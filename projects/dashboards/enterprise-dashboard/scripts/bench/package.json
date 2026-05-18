@@ -1,5 +1,5 @@
 {
-  "name": "bench",
+  "name": "enterprise-dashboard-bench",
   "type": "module",
   "description": "Performance benchmarks aligned with Bun's official benchmark structure",
   "dependencies": {

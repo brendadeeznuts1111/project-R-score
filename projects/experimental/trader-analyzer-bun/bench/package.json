@@ -1,5 +1,5 @@
 {
-  "name": "trader-analyzer-bench",
+  "name": "trader-analyzer-bun-bench",
   "type": "module",
   "scripts": {
     "generate": "bun run generate-sample-data.ts",

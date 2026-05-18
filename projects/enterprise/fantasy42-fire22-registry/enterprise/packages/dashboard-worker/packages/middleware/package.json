@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enterprise-middleware",
+  "name": "@fire22/enterprise-middleware-projects-enterprise-fantasy42-fire22-registry-enterprise-packages-dashboard-worker-packages-middleware",
   "version": "1.0.3",
   "description": "Fire22 Middleware System - Request handling, error formatting, and performance monitoring",
   "main": "src/index.ts",

@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enterprise-env-manager",
+  "name": "@fire22/enterprise-env-manager-projects-enterprise-fantasy42-fire22-registry-enterprise-packages-dashboard-worker-packages-env-manager",
   "version": "1.0.3",
   "description": "Fire22 Environment Manager - Configuration validation, security auditing, and environment switching",
   "main": "src/index.ts",

@@ -1,5 +1,5 @@
 {
-  "name": "@nexus/trader-analyzer",
+  "name": "@nexus/trader-analyzer-bun",
   "version": "0.1.0",
   "description": "NEXUS - Unified trading intelligence platform connecting crypto, prediction markets, and sports betting with cross-market arbitrage detection",
   "type": "module",

@@ -1,7 +1,7 @@
 {
-  "name": "systems-dashboard",
+  "name": "codepoint-systems-dashboard",
   "version": "1.0.0",
-  "description": "🖥️ Professional Systems Dashboard - Server monitoring with Bun inspect.table()",
+  "description": "\ud83d\udda5\ufe0f Professional Systems Dashboard - Server monitoring with Bun inspect.table()",
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",

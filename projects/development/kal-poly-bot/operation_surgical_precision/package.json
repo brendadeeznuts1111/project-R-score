@@ -1,5 +1,5 @@
 {
-  "name": "@surgical-precision/platform",
+  "name": "@surgical-precision/platform-old",
   "version": "1.2.0",
   "description": "Enterprise microservices platform with 28.5% Bun-native performance improvement - Service Mesh, Observability, Disaster Recovery",
   "main": "./build/index.js",

@@ -1,5 +1,5 @@
 {
-  "name": "fire22-personal-subdomains",
+  "name": "fire22-personal-subdomains-projects-enterprise-fantasy42-fire22-registry-dashboard-worker-personal-subdomains",
   "version": "1.0.0",
   "description": "Personal subdomain infrastructure for Fire22 employees using Cloudflare Workers",
   "main": "src/index.ts",
