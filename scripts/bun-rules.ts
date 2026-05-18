@@ -12,7 +12,7 @@ import {
   checkRipgrepAvailability,
   ConfigManager,
   PRESET_CONFIGS,
-} from '@fw/rip';
+} from '@factorywager/rip';
 
 // ============================================================================
 // RULES ENGINE

@@ -1,5 +1,5 @@
 {
-  "name": "@fw/package",
+  "name": "@factorywager/package",
   "version": "0.1.0",
   "private": true,
   "module": "src/index.ts",

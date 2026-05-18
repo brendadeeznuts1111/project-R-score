@@ -13,7 +13,7 @@ import { serve } from 'bun';
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestingManager } from '@fw/ab-testing';
+import { ABTestingManager } from '@factorywager/ab-testing';
 
 // Create global A/B testing manager instance
 const abManager = new ABTestingManager();

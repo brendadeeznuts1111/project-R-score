@@ -21,7 +21,7 @@ import {
   classifyHabits,
   calculateBonus,
   type HabitsData,
-} from '@fw/business';
+} from '@factorywager/business';
 
 // ============================================================================
 // Configuration

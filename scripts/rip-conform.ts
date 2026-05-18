@@ -5,7 +5,7 @@
  * Advanced purge rule generation with signature management
  */
 
-import { createRipgrepEngine } from '@fw/rip';
+import { createRipgrepEngine } from '@factorywager/rip';
 
 // ============================================================================
 // RIPGREP CONFORM ENGINE

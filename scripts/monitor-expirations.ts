@@ -10,7 +10,7 @@
 
 import { SecretLifecycleManager } from '../lib/security/secret-lifecycle.ts';
 import { styled } from '../lib/theme/colors.ts';
-import { refs } from '@fw/business';
+import { refs } from '@factorywager/business';
 
 const lifecycleManager = new SecretLifecycleManager();
 

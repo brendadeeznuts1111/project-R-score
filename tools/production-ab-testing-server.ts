@@ -13,7 +13,7 @@ import { serve } from 'bun';
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestManager } from '@fw/ab-testing';
+import { ABTestManager } from '@factorywager/ab-testing';
 
 // Global test configuration
 function configureTests(manager: ABTestManager) {

@@ -1,5 +1,5 @@
 {
-  "name": "@fw/business",
+  "name": "@factorywager/business",
   "version": "0.1.0",
   "private": true,
   "module": "src/index.ts",

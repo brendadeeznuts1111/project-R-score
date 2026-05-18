@@ -10,9 +10,9 @@
  */
 
 import Redis from 'ioredis';
-import { BusinessContinuity } from '@fw/p2p';
-import { CustomerNotifier } from '@fw/p2p';
-import { executeBusinessMigration, handlePaymentAccountLoss } from '@fw/p2p';
+import { BusinessContinuity } from '@factorywager/p2p';
+import { CustomerNotifier } from '@factorywager/p2p';
+import { executeBusinessMigration, handlePaymentAccountLoss } from '@factorywager/p2p';
 import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================

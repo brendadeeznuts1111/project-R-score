@@ -21,7 +21,7 @@ import {
   getRecommendation,
   applyVipRiskOverride,
   type HabitsData,
-} from '@fw/business';
+} from '@factorywager/business';
 
 // ============================================================================
 // Configuration

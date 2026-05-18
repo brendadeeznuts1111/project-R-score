@@ -5,7 +5,7 @@
  * Local Llama integration for intelligent code analysis and purification
  */
 
-import { createRipgrepEngine, scanDirectory, formatReport } from '@fw/rip';
+import { createRipgrepEngine, scanDirectory, formatReport } from '@factorywager/rip';
 
 // ============================================================================
 // AI PURGE ENGINE
