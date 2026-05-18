@@ -241,7 +241,9 @@ class EnhancedAuthTestClient {
 
         if (i > 10) {
         }
-      } catch (error) {}
+      } catch (error) {
+    console.error('Unhandled error:', error);
+  }
     }
 
     return rateLimitHit;
@@ -271,7 +273,9 @@ class EnhancedAuthTestClient {
 
         if (i === 5) {
         }
-      } catch (error) {}
+      } catch (error) {
+    console.error('Unhandled error:', error);
+  }
     }
 
     // Test if account is actually locked by trying with correct password
@@ -287,7 +291,9 @@ class EnhancedAuthTestClient {
         if (data.error && data.error.includes('locked')) {
         } else {
         }
-      } catch (error) {}
+      } catch (error) {
+    console.error('Unhandled error:', error);
+  }
     }
 
     return accountLocked;

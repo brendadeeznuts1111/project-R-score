@@ -334,7 +334,9 @@ class QuickWinsScanner {
     // Cleanup
     try {
       await Bun.file(testFile).delete();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     
     return benchmarks;
   }

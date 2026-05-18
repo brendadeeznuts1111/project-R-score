@@ -11,7 +11,9 @@ import { MLGSGraph } from './src/graph/MLGSGraph';
 const dataDir = './data';
 try {
 	Bun.mkdir(dataDir, { recursive: true });
-} catch {}
+} catch {
+    console.error('Unhandled error:', error);
+  }
 
 const dbPath = process.env.DB_PATH || `${dataDir}/stream-debug.db`;
 const mlgsPath = process.env.MLGS_PATH || `${dataDir}/mlgs-stream-debug.db`;

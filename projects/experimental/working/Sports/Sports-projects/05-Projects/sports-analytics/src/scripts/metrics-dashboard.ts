@@ -217,7 +217,9 @@ export async function runMetricsDashboard() {
     try {
       const { dns } = require("bun");
       dnsStats = dns.getCacheStats();
-    } catch (e) {}
+    } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 
     const logEntry = {
       timestamp: new Date().toISOString(),

@@ -110,7 +110,9 @@ export class Fantasy402Auth {
               if (decoded.exp) {
                 this.session.expiresAt = decoded.exp * 1000; // Convert to milliseconds
               }
-            } catch (e) {}
+            } catch (e) {
+    console.error('Unhandled error:', e);
+  }
           }
 
           // Also check for other token fields (fallback)

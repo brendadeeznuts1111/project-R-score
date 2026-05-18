@@ -15,7 +15,9 @@ beforeEach(() => {
 		if (fs.existsSync('./cache/sports-mapping.db')) {
 			fs.unlinkSync('./cache/sports-mapping.db');
 		}
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 });
 
 afterEach(() => {
@@ -25,7 +27,9 @@ afterEach(() => {
 		if (fs.existsSync('./cache/sports-mapping.db')) {
 			fs.unlinkSync('./cache/sports-mapping.db');
 		}
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 });
 
 test('SportsCache initialization', async () => {

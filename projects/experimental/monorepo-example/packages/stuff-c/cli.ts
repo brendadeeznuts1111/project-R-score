@@ -316,7 +316,9 @@ switch (cmd) {
       try {
         const res = await fetch(`${SERVER}${ROUTES.HEALTH}`);
         if (res.status === 200) { ready = true; break; }
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     if (ready) {
       console.info(`\nServer ready at ${SERVER}`);

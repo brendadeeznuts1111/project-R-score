@@ -781,7 +781,9 @@ async function r2Delete(r2Key: string): Promise<void> {
 			);
 			try {
 				await $`rm -f ${cacheFile}`.nothrow();
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 
 			cacheDB
 				.prepare(

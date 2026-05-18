@@ -73,8 +73,8 @@ export class NexusOrchestrator {
     try {
       mkdirSync(this.auditDirectory, { recursive: true });
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
 
   }
 
@@ -419,8 +419,8 @@ export class NexusOrchestrator {
           });
 
         } catch (webhookError) {
-
-        }
+    console.error('Unhandled error:', webhookError);
+  }
       }
       
       // Critical incidents trigger immediate alert
@@ -599,8 +599,8 @@ async function handleCliFeedback() {
           });
 
         } catch (webhookError) {
-
-        }
+    console.error('Unhandled error:', webhookError);
+  }
       }
       
     } catch (error) {

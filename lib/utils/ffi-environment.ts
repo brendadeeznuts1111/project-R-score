@@ -87,7 +87,9 @@ export function verifyFFIEnvironment(): { valid: boolean; issues: string[] } {
         issues.push('Non-FHS system detected but LIBRARY_PATH not set');
         issues.push('NixOS/Guix require C_INCLUDE_PATH and LIBRARY_PATH');
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   return {

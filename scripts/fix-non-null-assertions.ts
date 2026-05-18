@@ -8,20 +8,29 @@
  * safe fallback patterns where feasible.
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache']);
+const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
 const EXTENSIONS = new Set(['.ts', '.tsx']);
 
 async function* walkFiles(dir: string): AsyncGenerator<string> {
-  const entries = await Bun.readdir(dir).catch(() => []);
+  let entries: string[];
+  try {
+    entries = await readdir(dir);
+  } catch {
+    return;
+  }
   for (const entry of entries) {
     const full = path.join(dir, entry);
-    const stat = await Bun.stat(full).catch(() => null);
-    if (!stat) continue;
-    if (stat.isDirectory()) {
+    let s;
+    try {
+      s = await stat(full);
+    } catch {
+      continue;
+    }
+    if (s.isDirectory()) {
       if (EXCLUDE_DIRS.has(entry)) continue;
       yield* walkFiles(full);
     } else {

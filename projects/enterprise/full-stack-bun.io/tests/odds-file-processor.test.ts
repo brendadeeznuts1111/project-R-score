@@ -17,7 +17,9 @@ afterAll(async () => {
 	try {
 		await unlink(TEST_FILE).catch(() => {});
 		await unlink(TEST_FILE_2).catch(() => {});
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 });
 
 test('processOddsFile reads lines efficiently', async () => {
@@ -126,7 +128,9 @@ test('watchOddsFile handles partial lines correctly', async () => {
 	// Clean up
 	try {
 		await unlink(WATCH_FILE).catch(() => {});
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 
 	const arbFound: any[] = [];
 	const controller = new AbortController();
@@ -191,12 +195,16 @@ test('watchOddsFile handles partial lines correctly', async () => {
 			watchPromise,
 			new Promise(resolve => setTimeout(resolve, 500))
 		]);
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 
 	// Clean up
 	try {
 		await unlink(WATCH_FILE).catch(() => {});
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 
 	// Should have found both arbs (partial line should be handled)
 	expect(arbFound.length).toBeGreaterThanOrEqual(1);

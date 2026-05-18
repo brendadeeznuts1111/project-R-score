@@ -445,7 +445,9 @@ async function streamingIPC() {
           if (data.type === "stream-data") {
             streamData.push(data.data);
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
 
@@ -613,7 +615,9 @@ async function eventDrivenIPC() {
               )} │ ${pad("N/A", 30)} │`
             );
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
 
@@ -749,7 +753,9 @@ async function monitoredIPC() {
               timestamp: data.timestamp,
             });
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
 

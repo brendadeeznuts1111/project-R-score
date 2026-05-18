@@ -313,7 +313,9 @@ export const CouncilScripts = {
         matches.forEach(match => {
           factories[match] = (factories[match] || 0) + 1;
         });
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     
     return factories;
@@ -330,7 +332,9 @@ export const CouncilScripts = {
         matches.forEach(match => {
           disputes[match] = (disputes[match] || 0) + 1;
         });
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     
     return disputes;
@@ -345,7 +349,9 @@ export const CouncilScripts = {
         const content = await Bun.file(file).text();
         const matches = content.match(/[a-f0-9]{64}/g) || [];
         hashes.push(...matches);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     
     return [...new Set(hashes)]; // Deduplicate

@@ -51,7 +51,9 @@ export class EnhancedDocsCacheManager {
     // Create directory if it doesn't exist
     try {
       Bun.$`mkdir -p ${baseDir}`.quiet();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     return baseDir;
   }

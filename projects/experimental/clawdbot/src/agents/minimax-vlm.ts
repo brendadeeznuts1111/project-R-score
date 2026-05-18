@@ -18,7 +18,9 @@ function coerceApiHost(params: {
   try {
     const url = new URL(raw);
     return url.origin;
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 
   try {
     const url = new URL(`https://${raw}`);

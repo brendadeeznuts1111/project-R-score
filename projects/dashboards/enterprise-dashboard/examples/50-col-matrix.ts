@@ -2505,7 +2505,9 @@ Tips: Use :name for named groups, (\\d+) for regex, * for wildcards`);
         const url = new URL(trimmed);
         pattern = url.pathname + url.search;
         baseUrl = `${url.protocol}//${url.host}`;
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
 
     try {

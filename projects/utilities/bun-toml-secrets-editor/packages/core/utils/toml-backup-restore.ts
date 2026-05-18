@@ -277,7 +277,9 @@ class TomlBackupRestore {
 				if (this.matchesFilter(metadata, filter)) {
 					backups.push(metadata);
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		return backups.sort((a, b) => b.timestamp - a.timestamp);

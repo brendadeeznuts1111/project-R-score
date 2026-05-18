@@ -89,7 +89,9 @@ export class ColorEnforcer {
             }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+    console.error('Unhandled error:', e);
+  }
     };
     scan('.');
     return files;

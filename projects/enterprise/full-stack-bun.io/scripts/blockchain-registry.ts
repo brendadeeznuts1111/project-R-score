@@ -135,7 +135,9 @@ class BlockchainRegistry {
     try {
       const content = await Bun.file(registryFile).text();
       registry = JSON.parse(content);
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     const key = `${entry.owner}/${entry.name}@${entry.version}`;
     registry[key] = { ...entry, txHash, blockNumber: Math.floor(Math.random() * 1000000) };

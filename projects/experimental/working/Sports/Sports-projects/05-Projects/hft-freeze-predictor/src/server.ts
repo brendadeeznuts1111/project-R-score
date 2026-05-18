@@ -27,7 +27,9 @@ function broadcast(message: object): void {
   for (const client of wsClients) {
     try {
       client.send(data);
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 }
 
@@ -178,7 +180,9 @@ export function createServer(port: number = 0) {
           if (data.type === "ping") {
             ws.send(JSON.stringify({ type: "pong", timestamp: Date.now() }));
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       },
 
       close(ws) {

@@ -514,7 +514,9 @@ const SHOWCASE_HTML = `<!DOCTYPE html>
       try {
         const health = await fetch('/api/health').then(r => r.json());
         document.getElementById('health-result').innerHTML = syntaxHighlight(health);
-      } catch (e) {}
+      } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 
       // Memory stats
       try {
@@ -522,14 +524,18 @@ const SHOWCASE_HTML = `<!DOCTYPE html>
         document.getElementById('heap-used').textContent = mem.heapUsed;
         document.getElementById('heap-total').textContent = mem.heapTotal;
         document.getElementById('rss').textContent = mem.rss;
-      } catch (e) {}
+      } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 
       // Runtime info
       try {
         const runtime = await fetch('/api/debug/runtime').then(r => r.json());
         document.getElementById('runtime').textContent = 'Bun ' + runtime.bunVersion;
         document.getElementById('uptime').textContent = runtime.uptime;
-      } catch (e) {}
+      } catch (e) {
+    console.error('Unhandled error:', e);
+  }
     }
 
     init();
@@ -544,7 +550,9 @@ const SHOWCASE_HTML = `<!DOCTYPE html>
 
         const runtime = await fetch('/api/debug/runtime').then(r => r.json());
         document.getElementById('uptime').textContent = runtime.uptime;
-      } catch (e) {}
+      } catch (e) {
+    console.error('Unhandled error:', e);
+  }
     }, 10000);
   </script>
 </body>

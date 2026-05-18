@@ -4182,7 +4182,9 @@ const server = Bun.serve({
           try {
             const parsed = JSON.parse(cookieState);
             syncedState = { ...syncedState, ...parsed };
-          } catch {}
+          } catch {
+    console.error('Unhandled error:', error);
+  }
         }
 
         return Response.json({

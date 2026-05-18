@@ -303,7 +303,9 @@ async function testConnection(opts: FetchOptions = {}): Promise<void> {
   // Demonstrate fetch.preconnect in dry-run mode too
   if (!isLocalFile) {
     console.info(`   ⚡ Calling fetch.preconnect before test...`);
-    try { fetch.preconnect(url); } catch {}
+    try { fetch.preconnect(url); } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   const controller = new AbortController();
@@ -399,7 +401,9 @@ async function fetchDocsIndex(opts: FetchOptions = {}): Promise<DocPage[]> {
     console.info(`   ⚡ Preconnecting to host (fetch.preconnect)...`);
     try {
       fetch.preconnect(mergedConfig.sourceUrl);
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   console.info(`📥 Fetching Bun documentation index from ${mergedConfig.sourceUrl}...`);

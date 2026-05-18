@@ -67,7 +67,9 @@ function scanDirectory(dir) {
         }
       }
     });
-  } catch (e) {}
+  } catch (e) {
+    console.error('Unhandled error:', e);
+  }
   
   return totalViolations;
 }

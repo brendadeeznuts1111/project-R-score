@@ -311,7 +311,9 @@ class RegistryBinaryManager {
 		// Cleanup
 		try {
 			await $`rm ${tempPath}`;
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 
 		process.exit(exitCode || 0);
 	}
@@ -348,7 +350,9 @@ class RegistryBinaryManager {
 				// Clean up
 				try {
 					await $`rm ${outfile}`.quiet();
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 
 				console.info(color.green(`✅ ${name} built and uploaded\n`));
 			} catch (error) {

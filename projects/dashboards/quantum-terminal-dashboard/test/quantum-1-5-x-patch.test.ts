@@ -42,7 +42,9 @@ describe("Quantum 1.5.x Patch", () => {
     const testDbPath = ".test-sql-undefined.db";
     
     afterAll(() => {
-      try { unlinkSync(testDbPath); } catch {}
+      try { unlinkSync(testDbPath); } catch {
+    console.error('Unhandled error:', error);
+  }
     });
 
     test("filters out undefined values", async () => {
@@ -82,9 +84,15 @@ describe("Quantum 1.5.x Patch", () => {
     const testDbPath = ".test-wal.db";
     
     afterAll(() => {
-      try { unlinkSync(testDbPath); } catch {}
-      try { unlinkSync(testDbPath + "-wal"); } catch {}
-      try { unlinkSync(testDbPath + "-shm"); } catch {}
+      try { unlinkSync(testDbPath); } catch {
+    console.error('Unhandled error:', error);
+  }
+      try { unlinkSync(testDbPath + "-wal"); } catch {
+    console.error('Unhandled error:', error);
+  }
+      try { unlinkSync(testDbPath + "-shm"); } catch {
+    console.error('Unhandled error:', error);
+  }
     });
 
     test("creates WAL-enabled database", () => {
@@ -99,7 +107,9 @@ describe("Quantum 1.5.x Patch", () => {
     const testPath = ".test-safe-write.bin";
     
     afterAll(() => {
-      try { unlinkSync(testPath); } catch {}
+      try { unlinkSync(testPath); } catch {
+    console.error('Unhandled error:', error);
+  }
     });
 
     test("writes with correct mode", async () => {

@@ -131,7 +131,9 @@ async function main() {
         await Bun.file(path).stat();
         binPath = path;
         break;
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
 
     if (!binPath) {

@@ -10,7 +10,9 @@ async function dryRun() {
   let presigns = {};
   try {
     presigns = await Bun.file('presigns.json').json();
-  } catch (e) {}
+  } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 
   const manager = new BunR2AppleManager(presigns, Bun.env._BUCKET!);
 

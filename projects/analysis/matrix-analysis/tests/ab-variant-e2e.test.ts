@@ -471,7 +471,9 @@ describe("API Server A/B Integration", () => {
             if (msg.type === "ping") {
               ws.send(JSON.stringify({ type: "pong", ts: Date.now() }));
             }
-          } catch {}
+          } catch {
+    console.error('Unhandled error:', error);
+  }
         },
         close(ws: WS) {
           abEventSubs.delete(ws);

@@ -273,7 +273,9 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
           }
         }
       });
-    } catch (err) {}
+    } catch (err) {
+    console.error('Unhandled error:', err);
+  }
   }
   
   /**

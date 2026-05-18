@@ -153,7 +153,9 @@ export class EnhancedAPIDemo {
 
       try {
         await this.api.verifyToken();
-      } catch (error) {}
+      } catch (error) {
+    console.error('Unhandled error:', error);
+  }
 
       // Restore valid token if available
       if (typeof sessionStorage !== 'undefined') {
@@ -179,7 +181,9 @@ export class EnhancedAPIDemo {
       for (const endpoint of endpoints) {
         try {
           const response = await this.api.request(endpoint, { method: 'GET' });
-        } catch (error) {}
+        } catch (error) {
+    console.error('Unhandled error:', error);
+  }
       }
     } catch (error) {
       console.error('❌ Security monitoring demo failed:', error);

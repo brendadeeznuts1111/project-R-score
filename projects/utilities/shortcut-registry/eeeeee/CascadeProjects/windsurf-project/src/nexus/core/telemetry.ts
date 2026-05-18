@@ -114,8 +114,8 @@ export class Android13Telemetry {
           await writeFile(outputPath, JSON.stringify(metricsData, null, 2));
         }
       } catch (error) {
-
-      }
+    console.error('Unhandled error:', error);
+  }
     }, interval);
 
     // Auto-stop after 1 hour for demo

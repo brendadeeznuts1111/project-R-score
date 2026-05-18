@@ -261,7 +261,9 @@ async function main() {
   // Cleanup
   try {
     await Bun.write(TEST_FILE, ""); // Clear test file
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   const overallEnd = Bun.nanoseconds();
   const totalNs = overallEnd - overallStart;

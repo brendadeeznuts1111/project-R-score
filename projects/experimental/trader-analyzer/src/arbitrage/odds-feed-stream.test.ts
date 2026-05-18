@@ -21,10 +21,14 @@ describe("OddsFeedStream", () => {
 	afterEach(() => {
 		try {
 			unlinkSync(testDbPath);
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 		try {
 			unlinkSync(testMlgsPath);
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 	});
 
 	describe("CompressionStream - ZSTD Performance", () => {

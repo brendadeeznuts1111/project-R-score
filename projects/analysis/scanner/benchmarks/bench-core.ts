@@ -179,7 +179,9 @@ export async function loadMemberProfile(): Promise<{key: string | null; profile:
 			if (rc.team?.[user]) {
 				return {key: user, profile: rc.team[user]};
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 	}
 	return {key: null, profile: null};
 }

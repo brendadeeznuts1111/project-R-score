@@ -2400,7 +2400,9 @@ function shutdown(signal: string) {
   clearInterval(telemetryInterval);
   try {
     server.stop(true);
-  } catch (err) {}
+  } catch (err) {
+    console.error('Unhandled error:', err);
+  }
   console.info(`[${SERVER_NAME}] graceful shutdown via ${signal}`);
   process.exit(0);
 }

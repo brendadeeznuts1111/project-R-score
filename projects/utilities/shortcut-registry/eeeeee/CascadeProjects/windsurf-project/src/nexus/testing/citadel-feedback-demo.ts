@@ -96,8 +96,8 @@ export class CitadelFeedbackDemo {
         }
         
       } catch (error) {
-
-      }
+    console.error('Unhandled error:', error);
+  }
       
       console.info(); // spacing
     }
@@ -143,8 +143,8 @@ export class CitadelFeedbackDemo {
       });
       
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**

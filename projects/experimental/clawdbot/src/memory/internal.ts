@@ -20,7 +20,9 @@ export type MemoryChunk = {
 export function ensureDir(dir: string): string {
   try {
     fsSync.mkdirSync(dir, { recursive: true });
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   return dir;
 }
 
@@ -76,7 +78,9 @@ export async function listMemoryFiles(workspaceDir: string): Promise<string[]> {
     let key = entry;
     try {
       key = await fs.realpath(entry);
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     if (seen.has(key)) continue;
     seen.add(key);
     deduped.push(entry);

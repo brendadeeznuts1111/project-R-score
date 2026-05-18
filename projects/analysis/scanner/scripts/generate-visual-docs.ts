@@ -326,7 +326,9 @@ async function generateDashboardHTML(registry: VersionRegistry): Promise<string>
 			if (bunApiMatrixModule.BUN_DOCS_BASE) {
 				bunDocBase = bunApiMatrixModule.BUN_DOCS_BASE;
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 
 		// Try to get BUN_TYPES_REPO_URL from mcp-bun-docs if available
 		try {
@@ -338,7 +340,9 @@ async function generateDashboardHTML(registry: VersionRegistry): Promise<string>
 					bunTypesRepoUrl = mcpBunDocsModule.BUN_TYPES_REPO_URL;
 				}
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 
 		if (BUN_R_SCORE_BASELINE !== undefined) {
 			baselineR =
@@ -1262,7 +1266,9 @@ async function main(): Promise<void> {
 											headers: {'Content-Type': 'image/svg+xml'},
 										});
 									}
-								} catch {}
+								} catch {
+    console.error('Unhandled error:', error);
+  }
 
 								// Last resort: read file directly
 								if (existsSync(badgePath)) {

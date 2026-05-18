@@ -75,7 +75,9 @@ process.on("SIGINT", () => {
   try {
     unlinkSync(keyPath);
     unlinkSync(certPath);
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   process.exit(0);
 });
@@ -91,4 +93,6 @@ h2Server.close();
 try {
   unlinkSync(keyPath);
   unlinkSync(certPath);
-} catch {}
+} catch {
+    console.error('Unhandled error:', error);
+  }

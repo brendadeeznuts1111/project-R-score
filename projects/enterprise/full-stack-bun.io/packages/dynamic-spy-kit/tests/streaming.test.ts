@@ -14,7 +14,9 @@ beforeEach(() => {
 		if (fs.existsSync('./cache/arb.db')) {
 			fs.unlinkSync('./cache/arb.db');
 		}
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 });
 
 afterEach(() => {
@@ -26,7 +28,9 @@ afterEach(() => {
 		if (fs.existsSync('./cache/arb.db')) {
 			fs.unlinkSync('./cache/arb.db');
 		}
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 });
 
 test('LiveStreamingEngine initialization', () => {

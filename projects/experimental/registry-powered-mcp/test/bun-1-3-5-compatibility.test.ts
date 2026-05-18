@@ -322,7 +322,9 @@ describe('Bun 1.3.5 Enterprise Compatibility Tests', () => {
           Bun.sleep(timeoutMs).then(() => false),
         ]);
 
-        try { await client.quit(); } catch {}
+        try { await client.quit(); } catch {
+    console.error('Unhandled error:', error);
+  }
         return result;
       } catch {
         return false;

@@ -275,7 +275,9 @@ class TypedRegistryManager {
 			// Clean up
 			try {
 				await $`rm ${filePath}`.quiet();
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 
 			return {
 				filename,
@@ -331,7 +333,9 @@ class TypedRegistryManager {
 		// Cleanup
 		try {
 			await $`rm ${tempPath}`.quiet();
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 
 		process.exit(exitCode || 0);
 	}

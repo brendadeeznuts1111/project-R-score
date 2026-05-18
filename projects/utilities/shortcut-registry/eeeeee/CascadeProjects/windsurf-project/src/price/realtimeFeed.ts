@@ -62,8 +62,8 @@ export class RealtimePriceFeed extends EventEmitter {
             prices.push(price);
           }
         } catch (error) {
-
-        }
+    console.error('Unhandled error:', error);
+  }
       }
 
       if (prices.length > 0) {
@@ -86,8 +86,8 @@ export class RealtimePriceFeed extends EventEmitter {
         }
       }
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**

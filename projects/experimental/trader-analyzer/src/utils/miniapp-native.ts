@@ -493,7 +493,9 @@ export class NativeMiniappMonitor {
 							commit: data.commit || data.commitHash,
 						};
 					}
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 			}
 
 			// Fallback: extract info from URL

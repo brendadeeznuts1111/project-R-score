@@ -159,7 +159,9 @@ async function workerPool() {
         if (line) {
           try {
             responses.push(JSON.parse(line));
-          } catch {}
+          } catch {
+    console.error('Unhandled error:', error);
+  }
         }
       });
     await worker.exited;
@@ -263,7 +265,9 @@ async function bidirectionalIPC() {
               `  Status: ${response.data.messages} messages processed`
             );
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
 
@@ -353,7 +357,9 @@ async function ipcWithFiles() {
         try {
           const response = JSON.parse(line);
           console.info(`  ${response.type}: ${JSON.stringify(response.data)}`);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
 

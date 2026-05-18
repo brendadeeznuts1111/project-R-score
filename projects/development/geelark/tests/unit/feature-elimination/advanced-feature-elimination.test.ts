@@ -12,7 +12,9 @@ describe("Advanced Feature Elimination Tests", () => {
     // Ensure test directory exists
     try {
       mkdirSync(testDir, { recursive: true });
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   });
 
   afterAll(() => {
@@ -79,7 +81,9 @@ console.info("Available features:", features.join(","));
       try {
         unlinkSync(testFile);
         unlinkSync(output);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 
@@ -153,7 +157,9 @@ console.info("Full app");
         unlinkSync(testFile);
         unlinkSync(smallOutput);
         unlinkSync(largeOutput);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 
@@ -225,7 +231,9 @@ console.info(result);
       try {
         unlinkSync(testFile);
         unlinkSync(output);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 });

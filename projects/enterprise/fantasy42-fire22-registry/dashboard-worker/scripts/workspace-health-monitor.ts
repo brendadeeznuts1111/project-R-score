@@ -176,7 +176,9 @@ class WorkspaceHealthMonitor {
         const result =
           await $`find ${join(workspacePath, 'src')} -name "*.ts" -o -name "*.tsx" | wc -l`.quiet();
         health.metrics.files = parseInt(result.stdout.toString().trim());
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     } else {
       health.issues.push('src directory not found');
       if (health.status === 'healthy') health.status = 'warning';
@@ -219,13 +221,17 @@ class WorkspaceHealthMonitor {
           if (health.status === 'healthy') health.status = 'warning';
         }
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     // Get last modified time
     try {
       const stats = statSync(workspacePath);
       health.checks.lastModified = stats.mtime;
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     // Check for missing workspace dependencies
     for (const dep of health.dependencies.workspace) {

@@ -339,7 +339,9 @@ export class DocumentationAwarePerformanceAnalyzer {
       : 0;
 
     for (const e of entries) {
-      try { domains.add(new URL(e.request.url).hostname); } catch {}
+      try { domains.add(new URL(e.request.url).hostname); } catch {
+    console.error('Unhandled error:', error);
+  }
       totalTransfer += e.response._transferSize ?? e.response.content.size;
       totalSize += e.response.content.size;
       const headers = e.response.headers || [];

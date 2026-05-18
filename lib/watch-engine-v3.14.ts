@@ -200,7 +200,9 @@ async function setupPackageWatcher(
     try {
       // Kill existing process if any
       if (pkg.pid) {
-        try { process.kill(pkg.pid, 'SIGTERM'); } catch {}
+        try { process.kill(pkg.pid, 'SIGTERM'); } catch {
+    console.error('Unhandled error:', error);
+  }
       }
 
       const proc = spawn({
@@ -368,7 +370,9 @@ function startHealthCheck(session: WatchSession, url: string): void {
       // Trigger restart of all packages
       session.packages.forEach(p => {
         if (p.pid) {
-          try { process.kill(p.pid, 'SIGTERM'); } catch {}
+          try { process.kill(p.pid, 'SIGTERM'); } catch {
+    console.error('Unhandled error:', error);
+  }
         }
       });
     }
@@ -674,7 +678,9 @@ export function stopWatchSession(sessionId: string): void {
   
   session.packages.forEach(pkg => {
     if (pkg.pid) {
-      try { process.kill(pkg.pid, 'SIGTERM'); } catch {}
+      try { process.kill(pkg.pid, 'SIGTERM'); } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     pkg.watcher?.stop();
   });

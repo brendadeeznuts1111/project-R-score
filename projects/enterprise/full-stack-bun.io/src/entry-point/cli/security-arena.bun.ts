@@ -314,7 +314,9 @@ async function startSecurityArena() {
         // Handle regular ODC messages
         broadcastODC(data);
         structuredLog(`[${new Date().toISOString()}] ODC broadcast: ${inspect(data, { colors: true })}`);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     },
     close(ws: any) {
       odcClients.delete(ws);

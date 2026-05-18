@@ -48,7 +48,9 @@ let memberProfile: MemberProfile | null = null;
 				memberKey = user;
 				memberProfile = rc.team[user];
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 	}
 }
 

@@ -85,7 +85,9 @@ export async function verifyFileSinkTypes(verbose: boolean = false): Promise<boo
     
     // Clean up
     const { unlinkSync } = await import("fs");
-    try { unlinkSync("./test-types.txt"); } catch {}
+    try { unlinkSync("./test-types.txt"); } catch {
+    console.error('Unhandled error:', error);
+  }
     
     return true;
   } catch (error: any) {
@@ -127,7 +129,9 @@ export async function verifyIntegration(verbose: boolean = false): Promise<boole
     
     // Clean up
     const { unlinkSync } = await import("fs");
-    try { unlinkSync("./build-info.json"); } catch {}
+    try { unlinkSync("./build-info.json"); } catch {
+    console.error('Unhandled error:', error);
+  }
     
     if (verbose) console.info('  [OK] Integration test completed successfully');
     return true;

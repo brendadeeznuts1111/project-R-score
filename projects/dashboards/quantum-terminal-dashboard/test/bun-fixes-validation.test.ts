@@ -49,7 +49,9 @@ describe("Bun Fixes - January 2026", () => {
         try {
           const { unlinkSync } = await import("fs");
           unlinkSync(testFile);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
   });
@@ -141,7 +143,9 @@ describe("Bun Fixes - January 2026", () => {
         try {
           const { unlinkSync } = await import("fs");
           unlinkSync(testFile);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     });
   });

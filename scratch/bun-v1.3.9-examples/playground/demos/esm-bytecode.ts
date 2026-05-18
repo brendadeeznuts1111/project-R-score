@@ -79,4 +79,6 @@ try {
   if (existsSync(exampleFile)) {
     unlinkSync(exampleFile);
   }
-} catch {}
+} catch {
+    console.error('Unhandled error:', error);
+  }

@@ -835,7 +835,9 @@ async function mdTable(agents: ReturnType<typeof aggregateAgents>) {
 
     header = gen('DATAPIPE', 'REPORT', 'LIVE', 'CORE', 'AGENT-7D');
 
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 
 
 

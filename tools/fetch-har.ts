@@ -331,7 +331,9 @@ if (flags.prefetch && unique.length > 0) {
         if (flags.verbose && info)
           log(`  dns.prefetch("${info.hostname}", ${info.port})`);
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   log(`  Prefetched DNS for ${prefetched.size} host(s)`);

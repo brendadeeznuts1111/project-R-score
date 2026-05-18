@@ -147,7 +147,9 @@ export function renderAdminDashboard(resourceHints: string): string {
             fetch('/admin/orders').then(r => r.json())
           ]);
           document.getElementById('rawData').textContent = JSON.stringify({connections: a.connections?.length, orders: b.count}, null, 2);
-        } catch (err) {}
+        } catch (err) {
+    console.error('Unhandled error:', err);
+  }
       }
       refreshData();
       setInterval(refreshData, 7000);
@@ -453,7 +455,9 @@ export function renderBarberDashboard(resourceHints: string): string {
           document.getElementById('ticketsCompleted').textContent = s.ticketsCompleted || 0;
           document.getElementById('tipsShared').textContent = '$' + Number(s.tipsShared || 0).toFixed(0);
           document.getElementById('ordersSeen').textContent = s.ordersSeen || 0;
-        } catch (err) {}
+        } catch (err) {
+    console.error('Unhandled error:', err);
+  }
       }
       
       function setTicket(ticket) {

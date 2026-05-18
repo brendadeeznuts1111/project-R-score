@@ -1578,7 +1578,9 @@ async function fetchLogsData(): Promise<LogsState> {
 
 					return { recentErrors, logCounts };
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		return { recentErrors: null, logCounts: null };

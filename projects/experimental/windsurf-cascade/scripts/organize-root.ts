@@ -10,7 +10,9 @@ const TESTS_UTILS = "tests/utils";
 async function ensureDir(dir: string) {
     try {
         await mkdir(dir, { recursive: true });
-    } catch { }
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 }
 
 async function isDir(path: string) {

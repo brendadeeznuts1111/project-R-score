@@ -503,7 +503,9 @@ export class Fantasy402AgentClient {
         ) {
           return managerResponse;
         }
-      } catch (managerError) {}
+      } catch (managerError) {
+    console.error('Unhandled error:', managerError);
+  }
 
       // Fallback to customer-level endpoint
       return await this.auth.getCustomerLiveWagers();
@@ -557,7 +559,9 @@ export class Fantasy402AgentClient {
         if (alternativeResponse) {
           return alternativeResponse;
         }
-      } catch (altError) {}
+      } catch (altError) {
+    console.error('Unhandled error:', altError);
+  }
 
       return {
         customers: [],

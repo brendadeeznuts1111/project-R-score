@@ -206,8 +206,8 @@ export class FinancialWarmer {
       }
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
 
     return this.session;
   }

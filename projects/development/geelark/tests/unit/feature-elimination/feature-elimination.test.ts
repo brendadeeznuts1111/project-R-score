@@ -62,7 +62,9 @@ console.info("✅ Base functionality");
         unlinkSync(premiumOutput);
         unlinkSync(freeOutput);
         unlinkSync(testFile);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 
@@ -121,7 +123,9 @@ console.info("Features loaded:", features.length);
         unlinkSync(fullOutput);
         unlinkSync(minimalOutput);
         unlinkSync(testFile);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 
@@ -193,7 +197,9 @@ console.info("Service level:", serviceLevel);
         unlinkSync(premiumOutput);
         unlinkSync(basicOutput);
         unlinkSync(testFile);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 
@@ -258,7 +264,9 @@ if (feature("FEAT_PREMIUM")) {
         unlinkSync(premiumOutput);
         unlinkSync(freeOutput);
         unlinkSync(testFile);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   });
 });

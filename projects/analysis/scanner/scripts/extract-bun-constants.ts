@@ -56,7 +56,9 @@ function* walkTsFiles(dir: string, root: string): Generator<string> {
 				yield full;
 			}
 		}
-	} catch (_) {}
+	} catch (_) {
+    console.error('Unhandled error:', _);
+  }
 }
 
 function extractFromFile(filePath: string, project: 'scanner' | 'mcp-bun-docs', root: string): ConstantMatch[] {
@@ -180,7 +182,9 @@ function extractFromFile(filePath: string, project: 'scanner' | 'mcp-bun-docs', 
 				out.push(constant);
 			}
 		}
-	} catch (_) {}
+	} catch (_) {
+    console.error('Unhandled error:', _);
+  }
 	return out;
 }
 
@@ -195,7 +199,9 @@ function collectConstants(): ConstantMatch[] {
 				matches.push(...extractFromFile(fp, 'mcp-bun-docs', BUN_MCP_DOCS_ROOT));
 			}
 		}
-	} catch (_) {}
+	} catch (_) {
+    console.error('Unhandled error:', _);
+  }
 	return matches;
 }
 

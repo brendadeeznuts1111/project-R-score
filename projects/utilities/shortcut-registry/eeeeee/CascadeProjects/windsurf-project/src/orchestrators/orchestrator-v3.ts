@@ -433,7 +433,7 @@ async function main() {
     const finalStatus = citadel.getCitadelStatus();
 
   } catch (error) {
-
+    console.error('Unhandled error:', error);
   } finally {
     await citadel.shutdown();
   }

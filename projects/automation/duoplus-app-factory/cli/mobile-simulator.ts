@@ -428,12 +428,16 @@ if (import.meta.main) {
   try {
     execSync('which emulator 2>/dev/null', { stdio: 'ignore' });
     hasEmulator = true;
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 
   try {
     execSync('which adb 2>/dev/null', { stdio: 'ignore' });
     hasAdb = true;
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 
   if (!hasEmulator && !hasAdb) {
     console.error('⚠️  Android SDK tools not found in PATH');

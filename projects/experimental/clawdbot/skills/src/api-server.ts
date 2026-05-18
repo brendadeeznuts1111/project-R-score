@@ -69,7 +69,9 @@ async function getTailscaleIP(): Promise<string | null> {
     if (result.exitCode === 0) {
       return result.stdout.toString().trim();
     }
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   return null;
 }
 

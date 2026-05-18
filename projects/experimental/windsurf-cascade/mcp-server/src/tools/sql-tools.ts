@@ -67,7 +67,9 @@ export class SQLQueryTool {
         throw new Error(`SQL execution failed: ${execError.message}`);
       } finally {
         // Clean up temp file
-        try { await Bun.file(tempSqlFile).delete(); } catch {}
+        try { await Bun.file(tempSqlFile).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
       }
 
       const duration = performance.now() - start;
@@ -199,7 +201,9 @@ COMMIT;
         }
       } finally {
         // Clean up temp files
-        try { await Bun.file(migrationFile).delete(); } catch {}
+        try { await Bun.file(migrationFile).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
       }
 
       const duration = performance.now() - start;

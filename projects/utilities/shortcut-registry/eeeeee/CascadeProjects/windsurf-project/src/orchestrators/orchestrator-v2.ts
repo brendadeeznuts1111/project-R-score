@@ -115,8 +115,8 @@ export class NexusOrchestrator {
       stats.mischiefCycles++;
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -154,8 +154,8 @@ export class NexusOrchestrator {
       }
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -197,8 +197,8 @@ export class NexusOrchestrator {
       }
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -223,8 +223,8 @@ export class NexusOrchestrator {
       }
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -338,8 +338,8 @@ export class NexusOrchestrator {
       }
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -423,7 +423,7 @@ async function main() {
     await factory.runParallelMischief(3); // 3 cycles
 
   } catch (error) {
-
+    console.error('Unhandled error:', error);
   } finally {
     await factory.terminate();
   }

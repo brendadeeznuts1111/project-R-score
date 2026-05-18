@@ -699,7 +699,9 @@ class BenchmarkSuite {
     
     // Cleanup
     for (let i = 0; i < 10; i++) {
-      try { await fs.promises.unlink(\`/tmp/bench-\${i}.txt\`); } catch {}
+      try { await fs.promises.unlink(\`/tmp/bench-\${i}.txt\`); } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     
     return {

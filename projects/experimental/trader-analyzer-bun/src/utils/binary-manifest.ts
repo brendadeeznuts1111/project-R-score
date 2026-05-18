@@ -165,7 +165,9 @@ export class BinaryManifestCodec {
 	 * @example 8.2.6.2.2.2.0: **Error Handling**
 	 * // Test Formula:
 	 * // 1. const invalid = new Uint8Array([0, 1, 2, 3]);
-	 * // 2. try { BinaryManifestCodec.decode(invalid); } catch (e) { }
+	 * // 2. try { BinaryManifestCodec.decode(invalid); } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 	 * // 3. Expected: Error thrown ("Invalid binary manifest format")
 	 *
 	 * **Cross-Reference:** Used by `8.2.6.3.0.0.0.0` (CLI decode) and `8.2.0.0.0.0.0` (UIPolicyManager.applyPatch)

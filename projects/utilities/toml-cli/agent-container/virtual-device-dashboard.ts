@@ -321,7 +321,9 @@ export class VirtualDeviceDashboard {
             });
             break;
         }
-      } catch (error) {}
+      } catch (error) {
+    console.error('Unhandled error:', error);
+  }
     }, 15000);
   }
   

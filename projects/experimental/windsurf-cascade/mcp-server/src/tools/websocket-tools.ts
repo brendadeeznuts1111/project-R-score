@@ -84,7 +84,9 @@ bun run ${serverFile}
       } finally {
         // Clean up server file after a delay to allow user to save it
         setTimeout(() => {
-          try { Bun.file(serverFile).delete(); } catch {}
+          try { Bun.file(serverFile).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
         }, 10000);
       }
     } catch (error: any) {

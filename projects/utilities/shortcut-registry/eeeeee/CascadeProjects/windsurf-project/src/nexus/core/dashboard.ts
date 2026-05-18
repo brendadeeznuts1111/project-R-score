@@ -104,8 +104,8 @@ export class CitadelDashboard {
         }
       }
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
 
     return metrics;
   }
@@ -136,12 +136,12 @@ export class CitadelDashboard {
             severity: auditData.severity
           });
         } catch (error) {
-
-        }
+    console.error('Unhandled error:', error);
+  }
       });
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
     
     return incidents.reverse(); // Most recent first
   }

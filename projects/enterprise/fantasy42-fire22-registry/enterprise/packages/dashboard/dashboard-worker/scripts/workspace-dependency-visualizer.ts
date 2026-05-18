@@ -99,7 +99,9 @@ class WorkspaceDependencyVisualizer {
             const result = await Bun.$`du -sk ${distPath}`.quiet();
             node.size = parseInt(result.stdout.toString().split('\t')[0]);
           }
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
 
         this.workspaces.set(packageJson.name, node);
       }

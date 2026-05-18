@@ -1222,7 +1222,9 @@ const server = Bun.serve({
       let body: any = {};
       try {
         body = await req.json();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       const userId = body.userId ?? 'ashschaeffer1';
       const target = body.url ?? `http://localhost:${PORT}/profile/${encodeURIComponent(userId)}`;
       const proc = Bun.spawn(['open', target]);

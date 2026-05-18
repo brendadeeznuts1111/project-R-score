@@ -590,7 +590,9 @@ async function listProjects(): Promise<{folder: string; name: string | null; pat
         const pkg = await pkgFile.json();
         if (typeof pkg.name === 'string') pkgName = pkg.name;
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     const repoOwner = await getRepoOwner(dir);
     const org = deriveOrg(pkgName, repoOwner);
     const project = deriveProject(pkgName, folder);

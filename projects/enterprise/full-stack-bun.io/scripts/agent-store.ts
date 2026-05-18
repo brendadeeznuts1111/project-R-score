@@ -141,7 +141,9 @@ class AgentStore {
       if (exitCode === 0) {
         return signature.trim();
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     // Fallback: Create a mock signature for demonstration
     console.warn('SSH key signing failed, using mock signature for demonstration');
@@ -289,7 +291,9 @@ class AgentStore {
     try {
       await Bun.file(tempBundlePath).delete();
       await Bun.file(manifestPath).delete();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     console.info(`✅ Published decentralized agent bundle: ${bundleId}`);
     console.info(`📦 IPFS Source: ${ipfsResult.url}`);
@@ -346,7 +350,9 @@ class AgentStore {
     // Clean up temp file
     try {
       await Bun.file(tempPath).delete();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     if (!isValid) {
       throw new Error(`Bundle signature verification failed: ${bundleId}`);
@@ -412,10 +418,14 @@ class AgentStore {
           try {
             const bundle: AgentBundle = JSON.parse(readFileSync(join(this.storePath, file), 'utf-8'));
             bundles.push(bundle);
-          } catch {}
+          } catch {
+    console.error('Unhandled error:', error);
+  }
         }
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     return bundles;
   }
@@ -437,7 +447,9 @@ class AgentStore {
       if (username) {
         return username.toLowerCase().replace(/\s+/g, '-');
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     // Fallback to system username
     return process.env.USER || process.env.USERNAME || 'anonymous';

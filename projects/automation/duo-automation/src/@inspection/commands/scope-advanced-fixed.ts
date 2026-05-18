@@ -17,7 +17,9 @@ export class AdvancedScopeInspector {
     if (/[@]|[.]{2}|==|>=|script:/.test(path)) {
       try {
         return JSONPath({ path, json: obj, wrap: false });
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
 
     try {

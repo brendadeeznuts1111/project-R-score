@@ -67,7 +67,9 @@ async function main() {
       5000
     );
     printResult(schemaResult);
-  } catch (error) {}
+  } catch (error) {
+    console.error('Unhandled error:', error);
+  }
 
   // Test 2: JWT Token generation (if available)
   try {
@@ -86,7 +88,9 @@ async function main() {
       1000
     );
     printResult(jwtResult);
-  } catch (error) {}
+  } catch (error) {
+    console.error('Unhandled error:', error);
+  }
 
   // Test 3: Request parsing simulation
   const requestParsingResult = await benchmark(

@@ -925,7 +925,9 @@ async function startServer(options: StartServerOptions = {}) {
     const shutdown = (signal: string) => {
       try {
         server.stop(true);
-      } catch (err) {}
+      } catch (err) {
+    console.error('Unhandled error:', err);
+  }
       logInfo('shutdown', { signal, name: SERVER_NAME });
       process.exit(0);
     };

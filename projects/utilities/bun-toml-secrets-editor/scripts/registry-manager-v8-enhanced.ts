@@ -423,7 +423,9 @@ class BunRegistryV8 {
 					// Clean immediate
 					try {
 						await $`rm ${outfile}`.quiet();
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 
 					return true;
 				} catch (e) {
@@ -501,7 +503,9 @@ class BunRegistryV8 {
 		// Cleanup
 		try {
 			await $`rm ${tempPath}`.quiet();
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 
 		process.exit(exitCode || 0);
 	}

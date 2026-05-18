@@ -71,15 +71,21 @@ try {
   // Try importing index files
   try {
     await import('./index.ts');
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   try {
     await import('./src/index.ts');
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   try {
     await import('./lib/index.ts');
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   // Small delay to ensure profiling captures the state
   await new Promise(resolve => setTimeout(resolve, 100));

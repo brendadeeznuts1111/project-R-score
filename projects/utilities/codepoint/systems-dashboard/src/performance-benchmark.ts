@@ -22,7 +22,9 @@ async function cleanup(paths: string[]) {
   for (const path of paths) {
     try {
       await Bun.file(path).delete();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 }
 

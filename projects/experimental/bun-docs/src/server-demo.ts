@@ -195,7 +195,9 @@ export async function startServerDemo(opts: ServerDemoOptions) {
                 try {
                   controller.enqueue(encoder.encode(`id: ${eventId++}\ndata: [demo] 20 events sent — stream closed by server (try ?timeout=300 for longer)\n\n`));
                   controller.close();
-                } catch {}
+                } catch {
+    console.error('Unhandled error:', error);
+  }
                 return;
               }
               try {

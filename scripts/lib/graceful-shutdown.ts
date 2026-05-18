@@ -37,7 +37,9 @@ export function createShutdown(options: ShutdownOptions): ShutdownState {
     for (const fn of cleanups) {
       try {
         await fn();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   }
 

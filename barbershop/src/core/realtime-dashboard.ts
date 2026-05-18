@@ -3756,7 +3756,9 @@ const ELITE_ADMIN_DASHBOARD = `<!DOCTYPE html>
         try {
           const metadata = typeof p.metadata === 'string' ? JSON.parse(p.metadata) : (p.metadata || {});
           feeBreakdown = metadata.feeBreakdown;
-        } catch (e) {}
+        } catch (e) {
+    console.error('Unhandled error:', e);
+  }
         
         const feeInfo = p.houseFee && p.houseFee > 0 ? \`
           <div style="color:#ff6600;font-size:9px;margin-top:2px;">

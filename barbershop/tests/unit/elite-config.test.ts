@@ -1506,7 +1506,9 @@ describe('EliteConfigManager - File Loading Errors', () => {
     // Cleanup
     try {
       rmSync(testDir, { recursive: true, force: true });
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   });
 
   test('should handle deeply nested env vars', async () => {

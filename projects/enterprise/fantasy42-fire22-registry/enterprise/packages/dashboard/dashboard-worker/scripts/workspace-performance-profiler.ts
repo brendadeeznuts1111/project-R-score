@@ -173,7 +173,9 @@ class WorkspacePerformanceProfiler {
         const result = await $`find ${nodeModulesPath} -type d -maxdepth 1 | wc -l`.quiet();
         metrics.dependencies.count = parseInt(result.stdout.toString().trim()) - 1;
         metrics.dependencies.size = await this.getDirectorySize(nodeModulesPath);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
 
     // Calculate performance score

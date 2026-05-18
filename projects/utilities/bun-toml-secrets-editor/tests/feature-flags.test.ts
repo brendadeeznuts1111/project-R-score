@@ -236,7 +236,9 @@ describe("FeatureFlags", () => {
 						},
 						async () => "ok",
 					);
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 			}
 
 			const metrics = flags.getMetrics();

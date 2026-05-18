@@ -103,7 +103,9 @@ async function demonstrateFileSinkFix() {
 	const { unlinkSync } = await import("fs");
 	try {
 		unlinkSync("./test-types.txt");
-	} catch {}
+	} catch {
+    console.error('Unhandled error:', error);
+  }
 }
 
 // Type verification section - these should compile without errors

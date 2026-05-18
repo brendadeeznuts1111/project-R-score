@@ -321,7 +321,9 @@ async function $FUNC($$$) {
       try {
         await Bun.file(tempPatternFile).delete();
         await Bun.file(tempFile).delete();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   }
 

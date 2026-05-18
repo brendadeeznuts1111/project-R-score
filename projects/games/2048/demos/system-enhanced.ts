@@ -323,7 +323,9 @@ async function advancedIPC() {
           if (line) {
             try {
               responses.push(JSON.parse(line));
-            } catch {}
+            } catch {
+    console.error('Unhandled error:', error);
+  }
           }
         });
     }

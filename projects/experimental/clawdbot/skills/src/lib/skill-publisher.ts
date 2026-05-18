@@ -419,7 +419,9 @@ async function main() {
     try {
       const unlinkProc = Bun.spawn(['rm', '-f', symlinkPath]);
       await unlinkProc.exited;
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
 
     const linkProc = Bun.spawn(['ln', '-s', targetPath, symlinkPath]);
     await linkProc.exited;

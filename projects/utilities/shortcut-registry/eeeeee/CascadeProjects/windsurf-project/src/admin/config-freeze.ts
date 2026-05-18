@@ -48,8 +48,8 @@ export class ConfigFreeze {
           }
         }
       } catch (error) {
-
-      }
+    console.error('Unhandled error:', error);
+  }
     }
   }
 
@@ -67,8 +67,8 @@ export class ConfigFreeze {
     try {
       await Bun.write(ConfigFreeze.FREEZE_FILE, JSON.stringify(state, null, 2));
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -109,8 +109,8 @@ export class ConfigFreeze {
         await unlink(ConfigFreeze.FREEZE_FILE);
       }
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
 
     if (previousReason) {
 

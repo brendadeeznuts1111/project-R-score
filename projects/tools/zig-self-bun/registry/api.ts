@@ -389,7 +389,9 @@ const server = serve({
       if (ws.data?.process) {
         try {
           ws.data.process.kill();
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     },
   },

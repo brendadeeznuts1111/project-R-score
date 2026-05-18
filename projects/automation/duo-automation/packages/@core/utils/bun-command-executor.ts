@@ -308,7 +308,9 @@ export class BunCommandExecutor {
       // Cleanup on error
       try {
         Bun.spawnSync(['rm', '-f', tempScript]);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       
       return {
         success: false,

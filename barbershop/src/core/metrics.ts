@@ -259,7 +259,9 @@ export function collectSystemMetrics(): string {
     output += '# TYPE process_cpu_seconds_total counter\n';
     output += `process_cpu_seconds_total{mode="user"} ${cpuUsage.user / 1e6}\n`;
     output += `process_cpu_seconds_total{mode="system"} ${cpuUsage.system / 1e6}\n\n`;
-  } catch (err) {}
+  } catch (err) {
+    console.error('Unhandled error:', err);
+  }
   
   output += '# HELP process_uptime_seconds Process uptime\n';
   output += '# TYPE process_uptime_seconds gauge\n';

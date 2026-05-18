@@ -28,14 +28,18 @@ async function run(): Promise<number> {
       const timeout = setTimeout(() => {
         try {
           ws.close();
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
         reject(new Error("timeout waiting for websocket payload"));
       }, 6000);
 
       ws.onopen = () => {
         try {
           ws.send("ping");
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       };
 
       ws.onerror = () => {

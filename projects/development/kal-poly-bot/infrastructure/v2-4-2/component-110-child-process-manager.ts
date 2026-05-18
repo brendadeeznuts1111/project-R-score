@@ -82,7 +82,9 @@ export class ChildProcessManager {
     for (const [, proc] of this.activeProcesses) {
       try {
         proc.kill();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     this.activeProcesses.clear();
   }

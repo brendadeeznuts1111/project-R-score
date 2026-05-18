@@ -227,8 +227,8 @@ export class IAPLoopController {
       await this.nexus.executeCommand("am start -n com.android.vending/.AssetBrowserActivity");
       await Bun.sleep(3000);
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**

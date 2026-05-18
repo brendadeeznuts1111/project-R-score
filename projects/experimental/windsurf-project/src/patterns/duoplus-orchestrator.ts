@@ -134,7 +134,9 @@ export class DuoPlusIntegration {
       };
     } catch (error) {
       // Clean up on error
-      try { await unlink(tempPath); } catch {}
+      try { await unlink(tempPath); } catch {
+    console.error('Unhandled error:', error);
+  }
       throw error;
     }
   }

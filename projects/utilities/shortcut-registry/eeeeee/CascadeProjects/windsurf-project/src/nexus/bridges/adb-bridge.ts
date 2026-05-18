@@ -46,8 +46,8 @@ export class Android13Nexus {
         return true;
       }
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
     return false;
   }
 

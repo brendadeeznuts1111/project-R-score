@@ -569,7 +569,7 @@ async function main() {
     const finalStatus = sovereign.getSovereignIdentityMatrix();
 
   } catch (error) {
-
+    console.error('Unhandled error:', error);
   } finally {
     await sovereign.shutdown();
   }

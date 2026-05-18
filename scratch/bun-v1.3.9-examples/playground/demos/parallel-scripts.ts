@@ -84,4 +84,6 @@ try {
   if (await file.exists()) {
     await file.unlink();
   }
-} catch {}
+} catch {
+    console.error('Unhandled error:', error);
+  }

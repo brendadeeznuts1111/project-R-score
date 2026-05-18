@@ -2688,7 +2688,9 @@ export async function scanProject(dir: string): Promise<ProjectInfo> {
 				const editorMatch = debugBlock.match(/^\s*editor\s*=\s*"([^"]+)"/m);
 				if (editorMatch) base.debugEditor = editorMatch[1];
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 	}
 	profMark('bunfig');
 
@@ -2712,7 +2714,9 @@ export async function scanProject(dir: string): Promise<ProjectInfo> {
 			} else {
 				base.authReady = content.includes('_authToken');
 			}
-		} catch {}
+		} catch {
+    console.error('Unhandled error:', error);
+  }
 	}
 	profMark('npmrc');
 
@@ -2765,7 +2769,9 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 			for (const w of workers) {
 				try {
 					w.kill();
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 			}
 		}
 
@@ -3626,7 +3632,9 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 				try {
 					const pkg = await Bun.file(path).json();
 					classifyPkg(name, pkg.scripts ?? {});
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 			}),
 		);
 		xrefData.push(xref);
@@ -4495,15 +4503,21 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 				if (regMatch) {
 					try {
 						domains.add(new URL(regMatch[1]).hostname);
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 				}
 				// [install.scopes] urls
 				for (const m of toml.matchAll(/url\s*=\s*"([^"]+)"/g)) {
 					try {
 						domains.add(new URL(m[1]).hostname);
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		// Extract from .npmrc
@@ -4515,15 +4529,21 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 				for (const m of npmrc.matchAll(/^registry\s*=\s*(.+)$/gm)) {
 					try {
 						domains.add(new URL(m[1].trim()).hostname);
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 				}
 				// scoped registries
 				for (const m of npmrc.matchAll(/^@[^:\s]+:registry\s*=\s*(.+)$/gm)) {
 					try {
 						domains.add(new URL(m[1].trim()).hostname);
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		// Extract from package.json publishConfig
@@ -4535,9 +4555,13 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 				if (pubReg) {
 					try {
 						domains.add(new URL(pubReg).hostname);
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		// Always include npmjs as fallback
@@ -4948,7 +4972,9 @@ async function fixTrusted(projects: ProjectInfo[], dryRun: boolean): Promise<voi
 							detected.push(pkgName);
 						}
 					}
-				} catch {}
+				} catch {
+    console.error('Unhandled error:', error);
+  }
 			}),
 		);
 
@@ -5750,7 +5776,9 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 						const pkgJson = await Bun.file(`${projectDir(p)}/package.json`).json();
 						const allDeps = {...pkgJson.dependencies, ...pkgJson.devDependencies};
 						if (allDeps[bareName]) return `${p.folder} ${c.dim(allDeps[bareName])}`;
-					} catch {}
+					} catch {
+    console.error('Unhandled error:', error);
+  }
 					return null;
 				}),
 		)

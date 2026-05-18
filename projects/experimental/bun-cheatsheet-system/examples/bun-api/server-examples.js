@@ -90,7 +90,9 @@ const server = Bun.serve({
       if (await file.exists()) {
         return new Response(file);
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     
     return new Response('File not found', { status: 404 });
   }

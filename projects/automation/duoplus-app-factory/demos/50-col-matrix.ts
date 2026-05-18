@@ -126,7 +126,9 @@ if (Bun.argv.includes("--feedback")) {
     // Cleanup temp file
     try {
       await Bun.$`rm -f ${tempFile}`;
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     
     process.exit(success ? 0 : 1);
     

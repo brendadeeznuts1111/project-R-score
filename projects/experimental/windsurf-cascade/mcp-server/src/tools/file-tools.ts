@@ -286,7 +286,9 @@ export class FileCompressionTool {
         const compressionRatio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
         
         // Clean up test files
-        try { await Bun.file('/tmp/test-compressed').delete(); } catch {}
+        try { await Bun.file('/tmp/test-compressed').delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
         
         const duration = performance.now() - start;
 
@@ -332,7 +334,9 @@ bun run ${compressionFile}
         };
       } finally {
         // Clean up sample files
-        try { await Bun.file(sampleFile).delete(); } catch {}
+        try { await Bun.file(sampleFile).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     } catch (error: any) {
       const enhancedError = await mcpErrorHandler.handleError(
@@ -849,7 +853,9 @@ export class FileTransferTool {
         const destExists = await Bun.file(testDest).exists();
         
         // Clean up test files
-        try { await Bun.file(testDest).delete(); } catch {}
+        try { await Bun.file(testDest).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
         
         const duration = performance.now() - start;
 
@@ -899,7 +905,9 @@ bun run ${transferFile}
         };
       } finally {
         // Clean up test files
-        try { await Bun.file(testSource).delete(); } catch {}
+        try { await Bun.file(testSource).delete(); } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     } catch (error: any) {
       const enhancedError = await mcpErrorHandler.handleError(

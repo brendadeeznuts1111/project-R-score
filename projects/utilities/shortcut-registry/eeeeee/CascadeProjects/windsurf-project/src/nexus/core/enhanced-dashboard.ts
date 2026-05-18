@@ -221,8 +221,8 @@ export class EnhancedCitadelDashboard {
       const report = await this.metricsCollector.generateComprehensiveReport();
 
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -256,8 +256,8 @@ export class EnhancedCitadelDashboard {
       });
       
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -285,8 +285,8 @@ export class EnhancedCitadelDashboard {
       }
       
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
@@ -327,8 +327,8 @@ export class EnhancedCitadelDashboard {
       }
       
     } catch (error) {
-
-    }
+    console.error('Unhandled error:', error);
+  }
   }
 
   /**
