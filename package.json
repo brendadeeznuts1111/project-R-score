@@ -1697,6 +1697,8 @@
     "workspaces:all:sequential": "bun run --sequential --if-present workspaces:build workspaces:lint workspaces:test",
     "workspaces:dev": "bun run --parallel --workspaces --if-present dev",
     "test:habits": "bun run tests/habits-test.ts",
+    "packages:list": "bun run scripts/packages-list.ts",
+    "packages:outdated": "bun outdated --filter=factorywager-enterprise",
     "test:barbershop": "bun test barbershop/tests/*.ts",
     "test:content-types": "bun run tests/test-content-types.ts",
     "cheatsheet:integrated": "bun run scripts/cheatsheet-integrated.js",
