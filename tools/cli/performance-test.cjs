@@ -23,7 +23,7 @@ class PerformanceTester {
                 maxResponseTime: 0
             }
         };
-        
+
         this.config = {
             iterations: 10,
             concurrentRequests: 5,
@@ -40,9 +40,9 @@ class PerformanceTester {
 
     async runTest(testName, testFunction, options = {}) {
         const { iterations = this.config.iterations, warmup = true } = options;
-        
+
         console.log(`🧪 Running test: ${testName}`);
-        
+
         const testResults = {
             name: testName,
             iterations,
@@ -65,41 +65,41 @@ class PerformanceTester {
 
         // Actual test runs
         console.log(`  📊 Running ${iterations} iterations...`);
-        
+
         for (let i = 0; i < iterations; i++) {
             const startTime = performance.now();
-            
+
             try {
                 const result = await Promise.race([
                     testFunction(),
-                    new Promise((_, reject) => 
+                    new Promise((_, reject) =>
                         setTimeout(() => reject(new Error('Test timeout')), this.config.timeout)
                     )
                 ]);
-                
+
                 const endTime = performance.now();
                 const duration = endTime - startTime;
-                
+
                 testResults.results.push({
                     iteration: i + 1,
                     duration,
                     success: true,
                     result: typeof result === 'object' ? 'object' : result
                 });
-                
+
                 process.stdout.write('.');
-                
+
             } catch (error) {
                 const endTime = performance.now();
                 const duration = endTime - startTime;
-                
+
                 testResults.results.push({
                     iteration: i + 1,
                     duration,
                     success: false,
                     error: error.message
                 });
-                
+
                 process.stdout.write('x');
             }
         }
@@ -109,7 +109,7 @@ class PerformanceTester {
         // Calculate statistics
         const successfulResults = testResults.results.filter(r => r.success);
         const durations = successfulResults.map(r => r.duration);
-        
+
         if (durations.length > 0) {
             testResults.statistics = {
                 totalRuns: testResults.results.length,
@@ -123,7 +123,7 @@ class PerformanceTester {
                 p95Duration: this.calculatePercentile(durations, 95),
                 p99Duration: this.calculatePercentile(durations, 99)
             };
-            
+
             testResults.status = testResults.statistics.successRate >= 90 ? 'passed' : 'failed';
         } else {
             testResults.statistics = {
@@ -149,10 +149,10 @@ class PerformanceTester {
     async testDNSResolution() {
         return this.runTest('DNS Resolution', async () => {
             const domain = this.config.domains[Math.floor(Math.random() * this.config.domains.length)];
-            
+
             const { execSync } = require('child_process');
             const result = execSync(`dig +short ${domain}`, { encoding: 'utf8', timeout: 5000 });
-            
+
             return result.trim().length > 0;
         });
     }
@@ -160,12 +160,12 @@ class PerformanceTester {
     async testHTTPResponse() {
         return this.runTest('HTTP Response', async () => {
             const domain = this.config.domains[Math.floor(Math.random() * this.config.domains.length)];
-            
+
             const response = await fetch(`https://${domain}`, {
                 method: 'HEAD',
                 signal: AbortSignal.timeout(5000)
             });
-            
+
             return response.ok;
         });
     }
@@ -179,19 +179,19 @@ class PerformanceTester {
         ];
 
         const results = [];
-        
+
         for (const cmd of commands) {
             const result = await this.runTest(`CLI: ${cmd.name}`, async () => {
                 const { execSync } = require('child_process');
-                const output = execSync(cmd.command, { 
-                    encoding: 'utf8', 
+                const output = execSync(cmd.command, {
+                    encoding: 'utf8',
                     timeout: 10000,
                     cwd: process.cwd()
                 });
-                
+
                 return output.length > 0;
             }, { iterations: 5 });
-            
+
             results.push(result);
         }
 
@@ -201,19 +201,19 @@ class PerformanceTester {
     async testBadgeGeneration() {
         return this.runTest('Badge Generation', async () => {
             const { execSync } = require('child_process');
-            const output = execSync('node cli/status-badges.cjs infrastructure', { 
-                encoding: 'utf8', 
+            const output = execSync('node cli/status-badges.cjs infrastructure', {
+                encoding: 'utf8',
                 timeout: 15000,
                 cwd: process.cwd()
             });
-            
+
             return output.includes('✅');
         }, { iterations: 3 });
     }
 
     async testConcurrentRequests() {
         console.log('🧪 Running test: Concurrent HTTP Requests');
-        
+
         const testResults = {
             name: 'Concurrent HTTP Requests',
             concurrency: this.config.concurrentRequests,
@@ -224,10 +224,10 @@ class PerformanceTester {
 
         for (let i = 0; i < this.config.iterations; i++) {
             console.log(`  📊 Batch ${i + 1}/${this.config.iterations}...`);
-            
+
             const startTime = performance.now();
             const promises = [];
-            
+
             for (let j = 0; j < this.config.concurrentRequests; j++) {
                 const domain = this.config.domains[j % this.config.domains.length];
                 promises.push(
@@ -250,9 +250,9 @@ class PerformanceTester {
                 const results = await Promise.all(promises);
                 const endTime = performance.now();
                 const duration = endTime - startTime;
-                
+
                 const successful = results.filter(r => r.success).length;
-                
+
                 testResults.results.push({
                     iteration: i + 1,
                     duration,
@@ -261,13 +261,13 @@ class PerformanceTester {
                     totalRequests: this.config.concurrentRequests,
                     details: results
                 });
-                
+
                 console.log(`    ✅ ${successful}/${this.config.concurrentRequests} successful (${duration.toFixed(0)}ms)`);
-                
+
             } catch (error) {
                 const endTime = performance.now();
                 const duration = endTime - startTime;
-                
+
                 testResults.results.push({
                     iteration: i + 1,
                     duration,
@@ -276,7 +276,7 @@ class PerformanceTester {
                     successfulRequests: 0,
                     totalRequests: this.config.concurrentRequests
                 });
-                
+
                 console.log(`    ❌ Failed (${duration.toFixed(0)}ms): ${error.message}`);
             }
         }
@@ -284,7 +284,7 @@ class PerformanceTester {
         // Calculate statistics
         const successfulResults = testResults.results.filter(r => r.success);
         const durations = successfulResults.map(r => r.duration);
-        
+
         if (durations.length > 0) {
             testResults.statistics = {
                 totalRuns: testResults.results.length,
@@ -298,7 +298,7 @@ class PerformanceTester {
                 successfulRequests: testResults.results.reduce((sum, r) => sum + r.successfulRequests, 0),
                 averageSuccessRate: (testResults.results.reduce((sum, r) => sum + (r.successfulRequests / r.totalRequests), 0) / testResults.results.length) * 100
             };
-            
+
             testResults.status = testResults.statistics.successRate >= 80 ? 'passed' : 'failed';
         }
 
@@ -311,9 +311,9 @@ class PerformanceTester {
 
     async testMemoryUsage() {
         console.log('🧪 Running test: Memory Usage');
-        
+
         const initialMemory = process.memoryUsage();
-        
+
         const testResults = {
             name: 'Memory Usage',
             measurements: [],
@@ -324,19 +324,19 @@ class PerformanceTester {
         // Measure memory over time
         for (let i = 0; i < 20; i++) {
             const memBefore = process.memoryUsage();
-            
+
             // Perform some operations
             await this.testHTTPResponse();
-            
+
             const memAfter = process.memoryUsage();
-            
+
             // Force garbage collection if available
             if (global.gc) {
                 global.gc();
             }
-            
+
             const memFinal = process.memoryUsage();
-            
+
             testResults.measurements.push({
                 iteration: i + 1,
                 heapUsed: memAfter.heapUsed,
@@ -346,14 +346,14 @@ class PerformanceTester {
                 heapDelta: memAfter.heapUsed - memBefore.heapUsed,
                 heapAfterGC: memFinal.heapUsed
             });
-            
+
             // Small delay between measurements
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
         // Calculate statistics
         const heapUsages = testResults.measurements.map(m => m.heapUsed);
-        
+
         testResults.statistics = {
             measurements: testResults.measurements.length,
             initialHeapUsed: initialMemory.heapUsed,
@@ -389,19 +389,19 @@ class PerformanceTester {
             // Run all tests
             await this.testDNSResolution();
             console.log('');
-            
+
             await this.testHTTPResponse();
             console.log('');
-            
+
             await this.testCLICommands();
             console.log('');
-            
+
             await this.testBadgeGeneration();
             console.log('');
-            
+
             await this.testConcurrentRequests();
             console.log('');
-            
+
             await this.testMemoryUsage();
             console.log('');
 
@@ -424,30 +424,30 @@ class PerformanceTester {
     displayTestResults(testResults) {
         const stats = testResults.statistics;
         const status = testResults.status === 'passed' ? '✅' : '❌';
-        
+
         console.log(`  ${status} ${testResults.name}`);
-        
+
         if (stats.averageDuration !== undefined) {
             console.log(`     ⏱️  Average: ${stats.averageDuration.toFixed(2)}ms`);
             console.log(`     📊 Range: ${stats.minDuration.toFixed(2)}ms - ${stats.maxDuration.toFixed(2)}ms`);
             console.log(`     📈 Success Rate: ${stats.successRate.toFixed(1)}%`);
-            
+
             if (stats.p95Duration !== undefined) {
                 console.log(`     🎯 P95: ${stats.p95Duration.toFixed(2)}ms`);
                 console.log(`     🎯 P99: ${stats.p99Duration.toFixed(2)}ms`);
             }
         }
-        
+
         if (stats.totalRequests !== undefined) {
             console.log(`     🌐 Total Requests: ${stats.totalRequests}`);
             console.log(`     ✅ Successful: ${stats.successfulRequests} (${stats.averageSuccessRate.toFixed(1)}%)`);
         }
-        
+
         if (stats.heapUsed !== undefined) {
             console.log(`     💾 Average Heap: ${this.formatFileSize(stats.averageHeapUsed)}`);
             console.log(`     📈 Heap Growth: ${this.formatFileSize(stats.heapGrowth)}`);
         }
-        
+
         if (stats.error) {
             console.log(`     ❌ Error: ${stats.error}`);
         }
@@ -456,10 +456,10 @@ class PerformanceTester {
     displayFinalSummary(totalDuration) {
         console.log('📊 Final Performance Summary');
         console.log('============================');
-        
+
         const passedTests = this.results.tests.filter(t => t.status === 'passed').length;
         const totalTests = this.results.tests.length;
-        
+
         console.log(`📋 Total Tests: ${totalTests}`);
         console.log(`✅ Passed: ${passedTests}`);
         console.log(`❌ Failed: ${totalTests - passedTests}`);
@@ -470,7 +470,7 @@ class PerformanceTester {
         // Performance grades
         const grade = this.calculatePerformanceGrade();
         console.log(`🏆 Performance Grade: ${grade}`);
-        
+
         if (grade.startsWith('A')) {
             console.log('🎉 Excellent performance!');
         } else if (grade.startsWith('B')) {
@@ -486,7 +486,7 @@ class PerformanceTester {
         const passedTests = this.results.tests.filter(t => t.status === 'passed').length;
         const totalTests = this.results.tests.length;
         const successRate = passedTests / totalTests;
-        
+
         if (successRate >= 0.95) return 'A+';
         if (successRate >= 0.90) return 'A';
         if (successRate >= 0.85) return 'B+';
@@ -498,29 +498,29 @@ class PerformanceTester {
 
     updateSummary(testResults) {
         this.results.summary.totalTests++;
-        
+
         if (testResults.status === 'passed') {
             this.results.summary.passedTests++;
         } else {
             this.results.summary.failedTests++;
         }
-        
+
         if (testResults.statistics.averageDuration !== undefined) {
             this.results.summary.minResponseTime = Math.min(
                 this.results.summary.minResponseTime,
                 testResults.statistics.minDuration
             );
-            
+
             this.results.summary.maxResponseTime = Math.max(
                 this.results.summary.maxResponseTime,
                 testResults.statistics.maxDuration
             );
-            
+
             // Update running average
             const allDurations = this.results.tests
                 .filter(t => t.statistics.averageDuration !== undefined)
                 .map(t => t.statistics.averageDuration);
-            
+
             this.results.summary.averageResponseTime = allDurations.reduce((a, b) => a + b, 0) / allDurations.length;
         }
     }
@@ -533,12 +533,12 @@ class PerformanceTester {
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const resultsFile = path.join(resultsDir, `performance-results-${timestamp}.json`);
-        
+
         fs.writeFileSync(resultsFile, JSON.stringify(this.results, null, 2));
-        
+
         // Also save HTML report
         await this.generateHTMLReport(resultsFile.replace('.json', '.html'));
-        
+
         console.log(`\n📁 Results saved: ${resultsFile}`);
         console.log(`🌐 HTML Report: ${resultsFile.replace('.json', '.html')}`);
     }
@@ -684,7 +684,7 @@ class PerformanceTester {
     formatFileSize(bytes) {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         if (bytes === 0) return '0 Bytes';
-        
+
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
         return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
     }
@@ -693,9 +693,9 @@ class PerformanceTester {
 // CLI usage
 if (require.main === module) {
     const tester = new PerformanceTester();
-    
+
     const command = process.argv[2];
-    
+
     switch (command) {
         case 'dns':
             tester.testDNSResolution()
@@ -705,7 +705,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'http':
             tester.testHTTPResponse()
                 .then(() => process.exit(0))
@@ -714,7 +714,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'cli':
             tester.testCLICommands()
                 .then(() => process.exit(0))
@@ -723,7 +723,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'badges':
             tester.testBadgeGeneration()
                 .then(() => process.exit(0))
@@ -732,7 +732,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'concurrent':
             tester.testConcurrentRequests()
                 .then(() => process.exit(0))
@@ -741,7 +741,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'memory':
             tester.testMemoryUsage()
                 .then(() => process.exit(0))
@@ -750,7 +750,7 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'all':
         default:
             tester.runFullSuite()

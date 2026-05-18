@@ -302,7 +302,7 @@ export class ZenDocumentationDashboard {
             <p class="health-${this.metrics.systemHealth}">System Health: ${this.metrics.systemHealth.toUpperCase()}</p>
             <p>Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}</p>
         </div>
-        
+
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-value">${this.metrics.totalSearches}</div>
@@ -329,7 +329,7 @@ export class ZenDocumentationDashboard {
                 <div class="metric-label">Virtual Files</div>
             </div>
         </div>
-        
+
         <div class="search-history">
             <h2>📜 Recent Searches</h2>
             ${this.searchHistory

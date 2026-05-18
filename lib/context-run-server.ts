@@ -326,7 +326,7 @@ function getDashboardHTML(): string {
             <div class="title">Context Run Server v3.15</div>
             <div class="subtitle">Official Bun CLI Integration with Enhanced Context</div>
         </div>
-        
+
         <div class="stats" id="stats">
             <div class="stat">
                 <div class="stat-value" id="activeSessions">0</div>
@@ -345,7 +345,7 @@ function getDashboardHTML(): string {
                 <div class="stat-label">Success Rate</div>
             </div>
         </div>
-        
+
         <div class="card">
             <div class="card-title">🚀 Execute Command</div>
             <form id="commandForm">
@@ -374,61 +374,61 @@ function getDashboardHTML(): string {
             </form>
             <div id="result" class="result" style="display: none;"></div>
         </div>
-        
+
         <div class="card">
             <div class="card-title">📊 Recent Sessions</div>
             <div id="sessions"></div>
         </div>
     </div>
-    
+
     <script>
         let updateInterval;
-        
+
         async function executeCommand() {
             const form = document.getElementById('commandForm');
             const resultDiv = document.getElementById('result');
             const executeBtn = document.getElementById('executeBtn');
-            
+
             const command = document.getElementById('command').value;
             const cwd = document.getElementById('cwd').value;
             const envFile = document.getElementById('envFile').value;
             const config = document.getElementById('config').value;
             const useCache = document.getElementById('useCache').checked;
-            
+
             if (!command.trim()) {
                 alert('Please enter a command');
                 return;
             }
-            
+
             executeBtn.disabled = true;
             executeBtn.textContent = 'Executing...';
             resultDiv.style.display = 'block';
             resultDiv.textContent = 'Executing command...';
-            
+
             try {
                 const params = new URLSearchParams({
                     cmd: command,
                     cache: useCache.toString()
                 });
-                
+
                 if (cwd) params.append('cwd', cwd);
                 if (envFile) envFile.split(',').forEach(f => params.append('env-file', f.trim()));
                 if (config) params.append('config', config);
-                
+
                 const response = await fetch(\`/context-run?\${params}\`);
                 const session = await response.json();
-                
+
                 resultDiv.textContent = JSON.stringify(session, null, 2);
-                
+
                 if (session.status === 'error' || session.status === 'timeout') {
                     resultDiv.style.color = '#ef4444';
                 } else {
                     resultDiv.style.color = '#10b981';
                 }
-                
+
                 updateStats();
                 updateSessions();
-                
+
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 resultDiv.style.color = '#ef4444';
@@ -437,48 +437,48 @@ function getDashboardHTML(): string {
                 executeBtn.textContent = 'Execute Command';
             }
         }
-        
+
         async function updateStats() {
             try {
                 const response = await fetch('/health');
                 const health = await response.json();
-                
+
                 document.getElementById('activeSessions').textContent = health.activeSessions;
                 document.getElementById('cacheSize').textContent = health.cacheSize;
-                
+
                 const sessionsResponse = await fetch('/sessions');
                 const sessions = await sessionsResponse.json();
-                
+
                 const totalCommands = sessions.sessions.length;
                 const successfulCommands = sessions.sessions.filter(s => s.status === 'completed').length;
                 const successRate = totalCommands > 0 ? Math.round((successfulCommands / totalCommands) * 100) : 0;
-                
+
                 document.getElementById('totalCommands').textContent = totalCommands;
                 document.getElementById('successRate').textContent = successRate + '%';
-                
+
             } catch (error) {
                 console.error('Failed to update stats:', error);
             }
         }
-        
+
         async function updateSessions() {
             try {
                 const response = await fetch('/sessions');
                 const data = await response.json();
-                
+
                 const sessionsDiv = document.getElementById('sessions');
                 sessionsDiv.innerHTML = '';
-                
+
                 const recentSessions = data.sessions.slice(-10).reverse();
-                
+
                 recentSessions.forEach(session => {
                     const sessionDiv = document.createElement('div');
                     sessionDiv.style.cssText = 'padding: 1rem; margin-bottom: 0.5rem; background: #0f172a; border-radius: 6px; border-left: 4px solid #3b82f6;';
-                    
+
                     const statusClass = \`status-\${session.status}\`;
                     const duration = session.durationMs ? \`\${session.durationMs}ms\` : 'N/A';
                     const exitCode = session.exitCode !== undefined ? session.exitCode : 'N/A';
-                    
+
                     sessionDiv.innerHTML = \`
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
@@ -490,21 +490,21 @@ function getDashboardHTML(): string {
                             </div>
                         </div>
                     \`;
-                    
+
                     sessionsDiv.appendChild(sessionDiv);
                 });
-                
+
             } catch (error) {
                 console.error('Failed to update sessions:', error);
             }
         }
-        
+
         // Event listeners
         document.getElementById('commandForm').addEventListener('submit', (e) => {
             e.preventDefault();
             executeCommand();
         });
-        
+
         // Auto-update stats and sessions
         function startAutoUpdate() {
             updateStats();
@@ -514,7 +514,7 @@ function getDashboardHTML(): string {
                 updateSessions();
             }, 5000);
         }
-        
+
         // Start auto-update when page loads
         startAutoUpdate();
     </script>

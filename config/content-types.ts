@@ -21,15 +21,15 @@ export class ContentTypeHandler {
     if (data instanceof Blob) {
       return data.type || CONTENT_TYPES.OCTET_STREAM;
     }
-    
+
     if (data instanceof FormData) {
       return CONTENT_TYPES.MULTIPART_FORM;
     }
-    
+
     if (data instanceof Uint8Array || data instanceof ArrayBuffer) {
       return CONTENT_TYPES.BINARY.ARRAY_BUFFER;
     }
-    
+
     if (typeof data === 'string') {
       try {
         JSON.parse(data);
@@ -38,23 +38,23 @@ export class ContentTypeHandler {
         return CONTENT_TYPES.TEXT_PLAIN;
       }
     }
-    
+
     if (typeof data === 'object') {
       return CONTENT_TYPES.JSON;
     }
-    
+
     return CONTENT_TYPES.TEXT_PLAIN;
   }
-  
+
   // Create a fetch request with proper content-type
   static createRequest(url: string, data: any, method = 'POST'): Request {
     const contentType = this.getContentType(data);
     const headers = new Headers({
       'Content-Type': contentType
     });
-    
+
     let body: BodyInit;
-    
+
     // Handle different data types
     if (data instanceof Uint8Array) {
       body = data;
@@ -71,7 +71,7 @@ export class ContentTypeHandler {
     } else {
       body = String(data);
     }
-    
+
     return new Request(url, {
       method,
       headers,

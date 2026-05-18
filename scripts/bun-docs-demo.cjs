@@ -20,10 +20,10 @@ class BunDocsDemo {
         if (!fs.existsSync(this.demoDir)) {
             fs.mkdirSync(this.demoDir, { recursive: true });
         }
-        
+
         // Create sample documentation
         this.createSampleDocs();
-        
+
         // Set up demo secrets
         this.setupDemoSecrets();
     }
@@ -187,14 +187,14 @@ Shell commands:
             Bun.secrets.set({ service: demoService, name: "CLOUDFLARE_API_TOKEN", value: "demo-cf-token" });
             Bun.secrets.set({ service: demoService, name: "GITHUB_TOKEN", value: "demo-github-token" });
         }
-        
+
         // Also set as environment variables for fallback
         process.env.R2_ACCOUNT_ID = "demo-account-id";
         process.env.R2_ACCESS_KEY_ID = "demo-access-key";
         process.env.R2_SECRET_ACCESS_KEY = "demo-secret-key";
         process.env.CLOUDFLARE_API_TOKEN = "demo-cf-token";
         process.env.GITHUB_TOKEN = "demo-github-token";
-        
+
         console.log('✅ Set up demo secrets');
     }
 
@@ -210,28 +210,28 @@ Shell commands:
         await this.demoR2();
         await this.demoDoctor();
         await this.demoAnalyze();
-        
+
         console.log('\n🎉 Demo completed!');
         console.log('\nNext steps:');
         console.log('1. Try the interactive shell: bun-docs shell');
         console.log('2. Configure your real R2 credentials');
         console.log('3. Publish your actual documentation');
         console.log('4. Set up RSS feeds for monitoring');
-        
+
         this.cleanup();
     }
 
     async demoInit() {
         console.log('📦 1. Initialization Demo');
         console.log('========================');
-        
+
         try {
             // Change to demo directory
             process.chdir(this.demoDir);
-            
+
             console.log('🔄 Initializing Bun Docs project...');
             execSync('node ../bun-docs.cjs init', { stdio: 'inherit' });
-            
+
             console.log('✅ Initialization complete!\n');
         } catch (error) {
             console.log(`❌ Init demo failed: ${error.message}\n`);
@@ -241,11 +241,11 @@ Shell commands:
     async demoConfig() {
         console.log('⚙️ 2. Configuration Demo');
         console.log('========================');
-        
+
         try {
             console.log('📋 Current configuration:');
             execSync('node ../bun-docs.cjs config', { stdio: 'inherit' });
-            
+
             console.log('\n✅ Configuration displayed!\n');
         } catch (error) {
             console.log(`❌ Config demo failed: ${error.message}\n`);
@@ -255,11 +255,11 @@ Shell commands:
     async demoSecrets() {
         console.log('🔐 3. Secrets Management Demo');
         console.log('=============================');
-        
+
         try {
             console.log('🔍 Validating secrets...');
             execSync('node ../bun-docs.cjs doctor', { stdio: 'inherit' });
-            
+
             console.log('\n✅ Secrets validated!\n');
         } catch (error) {
             console.log(`❌ Secrets demo failed: ${error.message}\n`);
@@ -269,11 +269,11 @@ Shell commands:
     async demoPublish() {
         console.log('📚 4. Publishing Demo');
         console.log('====================');
-        
+
         try {
             console.log('🔄 Publishing documentation (dry-run)...');
             execSync('node ../bun-docs.cjs publish ./docs --dryrun', { stdio: 'inherit' });
-            
+
             console.log('\n✅ Publishing preview complete!\n');
         } catch (error) {
             console.log(`❌ Publish demo failed: ${error.message}\n`);
@@ -283,18 +283,18 @@ Shell commands:
     async demoRSS() {
         console.log('📡 5. RSS Management Demo');
         console.log('========================');
-        
+
         try {
             console.log('📋 Adding RSS feeds...');
             execSync('node ../bun-docs.cjs rss add https://bun.com/rss.xml', { stdio: 'inherit' });
             execSync('node ../bun-docs.cjs rss add https://github.com/oven-sh/bun/releases.atom', { stdio: 'inherit' });
-            
+
             console.log('\n📋 Listing RSS feeds...');
             execSync('node ../bun-docs.cjs rss list', { stdio: 'inherit' });
-            
+
             console.log('\n🔄 Fetching RSS feeds...');
             execSync('node ../bun-docs.cjs rss fetch', { stdio: 'inherit' });
-            
+
             console.log('\n✅ RSS management demo complete!\n');
         } catch (error) {
             console.log(`❌ RSS demo failed: ${error.message}\n`);
@@ -304,14 +304,14 @@ Shell commands:
     async demoR2() {
         console.log('🗄️ 6. R2 Storage Demo');
         console.log('===================');
-        
+
         try {
             console.log('📋 Listing R2 packages...');
             execSync('node ../bun-docs.cjs r2 list', { stdio: 'inherit' });
-            
+
             console.log('\n📊 R2 statistics...');
             execSync('node ../bun-docs.cjs r2 stats', { stdio: 'inherit' });
-            
+
             console.log('\n✅ R2 storage demo complete!\n');
         } catch (error) {
             console.log(`❌ R2 demo failed: ${error.message}\n`);
@@ -321,11 +321,11 @@ Shell commands:
     async demoDoctor() {
         console.log('🩺 7. System Diagnostics Demo');
         console.log('===========================');
-        
+
         try {
             console.log('🔍 Running diagnostics with Enhanced Docs Fetcher...');
             execSync('node ../bun-docs.cjs doctor --verbose', { stdio: 'inherit' });
-            
+
             console.log('\n✅ Diagnostics complete!');
             console.log('\n📚 Enhanced Docs Fetcher features demonstrated:');
             console.log('- Cache age monitoring');
@@ -340,11 +340,11 @@ Shell commands:
     async demoAnalyze() {
         console.log('📊 8. Analytics Demo');
         console.log('==================');
-        
+
         try {
             console.log('🔄 Generating analysis...');
             execSync('node ../bun-docs.cjs analyze --report --output demo-analysis.json', { stdio: 'inherit' });
-            
+
             // Show the generated report
             if (fs.existsSync('./demo-analysis.json')) {
                 const report = JSON.parse(fs.readFileSync('./demo-analysis.json', 'utf8'));
@@ -354,7 +354,7 @@ Shell commands:
                 console.log(`- RSS feeds: ${report.configuration.rssFeeds}`);
                 console.log(`- Cache hit rate: ${(report.performance.cacheHitRate * 100).toFixed(1)}%`);
                 console.log(`- Memory usage: ${(report.system.memory.heapUsed / 1024 / 1024).toFixed(1)}MB`);
-                
+
                 if (report.recommendations.length > 0) {
                     console.log('\n💡 Recommendations:');
                     report.recommendations.forEach((rec, index) => {
@@ -362,7 +362,7 @@ Shell commands:
                     });
                 }
             }
-            
+
             console.log('\n✅ Analytics demo complete!\n');
         } catch (error) {
             console.log(`❌ Analytics demo failed: ${error.message}\n`);
@@ -373,7 +373,7 @@ Shell commands:
         try {
             // Return to original directory
             process.chdir('..');
-            
+
             // Remove demo directory
             if (fs.existsSync(this.demoDir)) {
                 fs.rmSync(this.demoDir, { recursive: true, force: true });
@@ -417,9 +417,9 @@ async function runInteractiveDemo() {
     while (true) {
         showInteractiveMenu();
         const choice = await askQuestion('Enter your choice (1-8): ');
-        
+
         const demo = new BunDocsDemo();
-        
+
         switch (choice) {
             case '1':
                 await demo.runDemo();
@@ -457,7 +457,7 @@ async function runInteractiveDemo() {
             default:
                 console.log('❌ Invalid choice. Please try again.\n');
         }
-        
+
         if (choice !== '7') {
             await askQuestion('\nPress Enter to continue...');
         }
@@ -467,7 +467,7 @@ async function runInteractiveDemo() {
 // Main execution
 if (require.main === module) {
     const args = process.argv.slice(2);
-    
+
     if (args.includes('--interactive') || args.includes('-i')) {
         runInteractiveDemo().catch(console.error);
     } else if (args.includes('--help') || args.includes('-h')) {

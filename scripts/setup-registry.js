@@ -24,13 +24,13 @@ class RegistrySetup {
             await this.setupPackageJson();
             await this.testConfiguration();
             await this.createEnvironmentTemplate();
-            
+
             console.info('✅ Registry setup complete!');
             console.info('\n📋 Next Steps:');
             console.info('1. Set your FACTORY_WAGER_TOKEN environment variable');
             console.info('2. Run: npm install or bun install');
             console.info('3. Test with: node scripts/registry-client.js stats');
-            
+
         } catch (error) {
             console.error('❌ Setup failed:', error.message);
             process.exit(1);
@@ -39,7 +39,7 @@ class RegistrySetup {
 
     async checkPrerequisites() {
         console.info('🔍 Checking prerequisites...');
-        
+
         // Check Node.js
         try {
             const nodeVersion = execSync('node --version', { encoding: 'utf8' }).trim();
@@ -70,7 +70,7 @@ class RegistrySetup {
             const checker = new DNSHealthChecker();
             const results = await checker.checkAllDomains();
             const working = results.filter(r => r.success);
-            
+
             if (working.length >= 2) {
                 console.info(`   ✓ DNS Resolution: ${working.length}/4 servers working`);
             } else {
@@ -79,13 +79,13 @@ class RegistrySetup {
         } catch (error) {
             console.info('   ⚠️  DNS check failed, but continuing...');
         }
-        
+
         console.info('');
     }
 
     async setupNpmConfig() {
         console.info('📦 Setting up npm configuration...');
-        
+
         const npmrcPath = path.join(this.projectRoot, '.npmrc');
         const npmrcContent = `# FactoryWager Private Registry Configuration
 @factory-wager:registry=https://registry.factory-wager.com/
@@ -135,13 +135,13 @@ fund=true`;
         } else {
             console.info('   ℹ️  .npmrc already exists');
         }
-        
+
         console.info('');
     }
 
     async setupBunConfig() {
         console.info('🥟 Setting up Bun configuration...');
-        
+
         const bunfigPath = path.join(this.projectRoot, 'bunfig.toml');
         const bunfigContent = `[install]
 # Primary registry configuration
@@ -236,7 +236,7 @@ check-certificates = true
 # Allowed origins for package installation
 allowed-origins = [
     "registry.factory-wager.com",
-    "npm.factory-wager.com", 
+    "npm.factory-wager.com",
     "cache.factory-wager.com",
     "registry.npmjs.org"
 ]
@@ -252,79 +252,79 @@ anonymous = false`;
         } else {
             console.info('   ℹ️  bunfig.toml already exists');
         }
-        
+
         console.info('');
     }
 
     async setupPackageJson() {
         console.info('📋 Setting up package.json configuration...');
-        
+
         const packageJsonPath = path.join(this.projectRoot, 'package.json');
-        
+
         if (fs.existsSync(packageJsonPath)) {
             const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-            
+
             // Add registry configuration
             if (!packageJson.publishConfig) {
                 packageJson.publishConfig = {};
             }
-            
+
             packageJson.publishConfig.registry = 'https://registry.factory-wager.com/';
             packageJson.publishConfig.access = 'public';
-            
+
             // Add scripts for registry management
             if (!packageJson.scripts) {
                 packageJson.scripts = {};
             }
-            
+
             packageJson.scripts['registry:setup'] = 'node scripts/setup-registry.js';
             packageJson.scripts['registry:health'] = 'node scripts/dns-health-check.js';
             packageJson.scripts['registry:stats'] = 'node scripts/registry-client.js stats';
             packageJson.scripts['registry:clear-cache'] = 'node scripts/registry-client.js clear-cache';
-            
+
             fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
             console.info('   ✓ Updated package.json');
         } else {
             console.info('   ℹ️  package.json not found');
         }
-        
+
         console.info('');
     }
 
     async testConfiguration() {
         console.info('🧪 Testing configuration...');
-        
+
         try {
             // Test DNS health
             const DNSHealthChecker = require('./dns-health-check.js');
             const checker = new DNSHealthChecker();
             const results = await checker.checkAllDomains();
             const working = results.filter(r => r.success);
-            
+
             if (working.length >= 2) {
                 console.info(`   ✓ DNS health check passed (${working.length}/4 servers)`);
             } else {
                 console.info(`   ⚠️  DNS health check warning (${working.length}/4 servers)`);
             }
-            
+
             // Test registry client
             const RegistryClient = require('./registry-client.js');
             const client = new RegistryClient();
             await client.initialize();
             const stats = client.getStats();
-            
+
             console.info(`   ✓ Registry client initialized (${stats.workingRegistries}/${stats.totalRegistries} servers)`);
-            
+
         } catch (error) {
             console.info(`   ⚠️  Configuration test failed: ${error.message}`);
         }
-        
+
         console.info('');
     }
 
     async createEnvironmentTemplate() {
         console.info('📝 Creating environment template...');
-        
+
         const envTemplatePath = path.join(this.projectRoot, '.env.template');
         const envContent = `# FactoryWager Registry Configuration
 # Copy this file to .env and fill in your values
@@ -356,7 +356,7 @@ LOG_LEVEL=info`;
         } else {
             console.info('   ℹ️  .env.template already exists');
         }
-        
+
         console.info('');
     }
 }

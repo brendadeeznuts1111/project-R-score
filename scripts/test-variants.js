@@ -20,9 +20,9 @@ class VariantTester {
             await this.testFeatureFlags();
             await this.testAnalytics();
             await this.testVariantContent();
-            
+
             this.displayResults();
-            
+
         } catch (error) {
             console.error('❌ Test failed:', error.message);
             process.exit(1);
@@ -35,15 +35,15 @@ class VariantTester {
         // Simulate variant assignment
         const variants = ['control', 'enhanced', 'minimal'];
         const weights = [0.5, 0.3, 0.2];
-        
+
         const assignments = {};
         const iterations = 1000;
-        
+
         for (let i = 0; i < iterations; i++) {
             const random = Math.random();
             let cumulativeWeight = 0;
             let assigned = null;
-            
+
             for (let j = 0; j < variants.length; j++) {
                 cumulativeWeight += weights[j];
                 if (random <= cumulativeWeight) {
@@ -51,20 +51,20 @@ class VariantTester {
                     break;
                 }
             }
-            
+
             assignments[assigned] = (assignments[assigned] || 0) + 1;
         }
 
         // Check if distribution is roughly correct
         const tolerance = 0.05; // 5% tolerance
         let passed = true;
-        
+
         for (let i = 0; i < variants.length; i++) {
             const variant = variants[i];
             const expected = weights[i] * iterations;
             const actual = assignments[variant] || 0;
             const deviation = Math.abs(actual - expected) / expected;
-            
+
             if (deviation > tolerance) {
                 passed = false;
                 console.info(`   ❌ ${variant}: Expected ${expected}, got ${actual} (${(deviation * 100).toFixed(1)}% deviation)`);
@@ -96,7 +96,7 @@ class VariantTester {
 
         featureFlags.forEach(flag => {
             const isEnabled = this.mockIsFeatureEnabled(flag.id);
-            
+
             if (isEnabled === flag.enabled) {
                 console.info(`   ✅ ${flag.id}: ${isEnabled ? 'enabled' : 'disabled'}`);
             } else {
@@ -159,7 +159,7 @@ class VariantTester {
 
         contentTests.forEach(test => {
             const content = this.mockGetVariantContent('theme', 'ui_variant_2024', test.variant);
-            
+
             if (content && content.theme === test.expected.theme) {
                 console.info(`   ✅ ${test.variant}: Theme is ${content.theme}`);
             } else {

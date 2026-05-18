@@ -857,20 +857,20 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Type-Safe Enhanced Zen Dashboard with Dynamic Tables</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
-            color: #e2e8f0; 
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             min-height: 100vh;
         }
-        .table-badge { 
-            background: linear-gradient(45deg, #10b981, #3b82f6); 
-            color: white; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            font-size: 0.9em; 
+        .table-badge {
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
             font-weight: bold;
             animation: pulse 2s infinite;
         }
@@ -878,51 +878,51 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.8; }
         }
-        .table-section { 
-            background: #1e293b; 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .table-section {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             margin-bottom: 25px;
         }
-        .ascii-table { 
-            background: #0f172a; 
-            padding: 20px; 
-            border-radius: 12px; 
-            font-family: 'Courier New', monospace; 
+        .ascii-table {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
             font-size: 0.9em;
             line-height: 1.4;
             overflow-x: auto;
             white-space: pre;
         }
-        .metrics-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 30px; 
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .metric-card { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .metric-card {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             backdrop-filter: blur(10px);
             transition: transform 0.3s ease;
         }
         .metric-card:hover { transform: translateY(-5px); }
-        .metric-value { 
-            font-size: 2.5em; 
-            font-weight: bold; 
-            color: #10b981; 
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #10b981;
             margin-bottom: 5px;
         }
         .metric-label { color: #94a3b8; font-size: 0.9em; }
-        .btn { 
-            background: #10b981; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 8px; 
+        .btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 5px;
             transition: all 0.3s ease;
@@ -954,12 +954,12 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     <div style="max-width: 1400px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-size: 2.5em; margin-bottom: 15px;">
-                🛡️ Type-Safe Enhanced Zen Dashboard 
+                🛡️ Type-Safe Enhanced Zen Dashboard
                 <span class="table-badge">DYNAMIC TABLES</span>
             </h1>
             <p>Official Bun interfaces + Advanced dynamic table rendering with auto-type detection</p>
         </div>
-        
+
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-value" id="totalSearches">${this.metrics.totalSearches}</div>
@@ -986,17 +986,17 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 <div class="metric-label">🛡️ Type Safety</div>
             </div>
         </div>
-        
+
         <div class="table-section">
             <h3>📊 Dynamic Search History Table</h3>
             <p>Auto-detected column types with intelligent formatting and beautiful ASCII rendering</p>
             <button class="btn table" onclick="refreshTable()">🔄 Refresh Table</button>
             <button class="btn table" onclick="performNewSearch()">🔍 New Search</button>
-            
+
             <div class="ascii-table" id="tableOutput">
                 Loading dynamic table...
             </div>
-            
+
             <div class="export-section">
                 <h4>📤 Export Options</h4>
                 <button class="export-btn" onclick="exportTable('json')">📄 Export JSON</button>
@@ -1004,7 +1004,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 <button class="export-btn" onclick="copyTable()">📋 Copy Table</button>
             </div>
         </div>
-        
+
         <div style="text-align: center; margin-top: 40px; color: #64748b;">
             <p>🛡️ Type-Safe Enhanced with Official Bun Interfaces + Dynamic Tables</p>
             <p>🚀 Real search data • 📊 Auto-type detection • 🎨 Beautiful ASCII tables</p>
@@ -1014,36 +1014,36 @@ export class TypeSafeEnhancedZenDashboardWithTables {
 
     <script>
         let currentTableData = null;
-        
+
         async function refreshTable() {
             try {
                 const response = await fetch('/api/render-table');
                 const data = await response.json();
-                
+
                 document.getElementById('tableOutput').textContent = data.rendered;
                 currentTableData = data;
-                
+
                 console.info('📊 Dynamic table refreshed:', {
                     columns: data.columns.length,
                     hidden: data.hidden.length,
                     rows: data.json.length
                 });
-                
+
             } catch (error) {
                 console.error('❌ Failed to refresh table:', error);
                 document.getElementById('tableOutput').textContent = 'Error loading table data';
             }
         }
-        
+
         async function performNewSearch() {
             const query = prompt('Enter search query (e.g., bun, performance, zen):');
             if (!query) return;
-            
+
             try {
                 console.info(\`🔍 Performing search: \${query}\`);
                 const response = await fetch(\`/api/search?query=\${query}\`);
                 const result = await response.json();
-                
+
                 if (result.success) {
                     console.info(\`✅ Search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
                     // Refresh table after search
@@ -1051,22 +1051,22 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 } else {
                     alert(\`❌ Search failed: \${result.error}\`);
                 }
-                
+
             } catch (error) {
                 console.error('❌ Failed to perform search:', error);
                 alert('Failed to perform search: ' + error.message);
             }
         }
-        
+
         async function exportTable(format) {
             if (!currentTableData) {
                 alert('Please refresh the table first');
                 return;
             }
-            
+
             try {
                 let content, filename, type;
-                
+
                 if (format === 'json') {
                     content = JSON.stringify(currentTableData.json, null, 2);
                     filename = 'zen-search-results.json';
@@ -1076,7 +1076,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                     filename = 'zen-search-results.csv';
                     type = 'text/csv';
                 }
-                
+
                 const blob = new Blob([content], { type });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1084,21 +1084,21 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 a.download = filename;
                 a.click();
                 URL.revokeObjectURL(url);
-                
+
                 console.info(\`📤 Exported \${format.toUpperCase()}: \${filename}\`);
-                
+
             } catch (error) {
                 console.error(\`❌ Failed to export \${format}:\`, error);
                 alert(\`Failed to export \${format}: \${error.message}\`);
             }
         }
-        
+
         async function copyTable() {
             if (!currentTableData) {
                 alert('Please refresh the table first');
                 return;
             }
-            
+
             try {
                 await navigator.clipboard.writeText(currentTableData.rendered);
                 console.info('📋 Table copied to clipboard');
@@ -1108,13 +1108,13 @@ export class TypeSafeEnhancedZenDashboardWithTables {
                 alert('Failed to copy table: ' + error.message);
             }
         }
-        
+
         // Auto-refresh table every 10 seconds
         setInterval(refreshTable, 10000);
-        
+
         // Initial load
         refreshTable();
-        
+
         console.info('🛡️ Type-Safe Enhanced Zen Dashboard with Dynamic Tables loaded!');
         console.info('📊 Dynamic table rendering: Active');
         console.info('🎯 Auto-type detection: Enabled');

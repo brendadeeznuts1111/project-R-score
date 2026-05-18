@@ -71,7 +71,7 @@ const security = createSecurityMiddleware({
 
 Bun.serve({
   port: process.env.PORT || 3000,
-  
+
   // Security headers
   headers: {
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
@@ -81,18 +81,18 @@ Bun.serve({
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
   },
-  
+
   async fetch(request) {
     // Security middleware chain
     const securityResult = await security(request);
-    
+
     if (!securityResult.valid) {
-      return new Response('Security validation failed', { 
+      return new Response('Security validation failed', {
         status: 403,
-        headers: securityResult.headers 
+        headers: securityResult.headers
       });
     }
-    
+
     // Your application logic here
     return new Response('Secure response', {
       headers: securityResult.headers
@@ -114,14 +114,14 @@ class SecureDatabase {
   constructor(dbPath: string, encryptionKey: string) {
     this.db = new Database(dbPath);
     this.security = new BunSecurityEngine();
-    
+
     // Enable foreign key constraints
     this.db.exec('PRAGMA foreign_keys = ON');
-    
+
     // Set secure defaults
     this.db.exec('PRAGMA journal_mode = WAL');
     this.db.exec('PRAGMA synchronous = FULL');
-    
+
     this.initializeSecurityTables();
   }
 
@@ -176,11 +176,11 @@ class SecureDatabase {
   }): Promise<number> {
     // Hash password
     const passwordResult = await BunSecurityEngine.PasswordManager.hashPassword(userData.password);
-    
+
     // Encrypt sensitive data
-    const encryptedSSN = userData.ssn ? 
+    const encryptedSSN = userData.ssn ?
       BunSecurityEngine.SecretManager.encryptWithRotation(userData.ssn, 'DB_ENCRYPTION') : null;
-    const encryptedPhone = userData.phone ? 
+    const encryptedPhone = userData.phone ?
       BunSecurityEngine.SecretManager.encryptWithRotation(userData.phone, 'DB_ENCRYPTION') : null;
 
     // Insert user
@@ -216,14 +216,14 @@ class SecureDatabase {
     // Decrypt sensitive data
     if (user.encrypted_ssn) {
       user.ssn = BunSecurityEngine.SecretManager.decryptWithRotation(
-        user.encrypted_ssn, 
+        user.encrypted_ssn,
         'DB_ENCRYPTION'
       ).decrypted;
     }
 
     if (user.encrypted_phone) {
       user.phone = BunSecurityEngine.SecretManager.decryptWithRotation(
-        user.encrypted_phone, 
+        user.encrypted_phone,
         'DB_ENCRYPTION'
       ).decrypted;
     }
@@ -327,7 +327,7 @@ class SecurityDashboard {
     alerts: any[];
   } {
     const dashboard = this.monitoring.getDashboardData();
-    
+
     return {
       activeSessions: dashboard.metrics.passwordHashes, // Example metric
       failedLogins: dashboard.metrics.failedAttempts,
@@ -373,7 +373,7 @@ class SecurityDashboard {
 
     const failedChecks = checks.filter(c => !c.status);
     let status: 'healthy' | 'warning' | 'critical' = 'healthy';
-    
+
     if (failedChecks.length > 0) {
       status = failedChecks.some(c => c.name.includes('Critical')) ? 'critical' : 'warning';
     }
@@ -404,7 +404,7 @@ export class SecurityMaintenance {
     // 3. Generate security report
     const securityEngine = new BunSecurityEngine();
     const report = securityEngine.getSecurityReport();
-    
+
     if (report.riskScore < 70) {
       console.warn(`⚠️ Security risk score: ${report.riskScore}/100`);
       report.recommendations.forEach(rec => console.log(`→ ${rec}`));

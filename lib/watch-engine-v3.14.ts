@@ -544,7 +544,7 @@ function getWatchDashboardHTML(): string {
             <h1>👁️ Bun Watch Dashboard</h1>
             <p>Real-time monitoring of --watch + --filter sessions</p>
         </div>
-        
+
         <div class="controls">
             <h3>Start New Watch Session</h3>
             <form id="watchForm">
@@ -574,41 +574,41 @@ function getWatchDashboardHTML(): string {
                 <button type="submit">🚀 Start Watch Session</button>
             </form>
         </div>
-        
+
         <div id="sessions" class="sessions"></div>
     </div>
-    
+
     <div id="connection" class="connection disconnected">🔌 Disconnected</div>
 
     <script>
         let ws;
         let sessions = new Map();
-        
+
         function connect() {
             ws = new WebSocket('ws://localhost:3001/ws');
-            
+
             ws.onopen = () => {
                 document.getElementById('connection').className = 'connection connected';
                 document.getElementById('connection').textContent = '🔌 Connected';
                 console.info('Connected to watch dashboard');
             };
-            
+
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 handleWebSocketMessage(data);
             };
-            
+
             ws.onclose = () => {
                 document.getElementById('connection').className = 'connection disconnected';
                 document.getElementById('connection').textContent = '🔌 Disconnected';
                 setTimeout(connect, 3000);
             };
-            
+
             ws.onerror = (error) => {
                 console.error('WebSocket error:', error);
             };
         }
-        
+
         function handleWebSocketMessage(data) {
             switch (data.type) {
                 case 'init':
@@ -626,7 +626,7 @@ function getWatchDashboardHTML(): string {
                     break;
             }
         }
-        
+
         function updateSessions(sessionData) {
             sessions.clear();
             sessionData.forEach(session => {
@@ -634,17 +634,17 @@ function getWatchDashboardHTML(): string {
             });
             renderSessions();
         }
-        
+
         function renderSessions() {
             const container = document.getElementById('sessions');
             container.innerHTML = '';
-            
+
             sessions.forEach(session => {
                 const sessionEl = document.createElement('div');
                 sessionEl.className = \`session \${session.status}\`;
-                
+
                 const uptime = Math.round((Date.now() - session.startTime) / 1000);
-                
+
                 sessionEl.innerHTML = \`
                     <h3>\${session.pattern} → \${session.script}</h3>
                     <div class="status \${session.status}">\${session.status}</div>
@@ -665,11 +665,11 @@ function getWatchDashboardHTML(): string {
                     </div>
                     <button onclick="stopSession('\${session.id}')" style="margin-top: 10px; background: #ff4444;">🛑 Stop</button>
                 \`;
-                
+
                 container.appendChild(sessionEl);
             });
         }
-        
+
         function getStatusIcon(status) {
             const icons = {
                 idle: '⏸️',
@@ -678,7 +678,7 @@ function getWatchDashboardHTML(): string {
             };
             return icons[status] || '❓';
         }
-        
+
         function stopSession(sessionId) {
             const session = sessions.get(sessionId);
             if (session) {
@@ -688,17 +688,17 @@ function getWatchDashboardHTML(): string {
                 }));
             }
         }
-        
+
         document.getElementById('watchForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             const options = {
                 clearScreen: document.getElementById('clearScreen').checked,
                 parallel: document.getElementById('parallel').checked,
                 hotReload: document.getElementById('hotReload').checked,
                 smolMode: document.getElementById('smolMode').checked
             };
-            
+
             ws.send(JSON.stringify({
                 action: 'start',
                 pattern: document.getElementById('pattern').value,
@@ -706,7 +706,7 @@ function getWatchDashboardHTML(): string {
                 options
             }));
         });
-        
+
         // Start connection
         connect();
     </script>

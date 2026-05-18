@@ -34,14 +34,14 @@ class DryRunManager {
         if (!this.validateInput(method, endpoint, data)) {
             throw new Error('Invalid input parameters for dry-run preview');
         }
-        
+
         // Enforce preview size limit
         if (this.preview.length >= this.maxPreviewSize) {
             this.preview.shift(); // Remove oldest entry
         }
-        
+
         const operation = this.classifyOperation(method, endpoint, data);
-        
+
         const preview = {
             timestamp: new Date().toISOString(),
             operation: operation.type,
@@ -65,17 +65,17 @@ class DryRunManager {
         if (!validMethods.includes(method.toUpperCase())) {
             return false;
         }
-        
+
         // Validate endpoint format
         if (typeof endpoint !== 'string' || !endpoint.startsWith('/')) {
             return false;
         }
-        
+
         // Validate data if present
         if (data && typeof data !== 'object') {
             return false;
         }
-        
+
         return true;
     }
 
@@ -83,9 +83,9 @@ class DryRunManager {
         if (!data || typeof data !== 'object') {
             return data;
         }
-        
+
         const sanitized = JSON.parse(JSON.stringify(data));
-        
+
         const sanitizeObject = (obj) => {
             for (const key in obj) {
                 const lowerKey = key.toLowerCase();
@@ -96,7 +96,7 @@ class DryRunManager {
                 }
             }
         };
-        
+
         sanitizeObject(sanitized);
         return sanitized;
     }
@@ -147,13 +147,13 @@ class DryRunManager {
 
         const impacts = {
             low: '🟢 Low',
-            medium: '🟡 Medium', 
+            medium: '🟡 Medium',
             high: '🔴 High'
         };
 
         console.log(`${icons[preview.risk]} ${preview.operation.toUpperCase()}: ${preview.method} ${preview.endpoint}`);
         console.log(`   Impact: ${impacts[preview.impact]}`);
-        
+
         if (preview.data) {
             console.log(`   Data: ${preview.data.substring(0, 100)}${preview.data.length > 100 ? '...' : ''}`);
         }
@@ -166,13 +166,13 @@ class DryRunManager {
         if (Math.random() < errorRate) {
             return {
                 success: false,
-                errors: [{ 
+                errors: [{
                     message: `Dry-run simulated error for ${method} ${endpoint}`,
                     code: 'DRY_RUN_ERROR'
                 }]
             };
         }
-        
+
         // Return realistic mock responses for dry run
         if (endpoint.includes('/zones/') && endpoint.includes('/dns_records')) {
             return {
@@ -213,7 +213,7 @@ class DryRunManager {
 
         console.log('\n📋 DRY RUN SUMMARY');
         console.log('==================');
-        
+
         const stats = this.preview.reduce((acc, op) => {
             acc[op.operation] = (acc[op.operation] || 0) + 1;
             acc.total++;
@@ -221,7 +221,7 @@ class DryRunManager {
         }, { total: 0 });
 
         console.log(`Total Operations: ${stats.total}`);
-        
+
         Object.entries(stats).forEach(([type, count]) => {
             if (type !== 'total') {
                 console.log(`  ${type}: ${count}`);
@@ -259,7 +259,7 @@ function wrapCloudflareRequest(originalFunction, dryRunManager) {
         if (dryRunManager.dryRun) {
             return await dryRunManager.previewCloudflareRequest(method, endpoint, data);
         }
-        
+
         return await originalFunction.call(this, method, endpoint, data);
     };
 }

@@ -44,8 +44,8 @@ class AIPurgeEngine {
       model: 'llama3.2:latest',
       maxTokens: 4096,
       temperature: 0.3,
-      systemPrompt: `You are an expert code analyst specializing in Bun.js optimization and modern JavaScript practices. 
-Your task is to analyze code for Bun-purity, security, performance, and maintainability. 
+      systemPrompt: `You are an expert code analyst specializing in Bun.js optimization and modern JavaScript practices.
+Your task is to analyze code for Bun-purity, security, performance, and maintainability.
 Provide specific, actionable recommendations and score each dimension from 0-100.
 Focus on identifying opportunities to migrate from Node.js patterns to Bun-specific optimizations.`,
       ...config,
@@ -409,7 +409,7 @@ REQUIREMENTS:
 INSTALLATION:
   # Install Ollama
   curl -fsSL https://ollama.ai/install.sh | sh
-  
+
   # Pull Llama model
   ollama pull llama3.2:latest
       `);

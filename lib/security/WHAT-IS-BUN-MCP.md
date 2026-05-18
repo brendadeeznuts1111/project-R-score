@@ -250,7 +250,7 @@ AI: "I'm not sure, you'll need to test it"
 ### **🚀 With MCP**
 ```text
 You: "Help me secure our API"
-AI: 
+AI:
 1. 🔍 Searches your current API code
 2. 📊 Checks your existing authentication
 3. 🛠️ Implements JWT integration

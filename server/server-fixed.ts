@@ -93,7 +93,7 @@ async function generateRSSFeed(): Promise<Response> {
   <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</link>
   <description>Latest updates and examples for TypedArrays in Bun</description>
   <lastBuildDate>${new Date().toISOString()}</lastBuildDate>
-  
+
   <item>
     <title>TypedArray Methods Reference</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</link>
@@ -101,7 +101,7 @@ async function generateRSSFeed(): Promise<Response> {
     <pubDate>${new Date().toISOString()}</pubDate>
     <guid>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</guid>
   </item>
-  
+
   <item>
     <title>Binary Data Conversion Examples</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}</link>
@@ -160,13 +160,13 @@ async function handleRoot(): Promise<Response> {
 <body>
   <main class="container">
     <h1>📚 Bun TypedArray Documentation</h1>
-    
+
     <section>
       <h2>Base URL Pattern</h2>
       <p>All typed array documentation uses this base pattern:</p>
       <pre><code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></pre>
     </section>
-    
+
     <section>
       <h2>API Endpoints</h2>
       <div class="grid">
@@ -178,7 +178,7 @@ async function handleRoot(): Promise<Response> {
             <li><a href="${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}" target="_blank">Fetch API Docs</a></li>
           </ul>
         </article>
-        
+
         <article>
           <h3>⚡ Quick Examples</h3>
           <ul>
@@ -189,7 +189,7 @@ async function handleRoot(): Promise<Response> {
             <li><a href="/api/rss">RSS Feed</a></li>
           </ul>
         </article>
-        
+
         <article>
           <h3>📰 Feeds</h3>
           <ul>
@@ -199,7 +199,7 @@ async function handleRoot(): Promise<Response> {
         </article>
       </div>
     </section>
-    
+
     <section>
       <h2>Advanced Bun Fetch Features</h2>
       <p>This portal demonstrates advanced fetch capabilities from <a href="https://bun.sh/docs/runtime/networking/fetch" target="_blank">Bun's fetch documentation</a>:</p>
@@ -233,7 +233,7 @@ async function handleRoot(): Promise<Response> {
         </article>
       </div>
     </section>
-    
+
     <section>
       <h2>Try the Fetch Pattern</h2>
       <pre><code>// Using Bun's native fetch pattern:
@@ -241,18 +241,18 @@ const response = await fetch("/api/typedarray/urls");
 console.info(response.status); // => 200
 const data = await response.json();
 console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
-      
+
       <button onclick="testFetch()">Test Fetch</button>
       <div id="result"></div>
     </section>
   </main>
-  
+
   <script>
     async function testFetch() {
       const response = await fetch('/api/typedarray/urls');
       const result = document.getElementById('result');
       result.innerHTML = \`Status: \${response.status}\`;
-      
+
       if (response.ok) {
         const data = await response.json();
         result.innerHTML += \`<pre>\${JSON.stringify(data, null, 2)}</pre>\`;
@@ -366,7 +366,7 @@ async function runAdvancedDemo(): Promise<Response> {
   <main class="container">
     <h1>🚀 Advanced Bun Fetch Demo</h1>
     <p>Running comprehensive fetch demo... Check the server console for detailed output.</p>
-    
+
     <section>
       <h2>Features Demonstrated</h2>
       <ul>
@@ -382,7 +382,7 @@ async function runAdvancedDemo(): Promise<Response> {
         <li>✅ Multiple response body methods</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Bun-Specific Extensions</h2>
       <ul>
@@ -393,7 +393,7 @@ async function runAdvancedDemo(): Promise<Response> {
         <li><code>AbortSignal.timeout()</code> - Easy timeouts</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Performance Features</h2>
       <ul>
@@ -404,7 +404,7 @@ async function runAdvancedDemo(): Promise<Response> {
         <li>Response buffering optimization</li>
       </ul>
     </section>
-    
+
     <button onclick="location.reload()">Run Demo Again</button>
     <button onclick="location.href='/'">Back to Portal</button>
   </main>

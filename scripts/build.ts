@@ -79,14 +79,14 @@ const TYPED_ARRAY_BASE = "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}";
 async function fetchTypedArrayDocs() {
   const response = await fetch(TYPED_ARRAY_BASE);
   console.info(\`Status: \${response.status}\`);
-  
+
   if (response.ok) {
     // Get the documentation content
     const text = await response.text();
     console.info(\`Fetched \${text.length} bytes\`);
     return text;
   }
-  
+
   throw new Error(\`Failed to fetch: \${response.status}\`);
 }
 
@@ -97,11 +97,11 @@ async function fetchAllDocs() {
     "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}",
     "${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}",
   ];
-  
+
   const responses = await Promise.all(
     urls.map(url => fetch(url).then(r => ({ url, status: r.status })))
   );
-  
+
   return responses;
 }
 

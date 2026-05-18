@@ -49,7 +49,7 @@ const html = renderUserContent('# Hello **world**!');
 ```typescript
 import { MarkdownPresets } from './bunMarkdownConstants';
 
-const MarkdownComponent = ({ content }) => 
+const MarkdownComponent = ({ content }) =>
   MarkdownPresets.react('TAILWIND_TYPOGRAPHY')(content);
 
 // Usage
@@ -137,7 +137,7 @@ const bootstrapRenderer = MarkdownPresets.render('BOOTSTRAP', MARKDOWN_FEATURES.
 ```typescript
 import { REACT_COMPONENTS } from './bunMarkdownConstants';
 
-const ReactMarkdown = ({ content }) => 
+const ReactMarkdown = ({ content }) =>
   MarkdownPresets.react('TAILWIND_TYPOGRAPHY')(content);
 // Direct React component generation
 ```
@@ -165,7 +165,7 @@ function MarkdownEditor({ content }) {
     security: 'STRICT',
     debounceTime: 300
   });
-  
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   return <div dangerouslySetInnerHTML={{ __html: result }} />;
@@ -434,7 +434,7 @@ describe('Markdown Rendering', () => {
     const result = safeMarkdown('# Hello');
     expect(result).toContain('<h1');
   });
-  
+
   test('should block unsafe content', () => {
     expect(() => {
       safeMarkdown('<script>alert("xss")</script>');
@@ -462,7 +462,7 @@ console.log(`Average render time: ${(end - start) / 1000}ms`);
 
 ### Core Constants
 - `MARKDOWN_SECURITY` - Security level configurations
-- `MARKDOWN_FEATURES` - Feature preset configurations  
+- `MARKDOWN_FEATURES` - Feature preset configurations
 - `MARKDOWN_DOMAINS` - Domain-specific configurations
 - `HTML_RENDERERS` - HTML renderer templates
 - `TEXT_RENDERERS` - Plain text renderers

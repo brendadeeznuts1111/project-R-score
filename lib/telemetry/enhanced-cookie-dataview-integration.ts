@@ -451,7 +451,7 @@ export class UnifiedCookieDataViewManager {
 
     this.db.run(
       `
-      INSERT OR REPLACE INTO unified_sessions 
+      INSERT OR REPLACE INTO unified_sessions
       (session_id, cookie_data, dataview_data, performance_data, security_data, last_seen, total_requests, total_bytes_processed)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,

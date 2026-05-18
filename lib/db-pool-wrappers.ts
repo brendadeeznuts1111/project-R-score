@@ -89,7 +89,7 @@ export class PostgreSQLPool {
 
     await this.query(
       `
-      INSERT INTO profiles (id, session, profile, timestamp, member, document) 
+      INSERT INTO profiles (id, session, profile, timestamp, member, document)
       VALUES ($1, $2, $3, $4, $5, $6)
       ON CONFLICT (id) DO UPDATE SET
         session = EXCLUDED.session,
@@ -219,7 +219,7 @@ export class MySQLPool {
 
     await this.query(
       `
-      INSERT INTO profiles (id, session, profile, timestamp, member, document) 
+      INSERT INTO profiles (id, session, profile, timestamp, member, document)
       VALUES (?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
         session = VALUES(session),

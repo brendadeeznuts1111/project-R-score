@@ -1,6 +1,6 @@
 #!/bin/bash
 # 🏭 FactoryWager Tier-1380 Deployment Script
-# 
+#
 # Complete deployment automation for the enhanced Tier-1380 system
 # with configuration management, validation, and environment setup
 
@@ -25,7 +25,7 @@ log() {
     local level=$1
     local message=$2
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
+
     case $level in
         "INFO")
             echo -e "${BLUE}ℹ${NC} $message"
@@ -43,55 +43,55 @@ log() {
             echo -e "\n${CYAN}$message${NC}"
             ;;
     esac
-    
+
     echo "[$timestamp] [$level] $message" >> "$PROJECT_ROOT/logs/deployment.log" 2>/dev/null || true
 }
 
 # Check prerequisites
 check_prerequisites() {
     log "SECTION" "🔍 Checking Prerequisites"
-    
+
     # Check if Bun is installed
     if ! command -v bun &> /dev/null; then
         log "ERROR" "Bun is not installed or not in PATH"
         exit 1
     fi
-    
+
     # Check if configuration manager exists
     if [ ! -f "$CONFIG_MANAGER" ]; then
         log "ERROR" "Configuration manager not found at $CONFIG_MANAGER"
         exit 1
     fi
-    
+
     # Check if we're in a git repository
     if ! git rev-parse --git-dir > /dev/null 2>&1; then
         log "WARNING" "Not in a git repository"
     fi
-    
+
     # Create logs directory
     mkdir -p "$PROJECT_ROOT/logs"
-    
+
     log "SUCCESS" "Prerequisites check passed"
 }
 
 # Load and validate configuration
 load_configuration() {
     log "SECTION" "📋 Loading Configuration"
-    
+
     # Load from environment
     log "INFO" "Loading configuration from environment variables..."
     cd "$PROJECT_ROOT" && bun "$CONFIG_MANAGER" load 2>/dev/null || true
-    
+
     # Validate configuration
     log "INFO" "Validating configuration..."
     local validation_output=$(cd "$PROJECT_ROOT" && bun "$CONFIG_MANAGER" validate)
-    
+
     if [[ $validation_output == *"FAILED"* ]]; then
         log "ERROR" "Configuration validation failed"
         echo "$validation_output"
         exit 1
     fi
-    
+
     log "SUCCESS" "Configuration loaded and validated"
 }
 
@@ -104,13 +104,13 @@ show_configuration() {
 # Generate environment files
 generate_environment_files() {
     log "SECTION" "🔧 Generating Environment Files"
-    
+
     # Generate .env file
     local env_file="$PROJECT_ROOT/.env.tier1380"
     cd "$PROJECT_ROOT" && bun "$CONFIG_MANAGER" export > "$env_file"
-    
+
     log "SUCCESS" "Environment file generated: $env_file"
-    
+
     # Generate Cloudflare Workers environment
     local wrangler_env="$PROJECT_ROOT/wrangler.toml.env"
     cat > "$wrangler_env" << EOF
@@ -135,18 +135,18 @@ TIER1380_CACHE_TTL = "120000"
 TIER1380_COMPRESSION_LEVEL = "2"
 NODE_ENV = "staging"
 EOF
-    
+
     log "SUCCESS" "Cloudflare Workers environment generated: $wrangler_env"
 }
 
 # Run tests
 run_tests() {
     log "SECTION" "🧪 Running Tests"
-    
+
     # Test configuration manager
     log "INFO" "Testing configuration manager..."
     cd "$PROJECT_ROOT" && bun "$CONFIG_MANAGER" validate
-    
+
     # Test enhanced citadel (if available)
     if [ -f "$PROJECT_ROOT/tier1380-enhanced-citadel.ts" ]; then
         log "INFO" "Testing enhanced citadel..."
@@ -158,21 +158,21 @@ console.log("✅ Enhanced citadel test passed");
 console.log("Health:", status.health);
 '
     fi
-    
+
     log "SUCCESS" "All tests passed"
 }
 
 # Deploy to Cloudflare Workers
 deploy_workers() {
     log "SECTION" "🚀 Deploying to Cloudflare Workers"
-    
+
     # Check if wrangler is installed
     if ! command -v wrangler &> /dev/null; then
         log "WARNING" "Wrangler CLI not found. Skipping deployment."
         log "INFO" "Install wrangler with: npm install -g wrangler"
         return
     fi
-    
+
     # Deploy to staging first
     log "INFO" "Deploying to staging..."
     if wrangler deploy --env staging; then
@@ -181,7 +181,7 @@ deploy_workers() {
         log "ERROR" "Staging deployment failed"
         exit 1
     fi
-    
+
     # Ask for production deployment
     if [ "$1" = "--production" ] || [ "$1" = "-p" ]; then
         read -p "Deploy to production? (y/N): " -n 1 -r
@@ -205,27 +205,27 @@ deploy_workers() {
 # Verify deployment
 verify_deployment() {
     log "SECTION" "🔍 Verifying Deployment"
-    
+
     # Get worker URL from wrangler
     local worker_url=$(wrangler whoami 2>/dev/null | grep -o 'https://[^[:space:]]*\.workers\.dev' | head -1)
-    
+
     if [ -n "$worker_url" ]; then
         log "INFO" "Testing worker at: $worker_url"
-        
+
         # Test health endpoint
         local health_response=$(curl -s -w "%{http_code}" "$worker_url/health")
         local http_code="${health_response: -3}"
-        
+
         if [ "$http_code" = "200" ]; then
             log "SUCCESS" "Health check passed"
         else
             log "WARNING" "Health check failed with HTTP $http_code"
         fi
-        
+
         # Test cache stats endpoint
         local cache_response=$(curl -s -w "%{http_code}" "$worker_url/cache-stats")
         local cache_code="${cache_response: -3}"
-        
+
         if [ "$cache_code" = "200" ]; then
             log "SUCCESS" "Cache stats endpoint working"
         else
@@ -239,9 +239,9 @@ verify_deployment() {
 # Generate deployment report
 generate_report() {
     log "SECTION" "📋 Generating Deployment Report"
-    
+
     local report_file="$PROJECT_ROOT/logs/deployment_report_$(date +%Y%m%d_%H%M%S).md"
-    
+
     cat > "$report_file" << EOF
 # FactoryWager Tier-1380 Deployment Report
 
@@ -299,7 +299,7 @@ EOF
 # Main deployment function
 main() {
     local command=${1:-"help"}
-    
+
     case $command in
         "check")
             check_prerequisites

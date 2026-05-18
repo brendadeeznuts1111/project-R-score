@@ -672,15 +672,15 @@ export function createCookieAwareServer(port: number = 3000) {
 <body>
     <div class="container">
         <h1>🍪 Cookie Security v3.25 - Factory-Wager Fusion</h1>
-        
+
         <div class="metric success">
             <strong>✅ Session Cookie:</strong> ${sessionCookie ? `Found (${sessionCookie.name})` : 'Not found'}
         </div>
-        
+
         <div class="metric">
             <strong>🎲 A/B Variant:</strong> ${variant} for user ${userId}
         </div>
-        
+
         <div class="metric">
             <strong>🛡️ CSRF Token:</strong> ${csrfCookie.value.substring(0, 8)}...
         </div>

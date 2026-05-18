@@ -19,7 +19,7 @@ class HealthMonitor {
             logFile: path.join(process.cwd(), 'logs', 'health-monitor.log'),
             reportFile: path.join(process.cwd(), 'reports', 'health-report.json')
         };
-        
+
         this.status = {
             overall: 'unknown',
             services: {},
@@ -27,7 +27,7 @@ class HealthMonitor {
             consecutiveFailures: 0,
             uptime: 0
         };
-        
+
         this.alerts = [];
         this.metrics = {
             totalChecks: 0,
@@ -36,7 +36,7 @@ class HealthMonitor {
             averageResponseTime: 0,
             responseTimes: []
         };
-        
+
         this.ensureDirectories();
         this.startTime = Date.now();
     }
@@ -53,15 +53,15 @@ class HealthMonitor {
 
     async checkDomainHealth(domain) {
         const startTime = Date.now();
-        
+
         try {
             const response = await fetch(`https://${domain}`, {
                 method: 'HEAD',
                 signal: AbortSignal.timeout(this.config.timeout)
             });
-            
+
             const responseTime = Date.now() - startTime;
-            
+
             return {
                 domain,
                 status: response.ok ? 'healthy' : 'unhealthy',
@@ -72,7 +72,7 @@ class HealthMonitor {
             };
         } catch (error) {
             const responseTime = Date.now() - startTime;
-            
+
             return {
                 domain,
                 status: 'error',
@@ -87,16 +87,16 @@ class HealthMonitor {
     async checkServiceHealth(service) {
         const { name, url, type, expectedStatus = 200 } = service;
         const startTime = Date.now();
-        
+
         try {
             const response = await fetch(url, {
                 method: type === 'api' ? 'GET' : 'HEAD',
                 signal: AbortSignal.timeout(this.config.timeout)
             });
-            
+
             const responseTime = Date.now() - startTime;
             const isHealthy = response.status === expectedStatus;
-            
+
             return {
                 name,
                 url,
@@ -109,7 +109,7 @@ class HealthMonitor {
             };
         } catch (error) {
             const responseTime = Date.now() - startTime;
-            
+
             return {
                 name,
                 url,
@@ -125,10 +125,10 @@ class HealthMonitor {
 
     async performHealthCheck() {
         console.log('🏥 Performing comprehensive health check...');
-        
+
         const startTime = Date.now();
         this.metrics.totalChecks++;
-        
+
         // Define critical domains to check
         const criticalDomains = [
             'wiki.factory-wager.com',
@@ -137,7 +137,7 @@ class HealthMonitor {
             'registry.factory-wager.com',
             'registry.factory-wager.com'
         ];
-        
+
         // Define services to check
         const services = [
             { name: 'Wiki', url: 'https://wiki.factory-wager.com', type: 'web' },
@@ -146,34 +146,34 @@ class HealthMonitor {
             { name: 'Registry', url: 'https://registry.factory-wager.com', type: 'web' },
             { name: 'NPM Registry', url: 'https://registry.factory-wager.com', type: 'web' }
         ];
-        
+
         // Check all domains
         const domainResults = await Promise.all(
             criticalDomains.map(domain => this.checkDomainHealth(domain))
         );
-        
+
         // Check all services
         const serviceResults = await Promise.all(
             services.map(service => this.checkServiceHealth(service))
         );
-        
+
         // Combine results
         const allResults = [...domainResults, ...serviceResults];
-        
+
         // Calculate overall status
         const healthyCount = allResults.filter(r => r.status === 'healthy').length;
         const totalCount = allResults.length;
         const healthPercentage = (healthyCount / totalCount) * 100;
-        
+
         // Update status
         this.status.lastCheck = new Date().toISOString();
         this.status.uptime = Date.now() - this.startTime;
-        
+
         // Update service statuses
         serviceResults.forEach(result => {
             this.status.services[result.name] = result;
         });
-        
+
         // Determine overall status
         if (healthPercentage >= 90) {
             this.status.overall = 'healthy';
@@ -184,34 +184,34 @@ class HealthMonitor {
             this.status.overall = 'unhealthy';
             this.status.consecutiveFailures++;
         }
-        
+
         // Update metrics
         const responseTimes = allResults.map(r => r.responseTime).filter(t => t > 0);
         if (responseTimes.length > 0) {
             this.metrics.responseTimes.push(...responseTimes);
             this.metrics.averageResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
         }
-        
+
         if (this.status.overall === 'healthy') {
             this.metrics.successfulChecks++;
         } else {
             this.metrics.failedChecks++;
         }
-        
+
         // Generate alerts if needed
         await this.generateAlerts(allResults);
-        
+
         // Log results
         await this.logResults(allResults);
-        
+
         // Generate report
         await this.generateReport(allResults);
-        
+
         const duration = Date.now() - startTime;
         console.log(`✅ Health check completed in ${duration}ms`);
         console.log(`📊 Overall Status: ${this.status.overall.toUpperCase()}`);
         console.log(`📈 Health: ${healthPercentage.toFixed(1)}% (${healthyCount}/${totalCount})`);
-        
+
         return {
             status: this.status.overall,
             healthPercentage,
@@ -223,7 +223,7 @@ class HealthMonitor {
 
     async generateAlerts(results) {
         const newAlerts = [];
-        
+
         // Check for service failures
         results.forEach(result => {
             if (result.status !== 'healthy') {
@@ -237,11 +237,11 @@ class HealthMonitor {
                     timestamp: new Date().toISOString(),
                     acknowledged: false
                 };
-                
+
                 newAlerts.push(alert);
             }
         });
-        
+
         // Check for consecutive failures
         if (this.status.consecutiveFailures >= this.config.alertThreshold) {
             const alert = {
@@ -254,15 +254,15 @@ class HealthMonitor {
                 timestamp: new Date().toISOString(),
                 acknowledged: false
             };
-            
+
             newAlerts.push(alert);
         }
-        
+
         // Save new alerts
         if (newAlerts.length > 0) {
             this.alerts.push(...newAlerts);
             await this.saveAlerts();
-            
+
             console.log(`🚨 Generated ${newAlerts.length} new alert(s):`);
             newAlerts.forEach(alert => {
                 console.log(`  ${alert.severity.toUpperCase()}: ${alert.message}`);
@@ -283,7 +283,7 @@ class HealthMonitor {
             results: results,
             metrics: this.metrics
         };
-        
+
         const logLine = JSON.stringify(logEntry) + '\n';
         fs.appendFileSync(this.config.logFile, logLine);
     }
@@ -308,9 +308,9 @@ class HealthMonitor {
             },
             details: results
         };
-        
+
         fs.writeFileSync(this.config.reportFile, JSON.stringify(report, null, 2));
-        
+
         // Also generate HTML report
         await this.generateHTMLReport(report);
     }
@@ -338,7 +338,7 @@ class HealthMonitor {
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .status-${report.status.overall} {
-            color: ${report.status.overall === 'healthy' ? '#22c55e' : 
+            color: ${report.status.overall === 'healthy' ? '#22c55e' :
                      report.status.overall === 'degraded' ? '#f59e0b' : '#ef4444'};
         }
         .metrics {
@@ -470,10 +470,10 @@ class HealthMonitor {
         console.log(`📊 Check interval: ${this.config.checkInterval / 1000}s`);
         console.log(`⏰ Timeout: ${this.config.timeout / 1000}s`);
         console.log(`🔄 Retries: ${this.config.retries}`);
-        
+
         // Initial check
         await this.performHealthCheck();
-        
+
         // Start continuous monitoring
         this.monitoringInterval = setInterval(async () => {
             try {
@@ -482,12 +482,12 @@ class HealthMonitor {
                 console.error('❌ Health check failed:', error.message);
             }
         }, this.config.checkInterval);
-        
+
         console.log('✅ Health monitor started successfully!');
         console.log('📁 Reports: ./reports/health-report.html');
         console.log('📝 Logs: ./logs/health-monitor.log');
         console.log('🚨 Alerts: ./alerts/alerts.json');
-        
+
         // Handle graceful shutdown
         process.on('SIGINT', () => {
             console.log('\n🛑 Stopping health monitor...');
@@ -520,9 +520,9 @@ class HealthMonitor {
 // CLI usage
 if (require.main === module) {
     const monitor = new HealthMonitor();
-    
+
     const command = process.argv[2];
-    
+
     switch (command) {
         case 'check':
             monitor.performHealthCheck()
@@ -537,11 +537,11 @@ if (require.main === module) {
                     process.exit(1);
                 });
             break;
-            
+
         case 'start':
             monitor.startMonitoring();
             break;
-            
+
         case 'status':
             const status = monitor.getStatus();
             console.log('📊 Health Monitor Status:');
@@ -551,7 +551,7 @@ if (require.main === module) {
             console.log(`Success Rate: ${(status.metrics.successfulChecks / status.metrics.totalChecks * 100).toFixed(1)}%`);
             console.log(`Active Alerts: ${status.alerts.filter(a => !a.acknowledged).length}`);
             break;
-            
+
         case 'report':
             const reportFile = path.join(process.cwd(), 'reports', 'health-report.html');
             if (fs.existsSync(reportFile)) {
@@ -565,13 +565,13 @@ if (require.main === module) {
                 console.log('❌ No health report found. Run "check" first.');
             }
             break;
-            
+
         case 'alerts':
             const alertsFile = path.join(process.cwd(), 'alerts', 'alerts.json');
             if (fs.existsSync(alertsFile)) {
                 const alerts = JSON.parse(fs.readFileSync(alertsFile, 'utf8'));
                 const unacknowledged = alerts.filter(a => !a.acknowledged);
-                
+
                 console.log(`🚨 Alerts (${unacknowledged.length} active):`);
                 unacknowledged.forEach(alert => {
                     console.log(`  ${alert.severity.toUpperCase()}: ${alert.message}`);
@@ -581,7 +581,7 @@ if (require.main === module) {
                 console.log('✅ No alerts found');
             }
             break;
-            
+
         default:
             console.log('FactoryWager Health Monitor');
             console.log('');

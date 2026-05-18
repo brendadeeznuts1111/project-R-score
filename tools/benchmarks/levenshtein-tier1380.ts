@@ -263,10 +263,10 @@ export class LevenshteinEngine {
         timestamp INTEGER NOT NULL,
         created_at INTEGER DEFAULT (strftime('%s', 'now'))
       ) STRICT;
-      
+
       CREATE INDEX IF NOT EXISTS idx_hash ON similarity_cache(hash);
       CREATE INDEX IF NOT EXISTS idx_timestamp ON similarity_cache(timestamp);
-      
+
       PRAGMA journal_mode = WAL;
       PRAGMA synchronous = NORMAL;
     `);
@@ -285,8 +285,8 @@ export class LevenshteinEngine {
     // Check database cache
     try {
       const stmt = this.db.prepare(`
-        SELECT * FROM similarity_cache 
-        WHERE hash = ? 
+        SELECT * FROM similarity_cache
+        WHERE hash = ?
         LIMIT 1
       `);
 
@@ -334,7 +334,7 @@ export class LevenshteinEngine {
     setTimeout(() => {
       try {
         const stmt = this.db.prepare(`
-          INSERT OR REPLACE INTO similarity_cache 
+          INSERT OR REPLACE INTO similarity_cache
           (hash, target, candidate, distance, normalized_distance, score, operations, timestamp)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
@@ -743,7 +743,7 @@ export class LevenshteinEngine {
     if (!this.db) return;
 
     const stmt = this.db.prepare(`
-      SELECT * FROM similarity_cache 
+      SELECT * FROM similarity_cache
       ORDER BY timestamp DESC
     `);
 

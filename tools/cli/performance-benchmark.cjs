@@ -15,18 +15,18 @@ class PerformanceBenchmark {
 
     async runBenchmarks() {
         console.log('🚀 Running Performance Benchmarks...\n');
-        
+
         await this.benchmarkCachePerformance();
         await this.benchmarkDryRunPerformance();
         await this.benchmarkMemoryUsage();
         await this.benchmarkConcurrentOperations();
-        
+
         this.showBenchmarkResults();
     }
 
     async benchmarkCachePerformance() {
         console.log('📊 Benchmarking Cache Performance...');
-        
+
         const optimizer = new PerformanceOptimizer({ cacheTimeout: 60000 });
         const testData = Array.from({ length: 1000 }, (_, i) => ({
             key: `benchmark-key-${i}`,
@@ -50,7 +50,7 @@ class PerformanceBenchmark {
         const readTime = Number(readEnd - readStart) / 1000000; // Convert to ms
 
         const stats = optimizer.getPerformanceStats();
-        
+
         this.results.push({
             test: 'Cache Performance',
             metrics: {
@@ -68,7 +68,7 @@ class PerformanceBenchmark {
 
     async benchmarkDryRunPerformance() {
         console.log('🔍 Benchmarking Dry-Run Performance...');
-        
+
         const dryRun = new DryRunManager({ maxPreviewSize: 1000 });
         dryRun.enable();
 
@@ -103,9 +103,9 @@ class PerformanceBenchmark {
 
     async benchmarkMemoryUsage() {
         console.log('🧠 Benchmarking Memory Usage...');
-        
+
         const initialMemory = process.memoryUsage();
-        
+
         // Test cache memory usage
         const optimizer = new PerformanceOptimizer({ maxCacheSize: 500 });
         for (let i = 0; i < 500; i++) {
@@ -115,9 +115,9 @@ class PerformanceBenchmark {
                 metadata: { id: i, type: 'test' }
             });
         }
-        
+
         const afterCacheMemory = process.memoryUsage();
-        
+
         // Test dry-run memory usage
         const dryRun = new DryRunManager({ maxPreviewSize: 500 });
         dryRun.enable();
@@ -127,9 +127,9 @@ class PerformanceBenchmark {
                 id: i
             });
         }
-        
+
         const finalMemory = process.memoryUsage();
-        
+
         this.results.push({
             test: 'Memory Usage',
             metrics: {
@@ -147,7 +147,7 @@ class PerformanceBenchmark {
 
     async benchmarkConcurrentOperations() {
         console.log('⚡ Benchmarking Concurrent Operations...');
-        
+
         const optimizer = new PerformanceOptimizer();
         const dryRun = new DryRunManager();
         dryRun.enable();
@@ -188,7 +188,7 @@ class PerformanceBenchmark {
     showBenchmarkResults() {
         console.log('📊 Performance Benchmark Results');
         console.log('=================================');
-        
+
         this.results.forEach(result => {
             console.log(`\n🔹 ${result.test}:`);
             Object.entries(result.metrics).forEach(([key, value]) => {
@@ -198,7 +198,7 @@ class PerformanceBenchmark {
 
         // Performance recommendations
         console.log('\n💡 Performance Recommendations:');
-        
+
         const cacheResult = this.results.find(r => r.test === 'Cache Performance');
         if (cacheResult) {
             const readTime = parseFloat(cacheResult.metrics.readTime);

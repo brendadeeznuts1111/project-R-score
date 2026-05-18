@@ -148,7 +148,7 @@ export class DataViewCookieManager {
     const startTime = performance.now();
     this.db.run(
       `
-      INSERT OR REPLACE INTO sessions 
+      INSERT OR REPLACE INTO sessions
       (session_id, binary_metadata, created_at, last_seen, visits, performance_score)
       VALUES (?, ?, ?, ?, ?, ?)
     `,
@@ -240,7 +240,7 @@ export class DataViewCookieManager {
       .query(
         `
       SELECT event_type, COUNT(*) as count, timestamp
-      FROM session_events 
+      FROM session_events
       WHERE session_id = ?
       GROUP BY event_type
       ORDER BY timestamp DESC
@@ -283,7 +283,7 @@ export class DataViewCookieManager {
 
     // Cleanup orphaned events
     this.db.run(`
-      DELETE FROM session_events 
+      DELETE FROM session_events
       WHERE session_id NOT IN (SELECT session_id FROM sessions)
     `);
 

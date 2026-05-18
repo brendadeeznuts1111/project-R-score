@@ -448,13 +448,13 @@ Commands:
 Examples:
   # Measure single expression
   bun benchmark-helper.ts measure 'Math.sqrt(144)'
-  
+
   # Benchmark loop performance
   bun benchmark-helper.ts loop 'Math.random()' 1000000
-  
+
   # Run YAML benchmarks
   bun benchmark-helper.ts yaml
-  
+
   # One-liner templates (like bun -e):
   bun -e 'const t=Bun.nanoseconds(); for(let i=0;i<1e6;i++)Math.random(); console.info((Bun.nanoseconds()-t)/1e6,"ms")'
   bun -e 'const s=Bun.nanoseconds(); Math.sqrt(144); console.info(Bun.nanoseconds()-s,"ns")'

@@ -142,12 +142,12 @@ const server = (globalThis as any).Bun.serve({
   <div class="preview" id="root"></div>
   <script type="text/babel">
     const markdownContent = \`${localizedContent.replace(/`/g, '\\`')}\`;
-    
+
     // Simple markdown to React parser (in production, use a proper library)
     const parseMarkdown = (md) => {
       const lines = md.split('\\n');
       const elements = [];
-      
+
       lines.forEach((line, index) => {
         if (line.startsWith('# ')) {
           elements.push(React.createElement('h1', { key: index }, line.substring(2)));
@@ -162,12 +162,12 @@ const server = (globalThis as any).Bun.serve({
         } else if (line.includes('|')) {
           // Simple table parsing
           const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
-          elements.push(React.createElement('div', { key: index }, 
+          elements.push(React.createElement('div', { key: index },
             React.createElement('table', { style: { border: '1px solid #ccc', width: '100%' } },
-              React.createElement('tr', {}, 
-                cells.map((cell, i) => React.createElement('td', { 
-                  key: i, 
-                  style: { border: '1px solid #ccc', padding: '8px' } 
+              React.createElement('tr', {},
+                cells.map((cell, i) => React.createElement('td', {
+                  key: i,
+                  style: { border: '1px solid #ccc', padding: '8px' }
                 }, cell))
               )
             )
@@ -176,13 +176,13 @@ const server = (globalThis as any).Bun.serve({
           elements.push(React.createElement('p', { key: index }, line));
         }
       });
-      
+
       return elements;
     };
-    
+
     const App = () => {
       const [content, setContent] = React.useState(parseMarkdown(markdownContent));
-      
+
       React.useEffect(() => {
         if (window.HMR) {
           window.HMR.onUpdate((newContent) => {
@@ -190,10 +190,10 @@ const server = (globalThis as any).Bun.serve({
           });
         }
       }, []);
-      
+
       return React.createElement('div', {}, ...content);
     };
-    
+
     ReactDOM.render(React.createElement(App), document.getElementById('root'));
   </script>
 </body>
@@ -353,36 +353,36 @@ const server = (globalThis as any).Bun.serve({
     <h1>🤖 Wiki v3.19 - AI Live Dashboard</h1>
     <p>AI-powered wiki generation with live HMR preview and multi-language support</p>
   </div>
-  
+
   <div class="controls">
     <div class="control-group">
       <h3>🔥 Live Preview</h3>
       <div class="status" id="status">Ready for AI generation...</div>
-      
+
       <label>Prompt:</label>
       <input type="text" id="prompt" class="input" value="changelog section" placeholder="Enter wiki section prompt">
-      
+
       <label>Format:</label>
       <select id="format" class="select">
         <option value="react">React (HMR)</option>
         <option value="html">HTML</option>
         <option value="ansi">ANSI Terminal</option>
       </select>
-      
+
       <label>Language:</label>
       <select id="lang" class="select">
         <option value="en">English</option>
         <option value="es">Español</option>
         <option value="fr">Français</option>
       </select>
-      
+
       <label>
         <input type="checkbox" id="hmr" checked> Enable HMR
       </label>
-      
+
       <button class="button" onclick="generatePreview()">🚀 Generate Preview</button>
     </div>
-    
+
     <div class="control-group">
       <h3>⚡ Quick Actions</h3>
       <div class="demo-buttons">
@@ -392,43 +392,43 @@ const server = (globalThis as any).Bun.serve({
         <button class="button" onclick="quickGen('api documentation')">📚 API Docs</button>
         <button class="button" onclick="quickGen('one-liners cheatsheet')">⚡ One-Liners</button>
       </div>
-      
+
       <h4>🌐 Multi-Lang Wiki</h4>
       <button class="button" onclick="loadI18n()">Load i18n Config</button>
       <pre id="i18n-output" style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;"></pre>
     </div>
   </div>
-  
+
   <div class="preview" id="preview">
     <p>🔥 AI-generated wiki preview will appear here...</p>
     <p>Try one of the quick actions or enter a custom prompt above!</p>
   </div>
-  
+
   <script>
     async function generatePreview() {
       const prompt = document.getElementById('prompt').value;
       const format = document.getElementById('format').value;
       const lang = document.getElementById('lang').value;
       const hmr = document.getElementById('hmr').checked;
-      
+
       document.getElementById('status').textContent = '🤖 Generating AI wiki...';
-      
+
       try {
         const response = await fetch(\`/wiki-live?prompt=\${encodeURIComponent(prompt)}&format=\${format}&lang=\${lang}&hmr=\${hmr}\`);
         const content = await response.text();
-        
+
         document.getElementById('preview').innerHTML = content;
         document.getElementById('status').innerHTML = \`✅ Generated in \${response.headers.get('X-Render-Time')}ms | HMR: \${response.headers.get('X-HMR-Enabled')}\`;
       } catch (error) {
         document.getElementById('status').textContent = '❌ Error: ' + error.message;
       }
     }
-    
+
     async function quickGen(prompt) {
       document.getElementById('prompt').value = prompt;
       await generatePreview();
     }
-    
+
     async function loadI18n() {
       try {
         const response = await fetch('/wiki-i18n');
@@ -438,7 +438,7 @@ const server = (globalThis as any).Bun.serve({
         document.getElementById('i18n-output').textContent = 'Error loading i18n: ' + error.message;
       }
     }
-    
+
     // Auto-generate on load
     window.addEventListener('load', () => {
       generatePreview();

@@ -117,8 +117,8 @@ export class DataViewTelemetryPool extends TelemetryPool {
 
       // Insert binary data
       const stmt = db.prepare(`
-        INSERT INTO dv_profiles 
-        (id, binary_data, session_hash, member_id, timestamp, data_size, checksum) 
+        INSERT INTO dv_profiles
+        (id, binary_data, session_hash, member_id, timestamp, data_size, checksum)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
 
@@ -311,7 +311,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
       const summary = this.metrics.getMetricsSummary();
 
       const stmt = db.prepare(`
-        INSERT INTO dv_metrics (binary_metrics, record_count, export_timestamp) 
+        INSERT INTO dv_metrics (binary_metrics, record_count, export_timestamp)
         VALUES (?, ?, ?)
       `);
 

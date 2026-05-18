@@ -1,6 +1,6 @@
 #!/bin/bash
 # 🚀 URL Structure Migration Deployment Script
-# 
+#
 # This script handles the complete migration from fragment-based URLs to direct URLs
 # with feature flags, canary deployment, A/B testing, and rollback capabilities
 
@@ -28,7 +28,7 @@ log() {
     local level=$1
     local message=$2
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
+
     case $level in
         "INFO")
             echo -e "${BLUE}ℹ${NC} $message"
@@ -46,32 +46,32 @@ log() {
             echo -e "\n${CYAN}$message${NC}"
             ;;
     esac
-    
+
     echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
 }
 
 # Check prerequisites
 check_prerequisites() {
     log "SECTION" "🔍 Checking Prerequisites"
-    
+
     # Check if Bun is installed
     if ! command -v bun &> /dev/null; then
         log "ERROR" "Bun is not installed or not in PATH"
         exit 1
     fi
-    
+
     # Check if feature flag manager exists
     if [ ! -f "$FEATURE_FLAG_MANAGER" ]; then
         log "ERROR" "Feature flag manager not found at $FEATURE_FLAG_MANAGER"
         exit 1
     fi
-    
+
     # Check if we're in a git repository
     if ! git rev-parse --git-dir > /dev/null 2>&1; then
         log "ERROR" "Not in a git repository"
         exit 1
     fi
-    
+
     # Check if working directory is clean
     if [ -n "$(git status --porcelain)" ]; then
         log "WARNING" "Working directory is not clean"
@@ -82,25 +82,25 @@ check_prerequisites() {
             exit 1
         fi
     fi
-    
+
     log "SUCCESS" "Prerequisites check passed"
 }
 
 # Create backup
 create_backup() {
     log "SECTION" "💾 Creating Backup"
-    
+
     local backup_dir="$PROJECT_ROOT/backups/$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$backup_dir"
-    
+
     # Backup current configuration
     cp -r "$PROJECT_ROOT/lib/documentation" "$backup_dir/"
     cp -r "$PROJECT_ROOT/config" "$backup_dir/"
-    
+
     # Create git tag for rollback
     local tag_name="backup_$(date +%Y%m%d_%H%M%S)"
     git tag "$tag_name"
-    
+
     log "SUCCESS" "Backup created at $backup_dir"
     log "INFO" "Git tag created: $tag_name"
 }
@@ -109,13 +109,13 @@ create_backup() {
 enable_feature_flags() {
     local rollout_percentage=${1:-100}
     local target_groups=${2:-""}
-    
+
     log "SECTION" "🚀 Enabling Feature Flags"
-    
+
     # Enable fragment redirects first
     log "INFO" "Enabling fragment redirects..."
     bun "$FEATURE_FLAG_MANAGER" --enable fragment-redirects
-    
+
     # Enable direct URLs with specified rollout
     log "INFO" "Enabling direct URLs ($rollout_percentage% rollout)..."
     if [ -n "$target_groups" ]; then
@@ -123,33 +123,33 @@ enable_feature_flags() {
     else
         bun "$FEATURE_FLAG_MANAGER" --enable direct-urls-enabled
     fi
-    
+
     log "SUCCESS" "Feature flags enabled"
 }
 
 # Canary deployment
 canary_deployment() {
     log "SECTION" "🐤 Canary Deployment"
-    
+
     log "INFO" "Starting canary deployment to 5% of users..."
     bun "$FEATURE_FLAG_MANAGER" --enable direct-urls-enabled --canary
-    
+
     log "INFO" "Canary deployment initiated"
     log "INFO" "Monitoring for 30 minutes..."
-    
+
     # Wait for monitoring period
     sleep 30
-    
+
     log "SUCCESS" "Canary deployment completed"
 }
 
 # A/B testing
 ab_testing() {
     log "SECTION" "🧪 Starting A/B Testing"
-    
+
     log "INFO" "Creating A/B test for URL structures..."
     bun "$FEATURE_FLAG_MANAGER" --ab-test
-    
+
     log "SUCCESS" "A/B test started (14 days duration)"
     log "INFO" "Users will be split 50/50 between direct and fragment URLs"
 }
@@ -157,16 +157,16 @@ ab_testing() {
 # Monitor deployment
 monitor_deployment() {
     log "SECTION" "📊 Monitoring Deployment"
-    
+
     log "INFO" "Starting real-time monitoring..."
     bun "$FEATURE_FLAG_MANAGER" --monitor &
     MONITOR_PID=$!
-    
+
     # Trap to kill monitor on exit
     trap 'kill $MONITOR_PID 2>/dev/null || true' EXIT
-    
+
     log "INFO" "Monitoring started (Press Ctrl+C to stop)"
-    
+
     # Wait for user interrupt
     while true; do
         sleep 1
@@ -176,7 +176,7 @@ monitor_deployment() {
 # Rollback deployment
 rollback_deployment() {
     log "SECTION" "🔄 Rolling Back Deployment"
-    
+
     log "WARNING" "This will disable all new URL structure features"
     read -p "Are you sure you want to rollback? (y/N): " -n 1 -r
     echo
@@ -184,9 +184,9 @@ rollback_deployment() {
         log "INFO" "Rollback cancelled"
         return
     fi
-    
+
     bun "$FEATURE_FLAG_MANAGER" --rollback
-    
+
     log "SUCCESS" "Rollback completed"
     log "INFO" "System reverted to fragment-based URLs"
 }
@@ -194,9 +194,9 @@ rollback_deployment() {
 # Generate deployment report
 generate_report() {
     log "SECTION" "📋 Generating Deployment Report"
-    
+
     local report_file="$PROJECT_ROOT/logs/deployment_report_$(date +%Y%m%d_%H%M%S).md"
-    
+
     cat > "$report_file" << EOF
 # URL Structure Migration Deployment Report
 
@@ -264,13 +264,13 @@ show_usage() {
 # Full deployment pipeline
 full_deployment() {
     log "SECTION" "🚀 Full Deployment Pipeline"
-    
+
     check_prerequisites
     create_backup
     canary_deployment
     ab_testing
     generate_report
-    
+
     log "SUCCESS" "Full deployment pipeline completed"
     log "INFO" "Monitor the deployment with: $0 monitor"
 }
@@ -278,7 +278,7 @@ full_deployment() {
 # Main execution
 main() {
     local command=${1:-"help"}
-    
+
     case $command in
         "check")
             check_prerequisites

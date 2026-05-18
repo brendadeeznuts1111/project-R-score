@@ -16,7 +16,7 @@ function wiki-list {
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     try {
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" templates $args
     } catch {
@@ -30,7 +30,7 @@ function wiki-register {
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     try {
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $args
     } catch {
@@ -43,54 +43,54 @@ function wiki-generate {
     param(
         [Parameter(Mandatory=$false)]
         [string]$Format = "markdown",
-        
+
         [string]$BaseUrl,
-        
+
         [string]$Workspace,
-        
+
         [string]$Template
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     if ($Format -and -not (Test-SafeString -Input $Format -Pattern '^[a-zA-Z0-9_-]+$')) {
         throw "Invalid format: $Format"
     }
-    
+
     if ($BaseUrl -and -not (Test-SafeString -Input $BaseUrl -Pattern '^https?://[\w\.-]+')) {
         throw "Invalid base URL: $BaseUrl"
     }
-    
+
     if ($Workspace -and -not (Test-SafeString -Input $Workspace)) {
         throw "Invalid workspace: $Workspace"
     }
-    
+
     if ($Template -and -not (Test-SafeString -Input $Template)) {
         throw "Invalid template: $Template"
     }
-    
+
     try {
         $cliArgs = @("generate")
-        
+
         if ($Format) {
             $cliArgs += "--format", $Format
         }
-        
+
         if ($BaseUrl) {
             $cliArgs += "--base-url", $BaseUrl
         }
-        
+
         if ($Workspace) {
             $cliArgs += "--workspace", $Workspace
         }
-        
+
         if ($Template) {
             $cliArgs += "--template", $Template
         }
-        
+
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
     } catch {
         Write-Warning "Failed to generate wiki content: $_"
@@ -103,16 +103,16 @@ function wiki-score {
         [Parameter(Mandatory=$false)]
         [string]$Template
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     if ($Template -and -not (Test-SafeString -Input $Template)) {
         throw "Invalid template name: $Template"
     }
-    
+
     try {
         if ($Template) {
             bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Template
@@ -131,16 +131,16 @@ function wiki-history {
     param(
         [int]$Limit = 10
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     if ($Limit -lt 1 -or $Limit -gt 1000) {
         throw "Limit must be between 1 and 1000"
     }
-    
+
     try {
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" history $Limit
     } catch {
@@ -153,16 +153,16 @@ function wiki-factorywager {
     param(
         [string]$Context = "default"
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     if ($Context -and -not (Test-SafeString -Input $Context -Pattern '^[a-zA-Z0-9._-]+$')) {
         throw "Invalid context: $Context"
     }
-    
+
     try {
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" factorywager $Context
     } catch {
@@ -176,16 +176,16 @@ function wiki-template {
         [Parameter(Mandatory=$true)]
         [string]$Name
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
         throw "Invalid WIKI_ROOT environment variable"
     }
-    
+
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid template name: $Name"
     }
-    
+
     try {
         bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Name
     } catch {
@@ -201,12 +201,12 @@ function wiki-gen-md {
         [string]$BaseUrl,
         [string]$Workspace
     )
-    
+
     $cliArgs = @("generate", "--format", "markdown")
-    
+
     if ($BaseUrl) { $cliArgs += "--base-url", $BaseUrl }
     if ($Workspace) { $cliArgs += "--workspace", $Workspace }
-    
+
     bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
 }
 
@@ -216,12 +216,12 @@ function wiki-gen-html {
         [string]$BaseUrl,
         [string]$Workspace
     )
-    
+
     $cliArgs = @("generate", "--format", "html")
-    
+
     if ($BaseUrl) { $cliArgs += "--base-url", $BaseUrl }
     if ($Workspace) { $cliArgs += "--workspace", $Workspace }
-    
+
     bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
 }
 
@@ -231,12 +231,12 @@ function wiki-gen-all {
         [string]$BaseUrl,
         [string]$Workspace
     )
-    
+
     $cliArgs = @("generate", "--format", "all")
-    
+
     if ($BaseUrl) { $cliArgs += "--base-url", $BaseUrl }
     if ($Workspace) { $cliArgs += "--workspace", $Workspace }
-    
+
     bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
 }
 
@@ -246,10 +246,10 @@ function wiki-bench {
         [int]$Concurrent = 10,
         [switch]$Verbose
     )
-    
+
     $cliArgs = @("benchmark", "--concurrent", $Concurrent)
     if ($Verbose) { $cliArgs += "--verbose" }
-    
+
     bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" $cliArgs
 }
 
@@ -266,7 +266,7 @@ function wiki-bench-heavy {
     param(
         [int]$Concurrent = 20
     )
-    
+
     Write-Host "Running heavy benchmark with $Concurrent concurrent operations" -ForegroundColor Magenta
     bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" benchmark --concurrent $Concurrent --verbose
 }
@@ -315,14 +315,14 @@ function wiki-create-template {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Provider = "CONFLUENCE",
-        
+
         [string]$Workspace = "wiki/workspace"
     )
-    
+
     Write-Host "Creating template: $Name" -ForegroundColor Yellow
-    
+
     # Set environment variables for interactive registration
     $env:WIKI_TEMPLATE_NAME = $Name
     $env:WIKI_TEMPLATE_PROVIDER = $Provider
@@ -332,9 +332,9 @@ function wiki-create-template {
     $env:WIKI_TEMPLATE_CATEGORY = "custom"
     $env:WIKI_TEMPLATE_PRIORITY = "medium"
     $env:WIKI_TEMPLATE_TAGS = "cli, generated, $Name"
-    
+
     bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" register
-    
+
     # Clean up environment variables
     Remove-Item Env:WIKI_TEMPLATE_NAME -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_PROVIDER -ErrorAction SilentlyContinue
@@ -344,7 +344,7 @@ function wiki-create-template {
     Remove-Item Env:WIKI_TEMPLATE_CATEGORY -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_PRIORITY -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_TAGS -ErrorAction SilentlyContinue
-    
+
     Write-Host "Template '$Name' created successfully!" -ForegroundColor Green
 }
 
@@ -353,7 +353,7 @@ function wiki-generate-all-templates {
     Write-Host "Generating content for all templates..." -ForegroundColor Blue
     $outputDir = "./wiki-batch-output-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
     New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-    
+
     # Get list of templates (simplified for PowerShell)
     $templates = @()
     try {
@@ -368,18 +368,18 @@ function wiki-generate-all-templates {
     } catch {
         Write-Host "Could not retrieve template list" -ForegroundColor Yellow
     }
-    
+
     foreach ($template in $templates) {
         Write-Host "Processing: $template" -ForegroundColor Cyan
         wiki-gen-md $template "$outputDir/$($template.Replace(' ', '_')).md"
     }
-    
+
     Write-Host "Batch generation complete! Output in: $outputDir" -ForegroundColor Green
 }
 
 function wiki-score-all-templates {
     Write-Host "Scoring all templates..." -ForegroundColor Blue
-    
+
     $templates = @()
     try {
         $output = bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" list 2>$null
@@ -393,7 +393,7 @@ function wiki-score-all-templates {
     } catch {
         Write-Host "Could not retrieve template list" -ForegroundColor Yellow
     }
-    
+
     foreach ($template in $templates) {
         Write-Host "Scoring: $template" -ForegroundColor Cyan
         wiki-score $template
@@ -405,7 +405,7 @@ function wiki-score-all-templates {
 function wiki-status {
     Write-Host "=== Wiki Template System Status ===" -ForegroundColor Magenta
     Write-Host ""
-    
+
     Write-Host "Template Count:" -ForegroundColor Yellow
     try {
         $count = (wiki-list | Select-String "Template" | Measure-Object).Count
@@ -413,43 +413,43 @@ function wiki-status {
     } catch {
         Write-Host "0"
     }
-    
+
     Write-Host "Cache Status:" -ForegroundColor Yellow
     try {
         wiki-analytics | Select-String -Context 0,5 "Cache Statistics"
     } catch {
         Write-Host "Unable to retrieve cache status"
     }
-    
+
     Write-Host "Generator Status:" -ForegroundColor Yellow
     try {
         wiki-analytics | Select-String -Context 0,5 "Generator Statistics"
     } catch {
         Write-Host "Unable to retrieve generator status"
     }
-    
+
     Write-Host ""
 }
 
 function wiki-cleanup {
     Write-Host "Cleaning up wiki template system..." -ForegroundColor Yellow
     wiki-clear
-    
+
     # Clean up any test outputs (PowerShell equivalent)
-    Get-ChildItem -Path "$env:WIKI_ROOT" -Directory -Name "wiki-batch-output-*" | Where-Object { 
-        $_ -match 'wiki-batch-output-\d{8}-\d{6}' 
+    Get-ChildItem -Path "$env:WIKI_ROOT" -Directory -Name "wiki-batch-output-*" | Where-Object {
+        $_ -match 'wiki-batch-output-\d{8}-\d{6}'
     } | ForEach-Object {
         $dirPath = Join-Path "$env:WIKI_ROOT" $_
         if ((Get-Item $dirPath).CreationTime -lt (Get-Date).AddDays(-7)) {
             Remove-Item -Path $dirPath -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
-    
+
     # Clean up old generated files
     Get-ChildItem -Path "$env:WIKI_ROOT" -File -Name "*generated*.md" -ErrorAction SilentlyContinue | Where-Object {
         (Get-Item $_).CreationTime -lt (Get-Date).AddDays(-1)
     } | Remove-Item -Force -ErrorAction SilentlyContinue
-    
+
     Write-Host "Cleanup complete!" -ForegroundColor Green
 }
 
@@ -523,14 +523,14 @@ function wiki-create-template {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Provider = "CONFLUENCE",
-        
+
         [string]$Workspace = "wiki/workspace"
     )
-    
+
     Write-Host "Creating template: $Name" -ForegroundColor Yellow
-    
+
     # Set environment variables for interactive registration
     $env:WIKI_TEMPLATE_NAME = $Name
     $env:WIKI_TEMPLATE_PROVIDER = $Provider
@@ -540,9 +540,9 @@ function wiki-create-template {
     $env:WIKI_TEMPLATE_CATEGORY = "custom"
     $env:WIKI_TEMPLATE_PRIORITY = "medium"
     $env:WIKI_TEMPLATE_TAGS = "cli, generated, $Name"
-    
+
     bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" register
-    
+
     # Clean up environment variables
     Remove-Item Env:WIKI_TEMPLATE_NAME -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_PROVIDER -ErrorAction SilentlyContinue
@@ -552,7 +552,7 @@ function wiki-create-template {
     Remove-Item Env:WIKI_TEMPLATE_CATEGORY -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_PRIORITY -ErrorAction SilentlyContinue
     Remove-Item Env:WIKI_TEMPLATE_TAGS -ErrorAction SilentlyContinue
-    
+
     Write-Host "Template '$Name' created successfully!" -ForegroundColor Green
 }
 
@@ -561,7 +561,7 @@ function wiki-generate-all-templates {
     Write-Host "Generating content for all templates..." -ForegroundColor Blue
     $outputDir = "./wiki-batch-output-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
     New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-    
+
     # Get list of templates (simplified for PowerShell)
     $templates = @()
     try {
@@ -576,18 +576,18 @@ function wiki-generate-all-templates {
     } catch {
         Write-Host "Could not retrieve template list" -ForegroundColor Yellow
     }
-    
+
     foreach ($template in $templates) {
         Write-Host "Processing: $template" -ForegroundColor Cyan
         wiki-gen-md $template "$outputDir/$($template.Replace(' ', '_')).md"
     }
-    
+
     Write-Host "Batch generation complete! Output in: $outputDir" -ForegroundColor Green
 }
 
 function wiki-score-all-templates {
     Write-Host "Scoring all templates..." -ForegroundColor Blue
-    
+
     $templates = @()
     try {
         $output = bun run "$env:WIKI_ROOT/examples/wiki-template-cli.ts" list 2>$null
@@ -601,7 +601,7 @@ function wiki-score-all-templates {
     } catch {
         Write-Host "Could not retrieve template list" -ForegroundColor Yellow
     }
-    
+
     foreach ($template in $templates) {
         Write-Host "Scoring: $template" -ForegroundColor Cyan
         wiki-score $template
@@ -645,7 +645,7 @@ $script:CacheExpiry = 300 # 5 minutes
 
 function Get-WikiConfig {
     param([string]$Key)
-    
+
     # Check cache first
     if ($Key -and $script:ConfigCache.ContainsKey($Key)) {
         $cacheEntry = $script:ConfigCache[$Key]
@@ -656,14 +656,14 @@ function Get-WikiConfig {
             $script:ConfigCache.Remove($Key)
         }
     }
-    
+
     # Load from file if not in memory
     if (-not $script:WikiConfig.ContainsKey('_LoadedFromFile')) {
         Load-WikiConfigFromFile
     }
-    
+
     $script:PerformanceMetrics.CacheMisses++
-    
+
     if ($Key) {
         $value = $script:WikiConfig[$Key]
         # Cache the value
@@ -673,13 +673,13 @@ function Get-WikiConfig {
         }
         return $value
     }
-    
+
     return $script:WikiConfig.Clone()
 }
 
 function Load-WikiConfigFromFile {
     $configFile = Get-WikiConfig -Key 'ConfigFile'
-    
+
     if (Test-Path $configFile) {
         try {
             $fileConfig = Get-Content $configFile -Raw | ConvertFrom-Json
@@ -689,7 +689,7 @@ function Load-WikiConfigFromFile {
                 }
             }
             $script:WikiConfig['_LoadedFromFile'] = $true
-            
+
             if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
                 Write-Debug "Configuration loaded from file: $configFile"
             }
@@ -702,12 +702,12 @@ function Load-WikiConfigFromFile {
 function Save-WikiConfigToFile {
     $configFile = Get-WikiConfig -Key 'ConfigFile'
     $configDir = Split-Path $configFile -Parent
-    
+
     try {
         if (-not (Test-Path $configDir)) {
             New-Item -ItemType Directory -Path $configDir -Force | Out-Null
         }
-        
+
         # Create a copy without internal keys
         $configToSave = @{}
         foreach ($key in $script:WikiConfig.Keys) {
@@ -715,9 +715,9 @@ function Save-WikiConfigToFile {
                 $configToSave[$key] = $script:WikiConfig[$key]
             }
         }
-        
+
         $configToSave | ConvertTo-Json -Depth 10 | Set-Content -Path $configFile
-        
+
         if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
             Write-Debug "Configuration saved to file: $configFile"
         }
@@ -730,16 +730,16 @@ function Set-WikiConfig {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Key,
-        
+
         [Parameter(Mandatory=$true)]
         $Value
     )
-    
+
     # Check rate limiting
     if (-not (Test-RateLimit 'config-change')) {
         throw "Rate limit exceeded for configuration changes"
     }
-    
+
     # Validate configuration changes
     switch ($Key) {
         'ScriptTimeout' {
@@ -809,15 +809,15 @@ function Set-WikiConfig {
             throw "Unknown configuration key: $Key"
         }
     }
-    
+
     # Clear cache for this key
     if ($script:ConfigCache.ContainsKey($Key)) {
         $script:ConfigCache.Remove($Key)
     }
-    
+
     # Save to file
     Save-WikiConfigToFile
-    
+
     if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
         Write-Debug "Configuration updated: $Key = $Value"
     }
@@ -825,15 +825,15 @@ function Set-WikiConfig {
 
 function Test-RateLimit {
     param([string]$Operation = 'default')
-    
+
     $window = Get-WikiConfig -Key 'RateLimitWindow'
     $maxRequests = Get-WikiConfig -Key 'RateLimitMaxRequests'
     $now = (Get-Date)
-    
+
     # Clean old requests
     $cutoff = $now.AddSeconds(-$window)
     $script:RateLimitTracker.Requests = $script:RateLimitTracker.Requests | Where-Object { $_ -gt $cutoff }
-    
+
     # Check if we're at the limit
     if ($script:RateLimitTracker.Requests.Count -ge $maxRequests) {
         if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
@@ -841,7 +841,7 @@ function Test-RateLimit {
         }
         return $false
     }
-    
+
     # Add current request
     $script:RateLimitTracker.Requests += $now
     return $true
@@ -852,11 +852,11 @@ function Update-PerformanceMetrics {
         [string]$Operation,
         [double]$ExecutionTime = 0
     )
-    
+
     if (-not (Get-WikiConfig -Key 'PerformanceMetricsEnabled')) {
         return
     }
-    
+
     switch ($Operation) {
         'secret-operation' {
             $script:PerformanceMetrics.SecretOperations++
@@ -872,7 +872,7 @@ function Update-PerformanceMetrics {
             $script:PerformanceMetrics.CacheMisses++
         }
     }
-    
+
     if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
         Write-Debug "Performance metrics updated: $Operation ($ExecutionTime ms)"
     }
@@ -891,7 +891,7 @@ function Reset-PerformanceMetrics {
         TotalExecutionTime = 0
         LastReset = (Get-Date)
     }
-    
+
     if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
         Write-Debug "Performance metrics reset"
     }
@@ -901,14 +901,14 @@ function Write-DebugLog {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Message,
-        
+
         [string]$Component = "WikiSystem"
     )
-    
+
     if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
         $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
         Write-Debug "[$timestamp][$Component] $Message"
-        
+
         # Also write to debug log file if WIKI_DEBUG_LOG is set
         if ($env:WIKI_DEBUG_LOG) {
             $logEntry = "[$timestamp][$Component] $Message"
@@ -922,17 +922,17 @@ function Test-SafeString {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Input,
-        
+
         [string]$Pattern = '^[a-zA-Z0-9._-]+$',
-        
+
         [int]$MaxLength = 0
     )
-    
+
     # Use configured max length if not specified
     if ($MaxLength -eq 0) {
         $MaxLength = Get-WikiConfig -Key 'MaxStringLength'
     }
-    
+
     return $Input -match $Pattern -and $Input.Length -gt 0 -and $Input.Length -le $MaxLength
 }
 
@@ -941,7 +941,7 @@ function Test-SafeHexString {
         [Parameter(Mandatory=$true)]
         [string]$HexColor
     )
-    
+
     return $HexColor -match '^#[0-9a-fA-F]{6}$'
 }
 
@@ -950,7 +950,7 @@ function Test-SafeServiceName {
         [Parameter(Mandatory=$true)]
         [string]$ServiceName
     )
-    
+
     $maxLength = Get-WikiConfig -Key 'MaxStringLength'
     return $ServiceName -match '^[a-zA-Z0-9._-]+$' -and $ServiceName.Length -le $maxLength
 }
@@ -960,41 +960,41 @@ function Invoke-SecureBunScript {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Script,
-        
+
         [hashtable]$Env = @{},
-        
+
         [string]$Timeout = ""
     )
-    
+
     # Use configured timeout if not specified
     if (-not $Timeout) {
         $timeoutSeconds = Get-WikiConfig -Key 'ScriptTimeout'
         $Timeout = "$timeoutSeconds"
     }
-    
+
     $tempFile = [System.IO.Path]::GetTempFileName()
     try {
         # Write script to temporary file
         $Script | Out-File -FilePath $tempFile -Encoding UTF8
-        
+
         # Execute with proper error handling
         $process = Start-Process -FilePath "bun" -ArgumentList @("run", $tempFile) -NoNewWindow -PassThru -RedirectStandardOutput "$tempFile.out" -RedirectStandardError "$tempFile.err"
-        
+
         # Wait for completion with timeout
         $timeoutMs = [int]$Timeout * 1000
         if (-not $process.WaitForExit($timeoutMs)) {
             $process.Kill()
             throw "Script execution timed out after $Timeout seconds"
         }
-        
+
         # Read output
         $output = Get-Content "$tempFile.out" -Raw
         $error = Get-Content "$tempFile.err" -Raw
-        
+
         if ($process.ExitCode -ne 0) {
             throw "Bun script failed with exit code $($process.ExitCode): $error"
         }
-        
+
         return $output.Trim()
     } catch {
         Write-Warning "Bun script execution failed: $_"
@@ -1012,31 +1012,31 @@ function Set-WikiSecretTransaction {
     param(
         [Parameter(Mandatory=$true)]
         [hashtable]$Secrets,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     $stored = @()
     $auditLog = @()
-    
+
     try {
         foreach ($secret in $Secrets.GetEnumerator()) {
             $secretName = $secret.Key
             $secretValue = $secret.Value
-            
+
             # Validate inputs
             if (-not (Test-SafeString -Input $secretName)) {
                 throw "Invalid secret name: $secretName"
             }
-            
+
             if (-not (Test-SafeString -Input $secretValue -Pattern '^[\w\-\./=+]+$')) {
                 throw "Invalid secret value format for: $secretName"
             }
-            
+
             if (-not (Test-SafeServiceName -ServiceName $Service)) {
                 throw "Invalid service name: $Service"
             }
-            
+
             # Attempt to store secret using direct function to avoid circular reference
             if (Set-WikiSecretDirect -Name $secretName -Value $secretValue -Service $Service) {
                 $stored += $secretName
@@ -1051,11 +1051,11 @@ function Set-WikiSecretTransaction {
                 throw "Failed to store secret: $secretName"
             }
         }
-        
+
         # Log successful transaction
         Write-AuditLog -Entries $auditLog
         return $true
-        
+
     } catch {
         # Rollback on failure
         Write-Warning "Transaction failed, rolling back stored secrets..."
@@ -1073,7 +1073,7 @@ function Set-WikiSecretTransaction {
                 Write-Warning "Failed to rollback secret: $key"
             }
         }
-        
+
         # Log failed transaction
         $auditLog += @{
             Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
@@ -1093,28 +1093,28 @@ function Write-AuditLog {
         [Parameter(Mandatory=$true)]
         [array]$Entries
     )
-    
+
     # Check if audit logging is enabled
     if (-not (Get-WikiConfig -Key 'AuditLogEnabled')) {
         return
     }
-    
+
     $logFile = Join-Path $env:WIKI_ROOT "logs/wiki-secrets-audit.log"
     $logDir = Split-Path $logFile -Parent
-    
+
     try {
         # Ensure log directory exists
         if (-not (Test-Path $logDir)) {
             New-Item -ItemType Directory -Path $logDir -Force -ErrorAction Stop | Out-Null
         }
-        
+
         foreach ($entry in $Entries) {
             $logEntry = "[$($entry.Timestamp)] $($entry.Action): Service='$($entry.Service)', Name='$($entry.Name)'"
             if ($entry.Error) {
                 $logEntry += ", Error='$($entry.Error)'"
             }
             $logEntry += ", Success=$($entry.Success)"
-            
+
             Add-Content -Path $logFile -Value $logEntry -Encoding UTF8 -ErrorAction Stop
         }
     } catch {
@@ -1128,18 +1128,18 @@ function Get-BunColor {
     param(
         [Parameter(Mandatory=$true)]
         [string]$HexColor,
-        
+
         [ValidateSet('ansi', 'rgb', 'hsl', 'hex')]
         [string]$Format = 'ansi',
-        
+
         [switch]$Background
     )
-    
+
     # Input validation
     if (-not (Test-SafeHexString -HexColor $HexColor)) {
         throw "Invalid hex color format: $HexColor. Expected format: #RRGGBB"
     }
-    
+
     if ($HexColor -eq 'reset') {
         # Special case for reset color
         $script = "console.log(Bun.color('reset', 'ansi') || '');"
@@ -1148,7 +1148,7 @@ function Get-BunColor {
         $bgParam = if ($Background) { ", 'background'" } else { "" }
         $script = "const color = Bun.color('$HexColor', '$Format'$bgParam); console.log(color || '');"
     }
-    
+
     try {
         $result = Invoke-SecureBunScript -Script $script
         return $result
@@ -1162,26 +1162,26 @@ function Write-BunColor {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Text,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$HexColor,
-        
+
         [switch]$Background
     )
-    
+
     # Validate inputs
     if (-not $Text) {
         throw "Text parameter cannot be empty"
     }
-    
+
     if (-not (Test-SafeHexString -HexColor $HexColor)) {
         throw "Invalid hex color format: $HexColor"
     }
-    
+
     try {
         $ansiColor = Get-BunColor -HexColor $HexColor -Format 'ansi' -Background:$Background
         $reset = Get-BunColor -HexColor 'reset' -Format 'ansi'
-        
+
         if ($ansiColor -and $reset) {
             # Use Bun's ANSI color codes
             Write-Host ($ansiColor + $Text + $reset) -NoNewline
@@ -1201,7 +1201,7 @@ function Write-BunColorFallback {
         [string]$Text,
         [string]$HexColor
     )
-    
+
     $psColor = switch ($HexColor) {
         '#3b82f6' { 'Blue' }
         '#22c55e' { 'Green' }
@@ -1222,10 +1222,10 @@ function wiki-theme-enhanced {
         [ValidateSet('factorywager', 'dark', 'light', 'auto')]
         [string]$Theme = 'factorywager'
     )
-    
+
     try {
         $env:WIKI_THEME = $Theme
-        
+
         # Theme definitions with hex colors for Bun.color
         $themes = @{
             'factorywager' = @{
@@ -1253,12 +1253,12 @@ function wiki-theme-enhanced {
                 accent = '#0891b2'
             }
         }
-        
+
         $selectedTheme = $themes[$Theme]
         if (-not $selectedTheme) {
             throw "Unknown theme: $Theme"
         }
-        
+
         # Atomically update environment variables
         $originalEnv = @{
             WIKI_COLOR_PRIMARY = $env:WIKI_COLOR_PRIMARY
@@ -1268,7 +1268,7 @@ function wiki-theme-enhanced {
             WIKI_COLOR_MUTED = $env:WIKI_COLOR_MUTED
             WIKI_COLOR_ACCENT = $env:WIKI_COLOR_ACCENT
         }
-        
+
         try {
             # Store colors for Bun.color usage with validation
             $env:WIKI_COLOR_PRIMARY = $selectedTheme.primary ?? '#3b82f6'
@@ -1277,7 +1277,7 @@ function wiki-theme-enhanced {
             $env:WIKI_COLOR_ERROR = $selectedTheme.error ?? '#ef4444'
             $env:WIKI_COLOR_MUTED = $selectedTheme.muted ?? '#6b7280'
             $env:WIKI_COLOR_ACCENT = $selectedTheme.accent ?? '#06b6d4'
-            
+
             Write-BunColor "🎨 Applied $Theme theme (using Bun.color HSL)" $selectedTheme.accent
         } catch {
             # Rollback on failure
@@ -1302,44 +1302,44 @@ function Set-WikiSecretDirect {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$Value,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     # Check rate limiting
     if (-not (Test-RateLimit 'secret-operation')) {
         throw "Rate limit exceeded for secret operations"
     }
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
     }
-    
+
     if (-not (Test-SafeString -Input $Value -Pattern '^[\w\-\./=+]+$')) {
         throw "Invalid secret value format for: $Name"
     }
-    
+
     if (-not (Test-SafeServiceName -ServiceName $Service)) {
         throw "Invalid service name: $Service"
     }
-    
+
     $startTime = (Get-Date)
-    
+
     try {
         Write-DebugLog -Message "Setting secret: $Name in service: $Service" -Component "SecretOperations"
-        
+
         # Escape the value for JavaScript string literal
         $escapedValue = $Value -replace "'", "\'" -replace '`', '\`'
         $script = "await Bun.secrets.set({ service: '$Service', name: '$Name' }, '$escapedValue'); console.log('Secret stored successfully');"
         $result = Invoke-SecureBunScript -Script $script
-        
+
         $executionTime = ((Get-Date) - $startTime).TotalMilliseconds
         Update-PerformanceMetrics -Operation 'secret-operation' -ExecutionTime $executionTime
-        
+
         if ($result -eq "Secret stored successfully") {
             Write-DebugLog -Message "Secret stored successfully: $Name" -Component "SecretOperations"
             return $true
@@ -1357,35 +1357,35 @@ function Remove-WikiSecretDirect {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     # Check rate limiting
     if (-not (Test-RateLimit 'secret-operation')) {
         throw "Rate limit exceeded for secret operations"
     }
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
     }
-    
+
     if (-not (Test-SafeServiceName -ServiceName $Service)) {
         throw "Invalid service name: $Service"
     }
-    
+
     $startTime = (Get-Date)
-    
+
     try {
         Write-DebugLog -Message "Deleting secret: $Name from service: $Service" -Component "SecretOperations"
-        
+
         $script = "const deleted = await Bun.secrets.delete({ service: '$Service', name: '$Name' }); console.log(deleted ? 'Secret deleted' : 'Secret not found');"
         $result = Invoke-SecureBunScript -Script $script
-        
+
         $executionTime = ((Get-Date) - $startTime).TotalMilliseconds
         Update-PerformanceMetrics -Operation 'secret-operation' -ExecutionTime $executionTime
-        
+
         if ($result -eq "Secret deleted") {
             Write-DebugLog -Message "Secret deleted successfully: $Name" -Component "SecretOperations"
             return $true
@@ -1405,29 +1405,29 @@ function Rotate-WikiSecret {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Service = "com.factorywager.wiki",
-        
+
         [int]$Length = 32,
-        
+
         [ValidateSet('alphanumeric', 'hex', 'base64')]
         [string]$Type = 'alphanumeric'
     )
-    
+
     # Check rate limiting
     if (-not (Test-RateLimit 'secret-rotation')) {
         throw "Rate limit exceeded for secret rotation operations"
     }
-    
+
     Write-DebugLog -Message "Starting secret rotation for: $Name" -Component "SecretRotation"
-    
+
     try {
         # Get current secret
         $currentSecret = Get-WikiSecret -Name $Name -Service $Service
-        
+
         # Generate new secret
         $newSecret = New-RandomSecret -Length $Length -Type $Type
-        
+
         # Store the new secret
         if (Set-WikiSecretDirect -Name $Name -Value $newSecret -Service $Service) {
             # Log the rotation (without exposing the actual secrets)
@@ -1438,10 +1438,10 @@ function Rotate-WikiSecret {
                 Name = $Name
                 Success = $true
             })
-            
+
             Write-DebugLog -Message "Secret rotation completed successfully: $Name" -Component "SecretRotation"
             Write-Host "Secret '$Name' has been rotated successfully" -ForegroundColor Green
-            
+
             return @{
                 OldSecretLength = if ($currentSecret) { $currentSecret.Length } else { 0 }
                 NewSecretLength = $newSecret.Length
@@ -1453,7 +1453,7 @@ function Rotate-WikiSecret {
     } catch {
         Write-Warning "Failed to rotate secret '$Name': $_"
         Write-DebugLog -Message "Secret rotation failed: $Name - Error: $_" -Component "SecretRotation"
-        
+
         # Log failed rotation attempt
         Write-AuditLog -Entries @(@{
             Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
@@ -1463,7 +1463,7 @@ function Rotate-WikiSecret {
             Success = $false
             Error = $_.Exception.Message
         })
-        
+
         throw
     }
 }
@@ -1471,11 +1471,11 @@ function Rotate-WikiSecret {
 function New-RandomSecret {
     param(
         [int]$Length = 32,
-        
+
         [ValidateSet('alphanumeric', 'hex', 'base64')]
         [string]$Type = 'alphanumeric'
     )
-    
+
     switch ($Type) {
         'alphanumeric' {
             $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -1490,7 +1490,7 @@ function New-RandomSecret {
             $secret = [System.Convert]::ToBase64String($bytes)
         }
     }
-    
+
     Write-DebugLog -Message "Generated new secret of type '$Type' with length $Length" -Component "SecretGeneration"
     return $secret
 }
@@ -1498,19 +1498,19 @@ function New-RandomSecret {
 function Get-WikiSecretRotationHistory {
     param(
         [string]$Service = "com.factorywager.wiki",
-        
+
         [int]$Days = 30
     )
-    
+
     $logFile = Join-Path $env:WIKI_ROOT "logs/wiki-secrets-audit.log"
-    
+
     if (-not (Test-Path $logFile)) {
         return @()
     }
-    
+
     $cutoffDate = (Get-Date).AddDays(-$Days)
     $rotations = @()
-    
+
     try {
         $logContent = Get-Content $logFile
         foreach ($line in $logContent) {
@@ -1528,7 +1528,7 @@ function Get-WikiSecretRotationHistory {
     } catch {
         Write-Warning "Failed to read rotation history: $_"
     }
-    
+
     return $rotations | Sort-Object Timestamp -Descending
 }
 
@@ -1537,19 +1537,19 @@ function Get-WikiSecret {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
     }
-    
+
     if (-not (Test-SafeServiceName -ServiceName $Service)) {
         throw "Invalid service name: $Service"
     }
-    
+
     try {
         $script = "const secret = await Bun.secrets.get({ service: '$Service', name: '$Name' }); console.log(secret || '');"
         $result = Invoke-SecureBunScript -Script $script
@@ -1564,32 +1564,32 @@ function Set-WikiSecret {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$Value,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
     }
-    
+
     if (-not (Test-SafeString -Input $Value -Pattern '^[\w\-\./=+]+$')) {
         throw "Invalid secret value format for: $Name"
     }
-    
+
     if (-not (Test-SafeServiceName -ServiceName $Service)) {
         throw "Invalid service name: $Service"
     }
-    
+
     try {
         # Escape the value for JavaScript string literal
         $escapedValue = $Value -replace "'", "\'" -replace '`', '\`'
         $script = "await Bun.secrets.set({ service: '$Service', name: '$Name' }, '$escapedValue'); console.log('Secret stored successfully');"
         $result = Invoke-SecureBunScript -Script $script
-        
+
         # Log the operation
         Write-AuditLog -Entries @(@{
             Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
@@ -1598,7 +1598,7 @@ function Set-WikiSecret {
             Name = $Name
             Success = $true
         })
-        
+
         return $result -eq "Secret stored successfully"
     } catch {
         # Log failed operation
@@ -1610,7 +1610,7 @@ function Set-WikiSecret {
             Error = $_.ToString()
             Success = $false
         })
-        
+
         Write-Warning "Failed to store secret '$Name' in service '$Service': $_"
         return $false
     }
@@ -1620,25 +1620,25 @@ function Remove-WikiSecret {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Service = "com.factorywager.wiki"
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
     }
-    
+
     if (-not (Test-SafeServiceName -ServiceName $Service)) {
         throw "Invalid service name: $Service"
     }
-    
+
     try {
         $script = "const deleted = await Bun.secrets.delete({ service: '$Service', name: '$Name' }); console.log(deleted ? 'Secret deleted' : 'Secret not found');"
         $result = Invoke-SecureBunScript -Script $script
-        
+
         $success = $result -eq "Secret deleted"
-        
+
         # Log the operation
         Write-AuditLog -Entries @(@{
             Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
@@ -1647,7 +1647,7 @@ function Remove-WikiSecret {
             Name = $Name
             Success = $success
         })
-        
+
         return $success
     } catch {
         # Log failed operation
@@ -1659,7 +1659,7 @@ function Remove-WikiSecret {
             Error = $_.ToString()
             Success = $false
         })
-        
+
         Write-Warning "Failed to delete secret '$Name' from service '$Service': $_"
         return $false
     }
@@ -1671,7 +1671,7 @@ function wiki-theme-secure {
         [ValidateSet('factorywager', 'dark', 'light', 'auto')]
         [string]$Theme = 'factorywager'
     )
-    
+
     try {
         # Store theme preference securely using Bun Secrets
         if (Set-WikiSecret -Name "selected-theme" -Value $Theme) {
@@ -1690,7 +1690,7 @@ function wiki-theme-load {
     # Load theme preference from Bun Secrets
     try {
         $savedTheme = Get-WikiSecret -Name "selected-theme"
-        
+
         if ($savedTheme -and $savedTheme -in @('factorywager', 'dark', 'light', 'auto')) {
             wiki-theme-enhanced $savedTheme
             Write-BunColor "🔓 Loaded saved theme: $savedTheme" $env:WIKI_COLOR_ACCENT
@@ -1710,15 +1710,15 @@ function wiki-preferences-set {
         [Parameter(Mandatory=$true)]
         [hashtable]$Preferences
     )
-    
+
     if (-not $Preferences -or $Preferences.Count -eq 0) {
         throw "Preferences hashtable cannot be empty"
     }
-    
+
     try {
         # Use transaction pattern for atomic preference storage
         $success = Set-WikiSecretTransaction -Secrets $Preferences
-        
+
         if ($success) {
             Write-BunColor "✅ All preferences stored successfully" $env:WIKI_COLOR_SUCCESS
         } else {
@@ -1733,14 +1733,14 @@ function wiki-preferences-get {
     # Get all stored preferences
     $preferenceKeys = @("default-format", "default-workspace", "auto-refresh", "notification-level")
     $preferences = @{}
-    
+
     foreach ($key in $preferenceKeys) {
         $value = Get-WikiSecret -Name "pref-$key"
         if ($value) {
             $preferences[$key] = $value
         }
     }
-    
+
     if ($preferences.Count -gt 0) {
         Write-BunColor "`n🔓 Stored Preferences:" $env:WIKI_COLOR_ACCENT
         foreach ($pref in $preferences.GetEnumerator()) {
@@ -1750,7 +1750,7 @@ function wiki-preferences-get {
     else {
         Write-BunColor "No stored preferences found" $env:WIKI_COLOR_WARNING
     }
-    
+
     return $preferences
 }
 
@@ -1759,38 +1759,38 @@ function wiki-credentials-set {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Provider,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$Username,
-        
+
         [Parameter(Mandatory=$true)]
         [string]$ApiToken
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Provider)) {
         throw "Invalid provider name: $Provider"
     }
-    
+
     if (-not (Test-SafeString -Input $Username)) {
         throw "Invalid username format"
     }
-    
+
     if (-not $ApiToken -or $ApiToken.Length -lt 10) {
         throw "Invalid API token format or length"
     }
-    
+
     $service = "com.factorywager.wiki.providers"
-    
+
     try {
         # Use transaction pattern for atomic credential storage
         $credentials = @{
             "$Provider-username" = $Username
             "$Provider-token" = $ApiToken
         }
-        
+
         $success = Set-WikiSecretTransaction -Secrets $credentials -Service $service
-        
+
         if ($success) {
             Write-BunColor "🔐 Credentials securely stored for $Provider" $env:WIKI_COLOR_SUCCESS
         } else {
@@ -1806,21 +1806,21 @@ function wiki-credentials-get {
         [Parameter(Mandatory=$true)]
         [string]$Provider
     )
-    
+
     # Input validation
     if (-not (Test-SafeString -Input $Provider)) {
         throw "Invalid provider name: $Provider"
     }
-    
+
     $service = "com.factorywager.wiki.providers"
-    
+
     try {
         $username = Get-WikiSecret -Service $service -Name "$Provider-username"
         $token = Get-WikiSecret -Service $service -Name "$Provider-token"
-        
+
         if ($username -and $token) {
             Write-BunColor "🔓 Retrieved credentials for $Provider" $env:WIKI_COLOR_SUCCESS
-            
+
             # Log credential access (without exposing sensitive data)
             Write-AuditLog -Entries @(@{
                 Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
@@ -1829,7 +1829,7 @@ function wiki-credentials-get {
                 Name = "$Provider-credentials"
                 Success = $true
             })
-            
+
             return @{
                 Username = $username
                 ApiToken = $token
@@ -1846,17 +1846,17 @@ function wiki-credentials-get {
 
 function wiki-theme-preview {
     Write-Host "`n=== Wiki Theme Preview ===" -ForegroundColor Cyan
-    
+
     $primary = if ($env:WIKI_COLOR_PRIMARY) { $env:WIKI_COLOR_PRIMARY } else { '#3b82f6' }
     $success = if ($env:WIKI_COLOR_SUCCESS) { $env:WIKI_COLOR_SUCCESS } else { '#22c55e' }
     $warning = if ($env:WIKI_COLOR_WARNING) { $env:WIKI_COLOR_WARNING } else { '#f59e0b' }
     $error = if ($env:WIKI_COLOR_ERROR) { $env:WIKI_COLOR_ERROR } else { '#ef4444' }
-    
+
     Write-Host "Primary Color:   $primary" -ForegroundColor Blue
     Write-Host "Success Color:   $success" -ForegroundColor Green
     Write-Host "Warning Color:   $warning" -ForegroundColor Yellow
     Write-Host "Error Color:     $error" -ForegroundColor Red
-    
+
     Write-Host "`nSample Output:" -ForegroundColor White
     Write-Host "✅ Success message" -ForegroundColor Green
     Write-Host "⚠️ Warning message" -ForegroundColor Yellow
@@ -1878,7 +1878,7 @@ function wiki-theme-reset {
 # === System Management Functions ===
 function wiki-system-status {
     Write-Host "`n=== Wiki System Status ===" -ForegroundColor Cyan
-    
+
     # Configuration status
     Write-Host "`n📋 Configuration:" -ForegroundColor Yellow
     $config = Get-WikiConfig
@@ -1889,7 +1889,7 @@ function wiki-system-status {
     Write-Host "  Audit Logging: $(if ($config.AuditLogEnabled) { 'Enabled' } else { 'Disabled' })"
     Write-Host "  Performance Metrics: $(if ($config.PerformanceMetricsEnabled) { 'Enabled' } else { 'Disabled' })"
     Write-Host "  Debug Logging: $(if ($config.DebugLoggingEnabled) { 'Enabled' } else { 'Disabled' })"
-    
+
     # Performance metrics
     if ($config.PerformanceMetricsEnabled) {
         Write-Host "`n📊 Performance Metrics:" -ForegroundColor Yellow
@@ -1902,7 +1902,7 @@ function wiki-system-status {
         Write-Host "  Cache Hit Ratio: $(if ($metrics.CacheHits + $metrics.CacheMisses -gt 0) { [math]::Round(($metrics.CacheHits / ($metrics.CacheHits + $metrics.CacheMisses)) * 100, 2) } else { 0 })%"
         Write-Host "  Last Reset: $($metrics.LastReset)"
     }
-    
+
     # Rate limiting status
     Write-Host "`n🚦 Rate Limiting:" -ForegroundColor Yellow
     $rateLimitStatus = $script:RateLimitTracker
@@ -1912,13 +1912,13 @@ function wiki-system-status {
     Write-Host "  Current Window: Started at $windowStart"
     Write-Host "  Requests in Window: $requestCount / $maxRequests"
     Write-Host "  Window Size: $($config.RateLimitWindow) seconds"
-    
+
     if ($requestCount -ge $maxRequests) {
         Write-Host "  Status: ⚠️ Rate Limit Active" -ForegroundColor Red
     } else {
         Write-Host "  Status: ✅ Available" -ForegroundColor Green
     }
-    
+
     # Environment validation
     Write-Host "`n🔍 Environment Validation:" -ForegroundColor Yellow
     try {
@@ -1927,7 +1927,7 @@ function wiki-system-status {
     } catch {
         Write-Host "  WIKI_ROOT: ❌ Error - $_"
     }
-    
+
     # Audit log status
     if ($config.AuditLogEnabled) {
         $logFile = Join-Path $env:WIKI_ROOT "logs/wiki-secrets-audit.log"
@@ -1939,7 +1939,7 @@ function wiki-system-status {
             Write-Host "  Audit Log: ⚠️ Not created yet"
         }
     }
-    
+
     Write-Host ""
 }
 
@@ -1947,11 +1947,11 @@ function wiki-config-set {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Key,
-        
+
         [Parameter(Mandatory=$true)]
         $Value
     )
-    
+
     try {
         Set-WikiConfig -Key $Key -Value $Value
         Write-Host "✅ Configuration updated: $Key = $Value" -ForegroundColor Green
@@ -1962,7 +1962,7 @@ function wiki-config-set {
 
 function wiki-config-get {
     param([string]$Key)
-    
+
     try {
         if ($Key) {
             $value = Get-WikiConfig -Key $Key
@@ -2013,15 +2013,15 @@ function wiki-secret-rotate {
     param(
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        
+
         [string]$Service = "com.factorywager.wiki",
-        
+
         [int]$Length = 32,
-        
+
         [ValidateSet('alphanumeric', 'hex', 'base64')]
         [string]$Type = 'alphanumeric'
     )
-    
+
     try {
         $result = Rotate-WikiSecret -Name $Name -Service $Service -Length $Length -Type $Type
         Write-Host "🔄 Secret rotation completed:" -ForegroundColor Green
@@ -2037,13 +2037,13 @@ function wiki-secret-rotate {
 function wiki-secret-history {
     param(
         [string]$Service = "com.factorywager.wiki",
-        
+
         [int]$Days = 30
     )
-    
+
     try {
         $history = Get-WikiSecretRotationHistory -Service $Service -Days $Days
-        
+
         if ($history.Count -gt 0) {
             Write-Host "📜 Secret Rotation History (Last $Days days):" -ForegroundColor Yellow
             foreach ($entry in $history) {
@@ -2067,13 +2067,13 @@ if ($args[0] -ne "--silent") {
     Write-Host "Wiki Template System Shortcuts Loaded" -ForegroundColor Green
     Write-Host "Project Root: $env:WIKI_ROOT" -ForegroundColor Cyan
     Write-Host ""
-    
+
     # Show system status if debug logging is enabled
     if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
         Write-Host "🐛 Debug mode enabled" -ForegroundColor Yellow
         Write-DebugLog -Message "Wiki shortcuts loaded successfully" -Component "SystemStartup"
     }
-    
+
     # Show quick help
     Write-Host "Quick Commands:" -ForegroundColor White
     Write-Host "  wiki-system-status    Show system status and metrics"

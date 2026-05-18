@@ -89,7 +89,7 @@ When executing code, these variables are available:
 ```bash
 bunx @factorywager/playwriter-skill -s 1 -e "
   await page.goto('https://news.ycombinator.com');
-  const titles = await page.\$\$eval('.titleline > a', els => 
+  const titles = await page.\$\$eval('.titleline > a', els =>
     els.map(e => e.textContent)
   );
   console.log(titles.slice(0, 5));

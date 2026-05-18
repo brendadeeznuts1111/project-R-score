@@ -237,7 +237,7 @@ class StatusBadgesGenerator {
 </head>
 <body>
     <h1>🎨 FactoryWager Status Badges</h1>
-    
+
     <div class="badge-section">
         <h2>🏗️ Infrastructure</h2>
         <div class="badge-grid">
@@ -490,9 +490,9 @@ class StatusBadgesGenerator {
 // CLI usage
 if (require.main === module) {
     const generator = new StatusBadgesGenerator();
-    
+
     const command = process.argv[2];
-    
+
     switch (command) {
         case 'infrastructure':
             generator.generateInfrastructureBadges();

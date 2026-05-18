@@ -147,7 +147,7 @@ How the top 20 largest objects are kept alive (path from GC root to object):
 
 ```text
 InternalPromise#275 [ROOT] (32 B)
-    <root>#0 (0 B) -> 
+    <root>#0 (0 B) ->
         GlobalObject#1 [ROOT] (9.8 KB)
 ```
 
@@ -160,98 +160,98 @@ InternalPromise#275 [ROOT] (this object is a GC root)
 ### 4. Object #277 - `PromiseReaction` (83.1 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
     PromiseReaction#277 (48 B)
 ```
 
 ### 5. Object #336 - `InternalPromise` (82.8 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
         InternalPromise#336 (32 B)
 ```
 
 ### 6. Object #342 - `PromiseReaction` (82.7 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
             PromiseReaction#342 (48 B)
 ```
 
 ### 7. Object #376 - `PromiseCombinatorsGlobalContext` (67.1 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                PromiseReaction#348 (48 B) -> 
-                    Generator#351 (64 B) -> 
-                        InternalPromise#353 (32 B) -> 
-                            PromiseReaction#355 (48 B) -> 
-                                InternalPromise#373 (32 B) -> 
-                                    PromiseReaction#374 (48 B) -> 
-                                        PromiseCombinatorsContext#375 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                PromiseReaction#348 (48 B) ->
+                    Generator#351 (64 B) ->
+                        InternalPromise#353 (32 B) ->
+                            PromiseReaction#355 (48 B) ->
+                                InternalPromise#373 (32 B) ->
+                                    PromiseReaction#374 (48 B) ->
+                                        PromiseCombinatorsContext#375 (32 B) ->
                                             PromiseCombinatorsGlobalContext#376 (32 B)
 ```
 
 ### 8. Object #377 - `Array` (67.1 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                PromiseReaction#348 (48 B) -> 
-                    Generator#351 (64 B) -> 
-                        InternalPromise#353 (32 B) -> 
-                            PromiseReaction#355 (48 B) -> 
-                                InternalPromise#373 (32 B) -> 
-                                    PromiseReaction#374 (48 B) -> 
-                                        PromiseCombinatorsContext#375 (32 B) -> 
-                                            PromiseCombinatorsGlobalContext#376 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                PromiseReaction#348 (48 B) ->
+                    Generator#351 (64 B) ->
+                        InternalPromise#353 (32 B) ->
+                            PromiseReaction#355 (48 B) ->
+                                InternalPromise#373 (32 B) ->
+                                    PromiseReaction#374 (48 B) ->
+                                        PromiseCombinatorsContext#375 (32 B) ->
+                                            PromiseCombinatorsGlobalContext#376 (32 B) ->
                                                 Array#377 (16 B)
 ```
 
 ### 9. Object #514 - `Object` (13.4 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                PromiseReaction#348 (48 B) -> 
-                    Generator#351 (64 B) -> 
-                        InternalPromise#353 (32 B) -> 
-                            PromiseReaction#355 (48 B) -> 
-                                InternalPromise#373 (32 B) -> 
-                                    PromiseReaction#374 (48 B) -> 
-                                        PromiseCombinatorsContext#375 (32 B) -> 
-                                            PromiseCombinatorsGlobalContext#376 (32 B) -> 
-                                                Array#377 (16 B) .[8] -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                PromiseReaction#348 (48 B) ->
+                    Generator#351 (64 B) ->
+                        InternalPromise#353 (32 B) ->
+                            PromiseReaction#355 (48 B) ->
+                                InternalPromise#373 (32 B) ->
+                                    PromiseReaction#374 (48 B) ->
+                                        PromiseCombinatorsContext#375 (32 B) ->
+                                            PromiseCombinatorsGlobalContext#376 (32 B) ->
+                                                Array#377 (16 B) .[8] ->
                                                     Object#514 (160 B)
 ```
 
 ### 10. Object #515 - `ModuleRecord` (13.1 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                PromiseReaction#348 (48 B) -> 
-                    Generator#351 (64 B) -> 
-                        InternalPromise#353 (32 B) -> 
-                            PromiseReaction#355 (48 B) -> 
-                                InternalPromise#373 (32 B) -> 
-                                    PromiseReaction#374 (48 B) -> 
-                                        PromiseCombinatorsContext#375 (32 B) -> 
-                                            PromiseCombinatorsGlobalContext#376 (32 B) -> 
-                                                Array#377 (16 B) .[8] -> 
-                                                    Object#514 (160 B) .module -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                PromiseReaction#348 (48 B) ->
+                    Generator#351 (64 B) ->
+                        InternalPromise#353 (32 B) ->
+                            PromiseReaction#355 (48 B) ->
+                                InternalPromise#373 (32 B) ->
+                                    PromiseReaction#374 (48 B) ->
+                                        PromiseCombinatorsContext#375 (32 B) ->
+                                            PromiseCombinatorsGlobalContext#376 (32 B) ->
+                                                Array#377 (16 B) .[8] ->
+                                                    Object#514 (160 B) .module ->
                                                         ModuleRecord#515 (13.0 KB)
 ```
 
@@ -264,135 +264,135 @@ InternalPromise#275 [ROOT] (32 B) ->
 ### 12. Object #394 - `JSLexicalEnvironment` (10.5 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
                     JSLexicalEnvironment#394 (64 B)
 ```
 
 ### 13. Object #395 - `InternalPromise` (10.5 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
                         InternalPromise#395 (32 B)
 ```
 
 ### 14. Object #396 - `PromiseReaction` (10.5 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
                             PromiseReaction#396 (48 B)
 ```
 
 ### 15. Object #397 - `Generator` (10.4 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
-                            PromiseReaction#396 (48 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
+                            PromiseReaction#396 (48 B) ->
                                 Generator#397 (64 B)
 ```
 
 ### 16. Object #398 - `InternalPromise` (10.2 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
-                            PromiseReaction#396 (48 B) -> 
-                                Generator#397 (64 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
+                            PromiseReaction#396 (48 B) ->
+                                Generator#397 (64 B) ->
                                     InternalPromise#398 (32 B)
 ```
 
 ### 17. Object #399 - `PromiseReaction` (10.2 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
-                            PromiseReaction#396 (48 B) -> 
-                                Generator#397 (64 B) -> 
-                                    InternalPromise#398 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
+                            PromiseReaction#396 (48 B) ->
+                                Generator#397 (64 B) ->
+                                    InternalPromise#398 (32 B) ->
                                         PromiseReaction#399 (48 B)
 ```
 
 ### 18. Object #403 - `InternalPromise` (10.0 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
-                            PromiseReaction#396 (48 B) -> 
-                                Generator#397 (64 B) -> 
-                                    InternalPromise#398 (32 B) -> 
-                                        PromiseReaction#399 (48 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
+                            PromiseReaction#396 (48 B) ->
+                                Generator#397 (64 B) ->
+                                    InternalPromise#398 (32 B) ->
+                                        PromiseReaction#399 (48 B) ->
                                             InternalPromise#403 (32 B)
 ```
 
 ### 19. Object #404 - `PromiseReaction` (10.0 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                Function#393 (32 B) -> 
-                    JSLexicalEnvironment#394 (64 B) .newPromise -> 
-                        InternalPromise#395 (32 B) -> 
-                            PromiseReaction#396 (48 B) -> 
-                                Generator#397 (64 B) -> 
-                                    InternalPromise#398 (32 B) -> 
-                                        PromiseReaction#399 (48 B) -> 
-                                            InternalPromise#403 (32 B) -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                Function#393 (32 B) ->
+                    JSLexicalEnvironment#394 (64 B) .newPromise ->
+                        InternalPromise#395 (32 B) ->
+                            PromiseReaction#396 (48 B) ->
+                                Generator#397 (64 B) ->
+                                    InternalPromise#398 (32 B) ->
+                                        PromiseReaction#399 (48 B) ->
+                                            InternalPromise#403 (32 B) ->
                                                 PromiseReaction#404 (48 B)
 ```
 
 ### 20. Object #583 - `Object` (9.9 KB retained)
 
 ```text
-InternalPromise#275 [ROOT] (32 B) -> 
-    PromiseReaction#277 (48 B) -> 
-        InternalPromise#336 (32 B) -> 
-            PromiseReaction#342 (48 B) -> 
-                PromiseReaction#348 (48 B) -> 
-                    Generator#351 (64 B) -> 
-                        InternalPromise#353 (32 B) -> 
-                            PromiseReaction#355 (48 B) -> 
-                                InternalPromise#373 (32 B) -> 
-                                    PromiseReaction#374 (48 B) -> 
-                                        PromiseCombinatorsContext#375 (32 B) -> 
-                                            PromiseCombinatorsGlobalContext#376 (32 B) -> 
-                                                Array#377 (16 B) .[1] -> 
+InternalPromise#275 [ROOT] (32 B) ->
+    PromiseReaction#277 (48 B) ->
+        InternalPromise#336 (32 B) ->
+            PromiseReaction#342 (48 B) ->
+                PromiseReaction#348 (48 B) ->
+                    Generator#351 (64 B) ->
+                        InternalPromise#353 (32 B) ->
+                            PromiseReaction#355 (48 B) ->
+                                InternalPromise#373 (32 B) ->
+                                    PromiseReaction#374 (48 B) ->
+                                        PromiseCombinatorsContext#375 (32 B) ->
+                                            PromiseCombinatorsGlobalContext#376 (32 B) ->
+                                                Array#377 (16 B) .[1] ->
                                                     Object#583 (160 B)
 ```
 

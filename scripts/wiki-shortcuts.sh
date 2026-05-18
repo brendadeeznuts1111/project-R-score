@@ -103,13 +103,13 @@ wiki-create-template() {
         echo "Usage: wiki-create-template <template-name> [provider] [workspace]"
         return 1
     fi
-    
+
     local name="$1"
     local provider="${2:-CONFLUENCE}"
     local workspace="${3:-wiki/workspace}"
-    
+
     echo -e "${YELLOW}Creating template: $name${NC}"
-    
+
     # Set environment variables for interactive registration
     export WIKI_TEMPLATE_NAME="$name"
     export WIKI_TEMPLATE_PROVIDER="$provider"
@@ -119,14 +119,14 @@ wiki-create-template() {
     export WIKI_TEMPLATE_CATEGORY="custom"
     export WIKI_TEMPLATE_PRIORITY="medium"
     export WIKI_TEMPLATE_TAGS="cli, generated, $name"
-    
+
     bun run "$WIKI_ROOT/examples/wiki-template-cli.ts" register
-    
+
     # Clean up environment variables
     unset WIKI_TEMPLATE_NAME WIKI_TEMPLATE_PROVIDER WIKI_TEMPLATE_WORKSPACE
     unset WIKI_TEMPLATE_DESCRIPTION WIKI_TEMPLATE_FORMAT WIKI_TEMPLATE_CATEGORY
     unset WIKI_TEMPLATE_PRIORITY WIKI_TEMPLATE_TAGS
-    
+
     echo -e "${GREEN}Template '$name' created successfully!${NC}"
 }
 
@@ -135,24 +135,24 @@ wiki-generate-all-templates() {
     echo -e "${BLUE}Generating content for all templates...${NC}"
     local output_dir="./wiki-batch-output-$(date +%Y%m%d-%H%M%S)"
     mkdir -p "$output_dir"
-    
+
     # Get list of templates and generate for each
     local templates=$(bun run "$WIKI_ROOT/examples/wiki-template-cli.ts" list 2>/dev/null | grep -E "^[A-Za-z]" | head -20)
-    
+
     while IFS= read -r template; do
         if [[ -n "$template" && "$template" != *"📋"* && "$template" != *"─"* ]]; then
             echo -e "${CYAN}Processing: $template${NC}"
             wiki-gen-md "$template" "$output_dir/${template// /_}.md"
         fi
     done <<< "$templates"
-    
+
     echo -e "${GREEN}Batch generation complete! Output in: $output_dir${NC}"
 }
 
 wiki-score-all-templates() {
     echo -e "${BLUE}Scoring all templates...${NC}"
     local templates=$(bun run "$WIKI_ROOT/examples/wiki-template-cli.ts" list 2>/dev/null | grep -E "^[A-Za-z]" | head -10)
-    
+
     while IFS= read -r template; do
         if [[ -n "$template" && "$template" != *"📋"* && "$template" != *"─"* ]]; then
             echo -e "${CYAN}Scoring: $template${NC}"
@@ -166,27 +166,27 @@ wiki-score-all-templates() {
 wiki-status() {
     echo -e "${PURPLE}=== Wiki Template System Status ===${NC}"
     echo ""
-    
+
     echo -e "${YELLOW}Template Count:${NC}"
     wiki-list | grep -c "Template" || echo "0"
-    
+
     echo -e "${YELLOW}Cache Status:${NC}"
     wiki-analytics | grep -A 5 "Cache Statistics"
-    
+
     echo -e "${YELLOW}Generator Status:${NC}"
     wiki-analytics | grep -A 5 "Generator Statistics"
-    
+
     echo ""
 }
 
 wiki-cleanup() {
     echo -e "${YELLOW}Cleaning up wiki template system...${NC}"
     wiki-clear
-    
+
     # Clean up any test outputs
     find "$WIKI_ROOT" -name "wiki-batch-output-*" -type d -mtime +7 -exec rm -rf {} + 2>/dev/null || true
     find "$WIKI_ROOT" -name "*.md" -name "*generated*" -mtime +1 -delete 2>/dev/null || true
-    
+
     echo -e "${GREEN}Cleanup complete!${NC}"
 }
 
@@ -242,7 +242,7 @@ wiki-help() {
 #     cur="${COMP_WORDS[COMP_CWORD]}"
 #     prev="${COMP_WORDS[COMP_CWORD-1]}"
 #     opts=$(bun run "$WIKI_ROOT/examples/wiki-template-cli.ts" list 2>/dev/null | grep -E "^[A-Za-z]" | head -20)
-#     
+#
 #     if [[ ${cur} == * ]] ; then
 #         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 #         return 0

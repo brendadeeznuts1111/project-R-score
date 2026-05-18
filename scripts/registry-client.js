@@ -18,7 +18,7 @@ class RegistryClient {
             cacheTTL: 300000, // 5 minutes
             ...config
         };
-        
+
         this.dnsChecker = new DNSHealthChecker();
         this.workingRegistries = [];
     }
@@ -59,7 +59,7 @@ class RegistryClient {
     async fetchWithFallback(url, options = {}) {
         const cacheKey = this.getCacheKey(url);
         const cached = this.getFromCache(cacheKey);
-        
+
         if (cached && !options.skipCache) {
             console.info(`📦 Cache hit for ${url}`);
             return cached;
@@ -74,16 +74,16 @@ class RegistryClient {
             }
 
             const fullUrl = url.startsWith('http') ? url : `${registry}${url}`;
-            
+
             try {
                 console.info(`🔄 Trying ${registry}...`);
-                
+
                 const response = await Promise.race([
                     fetch(fullUrl, {
                         ...options,
                         timeout: this.config.timeout
                     }),
-                    new Promise((_, reject) => 
+                    new Promise((_, reject) =>
                         setTimeout(() => reject(new Error('Request timeout')), this.config.timeout)
                     )
                 ]);
@@ -94,14 +94,14 @@ class RegistryClient {
 
                 const data = await response.json();
                 this.setCache(cacheKey, data);
-                
+
                 console.info(`✅ Success from ${registry}`);
                 return data;
 
             } catch (error) {
                 lastError = error;
                 console.info(`❌ Failed ${registry}: ${error.message}`);
-                
+
                 // Mark registry as non-working temporarily
                 const index = this.workingRegistries.indexOf(registry);
                 if (index > -1) {
@@ -113,7 +113,7 @@ class RegistryClient {
         // If all failed, refresh DNS and try once more
         console.info('🔄 All registries failed, refreshing DNS...');
         await this.updateWorkingRegistries();
-        
+
         if (this.workingRegistries.length > 0) {
             return this.fetchWithFallback(url, options);
         }
@@ -145,11 +145,11 @@ class RegistryClient {
 
     async publishPackage(packageData, authToken) {
         const registries = [this.config.primary, ...this.config.fallbacks.slice(0, 2)]; // Try primary + 2 fallbacks for publishing
-        
+
         for (const registry of registries) {
             try {
                 console.info(`📤 Publishing to ${registry}...`);
-                
+
                 const response = await fetch(`${registry}package`, {
                     method: 'PUT',
                     headers: {
@@ -196,11 +196,11 @@ class RegistryClient {
 // CLI usage
 if (require.main === module) {
     const client = new RegistryClient();
-    
+
     client.initialize().then(async () => {
         const command = process.argv[2];
         const packageName = process.argv[3];
-        
+
         try {
             switch (command) {
                 case 'get':
@@ -210,21 +210,21 @@ if (require.main === module) {
                     }
                     await client.getPackage(packageName);
                     break;
-                    
+
                 case 'search':
                     const query = packageName || 'factory-wager';
                     await client.searchPackages(query);
                     break;
-                    
+
                 case 'stats':
                     console.info('📊 Registry Client Stats:');
                     console.info(JSON.stringify(client.getStats(), null, 2));
                     break;
-                    
+
                 case 'clear-cache':
                     client.clearCache();
                     break;
-                    
+
                 default:
                     console.info('Usage:');
                     console.info('  node registry-client.js get <package>');

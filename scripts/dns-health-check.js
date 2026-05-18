@@ -18,18 +18,18 @@ class DNSHealthChecker {
 
     async resolveDomain(domain) {
         const startTime = performance.now();
-        
+
         try {
             const result = await Promise.race([
                 dns.resolve4(domain),
-                new Promise((_, reject) => 
+                new Promise((_, reject) =>
                     setTimeout(() => reject(new Error('DNS timeout')), this.timeout)
                 )
             ]);
-            
+
             const endTime = performance.now();
             const responseTime = endTime - startTime;
-            
+
             return {
                 domain,
                 success: true,
@@ -40,7 +40,7 @@ class DNSHealthChecker {
         } catch (error) {
             const endTime = performance.now();
             const responseTime = endTime - startTime;
-            
+
             return {
                 domain,
                 success: false,
@@ -53,7 +53,7 @@ class DNSHealthChecker {
 
     async checkAllDomains() {
         console.info('🔍 Starting DNS health check...\n');
-        
+
         const domains = [this.primary, ...this.fallbacks];
         const results = await Promise.allSettled(
             domains.map(domain => this.resolveDomain(domain))
@@ -67,20 +67,20 @@ class DNSHealthChecker {
 
     displayResults() {
         console.info('📊 DNS Health Check Results:\n');
-        
+
         this.results.forEach((result, index) => {
             const status = result.success ? '✅' : '❌';
             const type = index === 0 ? 'PRIMARY' : index === 1 ? 'FALLBACK 1' : index === 2 ? 'FALLBACK 2' : 'EMERGENCY';
-            
+
             console.info(`${status} ${type}: ${result.domain}`);
             console.info(`   Response Time: ${result.responseTime.toFixed(2)}ms`);
-            
+
             if (result.success) {
                 console.info(`   IP Addresses: ${result.ips.join(', ')}`);
             } else {
                 console.info(`   Error: ${result.error}`);
             }
-            
+
             console.info(`   Timestamp: ${result.timestamp}\n`);
         });
 
@@ -96,7 +96,7 @@ class DNSHealthChecker {
         console.info(`   ✓ Successful: ${successful.length}/${this.results.length}`);
         console.info(`   ✗ Failed: ${failed.length}/${this.results.length}`);
         console.info(`   ⚡ Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
-        
+
         if (failed.length > 0) {
             console.info('\n⚠️  Recommendations:');
             failed.forEach(result => {
@@ -114,11 +114,11 @@ class DNSHealthChecker {
     async getWorkingRegistry() {
         const results = await this.checkAllDomains();
         const working = results.find(r => r.success);
-        
+
         if (working) {
             return `https://${working.domain}/`;
         }
-        
+
         throw new Error('No working registry servers available');
     }
 }
@@ -126,7 +126,7 @@ class DNSHealthChecker {
 // CLI usage
 if (require.main === module) {
     const checker = new DNSHealthChecker();
-    
+
     checker.checkAllDomains()
         .then(() => process.exit(0))
         .catch(error => {

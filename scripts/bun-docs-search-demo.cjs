@@ -47,7 +47,7 @@ class BunDocsSearchDemo {
     async runSearchExample(example) {
         console.log(`🔍 ${example.description}`);
         console.log('='.repeat(example.description.length + 3));
-        
+
         const args = ['search', example.query];
         if (example.options) {
             args.push(...example.options);
@@ -59,7 +59,7 @@ class BunDocsSearchDemo {
         } catch (error) {
             console.log(`❌ Search failed: ${error.message}`);
         }
-        
+
         console.log('\n' + '-'.repeat(50) + '\n');
     }
 
@@ -124,7 +124,7 @@ async function runInteractiveDemo() {
     while (true) {
         showInteractiveMenu();
         const choice = await askQuestion('Enter your choice (1-9): ');
-        
+
         switch (choice) {
             case '1':
                 const fullDemo = new BunDocsSearchDemo();
@@ -161,11 +161,11 @@ async function runInteractiveDemo() {
                 const customQuery = await askQuestion('Enter search query: ');
                 const domain = await askQuestion('Domain (com/sh) [com]: ');
                 const limit = await askQuestion('Result limit [10]: ');
-                
+
                 const args = ['search', `"${customQuery}"`];
                 if (domain === 'sh') args.push('--sh');
                 if (limit && limit !== '10') args.push('--limit', limit);
-                
+
                 console.log(`🔍 Searching for "${customQuery}"...`);
                 execSync(`node bun-docs.cjs ${args.join(' ')}`, { stdio: 'inherit' });
                 break;
@@ -176,7 +176,7 @@ async function runInteractiveDemo() {
             default:
                 console.log('❌ Invalid choice. Please try again.\n');
         }
-        
+
         if (choice !== '9') {
             await askQuestion('\nPress Enter to continue...');
             console.log();
@@ -187,7 +187,7 @@ async function runInteractiveDemo() {
 // Main execution
 if (require.main === module) {
     const args = process.argv.slice(2);
-    
+
     if (args.includes('--interactive') || args.includes('-i')) {
         runInteractiveDemo().catch(console.error);
     } else if (args.includes('--help') || args.includes('-h')) {

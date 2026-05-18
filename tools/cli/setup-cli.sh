@@ -124,7 +124,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ -n "$BASH_VERSION" ]; then
         COMPLETION_FILE="$HOME/.bash_completion.d/fw-cli"
         mkdir -p "$(dirname "$COMPLETION_FILE")"
-        
+
         cat > "$COMPLETION_FILE" << 'EOF'
 # FactoryWager CLI Bash Completion
 _fw_cli_completion() {
@@ -132,9 +132,9 @@ _fw_cli_completion() {
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    
+
     opts="dns domains status deploy monitor auth config batch help"
-    
+
     case "${prev}" in
         dns)
             COMPREPLY=( $(compgen -W "list add remove update check import export" -- ${cur}) )
@@ -179,11 +179,11 @@ complete -F _fw_cli_completion fw-cli
 EOF
         echo -e "${GREEN}✅ Bash completion installed: $COMPLETION_FILE${NC}"
         echo "Add to ~/.bashrc: source $COMPLETION_FILE"
-        
+
     elif [ -n "$ZSH_VERSION" ]; then
         COMPLETION_FILE="$HOME/.zsh_completions/_fw-cli"
         mkdir -p "$(dirname "$COMPLETION_FILE")"
-        
+
         cat > "$COMPLETION_FILE" << 'EOF'
 #compdef fw-cli
 
@@ -200,7 +200,7 @@ _fw_cli() {
         'batch:Batch operations'
         'help:Show help'
     )
-    
+
     if (( CURRENT == 2 )); then
         _describe 'command' commands
     else

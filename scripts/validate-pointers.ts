@@ -441,7 +441,7 @@ class BunNativeOptimizer {
 
           const dataHandler = (socket: Socket, data: Buffer) => {
             if (isResolved) return; // Ignore data after resolution
-            
+
             responseData += data.toString();
 
             if (!headersComplete && responseData.includes('\r\n\r\n')) {

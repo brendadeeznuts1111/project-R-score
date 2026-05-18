@@ -34,13 +34,13 @@ class PerformanceOptimizer {
     generateCacheKey(method, endpoint, data = null) {
         // Include method and endpoint
         let key = `${method}:${endpoint}`;
-        
+
         // For non-GET requests, include data hash
         if (method !== 'GET' && data) {
             const dataHash = this.hashData(data);
             key += `:${dataHash}`;
         }
-        
+
         return key;
     }
 
@@ -59,12 +59,12 @@ class PerformanceOptimizer {
     setCachedData(key, data) {
         // Clean expired entries first
         this.cleanExpiredEntries();
-        
+
         // Enforce cache size limit
         if (this.cache.size >= this.maxCacheSize) {
             this.evictOldestEntries(Math.floor(this.maxCacheSize * 0.2)); // Remove 20%
         }
-        
+
         this.cache.set(key, {
             data,
             timestamp: Date.now()
@@ -83,7 +83,7 @@ class PerformanceOptimizer {
     evictOldestEntries(count) {
         const entries = Array.from(this.cache.entries())
             .sort((a, b) => a[1].timestamp - b[1].timestamp);
-        
+
         for (let i = 0; i < Math.min(count, entries.length); i++) {
             this.cache.delete(entries[i][0]);
         }
@@ -107,26 +107,26 @@ class PerformanceOptimizer {
     async batchRequests(requests) {
         const batchSize = 5;
         const results = [];
-        
+
         for (let i = 0; i < requests.length; i += batchSize) {
             const batch = requests.slice(i, i + batchSize);
             const batchResults = await Promise.allSettled(
                 batch.map(req => this.executeRequest(req))
             );
             results.push(...batchResults);
-            
+
             // Small delay between batches to avoid rate limiting
             if (i + batchSize < requests.length) {
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
-        
+
         return results;
     }
 
     async executeRequest(request) {
         const cacheKey = `${request.method}:${request.url}`;
-        
+
         // Check cache for GET requests
         if (request.method === 'GET') {
             const cached = this.getCachedData(cacheKey);
@@ -134,21 +134,21 @@ class PerformanceOptimizer {
                 return cached;
             }
         }
-        
+
         try {
             const response = await fetch(request.url, {
                 method: request.method,
                 headers: request.headers,
                 body: request.body
             });
-            
+
             const data = await response.json();
-            
+
             // Cache successful GET requests
             if (request.method === 'GET' && response.ok) {
                 this.setCachedData(cacheKey, data);
             }
-            
+
             return data;
         } catch (error) {
             console.error(`Request failed: ${error.message}`);
@@ -164,12 +164,12 @@ class PerformanceOptimizer {
                 this.cache.delete(key);
             }
         }
-        
+
         // Limit connection pool size
         if (this.connectionPool.length > this.maxConnections) {
             this.connectionPool = this.connectionPool.slice(0, this.maxConnections);
         }
-        
+
         // Force garbage collection if available
         if (global.gc) {
             global.gc();
@@ -178,10 +178,10 @@ class PerformanceOptimizer {
 
     // Performance Metrics
     getPerformanceStats() {
-        const hitRate = this.cacheHits + this.cacheMisses > 0 
-            ? this.cacheHits / (this.cacheHits + this.cacheMisses) 
+        const hitRate = this.cacheHits + this.cacheMisses > 0
+            ? this.cacheHits / (this.cacheHits + this.cacheMisses)
             : 0;
-            
+
         return {
             cacheSize: this.cache.size,
             connectionPoolSize: this.connectionPool.length,
@@ -198,20 +198,20 @@ class PerformanceOptimizer {
 // CLI Integration
 function optimizeCLICommand(originalFunction, cacheKey, ttl = 30000) {
     const optimizer = new PerformanceOptimizer();
-    
+
     return async function(...args) {
         const key = `${cacheKey}:${JSON.stringify(args)}`;
         const cached = optimizer.getCachedData(key);
-        
+
         if (cached) {
             console.log('📋 Using cached data...');
             return cached;
         }
-        
+
         console.log('🔄 Executing command...');
         const result = await originalFunction.apply(this, args);
         optimizer.setCachedData(key, result);
-        
+
         return result;
     };
 }

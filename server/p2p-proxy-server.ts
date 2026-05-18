@@ -367,7 +367,7 @@ function generateQRPage(amount: number): string {
     <h1>💈 Quick Pay</h1>
     <div class="amount">$${amount}</div>
     <p class="subtitle">Choose your preferred app</p>
-    
+
     <div class="options">
       <a href="${cashappUrl}" class="option" target="_blank">
         <div class="option-icon cashapp">$</div>
@@ -376,7 +376,7 @@ function generateQRPage(amount: number): string {
           <div class="option-handle">${PROXY_HANDLES.cashapp}</div>
         </div>
       </a>
-      
+
       <a href="${venmoUrl}" class="option" target="_blank">
         <div class="option-icon venmo">V</div>
         <div class="option-text">
@@ -384,7 +384,7 @@ function generateQRPage(amount: number): string {
           <div class="option-handle">${PROXY_HANDLES.venmo}</div>
         </div>
       </a>
-      
+
       <a href="${paypalUrl}" class="option" target="_blank">
         <div class="option-icon paypal">P</div>
         <div class="option-text">
@@ -393,14 +393,14 @@ function generateQRPage(amount: number): string {
         </div>
       </a>
     </div>
-    
+
     <button class="share-btn" onclick="sharePayment()">Share Payment Link</button>
-    
+
     <div class="footer">
       Secured by P2P Proxy • Funds go directly to merchant
     </div>
   </div>
-  
+
   <script>
     function sharePayment() {
       const shareData = {
@@ -408,7 +408,7 @@ function generateQRPage(amount: number): string {
         text: 'Pay $${amount} to ${PROXY_HANDLES.cashapp}',
         url: window.location.href
       };
-      
+
       if (navigator.share) {
         navigator.share(shareData);
       } else {
@@ -554,19 +554,19 @@ const server = Bun.serve({
 <body>
   <h1>💈 P2P Proxy Server</h1>
   <p>Unified payment bridge for CashApp, Venmo, and PayPal</p>
-  
+
   <h2>Your Proxy Handles</h2>
   <ul>
     <li>CashApp: <span class="handle">${PROXY_HANDLES.cashapp}</span></li>
     <li>Venmo: <span class="handle">${PROXY_HANDLES.venmo}</span></li>
     <li>PayPal: <span class="handle">${PROXY_HANDLES.paypal}</span></li>
   </ul>
-  
+
   <h2>Client Payment Page</h2>
   <div class="endpoint">
     <strong>GET /qr?amount=25</strong> - Branded payment page with all options
   </div>
-  
+
   <h2>Webhook Endpoint</h2>
   <div class="endpoint">
     <strong>POST /webhook/proxy</strong> - Unified webhook for all providers
@@ -577,7 +577,7 @@ const server = Bun.serve({
     <li>Venmo Developer Portal → <code>http://your-domain:3002/webhook/proxy</code></li>
     <li>Square Dashboard (CashApp) → <code>http://your-domain:3002/webhook/proxy</code></li>
   </ul>
-  
+
   <h2>Test Payment</h2>
   <pre>curl -X POST http://localhost:${PORT}/webhook/proxy \\
   -H "Content-Type: application/json" \\

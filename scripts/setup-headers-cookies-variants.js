@@ -21,14 +21,14 @@ class HeadersCookiesVariantsSetup {
             await this.createIntegrationScript();
             await this.createExamples();
             await this.updatePackageJson();
-            
+
             console.info('✅ Headers, Cookies, and Variants setup complete!');
             console.info('\n📋 Next Steps:');
             console.info('1. Import the integration script in your main application');
             console.info('2. Initialize the system: initializeFactoryWagerSystem()');
             console.info('3. Use the APIs for headers, cookies, and variants');
             console.info('4. Check examples in the examples/ directory');
-            
+
         } catch (error) {
             console.error('❌ Setup failed:', error.message);
             process.exit(1);
@@ -37,7 +37,7 @@ class HeadersCookiesVariantsSetup {
 
     async createDirectories() {
         console.info('📁 Creating directories...');
-        
+
         const dirs = [
             this.configDir,
             this.libDir,
@@ -263,7 +263,7 @@ class FactoryWagerSystem {
 
     async initializeCookies() {
         console.info('🍪 Initializing cookie management...');
-        
+
         // Set essential cookies
         this.cookieManager.setCookie({
             name: 'fw_session',
@@ -285,7 +285,7 @@ class FactoryWagerSystem {
 
     async initializePrefetching() {
         console.info('⚡ Initializing prefetching...');
-        
+
         // Adaptive prefetching based on variant
         this.prefetchManager.adaptivePrefetch();
 
@@ -298,7 +298,7 @@ class FactoryWagerSystem {
 
     setupHeaders() {
         console.info('🔧 Setting up headers...');
-        
+
         const variant = this.variantTesting.getCurrentVariant();
         const sessionId = this.cookieManager.getCookie('fw_session');
 
@@ -450,21 +450,21 @@ export default FactoryWagerSystem;
 
             // Display current variant
             const variant = system.getCurrentVariant();
-            document.getElementById('variant-info').innerHTML = 
+            document.getElementById('variant-info').innerHTML =
                 \`<h2>Current Variant: \${variant?.name || 'Control'}</h2>\`;
 
             // Display feature flags
             const features = ['enhanced_ui', 'smart_prefetch', 'advanced_analytics'];
-            const featureHtml = features.map(feature => 
+            const featureHtml = features.map(feature =>
                 \`<div>\${feature}: \${system.isFeatureEnabled(feature) ? '✅' : '❌'}</div>\`
             ).join('');
-            document.getElementById('feature-flags').innerHTML = 
+            document.getElementById('feature-flags').innerHTML =
                 \`<h2>Feature Flags:</h2>\${featureHtml}\`;
 
             // Add tracking to button
             const button = document.getElementById('track-button');
             system.withTracking(button, 'ui_variant_2024');
-            
+
             button.addEventListener('click', () => {
                 system.trackEvent('button_click', {
                     button_id: 'track_button',
@@ -523,9 +523,9 @@ class AdvancedExample {
         if ('performance' in window) {
             window.addEventListener('load', () => {
                 const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-                this.system.trackEvent('page_load_time', { 
+                this.system.trackEvent('page_load_time', {
                     value: loadTime,
-                    variant: this.system.getCurrentVariant()?.id 
+                    variant: this.system.getCurrentVariant()?.id
                 });
             });
         }
@@ -534,7 +534,7 @@ class AdvancedExample {
     setupVariantSpecificContent() {
         const variant = this.system.getCurrentVariant();
         const content = this.system.getVariantContent('theme', 'ui_variant_2024');
-        
+
         if (content) {
             this.applyTheme(content);
         }
@@ -581,15 +581,15 @@ example.init();
         console.info('📦 Updating package.json...');
 
         const packageJsonPath = path.join(this.projectRoot, 'package.json');
-        
+
         if (fs.existsSync(packageJsonPath)) {
             const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-            
+
             // Add scripts
             if (!packageJson.scripts) {
                 packageJson.scripts = {};
             }
-            
+
             packageJson.scripts['setup:system'] = 'node scripts/setup-headers-cookies-variants.js';
             packageJson.scripts['test:variants'] = 'node scripts/test-variants.js';
             packageJson.scripts['test:cookies'] = 'node scripts/test-cookies.js';

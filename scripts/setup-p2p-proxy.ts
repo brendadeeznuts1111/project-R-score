@@ -178,17 +178,17 @@ const PROXY_URL = process.env.PROXY_URL || 'http://localhost:3002';
 
 async function testProxy() {
   console.info('Testing P2P Proxy...\n');
-  
+
   // 1. Health check
   console.info('1. Health check...');
   const health = await fetch(\`\${PROXY_URL}/health\`).then(r => r.json());
   console.info(\`   Status: \${health.status}, Redis: \${health.redis}\`);
-  
+
   // 2. Payment page
   console.info('\\n2. Payment page (HTML)...');
   const page = await fetch(\`\${PROXY_URL}/pay?amount=25\`);
   console.info(\`   Status: \${page.status}, Content-Type: \${page.headers.get('content-type')}\`);
-  
+
   // 3. Test webhook
   console.info('\\n3. Test webhook...');
   const webhook = await fetch(\`\${PROXY_URL}/webhook/proxy\`, {
@@ -209,7 +209,7 @@ async function testProxy() {
   if (webhook.success) {
     console.info(\`   Amount: \$\${webhook.amount}, Bonus: \$\${webhook.bonus}, Tier: \${webhook.tier}\`);
   }
-  
+
   console.info('\\n✨ Test complete!');
 }
 

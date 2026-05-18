@@ -499,7 +499,7 @@ if (import.meta.main) {
 </head>
 <body>
   <h1>📊 Chart Renderer</h1>
-  
+
   <div class="chart-container">
     <h2>Line Chart</h2>
     <div class="controls">
@@ -508,7 +508,7 @@ if (import.meta.main) {
     </div>
     <div id="lineChart"></div>
   </div>
-  
+
   <div class="chart-container">
     <h2>Bar Chart</h2>
     <div class="controls">
@@ -518,7 +518,7 @@ if (import.meta.main) {
     </div>
     <div id="barChart"></div>
   </div>
-  
+
   <div class="chart-container">
     <h2>Heatmap</h2>
     <div class="controls">
@@ -527,7 +527,7 @@ if (import.meta.main) {
     </div>
     <div id="heatmapContainer"></div>
   </div>
-  
+
   <script>
     async function updateLineChart() {
       const data = document.getElementById('lineData').value;
@@ -535,7 +535,7 @@ if (import.meta.main) {
       const svg = await response.text();
       document.getElementById('lineChart').innerHTML = svg;
     }
-    
+
     async function updateBarChart() {
       const data = document.getElementById('barData').value;
       const labels = document.getElementById('barLabels').value;
@@ -543,14 +543,14 @@ if (import.meta.main) {
       const svg = await response.text();
       document.getElementById('barChart').innerHTML = svg;
     }
-    
+
     async function updateHeatmap() {
       const data = document.getElementById('heatmapData').value;
       const response = await fetch('/chart?type=heatmap&data=' + encodeURIComponent(data));
       const svg = await response.text();
       document.getElementById('heatmapContainer').innerHTML = svg;
     }
-    
+
     // Initialize charts
     updateLineChart();
     updateBarChart();

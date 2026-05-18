@@ -416,7 +416,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       --error-glow: rgba(249, 115, 22, 0.4);
       --critical: #ef4444;
       --critical-glow: rgba(239, 68, 68, 0.4);
-      
+
       /* Chart colors */
       --chart-1: #4fd1c5;
       --chart-2: #22c55e;
@@ -425,7 +425,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       --chart-5: #a855f7;
       --chart-6: #3b82f6;
     }
-    
+
     [data-theme="light"] {
       --bg: #f8fafc;
       --panel: rgba(255, 255, 255, 0.85);
@@ -451,40 +451,40 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       --chart-5: #9333ea;
       --chart-6: #2563eb;
     }
-    
+
     * { box-sizing: border-box; }
-    
+
     html {
       scroll-behavior: smooth;
     }
-    
-    body { 
-      margin: 0; 
+
+    body {
+      margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: 
+      background:
         radial-gradient(ellipse at 0% 0%, rgba(79, 209, 197, 0.08) 0%, transparent 50%),
         radial-gradient(ellipse at 100% 100%, rgba(34, 197, 94, 0.05) 0%, transparent 50%),
         linear-gradient(180deg, #081226 0%, #0b111f 50%, #0a0f1a 100%);
       background-attachment: fixed;
-      color: var(--text); 
+      color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
     }
-    
-    main { 
-      max-width: 1400px; 
-      margin: 0 auto; 
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
       padding: 24px;
       animation: fadeIn 0.6s ease-out;
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     /* Glassmorphism Cards */
-    .card { 
+    .card {
       background: var(--panel);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -492,7 +492,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 
+      box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.3),
         0 2px 4px -1px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -500,7 +500,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       overflow: hidden;
     }
-    
+
     .card::before {
       content: '';
       position: absolute;
@@ -508,33 +508,33 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
       pointer-events: none;
     }
-    
+
     .card:hover {
       transform: translateY(-3px);
-      box-shadow: 
+      box-shadow:
         0 20px 40px -10px rgba(0, 0, 0, 0.5),
         0 10px 20px -5px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
       border-color: rgba(79, 209, 197, 0.2);
     }
-    
+
     .layout { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; }
     .span-12 { grid-column: span 12; }
     .span-8 { grid-column: span 8; }
     .span-6 { grid-column: span 6; }
     .span-4 { grid-column: span 4; }
-    .section-title { 
-      margin: 8px 0 4px; 
-      color: var(--muted); 
-      font-size: 11px; 
-      text-transform: uppercase; 
+    .section-title {
+      margin: 8px 0 4px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
       letter-spacing: 0.12em;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    
+
     .section-title::before {
       content: '';
       width: 3px;
@@ -542,16 +542,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background: linear-gradient(180deg, var(--accent), transparent);
       border-radius: 2px;
     }
-    
-    .section-subtitle { 
-      margin: 0 0 12px; 
-      color: var(--text-secondary); 
+
+    .section-subtitle {
+      margin: 0 0 12px;
+      color: var(--text-secondary);
       font-size: 13px;
       font-weight: 400;
     }
-    
-    h1 { 
-      margin: 0 0 8px; 
+
+    h1 {
+      margin: 0 0 8px;
       font-size: 26px;
       font-weight: 700;
       background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
@@ -560,29 +560,29 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background-clip: text;
       letter-spacing: -0.02em;
     }
-    
+
     h2 {
       font-size: 15px;
       font-weight: 600;
       margin: 0 0 12px;
       color: var(--text);
     }
-    
+
     .meta { color: var(--muted); font-size: 12px; line-height: 1.5; }
-    
-    .buttons { 
-      display: flex; 
-      gap: 10px; 
+
+    .buttons {
+      display: flex;
+      gap: 10px;
       margin-top: 16px;
       flex-wrap: wrap;
     }
-    
+
     /* Enhanced Buttons */
-    button { 
-      cursor: pointer; 
+    button {
+      cursor: pointer;
       background: linear-gradient(135deg, rgba(15, 34, 62, 0.9) 0%, rgba(15, 34, 62, 0.6) 100%);
       border: 1px solid rgba(45, 70, 111, 0.8);
-      color: var(--text); 
+      color: var(--text);
       padding: 10px 16px;
       border-radius: 10px;
       font-size: 13px;
@@ -591,7 +591,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       overflow: hidden;
     }
-    
+
     button::before {
       content: '';
       position: absolute;
@@ -600,21 +600,21 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0;
       transition: opacity 0.2s;
     }
-    
+
     button:hover {
       border-color: var(--accent);
       box-shadow: 0 0 20px var(--accent-glow);
       transform: translateY(-1px);
     }
-    
+
     button:hover::before {
       opacity: 1;
     }
-    
+
     button:active {
       transform: translateY(0);
     }
-    
+
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -628,7 +628,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       flex-shrink: 0;
     }
-    
+
     .status-orb::before,
     .status-orb::after {
       content: '';
@@ -637,7 +637,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 50%;
       animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    
+
     .status-orb.healthy {
       background: var(--success);
       box-shadow: 0 0 8px var(--success-glow);
@@ -645,7 +645,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .status-orb.healthy::before {
       border: 2px solid var(--success);
     }
-    
+
     .status-orb.warning {
       background: var(--warning);
       box-shadow: 0 0 8px var(--warning-glow);
@@ -653,7 +653,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .status-orb.warning::before {
       border: 2px solid var(--warning);
     }
-    
+
     .status-orb.critical {
       background: var(--critical);
       box-shadow: 0 0 8px var(--critical-glow);
@@ -661,7 +661,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .status-orb.critical::before {
       border: 2px solid var(--critical);
     }
-    
+
     .status-orb.neutral {
       background: var(--muted);
       box-shadow: none;
@@ -670,12 +670,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .status-orb.neutral::after {
       display: none;
     }
-    
+
     @keyframes pulse-ring {
       0% { transform: scale(1); opacity: 0.8; }
       100% { transform: scale(2.5); opacity: 0; }
     }
-    
+
     /* Refresh Button Enhancement */
     .refresh-btn {
       background: linear-gradient(135deg, rgba(15, 34, 62, 0.9) 0%, rgba(15, 34, 62, 0.6) 100%);
@@ -689,7 +689,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-weight: 600;
       font-size: 13px;
     }
-    
+
     .refresh-btn[data-state="loading"] {
       background: linear-gradient(135deg, rgba(17, 50, 77, 0.9) 0%, rgba(17, 50, 77, 0.6) 100%);
       border-color: var(--accent);
@@ -697,21 +697,21 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: wait;
       box-shadow: 0 0 20px var(--accent-glow);
     }
-    
+
     .refresh-btn[data-state="success"] {
       background: linear-gradient(135deg, rgba(7, 36, 25, 0.9) 0%, rgba(7, 36, 25, 0.6) 100%);
       border-color: var(--success);
       color: #dcfce7;
       box-shadow: 0 0 20px var(--success-glow);
     }
-    
+
     .refresh-btn[data-state="error"] {
       background: linear-gradient(135deg, rgba(43, 18, 16, 0.9) 0%, rgba(43, 18, 16, 0.6) 100%);
       border-color: var(--critical);
       color: #fee2e2;
       box-shadow: 0 0 20px var(--critical-glow);
     }
-    
+
     .refresh-icon {
       display: inline-flex;
       width: 16px;
@@ -720,11 +720,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-size: 14px;
       transition: transform 0.3s ease;
     }
-    
+
     .refresh-btn:hover .refresh-icon {
       transform: rotate(180deg);
     }
-    
+
     .refresh-spinner {
       width: 14px;
       height: 14px;
@@ -734,12 +734,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-right-color: var(--accent);
       animation: spin 0.8s linear infinite;
     }
-    
+
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    
+
     /* Skeleton Loading States */
     .skeleton {
       background: linear-gradient(
@@ -752,20 +752,20 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       animation: shimmer 1.5s infinite;
       border-radius: 6px;
     }
-    
+
     @keyframes shimmer {
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
     }
     /* Enhanced KPI Grid */
-    .kpi-grid { 
-      display: grid; 
-      grid-template-columns: repeat(2, minmax(0, 1fr)); 
-      gap: 12px; 
-      margin-top: 12px; 
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
     }
-    
-    .kpi-card { 
+
+    .kpi-card {
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 14px;
@@ -775,12 +775,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       overflow: hidden;
     }
-    
+
     .kpi-card:hover {
       border-color: rgba(79, 209, 197, 0.3);
       transform: translateY(-2px);
     }
-    
+
     .kpi-card::after {
       content: '';
       position: absolute;
@@ -792,15 +792,15 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0;
       transition: opacity 0.3s;
     }
-    
+
     .kpi-card:hover::after {
       opacity: 1;
     }
-    
-    .kpi-title { 
-      color: var(--muted); 
-      font-size: 10px; 
-      text-transform: uppercase; 
+
+    .kpi-title {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
       letter-spacing: 0.08em;
       margin-bottom: 8px;
       font-weight: 600;
@@ -809,22 +809,22 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .ring-wrap { display: flex; align-items: center; gap: 12px; }
     .ring-svg { width: 84px; height: 84px; transform: rotate(-90deg); filter: drop-shadow(0 0 8px var(--accent-glow)); }
     .ring-track { fill: none; stroke: rgba(31, 44, 73, 0.5); stroke-width: 10; }
-    .ring-progress { 
-      fill: none; 
-      stroke: url(#ringGradient); 
-      stroke-width: 10; 
-      stroke-linecap: round; 
+    .ring-progress {
+      fill: none;
+      stroke: url(#ringGradient);
+      stroke-width: 10;
+      stroke-linecap: round;
       transition: stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
       filter: drop-shadow(0 0 4px var(--accent-glow));
     }
     .ring-value { font-size: 22px; font-weight: 700; color: var(--text); font-family: ui-monospace, monospace; }
-    
+
     .gauge-wrap { margin-top: 4px; }
-    .gauge-track { 
-      position: relative; 
-      height: 14px; 
-      border-radius: 999px; 
-      overflow: hidden; 
+    .gauge-track {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
       border: 1px solid var(--line);
       background: rgba(10, 22, 43, 0.5);
     }
@@ -832,37 +832,37 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .gauge-zone-good { left: 0; width: 60%; background: linear-gradient(90deg, rgba(20, 83, 45, 0.8), rgba(34, 197, 94, 0.3)); }
     .gauge-zone-warn { left: 60%; width: 25%; background: linear-gradient(90deg, rgba(124, 45, 18, 0.6), rgba(250, 204, 21, 0.3)); }
     .gauge-zone-bad { left: 85%; width: 15%; background: linear-gradient(90deg, rgba(127, 29, 29, 0.6), rgba(239, 68, 68, 0.4)); }
-    .gauge-marker { 
-      position: absolute; 
-      top: -3px; 
-      width: 3px; 
-      height: 20px; 
+    .gauge-marker {
+      position: absolute;
+      top: -3px;
+      width: 3px;
+      height: 20px;
       background: var(--text);
       box-shadow: 0 0 8px rgba(232, 238, 252, 0.5);
       border-radius: 2px;
       transition: left 0.5s ease;
     }
-    .gauge-threshold { 
-      position: absolute; 
-      top: -3px; 
-      width: 2px; 
-      height: 20px; 
+    .gauge-threshold {
+      position: absolute;
+      top: -3px;
+      width: 2px;
+      height: 20px;
       background: var(--warning);
       box-shadow: 0 0 8px var(--warning-glow);
     }
     .gauge-legend { margin-top: 8px; color: var(--text-secondary); font-size: 11px; }
-    
+
     /* Animated Bar Chart */
-    .bar-chart { 
-      display: flex; 
-      align-items: end; 
+    .bar-chart {
+      display: flex;
+      align-items: end;
       gap: 3px;
       height: 50px;
       padding: 4px 0;
     }
-    
-    .bar { 
-      flex: 1; 
+
+    .bar {
+      flex: 1;
       background: linear-gradient(180deg, var(--accent), rgba(79, 209, 197, 0.3));
       border-radius: 3px 3px 0 0;
       min-height: 4px;
@@ -874,17 +874,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       animation-delay: var(--delay, 0ms);
       opacity: 0;
     }
-    
-    @keyframes growUp { 
+
+    @keyframes growUp {
       from { height: 0; opacity: 0; }
       to { height: var(--height); opacity: 1; }
     }
-    
-    .bar:hover { 
+
+    .bar:hover {
       filter: brightness(1.2);
       box-shadow: 0 0 12px var(--accent-glow);
     }
-    
+
     .bar::after {
       content: attr(data-value);
       position: absolute;
@@ -903,7 +903,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border: 1px solid var(--line);
       margin-bottom: 4px;
     }
-    
+
     .bar:hover::after {
       opacity: 1;
     }
@@ -928,30 +928,30 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--text-secondary);
       animation: fadeIn 0.5s ease;
     }
-    
-    .empty-icon { 
-      font-size: 32px; 
-      display: block; 
+
+    .empty-icon {
+      font-size: 32px;
+      display: block;
       margin-bottom: 12px;
       opacity: 0.8;
     }
-    
+
     .empty-state strong {
       color: var(--text);
       font-weight: 600;
     }
     /* Enhanced Toast Notifications */
-    #toastHost { 
-      position: fixed; 
-      right: 20px; 
-      bottom: 20px; 
-      z-index: 9999; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
+    #toastHost {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       pointer-events: none;
     }
-    
+
     .toast {
       pointer-events: auto;
       border: 1px solid var(--line);
@@ -968,27 +968,27 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       align-items: center;
       gap: 10px;
     }
-    
+
     @keyframes toastSlide {
-      from { 
-        opacity: 0; 
+      from {
+        opacity: 0;
         transform: translateX(20px);
       }
-      to { 
-        opacity: 1; 
+      to {
+        opacity: 1;
         transform: translateX(0);
       }
     }
-    
-    .toast-success { 
-      border-color: rgba(34, 197, 94, 0.5); 
+
+    .toast-success {
+      border-color: rgba(34, 197, 94, 0.5);
       background: linear-gradient(135deg, rgba(7, 36, 25, 0.95) 0%, rgba(7, 36, 25, 0.8) 100%);
       color: #dcfce7;
       box-shadow: 0 10px 40px rgba(34, 197, 94, 0.15);
     }
-    
-    .toast-error { 
-      border-color: rgba(239, 68, 68, 0.5); 
+
+    .toast-error {
+      border-color: rgba(239, 68, 68, 0.5);
       background: linear-gradient(135deg, rgba(43, 18, 16, 0.95) 0%, rgba(43, 18, 16, 0.8) 100%);
       color: #fee2e2;
       box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
@@ -997,7 +997,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     th, td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; }
     th { color: var(--muted); font-weight: 600; }
     /* Enhanced Code Styling */
-    code { 
+    code {
       color: var(--accent);
       background: rgba(79, 209, 197, 0.1);
       padding: 2px 6px;
@@ -1005,35 +1005,35 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
       font-size: 0.9em;
     }
-    
-    pre { 
-      white-space: pre-wrap; 
-      word-break: break-word; 
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
       background: linear-gradient(135deg, rgba(10, 22, 43, 0.8) 0%, rgba(10, 22, 43, 0.5) 100%);
-      border: 1px solid var(--line); 
-      padding: 16px; 
+      border: 1px solid var(--line);
+      padding: 16px;
       border-radius: 10px;
       overflow-x: auto;
       font-size: 12px;
       line-height: 1.6;
     }
     /* Enhanced Badges */
-    .badge { 
+    .badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      border-radius: 999px; 
-      padding: 3px 10px; 
-      font-size: 11px; 
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
       font-weight: 600;
       border: 1px solid transparent;
       transition: all 0.2s ease;
     }
-    
+
     .badge:hover {
       transform: translateY(-1px);
     }
-    
+
     .trend-delta {
       display: inline-flex;
       align-items: center;
@@ -1044,9 +1044,9 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .trend-delta-good { color: var(--success); text-shadow: 0 0 10px var(--success-glow); }
     .trend-delta-bad { color: var(--critical); text-shadow: 0 0 10px var(--critical-glow); }
     .trend-delta-neutral { color: #93c5fd; }
-    
+
     .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-    
+
     .status-pill {
       display: inline-flex;
       align-items: center;
@@ -1060,91 +1060,91 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: default;
       backdrop-filter: blur(4px);
     }
-    
+
     .status-pill:hover {
       transform: translateY(-2px) scale(1.02);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
-    
+
     .status-pill:focus-visible {
       outline: none;
       box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5);
     }
-    
-    .pill-success { 
-      color: #dcfce7; 
+
+    .pill-success {
+      color: #dcfce7;
       background: linear-gradient(135deg, rgba(20, 83, 45, 0.9) 0%, rgba(20, 83, 45, 0.6) 100%);
       border-color: rgba(34, 197, 94, 0.5);
       box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
     }
-    
-    .pill-warning { 
-      color: #ffedd5; 
+
+    .pill-warning {
+      color: #ffedd5;
       background: linear-gradient(135deg, rgba(124, 45, 18, 0.9) 0%, rgba(124, 45, 18, 0.6) 100%);
       border-color: rgba(249, 115, 22, 0.5);
       box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
     }
-    
-    .pill-error { 
-      color: #fee2e2; 
+
+    .pill-error {
+      color: #fee2e2;
       background: linear-gradient(135deg, rgba(127, 29, 29, 0.9) 0%, rgba(127, 29, 29, 0.6) 100%);
       border-color: rgba(239, 68, 68, 0.5);
       box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
     }
-    
-    .pill-closed { 
-      color: #f3e8ff; 
+
+    .pill-closed {
+      color: #f3e8ff;
       background: linear-gradient(135deg, rgba(88, 28, 135, 0.9) 0%, rgba(88, 28, 135, 0.6) 100%);
       border-color: rgba(168, 85, 247, 0.5);
       box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2);
     }
-    
-    .status-good { 
+
+    .status-good {
       color: var(--success);
       border-color: rgba(34, 197, 94, 0.4);
       background: linear-gradient(135deg, rgba(5, 46, 22, 0.8) 0%, rgba(5, 46, 22, 0.4) 100%);
       box-shadow: inset 0 1px 0 rgba(34, 197, 94, 0.1);
     }
-    
-    .status-warn { 
+
+    .status-warn {
       color: var(--warning);
       border-color: rgba(250, 204, 21, 0.4);
       background: linear-gradient(135deg, rgba(41, 37, 36, 0.8) 0%, rgba(41, 37, 36, 0.4) 100%);
       box-shadow: inset 0 1px 0 rgba(250, 204, 21, 0.1);
     }
-    
-    .status-bad { 
+
+    .status-bad {
       color: var(--error);
       border-color: rgba(249, 115, 22, 0.4);
       background: linear-gradient(135deg, rgba(43, 15, 10, 0.8) 0%, rgba(43, 15, 10, 0.4) 100%);
       box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.1);
     }
-    
-    .status-neutral { 
+
+    .status-neutral {
       color: #93c5fd;
       border-color: rgba(30, 58, 138, 0.4);
       background: linear-gradient(135deg, rgba(11, 28, 58, 0.8) 0%, rgba(11, 28, 58, 0.4) 100%);
     }
-    
+
     .vol-zero { color: #93c5fd; border-color: rgba(30, 58, 138, 0.4); background: rgba(11, 28, 58, 0.6); }
-    .vol-low { 
+    .vol-low {
       color: var(--success);
       border-color: rgba(34, 197, 94, 0.4);
       background: linear-gradient(135deg, rgba(5, 46, 22, 0.6) 0%, rgba(5, 46, 22, 0.3) 100%);
     }
-    .vol-medium { 
+    .vol-medium {
       color: var(--warning);
       border-color: rgba(250, 204, 21, 0.4);
       background: linear-gradient(135deg, rgba(41, 37, 36, 0.6) 0%, rgba(41, 37, 36, 0.3) 100%);
     }
-    .vol-high { 
+    .vol-high {
       color: #f43f5e;
       border-color: rgba(136, 19, 55, 0.4);
       background: linear-gradient(135deg, rgba(42, 9, 18, 0.6) 0%, rgba(42, 9, 18, 0.3) 100%);
     }
-    
-    .sparkline { 
-      font-size: 16px; 
+
+    .sparkline {
+      font-size: 16px;
       letter-spacing: 2px;
       color: var(--accent);
       white-space: nowrap;
@@ -1155,7 +1155,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .skeleton-wrapper {
       padding: 20px;
     }
-    
+
     .skeleton-header {
       height: 28px;
       width: 60%;
@@ -1165,7 +1165,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 6px;
       margin-bottom: 16px;
     }
-    
+
     .skeleton-line {
       height: 12px;
       width: 100%;
@@ -1175,18 +1175,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 4px;
       margin-bottom: 10px;
     }
-    
+
     .skeleton-line:nth-child(2) { width: 80%; animation-delay: 0.1s; }
     .skeleton-line:nth-child(3) { width: 70%; animation-delay: 0.2s; }
     .skeleton-line:nth-child(4) { width: 90%; animation-delay: 0.3s; }
-    
+
     .skeleton-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       margin-top: 20px;
     }
-    
+
     .skeleton-card {
       height: 80px;
       background: linear-gradient(90deg, rgba(31, 44, 73, 0.4) 25%, rgba(31, 44, 73, 0.7) 50%, rgba(31, 44, 73, 0.4) 75%);
@@ -1194,12 +1194,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       animation: shimmer 1.5s infinite;
       border-radius: 12px;
     }
-    
+
     .skeleton-card:nth-child(1) { animation-delay: 0.1s; }
     .skeleton-card:nth-child(2) { animation-delay: 0.2s; }
     .skeleton-card:nth-child(3) { animation-delay: 0.3s; }
     .skeleton-card:nth-child(4) { animation-delay: 0.4s; }
-    
+
     /* Data Table Sorting */
     th.sortable {
       cursor: pointer;
@@ -1207,11 +1207,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       padding-right: 24px;
     }
-    
+
     th.sortable:hover {
       background: rgba(79, 209, 197, 0.05);
     }
-    
+
     th.sortable::after {
       content: '⇅';
       position: absolute;
@@ -1219,40 +1219,40 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0.3;
       font-size: 10px;
     }
-    
+
     th.sortable.asc::after {
       content: '↑';
       opacity: 1;
       color: var(--accent);
     }
-    
+
     th.sortable.desc::after {
       content: '↓';
       opacity: 1;
       color: var(--accent);
     }
-    
+
     /* Virtual Scroll Container */
     .virtual-scroll {
       max-height: 400px;
       overflow-y: auto;
       overflow-x: hidden;
     }
-    
+
     .virtual-scroll::-webkit-scrollbar {
       width: 8px;
     }
-    
+
     .virtual-scroll::-webkit-scrollbar-track {
       background: rgba(31, 44, 73, 0.3);
       border-radius: 4px;
     }
-    
+
     .virtual-scroll::-webkit-scrollbar-thumb {
       background: rgba(79, 209, 197, 0.3);
       border-radius: 4px;
     }
-    
+
     /* Fullscreen Mode */
     .fullscreen-btn {
       position: absolute;
@@ -1272,38 +1272,38 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0;
       transition: all 0.2s ease;
     }
-    
+
     .card:hover .fullscreen-btn {
       opacity: 1;
     }
-    
+
     .fullscreen-btn:hover {
       background: var(--accent);
       color: var(--bg);
       border-color: var(--accent);
     }
-    
+
     /* Pulse Animation for Updates */
     .pulse-update {
       animation: pulseUpdate 0.6s ease;
     }
-    
+
     @keyframes pulseUpdate {
       0% { background: rgba(79, 209, 197, 0); }
       50% { background: rgba(79, 209, 197, 0.2); }
       100% { background: rgba(79, 209, 197, 0); }
     }
-    
+
     /* Number Counter Animation */
     .count-up {
       animation: countUp 0.5s ease-out;
     }
-    
+
     @keyframes countUp {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     /* Sticky Header on Scroll */
     .sticky-header {
       position: sticky;
@@ -1313,19 +1313,19 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       padding: 12px 0;
       margin: -12px 0;
     }
-    
+
     /* Page Transition */
     .page-transition-enter {
       opacity: 0;
       transform: translateY(20px);
     }
-    
+
     .page-transition-enter-active {
       opacity: 1;
       transform: translateY(0);
       transition: all 0.4s ease;
     }
-    
+
     /* Date Range Picker */
     .date-range-picker {
       display: flex;
@@ -1337,7 +1337,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 10px;
       margin-bottom: 16px;
     }
-    
+
     .date-input {
       background: rgba(31, 44, 73, 0.6);
       border: 1px solid var(--line);
@@ -1347,12 +1347,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-size: 13px;
       font-family: ui-monospace, monospace;
     }
-    
+
     .date-input:focus {
       outline: none;
       border-color: var(--accent);
     }
-    
+
     /* Range Slider */
     .range-slider {
       width: 100%;
@@ -1362,7 +1362,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       outline: none;
       -webkit-appearance: none;
     }
-    
+
     .range-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -1373,7 +1373,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: pointer;
       box-shadow: 0 0 10px var(--accent-glow);
     }
-    
+
     .range-slider::-moz-range-thumb {
       width: 18px;
       height: 18px;
@@ -1383,7 +1383,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border: none;
       box-shadow: 0 0 10px var(--accent-glow);
     }
-    
+
     /* Toggle Switch */
     .toggle-switch {
       position: relative;
@@ -1391,13 +1391,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       width: 44px;
       height: 24px;
     }
-    
+
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-    
+
     .toggle-slider {
       position: absolute;
       cursor: pointer;
@@ -1407,7 +1407,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: 0.3s;
       border: 1px solid var(--line);
     }
-    
+
     .toggle-slider::before {
       position: absolute;
       content: '';
@@ -1419,17 +1419,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 50%;
       transition: 0.3s;
     }
-    
+
     .toggle-switch input:checked + .toggle-slider {
       background: rgba(79, 209, 197, 0.3);
       border-color: var(--accent);
     }
-    
+
     .toggle-switch input:checked + .toggle-slider::before {
       transform: translateX(20px);
       background: var(--accent);
     }
-    
+
     /* Alert Configuration Panel */
     .alert-config {
       background: rgba(10, 22, 43, 0.4);
@@ -1438,7 +1438,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       padding: 16px;
       margin-bottom: 16px;
     }
-    
+
     .alert-row {
       display: flex;
       align-items: center;
@@ -1446,24 +1446,24 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       padding: 12px 0;
       border-bottom: 1px solid rgba(31, 44, 73, 0.5);
     }
-    
+
     .alert-row:last-child {
       border-bottom: none;
     }
-    
+
     .alert-label {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 13px;
     }
-    
+
     .alert-threshold {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    
+
     .threshold-input {
       width: 80px;
       padding: 6px 10px;
@@ -1475,53 +1475,53 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-size: 13px;
       text-align: center;
     }
-    
+
     .threshold-input:focus {
       outline: none;
       border-color: var(--accent);
     }
-    
+
     /* Diff View */
     .diff-view {
       font-family: ui-monospace, monospace;
       font-size: 12px;
       line-height: 1.6;
     }
-    
+
     .diff-line {
       padding: 2px 8px;
       display: flex;
       gap: 12px;
     }
-    
+
     .diff-added {
       background: rgba(34, 197, 94, 0.15);
       color: var(--success);
     }
-    
+
     .diff-removed {
       background: rgba(239, 68, 68, 0.15);
       color: var(--critical);
     }
-    
+
     .diff-neutral {
       color: var(--muted);
     }
-    
+
     .diff-line-num {
       color: var(--muted);
       min-width: 40px;
       text-align: right;
       user-select: none;
     }
-    
+
     /* Chart Zoom Controls */
     .chart-controls {
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
     }
-    
+
     .chart-btn {
       padding: 6px 12px;
       font-size: 12px;
@@ -1532,24 +1532,24 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
     .chart-btn:hover {
       border-color: var(--accent);
       background: rgba(79, 209, 197, 0.1);
     }
-    
+
     .chart-btn.active {
       background: var(--accent);
       border-color: var(--accent);
       color: var(--bg);
     }
-    
+
     /* Multi-select Dropdown */
     .multi-select {
       position: relative;
       min-width: 150px;
     }
-    
+
     .multi-select-trigger {
       padding: 8px 12px;
       background: rgba(31, 44, 73, 0.6);
@@ -1563,7 +1563,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       gap: 8px;
       font-size: 13px;
     }
-    
+
     .multi-select-dropdown {
       position: absolute;
       top: 100%;
@@ -1580,11 +1580,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       z-index: 100;
       display: none;
     }
-    
+
     .multi-select.open .multi-select-dropdown {
       display: block;
     }
-    
+
     .multi-option {
       padding: 8px 12px;
       border-radius: 6px;
@@ -1594,56 +1594,56 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       align-items: center;
       gap: 8px;
     }
-    
+
     .multi-option:hover {
       background: rgba(79, 209, 197, 0.1);
     }
-    
+
     .multi-option input {
       accent-color: var(--accent);
     }
-    
+
     /* Enhanced Footer */
-    .footer { 
-      color: var(--muted); 
-      font-size: 13px; 
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
       margin-top: 24px;
       padding: 20px 0;
       border-top: 1px solid var(--line);
     }
-    
+
     .footer-content {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    
+
     .footer-links {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
     }
-    
-    .footer a { 
+
+    .footer a {
       color: var(--text-secondary);
       text-decoration: none;
       padding: 4px 8px;
       border-radius: 6px;
       transition: all 0.2s ease;
     }
-    
-    .footer a:hover { 
+
+    .footer a:hover {
       color: var(--accent);
       background: rgba(79, 209, 197, 0.1);
     }
-    
+
     .footer-separator {
       color: var(--line);
       user-select: none;
     }
-    
-    .footer-meta { 
+
+    .footer-meta {
       color: var(--muted);
       font-size: 12px;
       display: flex;
@@ -1662,32 +1662,32 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       backdrop-filter: blur(8px);
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
     }
-    
+
     .table-scroll::-webkit-scrollbar {
       height: 8px;
       width: 8px;
     }
-    
+
     .table-scroll::-webkit-scrollbar-track {
       background: rgba(31, 44, 73, 0.3);
     }
-    
+
     .table-scroll::-webkit-scrollbar-thumb {
       background: rgba(79, 209, 197, 0.3);
       border-radius: 4px;
     }
-    
+
     .table-scroll::-webkit-scrollbar-thumb:hover {
       background: rgba(79, 209, 197, 0.5);
     }
-    
+
     .table-scroll table { margin-top: 0; min-width: 980px; }
-    
+
     table {
       border-collapse: separate;
       border-spacing: 0;
     }
-    
+
     th {
       background: rgba(13, 24, 48, 0.9);
       font-weight: 600;
@@ -1697,17 +1697,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--muted);
       padding: 12px;
     }
-    
+
     td {
       padding: 10px 12px;
       font-size: 13px;
       border-bottom: 1px solid rgba(31, 44, 73, 0.5);
     }
-    
+
     tr:hover td {
       background: rgba(79, 209, 197, 0.03);
     }
-    
+
     .subdomain-table { font-family: ui-monospace, Menlo, Monaco, monospace; }
     .subdomain-table th, .subdomain-table td { white-space: nowrap; }
     .subdomain-table th:first-child,
@@ -1734,14 +1734,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       vertical-align: bottom;
     }
     /* Enhanced Overview Tiles */
-    .overview-grid { 
-      display: grid; 
-      grid-template-columns: repeat(5, minmax(0, 1fr)); 
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
       margin-top: 16px;
     }
-    
-    .overview-tile { 
+
+    .overview-tile {
       border: 1px solid var(--line);
       background: linear-gradient(135deg, rgba(13, 24, 48, 0.9) 0%, rgba(13, 24, 48, 0.5) 100%);
       backdrop-filter: blur(8px);
@@ -1752,7 +1752,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       overflow: hidden;
     }
-    
+
     .overview-tile::before {
       content: '';
       position: absolute;
@@ -1760,53 +1760,53 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
       pointer-events: none;
     }
-    
+
     .overview-tile:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
-    
-    .overview-label { 
-      color: var(--muted); 
-      font-size: 10px; 
-      text-transform: uppercase; 
+
+    .overview-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
       letter-spacing: 0.08em;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    
-    .overview-value { 
-      margin-top: 8px; 
-      font-size: 18px; 
+
+    .overview-value {
+      margin-top: 8px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--text);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
     }
-    
-    .overview-meta { 
-      margin-top: 6px; 
-      color: var(--text-secondary); 
+
+    .overview-meta {
+      margin-top: 6px;
+      color: var(--text-secondary);
       font-size: 11px;
     }
-    
-    .tile-good { 
+
+    .tile-good {
       border-color: rgba(34, 197, 94, 0.4);
       background: linear-gradient(135deg, rgba(7, 36, 25, 0.9) 0%, rgba(7, 36, 25, 0.5) 100%);
       box-shadow: inset 0 1px 0 rgba(34, 197, 94, 0.1);
     }
-    .tile-warn { 
+    .tile-warn {
       border-color: rgba(250, 204, 21, 0.4);
       background: linear-gradient(135deg, rgba(42, 35, 19, 0.9) 0%, rgba(42, 35, 19, 0.5) 100%);
       box-shadow: inset 0 1px 0 rgba(250, 204, 21, 0.1);
     }
-    .tile-bad { 
+    .tile-bad {
       border-color: rgba(249, 115, 22, 0.4);
       background: linear-gradient(135deg, rgba(43, 18, 16, 0.9) 0%, rgba(43, 18, 16, 0.5) 100%);
       box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.1);
     }
-    .tile-neutral { 
+    .tile-neutral {
       border-color: rgba(30, 58, 138, 0.4);
       background: linear-gradient(135deg, rgba(16, 33, 63, 0.9) 0%, rgba(16, 33, 63, 0.5) 100%);
     }
@@ -1822,7 +1822,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 999px;
       border: 1px solid var(--line);
     }
-    
+
     .live-dot {
       width: 6px;
       height: 6px;
@@ -1830,18 +1830,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 50%;
       animation: livePulse 2s ease-in-out infinite;
     }
-    
+
     @keyframes livePulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
     }
-    
+
     /* Search/Filter Input */
     .search-box {
       position: relative;
       margin-bottom: 16px;
     }
-    
+
     .search-input {
       width: 100%;
       padding: 12px 16px 12px 40px;
@@ -1852,17 +1852,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-size: 14px;
       transition: all 0.2s ease;
     }
-    
+
     .search-input:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
-    
+
     .search-input::placeholder {
       color: var(--muted);
     }
-    
+
     .search-icon {
       position: absolute;
       left: 14px;
@@ -1871,7 +1871,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--muted);
       font-size: 16px;
     }
-    
+
     /* Filter Pills */
     .filter-row {
       display: flex;
@@ -1879,7 +1879,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       gap: 8px;
       margin-bottom: 16px;
     }
-    
+
     .filter-pill {
       padding: 6px 12px;
       background: rgba(31, 44, 73, 0.4);
@@ -1890,18 +1890,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    
+
     .filter-pill:hover {
       border-color: var(--accent);
       color: var(--accent);
     }
-    
+
     .filter-pill.active {
       background: var(--accent);
       border-color: var(--accent);
       color: var(--bg);
     }
-    
+
     /* Chart Container */
     .chart-container {
       position: relative;
@@ -1912,12 +1912,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border: 1px solid var(--line);
       overflow: hidden;
     }
-    
+
     .chart-canvas {
       width: 100%;
       height: 100%;
     }
-    
+
     /* Multi-metric Chart */
     .multi-chart {
       display: grid;
@@ -1925,41 +1925,41 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       gap: 16px;
       margin: 16px 0;
     }
-    
+
     .chart-box {
       background: rgba(10, 22, 43, 0.3);
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 16px;
     }
-    
+
     .chart-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
     }
-    
+
     .chart-title {
       font-size: 12px;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    
+
     .chart-value {
       font-size: 18px;
       font-weight: 700;
       font-family: ui-monospace, monospace;
     }
-    
+
     /* Radar Chart Container */
     .radar-container {
       width: 200px;
       height: 200px;
       margin: 0 auto;
     }
-    
+
     /* Heatmap Grid */
     .heatmap-grid {
       display: grid;
@@ -1967,20 +1967,20 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       gap: 3px;
       margin: 16px 0;
     }
-    
+
     .heatmap-cell {
       aspect-ratio: 1;
       border-radius: 3px;
       transition: all 0.2s ease;
       cursor: pointer;
     }
-    
+
     .heatmap-cell:hover {
       transform: scale(1.2);
       z-index: 10;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    
+
     /* Breadcrumb Navigation */
     .breadcrumb {
       display: flex;
@@ -1991,7 +1991,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       margin-bottom: 16px;
       flex-wrap: wrap;
     }
-    
+
     .breadcrumb a {
       color: var(--text-secondary);
       text-decoration: none;
@@ -1999,21 +1999,21 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 6px;
       transition: all 0.2s;
     }
-    
+
     .breadcrumb a:hover {
       color: var(--accent);
       background: rgba(79, 209, 197, 0.1);
     }
-    
+
     .breadcrumb-separator {
       color: var(--line);
     }
-    
+
     .breadcrumb-current {
       color: var(--text);
       font-weight: 500;
     }
-    
+
     /* Tab Navigation */
     .tabs {
       display: flex;
@@ -2023,11 +2023,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       overflow-x: auto;
       scrollbar-width: none;
     }
-    
+
     .tabs::-webkit-scrollbar {
       display: none;
     }
-    
+
     .tab {
       padding: 12px 20px;
       font-size: 13px;
@@ -2040,26 +2040,26 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.2s;
       white-space: nowrap;
     }
-    
+
     .tab:hover {
       color: var(--text);
       background: rgba(79, 209, 197, 0.05);
     }
-    
+
     .tab.active {
       color: var(--accent);
       border-bottom-color: var(--accent);
     }
-    
+
     .tab-content {
       display: none;
     }
-    
+
     .tab-content.active {
       display: block;
       animation: fadeIn 0.3s ease;
     }
-    
+
     /* Keyboard Shortcut Badge */
     .kbd {
       display: inline-flex;
@@ -2076,7 +2076,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 4px;
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
     }
-    
+
     /* Drag and Drop Zone */
     .drop-zone {
       border: 2px dashed var(--line);
@@ -2086,26 +2086,26 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.3s ease;
       background: rgba(10, 22, 43, 0.3);
     }
-    
+
     .drop-zone.drag-over {
       border-color: var(--accent);
       background: rgba(79, 209, 197, 0.1);
       transform: scale(1.02);
     }
-    
+
     .drop-zone-icon {
       font-size: 48px;
       margin-bottom: 12px;
       opacity: 0.6;
     }
-    
+
     /* Loading Spinner Variants */
     .spinner-ring {
       display: inline-block;
       width: 40px;
       height: 40px;
     }
-    
+
     .spinner-ring::after {
       content: '';
       display: block;
@@ -2117,12 +2117,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-top-color: var(--accent);
       animation: spin 1s linear infinite;
     }
-    
+
     .spinner-dots {
       display: inline-flex;
       gap: 6px;
     }
-    
+
     .spinner-dots span {
       width: 8px;
       height: 8px;
@@ -2130,15 +2130,15 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 50%;
       animation: bounce 1.4s ease-in-out infinite both;
     }
-    
+
     .spinner-dots span:nth-child(1) { animation-delay: -0.32s; }
     .spinner-dots span:nth-child(2) { animation-delay: -0.16s; }
-    
+
     @keyframes bounce {
       0%, 80%, 100% { transform: scale(0); }
       40% { transform: scale(1); }
     }
-    
+
     /* Copy to Clipboard Button */
     .copy-btn {
       display: inline-flex;
@@ -2153,18 +2153,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
     .copy-btn:hover {
       border-color: var(--accent);
       color: var(--accent);
     }
-    
+
     .copy-btn.copied {
       background: rgba(34, 197, 94, 0.2);
       border-color: var(--success);
       color: var(--success);
     }
-    
+
     /* Info Box */
     .info-box {
       padding: 16px;
@@ -2173,7 +2173,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background: rgba(79, 209, 197, 0.1);
       margin: 16px 0;
     }
-    
+
     .info-box-title {
       font-weight: 600;
       margin-bottom: 4px;
@@ -2181,22 +2181,22 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       align-items: center;
       gap: 8px;
     }
-    
+
     .info-box.warning {
       border-left-color: var(--warning);
       background: rgba(250, 204, 21, 0.1);
     }
-    
+
     .info-box.error {
       border-left-color: var(--error);
       background: rgba(249, 115, 22, 0.1);
     }
-    
+
     .info-box.success {
       border-left-color: var(--success);
       background: rgba(34, 197, 94, 0.1);
     }
-    
+
     /* Stats Grid */
     .stats-grid {
       display: grid;
@@ -2204,7 +2204,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       gap: 12px;
       margin: 16px 0;
     }
-    
+
     .stat-item {
       text-align: center;
       padding: 16px 12px;
@@ -2213,12 +2213,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border: 1px solid var(--line);
       transition: all 0.2s ease;
     }
-    
+
     .stat-item:hover {
       border-color: rgba(79, 209, 197, 0.3);
       transform: translateY(-2px);
     }
-    
+
     .stat-value {
       font-size: 24px;
       font-weight: 700;
@@ -2226,7 +2226,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--text);
       line-height: 1;
     }
-    
+
     .stat-label {
       font-size: 11px;
       color: var(--muted);
@@ -2234,13 +2234,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    
+
     /* Timeline */
     .timeline {
       position: relative;
       padding-left: 24px;
     }
-    
+
     .timeline::before {
       content: '';
       position: absolute;
@@ -2250,12 +2250,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       width: 2px;
       background: linear-gradient(180deg, var(--accent), transparent);
     }
-    
+
     .timeline-item {
       position: relative;
       padding-bottom: 20px;
     }
-    
+
     .timeline-item::before {
       content: '';
       position: absolute;
@@ -2267,18 +2267,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border: 2px solid var(--accent);
       border-radius: 50%;
     }
-    
+
     .timeline-item.success::before { border-color: var(--success); }
     .timeline-item.warning::before { border-color: var(--warning); }
     .timeline-item.error::before { border-color: var(--error); }
-    
+
     .timeline-content {
       background: rgba(10, 22, 43, 0.4);
       border-radius: 8px;
       padding: 12px;
       border: 1px solid var(--line);
     }
-    
+
     /* Modal Overlay */
     .modal-overlay {
       position: fixed;
@@ -2291,7 +2291,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       align-items: center;
       justify-content: center;
     }
-    
+
     .modal {
       background: var(--panel);
       backdrop-filter: blur(20px);
@@ -2305,26 +2305,26 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
       animation: modalSlide 0.3s ease;
     }
-    
+
     @keyframes modalSlide {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     /* Print Styles */
     @media print {
       body {
         background: white !important;
         color: black !important;
       }
-      
+
       .card {
         background: white !important;
         border: 1px solid #ccc !important;
         box-shadow: none !important;
         break-inside: avoid;
       }
-      
+
       .theme-toggle,
       .fab,
       .buttons,
@@ -2333,48 +2333,48 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       .status-orb::after {
         display: none !important;
       }
-      
+
       .collapsible-content {
         max-height: none !important;
       }
-      
+
       h1 {
         background: none !important;
         -webkit-text-fill-color: black !important;
         color: black !important;
       }
-      
+
       table {
         font-size: 10pt;
       }
-      
+
       th {
         background: #f0f0f0 !important;
         color: black !important;
       }
     }
-    
+
     /* Responsive Design */
     @media (max-width: 1200px) {
       main { padding: 20px; }
       .overview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .theme-toggle { top: 16px; right: 16px; }
     }
-    
+
     @media (max-width: 1000px) {
       .span-8, .span-6, .span-4 { grid-column: span 12; }
       .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .kpi-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
       .metric-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    
+
     @media (max-width: 768px) {
       .metric-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .fab { bottom: 16px; right: 16px; width: 48px; height: 48px; }
       .fab-menu { bottom: 72px; right: 16px; }
     }
-    
+
     @media (max-width: 560px) {
       main { padding: 12px; }
       h1 { font-size: 18px; }
@@ -2384,7 +2384,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       .theme-toggle { width: 36px; height: 36px; font-size: 16px; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    
+
     /* Accessibility */
     .visually-hidden {
       position: absolute;
@@ -2397,25 +2397,25 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       white-space: nowrap;
       border-width: 0;
     }
-    
+
     /* Focus styles */
     *:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
-    
+
     /* Selection */
     ::selection {
       background: rgba(79, 209, 197, 0.3);
       color: var(--text);
     }
-    
+
     /* Enhanced Tooltips */
     [data-tooltip] {
       position: relative;
       cursor: help;
     }
-    
+
     [data-tooltip]::after {
       content: attr(data-tooltip);
       position: absolute;
@@ -2439,7 +2439,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       white-space: normal;
       line-height: 1.5;
     }
-    
+
     [data-tooltip]::before {
       content: '';
       position: absolute;
@@ -2451,13 +2451,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0;
       transition: all 0.2s ease;
     }
-    
+
     [data-tooltip]:hover::after,
     [data-tooltip]:hover::before {
       opacity: 1;
       transform: translateX(-50%) translateY(-4px);
     }
-    
+
     /* Collapsible Sections */
     .collapsible {
       border: 1px solid var(--line);
@@ -2467,7 +2467,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       backdrop-filter: blur(8px);
       margin-bottom: 16px;
     }
-    
+
     .collapsible-header {
       display: flex;
       align-items: center;
@@ -2478,17 +2478,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: background 0.2s ease;
       background: transparent;
     }
-    
+
     .collapsible-header:hover {
       background: rgba(79, 209, 197, 0.05);
     }
-    
+
     .collapsible-header h2 {
       margin: 0;
       font-size: 14px;
       font-weight: 600;
     }
-    
+
     .collapsible-toggle {
       width: 24px;
       height: 24px;
@@ -2499,25 +2499,25 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.3s ease;
       color: var(--muted);
     }
-    
+
     .collapsible.expanded .collapsible-toggle {
       transform: rotate(180deg);
     }
-    
+
     .collapsible-content {
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     .collapsible.expanded .collapsible-content {
       max-height: 2000px;
     }
-    
+
     .collapsible-inner {
       padding: 0 20px 20px;
     }
-    
+
     /* Theme Toggle Button */
     .theme-toggle {
       position: fixed;
@@ -2538,13 +2538,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       z-index: 100;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
-    
+
     .theme-toggle:hover {
       transform: scale(1.1) rotate(15deg);
       border-color: var(--accent);
       box-shadow: 0 0 20px var(--accent-glow);
     }
-    
+
     /* Mini Charts */
     .mini-chart {
       display: flex;
@@ -2553,7 +2553,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       height: 30px;
       padding: 4px 0;
     }
-    
+
     .mini-bar {
       flex: 1;
       background: linear-gradient(180deg, var(--accent), transparent);
@@ -2562,11 +2562,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 0.7;
       transition: opacity 0.2s;
     }
-    
+
     .mini-bar:hover {
       opacity: 1;
     }
-    
+
     /* Floating Action Button */
     .fab {
       position: fixed;
@@ -2587,12 +2587,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 100;
     }
-    
+
     .fab:hover {
       transform: scale(1.1) rotate(90deg);
       box-shadow: 0 8px 30px var(--accent-glow);
     }
-    
+
     .fab-menu {
       position: fixed;
       bottom: 88px;
@@ -2605,13 +2605,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transform: translateY(20px);
       transition: all 0.3s ease;
     }
-    
+
     .fab-menu.open {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
     }
-    
+
     .fab-item {
       width: 48px;
       height: 48px;
@@ -2628,13 +2628,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.2s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
-    
+
     .fab-item:hover {
       transform: scale(1.1);
       border-color: var(--accent);
       box-shadow: 0 0 15px var(--accent-glow);
     }
-    
+
     /* Trend Indicators */
     .trend-arrow {
       display: inline-flex;
@@ -2646,22 +2646,22 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       font-size: 12px;
       font-weight: bold;
     }
-    
+
     .trend-up {
       background: rgba(34, 197, 94, 0.2);
       color: var(--success);
     }
-    
+
     .trend-down {
       background: rgba(239, 68, 68, 0.2);
       color: var(--critical);
     }
-    
+
     .trend-flat {
       background: rgba(147, 197, 253, 0.2);
       color: #93c5fd;
     }
-    
+
     /* Progress Bars */
     .progress-bar {
       height: 8px;
@@ -2670,7 +2670,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       overflow: hidden;
       position: relative;
     }
-    
+
     .progress-fill {
       height: 100%;
       border-radius: 4px;
@@ -2678,7 +2678,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       position: relative;
       overflow: hidden;
     }
-    
+
     .progress-fill::after {
       content: '';
       position: absolute;
@@ -2686,12 +2686,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
       animation: shimmer-bar 2s infinite;
     }
-    
+
     @keyframes shimmer-bar {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
     }
-    
+
     /* Loading Skeleton */
     .skeleton-text {
       height: 12px;
@@ -2701,7 +2701,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 4px;
       margin: 8px 0;
     }
-    
+
     .skeleton-circle {
       width: 40px;
       height: 40px;
@@ -2710,14 +2710,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
     }
-    
+
     /* Metric Cards */
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
     }
-    
+
     .metric-card {
       background: linear-gradient(135deg, rgba(10, 22, 43, 0.6) 0%, rgba(10, 22, 43, 0.3) 100%);
       border: 1px solid var(--line);
@@ -2725,12 +2725,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       padding: 16px;
       transition: all 0.3s ease;
     }
-    
+
     .metric-card:hover {
       border-color: rgba(79, 209, 197, 0.3);
       transform: translateY(-2px);
     }
-    
+
     .metric-label {
       font-size: 11px;
       text-transform: uppercase;
@@ -2738,7 +2738,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--muted);
       margin-bottom: 8px;
     }
-    
+
     .metric-value-large {
       font-size: 28px;
       font-weight: 700;
@@ -2746,7 +2746,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       color: var(--text);
       line-height: 1.2;
     }
-    
+
     .metric-delta {
       font-size: 12px;
       margin-top: 6px;
@@ -2754,7 +2754,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       align-items: center;
       gap: 4px;
     }
-    
+
     /* Comparison Table */
     .comparison-row {
       display: flex;
@@ -2763,23 +2763,23 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       padding: 12px 0;
       border-bottom: 1px solid var(--line);
     }
-    
+
     .comparison-row:last-child {
       border-bottom: none;
     }
-    
+
     .comparison-label {
       flex: 1;
       font-size: 13px;
       color: var(--text-secondary);
     }
-    
+
     .comparison-value {
       font-family: ui-monospace, monospace;
       font-weight: 600;
       font-size: 14px;
     }
-    
+
     .comparison-bar {
       width: 100px;
       height: 6px;
@@ -2787,19 +2787,19 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       border-radius: 3px;
       overflow: hidden;
     }
-    
+
     .comparison-fill {
       height: 100%;
       border-radius: 3px;
       transition: width 0.6s ease;
     }
-    
+
     /* Data Export Button */
     .export-menu {
       position: relative;
       display: inline-block;
     }
-    
+
     .export-dropdown {
       position: absolute;
       top: 100%;
@@ -2818,13 +2818,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
       z-index: 100;
     }
-    
+
     .export-menu:hover .export-dropdown {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
     }
-    
+
     .export-option {
       display: flex;
       align-items: center;
@@ -2835,7 +2835,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       transition: all 0.2s;
       font-size: 13px;
     }
-    
+
     .export-option:hover {
       background: rgba(79, 209, 197, 0.1);
       color: var(--accent);
@@ -2852,12 +2852,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       </linearGradient>
     </defs>
   </svg>
-  
+
   <!-- Theme Toggle -->
   <button class="theme-toggle" id="themeToggle" data-tooltip="Toggle dark/light mode" aria-label="Toggle theme">
     <span id="themeIcon">🌙</span>
   </button>
-  
+
   <!-- Floating Action Button -->
   <button class="fab" id="fab" data-tooltip="Quick actions" aria-label="Quick actions menu">
     <span>⚡</span>
@@ -2869,7 +2869,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     <button class="fab-item" id="fabHelp" data-tooltip="Keyboard shortcuts (?))" aria-label="Help">❓</button>
     <button class="fab-item" id="fabScrollTop" data-tooltip="Scroll to top" aria-label="Scroll to top">⬆️</button>
   </div>
-  
+
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">🏠 Dashboard</a>
@@ -2880,7 +2880,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     <span class="breadcrumb-separator">/</span>
     <a href="#storage-heading">Storage</a>
   </nav>
-  
+
   <main>
     <header class="card span-12">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
@@ -2898,7 +2898,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <span id="connectionStatus" class="badge status-neutral">●</span>
       </div>
       <div class="meta">
-        repo=<a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> 
+        repo=<a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a>
         commit=<a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a>
       </div>
       <div id="reportNotice" class="meta" style="margin-top:8px"></div>
@@ -3002,7 +3002,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         </div>
       </div>
     </div>
-    
+
     <section aria-labelledby="core-status-heading">
       <div class="section-title" id="core-status-heading">Core Status</div>
       <div class="section-subtitle">Benchmark quality, performance trend, and loop-closure alignment.</div>
@@ -3061,7 +3061,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         </article>
       </div>
     </section>
-    
+
     <section aria-labelledby="domain-registry-heading">
       <div class="section-title" id="domain-registry-heading">Domain Readiness</div>
       <div class="section-subtitle">Readiness of domain mappings, headers, token secrets, and runtime health.</div>
@@ -3094,7 +3094,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         </article>
       </div>
     </section>
-    
+
     <section aria-labelledby="storage-heading">
       <div class="section-title" id="storage-heading">Distribution & Feed</div>
       <div class="section-subtitle">Manifest integrity, inventory presence, and RSS publication consistency.</div>
@@ -3182,7 +3182,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         </article>
       </div>
     </section>
-    
+
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-links">
@@ -3204,8 +3204,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         </div>
         <div class="footer-meta">
           <span class="badge status-neutral">v2.0</span>
-          Built with <span class="status-orb healthy" style="width:6px;height:6px;display:inline-block;vertical-align:middle"></span> 
-          <span style="color:var(--accent)">Bun</span> · 
+          Built with <span class="status-orb healthy" style="width:6px;height:6px;display:inline-block;vertical-align:middle"></span>
+          <span style="color:var(--accent)">Bun</span> ·
           <span id="loadTime"></span>
         </div>
       </div>
@@ -3266,12 +3266,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     let knownLatestId = null;
     let currentRssGuid = null;
     let knownRssGuid = null;
-    
+
     // Real-time polling state
     let pollingEnabled = true;
     let lastDataTimestamp = Date.now();
     let connectionStatus = 'connected';
-    
+
     // Canvas chart cache
     const chartCache = new Map();
     const showToast = (message, tone = 'success', ttlMs = 2600) => {
@@ -3540,31 +3540,31 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     const renderSparkline = (canvasId, values, options = {}) => {
       const canvas = document.getElementById(canvasId);
       if (!canvas || !Array.isArray(values) || values.length === 0) return;
-      
+
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      
+
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
-      
+
       const width = rect.width;
       const height = rect.height;
       const padding = 4;
-      
+
       const min = Math.min(...values);
       const max = Math.max(...values);
       const range = max - min || 1;
-      
+
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
-      
+
       // Create gradient
       const gradient = ctx.createLinearGradient(0, 0, 0, height);
       gradient.addColorStop(0, options.color || 'rgba(79, 209, 197, 0.8)');
       gradient.addColorStop(1, 'rgba(79, 209, 197, 0.1)');
-      
+
       // Draw area
       ctx.beginPath();
       ctx.moveTo(0, height);
@@ -3578,7 +3578,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       ctx.closePath();
       ctx.fillStyle = gradient;
       ctx.fill();
-      
+
       // Draw line
       ctx.beginPath();
       ctx.strokeStyle = options.color || '#4fd1c5';
@@ -3592,7 +3592,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         else ctx.lineTo(x, y);
       });
       ctx.stroke();
-      
+
       // Draw dots for last value
       if (values.length > 0) {
         const lastX = width;
@@ -3606,32 +3606,32 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         ctx.stroke();
       }
     };
-    
+
     // Render bar chart
     const renderBarChart = (canvasId, data, options = {}) => {
       const canvas = document.getElementById(canvasId);
       if (!canvas || !Array.isArray(data) || data.length === 0) return;
-      
+
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      
+
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
-      
+
       const width = rect.width;
       const height = rect.height;
       const padding = { top: 20, right: 10, bottom: 30, left: 40 };
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
-      
+
       const max = Math.max(...data.map(d => d.value));
       const barWidth = (chartWidth / data.length) * 0.7;
       const barGap = (chartWidth / data.length) * 0.3;
-      
+
       ctx.clearRect(0, 0, width, height);
-      
+
       // Draw grid lines
       ctx.strokeStyle = 'rgba(31, 44, 73, 0.5)';
       ctx.lineWidth = 1;
@@ -3642,21 +3642,21 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         ctx.lineTo(width - padding.right, y);
         ctx.stroke();
       }
-      
+
       // Draw bars
       data.forEach((d, i) => {
         const x = padding.left + i * (barWidth + barGap) + barGap / 2;
         const barHeight = (d.value / max) * chartHeight;
         const y = padding.top + chartHeight - barHeight;
-        
+
         // Bar gradient
         const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
         gradient.addColorStop(0, d.color || 'var(--accent)');
         gradient.addColorStop(1, 'rgba(79, 209, 197, 0.3)');
-        
+
         ctx.fillStyle = gradient;
         ctx.fillRect(x, y, barWidth, barHeight);
-        
+
         // Label
         ctx.fillStyle = 'var(--muted)';
         ctx.font = '10px ui-sans-serif';
@@ -3664,16 +3664,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         ctx.fillText(d.label || i + 1, x + barWidth / 2, height - 10);
       });
     };
-    
+
     // Render heatmap
     const renderHeatmap = (containerId, data, options = {}) => {
       const container = document.getElementById(containerId);
       if (!container || !Array.isArray(data)) return;
-      
+
       const max = Math.max(...data);
       const min = Math.min(...data);
       const range = max - min || 1;
-      
+
       container.innerHTML = data.map((v, i) => {
         const intensity = (v - min) / range;
         const hue = (1 - intensity) * 120; // Green to red
@@ -3681,7 +3681,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         return '<div class="heatmap-cell" style="background:' + color + '" title="' + (options.labels?.[i] || v) + ': ' + v.toFixed(2) + '"></div>';
       }).join('');
     };
-    
+
     const sparkline = (values) => {
       if (!Array.isArray(values) || values.length === 0) return 'n/a';
       const blocks = Array.from('▁▂▃▄▅▆▇█');
@@ -3775,7 +3775,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '</div>'
       );
     };
-    
+
     // Animated Bar Chart for visualizing data
     const barChart = (values, labels) => {
       if (!Array.isArray(values) || values.length === 0) return '';
@@ -3838,7 +3838,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     };
     // Show skeleton loading state
     const showSkeleton = (container) => {
-      container.innerHTML = 
+      container.innerHTML =
         '<div class="skeleton-wrapper">' +
           '<div class="skeleton-header"></div>' +
           '<div class="skeleton-line"></div>' +
@@ -3852,18 +3852,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '</div>' +
         '</div>';
     };
-    
+
     // Table sorting state
     let tableSortColumn = null;
     let tableSortDirection = 'asc';
-    
+
     const sortTable = (columnIndex, tableSelector) => {
       const table = document.querySelector(tableSelector);
       if (!table) return;
-      
+
       const tbody = table.querySelector('tbody');
       const rows = Array.from(tbody.querySelectorAll('tr'));
-      
+
       // Toggle direction if same column
       if (tableSortColumn === columnIndex) {
         tableSortDirection = tableSortDirection === 'asc' ? 'desc' : 'asc';
@@ -3871,7 +3871,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         tableSortColumn = columnIndex;
         tableSortDirection = 'asc';
       }
-      
+
       // Update header classes
       table.querySelectorAll('th').forEach((th, i) => {
         th.classList.remove('asc', 'desc');
@@ -3879,39 +3879,39 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           th.classList.add(tableSortDirection);
         }
       });
-      
+
       // Sort rows
       rows.sort((a, b) => {
         const aVal = a.cells[columnIndex]?.textContent || '';
         const bVal = b.cells[columnIndex]?.textContent || '';
-        
+
         // Try numeric comparison
         const aNum = parseFloat(aVal);
         const bNum = parseFloat(bVal);
-        
+
         if (!isNaN(aNum) && !isNaN(bNum)) {
           return tableSortDirection === 'asc' ? aNum - bNum : bNum - aNum;
         }
-        
+
         // String comparison
-        return tableSortDirection === 'asc' 
+        return tableSortDirection === 'asc'
           ? aVal.localeCompare(bVal)
           : bVal.localeCompare(aVal);
       });
-      
+
       // Re-append sorted rows
       rows.forEach(row => tbody.appendChild(row));
     };
-    
+
     const renderLatest = (data) => {
       if (!data || !Array.isArray(data.rankedProfiles)) {
         latestEl.innerHTML = emptyState('No benchmark data', 'Run a new snapshot to populate latest metrics.', '📉');
         trendEl.innerHTML = emptyState('No trend data', 'Need at least one latest snapshot.', '📊');
         return;
       }
-      
+
       const currentTop = topProfile(data);
-      
+
       // Create mini sparklines for each profile
       const profileMetrics = data.rankedProfiles.map(p => ({
         profile: p.profile,
@@ -3919,7 +3919,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         p95: Number(p.latencyP95Ms || 0),
         signal: Number(p.avgSignalPct || 0)
       }));
-      
+
       const rows = data.rankedProfiles.map((p, idx) =>
         (() => {
           const uniquePct = Number(p.avgUniqueFamilyPct || 0);
@@ -3946,7 +3946,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '</tr>';
         })()
       ).join('');
-      
+
       // Metric cards for quick overview
       const qualityColor = currentTop?.qualityScore >= 80 ? 'var(--success)' : currentTop?.qualityScore >= 60 ? 'var(--warning)' : 'var(--error)';
       const p95Val = Number(currentTop?.latencyP95Ms || 0);
@@ -3957,8 +3957,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const rssPct = Math.min(100, (rssVal / 300) * 100);
       const rssColor = rssVal < 200 ? 'var(--success)' : rssVal < 250 ? 'var(--warning)' : 'var(--error)';
       const miniBars = [1,2,3,4,5].map((_,i) => '<div class="mini-bar" style="height:' + (40 + Math.floor(Math.random() * 60)) + '%"></div>').join('');
-      
-      const metricCards = 
+
+      const metricCards =
         '<div class="metric-grid" style="margin-bottom:20px">' +
           '<div class="metric-card" data-tooltip="Overall quality score across all profiles">' +
             '<div class="metric-label">Top Quality</div>' +
@@ -3987,7 +3987,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '</div>' +
           '</div>' +
         '</div>';
-      
+
       // Calculate stats
       const stats = {
         totalQueries: (data.queries || []).length,
@@ -3995,11 +3995,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         avgLatency: data.rankedProfiles.reduce((a, p) => a + Number(p.latencyP95Ms || 0), 0) / data.rankedProfiles.length,
         totalProfiles: data.rankedProfiles.length
       };
-      
+
       // Store profiles for comparison
       window.currentProfiles = data.rankedProfiles;
-      
-      const statsHtml = 
+
+      const statsHtml =
         '<div class="stats-grid" style="margin-bottom:20px">' +
           '<div class="stat-item" data-tooltip="Total number of queries">' +
             '<div class="stat-value">' + stats.totalQueries + '</div>' +
@@ -4018,9 +4018,9 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '<div class="stat-label">Profiles</div>' +
           '</div>' +
         '</div>';
-      
+
       // Canvas chart for quality trend across profiles
-      const chartHtml = 
+      const chartHtml =
         '<div style="margin-bottom:20px">' +
           '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Quality Distribution</div>' +
           '<canvas id="qualityChart" class="chart-canvas" style="width:100%;height:100px;background:rgba(10,22,43,0.3);border-radius:8px"></canvas>' +
@@ -4053,7 +4053,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         : gateError
           ? '<div class="meta" style="margin:4px 0 12px">gate error: ' + gateError + '</div>'
           : '';
-      
+
       latestEl.innerHTML =
         '<div class="meta" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">' +
           '<span data-tooltip="Unique snapshot identifier">📸 ' + (data.id || 'n/a') + '</span>' +
@@ -4061,7 +4061,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<span data-tooltip="Query pack configuration">📦 ' + (data.queryPack || 'core_delivery') + '</span>' +
           '<span data-tooltip="Number of queries executed">🔍 ' + ((data.queries || []).length || 0) + ' queries</span>' +
         '</div>' +
-        (Array.isArray(data.warnings) && data.warnings.length > 0 
+        (Array.isArray(data.warnings) && data.warnings.length > 0
           ? '<div class="pill-row" style="margin-bottom:16px">' + data.warnings.map(w => '<span class="status-pill pill-warning">⚠️ ' + w + '</span>').join('') + '</div>'
           : '') +
         (gatePills.length > 0
@@ -4087,7 +4087,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '</button>' +
         '</div>' +
         '<div class="table-scroll"><table id="profilesTable"><thead><tr><th class="sortable" onclick="sortTable(0, \'#profilesTable\')">Rank</th><th class="sortable" onclick="sortTable(1, \'#profilesTable\')">Profile</th><th class="sortable" onclick="sortTable(2, \'#profilesTable\')">Quality</th><th class="sortable" onclick="sortTable(3, \'#profilesTable\')">P95</th><th class="sortable" onclick="sortTable(4, \'#profilesTable\')">Signal</th><th class="sortable" onclick="sortTable(5, \'#profilesTable\')">Unique</th><th class="sortable" onclick="sortTable(6, \'#profilesTable\')">Slop</th><th class="sortable" onclick="sortTable(7, \'#profilesTable\')">Density</th><th class="sortable" onclick="sortTable(8, \'#profilesTable\')">Noise</th><th class="sortable" onclick="sortTable(9, \'#profilesTable\')">Reliability</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
-      
+
       // Render chart after DOM update
       setTimeout(() => {
         const qualityScores = data.rankedProfiles.map(p => Number(p.qualityScore || 0));
@@ -4101,7 +4101,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     window.showHelpModal = () => {
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="max-width:600px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">⌨️ Keyboard Shortcuts</h2>' +
@@ -4149,16 +4149,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '💡 Tip: You can also click section headers to collapse/expand them' +
           '</div>' +
         '</div>';
-      
+
       document.body.appendChild(modal);
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-    
+
     // API Documentation Modal
     window.showAPIDocs = () => {
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="max-width:700px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📚 API Documentation</h2>' +
@@ -4245,11 +4245,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '</table>' +
           '</div>' +
         '</div>';
-      
+
       document.body.appendChild(modal);
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-    
+
     // Alert configuration
     const alertConfig = {
       qualityThreshold: parseFloat(localStorage.getItem('alertQualityThreshold') || '60'),
@@ -4257,32 +4257,32 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       enabled: localStorage.getItem('alertsEnabled') === 'true',
       webhook: localStorage.getItem('alertWebhook') || ''
     };
-    
+
     const checkAlertThresholds = (data) => {
       if (!alertConfig.enabled || !data) return;
-      
+
       const topProfile = data.rankedProfiles?.[0];
       if (!topProfile) return;
-      
+
       const alerts = [];
-      
+
       if (topProfile.qualityScore < alertConfig.qualityThreshold) {
         alerts.push('Quality below ' + alertConfig.qualityThreshold + ': ' + topProfile.qualityScore.toFixed(1));
       }
-      
+
       if (topProfile.latencyP95Ms > alertConfig.latencyThreshold) {
         alerts.push('P95 latency above ' + alertConfig.latencyThreshold + 'ms: ' + topProfile.latencyP95Ms.toFixed(0) + 'ms');
       }
-      
+
       if (alerts.length > 0) {
         showToast('⚠️ ' + alerts.join('; '), 'error', 5000);
       }
     };
-    
+
     window.showAlertConfig = () => {
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="max-width:500px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">🔔 Alert Configuration</h2>' +
@@ -4320,52 +4320,52 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '<button id="saveAlertConfig" style="background:var(--accent);color:var(--bg);border-color:var(--accent)">Save</button>' +
           '</div>' +
         '</div>';
-      
+
       document.body.appendChild(modal);
-      
+
       // Sync sliders with inputs
       const qualitySlider = document.getElementById('qualitySlider');
       const qualityInput = document.getElementById('qualityThreshold');
       const latencySlider = document.getElementById('latencySlider');
       const latencyInput = document.getElementById('latencyThreshold');
-      
+
       qualitySlider.oninput = () => qualityInput.value = qualitySlider.value;
       qualityInput.oninput = () => qualitySlider.value = qualityInput.value;
       latencySlider.oninput = () => latencyInput.value = latencySlider.value;
       latencyInput.oninput = () => latencySlider.value = latencyInput.value;
-      
+
       document.getElementById('saveAlertConfig').onclick = () => {
         alertConfig.enabled = document.getElementById('alertEnabledToggle').checked;
         alertConfig.qualityThreshold = parseFloat(qualityInput.value);
         alertConfig.latencyThreshold = parseFloat(latencyInput.value);
         alertConfig.webhook = document.getElementById('webhookUrl').value;
-        
+
         localStorage.setItem('alertsEnabled', alertConfig.enabled);
         localStorage.setItem('alertQualityThreshold', alertConfig.qualityThreshold);
         localStorage.setItem('alertLatencyThreshold', alertConfig.latencyThreshold);
         localStorage.setItem('alertWebhook', alertConfig.webhook);
-        
+
         showToast('Alert configuration saved', 'success');
         modal.remove();
       };
-      
+
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-    
+
     // Profile comparison modal
     let comparisonModalOpen = false;
-    
+
     const openComparisonModal = (profiles) => {
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:16px;max-width:800px;width:90%;max-height:80vh;overflow:auto;padding:24px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;box-shadow:0 25px 50px rgba(0,0,0,0.5)">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">Profile Comparison</h2>' +
             '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div class="comparison-content">' +
-            profiles.map((p, i) => 
+            profiles.map((p, i) =>
               '<div style="margin-bottom:20px;padding:16px;background:rgba(10,22,43,0.4);border-radius:12px;border:1px solid var(--line)">' +
                 '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
                   '<h3 style="margin:0;color:' + (p.qualityScore >= 80 ? 'var(--success)' : p.qualityScore >= 60 ? 'var(--warning)' : 'var(--error)') + '">' + p.profile + '</h3>' +
@@ -4382,9 +4382,9 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '</div>' +
         '</div>' +
         '<style>.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;animation:fadeIn 0.2s}</style>';
-      
+
       document.body.appendChild(modal);
-      
+
       // Render mini charts
       setTimeout(() => {
         profiles.forEach((p, i) => {
@@ -4395,12 +4395,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           }
         });
       }, 0);
-      
+
       modal.onclick = (e) => {
         if (e.target === modal) modal.remove();
       };
     };
-    
+
     const renderTrend = (latest, previous) => {
       if (!latest || !Array.isArray(latest.rankedProfiles) || latest.rankedProfiles.length === 0) {
         trendEl.innerHTML = '<pre>No trend data.</pre>';
@@ -4579,14 +4579,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       // Visual trend indicators with progress bars
       const makeTrendVisual = (m) => {
         const pct = m.current !== null ? Math.min(100, (m.current / m.max) * 100) : 0;
-        const color = m.invert 
+        const color = m.invert
           ? (pct < 40 ? 'var(--success)' : pct < 70 ? 'var(--warning)' : 'var(--error)')
           : (pct > 80 ? 'var(--success)' : pct > 60 ? 'var(--warning)' : 'var(--error)');
-        const trend = m.current !== null && m.prev !== null 
+        const trend = m.current !== null && m.prev !== null
           ? (m.current > m.prev ? '↑' : m.current < m.prev ? '↓' : '→')
           : '';
-        const trendClass = m.current !== null && m.prev !== null 
-          ? (m.invert 
+        const trendClass = m.current !== null && m.prev !== null
+          ? (m.invert
               ? (m.current < m.prev ? 'trend-up' : m.current > m.prev ? 'trend-down' : 'trend-flat')
               : (m.current > m.prev ? 'trend-up' : m.current < m.prev ? 'trend-down' : 'trend-flat'))
           : 'trend-flat';
@@ -4601,7 +4601,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '</div>' +
           '</div>';
       };
-      
+
       const trendMetrics = [
         { label: 'Quality', current: currentQuality, prev: previousQuality, delta: qualityDelta, max: 100, invert: false },
         { label: 'P95 Latency', current: strictP95Current, prev: strictP95Previous, delta: strictP95Delta, max: 1500, invert: true },
@@ -4609,7 +4609,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         { label: 'Reliability', current: currentReliability, prev: previousReliability, delta: reliabilityDelta, max: 100, invert: false }
       ];
       const trendVisuals = trendMetrics.map(makeTrendVisual).join('');
-      
+
       trendEl.innerHTML =
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">' +
           '<div>' +
@@ -4646,16 +4646,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     // Search/filter functionality
     let historyFilter = '';
     let historyFilterPack = 'all';
-    
+
     const filterHistory = (snapshots) => {
       if (!Array.isArray(snapshots)) return [];
       return snapshots.filter(s => {
-        const matchesSearch = !historyFilter || 
+        const matchesSearch = !historyFilter ||
           s.id.toLowerCase().includes(historyFilter.toLowerCase()) ||
           (s.queryPack || '').toLowerCase().includes(historyFilter.toLowerCase()) ||
           (s.topProfile || '').toLowerCase().includes(historyFilter.toLowerCase());
         const matchesPack = historyFilterPack === 'all' || (s.queryPack || 'core_delivery') === historyFilterPack;
-        
+
         // Date range filtering
         let matchesDateRange = true;
         if (dateRangeStart || dateRangeEnd) {
@@ -4663,11 +4663,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           if (dateRangeStart && snapshotDate < dateRangeStart) matchesDateRange = false;
           if (dateRangeEnd && snapshotDate > dateRangeEnd) matchesDateRange = false;
         }
-        
+
         return matchesSearch && matchesPack && matchesDateRange;
       });
     };
-    
+
     const renderHistory = (data) => {
       if (!data || !Array.isArray(data.snapshots)) {
         historyEl.innerHTML = emptyState('No history index', 'History appears empty or unavailable.', '🗂️');
@@ -4675,13 +4675,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         return;
       }
       lastHistory = data;
-      
+
       // Get unique query packs for filter
       const packs = [...new Set(data.snapshots.map(s => s.queryPack || 'core_delivery'))];
-      
+
       const filtered = filterHistory(data.snapshots);
       const slice = filtered.slice(0, historyVisibleCount);
-      
+
       const rows = slice.map((s, idx) =>
         '<tr>' +
           '<td><code>' + s.id + '</code></td>' +
@@ -4695,12 +4695,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '</td>' +
         '</tr>'
       ).join('');
-      
+
       const hasMore = filtered.length > historyVisibleCount;
-      
+
       const savedStart = localStorage.getItem('dateRangeStart') || '';
       const savedEnd = localStorage.getItem('dateRangeEnd') || '';
-      
+
       historyEl.innerHTML =
         '<div class="search-box">' +
           '<span class="search-icon">🔍</span>' +
@@ -4726,7 +4726,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '</div>' +
         '<div class="table-scroll"><table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th><th>Actions</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No matching snapshots</td></tr>') + '</tbody></table></div>' +
         (hasMore ? '<div style="margin-top:8px"><button id="historyMore">Load more</button></div>' : '');
-      
+
       // Attach event listeners
       const searchInput = document.getElementById('historySearch');
       if (searchInput) {
@@ -4736,7 +4736,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           renderHistory(data);
         };
       }
-      
+
       document.querySelectorAll('.filter-pill').forEach(pill => {
         pill.onclick = () => {
           historyFilterPack = pill.dataset.pack;
@@ -4744,7 +4744,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           renderHistory(data);
         };
       });
-      
+
       const moreBtn = document.getElementById('historyMore');
       if (moreBtn) {
         moreBtn.onclick = () => {
@@ -5095,7 +5095,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         const latestGuid = items[0]?.querySelector('guid')?.textContent || items[0]?.querySelector('link')?.textContent || null;
         if (latestGuid && !currentRssGuid) currentRssGuid = latestGuid;
         if (latestGuid && !knownRssGuid) knownRssGuid = latestGuid;
-        
+
         const rows = items.map((item, idx) => {
           const title = item.querySelector('title')?.textContent || 'untitled';
           const pubDate = item.querySelector('pubDate')?.textContent || 'n/a';
@@ -5103,7 +5103,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           const pubDateObj = new Date(pubDate);
           const timeAgoText = isNaN(pubDateObj) ? 'unknown' : timeAgo(pubDateObj);
           const isLatest = idx === 0;
-          
+
           return '<tr style="' + (isLatest ? 'background:rgba(79,209,197,0.05)' : '') + '">' +
             '<td><span style="font-weight:' + (isLatest ? '600' : '400') + '">' + title + '</span>' + (isLatest ? ' <span class="badge status-good">latest</span>' : '') + '</td>' +
             '<td><span data-tooltip="' + pubDate + '">' + timeAgoText + '</span></td>' +
@@ -5113,11 +5113,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '</td>' +
           '</tr>';
         }).join('');
-        
+
         const itemCount = items.length;
         const feedTitle = doc.querySelector('channel > title')?.textContent || 'RSS Feed';
-        
-        const rssHeader = 
+
+        const rssHeader =
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">' +
             '<div>' +
               '<div style="font-size:16px;font-weight:600;margin-bottom:4px">' + feedTitle + '</div>' +
@@ -5130,14 +5130,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
               '<a href="/api/rss?source=' + source + '" target="_blank" class="badge status-neutral" style="text-decoration:none">View Raw ↗</a>' +
             '</div>' +
           '</div>';
-        
+
         const rssMeta = meta && !meta.error
           ? '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:var(--muted)">' +
               '<span data-tooltip="Storage bucket">📦 ' + (meta.bucket || 'n/a') + '</span>' +
               '<span data-tooltip="RSS file path">📄 ' + (meta.rssKey || 'n/a').split('/').pop() + '</span>' +
             '</div>'
           : '';
-          
+
         rssEl.innerHTML = rssHeader + rssMeta +
           '<div class="table-scroll"><table><thead><tr><th>Title</th><th>When</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
       } catch (err) {
@@ -5199,39 +5199,39 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast('Failed to copy', 'error');
       }
     };
-    
+
     // Tab switching
     window.switchTab = (tabId, contentId) => {
       // Remove active from all tabs and content
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      
+
       // Add active to selected
       document.querySelector('[data-tab="' + tabId + '"]').classList.add('active');
       document.getElementById(contentId).classList.add('active');
-      
+
       // Save preference
       localStorage.setItem('activeTab_' + tabId.split('-')[0], contentId);
     };
-    
+
     // Drag and drop for file upload
     const setupDragAndDrop = () => {
       const dropZones = document.querySelectorAll('.drop-zone');
-      
+
       dropZones.forEach(zone => {
         zone.ondragover = (e) => {
           e.preventDefault();
           zone.classList.add('drag-over');
         };
-        
+
         zone.ondragleave = () => {
           zone.classList.remove('drag-over');
         };
-        
+
         zone.ondrop = (e) => {
           e.preventDefault();
           zone.classList.remove('drag-over');
-          
+
           const files = e.dataTransfer.files;
           if (files.length > 0) {
             handleDroppedFile(files[0]);
@@ -5239,7 +5239,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         };
       });
     };
-    
+
     const handleDroppedFile = (file) => {
       if (file.type === 'application/json' || file.name.endsWith('.json')) {
         const reader = new FileReader();
@@ -5257,7 +5257,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast('Please drop a JSON file', 'error');
       }
     };
-    
+
     // Format bytes utility
     const formatBytes = (bytes, decimals = 2) => {
       if (bytes === 0) return '0 B';
@@ -5266,14 +5266,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
     };
-    
+
     // Format duration
     const formatDuration = (ms) => {
       if (ms < 1000) return ms.toFixed(0) + 'ms';
       if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
       return (ms / 60000).toFixed(1) + 'm';
     };
-    
+
     // Relative time formatter
     const timeAgo = (date) => {
       const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -5285,7 +5285,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         hour: 3600,
         minute: 60
       };
-      
+
       for (const [unit, secondsInUnit] of Object.entries(intervals)) {
         const interval = Math.floor(seconds / secondsInUnit);
         if (interval >= 1) {
@@ -5294,17 +5294,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       }
       return 'just now';
     };
-    
+
     // Diff view between two snapshots
     window.showDiffView = (current, previous) => {
       if (!current || !previous) {
         showToast('Need two snapshots to compare', 'error');
         return;
       }
-      
+
       const diffData = [];
       const metrics = ['qualityScore', 'latencyP95Ms', 'avgSignalPct', 'avgSlopPct', 'peakRssMB'];
-      
+
       current.rankedProfiles.forEach((curr, idx) => {
         const prev = previous.rankedProfiles?.[p => p.profile === curr.profile];
         if (prev) {
@@ -5313,7 +5313,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             const prevVal = prev[metric];
             const change = currVal - prevVal;
             const pctChange = prevVal !== 0 ? ((change / prevVal) * 100).toFixed(1) : 'N/A';
-            
+
             diffData.push({
               profile: curr.profile,
               metric: metric,
@@ -5326,10 +5326,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           });
         }
       });
-      
+
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="max-width:700px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📊 Snapshot Comparison</h2>' +
@@ -5353,51 +5353,51 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             }).join('') +
           '</div>' +
         '</div>';
-      
+
       document.body.appendChild(modal);
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-    
+
     // Date range filtering
     let dateRangeStart = null;
     let dateRangeEnd = null;
-    
+
     window.applyDateFilter = () => {
       const startInput = document.getElementById('dateRangeStart');
       const endInput = document.getElementById('dateRangeEnd');
-      
+
       dateRangeStart = startInput?.value ? new Date(startInput.value) : null;
       dateRangeEnd = endInput?.value ? new Date(endInput.value) : null;
-      
+
       localStorage.setItem('dateRangeStart', startInput?.value || '');
       localStorage.setItem('dateRangeEnd', endInput?.value || '');
-      
+
       // Re-render history with filter
       if (lastHistory) {
         renderHistory(lastHistory);
       }
-      
+
       showToast('Date filter applied', 'success');
     };
-    
+
     window.clearDateFilter = () => {
       dateRangeStart = null;
       dateRangeEnd = null;
       localStorage.removeItem('dateRangeStart');
       localStorage.removeItem('dateRangeEnd');
-      
+
       const startInput = document.getElementById('dateRangeStart');
       const endInput = document.getElementById('dateRangeEnd');
       if (startInput) startInput.value = '';
       if (endInput) endInput.value = '';
-      
+
       if (lastHistory) {
         renderHistory(lastHistory);
       }
-      
+
       showToast('Date filter cleared', 'success');
     };
-    
+
     // Collapsible sections toggle
     window.toggleCollapsible = (id) => {
       const el = document.getElementById(id);
@@ -5410,7 +5410,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         localStorage.setItem('collapsibleStates', JSON.stringify(savedStates));
       }
     };
-    
+
     // Restore collapsible states
     const restoreCollapsibleStates = () => {
       const savedStates = JSON.parse(localStorage.getItem('collapsibleStates') || '{}');
@@ -5421,7 +5421,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
       });
     };
-    
+
     const fetchJson = async (url, timeoutMs = 5000) => {
       const ctl = new AbortController();
       const timeout = setTimeout(() => ctl.abort(), timeoutMs);
@@ -5565,14 +5565,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       showToast('Dashboard updated successfully', 'success');
       updateConnectionStatus('connected');
     };
-    
+
     // Connection status management
     const updateConnectionStatus = (status) => {
       connectionStatus = status;
       const statusEl = document.getElementById('connectionStatus');
       const liveEl = document.getElementById('liveIndicator');
       if (!statusEl) return;
-      
+
       if (status === 'connected') {
         statusEl.className = 'badge status-good';
         statusEl.textContent = '●';
@@ -5614,44 +5614,44 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       showToast('Refresh failed. Countdown started.', 'error', 3200);
       refreshRetryTimer = setInterval(tick, 1000);
     };
-    
+
     // Error recovery and circuit breaker
     let consecutiveErrors = 0;
     const MAX_CONSECUTIVE_ERRORS = 5;
     let circuitOpen = false;
     let circuitResetTimer = null;
-    
+
     const recordError = () => {
       consecutiveErrors++;
       if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
         openCircuit();
       }
     };
-    
+
     const recordSuccess = () => {
       consecutiveErrors = 0;
       if (circuitOpen) {
         closeCircuit();
       }
     };
-    
+
     const openCircuit = () => {
       circuitOpen = true;
       updateConnectionStatus('error');
       showToast('Too many errors. Pausing auto-refresh for 60s.', 'error', 5000);
-      
+
       // Stop auto-refresh
       if (autoRefreshTimer) {
         clearInterval(autoRefreshTimer);
         autoRefreshTimer = null;
       }
-      
+
       // Auto-reset after 60s
       circuitResetTimer = setTimeout(() => {
         closeCircuit();
       }, 60000);
     };
-    
+
     const closeCircuit = () => {
       circuitOpen = false;
       consecutiveErrors = 0;
@@ -5663,13 +5663,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       showToast('Auto-refresh resumed', 'success');
       updateAutoRefresh();
     };
-    
+
     // Safe fetch with error handling
     const safeFetch = async (url, options = {}) => {
       if (circuitOpen) {
         throw new Error('Circuit breaker is open');
       }
-      
+
       try {
         const res = await fetch(url, options);
         recordSuccess();
@@ -5783,7 +5783,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         setRssBadge('-', 'neutral');
       }
     };
-    
+
     // Performance monitoring
     const perfMetrics = {
       loadTimes: [],
@@ -5791,7 +5791,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       errorCount: 0,
       lastLoadTime: null
     };
-    
+
     const recordPerformance = (type, duration) => {
       if (type === 'load') {
         perfMetrics.loadTimes.push(duration);
@@ -5807,18 +5807,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
       }
     };
-    
+
     window.showPerformanceMetrics = () => {
-      const avgLoad = perfMetrics.loadTimes.length > 0 
+      const avgLoad = perfMetrics.loadTimes.length > 0
         ? (perfMetrics.loadTimes.reduce((a, b) => a + b, 0) / perfMetrics.loadTimes.length).toFixed(0)
         : 'N/A';
       const avgRender = perfMetrics.renderTimes.length > 0
         ? (perfMetrics.renderTimes.reduce((a, b) => a + b, 0) / perfMetrics.renderTimes.length).toFixed(0)
         : 'N/A';
-      
+
       const modal = document.createElement('div');
       modal.className = 'modal-overlay';
-      modal.innerHTML = 
+      modal.innerHTML =
         '<div class="modal" style="max-width:500px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📊 Performance Metrics</h2>' +
@@ -5847,11 +5847,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '<div style="margin-top:8px">Recent loads: ' + perfMetrics.loadTimes.slice(-5).join(', ') + ' ms</div>' +
           '</div>' +
         '</div>';
-      
+
       document.body.appendChild(modal);
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-    
+
     async function loadLatest(source, opts = {}) {
       const loadStart = performance.now();
       const attempt = Number(opts.attempt || 0);
@@ -5929,11 +5929,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         applyDashboardStatusOverview(dashboardStatus);
         applyUnifiedOverview(unified, data?.id || null, guid);
         renderOverview();
-        
+
         // Record performance metrics
         const loadEnd = performance.now();
         recordPerformance('load', loadEnd - loadStart);
-        
+
         setRefreshSuccess();
         clearNoticeRetryTimer();
       } catch (error) {
@@ -6099,49 +6099,49 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     if (refreshBtnEl) {
       refreshBtnEl.onclick = () => loadLatest(activeSource || lastRefreshSource || INITIAL_SOURCE);
     }
-    
+
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const storedTheme = localStorage.getItem('searchBenchTheme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     let currentTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-    
+
     const applyTheme = (theme) => {
       document.documentElement.setAttribute('data-theme', theme);
       themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
       localStorage.setItem('searchBenchTheme', theme);
     };
-    
+
     applyTheme(currentTheme);
-    
+
     themeToggle.onclick = () => {
       currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
       applyTheme(currentTheme);
       showToast('Theme: ' + (currentTheme === 'dark' ? 'Dark' : 'Light') + ' mode', 'success', 2000);
     };
-    
+
     // Floating Action Button
     const fab = document.getElementById('fab');
     const fabMenu = document.getElementById('fabMenu');
     let fabOpen = false;
-    
+
     fab.onclick = () => {
       fabOpen = !fabOpen;
       fabMenu.classList.toggle('open', fabOpen);
       fab.style.transform = fabOpen ? 'rotate(45deg)' : 'rotate(0)';
     };
-    
+
     document.getElementById('fabScrollTop').onclick = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       fab.click();
     };
-    
+
     // Fullscreen toggle
     window.toggleFullscreen = (elementId) => {
       const element = document.getElementById(elementId);
       if (!element) return;
-      
+
       if (!document.fullscreenElement) {
         element.requestFullscreen().catch(err => {
           showToast('Error entering fullscreen: ' + err.message, 'error');
@@ -6150,7 +6150,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         document.exitFullscreen();
       }
     };
-    
+
     // Animate number counting
     const animateNumber = (element, start, end, duration = 500) => {
       const startTime = performance.now();
@@ -6159,19 +6159,19 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         const progress = Math.min(elapsed / duration, 1);
         const easeProgress = 1 - Math.pow(1 - progress, 3);
         const current = start + (end - start) * easeProgress;
-        
+
         if (element) {
           element.textContent = Number(current).toFixed(2);
           element.classList.add('count-up');
         }
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         }
       };
       requestAnimationFrame(animate);
     };
-    
+
     // Export functionality
     const exportData = async (format) => {
       const latestData = lastHistory?.snapshots?.[0];
@@ -6182,7 +6182,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         overview: overviewState,
         details: latestData
       };
-      
+
       if (format === 'json') {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -6199,7 +6199,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         csv += 'Source,' + activeSource + ',\n';
         csv += 'Quality Score,' + (latestData?.topScore || 0) + ',\n';
         csv += 'Query Pack,' + (latestData?.queryPack || 'core_delivery') + ',\n';
-        
+
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -6221,7 +6221,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         md += '| Token Coverage | ' + overviewState.tokenCoverage + ' |\n';
         md += '| Domain Health | ' + overviewState.domainHealth + ' |\n';
         md += '| RSS Status | ' + overviewState.rss + ' |\n\n';
-        
+
         const blob = new Blob([md], { type: 'text/markdown' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -6232,12 +6232,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast('Exported as Markdown', 'success');
       }
     };
-    
+
     document.getElementById('fabExport').onclick = () => {
       exportData('json');
       fab.click();
     };
-    
+
     const fabExportMd = document.getElementById('fabExportMd');
     if (fabExportMd) {
       fabExportMd.onclick = () => {
@@ -6245,7 +6245,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         fab.click();
       };
     }
-    
+
     const fabHelp = document.getElementById('fabHelp');
     if (fabHelp) {
       fabHelp.onclick = () => {
@@ -6253,7 +6253,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         fab.click();
       };
     }
-    
+
     document.getElementById('fabShare').onclick = () => {
       const url = window.location.href;
       navigator.clipboard?.writeText(url).then(() => {
@@ -6263,7 +6263,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       });
       fab.click();
     };
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey || e.metaKey) {
@@ -6306,7 +6306,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showHelpModal();
       }
     });
-    
+
     window.addEventListener('offline', () => {
       updateConnectionStatus('offline');
       setReportNotice('<span class="badge status-bad"><span class="status-orb critical" style="width:8px;height:8px;display:inline-block;vertical-align:middle;margin-right:4px"></span>Offline</span> <code>Network unavailable; showing last known data.</code>', 'network');
@@ -6328,12 +6328,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     let refreshIntervalMs = parseInt(localStorage.getItem('refreshInterval') || '15000');
     let notificationsEnabled = localStorage.getItem('notifications') === 'true';
     let autoRefreshTimer = null;
-    
+
     const autoRefreshToggle = document.getElementById('autoRefreshToggle');
     const refreshIntervalSelect = document.getElementById('refreshInterval');
     const notificationsToggle = document.getElementById('notificationsToggle');
     const clearCacheBtn = document.getElementById('clearCacheBtn');
-    
+
     if (autoRefreshToggle) {
       autoRefreshToggle.checked = autoRefreshEnabled;
       autoRefreshToggle.onchange = (e) => {
@@ -6343,7 +6343,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast(autoRefreshEnabled ? 'Auto-refresh enabled' : 'Auto-refresh disabled', 'success');
       };
     }
-    
+
     if (refreshIntervalSelect) {
       refreshIntervalSelect.value = String(refreshIntervalMs);
       refreshIntervalSelect.onchange = (e) => {
@@ -6353,7 +6353,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast('Refresh interval: ' + (refreshIntervalMs / 1000) + 's', 'success');
       };
     }
-    
+
     if (notificationsToggle) {
       notificationsToggle.checked = notificationsEnabled;
       notificationsToggle.onchange = (e) => {
@@ -6365,7 +6365,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showToast(notificationsEnabled ? 'Notifications enabled' : 'Notifications disabled', 'success');
       };
     }
-    
+
     if (clearCacheBtn) {
       clearCacheBtn.onclick = () => {
         localStorage.removeItem('searchBenchActiveSource');
@@ -6375,7 +6375,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         setTimeout(() => location.reload(), 1000);
       };
     }
-    
+
     const updateAutoRefresh = () => {
       if (autoRefreshTimer) {
         clearInterval(autoRefreshTimer);
@@ -6388,7 +6388,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }, refreshIntervalMs);
       }
     };
-    
+
     const showNotification = (title, body) => {
       if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
@@ -6398,7 +6398,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         });
       }
     };
-    
+
     // Override checkForNewReports to show notifications
     const originalCheckForNewReports = checkForNewReports;
     checkForNewReports = async () => {
@@ -6407,7 +6407,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showNotification('New Report Available', 'A new benchmark report is ready to view.');
       }
     };
-    
+
     // Display load time
     const loadTimeEl = document.getElementById('loadTime');
     if (loadTimeEl) {
@@ -6415,7 +6415,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const loadTime = perf.loadEventEnd - perf.navigationStart;
       loadTimeEl.textContent = 'Loaded in ' + loadTime + 'ms';
     }
-    
+
     renderOverview();
     setRefreshIdle();
     restoreCollapsibleStates();

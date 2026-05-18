@@ -95,7 +95,7 @@ rule:
   id: ${purge.id}
   signature: "${purge.signature}"
   grepable: "${purge.grepable}"
-  
+
 metadata:
   scope: ${purge.signature.match(/\[(\w+)\]/)?.[1] || 'PURGE'}
   type: ${purge.signature.match(/\[(\w+)\]/)?.[2] || 'TRANS'}
@@ -103,24 +103,24 @@ metadata:
   status: ACTIVE
   pattern: "${pattern}"
   description: "${description}"
-  
+
 config:
   severity: medium
   auto_fix: false
   requires_review: true
-  
+
 validation:
   hooks:
     - pattern-match
     - security-scan
     - performance-check
-    
+
 actions:
   on_match:
     - log: "Purge rule ${purge.id} matched"
     - tag: "purge-${purge.id.toLowerCase()}"
     - suggest: "Review and update code pattern"
-    
+
   on_fix:
     - generate: "transmutation-suggestion"
     - validate: "post-fix-validation"
@@ -174,10 +174,10 @@ OPTIONS:
 EXAMPLES:
   # Generate purge rule for non-Bun patterns
   bun run scripts/rip-conform.js --scope PURGE --type TRANS --pattern "fs\\."
-  
+
   # Generate security rule
   bun run scripts/rip-conform.js --scope SECURITY --type VALIDATE --pattern "eval\\("
-  
+
   # Generate performance rule
   bun run scripts/rip-conform.js --scope PERFORMANCE --type OPTIMIZE --pattern "for.*in"
         `);

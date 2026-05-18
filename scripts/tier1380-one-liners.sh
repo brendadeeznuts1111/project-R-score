@@ -213,18 +213,18 @@ for (let i = 0; i < 1000; i++) {
     "X-CSRF-Token": crypto.randomUUID(),
     "Content-Type": "application/tier1380+json"
   });
-  
+
   const cookies = new Map([
     ["session", crypto.randomUUID()],
     ["csrf", headers.get("X-CSRF-Token")!]
   ]);
-  
+
   const snapshot = {
     headers: [...headers.entries()],
     cookies: [...cookies.entries()],
     timestamp: new Date().toISOString()
   };
-  
+
   const raw = JSON.stringify(snapshot);
   const checksum = Bun.hash.crc32(raw);
   const compressed = Bun.zstdCompressSync(raw);

@@ -536,7 +536,7 @@ const server = Bun.serve({
 </head>
 <body>
   <h1>🦘 Payment Webhook Server v2 - Personalized</h1>
-  
+
   <h2>🎯 Habits Classification Tiers</h2>
   <div>
     <span class="tier whale">🐋 WHALE</span> 100+ txns, $100+ avg → 20% bonus
@@ -544,22 +544,22 @@ const server = Bun.serve({
     <span class="tier active">🎯 ACTIVE</span> 20-50 txns → 5% bonus
     <span class="tier casual">👤 CASUAL</span> &lt;20 txns → No bonus
   </div>
-  
+
   <h2>Endpoints</h2>
   <div class="endpoint"><strong>POST /webhook/paypal</strong> - PayPal webhooks</div>
   <div class="endpoint"><strong>POST /webhook/venmo</strong> - Venmo webhooks</div>
   <div class="endpoint"><strong>POST /test/payment</strong> - Test with personalization</div>
   <div class="endpoint"><strong>GET /recommend/:userId</strong> - Get personalized recommendation</div>
   <div class="endpoint"><strong>GET /health</strong> - Health check</div>
-  
+
   <h2>Test Personalized Payment</h2>
   <pre>curl -X POST http://localhost:${PORT}/test/payment \\
   -H "Content-Type: application/json" \\
   -d '{"userId":"@ashschaeffer1","amount":100}'</pre>
-  
+
   <h2>Get Recommendation</h2>
   <pre>curl http://localhost:${PORT}/recommend/@ashschaeffer1</pre>
-  
+
   <h2>Redis Channels</h2>
   <ul>
     <li><code>PERSONALIZED_DEPOSIT</code> - Deposits with bonus info</li>

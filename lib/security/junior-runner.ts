@@ -525,7 +525,7 @@ Integration:
 
 Example:
   junior-runner --cookie-inspect
-  
+
   This will run a demo of the cookie inspection capabilities
   with sample data and performance metrics.
     `);
@@ -561,27 +561,27 @@ export class CookieTelemetryDashboard {
 <body>
     <div class="dashboard">
         <h1>🍪 Cookie Security Telemetry Dashboard</h1>
-        
+
         <div class="metric-grid">
             <div class="metric-card">
                 <div class="metric-value">${telemetry.totalSessions}</div>
                 <div class="metric-label">Total Sessions</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.averageSecurityScore >= 80 ? 'status-good' : telemetry.averageSecurityScore >= 60 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.averageSecurityScore}/100
                 </div>
                 <div class="metric-label">Average Security Score</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.csrfCoverage >= 90 ? 'status-good' : telemetry.csrfCoverage >= 70 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.csrfCoverage}%
                 </div>
                 <div class="metric-label">CSRF Coverage</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.abTestingCoverage >= 80 ? 'status-good' : telemetry.abTestingCoverage >= 60 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.abTestingCoverage}%

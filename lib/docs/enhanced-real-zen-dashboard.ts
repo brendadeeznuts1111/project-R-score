@@ -385,20 +385,20 @@ export class EnhancedRealZenDashboard {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced REAL Zen Dashboard - MIME Type Intelligence</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
-            color: #e2e8f0; 
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             min-height: 100vh;
         }
-        .enhanced-badge { 
-            background: linear-gradient(45deg, #3b82f6, #22c55e); 
-            color: white; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 0.9em; 
+        .enhanced-badge {
+            background: linear-gradient(45deg, #3b82f6, #22c55e);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
             font-weight: bold;
             animation: shimmer 2s infinite;
         }
@@ -406,73 +406,73 @@ export class EnhancedRealZenDashboard {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.8; }
         }
-        .mime-section { 
-            background: #1e293b; 
-            padding: 20px; 
-            border-radius: 12px; 
-            border: 1px solid #334155; 
+        .mime-section {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
             margin-bottom: 20px;
         }
-        .mime-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 10px; 
+        .mime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
             margin-top: 15px;
         }
-        .mime-item { 
-            background: #0f172a; 
-            padding: 10px; 
-            border-radius: 8px; 
+        .mime-item {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
             font-size: 0.9em;
             border-left: 3px solid #3b82f6;
         }
         .mime-ext { font-weight: bold; color: #22c55e; }
         .mime-type { color: #94a3b8; font-family: monospace; }
-        .metrics-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 30px; 
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .metric-card { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .metric-card {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             backdrop-filter: blur(10px);
             transition: transform 0.3s ease;
         }
         .metric-card:hover { transform: translateY(-5px); }
-        .metric-value { 
-            font-size: 2.5em; 
-            font-weight: bold; 
-            color: #22c55e; 
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #22c55e;
             margin-bottom: 5px;
         }
         .metric-label { color: #94a3b8; font-size: 0.9em; }
-        .search-history { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .search-history {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             backdrop-filter: blur(10px);
         }
-        .search-item { 
-            display: flex; 
-            justify-content: space-between; 
+        .search-item {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 15px 0; 
-            border-bottom: 1px solid #334155; 
+            padding: 15px 0;
+            border-bottom: 1px solid #334155;
         }
         .search-item:last-child { border-bottom: none; }
         .search-query { font-weight: 600; color: #22c55e; }
         .search-stats { color: #94a3b8; }
-        .btn { 
-            background: #3b82f6; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 8px; 
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 5px;
             transition: background 0.3s ease;
@@ -480,11 +480,11 @@ export class EnhancedRealZenDashboard {
         .btn:hover { background: #2563eb; }
         .btn.mime { background: #22c55e; }
         .btn.mime:hover { background: #16a34a; }
-        .file-analysis { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 20px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .file-analysis {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             margin-top: 20px;
         }
     </style>
@@ -493,12 +493,12 @@ export class EnhancedRealZenDashboard {
     <div style="max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-size: 2.5em; margin-bottom: 10px;">
-                🎯 Enhanced REAL Zen Dashboard 
+                🎯 Enhanced REAL Zen Dashboard
                 <span class="enhanced-badge">MIME INTELLIGENCE</span>
             </h1>
             <p>Real search data with Bun's built-in MIME type detection</p>
         </div>
-        
+
         <div class="mime-section">
             <h3>🎭 MIME Type Detection - Bun Intelligence</h3>
             <p>Using Bun.file().type for automatic MIME type recognition</p>
@@ -518,7 +518,7 @@ export class EnhancedRealZenDashboard {
             <button class="btn mime" onclick="refreshMimeTypes()">🔄 Refresh MIME Types</button>
             <button class="btn mime" onclick="analyzeFile()">📁 Analyze File</button>
         </div>
-        
+
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-value" id="totalSearches">${this.metrics.totalSearches}</div>
@@ -545,7 +545,7 @@ export class EnhancedRealZenDashboard {
                 <div class="metric-label">🕒 Last REAL Update</div>
             </div>
         </div>
-        
+
         <div class="search-history">
             <h2>📜 REAL Search History - Live Data</h2>
             <div id="searchHistory">
@@ -565,12 +565,12 @@ export class EnhancedRealZenDashboard {
                 }
             </div>
         </div>
-        
+
         <div class="file-analysis" id="fileAnalysis" style="display: none;">
             <h3>📁 File Analysis with MIME Detection</h3>
             <div id="fileAnalysisContent"></div>
         </div>
-        
+
         <div style="text-align: center; margin-top: 40px; color: #64748b;">
             <p>🎯 Enhanced with Bun's built-in MIME type detection</p>
             <p>🚀 Real search data • 🎭 Intelligent file handling • 🔗 Bun file protocol</p>
@@ -589,18 +589,18 @@ export class EnhancedRealZenDashboard {
                 console.error('❌ Failed to refresh MIME types:', error);
             }
         }
-        
+
         async function analyzeFile() {
             const filename = prompt('Enter filename to analyze (e.g., package.json, README.md):');
             if (!filename) return;
-            
+
             try {
                 const response = await fetch(\`/api/analyze-file?file=\${filename}\`);
                 const analysis = await response.json();
-                
+
                 const analysisDiv = document.getElementById('fileAnalysis');
                 const contentDiv = document.getElementById('fileAnalysisContent');
-                
+
                 if (analysis.error) {
                     contentDiv.innerHTML = \`<p style="color: #ef4444;">❌ \${analysis.error}</p>\`;
                 } else {
@@ -622,53 +622,53 @@ export class EnhancedRealZenDashboard {
                         </div>
                     \`;
                 }
-                
+
                 analysisDiv.style.display = 'block';
-                
+
             } catch (error) {
                 console.error('❌ Failed to analyze file:', error);
                 alert('Failed to analyze file: ' + error.message);
             }
         }
-        
+
         async function refreshRealData() {
             try {
                 const response = await fetch('/api/real-metrics');
                 const metrics = await response.json();
-                
+
                 document.getElementById('totalSearches').textContent = metrics.totalSearches;
                 document.getElementById('mimeTypes').textContent = metrics.supportedMimeTypes.length;
                 document.getElementById('lastUpdate').textContent = new Date(metrics.lastUpdate).toLocaleTimeString();
-                
+
                 if (metrics.realSearchHistory.length > 0) {
                     const avgTime = metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / metrics.realSearchHistory.length;
                     const avgMemory = metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / metrics.realSearchHistory.length;
                     const totalMatches = metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
-                    
+
                     document.getElementById('avgTime').textContent = avgTime.toFixed(2) + 'ms';
                     document.getElementById('avgMemory').textContent = avgMemory.toFixed(2) + 'MB';
                     document.getElementById('totalMatches').textContent = totalMatches;
-                    
-                    const historyHtml = metrics.realSearchHistory.map(search => 
+
+                    const historyHtml = metrics.realSearchHistory.map(search =>
                         \`<div class="search-item">
                             <span class="search-query">🔍 "\${search.query}"</span>
                             <span class="search-stats">\${search.matches} matches • \${search.time.toFixed(2)}ms • \${search.memory.toFixed(2)}MB</span>
                         </div>\`
                     ).join('');
-                    
+
                     document.getElementById('searchHistory').innerHTML = historyHtml;
                 }
-                
+
                 console.info('✅ Enhanced real data refreshed!');
-                
+
             } catch (error) {
                 console.error('❌ Failed to refresh real data:', error);
             }
         }
-        
+
         // Auto-refresh every 10 seconds
         setInterval(refreshRealData, 10000);
-        
+
         console.info('🎯 Enhanced REAL Zen Dashboard loaded!');
         console.info('🎭 MIME Type Intelligence: Active');
         console.info('📊 Showing 100% REAL search data with enhanced file handling!');

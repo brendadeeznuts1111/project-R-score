@@ -480,7 +480,7 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
         <p>${packageInfo.description || 'No description'}</p>
         <p>Version: ${packageInfo.version} | Bun: ${Bun.version}</p>
     </header>
-    
+
     <main>
         <section id="apis">
             <h2>Bun APIs Used</h2>
@@ -500,18 +500,18 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
                 }
             </div>
         </section>
-        
+
         <section id="rss">
             <h2>Latest Updates</h2>
             <div id="rss-feed"></div>
         </section>
-        
+
         <section id="dependencies">
             <h2>Dependencies</h2>
             <pre>${JSON.stringify(packageInfo.dependencies, null, 2)}</pre>
         </section>
     </main>
-    
+
     <script>
         // Load RSS feed
         fetch('/feed.rss')
@@ -520,7 +520,7 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(xml, 'text/xml');
                 const items = doc.querySelectorAll('item');
-                
+
                 const feedContainer = document.getElementById('rss-feed');
                 items.forEach(item => {
                     const title = item.querySelector('title')?.textContent || '';

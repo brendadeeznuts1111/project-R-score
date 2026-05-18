@@ -435,7 +435,7 @@ export class BunWikiIntegration {
         <h1>🦌 Bun Documentation Wiki</h1>
         <p>Complete Bun documentation integrated into wiki format</p>
     </div>
-    
+
     <div class="toc">
         <h2>📋 Table of Contents</h2>
         <ul>`;

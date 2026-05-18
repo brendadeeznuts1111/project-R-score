@@ -139,7 +139,7 @@ if [ -n "$PRIVATE_OBJECT_KEY" ]; then
     PRIVATE_DOWNLOAD=$(curl -s "$SERVER_URL/api/wiki/download?objectKey=$PRIVATE_OBJECT_KEY" \
         -H "X-User-ID: $TEST_USER" \
         -H "X-Window-ID: $PRIVATE_WINDOW_ID")
-    
+
     if echo "$PRIVATE_DOWNLOAD" | grep -q "Private Wiki Content"; then
         echo -e "${GREEN}✅ Private content downloaded and decrypted successfully${NC}"
         echo "Content preview: $(echo "$PRIVATE_DOWNLOAD" | head -3)"
@@ -154,7 +154,7 @@ if [ -n "$PUBLIC_OBJECT_KEY" ]; then
     PUBLIC_DOWNLOAD=$(curl -s "$SERVER_URL/api/wiki/download?objectKey=$PUBLIC_OBJECT_KEY" \
         -H "X-User-ID: $TEST_USER" \
         -H "X-Window-ID: $PUBLIC_WINDOW_ID")
-    
+
     if echo "$PUBLIC_DOWNLOAD" | grep -q "Public Wiki Content"; then
         echo -e "${GREEN}✅ Public content downloaded and decrypted successfully${NC}"
         echo "Content preview: $(echo "$PUBLIC_DOWNLOAD" | head -3)"

@@ -130,8 +130,8 @@ class CouncilTicketFactory {
     const pendingTickets = this.db
       .query(
         `
-      SELECT id, hash, data, scope, factory 
-      FROM tickets_v4 
+      SELECT id, hash, data, scope, factory
+      FROM tickets_v4
       WHERE status = 'pending'
       LIMIT 1000
     `
@@ -210,8 +210,8 @@ class CouncilTicketFactory {
         // Update status
         this.db.run(
           `
-          UPDATE tickets_v4 
-          SET status = 'validated', validated_at = CURRENT_TIMESTAMP 
+          UPDATE tickets_v4
+          SET status = 'validated', validated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `,
           [ticket.id]
@@ -227,8 +227,8 @@ class CouncilTicketFactory {
         // Mark as disputed
         this.db.run(
           `
-          UPDATE tickets_v4 
-          SET status = 'disputed' 
+          UPDATE tickets_v4
+          SET status = 'disputed'
           WHERE id = ?
         `,
           [ticket.id]
@@ -486,7 +486,7 @@ const server = serve({
 <body>
     <h1>⚖️ COUNCIL PROTOCOL DASHBOARD</h1>
     <p>n=18–20 Ultra | Ticket Factory v4</p>
-    
+
     <div class="grid">
         <div class="card">
             <h3>🏭 Factory Status</h3>
@@ -495,7 +495,7 @@ const server = serve({
             <div>Validated: ${factoryStats.validated}</div>
             <div>Disputed: ${factoryStats.disputed}</div>
         </div>
-        
+
         <div class="card">
             <h3>⚖️ Dispute Resolution</h3>
             <div class="stat">${disputeStats.activeDisputes}</div>
@@ -503,7 +503,7 @@ const server = serve({
             <div>Resolved: ${disputeStats.resolved}</div>
             <div>Pending Votes: ${disputeStats.pendingVotes}</div>
         </div>
-        
+
         <div class="card">
             <h3>🔐 Hash Integrity</h3>
             <div class="stat">${hashStats.validHashes}</div>
@@ -512,14 +512,14 @@ const server = serve({
             <div>Matches: ${hashStats.matches}</div>
         </div>
     </div>
-    
+
     <div class="card">
         <h3>🚀 Quick Actions</h3>
         <button onclick="runScript('validate')">Validate Tickets</button>
         <button onclick="runScript('create')">Create Test Ticket</button>
         <button onclick="location.reload()">Refresh</button>
     </div>
-    
+
     <script>
         function runScript(action) {
             fetch('/council/' + action, { method: 'POST' })

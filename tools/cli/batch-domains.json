@@ -10,14 +10,14 @@
       "priority": "high"
     },
     {
-      "name": "monitoring.factory-wager.com", 
+      "name": "monitoring.factory-wager.com",
       "target": "github",
       "description": "System monitoring and alerts",
       "priority": "high"
     },
     {
       "name": "health.factory-wager.com",
-      "target": "github", 
+      "target": "github",
       "description": "Health check endpoint",
       "priority": "critical"
     },

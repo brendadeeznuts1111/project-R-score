@@ -2,7 +2,7 @@
 
 /**
  * Bun CLI Native Wrapper v3.15
- * 
+ *
  * Official Bun CLI integration wrapper with enhanced watch-filter capabilities
  * Usage: bun watch-filter [options] <script> [args...]
  */

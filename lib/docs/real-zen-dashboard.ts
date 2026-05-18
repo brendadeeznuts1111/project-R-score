@@ -242,27 +242,27 @@ export class RealZenDashboard {
 <body>
     <h1>🎯 REAL Zen Dashboard <span class="real-badge">LIVE DATA</span></h1>
     <p>100% Real search results from our Ultra-Zen Documentation System</p>
-    
+
     <div class="metric-card">
         <div class="metric-value">${this.metrics.totalSearches}</div>
         <div>🔍 Total REAL Searches</div>
     </div>
-    
+
     <div class="metric-card">
         <div class="metric-value">${avgTime.toFixed(2)}ms</div>
         <div>⚡ Average REAL Search Time</div>
     </div>
-    
+
     <div class="metric-card">
         <div class="metric-value">${totalMatches}</div>
         <div>🎯 Total REAL Matches</div>
     </div>
-    
+
     <div class="metric-card">
         <div class="metric-value">${avgMemory.toFixed(2)}MB</div>
         <div>💾 Average REAL Memory Usage</div>
     </div>
-    
+
     <div class="metric-card">
         <h3>📜 REAL Search History</h3>
         ${this.metrics.realSearchHistory
@@ -276,7 +276,7 @@ export class RealZenDashboard {
           )
           .join('')}
     </div>
-    
+
     <p style="text-align: center; margin-top: 40px; color: #64748b;">
         🎯 This dashboard shows 100% REAL search data<br>
         🚀 No simulated values - actual performance metrics

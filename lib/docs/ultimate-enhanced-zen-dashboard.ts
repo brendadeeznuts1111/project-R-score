@@ -711,7 +711,7 @@ export class UltimateEnhancedZenDashboard {
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .glass-effect { 
+        .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -745,13 +745,13 @@ export class UltimateEnhancedZenDashboard {
                     </div>
                     <p class="text-sm opacity-75 mt-2">Overall status</p>
                 </div>
-                
+
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-lg font-semibold mb-2">Total Searches</h3>
                     <div class="text-3xl font-bold text-blue-400">${this.metrics.totalSearches.toLocaleString()}</div>
                     <p class="text-sm opacity-75 mt-2">Lifetime operations</p>
                 </div>
-                
+
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-lg font-semibold mb-2">Error Rate</h3>
                     <div class="text-3xl font-bold ${this.metrics.errorRate > 0.05 ? 'text-red-400' : 'text-green-400'}">
@@ -759,7 +759,7 @@ export class UltimateEnhancedZenDashboard {
                     </div>
                     <p class="text-sm opacity-75 mt-2">Failure rate</p>
                 </div>
-                
+
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-lg font-semibold mb-2">Uptime</h3>
                     <div class="text-3xl font-bold text-purple-400">${this.formatUptime(this.metrics.uptime)}</div>
@@ -793,7 +793,7 @@ export class UltimateEnhancedZenDashboard {
                     <h3 class="text-xl font-bold mb-4">📈 Performance History</h3>
                     <canvas id="performanceChart" width="400" height="200"></canvas>
                 </div>
-                
+
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-xl font-bold mb-4">🧠 Memory Usage</h3>
                     <canvas id="memoryChart" width="400" height="200"></canvas>
@@ -847,7 +847,7 @@ export class UltimateEnhancedZenDashboard {
                             }
                         </div>
                     </div>
-                    
+
                     <div>
                         <h4 class="font-semibold mb-3">File System Analytics</h4>
                         <div class="space-y-2 text-sm">
@@ -865,7 +865,7 @@ export class UltimateEnhancedZenDashboard {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div>
                         <h4 class="font-semibold mb-3">Cache Performance</h4>
                         <div class="space-y-2 text-sm">

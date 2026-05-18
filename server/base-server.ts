@@ -2477,10 +2477,10 @@ function generateDashboardHTML(): string {
       </p>
     </div>
   </header>
-  
+
   <div class="container">
     <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-      
+
       <!-- Documentation Endpoints -->
       <div class="card">
         <h2>📚 Documentation</h2>
@@ -2519,7 +2519,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- External Documentation -->
       <div class="card">
         <h2>🌐 External Docs</h2>
@@ -2550,7 +2550,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- API Demonstrations -->
       <div class="card">
         <h2>🚀 API Demos</h2>
@@ -2601,7 +2601,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- GitHub Integration -->
       <div class="card">
         <h2>🐙 GitHub Integration</h2>
@@ -2628,7 +2628,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- CLI Tooling -->
       <div class="card">
         <h2>⚡ CLI Tooling</h2>
@@ -2643,7 +2643,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- CLI Integration -->
       <div class="card">
         <h2>💻 CLI Integration</h2>
@@ -2666,7 +2666,7 @@ bun docs search "http server"
 bun docs open fetch --sh --app
 bun docs index</code></pre>
       </div>
-      
+
       <!-- System Management -->
       <div class="card">
         <h2>⚙️ System</h2>
@@ -2693,7 +2693,7 @@ bun docs index</code></pre>
           </li>
         </ul>
       </div>
-      
+
       <!-- RSS Feeds -->
       <div class="card">
         <h2>📡 RSS Feeds</h2>
@@ -2730,9 +2730,9 @@ Blog: https://bun.com/blog/rss.xml
 Releases: https://bun.com/releases/rss.xml
 Security: https://bun.com/security/rss.xml</code></pre>
       </div>
-      
+
     </div>
-    
+
     <!-- Quick Test Section -->
     <div style="text-align: center; margin: 2rem 0;">
       <button class="test-btn" onclick="testAllEndpoints()">
@@ -2740,7 +2740,7 @@ Security: https://bun.com/security/rss.xml</code></pre>
       </button>
       <div id="testResults" class="response"></div>
     </div>
-    
+
     <!-- Enhanced Features -->
     <div class="card">
       <h2>✨ Enhanced Features</h2>
@@ -2762,24 +2762,24 @@ Security: https://bun.com/security/rss.xml</code></pre>
       </ul>
     </div>
   </div>
-  
+
   <script>
     async function testAllEndpoints() {
       const results = document.getElementById('testResults');
       results.style.display = 'block';
       results.innerHTML = '<p>🧪 Testing all endpoints...</p>';
-      
+
       try {
         const response = await fetch('/test/all');
         const data = await response.json();
-        
+
         results.innerHTML = \`
           <h3>✅ Test Results</h3>
           <p>Total Tests: \${data.totalTests}</p>
           <p>Passed: \${data.passed}</p>
           <p>Failed: \${data.failed}</p>
           <div style="margin-top: 1rem;">
-            \${data.tests.map(test => 
+            \${data.tests.map(test =>
               \`<div style="padding: 0.25rem 0;">
                 \${test.success ? '✅' : '❌'} \${test.endpoint}
                 \${test.error ? ' - ' + test.error : ''}

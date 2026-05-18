@@ -281,7 +281,7 @@ function generatePaymentPage(amount: number, description: string): string {
   <title>Pay ${BRAND_CONFIG.brandName}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
+    body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -375,9 +375,9 @@ function generatePaymentPage(amount: number, description: string): string {
     <div class="logo">${BRAND_CONFIG.brandName.charAt(0)}</div>
     <h1>${BRAND_CONFIG.brandName}</h1>
     <p class="desc">${description}</p>
-    
+
     <div class="amount">$${amount}</div>
-    
+
     <div class="options">
       <a href="${cashappUrl}" class="option" target="_blank">
         <div class="option-icon cashapp">$</div>
@@ -387,7 +387,7 @@ function generatePaymentPage(amount: number, description: string): string {
         </div>
         →
       </a>
-      
+
       <a href="${venmoUrl}" class="option" target="_blank">
         <div class="option-icon venmo">V</div>
         <div class="option-text">
@@ -396,7 +396,7 @@ function generatePaymentPage(amount: number, description: string): string {
         </div>
         →
       </a>
-      
+
       <a href="${paypalUrl}" class="option" target="_blank">
         <div class="option-icon paypal">P</div>
         <div class="option-text">
@@ -406,16 +406,16 @@ function generatePaymentPage(amount: number, description: string): string {
         →
       </a>
     </div>
-    
+
     <button class="share-btn" onclick="sharePayment()">
       📱 Share Payment Link
     </button>
-    
+
     <div class="footer">
       Secured by P2P Proxy • Funds go directly to merchant
     </div>
   </div>
-  
+
   <script>
     function sharePayment() {
       if (navigator.share) {
@@ -580,8 +580,8 @@ const server = Bun.serve({
   <style>
     body { font-family: system-ui; padding: 40px; text-align: center; }
     .brand { color: ${BRAND_CONFIG.color}; }
-    a { display: inline-block; margin: 10px; padding: 15px 30px; 
-        background: ${BRAND_CONFIG.color}; color: white; 
+    a { display: inline-block; margin: 10px; padding: 15px 30px;
+        background: ${BRAND_CONFIG.color}; color: white;
         text-decoration: none; border-radius: 8px; }
     code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
   </style>

@@ -336,7 +336,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
   ${faviconUrl ? `<link rel="icon" href="${faviconUrl}">` : ''}
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
+    body {
       font-family: ${fontFamily};
       background: ${backgroundColor};
       min-height: 100vh;
@@ -442,9 +442,9 @@ function generatePaymentPage(amount: number, description: string, config: any): 
     <div class="logo">${logoUrl ? '' : logoText}</div>
     <h1>${config.brandName}</h1>
     <p class="desc">${description}</p>
-    
+
     <div class="amount">$${amount}</div>
-    
+
     <div class="options">
       <a href="${cashappUrl}" class="option" target="_blank">
         <div class="option-icon cashapp">$</div>
@@ -454,7 +454,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         </div>
         →
       </a>
-      
+
       <a href="${venmoUrl}" class="option" target="_blank">
         <div class="option-icon venmo">V</div>
         <div class="option-text">
@@ -463,7 +463,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         </div>
         →
       </a>
-      
+
       <a href="${paypalUrl}" class="option" target="_blank">
         <div class="option-icon paypal">P</div>
         <div class="option-text">
@@ -473,16 +473,16 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         →
       </a>
     </div>
-    
+
     <button class="share-btn" onclick="sharePayment()">
       📱 Share Payment Link
     </button>
-    
+
     <div class="footer">
       Secured by P2P Proxy • Funds go directly to merchant
     </div>
   </div>
-  
+
   <script>
     function sharePayment() {
       if (navigator.share) {
@@ -738,7 +738,7 @@ const server = Bun.serve({
 </head>
 <body>
     <h1>Your Payment Portal</h1>
-    
+
     <div class="alert">
         ${
           portal.unreadNotifications > 0
@@ -746,7 +746,7 @@ const server = Bun.serve({
             : 'No new notifications'
         }
     </div>
-    
+
     <h2>Recent Notifications</h2>
     ${portal.recentNotifications
       .map(
@@ -760,7 +760,7 @@ const server = Bun.serve({
     `
       )
       .join('')}
-    
+
     <h2>Businesses You've Paid</h2>
     <div class="business-list">
         ${portal.subscribedBusinesses
@@ -790,8 +790,8 @@ const server = Bun.serve({
   <title>P2P Proxy v3 - Business Continuity</title>
   <style>
     body { font-family: system-ui; padding: 40px; text-align: center; }
-    a { display: inline-block; margin: 10px; padding: 15px 30px; 
-        background: #007bff; color: white; 
+    a { display: inline-block; margin: 10px; padding: 15px 30px;
+        background: #007bff; color: white;
         text-decoration: none; border-radius: 8px; }
   </style>
 </head>

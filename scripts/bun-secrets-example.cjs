@@ -18,7 +18,7 @@ if (typeof Bun !== 'undefined') {
     Bun.secrets.set({ service: demoService, name: "CLOUDFLARE_API_TOKEN", value: "your-cloudflare-token" });
     Bun.secrets.set({ service: demoService, name: "FACTORY_WAGER_TOKEN", value: "your-factory-wager-token" });
     Bun.secrets.set({ service: demoService, name: "GITHUB_TOKEN", value: "your-github-token" });
-    
+
     console.log('✅ Secrets set in Bun.secrets');
 } else {
     console.log('⚠️ Bun runtime not detected, using environment variables');
@@ -38,24 +38,24 @@ const { SecretsManager } = require('./secrets-management.cjs');
 
 async function demonstrateSecrets() {
     console.log('\n🧪 Testing Secrets Management...');
-    
+
     const secretsManager = new SecretsManager();
-    
+
     // List all available secrets
     console.log('\n📋 Available Secrets:');
     const secrets = secretsManager.listSecrets();
     secrets.forEach(secret => {
         try {
             const value = secretsManager.getSecret(secret);
-            const masked = secret.toLowerCase().includes('key') || secret.toLowerCase().includes('token') 
-                ? `${value.substring(0, 4)}****` 
+            const masked = secret.toLowerCase().includes('key') || secret.toLowerCase().includes('token')
+                ? `${value.substring(0, 4)}****`
                 : '[CONFIGURED]';
             console.log(`  ✅ ${secret}: ${masked}`);
         } catch (error) {
             console.log(`  ❌ ${secret}: Not available`);
         }
     });
-    
+
     // Test R2 configuration
     console.log('\n🗄️ Testing R2 Configuration:');
     try {
@@ -69,7 +69,7 @@ async function demonstrateSecrets() {
     } catch (error) {
         console.log(`  ❌ R2 configuration failed: ${error.message}`);
     }
-    
+
     // Test Cloudflare configuration
     console.log('\n☁️ Testing Cloudflare Configuration:');
     try {
@@ -79,7 +79,7 @@ async function demonstrateSecrets() {
     } catch (error) {
         console.log(`  ❌ Cloudflare configuration failed: ${error.message}`);
     }
-    
+
     // Test GitHub configuration
     console.log('\n🐙 Testing GitHub Configuration:');
     try {
@@ -89,7 +89,7 @@ async function demonstrateSecrets() {
     } catch (error) {
         console.log(`  ❌ GitHub configuration failed: ${error.message}`);
     }
-    
+
     // Validate all required secrets
     console.log('\n🔍 Validating Required Secrets:');
     try {
@@ -103,7 +103,7 @@ async function demonstrateSecrets() {
     } catch (error) {
         console.log(`  ❌ Validation failed: ${error.message}`);
     }
-    
+
     console.log('\n🎉 Secrets management demonstration complete!');
 }
 
@@ -111,22 +111,22 @@ async function demonstrateSecrets() {
 function demonstrateCLIIntegration() {
     console.log('\n🔧 CLI Integration Example:');
     console.log('==============================');
-    
+
     console.log('\n# Set secrets in your application:');
     console.log('Bun.secrets.set("R2_SECRET_KEY", "my-secret-key");');
     console.log('Bun.secrets.set("CLOUDFLARE_API_TOKEN", "your-cloudflare-token");');
-    
+
     console.log('\n# Use with FactoryWager CLI:');
     console.log('./cli/fw-cli secrets list      # List available secrets');
     console.log('./cli/fw-cli secrets validate  # Validate required secrets');
     console.log('./cli/fw-cli secrets test      # Test secret loading');
     console.log('./cli/fw-cli secrets setup     # Show setup guide');
-    
+
     console.log('\n# CLI commands will automatically use secrets from:');
     console.log('1. Bun.secrets (highest priority)');
     console.log('2. Environment variables');
     console.log('3. Configuration files');
-    
+
     console.log('\n# Example with dry-run mode:');
     console.log('./cli/fw-cli dns list --dryrun  # Uses CLOUDFLARE_API_TOKEN');
     console.log('./cli/fw-cli deploy content ./docs --dryrun  # Uses GITHUB_TOKEN');
@@ -136,7 +136,7 @@ function demonstrateCLIIntegration() {
 function showProductionDeployment() {
     console.log('\n🚀 Production Deployment Example:');
     console.log('===================================');
-    
+
     console.log('\n# In your production application:');
     console.log(`
 // Load secrets from secure source
@@ -150,12 +150,12 @@ const cli = new FactoryWagerCLI();
 // Deploy with confidence
 await cli.executeCommand(['deploy', 'content', './dist']);
     `);
-    
+
     console.log('\n# Environment variables for production:');
     console.log('export R2_SECRET_KEY="your-production-secret-key"');
     console.log('export CLOUDFLARE_API_TOKEN="your-production-api-token"');
     console.log('export GITHUB_TOKEN="your-production-github-token"');
-    
+
     console.log('\n# Or use .env file:');
     console.log('echo "R2_SECRET_KEY=your-production-secret-key" >> .env');
     console.log('echo "CLOUDFLARE_API_TOKEN=your-production-api-token" >> .env');

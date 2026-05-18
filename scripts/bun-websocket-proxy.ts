@@ -249,7 +249,7 @@ const wss = serve({
           <div id="log"></div>
           <script>
             const log = (msg) => document.getElementById('log').innerHTML += '<p>' + msg + '</p>';
-            
+
             // Connect through proxy (if configured)
             const ws = new WebSocket('ws://localhost:3006/ws');
             ws.onopen = () => {

@@ -238,20 +238,20 @@ export class RealZenBunDashboard {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REAL Zen Dashboard - Bun File Protocol</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
-            color: #e2e8f0; 
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             min-height: 100vh;
         }
-        .real-badge { 
-            background: #dc2626; 
-            color: white; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 0.9em; 
+        .real-badge {
+            background: #dc2626;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
             font-weight: bold;
             animation: pulse 2s infinite;
         }
@@ -259,69 +259,69 @@ export class RealZenBunDashboard {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
-        .bun-protocol { 
-            background: #1e293b; 
-            padding: 20px; 
-            border-radius: 12px; 
-            border: 1px solid #334155; 
+        .bun-protocol {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
             margin-bottom: 30px;
             text-align: center;
         }
-        .bun-url { 
-            font-family: 'Courier New', monospace; 
-            font-size: 1.2em; 
-            color: #22c55e; 
-            background: #0f172a; 
-            padding: 10px 20px; 
+        .bun-url {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: #22c55e;
+            background: #0f172a;
+            padding: 10px 20px;
             border-radius: 8px;
             display: inline-block;
             margin: 10px 0;
         }
-        .metrics-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 30px; 
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .metric-card { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .metric-card {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             backdrop-filter: blur(10px);
             transition: transform 0.3s ease;
         }
         .metric-card:hover { transform: translateY(-5px); }
-        .metric-value { 
-            font-size: 2.5em; 
-            font-weight: bold; 
-            color: #22c55e; 
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #22c55e;
             margin-bottom: 5px;
         }
         .metric-label { color: #94a3b8; font-size: 0.9em; }
-        .search-history { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
+        .search-history {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
             backdrop-filter: blur(10px);
         }
-        .search-item { 
-            display: flex; 
-            justify-content: space-between; 
+        .search-item {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 15px 0; 
-            border-bottom: 1px solid #334155; 
+            padding: 15px 0;
+            border-bottom: 1px solid #334155;
         }
         .search-item:last-child { border-bottom: none; }
         .search-query { font-weight: 600; color: #22c55e; }
         .search-stats { color: #94a3b8; }
-        .refresh-btn { 
-            background: #22c55e; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 8px; 
+        .refresh-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
             margin: 10px;
@@ -338,12 +338,12 @@ export class RealZenBunDashboard {
     <div style="max-width: 1200px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-size: 2.5em; margin-bottom: 10px;">
-                🎯 REAL Zen Dashboard 
+                🎯 REAL Zen Dashboard
                 <span class="real-badge">LIVE DATA</span>
             </h1>
             <p>100% Real search results using Bun File Protocol</p>
         </div>
-        
+
         <div class="bun-protocol">
             <h3>🔗 Bun File Protocol Active</h3>
             <div class="bun-url">bun://localhost:3002/dashboard</div>
@@ -351,7 +351,7 @@ export class RealZenBunDashboard {
             <button class="refresh-btn" onclick="refreshRealData()">🔄 Refresh Real Data</button>
             <button class="refresh-btn" onclick="performRealSearch()">🔍 Perform Real Search</button>
         </div>
-        
+
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-value" id="totalSearches">${this.metrics.totalSearches}</div>
@@ -378,7 +378,7 @@ export class RealZenBunDashboard {
                 <div class="metric-label">🕒 Last REAL Update</div>
             </div>
         </div>
-        
+
         <div class="search-history">
             <h2>📜 REAL Search History - Live Data</h2>
             <div id="searchHistory">
@@ -398,7 +398,7 @@ export class RealZenBunDashboard {
                 }
             </div>
         </div>
-        
+
         <div style="text-align: center; margin-top: 40px; color: #64748b;">
             <p>🎯 This dashboard shows 100% REAL search data from our Ultra-Zen System</p>
             <p>🚀 Powered by Bun File Protocol • 🧘 Zero-copy architecture • 🌐 Web Standards integration</p>
@@ -411,48 +411,48 @@ export class RealZenBunDashboard {
             try {
                 const response = await fetch('/api/real-metrics');
                 const metrics = await response.json();
-                
+
                 // Update all metrics with REAL data
                 document.getElementById('totalSearches').textContent = metrics.totalSearches;
                 document.getElementById('lastUpdate').textContent = new Date(metrics.lastUpdate).toLocaleTimeString();
-                
+
                 // Calculate real averages
                 if (metrics.realSearchHistory.length > 0) {
                     const avgTime = metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / metrics.realSearchHistory.length;
                     const avgMemory = metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / metrics.realSearchHistory.length;
                     const totalMatches = metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
-                    
+
                     document.getElementById('avgTime').textContent = avgTime.toFixed(2) + 'ms';
                     document.getElementById('avgMemory').textContent = avgMemory.toFixed(2) + 'MB';
                     document.getElementById('totalMatches').textContent = totalMatches;
-                    
+
                     // Update search history
-                    const historyHtml = metrics.realSearchHistory.map(search => 
+                    const historyHtml = metrics.realSearchHistory.map(search =>
                         \`<div class="search-item">
                             <span class="search-query">🔍 "\${search.query}"</span>
                             <span class="search-stats">\${search.matches} matches • \${search.time.toFixed(2)}ms • \${search.memory.toFixed(2)}MB</span>
                         </div>\`
                     ).join('');
-                    
+
                     document.getElementById('searchHistory').innerHTML = historyHtml;
                 }
-                
+
                 console.info('✅ Real data refreshed!');
-                
+
             } catch (error) {
                 console.error('❌ Failed to refresh real data:', error);
             }
         }
-        
+
         async function performRealSearch() {
             const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch', 'spawn'];
             const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-            
+
             try {
                 console.info(\`🔍 Performing real search: \${randomQuery}\`);
                 const response = await fetch(\`/api/search?query=\${randomQuery}\`);
                 const result = await response.json();
-                
+
                 if (result.success) {
                     console.info(\`✅ Real search completed: \${result.matches} matches in \${result.time.toFixed(2)}ms\`);
                     // Refresh data after search
@@ -460,15 +460,15 @@ export class RealZenBunDashboard {
                 } else {
                     console.error(\`❌ Real search failed: \${result.error}\`);
                 }
-                
+
             } catch (error) {
                 console.error('❌ Failed to perform real search:', error);
             }
         }
-        
+
         // Auto-refresh real data every 10 seconds
         setInterval(refreshRealData, 10000);
-        
+
         console.info('🎯 REAL Zen Dashboard loaded!');
         console.info('🔗 Bun File Protocol: bun://localhost:3002/dashboard');
         console.info('📊 Showing 100% REAL search data - no simulations!');

@@ -541,7 +541,7 @@ export class BunSecurityEngine {
         event_data TEXT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       CREATE TABLE IF NOT EXISTS password_hashes (
         user_id TEXT PRIMARY KEY,
         hash TEXT NOT NULL,
@@ -551,7 +551,7 @@ export class BunSecurityEngine {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         last_used DATETIME
       );
-      
+
       CREATE TABLE IF NOT EXISTS csrf_tokens (
         token TEXT PRIMARY KEY,
         session_id TEXT NOT NULL,
@@ -559,7 +559,7 @@ export class BunSecurityEngine {
         used INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       CREATE TABLE IF NOT EXISTS secret_versions (
         secret_name TEXT PRIMARY KEY,
         current_version INTEGER DEFAULT 1,

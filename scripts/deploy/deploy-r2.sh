@@ -5,7 +5,7 @@ echo "🚀 Deploying to R2 Buckets..."
 # List of R2 domains that need simple content
 R2_DOMAINS=(
     "admin.factory-wager.com"
-    "api.factory-wager.com" 
+    "api.factory-wager.com"
     "app.factory-wager.com"
     "artifacts.factory-wager.com"
     "metrics.factory-wager.com"
@@ -20,9 +20,9 @@ R2_DOMAINS=(
 # Create a simple landing page for each R2 bucket
 for domain in "${R2_DOMAINS[@]}"; do
     echo "📄 Creating page for $domain..."
-    
+
     bucket_name=$(echo $domain | sed 's/.factory-wager.com//')
-    
+
     cat > "${bucket_name}-index.html" << EOF
 <!DOCTYPE html>
 <html lang="en">
@@ -31,13 +31,13 @@ for domain in "${R2_DOMAINS[@]}"; do
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$domain - FactoryWager</title>
     <style>
-        body { 
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin: 0;
         }
         .container {
@@ -50,20 +50,20 @@ for domain in "${R2_DOMAINS[@]}"; do
         }
         .icon { font-size: 4rem; margin-bottom: 1rem; }
         h1 { color: #1e293b; margin-bottom: 1rem; }
-        .status { 
-            background: #f0fdf4; 
-            color: #22c55e; 
-            padding: 0.5rem 1rem; 
-            border-radius: 20px; 
+        .status {
+            background: #f0fdf4;
+            color: #22c55e;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             display: inline-block;
             margin: 1rem 0;
         }
         .info { color: #64748b; margin-top: 1rem; }
         .links { margin-top: 2rem; }
-        .links a { 
-            color: #3b82f6; 
-            text-decoration: none; 
-            margin: 0 0.5rem; 
+        .links a {
+            color: #3b82f6;
+            text-decoration: none;
+            margin: 0 0.5rem;
         }
     </style>
 </head>

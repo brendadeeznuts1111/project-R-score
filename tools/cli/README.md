@@ -273,7 +273,7 @@ EOF
    ```bash
    # Set your token
    export FACTORY_WAGER_TOKEN="your_token"
-   
+
    # Or use auth setup
    ./cli/fw-cli auth setup
    ```

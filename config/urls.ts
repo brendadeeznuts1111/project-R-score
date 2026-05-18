@@ -5,7 +5,7 @@ import { file } from 'bun';
 export const BUN_DOCS = {
   // Base URLs (aligned with bun.sh/docs pattern)
   BASE: 'https://bun.sh/docs',
-  
+
   // API endpoints following the bun.sh/docs/{category}/{section} pattern
   API: {
     FETCH: '/api/fetch',
@@ -13,7 +13,7 @@ export const BUN_DOCS = {
     WEBSOCKET: '/api/websocket',
     SERVE: '/api/serve',
   },
-  
+
   // Runtime documentation following bun.sh/docs/runtime/{category}
   RUNTIME: {
     BINARY_DATA: '/runtime/binary-data',
@@ -21,7 +21,7 @@ export const BUN_DOCS = {
     PROCESS: '/runtime/process',
     NETWORKING: '/runtime/networking',
   },
-  
+
   // Guides following bun.sh/docs/guides/{topic}
   GUIDES: {
     READ_FILE: '/guides/read-file',
