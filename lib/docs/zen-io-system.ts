@@ -14,7 +14,7 @@ export class ZenOutputSystem {
 
   constructor() {
     // Get the high-performance writer for stdout
-    this.writer = (Bun as any).stdout.writer();
+    this.writer = (Bun as Record<string, unknown>).stdout.writer();
   }
 
   /**
@@ -79,7 +79,7 @@ export class FileDescriptorManager {
    */
   async writeToDescriptor(fd: number, content: string): Promise<boolean> {
     try {
-      const descriptorFile = (Bun as any).file(fd);
+      const descriptorFile = (Bun as Record<string, unknown>).file(fd);
       if (await descriptorFile.exists()) {
         await Bun.write(descriptorFile, new TextEncoder().encode(content));
         return true;
@@ -96,7 +96,7 @@ export class FileDescriptorManager {
    */
   async isPipeAvailable(fd: number): Promise<boolean> {
     try {
-      const pipeFile = (Bun as any).file(fd);
+      const pipeFile = (Bun as Record<string, unknown>).file(fd);
       return await pipeFile.exists();
     } catch {
       return false;
@@ -134,7 +134,7 @@ export class VirtualDocumentationManager {
     results: any[],
     format: 'json' | 'markdown' | 'csv' = 'json'
   ): Promise<void> {
-    const exportFile = (Bun as any).file(filename, {
+    const exportFile = (Bun as Record<string, unknown>).file(filename, {
       type: format === 'json' ? 'application/json' : 'text/plain',
     });
 
@@ -229,7 +229,7 @@ export class SelfReferentialSystem {
    */
   async loadTemplate(templateName: string): Promise<string> {
     const templateUrl = new URL(`./templates/${templateName}`, this.baseUrl);
-    const templateFile = (Bun as any).file(templateUrl);
+    const templateFile = (Bun as Record<string, unknown>).file(templateUrl);
 
     if (await templateFile.exists()) {
       return await templateFile.text();
@@ -250,7 +250,7 @@ export class SelfReferentialSystem {
    */
   async resourceExists(resourceName: string): Promise<boolean> {
     const resourceUrl = new URL(`./resources/${resourceName}`, this.baseUrl);
-    const resourceFile = (Bun as any).file(resourceUrl);
+    const resourceFile = (Bun as Record<string, unknown>).file(resourceUrl);
     return await resourceFile.exists();
   }
 

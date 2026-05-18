@@ -25,7 +25,7 @@ export class VirtualFileManager {
     console.info(`🌐 Creating virtual export: ${filename}`);
 
     // Create the virtual file with MIME type
-    const exportFile = (Bun as any).file(filename, {
+    const exportFile = (Bun as Record<string, unknown>).file(filename, {
       type: format === 'json' ? 'application/json' : 'text/plain',
     });
 
@@ -137,7 +137,7 @@ export class VirtualFileManager {
     type?: string;
     lastModified?: Date;
   }> {
-    const virtualFile = (Bun as any).file(filename);
+    const virtualFile = (Bun as Record<string, unknown>).file(filename);
 
     if (await virtualFile.exists()) {
       const stats = await virtualFile.stat();
@@ -157,7 +157,7 @@ export class VirtualFileManager {
    */
   async listVirtualFiles(pattern: string = '*'): Promise<string[]> {
     try {
-      const files = await (Bun as any).glob(pattern);
+      const files = await (Bun as Record<string, unknown>).glob(pattern);
       return files.filter((file: string) => this.exportCache.has(file) || file.includes('-'));
     } catch {
       return [];
@@ -176,9 +176,9 @@ export class VirtualFileManager {
 
     for (const file of files) {
       try {
-        const stats = await (Bun as any).file(file).stat();
+        const stats = await (Bun as Record<string, unknown>).file(file).stat();
         if (stats.mtimeMs < cutoffTime) {
-          await (Bun as any).file(file).delete();
+          await (Bun as Record<string, unknown>).file(file).delete();
           this.exportCache.delete(file);
           cleaned++;
         }

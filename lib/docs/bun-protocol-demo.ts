@@ -16,7 +16,7 @@ const bunFileInfo = {
   ],
   dashboard: {
     file: 'zen-dashboard-enhanced.html',
-    size: (Bun as any).file('zen-dashboard-enhanced.html').size || 9478,
+    size: (Bun as Record<string, unknown>).file('zen-dashboard-enhanced.html').size || 9478,
     type: 'text/html',
     lastModified: new Date().toISOString(),
   },
@@ -28,7 +28,7 @@ const bunFileInfo = {
 };
 
 // Save the Bun file info
-const bunFile = (Bun as any).file('bun-protocol-info.json');
+const bunFile = (Bun as Record<string, unknown>).file('bun-protocol-info.json');
 await Bun.write(bunFile, new TextEncoder().encode(JSON.stringify(bunFileInfo, null, 2)));
 
 console.info('🎪 Bun File Protocol Demonstration');

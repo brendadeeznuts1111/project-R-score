@@ -3,14 +3,14 @@
  * Serves the dashboard using Bun's built-in file server
  */
 
-const dashboardServer = (Bun as any).serve({
+const dashboardServer = (Bun as Record<string, unknown>).serve({
   port: 3000,
   fetch(req) {
     const url = new URL(req.url);
 
     // Serve the dashboard
     if (url.pathname === '/' || url.pathname === '/dashboard') {
-      const dashboard = (Bun as any).file('zen-dashboard.html');
+      const dashboard = (Bun as Record<string, unknown>).file('zen-dashboard.html');
       return new Response(dashboard);
     }
 

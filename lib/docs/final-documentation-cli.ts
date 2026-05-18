@@ -80,7 +80,7 @@ export class FinalDocumentationCLI {
   private configRoot: URL;
 
   constructor() {
-    this.bun = (globalThis as any).Bun as ZenBun;
+    this.bun = (globalThis as Record<string, unknown>).Bun as ZenBun;
     this.searcher = new EnhancedZenStreamSearcher();
 
     // Pattern 1: File Descriptor for "Silent Pipe" telemetry

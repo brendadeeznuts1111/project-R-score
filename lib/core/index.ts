@@ -215,7 +215,7 @@ export function isErrorType<T extends Error>(
  */
 export function createErrorWithCause(message: string, cause: unknown): Error {
   const error = new Error(message);
-  (error as any).cause = cause;
+  (error as Record<string, unknown>).cause = cause;
   return error;
 }
 

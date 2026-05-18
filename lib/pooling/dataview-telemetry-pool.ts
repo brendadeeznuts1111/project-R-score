@@ -215,7 +215,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
 
     // Proactive GC control for critical batch operations with performance tracking
     const gcBefore =
-      typeof Bun !== 'undefined' && (Bun as any).gc
+      typeof Bun !== 'undefined' && (Bun as Record<string, unknown>).gc
         ? {
             available: true,
             heapBefore: process.memoryUsage().heapUsed,
@@ -223,7 +223,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
         : { available: false };
 
     if (gcBefore.available) {
-      (Bun as any).gc(false); // Suggest aggressive collection NOT to run now
+      (Bun as Record<string, unknown>).gc(false); // Suggest aggressive collection NOT to run now
     }
 
     try {
@@ -294,7 +294,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
       // Explicitly suggest cleanup after batch with performance monitoring
       if (gcBefore.available) {
         const gcStart = performance.now();
-        (Bun as any).gc(true); // Suggest a more aggressive collection
+        (Bun as Record<string, unknown>).gc(true); // Suggest a more aggressive collection
         const gcEnd = performance.now();
         console.info(`🗑️  GC cleanup time: ${(gcEnd - gcStart).toFixed(2)}ms`);
       }

@@ -127,59 +127,59 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
 
   // Helper methods to access protected state
   private getLastFailureTime(): number | null {
-    return (this as any).lastFailureTime;
+    return (this as Record<string, unknown>).lastFailureTime;
   }
 
   private getLastError(): Error | null {
-    return (this as any).lastError;
+    return (this as Record<string, unknown>).lastError;
   }
 
   private getResetTimeoutMs(): number {
-    return (this as any).config.resetTimeoutMs;
+    return (this as Record<string, unknown>).config.resetTimeoutMs;
   }
 
   private getServiceName(): string {
-    return (this as any).serviceName;
+    return (this as Record<string, unknown>).serviceName;
   }
 
   private incrementRejectedCalls(): void {
-    (this as any).rejectedCalls++;
+    (this as Record<string, unknown>).rejectedCalls++;
   }
 
   private getHalfOpenMaxCalls(): number {
-    return (this as any).config.halfOpenMaxCalls || 1;
+    return (this as Record<string, unknown>).config.halfOpenMaxCalls || 1;
   }
 
   private getHalfOpenCalls(): number {
-    return (this as any).halfOpenCalls;
+    return (this as Record<string, unknown>).halfOpenCalls;
   }
 
   private incrementHalfOpenCalls(): void {
-    (this as any).halfOpenCalls++;
+    (this as Record<string, unknown>).halfOpenCalls++;
   }
 
   private decrementHalfOpenCalls(): void {
-    (this as any).halfOpenCalls = Math.max(0, (this as any).halfOpenCalls - 1);
+    (this as Record<string, unknown>).halfOpenCalls = Math.max(0, (this as Record<string, unknown>).halfOpenCalls - 1);
   }
 
   private transitionTo(state: CircuitState): void {
     const oldState = this.getState();
     if (oldState === state) return;
 
-    (this as any).transitionTo(state);
+    (this as Record<string, unknown>).transitionTo(state);
     this.logStateTransition(oldState, state);
   }
 
   private executeWithTimeout<T>(fn: () => Promise<T>): Promise<T> {
-    return (this as any).executeWithTimeout(fn);
+    return (this as Record<string, unknown>).executeWithTimeout(fn);
   }
 
   private onSuccess(): void {
-    (this as any).onSuccess();
+    (this as Record<string, unknown>).onSuccess();
   }
 
   private onFailure(error: Error): void {
-    (this as any).onFailure(error);
+    (this as Record<string, unknown>).onFailure(error);
   }
 }
 

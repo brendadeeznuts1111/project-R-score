@@ -5,7 +5,7 @@ import { R2StorageAdapter } from './r2-storage';
 import { deleteSecret, getSecret, setSecret } from '../security/bun-secrets-adapter';
 
 // Use bun.secrets if available (Bun 1.2+)
-const secrets = (Bun as any).secrets;
+const secrets = (Bun as Record<string, unknown>).secrets;
 
 export interface SecretEntry {
   key: string;

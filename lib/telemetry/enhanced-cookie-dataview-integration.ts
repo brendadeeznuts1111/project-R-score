@@ -161,9 +161,9 @@ export class UnifiedCookieDataViewManager {
     metrics.performanceMetrics.memoryUsage = memUsage.heapUsed;
 
     // Track GC impact
-    if (typeof Bun !== 'undefined' && (Bun as any).gc) {
+    if (typeof Bun !== 'undefined' && (Bun as Record<string, unknown>).gc) {
       const gcStart = performance.now();
-      (Bun as any).gc(false);
+      (Bun as Record<string, unknown>).gc(false);
       const gcEnd = performance.now();
       metrics.performanceMetrics.gcImpact = gcEnd - gcStart;
     }

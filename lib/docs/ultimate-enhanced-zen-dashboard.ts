@@ -138,7 +138,7 @@ export class UltimateEnhancedZenDashboard {
   };
 
   constructor() {
-    this.bun = (globalThis as any).Bun as UltimateBun;
+    this.bun = (globalThis as Record<string, unknown>).Bun as UltimateBun;
     this.searcher = new EnhancedZenStreamSearcher();
     this.networkStreamer = new FetchAndRipStreamer();
 
@@ -639,7 +639,7 @@ export class UltimateEnhancedZenDashboard {
   async startUltimateDashboard(): Promise<void> {
     console.info('🚀 Starting Ultimate Enhanced Zen Dashboard - Enterprise Edition');
 
-    const bun = (globalThis as any).Bun as any;
+    const bun = (globalThis as Record<string, unknown>).Bun as any;
     this.server = bun.serve({
       port: 3007, // Different port for ultimate edition
       fetch: async (req: Request) => {

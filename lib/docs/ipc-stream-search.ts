@@ -137,7 +137,7 @@ class IPCDocumentationOrchestrator {
    */
   spawnWorker(workerId: string): boolean {
     try {
-      const worker = (Bun as any).spawn(['bun', '--import', './lib/docs/ipc-stream-search.ts'], {
+      const worker = (Bun as Record<string, unknown>).spawn(['bun', '--import', './lib/docs/ipc-stream-search.ts'], {
         ipc: (message: IPCMessage, subprocess) => {
           this.handleWorkerMessage(workerId, message, subprocess);
         },
@@ -305,7 +305,7 @@ class TerminalDocumentationExplorer {
 
   private setupTerminal() {
     // Create a reusable terminal for interactive documentation exploration
-    this.terminal = new (Bun as any).Terminal({
+    this.terminal = new (Bun as Record<string, unknown>).Terminal({
       cols: 100,
       rows: 30,
       name: 'xterm-256color',

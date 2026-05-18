@@ -371,7 +371,7 @@ export async function streamSpawn(
 export function ansiStringWidth(str: string): AnsiWidthResult {
   try {
     // Use Bun's built-in stringWidth if available
-    const width = (Bun as any).stringWidth?.(str) ?? str.length;
+    const width = (Bun as Record<string, unknown>).stringWidth?.(str) ?? str.length;
 
     // Check for ANSI codes
     const ansiPattern = /\x1b\[[0-9;]*m/g;

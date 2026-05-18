@@ -270,8 +270,8 @@ export class DataViewCookieManager {
     const cutoffTime = Date.now() - maxAge;
 
     // Proactive GC control for large cleanup operations
-    if (typeof Bun !== 'undefined' && (Bun as any).gc) {
-      (Bun as any).gc(false);
+    if (typeof Bun !== 'undefined' && (Bun as Record<string, unknown>).gc) {
+      (Bun as Record<string, unknown>).gc(false);
     }
 
     const result = this.db.run(
@@ -288,8 +288,8 @@ export class DataViewCookieManager {
     `);
 
     // Force cleanup GC
-    if (typeof Bun !== 'undefined' && (Bun as any).gc) {
-      (Bun as any).gc(true);
+    if (typeof Bun !== 'undefined' && (Bun as Record<string, unknown>).gc) {
+      (Bun as Record<string, unknown>).gc(true);
     }
 
     console.info(`🧹 Cleaned up ${result.changes} expired sessions`);

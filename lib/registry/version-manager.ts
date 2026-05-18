@@ -4,7 +4,7 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
 
 // Use bun.semver if available (Bun 1.2+)
-const semver = (Bun as any).semver || {
+const semver = (Bun as Record<string, unknown>).semver || {
   parse: (v: string) => ({ version: v, major: 0, minor: 0, patch: 0 }),
   compare: (a: string, b: string) => a.localeCompare(b),
   satisfies: () => true,

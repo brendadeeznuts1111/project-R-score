@@ -48,7 +48,7 @@ export class RealZenBunDashboard {
     console.info('🎯 Starting REAL Zen Dashboard with Bun File Protocol!');
 
     // Start Bun server with file protocol
-    this.server = (Bun as any).serve({
+    this.server = (Bun as Record<string, unknown>).serve({
       port: 3003,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
@@ -484,7 +484,7 @@ export class RealZenBunDashboard {
    */
   private async generateStaticRealDashboard(): Promise<void> {
     const html = await this.generateRealHTMLDashboard();
-    const staticFile = (Bun as any).file('real-zen-dashboard-bun.html', { type: 'text/html' });
+    const staticFile = (Bun as Record<string, unknown>).file('real-zen-dashboard-bun.html', { type: 'text/html' });
     await Bun.write(staticFile, new TextEncoder().encode(html));
 
     console.info('📄 Static REAL dashboard saved: real-zen-dashboard-bun.html');

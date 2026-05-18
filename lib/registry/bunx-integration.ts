@@ -5,7 +5,7 @@ import { R2StorageAdapter } from './r2-storage';
 import { RegistrySecretsManager } from './secrets-manager';
 
 // Use bun.semver if available
-const semver = (Bun as any).semver || {
+const semver = (Bun as Record<string, unknown>).semver || {
   satisfies: () => true,
   valid: (v: string) => v,
   maxSatisfying: (versions: string[], range: string) => versions[0],

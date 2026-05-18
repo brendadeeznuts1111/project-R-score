@@ -269,10 +269,10 @@ export class GlobalErrorHandler {
     const enhanced = new Error(`[${type}] ${error.message}`);
     enhanced.name = error.name;
     enhanced.stack = error.stack;
-    (enhanced as any).originalError = error;
-    (enhanced as any).errorType = type;
-    (enhanced as any).timestamp = new Date().toISOString();
-    (enhanced as any).processUptime = process.uptime();
+    (enhanced as Record<string, unknown>).originalError = error;
+    (enhanced as Record<string, unknown>).errorType = type;
+    (enhanced as Record<string, unknown>).timestamp = new Date().toISOString();
+    (enhanced as Record<string, unknown>).processUptime = process.uptime();
     return enhanced;
   }
 

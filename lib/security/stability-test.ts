@@ -134,14 +134,14 @@ class StabilityTests {
     console.info('\n💾 TESTING ENVIRONMENT CACHE MEMORY LEAK FIX');
     console.info('='.repeat(50));
 
-    const initialSize = (EnvironmentOptimizer as any).ENV_CACHE?.size || 0;
+    const initialSize = (EnvironmentOptimizer as Record<string, unknown>).ENV_CACHE?.size || 0;
 
     // Access environment variables multiple times
     for (let i = 0; i < 100; i++) {
       EnvironmentOptimizer.getOptimizedEnv('PATH');
     }
 
-    const finalSize = (EnvironmentOptimizer as any).ENV_CACHE?.size || 0;
+    const finalSize = (EnvironmentOptimizer as Record<string, unknown>).ENV_CACHE?.size || 0;
 
     if (finalSize === initialSize + 1) {
       console.info('✅ PASSED: No memory leak in environment cache');

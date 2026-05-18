@@ -28,7 +28,7 @@ export class FetchAndRipStreamer {
 
       // Stream directly to ripgrep - this is the magic!
       const startTime = performance.now();
-      const proc = (Bun as any).spawn(['rg', '--line-number', '--color=always', query], {
+      const proc = (Bun as Record<string, unknown>).spawn(['rg', '--line-number', '--color=always', query], {
         stdin: response.body, // Response body is a ReadableStream!
         stdout: 'pipe',
         stderr: 'pipe',
@@ -78,7 +78,7 @@ export class FetchAndRipStreamer {
         }
 
         // Stream directly to ripgrep
-        const proc = (Bun as any).spawn(['rg', '--line-number', '--heading', query], {
+        const proc = (Bun as Record<string, unknown>).spawn(['rg', '--line-number', '--heading', query], {
           stdin: response.body,
           stdout: 'pipe',
         });
@@ -104,7 +104,7 @@ export class FetchAndRipStreamer {
     console.info(`🧠 Processing search results from: ${url}`);
 
     const response = await fetch(url);
-    const proc = (Bun as any).spawn(['rg', '--json', query], {
+    const proc = (Bun as Record<string, unknown>).spawn(['rg', '--json', query], {
       stdin: response.body,
       stdout: 'pipe',
     });
@@ -222,7 +222,7 @@ export class NetworkDocumentationSearcher extends ZenStreamSearcher {
 async function basicExample() {
   const docUrl = 'https://bun.sh/docs/llms.txt';
 
-  const proc = (Bun as any).spawn(['rg', 'Bun.spawn'], {
+  const proc = (Bun as Record<string, unknown>).spawn(['rg', 'Bun.spawn'], {
     stdin: await fetch(docUrl), // Direct streaming from network to rg
     stdout: 'pipe',
   });

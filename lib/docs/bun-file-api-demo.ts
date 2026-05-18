@@ -32,7 +32,7 @@ export class BunFileAPIDemo {
   private bun: Bun;
 
   constructor() {
-    this.bun = (globalThis as any).Bun as Bun;
+    this.bun = (globalThis as Record<string, unknown>).Bun as Bun;
   }
 
   /**

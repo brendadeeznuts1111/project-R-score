@@ -570,8 +570,8 @@ const server = serve({
 
       // Re-register tests (in production, this would be done once globally)
       registerTests();
-      for (const [testId, test] of (requestAbManager as any).tests) {
-        (requestAbManager as any).tests.set(testId, test);
+      for (const [testId, test] of (requestAbManager as Record<string, unknown>).tests) {
+        (requestAbManager as Record<string, unknown>).tests.set(testId, test);
       }
 
       // Main test page

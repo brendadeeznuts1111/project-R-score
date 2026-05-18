@@ -531,7 +531,7 @@ export class EnhancedSecurityManager {
       this.startHealthMonitoring();
 
       // Initialize performance tracking
-      (this as any).initializedTime = Date.now();
+      (this as Record<string, unknown>).initializedTime = Date.now();
 
       this.isInitialized = true;
       console.info('✅ Enhanced Security Manager initialized successfully');
@@ -931,8 +931,8 @@ export class EnhancedSecurityManager {
         .map(([ip, data]) => ({ ip, blockedUntil: data.blockUntil })),
       auditBufferSize: this.auditLogBuffer.length,
       securityLevel: securityConfig.getSecurityLevel(),
-      uptime: Date.now() - (this as any).initializedTime || 0,
-      initializedAt: (this as any).initializedAt || new Date().toISOString(),
+      uptime: Date.now() - (this as Record<string, unknown>).initializedTime || 0,
+      initializedAt: (this as Record<string, unknown>).initializedAt || new Date().toISOString(),
     };
   }
 
@@ -1099,7 +1099,7 @@ export class EnhancedSecurityManager {
       },
       system: {
         health: this.monitoringData.systemHealth,
-        uptime: Date.now() - (this as any).initializedTime || 0,
+        uptime: Date.now() - (this as Record<string, unknown>).initializedTime || 0,
         auditLog: this.getAuditLogStats(),
         metrics: this.metrics,
       },

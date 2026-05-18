@@ -102,7 +102,7 @@ export class TypeSafeEnhancedZenDashboard {
     ];
 
     // Use official Bun interfaces with proper typing
-    const bun = (globalThis as any).Bun as Bun;
+    const bun = (globalThis as Record<string, unknown>).Bun as Bun;
 
     this.metrics.supportedMimeTypes = await Promise.all(
       testFiles.map(async ({ ext: extension, file, desc: description }) => {
@@ -158,7 +158,7 @@ export class TypeSafeEnhancedZenDashboard {
     console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Official Bun Interfaces!');
 
     // Start Bun server with type-safe MIME support
-    const bun = (globalThis as any).Bun as any;
+    const bun = (globalThis as Record<string, unknown>).Bun as any;
     this.server = bun.serve({
       port: 3005,
       fetch: async (req: Request) => {
@@ -183,7 +183,7 @@ export class TypeSafeEnhancedZenDashboard {
 
         // Enhanced MIME type API with official interfaces
         if (url.pathname === '/api/mime-types-official') {
-          const bun = (globalThis as any).Bun as Bun;
+          const bun = (globalThis as Record<string, unknown>).Bun as Bun;
           return Response.json({
             supportedMimeTypes: this.metrics.supportedMimeTypes,
             totalTypes: this.metrics.supportedMimeTypes.length,
@@ -256,7 +256,7 @@ export class TypeSafeEnhancedZenDashboard {
    */
   private async analyzeFileWithOfficialInterfaces(filename: string): Promise<any> {
     try {
-      const bun = (globalThis as any).Bun as Bun;
+      const bun = (globalThis as Record<string, unknown>).Bun as Bun;
       const bunFile: BunFile = bun.file(filename);
       const exists: boolean = await bunFile.exists();
 
@@ -369,7 +369,7 @@ export class TypeSafeEnhancedZenDashboard {
    */
   private async serveFileWithTypeSafety(filename: string): Promise<Response> {
     try {
-      const bun = (globalThis as any).Bun as Bun;
+      const bun = (globalThis as Record<string, unknown>).Bun as Bun;
       const bunFile: BunFile = bun.file(filename);
       const exists: boolean = await bunFile.exists();
 
@@ -804,7 +804,7 @@ export class TypeSafeEnhancedZenDashboard {
    */
   private async generateTypeSafeStaticDashboard(): Promise<void> {
     const html = await this.generateTypeSafeHTMLDashboard();
-    const bun = (globalThis as any).Bun as Bun;
+    const bun = (globalThis as Record<string, unknown>).Bun as Bun;
     const staticFile: BunFile = bun.file('type-safe-enhanced-zen-dashboard.html', {
       type: 'text/html',
     });

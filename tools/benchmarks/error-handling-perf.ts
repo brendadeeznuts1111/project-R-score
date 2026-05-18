@@ -49,11 +49,11 @@ async function benchmarkMetricsExport() {
   console.info('Populating 10,000 error metrics...');
   for (let i = 0; i < 10000; i++) {
     const error = new Error(`Test error ${i}`);
-    (metrics as any).record(error, {
+    (metrics as Record<string, unknown>).record(error, {
       service: `service-${i % 10}`,
       endpoint: `/api/endpoint-${i % 20}`,
     });
-    (optimized as any).record(error, {
+    (optimized as Record<string, unknown>).record(error, {
       service: `service-${i % 10}`,
       endpoint: `/api/endpoint-${i % 20}`,
     });
@@ -62,7 +62,7 @@ async function benchmarkMetricsExport() {
   // Benchmark original
   console.info('\nRunning benchmarks...');
   const start1 = performance.now();
-  (metrics as any).exportMetrics(60 * 60 * 1000);
+  (metrics as Record<string, unknown>).exportMetrics(60 * 60 * 1000);
   const time1 = performance.now() - start1;
 
   // Benchmark optimized
@@ -76,7 +76,7 @@ async function benchmarkMetricsExport() {
 
   // Memory usage estimate
   const memBefore = process.memoryUsage();
-  (metrics as any).exportMetrics(60 * 60 * 1000);
+  (metrics as Record<string, unknown>).exportMetrics(60 * 60 * 1000);
   const memAfter = process.memoryUsage();
   const memUsed = (memAfter.heapUsed - memBefore.heapUsed) / 1024 / 1024;
   console.info(`Memory allocated:  ${memUsed.toFixed(2)} MB (original)`);
@@ -136,7 +136,7 @@ function benchmarkErrorRateCaching() {
 
   // Add some errors
   for (let i = 0; i < 1000; i++) {
-    (optimized as any).record(new Error(`Error ${i}`), { service: 'test' });
+    (optimized as Record<string, unknown>).record(new Error(`Error ${i}`), { service: 'test' });
   }
 
   const iterations = 10000;

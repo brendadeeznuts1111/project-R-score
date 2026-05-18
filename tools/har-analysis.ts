@@ -132,7 +132,7 @@ export class DocumentationAwarePerformanceAnalyzer {
 
   findPerformanceIssues(har: any, url: string): PerformanceIssue[] {
     const issues: PerformanceIssue[] = [];
-    const entries = har.log.entries as any[];
+    const entries = har.log.entries as unknown[];
     const pageDomain = new URL(url).hostname;
 
     // TTFB check
@@ -246,7 +246,7 @@ export class DocumentationAwarePerformanceAnalyzer {
       });
     }
 
-    const entries = har.log.entries as any[];
+    const entries = har.log.entries as unknown[];
     const slowRequests = entries.filter((e: any) => e.time > 1000);
     if (slowRequests.length > 0) {
       recs.push({
@@ -312,7 +312,7 @@ export class DocumentationAwarePerformanceAnalyzer {
     const gaps: DocumentationGap[] = [];
 
     if (provider === DocumentationProvider.BUN_OFFICIAL) {
-      const entries = har.log.entries as any[];
+      const entries = har.log.entries as unknown[];
       const docEntry = entries[0];
       if (docEntry) {
         const t = docEntry.timings;
@@ -355,7 +355,7 @@ export class DocumentationAwarePerformanceAnalyzer {
   }
 
   analyzeBunPerformance(har: any, url: string): BunPerformanceMetrics {
-    const entries = har.log.entries as any[];
+    const entries = har.log.entries as unknown[];
     const pageDomain = new URL(url).hostname;
     const domains = new Set<string>();
     let totalTransfer = 0,
@@ -417,7 +417,7 @@ export class DocumentationAwarePerformanceAnalyzer {
 
   private generateActions(har: any, provider: DocumentationProvider): string[] {
     const actions: string[] = [];
-    const entries = har.log.entries as any[];
+    const entries = har.log.entries as unknown[];
     const metrics = this.analyzeBunPerformance(har, har.log.pages?.[0]?.title || 'https://unknown');
 
     if (metrics.ttfb > 500) actions.push('Implement edge caching to reduce TTFB');

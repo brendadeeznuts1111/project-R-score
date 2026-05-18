@@ -101,7 +101,7 @@ const c = {
   dim: (s: string) => `\x1b[2m${s}\x1b[0m`,
   hsl: (h: number, s: number, l: number, text: string) => {
     try {
-      const bun = (globalThis as any).Bun as any;
+      const bun = (globalThis as Record<string, unknown>).Bun as any;
       return bun.color ? bun.color(`hsl(${h}, ${s}%, ${l}%)`, 'ansi') || text : text;
     } catch {
       return `\x1b[38;2;${hslToRgb(h, s, l).join(';')}m${text}\x1b[0m`;
@@ -511,7 +511,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     for (const { ext, file, desc } of testFiles) {
       try {
         // Use official Bun.file API for type-safe operations
-        const bun = (globalThis as any).Bun as Bun;
+        const bun = (globalThis as Record<string, unknown>).Bun as Bun;
         const bunFile: BunFile = bun.file(file);
 
         // Check if file exists and get its type
@@ -588,7 +588,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
   async startTypeSafeEnhancedDashboardWithTables(): Promise<void> {
     console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Dynamic Tables!');
 
-    const bun = (globalThis as any).Bun as any;
+    const bun = (globalThis as Record<string, unknown>).Bun as any;
     this.server = bun.serve({
       port: 3006,
       fetch: async (req: Request) => {
@@ -1127,7 +1127,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
 
   private async generateTableEnhancedStaticDashboard(): Promise<void> {
     const html = await this.generateTableEnhancedHTMLDashboard();
-    const bun = (globalThis as any).Bun as Bun;
+    const bun = (globalThis as Record<string, unknown>).Bun as Bun;
     const staticFile: BunFile = bun.file('type-safe-zen-dashboard-with-tables.html', {
       type: 'text/html',
     });

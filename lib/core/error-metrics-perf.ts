@@ -42,7 +42,7 @@ export class OptimizedErrorMetricsCollector extends ErrorMetricsCollector {
     const buckets = new Map<number, BucketData>();
 
     // Access metrics array directly (it's protected in parent)
-    const metrics = (this as any).metrics as ErrorMetric[];
+    const metrics = (this as Record<string, unknown>).metrics as ErrorMetric[];
 
     for (const metric of metrics) {
       if (metric.timestamp < startTime) continue;
@@ -124,7 +124,7 @@ export class OptimizedErrorMetricsCollector extends ErrorMetricsCollector {
       timestamp: now,
       windowMs,
       aggregations,
-      alerts: (this as any).alerts.filter((a: any) => a.timestamp >= startTime),
+      alerts: (this as Record<string, unknown>).alerts.filter((a: any) => a.timestamp >= startTime),
     };
   }
 
@@ -163,21 +163,21 @@ export class OptimizedErrorMetricsCollector extends ErrorMetricsCollector {
    */
   private startOptimizedCleanup(): void {
     // Clear parent's cleanup interval
-    const existingInterval = (this as any).cleanupInterval;
+    const existingInterval = (this as Record<string, unknown>).cleanupInterval;
     if (existingInterval) {
       clearInterval(existingInterval);
     }
 
     // Set up optimized cleanup
     setInterval(() => {
-      const cutoff = Date.now() - ((this as any).config.retentionMs || 24 * 60 * 60 * 1000);
+      const cutoff = Date.now() - ((this as Record<string, unknown>).config.retentionMs || 24 * 60 * 60 * 1000);
 
       // In-place filter for metrics
-      const metrics = (this as any).metrics as ErrorMetric[];
+      const metrics = (this as Record<string, unknown>).metrics as ErrorMetric[];
       this.inPlaceTimeFilter(metrics, cutoff);
 
       // In-place filter for alerts
-      const alerts = (this as any).alerts as any[];
+      const alerts = (this as Record<string, unknown>).alerts as unknown[];
       this.inPlaceTimeFilter(alerts, cutoff);
 
       // Invalidate rate cache
@@ -235,13 +235,13 @@ export function comparePerformance(): void {
   // Add test data
   for (let i = 0; i < 10000; i++) {
     const error = new Error(`Test error ${i}`);
-    (metrics as any).record(error, { service: 'test' });
-    (optimized as any).record(error, { service: 'test' });
+    (metrics as Record<string, unknown>).record(error, { service: 'test' });
+    (optimized as Record<string, unknown>).record(error, { service: 'test' });
   }
 
   // Benchmark original
   const start1 = performance.now();
-  (metrics as any).exportMetrics(60 * 60 * 1000);
+  (metrics as Record<string, unknown>).exportMetrics(60 * 60 * 1000);
   const time1 = performance.now() - start1;
 
   // Benchmark optimized

@@ -30,8 +30,8 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     super(config);
 
     // Store original methods
-    this.originalInitialize = (this as any).initialize.bind(this);
-    this.originalGracefulShutdown = (this as any).gracefulShutdown.bind(this);
+    this.originalInitialize = (this as Record<string, unknown>).initialize.bind(this);
+    this.originalGracefulShutdown = (this as Record<string, unknown>).gracefulShutdown.bind(this);
   }
 
   /**
@@ -83,12 +83,12 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
    * Prevents one slow handler from starving others
    */
   async gracefulShutdown(exitCode: number): Promise<void> {
-    const state = (this as any).state;
+    const state = (this as Record<string, unknown>).state;
     if (state?.isShuttingDown) return;
 
     if (state) state.isShuttingDown = true;
 
-    const shutdownTimeout = (this as any).config?.shutdownTimeout || 5000;
+    const shutdownTimeout = (this as Record<string, unknown>).config?.shutdownTimeout || 5000;
 
     const timeoutId = setTimeout(() => {
       process.stderr.write('\n⏱️  Shutdown timeout exceeded, forcing exit\n');
@@ -179,7 +179,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
    * Atomic error output (prevents log interleaving)
    */
   private handleUncaughtExceptionAtomic(error: Error): void {
-    const state = (this as any).state;
+    const state = (this as Record<string, unknown>).state;
     if (state) {
       state.uncaughtExceptions++;
       state.lastErrorTime = Date.now();
@@ -205,7 +205,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     // Async handler (don't await to avoid blocking)
     this.handleErrorAsync(enhancedError);
 
-    const config = (this as any).config;
+    const config = (this as Record<string, unknown>).config;
     if (config?.exitOnUncaughtException) {
       this.gracefulShutdown(1);
     }
@@ -219,10 +219,10 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     const originalMessage = error.message;
 
     // Add metadata
-    (error as any).errorType = type;
-    (error as any).timestamp = new Date().toISOString();
-    (error as any).processUptime = process.uptime();
-    (error as any).originalMessage = originalMessage;
+    (error as Record<string, unknown>).errorType = type;
+    (error as Record<string, unknown>).timestamp = new Date().toISOString();
+    (error as Record<string, unknown>).processUptime = process.uptime();
+    (error as Record<string, unknown>).originalMessage = originalMessage;
 
     // Modify message for display
     Object.defineProperty(error, 'message', {

@@ -66,7 +66,7 @@ export class EnhancedRealZenDashboard {
     this.metrics.supportedMimeTypes = testFiles.map(
       ({ ext: extension, file, desc: description }) => {
         try {
-          const bunFile = (Bun as any).file(file);
+          const bunFile = (Bun as Record<string, unknown>).file(file);
           const mimeType = bunFile.type || 'application/octet-stream';
           return { extension, mimeType, description };
         } catch {
@@ -88,7 +88,7 @@ export class EnhancedRealZenDashboard {
     console.info('🎯 Starting Enhanced REAL Zen Dashboard with MIME Type Detection!');
 
     // Start Bun server with enhanced MIME support
-    this.server = (Bun as any).serve({
+    this.server = (Bun as Record<string, unknown>).serve({
       port: 3004,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
@@ -170,7 +170,7 @@ export class EnhancedRealZenDashboard {
    */
   private async analyzeFileWithMime(filename: string): Promise<any> {
     try {
-      const bunFile = (Bun as any).file(filename);
+      const bunFile = (Bun as Record<string, unknown>).file(filename);
       const exists = await bunFile.exists();
 
       if (!exists) {
@@ -228,7 +228,7 @@ export class EnhancedRealZenDashboard {
    */
   private async serveFileWithMime(filename: string): Promise<Response> {
     try {
-      const bunFile = (Bun as any).file(filename);
+      const bunFile = (Bun as Record<string, unknown>).file(filename);
       const exists = await bunFile.exists();
 
       if (!exists) {
@@ -684,7 +684,7 @@ export class EnhancedRealZenDashboard {
    */
   private async generateEnhancedStaticDashboard(): Promise<void> {
     const html = await this.generateEnhancedHTMLDashboard();
-    const staticFile = (Bun as any).file('enhanced-real-zen-dashboard-mime.html', {
+    const staticFile = (Bun as Record<string, unknown>).file('enhanced-real-zen-dashboard-mime.html', {
       type: 'text/html',
     });
     await Bun.write(staticFile, new TextEncoder().encode(html));

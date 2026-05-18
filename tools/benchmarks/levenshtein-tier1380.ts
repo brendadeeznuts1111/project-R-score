@@ -152,7 +152,7 @@ function countGraphemes(str: string): number {
 function calculateVisualWidth(str: string): number {
   // Use Bun's native stringWidth when available
   if (typeof Bun !== 'undefined' && 'stringWidth' in Bun) {
-    return (Bun as any).stringWidth(str);
+    return (Bun as Record<string, unknown>).stringWidth(str);
   }
 
   // Simplified fallback

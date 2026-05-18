@@ -71,7 +71,7 @@ export class Tier1380SyscallProfiler {
     const riskScore = baseRisk + edge * 0.001 + bytes * 0.000000001;
 
     // Speedup vs GNU cat (2x for large files on Linux per docs)
-    const isBunFile = input instanceof Blob && typeof (input as any).name === 'string';
+    const isBunFile = input instanceof Blob && typeof (input as Record<string, unknown>).name === 'string';
     const speedup = this.platform === 'linux' && isBunFile ? 2.0 : 1.0;
 
     return {
@@ -89,7 +89,7 @@ export class Tier1380SyscallProfiler {
   private detectSyscall(input: unknown, output: unknown): { syscall: string; baseRisk: number } {
     if (this.platform === 'linux') {
       const isBunFile = (obj: unknown): boolean =>
-        obj instanceof Blob && typeof (obj as any).name === 'string';
+        obj instanceof Blob && typeof (obj as Record<string, unknown>).name === 'string';
       if (isBunFile(input) && isBunFile(output)) {
         return { syscall: 'copy_file_range', baseRisk: 1.0000005 };
       }
@@ -103,7 +103,7 @@ export class Tier1380SyscallProfiler {
     } else {
       // macOS
       const isBunFile = (obj: unknown): boolean =>
-        obj instanceof Blob && typeof (obj as any).name === 'string';
+        obj instanceof Blob && typeof (obj as Record<string, unknown>).name === 'string';
       if (isBunFile(input) && isBunFile(output)) {
         // Check if file exists (simplified)
         return { syscall: 'clonefile/fcopyfile', baseRisk: 1.0000003 };
@@ -114,7 +114,7 @@ export class Tier1380SyscallProfiler {
 
   private describeInput(input: unknown): string {
     const isBunFile = (obj: unknown): boolean =>
-      obj instanceof Blob && typeof (obj as any).name === 'string';
+      obj instanceof Blob && typeof (obj as Record<string, unknown>).name === 'string';
     if (isBunFile(input)) return 'BunFile';
     if (typeof input === 'string') return 'string';
     if (input instanceof Uint8Array) return 'Uint8Array';
@@ -124,7 +124,7 @@ export class Tier1380SyscallProfiler {
 
   private describeOutput(output: unknown): string {
     const isBunFile = (obj: unknown): boolean =>
-      obj instanceof Blob && typeof (obj as any).name === 'string';
+      obj instanceof Blob && typeof (obj as Record<string, unknown>).name === 'string';
     if (isBunFile(output)) return 'BunFile';
     if (typeof output === 'string') return 'path';
     return 'unknown';
