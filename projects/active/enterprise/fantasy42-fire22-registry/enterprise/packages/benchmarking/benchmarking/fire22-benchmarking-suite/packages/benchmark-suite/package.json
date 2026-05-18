@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enterprise-benchmark-suite-projects-enterprise-fantasy42-fire22-registry-enterprise-packages-benchmarking-benchmarking-fire22-benchmarking-suite-packages-benchmark-suite",
+  "name": "@fire22/benchmark-suite",
   "version": "1.0.3",
   "description": "High-precision performance benchmarking using Bun's native APIs",
   "main": "dist/index.js",

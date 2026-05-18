@@ -1,5 +1,5 @@
 {
-  "name": "crystal-clear-docs-worker-projects-enterprise-fantasy42-fire22-registry-docs-worker",
+  "name": "crystal-clear-docs-worker",
   "version": "1.0.0",
   "description": "Automated documentation CDN using Cloudflare Workers",
   "main": "src/docs-worker.ts",

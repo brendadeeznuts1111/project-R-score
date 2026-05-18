@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-workspaces-telegram-workflows-telegram-workflows",
+  "name": "@fire22/telegram-workflows",
   "version": "1.0.0",
   "description": "Department workflows and orchestration for Fire22 Telegram bot",
   "author": "Fire22 Team",

@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-memory-profiler-memory-profiler",
+  "name": "@fire22/memory-profiler",
   "version": "1.0.3",
   "description": "Advanced memory profiling using Bun's JSC module",
   "main": "dist/index.js",

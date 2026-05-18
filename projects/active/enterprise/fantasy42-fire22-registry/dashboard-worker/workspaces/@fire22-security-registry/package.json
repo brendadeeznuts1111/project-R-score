@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-workspaces-security-registry-security-registry",
+  "name": "@fire22/security-registry",
   "version": "1.0.0",
   "description": "Fire22 security registry with bunx integration and comprehensive scanning capabilities",
   "type": "module",

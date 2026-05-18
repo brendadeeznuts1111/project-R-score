@@ -1,5 +1,5 @@
 {
-  "name": "fire22-dashboard-worker-projects-enterprise-fantasy42-fire22-registry-dashboard-worker",
+  "name": "fire22-dashboard-worker",
   "version": "5.1.0",
   "description": "Fire22 Dashboard Worker - Enhanced with Bun v1.01.04-alpha features and native Bun.semver version management",
   "author": {

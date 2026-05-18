@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-security-core-security-core",
+  "name": "@fire22/security-core",
   "version": "1.0.0",
   "description": "Fire22 Security Core - Bun native security APIs, credential management, and vulnerability scanning",
   "main": "dist/index.js",

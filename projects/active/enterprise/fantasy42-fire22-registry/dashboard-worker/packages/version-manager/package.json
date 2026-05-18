@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-version-manager-version-manager",
+  "name": "@fire22/version-manager",
   "version": "3.1.0",
   "description": "Production-ready version management using Bun.semver for Fire22 Dashboard Worker",
   "keywords": [

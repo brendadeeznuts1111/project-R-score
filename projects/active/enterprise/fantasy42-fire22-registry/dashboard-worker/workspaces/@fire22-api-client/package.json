@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-workspaces-api-client-api-client",
+  "name": "@fire22/api-client",
   "version": "3.0.9",
   "description": "Fire22 API integration and data management",
   "type": "module",

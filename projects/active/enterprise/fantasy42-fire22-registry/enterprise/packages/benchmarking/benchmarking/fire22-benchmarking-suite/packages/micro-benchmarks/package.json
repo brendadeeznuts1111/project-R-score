@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enterprise-micro-benchmarks-projects-enterprise-fantasy42-fire22-registry-enterprise-packages-benchmarking-benchmarking-fire22-benchmarking-suite-packages-micro-benchmarks",
+  "name": "@fire22/micro-benchmarks",
   "version": "1.0.3",
   "description": "Precision microbenchmarking for critical functions",
   "main": "dist/index.js",

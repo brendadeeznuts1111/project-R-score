@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-core-core",
+  "name": "@fire22/core",
   "version": "1.0.3",
   "description": "Fire22 Dashboard Core - Essential functionality and types",
   "main": "dist/index.js",

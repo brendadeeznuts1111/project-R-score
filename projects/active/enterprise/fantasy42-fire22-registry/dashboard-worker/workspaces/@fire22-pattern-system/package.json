@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-workspaces-pattern-system-pattern-system",
+  "name": "@fire22/pattern-system",
   "version": "3.0.9",
   "description": "Advanced pattern weaver system with streaming capabilities",
   "type": "module",

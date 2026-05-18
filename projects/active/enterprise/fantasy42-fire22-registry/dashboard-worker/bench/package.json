@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-bench-bench",
+  "name": "@fire22/bench",
   "version": "1.0.0",
   "description": "Comprehensive benchmarking suite for Fire22 dashboard",
   "main": "index.ts",

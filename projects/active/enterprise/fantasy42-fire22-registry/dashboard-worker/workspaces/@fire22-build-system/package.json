@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-workspaces-build-system-build-system",
+  "name": "@fire22/build-system",
   "version": "3.0.9",
   "description": "Build automation, benchmarking, and tooling",
   "type": "module",

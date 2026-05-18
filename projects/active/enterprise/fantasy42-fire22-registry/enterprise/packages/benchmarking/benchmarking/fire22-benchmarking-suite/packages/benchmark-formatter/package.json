@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enterprise-benchmark-formatter-projects-enterprise-fantasy42-fire22-registry-enterprise-packages-benchmarking-benchmarking-fire22-benchmarking-suite-packages-benchmark-formatter",
+  "name": "@fire22/benchmark-formatter",
   "version": "1.0.3",
   "description": "Beautiful benchmark output using Bun's native formatting utilities",
   "main": "dist/index.js",

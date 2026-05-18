@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/dashboard-worker-load-testing-load-testing",
+  "name": "@fire22/load-testing",
   "version": "1.0.3",
   "description": "High-performance load testing for HTTP endpoints",
   "main": "dist/index.js",
