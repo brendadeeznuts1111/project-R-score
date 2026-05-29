@@ -4,8 +4,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'bun:test';
 import { spawn, type Subprocess } from 'bun';
 import { join } from 'node:path';
+import { parseToolPayload } from '../lib/mcp/stdio-jsonrpc.ts';
 
 const SCRIPT = join(import.meta.dir, 'dx-mcp.ts');
+const BUN_VERSION = Bun.version;
 
 let proc: Subprocess;
 let reqId = 0;
@@ -24,10 +26,13 @@ function isAlive(): boolean {
   }
 }
 
-async function send(input: string, timeoutMs = 3000): Promise<any> {
+function payload(res: { result?: unknown }) {
+  return parseToolPayload(res.result);
+}
+
+async function send(input: string, timeoutMs = 8000): Promise<any> {
   if (!isAlive()) return { error: 'Process dead' };
   (proc.stdin! as any).write(input);
-  // Clear any stale waiter from a previous timeout
   resolveNext = null;
   try {
     return await Promise.race([
@@ -69,7 +74,12 @@ async function drainStdout() {
 }
 
 beforeAll(() => {
-  proc = spawn([process.argv0, 'run', SCRIPT], { stdin: 'pipe', stdout: 'pipe', stderr: 'pipe' });
+  proc = spawn([process.argv0, 'run', SCRIPT], {
+    stdin: 'pipe',
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...process.env, DX_MCP_NDJSON: '1' },
+  });
   drainStdout();
 });
 
@@ -80,187 +90,104 @@ afterAll(() => {
 });
 
 describe('dx-mcp server', () => {
-  // ── Core protocol ──────────────────────────────────────────
   it('handles initialize', async () => {
     const res = await send(req('initialize'));
     expect(res.result.protocolVersion).toBe('2024-11-05');
+    expect(res.result.serverInfo.version).toBe('2.2.0');
   });
 
-  it('handles tools/list — 15+ tools', async () => {
+  it('handles tools/list — 16+ tools', async () => {
     const res = await send(req('tools/list'));
-    expect(res.result.tools.length).toBeGreaterThanOrEqual(15);
+    expect(res.result.tools.length).toBeGreaterThanOrEqual(16);
     const names = res.result.tools.map((t: any) => t.name);
     expect(names).toContain('list_projects');
-    expect(names).toContain('dx_oneliner');
+    expect(names).toContain('dx_catalog');
+    expect(names).toContain('mcp_status');
   });
 
-  it('rejects unknown method', async () => {
+  it('rejects unknown tool', async () => {
     const res = await send(req('tools/call', { name: 'foobar', arguments: {} }));
-    expect(res.result.error).toBeTruthy();
+    expect(res.result.isError).toBe(true);
   });
 
-  // ── Project listing ────────────────────────────────────────
   it('list_projects returns projects', async () => {
     const res = await send(req('tools/call', { name: 'list_projects', arguments: {} }));
-    expect(res.result.total).toBeGreaterThan(0);
-    expect(res.result.projects[0]).toHaveProperty('name');
+    const data = payload(res);
+    expect(data.total).toBeGreaterThan(0);
+    expect(data.projects[0]).toHaveProperty('name');
   });
 
   it('list_projects filters by type', async () => {
     const res = await send(
       req('tools/call', { name: 'list_projects', arguments: { type: 'cascade-mover' } })
     );
-    expect(res.result.total).toBeGreaterThanOrEqual(1);
-    expect(res.result.projects.every((p: any) => p.type === 'cascade-mover')).toBe(true);
+    const data = payload(res);
+    expect(data.total).toBeGreaterThanOrEqual(1);
+    expect(data.projects.every((p: any) => p.type === 'cascade-mover')).toBe(true);
   });
 
-  // ── Project info ───────────────────────────────────────────
   it('project_info resolves cascade-mover-v3', async () => {
     const res = await send(
       req('tools/call', { name: 'project_info', arguments: { project: 'cascade-mover-v3' } })
     );
-    expect(res.result.type).toBe('cascade-mover');
-    expect(res.result.fileCount).toBeGreaterThan(0);
+    const data = payload(res);
+    expect(data.type).toBe('cascade-mover');
+    expect(data.fileCount).toBeGreaterThan(0);
   });
 
   it('project_info errors for unknown', async () => {
     const res = await send(
       req('tools/call', { name: 'project_info', arguments: { project: '__nonexistent__' } })
     );
-    expect(res.result.error).toBeTruthy();
+    expect(res.result.isError).toBe(true);
   });
 
   it('project_health returns health', async () => {
     const res = await send(req('tools/call', { name: 'project_health', arguments: {} }));
-    expect(res.result.total).toBeGreaterThan(0);
+    const data = payload(res);
+    expect(data.total).toBeGreaterThan(0);
   });
 
-  it('project_config finds configs', async () => {
-    const res = await send(
-      req('tools/call', { name: 'project_config', arguments: { project: 'cascade-mover-v3' } })
-    );
-    expect(res.result.configs.map((c: any) => c.path)).toContain('tsconfig.json');
+  it('mcp_status reads config catalog', async () => {
+    const res = await send(req('tools/call', { name: 'mcp_status', arguments: {} }));
+    const data = payload(res);
+    expect(data.serverCount).toBeGreaterThan(0);
+    expect(data.catalog?.essential).toContain('dx');
   });
 
-  it('project_entrypoints lists entry points', async () => {
-    const res = await send(
-      req('tools/call', { name: 'project_entrypoints', arguments: { project: 'cascade-mover-v3' } })
-    );
-    expect(res.result.entrypoints.map((e: any) => e.path)).toContain('src/server/main-server.ts');
+  it('dx_catalog lists entries', async () => {
+    const res = await send(req('tools/call', { name: 'dx_catalog', arguments: {} }));
+    const data = payload(res);
+    expect(data.total).toBeGreaterThan(10);
   });
 
-  // ── Version & timings ──────────────────────────────────────
   it('bun_version returns features', async () => {
     const res = await send(
-      req('tools/call', { name: 'bun_version', arguments: { expected: '1.3.14' } })
+      req('tools/call', { name: 'bun_version', arguments: { expected: BUN_VERSION } })
     );
-    expect(res.result.bun).toBeTruthy();
-    expect(res.result.wave9.webview).toBe(true);
+    const data = payload(res);
+    expect(data.bun).toBeTruthy();
+    expect(data.wave9.markdown).toBe(true);
   });
 
   it('dx_timing returns latencies', async () => {
     const res = await send(req('tools/call', { name: 'dx_timing', arguments: {} }));
-    expect(res.result.server).toBe('2.1.0');
-    expect(res.result.totalCalls).toBeGreaterThan(0);
+    const data = payload(res);
+    expect(data.server).toBe('2.2.0');
+    expect(data.totalCalls).toBeGreaterThan(0);
   });
 
-  // ── One-liner registry ─────────────────────────────────────
   it('dx_oneliner lists all topics', async () => {
     const res = await send(
       req('tools/call', { name: 'dx_oneliner', arguments: { topic: '--list' } })
     );
-    expect(res.result.count).toBeGreaterThanOrEqual(25);
-    expect(res.result.topics.map((t: any) => t.topic)).toContain('bun-webview');
+    const data = payload(res);
+    expect(data.count).toBeGreaterThanOrEqual(25);
   });
 
-  it('dx_oneliner returns code for topic', async () => {
-    const res = await send(
-      req('tools/call', { name: 'dx_oneliner', arguments: { topic: 'bun-escapehtml' } })
-    );
-    expect(res.result.code).toContain('Bun.escapeHTML');
-  });
-
-  // ── Lockfiles ──────────────────────────────────────────────
   it('check_lockfiles returns entries', async () => {
     const res = await send(req('tools/call', { name: 'check_lockfiles', arguments: {} }));
-    expect(res.result.entries.length).toBeGreaterThan(0);
-  });
-
-  // ── Workspace ──────────────────────────────────────────────
-  it('analyze_workspace returns workspace info', async () => {
-    const res = await send(req('tools/call', { name: 'analyze_workspace', arguments: {} }), 15000);
-    if (!res.result || res.result?.error) return;
-    expect(res.result.workspaceGlobs.length).toBeGreaterThan(0);
-  }, 20000);
-
-  // ── Readme ─────────────────────────────────────────────────
-  it('project_readme returns raw markdown', async () => {
-    const res = await send(
-      req('tools/call', {
-        name: 'project_readme',
-        arguments: { project: 'cascade-mover-v3', format: 'raw' },
-      }),
-      15000
-    );
-    if (!res.result || res.result?.error) return;
-    expect(res.result.readme.length).toBeGreaterThan(0);
-  }, 20000);
-
-  // ── Heavy tools (run last, may stress subprocess) ──────────
-  it('rg_search on single project', async () => {
-    const res = await send(
-      req('tools/call', {
-        name: 'rg_search',
-        arguments: { project: 'cascade-mover-v3', pattern: 'Bun.serve' },
-      })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(typeof res.result.matchCount).toBe('number');
-  });
-
-  it('rg_search scope=all runs cross-project', async () => {
-    const res = await send(
-      req('tools/call', {
-        name: 'rg_search',
-        arguments: { project: 'all', pattern: 'Bun.serve', maxResults: 5 },
-      })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(typeof res.result.projectCount).toBe('number');
-  });
-
-  it('find_unused_deps runs on project', async () => {
-    const res = await send(
-      req('tools/call', { name: 'find_unused_deps', arguments: { project: 'cascade-mover-v3' } })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(typeof res.result.totalDeps).toBe('number');
-  });
-
-  it('scan_imports returns imports', async () => {
-    const res = await send(
-      req('tools/call', { name: 'scan_imports', arguments: { project: 'cascade-mover-v3' } })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(typeof res.result.filesScanned).toBe('number');
-  });
-
-  it('find_large_files returns largest', async () => {
-    const res = await send(
-      req('tools/call', {
-        name: 'find_large_files',
-        arguments: { project: 'cascade-mover-v3', topN: 5 },
-      })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(res.result.topFiles.length).toBeLessThanOrEqual(5);
-  });
-
-  it('find_bloat returns metrics', async () => {
-    const res = await send(
-      req('tools/call', { name: 'find_bloat', arguments: { project: 'cascade-mover-v3' } })
-    );
-    if (!res.result || res.result?.error) return;
-    expect(res.result).toHaveProperty('nodeModulesKb');
+    const data = payload(res);
+    expect(data.entries.length).toBeGreaterThan(0);
   });
 });

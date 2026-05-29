@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "version": "2.1.0",
-    "updated": "2026-05-28",
+    "version": "2.2.0",
+    "updated": "2026-05-29",
     "syncWith": ".mcp.json",
     "docs": "https://cursor.com/docs/context/mcp",
-    "notes": "Canonical: .cursor/mcp.json. Essential: dx + bun-docs. Optional servers disabled by default.",
+    "notes": "Bun-native launch: command bun + script path (no run). Essential: dx + bun-docs.",
     "serverCatalog": {
       "essential": [
         "dx",
@@ -40,7 +40,6 @@
       "description": "Local bun-types MDX search and read (317+ docs, zero npm deps)",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/tools/bun-docs-mcp.ts"
       ],
       "env": {
@@ -58,7 +57,6 @@
       "description": "Developer Experience \u2014 project scan, health, README, Bun probes, mcp_status",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/scripts/dx-mcp.ts"
       ],
       "env": {
@@ -71,7 +69,6 @@
       "description": "Cascade Mover v3 \u2014 sports intelligence (lines, sources, confidence, 43 tools)",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
       ],
       "env": {
@@ -84,7 +81,6 @@
       "description": "Secrets, password hashing, auth, deployment audit (Bun.secrets; disable if unused)",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/lib/security/mcp-server.ts"
       ],
       "env": {
@@ -99,7 +95,6 @@
       "description": "R2 audit, profiling, security scans (requires R2 env; disable if unused)",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/scripts/fw-tools-mcp.ts"
       ],
       "env": {
@@ -114,7 +109,6 @@
       "description": "FactoryWager MCP bridge \u2014 SearchBunEnhanced, AuditSearch, wiki generation (Claude Desktop parity)",
       "command": "bun",
       "args": [
-        "run",
         "${workspaceFolder}/scripts/mcp-bridge.ts"
       ],
       "env": {

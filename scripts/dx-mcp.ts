@@ -3,8 +3,18 @@
 // Wave 9 primitives: Bun.file, Bun.nanoseconds, Bun.markdown.ansi, Bun.deepEquals, Bun.escapeHTML
 // Zero npm deps. Exposes project listing, info, README, health checks.
 // Register in .cursor/mcp.json or .mcp.json:
-//   { "type": "stdio", "command": "bun", "args": ["run", "${workspaceFolder}/scripts/dx-mcp.ts"] }
+//   { "type": "stdio", "command": "bun", "args": ["${workspaceFolder}/scripts/dx-mcp.ts"] }
 
+import {
+  readJsonRpcStream,
+  rpcErr,
+  rpcOk,
+  toolJson,
+  toolText,
+  writeJsonRpc,
+  type ToolCallResult,
+} from '../lib/mcp/stdio-jsonrpc.ts';
+import { BUN_DX_CATALOG, searchCatalog } from '../config/bun-dx-catalog.ts';
 import {
   baseName,
   checkGitStatus,
@@ -16,9 +26,9 @@ import {
 } from '../lib/projects-scan.ts';
 
 const ROOT = join(import.meta.dir, '..');
-const GIT = Bun.which('git')!;
+const GIT = Bun.which('git');
 const BUN_VERSION = Bun.version;
-const SERVER_VERSION = '2.1.0';
+const SERVER_VERSION = '2.2.0';
 const SCAN_DEBUG = Bun.env.DX_MCP_DEBUG === '1';
 
 function debugScan(where: string, err: unknown): void {
@@ -43,13 +53,6 @@ const SCAN_ROOTS = (() => {
 })();
 
 // ── Types ──────────────────────────────────────────────────────
-type JsonRpc = {
-  jsonrpc: '2.0';
-  id?: number | string;
-  method?: string;
-  params?: Record<string, unknown>;
-};
-
 type ProjectType = 'cloudflare-worker' | 'cascade-mover' | 'bun-native' | 'npm-package' | 'unknown';
 
 interface ProjectMeta {
@@ -633,23 +636,46 @@ function toolsList() {
           },
         },
       },
+      {
+        name: 'dx_catalog',
+        description:
+          'Search the Bun DX catalog (anti-patterns → Bun-native fixes). Pass query or entry id; omit for list.',
+        inputSchema: {
+          type: 'object' as const,
+          properties: {
+            query: { type: 'string', description: 'Search query or catalog entry id' },
+            limit: { type: 'number', description: 'Max results (default 5)' },
+          },
+        },
+      },
     ],
   };
 }
 
-async function toolsCall(name: string, params: Record<string, unknown> | undefined) {
+async function toolsCall(
+  name: string,
+  params: Record<string, unknown> | undefined
+): Promise<ToolCallResult> {
   const t0 = Bun.nanoseconds();
   const projects = await getProjects();
 
-  let result: unknown;
+  let payload: unknown;
   try {
-    result = await dispatch(name, params, projects);
-  } catch (e: any) {
-    result = { error: e.message || String(e) };
+    payload = await dispatch(name, params, projects);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    recordTiming(name, t0);
+    return toolText(message, true);
   }
 
   recordTiming(name, t0);
-  return result;
+  if (payload && typeof payload === 'object' && 'error' in payload) {
+    const err = (payload as { error?: unknown }).error;
+    if (typeof err === 'string' && Object.keys(payload as object).length === 1) {
+      return toolText(err, true);
+    }
+  }
+  return toolJson(payload);
 }
 
 async function dispatch(
@@ -966,6 +992,8 @@ async function dispatch(
           configs.find(c => c.file === '.cursor/mcp.json') ??
           configs.find(c => c.file === '.mcp.json') ??
           configs[0];
+        const catalog = (primary.cfg as { _meta?: { serverCatalog?: Record<string, string[]> } })._meta
+          ?.serverCatalog;
         const servers = Object.entries(primary.cfg.mcpServers || {}).map(
           ([name, s]: [string, any]) => {
             const scriptArg = s.args?.find((a: string) => a.endsWith('.ts') || a.endsWith('.js'));
@@ -975,14 +1003,30 @@ async function dispatch(
                   scriptArg.replace('${workspaceFolder}/', '').replace('${workspaceFolder}', '')
                 )
               : scriptArg;
+            const envFile = s.envFile?.includes('${workspaceFolder}')
+              ? join(
+                  ROOT,
+                  s.envFile.replace('${workspaceFolder}/', '').replace('${workspaceFolder}', '')
+                )
+              : s.envFile;
+            const tier =
+              (catalog &&
+                (['essential', 'remote', 'domain', 'optional'] as const).find(t =>
+                  catalog[t]?.includes(name)
+                )) ||
+              null;
             return {
               name,
+              tier,
               type: s.type ?? (s.url ? 'remote' : 'stdio'),
               description: s.description ?? null,
               disabled: s.disabled ?? false,
               url: s.url ?? null,
               script: scriptArg || null,
               scriptExists: script ? fileExistsSync(script) : s.url ? true : null,
+              envFile: s.envFile ?? null,
+              envFileExists: envFile ? fileExistsSync(envFile) : null,
+              bunNativeLaunch: Array.isArray(s.args) && !s.args.includes('run'),
             };
           }
         );
@@ -999,8 +1043,14 @@ async function dispatch(
           file: primary.file,
           configs: configs.map(c => c.file),
           serverCount: servers.length,
+          catalog,
           sync,
           servers,
+          recommendations: [
+            'Prefer bun-native launch: command "bun", args ["${workspaceFolder}/scripts/<server>.ts"] (no run subcommand).',
+            'Keep .cursor/mcp.json and .mcp.json mcpServers in sync.',
+            'Disable optional servers (app-security, factorywager-tools, mcp-bridge) until env is configured.',
+          ],
         };
       } catch (e: any) {
         return { error: `Failed to read MCP config: ${e.message}` };
@@ -1375,6 +1425,28 @@ async function dispatch(
       return { topic, description: R[topic].description, code: R[topic].code };
     }
 
+    case 'dx_catalog': {
+      const query = (params?.query as string | undefined)?.trim();
+      const limit = Math.min(Number(params?.limit ?? 5) || 5, 20);
+      if (!query) {
+        return {
+          total: BUN_DX_CATALOG.length,
+          entries: BUN_DX_CATALOG.map(e => ({
+            id: e.id,
+            summary: e.summary,
+            severity: e.severity,
+            docs: e.docs,
+          })),
+        };
+      }
+      const exact = BUN_DX_CATALOG.find(e => e.id === query);
+      if (exact) {
+        return { match: 'id', entry: exact };
+      }
+      const results = searchCatalog(query).slice(0, limit);
+      return { match: 'search', query, count: results.length, entries: results };
+    }
+
     default:
       return { error: `Unknown tool: ${name}` };
   }
@@ -1382,14 +1454,13 @@ async function dispatch(
 
 // ── MCP Stdio Loop ─────────────────────────────────────────────
 async function main() {
-  const decoder = new TextDecoder();
-  const encoder = new TextEncoder();
+  console.error(
+    `[dx-mcp] v${SERVER_VERSION} bun=${BUN_VERSION} transport=${Bun.env.DX_MCP_NDJSON === '1' ? 'ndjson' : 'content-length'}`
+  );
 
-  // Register cleanup with Symbol.dispose (Wave 9 await using)
   const cleanup = { [Symbol.dispose]: () => toolTimings.clear() };
   using _cleanup = cleanup;
 
-  // Pre-warm project cache and start background refresh
   getProjects().then(() => {
     setInterval(async () => {
       scanCache = null;
@@ -1397,54 +1468,48 @@ async function main() {
     }, SCAN_CACHE_TTL);
   });
 
-  let buffer = '';
-  for await (const chunk of Bun.stdin.stream()) {
-    buffer += decoder.decode(chunk);
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
+  for await (const req of readJsonRpcStream(Bun.stdin.stream())) {
+    const { id, method, params } = req;
 
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      let req: JsonRpc;
-      try {
-        req = JSON.parse(line);
-      } catch {
-        continue;
-      }
+    if (method?.startsWith('notifications/')) continue;
 
-      const { id, method, params } = req;
-      let result: unknown;
+    if (id === undefined) continue;
 
-      try {
-        switch (method) {
-          case 'tools/list':
-          case 'listTools':
-            result = toolsList();
-            break;
-          case 'tools/call':
-          case 'callTool':
-            result = await toolsCall(
-              params?.name as string,
-              params?.arguments as Record<string, unknown>
-            );
-            break;
-          case 'initialize':
-            result = {
+    try {
+      switch (method) {
+        case 'initialize':
+          writeJsonRpc(
+            rpcOk(id, {
               protocolVersion: '2024-11-05',
               capabilities: { tools: {} },
               serverInfo: { name: 'dx-mcp', version: SERVER_VERSION, bunVersion: BUN_VERSION },
-            };
-            break;
-          default:
-            result = { error: `Unknown method: ${method}` };
+            })
+          );
+          break;
+        case 'tools/list':
+        case 'listTools':
+          writeJsonRpc(rpcOk(id, toolsList()));
+          break;
+        case 'tools/call':
+        case 'callTool': {
+          const toolName = (params?.name as string) || '';
+          const toolArgs = (params?.arguments as Record<string, unknown> | undefined) ?? {};
+          const toolResult = await toolsCall(toolName, toolArgs);
+          writeJsonRpc(rpcOk(id, toolResult));
+          break;
         }
-      } catch (e: any) {
-        result = { error: e.message || String(e) };
+        case 'resources/list':
+          writeJsonRpc(rpcOk(id, { resources: [] }));
+          break;
+        case 'prompts/list':
+          writeJsonRpc(rpcOk(id, { prompts: [] }));
+          break;
+        default:
+          writeJsonRpc(rpcErr(id, -32601, `Unknown method: ${method}`));
       }
-
-      const response: JsonRpc = { jsonrpc: '2.0', id, result: result as any };
-      const out = encoder.encode(JSON.stringify(response) + '\n');
-      Bun.stdout.write(out);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      writeJsonRpc(rpcErr(id, -32603, message));
     }
   }
 }

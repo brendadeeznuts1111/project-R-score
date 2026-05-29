@@ -4,7 +4,7 @@
     "bun-docs": {
       "type": "stdio",
       "command": "bun",
-      "args": ["run", "${workspaceFolder}/tools/bun-docs-mcp.ts"],
+      "args": ["${workspaceFolder}/tools/bun-docs-mcp.ts"],
       "env": {
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }
@@ -12,7 +12,7 @@
     "dx": {
       "type": "stdio",
       "command": "bun",
-      "args": ["run", "${workspaceFolder}/scripts/dx-mcp.ts"],
+      "args": ["${workspaceFolder}/scripts/dx-mcp.ts"],
       "env": {
         "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,cascade-mover-v3,bet-ticker-worker-v1.1,packages,lib,tools"
       },
