@@ -90,6 +90,7 @@ Projects/
 - Add Dependabot/Renovate for automated version bumps (since deps are pinned, PRs would be intentional).
 - Add `packages:outdated` to CI reporting.
 - Evaluate `projects/active/kimiremote/` and `projects/active/factorywager/` as standalone repos vs monorepo members.
+- **Phase 4.4 (May 2026) — Scan consolidation**: Shared [`lib/projects-scan.ts`](lib/projects-scan.ts) for project inventory; dx-mcp debug-gated scan errors.
 - Move `bet-ticker-worker-v1.1/` and `cascade-mover-v3/` under `projects/active/` (currently gitignored at root).
 - **Antipattern remediation (manual)**: `export default` → named exports, `: any` → `: unknown`, non-null assertions, empty catches.
 
