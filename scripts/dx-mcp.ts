@@ -7,11 +7,17 @@
 
 import { readdirSync, statSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { checkGitStatus, walkStats } from '../lib/projects-scan.ts';
 
 const ROOT = join(import.meta.dir, '..');
 const GIT = Bun.which('git')!;
 const BUN_VERSION = Bun.version;
 const SERVER_VERSION = '2.1.0';
+const SCAN_DEBUG = process.env.DX_MCP_DEBUG === '1';
+
+function debugScan(where: string, err: unknown): void {
+  if (SCAN_DEBUG) console.error(`[dx-mcp:scan] ${where}`, err);
+}
 
 const DEFAULT_SCAN_ROOTS = [
   join(ROOT, 'projects', 'active'),
@@ -127,7 +133,9 @@ async function makeProjectMeta(fullPath: string, scanRoot: string): Promise<Proj
   let pkg: Record<string, any> = {};
   try {
     pkg = (await Bun.file(pkgPath).json()) as Record<string, any>;
-  } catch {}
+  } catch (err) {
+    debugScan(`read package.json ${pkgPath}`, err);
+  }
   const { type, signals } = detectType(fullPath, pkg);
   const stats = walkStats(fullPath);
   return {
@@ -140,7 +148,7 @@ async function makeProjectMeta(fullPath: string, scanRoot: string): Promise<Proj
     license: pkg.license || '—',
     private: !!pkg.private,
     type,
-    gitStatus: checkGit(fullPath),
+    gitStatus: checkGitStatus(fullPath, GIT),
     hasReadme: existsSync(join(fullPath, 'README.md')),
     hasLicense: !!pkg.license || existsSync(join(fullPath, 'LICENSE')),
     fileCount: stats.fileCount,
@@ -184,46 +192,6 @@ function findProject(projects: ProjectMeta[], target: string): ProjectMeta | und
   return projects.find(p => p.dirName === target || p.name === target || p.fullPath === target);
 }
 
-function walkStats(dir: string): { fileCount: number; sizeKb: number; lastChanged: string } {
-  let fileCount = 0;
-  let totalSize = 0;
-  let latestMtime = 0;
-  const walk = (d: string) => {
-    try {
-      for (const e of readdirSync(d, { withFileTypes: true })) {
-        if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') continue;
-        const fp = join(d, e.name);
-        if (e.isDirectory()) {
-          walk(fp);
-        } else {
-          fileCount++;
-          try {
-            const s = statSync(fp);
-            totalSize += s.size;
-            if (s.mtimeMs > latestMtime) latestMtime = s.mtimeMs;
-          } catch {}
-        }
-      }
-    } catch {}
-  };
-  walk(dir);
-  return {
-    fileCount,
-    sizeKb: Math.round(totalSize / 1024),
-    lastChanged: latestMtime > 0 ? new Date(latestMtime).toISOString().slice(0, 10) : '—',
-  };
-}
-
-function checkGit(dir: string): 'none' | 'clean' | 'dirty' {
-  if (!existsSync(join(dir, '.git')) || !GIT) return 'none';
-  try {
-    const proc = Bun.spawnSync([GIT, '-C', dir, 'status', '--porcelain'], { timeout: 3000 });
-    return proc.stdout.toString().trim() ? 'dirty' : 'clean';
-  } catch {
-    return 'clean';
-  }
-}
-
 // ── Analysis helpers ───────────────────────────────────────────
 const SRC_GLOB = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs}');
 
@@ -247,7 +215,9 @@ async function walkSource(dir: string): Promise<string[]> {
         continue;
       files.push(f);
     }
-  } catch {}
+  } catch (err) {
+    debugScan(`walkSource ${dir}`, err);
+  }
   return files;
 }
 
@@ -268,7 +238,9 @@ async function extractImports(filePath: string): Promise<string[]> {
         continue;
       pkgs.add(raw.startsWith('@') ? raw.split('/').slice(0, 2).join('/') : raw.split('/')[0]!);
     }
-  } catch {}
+  } catch (err) {
+    debugScan(`extractImports ${filePath}`, err);
+  }
   return [...pkgs];
 }
 
@@ -304,7 +276,9 @@ async function findLargeFiles(dir: string, topN = 20): Promise<{ path: string; s
     try {
       const s = statSync(file);
       files.push({ path: file.replace(dir + '/', ''), size: s.size });
-    } catch {}
+    } catch (err) {
+      debugScan(`stat ${file}`, err);
+    }
   }
   files.sort((a, b) => b.size - a.size);
   return files.slice(0, topN);
@@ -410,7 +384,9 @@ async function findBloat(dir: string): Promise<{
     totalSourceFiles++;
     try {
       totalSourceKb += Math.round(statSync(file).size / 1024);
-    } catch {}
+    } catch (err) {
+      debugScan(`bloat stat ${file}`, err);
+    }
   }
   return {
     nodeModulesKb,
@@ -783,7 +759,9 @@ async function dispatch(
         if (existsSync(cfPath)) {
           try {
             configs.push({ path: cf, content: await Bun.file(cfPath).text() });
-          } catch {}
+          } catch (err) {
+            debugScan(`read config ${cfPath}`, err);
+          }
         }
       }
       return { project: p.name, type: p.type, configs };

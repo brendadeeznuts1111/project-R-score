@@ -13,8 +13,12 @@ Phases 1–5 and 4.1–4.3 history moved to [`docs/archives/root-cleanup-history
 
 Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdown to project docs.
 
-## Phase 4.2 (in progress)
+## Phase 4.2 (committed)
 
-Context bloat reduction, global interface barrel diet, dead code removal in `lib/` / `scripts/` / `tools/`.
+Context bloat reduction, barrel trim, dead code purge (−16k lines).
+
+## Phase 4.3 (in progress)
+
+`lib/projects-scan.ts` shared module, dx-mcp scan hardening, path fork documented in core-documentation.
 
 See [`STRUCTURE.md`](STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).

@@ -9,3 +9,4 @@ scripts/advanced-forwarding.ts
 scripts/wiki-matrix-cli-standalone.ts
 scripts/wiki-matrix-cli-improved.ts
 **/node_modules/**
+docs/AGENTS.md

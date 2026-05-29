@@ -3,10 +3,15 @@
 // Zero npm deps. Bun.inspect.table, Bun.stringWidth, Bun.wrapAnsi, Bun.markdown.ansi, Bun.cron.
 // Run: bun run scripts/projects-dashboard.ts [--cards] [--readme] [--watch N] [--sort ...] [--timing]
 
-import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs';
+import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { spawnSync } from 'node:child_process';
+import {
+  checkGitStatus,
+  countFiles,
+  dirSizeBytes,
+  lastModified,
+} from '../lib/projects-scan.ts';
 
 const ROOT = process.cwd();
 const ACTIVE = join(ROOT, 'projects', 'active');
@@ -44,54 +49,6 @@ interface ProjectMeta {
 }
 
 // ── Helpers ────────────────────────────────────────────────────
-const GIT = Bun.which('git')!;
-
-function countFiles(dir: string): number {
-  let count = 0;
-  try {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
-      if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') continue;
-      try {
-        if (e.isDirectory()) count += countFiles(join(dir, e.name));
-        else if (e.isFile()) count++;
-      } catch {}
-    }
-  } catch {}
-  return count;
-}
-
-function dirSize(dir: string): number {
-  let total = 0;
-  try {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
-      if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') continue;
-      try {
-        const s = statSync(join(dir, e.name));
-        if (e.isFile()) total += s.size;
-        else if (e.isDirectory()) total += dirSize(join(dir, e.name));
-      } catch {}
-    }
-  } catch {}
-  return total;
-}
-
-function lastModified(dir: string): Date | null {
-  let latest: Date | null = null;
-  try {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
-      if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') continue;
-      try {
-        const s = statSync(join(dir, e.name));
-        if (!latest || s.mtime > latest) latest = s.mtime;
-        if (e.isDirectory()) {
-          const child = lastModified(join(dir, e.name));
-          if (child && (!latest || child > latest)) latest = child;
-        }
-      } catch {}
-    }
-  } catch {}
-  return latest;
-}
 
 function daysAgo(date: string): string {
   if (date === '—') return date;
@@ -102,19 +59,6 @@ function daysAgo(date: string): string {
   if (days < 30) return `${days}d ago`;
   const months = Math.floor(days / 30);
   return `${months}mo ago`;
-}
-
-function gitStatus(dir: string): 'none' | 'clean' | 'dirty' {
-  if (!existsSync(join(dir, '.git')) || !GIT) return 'none';
-  try {
-    const r = spawnSync(GIT, ['-C', dir, 'status', '--porcelain'], {
-      timeout: 3000,
-      encoding: 'utf-8',
-    });
-    return r.stdout?.trim() ? 'dirty' : 'clean';
-  } catch {
-    return 'clean';
-  }
 }
 
 function fmtGit(status: 'none' | 'clean' | 'dirty'): string {
@@ -177,11 +121,11 @@ function discoverProjects(): ProjectMeta[] {
       description: pkg.description || '—',
       license: pkg.license || '—',
       private: !!pkg.private,
-      gitStatus: gitStatus(dir),
+      gitStatus: checkGitStatus(dir),
       hasReadme: existsSync(join(dir, 'README.md')),
       hasLicense: !!pkg.license || existsSync(join(dir, 'LICENSE')),
       fileCount: countFiles(dir),
-      sizeKb: Math.round(dirSize(dir) / 1024),
+      sizeKb: Math.round(dirSizeBytes(dir) / 1024),
       lastChanged: lastMod ? lastMod.toISOString().slice(0, 10) : '—',
     });
   }
