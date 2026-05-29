@@ -31,7 +31,7 @@ We've implemented **complete coverage** of Bun's Markdown API including:
 ### ANSI Terminal Rendering
 ```bash
 # Basic ANSI output
-bun run markdown:ansi
+bun run markdown README.md ansi
 
 # Enhanced styled output  
 bun run markdown:styled
@@ -43,7 +43,7 @@ bun run dashboard:live
 ### HTML Output with Options
 ```bash
 # Default HTML with all features
-bun run markdown:html
+bun run markdown README.md html
 
 # Official options demo
 bun run markdown:official

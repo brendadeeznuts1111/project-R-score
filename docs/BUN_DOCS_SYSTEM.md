@@ -313,7 +313,7 @@ MIT License - see LICENSE file for details.
 
 ## 🔗 Related Tools
 
-- **Wiki Generator**: `bun run wiki:generate`
+- **Wiki Generator**: `bun run wiki:mcp generate`
 - **MCP Integration**: `bun run mcp:bun`
 - **URL Validation**: `bun run url:validate`
 - **Documentation Demo**: `bun run docs:demo`

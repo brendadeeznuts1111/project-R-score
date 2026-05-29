@@ -31,7 +31,11 @@ const CATEGORIES: Array<{ prefix: string; label: string; desc: string }> = [
   { prefix: 'rss:', label: 'RSS', desc: 'RSS feeds' },
   { prefix: 'search:', label: 'Search', desc: 'Search governance and benchmarks' },
   { prefix: 'wiki:', label: 'Wiki', desc: 'Wiki generation and live preview' },
+  { prefix: 'markdown', label: 'Markdown', desc: 'Markdown render and option demos' },
+  { prefix: 'profile:barbershop', label: 'Barbershop Profile', desc: 'Sampling profiler CLI' },
   { prefix: 'dataview', label: 'DataView', desc: 'DataView pool CLI (pass subcommand)' },
+  { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation' },
+];
 
 const SPECIAL: Record<string, string> = {
   dev: 'Start platform watch server (server-enhanced.ts)',
@@ -44,6 +48,10 @@ const SPECIAL: Record<string, string> = {
   commits: 'Check commits',
   'pool-telemetry': 'Connection pool telemetry CLI (pass subcommand: stats, query, sync, serve)',
   'security-tests': 'Run lib/security security test suite',
+  markdown: 'Render markdown (pass file + format: ansi, html, links, headings, plain)',
+  'markdown:options': 'Bun markdown parser option demos (pass demo|compare|gfm|extended)',
+  'profile:barbershop': 'Barbershop sampling profiler (pass subcommand: run, quick, status, …)',
+  'wiki:mcp': 'Wiki generator MCP CLI (pass subcommand: generate, templates, …)',
 };
 
 const CORE_CMDS = new Set([

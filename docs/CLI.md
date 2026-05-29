@@ -173,6 +173,35 @@ All commands run via `bun run <name>` from the project root:
 | `bun run rss:list` | lib/registry/rss-aggregator.ts list |
 | `bun run rss:monitor` | scripts/cheatsheet-rss-monitor-v2.js monitor |
 
+### Search
+| Command | Description |
+|---------|-------------|
+| `bun run search:bench` | scripts/search-benchmark.ts |
+| `bun run search:bench:baseline:verify` | scripts/search-benchmark-baseline-governance.ts --json |
+| `bun run search:bench:compare` | scripts/search-benchmark-pin.ts compare |
+| `bun run search:bench:dashboard` | scripts/search-benchmark-dashboard.ts |
+| `bun run search:bench:gate` | scripts/search-benchmark-pin.ts compare --strict --bootstrap-missing-baseline |
+| `bun run search:bench:pin` | scripts/search-benchmark-pin.ts pin |
+| `bun run search:bench:snapshot:core:wide:local` | scripts/search-benchmark-snapshot.ts --path ./lib,./packages/docs-tools/src --limit 40 --query-pack core_delivery_wide --overlap remove --concurrency 2 --no-upload |
+| `bun run search:bench:test` | test tests/search-benchmark-core.test.ts tests/search-benchmark-snapshot-core.test.ts tests/search-benchmark-pin.test.ts tests/search-benchmark-baseline-governance.test.ts tests/search-benchmark-thresholds.test.ts tests/search-policy-thresholds.test.ts |
+| `bun run search:code` | scripts/codesearch-cli.ts |
+| `bun run search:contract:check` | scripts/search-status-contract-check.ts |
+| `bun run search:coverage:loc` | scripts/search-coverage-loc.ts |
+| `bun run search:domain:doctor` | scripts/domain-registry-status.ts --doctor |
+| `bun run search:domain:tokens:sync` | scripts/domain-token-sync.ts |
+| `bun run search:lib:cleanup` | scripts/search-smart.ts --path ./lib --view slop-only --task cleanup --group-limit 5 --show-mirrors |
+| `bun run search:lib:cleanup:report` | scripts/search-cleanup-report.ts |
+| `bun run search:lib:strict` | scripts/search-smart.ts --path ./lib --strict --family-cap 2 |
+| `bun run search:loop:check:local:fast` | scripts/search-loop-check-local.ts --mode fast |
+| `bun run search:loop:check:local:full` | scripts/search-loop-check-local.ts --mode full |
+| `bun run search:loop:runbook` | scripts/search-loop-runbook.ts |
+| `bun run search:policy:check` | scripts/check-search-policy-governance.ts |
+| `bun run search:preflight:emergency` | scripts/search-emergency-preflight.ts |
+| `bun run search:smart` | scripts/search-smart.ts |
+| `bun run search:smart:index` | scripts/search-smart-index.ts |
+| `bun run search:status:unified:strict` | scripts/search-unified-status.ts --json --strict |
+| `bun run search:strict` | scripts/search-smart.ts --strict |
+
 ### Format
 | Command | Description |
 |---------|-------------|
@@ -181,6 +210,27 @@ All commands run via `bun run <name>` from the project root:
 | `bun run format:check:harness` | x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
 | `bun run format:core` | format:harness |
 | `bun run format:harness` | x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
+
+### Wiki
+| Command | Description |
+|---------|-------------|
+| `bun run wiki:filter` | scripts/wiki-matrix-filter.ts |
+| `bun run wiki:gen` | scripts/ai-wiki-gen.ts |
+| `bun run wiki:live` | scripts/wiki-live-dashboard.ts |
+| `bun run wiki:matrix` | scripts/wiki-matrix-cli.ts |
+| `bun run wiki:mcp` | Wiki generator MCP CLI (pass subcommand: generate, templates, …) |
+| `bun run wiki:pipe` | scripts/wiki-matrix-pipe.ts |
+
+### DataView
+| Command | Description |
+|---------|-------------|
+| `bun run dataview` | scripts/dataview-cli.ts |
+| `bun run dataview:test` | scripts/dataview-tests.ts |
+
+### Barbershop Profile
+| Command | Description |
+|---------|-------------|
+| `bun run profile:barbershop` | Barbershop sampling profiler (pass subcommand: run, quick, status, …) |
 
 ### Documentation
 | Command | Description |
@@ -205,6 +255,12 @@ All commands run via `bun run <name>` from the project root:
 | `bun run docs:sync` | lib/registry/docs-sync.ts |
 | `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
 | `bun run docs:validate` | -e "import('./lib/docs-scraper.ts').then(m=>m.generateValidationReport().then(console.log))" |
+
+### Markdown
+| Command | Description |
+|---------|-------------|
+| `bun run markdown` | Render markdown (pass file + format: ansi, html, links, headings, plain) |
+| `bun run markdown:options` | Bun markdown parser option demos (pass demo|compare|gfm|extended) |
 
 ---
 
