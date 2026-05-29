@@ -1,0 +1,241 @@
+{
+  "Bun CLI Entry + Entry Guard": {
+    "prefix": "bun-cli",
+    "body": [
+      "#!/usr/bin/env bun",
+      "import { ensureDirectExecution } from '${1:../lib/shared/tools/entry-guard.ts}';",
+      "",
+      "ensureDirectExecution();",
+      "",
+      "${2:// CLI implementation}",
+      ""
+    ],
+    "description": "Bun CLI shebang with entry guard (prevents accidental import execution)"
+  },
+  "Bun Test Suite": {
+    "prefix": "bun-test",
+    "body": [
+      "import { describe, expect, test } from 'bun:test';",
+      "",
+      "describe('${1:feature}', () => {",
+      "  test('${2:should behave correctly}', () => {",
+      "    ${3:expect(true).toBe(true);}",
+      "  });",
+      "});",
+      ""
+    ],
+    "description": "Bun test describe/test block"
+  },
+  "Bun.serve HTTP Server": {
+    "prefix": "bun-serve",
+    "body": [
+      "const server = Bun.serve({",
+      "  port: ${1:3000},",
+      "  fetch(req) {",
+      "    const url = new URL(req.url);",
+      "    if (url.pathname === '/health') {",
+      "      return Response.json({ ok: true });",
+      "    }",
+      "    return new Response('Not Found', { status: 404 });",
+      "  },",
+      "});",
+      "",
+      "console.log(`Listening on http://\\${server.hostname}:\\${server.port}`);",
+      ""
+    ],
+    "description": "Bun.serve HTTP server with health route"
+  },
+  "Bun Shell ($)": {
+    "prefix": "bun-shell",
+    "body": [
+      "import { $ } from 'bun';",
+      "",
+      "const result = await $`${1:echo hello}`.text();",
+      "console.log(result.trim());",
+      ""
+    ],
+    "description": "Bun shell template literal"
+  },
+  "Bun MCP Tool Handler": {
+    "prefix": "bun-mcp-tool",
+    "body": [
+      "case '${1:tool_name}': {",
+      "  const ${2:param} = params?.${2:param} as ${3:string} | undefined;",
+      "  if (!${2:param}) return { error: '${2:param} is required' };",
+      "  ${4:return { ok: true };}",
+      "}",
+      ""
+    ],
+    "description": "MCP tool switch-case handler (dx-mcp / stdio servers)"
+  },
+  "Bun MCP Stdio Server Header": {
+    "prefix": "bun-mcp-server",
+    "body": [
+      "#!/usr/bin/env bun",
+      "// ${1:server-name}-mcp.ts — MCP server (stdio, zero npm deps)",
+      "",
+      "const SERVER_NAME = '${1:server-name}';",
+      "const SERVER_VERSION = '${2:1.0.0}';",
+      "",
+      "type JsonRpc = {",
+      "  jsonrpc: '2.0';",
+      "  id?: number | string;",
+      "  method?: string;",
+      "  params?: Record<string, unknown>;",
+      "};",
+      "",
+      "${3:// tool handlers}",
+      ""
+    ],
+    "description": "MCP stdio server boilerplate header"
+  },
+  "Bun R-Score Documentation Reference": {
+    "prefix": "bun-rscore-docs",
+    "body": [
+      "/**",
+      " * R-Score Optimization Component",
+      " * ",
+      " * @see {@link https://bun.sh/docs/runtime/binary-data#sharedarraybuffer} SharedArrayBuffer documentation",
+      " * @see {@link https://bun.sh/docs/api/http#multiplexing} HTTP/2 multiplexing documentation",
+      " * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch documentation",
+      " * @see {@link https://bun.sh/docs/guides/performance} Performance optimization guide",
+      " */"
+    ],
+    "description": "Insert R-Score optimization documentation references"
+  },
+  "Bun Memory Pool Pattern": {
+    "prefix": "bun-memory-pool",
+    "body": [
+      "import { globalPool } from '../lib/memory-pool';",
+      "",
+      "// Allocate from SharedArrayBuffer pool",
+      "const { ptr, view, size } = globalPool.alloc(${1:bytes});",
+      "",
+      "// Read file directly into pool",
+      "try {",
+      "  const { ptr: filePtr, size: fileSize } = await globalPool.readFile('${2:filePath}');",
+      "  console.log(`File loaded at ptr ${filePtr}, size: ${fileSize} bytes`);",
+      "} catch (error) {",
+      "  console.error('Pool read failed:', error.message);",
+      "}"
+    ],
+    "description": "Insert Bun memory pool usage pattern"
+  },
+  "Bun HTTP/2 Multiplexer": {
+    "prefix": "bun-http2-mux",
+    "body": [
+      "import { BunHTTP2Multiplexer } from '../lib/http2-multiplexer';",
+      "",
+      "// HTTP/2 multiplexing for multiple requests to same host",
+      "const mux = new BunHTTP2Multiplexer();",
+      "try {",
+      "  await mux.connect('${1:hostname}', ${2:443});",
+      "  ",
+      "  // Fire multiple requests concurrently",
+      "  const requests = urls.map(url => {",
+      "    const { pathname } = new URL(url);",
+      "    return mux.request('GET', pathname);",
+      "  });",
+      "  ",
+      "  const results = await Promise.all(requests);",
+      "  console.log('HTTP/2 stats:', mux.getStats());",
+      "} finally {",
+      "  mux.disconnect();",
+      "}"
+    ],
+    "description": "Insert HTTP/2 multiplexing pattern"
+  },
+  "Bun Hardened Fetch": {
+    "prefix": "bun-hardened-fetch",
+    "body": [
+      "import { hardenedFetch } from '../lib/hardened-fetch';",
+      "",
+      "// Hardened fetch with TLS verification and redirect handling",
+      "try {",
+      "  const response = await hardenedFetch({",
+      "    url: '${1:url}',",
+      "    timeout: ${2:5000},",
+      "    method: '${3|HEAD,GET|}',",
+      "    followRedirects: ${4:3},",
+      "    pinFingerprint: '${5:optional-sha256-fingerprint}'",
+      "  });",
+      "  ",
+      "  console.log(`Status: ${response.status}, OK: ${response.ok}`);",
+      "} catch (error) {",
+      "  console.error('Hardened fetch failed:', error.message);",
+      "}"
+    ],
+    "description": "Insert hardened fetch with TLS verification"
+  },
+  "Bun Lazy File Loading": {
+    "prefix": "bun-lazy-file",
+    "body": [
+      "// Lazy file loading - zero disk I/O until method call",
+      "const file = Bun.file('${1:filePath}', { type: '${2:application/json}' });",
+      "",
+      "// Metadata access (no disk I/O)",
+      "console.log('Size:', file.size);",
+      "console.log('Type:', file.type);",
+      "",
+      "// Conditional loading",
+      "if (await file.exists()) {",
+      "  if (file.size > 1024 * 1024) {",
+      "    // Large file: use streaming",
+      "    const stream = file.stream();",
+      "    const reader = stream.getReader();",
+      "    // ... process chunks",
+      "  } else {",
+      "    // Small file: direct read",
+      "    const content = await file.${3|text(),json(),arrayBuffer()|};",
+      "    console.log('Content:', content);",
+      "  }",
+      "} else {",
+      "  console.log('File not found');",
+      "}"
+    ],
+    "description": "Insert lazy file loading pattern"
+  },
+  "R-Score Calculation": {
+    "prefix": "rscore-calc",
+    "body": [
+      "// R-Score calculation components",
+      "const rScore = {",
+      "  p_ratio: ${1:1.000},      // Performance ratio (HTTP/2 multiplexing)",
+      "  m_impact: ${2:0.650},     // Memory impact (SharedArrayBuffer pool)",
+      "  e_elimination: ${3:0.900}, // Error elimination (redirect handling)",
+      "  s_hardening: ${4:1.000},  // Security hardening (TLS verification)",
+      "  ",
+      "  get total_score() {",
+      "    return (this.p_ratio * 0.35) + ",
+      "           (this.m_impact * 0.30) + ",
+      "           (this.e_elimination * 0.20) + ",
+      "           (this.s_hardening * 0.15);",
+      "  }",
+      "};",
+      "",
+      "console.log(`R-Score: ${rScore.total_score.toFixed(3)}`);"
+    ],
+    "description": "Insert R-Score calculation formula"
+  },
+  "Bun Documentation Reference": {
+    "prefix": "bun-doc-ref",
+    "body": [
+      "import { docs, buildDocsUrl, getTypedArrayDocs, getRSysDocs } from '../lib/docs-reference';",
+      "",
+      "// Get specific documentation URLs",
+      "const typedArrayDocs = getTypedArrayDocs();",
+      "const rscoreDocs = getRSysDocs();",
+      "",
+      "// Build custom documentation URL",
+      "const customUrl = buildDocsUrl('/docs/custom', 'section');",
+      "",
+      "// Validate documentation URL",
+      "const isValid = docs.validateUrl('${1:https://bun.sh/docs/api/utils}');",
+      "",
+      "// Parse URL structure",
+      "const parsed = docs.parseUrl('${2:https://bun.sh/docs/api/utils}');",
+      "console.log('Parsed URL:', parsed);"
+    ],
+    "description": "Insert documentation reference management"
+  }
+}

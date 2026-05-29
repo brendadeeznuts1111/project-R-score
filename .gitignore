@@ -3,6 +3,10 @@
 # Dependencies
 node_modules/
 bun.lockb
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 .bun-cache/
 .bun/install/cache/
 .pnpm-store/
@@ -23,6 +27,8 @@ out/
 .next/
 .nuxt/
 .vite/
+.output/
+.turbo/
 .cache/
 *.js
 !scratch/bun-v1.3.9-examples/playground-web/app.js
@@ -30,18 +36,30 @@ out/
 *.js.map
 *.tsbuildinfo
 
-# IDE
-.vscode/
+# IDE — ignore local noise; track shared workspace configs
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/mcp.json
+!.vscode/bun-rscore.code-snippets
 .idea/
 *.swp
 *.swo
 
-# IDE-specific configs
+# Cursor — track canonical MCP config; ignore local agent state
+.cursor/*
+!.cursor/mcp.json
+
+# Other IDE / agent tooling
 .claude/*
 !.claude/agents/
 !.claude/commands/
-.cursor/
 .windsurf/
+.codex/
+.agents/
+.reasonix/
 
 # OS
 .DS_Store
@@ -54,7 +72,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Bun config (contains secrets)
+# Bun reference profile (may contain enterprise secrets — not auto-loaded)
 .bunfig.toml
 
 # Environment variables
@@ -63,12 +81,17 @@ yarn-error.log*
 .env.secret.local
 .env.*.local
 .env.*
+.env.development
 .env.production
+.env.staging
+.env.test
 .env.secret
 .env.enc
 
 # Test coverage
 coverage/
+.nyc_output/
+test-results/
 
 # Temporary files
 tmp/
@@ -92,8 +115,6 @@ reports/
 *.archive/
 
 # Working directories
-temp/
-tmp/
 data/
 output/
 download/
@@ -106,17 +127,11 @@ archive/
 *.output.*
 *.download.*
 
-# Test outputs
-test-results/
-coverage/
-.nyc_output/
-
 # Temporary and example files
 example*-*
 test*-*
 !scripts/test-*.ts
 *.tmp
-*.temp
 
 # Generated files
 *.generated.*
@@ -129,6 +144,8 @@ test*-*
 *.bun-build
 *.tar.gz
 *.tgz
+*.tar
+*.zip
 
 # Development artifacts
 *.local.*
@@ -139,10 +156,6 @@ test*-*
 *.node
 *.so
 *.dylib
-
-# Cache
-.cache/
-.nyc_output/
 
 # Session data
 sessions/
@@ -155,9 +168,6 @@ deploy/
 # Uploads
 uploads/
 public/uploads/
-
-# Misc
-bun.lockb
 
 # Projects without tokens or sensitive configurations
 *config/
@@ -177,8 +187,7 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
-**/credentials/.env.production
-.env.secret
+**/credentials/
 !config/
 config/*
 !config/domain-branding.json
@@ -199,20 +208,11 @@ clawdbot/
 .npm-cache/
 
 # Separate projects with their own git history
-kimiremote/
+projects/active/kimiremote/
 
 # Secrets and credentials (should never be committed)
 bun.secrets
 .fw-config.json
-
-# .env files (may contain secrets)
-.env
-.env.local
-.env.*.local
-.env.development
-.env.production
-.env.staging
-.env.test
 *.local.json
 
 # SQLite artifacts (development databases)
@@ -223,11 +223,11 @@ bun.secrets
 *.db
 *.sqlite
 *.sqlite3
-profiles.db
 
 # Heap snapshots and memory dumps
 *.heapsnapshot
 Heap-*
+*.heapsnapshot
 
 # Compiled binaries and object files
 *.bin
@@ -240,17 +240,20 @@ Heap-*
 **/models/*.pkl
 **/models/*.h5
 
-# Tarball archives
-*.tar
-*.tar.gz
-*.tgz
-*.zip
-
-# .icns and other binary assets
+# Binary assets
 *.icns
 
 # Smart environment cache (generated AI artifacts)
 .smart-env/
 
-# Bun native compiled output
-*.bun-build
+# Docs archives (large snapshots)
+docs/archives/
+
+# Minified assets
+*.min.js
+*.min.css
+*.bundle.js
+
+# Vendored / third-party
+vendor/
+.third_party/
