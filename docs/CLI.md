@@ -23,7 +23,6 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run build:affected` | --filter '...' build |
 | `bun run build:all` | --filter '*' build |
-| `bun run build:barbershop:meta` | projects/active/barbershop/build-metadata.ts |
 | `bun run build:protocol-handlers` | build protocols/resilience-chain.ts --target bun --outfile /tmp/protocol-resilience-chain.build.js |
 
 ### Test
@@ -74,7 +73,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:protocol:parallel:promote-baseline:dryrun` | test:protocol:parallel:compare |
 | `bun run test:protocol:s3` | scripts/dashboard-protocol-check.ts --protocol=s3 |
 | `bun run test:protocol:unix` | scripts/dashboard-protocol-check.ts --protocol=unix |
-| `bun run test:r2` | lib/mcp/r2-integration.ts |
+| `bun run test:r2` | test tests/r2-integration.test.ts |
 | `bun run test:scoped:bail` | test --bail=10 |
 | `bun run test:ui-quality` | tests/test-ui-quality.ts |
 | `bun run test:unit` | test ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
@@ -249,12 +248,10 @@ All commands run via `bun run <name>` from the project root:
 | `bun run docs:orchestration:graph` | docs/orchestration-graph.ts flow |
 | `bun run docs:publish` | tools/cli/integrated-cli.ts publish |
 | `bun run docs:rss` | lib/registry/rss-aggregator.ts |
-| `bun run docs:scrape` | lib/docs-scraper.ts |
 | `bun run docs:search` | tools/cli/docs-cli.ts search |
 | `bun run docs:serve` | docs:open |
 | `bun run docs:sync` | lib/registry/docs-sync.ts |
 | `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
-| `bun run docs:validate` | -e "import('./lib/docs-scraper.ts').then(m=>m.generateValidationReport().then(console.log))" |
 
 ### Markdown
 | Command | Description |

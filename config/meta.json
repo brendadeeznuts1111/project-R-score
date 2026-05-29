@@ -45,7 +45,7 @@
   ],
   "scripts": {
     "development": ["dev", "start", "test", "build"],
-    "tools": ["dashboard:ansi", "url:validate", "lint", "format", "type-check"],
+    "tools": ["url:validate", "lint", "format", "type-check"],
     "mcp": ["mcp:bun", "mcp:security"],
     "validation": ["standards:check", "ci:validate"]
   },

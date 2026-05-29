@@ -317,7 +317,7 @@ try {
       {
         step: 2,
         title: 'Test Connection',
-        command: 'bun run test:r2',
+        command: 'bun test tests/r2-integration.test.ts',
         details: 'Verify R2 connectivity and permissions',
       },
       {

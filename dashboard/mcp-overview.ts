@@ -364,7 +364,7 @@ class MCPSystemDashboard {
 
     const actions = [
       { command: 'bun run lib/security/master-token.ts create cli:user', description: 'Create new CLI token' },
-      { command: 'bun run test:r2', description: 'Test R2 connection' },
+      { command: 'bun test tests/r2-integration.test.ts', description: 'Test R2 connection' },
       { command: 'bun run demo:r2', description: 'Run R2 integration demo' },
       { command: 'bun run setup:mcp', description: 'Run MCP setup' },
       { command: 'bun run docs:search "Bun.API"', description: 'Test documentation search' },
