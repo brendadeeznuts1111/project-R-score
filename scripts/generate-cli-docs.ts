@@ -29,8 +29,9 @@ const CATEGORIES: Array<{ prefix: string; label: string; desc: string }> = [
   { prefix: 'cheatsheet:', label: 'Cheatsheet', desc: 'Generate cheat sheets' },
   { prefix: 'demo:', label: 'Demo', desc: 'Demo contracts' },
   { prefix: 'rss:', label: 'RSS', desc: 'RSS feeds' },
-  { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation' },
-];
+  { prefix: 'search:', label: 'Search', desc: 'Search governance and benchmarks' },
+  { prefix: 'wiki:', label: 'Wiki', desc: 'Wiki generation and live preview' },
+  { prefix: 'dataview', label: 'DataView', desc: 'DataView pool CLI (pass subcommand)' },
 
 const SPECIAL: Record<string, string> = {
   dev: 'Start platform watch server (server-enhanced.ts)',
@@ -41,6 +42,8 @@ const SPECIAL: Record<string, string> = {
   docs: 'Generate cheatsheet docs',
   news: 'RSS news feed',
   commits: 'Check commits',
+  'pool-telemetry': 'Connection pool telemetry CLI (pass subcommand: stats, query, sync, serve)',
+  'security-tests': 'Run lib/security security test suite',
 };
 
 const CORE_CMDS = new Set([

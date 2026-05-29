@@ -12,8 +12,8 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run install:all` | install |
-| `bun run install:factorywager` | install --filter './factorywager/registry/packages/*' |
-| `bun run install:kimiremote` | install --filter './kimiremote/packages/*' |
+| `bun run install:factorywager` | install --filter './projects/active/factorywager/registry/packages/*' |
+| `bun run install:kimiremote` | install --filter './projects/active/kimiremote/packages/*' |
 | `bun run install:packages` | install --filter './packages/*' |
 | `bun run install:projects` | install --filter './projects/*' |
 | `bun run install:projects:except:experimental` | install --filter './projects/*' --filter '!./projects/experimental/*' |
@@ -23,7 +23,7 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run build:affected` | --filter '...' build |
 | `bun run build:all` | --filter '*' build |
-| `bun run build:barbershop:meta` | barbershop/build-metadata.ts |
+| `bun run build:barbershop:meta` | projects/active/barbershop/build-metadata.ts |
 | `bun run build:protocol-handlers` | build protocols/resilience-chain.ts --target bun --outfile /tmp/protocol-resilience-chain.build.js |
 
 ### Test
@@ -31,16 +31,16 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run test:accessibility` | tests/test-accessibility.ts |
 | `bun run test:affected` | --filter '...' test |
-| `bun run test:agent` | AGENT=1 bun test ./tests ./lib ./utils ./cli ./barbershop ./packages/bun-markdown-constants |
+| `bun run test:agent` | AGENT=1 bun test ./tests ./lib ./utils ./cli ./projects/active/barbershop ./packages/bun-markdown-constants |
 | `bun run test:all` | --parallel test:ui-quality test:accessibility test:content-types |
-| `bun run test:barbershop` | test barbershop/tests/*.ts |
+| `bun run test:barbershop` | test projects/active/barbershop/tests/*.ts |
 | `bun run test:brand` | test ./tests/brand-seed.test.ts |
 | `bun run test:brand:0` | test:brand -- --seed=0 |
 | `bun run test:brand:120` | test:brand -- --seed=120 |
 | `bun run test:brand:240` | test:brand -- --seed=240 |
 | `bun run test:brand:all` | --parallel test:brand:0 test:brand:120 test:brand:240 |
 | `bun run test:brands` | test tests/brand-seed.test.ts |
-| `bun run test:ci` | test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test.xml ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
+| `bun run test:ci` | test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test.xml ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
 | `bun run test:ci:root` | mkdir -p ./reports/junit && bun test --timeout=10000 --max-concurrency=20 --bail=1 --reporter=junit --reporter-outfile=./reports/junit/bun-test-root.xml tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
 | `bun run test:ci:root:dots` | test --timeout=10000 --max-concurrency=20 --bail=1 --dots tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
 | `bun run test:ci:root:random` | test --timeout=10000 --max-concurrency=20 --bail=1 --randomize --seed=1337 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
@@ -48,7 +48,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:concurrent:safe` | AGENT=1 bun test --concurrent --max-concurrency=4 --timeout=10000 --bail=1 ./tests ./lib ./utils ./cli ./barbershop ./packages/bun-markdown-constants |
 | `bun run test:content-types` | tests/test-content-types.ts |
 | `bun run test:continuity` | tests/business-continuity-test.ts |
-| `bun run test:coverage` | test --coverage ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
+| `bun run test:coverage` | test --coverage ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
 | `bun run test:dashboard:endpoints` | scripts/test-dashboard-endpoints.ts |
 | `bun run test:dashboard:mini` | scripts/test-dashboard-mini.ts |
 | `bun run test:dashboard:suite` | scripts/test-dashboard-suite.ts |
@@ -77,8 +77,8 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:r2` | lib/mcp/r2-integration.ts |
 | `bun run test:scoped:bail` | test --bail=10 |
 | `bun run test:ui-quality` | tests/test-ui-quality.ts |
-| `bun run test:unit` | test ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
-| `bun run test:watch` | test --watch ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
+| `bun run test:unit` | test ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
+| `bun run test:watch` | test --watch ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
 | `bun run test:workspaces` | --filter '*' test |
 
 ### Lint
@@ -86,9 +86,11 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run lint:affected` | --filter '...' lint |
 | `bun run lint:all` | --filter '*' lint |
+| `bun run lint:bun-native` | scripts/harness-strict-lint.ts |
+| `bun run lint:bun-native:rollout` | eslint --config eslint.bun-native.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' --quiet |
 | `bun run lint:ci:root` | eslint lib/ai --ext .ts,.tsx |
-| `bun run lint:core` | eslint packages/ server/ config/ tools/ --ext .ts |
-| `bun run lint:fix` | eslint lib/ --ext .ts --fix |
+| `bun run lint:fix` | NODE_OPTIONS='--max-old-space-size=16384' bun run eslint lib/ --ext .ts --fix |
+| `bun run lint:harness` | eslint --config eslint.harness.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' |
 
 ### Core
 | Command | Description |
@@ -154,27 +156,12 @@ All commands run via `bun run <name>` from the project root:
 ### Cheatsheet
 | Command | Description |
 |---------|-------------|
-| `bun run cheatsheet:analytics` | scripts/cheatsheet-auto-version.js analytics |
-| `bun run cheatsheet:auto` | scripts/cheatsheet-auto-version.js detect |
-| `bun run cheatsheet:changelog` | scripts/cheatsheet-versioning.js changelog |
 | `bun run cheatsheet:dashboard` | cheatsheet:integrated dashboard |
-| `bun run cheatsheet:enhanced` | scripts/cheatsheet-enhanced.js |
-| `bun run cheatsheet:github` | scripts/cheatsheet-github.js |
-| `bun run cheatsheet:github:advanced` | scripts/cheatsheet-github-integrator.js |
 | `bun run cheatsheet:hub` | scripts/cheatsheet-all.js |
 | `bun run cheatsheet:integrated` | scripts/cheatsheet-integrated-v2.js |
 | `bun run cheatsheet:interactive` | scripts/cheatsheet-interactive.js interactive |
 | `bun run cheatsheet:manager` | scripts/cheatsheet-manager.js |
-| `bun run cheatsheet:markdown` | scripts/cheatsheet-interactive.js markdown |
-| `bun run cheatsheet:report` | scripts/cheatsheet-report-generator.js |
-| `bun run cheatsheet:restore` | scripts/cheatsheet-versioning.js restore |
-| `bun run cheatsheet:rss` | scripts/cheatsheet-rss-monitor-v2.js |
-| `bun run cheatsheet:rss:monitor` | scripts/cheatsheet-rss-monitor-v2.js |
 | `bun run cheatsheet:search` | scripts/cheatsheet.js search |
-| `bun run cheatsheet:snapshot` | scripts/cheatsheet-versioning.js snapshot |
-| `bun run cheatsheet:tip` | scripts/cheatsheet.js tip |
-| `bun run cheatsheet:version-report` | scripts/cheatsheet-auto-version.js report |
-| `bun run cheatsheet:versions` | scripts/cheatsheet-versioning.js list |
 
 ### RSS
 | Command | Description |
@@ -185,16 +172,15 @@ All commands run via `bun run <name>` from the project root:
 | `bun run rss:html` | lib/registry/rss-aggregator.ts html |
 | `bun run rss:list` | lib/registry/rss-aggregator.ts list |
 | `bun run rss:monitor` | scripts/cheatsheet-rss-monitor-v2.js monitor |
-| `bun run rss:news` | scripts/cheatsheet-rss-monitor-v2.js news |
-| `bun run rss:search` | scripts/cheatsheet-rss-monitor-v2.js search |
-| `bun run rss:stats` | scripts/cheatsheet-rss-monitor-v2.js stats |
 
 ### Format
 | Command | Description |
 |---------|-------------|
 | `bun run format:check` | prettier --check lib/**/*.ts |
-| `bun run format:check:core` | x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
-| `bun run format:core` | x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
+| `bun run format:check:core` | format:check:harness |
+| `bun run format:check:harness` | x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
+| `bun run format:core` | format:harness |
+| `bun run format:harness` | x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
 
 ### Documentation
 | Command | Description |
