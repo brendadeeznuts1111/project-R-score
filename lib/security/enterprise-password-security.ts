@@ -3,7 +3,7 @@
 import { styled, log } from '../theme/colors';
 
 import { Utils } from '../utils/index';
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 
 interface PasswordPolicy {
   minLength: number;
@@ -237,7 +237,7 @@ export class Tier1380PasswordSecurity {
 
     // Store in Windows Credential Manager (CRED_PERSIST_ENTERPRISE)
     // or other platform secure storage
-    await Tier1380SecretManager.setSecret(key, hashData, {
+    await appSecretManager.setSecret(key, hashData, {
       persistEnterprise: true,
     });
 
@@ -250,7 +250,7 @@ export class Tier1380PasswordSecurity {
    */
   private static async addToPasswordHistory(userId: string, hash: PasswordHash): Promise<void> {
     const historyKey = `TIER1380_PASSWORD_HISTORY_${userId}`;
-    const currentHistory = await Tier1380SecretManager.getSecret(historyKey);
+    const currentHistory = await appSecretManager.getSecret(historyKey);
 
     let history: PasswordHash[] = [];
     if (currentHistory) {
@@ -270,7 +270,7 @@ export class Tier1380PasswordSecurity {
     }
 
     // Store updated history
-    await Tier1380SecretManager.setSecret(historyKey, JSON.stringify(history), {
+    await appSecretManager.setSecret(historyKey, JSON.stringify(history), {
       persistEnterprise: true,
     });
   }
@@ -280,7 +280,7 @@ export class Tier1380PasswordSecurity {
    */
   static async isPasswordInHistory(password: string, userId: string): Promise<boolean> {
     const historyKey = `TIER1380_PASSWORD_HISTORY_${userId}`;
-    const historyData = await Tier1380SecretManager.getSecret(historyKey);
+    const historyData = await appSecretManager.getSecret(historyKey);
 
     if (!historyData) return false;
 
@@ -555,11 +555,11 @@ export class Tier1380PasswordAudit {
   }
 }
 
-// Helper method to retrieve password hash (implementation from Tier1380SecretManager)
+// Helper method to retrieve password hash (implementation from appSecretManager)
 namespace Tier1380PasswordSecurity {
   export async function retrievePasswordHash(userId: string): Promise<PasswordHash | null> {
     const key = `TIER1380_PASSWORD_${userId}`;
-    const hashData = await Tier1380SecretManager.getSecret(key);
+    const hashData = await appSecretManager.getSecret(key);
 
     if (!hashData) return null;
 

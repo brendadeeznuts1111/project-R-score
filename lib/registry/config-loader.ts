@@ -115,7 +115,7 @@ function findConfigFile(): string | null {
     './registry.config.json',
     './config/registry.config.json5',
     './config/registry.config.json',
-    process.env.REGISTRY_CONFIG_PATH,
+    Bun.env.REGISTRY_CONFIG_PATH,
   ].filter(Boolean) as string[];
 
   for (const path of candidates) {

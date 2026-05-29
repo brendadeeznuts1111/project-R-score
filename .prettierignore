@@ -39,6 +39,12 @@ docs/archives/
 # Binary & media (never format)
 *.{png,jpg,jpeg,gif,webp,svg,ico,woff,woff2,ttf,eot,mp4,mp3,wav,pdf,zip,tar,gz}
 
+# Test & bench files (harness lint excludes; avoid format churn)
+**/*.test.ts
+**/*.spec.ts
+**/*.bench.ts
+
 # VCS & OS
 .git/
+projects/
 .DS_Store

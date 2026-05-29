@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "tier1380-security": {
+    "app-security": {
       "command": "bun",
       "args": ["run", "/Users/nolarose/Projects/lib/security/mcp-server.ts"],
-      "description": "Tier-1380 Enterprise Security MCP Server - Bun-optimized for maximum performance with native Bun runtime integration",
+      "description": "App Security MCP Server — Bun.secrets with native Bun runtime integration",
       "env": {
         "BUN_RUNTIME": "true",
         "NODE_ENV": "production"

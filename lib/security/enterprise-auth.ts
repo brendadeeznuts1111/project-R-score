@@ -4,7 +4,7 @@ import { Tier1380PasswordSecurity } from './enterprise-password-security';
 
 import { styled, log } from '../theme/colors';
 import { Utils } from '../utils/index';
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 
 interface AuthenticationContext {
   ipAddress: string;
@@ -189,7 +189,7 @@ export class Tier1380EnterpriseAuth {
    */
   private static async retrieveSession(token: string): Promise<SessionToken | null> {
     const key = `TIER1380_SESSION_${token}`;
-    const sessionData = await Tier1380SecretManager.getSecret(key);
+    const sessionData = await appSecretManager.getSecret(key);
 
     if (!sessionData) return null;
 
@@ -217,7 +217,7 @@ export class Tier1380EnterpriseAuth {
    */
   private static async removeSession(token: string): Promise<void> {
     const key = `TIER1380_SESSION_${token}`;
-    await Tier1380SecretManager.setSecret(key, '', { delete: true });
+    await appSecretManager.setSecret(key, '', { delete: true });
   }
 
   /**
@@ -321,7 +321,7 @@ export class Tier1380EnterpriseAuth {
       lockExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
     });
 
-    await Tier1380SecretManager.setSecret(lockKey, lockData, {
+    await appSecretManager.setSecret(lockKey, lockData, {
       persistEnterprise: true,
     });
 
@@ -333,7 +333,7 @@ export class Tier1380EnterpriseAuth {
    */
   private static async isAccountLocked(username: string): Promise<boolean> {
     const lockKey = `TIER1380_LOCK_${username}`;
-    const lockData = await Tier1380SecretManager.getSecret(lockKey);
+    const lockData = await appSecretManager.getSecret(lockKey);
 
     if (!lockData) return false;
 
@@ -357,7 +357,7 @@ export class Tier1380EnterpriseAuth {
    */
   private static async unlockAccount(username: string): Promise<void> {
     const lockKey = `TIER1380_LOCK_${username}`;
-    await Tier1380SecretManager.setSecret(lockKey, '', { delete: true });
+    await appSecretManager.setSecret(lockKey, '', { delete: true });
     console.info(`🔓 Unlocked account: ${username}`);
   }
 

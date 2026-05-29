@@ -1,5 +1,16 @@
 // lib/registry/server.ts — Private npm registry server with R2 storage backend
 
+import { styled } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
+import { RegistryAuth, AuthConfigs } from './auth';
+import { resolveR2InfraConfig, resolveRegistrySecret } from '../security/infra-secrets';
+import { registryHost } from './env';
+import type { PackageManifest, PackageVersion, PublishRequest } from './registry-types';
+
+function defaultRegistryPort(options: ServerOptions): number {
+  return parseInt(String(options.port ?? Bun.env.REGISTRY_PORT ?? '4873'), 10);
+}
+
 export interface ServerOptions {
   port?: number;
   hostname?: string;
@@ -23,10 +34,8 @@ export class NPMRegistryServer {
   private server?: ReturnType<typeof Bun.serve>;
 
   constructor(options: ServerOptions = {}) {
-    const REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
     this.options = {
-      port: REGISTRY_PORT, // Default npm registry port
+      port: defaultRegistryPort(options),
       hostname: '0.0.0.0',
       auth: 'none',
       allowProxy: true,
@@ -73,8 +82,7 @@ export class NPMRegistryServer {
 
     console.info(styled(`\n📦 NPM Registry Server`, 'accent'));
     console.info(styled(`=====================`, 'accent'));
-    const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    console.info(styled(`🌐 URL: http://${REGISTRY_HOST}:${port}`, 'info'));
+    console.info(styled(`🌐 URL: http://${registryHost()}:${port}`, 'info'));
     console.info(
       styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info')
     );
@@ -329,7 +337,7 @@ export class NPMRegistryServer {
     }
 
     // Update tarball URLs to point to this registry
-    manifest = this.rewriteTarballUrls(manifest, request);
+    manifest = this.rewriteTarballUrl(manifest, request);
 
     return this.jsonResponse(manifest, 200, corsHeaders);
   }
@@ -581,17 +589,22 @@ export class NPMRegistryServer {
 
 // CLI interface
 if (import.meta.main) {
+  const infraR2 = await resolveR2InfraConfig({
+    bucketFallback: Bun.env.R2_REGISTRY_BUCKET || 'npm-registry',
+  });
+  const registrySecret = await resolveRegistrySecret();
+
   const server = new NPMRegistryServer({
-    port: parseInt(process.env.REGISTRY_PORT || '4873'),
-    auth: (process.env.REGISTRY_AUTH as any) || 'none',
-    authSecret: process.env.REGISTRY_SECRET,
+    port: parseInt(Bun.env.REGISTRY_PORT || '4873', 10),
+    auth: (Bun.env.REGISTRY_AUTH as ServerOptions['auth']) || 'none',
+    authSecret: registrySecret,
     storage: {
-      accountId: process.env.R2_ACCOUNT_ID,
-      accessKeyId: process.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-      bucketName: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      accountId: infraR2.accountId,
+      accessKeyId: infraR2.accessKeyId,
+      secretAccessKey: infraR2.secretAccessKey,
+      bucketName: infraR2.bucketName,
     },
-    cdnUrl: process.env.REGISTRY_CDN_URL,
+    cdnUrl: Bun.env.REGISTRY_CDN_URL,
   });
 
   await server.start();

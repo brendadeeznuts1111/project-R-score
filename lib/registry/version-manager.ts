@@ -61,7 +61,7 @@ export class VersionManager {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_VERSIONS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_VERSIONS_BUCKET || 'npm-registry',
       prefix: this.versionPrefix,
     });
   }

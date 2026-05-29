@@ -15,7 +15,7 @@ import {
   generatePointerId as generatePointerIdLib,
   getConceptual as getConceptualLib,
 } from '../lib/utils/pointer-id';
-import { metricsFeed } from '../lib/deployment/tier1380-metrics-feed';
+import { metricsFeed } from '../lib/deployment/metrics-feed';
 import { BunHTTP2Multiplexer } from '../lib/http/http2-multiplexer';
 import { StatusOutput, writeRScore, writeColored } from '../lib/utils/output-helpers';
 import { loadJSON, saveJSON } from '../lib/utils/json-loader';

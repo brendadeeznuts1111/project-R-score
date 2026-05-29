@@ -51,7 +51,7 @@ export class RegistrySecretsManager {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_SECRETS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_SECRETS_BUCKET || 'npm-registry',
       prefix: 'secrets/',
     });
     this.localSecretsService = Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry';

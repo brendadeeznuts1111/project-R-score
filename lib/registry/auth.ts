@@ -1,6 +1,7 @@
 // lib/registry/auth.ts — Registry authentication middleware
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { registryHost } from './env';
 import type { RegistryUser, AuthToken } from './registry-types';
 
 export type AuthType = 'none' | 'basic' | 'token' | 'jwt';
@@ -331,8 +332,7 @@ if (import.meta.main) {
   console.info(styled('🔐 Registry Auth Test', 'accent'));
   console.info(styled('=====================', 'accent'));
 
-  const TEST_HOST =
-    process.env.REGISTRY_HOST || process.env.SERVER_HOST || process.env.HOST || 'localhost';
+  const TEST_HOST = registryHost();
 
   // Test no auth
   const noAuth = new RegistryAuth(AuthConfigs.none());

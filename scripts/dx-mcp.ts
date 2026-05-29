@@ -19,7 +19,7 @@ const ROOT = join(import.meta.dir, '..');
 const GIT = Bun.which('git')!;
 const BUN_VERSION = Bun.version;
 const SERVER_VERSION = '2.1.0';
-const SCAN_DEBUG = process.env.DX_MCP_DEBUG === '1';
+const SCAN_DEBUG = Bun.env.DX_MCP_DEBUG === '1';
 
 function debugScan(where: string, err: unknown): void {
   if (SCAN_DEBUG) console.error(`[dx-mcp:scan] ${where}`, err);
@@ -34,7 +34,7 @@ const DEFAULT_SCAN_ROOTS = [
 ];
 
 const SCAN_ROOTS = (() => {
-  const env = process.env.DX_SCAN_ROOTS;
+  const env = Bun.env.DX_SCAN_ROOTS;
   if (!env) return DEFAULT_SCAN_ROOTS;
   return env
     .split(',')
@@ -1449,7 +1449,9 @@ async function main() {
   }
 }
 
-main().catch(err => {
-  console.error('dx-mcp fatal:', err);
-  process.exit(1);
-});
+if (import.meta.main) {
+  main().catch(err => {
+    console.error('dx-mcp fatal:', err);
+    process.exit(1);
+  });
+}

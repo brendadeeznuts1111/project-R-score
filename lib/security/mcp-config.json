@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "tier1380-security": {
+    "app-security": {
       "command": "bun",
       "args": ["run", "/Users/nolarose/Projects/lib/security/mcp-server.ts"],
-      "description": "Tier-1380 Enterprise Security MCP Server - Provides secure secret management, authentication, deployment, and audit capabilities"
+      "description": "App Security MCP Server — Bun.secrets, auth, deployment audit"
     }
   },
   "tools": [

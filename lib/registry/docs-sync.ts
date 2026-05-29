@@ -1,6 +1,7 @@
 // lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { syncUserId } from './env';
 
 export interface UserPreferences {
   userId: string;
@@ -61,8 +62,8 @@ export class DocumentationSync {
       accountId?: string;
     }
   ) {
-    this.r2Bucket = config?.bucketName || process.env.R2_DOCS_BUCKET || 'docs-sync';
-    const accountId = config?.accountId || process.env.R2_ACCOUNT_ID || '';
+    this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
+    const accountId = config?.accountId || Bun.env.R2_ACCOUNT_ID || '';
     this.baseUrl = `https://${accountId}.r2.cloudflarestorage.com`;
     this.deviceId = this.getDeviceId();
   }
@@ -79,8 +80,8 @@ export class DocumentationSync {
    * Get auth header for R2 requests
    */
   private getAuthHeader(): string {
-    const accessKey = process.env.R2_ACCESS_KEY_ID || '';
-    const secretKey = process.env.R2_SECRET_ACCESS_KEY || '';
+    const accessKey = Bun.env.R2_ACCESS_KEY_ID || '';
+    const secretKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
     return `Basic ${btoa(`${accessKey}:${secretKey}`)}`;
   }
 
@@ -385,7 +386,7 @@ export class DocumentationSync {
 
 // CLI interface
 if (import.meta.main) {
-  const userId = process.env.USER_ID || 'anonymous';
+  const userId = syncUserId();
   const sync = new DocumentationSync(userId);
   const args = process.argv.slice(2);
   const command = args[0];

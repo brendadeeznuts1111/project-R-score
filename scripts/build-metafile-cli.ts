@@ -251,8 +251,9 @@ async function main() {
 
     // Save deterministic snapshot if requested
     if (args.snapshot && result.metafile) {
-      const { createBundleSnapshot, normalizeMetafilePaths } =
-        await import('../src/build/metafile-snapshot');
+      const { createBundleSnapshot, normalizeMetafilePaths } = await import(
+        '../src/build/metafile-snapshot'
+      );
       const normalized = normalizeMetafilePaths(result.metafile);
       const snap = createBundleSnapshot(normalized);
       await Bun.write(args.snapshot, JSON.stringify(snap, null, 2));

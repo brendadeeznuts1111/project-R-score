@@ -17,7 +17,7 @@
         "cascade-mover"
       ],
       "optional": [
-        "tier1380-security",
+        "app-security",
         "factorywager-tools",
         "mcp-bridge"
       ],
@@ -79,9 +79,9 @@
       },
       "envFile": "${workspaceFolder}/cascade-mover-v3/.env"
     },
-    "tier1380-security": {
+    "app-security": {
       "type": "stdio",
-      "description": "Secrets, password hashing, auth, deployment audit (disable if unused)",
+      "description": "Secrets, password hashing, auth, deployment audit (Bun.secrets; disable if unused)",
       "command": "bun",
       "args": [
         "run",

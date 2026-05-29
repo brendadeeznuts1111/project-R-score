@@ -1,0 +1,35 @@
+---
+description: Global Bun harness — use Bun-native APIs in root paths; consult dx catalog for one-liners
+globs: lib/**/*.ts,scripts/**/*.ts,packages/**/*.ts,server/**/*.ts,config/**/*.ts,tools/**/*.ts
+alwaysApply: false
+---
+
+# Bun Harness
+
+Root TypeScript in harness paths must prefer Bun-native APIs over Node.js equivalents.
+
+## Before writing code
+
+- Run `bun run dx:catalog tip` or `bun run dx:catalog search <topic>` for one-liners + doc links
+- Source of truth: [`config/bun-dx-catalog.ts`](config/bun-dx-catalog.ts)
+
+## Prefer
+
+| Instead of | Use |
+|------------|-----|
+| `fs.readFileSync` | `await Bun.file(path).text()` |
+| `child_process.spawn` | `Bun.spawn([...])` |
+| `process.env.X` | `Bun.env.X` |
+| `axios` | `fetch()` |
+| CLI without guard | `if (import.meta.main) { ... }` |
+
+## Lint configs
+
+- Harness (global): `eslint.harness.config.ts`
+- Project-specific: `eslint.project.config.ts` (naming, lib/ai overrides)
+
+## Verify
+
+```bash
+bun run check:harness
+```

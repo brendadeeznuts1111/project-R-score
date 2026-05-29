@@ -1,6 +1,7 @@
 // lib/registry/package-docs.ts — Package documentation fetcher with R2 caching
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { npmRegistryUrl } from './env';
 import { R2StorageAdapter } from './r2-storage';
 
 export interface PackageDoc {
@@ -65,7 +66,7 @@ export class PackageDocumentationFetcher {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.r2Storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_DOCS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'npm-registry',
       prefix: this.cachePrefix,
     });
   }
@@ -117,7 +118,7 @@ export class PackageDocumentationFetcher {
    * Fetch from npm registry
    */
   private async fetchFromNpm(packageName: string, version?: string): Promise<PackageDoc | null> {
-    const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
+    const registryUrl = npmRegistryUrl();
     const url = version
       ? `${registryUrl}/${packageName}/${version}`
       : `${registryUrl}/${packageName}`;
@@ -243,7 +244,7 @@ export class PackageDocumentationFetcher {
       keywords?: string[];
     }>
   > {
-    const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
+    const registryUrl = npmRegistryUrl();
 
     try {
       const response = await fetch(

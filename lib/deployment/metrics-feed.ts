@@ -1,5 +1,4 @@
-// lib/deployment/tier1380-metrics-feed.ts — RSS feed generator for Tier-1380 R-Score metrics
-
+/** RSS / JSON metrics feed for R-Score validation runs. */
 import { type Serve } from 'bun';
 
 export interface MetricPayload {
@@ -27,7 +26,7 @@ export interface MetricPayload {
   };
 }
 
-export class Tier1380MetricsFeed {
+export class MetricsFeed {
   private metrics: MetricPayload[] = [];
   private readonly maxHistory = 1000;
 
@@ -51,9 +50,6 @@ export class Tier1380MetricsFeed {
       <guid isPermaLink="false">${m.git.commit}-${m.timestamp}</guid>
       <description><![CDATA[
         R-Score: ${m.rscore.current} → ${m.rscore.projected}
-        P_ratio: ${m.rscore.components.p_ratio}
-        M_impact: ${m.rscore.components.m_impact}
-        S_hardening: ${m.rscore.components.s_hardening}
         Latency: ${m.performance.latency_ms}ms
       ]]></description>
       <category>performance</category>
@@ -65,7 +61,7 @@ export class Tier1380MetricsFeed {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tier-1380 R-Score Metrics</title>
+    <title>FactoryWager R-Score Metrics</title>
     <link>https://factorywager.io/metrics</link>
     <description>Real-time R-Score performance metrics feed</description>
     <language>en</language>
@@ -78,15 +74,13 @@ export class Tier1380MetricsFeed {
 
   async pushToEndpoint(endpoint: string, secret: string): Promise<Response> {
     const latest = this.metrics[this.metrics.length - 1];
-    if (!latest) {
-      throw new Error('No metrics to push');
-    }
+    if (!latest) throw new Error('No metrics to push');
 
     return fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Tier1380-Secret': secret,
+        'X-Metrics-Secret': secret,
         'X-RScore-Version': latest.version,
       },
       body: JSON.stringify(latest),
@@ -120,13 +114,4 @@ export class Tier1380MetricsFeed {
   }
 }
 
-// Singleton export
-export const metricsFeed = new Tier1380MetricsFeed();
-
-/**
- * 💡 Performance Tip: For better performance, consider:
- * 1. Using preconnect for frequently accessed domains
- * 2. Adding resource hints to your HTML head
- * 3. Implementing request caching
- * 4. Using the native fetch API with keep-alive
- */
+export const metricsFeed = new MetricsFeed();

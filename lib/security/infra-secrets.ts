@@ -88,6 +88,15 @@ export async function resolveR2InfraConfig(
   };
 }
 
+export async function resolveRegistrySecret(): Promise<string | undefined> {
+  const value = await getSecret({
+    service: Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry',
+    name: 'REGISTRY_SECRET',
+    envKeys: ['REGISTRY_SECRET'],
+  });
+  return value ?? undefined;
+}
+
 export function resolveProfileSecretsService(): string {
   return Bun.env.PROFILE_SECRETS_SERVICE || 'factorywager';
 }

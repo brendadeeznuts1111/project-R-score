@@ -16,7 +16,7 @@ import {
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 import { Tier1380PasswordSecurity } from './enterprise-password-security';
 import { Tier1380EnterpriseAuth } from './enterprise-auth';
 import { Tier1380SecureDeployment } from './secure-deployment';
@@ -29,14 +29,14 @@ const BUN_VERSION = BUN_RUNTIME ? Bun.version : 'unknown';
 
 class Tier1380SecurityMCPServer {
   private server: Server;
-  private secretManager: Tier1380SecretManager;
+  private secretManager = appSecretManager;
   private lifecycleManager: SecretLifecycleManager;
   private versionManager: VersionedSecretManager;
 
   constructor() {
     this.server = new Server(
       {
-        name: 'tier1380-security',
+        name: 'app-security',
         version: '4.5.0',
       },
       {
@@ -48,7 +48,7 @@ class Tier1380SecurityMCPServer {
       }
     );
 
-    this.secretManager = Tier1380SecretManager;
+    this.secretManager = appSecretManager;
     this.lifecycleManager = new SecretLifecycleManager();
     this.versionManager = new VersionedSecretManager();
 
@@ -63,7 +63,7 @@ class Tier1380SecurityMCPServer {
   async runStdio(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error('🔐 Tier-1380 Security MCP Server running on stdio');
+    console.error('🔐 App Security MCP Server running on stdio');
   }
 
   /**
@@ -100,7 +100,7 @@ class Tier1380SecurityMCPServer {
           return new Response(
             JSON.stringify({
               status: 'healthy',
-              server: 'tier1380-security',
+              server: 'app-security',
               version: '4.5.0',
               bunVersion: BUN_VERSION,
             }),
@@ -1005,14 +1005,14 @@ class Tier1380SecurityMCPServer {
         title: 'Cross-Platform Secret Storage Implementation',
         description:
           'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret. Complete implementation guide with enterprise persistence support.',
-        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/tier1380-secret-manager.ts',
-        reference: 'lib/security/tier1380-secret-manager.ts',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/app-secrets.ts',
+        reference: 'lib/security/app-secrets.ts',
         category: 'secrets',
         severity: 'critical',
         version: '4.5',
         language: 'en',
         codeExample:
-          'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })',
+          'await appSecretManager.setSecret(key, value)',
         isApiReference: true,
       },
       {

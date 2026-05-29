@@ -3,7 +3,7 @@
 import { Tier1380EnterpriseAuth } from './enterprise-auth';
 
 import { styled, log } from '../theme/colors';
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 
 interface DeploymentCredentials {
   username: string;
@@ -128,7 +128,7 @@ export class Tier1380SecureDeployment {
    */
   private static async getDeploymentSecrets(snapshotId: string): Promise<string | null> {
     const key = `TIER1380_DEPLOYMENT_${snapshotId}`;
-    return await Tier1380SecretManager.getSecret(key);
+    return await appSecretManager.getSecret(key);
   }
 
   /**

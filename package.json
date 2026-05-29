@@ -2,7 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2",
   "packageManager": "bun@1.3.14",
-  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -711,7 +711,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 10000.0,
+      "max_concurrent_requests": 1e4,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -741,7 +741,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1000000.0,
+      "max_keys": 1e6,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -782,7 +782,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 10000.0,
+      "max_api_calls_per_hour": 1e4,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1748,7 +1748,7 @@
     "test:r2": "bun run lib/mcp/r2-integration.ts",
     "ci:validate": "bun run --sequential standards:check test:all",
     "ci:required": "bun run ci:bun:check && bun run ci:parallel",
-    "ci:parallel": "bun run --parallel build test:ci:root lint:ci:root",
+    "ci:parallel": "bun run --parallel build test:ci:root lint:ci:root check:harness",
     "ci:parallel:all": "bun run --parallel --no-exit-on-error build test:ci:root lint:ci:root",
     "search:policy:check": "bun run scripts/check-search-policy-governance.ts",
     "search:contract:check": "bun run scripts/search-status-contract-check.ts",
@@ -1764,11 +1764,21 @@
     "lint": "NODE_OPTIONS='--max-old-space-size=16384' bun run eslint lib/ --ext .ts",
     "postlint": "bun run demo:contract:validate",
     "lint:fix": "NODE_OPTIONS='--max-old-space-size=16384' bun run eslint lib/ --ext .ts --fix",
-    "lint:core": "bun run eslint packages/ server/ config/ tools/ --ext .ts",
+    "lint:bun-native": "bun run scripts/harness-strict-lint.ts",
+    "lint:bun-native:rollout": "bun eslint --config eslint.bun-native.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' --quiet",
+    "lint:harness": "bun eslint --config eslint.harness.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts'",
+    "check:bun-native": "bun run lint:bun-native && bun run format:check:harness",
+    "check:harness": "bun run lint:bun-native:rollout && bun run format:check:harness && bun run guard:bun-first:harness && echo '' && echo 'Tip: bun run harness:report for grouped offenders + easy fixes'",
+    "guard:bun-first:harness": "bun run scripts/harness-guard.ts",
+    "dx:catalog": "bun run scripts/dx-catalog-cli.ts",
+    "harness:report": "bun run scripts/harness-report.ts",
+    "harness:promote": "bun run scripts/harness-report.ts --promote",
+    "format:harness": "bun x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts'",
+    "format:check:harness": "bun x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts'",
     "format": "bun run prettier --write lib/**/*.ts",
     "format:check": "bun run prettier --check lib/**/*.ts",
-    "format:core": "bun x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts'",
-    "format:check:core": "bun x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts'",
+    "format:core": "bun run format:harness",
+    "format:check:core": "bun run format:check:harness",
     "type-check": "bun run tsc -b tsconfig.check.json",
     "type-check:ci": "bun run tsc -b tsconfig.ci.json",
     "type-check:full": "bun run tsc -b",
@@ -2202,6 +2212,7 @@
     "jiti": "2.7.0",
     "micromatch": "4.0.8",
     "picocolors": "1.1.1",
+    "prettier": "3.6.2",
     "typescript-eslint": "8.59.3"
   },
   "private": "false",

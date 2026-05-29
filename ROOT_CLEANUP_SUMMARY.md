@@ -24,5 +24,6 @@ Context bloat reduction, barrel trim, dead code purge (−16k lines).
 ## Phase 4.4 (committed)
 
 `lib/projects-scan.ts` uses Bun.Glob, Bun.file, Bun.spawnSync — no node:fs/path in project inventory chain.
+ESLint Bun-native gate: `bun run lint:bun-native` (see `eslint.bun-native.config.ts`).
 
 See [`STRUCTURE.md`](STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).

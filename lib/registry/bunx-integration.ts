@@ -1,6 +1,7 @@
 // lib/registry/bunx-integration.ts — bunx integration for executing registry packages
 
 import { styled } from '../theme/colors';
+import { registryHomeDir, registryPublicUrl } from './env';
 import { R2StorageAdapter } from './r2-storage';
 import { RegistrySecretsManager } from './secrets-manager';
 
@@ -43,9 +44,9 @@ export class BunXIntegration {
       registry?: string;
     } = {}
   ) {
-    this.cacheDir = options.cacheDir || `${process.env.HOME}/.bun/registry-cache`;
+    this.cacheDir = options.cacheDir || `${registryHomeDir()}/.bun/registry-cache`;
     this.storage = new R2StorageAdapter({
-      bucketName: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketName: Bun.env.R2_REGISTRY_BUCKET || 'npm-registry',
     });
     this.secretsManager = new RegistrySecretsManager();
   }
@@ -138,7 +139,7 @@ export class BunXIntegration {
     }
 
     try {
-      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+      const registry = registryPublicUrl();
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
 
       const headers: Record<string, string> = {
@@ -181,7 +182,7 @@ export class BunXIntegration {
    */
   private async downloadAndCache(pkgName: string, version: string): Promise<CachedPackage | null> {
     try {
-      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+      const registry = registryPublicUrl();
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
 
       // Get manifest

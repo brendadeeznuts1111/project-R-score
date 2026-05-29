@@ -5,7 +5,7 @@ import { R2StorageAdapter } from './r2-storage';
 import { NPMRegistryServer } from './server';
 import { RegistryAuth, AuthConfigs } from './auth';
 import { loadRegistryConfig } from './config-loader';
-import { resolveR2InfraConfig } from '../security/infra-secrets';
+import { resolveR2InfraConfig, resolveRegistrySecret } from '../security/infra-secrets';
 
 // Bun v1.3.7: ANSI-aware text wrapping helper
 function wrapText(text: string, columns: number = 80): string {
@@ -21,10 +21,10 @@ function wrapText(text: string, columns: number = 80): string {
   return text;
 }
 
-const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+const DEFAULT_REGISTRY_PORT = parseInt(Bun.env.REGISTRY_PORT || '4873', 10);
+const DEFAULT_REGISTRY_HOST = Bun.env.REGISTRY_HOST || Bun.env.SERVER_HOST || 'localhost';
 const DEFAULT_REGISTRY_URL =
-  process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+  Bun.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
 
 const COMMANDS = {
   start: 'Start the registry server',
@@ -41,10 +41,13 @@ const COMMANDS = {
 };
 
 class RegistryCLI {
-  private storage: R2StorageAdapter;
+  private storage?: R2StorageAdapter;
 
-  constructor() {
-    this.storage = new R2StorageAdapter();
+  private async getStorage(): Promise<R2StorageAdapter> {
+    if (!this.storage) {
+      this.storage = await R2StorageAdapter.create();
+    }
+    return this.storage;
   }
 
   async run(args: string[]): Promise<void> {
@@ -95,22 +98,23 @@ class RegistryCLI {
    */
   private async handleStart(options: any): Promise<void> {
     console.info(styled('\n🚀 Starting NPM Registry...', 'accent'));
+    const registrySecret = await resolveRegistrySecret();
     const infraR2 = await resolveR2InfraConfig({
-      bucketFallback: options.bucket || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketFallback: options.bucket || Bun.env.R2_REGISTRY_BUCKET || 'npm-registry',
     });
 
     const server = new NPMRegistryServer({
-      port: parseInt(options.port || process.env.REGISTRY_PORT || '4873'),
+      port: parseInt(options.port || Bun.env.REGISTRY_PORT || '4873'),
       hostname: options.host || '0.0.0.0',
-      auth: options.auth || process.env.REGISTRY_AUTH || 'none',
-      authSecret: options.secret || process.env.REGISTRY_SECRET,
+      auth: options.auth || Bun.env.REGISTRY_AUTH || 'none',
+      authSecret: options.secret || registrySecret,
       storage: {
         accountId: infraR2.accountId,
         accessKeyId: infraR2.accessKeyId,
         secretAccessKey: infraR2.secretAccessKey,
         bucketName: infraR2.bucketName,
       },
-      cdnUrl: options.cdn || process.env.REGISTRY_CDN_URL,
+      cdnUrl: options.cdn || Bun.env.REGISTRY_CDN_URL,
       allowProxy: options.proxy !== 'false',
     });
 
@@ -456,7 +460,8 @@ class RegistryCLI {
    * Show registry stats
    */
   private async handleStats(): Promise<void> {
-    const status = this.storage.getConfigStatus();
+    const storage = await this.getStorage();
+    const status = storage.getConfigStatus();
 
     console.info(styled('\n📊 Registry Statistics', 'accent'));
     console.info(styled('=====================', 'accent'));
@@ -471,14 +476,14 @@ class RegistryCLI {
     );
 
     if (status.configured) {
-      const connected = await this.storage.testConnection();
+      const connected = await storage.testConnection();
       console.info(
         styled(`  Connected: ${connected ? '✅' : '❌'}`, connected ? 'success' : 'error')
       );
 
       if (connected) {
-        const packages = await this.storage.listPackages();
-        const stats = await this.storage.getStats();
+        const packages = await storage.listPackages();
+        const stats = await storage.getStats();
 
         console.info(styled('\n📦 Packages:', 'info'));
         console.info(styled(`  Total: ${stats.packages}`, 'muted'));
@@ -493,26 +498,30 @@ class RegistryCLI {
    */
   private async handleConfig(): Promise<void> {
     const infraR2 = await resolveR2InfraConfig({
-      bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketFallback: Bun.env.R2_REGISTRY_BUCKET || 'npm-registry',
     });
+    const registrySecret = await resolveRegistrySecret();
     console.info(styled('\n⚙️  Registry Configuration', 'accent'));
     console.info(styled('==========================', 'accent'));
 
     console.info(styled('\n🌐 Server:', 'info'));
-    console.info(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
-    console.info(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
+    console.info(styled(`  Port: ${Bun.env.REGISTRY_PORT || '4873'}`, 'muted'));
+    console.info(styled(`  Auth: ${Bun.env.REGISTRY_AUTH || 'none'}`, 'muted'));
+    console.info(
+      styled(`  Secret: ${registrySecret ? 'configured' : 'not set'}`, 'muted')
+    );
 
     console.info(styled('\n🪣 R2 Storage:', 'info'));
     console.info(styled(`  Bucket: ${infraR2.bucketName}`, 'muted'));
     console.info(styled(`  Account: ${infraR2.accountId || 'not set'}`, 'muted'));
 
     console.info(styled('\n📡 CDN:', 'info'));
-    console.info(styled(`  URL: ${process.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
+    console.info(styled(`  URL: ${Bun.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
 
     console.info(styled('\n📝 Environment Variables:', 'info'));
     console.info(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));
     console.info(styled('  REGISTRY_AUTH - Auth type: none, basic, token, jwt', 'muted'));
-    console.info(styled('  REGISTRY_SECRET - Auth secret/password', 'muted'));
+    console.info(styled('  REGISTRY_SECRET - Auth secret (Bun.secrets or env)', 'muted'));
     console.info(styled('  R2_ACCOUNT_ID - Cloudflare account ID', 'muted'));
     console.info(styled('  R2_ACCESS_KEY_ID - R2 access key', 'muted'));
     console.info(styled('  R2_SECRET_ACCESS_KEY - R2 secret key', 'muted'));
@@ -643,6 +652,7 @@ class RegistryCLI {
   }
 }
 
-// Run CLI
-const cli = new RegistryCLI();
-await cli.run(process.argv.slice(2));
+if (import.meta.main) {
+  const cli = new RegistryCLI();
+  await cli.run(process.argv.slice(2));
+}

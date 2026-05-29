@@ -73,7 +73,7 @@ export class RSSAggregator {
   ) {
     this.r2Storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_FEEDS_BUCKET || 'rss-feeds',
+      bucketName: r2Config?.bucketName || Bun.env.R2_FEEDS_BUCKET || 'rss-feeds',
       prefix: `feeds/${userId}/`,
     });
   }
