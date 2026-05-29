@@ -1,16 +1,15 @@
 #!/usr/bin/env bun
 // projects-table.ts — Inventory all project directories with Bun.inspect.table
-// Run: bun run scripts/projects-table.ts [--root] [--sort name|files|changed]
+// Run: bun run scripts/projects-table.ts [--sort name|files|changed] [--deep]
 
-import { readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   countFiles,
   dirSizeBytes,
   discoverRootProjectNames,
   extractGithubUrl,
+  joinPath,
   lastModified,
+  parseScanFlags,
 } from '../lib/projects-scan.ts';
 
 const ROOT = process.cwd();
@@ -23,37 +22,36 @@ interface ProjectRow {
   sizeKb: number;
 }
 
-const { values: flags } = parseArgs({
-  args: Bun.argv,
-  options: {
-    sort: { type: 'string', default: 'name' },
-    deep: { type: 'boolean', default: false },
-    json: { type: 'boolean', default: false },
-    color: { type: 'boolean', default: true },
-  },
-  strict: false,
-  allowPositionals: true,
+function shallowEntryCount(dir: string): number {
+  return [...new Bun.Glob('*').scanSync({ cwd: dir, onlyFiles: false, dot: false })].filter(
+    name => !name.includes('/')
+  ).length;
+}
+
+const flags = parseScanFlags(Bun.argv, {
+  sort: { type: 'string', default: 'name' },
+  deep: { type: 'boolean', default: false },
+  json: { type: 'boolean', default: false },
+  color: { type: 'boolean', default: true },
 });
 
-const projectDirs = discoverRootProjectNames(ROOT);
 const rows: ProjectRow[] = [];
 
-for (const dir of projectDirs) {
-  const full = join(ROOT, dir);
-  const files = flags.deep ? countFiles(full) : readdirSync(full).length;
+for (const dir of discoverRootProjectNames(ROOT)) {
+  const full = joinPath(ROOT, dir);
   const lastMod = lastModified(full);
   const size = dirSizeBytes(full);
 
   rows.push({
     name: dir,
-    files,
-    githubUrl: extractGithubUrl(full),
+    files: flags.deep ? countFiles(full) : shallowEntryCount(full),
+    githubUrl: await extractGithubUrl(full),
     lastChanged: lastMod ? lastMod.toISOString().replace('T', ' ').slice(0, 19) : '—',
     sizeKb: Math.round(size / 1024),
   });
 }
 
-const sortKey = flags.sort as 'name' | 'files' | 'changed' | 'size';
+const sortKey = flags.sort as string;
 if (sortKey === 'files') {
   rows.sort((a, b) => b.files - a.files);
 } else if (sortKey === 'changed') {

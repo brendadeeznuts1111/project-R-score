@@ -1,36 +1,33 @@
 #!/usr/bin/env bun
 // projects-dashboard.ts — Bun-native project dashboard for projects/active/
-// Zero npm deps. Bun.inspect.table, Bun.stringWidth, Bun.wrapAnsi, Bun.markdown.ansi, Bun.cron.
 // Run: bun run scripts/projects-dashboard.ts [--cards] [--readme] [--watch N] [--sort ...] [--timing]
 
-import { readdirSync, existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   checkGitStatus,
   countFiles,
   dirSizeBytes,
+  fileExistsSync,
+  joinPath,
   lastModified,
+  listChildDirectoryNames,
+  parseScanFlags,
+  readPackageJson,
+  readTextFileSync,
 } from '../lib/projects-scan.ts';
 
 const ROOT = process.cwd();
-const ACTIVE = join(ROOT, 'projects', 'active');
+const ACTIVE = joinPath(ROOT, 'projects', 'active');
 
-const { values: flags } = parseArgs({
-  args: Bun.argv,
-  options: {
-    sort: { type: 'string', default: 'name' },
-    cards: { type: 'boolean', default: false },
-    json: { type: 'boolean', default: false },
-    color: { type: 'boolean', default: true },
-    timing: { type: 'boolean', default: false },
-    readme: { type: 'boolean', default: false },
-    watch: { type: 'string' }, // seconds, e.g. --watch=30
-  },
-  strict: false,
-  allowPositionals: true,
+const flags = parseScanFlags(Bun.argv, {
+  sort: { type: 'string', default: 'name' },
+  cards: { type: 'boolean', default: false },
+  json: { type: 'boolean', default: false },
+  color: { type: 'boolean', default: true },
+  timing: { type: 'boolean', default: false },
+  readme: { type: 'boolean', default: false },
+  watch: { type: 'string', default: '' },
 });
-const watchSec = flags.watch ? parseInt(flags.watch, 10) || 30 : 0;
+const watchSec = flags.watch ? parseInt(String(flags.watch), 10) || 30 : 0;
 
 // ── Types ──────────────────────────────────────────────────────
 interface ProjectMeta {
@@ -96,34 +93,28 @@ function wrapDesc(text: string, width: number): string[] {
 }
 
 // ── Scan ───────────────────────────────────────────────────────
-function discoverProjects(): ProjectMeta[] {
+async function discoverProjects(): Promise<ProjectMeta[]> {
   const projects: ProjectMeta[] = [];
 
-  for (const entry of readdirSync(ACTIVE, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    if (entry.name.startsWith('.')) continue;
+  for (const entry of listChildDirectoryNames(ACTIVE)) {
+    if (entry.startsWith('.')) continue;
 
-    const dir = join(ACTIVE, entry.name);
-    const pkgPath = join(dir, 'package.json');
-    if (!existsSync(pkgPath)) continue;
+    const dir = joinPath(ACTIVE, entry);
+    if (!fileExistsSync(joinPath(dir, 'package.json'))) continue;
 
-    let pkg: Record<string, any> = {};
-    try {
-      pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-    } catch {}
-
+    const pkg = await readPackageJson(dir);
     const lastMod = lastModified(dir);
 
     projects.push({
-      dir: entry.name,
-      name: pkg.name || entry.name,
-      version: pkg.version || '—',
-      description: pkg.description || '—',
-      license: pkg.license || '—',
+      dir: entry,
+      name: (pkg.name as string) || entry,
+      version: (pkg.version as string) || '—',
+      description: (pkg.description as string) || '—',
+      license: (pkg.license as string) || '—',
       private: !!pkg.private,
       gitStatus: checkGitStatus(dir),
-      hasReadme: existsSync(join(dir, 'README.md')),
-      hasLicense: !!pkg.license || existsSync(join(dir, 'LICENSE')),
+      hasReadme: fileExistsSync(joinPath(dir, 'README.md')),
+      hasLicense: !!pkg.license || fileExistsSync(joinPath(dir, 'LICENSE')),
       fileCount: countFiles(dir),
       sizeKb: Math.round(dirSizeBytes(dir) / 1024),
       lastChanged: lastMod ? lastMod.toISOString().slice(0, 10) : '—',
@@ -139,9 +130,9 @@ const C = useColor
   ? { cyan: '\x1b[36m', bold: '\x1b[1m', muted: '\x1b[2m', dim: '\x1b[2m', reset: '\x1b[0m' }
   : { cyan: '', bold: '', muted: '', dim: '', reset: '' };
 
-function renderDashboard() {
+async function renderDashboard() {
   const t0 = flags.timing ? Bun.nanoseconds() : 0;
-  const projects = discoverProjects();
+  const projects = await discoverProjects();
   const scanNs = flags.timing ? Bun.nanoseconds() - t0 : 0;
 
   const sortKey = flags.sort as string;
@@ -190,9 +181,9 @@ function renderDashboard() {
 
       // ── README preview ────────────────────────────────────────
       if (flags.readme && p.hasReadme) {
-        const readmePath = join(ACTIVE, p.dir, 'README.md');
-        try {
-          const md = readFileSync(readmePath, 'utf-8');
+        const readmePath = joinPath(ACTIVE, p.dir, 'README.md');
+        const md = readTextFileSync(readmePath);
+        if (md) {
           const rendered = Bun.markdown.ansi(md, {
             colors: useColor,
             columns: termWidth - 4,
@@ -200,7 +191,7 @@ function renderDashboard() {
           for (const line of rendered.split('\n')) {
             console.log(`│  ${line}`);
           }
-        } catch {
+        } else {
           console.log(`│  ${C.muted}(README.md unreadable)${C.reset}`);
         }
       }
@@ -242,13 +233,12 @@ function renderDashboard() {
 // ── Run ────────────────────────────────────────────────────────
 if (watchSec > 0) {
   console.clear();
-  renderDashboard();
+  await renderDashboard();
   setInterval(() => {
     console.clear();
-    renderDashboard();
+    void renderDashboard();
   }, watchSec * 1000);
-  // Keep alive
   await new Promise(() => {});
 } else {
-  renderDashboard();
+  await renderDashboard();
 }

@@ -5,9 +5,15 @@
 // Register in .cursor/mcp.json or .mcp.json:
 //   { "type": "stdio", "command": "bun", "args": ["run", "${workspaceFolder}/scripts/dx-mcp.ts"] }
 
-import { readdirSync, statSync, existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
-import { checkGitStatus, walkStats } from '../lib/projects-scan.ts';
+import {
+  baseName,
+  checkGitStatus,
+  fileExistsSync,
+  isDirectory,
+  joinPath as join,
+  listChildDirectoryNames,
+  walkStats,
+} from '../lib/projects-scan.ts';
 
 const ROOT = join(import.meta.dir, '..');
 const GIT = Bun.which('git')!;
@@ -106,15 +112,15 @@ function detectType(
 ): { type: ProjectType; signals: string[] } {
   const s: string[] = [];
 
-  if (existsSync(join(fullPath, 'wrangler.toml'))) {
+  if (fileExistsSync(join(fullPath, 'wrangler.toml'))) {
     s.push('wrangler.toml');
     return { type: 'cloudflare-worker', signals: s };
   }
-  if (existsSync(join(fullPath, 'src', 'server', 'cascade-mover-mcp.ts'))) {
+  if (fileExistsSync(join(fullPath, 'src', 'server', 'cascade-mover-mcp.ts'))) {
     s.push('cascade-mover-mcp.ts');
     return { type: 'cascade-mover', signals: s };
   }
-  if (existsSync(join(fullPath, 'src', 'server', 'main-server.ts'))) {
+  if (fileExistsSync(join(fullPath, 'src', 'server', 'main-server.ts'))) {
     s.push('main-server.ts');
     return { type: 'cascade-mover', signals: s };
   }
@@ -141,16 +147,16 @@ async function makeProjectMeta(fullPath: string, scanRoot: string): Promise<Proj
   return {
     fullPath,
     scanRoot,
-    dirName: basename(fullPath),
-    name: pkg.name || basename(fullPath),
+    dirName: baseName(fullPath),
+    name: pkg.name || baseName(fullPath),
     version: pkg.version || '—',
     description: pkg.description || '—',
     license: pkg.license || '—',
     private: !!pkg.private,
     type,
     gitStatus: checkGitStatus(fullPath, GIT),
-    hasReadme: existsSync(join(fullPath, 'README.md')),
-    hasLicense: !!pkg.license || existsSync(join(fullPath, 'LICENSE')),
+    hasReadme: fileExistsSync(join(fullPath, 'README.md')),
+    hasLicense: !!pkg.license || fileExistsSync(join(fullPath, 'LICENSE')),
     fileCount: stats.fileCount,
     sizeKb: stats.sizeKb,
     lastChanged: stats.lastChanged,
@@ -164,21 +170,20 @@ async function scanProjects(): Promise<ProjectMeta[]> {
   const projects: ProjectMeta[] = [];
 
   for (const root of SCAN_ROOTS) {
-    if (!existsSync(root)) continue;
+    if (!isDirectory(root)) continue;
 
-    if (existsSync(join(root, 'package.json'))) {
+    if (fileExistsSync(join(root, 'package.json'))) {
       if (!seen.has(root)) {
         seen.add(root);
         projects.push(await makeProjectMeta(root, root));
       }
     }
 
-    for (const entry of readdirSync(root, { withFileTypes: true })) {
-      if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
-      if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'build')
-        continue;
-      const fp = join(root, entry.name);
-      if (seen.has(fp) || !existsSync(join(fp, 'package.json'))) continue;
+    for (const name of listChildDirectoryNames(root)) {
+      if (name.startsWith('.')) continue;
+      if (name === 'node_modules' || name === 'dist' || name === 'build') continue;
+      const fp = join(root, name);
+      if (seen.has(fp) || !fileExistsSync(join(fp, 'package.json'))) continue;
       seen.add(fp);
       projects.push(await makeProjectMeta(fp, root));
     }
@@ -248,7 +253,7 @@ async function findUnusedDeps(
   dir: string
 ): Promise<{ used: string[]; unused: string[]; deps: Record<string, string> }> {
   const pkgPath = join(dir, 'package.json');
-  if (!existsSync(pkgPath)) return { used: [], unused: [], deps: {} };
+  if (!fileExistsSync(pkgPath)) return { used: [], unused: [], deps: {} };
   let deps: Record<string, string> = {};
   try {
     const pkg = (await Bun.file(pkgPath).json()) as Record<string, any>;
@@ -274,8 +279,7 @@ async function findLargeFiles(dir: string, topN = 20): Promise<{ path: string; s
   const srcFiles = await walkSource(dir);
   for (const file of srcFiles) {
     try {
-      const s = statSync(file);
-      files.push({ path: file.replace(dir + '/', ''), size: s.size });
+      files.push({ path: file.replace(dir + '/', ''), size: Bun.file(file).size });
     } catch (err) {
       debugScan(`stat ${file}`, err);
     }
@@ -325,7 +329,7 @@ function rgSearch(dir: string, pattern: string, maxResults = 50): string[] {
 
 function nodeModulesSize(dir: string): number {
   const nm = join(dir, 'node_modules');
-  if (!existsSync(nm)) return 0;
+  if (!fileExistsSync(nm)) return 0;
   try {
     const proc = Bun.spawnSync(['du', '-sk', nm], { timeout: 5000 });
     return parseInt(proc.stdout.toString().trim().split(/\s+/)[0] || '0', 10);
@@ -338,13 +342,16 @@ function checkLockfile(dir: string): { exists: boolean; inSync: boolean; size: n
   const lock = join(dir, 'bun.lock');
   const lockb = join(dir, 'bun.lockb');
   const pkg = join(dir, 'package.json');
-  if (!existsSync(pkg)) return { exists: false, inSync: false, size: 0 };
-  const lf = existsSync(lock) ? lock : existsSync(lockb) ? lockb : null;
+  if (!fileExistsSync(pkg)) return { exists: false, inSync: false, size: 0 };
+  const lf = fileExistsSync(lock) ? lock : fileExistsSync(lockb) ? lockb : null;
   if (!lf) return { exists: false, inSync: false, size: 0 };
-  const size = statSync(lf).size;
-  const pkgMtime = statSync(pkg).mtimeMs;
-  const lockMtime = statSync(lf).mtimeMs;
-  return { exists: true, inSync: lockMtime >= pkgMtime, size };
+  const lockFile = Bun.file(lf);
+  const pkgFile = Bun.file(pkg);
+  return {
+    exists: true,
+    inSync: lockFile.lastModified >= pkgFile.lastModified,
+    size: lockFile.size,
+  };
 }
 
 async function analyzeWorkspace(): Promise<{
@@ -353,7 +360,7 @@ async function analyzeWorkspace(): Promise<{
   rootDeps: number;
 }> {
   const pkgPath = join(ROOT, 'package.json');
-  if (!existsSync(pkgPath)) return { packages: [], totalDeps: 0, rootDeps: 0 };
+  if (!fileExistsSync(pkgPath)) return { packages: [], totalDeps: 0, rootDeps: 0 };
   let pkg: Record<string, any> = {};
   try {
     pkg = (await Bun.file(pkgPath).json()) as Record<string, any>;
@@ -383,7 +390,7 @@ async function findBloat(dir: string): Promise<{
   for (const file of srcFiles) {
     totalSourceFiles++;
     try {
-      totalSourceKb += Math.round(statSync(file).size / 1024);
+      totalSourceKb += Math.round(Bun.file(file).size / 1024);
     } catch (err) {
       debugScan(`bloat stat ${file}`, err);
     }
@@ -400,20 +407,20 @@ async function findBloat(dir: string): Promise<{
 function knownEntrypoints(p: ProjectMeta): { path: string; exists: boolean }[] {
   const eps: { path: string; exists: boolean }[] = [];
   if (p.type === 'cloudflare-worker') {
-    eps.push({ path: 'src/index.ts', exists: existsSync(join(p.fullPath, 'src', 'index.ts')) });
-    eps.push({ path: 'wrangler.toml', exists: existsSync(join(p.fullPath, 'wrangler.toml')) });
+    eps.push({ path: 'src/index.ts', exists: fileExistsSync(join(p.fullPath, 'src', 'index.ts')) });
+    eps.push({ path: 'wrangler.toml', exists: fileExistsSync(join(p.fullPath, 'wrangler.toml')) });
   } else if (p.type === 'cascade-mover') {
     eps.push({
       path: 'src/server/main-server.ts',
-      exists: existsSync(join(p.fullPath, 'src', 'server', 'main-server.ts')),
+      exists: fileExistsSync(join(p.fullPath, 'src', 'server', 'main-server.ts')),
     });
     eps.push({
       path: 'src/server/cascade-mover-mcp.ts',
-      exists: existsSync(join(p.fullPath, 'src', 'server', 'cascade-mover-mcp.ts')),
+      exists: fileExistsSync(join(p.fullPath, 'src', 'server', 'cascade-mover-mcp.ts')),
     });
     eps.push({
       path: 'src/admin-repl.ts',
-      exists: existsSync(join(p.fullPath, 'src', 'admin-repl.ts')),
+      exists: fileExistsSync(join(p.fullPath, 'src', 'admin-repl.ts')),
     });
   }
   eps.push({ path: 'README.md', exists: p.hasReadme });
@@ -665,7 +672,7 @@ async function dispatch(
 
       return {
         total: filtered.length,
-        scanRootCount: SCAN_ROOTS.filter(r => existsSync(r)).length,
+        scanRootCount: SCAN_ROOTS.filter(r => isDirectory(r)).length,
         projects: filtered.map(p => ({
           name: p.name,
           version: p.version,
@@ -756,7 +763,7 @@ async function dispatch(
       const candidates = ['wrangler.toml', 'config.toml', 'bunfig.toml', 'tsconfig.json'];
       for (const cf of candidates) {
         const cfPath = join(p.fullPath, cf);
-        if (existsSync(cfPath)) {
+        if (fileExistsSync(cfPath)) {
           try {
             configs.push({ path: cf, content: await Bun.file(cfPath).text() });
           } catch (err) {
@@ -946,7 +953,7 @@ async function dispatch(
         join(ROOT, '.cursor', 'mcp.json'),
         join(ROOT, '.mcp.json'),
         join(ROOT, '.vscode', 'mcp.json'),
-      ].filter(p => existsSync(p));
+      ].filter(p => fileExistsSync(p));
       if (!mcpPaths.length) return { error: 'No MCP config found (.cursor/mcp.json or .mcp.json)' };
       try {
         const configs = await Promise.all(
@@ -975,7 +982,7 @@ async function dispatch(
               disabled: s.disabled ?? false,
               url: s.url ?? null,
               script: scriptArg || null,
-              scriptExists: script ? existsSync(script) : s.url ? true : null,
+              scriptExists: script ? fileExistsSync(script) : s.url ? true : null,
             };
           }
         );
@@ -1002,13 +1009,12 @@ async function dispatch(
 
     // ── dx_system ───────────────────────────────────────────────
     case 'dx_system': {
-      const { execSync } = await import('node:child_process');
       const cacheAge = scanCache ? (Date.now() - scanCache.ts) / 1000 : 0;
       const totalHits = cacheHits + cacheMisses;
       const systemInfo = {
         server: SERVER_VERSION,
         bun: BUN_VERSION,
-        scanRoots: SCAN_ROOTS.filter(r => existsSync(r)).length,
+        scanRoots: SCAN_ROOTS.filter(r => isDirectory(r)).length,
         cache: {
           hits: cacheHits,
           misses: cacheMisses,
@@ -1018,8 +1024,9 @@ async function dispatch(
         },
       };
       try {
-        const df = execSync('df -k /', { encoding: 'utf-8', timeout: 2000 });
-        const [, , blocks, used, avail, usePct] = df.trim().split('\n')[1].split(/\s+/);
+        const proc = Bun.spawnSync(['df', '-k', '/'], { timeout: 2000 });
+        const df = proc.stdout.toString();
+        const [, , blocks, used, avail, usePct] = df.trim().split('\n')[1]!.split(/\s+/);
         return {
           ...systemInfo,
           disk: {

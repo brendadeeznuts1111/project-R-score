@@ -21,4 +21,8 @@ Context bloat reduction, barrel trim, dead code purge (−16k lines).
 
 `lib/projects-scan.ts` shared module, dx-mcp scan hardening (`DX_MCP_DEBUG=1`), path fork documented in core-documentation.
 
+## Phase 4.4 (committed)
+
+`lib/projects-scan.ts` uses Bun.Glob, Bun.file, Bun.spawnSync — no node:fs/path in project inventory chain.
+
 See [`STRUCTURE.md`](STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).
