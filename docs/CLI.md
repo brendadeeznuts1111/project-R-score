@@ -158,7 +158,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run cheatsheet:auto` | scripts/cheatsheet-auto-version.js detect |
 | `bun run cheatsheet:changelog` | scripts/cheatsheet-versioning.js changelog |
 | `bun run cheatsheet:dashboard` | cheatsheet:integrated dashboard |
-| `bun run cheatsheet:demo:nanoseconds` | scripts/bun-nanoseconds-demo.ts |
 | `bun run cheatsheet:enhanced` | scripts/cheatsheet-enhanced.js |
 | `bun run cheatsheet:github` | scripts/cheatsheet-github.js |
 | `bun run cheatsheet:github:advanced` | scripts/cheatsheet-github-integrator.js |
@@ -201,9 +200,9 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run docs:analyze` | tools/cli/integrated-cli.ts analyze |
-| `bun run docs:build` | scripts/build-docs.ts |
+| `bun run docs:build` | docs:sync:integrated |
 | `bun run docs:cache` | tools/cli/docs-cli.ts cache |
-| `bun run docs:cheatsheet` | scripts/generate-cheatsheet-md.js |
+| `bun run docs:cheatsheet` | scripts/cheatsheet-interactive.js markdown |
 | `bun run docs:demo` | examples/bun-docs-demo.ts |
 | `bun run docs:domain:graph` | docs/domain-renderer.ts full |
 | `bun run docs:fetch` | lib/registry/package-docs.ts |
@@ -216,7 +215,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run docs:rss` | lib/registry/rss-aggregator.ts |
 | `bun run docs:scrape` | lib/docs-scraper.ts |
 | `bun run docs:search` | tools/cli/docs-cli.ts search |
-| `bun run docs:serve` | scripts/serve-docs.ts |
+| `bun run docs:serve` | docs:open |
 | `bun run docs:sync` | lib/registry/docs-sync.ts |
 | `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
 | `bun run docs:validate` | -e "import('./lib/docs-scraper.ts').then(m=>m.generateValidationReport().then(console.log))" |
