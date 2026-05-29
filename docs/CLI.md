@@ -48,7 +48,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:concurrent:safe` | AGENT=1 bun test --concurrent --max-concurrency=4 --timeout=10000 --bail=1 ./tests ./lib ./utils ./cli ./barbershop ./packages/bun-markdown-constants |
 | `bun run test:content-types` | tests/test-content-types.ts |
 | `bun run test:continuity` | tests/business-continuity-test.ts |
-| `bun run test:cookies` | node scripts/test-cookies.js |
 | `bun run test:coverage` | test --coverage ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
 | `bun run test:dashboard:endpoints` | scripts/test-dashboard-endpoints.ts |
 | `bun run test:dashboard:mini` | scripts/test-dashboard-mini.ts |
@@ -56,7 +55,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:dashboard:websocket` | scripts/test-dashboard-websocket.ts |
 | `bun run test:endpoints` | scripts/test-endpoints-local.ts |
 | `bun run test:habits` | tests/habits-test.ts |
-| `bun run test:headers` | node scripts/test-headers.js |
 | `bun run test:integration` | tests/payment-dashboard-integration.ts |
 | `bun run test:p2p` | tests/p2p-proxy-quick-test.ts |
 | `bun run test:payments` | tests/payment-flow-demo.ts |
@@ -80,7 +78,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:scoped:bail` | test --bail=10 |
 | `bun run test:ui-quality` | tests/test-ui-quality.ts |
 | `bun run test:unit` | test ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
-| `bun run test:variants` | node scripts/test-variants.js |
 | `bun run test:watch` | test --watch ./tests ./lib ./utils ./barbershop ./packages/bun-markdown-constants |
 | `bun run test:workspaces` | --filter '*' test |
 
@@ -166,13 +163,13 @@ All commands run via `bun run <name>` from the project root:
 | `bun run cheatsheet:github` | scripts/cheatsheet-github.js |
 | `bun run cheatsheet:github:advanced` | scripts/cheatsheet-github-integrator.js |
 | `bun run cheatsheet:hub` | scripts/cheatsheet-all.js |
-| `bun run cheatsheet:integrated` | scripts/cheatsheet-integrated.js |
+| `bun run cheatsheet:integrated` | scripts/cheatsheet-integrated-v2.js |
 | `bun run cheatsheet:interactive` | scripts/cheatsheet-interactive.js interactive |
 | `bun run cheatsheet:manager` | scripts/cheatsheet-manager.js |
 | `bun run cheatsheet:markdown` | scripts/cheatsheet-interactive.js markdown |
 | `bun run cheatsheet:report` | scripts/cheatsheet-report-generator.js |
 | `bun run cheatsheet:restore` | scripts/cheatsheet-versioning.js restore |
-| `bun run cheatsheet:rss` | scripts/cheatsheet-rss.js |
+| `bun run cheatsheet:rss` | scripts/cheatsheet-rss-monitor-v2.js |
 | `bun run cheatsheet:rss:monitor` | scripts/cheatsheet-rss-monitor-v2.js |
 | `bun run cheatsheet:search` | scripts/cheatsheet.js search |
 | `bun run cheatsheet:snapshot` | scripts/cheatsheet-versioning.js snapshot |
