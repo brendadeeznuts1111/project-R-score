@@ -5,7 +5,10 @@ import { validateHost, validatePort } from '../lib/utils/env-validator.ts';
 
 // Create server that demonstrates content-type handling with validated environment variables
 const CONTENT_TYPE_SERVER_PORT = validatePort(process.env.CONTENT_TYPE_SERVER_PORT, 3001);
-const CONTENT_TYPE_SERVER_HOST = validateHost(process.env.CONTENT_TYPE_SERVER_HOST) || validateHost(process.env.SERVER_HOST) || 'localhost';
+const CONTENT_TYPE_SERVER_HOST =
+  validateHost(process.env.CONTENT_TYPE_SERVER_HOST) ||
+  validateHost(process.env.SERVER_HOST) ||
+  'localhost';
 const server = Bun.serve({
   port: CONTENT_TYPE_SERVER_PORT,
   async fetch(request) {
@@ -50,36 +53,36 @@ function handleContentTypeExamples(): Response {
         url: '/api/content-type/test',
         method: 'POST',
         headers: { 'Content-Type': CONTENT_TYPES.JSON },
-        body: { message: 'Hello JSON' }
+        body: { message: 'Hello JSON' },
       },
       form_urlencoded: {
         url: '/api/content-type/test',
         method: 'POST',
         headers: { 'Content-Type': CONTENT_TYPES.FORM_URLENCODED },
-        body: 'message=Hello+Form'
+        body: 'message=Hello+Form',
       },
       typed_array: {
         url: '/api/typedarray/binary',
         method: 'POST',
         headers: { 'Content-Type': CONTENT_TYPES.BINARY.UINT8_ARRAY },
-        body: 'Uint8Array.from([72, 101, 108, 108, 111])'
+        body: 'Uint8Array.from([72, 101, 108, 108, 111])',
       },
       auto_detect: {
         url: '/api/content-type/auto-detect',
         method: 'POST',
-        body: { message: 'Auto-detect JSON' }
-      }
+        body: { message: 'Auto-detect JSON' },
+      },
     },
     documentation: {
       fetch: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`,
       typed_array: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
-      binary_data: `${BUN_DOCS.BASE}/runtime/binary-data`
-    }
+      binary_data: `${BUN_DOCS.BASE}/runtime/binary-data`,
+    },
   };
 
   return Response.json(examples, {
     headers: {
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -111,15 +114,15 @@ async function handleContentTypeTest(request: Request): Promise<Response> {
       method: request.method,
       contentType,
       contentLength: request.headers.get('content-length'),
-      body: bodyParsed
+      body: bodyParsed,
     },
     timestamp: new Date().toISOString(),
-    documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`
+    documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`,
   };
 
   return Response.json(response, {
     headers: {
-      'X-Content-Type-Received': contentType
+      'X-Content-Type-Received': contentType,
     },
   });
 }
@@ -131,7 +134,7 @@ async function handleTypedArrayBinary(request: Request): Promise<Response> {
     method: request.method,
     contentType,
     binaryData: {
-      available: ['arrayBuffer', 'bytes', 'blob']
+      available: ['arrayBuffer', 'bytes', 'blob'],
     },
     examples: {
       // Binary data examples using fetch pattern
@@ -146,13 +149,13 @@ const uint8Array = await response.bytes(); // Bun-specific shortcut`,
 const uint8Array = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
 return new Response(uint8Array, {
   headers: { 'Content-Type': 'application/octet-stream' }
-});`
+});`,
     },
     documentation: {
       fetch: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`,
       typed_array: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
-      binary_methods: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`
-    }
+      binary_methods: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
+    },
   };
 
   // Check if client wants binary response
@@ -165,7 +168,7 @@ return new Response(uint8Array, {
       headers: {
         'Content-Type': CONTENT_TYPES.BINARY.ARRAY_BUFFER,
         'Content-Length': binaryData.length.toString(),
-        'X-Example': 'Binary response with Uint8Array'
+        'X-Example': 'Binary response with Uint8Array',
       },
     });
   }
@@ -173,7 +176,7 @@ return new Response(uint8Array, {
   // Return JSON response
   return Response.json(responseData, {
     headers: {
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -181,25 +184,23 @@ return new Response(uint8Array, {
 // Auto-detect content-type from request body
 async function handleAutoDetect(request: Request): Promise<Response> {
   const contentType = request.headers.get('content-type');
-  const autoDetectedType = ContentTypeHandler.getContentType(
-    await request.clone().text()
-  );
+  const autoDetectedType = ContentTypeHandler.getContentType(await request.clone().text());
 
   const response = {
     request: {
       providedContentType: contentType,
       autoDetectedContentType: autoDetectedType,
       method: request.method,
-      url: request.url
+      url: request.url,
     },
     bunBehavior: {
       automaticContentType: 'Bun automatically sets Content-Type for:',
       behaviors: [
-        'Blob objects: Uses the blob\'s type property',
+        "Blob objects: Uses the blob's type property",
         'FormData: Sets appropriate multipart boundary',
         'String/JSON: Defaults to text/plain, unless JSON detected',
-        'TypedArrays: Uses application/octet-stream'
-      ]
+        'TypedArrays: Uses application/octet-stream',
+      ],
     },
     example: {
       fetchWithAutoContentType: `// Bun automatically sets Content-Type based on body type
@@ -216,14 +217,14 @@ await fetch('/api/content-type/auto-detect', {
   method: 'POST',
   body: formData
   // Content-Type automatically set with boundary
-});`
+});`,
     },
-    documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`
+    documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`,
   };
 
   return Response.json(response, {
     headers: {
-      'X-Content-Type-Auto-Detected': autoDetectedType
+      'X-Content-Type-Auto-Detected': autoDetectedType,
     },
   });
 }
@@ -344,7 +345,7 @@ new Response('Hello World', {
 </html>`;
 
   return new Response(html, {
-    headers: { 'Content-Type': CONTENT_TYPES.TEXT_HTML }
+    headers: { 'Content-Type': CONTENT_TYPES.TEXT_HTML },
   });
 }
 
@@ -468,9 +469,11 @@ const response = await fetch('http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_
 </html>`;
 
   return new Response(html, {
-    headers: { 'Content-Type': CONTENT_TYPES.TEXT_HTML }
+    headers: { 'Content-Type': CONTENT_TYPES.TEXT_HTML },
   });
 }
 
-console.info(`📨 Content-Type Server running on http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}`);
+console.info(
+  `📨 Content-Type Server running on http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}`
+);
 console.info(`📚 Documentation: ${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`);

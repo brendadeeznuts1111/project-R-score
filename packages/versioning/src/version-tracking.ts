@@ -654,7 +654,10 @@ export class VersionTracker {
         config: this.config,
       };
 
-      await Bun.write(`${this.config.storagePath}/version-tracker.json`, JSON.stringify(data, null, 2));
+      await Bun.write(
+        `${this.config.storagePath}/version-tracker.json`,
+        JSON.stringify(data, null, 2)
+      );
     } catch (error) {
       console.error('Failed to save version tracker data:', error);
     }

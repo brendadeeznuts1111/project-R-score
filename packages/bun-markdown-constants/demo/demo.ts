@@ -34,18 +34,31 @@ HTML entities: & < > "
 `;
 
 console.info('\n📄 Input Markdown:');
-console.info(markdownExample.split('\n').map(l => '   ' + l).join('\n'));
+console.info(
+  markdownExample
+    .split('\n')
+    .map(l => '   ' + l)
+    .join('\n')
+);
 
 const html = Bun.markdown.html(markdownExample, { tables: true });
 console.info('\n📤 Output HTML (first 400 chars):');
-console.info(html.substring(0, 400).split('\n').map(l => '   ' + l).join('\n') + '...');
+console.info(
+  html
+    .substring(0, 400)
+    .split('\n')
+    .map(l => '   ' + l)
+    .join('\n') + '...'
+);
 
 console.info('\n⏱️  Performance:');
 const largeDoc = '# Title\n\n'.repeat(1000) + 'Normal text. '.repeat(50);
 const start1 = performance.now();
 for (let i = 0; i < 100; i++) Bun.markdown.html(largeDoc);
 const end1 = performance.now();
-console.info(`   100 renders: ${(end1 - start1).toFixed(2)}ms (${((end1 - start1) / 100).toFixed(2)}ms avg)`);
+console.info(
+  `   100 renders: ${(end1 - start1).toFixed(2)}ms (${((end1 - start1) / 100).toFixed(2)}ms avg)`
+);
 
 // 2. String.replace Rope Optimization
 section('2. String.replace Rope Optimization');
@@ -54,10 +67,7 @@ console.info('\n🪢 Rope Optimization - lazy concatenation reduces allocations'
 const original = 'The quick brown fox jumps over the lazy dog.';
 console.info(`   Original: "${original}"`);
 
-const replaced = original
-  .replace('quick', 'fast')
-  .replace('brown', 'red')
-  .replace('fox', 'cat');
+const replaced = original.replace('quick', 'fast').replace('brown', 'red').replace('fox', 'cat');
 console.info(`   Result: "${replaced}"`);
 
 // 3. AbortSignal.abort() Optimization
@@ -72,7 +82,7 @@ for (let i = 0; i < iterations; i++) {
 }
 const end2 = performance.now();
 console.info(`   ${iterations.toLocaleString()} abort() calls: ${(end2 - start2).toFixed(2)}ms`);
-console.info(`   Per call: ${((end2 - start2) / iterations * 1000).toFixed(3)} µs`);
+console.info(`   Per call: ${(((end2 - start2) / iterations) * 1000).toFixed(3)} µs`);
 
 // 4. RegExp SIMD Acceleration
 section('4. RegExp SIMD Acceleration');
@@ -81,7 +91,9 @@ console.info('\n🔍 SIMD prefix search (16 bytes at a time)');
 const simdRegex = /aaaa|bbbb|cccc|dddd/;
 const testText = 'x'.repeat(10000) + 'bbbb' + 'x'.repeat(10000);
 console.info(`   Pattern: /aaaa|bbbb|cccc|dddd/`);
-console.info(`   Match in ${testText.length} chars: ${simdRegex.test(testText) ? '✅ Found' : '❌ Not found'}`);
+console.info(
+  `   Match in ${testText.length} chars: ${simdRegex.test(testText) ? '✅ Found' : '❌ Not found'}`
+);
 
 console.info('\n🔧 Fixed-count parentheses JIT (~3.9x speedup)');
 const fixedRegex = /(?:abc){3}/;
@@ -99,7 +111,11 @@ console.info(`   "${testStr}".startsWith("World", 6): ${testStr.startsWith('Worl
 
 console.info('\n📊 Set.size & Map.size (2.24x / 2.74x faster)');
 const set = new Set([1, 2, 3, 4, 5]);
-const map = new Map([['a', 1], ['b', 2], ['c', 3]]);
+const map = new Map([
+  ['a', 1],
+  ['b', 2],
+  ['c', 3],
+]);
 console.info(`   Set {1,2,3,4,5}.size: ${set.size}`);
 console.info(`   Map {a:1,b:2,c:3}.size: ${map.size}`);
 

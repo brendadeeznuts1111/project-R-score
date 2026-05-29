@@ -46,7 +46,10 @@
       "type": "stdio",
       "description": "Cascade Mover v3 — sports intelligence (lines, sources, confidence, 43 tools)",
       "command": "bun",
-      "args": ["run", "${workspaceFolder}/cascade-mover-v3/src/server/cascade-mover-mcp.ts"],
+      "args": [
+        "run",
+        "${workspaceFolder}/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
+      ],
       "env": {
         "NODE_ENV": "production"
       },

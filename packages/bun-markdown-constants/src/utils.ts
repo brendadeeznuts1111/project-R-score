@@ -1,6 +1,6 @@
 /**
  * Utility Functions
- * 
+ *
  * Helper utilities for markdown processing
  */
 
@@ -14,31 +14,34 @@ import type { ValidationResult, SecurityScanResult, CacheStats } from './types';
  * Validate markdown content
  * Checks for size limits, invalid patterns, and potential security issues
  */
-export function validateMarkdown(content: string, options: {
-  maxSize?: number;
-  allowHtml?: boolean;
-  checkScripts?: boolean;
-} = {}): ValidationResult {
+export function validateMarkdown(
+  content: string,
+  options: {
+    maxSize?: number;
+    allowHtml?: boolean;
+    checkScripts?: boolean;
+  } = {}
+): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   const { maxSize = 1000000, allowHtml = true, checkScripts = true } = options;
-  
+
   // Size check
   if (content.length > maxSize) {
     errors.push(`Content exceeds maximum size of ${maxSize} characters`);
   }
-  
+
   // Script tag check
   if (checkScripts && /<script\b/i.test(content)) {
     errors.push('Content contains script tags');
   }
-  
+
   // Event handler check
   if (checkScripts && /on\w+\s*=/i.test(content)) {
     warnings.push('Content may contain inline event handlers');
   }
-  
+
   // Unclosed HTML check
   if (allowHtml) {
     const openTags = (content.match(/<[a-z][^>]*>/gi) || []).length;
@@ -47,11 +50,11 @@ export function validateMarkdown(content: string, options: {
       warnings.push('Potentially unclosed HTML tags detected');
     }
   }
-  
+
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -60,28 +63,40 @@ export function validateMarkdown(content: string, options: {
  */
 export function securityScan(content: string): SecurityScanResult {
   const issues: SecurityScanResult['issues'] = [];
-  
+
   // Dangerous HTML patterns
   const dangerousPatterns = [
     { pattern: /<script\b/i, type: 'dangerous_html' as const, message: 'Script tag detected' },
     { pattern: /<iframe\b/i, type: 'dangerous_html' as const, message: 'Iframe tag detected' },
     { pattern: /<object\b/i, type: 'dangerous_html' as const, message: 'Object tag detected' },
     { pattern: /<embed\b/i, type: 'dangerous_html' as const, message: 'Embed tag detected' },
-    { pattern: /javascript:/i, type: 'blacklisted_pattern' as const, message: 'JavaScript protocol detected' },
-    { pattern: /data:text\/html/i, type: 'blacklisted_pattern' as const, message: 'Data URL with HTML detected' },
-    { pattern: /on\w+\s*=/i, type: 'blacklisted_pattern' as const, message: 'Inline event handler detected' },
+    {
+      pattern: /javascript:/i,
+      type: 'blacklisted_pattern' as const,
+      message: 'JavaScript protocol detected',
+    },
+    {
+      pattern: /data:text\/html/i,
+      type: 'blacklisted_pattern' as const,
+      message: 'Data URL with HTML detected',
+    },
+    {
+      pattern: /on\w+\s*=/i,
+      type: 'blacklisted_pattern' as const,
+      message: 'Inline event handler detected',
+    },
   ];
-  
+
   for (const { pattern, type, message } of dangerousPatterns) {
     if (pattern.test(content)) {
       const position = content.search(pattern);
       issues.push({ type, message, position });
     }
   }
-  
+
   return {
     safe: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -94,29 +109,31 @@ export function securityScan(content: string): SecurityScanResult {
  * Removes all formatting and returns just the text content
  */
 export function extractText(markdown: string): string {
-  return markdown
-    // Remove code blocks
-    .replace(/```[\s\S]*?```/g, '')
-    // Remove inline code
-    .replace(/`[^`]*`/g, '')
-    // Remove images
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    // Remove links but keep text
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    // Remove HTML tags
-    .replace(/<[^>]*>/g, '')
-    // Remove emphasis
-    .replace(/(\*\*|__|\*|_)/g, '')
-    // Remove headers
-    .replace(/^#+\s*/gm, '')
-    // Remove blockquotes
-    .replace(/^>\s*/gm, '')
-    // Remove list markers
-    .replace(/^[\s]*[-*+]\s/gm, '')
-    .replace(/^\s*\d+\.\s/gm, '')
-    // Normalize whitespace
-    .replace(/\n+/g, ' ')
-    .trim();
+  return (
+    markdown
+      // Remove code blocks
+      .replace(/```[\s\S]*?```/g, '')
+      // Remove inline code
+      .replace(/`[^`]*`/g, '')
+      // Remove images
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      // Remove links but keep text
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      // Remove HTML tags
+      .replace(/<[^>]*>/g, '')
+      // Remove emphasis
+      .replace(/(\*\*|__|\*|_)/g, '')
+      // Remove headers
+      .replace(/^#+\s*/gm, '')
+      // Remove blockquotes
+      .replace(/^>\s*/gm, '')
+      // Remove list markers
+      .replace(/^[\s]*[-*+]\s/gm, '')
+      .replace(/^\s*\d+\.\s/gm, '')
+      // Normalize whitespace
+      .replace(/\n+/g, ' ')
+      .trim()
+  );
 }
 
 /**
@@ -132,7 +149,10 @@ export function countWords(markdown: string): number {
  * @param markdown - Markdown content
  * @param wordsPerMinute - Reading speed (default: 200)
  */
-export function estimateReadingTime(markdown: string, wordsPerMinute = 200): {
+export function estimateReadingTime(
+  markdown: string,
+  wordsPerMinute = 200
+): {
   minutes: number;
   words: number;
   text: string;
@@ -140,7 +160,7 @@ export function estimateReadingTime(markdown: string, wordsPerMinute = 200): {
   const text = extractText(markdown);
   const words = countWords(markdown);
   const minutes = Math.ceil(words / wordsPerMinute);
-  
+
   return { minutes, words, text };
 }
 
@@ -148,18 +168,22 @@ export function estimateReadingTime(markdown: string, wordsPerMinute = 200): {
  * Truncate markdown to a specific length
  * Preserves markdown structure when possible
  */
-export function truncateMarkdown(markdown: string, maxLength: number, options: {
-  ellipsis?: string;
-  preserveWords?: boolean;
-} = {}): string {
+export function truncateMarkdown(
+  markdown: string,
+  maxLength: number,
+  options: {
+    ellipsis?: string;
+    preserveWords?: boolean;
+  } = {}
+): string {
   const { ellipsis = '...', preserveWords = true } = options;
-  
+
   if (markdown.length <= maxLength) {
     return markdown;
   }
-  
+
   let truncated = markdown.slice(0, maxLength - ellipsis.length);
-  
+
   if (preserveWords) {
     // Try to end at a word boundary
     const lastSpace = truncated.lastIndexOf(' ');
@@ -167,7 +191,7 @@ export function truncateMarkdown(markdown: string, maxLength: number, options: {
       truncated = truncated.slice(0, lastSpace);
     }
   }
-  
+
   return truncated + ellipsis;
 }
 
@@ -184,7 +208,7 @@ export function calculateCacheStats(hits: number, misses: number): CacheStats {
     hits,
     misses,
     size: total,
-    hitRate: total > 0 ? hits / total : 0
+    hitRate: total > 0 ? hits / total : 0,
   };
 }
 
@@ -195,7 +219,7 @@ export function hashContent(content: string): string {
   let hash = 0;
   for (let i = 0; i < content.length; i++) {
     const char = content.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return Math.abs(hash).toString(36);
@@ -213,7 +237,7 @@ export function debounce<T extends (...args: any[]) => any>(
   delay: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout>;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn(...args), delay);
@@ -228,12 +252,12 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       fn(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }
@@ -260,21 +284,21 @@ export async function withRetry<T>(
   } = {}
 ): Promise<T> {
   const { retries = 3, delay = 100, onError } = options;
-  
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       if (attempt === retries) throw error;
-      
+
       if (onError && error instanceof Error) {
         onError(error, attempt);
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, delay * attempt));
     }
   }
-  
+
   throw new Error('Retry failed');
 }
 

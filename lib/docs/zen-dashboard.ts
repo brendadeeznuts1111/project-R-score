@@ -387,7 +387,9 @@ export class ZenDocumentationDashboard {
     console.info('\n📄 Generating HTML dashboard...');
     const htmlDashboard = await this.generateHTMLDashboard();
 
-    const dashboardFile = (Bun as Record<string, unknown>).file('zen-dashboard.html', { type: 'text/html' });
+    const dashboardFile = (Bun as Record<string, unknown>).file('zen-dashboard.html', {
+      type: 'text/html',
+    });
     await Bun.write(dashboardFile, new TextEncoder().encode(htmlDashboard));
 
     console.info('✅ HTML dashboard saved as: zen-dashboard.html');

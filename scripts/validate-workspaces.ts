@@ -40,20 +40,20 @@ const IGNORE_GLOBS = [
 /**
  * These top-level package.json files are allowed to exist but are intentionally
  * NOT included in the root workspaces. This is currently the case for large
- * applications (kimiremote, factorywager, barbershop, peer) that maintain
- * their own internal workspaces.
+ * applications now all live under projects/active/ (barbershop, peer, kimiremote, factorywager)
+ * that maintain their own internal workspaces.
  *
  * WARNING: This creates an inconsistency — we pull in their internal packages
- * (e.g. kimiremote/packages/*) into the root workspace for unified `bun install`,
- * but we do NOT manage the app's own dependencies (from kimiremote/package.json).
+ * (e.g. projects/active/kimiremote/packages/*) into the root workspace for unified `bun install`,
+ * but we do NOT manage the app's own dependencies (from projects/active/kimiremote/package.json).
  * This is a known design trade-off for Phase 4. A cleaner long-term model would be
  * either fully include these apps or fully exclude them.
  */
 const EXEMPT_PATHS = [
-  'kimiremote/package.json',
-  'factorywager/package.json',
-  'barbershop/package.json',
-  'peer/package.json',
+  'projects/active/kimiremote/package.json',
+  'projects/active/factorywager/package.json',
+  'projects/active/barbershop/package.json',
+  'projects/active/peer/package.json',
   'tools/package.json',
   'lib/package.json',
   'examples/package.json',

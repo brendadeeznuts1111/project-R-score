@@ -367,9 +367,7 @@ class FactoryWagerMCPBridge {
         // Store auth context for logging
         this.currentAuthContext = auth.authContext;
 
-        console.info(
-          styled(`🔐 Authenticated request: ${name} (${auth.authContext.tokenId})`, 'success')
-        );
+        console.error(styled(`Authenticated MCP request: ${name}`, 'success'));
         await this.bunClient.connect();
 
         switch (name) {

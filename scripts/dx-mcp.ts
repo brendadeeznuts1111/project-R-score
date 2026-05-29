@@ -622,7 +622,7 @@ function toolsList() {
       {
         name: 'mcp_status',
         description:
-          'List all MCP servers registered in .mcp.json with file existence checks and env info.',
+          'List MCP servers from .mcp.json / .cursor/mcp.json with script checks and sync drift.',
         inputSchema: { type: 'object' as const, properties: {} },
       },
       {
@@ -964,32 +964,57 @@ async function dispatch(
 
     // ── mcp_status ──────────────────────────────────────────────
     case 'mcp_status': {
-      const candidates = [join(ROOT, '.cursor', 'mcp.json'), join(ROOT, '.mcp.json')];
-      const mcpPath = candidates.find(p => existsSync(p));
-      if (!mcpPath) return { error: 'No MCP config found (.cursor/mcp.json or .mcp.json)' };
+      const mcpPaths = [
+        join(ROOT, '.cursor', 'mcp.json'),
+        join(ROOT, '.mcp.json'),
+        join(ROOT, '.vscode', 'mcp.json'),
+      ].filter(p => existsSync(p));
+      if (!mcpPaths.length) return { error: 'No MCP config found (.cursor/mcp.json or .mcp.json)' };
       try {
-        const cfg = (await Bun.file(mcpPath).json()) as { mcpServers: Record<string, any> };
-        const relFile = mcpPath.startsWith(ROOT) ? mcpPath.slice(ROOT.length + 1) : mcpPath;
-        const servers = Object.entries(cfg.mcpServers || {}).map(([name, s]: [string, any]) => {
-          const scriptArg = s.args?.find((a: string) => a.endsWith('.ts') || a.endsWith('.js'));
-          const script = scriptArg?.includes('${workspaceFolder}')
-            ? join(
-                ROOT,
-                scriptArg.replace('${workspaceFolder}/', '').replace('${workspaceFolder}', '')
-              )
-            : scriptArg;
-          return {
-            name,
-            type: s.type ?? (s.url ? 'remote' : 'stdio'),
-            description: s.description ?? null,
-            url: s.url ?? null,
-            script: scriptArg || null,
-            scriptExists: script ? existsSync(script) : s.url ? true : null,
-          };
-        });
+        const configs = await Promise.all(
+          mcpPaths.map(async path => ({
+            file: path.startsWith(ROOT) ? path.slice(ROOT.length + 1) : path,
+            cfg: (await Bun.file(path).json()) as { mcpServers?: Record<string, any> },
+          }))
+        );
+        const primary =
+          configs.find(c => c.file === '.cursor/mcp.json') ??
+          configs.find(c => c.file === '.mcp.json') ??
+          configs[0];
+        const servers = Object.entries(primary.cfg.mcpServers || {}).map(
+          ([name, s]: [string, any]) => {
+            const scriptArg = s.args?.find((a: string) => a.endsWith('.ts') || a.endsWith('.js'));
+            const script = scriptArg?.includes('${workspaceFolder}')
+              ? join(
+                  ROOT,
+                  scriptArg.replace('${workspaceFolder}/', '').replace('${workspaceFolder}', '')
+                )
+              : scriptArg;
+            return {
+              name,
+              type: s.type ?? (s.url ? 'remote' : 'stdio'),
+              description: s.description ?? null,
+              disabled: s.disabled ?? false,
+              url: s.url ?? null,
+              script: scriptArg || null,
+              scriptExists: script ? existsSync(script) : s.url ? true : null,
+            };
+          }
+        );
+        const rootCfg = configs.find(c => c.file === '.mcp.json');
+        const cursorCfg = configs.find(c => c.file === '.cursor/mcp.json');
+        const sync =
+          rootCfg && cursorCfg
+            ? {
+                compared: [rootCfg.file, cursorCfg.file],
+                inSync: Bun.deepEquals(rootCfg.cfg.mcpServers, cursorCfg.cfg.mcpServers),
+              }
+            : null;
         return {
-          file: relFile,
+          file: primary.file,
+          configs: configs.map(c => c.file),
           serverCount: servers.length,
+          sync,
           servers,
         };
       } catch (e: any) {

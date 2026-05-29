@@ -10,22 +10,26 @@ import pkg from '../package.json' assert { type: 'json' };
 
 const scripts = pkg.scripts as Record<string, string>;
 
-interface Cmd { key: string; cmd: string; desc: string }
+interface Cmd {
+  key: string;
+  cmd: string;
+  desc: string;
+}
 
 const CATEGORIES: Array<{ prefix: string; label: string; desc: string }> = [
-  { prefix: 'help',       label: 'Help',               desc: 'Available commands' },
-  { prefix: 'packages:',  label: 'Package Management',  desc: 'List, check, install deps' },
-  { prefix: 'fix:',       label: 'Antipattern Fixing',  desc: 'Automated code quality fixes' },
-  { prefix: 'format:',    label: 'Format',              desc: 'Prettier formatting' },
-  { prefix: 'lint:',      label: 'Lint',                desc: 'ESLint checks' },
-  { prefix: 'build:',     label: 'Build',               desc: 'Build affected packages' },
-  { prefix: 'test:',      label: 'Test',                desc: 'Run tests' },
-  { prefix: 'install:',   label: 'Install',             desc: 'Scoped installs' },
-  { prefix: 'workspaces:',label: 'Workspace',           desc: 'Workspace orchestration' },
-  { prefix: 'cheatsheet:',label: 'Cheatsheet',          desc: 'Generate cheat sheets' },
-  { prefix: 'demo:',      label: 'Demo',                desc: 'Demo contracts' },
-  { prefix: 'rss:',       label: 'RSS',                 desc: 'RSS feeds' },
-  { prefix: 'docs:',      label: 'Documentation',       desc: 'Doc generation' },
+  { prefix: 'help', label: 'Help', desc: 'Available commands' },
+  { prefix: 'packages:', label: 'Package Management', desc: 'List, check, install deps' },
+  { prefix: 'fix:', label: 'Antipattern Fixing', desc: 'Automated code quality fixes' },
+  { prefix: 'format:', label: 'Format', desc: 'Prettier formatting' },
+  { prefix: 'lint:', label: 'Lint', desc: 'ESLint checks' },
+  { prefix: 'build:', label: 'Build', desc: 'Build affected packages' },
+  { prefix: 'test:', label: 'Test', desc: 'Run tests' },
+  { prefix: 'install:', label: 'Install', desc: 'Scoped installs' },
+  { prefix: 'workspaces:', label: 'Workspace', desc: 'Workspace orchestration' },
+  { prefix: 'cheatsheet:', label: 'Cheatsheet', desc: 'Generate cheat sheets' },
+  { prefix: 'demo:', label: 'Demo', desc: 'Demo contracts' },
+  { prefix: 'rss:', label: 'RSS', desc: 'RSS feeds' },
+  { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation' },
 ];
 
 const SPECIAL: Record<string, string> = {
@@ -40,11 +44,25 @@ const SPECIAL: Record<string, string> = {
 };
 
 const CORE_CMDS = new Set([
-  'dev', 'lint', 'format', 'help', 'packages:list', 'packages:outdated',
-  'fix:console-log', 'fix:scan-any-types', 'fix:scan-default-exports',
-  'fix:scan-non-null-assertions', 'fix:as-any', 'fix:empty-catches',
-  'fix:pin-versions', 'lint:core', 'format:core', 'format:check:core',
-  'validate:workspaces', 'build:affected', 'test:affected',
+  'dev',
+  'lint',
+  'format',
+  'help',
+  'packages:list',
+  'packages:outdated',
+  'fix:console-log',
+  'fix:scan-any-types',
+  'fix:scan-default-exports',
+  'fix:scan-non-null-assertions',
+  'fix:as-any',
+  'fix:empty-catches',
+  'fix:pin-versions',
+  'lint:core',
+  'format:core',
+  'format:check:core',
+  'validate:workspaces',
+  'build:affected',
+  'test:affected',
 ]);
 
 function getCategory(key: string): string | null {
@@ -58,7 +76,10 @@ function getCategory(key: string): string | null {
 
 function describe(key: string, cmd: string): string {
   if (SPECIAL[key]) return SPECIAL[key];
-  return cmd.replace(/^bun run\s+/, '').replace(/^bun\s+/, '').trim();
+  return cmd
+    .replace(/^bun run\s+/, '')
+    .replace(/^bun\s+/, '')
+    .trim();
 }
 
 // Collect commands by category

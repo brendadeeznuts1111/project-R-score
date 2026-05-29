@@ -7,8 +7,8 @@
  * enabling advanced wiki generation with dashboard widgets, analytics, and collaborative features.
  */
 
-import { BarberRecord } from '../barbershop/src/core/barber-server.ts';
-import { createAdminDashboard } from '../barbershop/src/dashboard/index.ts';
+import { BarberRecord } from '../projects/active/barbershop/src/core/barber-server.ts';
+import { createAdminDashboard } from '../projects/active/barbershop/src/dashboard/index.ts';
 import { EnhancedWikiTemplate, WikiGenerationResult } from './enhanced-wikimode.ts';
 
 export interface BarbershopWikiConfig {

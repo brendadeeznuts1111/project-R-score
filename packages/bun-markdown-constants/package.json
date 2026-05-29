@@ -1,7 +1,21 @@
 {
   "name": "@bun-tools/markdown-constants",
   "version": "1.0.0",
+  "packageManager": "bun@1.3.14",
   "description": "Enterprise-grade markdown constants and presets for Bun",
+  "homepage": "https://github.com/brendadeeznuts1111/project-R-score/tree/main/packages/bun-markdown-constants",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git",
+    "directory": "packages/bun-markdown-constants"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/project-R-score/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "main": "src/index.ts",
   "types": "src/index.ts",
   "type": "module",

@@ -28,11 +28,14 @@ export class FetchAndRipStreamer {
 
       // Stream directly to ripgrep - this is the magic!
       const startTime = performance.now();
-      const proc = (Bun as Record<string, unknown>).spawn(['rg', '--line-number', '--color=always', query], {
-        stdin: response.body, // Response body is a ReadableStream!
-        stdout: 'pipe',
-        stderr: 'pipe',
-      });
+      const proc = (Bun as Record<string, unknown>).spawn(
+        ['rg', '--line-number', '--color=always', query],
+        {
+          stdin: response.body, // Response body is a ReadableStream!
+          stdout: 'pipe',
+          stderr: 'pipe',
+        }
+      );
 
       // Get the results as text
       const result = await proc.stdout.text();
@@ -78,10 +81,13 @@ export class FetchAndRipStreamer {
         }
 
         // Stream directly to ripgrep
-        const proc = (Bun as Record<string, unknown>).spawn(['rg', '--line-number', '--heading', query], {
-          stdin: response.body,
-          stdout: 'pipe',
-        });
+        const proc = (Bun as Record<string, unknown>).spawn(
+          ['rg', '--line-number', '--heading', query],
+          {
+            stdin: response.body,
+            stdout: 'pipe',
+          }
+        );
 
         const result = await proc.stdout.text();
         if (result.trim()) {

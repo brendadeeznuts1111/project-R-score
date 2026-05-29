@@ -71,7 +71,7 @@ const fallbackConstantValidator: ConstantValidatorLike = {
 const fallbackAutoHealer: AutoHealerLike = {
   async healAll(): Promise<{ totalFixes: number }> {
     const paths = [...collectPaths(CLI_DOCUMENTATION_URLS), ...collectPaths(BUN_UTILS_URLS)];
-    const fixable = paths.filter((p) => normalizePath(p) !== p).length;
+    const fixable = paths.filter(p => normalizePath(p) !== p).length;
     return { totalFixes: fixable };
   },
 };
@@ -81,9 +81,7 @@ let validatorsPromise: Promise<PlatformValidators> | null = null;
 function createDefaultPlatformValidatorLoader(): () => Promise<unknown> {
   return async () => {
     const modulePath = '../../../lib/validation/' + 'cli-constants-validation';
-    const dynamicImport = new Function('m', 'return import(m)') as (
-      m: string
-    ) => Promise<unknown>;
+    const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<unknown>;
     return dynamicImport(modulePath);
   };
 }
@@ -95,8 +93,7 @@ function isPlatformModule(value: unknown): value is PlatformModule {
   const candidate = value as Record<string, unknown>;
   const hasConstantValidator =
     !!candidate.ConstantValidator &&
-    typeof (candidate.ConstantValidator as Record<string, unknown>).validateConstant ===
-      'function';
+    typeof (candidate.ConstantValidator as Record<string, unknown>).validateConstant === 'function';
   const hasAutoHealer =
     !!candidate.AutoHealer &&
     typeof (candidate.AutoHealer as Record<string, unknown>).healAll === 'function';

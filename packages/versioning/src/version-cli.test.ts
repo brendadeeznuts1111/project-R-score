@@ -21,26 +21,14 @@ describe('parseArgsFrom', () => {
   });
 
   test('accepts valid environment and format values', () => {
-    const options = parseArgsFrom([
-      'report',
-      '--environment',
-      'staging',
-      '--format',
-      'json',
-    ]);
+    const options = parseArgsFrom(['report', '--environment', 'staging', '--format', 'json']);
 
     expect(options.environment).toBe('staging');
     expect(options.format).toBe('json');
   });
 
   test('ignores invalid environment and format values', () => {
-    const options = parseArgsFrom([
-      'report',
-      '--environment',
-      'qa',
-      '--format',
-      'xml',
-    ]);
+    const options = parseArgsFrom(['report', '--environment', 'qa', '--format', 'xml']);
 
     expect(options.environment).toBeUndefined();
     expect(options.format).toBeUndefined();

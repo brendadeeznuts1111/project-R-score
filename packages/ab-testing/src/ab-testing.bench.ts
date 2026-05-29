@@ -199,7 +199,9 @@ console.info(`  Full request cycle: ${fullCycle?.['ns/op']}ns/op (${fullCycle?.[
 console.info(
   `  Cached variant read: ${cachedRead?.['ns/op']}ns/op (${cachedRead?.['ops/s']} ops/s)`
 );
-console.info(`  Cookie serialization: ${serialize?.['ns/op']}ns/op (${serialize?.['ops/s']} ops/s)`);
+console.info(
+  `  Cookie serialization: ${serialize?.['ns/op']}ns/op (${serialize?.['ops/s']} ops/s)`
+);
 
 // Save results
 const report = {

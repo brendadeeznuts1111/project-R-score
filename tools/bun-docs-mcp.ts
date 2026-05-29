@@ -3,6 +3,10 @@
 // Zero dependencies. Indexes 313 MDX files, exposes search + read over stdio.
 // Max 300 lines.
 
+const MANIFEST_VERSION = '1.0.0';
+const SERVER_NAME = 'bun-docs';
+const SERVER_VERSION = '1.0.0';
+
 // --- Types ---
 type Doc = { path: string; slug: string; title: string; desc: string; content: string };
 type JsonRpc = { jsonrpc: '2.0'; id?: number | string; method?: string; params?: any };
@@ -167,7 +171,11 @@ function handleRequest(msg: JsonRpc): object | null {
         result: {
           protocolVersion: '2024-11-05',
           capabilities: { tools: {} },
-          serverInfo: { name: 'bun-docs', version: '1.0.0' },
+          serverInfo: {
+            name: SERVER_NAME,
+            version: SERVER_VERSION,
+            manifestVersion: MANIFEST_VERSION,
+          },
         },
       };
 
@@ -245,7 +253,9 @@ function send(msg: object) {
 async function main() {
   await buildIndex();
   const stderr = (s: string) => process.stderr.write(s + '\n');
-  stderr(`[bun-docs-mcp] Indexed ${docs.length} docs from ${docsRoot}`);
+  stderr(`[${SERVER_NAME}] v${SERVER_VERSION} manifest=${MANIFEST_VERSION}`);
+  stderr(`[${SERVER_NAME}] Indexed ${docs.length} docs from ${docsRoot}`);
+  stderr(`[${SERVER_NAME}] Tools: ${TOOLS.length} registered, transport: stdio`);
 
   // Read stdin as a stream, parse Content-Length framed messages
   let buffer = '';

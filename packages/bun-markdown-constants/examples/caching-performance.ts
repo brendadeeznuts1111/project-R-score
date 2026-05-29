@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 /**
  * Caching and Performance Example
- * 
+ *
  * Demonstrates how to use caching for improved performance
  */
 
-import { 
-  MarkdownPresets, 
+import {
+  MarkdownPresets,
   MarkdownCache,
   benchmark,
   measureMemory,
-  measureTime
+  measureTime,
 } from '../src/index';
 
 console.info('=== Caching and Performance Example ===\n');
@@ -40,7 +40,7 @@ function renderWithCache(docId: string, content: string): string {
     console.info(`  Cache hit for ${docId}`);
     return cached;
   }
-  
+
   console.info(`  Cache miss for ${docId} - rendering...`);
   const result = renderHtml(content);
   memoryCache.set(docId, result);

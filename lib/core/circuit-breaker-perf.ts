@@ -159,7 +159,10 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
   }
 
   private decrementHalfOpenCalls(): void {
-    (this as Record<string, unknown>).halfOpenCalls = Math.max(0, (this as Record<string, unknown>).halfOpenCalls - 1);
+    (this as Record<string, unknown>).halfOpenCalls = Math.max(
+      0,
+      (this as Record<string, unknown>).halfOpenCalls - 1
+    );
   }
 
   private transitionTo(state: CircuitState): void {

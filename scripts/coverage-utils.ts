@@ -138,7 +138,7 @@ function inferComponent(file: string): string {
       'tests',
       'utils',
       'cli',
-      'barbershop',
+      'projects/active/barbershop',
       'scratch',
       'dashboard',
       'scripts',

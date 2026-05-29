@@ -1,15 +1,15 @@
 #!/usr/bin/env bun
 /**
  * Basic Usage Example
- * 
+ *
  * Demonstrates the fundamental features of @bun-tools/markdown-constants
  */
 
-import { 
-  MarkdownPresets, 
-  MARKDOWN_SECURITY, 
+import {
+  MarkdownPresets,
+  MARKDOWN_SECURITY,
   MARKDOWN_FEATURES,
-  MARKDOWN_DOMAINS 
+  MARKDOWN_DOMAINS,
 } from '../src/index';
 
 console.info('=== Basic Usage Example ===\n');
@@ -90,13 +90,16 @@ console.info('  - DEVELOPER: Internal/trusted content');
 console.info('\n\n5. Individual Feature Options');
 console.info('-'.repeat(50));
 
-const customMarkdown = Bun.markdown.html(`# Test
+const customMarkdown = Bun.markdown.html(
+  `# Test
 
-~~Strikethrough~~ and **bold**`, {
-  strikethrough: true,
-  tables: true,
-  autolinks: true
-});
+~~Strikethrough~~ and **bold**`,
+  {
+    strikethrough: true,
+    tables: true,
+    autolinks: true,
+  }
+);
 
 console.info('Custom options (strikethrough, tables, autolinks):');
 console.info(customMarkdown);

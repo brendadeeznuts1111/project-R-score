@@ -14,23 +14,27 @@ const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
 const filter = args.find(a => !a.startsWith('-'));
 
-interface Category { prefix: string; label: string; priority: number }
+interface Category {
+  prefix: string;
+  label: string;
+  priority: number;
+}
 const categories: Category[] = [
-  { prefix: 'packages:',  label: 'Package Management', priority: 0 },
-  { prefix: 'format:',    label: 'Format',              priority: 1 },
-  { prefix: 'fix:',       label: 'Antipattern Fixing',  priority: 2 },
-  { prefix: 'lint:',      label: 'Lint',                priority: 3 },
-  { prefix: 'build:',     label: 'Build',               priority: 4 },
-  { prefix: 'test:',      label: 'Test',                priority: 5 },
-  { prefix: 'install:',   label: 'Install',             priority: 6 },
-  { prefix: 'dev',        label: 'Development',         priority: 7 },
-  { prefix: 'start:',     label: 'Servers',             priority: 8 },
-  { prefix: 'workspaces:',label: 'Workspace',           priority: 9 },
-  { prefix: 'cheatsheet:',label: 'Cheatsheet',          priority: 10 },
-  { prefix: 'demo:',      label: 'Demo',                priority: 11 },
-  { prefix: 'deploy',     label: 'Deploy',              priority: 12 },
-  { prefix: 'rss:',       label: 'RSS',                 priority: 13 },
-  { prefix: 'docs:',      label: 'Documentation',       priority: 14 },
+  { prefix: 'packages:', label: 'Package Management', priority: 0 },
+  { prefix: 'format:', label: 'Format', priority: 1 },
+  { prefix: 'fix:', label: 'Antipattern Fixing', priority: 2 },
+  { prefix: 'lint:', label: 'Lint', priority: 3 },
+  { prefix: 'build:', label: 'Build', priority: 4 },
+  { prefix: 'test:', label: 'Test', priority: 5 },
+  { prefix: 'install:', label: 'Install', priority: 6 },
+  { prefix: 'dev', label: 'Development', priority: 7 },
+  { prefix: 'start:', label: 'Servers', priority: 8 },
+  { prefix: 'workspaces:', label: 'Workspace', priority: 9 },
+  { prefix: 'cheatsheet:', label: 'Cheatsheet', priority: 10 },
+  { prefix: 'demo:', label: 'Demo', priority: 11 },
+  { prefix: 'deploy', label: 'Deploy', priority: 12 },
+  { prefix: 'rss:', label: 'RSS', priority: 13 },
+  { prefix: 'docs:', label: 'Documentation', priority: 14 },
 ];
 
 const SPECIAL: Record<string, string> = {
@@ -58,24 +62,33 @@ function categorize(key: string): { label: string; priority: number } {
   return { label: 'Other', priority: 99 };
 }
 
-interface Entry { key: string; cmd: string; desc: string; category: string; priority: number }
+interface Entry {
+  key: string;
+  cmd: string;
+  desc: string;
+  category: string;
+  priority: number;
+}
 const entries: Entry[] = [];
 
 for (const [key, cmd] of Object.entries(scripts)) {
   if (!cmd || cmd.startsWith('//')) continue;
   const { label, priority } = categorize(key);
   // Skip noisy/internal scripts unless verbose
-  if (!verbose && (
-    key.startsWith('cheatsheet:') ||
-    key.startsWith('rss:') ||
-    key.startsWith('demo:') ||
-    key.startsWith('deploy') ||
-    cmd.startsWith('echo') ||
-    cmd.startsWith('//')
-  )) continue;
+  if (
+    !verbose &&
+    (key.startsWith('cheatsheet:') ||
+      key.startsWith('rss:') ||
+      key.startsWith('demo:') ||
+      key.startsWith('deploy') ||
+      cmd.startsWith('echo') ||
+      cmd.startsWith('//'))
+  )
+    continue;
   if (filter && !key.includes(filter)) continue;
   entries.push({
-    key, cmd: cmd.slice(0, 70),
+    key,
+    cmd: cmd.slice(0, 70),
     desc: describe(key, cmd),
     category: label,
     priority,

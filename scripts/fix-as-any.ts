@@ -43,16 +43,30 @@ async function* walkFiles(dir: string): AsyncGenerator<string> {
       yield* walkFiles(full);
     } else {
       const ext = path.extname(entry);
-      if (EXTENSIONS.has(ext) && !entry.endsWith('.d.ts') && !entry.includes('.test.') && !entry.includes('.bench.')) yield full;
+      if (
+        EXTENSIONS.has(ext) &&
+        !entry.endsWith('.d.ts') &&
+        !entry.includes('.test.') &&
+        !entry.includes('.bench.')
+      )
+        yield full;
     }
   }
 }
 
 const PATTERNS: Array<{ from: RegExp; to: string; label: string }> = [
   // (this as any).prop -> (this as Record<string, unknown>).prop
-  { from: /\(this\s+as\s+any\)\.(\w+)/g, to: '(this as Record<string, unknown>).$1', label: '(this as any)' },
+  {
+    from: /\(this\s+as\s+any\)\.(\w+)/g,
+    to: '(this as Record<string, unknown>).$1',
+    label: '(this as any)',
+  },
   // (error as any).prop -> (error as Record<string, unknown>).prop
-  { from: /\(error\s+as\s+any\)\.(\w+)/g, to: '(error as Record<string, unknown>).$1', label: '(error as any)' },
+  {
+    from: /\(error\s+as\s+any\)\.(\w+)/g,
+    to: '(error as Record<string, unknown>).$1',
+    label: '(error as any)',
+  },
   // (obj as any[]) -> (obj as unknown[])
   { from: /(\w+)\s+as\s+any\[\]/g, to: '$1 as unknown[]', label: 'as any[]' },
 ];
@@ -83,7 +97,8 @@ for await (const file of walkFiles(ROOT)) {
 
   if (newContent === content) continue;
 
-  const count = (content.match(/as\s+any/g) || []).length - (newContent.match(/as\s+any/g) || []).length;
+  const count =
+    (content.match(/as\s+any/g) || []).length - (newContent.match(/as\s+any/g) || []).length;
 
   if (DRY_RUN) {
     console.info(`${path.relative(process.cwd(), file)}: ${count} as any -> as Record/unknown`);
@@ -97,4 +112,6 @@ for await (const file of walkFiles(ROOT)) {
   filesChanged++;
 }
 
-console.info(`\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} as any -> as unknown across ${filesChanged} files.`);
+console.info(
+  `\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} as any -> as unknown across ${filesChanged} files.`
+);

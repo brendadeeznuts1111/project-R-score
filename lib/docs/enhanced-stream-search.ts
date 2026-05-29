@@ -421,11 +421,14 @@ export class EnhancedZenStreamSearcher {
       }
 
       // Stream directly to ripgrep without intermediate storage
-      await using proc = (Bun as Record<string, unknown>).spawn(['rg', '--json', '--line-number', query], {
-        stdin: response.body, // Direct streaming from Response
-        stdout: 'pipe',
-        stderr: 'pipe',
-      });
+      await using proc = (Bun as Record<string, unknown>).spawn(
+        ['rg', '--json', '--line-number', query],
+        {
+          stdin: response.body, // Direct streaming from Response
+          stdout: 'pipe',
+          stderr: 'pipe',
+        }
+      );
 
       const stream = proc.stdout;
       if (!(stream instanceof ReadableStream)) {

@@ -46,8 +46,9 @@ const CORE_PLATFORM = new Set([
   '.git',
 ]);
 
-// Featured projects that live at the root (large active work)
-const FEATURED_AT_ROOT = ['barbershop', 'factorywager', 'kimiremote', 'peer', 'scratch'];
+// Featured projects (moved to projects/active/ or still at root)
+const FEATURED_AT_ROOT = ['scratch'];
+const FEATURED_AT_ACTIVE = ['barbershop', 'factorywager', 'kimiremote', 'peer'];
 
 interface ProjectEntry {
   id: string;
@@ -201,8 +202,8 @@ async function main() {
     byCategory[cat.name] = projectsInCat.length;
   }
 
-  // Add featured projects from root
-  console.info('\nScanning featured root projects...');
+  // Add featured projects from root + projects/active/
+  console.info('\nScanning featured projects...');
   const featured: ProjectEntry[] = [];
 
   for (const name of FEATURED_AT_ROOT) {
@@ -212,6 +213,16 @@ async function main() {
       project.category = 'featured';
       featured.push(project);
       console.info(`  ✓ ${name}`);
+    }
+  }
+
+  for (const name of FEATURED_AT_ACTIVE) {
+    const fullPath = join(ROOT, 'projects/active', name);
+    const project = await scanProject(fullPath, 'featured');
+    if (project) {
+      project.category = 'featured';
+      featured.push(project);
+      console.info(`  ✓ projects/active/${name}`);
     }
   }
 

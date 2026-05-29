@@ -1,6 +1,6 @@
 /**
  * Enhanced TypeScript Type Definitions
- * 
+ *
  * Additional type definitions for @bun-tools/markdown-constants
  */
 
@@ -234,5 +234,3 @@ export interface PresetConfig {
   features: MarkdownOptions;
   recommendedFor: string[];
 }
-
-

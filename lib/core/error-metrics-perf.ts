@@ -170,7 +170,8 @@ export class OptimizedErrorMetricsCollector extends ErrorMetricsCollector {
 
     // Set up optimized cleanup
     setInterval(() => {
-      const cutoff = Date.now() - ((this as Record<string, unknown>).config.retentionMs || 24 * 60 * 60 * 1000);
+      const cutoff =
+        Date.now() - ((this as Record<string, unknown>).config.retentionMs || 24 * 60 * 60 * 1000);
 
       // In-place filter for metrics
       const metrics = (this as Record<string, unknown>).metrics as ErrorMetric[];

@@ -14,9 +14,9 @@ try {
 
 import { feature } from 'bun:bundle';
 import { securityConfig, DEFAULT_SECURITY_CONFIG, type SecurityConfig } from './config-manager';
-import { secretManager } from '../../barbershop/lib/secrets/core/secrets';
-import { versionGraph } from '../../barbershop/lib/secrets/core/version-graph';
-import { secretLifecycleManager } from '../../barbershop/lib/secrets/core/secret-lifecycle';
+import { secretManager } from '../../../projects/active/barbershop/lib/secrets/core/secrets';
+import { versionGraph } from '../../../projects/active/barbershop/lib/secrets/core/version-graph';
+import { secretLifecycleManager } from '../../../projects/active/barbershop/lib/secrets/core/secret-lifecycle';
 import type { SecurityFeature, CacheFeature, AuditFeature, AuthFeature } from './config-manager';
 
 export class EnhancedSecurityManager {

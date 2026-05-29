@@ -24,8 +24,15 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set([
-  'node_modules', '.npm-cache', '.git', 'dist', 'build',
-  '.cache', 'coverage', '.wrangler', '.bun-docs-cache',
+  'node_modules',
+  '.npm-cache',
+  '.git',
+  'dist',
+  'build',
+  '.cache',
+  'coverage',
+  '.wrangler',
+  '.bun-docs-cache',
 ]);
 
 const DRY_RUN = process.argv.includes('--dry-run');
@@ -52,7 +59,12 @@ function pinVersion(version: string): string {
   // Handle pre-release tags: ^1.2.3-alpha.1 -> 1.2.3-alpha.1
   if (/^\d+\.\d+\.\d+-/.test(stripped)) return stripped;
   // Handle >= style
-  if (version.startsWith('>=') || version.startsWith('<=') || version.startsWith('>') || version.startsWith('<')) {
+  if (
+    version.startsWith('>=') ||
+    version.startsWith('<=') ||
+    version.startsWith('>') ||
+    version.startsWith('<')
+  ) {
     const match = stripped.match(/(\d+\.\d+\.\d+)/);
     if (match) return match[1];
   }
@@ -162,7 +174,9 @@ if (DRY_RUN) {
     let content: string;
     try {
       content = await readFile(file, 'utf-8');
-    } catch { continue; }
+    } catch {
+      continue;
+    }
     const matches = content.match(/"[\w@/-]+":\s*"[\^~]\d+\.\d+\.\d+/g);
     if (matches) dryCount += matches.length;
   }

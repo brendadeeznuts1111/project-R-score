@@ -684,9 +684,12 @@ export class EnhancedRealZenDashboard {
    */
   private async generateEnhancedStaticDashboard(): Promise<void> {
     const html = await this.generateEnhancedHTMLDashboard();
-    const staticFile = (Bun as Record<string, unknown>).file('enhanced-real-zen-dashboard-mime.html', {
-      type: 'text/html',
-    });
+    const staticFile = (Bun as Record<string, unknown>).file(
+      'enhanced-real-zen-dashboard-mime.html',
+      {
+        type: 'text/html',
+      }
+    );
     await Bun.write(staticFile, new TextEncoder().encode(html));
 
     console.info('📄 Enhanced static dashboard saved: enhanced-real-zen-dashboard-mime.html');

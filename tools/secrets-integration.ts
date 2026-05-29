@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // tools/secrets-integration.ts — Secure configuration with encrypted secrets at rest
 
-import { createHmac } from "crypto";
+import { createHmac } from 'crypto';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -13,7 +13,7 @@ import { createHmac } from "crypto";
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from 'fs';
 
 // ======================
 // 1. SECRETS DECRYPTION (Runtime)
@@ -55,7 +55,8 @@ function decryptSecrets(masterKey: string): Record<string, string> {
         }
 
         // Extract IV from the beginning of encrypted value (first 32 hex chars = 16 bytes)
-        if (encryptedValue.length < 64) { // Need at least IV + some encrypted data
+        if (encryptedValue.length < 64) {
+          // Need at least IV + some encrypted data
           throw new Error('Encrypted value too short');
         }
 
@@ -106,7 +107,7 @@ function decryptSecrets(masterKey: string): Record<string, string> {
 const getSigningKey = (): string => {
   const secrets = decryptSecrets(process.env.MASTER_KEY || '');
   const secret = secrets['TIER1380_SIGNING_KEY'];
-  if (!secret) throw new Error("TIER1380_SIGNING_KEY not configured");
+  if (!secret) throw new Error('TIER1380_SIGNING_KEY not configured');
   return secret;
 };
 
@@ -119,29 +120,29 @@ const getAuthHeaders = (): Headers => {
   // GitHub Enterprise - case-sensitive header preservation
   const githubToken = process.env.GITHUB_ENTERPRISE_TOKEN || Bun.secrets.GITHUB_ENTERPRISE_TOKEN;
   if (githubToken) {
-    headers.set("Authorization", `token ${githubToken}`);
-    headers.set("Accept", "application/vnd.github+json");
-    headers.set("X-GitHub-Api-Version", "2022-11-28");
+    headers.set('Authorization', `token ${githubToken}`);
+    headers.set('Accept', 'application/vnd.github+json');
+    headers.set('X-GitHub-Api-Version', '2022-11-28');
   }
 
   // Cloudflare API - Bearer token
   const cfToken = process.env.CLOUDFLARE_API_TOKEN || Bun.secrets.CLOUDFLARE_API_TOKEN;
   if (cfToken) {
-    headers.set("Authorization", `Bearer ${cfToken}`);
+    headers.set('Authorization', `Bearer ${cfToken}`);
   }
 
   // AWS/R2 credentials
   const r2KeyId = process.env.R2_ACCESS_KEY_ID || Bun.secrets.R2_ACCESS_KEY_ID;
   const r2SecretKey = process.env.R2_SECRET_ACCESS_KEY || Bun.secrets.R2_SECRET_ACCESS_KEY;
   if (r2KeyId && r2SecretKey) {
-    headers.set("X-AWS-Access-Key-Id", r2KeyId);
-    headers.set("X-AWS-Secret-Access-Key", r2SecretKey);
+    headers.set('X-AWS-Access-Key-Id', r2KeyId);
+    headers.set('X-AWS-Secret-Access-Key', r2SecretKey);
   }
 
   // Internal OAuth2 secret
   const oauth2Secret = process.env.INTERNAL_OAUTH2_SECRET || Bun.secrets.INTERNAL_OAUTH2_SECRET;
   if (oauth2Secret) {
-    headers.set("X-OAuth2-Secret", oauth2Secret);
+    headers.set('X-OAuth2-Secret', oauth2Secret);
   }
 
   return headers;
@@ -153,7 +154,7 @@ const getAuthHeaders = (): Headers => {
 const getR2Credentials = () => ({
   accessKeyId: process.env.R2_ACCESS_KEY_ID || Bun.secrets.R2_ACCESS_KEY_ID,
   secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || Bun.secrets.R2_SECRET_ACCESS_KEY,
-  endpoint: `https://${process.env.R2_ACCOUNT_ID || 'auto'}.r2.cloudflarestorage.com`
+  endpoint: `https://${process.env.R2_ACCOUNT_ID || 'auto'}.r2.cloudflarestorage.com`,
 });
 
 /**
@@ -162,7 +163,7 @@ const getR2Credentials = () => ({
 const getJWTSigningSecret = (): string => {
   const secrets = decryptSecrets(process.env.MASTER_KEY || '');
   const secret = secrets['JWT_SIGNING_SECRET'];
-  if (!secret) throw new Error("JWT_SIGNING_SECRET not configured");
+  if (!secret) throw new Error('JWT_SIGNING_SECRET not configured');
   return secret;
 };
 
@@ -185,17 +186,15 @@ interface SecureRequestOptions {
 }
 
 class Tier1380SecureFetch {
-  static async request(
-    url: string | URL,
-    options: SecureRequestOptions = {}
-  ): Promise<Response> {
+  static async request(url: string | URL, options: SecureRequestOptions = {}): Promise<Response> {
     const headers = new Headers(options.headers || {});
 
     // 1. Add required authentication
     if (options.requireToken) {
-      const token = typeof options.requireToken === 'string'
-        ? Bun.secrets[options.requireToken]
-        : Bun.secrets[options.requireToken];
+      const token =
+        typeof options.requireToken === 'string'
+          ? Bun.secrets[options.requireToken]
+          : Bun.secrets[options.requireToken];
 
       if (!token) {
         throw new Error(`Secret ${options.requireToken} not available`);
@@ -203,38 +202,39 @@ class Tier1380SecureFetch {
 
       // Case-preserved header based on API type
       if (options.requireToken.includes('GITHUB')) {
-        headers.set("Authorization", `token ${token}`);
+        headers.set('Authorization', `token ${token}`);
       } else if (options.requireToken.includes('CLOUDFLARE')) {
-        headers.set("Authorization", `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       } else if (options.requireToken.includes('AWS')) {
-        headers.set("X-AWS-Access-Key-Id", token);
+        headers.set('X-AWS-Access-Key-Id', token);
       } else {
-        headers.set("Authorization", token);
+        headers.set('Authorization', token);
       }
     }
 
     // 2. Add CSRF protection for state-changing operations
-    if (options.csrf && (options.method === 'POST' || options.method === 'PUT' || options.method === 'DELETE')) {
-      headers.set("X-CSRF-Token", generateCSRFToken());
+    if (
+      options.csrf &&
+      (options.method === 'POST' || options.method === 'PUT' || options.method === 'DELETE')
+    ) {
+      headers.set('X-CSRF-Token', generateCSRFToken());
     }
 
     // 3. Add Tier-1380 signature for sensitive operations
     if (options.signed) {
       const timestamp = Date.now();
       const payload = `${timestamp}${url.toString()}${options.method || 'GET'}`;
-      const signature = createHmac('sha256', getSigningKey())
-        .update(payload)
-        .digest('hex');
+      const signature = createHmac('sha256', getSigningKey()).update(payload).digest('hex');
 
-      headers.set("X-Tier1380-Timestamp", timestamp.toString());
-      headers.set("X-Tier1380-Signature", signature);
-      headers.set("X-Tier1380-Security", "v1.1");
+      headers.set('X-Tier1380-Timestamp', timestamp.toString());
+      headers.set('X-Tier1380-Signature', signature);
+      headers.set('X-Tier1380-Security', 'v1.1');
     }
 
     // 4. Execute with enhanced headers
     return fetch(url, {
       ...options,
-      headers
+      headers,
     });
   }
 }
@@ -248,14 +248,14 @@ class Tier1380SecureFetch {
  */
 const verifyCFToken = async (): Promise<boolean> => {
   const response = await Tier1380SecureFetch.request(
-    "https://api.cloudflare.com/client/v4/user/tokens/verify",
+    'https://api.cloudflare.com/client/v4/user/tokens/verify',
     {
-      method: "GET",
-      requireToken: "CLOUDFLARE_API_TOKEN",
+      method: 'GET',
+      requireToken: 'CLOUDFLARE_API_TOKEN',
       csrf: true,
       headers: {
-        "Accept": "application/json"
-      }
+        Accept: 'application/json',
+      },
     }
   );
 
@@ -283,16 +283,16 @@ const generateSignedURL = async (
         .digest('hex');
 
       return `${baseUrl}?expires=${expires}&requestId=${requestId}&signature=${signature}`;
-    }
+    },
   } as any;
 
   const signedUrl = await mockR2Client.createSignedUrl(key, {
     expiresInSeconds,
     customMetadata: {
-      "tier1380-signed-by": "factorywager-v1.1",
-      "tier1380-expires": (Date.now() + expiresIn * 1000).toString(),
-      "security-level": "high"
-    }
+      'tier1380-signed-by': 'factorywager-v1.1',
+      'tier1380-expires': (Date.now() + expiresIn * 1000).toString(),
+      'security-level': 'high',
+    },
   });
 
   return signedUrl;
@@ -301,31 +301,25 @@ const generateSignedURL = async (
 /**
  * Example 3: GitHub Enterprise webhook with secret signing
  */
-const dispatchGitHubWebhook = async (
-  repo: string,
-  event: string,
-  payload: any
-): Promise<void> => {
+const dispatchGitHubWebhook = async (repo: string, event: string, payload: any): Promise<void> => {
   const secret = getSigningKey();
   const body = JSON.stringify(payload);
-  const signature = createHmac('sha256', secret)
-    .update(body)
-    .digest('hex');
+  const signature = createHmac('sha256', secret).update(body).digest('hex');
 
   await Tier1380SecureFetch.request(
     `https://ghe.internal.example.com/api/v3/repos/${repo}/dispatches`,
     {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-GitHub-Event": event,
-        "X-Hub-Signature-256": `sha256=${signature}`,
-        "X-Tier1380-Security": "v1.1"
+        'Content-Type': 'application/json',
+        'X-GitHub-Event': event,
+        'X-Hub-Signature-256': `sha256=${signature}`,
+        'X-Tier1380-Security': 'v1.1',
       },
       body,
-      requireToken: "GITHUB_ENTERPRISE_TOKEN",
+      requireToken: 'GITHUB_ENTERPRISE_TOKEN',
       signed: true,
-      csrf: true
+      csrf: true,
     }
   );
 };
@@ -335,15 +329,15 @@ const dispatchGitHubWebhook = async (
  */
 const generateJWTToken = (payload: any, expiresIn: number = 3600): string => {
   const header = {
-    alg: "HS256",
-    typ: "JWT",
-    kid: "tier1380-jwt-key"
+    alg: 'HS256',
+    typ: 'JWT',
+    kid: 'tier1380-jwt-key',
   };
 
   const payloadWithIssued = {
     ...payload,
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + expiresIn
+    exp: Math.floor(Date.now() / 1000) + expiresIn,
   };
 
   const encodedHeader = Buffer.from(JSON.stringify(header)).toString('base64url');
@@ -367,7 +361,7 @@ const validateSecrets = (): { valid: boolean; missing: string[]; expired?: strin
     'TIER1380_SIGNING_KEY',
     'CLOUDFLARE_API_TOKEN',
     'R2_ACCESS_KEY_ID',
-    'R2_SECRET_ACCESS_KEY'
+    'R2_SECRET_ACCESS_KEY',
   ] as const;
 
   const missing: string[] = [];
@@ -380,7 +374,7 @@ const validateSecrets = (): { valid: boolean; missing: string[]; expired?: strin
 
   return {
     valid: missing.length === 0,
-    missing
+    missing,
   };
 };
 
@@ -392,9 +386,7 @@ const rotateSigningKey = (): string => {
   const secrets = decryptSecrets(process.env.MASTER_KEY || '');
 
   // Update the encrypted file
-  const lines = Object.entries(secrets).map(([key, value]) =>
-    `${key}=${value}`
-  );
+  const lines = Object.entries(secrets).map(([key, value]) => `${key}=${value}`);
 
   writeFileSync('.env.secret', lines.join('\n'));
   console.info('🔑️ TIER1380_SIGNING_KEY rotated successfully');

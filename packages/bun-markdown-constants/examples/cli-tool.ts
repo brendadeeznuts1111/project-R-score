@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 /**
  * CLI Tool Example
- * 
+ *
  * A complete CLI tool for rendering markdown files
  * Usage: bun examples/cli-tool.ts [file] [options]
  */
 
-import { 
-  MarkdownPresets, 
+import {
+  MarkdownPresets,
   MARKDOWN_FEATURES,
   TERMINAL_RENDERERS,
   extractText,
   estimateReadingTime,
-  countWords
+  countWords,
 } from '../src/index';
 import { existsSync, readFileSync } from 'fs';
 
@@ -60,7 +60,7 @@ if (showStats) {
   console.info(`File: ${filePath}`);
   console.info(`Characters: ${content.length.toLocaleString()}`);
   console.info(`Words: ${countWords(content).toLocaleString()}`);
-  
+
   const readingTime = estimateReadingTime(content);
   console.info(`Reading time: ${readingTime.minutes} minute(s)`);
   console.info();
@@ -78,26 +78,25 @@ if (extractPlainText) {
 if (useTerminal) {
   console.info('\n🖥️  Terminal Render');
   console.info('-'.repeat(50));
-  
+
   const renderTerminal = MarkdownPresets.render('COLOR', MARKDOWN_FEATURES.TERMINAL);
   const output = renderTerminal(content);
-  
+
   // Note: Terminal renderers use ANSI codes
   // For this demo, we'll just show the HTML output with a note
   console.info('Note: Terminal renderers use ANSI color codes for CLI display');
   console.info('Output preview:');
   console.info(output.substring(0, 500));
-  
 } else {
   console.info('\n🌐 HTML Render');
   console.info('-'.repeat(50));
-  
+
   const renderHtml = MarkdownPresets.html('GFM', 'MODERATE');
   const html = renderHtml(content);
-  
+
   console.info('Generated HTML:');
   console.info(html.substring(0, 1000));
-  
+
   if (html.length > 1000) {
     console.info(`\n... (${(html.length - 1000).toLocaleString()} more characters)`);
   }

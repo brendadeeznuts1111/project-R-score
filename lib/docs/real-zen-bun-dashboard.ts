@@ -484,7 +484,9 @@ export class RealZenBunDashboard {
    */
   private async generateStaticRealDashboard(): Promise<void> {
     const html = await this.generateRealHTMLDashboard();
-    const staticFile = (Bun as Record<string, unknown>).file('real-zen-dashboard-bun.html', { type: 'text/html' });
+    const staticFile = (Bun as Record<string, unknown>).file('real-zen-dashboard-bun.html', {
+      type: 'text/html',
+    });
     await Bun.write(staticFile, new TextEncoder().encode(html));
 
     console.info('📄 Static REAL dashboard saved: real-zen-dashboard-bun.html');
