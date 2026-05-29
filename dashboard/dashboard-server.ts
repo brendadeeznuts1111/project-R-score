@@ -224,7 +224,7 @@ async function collectDashboardData() {
 
   // CLI Tools
   const cliTools = [
-    { name: '🔍 fw-docs CLI', script: 'scripts/fw-docs.ts' }
+    { name: '📚 docs-cli', script: 'tools/cli/docs-cli.ts' }
   ];
 
   for (const tool of cliTools) {

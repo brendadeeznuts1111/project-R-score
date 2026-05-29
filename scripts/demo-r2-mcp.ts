@@ -329,7 +329,7 @@ try {
       {
         step: 4,
         title: 'Start Using MCP',
-        command: 'bun run fw-docs search "Bun.secrets.get"',
+        command: 'bun run docs:search "Bun.secrets.get"',
         details: 'Begin using the enhanced documentation system',
       },
     ];

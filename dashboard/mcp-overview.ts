@@ -151,7 +151,7 @@ class MCPSystemDashboard {
 
     // Check CLI Tools
     const cliTools = [
-      { name: '🔍 fw-docs', script: 'scripts/fw-docs.ts' },
+      { name: '📚 docs-cli', script: 'tools/cli/docs-cli.ts' },
       { name: '🩺 interactive-docs', script: 'scripts/interactive-docs.ts' },
       { name: '🎬 demo-r2-mcp', script: 'scripts/demo-r2-mcp.ts' }
     ];
@@ -367,7 +367,7 @@ class MCPSystemDashboard {
       { command: 'bun run test:r2', description: 'Test R2 connection' },
       { command: 'bun run demo:r2', description: 'Run R2 integration demo' },
       { command: 'bun run setup:mcp', description: 'Run MCP setup' },
-      { command: 'bun run fw-docs search "Bun.API"', description: 'Test documentation search' },
+      { command: 'bun run docs:search "Bun.API"', description: 'Test documentation search' },
       { command: 'bun run interactive-docs diagnose "error" context', description: 'Test error diagnosis' }
     ];
 
