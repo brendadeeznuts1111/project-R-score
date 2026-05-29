@@ -507,9 +507,7 @@ class RegistryCLI {
     console.info(styled('\n🌐 Server:', 'info'));
     console.info(styled(`  Port: ${Bun.env.REGISTRY_PORT || '4873'}`, 'muted'));
     console.info(styled(`  Auth: ${Bun.env.REGISTRY_AUTH || 'none'}`, 'muted'));
-    console.info(
-      styled(`  Secret: ${registrySecret ? 'configured' : 'not set'}`, 'muted')
-    );
+    console.info(styled(`  Secret: ${registrySecret ? 'configured' : 'not set'}`, 'muted'));
 
     console.info(styled('\n🪣 R2 Storage:', 'info'));
     console.info(styled(`  Bucket: ${infraR2.bucketName}`, 'muted'));

@@ -1011,8 +1011,7 @@ class Tier1380SecurityMCPServer {
         severity: 'critical',
         version: '4.5',
         language: 'en',
-        codeExample:
-          'await appSecretManager.setSecret(key, value)',
+        codeExample: 'await appSecretManager.setSecret(key, value)',
         isApiReference: true,
       },
       {
