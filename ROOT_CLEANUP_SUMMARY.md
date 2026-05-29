@@ -677,3 +677,12 @@ See `STRUCTURE.md` for the full history. Key outcomes:
 - Leaked Cloudflare credentials removed from git
 
 ✅ Root organization continues to evolve. See `STRUCTURE.md` Future Candidates for next steps.
+
+## Phase 4.1 (May 2026) — Autophagy Pass
+
+- Removed root `SKILL.md` duplicate; canonical skill → `.agents/skills/partner-profile-os/SKILL.md`
+- Consolidated Sports Terminal docs under `docs/sports-terminal/` (impl spec + mermaid atlas PDF)
+- Evicted long-form markdown from `**/.vscode/` into project `docs/` trees (grok-security, enterprise-dashboard)
+- Deduplicated `trader-analyzer-bun` Cursor config via symlinks to `trader-analyzer`
+- Tightened `.gitignore`: root-only `.vscode`/`.cursor` whitelist, ignore `**/.vscode/*.md`, Cursor boilerplate
+- Wired `projects:table` and `projects:dashboard:cli` package scripts

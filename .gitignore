@@ -36,21 +36,25 @@ out/
 *.js.map
 *.tsbuildinfo
 
-# IDE — ignore local noise; track shared workspace configs
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/mcp.json
-!.vscode/bun-rscore.code-snippets
+# IDE — root workspace config only; nested .vscode stays local
+.vscode/
+!/.vscode/
+!/.vscode/**
+**/.vscode/*.md
 .idea/
 *.swp
 *.swo
 
-# Cursor — track canonical MCP config; ignore local agent state
-.cursor/*
-!.cursor/mcp.json
+# Cursor — root MCP config only
+.cursor/
+!/.cursor/
+!/.cursor/mcp.json
+
+# Cursor auto-generated boilerplate & session artifacts
+**/.cursor/rules/use-bun-instead-of-node-vite-npm-pnpm.mdc
+**/.cursor/plans/
+**/.cursor/.agent-tools/
+**/.cursor/agents/
 
 # Other IDE / agent tooling
 .claude/*
@@ -58,7 +62,11 @@ out/
 !.claude/commands/
 .windsurf/
 .codex/
-.agents/
+.agents/*
+!.agents/skills/
+!.agents/skills/**/SKILL.md
+!.agents/skills/**/agents/
+!.agents/skills/**/agents/**
 .reasonix/
 
 # OS
@@ -209,6 +217,16 @@ clawdbot/
 
 # Separate projects with their own git history
 projects/active/kimiremote/
+bet-ticker-worker-v1.1/
+cascade-mover-v3/
+projects/active/f402-openapi/
+
+# Runtime / ephemeral state (cascade-mover shadow beta)
+shadow-beta-state.json
+
+# Accidental scaffold paths
+projects/active/utilities/shortcut-registry/eeeeee/
+projects/active/development/geelark/dev/.vscode/.vscode/
 
 # Secrets and credentials (should never be committed)
 bun.secrets

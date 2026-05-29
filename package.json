@@ -1615,6 +1615,8 @@
     "deploy:orchestrate": "bun run pipeline/deployment-orchestrator.ts",
     "start:dashboard:projects": "bun run dashboard/projects-server.ts",
     "dashboard:projects": "bun run dashboard/projects-server.ts",
+    "projects:table": "bun run scripts/projects-table.ts",
+    "projects:dashboard:cli": "bun run scripts/projects-dashboard.ts",
     "start:dashboard:mcp": "bun run dashboard/dashboard-server.ts",
     "start:dashboard:playground": "bun run scratch/bun-v1.3.9-examples/playground-web/server.ts",
     "playground:dev": "bun run scripts/playground-dev.ts",

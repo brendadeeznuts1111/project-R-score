@@ -1,0 +1,1 @@
+../../trader-analyzer/.cursor/mcp-config.md

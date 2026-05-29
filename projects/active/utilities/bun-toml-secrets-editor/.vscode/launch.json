@@ -1,0 +1,29 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug RSS Tests",
+			"type": "bun",
+			"request": "launch",
+			// v1.3.7: --inspect works without --inspect-wait
+			"runtimeArgs": ["test", "--inspect"],
+			"args": ["test/rss-fetcher.test.ts"]
+		},
+		{
+			"name": "Debug RSS Server",
+			"type": "bun",
+			"request": "launch",
+			// v1.3.7: Server export no longer causes stack overflow
+			"runtimeArgs": ["run", "--inspect"],
+			"args": ["src/server.ts"],
+			"envFile": "${workspaceFolder}/.env.production"
+		},
+		{
+			"name": "Debug Current File",
+			"type": "bun",
+			"request": "launch",
+			"runtimeArgs": ["run", "--inspect"],
+			"args": ["${file}"]
+		}
+	]
+}
