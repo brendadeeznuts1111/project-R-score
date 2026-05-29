@@ -30,6 +30,7 @@ out/
 .output/
 .turbo/
 .cache/
+.cheatsheet-cache/
 *.js
 !scratch/bun-v1.3.9-examples/playground-web/app.js
 !scratch/bun-v1.3.9-examples/playground-web/url-sharing.js
