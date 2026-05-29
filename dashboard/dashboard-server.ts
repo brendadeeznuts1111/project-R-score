@@ -11,7 +11,7 @@ import { serve } from "bun";
 import { existsSync } from "node:fs";
 import { resolve } from 'node:path';
 import { masterTokenManager } from '../lib/security/master-token.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 
 const REQUESTED_PORT = parseInt(process.env.DASHBOARD_PORT || '3456', 10);
 const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';

@@ -23,7 +23,7 @@ import {
 import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS } from '../lib/theme/colors.ts';
 import { SecretManager } from '../lib/security/secrets-v5.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 import {
   mcpAuthMiddleware,
   extractTokenFromRequest,

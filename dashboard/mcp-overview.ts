@@ -8,7 +8,7 @@
  */
 
 import { masterTokenManager } from '../lib/security/master-token.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 import { styled, FW_COLORS, colorBar } from '../lib/theme/colors.ts';
 import { createSpinner } from '../lib/theme/colors.ts';
 

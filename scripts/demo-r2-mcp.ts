@@ -9,7 +9,7 @@
 
 import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS, log, colorBar } from '../lib/theme/colors.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 
 class MCPDemo {
   constructor() {

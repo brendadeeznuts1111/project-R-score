@@ -12,9 +12,6 @@
 
 // Core infrastructure
 export * from './core/core-types';
-export * from './core/core-errors';
-export * from './core/core-validation';
-export * from './core/core-documentation';
 
 // Theme and styling
 export * from './theme/colors';
@@ -29,7 +26,6 @@ export type { VersionMetadata as SecurityVersionMetadata } from './security';
 export type { AuditEntry as SecurityAuditEntry } from './security';
 
 // Version tracking system
-export * from './versioning/version-tracking';
 
 // Constants and configuration
 export * from './constants';
@@ -42,7 +38,6 @@ export { styled, log, FW_COLORS } from './theme/colors';
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
 
-export { VersionTracker } from './versioning/version-tracking';
 export {
   PackageManager,
   type PackageInfo,
@@ -131,11 +126,6 @@ export const FW = {
   security: {
     versionedSecrets: VersionedSecretManager,
     utils: SecurityUtils,
-  },
-
-  // Version Tracking
-  versionTracking: {
-    tracker: VersionTracker,
   },
 
   // Package Management (NEW)

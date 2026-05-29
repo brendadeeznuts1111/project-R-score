@@ -217,8 +217,8 @@ clawdbot/
 
 # Separate projects with their own git history
 projects/active/kimiremote/
-bet-ticker-worker-v1.1/
-cascade-mover-v3/
+/bet-ticker-worker-v1.1/
+/cascade-mover-v3/
 projects/active/f402-openapi/
 
 # Runtime / ephemeral state (cascade-mover shadow beta)
@@ -266,6 +266,7 @@ Heap-*
 
 # Docs archives (large snapshots)
 docs/archives/
+!docs/archives/root-cleanup-history.md
 
 # Minified assets
 *.min.js
