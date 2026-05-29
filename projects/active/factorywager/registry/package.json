@@ -1,0 +1,59 @@
+{
+  "name": "@factorywager/registry",
+  "version": "1.0.0",
+  "packageManager": "bun@1.3.14",
+  "description": "Private NPM Registry with R2/CDN support",
+  "homepage": "https://github.com/brendadeeznuts1111/project-R-score/tree/main/factorywager/registry",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git",
+    "directory": "factorywager/registry"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/project-R-score/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "type": "module",
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ],
+    "catalog": {
+      "zod": "3.23.0",
+      "@types/bun": "1.3.8"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "build": "bun run build --workspaces",
+    "dev": "bun run dev --workspaces",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "profile:create": "bun run apps/profile-cli/src/cli.ts create",
+    "profile:query": "bun run apps/profile-cli/src/cli.ts query",
+    "profile:update": "bun run apps/profile-cli/src/cli.ts update",
+    "profile:bench": "bun run apps/profile-cli/src/cli.ts bench",
+    "profiler": "bun --cpu-prof-md apps/profile-cli/src/cli.ts",
+    "dashboard": "bun run packages/dashboard-profile/src/app.ts",
+    "dashboard-profile": "bun run packages/dashboard-profile/src/app.ts",
+    "avatar": "bun run packages/dashboard-profile/src/avatar-3d.ts",
+    "dev-dashboard": "bun run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:watch": "bun --watch run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:hot": "bun --hot run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:prod": "NODE_ENV=production bun run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "build:apps": "bun install && bun run build",
+    "doctor": "echo 'Checking dashboard routes...' && grep -q '/api/health' packages/dev-dashboard/src/enhanced-dashboard.ts && grep -q '/api/fraud' packages/dev-dashboard/src/enhanced-dashboard.ts && echo 'OK: /api/health and /api/fraud routes present.' || (echo 'Doctor: route check failed.'; exit 1)"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "typescript": "5.0.0"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  }
+}

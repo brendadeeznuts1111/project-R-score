@@ -1,0 +1,33 @@
+{
+  "name": "peer-team-payouts-peer",
+  "version": "0.1.0",
+  "packageManager": "bun@1.3.14",
+  "description": "Peer-to-peer team payouts system with ZKP2P SDK and viem integration",
+  "private": true,
+  "homepage": "https://github.com/brendadeeznuts1111/project-R-score/tree/main/projects/active/peer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git",
+    "directory": "projects/active/peer"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/project-R-score/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "bun scripts/build-web.ts",
+    "dev": "bun --watch src/server.ts",
+    "start": "bun src/server.ts",
+    "test": "bun test",
+    "typecheck": "bun ./node_modules/typescript/bin/tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@zkp2p/sdk": "0.3.2",
+    "viem": "2.48.4",
+    "zod": "4.3.6"
+  }
+}

@@ -1,2 +1,0 @@
-{"event":"test","message":"FD 3 is open!","timestamp":"2026-02-08T04:24:02.472Z"}
-{"event":"architecture_demo","patterns":["ESM_URL","FILE_DESCRIPTOR"],"status":"working_perfectly","currentFile":"/Users/nolarose/Projects/zen-architecture-demo.ts","monorepoRoot":"/Users/package.json","timestamp":"2026-02-08T04:24:02.472Z"}

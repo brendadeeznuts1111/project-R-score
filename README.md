@@ -1,6 +1,6 @@
 # FactoryWager Enterprise Platform
 
-**Bun-native monorepo** — Core packages live in `packages/`, `factorywager/`, `kimiremote/`, and `lib/`. Each project in `projects/` is independent with its own workspace.
+**Bun-native monorepo** — Core packages live in `packages/` and `lib/`. Large apps (`factorywager`, `kimiremote`) moved to `projects/active/`. Each project in `projects/` is independent with its own workspace.
 
 ## Quick Start
 ```bash
@@ -13,8 +13,8 @@ bun run packages:list    # Browse all packages with version/registry/triage
 
 ```
 packages/        @factorywager/* — 8 internal packages consumed by root workspace
-factorywager/    @factorywager/registry — registry platform
-kimiremote/      Sports terminal proxy (separate workspace)
+projects/active/factorywager/    @factorywager/registry — registry platform
+projects/active/kimiremote/        Sports terminal proxy (separate workspace)
 lib/             shared — shared utility code
 projects/
   active/        Actively developed (analysis, automation, dashboards, enterprise, etc.)

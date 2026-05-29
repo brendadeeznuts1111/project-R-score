@@ -3,6 +3,15 @@
 ## Overview
 Cleaned up root-level files by organizing them into dedicated directories and buckets.
 
+### Phase 5 (May 2026): Moved large apps → `projects/active/`
+- `kimiremote/` → `projects/active/kimiremote/` (gitignored — separate repo history)
+- `factorywager/` → `projects/active/factorywager/`
+- `barbershop/` → `projects/active/barbershop/`
+- `peer/` → `projects/active/peer/`
+- `tools/playwriter-skill/` → `projects/active/playwriter-skill/`
+- Purged tracked runtime output under `artifacts/` (logs, profiles, snapshots, exports)
+- Updated workspace paths in `package.json`, `.gitignore`, `validate-workspaces.ts`, `packages-list.ts`, `generate-project-registry.ts`, `projects-registry.json`, `STRUCTURE.md`, `README.md`
+
 ## Files Moved
 
 ### 1. Demo Files → `examples/demos/` (20 files)

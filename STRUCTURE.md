@@ -21,8 +21,8 @@ Projects/
 ├── examples/                # Runnable demos & Bun feature showcases
 │   ├── demos/               # One-off demos
 │   └── bun-v139-features/   # Bun 1.3.9 experiments
-├── factorywager/            # @factorywager/registry (13 packages)
-├── kimiremote/              # Sports terminal proxy (separate workspace)
+├── factorywager/            # → projects/active/factorywager/ (moved)
+├── kimiremote/              # → projects/active/kimiremote/ (moved)
 ├── lib/                     # Shared library code (shared utils)
 ├── packages/                # @factorywager/* internal packages (8)
 ├── projects/
@@ -73,7 +73,7 @@ Projects/
 - **Phase 4**: Consolidated `cli/`/`bin/`/`benchmarks/` under `tools/`, curated `scratch/`, removed root cruft, added monorepo scripts.
 - **Phase 4.2**: Antipattern remediation (250K console.log → console.info, CORS hardening, SQL injection fixes, shared config, analyzer scripts).
 - **Phase 4.3 (May 2026) — Workspace Isolation & Naming**:
-  - Workspace restricted to `packages/*`, `factorywager/registry/packages/*`, `kimiremote/packages/*`, `lib/*`.
+  - Workspace restricted to `packages/*`, `projects/active/factorywager/registry/packages/*`, `projects/active/kimiremote/packages/*`, `lib/*`.
   - `bun install` at root: **122 packages in <1s** (was timing out at 120s).
   - Projects triaged into `active/` / `experimental/` / `archive/` with `projects/README.md`.
   - fantasy42-fire22-registry deduplicated: 3 copies → 1, all `@fire22/*` names restored.
@@ -89,7 +89,7 @@ Projects/
 - Registry consolidation: migrate minor registries (`fire22.workers.dev`, `npm.internal.yourcompany.com`, etc.) to `registry.factory-wager.com`.
 - Add Dependabot/Renovate for automated version bumps (since deps are pinned, PRs would be intentional).
 - Add `packages:outdated` to CI reporting.
-- Evaluate `kimiremote/` and `factorywager/` as standalone repos vs monorepo members.
+- Evaluate `projects/active/kimiremote/` and `projects/active/factorywager/` as standalone repos vs monorepo members.
 - **Antipattern remediation (manual)**: `export default` → named exports, `: any` → `: unknown`, non-null assertions, empty catches.
 
 Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.
