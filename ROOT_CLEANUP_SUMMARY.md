@@ -17,8 +17,8 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 
 Context bloat reduction, barrel trim, dead code purge (−16k lines).
 
-## Phase 4.3 (in progress)
+## Phase 4.3 (committed)
 
-`lib/projects-scan.ts` shared module, dx-mcp scan hardening, path fork documented in core-documentation.
+`lib/projects-scan.ts` shared module, dx-mcp scan hardening (`DX_MCP_DEBUG=1`), path fork documented in core-documentation.
 
 See [`STRUCTURE.md`](STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).
