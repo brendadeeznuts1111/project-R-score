@@ -7,6 +7,18 @@
  * @version 1.0.0
  */
 
+import { semver } from 'bun';
+
+const MIN_SAFE_ZSTD_BUN = '1.3.14';
+
+function assertSafeZstdRuntime(): void {
+  if (!semver.satisfies(Bun.version, `>=${MIN_SAFE_ZSTD_BUN}`)) {
+    throw new Error(
+      `Bun ${Bun.version} is below the safe zstd runtime ${MIN_SAFE_ZSTD_BUN}. Upgrade Bun before using zstd state compression.`
+    );
+  }
+}
+
 export interface CompressionResult {
   compressed: Uint8Array;
   originalSize: number;
@@ -134,6 +146,7 @@ export class BunStateCompressor {
     
     // Check if Zstd is available
     if (typeof (Bun as any).zstdCompressSync === 'function') {
+      assertSafeZstdRuntime();
       compressed = (Bun as any).zstdCompressSync(serialized, { level });
     } else {
       // Fallback to gzip
@@ -167,6 +180,7 @@ export class BunStateCompressor {
     
     // Check if Zstd is available
     if (typeof (Bun as any).zstdDecompressSync === 'function') {
+      assertSafeZstdRuntime();
       decompressed = (Bun as any).zstdDecompressSync(compressed);
     } else {
       // Fallback to gzip

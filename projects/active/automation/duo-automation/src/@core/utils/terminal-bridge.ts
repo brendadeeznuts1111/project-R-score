@@ -18,17 +18,40 @@ export class TerminalBridge implements WorkflowPattern<string[], any> {
 
   private terminals = new Map<string, any>();
 
+  private spawnInteractive(command: string[]) {
+    const proc = Bun.spawn(command, {
+      stdin: "pipe",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    // Touch stdin immediately and close it on process exit. Older Bun builds
+    // leaked the fd when a stdin pipe was requested but never observed.
+    void proc.stdin;
+    void proc.exited.finally(() => this.closeStdin(proc));
+
+    return proc;
+  }
+
+  private closeStdin(proc: any): void {
+    try {
+      proc.stdin?.end?.();
+    } catch {
+      // Already closed.
+    }
+    try {
+      proc.stdin?.close?.();
+    } catch {
+      // Already closed.
+    }
+  }
+
   readonly stages = [
     {
       name: "SpawnPTY",
       pattern: "§Bun:132",
       action: async (ctx: any) => {
-        const proc = Bun.spawn(ctx.command, {
-          stdin: "pipe",
-          stdout: "pipe",
-          stderr: "pipe",
-        });
-        return proc;
+        return this.spawnInteractive(ctx.command);
       },
       budget: "<5ms"
     }
@@ -43,12 +66,7 @@ export class TerminalBridge implements WorkflowPattern<string[], any> {
    */
   async exec(command: string[]): Promise<WorkflowResult<any>> {
     const start = performance.now();
-    
-    const proc = Bun.spawn(command, {
-      stdin: "pipe",
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+    const proc = this.spawnInteractive(command);
 
     const terminalId = `term_${Date.now()}`;
     this.terminals.set(terminalId, proc);
@@ -130,7 +148,7 @@ export class TerminalBridge implements WorkflowPattern<string[], any> {
     try {
       const writer = proc.stdin.getWriter();
       await writer.write(new TextEncoder().encode(input));
-      await writer.releaseLock();
+      writer.releaseLock();
     } catch (e) {
       console.error(`Terminal write error for ${terminalId}:`, e);
       // If we lose stdin, it's safer to kill the proc
@@ -145,6 +163,7 @@ export class TerminalBridge implements WorkflowPattern<string[], any> {
     const proc = this.terminals.get(terminalId);
     if (!proc) return;
 
+    this.closeStdin(proc);
     proc.kill();
     this.terminals.delete(terminalId);
   }

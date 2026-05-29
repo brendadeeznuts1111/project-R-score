@@ -81,6 +81,20 @@ class PTYService {
   private maxOutputLines = 1000;
   private maxOutputBytes = 1024 * 1024; // 1MB per session
 
+  private closeStdin(proc: Subprocess | null): void {
+    const stdin = (proc as any)?.stdin;
+    try {
+      stdin?.end?.();
+    } catch {
+      // Already closed.
+    }
+    try {
+      stdin?.close?.();
+    } catch {
+      // Already closed.
+    }
+  }
+
   /**
    * Create a new PTY session
    */
@@ -138,6 +152,9 @@ class PTYService {
         stdin: "pipe",
       });
 
+      // Touch stdin immediately and close it on exit. Older Bun builds leaked
+      // the fd when stdin:"pipe" was requested but the handle was never used.
+      void proc.stdin;
       session.process = proc;
 
       // Handle stdout
@@ -174,6 +191,7 @@ class PTYService {
 
       // Handle exit
       proc.exited.then((code) => {
+        this.closeStdin(proc);
         session.status = "exited";
         session.exitCode = code;
         session.lastActivity = Date.now();
@@ -292,6 +310,7 @@ class PTYService {
     if (!session) return false;
 
     if (session.process && session.status === "running") {
+      this.closeStdin(session.process);
       session.process.kill();
       session.status = "exited";
       session.exitCode = -1;

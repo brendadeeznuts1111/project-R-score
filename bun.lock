@@ -41,125 +41,6 @@
         "typescript": "5.9.3",
       },
     },
-    "factorywager/registry/packages/dashboard-profile": {
-      "name": "@factorywager/dashboard-profile",
-      "version": "10.0.0",
-      "dependencies": {
-        "@factorywager/pref-propagation": "workspace:*",
-        "@factorywager/redis-profile": "workspace:*",
-        "@factorywager/user-profile": "workspace:*",
-        "@factorywager/xgboost-pers": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/dev-dashboard": {
-      "name": "@factorywager/dev-dashboard",
-      "version": "1.0.0",
-      "dependencies": {
-        "@factorywager/fraud-prevention": "workspace:*",
-        "@factorywager/user-profile": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/fraud-prevention": {
-      "name": "@factorywager/fraud-prevention",
-      "version": "1.0.0",
-      "dependencies": {
-        "zod": "3.22.0",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/pref-propagation": {
-      "name": "@factorywager/pref-propagation",
-      "version": "10.0.0",
-      "dependencies": {
-        "@factorywager/user-profile": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/r2-storage": {
-      "name": "@factorywager/r2-storage",
-      "version": "1.0.0",
-      "dependencies": {
-        "@factorywager/registry-core": "workspace:*",
-        "@factorywager/theme": "workspace:*",
-      },
-    },
-    "factorywager/registry/packages/redis-profile": {
-      "name": "@factorywager/redis-profile",
-      "version": "10.0.0",
-      "dependencies": {
-        "@factorywager/user-profile": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/registry-core": {
-      "name": "@factorywager/registry-core",
-      "version": "1.0.0",
-    },
-    "factorywager/registry/packages/semver": {
-      "name": "@factorywager/semver",
-      "version": "1.0.0",
-    },
-    "factorywager/registry/packages/theme": {
-      "name": "@factorywager/theme",
-      "version": "1.0.0",
-    },
-    "factorywager/registry/packages/user-profile": {
-      "name": "@factorywager/user-profile",
-      "version": "10.0.0",
-      "dependencies": {
-        "zod": "3.22.0",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "factorywager/registry/packages/xgboost-pers": {
-      "name": "@factorywager/xgboost-pers",
-      "version": "10.0.0",
-      "dependencies": {
-        "@factorywager/user-profile": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-    },
-    "kimiremote/packages/cli": {
-      "name": "@sports-terminal/cli",
-      "version": "0.1.1",
-      "bin": {
-        "st": "src/index.ts",
-        "fw": "src/index.ts",
-        "factory-wager": "src/index.ts",
-        "sports-terminal": "src/index.ts",
-      },
-      "dependencies": {
-        "@sports-terminal/core": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "1.3.14",
-        "typescript": "6.0.3",
-      },
-    },
-    "kimiremote/packages/core": {
-      "name": "@sports-terminal/core",
-      "version": "0.1.1",
-      "devDependencies": {
-        "@types/bun": "1.3.14",
-        "typescript": "6.0.3",
-      },
-    },
     "lib/shared": {
       "name": "shared",
       "version": "0.1.0",
@@ -207,6 +88,125 @@
       "name": "@factorywager/versioning",
       "version": "0.1.0",
     },
+    "projects/active/factorywager/registry/packages/dashboard-profile": {
+      "name": "@factorywager/dashboard-profile",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/pref-propagation": "workspace:*",
+        "@factorywager/redis-profile": "workspace:*",
+        "@factorywager/user-profile": "workspace:*",
+        "@factorywager/xgboost-pers": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/dev-dashboard": {
+      "name": "@factorywager/dev-dashboard",
+      "version": "1.0.0",
+      "dependencies": {
+        "@factorywager/fraud-prevention": "workspace:*",
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/fraud-prevention": {
+      "name": "@factorywager/fraud-prevention",
+      "version": "1.0.0",
+      "dependencies": {
+        "zod": "3.22.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/pref-propagation": {
+      "name": "@factorywager/pref-propagation",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/r2-storage": {
+      "name": "@factorywager/r2-storage",
+      "version": "1.0.0",
+      "dependencies": {
+        "@factorywager/registry-core": "workspace:*",
+        "@factorywager/theme": "workspace:*",
+      },
+    },
+    "projects/active/factorywager/registry/packages/redis-profile": {
+      "name": "@factorywager/redis-profile",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/registry-core": {
+      "name": "@factorywager/registry-core",
+      "version": "1.0.0",
+    },
+    "projects/active/factorywager/registry/packages/semver": {
+      "name": "@factorywager/semver",
+      "version": "1.0.0",
+    },
+    "projects/active/factorywager/registry/packages/theme": {
+      "name": "@factorywager/theme",
+      "version": "1.0.0",
+    },
+    "projects/active/factorywager/registry/packages/user-profile": {
+      "name": "@factorywager/user-profile",
+      "version": "10.0.0",
+      "dependencies": {
+        "zod": "3.22.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/factorywager/registry/packages/xgboost-pers": {
+      "name": "@factorywager/xgboost-pers",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "projects/active/kimiremote/packages/cli": {
+      "name": "@sports-terminal/cli",
+      "version": "0.1.1",
+      "bin": {
+        "st": "src/index.ts",
+        "fw": "src/index.ts",
+        "factory-wager": "src/index.ts",
+        "sports-terminal": "src/index.ts",
+      },
+      "dependencies": {
+        "@sports-terminal/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "1.3.14",
+        "typescript": "6.0.3",
+      },
+    },
+    "projects/active/kimiremote/packages/core": {
+      "name": "@sports-terminal/core",
+      "version": "0.1.1",
+      "devDependencies": {
+        "@types/bun": "1.3.14",
+        "typescript": "6.0.3",
+      },
+    },
   },
   "overrides": {
     "axios": "1.16.1",
@@ -241,13 +241,13 @@
 
     "@factorywager/business": ["@factorywager/business@workspace:packages/business"],
 
-    "@factorywager/dashboard-profile": ["@factorywager/dashboard-profile@workspace:factorywager/registry/packages/dashboard-profile"],
+    "@factorywager/dashboard-profile": ["@factorywager/dashboard-profile@workspace:projects/active/factorywager/registry/packages/dashboard-profile"],
 
-    "@factorywager/dev-dashboard": ["@factorywager/dev-dashboard@workspace:factorywager/registry/packages/dev-dashboard"],
+    "@factorywager/dev-dashboard": ["@factorywager/dev-dashboard@workspace:projects/active/factorywager/registry/packages/dev-dashboard"],
 
     "@factorywager/docs-tools": ["@factorywager/docs-tools@workspace:packages/docs-tools"],
 
-    "@factorywager/fraud-prevention": ["@factorywager/fraud-prevention@workspace:factorywager/registry/packages/fraud-prevention"],
+    "@factorywager/fraud-prevention": ["@factorywager/fraud-prevention@workspace:projects/active/factorywager/registry/packages/fraud-prevention"],
 
     "@factorywager/guards": ["@factorywager/guards@workspace:packages/guards"],
 
@@ -255,25 +255,25 @@
 
     "@factorywager/package": ["@factorywager/package@workspace:packages/package"],
 
-    "@factorywager/pref-propagation": ["@factorywager/pref-propagation@workspace:factorywager/registry/packages/pref-propagation"],
+    "@factorywager/pref-propagation": ["@factorywager/pref-propagation@workspace:projects/active/factorywager/registry/packages/pref-propagation"],
 
-    "@factorywager/r2-storage": ["@factorywager/r2-storage@workspace:factorywager/registry/packages/r2-storage"],
+    "@factorywager/r2-storage": ["@factorywager/r2-storage@workspace:projects/active/factorywager/registry/packages/r2-storage"],
 
-    "@factorywager/redis-profile": ["@factorywager/redis-profile@workspace:factorywager/registry/packages/redis-profile"],
+    "@factorywager/redis-profile": ["@factorywager/redis-profile@workspace:projects/active/factorywager/registry/packages/redis-profile"],
 
-    "@factorywager/registry-core": ["@factorywager/registry-core@workspace:factorywager/registry/packages/registry-core"],
+    "@factorywager/registry-core": ["@factorywager/registry-core@workspace:projects/active/factorywager/registry/packages/registry-core"],
 
     "@factorywager/rip": ["@factorywager/rip@workspace:packages/rip"],
 
-    "@factorywager/semver": ["@factorywager/semver@workspace:factorywager/registry/packages/semver"],
+    "@factorywager/semver": ["@factorywager/semver@workspace:projects/active/factorywager/registry/packages/semver"],
 
-    "@factorywager/theme": ["@factorywager/theme@workspace:factorywager/registry/packages/theme"],
+    "@factorywager/theme": ["@factorywager/theme@workspace:projects/active/factorywager/registry/packages/theme"],
 
-    "@factorywager/user-profile": ["@factorywager/user-profile@workspace:factorywager/registry/packages/user-profile"],
+    "@factorywager/user-profile": ["@factorywager/user-profile@workspace:projects/active/factorywager/registry/packages/user-profile"],
 
     "@factorywager/versioning": ["@factorywager/versioning@workspace:packages/versioning"],
 
-    "@factorywager/xgboost-pers": ["@factorywager/xgboost-pers@workspace:factorywager/registry/packages/xgboost-pers"],
+    "@factorywager/xgboost-pers": ["@factorywager/xgboost-pers@workspace:projects/active/factorywager/registry/packages/xgboost-pers"],
 
     "@hono/node-server": ["@hono/node-server@1.19.14", "", { "peerDependencies": { "hono": "^4" } }, "sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw=="],
 
@@ -317,9 +317,9 @@
 
     "@rtsao/scc": ["@rtsao/scc@1.1.0", "", {}, "sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g=="],
 
-    "@sports-terminal/cli": ["@sports-terminal/cli@workspace:kimiremote/packages/cli"],
+    "@sports-terminal/cli": ["@sports-terminal/cli@workspace:projects/active/kimiremote/packages/cli"],
 
-    "@sports-terminal/core": ["@sports-terminal/core@workspace:kimiremote/packages/core"],
+    "@sports-terminal/core": ["@sports-terminal/core@workspace:projects/active/kimiremote/packages/core"],
 
     "@types/bun": ["@types/bun@1.3.14", "", { "dependencies": { "bun-types": "1.3.14" } }, "sha512-h1hFqFVcvAvD9j9K7ZW7vd82aSA+rTdznZa+5bwvCwqSB1jmmfLcbIWhOLx1/+boy/xmjgCs/OMUL8hRJSmnPw=="],
 

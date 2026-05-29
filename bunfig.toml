@@ -1,2 +1,48 @@
+# FactoryWager Enterprise — bunfig.toml
+# Bun runtime configuration.  Bun reads this file from the project root.
+# .bunfig.toml is the enterprise profile (team-lead config), separate concern.
+
 [install]
+# Isolated linker: 20.5s → 2.4s in peer-heavy monorepos.
+# Required by bet-ticker-worker-v1.1; safe for all workspaces.
+linker = "isolated"
+
+# Global virtual store: ~1 symlink per package on warm install.
+# First install materializes to ~/.bun/install/cache; subsequent
+# installs across all 6 projects share the same cache via symlinks.
+# Set BUN_INSTALL_GLOBAL_STORE=1 in CI as a belt-and-suspenders.
+globalStore = true
+
+# Pin exact versions — no ^/~ drift.  Inherited from .bunfig.toml.
 exact = true
+
+# CI safety: refuse to mutate lockfile.
+# In dev, drop this or set BUN_INSTALL_FROZEN_LOCKFILE=0.
+frozenLockfile = false
+
+# Minimum age before a package version is trusted (seconds).
+# 3 days = 259200 — same as bet-ticker, prevents supply-chain
+# attacks on freshly-published packages.
+minimumReleaseAge = 259200
+
+# Scoped registries — private @factorywager packages.
+# Token via FACTORYWAGER_REGISTRY_TOKEN env var.
+[install.scopes]
+"@factorywager" = { url = "https://factory-wager.com/registry", token = "$FACTORYWAGER_REGISTRY_TOKEN" }
+
+# Test runner defaults.  Per-workspace bunfig.toml files
+# (e.g. bet-ticker-worker-v1.1/bunfig.toml) override these.
+[test]
+timeout = 10000
+pathIgnorePatterns = [
+  "node_modules/**",
+  "dist/**",
+  "archive/**",
+  "scratch/**",
+  "docs/**",
+  "screenshots/**",
+  "bench/**",
+  "migrations/**",
+  "generated/**",
+  "vendor/**",
+]

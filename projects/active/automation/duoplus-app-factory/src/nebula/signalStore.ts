@@ -1,13 +1,24 @@
+import { semver } from "bun";
+
+const MIN_SAFE_NATIVE_REDIS_BUN = "1.3.14";
+
+function assertSafeNativeRedisRuntime(): void {
+  if (!semver.satisfies(Bun.version, `>=${MIN_SAFE_NATIVE_REDIS_BUN}`)) {
+    throw new Error(
+      `Bun ${Bun.version} is below the safe native Redis runtime ${MIN_SAFE_NATIVE_REDIS_BUN}. Upgrade Bun before using Bun.redis().`
+    );
+  }
+}
+
 export class SignalStore {
   private redis: Bun.RedisClient | null = null;
   private isInitialized: boolean = false;
 
-  constructor() {
-    const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
-  }
+  constructor() {}
 
   async init(): Promise<void> {
     if (!this.isInitialized) {
+      assertSafeNativeRedisRuntime();
       const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
       this.redis = Bun.redis(redisUrl);
       this.isInitialized = true;

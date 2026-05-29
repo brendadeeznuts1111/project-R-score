@@ -6,7 +6,7 @@
  * Ensures no sensitive information or debug code is included
  */
 
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
 
 interface SecurityCheck {
   name: string;
@@ -119,7 +119,7 @@ class MCPSecurityVerifier {
       throw new Error(`Bundle not found: ${this.bundlePath}`);
     }
 
-    const bundleContent = readFileSync(this.bundlePath, "utf8");
+    const bundleContent = await Bun.file(this.bundlePath).text();
     const results: SecurityCheckResult[] = [];
 
     console.info(`📦 Analyzing bundle: ${this.bundlePath}`);
@@ -252,7 +252,7 @@ class MCPSecurityVerifier {
     console.info("\n🚩 Verifying Feature Flag Configuration");
     console.info("-".repeat(45));
 
-    const bundleContent = readFileSync(this.bundlePath, "utf8");
+    const bundleContent = await Bun.file(this.bundlePath).text();
 
     const expectedFeatures = [
       "MCP_ENABLED",

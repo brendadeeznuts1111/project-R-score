@@ -8,6 +8,17 @@
  */
 
 import { feature } from "bun:bundle";
+import { semver } from "bun";
+
+const MIN_SAFE_NATIVE_REDIS_BUN = "1.3.14";
+
+function assertSafeNativeRedisRuntime(): void {
+  if (!semver.satisfies(Bun.version, `>=${MIN_SAFE_NATIVE_REDIS_BUN}`)) {
+    throw new Error(
+      `Bun ${Bun.version} is below the safe native Redis runtime ${MIN_SAFE_NATIVE_REDIS_BUN}. Upgrade Bun before using Bun.RedisClient.`
+    );
+  }
+}
 
 export class RedisClient {
   private static instance: RedisClient;
@@ -26,6 +37,7 @@ export class RedisClient {
       return null;
     }
 
+    assertSafeNativeRedisRuntime();
     const client = new Bun.RedisClient(url);
     await client.connect();
     return client;

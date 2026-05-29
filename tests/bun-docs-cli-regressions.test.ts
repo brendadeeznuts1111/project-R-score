@@ -47,14 +47,14 @@ describe('bun docs cli regressions', () => {
       )
     );
 
-    const out = runCli('barbershop/cli/bun-docs.ts', ['search', 'http', '404', '--max', '1'], { HOME: home });
+    const out = runCli('projects/active/barbershop/cli/bun-docs.ts', ['search', 'http', '404', '--max', '1'], { HOME: home });
 
     expect(out.exitCode).toBe(0);
     expect(out.stdout).toContain('No results found for "http 404"');
   });
 
   test('bun-docs-ultra does not treat --max value as query text', () => {
-    const out = runCli('barbershop/cli/bun-docs-ultra.ts', ['--max', '20'], {});
+    const out = runCli('projects/active/barbershop/cli/bun-docs-ultra.ts', ['--max', '20'], {});
 
     expect(out.exitCode).toBe(1);
     expect(out.stdout).toContain('Usage:');
@@ -66,7 +66,7 @@ describe('bun docs cli regressions', () => {
     const home = await mkdtemp(join(tmpdir(), 'bun-docs-ultra-home-'));
     process.env.HOME = home;
 
-    const module = await import(`../barbershop/cli/bun-docs-ultra.ts?refresh=${Date.now()}`);
+    const module = await import(`../projects/active/barbershop/cli/bun-docs-ultra.ts?refresh=${Date.now()}`);
     const interactive = new module.InteractiveSearcher() as any;
     let called = false;
     interactive.searcher.refreshIndex = async () => {

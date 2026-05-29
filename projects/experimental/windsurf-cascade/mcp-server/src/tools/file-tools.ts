@@ -411,9 +411,8 @@ class FileCompressor {
 
   async walkDirectory(dir) {
     const files = [];
-    const items = fs.readdirSync(dir);
     
-    for (const item of items) {
+    for await (const item of new Bun.Glob("*").scan(dir)) {
       const fullPath = path.join(dir, item);
       const stats = fs.statSync(fullPath);
       
@@ -661,9 +660,8 @@ class FileEncryptor {
 
   async walkDirectory(dir) {
     const files = [];
-    const items = fs.readdirSync(dir);
     
-    for (const item of items) {
+    for await (const item of new Bun.Glob("*").scan(dir)) {
       const fullPath = path.join(dir, item);
       const stats = fs.statSync(fullPath);
       
@@ -975,9 +973,8 @@ class FileTransfer {
 
   async walkDirectory(dir) {
     const files = [];
-    const items = fs.readdirSync(dir);
     
-    for (const item of items) {
+    for await (const item of new Bun.Glob("*").scan(dir)) {
       const fullPath = path.join(dir, item);
       const stats = fs.statSync(fullPath);
       
