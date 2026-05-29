@@ -40,9 +40,10 @@ export function createEnhancedServer(options: EnhancedServeOptions) {
     };
   }
   
-  const server = Bun.serve({
+  let server!: ReturnType<typeof Bun.serve>;
+  server = Bun.serve({
     ...options,
-    async fetch(request) {
+    async fetch(request): Promise<Response> {
       const monitor = new PerformanceMonitor({
         server: server as EnhancedServer,
         enableMetrics: options.monitoring?.enabled,
@@ -147,11 +148,13 @@ function enhanceServerWithMetrics(server: EnhancedServer): EnhancedServer {
     };
   };
   
-  server.stop = () => {
+  const baseStop = server.stop.bind(server);
+  server.stop = (closeActiveConnections?: boolean) => {
     for (const interval of activeIntervals) {
       clearInterval(interval);
     }
     activeIntervals.clear();
+    return baseStop(closeActiveConnections);
   };
   
   const interval = setInterval(() => {

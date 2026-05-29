@@ -145,7 +145,7 @@ export class ProtocolOptimizer {
     }
     
     // Check cache stats
-    if (performance?.cacheStats.ratio < 0.5) {
+    if ((performance?.cacheStats?.ratio ?? 0) < 0.5) {
       recommendations.push('� Low cache hit ratio. Consider adjusting cache strategies');
     }
     
@@ -175,10 +175,10 @@ export class ProtocolOptimizer {
     let score = 100;
     
     if (protocol === 'http') score -= 20;
-    if (performance?.avgResponseTime > 500) score -= 15;
-    if (performance?.avgResponseTime > 1000) score -= 20;
+    if ((performance?.avgResponseTime ?? 0) > 500) score -= 15;
+    if ((performance?.avgResponseTime ?? 0) > 1000) score -= 20;
     if ((compressionStats?.ratio ?? compressionStats?.savings?.ratio ?? 0) < 0.5) score -= 10;
-    if (performance?.cacheStats.ratio < 0.5) score -= 10;
+    if ((performance?.cacheStats?.ratio ?? 0) < 0.5) score -= 10;
     
     const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
     

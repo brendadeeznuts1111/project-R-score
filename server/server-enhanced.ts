@@ -852,7 +852,7 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
 
             const port = ports[projectId];
             if (port) {
-              window.open(`http://${SERVER_HOST}:${port}`, '_blank');
+              window.open('http://${SERVER_HOST}:' + port, '_blank');
             } else {
               executeCommand('View ' + projectId, 'bun run ' + projectId, [projectId]);
             }
@@ -1460,7 +1460,7 @@ const contentType = ContentTypeHandler.getContentType(data);
 
 // Create requests with proper Content-Type
 const request = ContentTypeHandler.createRequest(
-  `http://${SERVER_HOST}:${SERVER_PORT}/api`,
+  'http://${SERVER_HOST}:${SERVER_PORT}/api',
   { message: 'Hello' }
 );</code></pre>
 

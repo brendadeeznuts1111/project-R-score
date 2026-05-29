@@ -405,43 +405,25 @@ const rotateSigningKey = (): string => {
 // 6. ONE-LINER VALIDATION
 // ======================
 
-// Run this to verify secrets integration:
-// MASTER_KEY=your_master_key bun -e '
+/*
+Run this to verify secrets integration:
+
+MASTER_KEY=your_master_key bun -e '
 import { validateSecrets, rotateSigningKey } from "./secrets-integration";
 
 console.info(`
 🔐 TIER-1380 SECRETS STATUS
 ===========================
-Signing Key: ${Bun.secrets.TIER1380_SIGNING_KEY ? '✅ Loaded' : '❌ Missing'}
-R2 Credentials: ${Bun.secrets.R2_ACCESS_KEY_ID && Bun.secrets.R2_SECRET_ACCESS_KEY ? '✅ Loaded' : '❌ Missing'}
-GitHub Token: ${Bun.secrets.GITHUB_ENTERPRISE_TOKEN ? '✅ Loaded' : '❌ Missing'}
-Cloudflare API: ${Bun.secrets.CLOUDFLARE_API_TOKEN ? '✅ Loaded' : '❌ Missing'}
+Signing Key: ${Bun.secrets.TIER1380_SIGNING_KEY ? "✅ Loaded" : "❌ Missing"}
+R2 Credentials: ${Bun.secrets.R2_ACCESS_KEY_ID && Bun.secrets.R2_SECRET_ACCESS_KEY ? "✅ Loaded" : "❌ Missing"}
+GitHub Token: ${Bun.secrets.GITHUB_ENTERPRISE_TOKEN ? "✅ Loaded" : "❌ Missing"}
+Cloudflare API: ${Bun.secrets.CLOUDFLARE_API_TOKEN ? "✅ Loaded" : "❌ Missing"}
 
-📊 Validation: ${validateSecrets().valid ? '✅ ALL SECRETS' : '❌ MISSING SECRETS'}
+📊 Validation: ${validateSecrets().valid ? "✅ ALL SECRETS" : "❌ MISSING SECRETS"}
 
 🔄 Current Signing Key: ${Bun.secrets.TIER1380_SIGNING_KEY?.slice(0, 8)}...`
-
-// Test secure fetch
-const testSecureFetch = async () => {
-  try {
-    const response = await Tier1380SecureFetch.request(
-      "https://api.cloudflare.com/client/v4/user/tokens/verify",
-      {
-        method: "GET",
-        requireToken: "CLOUDFLARE_API_TOKEN",
-        csrf: true
-      }
-    );
-    console.info('✅ Secure fetch test passed:', response.ok);
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    console.error('❌ Secure fetch test failed:', errorMessage);
-  }
-};
-
-await testSecureFetch();
-console.info('🔒 Security integration test complete!');
 '
+*/
 
 /**
  * 💡 Performance Tip: For better performance, consider:

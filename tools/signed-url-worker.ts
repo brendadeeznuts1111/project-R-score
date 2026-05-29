@@ -127,7 +127,7 @@ export default {
           code: "SIGNED_URL_ERROR"
         }, {
           status: 500,
-          headers: { "Content-Type: "application/json" }
+          headers: { "Content-Type": "application/json" }
         });
       }
     }
@@ -164,7 +164,7 @@ export default {
           code: "AUDIT_URL_ERROR"
         }, {
           status: 500,
-          headers: { "Content-Type: "application/json" }
+          headers: { "Content-Type": "application/json" }
         });
       }
     }

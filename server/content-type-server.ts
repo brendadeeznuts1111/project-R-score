@@ -420,7 +420,7 @@ async function handleVerboseDemo(): Promise<Response> {
   <h2>Usage Examples</h2>
   <div class="example">
     <h3>Basic Verbose Logging</h3>
-    <pre><code>const response = await fetch(`http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test`, {
+    <pre><code>const response = await fetch('http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test', {
   verbose: true // Bun-specific: shows detailed HTTP headers
 });</code></pre>
   </div>

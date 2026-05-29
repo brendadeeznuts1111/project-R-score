@@ -365,7 +365,7 @@ export class MetafileAnalyzer {
 ### Largest Files
 | Path | Size | Format |
 |------|------|--------|
-${inputAnalysis.largestFiles.map(f => `| ${f.path} | ${this.formatBytes(f.bytes)} | ${f.format} |`).join('\n')}
+${inputAnalysis.largestFiles.map((f: { path: string; bytes: number; format?: string }) => `| ${f.path} | ${this.formatBytes(f.bytes)} | ${f.format} |`).join('\n')}
 
 ### Format Breakdown
 | Format | Files | Total Size |
@@ -393,7 +393,7 @@ ${Object.entries(outputAnalysis.exportAnalysis).map(([name, count]) =>
 
 ## 🚨 Optimization Opportunities
 ${sizeAnalysis.optimizationOpportunities.length > 0 
-  ? sizeAnalysis.optimizationOpportunities.map(opp => `- ⚠️ ${opp}`).join('\n')
+  ? sizeAnalysis.optimizationOpportunities.map((opp: string) => `- ⚠️ ${opp}`).join('\n')
   : '✅ No major optimization opportunities detected'
 }
 

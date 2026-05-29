@@ -87,9 +87,10 @@ export function createHARServer(options?: {
 }): HARServer {
   const captured: CapturedEntry[] = [];
 
+  // @ts-expect-error Bun.serve overload union rejects optional TLS spread
   const server = Bun.serve({
     port: 0,
-    fetch(req, server): Response {
+    fetch(req, server): Response | Promise<Response> {
       const proto: 'http' | 'https' =
         server.protocol ?? (req.url.startsWith('https:') ? 'https' : 'http');
       const start = performance.now();
@@ -101,14 +102,15 @@ export function createHARServer(options?: {
       return handle(req, proto, start, captured, options?.onRequest, extraHeaders);
     },
 
-    // TLS config when certs provided
-    ...(options?.tls && {
-      tls: {
-        key: Bun.file(options.tls.key),
-        cert: Bun.file(options.tls.cert),
-        alpnProtocols: ['h2', 'http/1.1'],
-      },
-    }),
+    ...(options?.tls
+      ? {
+          tls: {
+            key: Bun.file(options.tls.key),
+            cert: Bun.file(options.tls.cert),
+            alpnProtocols: ['h2', 'http/1.1'] as string[],
+          },
+        }
+      : {}),
   });
 
   return server;

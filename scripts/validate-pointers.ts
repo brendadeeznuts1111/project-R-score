@@ -819,7 +819,7 @@ const POINTER_DICTIONARY = {
 
   // Shared utilities
   SHARED_UTILS: {
-    entryGuard: join(PLATFORM_ROOT, 'shared', 'tools', 'entry-guard.ts'),
+    entryGuard: join(PLATFORM_ROOT, 'lib', 'shared', 'tools', 'entry-guard.ts'),
   },
 
   // Documentation files (only existing files)
@@ -830,7 +830,7 @@ const POINTER_DICTIONARY = {
 
   // Development servers
   DEV_SERVERS: {
-    example.com: 'http://example.com',
+    'example.com': 'http://example.com',
   },
 } as const;
 
