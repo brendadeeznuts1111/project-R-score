@@ -1,0 +1,13 @@
+{
+  "name": "sports-mcp-server",
+  "version": "1.0.0",
+  "module": "mcp-server.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run mcp-server.ts",
+    "dev": "bun run --watch mcp-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
