@@ -174,7 +174,7 @@ function launchDashboard(dashboardKey: string): void {
       console.info('   Then open: http://localhost:3000');
     } else if (dashboardKey === 'mcp') {
       console.info('💡 Quick Start:');
-      console.info('   bun run mcp:security            # Start MCP server');
+      console.info('   bun run mcp:bun                 # Start MCP server');
       console.info('   Then open: http://localhost:3000');
     }
   }

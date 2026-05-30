@@ -19,44 +19,31 @@ The following JSON configuration files contain hardcoded paths that cannot be au
 
 ### MCP Server Configurations
 
-#### `factorywager-mcp.json`
+MCP servers are configured in `.cursor/mcp.json` and `.mcp.json` at the project root. Use `${workspaceFolder}` for script paths:
+
 ```json
 {
   "mcpServers": {
     "bun-docs": {
-      "args": ["run", "/Users/nolarose/Projects/scripts/mcp-bridge.ts"]
+      "command": "bun",
+      "args": ["${workspaceFolder}/tools/bun-docs-mcp.ts"]
     },
-    "factorywager-tools": {
-      "args": ["run", "/Users/nolarose/Projects/scripts/fw-tools-mcp.ts"]
+    "dx": {
+      "command": "bun",
+      "args": ["${workspaceFolder}/scripts/dx-mcp.ts"]
     }
   }
 }
 ```
 
 **Solution Options:**
-1. **Use relative paths** (if MCP tool supports it):
-   ```json
-   "args": ["run", "scripts/mcp-bridge.ts"]
-   ```
+1. **Use workspace-relative paths** with `${workspaceFolder}` substitution
 2. **Use environment variable substitution** (if your MCP client supports it):
    ```json
-   "args": ["run", "${BUN_PLATFORM_HOME}/scripts/mcp-bridge.ts"]
+   "args": ["${BUN_PLATFORM_HOME}/scripts/mcp-bridge.ts"]
    ```
 3. **Create a wrapper script** that resolves paths before launching MCP servers
 4. **Manual edit** per installation (documented in setup instructions)
-
-#### `lib/security/bun-mcp-config.json` & `lib/security/mcp-config.json`
-```json
-{
-  "mcpServers": {
-    "tier1380-security": {
-      "args": ["run", "/Users/nolarose/Projects/lib/security/mcp-server.ts"]
-    }
-  }
-}
-```
-
-**Solution:** Same options as above. Consider using relative paths if the config is always loaded from the repo root.
 
 ### Recommended Approach
 

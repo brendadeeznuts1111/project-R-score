@@ -1049,7 +1049,7 @@ async function dispatch(
           recommendations: [
             'Prefer bun-native launch: command "bun", args ["${workspaceFolder}/scripts/<server>.ts"] (no run subcommand).',
             'Keep .cursor/mcp.json and .mcp.json mcpServers in sync.',
-            'Disable optional servers (app-security, factorywager-tools, mcp-bridge) until env is configured.',
+            'Disable optional servers (mcp-bridge) until env is configured.',
           ],
         };
       } catch (e: any) {

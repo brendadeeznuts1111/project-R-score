@@ -124,7 +124,6 @@ class MCPSystemDashboard {
     // Check MCP Servers
     const mcpServers = [
       { name: '📚 Bun MCP Server', script: 'lib/mcp/bun-mcp-server.ts' },
-      { name: '🔧 Tools MCP Server', script: 'scripts/fw-tools-mcp.ts' },
       { name: '🌉 MCP Bridge', script: 'scripts/mcp-bridge.ts' }
     ];
 

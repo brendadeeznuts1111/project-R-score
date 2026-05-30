@@ -46,7 +46,7 @@
   "scripts": {
     "development": ["dev", "start", "test", "build"],
     "tools": ["url:validate", "lint", "format", "type-check"],
-    "mcp": ["mcp:bun", "mcp:security"],
+    "mcp": ["mcp:bun"],
     "validation": ["standards:check", "ci:validate"]
   },
   "releases": {

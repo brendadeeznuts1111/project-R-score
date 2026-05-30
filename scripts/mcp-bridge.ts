@@ -7,8 +7,8 @@
  * providing enhanced Bun documentation search with FactoryWager context.
  *
  * Setup:
- *   cp factorywager-mcp.json ~/.config/claude/mcp.json
- *   Restart Claude Desktop
+ *   Configure in .cursor/mcp.json or ~/.config/claude/mcp.json
+ *   Restart your MCP client
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

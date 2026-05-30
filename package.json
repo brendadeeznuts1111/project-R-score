@@ -8,6 +8,7 @@
       "packages/*",
       "projects/active/kimiremote/packages/*",
       "projects/active/factorywager/registry/packages/*",
+      "projects/active/sports-terminal-os",
       "lib/*"
     ]
   },
@@ -1598,7 +1599,6 @@
     "start:payments": "bun run server/payment-webhook-server.ts",
     "start:payments:v2": "bun run server/payment-webhook-server-v2.ts",
     "start:content-type": "bun run server/content-type-server.ts",
-    "mcp:security": "bun run lib/security/mcp-server.ts --http --port=3000",
     "start:p2p-proxy": "bun run server/p2p-proxy-server.ts",
     "start:p2p-proxy:v2": "bun run server/p2p-proxy-server-enhanced.ts",
     "start:p2p-proxy:bun": "bun run server/p2p-proxy-bun-native.ts",
@@ -1852,7 +1852,6 @@
     "deploy:staging": "bash scripts/shell/deploy-staging.sh",
     "deploy:production": "bash scripts/deployment/deploy-production.sh deploy",
     "mcp:bun": "bun run lib/mcp/bun-mcp-server.ts",
-    "mcp:tools": "bun run scripts/fw-tools-mcp.ts",
     "mcp:bridge": "bun run scripts/mcp-bridge.ts",
     "setup:mcp": "bash scripts/setup-mcp.sh",
     "mcp-monitor": "bun run scripts/mcp-monitor.ts",

@@ -103,17 +103,6 @@ setup_claude_desktop() {
         "R2_AUDIT_BUCKET": "scanner-cookies",
         "NODE_ENV": "production"
       }
-    },
-    "factorywager-tools": {
-      "command": "bun",
-      "args": [
-        "run",
-        "$PROJECT_PATH/scripts/fw-tools-mcp.ts"
-      ],
-      "env": {
-        "FW_COLORS_ENABLED": "true",
-        "R2_AUDIT_BUCKET": "scanner-cookies"
-      }
     }
   }
 }
@@ -131,7 +120,6 @@ create_cli_scripts() {
     chmod +x scripts/fw-docs.ts
     chmod +x scripts/interactive-docs.ts
     chmod +x scripts/mcp-bridge.ts
-    chmod +h scripts/fw-tools-mcp.ts
     chmod +x lib/mcp/bun-mcp-server.ts
 
     print_success "CLI scripts made executable"
@@ -147,13 +135,6 @@ test_mcp_servers() {
         print_warning "Bun MCP server test timed out (expected behavior)"
     }
     print_success "Bun MCP server is accessible"
-
-    # Test the tools MCP server
-    print_info "Testing FactoryWager tools MCP server..."
-    timeout 5s bun run scripts/fw-tools-mcp.ts > /dev/null 2>&1 || {
-        print_warning "FactoryWager tools MCP server test timed out (expected behavior)"
-    }
-    print_success "FactoryWager tools MCP server is accessible"
 
     # Test R2 integration
     print_info "Testing R2 integration..."
@@ -203,7 +184,6 @@ add_package_scripts() {
 
     # Add MCP scripts to package.json
     npm pkg set scripts.mcp:bun="bun run lib/mcp/bun-mcp-server.ts"
-    npm pkg set scripts.mcp:tools="bun run scripts/fw-tools-mcp.ts"
     npm pkg set scripts.mcp:bridge="bun run scripts/mcp-bridge.ts"
     npm pkg set scripts.fw-docs="bun run scripts/fw-docs.ts"
     npm pkg set scripts.interactive-docs="bun run scripts/interactive-docs.ts"
@@ -261,9 +241,6 @@ bun run interactive-docs validate ./code.ts secrets
 ```bash
 # Bun documentation server
 bun run mcp:bun
-
-# FactoryWager tools server
-bun run mcp:tools
 
 # Claude Desktop bridge
 bun run mcp:bridge
@@ -357,10 +334,8 @@ verify_setup() {
         "lib/mcp/bun-mcp-client.ts"
         "lib/mcp/bun-mcp-server.ts"
         "scripts/mcp-bridge.ts"
-        "scripts/fw-tools-mcp.ts"
         "scripts/fw-docs.ts"
         "scripts/interactive-docs.ts"
-        "factorywager-mcp.json"
     )
 
     for file in "${required_files[@]}"; do

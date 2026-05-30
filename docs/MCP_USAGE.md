@@ -40,9 +40,6 @@ bun run scripts/interactive-docs.ts diagnose "error message" context
 # Bun documentation server
 bun run lib/mcp/bun-mcp-server.ts
 
-# FactoryWager tools server  
-bun run scripts/fw-tools-mcp.ts
-
 # Claude Desktop bridge
 bun run scripts/mcp-bridge.ts
 ```
@@ -94,7 +91,6 @@ scanner-cookies/
 
 ### ✅ MCP Server Infrastructure  
 - Bun documentation server: Running
-- FactoryWager tools server: Running
 - Claude Desktop bridge: Configured
 - Server startup: All servers accessible
 

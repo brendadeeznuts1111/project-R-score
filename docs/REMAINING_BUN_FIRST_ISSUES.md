@@ -75,7 +75,6 @@ bun run lint
 - [ ] lib/registry/r2-storage.ts
 - [ ] lib/security/enterprise-auth.ts
 - [ ] lib/security/master-token.ts
-- [ ] lib/security/mcp-server.ts
 - [ ] lib/security/secret-lifecycle.ts
 - [ ] lib/security/test-integration.ts
 - [ ] lib/security/zero-trust-manager.ts

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": "2.2.0",
-    "updated": "2026-05-29",
+    "updated": "2026-05-30",
     "syncWith": ".cursor/mcp.json",
     "docs": "https://cursor.com/docs/context/mcp",
     "notes": "Bun-native launch: command bun + script path (no run). Essential: dx + bun-docs.",
@@ -10,21 +10,13 @@
         "dx",
         "bun-docs"
       ],
-      "remote": [
-        "bun-docs-http"
-      ],
       "domain": [
         "cascade-mover"
       ],
       "optional": [
-        "app-security",
-        "factorywager-tools",
         "mcp-bridge"
       ],
       "requiresEnv": {
-        "factorywager-tools": [
-          "R2_AUDIT_BUCKET"
-        ],
         "cascade-mover": [
           "cascade-mover-v3/.env"
         ],
@@ -46,15 +38,9 @@
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }
     },
-    "bun-docs-http": {
-      "type": "sse",
-      "description": "Official Bun documentation MCP (remote fallback when local bun-docs unavailable)",
-      "url": "https://bun.com/docs/mcp",
-      "disabled": true
-    },
     "dx": {
       "type": "stdio",
-      "description": "Developer Experience \u2014 project scan, health, README, Bun probes, mcp_status",
+      "description": "Developer Experience — project scan, health, README, Bun probes, mcp_status",
       "command": "bun",
       "args": [
         "${workspaceFolder}/scripts/dx-mcp.ts"
@@ -66,7 +52,7 @@
     },
     "cascade-mover": {
       "type": "stdio",
-      "description": "Cascade Mover v3 \u2014 sports intelligence (lines, sources, confidence, 43 tools)",
+      "description": "Cascade Mover v3 — sports intelligence (lines, sources, confidence, 43 tools)",
       "command": "bun",
       "args": [
         "${workspaceFolder}/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
@@ -76,37 +62,9 @@
       },
       "envFile": "${workspaceFolder}/cascade-mover-v3/.env"
     },
-    "app-security": {
-      "type": "stdio",
-      "description": "Secrets, password hashing, auth, deployment audit (Bun.secrets; disable if unused)",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/lib/security/mcp-server.ts"
-      ],
-      "env": {
-        "BUN_RUNTIME": "true",
-        "NODE_ENV": "production"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "disabled": true
-    },
-    "factorywager-tools": {
-      "type": "stdio",
-      "description": "R2 audit, profiling, security scans (requires R2 env; disable if unused)",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/scripts/fw-tools-mcp.ts"
-      ],
-      "env": {
-        "FW_COLORS_ENABLED": "true",
-        "R2_AUDIT_BUCKET": "${env:R2_AUDIT_BUCKET}"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "disabled": true
-    },
     "mcp-bridge": {
       "type": "stdio",
-      "description": "FactoryWager MCP bridge \u2014 SearchBunEnhanced, AuditSearch, wiki generation (Claude Desktop parity)",
+      "description": "FactoryWager MCP bridge — SearchBunEnhanced, AuditSearch, wiki generation (Claude Desktop parity)",
       "command": "bun",
       "args": [
         "${workspaceFolder}/scripts/mcp-bridge.ts"

@@ -58,7 +58,6 @@
       "options": [
         "scripts/dx-mcp.ts",
         "scripts/mcp-bridge.ts",
-        "scripts/fw-tools-mcp.ts",
         "tools/bun-docs-mcp.ts",
         "scripts/build.ts"
       ]

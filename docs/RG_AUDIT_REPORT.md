@@ -48,7 +48,7 @@ Many files hardcode `/Users/nolarose/Projects` or `/Users/ashley/PROJECTS`. This
 **Examples:**
 
 - **`/Users/nolarose/Projects`** (current user):  
-  `DIRECTORY_STRUCTURE.md`, `docs/AGENTS.md`, `docs/QUICK_TEST.md`, `factorywager-mcp.json`, `lib/port-management-system.ts`, `lib/security/*.json`, `projects/dashboards/secrets-dashboard/*`, `.husky/*.sh`, `.validate-pointers-baseline.json`, `BUN_CONSTANTS_VERSION.json`, `projects/analysis/scanner/scan.ts`, etc.
+  `DIRECTORY_STRUCTURE.md`, `docs/AGENTS.md`, `docs/QUICK_TEST.md`, `lib/port-management-system.ts`, `projects/dashboards/secrets-dashboard/*`, `.husky/*.sh`, `.validate-pointers-baseline.json`, `BUN_CONSTANTS_VERSION.json`, `projects/analysis/scanner/scan.ts`, etc.
 - **`/Users/ashley/PROJECTS`** (example user in docs):  
   `docs/BUN_MAIN_GUIDE.md`, `tools/inspect-demo.ts`, `tools/inspect-projects.ts`, `docs/guides/BUN_WHICH_GUIDE.md`, `docs/BUN_INSPECT_GUIDE.md`.
 
