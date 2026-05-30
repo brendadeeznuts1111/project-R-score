@@ -1,0 +1,126 @@
+# WEBSOCKET HANDLER BLUEPRINT — Template for adding a real-time channel
+
+Every WebSocket handler in `src/services/websocket-handlers/` follows this exact shape. 7 handlers, all identical structure.
+
+## Template
+
+```typescript
+// src/services/websocket-handlers/my-channel-ws.ts
+
+import type { ServerWebSocket } from "bun";
+import type { WebSocketMessage, WebSocketClient } from "@utils/types";
+
+// ---------------------------------------------------------------------------
+// Channel name constant
+// ---------------------------------------------------------------------------
+
+const CHANNEL = "my_channel";
+
+// ---------------------------------------------------------------------------
+// Subscribe
+// ---------------------------------------------------------------------------
+
+export function handleSubscribe(
+  ws: ServerWebSocket<unknown>,
+  client: WebSocketClient,
+  message: WebSocketMessage
+): void {
+  client.subscribedChannels.add(CHANNEL);
+
+  // Send initial snapshot
+  ws.send(JSON.stringify({
+    type: "snapshot",
+    provider: CHANNEL,
+    data: getSnapshot(),
+  }));
+
+  ws.send(JSON.stringify({
+    type: "subscribed",
+    provider: CHANNEL,
+    data: { channel: CHANNEL, subscriberCount: getSubscriberCount(CHANNEL) },
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// Unsubscribe
+// ---------------------------------------------------------------------------
+
+export function handleUnsubscribe(
+  ws: ServerWebSocket<unknown>,
+  client: WebSocketClient,
+  message: WebSocketMessage
+): void {
+  client.subscribedChannels.delete(CHANNEL);
+
+  ws.send(JSON.stringify({
+    type: "unsubscribed",
+    provider: CHANNEL,
+    data: { channel: CHANNEL },
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// Broadcast
+// ---------------------------------------------------------------------------
+
+export function broadcastMyUpdate(data: unknown): void {
+  broadcastToChannel(CHANNEL, {
+    type: "my_update",
+    provider: CHANNEL,
+    data,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Snapshot (initial state on subscribe)
+// ---------------------------------------------------------------------------
+
+function getSnapshot(): unknown {
+  // Return current state for this channel
+  return { timestamp: Date.now() };
+}
+
+function getSubscriberCount(channel: string): number {
+  // Count clients subscribed to this channel
+  return 0;
+}
+```
+
+## Registration
+
+In `src/index.ts` or the WS router:
+
+```typescript
+import {
+  handleSubscribe as handleMySubscribe,
+  handleUnsubscribe as handleMyUnsubscribe,
+} from "@services/websocket-handlers/my-channel-ws";
+
+// In the message handler:
+case "subscribe:my_channel":
+  handleMySubscribe(ws, client, message);
+  break;
+case "unsubscribe:my_channel":
+  handleMyUnsubscribe(ws, client, message);
+  break;
+```
+
+## Rules
+
+- **One file per channel.** Never mix two channels in one handler file.
+- **Snapshot on subscribe.** Always send current state when a client subscribes.
+- **Channel constant.** Define `CHANNEL` as a const at the top of the file.
+- **Subscribe/unsubscribe pattern.** Same function signatures across all handlers.
+- **Broadcast through shared function.** Use `broadcastToChannel()` from index.ts, not raw `ws.send()`.
+
+## Existing Handlers
+
+| File | Channel |
+|------|---------|
+| `sportsbook-ws.ts` | `sportsbook_odds_update` |
+| `agents-ws.ts` | `agentUpdate` |
+| `patterns-ws.ts` | `pattern_detected` |
+| `players-ws.ts` | `player_update` |
+| `prediction-ws.ts` | `prediction_update` |
+| `risk-ws.ts` | `riskAlert` |
+| `system-ws.ts` | System events |

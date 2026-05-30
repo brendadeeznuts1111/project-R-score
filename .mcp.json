@@ -37,7 +37,7 @@
   "mcpServers": {
     "bun-docs": {
       "type": "stdio",
-      "description": "Local bun-types MDX search and read (317+ docs, zero npm deps)",
+      "description": "Bun docs MCP v1.3 — lazy index, compact output, blog/RSS, rg query (zero npm deps)",
       "command": "bun",
       "args": [
         "${workspaceFolder}/tools/bun-docs-mcp.ts"

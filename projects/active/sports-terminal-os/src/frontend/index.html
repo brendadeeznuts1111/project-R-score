@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sports Terminal OS — Professional sports betting trading terminal with real-time odds, risk analytics, and player management" />
+    <meta name="theme-color" content="#1a1a2e" />
+    <title>Sports Terminal OS</title>
+    <style>
+      /* Critical CSS inlined to prevent flash of unstyled content */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html, body, #root {
+        width: 100%;
+        height: 100%;
+        background: #0a0a0f;
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      #root {
+        display: flex;
+        flex-direction: column;
+      }
+      /* Loading spinner while React mounts */
+      .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: #0a0a0f;
+        gap: 16px;
+      }
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #2a2a3e;
+        border-top-color: #4a9eff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .loading-text {
+        color: #888;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Loading fallback rendered before React hydrates -->
+      <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Sports Terminal OS v5.2.0</div>
+      </div>
+    </div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

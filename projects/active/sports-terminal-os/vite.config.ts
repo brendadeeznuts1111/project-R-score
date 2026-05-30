@@ -1,0 +1,53 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { resolve } from "path";
+
+/**
+ * Vite 5 configuration for Sports Terminal OS frontend.
+ * React 19 + TypeScript SPA with HMR and optimized builds.
+ */
+export default defineConfig(({ mode }) => ({
+  plugins: [react()],
+  root: resolve(__dirname, "src/frontend"),
+  publicDir: resolve(__dirname, "src/frontend/public"),
+  build: {
+    outDir: resolve(__dirname, "dist/frontend"),
+    emptyOutDir: true,
+    sourcemap: mode !== "production",
+    minify: mode === "production",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+      "@frontend": resolve(__dirname, "src/frontend"),
+      "@components": resolve(__dirname, "src/frontend/components"),
+      "@pages": resolve(__dirname, "src/frontend/pages"),
+      "@hooks": resolve(__dirname, "src/frontend/hooks"),
+    },
+  },
+  server: {
+    port: 5173,
+    strictPort: false,
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/ws": {
+        target: "ws://localhost:3000",
+        ws: true,
+      },
+    },
+  },
+  css: {
+    devSourcemap: true,
+  },
+}));
