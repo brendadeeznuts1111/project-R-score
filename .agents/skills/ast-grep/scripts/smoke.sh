@@ -16,8 +16,17 @@ cd "$REPO"
 echo "== doctor =="
 python3 "$HELPER" doctor
 echo ""
-echo "== map (kimi only) =="
-python3 "$HELPER" map --only kimi 2>&1 | head -35
+echo "== map --list (zones) =="
+python3 "$HELPER" -q map --list 2>&1 | head -20
+echo ""
+echo "== map --compact --zone kimi =="
+python3 "$HELPER" -q map --compact --zone kimi
+echo ""
+echo "== map (kimi only, digest sample) =="
+python3 "$HELPER" map --only kimi-f402 2>&1 | head -20
+echo ""
+echo "== outline --zone agents =="
+python3 "$HELPER" -q outline --zone agents --view names 2>&1 | head -15
 echo ""
 echo "== outline (helper) =="
 python3 "$HELPER" outline "$TARGET" --view names

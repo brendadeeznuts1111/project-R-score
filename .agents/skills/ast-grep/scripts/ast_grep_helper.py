@@ -70,7 +70,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -540,12 +540,122 @@ def _load_repo_map() -> dict:
     return json.loads(manifest.read_text(encoding="utf-8"))
 
 
-def _filter_repo_targets(targets: list[dict], only: str) -> list[dict]:
-    needle = only.lower()
-    return [
-        t for t in targets
-        if needle in t.get("id", "").lower() or needle in t.get("name", "").lower()
-    ]
+def _filter_repo_targets(
+    targets: list[dict],
+    *,
+    only: str = "",
+    zone: str = "",
+) -> list[dict]:
+    filtered = targets
+    if zone:
+        needle = zone.lower()
+        filtered = [t for t in filtered if t.get("zone", "").lower() == needle]
+    if only:
+        needle = only.lower()
+        filtered = [
+            t for t in filtered
+            if needle in t.get("id", "").lower()
+            or needle in t.get("name", "").lower()
+            or needle in t.get("zone", "").lower()
+            or any(needle in tag.lower() for tag in t.get("tags", []))
+        ]
+    return filtered
+
+
+def _resolve_repo_targets(args: argparse.Namespace) -> list[dict]:
+    data = _load_repo_map()
+    targets = data.get("targets", [])
+    only = getattr(args, "only", None) or ""
+    zone = getattr(args, "zone", None) or ""
+    if only or zone:
+        targets = _filter_repo_targets(targets, only=only, zone=zone)
+    return targets
+
+
+def _outline_rules_path(args: argparse.Namespace, target: Optional[dict] = None) -> Optional[str]:
+    custom = getattr(args, "outline_rules", None)
+    if custom:
+        p = Path(custom)
+        return str(p if p.is_file() else skill_root() / custom)
+    use_bun = getattr(args, "bun_rules", False)
+    if target and target.get("bun_rules"):
+        use_bun = True
+    if use_bun:
+        return str(skill_root() / "outline-rules" / "bun-monorepo.yml")
+    return None
+
+
+def _build_outline_sg_args(
+    args: argparse.Namespace,
+    paths: list[str],
+    target: Optional[dict] = None,
+) -> list[str]:
+    sg_args = ["outline", "--color", "never"]
+    view = getattr(args, "view", None) or (target or {}).get("view")
+    items = getattr(args, "items", None) or (target or {}).get("items")
+    if view:
+        sg_args.extend(["--view", view])
+    if items:
+        sg_args.extend(["--items", items])
+    if getattr(args, "match", None):
+        sg_args.extend(["--match", args.match])
+    if getattr(args, "types", None):
+        sg_args.extend(["--type", ",".join(args.types)])
+    if getattr(args, "lang", None):
+        sg_args.extend(["--lang", normalize_lang(args.lang) or args.lang])
+    if getattr(args, "pub_members", False):
+        sg_args.append("--pub-members")
+    rules = _outline_rules_path(args, target)
+    if rules:
+        sg_args.extend(["--outline-rules", rules])
+    json_style = getattr(args, "json_style", None)
+    if getattr(args, "json_out", False):
+        sg_args.append(f"--json={json_style or 'compact'}")
+    globs: list[str] = list(getattr(args, "globs", None) or [])
+    if target:
+        for g in target.get("globs", []):
+            if g not in globs:
+                globs.append(g)
+    for g in globs:
+        sg_args.extend(["--globs", g])
+    sg_args.extend(paths)
+    return sg_args
+
+
+def _summarize_outline_json(entries: list[dict]) -> dict:
+    by_type: dict[str, int] = {}
+    files: dict[str, int] = {}
+    symbols: list[dict] = []
+    for file_entry in entries:
+        rel = file_entry.get("path", "?")
+        for item in file_entry.get("items", []):
+            st = item.get("symbolType", "?")
+            by_type[st] = by_type.get(st, 0) + 1
+            files[rel] = files.get(rel, 0) + 1
+            symbols.append({
+                "file": rel,
+                "name": item.get("name"),
+                "type": st,
+                "exported": item.get("isExported", False),
+                "line": item.get("range", {}).get("start", {}).get("line"),
+            })
+    return {
+        "symbol_count": len(symbols),
+        "file_count": len(files),
+        "by_type": by_type,
+        "files": files,
+        "symbols": symbols,
+    }
+
+
+def _run_outline(
+    binary: Path,
+    args: argparse.Namespace,
+    paths: list[str],
+    target: Optional[dict] = None,
+) -> tuple[int, str]:
+    proc = run_sg(binary, _build_outline_sg_args(args, paths, target))
+    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
 
 
 def _load_scan_profile(name: Optional[str]) -> Optional[dict]:
@@ -589,7 +699,8 @@ def _expand_repo_map_only(args: argparse.Namespace, root: Path) -> None:
     explicit = _search_paths(args)
     if explicit and explicit != ["."]:
         return
-    targets = _filter_repo_targets(_load_repo_map().get("targets", []), only)
+    zone = getattr(args, "zone", None) or ""
+    targets = _filter_repo_targets(_load_repo_map().get("targets", []), only=only, zone=zone)
     paths: list[str] = []
     globs: list[str] = list(getattr(args, "globs", None) or [])
     for target in targets:
@@ -632,33 +743,51 @@ def _summarize_matches(matches: list[dict]) -> tuple[dict[str, dict], dict[str, 
 
 def cmd_outline(args: argparse.Namespace) -> int:
     binary = require_binary(require_outline=True)
-    sg_args = ["outline", "--color", "never"]
-    if args.view:
-        sg_args.extend(["--view", args.view])
-    if args.items:
-        sg_args.extend(["--items", args.items])
-    if args.match:
-        sg_args.extend(["--match", args.match])
-    if args.types:
-        sg_args.extend(["--type", ",".join(args.types)])
-    if args.lang:
-        sg_args.extend(["--lang", normalize_lang(args.lang) or args.lang])
-    if getattr(args, "bun_rules", False):
-        sg_args.extend(["--outline-rules", str(skill_root() / "outline-rules" / "bun-monorepo.yml")])
-    for g in args.globs or []:
-        sg_args.extend(["--globs", g])
-    sg_args.extend(_search_paths(args))
+    root = git_root() or Path.cwd()
+    paths = _search_paths(args)
+    only = getattr(args, "only", None)
+    zone = getattr(args, "zone", None)
+    if (only or zone) and (not paths or paths == ["."]):
+        targets = _resolve_repo_targets(args)
+        if not targets:
+            err("no map targets matched --only/--zone filter")
+            return 1
+        exit_code = 0
+        for target in targets:
+            rel = target.get("path", ".")
+            full = (root / rel).resolve()
+            if not full.exists():
+                print(f"## {target.get('id', rel)}  SKIP (missing {rel})")
+                print()
+                continue
+            if len(targets) > 1:
+                print(f"## {target.get('name', rel)} ({rel})")
+            code, out = _run_outline(binary, args, [str(full)], target)
+            exit_code = max(exit_code, code)
+            if code != 0:
+                sys.stderr.write(out)
+                print("(outline failed)")
+                print()
+                continue
+            text = out.strip() or "(no outline entries)"
+            if args.json_out:
+                print(text)
+            else:
+                body, _ = truncate_output(text)
+                print(body)
+            if len(targets) > 1:
+                print()
+        return exit_code
 
-    proc = run_sg(binary, sg_args)
-    if proc.returncode != 0:
-        sys.stderr.write(proc.stderr or "")
-        return proc.returncode
-
-    out = proc.stdout.strip() or "(no outline entries)"
+    code, out = _run_outline(binary, args, paths)
+    if code != 0:
+        sys.stderr.write(out)
+        return code
+    text = out.strip() or "(no outline entries)"
     if args.json_out:
-        print(out)
+        print(text)
     else:
-        body, _ = truncate_output(out)
+        body, _ = truncate_output(text)
         print(body)
     return 0
 
@@ -670,48 +799,119 @@ def cmd_map(args: argparse.Namespace) -> int:
         return 1
     data = json.loads(manifest.read_text(encoding="utf-8"))
     root = git_root() or Path.cwd()
-    only = (args.only or "").lower()
-    targets = data.get("targets", [])
-    if only:
-        targets = [t for t in targets if only in t.get("id", "").lower() or only in t.get("name", "").lower()]
+    targets = _resolve_repo_targets(args)
     if not targets:
         err("no map targets matched filter")
         return 1
 
+    list_only = getattr(args, "list_only", False) or getattr(args, "no_outline", False)
+    compact = getattr(args, "compact", False)
+    json_out = getattr(args, "json_out", False)
+
+    report: dict = {
+        "version": data.get("version"),
+        "zones": data.get("zones", {}),
+        "repo": str(root),
+        "targets": [],
+    }
+
+    if list_only and not json_out:
+        print(f"repo: {root}")
+        print(f"targets: {len(targets)}")
+        zones = data.get("zones", {})
+        if zones:
+            print("zones:", ", ".join(f"{k}={v}" for k, v in zones.items()))
+        print()
+        for target in targets:
+            rel = target.get("path", ".")
+            exists = (root / rel).exists()
+            tags = ", ".join(target.get("tags", [])) or "-"
+            desc = target.get("description", "")
+            print(f"  [{target.get('zone', '?')}] {target.get('id', rel)}")
+            print(f"    path: {rel}  {'ok' if exists else 'MISSING'}")
+            print(f"    view: {target.get('view', 'auto')}  tags: {tags}")
+            if target.get("bun_rules"):
+                print("    bun_rules: true")
+            if desc:
+                print(f"    {desc}")
+        return 0
+
     binary = require_binary(require_outline=True)
-    print(f"repo: {root}")
-    print(f"targets: {len(targets)}")
-    print()
+    if not json_out and not compact:
+        print(f"repo: {root}")
+        print(f"targets: {len(targets)}")
+        if getattr(args, "only", None):
+            print(f"filter: --only {args.only}")
+        if getattr(args, "zone", None):
+            print(f"filter: --zone {args.zone}")
+        print()
 
     for target in targets:
         rel = target.get("path", ".")
         full = (root / rel).resolve()
+        tid = target.get("id", rel)
         name = target.get("name", rel)
+        entry: dict = {
+            "id": tid,
+            "zone": target.get("zone"),
+            "name": name,
+            "path": rel,
+            "exists": full.exists(),
+            "tags": target.get("tags", []),
+            "description": target.get("description"),
+        }
+
+        if not full.exists():
+            entry["status"] = "missing"
+            report["targets"].append(entry)
+            if not json_out and not compact:
+                print(f"## {name}")
+                print(f"   path: {rel}")
+                print("   (missing)")
+                print()
+            continue
+
+        map_args = argparse.Namespace(**{
+            **vars(args),
+            "json_out": compact or json_out,
+            "json_style": "compact",
+        })
+        code, out = _run_outline(binary, map_args, [str(full)], target)
+        if code != 0:
+            entry["status"] = "error"
+            report["targets"].append(entry)
+            if not json_out and not compact:
+                print(f"## {name}")
+                print(f"   path: {rel}")
+                print("   (outline failed)")
+                print()
+            continue
+
+        if compact or json_out:
+            summary = _summarize_outline_json(parse_compact_json(out))
+            entry["outline"] = summary
+            entry["status"] = "ok"
+            report["targets"].append(entry)
+            if compact and not json_out:
+                types = ", ".join(f"{k}:{v}" for k, v in sorted(summary["by_type"].items()))
+                print(f"[{target.get('zone', '?')}] {tid}: {summary['symbol_count']} symbols in {summary['file_count']} files ({types})")
+            continue
+
+        entry["status"] = "ok"
+        report["targets"].append(entry)
         print(f"## {name}")
         print(f"   path: {rel}")
-        if not full.exists():
-            print("   (missing)")
-            print()
-            continue
-        sg_args = ["outline", "--color", "never"]
-        if target.get("view"):
-            sg_args.extend(["--view", target["view"]])
-        if target.get("items"):
-            sg_args.extend(["--items", target["items"]])
-        for g in target.get("globs", []):
-            sg_args.extend(["--globs", g])
-        sg_args.append(str(full))
-        proc = run_sg(binary, sg_args)
-        if proc.returncode != 0:
-            sys.stderr.write(proc.stderr or "")
-            print("   (outline failed)")
-            print()
-            continue
-        body, truncated = truncate_output(proc.stdout.strip() or "(no outline entries)")
+        if target.get("zone"):
+            print(f"   zone: {target['zone']}")
+        body, truncated = truncate_output(out.strip() or "(no outline entries)")
         for line in body.splitlines():
             print(f"   {line}")
         if truncated:
             print("   [section truncated — run outline on path directly]")
+        print()
+
+    if json_out:
+        json.dump(report, sys.stdout, indent=2)
         print()
     return 0
 
@@ -1101,7 +1301,10 @@ def cmd_audit(args: argparse.Namespace) -> int:
     data = _load_repo_map()
     root = git_root() or Path.cwd()
     only = getattr(args, "only", None) or ""
-    targets = _filter_repo_targets(data.get("targets", []), only) if only else data.get("targets", [])
+    zone = getattr(args, "zone", None) or ""
+    targets = data.get("targets", [])
+    if only or zone:
+        targets = _filter_repo_targets(targets, only=only, zone=zone)
     if not targets:
         err("no map targets matched filter")
         return 1
@@ -1352,6 +1555,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     o = sub.add_parser("outline", help="Map code structure (requires ast-grep 0.44+).")
     o.add_argument("paths", nargs="*", help="Paths (default: '.')")
+    o.add_argument("--only", help="Expand paths from repo-map targets (substring id/name/zone/tag).")
+    o.add_argument("--zone", help="Filter repo-map targets by zone (sports-terminal, kimi, agents).")
     o.add_argument("--view", choices=["auto", "names", "signatures", "digest", "expanded"], help="Outline view.")
     o.add_argument("--items", choices=["auto", "structure", "exports", "imports", "all"], help="Item filter.")
     o.add_argument("--match", help="Regex filter on symbol names/signatures.")
@@ -1359,11 +1564,25 @@ def build_parser() -> argparse.ArgumentParser:
     o.add_argument("--lang", "-l", help="Language override.")
     o.add_argument("--globs", action="append", help="Include/exclude glob.")
     o.add_argument("--bun-rules", action="store_true", help="Load outline-rules/bun-monorepo.yml extractors.")
-    o.add_argument("--json-out", action="store_true", help="Emit raw output (no truncation).")
+    o.add_argument("--outline-rules", help="Custom outline-rules YAML (path under skill or absolute).")
+    o.add_argument("--pub-members", action="store_true", help="Show only public members in member views.")
+    o.add_argument("--json-out", action="store_true", help="Emit outline JSON (no truncation).")
+    o.add_argument("--json-style", choices=["compact", "pretty", "stream"], default="compact", help="With --json-out.")
     o.set_defaults(func=cmd_outline)
 
     m = sub.add_parser("map", help="Outline monorepo targets from repo-map.json.")
-    m.add_argument("--only", help="Filter targets by id/name substring.")
+    m.add_argument("--only", help="Filter targets by id/name/zone/tag substring.")
+    m.add_argument("--zone", help="Filter targets by zone (sports-terminal, kimi, agents).")
+    m.add_argument("--list", dest="list_only", action="store_true", help="Inventory only — no outline run.")
+    m.add_argument("--compact", action="store_true", help="Symbol counts per target (JSON outline under the hood).")
+    m.add_argument("--json-out", action="store_true", help="Structured map report with outline summaries.")
+    m.add_argument("--no-outline", dest="no_outline", action="store_true", help="Alias for --list.")
+    m.add_argument("--view", choices=["auto", "names", "signatures", "digest", "expanded"], help="Override all target views.")
+    m.add_argument("--items", choices=["auto", "structure", "exports", "imports", "all"], help="Override items filter.")
+    m.add_argument("--match", help="Regex filter passed to outline.")
+    m.add_argument("--types", action="append", help="Symbol type filter for outline.")
+    m.add_argument("--bun-rules", action="store_true", help="Force bun-monorepo outline rules on all targets.")
+    m.add_argument("--outline-rules", help="Custom outline-rules YAML for all targets.")
     m.set_defaults(func=cmd_map)
 
     f = sub.add_parser("files", help="List files with at least one pattern match.")
@@ -1423,7 +1642,8 @@ def build_parser() -> argparse.ArgumentParser:
     rl.set_defaults(func=cmd_rules)
 
     au = sub.add_parser("audit", help="Scan repo-map targets and summarize rule violations.")
-    au.add_argument("--only", help="Filter targets by id/name substring.")
+    au.add_argument("--only", help="Filter targets by id/name/zone/tag substring.")
+    au.add_argument("--zone", help="Filter targets by zone (sports-terminal, kimi, agents).")
     au.add_argument("--config", "-c", help="Path to sgconfig.yml (default: skill sgconfig.yml).")
     au.add_argument("--rule", "-r", help="Single rule file instead of full config.")
     au.add_argument("--globs", action="append", help="Extra include/exclude glob.")

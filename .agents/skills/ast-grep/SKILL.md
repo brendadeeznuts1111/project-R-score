@@ -41,14 +41,17 @@ Agent default — validates patterns, truncates huge output, two-pass replace, *
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
-# Monorepo orientation (repo-map.json)
-python3 $AG map
-python3 $AG map --only sports-terminal
+# Monorepo orientation (repo-map.json v2 — zones: sports-terminal, kimi, agents)
+python3 $AG map --list                              # inventory, no outline
+python3 $AG map --compact --zone kimi               # symbol counts per target
+python3 $AG map --only sports-terminal             # full outline per target
+python3 $AG map --json-out --zone kimi              # structured report
 
 # Structure map (0.44+)
 python3 $AG outline src/file.ts --view digest
-python3 $AG outline src --view names --items exports
-python3 $AG outline src --match 'Effect' --types function
+python3 $AG outline --zone kimi --view names        # all kimi repo-map paths
+python3 $AG outline --only sports-terminal-entry --bun-rules --view digest
+python3 $AG outline src --match 'Effect' --types function --json-out
 
 # Files-with-matches only (cheap)
 python3 $AG files 'Bun.serve($$$)' --path projects/active/sports-terminal-os --lang ts

@@ -54,3 +54,34 @@ rule:
   pattern: async function $NAME($$$PARAMS) { $$$BODY }
 name: $NAME
 isExported: false
+---
+id: outbound-fetch
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: fetch($$$ARGS)
+name: fetch
+isExported: false
+---
+id: websocket-client
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new WebSocket($$$URL)
+name: WebSocket
+isExported: false
+---
+id: mcp-tool-def
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: |
+    {
+      name: $NAME,
+      $$$REST
+    }
+name: $NAME
+isExported: false

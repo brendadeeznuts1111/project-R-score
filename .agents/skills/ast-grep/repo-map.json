@@ -1,52 +1,102 @@
 {
+  "version": 2,
+  "zones": {
+    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal",
+    "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
+    "agents": "Agent skills and toolchain references"
+  },
   "targets": [
     {
+      "id": "sports-terminal-entry",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal boot (Bun.serve)",
+      "path": "projects/active/sports-terminal-os/src/index.ts",
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["entry", "http"],
+      "description": "Main Bun.serve wiring and server boot"
+    },
+    {
       "id": "sports-terminal-api",
+      "zone": "sports-terminal",
       "name": "Sports Terminal API routes",
       "path": "projects/active/sports-terminal-os/src/api",
       "view": "names",
       "items": "exports",
-      "globs": ["!**/*.test.ts"]
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["api", "routes"],
+      "description": "Route handlers and proxy endpoints"
     },
     {
       "id": "sports-terminal-services",
+      "zone": "sports-terminal",
       "name": "Sports Terminal services",
       "path": "projects/active/sports-terminal-os/src/services",
       "view": "names",
       "items": "structure",
-      "globs": ["!**/*.test.ts"]
+      "globs": ["!**/*.test.ts"],
+      "tags": ["services", "domain"],
+      "description": "Domain logic, WS handlers, AI risk"
     },
     {
       "id": "sports-terminal-router",
+      "zone": "sports-terminal",
       "name": "Sports Terminal router (digest)",
       "path": "projects/active/sports-terminal-os/src/api/router.ts",
-      "view": "digest"
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["router"],
+      "description": "Central route table — start here for API shape"
     },
     {
       "id": "kimi-sports-plugin",
+      "zone": "kimi",
       "name": "Kimi sports-odds plugin scripts",
       "path": "kimi-plugin/sports-odds-plugin/scripts",
-      "view": "names"
+      "view": "names",
+      "tags": ["cli", "odds"],
+      "description": "get_odds, get_scores, get_handle CLI scripts"
     },
     {
       "id": "kimi-f402-lib",
+      "zone": "kimi",
       "name": "Kimi f402 client lib",
       "path": "kimi-plugin/sports-odds-plugin/scripts/lib/f402.ts",
-      "view": "digest"
+      "view": "digest",
+      "tags": ["lib", "fetch"],
+      "description": "Shared f402 fetch + table helpers"
     },
     {
       "id": "kimi-shared",
+      "zone": "kimi",
       "name": "Kimi shared constants",
       "path": "kimi-plugin/shared",
       "view": "names",
-      "items": "exports"
+      "items": "exports",
+      "tags": ["shared"],
+      "description": "Cross-plugin constants and risk helpers"
     },
     {
       "id": "kimi-mcp-server",
+      "zone": "kimi",
       "name": "Kimi sports MCP server",
       "path": "kimi-plugin/sports-mcp-server",
       "view": "names",
-      "globs": ["!**/*.test.ts"]
+      "globs": ["!**/*.test.ts"],
+      "tags": ["mcp", "websocket"],
+      "description": "MCP tools + WS subscription handlers"
+    },
+    {
+      "id": "agents-ast-grep",
+      "zone": "agents",
+      "name": "ast-grep skill bundle",
+      "path": ".agents/skills/ast-grep",
+      "view": "names",
+      "items": "structure",
+      "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
+      "tags": ["skill", "ast-grep"],
+      "description": "This skill — helper, rules, MCP, repo-map"
     }
   ]
 }

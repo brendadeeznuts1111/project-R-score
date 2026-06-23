@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.4.0';
+const SERVER_VERSION = '0.5.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -43,16 +43,20 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_outline',
-    description: 'Map code structure (symbols, exports, digest). Requires ast-grep 0.44+.',
+    description: 'Map code structure (symbols, exports, digest). Use only/zone to expand repo-map targets.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         paths: { type: 'array', items: { type: 'string' }, description: 'Files or directories' },
+        only: { type: 'string', description: 'repo-map filter (id/name/zone/tag)' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
         view: { type: 'string', enum: ['auto', 'names', 'signatures', 'digest', 'expanded'] },
         items: { type: 'string', enum: ['auto', 'structure', 'exports', 'imports', 'all'] },
         match: { type: 'string', description: 'Regex filter on symbol names' },
         types: { type: 'string', description: 'Comma-separated symbol types' },
         bunRules: { type: 'boolean', description: 'Load outline-rules/bun-monorepo.yml' },
+        pubMembers: { type: 'boolean' },
+        jsonOut: { type: 'boolean', description: 'Emit outline JSON' },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -88,11 +92,18 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_map',
-    description: 'Outline monorepo targets from repo-map.json (sports-terminal, kimi-plugin, ...).',
+    description: 'Map repo-map.json zones/targets. list=true inventory; compact=true symbol counts; default=full outline.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        only: { type: 'string', description: 'Filter targets by id/name substring' },
+        only: { type: 'string', description: 'Filter by id/name/zone/tag substring' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        list: { type: 'boolean', description: 'Inventory only (no outline)' },
+        compact: { type: 'boolean', description: 'Symbol counts per target' },
+        jsonOut: { type: 'boolean', description: 'Structured JSON report' },
+        view: { type: 'string', enum: ['auto', 'names', 'signatures', 'digest', 'expanded'] },
+        bunRules: { type: 'boolean' },
+        match: { type: 'string' },
       },
     },
   },
@@ -308,19 +319,20 @@ async function cmdDoctor(args: Record<string, unknown>): Promise<ToolCallResult>
 }
 
 async function cmdOutline(args: Record<string, unknown>): Promise<ToolCallResult> {
-  const sgArgs = ['outline', '--color', 'never'];
-  if (args.view) sgArgs.push('--view', String(args.view));
-  if (args.items) sgArgs.push('--items', String(args.items));
-  if (args.match) sgArgs.push('--match', String(args.match));
-  if (args.types) sgArgs.push('--type', String(args.types));
-  if (args.bunRules === true) {
-    sgArgs.push('--outline-rules', join(SKILL_ROOT, 'outline-rules/bun-monorepo.yml'));
-  }
-  pushGlobs(sgArgs, args.globs);
-  sgArgs.push(...strPaths(args));
-  const { stdout, stderr, code } = await runSg(sgArgs, repoRoot());
-  if (code !== 0) return toolText(stderr || stdout || `outline failed (${code})`, true);
-  return toolText(truncate(stdout.trim() || '(no outline entries)'));
+  const extra: string[] = [];
+  if (args.view) extra.push('--view', String(args.view));
+  if (args.items) extra.push('--items', String(args.items));
+  if (args.match) extra.push('--match', String(args.match));
+  if (args.types) extra.push('--type', String(args.types));
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.bunRules === true) extra.push('--bun-rules');
+  if (args.pubMembers === true) extra.push('--pub-members');
+  if (args.jsonOut === true) extra.push('--json-out');
+  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const p of strPaths(args)) extra.push(p);
+  const { stdout, stderr, code } = await runHelper('outline', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no outline entries)'), code !== 0);
 }
 
 async function cmdSearch(args: Record<string, unknown>, filesOnly = false): Promise<ToolCallResult> {
@@ -353,30 +365,17 @@ async function cmdSearch(args: Record<string, unknown>, filesOnly = false): Prom
 }
 
 async function cmdMap(args: Record<string, unknown>): Promise<ToolCallResult> {
-  const manifest = join(SKILL_ROOT, 'repo-map.json');
-  const data = JSON.parse(await readFile(manifest, 'utf8')) as { targets?: RepoTarget[] };
-  const root = repoRoot();
-  const only = String(args.only ?? '').toLowerCase();
-  let targets = data.targets ?? [];
-  if (only) {
-    targets = targets.filter(
-      t => (t.id ?? '').toLowerCase().includes(only) || (t.name ?? '').toLowerCase().includes(only),
-    );
-  }
-  if (!targets.length) return toolText('no map targets matched filter', true);
-  const chunks: string[] = [`repo: ${root}`, `targets: ${targets.length}`, ''];
-  for (const t of targets) {
-    const rel = t.path ?? '.';
-    chunks.push(`## ${t.name ?? rel}`, `path: ${rel}`);
-    const sgArgs = ['outline', '--color', 'never'];
-    if (t.view) sgArgs.push('--view', t.view);
-    if (t.items) sgArgs.push('--items', t.items);
-    pushGlobs(sgArgs, t.globs);
-    sgArgs.push(resolve(root, rel));
-    const { stdout, code } = await runSg(sgArgs, root);
-    chunks.push(code === 0 ? truncate(stdout.trim() || '(no outline)') : '(outline failed)', '');
-  }
-  return toolText(chunks.join('\n'));
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.list === true) extra.push('--list');
+  if (args.compact === true) extra.push('--compact');
+  if (args.jsonOut === true) extra.push('--json-out');
+  if (args.view) extra.push('--view', String(args.view));
+  if (args.bunRules === true) extra.push('--bun-rules');
+  if (args.match) extra.push('--match', String(args.match));
+  const { stdout, stderr, code } = await runHelper('map', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no map output)'), code !== 0);
 }
 
 async function cmdScan(args: Record<string, unknown>): Promise<ToolCallResult> {

@@ -7,21 +7,32 @@ Curated ast-grep targets for this workspace. Run via helper `map` or one-off `ou
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
-python3 $AG map                          # all targets in repo-map.json
-python3 $AG map --only sports-terminal   # filter by name substring
+python3 $AG map --list                   # zone inventory (no outline)
+python3 $AG map --compact --zone kimi    # symbol counts
+python3 $AG map --only sports-terminal   # full outline per target
+python3 $AG outline --zone kimi --view names   # outline all kimi paths
+python3 $AG outline --only sports-terminal-entry --bun-rules
 python3 $AG scan --config .agents/skills/ast-grep/sgconfig.yml \
   --path projects/active/sports-terminal-os/src
 ```
+
+## Zones (`repo-map.json` v2)
+
+| Zone | Targets | Start here |
+|---|---|---|
+| `sports-terminal` | entry, api, services, router | `map --zone sports-terminal --list` |
+| `kimi` | plugin scripts, f402, shared, mcp-server | `map --compact --zone kimi` |
+| `agents` | ast-grep skill bundle | `outline --zone agents --view names` |
 
 ## High-value outline paths
 
 | Area | Path | Why |
 |---|---|---|
+| Sports terminal entry | `projects/active/sports-terminal-os/src/index.ts` | `Bun.serve`, boot wiring (`bun_rules`) |
 | Sports terminal API | `projects/active/sports-terminal-os/src/api` | Route handlers, proxy endpoints |
 | Sports terminal services | `projects/active/sports-terminal-os/src/services` | Domain logic, WS handlers |
-| Sports terminal entry | `projects/active/sports-terminal-os/src/index.ts` | `Bun.serve`, boot wiring |
 | Kimi sports plugin | `kimi-plugin/sports-odds-plugin/scripts` | Odds/scores CLI scripts |
-| Agent skills | `.agents/skills` | SKILL.md workflows (markdown — use rg for prose) |
+| Kimi MCP server | `kimi-plugin/sports-mcp-server` | MCP tools + WS handlers |
 | Shared constants | `kimi-plugin/shared` | Cross-plugin types/constants |
 
 ## Verified search patterns (this repo)
