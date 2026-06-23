@@ -5,6 +5,23 @@
     "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
     "agents": "Agent skills and toolchain references"
   },
+  "navigation": {
+    "sports-terminal": [
+      "sports-terminal-entry",
+      "sports-terminal-router",
+      "sports-terminal-api",
+      "sports-terminal-services"
+    ],
+    "kimi": [
+      "kimi-shared",
+      "kimi-f402-lib",
+      "kimi-sports-plugin",
+      "kimi-mcp-server"
+    ],
+    "agents": [
+      "agents-ast-grep"
+    ]
+  },
   "targets": [
     {
       "id": "sports-terminal-entry",
@@ -14,6 +31,7 @@
       "view": "digest",
       "bun_rules": true,
       "tags": ["entry", "http"],
+      "anchors": ["Bun.serve", "fetch", "createLogger"],
       "description": "Main Bun.serve wiring and server boot"
     },
     {
@@ -26,6 +44,7 @@
       "globs": ["!**/*.test.ts"],
       "bun_rules": true,
       "tags": ["api", "routes"],
+      "anchors": ["handleRequest", "router", "proxy"],
       "description": "Route handlers and proxy endpoints"
     },
     {
@@ -37,6 +56,7 @@
       "items": "structure",
       "globs": ["!**/*.test.ts"],
       "tags": ["services", "domain"],
+      "anchors": ["WebSocket", "createLogger", "subscribe"],
       "description": "Domain logic, WS handlers, AI risk"
     },
     {
@@ -47,6 +67,7 @@
       "view": "digest",
       "bun_rules": true,
       "tags": ["router"],
+      "anchors": ["routes", "Route", "handler"],
       "description": "Central route table — start here for API shape"
     },
     {
@@ -56,6 +77,7 @@
       "path": "kimi-plugin/sports-odds-plugin/scripts",
       "view": "names",
       "tags": ["cli", "odds"],
+      "anchors": ["get_odds", "get_scores", "get_handle", "get_positions"],
       "description": "get_odds, get_scores, get_handle CLI scripts"
     },
     {
@@ -65,6 +87,7 @@
       "path": "kimi-plugin/sports-odds-plugin/scripts/lib/f402.ts",
       "view": "digest",
       "tags": ["lib", "fetch"],
+      "anchors": ["f402", "fetch", "table"],
       "description": "Shared f402 fetch + table helpers"
     },
     {
@@ -75,6 +98,7 @@
       "view": "names",
       "items": "exports",
       "tags": ["shared"],
+      "anchors": ["constants", "risk", "RISK"],
       "description": "Cross-plugin constants and risk helpers"
     },
     {
@@ -85,6 +109,7 @@
       "view": "names",
       "globs": ["!**/*.test.ts"],
       "tags": ["mcp", "websocket"],
+      "anchors": ["tools", "WebSocket", "subscribe", "readToolArgs"],
       "description": "MCP tools + WS subscription handlers"
     },
     {
@@ -96,6 +121,7 @@
       "items": "structure",
       "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
       "tags": ["skill", "ast-grep"],
+      "anchors": ["cmd_outline", "cmd_map", "repo-map", "ast_grep_helper"],
       "description": "This skill — helper, rules, MCP, repo-map"
     }
   ]

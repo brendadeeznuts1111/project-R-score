@@ -44,8 +44,16 @@ AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 # Monorepo orientation (repo-map.json v2 — zones: sports-terminal, kimi, agents)
 python3 $AG map --list                              # inventory, no outline
 python3 $AG map --compact --zone kimi               # symbol counts per target
+python3 $AG map --heatmap                           # ASCII symbol density chart
 python3 $AG map --only sports-terminal             # full outline per target
 python3 $AG map --json-out --zone kimi              # structured report
+
+# Cross-target symbol index + zone navigation
+python3 $AG zones --stats                           # zones with symbol totals
+python3 $AG index --refresh                         # build .outline-index.json cache
+python3 $AG index --name fetch --zone kimi          # find symbols across targets
+python3 $AG index --exports --type function         # exported functions repo-wide
+python3 $AG nav --zone sports-terminal --digest     # guided read order + previews
 
 # Structure map (0.44+)
 python3 $AG outline src/file.ts --view digest
@@ -108,7 +116,10 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_outline` | `outline` (+ `bunRules: true` for Bun extractors) |
 | `ast_grep_search` | `search` |
 | `ast_grep_files` | `files` |
-| `ast_grep_map` | `map` |
+| `ast_grep_map` | `map` (`heatmap: true` for symbol density) |
+| `ast_grep_zones` | `zones` (`stats: true` for symbol totals) |
+| `ast_grep_index` | `index` (cross-target symbol lookup) |
+| `ast_grep_nav` | `nav` (guided zone read order) |
 | `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
 | `ast_grep_fix` | `fix` (all autofix rules) |
 | `ast_grep_replace` | `replace` (`fix: true` to apply) |
@@ -124,7 +135,7 @@ Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 
 ## Workflow checklist
 
-1. **Orient** — `map` or `map --only <zone>` for unfamiliar monorepo areas
+1. **Orient** — `nav --zone <zone>` or `map --heatmap` for unfamiliar monorepo areas
 2. **Explore** — `outline --view names` or `digest` on target path
 3. **Narrow** — `files` for path list only; then `search` for line matches
 4. **Lint** — `scan` with bundled rules before broad edits; `fix` for autofix rules

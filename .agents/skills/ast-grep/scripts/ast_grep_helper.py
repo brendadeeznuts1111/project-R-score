@@ -29,6 +29,9 @@ USAGE
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
     ast_grep_helper.py map [--only SUBSTR]              # monorepo repo-map.json targets
+    ast_grep_helper.py zones [--stats]                # list zones + targets
+    ast_grep_helper.py index [--name SUBSTR]          # cross-target symbol index
+    ast_grep_helper.py nav --zone ZONE [--digest]     # guided read order per zone
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
     ast_grep_helper.py --version
@@ -70,7 +73,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -658,6 +661,99 @@ def _run_outline(
     return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
 
 
+def _outline_index_cache_path() -> Path:
+    return skill_root() / ".outline-index.json"
+
+
+def _collect_symbol_index(
+    args: argparse.Namespace,
+    root: Path,
+    binary: Path,
+) -> dict:
+    data = _load_repo_map()
+    targets = _resolve_repo_targets(args)
+    map_args = argparse.Namespace(**{
+        **vars(args),
+        "json_out": True,
+        "json_style": "compact",
+        "view": getattr(args, "view", None) or "names",
+        "items": getattr(args, "items", None) or "all",
+    })
+    report: dict = {
+        "version": data.get("version"),
+        "repo": str(root),
+        "repo_map": str(skill_root() / "repo-map.json"),
+        "targets": [],
+        "symbols_by_name": {},
+        "total_symbols": 0,
+    }
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        tid = target.get("id", rel)
+        if not full.exists():
+            continue
+        code, out = _run_outline(binary, map_args, [str(full)], target)
+        if code != 0:
+            continue
+        summary = _summarize_outline_json(parse_compact_json(out))
+        summary["target"] = tid
+        summary["zone"] = target.get("zone")
+        summary["path"] = rel
+        report["targets"].append(summary)
+        report["total_symbols"] += summary["symbol_count"]
+        for sym in summary["symbols"]:
+            name = sym.get("name")
+            if not name:
+                continue
+            entry = {
+                **sym,
+                "target": tid,
+                "zone": target.get("zone"),
+                "target_path": rel,
+            }
+            report["symbols_by_name"].setdefault(name, []).append(entry)
+    return report
+
+
+def _load_symbol_index(args: argparse.Namespace, root: Path, binary: Path) -> dict:
+    cache = _outline_index_cache_path()
+    if not getattr(args, "refresh", False) and cache.is_file():
+        try:
+            cached = json.loads(cache.read_text(encoding="utf-8"))
+            if cached.get("repo") == str(root):
+                return cached
+        except (OSError, json.JSONDecodeError):
+            pass
+    index = _collect_symbol_index(args, root, binary)
+    try:
+        cache.write_text(json.dumps(index, indent=2), encoding="utf-8")
+    except OSError:
+        pass
+    return index
+
+
+def _filter_index_symbols(index: dict, args: argparse.Namespace) -> list[dict]:
+    name_q = getattr(args, "name", None) or ""
+    type_q = getattr(args, "symbol_type", None) or ""
+    exports_only = getattr(args, "exports_only", False)
+    zone_q = (getattr(args, "zone", None) or "").lower()
+    results: list[dict] = []
+    for sym_name, occurrences in index.get("symbols_by_name", {}).items():
+        if name_q and name_q.lower() not in sym_name.lower():
+            continue
+        for occ in occurrences:
+            if exports_only and not occ.get("exported"):
+                continue
+            if type_q and occ.get("type") != type_q:
+                continue
+            if zone_q and (occ.get("zone") or "").lower() != zone_q:
+                continue
+            results.append({"name": sym_name, **occ})
+    results.sort(key=lambda r: (r.get("name", ""), r.get("file", ""), r.get("line") or 0))
+    return results
+
+
 def _load_scan_profile(name: Optional[str]) -> Optional[dict]:
     if not name:
         return None
@@ -806,6 +902,7 @@ def cmd_map(args: argparse.Namespace) -> int:
 
     list_only = getattr(args, "list_only", False) or getattr(args, "no_outline", False)
     compact = getattr(args, "compact", False)
+    heatmap = getattr(args, "heatmap", False)
     json_out = getattr(args, "json_out", False)
 
     report: dict = {
@@ -837,6 +934,32 @@ def cmd_map(args: argparse.Namespace) -> int:
         return 0
 
     binary = require_binary(require_outline=True)
+
+    if heatmap:
+        rows: list[tuple[dict, dict]] = []
+        map_args = argparse.Namespace(**{**vars(args), "json_out": True, "json_style": "compact"})
+        for target in targets:
+            rel = target.get("path", ".")
+            full = (root / rel).resolve()
+            if not full.exists():
+                continue
+            code, out = _run_outline(binary, map_args, [str(full)], target)
+            if code != 0:
+                continue
+            rows.append((target, _summarize_outline_json(parse_compact_json(out))))
+        rows.sort(key=lambda row: -row[1]["symbol_count"])
+        max_count = rows[0][1]["symbol_count"] if rows else 1
+        print(f"repo: {root}")
+        print(f"symbol heatmap ({len(rows)} targets)")
+        print()
+        for target, summary in rows:
+            count = summary["symbol_count"]
+            width = max(1, int(48 * count / max_count)) if count else 0
+            bar = "#" * width
+            zone = target.get("zone", "?")
+            print(f"{count:5d} {bar:<48} [{zone}] {target.get('id')}")
+        return 0
+
     if not json_out and not compact:
         print(f"repo: {root}")
         print(f"targets: {len(targets)}")
@@ -912,6 +1035,147 @@ def cmd_map(args: argparse.Namespace) -> int:
 
     if json_out:
         json.dump(report, sys.stdout, indent=2)
+        print()
+    return 0
+
+
+def cmd_zones(args: argparse.Namespace) -> int:
+    data = _load_repo_map()
+    zones_meta = data.get("zones", {})
+    targets = data.get("targets", [])
+    by_zone: dict[str, list[dict]] = {}
+    for t in targets:
+        by_zone.setdefault(t.get("zone", "?"), []).append(t)
+
+    stats: dict[str, int] = {}
+    if getattr(args, "stats", False):
+        root = git_root() or Path.cwd()
+        binary = require_binary(require_outline=True)
+        index = _load_symbol_index(args, root, binary)
+        for t_summary in index.get("targets", []):
+            z = t_summary.get("zone") or "?"
+            stats[z] = stats.get(z, 0) + t_summary.get("symbol_count", 0)
+
+    rows = []
+    for zone_id, label in zones_meta.items():
+        zone_targets = by_zone.get(zone_id, [])
+        rows.append({
+            "id": zone_id,
+            "label": label,
+            "targets": len(zone_targets),
+            "symbols": stats.get(zone_id),
+        })
+
+    if getattr(args, "json_out", False):
+        json.dump({"zones": rows}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"zones: {len(rows)}")
+    for row in rows:
+        sym = f"  symbols: {row['symbols']}" if row["symbols"] is not None else ""
+        print(f"  {row['id']}: {row['label']}")
+        print(f"    targets: {row['targets']}{sym}")
+        for t in by_zone.get(row["id"], []):
+            print(f"      - {t.get('id')}  {t.get('path')}")
+    return 0
+
+
+def cmd_index(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    index = _load_symbol_index(args, root, binary)
+    matches = _filter_index_symbols(index, args)
+
+    if getattr(args, "json_out", False):
+        json.dump({"total_symbols": index.get("total_symbols"), "matches": matches}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    if getattr(args, "name", None) or getattr(args, "symbol_type", None) or getattr(args, "exports_only", False):
+        if not matches:
+            print("(no symbols matched filter)")
+            return 0
+        print(f"matches: {len(matches)}")
+        current = ""
+        for m in matches[:500]:
+            header = f"{m['name']} ({m.get('type', '?')})"
+            if header != current:
+                current = header
+                print(f"\n{header}")
+            exp = " export" if m.get("exported") else ""
+            print(f"  [{m.get('zone')}] {m.get('target')}  {m.get('file')}:{m.get('line')}{exp}")
+        if len(matches) > 500:
+            print(f"\n... {len(matches) - 500} more — narrow with --name or --zone")
+        return 0
+
+    print(f"symbol index: {index.get('total_symbols', 0)} symbols across {len(index.get('targets', []))} targets")
+    print(f"unique names: {len(index.get('symbols_by_name', {}))}")
+    print(f"cache: {_outline_index_cache_path()}")
+    top = sorted(
+        index.get("symbols_by_name", {}).items(),
+        key=lambda kv: -len(kv[1]),
+    )[:20]
+    print("\ntop symbols by occurrence:")
+    for name, occs in top:
+        zones = sorted({o.get("zone", "?") for o in occs})
+        print(f"  {name}: {len(occs)}x  zones={','.join(zones)}")
+    return 0
+
+
+def cmd_nav(args: argparse.Namespace) -> int:
+    zone = getattr(args, "zone", None)
+    if not zone:
+        err("nav requires --zone (sports-terminal, kimi, agents)")
+        return 1
+    data = _load_repo_map()
+    navigation = data.get("navigation", {})
+    order = navigation.get(zone)
+    targets_by_id = {t["id"]: t for t in data.get("targets", []) if t.get("id")}
+    if not order:
+        order = [t["id"] for t in data.get("targets", []) if t.get("zone") == zone and t.get("id")]
+
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    print(f"zone: {zone}")
+    print(f"read order: {len(order)} steps")
+    print()
+
+    for step, tid in enumerate(order, 1):
+        target = targets_by_id.get(tid)
+        if not target:
+            print(f"{step}. {tid}  (unknown target id)")
+            continue
+        rel = target.get("path", ".")
+        print(f"{step}. {target.get('name', tid)}")
+        print(f"   id: {tid}")
+        print(f"   path: {rel}")
+        if target.get("description"):
+            print(f"   {target['description']}")
+        anchors = target.get("anchors", [])
+        if anchors:
+            print(f"   anchors: {', '.join(anchors)}")
+        cmd = f"python3 {Path(__file__).name} outline {rel}"
+        if target.get("bun_rules"):
+            cmd += " --bun-rules"
+        if target.get("view"):
+            cmd += f" --view {target['view']}"
+        print(f"   cmd: {cmd}")
+        full = (root / rel).resolve()
+        if full.exists() and getattr(args, "digest", False):
+            nav_args = argparse.Namespace(
+                view=target.get("view") or "digest",
+                items=target.get("items"),
+                bun_rules=bool(target.get("bun_rules")),
+                match=None, types=None, lang=None, globs=None,
+                outline_rules=None, pub_members=False,
+                json_out=False, json_style="compact",
+            )
+            code, out = _run_outline(binary, nav_args, [str(full)], target)
+            if code == 0 and out.strip():
+                preview = out.strip().splitlines()[:6]
+                for line in preview:
+                    print(f"   | {line}")
         print()
     return 0
 
@@ -1575,6 +1839,7 @@ def build_parser() -> argparse.ArgumentParser:
     m.add_argument("--zone", help="Filter targets by zone (sports-terminal, kimi, agents).")
     m.add_argument("--list", dest="list_only", action="store_true", help="Inventory only — no outline run.")
     m.add_argument("--compact", action="store_true", help="Symbol counts per target (JSON outline under the hood).")
+    m.add_argument("--heatmap", action="store_true", help="ASCII bar chart of symbol counts per target.")
     m.add_argument("--json-out", action="store_true", help="Structured map report with outline summaries.")
     m.add_argument("--no-outline", dest="no_outline", action="store_true", help="Alias for --list.")
     m.add_argument("--view", choices=["auto", "names", "signatures", "digest", "expanded"], help="Override all target views.")
@@ -1584,6 +1849,26 @@ def build_parser() -> argparse.ArgumentParser:
     m.add_argument("--bun-rules", action="store_true", help="Force bun-monorepo outline rules on all targets.")
     m.add_argument("--outline-rules", help="Custom outline-rules YAML for all targets.")
     m.set_defaults(func=cmd_map)
+
+    z = sub.add_parser("zones", help="List repo-map zones and targets.")
+    z.add_argument("--stats", action="store_true", help="Include symbol counts (uses outline index cache).")
+    z.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    z.set_defaults(func=cmd_zones)
+
+    ix = sub.add_parser("index", help="Cross-target symbol index from repo-map outlines.")
+    ix.add_argument("--name", help="Filter symbols by name substring.")
+    ix.add_argument("--type", dest="symbol_type", help="Filter by symbol type (function, class, ...).")
+    ix.add_argument("--exports", dest="exports_only", action="store_true", help="Exported symbols only.")
+    ix.add_argument("--only", help="Filter repo-map targets.")
+    ix.add_argument("--zone", help="Filter by zone.")
+    ix.add_argument("--refresh", action="store_true", help="Rebuild .outline-index.json cache.")
+    ix.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    ix.set_defaults(func=cmd_index)
+
+    nv = sub.add_parser("nav", help="Guided read order for a repo-map zone.")
+    nv.add_argument("--zone", required=True, help="Zone id (sports-terminal, kimi, agents).")
+    nv.add_argument("--digest", action="store_true", help="Inline outline preview per step.")
+    nv.set_defaults(func=cmd_nav)
 
     f = sub.add_parser("files", help="List files with at least one pattern match.")
     f.add_argument("pattern", help="AST pattern.")

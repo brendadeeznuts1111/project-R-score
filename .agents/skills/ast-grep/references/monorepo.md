@@ -9,7 +9,11 @@ AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
 python3 $AG map --list                   # zone inventory (no outline)
 python3 $AG map --compact --zone kimi    # symbol counts
+python3 $AG map --heatmap                # symbol density bar chart
 python3 $AG map --only sports-terminal   # full outline per target
+python3 $AG nav --zone sports-terminal --digest   # guided read order
+python3 $AG zones --stats                # zone totals from symbol index
+python3 $AG index --name fetch --zone kimi        # cross-target symbol lookup
 python3 $AG outline --zone kimi --view names   # outline all kimi paths
 python3 $AG outline --only sports-terminal-entry --bun-rules
 python3 $AG scan --config .agents/skills/ast-grep/sgconfig.yml \
@@ -107,12 +111,33 @@ python3 $AG codemod strip-as-any --only kimi-mcp        # preview 6 fixes in too
 python3 $AG fix --only kimi-mcp --rule no-as-any.yml    # YAML autofix equivalent
 ```
 
+## Navigation (`repo-map.json` → `navigation`)
+
+Each zone has a curated read order. Targets may include `anchors` — symbol names to grep for in outlines.
+
+```bash
+python3 $AG nav --zone kimi              # step-by-step with cmds + anchors
+python3 $AG nav --zone sports-terminal --digest   # inline outline previews
+```
+
+## Symbol index (cross-target)
+
+Builds `.outline-index.json` (gitignored) from repo-map outlines:
+
+```bash
+python3 $AG index --refresh              # rebuild cache
+python3 $AG index                        # top symbols by occurrence
+python3 $AG index --name WebSocket       # find symbol across all targets
+python3 $AG index --exports --type function --zone kimi
+```
+
 ## Agent workflow for unfamiliar zones
 
-1. `python3 $AG map --only <zone>` — symbol names without reading every file
-2. `outline --view digest` on the 1–2 files that matter
-3. `search` with syntax pattern from [recipes.md](recipes.md)
-4. `Read` only the matched line ranges — not whole directories
+1. `python3 $AG nav --zone <zone>` — guided read order with anchors
+2. `python3 $AG index --name <symbol>` — locate symbol across targets
+3. `outline --view digest` on the 1–2 files that matter
+4. `search` with syntax pattern from [recipes.md](recipes.md)
+5. `Read` only the matched line ranges — not whole directories
 
 ## Globs that reduce noise
 

@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.5.0';
+const SERVER_VERSION = '0.6.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -92,7 +92,7 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_map',
-    description: 'Map repo-map.json zones/targets. list=true inventory; compact=true symbol counts; default=full outline.',
+    description: 'Map repo-map.json zones/targets. list=true inventory; compact=true symbol counts; heatmap=true ASCII bar chart; default=full outline.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -100,11 +100,51 @@ const TOOLS = [
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
         list: { type: 'boolean', description: 'Inventory only (no outline)' },
         compact: { type: 'boolean', description: 'Symbol counts per target' },
+        heatmap: { type: 'boolean', description: 'ASCII bar chart of symbol counts per target' },
         jsonOut: { type: 'boolean', description: 'Structured JSON report' },
         view: { type: 'string', enum: ['auto', 'names', 'signatures', 'digest', 'expanded'] },
         bunRules: { type: 'boolean' },
         match: { type: 'string' },
       },
+    },
+  },
+  {
+    name: 'ast_grep_zones',
+    description: 'List repo-map zones and targets. stats=true includes symbol counts from outline index cache.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        stats: { type: 'boolean', description: 'Include symbol counts per zone' },
+        jsonOut: { type: 'boolean', description: 'Emit JSON' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_index',
+    description: 'Cross-target symbol index from repo-map outlines. Filter by name, type, zone, exports.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string', description: 'Filter symbols by name substring' },
+        type: { type: 'string', description: 'Symbol type (function, class, ...)' },
+        exports: { type: 'boolean', description: 'Exported symbols only' },
+        only: { type: 'string', description: 'Filter repo-map targets' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        refresh: { type: 'boolean', description: 'Rebuild .outline-index.json cache' },
+        jsonOut: { type: 'boolean', description: 'Emit JSON' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_nav',
+    description: 'Guided read order for a repo-map zone (navigation block in repo-map.json).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'], description: 'Zone id (required)' },
+        digest: { type: 'boolean', description: 'Inline outline preview per step' },
+      },
+      required: ['zone'],
     },
   },
   {
@@ -370,12 +410,43 @@ async function cmdMap(args: Record<string, unknown>): Promise<ToolCallResult> {
   if (args.zone) extra.push('--zone', String(args.zone));
   if (args.list === true) extra.push('--list');
   if (args.compact === true) extra.push('--compact');
+  if (args.heatmap === true) extra.push('--heatmap');
   if (args.jsonOut === true) extra.push('--json-out');
   if (args.view) extra.push('--view', String(args.view));
   if (args.bunRules === true) extra.push('--bun-rules');
   if (args.match) extra.push('--match', String(args.match));
   const { stdout, stderr, code } = await runHelper('map', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no map output)'), code !== 0);
+}
+
+async function cmdZones(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.stats === true) extra.push('--stats');
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('zones', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no zones output)'), code !== 0);
+}
+
+async function cmdIndex(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.name) extra.push('--name', String(args.name));
+  if (args.type) extra.push('--type', String(args.type));
+  if (args.exports === true) extra.push('--exports');
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.refresh === true) extra.push('--refresh');
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('index', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no index output)'), code !== 0);
+}
+
+async function cmdNav(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const zone = String(args.zone ?? '');
+  if (!zone) return toolText('zone is required', true);
+  const extra = ['--zone', zone];
+  if (args.digest === true) extra.push('--digest');
+  const { stdout, stderr, code } = await runHelper('nav', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no nav output)'), code !== 0);
 }
 
 async function cmdScan(args: Record<string, unknown>): Promise<ToolCallResult> {
@@ -493,6 +564,9 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_search': result = await cmdSearch(args); break;
       case 'ast_grep_files': result = await cmdSearch(args, true); break;
       case 'ast_grep_map': result = await cmdMap(args); break;
+      case 'ast_grep_zones': result = await cmdZones(args); break;
+      case 'ast_grep_index': result = await cmdIndex(args); break;
+      case 'ast_grep_nav': result = await cmdNav(args); break;
       case 'ast_grep_scan': result = await cmdScan(args); break;
       case 'ast_grep_fix': result = await cmdFix(args); break;
       case 'ast_grep_replace': result = await cmdReplace(args); break;

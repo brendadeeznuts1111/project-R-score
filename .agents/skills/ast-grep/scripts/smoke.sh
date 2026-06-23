@@ -22,6 +22,21 @@ echo ""
 echo "== map --compact --zone kimi =="
 python3 "$HELPER" -q map --compact --zone kimi
 echo ""
+echo "== map --heatmap =="
+python3 "$HELPER" -q map --heatmap 2>&1 | head -12
+echo ""
+echo "== zones --stats =="
+python3 "$HELPER" -q zones --stats 2>&1 | head -20
+echo ""
+echo "== index (summary) =="
+python3 "$HELPER" -q index --refresh 2>&1 | head -15
+echo ""
+echo "== index --name fetch --zone kimi =="
+python3 "$HELPER" -q index --name fetch --zone kimi 2>&1 | head -12
+echo ""
+echo "== nav --zone kimi =="
+python3 "$HELPER" -q nav --zone kimi 2>&1 | head -25
+echo ""
 echo "== map (kimi only, digest sample) =="
 python3 "$HELPER" map --only kimi-f402 2>&1 | head -20
 echo ""
