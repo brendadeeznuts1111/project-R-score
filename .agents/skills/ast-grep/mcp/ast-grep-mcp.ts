@@ -15,7 +15,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.20.0';
+const SERVER_VERSION = '0.21.0';
 const SKILL_ROOT = resolve(import.meta.dir, '..');
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;

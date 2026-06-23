@@ -20,8 +20,8 @@ else
   python3 "$HELPER" doctor
 fi
 echo ""
-echo "== discover (unmapped sample) =="
-python3 "$HELPER" -q discover 2>&1 | head -18 || true
+echo "== discover (gap gate) =="
+python3 "$HELPER" -q discover --fail-on 2>&1 | head -8 || true
 echo ""
 echo "== zones --stats =="
 python3 "$HELPER" -q zones --stats 2>&1 | head -20 || true

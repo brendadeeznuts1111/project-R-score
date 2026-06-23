@@ -1,7 +1,7 @@
 {
-  "version": 3,
+  "version": 4,
   "zones": {
-    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal, partner zones, Telegram",
+    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal, partner zones, Telegram, related workspaces",
     "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
     "packages": "Root workspace packages — guards, versioning, business libs",
     "agents": "Agent skills, orchestration, and ast-grep tooling"
@@ -13,7 +13,11 @@
       "sports-terminal-api",
       "sports-terminal-services",
       "sports-terminal-partner",
-      "sports-terminal-telegram"
+      "sports-terminal-telegram",
+      "sports-terminal-kimiremote",
+      "sports-terminal-f402-openapi",
+      "sports-terminal-factorywager-registry",
+      "sports-terminal-playwriter"
     ],
     "kimi": [
       "kimi-shared",
@@ -24,14 +28,27 @@
     "packages": [
       "packages-guards",
       "packages-versioning",
-      "packages-business"
+      "packages-business",
+      "packages-ab-testing",
+      "packages-p2p",
+      "packages-rip",
+      "packages-package",
+      "packages-docs-tools",
+      "packages-shared"
     ],
     "agents": [
       "agents-ast-grep",
       "agents-sports-terminal-skill",
       "agents-partner-profile",
+      "agents-bet-ticker-worker",
+      "agents-cascade-mover",
       "agents-domain-orchestrator",
-      "agents-domain-diagnostic"
+      "agents-domain-diagnostic",
+      "agents-self-healing-domain",
+      "agents-quantum-domain-ops",
+      "agents-bun-playground",
+      "agents-source-command-commit",
+      "agents-project-r-skill-maintenance"
     ]
   },
   "targets": [
@@ -111,6 +128,50 @@
       "description": "Multi-bot launcher and Redis Streams workers"
     },
     {
+      "id": "sports-terminal-kimiremote",
+      "zone": "sports-terminal",
+      "name": "Kimiremote proxy (sports-terminal-proxy)",
+      "path": "projects/active/kimiremote/src/index.ts",
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["proxy", "kimi", "bun"],
+      "anchors": ["Bun.serve", "Bun.cron"],
+      "description": "Sports Terminal proxy with Kimi AI integration"
+    },
+    {
+      "id": "sports-terminal-f402-openapi",
+      "zone": "sports-terminal",
+      "name": "f402-openapi ingestion worker",
+      "path": "projects/active/f402-openapi/workers/fantasy402-ingestion/src",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["f402", "worker", "ingestion"],
+      "anchors": ["bet-ticker-live", "customer-profile", "ingest-plane"],
+      "description": "Fantasy402 ingestion plane, live wager broadcast, customer profile"
+    },
+    {
+      "id": "sports-terminal-factorywager-registry",
+      "zone": "sports-terminal",
+      "name": "FactoryWager registry packages",
+      "path": "projects/active/factorywager/registry/packages",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["registry", "r2", "packages"],
+      "description": "R2-backed private NPM registry platform packages"
+    },
+    {
+      "id": "sports-terminal-playwriter",
+      "zone": "sports-terminal",
+      "name": "Playwriter browser automation skill",
+      "path": "projects/active/playwriter-skill",
+      "view": "names",
+      "tags": ["playwriter", "mcp", "browser"],
+      "anchors": ["mcp-server", "playwriter"],
+      "description": "Browser automation skill for Kimi CLI via Playwriter"
+    },
+    {
       "id": "kimi-sports-plugin",
       "zone": "kimi",
       "name": "Kimi sports-odds plugin scripts",
@@ -163,7 +224,6 @@
       "view": "names",
       "items": "exports",
       "tags": ["package", "guards"],
-      "anchors": ["exports"],
       "description": "Shared guard utilities"
     },
     {
@@ -187,6 +247,66 @@
       "description": "Business domain types and helpers"
     },
     {
+      "id": "packages-ab-testing",
+      "zone": "packages",
+      "name": "@factorywager/ab-testing",
+      "path": "packages/ab-testing",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "ab-testing"],
+      "description": "A/B testing utilities"
+    },
+    {
+      "id": "packages-p2p",
+      "zone": "packages",
+      "name": "@factorywager/p2p",
+      "path": "packages/p2p",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "p2p"],
+      "description": "Peer-to-peer networking helpers"
+    },
+    {
+      "id": "packages-rip",
+      "zone": "packages",
+      "name": "@factorywager/rip",
+      "path": "packages/rip",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "rip"],
+      "description": "RIP protocol utilities"
+    },
+    {
+      "id": "packages-package",
+      "zone": "packages",
+      "name": "@factorywager/package",
+      "path": "packages/package",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "meta"],
+      "description": "Package metadata utilities"
+    },
+    {
+      "id": "packages-docs-tools",
+      "zone": "packages",
+      "name": "@factorywager/docs-tools",
+      "path": "packages/docs-tools",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "docs"],
+      "description": "Documentation tooling"
+    },
+    {
+      "id": "packages-shared",
+      "zone": "packages",
+      "name": "lib/shared workspace",
+      "path": "lib/shared",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "shared", "lib"],
+      "description": "Shared lib workspace package"
+    },
+    {
       "id": "agents-ast-grep",
       "zone": "agents",
       "name": "ast-grep skill bundle",
@@ -195,7 +315,7 @@
       "items": "structure",
       "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
       "tags": ["skill", "ast-grep"],
-      "anchors": ["cmd_outline", "cmd_map", "cmd_index", "ast_grep_helper"],
+      "anchors": ["cmd_outline", "cmd_map", "cmd_discover", "ast_grep_helper"],
       "description": "This skill — helper, rules, MCP, repo-map"
     },
     {
@@ -219,6 +339,26 @@
       "description": "Partner Profile OS skill — gateway, lifecycle, SOR"
     },
     {
+      "id": "agents-bet-ticker-worker",
+      "zone": "agents",
+      "name": "bet-ticker-worker skill",
+      "path": ".agents/skills/bet-ticker-worker",
+      "view": "digest",
+      "tags": ["skill", "cloudflare", "worker"],
+      "anchors": ["DurableObject", "WebSocket", "PartnerGateway"],
+      "description": "CF Worker + DO live wager broadcast skill"
+    },
+    {
+      "id": "agents-cascade-mover",
+      "zone": "agents",
+      "name": "cascade-mover-v3 skill",
+      "path": ".agents/skills/cascade-mover-v3",
+      "view": "digest",
+      "tags": ["skill", "cascade", "mcp"],
+      "anchors": ["cascade-mover", "confidence"],
+      "description": "Sports intelligence and multi-market cascading (MCP-first)"
+    },
+    {
       "id": "agents-domain-orchestrator",
       "zone": "agents",
       "name": "domain-orchestrator skill",
@@ -236,6 +376,52 @@
       "view": "digest",
       "tags": ["skill", "diagnostic", "healing"],
       "description": "Domain health check and remediation flows"
+    },
+    {
+      "id": "agents-self-healing-domain",
+      "zone": "agents",
+      "name": "self-healing-domain skill",
+      "path": ".agents/skills/self-healing-domain",
+      "view": "digest",
+      "tags": ["skill", "healing", "domain"],
+      "description": "Automated diagnostic and healing workflows"
+    },
+    {
+      "id": "agents-quantum-domain-ops",
+      "zone": "agents",
+      "name": "quantum-domain-ops skill",
+      "path": ".agents/skills/quantum-domain-ops",
+      "view": "digest",
+      "tags": ["skill", "quantum", "domain"],
+      "description": "Quantum domain state and coherence operations"
+    },
+    {
+      "id": "agents-bun-playground",
+      "zone": "agents",
+      "name": "bun-v139-playground skill",
+      "path": ".agents/skills/bun-v139-playground",
+      "view": "digest",
+      "tags": ["skill", "bun", "playground"],
+      "anchors": ["Bun.serve", "governance"],
+      "description": "Bun v1.3.9 interactive playground demos"
+    },
+    {
+      "id": "agents-source-command-commit",
+      "zone": "agents",
+      "name": "source-command-commit skill",
+      "path": ".agents/skills/source-command-commit",
+      "view": "digest",
+      "tags": ["skill", "git", "commit"],
+      "description": "Disciplined commit agent workflow"
+    },
+    {
+      "id": "agents-project-r-skill-maintenance",
+      "zone": "agents",
+      "name": "project-r-skill-maintenance skill",
+      "path": ".agents/skills/project-r-skill-maintenance",
+      "view": "digest",
+      "tags": ["skill", "maintenance", "codex"],
+      "description": "Codex skill maintenance and validation"
     }
   ]
 }
