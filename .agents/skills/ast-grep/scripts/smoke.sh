@@ -20,17 +20,20 @@ else
   python3 "$HELPER" doctor
 fi
 echo ""
+echo "== discover (unmapped sample) =="
+python3 "$HELPER" -q discover 2>&1 | head -18 || true
+echo ""
+echo "== zones --stats =="
+python3 "$HELPER" -q zones --stats 2>&1 | head -20 || true
+echo ""
 echo "== map --list (zones) =="
-python3 "$HELPER" -q map --list 2>&1 | head -20
+python3 "$HELPER" -q map --list 2>&1 | head -20 || true
 echo ""
 echo "== map --compact --zone kimi =="
 python3 "$HELPER" -q map --compact --zone kimi
 echo ""
 echo "== map --heatmap =="
 python3 "$HELPER" -q map --heatmap 2>&1 | head -12
-echo ""
-echo "== zones --stats =="
-python3 "$HELPER" -q zones --stats 2>&1 | head -20
 echo ""
 echo "== index (summary) =="
 python3 "$HELPER" -q index --refresh 2>&1 | head -15
@@ -114,7 +117,7 @@ echo "== map (kimi only, digest sample) =="
 python3 "$HELPER" map --only kimi-f402 2>&1 | head -20
 echo ""
 echo "== outline --zone agents =="
-python3 "$HELPER" -q outline --zone agents --view names 2>&1 | head -15
+python3 "$HELPER" -q outline --zone agents --view names 2>&1 | head -15 || true
 echo ""
 echo "== outline (helper) =="
 python3 "$HELPER" outline "$TARGET" --view names

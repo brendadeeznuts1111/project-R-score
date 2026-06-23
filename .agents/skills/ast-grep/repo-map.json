@@ -1,16 +1,19 @@
 {
-  "version": 2,
+  "version": 3,
   "zones": {
-    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal",
+    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal, partner zones, Telegram",
     "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
-    "agents": "Agent skills and toolchain references"
+    "packages": "Root workspace packages — guards, versioning, business libs",
+    "agents": "Agent skills, orchestration, and ast-grep tooling"
   },
   "navigation": {
     "sports-terminal": [
       "sports-terminal-entry",
       "sports-terminal-router",
       "sports-terminal-api",
-      "sports-terminal-services"
+      "sports-terminal-services",
+      "sports-terminal-partner",
+      "sports-terminal-telegram"
     ],
     "kimi": [
       "kimi-shared",
@@ -18,8 +21,17 @@
       "kimi-sports-plugin",
       "kimi-mcp-server"
     ],
+    "packages": [
+      "packages-guards",
+      "packages-versioning",
+      "packages-business"
+    ],
     "agents": [
-      "agents-ast-grep"
+      "agents-ast-grep",
+      "agents-sports-terminal-skill",
+      "agents-partner-profile",
+      "agents-domain-orchestrator",
+      "agents-domain-diagnostic"
     ]
   },
   "targets": [
@@ -73,6 +85,32 @@
       "description": "Central route table — start here for API shape"
     },
     {
+      "id": "sports-terminal-partner",
+      "zone": "sports-terminal",
+      "name": "Partner Profile OS kernel",
+      "path": "projects/active/sports-terminal-os/src/zones/partner-profile",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["partner", "gateway", "bun"],
+      "depends_on": ["sports-terminal-services"],
+      "anchors": ["PartnerGateway", "evaluate", "GateResult"],
+      "description": "PartnerGateway.evaluate — lifecycle gates and SOR routing"
+    },
+    {
+      "id": "sports-terminal-telegram",
+      "zone": "sports-terminal",
+      "name": "Telegram bot hub",
+      "path": "projects/active/sports-terminal-os/src/telegram",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["telegram", "redis", "bun"],
+      "depends_on": ["sports-terminal-services"],
+      "anchors": ["run-bots", "Redis", "XREADGROUP"],
+      "description": "Multi-bot launcher and Redis Streams workers"
+    },
+    {
       "id": "kimi-sports-plugin",
       "zone": "kimi",
       "name": "Kimi sports-odds plugin scripts",
@@ -118,6 +156,37 @@
       "description": "MCP tools + WS subscription handlers"
     },
     {
+      "id": "packages-guards",
+      "zone": "packages",
+      "name": "@factorywager/guards",
+      "path": "packages/guards",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "guards"],
+      "anchors": ["exports"],
+      "description": "Shared guard utilities"
+    },
+    {
+      "id": "packages-versioning",
+      "zone": "packages",
+      "name": "@factorywager/versioning",
+      "path": "packages/versioning",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "semver"],
+      "description": "Versioning helpers"
+    },
+    {
+      "id": "packages-business",
+      "zone": "packages",
+      "name": "@factorywager/business",
+      "path": "packages/business",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "domain"],
+      "description": "Business domain types and helpers"
+    },
+    {
       "id": "agents-ast-grep",
       "zone": "agents",
       "name": "ast-grep skill bundle",
@@ -128,6 +197,45 @@
       "tags": ["skill", "ast-grep"],
       "anchors": ["cmd_outline", "cmd_map", "cmd_index", "ast_grep_helper"],
       "description": "This skill — helper, rules, MCP, repo-map"
+    },
+    {
+      "id": "agents-sports-terminal-skill",
+      "zone": "agents",
+      "name": "sports-terminal-os skill",
+      "path": ".agents/skills/sports-terminal-os",
+      "view": "digest",
+      "tags": ["skill", "sports-terminal"],
+      "anchors": ["Bun.serve", "PartnerGateway", "router"],
+      "description": "SKILL.md runbook for Sports Terminal OS workspace"
+    },
+    {
+      "id": "agents-partner-profile",
+      "zone": "agents",
+      "name": "partner-profile-os skill",
+      "path": ".agents/skills/partner-profile-os",
+      "view": "digest",
+      "tags": ["skill", "partner"],
+      "anchors": ["PartnerGateway", "evaluate", "TOML"],
+      "description": "Partner Profile OS skill — gateway, lifecycle, SOR"
+    },
+    {
+      "id": "agents-domain-orchestrator",
+      "zone": "agents",
+      "name": "domain-orchestrator skill",
+      "path": ".agents/skills/domain-orchestrator",
+      "view": "digest",
+      "tags": ["skill", "orchestrator", "flow"],
+      "anchors": ["SkillOrchestrator", "executeFlowSkill"],
+      "description": "Flow skill orchestration and domain API mapping"
+    },
+    {
+      "id": "agents-domain-diagnostic",
+      "zone": "agents",
+      "name": "domain-diagnostic-flow skill",
+      "path": ".agents/skills/domain-diagnostic-flow",
+      "view": "digest",
+      "tags": ["skill", "diagnostic", "healing"],
+      "description": "Domain health check and remediation flows"
     }
   ]
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 /** ast-grep MCP — pi-ast-grep parity for Cursor (outline, search, map, scan). Zero npm deps. */
 
+import { readFileSync } from 'node:fs';
 import { access, readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import {
@@ -14,11 +15,24 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.19.0';
+const SERVER_VERSION = '0.20.0';
+const SKILL_ROOT = resolve(import.meta.dir, '..');
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
-const SKILL_ROOT = resolve(import.meta.dir, '..');
+function loadZoneIds(): string[] {
+  try {
+    const raw = JSON.parse(readFileSync(join(SKILL_ROOT, 'repo-map.json'), 'utf8')) as {
+      zones?: Record<string, string>;
+    };
+    return Object.keys(raw.zones ?? {});
+  } catch {
+    return ['sports-terminal', 'kimi', 'packages', 'agents'];
+  }
+}
+
+const ZONE_IDS = loadZoneIds();
+const ZONE_DESC = `Zone id from repo-map.json: ${ZONE_IDS.join(', ')}`;
 
 type RepoTarget = {
   id?: string;
@@ -49,7 +63,7 @@ const TOOLS = [
       properties: {
         paths: { type: 'array', items: { type: 'string' }, description: 'Files or directories' },
         only: { type: 'string', description: 'repo-map filter (id/name/zone/tag)' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         view: { type: 'string', enum: ['auto', 'names', 'signatures', 'digest', 'expanded'] },
         items: { type: 'string', enum: ['auto', 'structure', 'exports', 'imports', 'all'] },
         match: { type: 'string', description: 'Regex filter on symbol names' },
@@ -97,7 +111,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string', description: 'Filter by id/name/zone/tag substring' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         list: { type: 'boolean', description: 'Inventory only (no outline)' },
         compact: { type: 'boolean', description: 'Symbol counts per target' },
         heatmap: { type: 'boolean', description: 'ASCII bar chart of symbol counts per target' },
@@ -115,6 +129,21 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         stats: { type: 'boolean', description: 'Include symbol counts per zone' },
+        discover: { type: 'boolean', description: 'Find unmapped monorepo candidates (alias: ast_grep_discover)' },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
+        failOn: { type: 'boolean', description: 'With discover: exit 1 when unmapped exist' },
+        jsonOut: { type: 'boolean', description: 'Emit JSON' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_discover',
+    description: 'Scan monorepo for repo-map gaps — skills, workspaces, packages (zone-discovery.json probes).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
+        failOn: { type: 'boolean', description: 'Exit 1 when unmapped candidates exist' },
         jsonOut: { type: 'boolean', description: 'Emit JSON' },
       },
     },
@@ -129,7 +158,7 @@ const TOOLS = [
         type: { type: 'string', description: 'Symbol type (function, class, ...)' },
         exports: { type: 'boolean', description: 'Exported symbols only' },
         only: { type: 'string', description: 'Filter repo-map targets' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         refresh: { type: 'boolean', description: 'Rebuild .outline-index.json cache' },
         status: { type: 'boolean', description: 'Show cache age and stale targets' },
         jsonOut: { type: 'boolean', description: 'Emit JSON' },
@@ -143,7 +172,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         failOn: { type: 'boolean', description: 'Error when anchors missing' },
         jsonOut: { type: 'boolean' },
       },
@@ -156,7 +185,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         jsonOut: { type: 'boolean' },
       },
     },
@@ -168,7 +197,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         minTargets: { type: 'number', description: 'Minimum targets for a collision (default 2)' },
         jsonOut: { type: 'boolean' },
       },
@@ -181,7 +210,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         jsonOut: { type: 'boolean' },
       },
     },
@@ -195,7 +224,7 @@ const TOOLS = [
         name: { type: 'string', description: 'Symbol name (required)' },
         type: { type: 'string' },
         exports: { type: 'boolean' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         jsonOut: { type: 'boolean' },
       },
       required: ['name'],
@@ -222,7 +251,7 @@ const TOOLS = [
         integration: { type: 'string', enum: ['catalog', 'planned', 'integrated'], description: 'For roadmap: filter by integration state' },
         patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
         only: { type: 'string' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         group: { type: 'string', description: 'Filter patterns: http, io, db, crypto, anti-pattern, ...' },
         tier: { type: 'string', enum: ['core', 'extended', 'migrate'] },
         coreOnly: { type: 'boolean', description: 'Shorthand for tier=core' },
@@ -241,7 +270,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'], description: 'Zone id (required)' },
+        zone: { type: 'string', enum: ZONE_IDS, description: `${ZONE_DESC} (required)` },
         digest: { type: 'boolean', description: 'Inline outline preview per step' },
       },
       required: ['zone'],
@@ -315,7 +344,7 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         only: { type: 'string', description: 'Filter targets by id/name substring' },
-        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         rule: { type: 'string', description: 'Single rule instead of full sgconfig' },
         profile: { type: 'string', description: 'scan-profiles.json key (ci, autofix, strict)' },
         verbose: { type: 'boolean', description: 'Per-file violation breakdown' },
@@ -524,10 +553,22 @@ async function cmdMap(args: Record<string, unknown>): Promise<ToolCallResult> {
 
 async function cmdZones(args: Record<string, unknown>): Promise<ToolCallResult> {
   const extra: string[] = [];
+  if (args.discover === true) extra.push('--discover');
   if (args.stats === true) extra.push('--stats');
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.failOn === true) extra.push('--fail-on');
   if (args.jsonOut === true) extra.push('--json-out');
   const { stdout, stderr, code } = await runHelper('zones', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no zones output)'), code !== 0);
+}
+
+async function cmdDiscover(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.failOn === true) extra.push('--fail-on');
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('discover', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no discover output)'), code !== 0);
 }
 
 async function cmdIndex(args: Record<string, unknown>): Promise<ToolCallResult> {
@@ -770,6 +811,7 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_files': result = await cmdSearch(args, true); break;
       case 'ast_grep_map': result = await cmdMap(args); break;
       case 'ast_grep_zones': result = await cmdZones(args); break;
+      case 'ast_grep_discover': result = await cmdDiscover(args); break;
       case 'ast_grep_index': result = await cmdIndex(args); break;
       case 'ast_grep_anchors': result = await cmdAnchors(args); break;
       case 'ast_grep_exports': result = await cmdExports(args); break;

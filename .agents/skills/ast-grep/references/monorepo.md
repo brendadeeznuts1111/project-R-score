@@ -24,9 +24,12 @@ python3 $AG scan --config .agents/skills/ast-grep/sgconfig.yml \
 
 | Zone | Targets | Start here |
 |---|---|---|
-| `sports-terminal` | entry, api, services, router | `map --zone sports-terminal --list` |
+| `sports-terminal` | entry, api, services, router, partner, telegram | `map --zone sports-terminal --list` |
 | `kimi` | plugin scripts, f402, shared, mcp-server | `map --compact --zone kimi` |
-| `agents` | ast-grep skill bundle | `outline --zone agents --view names` |
+| `packages` | guards, versioning, business | `map --zone packages --compact` |
+| `agents` | ast-grep + domain/sports skills | `outline --zone agents --view names` |
+
+**Discovery:** `discover` scans `zone-discovery.json` probes (skills, workspaces, packages) and reports unmapped paths vs `repo-map.json`. Stale targets (missing on disk) are listed separately.
 
 ## High-value outline paths
 

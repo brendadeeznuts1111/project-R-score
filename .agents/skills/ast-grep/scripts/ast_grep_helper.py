@@ -28,6 +28,7 @@ USAGE
     ast_grep_helper.py test [-U]            # run rule snapshot tests (tests/)
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
+    ast_grep_helper.py discover [--zone ZONE]         # unmapped monorepo candidates
     ast_grep_helper.py map [--only SUBSTR]              # monorepo repo-map.json targets
     ast_grep_helper.py zones [--stats]                # list zones + targets
     ast_grep_helper.py index [--name SUBSTR]          # cross-target symbol index
@@ -92,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.19.0"
+VERSION = "0.20.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -555,6 +556,7 @@ def _skill_artifacts() -> dict[str, object]:
         "bundle_threat_rules": (root / "bundle-threat-rules.json").is_file(),
         "bundle_threat_profiles": (root / "bundle-threat-profiles.json").is_file(),
         "bundle_threat_scan": (root / "scripts" / "bundle-threat-scan.ts").is_file(),
+        "zone_discovery": (root / "zone-discovery.json").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -569,6 +571,159 @@ def _load_repo_map() -> dict:
     if not manifest.is_file():
         return {"targets": []}
     return json.loads(manifest.read_text(encoding="utf-8"))
+
+
+def _load_zone_discovery() -> dict:
+    path = skill_root() / "zone-discovery.json"
+    if not path.is_file():
+        return {"probes": [], "skip_dirs": []}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _zone_ids() -> list[str]:
+    return list(_load_repo_map().get("zones", {}).keys())
+
+
+def _zone_hint() -> str:
+    ids = _zone_ids()
+    return ", ".join(ids) if ids else "(none — run discover)"
+
+
+def _norm_rel_path(root: Path, path: str) -> str:
+    p = Path(path)
+    if p.is_absolute():
+        try:
+            return p.resolve().relative_to(root.resolve()).as_posix()
+        except ValueError:
+            return p.as_posix()
+    return p.as_posix()
+
+
+def _path_has_skip_part(rel: str, skip_dirs: set[str]) -> bool:
+    return any(part in skip_dirs for part in rel.split("/"))
+
+
+def _paths_overlap(a: str, b: str) -> bool:
+    if a == b:
+        return True
+    return a.startswith(f"{b}/") or b.startswith(f"{a}/")
+
+
+def _mapped_target_paths(data: dict, root: Path) -> set[str]:
+    out: set[str] = set()
+    for t in data.get("targets", []):
+        rel = _norm_rel_path(root, t.get("path", "."))
+        out.add(rel)
+    return out
+
+
+def _candidate_mapped(rel: str, mapped: set[str]) -> bool:
+    return any(_paths_overlap(rel, m) for m in mapped)
+
+
+def _suggest_target_id(zone: str, name: str, pkg_name: Optional[str] = None) -> str:
+    slug = (pkg_name or name).split("/")[-1]
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", slug).strip("-").lower()
+    prefix = zone.replace("_", "-")
+    if slug.startswith(prefix):
+        return slug
+    return f"{prefix}-{slug}" if slug else prefix
+
+
+def _discover_probe_candidates(root: Path, probe: dict, skip_dirs: set[str]) -> list[dict]:
+    glob_pat = probe.get("glob", "")
+    if not glob_pat:
+        return []
+    rows: list[dict] = []
+    seen: set[str] = set()
+    for hit in sorted(root.glob(glob_pat)):
+        rel_hit = hit.relative_to(root).as_posix()
+        if _path_has_skip_part(rel_hit, skip_dirs):
+            continue
+        path_from = probe.get("path_from", "self")
+        candidate = hit.parent if path_from == "parent" else hit
+        require_child = probe.get("require_child")
+        if require_child and not (candidate / require_child).is_file():
+            continue
+        rel = candidate.relative_to(root).as_posix()
+        if rel in seen:
+            continue
+        seen.add(rel)
+
+        pkg_name: Optional[str] = None
+        pkg_json = candidate / "package.json"
+        if pkg_json.is_file():
+            try:
+                pkg_name = json.loads(pkg_json.read_text(encoding="utf-8")).get("name")
+            except (OSError, json.JSONDecodeError):
+                pkg_name = None
+
+        entry: Optional[str] = None
+        for eg in probe.get("entry_globs", []):
+            ep = candidate / eg
+            if ep.is_file():
+                entry = ep.relative_to(root).as_posix()
+                break
+
+        rows.append({
+            "path": rel,
+            "kind": probe.get("kind", "unknown"),
+            "zone": probe.get("zone", "?"),
+            "probe": probe.get("id", "?"),
+            "name": pkg_name or candidate.name,
+            "entry": entry,
+            "suggested_id": _suggest_target_id(probe.get("zone", "zone"), candidate.name, pkg_name),
+        })
+    return rows
+
+
+def _discover_report(root: Path, *, zone_filter: str = "") -> dict:
+    data = _load_repo_map()
+    discovery = _load_zone_discovery()
+    skip_dirs = set(discovery.get("skip_dirs", []))
+    mapped = _mapped_target_paths(data, root)
+
+    candidates: list[dict] = []
+    for probe in discovery.get("probes", []):
+        candidates.extend(_discover_probe_candidates(root, probe, skip_dirs))
+
+    unmapped: list[dict] = []
+    mapped_hits: list[dict] = []
+    for c in candidates:
+        if zone_filter and c.get("zone", "").lower() != zone_filter.lower():
+            continue
+        row = {**c, "mapped": _candidate_mapped(c["path"], mapped)}
+        if row["mapped"]:
+            mapped_hits.append(row)
+        else:
+            unmapped.append(row)
+
+    stale: list[dict] = []
+    for t in data.get("targets", []):
+        if zone_filter and t.get("zone", "").lower() != zone_filter.lower():
+            continue
+        rel = _norm_rel_path(root, t.get("path", "."))
+        full = root / rel
+        if not full.exists():
+            stale.append({
+                "id": t.get("id"),
+                "zone": t.get("zone"),
+                "path": rel,
+                "reason": "path missing on disk",
+            })
+
+    zones_meta = data.get("zones", {})
+    unmapped_zones = sorted({c["zone"] for c in unmapped})
+    return {
+        "repo": str(root),
+        "zones": list(zones_meta.keys()),
+        "targets_mapped": len(data.get("targets", [])),
+        "candidates": len(candidates),
+        "mapped_hits": len(mapped_hits),
+        "unmapped": unmapped,
+        "stale": stale,
+        "unmapped_by_zone": {z: sum(1 for c in unmapped if c["zone"] == z) for z in unmapped_zones},
+    }
 
 
 def _filter_repo_targets(
@@ -1241,7 +1396,53 @@ def cmd_map(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_discover(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    zone_filter = getattr(args, "zone", None) or ""
+    report = _discover_report(root, zone_filter=zone_filter)
+
+    if getattr(args, "json_out", False):
+        json.dump(report, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(
+        f"discover: {report['candidates']} candidate(s)"
+        f"  mapped_hits={report['mapped_hits']}"
+        f"  unmapped={len(report['unmapped'])}"
+        f"  stale={len(report['stale'])}"
+    )
+    print(f"zones: {', '.join(report['zones'])}")
+    if report["unmapped_by_zone"]:
+        print("unmapped by zone:", ", ".join(f"{k}={v}" for k, v in sorted(report["unmapped_by_zone"].items())))
+
+    if report["stale"]:
+        print("\n[stale targets — path missing]")
+        for row in report["stale"][:40]:
+            print(f"  [{row['zone']}] {row['id']}  {row['path']}")
+        if len(report["stale"]) > 40:
+            print(f"  ... {len(report['stale']) - 40} more")
+
+    if report["unmapped"]:
+        print("\n[unmapped candidates — add to repo-map.json]")
+        for row in report["unmapped"][:60]:
+            entry = f"  entry={row['entry']}" if row.get("entry") else ""
+            print(
+                f"  [{row['zone']}] {row['suggested_id']}  {row['path']}"
+                f"  ({row['kind']}/{row['probe']}){entry}"
+            )
+        if len(report["unmapped"]) > 60:
+            print(f"  ... {len(report['unmapped']) - 60} more")
+
+    if getattr(args, "fail_on", False) and report["unmapped"]:
+        return 1
+    return 0
+
+
 def cmd_zones(args: argparse.Namespace) -> int:
+    if getattr(args, "discover", False):
+        return cmd_discover(args)
+
     data = _load_repo_map()
     zones_meta = data.get("zones", {})
     targets = data.get("targets", [])
@@ -1352,7 +1553,7 @@ def cmd_index(args: argparse.Namespace) -> int:
 def cmd_nav(args: argparse.Namespace) -> int:
     zone = getattr(args, "zone", None)
     if not zone:
-        err("nav requires --zone (sports-terminal, kimi, agents)")
+        err(f"nav requires --zone ({_zone_hint()})")
         return 1
     data = _load_repo_map()
     navigation = data.get("navigation", {})
@@ -3217,6 +3418,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     print(f"sgconfig.yml: {'ok' if artifacts['sgconfig'] else 'missing'}")
     print(f"repo-map.json: {'ok' if artifacts['repo_map'] else 'missing'}")
+    print(f"zone-discovery.json: {'ok' if artifacts['zone_discovery'] else 'missing'}")
     print(f"scan-profiles.json: {'ok' if artifacts['scan_profiles'] else 'missing'}")
     print(f"codemods.json: {'ok' if artifacts['codemods'] else 'missing'}")
     print(f"bun-patterns.json: {'ok' if artifacts['bun_patterns'] else 'missing'}")
@@ -3788,7 +3990,7 @@ def build_parser() -> argparse.ArgumentParser:
     o = sub.add_parser("outline", help="Map code structure (requires ast-grep 0.44+).")
     o.add_argument("paths", nargs="*", help="Paths (default: '.')")
     o.add_argument("--only", help="Expand paths from repo-map targets (substring id/name/zone/tag).")
-    o.add_argument("--zone", help="Filter repo-map targets by zone (sports-terminal, kimi, agents).")
+    o.add_argument("--zone", help=f"Filter repo-map targets by zone ({_zone_hint()}).")
     o.add_argument("--view", choices=["auto", "names", "signatures", "digest", "expanded"], help="Outline view.")
     o.add_argument("--items", choices=["auto", "structure", "exports", "imports", "all"], help="Item filter.")
     o.add_argument("--match", help="Regex filter on symbol names/signatures.")
@@ -3804,7 +4006,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     m = sub.add_parser("map", help="Outline monorepo targets from repo-map.json.")
     m.add_argument("--only", help="Filter targets by id/name/zone/tag substring.")
-    m.add_argument("--zone", help="Filter targets by zone (sports-terminal, kimi, agents).")
+    m.add_argument("--zone", help=f"Filter targets by zone ({_zone_hint()}).")
     m.add_argument("--list", dest="list_only", action="store_true", help="Inventory only — no outline run.")
     m.add_argument("--compact", action="store_true", help="Symbol counts per target (JSON outline under the hood).")
     m.add_argument("--heatmap", action="store_true", help="ASCII bar chart of symbol counts per target.")
@@ -3820,8 +4022,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     z = sub.add_parser("zones", help="List repo-map zones and targets.")
     z.add_argument("--stats", action="store_true", help="Include symbol counts (uses outline index cache).")
+    z.add_argument("--discover", action="store_true", help="Find unmapped monorepo candidates (alias: discover).")
+    z.add_argument("--zone", help=f"Filter by zone ({_zone_hint()}).")
+    z.add_argument("--fail-on", action="store_true", help="With --discover: exit 1 when unmapped candidates exist.")
     z.add_argument("--json-out", action="store_true", help="Emit JSON.")
     z.set_defaults(func=cmd_zones)
+
+    dc = sub.add_parser("discover", help="Scan monorepo for repo-map gaps (zone-discovery.json probes).")
+    dc.add_argument("--zone", help=f"Filter candidates by zone ({_zone_hint()}).")
+    dc.add_argument("--fail-on", action="store_true", help="Exit 1 when unmapped candidates exist.")
+    dc.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    dc.set_defaults(func=cmd_discover)
 
     ix = sub.add_parser("index", help="Cross-target symbol index from repo-map outlines.")
     ix.add_argument("--name", help="Filter symbols by name substring.")
@@ -3870,7 +4081,7 @@ def build_parser() -> argparse.ArgumentParser:
     jp.set_defaults(func=cmd_jump)
 
     nv = sub.add_parser("nav", help="Guided read order for a repo-map zone.")
-    nv.add_argument("--zone", required=True, help="Zone id (sports-terminal, kimi, agents).")
+    nv.add_argument("--zone", required=True, help=f"Zone id ({_zone_hint()}).")
     nv.add_argument("--digest", action="store_true", help="Inline outline preview per step.")
     nv.set_defaults(func=cmd_nav)
 

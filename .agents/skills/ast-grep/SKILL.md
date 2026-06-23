@@ -57,7 +57,10 @@ Agent default — validates patterns, truncates huge output, two-pass replace, *
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
-# Monorepo orientation (repo-map.json v2 — zones: sports-terminal, kimi, agents)
+# Monorepo orientation (repo-map.json v3 — zones: sports-terminal, kimi, packages, agents)
+python3 $AG discover                              # unmapped skills/workspaces/packages
+python3 $AG discover --zone packages --json-out     # gap report for one zone
+python3 $AG zones --discover                        # alias for discover
 python3 $AG map --list                              # inventory, no outline
 python3 $AG map --compact --zone kimi               # symbol counts per target
 python3 $AG map --heatmap                           # ASCII symbol density chart
