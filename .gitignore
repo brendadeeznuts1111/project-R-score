@@ -77,6 +77,10 @@ out/
 !.agents/skills/**/references/**
 !.agents/skills/**/rules/
 !.agents/skills/**/rules/**
+!.agents/skills/**/outline-rules/
+!.agents/skills/**/outline-rules/**
+!.agents/skills/**/mcp/
+!.agents/skills/**/mcp/**
 !.agents/skills/**/repo-map.json
 !.agents/skills/**/sgconfig.yml
 .reasonix/

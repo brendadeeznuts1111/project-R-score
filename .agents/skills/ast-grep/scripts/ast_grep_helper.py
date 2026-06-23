@@ -509,6 +509,8 @@ def cmd_outline(args: argparse.Namespace) -> int:
         sg_args.extend(["--type", ",".join(args.types)])
     if args.lang:
         sg_args.extend(["--lang", normalize_lang(args.lang) or args.lang])
+    if getattr(args, "bun_rules", False):
+        sg_args.extend(["--outline-rules", str(skill_root() / "outline-rules" / "bun-monorepo.yml")])
     for g in args.globs or []:
         sg_args.extend(["--globs", g])
     sg_args.extend(_search_paths(args))
@@ -936,6 +938,7 @@ def build_parser() -> argparse.ArgumentParser:
     o.add_argument("--types", action="append", help="Symbol types (repeatable): class, function, enum, ...")
     o.add_argument("--lang", "-l", help="Language override.")
     o.add_argument("--globs", action="append", help="Include/exclude glob.")
+    o.add_argument("--bun-rules", action="store_true", help="Load outline-rules/bun-monorepo.yml extractors.")
     o.add_argument("--json-out", action="store_true", help="Emit raw output (no truncation).")
     o.set_defaults(func=cmd_outline)
 

@@ -1,0 +1,6 @@
+id: empty-catch
+language: TypeScript
+severity: warning
+message: Empty catch block — log, narrow the error type, or rethrow
+rule:
+  pattern: try { $$$TRY } catch ($E) { }

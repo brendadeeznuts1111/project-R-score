@@ -72,6 +72,21 @@ Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary
 
 Deep workspace guide: [references/monorepo.md](references/monorepo.md) · patterns: [references/recipes.md](references/recipes.md)
 
+## MCP (Cursor)
+
+Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
+
+| MCP tool | CLI equivalent |
+|---|---|
+| `ast_grep_outline` | `outline` (+ `bunRules: true` for Bun extractors) |
+| `ast_grep_search` | `search` |
+| `ast_grep_files` | `files` |
+| `ast_grep_map` | `map` |
+| `ast_grep_scan` | `scan` |
+| `ast_grep_doctor` | `doctor` |
+
+Reload MCP after install. Test: `./scripts/test-mcp.sh`
+
 ## Workflow checklist
 
 1. **Orient** — `map` or `map --only <zone>` for unfamiliar monorepo areas

@@ -43,12 +43,24 @@ python3 $AG search 'new WebSocket($$$)' --path projects/active/sports-terminal-o
 python3 $AG outline projects/active/sports-terminal-os/src/api/router.ts --view digest
 ```
 
+## Outline rules (Bun runtime)
+
+Load extra extractors for `Bun.serve`, `createLogger`, route handlers:
+
+```bash
+python3 $AG outline projects/active/sports-terminal-os/src/index.ts --bun-rules --view names
+```
+
+File: `outline-rules/bun-monorepo.yml`
+
 ## Scan rules (bundled)
 
 | Rule | File | Finds |
 |---|---|---|
 | `no-console-log` | `rules/no-console-log.yml` | `console.*($$$)` |
 | `no-as-any` | `rules/no-as-any.yml` | `$EXPR as any` |
+| `empty-catch` | `rules/empty-catch.yml` | empty `catch {}` blocks |
+| `hardcoded-fetch-url` | `rules/hardcoded-fetch-url.yml` | `fetch('https://...')` literals |
 
 Preview only unless you pass `--apply` to `scan`.
 

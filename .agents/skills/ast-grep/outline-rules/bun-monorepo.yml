@@ -1,0 +1,56 @@
+# Extra outline extractors for Bun / sports-terminal / kimi-plugin patterns.
+# Use: ast-grep outline --outline-rules outline-rules/bun-monorepo.yml
+---
+id: bun-serve-call
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: Bun.serve($$$OPTS)
+name: Bun.serve
+isExported: false
+---
+id: bun-serve-call-tsx
+language: Tsx
+role: item
+symbolType: function
+rule:
+  pattern: Bun.serve($$$OPTS)
+name: Bun.serve
+isExported: false
+---
+id: structured-logger
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: const $NAME = createLogger($LABEL)
+name: $NAME
+isExported: false
+---
+id: structured-logger-tsx
+language: Tsx
+role: item
+symbolType: constant
+rule:
+  pattern: const $NAME = createLogger($LABEL)
+name: $NAME
+isExported: false
+---
+id: export-route-handler
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: export async function $NAME($$$PARAMS) { $$$BODY }
+name: $NAME
+isExported: true
+---
+id: route-handler
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: async function $NAME($$$PARAMS) { $$$BODY }
+name: $NAME
+isExported: false
