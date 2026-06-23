@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.15.0';
+const SERVER_VERSION = '0.16.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -208,7 +208,9 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'search'], description: 'Bun subcommand' },
-        topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles'], description: 'For install-docs: filter section' },
+        topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles', 'platform', 'lockfile', 'backends', 'pnpm', 'peers', 'cache', 'cli'], description: 'For install-docs: filter section' },
+        cpu: { type: 'string', description: 'For install-ci: --cpu override' },
+        osTarget: { type: 'string', description: 'For install-ci: --os override' },
         scanPath: { type: 'string', description: 'For install-scan: directory or package.json' },
         release: { type: 'string', description: 'For features: release key (1.3.13)' },
         profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key' },
@@ -614,6 +616,8 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   }
   if (action === 'install-ci') {
     if (args.profile) extra.push('--profile', String(args.profile));
+    if (args.cpu) extra.push('--cpu', String(args.cpu));
+    if (args.osTarget) extra.push('--os-target', String(args.osTarget));
     if (args.dryRun === true) extra.push('--dry-run');
   }
   if (action === 'features' && args.release) extra.push('--release', String(args.release));

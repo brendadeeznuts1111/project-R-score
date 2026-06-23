@@ -91,7 +91,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.17.0"
+VERSION = "0.18.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -1601,6 +1601,8 @@ _PKG_DEP_SECTIONS = (
 def _classify_dep_spec(spec: str, catalog: dict) -> Optional[str]:
     if not isinstance(spec, str):
         return None
+    if spec == "catalog:" or spec.startswith("catalog:"):
+        return "pnpm-catalog"
     if spec.startswith("git@"):
         return "git-scp"
     for entry in catalog.get("non_npm_sources", []):
@@ -1626,6 +1628,49 @@ def _iter_package_json_files(root: Path, scan_path: Path) -> list[Path]:
         if "package.json" in filenames:
             files.append(Path(dirpath) / "package.json")
     return sorted(files)
+
+
+def _scan_install_lockfiles(root: Path, scan_path: Path) -> list[dict]:
+    """Detect bun/pnpm/yarn lockfiles and migration readiness."""
+    names = {
+        "bun.lock": "bun-text",
+        "bun.lockb": "bun-legacy-binary",
+        "pnpm-lock.yaml": "pnpm",
+        "pnpm-workspace.yaml": "pnpm-workspace",
+        "yarn.lock": "yarn",
+    }
+    hits: list[dict] = []
+    base = scan_path if scan_path.is_dir() else scan_path.parent
+    skip = {"node_modules", ".git"}
+    for dirpath, dirnames, filenames in os.walk(base):
+        depth = Path(dirpath).relative_to(base).parts if dirpath != str(base) else ()
+        if len(depth) > 4:
+            dirnames.clear()
+            continue
+        dirnames[:] = [d for d in dirnames if d not in skip]
+        for name, kind in names.items():
+            if name not in filenames:
+                continue
+            fp = Path(dirpath) / name
+            rel = str(fp.relative_to(root)) if fp.is_relative_to(root) else str(fp)
+            hits.append({"file": rel, "kind": kind, "name": name})
+    pnpm = [h for h in hits if h["kind"] == "pnpm"]
+    bun_text = [h for h in hits if h["kind"] == "bun-text"]
+    bun_legacy = [h for h in hits if h["kind"] == "bun-legacy-binary"]
+    migration: list[dict] = []
+    if pnpm and not bun_text:
+        migration.append({
+            "id": "pnpm-auto-migrate",
+            "message": "pnpm-lock.yaml without bun.lock — bun install will auto-migrate",
+            "files": [h["file"] for h in pnpm],
+        })
+    if bun_legacy and not bun_text:
+        migration.append({
+            "id": "lockb-upgrade",
+            "message": "bun.lockb without bun.lock — run profile lockfile-migrate",
+            "command": "bun install --save-text-lockfile --frozen-lockfile --lockfile-only",
+        })
+    return hits, migration
 
 
 def _scan_non_npm_dependencies(root: Path, scan_path: Path) -> dict:
@@ -1672,7 +1717,14 @@ def _scan_non_npm_dependencies(root: Path, scan_path: Path) -> dict:
                 bunfig_hits.append({"file": rel, "key": "linker", "line": stripped})
             if stripped.startswith("minimumReleaseAge"):
                 bunfig_hits.append({"file": rel, "key": "minimumReleaseAge", "line": stripped})
-    return {"findings": findings, "totals": totals, "bunfig": bunfig_hits}
+    lockfiles, migration = _scan_install_lockfiles(root, scan_path)
+    return {
+        "findings": findings,
+        "totals": totals,
+        "bunfig": bunfig_hits,
+        "lockfiles": lockfiles,
+        "migration": migration,
+    }
 
 
 def _resolve_bun_version() -> Optional[str]:
@@ -2377,6 +2429,63 @@ def cmd_bun_install_docs(args: argparse.Namespace) -> int:
         print("\n[environment variables]")
         for ev in data.get("env_vars", []):
             print(f"  {ev.get('name')}: {ev.get('description', '')}")
+    if topic == "platform":
+        plat = data.get("platform", {})
+        if plat:
+            print("\n[platform-specific optional deps]")
+            print(f"  {plat.get('description', '')}")
+            print(f"  cpu: {', '.join(plat.get('cpu_values', []))}")
+            print(f"  os: {', '.join(plat.get('os_values', []))}")
+            if plat.get("cli_example"):
+                print(f"  {plat['cli_example']}")
+            if plat.get("lockfile_note"):
+                print(f"  note: {plat['lockfile_note']}")
+    if topic == "lockfile":
+        lf = data.get("lockfile", {})
+        if lf:
+            print("\n[lockfile]")
+            print(f"  current: {lf.get('current')}  legacy: {lf.get('legacy_binary')}")
+            if lf.get("upgrade_command"):
+                print(f"  upgrade: {lf['upgrade_command']}")
+            for k, v in (lf.get("flags") or {}).items():
+                print(f"  {k}: {v}")
+    if topic == "backends":
+        print("\n[install backends]")
+        for be in data.get("backends", []):
+            default = f" (default: {be['default_on']})" if be.get("default_on") else ""
+            print(f"  {be.get('id')}{default}: {be.get('description', '')}")
+    if topic == "pnpm":
+        pm = data.get("pnpm_migration", {})
+        if pm:
+            print("\n[pnpm migration]")
+            print(f"  trigger: {pm.get('trigger')}")
+            for item in pm.get("migrates", []):
+                print(f"  - {item}")
+            for req in pm.get("requirements", []):
+                print(f"  requires: {req}")
+    if topic == "peers":
+        peers = data.get("peer_dependencies", {})
+        if peers:
+            print("\n[peer dependencies]")
+            print(f"  {peers.get('description', '')}")
+            if peers.get("optional_meta"):
+                print(f"  {peers['optional_meta']}")
+    if topic == "cache":
+        cache = data.get("cache", {})
+        if cache:
+            print("\n[cache]")
+            print(f"  path: {cache.get('path')}")
+            for cmd in cache.get("clear_commands", []):
+                print(f"  clear: {cmd}")
+            meta = cache.get("registry_metadata", {})
+            if meta:
+                print(f"  registry cache: {meta.get('path_pattern')} ({meta.get('format')})")
+    if topic == "cli":
+        flags = data.get("cli_flags", {})
+        if flags:
+            print("\n[CLI flags]")
+            for _key, spec in sorted(flags.items()):
+                print(f"  {spec.get('flag')}: {spec.get('description', '')}")
 
     profiles = _load_install_profiles().get("profiles", {})
     if profiles and topic in ("", "profiles"):
@@ -2416,6 +2525,16 @@ def cmd_bun_install_scan(args: argparse.Namespace) -> int:
         print("\nbunfig.toml:")
         for hit in report["bunfig"][:20]:
             print(f"  {hit['file']}: {hit['line']}")
+    if report.get("lockfiles"):
+        print("\nlockfiles:")
+        for lf in report["lockfiles"][:30]:
+            print(f"  [{lf['kind']}] {lf['file']}")
+    if report.get("migration"):
+        print("\nmigration hints:")
+        for m in report["migration"]:
+            print(f"  {m['id']}: {m['message']}")
+            if m.get("command"):
+                print(f"    {m['command']}")
     if getattr(args, "fail_on", False) and findings:
         return 1
     return 0
@@ -2431,6 +2550,13 @@ def cmd_bun_install_ci(args: argparse.Namespace) -> int:
         return 1
     root = git_root() or Path.cwd()
     cmd = ["bun", "install", *spec.get("args", [])]
+    env_spec = profiles_data.get("env", {})
+    cpu = getattr(args, "cpu", None) or os.environ.get(env_spec.get("cpu", "BUN_INSTALL_CPU"), "")
+    os_target = getattr(args, "os_target", None) or os.environ.get(env_spec.get("os", "BUN_INSTALL_OS"), "")
+    if cpu and not any(a.startswith("--cpu") for a in cmd):
+        cmd.append(f"--cpu={cpu}")
+    if os_target and not any(a.startswith("--os") for a in cmd):
+        cmd.append(f"--os={os_target}")
     if getattr(args, "dry_run", False):
         print(" ".join(cmd))
         return 0
@@ -3793,7 +3919,11 @@ def build_parser() -> argparse.ArgumentParser:
     bun_tc.set_defaults(func=cmd_bun_test_ci)
 
     bun_id = bun_sub.add_parser("install-docs", help="Bun install: git/github/tarball deps, linker, bunfig, age gate.")
-    bun_id.add_argument("--topic", choices=["sources", "linker", "security", "bunfig", "env", "profiles"], help="Filter section.")
+    bun_id.add_argument(
+        "--topic",
+        choices=["sources", "linker", "security", "bunfig", "env", "profiles", "platform", "lockfile", "backends", "pnpm", "peers", "cache", "cli"],
+        help="Filter section.",
+    )
     bun_id.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_id.set_defaults(func=cmd_bun_install_docs)
 
@@ -3804,7 +3934,9 @@ def build_parser() -> argparse.ArgumentParser:
     bun_is.set_defaults(func=cmd_bun_install_scan)
 
     bun_ic = bun_sub.add_parser("install-ci", help="Run bun install with bun-install-profiles.json.")
-    bun_ic.add_argument("--profile", default="ci-isolated", help="Profile: hoisted, isolated, ci, secure, ...")
+    bun_ic.add_argument("--profile", default="ci-isolated", help="Profile: hoisted, isolated, ci, cross-linux-x64, ...")
+    bun_ic.add_argument("--cpu", help="Override --cpu= (or BUN_INSTALL_CPU).")
+    bun_ic.add_argument("--os-target", dest="os_target", help="Override --os= (or BUN_INSTALL_OS).")
     bun_ic.add_argument("--dry-run", action="store_true", help="Print command without running.")
     bun_ic.set_defaults(func=cmd_bun_install_ci)
 

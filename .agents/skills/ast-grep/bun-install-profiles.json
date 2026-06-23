@@ -1,6 +1,10 @@
 {
-  "version": 1,
-  "description": "bun install CI recipes — linker, frozen lockfile, production, supply-chain age gate",
+  "version": 2,
+  "description": "bun install CI recipes — linker, platform, lockfile, supply-chain",
+  "env": {
+    "cpu": "BUN_INSTALL_CPU",
+    "os": "BUN_INSTALL_OS"
+  },
   "profiles": {
     "default": {
       "description": "Standard install",
@@ -37,6 +41,30 @@
     "dry-run": {
       "description": "Resolve without writing node_modules",
       "args": ["--dry-run"]
+    },
+    "cross-linux-x64": {
+      "description": "Install optional deps for linux x64 (cross-compile/deploy prep)",
+      "args": ["--cpu=x64", "--os=linux"]
+    },
+    "cross-linux-arm64": {
+      "description": "Install optional deps for linux arm64",
+      "args": ["--cpu=arm64", "--os=linux"]
+    },
+    "cross-darwin-arm64": {
+      "description": "Install optional deps for darwin arm64",
+      "args": ["--cpu=arm64", "--os=darwin"]
+    },
+    "lockfile-only": {
+      "description": "Generate bun.lock without installing node_modules",
+      "args": ["--lockfile-only"]
+    },
+    "lockfile-migrate": {
+      "description": "Upgrade bun.lockb → text bun.lock (then delete bun.lockb)",
+      "args": ["--save-text-lockfile", "--frozen-lockfile", "--lockfile-only"]
+    },
+    "ignore-scripts": {
+      "description": "Skip root package.json lifecycle scripts",
+      "args": ["--ignore-scripts", "--frozen-lockfile"]
     }
   }
 }

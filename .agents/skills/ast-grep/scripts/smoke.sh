@@ -71,8 +71,11 @@ echo ""
 echo "== bun test-ci dry-run =="
 python3 "$HELPER" -q bun test-ci --profile ci --path .agents/skills/ast-grep/tests --dry-run 2>&1 || true
 echo ""
-echo "== bun install-docs (linker) =="
-python3 "$HELPER" -q bun install-docs --topic linker 2>&1 | head -18 || true
+echo "== bun install-docs (platform) =="
+python3 "$HELPER" -q bun install-docs --topic platform 2>&1 | head -12 || true
+echo ""
+echo "== bun install-docs (lockfile) =="
+python3 "$HELPER" -q bun install-docs --topic lockfile 2>&1 | head -10 || true
 echo ""
 echo "== bun install-scan (repo root sample) =="
 python3 "$HELPER" -q bun install-scan --path . 2>&1 | head -12 || true

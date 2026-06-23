@@ -129,7 +129,8 @@
         "install-git-scp",
         "install-github",
         "install-tarball",
-        "install-npm-alias"
+        "install-npm-alias",
+        "install-pnpm-catalog"
       ]
     }
   },
@@ -1331,6 +1332,17 @@
       "tier": "extended",
       "description": "Non-npm install spec (npm:)",
       "scan_prefix": "npm:"
+    },
+    {
+      "id": "install-pnpm-catalog",
+      "name": "catalog:",
+      "pattern": "catalog:build",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "pnpm catalog protocol (preserved in Bun migration)",
+      "scan_prefix": "catalog:"
     }
   ],
   "docs_base": "https://bun.sh/docs",
