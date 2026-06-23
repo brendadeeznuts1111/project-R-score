@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "description": "Bun native API structural patterns \u2014 inventory, matrix, score, and migration",
   "bundles": {
     "server-boot": {
@@ -83,6 +83,30 @@
         "bun-listen",
         "fetch-native",
         "html-rewriter"
+      ]
+    },
+    "security": {
+      "description": "Threat intel, bundle scanning, HTML/XSS, distributed cache",
+      "patterns": [
+        "bun-transpiler",
+        "worker",
+        "html-rewriter",
+        "bun-webview",
+        "bun-redis-short",
+        "bun-udp",
+        "bun-escape-html",
+        "bun-csrf"
+      ]
+    },
+    "doctor-utils": {
+      "description": "Doctor/debug ergonomics (catalog only until wired)",
+      "patterns": [
+        "bun-peek",
+        "bun-deep-equals",
+        "bun-resolve-sync",
+        "bun-strip-ansi",
+        "bun-wrap-ansi",
+        "bun-path-to-file-url"
       ]
     }
   },
@@ -562,7 +586,12 @@
       "outline": true,
       "tier": "extended",
       "description": "UDP socket",
-      "docs_path": "/runtime/networking/udp"
+      "docs_path": "/runtime/networking/udp",
+      "security": {
+        "priority": "low",
+        "use_case": "UDP-based threat-intel feeds",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-transpiler",
@@ -573,7 +602,12 @@
       "outline": true,
       "tier": "extended",
       "description": "JS/TS transpiler",
-      "docs_path": "/runtime/transpiler"
+      "docs_path": "/runtime/transpiler",
+      "security": {
+        "priority": "high",
+        "use_case": "Scan bundled JS for hidden threats",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-fs-router",
@@ -584,7 +618,12 @@
       "outline": true,
       "tier": "extended",
       "description": "File-based HTTP routing",
-      "docs_path": "/runtime/file-system-router"
+      "docs_path": "/runtime/file-system-router",
+      "security": {
+        "priority": "nice",
+        "use_case": "Optional service routing",
+        "integration": "catalog"
+      }
     },
     {
       "id": "html-rewriter",
@@ -595,7 +634,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Streaming HTML transforms",
-      "docs_path": "/runtime/html-rewriter"
+      "docs_path": "/runtime/html-rewriter",
+      "security": {
+        "priority": "medium",
+        "use_case": "Scan HTML streams for XSS",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-webview",
@@ -606,7 +650,12 @@
       "outline": false,
       "tier": "extended",
       "description": "Headless browser WebView",
-      "docs_path": "/runtime/webview"
+      "docs_path": "/runtime/webview",
+      "security": {
+        "priority": "medium",
+        "use_case": "Render reports and headless HTML audit",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-sha",
@@ -661,7 +710,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Redis/Valkey client",
-      "docs_path": "/runtime/redis"
+      "docs_path": "/runtime/redis",
+      "security": {
+        "priority": "medium",
+        "use_case": "Distributed cache for threat feeds",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-redis-short",
@@ -672,7 +726,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Redis shorthand client",
-      "docs_path": "/runtime/redis"
+      "docs_path": "/runtime/redis",
+      "security": {
+        "priority": "medium",
+        "use_case": "Distributed cache for threat feeds",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-dns",
@@ -694,7 +753,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Web Worker spawn",
-      "docs_path": "/runtime/workers"
+      "docs_path": "/runtime/workers",
+      "security": {
+        "priority": "high",
+        "use_case": "Parallelize domain scans",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-plugin",
@@ -705,7 +769,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Bundler plugin loader",
-      "docs_path": "/bundler/plugins"
+      "docs_path": "/bundler/plugins",
+      "security": {
+        "priority": "nice",
+        "use_case": "Build-time security checks (future)",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-cookie",
@@ -782,7 +851,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Sync peek at Promise value",
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Doctor perf debugging (sync Promise peek)",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-deep-equals",
@@ -793,7 +867,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Deep equality compare",
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Replace manual diff in doctor output",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-deep-match",
@@ -859,7 +938,12 @@
       "outline": true,
       "tier": "extended",
       "description": "path to file:// URL",
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Symmetric path \u2194 file URL",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-gzip-sync",
@@ -936,7 +1020,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Incremental ArrayBuffer builder",
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Efficient binary writes",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-alloc-unsafe",
@@ -969,7 +1058,12 @@
       "outline": true,
       "tier": "extended",
       "description": "Sync module resolution",
-      "docs_path": "/runtime/utils"
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Resolve external tool paths",
+        "integration": "catalog"
+      }
     },
     {
       "id": "bun-semver",
@@ -1047,6 +1141,38 @@
       "tier": "core",
       "description": "Standalone $ shell template (docs)",
       "docs_path": "/runtime/shell"
+    },
+    {
+      "id": "bun-strip-ansi",
+      "name": "Bun.stripANSI",
+      "pattern": "Bun.stripANSI($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Strip ANSI escape codes",
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Strip ANSI before diff/compare",
+        "integration": "catalog"
+      }
+    },
+    {
+      "id": "bun-wrap-ansi",
+      "name": "Bun.wrapAnsi",
+      "pattern": "Bun.wrapAnsi($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Wrap text to terminal width preserving ANSI",
+      "docs_path": "/runtime/utils",
+      "security": {
+        "priority": "nice",
+        "use_case": "Terminal formatting in reports",
+        "integration": "catalog"
+      }
     }
   ],
   "docs_base": "https://bun.sh/docs",
@@ -1574,6 +1700,136 @@
         "fetch-native"
       ],
       "docs_path": "/runtime/networking/fetch"
+    },
+    {
+      "id": "terminal-ansi",
+      "topic": "Terminal ANSI",
+      "apis": [
+        "Bun.stripANSI",
+        "Bun.wrapAnsi",
+        "Bun.stringWidth"
+      ],
+      "patterns": [
+        "bun-strip-ansi",
+        "bun-wrap-ansi",
+        "bun-string-width"
+      ],
+      "docs_path": "/runtime/utils"
     }
-  ]
+  ],
+  "roadmap": {
+    "description": "Security-oriented Bun APIs: cataloged in bun-patterns.json vs wired into doctor/scan",
+    "integration_states": {
+      "catalog": "ast-grep pattern exists \u2014 bun search/inventory only",
+      "planned": "scheduled for doctor/scan worker integration",
+      "integrated": "used by ast-grep tooling at runtime"
+    },
+    "items": [
+      {
+        "pattern": "bun-transpiler",
+        "api": "Bun.Transpiler",
+        "priority": "high",
+        "use_case": "Scan bundled JS for hidden threats",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "worker",
+        "api": "Worker",
+        "priority": "high",
+        "use_case": "Parallelize domain scans",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "html-rewriter",
+        "api": "HTMLRewriter",
+        "priority": "medium",
+        "use_case": "Scan HTML streams for XSS",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-webview",
+        "api": "Bun.WebView",
+        "priority": "medium",
+        "use_case": "Render reports and headless HTML audit",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-redis-short",
+        "api": "Bun.redis",
+        "priority": "medium",
+        "use_case": "Distributed cache for threat feeds",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-udp",
+        "api": "Bun.udpSocket",
+        "priority": "low",
+        "use_case": "UDP-based threat-intel feeds",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-peek",
+        "api": "Bun.peek",
+        "priority": "nice",
+        "use_case": "Doctor perf debugging (sync Promise peek)",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-deep-equals",
+        "api": "Bun.deepEquals",
+        "priority": "nice",
+        "use_case": "Replace manual diff in doctor output",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-resolve-sync",
+        "api": "Bun.resolveSync",
+        "priority": "nice",
+        "use_case": "Resolve external tool paths",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-strip-ansi",
+        "api": "Bun.stripANSI",
+        "priority": "nice",
+        "use_case": "Strip ANSI before diff/compare",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-wrap-ansi",
+        "api": "Bun.wrapAnsi",
+        "priority": "nice",
+        "use_case": "Terminal formatting in reports",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-path-to-file-url",
+        "api": "Bun.pathToFileURL",
+        "priority": "nice",
+        "use_case": "Symmetric path \u2194 file URL",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-array-buffer-sink",
+        "api": "Bun.ArrayBufferSink",
+        "priority": "nice",
+        "use_case": "Efficient binary writes",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-fs-router",
+        "api": "Bun.FileSystemRouter",
+        "priority": "nice",
+        "use_case": "Optional service routing",
+        "integration": "catalog"
+      },
+      {
+        "pattern": "bun-plugin",
+        "api": "Bun.plugin",
+        "priority": "nice",
+        "use_case": "Build-time security checks (future)",
+        "integration": "catalog"
+      }
+    ]
+  }
 }

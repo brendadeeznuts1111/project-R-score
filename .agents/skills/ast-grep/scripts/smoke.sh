@@ -62,6 +62,9 @@ echo ""
 echo "== bun docs =="
 python3 "$HELPER" -q bun docs 2>&1 | head -20
 echo ""
+echo "== bun roadmap (high) =="
+python3 "$HELPER" -q bun roadmap --priority high 2>&1 | head -12
+echo ""
 echo "== bun bundles =="
 python3 "$HELPER" -q bun bundles 2>&1 | head -12
 echo ""

@@ -44,6 +44,7 @@ USAGE
     ast_grep_helper.py bun migrate                  # anti-pattern -> Bun.native hints
     ast_grep_helper.py bun report                   # unified Bun intelligence report
     ast_grep_helper.py bun docs                       # official Bun API topic coverage
+    ast_grep_helper.py bun roadmap                    # security integration backlog
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
@@ -88,7 +89,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.13.0"
+VERSION = "0.14.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -2086,6 +2087,70 @@ def cmd_bun_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _bun_roadmap_items(data: dict, args: argparse.Namespace) -> list[dict]:
+    roadmap = data.get("roadmap", {})
+    items = list(roadmap.get("items", []))
+    patterns = {p.get("id"): p for p in data.get("patterns", [])}
+    priority_q = (getattr(args, "priority", None) or "").lower()
+    integration_q = (getattr(args, "integration", None) or "").lower()
+    if priority_q:
+        items = [i for i in items if (i.get("priority") or "").lower() == priority_q]
+    if integration_q:
+        items = [i for i in items if (i.get("integration") or "").lower() == integration_q]
+    rows: list[dict] = []
+    for item in items:
+        pat = patterns.get(item.get("pattern", ""), {})
+        rows.append({
+            **item,
+            "cataloged": bool(pat),
+            "group": pat.get("group"),
+            "tier": pat.get("tier"),
+        })
+    return rows
+
+
+def cmd_bun_roadmap(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    roadmap = data.get("roadmap", {})
+    rows = _bun_roadmap_items(data, args)
+    states = roadmap.get("integration_states", {})
+
+    if getattr(args, "json_out", False):
+        json.dump({
+            "version": data.get("version"),
+            "description": roadmap.get("description"),
+            "integration_states": states,
+            "items": rows,
+            "cataloged": sum(1 for r in rows if r.get("cataloged")),
+            "integrated": sum(1 for r in rows if r.get("integration") == "integrated"),
+        }, sys.stdout, indent=2)
+        print()
+        return 0
+
+    cataloged = sum(1 for r in rows if r.get("cataloged"))
+    integrated = sum(1 for r in rows if r.get("integration") == "integrated")
+    print(f"bun roadmap: {cataloged}/{len(rows)} cataloged, {integrated} integrated (v{data.get('version', '?')})")
+    if roadmap.get("description"):
+        print(roadmap["description"])
+    if states:
+        print("states:", ", ".join(f"{k}={v}" for k, v in states.items()))
+
+    order = {"high": 0, "medium": 1, "low": 2, "nice": 3}
+    rows.sort(key=lambda r: (order.get((r.get("priority") or "").lower(), 9), r.get("api", "")))
+    current_pri = None
+    for row in rows:
+        pri = (row.get("priority") or "?").upper()
+        if pri != current_pri:
+            current_pri = pri
+            print(f"\n[{pri}]")
+        cat = "yes" if row.get("cataloged") else "MISSING"
+        integ = row.get("integration", "?")
+        print(f"  {row.get('api')}: {row.get('use_case')}")
+        print(f"    pattern={row.get('pattern')}  cataloged={cat}  integration={integ}")
+    print("\nrun: bun patterns --bundle security | bun search bun-transpiler")
+    return 0
+
+
 def cmd_bun_docs(args: argparse.Namespace) -> int:
     data = _load_bun_patterns()
     topics = data.get("docs_topics", [])
@@ -2520,6 +2585,23 @@ def cmd_doctor(args: argparse.Namespace) -> int:
             print("bun cache: corrupt (run: bun score --refresh)")
     else:
         print("bun cache: missing (run: bun score --zone sports-terminal)")
+
+    try:
+        bun_data = _load_bun_patterns()
+        roadmap = bun_data.get("roadmap", {})
+        items = roadmap.get("items", [])
+        if items:
+            cataloged = sum(
+                1 for i in items
+                if _find_bun_pattern(bun_data.get("patterns", []), i.get("pattern", ""))
+            )
+            integrated = sum(1 for i in items if i.get("integration") == "integrated")
+            print(
+                f"security roadmap: {cataloged}/{len(items)} cataloged,"
+                f" {integrated} integrated (run: bun roadmap)"
+            )
+    except (OSError, json.JSONDecodeError, KeyError):
+        pass
 
     if getattr(args, "fix", False):
         if issues:
@@ -3144,6 +3226,12 @@ def build_parser() -> argparse.ArgumentParser:
     bun_d.add_argument("--topic", help="Filter by topic id or name (http-server, PostgreSQL, ...).")
     bun_d.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_d.set_defaults(func=cmd_bun_docs)
+
+    bun_r = bun_sub.add_parser("roadmap", help="Security integration backlog (catalog vs doctor/scan wiring).")
+    bun_r.add_argument("--priority", choices=["high", "medium", "low", "nice"], help="Filter by priority tier.")
+    bun_r.add_argument("--integration", choices=["catalog", "planned", "integrated"], help="Filter by integration state.")
+    bun_r.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_r.set_defaults(func=cmd_bun_roadmap)
 
     return p
 

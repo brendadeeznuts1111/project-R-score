@@ -79,9 +79,12 @@ python3 $AG collisions --zone kimi                  # duplicate names across tar
 python3 $AG graph --zone kimi                         # import + depends_on edges
 python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
 
-# Bun native API (bun-patterns.json v4 — aligned with bun.sh/docs/runtime/bun-apis)
+# Bun native API (bun-patterns.json v5 — aligned with bun.sh/docs/runtime/bun-apis)
 python3 $AG bun docs                                # official topic coverage map
-python3 $AG bun bundles                             # server-boot, networking, data-stores, ...
+python3 $AG bun roadmap                             # security backlog: catalog vs integrated
+python3 $AG bun roadmap --priority high             # Transpiler, Workers (cataloged, not wired yet)
+python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs
+python3 $AG bun bundles                             # server-boot, networking, data-stores, security, ...
 python3 $AG bun patterns --bundle full-stack        # curated API subset
 python3 $AG bun score --zone sports-terminal        # adoption % (native vs anti-pattern)
 python3 $AG bun migrate --zone sports-terminal      # node:fs -> bun-file hints

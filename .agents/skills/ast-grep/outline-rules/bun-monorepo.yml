@@ -357,3 +357,66 @@ rule:
   pattern: Bun.CSRF.$METHOD($$$ARGS)
 name: Bun.CSRF
 isExported: false
+---
+id: bun-transpiler-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.Transpiler($$$OPTS)
+name: Bun.Transpiler
+isExported: false
+---
+id: bun-webview-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.WebView($$$OPTS)
+name: Bun.WebView
+isExported: false
+---
+id: bun-udp-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.udpSocket($$$OPTS)
+name: Bun.udpSocket
+isExported: false
+---
+id: bun-redis-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.RedisClient($$$OPTS)
+name: Bun.RedisClient
+isExported: false
+---
+id: bun-redis-short-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.redis
+name: Bun.redis
+isExported: false
+---
+id: bun-strip-ansi-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.stripANSI($$$TEXT)
+name: Bun.stripANSI
+isExported: false
+---
+id: bun-wrap-ansi-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.wrapAnsi($$$TEXT)
+name: Bun.wrapAnsi
+isExported: false

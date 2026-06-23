@@ -88,7 +88,9 @@ python3 $AG bun matrix --zone sports-terminal
 ./scripts/bun-ci.sh                              # score + migrate + audit --profile bun
 ```
 
-**Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`
+**Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`, `security`, `doctor-utils`
+
+**Security roadmap** (`bun roadmap`): high-impact APIs are **cataloged** (searchable via ast-grep) but **not yet integrated** into doctor/scan workers. Only `Bun.stripANSI` / `Bun.wrapAnsi` were missing from the catalog (added in v5).
 
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 

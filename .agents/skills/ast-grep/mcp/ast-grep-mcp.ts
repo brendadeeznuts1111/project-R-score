@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.11.0';
+const SERVER_VERSION = '0.12.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -207,7 +207,9 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'search'], description: 'Bun subcommand' },
+        priority: { type: 'string', enum: ['high', 'medium', 'low', 'nice'], description: 'For roadmap: filter by priority' },
+        integration: { type: 'string', enum: ['catalog', 'planned', 'integrated'], description: 'For roadmap: filter by integration state' },
         patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
         only: { type: 'string' },
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
@@ -592,6 +594,8 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   if (args.group) extra.push('--group', String(args.group));
   if (args.tier) extra.push('--tier', String(args.tier));
   if (args.bundle) extra.push('--bundle', String(args.bundle));
+  if (args.priority) extra.push('--priority', String(args.priority));
+  if (args.integration) extra.push('--integration', String(args.integration));
   if (args.coreOnly === true) extra.push('--core-only');
   if (args.refresh === true) extra.push('--refresh');
   if (args.minScore != null) extra.push('--min-score', String(args.minScore));
