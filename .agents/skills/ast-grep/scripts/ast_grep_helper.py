@@ -83,7 +83,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.10.0"
+VERSION = "0.11.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -1565,6 +1565,67 @@ def _find_bun_pattern(patterns: list[dict], pattern_id: str) -> Optional[dict]:
     return None
 
 
+def _filter_bun_patterns(patterns: list[dict], args: argparse.Namespace) -> list[dict]:
+    group_q = (getattr(args, "group", None) or getattr(args, "category", None) or "").lower()
+    tier_q = (getattr(args, "tier", None) or "").lower()
+    core_only = getattr(args, "core_only", False)
+    filtered = patterns
+    if group_q:
+        filtered = [p for p in filtered if (p.get("group") or p.get("category", "")).lower() == group_q]
+    if tier_q:
+        filtered = [p for p in filtered if (p.get("tier") or "").lower() == tier_q]
+    if core_only:
+        filtered = [p for p in filtered if (p.get("tier") or "") == "core"]
+    return filtered
+
+
+def _bun_pattern_groups(data: dict) -> dict[str, str]:
+    groups = dict(data.get("groups", {}))
+    for p in data.get("patterns", []):
+        g = p.get("group") or p.get("category")
+        if g and g not in groups:
+            groups[g] = g
+    return groups
+
+
+def _collect_bun_counts(
+    args: argparse.Namespace,
+    data: dict,
+    patterns: list[dict],
+    include_anti: bool = False,
+) -> tuple[list[dict], dict[str, int], dict[str, dict[str, int]]]:
+    binary = require_binary()
+    root = git_root() or Path.cwd()
+    targets = _bun_native_targets(args)
+    anti = [p for p in data.get("patterns", []) if (p.get("group") or p.get("category")) == "anti-pattern"]
+    scan_patterns = patterns + (anti if include_anti else [])
+    totals: dict[str, int] = {}
+    group_totals: dict[str, dict[str, int]] = {}
+    target_rows: list[dict] = []
+
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        tid = target.get("id", rel)
+        if not full.exists():
+            continue
+        globs = list(target.get("globs") or [])
+        entry: dict = {"id": tid, "zone": target.get("zone"), "path": rel, "patterns": {}, "groups": {}}
+        for p in scan_patterns:
+            pid = p.get("id", "?")
+            count, files = _count_pattern_files(
+                binary, p["pattern"], p.get("lang", "ts"), full, globs,
+            )
+            entry["patterns"][pid] = {"count": count, "files": files[:10]}
+            totals[pid] = totals.get(pid, 0) + count
+            grp = p.get("group") or p.get("category") or "?"
+            entry["groups"][grp] = entry["groups"].get(grp, 0) + count
+            group_totals.setdefault(grp, {})
+            group_totals[grp][tid] = group_totals[grp].get(tid, 0) + count
+        target_rows.append(entry)
+    return target_rows, totals, group_totals
+
+
 def _count_pattern_files(
     binary: Path,
     pattern: str,
@@ -1586,76 +1647,134 @@ def _count_pattern_files(
 
 def cmd_bun_patterns(args: argparse.Namespace) -> int:
     data = _load_bun_patterns()
-    patterns = data.get("patterns", [])
+    patterns = _filter_bun_patterns(data.get("patterns", []), args)
+    groups = _bun_pattern_groups(data)
     if getattr(args, "json_out", False):
-        json.dump(data, sys.stdout, indent=2)
+        json.dump({**data, "patterns": patterns}, sys.stdout, indent=2)
         print()
         return 0
     print(f"bun patterns: {len(patterns)} (bun-patterns.json v{data.get('version', '?')})")
-    by_cat: dict[str, list[dict]] = {}
+    if groups:
+        print("groups:", ", ".join(f"{k}" for k in sorted(groups)))
+    by_grp: dict[str, list[dict]] = {}
     for p in patterns:
-        by_cat.setdefault(p.get("category", "?"), []).append(p)
-    for cat in sorted(by_cat):
-        print(f"\n[{cat}]")
-        for p in by_cat[cat]:
+        by_grp.setdefault(p.get("group") or p.get("category", "?"), []).append(p)
+    for grp in sorted(by_grp):
+        label = groups.get(grp, grp)
+        print(f"\n[{grp}] {label}")
+        for p in by_grp[grp]:
             outline = "outline" if p.get("outline") else "search"
-            print(f"  {p.get('id')}: {p.get('name')}  ({outline}) — {p.get('description', '')}")
-    print("\nrun: bun search <id>  |  bun scripts/bun-cli.ts bun inventory")
+            tier = p.get("tier", "")
+            tier_s = f" {tier}" if tier else ""
+            print(f"  {p.get('id')}: {p.get('name')}  ({outline}{tier_s}) — {p.get('description', '')}")
+    print("\nrun: bun matrix | bun heatmap | bun search <id>")
     return 0
 
 
 def cmd_bun_inventory(args: argparse.Namespace) -> int:
     data = _load_bun_patterns()
-    patterns = [p for p in data.get("patterns", []) if p.get("category") != "anti-pattern"]
-    anti = [p for p in data.get("patterns", []) if p.get("category") == "anti-pattern"]
-    binary = require_binary()
-    root = git_root() or Path.cwd()
+    all_patterns = data.get("patterns", [])
+    patterns = _filter_bun_patterns(
+        [p for p in all_patterns if (p.get("group") or p.get("category")) != "anti-pattern"],
+        args,
+    )
+    if not patterns:
+        err("no patterns matched filter")
+        return 1
     targets = _bun_native_targets(args)
     if not targets:
         err("no bun-native targets (set bun_rules or tag:bun on repo-map targets)")
         return 1
 
-    report: dict = {"targets": [], "totals": {}}
-    totals: dict[str, int] = {}
-
-    for target in targets:
-        rel = target.get("path", ".")
-        full = (root / rel).resolve()
-        tid = target.get("id", rel)
-        if not full.exists():
-            continue
-        globs = list(target.get("globs") or [])
-        entry: dict = {"id": tid, "zone": target.get("zone"), "path": rel, "patterns": {}}
-        for p in patterns + anti:
-            pid = p.get("id", "?")
-            count, files = _count_pattern_files(
-                binary, p["pattern"], p.get("lang", "ts"), full, globs,
-            )
-            entry["patterns"][pid] = {"count": count, "files": files[:10]}
-            totals[pid] = totals.get(pid, 0) + count
-        report["targets"].append(entry)
-
-    report["totals"] = totals
+    target_rows, totals, _group_totals = _collect_bun_counts(args, data, patterns, include_anti=True)
+    report = {"targets": target_rows, "totals": totals}
 
     if getattr(args, "json_out", False):
         json.dump(report, sys.stdout, indent=2)
         print()
         return 0
 
-    print(f"bun inventory: {len(report['targets'])} targets")
+    print(f"bun inventory: {len(target_rows)} targets, {len(patterns)} patterns")
     rows = sorted(totals.items(), key=lambda kv: -kv[1])
     print("\nAPI totals:")
     for pid, count in rows:
         if count:
-            p = _find_bun_pattern(data.get("patterns", []), pid) or {}
+            p = _find_bun_pattern(all_patterns, pid) or {}
             print(f"  {p.get('name', pid)}: {count} file(s)")
     print()
-    for entry in report["targets"]:
+    for entry in target_rows:
         hits = {k: v["count"] for k, v in entry["patterns"].items() if v["count"]}
         if not hits:
             continue
-        summary = ", ".join(f"{k}={v}" for k, v in sorted(hits.items(), key=lambda x: -x[1]))
-        print(f"[{entry.get('zone')}] {entry['id']}: {summary}")
+        summary = ", ".join(f"{k}={v}" for k, v in sorted(hits.items(), key=lambda x: -x[1])[:8])
+        more = f" +{len(hits) - 8}" if len(hits) > 8 else ""
+        print(f"[{entry.get('zone')}] {entry['id']}: {summary}{more}")
+    return 0
+
+
+def cmd_bun_matrix(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    patterns = _filter_bun_patterns(
+        [p for p in data.get("patterns", []) if (p.get("group") or p.get("category")) != "anti-pattern"],
+        args,
+    )
+    targets = _bun_native_targets(args)
+    if not targets:
+        err("no bun-native targets")
+        return 1
+    target_rows, _totals, group_totals = _collect_bun_counts(args, data, patterns, include_anti=False)
+    tids = [r["id"] for r in target_rows]
+    groups = sorted(group_totals.keys())
+
+    if getattr(args, "json_out", False):
+        json.dump({"groups": group_totals, "targets": tids}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    labels = [tid.split("-")[-1][:10] for tid in tids]
+    col_w = 10
+    print(f"bun matrix: {len(groups)} groups x {len(tids)} targets")
+    print(f"  targets: {', '.join(tids)}")
+    header = f"{'group':<14}" + "".join(f"{lb:>{col_w}}" for lb in labels)
+    print(header)
+    for grp in groups:
+        row = f"{grp:<14}"
+        for tid in tids:
+            val = group_totals.get(grp, {}).get(tid, 0)
+            row += f"{val:>{col_w}}" if val else f"{'·':>{col_w}}"
+        print(row)
+    return 0
+
+
+def cmd_bun_heatmap(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    patterns = _filter_bun_patterns(
+        [p for p in data.get("patterns", []) if (p.get("group") or p.get("category")) != "anti-pattern"],
+        args,
+    )
+    _target_rows, totals, _group_totals = _collect_bun_counts(args, data, patterns, include_anti=False)
+    rows = [(pid, count) for pid, count in totals.items() if count]
+    rows.sort(key=lambda x: -x[1])
+    if not rows:
+        print("(no bun pattern matches)")
+        return 0
+    max_count = rows[0][1]
+
+    if getattr(args, "json_out", False):
+        json.dump({"heatmap": [{"id": pid, "count": c} for pid, c in rows]}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"bun heatmap: {len(rows)} patterns with matches")
+    all_patterns = data.get("patterns", [])
+    for pid, count in rows[:40]:
+        p = _find_bun_pattern(all_patterns, pid) or {}
+        width = max(1, int(40 * count / max_count))
+        bar = "#" * width
+        grp = p.get("group", "?")
+        print(f"{count:4d} {bar:<40} [{grp}] {p.get('name', pid)}")
+    if len(rows) > 40:
+        print(f"... {len(rows) - 40} more — narrow with --group or --tier core")
     return 0
 
 
@@ -2579,24 +2698,40 @@ def build_parser() -> argparse.ArgumentParser:
     v.add_argument("--lang", "-l", help="Language for language-specific hints.")
     v.set_defaults(func=cmd_validate)
 
-    bun = sub.add_parser("bun", help="Bun native API patterns and inventory.")
+    bun = sub.add_parser("bun", help="Bun native API patterns, matrix, and inventory.")
     bun_sub = bun.add_subparsers(dest="bun_cmd", required=True, metavar="BUN_CMD")
 
+    def _add_bun_filters(p: argparse.ArgumentParser) -> None:
+        p.add_argument("--only", help="Filter repo-map targets.")
+        p.add_argument("--zone", help="Filter by zone.")
+        p.add_argument("--group", "--category", dest="group", help="Filter patterns by group (http, io, db, ...).")
+        p.add_argument("--tier", choices=["core", "extended", "migrate"], help="Filter by pattern tier.")
+        p.add_argument("--core-only", action="store_true", help="Shorthand for --tier core.")
+
     bun_p = bun_sub.add_parser("patterns", help="List bun-patterns.json catalog.")
+    _add_bun_filters(bun_p)
     bun_p.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_p.set_defaults(func=cmd_bun_patterns)
 
     bun_i = bun_sub.add_parser("inventory", help="Count Bun API usage across bun_rules targets.")
-    bun_i.add_argument("--only", help="Filter repo-map targets.")
-    bun_i.add_argument("--zone", help="Filter by zone.")
+    _add_bun_filters(bun_i)
     bun_i.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_i.set_defaults(func=cmd_bun_inventory)
+
+    bun_m = bun_sub.add_parser("matrix", help="Group x target usage grid.")
+    _add_bun_filters(bun_m)
+    bun_m.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_m.set_defaults(func=cmd_bun_matrix)
+
+    bun_h = bun_sub.add_parser("heatmap", help="ASCII bar chart of Bun pattern counts.")
+    _add_bun_filters(bun_h)
+    bun_h.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_h.set_defaults(func=cmd_bun_heatmap)
 
     bun_s = bun_sub.add_parser("search", help="Run a cataloged Bun pattern by id.")
     bun_s.add_argument("pattern_id", help="Pattern id from bun patterns (e.g. bun-serve).")
     bun_s.add_argument("--path", "-p", action="append", dest="path", help="Path override.")
-    bun_s.add_argument("--only", help="Expand paths from bun_rules repo-map targets.")
-    bun_s.add_argument("--zone", help="Filter repo-map targets.")
+    _add_bun_filters(bun_s)
     bun_s.add_argument("--globs", action="append", help="Include/exclude glob.")
     bun_s.add_argument("--context", "-C", type=int, help="Lines of context.")
     bun_s.add_argument("--json-out", action="store_true", help="Emit JSON.")

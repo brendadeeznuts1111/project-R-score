@@ -79,10 +79,13 @@ python3 $AG collisions --zone kimi                  # duplicate names across tar
 python3 $AG graph --zone kimi                         # import + depends_on edges
 python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
 
-# Bun native API (bun-patterns.json + bun inventory)
-python3 $AG bun patterns                            # Bun.serve, Bun.file, bun:sqlite, ...
+# Bun native API (bun-patterns.json v2 — 36 patterns, 12 groups)
+python3 $AG bun patterns                            # full catalog by group
+python3 $AG bun patterns --group http --tier core   # Bun.serve, fetch, WebSocket
 python3 $AG bun inventory --zone sports-terminal    # API usage counts per target
-python3 $AG bun search bun-serve --zone sports-terminal
+python3 $AG bun matrix --zone sports-terminal       # group x target grid
+python3 $AG bun heatmap --tier core                 # ASCII density chart
+python3 $AG bun search bun-glob --zone sports-terminal
 python3 $AG audit --profile bun --only sports-terminal
 
 # Structure map (0.44+)

@@ -168,3 +168,75 @@ rule:
     }
 name: $NAME
 isExported: false
+---
+id: bun-glob-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.Glob($$$PAT)
+name: Bun.Glob
+isExported: false
+---
+id: bun-nanoseconds-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.nanoseconds($$$)
+name: Bun.nanoseconds
+isExported: false
+---
+id: bun-password-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.password.$METHOD($$$)
+name: Bun.password
+isExported: false
+---
+id: bun-markdown-ansi
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.markdown.ansi($$$)
+name: Bun.markdown.ansi
+isExported: false
+---
+id: bun-inspect-table-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.inspect.table($$$)
+name: Bun.inspect.table
+isExported: false
+---
+id: bun-which-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.which($$$)
+name: Bun.which
+isExported: false
+---
+id: bun-remove-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.remove($$$)
+name: Bun.remove
+isExported: false
+---
+id: bun-secrets-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.secrets
+name: Bun.secrets
+isExported: false

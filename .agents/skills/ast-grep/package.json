@@ -12,6 +12,8 @@
     "codemods": "bun scripts/bun-cli.ts codemods",
     "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
     "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
+    "bun:matrix": "bun scripts/bun-cli.ts bun matrix --zone sports-terminal",
+    "bun:heatmap": "bun scripts/bun-cli.ts bun heatmap --zone sports-terminal --tier core",
     "install-cli": "npm install",
     "smoke": "./scripts/smoke.sh"
   },

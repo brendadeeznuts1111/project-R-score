@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.8.0';
+const SERVER_VERSION = '0.9.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -203,14 +203,17 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_bun',
-    description: 'Bun native API: patterns catalog, inventory across bun_rules targets, or cataloged search by pattern id.',
+    description: 'Bun native API: patterns, inventory, matrix, heatmap, or cataloged search by pattern id.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'inventory', 'search'], description: 'patterns=list catalog; inventory=count APIs; search=run pattern id' },
-        patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-spawn, ...' },
+        action: { type: 'string', enum: ['patterns', 'inventory', 'matrix', 'heatmap', 'search'], description: 'patterns|inventory|matrix|heatmap|search' },
+        patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
         only: { type: 'string' },
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        group: { type: 'string', description: 'Filter patterns: http, io, db, crypto, anti-pattern, ...' },
+        tier: { type: 'string', enum: ['core', 'extended', 'migrate'] },
+        coreOnly: { type: 'boolean', description: 'Shorthand for tier=core' },
         jsonOut: { type: 'boolean' },
       },
       required: ['action'],
@@ -582,6 +585,9 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   }
   if (args.only) extra.push('--only', String(args.only));
   if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.group) extra.push('--group', String(args.group));
+  if (args.tier) extra.push('--tier', String(args.tier));
+  if (args.coreOnly === true) extra.push('--core-only');
   if (args.jsonOut === true) extra.push('--json-out');
   const { stdout, stderr, code } = await runHelper('bun', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no bun output)'), code !== 0);

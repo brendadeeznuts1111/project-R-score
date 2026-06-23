@@ -16,7 +16,7 @@
     },
     "bun": {
       "description": "Bun-native hygiene — node:fs hints + CI autofix rules",
-      "rules": ["node-fs-in-bun", "no-as-any", "no-double-cast", "empty-catch"],
+      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast", "empty-catch"],
       "min_severity": "hint"
     }
   }

@@ -1,0 +1,10 @@
+id: prefer-bun-spawn
+language: TypeScript
+severity: hint
+message: Prefer Bun.spawn over child_process in Bun projects
+note: Use `bun search node-child-process` to find occurrences
+rule:
+  any:
+    - pattern: import { $$$ } from "child_process"
+    - pattern: import $X from "child_process"
+    - pattern: import { $$$ } from "node:child_process"

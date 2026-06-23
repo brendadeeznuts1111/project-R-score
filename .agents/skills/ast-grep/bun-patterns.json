@@ -1,123 +1,380 @@
 {
-  "version": 1,
-  "description": "Bun native API structural patterns for inventory and search",
+  "version": 2,
+  "description": "Bun native API structural patterns — inventory, matrix, and search",
+  "groups": {
+    "http": "Servers, fetch, WebSocket",
+    "io": "Bun.file, Bun.write, Bun.Glob, streams",
+    "process": "Bun.spawn, Bun.which, Bun.argv, Bun.main",
+    "db": "bun:sqlite and database usage",
+    "test": "bun:test runner",
+    "crypto": "Bun.hash, Bun.password, CryptoHasher",
+    "runtime": "Bun.env, Bun.version, Bun.nanoseconds",
+    "display": "Bun.inspect, Bun.color, Bun.markdown",
+    "secrets": "Bun.secrets keychain",
+    "shell": "Bun.$ shell templates",
+    "modules": "bun:* built-in module imports",
+    "anti-pattern": "Node APIs to migrate away from"
+  },
   "patterns": [
     {
       "id": "bun-serve",
       "name": "Bun.serve",
       "pattern": "Bun.serve($$$)",
       "lang": "ts",
-      "category": "http",
+      "group": "http",
       "outline": true,
+      "tier": "core",
       "description": "HTTP/WebSocket server boot"
-    },
-    {
-      "id": "bun-file",
-      "name": "Bun.file",
-      "pattern": "Bun.file($$$)",
-      "lang": "ts",
-      "category": "io",
-      "outline": true,
-      "description": "Native file reads (prefer over node:fs)"
-    },
-    {
-      "id": "bun-write",
-      "name": "Bun.write",
-      "pattern": "Bun.write($$$)",
-      "lang": "ts",
-      "category": "io",
-      "outline": true,
-      "description": "Native file writes"
-    },
-    {
-      "id": "bun-spawn",
-      "name": "Bun.spawn",
-      "pattern": "Bun.spawn($$$)",
-      "lang": "ts",
-      "category": "process",
-      "outline": true,
-      "description": "Child process spawn"
-    },
-    {
-      "id": "bun-sleep",
-      "name": "Bun.sleep",
-      "pattern": "Bun.sleep($$$)",
-      "lang": "ts",
-      "category": "async",
-      "outline": true,
-      "description": "Native async sleep"
-    },
-    {
-      "id": "bun-hash",
-      "name": "Bun.hash",
-      "pattern": "Bun.hash($$$)",
-      "lang": "ts",
-      "category": "crypto",
-      "outline": true,
-      "description": "Fast hashing"
-    },
-    {
-      "id": "bun-env",
-      "name": "Bun.env",
-      "pattern": "Bun.env",
-      "lang": "ts",
-      "category": "config",
-      "outline": true,
-      "description": "Environment variables"
-    },
-    {
-      "id": "bun-sqlite",
-      "name": "bun:sqlite",
-      "pattern": "import { $$$ } from \"bun:sqlite\"",
-      "lang": "ts",
-      "category": "db",
-      "outline": true,
-      "description": "SQLite via Bun built-in driver"
-    },
-    {
-      "id": "bun-test",
-      "name": "bun:test",
-      "pattern": "import { $$$ } from \"bun:test\"",
-      "lang": "ts",
-      "category": "test",
-      "outline": false,
-      "description": "Bun test runner imports"
-    },
-    {
-      "id": "bun-stdin",
-      "name": "Bun.stdin",
-      "pattern": "Bun.stdin",
-      "lang": "ts",
-      "category": "io",
-      "outline": true,
-      "description": "Stdin stream"
     },
     {
       "id": "fetch-native",
       "name": "fetch",
       "pattern": "fetch($$$)",
       "lang": "ts",
-      "category": "http",
+      "group": "http",
       "outline": true,
-      "description": "Bun-native fetch (also in bun-monorepo outline rules)"
+      "tier": "core",
+      "description": "Bun-native fetch"
+    },
+    {
+      "id": "websocket",
+      "name": "WebSocket",
+      "pattern": "new WebSocket($$$)",
+      "lang": "ts",
+      "group": "http",
+      "outline": true,
+      "tier": "core",
+      "description": "WebSocket client"
+    },
+    {
+      "id": "bun-file",
+      "name": "Bun.file",
+      "pattern": "Bun.file($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "core",
+      "description": "Native file reads — prefer over node:fs"
+    },
+    {
+      "id": "bun-write",
+      "name": "Bun.write",
+      "pattern": "Bun.write($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "core",
+      "description": "Native file writes"
+    },
+    {
+      "id": "bun-remove",
+      "name": "Bun.remove",
+      "pattern": "Bun.remove($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Delete files/directories"
+    },
+    {
+      "id": "bun-glob",
+      "name": "Bun.Glob",
+      "pattern": "new Bun.Glob($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Glob file traversal"
+    },
+    {
+      "id": "bun-stdin",
+      "name": "Bun.stdin",
+      "pattern": "Bun.stdin",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Stdin stream"
+    },
+    {
+      "id": "bun-spawn",
+      "name": "Bun.spawn",
+      "pattern": "Bun.spawn($$$)",
+      "lang": "ts",
+      "group": "process",
+      "outline": true,
+      "tier": "core",
+      "description": "Child process spawn"
+    },
+    {
+      "id": "bun-which",
+      "name": "Bun.which",
+      "pattern": "Bun.which($$$)",
+      "lang": "ts",
+      "group": "process",
+      "outline": true,
+      "tier": "extended",
+      "description": "Resolve executable on PATH"
+    },
+    {
+      "id": "bun-argv",
+      "name": "Bun.argv",
+      "pattern": "Bun.argv",
+      "lang": "ts",
+      "group": "process",
+      "outline": true,
+      "tier": "core",
+      "description": "CLI argument vector"
+    },
+    {
+      "id": "bun-main",
+      "name": "Bun.main",
+      "pattern": "Bun.main",
+      "lang": "ts",
+      "group": "process",
+      "outline": true,
+      "tier": "extended",
+      "description": "Entry module check"
+    },
+    {
+      "id": "bun-sleep",
+      "name": "Bun.sleep",
+      "pattern": "Bun.sleep($$$)",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "core",
+      "description": "Native async sleep"
+    },
+    {
+      "id": "bun-env",
+      "name": "Bun.env",
+      "pattern": "Bun.env",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "core",
+      "description": "Environment variables"
+    },
+    {
+      "id": "bun-version",
+      "name": "Bun.version",
+      "pattern": "Bun.version",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "extended",
+      "description": "Runtime version string"
+    },
+    {
+      "id": "bun-nanoseconds",
+      "name": "Bun.nanoseconds",
+      "pattern": "Bun.nanoseconds($$$)",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "extended",
+      "description": "High-resolution timer"
+    },
+    {
+      "id": "bun-hash",
+      "name": "Bun.hash",
+      "pattern": "Bun.hash($$$)",
+      "lang": "ts",
+      "group": "crypto",
+      "outline": true,
+      "tier": "extended",
+      "description": "Fast non-crypto hash"
+    },
+    {
+      "id": "bun-password",
+      "name": "Bun.password",
+      "pattern": "Bun.password.$METHOD($$$)",
+      "lang": "ts",
+      "group": "crypto",
+      "outline": true,
+      "tier": "extended",
+      "description": "bcrypt/argon password hashing"
+    },
+    {
+      "id": "bun-crypto-hasher",
+      "name": "Bun.CryptoHasher",
+      "pattern": "new Bun.CryptoHasher($$$)",
+      "lang": "ts",
+      "group": "crypto",
+      "outline": true,
+      "tier": "extended",
+      "description": "Streaming crypto hash"
+    },
+    {
+      "id": "bun-inspect",
+      "name": "Bun.inspect",
+      "pattern": "Bun.inspect($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Debug formatting"
+    },
+    {
+      "id": "bun-inspect-table",
+      "name": "Bun.inspect.table",
+      "pattern": "Bun.inspect.table($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "ANSI table output"
+    },
+    {
+      "id": "bun-color",
+      "name": "Bun.color",
+      "pattern": "Bun.color($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Color conversion (hex, ansi, css)"
+    },
+    {
+      "id": "bun-markdown-html",
+      "name": "Bun.markdown.html",
+      "pattern": "Bun.markdown.html($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Markdown to HTML"
+    },
+    {
+      "id": "bun-markdown-ansi",
+      "name": "Bun.markdown.ansi",
+      "pattern": "Bun.markdown.ansi($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Markdown to ANSI terminal"
+    },
+    {
+      "id": "bun-markdown-render",
+      "name": "Bun.markdown.render",
+      "pattern": "Bun.markdown.render($$$)",
+      "lang": "ts",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Markdown with custom callbacks"
+    },
+    {
+      "id": "bun-secrets",
+      "name": "Bun.secrets",
+      "pattern": "Bun.secrets",
+      "lang": "ts",
+      "group": "secrets",
+      "outline": true,
+      "tier": "extended",
+      "description": "OS keychain / credential store"
+    },
+    {
+      "id": "bun-shell",
+      "name": "Bun.$",
+      "pattern": "await Bun.$`$$$`",
+      "lang": "ts",
+      "group": "shell",
+      "outline": false,
+      "tier": "extended",
+      "description": "Shell template execution"
+    },
+    {
+      "id": "bun-sqlite",
+      "name": "bun:sqlite",
+      "pattern": "import { $$$ } from \"bun:sqlite\"",
+      "lang": "ts",
+      "group": "db",
+      "outline": true,
+      "tier": "core",
+      "description": "SQLite built-in driver"
+    },
+    {
+      "id": "bun-test",
+      "name": "bun:test",
+      "pattern": "import { $$$ } from \"bun:test\"",
+      "lang": "ts",
+      "group": "test",
+      "outline": false,
+      "tier": "core",
+      "description": "Bun test runner"
+    },
+    {
+      "id": "bun-test-describe",
+      "name": "describe()",
+      "pattern": "describe($$$)",
+      "lang": "ts",
+      "group": "test",
+      "outline": false,
+      "tier": "extended",
+      "description": "Test suite block (usually with bun:test)"
+    },
+    {
+      "id": "bun-ffi",
+      "name": "bun:ffi",
+      "pattern": "import { $$$ } from \"bun:ffi\"",
+      "lang": "ts",
+      "group": "modules",
+      "outline": false,
+      "tier": "extended",
+      "description": "Foreign function interface"
+    },
+    {
+      "id": "bun-jsc",
+      "name": "bun:jsc",
+      "pattern": "import { $$$ } from \"bun:jsc\"",
+      "lang": "ts",
+      "group": "modules",
+      "outline": false,
+      "tier": "extended",
+      "description": "JavaScriptCore introspection"
     },
     {
       "id": "node-fs",
       "name": "node:fs import",
       "pattern": "import $X from \"fs\"",
       "lang": "ts",
-      "category": "anti-pattern",
+      "group": "anti-pattern",
       "outline": false,
-      "description": "Node fs — prefer Bun.file in Bun projects"
+      "tier": "migrate",
+      "description": "Node fs — prefer Bun.file"
     },
     {
       "id": "node-fs-explicit",
-      "name": "node:fs import",
+      "name": "node:fs explicit",
       "pattern": "import $X from \"node:fs\"",
       "lang": "ts",
-      "category": "anti-pattern",
+      "group": "anti-pattern",
       "outline": false,
+      "tier": "migrate",
       "description": "Explicit node:fs — prefer Bun.file"
+    },
+    {
+      "id": "node-child-process",
+      "name": "child_process",
+      "pattern": "import { $$$ } from \"child_process\"",
+      "lang": "ts",
+      "group": "anti-pattern",
+      "outline": false,
+      "tier": "migrate",
+      "description": "Node child_process — prefer Bun.spawn"
+    },
+    {
+      "id": "node-http",
+      "name": "node:http",
+      "pattern": "import $X from \"http\"",
+      "lang": "ts",
+      "group": "anti-pattern",
+      "outline": false,
+      "tier": "migrate",
+      "description": "Node http — prefer Bun.serve"
     }
   ]
 }

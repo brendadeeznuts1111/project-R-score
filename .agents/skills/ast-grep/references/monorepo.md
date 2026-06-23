@@ -69,14 +69,19 @@ python3 $AG bun search bun-file --zone sports-terminal
 python3 $AG audit --profile bun --only sports-terminal   # node:fs hints + CI rules
 ```
 
-| Pattern id | API |
+**Groups:** `http`, `io`, `process`, `db`, `crypto`, `runtime`, `display`, `secrets`, `shell`, `test`, `modules`, `anti-pattern`
+
+| Tier | Examples |
 |---|---|
-| `bun-serve` | `Bun.serve($$$)` |
-| `bun-file` | `Bun.file($$$)` |
-| `bun-write` | `Bun.write($$$)` |
-| `bun-spawn` | `Bun.spawn($$$)` |
-| `bun-sqlite` | `from "bun:sqlite"` |
-| `node-fs` | anti-pattern — prefer Bun.file |
+| `core` | `bun-serve`, `bun-file`, `bun-spawn`, `bun-sqlite`, `fetch-native` |
+| `extended` | `bun-glob`, `bun-password`, `bun-markdown-ansi`, `bun-inspect-table` |
+| `migrate` | `node-fs`, `node-child-process`, `node-http` |
+
+```bash
+python3 $AG bun matrix --zone sports-terminal    # group x target grid
+python3 $AG bun heatmap --group io               # I/O API density
+python3 $AG bun patterns --tier core
+```
 
 ## Outline rules (Bun runtime)
 
