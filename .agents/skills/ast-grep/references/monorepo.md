@@ -62,7 +62,12 @@ File: `outline-rules/bun-monorepo.yml`
 | `empty-catch` | `rules/empty-catch.yml` | empty `catch {}` blocks |
 | `hardcoded-fetch-url` | `rules/hardcoded-fetch-url.yml` | `fetch('https://...')` literals |
 
-Preview only unless you pass `--apply` to `scan`.
+Preview only unless you pass `--apply` or `--fix` to `scan`. Rules with a `fix:` field (e.g. `no-as-any`) can be applied in bulk:
+
+```bash
+python3 $AG fix --path projects/active/sports-terminal-os/src --dry-run
+python3 $AG fix --path projects/active/sports-terminal-os/src
+```
 
 ## Agent workflow for unfamiliar zones
 

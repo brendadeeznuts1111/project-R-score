@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.1.0';
+const SERVER_VERSION = '0.2.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -32,8 +32,14 @@ type RepoTarget = {
 const TOOLS = [
   {
     name: 'ast_grep_doctor',
-    description: 'Verify ast-grep 0.44+ binary and outline support.',
-    inputSchema: { type: 'object' as const, properties: {} },
+    description: 'Health check: binary, outline, skill bundle, autofix rules. fix=true installs skill pin when missing.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        fix: { type: 'boolean', description: 'Install skill pin if binary/outline missing.' },
+        globalFix: { type: 'boolean', description: 'Hint npm global install when fix is set.' },
+      },
+    },
   },
   {
     name: 'ast_grep_outline',
@@ -92,13 +98,27 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_scan',
-    description: 'Run bundled YAML rules (no-console-log, no-as-any, empty-catch, ...). Preview unless apply=true.',
+    description: 'Run bundled YAML rules (no-console-log, no-as-any, empty-catch, ...). Preview unless apply/fix=true.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         paths: { type: 'array', items: { type: 'string' } },
         rule: { type: 'string', description: 'Single rule file under skill rules/' },
         apply: { type: 'boolean' },
+        fix: { type: 'boolean', description: 'Alias for apply (mutate files for rules with fix: field).' },
+        globs: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_fix',
+    description: 'Apply all bundled autofix rules (rules with fix: field, e.g. no-as-any). dryRun=true for preview.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        paths: { type: 'array', items: { type: 'string' } },
+        rule: { type: 'string', description: 'Single autofix rule under skill rules/' },
+        dryRun: { type: 'boolean', description: 'Preview violations only (no mutation).' },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -170,11 +190,41 @@ function pushGlobs(sgArgs: string[], globs: unknown) {
   for (const g of globs) sgArgs.push('--globs', String(g));
 }
 
-async function cmdDoctor(): Promise<ToolCallResult> {
-  const bin = await resolveBinary();
-  const ver = await runSg(['--version'], repoRoot());
-  const lines = [`binary: ${bin}`, `version: ${ver.stdout.trim()}`, `outline: supported`, `repo: ${repoRoot()}`];
-  return toolText(lines.join('\n'));
+function wantsApply(args: Record<string, unknown>): boolean {
+  return args.apply === true || args.fix === true;
+}
+
+async function safeGitDiff(paths: string[], cwd: string): Promise<string> {
+  const check = Bun.spawn(['git', 'rev-parse', '--is-inside-work-tree'], { cwd, stdout: 'pipe', stderr: 'pipe' });
+  if (await check.exited !== 0) return '';
+  const diffArgs = ['git', 'diff', '--no-ext-diff', '--', ...paths];
+  const proc = Bun.spawn(diffArgs, { cwd, stdout: 'pipe', stderr: 'pipe' });
+  const stdout = await new Response(proc.stdout).text();
+  return (await proc.exited) === 0 ? stdout.trim() : '';
+}
+
+async function runHelper(subcmd: string, extra: string[] = []): Promise<{ stdout: string; stderr: string; code: number }> {
+  const helper = join(SKILL_ROOT, 'scripts/ast_grep_helper.py');
+  const proc = Bun.spawn(['python3', helper, subcmd, ...extra], {
+    cwd: repoRoot(),
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: process.env,
+  });
+  const [stdout, stderr] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  return { stdout, stderr, code: await proc.exited };
+}
+
+async function cmdDoctor(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.fix === true) extra.push('--fix');
+  if (args.globalFix === true) extra.push('--global-fix');
+  const { stdout, stderr, code } = await runHelper('doctor', extra);
+  const body = (stdout || stderr).trim();
+  return toolText(body || '(no doctor output)', code !== 0);
 }
 
 async function cmdOutline(args: Record<string, unknown>): Promise<ToolCallResult> {
@@ -259,12 +309,33 @@ async function cmdScan(args: Record<string, unknown>): Promise<ToolCallResult> {
   } else {
     sgArgs.push('-c', join(SKILL_ROOT, 'sgconfig.yml'));
   }
-  if (args.apply === true) sgArgs.push('-U');
+  if (wantsApply(args)) sgArgs.push('-U');
+  const paths = strPaths(args);
   pushGlobs(sgArgs, args.globs);
-  sgArgs.push(...strPaths(args));
+  sgArgs.push(...paths);
   const { stdout, stderr, code } = await runSg(sgArgs, repoRoot());
   if (code !== 0 && code !== 1) return toolText(stderr || stdout || `scan failed (${code})`, true);
-  return toolText(truncate((stdout || stderr).trim() || '(no scan results)'));
+  let body = (stdout || stderr).trim() || '(no scan results)';
+  if (wantsApply(args)) {
+    const diff = await safeGitDiff(paths, repoRoot());
+    if (diff) body += `\n\n[git diff after scan apply]\n${truncate(diff)}`;
+  }
+  return toolText(truncate(body));
+}
+
+async function cmdFix(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.dryRun === true) extra.push('--dry-run');
+  if (args.rule) extra.push('--rule', String(args.rule));
+  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const p of strPaths(args)) extra.push('--path', p);
+  const { stdout, stderr, code } = await runHelper('fix', extra);
+  let body = (stdout || stderr).trim() || '(no fix output)';
+  if (!args.dryRun && code === 0) {
+    const diff = await safeGitDiff(strPaths(args), repoRoot());
+    if (diff) body += `\n\n[git diff after fix]\n${truncate(diff)}`;
+  }
+  return toolText(truncate(body), code !== 0);
 }
 
 async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
@@ -279,6 +350,7 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_files': result = await cmdSearch(args, true); break;
       case 'ast_grep_map': result = await cmdMap(args); break;
       case 'ast_grep_scan': result = await cmdScan(args); break;
+      case 'ast_grep_fix': result = await cmdFix(args); break;
       default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);

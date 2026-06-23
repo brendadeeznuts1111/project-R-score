@@ -33,6 +33,9 @@ python3 "$HELPER" -q scan --path "$TARGET" --rule "$ROOT/rules/no-console-log.ym
 echo ""
 echo "== scan hardcoded URL (sports-terminal sample) =="
 python3 "$HELPER" -q scan --path projects/active/sports-terminal-os/src/services/ai-risk-service.ts --rule "$ROOT/rules/hardcoded-fetch-url.yml" 2>&1 | head -6
+echo ""
+echo "== fix dry-run (no-as-any) =="
+python3 "$HELPER" -q fix --path "$TARGET" --dry-run 2>&1 | head -6
 if command -v bun >/dev/null 2>&1; then
   echo ""
   echo "== mcp doctor =="

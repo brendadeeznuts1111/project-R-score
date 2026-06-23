@@ -19,7 +19,8 @@ USAGE
     ast_grep_helper.py test [-c CONFIG] [-t TEST_DIR] [-U]
     ast_grep_helper.py new {project,rule,test,util} [NAME] [--lang LANG]
     ast_grep_helper.py langs                # list 25 supported languages
-    ast_grep_helper.py doctor               # check binary availability + version
+    ast_grep_helper.py doctor [--fix]       # health check; --fix installs skill pin if missing
+    ast_grep_helper.py fix [PATH...]        # apply bundled autofix rules (rules with fix: field)
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
     ast_grep_helper.py map [--only SUBSTR]              # monorepo repo-map.json targets
@@ -64,7 +65,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -496,6 +497,33 @@ def _search_paths(args: argparse.Namespace) -> list[str]:
     return merged if merged else ["."]
 
 
+def _wants_apply(args: argparse.Namespace) -> bool:
+    """--fix is an alias for --apply on scan/replace/fix commands."""
+    return bool(getattr(args, "apply", False) or getattr(args, "fix", False))
+
+
+def _skill_artifacts() -> dict[str, object]:
+    root = skill_root()
+    rules = sorted((root / "rules").glob("*.yml")) if (root / "rules").is_dir() else []
+    fix_rules = []
+    for rule in rules:
+        try:
+            text = rule.read_text(encoding="utf-8")
+            if "\nfix:" in text or text.lstrip().startswith("fix:"):
+                fix_rules.append(rule.name)
+        except OSError:
+            pass
+    return {
+        "sgconfig": (root / "sgconfig.yml").is_file(),
+        "repo_map": (root / "repo-map.json").is_file(),
+        "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
+        "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
+        "skill_pin": (root / "node_modules" / ".bin" / "ast-grep").is_file(),
+        "rules": [r.name for r in rules],
+        "fix_rules": fix_rules,
+    }
+
+
 def cmd_outline(args: argparse.Namespace) -> int:
     binary = require_binary(require_outline=True)
     sg_args = ["outline", "--color", "never"]
@@ -696,13 +724,13 @@ def cmd_replace(args: argparse.Namespace) -> int:
         trace("no matches; nothing to replace.")
         return 0
 
-    if not args.apply:
+    if not _wants_apply(args):
         # Show the dry-run preview and exit.
         print(f"DRY-RUN: would rewrite {len(matches)} match(es) across "
               f"{len({m['file'] for m in matches})} file(s):")
         format_matches(matches, show_replacement=True)
         print()
-        print("Re-run with --apply to mutate files.")
+        print("Re-run with --apply or --fix to mutate files.")
         return 0
 
     # Pass 2: apply with --update-all (no --json; sg silently ignores --update-all
@@ -734,30 +762,33 @@ def cmd_replace(args: argparse.Namespace) -> int:
 def cmd_scan(args: argparse.Namespace) -> int:
     binary = require_binary()
     sg_args = ["scan", "--color", "never"]
-    config = args.config
-    if not config:
+    config = getattr(args, "config", None)
+    if not config and not getattr(args, "rule", None):
         default = default_sgconfig()
         if default:
             config = str(default)
     if config:
         sg_args.extend(["-c", config])
-    if args.rule:
-        sg_args.extend(["-r", args.rule])
-    if args.inline_rules:
-        sg_args.extend(["--inline-rules", args.inline_rules])
-    if args.report_style:
-        sg_args.extend(["--report-style", args.report_style])
-    if args.apply:
+    rule = getattr(args, "rule", None)
+    if rule:
+        sg_args.extend(["-r", rule])
+    inline_rules = getattr(args, "inline_rules", None)
+    if inline_rules:
+        sg_args.extend(["--inline-rules", inline_rules])
+    report_style = getattr(args, "report_style", None)
+    if report_style:
+        sg_args.extend(["--report-style", report_style])
+    if _wants_apply(args):
         sg_args.append("-U")
     paths = _search_paths(args)
     sg_args.extend(paths)
 
-    proc = run_sg(binary, sg_args, capture=not args.apply)
+    proc = run_sg(binary, sg_args, capture=not _wants_apply(args))
     if proc.returncode not in (0, 1):
         if proc.stderr:
             sys.stderr.write(proc.stderr)
         return proc.returncode
-    if args.apply:
+    if _wants_apply(args):
         root = git_root()
         if root:
             diff = safe_git_diff(paths, root)
@@ -811,34 +842,107 @@ def cmd_langs(_args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_doctor(_args: argparse.Namespace) -> int:
+def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"ast-grep-helper v{VERSION}")
     print(f"Python:   {sys.version.split()[0]}")
     print(f"Platform: {platform.system()} {platform.release()} ({platform.machine()})")
     print(f"Skill:    {skill_root()}")
     print()
+    issues: list[str] = []
+    artifacts = _skill_artifacts()
+
     binary = resolve_binary()
     outline_bin = resolve_binary(require_outline=True)
+
     if not binary:
         print("ast-grep binary: NOT FOUND")
-        print(f"  -> run: bash {skill_root()}/scripts/install.sh")
-        return 1
-    print(f"ast-grep binary: {binary}")
-    proc = run_sg(binary, ["--version"], timeout=5)
-    if proc.returncode == 0:
-        print(f"  version: {proc.stdout.strip()}")
+        issues.append("binary")
     else:
-        print(f"  --version returned exit {proc.returncode}")
-        print(f"  stderr: {proc.stderr.strip()}")
-        return 1
+        print(f"ast-grep binary: {binary}")
+        proc = run_sg(binary, ["--version"], timeout=5)
+        if proc.returncode == 0:
+            print(f"  version: {proc.stdout.strip()}")
+        else:
+            print(f"  --version failed: {proc.stderr.strip()}")
+            issues.append("binary-version")
+
     if outline_bin:
         print(f"outline: supported ({outline_bin})")
     else:
         print("outline: MISSING (need @ast-grep/cli@0.44.0+)")
-        print(f"  -> npm install -g @ast-grep/cli@0.44.0")
-        print(f"  -> bash {skill_root()}/scripts/install.sh")
+        issues.append("outline")
+
+    print(f"skill-pin: {'ok' if artifacts['skill_pin'] else 'missing'}")
+    if not artifacts["skill_pin"]:
+        issues.append("skill-pin")
+
+    print(f"sgconfig.yml: {'ok' if artifacts['sgconfig'] else 'missing'}")
+    print(f"repo-map.json: {'ok' if artifacts['repo_map'] else 'missing'}")
+    print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
+    print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
+    print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
+    fix_rules = artifacts["fix_rules"]
+    print(f"autofix rules: {len(fix_rules)} ({', '.join(fix_rules) or 'none — use replace --fix for codemods'})")
+
+    if getattr(args, "fix", False):
+        if issues:
+            print()
+            print("Applying fixes...")
+            if "skill-pin" in issues or "outline" in issues or "binary" in issues:
+                code = cmd_install(argparse.Namespace())
+                if code != 0:
+                    return code
+                outline_bin = resolve_binary(require_outline=True)
+                if not outline_bin:
+                    err("install completed but outline still missing")
+                    return 1
+                print("  installed skill pin via scripts/install.sh")
+                issues = [i for i in issues if i not in ("skill-pin", "outline", "binary", "binary-version")]
+            if getattr(args, "global_fix", False) and "outline" in issues:
+                err("global install not attempted; use: npm install -g @ast-grep/cli@0.44.0 --force")
+        else:
+            print()
+            print("No environment fixes needed.")
+
+    if issues:
+        print()
+        print("Remediation:")
+        if "outline" in issues or "binary" in issues or "skill-pin" in issues:
+            print(f"  python3 {Path(__file__).name} doctor --fix")
+            print(f"  bash {skill_root()}/scripts/install.sh")
+            print("  npm install -g @ast-grep/cli@0.44.0 --force")
         return 1
     return 0
+
+
+def cmd_fix(args: argparse.Namespace) -> int:
+    """Apply autofixes from rules that define `fix:` (currently no-as-any)."""
+    if getattr(args, "dry_run", False):
+        args.apply = False
+        args.fix = False
+    else:
+        args.apply = True
+        args.fix = True
+    artifacts = _skill_artifacts()
+    fix_rules = artifacts["fix_rules"]
+    if not fix_rules:
+        err("no autofix rules in rules/ — use replace --fix for codemods")
+        return 1
+    if args.rule:
+        rule = Path(args.rule)
+        if not rule.is_file():
+            candidate = skill_root() / "rules" / args.rule
+            if candidate.is_file():
+                args.rule = str(candidate)
+        return cmd_scan(args)
+    # Run each autofix rule sequentially
+    exit_code = 0
+    for name in fix_rules:
+        trace(f"autofix rule: {name}")
+        rule_args = argparse.Namespace(**{**vars(args), "rule": str(skill_root() / "rules" / name)})
+        code = cmd_scan(rule_args)
+        exit_code = max(exit_code, code)
+    return exit_code
 
 
 def cmd_install(_args: argparse.Namespace) -> int:
@@ -974,6 +1078,7 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--lang", "-l", help="Language.")
     r.add_argument("--globs", action="append", help="Include/exclude glob.")
     r.add_argument("--apply", action="store_true", help="Mutate files (default: dry-run preview).")
+    r.add_argument("--fix", action="store_true", help="Alias for --apply.")
     r.add_argument("--force", action="store_true", help="Skip pattern hint validation.")
     r.set_defaults(func=cmd_replace)
 
@@ -984,8 +1089,17 @@ def build_parser() -> argparse.ArgumentParser:
     sc.add_argument("--rule", "-r", help="Single rule file.")
     sc.add_argument("--inline-rules", help="Inline YAML rule string.")
     sc.add_argument("--report-style", choices=["rich", "medium", "short"], help="Report style.")
-    sc.add_argument("--apply", "-U", action="store_true", help="Apply fixes (default: report only).")
+    sc.add_argument("--apply", "-U", action="store_true", help="Apply rule fixes (rules with fix: field).")
+    sc.add_argument("--fix", action="store_true", help="Alias for --apply.")
     sc.set_defaults(func=cmd_scan)
+
+    fx = sub.add_parser("fix", help="Apply bundled autofix rules (rules with fix: field).")
+    fx.add_argument("paths", nargs="*", help=argparse.SUPPRESS)
+    fx.add_argument("--path", "-p", action="append", dest="path", help="Path (repeatable).")
+    fx.add_argument("--rule", "-r", help="Single autofix rule (default: all fix rules).")
+    fx.add_argument("--globs", action="append", help="Include/exclude glob.")
+    fx.add_argument("--dry-run", action="store_true", help="Preview violations only (no --fix).")
+    fx.set_defaults(func=cmd_fix, paths=[])
 
     t = sub.add_parser("test", help="Run ast-grep snapshot tests.")
     t.add_argument("--config", "-c", help="Path to sgconfig.yml.")
@@ -1001,7 +1115,10 @@ def build_parser() -> argparse.ArgumentParser:
     n.set_defaults(func=cmd_new)
 
     sub.add_parser("langs", help="List supported languages.").set_defaults(func=cmd_langs)
-    sub.add_parser("doctor", help="Check ast-grep binary availability.").set_defaults(func=cmd_doctor)
+    d = sub.add_parser("doctor", help="Health check for binary, outline, skill bundle.")
+    d.add_argument("--fix", action="store_true", help="Install skill pin if binary/outline missing.")
+    d.add_argument("--global-fix", action="store_true", help="Hint npm global install when --fix is set.")
+    d.set_defaults(func=cmd_doctor)
     sub.add_parser("install", help="Run the install script for this OS.").set_defaults(func=cmd_install)
 
     v = sub.add_parser("validate", help="Validate a pattern offline (pattern hint check only).")

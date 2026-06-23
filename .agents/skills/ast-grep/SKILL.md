@@ -30,6 +30,7 @@ Verify:
 
 ```bash
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor
+python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor --fix   # install skill pin if missing
 ./scripts/smoke.sh
 ```
 
@@ -56,16 +57,20 @@ python3 $AG files 'Bun.serve($$$)' --path projects/active/sports-terminal-os --l
 python3 $AG search 'fetch($$$)' --path kimi-plugin/ --lang ts
 python3 $AG search 'console.log($MSG)' --path src/ --lang ts -C 2
 
-# Codemod (dry-run, then --apply)
+# Codemod (dry-run, then --apply or --fix)
 python3 $AG replace 'foo($A)' 'bar($A)' --path src/ --lang ts
-python3 $AG replace 'foo($A)' 'bar($A)' --path src/ --lang ts --apply
+python3 $AG replace 'foo($A)' 'bar($A)' --path src/ --lang ts --fix
+
+# Autofix bundled rules (no-as-any strips `as any`)
+python3 $AG fix --path src/ --dry-run
+python3 $AG fix --path src/
 
 # Offline pattern check (before debugging "no matches")
 python3 $AG validate 'console.log($MSG)' --lang ts
 
 # YAML rules (skill sgconfig.yml is default for scan)
 python3 $AG scan --path projects/active/sports-terminal-os/src
-python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml
+python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml --fix
 ```
 
 Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
@@ -82,8 +87,9 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_search` | `search` |
 | `ast_grep_files` | `files` |
 | `ast_grep_map` | `map` |
-| `ast_grep_scan` | `scan` |
-| `ast_grep_doctor` | `doctor` |
+| `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
+| `ast_grep_fix` | `fix` (all autofix rules) |
+| `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 
@@ -92,8 +98,8 @@ Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 1. **Orient** — `map` or `map --only <zone>` for unfamiliar monorepo areas
 2. **Explore** — `outline --view names` or `digest` on target path
 3. **Narrow** — `files` for path list only; then `search` for line matches
-4. **Lint** — `scan` with bundled rules before broad edits
-5. **Rewrite** — preview `replace`, then `--apply` (prints `git diff` when in repo)
+4. **Lint** — `scan` with bundled rules before broad edits; `fix` for autofix rules
+5. **Rewrite** — preview `replace`, then `--fix` / `--apply` (prints `git diff` when in repo)
 6. **Verify** — project tests
 
 ## Outline views

@@ -4,3 +4,4 @@ severity: warning
 message: Avoid `as any` — narrow the type or use a boundary schema
 rule:
   pattern: $EXPR as any
+fix: $EXPR
