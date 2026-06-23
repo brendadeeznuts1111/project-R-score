@@ -40,6 +40,13 @@
       "path": "kimi-plugin/shared",
       "view": "names",
       "items": "exports"
+    },
+    {
+      "id": "kimi-mcp-server",
+      "name": "Kimi sports MCP server",
+      "path": "kimi-plugin/sports-mcp-server",
+      "view": "names",
+      "globs": ["!**/*.test.ts"]
     }
   ]
 }

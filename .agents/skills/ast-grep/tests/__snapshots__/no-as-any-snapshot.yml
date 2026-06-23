@@ -1,0 +1,16 @@
+id: no-as-any
+snapshots:
+  const x = foo as any:
+    fixed: const x = foo
+    labels:
+    - source: foo as any
+      style: primary
+      start: 10
+      end: 20
+  const { sport } = args as any:
+    fixed: const { sport } = args
+    labels:
+    - source: args as any
+      style: primary
+      start: 18
+      end: 29

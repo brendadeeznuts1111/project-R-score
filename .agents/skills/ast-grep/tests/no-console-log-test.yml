@@ -1,0 +1,7 @@
+id: no-console-log
+valid:
+  - "logger.info('ok')"
+  - "createLogger('app').info('ok')"
+invalid:
+  - "console.log('debug')"
+  - "console.error('fail', err)"

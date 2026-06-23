@@ -14,5 +14,6 @@ payload='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersio
 out="$(printf '%s\n' "$payload" | bun "$MCP" 2>/dev/null | tail -3)"
 echo "$out" | grep -q ast_grep_outline
 echo "$out" | grep -q ast_grep_fix
+echo "$out" | grep -q ast_grep_audit
 echo "$out" | grep -q 'autofix rules'
 echo "mcp OK"

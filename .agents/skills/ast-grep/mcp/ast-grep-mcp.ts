@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.2.0';
+const SERVER_VERSION = '0.3.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -119,6 +119,52 @@ const TOOLS = [
         paths: { type: 'array', items: { type: 'string' } },
         rule: { type: 'string', description: 'Single autofix rule under skill rules/' },
         dryRun: { type: 'boolean', description: 'Preview violations only (no mutation).' },
+        globs: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_replace',
+    description: 'Structural codemod (dry-run by default). fix=true applies and returns git diff.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        pattern: { type: 'string' },
+        rewrite: { type: 'string' },
+        lang: { type: 'string' },
+        paths: { type: 'array', items: { type: 'string' } },
+        fix: { type: 'boolean', description: 'Apply rewrite (alias for apply).' },
+        globs: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['pattern', 'rewrite'],
+    },
+  },
+  {
+    name: 'ast_grep_validate',
+    description: 'Offline pattern hint check — catches regex misuse before calling ast-grep.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        pattern: { type: 'string' },
+        lang: { type: 'string' },
+      },
+      required: ['pattern'],
+    },
+  },
+  {
+    name: 'ast_grep_rules',
+    description: 'List bundled scan rules and which ones support autofix.',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+  {
+    name: 'ast_grep_audit',
+    description: 'Scan all repo-map.json targets and summarize violations by rule.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        only: { type: 'string', description: 'Filter targets by id/name substring' },
+        rule: { type: 'string', description: 'Single rule instead of full sgconfig' },
+        failOn: { type: 'boolean', description: 'Return error when violations found' },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -338,19 +384,60 @@ async function cmdFix(args: Record<string, unknown>): Promise<ToolCallResult> {
   return toolText(truncate(body), code !== 0);
 }
 
+async function cmdReplace(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const pattern = String(args.pattern ?? '');
+  const rewrite = String(args.rewrite ?? '');
+  if (!pattern || !rewrite) return toolText('pattern and rewrite are required', true);
+  const extra = [pattern, rewrite];
+  if (args.lang) extra.push('--lang', String(args.lang));
+  if (args.fix === true) extra.push('--fix');
+  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const p of strPaths(args)) extra.push('--path', p);
+  const { stdout, stderr, code } = await runHelper('replace', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no replace output)'), code !== 0);
+}
+
+async function cmdValidate(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const pattern = String(args.pattern ?? '');
+  if (!pattern) return toolText('pattern is required', true);
+  const extra = [pattern];
+  if (args.lang) extra.push('--lang', String(args.lang));
+  const { stdout, stderr, code } = await runHelper('validate', extra);
+  return toolText((stdout || stderr).trim() || '(no validate output)', code !== 0);
+}
+
+async function cmdRules(): Promise<ToolCallResult> {
+  const { stdout, stderr, code } = await runHelper('rules');
+  return toolText((stdout || stderr).trim() || '(no rules)', code !== 0);
+}
+
+async function cmdAudit(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.rule) extra.push('--rule', String(args.rule));
+  if (args.failOn === true) extra.push('--fail-on');
+  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  const { stdout, stderr, code } = await runHelper('audit', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no audit output)'), code !== 0);
+}
+
 async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
   const name = String(params?.name ?? '');
   const args = (params?.arguments ?? {}) as Record<string, unknown>;
   try {
     let result: ToolCallResult;
     switch (name) {
-      case 'ast_grep_doctor': result = await cmdDoctor(); break;
+      case 'ast_grep_doctor': result = await cmdDoctor(args); break;
       case 'ast_grep_outline': result = await cmdOutline(args); break;
       case 'ast_grep_search': result = await cmdSearch(args); break;
       case 'ast_grep_files': result = await cmdSearch(args, true); break;
       case 'ast_grep_map': result = await cmdMap(args); break;
       case 'ast_grep_scan': result = await cmdScan(args); break;
       case 'ast_grep_fix': result = await cmdFix(args); break;
+      case 'ast_grep_replace': result = await cmdReplace(args); break;
+      case 'ast_grep_validate': result = await cmdValidate(args); break;
+      case 'ast_grep_rules': result = await cmdRules(); break;
+      case 'ast_grep_audit': result = await cmdAudit(args); break;
       default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);

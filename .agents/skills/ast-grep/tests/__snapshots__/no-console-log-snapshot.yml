@@ -1,0 +1,14 @@
+id: no-console-log
+snapshots:
+  console.error('fail', err):
+    labels:
+    - source: console.error('fail', err)
+      style: primary
+      start: 0
+      end: 26
+  console.log('debug'):
+    labels:
+    - source: console.log('debug')
+      style: primary
+      start: 0
+      end: 20

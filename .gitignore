@@ -83,6 +83,8 @@ out/
 !.agents/skills/**/mcp/**
 !.agents/skills/**/repo-map.json
 !.agents/skills/**/sgconfig.yml
+!.agents/skills/**/tests/
+!.agents/skills/**/tests/**
 .reasonix/
 
 # OS

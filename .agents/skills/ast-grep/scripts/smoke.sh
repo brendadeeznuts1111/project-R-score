@@ -36,6 +36,15 @@ python3 "$HELPER" -q scan --path projects/active/sports-terminal-os/src/services
 echo ""
 echo "== fix dry-run (no-as-any) =="
 python3 "$HELPER" -q fix --path "$TARGET" --dry-run 2>&1 | head -6
+echo ""
+echo "== rules =="
+python3 "$HELPER" -q rules
+echo ""
+echo "== audit (kimi only) =="
+python3 "$HELPER" -q audit --only kimi 2>&1 | head -25
+echo ""
+echo "== rule tests =="
+python3 "$HELPER" -q test
 if command -v bun >/dev/null 2>&1; then
   echo ""
   echo "== mcp doctor =="

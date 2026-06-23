@@ -71,6 +71,15 @@ python3 $AG validate 'console.log($MSG)' --lang ts
 # YAML rules (skill sgconfig.yml is default for scan)
 python3 $AG scan --path projects/active/sports-terminal-os/src
 python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml --fix
+
+# Rule inventory + monorepo audit (repo-map.json targets)
+python3 $AG rules
+python3 $AG audit --only kimi
+python3 $AG audit --fail-on          # CI: exit 1 when violations exist
+
+# Rule snapshot tests (tests/ + __snapshots__)
+python3 $AG test
+./scripts/baseline.sh kimi           # test + rules + audit
 ```
 
 Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
@@ -89,6 +98,10 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_map` | `map` |
 | `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
 | `ast_grep_fix` | `fix` (all autofix rules) |
+| `ast_grep_replace` | `replace` (`fix: true` to apply) |
+| `ast_grep_validate` | `validate` |
+| `ast_grep_rules` | `rules` |
+| `ast_grep_audit` | `audit` |
 | `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`

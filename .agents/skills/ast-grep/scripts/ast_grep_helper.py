@@ -21,6 +21,9 @@ USAGE
     ast_grep_helper.py langs                # list 25 supported languages
     ast_grep_helper.py doctor [--fix]       # health check; --fix installs skill pin if missing
     ast_grep_helper.py fix [PATH...]        # apply bundled autofix rules (rules with fix: field)
+    ast_grep_helper.py audit [--only SUBSTR]  # scan repo-map targets, summarize violations
+    ast_grep_helper.py rules                # list bundled rules and autofix status
+    ast_grep_helper.py test [-U]            # run rule snapshot tests (tests/)
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
     ast_grep_helper.py map [--only SUBSTR]              # monorepo repo-map.json targets
@@ -65,7 +68,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -808,8 +811,9 @@ def cmd_scan(args: argparse.Namespace) -> int:
 def cmd_test(args: argparse.Namespace) -> int:
     binary = require_binary()
     sg_args = ["test"]
-    if args.config:
-        sg_args.extend(["-c", args.config])
+    config = args.config or default_sgconfig()
+    if config:
+        sg_args.extend(["-c", str(config)])
     if args.test_dir:
         sg_args.extend(["-t", args.test_dir])
     if args.update:
@@ -943,6 +947,123 @@ def cmd_fix(args: argparse.Namespace) -> int:
         code = cmd_scan(rule_args)
         exit_code = max(exit_code, code)
     return exit_code
+
+
+def cmd_rules(args: argparse.Namespace) -> int:
+    artifacts = _skill_artifacts()
+    fix_set = set(artifacts["fix_rules"])
+    rows = []
+    for name in artifacts["rules"]:
+        rows.append({
+            "id": Path(name).stem,
+            "file": name,
+            "autofix": name in fix_set,
+        })
+    if getattr(args, "json_out", False):
+        json.dump(rows, sys.stdout, indent=2)
+        print()
+        return 0
+    print(f"rules: {len(rows)} ({len(fix_set)} autofix)")
+    for row in rows:
+        tag = "autofix" if row["autofix"] else "report"
+        print(f"  [{tag}] {row['id']}  ({row['file']})")
+    return 0
+
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    manifest = skill_root() / "repo-map.json"
+    if not manifest.is_file():
+        err(f"repo map not found: {manifest}")
+        return 1
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    root = git_root() or Path.cwd()
+    only = (getattr(args, "only", None) or "").lower()
+    targets = data.get("targets", [])
+    if only:
+        targets = [
+            t for t in targets
+            if only in t.get("id", "").lower() or only in t.get("name", "").lower()
+        ]
+    if not targets:
+        err("no map targets matched filter")
+        return 1
+
+    binary = require_binary()
+    config = getattr(args, "config", None) or default_sgconfig()
+    config_path = str(config) if config else None
+    summary: list[dict] = []
+    total_violations = 0
+
+    print(f"repo: {root}")
+    print(f"targets: {len(targets)}")
+    if config_path:
+        print(f"config: {config_path}")
+    print()
+
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        tid = target.get("id", rel)
+        if not full.exists():
+            print(f"## {tid}  SKIP (missing {rel})")
+            print()
+            continue
+
+        sg_args = ["scan", "--json=compact", "--include-metadata", "--color", "never"]
+        if getattr(args, "rule", None):
+            rule = Path(args.rule)
+            if not rule.is_file():
+                candidate = skill_root() / "rules" / args.rule
+                if candidate.is_file():
+                    rule = candidate
+            sg_args.extend(["-r", str(rule)])
+        elif config_path:
+            sg_args.extend(["-c", config_path])
+        for g in target.get("globs", []):
+            sg_args.extend(["--globs", g])
+        for g in getattr(args, "globs", None) or []:
+            sg_args.extend(["--globs", g])
+        sg_args.append(str(full))
+
+        proc = run_sg(binary, sg_args)
+        if proc.returncode not in (0, 1):
+            sys.stderr.write(proc.stderr or "")
+            print(f"## {tid}  ERROR (scan failed)")
+            print()
+            continue
+
+        matches = parse_compact_json(proc.stdout)
+        by_rule: dict[str, dict] = {}
+        for m in matches:
+            rid = m.get("ruleId", "?")
+            entry = by_rule.setdefault(rid, {"count": 0, "severity": m.get("severity", "?")})
+            entry["count"] += 1
+
+        target_total = len(matches)
+        total_violations += target_total
+        print(f"## {tid}  ({rel})  {target_total} finding(s)")
+        if not by_rule:
+            print("   (clean)")
+        else:
+            for rid, info in sorted(by_rule.items()):
+                print(f"   {rid}: {info['count']} [{info['severity']}]")
+                summary.append({
+                    "target": tid,
+                    "path": rel,
+                    "rule": rid,
+                    "count": info["count"],
+                    "severity": info["severity"],
+                })
+        print()
+
+    print(f"total: {total_violations} finding(s) across {len(targets)} target(s)")
+    if getattr(args, "json_out", False):
+        json.dump({"total": total_violations, "findings": summary}, sys.stdout, indent=2)
+        print()
+
+    if getattr(args, "fail_on", False) and total_violations > 0:
+        return 1
+    return 0
 
 
 def cmd_install(_args: argparse.Namespace) -> int:
@@ -1101,7 +1222,20 @@ def build_parser() -> argparse.ArgumentParser:
     fx.add_argument("--dry-run", action="store_true", help="Preview violations only (no --fix).")
     fx.set_defaults(func=cmd_fix, paths=[])
 
-    t = sub.add_parser("test", help="Run ast-grep snapshot tests.")
+    rl = sub.add_parser("rules", help="List bundled scan rules and autofix status.")
+    rl.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    rl.set_defaults(func=cmd_rules)
+
+    au = sub.add_parser("audit", help="Scan repo-map targets and summarize rule violations.")
+    au.add_argument("--only", help="Filter targets by id/name substring.")
+    au.add_argument("--config", "-c", help="Path to sgconfig.yml (default: skill sgconfig.yml).")
+    au.add_argument("--rule", "-r", help="Single rule file instead of full config.")
+    au.add_argument("--globs", action="append", help="Extra include/exclude glob.")
+    au.add_argument("--json-out", action="store_true", help="Emit JSON findings summary.")
+    au.add_argument("--fail-on", action="store_true", help="Exit 1 when any violations found.")
+    au.set_defaults(func=cmd_audit)
+
+    t = sub.add_parser("test", help="Run ast-grep rule snapshot tests.")
     t.add_argument("--config", "-c", help="Path to sgconfig.yml.")
     t.add_argument("--test-dir", "-t", help="Test directory.")
     t.add_argument("--update", "-U", action="store_true", help="Update snapshots.")

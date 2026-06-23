@@ -5,6 +5,9 @@
   "description": "Pinned ast-grep CLI for agent outline/search workflows (0.44.0+ for outline).",
   "scripts": {
     "doctor": "python3 scripts/ast_grep_helper.py doctor",
+    "test": "python3 scripts/ast_grep_helper.py test",
+    "audit": "python3 scripts/ast_grep_helper.py audit",
+    "baseline": "./scripts/baseline.sh",
     "install-cli": "npm install",
     "smoke": "./scripts/smoke.sh"
   },

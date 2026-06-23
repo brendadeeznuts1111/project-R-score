@@ -58,7 +58,8 @@ File: `outline-rules/bun-monorepo.yml`
 | Rule | File | Finds |
 |---|---|---|
 | `no-console-log` | `rules/no-console-log.yml` | `console.*($$$)` |
-| `no-as-any` | `rules/no-as-any.yml` | `$EXPR as any` |
+| `no-as-any` | `rules/no-as-any.yml` | `$EXPR as any` (autofix) |
+| `no-double-cast` | `rules/no-double-cast.yml` | `$EXPR as unknown as $T` (autofix) |
 | `empty-catch` | `rules/empty-catch.yml` | empty `catch {}` blocks |
 | `hardcoded-fetch-url` | `rules/hardcoded-fetch-url.yml` | `fetch('https://...')` literals |
 
@@ -68,6 +69,17 @@ Preview only unless you pass `--apply` or `--fix` to `scan`. Rules with a `fix:`
 python3 $AG fix --path projects/active/sports-terminal-os/src --dry-run
 python3 $AG fix --path projects/active/sports-terminal-os/src
 ```
+
+## Audit across targets
+
+```bash
+python3 $AG audit                    # all repo-map.json targets
+python3 $AG audit --only kimi        # kimi-plugin zones only
+python3 $AG audit --fail-on          # non-zero exit for CI gates
+./scripts/baseline.sh sports-terminal
+```
+
+Rule tests live in `tests/` — run `python3 $AG test` before changing YAML rules.
 
 ## Agent workflow for unfamiliar zones
 
