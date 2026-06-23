@@ -40,35 +40,46 @@ Agent default — validates patterns, truncates huge output, two-pass replace, *
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
+# Monorepo orientation (repo-map.json)
+python3 $AG map
+python3 $AG map --only sports-terminal
+
 # Structure map (0.44+)
 python3 $AG outline src/file.ts --view digest
 python3 $AG outline src --view names --items exports
 python3 $AG outline src --match 'Effect' --types function
 
+# Files-with-matches only (cheap)
+python3 $AG files 'Bun.serve($$$)' --path projects/active/sports-terminal-os --lang ts
+
 # Structural search
 python3 $AG search 'fetch($$$)' --path kimi-plugin/ --lang ts
-python3 $AG search 'console.log($MSG)' --lang ts src/ -C 2
+python3 $AG search 'console.log($MSG)' --path src/ --lang ts -C 2
 
 # Codemod (dry-run, then --apply)
-python3 $AG replace 'foo($A)' 'bar($A)' --lang ts src/
-python3 $AG replace 'foo($A)' 'bar($A)' --lang ts src/ --apply
+python3 $AG replace 'foo($A)' 'bar($A)' --path src/ --lang ts
+python3 $AG replace 'foo($A)' 'bar($A)' --path src/ --lang ts --apply
 
 # Offline pattern check (before debugging "no matches")
 python3 $AG validate 'console.log($MSG)' --lang ts
 
-# YAML rules
-python3 $AG scan --rule rules/no-console.yml src/
+# YAML rules (skill sgconfig.yml is default for scan)
+python3 $AG scan --path projects/active/sports-terminal-os/src
+python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml
 ```
 
 Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
 
+Deep workspace guide: [references/monorepo.md](references/monorepo.md) · patterns: [references/recipes.md](references/recipes.md)
+
 ## Workflow checklist
 
-1. **Explore** — `outline --view names` or `digest` on target path
-2. **Narrow** — add `--match`, `--types`, `--globs`, or specific files
-3. **Search** — `search` with AST pattern (not regex)
-4. **Rewrite** — preview replace, then `--apply` on narrow scope
-5. **Verify** — `git diff` + project tests
+1. **Orient** — `map` or `map --only <zone>` for unfamiliar monorepo areas
+2. **Explore** — `outline --view names` or `digest` on target path
+3. **Narrow** — `files` for path list only; then `search` for line matches
+4. **Lint** — `scan` with bundled rules before broad edits
+5. **Rewrite** — preview `replace`, then `--apply` (prints `git diff` when in repo)
+6. **Verify** — project tests
 
 ## Outline views
 

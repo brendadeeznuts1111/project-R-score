@@ -22,6 +22,8 @@ USAGE
     ast_grep_helper.py doctor               # check binary availability + version
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
+    ast_grep_helper.py map [--only SUBSTR]              # monorepo repo-map.json targets
+    ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
     ast_grep_helper.py --version
     ast_grep_helper.py --help
@@ -62,7 +64,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -302,6 +304,52 @@ def require_binary(*, require_outline: bool = False) -> Path:
     sys.exit(3)
 
 
+def git_root(start: Optional[Path] = None) -> Optional[Path]:
+    start = start or Path.cwd()
+    try:
+        proc = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=str(start),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if proc.returncode == 0:
+            root = proc.stdout.strip()
+            if root:
+                return Path(root)
+    except Exception:
+        pass
+    return None
+
+
+def default_sgconfig() -> Optional[Path]:
+    cfg = skill_root() / "sgconfig.yml"
+    return cfg if cfg.is_file() else None
+
+
+def safe_git_diff(paths: list[str], cwd: Path) -> str:
+    try:
+        subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True,
+        )
+        proc = subprocess.run(
+            ["git", "diff", "--no-ext-diff", "--", *paths],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        return proc.stdout.strip()
+    except Exception:
+        return ""
+
+
 def truncate_output(text: str) -> tuple[str, bool]:
     lines = text.splitlines()
     truncated = len(lines) > MAX_OUTPUT_LINES
@@ -463,7 +511,7 @@ def cmd_outline(args: argparse.Namespace) -> int:
         sg_args.extend(["--lang", normalize_lang(args.lang) or args.lang])
     for g in args.globs or []:
         sg_args.extend(["--globs", g])
-    sg_args.extend(args.paths or ["."])
+    sg_args.extend(_search_paths(args))
 
     proc = run_sg(binary, sg_args)
     if proc.returncode != 0:
@@ -476,6 +524,90 @@ def cmd_outline(args: argparse.Namespace) -> int:
     else:
         body, _ = truncate_output(out)
         print(body)
+    return 0
+
+
+def cmd_map(args: argparse.Namespace) -> int:
+    manifest = skill_root() / "repo-map.json"
+    if not manifest.is_file():
+        err(f"repo map not found: {manifest}")
+        return 1
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    root = git_root() or Path.cwd()
+    only = (args.only or "").lower()
+    targets = data.get("targets", [])
+    if only:
+        targets = [t for t in targets if only in t.get("id", "").lower() or only in t.get("name", "").lower()]
+    if not targets:
+        err("no map targets matched filter")
+        return 1
+
+    binary = require_binary(require_outline=True)
+    print(f"repo: {root}")
+    print(f"targets: {len(targets)}")
+    print()
+
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        name = target.get("name", rel)
+        print(f"## {name}")
+        print(f"   path: {rel}")
+        if not full.exists():
+            print("   (missing)")
+            print()
+            continue
+        sg_args = ["outline", "--color", "never"]
+        if target.get("view"):
+            sg_args.extend(["--view", target["view"]])
+        if target.get("items"):
+            sg_args.extend(["--items", target["items"]])
+        for g in target.get("globs", []):
+            sg_args.extend(["--globs", g])
+        sg_args.append(str(full))
+        proc = run_sg(binary, sg_args)
+        if proc.returncode != 0:
+            sys.stderr.write(proc.stderr or "")
+            print("   (outline failed)")
+            print()
+            continue
+        body, truncated = truncate_output(proc.stdout.strip() or "(no outline entries)")
+        for line in body.splitlines():
+            print(f"   {line}")
+        if truncated:
+            print("   [section truncated — run outline on path directly]")
+        print()
+    return 0
+
+
+def cmd_files(args: argparse.Namespace) -> int:
+    pattern: str = args.pattern
+    lang = normalize_lang(args.lang)
+    hints = validate_pattern(pattern, lang)
+    if hints and not args.force:
+        err("pattern looks invalid for ast-grep:")
+        for h in hints:
+            err(f"  - {h}")
+        err("(pass --force to call ast-grep anyway)")
+        return 2
+
+    binary = require_binary()
+    sg_args = ["run", "-p", pattern, "--files-with-matches", "--color", "never"]
+    if lang:
+        sg_args.extend(["--lang", lang])
+    for g in args.globs or []:
+        sg_args.extend(["--globs", g])
+    sg_args.extend(_search_paths(args))
+
+    proc = run_sg(binary, sg_args)
+    if proc.returncode not in (0, 1):
+        sys.stderr.write(proc.stderr or "")
+        return 4
+    out = proc.stdout.strip()
+    if not out:
+        print("(no files with matches)")
+        return 0
+    print(out)
     return 0
 
 
@@ -587,14 +719,26 @@ def cmd_replace(args: argparse.Namespace) -> int:
 
     print(f"APPLIED: rewrote {len(matches)} match(es) across "
           f"{len({m['file'] for m in matches})} file(s).")
+    root = git_root()
+    if root:
+        diff = safe_git_diff(_search_paths(args), root)
+        if diff:
+            print()
+            print("[git diff after apply]")
+            print(diff)
     return 0
 
 
 def cmd_scan(args: argparse.Namespace) -> int:
     binary = require_binary()
-    sg_args = ["scan"]
-    if args.config:
-        sg_args.extend(["-c", args.config])
+    sg_args = ["scan", "--color", "never"]
+    config = args.config
+    if not config:
+        default = default_sgconfig()
+        if default:
+            config = str(default)
+    if config:
+        sg_args.extend(["-c", config])
     if args.rule:
         sg_args.extend(["-r", args.rule])
     if args.inline_rules:
@@ -603,9 +747,28 @@ def cmd_scan(args: argparse.Namespace) -> int:
         sg_args.extend(["--report-style", args.report_style])
     if args.apply:
         sg_args.append("-U")
-    sg_args.extend(args.paths or [])
+    paths = _search_paths(args)
+    sg_args.extend(paths)
 
-    proc = run_sg(binary, sg_args, capture=False)
+    proc = run_sg(binary, sg_args, capture=not args.apply)
+    if proc.returncode not in (0, 1):
+        if proc.stderr:
+            sys.stderr.write(proc.stderr)
+        return proc.returncode
+    if args.apply:
+        root = git_root()
+        if root:
+            diff = safe_git_diff(paths, root)
+            if diff:
+                print("[git diff after scan apply]")
+                print(diff)
+        return proc.returncode
+    out = (proc.stdout or "").strip()
+    if out:
+        body, _ = truncate_output(out)
+        print(body)
+    else:
+        print("(no scan results)")
     return proc.returncode
 
 
@@ -776,6 +939,19 @@ def build_parser() -> argparse.ArgumentParser:
     o.add_argument("--json-out", action="store_true", help="Emit raw output (no truncation).")
     o.set_defaults(func=cmd_outline)
 
+    m = sub.add_parser("map", help="Outline monorepo targets from repo-map.json.")
+    m.add_argument("--only", help="Filter targets by id/name substring.")
+    m.set_defaults(func=cmd_map)
+
+    f = sub.add_parser("files", help="List files with at least one pattern match.")
+    f.add_argument("pattern", help="AST pattern.")
+    f.add_argument("--path", "-p", action="append", dest="path", help="Path (repeatable).")
+    f.add_argument("paths", nargs="*", help=argparse.SUPPRESS)
+    f.add_argument("--lang", "-l", help="Language.")
+    f.add_argument("--globs", action="append", help="Include/exclude glob.")
+    f.add_argument("--force", action="store_true", help="Skip pattern hint validation.")
+    f.set_defaults(func=cmd_files, paths=[])
+
     s = sub.add_parser("search", help="Search code by AST pattern.")
     s.add_argument("pattern", help="AST pattern, e.g. 'console.log($MSG)'")
     s.add_argument("paths", nargs="*", help="Paths (before flags, or use --path). Default: '.'")
@@ -799,8 +975,9 @@ def build_parser() -> argparse.ArgumentParser:
     r.set_defaults(func=cmd_replace)
 
     sc = sub.add_parser("scan", help="Run YAML-rule-based scan.")
-    sc.add_argument("paths", nargs="*", help="Paths to scan.")
-    sc.add_argument("--config", "-c", help="Path to sgconfig.yml.")
+    sc.add_argument("paths", nargs="*", help="Paths (before flags, or use --path).")
+    sc.add_argument("--path", "-p", action="append", dest="path", help="Path to scan (repeatable).")
+    sc.add_argument("--config", "-c", help="Path to sgconfig.yml (defaults to skill sgconfig.yml).")
     sc.add_argument("--rule", "-r", help="Single rule file.")
     sc.add_argument("--inline-rules", help="Inline YAML rule string.")
     sc.add_argument("--report-style", choices=["rich", "medium", "short"], help="Report style.")

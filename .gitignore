@@ -75,6 +75,10 @@ out/
 !.agents/skills/**/.gitignore
 !.agents/skills/**/references/
 !.agents/skills/**/references/**
+!.agents/skills/**/rules/
+!.agents/skills/**/rules/**
+!.agents/skills/**/repo-map.json
+!.agents/skills/**/sgconfig.yml
 .reasonix/
 
 # OS

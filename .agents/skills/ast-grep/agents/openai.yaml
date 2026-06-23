@@ -1,4 +1,4 @@
 interface:
   display_name: "ast-grep"
-  short_description: "AST outline, search, and codemods via ast_grep_helper.py (0.44+)"
-  default_prompt: "Run ast_grep_helper.py outline before large file reads. Use search/replace for syntax-shaped patterns. Validate patterns offline when matches are empty. See references/pitfalls.md for regex mistakes."
+  short_description: "AST map/search/scan for monorepo — map, outline, files, replace"
+  default_prompt: "Start with ast_grep_helper.py map for unfamiliar zones. Use outline before large reads, files for cheap path lists, scan for bundled rules. See references/monorepo.md for workspace paths."

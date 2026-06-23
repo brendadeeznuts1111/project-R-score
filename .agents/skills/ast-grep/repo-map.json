@@ -1,0 +1,45 @@
+{
+  "targets": [
+    {
+      "id": "sports-terminal-api",
+      "name": "Sports Terminal API routes",
+      "path": "projects/active/sports-terminal-os/src/api",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"]
+    },
+    {
+      "id": "sports-terminal-services",
+      "name": "Sports Terminal services",
+      "path": "projects/active/sports-terminal-os/src/services",
+      "view": "names",
+      "items": "structure",
+      "globs": ["!**/*.test.ts"]
+    },
+    {
+      "id": "sports-terminal-router",
+      "name": "Sports Terminal router (digest)",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "view": "digest"
+    },
+    {
+      "id": "kimi-sports-plugin",
+      "name": "Kimi sports-odds plugin scripts",
+      "path": "kimi-plugin/sports-odds-plugin/scripts",
+      "view": "names"
+    },
+    {
+      "id": "kimi-f402-lib",
+      "name": "Kimi f402 client lib",
+      "path": "kimi-plugin/sports-odds-plugin/scripts/lib/f402.ts",
+      "view": "digest"
+    },
+    {
+      "id": "kimi-shared",
+      "name": "Kimi shared constants",
+      "path": "kimi-plugin/shared",
+      "view": "names",
+      "items": "exports"
+    }
+  ]
+}
