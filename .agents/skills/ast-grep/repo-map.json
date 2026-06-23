@@ -30,8 +30,8 @@
       "path": "projects/active/sports-terminal-os/src/index.ts",
       "view": "digest",
       "bun_rules": true,
-      "tags": ["entry", "http"],
-      "anchors": ["Bun.serve", "fetch", "createLogger"],
+      "tags": ["entry", "http", "bun"],
+      "anchors": ["Bun.serve", "Bun.file", "createLogger"],
       "description": "Main Bun.serve wiring and server boot"
     },
     {
@@ -43,7 +43,7 @@
       "items": "exports",
       "globs": ["!**/*.test.ts"],
       "bun_rules": true,
-      "tags": ["api", "routes"],
+      "tags": ["api", "routes", "bun"],
       "depends_on": ["sports-terminal-router"],
       "anchors": ["handleRequest", "router", "proxy"],
       "description": "Route handlers and proxy endpoints"
@@ -56,7 +56,7 @@
       "view": "names",
       "items": "structure",
       "globs": ["!**/*.test.ts"],
-      "tags": ["services", "domain"],
+      "tags": ["services", "domain", "bun"],
       "depends_on": ["sports-terminal-api"],
       "anchors": ["WebSocket", "createLogger", "subscribe"],
       "description": "Domain logic, WS handlers, AI risk"
@@ -68,7 +68,7 @@
       "path": "projects/active/sports-terminal-os/src/api/router.ts",
       "view": "digest",
       "bun_rules": true,
-      "tags": ["router"],
+      "tags": ["router", "bun"],
       "anchors": ["routes", "Route", "handler"],
       "description": "Central route table — start here for API shape"
     },

@@ -1,5 +1,5 @@
 # Extra outline extractors for Bun / sports-terminal / kimi-plugin patterns.
-# Use: ast-grep outline --outline-rules outline-rules/bun-monorepo.yml
+# Use: ast-grep outline --bun-rules  (or: --outline-rules outline-rules/bun-monorepo.yml)
 ---
 id: bun-serve-call
 language: TypeScript
@@ -17,6 +17,89 @@ symbolType: function
 rule:
   pattern: Bun.serve($$$OPTS)
 name: Bun.serve
+isExported: false
+---
+id: bun-file-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.file($$$PATH)
+name: Bun.file
+isExported: false
+---
+id: bun-file-call-tsx
+language: Tsx
+role: item
+symbolType: call
+rule:
+  pattern: Bun.file($$$PATH)
+name: Bun.file
+isExported: false
+---
+id: bun-write-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.write($$$ARGS)
+name: Bun.write
+isExported: false
+---
+id: bun-spawn-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.spawn($$$ARGS)
+name: Bun.spawn
+isExported: false
+---
+id: bun-sleep-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.sleep($$$MS)
+name: Bun.sleep
+isExported: false
+---
+id: bun-hash-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.hash($$$DATA)
+name: Bun.hash
+isExported: false
+---
+id: bun-env-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.env
+name: Bun.env
+isExported: false
+---
+id: bun-sqlite-import
+language: TypeScript
+role: item
+symbolType: module
+rule:
+  pattern: import { $$$ } from "bun:sqlite"
+name: bun:sqlite
+isImport: true
+isExported: false
+---
+id: bun-test-import
+language: TypeScript
+role: item
+symbolType: module
+rule:
+  pattern: import { $$$ } from "bun:test"
+name: bun:test
+isImport: true
 isExported: false
 ---
 id: structured-logger

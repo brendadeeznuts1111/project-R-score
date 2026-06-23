@@ -13,6 +13,11 @@
       "description": "All bundled rules at any severity",
       "rules": null,
       "min_severity": "hint"
+    },
+    "bun": {
+      "description": "Bun-native hygiene — node:fs hints + CI autofix rules",
+      "rules": ["node-fs-in-bun", "no-as-any", "no-double-cast", "empty-catch"],
+      "min_severity": "hint"
     }
   }
 }

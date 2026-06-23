@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.7.0';
+const SERVER_VERSION = '0.8.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -199,6 +199,21 @@ const TOOLS = [
         jsonOut: { type: 'boolean' },
       },
       required: ['name'],
+    },
+  },
+  {
+    name: 'ast_grep_bun',
+    description: 'Bun native API: patterns catalog, inventory across bun_rules targets, or cataloged search by pattern id.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        action: { type: 'string', enum: ['patterns', 'inventory', 'search'], description: 'patterns=list catalog; inventory=count APIs; search=run pattern id' },
+        patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-spawn, ...' },
+        only: { type: 'string' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        jsonOut: { type: 'boolean' },
+      },
+      required: ['action'],
     },
   },
   {
@@ -557,6 +572,21 @@ async function cmdJump(args: Record<string, unknown>): Promise<ToolCallResult> {
   return toolText(truncate((stdout || stderr).trim() || '(no jump output)'), code !== 0);
 }
 
+async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const action = String(args.action ?? 'patterns');
+  const extra: string[] = [action];
+  if (action === 'search') {
+    const pid = String(args.patternId ?? '');
+    if (!pid) return toolText('patternId is required for search', true);
+    extra.push(pid);
+  }
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('bun', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no bun output)'), code !== 0);
+}
+
 async function cmdNav(args: Record<string, unknown>): Promise<ToolCallResult> {
   const zone = String(args.zone ?? '');
   if (!zone) return toolText('zone is required', true);
@@ -688,6 +718,7 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_collisions': result = await cmdCollisions(args); break;
       case 'ast_grep_graph': result = await cmdGraph(args); break;
       case 'ast_grep_jump': result = await cmdJump(args); break;
+      case 'ast_grep_bun': result = await cmdBun(args); break;
       case 'ast_grep_nav': result = await cmdNav(args); break;
       case 'ast_grep_scan': result = await cmdScan(args); break;
       case 'ast_grep_fix': result = await cmdFix(args); break;

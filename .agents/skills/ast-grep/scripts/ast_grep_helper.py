@@ -37,6 +37,9 @@ USAGE
     ast_grep_helper.py collisions [--zone ZONE]       # duplicate symbol names across targets
     ast_grep_helper.py graph [--zone ZONE]            # import edges between repo-map targets
     ast_grep_helper.py jump --name SYMBOL             # file:line jump hints for agents
+    ast_grep_helper.py bun patterns                   # Bun native API pattern catalog
+    ast_grep_helper.py bun inventory [--zone ZONE]    # count Bun API usage per target
+    ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
     ast_grep_helper.py --version
@@ -80,7 +83,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.9.0"
+VERSION = "0.10.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -535,6 +538,8 @@ def _skill_artifacts() -> dict[str, object]:
         "repo_map": (root / "repo-map.json").is_file(),
         "scan_profiles": (root / "scan-profiles.json").is_file(),
         "codemods": (root / "codemods.json").is_file(),
+        "bun_patterns": (root / "bun-patterns.json").is_file(),
+        "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
         "skill_pin": (root / "node_modules" / ".bin" / "ast-grep").is_file(),
@@ -1533,6 +1538,157 @@ def cmd_graph(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_bun_patterns() -> dict:
+    path = skill_root() / "bun-patterns.json"
+    if not path.is_file():
+        err(f"bun patterns not found: {path}")
+        return {"patterns": []}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _bun_native_targets(args: argparse.Namespace) -> list[dict]:
+    targets = _resolve_repo_targets(args)
+    if targets:
+        return [t for t in targets if t.get("bun_rules") or "bun" in t.get("tags", [])]
+    data = _load_repo_map()
+    return [
+        t for t in data.get("targets", [])
+        if t.get("bun_rules") or "bun" in t.get("tags", [])
+    ]
+
+
+def _find_bun_pattern(patterns: list[dict], pattern_id: str) -> Optional[dict]:
+    needle = pattern_id.lower()
+    for p in patterns:
+        if p.get("id", "").lower() == needle or p.get("name", "").lower() == needle:
+            return p
+    return None
+
+
+def _count_pattern_files(
+    binary: Path,
+    pattern: str,
+    lang: str,
+    path: Path,
+    globs: Optional[list[str]] = None,
+) -> tuple[int, list[str]]:
+    sg_args = ["run", "-p", pattern, "--files-with-matches", "--color", "never", "--lang", lang]
+    for g in globs or []:
+        sg_args.extend(["--globs", g])
+    sg_args.append(str(path))
+    proc = run_sg(binary, sg_args)
+    if proc.returncode not in (0, 1):
+        trace(f"bun pattern count skipped ({proc.returncode}): {pattern}")
+        return 0, []
+    files = [line.strip() for line in (proc.stdout or "").splitlines() if line.strip()]
+    return len(files), files
+
+
+def cmd_bun_patterns(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    patterns = data.get("patterns", [])
+    if getattr(args, "json_out", False):
+        json.dump(data, sys.stdout, indent=2)
+        print()
+        return 0
+    print(f"bun patterns: {len(patterns)} (bun-patterns.json v{data.get('version', '?')})")
+    by_cat: dict[str, list[dict]] = {}
+    for p in patterns:
+        by_cat.setdefault(p.get("category", "?"), []).append(p)
+    for cat in sorted(by_cat):
+        print(f"\n[{cat}]")
+        for p in by_cat[cat]:
+            outline = "outline" if p.get("outline") else "search"
+            print(f"  {p.get('id')}: {p.get('name')}  ({outline}) — {p.get('description', '')}")
+    print("\nrun: bun search <id>  |  bun scripts/bun-cli.ts bun inventory")
+    return 0
+
+
+def cmd_bun_inventory(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    patterns = [p for p in data.get("patterns", []) if p.get("category") != "anti-pattern"]
+    anti = [p for p in data.get("patterns", []) if p.get("category") == "anti-pattern"]
+    binary = require_binary()
+    root = git_root() or Path.cwd()
+    targets = _bun_native_targets(args)
+    if not targets:
+        err("no bun-native targets (set bun_rules or tag:bun on repo-map targets)")
+        return 1
+
+    report: dict = {"targets": [], "totals": {}}
+    totals: dict[str, int] = {}
+
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        tid = target.get("id", rel)
+        if not full.exists():
+            continue
+        globs = list(target.get("globs") or [])
+        entry: dict = {"id": tid, "zone": target.get("zone"), "path": rel, "patterns": {}}
+        for p in patterns + anti:
+            pid = p.get("id", "?")
+            count, files = _count_pattern_files(
+                binary, p["pattern"], p.get("lang", "ts"), full, globs,
+            )
+            entry["patterns"][pid] = {"count": count, "files": files[:10]}
+            totals[pid] = totals.get(pid, 0) + count
+        report["targets"].append(entry)
+
+    report["totals"] = totals
+
+    if getattr(args, "json_out", False):
+        json.dump(report, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"bun inventory: {len(report['targets'])} targets")
+    rows = sorted(totals.items(), key=lambda kv: -kv[1])
+    print("\nAPI totals:")
+    for pid, count in rows:
+        if count:
+            p = _find_bun_pattern(data.get("patterns", []), pid) or {}
+            print(f"  {p.get('name', pid)}: {count} file(s)")
+    print()
+    for entry in report["targets"]:
+        hits = {k: v["count"] for k, v in entry["patterns"].items() if v["count"]}
+        if not hits:
+            continue
+        summary = ", ".join(f"{k}={v}" for k, v in sorted(hits.items(), key=lambda x: -x[1]))
+        print(f"[{entry.get('zone')}] {entry['id']}: {summary}")
+    return 0
+
+
+def cmd_bun_search(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    pattern_id = getattr(args, "pattern_id", None) or ""
+    pat = _find_bun_pattern(data.get("patterns", []), pattern_id)
+    if not pat:
+        err(f"unknown bun pattern '{pattern_id}' — run: bun patterns")
+        return 1
+    search_args = argparse.Namespace(
+        pattern=pat["pattern"],
+        paths=[],
+        path=getattr(args, "path", None) or [],
+        lang=pat.get("lang", "ts"),
+        globs=getattr(args, "globs", None),
+        context=getattr(args, "context", None),
+        json_out=getattr(args, "json_out", False),
+        force=True,
+    )
+    root = git_root() or Path.cwd()
+    if not search_args.path:
+        targets = _bun_native_targets(args)
+        for t in targets:
+            rel = t.get("path", ".")
+            full = (root / rel).resolve()
+            if full.exists():
+                search_args.path.append(str(full))
+        if not search_args.path:
+            search_args.path = ["."]
+    return cmd_search(search_args)
+
+
 def cmd_jump(args: argparse.Namespace) -> int:
     name = getattr(args, "name", None)
     if not name:
@@ -1844,6 +2000,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"repo-map.json: {'ok' if artifacts['repo_map'] else 'missing'}")
     print(f"scan-profiles.json: {'ok' if artifacts['scan_profiles'] else 'missing'}")
     print(f"codemods.json: {'ok' if artifacts['codemods'] else 'missing'}")
+    print(f"bun-patterns.json: {'ok' if artifacts['bun_patterns'] else 'missing'}")
+    print(f"bun-cli.ts: {'ok' if artifacts['bun_cli'] else 'missing'}")
     print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
     print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
     print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
@@ -2420,6 +2578,29 @@ def build_parser() -> argparse.ArgumentParser:
     v.add_argument("pattern", help="AST pattern.")
     v.add_argument("--lang", "-l", help="Language for language-specific hints.")
     v.set_defaults(func=cmd_validate)
+
+    bun = sub.add_parser("bun", help="Bun native API patterns and inventory.")
+    bun_sub = bun.add_subparsers(dest="bun_cmd", required=True, metavar="BUN_CMD")
+
+    bun_p = bun_sub.add_parser("patterns", help="List bun-patterns.json catalog.")
+    bun_p.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_p.set_defaults(func=cmd_bun_patterns)
+
+    bun_i = bun_sub.add_parser("inventory", help="Count Bun API usage across bun_rules targets.")
+    bun_i.add_argument("--only", help="Filter repo-map targets.")
+    bun_i.add_argument("--zone", help="Filter by zone.")
+    bun_i.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_i.set_defaults(func=cmd_bun_inventory)
+
+    bun_s = bun_sub.add_parser("search", help="Run a cataloged Bun pattern by id.")
+    bun_s.add_argument("pattern_id", help="Pattern id from bun patterns (e.g. bun-serve).")
+    bun_s.add_argument("--path", "-p", action="append", dest="path", help="Path override.")
+    bun_s.add_argument("--only", help="Expand paths from bun_rules repo-map targets.")
+    bun_s.add_argument("--zone", help="Filter repo-map targets.")
+    bun_s.add_argument("--globs", action="append", help="Include/exclude glob.")
+    bun_s.add_argument("--context", "-C", type=int, help="Lines of context.")
+    bun_s.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_s.set_defaults(func=cmd_bun_search)
 
     return p
 

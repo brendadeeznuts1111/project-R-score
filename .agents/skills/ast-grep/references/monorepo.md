@@ -58,12 +58,33 @@ python3 $AG search 'new WebSocket($$$)' --path projects/active/sports-terminal-o
 python3 $AG outline projects/active/sports-terminal-os/src/api/router.ts --view digest
 ```
 
+## Bun native
+
+**Preferred entry:** `bun scripts/bun-cli.ts` from `.agents/skills/ast-grep/`
+
+```bash
+bun run bun:inventory                              # API counts for sports-terminal
+python3 $AG bun patterns                           # catalog (bun-patterns.json)
+python3 $AG bun search bun-file --zone sports-terminal
+python3 $AG audit --profile bun --only sports-terminal   # node:fs hints + CI rules
+```
+
+| Pattern id | API |
+|---|---|
+| `bun-serve` | `Bun.serve($$$)` |
+| `bun-file` | `Bun.file($$$)` |
+| `bun-write` | `Bun.write($$$)` |
+| `bun-spawn` | `Bun.spawn($$$)` |
+| `bun-sqlite` | `from "bun:sqlite"` |
+| `node-fs` | anti-pattern — prefer Bun.file |
+
 ## Outline rules (Bun runtime)
 
-Load extra extractors for `Bun.serve`, `createLogger`, route handlers:
+Load extra extractors for `Bun.serve`, `Bun.file`, `Bun.spawn`, `bun:sqlite`, `createLogger`, route handlers:
 
 ```bash
 python3 $AG outline projects/active/sports-terminal-os/src/index.ts --bun-rules --view names
+bun scripts/bun-cli.ts outline projects/active/sports-terminal-os/src/index.ts --bun-rules --view digest
 ```
 
 File: `outline-rules/bun-monorepo.yml`
@@ -102,6 +123,7 @@ Rule tests live in `tests/` — run `python3 $AG test` before changing YAML rule
 |---|---|---|
 | `ci` | no-as-any, no-double-cast, empty-catch | CI gate (`./scripts/ci.sh`) |
 | `autofix` | no-as-any, no-double-cast | Safe mechanical fixes |
+| `bun` | node-fs-in-bun + ci rules | Bun-native hygiene (`audit --profile bun`) |
 | `strict` | all rules | Full lint inventory |
 
 ## Named codemods (`codemods.json`)

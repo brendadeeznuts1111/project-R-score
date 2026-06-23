@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "description": "Bun native API structural patterns for inventory and search",
+  "patterns": [
+    {
+      "id": "bun-serve",
+      "name": "Bun.serve",
+      "pattern": "Bun.serve($$$)",
+      "lang": "ts",
+      "category": "http",
+      "outline": true,
+      "description": "HTTP/WebSocket server boot"
+    },
+    {
+      "id": "bun-file",
+      "name": "Bun.file",
+      "pattern": "Bun.file($$$)",
+      "lang": "ts",
+      "category": "io",
+      "outline": true,
+      "description": "Native file reads (prefer over node:fs)"
+    },
+    {
+      "id": "bun-write",
+      "name": "Bun.write",
+      "pattern": "Bun.write($$$)",
+      "lang": "ts",
+      "category": "io",
+      "outline": true,
+      "description": "Native file writes"
+    },
+    {
+      "id": "bun-spawn",
+      "name": "Bun.spawn",
+      "pattern": "Bun.spawn($$$)",
+      "lang": "ts",
+      "category": "process",
+      "outline": true,
+      "description": "Child process spawn"
+    },
+    {
+      "id": "bun-sleep",
+      "name": "Bun.sleep",
+      "pattern": "Bun.sleep($$$)",
+      "lang": "ts",
+      "category": "async",
+      "outline": true,
+      "description": "Native async sleep"
+    },
+    {
+      "id": "bun-hash",
+      "name": "Bun.hash",
+      "pattern": "Bun.hash($$$)",
+      "lang": "ts",
+      "category": "crypto",
+      "outline": true,
+      "description": "Fast hashing"
+    },
+    {
+      "id": "bun-env",
+      "name": "Bun.env",
+      "pattern": "Bun.env",
+      "lang": "ts",
+      "category": "config",
+      "outline": true,
+      "description": "Environment variables"
+    },
+    {
+      "id": "bun-sqlite",
+      "name": "bun:sqlite",
+      "pattern": "import { $$$ } from \"bun:sqlite\"",
+      "lang": "ts",
+      "category": "db",
+      "outline": true,
+      "description": "SQLite via Bun built-in driver"
+    },
+    {
+      "id": "bun-test",
+      "name": "bun:test",
+      "pattern": "import { $$$ } from \"bun:test\"",
+      "lang": "ts",
+      "category": "test",
+      "outline": false,
+      "description": "Bun test runner imports"
+    },
+    {
+      "id": "bun-stdin",
+      "name": "Bun.stdin",
+      "pattern": "Bun.stdin",
+      "lang": "ts",
+      "category": "io",
+      "outline": true,
+      "description": "Stdin stream"
+    },
+    {
+      "id": "fetch-native",
+      "name": "fetch",
+      "pattern": "fetch($$$)",
+      "lang": "ts",
+      "category": "http",
+      "outline": true,
+      "description": "Bun-native fetch (also in bun-monorepo outline rules)"
+    },
+    {
+      "id": "node-fs",
+      "name": "node:fs import",
+      "pattern": "import $X from \"fs\"",
+      "lang": "ts",
+      "category": "anti-pattern",
+      "outline": false,
+      "description": "Node fs — prefer Bun.file in Bun projects"
+    },
+    {
+      "id": "node-fs-explicit",
+      "name": "node:fs import",
+      "pattern": "import $X from \"node:fs\"",
+      "lang": "ts",
+      "category": "anti-pattern",
+      "outline": false,
+      "description": "Explicit node:fs — prefer Bun.file"
+    }
+  ]
+}

@@ -29,10 +29,26 @@ cd .agents/skills/ast-grep && ./scripts/install.sh
 Verify:
 
 ```bash
-python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor
-python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor --fix   # install skill pin if missing
+cd .agents/skills/ast-grep && bun run doctor          # Bun-native entry (preferred)
+python3 scripts/ast_grep_helper.py doctor --fix       # install skill pin if missing
 ./scripts/smoke.sh
 ```
+
+## Bun native (preferred entry)
+
+Use `bun scripts/bun-cli.ts` or `bun run` from the skill directory — same subcommands, spawned via `Bun.spawn`:
+
+```bash
+cd .agents/skills/ast-grep
+bun run doctor
+bun run bun:inventory                    # Bun API counts (sports-terminal)
+bun scripts/bun-cli.ts bun patterns      # catalog: Bun.serve, Bun.file, bun:sqlite, ...
+bun scripts/bun-cli.ts bun search bun-serve --zone sports-terminal
+bun scripts/bun-cli.ts outline projects/active/sports-terminal-os/src/index.ts --bun-rules --view digest
+bun scripts/bun-cli.ts audit --profile bun --only sports-terminal
+```
+
+`--bun-rules` loads `outline-rules/bun-monorepo.yml` — extractors for `Bun.serve`, `Bun.file`, `Bun.spawn`, `bun:sqlite`, route handlers, MCP tools.
 
 ## Primary entry: `ast_grep_helper.py`
 
@@ -62,6 +78,12 @@ python3 $AG exports --zone kimi                       # public export surface
 python3 $AG collisions --zone kimi                  # duplicate names across targets
 python3 $AG graph --zone kimi                         # import + depends_on edges
 python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
+
+# Bun native API (bun-patterns.json + bun inventory)
+python3 $AG bun patterns                            # Bun.serve, Bun.file, bun:sqlite, ...
+python3 $AG bun inventory --zone sports-terminal    # API usage counts per target
+python3 $AG bun search bun-serve --zone sports-terminal
+python3 $AG audit --profile bun --only sports-terminal
 
 # Structure map (0.44+)
 python3 $AG outline src/file.ts --view digest
@@ -133,6 +155,7 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_collisions` | `collisions` (duplicate symbol names) |
 | `ast_grep_graph` | `graph` (import/depends_on edges) |
 | `ast_grep_jump` | `jump` (symbol → file:line) |
+| `ast_grep_bun` | `bun patterns/inventory/search` (Bun native APIs) |
 | `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
 | `ast_grep_fix` | `fix` (all autofix rules) |
 | `ast_grep_replace` | `replace` (`fix: true` to apply) |

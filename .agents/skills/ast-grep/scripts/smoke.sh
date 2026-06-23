@@ -14,7 +14,11 @@ fi
 cd "$REPO"
 
 echo "== doctor =="
-python3 "$HELPER" doctor
+if command -v bun >/dev/null 2>&1; then
+  bun "$ROOT/scripts/bun-cli.ts" doctor
+else
+  python3 "$HELPER" doctor
+fi
 echo ""
 echo "== map --list (zones) =="
 python3 "$HELPER" -q map --list 2>&1 | head -20
@@ -54,6 +58,15 @@ python3 "$HELPER" -q graph --zone kimi 2>&1 | head -12
 echo ""
 echo "== jump --name f402Fetch =="
 python3 "$HELPER" -q jump --name f402Fetch --zone kimi 2>&1 | head -10
+echo ""
+echo "== bun patterns =="
+python3 "$HELPER" -q bun patterns 2>&1 | head -18
+echo ""
+echo "== bun inventory (sports-terminal) =="
+python3 "$HELPER" -q bun inventory --zone sports-terminal 2>&1 | head -18
+echo ""
+echo "== bun search bun-serve =="
+python3 "$HELPER" -q bun search bun-serve --zone sports-terminal 2>&1 | head -8
 echo ""
 echo "== map (kimi only, digest sample) =="
 python3 "$HELPER" map --only kimi-f402 2>&1 | head -20

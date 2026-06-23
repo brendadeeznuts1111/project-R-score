@@ -4,12 +4,14 @@
   "private": true,
   "description": "Pinned ast-grep CLI for agent outline/search workflows (0.44.0+ for outline).",
   "scripts": {
-    "doctor": "python3 scripts/ast_grep_helper.py doctor",
-    "test": "python3 scripts/ast_grep_helper.py test",
-    "audit": "python3 scripts/ast_grep_helper.py audit",
+    "doctor": "bun scripts/bun-cli.ts doctor",
+    "test": "bun scripts/bun-cli.ts test",
+    "audit": "bun scripts/bun-cli.ts audit",
     "baseline": "./scripts/baseline.sh",
     "ci": "./scripts/ci.sh",
-    "codemods": "python3 scripts/ast_grep_helper.py codemods",
+    "codemods": "bun scripts/bun-cli.ts codemods",
+    "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
+    "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
     "install-cli": "npm install",
     "smoke": "./scripts/smoke.sh"
   },
