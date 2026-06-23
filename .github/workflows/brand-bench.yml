@@ -10,6 +10,7 @@ jobs:
   brand-bench:
     runs-on: ubuntu-latest
     env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
       BRAND_BENCH_STRICT: ${{ vars.BRAND_BENCH_STRICT || '0' }}
     steps:
       - uses: actions/checkout@v4

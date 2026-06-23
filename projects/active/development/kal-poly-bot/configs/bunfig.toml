@@ -10,8 +10,7 @@ silent = false
 [install]
 
 [install.cache]
-# Global cache directory with optimized backend configurations
-dir = "~/.bun/install/cache"
+# dir: monorepo root bunfig.toml — use BUN_INSTALL_CACHE_DIR in CI
 
 # Advanced cache backend optimization for macOS performance
 # clonefile: Copy-on-write for instant operations (macOS optimized)

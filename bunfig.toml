@@ -8,13 +8,15 @@
 linker = "isolated"
 
 # Global virtual store: ~1 symlink per package on warm install.
-# First install materializes to ~/.bun/install/cache; subsequent
-# installs across all 6 projects share the same cache via symlinks.
+# Materializes under <cache>/links/ (see docs/pm/global-store).
 # Set BUN_INSTALL_GLOBAL_STORE=1 in CI as a belt-and-suspenders.
-# IMPORTANT: export BUN_INSTALL_CACHE_DIR="$HOME/.bun/install/cache" before
-# `bun install` — workspace bunfigs use `~/.bun/...` and Bun may create a
-# literal `./~/` dir at repo root when tilde is not expanded.
 globalStore = true
+
+# https://bun.sh/docs/pm/global-cache — override with BUN_INSTALL_CACHE_DIR
+[install.cache]
+dir = "~/.bun/install/cache"
+disable = false
+disableManifest = false
 
 # Pin exact versions — no ^/~ drift.  Inherited from .bunfig.toml.
 exact = true

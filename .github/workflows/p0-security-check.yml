@@ -12,6 +12,8 @@ on:
 jobs:
   security-audit:
     runs-on: ubuntu-latest
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
     steps:
       - uses: actions/checkout@v4
       

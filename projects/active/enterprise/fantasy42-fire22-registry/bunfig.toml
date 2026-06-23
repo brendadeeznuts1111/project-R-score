@@ -165,7 +165,7 @@ frozenLockfile = false              # Allow lockfile updates in development
 
 # Global package cache settings - Optimized for SportsBet
 [install.cache]
-dir = "~/.bun/install/cache"
+# dir: monorepo root bunfig.toml — use BUN_INSTALL_CACHE_DIR in CI
 disable = false
 disableManifest = false
 # Cache optimization for global packages

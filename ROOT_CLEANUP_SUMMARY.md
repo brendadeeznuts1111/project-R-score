@@ -27,11 +27,12 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 
 - Removed duplicate root `index.html` (canonical: `public/dashboards/dns-status-dashboard.html`)
 - Removed root `index.ts` hello-world stub
-- Deleted recurring `~/` Bun cache dir; pinned `[install.cache]` in `bunfig.toml` to `$HOME/.bun/install/cache`
+- Deleted recurring `./~/` Bun cache dir; root `bunfig.toml` now uses Bun-documented `[install.cache]`
 - Moved `registry.config.json5`, `ci.bunfig.toml`, `bunfig-registry.toml` → `config/` (root symlinks for legacy lookups)
 - Fixed `scripts/sitemap-refresh.ts` to reference `public/dashboards/` paths
 - `repo-hygiene` flags unexpected root dirs/files and auto-evicts `./~` Bun cache drift
-- `postinstall` + `scripts/evict-root-tilde-cache.ts` prevent recurring `./~` cache dirs
+- Override via `BUN_INSTALL_CACHE_DIR="$HOME/.bun/install/cache"` when nested bunfigs break `~` expansion;
+  `postinstall` + `scripts/evict-root-tilde-cache.ts` is a safety net only
 
 ## Phase 4.2 (committed)
 

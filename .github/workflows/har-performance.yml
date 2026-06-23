@@ -12,7 +12,8 @@ on:
 jobs:
   performance-test:
     runs-on: ubuntu-latest
-    
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
     steps:
       - name: Checkout
         uses: actions/checkout@v4

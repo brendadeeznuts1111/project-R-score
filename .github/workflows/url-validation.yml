@@ -10,7 +10,8 @@ jobs:
   url-validation:
     name: URL Standards Validation
     runs-on: ubuntu-latest
-    
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
     steps:
     - name: Checkout code
       uses: actions/checkout@v3

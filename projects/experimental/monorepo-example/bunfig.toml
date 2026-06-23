@@ -12,8 +12,7 @@ registry = "https://registry.factory-wager.com"
 "@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 
 [install.cache]
-# Standard location, but explicit for Docker/CI clarity
-dir = "~/.bun/install/cache"
+# dir: monorepo root bunfig.toml — use BUN_INSTALL_CACHE_DIR in CI
 # Only disable for debugging cache issues
 disable = false
 # Keep false to use cached versions (faster CI)

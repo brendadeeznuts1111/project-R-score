@@ -4,7 +4,7 @@
 
 ## Quick Start
 ```bash
-bun install              # 122 packages in ~700ms (root workspace only)
+bun run install:all      # uses BUN_INSTALL_CACHE_DIR (see bun.sh/docs/pm/global-cache)
 bun run dev              # Watch server
 bun run packages:list    # Browse all packages with version/registry/triage
 ```
