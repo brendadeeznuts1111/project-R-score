@@ -6,15 +6,11 @@
 import { join } from 'path';
 
 const ROOT = join(import.meta.dir, '..');
-const PRUNE = [
-  join(ROOT, 'node_modules'),
-  join(ROOT, '.git'),
-  join(ROOT, 'herdr-worktrees'),
-];
+const PRUNE = [join(ROOT, 'node_modules'), join(ROOT, '.git'), join(ROOT, 'herdr-worktrees')];
 
 const findArgs = [
   ROOT,
-  ...PRUNE.flatMap((p) => ['-path', p, '-prune', '-o']),
+  ...PRUNE.flatMap(p => ['-path', p, '-prune', '-o']),
   '-name',
   '~',
   '-type',
@@ -30,7 +26,7 @@ if (found.exitCode !== 0) {
 const dirs = new TextDecoder()
   .decode(found.stdout)
   .split('\n')
-  .map((line) => line.trim())
+  .map(line => line.trim())
   .filter(Boolean);
 
 if (dirs.length === 0) {
