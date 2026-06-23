@@ -25,6 +25,7 @@
     "supply-chain:ci": "bun scripts/bun-cli.ts bun supply-chain scan --profile supply-chain-ci --fail-on",
     "supply-chain:advisories": "bun scripts/bun-cli.ts bun supply-chain advisories",
     "supply-chain:packages": "bun scripts/bun-cli.ts bun supply-chain packages --domain agents-ast-grep",
+    "supply-chain:watch": "bun scripts/bun-cli.ts bun supply-chain scan --path .agents/skills/ast-grep/scripts --watch",
     "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
     "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
     "bun:matrix": "bun scripts/bun-cli.ts bun matrix --zone sports-terminal",

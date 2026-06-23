@@ -102,6 +102,8 @@ python3 $AG bun supply-chain scan --zone agents     # Layer 4.5: transpiler + TO
 python3 $AG bun supply-chain scan --path dist --format markdown --parallel --threat-feed
 python3 $AG bun supply-chain packages --domain agents-ast-grep --threat-feed  # policy + CVE feed + upgrade hints
 python3 $AG bun supply-chain packages --path . --fix --dry-run               # preview bun add remediations
+python3 $AG bun supply-chain scan --path dist --watch --fix                 # watch + source autofix + deps
+python3 $AG bun supply-chain packages --path . --watch --watch-interval 1000
 python3 $AG doctor --validate-snapshot snapshot.json           # snapshotVersion vs policy [snapshot]
 python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)
 python3 $AG bun bundle-threat --profile ci --fail-on

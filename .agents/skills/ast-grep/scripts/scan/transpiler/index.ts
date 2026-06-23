@@ -13,3 +13,5 @@ export * from "./snapshot.ts";
 export * from "./feed.ts";
 export * from "./remediation.ts";
 export * from "./lock-index.ts";
+export * from "./autofix.ts";
+export * from "./watch.ts";

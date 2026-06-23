@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.25.0"
+VERSION = "0.26.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -2842,6 +2842,14 @@ def _build_supply_chain_cmd(args: argparse.Namespace, profile_name: str, root: P
         cmd.append("--threat-feed")
     if getattr(args, "no_threat_feed", False):
         cmd.append("--no-threat-feed")
+    if getattr(args, "watch", False):
+        cmd.append("--watch")
+    if getattr(args, "watch_interval", None):
+        cmd.extend(["--watch-interval", str(args.watch_interval)])
+    if getattr(args, "fix", False):
+        cmd.append("--fix")
+    if getattr(args, "dry_run_fix", False):
+        cmd.append("--dry-run-fix")
     return cmd
 
 
@@ -3075,6 +3083,10 @@ def _run_packages_scan(args: argparse.Namespace) -> int:
         cmd.append("--fix")
     if getattr(args, "dry_run", False):
         cmd.append("--dry-run")
+    if getattr(args, "watch", False):
+        cmd.append("--watch")
+    if getattr(args, "watch_interval", None):
+        cmd.extend(["--watch-interval", str(args.watch_interval)])
     trace(f"supply-chain packages: {' '.join(cmd)}")
     proc = subprocess.run(cmd, cwd=str(root))
     return proc.returncode
@@ -4516,6 +4528,10 @@ def build_parser() -> argparse.ArgumentParser:
         parser.add_argument("--verbose", "-v", action="store_true", help="Show per-finding details.")
         parser.add_argument("--fail-on", action="store_true", help="Exit 1 when error-level findings exist.")
         parser.add_argument("--json-out", action="store_true", help="Emit JSON (default for scan).")
+        parser.add_argument("--watch", action="store_true", help="Re-scan on file changes (Ctrl+C to stop).")
+        parser.add_argument("--watch-interval", dest="watch_interval", type=int, help="Watch poll ms (default 750).")
+        parser.add_argument("--fix", action="store_true", help="Autofix source rules + bun add package upgrades.")
+        parser.add_argument("--dry-run-fix", action="store_true", help="Preview autofix without writing files.")
 
     bun_bt = bun_sub.add_parser(
         "bundle-threat",
@@ -4560,6 +4576,8 @@ def build_parser() -> argparse.ArgumentParser:
     sc_pkg.add_argument("--no-threat-feed", action="store_true", help="Disable threat-feed correlation.")
     sc_pkg.add_argument("--fix", action="store_true", help="Apply bun add upgrades for suggested versions.")
     sc_pkg.add_argument("--dry-run", action="store_true", help="With --fix: print commands only.")
+    sc_pkg.add_argument("--watch", action="store_true", help="Re-scan package.json/bun.lock on changes.")
+    sc_pkg.add_argument("--watch-interval", dest="watch_interval", type=int, help="Watch poll ms (default 750).")
     sc_pkg.set_defaults(func=cmd_bun_supply_chain, supply_action="packages")
 
     return p

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "description": "Safe transpiler autofixes — applied with supply-chain scan --fix",
+  "rules": [
+    {
+      "id": "zero-width-char",
+      "description": "Strip zero-width Unicode characters",
+      "pattern": "[\\u200B-\\u200D\\uFEFF]",
+      "replacement": ""
+    },
+    {
+      "id": "hardcoded-secret",
+      "description": "Replace inline secret with process.env placeholder",
+      "pattern": "((api[_-]?key|token|secret|password)\\s*[:=]\\s*)['\"][a-zA-Z0-9_\\-]{8,}['\"]",
+      "replacement": "process.env placeholder"
+    }
+  ]
+}
