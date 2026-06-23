@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.6.0';
+const SERVER_VERSION = '0.7.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -131,8 +131,74 @@ const TOOLS = [
         only: { type: 'string', description: 'Filter repo-map targets' },
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
         refresh: { type: 'boolean', description: 'Rebuild .outline-index.json cache' },
+        status: { type: 'boolean', description: 'Show cache age and stale targets' },
         jsonOut: { type: 'boolean', description: 'Emit JSON' },
       },
+    },
+  },
+  {
+    name: 'ast_grep_anchors',
+    description: 'Validate repo-map anchor symbols against the symbol index.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        only: { type: 'string' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        failOn: { type: 'boolean', description: 'Error when anchors missing' },
+        jsonOut: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_exports',
+    description: 'Exported symbol surface across repo-map targets.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        only: { type: 'string' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        jsonOut: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_collisions',
+    description: 'Symbol names duplicated across multiple repo-map targets.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        only: { type: 'string' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        minTargets: { type: 'number', description: 'Minimum targets for a collision (default 2)' },
+        jsonOut: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_graph',
+    description: 'Import and depends_on edges between repo-map targets.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        only: { type: 'string' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        jsonOut: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_jump',
+    description: 'Resolve symbol name to file:line jump hints for agent Read.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string', description: 'Symbol name (required)' },
+        type: { type: 'string' },
+        exports: { type: 'boolean' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
+        jsonOut: { type: 'boolean' },
+      },
+      required: ['name'],
     },
   },
   {
@@ -435,9 +501,60 @@ async function cmdIndex(args: Record<string, unknown>): Promise<ToolCallResult> 
   if (args.only) extra.push('--only', String(args.only));
   if (args.zone) extra.push('--zone', String(args.zone));
   if (args.refresh === true) extra.push('--refresh');
+  if (args.status === true) extra.push('--status');
   if (args.jsonOut === true) extra.push('--json-out');
   const { stdout, stderr, code } = await runHelper('index', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no index output)'), code !== 0);
+}
+
+async function cmdAnchors(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.failOn === true) extra.push('--fail-on');
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('anchors', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no anchors output)'), code !== 0);
+}
+
+async function cmdExports(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('exports', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no exports output)'), code !== 0);
+}
+
+async function cmdCollisions(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.minTargets) extra.push('--min-targets', String(args.minTargets));
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('collisions', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no collisions output)'), code !== 0);
+}
+
+async function cmdGraph(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('graph', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no graph output)'), code !== 0);
+}
+
+async function cmdJump(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const name = String(args.name ?? '');
+  if (!name) return toolText('name is required', true);
+  const extra = ['--name', name];
+  if (args.type) extra.push('--type', String(args.type));
+  if (args.exports === true) extra.push('--exports');
+  if (args.zone) extra.push('--zone', String(args.zone));
+  if (args.jsonOut === true) extra.push('--json-out');
+  const { stdout, stderr, code } = await runHelper('jump', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no jump output)'), code !== 0);
 }
 
 async function cmdNav(args: Record<string, unknown>): Promise<ToolCallResult> {
@@ -566,6 +683,11 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_map': result = await cmdMap(args); break;
       case 'ast_grep_zones': result = await cmdZones(args); break;
       case 'ast_grep_index': result = await cmdIndex(args); break;
+      case 'ast_grep_anchors': result = await cmdAnchors(args); break;
+      case 'ast_grep_exports': result = await cmdExports(args); break;
+      case 'ast_grep_collisions': result = await cmdCollisions(args); break;
+      case 'ast_grep_graph': result = await cmdGraph(args); break;
+      case 'ast_grep_jump': result = await cmdJump(args); break;
       case 'ast_grep_nav': result = await cmdNav(args); break;
       case 'ast_grep_scan': result = await cmdScan(args); break;
       case 'ast_grep_fix': result = await cmdFix(args); break;

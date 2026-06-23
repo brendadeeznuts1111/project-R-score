@@ -17,5 +17,7 @@ echo "$out" | grep -q ast_grep_fix
 echo "$out" | grep -q ast_grep_audit
 echo "$out" | grep -q ast_grep_codemod
 echo "$out" | grep -q ast_grep_test
+echo "$out" | grep -q ast_grep_graph
+echo "$out" | grep -q ast_grep_jump
 echo "$out" | grep -q 'autofix rules'
 echo "mcp OK"

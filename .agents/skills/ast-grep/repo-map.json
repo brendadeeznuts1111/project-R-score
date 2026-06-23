@@ -44,6 +44,7 @@
       "globs": ["!**/*.test.ts"],
       "bun_rules": true,
       "tags": ["api", "routes"],
+      "depends_on": ["sports-terminal-router"],
       "anchors": ["handleRequest", "router", "proxy"],
       "description": "Route handlers and proxy endpoints"
     },
@@ -56,6 +57,7 @@
       "items": "structure",
       "globs": ["!**/*.test.ts"],
       "tags": ["services", "domain"],
+      "depends_on": ["sports-terminal-api"],
       "anchors": ["WebSocket", "createLogger", "subscribe"],
       "description": "Domain logic, WS handlers, AI risk"
     },
@@ -77,7 +79,8 @@
       "path": "kimi-plugin/sports-odds-plugin/scripts",
       "view": "names",
       "tags": ["cli", "odds"],
-      "anchors": ["get_odds", "get_scores", "get_handle", "get_positions"],
+      "depends_on": ["kimi-f402-lib", "kimi-shared"],
+      "anchors": ["main", "f402Fetch", "loadConfig", "makeTable"],
       "description": "get_odds, get_scores, get_handle CLI scripts"
     },
     {
@@ -87,7 +90,8 @@
       "path": "kimi-plugin/sports-odds-plugin/scripts/lib/f402.ts",
       "view": "digest",
       "tags": ["lib", "fetch"],
-      "anchors": ["f402", "fetch", "table"],
+      "depends_on": ["kimi-shared"],
+      "anchors": ["f402Fetch", "fetch", "makeTable"],
       "description": "Shared f402 fetch + table helpers"
     },
     {
@@ -98,7 +102,7 @@
       "view": "names",
       "items": "exports",
       "tags": ["shared"],
-      "anchors": ["constants", "risk", "RISK"],
+      "anchors": ["SPORT_POSSESSION_EMOJI", "riskEmoji", "riskColor"],
       "description": "Cross-plugin constants and risk helpers"
     },
     {
@@ -109,6 +113,7 @@
       "view": "names",
       "globs": ["!**/*.test.ts"],
       "tags": ["mcp", "websocket"],
+      "depends_on": ["kimi-shared"],
       "anchors": ["tools", "WebSocket", "subscribe", "readToolArgs"],
       "description": "MCP tools + WS subscription handlers"
     },
@@ -121,7 +126,7 @@
       "items": "structure",
       "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
       "tags": ["skill", "ast-grep"],
-      "anchors": ["cmd_outline", "cmd_map", "repo-map", "ast_grep_helper"],
+      "anchors": ["cmd_outline", "cmd_map", "cmd_index", "ast_grep_helper"],
       "description": "This skill — helper, rules, MCP, repo-map"
     }
   ]

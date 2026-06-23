@@ -1,4 +1,4 @@
 interface:
   display_name: "ast-grep"
   short_description: "AST map/search/scan for monorepo — map, outline, files, replace"
-  default_prompt: "Start with nav/map --heatmap for unfamiliar zones; index for cross-target symbol lookup. Use outline before large reads, rules for inventory, audit for violation counts, fix for autofix rules. Run test after editing YAML rules. See references/monorepo.md."
+  default_prompt: "Start with nav/map --heatmap for unfamiliar zones. Use index/jump for symbol lookup, graph for target deps, anchors to verify repo-map. Outline before large reads; audit for violations; fix for autofix rules. Run test after editing YAML rules. See references/monorepo.md."

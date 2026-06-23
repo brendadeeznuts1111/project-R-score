@@ -126,10 +126,23 @@ Builds `.outline-index.json` (gitignored) from repo-map outlines:
 
 ```bash
 python3 $AG index --refresh              # rebuild cache
+python3 $AG index --status               # cache age + stale targets
 python3 $AG index                        # top symbols by occurrence
 python3 $AG index --name WebSocket       # find symbol across all targets
 python3 $AG index --exports --type function --zone kimi
 ```
+
+## Symbol intelligence
+
+| Command | Use |
+|---|---|
+| `anchors --zone kimi` | Verify repo-map `anchors` resolve in symbol index |
+| `exports --zone kimi` | Public API surface (exported symbols) |
+| `collisions` | Names duplicated across targets (e.g. `main`, `logger`) |
+| `graph --zone kimi` | Import paths + `depends_on` edges between targets |
+| `jump --name f402Fetch` | Best file:line for agent `Read` |
+
+Targets may declare `depends_on: ["kimi-shared"]` in `repo-map.json` for explicit graph edges.
 
 ## Agent workflow for unfamiliar zones
 

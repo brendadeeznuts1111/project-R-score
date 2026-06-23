@@ -37,6 +37,24 @@ echo ""
 echo "== nav --zone kimi =="
 python3 "$HELPER" -q nav --zone kimi 2>&1 | head -25
 echo ""
+echo "== index --status =="
+python3 "$HELPER" -q index --status 2>&1 | head -6
+echo ""
+echo "== anchors --zone kimi =="
+python3 "$HELPER" -q anchors --zone kimi 2>&1 | head -20
+echo ""
+echo "== exports --zone kimi =="
+python3 "$HELPER" -q exports --zone kimi 2>&1 | head -15
+echo ""
+echo "== collisions (kimi) =="
+python3 "$HELPER" -q collisions --zone kimi 2>&1 | head -10
+echo ""
+echo "== graph --zone kimi =="
+python3 "$HELPER" -q graph --zone kimi 2>&1 | head -12
+echo ""
+echo "== jump --name f402Fetch =="
+python3 "$HELPER" -q jump --name f402Fetch --zone kimi 2>&1 | head -10
+echo ""
 echo "== map (kimi only, digest sample) =="
 python3 "$HELPER" map --only kimi-f402 2>&1 | head -20
 echo ""

@@ -51,9 +51,17 @@ python3 $AG map --json-out --zone kimi              # structured report
 # Cross-target symbol index + zone navigation
 python3 $AG zones --stats                           # zones with symbol totals
 python3 $AG index --refresh                         # build .outline-index.json cache
+python3 $AG index --status                          # cache age + stale targets
 python3 $AG index --name fetch --zone kimi          # find symbols across targets
 python3 $AG index --exports --type function         # exported functions repo-wide
 python3 $AG nav --zone sports-terminal --digest     # guided read order + previews
+
+# Symbol intelligence (index-powered)
+python3 $AG anchors --zone kimi                     # validate repo-map anchors
+python3 $AG exports --zone kimi                       # public export surface
+python3 $AG collisions --zone kimi                  # duplicate names across targets
+python3 $AG graph --zone kimi                         # import + depends_on edges
+python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
 
 # Structure map (0.44+)
 python3 $AG outline src/file.ts --view digest
@@ -120,6 +128,11 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_zones` | `zones` (`stats: true` for symbol totals) |
 | `ast_grep_index` | `index` (cross-target symbol lookup) |
 | `ast_grep_nav` | `nav` (guided zone read order) |
+| `ast_grep_anchors` | `anchors` (validate repo-map anchor symbols) |
+| `ast_grep_exports` | `exports` (export surface per target) |
+| `ast_grep_collisions` | `collisions` (duplicate symbol names) |
+| `ast_grep_graph` | `graph` (import/depends_on edges) |
+| `ast_grep_jump` | `jump` (symbol → file:line) |
 | `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
 | `ast_grep_fix` | `fix` (all autofix rules) |
 | `ast_grep_replace` | `replace` (`fix: true` to apply) |

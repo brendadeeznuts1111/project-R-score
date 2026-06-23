@@ -32,6 +32,11 @@ USAGE
     ast_grep_helper.py zones [--stats]                # list zones + targets
     ast_grep_helper.py index [--name SUBSTR]          # cross-target symbol index
     ast_grep_helper.py nav --zone ZONE [--digest]     # guided read order per zone
+    ast_grep_helper.py anchors [--zone ZONE]          # validate repo-map anchor symbols
+    ast_grep_helper.py exports [--zone ZONE]          # exported symbol surface per target
+    ast_grep_helper.py collisions [--zone ZONE]       # duplicate symbol names across targets
+    ast_grep_helper.py graph [--zone ZONE]            # import edges between repo-map targets
+    ast_grep_helper.py jump --name SYMBOL             # file:line jump hints for agents
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
     ast_grep_helper.py --version
@@ -70,10 +75,12 @@ import re
 import shutil
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -665,6 +672,177 @@ def _outline_index_cache_path() -> Path:
     return skill_root() / ".outline-index.json"
 
 
+def _path_mtime(path: Path) -> float:
+    if not path.exists():
+        return 0.0
+    if path.is_file():
+        return path.stat().st_mtime
+    latest = path.stat().st_mtime
+    for child in path.rglob("*"):
+        if child.is_file():
+            latest = max(latest, child.stat().st_mtime)
+    return latest
+
+
+def _index_stale_targets(cached: dict, root: Path, targets: list[dict]) -> list[str]:
+    mtimes = cached.get("target_mtimes", {})
+    stale: list[str] = []
+    for target in targets:
+        tid = target.get("id")
+        if not tid:
+            continue
+        rel = target.get("path", ".")
+        current = _path_mtime((root / rel).resolve())
+        cached_mtime = mtimes.get(tid)
+        if cached_mtime is None or current > cached_mtime + 0.5:
+            stale.append(tid)
+    return stale
+
+
+def _target_symbols(index: dict, target_id: str) -> set[str]:
+    names: set[str] = set()
+    for sym_name, occs in index.get("symbols_by_name", {}).items():
+        for occ in occs:
+            if occ.get("target") == target_id:
+                names.add(sym_name)
+    return names
+
+
+def _match_anchor(anchor: str, symbols: set[str]) -> tuple[bool, Optional[str]]:
+    needle = anchor.lower()
+    for sym in symbols:
+        sym_l = sym.lower().strip("\"'")
+        if sym_l == needle or needle in sym_l or sym_l in needle:
+            return True, sym
+    return False, None
+
+
+def _resolve_import_path(import_spec: str, source_file: str, root: Path) -> Optional[Path]:
+    imp = import_spec.strip("\"'")
+    if not imp.startswith("."):
+        return None
+    src = (root / source_file).resolve()
+    base = src.parent
+    candidates = [
+        base / imp,
+        base / f"{imp}.ts",
+        base / f"{imp}.tsx",
+        base / imp / "index.ts",
+        base / imp / "index.tsx",
+    ]
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve()
+            if resolved.exists():
+                return resolved
+        except OSError:
+            continue
+    try:
+        return (base / imp).resolve()
+    except OSError:
+        return None
+
+
+def _target_for_resolved_path(resolved: Path, root: Path, targets: list[dict]) -> Optional[str]:
+    try:
+        rel = resolved.relative_to(root.resolve())
+    except ValueError:
+        return None
+    rel_s = str(rel).replace("\\", "/")
+    best_id: Optional[str] = None
+    best_len = -1
+    for target in targets:
+        tp = target.get("path", "").rstrip("/")
+        if not tp:
+            continue
+        if rel_s == tp or rel_s.startswith(tp + "/") or tp in rel_s:
+            if len(tp) > best_len:
+                best_id = target.get("id")
+                best_len = len(tp)
+    return best_id
+
+
+def _collect_import_edges(
+    args: argparse.Namespace,
+    root: Path,
+    binary: Path,
+    targets: list[dict],
+) -> list[dict]:
+    import_args = argparse.Namespace(**{
+        **vars(args),
+        "json_out": True,
+        "json_style": "compact",
+        "items": "imports",
+        "view": "names",
+    })
+    edges: dict[tuple[str, str], dict] = {}
+    targets_by_id = {t["id"]: t for t in targets if t.get("id")}
+
+    for target in targets:
+        tid = target.get("id")
+        if not tid:
+            continue
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        if not full.exists():
+            continue
+        code, out = _run_outline(binary, import_args, [str(full)], target)
+        if code != 0:
+            continue
+        for file_entry in parse_compact_json(out):
+            file_path = file_entry.get("path", "")
+            for item in file_entry.get("items", []):
+                if not item.get("isImport"):
+                    continue
+                imp_name = str(item.get("name", "")).strip("\"'")
+                edge_to: Optional[str] = None
+                edge_kind = "external"
+                resolved = _resolve_import_path(imp_name, file_path, root)
+                if resolved:
+                    edge_to = _target_for_resolved_path(resolved, root, targets)
+                    if edge_to and edge_to != tid:
+                        edge_kind = "import"
+                if not edge_to:
+                    for other in targets:
+                        oid = other.get("id")
+                        op = other.get("path", "")
+                        if not oid or oid == tid or not op:
+                            continue
+                        tail = op.rstrip("/").split("/")[-1]
+                        if tail and tail in imp_name:
+                            edge_to = oid
+                            edge_kind = "inferred"
+                            break
+                if not edge_to or edge_to == tid:
+                    continue
+                key = (tid, edge_to)
+                entry = edges.setdefault(key, {
+                    "from": tid,
+                    "to": edge_to,
+                    "kind": edge_kind,
+                    "imports": [],
+                })
+                if imp_name not in entry["imports"]:
+                    entry["imports"].append(imp_name)
+    for target in targets:
+        tid = target.get("id")
+        if not tid:
+            continue
+        for dep_id in target.get("depends_on", []):
+            if dep_id == tid or dep_id not in targets_by_id:
+                continue
+            key = (tid, dep_id)
+            entry = edges.setdefault(key, {
+                "from": tid,
+                "to": dep_id,
+                "kind": "declared",
+                "imports": [],
+            })
+            if "depends_on" not in entry["imports"]:
+                entry["imports"].append("depends_on")
+    return sorted(edges.values(), key=lambda e: (e["from"], e["to"]))
+
+
 def _collect_symbol_index(
     args: argparse.Namespace,
     root: Path,
@@ -676,13 +854,15 @@ def _collect_symbol_index(
         **vars(args),
         "json_out": True,
         "json_style": "compact",
-        "view": getattr(args, "view", None) or "names",
+        "view": getattr(args, "view", None),
         "items": getattr(args, "items", None) or "all",
     })
     report: dict = {
         "version": data.get("version"),
         "repo": str(root),
         "repo_map": str(skill_root() / "repo-map.json"),
+        "built_at": datetime.now(timezone.utc).isoformat(),
+        "target_mtimes": {},
         "targets": [],
         "symbols_by_name": {},
         "total_symbols": 0,
@@ -693,6 +873,7 @@ def _collect_symbol_index(
         tid = target.get("id", rel)
         if not full.exists():
             continue
+        report["target_mtimes"][tid] = _path_mtime(full)
         code, out = _run_outline(binary, map_args, [str(full)], target)
         if code != 0:
             continue
@@ -1084,6 +1265,30 @@ def cmd_zones(args: argparse.Namespace) -> int:
 def cmd_index(args: argparse.Namespace) -> int:
     root = git_root() or Path.cwd()
     binary = require_binary(require_outline=True)
+
+    if getattr(args, "status", False):
+        cache = _outline_index_cache_path()
+        targets = _resolve_repo_targets(args)
+        if not cache.is_file():
+            print("cache: missing (run: index --refresh)")
+            return 0
+        try:
+            cached = json.loads(cache.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            print("cache: corrupt (run: index --refresh)")
+            return 1
+        if cached.get("repo") != str(root):
+            print(f"cache: repo mismatch ({cached.get('repo')} vs {root})")
+            return 1
+        stale = _index_stale_targets(cached, root, targets)
+        print(f"built_at: {cached.get('built_at', '?')}")
+        print(f"symbols: {cached.get('total_symbols', 0)} across {len(cached.get('targets', []))} targets")
+        print(f"cache: {cache}")
+        print(f"stale: {', '.join(stale) if stale else 'none'}")
+        if stale and getattr(args, "fail_on", False):
+            return 1
+        return 0
+
     index = _load_symbol_index(args, root, binary)
     matches = _filter_index_symbols(index, args)
 
@@ -1177,6 +1382,194 @@ def cmd_nav(args: argparse.Namespace) -> int:
                 for line in preview:
                     print(f"   | {line}")
         print()
+    return 0
+
+
+def cmd_anchors(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    index = _load_symbol_index(args, root, binary)
+    targets = _resolve_repo_targets(args)
+    rows: list[dict] = []
+    missing_total = 0
+
+    for target in targets:
+        tid = target.get("id", "?")
+        anchors = target.get("anchors", [])
+        if not anchors:
+            continue
+        symbols = _target_symbols(index, tid)
+        for anchor in anchors:
+            found, matched = _match_anchor(anchor, symbols)
+            if not found:
+                missing_total += 1
+            rows.append({
+                "target": tid,
+                "zone": target.get("zone"),
+                "anchor": anchor,
+                "found": found,
+                "matched": matched,
+            })
+
+    if getattr(args, "json_out", False):
+        json.dump({"anchors": rows, "missing": missing_total}, sys.stdout, indent=2)
+        print()
+        return 1 if missing_total and getattr(args, "fail_on", False) else 0
+
+    if not rows:
+        print("(no anchors defined in matched targets)")
+        return 0
+
+    print(f"anchors: {len(rows)} checked, {missing_total} missing")
+    current = ""
+    for row in rows:
+        header = row["target"]
+        if header != current:
+            current = header
+            print(f"\n[{row.get('zone')}] {header}")
+        mark = "ok" if row["found"] else "MISSING"
+        match = f" -> {row['matched']}" if row["matched"] else ""
+        print(f"  {row['anchor']}: {mark}{match}")
+    if getattr(args, "fail_on", False) and missing_total:
+        return 1
+    return 0
+
+
+def cmd_exports(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    index = _load_symbol_index(args, root, binary)
+    targets = _resolve_repo_targets(args)
+    target_ids = {t.get("id") for t in targets}
+    by_target: dict[str, list[dict]] = {}
+
+    for sym_name, occs in index.get("symbols_by_name", {}).items():
+        for occ in occs:
+            if not occ.get("exported"):
+                continue
+            tid = occ.get("target")
+            if target_ids and tid not in target_ids:
+                continue
+            by_target.setdefault(tid or "?", []).append({"name": sym_name, **occ})
+
+    if getattr(args, "json_out", False):
+        json.dump({"exports": by_target}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    total = sum(len(v) for v in by_target.values())
+    print(f"export surface: {total} symbols across {len(by_target)} targets")
+    for tid in sorted(by_target):
+        items = sorted(by_target[tid], key=lambda x: (x.get("type", ""), x.get("name", "")))
+        zone = items[0].get("zone", "?") if items else "?"
+        print(f"\n[{zone}] {tid} ({len(items)} exports)")
+        for item in items[:80]:
+            print(f"  {item.get('type', '?')}: {item.get('name')}  {item.get('file')}:{item.get('line')}")
+        if len(items) > 80:
+            print(f"  ... {len(items) - 80} more")
+    return 0
+
+
+def cmd_collisions(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    index = _load_symbol_index(args, root, binary)
+    zone_q = (getattr(args, "zone", None) or "").lower()
+    min_targets = max(2, int(getattr(args, "min_targets", 2) or 2))
+    rows: list[dict] = []
+
+    for sym_name, occs in index.get("symbols_by_name", {}).items():
+        filtered = occs
+        if zone_q:
+            filtered = [o for o in occs if (o.get("zone") or "").lower() == zone_q]
+        targets_set = {o.get("target") for o in filtered}
+        zones_set = {o.get("zone") for o in filtered}
+        if len(targets_set) < min_targets:
+            continue
+        rows.append({
+            "name": sym_name,
+            "count": len(filtered),
+            "targets": sorted(targets_set),
+            "zones": sorted(zones_set),
+            "occurrences": filtered,
+        })
+
+    rows.sort(key=lambda r: (-r["count"], r["name"]))
+
+    if getattr(args, "json_out", False):
+        json.dump({"collisions": rows}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"collisions: {len(rows)} symbol names span {min_targets}+ targets")
+    for row in rows[:60]:
+        zones = ",".join(row["zones"])
+        targets = ",".join(row["targets"])
+        print(f"  {row['name']}: {row['count']}x  zones={zones}  targets={targets}")
+    if len(rows) > 60:
+        print(f"  ... {len(rows) - 60} more")
+    return 0
+
+
+def cmd_graph(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    targets = _resolve_repo_targets(args)
+    edges = _collect_import_edges(args, root, binary, targets)
+
+    if getattr(args, "json_out", False):
+        json.dump({"edges": edges}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"import graph: {len(edges)} edges across {len(targets)} targets")
+    for edge in edges:
+        kinds = edge.get("kind", "?")
+        imports = ", ".join(edge.get("imports", [])[:3])
+        more = ""
+        if len(edge.get("imports", [])) > 3:
+            more = f" +{len(edge['imports']) - 3}"
+        print(f"  {edge['from']} -> {edge['to']}  [{kinds}]  {imports}{more}")
+    return 0
+
+
+def cmd_jump(args: argparse.Namespace) -> int:
+    name = getattr(args, "name", None)
+    if not name:
+        err("jump requires --name SYMBOL")
+        return 1
+    root = git_root() or Path.cwd()
+    binary = require_binary(require_outline=True)
+    index = _load_symbol_index(args, root, binary)
+    matches = _filter_index_symbols(index, args)
+    if not matches:
+        print(f"(no symbol matched '{name}')")
+        return 1
+
+    def rank(m: dict) -> tuple:
+        exact = m.get("name", "").lower() == name.lower()
+        exported = bool(m.get("exported"))
+        line = m.get("line") or 99999
+        return (0 if exact else 1, 0 if exported else 1, line)
+
+    matches.sort(key=rank)
+    best = matches[0]
+
+    if getattr(args, "json_out", False):
+        json.dump({"best": best, "candidates": matches[:20]}, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print(f"jump: {best.get('name')} ({best.get('type', '?')})")
+    print(f"  file: {best.get('file')}")
+    print(f"  line: {best.get('line')}")
+    print(f"  target: [{best.get('zone')}] {best.get('target')}")
+    if best.get("exported"):
+        print("  exported: yes")
+    if len(matches) > 1:
+        print(f"\nalternates: {len(matches) - 1}")
+        for alt in matches[1:6]:
+            print(f"  [{alt.get('zone')}] {alt.get('target')}  {alt.get('file')}:{alt.get('line')}")
     return 0
 
 
@@ -1456,6 +1849,20 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
     fix_rules = artifacts["fix_rules"]
     print(f"autofix rules: {len(fix_rules)} ({', '.join(fix_rules) or 'none — use replace --fix for codemods'})")
+
+    cache = _outline_index_cache_path()
+    if cache.is_file():
+        try:
+            cached = json.loads(cache.read_text(encoding="utf-8"))
+            root = git_root() or Path.cwd()
+            stale = _index_stale_targets(cached, root, _load_repo_map().get("targets", []))
+            age = cached.get("built_at", "?")
+            stale_msg = f"stale ({len(stale)} targets)" if stale else "fresh"
+            print(f"index cache: {stale_msg}  built_at={age}")
+        except (OSError, json.JSONDecodeError):
+            print("index cache: corrupt (run: index --refresh)")
+    else:
+        print("index cache: missing (run: index --refresh)")
 
     if getattr(args, "fix", False):
         if issues:
@@ -1862,8 +2269,44 @@ def build_parser() -> argparse.ArgumentParser:
     ix.add_argument("--only", help="Filter repo-map targets.")
     ix.add_argument("--zone", help="Filter by zone.")
     ix.add_argument("--refresh", action="store_true", help="Rebuild .outline-index.json cache.")
+    ix.add_argument("--status", action="store_true", help="Show cache age and stale targets.")
+    ix.add_argument("--fail-on", action="store_true", help="With --status: exit 1 when cache is stale.")
     ix.add_argument("--json-out", action="store_true", help="Emit JSON.")
     ix.set_defaults(func=cmd_index)
+
+    an = sub.add_parser("anchors", help="Validate repo-map anchor symbols against index.")
+    an.add_argument("--only", help="Filter repo-map targets.")
+    an.add_argument("--zone", help="Filter by zone.")
+    an.add_argument("--fail-on", action="store_true", help="Exit 1 when anchors missing.")
+    an.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    an.set_defaults(func=cmd_anchors)
+
+    ex = sub.add_parser("exports", help="Exported symbol surface across repo-map targets.")
+    ex.add_argument("--only", help="Filter repo-map targets.")
+    ex.add_argument("--zone", help="Filter by zone.")
+    ex.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    ex.set_defaults(func=cmd_exports)
+
+    co = sub.add_parser("collisions", help="Symbol names duplicated across multiple targets.")
+    co.add_argument("--only", help="Filter repo-map targets.")
+    co.add_argument("--zone", help="Filter by zone.")
+    co.add_argument("--min-targets", type=int, default=2, help="Minimum targets for a collision (default 2).")
+    co.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    co.set_defaults(func=cmd_collisions)
+
+    gr = sub.add_parser("graph", help="Import/depends_on edges between repo-map targets.")
+    gr.add_argument("--only", help="Filter repo-map targets.")
+    gr.add_argument("--zone", help="Filter by zone.")
+    gr.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    gr.set_defaults(func=cmd_graph)
+
+    jp = sub.add_parser("jump", help="Resolve symbol name to file:line for agent Read.")
+    jp.add_argument("--name", required=True, help="Symbol name (substring match).")
+    jp.add_argument("--type", dest="symbol_type", help="Filter by symbol type.")
+    jp.add_argument("--exports", dest="exports_only", action="store_true", help="Exported symbols only.")
+    jp.add_argument("--zone", help="Filter by zone.")
+    jp.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    jp.set_defaults(func=cmd_jump)
 
     nv = sub.add_parser("nav", help="Guided read order for a repo-map zone.")
     nv.add_argument("--zone", required=True, help="Zone id (sports-terminal, kimi, agents).")
