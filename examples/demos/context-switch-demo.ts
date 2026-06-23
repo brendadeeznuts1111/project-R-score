@@ -99,10 +99,10 @@ preload = ["./test-setup.ts"]
 coverage = true
 `;
     
-    await Bun.write('./ci.bunfig.toml', testBunfig);
+    await Bun.write('./config/ci.bunfig.toml', testBunfig);
     
     const session = await executeBunCLI([
-      '--config', 'ci.bunfig.toml',
+      '--config', 'config/ci.bunfig.toml',
       'run', 'test'
     ], { captureOutput: true });
     
@@ -110,7 +110,7 @@ coverage = true
     
     return {
       context: 'bunfig.toml',
-      oneLiner: 'bun --config ci.bunfig.toml run test',
+      oneLiner: 'bun --config config/ci.bunfig.toml run test',
       result: '[run] Preload',
       duration,
       success: session.status === 'completed',
@@ -124,7 +124,7 @@ coverage = true
   } catch (error) {
     return {
       context: 'bunfig.toml',
-      oneLiner: 'bun --config ci.bunfig.toml run test',
+      oneLiner: 'bun --config config/ci.bunfig.toml run test',
       result: `Error: ${error}`,
       duration: performance.now() - startTime,
       success: false
@@ -414,7 +414,7 @@ async function runContextSwitchDemo(): Promise<void> {
   console.info(c.yellow('\n🧹 Cleaning up demo files...'));
   const cleanupFiles = [
     './utils/.env.test',
-    './ci.bunfig.toml',
+    './config/ci.bunfig.toml',
     './tsconfig.json',
     './utils/bun-spawn-terminal.ts'
   ];

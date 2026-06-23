@@ -23,6 +23,16 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 - Removed: `~/` (815M misplaced bun cache), empty scaffolds (`my-app/`, `playground/`, `work/`), session photo
 - MCP/dx-mcp paths updated; `bet-ticker-worker` skill symlink retargeted
 
+## Phase 4.1b (Jun 2026) — Root polish
+
+- Removed duplicate root `index.html` (canonical: `public/dashboards/dns-status-dashboard.html`)
+- Removed root `index.ts` hello-world stub
+- Deleted recurring `~/` Bun cache dir; pinned `[install.cache]` in `bunfig.toml` to `$HOME/.bun/install/cache`
+- Moved `registry.config.json5`, `ci.bunfig.toml`, `bunfig-registry.toml` → `config/` (root symlinks for legacy lookups)
+- Fixed `scripts/sitemap-refresh.ts` to reference `public/dashboards/` paths
+- `repo-hygiene` flags unexpected root dirs/files and auto-evicts `./~` Bun cache drift
+- `postinstall` + `scripts/evict-root-tilde-cache.ts` prevent recurring `./~` cache dirs
+
 ## Phase 4.2 (committed)
 
 Context bloat reduction, barrel trim, dead code purge (−16k lines).

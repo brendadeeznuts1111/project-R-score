@@ -16,39 +16,66 @@ const PUBLIC_DIR = resolve('public');
 const SITEMAP_INDEX_PATH = resolve(PUBLIC_DIR, 'sitemap.xml');
 const SITEMAP_PAGES_PATH = resolve(PUBLIC_DIR, 'sitemap-pages.xml');
 
+const DASHBOARDS = 'public/dashboards';
+
 const PAGES: SitemapPage[] = [
-  { path: '/', localFile: 'index.html', changefreq: 'daily', priority: '1.0' },
-  { path: '/wiki-index.html', localFile: 'wiki-index.html', changefreq: 'daily', priority: '0.9' },
-  { path: '/app-index.html', localFile: 'app-index.html', changefreq: 'weekly', priority: '0.7' },
-  { path: '/api-index.html', localFile: 'api-index.html', changefreq: 'weekly', priority: '0.7' },
   {
-    path: '/dashboard-index.html',
-    localFile: 'dashboard-index.html',
+    path: '/dashboards/dns-status-dashboard.html',
+    localFile: `${DASHBOARDS}/dns-status-dashboard.html`,
+    changefreq: 'daily',
+    priority: '1.0',
+  },
+  {
+    path: '/dashboards/wiki-index.html',
+    localFile: `${DASHBOARDS}/wiki-index.html`,
+    changefreq: 'daily',
+    priority: '0.9',
+  },
+  {
+    path: '/dashboards/app-index.html',
+    localFile: `${DASHBOARDS}/app-index.html`,
+    changefreq: 'weekly',
+    priority: '0.7',
+  },
+  {
+    path: '/dashboards/api-index.html',
+    localFile: `${DASHBOARDS}/api-index.html`,
+    changefreq: 'weekly',
+    priority: '0.7',
+  },
+  {
+    path: '/dashboards/dashboard-index.html',
+    localFile: `${DASHBOARDS}/dashboard-index.html`,
     changefreq: 'weekly',
     priority: '0.8',
   },
   {
-    path: '/registry-index.html',
-    localFile: 'registry-index.html',
+    path: '/dashboards/registry-index.html',
+    localFile: `${DASHBOARDS}/registry-index.html`,
     changefreq: 'weekly',
     priority: '0.8',
   },
-  { path: '/rss-index.html', localFile: 'rss-index.html', changefreq: 'daily', priority: '0.6' },
   {
-    path: '/admin-index.html',
-    localFile: 'admin-index.html',
+    path: '/dashboards/rss-index.html',
+    localFile: `${DASHBOARDS}/rss-index.html`,
+    changefreq: 'daily',
+    priority: '0.6',
+  },
+  {
+    path: '/dashboards/admin-index.html',
+    localFile: `${DASHBOARDS}/admin-index.html`,
     changefreq: 'weekly',
     priority: '0.5',
   },
   {
-    path: '/storage-index.html',
-    localFile: 'storage-index.html',
+    path: '/dashboards/storage-index.html',
+    localFile: `${DASHBOARDS}/storage-index.html`,
     changefreq: 'weekly',
     priority: '0.5',
   },
   {
-    path: '/staging-index.html',
-    localFile: 'staging-index.html',
+    path: '/dashboards/staging-index.html',
+    localFile: `${DASHBOARDS}/staging-index.html`,
     changefreq: 'weekly',
     priority: '0.4',
   },

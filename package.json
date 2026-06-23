@@ -1578,7 +1578,8 @@
   "status": "active",
   "type": "module",
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky && bun scripts/evict-root-tilde-cache.ts",
+    "postinstall": "bun scripts/evict-root-tilde-cache.ts",
     "precommit": ".husky/pre-commit",
     "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts --full",
     "precommit:ast-grep:staged": "bun scripts/pre-commit-ast-grep.ts --staged",

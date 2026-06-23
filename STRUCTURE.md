@@ -12,7 +12,10 @@ Projects/
 ├── archive/                 # Old/parked experiments (factory-wager v38, freshcuts, omega, etc.)
 ├── artifacts/               # Releases, snapshots, alerts
 ├── assets/                  # Logos, charts, static images
-├── config/                  # Centralized config (ports.ts, r2-env.ts)
+├── config/                  # Centralized config (ports.ts, r2-env.ts, registry, ci bunfig)
+│   ├── registry.config.json5
+│   ├── ci.bunfig.toml
+│   └── bunfig-registry.toml
 ├── dashboard/               # Dashboard servers & UIs (MCP overview, p2p, profile)
 ├── data/                    # Exports, health checks, search results
 ├── database/                # SQLite telemetry, sessions, unified DBs
@@ -45,6 +48,8 @@ Projects/
 ├── package.json             # Root workspace (122 deps, <1s install)
 ├── tsconfig*.json           # TypeScript configs (base, lint, ci, check)
 ├── wrangler.toml            # Cloudflare Workers config
+├── registry.config.json5    # → config/registry.config.json5 (symlink)
+├── ci.bunfig.toml           # → config/ci.bunfig.toml (symlink)
 ├── ROOT_CLEANUP_SUMMARY.md  # Cleanup history
 ├── STRUCTURE.md             # This file
 └── README.md                # Entrypoint

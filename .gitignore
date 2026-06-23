@@ -308,6 +308,8 @@ projects/archive/lazycodex/
 .kimi/
 herdr-worktrees/
 /~/
+/index.html
+/index.ts
 scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx

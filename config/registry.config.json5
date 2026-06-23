@@ -1,0 +1,36 @@
+// FactoryWager registry baseline (permanent repo config)
+{
+  name: "FactoryWager Private Registry",
+  url: "https://registry.factory-wager.com",
+  storage: {
+    type: "r2",
+    bucket: "npm-registry",
+    prefix: "packages/",
+  },
+  cdn: {
+    enabled: true,
+    url: "https://registry.factory-wager.com",
+    signedUrls: false,
+    expirySeconds: 3600,
+  },
+  auth: {
+    type: "jwt",
+    tokenExpiry: "7d",
+  },
+  packages: [
+    {
+      pattern: "@factory-wager/*",
+      access: "authenticated",
+      publish: ["admin", "developer"],
+    },
+    {
+      pattern: "@factorywager/*",
+      access: "authenticated",
+      publish: ["admin", "developer"],
+    },
+    {
+      pattern: "*",
+      access: "all",
+    },
+  ],
+}

@@ -11,6 +11,9 @@ linker = "isolated"
 # First install materializes to ~/.bun/install/cache; subsequent
 # installs across all 6 projects share the same cache via symlinks.
 # Set BUN_INSTALL_GLOBAL_STORE=1 in CI as a belt-and-suspenders.
+# IMPORTANT: export BUN_INSTALL_CACHE_DIR="$HOME/.bun/install/cache" before
+# `bun install` — workspace bunfigs use `~/.bun/...` and Bun may create a
+# literal `./~/` dir at repo root when tilde is not expanded.
 globalStore = true
 
 # Pin exact versions — no ^/~ drift.  Inherited from .bunfig.toml.
