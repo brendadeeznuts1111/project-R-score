@@ -7,6 +7,7 @@
     "doctor": "bun scripts/bun-cli.ts doctor",
     "test": "bun scripts/bun-cli.ts test",
     "audit": "bun scripts/bun-cli.ts audit",
+    "audit:parallel": "bun scripts/bun-cli.ts audit --parallel --workers 4",
     "baseline": "./scripts/baseline.sh",
     "ci": "./scripts/ci.sh",
     "codemods": "bun scripts/bun-cli.ts codemods",

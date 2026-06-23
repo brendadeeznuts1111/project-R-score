@@ -21,7 +21,7 @@ python3 "$HELPER" -q bun migrate --only "$ONLY" --fail-on || {
 }
 
 echo ""
-echo "== ast-grep audit (profile=bun-hygiene, only=$ONLY) =="
-python3 "$HELPER" -q audit --profile bun-hygiene --only "$ONLY" --fail-on
+echo "== ast-grep audit (profile=bun-hygiene, only=$ONLY, parallel) =="
+python3 "$HELPER" -q audit --profile bun-hygiene --only "$ONLY" --parallel --workers "${AST_GREP_WORKERS:-4}" --fail-on
 
 echo "bun-ci OK"

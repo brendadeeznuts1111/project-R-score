@@ -85,12 +85,13 @@ python3 $AG bun score --zone sports-terminal     # adoption grade A–F per targ
 python3 $AG bun migrate --zone sports-terminal   # anti-pattern files + migrate_to
 python3 $AG bun report --zone sports-terminal    # scores + groups + top APIs
 python3 $AG bun matrix --zone sports-terminal
-./scripts/bun-ci.sh                              # score + migrate + audit --profile bun
+./scripts/bun-ci.sh                              # score + migrate + parallel audit
+./scripts/ci.sh                                # auto --parallel when bun is on PATH
 ```
 
 **Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`, `security`, `doctor-utils`
 
-**Security roadmap** (`bun roadmap`): high-impact APIs are **cataloged** (searchable via ast-grep) but **not yet integrated** into doctor/scan workers. Only `Bun.stripANSI` / `Bun.wrapAnsi` were missing from the catalog (added in v5).
+**Security roadmap** (`bun roadmap`): most APIs are cataloged; **`Worker` is integrated** via `audit --parallel` (Bun Worker pool in `scripts/audit-pool.ts`). Transpiler/HTMLRewriter/WebView/Redis remain catalog-only.
 
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 

@@ -756,8 +756,8 @@
       "docs_path": "/runtime/workers",
       "security": {
         "priority": "high",
-        "use_case": "Parallelize domain scans",
-        "integration": "catalog"
+        "use_case": "Parallel repo-map audit via Worker pool",
+        "integration": "integrated"
       }
     },
     {
@@ -1736,8 +1736,8 @@
         "pattern": "worker",
         "api": "Worker",
         "priority": "high",
-        "use_case": "Parallelize domain scans",
-        "integration": "catalog"
+        "use_case": "Parallelize domain scans (audit --parallel)",
+        "integration": "integrated"
       },
       {
         "pattern": "html-rewriter",

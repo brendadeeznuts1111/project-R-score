@@ -119,6 +119,13 @@ echo ""
 echo "== audit (kimi only) =="
 python3 "$HELPER" -q audit --only kimi 2>&1 | head -25
 echo ""
+echo "== audit parallel (kimi, if bun) =="
+if command -v bun >/dev/null 2>&1; then
+  python3 "$HELPER" -q audit --parallel --only kimi --profile ci --workers 2 2>&1 | head -20
+else
+  echo "(skip — bun not on PATH)"
+fi
+echo ""
 echo "== audit profile ci (verbose sample) =="
 python3 "$HELPER" -q audit --profile ci --only kimi-mcp -v 2>&1 | head -12
 echo ""

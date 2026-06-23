@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.12.0';
+const SERVER_VERSION = '0.13.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -300,14 +300,17 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_audit',
-    description: 'Scan repo-map targets; summarize by rule. profile=ci|autofix|strict, verbose=file breakdown.',
+    description: 'Scan repo-map targets; summarize by rule. parallel=true uses Bun Worker pool (one scan per target).',
     inputSchema: {
       type: 'object' as const,
       properties: {
         only: { type: 'string', description: 'Filter targets by id/name substring' },
+        zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
         rule: { type: 'string', description: 'Single rule instead of full sgconfig' },
         profile: { type: 'string', description: 'scan-profiles.json key (ci, autofix, strict)' },
         verbose: { type: 'boolean', description: 'Per-file violation breakdown' },
+        parallel: { type: 'boolean', description: 'Scan targets in parallel via Bun Workers' },
+        workers: { type: 'number', description: 'Worker count for parallel audit' },
         format: { type: 'string', enum: ['github', 'sarif'], description: 'CI annotation format' },
         failOn: { type: 'boolean', description: 'Return error when violations found' },
         globs: { type: 'array', items: { type: 'string' } },
@@ -684,9 +687,12 @@ async function cmdRules(): Promise<ToolCallResult> {
 async function cmdAudit(args: Record<string, unknown>): Promise<ToolCallResult> {
   const extra: string[] = [];
   if (args.only) extra.push('--only', String(args.only));
+  if (args.zone) extra.push('--zone', String(args.zone));
   if (args.rule) extra.push('--rule', String(args.rule));
   if (args.profile) extra.push('--profile', String(args.profile));
   if (args.verbose === true) extra.push('--verbose');
+  if (args.parallel === true) extra.push('--parallel');
+  if (args.workers != null) extra.push('--workers', String(args.workers));
   if (args.format) extra.push('--format', String(args.format));
   if (args.failOn === true) extra.push('--fail-on');
   for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));

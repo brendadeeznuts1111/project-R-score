@@ -15,6 +15,11 @@ python3 "$HELPER" -q test
 
 echo ""
 echo "== ast-grep audit (profile=$PROFILE, only=$ONLY) =="
-python3 "$HELPER" -q audit --profile "$PROFILE" --only "$ONLY" --fail-on
+AUDIT_EXTRA=()
+if command -v bun >/dev/null 2>&1; then
+  AUDIT_EXTRA=(--parallel --workers "${AST_GREP_WORKERS:-4}")
+  echo "(parallel workers=${AST_GREP_WORKERS:-4})"
+fi
+python3 "$HELPER" -q audit --profile "$PROFILE" --only "$ONLY" --fail-on "${AUDIT_EXTRA[@]}"
 
 echo "ci OK"

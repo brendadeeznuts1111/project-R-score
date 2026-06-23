@@ -89,7 +89,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.14.0"
+VERSION = "0.15.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -2687,6 +2687,132 @@ def cmd_rules(args: argparse.Namespace) -> int:
     return 0
 
 
+def _audit_pool_script() -> Path:
+    return skill_root() / "scripts" / "audit-pool.ts"
+
+
+def _run_audit_pool(
+    args: argparse.Namespace,
+    targets: list[dict],
+    root: Path,
+    binary: Path,
+    config_path: Optional[str],
+) -> Optional[list[dict]]:
+    pool_script = _audit_pool_script()
+    if not pool_script.is_file():
+        err("audit-pool.ts missing — cannot use --parallel")
+        return None
+    if not shutil.which("bun"):
+        err("bun required for --parallel audit (Worker pool)")
+        return None
+
+    workers = int(getattr(args, "workers", None) or os.cpu_count() or 4)
+    cmd = [
+        "bun",
+        str(pool_script),
+        "--repo",
+        str(root),
+        "--binary",
+        str(binary),
+        "--workers",
+        str(max(1, workers)),
+    ]
+    if config_path:
+        cmd.extend(["--config", config_path])
+    if getattr(args, "rule", None):
+        cmd.extend(["--rule", str(args.rule)])
+    if getattr(args, "profile", None):
+        cmd.extend(["--profile", str(args.profile)])
+    only = getattr(args, "only", None) or ""
+    zone = getattr(args, "zone", None) or ""
+    if only:
+        cmd.extend(["--only", only])
+    if zone:
+        cmd.extend(["--zone", zone])
+    for g in getattr(args, "globs", None) or []:
+        cmd.extend(["--globs", g])
+
+    trace(f"audit pool: {' '.join(cmd)}")
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        err(f"parallel audit timed out after {DEFAULT_TIMEOUT_S}s")
+        return None
+    if proc.returncode != 0:
+        err(proc.stderr.strip() or proc.stdout.strip() or "audit-pool failed")
+        return None
+    try:
+        payload = json.loads(proc.stdout.strip())
+    except json.JSONDecodeError:
+        err("audit-pool returned invalid JSON")
+        return None
+    rows = payload.get("targets", [])
+    trace(
+        f"audit pool done: {len(rows)} targets in {payload.get('elapsed_ms', '?')}ms"
+        f" ({payload.get('workers', '?')} workers)"
+    )
+    return rows
+
+
+def _audit_render_target(
+    tid: str,
+    rel: str,
+    matches: list[dict],
+    *,
+    verbose: bool,
+    skipped: bool = False,
+    scan_error: Optional[str] = None,
+    worker_ms: Optional[int] = None,
+) -> tuple[dict, int]:
+    if skipped:
+        print(f"## {tid}  SKIP (missing {rel})")
+        print()
+        return {"id": tid, "path": rel, "total": 0, "skipped": True}, 0
+    if scan_error:
+        print(f"## {tid}  ERROR ({scan_error})")
+        print()
+        return {"id": tid, "path": rel, "total": 0, "error": scan_error}, 0
+
+    by_rule, by_file = _summarize_matches(matches)
+    target_total = len(matches)
+    target_report: dict = {
+        "id": tid,
+        "path": rel,
+        "total": target_total,
+        "by_rule": {
+            rid: {"count": info["count"], "severity": info["severity"]}
+            for rid, info in by_rule.items()
+        },
+        "top_files": [],
+    }
+    if worker_ms is not None:
+        target_report["worker_ms"] = worker_ms
+
+    suffix = f"  {worker_ms}ms" if worker_ms is not None else ""
+    print(f"## {tid}  ({rel})  {target_total} finding(s){suffix}")
+    if not by_rule:
+        print("   (clean)")
+    else:
+        for rid, info in sorted(by_rule.items()):
+            print(f"   {rid}: {info['count']} [{info['severity']}]")
+            if verbose:
+                ranked = sorted(info["files"].items(), key=lambda kv: -kv[1])[:8]
+                for file_path, count in ranked:
+                    print(f"      {file_path}: {count}")
+    if verbose and by_file:
+        print("   top files:")
+        for file_path, info in sorted(by_file.items(), key=lambda kv: -kv[1]["count"])[:8]:
+            rules = ", ".join(sorted(info["rules"]))
+            print(f"      {file_path}: {info['count']} ({rules})")
+            target_report["top_files"].append({
+                "file": file_path,
+                "count": info["count"],
+                "rules": sorted(info["rules"]),
+            })
+    print()
+    return target_report, target_total
+
+
 def _audit_scan_args(args: argparse.Namespace, config_path: Optional[str], profile: Optional[dict]) -> list[str]:
     fmt = getattr(args, "format", None)
     if fmt in ("github", "sarif"):
@@ -2737,6 +2863,14 @@ def cmd_audit(args: argparse.Namespace) -> int:
     }
     total_violations = 0
 
+    parallel = bool(getattr(args, "parallel", False))
+    if parallel and not shutil.which("bun"):
+        trace("bun not found — falling back to sequential audit")
+        parallel = False
+    if parallel and fmt in ("github", "sarif"):
+        err("--parallel does not support --format github|sarif yet")
+        return 1
+
     if fmt not in ("github", "sarif"):
         print(f"repo: {root}")
         print(f"targets: {len(targets)}")
@@ -2744,12 +2878,49 @@ def cmd_audit(args: argparse.Namespace) -> int:
             print(f"config: {config_path}")
         if profile_name:
             print(f"profile: {profile_name} — {profile.get('description', '')}")
+        if parallel:
+            workers = int(getattr(args, "workers", None) or os.cpu_count() or 4)
+            print(f"parallel: {max(1, workers)} workers (Bun Worker pool)")
         print()
+
+    pool_rows: Optional[list[dict]] = None
+    if parallel:
+        pool_rows = _run_audit_pool(args, targets, root, binary, config_path)
+        if pool_rows is None:
+            return 1
+        pool_by_id = {row.get("id"): row for row in pool_rows}
 
     for target in targets:
         rel = target.get("path", ".")
         full = (root / rel).resolve()
         tid = target.get("id", rel)
+
+        if parallel:
+            row = pool_by_id.get(tid, {})
+            if row.get("skipped"):
+                target_report, target_total = _audit_render_target(
+                    tid, rel, [], skipped=True,
+                )
+                report["targets"].append(target_report)
+                continue
+            if row.get("scan_error"):
+                target_report, target_total = _audit_render_target(
+                    tid, rel, [], scan_error=row.get("scan_error"),
+                )
+                report["targets"].append(target_report)
+                continue
+            matches = _filter_matches_by_profile(
+                parse_compact_json(row.get("stdout", "")), profile,
+            )
+            target_report, target_total = _audit_render_target(
+                tid, rel, matches,
+                verbose=verbose,
+                worker_ms=row.get("worker_ms"),
+            )
+            total_violations += target_total
+            report["targets"].append(target_report)
+            continue
+
         if not full.exists():
             if fmt not in ("github", "sarif"):
                 print(f"## {tid}  SKIP (missing {rel})")
@@ -2780,43 +2951,11 @@ def cmd_audit(args: argparse.Namespace) -> int:
             continue
 
         matches = _filter_matches_by_profile(parse_compact_json(proc.stdout), profile)
-        by_rule, by_file = _summarize_matches(matches)
-        target_total = len(matches)
+        target_report, target_total = _audit_render_target(
+            tid, rel, matches, verbose=verbose,
+        )
         total_violations += target_total
-
-        target_report = {
-            "id": tid,
-            "path": rel,
-            "total": target_total,
-            "by_rule": {
-                rid: {"count": info["count"], "severity": info["severity"]}
-                for rid, info in by_rule.items()
-            },
-            "top_files": [],
-        }
-
-        print(f"## {tid}  ({rel})  {target_total} finding(s)")
-        if not by_rule:
-            print("   (clean)")
-        else:
-            for rid, info in sorted(by_rule.items()):
-                print(f"   {rid}: {info['count']} [{info['severity']}]")
-                if verbose:
-                    ranked = sorted(info["files"].items(), key=lambda kv: -kv[1])[:8]
-                    for file_path, count in ranked:
-                        print(f"      {file_path}: {count}")
-        if verbose and by_file:
-            print("   top files:")
-            for file_path, info in sorted(by_file.items(), key=lambda kv: -kv[1]["count"])[:8]:
-                rules = ", ".join(sorted(info["rules"]))
-                print(f"      {file_path}: {info['count']} ({rules})")
-                target_report["top_files"].append({
-                    "file": file_path,
-                    "count": info["count"],
-                    "rules": sorted(info["rules"]),
-                })
         report["targets"].append(target_report)
-        print()
 
     if fmt in ("github", "sarif"):
         if getattr(args, "fail_on", False) and total_violations > 0:
@@ -3119,6 +3258,8 @@ def build_parser() -> argparse.ArgumentParser:
     au.add_argument("--profile", help="Filter rules via scan-profiles.json (ci, autofix, strict).")
     au.add_argument("--verbose", "-v", action="store_true", help="Per-file violation breakdown.")
     au.add_argument("--format", choices=["github", "sarif"], help="CI output format (ignores summary table).")
+    au.add_argument("--parallel", action="store_true", help="Scan targets in parallel via Bun Workers (requires bun).")
+    au.add_argument("--workers", type=int, default=0, help="Worker count for --parallel (default: CPU count).")
     au.set_defaults(func=cmd_audit)
 
     cm = sub.add_parser("codemods", help="List named codemods from codemods.json.")

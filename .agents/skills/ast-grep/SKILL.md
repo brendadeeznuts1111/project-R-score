@@ -126,6 +126,7 @@ python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml 
 python3 $AG rules
 python3 $AG audit --only kimi
 python3 $AG audit --profile ci --only kimi --fail-on   # CI gate
+python3 $AG audit --parallel --zone sports-terminal    # Bun Worker pool (needs bun)
 python3 $AG audit --verbose --only kimi-mcp            # per-file breakdown
 
 # Named codemods (codemods.json)
