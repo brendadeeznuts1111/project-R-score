@@ -81,6 +81,21 @@ python3 $AG audit --fail-on          # non-zero exit for CI gates
 
 Rule tests live in `tests/` — run `python3 $AG test` before changing YAML rules.
 
+## Scan profiles (`scan-profiles.json`)
+
+| Profile | Rules | Use |
+|---|---|---|
+| `ci` | no-as-any, no-double-cast, empty-catch | CI gate (`./scripts/ci.sh`) |
+| `autofix` | no-as-any, no-double-cast | Safe mechanical fixes |
+| `strict` | all rules | Full lint inventory |
+
+## Named codemods (`codemods.json`)
+
+```bash
+python3 $AG codemod strip-as-any --only kimi-mcp        # preview 6 fixes in tools.ts
+python3 $AG fix --only kimi-mcp --rule no-as-any.yml    # YAML autofix equivalent
+```
+
 ## Agent workflow for unfamiliar zones
 
 1. `python3 $AG map --only <zone>` — symbol names without reading every file

@@ -1,0 +1,7 @@
+id: hardcoded-fetch-url
+valid:
+  - "const url = process.env.API_URL; fetch(url)"
+  - "fetch(endpoint)"
+invalid:
+  - "fetch('https://api.example.com/v1/data')"
+  - "await fetch(\"https://moonshot.cn/v1/chat/completions\")"

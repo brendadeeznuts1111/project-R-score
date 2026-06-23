@@ -43,6 +43,15 @@ echo ""
 echo "== audit (kimi only) =="
 python3 "$HELPER" -q audit --only kimi 2>&1 | head -25
 echo ""
+echo "== audit profile ci (verbose sample) =="
+python3 "$HELPER" -q audit --profile ci --only kimi-mcp -v 2>&1 | head -12
+echo ""
+echo "== codemods =="
+python3 "$HELPER" -q codemods
+echo ""
+echo "== codemod dry-run =="
+python3 "$HELPER" -q codemod strip-as-any --only kimi-mcp 2>&1 | head -8
+echo ""
 echo "== rule tests =="
 python3 "$HELPER" -q test
 if command -v bun >/dev/null 2>&1; then

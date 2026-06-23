@@ -6,8 +6,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO="$(cd "$ROOT/../../.." && pwd)"
 HELPER="$ROOT/scripts/ast_grep_helper.py"
 ONLY="${1:-}"
+FAIL_ON="${2:-}"
 
 cd "$REPO"
+
+fail_args=()
+if [[ "$FAIL_ON" == "--fail-on" || "$FAIL_ON" == "fail" ]]; then
+  fail_args=(--fail-on)
+fi
 
 echo "== rule tests =="
 python3 "$HELPER" -q test
@@ -19,10 +25,10 @@ python3 "$HELPER" rules
 echo ""
 if [[ -n "$ONLY" ]]; then
   echo "== audit (--only $ONLY) =="
-  python3 "$HELPER" -q audit --only "$ONLY"
+  python3 "$HELPER" -q audit --only "$ONLY" "${fail_args[@]}"
 else
   echo "== audit (all repo-map targets) =="
-  python3 "$HELPER" -q audit
+  python3 "$HELPER" -q audit "${fail_args[@]}"
 fi
 
 echo "baseline OK"

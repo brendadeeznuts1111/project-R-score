@@ -23,6 +23,8 @@ USAGE
     ast_grep_helper.py fix [PATH...]        # apply bundled autofix rules (rules with fix: field)
     ast_grep_helper.py audit [--only SUBSTR]  # scan repo-map targets, summarize violations
     ast_grep_helper.py rules                # list bundled rules and autofix status
+    ast_grep_helper.py codemods             # list named codemods from codemods.json
+    ast_grep_helper.py codemod ID [--fix]   # run a named codemod (dry-run by default)
     ast_grep_helper.py test [-U]            # run rule snapshot tests (tests/)
     ast_grep_helper.py install              # delegate to ../install.sh / install.ps1
     ast_grep_helper.py outline [PATH...] [--view VIEW] [--items ITEMS] [--match REGEX]
@@ -68,7 +70,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -121,6 +123,8 @@ LANG_ALIASES: dict[str, str] = {
 
 # Default search timeout (5 min). ast-grep calls can be slow on huge repos.
 DEFAULT_TIMEOUT_S = 300
+
+SEVERITY_RANK: dict[str, int] = {"hint": 0, "warning": 1, "error": 2}
 
 
 # ---------- logging ----------
@@ -519,12 +523,111 @@ def _skill_artifacts() -> dict[str, object]:
     return {
         "sgconfig": (root / "sgconfig.yml").is_file(),
         "repo_map": (root / "repo-map.json").is_file(),
+        "scan_profiles": (root / "scan-profiles.json").is_file(),
+        "codemods": (root / "codemods.json").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
         "skill_pin": (root / "node_modules" / ".bin" / "ast-grep").is_file(),
         "rules": [r.name for r in rules],
         "fix_rules": fix_rules,
     }
+
+
+def _load_repo_map() -> dict:
+    manifest = skill_root() / "repo-map.json"
+    if not manifest.is_file():
+        return {"targets": []}
+    return json.loads(manifest.read_text(encoding="utf-8"))
+
+
+def _filter_repo_targets(targets: list[dict], only: str) -> list[dict]:
+    needle = only.lower()
+    return [
+        t for t in targets
+        if needle in t.get("id", "").lower() or needle in t.get("name", "").lower()
+    ]
+
+
+def _load_scan_profile(name: Optional[str]) -> Optional[dict]:
+    if not name:
+        return None
+    path = skill_root() / "scan-profiles.json"
+    if not path.is_file():
+        err(f"scan profiles not found: {path}")
+        return None
+    data = json.loads(path.read_text(encoding="utf-8"))
+    profiles = data.get("profiles", {})
+    if name not in profiles:
+        err(f"unknown scan profile '{name}' — choose: {', '.join(sorted(profiles))}")
+        return None
+    return profiles[name]
+
+
+def _filter_matches_by_profile(matches: list[dict], profile: Optional[dict]) -> list[dict]:
+    if not profile:
+        return matches
+    allowed = profile.get("rules")
+    min_sev = profile.get("min_severity")
+    min_rank = SEVERITY_RANK.get(min_sev, -1) if min_sev else -1
+    kept: list[dict] = []
+    for m in matches:
+        rid = m.get("ruleId", "?")
+        if allowed and rid not in allowed:
+            continue
+        sev = str(m.get("severity", "hint"))
+        if min_rank >= 0 and SEVERITY_RANK.get(sev, 0) < min_rank:
+            continue
+        kept.append(m)
+    return kept
+
+
+def _expand_repo_map_only(args: argparse.Namespace, root: Path) -> None:
+    """When --only is set and no explicit --path, expand paths from repo-map targets."""
+    only = getattr(args, "only", None)
+    if not only:
+        return
+    explicit = _search_paths(args)
+    if explicit and explicit != ["."]:
+        return
+    targets = _filter_repo_targets(_load_repo_map().get("targets", []), only)
+    paths: list[str] = []
+    globs: list[str] = list(getattr(args, "globs", None) or [])
+    for target in targets:
+        rel = target.get("path", ".")
+        full = (root / rel).resolve()
+        if full.exists():
+            paths.append(str(full))
+        for g in target.get("globs", []):
+            if g not in globs:
+                globs.append(g)
+    if paths:
+        args.path = paths
+        args.paths = []
+        args.globs = globs
+
+
+def _load_codemods() -> list[dict]:
+    path = skill_root() / "codemods.json"
+    if not path.is_file():
+        return []
+    return json.loads(path.read_text(encoding="utf-8")).get("codemods", [])
+
+
+def _summarize_matches(matches: list[dict]) -> tuple[dict[str, dict], dict[str, dict]]:
+    by_rule: dict[str, dict] = {}
+    by_file: dict[str, dict] = {}
+    for m in matches:
+        rid = m.get("ruleId", "?")
+        file_path = m.get("file", "?")
+        sev = m.get("severity", "?")
+        line = m.get("range", {}).get("start", {}).get("line", "?")
+        rule_entry = by_rule.setdefault(rid, {"count": 0, "severity": sev, "files": {}})
+        rule_entry["count"] += 1
+        rule_entry["files"][file_path] = rule_entry["files"].get(file_path, 0) + 1
+        file_entry = by_file.setdefault(file_path, {"count": 0, "rules": set()})
+        file_entry["count"] += 1
+        file_entry["rules"].add(rid)
+    return by_rule, by_file
 
 
 def cmd_outline(args: argparse.Namespace) -> int:
@@ -882,6 +985,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     print(f"sgconfig.yml: {'ok' if artifacts['sgconfig'] else 'missing'}")
     print(f"repo-map.json: {'ok' if artifacts['repo_map'] else 'missing'}")
+    print(f"scan-profiles.json: {'ok' if artifacts['scan_profiles'] else 'missing'}")
+    print(f"codemods.json: {'ok' if artifacts['codemods'] else 'missing'}")
     print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
     print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
     print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
@@ -921,6 +1026,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
 def cmd_fix(args: argparse.Namespace) -> int:
     """Apply autofixes from rules that define `fix:` (currently no-as-any)."""
+    root = git_root() or Path.cwd()
+    _expand_repo_map_only(args, root)
     if getattr(args, "dry_run", False):
         args.apply = False
         args.fix = False
@@ -970,55 +1077,73 @@ def cmd_rules(args: argparse.Namespace) -> int:
     return 0
 
 
+def _audit_scan_args(args: argparse.Namespace, config_path: Optional[str], profile: Optional[dict]) -> list[str]:
+    fmt = getattr(args, "format", None)
+    if fmt in ("github", "sarif"):
+        sg_args = ["scan", "--color", "never", f"--format={fmt}"]
+    else:
+        sg_args = ["scan", "--json=compact", "--include-metadata", "--color", "never"]
+    if getattr(args, "rule", None):
+        rule = Path(args.rule)
+        if not rule.is_file():
+            candidate = skill_root() / "rules" / args.rule
+            if candidate.is_file():
+                rule = candidate
+        sg_args.extend(["-r", str(rule)])
+    elif config_path:
+        sg_args.extend(["-c", config_path])
+    if profile and profile.get("rules"):
+        sg_args.extend(["--filter", "|".join(profile["rules"])])
+    return sg_args
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
-    manifest = skill_root() / "repo-map.json"
-    if not manifest.is_file():
-        err(f"repo map not found: {manifest}")
-        return 1
-    data = json.loads(manifest.read_text(encoding="utf-8"))
+    data = _load_repo_map()
     root = git_root() or Path.cwd()
-    only = (getattr(args, "only", None) or "").lower()
-    targets = data.get("targets", [])
-    if only:
-        targets = [
-            t for t in targets
-            if only in t.get("id", "").lower() or only in t.get("name", "").lower()
-        ]
+    only = getattr(args, "only", None) or ""
+    targets = _filter_repo_targets(data.get("targets", []), only) if only else data.get("targets", [])
     if not targets:
         err("no map targets matched filter")
+        return 1
+
+    profile_name = getattr(args, "profile", None)
+    profile = _load_scan_profile(profile_name) if profile_name else None
+    if profile_name and profile is None:
         return 1
 
     binary = require_binary()
     config = getattr(args, "config", None) or default_sgconfig()
     config_path = str(config) if config else None
-    summary: list[dict] = []
+    fmt = getattr(args, "format", None)
+    verbose = bool(getattr(args, "verbose", False))
+    report: dict = {
+        "repo": str(root),
+        "profile": profile_name,
+        "total": 0,
+        "targets": [],
+    }
     total_violations = 0
 
-    print(f"repo: {root}")
-    print(f"targets: {len(targets)}")
-    if config_path:
-        print(f"config: {config_path}")
-    print()
+    if fmt not in ("github", "sarif"):
+        print(f"repo: {root}")
+        print(f"targets: {len(targets)}")
+        if config_path:
+            print(f"config: {config_path}")
+        if profile_name:
+            print(f"profile: {profile_name} — {profile.get('description', '')}")
+        print()
 
     for target in targets:
         rel = target.get("path", ".")
         full = (root / rel).resolve()
         tid = target.get("id", rel)
         if not full.exists():
-            print(f"## {tid}  SKIP (missing {rel})")
-            print()
+            if fmt not in ("github", "sarif"):
+                print(f"## {tid}  SKIP (missing {rel})")
+                print()
             continue
 
-        sg_args = ["scan", "--json=compact", "--include-metadata", "--color", "never"]
-        if getattr(args, "rule", None):
-            rule = Path(args.rule)
-            if not rule.is_file():
-                candidate = skill_root() / "rules" / args.rule
-                if candidate.is_file():
-                    rule = candidate
-            sg_args.extend(["-r", str(rule)])
-        elif config_path:
-            sg_args.extend(["-c", config_path])
+        sg_args = _audit_scan_args(args, config_path, profile)
         for g in target.get("globs", []):
             sg_args.extend(["--globs", g])
         for g in getattr(args, "globs", None) or []:
@@ -1028,42 +1153,112 @@ def cmd_audit(args: argparse.Namespace) -> int:
         proc = run_sg(binary, sg_args)
         if proc.returncode not in (0, 1):
             sys.stderr.write(proc.stderr or "")
-            print(f"## {tid}  ERROR (scan failed)")
-            print()
+            if fmt not in ("github", "sarif"):
+                print(f"## {tid}  ERROR (scan failed)")
+                print()
             continue
 
-        matches = parse_compact_json(proc.stdout)
-        by_rule: dict[str, dict] = {}
-        for m in matches:
-            rid = m.get("ruleId", "?")
-            entry = by_rule.setdefault(rid, {"count": 0, "severity": m.get("severity", "?")})
-            entry["count"] += 1
+        if fmt in ("github", "sarif"):
+            out = (proc.stdout or "").strip()
+            if out:
+                print(out)
+            if proc.returncode == 1:
+                total_violations += 1
+            continue
 
+        matches = _filter_matches_by_profile(parse_compact_json(proc.stdout), profile)
+        by_rule, by_file = _summarize_matches(matches)
         target_total = len(matches)
         total_violations += target_total
+
+        target_report = {
+            "id": tid,
+            "path": rel,
+            "total": target_total,
+            "by_rule": {
+                rid: {"count": info["count"], "severity": info["severity"]}
+                for rid, info in by_rule.items()
+            },
+            "top_files": [],
+        }
+
         print(f"## {tid}  ({rel})  {target_total} finding(s)")
         if not by_rule:
             print("   (clean)")
         else:
             for rid, info in sorted(by_rule.items()):
                 print(f"   {rid}: {info['count']} [{info['severity']}]")
-                summary.append({
-                    "target": tid,
-                    "path": rel,
-                    "rule": rid,
+                if verbose:
+                    ranked = sorted(info["files"].items(), key=lambda kv: -kv[1])[:8]
+                    for file_path, count in ranked:
+                        print(f"      {file_path}: {count}")
+        if verbose and by_file:
+            print("   top files:")
+            for file_path, info in sorted(by_file.items(), key=lambda kv: -kv[1]["count"])[:8]:
+                rules = ", ".join(sorted(info["rules"]))
+                print(f"      {file_path}: {info['count']} ({rules})")
+                target_report["top_files"].append({
+                    "file": file_path,
                     "count": info["count"],
-                    "severity": info["severity"],
+                    "rules": sorted(info["rules"]),
                 })
+        report["targets"].append(target_report)
         print()
 
+    if fmt in ("github", "sarif"):
+        if getattr(args, "fail_on", False) and total_violations > 0:
+            return 1
+        return 0
+
     print(f"total: {total_violations} finding(s) across {len(targets)} target(s)")
+    report["total"] = total_violations
     if getattr(args, "json_out", False):
-        json.dump({"total": total_violations, "findings": summary}, sys.stdout, indent=2)
+        json.dump(report, sys.stdout, indent=2)
         print()
 
     if getattr(args, "fail_on", False) and total_violations > 0:
         return 1
     return 0
+
+
+def cmd_codemods(args: argparse.Namespace) -> int:
+    rows = _load_codemods()
+    if getattr(args, "json_out", False):
+        json.dump(rows, sys.stdout, indent=2)
+        print()
+        return 0
+    if not rows:
+        err("no codemods in codemods.json")
+        return 1
+    print(f"codemods: {len(rows)}")
+    for row in rows:
+        lang = row.get("lang") or "any"
+        print(f"  {row['id']}  [{lang}]  {row.get('description', '')}")
+    return 0
+
+
+def cmd_codemod(args: argparse.Namespace) -> int:
+    rows = _load_codemods()
+    mod = next((c for c in rows if c.get("id") == args.name), None)
+    if not mod:
+        ids = ", ".join(c.get("id", "?") for c in rows) or "(none)"
+        err(f"unknown codemod '{args.name}' — choose: {ids}")
+        return 1
+    root = git_root() or Path.cwd()
+    replace_args = argparse.Namespace(
+        pattern=mod["pattern"],
+        rewrite=mod["rewrite"],
+        paths=list(getattr(args, "paths", None) or []),
+        path=list(getattr(args, "path", None) or []),
+        only=getattr(args, "only", None),
+        lang=mod.get("lang"),
+        globs=getattr(args, "globs", None),
+        apply=_wants_apply(args),
+        fix=_wants_apply(args),
+        force=False,
+    )
+    _expand_repo_map_only(replace_args, root)
+    return cmd_replace(replace_args)
 
 
 def cmd_install(_args: argparse.Namespace) -> int:
@@ -1220,6 +1415,7 @@ def build_parser() -> argparse.ArgumentParser:
     fx.add_argument("--rule", "-r", help="Single autofix rule (default: all fix rules).")
     fx.add_argument("--globs", action="append", help="Include/exclude glob.")
     fx.add_argument("--dry-run", action="store_true", help="Preview violations only (no --fix).")
+    fx.add_argument("--only", help="Expand paths from repo-map targets (when no --path).")
     fx.set_defaults(func=cmd_fix, paths=[])
 
     rl = sub.add_parser("rules", help="List bundled scan rules and autofix status.")
@@ -1233,7 +1429,24 @@ def build_parser() -> argparse.ArgumentParser:
     au.add_argument("--globs", action="append", help="Extra include/exclude glob.")
     au.add_argument("--json-out", action="store_true", help="Emit JSON findings summary.")
     au.add_argument("--fail-on", action="store_true", help="Exit 1 when any violations found.")
+    au.add_argument("--profile", help="Filter rules via scan-profiles.json (ci, autofix, strict).")
+    au.add_argument("--verbose", "-v", action="store_true", help="Per-file violation breakdown.")
+    au.add_argument("--format", choices=["github", "sarif"], help="CI output format (ignores summary table).")
     au.set_defaults(func=cmd_audit)
+
+    cm = sub.add_parser("codemods", help="List named codemods from codemods.json.")
+    cm.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    cm.set_defaults(func=cmd_codemods)
+
+    cd = sub.add_parser("codemod", help="Run a named codemod (dry-run by default).")
+    cd.add_argument("name", help="Codemod id from codemods.json.")
+    cd.add_argument("paths", nargs="*", help=argparse.SUPPRESS)
+    cd.add_argument("--path", "-p", action="append", dest="path", help="Path (repeatable).")
+    cd.add_argument("--only", help="Expand paths from repo-map targets (when no --path).")
+    cd.add_argument("--globs", action="append", help="Include/exclude glob.")
+    cd.add_argument("--apply", action="store_true", help="Mutate files.")
+    cd.add_argument("--fix", action="store_true", help="Alias for --apply.")
+    cd.set_defaults(func=cmd_codemod, paths=[])
 
     t = sub.add_parser("test", help="Run ast-grep rule snapshot tests.")
     t.add_argument("--config", "-c", help="Path to sgconfig.yml.")

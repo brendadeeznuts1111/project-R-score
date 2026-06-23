@@ -1,0 +1,25 @@
+{
+  "codemods": [
+    {
+      "id": "strip-as-any",
+      "description": "Remove `as any` type assertions",
+      "pattern": "$EXPR as any",
+      "rewrite": "$EXPR",
+      "lang": "ts"
+    },
+    {
+      "id": "strip-double-cast",
+      "description": "Remove `as unknown as T` double casts",
+      "pattern": "$EXPR as unknown as $T",
+      "rewrite": "$EXPR",
+      "lang": "ts"
+    },
+    {
+      "id": "console-log-to-info",
+      "description": "Replace console.log with logger.info (requires logger in scope)",
+      "pattern": "console.log($$$ARGS)",
+      "rewrite": "logger.info($$$ARGS)",
+      "lang": "ts"
+    }
+  ]
+}

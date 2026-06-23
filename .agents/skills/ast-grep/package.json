@@ -8,6 +8,8 @@
     "test": "python3 scripts/ast_grep_helper.py test",
     "audit": "python3 scripts/ast_grep_helper.py audit",
     "baseline": "./scripts/baseline.sh",
+    "ci": "./scripts/ci.sh",
+    "codemods": "python3 scripts/ast_grep_helper.py codemods",
     "install-cli": "npm install",
     "smoke": "./scripts/smoke.sh"
   },

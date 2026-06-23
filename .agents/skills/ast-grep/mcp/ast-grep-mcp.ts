@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.3.0';
+const SERVER_VERSION = '0.4.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -119,6 +119,7 @@ const TOOLS = [
         paths: { type: 'array', items: { type: 'string' } },
         rule: { type: 'string', description: 'Single autofix rule under skill rules/' },
         dryRun: { type: 'boolean', description: 'Preview violations only (no mutation).' },
+        only: { type: 'string', description: 'Expand paths from repo-map targets when paths omitted.' },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -158,14 +159,47 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_audit',
-    description: 'Scan all repo-map.json targets and summarize violations by rule.',
+    description: 'Scan repo-map targets; summarize by rule. profile=ci|autofix|strict, verbose=file breakdown.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         only: { type: 'string', description: 'Filter targets by id/name substring' },
         rule: { type: 'string', description: 'Single rule instead of full sgconfig' },
+        profile: { type: 'string', description: 'scan-profiles.json key (ci, autofix, strict)' },
+        verbose: { type: 'boolean', description: 'Per-file violation breakdown' },
+        format: { type: 'string', enum: ['github', 'sarif'], description: 'CI annotation format' },
         failOn: { type: 'boolean', description: 'Return error when violations found' },
         globs: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_codemods',
+    description: 'List named codemods from codemods.json (strip-as-any, strip-double-cast, ...).',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+  {
+    name: 'ast_grep_codemod',
+    description: 'Run a named codemod. fix=true applies; only= expands repo-map paths.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        name: { type: 'string', description: 'Codemod id' },
+        paths: { type: 'array', items: { type: 'string' } },
+        only: { type: 'string' },
+        fix: { type: 'boolean' },
+        globs: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'ast_grep_test',
+    description: 'Run ast-grep rule snapshot tests (tests/). update=true refreshes snapshots.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        update: { type: 'boolean', description: 'Update __snapshots__ (-U)' },
       },
     },
   },
@@ -373,6 +407,7 @@ async function cmdFix(args: Record<string, unknown>): Promise<ToolCallResult> {
   const extra: string[] = [];
   if (args.dryRun === true) extra.push('--dry-run');
   if (args.rule) extra.push('--rule', String(args.rule));
+  if (args.only) extra.push('--only', String(args.only));
   for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
   for (const p of strPaths(args)) extra.push('--path', p);
   const { stdout, stderr, code } = await runHelper('fix', extra);
@@ -415,10 +450,37 @@ async function cmdAudit(args: Record<string, unknown>): Promise<ToolCallResult> 
   const extra: string[] = [];
   if (args.only) extra.push('--only', String(args.only));
   if (args.rule) extra.push('--rule', String(args.rule));
+  if (args.profile) extra.push('--profile', String(args.profile));
+  if (args.verbose === true) extra.push('--verbose');
+  if (args.format) extra.push('--format', String(args.format));
   if (args.failOn === true) extra.push('--fail-on');
   for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
   const { stdout, stderr, code } = await runHelper('audit', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no audit output)'), code !== 0);
+}
+
+async function cmdCodemods(): Promise<ToolCallResult> {
+  const { stdout, stderr, code } = await runHelper('codemods');
+  return toolText((stdout || stderr).trim() || '(no codemods)', code !== 0);
+}
+
+async function cmdCodemod(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const name = String(args.name ?? '');
+  if (!name) return toolText('name is required', true);
+  const extra = [name];
+  if (args.fix === true) extra.push('--fix');
+  if (args.only) extra.push('--only', String(args.only));
+  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const p of strPaths(args)) extra.push('--path', p);
+  const { stdout, stderr, code } = await runHelper('codemod', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no codemod output)'), code !== 0);
+}
+
+async function cmdTest(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const extra: string[] = [];
+  if (args.update === true) extra.push('-U');
+  const { stdout, stderr, code } = await runHelper('test', extra);
+  return toolText(truncate((stdout || stderr).trim() || '(no test output)'), code !== 0);
 }
 
 async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
@@ -438,6 +500,9 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_validate': result = await cmdValidate(args); break;
       case 'ast_grep_rules': result = await cmdRules(); break;
       case 'ast_grep_audit': result = await cmdAudit(args); break;
+      case 'ast_grep_codemods': result = await cmdCodemods(); break;
+      case 'ast_grep_codemod': result = await cmdCodemod(args); break;
+      case 'ast_grep_test': result = await cmdTest(args); break;
       default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);

@@ -75,11 +75,21 @@ python3 $AG scan --path src/ --rule .agents/skills/ast-grep/rules/no-as-any.yml 
 # Rule inventory + monorepo audit (repo-map.json targets)
 python3 $AG rules
 python3 $AG audit --only kimi
-python3 $AG audit --fail-on          # CI: exit 1 when violations exist
+python3 $AG audit --profile ci --only kimi --fail-on   # CI gate
+python3 $AG audit --verbose --only kimi-mcp            # per-file breakdown
+
+# Named codemods (codemods.json)
+python3 $AG codemods
+python3 $AG codemod strip-as-any --only kimi-mcp       # dry-run
+python3 $AG codemod strip-as-any --only kimi-mcp --fix
+
+# Autofix across repo-map zone
+python3 $AG fix --only kimi --dry-run
 
 # Rule snapshot tests (tests/ + __snapshots__)
 python3 $AG test
 ./scripts/baseline.sh kimi           # test + rules + audit
+./scripts/ci.sh                      # test + profile audit --fail-on
 ```
 
 Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
@@ -101,7 +111,10 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_replace` | `replace` (`fix: true` to apply) |
 | `ast_grep_validate` | `validate` |
 | `ast_grep_rules` | `rules` |
-| `ast_grep_audit` | `audit` |
+| `ast_grep_audit` | `audit` (`profile`, `verbose`, `format`) |
+| `ast_grep_codemods` | `codemods` |
+| `ast_grep_codemod` | `codemod` |
+| `ast_grep_test` | `test` |
 | `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`
