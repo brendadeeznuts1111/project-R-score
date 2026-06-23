@@ -45,6 +45,8 @@ USAGE
     ast_grep_helper.py bun report                   # unified Bun intelligence report
     ast_grep_helper.py bun docs                       # official Bun API topic coverage
     ast_grep_helper.py bun roadmap                    # security integration backlog
+    ast_grep_helper.py bun features                   # Bun release highlights (v1.3.13 test CLI)
+    ast_grep_helper.py bun test-ci --profile ci       # bun test --parallel --isolate
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
@@ -89,7 +91,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.15.0"
+VERSION = "0.16.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -545,6 +547,8 @@ def _skill_artifacts() -> dict[str, object]:
         "scan_profiles": (root / "scan-profiles.json").is_file(),
         "codemods": (root / "codemods.json").is_file(),
         "bun_patterns": (root / "bun-patterns.json").is_file(),
+        "bun_releases": (root / "bun-releases.json").is_file(),
+        "test_profiles": (root / "bun-test-profiles.json").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -1552,6 +1556,52 @@ def _load_bun_patterns() -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_bun_releases() -> dict:
+    path = skill_root() / "bun-releases.json"
+    if not path.is_file():
+        err(f"bun releases not found: {path}")
+        return {"releases": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_test_profiles() -> dict:
+    path = skill_root() / "bun-test-profiles.json"
+    if not path.is_file():
+        err(f"test profiles not found: {path}")
+        return {"profiles": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _resolve_bun_version() -> Optional[str]:
+    if not shutil.which("bun"):
+        return None
+    try:
+        proc = subprocess.run(
+            ["bun", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if proc.returncode == 0:
+            return proc.stdout.strip().lstrip("bun ").strip()
+    except (subprocess.TimeoutExpired, OSError):
+        pass
+    return None
+
+
+def _bun_version_gte(current: str, minimum: str) -> bool:
+    def parts(v: str) -> list[int]:
+        nums: list[int] = []
+        for piece in v.split("."):
+            digits = "".join(ch for ch in piece if ch.isdigit())
+            nums.append(int(digits) if digits else 0)
+        while len(nums) < 3:
+            nums.append(0)
+        return nums[:3]
+
+    return parts(current) >= parts(minimum)
+
+
 def _bun_native_targets(args: argparse.Namespace) -> list[dict]:
     targets = _resolve_repo_targets(args)
     if targets:
@@ -2109,6 +2159,133 @@ def _bun_roadmap_items(data: dict, args: argparse.Namespace) -> list[dict]:
     return rows
 
 
+def cmd_bun_features(args: argparse.Namespace) -> int:
+    catalog = _load_bun_releases()
+    release_key = getattr(args, "release", None) or catalog.get("default", "1.3.13")
+    releases = catalog.get("releases", {})
+    rel = releases.get(release_key)
+    if not rel:
+        err(f"unknown release '{release_key}' — choose: {', '.join(sorted(releases))}")
+        return 1
+
+    bun_ver = _resolve_bun_version()
+    patterns = _load_bun_patterns()
+    pattern_ids = {p.get("id") for p in patterns.get("patterns", [])}
+    min_bun = patterns.get("min_bun") or catalog.get("min_bun") or release_key
+
+    if getattr(args, "json_out", False):
+        json.dump({
+            "release": release_key,
+            "bun_version": bun_ver,
+            "min_bun": min_bun,
+            "release_meta": rel,
+        }, sys.stdout, indent=2)
+        print()
+        return 0
+
+    blog = rel.get("blog", "")
+    print(f"bun features: v{release_key}  catalog min_bun={min_bun}")
+    if bun_ver:
+        ok = _bun_version_gte(bun_ver, str(min_bun).split("-")[0] if min_bun else "0")
+        print(f"runtime: bun {bun_ver}  {'ok' if ok else f'upgrade: bun upgrade (need >={min_bun})'}")
+    else:
+        print("runtime: bun not on PATH")
+    if rel.get("summary"):
+        print(f"summary: {rel['summary']}")
+    if blog:
+        print(f"blog: {blog}")
+
+    test_cli = rel.get("test_cli", [])
+    if test_cli:
+        print("\n[bun test CLI]")
+        for item in test_cli:
+            print(f"  {item.get('flag')}: {item.get('description', '')}")
+            if item.get("example"):
+                print(f"    {item['example']}")
+            profs = item.get("profiles") or []
+            if profs:
+                print(f"    profiles: {', '.join(profs)}")
+
+    runtime_feats = rel.get("runtime", [])
+    if runtime_feats:
+        print("\n[runtime APIs]")
+        for feat in runtime_feats:
+            pats = feat.get("patterns") or []
+            mapped = [p for p in pats if p in pattern_ids]
+            status = f"{len(mapped)}/{len(pats)} cataloged" if pats else "cli-only"
+            print(f"  {feat.get('topic')}: {feat.get('description', '')} ({status})")
+
+    test_profiles = _load_test_profiles().get("profiles", {})
+    if test_profiles and not getattr(args, "release", None):
+        print("\n[bun-test-profiles.json]")
+        for pid, spec in test_profiles.items():
+            args_s = " ".join(spec.get("args", []))
+            print(f"  {pid}: {spec.get('description', '')}")
+            print(f"    bun test {args_s}")
+
+    print("\nrun: bun test-ci --profile ci --path ./tests | bun patterns --bundle test-ci")
+    return 0
+
+
+def cmd_bun_test_ci(args: argparse.Namespace) -> int:
+    profiles_data = _load_test_profiles()
+    profiles = profiles_data.get("profiles", {})
+    profile_name = getattr(args, "profile", None) or "ci"
+    spec = profiles.get(profile_name)
+    if not spec:
+        err(f"unknown test profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
+        return 1
+
+    root = git_root() or Path.cwd()
+
+    if not getattr(args, "dry_run", False):
+        if not shutil.which("bun"):
+            err("bun required for test-ci")
+            return 1
+        min_bun = profiles_data.get("min_bun", "1.3.13")
+        bun_ver = _resolve_bun_version()
+        if bun_ver and not _bun_version_gte(bun_ver, min_bun):
+            err(f"bun {bun_ver} < {min_bun} — run: bun upgrade")
+            return 1
+    test_path = getattr(args, "test_path", None) or "."
+    full_path = (root / test_path).resolve() if not Path(test_path).is_absolute() else Path(test_path)
+
+    cmd = ["bun", "test", *spec.get("args", [])]
+    shard = getattr(args, "shard", None) or os.environ.get("BUN_TEST_SHARD", "")
+    if shard or spec.get("shard"):
+        shard_val = shard or os.environ.get("BUN_TEST_SHARD", "")
+        if not shard_val:
+            err("profile requires --shard M/N or BUN_TEST_SHARD env")
+            return 1
+        cmd.append(f"--shard={shard_val}")
+    changed = getattr(args, "changed", None)
+    if changed:
+        cmd.append(f"--changed={changed}" if changed != "1" else "--changed")
+    if getattr(args, "dry_run", False):
+        cmd.append(str(full_path))
+        print(" ".join(cmd))
+        return 0
+
+    cmd.append(str(full_path))
+    trace(f"test-ci: {' '.join(cmd)}")
+    if getattr(args, "json_out", False):
+        started = time.time()
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root))
+        json.dump({
+            "profile": profile_name,
+            "command": cmd,
+            "returncode": proc.returncode,
+            "stdout": proc.stdout,
+            "stderr": proc.stderr,
+            "elapsed_ms": int((time.time() - started) * 1000),
+        }, sys.stdout, indent=2)
+        print()
+        return proc.returncode
+
+    proc = subprocess.run(cmd, cwd=str(root))
+    return proc.returncode
+
+
 def cmd_bun_roadmap(args: argparse.Namespace) -> int:
     data = _load_bun_patterns()
     roadmap = data.get("roadmap", {})
@@ -2553,6 +2730,16 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"scan-profiles.json: {'ok' if artifacts['scan_profiles'] else 'missing'}")
     print(f"codemods.json: {'ok' if artifacts['codemods'] else 'missing'}")
     print(f"bun-patterns.json: {'ok' if artifacts['bun_patterns'] else 'missing'}")
+    print(f"bun-releases.json: {'ok' if artifacts['bun_releases'] else 'missing'}")
+    print(f"bun-test-profiles.json: {'ok' if artifacts['test_profiles'] else 'missing'}")
+    bun_ver = _resolve_bun_version()
+    if bun_ver:
+        patterns = _load_bun_patterns()
+        min_bun = patterns.get("min_bun", "1.3.13")
+        ok = _bun_version_gte(bun_ver, str(min_bun))
+        print(f"bun runtime: {bun_ver}  (min_bun={min_bun}, {'ok' if ok else 'upgrade'})")
+    else:
+        print("bun runtime: not on PATH")
     print(f"bun-cli.ts: {'ok' if artifacts['bun_cli'] else 'missing'}")
     print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
     print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
@@ -3373,6 +3560,20 @@ def build_parser() -> argparse.ArgumentParser:
     bun_r.add_argument("--integration", choices=["catalog", "planned", "integrated"], help="Filter by integration state.")
     bun_r.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_r.set_defaults(func=cmd_bun_roadmap)
+
+    bun_f = bun_sub.add_parser("features", help="Bun release highlights (default: v1.3.13 test CLI + runtime).")
+    bun_f.add_argument("--release", help="Release key from bun-releases.json (default: 1.3.13).")
+    bun_f.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_f.set_defaults(func=cmd_bun_features)
+
+    bun_tc = bun_sub.add_parser("test-ci", help="Run bun test with bun-test-profiles.json (v1.3.13+ flags).")
+    bun_tc.add_argument("--profile", default="ci", help="Profile: local, ci, fast, ci-shard, changed, ...")
+    bun_tc.add_argument("--path", dest="test_path", default=".", help="Test path (default: repo root).")
+    bun_tc.add_argument("--shard", help="Shard M/N for matrix jobs (or BUN_TEST_SHARD env).")
+    bun_tc.add_argument("--changed", nargs="?", const="1", help="Pass --changed or --changed=REF.")
+    bun_tc.add_argument("--dry-run", action="store_true", help="Print command without running.")
+    bun_tc.add_argument("--json-out", action="store_true", help="Emit JSON result.")
+    bun_tc.set_defaults(func=cmd_bun_test_ci)
 
     return p
 

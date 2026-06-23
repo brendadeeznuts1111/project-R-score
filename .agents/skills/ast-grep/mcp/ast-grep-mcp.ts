@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.13.0';
+const SERVER_VERSION = '0.14.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -207,7 +207,13 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'search'], description: 'Bun subcommand' },
+        release: { type: 'string', description: 'For features: release key (1.3.13)' },
+        profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key' },
+        testPath: { type: 'string', description: 'For test-ci: path to test directory' },
+        shard: { type: 'string', description: 'For test-ci: M/N shard for CI matrix' },
+        changed: { type: 'string', description: 'For test-ci: --changed or --changed=REF' },
+        dryRun: { type: 'boolean', description: 'For test-ci: print command only' },
         priority: { type: 'string', enum: ['high', 'medium', 'low', 'nice'], description: 'For roadmap: filter by priority' },
         integration: { type: 'string', enum: ['catalog', 'planned', 'integrated'], description: 'For roadmap: filter by integration state' },
         patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
@@ -592,6 +598,14 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
     if (!pid) return toolText('patternId is required for search', true);
     extra.push(pid);
   }
+  if (action === 'test-ci') {
+    if (args.profile) extra.push('--profile', String(args.profile));
+    if (args.testPath) extra.push('--path', String(args.testPath));
+    if (args.shard) extra.push('--shard', String(args.shard));
+    if (args.changed) extra.push('--changed', String(args.changed));
+    if (args.dryRun === true) extra.push('--dry-run');
+  }
+  if (action === 'features' && args.release) extra.push('--release', String(args.release));
   if (args.only) extra.push('--only', String(args.only));
   if (args.zone) extra.push('--zone', String(args.zone));
   if (args.group) extra.push('--group', String(args.group));

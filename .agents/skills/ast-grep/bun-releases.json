@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "default": "1.3.13",
+  "releases": {
+    "1.3.13": {
+      "date": "2026-04-20",
+      "blog": "https://bun.com/blog/bun-v1.3.13",
+      "summary": "Parallel/isolated bun test, CI sharding, --changed, install streaming, Range in Bun.serve, faster gzip (zlib-ng)",
+      "test_cli": [
+        {
+          "flag": "--isolate",
+          "description": "Fresh global per test file in-process; drains microtasks, closes sockets, VM transpile cache",
+          "example": "bun test --isolate ./tests",
+          "profiles": ["local", "ci"]
+        },
+        {
+          "flag": "--parallel[=N]",
+          "description": "Distribute test files across N workers (default CPU count); workers auto --isolate",
+          "example": "bun test --parallel=8 ./tests",
+          "env": ["JEST_WORKER_ID", "BUN_TEST_WORKER_ID"],
+          "profiles": ["ci", "fast"]
+        },
+        {
+          "flag": "--shard=M/N",
+          "description": "Split test files across CI matrix jobs (1-based, round-robin, deterministic sort)",
+          "example": "bun test --shard=2/3",
+          "profiles": ["ci-shard"]
+        },
+        {
+          "flag": "--changed[=REF]",
+          "description": "Run only tests transitively importing git-changed files",
+          "example": "bun test --changed=main",
+          "profiles": ["changed", "pre-push"]
+        }
+      ],
+      "runtime": [
+        {
+          "id": "serve-range",
+          "topic": "Range requests in Bun.serve",
+          "description": "206 Partial Content for Bun.file-backed Response in routes and fetch handlers",
+          "patterns": ["bun-serve-file-response", "range-request-header"],
+          "blog_anchor": "#range-request-support-in-bun-serve"
+        },
+        {
+          "id": "gzip-zlib-ng",
+          "topic": "zlib-ng compression",
+          "description": "Up to 5.5x faster gzip/deflate — drop-in, no API change",
+          "patterns": ["bun-gzip-sync", "bun-deflate-sync"]
+        },
+        {
+          "id": "install-streaming",
+          "topic": "Streaming bun install",
+          "description": "Tarballs extracted while downloading; disable via BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL=1",
+          "cli_only": true
+        },
+        {
+          "id": "install-isolated-linker",
+          "topic": "Isolated linker speedup",
+          "description": "bun install --linker=isolated — peer-heavy monorepos ~8x faster",
+          "cli_only": true,
+          "example": "bun install --linker=isolated"
+        },
+        {
+          "id": "websocket-unix",
+          "topic": "WebSocket Unix sockets",
+          "description": "ws+unix:// and wss+unix:// client URLs",
+          "patterns": ["websocket-unix"]
+        },
+        {
+          "id": "crypto-sha3",
+          "topic": "SHA3 WebCrypto + node:crypto",
+          "patterns": ["crypto-sha3", "subtle-sha3"]
+        },
+        {
+          "id": "subtle-x25519",
+          "topic": "X25519 deriveBits",
+          "patterns": ["subtle-x25519"]
+        },
+        {
+          "id": "file-streaming-ssl",
+          "topic": "Bun.file streaming",
+          "description": "new Response(Bun.file) streams on SSL/Windows in dynamic handlers",
+          "patterns": ["bun-serve-file-response"]
+        }
+      ]
+    }
+  }
+}

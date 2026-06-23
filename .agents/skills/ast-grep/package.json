@@ -13,6 +13,8 @@
     "codemods": "bun scripts/bun-cli.ts codemods",
     "bun:docs": "bun scripts/bun-cli.ts bun docs",
     "bun:roadmap": "bun scripts/bun-cli.ts bun roadmap",
+    "bun:features": "bun scripts/bun-cli.ts bun features",
+    "test:ci": "./scripts/bun-test-ci.sh",
     "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
     "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
     "bun:matrix": "bun scripts/bun-cli.ts bun matrix --zone sports-terminal",

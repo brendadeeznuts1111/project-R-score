@@ -403,6 +403,42 @@ rule:
 name: Bun.redis
 isExported: false
 ---
+id: bun-serve-file-response
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Response(Bun.file($$$PATH))
+name: Response(Bun.file)
+isExported: false
+---
+id: websocket-unix-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new WebSocket("ws+unix://$$$PATH")
+name: WebSocket(ws+unix)
+isExported: false
+---
+id: crypto-sha3-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: crypto.createHash("sha3-$ALG")
+name: crypto SHA3
+isExported: false
+---
+id: subtle-x25519-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: crypto.subtle.deriveBits({ name: "X25519", $$$OPTS }, $$$KEY, $$$LEN)
+name: X25519 deriveBits
+isExported: false
+---
 id: bun-strip-ansi-call
 language: TypeScript
 role: item

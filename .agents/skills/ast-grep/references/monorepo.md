@@ -71,6 +71,8 @@ python3 $AG audit --profile bun --only sports-terminal   # node:fs hints + CI ru
 
 **Docs index:** [bun.sh/docs/runtime/bun-apis](https://bun.sh/docs/runtime/bun-apis) — `python3 $AG bun docs` reports topic coverage.
 
+**Bun v1.3.13:** [release blog](https://bun.com/blog/bun-v1.3.13) — `bun features` + `bun-test-profiles.json` for `--parallel`, `--isolate`, `--shard=M/N`, `--changed`. CI matrix: `BUN_TEST_SHARD=2/3 ./scripts/bun-test-ci.sh`.
+
 **Groups:** `http`, `io`, `process`, `db`, `crypto`, `runtime`, `display`, `secrets`, `shell`, `test`, `modules`, `networking`, `bundler`, `data-stores`, `routing`, `html`, `workers`, `cookies`, `compression`, `streams`, `parsing`, `utils`, `low-level`, `anti-pattern`
 
 | Tier | Examples |

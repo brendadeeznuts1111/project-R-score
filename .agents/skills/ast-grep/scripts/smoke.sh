@@ -65,6 +65,12 @@ echo ""
 echo "== bun roadmap (high) =="
 python3 "$HELPER" -q bun roadmap --priority high 2>&1 | head -12
 echo ""
+echo "== bun features (1.3.13) =="
+python3 "$HELPER" -q bun features 2>&1 | head -22 || true
+echo ""
+echo "== bun test-ci dry-run =="
+python3 "$HELPER" -q bun test-ci --profile ci --path .agents/skills/ast-grep/tests --dry-run 2>&1 || true
+echo ""
 echo "== bun bundles =="
 python3 "$HELPER" -q bun bundles 2>&1 | head -12
 echo ""
