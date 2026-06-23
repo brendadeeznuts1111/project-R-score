@@ -22,12 +22,76 @@ function topic(prefix: string, sport: string, ...extra: string[]): string {
 
 // ── Shared subscribe helper ─────────────────────────────────────────────────
 
+/** Loose WS payload shape shared across sports feed topics. */
+interface WsFeedMessage {
+  game?: string;
+  market?: string;
+  old_line?: string;
+  new_line?: string;
+  opening_line?: string;
+  current_line?: string;
+  timestamp?: string;
+  ewma_lag?: number;
+  exposure_gate?: boolean;
+  flow_particles?: number;
+  exposure?: number;
+  side?: string;
+  tickets?: number;
+  sharp_flag?: boolean;
+  limit_breach?: boolean;
+  away_score?: number;
+  home_score?: number;
+  period?: string;
+  clock?: string;
+  possession?: string;
+  status?: string;
+  last_play?: string;
+  steam_move?: boolean;
+  key_number_crossed?: string;
+}
+
 interface SubscribeArgs {
   topic: string;
   wsUrl: string;
-  onMessage: (data: any) => void;
+  onMessage: (data: WsFeedMessage) => void;
   alreadyText: string;
   successText: string;
+}
+
+interface SubscribeOddsArgs {
+  sport: string;
+  game_id?: string;
+  markets?: Array<"moneyline" | "spread" | "totals">;
+}
+
+interface SubscribePositionsArgs {
+  threshold?: number;
+  sports?: string[];
+}
+
+interface SubscribeScoresArgs {
+  sport: string;
+  games?: string[];
+}
+
+interface SubscribeLineHistoryArgs {
+  sport: string;
+  game_id?: string;
+  since?: string;
+}
+
+interface CascadeSnapshotArgs {
+  zone?: string;
+}
+
+interface UnsubscribeArgs {
+  topic: string;
+}
+
+function readToolArgs<T extends object>(
+  raw: CallToolRequest["params"]["arguments"],
+): T {
+  return (raw ?? {}) as T;
 }
 
 function subscribe(server: Server, args: SubscribeArgs) {
@@ -147,7 +211,8 @@ export function createHandler(server: Server) {
 
     switch (name) {
       case "subscribe_odds": {
-        const { sport, game_id, markets = ["moneyline", "spread", "totals"] } = args as any;
+        const { sport, game_id, markets = ["moneyline", "spread", "totals"] } =
+          readToolArgs<SubscribeOddsArgs>(args);
         const t = topic("odds", sport, game_id ?? "");
 
         return subscribe(server, {
@@ -178,7 +243,7 @@ export function createHandler(server: Server) {
       }
 
       case "subscribe_positions": {
-        const { threshold = 50000, sports = [] } = args as any;
+        const { threshold = 50000, sports = [] } = readToolArgs<SubscribePositionsArgs>(args);
         const t = topic("positions", sports.length ? sports.join(",") : "all");
 
         return subscribe(server, {
@@ -209,7 +274,7 @@ export function createHandler(server: Server) {
       }
 
       case "subscribe_scores": {
-        const { sport, games = [] } = args as any;
+        const { sport, games = [] } = readToolArgs<SubscribeScoresArgs>(args);
         const t = topic("scores", sport, games.join(","));
 
         return subscribe(server, {
@@ -237,7 +302,7 @@ export function createHandler(server: Server) {
       }
 
       case "subscribe_line_history": {
-        const { sport, game_id, since } = args as any;
+        const { sport, game_id, since } = readToolArgs<SubscribeLineHistoryArgs>(args);
         const t = topic("line_history", sport, game_id ?? "");
         const sinceParam = since ?? new Date().toISOString();
 
@@ -275,7 +340,7 @@ export function createHandler(server: Server) {
       }
 
       case "get_cascade_snapshot": {
-        const { zone = "Z9" } = args as any;
+        const { zone = "Z9" } = readToolArgs<CascadeSnapshotArgs>(args);
 
         try {
           const res = await fetch(`${F402_ENDPOINT}/cascade/snapshot?zone=${zone}`, {
@@ -339,7 +404,7 @@ export function createHandler(server: Server) {
       }
 
       case "unsubscribe": {
-        const { topic: t } = args as any;
+        const { topic: t } = readToolArgs<UnsubscribeArgs>(args);
         const success = disconnect(t);
 
         return {
