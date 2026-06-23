@@ -27,7 +27,8 @@
         "policies": "policies/security.policy.toml",
         "legacy_rules": "bundle-threat-rules.json",
         "threat_feed": "threat-feed.json",
-        "semver_matcher": "scripts/scan/transpiler/semver-matcher.ts"
+        "semver_matcher": "scripts/scan/transpiler/semver-matcher.ts",
+        "semver_docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean"
       }
     },
     {

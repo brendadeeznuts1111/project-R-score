@@ -20,18 +20,27 @@ export type ThreatFeed = {
   advisories: ThreatAdvisory[];
 };
 
+export const SEMVER_DOCS =
+  "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean";
+
 export async function loadThreatFeed(skillRoot: string): Promise<ThreatFeed> {
   const path = join(skillRoot, "threat-feed.json");
   const raw = JSON.parse(await readFile(path, "utf8")) as ThreatFeed;
   return raw;
 }
 
+/**
+ * True when `version` falls in vulnerable `range`.
+ * Uses Bun.semver.satisfies — node-semver compatible; invalid version/range → false.
+ * @see {@link SEMVER_DOCS}
+ */
 export function isVulnerable(version: string, range: string): boolean {
-  try {
-    return Bun.semver.satisfies(version, range);
-  } catch {
-    return false;
-  }
+  return Bun.semver.satisfies(version, range);
+}
+
+/** Compare two versions (for feed sorting / min-patch checks). */
+export function compareVersions(a: string, b: string): -1 | 0 | 1 {
+  return Bun.semver.order(a, b);
 }
 
 export function matchDependencies(

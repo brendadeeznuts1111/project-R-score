@@ -4,7 +4,12 @@ import { loadRuleSet, meetsSeverity, resolvePattern } from "../scripts/scan/tran
 import { analyzeFile } from "../scripts/scan/transpiler/analyzer.ts";
 import { formatMarkdown } from "../scripts/scan/transpiler/reporter.ts";
 import { runBundleScan } from "../scripts/scan/transpiler/bundle-scanner.ts";
-import { isVulnerable, loadThreatFeed, matchDependencies } from "../scripts/scan/transpiler/semver-matcher.ts";
+import {
+  compareVersions,
+  isVulnerable,
+  loadThreatFeed,
+  matchDependencies,
+} from "../scripts/scan/transpiler/semver-matcher.ts";
 import { resolveTargetDependencies } from "../scripts/scan/transpiler/dependency-resolver.ts";
 
 const SKILL_ROOT = resolve(import.meta.dir, "..");
@@ -86,9 +91,20 @@ describe("supply-chain Layer 4.5", () => {
     expect(md).toContain("threat-feed");
   });
 
-  test("Bun.semver.satisfies matches vulnerable axios range", () => {
+  test("Bun.semver.satisfies matches official doc examples", () => {
+    expect(isVulnerable("1.0.0", "^1.0.0")).toBe(true);
+    expect(isVulnerable("1.0.0", "^1.0.1")).toBe(false);
+    expect(isVulnerable("1.0.0", "~1.0.0")).toBe(true);
+    expect(isVulnerable("1.0.0", "1.0.0 - 2.0.0")).toBe(true);
     expect(isVulnerable("1.5.0", "<1.6.0")).toBe(true);
     expect(isVulnerable("1.16.1", "<1.6.0")).toBe(false);
+    expect(isVulnerable("not-a-version", "<1.6.0")).toBe(false);
+  });
+
+  test("Bun.semver.order compares versions", () => {
+    expect(compareVersions("1.0.0", "1.0.0")).toBe(0);
+    expect(compareVersions("1.0.0", "1.0.1")).toBe(-1);
+    expect(compareVersions("1.0.1", "1.0.0")).toBe(1);
   });
 
   test("matchDependencies flags lodash below patched range", async () => {

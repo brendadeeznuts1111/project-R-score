@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.23.0"
+VERSION = "0.23.1"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -2975,6 +2975,41 @@ def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
         print(f"  JSON: {legacy} ({'ok' if legacy.is_file() else 'missing'})")
         print("  module: scripts/scan/transpiler/rule-engine.ts")
         return 0
+    if action == "semver":
+        version = getattr(args, "semver_version", None) or ""
+        range_spec = getattr(args, "semver_range", None) or ""
+        if not version or not range_spec:
+            err("semver requires --version and --range")
+            return 1
+        if not shutil.which("bun"):
+            err("bun required for semver check")
+            return 1
+        script = (
+            "const v=process.argv[1],r=process.argv[2];"
+            "console.log(JSON.stringify({"
+            "version:v,range:r,"
+            "satisfies:Bun.semver.satisfies(v,r),"
+            "docs:'https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean'"
+            "}));"
+        )
+        proc = subprocess.run(
+            ["bun", "-e", script, version, range_spec],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if proc.returncode != 0:
+            err(proc.stderr.strip() or "semver check failed")
+            return 1
+        payload = json.loads(proc.stdout.strip())
+        if getattr(args, "json_out", False):
+            json.dump(payload, sys.stdout, indent=2)
+            print()
+            return 0
+        sat = payload.get("satisfies")
+        print(f"Bun.semver.satisfies({version!r}, {range_spec!r}) → {sat}")
+        print(f"docs: {payload.get('docs')}")
+        return 0
     if action == "advisories":
         feed_path = skill_root() / "threat-feed.json"
         if not feed_path.is_file():
@@ -2986,6 +3021,8 @@ def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
             print()
             return 0
         print(f"threat-feed (v{data.get('version', '?')}): {len(data.get('advisories', []))} advisories")
+        if data.get("semver_docs"):
+            print(f"  matcher: Bun.semver.satisfies — {data['semver_docs']}")
         for adv in data.get("advisories", []):
             cve = f" {adv['cve']}" if adv.get("cve") else ""
             syms = f"  symbols={adv['symbols']}" if adv.get("symbols") else ""
@@ -4429,6 +4466,14 @@ def build_parser() -> argparse.ArgumentParser:
     sc_adv = sc_sub.add_parser("advisories", help="List CVE advisories from threat-feed.json.")
     sc_adv.add_argument("--json-out", action="store_true", help="Emit JSON.")
     sc_adv.set_defaults(func=cmd_bun_supply_chain, supply_action="advisories")
+    sc_sem = sc_sub.add_parser(
+        "semver",
+        help="Probe Bun.semver.satisfies(version, range) — node-semver compatible.",
+    )
+    sc_sem.add_argument("--version", dest="semver_version", required=True, help="Installed or candidate version.")
+    sc_sem.add_argument("--range", dest="semver_range", required=True, help="Advisory range (e.g. '<1.6.0', '^1.0.0').")
+    sc_sem.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_sem.set_defaults(func=cmd_bun_supply_chain, supply_action="semver")
 
     return p
 

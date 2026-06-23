@@ -1,6 +1,7 @@
 {
   "version": 1,
   "description": "Curated supply-chain advisories — matched via Bun.semver.satisfies against lockfile versions",
+  "semver_docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
   "advisories": [
     {
       "id": "axios-ssrf-cve-2023-45857",
