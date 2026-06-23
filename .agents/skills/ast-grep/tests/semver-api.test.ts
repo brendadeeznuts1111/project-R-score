@@ -6,6 +6,7 @@ import { semver } from "bun";
 import {
   compareVersions,
   isVulnerable,
+  SemverMatcher,
   sortVersions,
 } from "../scripts/scan/transpiler/semver-matcher.ts";
 
@@ -44,6 +45,14 @@ describe("Bun.semver.order (official examples)", () => {
     expect(semver.order("1.0.0", "1.0.1")).toBe(-1);
     expect(semver.order("1.0.1", "1.0.0")).toBe(1);
     expect(compareVersions("1.0.0", "1.0.1")).toBe(-1);
+  });
+
+  test("filterSatisfying and latestSatisfying", () => {
+    expect(SemverMatcher.filterSatisfying(["1.0.0", "1.5.0", "0.9.0"], "^1.0.0")).toEqual([
+      "1.0.0",
+      "1.5.0",
+    ]);
+    expect(SemverMatcher.latestSatisfying(["1.0.0", "1.5.0", "1.0.1"], "^1.0.0")).toBe("1.5.0");
   });
 
   test("sort prereleases before releases", () => {

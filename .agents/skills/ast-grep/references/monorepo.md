@@ -105,6 +105,7 @@ python3 $AG bun matrix --zone sports-terminal
 ```bash
 python3 $AG bun supply-chain layers
 python3 $AG bun supply-chain advisories
+python3 $AG bun supply-chain packages --domain agents-ast-grep   # Layer 5 Registry/Service
 python3 $AG bun supply-chain scan --zone agents --profile supply-chain-ci
 python3 $AG bun supply-chain scan --path dist --format html --threat-feed --integrity-manifest checksums.json
 bun run supply-chain:scan -- --path .agents/skills/ast-grep/scripts --format markdown

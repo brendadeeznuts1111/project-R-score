@@ -3,10 +3,44 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { ImportKind, ScanResult, Severity } from "./types.ts";
 import type { ResolvedDependency } from "./dependency-resolver.ts";
+import type { SemverRule } from "./policy-loader.ts";
 import { meetsSeverity, normalizeSeverity } from "./rule-engine.ts";
 
 /** Re-export for callers that want the native Bun semver namespace. */
 export { semver };
+
+export class SemverMatcher {
+  static satisfies(version: string, range: string): boolean {
+    return semver.satisfies(version, range);
+  }
+
+  static order(a: string, b: string): -1 | 0 | 1 {
+    return semver.order(a, b);
+  }
+
+  static checkRule(packageName: string, version: string, rules: SemverRule[]): SemverRule | null {
+    for (const rule of rules) {
+      if (rule.package === packageName && this.satisfies(version, rule.range)) {
+        return rule;
+      }
+    }
+    return null;
+  }
+
+  static snapshotCompatible(snapshotVersion: string, requiredRange: string): boolean {
+    return this.satisfies(snapshotVersion, requiredRange);
+  }
+
+  static filterSatisfying(versions: string[], range: string): string[] {
+    return versions.filter((v) => this.satisfies(v, range));
+  }
+
+  static latestSatisfying(versions: string[], range: string): string | null {
+    const satisfying = this.filterSatisfying(versions, range);
+    if (satisfying.length === 0) return null;
+    return satisfying.sort(this.order).pop() ?? null;
+  }
+}
 
 export type ThreatAdvisory = {
   id: string;
@@ -40,17 +74,39 @@ export async function loadThreatFeed(skillRoot: string): Promise<ThreatFeed> {
  * @see {@link SEMVER_DOCS}
  */
 export function isVulnerable(version: string, range: string): boolean {
-  return semver.satisfies(version, range);
+  return SemverMatcher.satisfies(version, range);
 }
 
-/** `semver.order(a, b)` — 0 equal, 1 if a > b, -1 if a < b. */
 export function compareVersions(a: string, b: string): -1 | 0 | 1 {
-  return semver.order(a, b);
+  return SemverMatcher.order(a, b);
 }
 
-/** Sort versions ascending (prereleases before release per Bun docs). */
 export function sortVersions(versions: string[]): string[] {
-  return [...versions].sort(semver.order);
+  return [...versions].sort(SemverMatcher.order);
+}
+
+export function matchPolicySemverRules(
+  deps: ResolvedDependency[],
+  rules: SemverRule[],
+  minSeverity: Severity,
+): ScanResult[] {
+  const out: ScanResult[] = [];
+  for (const dep of deps) {
+    const rule = SemverMatcher.checkRule(dep.name, dep.version, rules);
+    if (!rule || !meetsSeverity(rule.severity, minSeverity)) continue;
+    out.push({
+      type: "semver",
+      file: dep.name,
+      line: 0,
+      column: 0,
+      ruleId: rule.id,
+      severity: normalizeSeverity(rule.severity),
+      message: `${dep.name}@${dep.version} violates policy: ${rule.description}`,
+      layer: "deps",
+      detail: `satisfies ${rule.range} [${dep.source}]`,
+    });
+  }
+  return out;
 }
 
 export function matchDependencies(

@@ -100,6 +100,8 @@ python3 $AG bun supply-chain semver --version 1.5.0 --range '<1.6.0'  # satisfie
 # SemverMatcher uses `import { semver } from "bun"` — see https://bun.com/docs/runtime/semver
 python3 $AG bun supply-chain scan --zone agents     # Layer 4.5: transpiler + TOML rules + integrity
 python3 $AG bun supply-chain scan --path dist --format markdown --parallel --threat-feed
+python3 $AG bun supply-chain packages --domain agents-ast-grep  # Layer 5 semver policy (sp scan packages alias)
+python3 $AG doctor --validate-snapshot snapshot.json           # snapshotVersion vs policy [snapshot]
 python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)
 python3 $AG bun bundle-threat --profile ci --fail-on
 python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs

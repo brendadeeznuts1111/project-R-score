@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.23.2"
+VERSION = "0.24.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -562,6 +562,9 @@ def _skill_artifacts() -> dict[str, object]:
         "security_policy": (root / "policies" / "security.policy.toml").is_file(),
         "threat_feed": (root / "threat-feed.json").is_file(),
         "semver_matcher": (root / "scripts" / "scan" / "transpiler" / "semver-matcher.ts").is_file(),
+        "policy_loader": (root / "scripts" / "scan" / "transpiler" / "policy-loader.ts").is_file(),
+        "registry_service": (root / "scripts" / "scan" / "transpiler" / "service.ts").is_file(),
+        "scan_packages": (root / "scripts" / "scan-packages.ts").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -2790,6 +2793,14 @@ def _bundle_threat_script() -> Path:
     return skill_root() / "scripts" / "bundle-threat-scan.ts"
 
 
+def _scan_packages_script() -> Path:
+    return skill_root() / "scripts" / "scan-packages.ts"
+
+
+def _validate_snapshot_script() -> Path:
+    return skill_root() / "scripts" / "validate-snapshot.ts"
+
+
 def _load_supply_chain_layers() -> dict:
     path = skill_root() / "supply-chain-layers.json"
     if not path.is_file():
@@ -3031,7 +3042,34 @@ def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
             )
         print("\nrun: bun supply-chain scan --threat-feed --path .")
         return 0
+    if action == "packages":
+        return _run_packages_scan(args)
     return _run_supply_chain_scan(args, default_profile="supply-chain-ci")
+
+
+def _run_packages_scan(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    script = _scan_packages_script()
+    if not script.is_file():
+        err("scan-packages.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain packages scan")
+        return 1
+    cmd = ["bun", str(script), "--repo", str(root)]
+    domain = getattr(args, "domain", None) or getattr(args, "only", None)
+    if domain:
+        cmd.extend(["--domain", str(domain)])
+    scan_path = getattr(args, "scan_path", None) or getattr(args, "path", None)
+    if scan_path:
+        cmd.extend(["--path", str(scan_path)])
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    if getattr(args, "fail_on", False):
+        cmd.append("--fail-on")
+    trace(f"supply-chain packages: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(root))
+    return proc.returncode
 
 
 def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
@@ -3551,7 +3589,30 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         f"  policy={'ok' if artifacts['security_policy'] else 'missing'}"
         f"  feed={'ok' if artifacts['threat_feed'] else 'missing'}"
         f"  semver={'ok' if artifacts['semver_matcher'] else 'missing'}"
+        f"  L5={'ok' if artifacts['registry_service'] else 'missing'}"
     )
+    if getattr(args, "validate_snapshot", None):
+        snap = Path(args.validate_snapshot)
+        if not snap.is_file():
+            print(f"snapshot validation: missing file {snap}")
+            issues.append("snapshot-file")
+        elif not shutil.which("bun"):
+            print("snapshot validation: bun required")
+            issues.append("snapshot-bun")
+        else:
+            proc = subprocess.run(
+                ["bun", str(_validate_snapshot_script()), str(snap)],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            if proc.returncode == 0:
+                print(f"snapshot validation: ok ({snap.name})")
+            else:
+                print(f"snapshot validation: FAIL ({snap.name})")
+                if proc.stdout.strip():
+                    print(proc.stdout.strip())
+                issues.append("snapshot-version")
     bun_ver = _resolve_bun_version()
     if bun_ver:
         patterns = _load_bun_patterns()
@@ -4309,6 +4370,11 @@ def build_parser() -> argparse.ArgumentParser:
     d = sub.add_parser("doctor", help="Health check for binary, outline, skill bundle.")
     d.add_argument("--fix", action="store_true", help="Install skill pin if binary/outline missing.")
     d.add_argument("--global-fix", action="store_true", help="Hint npm global install when --fix is set.")
+    d.add_argument(
+        "--validate-snapshot",
+        metavar="FILE",
+        help="Validate snapshotVersion against policies/security.policy.toml [snapshot].",
+    )
     d.set_defaults(func=cmd_doctor)
     sub.add_parser("install", help="Run the install script for this OS.").set_defaults(func=cmd_install)
 
@@ -4474,6 +4540,15 @@ def build_parser() -> argparse.ArgumentParser:
     sc_sem.add_argument("--range", dest="semver_range", required=True, help="Advisory range (e.g. '<1.6.0', '^1.0.0').")
     sc_sem.add_argument("--json-out", action="store_true", help="Emit JSON.")
     sc_sem.set_defaults(func=cmd_bun_supply_chain, supply_action="semver")
+    sc_pkg = sc_sub.add_parser(
+        "packages",
+        help="Layer 5 — check package versions against policy [[semver_rule]] (bun sp scan packages alias).",
+    )
+    sc_pkg.add_argument("--domain", help="repo-map target id (e.g. agents-ast-grep).")
+    sc_pkg.add_argument("--path", "-p", dest="scan_path", help="Explicit path instead of domain.")
+    sc_pkg.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_pkg.add_argument("--fail-on", action="store_true", help="Exit 1 when violations exist.")
+    sc_pkg.set_defaults(func=cmd_bun_supply_chain, supply_action="packages")
 
     return p
 

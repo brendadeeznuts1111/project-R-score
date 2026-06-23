@@ -1,7 +1,33 @@
-# Supply-chain security rules — Layer 4.5 (Bun.Transpiler scan pipeline)
-# Loaded by scripts/scan/transpiler/rule-engine.ts (merged with bundle-threat-rules.json)
+# Supply-chain security rules — Layer 4.5 + Layer 5 (Registry / Service)
+# Transpiler rules: rule-engine.ts | Semver policy: policy-loader.ts
 
 version = 1
+
+[snapshot]
+allowedDrift = ["branding", "templateDrift"]
+requiredSections = ["policy", "transpiler", "semver"]
+snapshotVersionRange = "^2.0.0"
+
+[[semver_rule]]
+id = "axios-ssrf-policy"
+package = "axios"
+range = "<1.6.0"
+severity = "high"
+description = "Axios SSRF — upgrade to >=1.6.0 (CVE-2023-45857)"
+
+[[semver_rule]]
+id = "lodash-prototype-policy"
+package = "lodash"
+range = "<4.17.21"
+severity = "high"
+description = "Lodash prototype pollution — upgrade to >=4.17.21"
+
+[[semver_rule]]
+id = "ws-dos-policy"
+package = "ws"
+range = "<8.17.1"
+severity = "high"
+description = "ws DoS on malformed upgrade — upgrade to >=8.17.1"
 
 [[rule]]
 id = "hardcoded-secret"

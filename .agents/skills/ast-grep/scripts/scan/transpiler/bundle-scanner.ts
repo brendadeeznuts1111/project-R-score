@@ -8,7 +8,8 @@ import { filterRulesById, loadRuleSet } from "./rule-engine.ts";
 import type { RuleSet } from "./types.ts";
 import { buildSummary } from "./reporter.ts";
 import { resolveTargetDependencies } from "./dependency-resolver.ts";
-import { loadThreatFeed, matchDependencies } from "./semver-matcher.ts";
+import { loadThreatFeed, matchDependencies, matchPolicySemverRules } from "./semver-matcher.ts";
+import { loadPolicyFromSkill } from "./policy-loader.ts";
 import type { ThreatFeed } from "./semver-matcher.ts";
 import type {
   BundleScanReport,
@@ -201,8 +202,9 @@ export async function scanTarget(options: {
   workers: number;
   parallel: boolean;
   threatFeed: ThreatFeed | null;
+  skillRoot: string;
 }): Promise<TargetScanResult> {
-  const { repo, target, rules, profile, manifest, workers, parallel, threatFeed } = options;
+  const { repo, target, rules, profile, manifest, workers, parallel, threatFeed, skillRoot } = options;
   const rel = target.path ?? ".";
   const id = target.id ?? rel;
   const started = performance.now();
@@ -220,15 +222,12 @@ export async function scanTarget(options: {
     };
   }
 
-  let resolvedDeps: ResolvedDependency[] = [];
-  if (threatFeed) {
-    const resolved = await resolveTargetDependencies({
-      repo,
-      targetPath: rel,
-      includeDev: profile.include_dev_dependencies,
-    });
-    resolvedDeps = resolved.dependencies;
-  }
+  const resolved = await resolveTargetDependencies({
+    repo,
+    targetPath: rel,
+    includeDev: profile.include_dev_dependencies,
+  });
+  const resolvedDeps = resolved.dependencies;
 
   const ctx: ScanContext = { threatFeed, resolvedDeps };
   const paths = await collectScanFiles(repo, rel, profile);
@@ -237,6 +236,10 @@ export async function scanTarget(options: {
     : await scanFilesSequential(repo, paths, rules, profile, manifest, ctx);
 
   const findings = [...scanned.findings];
+  const policy = await loadPolicyFromSkill(skillRoot);
+  if (policy.semver_rules.length && resolvedDeps.length) {
+    findings.push(...matchPolicySemverRules(resolvedDeps, policy.semver_rules, profile.min_severity));
+  }
   if (threatFeed && resolvedDeps.length) {
     findings.push(...matchDependencies(resolvedDeps, threatFeed, profile.min_severity));
   }
@@ -339,6 +342,7 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
         workers,
         parallel: Boolean(opts.parallel),
         threatFeed,
+        skillRoot: opts.skillRoot,
       }),
     );
   }

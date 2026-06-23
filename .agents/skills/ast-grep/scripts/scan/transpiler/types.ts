@@ -51,7 +51,7 @@ export interface ScanProfile {
 }
 
 export interface ScanResult {
-  type: "transpiler";
+  type: "transpiler" | "semver";
   file: string;
   line: number;
   column: number;

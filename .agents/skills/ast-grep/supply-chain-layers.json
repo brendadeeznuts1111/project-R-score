@@ -34,9 +34,16 @@
     {
       "id": "5",
       "name": "Runtime",
-      "components": ["Service", "Registry", "audit-sink"],
-      "status": "planned",
-      "note": "Domain config scan.transpiler — wire when Service exists in monorepo"
+      "components": ["Service", "Registry", "SemverMatcher", "snapshot-validation"],
+      "status": "integrated",
+      "entry": "bun supply-chain packages",
+      "paths": {
+        "registry": "scripts/scan/transpiler/registry.ts",
+        "service": "scripts/scan/transpiler/service.ts",
+        "scan_packages": "scripts/scan-packages.ts",
+        "validate_snapshot": "scripts/validate-snapshot.ts"
+      },
+      "note": "Alias for planned bun sp scan packages — domain = repo-map target id"
     }
   ]
 }

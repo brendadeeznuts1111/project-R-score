@@ -6,3 +6,7 @@ export * from "./reporter.ts";
 export * from "./bundle-scanner.ts";
 export * from "./dependency-resolver.ts";
 export * from "./semver-matcher.ts";
+export * from "./policy-loader.ts";
+export * from "./registry.ts";
+export * from "./service.ts";
+export * from "./snapshot.ts";
