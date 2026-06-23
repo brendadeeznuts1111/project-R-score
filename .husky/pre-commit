@@ -1,28 +1,16 @@
+#!/usr/bin/env sh
+set -e
 
-#!/usr/bin/env bun
+echo "== pre-commit: repo hygiene =="
+bun scripts/repo-hygiene.ts --staged
 
-// 1. Repo hygiene — block stray outputs and secrets from being committed
-const hygiene = Bun.spawn(['bun', 'scripts/repo-hygiene.ts', '--staged'], {
-  cwd: import.meta.dir + '/..',
-  stdout: 'inherit',
-  stderr: 'inherit',
-});
-const hygieneCode = await hygiene.exited;
-if (hygieneCode !== 0) {
-  console.error('❌ Repo hygiene check failed');
-  process.exit(1);
-}
+echo ""
+echo "== pre-commit: harness lint =="
+bun scripts/pre-commit-harness.ts
 
-// 2. Fast harness lint + format on staged root paths (bun-native, no type-check OOM)
-const harness = Bun.spawn(['bun', 'scripts/pre-commit-harness.ts'], {
-  cwd: import.meta.dir + '/..',
-  stdout: 'inherit',
-  stderr: 'inherit',
-});
-const harnessCode = await harness.exited;
-if (harnessCode !== 0) {
-  console.error('❌ Harness pre-commit check failed');
-  process.exit(1);
-}
+echo ""
+echo "== pre-commit: ast-grep + semver =="
+bun scripts/pre-commit-ast-grep.ts
 
-console.log('✅ Pre-commit checks passed');
+echo ""
+echo "✅ Pre-commit checks passed"
