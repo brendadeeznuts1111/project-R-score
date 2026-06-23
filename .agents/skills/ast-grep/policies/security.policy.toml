@@ -7,11 +7,21 @@ version = 1
 allowedDrift = ["branding", "templateDrift"]
 requiredSections = ["policy", "transpiler", "semver"]
 snapshotVersionRange = "^2.0.0"
+compatibleScannerVersions = ">=2.0.0 <3.0.0"
+
+[semver.packages]
+lodash = ">=4.17.21"
+axios = ">=1.6.0"
+ws = ">=8.17.1"
+
+[semver.blocked]
+left-pad = "<1.0.0"
 
 [[semver_rule]]
 id = "axios-ssrf-policy"
 package = "axios"
 range = "<1.6.0"
+safeRange = ">=1.6.0"
 severity = "high"
 description = "Axios SSRF — upgrade to >=1.6.0 (CVE-2023-45857)"
 
@@ -19,6 +29,7 @@ description = "Axios SSRF — upgrade to >=1.6.0 (CVE-2023-45857)"
 id = "lodash-prototype-policy"
 package = "lodash"
 range = "<4.17.21"
+safeRange = ">=4.17.21"
 severity = "high"
 description = "Lodash prototype pollution — upgrade to >=4.17.21"
 
@@ -26,6 +37,7 @@ description = "Lodash prototype pollution — upgrade to >=4.17.21"
 id = "ws-dos-policy"
 package = "ws"
 range = "<8.17.1"
+safeRange = ">=8.17.1"
 severity = "high"
 description = "ws DoS on malformed upgrade — upgrade to >=8.17.1"
 

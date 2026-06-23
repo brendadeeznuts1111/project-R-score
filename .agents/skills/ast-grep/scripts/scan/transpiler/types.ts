@@ -50,8 +50,15 @@ export interface ScanProfile {
   correlate_symbols?: boolean;
 }
 
+export type ScanRemediation = {
+  safeRange: string;
+  suggestedVersion: string | null;
+  latestInLockfile: string | null;
+  command: string;
+};
+
 export interface ScanResult {
-  type: "transpiler" | "semver";
+  type: "transpiler" | "semver" | "threat";
   file: string;
   line: number;
   column: number;
@@ -64,6 +71,8 @@ export interface ScanResult {
   hashBefore?: string;
   hashAfter?: string;
   integrityMismatch?: boolean;
+  cve?: string;
+  remediation?: ScanRemediation;
 }
 
 export interface FileScanResult {

@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 /**
- * Package version policy scan (Layer 5) — alias for `bun sp scan packages`.
+ * Package version policy + threat-feed scan (Layer 5).
  *
- *   bun scripts/scan-packages.ts --repo . --domain agents-ast-grep
- *   bun scripts/scan-packages.ts --path projects/active/sports-terminal-os --json
+ *   bun scripts/scan-packages.ts --repo . --domain agents-ast-grep --threat-feed
+ *   bun scripts/scan-packages.ts --path . --threat-feed --fix --dry-run
  */
 
 import { resolve } from "node:path";
@@ -28,25 +28,49 @@ function parseArgs(argv: string[]): Record<string, string | boolean> {
   return out;
 }
 
+function printRemediation(findings: Awaited<ReturnType<typeof scanPackagesForTarget>>["findings"]): void {
+  for (const f of findings) {
+    const cve = f.cve ? ` (${f.cve})` : "";
+    console.log(`⚠️  [${f.severity}] ${f.file} — ${f.ruleId}${cve}`);
+    console.log(`    ${f.message}`);
+    if (f.remediation?.suggestedVersion) {
+      const latest = f.remediation.latestInLockfile;
+      const extra = latest && latest !== f.remediation.suggestedVersion
+        ? ` (latest in lockfile: ${latest})`
+        : "";
+      console.log(
+        `    → Upgrade to ${f.file}@${f.remediation.suggestedVersion} or later${extra}`,
+      );
+      console.log(`    → ${f.remediation.command}`);
+    } else if (f.remediation?.safeRange) {
+      console.log(`    → Satisfy range: ${f.remediation.safeRange}`);
+      console.log(`    → ${f.remediation.command}`);
+    }
+  }
+}
+
 async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   const repo = resolve(String(opts.repo ?? process.cwd()));
-  const domain = typeof opts.domain === "string" ? opts.domain : undefined;
-  const scanPath = typeof opts.path === "string" ? opts.path : undefined;
+  const threatFeed = opts["no-threat-feed"] !== true;
 
   const result = await scanPackagesForTarget({
     skillRoot: SKILL_ROOT,
     repo,
-    targetId: domain,
-    targetPath: scanPath,
+    targetId: typeof opts.domain === "string" ? opts.domain : undefined,
+    targetPath: typeof opts.path === "string" ? opts.path : undefined,
     minSeverity: typeof opts["min-severity"] === "string"
       ? opts["min-severity"] as "warn"
       : "warn",
+    threatFeed,
+    fix: opts.fix === true,
+    dryRunFix: opts["dry-run"] === true && opts.fix === true,
   });
 
   const payload = {
     layer: "5",
     command: "scan packages",
+    threatFeed: result.threatFeed,
     ...result,
     clean: result.findings.length === 0,
   };
@@ -54,16 +78,13 @@ async function main(): Promise<void> {
   if (opts.json === true) {
     process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);
   } else if (result.findings.length === 0) {
-    console.log(`✅ All packages satisfy version policies (${result.targetId})`);
+    console.log(`✅ All packages satisfy policies + threat-feed (${result.targetId})`);
   } else {
-    console.table(
-      result.findings.map((f) => ({
-        rule: f.ruleId,
-        severity: f.severity,
-        package: f.file,
-        message: f.message,
-      })),
-    );
+    printRemediation(result.findings);
+    if (result.fixesApplied.length) {
+      console.log("\n✅ Fixes applied:");
+      for (const cmd of result.fixesApplied) console.log(`  ${cmd}`);
+    }
   }
 
   if (opts["fail-on"] === true && result.findings.length > 0) {

@@ -10,3 +10,6 @@ export * from "./policy-loader.ts";
 export * from "./registry.ts";
 export * from "./service.ts";
 export * from "./snapshot.ts";
+export * from "./feed.ts";
+export * from "./remediation.ts";
+export * from "./lock-index.ts";

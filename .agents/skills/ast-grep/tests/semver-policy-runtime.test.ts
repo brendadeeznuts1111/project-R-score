@@ -4,7 +4,12 @@ import { SemverMatcher } from "../scripts/scan/transpiler/semver-matcher.ts";
 import { loadPolicyFromSkill } from "../scripts/scan/transpiler/policy-loader.ts";
 import { Registry } from "../scripts/scan/transpiler/registry.ts";
 import { Service } from "../scripts/scan/transpiler/service.ts";
-import { validateSnapshotVersion } from "../scripts/scan/transpiler/snapshot.ts";
+import {
+  validateScannerCompatibility,
+  validateSnapshotVersion,
+} from "../scripts/scan/transpiler/snapshot.ts";
+import { FeedParser } from "../scripts/scan/transpiler/feed.ts";
+import { suggestUpgrade, inferSafeRange } from "../scripts/scan/transpiler/remediation.ts";
 
 const SKILL_ROOT = resolve(import.meta.dir, "..");
 const REPO_ROOT = resolve(SKILL_ROOT, "../../..");
@@ -32,10 +37,13 @@ describe("SemverMatcher policy runtime (Layer 5)", () => {
     expect(latest).toBe("1.5.0");
   });
 
-  test("loadPolicy reads [semver_rule] from security.policy.toml", async () => {
+  test("loadPolicy reads semver rules, packages, blocked, scanner range", async () => {
     const policy = await loadPolicyFromSkill(SKILL_ROOT);
     expect(policy.semver_rules.length).toBeGreaterThanOrEqual(3);
     expect(policy.snapshot?.snapshotVersionRange).toBe("^2.0.0");
+    expect(policy.snapshot?.compatibleScannerVersions).toBe(">=2.0.0 <3.0.0");
+    expect(policy.semver_packages.lodash).toBe(">=4.17.21");
+    expect(policy.semver_blocked["left-pad"]).toBe("<1.0.0");
   });
 
   test("Registry.checkPackageVersions flags vulnerable lodash", async () => {
@@ -44,15 +52,52 @@ describe("SemverMatcher policy runtime (Layer 5)", () => {
     expect(violations.some((v) => v.rule.id === "lodash-prototype-policy")).toBe(true);
   });
 
-  test("Service.scanPackages on sports-terminal target", async () => {
+  test("FeedParser.matchThreats uses versionRange", async () => {
+    const feed = new FeedParser(SKILL_ROOT);
+    const matches = await feed.matchThreats("lodash", "4.17.20");
+    expect(matches.some((m) => m.cve === "CVE-2020-8203")).toBe(true);
+    expect(matches[0]?.versionRange).toBe("<4.17.21");
+  });
+
+  test("Registry.checkAllViolations merges allowed + threat feed", async () => {
+    const registry = new Registry(SKILL_ROOT);
+    const rows = await registry.checkAllViolations(
+      { lodash: "4.17.20", axios: "1.16.1" },
+      { threatFeed: true },
+    );
+    expect(rows.some((r) => r.kind === "threat" && r.package === "lodash")).toBe(true);
+    expect(rows.some((r) => r.kind === "allowed" && r.package === "lodash")).toBe(true);
+  });
+
+  test("suggestUpgrade infers safe range from vuln range", async () => {
+    expect(inferSafeRange("<4.17.21")).toBe(">=4.17.21");
+    const hint = await suggestUpgrade({
+      repo: REPO_ROOT,
+      package: "lodash",
+      currentVersion: "4.17.20",
+      vulnRange: "<4.17.21",
+    });
+    expect(hint?.safeRange).toBe(">=4.17.21");
+  });
+
+  test("Service.scanPackages returns findings + remediations", async () => {
     const service = new Service({
       skillRoot: SKILL_ROOT,
       repo: REPO_ROOT,
       targetPath: "projects/active/sports-terminal-os",
       minSeverity: "warn",
+      threatFeed: true,
     });
-    const findings = await service.scanPackages();
-    expect(Array.isArray(findings)).toBe(true);
+    const result = await service.scanPackages();
+    expect(Array.isArray(result.findings)).toBe(true);
+    expect(Array.isArray(result.remediations)).toBe(true);
+  });
+
+  test("validateScannerCompatibility enforces scanner range", async () => {
+    const policy = await loadPolicyFromSkill(SKILL_ROOT);
+    expect(validateScannerCompatibility("2.0.0", policy).compatible).toBe(true);
+    expect(validateScannerCompatibility("1.5.0", policy).compatible).toBe(false);
+    expect(validateScannerCompatibility("3.0.0", policy).compatible).toBe(false);
   });
 
   test("validateSnapshotVersion legacy missing field", async () => {

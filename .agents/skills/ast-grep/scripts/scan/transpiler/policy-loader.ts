@@ -7,6 +7,7 @@ export type SemverRule = {
   range: string;
   severity: "low" | "medium" | "high" | "critical";
   description: string;
+  safeRange?: string;
 };
 
 export type SecurityPolicy = {
@@ -15,12 +16,24 @@ export type SecurityPolicy = {
     allowedDrift?: string[];
     requiredSections?: string[];
     snapshotVersionRange?: string;
+    compatibleScannerVersions?: string;
   };
   semver_rules: SemverRule[];
+  semver_packages: Record<string, string>;
+  semver_blocked: Record<string, string>;
 };
 
 function asString(v: unknown): string | undefined {
   return typeof v === "string" ? v : undefined;
+}
+
+function parseStringMap(raw: unknown): Record<string, string> {
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === "string") out[k] = v;
+  }
+  return out;
 }
 
 function parseSemverRule(row: Record<string, unknown>): SemverRule | null {
@@ -31,11 +44,19 @@ function parseSemverRule(row: Record<string, unknown>): SemverRule | null {
   const description = asString(row.description);
   if (!id || !pkg || !range || !severity || !description) return null;
   if (!["low", "medium", "high", "critical"].includes(severity)) return null;
-  return { id, package: pkg, range, severity, description };
+  return {
+    id,
+    package: pkg,
+    range,
+    severity,
+    description,
+    safeRange: asString(row.safeRange),
+  };
 }
 
 export function parseSecurityPolicy(doc: Record<string, unknown>): SecurityPolicy {
   const snapshotRaw = doc.snapshot as Record<string, unknown> | undefined;
+  const semverRaw = doc.semver as Record<string, unknown> | undefined;
   const semverRows = doc.semver_rule as Record<string, unknown>[] | Record<string, unknown> | undefined;
   const rulesList = Array.isArray(semverRows)
     ? semverRows
@@ -60,9 +81,12 @@ export function parseSecurityPolicy(doc: Record<string, unknown>): SecurityPolic
             ? snapshotRaw.requiredSections.map(String)
             : undefined,
           snapshotVersionRange: asString(snapshotRaw.snapshotVersionRange),
+          compatibleScannerVersions: asString(snapshotRaw.compatibleScannerVersions),
         }
       : undefined,
     semver_rules,
+    semver_packages: parseStringMap(semverRaw?.packages),
+    semver_blocked: parseStringMap(semverRaw?.blocked),
   };
 }
 

@@ -3,7 +3,9 @@ import { join } from "node:path";
 import { SemverMatcher } from "./semver-matcher.ts";
 import type { SemverRule, SecurityPolicy } from "./policy-loader.ts";
 import { loadPolicyFromSkill } from "./policy-loader.ts";
+import { FeedParser, type ThreatMatch } from "./feed.ts";
 import type { RepoTarget } from "./bundle-scanner.ts";
+import type { Severity } from "./types.ts";
 
 export type SemverViolation = {
   rule: SemverRule;
@@ -11,11 +13,28 @@ export type SemverViolation = {
   version: string;
 };
 
+export type ViolationKind = "semver_rule" | "allowed" | "blocked" | "threat";
+
+export type PackageViolation = {
+  kind: ViolationKind;
+  package: string;
+  version: string;
+  ruleId: string;
+  severity: Severity;
+  message: string;
+  vulnRange?: string;
+  safeRange?: string;
+  cve?: string;
+};
+
 export class Registry {
   readonly semver = SemverMatcher;
   private policyCache: SecurityPolicy | null = null;
+  readonly feed: FeedParser;
 
-  constructor(private readonly skillRoot: string) {}
+  constructor(private readonly skillRoot: string) {
+    this.feed = new FeedParser(skillRoot);
+  }
 
   async loadPolicy(): Promise<SecurityPolicy> {
     if (!this.policyCache) {
@@ -52,5 +71,96 @@ export class Registry {
       if (rule) violations.push({ rule, package: pkg, version });
     }
     return violations;
+  }
+
+  checkAllowedPackages(
+    packages: Record<string, string>,
+    allowed: Record<string, string>,
+  ): PackageViolation[] {
+    const out: PackageViolation[] = [];
+    for (const [pkg, version] of Object.entries(packages)) {
+      const range = allowed[pkg];
+      if (!range) continue;
+      if (SemverMatcher.satisfies(version, range)) continue;
+      out.push({
+        kind: "allowed",
+        package: pkg,
+        version,
+        ruleId: `allowed-${pkg}`,
+        severity: "high",
+        message: `${pkg}@${version} below allowed range ${range}`,
+        vulnRange: range,
+        safeRange: range,
+      });
+    }
+    return out;
+  }
+
+  checkBlockedPackages(
+    packages: Record<string, string>,
+    blocked: Record<string, string>,
+  ): PackageViolation[] {
+    const out: PackageViolation[] = [];
+    for (const [pkg, version] of Object.entries(packages)) {
+      const range = blocked[pkg];
+      if (!range) continue;
+      if (!SemverMatcher.satisfies(version, range)) continue;
+      out.push({
+        kind: "blocked",
+        package: pkg,
+        version,
+        ruleId: `blocked-${pkg}`,
+        severity: "critical",
+        message: `${pkg}@${version} matches blocked range ${range}`,
+        vulnRange: range,
+      });
+    }
+    return out;
+  }
+
+  threatMatchesToViolations(matches: ThreatMatch[]): PackageViolation[] {
+    return matches.map((m) => ({
+      kind: "threat" as const,
+      package: m.package,
+      version: m.matchedVersion,
+      ruleId: m.id,
+      severity: m.severity,
+      message: m.message,
+      vulnRange: m.versionRange,
+      safeRange: m.safeRange,
+      cve: m.cve,
+    }));
+  }
+
+  semverViolationsToPackage(rows: SemverViolation[]): PackageViolation[] {
+    return rows.map((v) => ({
+      kind: "semver_rule" as const,
+      package: v.package,
+      version: v.version,
+      ruleId: v.rule.id,
+      severity: v.rule.severity,
+      message: v.rule.description,
+      vulnRange: v.rule.range,
+      safeRange: v.rule.safeRange,
+    }));
+  }
+
+  async checkAllViolations(
+    packages: Record<string, string>,
+    options: { threatFeed?: boolean } = {},
+  ): Promise<PackageViolation[]> {
+    const policy = await this.loadPolicy();
+    const rows: PackageViolation[] = [];
+
+    rows.push(...this.semverViolationsToPackage(await this.checkPackageVersions(packages)));
+    rows.push(...this.checkAllowedPackages(packages, policy.semver_packages));
+    rows.push(...this.checkBlockedPackages(packages, policy.semver_blocked));
+
+    if (options.threatFeed !== false) {
+      const threats = await this.feed.matchAllPackages(packages);
+      rows.push(...this.threatMatchesToViolations(threats));
+    }
+
+    return rows;
   }
 }

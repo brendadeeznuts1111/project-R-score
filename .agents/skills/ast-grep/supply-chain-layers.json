@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "scannerVersion": "2.0.0",
   "description": "Security scan stack — intelligence, supply-chain (Layer 4.5), runtime",
   "layers": [
     {

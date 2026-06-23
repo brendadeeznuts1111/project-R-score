@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.24.0"
+VERSION = "0.25.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -3067,6 +3067,14 @@ def _run_packages_scan(args: argparse.Namespace) -> int:
         cmd.append("--json")
     if getattr(args, "fail_on", False):
         cmd.append("--fail-on")
+    if getattr(args, "threat_feed", False):
+        cmd.append("--threat-feed")
+    if getattr(args, "no_threat_feed", False):
+        cmd.append("--no-threat-feed")
+    if getattr(args, "fix", False):
+        cmd.append("--fix")
+    if getattr(args, "dry_run", False):
+        cmd.append("--dry-run")
     trace(f"supply-chain packages: {' '.join(cmd)}")
     proc = subprocess.run(cmd, cwd=str(root))
     return proc.returncode
@@ -4548,6 +4556,10 @@ def build_parser() -> argparse.ArgumentParser:
     sc_pkg.add_argument("--path", "-p", dest="scan_path", help="Explicit path instead of domain.")
     sc_pkg.add_argument("--json-out", action="store_true", help="Emit JSON.")
     sc_pkg.add_argument("--fail-on", action="store_true", help="Exit 1 when violations exist.")
+    sc_pkg.add_argument("--threat-feed", action="store_true", help="Include threat-feed.json matches (default on).")
+    sc_pkg.add_argument("--no-threat-feed", action="store_true", help="Disable threat-feed correlation.")
+    sc_pkg.add_argument("--fix", action="store_true", help="Apply bun add upgrades for suggested versions.")
+    sc_pkg.add_argument("--dry-run", action="store_true", help="With --fix: print commands only.")
     sc_pkg.set_defaults(func=cmd_bun_supply_chain, supply_action="packages")
 
     return p

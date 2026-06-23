@@ -46,6 +46,8 @@ export type ThreatAdvisory = {
   id: string;
   package: string;
   range: string;
+  versionRange?: string;
+  safeRange?: string;
   severity: Severity;
   message: string;
   cve?: string;
@@ -64,6 +66,10 @@ export const SEMVER_DOCS =
 export async function loadThreatFeed(skillRoot: string): Promise<ThreatFeed> {
   const path = join(skillRoot, "threat-feed.json");
   const raw = JSON.parse(await readFile(path, "utf8")) as ThreatFeed;
+  raw.advisories = (raw.advisories ?? []).map((a) => ({
+    ...a,
+    range: a.versionRange ?? a.range,
+  }));
   return raw;
 }
 
