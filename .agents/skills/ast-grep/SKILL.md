@@ -97,6 +97,7 @@ python3 $AG bun supply-chain layers                 # Layer 4 / 4.5 / 5 stack
 python3 $AG bun supply-chain rules                  # TOML + JSON policy paths
 python3 $AG bun supply-chain advisories             # CVE feed (Bun.semver correlation)
 python3 $AG bun supply-chain semver --version 1.5.0 --range '<1.6.0'  # satisfies probe
+# SemverMatcher uses `import { semver } from "bun"` — see https://bun.com/docs/runtime/semver
 python3 $AG bun supply-chain scan --zone agents     # Layer 4.5: transpiler + TOML rules + integrity
 python3 $AG bun supply-chain scan --path dist --format markdown --parallel --threat-feed
 python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)

@@ -1,8 +1,12 @@
+import { semver } from "bun";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { ImportKind, ScanResult, Severity } from "./types.ts";
 import type { ResolvedDependency } from "./dependency-resolver.ts";
 import { meetsSeverity, normalizeSeverity } from "./rule-engine.ts";
+
+/** Re-export for callers that want the native Bun semver namespace. */
+export { semver };
 
 export type ThreatAdvisory = {
   id: string;
@@ -31,16 +35,22 @@ export async function loadThreatFeed(skillRoot: string): Promise<ThreatFeed> {
 
 /**
  * True when `version` falls in vulnerable `range`.
- * Uses Bun.semver.satisfies — node-semver compatible; invalid version/range → false.
+ * `semver.satisfies(version, range)` — node-semver compatible.
+ * Invalid version or range → false per Bun docs.
  * @see {@link SEMVER_DOCS}
  */
 export function isVulnerable(version: string, range: string): boolean {
-  return Bun.semver.satisfies(version, range);
+  return semver.satisfies(version, range);
 }
 
-/** Compare two versions (for feed sorting / min-patch checks). */
+/** `semver.order(a, b)` — 0 equal, 1 if a > b, -1 if a < b. */
 export function compareVersions(a: string, b: string): -1 | 0 | 1 {
-  return Bun.semver.order(a, b);
+  return semver.order(a, b);
+}
+
+/** Sort versions ascending (prereleases before release per Bun docs). */
+export function sortVersions(versions: string[]): string[] {
+  return [...versions].sort(semver.order);
 }
 
 export function matchDependencies(
