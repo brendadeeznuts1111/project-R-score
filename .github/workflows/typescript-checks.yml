@@ -35,7 +35,7 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts install --frozen-lockfile
 
       - name: Verify TypeScript Check Config
         run: bun run ts:verify

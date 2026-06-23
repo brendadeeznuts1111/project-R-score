@@ -6,22 +6,21 @@
  *
  * Absolute cache path avoids literal `./~/` dirs when nested bunfigs use unexpanded `~`.
  */
-const home = Bun.env.HOME ?? Bun.env.USERPROFILE;
-const env = { ...Bun.env } as Record<string, string | undefined>;
+import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
-if (home && !env.BUN_INSTALL_CACHE_DIR) {
-  env.BUN_INSTALL_CACHE_DIR = `${home}/.bun/install/cache`;
-}
+const verbose = process.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
+const args = process.argv.slice(2).filter(a => a !== '--verbose');
+const env = applyBunInstallEnv();
 
-// bunfig.toml sets globalStore=true; env is belt-and-suspenders for CI/subprocesses
-if (env.BUN_INSTALL_GLOBAL_STORE == null) {
-  env.BUN_INSTALL_GLOBAL_STORE = '1';
-}
-
-const args = process.argv.slice(2);
 if (args.length === 0) {
-  console.error('usage: bun scripts/with-bun-cache-env.ts <bun-args...>');
+  console.error('usage: bun scripts/with-bun-cache-env.ts [--verbose] <bun-args...>');
   process.exit(1);
+}
+
+if (verbose) {
+  console.info(
+    `bun install env: BUN_INSTALL_CACHE_DIR=${env.BUN_INSTALL_CACHE_DIR} BUN_INSTALL_GLOBAL_STORE=${env.BUN_INSTALL_GLOBAL_STORE}`
+  );
 }
 
 const proc = Bun.spawn(['bun', ...args], {

@@ -531,6 +531,33 @@ describe('Performance', () => {
 // Repo Hygiene Tests
 // ============================================================================
 
+describe('Bun install env', () => {
+  const {
+    applyBunInstallEnv,
+    isTildeCachePath,
+    resolveBunInstallCacheDir,
+  } = require('../scripts/lib/bun-install-env.ts');
+
+  it('resolves absolute cache dir from HOME', () => {
+    const env = applyBunInstallEnv({ HOME: '/Users/test' });
+    expect(env.BUN_INSTALL_CACHE_DIR).toBe('/Users/test/.bun/install/cache');
+    expect(env.BUN_INSTALL_GLOBAL_STORE).toBe('1');
+  });
+
+  it('expands literal ~/ in BUN_INSTALL_CACHE_DIR', () => {
+    const dir = resolveBunInstallCacheDir({
+      HOME: '/Users/test',
+      BUN_INSTALL_CACHE_DIR: '~/.bun/install/cache',
+    });
+    expect(dir).toBe('/Users/test/.bun/install/cache');
+  });
+
+  it('detects tilde-cache drift paths', () => {
+    expect(isTildeCachePath('projects/foo/~/.bun/install/cache/x.npm')).toBe(true);
+    expect(isTildeCachePath('package.json')).toBe(false);
+  });
+});
+
 describe('Repo Hygiene', () => {
   const { STRAY_PATTERNS, SECRETS_FILES } = require('../scripts/repo-hygiene.ts');
 

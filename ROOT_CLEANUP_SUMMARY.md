@@ -23,6 +23,13 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 - Removed: `~/` (815M misplaced bun cache), empty scaffolds (`my-app/`, `playground/`, `work/`), session photo
 - MCP/dx-mcp paths updated; `bet-ticker-worker` skill symlink retargeted
 
+## Phase 4.5 (Jun 2026) — Global virtual store
+
+- `scripts/lib/bun-install-env.ts` — shared `BUN_INSTALL_CACHE_DIR` + `BUN_INSTALL_GLOBAL_STORE` resolution
+- `scripts/verify-install-cache.ts` — `bun run install:verify` checks cache, `links/`, lockfile, tilde drift
+- Pre-commit blocks staged `./~` cache paths; CI installs via `with-bun-cache-env.ts`
+- VS Code terminal env sets absolute cache path + global store
+
 ## Phase 4.1b (Jun 2026) — Root polish
 
 - Removed duplicate root `index.html` (canonical: `public/dashboards/dns-status-dashboard.html`)

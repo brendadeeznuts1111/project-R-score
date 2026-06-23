@@ -15,6 +15,7 @@
 import { Glob } from 'bun';
 import { join } from 'path';
 import { readdir } from 'node:fs/promises';
+import { isTildeCachePath } from './lib/bun-install-env.ts';
 
 const ROOT = join(import.meta.dir, '..');
 
@@ -185,6 +186,10 @@ async function checkStagedStray(): Promise<Violation[]> {
 
   for (const file of staged) {
     const basename = file.split('/').pop()!;
+    if (isTildeCachePath(file)) {
+      violations.push({ file, rule: 'tilde-cache-staged' });
+      continue;
+    }
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(basename)) {
         violations.push({ file, rule: 'stray-output-staged' });
@@ -201,7 +206,8 @@ async function main() {
   const violations: Violation[] = [];
 
   if (stagedOnly) {
-    // Pre-commit mode: only check what's being committed
+    // Pre-commit mode — evict drift first so ./~ never gets staged
+    Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
     violations.push(...(await checkStagedSecrets()));
     violations.push(...(await checkStagedStray()));
   } else {

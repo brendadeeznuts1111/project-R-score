@@ -1585,6 +1585,8 @@
     "precommit:ast-grep:staged": "bun scripts/pre-commit-ast-grep.ts --staged",
     "precommit:ast-grep:changed": "bun scripts/pre-commit-ast-grep.ts --changed",
     "install:all": "bun scripts/with-bun-cache-env.ts install",
+    "install:verify": "bun scripts/verify-install-cache.ts",
+    "install:verify:strict": "bun scripts/verify-install-cache.ts --strict",
     "install:packages": "bun scripts/with-bun-cache-env.ts install --filter './packages/*'",
     "install:projects": "bun scripts/with-bun-cache-env.ts install --filter './projects/*'",
     "install:projects:except:experimental": "bun scripts/with-bun-cache-env.ts install --filter './projects/*' --filter '!./projects/experimental/*'",

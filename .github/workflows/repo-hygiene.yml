@@ -24,7 +24,10 @@ jobs:
           bun-version: latest
 
       - name: Install
-        run: bun install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts install --frozen-lockfile
+
+      - name: Verify install cache
+        run: bun run install:verify:strict
 
       - name: Run Repo Hygiene
         run: bun run hygiene

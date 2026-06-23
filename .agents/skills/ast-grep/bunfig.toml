@@ -1,4 +1,9 @@
 # ast-grep supply-chain skill — bun test defaults
+# Install: inherit monorepo root bunfig (globalStore + absolute BUN_INSTALL_CACHE_DIR).
+# Do not set [install.cache] dir = "~/.bun/..." here — unexpanded ~ creates ./~ drift.
+[install]
+linker = "isolated"
+globalStore = true
 # Discovery: https://bun.com/docs/test/discovery
 # Concurrent globs: https://bun.com/docs/guides/test/concurrent-test-glob
 #
