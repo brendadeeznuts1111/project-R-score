@@ -83,6 +83,9 @@ python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
 python3 $AG bun docs                                # official topic coverage map
 python3 $AG bun features                            # v1.3.13: --parallel, --isolate, --shard, --changed
 python3 $AG bun test-ci --profile ci --path ./tests # run bun test with bun-test-profiles.json
+python3 $AG bun install-docs --topic linker       # hoisted vs isolated, bunfig, age gate
+python3 $AG bun install-scan --path .             # git/github/tarball deps in package.json
+python3 $AG bun install-ci --profile ci-isolated --dry-run
 python3 $AG bun roadmap                             # security backlog: catalog vs integrated
 python3 $AG bun roadmap --priority high             # Transpiler, Workers (cataloged, not wired yet)
 python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs

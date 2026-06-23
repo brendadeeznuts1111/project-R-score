@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "description": "Bun native API structural patterns \u2014 inventory, matrix, score, and migration",
   "bundles": {
     "server-boot": {
@@ -120,6 +120,17 @@
         "subtle-sha3",
         "subtle-x25519"
       ]
+    },
+    "install": {
+      "description": "Non-npm package.json dependency specs",
+      "patterns": [
+        "install-git-https",
+        "install-git-ssh",
+        "install-git-scp",
+        "install-github",
+        "install-tarball",
+        "install-npm-alias"
+      ]
     }
   },
   "groups": {
@@ -149,7 +160,8 @@
     "parsing": "semver, TOML, Image",
     "utils": "peek, deepEquals, escapeHTML, path/url helpers",
     "low-level": "mmap, gc, heap snapshots",
-    "meta": "import.meta and module introspection"
+    "meta": "import.meta and module introspection",
+    "install": "package.json non-npm sources, bunfig linker/age gate"
   },
   "patterns": [
     {
@@ -1253,6 +1265,72 @@
       "tier": "extended",
       "description": "X25519 key agreement via SubtleCrypto",
       "since": "1.3.13"
+    },
+    {
+      "id": "install-git-https",
+      "name": "git-https",
+      "pattern": "git+https://github.com/iamkun/dayjs.git",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (git+https://)",
+      "scan_prefix": "git+https://"
+    },
+    {
+      "id": "install-git-ssh",
+      "name": "git-ssh",
+      "pattern": "git+ssh://github.com/lodash/lodash.git#4.17.21",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (git+ssh://)",
+      "scan_prefix": "git+ssh://"
+    },
+    {
+      "id": "install-git-scp",
+      "name": "git-scp",
+      "pattern": "git@github.com:moment/moment.git",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (git@github.com:)",
+      "scan_prefix": "git@github.com:"
+    },
+    {
+      "id": "install-github",
+      "name": "github",
+      "pattern": "github:colinhacks/zod",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (github:)",
+      "scan_prefix": "github:"
+    },
+    {
+      "id": "install-tarball",
+      "name": "tarball",
+      "pattern": "https://registry.npmjs.org/react/-/react-18.2.0.tgz",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (https://)",
+      "scan_prefix": "https://"
+    },
+    {
+      "id": "install-npm-alias",
+      "name": "npm-alias",
+      "pattern": "npm:@types/bun",
+      "lang": "catalog",
+      "group": "install",
+      "outline": false,
+      "tier": "extended",
+      "description": "Non-npm install spec (npm:)",
+      "scan_prefix": "npm:"
     }
   ],
   "docs_base": "https://bun.sh/docs",

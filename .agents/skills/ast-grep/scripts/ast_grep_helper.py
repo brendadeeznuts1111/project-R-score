@@ -91,7 +91,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.16.0"
+VERSION = "0.17.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -548,7 +548,9 @@ def _skill_artifacts() -> dict[str, object]:
         "codemods": (root / "codemods.json").is_file(),
         "bun_patterns": (root / "bun-patterns.json").is_file(),
         "bun_releases": (root / "bun-releases.json").is_file(),
+        "bun_install": (root / "bun-install.json").is_file(),
         "test_profiles": (root / "bun-test-profiles.json").is_file(),
+        "install_profiles": (root / "bun-install-profiles.json").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -1572,6 +1574,107 @@ def _load_test_profiles() -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_bun_install() -> dict:
+    path = skill_root() / "bun-install.json"
+    if not path.is_file():
+        err(f"bun install catalog not found: {path}")
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_install_profiles() -> dict:
+    path = skill_root() / "bun-install-profiles.json"
+    if not path.is_file():
+        err(f"install profiles not found: {path}")
+        return {"profiles": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+_PKG_DEP_SECTIONS = (
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+)
+
+
+def _classify_dep_spec(spec: str, catalog: dict) -> Optional[str]:
+    if not isinstance(spec, str):
+        return None
+    if spec.startswith("git@"):
+        return "git-scp"
+    for entry in catalog.get("non_npm_sources", []):
+        eid = entry.get("id", "")
+        prefix = entry.get("prefix", "")
+        suffix = entry.get("suffix", "")
+        if eid == "tarball":
+            if spec.startswith(("https://", "http://")) and ".tgz" in spec:
+                return eid
+            continue
+        if prefix and spec.startswith(prefix):
+            return eid
+    return None
+
+
+def _iter_package_json_files(root: Path, scan_path: Path) -> list[Path]:
+    skip = {"node_modules", ".git", "dist", "build", ".bun"}
+    files: list[Path] = []
+    if scan_path.is_file() and scan_path.name == "package.json":
+        return [scan_path]
+    for dirpath, dirnames, filenames in os.walk(scan_path):
+        dirnames[:] = [d for d in dirnames if d not in skip and not d.startswith(".")]
+        if "package.json" in filenames:
+            files.append(Path(dirpath) / "package.json")
+    return sorted(files)
+
+
+def _scan_non_npm_dependencies(root: Path, scan_path: Path) -> dict:
+    catalog = _load_bun_install()
+    findings: list[dict] = []
+    totals: dict[str, int] = {}
+    for pkg_path in _iter_package_json_files(root, scan_path):
+        try:
+            data = json.loads(pkg_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        rel = str(pkg_path.relative_to(root)) if pkg_path.is_relative_to(root) else str(pkg_path)
+        for section in _PKG_DEP_SECTIONS:
+            block = data.get(section)
+            if not isinstance(block, dict):
+                continue
+            for name, spec in block.items():
+                kind = _classify_dep_spec(str(spec), catalog)
+                if not kind:
+                    continue
+                totals[kind] = totals.get(kind, 0) + 1
+                findings.append({
+                    "file": rel,
+                    "section": section,
+                    "name": name,
+                    "spec": spec,
+                    "kind": kind,
+                })
+    bunfig_hits: list[dict] = []
+    bunfig_name = "bunfig.toml"
+    for dirpath, dirnames, filenames in os.walk(scan_path if scan_path.is_dir() else scan_path.parent):
+        dirnames[:] = [d for d in dirnames if d not in {"node_modules", ".git"}]
+        if bunfig_name not in filenames:
+            continue
+        bf = Path(dirpath) / bunfig_name
+        try:
+            text = bf.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        rel = str(bf.relative_to(root)) if bf.is_relative_to(root) else str(bf)
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("linker"):
+                bunfig_hits.append({"file": rel, "key": "linker", "line": stripped})
+            if stripped.startswith("minimumReleaseAge"):
+                bunfig_hits.append({"file": rel, "key": "minimumReleaseAge", "line": stripped})
+    return {"findings": findings, "totals": totals, "bunfig": bunfig_hits}
+
+
 def _resolve_bun_version() -> Optional[str]:
     if not shutil.which("bun"):
         return None
@@ -2223,8 +2326,120 @@ def cmd_bun_features(args: argparse.Namespace) -> int:
             print(f"  {pid}: {spec.get('description', '')}")
             print(f"    bun test {args_s}")
 
-    print("\nrun: bun test-ci --profile ci --path ./tests | bun patterns --bundle test-ci")
+    print("\nrun: bun test-ci --profile ci --path ./tests | bun install-docs")
     return 0
+
+
+def cmd_bun_install_docs(args: argparse.Namespace) -> int:
+    data = _load_bun_install()
+    if not data:
+        return 1
+    topic = (getattr(args, "topic", None) or "").lower()
+
+    if getattr(args, "json_out", False):
+        json.dump(data, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print("bun install catalog")
+    if data.get("docs"):
+        print(f"docs: {data['docs']}")
+    if not topic or topic == "sources":
+        print("\n[non-npm dependencies]")
+        for src in data.get("non_npm_sources", []):
+            print(f"  {src.get('id')}: {src.get('example', '')}")
+    if not topic or topic == "linker":
+        print("\n[linker strategies]")
+        for strat in data.get("linker_strategies", []):
+            print(f"  {strat.get('id')}: {strat.get('description', '')}")
+            if strat.get("cli"):
+                print(f"    {strat['cli']}")
+        defaults = data.get("default_linker", {})
+        if defaults and (not topic or topic == "linker"):
+            print(f"  defaults: workspace={defaults.get('new_workspace')}, single={defaults.get('new_single_package')}")
+    if not topic or topic == "security":
+        age = data.get("minimum_release_age", {})
+        if age:
+            print("\n[minimum release age]")
+            print(f"  {age.get('description', '')}")
+            if age.get("cli_example"):
+                print(f"  {age['cli_example']}")
+            for note in age.get("notes", [])[:4]:
+                print(f"  - {note}")
+    if not topic or topic == "bunfig":
+        bunfig = data.get("bunfig", {})
+        if bunfig:
+            print("\n[bunfig.toml]")
+            for p in bunfig.get("search_paths", []):
+                print(f"  search: {p}")
+            print(f"  install keys: {', '.join(bunfig.get('install_keys', [])[:8])}...")
+    if not topic or topic == "env":
+        print("\n[environment variables]")
+        for ev in data.get("env_vars", []):
+            print(f"  {ev.get('name')}: {ev.get('description', '')}")
+
+    profiles = _load_install_profiles().get("profiles", {})
+    if profiles and topic in ("", "profiles"):
+        print("\n[bun-install-profiles.json]")
+        for pid, spec in profiles.items():
+            args_s = " ".join(spec.get("args", []))
+            print(f"  {pid}: {spec.get('description', '')}")
+            if args_s:
+                print(f"    bun install {args_s}")
+
+    print("\nrun: bun install-scan | bun install-ci --profile ci-isolated --dry-run")
+    return 0
+
+
+def cmd_bun_install_scan(args: argparse.Namespace) -> int:
+    root = git_root() or Path.cwd()
+    scan_rel = getattr(args, "scan_path", None) or "."
+    scan_path = (root / scan_rel).resolve() if not Path(scan_rel).is_absolute() else Path(scan_rel)
+    if not scan_path.exists():
+        err(f"path not found: {scan_path}")
+        return 1
+    report = _scan_non_npm_dependencies(root, scan_path)
+    findings = report["findings"]
+    if getattr(args, "json_out", False):
+        json.dump(report, sys.stdout, indent=2)
+        print()
+        return 0
+    print(f"bun install-scan: {len(findings)} non-npm dep(s) under {scan_rel}")
+    if report["totals"]:
+        print("totals:", ", ".join(f"{k}={v}" for k, v in sorted(report["totals"].items())))
+    for f in findings[:50]:
+        print(f"  [{f['kind']}] {f['name']} @ {f['file']} ({f['section']})")
+        print(f"    {f['spec']}")
+    if len(findings) > 50:
+        print(f"  ... {len(findings) - 50} more")
+    if report["bunfig"]:
+        print("\nbunfig.toml:")
+        for hit in report["bunfig"][:20]:
+            print(f"  {hit['file']}: {hit['line']}")
+    if getattr(args, "fail_on", False) and findings:
+        return 1
+    return 0
+
+
+def cmd_bun_install_ci(args: argparse.Namespace) -> int:
+    profiles_data = _load_install_profiles()
+    profiles = profiles_data.get("profiles", {})
+    profile_name = getattr(args, "profile", None) or "ci"
+    spec = profiles.get(profile_name)
+    if not spec:
+        err(f"unknown install profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
+        return 1
+    root = git_root() or Path.cwd()
+    cmd = ["bun", "install", *spec.get("args", [])]
+    if getattr(args, "dry_run", False):
+        print(" ".join(cmd))
+        return 0
+    if not shutil.which("bun"):
+        err("bun required for install-ci (use --dry-run to preview)")
+        return 1
+    trace(f"install-ci: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(root))
+    return proc.returncode
 
 
 def cmd_bun_test_ci(args: argparse.Namespace) -> int:
@@ -2732,6 +2947,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"bun-patterns.json: {'ok' if artifacts['bun_patterns'] else 'missing'}")
     print(f"bun-releases.json: {'ok' if artifacts['bun_releases'] else 'missing'}")
     print(f"bun-test-profiles.json: {'ok' if artifacts['test_profiles'] else 'missing'}")
+    print(f"bun-install.json: {'ok' if artifacts['bun_install'] else 'missing'}")
+    print(f"bun-install-profiles.json: {'ok' if artifacts['install_profiles'] else 'missing'}")
     bun_ver = _resolve_bun_version()
     if bun_ver:
         patterns = _load_bun_patterns()
@@ -3574,6 +3791,22 @@ def build_parser() -> argparse.ArgumentParser:
     bun_tc.add_argument("--dry-run", action="store_true", help="Print command without running.")
     bun_tc.add_argument("--json-out", action="store_true", help="Emit JSON result.")
     bun_tc.set_defaults(func=cmd_bun_test_ci)
+
+    bun_id = bun_sub.add_parser("install-docs", help="Bun install: git/github/tarball deps, linker, bunfig, age gate.")
+    bun_id.add_argument("--topic", choices=["sources", "linker", "security", "bunfig", "env", "profiles"], help="Filter section.")
+    bun_id.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_id.set_defaults(func=cmd_bun_install_docs)
+
+    bun_is = bun_sub.add_parser("install-scan", help="Scan package.json for non-npm dependency specs.")
+    bun_is.add_argument("--path", "-p", dest="scan_path", default=".", help="Directory or package.json to scan.")
+    bun_is.add_argument("--fail-on", action="store_true", help="Exit 1 when non-npm deps found.")
+    bun_is.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_is.set_defaults(func=cmd_bun_install_scan)
+
+    bun_ic = bun_sub.add_parser("install-ci", help="Run bun install with bun-install-profiles.json.")
+    bun_ic.add_argument("--profile", default="ci-isolated", help="Profile: hoisted, isolated, ci, secure, ...")
+    bun_ic.add_argument("--dry-run", action="store_true", help="Print command without running.")
+    bun_ic.set_defaults(func=cmd_bun_install_ci)
 
     return p
 

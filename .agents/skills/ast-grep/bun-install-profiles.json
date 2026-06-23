@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "description": "bun install CI recipes — linker, frozen lockfile, production, supply-chain age gate",
+  "profiles": {
+    "default": {
+      "description": "Standard install",
+      "args": []
+    },
+    "hoisted": {
+      "description": "Traditional flattened node_modules",
+      "args": ["--linker", "hoisted"]
+    },
+    "isolated": {
+      "description": "Strict dependency isolation (monorepo default)",
+      "args": ["--linker", "isolated"]
+    },
+    "ci": {
+      "description": "CI — frozen lockfile, no drift",
+      "args": ["--frozen-lockfile"]
+    },
+    "ci-isolated": {
+      "description": "CI monorepo — isolated linker + frozen lockfile",
+      "args": ["--linker", "isolated", "--frozen-lockfile"]
+    },
+    "production": {
+      "description": "Production deps only",
+      "args": ["--production"]
+    },
+    "secure": {
+      "description": "Minimum release age 3 days (259200s)",
+      "args": ["--minimum-release-age", "259200"]
+    },
+    "secure-isolated": {
+      "description": "Isolated linker + 3-day release age gate",
+      "args": ["--linker", "isolated", "--minimum-release-age", "259200"]
+    },
+    "dry-run": {
+      "description": "Resolve without writing node_modules",
+      "args": ["--dry-run"]
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "docs": "https://bun.com/docs/pm/cli/install",
+  "git_docs": "https://bun.com/docs/pm/cli/add#git-github-and-tarball-dependencies",
+  "linker_docs": "https://bun.com/docs/pm/isolated-installs",
+  "security_docs": "https://bun.com/docs/pm/security-scanner-api",
+  "non_npm_sources": [
+    {
+      "id": "git-https",
+      "prefix": "git+https://",
+      "example": "git+https://github.com/iamkun/dayjs.git",
+      "pattern_id": "install-git-https"
+    },
+    {
+      "id": "git-ssh",
+      "prefix": "git+ssh://",
+      "example": "git+ssh://github.com/lodash/lodash.git#4.17.21",
+      "pattern_id": "install-git-ssh"
+    },
+    {
+      "id": "git-scp",
+      "prefix": "git@github.com:",
+      "example": "git@github.com:moment/moment.git",
+      "pattern_id": "install-git-scp"
+    },
+    {
+      "id": "github",
+      "prefix": "github:",
+      "example": "github:colinhacks/zod",
+      "pattern_id": "install-github"
+    },
+    {
+      "id": "tarball",
+      "prefix": "https://",
+      "suffix": ".tgz",
+      "example": "https://registry.npmjs.org/react/-/react-18.2.0.tgz",
+      "pattern_id": "install-tarball"
+    },
+    {
+      "id": "npm-alias",
+      "prefix": "npm:",
+      "example": "npm:@types/bun",
+      "pattern_id": "install-npm-alias"
+    }
+  ],
+  "linker_strategies": [
+    {
+      "id": "hoisted",
+      "description": "Traditional npm/Yarn — flattened shared node_modules",
+      "cli": "bun install --linker hoisted",
+      "default_when": "Single-package projects; pre-v1.3.2 lockfiles (configVersion 0)"
+    },
+    {
+      "id": "isolated",
+      "description": "pnpm-like strict isolation — store in node_modules/.bun/ with symlinks",
+      "cli": "bun install --linker isolated",
+      "default_when": "New workspaces/monorepos (configVersion 1); v1.3.13+ faster peer-heavy installs"
+    }
+  ],
+  "default_linker": {
+    "new_workspace": "isolated",
+    "new_single_package": "hoisted",
+    "existing_pre_v1_3_2": "hoisted",
+    "lockfile_field": "configVersion"
+  },
+  "minimum_release_age": {
+    "description": "Block npm versions published within N seconds (supply-chain age gate)",
+    "cli_example": "bun add @types/bun --minimum-release-age 259200",
+    "bunfig_key": "minimumReleaseAge",
+    "bunfig_excludes": "minimumReleaseAgeExcludes",
+    "seconds_per_day": 86400,
+    "example_days": 3,
+    "notes": [
+      "Only affects new resolution; bun.lock entries unchanged",
+      "Transitive deps filtered when resolving",
+      "Stability check skips rapid bugfix clusters near the age gate",
+      "Exact pin package@1.1.1 respects age gate but bypasses stability check"
+    ]
+  },
+  "bunfig": {
+    "search_paths": [
+      "$XDG_CONFIG_HOME/.bunfig.toml",
+      "$HOME/.bunfig.toml",
+      "./bunfig.toml"
+    ],
+    "install_keys": [
+      "optional",
+      "dev",
+      "peer",
+      "production",
+      "saveTextLockfile",
+      "frozenLockfile",
+      "dryRun",
+      "concurrentScripts",
+      "linker",
+      "minimumReleaseAge",
+      "minimumReleaseAgeExcludes"
+    ],
+    "defaults": {
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "production": false,
+      "linker": "hoisted",
+      "concurrentScripts": "cpu*2"
+    }
+  },
+  "env_vars": [
+    { "name": "BUN_CONFIG_REGISTRY", "description": "npm registry URL" },
+    { "name": "BUN_CONFIG_TOKEN", "description": "Auth token" },
+    { "name": "BUN_CONFIG_YARN_LOCKFILE", "description": "Save Yarn v1 yarn.lock" },
+    { "name": "BUN_CONFIG_LINK_NATIVE_BINS", "description": "Platform-specific bin linking" },
+    { "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE", "description": "Skip saving lockfile" },
+    { "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE", "description": "Skip loading lockfile" },
+    { "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES", "description": "Skip installing packages" },
+    { "name": "BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL", "description": "Disable streaming tarball extract (v1.3.13)" }
+  ],
+  "cache": {
+    "path": "~/.bun/install/cache/${name}@${version}",
+    "note": "Build/pre-release semver tags hashed in cache path"
+  }
+}
