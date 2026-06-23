@@ -18,6 +18,8 @@
     "install:docs": "bun scripts/bun-cli.ts bun install-docs",
     "install:scan": "bun scripts/bun-cli.ts bun install-scan --path ../..",
     "install:ci": "./scripts/bun-install-ci.sh",
+    "bundle-threat": "bun scripts/bun-cli.ts bun bundle-threat --zone agents",
+    "bundle-threat:ci": "bun scripts/bun-cli.ts bun bundle-threat --profile ci --fail-on",
     "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
     "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
     "bun:matrix": "bun scripts/bun-cli.ts bun matrix --zone sports-terminal",

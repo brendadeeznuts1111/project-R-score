@@ -95,7 +95,7 @@ python3 $AG bun matrix --zone sports-terminal
 
 **Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`, `security`, `doctor-utils`
 
-**Security roadmap** (`bun roadmap`): most APIs are cataloged; **`Worker` is integrated** via `audit --parallel` (Bun Worker pool in `scripts/audit-pool.ts`). Transpiler/HTMLRewriter/WebView/Redis remain catalog-only.
+**Security roadmap** (`bun roadmap`): **`Worker`** via `audit --parallel` (`scripts/audit-pool.ts`); **`Bun.Transpiler`** via `bun bundle-threat` (`scripts/bundle-threat-scan.ts` + `bundle-threat-rules.json`). HTMLRewriter/WebView/Redis remain catalog-only.
 
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 

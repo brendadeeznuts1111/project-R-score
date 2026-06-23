@@ -89,7 +89,9 @@ python3 $AG bun install-docs --topic backends     # hardlink, clonefile, copyfil
 python3 $AG bun install-scan --path .             # deps + lockfiles + migration hints
 python3 $AG bun install-ci --profile cross-linux-x64 --dry-run
 python3 $AG bun roadmap                             # security backlog: catalog vs integrated
-python3 $AG bun roadmap --priority high             # Transpiler, Workers (cataloged, not wired yet)
+python3 $AG bun roadmap --priority high             # security backlog — Transpiler + Worker integrated
+python3 $AG bun bundle-threat --zone agents         # Bun.Transpiler import/output threat scan
+python3 $AG bun bundle-threat --profile ci --fail-on
 python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs
 python3 $AG bun bundles                             # server-boot, networking, data-stores, security, ...
 python3 $AG bun patterns --bundle full-stack        # curated API subset

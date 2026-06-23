@@ -45,6 +45,7 @@ USAGE
     ast_grep_helper.py bun report                   # unified Bun intelligence report
     ast_grep_helper.py bun docs                       # official Bun API topic coverage
     ast_grep_helper.py bun roadmap                    # security integration backlog
+    ast_grep_helper.py bun bundle-threat --zone agents  # Bun.Transpiler threat scan
     ast_grep_helper.py bun features                   # Bun release highlights (v1.3.13 test CLI)
     ast_grep_helper.py bun test-ci --profile ci       # bun test --parallel --isolate
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
@@ -91,7 +92,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.18.0"
+VERSION = "0.19.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -551,6 +552,9 @@ def _skill_artifacts() -> dict[str, object]:
         "bun_install": (root / "bun-install.json").is_file(),
         "test_profiles": (root / "bun-test-profiles.json").is_file(),
         "install_profiles": (root / "bun-install-profiles.json").is_file(),
+        "bundle_threat_rules": (root / "bundle-threat-rules.json").is_file(),
+        "bundle_threat_profiles": (root / "bundle-threat-profiles.json").is_file(),
+        "bundle_threat_scan": (root / "scripts" / "bundle-threat-scan.ts").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -1590,6 +1594,14 @@ def _load_install_profiles() -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_bundle_threat_profiles() -> dict:
+    path = skill_root() / "bundle-threat-profiles.json"
+    if not path.is_file():
+        err(f"bundle-threat profiles not found: {path}")
+        return {"profiles": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 _PKG_DEP_SECTIONS = (
     "dependencies",
     "devDependencies",
@@ -2568,6 +2580,143 @@ def cmd_bun_install_ci(args: argparse.Namespace) -> int:
     return proc.returncode
 
 
+def _bundle_threat_script() -> Path:
+    return skill_root() / "scripts" / "bundle-threat-scan.ts"
+
+
+def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
+    profiles_data = _load_bundle_threat_profiles()
+    profiles = profiles_data.get("profiles", {})
+    profile_name = getattr(args, "profile", None) or "default"
+    if profile_name not in profiles:
+        err(f"unknown bundle-threat profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
+        return 1
+
+    root = git_root() or Path.cwd()
+    script = _bundle_threat_script()
+    if not script.is_file():
+        err("bundle-threat-scan.ts missing")
+        return 1
+
+    cmd = [
+        "bun",
+        str(script),
+        "--repo",
+        str(root),
+        "--profile",
+        profile_name,
+    ]
+    only = getattr(args, "only", None) or ""
+    zone = getattr(args, "zone", None) or ""
+    if only:
+        cmd.extend(["--only", only])
+    if zone:
+        cmd.extend(["--zone", zone])
+    if getattr(args, "dry_run", False):
+        cmd.append("--dry-run")
+
+    if getattr(args, "dry_run", False) and not shutil.which("bun"):
+        print(" ".join(cmd))
+        return 0
+    if not shutil.which("bun"):
+        err("bun required for bundle-threat (use --dry-run to preview)")
+        return 1
+
+    trace(f"bundle-threat: {' '.join(cmd)}")
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        err(f"bundle-threat timed out after {DEFAULT_TIMEOUT_S}s")
+        return 1
+    if proc.returncode != 0:
+        err(proc.stderr.strip() or proc.stdout.strip() or "bundle-threat-scan failed")
+        return proc.returncode
+
+    raw = proc.stdout.strip()
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        err("bundle-threat-scan returned invalid JSON")
+        return 1
+
+    if getattr(args, "json_out", False):
+        json.dump(payload, sys.stdout, indent=2)
+        print()
+        return 0
+
+    if payload.get("dry_run"):
+        targets = payload.get("targets", [])
+        print(f"bun bundle-threat (dry-run): profile={profile_name}  targets={len(targets)}")
+        for t in targets:
+            print(f"  [{t.get('zone', '?')}] {t.get('id', '?')}  {t.get('path', '.')}")
+        return 0
+
+    total_errors = 0
+    total_warns = 0
+    total_info = 0
+    total_files = 0
+    targets = payload.get("targets", [])
+    verbose = bool(getattr(args, "verbose", False))
+
+    print(
+        f"bun bundle-threat: profile={profile_name}"
+        f"  min={payload.get('min_severity', '?')}"
+        f"  targets={len(targets)}"
+        f"  elapsed={payload.get('elapsed_ms', '?')}ms"
+    )
+    if payload.get("description"):
+        print(f"  {payload['description']}")
+
+    for target in targets:
+        tid = target.get("id", "?")
+        rel = target.get("path", ".")
+        if target.get("skipped"):
+            print(f"\n## {tid}  SKIP (missing {rel})")
+            continue
+        findings = target.get("findings", [])
+        files_scanned = target.get("files_scanned", 0)
+        total_files += files_scanned
+        by_sev: dict[str, int] = {}
+        for f in findings:
+            sev = f.get("severity", "info")
+            by_sev[sev] = by_sev.get(sev, 0) + 1
+            if sev == "error":
+                total_errors += 1
+            elif sev == "warn":
+                total_warns += 1
+            else:
+                total_info += 1
+        sev_s = ", ".join(f"{k}={v}" for k, v in sorted(by_sev.items())) or "clean"
+        print(f"\n## {tid}  ({rel})  files={files_scanned}  {sev_s}")
+        file_rows = target.get("files", [])
+        shown = 0
+        for fr in file_rows:
+            file_findings = fr.get("findings", [])
+            if not file_findings:
+                continue
+            if not verbose and shown >= 40:
+                break
+            for f in file_findings:
+                if shown >= 40 and not verbose:
+                    break
+                detail = f"  {f['detail']}" if f.get("detail") else ""
+                print(
+                    f"  [{f.get('severity')}] {f.get('rule')}"
+                    f" @ {fr.get('file', '?')}: {f.get('message', '')}{detail}"
+                )
+                shown += 1
+        if not verbose and len(findings) > shown:
+            print(f"  ... {len(findings) - shown} more (use --verbose)")
+
+    print(
+        f"\ntotal: files={total_files}"
+        f"  error={total_errors}  warn={total_warns}  info={total_info}"
+    )
+    if getattr(args, "fail_on", False) and total_errors > 0:
+        return 1
+    return 0
+
+
 def cmd_bun_test_ci(args: argparse.Namespace) -> int:
     profiles_data = _load_test_profiles()
     profiles = profiles_data.get("profiles", {})
@@ -2665,7 +2814,7 @@ def cmd_bun_roadmap(args: argparse.Namespace) -> int:
         integ = row.get("integration", "?")
         print(f"  {row.get('api')}: {row.get('use_case')}")
         print(f"    pattern={row.get('pattern')}  cataloged={cat}  integration={integ}")
-    print("\nrun: bun patterns --bundle security | bun search bun-transpiler")
+    print("\nrun: bun bundle-threat --zone agents | bun patterns --bundle security")
     return 0
 
 
@@ -3075,6 +3224,10 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"bun-test-profiles.json: {'ok' if artifacts['test_profiles'] else 'missing'}")
     print(f"bun-install.json: {'ok' if artifacts['bun_install'] else 'missing'}")
     print(f"bun-install-profiles.json: {'ok' if artifacts['install_profiles'] else 'missing'}")
+    print(
+        f"bundle-threat: {'ok' if artifacts['bundle_threat_scan'] else 'missing'}"
+        f"  rules={'ok' if artifacts['bundle_threat_rules'] else 'missing'}"
+    )
     bun_ver = _resolve_bun_version()
     if bun_ver:
         patterns = _load_bun_patterns()
@@ -3429,13 +3582,13 @@ def cmd_audit(args: argparse.Namespace) -> int:
             row = pool_by_id.get(tid, {})
             if row.get("skipped"):
                 target_report, target_total = _audit_render_target(
-                    tid, rel, [], skipped=True,
+                    tid, rel, [], skipped=True, verbose=verbose,
                 )
                 report["targets"].append(target_report)
                 continue
             if row.get("scan_error"):
                 target_report, target_total = _audit_render_target(
-                    tid, rel, [], scan_error=row.get("scan_error"),
+                    tid, rel, [], scan_error=row.get("scan_error"), verbose=verbose,
                 )
                 report["targets"].append(target_report)
                 continue
@@ -3939,6 +4092,19 @@ def build_parser() -> argparse.ArgumentParser:
     bun_ic.add_argument("--os-target", dest="os_target", help="Override --os= (or BUN_INSTALL_OS).")
     bun_ic.add_argument("--dry-run", action="store_true", help="Print command without running.")
     bun_ic.set_defaults(func=cmd_bun_install_ci)
+
+    bun_bt = bun_sub.add_parser(
+        "bundle-threat",
+        help="Scan repo-map targets with Bun.Transpiler (imports + transpiled output threats).",
+    )
+    bun_bt.add_argument("--profile", default="default", help="Profile: default, ci, imports-only")
+    bun_bt.add_argument("--only", help="Filter repo-map targets (substring).")
+    bun_bt.add_argument("--zone", help="Filter repo-map zone.")
+    bun_bt.add_argument("--dry-run", action="store_true", help="List targets without scanning.")
+    bun_bt.add_argument("--verbose", "-v", action="store_true", help="Show per-finding details.")
+    bun_bt.add_argument("--fail-on", action="store_true", help="Exit 1 when error-level findings exist.")
+    bun_bt.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_bt.set_defaults(func=cmd_bun_bundle_threat)
 
     return p
 

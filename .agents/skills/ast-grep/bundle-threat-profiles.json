@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "description": "Bun.Transpiler bundle-threat scan profiles",
+  "profiles": {
+    "default": {
+      "description": "Full scan — imports, source patterns, transpiled output",
+      "min_severity": "info",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512
+    },
+    "ci": {
+      "description": "CI gate — error-level threats only",
+      "min_severity": "error",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512
+    },
+    "imports-only": {
+      "description": "Fast path — scanImports only, no transformSync",
+      "min_severity": "warn",
+      "transform_output": false,
+      "use_scan_imports": true,
+      "max_file_kb": 1024
+    }
+  }
+}

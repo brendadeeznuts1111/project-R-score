@@ -631,7 +631,7 @@
       "security": {
         "priority": "high",
         "use_case": "Scan bundled JS for hidden threats",
-        "integration": "catalog"
+        "integration": "integrated"
       }
     },
     {
@@ -1914,7 +1914,7 @@
         "api": "Bun.Transpiler",
         "priority": "high",
         "use_case": "Scan bundled JS for hidden threats",
-        "integration": "catalog"
+        "integration": "integrated"
       },
       {
         "pattern": "worker",

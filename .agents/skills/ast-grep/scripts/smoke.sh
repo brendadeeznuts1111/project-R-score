@@ -65,6 +65,9 @@ echo ""
 echo "== bun roadmap (high) =="
 python3 "$HELPER" -q bun roadmap --priority high 2>&1 | head -12
 echo ""
+echo "== bun bundle-threat dry-run =="
+python3 "$HELPER" -q bun bundle-threat --zone agents --dry-run 2>&1 | head -10 || true
+echo ""
 echo "== bun features (1.3.13) =="
 python3 "$HELPER" -q bun features 2>&1 | head -22 || true
 echo ""
