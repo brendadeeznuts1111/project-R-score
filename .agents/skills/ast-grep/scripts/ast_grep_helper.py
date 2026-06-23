@@ -38,7 +38,11 @@ USAGE
     ast_grep_helper.py graph [--zone ZONE]            # import edges between repo-map targets
     ast_grep_helper.py jump --name SYMBOL             # file:line jump hints for agents
     ast_grep_helper.py bun patterns                   # Bun native API pattern catalog
+    ast_grep_helper.py bun bundles                  # named pattern bundles
     ast_grep_helper.py bun inventory [--zone ZONE]    # count Bun API usage per target
+    ast_grep_helper.py bun score [--min-score N]    # adoption score per target
+    ast_grep_helper.py bun migrate                  # anti-pattern -> Bun.native hints
+    ast_grep_helper.py bun report                   # unified Bun intelligence report
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
@@ -83,7 +87,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.11.0"
+VERSION = "0.12.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -1565,7 +1569,22 @@ def _find_bun_pattern(patterns: list[dict], pattern_id: str) -> Optional[dict]:
     return None
 
 
-def _filter_bun_patterns(patterns: list[dict], args: argparse.Namespace) -> list[dict]:
+def _filter_bun_patterns(
+    patterns: list[dict],
+    args: argparse.Namespace,
+    data: Optional[dict] = None,
+) -> list[dict]:
+    bundle_q = getattr(args, "bundle", None) or ""
+    if bundle_q:
+        bundles = (data or {}).get("bundles", {})
+        spec = bundles.get(bundle_q)
+        if not spec:
+            err(f"unknown bundle '{bundle_q}' — run: bun bundles")
+            return []
+        if spec.get("tier"):
+            return [p for p in patterns if (p.get("tier") or "") == spec["tier"]]
+        ids = set(spec.get("patterns", []))
+        return [p for p in patterns if p.get("id") in ids]
     group_q = (getattr(args, "group", None) or getattr(args, "category", None) or "").lower()
     tier_q = (getattr(args, "tier", None) or "").lower()
     core_only = getattr(args, "core_only", False)
@@ -1577,6 +1596,104 @@ def _filter_bun_patterns(patterns: list[dict], args: argparse.Namespace) -> list
     if core_only:
         filtered = [p for p in filtered if (p.get("tier") or "") == "core"]
     return filtered
+
+
+def _bun_inventory_cache_path() -> Path:
+    return skill_root() / ".bun-inventory-cache.json"
+
+
+def _bun_adoption_grade(score: float) -> str:
+    if score >= 95:
+        return "A"
+    if score >= 80:
+        return "B"
+    if score >= 60:
+        return "C"
+    if score >= 40:
+        return "D"
+    return "F"
+
+
+def _bun_score_target(entry: dict, all_patterns: list[dict]) -> dict:
+    anti_ids = {
+        p["id"] for p in all_patterns
+        if (p.get("group") or p.get("category")) == "anti-pattern"
+    }
+    native = 0
+    anti = 0
+    for pid, info in entry.get("patterns", {}).items():
+        count = info.get("count", 0)
+        if pid in anti_ids:
+            anti += count
+        else:
+            native += count
+    total = native + anti
+    score = round(100.0 * native / total, 1) if total else (100.0 if native else 0.0)
+    return {
+        "id": entry.get("id"),
+        "zone": entry.get("zone"),
+        "native": native,
+        "anti": anti,
+        "score": score,
+        "grade": _bun_adoption_grade(score),
+    }
+
+
+def _load_bun_inventory_cache(args: argparse.Namespace, data: dict, *, refresh: bool = False) -> dict:
+    cache_path = _bun_inventory_cache_path()
+    root = git_root() or Path.cwd()
+    targets = _bun_native_targets(args)
+    all_patterns = data.get("patterns", [])
+    native_patterns = [p for p in all_patterns if (p.get("group") or p.get("category")) != "anti-pattern"]
+
+    if not refresh and cache_path.is_file():
+        try:
+            cached = json.loads(cache_path.read_text(encoding="utf-8"))
+            if cached.get("repo") == str(root):
+                stale = _index_stale_targets(cached, root, targets)
+                if not stale:
+                    return cached
+        except (OSError, json.JSONDecodeError):
+            pass
+
+    target_rows, totals, group_totals = _collect_bun_counts(
+        args, data, native_patterns, include_anti=True,
+    )
+    mtimes: dict[str, float] = {}
+    for target in targets:
+        tid = target.get("id")
+        if tid:
+            mtimes[tid] = _path_mtime((root / target.get("path", ".")).resolve())
+
+    cached = {
+        "version": data.get("version"),
+        "repo": str(root),
+        "built_at": datetime.now(timezone.utc).isoformat(),
+        "target_mtimes": mtimes,
+        "targets": target_rows,
+        "totals": totals,
+        "group_totals": group_totals,
+    }
+    try:
+        cache_path.write_text(json.dumps(cached, indent=2), encoding="utf-8")
+    except OSError:
+        pass
+    return cached
+
+
+def _filter_cached_targets(cached: dict, args: argparse.Namespace) -> list[dict]:
+    rows = cached.get("targets", [])
+    only = (getattr(args, "only", None) or "").lower()
+    zone = (getattr(args, "zone", None) or "").lower()
+    if zone:
+        rows = [r for r in rows if (r.get("zone") or "").lower() == zone]
+    if only:
+        rows = [
+            r for r in rows
+            if only in (r.get("id") or "").lower()
+            or only in (r.get("path") or "").lower()
+        ]
+    return rows
 
 
 def _bun_pattern_groups(data: dict) -> dict[str, str]:
@@ -1645,9 +1762,28 @@ def _count_pattern_files(
     return len(files), files
 
 
+def cmd_bun_bundles(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    bundles = data.get("bundles", {})
+    if getattr(args, "json_out", False):
+        json.dump({"bundles": bundles}, sys.stdout, indent=2)
+        print()
+        return 0
+    print(f"bun bundles: {len(bundles)}")
+    for bid, spec in bundles.items():
+        pats = spec.get("patterns")
+        tier = spec.get("tier")
+        detail = f"tier={tier}" if tier else f"{len(pats or [])} patterns"
+        print(f"  {bid}: {spec.get('description', '')} ({detail})")
+        if pats:
+            print(f"    {', '.join(pats)}")
+    print("\nrun: bun inventory --bundle server-boot")
+    return 0
+
+
 def cmd_bun_patterns(args: argparse.Namespace) -> int:
     data = _load_bun_patterns()
-    patterns = _filter_bun_patterns(data.get("patterns", []), args)
+    patterns = _filter_bun_patterns(data.get("patterns", []), args, data)
     groups = _bun_pattern_groups(data)
     if getattr(args, "json_out", False):
         json.dump({**data, "patterns": patterns}, sys.stdout, indent=2)
@@ -1677,16 +1813,24 @@ def cmd_bun_inventory(args: argparse.Namespace) -> int:
     patterns = _filter_bun_patterns(
         [p for p in all_patterns if (p.get("group") or p.get("category")) != "anti-pattern"],
         args,
+        data,
     )
     if not patterns:
         err("no patterns matched filter")
         return 1
-    targets = _bun_native_targets(args)
-    if not targets:
+    if not _bun_native_targets(args):
         err("no bun-native targets (set bun_rules or tag:bun on repo-map targets)")
         return 1
 
-    target_rows, totals, _group_totals = _collect_bun_counts(args, data, patterns, include_anti=True)
+    if getattr(args, "bundle", None):
+        target_rows, totals, _ = _collect_bun_counts(args, data, patterns, include_anti=True)
+    else:
+        cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+        target_rows = _filter_cached_targets(cached, args)
+        allowed = {p["id"] for p in patterns}
+        totals = {k: v for k, v in cached.get("totals", {}).items() if k in allowed}
+        for row in target_rows:
+            row["patterns"] = {k: v for k, v in row.get("patterns", {}).items() if k in allowed}
     report = {"targets": target_rows, "totals": totals}
 
     if getattr(args, "json_out", False):
@@ -1717,12 +1861,17 @@ def cmd_bun_matrix(args: argparse.Namespace) -> int:
     patterns = _filter_bun_patterns(
         [p for p in data.get("patterns", []) if (p.get("group") or p.get("category")) != "anti-pattern"],
         args,
+        data,
     )
-    targets = _bun_native_targets(args)
-    if not targets:
+    if not _bun_native_targets(args):
         err("no bun-native targets")
         return 1
-    target_rows, _totals, group_totals = _collect_bun_counts(args, data, patterns, include_anti=False)
+    if getattr(args, "bundle", None):
+        target_rows, _totals, group_totals = _collect_bun_counts(args, data, patterns, include_anti=False)
+    else:
+        cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+        target_rows = _filter_cached_targets(cached, args)
+        group_totals = cached.get("group_totals", {})
     tids = [r["id"] for r in target_rows]
     groups = sorted(group_totals.keys())
 
@@ -1751,8 +1900,15 @@ def cmd_bun_heatmap(args: argparse.Namespace) -> int:
     patterns = _filter_bun_patterns(
         [p for p in data.get("patterns", []) if (p.get("group") or p.get("category")) != "anti-pattern"],
         args,
+        data,
     )
-    _target_rows, totals, _group_totals = _collect_bun_counts(args, data, patterns, include_anti=False)
+    if getattr(args, "bundle", None):
+        _target_rows, totals, _ = _collect_bun_counts(args, data, patterns, include_anti=False)
+    else:
+        cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+        totals = cached.get("totals", {})
+        allowed = {p["id"] for p in patterns}
+        totals = {k: v for k, v in totals.items() if k in allowed}
     rows = [(pid, count) for pid, count in totals.items() if count]
     rows.sort(key=lambda x: -x[1])
     if not rows:
@@ -1775,6 +1931,155 @@ def cmd_bun_heatmap(args: argparse.Namespace) -> int:
         print(f"{count:4d} {bar:<40} [{grp}] {p.get('name', pid)}")
     if len(rows) > 40:
         print(f"... {len(rows) - 40} more — narrow with --group or --tier core")
+    return 0
+
+
+def cmd_bun_score(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    all_patterns = data.get("patterns", [])
+    if not _bun_native_targets(args):
+        err("no bun-native targets")
+        return 1
+    cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+    rows = [_bun_score_target(r, all_patterns) for r in _filter_cached_targets(cached, args)]
+    rows.sort(key=lambda r: -r["score"])
+    min_score = float(getattr(args, "min_score", 0) or 0)
+
+    if getattr(args, "json_out", False):
+        json.dump({"scores": rows, "cache": str(_bun_inventory_cache_path())}, sys.stdout, indent=2)
+        print()
+        if min_score and any(r["score"] < min_score for r in rows):
+            return 1
+        return 0
+
+    print(f"bun adoption score ({len(rows)} targets)")
+    print(f"cache: {_bun_inventory_cache_path()}  built_at: {cached.get('built_at', '?')}")
+    for row in rows:
+        print(
+            f"  [{row.get('zone')}] {row['id']}: {row['score']}% ({row['grade']})"
+            f"  native={row['native']} anti={row['anti']}"
+        )
+    if min_score:
+        failing = [r for r in rows if r["score"] < min_score]
+        if failing:
+            print(f"\n{len(failing)} target(s) below --min-score {min_score}")
+            return 1
+    return 0
+
+
+def cmd_bun_migrate(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    all_patterns = data.get("patterns", [])
+    anti = [p for p in all_patterns if (p.get("group") or p.get("category")) == "anti-pattern"]
+    if not _bun_native_targets(args):
+        err("no bun-native targets")
+        return 1
+    cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+    findings: list[dict] = []
+    for row in _filter_cached_targets(cached, args):
+        for p in anti:
+            pid = p.get("id", "?")
+            info = row.get("patterns", {}).get(pid, {})
+            if not info.get("count"):
+                continue
+            findings.append({
+                "target": row.get("id"),
+                "zone": row.get("zone"),
+                "pattern": pid,
+                "name": p.get("name"),
+                "migrate_to": p.get("migrate_to"),
+                "files": info.get("files", []),
+                "count": info.get("count"),
+            })
+
+    if getattr(args, "json_out", False):
+        json.dump({"migrations": findings}, sys.stdout, indent=2)
+        print()
+        return 1 if findings and getattr(args, "fail_on", False) else 0
+
+    if not findings:
+        print("(no anti-pattern matches — Bun-native clean)")
+        return 0
+    print(f"migrate: {len(findings)} anti-pattern hit(s)")
+    for f in findings:
+        hint = f" -> {f['migrate_to']}" if f.get("migrate_to") else ""
+        print(f"\n[{f.get('zone')}] {f['target']}: {f.get('name')}{hint}")
+        for fp in f.get("files", [])[:5]:
+            print(f"  {fp}")
+        if len(f.get("files", [])) > 5:
+            print(f"  ... {len(f['files']) - 5} more")
+    if getattr(args, "fail_on", False):
+        return 1
+    return 0
+
+
+def cmd_bun_report(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    all_patterns = data.get("patterns", [])
+    if not _bun_native_targets(args):
+        err("no bun-native targets")
+        return 1
+    cached = _load_bun_inventory_cache(args, data, refresh=getattr(args, "refresh", False))
+    target_rows = _filter_cached_targets(cached, args)
+    scores = [_bun_score_target(r, all_patterns) for r in target_rows]
+    anti_hits = sum(s["anti"] for s in scores)
+    native_hits = sum(s["native"] for s in scores)
+    group_totals = cached.get("group_totals", {})
+
+    migrations: list[dict] = []
+    anti = [p for p in all_patterns if (p.get("group") or p.get("category")) == "anti-pattern"]
+    for row in target_rows:
+        for p in anti:
+            info = row.get("patterns", {}).get(p.get("id", ""), {})
+            if info.get("count"):
+                migrations.append({
+                    "target": row.get("id"),
+                    "pattern": p.get("id"),
+                    "migrate_to": p.get("migrate_to"),
+                    "count": info.get("count"),
+                })
+
+    report = {
+        "built_at": cached.get("built_at"),
+        "targets": len(target_rows),
+        "native_hits": native_hits,
+        "anti_hits": anti_hits,
+        "scores": scores,
+        "group_totals": group_totals,
+        "migrations": migrations,
+        "top_apis": sorted(
+            [(k, v) for k, v in cached.get("totals", {}).items() if v],
+            key=lambda x: -x[1],
+        )[:10],
+    }
+
+    if getattr(args, "json_out", False):
+        json.dump(report, sys.stdout, indent=2)
+        print()
+        return 0
+
+    print("bun report")
+    print(f"  cache: {_bun_inventory_cache_path()}")
+    print(f"  built_at: {report['built_at']}")
+    print(f"  targets: {report['targets']}  native_hits: {native_hits}  anti_hits: {anti_hits}")
+    print("\nscores:")
+    for s in scores:
+        print(f"  {s['id']}: {s['score']}% ({s['grade']})")
+    if group_totals:
+        print("\ngroups:")
+        for grp in sorted(group_totals):
+            total = sum(group_totals[grp].values())
+            if total:
+                print(f"  {grp}: {total}")
+    if migrations:
+        print("\nmigrations:")
+        for m in migrations:
+            print(f"  {m['target']}: {m['pattern']} -> {m.get('migrate_to', '?')} ({m['count']} files)")
+    print("\ntop APIs:")
+    for pid, count in report["top_apis"]:
+        p = _find_bun_pattern(all_patterns, pid) or {}
+        if (p.get("group") or "") != "anti-pattern":
+            print(f"  {p.get('name', pid)}: {count}")
     return 0
 
 
@@ -2140,6 +2445,18 @@ def cmd_doctor(args: argparse.Namespace) -> int:
             print("index cache: corrupt (run: index --refresh)")
     else:
         print("index cache: missing (run: index --refresh)")
+
+    bun_cache = _bun_inventory_cache_path()
+    if bun_cache.is_file():
+        try:
+            bc = json.loads(bun_cache.read_text(encoding="utf-8"))
+            root = git_root() or Path.cwd()
+            stale = _index_stale_targets(bc, root, _bun_native_targets(argparse.Namespace()))
+            print(f"bun cache: {'stale' if stale else 'fresh'}  built_at={bc.get('built_at', '?')}")
+        except (OSError, json.JSONDecodeError):
+            print("bun cache: corrupt (run: bun score --refresh)")
+    else:
+        print("bun cache: missing (run: bun score --zone sports-terminal)")
 
     if getattr(args, "fix", False):
         if issues:
@@ -2704,9 +3021,15 @@ def build_parser() -> argparse.ArgumentParser:
     def _add_bun_filters(p: argparse.ArgumentParser) -> None:
         p.add_argument("--only", help="Filter repo-map targets.")
         p.add_argument("--zone", help="Filter by zone.")
+        p.add_argument("--bundle", help="Filter patterns via bundles (server-boot, cli, core, hygiene, ...).")
         p.add_argument("--group", "--category", dest="group", help="Filter patterns by group (http, io, db, ...).")
         p.add_argument("--tier", choices=["core", "extended", "migrate"], help="Filter by pattern tier.")
         p.add_argument("--core-only", action="store_true", help="Shorthand for --tier core.")
+        p.add_argument("--refresh", action="store_true", help="Rebuild .bun-inventory-cache.json.")
+
+    bun_b = bun_sub.add_parser("bundles", help="List named pattern bundles.")
+    bun_b.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_b.set_defaults(func=cmd_bun_bundles)
 
     bun_p = bun_sub.add_parser("patterns", help="List bun-patterns.json catalog.")
     _add_bun_filters(bun_p)
@@ -2727,6 +3050,23 @@ def build_parser() -> argparse.ArgumentParser:
     _add_bun_filters(bun_h)
     bun_h.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_h.set_defaults(func=cmd_bun_heatmap)
+
+    bun_sc = bun_sub.add_parser("score", help="Bun adoption score per target (native vs anti-pattern).")
+    _add_bun_filters(bun_sc)
+    bun_sc.add_argument("--min-score", type=float, default=0, help="Exit 1 if any target scores below this.")
+    bun_sc.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_sc.set_defaults(func=cmd_bun_score)
+
+    bun_mg = bun_sub.add_parser("migrate", help="Anti-pattern files with migrate_to suggestions.")
+    _add_bun_filters(bun_mg)
+    bun_mg.add_argument("--fail-on", action="store_true", help="Exit 1 when migrations needed.")
+    bun_mg.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_mg.set_defaults(func=cmd_bun_migrate)
+
+    bun_rp = bun_sub.add_parser("report", help="Unified Bun report: scores, groups, migrations, top APIs.")
+    _add_bun_filters(bun_rp)
+    bun_rp.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_rp.set_defaults(func=cmd_bun_report)
 
     bun_s = bun_sub.add_parser("search", help="Run a cataloged Bun pattern by id.")
     bun_s.add_argument("pattern_id", help="Pattern id from bun patterns (e.g. bun-serve).")

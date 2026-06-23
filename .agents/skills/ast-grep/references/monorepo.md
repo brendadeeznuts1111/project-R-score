@@ -78,10 +78,17 @@ python3 $AG audit --profile bun --only sports-terminal   # node:fs hints + CI ru
 | `migrate` | `node-fs`, `node-child-process`, `node-http` |
 
 ```bash
-python3 $AG bun matrix --zone sports-terminal    # group x target grid
-python3 $AG bun heatmap --group io               # I/O API density
-python3 $AG bun patterns --tier core
+python3 $AG bun bundles                          # server-boot, cli, persistence, hygiene
+python3 $AG bun score --zone sports-terminal     # adoption grade A–F per target
+python3 $AG bun migrate --zone sports-terminal   # anti-pattern files + migrate_to
+python3 $AG bun report --zone sports-terminal    # scores + groups + top APIs
+python3 $AG bun matrix --zone sports-terminal
+./scripts/bun-ci.sh                              # score + migrate + audit --profile bun
 ```
+
+**Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`
+
+**Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 
 ## Outline rules (Bun runtime)
 

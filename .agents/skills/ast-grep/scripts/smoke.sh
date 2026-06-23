@@ -59,8 +59,17 @@ echo ""
 echo "== jump --name f402Fetch =="
 python3 "$HELPER" -q jump --name f402Fetch --zone kimi 2>&1 | head -10
 echo ""
+echo "== bun bundles =="
+python3 "$HELPER" -q bun bundles 2>&1 | head -12
+echo ""
+echo "== bun score (sports-terminal) =="
+python3 "$HELPER" -q bun score --zone sports-terminal 2>&1 | head -8
+echo ""
+echo "== bun report (sports-terminal) =="
+python3 "$HELPER" -q bun report --zone sports-terminal 2>&1 | head -18
+echo ""
 echo "== bun patterns (core) =="
-python3 "$HELPER" -q bun patterns --tier core 2>&1 | head -22
+python3 "$HELPER" -q bun patterns --tier core 2>&1 | head -15
 echo ""
 echo "== bun matrix (sports-terminal) =="
 python3 "$HELPER" -q bun matrix --zone sports-terminal 2>&1 | head -12

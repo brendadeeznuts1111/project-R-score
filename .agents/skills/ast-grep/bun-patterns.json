@@ -1,6 +1,28 @@
 {
-  "version": 2,
-  "description": "Bun native API structural patterns — inventory, matrix, and search",
+  "version": 3,
+  "description": "Bun native API structural patterns — inventory, matrix, score, and migration",
+  "bundles": {
+    "server-boot": {
+      "description": "HTTP/WebSocket server entrypoints",
+      "patterns": ["bun-serve", "bun-file", "bun-env", "fetch-native", "websocket"]
+    },
+    "cli": {
+      "description": "CLI scripts and subprocess wiring",
+      "patterns": ["bun-argv", "bun-spawn", "bun-stdin", "bun-file", "bun-env"]
+    },
+    "persistence": {
+      "description": "SQLite and file-backed storage",
+      "patterns": ["bun-sqlite", "bun-file", "bun-write", "bun-glob"]
+    },
+    "core": {
+      "description": "All tier=core Bun APIs",
+      "tier": "core"
+    },
+    "hygiene": {
+      "description": "Node APIs to migrate away from",
+      "patterns": ["node-fs", "node-fs-explicit", "node-child-process", "node-http"]
+    }
+  },
   "groups": {
     "http": "Servers, fetch, WebSocket",
     "io": "Bun.file, Bun.write, Bun.Glob, streams",
@@ -344,7 +366,8 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node fs — prefer Bun.file"
+      "description": "Node fs — prefer Bun.file",
+      "migrate_to": "bun-file"
     },
     {
       "id": "node-fs-explicit",
@@ -354,7 +377,8 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Explicit node:fs — prefer Bun.file"
+      "description": "Explicit node:fs — prefer Bun.file",
+      "migrate_to": "bun-file"
     },
     {
       "id": "node-child-process",
@@ -364,7 +388,8 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node child_process — prefer Bun.spawn"
+      "description": "Node child_process — prefer Bun.spawn",
+      "migrate_to": "bun-spawn"
     },
     {
       "id": "node-http",
@@ -374,7 +399,8 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node http — prefer Bun.serve"
+      "description": "Node http — prefer Bun.serve",
+      "migrate_to": "bun-serve"
     }
   ]
 }

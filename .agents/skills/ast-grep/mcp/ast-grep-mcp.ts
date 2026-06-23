@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.9.0';
+const SERVER_VERSION = '0.10.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -207,13 +207,17 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'inventory', 'matrix', 'heatmap', 'search'], description: 'patterns|inventory|matrix|heatmap|search' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'search'], description: 'Bun subcommand' },
         patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
         only: { type: 'string' },
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },
         group: { type: 'string', description: 'Filter patterns: http, io, db, crypto, anti-pattern, ...' },
         tier: { type: 'string', enum: ['core', 'extended', 'migrate'] },
         coreOnly: { type: 'boolean', description: 'Shorthand for tier=core' },
+        bundle: { type: 'string', description: 'Pattern bundle: server-boot, cli, core, hygiene' },
+        refresh: { type: 'boolean', description: 'Rebuild bun inventory cache' },
+        minScore: { type: 'number', description: 'For score: exit error below threshold' },
+        failOn: { type: 'boolean', description: 'For migrate: error when anti-patterns found' },
         jsonOut: { type: 'boolean' },
       },
       required: ['action'],
@@ -587,7 +591,11 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   if (args.zone) extra.push('--zone', String(args.zone));
   if (args.group) extra.push('--group', String(args.group));
   if (args.tier) extra.push('--tier', String(args.tier));
+  if (args.bundle) extra.push('--bundle', String(args.bundle));
   if (args.coreOnly === true) extra.push('--core-only');
+  if (args.refresh === true) extra.push('--refresh');
+  if (args.minScore != null) extra.push('--min-score', String(args.minScore));
+  if (args.failOn === true) extra.push('--fail-on');
   if (args.jsonOut === true) extra.push('--json-out');
   const { stdout, stderr, code } = await runHelper('bun', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no bun output)'), code !== 0);
