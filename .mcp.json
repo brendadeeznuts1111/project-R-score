@@ -19,7 +19,7 @@
       ],
       "requiresEnv": {
         "cascade-mover": [
-          "cascade-mover-v3/.env"
+          "projects/active/enterprise/cascade-mover-v3/.env"
         ],
         "mcp-bridge": [
           ".env"
@@ -47,7 +47,7 @@
         "${workspaceFolder}/scripts/dx-mcp.ts"
       ],
       "env": {
-        "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,cascade-mover-v3,bet-ticker-worker-v1.1,packages,lib,tools"
+        "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,projects/active/enterprise/cascade-mover-v3,projects/active/enterprise/bet-ticker-worker-v1.1,packages,lib,tools"
       },
       "envFile": "${workspaceFolder}/.env"
     },
@@ -56,12 +56,12 @@
       "description": "Cascade Mover v3 — sports intelligence (lines, sources, confidence, 43 tools)",
       "command": "bun",
       "args": [
-        "${workspaceFolder}/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
+        "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
       ],
       "env": {
         "NODE_ENV": "production"
       },
-      "envFile": "${workspaceFolder}/cascade-mover-v3/.env"
+      "envFile": "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/.env"
     },
     "ast-grep": {
       "type": "stdio",

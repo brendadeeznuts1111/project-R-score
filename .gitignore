@@ -237,12 +237,12 @@ clawdbot/
 
 # Separate projects with their own git history
 projects/active/kimiremote/
-/bet-ticker-worker-v1.1/
-/cascade-mover-v3/
+/projects/active/enterprise/bet-ticker-worker-v1.1/
+/projects/active/enterprise/cascade-mover-v3/
 projects/active/f402-openapi/
 
 # Runtime / ephemeral state (cascade-mover shadow beta)
-shadow-beta-state.json
+projects/active/enterprise/cascade-mover-v3/shadow-beta-state.json
 
 # Accidental scaffold paths
 projects/active/utilities/shortcut-registry/eeeeee/
@@ -297,20 +297,20 @@ docs/archives/
 vendor/
 .third_party/
 
-# Independent project — has its own git repo
-apex-biolabs/
+# Independent projects — own git history (under projects/)
+projects/experimental/apex-biolabs/
+projects/experimental/alchemy-effect/
+projects/experimental/cloudflare-artifacts/
+projects/experimental/purelytelegram-router/
+projects/archive/lazycodex/
 
-# Local workspace clutter — experiments, worktrees, session artifacts (root)
+# Local workspace clutter — worktrees, session artifacts
 .kimi/
 herdr-worktrees/
-lazycodex/
-z-ai/
-barrel-index-files.txt
+/~/
+scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx
-cloudflare-artifacts/
-alchemy-effect/
-alchemy-tutorial/
-purelytelegram-router/
+examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/

@@ -21,6 +21,7 @@ Projects/
 ├── examples/                # Runnable demos & Bun feature showcases
 │   ├── demos/               # One-off demos
 │   └── bun-v139-features/   # Bun 1.3.9 experiments
+├── projects/active/enterprise/  # bet-ticker-worker-v1.1, cascade-mover-v3 (gitignored, own repos)
 ├── factorywager/            # → projects/active/factorywager/ (moved)
 ├── kimiremote/              # → projects/active/kimiremote/ (moved)
 ├── lib/                     # Shared library code (shared utils)
@@ -91,7 +92,7 @@ Projects/
 - Add `packages:outdated` to CI reporting.
 - Evaluate `projects/active/kimiremote/` and `projects/active/factorywager/` as standalone repos vs monorepo members.
 - **Phase 4.4 (May 2026) — Scan consolidation**: Shared [`lib/projects-scan.ts`](lib/projects-scan.ts) for project inventory; dx-mcp debug-gated scan errors.
-- Move `bet-ticker-worker-v1.1/` and `cascade-mover-v3/` under `projects/active/` (currently gitignored at root).
+- ~~Move `bet-ticker-worker-v1.1/` and `cascade-mover-v3/` under `projects/active/`~~ **Done (Jun 2026)** → `projects/active/enterprise/`.
 - **Antipattern remediation (manual)**: `export default` → named exports, `: any` → `: unknown`, non-null assertions, empty catches.
 
 Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.

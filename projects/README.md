@@ -31,7 +31,7 @@ Each project under `projects/` is classified into one of three tiers:
 | `active/automation/` | duo-automation, duoplus-app-factory, enhancements |
 | `active/dashboards/` | enterprise-dashboard, quantum-terminal-dashboard |
 | `active/development/` | geelark, kal-poly-bot |
-| `active/enterprise/` | fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io |
+| `active/enterprise/` | fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io, bet-ticker-worker-v1.1, cascade-mover-v3 |
 | `active/games/` | 2048 |
 | `active/tools/` | native-addon-tool, rust-bun-plugin, zig-self-bun |
 | `active/utilities/` | codepoint, tan-bun, shortcut-registry, toml-cli, testing |

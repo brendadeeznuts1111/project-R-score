@@ -68,7 +68,7 @@ function isAstGrepRelevant(file: string): boolean {
 }
 
 function hasLockfileOrPolicyTrigger(files: string[]): boolean {
-  return files.some((file) => {
+  return files.some(file => {
     const normalized = file.replace(/^\.\//, '');
     return LOCKFILE_PATHS.has(normalized) || normalized === POLICY_PATH;
   });
@@ -85,7 +85,7 @@ async function gitLines(args: string[]): Promise<string[]> {
   if (code !== 0) return [];
   return out
     .split('\n')
-    .map((f) => f.trim())
+    .map(f => f.trim())
     .filter(Boolean);
 }
 
@@ -117,16 +117,7 @@ function buildGates(includePackages: boolean): Gate[] {
     {
       id: 'semver',
       label: 'semver policy tests',
-      cmd: [
-        'python3',
-        helper,
-        '-q',
-        'bun',
-        'test-ci',
-        '--profile',
-        'semver',
-        '--skip-preflight',
-      ],
+      cmd: ['python3', helper, '-q', 'bun', 'test-ci', '--profile', 'semver', '--skip-preflight'],
     },
   ];
 
@@ -208,7 +199,7 @@ async function main(): Promise<void> {
     if (!results.at(-1)?.ok) break;
   }
 
-  const failed = results.filter((r) => !r.ok);
+  const failed = results.filter(r => !r.ok);
   const totalMs = results.reduce((sum, r) => sum + r.ms, 0);
 
   console.info('');
@@ -218,9 +209,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.info(
-    `✅ ast-grep + semver passed — ${results.length} gate(s), ${totalMs}ms [${mode}]`,
-  );
+  console.info(`✅ ast-grep + semver passed — ${results.length} gate(s), ${totalMs}ms [${mode}]`);
 }
 
 if (import.meta.main) {

@@ -38,9 +38,9 @@ python3 $AG scan --config .agents/skills/ast-grep/sgconfig.yml \
 | Sports terminal entry | `projects/active/sports-terminal-os/src/index.ts` | `Bun.serve`, boot wiring (`bun_rules`) |
 | Sports terminal API | `projects/active/sports-terminal-os/src/api` | Route handlers, proxy endpoints |
 | Sports terminal services | `projects/active/sports-terminal-os/src/services` | Domain logic, WS handlers |
-| Kimi sports plugin | `kimi-plugin/sports-odds-plugin/scripts` | Odds/scores CLI scripts |
-| Kimi MCP server | `kimi-plugin/sports-mcp-server` | MCP tools + WS handlers |
-| Shared constants | `kimi-plugin/shared` | Cross-plugin types/constants |
+| Kimi sports plugin | `projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin/scripts` | Odds/scores CLI scripts |
+| Kimi MCP server | `projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server` | MCP tools + WS handlers |
+| Shared constants | `projects/active/sports-terminal-os/integrations/kimi-plugin/shared` | Cross-plugin types/constants |
 
 ## Verified search patterns (this repo)
 
@@ -52,7 +52,7 @@ python3 $AG search 'Bun.serve($$$)' --path projects/active/sports-terminal-os --
 python3 $AG search 'createLogger($$$)' --path projects/active/sports-terminal-os/src --lang ts
 
 # Outbound fetch (plugin + services)
-python3 $AG search 'fetch($$$)' --path kimi-plugin/sports-odds-plugin --lang ts
+python3 $AG search 'fetch($$$)' --path projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin --lang ts
 
 # WebSocket clients
 python3 $AG search 'new WebSocket($$$)' --path projects/active/sports-terminal-os --lang ts

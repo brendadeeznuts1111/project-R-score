@@ -39,8 +39,8 @@ const DEFAULT_SCAN_ROOTS = [
   join(ROOT, 'projects', 'active'),
   join(ROOT, 'projects', 'experimental'),
   join(ROOT, 'projects', 'archive'),
-  join(ROOT, 'cascade-mover-v3'),
-  join(ROOT, 'bet-ticker-worker-v1.1'),
+  join(ROOT, 'projects', 'active', 'enterprise', 'cascade-mover-v3'),
+  join(ROOT, 'projects', 'active', 'enterprise', 'bet-ticker-worker-v1.1'),
 ];
 
 const SCAN_ROOTS = (() => {
@@ -992,8 +992,8 @@ async function dispatch(
           configs.find(c => c.file === '.cursor/mcp.json') ??
           configs.find(c => c.file === '.mcp.json') ??
           configs[0];
-        const catalog = (primary.cfg as { _meta?: { serverCatalog?: Record<string, string[]> } })._meta
-          ?.serverCatalog;
+        const catalog = (primary.cfg as { _meta?: { serverCatalog?: Record<string, string[]> } })
+          ._meta?.serverCatalog;
         const servers = Object.entries(primary.cfg.mcpServers || {}).map(
           ([name, s]: [string, any]) => {
             const scriptArg = s.args?.find((a: string) => a.endsWith('.ts') || a.endsWith('.js'));

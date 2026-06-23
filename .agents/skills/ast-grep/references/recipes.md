@@ -414,14 +414,14 @@ python3 $AG search 'Bun.serve($$$)' --path projects/active/sports-terminal-os --
 python3 $AG files 'createLogger($$$)' --path projects/active/sports-terminal-os/src --lang ts
 
 # HTTP clients in plugins
-python3 $AG search 'fetch($$$)' --path kimi-plugin/sports-odds-plugin --lang ts
+python3 $AG search 'fetch($$$)' --path projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin --lang ts
 
 # WebSocket hooks
 python3 $AG search 'new WebSocket($$$)' --path projects/active/sports-terminal-os --lang ts
 
 # Bundled lint rules (preview)
 python3 $AG scan --path projects/active/sports-terminal-os/src --lang ts
-python3 $AG scan --path kimi-plugin/sports-odds-plugin/scripts --rule rules/no-console-log.yml
+python3 $AG scan --path projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin/scripts --rule rules/no-console-log.yml
 ```
 
 ---

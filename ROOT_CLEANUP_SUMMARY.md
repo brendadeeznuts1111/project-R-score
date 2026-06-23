@@ -9,9 +9,19 @@ Phases 1–5 and 4.1–4.3 history moved to [`docs/archives/root-cleanup-history
 - Sports Terminal docs: `docs/sports-terminal/`
 - Workspace map: [`STRUCTURE.md`](STRUCTURE.md)
 
-## Phase 4.1 (committed)
+## Phase 4.1 (Jun 2026)
 
 Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdown to project docs.
+
+**Root eviction (Jun 2026):**
+- `bet-ticker-worker-v1.1/`, `cascade-mover-v3/` → `projects/active/enterprise/`
+- `kimi-plugin/` → `projects/active/sports-terminal-os/integrations/kimi-plugin/`
+- Experimental: `alchemy-effect/`, `cloudflare-artifacts/`, `purelytelegram-router/`, `apex-biolabs/` → `projects/experimental/`
+- `alchemy-tutorial/` → `examples/demos/alchemy-tutorial/`
+- `lazycodex/` → `projects/archive/`
+- `z-ai/` → `scratch/session-artifacts/`
+- Removed: `~/` (815M misplaced bun cache), empty scaffolds (`my-app/`, `playground/`, `work/`), session photo
+- MCP/dx-mcp paths updated; `bet-ticker-worker` skill symlink retargeted
 
 ## Phase 4.2 (committed)
 
