@@ -7,6 +7,8 @@ exact = true
 # Isolated installs (default for workspaces)
 linker = "isolated"
 auto = "fallback"
+# Global virtual store — install once, link everywhere (warm install ~7× faster)
+globalStore = true
 
 # Private registry configuration for @graph scoped packages
 [install.scopes."@graph"]

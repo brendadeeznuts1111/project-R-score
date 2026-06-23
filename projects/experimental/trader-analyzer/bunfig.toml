@@ -38,6 +38,11 @@ concurrentScripts = 16 # (cpu count or GOMAXPROCS) x2
 # Using "isolated" for workspaces (prevents phantom dependencies)
 linker = "isolated"
 
+# [INSTALL.GLOBAL.STORE.RG:CONFIG] global virtual store — install once, link everywhere.
+# Warm installs ~7× faster; node_modules shrinks to ~5 MB of symlinks.
+# See: https://bun.com/docs/pm/global-store
+globalStore = true
+
 # [INSTALL.AUTO.RG:CONFIG] Auto-install behavior
 auto = "fallback"
 

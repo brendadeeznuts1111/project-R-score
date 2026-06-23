@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
       SEARCH_BENCH_QUERY_TIMEOUT_MS: "60000"
       SEARCH_BENCH_QUERY_RETRIES: "1"
       SEARCH_BENCH_PIN_TREND_ENABLED: "1"

@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
     steps:
     - name: Checkout code
       uses: actions/checkout@v3

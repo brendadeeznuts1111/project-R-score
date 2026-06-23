@@ -7,12 +7,13 @@
 # Required by projects/active/enterprise/bet-ticker-worker-v1.1; safe for all workspaces.
 linker = "isolated"
 
-# Global virtual store: ~1 symlink per package on warm install.
-# Materializes under <cache>/links/ (see docs/pm/global-store).
-# Set BUN_INSTALL_GLOBAL_STORE=1 in CI as a belt-and-suspenders.
+# Global virtual store — https://bun.sh/docs/pm/global-store
+# Requires isolated linker. Warm installs link from <cache>/links/ (~7× faster).
+# Opt out: globalStore = false or BUN_INSTALL_GLOBAL_STORE=0
 globalStore = true
 
-# https://bun.sh/docs/pm/global-cache — override with BUN_INSTALL_CACHE_DIR
+# Global cache (tarballs) — https://bun.sh/docs/pm/global-cache
+# Override: BUN_INSTALL_CACHE_DIR (also relocates global store links/)
 [install.cache]
 dir = "~/.bun/install/cache"
 disable = false

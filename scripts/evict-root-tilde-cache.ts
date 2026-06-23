@@ -1,16 +1,43 @@
 #!/usr/bin/env bun
 /**
  * Remove literal `./~` cache dirs created when Bun fails to expand `~` in
- * workspace bunfig cache paths. Safe no-op when absent.
+ * workspace bunfig cache paths. Scans repo root and nested workspaces.
  */
 import { join } from 'path';
 
 const ROOT = join(import.meta.dir, '..');
-const TILDE_CACHE = join(ROOT, '~');
+const PRUNE = [
+  join(ROOT, 'node_modules'),
+  join(ROOT, '.git'),
+  join(ROOT, 'herdr-worktrees'),
+];
 
-if (Bun.spawnSync(['test', '-d', TILDE_CACHE]).exitCode !== 0) {
+const findArgs = [
+  ROOT,
+  ...PRUNE.flatMap((p) => ['-path', p, '-prune', '-o']),
+  '-name',
+  '~',
+  '-type',
+  'd',
+  '-print',
+];
+
+const found = Bun.spawnSync(['find', ...findArgs], { stdout: 'pipe' });
+if (found.exitCode !== 0) {
+  process.exit(found.exitCode ?? 1);
+}
+
+const dirs = new TextDecoder()
+  .decode(found.stdout)
+  .split('\n')
+  .map((line) => line.trim())
+  .filter(Boolean);
+
+if (dirs.length === 0) {
   process.exit(0);
 }
 
-Bun.spawnSync(['rm', '-rf', TILDE_CACHE]);
-console.info('🧹 evicted root ./~ bun cache dir');
+for (const dir of dirs) {
+  Bun.spawnSync(['rm', '-rf', dir]);
+  console.info(`🧹 evicted ${dir.replace(ROOT + '/', './')}`);
+}
