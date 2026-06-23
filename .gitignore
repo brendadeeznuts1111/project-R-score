@@ -73,6 +73,8 @@ out/
 !.agents/skills/**/package.json
 !.agents/skills/**/SOURCE
 !.agents/skills/**/.gitignore
+!.agents/skills/**/references/
+!.agents/skills/**/references/**
 .reasonix/
 
 # OS

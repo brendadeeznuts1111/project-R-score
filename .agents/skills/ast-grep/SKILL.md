@@ -4,7 +4,7 @@ description: |
   AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+.
   Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads,
   finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy.
-  Requires scripts/sg.sh (pins @ast-grep/cli@0.44.0 for the outline command).
+  Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).
 ---
 
 # ast-grep (outline + structural tools)
@@ -20,7 +20,7 @@ npm install -g @ast-grep/cli@0.44.0
 ast-grep outline --help   # must work
 ```
 
-**Skill fallback** (if global is older or missing):
+**Skill fallback:**
 
 ```bash
 cd .agents/skills/ast-grep && ./scripts/install.sh
@@ -29,72 +29,55 @@ cd .agents/skills/ast-grep && ./scripts/install.sh
 Verify:
 
 ```bash
-.agents/skills/ast-grep/scripts/doctor.sh
+python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor
+./scripts/smoke.sh
 ```
 
-Use `scripts/sg.sh` — it picks the first binary with `outline` support (global 0.44+ or skill pin).
+## Primary entry: `ast_grep_helper.py`
 
-## Default moves
-
-1. **`outline`** — map structure before reading large files/dirs
-2. **`run`** — read-only structural search
-3. **`run --rewrite`** — preview codemod (add `--update-all` to apply)
-4. **`scan`** — YAML rules / `sgconfig.yml`
-5. **`doctor`** — if outline fails
-
-## Outline (new in 0.44 — pi-ast-grep's killer feature)
-
-Start cheap:
+Agent default — validates patterns, truncates huge output, two-pass replace, **outline**:
 
 ```bash
-SG=.agents/skills/ast-grep/scripts/sg.sh
+AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
 
-# File skeleton
-$SG outline src/file.ts --view digest --color never
+# Structure map (0.44+)
+python3 $AG outline src/file.ts --view digest
+python3 $AG outline src --view names --items exports
+python3 $AG outline src --match 'Effect' --types function
 
-# Symbol names only
-$SG outline src --view names --color never
+# Structural search
+python3 $AG search 'fetch($$$)' --path kimi-plugin/ --lang ts
+python3 $AG search 'console.log($MSG)' --lang ts src/ -C 2
 
-# Exports across a tree
-$SG outline src --items exports --view names --color never
+# Codemod (dry-run, then --apply)
+python3 $AG replace 'foo($A)' 'bar($A)' --lang ts src/
+python3 $AG replace 'foo($A)' 'bar($A)' --lang ts src/ --apply
 
-# Filter symbols
-$SG outline src --match 'Effect' --types function,class --color never
+# Offline pattern check (before debugging "no matches")
+python3 $AG validate 'console.log($MSG)' --lang ts
+
+# YAML rules
+python3 $AG scan --rule rules/no-console.yml src/
 ```
 
-Views: `auto`, `names`, `signatures`, `digest`, `expanded`  
-Items: `auto`, `structure`, `exports`, `imports`, `all`
+Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
 
-## Structural search
+## Workflow checklist
 
-```bash
-$SG run --pattern 'fetch($$$)' --lang ts --color never kimi-plugin/
-$SG run --pattern 'console.log($$$)' --lang ts --files-with-matches src/
-$SG run --kind 'function_declaration' --lang ts --color never src/
-```
+1. **Explore** — `outline --view names` or `digest` on target path
+2. **Narrow** — add `--match`, `--types`, `--globs`, or specific files
+3. **Search** — `search` with AST pattern (not regex)
+4. **Rewrite** — preview replace, then `--apply` on narrow scope
+5. **Verify** — `git diff` + project tests
 
-Patterns use `$VAR` (one node) and `$$$` (many nodes) — **not regex**.
+## Outline views
 
-## Rewrite (preview first)
-
-```bash
-# Preview diff (default)
-$SG run --pattern 'foo($A)' --rewrite 'bar($A)' --lang ts --color never src/
-
-# Apply
-$SG run --pattern 'foo($A)' --rewrite 'bar($A)' --lang ts --update-all src/
-git diff
-```
-
-`--json` and `--update-all` are mutually exclusive — run two passes if scripting.
-
-## Scan (YAML rules)
-
-```bash
-$SG scan --rule rules/no-console.yml --color never src/
-$SG scan --config sgconfig.yml --color never .
-$SG scan --config sgconfig.yml --update-all src/   # trusted fixes only
-```
+| View | Use when |
+|---|---|
+| `names` | Symbol inventory, exports map |
+| `digest` | Quick skeleton with key lines |
+| `signatures` | Types + params without bodies |
+| `expanded` | Members and nested detail |
 
 ## When to use what
 
@@ -102,29 +85,30 @@ $SG scan --config sgconfig.yml --update-all src/   # trusted fixes only
 |---|---|
 | What symbols/exports exist? | `outline --view names` |
 | Quick file skeleton | `outline --view digest` |
-| Find every `fetch()` call | `run --pattern` |
-| Codemod across files | `run --rewrite` then `--update-all` |
+| Find every `fetch()` call | `search` |
+| Codemod across files | `replace` then `--apply` |
 | Project lint rules | `scan` |
 | String in comments/filenames | `rg` (not ast-grep) |
+
+## Pattern rules (critical)
+
+- `$VAR` = one AST node, `$$$` = zero or more nodes — **not regex**
+- Patterns must be **valid parseable code** for the target language
+- `--json` and `--update-all` are mutually exclusive — helper runs two passes on `--apply`
+
+See [references/patterns.md](references/patterns.md) and [references/pitfalls.md](references/pitfalls.md).
 
 ## Agent guidelines
 
 - Run `outline` before reading files >200 lines or unfamiliar directories.
-- Narrow with `--match`, `--types`, `--globs`, or explicit paths — avoid dumping whole monorepos.
+- Call `validate` when a pattern looks like regex or returns zero matches unexpectedly.
 - Preview broad rewrites; apply only when paths/globs/patterns are narrow and intentional.
-- After `--update-all`, inspect `git diff` and run project checks.
-
-## Lazycodex helper (optional)
-
-For offline pattern validation and two-pass replace automation, see  
-`lazycodex/plugins/omo/skills/ast-grep/scripts/ast_grep_helper.py` — it does not yet wrap `outline`; use `scripts/sg.sh` for that.
+- Output auto-truncates at 2,000 lines / 50 KiB — narrow scope instead of widening.
 
 ## Pi install (separate harness)
-
-If using [Pi](https://github.com/earendil-works/pi-coding-agent):
 
 ```bash
 pi install git:github.com/joelhooks/pi-ast-grep@main
 ```
 
-That exposes `ast_grep_outline`, `ast_grep_search`, etc. as native Pi tools. This skill is the Cursor/Grok/Kimi port.
+Native Pi tools: `ast_grep_outline`, `ast_grep_search`, etc.

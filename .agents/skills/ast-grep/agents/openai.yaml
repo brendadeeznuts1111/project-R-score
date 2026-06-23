@@ -1,4 +1,4 @@
 interface:
   display_name: "ast-grep"
-  short_description: "AST outline, structural search, and codemods via ast-grep 0.44+"
-  default_prompt: "Use ast-grep outline before reading large files. Run structural search/rewrite via scripts/sg.sh. Prefer syntax-shaped patterns over rg when exploring code structure."
+  short_description: "AST outline, search, and codemods via ast_grep_helper.py (0.44+)"
+  default_prompt: "Run ast_grep_helper.py outline before large file reads. Use search/replace for syntax-shaped patterns. Validate patterns offline when matches are empty. See references/pitfalls.md for regex mistakes."
