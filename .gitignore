@@ -299,3 +299,18 @@ vendor/
 
 # Independent project — has its own git repo
 apex-biolabs/
+
+# Local workspace clutter — experiments, worktrees, session artifacts (root)
+.kimi/
+herdr-worktrees/
+lazycodex/
+z-ai/
+barrel-index-files.txt
+photo_*.jpg
+artifacts/*.docx
+cloudflare-artifacts/
+alchemy-effect/
+alchemy-tutorial/
+purelytelegram-router/
+examples/mega-liner-v7/
+examples/mega-liner-v8/
