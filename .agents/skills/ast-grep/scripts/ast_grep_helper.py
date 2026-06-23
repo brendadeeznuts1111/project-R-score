@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.21.0"
+VERSION = "0.22.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -557,6 +557,9 @@ def _skill_artifacts() -> dict[str, object]:
         "bundle_threat_profiles": (root / "bundle-threat-profiles.json").is_file(),
         "bundle_threat_scan": (root / "scripts" / "bundle-threat-scan.ts").is_file(),
         "zone_discovery": (root / "zone-discovery.json").is_file(),
+        "supply_chain_layers": (root / "supply-chain-layers.json").is_file(),
+        "transpiler_module": (root / "scripts" / "scan" / "transpiler" / "bundle-scanner.ts").is_file(),
+        "security_policy": (root / "policies" / "security.policy.toml").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -2785,89 +2788,70 @@ def _bundle_threat_script() -> Path:
     return skill_root() / "scripts" / "bundle-threat-scan.ts"
 
 
-def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
-    profiles_data = _load_bundle_threat_profiles()
-    profiles = profiles_data.get("profiles", {})
-    profile_name = getattr(args, "profile", None) or "default"
-    if profile_name not in profiles:
-        err(f"unknown bundle-threat profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
-        return 1
+def _load_supply_chain_layers() -> dict:
+    path = skill_root() / "supply-chain-layers.json"
+    if not path.is_file():
+        return {"layers": []}
+    return json.loads(path.read_text(encoding="utf-8"))
 
-    root = git_root() or Path.cwd()
+
+def _build_supply_chain_cmd(args: argparse.Namespace, profile_name: str, root: Path) -> list[str]:
     script = _bundle_threat_script()
-    if not script.is_file():
-        err("bundle-threat-scan.ts missing")
-        return 1
-
-    cmd = [
-        "bun",
-        str(script),
-        "--repo",
-        str(root),
-        "--profile",
-        profile_name,
-    ]
+    cmd = ["bun", str(script), "--repo", str(root), "--profile", profile_name]
     only = getattr(args, "only", None) or ""
     zone = getattr(args, "zone", None) or ""
     if only:
         cmd.extend(["--only", only])
     if zone:
         cmd.extend(["--zone", zone])
+    scan_path = getattr(args, "scan_path", None) or getattr(args, "path", None)
+    if scan_path:
+        cmd.extend(["--path", str(scan_path)])
+    fmt = getattr(args, "format", None) or "json"
+    if fmt:
+        cmd.extend(["--format", str(fmt)])
+    if getattr(args, "parallel", False):
+        cmd.append("--parallel")
+    workers = getattr(args, "workers", None)
+    if workers:
+        cmd.extend(["--workers", str(workers)])
+    rules = getattr(args, "rules", None)
+    if rules:
+        cmd.extend(["--rules", str(rules)])
+    integrity = getattr(args, "integrity_manifest", None)
+    if integrity:
+        cmd.extend(["--integrity-manifest", str(integrity)])
     if getattr(args, "dry_run", False):
         cmd.append("--dry-run")
+    if getattr(args, "fail_on", False):
+        cmd.append("--fail-on")
+    return cmd
 
-    if getattr(args, "dry_run", False) and not shutil.which("bun"):
-        print(" ".join(cmd))
-        return 0
-    if not shutil.which("bun"):
-        err("bun required for bundle-threat (use --dry-run to preview)")
-        return 1
 
-    trace(f"bundle-threat: {' '.join(cmd)}")
-    try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT_S)
-    except subprocess.TimeoutExpired:
-        err(f"bundle-threat timed out after {DEFAULT_TIMEOUT_S}s")
-        return 1
-    if proc.returncode != 0:
-        err(proc.stderr.strip() or proc.stdout.strip() or "bundle-threat-scan failed")
-        return proc.returncode
-
-    raw = proc.stdout.strip()
-    try:
-        payload = json.loads(raw)
-    except json.JSONDecodeError:
-        err("bundle-threat-scan returned invalid JSON")
-        return 1
-
-    if getattr(args, "json_out", False):
-        json.dump(payload, sys.stdout, indent=2)
-        print()
-        return 0
-
+def _render_supply_chain_report(payload: dict, profile_name: str, *, verbose: bool) -> int:
     if payload.get("dry_run"):
         targets = payload.get("targets", [])
-        print(f"bun bundle-threat (dry-run): profile={profile_name}  targets={len(targets)}")
+        print(f"supply-chain scan (dry-run): profile={profile_name}  targets={len(targets)}")
         for t in targets:
-            print(f"  [{t.get('zone', '?')}] {t.get('id', '?')}  {t.get('path', '.')}")
+            print(f"  {t.get('id', '?')}  {t.get('path', '.')}")
         return 0
 
-    total_errors = 0
-    total_warns = 0
-    total_info = 0
-    total_files = 0
-    targets = payload.get("targets", [])
-    verbose = bool(getattr(args, "verbose", False))
-
+    summary = payload.get("summary", {})
     print(
-        f"bun bundle-threat: profile={profile_name}"
-        f"  min={payload.get('min_severity', '?')}"
-        f"  targets={len(targets)}"
+        f"supply-chain (Layer {payload.get('layer', '4.5')}): profile={profile_name}"
+        f"  findings={summary.get('findings', 0)}"
+        f"  files={summary.get('files', 0)}"
         f"  elapsed={payload.get('elapsed_ms', '?')}ms"
+        f"  workers={payload.get('workers', 1)}"
     )
+    if payload.get("integrity_enabled"):
+        print("  integrity: enabled")
     if payload.get("description"):
         print(f"  {payload['description']}")
 
+    total_errors = 0
+    total_warns = 0
+    targets = payload.get("targets", [])
     for target in targets:
         tid = target.get("id", "?")
         rel = target.get("path", ".")
@@ -2876,7 +2860,6 @@ def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
             continue
         findings = target.get("findings", [])
         files_scanned = target.get("files_scanned", 0)
-        total_files += files_scanned
         by_sev: dict[str, int] = {}
         for f in findings:
             sev = f.get("severity", "info")
@@ -2885,37 +2868,110 @@ def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
                 total_errors += 1
             elif sev == "warn":
                 total_warns += 1
-            else:
-                total_info += 1
         sev_s = ", ".join(f"{k}={v}" for k, v in sorted(by_sev.items())) or "clean"
         print(f"\n## {tid}  ({rel})  files={files_scanned}  {sev_s}")
-        file_rows = target.get("files", [])
         shown = 0
-        for fr in file_rows:
-            file_findings = fr.get("findings", [])
-            if not file_findings:
-                continue
+        for f in findings:
             if not verbose and shown >= 40:
                 break
-            for f in file_findings:
-                if shown >= 40 and not verbose:
-                    break
-                detail = f"  {f['detail']}" if f.get("detail") else ""
-                print(
-                    f"  [{f.get('severity')}] {f.get('rule')}"
-                    f" @ {fr.get('file', '?')}: {f.get('message', '')}{detail}"
-                )
-                shown += 1
+            rid = f.get("ruleId") or f.get("rule", "?")
+            loc = f"{f.get('file', '?')}:{f.get('line', '?')}"
+            detail = f"  {f['detail']}" if f.get("detail") else ""
+            snippet = f"  snippet: {f['snippet']}" if f.get("snippet") else ""
+            print(f"  [{f.get('severity')}] {rid} @ {loc}: {f.get('message', '')}{detail}{snippet}")
+            shown += 1
         if not verbose and len(findings) > shown:
             print(f"  ... {len(findings) - shown} more (use --verbose)")
+    print(f"\ntotal errors={total_errors}  warns={total_warns}")
+    return 1 if total_errors > 0 else 0
 
-    print(
-        f"\ntotal: files={total_files}"
-        f"  error={total_errors}  warn={total_warns}  info={total_info}"
-    )
-    if getattr(args, "fail_on", False) and total_errors > 0:
+
+def _run_supply_chain_scan(args: argparse.Namespace, *, default_profile: str = "default") -> int:
+    profiles_data = _load_bundle_threat_profiles()
+    profiles = profiles_data.get("profiles", {})
+    profile_name = getattr(args, "profile", None) or default_profile
+    if profile_name not in profiles:
+        err(f"unknown profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
         return 1
-    return 0
+
+    root = git_root() or Path.cwd()
+    if not _bundle_threat_script().is_file():
+        err("bundle-threat-scan.ts missing")
+        return 1
+
+    cmd = _build_supply_chain_cmd(args, profile_name, root)
+    if getattr(args, "dry_run", False) and not shutil.which("bun"):
+        print(" ".join(cmd))
+        return 0
+    if not shutil.which("bun"):
+        err("bun required for supply-chain scan (use --dry-run to preview)")
+        return 1
+
+    trace(f"supply-chain: {' '.join(cmd)}")
+    fmt = getattr(args, "format", None) or "json"
+    passthrough = fmt in ("html", "markdown") and not getattr(args, "json_out", False)
+
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        err(f"supply-chain scan timed out after {DEFAULT_TIMEOUT_S}s")
+        return 1
+    if proc.returncode != 0 and not proc.stdout.strip():
+        err(proc.stderr.strip() or "supply-chain scan failed")
+        return proc.returncode
+
+    if passthrough:
+        sys.stdout.write(proc.stdout)
+        return proc.returncode
+
+    raw = proc.stdout.strip()
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        sys.stdout.write(proc.stdout)
+        return proc.returncode
+
+    if getattr(args, "json_out", False):
+        json.dump(payload, sys.stdout, indent=2)
+        print()
+        return proc.returncode
+
+    code = _render_supply_chain_report(payload, profile_name, verbose=bool(getattr(args, "verbose", False)))
+    return max(proc.returncode, code) if getattr(args, "fail_on", False) else proc.returncode
+
+
+def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
+    action = getattr(args, "supply_action", None) or "scan"
+    if action == "layers":
+        data = _load_supply_chain_layers()
+        if getattr(args, "json_out", False):
+            json.dump(data, sys.stdout, indent=2)
+            print()
+            return 0
+        print(f"supply-chain layers (v{data.get('version', '?')})")
+        for layer in data.get("layers", []):
+            status = layer.get("status", "?")
+            print(f"\n[Layer {layer.get('id')}] {layer.get('name')} ({status})")
+            print(f"  {', '.join(layer.get('components', []))}")
+            if layer.get("entry"):
+                print(f"  entry: {layer['entry']}")
+            if layer.get("note"):
+                print(f"  note: {layer['note']}")
+        print("\nrun: bun supply-chain scan --zone agents | bun supply-chain scan --path dist --format markdown")
+        return 0
+    if action == "rules":
+        policy = skill_root() / "policies" / "security.policy.toml"
+        legacy = skill_root() / "bundle-threat-rules.json"
+        print("supply-chain rules:")
+        print(f"  TOML: {policy} ({'ok' if policy.is_file() else 'missing'})")
+        print(f"  JSON: {legacy} ({'ok' if legacy.is_file() else 'missing'})")
+        print("  module: scripts/scan/transpiler/rule-engine.ts")
+        return 0
+    return _run_supply_chain_scan(args, default_profile="supply-chain-ci")
+
+
+def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
+    return _run_supply_chain_scan(args, default_profile="default")
 
 
 def cmd_bun_test_ci(args: argparse.Namespace) -> int:
@@ -3015,7 +3071,7 @@ def cmd_bun_roadmap(args: argparse.Namespace) -> int:
         integ = row.get("integration", "?")
         print(f"  {row.get('api')}: {row.get('use_case')}")
         print(f"    pattern={row.get('pattern')}  cataloged={cat}  integration={integ}")
-    print("\nrun: bun bundle-threat --zone agents | bun patterns --bundle security")
+    print("\nrun: bun supply-chain scan --zone agents | bun supply-chain layers")
     return 0
 
 
@@ -3427,8 +3483,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"bun-install.json: {'ok' if artifacts['bun_install'] else 'missing'}")
     print(f"bun-install-profiles.json: {'ok' if artifacts['install_profiles'] else 'missing'}")
     print(
-        f"bundle-threat: {'ok' if artifacts['bundle_threat_scan'] else 'missing'}"
-        f"  rules={'ok' if artifacts['bundle_threat_rules'] else 'missing'}"
+        f"supply-chain L4.5: {'ok' if artifacts['transpiler_module'] else 'missing'}"
+        f"  policy={'ok' if artifacts['security_policy'] else 'missing'}"
     )
     bun_ver = _resolve_bun_version()
     if bun_ver:
@@ -4304,18 +4360,41 @@ def build_parser() -> argparse.ArgumentParser:
     bun_ic.add_argument("--dry-run", action="store_true", help="Print command without running.")
     bun_ic.set_defaults(func=cmd_bun_install_ci)
 
+    def _add_supply_chain_scan_args(parser: argparse.ArgumentParser, *, default_profile: str) -> None:
+        parser.add_argument("--profile", default=default_profile, help="bundle-threat-profiles.json key")
+        parser.add_argument("--only", help="Filter repo-map targets (substring).")
+        parser.add_argument("--zone", help=f"Filter repo-map zone ({_zone_hint()}).")
+        parser.add_argument("--path", "-p", dest="scan_path", help="Scan explicit path instead of repo-map.")
+        parser.add_argument("--format", choices=["json", "html", "markdown"], default="json", help="Report format.")
+        parser.add_argument("--parallel", action="store_true", help="Worker pool per-file scan.")
+        parser.add_argument("--workers", type=int, help="Parallel workers (default: CPU count).")
+        parser.add_argument("--rules", help="Comma-separated rule ids from security.policy.toml.")
+        parser.add_argument("--integrity-manifest", help="JSON manifest path for sha256 tamper check.")
+        parser.add_argument("--dry-run", action="store_true", help="List targets without scanning.")
+        parser.add_argument("--verbose", "-v", action="store_true", help="Show per-finding details.")
+        parser.add_argument("--fail-on", action="store_true", help="Exit 1 when error-level findings exist.")
+        parser.add_argument("--json-out", action="store_true", help="Emit JSON (default for scan).")
+
     bun_bt = bun_sub.add_parser(
         "bundle-threat",
-        help="Scan repo-map targets with Bun.Transpiler (imports + transpiled output threats).",
+        help="Alias: Layer 4.5 supply-chain scan via Bun.Transpiler.",
     )
-    bun_bt.add_argument("--profile", default="default", help="Profile: default, ci, imports-only")
-    bun_bt.add_argument("--only", help="Filter repo-map targets (substring).")
-    bun_bt.add_argument("--zone", help="Filter repo-map zone.")
-    bun_bt.add_argument("--dry-run", action="store_true", help="List targets without scanning.")
-    bun_bt.add_argument("--verbose", "-v", action="store_true", help="Show per-finding details.")
-    bun_bt.add_argument("--fail-on", action="store_true", help="Exit 1 when error-level findings exist.")
-    bun_bt.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    _add_supply_chain_scan_args(bun_bt, default_profile="default")
     bun_bt.set_defaults(func=cmd_bun_bundle_threat)
+
+    bun_sc = bun_sub.add_parser(
+        "supply-chain",
+        help="Layer 4.5 supply-chain security — transpiler scan, policies, integrity.",
+    )
+    sc_sub = bun_sc.add_subparsers(dest="supply_action", metavar="ACTION", required=True)
+    sc_scan = sc_sub.add_parser("scan", help="Run bundle scanner (Bun.Transpiler + TOML rules).")
+    _add_supply_chain_scan_args(sc_scan, default_profile="supply-chain-ci")
+    sc_scan.set_defaults(func=cmd_bun_supply_chain)
+    sc_layers = sc_sub.add_parser("layers", help="Show security layer stack (4 / 4.5 / 5).")
+    sc_layers.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_layers.set_defaults(func=cmd_bun_supply_chain, supply_action="layers")
+    sc_rules = sc_sub.add_parser("rules", help="List policy file locations.")
+    sc_rules.set_defaults(func=cmd_bun_supply_chain, supply_action="rules")
 
     return p
 

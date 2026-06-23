@@ -68,9 +68,20 @@ echo ""
 echo "== bun roadmap (high) =="
 python3 "$HELPER" -q bun roadmap --priority high 2>&1 | head -12
 echo ""
+echo "== bun supply-chain layers =="
+python3 "$HELPER" -q bun supply-chain layers 2>&1 | head -12 || true
+echo ""
+echo "== bun supply-chain rules =="
+python3 "$HELPER" -q bun supply-chain rules 2>&1 | head -6 || true
+echo ""
 echo "== bun bundle-threat dry-run =="
 python3 "$HELPER" -q bun bundle-threat --zone agents --dry-run 2>&1 | head -10 || true
 echo ""
+if command -v bun >/dev/null 2>&1; then
+  echo "== supply-chain transpiler tests =="
+  bun test "$ROOT/tests/supply-chain-transpiler.test.ts" 2>&1 | tail -5 || true
+  echo ""
+fi
 echo "== bun features (1.3.13) =="
 python3 "$HELPER" -q bun features 2>&1 | head -22 || true
 echo ""

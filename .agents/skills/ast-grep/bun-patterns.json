@@ -781,7 +781,7 @@
       "docs_path": "/runtime/workers",
       "security": {
         "priority": "high",
-        "use_case": "Parallel repo-map audit via Worker pool",
+        "use_case": "Parallel repo-map audit + supply-chain file scan via Worker pool",
         "integration": "integrated"
       }
     },
@@ -1913,14 +1913,14 @@
         "pattern": "bun-transpiler",
         "api": "Bun.Transpiler",
         "priority": "high",
-        "use_case": "Scan bundled JS for hidden threats",
+        "use_case": "Layer 4.5 supply-chain scan (transpiler + TOML policies + integrity)",
         "integration": "integrated"
       },
       {
         "pattern": "worker",
         "api": "Worker",
         "priority": "high",
-        "use_case": "Parallelize domain scans (audit --parallel)",
+        "use_case": "Parallelize audit + supply-chain scan (audit --parallel, supply-chain --parallel)",
         "integration": "integrated"
       },
       {

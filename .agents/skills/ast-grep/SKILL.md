@@ -93,7 +93,11 @@ python3 $AG bun install-scan --path .             # deps + lockfiles + migration
 python3 $AG bun install-ci --profile cross-linux-x64 --dry-run
 python3 $AG bun roadmap                             # security backlog: catalog vs integrated
 python3 $AG bun roadmap --priority high             # security backlog — Transpiler + Worker integrated
-python3 $AG bun bundle-threat --zone agents         # Bun.Transpiler import/output threat scan
+python3 $AG bun supply-chain layers                 # Layer 4 / 4.5 / 5 stack
+python3 $AG bun supply-chain rules                  # TOML + JSON policy paths
+python3 $AG bun supply-chain scan --zone agents     # Layer 4.5: transpiler + TOML rules + integrity
+python3 $AG bun supply-chain scan --path dist --format markdown --parallel
+python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)
 python3 $AG bun bundle-threat --profile ci --fail-on
 python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs
 python3 $AG bun bundles                             # server-boot, networking, data-stores, security, ...
@@ -177,7 +181,7 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_collisions` | `collisions` (duplicate symbol names) |
 | `ast_grep_graph` | `graph` (import/depends_on edges) |
 | `ast_grep_jump` | `jump` (symbol → file:line) |
-| `ast_grep_bun` | `bun patterns/inventory/search` (Bun native APIs) |
+| `ast_grep_bun` | `bun patterns/inventory/search` (Bun native APIs); `supply-chain-layers/rules/scan` for Layer 4.5 |
 | `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
 | `ast_grep_fix` | `fix` (all autofix rules) |
 | `ast_grep_replace` | `replace` (`fix: true` to apply) |

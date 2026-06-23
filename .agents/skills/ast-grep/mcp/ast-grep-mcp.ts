@@ -236,11 +236,14 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
         topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles', 'platform', 'lockfile', 'backends', 'pnpm', 'peers', 'cache', 'cli'], description: 'For install-docs: filter section' },
         cpu: { type: 'string', description: 'For install-ci: --cpu override' },
         osTarget: { type: 'string', description: 'For install-ci: --os override' },
-        scanPath: { type: 'string', description: 'For install-scan: directory or package.json' },
+        scanPath: { type: 'string', description: 'For install-scan or supply-chain-scan: directory or package.json' },
+        format: { type: 'string', enum: ['json', 'html', 'markdown'], description: 'For supply-chain-scan: report format' },
+        parallel: { type: 'boolean', description: 'For supply-chain-scan: Worker pool per-file scan' },
+        ruleIds: { type: 'string', description: 'For supply-chain-scan: comma-separated rule ids' },
         release: { type: 'string', description: 'For features: release key (1.3.13)' },
         profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key' },
         testPath: { type: 'string', description: 'For test-ci: path to test directory' },
@@ -661,10 +664,25 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
     if (args.osTarget) extra.push('--os-target', String(args.osTarget));
     if (args.dryRun === true) extra.push('--dry-run');
   }
-  if (action === 'bundle-threat') {
+  if (action === 'supply-chain-layers') {
+    extra.length = 0;
+    extra.push('supply-chain', 'layers');
+  } else if (action === 'supply-chain-rules') {
+    extra.length = 0;
+    extra.push('supply-chain', 'rules');
+  } else if (action === 'supply-chain-scan') {
+    extra.length = 0;
+    extra.push('supply-chain', 'scan');
+  }
+  if (action === 'bundle-threat' || action === 'supply-chain-scan') {
     if (args.profile) extra.push('--profile', String(args.profile));
     if (args.dryRun === true) extra.push('--dry-run');
     if (args.verbose === true) extra.push('--verbose');
+    if (args.scanPath) extra.push('--path', String(args.scanPath));
+    if (args.format) extra.push('--format', String(args.format));
+    if (args.parallel === true) extra.push('--parallel');
+    if (args.ruleIds) extra.push('--rules', String(args.ruleIds));
+    if (args.failOn === true) extra.push('--fail-on');
   }
   if (action === 'features' && args.release) extra.push('--release', String(args.release));
   if (args.only) extra.push('--only', String(args.only));

@@ -1,0 +1,60 @@
+# Supply-chain security rules — Layer 4.5 (Bun.Transpiler scan pipeline)
+# Loaded by scripts/scan/transpiler/rule-engine.ts (merged with bundle-threat-rules.json)
+
+version = 1
+
+[[rule]]
+id = "hardcoded-secret"
+description = "Hardcoded API keys, tokens, or passwords"
+severity = "high"
+type = "regex"
+layer = "source"
+pattern = "(?:api[_-]?key|token|secret|password)\\s*[:=]\\s*['\"][a-zA-Z0-9_\\-]{16,}['\"]"
+
+[[rule]]
+id = "unsafe-eval"
+description = "eval() call"
+severity = "critical"
+type = "ast"
+layer = "source"
+astPattern = "CallExpression[callee.name='eval']"
+
+[[rule]]
+id = "unsafe-function-constructor"
+description = "Function constructor"
+severity = "critical"
+type = "ast"
+layer = "source"
+astPattern = "NewExpression[callee.name='Function']"
+
+[[rule]]
+id = "settimeout-string"
+description = "setTimeout/setInterval with string argument"
+severity = "high"
+type = "regex"
+layer = "source"
+pattern = "set(?:Timeout|Interval)\\s*\\(\\s*['\"]"
+
+[[rule]]
+id = "from-char-code"
+description = "String.fromCharCode obfuscation chain"
+severity = "medium"
+type = "regex"
+layer = "source"
+pattern = "String\\.fromCharCode\\s*\\("
+
+[[rule]]
+id = "external-url-import"
+description = "Import from http(s) URL"
+severity = "high"
+type = "import"
+layer = "import"
+path_pattern = "^https?://"
+
+[[rule]]
+id = "child-process-spawn"
+description = "child_process or Bun.spawn in bundle"
+severity = "medium"
+type = "regex"
+layer = "output"
+pattern = "child_process|Bun\\.spawn\\s*\\("

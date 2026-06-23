@@ -98,7 +98,16 @@ python3 $AG bun matrix --zone sports-terminal
 
 **Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`, `security`, `doctor-utils`
 
-**Security roadmap** (`bun roadmap`): **`Worker`** via `audit --parallel` (`scripts/audit-pool.ts`); **`Bun.Transpiler`** via `bun bundle-threat` (`scripts/bundle-threat-scan.ts` + `bundle-threat-rules.json`). HTMLRewriter/WebView/Redis remain catalog-only.
+**Security roadmap** (`bun roadmap`): **`Worker`** via `audit --parallel` and `supply-chain scan --parallel` (`scripts/audit-pool.ts`, `scripts/workers/transpiler-file.worker.ts`); **`Bun.Transpiler`** via Layer **4.5** (`bun supply-chain scan`, module `scripts/scan/transpiler/`, policies `policies/security.policy.toml`, legacy `bundle-threat-rules.json`). HTMLRewriter/WebView/Redis remain catalog-only.
+
+**Layer 4.5 supply-chain** (`supply-chain-layers.json`):
+
+```bash
+python3 $AG bun supply-chain layers
+python3 $AG bun supply-chain scan --zone agents --profile supply-chain-ci
+python3 $AG bun supply-chain scan --path dist --format html --integrity-manifest checksums.json
+bun run supply-chain:scan -- --path .agents/skills/ast-grep/scripts --format markdown
+```
 
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 
