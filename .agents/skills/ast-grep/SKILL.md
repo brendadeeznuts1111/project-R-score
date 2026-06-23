@@ -85,7 +85,7 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_scan` | `scan` |
 | `ast_grep_doctor` | `doctor` |
 
-Reload MCP after install. Test: `./scripts/test-mcp.sh`
+Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 
 ## Workflow checklist
 
