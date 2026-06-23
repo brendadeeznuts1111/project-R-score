@@ -33,8 +33,11 @@ export function formatMarkdown(report: BundleScanReport): string {
     `- **elapsed:** ${report.elapsed_ms}ms`,
     `- **workers:** ${report.workers}`,
     `- **findings:** ${report.summary.findings} across ${report.summary.files} files`,
-    "",
   ];
+  if (report.threat_feed_enabled) {
+    lines.push(`- **threat-feed:** ${report.advisories_matched} CVE advisory match(es)`);
+  }
+  lines.push("");
   for (const t of report.targets) {
     if (t.skipped) {
       lines.push(`## ${t.id} — SKIP (${t.path})`, "");

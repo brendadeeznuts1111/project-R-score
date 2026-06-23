@@ -93,7 +93,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.22.0"
+VERSION = "0.23.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -560,6 +560,8 @@ def _skill_artifacts() -> dict[str, object]:
         "supply_chain_layers": (root / "supply-chain-layers.json").is_file(),
         "transpiler_module": (root / "scripts" / "scan" / "transpiler" / "bundle-scanner.ts").is_file(),
         "security_policy": (root / "policies" / "security.policy.toml").is_file(),
+        "threat_feed": (root / "threat-feed.json").is_file(),
+        "semver_matcher": (root / "scripts" / "scan" / "transpiler" / "semver-matcher.ts").is_file(),
         "bun_cli": (root / "scripts" / "bun-cli.ts").is_file(),
         "outline_rules": (root / "outline-rules" / "bun-monorepo.yml").is_file(),
         "mcp": (root / "mcp" / "ast-grep-mcp.ts").is_file(),
@@ -2825,6 +2827,10 @@ def _build_supply_chain_cmd(args: argparse.Namespace, profile_name: str, root: P
         cmd.append("--dry-run")
     if getattr(args, "fail_on", False):
         cmd.append("--fail-on")
+    if getattr(args, "threat_feed", False):
+        cmd.append("--threat-feed")
+    if getattr(args, "no_threat_feed", False):
+        cmd.append("--no-threat-feed")
     return cmd
 
 
@@ -2846,6 +2852,8 @@ def _render_supply_chain_report(payload: dict, profile_name: str, *, verbose: bo
     )
     if payload.get("integrity_enabled"):
         print("  integrity: enabled")
+    if payload.get("threat_feed_enabled"):
+        print(f"  threat-feed: {payload.get('advisories_matched', 0)} CVE match(es)")
     if payload.get("description"):
         print(f"  {payload['description']}")
 
@@ -2966,6 +2974,25 @@ def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
         print(f"  TOML: {policy} ({'ok' if policy.is_file() else 'missing'})")
         print(f"  JSON: {legacy} ({'ok' if legacy.is_file() else 'missing'})")
         print("  module: scripts/scan/transpiler/rule-engine.ts")
+        return 0
+    if action == "advisories":
+        feed_path = skill_root() / "threat-feed.json"
+        if not feed_path.is_file():
+            err("threat-feed.json missing")
+            return 1
+        data = json.loads(feed_path.read_text(encoding="utf-8"))
+        if getattr(args, "json_out", False):
+            json.dump(data, sys.stdout, indent=2)
+            print()
+            return 0
+        print(f"threat-feed (v{data.get('version', '?')}): {len(data.get('advisories', []))} advisories")
+        for adv in data.get("advisories", []):
+            cve = f" {adv['cve']}" if adv.get("cve") else ""
+            syms = f"  symbols={adv['symbols']}" if adv.get("symbols") else ""
+            print(
+                f"  [{adv.get('severity')}] {adv.get('id')}: {adv.get('package')} {adv.get('range')}{cve}{syms}"
+            )
+        print("\nrun: bun supply-chain scan --threat-feed --path .")
         return 0
     return _run_supply_chain_scan(args, default_profile="supply-chain-ci")
 
@@ -3485,6 +3512,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(
         f"supply-chain L4.5: {'ok' if artifacts['transpiler_module'] else 'missing'}"
         f"  policy={'ok' if artifacts['security_policy'] else 'missing'}"
+        f"  feed={'ok' if artifacts['threat_feed'] else 'missing'}"
+        f"  semver={'ok' if artifacts['semver_matcher'] else 'missing'}"
     )
     bun_ver = _resolve_bun_version()
     if bun_ver:
@@ -4370,6 +4399,8 @@ def build_parser() -> argparse.ArgumentParser:
         parser.add_argument("--workers", type=int, help="Parallel workers (default: CPU count).")
         parser.add_argument("--rules", help="Comma-separated rule ids from security.policy.toml.")
         parser.add_argument("--integrity-manifest", help="JSON manifest path for sha256 tamper check.")
+        parser.add_argument("--threat-feed", action="store_true", help="Correlate bun.lock deps with threat-feed.json (Bun.semver).")
+        parser.add_argument("--no-threat-feed", action="store_true", help="Disable threat-feed even when profile enables it.")
         parser.add_argument("--dry-run", action="store_true", help="List targets without scanning.")
         parser.add_argument("--verbose", "-v", action="store_true", help="Show per-finding details.")
         parser.add_argument("--fail-on", action="store_true", help="Exit 1 when error-level findings exist.")
@@ -4395,6 +4426,9 @@ def build_parser() -> argparse.ArgumentParser:
     sc_layers.set_defaults(func=cmd_bun_supply_chain, supply_action="layers")
     sc_rules = sc_sub.add_parser("rules", help="List policy file locations.")
     sc_rules.set_defaults(func=cmd_bun_supply_chain, supply_action="rules")
+    sc_adv = sc_sub.add_parser("advisories", help="List CVE advisories from threat-feed.json.")
+    sc_adv.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_adv.set_defaults(func=cmd_bun_supply_chain, supply_action="advisories")
 
     return p
 

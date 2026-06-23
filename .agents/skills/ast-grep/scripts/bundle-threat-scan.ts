@@ -55,6 +55,11 @@ async function main(): Promise<void> {
       : undefined,
     ruleIds,
     dryRun: opts["dry-run"] === true,
+    threatFeed: opts["no-threat-feed"] === true
+      ? false
+      : opts["threat-feed"] === true
+        ? true
+        : undefined,
   });
 
   if (opts["dry-run"] === true) {

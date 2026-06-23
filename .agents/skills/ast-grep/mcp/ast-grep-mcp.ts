@@ -236,7 +236,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-advisories', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
         topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles', 'platform', 'lockfile', 'backends', 'pnpm', 'peers', 'cache', 'cli'], description: 'For install-docs: filter section' },
         cpu: { type: 'string', description: 'For install-ci: --cpu override' },
         osTarget: { type: 'string', description: 'For install-ci: --os override' },
@@ -244,6 +244,7 @@ const TOOLS = [
         format: { type: 'string', enum: ['json', 'html', 'markdown'], description: 'For supply-chain-scan: report format' },
         parallel: { type: 'boolean', description: 'For supply-chain-scan: Worker pool per-file scan' },
         ruleIds: { type: 'string', description: 'For supply-chain-scan: comma-separated rule ids' },
+        threatFeed: { type: 'boolean', description: 'For supply-chain-scan: correlate bun.lock with threat-feed.json' },
         release: { type: 'string', description: 'For features: release key (1.3.13)' },
         profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key' },
         testPath: { type: 'string', description: 'For test-ci: path to test directory' },
@@ -670,6 +671,9 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   } else if (action === 'supply-chain-rules') {
     extra.length = 0;
     extra.push('supply-chain', 'rules');
+  } else if (action === 'supply-chain-advisories') {
+    extra.length = 0;
+    extra.push('supply-chain', 'advisories');
   } else if (action === 'supply-chain-scan') {
     extra.length = 0;
     extra.push('supply-chain', 'scan');
@@ -683,6 +687,7 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
     if (args.parallel === true) extra.push('--parallel');
     if (args.ruleIds) extra.push('--rules', String(args.ruleIds));
     if (args.failOn === true) extra.push('--fail-on');
+    if (args.threatFeed === true) extra.push('--threat-feed');
   }
   if (action === 'features' && args.release) extra.push('--release', String(args.release));
   if (args.only) extra.push('--only', String(args.only));

@@ -32,11 +32,14 @@
       "include_node_modules": false
     },
     "supply-chain-ci": {
-      "description": "Layer 4.5 CI — critical/high rules, integrity-ready",
+      "description": "Layer 4.5 CI — critical/high rules, integrity + threat-feed CVE correlation",
       "min_severity": "error",
       "transform_output": true,
       "use_scan_imports": false,
-      "max_file_kb": 512
+      "max_file_kb": 512,
+      "threat_feed": true,
+      "include_dev_dependencies": false,
+      "correlate_symbols": true
     }
   }
 }

@@ -4,8 +4,11 @@ import { loadRuleSet, meetsSeverity, resolvePattern } from "../scripts/scan/tran
 import { analyzeFile } from "../scripts/scan/transpiler/analyzer.ts";
 import { formatMarkdown } from "../scripts/scan/transpiler/reporter.ts";
 import { runBundleScan } from "../scripts/scan/transpiler/bundle-scanner.ts";
+import { isVulnerable, loadThreatFeed, matchDependencies } from "../scripts/scan/transpiler/semver-matcher.ts";
+import { resolveTargetDependencies } from "../scripts/scan/transpiler/dependency-resolver.ts";
 
 const SKILL_ROOT = resolve(import.meta.dir, "..");
+const REPO_ROOT = resolve(SKILL_ROOT, "../../..");
 
 describe("supply-chain Layer 4.5", () => {
   test("loadRuleSet merges JSON + TOML policies", async () => {
@@ -55,7 +58,7 @@ describe("supply-chain Layer 4.5", () => {
   test("runBundleScan dry-run agents zone", async () => {
     const report = await runBundleScan({
       skillRoot: SKILL_ROOT,
-      repo: resolve(SKILL_ROOT, "../.."),
+      repo: REPO_ROOT,
       profileName: "default",
       zone: "agents",
       dryRun: true,
@@ -74,9 +77,48 @@ describe("supply-chain Layer 4.5", () => {
       elapsed_ms: 1,
       workers: 1,
       integrity_enabled: false,
+      threat_feed_enabled: true,
+      advisories_matched: 2,
       targets: [],
       summary: { files: 0, findings: 0, by_severity: {} },
     });
     expect(md).toContain("Layer 4.5");
+    expect(md).toContain("threat-feed");
+  });
+
+  test("Bun.semver.satisfies matches vulnerable axios range", () => {
+    expect(isVulnerable("1.5.0", "<1.6.0")).toBe(true);
+    expect(isVulnerable("1.16.1", "<1.6.0")).toBe(false);
+  });
+
+  test("matchDependencies flags lodash below patched range", async () => {
+    const feed = await loadThreatFeed(SKILL_ROOT);
+    const findings = matchDependencies(
+      [{ name: "lodash", version: "4.17.20", spec: "4.17.20", source: "lock" }],
+      feed,
+      "warn",
+    );
+    expect(findings.some((f) => f.ruleId === "lodash-prototype-pollution")).toBe(true);
+  });
+
+  test("resolveTargetDependencies reads root package.json", async () => {
+    const { dependencies } = await resolveTargetDependencies({
+      repo: REPO_ROOT,
+      targetPath: ".",
+      includeDev: false,
+    });
+    expect(dependencies.some((d) => d.name === "axios")).toBe(true);
+  });
+
+  test("supply-chain-ci enables threat feed correlation", async () => {
+    const report = await runBundleScan({
+      skillRoot: SKILL_ROOT,
+      repo: REPO_ROOT,
+      profileName: "supply-chain-ci",
+      scanPath: "projects/active/sports-terminal-os",
+      threatFeed: true,
+    });
+    expect(report.threat_feed_enabled).toBe(true);
+    expect(report.targets[0]?.findings.length).toBeGreaterThanOrEqual(0);
   });
 });

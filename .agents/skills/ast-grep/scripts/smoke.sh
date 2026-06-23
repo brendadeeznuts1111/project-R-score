@@ -74,6 +74,9 @@ echo ""
 echo "== bun supply-chain rules =="
 python3 "$HELPER" -q bun supply-chain rules 2>&1 | head -6 || true
 echo ""
+echo "== bun supply-chain advisories =="
+python3 "$HELPER" -q bun supply-chain advisories 2>&1 | head -10 || true
+echo ""
 echo "== bun bundle-threat dry-run =="
 python3 "$HELPER" -q bun bundle-threat --zone agents --dry-run 2>&1 | head -10 || true
 echo ""

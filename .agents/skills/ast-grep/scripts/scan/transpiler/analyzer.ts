@@ -2,6 +2,9 @@ import type { ImportKind, PolicyRule, ScanLayer, ScanProfile, ScanResult } from 
 import { meetsSeverity, normalizeSeverity, resolvePattern } from "./rule-engine.ts";
 import { checkIntegrity, sha256File } from "./integrity.ts";
 import type { IntegrityManifest } from "./integrity.ts";
+import { correlateImportSymbols } from "./semver-matcher.ts";
+import type { ThreatFeed } from "./semver-matcher.ts";
+import type { ResolvedDependency } from "./dependency-resolver.ts";
 
 export type Loader = "js" | "jsx" | "ts" | "tsx";
 
@@ -99,6 +102,8 @@ export async function analyzeFile(options: {
   rules: { import_rules: PolicyRule[]; source_rules: PolicyRule[]; output_rules: PolicyRule[] };
   profile: ScanProfile;
   manifest: IntegrityManifest | null;
+  threatFeed?: ThreatFeed | null;
+  resolvedDeps?: ResolvedDependency[];
 }): Promise<{
   file: string;
   skipped?: boolean;
@@ -108,7 +113,7 @@ export async function analyzeFile(options: {
   scan_ms?: number;
   sha256?: string;
 }> {
-  const { fullPath, repo, rules, profile, manifest } = options;
+  const { fullPath, repo, rules, profile, manifest, threatFeed, resolvedDeps } = options;
   const rel = fullPath.startsWith(repo)
     ? fullPath.slice(repo.length + 1)
     : fullPath;
@@ -163,6 +168,19 @@ export async function analyzeFile(options: {
     }
     findings.push(...matchImportRules(imports, rules.import_rules, rel, profile.min_severity));
     findings.push(...matchRegexRules(source, rules.source_rules, "source", rel, profile.min_severity));
+
+    if (profile.correlate_symbols && threatFeed && resolvedDeps?.length) {
+      findings.push(
+        ...correlateImportSymbols({
+          relFile: rel,
+          source,
+          imports,
+          deps: resolvedDeps,
+          feed: threatFeed,
+          minSeverity: profile.min_severity,
+        }),
+      );
+    }
 
     if (profile.transform_output) {
       try {

@@ -7,12 +7,16 @@ import type { IntegrityManifest } from "./integrity.ts";
 import { filterRulesById, loadRuleSet } from "./rule-engine.ts";
 import type { RuleSet } from "./types.ts";
 import { buildSummary } from "./reporter.ts";
+import { resolveTargetDependencies } from "./dependency-resolver.ts";
+import { loadThreatFeed, matchDependencies } from "./semver-matcher.ts";
+import type { ThreatFeed } from "./semver-matcher.ts";
 import type {
   BundleScanReport,
   ScanProfile,
   ScanResult,
   TargetScanResult,
 } from "./types.ts";
+import type { ResolvedDependency } from "./dependency-resolver.ts";
 
 export type RepoTarget = {
   id?: string;
@@ -93,17 +97,31 @@ export async function collectScanFiles(
   return files;
 }
 
+type ScanContext = {
+  threatFeed: ThreatFeed | null;
+  resolvedDeps: ResolvedDependency[];
+};
+
 async function scanFilesSequential(
   repo: string,
   paths: string[],
   rules: RuleSet,
   profile: ScanProfile,
   manifest: IntegrityManifest | null,
+  ctx: ScanContext,
 ): Promise<{ files: TargetScanResult["files"]; findings: ScanResult[]; files_scanned: number }> {
   const files: TargetScanResult["files"] = [];
   const findings: ScanResult[] = [];
   for (const fp of paths) {
-    const r = await analyzeFile({ fullPath: fp, repo, rules, profile, manifest });
+    const r = await analyzeFile({
+      fullPath: fp,
+      repo,
+      rules,
+      profile,
+      manifest,
+      threatFeed: ctx.threatFeed,
+      resolvedDeps: ctx.resolvedDeps,
+    });
     files.push(r);
     if (!r.skipped) findings.push(...r.findings);
   }
@@ -117,6 +135,7 @@ async function scanFilesParallel(
   profile: ScanProfile,
   manifest: IntegrityManifest | null,
   workers: number,
+  ctx: ScanContext,
 ): Promise<{ files: TargetScanResult["files"]; findings: ScanResult[]; files_scanned: number }> {
   if (paths.length === 0) {
     return { files: [], findings: [], files_scanned: 0 };
@@ -132,6 +151,8 @@ async function scanFilesParallel(
     profile,
     rules,
     manifest,
+    threatFeed: ctx.threatFeed,
+    resolvedDeps: ctx.resolvedDeps,
   };
 
   async function workerLoop(): Promise<void> {
@@ -179,8 +200,9 @@ export async function scanTarget(options: {
   manifest: IntegrityManifest | null;
   workers: number;
   parallel: boolean;
+  threatFeed: ThreatFeed | null;
 }): Promise<TargetScanResult> {
-  const { repo, target, rules, profile, manifest, workers, parallel } = options;
+  const { repo, target, rules, profile, manifest, workers, parallel, threatFeed } = options;
   const rel = target.path ?? ".";
   const id = target.id ?? rel;
   const started = performance.now();
@@ -198,17 +220,33 @@ export async function scanTarget(options: {
     };
   }
 
+  let resolvedDeps: ResolvedDependency[] = [];
+  if (threatFeed) {
+    const resolved = await resolveTargetDependencies({
+      repo,
+      targetPath: rel,
+      includeDev: profile.include_dev_dependencies,
+    });
+    resolvedDeps = resolved.dependencies;
+  }
+
+  const ctx: ScanContext = { threatFeed, resolvedDeps };
   const paths = await collectScanFiles(repo, rel, profile);
   const scanned = parallel && workers > 1
-    ? await scanFilesParallel(repo, paths, rules, profile, manifest, workers)
-    : await scanFilesSequential(repo, paths, rules, profile, manifest);
+    ? await scanFilesParallel(repo, paths, rules, profile, manifest, workers, ctx)
+    : await scanFilesSequential(repo, paths, rules, profile, manifest, ctx);
+
+  const findings = [...scanned.findings];
+  if (threatFeed && resolvedDeps.length) {
+    findings.push(...matchDependencies(resolvedDeps, threatFeed, profile.min_severity));
+  }
 
   return {
     id,
     path: rel,
     skipped: false,
     files_scanned: scanned.files_scanned,
-    findings: scanned.findings,
+    findings,
     files: scanned.files,
     scan_ms: Math.round(performance.now() - started),
   };
@@ -227,6 +265,7 @@ export type ScanOptions = {
   integrityManifest?: string;
   ruleIds?: string[];
   dryRun?: boolean;
+  threatFeed?: boolean;
 };
 
 export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport> {
@@ -255,6 +294,11 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
 
   const workers = opts.workers ?? cpus().length ?? 4;
   const format = opts.format ?? "json";
+  const threatFeedEnabled = opts.threatFeed ?? profile.threat_feed ?? false;
+  let threatFeed: ThreatFeed | null = null;
+  if (threatFeedEnabled) {
+    threatFeed = await loadThreatFeed(opts.skillRoot);
+  }
 
   if (opts.dryRun) {
     return {
@@ -267,6 +311,8 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
       elapsed_ms: 0,
       workers,
       integrity_enabled: Boolean(manifest),
+      threat_feed_enabled: threatFeedEnabled,
+      advisories_matched: 0,
       targets: targets.map((t) => ({
         id: t.id ?? t.path ?? "?",
         path: t.path ?? ".",
@@ -292,9 +338,15 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
         manifest,
         workers,
         parallel: Boolean(opts.parallel),
+        threatFeed,
       }),
     );
   }
+
+  const advisoriesMatched = results.reduce(
+    (n, t) => n + t.findings.filter((f) => f.layer === "deps").length,
+    0,
+  );
 
   const partial: Omit<BundleScanReport, "summary"> = {
     repo: opts.repo,
@@ -306,6 +358,8 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
     elapsed_ms: Math.round(performance.now() - started),
     workers: opts.parallel ? workers : 1,
     integrity_enabled: Boolean(manifest),
+    threat_feed_enabled: threatFeedEnabled,
+    advisories_matched: advisoriesMatched,
     targets: results,
   };
 

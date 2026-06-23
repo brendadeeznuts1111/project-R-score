@@ -6,6 +6,8 @@ import { analyzeFile } from "../scan/transpiler/analyzer.ts";
 import type { IntegrityManifest } from "../scan/transpiler/integrity.ts";
 import type { ScanProfile } from "../scan/transpiler/types.ts";
 import type { RuleSet } from "../scan/transpiler/types.ts";
+import type { ThreatFeed } from "../scan/transpiler/semver-matcher.ts";
+import type { ResolvedDependency } from "../scan/transpiler/dependency-resolver.ts";
 
 export type TranspilerFileJob = {
   fullPath: string;
@@ -13,14 +15,18 @@ export type TranspilerFileJob = {
   profile: ScanProfile;
   rules: RuleSet;
   manifest: IntegrityManifest | null;
+  threatFeed?: ThreatFeed | null;
+  resolvedDeps?: ResolvedDependency[];
 };
 
 declare const self: Worker;
 
 self.onmessage = async (event: MessageEvent<TranspilerFileJob>) => {
-  const { fullPath, repo, profile, rules, manifest } = event.data;
+  const { fullPath, repo, profile, rules, manifest, threatFeed, resolvedDeps } = event.data;
   try {
-    const result = await analyzeFile({ fullPath, repo, rules, profile, manifest });
+    const result = await analyzeFile({
+      fullPath, repo, rules, profile, manifest, threatFeed, resolvedDeps,
+    });
     self.postMessage(result);
   } catch (e) {
     self.postMessage({

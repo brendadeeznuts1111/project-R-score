@@ -16,6 +16,7 @@
         "Bun.Transpiler",
         "IntegrityHasher",
         "SemverMatcher",
+        "threat-feed",
         "rule-engine",
         "bundle-scanner"
       ],
@@ -24,7 +25,9 @@
       "paths": {
         "module": "scripts/scan/transpiler/",
         "policies": "policies/security.policy.toml",
-        "legacy_rules": "bundle-threat-rules.json"
+        "legacy_rules": "bundle-threat-rules.json",
+        "threat_feed": "threat-feed.json",
+        "semver_matcher": "scripts/scan/transpiler/semver-matcher.ts"
       }
     },
     {

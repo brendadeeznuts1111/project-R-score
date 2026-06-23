@@ -2,7 +2,7 @@ export type Loader = "js" | "jsx" | "ts" | "tsx";
 
 export type Severity = "info" | "warn" | "error" | "low" | "medium" | "high" | "critical";
 
-export type ScanLayer = "import" | "source" | "output" | "integrity";
+export type ScanLayer = "import" | "source" | "output" | "integrity" | "deps";
 
 export type ImportKind =
   | "import-statement"
@@ -45,6 +45,9 @@ export interface ScanProfile {
   max_file_kb: number;
   include_node_modules?: boolean;
   exclude_globs?: string[];
+  threat_feed?: boolean;
+  include_dev_dependencies?: boolean;
+  correlate_symbols?: boolean;
 }
 
 export interface ScanResult {
@@ -93,6 +96,8 @@ export interface BundleScanReport {
   elapsed_ms: number;
   workers: number;
   integrity_enabled: boolean;
+  threat_feed_enabled: boolean;
+  advisories_matched: number;
   targets: TargetScanResult[];
   summary: {
     files: number;

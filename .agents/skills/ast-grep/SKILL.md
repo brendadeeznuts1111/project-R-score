@@ -95,8 +95,9 @@ python3 $AG bun roadmap                             # security backlog: catalog 
 python3 $AG bun roadmap --priority high             # security backlog — Transpiler + Worker integrated
 python3 $AG bun supply-chain layers                 # Layer 4 / 4.5 / 5 stack
 python3 $AG bun supply-chain rules                  # TOML + JSON policy paths
+python3 $AG bun supply-chain advisories             # CVE feed (Bun.semver correlation)
 python3 $AG bun supply-chain scan --zone agents     # Layer 4.5: transpiler + TOML rules + integrity
-python3 $AG bun supply-chain scan --path dist --format markdown --parallel
+python3 $AG bun supply-chain scan --path dist --format markdown --parallel --threat-feed
 python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)
 python3 $AG bun bundle-threat --profile ci --fail-on
 python3 $AG bun patterns --bundle security          # threat intel / XSS / bundle scan APIs
