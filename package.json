@@ -1580,7 +1580,9 @@
   "scripts": {
     "prepare": "husky",
     "precommit": ".husky/pre-commit",
-    "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts",
+    "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts --full",
+    "precommit:ast-grep:staged": "bun scripts/pre-commit-ast-grep.ts --staged",
+    "precommit:ast-grep:changed": "bun scripts/pre-commit-ast-grep.ts --changed",
     "install:all": "bun install",
     "install:packages": "bun install --filter './packages/*'",
     "install:projects": "bun install --filter './projects/*'",

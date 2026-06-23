@@ -22,7 +22,9 @@ Or run the hook directly:
 ## Targeted gates
 
 ```bash
-bun run precommit:ast-grep
+bun run precommit:ast-grep              # full: doctor + rules + semver + packages
+bun run precommit:ast-grep:changed      # when ast-grep paths changed vs HEAD
+bun run precommit:ast-grep:staged       # husky-equivalent (staged paths only)
 cd .agents/skills/ast-grep && bun run precommit
 cd .agents/skills/ast-grep && bun run precommit:rules
 cd .agents/skills/ast-grep && bun run precommit:semver

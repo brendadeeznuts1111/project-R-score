@@ -17,8 +17,10 @@ Setup after clone: `bun run prepare`
 Manual gates:
 
 ```bash
-bun run precommit:ast-grep
-cd .agents/skills/ast-grep && bun run precommit          # rules + semver tests
+bun run precommit:ast-grep              # full: doctor + rules + semver + packages
+bun run precommit:ast-grep:changed      # only when ast-grep paths differ from HEAD
+bun run precommit:ast-grep:staged       # same logic as husky hook
+cd .agents/skills/ast-grep && bun run precommit           # rules + semver (skill-local)
 cd .agents/skills/ast-grep && bun run precommit:packages  # supply-chain semver policy
 ```
 

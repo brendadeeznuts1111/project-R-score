@@ -471,7 +471,9 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        full: { type: 'boolean', description: 'Run all gates regardless of staged paths (default: staged-path gate only).' },
+        full: { type: 'boolean', description: 'Full gate chain + ast-grep --full (doctor, rules, semver, packages).' },
+        staged: { type: 'boolean', description: 'ast-grep gate: --staged (husky behaviour).' },
+        changed: { type: 'boolean', description: 'ast-grep gate: --changed (diff vs HEAD).' },
         hygiene: { type: 'boolean', description: 'Include repo-hygiene --staged (default true when full).' },
         harness: { type: 'boolean', description: 'Include harness lint/format (default true when full).' },
         astGrep: { type: 'boolean', description: 'Include ast-grep + semver gate (default true).' },
@@ -1007,10 +1009,25 @@ async function cmdPrecommit(args: Record<string, unknown>): Promise<ToolCallResu
     steps.push({ label: 'harness', script: join(root, 'scripts/pre-commit-harness.ts') });
   }
   if (args.astGrep !== false) {
-    steps.push({ label: 'ast-grep', script: join(root, 'scripts/pre-commit-ast-grep.ts') });
+    const astGrepMode = full
+      ? '--full'
+      : args.staged === true
+        ? '--staged'
+        : args.changed === true
+          ? '--changed'
+          : '--full';
+    steps.push({
+      label: 'ast-grep',
+      script: join(root, 'scripts/pre-commit-ast-grep.ts'),
+      extra: [astGrepMode],
+    });
   }
   if (steps.length === 0) {
-    steps.push({ label: 'ast-grep', script: join(root, 'scripts/pre-commit-ast-grep.ts') });
+    steps.push({
+      label: 'ast-grep',
+      script: join(root, 'scripts/pre-commit-ast-grep.ts'),
+      extra: ['--full'],
+    });
   }
 
   const chunks: string[] = [];

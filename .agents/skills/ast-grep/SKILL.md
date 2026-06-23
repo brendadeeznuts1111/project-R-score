@@ -256,7 +256,9 @@ Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 Husky hook (repo root): `.husky/pre-commit` → `bun run precommit:ast-grep` when skill paths staged.
 
 ```bash
-bun run precommit
+bun run precommit:ast-grep              # full: doctor + rules + semver + packages
+bun run precommit:ast-grep:changed      # when ast-grep paths differ from HEAD
+bun run precommit                       # full husky chain
 bun run precommit:rules
 bun run precommit:semver
 bun run precommit:packages

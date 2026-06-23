@@ -10,7 +10,7 @@ bun scripts/pre-commit-harness.ts
 
 echo ""
 echo "== pre-commit: ast-grep + semver =="
-bun scripts/pre-commit-ast-grep.ts
+bun scripts/pre-commit-ast-grep.ts --staged
 
 echo ""
 echo "✅ Pre-commit checks passed"
