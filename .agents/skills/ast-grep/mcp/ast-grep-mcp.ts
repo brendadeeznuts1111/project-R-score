@@ -15,7 +15,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.21.0';
+const SERVER_VERSION = '0.22.0';
 const SKILL_ROOT = resolve(import.meta.dir, '..');
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
@@ -236,7 +236,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-advisories', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'test-list', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-advisories', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
         topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles', 'platform', 'lockfile', 'backends', 'pnpm', 'peers', 'cache', 'cli'], description: 'For install-docs: filter section' },
         cpu: { type: 'string', description: 'For install-ci: --cpu override' },
         osTarget: { type: 'string', description: 'For install-ci: --os override' },
@@ -246,10 +246,13 @@ const TOOLS = [
         ruleIds: { type: 'string', description: 'For supply-chain-scan: comma-separated rule ids' },
         threatFeed: { type: 'boolean', description: 'For supply-chain-scan: correlate bun.lock with threat-feed.json' },
         release: { type: 'string', description: 'For features: release key (1.3.13)' },
-        profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key' },
-        testPath: { type: 'string', description: 'For test-ci: path to test directory' },
+        profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key (ci, unit, network, snapshot, ...)' },
+        testPath: { type: 'string', description: 'For test-ci: exact file (./tests/...) or substring filter' },
+        testFilter: { type: 'array', items: { type: 'string' }, description: 'For test-ci: position filters (unit, integration, concurrent)' },
+        testNamePattern: { type: 'string', description: 'For test-ci: -t regex on describe/test names' },
         shard: { type: 'string', description: 'For test-ci: M/N shard for CI matrix' },
         changed: { type: 'string', description: 'For test-ci: --changed or --changed=REF' },
+        skipPreflight: { type: 'boolean', description: 'For test-ci: skip snapshot-validate preflight' },
         dryRun: { type: 'boolean', description: 'For test-ci: print command only' },
         priority: { type: 'string', enum: ['high', 'medium', 'low', 'nice'], description: 'For roadmap: filter by priority' },
         integration: { type: 'string', enum: ['catalog', 'planned', 'integrated'], description: 'For roadmap: filter by integration state' },
@@ -390,6 +393,77 @@ const TOOLS = [
       },
     },
   },
+  {
+    name: 'ast_grep_network',
+    description:
+      'Supply-chain network audit: dist surface scan, OpenAPI catalog, health probes, baseline seed, ground-truth gate. pointers=true lists modules/standards without --path.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        pointers: { type: 'boolean', description: 'Module/script/baseline index (no scan path required).' },
+        dryRun: { type: 'boolean', description: 'Single audit preview (no loop).' },
+        validateGroundTruth: { type: 'boolean', description: 'Compare live audit to pinned golden counts.' },
+        seed: { type: 'boolean', description: 'Refresh baselines/<domain>/snapshot.json network section.' },
+        loop: { type: 'boolean', description: 'Enter watch/probe loop.' },
+        watch: { type: 'boolean', description: 'With loop: re-audit on file changes.' },
+        scanPath: { type: 'string', description: 'Bundle scan path (e.g. dist/frontend).' },
+        domain: { type: 'string', description: 'Domain id (default sports-terminal-os).' },
+        profile: { type: 'string', description: 'bundle-threat-profiles.json key (supply-chain-network-dist).' },
+        healthUrl: { type: 'string', description: 'Health probe URL.' },
+        output: { type: 'string', enum: ['table', 'json', 'herdr'], description: 'Dry-run output format.' },
+        verbose: { type: 'boolean' },
+        quiet: { type: 'boolean' },
+        jsonOut: { type: 'boolean', description: 'JSON stdout (pointers, dry-run, validate).' },
+        failOnDrift: { type: 'boolean', description: 'Exit error on route drift (not dry-run).' },
+        failOnHealth: { type: 'boolean', description: 'Exit error when health probe fails.' },
+        noSeed: { type: 'boolean', description: 'Skip auto-seed before loop when no baseline.' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_skill_loop',
+    description:
+      'Unified skill loop: test, bench, network, snapshot, rate across agent skills. bench-snapshot repeats validateSnapshotFull + live network + ground-truth.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        action: {
+          type: 'string',
+          enum: ['list', 'run', 'matrix', 'bench', 'bench-snapshot', 'close-loop', 'full', 'plan'],
+          description: 'Loop subcommand (plan = full --dry-run --explain).',
+        },
+        skill: { type: 'string', description: 'Target skill id (run action).' },
+        phases: { type: 'string', description: 'Comma-separated: doctor,test,bench,network,snapshot,rate.' },
+        preset: { type: 'string', description: 'quick | standard | full | ci (full/plan).' },
+        profile: { type: 'string', description: 'Bench profile (unit, ci, ...).' },
+        iterations: { type: 'number', description: 'Bench or bench-snapshot repeat count.' },
+        domain: { type: 'string', description: 'bench-snapshot domain (sports-terminal-os).' },
+        scanPath: { type: 'string', description: 'bench-snapshot live network drift path.' },
+        targetMs: { type: 'number', description: 'p50 speed target for bench rating.' },
+        groundTruth: { type: 'boolean', description: 'bench-snapshot: validateNetworkGroundTruth gate.' },
+        failOnNetworkDrift: { type: 'boolean', description: 'bench-snapshot: fail iteration on route drift.' },
+        minRating: { type: 'number', description: 'Rating gate threshold.' },
+        only: { type: 'string', description: 'Filter matrix skills by id substring.' },
+        dryRun: { type: 'boolean', description: 'Preview plan without executing.' },
+        explain: { type: 'boolean', description: 'With dryRun: show commands and per-iteration pipeline.' },
+        verbose: { type: 'boolean', description: 'Per-phase timings (bench-snapshot) or phase starts.' },
+        quiet: { type: 'boolean' },
+        parallel: { type: 'boolean', description: 'Matrix concurrent execution.' },
+        skipPreflight: { type: 'boolean' },
+        failOnRating: { type: 'boolean' },
+        failOnDrift: { type: 'boolean', description: 'full preset baseline drift gate.' },
+        baselineWrite: { type: 'boolean' },
+        noBaseline: { type: 'boolean' },
+        smoke: { type: 'boolean' },
+        seed: { type: 'boolean', description: 'close-loop: seed network baseline first.' },
+        effect: { type: 'boolean', description: 'close-loop: Effect-TS CloseLoopEngine program.' },
+        jsonOut: { type: 'boolean' },
+        herdrTab: { type: 'boolean' },
+        noColor: { type: 'boolean' },
+      },
+      required: ['action'],
+    },
+  },
 ];
 
 async function executable(path: string): Promise<boolean> {
@@ -473,6 +547,23 @@ async function safeGitDiff(paths: string[], cwd: string): Promise<string> {
 async function runHelper(subcmd: string, extra: string[] = []): Promise<{ stdout: string; stderr: string; code: number }> {
   const helper = join(SKILL_ROOT, 'scripts/ast_grep_helper.py');
   const proc = Bun.spawn(['python3', helper, subcmd, ...extra], {
+    cwd: repoRoot(),
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: process.env,
+  });
+  const [stdout, stderr] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  return { stdout, stderr, code: await proc.exited };
+}
+
+async function runBunScript(
+  script: string,
+  extra: string[] = [],
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  const proc = Bun.spawn(['bun', script, ...extra], {
     cwd: repoRoot(),
     stdout: 'pipe',
     stderr: 'pipe',
@@ -650,9 +741,17 @@ async function cmdBun(args: Record<string, unknown>): Promise<ToolCallResult> {
   if (action === 'test-ci') {
     if (args.profile) extra.push('--profile', String(args.profile));
     if (args.testPath) extra.push('--path', String(args.testPath));
+    if (Array.isArray(args.testFilter)) {
+      for (const f of args.testFilter) extra.push(String(f));
+    }
+    if (args.testNamePattern) extra.push('-t', String(args.testNamePattern));
     if (args.shard) extra.push('--shard', String(args.shard));
     if (args.changed) extra.push('--changed', String(args.changed));
+    if (args.skipPreflight === true) extra.push('--skip-preflight');
     if (args.dryRun === true) extra.push('--dry-run');
+  }
+  if (action === 'test-list') {
+    if (args.jsonOut === true) extra.push('--json-out');
   }
   if (action === 'install-docs' && args.topic) extra.push('--topic', String(args.topic));
   if (action === 'install-scan') {
@@ -822,6 +921,78 @@ async function cmdTest(args: Record<string, unknown>): Promise<ToolCallResult> {
   return toolText(truncate((stdout || stderr).trim() || '(no test output)'), code !== 0);
 }
 
+async function cmdNetwork(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const script = join(SKILL_ROOT, 'scripts/network-cli.ts');
+  const extra: string[] = [];
+  if (args.pointers === true) {
+    extra.push('--pointers');
+    if (args.jsonOut === true) extra.push('--json');
+    const { stdout, stderr, code } = await runBunScript(script, extra);
+    return toolText(truncate((stdout || stderr).trim() || '(no pointers output)'), code !== 0);
+  }
+  const scanPath = args.scanPath ? String(args.scanPath) : '';
+  if (!scanPath) {
+    return toolText('scanPath is required unless pointers=true', true);
+  }
+  extra.push('--path', scanPath, '--repo', repoRoot());
+  if (args.domain) extra.push('--domain', String(args.domain));
+  if (args.profile) extra.push('--profile', String(args.profile));
+  if (args.healthUrl) extra.push('--health-url', String(args.healthUrl));
+  if (args.output) extra.push('--output', String(args.output));
+  if (args.dryRun === true) extra.push('--dry-run');
+  if (args.validateGroundTruth === true) extra.push('--validate-ground-truth');
+  if (args.seed === true) extra.push('--seed');
+  if (args.noSeed === true) extra.push('--no-seed');
+  if (args.loop === true) extra.push('--loop');
+  if (args.watch === true) extra.push('--watch');
+  if (args.verbose === true) extra.push('--verbose');
+  if (args.quiet === true) extra.push('--quiet');
+  if (args.jsonOut === true) extra.push('--json');
+  if (args.failOnDrift === true) extra.push('--fail-on-drift');
+  if (args.failOnHealth === true) extra.push('--fail-on-health');
+  const { stdout, stderr, code } = await runBunScript(script, extra);
+  const body = [stdout.trim(), stderr.trim()].filter(Boolean).join('\n') || '(no network output)';
+  return toolText(truncate(body), code !== 0);
+}
+
+async function cmdSkillLoop(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const script = join(SKILL_ROOT, 'scripts/skill-loop-cli.ts');
+  let action = String(args.action ?? 'list');
+  if (action === 'plan') action = 'full';
+  const extra: string[] = [action];
+  if (args.skill) extra.push('--skill', String(args.skill));
+  if (args.phases) extra.push('--phases', String(args.phases));
+  if (args.preset) extra.push('--preset', String(args.preset));
+  if (args.profile) extra.push('--profile', String(args.profile));
+  if (args.iterations != null) extra.push('--iterations', String(args.iterations));
+  if (args.domain) extra.push('--domain', String(args.domain));
+  if (args.scanPath) extra.push('--scan-path', String(args.scanPath));
+  if (args.targetMs != null) extra.push('--target-ms', String(args.targetMs));
+  if (args.groundTruth === true) extra.push('--ground-truth');
+  if (args.failOnNetworkDrift === true) extra.push('--fail-on-network-drift');
+  if (args.minRating != null) extra.push('--min-rating', String(args.minRating));
+  if (args.only) extra.push('--only', String(args.only));
+  if (args.dryRun === true || args.action === 'plan') extra.push('--dry-run');
+  if (args.explain === true || args.action === 'plan') extra.push('--explain');
+  if (args.verbose === true) extra.push('--verbose');
+  if (args.quiet === true) extra.push('--quiet');
+  if (args.parallel === true) extra.push('--parallel');
+  if (args.skipPreflight === true) extra.push('--skip-preflight');
+  if (args.failOnRating === true) extra.push('--fail-on-rating');
+  if (args.failOnDrift === true) extra.push('--fail-on-drift');
+  if (args.baselineWrite === true) extra.push('--baseline-write');
+  if (args.noBaseline === true) extra.push('--no-baseline');
+  if (args.smoke === true) extra.push('--smoke');
+  if (args.seed === true) extra.push('--seed');
+  if (args.effect === true) extra.push('--effect');
+  if (args.jsonOut === true) extra.push('--json');
+  if (args.herdrTab === true) extra.push('--herdr-tab');
+  if (args.noColor === true) extra.push('--no-color');
+  const { stdout, stderr, code } = await runBunScript(script, extra);
+  const body = [stdout.trim(), stderr.trim()].filter(Boolean).join('\n') || '(no skill-loop output)';
+  return toolText(truncate(body), code !== 0);
+}
+
 async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
   const name = String(params?.name ?? '');
   const args = (params?.arguments ?? {}) as Record<string, unknown>;
@@ -852,6 +1023,8 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_codemods': result = await cmdCodemods(); break;
       case 'ast_grep_codemod': result = await cmdCodemod(args); break;
       case 'ast_grep_test': result = await cmdTest(args); break;
+      case 'ast_grep_network': result = await cmdNetwork(args); break;
+      case 'ast_grep_skill_loop': result = await cmdSkillLoop(args); break;
       default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);

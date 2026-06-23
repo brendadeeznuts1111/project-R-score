@@ -99,7 +99,12 @@ function matchImportRules(
 export async function analyzeFile(options: {
   fullPath: string;
   repo: string;
-  rules: { import_rules: PolicyRule[]; source_rules: PolicyRule[]; output_rules: PolicyRule[] };
+  rules: {
+    import_rules: PolicyRule[];
+    source_rules: PolicyRule[];
+    output_rules: PolicyRule[];
+    network_rules: PolicyRule[];
+  };
   profile: ScanProfile;
   manifest: IntegrityManifest | null;
   threatFeed?: ThreatFeed | null;
@@ -168,6 +173,9 @@ export async function analyzeFile(options: {
     }
     findings.push(...matchImportRules(imports, rules.import_rules, rel, profile.min_severity));
     findings.push(...matchRegexRules(source, rules.source_rules, "source", rel, profile.min_severity));
+    if (rules.network_rules.length) {
+      findings.push(...matchRegexRules(source, rules.network_rules, "network", rel, profile.min_severity));
+    }
 
     if (profile.correlate_symbols && threatFeed && resolvedDeps?.length) {
       findings.push(

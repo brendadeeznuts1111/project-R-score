@@ -82,7 +82,7 @@ python3 "$HELPER" -q bun bundle-threat --zone agents --dry-run 2>&1 | head -10 |
 echo ""
 if command -v bun >/dev/null 2>&1; then
   echo "== supply-chain transpiler tests =="
-  bun test "$ROOT/tests/supply-chain-transpiler.test.ts" 2>&1 | tail -5 || true
+  bun test ./tests/integration/concurrent-supply-chain-transpiler.test.ts 2>&1 | tail -5 || true
   echo ""
 fi
 echo "== bun features (1.3.13) =="
@@ -179,5 +179,13 @@ if command -v bun >/dev/null 2>&1; then
   echo ""
   echo "== mcp doctor =="
   AST_GREP_REPO_ROOT="$REPO" bun "$ROOT/mcp/ast-grep-mcp.ts" <<< '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"ast_grep_doctor","arguments":{}}}' 2>/dev/null | tail -1 | grep -q outline
+  echo ""
+  echo "== close-loop plan =="
+  bun "$ROOT/scripts/skill-loop-cli.ts" close-loop --domain sports-terminal-os \
+    --scan-path projects/active/sports-terminal-os/dist/frontend --ground-truth --dry-run --explain 2>&1 | head -20
+  echo ""
+  echo "== supply-chain network validate =="
+  bun "$ROOT/scripts/bun-cli.ts" bun supply-chain network --validate-ground-truth \
+    --path projects/active/sports-terminal-os/dist/frontend --domain sports-terminal-os 2>&1 | tail -5 || true
 fi
 echo "smoke OK"

@@ -28,7 +28,8 @@
         "bun-sqlite",
         "bun-file",
         "bun-write",
-        "bun-glob"
+        "bun-glob",
+        "bun-archive"
       ]
     },
     "core": {
@@ -136,7 +137,7 @@
   },
   "groups": {
     "http": "Servers, fetch, WebSocket",
-    "io": "Bun.file, Bun.write, Bun.Glob, streams",
+    "io": "Bun.file, Bun.write, Bun.Glob, Bun.Archive, streams",
     "process": "Bun.spawn, Bun.which, Bun.argv, Bun.main",
     "db": "bun:sqlite and database usage",
     "test": "bun:test runner",
@@ -238,6 +239,39 @@
       "outline": true,
       "tier": "extended",
       "description": "Glob file traversal"
+    },
+    {
+      "id": "bun-archive",
+      "name": "Bun.Archive",
+      "pattern": "new Bun.Archive($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Native tar/tar.gz create, extract, files() with glob filter",
+      "docs_path": "/runtime/archive"
+    },
+    {
+      "id": "bun-archive-extract",
+      "name": "Bun.Archive.extract",
+      "pattern": "archive.extract($$$)",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Extract tarball with optional glob filter",
+      "docs_path": "/runtime/archive#filtering-with-glob-patterns"
+    },
+    {
+      "id": "bun-run-filter",
+      "name": "bun run --filter",
+      "pattern": "bun run --filter $$$",
+      "lang": "sh",
+      "group": "process",
+      "outline": false,
+      "tier": "core",
+      "description": "Run package.json scripts in workspace packages matching name/path glob",
+      "docs_path": "/runtime#filtering"
     },
     {
       "id": "bun-stdin",
@@ -388,7 +422,13 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Color conversion (hex, ansi, css)"
+      "description": "CSS color parse/normalize — css, ansi, hex, number, {rgba}, [rgb]",
+      "docs_url": "https://bun.com/docs/runtime/color",
+      "supply_chain": {
+        "module": "scripts/scan/transpiler/color-matcher.ts",
+        "terminal": "scripts/scan/transpiler/terminal-color.ts",
+        "cli": "scripts/format-terminal-report.ts"
+      }
     },
     {
       "id": "bun-markdown-html",
@@ -398,7 +438,12 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown to HTML"
+      "description": "Markdown → HTML (GFM tables, strikethrough, task lists)",
+      "docs_url": "https://bun.com/docs/runtime/markdown",
+      "supply_chain": {
+        "module": "scripts/scan/transpiler/markdown-reporter.ts",
+        "report": "buildSupplyChainMarkdown"
+      }
     },
     {
       "id": "bun-markdown-ansi",
@@ -408,7 +453,8 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown to ANSI terminal"
+      "description": "Markdown → ANSI terminal output",
+      "docs_url": "https://bun.com/docs/runtime/markdown"
     },
     {
       "id": "bun-markdown-render",
@@ -418,7 +464,19 @@
       "group": "display",
       "outline": true,
       "tier": "extended",
-      "description": "Markdown with custom callbacks"
+      "description": "Markdown with custom element callbacks (HTML/ANSI/React)",
+      "docs_url": "https://bun.com/docs/runtime/markdown"
+    },
+    {
+      "id": "bun-markdown-react",
+      "name": "Bun.markdown.react",
+      "pattern": "Bun.markdown.react($$$)",
+      "lang": "tsx",
+      "group": "display",
+      "outline": true,
+      "tier": "extended",
+      "description": "Markdown → React elements with component overrides",
+      "docs_url": "https://bun.com/docs/runtime/markdown"
     },
     {
       "id": "bun-secrets",
@@ -1637,6 +1695,29 @@
       "docs_path": "/runtime/glob"
     },
     {
+      "id": "archive",
+      "topic": "Archive",
+      "apis": [
+        "Bun.Archive"
+      ],
+      "patterns": [
+        "bun-archive",
+        "bun-archive-extract"
+      ],
+      "docs_path": "/runtime/archive"
+    },
+    {
+      "id": "workspace-filter",
+      "topic": "Workspace filter",
+      "apis": [
+        "bun run --filter"
+      ],
+      "patterns": [
+        "bun-run-filter"
+      ],
+      "docs_path": "/runtime#filtering"
+    },
+    {
       "id": "cookies",
       "topic": "Cookies",
       "apis": [
@@ -1832,10 +1913,39 @@
         "bun-markdown-html",
         "bun-markdown-ansi",
         "bun-markdown-render",
+        "bun-markdown-react",
         "bun-color",
         "bun-image"
       ],
       "docs_path": "/runtime/semver"
+    },
+    {
+      "id": "color",
+      "topic": "Color",
+      "apis": [
+        "Bun.color"
+      ],
+      "patterns": [
+        "bun-color"
+      ],
+      "docs_path": "/runtime/color"
+    },
+    {
+      "id": "markdown",
+      "topic": "Markdown",
+      "apis": [
+        "Bun.markdown.html",
+        "Bun.markdown.ansi",
+        "Bun.markdown.render",
+        "Bun.markdown.react"
+      ],
+      "patterns": [
+        "bun-markdown-html",
+        "bun-markdown-ansi",
+        "bun-markdown-render",
+        "bun-markdown-react"
+      ],
+      "docs_path": "/runtime/markdown"
     },
     {
       "id": "low-level",

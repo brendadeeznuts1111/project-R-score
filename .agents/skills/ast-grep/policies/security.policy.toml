@@ -96,3 +96,59 @@ severity = "medium"
 type = "regex"
 layer = "output"
 pattern = "child_process|Bun\\.spawn\\s*\\("
+
+[[rule]]
+id = "fetch-call"
+description = "fetch() outbound HTTP request"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\bfetch\\s*\\("
+
+[[rule]]
+id = "http-client"
+description = "HTTP client call (axios/http/https)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\b(?:axios|http|https)\\.(?:get|post|request|create)\\s*\\("
+
+[[rule]]
+id = "websocket-constructor"
+description = "WebSocket client connection"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\bnew\\s+WebSocket\\s*\\(|\\bWebSocket\\s*\\("
+
+[[rule]]
+id = "dns-lookup"
+description = "DNS resolution (Bun.dns or node:dns)"
+severity = "info"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.dns\\.|node:dns|dns\\.(?:lookup|resolve)"
+
+[[rule]]
+id = "tcp-listen"
+description = "TCP server socket (Bun.listen / createServer)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.listen\\s*\\(|\\.createServer\\s*\\("
+
+[[rule]]
+id = "tcp-connect"
+description = "TCP client socket (Bun.connect / createConnection)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.connect\\s*\\(|\\.createConnection\\s*\\("
+
+[[rule]]
+id = "udp-socket"
+description = "UDP socket (Bun.udpSocket / node:dgram)"
+severity = "info"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.udpSocket\\s*\\(|node:dgram"

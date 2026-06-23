@@ -337,7 +337,7 @@ export async function dispatchWebhook(options: DispatchOptions): Promise<Dispatc
 
         // Wait with exponential backoff
         const backoffMs = BACKOFF_DELAYS_MS[attempt - 1] ?? BACKOFF_DELAYS_MS[BACKOFF_DELAYS_MS.length - 1];
-        await sleep(backoffMs);
+        await Bun.sleep(backoffMs);
         continue;
       }
 
@@ -362,7 +362,7 @@ export async function dispatchWebhook(options: DispatchOptions): Promise<Dispatc
 
       if (attempt < maxAttempts) {
         const backoffMs = BACKOFF_DELAYS_MS[attempt - 1] ?? BACKOFF_DELAYS_MS[BACKOFF_DELAYS_MS.length - 1];
-        await sleep(backoffMs);
+        await Bun.sleep(backoffMs);
       }
     }
   }
@@ -487,6 +487,4 @@ export function getAllCircuitStates(): Array<{
 // Utility
 // ---------------------------------------------------------------------------
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+

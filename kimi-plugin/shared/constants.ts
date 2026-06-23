@@ -1,13 +1,3 @@
-export const SPORTS = ["NFL", "NBA", "MLB", "NHL", "NCAAF", "NCAAB", "SOCCER"] as const;
-export type Sport = typeof SPORTS[number];
-
-export const MARKETS = ["moneyline", "spread", "totals", "all"] as const;
-export type Market = typeof MARKETS[number];
-
-export const STATUS_FILTERS = ["live", "upcoming", "completed", "all"] as const;
-export const HANDLE_PERIODS = ["today", "week", "month"] as const;
-export const POSITION_VIEWS = ["summary", "by_sport", "by_game", "sharp_flags", "limits"] as const;
-
 export const SPORT_POSSESSION_EMOJI: Record<string, string> = {
   NFL: "🏈",
   NCAAF: "🏈",

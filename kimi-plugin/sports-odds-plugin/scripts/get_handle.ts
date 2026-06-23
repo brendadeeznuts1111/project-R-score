@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
-import { init, runMain, f402Fetch, makeTable, respond, formatMoney } from "./lib/f402";
+import { loadConfig, readParams, f402Fetch, makeTable, formatMoney } from "./lib/f402";
 
-const { config, params } = await init<{ sport?: string; game_id?: string; period?: string }>();
+const config = await loadConfig();
+const params = await readParams<{ sport?: string; game_id?: string; period?: string }>();
 
-runMain(async () => {
+async function main() {
   const { sport, game_id, period = "today" } = params;
 
   const data = await f402Fetch<{ games: any[] }>(config, "/handle", { sport, game_id, period });
@@ -22,8 +23,13 @@ runMain(async () => {
 
   const table = makeTable(["Matchup", "Handle", "Tickets", "Money Split"], rows);
 
-  respond({
+  console.log(JSON.stringify({
     content: `## Betting Handle (${period})\n\n${table || "No handle data available."}${table ? `\n\n**Total:** ${formatMoney(totalHandle)} | ${totalTickets.toLocaleString()} tickets` : ""}`,
     metadata: { total_handle: totalHandle, total_tickets: totalTickets, game_count: games.length, period },
-  });
+  }));
+}
+
+main().catch(err => {
+  console.log(JSON.stringify({ error: true, message: err.message }));
+  process.exit(1);
 });

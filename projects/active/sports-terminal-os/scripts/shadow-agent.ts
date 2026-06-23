@@ -290,7 +290,7 @@ async function extractCookies(): Promise<{
     }
 
     // ── 4. Wait for cookies to settle ──
-    await sleep(3000);
+    await Bun.sleep(3000);
 
     // ── 5. Extract cookies ──
     const cookieStr: string = await wv.evaluate("document.cookie");
@@ -367,7 +367,7 @@ async function waitForCfChallenge(wv: any, timeoutMs: number): Promise<boolean> 
     } catch {
       // evaluate may throw if page is still loading — retry
     }
-    await sleep(1500);
+    await Bun.sleep(1500);
   }
   return false;
 }
@@ -386,10 +386,7 @@ function parseCookies(cookieStr: string): Record<string, string> {
   return result;
 }
 
-/** Promise-based sleep. */
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
+
 
 // ---------------------------------------------------------------------------
 // Cookie health probe — event-driven refresh trigger

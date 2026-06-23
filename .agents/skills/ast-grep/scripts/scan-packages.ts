@@ -3,12 +3,23 @@
  * Package version policy + threat-feed scan (Layer 5).
  *
  *   bun scripts/scan-packages.ts --path . --threat-feed --fix
- *   bun scripts/scan-packages.ts --path . --watch --watch-interval 1000
+ *   bun scripts/scan-packages.ts --path . --format markdown --profile pillars
  */
 
 import { resolve } from "node:path";
 import { scanPackagesForTarget } from "./scan/transpiler/service.ts";
+import { loadPackageProfile } from "./scan/transpiler/profile-loader.ts";
 import { runWatchLoop } from "./scan/transpiler/watch.ts";
+import {
+  formatFindingLine,
+  formatRemediationPlan,
+  okLine,
+} from "./scan/transpiler/terminal-color.ts";
+import {
+  buildPackageScanMarkdown,
+  renderMarkdownDocument,
+  type ReportRenderFormat,
+} from "./scan/transpiler/markdown-reporter.ts";
 
 const SKILL_ROOT = resolve(import.meta.dir, "..");
 
@@ -32,40 +43,43 @@ function parseArgs(argv: string[]): Record<string, string | boolean | number> {
   return out;
 }
 
-function printRemediation(findings: Awaited<ReturnType<typeof scanPackagesForTarget>>["findings"]): void {
-  for (const f of findings) {
-    const cve = f.cve ? ` (${f.cve})` : "";
-    console.log(`⚠️  [${f.severity}] ${f.file} — ${f.ruleId}${cve}`);
-    console.log(`    ${f.message}`);
-    if (f.remediation?.suggestedVersion) {
-      const latest = f.remediation.latestInLockfile;
-      const extra = latest && latest !== f.remediation.suggestedVersion
-        ? ` (latest in lockfile: ${latest})`
-        : "";
-      console.log(
-        `    → Upgrade to ${f.file}@${f.remediation.suggestedVersion} or later${extra}`,
-      );
-      console.log(`    → ${f.remediation.command}`);
-    } else if (f.remediation?.safeRange) {
-      console.log(`    → Satisfy range: ${f.remediation.safeRange}`);
-      console.log(`    → ${f.remediation.command}`);
-    }
+async function resolveFormat(
+  opts: Record<string, string | boolean | number>,
+): Promise<ReportRenderFormat> {
+  if (typeof opts.format === "string") return opts.format as ReportRenderFormat;
+  const profile = await loadPackageProfile(
+    SKILL_ROOT,
+    typeof opts.profile === "string" ? opts.profile : undefined,
+  );
+  return profile.report_format ?? "json";
+}
+
+function printRemediation(
+  findings: Awaited<ReturnType<typeof scanPackagesForTarget>>["findings"],
+  plan?: Awaited<ReturnType<typeof scanPackagesForTarget>>["plan"],
+): void {
+  for (const f of findings) console.log(formatFindingLine(f));
+  if (plan?.items.length) {
+    console.log("");
+    console.log(formatRemediationPlan(plan));
   }
 }
 
 async function runOnce(opts: Record<string, string | boolean | number>) {
   const repo = resolve(String(opts.repo ?? process.cwd()));
-  const threatFeed = opts["no-threat-feed"] !== true;
+  const explicitThreatOff = opts["no-threat-feed"] === true;
+  const explicitThreatOn = opts["threat-feed"] === true;
 
   return scanPackagesForTarget({
     skillRoot: SKILL_ROOT,
     repo,
     targetId: typeof opts.domain === "string" ? opts.domain : undefined,
     targetPath: typeof opts.path === "string" ? opts.path : undefined,
+    packageProfileName: typeof opts.profile === "string" ? opts.profile : undefined,
     minSeverity: typeof opts["min-severity"] === "string"
       ? opts["min-severity"] as "warn"
-      : "warn",
-    threatFeed,
+      : undefined,
+    threatFeed: explicitThreatOff ? false : explicitThreatOn ? true : undefined,
     fix: opts.fix === true,
     dryRunFix: opts["dry-run"] === true && opts.fix === true,
   });
@@ -76,18 +90,34 @@ async function printResult(
   result: Awaited<ReturnType<typeof runOnce>>,
   watch = false,
 ): Promise<number> {
+  const format = await resolveFormat(opts);
+  const profile = await loadPackageProfile(
+    SKILL_ROOT,
+    typeof opts.profile === "string" ? opts.profile : undefined,
+  );
   const payload = {
     layer: "5",
     command: "scan packages",
+    profile: typeof opts.profile === "string" ? opts.profile : "default",
     threatFeed: result.threatFeed,
     ...result,
     clean: result.findings.length === 0,
+    format,
   };
 
-  if (opts.json === true && !watch) {
-    process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);
+  if (format !== "json" && !watch) {
+    const md = buildPackageScanMarkdown(payload);
+    process.stdout.write(renderMarkdownDocument(md, format, {
+      colored: profile.markdown_colored !== false,
+    }));
+  } else if (opts.json === true && !watch) {
+    const md = buildPackageScanMarkdown(payload);
+    process.stdout.write(`${JSON.stringify({
+      ...payload,
+      markdown_source: md,
+    }, null, 2)}\n`);
   } else if (result.findings.length === 0) {
-    const msg = `✅ All packages satisfy policies + threat-feed (${result.targetId})`;
+    const msg = okLine(`✅ All packages satisfy policies + threat-feed (${result.targetId})`);
     if (watch) process.stderr.write(`[watch] ${msg}\n`);
     else console.log(msg);
   } else {
@@ -97,7 +127,7 @@ async function printResult(
         process.stderr.write(`  [${f.severity}] ${f.file} ${f.ruleId}\n`);
       }
     } else {
-      printRemediation(result.findings);
+      printRemediation(result.findings, result.plan);
     }
     if (result.fixesApplied.length) {
       const lines = result.fixesApplied.map((c) => `  ${c}`).join("\n");

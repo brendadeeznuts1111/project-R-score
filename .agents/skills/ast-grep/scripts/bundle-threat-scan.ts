@@ -8,7 +8,11 @@
 
 import { resolve } from "node:path";
 import { runBundleScan } from "./scan/transpiler/bundle-scanner.ts";
+import { loadBundleProfile } from "./scan/transpiler/profile-loader.ts";
 import { formatReport, maxSeverity } from "./scan/transpiler/reporter.ts";
+import { supportsColor } from "./scan/transpiler/terminal-color.ts";
+import { PlatformMatcher, type PlatformTarget } from "./scan/transpiler/platform-matcher.ts";
+import type { ReportFormat } from "./scan/transpiler/types.ts";
 import { runWatchLoop } from "./scan/transpiler/watch.ts";
 import { applyBundleFixes } from "./scan/transpiler/autofix.ts";
 import type { BundleScanReport } from "./scan/transpiler/types.ts";
@@ -35,9 +39,19 @@ function parseArgs(argv: string[]): Record<string, string | boolean | number> {
   return out;
 }
 
+async function resolveFormat(
+  opts: Record<string, string | boolean | number>,
+  profileName: string,
+): Promise<ReportFormat> {
+  if (typeof opts.format === "string") return opts.format as ReportFormat;
+  const profile = await loadBundleProfile(SKILL_ROOT, profileName);
+  return profile.report_format ?? "json";
+}
+
 async function runScan(opts: Record<string, string | boolean | number>): Promise<BundleScanReport> {
   const repo = resolve(String(opts.repo ?? process.cwd()));
-  const format = (typeof opts.format === "string" ? opts.format : "json") as "json" | "html" | "markdown";
+  const profileName = typeof opts.profile === "string" ? opts.profile : "default";
+  const format = await resolveFormat(opts, profileName);
   const ruleIds = typeof opts.rules === "string"
     ? opts.rules.split(",").map((s) => s.trim()).filter(Boolean)
     : undefined;
@@ -45,7 +59,7 @@ async function runScan(opts: Record<string, string | boolean | number>): Promise
   return runBundleScan({
     skillRoot: SKILL_ROOT,
     repo,
-    profileName: typeof opts.profile === "string" ? opts.profile : "default",
+    profileName,
     zone: typeof opts.zone === "string" ? opts.zone : undefined,
     only: typeof opts.only === "string" ? opts.only : undefined,
     scanPath: typeof opts.path === "string" ? opts.path : undefined,
@@ -62,7 +76,25 @@ async function runScan(opts: Record<string, string | boolean | number>): Promise
       : opts["threat-feed"] === true
         ? true
         : undefined,
+    platformTarget: resolveCliPlatform(opts),
   });
+}
+
+function resolveCliPlatform(
+  opts: Record<string, string | boolean | number>,
+): PlatformTarget | undefined {
+  const cpu = typeof opts.cpu === "string" ? opts.cpu : undefined;
+  const osName = typeof opts.os === "string"
+    ? opts.os
+    : typeof opts["os-target"] === "string"
+      ? opts["os-target"]
+      : undefined;
+  if (!cpu && !osName) return undefined;
+  const target: PlatformTarget = {
+    cpu: PlatformMatcher.normalizeCpu(cpu ?? "") ?? "x64",
+    os: PlatformMatcher.normalizeOs(osName ?? "") ?? "linux",
+  };
+  return PlatformMatcher.isValidTarget(target) ? target : undefined;
 }
 
 async function emitReport(
@@ -105,7 +137,17 @@ async function emitReport(
     return allFindings.length > 0 ? 1 : 0;
   }
 
-  process.stdout.write(formatReport(report));
+  const profile = await loadBundleProfile(SKILL_ROOT, report.profile);
+  const noColor = opts["no-color"] === true;
+  const colored = !noColor && (
+    opts.color === true
+    || (opts.color !== false && profile.markdown_colored !== false && supportsColor())
+  );
+  const useTerminal = !noColor && (
+    opts.color === true
+    || (opts.color !== false && report.format === "json" && supportsColor())
+  );
+  process.stdout.write(formatReport(report, { terminal: useTerminal, colored }));
 
   const failSev = typeof opts["fail-on"] === "string" ? opts["fail-on"] : "error";
   if (opts["fail-on"] === true || opts["fail-on"]) {

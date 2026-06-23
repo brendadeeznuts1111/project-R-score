@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { ScanResult } from "./types.ts";
-import { scanPackagesForTarget } from "./service.ts";
-import type { ServiceOptions } from "./service.ts";
+import { resolveTargetDependencies } from "./dependency-resolver.ts";
+import { buildRemediationPlan, applyRemediationPlan } from "./remediation-plan.ts";
 
 export type AutofixRule = {
   id: string;
@@ -135,15 +135,25 @@ export async function applyBundleFixes(options: {
   const hasDepViolation = options.findings.some((f) => f.layer === "deps");
   const packages: string[] = [];
   if (hasDepViolation) {
-    const pkgResult = await scanPackagesForTarget({
-      skillRoot: options.skillRoot,
+    const plan = await buildRemediationPlan({
       repo: options.repo,
-      targetPath: options.targetPath ?? ".",
-      fix: true,
-      dryRunFix: options.dryRun,
-      threatFeed: true,
+      findings: options.findings,
     });
-    packages.push(...pkgResult.fixesApplied);
+    if (plan.items.length) {
+      const { packageJson } = await resolveTargetDependencies({
+        repo: options.repo,
+        targetPath: options.targetPath ?? ".",
+        includeDev: false,
+      });
+      if (packageJson) {
+        const applied = await applyRemediationPlan({
+          plan,
+          packageJsonPath: packageJson,
+          dryRun: options.dryRun,
+        });
+        packages.push(...applied.applied);
+      }
+    }
   }
 
   return { source, packages, dryRun: Boolean(options.dryRun) };

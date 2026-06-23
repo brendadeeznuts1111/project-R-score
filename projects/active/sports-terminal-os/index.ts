@@ -20,6 +20,7 @@ export {
   gracefulShutdown,
   broadcastToWebSockets,
   broadcastToSSE,
+  getWsMetrics,
 } from "./src/index";
 
 // ---------------------------------------------------------------------------

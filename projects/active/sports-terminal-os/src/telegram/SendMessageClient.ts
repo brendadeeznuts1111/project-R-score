@@ -11,6 +11,7 @@
  */
 
 import { createLogger } from "@utils/logger";
+import { h2Fetch } from "@utils/h2-fetch";
 
 const logger = createLogger("SendMessageClient");
 
@@ -132,7 +133,7 @@ export class SendMessageClient {
     // Retry loop with exponential backoff
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        const response = await fetch(`${this.apiUrl}/sendMessage`, {
+        const response = await h2Fetch(`${this.apiUrl}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -149,7 +150,7 @@ export class SendMessageClient {
         if (data.error_code === 429) {
           const retryAfter = data.parameters?.retry_after || 1;
           logger.warn(`Telegram rate limit, retry after ${retryAfter}s`);
-          await sleep(retryAfter * 1000);
+          await Bun.sleep(retryAfter * 1000);
           continue;
         }
 
@@ -172,7 +173,7 @@ export class SendMessageClient {
         logger.warn(
           `Send attempt ${attempt} failed: ${err.message}, retrying in ${backoffMs}ms`
         );
-        await sleep(backoffMs);
+        await Bun.sleep(backoffMs);
       }
     }
 
@@ -218,7 +219,7 @@ export class SendMessageClient {
       const waitMs = MSG_WINDOW_MS - (now - oldest);
       if (waitMs > 0) {
         logger.debug(`Rate limit: waiting ${waitMs}ms`);
-        await sleep(waitMs);
+        await Bun.sleep(waitMs);
       }
     }
   }
@@ -248,6 +249,4 @@ export class SendMessageClient {
   }
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+

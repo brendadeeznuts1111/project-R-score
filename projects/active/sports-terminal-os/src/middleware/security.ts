@@ -36,7 +36,7 @@ const TRUST_PROXY = process.env.TRUST_PROXY === "true";
  * Generate a unique request ID for tracing.
  */
 export function generateRequestId(): string {
-  return `req_${crypto.randomUUID().slice(0, 12)}`;
+  return `req_${Bun.randomUUIDv7().slice(0, 12)}`;
 }
 
 /**

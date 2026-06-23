@@ -207,7 +207,7 @@ export async function handleAlertSummary(_req: Request, _auth: AuthContext): Pro
  */
 export function handleAlertStream(req: Request): Response {
   const url = new URL(req.url);
-  const clientId = crypto.randomUUID();
+  const clientId = Bun.randomUUIDv7();
 
   const filter: SSEClient["filter"] = {};
   const severityParam = url.searchParams.get("severity");

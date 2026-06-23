@@ -6,6 +6,8 @@ import { loadPolicyFromSkill } from "./policy-loader.ts";
 import { FeedParser, type ThreatMatch } from "./feed.ts";
 import type { RepoTarget } from "./bundle-scanner.ts";
 import type { Severity } from "./types.ts";
+import { SEVERITY_RANK, normalizeSeverity } from "./rule-engine.ts";
+import { strictestSafeRange, evaluateAgainstPolicy } from "./policy-engine.ts";
 
 export type SemverViolation = {
   rule: SemverRule;
@@ -17,6 +19,7 @@ export type ViolationKind = "semver_rule" | "allowed" | "blocked" | "threat";
 
 export type PackageViolation = {
   kind: ViolationKind;
+  kinds?: ViolationKind[];
   package: string;
   version: string;
   ruleId: string;
@@ -26,6 +29,58 @@ export type PackageViolation = {
   safeRange?: string;
   cve?: string;
 };
+
+const KIND_PRIORITY: Record<ViolationKind, number> = {
+  blocked: 4,
+  threat: 3,
+  semver_rule: 2,
+  allowed: 1,
+};
+
+export function dedupeViolations(rows: PackageViolation[]): PackageViolation[] {
+  const byPkg = new Map<string, PackageViolation[]>();
+  for (const row of rows) {
+    const list = byPkg.get(row.package) ?? [];
+    list.push(row);
+    byPkg.set(row.package, list);
+  }
+
+  const out: PackageViolation[] = [];
+  for (const group of byPkg.values()) {
+    if (group.length === 1) {
+      out.push({ ...group[0], kinds: [group[0].kind] });
+      continue;
+    }
+
+    const kinds = [...new Set(group.map((g) => g.kind))];
+    const primary = group.reduce((best, cur) => {
+      const bp = KIND_PRIORITY[best.kind];
+      const cp = KIND_PRIORITY[cur.kind];
+      if (cp !== bp) return cp > bp ? cur : best;
+      const bs = SEVERITY_RANK[normalizeSeverity(best.severity)] ?? 0;
+      const cs = SEVERITY_RANK[normalizeSeverity(cur.severity)] ?? 0;
+      return cs > bs ? cur : best;
+    });
+    const maxSev = group.reduce((max, g) => {
+      const gs = SEVERITY_RANK[normalizeSeverity(g.severity)] ?? 0;
+      const ms = SEVERITY_RANK[normalizeSeverity(max.severity)] ?? 0;
+      return gs > ms ? g : max;
+    }, group[0]);
+
+    const safeRanges = group.map((g) => g.safeRange).filter((r): r is string => Boolean(r));
+    out.push({
+      ...primary,
+      severity: maxSev.severity,
+      kinds,
+      safeRange: strictestSafeRange(safeRanges) ?? primary.safeRange,
+      cve: group.find((g) => g.cve)?.cve ?? primary.cve,
+      message: kinds.length > 1
+        ? `${primary.package}@${primary.version} — [${kinds.join("+")}] ${primary.message}`
+        : primary.message,
+    });
+  }
+  return out;
+}
 
 export class Registry {
   readonly semver = SemverMatcher;
@@ -161,6 +216,17 @@ export class Registry {
       rows.push(...this.threatMatchesToViolations(threats));
     }
 
-    return rows;
+    return dedupeViolations(rows);
+  }
+
+  async evaluatePackage(
+    pkg: string,
+    version: string,
+    options: { threatFeed?: boolean } = {},
+  ): Promise<ReturnType<typeof evaluateAgainstPolicy>> {
+    const policy = await this.loadPolicy();
+    const violations = await this.checkAllViolations({ [pkg]: version }, options);
+    const pkgViolations = violations.filter((v) => v.package === pkg);
+    return evaluateAgainstPolicy(pkg, version, policy, pkgViolations);
   }
 }

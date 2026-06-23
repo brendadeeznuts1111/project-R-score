@@ -34,6 +34,12 @@ minimumReleaseAge = 259200
 # (e.g. bet-ticker-worker-v1.1/bunfig.toml) override these.
 [test]
 timeout = 10000
+# ast-grep integration scans (see .agents/skills/ast-grep/bunfig.toml for skill-local defaults)
+concurrentTestGlob = [
+  ".agents/skills/ast-grep/tests/integration/*.test.ts",
+  ".agents/skills/ast-grep/tests/integration/**/*.test.ts",
+  ".agents/skills/ast-grep/**/concurrent-*.test.ts",
+]
 pathIgnorePatterns = [
   "node_modules/**",
   "dist/**",

@@ -8,9 +8,27 @@ import { filterRulesById, loadRuleSet } from "./rule-engine.ts";
 import type { RuleSet } from "./types.ts";
 import { buildSummary } from "./reporter.ts";
 import { resolveTargetDependencies } from "./dependency-resolver.ts";
-import { loadThreatFeed, matchDependencies, matchPolicySemverRules } from "./semver-matcher.ts";
-import { loadPolicyFromSkill } from "./policy-loader.ts";
+import { loadThreatFeed } from "./semver-matcher.ts";
 import type { ThreatFeed } from "./semver-matcher.ts";
+import { Registry } from "./registry.ts";
+import { dependenciesToPackages, scanDependencyViolations } from "./dep-scan.ts";
+import { buildRemediationPlan } from "./remediation-plan.ts";
+import { loadBundleProfile } from "./profile-loader.ts";
+import {
+  PlatformMatcher,
+  resolveInstallProfile,
+  resolveScanPlatform,
+  PLATFORM_DOCS,
+  type PlatformTarget,
+} from "./platform-matcher.ts";
+import { NetworkMatcher, NETWORK_DOCS } from "./network-matcher.ts";
+import {
+  discoverOpenApi,
+  loadOpenApiCatalog,
+  probeHealth,
+  type EndpointCatalog,
+  type HealthReport,
+} from "./endpoint-catalog.ts";
 import type {
   BundleScanReport,
   ScanProfile,
@@ -236,12 +254,19 @@ export async function scanTarget(options: {
     : await scanFilesSequential(repo, paths, rules, profile, manifest, ctx);
 
   const findings = [...scanned.findings];
-  const policy = await loadPolicyFromSkill(skillRoot);
-  if (policy.semver_rules.length && resolvedDeps.length) {
-    findings.push(...matchPolicySemverRules(resolvedDeps, policy.semver_rules, profile.min_severity));
-  }
-  if (threatFeed && resolvedDeps.length) {
-    findings.push(...matchDependencies(resolvedDeps, threatFeed, profile.min_severity));
+  if (resolvedDeps.length) {
+    const registry = new Registry(skillRoot);
+    const { packages, sourceByPackage } = dependenciesToPackages(resolvedDeps);
+    findings.push(
+      ...(await scanDependencyViolations({
+        repo,
+        registry,
+        packages,
+        sourceByPackage,
+        threatFeed: Boolean(threatFeed),
+        minSeverity: profile.min_severity,
+      })),
+    );
   }
 
   return {
@@ -262,23 +287,21 @@ export type ScanOptions = {
   zone?: string;
   only?: string;
   scanPath?: string;
-  format?: "json" | "html" | "markdown";
+  format?: "json" | "html" | "markdown" | "ansi" | "plaintext";
   parallel?: boolean;
   workers?: number;
   integrityManifest?: string;
   ruleIds?: string[];
   dryRun?: boolean;
   threatFeed?: boolean;
+  platformTarget?: PlatformTarget;
+  openapiPath?: string;
+  healthUrl?: string;
 };
 
 export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport> {
-  const profilesPath = join(opts.skillRoot, "bundle-threat-profiles.json");
   const mapPath = join(opts.skillRoot, "repo-map.json");
-  const profilesDoc = JSON.parse(await readFile(profilesPath, "utf8")) as {
-    profiles: Record<string, ScanProfile>;
-  };
-  const profile = profilesDoc.profiles[opts.profileName];
-  if (!profile) throw new Error(`unknown profile '${opts.profileName}'`);
+  const profile = await loadBundleProfile(opts.skillRoot, opts.profileName);
 
   let rules = await loadRuleSet(opts.skillRoot);
   if (opts.ruleIds?.length) rules = filterRulesById(rules, opts.ruleIds);
@@ -352,6 +375,65 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
     0,
   );
 
+  let allFindings = results.flatMap((t) => t.findings);
+
+  const installSpec = profile.install_profile
+    ? await resolveInstallProfile(opts.skillRoot, profile.install_profile)
+    : null;
+  const profileTarget = profile.platform_target
+    ? {
+        cpu: PlatformMatcher.normalizeCpu(profile.platform_target.cpu) ?? "x64",
+        os: PlatformMatcher.normalizeOs(profile.platform_target.os) ?? "linux",
+      }
+    : undefined;
+  const platformCtx = resolveScanPlatform({
+    profileTarget: profileTarget as PlatformTarget | undefined,
+    installProfile: installSpec,
+    envTarget: PlatformMatcher.fromEnv(),
+    cliTarget: opts.platformTarget ?? null,
+  });
+
+  const networkEnabled = profile.network_audit === true;
+  if (networkEnabled) {
+    allFindings = allFindings.map((f) => NetworkMatcher.tagFinding(f));
+    for (const t of results) {
+      t.findings = t.findings.map((f) => NetworkMatcher.tagFinding(f));
+    }
+  }
+  const networkSummary = NetworkMatcher.summarize(allFindings, networkEnabled);
+
+  let endpointCatalog: EndpointCatalog | undefined;
+  let healthReport: HealthReport | undefined;
+  const endpointMeta = profile.endpoint_meta === true || networkEnabled;
+  if (endpointMeta) {
+    const openapiPath = opts.openapiPath
+      ?? (opts.scanPath ? await discoverOpenApi(opts.scanPath, opts.repo) : null);
+    if (openapiPath) {
+      try {
+        endpointCatalog = await loadOpenApiCatalog(openapiPath);
+      } catch {
+        endpointCatalog = undefined;
+      }
+    }
+    if (opts.healthUrl) {
+      try {
+        healthReport = await probeHealth(opts.healthUrl);
+      } catch {
+        healthReport = {
+          probed: true,
+          base_url: opts.healthUrl,
+          overall: "unreachable",
+          probes: [],
+        };
+      }
+    }
+  }
+
+  const planEnabled = profile.remediation_plan !== false;
+  const plan = planEnabled
+    ? await buildRemediationPlan({ repo: opts.repo, findings: allFindings })
+    : { actionable: 0, upgrades: 0, removals: 0, commands: [], items: [], totalFindings: allFindings.length };
+
   const partial: Omit<BundleScanReport, "summary"> = {
     repo: opts.repo,
     profile: opts.profileName,
@@ -365,6 +447,76 @@ export async function runBundleScan(opts: ScanOptions): Promise<BundleScanReport
     threat_feed_enabled: threatFeedEnabled,
     advisories_matched: advisoriesMatched,
     targets: results,
+    remediation: plan.actionable
+      ? {
+          actionable: plan.actionable,
+          upgrades: plan.upgrades,
+          removals: plan.removals,
+          commands: plan.commands,
+        }
+      : undefined,
+    platform: {
+      host: {
+        cpu: platformCtx.host.cpu,
+        os: platformCtx.host.os,
+        rawArch: platformCtx.host.rawArch,
+        bunVersion: platformCtx.host.bunVersion,
+      },
+      target: platformCtx.target,
+      crossTarget: platformCtx.crossTarget,
+      installProfile: platformCtx.installProfile ?? profile.install_profile,
+      installArgs: platformCtx.installArgs,
+      docs: PLATFORM_DOCS,
+    },
+    network: {
+      enabled: networkEnabled,
+      total: networkSummary.total,
+      unique_total: networkSummary.unique_total,
+      by_surface: networkSummary.by_surface as Record<string, number>,
+      by_rule: networkSummary.by_rule,
+      by_file: networkSummary.by_file.map((r) => ({
+        ...r,
+        surfaces: r.surfaces as Record<string, number>,
+      })),
+      hotspots: networkSummary.hotspots.map((r) => ({
+        ...r,
+        surfaces: r.surfaces as Record<string, number>,
+      })),
+      docs: NETWORK_DOCS,
+    },
+    endpoints: endpointCatalog
+      ? {
+          source: endpointCatalog.source,
+          title: endpointCatalog.title,
+          version: endpointCatalog.version,
+          total: endpointCatalog.total,
+          health_count: endpointCatalog.health_count,
+          by_tag: endpointCatalog.by_tag,
+          by_kind: endpointCatalog.by_kind,
+          health_routes: endpointCatalog.health_routes.map((r) => ({
+            path: r.path,
+            method: r.method,
+            summary: r.summary,
+          })),
+          route_fingerprints: endpointCatalog.entries.map(
+            (r) => `${r.method} ${r.path}`,
+          ),
+        }
+      : undefined,
+    health: healthReport
+      ? {
+          probed: healthReport.probed,
+          base_url: healthReport.base_url,
+          overall: healthReport.overall,
+          probes: healthReport.probes.map((p) => ({
+            url: p.url,
+            ok: p.ok,
+            status: p.status,
+            latency_ms: p.latency_ms,
+            error: p.error,
+          })),
+        }
+      : undefined,
   };
 
   return { ...partial, summary: buildSummary(partial) };

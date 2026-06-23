@@ -17,6 +17,8 @@
         "Bun.Transpiler",
         "IntegrityHasher",
         "SemverMatcher",
+        "PlatformMatcher",
+        "NetworkMatcher",
         "threat-feed",
         "rule-engine",
         "bundle-scanner"
@@ -35,14 +37,19 @@
     {
       "id": "5",
       "name": "Runtime",
-      "components": ["Service", "Registry", "SemverMatcher", "snapshot-validation"],
+      "components": ["Service", "Registry", "SemverMatcher", "snapshot-validation", "policy-constraints", "auto-remediation"],
       "status": "integrated",
       "entry": "bun supply-chain packages",
       "paths": {
         "registry": "scripts/scan/transpiler/registry.ts",
         "service": "scripts/scan/transpiler/service.ts",
         "scan_packages": "scripts/scan-packages.ts",
-        "validate_snapshot": "scripts/validate-snapshot.ts"
+        "validate_snapshot": "scripts/validate-snapshot.ts",
+        "snapshot_cli": "scripts/snapshot-cli.ts",
+        "policy_cli": "scripts/policy-cli.ts",
+        "dep_scan": "scripts/scan/transpiler/dep-scan.ts",
+        "profiles": "bundle-threat-profiles.json",
+        "profile_loader": "scripts/scan/transpiler/profile-loader.ts"
       },
       "note": "Alias for planned bun sp scan packages — domain = repo-map target id"
     }

@@ -200,6 +200,7 @@ export type WebSocketMessageType =
   | "unsubscribed"
   | "pattern_detected"
   | "player_update"
+  | "odds_drift"
   | "pong";
 
 export interface WebSocketMessage {

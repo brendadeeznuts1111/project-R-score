@@ -672,7 +672,7 @@ export function updateBookHealth(bookId: string, result: { latencyMs: number; su
 
 /**
  * Refresh all odds from upstream sources (Pinnacle API).
- * Delegates to the odds-feed module. Falls back to timestamp-only
+ * Delegates to the Pinnacle feed (src/feeds/pinnacle.ts). Falls back to timestamp-only
  * refresh if the feed is not configured.
  *
  * Returns count of markets updated.
@@ -680,7 +680,7 @@ export function updateBookHealth(bookId: string, result: { latencyMs: number; su
 export async function refreshAllOdds(): Promise<number> {
   try {
     // Use real Pinnacle feed if configured
-    const { refreshOddsFeed } = await import("./odds-feed");
+    const { refreshOddsFeed } = await import("../feeds/pinnacle");
     const result = await refreshOddsFeed();
 
     logSportEvent({

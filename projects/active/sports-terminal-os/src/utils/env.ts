@@ -27,6 +27,7 @@ const envSchema = z.object({
 
   // Auth
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
+  HYGIENE_JWT_SECRET: z.string().optional(),
   ADMIN_API_TOKEN: z.string().optional(),
   DEV_BYPASS_JWT: z.coerce.boolean().default(false),
 
@@ -84,6 +85,11 @@ const envSchema = z.object({
 
   // Frontend
   FRONTEND_DEV_PORT: z.coerce.number().default(5173),
+
+  // Zone 10: Odds Drift Hygiene WebSocket
+  HYGIENE_WS_BACKPRESSURE_LIMIT: z.coerce.number().optional(),
+  HYGIENE_WS_RATE_LIMIT_MSGS: z.coerce.number().optional(),
+  HYGIENE_WS_RING_BUFFER_SIZE: z.coerce.number().optional(),
 });
 
 // ---------------------------------------------------------------------------

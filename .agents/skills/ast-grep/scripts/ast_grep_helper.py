@@ -49,6 +49,16 @@ USAGE
     ast_grep_helper.py bun bundle-threat --zone agents  # Bun.Transpiler threat scan
     ast_grep_helper.py bun features                   # Bun release highlights (v1.3.13 test CLI)
     ast_grep_helper.py bun test-ci --profile ci       # bun test --parallel --isolate
+    ast_grep_helper.py bun test-ci --profile unit     # bun test unit (position filter)
+    ast_grep_helper.py bun test-ci --profile network  # domain preset with bundled -t pattern
+    ast_grep_helper.py bun test-list [--json-out]     # discovery index (filters, domains, files)
+    ast_grep_helper.py bun test-ci unit integration -t network  # filters + name pattern
+    ast_grep_helper.py skill loop list                  # skill-loop registry
+    ast_grep_helper.py skill loop run --skill ast-grep  # test+bench+rate loop
+    ast_grep_helper.py skill loop matrix --phases doctor,rate  # all skills health matrix
+    ast_grep_helper.py skill loop bench --profile unit --iterations 3  # rate bench loop
+    ast_grep_helper.py skill loop full --preset full                   # matrix + ast-grep deep + baseline
+    ast_grep_helper.py skill loop full --dry-run --explain             # preview plan + commands
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
@@ -93,7 +103,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.26.0"
+VERSION = "0.44.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -2596,10 +2606,42 @@ def cmd_bun_features(args: argparse.Namespace) -> int:
         print("\n[bun-test-profiles.json]")
         for pid, spec in test_profiles.items():
             args_s = " ".join(spec.get("args", []))
+            filt = spec.get("filters") or []
+            filt_s = f" filters={','.join(filt)}" if filt else ""
+            pat = spec.get("testNamePattern")
+            pat_s = f' -t "{pat}"' if pat else ""
+            pre = spec.get("preflight")
+            pre_s = f" preflight={pre}" if pre else ""
+            tz = (spec.get("env") or {}).get("TZ")
+            tz_s = f" TZ={tz}" if tz else ""
             print(f"  {pid}: {spec.get('description', '')}")
-            print(f"    bun test {args_s}")
+            print(f"    bun test {args_s}{filt_s}{pat_s}{pre_s}{tz_s}")
 
-    print("\nrun: bun test-ci --profile ci --path ./tests | bun install-docs")
+    bunfig = skill_root() / "bunfig.toml"
+    if bunfig.is_file() and not getattr(args, "release", None):
+        text = bunfig.read_text(encoding="utf-8")
+        root_m = re.search(r'^\s*root\s*=\s*["\']([^"\']+)["\']', text, re.M)
+        glob_m = re.findall(r'["\']([^"\']+)["\']', re.search(
+            r"concurrentTestGlob\s*=\s*\[([\s\S]*?)\]", text
+        ).group(1)) if re.search(r"concurrentTestGlob\s*=\s*\[", text) else []
+        print("\n[bunfig.toml test]")
+        if root_m:
+            print(f"  root: {root_m.group(1)}")
+        print("  discovery: *.test.*, *_test.*, *.spec.*, *_spec.* (see bun.com/docs/test/discovery)")
+        print("  exclusions: node_modules, hidden directories")
+        print("  position filters: substring match — bun test unit | integration | concurrent")
+        print("  exact path: ./tests/foo.test.ts (./ or / prefix required)")
+        print("  -t: regex on joined describe labels + test name")
+        print("  dates/times: bun.com/docs/test/dates-and-times")
+        print("    setSystemTime(date) | setSystemTime() reset | jest.now() | TZ=Etc/UTC default")
+        print("  api ref: https://bun.com/reference/bun/test")
+        print("    expect, describe, test, jest, vi — toContainAllKeys, objectContaining, ...")
+        if glob_m:
+            print("  concurrentTestGlob:")
+            for g in glob_m:
+                print(f"    {g}")
+
+    print("\nrun: bun test-list | bun test-ci --profile network --dry-run | bun install-docs")
     return 0
 
 
@@ -2801,6 +2843,124 @@ def _validate_snapshot_script() -> Path:
     return skill_root() / "scripts" / "validate-snapshot.ts"
 
 
+def _snapshot_cli_script() -> Path:
+    return skill_root() / "scripts" / "snapshot-cli.ts"
+
+
+def _policy_cli_script() -> Path:
+    return skill_root() / "scripts" / "policy-cli.ts"
+
+
+def _markdown_cli_script() -> Path:
+    return skill_root() / "scripts" / "markdown-cli.ts"
+
+
+def _platform_cli_script() -> Path:
+    return skill_root() / "scripts" / "platform-cli.ts"
+
+
+def _network_cli_script() -> Path:
+    return skill_root() / "scripts" / "network-cli.ts"
+
+
+def _skill_loop_cli_script() -> Path:
+    return skill_root() / "scripts" / "skill-loop-cli.ts"
+
+
+def _load_skill_loop_registry() -> dict:
+    path = skill_root() / "skill-loop-registry.json"
+    if not path.is_file():
+        return {"version": 0, "skills": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _run_skill_loop_cli(args: argparse.Namespace) -> int:
+    script = _skill_loop_cli_script()
+    if not script.is_file():
+        err("skill-loop-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for skill loop")
+        return 1
+    root = git_root() or Path.cwd()
+    action = getattr(args, "loop_action", None) or "list"
+    cmd = ["bun", str(script), str(action)]
+    skill = getattr(args, "skill", None)
+    if skill:
+        cmd.extend(["--skill", str(skill)])
+    phases = getattr(args, "phases", None)
+    if phases:
+        cmd.extend(["--phases", str(phases)])
+    profile = getattr(args, "profile", None)
+    if profile:
+        cmd.extend(["--profile", str(profile)])
+    if getattr(args, "iterations", None):
+        cmd.extend(["--iterations", str(args.iterations)])
+    if getattr(args, "min_rating", None):
+        cmd.extend(["--min-rating", str(args.min_rating)])
+    if getattr(args, "target_ms", None):
+        cmd.extend(["--target-ms", str(args.target_ms)])
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    if getattr(args, "herdr_tab", False):
+        cmd.append("--herdr-tab")
+    if getattr(args, "no_color", False):
+        cmd.append("--no-color")
+    if getattr(args, "skip_preflight", False):
+        cmd.append("--skip-preflight")
+    if getattr(args, "fail_on_rating", False):
+        cmd.append("--fail-on-rating")
+    if getattr(args, "fail_on_drift", False):
+        cmd.append("--fail-on-drift")
+    if getattr(args, "baseline_write", False):
+        cmd.append("--baseline-write")
+    if getattr(args, "parallel", False):
+        cmd.append("--parallel")
+    if getattr(args, "dry_run", False):
+        cmd.append("--dry-run")
+    if getattr(args, "explain", False):
+        cmd.append("--explain")
+    if getattr(args, "quiet", False):
+        cmd.append("--quiet")
+    if getattr(args, "verbose", False):
+        cmd.append("--verbose")
+    if getattr(args, "smoke", False):
+        cmd.append("--smoke")
+    if getattr(args, "no_baseline", False):
+        cmd.append("--no-baseline")
+    only = getattr(args, "only", None)
+    if only:
+        cmd.extend(["--only", str(only)])
+    preset = getattr(args, "preset", None)
+    if preset:
+        cmd.extend(["--preset", str(preset)])
+    domain = getattr(args, "domain", None)
+    if domain:
+        cmd.extend(["--domain", str(domain)])
+    scan_path = getattr(args, "scan_path", None)
+    if scan_path:
+        cmd.extend(["--scan-path", str(scan_path)])
+    if getattr(args, "ground_truth", False):
+        cmd.append("--ground-truth")
+    if getattr(args, "fail_on_network_drift", False):
+        cmd.append("--fail-on-network-drift")
+    if getattr(args, "seed", False):
+        cmd.append("--seed")
+    for s in getattr(args, "skills", None) or []:
+        cmd.append(str(s))
+    trace(f"skill loop: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(root))
+    return proc.returncode
+
+
+def cmd_skill(args: argparse.Namespace) -> int:
+    action = getattr(args, "skill_action", None)
+    if action == "loop":
+        return _run_skill_loop_cli(args)
+    err("unknown skill action — use: skill loop")
+    return 1
+
+
 def _load_supply_chain_layers() -> dict:
     path = skill_root() / "supply-chain-layers.json"
     if not path.is_file():
@@ -2850,7 +3010,34 @@ def _build_supply_chain_cmd(args: argparse.Namespace, profile_name: str, root: P
         cmd.append("--fix")
     if getattr(args, "dry_run_fix", False):
         cmd.append("--dry-run-fix")
+    if getattr(args, "color", False):
+        cmd.append("--color")
+    if getattr(args, "no_color", False):
+        cmd.append("--no-color")
+    cpu = getattr(args, "cpu", None) or os.environ.get("BUN_INSTALL_CPU", "")
+    os_target = getattr(args, "os_target", None) or os.environ.get("BUN_INSTALL_OS", "")
+    if cpu and not any(a.startswith("--cpu") for a in cmd):
+        cmd.append(f"--cpu={cpu}")
+    if os_target and not any(a.startswith("--os") for a in cmd):
+        cmd.append(f"--os={os_target}")
     return cmd
+
+
+def _format_terminal_report(payload: dict) -> int:
+    script = skill_root() / "scripts" / "format-terminal-report.ts"
+    if not script.is_file() or not shutil.which("bun"):
+        return -1
+    proc = subprocess.run(
+        ["bun", str(script)],
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    if proc.returncode != 0:
+        return -1
+    sys.stdout.write(proc.stdout)
+    return 0
 
 
 def _render_supply_chain_report(payload: dict, profile_name: str, *, verbose: bool) -> int:
@@ -2905,7 +3092,16 @@ def _render_supply_chain_report(payload: dict, profile_name: str, *, verbose: bo
             loc = f"{f.get('file', '?')}:{f.get('line', '?')}"
             detail = f"  {f['detail']}" if f.get("detail") else ""
             snippet = f"  snippet: {f['snippet']}" if f.get("snippet") else ""
-            print(f"  [{f.get('severity')}] {rid} @ {loc}: {f.get('message', '')}{detail}{snippet}")
+            kinds = f.get("kinds") or ([f["violationKind"]] if f.get("violationKind") else [])
+            kind_s = f" [{'+'.join(kinds)}]" if kinds else ""
+            rem = f.get("remediation") or {}
+            fix_s = ""
+            if rem.get("command"):
+                fix_s = f"  fix: {rem['command']}"
+            print(
+                f"  [{f.get('severity')}]{kind_s} {rid} @ {loc}: {f.get('message', '')}"
+                f"{detail}{snippet}{fix_s}"
+            )
             shown += 1
         if not verbose and len(findings) > shown:
             print(f"  ... {len(findings) - shown} more (use --verbose)")
@@ -2936,32 +3132,45 @@ def _run_supply_chain_scan(args: argparse.Namespace, *, default_profile: str = "
 
     trace(f"supply-chain: {' '.join(cmd)}")
     fmt = getattr(args, "format", None) or "json"
-    passthrough = fmt in ("html", "markdown") and not getattr(args, "json_out", False)
+    passthrough = fmt in ("html", "markdown", "ansi", "plaintext") and not getattr(args, "json_out", False)
 
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT_S)
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=DEFAULT_TIMEOUT_S,
+        )
     except subprocess.TimeoutExpired:
         err(f"supply-chain scan timed out after {DEFAULT_TIMEOUT_S}s")
         return 1
-    if proc.returncode != 0 and not proc.stdout.strip():
-        err(proc.stderr.strip() or "supply-chain scan failed")
+    stdout = proc.stdout or ""
+    stderr = proc.stderr or ""
+    if proc.returncode != 0 and not stdout.strip():
+        err(stderr.strip() or "supply-chain scan failed")
         return proc.returncode
 
     if passthrough:
-        sys.stdout.write(proc.stdout)
+        sys.stdout.write(stdout)
         return proc.returncode
 
-    raw = proc.stdout.strip()
+    raw = stdout.strip()
     try:
         payload = json.loads(raw)
     except json.JSONDecodeError:
-        sys.stdout.write(proc.stdout)
+        sys.stdout.write(stdout)
         return proc.returncode
 
     if getattr(args, "json_out", False):
         json.dump(payload, sys.stdout, indent=2)
         print()
         return proc.returncode
+
+    if getattr(args, "color", False):
+        if _format_terminal_report(payload) == 0:
+            return max(proc.returncode, 1 if payload.get("summary", {}).get("findings", 0) else 0) if getattr(args, "fail_on", False) else proc.returncode
 
     code = _render_supply_chain_report(payload, profile_name, verbose=bool(getattr(args, "verbose", False)))
     return max(proc.returncode, code) if getattr(args, "fail_on", False) else proc.returncode
@@ -3052,7 +3261,258 @@ def cmd_bun_supply_chain(args: argparse.Namespace) -> int:
         return 0
     if action == "packages":
         return _run_packages_scan(args)
+    if action == "policy":
+        return _run_policy_cli(args)
+    if action == "markdown":
+        return _run_markdown_cli(args)
+    if action == "platform":
+        return _run_platform_cli(args)
+    if action == "network":
+        return _run_network_cli(args)
+    if action == "snapshot":
+        return _run_snapshot_cli(args)
+    if action == "profiles":
+        return _run_supply_chain_profiles(args)
     return _run_supply_chain_scan(args, default_profile="supply-chain-ci")
+
+
+def _run_supply_chain_profiles(args: argparse.Namespace) -> int:
+    data = _load_bundle_threat_profiles()
+    bundle = [
+        {"name": k, **{kk: vv for kk, vv in v.items() if kk == "description"}}
+        for k, v in sorted((data.get("profiles") or {}).items())
+    ]
+    packages = [
+        {"name": k, **{kk: vv for kk, vv in v.items() if kk == "description"}}
+        for k, v in sorted((data.get("package_profiles") or {}).items())
+    ]
+    if getattr(args, "json_out", False):
+        json.dump({"bundle": bundle, "packages": packages}, sys.stdout, indent=2)
+        print()
+        return 0
+    print("supply-chain profiles:")
+    print("\n[bundle]")
+    for row in bundle:
+        print(f"  {row['name']}: {row.get('description', '')}")
+    print("\n[packages]")
+    for row in packages:
+        print(f"  {row['name']}: {row.get('description', '')}")
+    print("\nrun: bun supply-chain scan --profile supply-chain-pillars --threat-feed")
+    print("run: bun supply-chain packages --profile pillars --path .")
+    return 0
+
+
+def _run_network_cli(args: argparse.Namespace) -> int:
+    script = _network_cli_script()
+    if not script.is_file():
+        err("network-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain network")
+        return 1
+    root = git_root() or Path.cwd()
+    cmd = ["bun", str(script)]
+    profile = getattr(args, "profile", None) or "supply-chain-network-dist"
+    cmd.extend(["--profile", str(profile)])
+    fmt = getattr(args, "format", None) or "markdown"
+    cmd.extend(["--format", str(fmt)])
+    scan_path = getattr(args, "scan_path", None) or getattr(args, "path", None)
+    if scan_path:
+        cmd.extend(["--path", str(scan_path), "--repo", str(root)])
+    elif getattr(args, "json_out", False):
+        cmd.append("--stdin")
+    else:
+        err("network audit requires --path (or pipe JSON via stdin with --json-out)")
+        return 1
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    openapi = getattr(args, "openapi", None)
+    if openapi:
+        cmd.extend(["--openapi", str(openapi)])
+    health_url = getattr(args, "health_url", None)
+    if health_url:
+        cmd.extend(["--health-url", str(health_url)])
+    if getattr(args, "pointers", False):
+        cmd.append("--pointers")
+        if getattr(args, "json_out", False):
+            cmd.append("--json")
+        trace(f"supply-chain network pointers: {' '.join(cmd)}")
+        proc = subprocess.run(cmd, cwd=str(root))
+        return proc.returncode
+    if getattr(args, "validate_ground_truth", False):
+        cmd.append("--validate-ground-truth")
+        if getattr(args, "json_out", False):
+            cmd.append("--json")
+    if getattr(args, "seed", False):
+        cmd.append("--seed")
+    if getattr(args, "no_seed", False):
+        cmd.append("--no-seed")
+    if getattr(args, "dry_run", False):
+        cmd.append("--dry-run")
+    if getattr(args, "verbose", False):
+        cmd.append("--verbose")
+    if getattr(args, "quiet", False):
+        cmd.append("--quiet")
+    output = getattr(args, "output", None)
+    if output:
+        cmd.extend(["--output", str(output)])
+    if getattr(args, "loop", False):
+        cmd.append("--loop")
+    if getattr(args, "watch", False):
+        cmd.append("--watch")
+    if getattr(args, "watch_interval", None):
+        cmd.extend(["--watch-interval", str(args.watch_interval)])
+    if getattr(args, "probe_interval", None):
+        cmd.extend(["--probe-interval", str(args.probe_interval)])
+    if getattr(args, "fail_on_health", False):
+        cmd.append("--fail-on-health")
+    if getattr(args, "fail_on_drift", False):
+        cmd.append("--fail-on-drift")
+    if getattr(args, "herdr_tab", False):
+        cmd.append("--herdr-tab")
+    if getattr(args, "no_color", False):
+        cmd.append("--no-color")
+    if getattr(args, "baseline", None):
+        cmd.extend(["--baseline", str(args.baseline)])
+    if getattr(args, "baseline_write", False):
+        cmd.append("--baseline-write")
+    if getattr(args, "snapshot_write", False):
+        cmd.append("--snapshot-write")
+    snapshot = getattr(args, "snapshot", None)
+    if snapshot:
+        cmd.extend(["--snapshot", str(snapshot)])
+    domain = getattr(args, "domain", None)
+    if domain:
+        cmd.extend(["--domain", str(domain)])
+    health_secret = getattr(args, "health_url_secret", None)
+    if health_secret:
+        cmd.extend(["--health-url-secret", str(health_secret)])
+    trace(f"supply-chain network: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(root))
+    return proc.returncode
+
+
+def _run_platform_cli(args: argparse.Namespace) -> int:
+    script = _platform_cli_script()
+    if not script.is_file():
+        err("platform-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain platform")
+        return 1
+    sub = getattr(args, "platform_action", None) or "list"
+    cmd = ["bun", str(script)]
+    if sub == "check":
+        cpu = getattr(args, "platform_cpu", None)
+        os_target = getattr(args, "platform_os", None)
+        if not cpu or not os_target:
+            err("platform check requires CPU and OS")
+            return 1
+        cmd.extend(["check", str(cpu), str(os_target)])
+    elif sub == "resolve":
+        prof = getattr(args, "install_profile", None)
+        if not prof:
+            err("platform resolve requires INSTALL_PROFILE")
+            return 1
+        cmd.extend(["resolve", str(prof)])
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    trace(f"supply-chain platform: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(git_root() or Path.cwd()))
+    return proc.returncode
+
+
+def _run_markdown_cli(args: argparse.Namespace) -> int:
+    script = _markdown_cli_script()
+    if not script.is_file():
+        err("markdown-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain markdown")
+        return 1
+    fmt = getattr(args, "format", None) or "markdown"
+    cmd = ["bun", str(script), "--format", str(fmt)]
+    if getattr(args, "no_colored", False):
+        cmd.append("--no-colored")
+    input_path = getattr(args, "markdown_input", None)
+    if input_path:
+        cmd.append(str(input_path))
+    else:
+        cmd.append("--stdin")
+    trace(f"supply-chain markdown: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(git_root() or Path.cwd()))
+    return proc.returncode
+
+
+def _run_policy_cli(args: argparse.Namespace) -> int:
+    script = _policy_cli_script()
+    if not script.is_file():
+        err("policy-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain policy")
+        return 1
+    cmd = ["bun", str(script)]
+    if getattr(args, "policy_action", None) == "check":
+        pkg = getattr(args, "policy_package", None)
+        ver = getattr(args, "policy_version", None)
+        if not pkg or not ver:
+            err("policy check requires PACKAGE and VERSION")
+            return 1
+        cmd.extend(["check", str(pkg), str(ver)])
+        if getattr(args, "explain", False):
+            cmd.append("--explain")
+        if getattr(args, "no_threat_feed", False):
+            cmd.append("--no-threat-feed")
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    fmt = getattr(args, "format", None)
+    if fmt and fmt != "json":
+        cmd.extend(["--format", str(fmt)])
+    trace(f"supply-chain policy: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(git_root() or Path.cwd()))
+    return proc.returncode
+
+
+def _run_snapshot_cli(args: argparse.Namespace) -> int:
+    script = _snapshot_cli_script()
+    if not script.is_file():
+        err("snapshot-cli.ts missing")
+        return 1
+    if not shutil.which("bun"):
+        err("bun required for supply-chain snapshot")
+        return 1
+    sub = getattr(args, "snapshot_action", None) or "validate"
+    cmd = ["bun", str(script), sub]
+    snap_file = getattr(args, "snapshot_file", None)
+    if snap_file and sub not in ("init", "capture"):
+        cmd.append(str(snap_file))
+    if getattr(args, "json_out", False):
+        cmd.append("--json")
+    out_path = getattr(args, "out", None)
+    if out_path:
+        cmd.extend(["--out", str(out_path)])
+    scan_path = getattr(args, "scan_path", None) or getattr(args, "path", None)
+    if scan_path and sub in ("capture", "diff", "validate"):
+        cmd.extend(["--path", str(scan_path)])
+    network_path = getattr(args, "network_path", None)
+    if network_path and sub in ("capture", "diff", "validate"):
+        cmd.extend(["--network-path", str(network_path)])
+    domain = getattr(args, "domain", None)
+    if domain and sub in ("capture", "diff", "validate", "migrate-baseline"):
+        cmd.extend(["--domain", str(domain)])
+    if getattr(args, "fail_on_drift", False) and sub in ("diff", "validate"):
+        cmd.append("--fail-on-drift")
+    if sub == "migrate-baseline":
+        baseline = getattr(args, "baseline", None)
+        if baseline:
+            cmd.extend(["--baseline", str(baseline)])
+    scanner = getattr(args, "scanner_version", None)
+    if scanner:
+        cmd.extend(["--scanner-version", str(scanner)])
+    trace(f"supply-chain snapshot: {' '.join(cmd)}")
+    proc = subprocess.run(cmd, cwd=str(git_root() or Path.cwd()))
+    return proc.returncode
 
 
 def _run_packages_scan(args: argparse.Namespace) -> int:
@@ -3087,6 +3547,12 @@ def _run_packages_scan(args: argparse.Namespace) -> int:
         cmd.append("--watch")
     if getattr(args, "watch_interval", None):
         cmd.extend(["--watch-interval", str(args.watch_interval)])
+    profile = getattr(args, "profile", None)
+    if profile:
+        cmd.extend(["--profile", str(profile)])
+    fmt = getattr(args, "format", None)
+    if fmt:
+        cmd.extend(["--format", str(fmt)])
     trace(f"supply-chain packages: {' '.join(cmd)}")
     proc = subprocess.run(cmd, cwd=str(root))
     return proc.returncode
@@ -3096,16 +3562,75 @@ def cmd_bun_bundle_threat(args: argparse.Namespace) -> int:
     return _run_supply_chain_scan(args, default_profile="default")
 
 
-def cmd_bun_test_ci(args: argparse.Namespace) -> int:
+def _run_test_cli(action: str, extra: list[str]) -> tuple[int, str, str]:
+    """Delegate to scripts/test-cli.ts (test-runner.ts single source of truth)."""
+    root = git_root() or Path.cwd()
+    skill = skill_root()
+    cli = skill / "scripts" / "test-cli.ts"
+    if not cli.is_file():
+        err(f"test-cli not found: {cli}")
+        return 1, "", ""
+    cmd = ["bun", str(cli), action, *extra]
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root))
+    return proc.returncode, proc.stdout, proc.stderr
+
+
+def _assemble_test_command(args: argparse.Namespace) -> tuple[int, dict | None]:
     profiles_data = _load_test_profiles()
     profiles = profiles_data.get("profiles", {})
     profile_name = getattr(args, "profile", None) or "ci"
-    spec = profiles.get(profile_name)
-    if not spec:
+    if profile_name not in profiles:
         err(f"unknown test profile '{profile_name}' — choose: {', '.join(sorted(profiles))}")
-        return 1
+        return 1, None
 
-    root = git_root() or Path.cwd()
+    extra = ["--profile", profile_name, "--json"]
+    test_path = getattr(args, "test_path", None)
+    if test_path:
+        extra.extend(["--path", str(test_path)])
+    test_name = getattr(args, "test_name_pattern", None)
+    if test_name:
+        extra.extend(["-t", str(test_name)])
+    shard = getattr(args, "shard", None) or os.environ.get("BUN_TEST_SHARD", "")
+    if shard:
+        extra.extend(["--shard", str(shard)])
+    changed = getattr(args, "changed", None)
+    if changed:
+        extra.extend(["--changed", str(changed)])
+    for filt in getattr(args, "test_filter", None) or []:
+        extra.append(str(filt))
+
+    code, stdout, stderr = _run_test_cli("assemble", extra)
+    if code != 0:
+        err(stderr.strip() or stdout.strip() or "test-cli assemble failed")
+        return code, None
+    try:
+        return 0, json.loads(stdout)
+    except json.JSONDecodeError:
+        err(f"test-cli assemble returned invalid JSON: {stdout[:200]}")
+        return 1, None
+
+
+def cmd_bun_test_list(args: argparse.Namespace) -> int:
+    if not shutil.which("bun"):
+        err("bun required for test-list")
+        return 1
+    extra: list[str] = []
+    if getattr(args, "json_out", False):
+        extra.append("--json")
+    fmt = getattr(args, "format", None)
+    if fmt:
+        extra.extend(["--format", str(fmt)])
+    code, stdout, stderr = _run_test_cli("list", extra)
+    if code != 0:
+        err(stderr.strip() or "test-list failed")
+        return code
+    print(stdout, end="")
+    return 0
+
+
+def cmd_bun_test_ci(args: argparse.Namespace) -> int:
+    profiles_data = _load_test_profiles()
+    profile_name = getattr(args, "profile", None) or "ci"
 
     if not getattr(args, "dry_run", False):
         if not shutil.which("bun"):
@@ -3116,33 +3641,49 @@ def cmd_bun_test_ci(args: argparse.Namespace) -> int:
         if bun_ver and not _bun_version_gte(bun_ver, min_bun):
             err(f"bun {bun_ver} < {min_bun} — run: bun upgrade")
             return 1
-    test_path = getattr(args, "test_path", None) or "."
-    full_path = (root / test_path).resolve() if not Path(test_path).is_absolute() else Path(test_path)
 
-    cmd = ["bun", "test", *spec.get("args", [])]
-    shard = getattr(args, "shard", None) or os.environ.get("BUN_TEST_SHARD", "")
-    if shard or spec.get("shard"):
-        shard_val = shard or os.environ.get("BUN_TEST_SHARD", "")
-        if not shard_val:
-            err("profile requires --shard M/N or BUN_TEST_SHARD env")
-            return 1
-        cmd.append(f"--shard={shard_val}")
-    changed = getattr(args, "changed", None)
-    if changed:
-        cmd.append(f"--changed={changed}" if changed != "1" else "--changed")
+    code, assembled = _assemble_test_command(args)
+    if code != 0 or not assembled:
+        return code or 1
+
+    cwd = assembled.get("cwd", str(git_root() or Path.cwd()))
+    cmd = assembled.get("command", [])
+    preflight = assembled.get("preflight")
+
+    run_env = os.environ.copy()
+    for key, val in (assembled.get("env") or {}).items():
+        run_env[str(key)] = str(val)
+
     if getattr(args, "dry_run", False):
-        cmd.append(str(full_path))
+        print(f"cwd={cwd} ", end="")
         print(" ".join(cmd))
+        if assembled.get("env"):
+            print(f"env: {' '.join(f'{k}={v}' for k, v in assembled['env'].items())}")
+        if preflight:
+            print(f"preflight: {' '.join(preflight.get('command', []))}")
         return 0
 
-    cmd.append(str(full_path))
-    trace(f"test-ci: {' '.join(cmd)}")
+    trace(f"test-ci: cwd={cwd} {' '.join(cmd)}")
+    if preflight and not getattr(args, "skip_preflight", False):
+        pf_cmd = preflight.get("command", [])
+        pf_cwd = preflight.get("cwd", cwd)
+        trace(f"test-ci preflight: {' '.join(pf_cmd)}")
+        pf_proc = subprocess.run(pf_cmd, cwd=str(pf_cwd), env=run_env)
+        if pf_proc.returncode != 0:
+            err(f"preflight {preflight.get('label', 'check')} failed (exit {pf_proc.returncode})")
+            return pf_proc.returncode
+
     if getattr(args, "json_out", False):
         started = time.time()
-        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root))
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(cwd), env=run_env)
         json.dump({
             "profile": profile_name,
             "command": cmd,
+            "cwd": cwd,
+            "env": assembled.get("env"),
+            "filters": assembled.get("filters", []),
+            "testNamePattern": assembled.get("testNamePattern"),
+            "preflight": preflight,
             "returncode": proc.returncode,
             "stdout": proc.stdout,
             "stderr": proc.stderr,
@@ -3151,7 +3692,7 @@ def cmd_bun_test_ci(args: argparse.Namespace) -> int:
         print()
         return proc.returncode
 
-    proc = subprocess.run(cmd, cwd=str(root))
+    proc = subprocess.run(cmd, cwd=str(cwd), env=run_env)
     return proc.returncode
 
 
@@ -3620,19 +4161,46 @@ def cmd_doctor(args: argparse.Namespace) -> int:
             print("snapshot validation: bun required")
             issues.append("snapshot-bun")
         else:
-            proc = subprocess.run(
-                ["bun", str(_validate_snapshot_script()), str(snap)],
-                capture_output=True,
-                text=True,
-                timeout=30,
-            )
-            if proc.returncode == 0:
-                print(f"snapshot validation: ok ({snap.name})")
+            if getattr(args, "snapshot_update", False):
+                migrate_out = snap.with_name(f"{snap.stem}.migrated{snap.suffix}")
+                proc = subprocess.run(
+                    [
+                        "bun",
+                        str(_snapshot_cli_script()),
+                        "migrate",
+                        str(snap),
+                        "--out",
+                        str(migrate_out),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                if proc.returncode == 0:
+                    print(f"snapshot migration: ok → {migrate_out.name}")
+                    if proc.stdout.strip():
+                        print(proc.stdout.strip())
+                else:
+                    print(f"snapshot migration: FAIL ({snap.name})")
+                    if proc.stdout.strip():
+                        print(proc.stdout.strip())
+                    if proc.stderr.strip():
+                        print(proc.stderr.strip())
+                    issues.append("snapshot-migrate")
             else:
-                print(f"snapshot validation: FAIL ({snap.name})")
-                if proc.stdout.strip():
-                    print(proc.stdout.strip())
-                issues.append("snapshot-version")
+                proc = subprocess.run(
+                    ["bun", str(_validate_snapshot_script()), str(snap)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                if proc.returncode == 0:
+                    print(f"snapshot validation: ok ({snap.name})")
+                else:
+                    print(f"snapshot validation: FAIL ({snap.name})")
+                    if proc.stdout.strip():
+                        print(proc.stdout.strip())
+                    issues.append("snapshot-version")
     bun_ver = _resolve_bun_version()
     if bun_ver:
         patterns = _load_bun_patterns()
@@ -4395,6 +4963,12 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="FILE",
         help="Validate snapshotVersion against policies/security.policy.toml [snapshot].",
     )
+    d.add_argument(
+        "--snapshot-update",
+        "-u",
+        action="store_true",
+        help="With --validate-snapshot: migrate legacy snapshot to current policy schema.",
+    )
     d.set_defaults(func=cmd_doctor)
     sub.add_parser("install", help="Run the install script for this OS.").set_defaults(func=cmd_install)
 
@@ -4481,12 +5055,35 @@ def build_parser() -> argparse.ArgumentParser:
     bun_f.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_f.set_defaults(func=cmd_bun_features)
 
+    bun_tl = bun_sub.add_parser("test-list", help="Test discovery index — filters, domain presets, files.")
+    bun_tl.add_argument("--format", choices=["markdown"], help="Markdown report (default: terminal summary).")
+    bun_tl.add_argument("--json-out", action="store_true", help="Emit JSON index.")
+    bun_tl.set_defaults(func=cmd_bun_test_list)
+
     bun_tc = bun_sub.add_parser("test-ci", help="Run bun test with bun-test-profiles.json (v1.3.13+ flags).")
-    bun_tc.add_argument("--profile", default="ci", help="Profile: local, ci, fast, ci-shard, changed, ...")
-    bun_tc.add_argument("--path", dest="test_path", default=".", help="Test path (default: repo root).")
+    bun_tc.add_argument("--profile", default="ci", help="Profile: local, ci, unit, integration, network, ...")
+    bun_tc.add_argument(
+        "--path",
+        dest="test_path",
+        default=None,
+        help="Exact file (./tests/...) or substring filter (e.g. unit, integration).",
+    )
+    bun_tc.add_argument(
+        "test_filter",
+        nargs="*",
+        metavar="FILTER",
+        help="Position filters — substring match on test paths (see bun test discovery).",
+    )
+    bun_tc.add_argument(
+        "-t",
+        "--test-name-pattern",
+        dest="test_name_pattern",
+        help="Regex filter on test/describe names (bun test -t).",
+    )
     bun_tc.add_argument("--shard", help="Shard M/N for matrix jobs (or BUN_TEST_SHARD env).")
     bun_tc.add_argument("--changed", nargs="?", const="1", help="Pass --changed or --changed=REF.")
     bun_tc.add_argument("--dry-run", action="store_true", help="Print command without running.")
+    bun_tc.add_argument("--skip-preflight", action="store_true", help="Skip snapshot-validate preflight.")
     bun_tc.add_argument("--json-out", action="store_true", help="Emit JSON result.")
     bun_tc.set_defaults(func=cmd_bun_test_ci)
 
@@ -4517,7 +5114,12 @@ def build_parser() -> argparse.ArgumentParser:
         parser.add_argument("--only", help="Filter repo-map targets (substring).")
         parser.add_argument("--zone", help=f"Filter repo-map zone ({_zone_hint()}).")
         parser.add_argument("--path", "-p", dest="scan_path", help="Scan explicit path instead of repo-map.")
-        parser.add_argument("--format", choices=["json", "html", "markdown"], default="json", help="Report format.")
+        parser.add_argument(
+            "--format",
+            choices=["json", "html", "markdown", "ansi", "plaintext"],
+            default="json",
+            help="Report format (ansi/plaintext use Bun.markdown pipeline).",
+        )
         parser.add_argument("--parallel", action="store_true", help="Worker pool per-file scan.")
         parser.add_argument("--workers", type=int, help="Parallel workers (default: CPU count).")
         parser.add_argument("--rules", help="Comma-separated rule ids from security.policy.toml.")
@@ -4532,6 +5134,10 @@ def build_parser() -> argparse.ArgumentParser:
         parser.add_argument("--watch-interval", dest="watch_interval", type=int, help="Watch poll ms (default 750).")
         parser.add_argument("--fix", action="store_true", help="Autofix source rules + bun add package upgrades.")
         parser.add_argument("--dry-run-fix", action="store_true", help="Preview autofix without writing files.")
+        parser.add_argument("--color", action="store_true", help="Bun.color terminal report (ansi-16m severity tags).")
+        parser.add_argument("--no-color", action="store_true", help="Disable auto terminal colors on JSON scans.")
+        parser.add_argument("--cpu", help="Target CPU for optional deps (arm64|x64|...).")
+        parser.add_argument("--os-target", dest="os_target", help="Target OS for optional deps (linux|darwin|win32|...).")
 
     bun_bt = bun_sub.add_parser(
         "bundle-threat",
@@ -4570,6 +5176,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sc_pkg.add_argument("--domain", help="repo-map target id (e.g. agents-ast-grep).")
     sc_pkg.add_argument("--path", "-p", dest="scan_path", help="Explicit path instead of domain.")
+    sc_pkg.add_argument(
+        "--profile",
+        help="Package profile from bundle-threat-profiles.json package_profiles (default, pillars, ci).",
+    )
+    sc_pkg.add_argument(
+        "--format",
+        choices=["json", "html", "markdown", "ansi", "plaintext"],
+        help="Report format (default from package profile report_format).",
+    )
     sc_pkg.add_argument("--json-out", action="store_true", help="Emit JSON.")
     sc_pkg.add_argument("--fail-on", action="store_true", help="Exit 1 when violations exist.")
     sc_pkg.add_argument("--threat-feed", action="store_true", help="Include threat-feed.json matches (default on).")
@@ -4579,6 +5194,393 @@ def build_parser() -> argparse.ArgumentParser:
     sc_pkg.add_argument("--watch", action="store_true", help="Re-scan package.json/bun.lock on changes.")
     sc_pkg.add_argument("--watch-interval", dest="watch_interval", type=int, help="Watch poll ms (default 750).")
     sc_pkg.set_defaults(func=cmd_bun_supply_chain, supply_action="packages")
+    sc_prof = sc_sub.add_parser("profiles", help="List bundle + package scan profiles.")
+    sc_prof.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_prof.set_defaults(func=cmd_bun_supply_chain, supply_action="profiles")
+    sc_pol = sc_sub.add_parser(
+        "policy",
+        help="Policy constraints — list allow/block/rules or check a package@version.",
+    )
+    sc_pol.set_defaults(func=cmd_bun_supply_chain, supply_action="policy", policy_action="list")
+    sc_pol_sub = sc_pol.add_subparsers(dest="policy_action", metavar="POLICY_ACTION")
+    sc_pol_list = sc_pol_sub.add_parser("list", help="List allow/block constraints (default).")
+    sc_pol_list.add_argument(
+        "--format",
+        choices=["json", "html", "markdown", "ansi", "plaintext"],
+        help="Policy list report format.",
+    )
+    sc_pol_list.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_pol_list.set_defaults(func=cmd_bun_supply_chain, supply_action="policy", policy_action="list")
+    sc_pol_chk = sc_pol_sub.add_parser("check", help="Evaluate package against all constraints.")
+    sc_pol_chk.add_argument("policy_package", metavar="PACKAGE", help="Package name.")
+    sc_pol_chk.add_argument("policy_version", metavar="VERSION", help="Installed version.")
+    sc_pol_chk.add_argument("--explain", action="store_true", help="Full constraint breakdown.")
+    sc_pol_chk.add_argument("--no-threat-feed", action="store_true", help="Skip threat-feed.")
+    sc_pol_chk.add_argument(
+        "--format",
+        choices=["json", "html", "markdown", "ansi", "plaintext"],
+        help="Policy check report format.",
+    )
+    sc_pol_chk.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_pol_chk.set_defaults(func=cmd_bun_supply_chain, supply_action="policy", policy_action="check")
+    sc_md = sc_sub.add_parser(
+        "markdown",
+        help="Render supply-chain JSON report via Bun.markdown (html/ansi/plaintext).",
+    )
+    sc_md.add_argument(
+        "--format",
+        choices=["json", "html", "markdown", "ansi", "plaintext"],
+        default="markdown",
+        help="Output format (default: markdown).",
+    )
+    sc_md.add_argument("markdown_input", nargs="?", help="Report JSON file (default: stdin).")
+    sc_md.add_argument("--no-colored", action="store_true", help="Disable colored ansi render.")
+    sc_md.set_defaults(func=cmd_bun_supply_chain, supply_action="markdown")
+    sc_plat = sc_sub.add_parser(
+        "platform",
+        help="CPU/OS cross-target — host detect, validate, install profile resolve.",
+    )
+    sc_plat.set_defaults(func=cmd_bun_supply_chain, supply_action="platform", platform_action="list")
+    sc_plat_sub = sc_plat.add_subparsers(dest="platform_action", metavar="PLATFORM_ACTION")
+    sc_plat_list = sc_plat_sub.add_parser("list", help="Show host + cross-target install profiles (default).")
+    sc_plat_list.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_plat_list.set_defaults(func=cmd_bun_supply_chain, supply_action="platform", platform_action="list")
+    sc_plat_chk = sc_plat_sub.add_parser("check", help="Validate cpu/os target vs host.")
+    sc_plat_chk.add_argument("platform_cpu", metavar="CPU", help="Target CPU (x64, arm64, ...).")
+    sc_plat_chk.add_argument("platform_os", metavar="OS", help="Target OS (linux, darwin, win32, ...).")
+    sc_plat_chk.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_plat_chk.set_defaults(func=cmd_bun_supply_chain, supply_action="platform", platform_action="check")
+    sc_plat_res = sc_plat_sub.add_parser("resolve", help="Resolve bun-install-profiles.json target.")
+    sc_plat_res.add_argument("install_profile", metavar="INSTALL_PROFILE", help="Profile name (e.g. cross-linux-x64).")
+    sc_plat_res.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_plat_res.set_defaults(func=cmd_bun_supply_chain, supply_action="platform", platform_action="resolve")
+    sc_net = sc_sub.add_parser(
+        "network",
+        help="Network surface audit — deduped heatmap for dist/bundles (fetch/WebSocket/TCP).",
+        epilog=(
+            "pointers: bun scripts/network-cli.ts --help | --pointers --json\n"
+            "seed → dry-run → loop: baselines/<domain>/snapshot.json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    sc_net.add_argument(
+        "--pointers",
+        action="store_true",
+        help="Print module/script/baseline pointers (pass --json-out for JSON).",
+    )
+    sc_net.add_argument(
+        "--validate-ground-truth",
+        dest="validate_ground_truth",
+        action="store_true",
+        help="Verify repo ground-truth files and pinned golden counts (--check-standards alias).",
+    )
+    sc_net.add_argument(
+        "--check-standards",
+        dest="validate_ground_truth",
+        action="store_true",
+        help="Alias for --validate-ground-truth.",
+    )
+    sc_net.add_argument("--path", "-p", dest="scan_path", required=True, help="Scan path (e.g. dist/frontend).")
+    sc_net.add_argument(
+        "--profile",
+        default="supply-chain-network-dist",
+        help="Profile (default: supply-chain-network-dist).",
+    )
+    sc_net.add_argument(
+        "--format",
+        choices=["json", "html", "markdown", "ansi", "plaintext"],
+        default="markdown",
+        help="Report format.",
+    )
+    sc_net.add_argument("--json-out", action="store_true", help="Emit full JSON report + network summary.")
+    sc_net.add_argument(
+        "--openapi",
+        help="OpenAPI spec path (default: auto-discover openapi.json near --path).",
+    )
+    sc_net.add_argument(
+        "--health-url",
+        metavar="URL",
+        help="Probe live health endpoints (e.g. http://localhost:3000).",
+    )
+    sc_net.add_argument(
+        "--seed",
+        action="store_true",
+        help="Capture snapshot+baseline before --loop (or seed-only and exit). Auto-runs when no baseline.",
+    )
+    sc_net.add_argument(
+        "--no-seed",
+        dest="no_seed",
+        action="store_true",
+        help="Skip auto-seed before loop when no baseline exists.",
+    )
+    sc_net.add_argument(
+        "--dry-run",
+        "-n",
+        dest="dry_run",
+        action="store_true",
+        help="Run one full audit, emit summary, and exit (no loop/probes/watch).",
+    )
+    sc_net.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Include endpoint/route catalog details in dry-run or loop output.",
+    )
+    sc_net.add_argument(
+        "--quiet",
+        "-q",
+        action="store_true",
+        help="Suppress non-fatal output (overrides --verbose).",
+    )
+    sc_net.add_argument(
+        "--output",
+        choices=["table", "json", "herdr"],
+        help="Dry-run output format (default: table). --json/--herdr-tab also work.",
+    )
+    sc_net.add_argument(
+        "--loop",
+        action="store_true",
+        help="Continuous audit loop — health probes + optional dist watch (Ctrl+C to stop).",
+    )
+    sc_net.add_argument(
+        "--watch",
+        action="store_true",
+        help="With --loop: re-scan dist on file changes.",
+    )
+    sc_net.add_argument(
+        "--watch-interval",
+        dest="watch_interval",
+        type=int,
+        help="Dist watch poll ms (default: 750).",
+    )
+    sc_net.add_argument(
+        "--probe-interval",
+        dest="probe_interval",
+        type=int,
+        help="Health probe interval ms (default: 8000).",
+    )
+    sc_net.add_argument(
+        "--fail-on-health",
+        dest="fail_on_health",
+        action="store_true",
+        help="Exit 1 when live health is degraded or unreachable.",
+    )
+    sc_net.add_argument(
+        "--fail-on-drift",
+        dest="fail_on_drift",
+        action="store_true",
+        help="Exit 1 when endpoint catalog drifts from baseline.",
+    )
+    sc_net.add_argument(
+        "--herdr-tab",
+        dest="herdr_tab",
+        action="store_true",
+        help="Format stdout for Herdr doctor tab (watch-style lines).",
+    )
+    sc_net.add_argument("--no-color", dest="no_color", action="store_true", help="Disable colored loop status lines.")
+    sc_net.add_argument("--domain", help="Domain id for baseline path and secret channel (default: from --path).")
+    sc_net.add_argument(
+        "--baseline",
+        help="network-baseline.json5 path (default: baselines/<domain>/network-baseline.json5).",
+    )
+    sc_net.add_argument(
+        "--baseline-write",
+        dest="baseline_write",
+        action="store_true",
+        help="Capture legacy network-baseline.json5 on initial loop tick.",
+    )
+    sc_net.add_argument(
+        "--snapshot",
+        help="Domain snapshot.json path (default: baselines/<domain>/snapshot.json).",
+    )
+    sc_net.add_argument(
+        "--snapshot-write",
+        dest="snapshot_write",
+        action="store_true",
+        help="Merge network section into domain snapshot on initial loop tick.",
+    )
+    sc_net.add_argument(
+        "--health-url-secret",
+        dest="health_url_secret",
+        metavar="DOMAIN/NAME",
+        help="Resolve health URL via Bun.secrets (e.g. sports-terminal/health/prod).",
+    )
+    sc_net.set_defaults(func=cmd_bun_supply_chain, supply_action="network")
+    sc_snap = sc_sub.add_parser(
+        "snapshot",
+        help="Snapshot compatibility — validate, init template, or migrate legacy snapshots.",
+    )
+    sc_snap_sub = sc_snap.add_subparsers(dest="snapshot_action", metavar="SNAP_ACTION", required=True)
+    sc_snap_val = sc_snap_sub.add_parser("validate", help="Validate snapshotVersion + scanner + policy drift.")
+    sc_snap_val.add_argument("snapshot_file", help="snapshot.json path.")
+    sc_snap_val.add_argument("--path", "-p", dest="scan_path", help="Compare pinned packages to live lockfile.")
+    sc_snap_val.add_argument("--scanner-version", dest="scanner_version", help="Override scanner version.")
+    sc_snap_val.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_snap_val.add_argument(
+        "--network-path",
+        dest="network_path",
+        help="Live dist path for network section drift check.",
+    )
+    sc_snap_val.add_argument("--domain", help="Domain id for network capture.")
+    sc_snap_val.add_argument(
+        "--fail-on-drift",
+        dest="fail_on_drift",
+        action="store_true",
+        help="Exit 1 when network routes drift from snapshot.",
+    )
+    sc_snap_val.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="validate")
+    sc_snap_cap = sc_snap_sub.add_parser("capture", help="Capture live package pins + policy fingerprint.")
+    sc_snap_cap.add_argument("--path", "-p", dest="scan_path", default=".", help="Target path.")
+    sc_snap_cap.add_argument(
+        "--network-path",
+        dest="network_path",
+        help="Include network section from dist scan (e.g. dist/frontend).",
+    )
+    sc_snap_cap.add_argument("--domain", help="Domain id for network section.")
+    sc_snap_cap.add_argument("--out", help="Write snapshot JSON.")
+    sc_snap_cap.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_snap_cap.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="capture")
+    sc_snap_diff = sc_snap_sub.add_parser("diff", help="Diff snapshot pins vs live lockfile.")
+    sc_snap_diff.add_argument("snapshot_file", help="snapshot.json path.")
+    sc_snap_diff.add_argument("--path", "-p", dest="scan_path", default=".", help="Target path.")
+    sc_snap_diff.add_argument(
+        "--network-path",
+        dest="network_path",
+        help="Compare network section against live dist scan.",
+    )
+    sc_snap_diff.add_argument("--domain", help="Domain id for network capture.")
+    sc_snap_diff.add_argument(
+        "--fail-on-drift",
+        dest="fail_on_drift",
+        action="store_true",
+        help="Exit 1 when network routes drift.",
+    )
+    sc_snap_diff.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_snap_diff.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="diff")
+    sc_snap_init = sc_snap_sub.add_parser("init", help="Write v2 snapshot template from policy.")
+    sc_snap_init.add_argument("--out", help="Output path (default: stdout).")
+    sc_snap_init.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_snap_init.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="init")
+    sc_snap_mig = sc_snap_sub.add_parser("migrate", help="Upgrade legacy snapshot (add version + sections).")
+    sc_snap_mig.add_argument("snapshot_file", help="snapshot.json path.")
+    sc_snap_mig.add_argument("--out", help="Write migrated snapshot to path.")
+    sc_snap_mig.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sc_snap_mig.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="migrate")
+    sc_snap_mig_base = sc_snap_sub.add_parser(
+        "migrate-baseline",
+        help="Migrate legacy network-baseline.json5 into snapshot.json network section.",
+    )
+    sc_snap_mig_base.add_argument("--domain", required=True, help="Domain id (e.g. sports-terminal-os).")
+    sc_snap_mig_base.add_argument("--baseline", help="Legacy network-baseline.json5 path.")
+    sc_snap_mig_base.add_argument("--out", help="Output snapshot.json path.")
+    sc_snap_mig_base.set_defaults(func=cmd_bun_supply_chain, supply_action="snapshot", snapshot_action="migrate-baseline")
+
+    sk = sub.add_parser("skill", help="Cross-skill orchestration (loop, bench, rate).")
+    sk_sub = sk.add_subparsers(dest="skill_action", metavar="ACTION", required=True)
+    sk_loop = sk_sub.add_parser("loop", help="Unified skill loop — test, bench, network, snapshot, rate.")
+    sk_loop_sub = sk_loop.add_subparsers(dest="loop_action", metavar="SUB", required=True)
+
+    def _loop_flags(p: argparse.ArgumentParser) -> None:
+        p.add_argument("--dry-run", "-n", action="store_true", dest="dry_run", help="Preview plan; do not execute.")
+        p.add_argument("--explain", action="store_true", help="With --dry-run: show commands and cwd.")
+        p.add_argument("--quiet", "-q", action="store_true", help="Summary only; suppress per-tick stderr.")
+        p.add_argument("--verbose", "-v", action="store_true", help="Log phase starts.")
+        p.add_argument("--only", help="Filter matrix skills by id substring.")
+        p.add_argument("--smoke", action="store_true", help="Run smoke.sh in doctor phase (heavy).")
+        p.add_argument("--no-baseline", action="store_true", dest="no_baseline", help="Skip baseline write.")
+        p.add_argument("--parallel", action="store_true", help="Parallel matrix execution.")
+
+    sk_loop_help = sk_loop_sub.add_parser("help", help="List loop CLI flags.")
+    sk_loop_help.set_defaults(func=cmd_skill, skill_action="loop", loop_action="help")
+    sk_loop_plan = sk_loop_sub.add_parser("plan", help="Alias for full --dry-run --explain.")
+    sk_loop_plan.add_argument("--preset", default="full", help="Preset name.")
+    _loop_flags(sk_loop_plan)
+    sk_loop_plan.add_argument("--json-out", action="store_true", help="Emit JSON plan.")
+    sk_loop_plan.set_defaults(func=cmd_skill, skill_action="loop", loop_action="full", dry_run=True, explain=True)
+    sk_loop_list = sk_loop_sub.add_parser("list", help="List skill-loop-registry.json entries.")
+    sk_loop_list.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sk_loop_list.set_defaults(func=cmd_skill, skill_action="loop", loop_action="list")
+    sk_loop_run = sk_loop_sub.add_parser("run", help="Run loop for one skill.")
+    sk_loop_run.add_argument("--skill", default="ast-grep", help="Skill id from registry.")
+    sk_loop_run.add_argument("--phases", help="Comma-separated: doctor,test,bench,network,snapshot,rate.")
+    sk_loop_run.add_argument("--iterations", type=int, help="Bench iterations.")
+    sk_loop_run.add_argument("--min-rating", type=int, dest="min_rating", help="Minimum overall rating.")
+    sk_loop_run.add_argument("--json-out", action="store_true", help="NDJSON tick output.")
+    sk_loop_run.add_argument("--herdr-tab", action="store_true", dest="herdr_tab", help="Herdr tab stderr lines.")
+    sk_loop_run.add_argument("--no-color", action="store_true", dest="no_color", help="Plain stderr.")
+    sk_loop_run.add_argument("--skip-preflight", action="store_true", dest="skip_preflight", help="Skip snapshot preflight.")
+    sk_loop_run.add_argument("--fail-on-rating", action="store_true", dest="fail_on_rating", help="Exit 1 when rating below min.")
+    _loop_flags(sk_loop_run)
+    sk_loop_run.set_defaults(func=cmd_skill, skill_action="loop", loop_action="run")
+    sk_loop_matrix = sk_loop_sub.add_parser("matrix", help="Run loop across all registry skills.")
+    sk_loop_matrix.add_argument("--phases", default="doctor,rate", help="Comma-separated phases.")
+    sk_loop_matrix.add_argument("skills", nargs="*", help="Optional skill id filter.")
+    sk_loop_matrix.add_argument("--iterations", type=int, help="Bench iterations.")
+    sk_loop_matrix.add_argument("--min-rating", type=int, dest="min_rating", help="Minimum rating per skill.")
+    sk_loop_matrix.add_argument("--json-out", action="store_true", help="Emit JSON matrix.")
+    sk_loop_matrix.add_argument("--herdr-tab", action="store_true", dest="herdr_tab", help="Herdr tab stderr.")
+    sk_loop_matrix.add_argument("--no-color", action="store_true", dest="no_color", help="Plain stderr.")
+    sk_loop_matrix.add_argument("--skip-preflight", action="store_true", dest="skip_preflight", help="Skip preflight.")
+    sk_loop_matrix.add_argument("--fail-on-rating", action="store_true", dest="fail_on_rating", help="Exit 1 on low rating.")
+    _loop_flags(sk_loop_matrix)
+    sk_loop_matrix.set_defaults(func=cmd_skill, skill_action="loop", loop_action="matrix")
+    sk_loop_bench = sk_loop_sub.add_parser("bench", help="Rate bench test loop (repeated bun test runs).")
+    sk_loop_bench.add_argument("--profile", default="unit", help="bun-test-profiles.json profile.")
+    sk_loop_bench.add_argument("--iterations", type=int, default=3, help="Repeat count.")
+    sk_loop_bench.add_argument("--target-ms", type=int, dest="target_ms", help="p50 target for speed rating.")
+    sk_loop_bench.add_argument("--min-rating", type=int, dest="min_rating", help="Minimum bench rating.")
+    sk_loop_bench.add_argument("--json-out", action="store_true", help="Emit JSON summary.")
+    sk_loop_bench.add_argument("--skip-preflight", action="store_true", dest="skip_preflight", help="Skip preflight.")
+    sk_loop_bench.add_argument("--fail-on-rating", action="store_true", dest="fail_on_rating", help="Exit 1 on low rating.")
+    _loop_flags(sk_loop_bench)
+    sk_loop_bench.set_defaults(func=cmd_skill, skill_action="loop", loop_action="bench")
+    sk_loop_snap_bench = sk_loop_sub.add_parser(
+        "bench-snapshot",
+        help="Rate bench snapshot validate + optional live network/ground-truth.",
+    )
+    sk_loop_snap_bench.add_argument("--domain", default="sports-terminal-os", help="Snapshot domain id.")
+    sk_loop_snap_bench.add_argument(
+        "--scan-path",
+        dest="scan_path",
+        help="Live dist path for network drift during bench.",
+    )
+    sk_loop_snap_bench.add_argument("--iterations", type=int, default=3, help="Repeat count.")
+    sk_loop_snap_bench.add_argument("--target-ms", type=int, dest="target_ms", help="p50 target ms.")
+    sk_loop_snap_bench.add_argument("--ground-truth", action="store_true", dest="ground_truth", help="Include ground-truth gate.")
+    sk_loop_snap_bench.add_argument(
+        "--fail-on-network-drift",
+        action="store_true",
+        dest="fail_on_network_drift",
+        help="Fail iteration when routes drift.",
+    )
+    sk_loop_snap_bench.add_argument("--json-out", action="store_true", help="Emit JSON summary.")
+    _loop_flags(sk_loop_snap_bench)
+    sk_loop_snap_bench.set_defaults(func=cmd_skill, skill_action="loop", loop_action="bench-snapshot")
+    sk_loop_close = sk_loop_sub.add_parser(
+        "close-loop",
+        help="Closed loop: ground-truth gate → bench-snapshot → baseline diff/write.",
+    )
+    sk_loop_close.add_argument("--domain", default="sports-terminal-os", help="Snapshot domain id.")
+    sk_loop_close.add_argument("--scan-path", dest="scan_path", help="Live dist path.")
+    sk_loop_close.add_argument("--iterations", type=int, default=3, help="Bench repeat count.")
+    sk_loop_close.add_argument("--target-ms", type=int, dest="target_ms", help="p50 target ms.")
+    sk_loop_close.add_argument("--ground-truth", action="store_true", dest="ground_truth", help="Include ground-truth gate.")
+    sk_loop_close.add_argument("--seed", action="store_true", help="Seed network baseline before gates.")
+    sk_loop_close.add_argument("--fail-on-drift", action="store_true", dest="fail_on_drift", help="Exit 1 on loop baseline drift.")
+    sk_loop_close.add_argument("--baseline-write", action="store_true", dest="baseline_write", help="Write loop baseline after run.")
+    sk_loop_close.add_argument("--json-out", action="store_true", help="Emit JSON summary.")
+    _loop_flags(sk_loop_close)
+    sk_loop_close.set_defaults(func=cmd_skill, skill_action="loop", loop_action="close-loop")
+    sk_loop_full = sk_loop_sub.add_parser("full", help="Run registry preset (quick|standard|full|ci).")
+    sk_loop_full.add_argument("--preset", default="full", help="Preset name from skill-loop-registry.json.")
+    sk_loop_full.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    sk_loop_full.add_argument("--herdr-tab", action="store_true", dest="herdr_tab", help="Herdr tab stderr.")
+    sk_loop_full.add_argument("--no-color", action="store_true", dest="no_color", help="Plain stderr.")
+    sk_loop_full.add_argument("--fail-on-rating", action="store_true", dest="fail_on_rating", help="Exit 1 on low rating.")
+    sk_loop_full.add_argument("--fail-on-drift", action="store_true", dest="fail_on_drift", help="Exit 1 on baseline drift.")
+    sk_loop_full.add_argument("--baseline-write", action="store_true", dest="baseline_write", help="Force baseline write.")
+    _loop_flags(sk_loop_full)
+    sk_loop_full.set_defaults(func=cmd_skill, skill_action="loop", loop_action="full")
 
     return p
 

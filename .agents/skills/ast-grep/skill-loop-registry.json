@@ -1,0 +1,170 @@
+{
+  "version": 2,
+  "description": "Per-skill loop capabilities — test, bench, network, snapshot, rate phases",
+  "defaultPhases": ["test", "bench", "rate"],
+  "presets": {
+    "quick": {
+      "description": "Matrix doctor+rate across all registry skills",
+      "matrix": true,
+      "phases": ["doctor", "rate"],
+      "parallel": true
+    },
+    "standard": {
+      "description": "ast-grep test+bench+rate (skip snapshot preflight)",
+      "skill": "ast-grep",
+      "phases": ["test", "bench", "rate"],
+      "skipPreflight": true
+    },
+    "full": {
+      "description": "Matrix quick scan + ast-grep deep loop + baseline capture",
+      "matrix": true,
+      "matrixPhases": ["doctor", "rate"],
+      "skill": "ast-grep",
+      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
+      "skipPreflight": true,
+      "baselineWrite": true,
+      "parallel": true
+    },
+    "ci": {
+      "description": "ast-grep CI gate with snapshot preflight",
+      "skill": "ast-grep",
+      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
+      "failOnRating": 70,
+      "skipPreflight": false
+    },
+    "close-loop": {
+      "description": "Closed loop: ground-truth → bench-snapshot ×3 → baseline diff/write",
+      "skill": "ast-grep",
+      "closeLoop": {
+        "domain": "sports-terminal-os",
+        "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+        "groundTruth": true,
+        "iterations": 3,
+        "targetMs": 1500,
+        "baselineWrite": true,
+        "ratingDriftTolerance": 15
+      },
+      "failOnRating": 70
+    },
+    "snapshot-bench": {
+      "description": "bench-snapshot ×3: validateSnapshotFull + live network + ground-truth gate",
+      "skill": "ast-grep",
+      "benchSnapshot": {
+        "domain": "sports-terminal-os",
+        "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+        "groundTruth": true,
+        "iterations": 3,
+        "targetMs": 1500
+      },
+      "failOnRating": 70
+    }
+  },
+  "skills": {
+    "ast-grep": {
+      "path": ".agents/skills/ast-grep",
+      "zone": "agents",
+      "phases": {
+        "test": { "enabled": true, "profile": "ci" },
+        "bench": { "enabled": true, "profile": "unit", "iterations": 3, "targetMs": 8000 },
+        "network": {
+          "enabled": true,
+          "profile": "supply-chain-network-dist",
+          "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+          "domain": "sports-terminal-os"
+        },
+        "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
+        "rate": { "enabled": true, "minRating": 70 },
+        "doctor": { "enabled": true }
+      }
+    },
+    "sports-terminal-os": {
+      "path": ".agents/skills/sports-terminal-os",
+      "zone": "agents",
+      "workspace": "projects/active/sports-terminal-os",
+      "phases": {
+        "test": { "enabled": false },
+        "network": {
+          "enabled": true,
+          "profile": "supply-chain-network-dist",
+          "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+          "domain": "sports-terminal-os"
+        },
+        "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
+        "rate": { "enabled": true, "minRating": 60 },
+        "doctor": { "enabled": true }
+      }
+    },
+    "partner-profile-os": {
+      "path": ".agents/skills/partner-profile-os",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "cascade-mover-v3": {
+      "path": ".agents/skills/cascade-mover-v3",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "domain-orchestrator": {
+      "path": ".agents/skills/domain-orchestrator",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "domain-diagnostic-flow": {
+      "path": ".agents/skills/domain-diagnostic-flow",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "self-healing-domain": {
+      "path": ".agents/skills/self-healing-domain",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "quantum-domain-ops": {
+      "path": ".agents/skills/quantum-domain-ops",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "bun-v139-playground": {
+      "path": ".agents/skills/bun-v139-playground",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "source-command-commit": {
+      "path": ".agents/skills/source-command-commit",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    },
+    "project-r-skill-maintenance": {
+      "path": ".agents/skills/project-r-skill-maintenance",
+      "zone": "agents",
+      "phases": {
+        "doctor": { "enabled": true },
+        "rate": { "enabled": true, "minRating": 50 }
+      }
+    }
+  }
+}

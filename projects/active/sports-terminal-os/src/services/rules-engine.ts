@@ -297,7 +297,7 @@ export function createRule(input: {
 }): TradingRule {
   const db = getDb();
   const now = Math.floor(Date.now() / 1000);
-  const id = `rule_${crypto.randomUUID().slice(0, 8)}`;
+  const id = `rule_${Bun.randomUUIDv7().slice(0, 8)}`;
 
   // Validate
   if (!input.name?.trim()) throw ValidationError.field("name", "required");
@@ -566,7 +566,7 @@ export function executeRule(ruleId: string, context: MarketDataContext, executio
 
   const result = evaluateRule(rule, context);
   const now = Math.floor(Date.now() / 1000);
-  const execId = `exec_${crypto.randomUUID().slice(0, 8)}`;
+  const execId = `exec_${Bun.randomUUIDv7().slice(0, 8)}`;
 
   // Calculate P&L for simulated trades
   let pnl = 0;

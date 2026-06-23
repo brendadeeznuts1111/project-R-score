@@ -1,6 +1,6 @@
 // Cron Job Manager
 //
-// Registers all 8 system cron jobs using Bun.cron().
+// Registers all 10 system cron jobs using Bun.cron().
 // Tracks execution history in SQLite table `cron_schedule`.
 //
 // Jobs:
@@ -13,6 +13,7 @@
 //   7. sandbox_janitor    0 * * * *     Clean old sandbox data
 //   8. alert_cleanup      0 3 * * *      Purge old alerts
 //   9. ip_surveillance    */15 * * * *   Auto-flag IPs
+//  10. pipeline_health    */5 * * * *    Pipeline metrics + Telegram alerts
 //
 // Note: wager_refresh depends on Shadow Agent Worker (scripts/shadow-agent.ts)
 // to keep cf_clearance cookies fresh. Run the agent every 15 min via system
@@ -309,6 +310,21 @@ function createJobs(): CronJobDefinition[] {
         }
 
         logger.debug(`IP surveillance: flagged ${flagsCreated} shared IPs`);
+      },
+    },
+    {
+      name: "pipeline_health",
+      schedule: "*/5 * * * *",
+      description: "Check pipeline metrics, alert via Telegram if thresholds breached",
+      enabled: true,
+      handler: async () => {
+        try {
+          const { runPipelineHealthCheck } = await import("./pipeline-health-monitor");
+          await runPipelineHealthCheck();
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : "Unknown error";
+          logger.error(`Pipeline health check failed: ${msg}`);
+        }
       },
     },
   ];

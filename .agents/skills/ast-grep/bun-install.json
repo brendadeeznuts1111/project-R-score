@@ -194,7 +194,14 @@
     "backend": { "flag": "--backend", "type": "string", "default": "clonefile", "description": "hardlink|clonefile|clonefile_each_dir|copyfile|symlink" },
     "cpu": { "flag": "--cpu", "type": "string", "description": "Target CPU for optional deps (arm64|x64|ia32|ppc64|s390x)" },
     "os": { "flag": "--os", "type": "string", "description": "Target OS for optional deps (linux|darwin|win32|...)" },
-    "filter": { "flag": "--filter", "type": "string", "description": "Workspace filter" },
+    "filter": {
+      "flag": "--filter",
+      "alias": "-F",
+      "type": "string",
+      "description": "Workspace filter — name glob or ./path glob; ! negation",
+      "docs": "https://bun.com/docs/pm/filter",
+      "runtime_docs": "https://bun.com/docs/runtime#filtering"
+    },
     "analyze": { "flag": "--analyze", "type": "boolean", "description": "Install deps of passed files recursively" },
     "cache_dir": { "flag": "--cache-dir", "type": "string", "description": "Custom cache directory" },
     "no_cache": { "flag": "--no-cache", "type": "boolean", "description": "Ignore manifest cache" },

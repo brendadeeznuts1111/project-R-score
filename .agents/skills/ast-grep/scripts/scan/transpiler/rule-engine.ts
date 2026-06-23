@@ -36,13 +36,15 @@ function policyToBuckets(rules: PolicyRule[]): RuleSet {
   const import_rules: PolicyRule[] = [];
   const source_rules: PolicyRule[] = [];
   const output_rules: PolicyRule[] = [];
+  const network_rules: PolicyRule[] = [];
   for (const r of rules) {
     const layer = r.layer ?? "source";
     if (layer === "import" || r.type === "import") import_rules.push(r);
+    else if (layer === "network") network_rules.push(r);
     else if (layer === "output") output_rules.push(r);
     else source_rules.push(r);
   }
-  return { version: 1, import_rules, source_rules, output_rules };
+  return { version: 1, import_rules, source_rules, output_rules, network_rules };
 }
 
 function mergeRules(base: PolicyRule[], extra: PolicyRule[]): PolicyRule[] {
@@ -111,7 +113,12 @@ export async function loadRuleSet(skillRoot: string): Promise<RuleSet> {
     // optional policy file
   }
   const merged = mergeRules(
-    [...jsonSet.import_rules, ...jsonSet.source_rules, ...jsonSet.output_rules],
+    [
+      ...jsonSet.import_rules,
+      ...jsonSet.source_rules,
+      ...jsonSet.output_rules,
+      ...jsonSet.network_rules,
+    ],
     tomlRules,
   );
   return policyToBuckets(merged);
@@ -126,6 +133,7 @@ export function filterRulesById(rules: RuleSet, ids: string[]): RuleSet {
     import_rules: rules.import_rules.filter(keep),
     source_rules: rules.source_rules.filter(keep),
     output_rules: rules.output_rules.filter(keep),
+    network_rules: rules.network_rules.filter(keep),
   };
 }
 

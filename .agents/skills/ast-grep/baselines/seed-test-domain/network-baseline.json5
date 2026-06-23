@@ -1,0 +1,148 @@
+// network-baseline.json5 — golden template for supply-chain network loop
+{
+  "schemaVersion": 1,
+  "domain": "seed-test-domain",
+  "capturedAt": "2026-06-23T09:33:14.693Z",
+  "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+  "network": {
+    "unique_total": 20,
+    "total": 102,
+    "by_surface": {
+      "fetch": 97,
+      "websocket": 5
+    },
+    "hotspot_files": [
+      "OperationsPage-DIbfoytW.js",
+      "CommandCenterPage-BhC1XbnX.js",
+      "PatternsPage-Bg6uDejU.js",
+      "RiskPage-9cU4KROi.js",
+      "CustomersPage-Dz3zXUdf.js",
+      "PredictionMarketsPage-DMr73Heu.js",
+      "PartnersPage-gp4gXWme.js",
+      "SportsbookPage-BiccLxuL.js",
+      "AgentsPage-DgD7x-5x.js",
+      "TelegramPage-CFH7kDI4.js",
+      "index-CUcgJhsj.js",
+      "AIPlaygroundPage-IONEFQNa.js",
+      "HomePage-BZ0UJets.js"
+    ]
+  },
+  "endpoints": {
+    "total": 22,
+    "health_count": 3,
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/api/agents"
+      },
+      {
+        "method": "GET",
+        "path": "/api/alerts"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health/ready"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health/system-status"
+      },
+      {
+        "method": "GET",
+        "path": "/api/metrics"
+      },
+      {
+        "method": "GET",
+        "path": "/api/partners"
+      },
+      {
+        "method": "POST",
+        "path": "/api/partners"
+      },
+      {
+        "method": "POST",
+        "path": "/api/partners/{id}/evaluate"
+      },
+      {
+        "method": "GET",
+        "path": "/api/players"
+      },
+      {
+        "method": "GET",
+        "path": "/api/players/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/prediction-markets"
+      },
+      {
+        "method": "GET",
+        "path": "/api/prediction-markets/arbitrage"
+      },
+      {
+        "method": "POST",
+        "path": "/api/proxy/auth"
+      },
+      {
+        "method": "GET",
+        "path": "/api/risk/dashboard"
+      },
+      {
+        "method": "GET",
+        "path": "/api/risk/positions"
+      },
+      {
+        "method": "POST",
+        "path": "/api/signals/route"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sportsbook/best-lines"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sportsbook/odds"
+      },
+      {
+        "method": "GET",
+        "path": "/api/telegram/delivery-stats"
+      },
+      {
+        "method": "GET",
+        "path": "/api/webhooks"
+      },
+      {
+        "method": "POST",
+        "path": "/api/webhooks"
+      }
+    ],
+    "fingerprints": [
+      "GET /api/agents",
+      "GET /api/alerts",
+      "GET /api/health",
+      "GET /api/health/ready",
+      "GET /api/health/system-status",
+      "GET /api/metrics",
+      "GET /api/partners",
+      "POST /api/partners",
+      "POST /api/partners/{id}/evaluate",
+      "GET /api/players",
+      "GET /api/players/{id}",
+      "GET /api/prediction-markets",
+      "GET /api/prediction-markets/arbitrage",
+      "POST /api/proxy/auth",
+      "GET /api/risk/dashboard",
+      "GET /api/risk/positions",
+      "POST /api/signals/route",
+      "GET /api/sportsbook/best-lines",
+      "GET /api/sportsbook/odds",
+      "GET /api/telegram/delivery-stats",
+      "GET /api/webhooks",
+      "POST /api/webhooks"
+    ]
+  }
+}

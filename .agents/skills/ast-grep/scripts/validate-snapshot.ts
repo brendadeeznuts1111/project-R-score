@@ -23,14 +23,8 @@ async function main(): Promise<void> {
     scannerVersion,
   });
 
-  const ok = result.version.compatible
-    && result.sections.length === 0
-    && result.scanner.compatible;
-
-  const payload = { ...result, ok };
-  process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);
-
-  if (!ok) process.exit(1);
+  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+  if (!result.ok) process.exit(1);
 }
 
 main().catch((e) => {

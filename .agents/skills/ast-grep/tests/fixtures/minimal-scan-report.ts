@@ -1,0 +1,50 @@
+import type { BundleScanReport } from "../../scripts/scan/transpiler/types.ts";
+
+/** Shared minimal BundleScanReport for shape + reporter unit tests */
+export const MINIMAL_SCAN_REPORT: BundleScanReport = {
+  repo: "/repo",
+  profile: "supply-chain-pillars",
+  layer: "4.5",
+  min_severity: "warn",
+  format: "json",
+  elapsed_ms: 12,
+  workers: 1,
+  integrity_enabled: false,
+  threat_feed_enabled: true,
+  advisories_matched: 1,
+  targets: [{
+    id: "t",
+    path: ".",
+    skipped: false,
+    files_scanned: 1,
+    scan_ms: 1,
+    files: [],
+    findings: [{
+      type: "semver",
+      file: "lodash",
+      line: 0,
+      column: 0,
+      ruleId: "lodash-prototype-policy",
+      severity: "high",
+      message: "upgrade lodash",
+      layer: "deps",
+      violationKind: "semver_rule",
+      kinds: ["semver_rule", "threat"],
+      remediation: {
+        action: "upgrade",
+        safeRange: ">=4.17.21",
+        suggestedVersion: "4.17.21",
+        latestInLockfile: "4.17.21",
+        command: "bun add lodash@4.17.21",
+        reason: "Upgrade lodash",
+      },
+    }],
+  }],
+  summary: { files: 1, findings: 1, by_severity: { high: 1 } },
+  remediation: {
+    actionable: 1,
+    upgrades: 1,
+    removals: 0,
+    commands: ["bun add lodash@4.17.21"],
+  },
+};

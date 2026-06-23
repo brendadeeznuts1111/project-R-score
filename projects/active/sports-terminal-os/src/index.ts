@@ -42,9 +42,25 @@ import {
   processPredictionWsMessage,
   removePredictionSubscriber,
 } from "@services/websocket-handlers/prediction-ws";
+
+// Zone 10: Odds Drift WebSocket
+import {
+  processOddsDriftWsMessage,
+  unregisterDriftClient,
+  getOddsDriftMetrics,
+  broadcastOddsDrift,
+  setOddsDriftBroadcast,
+  setSnapshotProvider as setOddsDriftSnapshotProvider,
+} from "@services/websocket-handlers/odds-drift-ws";
+
 import { ensureActionQueueSchema, processActionQueue } from "@api/action-queue";
 import { recordWsMessage, recordHttpRequest } from "@api/metrics";
 import { applySecurityHeaders } from "@middleware/security";
+
+// Zone 10: Odds Drift Engine + Alias Loader + Pipeline Worker
+import { initOddsDriftEngine } from "@services/odds-drift-engine";
+import { loadAliasMap, startAliasHotReload, stopAliasHotReload } from "@services/team-alias-loader";
+import { PipelineWorker } from "@services/pipeline-worker";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -78,6 +94,52 @@ let errorCount = 0;
 
 /** Server instance reference */
 let serverInstance: Server<unknown> | null = null;
+
+/** Zone 10: Pipeline worker — visual evidence for drift alerts */
+let pipelineWorker: PipelineWorker | null = null;
+
+// ---------------------------------------------------------------------------
+// WebSocket metrics
+// ---------------------------------------------------------------------------
+
+/**
+ * Gather real-time WebSocket metrics for the /ws/metrics endpoint.
+ * Returns JSON-serializable object consumed by hygiene dashboard.
+ */
+export function getWsMetrics(): Record<string, unknown> {
+  const topicDistribution: Record<string, number> = {};
+
+  for (const client of wsClients.values()) {
+    for (const channel of client.subscribedChannels) {
+      topicDistribution[channel] = (topicDistribution[channel] ?? 0) + 1;
+    }
+  }
+
+  // Pull odds-drift + pipeline metrics (statically imported)
+  let oddsDrift: Record<string, unknown> | null = null;
+  try {
+    oddsDrift = getOddsDriftMetrics();
+  } catch {
+    // odds-drift handler may not be registered
+  }
+
+  let pipeline: Record<string, unknown> | null = null;
+  try {
+    pipeline = pipelineWorker?.getMetrics() ?? null;
+  } catch {
+    // pipeline worker may not be initialized
+  }
+
+  return {
+    protocol_version: "odds-drift-v2.1.0",
+    uptime_seconds: Math.floor((Date.now() - serverStartTime) / 1000),
+    connections: wsClients.size,
+    topics_distribution: topicDistribution,
+    odds_drift: oddsDrift,
+    pipeline: pipeline,
+    server_time: new Date().toISOString(),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // WebSocket message broadcasting
@@ -151,6 +213,7 @@ async function gracefulShutdown(signal?: string): Promise<void> {
   try {
     stopMetricsCollector();
     resetIdleShutdown();
+    stopAliasHotReload();
     logger.info("Background services stopped");
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -226,7 +289,7 @@ function registerCronJobs(): void {
 // ---------------------------------------------------------------------------
 
 function handleWebSocketOpen(ws: ServerWebSocket<unknown>): void {
-  const clientId = crypto.randomUUID();
+  const clientId = Bun.randomUUIDv7();
   ws.data = { clientId };
 
   const client: WebSocketClient = {
@@ -295,7 +358,11 @@ function handleWebSocketMessage(ws: ServerWebSocket<unknown>, message: string | 
 
       default: {
         // Try Zone 3: Prediction Market WebSocket handlers
-        const handled = processPredictionWsMessage(ws, msg.type, msg.data);
+        let handled = processPredictionWsMessage(ws, msg.type, msg.data);
+        if (handled) break;
+
+        // Try Zone 10: Odds Drift WebSocket handler
+        handled = processOddsDriftWsMessage(ws, msg.type, msg.data, clientId);
         if (handled) break;
 
         // Unknown message type — log but don't crash
@@ -323,6 +390,9 @@ function handleWebSocketClose(ws: ServerWebSocket<unknown>, code: number, reason
     // Zone 3: Clean up prediction market subscriptions
     removePredictionSubscriber(ws);
 
+    // Zone 10: Clean up odds drift subscriptions
+    unregisterDriftClient(clientId);
+
     wsClients.delete(clientId);
     onWsConnectionClose();
     logger.info(`WebSocket client disconnected: ${clientId} (code: ${code}, reason: ${reason}, remaining: ${wsClients.size})`);
@@ -334,7 +404,7 @@ function handleWebSocketClose(ws: ServerWebSocket<unknown>, code: number, reason
 // ---------------------------------------------------------------------------
 
 function handleSSE(req: Request): Response {
-  const clientId = crypto.randomUUID();
+  const clientId = Bun.randomUUIDv7();
   const url = new URL(req.url);
 
   // Parse optional filter params
@@ -431,7 +501,7 @@ async function serveStaticFile(pathname: string): Promise<Response | null> {
   }
 
   // SPA fallback — serve index.html for unknown routes
-  if (!pathname.startsWith("/api/") && !pathname.startsWith("/ws")) {
+  if (!pathname.startsWith("/api/") && !pathname.startsWith("/ws") && !pathname.startsWith("/thumbs/")) {
     const indexFile = Bun.file("./dist/frontend/index.html");
     if (await indexFile.exists()) {
       return new Response(indexFile, {
@@ -487,6 +557,76 @@ function startServer(): void {
     () => sseClients.size
   );
 
+  // Zone 10: Initialize Odds Drift Engine
+  try {
+    // Wire the broadcast function (callback injection — no circular deps)
+    setOddsDriftBroadcast((message) => {
+      broadcastToWebSockets({
+        type: message.type as WebSocketMessage["type"],
+        provider: message.provider,
+        data: message.data,
+      });
+    });
+
+    // Load team aliases from DB and initialize the engine
+    const { aliasMap, canonicalTeams } = loadAliasMap();
+
+    if (canonicalTeams.length > 0) {
+      // Create pipeline worker for visual evidence
+      pipelineWorker = new PipelineWorker({
+        onBroadcast: (channel, payload) => {
+          broadcastToWebSockets({
+            type: channel as WebSocketMessage["type"],
+            data: payload,
+          });
+        },
+      });
+
+      const engine = initOddsDriftEngine({
+        canonicalTeams,
+        aliasMap,
+        threshold: 0.88,
+        minDrift: 0.01,
+        dedupWindowMs: 5000,
+        onAlert: (alert) => {
+          // 1. Broadcast drift alert to WebSocket clients
+          broadcastOddsDrift({
+            source: alert.source,
+            rawTeam: alert.rawTeam,
+            canonicalTeam: alert.canonicalTeam ?? "unknown",
+            drift: alert.drift,
+            direction: alert.direction,
+            market: alert.market,
+            fromOdds: alert.fromOdds,
+            toOdds: alert.toOdds,
+            detectedAt: alert.detectedAt,
+            metadata: alert.metadata,
+          });
+
+          // 2. Pipeline worker: scrape evidence, generate thumbnail, notify Telegram
+          pipelineWorker?.onAlert(alert);
+        },
+      });
+
+      // Wire snapshot provider
+      setOddsDriftSnapshotProvider(() => engine.snapshot());
+
+      // Start hot-reload for alias map
+      startAliasHotReload();
+
+      logger.info(
+        `Zone 10: Engine + PipelineWorker initialized ` +
+        `(${canonicalTeams.length} teams, ${aliasMap.size} aliases, ` +
+        `webview=${pipelineWorker?.getMetrics().webViewAvailable ?? "?"})`
+      );
+    } else {
+      logger.info("Zone 10: OddsDriftEngine skipped — no canonical teams in alias store");
+    }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    logger.warn(`Zone 10: OddsDriftEngine init skipped (${message})`);
+  }
+
   // Create the server
   serverInstance = Bun.serve({
     port: PORT,
@@ -534,6 +674,20 @@ function startServer(): void {
         return handleSSE(req);
       }
 
+      // Zone 10: Thumbnail evidence endpoint
+      if (pathname.startsWith("/thumbs/")) {
+        const team = decodeURIComponent(pathname.split("/").pop()!);
+        const entry = pipelineWorker?.getThumbnail(team);
+        if (!entry) return new Response("Not found", { status: 404 });
+        return new Response(entry.bytes as unknown as BodyInit, {
+          headers: {
+            "Content-Type": "image/jpeg",
+            "Cache-Control": "public, max-age=60",
+            "X-SHA256": entry.sha256,
+          },
+        });
+      }
+
       // Legacy fast-path metrics endpoint (redirected to router)
       if (pathname === "/metrics") {
         return handleMetrics();
@@ -544,8 +698,8 @@ function startServer(): void {
         return handleRequest(new Request(`${url.origin}/api/health`, req));
       }
 
-      // API routes (includes /api/metrics, /api/health/* via router)
-      if (pathname.startsWith("/api/")) {
+      // API routes + WS metrics (includes /api/metrics, /api/health/*, /ws/metrics via router)
+      if (pathname.startsWith("/api/") || pathname.startsWith("/ws/")) {
         try {
           const response = await handleRequest(req);
           return response;
@@ -554,7 +708,7 @@ function startServer(): void {
           const message = err instanceof Error ? err.message : "Unknown error";
           logger.error(`Unhandled API error: ${message}`);
           const errorResponse = Response.json(
-            { error: "Internal server error", code: "INTERNAL_ERROR", requestId: crypto.randomUUID().slice(0, 12) },
+            { error: "Internal server error", code: "INTERNAL_ERROR", requestId: Bun.randomUUIDv7().slice(0, 12) },
             { status: 500 }
           );
           applySecurityHeaders(errorResponse);

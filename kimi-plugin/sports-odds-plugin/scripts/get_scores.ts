@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
-import { init, runMain, f402Fetch, makeTable, respond, SPORT_POSSESSION_EMOJI } from "./lib/f402";
+import { loadConfig, readParams, f402Fetch, makeTable, SPORT_POSSESSION_EMOJI } from "./lib/f402";
 
-const { config, params } = await init<{ sport: string; status?: string; date?: string }>();
+const config = await loadConfig();
+const params = await readParams<{ sport: string; status?: string; date?: string }>();
 
-runMain(async () => {
+async function main() {
   const { sport, status = "live", date } = params;
   const emoji = SPORT_POSSESSION_EMOJI[sport] ?? "";
 
@@ -18,11 +19,16 @@ runMain(async () => {
     return `| ${g.away_team} @ ${g.home_team} | ${scoreLine} | ${period} | ${clock} | ${possession} | ${g.status ?? ""} |`;
   });
 
-  respond({
+  console.log(JSON.stringify({
     content: `## ${sport} Scores (${status})\n\n${makeTable(
       ["Matchup", "Score", "Period", "Clock", "Possession", "Status"],
       rows,
     ) || `No ${status} games found for ${sport}.`}\n\n*${games.length} games | ${date || "today"}*`,
     metadata: { count: games.length, sport, status, date },
-  });
+  }));
+}
+
+main().catch(err => {
+  console.log(JSON.stringify({ error: true, message: err.message }));
+  process.exit(1);
 });

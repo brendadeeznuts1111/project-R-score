@@ -1,0 +1,29 @@
+# bunfig.toml — Sports Terminal OS
+#
+# Bun-native configuration. Loaded automatically by `bun run`,
+# `bun test`, and `bun build` from the project root.
+#
+# Docs: https://bun.sh/docs/runtime/bunfig
+
+# ─── Console ─────────────────────────────────────────────────────────
+[console]
+# How deeply Bun.inspect / console.log drill into nested objects.
+# 8 levels covers all Zone 10 pipeline payloads without [Object] truncation.
+depth = 8
+
+# ─── Install ─────────────────────────────────────────────────────────
+[install]
+# Global virtual store — identical packages shared across projects
+# via symlink. Zero extra disk, ~115ms warm installs.
+globalStore = true
+
+# ─── Zone 10: Odds Drift Hygiene WebSocket ───────────────────────────
+#
+# These values are defaults — override via environment variables:
+#   HYGIENE_JWT_SECRET        (HMAC-SHA256 signing key)
+#   HYGIENE_WS_BACKPRESSURE_LIMIT  (bytes, default 65536)
+#   HYGIENE_WS_RATE_LIMIT_MSGS     (msgs/sec/conn, default 30)
+#   HYGIENE_WS_RING_BUFFER_SIZE    (replay entries, default 100)
+#
+# Example overrides:
+#   HYGIENE_JWT_SECRET=my-secret HYGIENE_WS_RATE_LIMIT_MSGS=50 bun run src/index.ts

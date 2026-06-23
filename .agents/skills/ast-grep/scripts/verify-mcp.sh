@@ -20,5 +20,7 @@ echo "$out" | grep -q ast_grep_test
 echo "$out" | grep -q ast_grep_graph
 echo "$out" | grep -q ast_grep_jump
 echo "$out" | grep -q ast_grep_bun
+echo "$out" | grep -q ast_grep_network
+echo "$out" | grep -q ast_grep_skill_loop
 echo "$out" | grep -q 'autofix rules'
 echo "mcp OK"

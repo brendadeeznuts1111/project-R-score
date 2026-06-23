@@ -85,6 +85,10 @@ python3 $AG jump --name f402Fetch --zone kimi         # file:line for agent Read
 # Bun native API (bun-patterns.json v6 — min Bun 1.3.13)
 python3 $AG bun docs                                # official topic coverage map
 python3 $AG bun features                            # v1.3.13: --parallel, --isolate, --shard, --changed
+python3 $AG bun test-ci --profile archive           # Bun.Archive glob — bun.com/docs/runtime/archive
+bun run test:bun:archive                            # files()/extract() glob: **, !node_modules/**
+bun run test:bun:workspace-filter                   # bun run --filter — runtime#filtering
+python3 $AG bun test-ci --profile workspace-filter  # monorepo script matrix (parallel/sequential)
 python3 $AG bun test-ci --profile ci --path ./tests # run bun test with bun-test-profiles.json
 python3 $AG bun install-docs --topic platform     # --cpu/--os cross-target optional deps
 python3 $AG bun install-docs --topic lockfile     # bun.lock vs bun.lockb, pnpm migration
@@ -104,6 +108,46 @@ python3 $AG bun supply-chain packages --domain agents-ast-grep --threat-feed  # 
 python3 $AG bun supply-chain packages --path . --fix --dry-run               # preview bun add remediations
 python3 $AG bun supply-chain scan --path dist --watch --fix                 # watch + source autofix + deps
 python3 $AG bun supply-chain packages --path . --watch --watch-interval 1000
+python3 $AG bun supply-chain network --path dist/frontend --domain sports-terminal-os --dry-run
+python3 $AG bun supply-chain network --path dist/frontend --dry-run --output json --verbose
+python3 $AG bun supply-chain network --path dist/frontend --loop --watch --verbose
+python3 $AG bun supply-chain network --path dist/frontend --domain sports-terminal-os --seed
+python3 $AG bun supply-chain network --path dist/frontend --loop --watch --seed   # refresh baseline then loop
+python3 $AG bun supply-chain network --pointers --json-out     # modules + ground-truth + standards
+bun run supply-chain:network:help                              # flags + repo references index
+# Ground truth: baselines/sports-terminal-os/snapshot.json (22 routes, 20 unique surfaces)
+# Standards: expect-shape snapshot-network-section, route fingerprint "METHOD /path"
+bun run supply-chain:network:validate                        # ground-truth + pinned counts gate
+python3 $AG bun supply-chain network --validate-ground-truth --path dist/frontend --domain sports-terminal-os
+python3 $AG bun supply-chain network --dry-run --validate-ground-truth   # audit + compliance
+bun run supply-chain:network:dry-run                           # table + verbose catalog
+python3 $AG skill loop list                                    # skill-loop-registry.json
+python3 $AG skill loop run --skill ast-grep --phases test,bench,rate --skip-preflight
+python3 $AG skill loop matrix --phases doctor,rate             # all agent skills health matrix
+python3 $AG skill loop bench --profile unit --iterations 3     # rate bench test loop (p50/p95)
+bun run loop                                                   # preset full: matrix + ast-grep deep + baseline
+bun run loop -- --dry-run --explain                            # preview steps + bun test commands
+bun run loop:plan                                              # same as dry-run explain
+bun run loop -- --only profile --dry-run                       # filter matrix skills
+bun run loop:quick                                             # preset quick: parallel matrix doctor+rate
+bun run loop:ci                                                # preset ci: snapshot preflight gate
+bun run skill-loop:run                                         # ast-grep test+bench+rate
+bun run skill-loop:matrix                                      # doctor+rate across registry
+bun run skill-loop:bench                                       # unit profile × 3 iterations
+bun run skill-loop:bench-snapshot                              # snapshot validate ×3 + live network + ground-truth
+bun run skill-loop:bench-snapshot:plan                       # dry-run --explain per-iteration pipeline
+bun run loop:snapshot-bench                                  # preset snapshot-bench (registry benchSnapshot)
+bun run loop:snapshot-bench:plan                             # preset dry-run with substeps
+bun run skill-loop:bench-snapshot:ci                         # CI gate: 3× pass + fail-on-rating ≥70
+bun run close-loop                                         # ground-truth → bench-snapshot → baseline diff
+bun run close-loop:plan                                    # dry-run closed-loop pipeline
+bun run close-loop:ci                                      # CI shell gate (fail-on-rating ≥70)
+bun run loop:close-loop                                    # preset close-loop (registry closeLoop + baseline write)
+bun run loop:close-loop:plan                               # preset dry-run closed-loop pipeline
+bun run close-loop:effect                                  # Effect-TS CloseLoopEngine layer + TaggedError gates
+bun scripts/skill-loop-cli.ts close-loop --effect          # Schema-validated JSON with --json
+python3 $AG skill loop bench-snapshot --domain sports-terminal-os --scan-path dist/frontend --ground-truth
+python3 $AG skill loop full --preset snapshot-bench          # same as loop:snapshot-bench
 python3 $AG doctor --validate-snapshot snapshot.json           # snapshotVersion vs policy [snapshot]
 python3 $AG bun bundle-threat --zone agents         # alias for supply-chain scan (default profile)
 python3 $AG bun bundle-threat --profile ci --fail-on
@@ -200,6 +244,8 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_codemod` | `codemod` |
 | `ast_grep_test` | `test` |
 | `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
+| `ast_grep_network` | `supply-chain network` (`pointers`, `dryRun`, `validateGroundTruth`, `seed`, `loop`) |
+| `ast_grep_skill_loop` | `skill loop` (`action`: list, run, matrix, bench, bench-snapshot, close-loop, full, plan) |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 

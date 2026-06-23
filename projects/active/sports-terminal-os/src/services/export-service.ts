@@ -437,7 +437,7 @@ export function createExportJob(
   filters: ExportFilters
 ): ExportJob {
   const job: ExportJob = {
-    jobId: `exp_${crypto.randomUUID().slice(0, 8)}`,
+    jobId: `exp_${Bun.randomUUIDv7().slice(0, 8)}`,
     entity,
     format,
     filters,

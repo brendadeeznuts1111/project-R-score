@@ -242,7 +242,7 @@ export class TelegramBotWorker {
       } catch (err: any) {
         logger.error(`Consume loop error: ${err.message}`);
         // Brief pause before retry to avoid tight error loops
-        await new Promise((r) => setTimeout(r, 2000));
+        await Bun.sleep(2000);
       }
     }
   }

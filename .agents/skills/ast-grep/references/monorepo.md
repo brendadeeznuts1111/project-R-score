@@ -111,6 +111,42 @@ python3 $AG bun supply-chain scan --path dist --format html --threat-feed --inte
 bun run supply-chain:scan -- --path .agents/skills/ast-grep/scripts --format markdown
 ```
 
+**Network loop** (dist surface + OpenAPI catalog + health probes):
+
+```bash
+bun run supply-chain:network:help                    # flags + module pointers
+python3 $AG bun supply-chain network --pointers --json-out
+bun run supply-chain:network:dry-run                 # single audit, no loop
+bun run supply-chain:network:seed                    # baselines/<domain>/snapshot.json
+bun run supply-chain:network:loop                    # seed (auto) → watch + probes
+```
+
+| Pointer | Path |
+|---|---|
+| CLI | `scripts/network-cli.ts` |
+| Loop | `scripts/scan/transpiler/network-loop.ts` |
+| Seed | `scripts/scan/transpiler/network-seed.ts` |
+| Baseline | `baselines/sports-terminal-os/snapshot.json` |
+| Profile | `bundle-threat-profiles.json` → `supply-chain-network-dist` |
+
+**Ground truth (repo):**
+
+| Id | Path | Pinned |
+|---|---|---|
+| `sports-terminal-snapshot` | `baselines/sports-terminal-os/snapshot.json` | 22 endpoints, 20 unique, 102 raw |
+| `sports-terminal-openapi` | `projects/active/sports-terminal-os/openapi.json` | catalog source |
+| `security-policy-network` | `policies/security.policy.toml` | fetch/WebSocket/TCP/DNS rules |
+| `snapshot-network-shape` | `expect-shape-catalog.ts` | `snapshot-network-section` keys |
+
+**Standards:** baseline schema v1 · snapshot `2.0.0` (`^2.0.0`) · route fingerprint `METHOD /path` · health `healthy|degraded|unreachable` · drift on route add/remove · `--dry-run` ignores `--fail-on-drift`.
+
+```bash
+bun run supply-chain:network:validate   # 12 ground-truth checks + live pinned counts
+bun run supply-chain:network:dry-run -- --validate-ground-truth
+```
+
+Flow: **seed** → **dry-run** (debug) → **validate** (gate) → **loop** (watch drift). Full index: `bun run supply-chain:network:help`.
+
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 
 ## Outline rules (Bun runtime)
