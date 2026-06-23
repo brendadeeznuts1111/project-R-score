@@ -1,0 +1,4 @@
+interface:
+  display_name: "ast-grep"
+  short_description: "AST outline, structural search, and codemods via ast-grep 0.44+"
+  default_prompt: "Use ast-grep outline before reading large files. Run structural search/rewrite via scripts/sg.sh. Prefer syntax-shaped patterns over rg when exploring code structure."

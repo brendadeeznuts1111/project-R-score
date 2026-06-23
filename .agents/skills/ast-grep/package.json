@@ -1,0 +1,14 @@
+{
+  "name": "@projects/ast-grep-skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned ast-grep CLI for agent outline/search workflows (0.44.0+ for outline).",
+  "scripts": {
+    "doctor": "./scripts/doctor.sh",
+    "install-cli": "npm install",
+    "smoke": "./scripts/sg.sh outline scripts/sg.sh --view names --color never"
+  },
+  "dependencies": {
+    "@ast-grep/cli": "0.44.0"
+  }
+}

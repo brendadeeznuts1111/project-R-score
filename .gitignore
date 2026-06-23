@@ -68,6 +68,11 @@ out/
 !.agents/skills/**/SKILL.md
 !.agents/skills/**/agents/
 !.agents/skills/**/agents/**
+!.agents/skills/**/scripts/
+!.agents/skills/**/scripts/**
+!.agents/skills/**/package.json
+!.agents/skills/**/SOURCE
+!.agents/skills/**/.gitignore
 .reasonix/
 
 # OS
@@ -277,3 +282,6 @@ docs/archives/
 # Vendored / third-party
 vendor/
 .third_party/
+
+# Independent project — has its own git repo
+apex-biolabs/
