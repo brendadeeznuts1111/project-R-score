@@ -21,7 +21,7 @@ export type { SnapshotBenchSummary } from "./snapshot-bench-loop.ts";
 import { validateSnapshotFull } from "./snapshot.ts";
 import { defaultSnapshotPath } from "./snapshot-network.ts";
 
-export type SkillLoopPhase = "doctor" | "test" | "bench" | "network" | "snapshot" | "rate";
+export type SkillLoopPhase = "doctor" | "test" | "bench" | "network" | "snapshot" | "rate" | "precommit";
 
 export type SkillPhaseSpec = {
   enabled?: boolean;
@@ -32,6 +32,9 @@ export type SkillPhaseSpec = {
   scanPath?: string;
   domain?: string;
   healthUrl?: string;
+  /** npm/bun script name in skill package.json (precommit phase). */
+  script?: string;
+  note?: string;
   /** Run scripts/smoke.sh when present (heavy — off by default in loop ticks). */
   smoke?: boolean;
 };
@@ -242,6 +245,47 @@ export function snapshotBenchSummaryToTick(
 
 export function listLoopPresets(registry: SkillLoopRegistry): string[] {
   return Object.keys(registry.presets ?? {}).sort();
+}
+
+async function runPrecommitPhase(
+  repoRoot: string,
+  skillId: string,
+  entry: SkillRegistryEntry,
+  spec: SkillPhaseSpec,
+): Promise<PhaseResult> {
+  const started = performance.now();
+  if (spec.note && spec.enabled === false) {
+    return {
+      phase: "precommit",
+      ok: true,
+      detail: spec.note,
+      rating: 100,
+      grade: "A",
+      elapsedMs: Math.round(performance.now() - started),
+    };
+  }
+  const skillPath = resolve(repoRoot, entry.path);
+  const script = spec.script ?? "precommit";
+  const proc = Bun.spawn(["bun", "run", script], {
+    cwd: skillPath,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  const [stdout, stderr] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  const code = await proc.exited;
+  const ok = code === 0;
+  const tail = [stdout.trim(), stderr.trim()].filter(Boolean).join("\n").split("\n").slice(-4).join(" ");
+  return {
+    phase: "precommit",
+    ok,
+    detail: ok ? `${skillId} precommit ok` : `${skillId} precommit exit ${code}: ${tail}`,
+    rating: ok ? 100 : 0,
+    grade: ok ? "A" : "F",
+    elapsedMs: Math.round(performance.now() - started),
+  };
 }
 
 async function runDoctorPhase(
@@ -499,6 +543,9 @@ async function runSkillPhases(
         break;
       case "snapshot":
         result = await runSnapshotPhase(opts, phaseSpec);
+        break;
+      case "precommit":
+        result = await runPrecommitPhase(opts.repoRoot, opts.skillId, entry, phaseSpec);
         break;
       case "rate":
         continue;

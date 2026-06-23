@@ -52,3 +52,13 @@ if (domain.tunnelingProbability > 0.3) {
 - Log all operations via `DomainPerformanceMonitor`
 - Never observe entangled domains separately
 - Coherence < 0.5 triggers automatic recovery
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_search` | Find `collapse`, `entangleWith`, coherence checks in codebase |
+| `ast_grep_skill_loop` | `action: matrix --phases doctor,rate --only quantum` |
+| `/precommit` | Before committing domain operation changes |
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

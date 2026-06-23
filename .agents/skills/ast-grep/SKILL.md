@@ -245,9 +245,24 @@ Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
 | `ast_grep_test` | `test` |
 | `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
 | `ast_grep_network` | `supply-chain network` (`pointers`, `dryRun`, `validateGroundTruth`, `seed`, `loop`) |
-| `ast_grep_skill_loop` | `skill loop` (`action`: list, run, matrix, bench, bench-snapshot, close-loop, full, plan) |
+| `ast_grep_skill_loop` | `skill loop` (`action`: list, run, matrix, bench, bench-snapshot, close-loop, full, plan, workflow, precommit) |
+| `ast_grep_precommit` | Husky gates: hygiene, harness, rule tests, semver, supply-chain packages |
+| `ast_grep_workflow` | Workflow loop with effect plugins (log, alert, fix, report, custom) |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`
+
+## Pre-commit + semver gates
+
+Husky hook (repo root): `.husky/pre-commit` → `bun run precommit:ast-grep` when skill paths staged.
+
+```bash
+bun run precommit
+bun run precommit:rules
+bun run precommit:semver
+bun run precommit:packages
+```
+
+Slash commands: `/precommit` · `/workflow` · `/ast-grep` · shared reference: [references/agent-tooling.md](../references/agent-tooling.md)
 
 ## Workflow checklist
 

@@ -15,7 +15,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.22.0';
+const SERVER_VERSION = '0.23.0';
 const SKILL_ROOT = resolve(import.meta.dir, '..');
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
@@ -429,8 +429,8 @@ const TOOLS = [
       properties: {
         action: {
           type: 'string',
-          enum: ['list', 'run', 'matrix', 'bench', 'bench-snapshot', 'close-loop', 'full', 'plan'],
-          description: 'Loop subcommand (plan = full --dry-run --explain).',
+          enum: ['list', 'run', 'matrix', 'bench', 'bench-snapshot', 'close-loop', 'full', 'plan', 'workflow', 'precommit'],
+          description: 'Loop subcommand (plan = full --dry-run --explain; workflow/precommit delegate to dedicated tools).',
         },
         skill: { type: 'string', description: 'Target skill id (run action).' },
         phases: { type: 'string', description: 'Comma-separated: doctor,test,bench,network,snapshot,rate.' },
@@ -462,6 +462,46 @@ const TOOLS = [
         noColor: { type: 'boolean' },
       },
       required: ['action'],
+    },
+  },
+  {
+    name: 'ast_grep_precommit',
+    description:
+      'Run husky pre-commit gates: repo hygiene, harness lint, ast-grep rule tests, semver policy, supply-chain packages (on lockfile/policy changes).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        full: { type: 'boolean', description: 'Run all gates regardless of staged paths (default: staged-path gate only).' },
+        hygiene: { type: 'boolean', description: 'Include repo-hygiene --staged (default true when full).' },
+        harness: { type: 'boolean', description: 'Include harness lint/format (default true when full).' },
+        astGrep: { type: 'boolean', description: 'Include ast-grep + semver gate (default true).' },
+      },
+    },
+  },
+  {
+    name: 'ast_grep_workflow',
+    description:
+      'Continuous workflow loop: semver + network scanners, drift detection, pluggable effects (log, alert, fix, report, custom).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        domain: { type: 'string', description: 'Domain id (required).' },
+        scanPath: { type: 'string', description: 'Scan target path relative to repo root.' },
+        scanners: { type: 'string', description: 'Comma-separated: semver,network (default).' },
+        watch: { type: 'boolean', description: 'Continuous watch loop.' },
+        dryRun: { type: 'boolean', description: 'Preview without applying fixes.' },
+        seed: { type: 'string', description: 'Seed baseline path (json5).' },
+        seedWrite: { type: 'string', description: 'Write baseline after each run.' },
+        failOnIssue: { type: 'boolean' },
+        failOnDrift: { type: 'boolean' },
+        alertUrl: { type: 'string', description: 'Enable alert effect with webhook URL.' },
+        fix: { type: 'boolean', description: 'Enable fix effect.' },
+        report: { type: 'string', description: 'Report output path.' },
+        effectsDir: { type: 'string', description: 'Custom effect plugins directory.' },
+        effects: { type: 'array', items: { type: 'string' }, description: 'Effect specs (e.g. custom, alert.url=...).' },
+        jsonOut: { type: 'boolean' },
+      },
+      required: ['domain'],
     },
   },
 ];
@@ -955,9 +995,80 @@ async function cmdNetwork(args: Record<string, unknown>): Promise<ToolCallResult
   return toolText(truncate(body), code !== 0);
 }
 
+async function cmdPrecommit(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const root = repoRoot();
+  const full = args.full === true;
+  const steps: Array<{ label: string; script: string; extra?: string[] }> = [];
+
+  if (full || args.hygiene === true) {
+    steps.push({ label: 'hygiene', script: join(root, 'scripts/repo-hygiene.ts'), extra: ['--staged'] });
+  }
+  if (full || args.harness === true) {
+    steps.push({ label: 'harness', script: join(root, 'scripts/pre-commit-harness.ts') });
+  }
+  if (args.astGrep !== false) {
+    steps.push({ label: 'ast-grep', script: join(root, 'scripts/pre-commit-ast-grep.ts') });
+  }
+  if (steps.length === 0) {
+    steps.push({ label: 'ast-grep', script: join(root, 'scripts/pre-commit-ast-grep.ts') });
+  }
+
+  const chunks: string[] = [];
+  let code = 0;
+  for (const step of steps) {
+    const { stdout, stderr, code: stepCode } = await runBunScript(step.script, step.extra ?? []);
+    chunks.push(`== ${step.label} ==\n${[stdout.trim(), stderr.trim()].filter(Boolean).join('\n')}`);
+    if (stepCode !== 0) {
+      code = stepCode;
+      break;
+    }
+  }
+  return toolText(truncate(chunks.join('\n\n')), code !== 0);
+}
+
+async function cmdWorkflow(args: Record<string, unknown>): Promise<ToolCallResult> {
+  const script = join(SKILL_ROOT, 'scripts/workflow-cli.ts');
+  const extra: string[] = ['start', '--domain', String(args.domain)];
+  if (args.scanPath) extra.push('--scan-path', String(args.scanPath));
+  if (args.scanners) extra.push('--scanners', String(args.scanners));
+  if (args.watch === true) extra.push('--watch');
+  if (args.dryRun === true) extra.push('--dry-run');
+  if (args.seed) extra.push('--seed', String(args.seed));
+  if (args.seedWrite) extra.push('--seed-write', String(args.seedWrite));
+  if (args.failOnIssue === true) extra.push('--fail-on-issue');
+  if (args.failOnDrift === true) extra.push('--fail-on-drift');
+  if (args.alertUrl) extra.push('--alert-url', String(args.alertUrl));
+  if (args.fix === true) extra.push('--fix');
+  if (args.report) extra.push('--report', String(args.report));
+  if (args.effectsDir) extra.push('--effects-dir', String(args.effectsDir));
+  if (Array.isArray(args.effects)) {
+    for (const effect of args.effects) extra.push('--effect', String(effect));
+  }
+  if (args.jsonOut === true) extra.push('--json');
+  const { stdout, stderr, code } = await runBunScript(script, extra);
+  const body = [stdout.trim(), stderr.trim()].filter(Boolean).join('\n') || '(no workflow output)';
+  return toolText(truncate(body), code !== 0);
+}
+
 async function cmdSkillLoop(args: Record<string, unknown>): Promise<ToolCallResult> {
-  const script = join(SKILL_ROOT, 'scripts/skill-loop-cli.ts');
   let action = String(args.action ?? 'list');
+  if (action === 'precommit') return cmdPrecommit({ full: args.full, hygiene: args.hygiene, harness: args.harness, astGrep: args.astGrep });
+  if (action === 'workflow') {
+    return cmdWorkflow({
+      domain: args.domain ?? 'sports-terminal-os',
+      scanPath: args.scanPath,
+      watch: args.watch,
+      dryRun: args.dryRun,
+      seed: args.seed,
+      failOnDrift: args.failOnDrift,
+      alertUrl: args.alertUrl,
+      fix: args.fix,
+      effectsDir: args.effectsDir,
+      effects: args.effects,
+      jsonOut: args.jsonOut,
+    });
+  }
+  const script = join(SKILL_ROOT, 'scripts/skill-loop-cli.ts');
   if (action === 'plan') action = 'full';
   const extra: string[] = [action];
   if (args.skill) extra.push('--skill', String(args.skill));
@@ -1025,6 +1136,8 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       case 'ast_grep_test': result = await cmdTest(args); break;
       case 'ast_grep_network': result = await cmdNetwork(args); break;
       case 'ast_grep_skill_loop': result = await cmdSkillLoop(args); break;
+      case 'ast_grep_precommit': result = await cmdPrecommit(args); break;
+      case 'ast_grep_workflow': result = await cmdWorkflow(args); break;
       default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);

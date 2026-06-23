@@ -20,3 +20,15 @@ Enable the `cascade-mover` server in [`.cursor/mcp.json`](../../.cursor/mcp.json
 ## Code location
 
 `cascade-mover-v3/src/server/cascade-mover-mcp.ts` — MCP entry. See project README for full architecture.
+
+## Agent tooling
+
+Prefer **cascade-mover MCP** (43 tools) for runtime ops. For repo-wide gates:
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_search` | Find cascade wire-ups across monorepo |
+| `ast_grep_audit` | Scan `cascade-mover-v3/src` before release |
+| `/precommit` | Before committing skill or integration changes |
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

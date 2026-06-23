@@ -1579,6 +1579,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
+    "precommit": ".husky/pre-commit",
     "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts",
     "install:all": "bun install",
     "install:packages": "bun install --filter './packages/*'",

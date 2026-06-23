@@ -99,3 +99,13 @@ for (const step of results) {
   console.log(`${step.status}: ${step.attempts} attempts, ${step.durationMs}ms`);
 }
 ```
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_workflow` | Continuous scan after treatment (`--fail-on-drift`) |
+| `ast_grep_skill_loop` | `action: run --skill domain-diagnostic-flow --phases doctor,rate` |
+| `/precommit` | Before committing flow or resilience policy changes |
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

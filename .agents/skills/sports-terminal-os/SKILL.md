@@ -134,3 +134,19 @@ Copy `.env.example` to `.env`:
 | Database schema (54 tables) | `design/database-schema.md` |
 | Build plan | `plan.md` |
 | Session memory | `MEMORY.md` |
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_outline` / `ast_grep_search` | Explore `src/` before broad reads |
+| `ast_grep_network` | Validate dist frontend routes + ground-truth |
+| `ast_grep_workflow` | Continuous semver/network scan on `dist/frontend` |
+| `/precommit` | Before committing sports-terminal changes |
+
+```bash
+cd .agents/skills/ast-grep && bun run supply-chain:network:validate
+bun run skill-loop:matrix -- --phases doctor,rate --only sports-terminal
+```
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

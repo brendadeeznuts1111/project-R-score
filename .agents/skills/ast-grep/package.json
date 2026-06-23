@@ -60,6 +60,7 @@
     "loop": "bun scripts/skill-loop-cli.ts full --preset full --no-color",
     "loop:plan": "bun scripts/skill-loop-cli.ts full --preset full --dry-run --explain",
     "loop:quick": "bun scripts/skill-loop-cli.ts full --preset quick --no-color",
+    "loop:precommit": "bun scripts/skill-loop-cli.ts full --preset precommit --no-color",
     "loop:ci": "bun scripts/skill-loop-cli.ts full --preset ci --fail-on-rating",
     "skill-loop:list": "bun scripts/skill-loop-cli.ts list",
     "skill-loop:run": "bun scripts/skill-loop-cli.ts run --skill ast-grep --phases test,bench,rate --skip-preflight",

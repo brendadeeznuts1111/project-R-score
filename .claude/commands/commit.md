@@ -64,9 +64,27 @@ Run `git status` after the commit to confirm:
 
 Report the result: commit hash, branch, number of files changed, and any remaining unstaged work.
 
+## Pre-commit gates (run before commit)
+
+Husky runs automatically. Dry-run first when ast-grep or lockfiles changed:
+
+```bash
+.husky/pre-commit
+# or
+bun run precommit:ast-grep
+```
+
+| Gate | Fails when |
+|------|------------|
+| Hygiene | Staged secrets, clutter, `.env` |
+| Harness | ESLint/Prettier on staged `lib/`, `scripts/`, `packages/`, etc. |
+| ast-grep + semver | Rule tests, semver policy, or supply-chain package violations |
+
+MCP: `ast_grep_precommit` · Slash: `/precommit`
+
 ## Error Recovery
 
-- **Pre-commit hook failure**: Read the error output. Fix the issue. Re-stage and create a NEW commit (never `--amend` — the previous commit is someone else's work).
+- **Pre-commit hook failure**: Identify which gate failed. Fix, re-run that gate, re-stage, then create a NEW commit (never `--amend` — the previous commit is someone else's work).
 - **Nothing to commit**: Tell the user there are no changes to commit. Do not create an empty commit.
 - **Merge conflict**: Do not attempt to auto-resolve. Show the conflicted files and ask the user how to proceed.
 

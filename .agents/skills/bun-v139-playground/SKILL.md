@@ -54,3 +54,17 @@ All demos use Bun native APIs:
 ## Location
 
 `scratch/bun-v1.3.9-examples/playground-web/`
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_bun` | Inventory Bun.spawn/signal patterns vs playground demos |
+| `ast_grep_search` | Find demo IDs referenced in server routes |
+| `/precommit` | Before committing playground or governance changes |
+
+```bash
+cd .agents/skills/ast-grep && bun run skill-loop:matrix -- --phases doctor,rate --only bun-v139
+```
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

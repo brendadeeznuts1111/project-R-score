@@ -16,6 +16,8 @@ Keep edits minimal, deterministic, and aligned between `SKILL.md` and `agents/op
 2. Edit `SKILL.md`.
 - Keep frontmatter valid and concise (`name`, `description`).
 - Add only task-relevant workflow guidance.
+- Link shared agent tooling when the skill touches commits, scans, or loops: [references/agent-tooling.md](../references/agent-tooling.md).
+- Register new skills in `ast-grep/skill-loop-registry.json` with `doctor` + `rate` phases (add `precommit` only when the skill has `bun run precommit`).
 - Avoid extra docs files (`README.md`, changelog files) unless explicitly requested.
 3. Sync `agents/openai.yaml`.
 - Ensure `display_name`, `short_description`, and `default_prompt` match the new skill scope.

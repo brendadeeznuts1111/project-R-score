@@ -32,6 +32,12 @@
       "failOnRating": 70,
       "skipPreflight": false
     },
+    "precommit": {
+      "description": "Husky-aligned gates: doctor + precommit + rate across registry",
+      "matrix": true,
+      "matrixPhases": ["doctor", "precommit", "rate"],
+      "parallel": true
+    },
     "close-loop": {
       "description": "Closed loop: ground-truth → bench-snapshot ×3 → baseline diff/write",
       "skill": "ast-grep",
@@ -74,7 +80,8 @@
         },
         "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
         "rate": { "enabled": true, "minRating": 70 },
-        "doctor": { "enabled": true }
+        "doctor": { "enabled": true },
+        "precommit": { "enabled": true, "script": "precommit" }
       }
     },
     "sports-terminal-os": {
@@ -91,7 +98,8 @@
         },
         "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
         "rate": { "enabled": true, "minRating": 60 },
-        "doctor": { "enabled": true }
+        "doctor": { "enabled": true },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "partner-profile-os": {
@@ -99,7 +107,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "cascade-mover-v3": {
@@ -107,7 +116,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "domain-orchestrator": {
@@ -115,7 +125,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "domain-diagnostic-flow": {
@@ -123,7 +134,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "self-healing-domain": {
@@ -131,7 +143,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "quantum-domain-ops": {
@@ -139,7 +152,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "bun-v139-playground": {
@@ -147,7 +161,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     },
     "source-command-commit": {
@@ -155,7 +170,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "run bun run precommit:ast-grep from repo root before commit" }
       }
     },
     "project-r-skill-maintenance": {
@@ -163,7 +179,8 @@
       "zone": "agents",
       "phases": {
         "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 }
+        "rate": { "enabled": true, "minRating": 50 },
+        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
       }
     }
   }

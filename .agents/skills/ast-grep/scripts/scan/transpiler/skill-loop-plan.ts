@@ -80,6 +80,19 @@ async function planPhaseStep(
       if (opts.smoke || spec.smoke) bits.push("run scripts/smoke.sh (heavy)");
       return { skillId, phase, detail: bits.join("; ") };
     }
+    case "precommit": {
+      if (spec.enabled === false) {
+        return { skillId, phase, detail: spec.note ?? "precommit disabled" };
+      }
+      const script = spec.script ?? "precommit";
+      return {
+        skillId,
+        phase,
+        detail: `bun run ${script} @ ${entry.path}`,
+        command: ["bun", "run", script],
+        cwd: resolve(repoRoot, entry.path),
+      };
+    }
     case "test": {
       const profile = spec.profile ?? "ci";
       const { profiles } = await loadTestProfiles(skillRoot);

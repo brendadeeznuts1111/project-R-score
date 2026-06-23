@@ -48,3 +48,13 @@ flowchart TD
 const orchestrator = new SkillOrchestrator();
 await orchestrator.executeFlowSkill('self-healing-domain', myDomain);
 ```
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_workflow` | Watch loop with `--effect alert.url=...` after failed recovery |
+| `ast_grep_audit` | Scan domain modules before applying auto-treatment |
+| `/workflow` | Plan remediation effects with `--dry-run --explain` |
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)

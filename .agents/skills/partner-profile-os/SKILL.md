@@ -24,3 +24,13 @@ Canonical partner identity layer for Sports Terminal v5.2+. Use when implementin
 ## Runtime
 
 Bun-native. Zero non-Bun dependencies except Zod. Import from `src/zones/partner-profile/` (see full spec for module order).
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_outline` | Map partner-profile modules under sports-terminal-os |
+| `ast_grep_search` | Find `PartnerGateway.evaluate` call sites |
+| `/precommit` | Before committing TOML templates or gateway changes |
+
+Shared reference: [agent-tooling.md](../references/agent-tooling.md)
