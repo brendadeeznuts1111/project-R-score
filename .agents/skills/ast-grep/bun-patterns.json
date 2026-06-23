@@ -1,18 +1,35 @@
 {
-  "version": 3,
-  "description": "Bun native API structural patterns — inventory, matrix, score, and migration",
+  "version": 4,
+  "description": "Bun native API structural patterns \u2014 inventory, matrix, score, and migration",
   "bundles": {
     "server-boot": {
       "description": "HTTP/WebSocket server entrypoints",
-      "patterns": ["bun-serve", "bun-file", "bun-env", "fetch-native", "websocket"]
+      "patterns": [
+        "bun-serve",
+        "bun-file",
+        "bun-env",
+        "fetch-native",
+        "websocket"
+      ]
     },
     "cli": {
       "description": "CLI scripts and subprocess wiring",
-      "patterns": ["bun-argv", "bun-spawn", "bun-stdin", "bun-file", "bun-env"]
+      "patterns": [
+        "bun-argv",
+        "bun-spawn",
+        "bun-stdin",
+        "bun-file",
+        "bun-env"
+      ]
     },
     "persistence": {
       "description": "SQLite and file-backed storage",
-      "patterns": ["bun-sqlite", "bun-file", "bun-write", "bun-glob"]
+      "patterns": [
+        "bun-sqlite",
+        "bun-file",
+        "bun-write",
+        "bun-glob"
+      ]
     },
     "core": {
       "description": "All tier=core Bun APIs",
@@ -20,7 +37,53 @@
     },
     "hygiene": {
       "description": "Node APIs to migrate away from",
-      "patterns": ["node-fs", "node-fs-explicit", "node-child-process", "node-http"]
+      "patterns": [
+        "node-fs",
+        "node-fs-explicit",
+        "node-child-process",
+        "node-http"
+      ]
+    },
+    "networking": {
+      "description": "TCP/UDP/DNS and outbound fetch",
+      "patterns": [
+        "bun-listen",
+        "bun-connect",
+        "bun-udp",
+        "bun-dns",
+        "fetch-native",
+        "websocket"
+      ]
+    },
+    "bundler": {
+      "description": "Build, transpile, and plugin loaders",
+      "patterns": [
+        "bun-build",
+        "bun-transpiler",
+        "bun-plugin"
+      ]
+    },
+    "data-stores": {
+      "description": "SQLite, PostgreSQL, Redis",
+      "patterns": [
+        "bun-sqlite",
+        "bun-sql",
+        "bun-sql-tag",
+        "bun-redis",
+        "bun-redis-short"
+      ]
+    },
+    "full-stack": {
+      "description": "Server + data + networking core",
+      "patterns": [
+        "bun-serve",
+        "bun-build",
+        "bun-sqlite",
+        "bun-sql",
+        "bun-listen",
+        "fetch-native",
+        "html-rewriter"
+      ]
     }
   },
   "groups": {
@@ -35,7 +98,22 @@
     "secrets": "Bun.secrets keychain",
     "shell": "Bun.$ shell templates",
     "modules": "bun:* built-in module imports",
-    "anti-pattern": "Node APIs to migrate away from"
+    "anti-pattern": "Node APIs to migrate away from",
+    "networking": "TCP/UDP sockets, DNS",
+    "bundler": "Bun.build, Bun.plugin, Bun.Transpiler",
+    "data-stores": "PostgreSQL (Bun.SQL) and Redis clients",
+    "routing": "File-system routing",
+    "html": "HTMLRewriter streaming transforms",
+    "browser": "Headless WebView",
+    "workers": "Web Workers",
+    "cookies": "Bun.Cookie and CookieMap",
+    "csrf": "CSRF token helpers",
+    "compression": "gzip/deflate/zstd sync+async",
+    "streams": "readableStreamTo* helpers",
+    "parsing": "semver, TOML, Image",
+    "utils": "peek, deepEquals, escapeHTML, path/url helpers",
+    "low-level": "mmap, gc, heap snapshots",
+    "meta": "import.meta and module introspection"
   },
   "patterns": [
     {
@@ -46,7 +124,8 @@
       "group": "http",
       "outline": true,
       "tier": "core",
-      "description": "HTTP/WebSocket server boot"
+      "description": "HTTP/WebSocket server boot",
+      "docs_path": "/runtime/http/server"
     },
     {
       "id": "fetch-native",
@@ -56,7 +135,8 @@
       "group": "http",
       "outline": true,
       "tier": "core",
-      "description": "Bun-native fetch"
+      "description": "Bun-native fetch",
+      "docs_path": "/runtime/networking/fetch"
     },
     {
       "id": "websocket",
@@ -76,7 +156,8 @@
       "group": "io",
       "outline": true,
       "tier": "core",
-      "description": "Native file reads — prefer over node:fs"
+      "description": "Native file reads \u2014 prefer over node:fs",
+      "docs_path": "/runtime/file-io"
     },
     {
       "id": "bun-write",
@@ -86,7 +167,8 @@
       "group": "io",
       "outline": true,
       "tier": "core",
-      "description": "Native file writes"
+      "description": "Native file writes",
+      "docs_path": "/runtime/file-io"
     },
     {
       "id": "bun-remove",
@@ -126,7 +208,8 @@
       "group": "process",
       "outline": true,
       "tier": "core",
-      "description": "Child process spawn"
+      "description": "Child process spawn",
+      "docs_path": "/runtime/child-process"
     },
     {
       "id": "bun-which",
@@ -316,7 +399,8 @@
       "group": "db",
       "outline": true,
       "tier": "core",
-      "description": "SQLite built-in driver"
+      "description": "SQLite built-in driver",
+      "docs_path": "/runtime/sqlite"
     },
     {
       "id": "bun-test",
@@ -326,7 +410,8 @@
       "group": "test",
       "outline": false,
       "tier": "core",
-      "description": "Bun test runner"
+      "description": "Bun test runner",
+      "docs_path": "/test"
     },
     {
       "id": "bun-test-describe",
@@ -366,7 +451,7 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node fs — prefer Bun.file",
+      "description": "Node fs \u2014 prefer Bun.file",
       "migrate_to": "bun-file"
     },
     {
@@ -377,7 +462,7 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Explicit node:fs — prefer Bun.file",
+      "description": "Explicit node:fs \u2014 prefer Bun.file",
       "migrate_to": "bun-file"
     },
     {
@@ -388,7 +473,7 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node child_process — prefer Bun.spawn",
+      "description": "Node child_process \u2014 prefer Bun.spawn",
       "migrate_to": "bun-spawn"
     },
     {
@@ -399,8 +484,1096 @@
       "group": "anti-pattern",
       "outline": false,
       "tier": "migrate",
-      "description": "Node http — prefer Bun.serve",
+      "description": "Node http \u2014 prefer Bun.serve",
       "migrate_to": "bun-serve"
+    },
+    {
+      "id": "bun-build",
+      "name": "Bun.build",
+      "pattern": "Bun.build($$$)",
+      "lang": "ts",
+      "group": "bundler",
+      "outline": true,
+      "tier": "core",
+      "description": "Native bundler",
+      "docs_path": "/bundler"
+    },
+    {
+      "id": "bun-spawn-sync",
+      "name": "Bun.spawnSync",
+      "pattern": "Bun.spawnSync($$$)",
+      "lang": "ts",
+      "group": "process",
+      "outline": true,
+      "tier": "extended",
+      "description": "Blocking child process",
+      "docs_path": "/runtime/child-process"
+    },
+    {
+      "id": "bun-stdout",
+      "name": "Bun.stdout",
+      "pattern": "Bun.stdout",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Stdout stream",
+      "docs_path": "/runtime/file-io"
+    },
+    {
+      "id": "bun-stderr",
+      "name": "Bun.stderr",
+      "pattern": "Bun.stderr",
+      "lang": "ts",
+      "group": "io",
+      "outline": true,
+      "tier": "extended",
+      "description": "Stderr stream",
+      "docs_path": "/runtime/file-io"
+    },
+    {
+      "id": "bun-listen",
+      "name": "Bun.listen",
+      "pattern": "Bun.listen($$$)",
+      "lang": "ts",
+      "group": "networking",
+      "outline": true,
+      "tier": "extended",
+      "description": "TCP server socket",
+      "docs_path": "/runtime/networking/tcp"
+    },
+    {
+      "id": "bun-connect",
+      "name": "Bun.connect",
+      "pattern": "Bun.connect($$$)",
+      "lang": "ts",
+      "group": "networking",
+      "outline": true,
+      "tier": "extended",
+      "description": "TCP client socket",
+      "docs_path": "/runtime/networking/tcp"
+    },
+    {
+      "id": "bun-udp",
+      "name": "Bun.udpSocket",
+      "pattern": "Bun.udpSocket($$$)",
+      "lang": "ts",
+      "group": "networking",
+      "outline": true,
+      "tier": "extended",
+      "description": "UDP socket",
+      "docs_path": "/runtime/networking/udp"
+    },
+    {
+      "id": "bun-transpiler",
+      "name": "Bun.Transpiler",
+      "pattern": "new Bun.Transpiler($$$)",
+      "lang": "ts",
+      "group": "bundler",
+      "outline": true,
+      "tier": "extended",
+      "description": "JS/TS transpiler",
+      "docs_path": "/runtime/transpiler"
+    },
+    {
+      "id": "bun-fs-router",
+      "name": "Bun.FileSystemRouter",
+      "pattern": "new Bun.FileSystemRouter($$$)",
+      "lang": "ts",
+      "group": "routing",
+      "outline": true,
+      "tier": "extended",
+      "description": "File-based HTTP routing",
+      "docs_path": "/runtime/file-system-router"
+    },
+    {
+      "id": "html-rewriter",
+      "name": "HTMLRewriter",
+      "pattern": "new HTMLRewriter($$$)",
+      "lang": "ts",
+      "group": "html",
+      "outline": true,
+      "tier": "extended",
+      "description": "Streaming HTML transforms",
+      "docs_path": "/runtime/html-rewriter"
+    },
+    {
+      "id": "bun-webview",
+      "name": "Bun.WebView",
+      "pattern": "new Bun.WebView($$$)",
+      "lang": "ts",
+      "group": "browser",
+      "outline": false,
+      "tier": "extended",
+      "description": "Headless browser WebView",
+      "docs_path": "/runtime/webview"
+    },
+    {
+      "id": "bun-sha",
+      "name": "Bun.sha",
+      "pattern": "Bun.sha($$$)",
+      "lang": "ts",
+      "group": "crypto",
+      "outline": true,
+      "tier": "extended",
+      "description": "SHA hash helper",
+      "docs_path": "/runtime/hashing"
+    },
+    {
+      "id": "bun-csrf",
+      "name": "Bun.CSRF",
+      "pattern": "Bun.CSRF.$METHOD($$$)",
+      "lang": "ts",
+      "group": "csrf",
+      "outline": true,
+      "tier": "extended",
+      "description": "CSRF token generate/verify",
+      "docs_path": "/runtime/csrf"
+    },
+    {
+      "id": "bun-sql",
+      "name": "Bun.SQL",
+      "pattern": "Bun.SQL($$$)",
+      "lang": "ts",
+      "group": "data-stores",
+      "outline": true,
+      "tier": "core",
+      "description": "PostgreSQL client constructor",
+      "docs_path": "/runtime/sql"
+    },
+    {
+      "id": "bun-sql-tag",
+      "name": "Bun.sql",
+      "pattern": "Bun.sql",
+      "lang": "ts",
+      "group": "data-stores",
+      "outline": true,
+      "tier": "core",
+      "description": "PostgreSQL tagged template",
+      "docs_path": "/runtime/sql"
+    },
+    {
+      "id": "bun-redis",
+      "name": "Bun.RedisClient",
+      "pattern": "Bun.RedisClient($$$)",
+      "lang": "ts",
+      "group": "data-stores",
+      "outline": true,
+      "tier": "extended",
+      "description": "Redis/Valkey client",
+      "docs_path": "/runtime/redis"
+    },
+    {
+      "id": "bun-redis-short",
+      "name": "Bun.redis",
+      "pattern": "Bun.redis",
+      "lang": "ts",
+      "group": "data-stores",
+      "outline": true,
+      "tier": "extended",
+      "description": "Redis shorthand client",
+      "docs_path": "/runtime/redis"
+    },
+    {
+      "id": "bun-dns",
+      "name": "Bun.dns",
+      "pattern": "Bun.dns.$METHOD($$$)",
+      "lang": "ts",
+      "group": "networking",
+      "outline": true,
+      "tier": "extended",
+      "description": "DNS lookup/prefetch/cache",
+      "docs_path": "/runtime/networking/dns"
+    },
+    {
+      "id": "worker",
+      "name": "Worker",
+      "pattern": "new Worker($$$)",
+      "lang": "ts",
+      "group": "workers",
+      "outline": true,
+      "tier": "extended",
+      "description": "Web Worker spawn",
+      "docs_path": "/runtime/workers"
+    },
+    {
+      "id": "bun-plugin",
+      "name": "Bun.plugin",
+      "pattern": "Bun.plugin($$$)",
+      "lang": "ts",
+      "group": "bundler",
+      "outline": true,
+      "tier": "extended",
+      "description": "Bundler plugin loader",
+      "docs_path": "/bundler/plugins"
+    },
+    {
+      "id": "bun-cookie",
+      "name": "Bun.Cookie",
+      "pattern": "new Bun.Cookie($$$)",
+      "lang": "ts",
+      "group": "cookies",
+      "outline": true,
+      "tier": "extended",
+      "description": "HTTP cookie value",
+      "docs_path": "/runtime/cookies"
+    },
+    {
+      "id": "bun-cookie-map",
+      "name": "Bun.CookieMap",
+      "pattern": "new Bun.CookieMap($$$)",
+      "lang": "ts",
+      "group": "cookies",
+      "outline": true,
+      "tier": "extended",
+      "description": "Cookie header map",
+      "docs_path": "/runtime/cookies"
+    },
+    {
+      "id": "import-meta",
+      "name": "import.meta",
+      "pattern": "import.meta",
+      "lang": "ts",
+      "group": "meta",
+      "outline": false,
+      "tier": "extended",
+      "description": "Module metadata",
+      "docs_path": "/runtime/module-resolution#import-meta"
+    },
+    {
+      "id": "bun-revision",
+      "name": "Bun.revision",
+      "pattern": "Bun.revision",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "extended",
+      "description": "Git revision string",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-sleep-sync",
+      "name": "Bun.sleepSync",
+      "pattern": "Bun.sleepSync($$$)",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "extended",
+      "description": "Blocking sleep",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-random-uuidv7",
+      "name": "Bun.randomUUIDv7",
+      "pattern": "Bun.randomUUIDv7($$$)",
+      "lang": "ts",
+      "group": "runtime",
+      "outline": true,
+      "tier": "extended",
+      "description": "Time-sortable UUID v7",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-peek",
+      "name": "Bun.peek",
+      "pattern": "Bun.peek($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync peek at Promise value",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-deep-equals",
+      "name": "Bun.deepEquals",
+      "pattern": "Bun.deepEquals($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "Deep equality compare",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-deep-match",
+      "name": "Bun.deepMatch",
+      "pattern": "Bun.deepMatch($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "Deep partial object match",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-escape-html",
+      "name": "Bun.escapeHTML",
+      "pattern": "Bun.escapeHTML($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "HTML entity escape",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-string-width",
+      "name": "Bun.stringWidth",
+      "pattern": "Bun.stringWidth($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "Terminal string width",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-index-of-line",
+      "name": "Bun.indexOfLine",
+      "pattern": "Bun.indexOfLine($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": false,
+      "tier": "extended",
+      "description": "Line index in buffer",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-file-url-to-path",
+      "name": "Bun.fileURLToPath",
+      "pattern": "Bun.fileURLToPath($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "file:// to path",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-path-to-file-url",
+      "name": "Bun.pathToFileURL",
+      "pattern": "Bun.pathToFileURL($$$)",
+      "lang": "ts",
+      "group": "utils",
+      "outline": true,
+      "tier": "extended",
+      "description": "path to file:// URL",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-gzip-sync",
+      "name": "Bun.gzipSync",
+      "pattern": "Bun.gzipSync($$$)",
+      "lang": "ts",
+      "group": "compression",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync gzip compress",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-gunzip-sync",
+      "name": "Bun.gunzipSync",
+      "pattern": "Bun.gunzipSync($$$)",
+      "lang": "ts",
+      "group": "compression",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync gzip decompress",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-deflate-sync",
+      "name": "Bun.deflateSync",
+      "pattern": "Bun.deflateSync($$$)",
+      "lang": "ts",
+      "group": "compression",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync deflate",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-inflate-sync",
+      "name": "Bun.inflateSync",
+      "pattern": "Bun.inflateSync($$$)",
+      "lang": "ts",
+      "group": "compression",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync inflate",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-zstd",
+      "name": "Bun.zstd*",
+      "pattern": "Bun.zstd$METHOD($$$)",
+      "lang": "ts",
+      "group": "compression",
+      "outline": true,
+      "tier": "extended",
+      "description": "zstd compress/decompress",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-readable-stream-to",
+      "name": "Bun.readableStreamTo*",
+      "pattern": "Bun.readableStreamTo$METHOD($$$)",
+      "lang": "ts",
+      "group": "streams",
+      "outline": true,
+      "tier": "extended",
+      "description": "Drain ReadableStream to bytes/blob/json",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-array-buffer-sink",
+      "name": "Bun.ArrayBufferSink",
+      "pattern": "new Bun.ArrayBufferSink($$$)",
+      "lang": "ts",
+      "group": "streams",
+      "outline": true,
+      "tier": "extended",
+      "description": "Incremental ArrayBuffer builder",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-alloc-unsafe",
+      "name": "Bun.allocUnsafe",
+      "pattern": "Bun.allocUnsafe($$$)",
+      "lang": "ts",
+      "group": "low-level",
+      "outline": false,
+      "tier": "extended",
+      "description": "Allocate uninitialized buffer",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-concat-array-buffers",
+      "name": "Bun.concatArrayBuffers",
+      "pattern": "Bun.concatArrayBuffers($$$)",
+      "lang": "ts",
+      "group": "low-level",
+      "outline": false,
+      "tier": "extended",
+      "description": "Concatenate ArrayBuffers",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-resolve-sync",
+      "name": "Bun.resolveSync",
+      "pattern": "Bun.resolveSync($$$)",
+      "lang": "ts",
+      "group": "meta",
+      "outline": true,
+      "tier": "extended",
+      "description": "Sync module resolution",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-semver",
+      "name": "Bun.semver",
+      "pattern": "Bun.semver.$METHOD($$$)",
+      "lang": "ts",
+      "group": "parsing",
+      "outline": true,
+      "tier": "extended",
+      "description": "Semver compare/satisfies",
+      "docs_path": "/runtime/semver"
+    },
+    {
+      "id": "bun-toml",
+      "name": "Bun.TOML.parse",
+      "pattern": "Bun.TOML.parse($$$)",
+      "lang": "ts",
+      "group": "parsing",
+      "outline": true,
+      "tier": "extended",
+      "description": "Parse TOML config",
+      "docs_path": "/runtime/toml"
+    },
+    {
+      "id": "bun-image",
+      "name": "Bun.Image",
+      "pattern": "Bun.Image($$$)",
+      "lang": "ts",
+      "group": "parsing",
+      "outline": true,
+      "tier": "extended",
+      "description": "Image decode/encode",
+      "docs_path": "/runtime/image"
+    },
+    {
+      "id": "bun-mmap",
+      "name": "Bun.mmap",
+      "pattern": "Bun.mmap($$$)",
+      "lang": "ts",
+      "group": "low-level",
+      "outline": false,
+      "tier": "extended",
+      "description": "Memory-map file",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-gc",
+      "name": "Bun.gc",
+      "pattern": "Bun.gc($$$)",
+      "lang": "ts",
+      "group": "low-level",
+      "outline": false,
+      "tier": "extended",
+      "description": "Trigger garbage collection",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "bun-heap-snapshot",
+      "name": "Bun.generateHeapSnapshot",
+      "pattern": "Bun.generateHeapSnapshot($$$)",
+      "lang": "ts",
+      "group": "low-level",
+      "outline": false,
+      "tier": "extended",
+      "description": "Heap snapshot for profiling",
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "shell-dollar",
+      "name": "$ shell",
+      "pattern": "await $`$$$`",
+      "lang": "ts",
+      "group": "shell",
+      "outline": false,
+      "tier": "core",
+      "description": "Standalone $ shell template (docs)",
+      "docs_path": "/runtime/shell"
+    }
+  ],
+  "docs_base": "https://bun.sh/docs",
+  "docs_index": "/runtime/bun-apis",
+  "docs_topics": [
+    {
+      "id": "http-server",
+      "topic": "HTTP Server",
+      "apis": [
+        "Bun.serve"
+      ],
+      "patterns": [
+        "bun-serve"
+      ],
+      "docs_path": "/runtime/http/server"
+    },
+    {
+      "id": "shell",
+      "topic": "Shell",
+      "apis": [
+        "$",
+        "Bun.$"
+      ],
+      "patterns": [
+        "shell-dollar",
+        "bun-shell"
+      ],
+      "docs_path": "/runtime/shell"
+    },
+    {
+      "id": "bundler",
+      "topic": "Bundler",
+      "apis": [
+        "Bun.build"
+      ],
+      "patterns": [
+        "bun-build"
+      ],
+      "docs_path": "/bundler"
+    },
+    {
+      "id": "file-io",
+      "topic": "File I/O",
+      "apis": [
+        "Bun.file",
+        "Bun.write",
+        "Bun.stdin",
+        "Bun.stdout",
+        "Bun.stderr"
+      ],
+      "patterns": [
+        "bun-file",
+        "bun-write",
+        "bun-stdin",
+        "bun-stdout",
+        "bun-stderr"
+      ],
+      "docs_path": "/runtime/file-io"
+    },
+    {
+      "id": "child-processes",
+      "topic": "Child Processes",
+      "apis": [
+        "Bun.spawn",
+        "Bun.spawnSync"
+      ],
+      "patterns": [
+        "bun-spawn",
+        "bun-spawn-sync"
+      ],
+      "docs_path": "/runtime/child-process"
+    },
+    {
+      "id": "tcp",
+      "topic": "TCP Sockets",
+      "apis": [
+        "Bun.listen",
+        "Bun.connect"
+      ],
+      "patterns": [
+        "bun-listen",
+        "bun-connect"
+      ],
+      "docs_path": "/runtime/networking/tcp"
+    },
+    {
+      "id": "udp",
+      "topic": "UDP Sockets",
+      "apis": [
+        "Bun.udpSocket"
+      ],
+      "patterns": [
+        "bun-udp"
+      ],
+      "docs_path": "/runtime/networking/udp"
+    },
+    {
+      "id": "websockets",
+      "topic": "WebSockets",
+      "apis": [
+        "WebSocket",
+        "Bun.serve"
+      ],
+      "patterns": [
+        "websocket",
+        "bun-serve"
+      ],
+      "docs_path": "/runtime/http/websockets"
+    },
+    {
+      "id": "transpiler",
+      "topic": "Transpiler",
+      "apis": [
+        "Bun.Transpiler"
+      ],
+      "patterns": [
+        "bun-transpiler"
+      ],
+      "docs_path": "/runtime/transpiler"
+    },
+    {
+      "id": "routing",
+      "topic": "Routing",
+      "apis": [
+        "Bun.FileSystemRouter"
+      ],
+      "patterns": [
+        "bun-fs-router"
+      ],
+      "docs_path": "/runtime/file-system-router"
+    },
+    {
+      "id": "html-rewriter",
+      "topic": "Streaming HTML",
+      "apis": [
+        "HTMLRewriter"
+      ],
+      "patterns": [
+        "html-rewriter"
+      ],
+      "docs_path": "/runtime/html-rewriter"
+    },
+    {
+      "id": "webview",
+      "topic": "Headless Browser",
+      "apis": [
+        "Bun.WebView"
+      ],
+      "patterns": [
+        "bun-webview"
+      ],
+      "docs_path": "/runtime/webview"
+    },
+    {
+      "id": "hashing",
+      "topic": "Hashing",
+      "apis": [
+        "Bun.password",
+        "Bun.hash",
+        "Bun.CryptoHasher",
+        "Bun.sha"
+      ],
+      "patterns": [
+        "bun-password",
+        "bun-hash",
+        "bun-crypto-hasher",
+        "bun-sha"
+      ],
+      "docs_path": "/runtime/hashing"
+    },
+    {
+      "id": "csrf",
+      "topic": "CSRF Protection",
+      "apis": [
+        "Bun.CSRF.generate",
+        "Bun.CSRF.verify"
+      ],
+      "patterns": [
+        "bun-csrf"
+      ],
+      "docs_path": "/runtime/csrf"
+    },
+    {
+      "id": "sqlite",
+      "topic": "SQLite",
+      "apis": [
+        "bun:sqlite"
+      ],
+      "patterns": [
+        "bun-sqlite"
+      ],
+      "docs_path": "/runtime/sqlite"
+    },
+    {
+      "id": "postgres",
+      "topic": "PostgreSQL Client",
+      "apis": [
+        "Bun.SQL",
+        "Bun.sql"
+      ],
+      "patterns": [
+        "bun-sql",
+        "bun-sql-tag"
+      ],
+      "docs_path": "/runtime/sql"
+    },
+    {
+      "id": "redis",
+      "topic": "Redis (Valkey) Client",
+      "apis": [
+        "Bun.RedisClient",
+        "Bun.redis"
+      ],
+      "patterns": [
+        "bun-redis",
+        "bun-redis-short"
+      ],
+      "docs_path": "/runtime/redis"
+    },
+    {
+      "id": "ffi",
+      "topic": "FFI",
+      "apis": [
+        "bun:ffi"
+      ],
+      "patterns": [
+        "bun-ffi"
+      ],
+      "docs_path": "/runtime/ffi"
+    },
+    {
+      "id": "dns",
+      "topic": "DNS",
+      "apis": [
+        "Bun.dns.lookup",
+        "Bun.dns.prefetch",
+        "Bun.dns.getCacheStats"
+      ],
+      "patterns": [
+        "bun-dns"
+      ],
+      "docs_path": "/runtime/networking/dns"
+    },
+    {
+      "id": "testing",
+      "topic": "Testing",
+      "apis": [
+        "bun:test"
+      ],
+      "patterns": [
+        "bun-test",
+        "bun-test-describe"
+      ],
+      "docs_path": "/test"
+    },
+    {
+      "id": "workers",
+      "topic": "Workers",
+      "apis": [
+        "Worker"
+      ],
+      "patterns": [
+        "worker"
+      ],
+      "docs_path": "/runtime/workers"
+    },
+    {
+      "id": "plugins",
+      "topic": "Module Loaders",
+      "apis": [
+        "Bun.plugin"
+      ],
+      "patterns": [
+        "bun-plugin"
+      ],
+      "docs_path": "/bundler/plugins"
+    },
+    {
+      "id": "glob",
+      "topic": "Glob",
+      "apis": [
+        "Bun.Glob"
+      ],
+      "patterns": [
+        "bun-glob"
+      ],
+      "docs_path": "/runtime/glob"
+    },
+    {
+      "id": "cookies",
+      "topic": "Cookies",
+      "apis": [
+        "Bun.Cookie",
+        "Bun.CookieMap"
+      ],
+      "patterns": [
+        "bun-cookie",
+        "bun-cookie-map"
+      ],
+      "docs_path": "/runtime/cookies"
+    },
+    {
+      "id": "import-meta",
+      "topic": "import.meta",
+      "apis": [
+        "import.meta"
+      ],
+      "patterns": [
+        "import-meta"
+      ],
+      "docs_path": "/runtime/module-resolution#import-meta"
+    },
+    {
+      "id": "utilities",
+      "topic": "Utilities",
+      "apis": [
+        "Bun.version",
+        "Bun.revision",
+        "Bun.env",
+        "Bun.main"
+      ],
+      "patterns": [
+        "bun-version",
+        "bun-revision",
+        "bun-env",
+        "bun-main"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "sleep-timing",
+      "topic": "Sleep & Timing",
+      "apis": [
+        "Bun.sleep",
+        "Bun.sleepSync",
+        "Bun.nanoseconds"
+      ],
+      "patterns": [
+        "bun-sleep",
+        "bun-sleep-sync",
+        "bun-nanoseconds"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "random-uuid",
+      "topic": "Random & UUID",
+      "apis": [
+        "Bun.randomUUIDv7"
+      ],
+      "patterns": [
+        "bun-random-uuidv7"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "system-env",
+      "topic": "System & Environment",
+      "apis": [
+        "Bun.which"
+      ],
+      "patterns": [
+        "bun-which"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "comparison",
+      "topic": "Comparison & Inspection",
+      "apis": [
+        "Bun.peek",
+        "Bun.deepEquals",
+        "Bun.deepMatch",
+        "Bun.inspect"
+      ],
+      "patterns": [
+        "bun-peek",
+        "bun-deep-equals",
+        "bun-deep-match",
+        "bun-inspect",
+        "bun-inspect-table"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "string-text",
+      "topic": "String & Text Processing",
+      "apis": [
+        "Bun.escapeHTML",
+        "Bun.stringWidth",
+        "Bun.indexOfLine"
+      ],
+      "patterns": [
+        "bun-escape-html",
+        "bun-string-width",
+        "bun-index-of-line"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "url-path",
+      "topic": "URL & Path Utilities",
+      "apis": [
+        "Bun.fileURLToPath",
+        "Bun.pathToFileURL"
+      ],
+      "patterns": [
+        "bun-file-url-to-path",
+        "bun-path-to-file-url"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "compression",
+      "topic": "Compression",
+      "apis": [
+        "Bun.gzipSync",
+        "Bun.gunzipSync",
+        "Bun.deflateSync",
+        "Bun.inflateSync",
+        "Bun.zstd*"
+      ],
+      "patterns": [
+        "bun-gzip-sync",
+        "bun-gunzip-sync",
+        "bun-deflate-sync",
+        "bun-inflate-sync",
+        "bun-zstd"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "stream-processing",
+      "topic": "Stream Processing",
+      "apis": [
+        "Bun.readableStreamTo*"
+      ],
+      "patterns": [
+        "bun-readable-stream-to"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "memory-buffer",
+      "topic": "Memory & Buffer Management",
+      "apis": [
+        "Bun.ArrayBufferSink",
+        "Bun.allocUnsafe",
+        "Bun.concatArrayBuffers"
+      ],
+      "patterns": [
+        "bun-array-buffer-sink",
+        "bun-alloc-unsafe",
+        "bun-concat-array-buffers"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "module-resolution",
+      "topic": "Module Resolution",
+      "apis": [
+        "Bun.resolveSync"
+      ],
+      "patterns": [
+        "bun-resolve-sync"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "parsing-formatting",
+      "topic": "Parsing & Formatting",
+      "apis": [
+        "Bun.semver",
+        "Bun.TOML.parse",
+        "Bun.markdown",
+        "Bun.color",
+        "Bun.Image"
+      ],
+      "patterns": [
+        "bun-semver",
+        "bun-toml",
+        "bun-markdown-html",
+        "bun-markdown-ansi",
+        "bun-markdown-render",
+        "bun-color",
+        "bun-image"
+      ],
+      "docs_path": "/runtime/semver"
+    },
+    {
+      "id": "low-level",
+      "topic": "Low-level / Internals",
+      "apis": [
+        "Bun.mmap",
+        "Bun.gc",
+        "Bun.generateHeapSnapshot",
+        "bun:jsc"
+      ],
+      "patterns": [
+        "bun-mmap",
+        "bun-gc",
+        "bun-heap-snapshot",
+        "bun-jsc"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "secrets",
+      "topic": "Secrets (extension)",
+      "apis": [
+        "Bun.secrets"
+      ],
+      "patterns": [
+        "bun-secrets"
+      ],
+      "docs_path": "/runtime/utils"
+    },
+    {
+      "id": "fetch",
+      "topic": "Fetch (Web standard)",
+      "apis": [
+        "fetch"
+      ],
+      "patterns": [
+        "fetch-native"
+      ],
+      "docs_path": "/runtime/networking/fetch"
     }
   ]
 }

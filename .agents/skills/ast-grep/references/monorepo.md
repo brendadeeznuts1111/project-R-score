@@ -69,7 +69,9 @@ python3 $AG bun search bun-file --zone sports-terminal
 python3 $AG audit --profile bun --only sports-terminal   # node:fs hints + CI rules
 ```
 
-**Groups:** `http`, `io`, `process`, `db`, `crypto`, `runtime`, `display`, `secrets`, `shell`, `test`, `modules`, `anti-pattern`
+**Docs index:** [bun.sh/docs/runtime/bun-apis](https://bun.sh/docs/runtime/bun-apis) — `python3 $AG bun docs` reports topic coverage.
+
+**Groups:** `http`, `io`, `process`, `db`, `crypto`, `runtime`, `display`, `secrets`, `shell`, `test`, `modules`, `networking`, `bundler`, `data-stores`, `routing`, `html`, `workers`, `cookies`, `compression`, `streams`, `parsing`, `utils`, `low-level`, `anti-pattern`
 
 | Tier | Examples |
 |---|---|
@@ -86,7 +88,7 @@ python3 $AG bun matrix --zone sports-terminal
 ./scripts/bun-ci.sh                              # score + migrate + audit --profile bun
 ```
 
-**Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`
+**Bundles:** `server-boot`, `cli`, `persistence`, `core`, `hygiene`, `networking`, `bundler`, `data-stores`, `full-stack`
 
 **Cache:** `.bun-inventory-cache.json` (gitignored) — `bun score`/`report`/`matrix` reuse it; `--refresh` rebuilds.
 

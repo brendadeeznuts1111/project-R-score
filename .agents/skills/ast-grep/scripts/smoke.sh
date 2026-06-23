@@ -59,6 +59,9 @@ echo ""
 echo "== jump --name f402Fetch =="
 python3 "$HELPER" -q jump --name f402Fetch --zone kimi 2>&1 | head -10
 echo ""
+echo "== bun docs =="
+python3 "$HELPER" -q bun docs 2>&1 | head -20
+echo ""
 echo "== bun bundles =="
 python3 "$HELPER" -q bun bundles 2>&1 | head -12
 echo ""

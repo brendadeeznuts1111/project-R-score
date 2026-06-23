@@ -240,3 +240,120 @@ rule:
   pattern: Bun.secrets
 name: Bun.secrets
 isExported: false
+---
+id: bun-build-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.build($$$OPTS)
+name: Bun.build
+isExported: false
+---
+id: bun-spawn-sync-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.spawnSync($$$ARGS)
+name: Bun.spawnSync
+isExported: false
+---
+id: bun-listen-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.listen($$$OPTS)
+name: Bun.listen
+isExported: false
+---
+id: bun-connect-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.connect($$$OPTS)
+name: Bun.connect
+isExported: false
+---
+id: bun-sql-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.SQL($$$OPTS)
+name: Bun.SQL
+isExported: false
+---
+id: bun-sql-tag-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.sql
+name: Bun.sql
+isExported: false
+---
+id: worker-spawn
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Worker($$$URL)
+name: Worker
+isExported: false
+---
+id: bun-plugin-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.plugin($$$OPTS)
+name: Bun.plugin
+isExported: false
+---
+id: html-rewriter-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new HTMLRewriter($$$)
+name: HTMLRewriter
+isExported: false
+---
+id: bun-toml-parse
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.TOML.parse($$$SRC)
+name: Bun.TOML.parse
+isExported: false
+---
+id: bun-semver-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.semver.$METHOD($$$ARGS)
+name: Bun.semver
+isExported: false
+---
+id: bun-dns-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.dns.$METHOD($$$ARGS)
+name: Bun.dns
+isExported: false
+---
+id: bun-csrf-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.CSRF.$METHOD($$$ARGS)
+name: Bun.CSRF
+isExported: false

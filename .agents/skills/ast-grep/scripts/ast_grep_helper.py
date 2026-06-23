@@ -43,6 +43,7 @@ USAGE
     ast_grep_helper.py bun score [--min-score N]    # adoption score per target
     ast_grep_helper.py bun migrate                  # anti-pattern -> Bun.native hints
     ast_grep_helper.py bun report                   # unified Bun intelligence report
+    ast_grep_helper.py bun docs                       # official Bun API topic coverage
     ast_grep_helper.py bun search PATTERN_ID          # run cataloged Bun pattern
     ast_grep_helper.py files PATTERN [--path PATH]      # paths-with-matches only
     ast_grep_helper.py validate PATTERN [--lang LANG]   # offline pattern hint check only
@@ -87,7 +88,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-VERSION = "0.12.0"
+VERSION = "0.13.0"
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -1802,8 +1803,10 @@ def cmd_bun_patterns(args: argparse.Namespace) -> int:
             outline = "outline" if p.get("outline") else "search"
             tier = p.get("tier", "")
             tier_s = f" {tier}" if tier else ""
-            print(f"  {p.get('id')}: {p.get('name')}  ({outline}{tier_s}) — {p.get('description', '')}")
-    print("\nrun: bun matrix | bun heatmap | bun search <id>")
+            docs = p.get("docs_path")
+            docs_s = f"  docs:{docs}" if docs else ""
+            print(f"  {p.get('id')}: {p.get('name')}  ({outline}{tier_s}) — {p.get('description', '')}{docs_s}")
+    print("\nrun: bun docs | bun matrix | bun heatmap | bun search <id>")
     return 0
 
 
@@ -2080,6 +2083,66 @@ def cmd_bun_report(args: argparse.Namespace) -> int:
         p = _find_bun_pattern(all_patterns, pid) or {}
         if (p.get("group") or "") != "anti-pattern":
             print(f"  {p.get('name', pid)}: {count}")
+    return 0
+
+
+def cmd_bun_docs(args: argparse.Namespace) -> int:
+    data = _load_bun_patterns()
+    topics = data.get("docs_topics", [])
+    patterns = data.get("patterns", [])
+    pattern_ids = {p.get("id") for p in patterns}
+    base = (data.get("docs_base") or "https://bun.sh/docs").rstrip("/")
+    index_path = data.get("docs_index", "/runtime/bun-apis")
+    topic_q = (getattr(args, "topic", None) or "").lower()
+
+    if topic_q:
+        topics = [
+            t for t in topics
+            if topic_q in (t.get("id") or "").lower()
+            or topic_q in (t.get("topic") or "").lower()
+        ]
+
+    rows: list[dict] = []
+    for t in topics:
+        mapped = [pid for pid in t.get("patterns", []) if pid in pattern_ids]
+        missing = [pid for pid in t.get("patterns", []) if pid not in pattern_ids]
+        rows.append({
+            "id": t.get("id"),
+            "topic": t.get("topic"),
+            "apis": t.get("apis", []),
+            "patterns": mapped,
+            "missing_patterns": missing,
+            "docs_url": f"{base}{t.get('docs_path', '')}",
+            "covered": len(mapped) == len(t.get("patterns", [])) and bool(mapped),
+        })
+
+    if getattr(args, "json_out", False):
+        json.dump({
+            "version": data.get("version"),
+            "index_url": f"{base}{index_path}",
+            "topics": rows,
+            "coverage": sum(1 for r in rows if r["covered"]),
+            "total": len(rows),
+        }, sys.stdout, indent=2)
+        print()
+        return 0
+
+    covered = sum(1 for r in rows if r["covered"])
+    print(f"bun docs: {covered}/{len(rows)} topics covered (bun-patterns.json v{data.get('version', '?')})")
+    print(f"index: {base}{index_path}")
+    print(f"patterns: {len([p for p in patterns if (p.get('group') or '') != 'anti-pattern'])} native APIs")
+    for row in rows:
+        status = "ok" if row["covered"] else "gap"
+        pats = ", ".join(row["patterns"]) or "(none)"
+        apis = ", ".join(row["apis"][:4])
+        more = f" +{len(row['apis']) - 4}" if len(row["apis"]) > 4 else ""
+        print(f"\n[{status}] {row['topic']}")
+        print(f"  apis: {apis}{more}")
+        print(f"  patterns: {pats}")
+        print(f"  docs: {row['docs_url']}")
+        if row["missing_patterns"]:
+            print(f"  missing: {', '.join(row['missing_patterns'])}")
+    print("\nrun: bun patterns --group networking | bun search bun-build")
     return 0
 
 
@@ -3076,6 +3139,11 @@ def build_parser() -> argparse.ArgumentParser:
     bun_s.add_argument("--context", "-C", type=int, help="Lines of context.")
     bun_s.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_s.set_defaults(func=cmd_bun_search)
+
+    bun_d = bun_sub.add_parser("docs", help="Official Bun API topic coverage (bun.sh/docs/runtime/bun-apis).")
+    bun_d.add_argument("--topic", help="Filter by topic id or name (http-server, PostgreSQL, ...).")
+    bun_d.add_argument("--json-out", action="store_true", help="Emit JSON.")
+    bun_d.set_defaults(func=cmd_bun_docs)
 
     return p
 

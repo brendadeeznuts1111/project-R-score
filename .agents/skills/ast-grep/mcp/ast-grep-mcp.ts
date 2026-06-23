@@ -14,7 +14,7 @@ import {
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.10.0';
+const SERVER_VERSION = '0.11.0';
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
 
@@ -207,7 +207,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'search'], description: 'Bun subcommand' },
+        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'search'], description: 'Bun subcommand' },
         patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
         only: { type: 'string' },
         zone: { type: 'string', enum: ['sports-terminal', 'kimi', 'agents'] },

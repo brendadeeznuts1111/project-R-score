@@ -10,6 +10,7 @@
     "baseline": "./scripts/baseline.sh",
     "ci": "./scripts/ci.sh",
     "codemods": "bun scripts/bun-cli.ts codemods",
+    "bun:docs": "bun scripts/bun-cli.ts bun docs",
     "bun:patterns": "bun scripts/bun-cli.ts bun patterns",
     "bun:inventory": "bun scripts/bun-cli.ts bun inventory --zone sports-terminal",
     "bun:matrix": "bun scripts/bun-cli.ts bun matrix --zone sports-terminal",
