@@ -1,0 +1,14 @@
+id: prefer-bun-env
+snapshots:
+  const home = process.env.HOME:
+    labels:
+    - source: process.env.HOME
+      style: primary
+      start: 13
+      end: 29
+  const port = process.env.PORT:
+    labels:
+    - source: process.env.PORT
+      style: primary
+      start: 13
+      end: 29

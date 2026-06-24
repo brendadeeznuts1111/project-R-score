@@ -1,0 +1,6 @@
+id: bun-glob-exact-signature
+valid:
+  - 'new Bun.Glob("**/*.md")'
+invalid:
+  - 'new Bun.Glob()'
+  - 'new Bun.Glob("a", "b")'

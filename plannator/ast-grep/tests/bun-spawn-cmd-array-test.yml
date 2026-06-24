@@ -1,0 +1,6 @@
+id: bun-spawn-cmd-array
+valid:
+  - 'Bun.spawn({ cmd: ["echo", "hi"] })'
+  - 'Bun.spawn({ cmd: ["plannotator", "annotate", file], stdout: "pipe" })'
+invalid:
+  - 'Bun.spawn(["echo", "hi"])'

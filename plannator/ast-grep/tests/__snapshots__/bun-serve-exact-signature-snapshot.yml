@@ -1,0 +1,14 @@
+id: bun-serve-exact-signature
+snapshots:
+  Bun.serve():
+    labels:
+    - source: Bun.serve()
+      style: primary
+      start: 0
+      end: 11
+  Bun.serve(3000):
+    labels:
+    - source: Bun.serve(3000)
+      style: primary
+      start: 0
+      end: 15

@@ -1,0 +1,6 @@
+id: effect-prefer-tagged-error
+valid:
+  - 'class FileError extends Data.TaggedError("FileError")<{ path: string }>() {}'
+invalid:
+  - 'throw new Error("failed")'
+  - 'return new Error("failed")'

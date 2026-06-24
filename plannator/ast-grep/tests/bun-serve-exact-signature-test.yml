@@ -1,0 +1,6 @@
+id: bun-serve-exact-signature
+valid:
+  - 'Bun.serve({ port: 3000, fetch: () => new Response("hi") })'
+  - 'Bun.serve({ routes: { "/": home } })'
+invalid:
+  - 'Bun.serve()'

@@ -1,0 +1,8 @@
+id: no-buffer
+valid:
+  - 'const bytes = new Uint8Array(8)'
+  - 'const data = await Bun.file("x").bytes()'
+invalid:
+  - 'const buf = Buffer.from("hello")'
+  - 'const buf = new Buffer(8)'
+  - 'const buf = Buffer.alloc(16)'

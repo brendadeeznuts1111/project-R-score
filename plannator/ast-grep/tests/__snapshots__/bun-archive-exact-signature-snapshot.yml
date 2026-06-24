@@ -1,0 +1,14 @@
+id: bun-archive-exact-signature
+snapshots:
+  new Bun.Archive():
+    labels:
+    - source: new Bun.Archive()
+      style: primary
+      start: 0
+      end: 17
+  new Bun.Archive({}, {}, {}):
+    labels:
+    - source: new Bun.Archive({}, {}, {})
+      style: primary
+      start: 0
+      end: 27

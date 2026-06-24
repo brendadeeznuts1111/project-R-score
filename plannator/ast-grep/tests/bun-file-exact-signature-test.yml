@@ -1,0 +1,7 @@
+id: bun-file-exact-signature
+valid:
+  - 'const file = Bun.file("report.html")'
+  - 'const file = Bun.file(path)'
+invalid:
+  - 'const file = Bun.file()'
+  - 'const file = Bun.file("a", "b")'

@@ -1,0 +1,7 @@
+id: no-date-now-benchmarks
+valid:
+  - 'const start = Bun.nanoseconds()'
+  - 'const elapsed = (Bun.nanoseconds() - start) / 1000'
+invalid:
+  - 'const start = Date.now()'
+  - 'const elapsed = Date.now() - start'

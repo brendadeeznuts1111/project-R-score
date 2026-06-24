@@ -1,0 +1,14 @@
+id: no-node-crypto
+snapshots:
+  import crypto from "crypto":
+    labels:
+    - source: import crypto from "crypto"
+      style: primary
+      start: 0
+      end: 27
+  import { createHash } from "node:crypto":
+    labels:
+    - source: import { createHash } from "node:crypto"
+      style: primary
+      start: 0
+      end: 40

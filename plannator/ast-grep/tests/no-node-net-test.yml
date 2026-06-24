@@ -1,0 +1,6 @@
+id: no-node-net
+valid:
+  - 'const socket = Bun.connect({ hostname: "localhost", port: 3000 })'
+invalid:
+  - 'import net from "net"'
+  - 'import { createServer } from "node:net"'

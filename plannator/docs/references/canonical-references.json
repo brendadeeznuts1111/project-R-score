@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-23T21:19:19.280Z",
+  "ecosystem": [
+    {
+      "id": "bun",
+      "name": "Bun",
+      "kind": "runtime",
+      "homepage": "https://bun.sh",
+      "docs": "https://bun.sh/docs",
+      "apiReference": "https://bun.com/reference/bun",
+      "rss": "https://bun.com/rss.xml",
+      "minVersion": "1.3.6",
+      "usage": "Runtime, package manager, test runner, and native I/O for Plannator tools"
+    },
+    {
+      "id": "effect",
+      "name": "Effect",
+      "kind": "library",
+      "homepage": "https://effect.website",
+      "docs": "https://effect.website/docs",
+      "apiReference": "https://effect-ts.github.io/effect/",
+      "package": "effect",
+      "usage": "Typed errors, structured concurrency, retries, and CLI pipelines"
+    }
+  ],
+  "localDocs": [
+    {
+      "id": "bun-api-reference",
+      "repoPath": "docs/references/bun-api-reference.md",
+      "purpose": "Bun-native API grounding card for agents and tools"
+    },
+    {
+      "id": "effect-reference",
+      "repoPath": "docs/references/effect-reference.md",
+      "purpose": "Effect-TS grounding card for agents and tools"
+    }
+  ]
+}

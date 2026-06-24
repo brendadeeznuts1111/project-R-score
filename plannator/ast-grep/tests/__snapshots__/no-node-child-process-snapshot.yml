@@ -1,0 +1,14 @@
+id: no-node-child-process
+snapshots:
+  import cp from "node:child_process":
+    labels:
+    - source: import cp from "node:child_process"
+      style: primary
+      start: 0
+      end: 35
+  import { spawn } from "child_process":
+    labels:
+    - source: import { spawn } from "child_process"
+      style: primary
+      start: 0
+      end: 37

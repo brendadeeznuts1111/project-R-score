@@ -1,0 +1,14 @@
+id: no-date-now-benchmarks
+snapshots:
+  const elapsed = Date.now() - start:
+    labels:
+    - source: Date.now()
+      style: primary
+      start: 16
+      end: 26
+  const start = Date.now():
+    labels:
+    - source: Date.now()
+      style: primary
+      start: 14
+      end: 24

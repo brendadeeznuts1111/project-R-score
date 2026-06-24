@@ -1,0 +1,8 @@
+id: bun-spawn-cmd-array
+snapshots:
+  Bun.spawn(["echo", "hi"]):
+    labels:
+    - source: Bun.spawn(["echo", "hi"])
+      style: primary
+      start: 0
+      end: 25

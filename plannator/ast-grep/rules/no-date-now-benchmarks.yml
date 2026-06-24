@@ -1,0 +1,9 @@
+id: no-date-now-benchmarks
+language: TypeScript
+severity: warning
+message: "Prefer Bun.nanoseconds() over Date.now() for benchmarks"
+note: "Bun.nanoseconds() gives monotonic high-resolution timing"
+ignores:
+  - ".agents/**"
+rule:
+  pattern: Date.now()

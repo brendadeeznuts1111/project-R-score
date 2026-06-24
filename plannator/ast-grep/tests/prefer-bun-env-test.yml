@@ -1,0 +1,7 @@
+id: prefer-bun-env
+valid:
+  - 'const home = Bun.env.HOME'
+  - 'const dataDir = Bun.env.PLANNOTATOR_DATA_DIR ?? "~/.plannotator"'
+invalid:
+  - 'const home = process.env.HOME'
+  - 'const port = process.env.PORT'

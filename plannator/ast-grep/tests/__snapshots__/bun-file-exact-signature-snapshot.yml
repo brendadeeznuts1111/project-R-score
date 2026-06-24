@@ -1,0 +1,14 @@
+id: bun-file-exact-signature
+snapshots:
+  const file = Bun.file("a", "b"):
+    labels:
+    - source: Bun.file("a", "b")
+      style: primary
+      start: 13
+      end: 31
+  const file = Bun.file():
+    labels:
+    - source: Bun.file()
+      style: primary
+      start: 13
+      end: 23

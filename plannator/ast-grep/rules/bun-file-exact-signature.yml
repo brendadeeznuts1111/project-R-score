@@ -1,0 +1,11 @@
+id: bun-file-exact-signature
+language: TypeScript
+severity: error
+message: "Bun.file expects exactly one string|URL path argument"
+note: "Signature is Bun.file(pathToFile) — see docs/references/bun-api-reference.md"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: Bun.file()
+    - pattern: Bun.file($A, $B)

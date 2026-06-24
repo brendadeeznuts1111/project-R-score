@@ -1,0 +1,7 @@
+id: no-node-fs
+valid:
+  - 'import { readFileSync } from "node:fs"  # in .agents skill tests'
+invalid:
+  - 'import fs from "node:fs"'
+  - 'import { readFileSync } from "fs"'
+  - 'import fs from "fs"'
