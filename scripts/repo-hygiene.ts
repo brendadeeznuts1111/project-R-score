@@ -77,6 +77,7 @@ const ALLOWED_ROOT_DIRS = new Set([
   'logs',
   'node_modules',
   'packages',
+  'plannator',
   'projects',
   'public',
   'reports',
@@ -102,6 +103,11 @@ interface Violation {
   rule: string;
 }
 
+function isGitignored(relPath: string): boolean {
+  const probe = Bun.spawnSync(['git', 'check-ignore', '-q', '--', relPath], { cwd: ROOT });
+  return probe.exitCode === 0;
+}
+
 async function findRootClutter(): Promise<Violation[]> {
   const violations: Violation[] = [];
   const rootEntries = await readdir(ROOT, { withFileTypes: true });
@@ -110,7 +116,11 @@ async function findRootClutter(): Promise<Violation[]> {
     if (entry.isDirectory()) {
       if (FORBIDDEN_ROOT_DIRS.has(entry.name)) {
         violations.push({ file: entry.name + '/', rule: 'forbidden-root-dir' });
-      } else if (!entry.name.startsWith('.') && !ALLOWED_ROOT_DIRS.has(entry.name)) {
+      } else if (
+        !entry.name.startsWith('.') &&
+        !ALLOWED_ROOT_DIRS.has(entry.name) &&
+        !isGitignored(entry.name)
+      ) {
         violations.push({ file: entry.name + '/', rule: 'unexpected-root-dir' });
       }
       continue;

@@ -1,6 +1,8 @@
 # AGENTS.md
 
-AI agent entrypoint for the FactoryWager monorepo (`~/projects`).
+AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
+
+**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → [cascade-mover-v3](https://github.com/brendadeeznuts1111/cascade-mover-v3) (separate project — do not use as default push target).
 
 **Full agent guide:** [`docs/AGENTS.md`](docs/AGENTS.md)
 
