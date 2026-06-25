@@ -2,7 +2,7 @@
  * Monorepo gate report — runs gate-map projects and builds aggregated HTML/JSON.
  */
 
-import { join } from "node:path";
+import { join } from 'node:path';
 import {
   escapeHtml,
   formatDuration,
@@ -10,29 +10,32 @@ import {
   toolVersion,
   type GateResult,
   type GateStatus,
-} from "../plannator/lib/gate-report.ts";
+} from '../plannator/lib/gate-report.ts';
 import {
   type GateMapGate,
   type GateMapProject,
   resolveProjectPath,
   REPO_ROOT,
-} from "./gate-map.ts";
+} from './gate-map.ts';
 
 export type KimiCheckSummary = {
   passed: boolean;
-  steps: Record<string, { passed: boolean; durationMs: number; skipped?: boolean; errors?: number }>;
+  steps: Record<
+    string,
+    { passed: boolean; durationMs: number; skipped?: boolean; errors?: number }
+  >;
   totalDurationMs: number;
 };
 
 export function parseKimiCheckJson(stdout: string): KimiCheckSummary | null {
   const line = stdout
-    .split("\n")
-    .map((l) => l.trim())
-    .find((l) => l.startsWith("{") && l.includes('"steps"'));
+    .split('\n')
+    .map(l => l.trim())
+    .find(l => l.startsWith('{') && l.includes('"steps"'));
   if (!line) return null;
   try {
     const parsed = JSON.parse(line) as KimiCheckSummary;
-    if (typeof parsed.passed !== "boolean" || !parsed.steps) return null;
+    if (typeof parsed.passed !== 'boolean' || !parsed.steps) return null;
     return parsed;
   } catch {
     return null;
@@ -53,9 +56,9 @@ export function kimiCheckMetrics(summary: KimiCheckSummary): Record<string, stri
   };
 }
 
-export const DEFAULT_HTML_OUTPUT = join(REPO_ROOT, "reports", "monorepo-gate-report.html");
-export const DEFAULT_JSON_OUTPUT = join(REPO_ROOT, "reports", "monorepo-gate-report.json");
-export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, "reports", "monorepo-history.jsonl");
+export const DEFAULT_HTML_OUTPUT = join(REPO_ROOT, 'reports', 'monorepo-gate-report.html');
+export const DEFAULT_JSON_OUTPUT = join(REPO_ROOT, 'reports', 'monorepo-gate-report.json');
+export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, 'reports', 'monorepo-history.jsonl');
 
 export type ProjectGateResult = GateResult & { optional?: boolean };
 
@@ -74,7 +77,7 @@ export type MonorepoReport = {
   generatedAt: string;
   bunVersion: string;
   astGrepVersion: string;
-  mode: "live";
+  mode: 'live';
   overall: GateStatus;
   totalDurationMs: number;
   projects: ProjectReport[];
@@ -93,9 +96,9 @@ export async function runProjectGate(
   const proc = Bun.spawn({
     cmd: gate.cmd,
     cwd,
-    stdout: "pipe",
-    stderr: "pipe",
-    env: { ...Bun.env, FORCE_COLOR: "0" },
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env, FORCE_COLOR: '0' },
   });
 
   const [stdout, stderr] = await Promise.all([
@@ -105,14 +108,14 @@ export async function runProjectGate(
   const exitCode = await proc.exited;
   const durationMs = Math.round((Bun.nanoseconds() - start) / 1_000_000);
 
-  let status: GateStatus = exitCode === 0 ? "pass" : "fail";
+  let status: GateStatus = exitCode === 0 ? 'pass' : 'fail';
   let metrics = parseMetrics(gate.id, stdout, stderr);
 
   if (gate.kimiCheckJson) {
     const summary = parseKimiCheckJson(stdout);
     if (summary) {
       metrics = { ...metrics, ...kimiCheckMetrics(summary) };
-      status = summary.passed ? "pass" : "fail";
+      status = summary.passed ? 'pass' : 'fail';
     }
   }
 
@@ -120,7 +123,7 @@ export async function runProjectGate(
     id: gate.id,
     label: gate.label,
     description: gate.description,
-    command: gate.cmd.join(" "),
+    command: gate.cmd.join(' '),
     status,
     exitCode,
     durationMs,
@@ -143,8 +146,8 @@ export async function runProject(
     gates.push(result);
   }
 
-  const requiredFailed = gates.some((g) => g.status === "fail" && !g.optional);
-  const status: GateStatus = requiredFailed ? "fail" : "pass";
+  const requiredFailed = gates.some(g => g.status === 'fail' && !g.optional);
+  const status: GateStatus = requiredFailed ? 'fail' : 'pass';
 
   return {
     id: project.id,
@@ -158,12 +161,12 @@ export async function runProject(
   };
 }
 
-export function summarizeZones(projects: ProjectReport[]): MonorepoReport["zones"] {
-  const zones: MonorepoReport["zones"] = {};
+export function summarizeZones(projects: ProjectReport[]): MonorepoReport['zones'] {
+  const zones: MonorepoReport['zones'] = {};
   for (const p of projects) {
     const z = zones[p.zone] ?? { passed: 0, total: 0, failed: 0 };
     z.total++;
-    if (p.status === "pass") z.passed++;
+    if (p.status === 'pass') z.passed++;
     else z.failed++;
     zones[p.zone] = z;
   }
@@ -171,11 +174,11 @@ export function summarizeZones(projects: ProjectReport[]): MonorepoReport["zones
 }
 
 export function buildMonorepoHtml(report: MonorepoReport): string {
-  const passed = report.projects.filter((p) => p.status === "pass").length;
-  const failed = report.projects.filter((p) => p.status === "fail").length;
-  const overallClass = report.overall === "pass" ? "pass" : "fail";
+  const passed = report.projects.filter(p => p.status === 'pass').length;
+  const failed = report.projects.filter(p => p.status === 'fail').length;
+  const overallClass = report.overall === 'pass' ? 'pass' : 'fail';
   const overallLabel =
-    report.overall === "pass"
+    report.overall === 'pass'
       ? `All projects passed (${passed}/${report.projects.length})`
       : `${failed} project(s) failed (${passed}/${report.projects.length} passed)`;
 
@@ -187,7 +190,7 @@ export function buildMonorepoHtml(report: MonorepoReport): string {
         <span class="stat-label">${escapeHtml(zone)}</span>
       </div>`
     )
-    .join("");
+    .join('');
 
   const byZone = new Map<string, ProjectReport[]>();
   for (const p of report.projects) {
@@ -200,14 +203,14 @@ export function buildMonorepoHtml(report: MonorepoReport): string {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([zone, projects]) => {
       const cards = projects
-        .map((project) => {
+        .map(project => {
           const gateRows = project.gates
-            .map((gate) => {
+            .map(gate => {
               const log =
-                [gate.stdout, gate.stderr].filter(Boolean).join("\n").trim() || "(no output)";
-              const optionalFail = gate.optional && gate.status === "fail";
-              const badgeClass = optionalFail ? "optional-fail" : gate.status;
-              const badgeLabel = optionalFail ? "OPTIONAL FAIL" : gate.status.toUpperCase();
+                [gate.stdout, gate.stderr].filter(Boolean).join('\n').trim() || '(no output)';
+              const optionalFail = gate.optional && gate.status === 'fail';
+              const badgeClass = optionalFail ? 'optional-fail' : gate.status;
+              const badgeLabel = optionalFail ? 'OPTIONAL FAIL' : gate.status.toUpperCase();
               return `<article class="gate-card ${badgeClass}">
                 <div class="gate-head">
                   <div class="gate-title">
@@ -223,11 +226,9 @@ export function buildMonorepoHtml(report: MonorepoReport): string {
                 <details class="log-details"><summary>Output</summary><pre class="log">${escapeHtml(log)}</pre></details>
               </article>`;
             })
-            .join("");
+            .join('');
 
-          const extBadge = project.external
-            ? `<span class="chip">external</span>`
-            : "";
+          const extBadge = project.external ? `<span class="chip">external</span>` : '';
 
           return `<section class="project-card ${project.status}">
             <div class="project-head">
@@ -243,21 +244,21 @@ export function buildMonorepoHtml(report: MonorepoReport): string {
             <div class="gate-list">${gateRows}</div>
           </section>`;
         })
-        .join("");
+        .join('');
 
       return `<div class="zone-section">
         <div class="section-label">Zone · ${escapeHtml(zone)}</div>
         ${cards}
       </div>`;
     })
-    .join("");
+    .join('');
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monorepo Gate Report — ${report.overall === "pass" ? "PASS" : "FAIL"}</title>
+  <title>Monorepo Gate Report — ${report.overall === 'pass' ? 'PASS' : 'FAIL'}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -350,19 +351,19 @@ export function buildMonorepoJson(report: MonorepoReport): string {
 }
 
 export function buildGithubSummary(report: MonorepoReport): string {
-  const icon = (s: GateStatus) => (s === "pass" ? "✅" : "❌");
+  const icon = (s: GateStatus) => (s === 'pass' ? '✅' : '❌');
   return [
-    "## Monorepo gate report",
-    "",
-    `**Overall:** ${report.overall === "pass" ? "PASS" : "FAIL"} · ${formatDuration(report.totalDurationMs)}`,
-    "",
-    "| Project | Zone | Status | Duration |",
-    "|---------|------|--------|----------|",
+    '## Monorepo gate report',
+    '',
+    `**Overall:** ${report.overall === 'pass' ? 'PASS' : 'FAIL'} · ${formatDuration(report.totalDurationMs)}`,
+    '',
+    '| Project | Zone | Status | Duration |',
+    '|---------|------|--------|----------|',
     ...report.projects.map(
-      (p) =>
+      p =>
         `| ${p.name} | ${p.zone} | ${icon(p.status)} ${p.status} | ${formatDuration(p.durationMs)} |`
     ),
-    "",
-    "Download the `monorepo-gate-report` artifact for the HTML dashboard.",
-  ].join("\n");
+    '',
+    'Download the `monorepo-gate-report` artifact for the HTML dashboard.',
+  ].join('\n');
 }

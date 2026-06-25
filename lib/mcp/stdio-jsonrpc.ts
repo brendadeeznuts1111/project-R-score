@@ -29,7 +29,10 @@ export function toolText(text: string, isError = false): ToolCallResult {
   return { content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) };
 }
 
-export function rpcOk(id: number | string | undefined, result: unknown): JsonRpcMessage & { result: unknown } {
+export function rpcOk(
+  id: number | string | undefined,
+  result: unknown
+): JsonRpcMessage & { result: unknown } {
   return { jsonrpc: '2.0', id, result };
 }
 

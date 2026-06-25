@@ -61,7 +61,17 @@ export function cleanMdx(raw: string): string {
   s = s.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
   s = s.replace(/\s*\[!code[^\]]*\]/g, '');
   s = s.replace(/<[A-Z][a-zA-Z0-9]*[^>]*\/>/g, '');
-  for (const tag of ['Note', 'Warning', 'Tip', 'Callout', 'Card', 'CardGroup', 'Tab', 'Tabs', 'Frame']) {
+  for (const tag of [
+    'Note',
+    'Warning',
+    'Tip',
+    'Callout',
+    'Card',
+    'CardGroup',
+    'Tab',
+    'Tabs',
+    'Frame',
+  ]) {
     s = s.replace(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'gi'), (_, inner: string) =>
       inner.trim() ? `\n> ${inner.trim()}\n` : ''
     );
@@ -129,7 +139,10 @@ export async function collectDocRootCandidates(workspaceRoot: string): Promise<D
   return [...found.entries()].map(([root, version]) => ({ root, version }));
 }
 
-export function pickBestDocRoot(candidates: DocRootCandidate[], workspaceRoot: string): DocRootCandidate | null {
+export function pickBestDocRoot(
+  candidates: DocRootCandidate[],
+  workspaceRoot: string
+): DocRootCandidate | null {
   if (!candidates.length) return null;
   const preferred = normalizeDocsRoot(join(workspaceRoot, 'node_modules/bun-types/docs'));
   const sorted = [...candidates].sort((a, b) => {
@@ -400,8 +413,20 @@ export async function queryDocs(
   const rg = Bun.which('rg');
 
   if (rg && docsRoot) {
-    const searchPath = category ? join(docsRoot.replace(/\/$/, ''), category) : docsRoot.replace(/\/$/, '');
-    const args = [rg, '--json', '-i', '-C', String(contextLines), '--glob', '*.mdx', pattern, searchPath];
+    const searchPath = category
+      ? join(docsRoot.replace(/\/$/, ''), category)
+      : docsRoot.replace(/\/$/, '');
+    const args = [
+      rg,
+      '--json',
+      '-i',
+      '-C',
+      String(contextLines),
+      '--glob',
+      '*.mdx',
+      pattern,
+      searchPath,
+    ];
     const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'pipe' });
     const text = await new Response(proc.stdout).text();
     await proc.exited;
@@ -469,7 +494,10 @@ export function listCategories(docs: Doc[]): DocCategory[] {
     .sort((a, b) => b.count - a.count);
 }
 
-export function resolveDocSlug(slugMap: Map<string, Doc>, slugOrPath: string): { slug: string; url: string; title: string; exists: boolean } {
+export function resolveDocSlug(
+  slugMap: Map<string, Doc>,
+  slugOrPath: string
+): { slug: string; url: string; title: string; exists: boolean } {
   const normalized = slugOrPath.replace(/^\/+|\/+$/g, '').replace(/\.mdx$/, '');
   const doc = slugMap.get(normalized);
   return {
@@ -481,7 +509,10 @@ export function resolveDocSlug(slugMap: Map<string, Doc>, slugOrPath: string): {
 }
 
 function stripCdata(value: string): string {
-  return value.replace(/^<!\[CDATA\[/, '').replace(/\]\]>$/, '').trim();
+  return value
+    .replace(/^<!\[CDATA\[/, '')
+    .replace(/\]\]>$/, '')
+    .trim();
 }
 
 function rssField(block: string, tag: string): string {
@@ -502,7 +533,12 @@ function decodeHtmlEntities(text: string): string {
 }
 
 function cleanSummary(html: string, max = 400): string {
-  return decodeHtmlEntities(html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()).slice(0, max);
+  return decodeHtmlEntities(
+    html
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+  ).slice(0, max);
 }
 
 export function parseRssItems(xml: string, limit = 50): ReleaseNote[] {
@@ -577,7 +613,10 @@ export function htmlArticleToText(html: string): string {
   let s = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<pre[\s\S]*?<\/pre>/gi, block => `\n\`\`\`\n${block.replace(/<[^>]+>/g, '')}\n\`\`\`\n`)
+    .replace(
+      /<pre[\s\S]*?<\/pre>/gi,
+      block => `\n\`\`\`\n${block.replace(/<[^>]+>/g, '')}\n\`\`\`\n`
+    )
     .replace(/<\/(p|div|h[1-6]|li|br|tr|blockquote)>/gi, '\n')
     .replace(/<li[^>]*>/gi, '- ')
     .replace(/<h([1-6])[^>]*>/gi, (_, n) => `\n${'#'.repeat(Number(n))} `)

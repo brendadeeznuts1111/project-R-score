@@ -7,10 +7,7 @@
  *
  * @see docs/UNIFIED.md
  */
-import {
-  runBunCacheLifecycle,
-  type BunCacheLifecyclePlan,
-} from './lib/bun-cache-metrics.ts';
+import { runBunCacheLifecycle, type BunCacheLifecyclePlan } from './lib/bun-cache-metrics.ts';
 import { collectBunPmHealth, type BunPmHealthReport } from './lib/bun-pm-health.ts';
 
 function parseArgs(argv: string[]): {

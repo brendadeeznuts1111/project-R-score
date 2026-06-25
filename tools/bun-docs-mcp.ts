@@ -53,7 +53,7 @@ const SEARCH_SCHEMA = {
   properties: {
     query: { type: 'string', description: "Keywords (e.g. 'Bun.Image', 'http3')" },
     limit: { type: 'number', description: `Max results (default ${DEFAULTS.searchLimit})` },
-    category: { type: 'string', description: "Slug prefix: runtime, pm, guides, test, bundler" },
+    category: { type: 'string', description: 'Slug prefix: runtime, pm, guides, test, bundler' },
     codeOnly: { type: 'boolean', description: 'Search fenced code blocks only' },
   },
   required: ['query'],
@@ -68,12 +68,16 @@ const TOOLS = [
   { name: 'search_bun', description: 'Alias for search_bun_docs.', inputSchema: SEARCH_SCHEMA },
   {
     name: 'query_bun_docs',
-    description: 'Exact pattern search with line context (ripgrep). Best for API strings and flags.',
+    description:
+      'Exact pattern search with line context (ripgrep). Best for API strings and flags.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         pattern: { type: 'string', description: "Pattern (e.g. 'http3: true')" },
-        contextLines: { type: 'number', description: `Context lines (default ${DEFAULTS.queryContext})` },
+        contextLines: {
+          type: 'number',
+          description: `Context lines (default ${DEFAULTS.queryContext})`,
+        },
         limit: { type: 'number', description: `Max matches (default ${DEFAULTS.queryLimit})` },
         category: { type: 'string', description: 'Slug prefix filter' },
       },
@@ -121,7 +125,8 @@ const TOOLS = [
   },
   {
     name: 'get_bun_blog_posts',
-    description: 'Recent Bun blog/release posts from bun.com/rss.xml. Same feed for releases + blog.',
+    description:
+      'Recent Bun blog/release posts from bun.com/rss.xml. Same feed for releases + blog.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -156,7 +161,10 @@ function num(v: unknown, fallback: number): number {
   return typeof v === 'number' ? v : fallback;
 }
 
-async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
+async function handleToolsCall(
+  id: number | string | undefined,
+  params: Record<string, unknown>
+): Promise<JsonRpcMessage> {
   const tool = params?.name as string;
   const args = (params?.arguments ?? {}) as Record<string, unknown>;
 
@@ -196,7 +204,10 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
         raw: args.raw === true,
       });
       if (!page) return ok(id, toolText(`Not found: "${args.slug}". Try search_bun_docs.`, true));
-      return ok(id, toolText(formatDocPage(page.title, page.desc, String(args.slug), page.content)));
+      return ok(
+        id,
+        toolText(formatDocPage(page.title, page.desc, String(args.slug), page.content))
+      );
     }
 
     case 'get_bun_doc_entry': {
@@ -210,16 +221,21 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
       return ok(id, toolText(formatCategories(listCategories(docs))));
 
     case 'list_bun_topics': {
-      const category = typeof args.category === 'string' ? args.category.replace(/^\/+|\/+$/g, '') : '';
+      const category =
+        typeof args.category === 'string' ? args.category.replace(/^\/+|\/+$/g, '') : '';
       const limit = num(args.limit, DEFAULTS.topicListLimit);
       let topics = listTopics(docs);
       if (category) topics = topics.filter(t => t.slug.startsWith(category));
       const truncated = topics.length > limit;
       topics = topics.slice(0, limit);
-      const stale = indexMeta?.stale ? `\n⚠ docs ${indexMeta.docsVersion} < runtime ${indexMeta.runtimeVersion}` : '';
+      const stale = indexMeta?.stale
+        ? `\n⚠ docs ${indexMeta.docsVersion} < runtime ${indexMeta.runtimeVersion}`
+        : '';
       return ok(
         id,
-        toolText(formatTopics(topics, { docsVersion, category: category || undefined, truncated }) + stale)
+        toolText(
+          formatTopics(topics, { docsVersion, category: category || undefined, truncated }) + stale
+        )
       );
     }
 
@@ -233,7 +249,8 @@ async function handleToolsCall(id: number | string | undefined, params: Record<s
 
     case 'read_bun_blog_post':
       try {
-        const maxLines = args.maxLines === 0 ? undefined : num(args.maxLines, DEFAULTS.blogMaxLines);
+        const maxLines =
+          args.maxLines === 0 ? undefined : num(args.maxLines, DEFAULTS.blogMaxLines);
         const post = await fetchBlogPost(String(args.slug ?? ''), { maxLines });
         return ok(id, toolText(formatBlogPost(post.title, post.slug, post.content)));
       } catch (err) {
@@ -257,7 +274,11 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
       return rpcOk(id, {
         protocolVersion: '2024-11-05',
         capabilities: { tools: {} },
-        serverInfo: { name: SERVER_NAME, version: SERVER_VERSION, manifestVersion: MANIFEST_VERSION },
+        serverInfo: {
+          name: SERVER_NAME,
+          version: SERVER_VERSION,
+          manifestVersion: MANIFEST_VERSION,
+        },
       });
     case 'tools/list':
       return rpcOk(id, { tools: TOOLS });
@@ -276,8 +297,11 @@ async function main() {
   indexMeta = getIndexMeta(docs, docsRoot, docsVersion);
 
   const log = (s: string) => process.stderr.write(`${s}\n`);
-  log(`[${SERVER_NAME}] v${SERVER_VERSION} · ${docs.length} docs (bun-types ${docsVersion}) · rg:${Bun.which('rg') ? 'yes' : 'no'}`);
-  if (indexMeta.stale) log(`[${SERVER_NAME}] ⚠ docs ${docsVersion} < runtime ${indexMeta.runtimeVersion}`);
+  log(
+    `[${SERVER_NAME}] v${SERVER_VERSION} · ${docs.length} docs (bun-types ${docsVersion}) · rg:${Bun.which('rg') ? 'yes' : 'no'}`
+  );
+  if (indexMeta.stale)
+    log(`[${SERVER_NAME}] ⚠ docs ${docsVersion} < runtime ${indexMeta.runtimeVersion}`);
 
   for await (const msg of readJsonRpcStream(Bun.stdin.stream())) {
     try {

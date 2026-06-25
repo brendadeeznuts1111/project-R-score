@@ -2,13 +2,10 @@
  * gate-map.json loader, validator, and project resolution for monorepo gates.
  */
 
-import { join } from "node:path";
+import { join } from 'node:path';
 
-export const REPO_ROOT = import.meta.dir.replace(/\/lib$/, "");
-export const DEFAULT_GATE_MAP_PATH = join(
-  REPO_ROOT,
-  ".agents/skills/ast-grep/gate-map.json"
-);
+export const REPO_ROOT = import.meta.dir.replace(/\/lib$/, '');
+export const DEFAULT_GATE_MAP_PATH = join(REPO_ROOT, '.agents/skills/ast-grep/gate-map.json');
 
 export type GateMapGate = {
   id: string;
@@ -44,7 +41,7 @@ export type GateMap = {
 };
 
 export type GateMapValidationIssue = {
-  level: "error" | "warning";
+  level: 'error' | 'warning';
   projectId?: string;
   message: string;
 };
@@ -74,8 +71,8 @@ export function resolveProjectPath(project: GateMapProject, root = REPO_ROOT): s
   if (project.pathEnv && Bun.env[project.pathEnv]?.trim()) {
     return Bun.env[project.pathEnv]!.trim();
   }
-  if (project.path.startsWith("/") || project.path.startsWith("~")) {
-    return project.path.replace(/^~/, Bun.env.HOME ?? "");
+  if (project.path.startsWith('/') || project.path.startsWith('~')) {
+    return project.path.replace(/^~/, Bun.env.HOME ?? '');
   }
   return join(root, project.path);
 }
@@ -85,21 +82,18 @@ export function projectRoot(project: GateMapProject, root = REPO_ROOT): string {
   return resolveProjectPath(project, root);
 }
 
-export async function validateGateMap(
-  map: GateMap,
-  root = REPO_ROOT
-): Promise<GateMapValidation> {
+export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<GateMapValidation> {
   const issues: GateMapValidationIssue[] = [];
   const ids = new Set<string>();
 
   if (map.version !== 1) {
-    issues.push({ level: "error", message: `Unsupported gate-map version: ${map.version}` });
+    issues.push({ level: 'error', message: `Unsupported gate-map version: ${map.version}` });
   }
 
   for (const project of map.projects) {
     if (ids.has(project.id)) {
       issues.push({
-        level: "error",
+        level: 'error',
         projectId: project.id,
         message: `Duplicate project id: ${project.id}`,
       });
@@ -108,20 +102,20 @@ export async function validateGateMap(
 
     if (!map.zones[project.zone]) {
       issues.push({
-        level: "warning",
+        level: 'warning',
         projectId: project.id,
         message: `Zone "${project.zone}" not documented in gate-map.zones`,
       });
     }
 
     const absPath = resolveProjectPath(project, root);
-    if (!(await Bun.file(join(absPath, "package.json")).exists())) {
+    if (!(await Bun.file(join(absPath, 'package.json')).exists())) {
       const hasOtherMarker =
         (await Bun.file(absPath).exists()) &&
-        (project.path === "." || project.id === "ast-grep-skill");
-      if (!hasOtherMarker && project.path !== ".") {
+        (project.path === '.' || project.id === 'ast-grep-skill');
+      if (!hasOtherMarker && project.path !== '.') {
         issues.push({
-          level: "error",
+          level: 'error',
           projectId: project.id,
           message: `Missing package.json at ${absPath}`,
         });
@@ -130,7 +124,7 @@ export async function validateGateMap(
       const resolved = resolveProjectPath(project, root);
       if (!resolved.startsWith(root) && !project.pathEnv) {
         issues.push({
-          level: "warning",
+          level: 'warning',
           projectId: project.id,
           message: `External project resolved outside monorepo: ${resolved}`,
         });
@@ -139,9 +133,9 @@ export async function validateGateMap(
 
     if (project.gates.length === 0) {
       issues.push({
-        level: "warning",
+        level: 'warning',
         projectId: project.id,
-        message: "No gates defined",
+        message: 'No gates defined',
       });
     }
 
@@ -149,7 +143,7 @@ export async function validateGateMap(
     for (const gate of project.gates) {
       if (gateIds.has(gate.id)) {
         issues.push({
-          level: "error",
+          level: 'error',
           projectId: project.id,
           message: `Duplicate gate id: ${gate.id}`,
         });
@@ -157,7 +151,7 @@ export async function validateGateMap(
       gateIds.add(gate.id);
       if (gate.cmd.length === 0) {
         issues.push({
-          level: "error",
+          level: 'error',
           projectId: project.id,
           message: `Gate ${gate.id} has empty cmd`,
         });
@@ -165,35 +159,32 @@ export async function validateGateMap(
     }
   }
 
-  const errors = issues.filter((i) => i.level === "error");
+  const errors = issues.filter(i => i.level === 'error');
   return { ok: errors.length === 0, issues, projects: map.projects };
 }
 
 export async function gitChangedPaths(root = REPO_ROOT): Promise<string[]> {
-  const proc = Bun.spawn(["git", "diff", "--name-only", "HEAD"], {
+  const proc = Bun.spawn(['git', 'diff', '--name-only', 'HEAD'], {
     cwd: root,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const out = await new Response(proc.stdout).text();
   await proc.exited;
   if (proc.exitCode !== 0) return [];
   return out
-    .split("\n")
-    .map((p) => p.trim())
+    .split('\n')
+    .map(p => p.trim())
     .filter(Boolean);
 }
 
-export function projectMatchesChanges(
-  project: GateMapProject,
-  changedPaths: string[]
-): boolean {
-  if (project.path === ".") {
-    const rootPrefixes = ["scripts/", "lib/", "config/", ".husky/", "package.json", "bunfig.toml"];
-    return changedPaths.some((p) => rootPrefixes.some((pre) => p === pre || p.startsWith(pre)));
+export function projectMatchesChanges(project: GateMapProject, changedPaths: string[]): boolean {
+  if (project.path === '.') {
+    const rootPrefixes = ['scripts/', 'lib/', 'config/', '.husky/', 'package.json', 'bunfig.toml'];
+    return changedPaths.some(p => rootPrefixes.some(pre => p === pre || p.startsWith(pre)));
   }
   const prefix = `${project.path}/`;
-  return changedPaths.some((p) => p === project.path || p.startsWith(prefix));
+  return changedPaths.some(p => p === project.path || p.startsWith(prefix));
 }
 
 export function resolveProjects(
@@ -201,16 +192,16 @@ export function resolveProjects(
   filter: ProjectFilter,
   changedPaths: string[] = []
 ): GateMapProject[] {
-  let projects = map.projects.filter((p) => p.enabled);
+  let projects = map.projects.filter(p => p.enabled);
 
   if (filter.projectId) {
-    projects = projects.filter((p) => p.id === filter.projectId);
+    projects = projects.filter(p => p.id === filter.projectId);
   } else if (filter.zone) {
-    projects = projects.filter((p) => p.zone === filter.zone);
+    projects = projects.filter(p => p.zone === filter.zone);
   }
 
   if (filter.changedOnly && !filter.all && !filter.projectId) {
-    projects = projects.filter((p) => projectMatchesChanges(p, changedPaths));
+    projects = projects.filter(p => projectMatchesChanges(p, changedPaths));
   }
 
   return projects;
@@ -225,30 +216,24 @@ export function formatGateMapTree(map: GateMap, projects?: GateMapProject[]): st
     byZone.set(p.zone, arr);
   }
 
-  const lines: string[] = [
-    `gate-map v${map.version}`,
-    map.description ?? "",
-    "",
-  ];
+  const lines: string[] = [`gate-map v${map.version}`, map.description ?? '', ''];
 
-  for (const [zone, zoneProjects] of [...byZone.entries()].sort(([a], [b]) =>
-    a.localeCompare(b)
-  )) {
-    const zoneDesc = map.zones[zone] ?? "";
+  for (const [zone, zoneProjects] of [...byZone.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    const zoneDesc = map.zones[zone] ?? '';
     lines.push(`zone: ${zone}`);
     if (zoneDesc) lines.push(`  ${zoneDesc}`);
     for (const p of zoneProjects) {
-      const status = p.enabled ? "enabled" : "disabled";
-      const ext = p.external ? " external" : "";
+      const status = p.enabled ? 'enabled' : 'disabled';
+      const ext = p.external ? ' external' : '';
       lines.push(`  • ${p.id} [${status}${ext}] — ${p.name}`);
-      lines.push(`    path: ${p.path}${p.pathEnv ? ` (env: ${p.pathEnv})` : ""}`);
+      lines.push(`    path: ${p.path}${p.pathEnv ? ` (env: ${p.pathEnv})` : ''}`);
       for (const g of p.gates) {
-        const opt = g.optional ? " (optional)" : "";
+        const opt = g.optional ? ' (optional)' : '';
         lines.push(`    - ${g.id}: ${g.label}${opt}`);
       }
     }
-    lines.push("");
+    lines.push('');
   }
 
-  return lines.join("\n").trim();
+  return lines.join('\n').trim();
 }

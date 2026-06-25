@@ -1,6 +1,13 @@
 // tools/bun-docs-mcp-format.ts — Compact MCP output formatters (token-aware)
 
-import type { BlogPostSummary, DocCategory, IndexMeta, QueryHit, ReleaseNote, SearchHit } from './bun-docs-mcp-lib.ts';
+import type {
+  BlogPostSummary,
+  DocCategory,
+  IndexMeta,
+  QueryHit,
+  ReleaseNote,
+  SearchHit,
+} from './bun-docs-mcp-lib.ts';
 
 export const DEFAULTS = {
   searchLimit: 8,
@@ -36,27 +43,48 @@ export function formatQueryHits(hits: QueryHit[], engine: string): string {
   );
 }
 
-export function formatDocPage(title: string, desc: string, slug: string, content: string, docsBase = 'https://bun.com/docs'): string {
-  const header = desc ? `# ${title}\n${desc}\n${docsBase}/${slug}\n\n---\n\n` : `# ${title}\n${docsBase}/${slug}\n\n---\n\n`;
+export function formatDocPage(
+  title: string,
+  desc: string,
+  slug: string,
+  content: string,
+  docsBase = 'https://bun.com/docs'
+): string {
+  const header = desc
+    ? `# ${title}\n${desc}\n${docsBase}/${slug}\n\n---\n\n`
+    : `# ${title}\n${docsBase}/${slug}\n\n---\n\n`;
   return header + content;
 }
 
-export function formatBlogPost(title: string, slug: string, content: string, blogBase = 'https://bun.com/blog'): string {
+export function formatBlogPost(
+  title: string,
+  slug: string,
+  content: string,
+  blogBase = 'https://bun.com/blog'
+): string {
   return `# ${title}\n${blogBase}/${slug}\n\n---\n\n${content}`;
 }
 
-export function formatRssItems(items: ReleaseNote[] | BlogPostSummary[], blogBase = 'https://bun.com/blog'): string {
+export function formatRssItems(
+  items: ReleaseNote[] | BlogPostSummary[],
+  blogBase = 'https://bun.com/blog'
+): string {
   return items
     .map((item, i) => {
       const slug = 'slug' in item ? item.slug : item.link.replace(`${blogBase}/`, '');
-      const summary = item.summary.length > DEFAULTS.rssSummaryLen ? `${item.summary.slice(0, DEFAULTS.rssSummaryLen)}…` : item.summary;
+      const summary =
+        item.summary.length > DEFAULTS.rssSummaryLen
+          ? `${item.summary.slice(0, DEFAULTS.rssSummaryLen)}…`
+          : item.summary;
       return `${i + 1}. **${item.title}** (\`${slug}\`)\n   ${item.date}\n   ${summary}`;
     })
     .join('\n\n');
 }
 
 export function formatCategories(cats: DocCategory[]): string {
-  return cats.map(c => `- **${c.category}** (${c.count}): ${c.examples.slice(0, 3).join(', ')}`).join('\n');
+  return cats
+    .map(c => `- **${c.category}** (${c.count}): ${c.examples.slice(0, 3).join(', ')}`)
+    .join('\n');
 }
 
 export function formatTopics(

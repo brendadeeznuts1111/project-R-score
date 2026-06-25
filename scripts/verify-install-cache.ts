@@ -31,10 +31,7 @@ function envInstallPolicyOk(env: ReturnType<typeof applyBunInstallEnv>): boolean
 }
 
 async function checkBunfig(): Promise<Check> {
-  const [project, machine] = await Promise.all([
-    readProjectBunfig(ROOT),
-    readMachineBunfig(),
-  ]);
+  const [project, machine] = await Promise.all([readProjectBunfig(ROOT), readMachineBunfig()]);
   const policy = resolveEffectiveInstallPolicy(project, machine);
   const env = applyBunInstallEnv();
 
@@ -46,9 +43,7 @@ async function checkBunfig(): Promise<Check> {
   const ok = policyOk || envFallback;
 
   const parts: string[] = [];
-  parts.push(
-    `linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`
-  );
+  parts.push(`linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`);
   parts.push(
     `globalStore=${String(policy.globalStore)} (${formatPolicySource('globalStore', policy)})`
   );
