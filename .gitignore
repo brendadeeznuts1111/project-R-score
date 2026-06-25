@@ -3,6 +3,12 @@
 # Machine layout — separate clone symlinked under dev root (see ~/.config/shell/machine-paths.sh)
 /kimi-toolchain
 
+# Vendored upstream clones (local only)
+/plannotator-upstream/
+
+# Local symlinks inside nested enterprise repos
+projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
+
 # Dependencies
 node_modules/
 bun.lockb
