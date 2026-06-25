@@ -24,10 +24,10 @@ if [[ "$USE_DOCTOR" -eq 1 ]] && command -v kimi-doctor >/dev/null 2>&1; then
 fi
 
 # Match actual key assignments only — not comments mentioning linker/globalStore/cache.dir
-KEY_PATTERN='^(linker|globalStore)[[:space:]]*=|^[[:space:]]*dir[[:space:]]*='
+KEY_PATTERN='^(linker|globalStore|minimumReleaseAge)[[:space:]]*=|^[[:space:]]*dir[[:space:]]*='
 
 echo "=== Bunfig.toml duplication audit ==="
-echo "Machine defaults (~/.bunfig.toml): linker=isolated, globalStore=true, absolute cache.dir"
+echo "Machine defaults (~/.bunfig.toml): linker, globalStore, cache.dir, minimumReleaseAge"
 echo ""
 
 if command -v bun >/dev/null 2>&1; then

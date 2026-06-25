@@ -17,7 +17,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | PATH | `~/.config/shell/path.sh` | PATH ownership (`zshenv` + `zprofile` + `zshrc`) |
 | Interactive | `~/.config/shell/interactive.zsh` | Completions, `health` → `root-health` |
 | Aliases | `~/.config/shell/aliases.sh` | `ba`, `bhealth`, `bverify`, `bci`, `bmachine`, `bun-install-*`, etc. |
-| Verification | `bun_verify` / `machine-bun.ts` | 18 runtime+policy checks (TOML parse); fatal on `linker`/`globalStore`; warnings on project override |
+| Verification | `bun_verify` / `bmachine` / `machine-bun.ts` | Runtime + `~/.bunfig.toml` policy; `health` → `root-health`, `shell-health` → layout + agent-env |
 
 ### Config hierarchy
 

@@ -1,21 +1,11 @@
-# FactoryWager Enterprise — bunfig.toml
-# Bun runtime configuration.  Bun reads this file from the project root.
-# .bunfig.toml is the enterprise profile (team-lead config), separate concern.
+# FactoryWager monorepo — project bunfig.toml
+# Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge)
+# Enterprise reference profile (not auto-loaded): ./.bunfig.toml
 
 [install]
-# Install defaults inherited from ~/.bunfig.toml
-
-# Pin exact versions — no ^/~ drift.  Inherited from .bunfig.toml.
 exact = true
-
-# CI safety: refuse to mutate lockfile.
-# In dev, drop this or set BUN_INSTALL_FROZEN_LOCKFILE=0.
+# Dev override — machine ~/.bunfig.toml sets frozenLockfile = true
 frozenLockfile = false
-
-# Minimum age before a package version is trusted (seconds).
-# 3 days = 259200 — same as bet-ticker, prevents supply-chain
-# attacks on freshly-published packages.
-minimumReleaseAge = 259200
 
 # Scoped registries — private @factorywager packages.
 # Token via FACTORYWAGER_REGISTRY_TOKEN env var.
