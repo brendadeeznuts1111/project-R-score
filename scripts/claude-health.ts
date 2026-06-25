@@ -85,25 +85,50 @@ function rel(absPath: string): string {
 }
 
 async function main() {
-  console.log('\n🔍 .claude/ health check\n');
+  console.info('\n🔍 .claude/ health check\n');
 
   // 1. commands/ directory exists
   const commandsDir = join(CLAUDE_DIR, 'commands');
   const cmdPath = rel(commandsDir);
-  const i1 = add({ check: 'commands/', type: 'directory', path: cmdPath, expected: 'exists', detail: 'checking...' });
-  const commandsDirStat = await Array.fromAsync(new Glob('*').scan({ cwd: commandsDir })).catch(() => null);
-  resolve(i1, commandsDirStat !== null ? '✅' : '❌', commandsDirStat !== null ? 'exists' : 'missing');
+  const i1 = add({
+    check: 'commands/',
+    type: 'directory',
+    path: cmdPath,
+    expected: 'exists',
+    detail: 'checking...',
+  });
+  const commandsDirStat = await Array.fromAsync(new Glob('*').scan({ cwd: commandsDir })).catch(
+    () => null
+  );
+  resolve(
+    i1,
+    commandsDirStat !== null ? '✅' : '❌',
+    commandsDirStat !== null ? 'exists' : 'missing'
+  );
 
   // 2. command frontmatter validation
   if (commandsDirStat !== null) {
     const cmds = await mdFiles(commandsDir);
     if (cmds.length === 0) {
-      add({ check: 'command files', type: 'frontmatter', path: cmdPath, expected: '>= 1 .md', detail: 'none found', status: '⚠️' });
+      add({
+        check: 'command files',
+        type: 'frontmatter',
+        path: cmdPath,
+        expected: '>= 1 .md',
+        detail: 'none found',
+        status: '⚠️',
+      });
     }
     for (const filepath of cmds) {
       const name = filepath.split('/').pop()!;
       const rp = rel(filepath);
-      const idx = add({ check: name, type: 'frontmatter', path: rp, expected: 'user_invocable: true', detail: 'checking...' });
+      const idx = add({
+        check: name,
+        type: 'frontmatter',
+        path: rp,
+        expected: 'user_invocable: true',
+        detail: 'checking...',
+      });
       const content = await Bun.file(filepath).text();
       const fm = parseFrontmatter(content);
       if (!fm) {
@@ -118,14 +143,39 @@ async function main() {
 
   // 3. .gitignore whitelists
   const gitignorePath = rel(join(ROOT, '.gitignore'));
-  const gitignore = await Bun.file(join(ROOT, '.gitignore')).text().catch(() => '');
+  const gitignore = await Bun.file(join(ROOT, '.gitignore'))
+    .text()
+    .catch(() => '');
   const wlCommands = gitignore.includes('!.claude/commands/');
   const wlAgents = gitignore.includes('!.claude/agents/');
   if (wlCommands && wlAgents) {
-    add({ check: '.gitignore', type: 'gitignore', path: gitignorePath, expected: '!.claude/{commands,agents}/', detail: 'both whitelisted', status: '✅' });
+    add({
+      check: '.gitignore',
+      type: 'gitignore',
+      path: gitignorePath,
+      expected: '!.claude/{commands,agents}/',
+      detail: 'both whitelisted',
+      status: '✅',
+    });
   } else {
-    if (!wlCommands) add({ check: '.gitignore', type: 'gitignore', path: gitignorePath, expected: '!.claude/commands/', detail: 'missing', status: '❌' });
-    if (!wlAgents) add({ check: '.gitignore', type: 'gitignore', path: gitignorePath, expected: '!.claude/agents/', detail: 'missing', status: '❌' });
+    if (!wlCommands)
+      add({
+        check: '.gitignore',
+        type: 'gitignore',
+        path: gitignorePath,
+        expected: '!.claude/commands/',
+        detail: 'missing',
+        status: '❌',
+      });
+    if (!wlAgents)
+      add({
+        check: '.gitignore',
+        type: 'gitignore',
+        path: gitignorePath,
+        expected: '!.claude/agents/',
+        detail: 'missing',
+        status: '❌',
+      });
   }
 
   // 4. No slash commands misplaced in agents/
@@ -137,19 +187,39 @@ async function main() {
     const content = await Bun.file(filepath).text();
     const fm = parseFrontmatter(content);
     if (fm?.user_invocable === true) {
-      add({ check: `agents/${name}`, type: 'placement', path: rel(filepath), expected: 'in commands/', detail: 'has user_invocable — move it', status: '❌' });
+      add({
+        check: `agents/${name}`,
+        type: 'placement',
+        path: rel(filepath),
+        expected: 'in commands/',
+        detail: 'has user_invocable — move it',
+        status: '❌',
+      });
       misplaced++;
     }
   }
   if (misplaced === 0) {
-    add({ check: 'agent placement', type: 'placement', path: rel(agentsDir), expected: 'no slash commands', detail: agentFiles.length === 0 ? 'empty' : 'clean', status: '✅' });
+    add({
+      check: 'agent placement',
+      type: 'placement',
+      path: rel(agentsDir),
+      expected: 'no slash commands',
+      detail: agentFiles.length === 0 ? 'empty' : 'clean',
+      status: '✅',
+    });
   }
 
   // 5. settings.local.json
   const settingsPath = join(CLAUDE_DIR, 'settings.local.json');
   const settingsFile = Bun.file(settingsPath);
   if (await settingsFile.exists()) {
-    const idx = add({ check: 'settings.local.json', type: 'json', path: rel(settingsPath), expected: 'valid JSON', detail: 'checking...' });
+    const idx = add({
+      check: 'settings.local.json',
+      type: 'json',
+      path: rel(settingsPath),
+      expected: 'valid JSON',
+      detail: 'checking...',
+    });
     try {
       JSON.parse(await settingsFile.text());
       resolve(idx, '✅', 'valid');
@@ -157,7 +227,14 @@ async function main() {
       resolve(idx, '❌', (e as Error).message);
     }
   } else {
-    add({ check: 'settings.local.json', type: 'json', path: rel(settingsPath), expected: 'valid JSON', detail: 'not found (optional)', status: '⚠️' });
+    add({
+      check: 'settings.local.json',
+      type: 'json',
+      path: rel(settingsPath),
+      expected: 'valid JSON',
+      detail: 'not found (optional)',
+      status: '⚠️',
+    });
   }
 
   // Summary
@@ -166,9 +243,9 @@ async function main() {
   const total = passed_n + failed_n;
 
   if (failed_n === 0) {
-    console.log(`✅ ${passed_n}/${total} checks passed\n`);
+    console.info(`✅ ${passed_n}/${total} checks passed\n`);
   } else {
-    console.log(`❌ ${failed_n}/${total} checks failed\n`);
+    console.info(`❌ ${failed_n}/${total} checks failed\n`);
   }
   process.exit(failed_n > 0 ? 1 : 0);
 }

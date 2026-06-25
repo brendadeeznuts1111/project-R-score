@@ -1,0 +1,10 @@
+id: hardcoded-fetch-url
+language: TypeScript
+severity: hint
+message: Hardcoded https fetch URL — prefer env config or shared endpoint constant
+rule:
+  kind: call_expression
+  regex: 'https://'
+  has:
+    field: function
+    regex: 'fetch$'

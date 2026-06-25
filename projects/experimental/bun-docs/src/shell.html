@@ -38,7 +38,7 @@
           <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">Bun Documentation</h1>
           <p class="text-slate-400 text-xs md:text-sm hidden sm:block">
             <span id="total">0</span> pages • 
-            <span onclick="showAboutModal()" class="cursor-pointer hover:text-yellow-300 underline decoration-yellow-500/30 hover:decoration-yellow-400">
+            <span id="about-link" class="cursor-pointer hover:text-yellow-300 underline decoration-yellow-500/30 hover:decoration-yellow-400">
               Generated with <code>bun build</code>
             </span>
           </p>
@@ -49,7 +49,7 @@
         <div id="last-updated" class="hidden md:block text-xs text-slate-500 mono px-3 py-1.5 bg-[#161b24] rounded-2xl border border-slate-800"></div>
 
         <!-- About / Built with Bun -->
-        <button onclick="showAboutModal()" 
+        <button id="about-btn" 
                 class="flex items-center gap-x-2 px-3 py-2 bg-[#161b24] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-2xl text-sm transition-colors">
           <i class="fa-solid fa-info-circle text-yellow-400"></i>
           <span class="hidden sm:inline font-medium">Built with Bun</span>
@@ -70,7 +70,7 @@
         <div class="sticky top-6">
           <div class="flex items-center justify-between mb-3 px-1">
             <div class="font-semibold text-sm tracking-wider text-slate-400">TABLE OF CONTENTS</div>
-            <button onclick="clearFilters()" 
+            <button id="clear-filters" 
                     class="text-xs px-2 py-1 text-slate-400 hover:text-white transition-colors">
               Clear
             </button>
@@ -99,13 +99,6 @@
               <input type="checkbox" id="only-bundler" class="accent-yellow-500">
               <span class="whitespace-nowrap">Only Bundler</span>
             </label>
-
-            <select id="sort" class="bg-[#161b24] border border-slate-700 rounded-2xl px-4 py-3 text-sm focus:outline-none">
-              <option value="size-desc">Size ↓</option>
-              <option value="size-asc">Size ↑</option>
-              <option value="name-asc">A-Z</option>
-              <option value="name-desc">Z-A</option>
-            </select>
           </div>
         </div>
 
@@ -135,7 +128,7 @@
   </div>
 
   <!-- About / Built with Bun Modal -->
-  <div id="about-modal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/70 p-4" onclick="hideAboutModal()">
+  <div id="about-modal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/70 p-4">
     <div onclick="event.stopImmediatePropagation()" 
          class="bg-[#161b24] border border-slate-700 rounded-3xl w-full max-w-[820px] p-6 md:p-8 shadow-2xl max-h-[90vh] overflow-auto">
       
@@ -150,7 +143,7 @@
             <p class="text-slate-400 text-sm">This single-file dashboard is a living showcase of <code>Bun.serve</code> + full <code>Server</code> interface (lifecycle, WS, timeouts, metrics)</p>
           </div>
         </div>
-        <button onclick="hideAboutModal()" class="text-3xl text-slate-400 hover:text-white leading-none -mt-2">×</button>
+        <button id="about-close" class="text-3xl text-slate-400 hover:text-white leading-none -mt-2" aria-label="Close">×</button>
       </div>
 
       <!-- TL;DR -->
@@ -194,7 +187,7 @@
             <span class="text-slate-300">Single-file HTML output with inlined data and JavaScript.</span>
           </div>
           <div>
-            <button onclick="copyToClipboard('bun run generate --env inline --sourcemap linked')" 
+            <button data-demo="copy:bun run generate --env inline --sourcemap linked" 
                     class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
               <i class="fa-solid fa-copy mr-1"></i> bun run generate --env inline --sourcemap linked
             </button>
@@ -217,7 +210,7 @@
           <div>• Introspection: <code>requestIP()</code>, <code>pendingRequests</code> + debug endpoints</div>
 
           <div class="pt-1">
-            <button onclick="copyToClipboard('bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref')" 
+            <button data-demo="copy:bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref" 
                     class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
               <i class="fa-solid fa-copy mr-1"></i> bun run generate --serve --ws --console --watch --idle-timeout 120 --unref
             </button>
@@ -317,7 +310,7 @@
           </div>
 
           <div class="pt-1">
-            <button onclick="copyToClipboard('bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref')" 
+            <button data-demo="copy:bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref" 
                     class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
               <i class="fa-solid fa-copy mr-1"></i> bun run generate --serve --ws --console --watch --idle-timeout 120 --unref
             </button>
@@ -333,13 +326,14 @@
         </div>
         <div class="pl-6 space-y-2 text-sm text-slate-300">
           <div>• Advanced <code>fetch</code> with <code>verbose</code>, <code>preconnect</code>, proxy &amp; TLS support</div>
-          <div>• Streaming responses (<code>for await</code> / <code>getReader()</code>) + streaming request bodies</div>
+          <div>• Streaming responses (<code>for await</code> / <code>getReader()</code>) — see <code>/api/stream-demo</code></div>
+          <div>• Streaming request bodies (<code>ReadableStream</code> as <code>body</code>) — see <code>/api/echo-stream</code></div>
           <div>• <code>AbortSignal.timeout(ms)</code> for clean request timeouts</div>
           <div>• Native <code>file://</code> support for local documentation indexes</div>
           <div>• Powerful debugging with <code>--dry-run --verbose</code></div>
 
           <div class="pt-1">
-            <button onclick="copyToClipboard('bun run generate --preconnect --dry-run --verbose')" 
+            <button data-demo="copy:bun run generate --preconnect --dry-run --verbose" 
                     class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
               <i class="fa-solid fa-copy mr-1"></i> bun run generate --preconnect --dry-run --verbose
             </button>
@@ -356,27 +350,61 @@
         <p class="text-xs text-slate-400 mb-3 pl-6">Click any button below — the output will appear in your terminal thanks to <code>--console</code>.</p>
         
         <div class="pl-6 flex flex-wrap gap-2">
-          <button onclick="triggerConsoleDemo('log')" 
+          <button data-demo="triggerConsoleDemo:log" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             console.log("Hello Bun")
           </button>
-          <button onclick="triggerConsoleDemo('warn')" 
+          <button data-demo="triggerConsoleDemo:warn" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             console.warn("Warning")
           </button>
-          <button onclick="triggerConsoleDemo('error')" 
+          <button data-demo="triggerConsoleDemo:error" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             console.error("Something broke")
           </button>
-          <button onclick="triggerConsoleDemo('object')" 
+          <button data-demo="triggerConsoleDemo:object" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             console.log({ user: "demo", active: true })
           </button>
 
           <!-- Streaming fetch demo -->
-          <button onclick="streamResponseDemo()" 
+          <button data-demo="streamResponseDemo" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-blue-500/50 rounded-xl transition-colors text-blue-400">
             <i class="fa-solid fa-stream mr-1"></i> Stream Response Body
+          </button>
+
+          <!-- Streaming request body demo -->
+          <button data-demo="sendStreamingRequestDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-purple-500/50 rounded-xl transition-colors text-purple-400">
+            <i class="fa-solid fa-upload mr-1"></i> Send Streaming Request
+          </button>
+
+          <!-- AbortSignal.timeout demo -->
+          <button data-demo="fetchWithTimeoutDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-orange-500/50 rounded-xl transition-colors text-orange-400">
+            <i class="fa-solid fa-clock mr-1"></i> Fetch with Timeout
+          </button>
+
+          <!-- Deep Content-Type Auto-Detection Demos -->
+          <button data-demo="sendPlainTextDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            Plain string
+          </button>
+          <button data-demo="sendBlobDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-teal-500/50 rounded-xl transition-colors text-teal-400">
+            Blob + type
+          </button>
+          <button data-demo="sendBlobNoTypeDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-orange-500/50 rounded-xl transition-colors text-orange-400">
+            Blob (no type)
+          </button>
+          <button data-demo="sendFormDataDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-violet-500/50 rounded-xl transition-colors text-violet-400">
+            FormData
+          </button>
+          <button data-demo="sendFormDataWithFileDemo" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-fuchsia-500/50 rounded-xl transition-colors text-fuchsia-400">
+            FormData + File
           </button>
         </div>
       </div>
@@ -412,23 +440,23 @@
         </div>
         
         <div class="pl-6 flex flex-wrap gap-2">
-          <button onclick="wsConnect()" 
+          <button data-demo="wsConnect" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             Connect /ws (with headers)
           </button>
-          <button onclick="wsSend('Hello Bun WebSocket!')" 
+          <button data-demo="wsSend:Hello Bun WebSocket!" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             Send Hello
           </button>
-          <button onclick="wsSend('broadcast test @' + Date.now())" 
+          <button data-demo="wsSend:__timestamp__" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             Send Timestamp
           </button>
-          <button onclick="wsStatus()" 
+          <button data-demo="wsStatus" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             Check /api/ws-status
           </button>
-          <button onclick="wsDisconnect()" 
+          <button data-demo="wsDisconnect" 
                   class="px-3 py-1.5 text-xs bg-red-900/30 hover:bg-red-900/50 border border-red-700/50 rounded-xl transition-colors">
             Disconnect
           </button>

@@ -5,7 +5,8 @@ import { validateHost } from '../lib/utils/env-validator';
 // TODO: fetch-proxy module not found in tools/services/
 // import { fetchProxy, type ProxyRequest } from './services/fetch-proxy';
 type ProxyRequest = { url: string; method?: string; headers?: Record<string, string> };
-const fetchProxy = async (req: ProxyRequest) => fetch(req.url, { method: req.method, headers: req.headers });
+const fetchProxy = async (req: ProxyRequest) =>
+  fetch(req.url, { method: req.method, headers: req.headers });
 
 /**
  * 🚀 Prefetch Optimizations
@@ -36,7 +37,10 @@ function parseCookie(cookieHeader: string): Record<string, string> {
 // Simple HMAC for session integrity (in production, use a proper secret)
 function simpleHmac(key: string, data: string): string {
   // This is a simplified example - use Bun.hash.hmac in real code
-  return Bun.hash.sha256(data + key).toString('hex').slice(0, 16);
+  return Bun.hash
+    .sha256(data + key)
+    .toString('hex')
+    .slice(0, 16);
 }
 
 // Get session secret from environment or generate a warning
@@ -55,10 +59,7 @@ function createSessionCookie(sessionData: Record<string, any>): string {
   const payload = JSON.stringify(sessionData);
   const sessionSecret = getSessionSecret();
   const hmac = simpleHmac(sessionSecret, payload);
-  const encoded = btoa(payload)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  const encoded = btoa(payload).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return `session=${encoded}; hmac=${hmac}; Path=/; HttpOnly; Secure`;
 }
 
@@ -94,13 +95,13 @@ const patterns = {
   logout: new URLPattern({ pathname: '/logout' }),
   proxy: new URLPattern({ pathname: '/proxy' }),
   proxyStats: new URLPattern({ pathname: '/proxy-stats' }),
-  health: new URLPattern({ pathname: '/health' })
+  health: new URLPattern({ pathname: '/health' }),
 };
 
 // Main server
 const port = process.env.PORT || 3000;
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Project Server Starting                                 ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(40 - Bun.main.length)}║
@@ -120,9 +121,9 @@ Bun.serve({
     const session = verifySessionCookie(sessionCookie);
 
     if (session) {
-      console.log(`[${projectContext}] Session verified:`, session);
+      console.info(`[${projectContext}] Session verified:`, session);
     } else {
-      console.log(`[${projectContext}] No valid session - new visitor`);
+      console.info(`[${projectContext}] No valid session - new visitor`);
     }
 
     // Route handling with URLPattern
@@ -130,7 +131,8 @@ Bun.serve({
       const newSession = { userId: Date.now(), visitCount: (session?.visitCount || 0) + 1 };
       const cookieHeader = createSessionCookie(newSession);
 
-      return new Response(`
+      return new Response(
+        `
         <!DOCTYPE html>
         <html>
           <head>
@@ -189,17 +191,20 @@ Bun.serve({
             <p><a href="/logout">Logout</a></p>
           </body>
         </html>
-      `, {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html',
-          'Set-Cookie': cookieHeader
+      `,
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html',
+            'Set-Cookie': cookieHeader,
+          },
         }
-      });
+      );
     }
 
     if (patterns.logout.test(url) && req.method === 'GET') {
-      return new Response(`
+      return new Response(
+        `
         <!DOCTYPE html>
         <html>
           <head><title>Logged Out</title></head>
@@ -208,20 +213,22 @@ Bun.serve({
             <p><a href="/">Return</a></p>
           </body>
         </html>
-      `, {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html',
-          'Set-Cookie': 'session=; hmac=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      `,
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html',
+            'Set-Cookie': 'session=; hmac=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+          },
         }
-      });
+      );
     }
 
     // Proxy endpoint - demonstrates Bun's fetch API
     if (patterns.proxy.test(url) && req.method === 'GET') {
       const targetUrl = url.searchParams.get('url') || 'https://example.com';
 
-      console.log(`[${projectContext}] Proxy request to: ${targetUrl}`);
+      console.info(`[${projectContext}] Proxy request to: ${targetUrl}`);
 
       try {
         // Use our enhanced fetch proxy service
@@ -230,12 +237,14 @@ Bun.serve({
           method: 'GET',
           timeout: 15000, // 15 seconds
           optimize: true, // Enable DNS prefetch and preconnect
-          cache: true // Enable caching
+          cache: true, // Enable caching
         };
 
         const proxyResponse = await fetchProxy.handleProxy(proxyRequest);
 
-        console.log(`[${projectContext}] Proxy response: ${proxyResponse.status} (${proxyResponse.timing.total.toFixed(2)}ms)`);
+        console.info(
+          `[${projectContext}] Proxy response: ${proxyResponse.status} (${proxyResponse.timing.total.toFixed(2)}ms)`
+        );
 
         // Return HTML response with proxy info
         const htmlResponse = `
@@ -277,9 +286,10 @@ Bun.serve({
 
               <div class="content">
                 <h3>Response Content</h3>
-                ${proxyResponse.ok ?
-                  `<pre>${proxyResponse.body.substring(0, 5000)}${proxyResponse.body.length > 5000 ? '\\n\\n... (truncated)' : ''}</pre>` :
-                  `<p class="error">Error: ${proxyResponse.body}</p>`
+                ${
+                  proxyResponse.ok
+                    ? `<pre>${proxyResponse.body.substring(0, 5000)}${proxyResponse.body.length > 5000 ? '\\n\\n... (truncated)' : ''}</pre>`
+                    : `<p class="error">Error: ${proxyResponse.body}</p>`
                 }
               </div>
 
@@ -294,15 +304,15 @@ Bun.serve({
             'Content-Type': 'text/html',
             'X-Proxy-Status': proxyResponse.status.toString(),
             'X-Proxy-Time': proxyResponse.timing.total.toFixed(2),
-            'X-Proxy-Cache': proxyResponse.cache?.hit ? 'HIT' : 'MISS'
-          }
+            'X-Proxy-Cache': proxyResponse.cache?.hit ? 'HIT' : 'MISS',
+          },
         });
-
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         console.error(`[${projectContext}] Proxy error:`, errorMessage);
 
-        return new Response(`
+        return new Response(
+          `
           <!DOCTYPE html>
           <html>
             <head><title>Proxy Error</title></head>
@@ -313,10 +323,12 @@ Bun.serve({
               <p><a href="/">← Back to Home</a></p>
             </body>
           </html>
-        `, {
-          status: 500,
-          headers: { 'Content-Type': 'text/html' }
-        });
+        `,
+          {
+            status: 500,
+            headers: { 'Content-Type': 'text/html' },
+          }
+        );
       }
     }
 
@@ -365,9 +377,12 @@ Bun.serve({
               <h3>Rate Limiting</h3>
               <table>
                 <tr><th>Host</th><th>Requests</th><th>Reset In</th></tr>
-                ${stats.rateLimit.entries.map(entry =>
-                  `<tr><td>${entry.host}</td><td>${entry.count}</td><td>${(entry.resetIn / 1000).toFixed(1)}s</td></tr>`
-                ).join('')}
+                ${stats.rateLimit.entries
+                  .map(
+                    entry =>
+                      `<tr><td>${entry.host}</td><td>${entry.count}</td><td>${(entry.resetIn / 1000).toFixed(1)}s</td></tr>`
+                  )
+                  .join('')}
               </table>
             </div>
 
@@ -378,7 +393,7 @@ Bun.serve({
 
       return new Response(htmlResponse, {
         status: 200,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 'Content-Type': 'text/html' },
       });
     }
 
@@ -409,9 +424,12 @@ Bun.serve({
 
               <table>
                 <tr><th>Check</th><th>Status</th></tr>
-                ${Object.entries(health.checks).map(([check, status]) =>
-                  `<tr><td>${check}</td><td class="${status ? 'healthy' : 'unhealthy'}">${status ? '✅ PASS' : '❌ FAIL'}</td></tr>`
-                ).join('')}
+                ${Object.entries(health.checks)
+                  .map(
+                    ([check, status]) =>
+                      `<tr><td>${check}</td><td class="${status ? 'healthy' : 'unhealthy'}">${status ? '✅ PASS' : '❌ FAIL'}</td></tr>`
+                  )
+                  .join('')}
               </table>
             </div>
 
@@ -422,11 +440,12 @@ Bun.serve({
 
       return new Response(htmlResponse, {
         status: health.status === 'healthy' ? 200 : 503,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 'Content-Type': 'text/html' },
       });
     }
 
-    return new Response(`
+    return new Response(
+      `
       <!DOCTYPE html>
       <html>
         <head><title>Not Found</title></head>
@@ -436,22 +455,24 @@ Bun.serve({
           <p><a href="/">← Back to Home</a></p>
         </body>
       </html>
-    `, { status: 404, headers: { 'Content-Type': 'text/html' } });
+    `,
+      { status: 404, headers: { 'Content-Type': 'text/html' } }
+    );
   },
   error(err) {
     console.error(`[${Bun.main}] Server error:`, err);
-  }
+  },
 });
 
 const SERVER_HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
-console.log(`Server listening on http://${SERVER_HOST}:${port}`);
-console.log(`Project context: ${Bun.main}`);
-console.log(`Available endpoints:`);
-console.log(`  GET  /              - Main page with session management`);
-console.log(`  GET  /proxy         - Fetch proxy (add ?url=TARGET)`);
-console.log(`  GET  /proxy-stats   - Proxy statistics and cache info`);
-console.log(`  GET  /health        - Health check`);
-console.log(`  GET  /logout        - Clear session`);
+console.info(`Server listening on http://${SERVER_HOST}:${port}`);
+console.info(`Project context: ${Bun.main}`);
+console.info(`Available endpoints:`);
+console.info(`  GET  /              - Main page with session management`);
+console.info(`  GET  /proxy         - Fetch proxy (add ?url=TARGET)`);
+console.info(`  GET  /proxy-stats   - Proxy statistics and cache info`);
+console.info(`  GET  /health        - Health check`);
+console.info(`  GET  /logout        - Clear session`);
 /**
  * 💡 Performance Tip: For better performance, consider:
  * 1. Using preconnect for frequently accessed domains

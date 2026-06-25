@@ -75,7 +75,7 @@ export class TestDurationOracle {
         cache.set(historyKey, JSON.stringify(history));
 
         // Log to consciousness ledger for analysis
-        console.log(`[TestDurationOracle] Recorded ${testName}: ${duration}ms (history: ${history.length})`);
+        console.info(`[TestDurationOracle] Recorded ${testName}: ${duration}ms (history: ${history.length})`);
     }
 
     static getAllPredictions(): TestDurationPrediction[] {
@@ -113,7 +113,7 @@ export class TestDurationOracle {
         // Clear all test duration history
         const keys = Object.keys(localStorage).filter(key => key.startsWith('test:duration:'));
         keys.forEach(key => localStorage.removeItem(key));
-        console.log('[TestDurationOracle] Reset all test history');
+        console.info('[TestDurationOracle] Reset all test history');
     }
 
     private static predictSync(testName: string): TestDurationPrediction | null {

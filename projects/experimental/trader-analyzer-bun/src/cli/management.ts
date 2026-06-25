@@ -91,7 +91,7 @@ async function checkServiceStatus(
 }
 
 async function listServices(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}Service Status${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Service Status${c.reset}\n`);
 
 	const services = ["api", "dashboard", "mcp", "telegram"];
 	const statuses = await Promise.all(
@@ -109,11 +109,11 @@ async function listServices(): Promise<void> {
 					: c.red;
 
 		const portInfo = status.port ? ` (port ${status.port})` : "";
-		console.log(
+		console.info(
 			`  ${status.name.padEnd(15)} ${statusColor}${status.status.toUpperCase()}${c.reset}${portInfo}`,
 		);
 	}
-	console.log();
+	console.info();
 }
 
 // ============ Integration Management ============
@@ -203,7 +203,7 @@ async function checkIntegration(name: string): Promise<IntegrationStatus> {
 }
 
 async function listIntegrations(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}Integration Status${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Integration Status${c.reset}\n`);
 
 	const integrations = ["telegram", "database", "api", "mcp"];
 	const statuses = await Promise.all(
@@ -227,36 +227,36 @@ async function listIntegrations(): Promise<void> {
 						? "⚙️"
 						: "🔗";
 
-		console.log(
+		console.info(
 			`  ${typeIcon} ${status.name.padEnd(20)} ${statusColor}${status.status.toUpperCase()}${c.reset}`,
 		);
 	}
-	console.log();
+	console.info();
 }
 
 async function testIntegration(name: string): Promise<void> {
-	console.log(`\n${c.yellow}Testing ${name} integration...${c.reset}\n`);
+	console.info(`\n${c.yellow}Testing ${name} integration...${c.reset}\n`);
 
 	const status = await checkIntegration(name);
 
 	if (status.status === "connected") {
-		console.log(`${c.green}✓${c.reset} ${status.name} is connected`);
+		console.info(`${c.green}✓${c.reset} ${status.name} is connected`);
 		if (status.config) {
-			console.log(`  Configuration:`, status.config);
+			console.info(`  Configuration:`, status.config);
 		}
 	} else {
-		console.log(`${c.red}✗${c.reset} ${status.name} is ${status.status}`);
-		console.log(
+		console.info(`${c.red}✗${c.reset} ${status.name} is ${status.status}`);
+		console.info(
 			`  ${c.dim}Check configuration and environment variables${c.reset}`,
 		);
 	}
-	console.log();
+	console.info();
 }
 
 // ============ Configuration Management ============
 
 async function showConfig(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}Configuration${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Configuration${c.reset}\n`);
 
 	const config = {
 		"API Port": Bun.env.PORT || "3001",
@@ -278,13 +278,13 @@ async function showConfig(): Promise<void> {
 			: value.includes("✗")
 				? c.red
 				: c.reset;
-		console.log(`  ${key.padEnd(25)} ${valueColor}${value}${c.reset}`);
+		console.info(`  ${key.padEnd(25)} ${valueColor}${value}${c.reset}`);
 	}
-	console.log();
+	console.info();
 }
 
 async function validateConfig(): Promise<void> {
-	console.log(`\n${c.yellow}Validating configuration...${c.reset}\n`);
+	console.info(`\n${c.yellow}Validating configuration...${c.reset}\n`);
 
 	const checks = [
 		{
@@ -327,33 +327,33 @@ async function validateConfig(): Promise<void> {
 		const result = await check.check();
 		const icon = result ? `${c.green}✓${c.reset}` : `${c.red}✗${c.reset}`;
 		const status = result ? "OK" : check.required ? "REQUIRED" : "OPTIONAL";
-		console.log(`  ${icon} ${check.name.padEnd(25)} ${status}`);
+		console.info(`  ${icon} ${check.name.padEnd(25)} ${status}`);
 	}
-	console.log();
+	console.info();
 }
 
 // ============ Health Check ============
 
 async function healthCheck(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}System Health Check${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}System Health Check${c.reset}\n`);
 
 	// Check services
-	console.log(`${c.yellow}Services:${c.reset}`);
+	console.info(`${c.yellow}Services:${c.reset}`);
 	await listServices();
 
 	// Check integrations
-	console.log(`${c.yellow}Integrations:${c.reset}`);
+	console.info(`${c.yellow}Integrations:${c.reset}`);
 	await listIntegrations();
 
 	// Check configuration
-	console.log(`${c.yellow}Configuration:${c.reset}`);
+	console.info(`${c.yellow}Configuration:${c.reset}`);
 	await validateConfig();
 }
 
 // ============ User Management ============
 
 async function listUsers(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}Users${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Users${c.reset}\n`);
 
 	try {
 		const response = await fetch("http://localhost:3001/api/users", {
@@ -363,7 +363,7 @@ async function listUsers(): Promise<void> {
 		});
 
 		if (!response.ok) {
-			console.log(`${c.red}Failed to fetch users: ${response.status}${c.reset}`);
+			console.info(`${c.red}Failed to fetch users: ${response.status}${c.reset}`);
 			return;
 		}
 
@@ -371,15 +371,15 @@ async function listUsers(): Promise<void> {
 		const users = data.users || [];
 
 		if (users.length === 0) {
-			console.log(`${c.dim}No users found${c.reset}`);
+			console.info(`${c.dim}No users found${c.reset}`);
 			return;
 		}
 
-		console.log(`${c.dim}ID${c.reset}`.padEnd(25), `${c.dim}Username${c.reset}`.padEnd(15), `${c.dim}Role${c.reset}`.padEnd(10), `${c.dim}Email${c.reset}`);
-		console.log("─".repeat(70));
+		console.info(`${c.dim}ID${c.reset}`.padEnd(25), `${c.dim}Username${c.reset}`.padEnd(15), `${c.dim}Role${c.reset}`.padEnd(10), `${c.dim}Email${c.reset}`);
+		console.info("─".repeat(70));
 
 		for (const user of users) {
-			console.log(
+			console.info(
 				user.id.slice(0, 24).padEnd(25),
 				user.username.padEnd(15),
 				user.role.padEnd(10),
@@ -387,21 +387,21 @@ async function listUsers(): Promise<void> {
 			);
 		}
 	} catch (error) {
-		console.log(`${c.red}Error fetching users: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
+		console.info(`${c.red}Error fetching users: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
 	}
-	console.log();
+	console.info();
 }
 
 async function createUser(args: string[]): Promise<void> {
 	const [username, password, role = "readonly", email] = args;
 
 	if (!username || !password) {
-		console.log(`${c.red}Usage: users create <username> <password> [role] [email]${c.reset}`);
-		console.log(`${c.dim}Example: users create john password123 trader john@example.com${c.reset}`);
+		console.info(`${c.red}Usage: users create <username> <password> [role] [email]${c.reset}`);
+		console.info(`${c.dim}Example: users create john password123 trader john@example.com${c.reset}`);
 		return;
 	}
 
-	console.log(`\n${c.yellow}Creating user ${username}...${c.reset}\n`);
+	console.info(`\n${c.yellow}Creating user ${username}...${c.reset}\n`);
 
 	try {
 		const response = await fetch("http://localhost:3001/api/users", {
@@ -420,30 +420,30 @@ async function createUser(args: string[]): Promise<void> {
 
 		if (!response.ok) {
 			const error = await response.json();
-			console.log(`${c.red}Failed to create user: ${error.error || response.status}${c.reset}`);
+			console.info(`${c.red}Failed to create user: ${error.error || response.status}${c.reset}`);
 			return;
 		}
 
 		const data = await response.json();
-		console.log(`${c.green}✓${c.reset} User created successfully`);
-		console.log(`  ID: ${data.user.id}`);
-		console.log(`  Username: ${data.user.username}`);
-		console.log(`  Role: ${data.user.role}`);
+		console.info(`${c.green}✓${c.reset} User created successfully`);
+		console.info(`  ID: ${data.user.id}`);
+		console.info(`  Username: ${data.user.username}`);
+		console.info(`  Role: ${data.user.role}`);
 		if (data.user.email) {
-			console.log(`  Email: ${data.user.email}`);
+			console.info(`  Email: ${data.user.email}`);
 		}
 	} catch (error) {
-		console.log(`${c.red}Error creating user: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
+		console.info(`${c.red}Error creating user: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
 	}
-	console.log();
+	console.info();
 }
 
 async function updateUser(args: string[]): Promise<void> {
 	const [userId, ...updateArgs] = args;
 
 	if (!userId || updateArgs.length === 0) {
-		console.log(`${c.red}Usage: users update <userId> <field>=<value> [...fields]${c.reset}`);
-		console.log(`${c.dim}Example: users update user_123 username=newname role=trader${c.reset}`);
+		console.info(`${c.red}Usage: users update <userId> <field>=<value> [...fields]${c.reset}`);
+		console.info(`${c.dim}Example: users update user_123 username=newname role=trader${c.reset}`);
 		return;
 	}
 
@@ -455,7 +455,7 @@ async function updateUser(args: string[]): Promise<void> {
 		}
 	}
 
-	console.log(`\n${c.yellow}Updating user ${userId}...${c.reset}\n`);
+	console.info(`\n${c.yellow}Updating user ${userId}...${c.reset}\n`);
 
 	try {
 		const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
@@ -469,28 +469,28 @@ async function updateUser(args: string[]): Promise<void> {
 
 		if (!response.ok) {
 			const error = await response.json();
-			console.log(`${c.red}Failed to update user: ${error.error || response.status}${c.reset}`);
+			console.info(`${c.red}Failed to update user: ${error.error || response.status}${c.reset}`);
 			return;
 		}
 
 		const data = await response.json();
-		console.log(`${c.green}✓${c.reset} User updated successfully`);
-		console.log(`  ID: ${data.user.id}`);
-		console.log(`  Username: ${data.user.username}`);
-		console.log(`  Role: ${data.user.role}`);
+		console.info(`${c.green}✓${c.reset} User updated successfully`);
+		console.info(`  ID: ${data.user.id}`);
+		console.info(`  Username: ${data.user.username}`);
+		console.info(`  Role: ${data.user.role}`);
 		if (data.user.email) {
-			console.log(`  Email: ${data.user.email}`);
+			console.info(`  Email: ${data.user.email}`);
 		}
 	} catch (error) {
-		console.log(`${c.red}Error updating user: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
+		console.info(`${c.red}Error updating user: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
 	}
-	console.log();
+	console.info();
 }
 
 // ============ Role Management ============
 
 async function listRoles(): Promise<void> {
-	console.log(`\n${c.cyan}${c.bold}Roles${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Roles${c.reset}\n`);
 
 	try {
 		const response = await fetch("http://localhost:3001/api/roles", {
@@ -500,7 +500,7 @@ async function listRoles(): Promise<void> {
 		});
 
 		if (!response.ok) {
-			console.log(`${c.red}Failed to fetch roles: ${response.status}${c.reset}`);
+			console.info(`${c.red}Failed to fetch roles: ${response.status}${c.reset}`);
 			return;
 		}
 
@@ -508,20 +508,20 @@ async function listRoles(): Promise<void> {
 		const roles = data.roles || [];
 
 		if (roles.length === 0) {
-			console.log(`${c.dim}No roles found${c.reset}`);
+			console.info(`${c.dim}No roles found${c.reset}`);
 			return;
 		}
 
 		for (const role of roles) {
-			console.log(`${c.green}${role.name}${c.reset} (${role.id})`);
+			console.info(`${c.green}${role.name}${c.reset} (${role.id})`);
 			if (role.description) {
-				console.log(`  ${c.dim}${role.description}${c.reset}`);
+				console.info(`  ${c.dim}${role.description}${c.reset}`);
 			}
-			console.log(`  Permissions: ${role.permissions.map((p: any) => `${p.resource}:${p.actions.join(",")}`).join(", ")}`);
-			console.log();
+			console.info(`  Permissions: ${role.permissions.map((p: any) => `${p.resource}:${p.actions.join(",")}`).join(", ")}`);
+			console.info();
 		}
 	} catch (error) {
-		console.log(`${c.red}Error fetching roles: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
+		console.info(`${c.red}Error fetching roles: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
 	}
 }
 
@@ -529,8 +529,8 @@ async function createRole(args: string[]): Promise<void> {
 	const [id, name, ...permissions] = args;
 
 	if (!id || !name || permissions.length === 0) {
-		console.log(`${c.red}Usage: roles create <id> <name> <permission1> [permission2] ...${c.reset}`);
-		console.log(`${c.dim}Example: roles create analyst Analyst data-source:read property:read${c.reset}`);
+		console.info(`${c.red}Usage: roles create <id> <name> <permission1> [permission2] ...${c.reset}`);
+		console.info(`${c.dim}Example: roles create analyst Analyst data-source:read property:read${c.reset}`);
 		return;
 	}
 
@@ -541,7 +541,7 @@ async function createRole(args: string[]): Promise<void> {
 		return { resource, actions };
 	});
 
-	console.log(`\n${c.yellow}Creating role ${name}...${c.reset}\n`);
+	console.info(`\n${c.yellow}Creating role ${name}...${c.reset}\n`);
 
 	try {
 		const response = await fetch("http://localhost:3001/api/roles", {
@@ -559,19 +559,19 @@ async function createRole(args: string[]): Promise<void> {
 
 		if (!response.ok) {
 			const error = await response.json();
-			console.log(`${c.red}Failed to create role: ${error.error || response.status}${c.reset}`);
+			console.info(`${c.red}Failed to create role: ${error.error || response.status}${c.reset}`);
 			return;
 		}
 
 		const data = await response.json();
-		console.log(`${c.green}✓${c.reset} Role created successfully`);
-		console.log(`  ID: ${data.role.id}`);
-		console.log(`  Name: ${data.role.name}`);
-		console.log(`  Permissions: ${data.role.permissions.map((p: any) => `${p.resource}:${p.actions.join(",")}`).join(", ")}`);
+		console.info(`${c.green}✓${c.reset} Role created successfully`);
+		console.info(`  ID: ${data.role.id}`);
+		console.info(`  Name: ${data.role.name}`);
+		console.info(`  Permissions: ${data.role.permissions.map((p: any) => `${p.resource}:${p.actions.join(",")}`).join(", ")}`);
 	} catch (error) {
-		console.log(`${c.red}Error creating role: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
+		console.info(`${c.red}Error creating role: ${error instanceof Error ? error.message : String(error)}${c.reset}`);
 	}
-	console.log();
+	console.info();
 }
 
 // ============ CLI ============
@@ -611,7 +611,7 @@ async function main(): Promise<void> {
 	const [cmd, ...rest] = args;
 
 	if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-		console.log(HELP);
+		console.info(HELP);
 		return;
 	}
 
@@ -660,7 +660,7 @@ async function main(): Promise<void> {
 						break;
 					default:
 						console.error(`${c.red}Unknown users command: ${userCmd}${c.reset}`);
-						console.log("Available: list, create, update");
+						console.info("Available: list, create, update");
 						process.exit(1);
 				}
 				break;
@@ -677,14 +677,14 @@ async function main(): Promise<void> {
 						break;
 					default:
 						console.error(`${c.red}Unknown roles command: ${roleCmd}${c.reset}`);
-						console.log("Available: list, create");
+						console.info("Available: list, create");
 						process.exit(1);
 				}
 				break;
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

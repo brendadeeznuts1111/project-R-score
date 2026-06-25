@@ -25,9 +25,9 @@ export class WasmValidator {
             await new Promise(resolve => setTimeout(resolve, 100));
             this.isInitialized = true;
 
-            console.log('✅ WebAssembly validator initialized successfully');
-            console.log('🚀 Ready for 10-100x performance improvements');
-            console.log(`⚡ Simulated speedup: ${this.performanceMetrics.wasmSpeedup}x`);
+            console.info('✅ WebAssembly validator initialized successfully');
+            console.info('🚀 Ready for 10-100x performance improvements');
+            console.info(`⚡ Simulated speedup: ${this.performanceMetrics.wasmSpeedup}x`);
         } catch (error) {
             console.error('❌ Failed to initialize WebAssembly validator:', error);
             throw error;
@@ -136,10 +136,10 @@ export class WasmValidator {
 
         const speedup = jsTime / wasmTime;
 
-        console.log(`📊 Performance Benchmark Results:`);
-        console.log(`   WebAssembly: ${wasmTime.toFixed(2)}ms`);
-        console.log(`   JavaScript: ${jsTime.toFixed(2)}ms`);
-        console.log(`   🚀 Speedup: ${speedup.toFixed(1)}x`);
+        console.info(`📊 Performance Benchmark Results:`);
+        console.info(`   WebAssembly: ${wasmTime.toFixed(2)}ms`);
+        console.info(`   JavaScript: ${jsTime.toFixed(2)}ms`);
+        console.info(`   🚀 Speedup: ${speedup.toFixed(1)}x`);
 
         return { wasmTime, jsTime, speedup };
     }
@@ -170,8 +170,8 @@ export class PerformanceValidationManager {
         const benchmark = await this.wasmValidator.benchmarkPerformance();
         this.metrics.wasmSpeedup = benchmark.speedup;
 
-        console.log('🎯 Performance Validation Manager initialized');
-        console.log(`📈 WebAssembly speedup: ${benchmark.speedup.toFixed(1)}x`);
+        console.info('🎯 Performance Validation Manager initialized');
+        console.info(`📈 WebAssembly speedup: ${benchmark.speedup.toFixed(1)}x`);
     }
 
     /**
@@ -227,5 +227,5 @@ export const performanceValidator = new PerformanceValidationManager();
  */
 export async function initializeWebAssemblyValidation(): Promise<void> {
     await performanceValidator.initialize();
-    console.log('🚀 WebAssembly validation system ready for Industry Dominance');
+    console.info('🚀 WebAssembly validation system ready for Industry Dominance');
 }

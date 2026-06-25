@@ -143,9 +143,9 @@ export const printTable = (
 
   // Bun.inspect.table(data, properties?, options?)
   if (columns) {
-    console.log(Bun.inspect.table(data, columns, options));
+    console.info(Bun.inspect.table(data, columns, options));
   } else {
-    console.log(Bun.inspect.table(data, options));
+    console.info(Bun.inspect.table(data, options));
   }
 };
 

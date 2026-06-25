@@ -31,6 +31,8 @@ export const TEXT_FRAGMENT_PATTERNS = _CANONICAL_FRAGMENTS;
 
 // ============================================================================
 // DOCUMENTATION PATH CONSTANTS
+// Canonical source: lib/docs/constants/categories.ts (provider-nested paths).
+// This legacy flat view remains for EnterpriseDocumentationManager helpers.
 // ============================================================================
 
 /**

@@ -54,7 +54,7 @@ export interface TableOptions {
  * @example
  * ```typescript
  * const obj = { nested: { deep: { value: 42 } } };
- * console.log(inspect(obj, { depth: 5 }));
+ * console.info(inspect(obj, { depth: 5 }));
  * ```
  */
 export function inspect(value: unknown, options: InspectOptions = {}): string {
@@ -86,7 +86,7 @@ export function log(
 	value: unknown,
 	options?: InspectOptions,
 ): void {
-	console.log(`\x1b[36m[${label}]\x1b[0m`, inspect(value, options));
+	console.info(`\x1b[36m[${label}]\x1b[0m`, inspect(value, options));
 }
 
 /**
@@ -175,7 +175,7 @@ export function serialize(value: any): ArrayBuffer {
  * @example
  * ```typescript
  * const obj = deserialize(buf);
- * console.log(obj); // { data: [1, 2, 3], meta: { timestamp: 1234567890 } }
+ * console.info(obj); // { data: [1, 2, 3], meta: { timestamp: 1234567890 } }
  * ```
  */
 export function deserialize<T = any>(buffer: ArrayBuffer): T {
@@ -262,7 +262,7 @@ export interface TableOptions {
  *   { name: 'Bob', age: 25, active: false }
  * ];
  *
- * console.log(formatTable(users, {
+ * console.info(formatTable(users, {
  *   title: 'Users',
  *   borderStyle: 'rounded',
  *   sort: 'age',
@@ -596,7 +596,7 @@ export function printTable<T extends Record<string, unknown>>(
 	data: T[],
 	columns?: TableColumn<T>[],
 ): void {
-	console.log(table(data, columns));
+	console.info(table(data, columns));
 }
 
 /**
@@ -1675,7 +1675,7 @@ export function setupGracefulShutdown(cleanup: () => Promise<void>) {
 
 	signals.forEach((signal) => {
 		process.on(signal, async () => {
-			console.log(`Received ${signal}, cleaning up...`);
+			console.info(`Received ${signal}, cleaning up...`);
 			await cleanup();
 			process.exit(0);
 		});

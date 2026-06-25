@@ -45,7 +45,7 @@ interface WorkerResult {
 // Get worker ID from environment
 const WORKER_ID = process.env.WORKER_ID || `worker-${Date.now()}`;
 
-console.log(`🏃 Analysis worker ${WORKER_ID} started`);
+console.info(`🏃 Analysis worker ${WORKER_ID} started`);
 
 // Performance optimization: Pre-allocate commonly used arrays
 const PREALLOCATED_SIZE = 10000;
@@ -181,7 +181,7 @@ function performMemoryCleanup(): void {
       global.gc();
     }
 
-    console.log(`🧹 Worker ${WORKER_ID} performed memory cleanup`);
+    console.info(`🧹 Worker ${WORKER_ID} performed memory cleanup`);
   }
 }
 
@@ -198,7 +198,7 @@ process.on("message", async (task: WorkerTask) => {
   const startTime = performance.now();
 
   try {
-    console.log(
+    console.info(
       `📨 Worker ${WORKER_ID} received task ${task.id} (${task.type})`
     );
 
@@ -236,7 +236,7 @@ process.on("message", async (task: WorkerTask) => {
 
     process.postMessage(workerResult);
 
-    console.log(
+    console.info(
       `✅ Worker ${WORKER_ID} completed task ${
         task.id
       } in ${processingTime.toFixed(2)}ms`
@@ -279,7 +279,7 @@ process.on("health-check", () => {
 
 // Graceful shutdown handler
 process.on("shutdown", () => {
-  console.log(`🛑 Worker ${WORKER_ID} shutting down...`);
+  console.info(`🛑 Worker ${WORKER_ID} shutting down...`);
 
   // Clean up resources
   preallocatedArrays.float64 = new Float64Array(0);
@@ -304,7 +304,7 @@ process.postMessage = (message: any) => {
     // Log performance every 50 tasks
     if (taskCount % 50 === 0) {
       const avgTime = totalProcessingTime / taskCount;
-      console.log(
+      console.info(
         `📊 Worker ${WORKER_ID} performance: ${taskCount} tasks, avg ${avgTime.toFixed(
           2
         )}ms/task`
@@ -317,12 +317,12 @@ process.postMessage = (message: any) => {
 
 // Signal handlers for graceful shutdown
 process.on("SIGINT", () => {
-  console.log(`📡 Worker ${WORKER_ID} received SIGINT`);
+  console.info(`📡 Worker ${WORKER_ID} received SIGINT`);
   process.emit("shutdown");
 });
 
 process.on("SIGTERM", () => {
-  console.log(`📡 Worker ${WORKER_ID} received SIGTERM`);
+  console.info(`📡 Worker ${WORKER_ID} received SIGTERM`);
   process.emit("shutdown");
 });
 
@@ -338,7 +338,7 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 // Worker ready notification
-console.log(`✅ Analysis worker ${WORKER_ID} ready for tasks`);
+console.info(`✅ Analysis worker ${WORKER_ID} ready for tasks`);
 
 // Notify main thread that worker is ready
 process.postMessage({

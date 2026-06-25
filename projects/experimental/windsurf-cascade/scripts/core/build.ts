@@ -26,7 +26,7 @@ class Builder {
   ];
 
   async buildAll(): Promise<void> {
-    console.log('🚀 Building all packages with Bun optimization...\n');
+    console.info('🚀 Building all packages with Bun optimization...\n');
     
     const results: BuildResult[] = [];
     const startTime = Date.now();
@@ -36,9 +36,9 @@ class Builder {
       results.push(result);
       
       if (result.success) {
-        console.log(`✅ ${pkg} - ${result.duration}ms`);
+        console.info(`✅ ${pkg} - ${result.duration}ms`);
       } else {
-        console.log(`❌ ${pkg} - ${result.error}`);
+        console.info(`❌ ${pkg} - ${result.error}`);
       }
     }
 
@@ -49,22 +49,22 @@ class Builder {
     const successful = results.filter(r => r.success).length;
     const failed = results.filter(r => !r.success).length;
 
-    console.log(`\n📊 Build Summary:`);
-    console.log(`   Total: ${results.length} packages`);
-    console.log(`   Successful: ${successful}`);
-    console.log(`   Failed: ${failed}`);
-    console.log(`   Total time: ${totalTime}ms`);
+    console.info(`\n📊 Build Summary:`);
+    console.info(`   Total: ${results.length} packages`);
+    console.info(`   Successful: ${successful}`);
+    console.info(`   Failed: ${failed}`);
+    console.info(`   Total time: ${totalTime}ms`);
 
     if (failed > 0) {
-      console.log('\n❌ Build failed for some packages');
+      console.info('\n❌ Build failed for some packages');
       process.exit(1);
     } else {
-      console.log('\n✅ All packages built successfully');
+      console.info('\n✅ All packages built successfully');
     }
   }
 
   async runBunBundling(): Promise<void> {
-    console.log('\n🔨 Optimizing bundles with Bun...');
+    console.info('\n🔨 Optimizing bundles with Bun...');
 
     const targets = [
       {
@@ -102,7 +102,7 @@ class Builder {
         if (!result.success) {
           console.error(`Failed to build ${target.name}:`, result.logs);
         } else {
-          console.log(`✅ Bundled ${target.name} (${result.outputs.length} files)`);
+          console.info(`✅ Bundled ${target.name} (${result.outputs.length} files)`);
         }
       } catch (error) {
         console.error(`Bundle error for ${target.name}:`, error);
@@ -110,7 +110,7 @@ class Builder {
     }
 
     // Generate type declarations
-    console.log('📝 Generating type declarations...');
+    console.info('📝 Generating type declarations...');
     await $`bun run typecheck`.quiet();
   }
 
@@ -147,13 +147,13 @@ class Builder {
   }
 
   async clean(): Promise<void> {
-    console.log('🧹 Cleaning build artifacts...\n');
+    console.info('🧹 Cleaning build artifacts...\n');
     
     // Use Bun shell for cleaning
     await $`rm -rf packages/*/dist apps/*/dist dist/*`.nothrow();
     await $`find . -name "*.tsbuildinfo" -delete`.nothrow();
     
-    console.log('\n✅ Clean completed');
+    console.info('\n✅ Clean completed');
   }
 }
 

@@ -45,23 +45,23 @@ Complete library index for the FactoryWager Enterprise Platform.
 ## 🚀 Quick Access
 
 ```typescript
-import { 
+import {
   // Package Management
   PackageManager,
   type PackageInfo,
-  
+
   // R2 Storage
   R2Storage,
   type R2StorageConfig,
-  
+
   // RSS Management
   RSSManager,
   type RSSFeed,
-  
+
   // Documentation
   docsURLBuilder,
   EnhancedDocumentationURLValidator,
-  
+
   // Utilities
   FW
 } from './lib';

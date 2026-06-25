@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // Comprehensive Bun.inspect.table() Demo for UDP HFT Integration
 import { inspect } from 'bun';
-console.log('🚀 Bun.inspect.table() UDP HFT Integration Demo');
-console.log('='.repeat(60));
+console.info('🚀 Bun.inspect.table() UDP HFT Integration Demo');
+console.info('='.repeat(60));
 // --- UDP HFT Data Structure ---
 interface UDPHFTMetrics {
   packetsSent: number;
@@ -32,8 +32,8 @@ interface IntegrationBenefits {
 // --- Demonstrate Bun.inspect.table() with UDP HFT Data ---
 class BunInspectTableDemo {
   demonstrateBasicTable(): void {
-    console.log('\n📋 1. Basic UDP HFT Metrics Table');
-    console.log('─'.repeat(50));
+    console.info('\n📋 1. Basic UDP HFT Metrics Table');
+    console.info('─'.repeat(50));
     const udpMetrics: UDPHFTMetrics = {
       packetsSent: 1135185,
       packetsReceived: 1113782,
@@ -46,11 +46,11 @@ class BunInspectTableDemo {
       packetLossRate: 0.003
     };
     // Basic table display
-    console.log(inspect.table([udpMetrics], { colors: true }));
+    console.info(inspect.table([udpMetrics], { colors: true }));
   }
   demonstrateColumnSelection(): void {
-    console.log('\n📋 2. Column Selection and Ordering');
-    console.log('─'.repeat(50));
+    console.info('\n📋 2. Column Selection and Ordering');
+    console.info('─'.repeat(50));
     const udpMetrics: UDPHFTMetrics[] = [
       {
         packetsSent: 1135185,
@@ -65,23 +65,23 @@ class BunInspectTableDemo {
       }
     ];
     // Select specific columns in custom order
-    console.log('🔹 Key Performance Metrics:');
-    console.log(inspect.table(udpMetrics, [
+    console.info('🔹 Key Performance Metrics:');
+    console.info(inspect.table(udpMetrics, [
       'packetsPerSecond',
       'averageLatency',
       'packetLossRate',
       'clientCount'
     ], { colors: true }));
-    console.log('\n🔹 Data Volume Metrics:');
-    console.log(inspect.table(udpMetrics, [
+    console.info('\n🔹 Data Volume Metrics:');
+    console.info(inspect.table(udpMetrics, [
       'packetsSent',
       'packetsReceived',
       'bytesTransmitted'
     ], { colors: true }));
   }
   demonstrateCustomColumnNames(): void {
-    console.log('\n📋 3. Enhanced System Metrics with Custom Tags');
-    console.log('─'.repeat(60));
+    console.info('\n📋 3. Enhanced System Metrics with Custom Tags');
+    console.info('─'.repeat(60));
     
     // Enhanced system metrics with IP, OS, and metadata
     const systemMetrics = {
@@ -141,31 +141,31 @@ class BunInspectTableDemo {
       cacheEvictions: 1423
     };
     
-    console.log('\n🏷️  Network & IP Information:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n🏷️  Network & IP Information:');
+    console.info(inspect.table([systemMetrics], {
       'Client IP': 'clientIP',
       'Server IP': 'serverIP', 
       'Public IP': 'publicIP'
     }, { colors: true }));
     
-    console.log('\n💻 Operating System Details:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n💻 Operating System Details:');
+    console.info(inspect.table([systemMetrics], {
       'OS Type': 'osType',
       'OS Version': 'osVersion',
       'Architecture': 'osArch',
       'Kernel': 'kernel'
     }, { colors: true }));
     
-    console.log('\n⚙️  Process & Runtime Information:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n⚙️  Process & Runtime Information:');
+    console.info(inspect.table([systemMetrics], {
       'Process ID': 'processId',
       'Process Name': 'processName',
       'Uptime': 'processUptime',
       'Environment': 'environment'
     }, { colors: true }));
     
-    console.log('\n📊 Performance Metrics:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n📊 Performance Metrics:');
+    console.info(inspect.table([systemMetrics], {
       'Packets Sent': 'packetsSent',
       'Packets Received': 'packetsReceived',
       'Bytes Transmitted': 'bytesTransmitted',
@@ -177,15 +177,15 @@ class BunInspectTableDemo {
       'Dropped Packets': 'droppedPackets'
     }, { colors: true }));
     
-    console.log('\n🧠 Memory & CPU Usage:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n🧠 Memory & CPU Usage:');
+    console.info(inspect.table([systemMetrics], {
       'Memory Usage (MB)': 'memoryUsage',
       'CPU Usage (%)': 'cpuUsage',
       'Peak Memory (MB)': 'memoryPeak'
     }, { colors: true }));
     
-    console.log('\n📋 System Metadata:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n📋 System Metadata:');
+    console.info(inspect.table([systemMetrics], {
       'Region': 'region',
       'Datacenter': 'datacenter',
       'Environment': 'environment',
@@ -194,29 +194,29 @@ class BunInspectTableDemo {
       'Last Deployed': 'lastDeployed'
     }, { colors: true }));
     
-    console.log('\n🔐 Security & Compliance:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n🔐 Security & Compliance:');
+    console.info(inspect.table([systemMetrics], {
       'TLS Version': 'tlsVersion',
       'Cipher Suite': 'cipherSuite',
       'Compliance': 'complianceLevel'
     }, { colors: true }));
     
-    console.log('\n🌐 WebSocket Statistics:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n🌐 WebSocket Statistics:');
+    console.info(inspect.table([systemMetrics], {
       'Connections': 'wsConnections',
       'Subscriptions': 'wsSubscriptions',
       'Message Rate': 'wsMessageRate'
     }, { colors: true }));
     
-    console.log('\n💾 Cache Performance:');
-    console.log(inspect.table([systemMetrics], {
+    console.info('\n💾 Cache Performance:');
+    console.info(inspect.table([systemMetrics], {
       'Hit Rate (%)': 'cacheHitRate',
       'Cache Size': 'cacheSize',
       'Evictions': 'cacheEvictions'
     }, { colors: true }));
     
     // Additional formatted metadata section
-    console.log('\n🏷️  Enhanced System Tags:');
+    console.info('\n🏷️  Enhanced System Tags:');
     const systemTags = [
       '🌐 network:client-ip=192.168.1.100',
       '🌐 network:server-ip=10.0.0.15', 
@@ -250,14 +250,14 @@ class BunInspectTableDemo {
     ];
     
     systemTags.forEach((tag, index) => {
-      console.log(`   ${(index + 1).toString().padStart(2)}. ${tag}`);
+      console.info(`   ${(index + 1).toString().padStart(2)}. ${tag}`);
     });
     
-    console.log('\n✨ Enhanced tagging system with categorized system information!');
+    console.info('\n✨ Enhanced tagging system with categorized system information!');
   }
   demonstrateHFTSymbolsTable(): void {
-    console.log('\n📋 4. HFT Symbols Performance Table');
-    console.log('─'.repeat(50));
+    console.info('\n📋 4. HFT Symbols Performance Table');
+    console.info('─'.repeat(50));
     const hftSymbols: HFTSymbol[] = [
       {
         symbol: 'BTC/USD',
@@ -301,7 +301,7 @@ class BunInspectTableDemo {
       }
     ];
     // Custom column names with formatting
-    console.log(inspect.table(hftSymbols, {
+    console.info(inspect.table(hftSymbols, {
       '📈 Symbol': 'symbol',
       '💰 Volume': 'volume',
       '⚡ Latency (ms)': 'latency',
@@ -311,8 +311,8 @@ class BunInspectTableDemo {
     }, { colors: true }));
   }
   demonstrateDataFilteringAndSorting(): void {
-    console.log('\n📋 5. Data Filtering and Analysis');
-    console.log('─'.repeat(50));
+    console.info('\n📋 5. Data Filtering and Analysis');
+    console.info('─'.repeat(50));
     const hftSymbols: HFTSymbol[] = [
       { symbol: 'BTC/USD', volume: 772302, latency: 0.97, exchange: 'Binance', spread: 0.05, lastUpdated: new Date().toISOString() },
       { symbol: 'ETH/USD', volume: 1096062, latency: 1.08, exchange: 'Coinbase', spread: 0.03, lastUpdated: new Date().toISOString() },
@@ -322,8 +322,8 @@ class BunInspectTableDemo {
     ];
     // Filter for high-volume symbols (> 1M contracts)
     const highVolumeSymbols = hftSymbols.filter(symbol => symbol.volume > 1000000);
-    console.log('🔹 High Volume Symbols (> 1M contracts):');
-    console.log(inspect.table(highVolumeSymbols, {
+    console.info('🔹 High Volume Symbols (> 1M contracts):');
+    console.info(inspect.table(highVolumeSymbols, {
       '📈 Symbol': 'symbol',
       '💰 Volume': 'volume',
       '⚡ Latency (ms)': 'latency',
@@ -331,8 +331,8 @@ class BunInspectTableDemo {
     }, { colors: true }));
     // Filter for low-latency symbols (< 0.5ms)
     const lowLatencySymbols = hftSymbols.filter(symbol => symbol.latency < 0.5);
-    console.log('\n🔹 Low Latency Symbols (< 0.5ms):');
-    console.log(inspect.table(lowLatencySymbols, {
+    console.info('\n🔹 Low Latency Symbols (< 0.5ms):');
+    console.info(inspect.table(lowLatencySymbols, {
       '📈 Symbol': 'symbol',
       '⚡ Latency (ms)': 'latency',
       '💰 Volume': 'volume',
@@ -340,8 +340,8 @@ class BunInspectTableDemo {
     }, { colors: true }));
   }
   demonstrateIntegrationBenefits(): void {
-    console.log('\n📋 6. Integration Benefits Analysis');
-    console.log('─'.repeat(50));
+    console.info('\n📋 6. Integration Benefits Analysis');
+    console.info('─'.repeat(50));
     const benefits: IntegrationBenefits[] = [
       {
         feature: 'Sub-millisecond Latency',
@@ -389,8 +389,8 @@ class BunInspectTableDemo {
     }, {} as Record<string, IntegrationBenefits[]>);
     // Display by category
     Object.entries(groupedBenefits).forEach(([category, categoryBenefits]) => {
-      console.log(`\n🔹 ${category} Benefits:`);
-      console.log(inspect.table(categoryBenefits, {
+      console.info(`\n🔹 ${category} Benefits:`);
+      console.info(inspect.table(categoryBenefits, {
         '✨ Feature': 'feature',
         '📝 Description': 'description',
         '🎯 Impact': 'impact'
@@ -398,8 +398,8 @@ class BunInspectTableDemo {
     });
   }
   demonstrateAdvancedFormatting(): void {
-    console.log('\n📋 7. Advanced Data Formatting');
-    console.log('─'.repeat(50));
+    console.info('\n📋 7. Advanced Data Formatting');
+    console.info('─'.repeat(50));
     // Create formatted data with calculated fields
     const formattedMetrics = [{
       '📊 Total Packets': '1,135,185',
@@ -411,8 +411,8 @@ class BunInspectTableDemo {
       '👥 Clients': '52 active',
       '🚀 Status': '🟢 Optimal'
     }];
-    console.log('🔹 Formatted Performance Summary:');
-    console.log(inspect.table(formattedMetrics, { colors: true }));
+    console.info('🔹 Formatted Performance Summary:');
+    console.info(inspect.table(formattedMetrics, { colors: true }));
     // Time series data simulation
     const timeSeriesData = Array.from({ length: 5 }, (_, i) => ({
       '🕐 Timestamp': new Date(Date.now() - (4 - i) * 60000).toLocaleTimeString(),
@@ -421,12 +421,12 @@ class BunInspectTableDemo {
       '📉 Loss Rate (%)': (Math.random() * 0.01).toFixed(4),
       '👥 Clients': Math.floor(Math.random() * 20 + 40)
     }));
-    console.log('\n🔹 Performance Time Series (Last 5 minutes):');
-    console.log(inspect.table(timeSeriesData, { colors: true }));
+    console.info('\n🔹 Performance Time Series (Last 5 minutes):');
+    console.info(inspect.table(timeSeriesData, { colors: true }));
   }
   demonstrateMixedDataTypes(): void {
-    console.log('\n📋 8. Mixed Data Types and Complex Objects');
-    console.log('─'.repeat(50));
+    console.info('\n📋 8. Mixed Data Types and Complex Objects');
+    console.info('─'.repeat(50));
     const complexData = [
       {
         '🔧 Configuration': {
@@ -449,8 +449,8 @@ class BunInspectTableDemo {
         '🕐 Last Check': new Date().toISOString()
       }
     ];
-    console.log('🔹 Complex Configuration Data:');
-    console.log(inspect.table(complexData, {
+    console.info('🔹 Complex Configuration Data:');
+    console.info(inspect.table(complexData, {
       '🔧 Config': 'Configuration',
       '📈 Perf': 'Performance',
       '🌐 Network': 'Network',
@@ -459,7 +459,7 @@ class BunInspectTableDemo {
     }, { colors: true }));
   }
   runFullDemo(): void {
-    console.log('🎯 Running Complete Bun.inspect.table() Demo for UDP HFT Integration');
+    console.info('🎯 Running Complete Bun.inspect.table() Demo for UDP HFT Integration');
     this.demonstrateBasicTable();
     this.demonstrateColumnSelection();
     this.demonstrateCustomColumnNames();
@@ -468,21 +468,21 @@ class BunInspectTableDemo {
     this.demonstrateIntegrationBenefits();
     this.demonstrateAdvancedFormatting();
     this.demonstrateMixedDataTypes();
-    console.log('\n✅ Complete Bun.inspect.table() Demo Finished!');
-    console.log('\n💡 Key Features Demonstrated:');
-    console.log('  • Basic table rendering with automatic formatting');
-    console.log('  • Column selection and custom ordering');
-    console.log('  • Custom column names with emojis');
-    console.log('  • Data filtering and analysis capabilities');
-    console.log('  • Advanced formatting and calculated fields');
-    console.log('  • Complex object handling');
-    console.log('  • Time series data visualization');
-    console.log('  • Mixed data types support');
-    console.log('\n🚀 Integration Benefits:');
-    console.log('  • Real-time HFT metrics visualization');
-    console.log('  • Professional table formatting for monitoring');
-    console.log('  • Flexible data presentation options');
-    console.log('  • Enhanced debugging and analysis capabilities');
+    console.info('\n✅ Complete Bun.inspect.table() Demo Finished!');
+    console.info('\n💡 Key Features Demonstrated:');
+    console.info('  • Basic table rendering with automatic formatting');
+    console.info('  • Column selection and custom ordering');
+    console.info('  • Custom column names with emojis');
+    console.info('  • Data filtering and analysis capabilities');
+    console.info('  • Advanced formatting and calculated fields');
+    console.info('  • Complex object handling');
+    console.info('  • Time series data visualization');
+    console.info('  • Mixed data types support');
+    console.info('\n🚀 Integration Benefits:');
+    console.info('  • Real-time HFT metrics visualization');
+    console.info('  • Professional table formatting for monitoring');
+    console.info('  • Flexible data presentation options');
+    console.info('  • Enhanced debugging and analysis capabilities');
   }
 }
 // --- Main Execution ---

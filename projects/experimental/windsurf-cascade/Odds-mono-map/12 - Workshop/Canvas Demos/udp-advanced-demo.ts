@@ -18,16 +18,16 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 Advanced UDP Socket Demonstration');
-console.log('======================================');
+console.info('🚀 Advanced UDP Socket Demonstration');
+console.info('======================================');
 
 // =============================================================================
 // BASIC UDP SERVER/CLIENT COMMUNICATION
 // =============================================================================
 
 async function demonstrateBasicUDPServer() {
-    console.log('\n📡 Basic UDP Server/Client:');
-    console.log('==========================');
+    console.info('\n📡 Basic UDP Server/Client:');
+    console.info('==========================');
 
     try {
         // Create UDP server
@@ -35,7 +35,7 @@ async function demonstrateBasicUDPServer() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Server received from ${addr}:${port}: "${message}"`);
+                    console.info(`📨 Server received from ${addr}:${port}: "${message}"`);
 
                     // Echo back with timestamp
                     const response = `Echo: ${message} (at ${new Date().toISOString()})`;
@@ -47,7 +47,7 @@ async function demonstrateBasicUDPServer() {
             }
         });
 
-        console.log(`🚀 UDP Server started on port ${server.port}`);
+        console.info(`🚀 UDP Server started on port ${server.port}`);
 
         // Create multiple clients
         const clients = [];
@@ -58,7 +58,7 @@ async function demonstrateBasicUDPServer() {
             // Send message from each client
             const message = `Hello from client ${i}!`;
             client.send(message, server.port, '127.0.0.1');
-            console.log(`📤 Client ${i} sent: "${message}"`);
+            console.info(`📤 Client ${i} sent: "${message}"`);
         }
 
         // Wait for responses
@@ -68,7 +68,7 @@ async function demonstrateBasicUDPServer() {
         clients.forEach(({ client }) => client.close());
         server.close();
 
-        console.log('✅ Basic UDP communication completed');
+        console.info('✅ Basic UDP communication completed');
 
     } catch (error) {
         console.error(`❌ Basic UDP demo failed: ${error.message}`);
@@ -80,8 +80,8 @@ async function demonstrateBasicUDPServer() {
 // =============================================================================
 
 async function demonstrateConnectedSockets() {
-    console.log('\n🔗 Connected vs Unconnected Sockets:');
-    console.log('=====================================');
+    console.info('\n🔗 Connected vs Unconnected Sockets:');
+    console.info('=====================================');
 
     try {
         // Create server
@@ -89,7 +89,7 @@ async function demonstrateConnectedSockets() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Received: "${message}" from ${addr}:${port}`);
 
                     // Send response back to specific client
                     socket.send(`Response to: ${message}`, port, addr);
@@ -97,7 +97,7 @@ async function demonstrateConnectedSockets() {
             }
         });
 
-        console.log(`🚀 Server listening on port ${server.port}`);
+        console.info(`🚀 Server listening on port ${server.port}`);
 
         // Connected client (performance optimized)
         const connectedClient = await Bun.udpSocket({
@@ -107,12 +107,12 @@ async function demonstrateConnectedSockets() {
             }
         });
 
-        console.log('🔗 Connected client established');
+        console.info('🔗 Connected client established');
 
         // Unconnected client (flexible destinations)
         const unconnectedClient = await Bun.udpSocket({});
 
-        console.log('🔓 Unconnected client created');
+        console.info('🔓 Unconnected client created');
 
         // Test connected client (no need to specify address/port)
         connectedClient.send('Message from connected client');
@@ -133,7 +133,7 @@ async function demonstrateConnectedSockets() {
         unconnectedClient.close();
         server.close();
 
-        console.log('✅ Connected vs unconnected demo completed');
+        console.info('✅ Connected vs unconnected demo completed');
 
     } catch (error) {
         console.error(`❌ Connected sockets demo failed: ${error.message}`);
@@ -145,8 +145,8 @@ async function demonstrateConnectedSockets() {
 // =============================================================================
 
 async function demonstrateBatchOperations() {
-    console.log('\n📦 Batch Operations with sendMany():');
-    console.log('=====================================');
+    console.info('\n📦 Batch Operations with sendMany():');
+    console.info('=====================================');
 
     try {
         // Create server to receive batch messages
@@ -154,7 +154,7 @@ async function demonstrateBatchOperations() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Batch message received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Batch message received: "${message}" from ${addr}:${port}`);
 
                     // Acknowledge receipt
                     socket.send(`ACK: ${message}`, port, addr);
@@ -162,7 +162,7 @@ async function demonstrateBatchOperations() {
             }
         });
 
-        console.log(`🚀 Batch server listening on port ${server.port}`);
+        console.info(`🚀 Batch server listening on port ${server.port}`);
 
         // Connected socket batch send
         const connectedBatcher = await Bun.udpSocket({
@@ -172,7 +172,7 @@ async function demonstrateBatchOperations() {
             }
         });
 
-        console.log('\n📦 Testing connected socket sendMany()...');
+        console.info('\n📦 Testing connected socket sendMany()...');
 
         // Send multiple messages in one system call
         const batchMessages = [
@@ -184,14 +184,14 @@ async function demonstrateBatchOperations() {
         ];
 
         const sentCount = connectedBatcher.sendMany(batchMessages);
-        console.log(`📊 Sent ${sentCount} messages in batch via connected socket`);
+        console.info(`📊 Sent ${sentCount} messages in batch via connected socket`);
 
         await Bun.sleep(100);
 
         // Unconnected socket batch send
         const unconnectedBatcher = await Bun.udpSocket({});
 
-        console.log('\n📦 Testing unconnected socket sendMany()...');
+        console.info('\n📦 Testing unconnected socket sendMany()...');
 
         // For unconnected sockets: [data, port, address, data, port, address, ...]
         const unconnectedBatch = [
@@ -201,12 +201,12 @@ async function demonstrateBatchOperations() {
         ];
 
         const unconnectedSent = unconnectedBatcher.sendMany(unconnectedBatch);
-        console.log(`📊 Sent ${unconnectedSent / 3} packets in batch via unconnected socket`);
+        console.info(`📊 Sent ${unconnectedSent / 3} packets in batch via unconnected socket`);
 
         await Bun.sleep(200);
 
         // Performance comparison
-        console.log('\n⚡ Performance comparison...');
+        console.info('\n⚡ Performance comparison...');
 
         const startConnected = performance.now();
         for (let i = 0; i < 100; i++) {
@@ -220,16 +220,16 @@ async function demonstrateBatchOperations() {
         }
         const unconnectedTime = performance.now() - startUnconnected;
 
-        console.log(`📊 Connected 100 messages: ${connectedTime.toFixed(2)}ms`);
-        console.log(`📊 Unconnected 100 messages: ${unconnectedTime.toFixed(2)}ms`);
-        console.log(`📊 Performance improvement: ${((unconnectedTime - connectedTime) / unconnectedTime * 100).toFixed(1)}%`);
+        console.info(`📊 Connected 100 messages: ${connectedTime.toFixed(2)}ms`);
+        console.info(`📊 Unconnected 100 messages: ${unconnectedTime.toFixed(2)}ms`);
+        console.info(`📊 Performance improvement: ${((unconnectedTime - connectedTime) / unconnectedTime * 100).toFixed(1)}%`);
 
         // Clean up
         connectedBatcher.close();
         unconnectedBatcher.close();
         server.close();
 
-        console.log('✅ Batch operations demo completed');
+        console.info('✅ Batch operations demo completed');
 
     } catch (error) {
         console.error(`❌ Batch operations demo failed: ${error.message}`);
@@ -241,8 +241,8 @@ async function demonstrateBatchOperations() {
 // =============================================================================
 
 async function demonstrateBackpressure() {
-    console.log('\n🌊 Backpressure Handling:');
-    console.log('==========================');
+    console.info('\n🌊 Backpressure Handling:');
+    console.info('==========================');
 
     try {
         let drainCount = 0;
@@ -254,22 +254,22 @@ async function demonstrateBackpressure() {
                 data(socket, buf, port, addr) {
                     messagesReceived++;
                     if (messagesReceived % 100 === 0) {
-                        console.log(`📨 Server processed ${messagesReceived} messages`);
+                        console.info(`📨 Server processed ${messagesReceived} messages`);
                     }
                 },
                 drain(socket) {
                     drainCount++;
-                    console.log(`💧 Drain event #${drainCount} - socket buffer ready for more data`);
+                    console.info(`💧 Drain event #${drainCount} - socket buffer ready for more data`);
                 }
             }
         });
 
-        console.log(`🚀 Backpressure server on port ${server.port}`);
+        console.info(`🚀 Backpressure server on port ${server.port}`);
 
         // Create sender that might trigger backpressure
         const sender = await Bun.udpSocket({});
 
-        console.log('\n🌊 Rapidly sending messages to test backpressure...');
+        console.info('\n🌊 Rapidly sending messages to test backpressure...');
 
         let sentCount = 0;
         let failedCount = 0;
@@ -281,7 +281,7 @@ async function demonstrateBackpressure() {
                 sentCount++;
             } else {
                 failedCount++;
-                console.log(`⚠️ Send failed at message ${i} - buffer full`);
+                console.info(`⚠️ Send failed at message ${i} - buffer full`);
                 break;
             }
 
@@ -291,10 +291,10 @@ async function demonstrateBackpressure() {
             }
         }
 
-        console.log(`📊 Successfully sent: ${sentCount} messages`);
-        console.log(`📊 Failed to send: ${failedCount} messages`);
-        console.log(`📊 Drain events triggered: ${drainCount}`);
-        console.log(`📊 Messages received by server: ${messagesReceived}`);
+        console.info(`📊 Successfully sent: ${sentCount} messages`);
+        console.info(`📊 Failed to send: ${failedCount} messages`);
+        console.info(`📊 Drain events triggered: ${drainCount}`);
+        console.info(`📊 Messages received by server: ${messagesReceived}`);
 
         // Wait for processing
         await Bun.sleep(500);
@@ -303,7 +303,7 @@ async function demonstrateBackpressure() {
         sender.close();
         server.close();
 
-        console.log('✅ Backpressure handling demo completed');
+        console.info('✅ Backpressure handling demo completed');
 
     } catch (error) {
         console.error(`❌ Backpressure demo failed: ${error.message}`);
@@ -315,8 +315,8 @@ async function demonstrateBackpressure() {
 // =============================================================================
 
 async function demonstrateVoiceChatSimulation() {
-    console.log('\n🎤 Real-Time Voice Chat Simulation:');
-    console.log('===================================');
+    console.info('\n🎤 Real-Time Voice Chat Simulation:');
+    console.info('===================================');
 
     try {
         // Simulate voice chat server
@@ -327,7 +327,7 @@ async function demonstrateVoiceChatSimulation() {
                     const packetId = buf.toString().split(':')[0];
                     const audioData = buf.toString().split(':')[1];
 
-                    console.log(`🎤 Audio packet ${packetId} from ${addr}:${port} (${audioData?.length || 0} bytes)`);
+                    console.info(`🎤 Audio packet ${packetId} from ${addr}:${port} (${audioData?.length || 0} bytes)`);
 
                     // Echo back with processing delay
                     setTimeout(() => {
@@ -340,7 +340,7 @@ async function demonstrateVoiceChatSimulation() {
             }
         });
 
-        console.log(`🎤 Voice server started on port ${voiceServer.port}`);
+        console.info(`🎤 Voice server started on port ${voiceServer.port}`);
 
         // Simulate multiple voice clients
         const voiceClients = [];
@@ -356,7 +356,7 @@ async function demonstrateVoiceChatSimulation() {
                         const response = buf.toString();
                         if (response.startsWith('PROCESSED:')) {
                             const packetId = response.split(':')[1];
-                            console.log(`🔊 Client ${clientId} received processed packet ${packetId}`);
+                            console.info(`🔊 Client ${clientId} received processed packet ${packetId}`);
                         }
                     }
                 }
@@ -365,11 +365,11 @@ async function demonstrateVoiceChatSimulation() {
             voiceClients.push({ client, id: clientId });
         }
 
-        console.log('🎤 Simulating voice chat traffic...');
+        console.info('🎤 Simulating voice chat traffic...');
 
         // Simulate sending audio packets
         for (let round = 1; round <= 5; round++) {
-            console.log(`\n📡 Round ${round} - Sending audio packets...`);
+            console.info(`\n📡 Round ${round} - Sending audio packets...`);
 
             // Each client sends multiple audio packets
             for (const { client, id } of voiceClients) {
@@ -385,17 +385,17 @@ async function demonstrateVoiceChatSimulation() {
         }
 
         // Calculate performance metrics
-        console.log('\n📊 Voice Chat Performance Metrics:');
-        console.log('• Low latency: ~10ms processing delay');
-        console.log('• High throughput: Multiple concurrent clients');
-        console.log('• Connected sockets: Optimized for single-peer communication');
-        console.log('• UDP benefits: No connection overhead, packet-based transmission');
+        console.info('\n📊 Voice Chat Performance Metrics:');
+        console.info('• Low latency: ~10ms processing delay');
+        console.info('• High throughput: Multiple concurrent clients');
+        console.info('• Connected sockets: Optimized for single-peer communication');
+        console.info('• UDP benefits: No connection overhead, packet-based transmission');
 
         // Clean up
         voiceClients.forEach(({ client }) => client.close());
         voiceServer.close();
 
-        console.log('✅ Voice chat simulation completed');
+        console.info('✅ Voice chat simulation completed');
 
     } catch (error) {
         console.error(`❌ Voice chat simulation failed: ${error.message}`);
@@ -407,8 +407,8 @@ async function demonstrateVoiceChatSimulation() {
 // =============================================================================
 
 async function demonstratePerformanceBenchmark() {
-    console.log('\n🏁 UDP Performance Benchmarking:');
-    console.log('==================================');
+    console.info('\n🏁 UDP Performance Benchmarking:');
+    console.info('==================================');
 
     try {
         // Create benchmark server
@@ -422,7 +422,7 @@ async function demonstratePerformanceBenchmark() {
             }
         });
 
-        console.log(`🏁 Benchmark server on port ${benchmarkServer.port}`);
+        console.info(`🏁 Benchmark server on port ${benchmarkServer.port}`);
 
         // Benchmark configurations
         const benchmarks = [
@@ -433,7 +433,7 @@ async function demonstratePerformanceBenchmark() {
         ];
 
         for (const benchmark of benchmarks) {
-            console.log(`\n📊 Running: ${benchmark.name}`);
+            console.info(`\n📊 Running: ${benchmark.name}`);
 
             const client = benchmark.connected
                 ? await Bun.udpSocket({
@@ -496,18 +496,18 @@ async function demonstratePerformanceBenchmark() {
             const totalTime = performance.now() - startTime;
             const messagesPerSecond = (benchmark.messageCount / totalTime) * 1000;
 
-            console.log(`   • Messages sent: ${benchmark.messageCount}`);
-            console.log(`   • Send time: ${sendTime.toFixed(2)}ms`);
-            console.log(`   • Total time: ${totalTime.toFixed(2)}ms`);
-            console.log(`   • Throughput: ${messagesPerSecond.toFixed(0)} msg/sec`);
-            console.log(`   • ACKs received: ${ackCount}`);
+            console.info(`   • Messages sent: ${benchmark.messageCount}`);
+            console.info(`   • Send time: ${sendTime.toFixed(2)}ms`);
+            console.info(`   • Total time: ${totalTime.toFixed(2)}ms`);
+            console.info(`   • Throughput: ${messagesPerSecond.toFixed(0)} msg/sec`);
+            console.info(`   • ACKs received: ${ackCount}`);
 
             client.close();
         }
 
         benchmarkServer.close();
 
-        console.log('✅ Performance benchmarking completed');
+        console.info('✅ Performance benchmarking completed');
 
     } catch (error) {
         console.error(`❌ Performance benchmarking failed: ${error.message}`);
@@ -519,18 +519,18 @@ async function demonstratePerformanceBenchmark() {
 // =============================================================================
 
 async function main() {
-    console.log('🚀 Starting Advanced UDP Socket Demonstration');
-    console.log('================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log('');
-    console.log('💡 This demo showcases Bun\'s high-performance UDP API');
-    console.log('   • Real-time communication capabilities');
-    console.log('   • Batch operations with sendMany()');
-    console.log('   • Backpressure handling');
-    console.log('   • Voice chat simulation patterns');
-    console.log('   • Performance benchmarking');
-    console.log('');
+    console.info('🚀 Starting Advanced UDP Socket Demonstration');
+    console.info('================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info('');
+    console.info('💡 This demo showcases Bun\'s high-performance UDP API');
+    console.info('   • Real-time communication capabilities');
+    console.info('   • Batch operations with sendMany()');
+    console.info('   • Backpressure handling');
+    console.info('   • Voice chat simulation patterns');
+    console.info('   • Performance benchmarking');
+    console.info('');
 
     try {
         // Run all demonstrations
@@ -541,23 +541,23 @@ async function main() {
         await demonstrateVoiceChatSimulation();
         await demonstratePerformanceBenchmark();
 
-        console.log('\n🎉 Advanced UDP Socket Demonstration Complete!');
-        console.log('=================================================');
-        console.log('✅ All UDP API features demonstrated successfully');
-        console.log('📚 Features shown:');
-        console.log('   • Basic UDP server/client communication');
-        console.log('   • Connected vs unconnected socket performance');
-        console.log('   • Batch operations with sendMany()');
-        console.log('   • Backpressure handling and drain events');
-        console.log('   • Real-time voice chat simulation');
-        console.log('   • Performance benchmarking and optimization');
-        console.log('');
-        console.log('🚀 Bun UDP API is perfect for:');
-        console.log('   • Real-time gaming and voice chat');
-        console.log('   • High-frequency data streaming');
-        console.log('   • IoT device communication');
-        console.log('   • DNS and service discovery');
-        console.log('   • Log aggregation and monitoring');
+        console.info('\n🎉 Advanced UDP Socket Demonstration Complete!');
+        console.info('=================================================');
+        console.info('✅ All UDP API features demonstrated successfully');
+        console.info('📚 Features shown:');
+        console.info('   • Basic UDP server/client communication');
+        console.info('   • Connected vs unconnected socket performance');
+        console.info('   • Batch operations with sendMany()');
+        console.info('   • Backpressure handling and drain events');
+        console.info('   • Real-time voice chat simulation');
+        console.info('   • Performance benchmarking and optimization');
+        console.info('');
+        console.info('🚀 Bun UDP API is perfect for:');
+        console.info('   • Real-time gaming and voice chat');
+        console.info('   • High-frequency data streaming');
+        console.info('   • IoT device communication');
+        console.info('   • DNS and service discovery');
+        console.info('   • Log aggregation and monitoring');
 
     } catch (error) {
         console.error(`❌ Demonstration failed: ${error.message}`);

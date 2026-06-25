@@ -2,7 +2,12 @@ import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 
 type OutputFormat = 'json' | 'css';
 
-function parseArgs(argv: string[]): { seed: number; saturation: number; lightness: number; format: OutputFormat } {
+function parseArgs(argv: string[]): {
+  seed: number;
+  saturation: number;
+  lightness: number;
+  format: OutputFormat;
+} {
   let seed = 210;
   let saturation = 90;
   let lightness = 60;
@@ -55,11 +60,11 @@ function main(): void {
   const palette = generatePalette({ h: seed, s: saturation, l: lightness });
 
   if (format === 'css') {
-    console.log(toCssVars(palette, seed));
+    console.info(toCssVars(palette, seed));
     return;
   }
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         seed,

@@ -733,7 +733,9 @@ export class MemoryIndexManager {
     } catch (err) {
       try {
         this.db.exec("ROLLBACK");
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       throw err;
     }
   }
@@ -1045,14 +1047,18 @@ export class MemoryIndexManager {
             `DELETE FROM ${VECTOR_TABLE} WHERE id IN (SELECT id FROM chunks WHERE path = ? AND source = ?)`,
           )
           .run(stale.path, "memory");
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       this.db.prepare(`DELETE FROM chunks WHERE path = ? AND source = ?`).run(stale.path, "memory");
       if (this.fts.enabled && this.fts.available) {
         try {
           this.db
             .prepare(`DELETE FROM ${FTS_TABLE} WHERE path = ? AND source = ? AND model = ?`)
             .run(stale.path, "memory", this.provider.model);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     }
   }
@@ -1142,7 +1148,9 @@ export class MemoryIndexManager {
             `DELETE FROM ${VECTOR_TABLE} WHERE id IN (SELECT id FROM chunks WHERE path = ? AND source = ?)`,
           )
           .run(stale.path, "sessions");
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       this.db
         .prepare(`DELETE FROM chunks WHERE path = ? AND source = ?`)
         .run(stale.path, "sessions");
@@ -1151,7 +1159,9 @@ export class MemoryIndexManager {
           this.db
             .prepare(`DELETE FROM ${FTS_TABLE} WHERE path = ? AND source = ? AND model = ?`)
             .run(stale.path, "sessions", this.provider.model);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
       }
     }
   }
@@ -1404,7 +1414,9 @@ export class MemoryIndexManager {
     } catch (err) {
       try {
         this.db.close();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       await this.removeIndexFiles(tempDbPath);
       restoreOriginalState();
       throw err;
@@ -1417,7 +1429,9 @@ export class MemoryIndexManager {
     if (this.fts.enabled && this.fts.available) {
       try {
         this.db.exec(`DELETE FROM ${FTS_TABLE}`);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     this.dropVectorTable();
     this.vector.dims = undefined;
@@ -2080,14 +2094,18 @@ export class MemoryIndexManager {
             `DELETE FROM ${VECTOR_TABLE} WHERE id IN (SELECT id FROM chunks WHERE path = ? AND source = ?)`,
           )
           .run(entry.path, options.source);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     if (this.fts.enabled && this.fts.available) {
       try {
         this.db
           .prepare(`DELETE FROM ${FTS_TABLE} WHERE path = ? AND source = ? AND model = ?`)
           .run(entry.path, options.source, this.provider.model);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     this.db
       .prepare(`DELETE FROM chunks WHERE path = ? AND source = ?`)
@@ -2124,7 +2142,9 @@ export class MemoryIndexManager {
       if (vectorReady && embedding.length > 0) {
         try {
           this.db.prepare(`DELETE FROM ${VECTOR_TABLE} WHERE id = ?`).run(id);
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
         this.db
           .prepare(`INSERT INTO ${VECTOR_TABLE} (id, embedding) VALUES (?, ?)`)
           .run(id, vectorToBlob(embedding));

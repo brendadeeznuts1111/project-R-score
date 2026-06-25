@@ -46,13 +46,13 @@ const colors = {
   dim: (s: string) => `\x1b[2m${s}\x1b[0m`,
 };
 
-console.log("\n" + "═".repeat(70));
-console.log("  Tag Manager Pro Demo - Custom Error Inspection");
-console.log("═".repeat(70) + "\n");
+console.info("\n" + "═".repeat(70));
+console.info("  Tag Manager Pro Demo - Custom Error Inspection");
+console.info("═".repeat(70) + "\n");
 
 // Example 1: Custom error inspection
-console.log("📋 Example 1: Custom Error Inspection with Error.prepareStackTrace");
-console.log("-".repeat(70));
+console.info("📋 Example 1: Custom Error Inspection with Error.prepareStackTrace");
+console.info("-".repeat(70));
 
 try {
   throw new TagManagerError('Test error with context', {
@@ -63,14 +63,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
-    console.log();
+    console.info(error);
+    console.info();
   }
 }
 
 // Example 2: Error with tag context
-console.log("📋 Example 2: Error with Tag Context");
-console.log("-".repeat(70));
+console.info("📋 Example 2: Error with Tag Context");
+console.info("-".repeat(70));
 
 try {
   throw new TagManagerError('Invalid tag format', {
@@ -79,14 +79,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
-    console.log();
+    console.info(error);
+    console.info();
   }
 }
 
 // Example 3: Configuration error
-console.log("📋 Example 3: Configuration Error");
-console.log("-".repeat(70));
+console.info("📋 Example 3: Configuration Error");
+console.info("-".repeat(70));
 
 try {
   // Simulate config error
@@ -97,14 +97,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
+    console.info(error);
   }
-  console.log();
+  console.info();
 }
 
 // Example 4: File scan error
-console.log("📋 Example 4: File Scan Error");
-console.log("-".repeat(70));
+console.info("📋 Example 4: File Scan Error");
+console.info("-".repeat(70));
 
 try {
   throw new TagManagerError('Failed to scan file', {
@@ -115,14 +115,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
-    console.log();
+    console.info(error);
+    console.info();
   }
 }
 
 // Example 5: Cache error
-console.log("📋 Example 5: Cache Operation Error");
-console.log("-".repeat(70));
+console.info("📋 Example 5: Cache Operation Error");
+console.info("-".repeat(70));
 
 try {
   throw new TagManagerError('Cache operation failed', {
@@ -133,14 +133,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
-    console.log();
+    console.info(error);
+    console.info();
   }
 }
 
 // Example 6: Error inspection with showHidden
-console.log("📋 Example 6: Error Inspection with showHidden");
-console.log("-".repeat(70));
+console.info("📋 Example 6: Error Inspection with showHidden");
+console.info("-".repeat(70));
 
 try {
   throw new TagManagerError('Debug error', {
@@ -149,14 +149,14 @@ try {
   });
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(Bun.inspect(error, { showHidden: true, colors: true }));
-    console.log();
+    console.info(Bun.inspect(error, { showHidden: true, colors: true }));
+    console.info();
   }
 }
 
 // Example 7: Normal operation (no errors)
-console.log("📋 Example 7: Normal Operation - Tag Validation");
-console.log("-".repeat(70));
+console.info("📋 Example 7: Normal Operation - Tag Validation");
+console.info("-".repeat(70));
 
 const manager = new TagManagerPro();
 const tag = "[hyper-bun][utils][feat][META:priority=high,status=production][tag-manager-pro][#REF:Bun.inspect]";
@@ -165,20 +165,20 @@ try {
   const validation = TagParser.validate(tag);
   if (validation.valid) {
     const parsed = TagParser.parse(tag);
-    console.log(`${colors.green('✅ Valid tag')}`);
-    console.log(Bun.inspect(parsed, { colors: true }));
+    console.info(`${colors.green('✅ Valid tag')}`);
+    console.info(Bun.inspect(parsed, { colors: true }));
   } else {
-    console.log(`${colors.red('❌ Invalid tag')}`);
-    validation.errors.forEach(err => console.log(`  ${colors.red('-')} ${err}`));
+    console.info(`${colors.red('❌ Invalid tag')}`);
+    validation.errors.forEach(err => console.info(`  ${colors.red('-')} ${err}`));
   }
 } catch (error) {
   if (error instanceof TagManagerError) {
-    console.log(error);
+    console.info(error);
   } else {
     console.error('Unexpected error:', error);
   }
 }
 
-console.log("\n" + "═".repeat(70));
-console.log("  Demo Complete!");
-console.log("═".repeat(70) + "\n");
+console.info("\n" + "═".repeat(70));
+console.info("  Demo Complete!");
+console.info("═".repeat(70) + "\n");

@@ -26,14 +26,14 @@ import { Glob } from 'bun';
 
 /** Root cause of the issue */
 export type ErrorSource =
-  | 'dns'              // Domain does not resolve (e.g. docs.bun.sh, cdn.bun.sh)
-  | 'provider_change'  // Provider restructured URLs (e.g. feed.xml → rss.xml)
-  | 'cdn'              // CDN / static-asset domain issue
-  | 'redirect'         // URL redirects to a different location
-  | 'deleted_module'   // Source file was removed from the codebase
-  | 'path_rename'      // Directory/file was renamed during reorg
-  | 'duplicate_def'    // Same symbol defined in multiple places
-  | 'planned'          // URL is intentionally fictional / not yet live
+  | 'dns' // Domain does not resolve (e.g. docs.bun.sh, cdn.bun.sh)
+  | 'provider_change' // Provider restructured URLs (e.g. feed.xml → rss.xml)
+  | 'cdn' // CDN / static-asset domain issue
+  | 'redirect' // URL redirects to a different location
+  | 'deleted_module' // Source file was removed from the codebase
+  | 'path_rename' // Directory/file was renamed during reorg
+  | 'duplicate_def' // Same symbol defined in multiple places
+  | 'planned' // URL is intentionally fictional / not yet live
   | 'unknown';
 
 export interface Issue {
@@ -66,7 +66,9 @@ const args = process.argv.slice(2);
 const flags = new Set(args.filter(a => a.startsWith('--') || a === '-h'));
 // Filter out flag values (e.g. the value after --source)
 const flagsWithValues = new Set(['--source']);
-const commands = args.filter((a, i) => !a.startsWith('-') && (i === 0 || !flagsWithValues.has(args[i - 1])));
+const commands = args.filter(
+  (a, i) => !a.startsWith('-') && (i === 0 || !flagsWithValues.has(args[i - 1]))
+);
 
 const showHelp = flags.has('--help') || flags.has('-h');
 const jsonOutput = flags.has('--json');
@@ -75,14 +77,26 @@ const verbose = flags.has('--verbose');
 const noColor = flags.has('--no-color');
 
 // --source <value> filter (supports comma-separated: --source dns,cdn)
-const VALID_SOURCES = ['dns', 'provider_change', 'cdn', 'redirect', 'deleted_module', 'path_rename', 'duplicate_def', 'planned', 'unknown'] as const;
+const VALID_SOURCES = [
+  'dns',
+  'provider_change',
+  'cdn',
+  'redirect',
+  'deleted_module',
+  'path_rename',
+  'duplicate_def',
+  'planned',
+  'unknown',
+] as const;
 const sourceIdx = args.indexOf('--source');
 const sourceFilter: Set<ErrorSource> | null = (() => {
   if (sourceIdx === -1 || sourceIdx + 1 >= args.length) return null;
   const values = args[sourceIdx + 1].split(',').map(s => s.trim());
   const invalid = values.filter(v => !VALID_SOURCES.includes(v as any));
   if (invalid.length > 0) {
-    console.error(`Unknown source(s): ${invalid.join(', ')}\nValid sources: ${VALID_SOURCES.join(', ')}`);
+    console.error(
+      `Unknown source(s): ${invalid.join(', ')}\nValid sources: ${VALID_SOURCES.join(', ')}`
+    );
     process.exit(2);
   }
   return new Set(values as ErrorSource[]);
@@ -92,7 +106,7 @@ const command = commands[0] || 'all';
 const validCommands = ['urls', 'enums', 'imports', 'all'];
 
 if (showHelp) {
-  console.log(`Usage: bun tools/validate-docs.ts [command] [options]
+  console.info(`Usage: bun tools/validate-docs.ts [command] [options]
 
 Commands:
   urls      Check URL patterns for known-broken patterns (feed.xml, dead domains)
@@ -132,9 +146,15 @@ if (!validCommands.includes(command)) {
 function color(text: string, c: string): string {
   if (noColor || jsonOutput) return text;
   const codes: Record<string, string> = {
-    red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m',
-    blue: '\x1b[34m', cyan: '\x1b[36m', magenta: '\x1b[35m',
-    dim: '\x1b[2m', bold: '\x1b[1m', reset: '\x1b[0m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    cyan: '\x1b[36m',
+    magenta: '\x1b[35m',
+    dim: '\x1b[2m',
+    bold: '\x1b[1m',
+    reset: '\x1b[0m',
   };
   return `${codes[c] || ''}${text}${codes.reset}`;
 }
@@ -180,7 +200,12 @@ async function readLines(filePath: string): Promise<string[]> {
 
 // ─── URL pattern checker ─────────────────────────────────────────────
 
-const BROKEN_URL_PATTERNS: { pattern: RegExp; source: ErrorSource; message: string; fix: string }[] = [
+const BROKEN_URL_PATTERNS: {
+  pattern: RegExp;
+  source: ErrorSource;
+  message: string;
+  fix: string;
+}[] = [
   {
     pattern: /bun\.sh\/feed\.xml/,
     source: 'provider_change',
@@ -271,7 +296,12 @@ export async function checkEnums(): Promise<CheckResult> {
 
 // ─── Import path checker ─────────────────────────────────────────────
 
-const BROKEN_IMPORT_PATTERNS: { pattern: RegExp; source: ErrorSource; message: string; fix: string }[] = [
+const BROKEN_IMPORT_PATTERNS: {
+  pattern: RegExp;
+  source: ErrorSource;
+  message: string;
+  fix: string;
+}[] = [
   {
     pattern: /from\s+['"].*\/documentation\/constants\//,
     source: 'path_rename',
@@ -299,13 +329,15 @@ const BROKEN_IMPORT_PATTERNS: { pattern: RegExp; source: ErrorSource; message: s
   {
     pattern: /from\s+['"].*\/enums\/Provider\.enum/,
     source: 'deleted_module',
-    message: 'Broken import: src/core/enums/Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
+    message:
+      'Broken import: src/core/enums/Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
     fix: "Import from 'lib/docs/constants/enums' instead",
   },
   {
     pattern: /from\s+['"].*Provider\.enum/,
     source: 'deleted_module',
-    message: 'Broken import: Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
+    message:
+      'Broken import: Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
     fix: "Import from 'lib/docs/constants/enums' instead",
   },
 ];
@@ -387,39 +419,39 @@ async function run() {
   const report = buildReport(results);
 
   if (jsonOutput) {
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
   } else {
     // Per-check results (use filtered results from report)
     for (const r of report.results) {
       const icon = r.issues.length === 0 ? color('PASS', 'green') : color('FAIL', 'red');
-      console.log(`\n${icon} ${r.name}: ${r.issues.length} issue(s)`);
+      console.info(`\n${icon} ${r.name}: ${r.issues.length} issue(s)`);
 
       for (const issue of r.issues) {
         const loc = color(`${issue.file}:${issue.line}`, 'cyan');
         const sev = issue.severity === 'error' ? color('ERROR', 'red') : color('WARN', 'yellow');
         const src = color(`[${issue.source}]`, 'magenta');
-        console.log(`  ${sev} ${src} ${loc} ${issue.message}`);
+        console.info(`  ${sev} ${src} ${loc} ${issue.message}`);
         if (showFix && issue.fix) {
-          console.log(`    ${color('fix:', 'dim')} ${issue.fix}`);
+          console.info(`    ${color('fix:', 'dim')} ${issue.fix}`);
         }
       }
 
       if (verbose && r.issues.length === 0) {
-        console.log(`  ${color('All checks passed', 'green')}`);
+        console.info(`  ${color('All checks passed', 'green')}`);
       }
     }
 
     // Breakdown by error source
     const sourceCounts = Object.entries(report.bySource);
     if (sourceCounts.length > 0) {
-      console.log(`\n${color('By error source:', 'bold')}`);
+      console.info(`\n${color('By error source:', 'bold')}`);
       for (const [src, count] of sourceCounts.sort((a, b) => b[1] - a[1])) {
         const label = SOURCE_LABELS[src as ErrorSource] || src;
-        console.log(`  ${color(String(count), 'yellow')} ${label} ${color(`(${src})`, 'dim')}`);
+        console.info(`  ${color(String(count), 'yellow')} ${label} ${color(`(${src})`, 'dim')}`);
       }
     }
 
-    console.log(`\n${color('Total:', 'blue')} ${report.totalIssues} issue(s)`);
+    console.info(`\n${color('Total:', 'blue')} ${report.totalIssues} issue(s)`);
   }
 
   process.exit(report.totalIssues > 0 ? 1 : 0);

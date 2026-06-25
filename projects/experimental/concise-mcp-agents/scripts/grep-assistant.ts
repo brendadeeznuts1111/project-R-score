@@ -245,7 +245,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(GrepAssistant.list());
+    console.info(GrepAssistant.list());
     return;
   }
 
@@ -258,11 +258,11 @@ async function main() {
         console.error('Usage: bun grep suggest <query>');
         process.exit(1);
       }
-      console.log(GrepAssistant.suggest(args[1]));
+      console.info(GrepAssistant.suggest(args[1]));
       break;
 
     case 'list':
-      console.log(GrepAssistant.list());
+      console.info(GrepAssistant.list());
       break;
 
     default:
@@ -273,7 +273,7 @@ async function main() {
 
       try {
         const results = await assistant.search(query, path, fzf);
-        console.log(assistant.formatResults(results));
+        console.info(assistant.formatResults(results));
       } catch (error) {
         console.error(`Search failed: ${error.message}`);
         process.exit(1);

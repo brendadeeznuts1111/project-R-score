@@ -180,5 +180,5 @@ export class DeploymentOrchestrator {
 if (import.meta.main) {
   const orchestrator = new DeploymentOrchestrator();
   const result = await orchestrator.deployAll();
-  console.log(JSON.stringify(result, null, 2));
+  console.info(JSON.stringify(result, null, 2));
 }

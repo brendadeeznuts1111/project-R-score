@@ -1,0 +1,113 @@
+{
+  "name": "sports-odds-plugin",
+  "version": "1.0.0",
+  "description": "Live sports odds, scores, handle, and risk positions via Fantasy402/Buckeye PPH proxy",
+  "config_file": "config.json",
+  "inject": {
+    "F402_API_KEY": "api_key",
+    "F402_ENDPOINT": "base_url"
+  },
+  "tools": [
+    {
+      "name": "get_odds",
+      "description": "Fetch live betting odds for a sport, league, or specific game. Supports NFL, NBA, MLB, NHL, NCAAF, NCAAB. Returns moneyline, spread, and totals.",
+      "command": ["bun", "run", "scripts/get_odds.ts"],
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["NFL", "NBA", "MLB", "NHL", "NCAAF", "NCAAB", "SOCCER"],
+            "description": "Sport to query"
+          },
+          "league": {
+            "type": "string",
+            "description": "Optional league filter (e.g., 'Premier League', 'ATP')"
+          },
+          "game_id": {
+            "type": "string",
+            "description": "Optional specific game ID for single-game odds"
+          },
+          "market": {
+            "type": "string",
+            "enum": ["moneyline", "spread", "totals", "all"],
+            "default": "all",
+            "description": "Betting market type"
+          }
+        },
+        "required": ["sport"]
+      }
+    },
+    {
+      "name": "get_scores",
+      "description": "Fetch live scores, game status, period, clock, and possession for active or completed games.",
+      "command": ["bun", "run", "scripts/get_scores.ts"],
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["NFL", "NBA", "MLB", "NHL", "NCAAF", "NCAAB", "SOCCER"],\n            "description": "Sport to query"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["live", "upcoming", "completed", "all"],
+            "default": "live",
+            "description": "Game status filter"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format (defaults to today)"
+          }
+        },
+        "required": ["sport"]
+      }
+    },
+    {
+      "name": "get_handle",
+      "description": "Fetch betting handle, ticket count, and volume metrics for a sport or specific game. Returns dollars at risk and money-split distribution.",
+      "command": ["bun", "run", "scripts/get_handle.ts"],
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sport": {
+            "type": "string",
+            "description": "Sport filter"
+          },
+          "game_id": {
+            "type": "string",
+            "description": "Specific game ID"
+          },
+          "period": {
+            "type": "string",
+            "enum": ["today", "week", "month"],
+            "default": "today",
+            "description": "Time period for handle aggregation"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_positions",
+      "description": "Fetch current risk positions, exposure, and P&L for the book. Returns top exposures, sharp action flags, and limit breaches.",
+      "command": ["bun", "run", "scripts/get_positions.ts"],
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "view": {
+            "type": "string",
+            "enum": ["summary", "by_sport", "by_game", "sharp_flags", "limits"],
+            "default": "summary",
+            "description": "Position view type"
+          },
+          "sport": {
+            "type": "string",
+            "description": "Filter by sport"
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}

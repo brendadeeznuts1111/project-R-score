@@ -99,7 +99,7 @@ async function main() {
   const mfa = new MFASystem();
 
   if (args.length === 0) {
-    console.log(`🔐 MFA/OTP System v2.11
+    console.info(`🔐 MFA/OTP System v2.11
 
 USAGE:
   bun mfa:generate <user> [action]    # Generate OTP code
@@ -126,8 +126,8 @@ EXAMPLES:
         const user = args[1];
         const action = args[2] || 'auth';
         const code = await mfa.requestMFAForAction(user, action);
-        console.log(`✅ OTP generated for ${user} (${action})`);
-        console.log(`📱 Code sent via Telegram`);
+        console.info(`✅ OTP generated for ${user} (${action})`);
+        console.info(`📱 Code sent via Telegram`);
         break;
 
       case 'verify':
@@ -139,21 +139,21 @@ EXAMPLES:
         const verifyCode = args[2];
         const result = await mfa.verifyOTP(verifyUser, verifyCode);
         if (result.valid) {
-          console.log(`✅ MFA verification successful`);
+          console.info(`✅ MFA verification successful`);
         } else {
-          console.log(`❌ MFA verification failed: ${result.reason}`);
+          console.info(`❌ MFA verification failed: ${result.reason}`);
           process.exit(1);
         }
         break;
 
       case 'status':
         const count = mfa.getActiveSessionsCount();
-        console.log(`🔐 Active MFA sessions: ${count}`);
+        console.info(`🔐 Active MFA sessions: ${count}`);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun mfa --help');
+        console.info('Use: bun mfa --help');
         process.exit(1);
     }
   } catch (error) {

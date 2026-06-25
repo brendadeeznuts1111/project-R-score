@@ -326,7 +326,7 @@ export class OddsFeedStream {
 		if (newArbs.length > 0) {
 			const elapsed = (Bun.nanoseconds() - startTime) / 1_000_000; // ms
 
-			console.log(
+			console.info(
 				JSON.stringify({
 					event: "LIVE_ARBS_FOUND",
 					count: newArbs.length,

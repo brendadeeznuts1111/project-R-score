@@ -67,17 +67,17 @@ class ContinuousTestingPipeline extends EventEmitter {
     } = options;
 
     if (this.isRunning) {
-      console.log("⚠️  Continuous testing is already running");
+      console.info("⚠️  Continuous testing is already running");
       return;
     }
 
-    console.log("🚀 Starting continuous testing pipeline...");
-    console.log(`📊 Configuration:`);
-    console.log(`   - Interval: ${interval}ms`);
-    console.log(`   - Watch mode: ${watch ? "Enabled" : "Disabled"}`);
-    console.log(`   - Coverage: ${coverage ? "Enabled" : "Disabled"}`);
-    console.log(`   - Performance: ${performance ? "Enabled" : "Disabled"}`);
-    console.log(`   - Concurrent: ${concurrent ? "Enabled" : "Disabled"}`);
+    console.info("🚀 Starting continuous testing pipeline...");
+    console.info(`📊 Configuration:`);
+    console.info(`   - Interval: ${interval}ms`);
+    console.info(`   - Watch mode: ${watch ? "Enabled" : "Disabled"}`);
+    console.info(`   - Coverage: ${coverage ? "Enabled" : "Disabled"}`);
+    console.info(`   - Performance: ${performance ? "Enabled" : "Disabled"}`);
+    console.info(`   - Concurrent: ${concurrent ? "Enabled" : "Disabled"}`);
 
     this.isRunning = true;
 
@@ -97,7 +97,7 @@ class ContinuousTestingPipeline extends EventEmitter {
     }, interval);
 
     this.emit("started");
-    console.log("✅ Continuous testing pipeline started");
+    console.info("✅ Continuous testing pipeline started");
   }
 
   async stop(): Promise<void> {
@@ -105,7 +105,7 @@ class ContinuousTestingPipeline extends EventEmitter {
       return;
     }
 
-    console.log("🛑 Stopping continuous testing pipeline...");
+    console.info("🛑 Stopping continuous testing pipeline...");
     
     this.isRunning = false;
     
@@ -125,7 +125,7 @@ class ContinuousTestingPipeline extends EventEmitter {
     this.watchers.clear();
 
     this.emit("stopped");
-    console.log("✅ Continuous testing pipeline stopped");
+    console.info("✅ Continuous testing pipeline stopped");
   }
 
   private setupWatchers(): void {
@@ -140,7 +140,7 @@ class ContinuousTestingPipeline extends EventEmitter {
     for (const pattern of watchPaths) {
       // In a real implementation, you'd use a proper file watcher like chokidar
       // For this example, we'll simulate file watching
-      console.log(`👀 Setting up watcher for: ${pattern}`);
+      console.info(`👀 Setting up watcher for: ${pattern}`);
     }
   }
 
@@ -150,7 +150,7 @@ class ContinuousTestingPipeline extends EventEmitter {
     concurrent: boolean;
   }): Promise<TestReport> {
     const startTime = Date.now();
-    console.log("🧪 Running test suite...");
+    console.info("🧪 Running test suite...");
 
     const report: TestReport = {
       timestamp: new Date().toISOString(),
@@ -238,9 +238,9 @@ class ContinuousTestingPipeline extends EventEmitter {
         this.emit("test-failed", report);
       }
 
-      console.log(`✅ Tests completed in ${report.duration}ms`);
-      console.log(`📊 Results: ${report.summary.passed} passed, ${report.summary.failed} failed, ${report.summary.skipped} skipped`);
-      console.log(`📈 Coverage: ${report.summary.coverage}%`);
+      console.info(`✅ Tests completed in ${report.duration}ms`);
+      console.info(`📊 Results: ${report.summary.passed} passed, ${report.summary.failed} failed, ${report.summary.skipped} skipped`);
+      console.info(`📈 Coverage: ${report.summary.coverage}%`);
 
       return report;
     } catch (error: any) {
@@ -467,7 +467,7 @@ class ContinuousTestingPipeline extends EventEmitter {
     const htmlFile = join(reportsDir, "report.html");
     writeFileSync(htmlFile, htmlReport);
 
-    console.log(`📄 Reports generated in test-results/`);
+    console.info(`📄 Reports generated in test-results/`);
   }
 
   private generateMarkdownReport(report: TestReport): string {
@@ -630,7 +630,7 @@ if (import.meta.main) {
       }
     }
     if (arg === "--help") {
-      console.log(`
+      console.info(`
 Usage: bun run continuous-testing.ts [options]
 
 Options:
@@ -654,13 +654,13 @@ Examples:
 
   // Handle graceful shutdown
   process.on("SIGINT", async () => {
-    console.log("\\n🛑 Received SIGINT, stopping pipeline...");
+    console.info("\\n🛑 Received SIGINT, stopping pipeline...");
     await pipeline.stop();
     process.exit(0);
   });
 
   process.on("SIGTERM", async () => {
-    console.log("\\n🛑 Received SIGTERM, stopping pipeline...");
+    console.info("\\n🛑 Received SIGTERM, stopping pipeline...");
     await pipeline.stop();
     process.exit(0);
   });

@@ -134,7 +134,7 @@ export class PatternWeaver {
    */
   async apply(): Promise<void> {
     if (this.options.test) {
-      console.log("🧪 Test mode - no changes made");
+      console.info("🧪 Test mode - no changes made");
       this.printMatches();
       return;
     }
@@ -165,21 +165,21 @@ export class PatternWeaver {
 
     // Write file
     await Bun.write(match.file, lines.join("\n"));
-    console.log(`✅ Fixed: ${match.file}:${match.line}`);
+    console.info(`✅ Fixed: ${match.file}:${match.line}`);
   }
 
   /**
    * Print matches
    */
   private printMatches(): void {
-    console.log(`\n📊 Found ${this.matches.length} matches:\n`);
+    console.info(`\n📊 Found ${this.matches.length} matches:\n`);
     for (const match of this.matches) {
-      console.log(`  ${match.file}:${match.line}`);
-      console.log(`    - ${match.match}`);
+      console.info(`  ${match.file}:${match.line}`);
+      console.info(`    - ${match.match}`);
       if (match.replacement) {
-        console.log(`    + ${match.replacement}`);
+        console.info(`    + ${match.replacement}`);
       }
-      console.log();
+      console.info();
     }
   }
 

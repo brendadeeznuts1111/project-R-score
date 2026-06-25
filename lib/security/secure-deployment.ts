@@ -3,7 +3,7 @@
 import { Tier1380EnterpriseAuth } from './enterprise-auth';
 
 import { styled, log } from '../theme/colors';
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 
 interface DeploymentCredentials {
   username: string;
@@ -67,7 +67,7 @@ export class Tier1380SecureDeployment {
 
     try {
       // Mock deployment execution
-      console.log(`🚀 Deploying snapshot ${snapshotId} for user ${credentials.username}`);
+      console.info(`🚀 Deploying snapshot ${snapshotId} for user ${credentials.username}`);
 
       // In production, would execute actual deployment
       const deploymentResult = await this.executeDeployment(snapshotId, {
@@ -128,7 +128,7 @@ export class Tier1380SecureDeployment {
    */
   private static async getDeploymentSecrets(snapshotId: string): Promise<string | null> {
     const key = `TIER1380_DEPLOYMENT_${snapshotId}`;
-    return await Tier1380SecretManager.getSecret(key);
+    return await appSecretManager.getSecret(key);
   }
 
   /**
@@ -150,9 +150,9 @@ export class Tier1380SecureDeployment {
       metadata: Record<string, any>;
     }
   ): Promise<any> {
-    console.log(`🚀 Executing real deployment for ${snapshotId}`);
-    console.log(`  Authenticated by: ${context.authenticatedBy}`);
-    console.log(`  Password score: ${context.passwordScore}/100`);
+    console.info(`🚀 Executing real deployment for ${snapshotId}`);
+    console.info(`  Authenticated by: ${context.authenticatedBy}`);
+    console.info(`  Password score: ${context.passwordScore}/100`);
 
     const startTime = Date.now();
     const deploymentSteps = [];
@@ -228,7 +228,7 @@ export class Tier1380SecureDeployment {
     // - Validate file structure
     // - Verify signatures
 
-    console.log(`    ✅ Snapshot ${snapshotId} validated`);
+    console.info(`    ✅ Snapshot ${snapshotId} validated`);
   }
 
   /**
@@ -243,7 +243,7 @@ export class Tier1380SecureDeployment {
     // - Verify version compatibility
     // - Check security vulnerabilities
 
-    console.log(`    ✅ Dependencies checked for ${snapshotId}`);
+    console.info(`    ✅ Dependencies checked for ${snapshotId}`);
   }
 
   /**
@@ -258,7 +258,7 @@ export class Tier1380SecureDeployment {
     // - Optimize assets
     // - Generate build artifacts
 
-    console.log(`    ✅ Application built for ${snapshotId}`);
+    console.info(`    ✅ Application built for ${snapshotId}`);
 
     return {
       size: '125MB',
@@ -277,7 +277,7 @@ export class Tier1380SecureDeployment {
     // - Run integration tests
     // - Run E2E tests
 
-    console.log(`    ✅ Tests passed for ${snapshotId}`);
+    console.info(`    ✅ Tests passed for ${snapshotId}`);
 
     return {
       passed: 150,
@@ -300,7 +300,7 @@ export class Tier1380SecureDeployment {
     // - Configure environment variables
     // - Start application services
 
-    console.log(`    ✅ Deployed ${snapshotId} to production`);
+    console.info(`    ✅ Deployed ${snapshotId} to production`);
 
     return {
       url: `https://app.example.com/${snapshotId}`,
@@ -319,7 +319,7 @@ export class Tier1380SecureDeployment {
     // - Configure health checks
     // - Enable new deployment
 
-    console.log(`    ✅ Load balancer updated for ${snapshotId}`);
+    console.info(`    ✅ Load balancer updated for ${snapshotId}`);
   }
 
   /**
@@ -336,7 +336,7 @@ export class Tier1380SecureDeployment {
     // - Monitor resource usage
     // - Verify service connectivity
 
-    console.log(`    ✅ Health checks passed for ${snapshotId}`);
+    console.info(`    ✅ Health checks passed for ${snapshotId}`);
 
     return {
       status: 'passing',
@@ -393,7 +393,7 @@ export class Tier1380SecureDeployment {
    * Cancel deployment
    */
   static async cancelDeployment(deploymentId: string): Promise<void> {
-    console.log(`Cancelling deployment: ${deploymentId}`);
+    console.info(`Cancelling deployment: ${deploymentId}`);
 
     // In production, would cancel the deployment process
     // For now, just log the action

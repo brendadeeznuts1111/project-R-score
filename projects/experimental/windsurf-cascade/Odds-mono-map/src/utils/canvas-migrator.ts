@@ -34,7 +34,7 @@ export class CanvasColorMigrator {
      * Converts legacy canvas files to HEX colors
      */
     async migrateCanvasToHex(canvasPath: string): Promise<MigrationResult> {
-        console.log(`🎨 Starting color migration for: ${canvasPath}`);
+        console.info(`🎨 Starting color migration for: ${canvasPath}`);
 
         // Backup original
         await this.createBackup(canvasPath);
@@ -56,7 +56,7 @@ export class CanvasColorMigrator {
             }
         };
 
-        console.log(`📊 Processing ${canvas.nodes.length} nodes...`);
+        console.info(`📊 Processing ${canvas.nodes.length} nodes...`);
 
         // Process each node
         for (const node of canvas.nodes) {
@@ -78,7 +78,7 @@ export class CanvasColorMigrator {
                         newColor
                     });
 
-                    console.log(`  ✅ ${node.id}: ${oldColor} → ${newColor}`);
+                    console.info(`  ✅ ${node.id}: ${oldColor} → ${newColor}`);
                 }
 
                 // Add semantic color if missing
@@ -90,7 +90,7 @@ export class CanvasColorMigrator {
                         message: `Auto-assigned semantic color: ${semanticColor}`
                     });
 
-                    console.log(`  🎯 ${node.id}: Auto-assigned ${semanticColor}`);
+                    console.info(`  🎯 ${node.id}: Auto-assigned ${semanticColor}`);
                 }
 
                 // Validate the final color
@@ -112,7 +112,7 @@ export class CanvasColorMigrator {
                     nodeId: node.id,
                     message: error.message
                 });
-                console.log(`  ❌ ${node.id}: ${error.message}`);
+                console.info(`  ❌ ${node.id}: ${error.message}`);
             }
         }
 
@@ -130,7 +130,7 @@ export class CanvasColorMigrator {
                     newColor
                 });
 
-                console.log(`  🔗 ${edge.id}: Edge ${oldColor} → ${newColor}`);
+                console.info(`  🔗 ${edge.id}: Edge ${oldColor} → ${newColor}`);
             }
         }
 
@@ -143,11 +143,11 @@ export class CanvasColorMigrator {
         // Generate migration report
         await this.generateMigrationReport(migration);
 
-        console.log(`🎉 Migration complete!`);
-        console.log(`   Nodes processed: ${migration.nodesProcessed}`);
-        console.log(`   Nodes migrated: ${migration.nodesMigrated}`);
-        console.log(`   Success rate: ${(migration.summary.successRate * 100).toFixed(1)}%`);
-        console.log(`   Backup location: ${migration.summary.backupLocation}`);
+        console.info(`🎉 Migration complete!`);
+        console.info(`   Nodes processed: ${migration.nodesProcessed}`);
+        console.info(`   Nodes migrated: ${migration.nodesMigrated}`);
+        console.info(`   Success rate: ${(migration.summary.successRate * 100).toFixed(1)}%`);
+        console.info(`   Backup location: ${migration.summary.backupLocation}`);
 
         return migration;
     }
@@ -163,7 +163,7 @@ export class CanvasColorMigrator {
         );
 
         await copyFile(canvasPath, backupPath);
-        console.log(`📁 Backup created: ${backupPath}`);
+        console.info(`📁 Backup created: ${backupPath}`);
     }
 
     /**
@@ -188,7 +188,7 @@ export class CanvasColorMigrator {
         };
 
         await writeFile(reportPath, JSON.stringify(report, null, 2));
-        console.log(`📄 Migration report saved: ${reportPath}`);
+        console.info(`📄 Migration report saved: ${reportPath}`);
     }
 
     /**
@@ -223,7 +223,7 @@ export class CanvasColorMigrator {
      * Downgrade HEX back to legacy (for older Obsidian versions)
      */
     async revertToLegacyEnums(canvasPath: string): Promise<void> {
-        console.log(`🔄 Reverting ${canvasPath} to legacy colors...`);
+        console.info(`🔄 Reverting ${canvasPath} to legacy colors...`);
 
         const content = await readFile(canvasPath, 'utf8');
         const canvas: CanvasFile = JSON.parse(content);
@@ -238,7 +238,7 @@ export class CanvasColorMigrator {
                 if (legacy) {
                     node.color = legacy;
                     revertedCount++;
-                    console.log(`  ↩️ ${node.id}: ${node.color} → ${legacy}`);
+                    console.info(`  ↩️ ${node.id}: ${node.color} → ${legacy}`);
                 }
             }
         }
@@ -256,7 +256,7 @@ export class CanvasColorMigrator {
 
         await writeFile(canvasPath, JSON.stringify(canvas, null, 2));
 
-        console.log(`🔄 Reversion complete! Reverted ${revertedCount} items to legacy colors.`);
+        console.info(`🔄 Reversion complete! Reverted ${revertedCount} items to legacy colors.`);
     }
 
     /**
@@ -276,13 +276,13 @@ export class CanvasColorMigrator {
      * Batch migrate multiple canvas files
      */
     async migrateDirectory(directoryPath: string, pattern: string = '*.canvas'): Promise<MigrationResult[]> {
-        console.log(`🎨 Starting batch migration in: ${directoryPath}`);
+        console.info(`🎨 Starting batch migration in: ${directoryPath}`);
 
         const { readdir } = await import('fs/promises');
         const files = await readdir(directoryPath);
         const canvasFiles = files.filter(file => file.endsWith('.canvas'));
 
-        console.log(`📁 Found ${canvasFiles.length} canvas files to migrate`);
+        console.info(`📁 Found ${canvasFiles.length} canvas files to migrate`);
 
         const results: MigrationResult[] = [];
 
@@ -338,14 +338,14 @@ export class CanvasColorMigrator {
         const reportPath = `batch-migration-report-${Date.now()}.json`;
         await writeFile(reportPath, JSON.stringify(batchReport, null, 2));
 
-        console.log(`📊 Batch Migration Summary:`);
-        console.log(`   Files processed: ${totalFiles}`);
-        console.log(`   Successful: ${successfulFiles}`);
-        console.log(`   Failed: ${totalFiles - successfulFiles}`);
-        console.log(`   Total nodes: ${totalNodes}`);
-        console.log(`   Nodes migrated: ${totalMigrated}`);
-        console.log(`   Migration rate: ${batchReport.summary.migrationRate.toFixed(1)}%`);
-        console.log(`📄 Batch report saved: ${reportPath}`);
+        console.info(`📊 Batch Migration Summary:`);
+        console.info(`   Files processed: ${totalFiles}`);
+        console.info(`   Successful: ${successfulFiles}`);
+        console.info(`   Failed: ${totalFiles - successfulFiles}`);
+        console.info(`   Total nodes: ${totalNodes}`);
+        console.info(`   Nodes migrated: ${totalMigrated}`);
+        console.info(`   Migration rate: ${batchReport.summary.migrationRate.toFixed(1)}%`);
+        console.info(`📄 Batch report saved: ${reportPath}`);
     }
 }
 

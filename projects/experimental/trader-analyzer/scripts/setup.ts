@@ -19,7 +19,7 @@ const colors = {
 };
 
 function log(message: string, color: keyof typeof colors = "reset") {
-	console.log(`${colors[color]}${message}${colors.reset}`);
+	console.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 function logSection(title: string) {

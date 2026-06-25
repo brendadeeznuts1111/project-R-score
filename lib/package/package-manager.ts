@@ -218,7 +218,7 @@ export class PackageManager {
   }
 
   async installMissingDocs(): Promise<void> {
-    console.log('📦 Installing documentation dependencies...');
+    console.info('📦 Installing documentation dependencies...');
 
     const pkg = await this.analyzePackage();
     const docsDependencies = ['@types/bun', 'bun-types', 'rss-parser', '@cloudflare/wrangler'];
@@ -227,14 +227,14 @@ export class PackageManager {
     const missing = docsDependencies.filter(dep => !allDeps[dep]);
 
     if (missing.length > 0) {
-      console.log(`Installing: ${missing.join(', ')}`);
+      console.info(`Installing: ${missing.join(', ')}`);
       try {
         await Bun.$`bun add -d ${missing.join(' ')}`.quiet();
       } catch {
         console.warn('Failed to install dependencies automatically');
       }
     } else {
-      console.log('✅ All documentation dependencies already installed');
+      console.info('✅ All documentation dependencies already installed');
     }
   }
 }

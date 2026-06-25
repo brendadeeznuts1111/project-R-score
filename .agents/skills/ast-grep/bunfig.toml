@@ -1,0 +1,31 @@
+# ast-grep supply-chain skill — bun test defaults
+# Install: machine defaults inherited from ~/.bunfig.toml
+# Discovery: https://bun.com/docs/test/discovery
+# Concurrent globs: https://bun.com/docs/guides/test/concurrent-test-glob
+#
+# Bun discovers *.test.*, *_test.*, *.spec.*, *_spec.* under [test].root
+# Skips node_modules and hidden directories. Files run sequentially by default;
+# concurrentTestGlob enables in-file parallelism for matching paths.
+#
+#   bun test              # all under tests/
+#   bun test unit         # substring filter (not a glob) → paths containing "unit"
+#   bun test integration  # → paths containing "integration"
+#   bun test concurrent   # → paths containing "concurrent"
+#   bun test ./tests/unit/watch-autofix.test.ts  # exact file — requires ./ or / prefix
+#   bun test -t ColorMatcher  # regex on "describe describe ... test name" label
+#
+# API reference: https://bun.com/reference/bun/test
+# Dates/times: https://bun.com/docs/test/dates-and-times
+#   setSystemTime(date) / setSystemTime() reset — mocks Date.now, new Date(), Intl
+#   jest.useFakeTimers(), jest.now() — Jest compat (Date constructor unchanged in Bun)
+#   TZ=America/Los_Angeles bun test  — default is Etc/UTC
+
+[test]
+root = "tests"
+timeout = 30000
+
+concurrentTestGlob = [
+  "integration/*.test.ts",
+  "integration/**/*.test.ts",
+  "**/concurrent-*.test.ts",
+]

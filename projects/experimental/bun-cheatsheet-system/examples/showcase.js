@@ -2,8 +2,8 @@
 // Main showcase runner
 
 async function runAllExamples() {
-  console.log('🚀 Bun Cheatsheet System - Example Showcase');
-  console.log('='.repeat(60));
+  console.info('🚀 Bun Cheatsheet System - Example Showcase');
+  console.info('='.repeat(60));
   
   const examples = [
     { name: 'HTTP Client', run: () => import('./http/basic-fetch.js').then(m => m.demoBasicFetch?.()) },
@@ -12,23 +12,23 @@ async function runAllExamples() {
   ];
   
   for (const example of examples) {
-    console.log(`\n📁 ${example.name}`);
-    console.log('─'.repeat(40));
+    console.info(`\n📁 ${example.name}`);
+    console.info('─'.repeat(40));
     
     try {
       await example.run();
-      console.log(`✅ ${example.name} completed successfully`);
+      console.info(`✅ ${example.name} completed successfully`);
     } catch (error) {
-      console.log(`❌ ${example.name} failed: ${error.message}`);
+      console.info(`❌ ${example.name} failed: ${error.message}`);
     }
   }
   
-  console.log('\n🎉 All examples completed!');
-  console.log('\n💡 Try these commands:');
-  console.log('  bun run playground      - Interactive playground');
-  console.log('  bun run cheatsheet      - Cheatsheet system');
-  console.log('  bun run examples:http   - HTTP examples only');
-  console.log('  bun run examples:bun    - Bun API examples');
+  console.info('\n🎉 All examples completed!');
+  console.info('\n💡 Try these commands:');
+  console.info('  bun run playground      - Interactive playground');
+  console.info('  bun run cheatsheet      - Cheatsheet system');
+  console.info('  bun run examples:http   - HTTP examples only');
+  console.info('  bun run examples:bun    - Bun API examples');
 }
 
 runAllExamples().catch(console.error);

@@ -57,13 +57,13 @@ class PipeDatapipeETL {
     const startTime = Date.now();
 
     try {
-      console.log(`🚀 Starting BUN PIPE ETL v1.3`);
-      console.log(`📡 API: ${this.config.apiUrl}`);
-      console.log(`🔧 Filter: ${this.config.jqFilter}`);
-      console.log(`💾 Output: ${this.config.outputFile}`);
+      console.info(`🚀 Starting BUN PIPE ETL v1.3`);
+      console.info(`📡 API: ${this.config.apiUrl}`);
+      console.info(`🔧 Filter: ${this.config.jqFilter}`);
+      console.info(`💾 Output: ${this.config.outputFile}`);
 
       // 1. Fetch data with streaming
-      console.log(`📡 Fetching data stream...`);
+      console.info(`📡 Fetching data stream...`);
       const response = await fetch(this.config.apiUrl, {
         method: 'POST',
         headers: this.config.headers,
@@ -81,7 +81,7 @@ class PipeDatapipeETL {
       }
 
       // 2. Spawn jq with streaming stdin (BUN v1.3 ZERO-COPY MAGIC!)
-      console.log(`🔧 Processing with jq (streaming)...`);
+      console.info(`🔧 Processing with jq (streaming)...`);
       const jqProcess = spawn({
         cmd: ['jq', '-c', this.config.jqFilter],
         stdin: dataStream, // **ZERO-COPY STREAM PIPE**
@@ -93,7 +93,7 @@ class PipeDatapipeETL {
       });
 
       // 3. Collect jq output
-      console.log(`📊 Collecting filtered results...`);
+      console.info(`📊 Collecting filtered results...`);
       const results: string[] = [];
       let processedCount = 0;
 
@@ -139,7 +139,7 @@ class PipeDatapipeETL {
       }
 
       // 4. Append to YAML file
-      console.log(`💾 Appending ${results.length} records to ${this.config.outputFile}`);
+      console.info(`💾 Appending ${results.length} records to ${this.config.outputFile}`);
 
       // Ensure directory exists
       const dir = join(process.cwd(), this.config.outputFile).split('/').slice(0, -1).join('/');
@@ -177,11 +177,11 @@ class PipeDatapipeETL {
       }
 
       // 5. Trigger notifications and reloads
-      console.log(`📢 Triggering notifications...`);
+      console.info(`📢 Triggering notifications...`);
       await this.triggerNotifications(results.length);
 
       const duration = Date.now() - startTime;
-      console.log(`✅ PIPE ETL COMPLETE: ${processedCount} records processed in ${duration}ms`);
+      console.info(`✅ PIPE ETL COMPLETE: ${processedCount} records processed in ${duration}ms`);
 
       return {
         processed: processedCount,
@@ -223,16 +223,16 @@ class PipeDatapipeETL {
   }
 
   async watchMode(intervalMs: number = 30000): Promise<void> {
-    console.log(`👀 Starting PIPE ETL watch mode (every ${intervalMs}ms)`);
+    console.info(`👀 Starting PIPE ETL watch mode (every ${intervalMs}ms)`);
 
     while (true) {
       try {
         await this.pipeETL();
-        console.log(`⏰ Next ETL in ${intervalMs}ms...`);
+        console.info(`⏰ Next ETL in ${intervalMs}ms...`);
         await new Promise(resolve => setTimeout(resolve, intervalMs));
       } catch (error) {
         console.error(`❌ Watch mode error: ${error.message}`);
-        console.log(`⏰ Retrying in ${intervalMs}ms...`);
+        console.info(`⏰ Retrying in ${intervalMs}ms...`);
         await new Promise(resolve => setTimeout(resolve, intervalMs));
       }
     }
@@ -244,7 +244,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`🚀 BUN PIPE STREAMS ETL v1.3
+    console.info(`🚀 BUN PIPE STREAMS ETL v1.3
 
 USAGE:
   bun pipe-datapipe                    # Run ETL once
@@ -293,12 +293,12 @@ PERFORMANCE:
         break;
 
       case 'config':
-        console.log('Current PIPE ETL Configuration:');
-        console.log(JSON.stringify(etl, null, 2));
+        console.info('Current PIPE ETL Configuration:');
+        console.info(JSON.stringify(etl, null, 2));
         break;
 
       case 'test':
-        console.log('🧪 Testing PIPE ETL with mock data...');
+        console.info('🧪 Testing PIPE ETL with mock data...');
         // Create test data file for testing
         const testData = '{"r":{"bets":[{"result":"150","agent":"TEST","bet":"100"},{"result":"50","agent":"LOW","bet":"25"}]}}';
         await Bun.write('test-data.json', testData);
@@ -316,14 +316,14 @@ PERFORMANCE:
         // Clean up test file
         await Bun.$`rm test-data.json`.quiet();
 
-        console.log(`✅ Test successful: ${lines.length} records filtered from mock data`);
-        console.log(`📊 Sample output: ${lines[0] || 'No high-profit bets found'}`);
+        console.info(`✅ Test successful: ${lines.length} records filtered from mock data`);
+        console.info(`📊 Sample output: ${lines[0] || 'No high-profit bets found'}`);
         break;
 
       default:
         // Run ETL once
         const result = await etl.pipeETL();
-        console.log(`✅ ETL Complete: ${result.processed} records → ${result.outputFile} (${result.duration}ms)`);
+        console.info(`✅ ETL Complete: ${result.processed} records → ${result.outputFile} (${result.duration}ms)`);
         break;
     }
   } catch (error) {

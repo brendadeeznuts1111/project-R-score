@@ -16,16 +16,16 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 UDP sendMany() Batch Operations Demonstration');
-console.log('==================================================');
+console.info('🚀 UDP sendMany() Batch Operations Demonstration');
+console.info('==================================================');
 
 // =============================================================================
 // BASIC sendMany() DEMONSTRATION
 // =============================================================================
 
 async function demonstrateBasicSendMany() {
-    console.log('\n📦 Basic sendMany() Demonstration:');
-    console.log('===================================');
+    console.info('\n📦 Basic sendMany() Demonstration:');
+    console.info('===================================');
 
     try {
         // Create UDP server to receive batch messages
@@ -33,17 +33,17 @@ async function demonstrateBasicSendMany() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Received: "${message}" from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Server listening on port ${server.port}`);
+        console.info(`🚀 Server listening on port ${server.port}`);
 
         // Create unconnected UDP socket
         const socket = await Bun.udpSocket({});
 
-        console.log('\n📦 Sending multiple messages to different destinations...');
+        console.info('\n📦 Sending multiple messages to different destinations...');
 
         // Exact syntax from documentation: [data, port, address, data, port, address, ...]
         const batchMessages = [
@@ -54,12 +54,12 @@ async function demonstrateBasicSendMany() {
             "Demo", 53, "1.1.1.1"                   // Message 5 to external DNS (will be dropped)
         ];
 
-        console.log('📤 Batch array:');
-        console.log('   ["Hello", port, "127.0.0.1", "World", port, "127.0.0.1", "Bun", port, "127.0.0.1", "Test", 12345, "127.0.0.1", "Demo", 53, "1.1.1.1"]');
+        console.info('📤 Batch array:');
+        console.info('   ["Hello", port, "127.0.0.1", "World", port, "127.0.0.1", "Bun", port, "127.0.0.1", "Test", 12345, "127.0.0.1", "Demo", 53, "1.1.1.1"]');
 
         // Send all messages in a single system call
         const packetsSent = socket.sendMany(batchMessages);
-        console.log(`📊 Sent ${packetsSent / 3} packets in a single operation (${packetsSent} array elements)`);
+        console.info(`📊 Sent ${packetsSent / 3} packets in a single operation (${packetsSent} array elements)`);
 
         // Wait for processing
         await Bun.sleep(200);
@@ -68,7 +68,7 @@ async function demonstrateBasicSendMany() {
         socket.close();
         server.close();
 
-        console.log('✅ Basic sendMany() demonstration completed');
+        console.info('✅ Basic sendMany() demonstration completed');
 
     } catch (error) {
         console.error(`❌ Basic sendMany() demo failed: ${error.message}`);
@@ -80,8 +80,8 @@ async function demonstrateBasicSendMany() {
 // =============================================================================
 
 async function demonstrateConnectedVsUnconnected() {
-    console.log('\n🔗 Connected vs Unconnected sendMany():');
-    console.log('=======================================');
+    console.info('\n🔗 Connected vs Unconnected sendMany():');
+    console.info('=======================================');
 
     try {
         // Create server
@@ -89,12 +89,12 @@ async function demonstrateConnectedVsUnconnected() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Server received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Server received: "${message}" from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Server on port ${server.port}`);
+        console.info(`🚀 Server on port ${server.port}`);
 
         // Connected socket sendMany() - simple array
         const connectedSocket = await Bun.udpSocket({
@@ -104,19 +104,19 @@ async function demonstrateConnectedVsUnconnected() {
             }
         });
 
-        console.log('\n🔗 Connected socket sendMany() (simple array):');
+        console.info('\n🔗 Connected socket sendMany() (simple array):');
         const connectedMessages = ['Connected 1', 'Connected 2', 'Connected 3', 'Connected 4', 'Connected 5'];
-        console.log(`📤 Array: [${connectedMessages.map(m => `"${m}"`).join(', ')}]`);
+        console.info(`📤 Array: [${connectedMessages.map(m => `"${m}"`).join(', ')}]`);
 
         const connectedSent = connectedSocket.sendMany(connectedMessages);
-        console.log(`📊 Connected socket sent ${connectedSent} messages`);
+        console.info(`📊 Connected socket sent ${connectedSent} messages`);
 
         await Bun.sleep(100);
 
         // Unconnected socket sendMany() - complex array
         const unconnectedSocket = await Bun.udpSocket({});
 
-        console.log('\n🔓 Unconnected socket sendMany() (data, port, address pattern):');
+        console.info('\n🔓 Unconnected socket sendMany() (data, port, address pattern):');
         const unconnectedMessages = [
             'Unconnected 1', server.port, '127.0.0.1',
             'Unconnected 2', server.port, '127.0.0.1',
@@ -124,12 +124,12 @@ async function demonstrateConnectedVsUnconnected() {
             'Unconnected 4', server.port, '127.0.0.1',
             'Unconnected 5', server.port, '127.0.0.1'
         ];
-        console.log(`📤 Array: [${unconnectedMessages.map((m, i) =>
+        console.info(`📤 Array: [${unconnectedMessages.map((m, i) =>
             i % 3 === 0 ? `"${m}"` : i % 3 === 1 ? server.port : `"127.0.0.1"`
         ).join(', ')}]`);
 
         const unconnectedSent = unconnectedSocket.sendMany(unconnectedMessages);
-        console.log(`📊 Unconnected socket sent ${unconnectedSent / 3} packets (${unconnectedSent} array elements)`);
+        console.info(`📊 Unconnected socket sent ${unconnectedSent / 3} packets (${unconnectedSent} array elements)`);
 
         await Bun.sleep(200);
 
@@ -138,7 +138,7 @@ async function demonstrateConnectedVsUnconnected() {
         unconnectedSocket.close();
         server.close();
 
-        console.log('✅ Connected vs unconnected comparison completed');
+        console.info('✅ Connected vs unconnected comparison completed');
 
     } catch (error) {
         console.error(`❌ Connected vs unconnected demo failed: ${error.message}`);
@@ -150,8 +150,8 @@ async function demonstrateConnectedVsUnconnected() {
 // =============================================================================
 
 async function demonstratePerformanceBenchmark() {
-    console.log('\n🏁 Performance Benchmark: sendMany() vs Individual Sends');
-    console.log('==========================================================');
+    console.info('\n🏁 Performance Benchmark: sendMany() vs Individual Sends');
+    console.info('==========================================================');
 
     try {
         // Create benchmark server
@@ -163,13 +163,13 @@ async function demonstratePerformanceBenchmark() {
             }
         });
 
-        console.log(`🚀 Benchmark server on port ${server.port}`);
+        console.info(`🚀 Benchmark server on port ${server.port}`);
 
         const messageCount = 1000;
         const unconnectedSocket = await Bun.udpSocket({});
 
         // Benchmark 1: Individual sends
-        console.log('\n📊 Benchmark 1: Individual sends');
+        console.info('\n📊 Benchmark 1: Individual sends');
         const startIndividual = performance.now();
 
         for (let i = 0; i < messageCount; i++) {
@@ -177,14 +177,14 @@ async function demonstratePerformanceBenchmark() {
         }
 
         const individualTime = performance.now() - startIndividual;
-        console.log(`   • Sent ${messageCount} messages individually`);
-        console.log(`   • Time: ${individualTime.toFixed(2)}ms`);
-        console.log(`   • Rate: ${(messageCount / individualTime * 1000).toFixed(0)} msg/sec`);
+        console.info(`   • Sent ${messageCount} messages individually`);
+        console.info(`   • Time: ${individualTime.toFixed(2)}ms`);
+        console.info(`   • Rate: ${(messageCount / individualTime * 1000).toFixed(0)} msg/sec`);
 
         await Bun.sleep(500);
 
         // Benchmark 2: Batch sends with sendMany()
-        console.log('\n📊 Benchmark 2: Batch sends with sendMany()');
+        console.info('\n📊 Benchmark 2: Batch sends with sendMany()');
         const startBatch = performance.now();
 
         // Create batch array: [data, port, address, data, port, address, ...]
@@ -196,12 +196,12 @@ async function demonstratePerformanceBenchmark() {
         const batchSent = unconnectedSocket.sendMany(batchArray);
         const batchTime = performance.now() - startBatch;
 
-        console.log(`   • Sent ${batchSent / 3} messages in batch`);
-        console.log(`   • Time: ${batchTime.toFixed(2)}ms`);
-        console.log(`   • Rate: ${(batchSent / 3 / batchTime * 1000).toFixed(0)} msg/sec`);
+        console.info(`   • Sent ${batchSent / 3} messages in batch`);
+        console.info(`   • Time: ${batchTime.toFixed(2)}ms`);
+        console.info(`   • Rate: ${(batchSent / 3 / batchTime * 1000).toFixed(0)} msg/sec`);
 
         const improvement = ((individualTime - batchTime) / individualTime * 100);
-        console.log(`   • Performance improvement: ${improvement.toFixed(1)}% faster`);
+        console.info(`   • Performance improvement: ${improvement.toFixed(1)}% faster`);
 
         await Bun.sleep(500);
 
@@ -213,26 +213,26 @@ async function demonstratePerformanceBenchmark() {
             }
         });
 
-        console.log('\n📊 Benchmark 3: Connected socket batch sends');
+        console.info('\n📊 Benchmark 3: Connected socket batch sends');
         const startConnected = performance.now();
 
         const connectedBatch = Array.from({ length: messageCount }, (_, i) => `Connected ${i}`);
         const connectedSent = connectedSocket.sendMany(connectedBatch);
         const connectedTime = performance.now() - startConnected;
 
-        console.log(`   • Sent ${connectedSent} messages via connected socket`);
-        console.log(`   • Time: ${connectedTime.toFixed(2)}ms`);
-        console.log(`   • Rate: ${(connectedSent / connectedTime * 1000).toFixed(0)} msg/sec`);
+        console.info(`   • Sent ${connectedSent} messages via connected socket`);
+        console.info(`   • Time: ${connectedTime.toFixed(2)}ms`);
+        console.info(`   • Rate: ${(connectedSent / connectedTime * 1000).toFixed(0)} msg/sec`);
 
         const connectedImprovement = ((individualTime - connectedTime) / individualTime * 100);
-        console.log(`   • Performance improvement: ${connectedImprovement.toFixed(1)}% faster`);
+        console.info(`   • Performance improvement: ${connectedImprovement.toFixed(1)}% faster`);
 
         // Clean up
         unconnectedSocket.close();
         connectedSocket.close();
         server.close();
 
-        console.log('✅ Performance benchmark completed');
+        console.info('✅ Performance benchmark completed');
 
     } catch (error) {
         console.error(`❌ Performance benchmark failed: ${error.message}`);
@@ -244,12 +244,12 @@ async function demonstratePerformanceBenchmark() {
 // =============================================================================
 
 async function demonstrateRealWorldUseCases() {
-    console.log('\n🌍 Real-World sendMany() Use Cases:');
-    console.log('===================================');
+    console.info('\n🌍 Real-World sendMany() Use Cases:');
+    console.info('===================================');
 
     try {
         // Use Case 1: DNS Query Broadcasting
-        console.log('\n🔍 Use Case 1: DNS Query Broadcasting');
+        console.info('\n🔍 Use Case 1: DNS Query Broadcasting');
 
         const dnsSocket = await Bun.udpSocket({});
         const dnsQueries = [
@@ -258,20 +258,20 @@ async function demonstrateRealWorldUseCases() {
             'query3', 53, '208.67.222.222' // OpenDNS
         ];
 
-        console.log('📤 Broadcasting DNS queries to multiple servers:');
+        console.info('📤 Broadcasting DNS queries to multiple servers:');
         dnsSocket.sendMany(dnsQueries);
-        console.log('📊 Sent 3 DNS queries in a single operation');
+        console.info('📊 Sent 3 DNS queries in a single operation');
 
         await Bun.sleep(100);
 
         // Use Case 2: Log Aggregation
-        console.log('\n📋 Use Case 2: Log Aggregation to Multiple Servers');
+        console.info('\n📋 Use Case 2: Log Aggregation to Multiple Servers');
 
         const logServer = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
                     const log = buf.toString();
-                    console.log(`📨 Log server received: ${log}`);
+                    console.info(`📨 Log server received: ${log}`);
                 }
             }
         });
@@ -285,20 +285,20 @@ async function demonstrateRealWorldUseCases() {
             'WARN: Rate limit exceeded', logServer.port, '127.0.0.1'
         ];
 
-        console.log(`📤 Sending 5 log messages to aggregation server:`);
+        console.info(`📤 Sending 5 log messages to aggregation server:`);
         const logsSent = logSocket.sendMany(logMessages);
-        console.log(`📊 Sent ${logsSent / 3} log entries in batch`);
+        console.info(`📊 Sent ${logsSent / 3} log entries in batch`);
 
         await Bun.sleep(200);
 
         // Use Case 3: IoT Sensor Data
-        console.log('\n🌐 Use Case 3: IoT Sensor Data Collection');
+        console.info('\n🌐 Use Case 3: IoT Sensor Data Collection');
 
         const iotServer = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
                     const sensorData = buf.toString();
-                    console.log(`📨 IoT server received: ${sensorData}`);
+                    console.info(`📨 IoT server received: ${sensorData}`);
                 }
             }
         });
@@ -312,20 +312,20 @@ async function demonstrateRealWorldUseCases() {
             'sensor2:humidity:45.1', iotServer.port, '127.0.0.1'
         ];
 
-        console.log('📤 Sending IoT sensor readings:');
+        console.info('📤 Sending IoT sensor readings:');
         const sensorsSent = iotSocket.sendMany(sensorReadings);
-        console.log(`📊 Sent ${sensorsSent / 3} sensor readings in batch`);
+        console.info(`📊 Sent ${sensorsSent / 3} sensor readings in batch`);
 
         await Bun.sleep(200);
 
         // Use Case 4: Gaming State Updates
-        console.log('\n🎮 Use Case 4: Gaming State Updates');
+        console.info('\n🎮 Use Case 4: Gaming State Updates');
 
         const gameServer = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
                     const gameState = buf.toString();
-                    console.log(`📨 Game server received: ${gameState}`);
+                    console.info(`📨 Game server received: ${gameState}`);
                 }
             }
         });
@@ -339,9 +339,9 @@ async function demonstrateRealWorldUseCases() {
             'projectile2:x:140:y:170', gameServer.port, '127.0.0.1'
         ];
 
-        console.log('📤 Sending game state updates:');
+        console.info('📤 Sending game state updates:');
         const gameSent = gameSocket.sendMany(gameUpdates);
-        console.log(`📊 Sent ${gameSent / 3} game updates in batch`);
+        console.info(`📊 Sent ${gameSent / 3} game updates in batch`);
 
         await Bun.sleep(200);
 
@@ -355,7 +355,7 @@ async function demonstrateRealWorldUseCases() {
         iotServer.close();
         gameServer.close();
 
-        console.log('✅ Real-world use cases demonstration completed');
+        console.info('✅ Real-world use cases demonstration completed');
 
     } catch (error) {
         console.error(`❌ Real-world use cases demo failed: ${error.message}`);
@@ -367,25 +367,25 @@ async function demonstrateRealWorldUseCases() {
 // =============================================================================
 
 async function demonstrateAdvancedTechniques() {
-    console.log('\n🔧 Advanced sendMany() Techniques:');
-    console.log('===================================');
+    console.info('\n🔧 Advanced sendMany() Techniques:');
+    console.info('===================================');
 
     try {
         const server = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Received: "${message}" from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Advanced server on port ${server.port}`);
+        console.info(`🚀 Advanced server on port ${server.port}`);
 
         const socket = await Bun.udpSocket({});
 
         // Technique 1: Dynamic batch construction
-        console.log('\n🔧 Technique 1: Dynamic batch construction');
+        console.info('\n🔧 Technique 1: Dynamic batch construction');
 
         const destinations = [
             { host: '127.0.0.1', port: server.port },
@@ -398,14 +398,14 @@ async function demonstrateAdvancedTechniques() {
             dynamicBatch.push(`Dynamic message ${i + 1}`, dest.port, dest.host);
         });
 
-        console.log(`📤 Dynamic batch with ${dynamicBatch.length / 3} destinations`);
+        console.info(`📤 Dynamic batch with ${dynamicBatch.length / 3} destinations`);
         const dynamicSent = socket.sendMany(dynamicBatch);
-        console.log(`📊 Sent ${dynamicSent / 3} messages dynamically`);
+        console.info(`📊 Sent ${dynamicSent / 3} messages dynamically`);
 
         await Bun.sleep(100);
 
         // Technique 2: Mixed destination batch
-        console.log('\n🔧 Technique 2: Mixed destination batch');
+        console.info('\n🔧 Technique 2: Mixed destination batch');
 
         const mixedBatch = [
             'Local message', server.port, '127.0.0.1',
@@ -415,14 +415,14 @@ async function demonstrateAdvancedTechniques() {
             'Final local', server.port, '127.0.0.1'
         ];
 
-        console.log('📤 Mixed destination batch (some will be dropped):');
+        console.info('📤 Mixed destination batch (some will be dropped):');
         const mixedSent = socket.sendMany(mixedBatch);
-        console.log(`📊 Sent ${mixedSent / 3} packets to mixed destinations`);
+        console.info(`📊 Sent ${mixedSent / 3} packets to mixed destinations`);
 
         await Bun.sleep(200);
 
         // Technique 3: Large batch performance
-        console.log('\n🔧 Technique 3: Large batch performance');
+        console.info('\n🔧 Technique 3: Large batch performance');
 
         const largeBatchSize = 300; // 100 messages
         const largeBatch = [];
@@ -435,8 +435,8 @@ async function demonstrateAdvancedTechniques() {
         const largeSent = socket.sendMany(largeBatch);
         const largeTime = performance.now() - startLarge;
 
-        console.log(`📊 Large batch: ${largeSent / 3} messages in ${largeTime.toFixed(2)}ms`);
-        console.log(`📊 Large batch rate: ${(largeSent / 3 / largeTime * 1000).toFixed(0)} msg/sec`);
+        console.info(`📊 Large batch: ${largeSent / 3} messages in ${largeTime.toFixed(2)}ms`);
+        console.info(`📊 Large batch rate: ${(largeSent / 3 / largeTime * 1000).toFixed(0)} msg/sec`);
 
         await Bun.sleep(300);
 
@@ -444,7 +444,7 @@ async function demonstrateAdvancedTechniques() {
         socket.close();
         server.close();
 
-        console.log('✅ Advanced techniques demonstration completed');
+        console.info('✅ Advanced techniques demonstration completed');
 
     } catch (error) {
         console.error(`❌ Advanced techniques demo failed: ${error.message}`);
@@ -456,18 +456,18 @@ async function demonstrateAdvancedTechniques() {
 // =============================================================================
 
 async function main() {
-    console.log('🚀 Starting UDP sendMany() Batch Operations Demonstration');
-    console.log('========================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log('');
-    console.log('💡 This demo focuses on Bun\'s powerful sendMany() API:');
-    console.log('   • Batch sending to multiple destinations');
-    console.log('   • Connected vs unconnected socket patterns');
-    console.log('   • Performance optimization techniques');
-    console.log('   • Real-world use case demonstrations');
-    console.log('   • Advanced batch construction methods');
-    console.log('');
+    console.info('🚀 Starting UDP sendMany() Batch Operations Demonstration');
+    console.info('========================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info('');
+    console.info('💡 This demo focuses on Bun\'s powerful sendMany() API:');
+    console.info('   • Batch sending to multiple destinations');
+    console.info('   • Connected vs unconnected socket patterns');
+    console.info('   • Performance optimization techniques');
+    console.info('   • Real-world use case demonstrations');
+    console.info('   • Advanced batch construction methods');
+    console.info('');
 
     try {
         // Run all demonstrations
@@ -477,22 +477,22 @@ async function main() {
         await demonstrateRealWorldUseCases();
         await demonstrateAdvancedTechniques();
 
-        console.log('\n🎉 UDP sendMany() Batch Operations Demonstration Complete!');
-        console.log('==========================================================');
-        console.log('✅ All sendMany() features demonstrated successfully');
-        console.log('📚 Key takeaways:');
-        console.log('   • sendMany() provides 3x+ performance improvement');
-        console.log('   • Connected sockets: simple array syntax');
-        console.log('   • Unconnected sockets: [data, port, address] pattern');
-        console.log('   • Perfect for high-throughput scenarios');
-        console.log('   • Ideal for DNS, logging, IoT, and gaming');
-        console.log('');
-        console.log('🚀 sendMany() is essential for:');
-        console.log('   • High-frequency data streaming');
-        console.log('   • Multi-destination broadcasting');
-        console.log('   • Real-time application updates');
-        console.log('   • Log aggregation and monitoring');
-        console.log('   • Gaming and IoT communications');
+        console.info('\n🎉 UDP sendMany() Batch Operations Demonstration Complete!');
+        console.info('==========================================================');
+        console.info('✅ All sendMany() features demonstrated successfully');
+        console.info('📚 Key takeaways:');
+        console.info('   • sendMany() provides 3x+ performance improvement');
+        console.info('   • Connected sockets: simple array syntax');
+        console.info('   • Unconnected sockets: [data, port, address] pattern');
+        console.info('   • Perfect for high-throughput scenarios');
+        console.info('   • Ideal for DNS, logging, IoT, and gaming');
+        console.info('');
+        console.info('🚀 sendMany() is essential for:');
+        console.info('   • High-frequency data streaming');
+        console.info('   • Multi-destination broadcasting');
+        console.info('   • Real-time application updates');
+        console.info('   • Log aggregation and monitoring');
+        console.info('   • Gaming and IoT communications');
 
     } catch (error) {
         console.error(`❌ Demonstration failed: ${error.message}`);

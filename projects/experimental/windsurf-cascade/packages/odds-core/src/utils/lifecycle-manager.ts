@@ -46,7 +46,7 @@ export class MetadataLifecycleManager extends EventEmitter {
     this.startProcessingLoop();
 
     this.emit('managerStarted', { timestamp: Date.now() });
-    console.log('🔄 Metadata lifecycle manager started');
+    console.info('🔄 Metadata lifecycle manager started');
   }
 
   /**
@@ -66,7 +66,7 @@ export class MetadataLifecycleManager extends EventEmitter {
 
     await this.saveAllLifecycles();
     this.emit('managerStopped', { timestamp: Date.now() });
-    console.log('🛑 Metadata lifecycle manager stopped');
+    console.info('🛑 Metadata lifecycle manager stopped');
   }
 
   /**
@@ -541,7 +541,7 @@ export class MetadataLifecycleManager extends EventEmitter {
         });
       }
 
-      console.log(`📂 Loaded ${this.lifecycles.size} active lifecycles`);
+      console.info(`📂 Loaded ${this.lifecycles.size} active lifecycles`);
     } catch (error) {
       console.error('❌ Failed to load lifecycles:', error);
       throw error;
@@ -556,7 +556,7 @@ export class MetadataLifecycleManager extends EventEmitter {
       const lifecycleArray = Array.from(this.lifecycles.values());
       if (lifecycleArray.length > 0) {
         await this.storage.updateMultiple(lifecycleArray);
-        console.log(`💾 Saved ${lifecycleArray.length} lifecycles to storage`);
+        console.info(`💾 Saved ${lifecycleArray.length} lifecycles to storage`);
       }
     } catch (error) {
       console.error('❌ Failed to save lifecycles:', error);

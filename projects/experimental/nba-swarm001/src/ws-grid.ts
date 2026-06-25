@@ -165,7 +165,7 @@ export function startRotationGridServer(port: number = 3003): void {
   // Broadcast delta every 500ms
   setInterval(broadcastDelta, 500);
 
-  console.log(`🚀 Rotation Grid WebSocket server running on port ${port}`);
+  console.info(`🚀 Rotation Grid WebSocket server running on port ${port}`);
 }
 
 // If run directly, start the server

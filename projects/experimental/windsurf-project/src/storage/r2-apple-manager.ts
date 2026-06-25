@@ -124,15 +124,15 @@ export class BunR2AppleManager {
   }
 
   async initialize() {
-    console.log(`📡 Preconnecting to R2 Bucket: ${this.bucket} [Scope: ${this.scope}]...`);
+    console.info(`📡 Preconnecting to R2 Bucket: ${this.bucket} [Scope: ${this.scope}]...`);
     if (Bun.env._WORKER_URL) {
       const isHealthy = await this.validateBucketConnection();
       if (!isHealthy) {
         throw new Error(`CRITICAL: R2 Bucket connection through Worker failed.`);
       }
-      console.log(`✅ Verified Active Connection to R2 Bucket.`);
+      console.info(`✅ Verified Active Connection to R2 Bucket.`);
     } else {
-      console.log(`✅ Bun R2 initialized: ${this.bucket}`);
+      console.info(`✅ Bun R2 initialized: ${this.bucket}`);
     }
     return true;
   }
@@ -269,7 +269,7 @@ export class BunR2AppleManager {
         await Bun.write(localPath, data);
       }
       
-      console.log(`🪞 Mirrored ${key} to ${localPath} (Decoded)`);
+      console.info(`🪞 Mirrored ${key} to ${localPath} (Decoded)`);
       return true;
     } catch (e) {
       console.warn(`⚠️ Local mirror update failed for ${key}`);
@@ -463,7 +463,7 @@ export class BunR2AppleManager {
     const localPath = this.getLocalPath(key);
     this.ensureLocalDir(key);
     await Bun.write(localPath, JSON.stringify(data, null, 2));
-    console.log(`💾 Saved ${filename} to local mirror: ${localPath}`);
+    console.info(`💾 Saved ${filename} to local mirror: ${localPath}`);
     return localPath;
   }
 
@@ -471,9 +471,9 @@ export class BunR2AppleManager {
    * Performs a comprehensive lifecycle audit of the storage system
    */
   public async performLifecycleAudit(): Promise<boolean> {
-    console.log('🔍 Starting Storage Lifecycle Audit...');
+    console.info('🔍 Starting Storage Lifecycle Audit...');
     const metrics = await this.getMetrics();
-    console.log(`📊 Current Status: ${metrics.status} [Scope: ${metrics.scope}]`);
+    console.info(`📊 Current Status: ${metrics.status} [Scope: ${metrics.scope}]`);
     
     try {
       // Test basic connectivity if S3 is online
@@ -481,7 +481,7 @@ export class BunR2AppleManager {
         const testKey = `${R2_DIRS.TEST}audit-${Date.now()}.json`;
         await this.uploadStream(testKey, JSON.stringify({ audit: true, time: new Date().toISOString() }));
         await this.deleteFile(testKey);
-        console.log('✅ S3 Write/Delete lifecycle verified');
+        console.info('✅ S3 Write/Delete lifecycle verified');
       }
       return true;
     } catch (e) {
@@ -495,11 +495,11 @@ export class BunR2AppleManager {
    */
   public async getStorageStats(): Promise<void> {
     const metrics = await this.getMetrics();
-    console.log('\n--- Storage Stats ---');
-    console.log(`Bucket: ${metrics.bucket}`);
-    console.log(`Status: ${metrics.status}`);
-    console.log(`Local Files: ${metrics.metrics.localMirroredFiles}`);
-    console.log(`----------------------\n`);
+    console.info('\n--- Storage Stats ---');
+    console.info(`Bucket: ${metrics.bucket}`);
+    console.info(`Status: ${metrics.status}`);
+    console.info(`Local Files: ${metrics.metrics.localMirroredFiles}`);
+    console.info(`----------------------\n`);
   }
 
   /**

@@ -74,7 +74,7 @@ export class VoiceCallWebhookServer {
     const streamConfig: MediaStreamConfig = {
       sttProvider,
       onTranscript: (providerCallId, transcript) => {
-        console.log(
+        console.info(
           `[voice-call] Transcript for ${providerCallId}: ${transcript}`,
         );
 
@@ -110,10 +110,10 @@ export class VoiceCallWebhookServer {
         }
       },
       onPartialTranscript: (callId, partial) => {
-        console.log(`[voice-call] Partial for ${callId}: ${partial}`);
+        console.info(`[voice-call] Partial for ${callId}: ${partial}`);
       },
       onConnect: (callId, streamSid) => {
-        console.log(
+        console.info(
           `[voice-call] Media stream connected: ${callId} -> ${streamSid}`,
         );
         // Register stream with provider for TTS routing
@@ -133,7 +133,7 @@ export class VoiceCallWebhookServer {
         }, 500);
       },
       onDisconnect: (callId) => {
-        console.log(`[voice-call] Media stream disconnected: ${callId}`);
+        console.info(`[voice-call] Media stream disconnected: ${callId}`);
         if (this.provider.name === "twilio") {
           (this.provider as TwilioProvider).unregisterCallStream(callId);
         }
@@ -141,7 +141,7 @@ export class VoiceCallWebhookServer {
     };
 
     this.mediaStreamHandler = new MediaStreamHandler(streamConfig);
-    console.log("[voice-call] Media streaming initialized");
+    console.info("[voice-call] Media streaming initialized");
   }
 
   /**
@@ -169,7 +169,7 @@ export class VoiceCallWebhookServer {
           );
 
           if (url.pathname === streamPath) {
-            console.log("[voice-call] WebSocket upgrade for media stream");
+            console.info("[voice-call] WebSocket upgrade for media stream");
             this.mediaStreamHandler?.handleUpgrade(request, socket, head);
           } else {
             socket.destroy();
@@ -181,9 +181,9 @@ export class VoiceCallWebhookServer {
 
       this.server.listen(port, bind, () => {
         const url = `http://${bind}:${port}${webhookPath}`;
-        console.log(`[voice-call] Webhook server listening on ${url}`);
+        console.info(`[voice-call] Webhook server listening on ${url}`);
         if (this.mediaStreamHandler) {
-          console.log(
+          console.info(
             `[voice-call] Media stream WebSocket on ws://${bind}:${port}${streamPath}`,
           );
         }
@@ -304,7 +304,7 @@ export class VoiceCallWebhookServer {
     callId: string,
     userMessage: string,
   ): Promise<void> {
-    console.log(
+    console.info(
       `[voice-call] Auto-responding to inbound call ${callId}: "${userMessage}"`,
     );
 
@@ -340,7 +340,7 @@ export class VoiceCallWebhookServer {
       }
 
       if (result.text) {
-        console.log(`[voice-call] AI response: "${result.text}"`);
+        console.info(`[voice-call] AI response: "${result.text}"`);
         await this.manager.speak(callId, result.text);
       }
     } catch (err) {
@@ -428,7 +428,7 @@ export async function setupTailscaleExposureRoute(opts: {
 
   if (code === 0) {
     const publicUrl = `https://${dnsName}${opts.path}`;
-    console.log(`[voice-call] Tailscale ${opts.mode} active: ${publicUrl}`);
+    console.info(`[voice-call] Tailscale ${opts.mode} active: ${publicUrl}`);
     return publicUrl;
   }
 

@@ -23,7 +23,7 @@ export class NexusBenchmarkSuite {
    * Run full benchmark suite
    */
   async runFullSuite(): Promise<void> {
-    console.log(colors.cyan('🚀 Starting NEXUS Performance Benchmark Suite\n'));
+    console.info(colors.cyan('🚀 Starting NEXUS Performance Benchmark Suite\n'));
 
     // Core system benchmarks
     await this.benchmarkArbitrageScanner();
@@ -45,7 +45,7 @@ export class NexusBenchmarkSuite {
    * Benchmark arbitrage scanner performance
    */
   private async benchmarkArbitrageScanner(): Promise<void> {
-    console.log(colors.yellow('📊 Benchmarking Arbitrage Scanner...'));
+    console.info(colors.yellow('📊 Benchmarking Arbitrage Scanner...'));
 
     const scanner = new ArbitrageScanner({
       minSpread: 0.001,
@@ -81,7 +81,7 @@ export class NexusBenchmarkSuite {
    * Benchmark ORCA normalizer performance
    */
   private async benchmarkOrcaNormalizer(): Promise<void> {
-    console.log(colors.yellow('🏈 Benchmarking ORCA Normalizer...'));
+    console.info(colors.yellow('🏈 Benchmarking ORCA Normalizer...'));
 
     const normalizer = createOrcaNormalizer();
 
@@ -133,7 +133,7 @@ export class NexusBenchmarkSuite {
    * Benchmark cache operations
    */
   private async benchmarkCacheOperations(): Promise<void> {
-    console.log(colors.yellow('💾 Benchmarking Cache Operations...'));
+    console.info(colors.yellow('💾 Benchmarking Cache Operations...'));
 
     const cache = getCache();
 
@@ -186,7 +186,7 @@ export class NexusBenchmarkSuite {
    * Benchmark WebSocket performance
    */
   private async benchmarkWebSocketPerformance(): Promise<void> {
-    console.log(colors.yellow('🔌 Benchmarking WebSocket Performance...'));
+    console.info(colors.yellow('🔌 Benchmarking WebSocket Performance...'));
 
     // This would require setting up test WebSocket connections
     // For now, we'll benchmark message serialization/deserialization
@@ -231,7 +231,7 @@ export class NexusBenchmarkSuite {
    * Benchmark provider performance
    */
   private async benchmarkProviders(): Promise<void> {
-    console.log(colors.yellow('🌐 Benchmarking Providers...'));
+    console.info(colors.yellow('🌐 Benchmarking Providers...'));
 
     const polymarket = new PolymarketProvider({});
     const kalshi = new KalshiProvider({});
@@ -261,7 +261,7 @@ export class NexusBenchmarkSuite {
    * Benchmark memory usage patterns
    */
   private async benchmarkMemoryUsage(): Promise<void> {
-    console.log(colors.yellow('🧠 Benchmarking Memory Usage...'));
+    console.info(colors.yellow('🧠 Benchmarking Memory Usage...'));
 
     const profiler = createProfiler();
     profiler.start();
@@ -309,7 +309,7 @@ export class NexusBenchmarkSuite {
    * Benchmark concurrent operations
    */
   private async benchmarkConcurrentOperations(): Promise<void> {
-    console.log(colors.yellow('⚡ Benchmarking Concurrent Operations...'));
+    console.info(colors.yellow('⚡ Benchmarking Concurrent Operations...'));
 
     const concurrentResult = await benchmark(
       'concurrent-arbitrage-scans',
@@ -335,7 +335,7 @@ export class NexusBenchmarkSuite {
    * Print benchmark results in a formatted table
    */
   private printResults(): void {
-    console.log(colors.cyan('\n📈 NEXUS Benchmark Results\n'));
+    console.info(colors.cyan('\n📈 NEXUS Benchmark Results\n'));
 
     const allResults: Array<{
       component: string;
@@ -358,11 +358,11 @@ export class NexusBenchmarkSuite {
       }
     }
 
-    console.log('Component'.padEnd(20), 'Benchmark'.padEnd(30), 'Avg Time'.padEnd(12), 'Ops/sec'.padEnd(12), 'Memory');
-    console.log('─'.repeat(90));
+    console.info('Component'.padEnd(20), 'Benchmark'.padEnd(30), 'Avg Time'.padEnd(12), 'Ops/sec'.padEnd(12), 'Memory');
+    console.info('─'.repeat(90));
 
     for (const result of allResults) {
-      console.log(
+      console.info(
         result.component.padEnd(20),
         result.benchmark.padEnd(30),
         result.avgTime.padEnd(12),
@@ -372,12 +372,12 @@ export class NexusBenchmarkSuite {
     }
 
     // Performance recommendations
-    console.log(colors.yellow('\n💡 Performance Recommendations:'));
+    console.info(colors.yellow('\n💡 Performance Recommendations:'));
 
     const recommendations = this.generateRecommendations();
-    recommendations.forEach(rec => console.log(`  • ${rec}`));
+    recommendations.forEach(rec => console.info(`  • ${rec}`));
 
-    console.log(colors.green('\n✅ Benchmark suite completed!'));
+    console.info(colors.green('\n✅ Benchmark suite completed!'));
   }
 
   /**

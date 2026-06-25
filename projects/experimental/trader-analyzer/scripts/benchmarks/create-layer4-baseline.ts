@@ -17,7 +17,7 @@ const BENCHMARK_NAME = "Layer4 Correlation Detection Baseline";
 const BENCHMARK_DESCRIPTION = "Baseline performance benchmark for Layer4 cross-sport correlation detection";
 
 async function createBaseline() {
-	console.log("🎯 Creating Layer4 correlation detection baseline...");
+	console.info("🎯 Creating Layer4 correlation detection baseline...");
 	
 	// Ensure profiles directory exists
 	const profilesDir = "profiles";
@@ -38,18 +38,18 @@ async function createBaseline() {
 	});
 	
 	// Run performance benchmarks
-	console.log("📊 Running Layer4 correlation detection benchmarks...");
-	console.log("   This may take a few minutes...");
-	console.log("   Note: CPU profiling will be added in a future update.");
-	console.log("   For now, creating baseline from test execution metrics.");
+	console.info("📊 Running Layer4 correlation detection benchmarks...");
+	console.info("   This may take a few minutes...");
+	console.info("   Note: CPU profiling will be added in a future update.");
+	console.info("   For now, creating baseline from test execution metrics.");
 	
 	try {
 		// Run benchmarks with 50 repeats to get stable metrics
-		console.log("   Running benchmarks with 50 repeats...");
+		console.info("   Running benchmarks with 50 repeats...");
 		await $`bun test --repeats=50 ./test/profiling/correlation-detection.bench.ts`;
 		
 		// Create a simple baseline metadata file
-		console.log("📝 Creating benchmark metadata...");
+		console.info("📝 Creating benchmark metadata...");
 		
 		const gitCommit = await $`git rev-parse HEAD`.text().then(s => s.trim());
 		const gitBranch = await $`git rev-parse --abbrev-ref HEAD`.text().then(s => s.trim());
@@ -80,18 +80,18 @@ async function createBaseline() {
 		const metadataPath = join(metadataDir, `${BENCHMARK_ID}.json`);
 		await Bun.write(metadataPath, JSON.stringify(baselineMetadata, null, 2));
 		
-		console.log(`✅ Baseline benchmark created: ${BENCHMARK_ID}`);
-		console.log(`   Metadata: ${metadataPath}`);
+		console.info(`✅ Baseline benchmark created: ${BENCHMARK_ID}`);
+		console.info(`   Metadata: ${metadataPath}`);
 		
 		// Verify file was created
 		if (existsSync(metadataPath)) {
-			console.log(`   ✅ Metadata file verified: ${metadataPath}`);
+			console.info(`   ✅ Metadata file verified: ${metadataPath}`);
 		} else {
 			throw new Error(`Failed to create metadata file: ${metadataPath}`);
 		}
 		
-		console.log("\n🎉 Layer4 correlation detection baseline created successfully!");
-		console.log("   This baseline will be used for performance regression detection in CI/CD.");
+		console.info("\n🎉 Layer4 correlation detection baseline created successfully!");
+		console.info("   This baseline will be used for performance regression detection in CI/CD.");
 		
 	} catch (error) {
 		console.error("❌ Failed to create baseline:", error);

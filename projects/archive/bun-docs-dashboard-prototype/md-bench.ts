@@ -21,7 +21,7 @@ async function bench(size: 'small' | 'medium' | 'large'): Promise<MdProfile> {
   else if (size === 'medium') md = (md + '\n\n' + md).repeat(10);  // 10KB
   else md = (md + '\n\n' + md).repeat(100);  // 100KB
   
-  console.log(`🚀 Benchmarking ${size} (${(md.length/1024).toFixed(1)}KB)...`);
+  console.info(`🚀 Benchmarking ${size} (${(md.length/1024).toFixed(1)}KB)...`);
   
   const t0 = performance.now();
   for (let i = 0; i < ITER; i++) {
@@ -39,46 +39,46 @@ async function bench(size: 'small' | 'medium' | 'large'): Promise<MdProfile> {
     features: analyzeMd(md),
   };
   
-  console.log(`✅ ${size}: ${(time).toFixed(3)}ms, ${profile.throughput.toFixed(0)} chars/sec`);
+  console.info(`✅ ${size}: ${(time).toFixed(3)}ms, ${profile.throughput.toFixed(0)} chars/sec`);
   return profile;
 }
 
-console.log("⚡ Bun.markdown Official Performance Benchmark");
-console.log("📊 Testing Zig-powered parser with full GFM features");
-console.log("=" .repeat(60));
+console.info("⚡ Bun.markdown Official Performance Benchmark");
+console.info("📊 Testing Zig-powered parser with full GFM features");
+console.info("=" .repeat(60));
 
 const results = await Promise.all(['small', 'medium', 'large'].map(bench));
 
-console.log("\n🎯 BENCHMARK RESULTS:");
+console.info("\n🎯 BENCHMARK RESULTS:");
 console.table(results);
 
 // Performance analysis
 const large = results[2];
-console.log("\n🏆 PERFORMANCE ANALYSIS:");
-console.log(`📄 Large Document (${(large.size/1024).toFixed(1)}KB):`);
-console.log(`⚡ Parse Time: ${large.time.toFixed(3)}ms`);
-console.log(`🚀 Throughput: ${large.throughput.toFixed(0)} chars/sec`);
-console.log(`📊 Features: ${large.features.tables} tables, ${large.features.tasks} tasks, ${large.features.math} math blocks`);
+console.info("\n🏆 PERFORMANCE ANALYSIS:");
+console.info(`📄 Large Document (${(large.size/1024).toFixed(1)}KB):`);
+console.info(`⚡ Parse Time: ${large.time.toFixed(3)}ms`);
+console.info(`🚀 Throughput: ${large.throughput.toFixed(0)} chars/sec`);
+console.info(`📊 Features: ${large.features.tables} tables, ${large.features.tasks} tasks, ${large.features.math} math blocks`);
 
 // Comparison with typical JS parsers
 const markedThroughput = 14000; // Typical Marked.js throughput
 const speedup = large.throughput / markedThroughput;
-console.log(`🔥 Speedup vs Marked.js: ${speedup.toFixed(1)}x FASTER!`);
+console.info(`🔥 Speedup vs Marked.js: ${speedup.toFixed(1)}x FASTER!`);
 
 // Save results
 await Bun.write('md-profile.json', JSON.stringify(large, null, 2));
-console.log("\n💾 Results saved to md-profile.json");
+console.info("\n💾 Results saved to md-profile.json");
 
 // Memory efficiency estimate
 const memoryEstimate = large.size * 2.5; // Rough estimate based on docs
-console.log(`💾 Memory Efficiency: ~${(memoryEstimate/1024).toFixed(1)}KB peak`);
+console.info(`💾 Memory Efficiency: ~${(memoryEstimate/1024).toFixed(1)}KB peak`);
 
 // =============================================================================
 // Ablation: Options Performance Impact
 // =============================================================================
 
-console.log("\n🔬 ABLATION: Options Perf Impact");
-console.log("=".repeat(60));
+console.info("\n🔬 ABLATION: Options Perf Impact");
+console.info("=".repeat(60));
 
 const massiveMd = results[2] ? '# Hi\n| A | B |\n- [x] Task\n$ E=mc^2 $'.repeat(100) : '# Fallback\n| A | B |\n|---|---|\n| 1 | 2 |';
 const ABLATION_ITER = 10000;
@@ -95,7 +95,7 @@ for (const { label, opts } of optsSets) {
     Bun.markdown.html(massiveMd, opts);
   }
   const avgMs = (performance.now() - t0) / ABLATION_ITER;
-  console.log(`  ${label}: ${avgMs.toFixed(3)}ms  ${JSON.stringify(opts)}`);
+  console.info(`  ${label}: ${avgMs.toFixed(3)}ms  ${JSON.stringify(opts)}`);
 }
 
-console.log("\n🎊 Bun.markdown = UNRIVALED PERFORMANCE! 🚀");
+console.info("\n🎊 Bun.markdown = UNRIVALED PERFORMANCE! 🚀");

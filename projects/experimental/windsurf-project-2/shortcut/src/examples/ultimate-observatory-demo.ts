@@ -16,15 +16,15 @@
  * @see https://bun.sh/blog/bun-v1.3.6
  */
 
-console.log('🚀 Ultimate URLPattern Observatory v1.3.6+ Demo');
-console.log('================================================');
+console.info('🚀 Ultimate URLPattern Observatory v1.3.6+ Demo');
+console.info('================================================');
 
 // Demo 1: Feature-Flagged Security Tiers
-console.log('\n🔒 1. Feature-Flagged Security Tiers');
-console.log('===================================');
+console.info('\n🔒 1. Feature-Flagged Security Tiers');
+console.info('===================================');
 
 async function demonstrateSecurityTiers() {
-  console.log('Testing different feature combinations...');
+  console.info('Testing different feature combinations...');
   
   const tiers = [
     { name: 'Community', features: [], expected: 'basic security only' },
@@ -34,27 +34,27 @@ async function demonstrateSecurityTiers() {
   ];
   
   for (const tier of tiers) {
-    console.log(`\n📦 ${tier.name} Build:`);
-    console.log(`   Features: ${tier.features.join(', ') || 'none'}`);
-    console.log(`   Expected: ${tier.expected}`);
+    console.info(`\n📦 ${tier.name} Build:`);
+    console.info(`   Features: ${tier.features.join(', ') || 'none'}`);
+    console.info(`   Expected: ${tier.expected}`);
     
     // Simulate feature flag check
     const hasCache = tier.features.includes('PREMIUM');
     const hasPTY = tier.features.includes('INTERACTIVE');
     const hasTelemetry = tier.features.includes('TELEMETRY');
     
-    console.log(`   ✅ Cache: ${hasCache ? 'enabled' : 'disabled'}`);
-    console.log(`   ✅ PTY Editor: ${hasPTY ? 'enabled' : 'disabled'}`);
-    console.log(`   ✅ Telemetry: ${hasTelemetry ? 'enabled' : 'disabled'}`);
+    console.info(`   ✅ Cache: ${hasCache ? 'enabled' : 'disabled'}`);
+    console.info(`   ✅ PTY Editor: ${hasPTY ? 'enabled' : 'disabled'}`);
+    console.info(`   ✅ Telemetry: ${hasTelemetry ? 'enabled' : 'disabled'}`);
   }
 }
 
 // Demo 2: Fast CRC32 Pattern Cache
-console.log('\n⚡ 2. Fast CRC32 Pattern Cache');
-console.log('==============================');
+console.info('\n⚡ 2. Fast CRC32 Pattern Cache');
+console.info('==============================');
 
 async function demonstrateCRC32Cache() {
-  console.log('Benchmarking CRC32 vs traditional hashing...');
+  console.info('Benchmarking CRC32 vs traditional hashing...');
   
   const testPatterns = [
     'https://localhost:3000/admin/*',
@@ -74,14 +74,14 @@ async function demonstrateCRC32Cache() {
   }
   const crc32Time = performance.now() - crc32Start;
   
-  console.log(`🚀 CRC32 Performance:`);
-  console.log(`   Time: ${crc32Time.toFixed(2)}ms`);
-  console.log(`   Operations: ${testPatterns.length * 10000}`);
-  console.log(`   Speed: ${(testPatterns.length * 10000 / crc32Time * 1000).toFixed(0)} ops/sec`);
-  console.log(`   Sample hashes: ${crc32Hashes.slice(0, 3).join(', ')}`);
+  console.info(`🚀 CRC32 Performance:`);
+  console.info(`   Time: ${crc32Time.toFixed(2)}ms`);
+  console.info(`   Operations: ${testPatterns.length * 10000}`);
+  console.info(`   Speed: ${(testPatterns.length * 10000 / crc32Time * 1000).toFixed(0)} ops/sec`);
+  console.info(`   Sample hashes: ${crc32Hashes.slice(0, 3).join(', ')}`);
   
   // Cache simulation
-  console.log(`\n💾 Cache Simulation:`);
+  console.info(`\n💾 Cache Simulation:`);
   const cache = new Map<string, any>();
   let cacheHits = 0;
   let cacheMisses = 0;
@@ -100,18 +100,18 @@ async function demonstrateCRC32Cache() {
   }
   
   const hitRate = (cacheHits / (cacheHits + cacheMisses) * 100).toFixed(1);
-  console.log(`   Cache hits: ${cacheHits}`);
-  console.log(`   Cache misses: ${cacheMisses}`);
-  console.log(`   Hit rate: ${hitRate}%`);
-  console.log(`   Unique patterns: ${cache.size}`);
+  console.info(`   Cache hits: ${cacheHits}`);
+  console.info(`   Cache misses: ${cacheMisses}`);
+  console.info(`   Hit rate: ${hitRate}%`);
+  console.info(`   Unique patterns: ${cache.size}`);
 }
 
 // Demo 3: PTY-Powered Interactive Editor
-console.log('\n🖥️  3. PTY-Powered Interactive Editor');
-console.log('==================================');
+console.info('\n🖥️  3. PTY-Powered Interactive Editor');
+console.info('==================================');
 
 async function demonstratePTYEditor() {
-  console.log('Simulating PTY-powered pattern editing...');
+  console.info('Simulating PTY-powered pattern editing...');
   
   const editorFeatures = [
     'Real-time pattern validation',
@@ -121,33 +121,33 @@ async function demonstratePTYEditor() {
     'Live security feedback'
   ];
   
-  console.log('🔧 PTY Editor Features:');
+  console.info('🔧 PTY Editor Features:');
   editorFeatures.forEach((feature, index) => {
-    console.log(`   ${index + 1}. ✅ ${feature}`);
+    console.info(`   ${index + 1}. ✅ ${feature}`);
   });
   
   // Simulate terminal output
-  console.log('\n📺 Simulated Terminal Output:');
-  console.log('┌─────────────────────────────────────────────────────────────┐');
-  console.log('│ Pattern: https://localhost:3000/admin/*                    │');
-  console.log('│ Risk: 🚨 CRITICAL                                         │');
-  console.log('│ ⚠️  SSRF/Traversal detected!                               │');
-  console.log('│                                                             │');
-  console.log('│ Pattern: https://api.example.com/v1/:resource             │');
-  console.log('│ Risk: ✅ LOW                                               │');
-  console.log('│                                                             │');
-  console.log('│ Pattern: https://evil.com/../admin                        │');
-  console.log('│ Risk: 🚨 CRITICAL                                         │');
-  console.log('│ ⚠️  Path traversal vulnerability!                          │');
-  console.log('└─────────────────────────────────────────────────────────────┘');
+  console.info('\n📺 Simulated Terminal Output:');
+  console.info('┌─────────────────────────────────────────────────────────────┐');
+  console.info('│ Pattern: https://localhost:3000/admin/*                    │');
+  console.info('│ Risk: 🚨 CRITICAL                                         │');
+  console.info('│ ⚠️  SSRF/Traversal detected!                               │');
+  console.info('│                                                             │');
+  console.info('│ Pattern: https://api.example.com/v1/:resource             │');
+  console.info('│ Risk: ✅ LOW                                               │');
+  console.info('│                                                             │');
+  console.info('│ Pattern: https://evil.com/../admin                        │');
+  console.info('│ Risk: 🚨 CRITICAL                                         │');
+  console.info('│ ⚠️  Path traversal vulnerability!                          │');
+  console.info('└─────────────────────────────────────────────────────────────┘');
 }
 
 // Demo 4: Archive-Based Backup System
-console.log('\n💾 4. Archive-Based Backup System');
-console.log('===============================');
+console.info('\n💾 4. Archive-Based Backup System');
+console.info('===============================');
 
 async function demonstrateArchiveSystem() {
-  console.log('Creating secure archive with all observatory data...');
+  console.info('Creating secure archive with all observatory data...');
   
   // Simulate archive creation
   const archiveData = {
@@ -165,9 +165,9 @@ async function demonstrateArchiveSystem() {
     'audit-log.json': 'Complete audit trail'
   };
   
-  console.log('📦 Archive Contents:');
+  console.info('📦 Archive Contents:');
   Object.entries(archiveData).forEach(([file, description]) => {
-    console.log(`   📄 ${file}: ${description}`);
+    console.info(`   📄 ${file}: ${description}`);
   });
   
   // Simulate compression
@@ -175,19 +175,19 @@ async function demonstrateArchiveSystem() {
   const compressedSize = 2 * 1024 * 1024;  // 2MB
   const compressionRatio = (originalSize / compressedSize).toFixed(1);
   
-  console.log(`\n🗜️  Compression Results:`);
-  console.log(`   Original size: ${(originalSize / 1024 / 1024).toFixed(1)} MB`);
-  console.log(`   Compressed size: ${(compressedSize / 1024 / 1024).toFixed(1)} MB`);
-  console.log(`   Compression ratio: ${compressionRatio}:1`);
-  console.log(`   Integrity: CRC32-verified`);
+  console.info(`\n🗜️  Compression Results:`);
+  console.info(`   Original size: ${(originalSize / 1024 / 1024).toFixed(1)} MB`);
+  console.info(`   Compressed size: ${(compressedSize / 1024 / 1024).toFixed(1)} MB`);
+  console.info(`   Compression ratio: ${compressionRatio}:1`);
+  console.info(`   Integrity: CRC32-verified`);
 }
 
 // Demo 5: WebSocket Proxy for Corporate Environments
-console.log('\n📡 5. WebSocket Proxy Support');
-console.log('=============================');
+console.info('\n📡 5. WebSocket Proxy Support');
+console.info('=============================');
 
 async function demonstrateWebSocketProxy() {
-  console.log('Configuring WebSocket for corporate environments...');
+  console.info('Configuring WebSocket for corporate environments...');
   
   const proxyConfig = {
     url: 'https://proxy.corp.com:8443',
@@ -201,13 +201,13 @@ async function demonstrateWebSocketProxy() {
     }
   };
   
-  console.log('🔒 Proxy Configuration:');
-  console.log(`   URL: ${proxyConfig.url}`);
-  console.log(`   Auth: Bearer token configured`);
-  console.log(`   TLS: Corporate CA certificate`);
-  console.log(`   Headers: ${Object.keys(proxyConfig.headers).length} configured`);
+  console.info('🔒 Proxy Configuration:');
+  console.info(`   URL: ${proxyConfig.url}`);
+  console.info(`   Auth: Bearer token configured`);
+  console.info(`   TLS: Corporate CA certificate`);
+  console.info(`   Headers: ${Object.keys(proxyConfig.headers).length} configured`);
   
-  console.log('\n📊 Real-time Security Events:');
+  console.info('\n📊 Real-time Security Events:');
   const events = [
     { type: 'critical', pattern: 'https://localhost:3000/*', action: 'alert' },
     { type: 'high', pattern: 'https://192.168.1.100/*', action: 'warn' },
@@ -216,16 +216,16 @@ async function demonstrateWebSocketProxy() {
   
   events.forEach((event, index) => {
     const icon = event.type === 'critical' ? '🚨' : event.type === 'high' ? '⚠️' : '⚡';
-    console.log(`   ${index + 1}. ${icon} ${event.type.toUpperCase()}: ${event.pattern} → ${event.action}`);
+    console.info(`   ${index + 1}. ${icon} ${event.type.toUpperCase()}: ${event.pattern} → ${event.action}`);
   });
 }
 
 // Demo 6: Metafile Bundle Analysis
-console.log('\n📊 6. Metafile Bundle Analysis');
-console.log('=============================');
+console.info('\n📊 6. Metafile Bundle Analysis');
+console.info('=============================');
 
 async function demonstrateMetafileAnalysis() {
-  console.log('Analyzing bundle composition and virtual guard contribution...');
+  console.info('Analyzing bundle composition and virtual guard contribution...');
   
   const bundleAnalysis = {
     totalSize: '1.2 MB',
@@ -248,27 +248,27 @@ async function demonstrateMetafileAnalysis() {
     }
   };
   
-  console.log('📦 Bundle Composition:');
+  console.info('📦 Bundle Composition:');
   Object.entries(bundleAnalysis.inputs).forEach(([file, size]) => {
     const isVirtual = file.startsWith('virtual:');
     const icon = isVirtual ? '🔮' : '📄';
-    console.log(`   ${icon} ${file}: ${size}`);
+    console.info(`   ${icon} ${file}: ${size}`);
   });
   
-  console.log('\n🛡️  Virtual Guards:');
-  console.log(`   Count: ${bundleAnalysis.virtualGuards.count}`);
-  console.log(`   Total size: ${bundleAnalysis.virtualGuards.totalSize}`);
-  console.log(`   Average: ${bundleAnalysis.virtualGuards.averageSize}`);
+  console.info('\n🛡️  Virtual Guards:');
+  console.info(`   Count: ${bundleAnalysis.virtualGuards.count}`);
+  console.info(`   Total size: ${bundleAnalysis.virtualGuards.totalSize}`);
+  console.info(`   Average: ${bundleAnalysis.virtualGuards.averageSize}`);
   
-  console.log('\n⚡ Optimization Results:');
-  console.log(`   Dead code eliminated: ${bundleAnalysis.optimization.deadCodeEliminated}`);
-  console.log(`   Tree shaking: ${bundleAnalysis.optimization.treeShaking}`);
-  console.log(`   Minification: ${bundleAnalysis.optimization.minification}`);
+  console.info('\n⚡ Optimization Results:');
+  console.info(`   Dead code eliminated: ${bundleAnalysis.optimization.deadCodeEliminated}`);
+  console.info(`   Tree shaking: ${bundleAnalysis.optimization.treeShaking}`);
+  console.info(`   Minification: ${bundleAnalysis.optimization.minification}`);
 }
 
 // Demo 7: Performance Summary
-console.log('\n🚀 7. Performance Summary');
-console.log('=========================');
+console.info('\n🚀 7. Performance Summary');
+console.info('=========================');
 
 async function demonstratePerformanceSummary() {
   const performanceMetrics = {
@@ -280,12 +280,12 @@ async function demonstratePerformanceSummary() {
     archiveCompression: '25:1 ratio'
   };
   
-  console.log('⚡ Key Performance Metrics:');
+  console.info('⚡ Key Performance Metrics:');
   Object.entries(performanceMetrics).forEach(([metric, value]) => {
-    console.log(`   🎯 ${metric}: ${value}`);
+    console.info(`   🎯 ${metric}: ${value}`);
   });
   
-  console.log('\n🏆 Performance Achievements:');
+  console.info('\n🏆 Performance Achievements:');
   const achievements = [
     'Sub-millisecond pattern analysis',
     '20× faster CRC32 hashing',
@@ -296,13 +296,13 @@ async function demonstratePerformanceSummary() {
   ];
   
   achievements.forEach((achievement, index) => {
-    console.log(`   ${index + 1}. ✅ ${achievement}`);
+    console.info(`   ${index + 1}. ✅ ${achievement}`);
   });
 }
 
 // Main demonstration runner
 async function runUltimateDemo() {
-  console.log('🎯 Running Ultimate Observatory Demo...\n');
+  console.info('🎯 Running Ultimate Observatory Demo...\n');
   
   try {
     await demonstrateSecurityTiers();
@@ -313,11 +313,11 @@ async function runUltimateDemo() {
     await demonstrateMetafileAnalysis();
     await demonstratePerformanceSummary();
     
-    console.log('\n🎉 Ultimate Observatory Demo Complete!');
-    console.log('=====================================');
+    console.info('\n🎉 Ultimate Observatory Demo Complete!');
+    console.info('=====================================');
     
-    console.log('\n🔥 This demonstrates the most advanced URLPattern security platform possible!');
-    console.log('📊 Every Bun 1.3.6+ feature weaponized for enterprise security:');
+    console.info('\n🔥 This demonstrates the most advanced URLPattern security platform possible!');
+    console.info('📊 Every Bun 1.3.6+ feature weaponized for enterprise security:');
     
     const features = [
       '✅ Bun.Terminal API for PTY-powered editing',
@@ -332,18 +332,18 @@ async function runUltimateDemo() {
       '✅ Virtual file system for guard injection'
     ];
     
-    features.forEach(feature => console.log(`   ${feature}`));
+    features.forEach(feature => console.info(`   ${feature}`));
     
-    console.log('\n🚀 Ready for enterprise deployment with:');
-    console.log('   • Zero external dependencies');
-    console.log('   • Sub-millisecond performance');
-    console.log('   • Feature-flagged builds');
-    console.log('   • Interactive security workflows');
-    console.log('   • Corporate proxy support');
-    console.log('   • Complete audit trails');
+    console.info('\n🚀 Ready for enterprise deployment with:');
+    console.info('   • Zero external dependencies');
+    console.info('   • Sub-millisecond performance');
+    console.info('   • Feature-flagged builds');
+    console.info('   • Interactive security workflows');
+    console.info('   • Corporate proxy support');
+    console.info('   • Complete audit trails');
     
-    console.log('\n🎯 The hoodie is DEFINITELY in the cart!');
-    console.log('🔥 This URLPattern Observatory is the ultimate Bun-native security platform!');
+    console.info('\n🎯 The hoodie is DEFINITELY in the cart!');
+    console.info('🔥 This URLPattern Observatory is the ultimate Bun-native security platform!');
     
   } catch (error) {
     console.error('❌ Demo failed:', error instanceof Error ? error.message : String(error));

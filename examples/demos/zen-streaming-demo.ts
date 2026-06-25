@@ -11,8 +11,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 async function demonstrateZeroCopyStreaming() {
-  console.log('🚀 Zero-Copy Streaming with ReadableStream');
-  console.log('=' .repeat(50));
+  console.info('🚀 Zero-Copy Streaming with ReadableStream');
+  console.info('=' .repeat(50));
 
   const searcher = new ZenStreamSearcher();
   const cachePath = join(__dirname, '..', '.cache'); // Use parent cache directory
@@ -22,15 +22,15 @@ async function demonstrateZeroCopyStreaming() {
       query: 'bun',
       cachePath,
       onMatch: (match) => {
-        console.log(`✨ ${match.data.path.text}:${match.data.line_number} - ${match.data.lines.text.trim()}`);
+        console.info(`✨ ${match.data.path.text}:${match.data.line_number} - ${match.data.lines.text.trim()}`);
       },
       onProgress: (stats) => {
-        console.log(`📈 Progress: ${stats.matchesFound} matches, ${(stats.bytesProcessed / 1024).toFixed(1)}KB`);
+        console.info(`📈 Progress: ${stats.matchesFound} matches, ${(stats.bytesProcessed / 1024).toFixed(1)}KB`);
       }
     });
 
-    console.log(`\n✅ Streaming complete: ${stats.matchesFound} matches in ${stats.elapsedTime.toFixed(2)}ms`);
-    console.log(`💾 Memory efficiency: Only ${stats.bytesProcessed} bytes processed (no full text held in memory)`);
+    console.info(`\n✅ Streaming complete: ${stats.matchesFound} matches in ${stats.elapsedTime.toFixed(2)}ms`);
+    console.info(`💾 Memory efficiency: Only ${stats.bytesProcessed} bytes processed (no full text held in memory)`);
     
   } catch (error) {
     console.error('❌ Streaming demo failed:', error);
@@ -38,16 +38,16 @@ async function demonstrateZeroCopyStreaming() {
 }
 
 async function demonstratePTYSearch() {
-  console.log('\n🖥️  Advanced PTY Support (Interactive Terminal)');
-  console.log('=' .repeat(50));
+  console.info('\n🖥️  Advanced PTY Support (Interactive Terminal)');
+  console.info('=' .repeat(50));
 
   const searcher = new ZenStreamSearcher();
   const cachePath = join(__dirname, '..', '.cache');
   
   try {
-    console.log('Running PTY search with ANSI colors preserved...');
+    console.info('Running PTY search with ANSI colors preserved...');
     await searcher.ptySearch('bun', cachePath);
-    console.log('\n✅ PTY search complete');
+    console.info('\n✅ PTY search complete');
     
   } catch (error) {
     console.error('❌ PTY demo failed:', error);
@@ -55,8 +55,8 @@ async function demonstratePTYSearch() {
 }
 
 async function demonstrateResourceMonitoring() {
-  console.log('\n📊 Resource Usage Monitoring');
-  console.log('=' .repeat(50));
+  console.info('\n📊 Resource Usage Monitoring');
+  console.info('=' .repeat(50));
 
   const searcher = new ZenStreamSearcher();
   const cachePath = join(__dirname, '..', '.cache');
@@ -64,12 +64,12 @@ async function demonstrateResourceMonitoring() {
   try {
     const { stats, resources } = await searcher.monitoredSearch('bun', cachePath);
     
-    console.log('\n🔍 Detailed Resource Analysis:');
-    console.log(`   📈 Peak Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   ⏱️  CPU User Time: ${resources.cpuTime.user}ms`);
-    console.log(`   ⏱️  CPU System Time: ${resources.cpuTime.system}ms`);
-    console.log(`   ⏱️  CPU Total Time: ${resources.cpuTime.total}ms`);
-    console.log(`   📊 Block I/O Operations: ${resources.blockInputs} inputs, ${resources.blockOutputs} outputs`);
+    console.info('\n🔍 Detailed Resource Analysis:');
+    console.info(`   📈 Peak Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   ⏱️  CPU User Time: ${resources.cpuTime.user}ms`);
+    console.info(`   ⏱️  CPU System Time: ${resources.cpuTime.system}ms`);
+    console.info(`   ⏱️  CPU Total Time: ${resources.cpuTime.total}ms`);
+    console.info(`   📊 Block I/O Operations: ${resources.blockInputs} inputs, ${resources.blockOutputs} outputs`);
     
   } catch (error) {
     console.error('❌ Resource monitoring demo failed:', error);
@@ -77,27 +77,27 @@ async function demonstrateResourceMonitoring() {
 }
 
 async function demonstrateAdaptiveSearch() {
-  console.log('\n🔄 Adaptive Search with Safe Termination');
-  console.log('=' .repeat(50));
+  console.info('\n🔄 Adaptive Search with Safe Termination');
+  console.info('=' .repeat(50));
 
   const searcher = new ZenStreamSearcher();
   const cachePath = join(__dirname, '..', '.cache');
   
   try {
-    console.log('Starting first search...');
+    console.info('Starting first search...');
     const search1 = searcher.adaptiveSearch('bun', cachePath);
     
     // Simulate user typing a new query after 500ms
     setTimeout(() => {
-      console.log('\n⚡ User typed new query - cancelling previous search...');
+      console.info('\n⚡ User typed new query - cancelling previous search...');
     }, 500);
     
     // Start a new search (will automatically cancel the first one)
     await new Promise(resolve => setTimeout(resolve, 600));
     const stats = await searcher.adaptiveSearch('ReadableStream', cachePath);
     
-    console.log(`\n✅ Adaptive search complete: ${stats.matchesFound} matches`);
-    console.log('🛑 Previous search was safely terminated to save CPU');
+    console.info(`\n✅ Adaptive search complete: ${stats.matchesFound} matches`);
+    console.info('🛑 Previous search was safely terminated to save CPU');
     
   } catch (error) {
     console.error('❌ Adaptive search demo failed:', error);
@@ -105,8 +105,8 @@ async function demonstrateAdaptiveSearch() {
 }
 
 async function demonstrateResponseSearch() {
-  console.log('\n🌐 Search Through Response Object (No Temp Files)');
-  console.log('=' .repeat(50));
+  console.info('\n🌐 Search Through Response Object (No Temp Files)');
+  console.info('=' .repeat(50));
 
   const searcher = new ZenStreamSearcher();
   
@@ -123,8 +123,8 @@ Web Standard APIs make this ultra-efficient.
     
     const stats = await searcher.searchResponse(response, 'stream');
     
-    console.log(`✅ Response search complete: ${stats.matchesFound} matches`);
-    console.log('💾 No temporary files created - Response streamed directly to ripgrep');
+    console.info(`✅ Response search complete: ${stats.matchesFound} matches`);
+    console.info('💾 No temporary files created - Response streamed directly to ripgrep');
     
   } catch (error) {
     console.error('❌ Response search demo failed:', error);
@@ -132,8 +132,8 @@ Web Standard APIs make this ultra-efficient.
 }
 
 async function demonstrateEnhancedDocsFetcher() {
-  console.log('\n📚 Enhanced Docs Fetcher Integration');
-  console.log('=' .repeat(50));
+  console.info('\n📚 Enhanced Docs Fetcher Integration');
+  console.info('=' .repeat(50));
 
   const fetcher = new EnhancedDocsFetcher();
   const cachePath = join(__dirname, '..', '.cache');
@@ -149,9 +149,9 @@ async function demonstrateEnhancedDocsFetcher() {
 }
 
 async function runAllDemos() {
-  console.log('🧘 Ultra-Zen Documentation Streaming System');
-  console.log('High-performance search using Bun.spawn Web Standard APIs');
-  console.log('=' .repeat(60));
+  console.info('🧘 Ultra-Zen Documentation Streaming System');
+  console.info('High-performance search using Bun.spawn Web Standard APIs');
+  console.info('=' .repeat(60));
 
   await demonstrateZeroCopyStreaming();
   await demonstratePTYSearch();
@@ -160,15 +160,15 @@ async function runAllDemos() {
   await demonstrateResponseSearch();
   await demonstrateEnhancedDocsFetcher();
 
-  console.log('\n🎉 All demos completed!');
-  console.log('\n💡 Key Benefits Demonstrated:');
-  console.log('   • Zero-copy streaming with ReadableStream');
-  console.log('   • Advanced PTY support for interactive terminals');
-  console.log('   • Comprehensive resource usage monitoring');
-  console.log('   • Safe termination with AbortSignal');
-  console.log('   • Direct Response object processing');
-  console.log('   • AsyncDisposable pattern for automatic cleanup');
-  console.log('   • Type-safe Web Standard APIs integration');
+  console.info('\n🎉 All demos completed!');
+  console.info('\n💡 Key Benefits Demonstrated:');
+  console.info('   • Zero-copy streaming with ReadableStream');
+  console.info('   • Advanced PTY support for interactive terminals');
+  console.info('   • Comprehensive resource usage monitoring');
+  console.info('   • Safe termination with AbortSignal');
+  console.info('   • Direct Response object processing');
+  console.info('   • AsyncDisposable pattern for automatic cleanup');
+  console.info('   • Type-safe Web Standard APIs integration');
 }
 
 // Run demos if this file is executed directly

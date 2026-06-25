@@ -6,9 +6,12 @@ const key = 'user:@ashschaeffer1:tokens';
 
 await redis.send('HMSET', [
   key,
-  'venmo', 'venmo_sandbox_token',
-  'paypal', 'paypal_sandbox_token',
-  'plaid', 'plaid_public_token'
+  'venmo',
+  'venmo_sandbox_token',
+  'paypal',
+  'paypal_sandbox_token',
+  'plaid',
+  'plaid_public_token',
 ]);
 
-console.log('✅ Tokens stored!');
+console.info('✅ Tokens stored!');

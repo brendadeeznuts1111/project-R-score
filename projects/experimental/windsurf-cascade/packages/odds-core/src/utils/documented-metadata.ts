@@ -340,8 +340,8 @@ export class MetadataBuilder {
    *   .setCategory(DataCategory.MARKET_DATA)
    *   .build();
    * 
-   * console.log(metadata.id); // 'data_001'
-   * console.log(metadata.topics); // ['crypto.spot']
+   * console.info(metadata.id); // 'data_001'
+   * console.info(metadata.topics); // ['crypto.spot']
    * ```
    */
   build(): EnhancedMetadata {
@@ -574,8 +574,8 @@ export class MetadataBuilder {
  * };
  * 
  * const analysis = TopicAnalyzer.analyzeTopics(marketData);
- * console.log(analysis.primaryTopic); // 'crypto.spot'
- * console.log(analysis.confidence); // 0.8
+ * console.info(analysis.primaryTopic); // 'crypto.spot'
+ * console.info(analysis.confidence); // 0.8
  * ```
  */
 export class TopicAnalyzer {
@@ -640,7 +640,7 @@ export class TopicAnalyzer {
    * ];
    * 
    * const analyses = TopicAnalyzer.analyzeTopicsBatch(dataArray);
-   * console.log(analyses.length); // 3
+   * console.info(analyses.length); // 3
    * ```
    */
   static analyzeTopicsBatch(dataArray: any[]): TopicAnalysis[] {
@@ -682,7 +682,7 @@ export class TopicAnalyzer {
    * @example
    * ```typescript
    * const topics = TopicAnalyzer.extractTopicsFromSymbol('BTC/USD');
-   * console.log(topics); // ['crypto.spot', 'forex.major']
+   * console.info(topics); // ['crypto.spot', 'forex.major']
    * ```
    */
   private static extractTopicsFromSymbol(symbol: string): MarketTopic[] {

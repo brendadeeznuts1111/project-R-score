@@ -29,7 +29,7 @@ class BunPackageManager {
   async pack(options: PMOptions = {}): Promise<string> {
     const { dryRun = false, quiet = false, destination = '.', gzipLevel = 9 } = options;
 
-    if (!quiet) console.log('📦 Packing package...');
+    if (!quiet) console.info('📦 Packing package...');
 
     // Read package.json
     const pkg = await this.readPackageJson();
@@ -42,7 +42,7 @@ class BunPackageManager {
     const tarballPath = join(destination, tarballName);
 
     if (dryRun) {
-      console.log(`📦 Would pack ${files.length} files into ${tarballName}`);
+      console.info(`📦 Would pack ${files.length} files into ${tarballName}`);
       return tarballName;
     }
 
@@ -55,7 +55,7 @@ class BunPackageManager {
     const duration = performance.now() - startTime;
 
     if (!quiet) {
-      console.log(`📦 Packed ${files.length} files into ${tarballName} (${compressed.length} bytes, ${duration.toFixed(1)}ms)`);
+      console.info(`📦 Packed ${files.length} files into ${tarballName} (${compressed.length} bytes, ${duration.toFixed(1)}ms)`);
     }
 
     return tarballPath;
@@ -69,19 +69,19 @@ class BunPackageManager {
     const deps = all ? { ...pkg.dependencies, ...pkg.devDependencies } : pkg.dependencies || {};
 
     if (json) {
-      console.log(JSON.stringify(deps, null, 2));
+      console.info(JSON.stringify(deps, null, 2));
       return;
     }
 
     const depList = Object.entries(deps).map(([name, version]) => `${name}@${version}`);
 
     if (depList.length === 0) {
-      console.log('No dependencies found');
+      console.info('No dependencies found');
       return;
     }
 
-    console.log('Dependencies:');
-    depList.forEach(dep => console.log(`  ${dep}`));
+    console.info('Dependencies:');
+    depList.forEach(dep => console.info(`  ${dep}`));
   }
 
   // bun pm bin
@@ -95,23 +95,23 @@ class BunPackageManager {
     const localBin = join(process.cwd(), 'node_modules', '.bin');
 
     if (json) {
-      console.log(JSON.stringify({
+      console.info(JSON.stringify({
         global: globalBin,
         local: localBin
       }, null, 2));
       return;
     }
 
-    console.log('Bin paths:');
-    console.log(`  Global: ${globalBin}`);
-    console.log(`  Local:  ${localBin}`);
+    console.info('Bin paths:');
+    console.info(`  Global: ${globalBin}`);
+    console.info(`  Local:  ${localBin}`);
 
     // List executables if they exist
     if (existsSync(localBin)) {
       const bins = readdirSync(localBin).filter(file => !file.startsWith('.'));
       if (bins.length > 0) {
-        console.log('\nLocal executables:');
-        bins.forEach(bin => console.log(`  ${bin}`));
+        console.info('\nLocal executables:');
+        bins.forEach(bin => console.info(`  ${bin}`));
       }
     }
   }
@@ -143,7 +143,7 @@ class BunPackageManager {
     pkg.version = newVersion;
     await Bun.write(this.packagePath, JSON.stringify(pkg, null, 2));
 
-    console.log(`📦 Version bumped: ${currentVersion} → ${newVersion}`);
+    console.info(`📦 Version bumped: ${currentVersion} → ${newVersion}`);
 
     // Git operations (if not disabled)
     if (!noGitTagVersion) {
@@ -152,7 +152,7 @@ class BunPackageManager {
         await this.runCommand('git', ['add', 'package.json']);
         await this.runCommand('git', ['commit', '-m', commitMsg]);
         await this.runCommand('git', ['tag', `v${newVersion}`]);
-        console.log('🏷️  Git tag created');
+        console.info('🏷️  Git tag created');
       } catch (error) {
         console.warn('⚠️  Git operations failed (this is normal if not in a git repo)');
       }
@@ -167,7 +167,7 @@ class BunPackageManager {
       case 'get':
         const key = args[0];
         if (!key) throw new Error('Usage: bun pm pkg get <key>');
-        console.log(this.getNestedValue(pkg, key));
+        console.info(this.getNestedValue(pkg, key));
         break;
 
       case 'set':
@@ -177,7 +177,7 @@ class BunPackageManager {
         if (!setKey || value === undefined) throw new Error('Invalid format. Use key=value');
         this.setNestedValue(pkg, setKey, value);
         await Bun.write(this.packagePath, JSON.stringify(pkg, null, 2));
-        console.log(`✅ Set ${setKey} = ${value}`);
+        console.info(`✅ Set ${setKey} = ${value}`);
         break;
 
       case 'fix':
@@ -186,7 +186,7 @@ class BunPackageManager {
         if (!pkg.module && existsSync('index.mjs')) pkg.module = 'index.mjs';
         if (!pkg.types && existsSync('index.d.ts')) pkg.types = 'index.d.ts';
         await Bun.write(this.packagePath, JSON.stringify(pkg, null, 2));
-        console.log('🔧 Package.json fixes applied');
+        console.info('🔧 Package.json fixes applied');
         break;
 
       default:
@@ -203,15 +203,15 @@ class BunPackageManager {
         // Simulate cache clearing (in real Bun this would clear the actual cache)
         await new Promise(resolve => setTimeout(resolve, 5)); // Simulate 5ms operation
         const duration = performance.now() - startTime;
-        console.log(`🗑️  Cache cleared in ${duration.toFixed(1)}ms`);
+        console.info(`🗑️  Cache cleared in ${duration.toFixed(1)}ms`);
         break;
 
       case '':
-        console.log(`📁 Cache path: ${this.cachePath}`);
+        console.info(`📁 Cache path: ${this.cachePath}`);
         break;
 
       default:
-        console.log(`📁 Cache path: ${this.cachePath}`);
+        console.info(`📁 Cache path: ${this.cachePath}`);
     }
   }
 
@@ -224,11 +224,11 @@ class BunPackageManager {
     const foundLockfiles = lockfiles.filter(file => existsSync(file));
 
     if (foundLockfiles.length === 0) {
-      console.log('No lockfiles found to migrate');
+      console.info('No lockfiles found to migrate');
       return;
     }
 
-    console.log('🔄 Migrating lockfiles...');
+    console.info('🔄 Migrating lockfiles...');
 
     // Simulate migration (in real Bun this would actually migrate)
     await new Promise(resolve => setTimeout(resolve, 15)); // Simulate 15ms operation
@@ -244,8 +244,8 @@ class BunPackageManager {
     await Bun.write('bun.lock', JSON.stringify(lockfile, null, 2));
 
     const duration = performance.now() - startTime;
-    console.log(`✅ Migration complete in ${duration.toFixed(1)}ms`);
-    console.log(`📄 Migrated from: ${foundLockfiles.join(', ')}`);
+    console.info(`✅ Migration complete in ${duration.toFixed(1)}ms`);
+    console.info(`📄 Migrated from: ${foundLockfiles.join(', ')}`);
   }
 
   // bun pm trust
@@ -253,15 +253,15 @@ class BunPackageManager {
     const { all = false } = options;
 
     if (all) {
-      console.log('🔒 Trusted all dependencies');
+      console.info('🔒 Trusted all dependencies');
       return;
     }
 
     const pkg = await this.readPackageJson();
     const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
 
-    console.log('🔒 Trusted dependencies:');
-    deps.forEach(dep => console.log(`  ✅ ${dep}`));
+    console.info('🔒 Trusted dependencies:');
+    deps.forEach(dep => console.info(`  ✅ ${dep}`));
   }
 
   // bun pm untrusted
@@ -273,13 +273,13 @@ class BunPackageManager {
     ];
 
     if (untrusted.length === 0) {
-      console.log('✅ No untrusted dependencies found');
+      console.info('✅ No untrusted dependencies found');
       return;
     }
 
-    console.log('⚠️  Untrusted dependencies:');
+    console.info('⚠️  Untrusted dependencies:');
     untrusted.forEach(dep => {
-      console.log(`  ❌ ${dep.name}@${dep.version} - ${dep.reason}`);
+      console.info(`  ❌ ${dep.name}@${dep.version} - ${dep.reason}`);
     });
   }
 
@@ -287,13 +287,13 @@ class BunPackageManager {
   async whoami(): Promise<void> {
     // Simulate npm whoami
     const user = process.env.USER || 'anonymous';
-    console.log(user);
+    console.info(user);
   }
 
   // bun pm hash
   async hash(file?: string): Promise<void> {
     if (!file) {
-      console.log('Usage: bun pm hash <file>');
+      console.info('Usage: bun pm hash <file>');
       return;
     }
 
@@ -304,7 +304,7 @@ class BunPackageManager {
     const content = await Bun.file(file).arrayBuffer();
     const hash = createHash('sha256').update(Buffer.from(content)).digest('hex');
 
-    console.log(hash);
+    console.info(hash);
   }
 
   private async readPackageJson(): Promise<any> {
@@ -467,7 +467,7 @@ async function main() {
         break;
 
       default:
-        console.log(`
+        console.info(`
 Bun Package Manager v1.3
 
 Usage: bun pm <command> [options]

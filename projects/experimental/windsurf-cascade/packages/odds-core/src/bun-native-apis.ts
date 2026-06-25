@@ -181,10 +181,10 @@ export class BunNativeAPIsIntegration {
           handler({ socket, data: data.toString() });
         },
         open: (socket: any) => {
-          console.log(`TCP connection opened`);
+          console.info(`TCP connection opened`);
         },
         close: (socket: any) => {
-          console.log(`TCP connection closed`);
+          console.info(`TCP connection closed`);
         }
       }
     });
@@ -647,7 +647,7 @@ export class MarketDataNativeProcessor {
       }
     });
     
-    console.log(`📡 TCP Market Data Feed started on port ${port}`);
+    console.info(`📡 TCP Market Data Feed started on port ${port}`);
   }
   
   startUDPDataFeed(port: number = 8081): void {
@@ -655,14 +655,14 @@ export class MarketDataNativeProcessor {
       try {
         const tick = JSON.parse(data);
         this.storeMarketData(tick).then(result => {
-          console.log(`📊 Stored tick from ${remoteInfo.address}:${remoteInfo.port} - ID: ${result.id}`);
+          console.info(`📊 Stored tick from ${remoteInfo.address}:${remoteInfo.port} - ID: ${result.id}`);
         });
       } catch (error) {
         console.error(`❌ Invalid data from ${remoteInfo.address}:${remoteInfo.port}:`, error);
       }
     });
     
-    console.log(`📡 UDP Market Data Feed started on port ${port}`);
+    console.info(`📡 UDP Market Data Feed started on port ${port}`);
   }
   
   async exportToFile(filePath: string, symbol?: string): Promise<{

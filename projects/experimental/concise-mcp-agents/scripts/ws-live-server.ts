@@ -61,7 +61,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
       websocket: {
         open: (ws) => {
           this.connectedClients++;
-          console.log(`🟢 WS Client connected (${this.connectedClients} total)`);
+          console.info(`🟢 WS Client connected (${this.connectedClients} total)`);
 
           // Subscribe to syndicate-live channel
           ws.subscribe("syndicate-live");
@@ -110,18 +110,18 @@ class SyndicateWSLiveServer implements WSLiveServer {
 
         close: (ws, code, reason) => {
           this.connectedClients--;
-          console.log(`🔴 WS Client disconnected (${this.connectedClients} remaining) - Code: ${code}`);
+          console.info(`🔴 WS Client disconnected (${this.connectedClients} remaining) - Code: ${code}`);
         },
 
         drain: (ws) => {
-          console.log(`💧 WS backpressure relieved for client ${ws.data.id}`);
+          console.info(`💧 WS backpressure relieved for client ${ws.data.id}`);
         }
       },
     });
 
-    console.log(`🌐 WS Live Server started on port ${this.port}`);
-    console.log(`📊 Deflate compression: ${this.server.protocol || 'enabled'}`);
-    console.log(`⏰ Poll interval: ${this.pollInterval / 1000}s`);
+    console.info(`🌐 WS Live Server started on port ${this.port}`);
+    console.info(`📊 Deflate compression: ${this.server.protocol || 'enabled'}`);
+    console.info(`⏰ Poll interval: ${this.pollInterval / 1000}s`);
   }
 
   private startPolling(): void {
@@ -138,7 +138,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
       this.lastPollTime = new Date().toISOString();
 
       // Poll datapipe for new bets
-      console.log('📊 Polling for new bets...');
+      console.info('📊 Polling for new bets...');
 
       const proc = Bun.spawnSync(['bun', 'datapipe.ts', 'raw'], {
         cwd: process.cwd(),
@@ -157,7 +157,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
       const newBets = allBets.slice(-10); // Last 10 bets as example
 
       if (newBets.length > 0) {
-        console.log(`📡 Broadcasting ${newBets.length} new bets`);
+        console.info(`📡 Broadcasting ${newBets.length} new bets`);
 
         // Broadcast to all subscribers
         this.server.publish("syndicate-live", JSON.stringify({
@@ -175,7 +175,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
         );
 
         if (highProfitBets.length > 0) {
-          console.log(`🚨 High profit alert: ${highProfitBets.length} bets > $1000`);
+          console.info(`🚨 High profit alert: ${highProfitBets.length} bets > $1000`);
 
           // Send alert to subscribers
           this.server.publish("syndicate-live", JSON.stringify({
@@ -186,7 +186,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
           }));
         }
       } else {
-        console.log('📊 No new bets to broadcast');
+        console.info('📊 No new bets to broadcast');
       }
 
     } catch (error) {
@@ -221,7 +221,7 @@ class SyndicateWSLiveServer implements WSLiveServer {
     if (this.server) {
       this.server.stop();
     }
-    console.log('🛑 WS Live Server stopped');
+    console.info('🛑 WS Live Server stopped');
   }
 }
 
@@ -233,30 +233,30 @@ switch (cmd) {
   case 'start':
   case undefined:
     server = new SyndicateWSLiveServer();
-    console.log('🚀 Syndicate WS Live Server v2.13 started');
-    console.log('🌐 WebSocket: ws://localhost:3001');
-    console.log('📊 Broadcasting: syndicate-live channel');
-    console.log('🗜️  Compression: Bun deflate enabled');
-    console.log('⏰ Polling: Every 30 seconds');
+    console.info('🚀 Syndicate WS Live Server v2.13 started');
+    console.info('🌐 WebSocket: ws://localhost:3001');
+    console.info('📊 Broadcasting: syndicate-live channel');
+    console.info('🗜️  Compression: Bun deflate enabled');
+    console.info('⏰ Polling: Every 30 seconds');
 
     // Keep alive
     process.on('SIGINT', () => {
-      console.log('\n👋 Shutting down gracefully...');
+      console.info('\n👋 Shutting down gracefully...');
       if (server) server.stop();
       process.exit(0);
     });
     break;
 
   case 'test':
-    console.log('🧪 WS Live Server Test Mode');
-    console.log('✅ Would start on port 3001');
-    console.log('✅ Would poll datapipe every 30s');
-    console.log('✅ Would broadcast to syndicate-live channel');
-    console.log('✅ Would enable deflate compression');
+    console.info('🧪 WS Live Server Test Mode');
+    console.info('✅ Would start on port 3001');
+    console.info('✅ Would poll datapipe every 30s');
+    console.info('✅ Would broadcast to syndicate-live channel');
+    console.info('✅ Would enable deflate compression');
     break;
 
   default:
-    console.log('WS Live Server Commands:');
-    console.log('  start  - Start the live WebSocket server');
-    console.log('  test   - Dry run test (no actual server)');
+    console.info('WS Live Server Commands:');
+    console.info('  start  - Start the live WebSocket server');
+    console.info('  test   - Dry run test (no actual server)');
 }

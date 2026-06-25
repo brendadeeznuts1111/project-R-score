@@ -46,8 +46,8 @@ class AutomatedValidationSystem {
     const startTime = Date.now();
     const startMemory = process.memoryUsage().heapUsed;
 
-    console.log('🤖 AUTOMATED VALIDATION SYSTEM');
-    console.log('='.repeat(50));
+    console.info('🤖 AUTOMATED VALIDATION SYSTEM');
+    console.info('='.repeat(50));
 
     const results: ValidationResult['results'] = {
       urls: { total: 0, valid: 0, invalid: 0, errors: [] },
@@ -60,7 +60,7 @@ class AutomatedValidationSystem {
 
     try {
       // 1. URL Validation with timeout protection
-      console.log('\n🌐 Running URL Validation...');
+      console.info('\n🌐 Running URL Validation...');
       const urlValidationPromises = [
         URLValidator.validateURL('bun-official-docs'),
         URLValidator.validateURL('github-api'),
@@ -81,10 +81,10 @@ class AutomatedValidationSystem {
       results.urls.invalid = urlResults.filter(r => !r.isValid).length;
       results.urls.errors = urlResults.flatMap(r => r.errors);
 
-      console.log(`   URLs: ${results.urls.valid}/${results.urls.total} valid`);
+      console.info(`   URLs: ${results.urls.valid}/${results.urls.total} valid`);
 
       // 2. Constants Validation
-      console.log('\n📊 Running Constants Validation...');
+      console.info('\n📊 Running Constants Validation...');
       const constantNames = ['default-timeout', 'max-retries', 'cli-categories-count'];
       const constantResults = constantNames.map(name => ConstantValidator.validateConstant(name));
 
@@ -93,26 +93,26 @@ class AutomatedValidationSystem {
       results.constants.invalid = constantResults.filter(r => !r.isValid).length;
       results.constants.errors = constantResults.flatMap(r => r.errors);
 
-      console.log(`   Constants: ${results.constants.valid}/${results.constants.total} valid`);
+      console.info(`   Constants: ${results.constants.valid}/${results.constants.total} valid`);
 
       // 3. Documentation Validation
-      console.log('\n📚 Running Documentation Validation...');
+      console.info('\n📚 Running Documentation Validation...');
       try {
         const docResults = await DocumentationValidator.validateCLIDocumentation();
         results.documentation.total = docResults.total;
         results.documentation.valid = docResults.valid;
         results.documentation.invalid = docResults.total - docResults.valid;
         results.documentation.errors = docResults.errors;
-        console.log(
+        console.info(
           `   Documentation: ${results.documentation.valid}/${results.documentation.total} valid`
         );
       } catch (error) {
         results.documentation.errors.push(`Documentation validation failed: ${error}`);
-        console.log(`   Documentation: Validation failed`);
+        console.info(`   Documentation: Validation failed`);
       }
 
       // 4. Files Analysis
-      console.log('\n📁 Running Files Analysis...');
+      console.info('\n📁 Running Files Analysis...');
       try {
         const filesAnalysis = await UntrackedFilesAnalyzer.analyzeAllFiles();
         results.files.total = filesAnalysis.total;
@@ -123,10 +123,10 @@ class AutomatedValidationSystem {
           .slice(0, 5)
           .map(f => f.path);
 
-        console.log(`   Files: ${results.files.untracked} untracked analyzed`);
+        console.info(`   Files: ${results.files.untracked} untracked analyzed`);
       } catch (error) {
         results.files.errors.push(`Files analysis failed: ${error}`);
-        console.log(`   Files: Analysis failed`);
+        console.info(`   Files: Analysis failed`);
       }
 
       // Generate recommendations
@@ -184,41 +184,41 @@ class AutomatedValidationSystem {
    * Generate CI/CD compatible output
    */
   static generateCIOutput(result: ValidationResult): void {
-    console.log('\n📋 CI/CD VALIDATION REPORT');
-    console.log('='.repeat(50));
+    console.info('\n📋 CI/CD VALIDATION REPORT');
+    console.info('='.repeat(50));
 
     // Exit code based on success
     if (!result.success) {
-      console.log('❌ VALIDATION FAILED');
+      console.info('❌ VALIDATION FAILED');
       process.exit(1);
     } else {
-      console.log('✅ VALIDATION PASSED');
+      console.info('✅ VALIDATION PASSED');
     }
 
     // Detailed results
-    console.log(`\n📊 RESULTS:`);
-    console.log(`   URLs: ${result.results.urls.valid}/${result.results.urls.total} valid`);
-    console.log(
+    console.info(`\n📊 RESULTS:`);
+    console.info(`   URLs: ${result.results.urls.valid}/${result.results.urls.total} valid`);
+    console.info(
       `   Constants: ${result.results.constants.valid}/${result.results.constants.total} valid`
     );
-    console.log(
+    console.info(
       `   Documentation: ${result.results.documentation.valid}/${result.results.documentation.total} valid`
     );
-    console.log(`   Files: ${result.results.files.untracked} untracked`);
+    console.info(`   Files: ${result.results.files.untracked} untracked`);
 
     // Performance metrics
-    console.log(`\n⚡ PERFORMANCE:`);
-    console.log(`   Total time: ${result.performance.totalTime}ms`);
-    console.log(`   Memory used: ${(result.performance.memoryUsage / 1024 / 1024).toFixed(1)}MB`);
+    console.info(`\n⚡ PERFORMANCE:`);
+    console.info(`   Total time: ${result.performance.totalTime}ms`);
+    console.info(`   Memory used: ${(result.performance.memoryUsage / 1024 / 1024).toFixed(1)}MB`);
 
     // Recommendations
     if (result.recommendations.length > 0) {
-      console.log(`\n💡 RECOMMENDATIONS:`);
-      result.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info(`\n💡 RECOMMENDATIONS:`);
+      result.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
 
     // Output JSON for CI systems
-    console.log(`\n📄 JSON OUTPUT:`);
+    console.info(`\n📄 JSON OUTPUT:`);
     try {
       const jsonOutput = JSON.stringify(
         {
@@ -232,9 +232,9 @@ class AutomatedValidationSystem {
         null,
         2
       );
-      console.log(jsonOutput);
+      console.info(jsonOutput);
     } catch (error) {
-      console.log('{"error": "Failed to serialize output to JSON"}');
+      console.info('{"error": "Failed to serialize output to JSON"}');
     }
   }
 
@@ -310,18 +310,18 @@ jobs:
               });
             }
           } catch (error) {
-            console.log('Failed to read validation report:', error.message);
+            console.info('Failed to read validation report:', error.message);
           }
 `;
 
     try {
       require('fs').mkdirSync('.github/workflows', { recursive: true });
       require('fs').writeFileSync('.github/workflows/automated-validation.yml', workflow);
-      console.log(
+      console.info(
         '   ✅ GitHub Actions workflow created: .github/workflows/automated-validation.yml'
       );
     } catch (error) {
-      console.log(`   ❌ Failed to create GitHub Actions workflow: ${error}`);
+      console.info(`   ❌ Failed to create GitHub Actions workflow: ${error}`);
     }
   }
 
@@ -371,9 +371,9 @@ jobs:
         'config/monitoring-dashboard.json',
         JSON.stringify(dashboard, null, 2)
       );
-      console.log('   ✅ Monitoring dashboard config created: config/monitoring-dashboard.json');
+      console.info('   ✅ Monitoring dashboard config created: config/monitoring-dashboard.json');
     } catch (error) {
-      console.log(`   ❌ Failed to create monitoring dashboard: ${error}`);
+      console.info(`   ❌ Failed to create monitoring dashboard: ${error}`);
     }
   }
 
@@ -381,8 +381,8 @@ jobs:
    * Setup complete automated validation system
    */
   static async setupSystem(): Promise<void> {
-    console.log('🚀 SETTING UP AUTOMATED VALIDATION SYSTEM');
-    console.log('='.repeat(50));
+    console.info('🚀 SETTING UP AUTOMATED VALIDATION SYSTEM');
+    console.info('='.repeat(50));
 
     // Run validation
     const result = await this.runCompleteValidation();
@@ -393,26 +393,26 @@ jobs:
     // Save validation report
     try {
       require('fs').writeFileSync('validation-report.json', JSON.stringify(result, null, 2));
-      console.log('\n📄 Validation report saved: validation-report.json');
+      console.info('\n📄 Validation report saved: validation-report.json');
     } catch (error) {
-      console.log(`\n❌ Failed to save validation report: ${error}`);
+      console.info(`\n❌ Failed to save validation report: ${error}`);
     }
 
     // Create GitHub Actions workflow
-    console.log('\n🔧 Creating CI/CD integration...');
+    console.info('\n🔧 Creating CI/CD integration...');
     this.createGitHubActionsWorkflow();
 
     // Create monitoring dashboard
-    console.log('\n📊 Setting up monitoring...');
+    console.info('\n📊 Setting up monitoring...');
     this.createMonitoringDashboard();
 
-    console.log('\n✅ Automated validation system setup complete!');
-    console.log('\n🎯 Features enabled:');
-    console.log('   • Automated URL, constants, and documentation validation');
-    console.log('   • CI/CD integration with GitHub Actions');
-    console.log('   • Performance monitoring and alerting');
-    console.log('   • Comprehensive reporting and recommendations');
-    console.log('   • Repository health tracking');
+    console.info('\n✅ Automated validation system setup complete!');
+    console.info('\n🎯 Features enabled:');
+    console.info('   • Automated URL, constants, and documentation validation');
+    console.info('   • CI/CD integration with GitHub Actions');
+    console.info('   • Performance monitoring and alerting');
+    console.info('   • Comprehensive reporting and recommendations');
+    console.info('   • Repository health tracking');
   }
 }
 

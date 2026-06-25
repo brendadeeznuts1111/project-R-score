@@ -9,9 +9,9 @@ import { BenchmarkStats } from '../stats';
  * Report benchmark results to console
  */
 export function reportToConsole(results: BenchResult[]) {
-  console.log('\n' + '═'.repeat(80));
-  console.log('📊 BENCHMARK RESULTS');
-  console.log('═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
+  console.info('📊 BENCHMARK RESULTS');
+  console.info('═'.repeat(80));
 
   // Group by category
   const byCategory = new Map<string, BenchResult[]>();
@@ -26,8 +26,8 @@ export function reportToConsole(results: BenchResult[]) {
 
   // Print each category
   for (const [category, categoryResults] of byCategory) {
-    console.log(`\n🏷️  ${category.toUpperCase()}`);
-    console.log('─'.repeat(80));
+    console.info(`\n🏷️  ${category.toUpperCase()}`);
+    console.info('─'.repeat(80));
 
     for (const result of categoryResults) {
       const { name, stats, target, passed, tier } = result;
@@ -47,38 +47,38 @@ export function reportToConsole(results: BenchResult[]) {
       // Tier label
       const tierLabel = tier.label !== 'N/A' ? ` [${tier.label}]` : '';
 
-      console.log(
+      console.info(
         `  ${icon} ${name.padEnd(40)} ${color}${meanStr}${resetColor}${targetStr}${tierLabel}`
       );
 
       // Additional stats for failed benchmarks
       if (!passed) {
-        console.log(`     ├─ p50: ${BenchmarkStats.formatTime(stats.p50)}`);
-        console.log(`     ├─ p95: ${BenchmarkStats.formatTime(stats.p95)}`);
-        console.log(`     ├─ p99: ${BenchmarkStats.formatTime(stats.p99)}`);
-        console.log(`     └─ σ:   ${BenchmarkStats.formatTime(stats.stdDev)}`);
+        console.info(`     ├─ p50: ${BenchmarkStats.formatTime(stats.p50)}`);
+        console.info(`     ├─ p95: ${BenchmarkStats.formatTime(stats.p95)}`);
+        console.info(`     ├─ p99: ${BenchmarkStats.formatTime(stats.p99)}`);
+        console.info(`     └─ σ:   ${BenchmarkStats.formatTime(stats.stdDev)}`);
       }
     }
   }
 
   // Summary
-  console.log('\n' + '─'.repeat(80));
+  console.info('\n' + '─'.repeat(80));
   const total = results.length;
   const passed = results.filter(r => r.passed).length;
   const failed = total - passed;
 
-  console.log(`\n📈 SUMMARY:`);
-  console.log(`   Total:  ${total} benchmarks`);
-  console.log(`   Passed: ${passed} ✓`);
-  console.log(`   Failed: ${failed} ✗`);
+  console.info(`\n📈 SUMMARY:`);
+  console.info(`   Total:  ${total} benchmarks`);
+  console.info(`   Passed: ${passed} ✓`);
+  console.info(`   Failed: ${failed} ✗`);
 
   if (failed > 0) {
-    console.log(`\n⚠️  ${failed} benchmark(s) exceeded target performance`);
+    console.info(`\n⚠️  ${failed} benchmark(s) exceeded target performance`);
   } else {
-    console.log(`\n🎉 All benchmarks passed!`);
+    console.info(`\n🎉 All benchmarks passed!`);
   }
 
-  console.log('═'.repeat(80) + '\n');
+  console.info('═'.repeat(80) + '\n');
 
   return {
     total,
@@ -108,20 +108,20 @@ function getColor(hex: string): string {
  * Print a detailed breakdown of a single benchmark
  */
 export function printBenchmarkDetail(result: BenchResult) {
-  console.log(`\n📊 ${result.name}`);
-  console.log('─'.repeat(60));
-  console.log(`   Mean:   ${BenchmarkStats.formatTime(result.stats.mean)}`);
-  console.log(`   Median: ${BenchmarkStats.formatTime(result.stats.p50)}`);
-  console.log(`   p95:    ${BenchmarkStats.formatTime(result.stats.p95)}`);
-  console.log(`   p99:    ${BenchmarkStats.formatTime(result.stats.p99)}`);
-  console.log(`   Min:    ${BenchmarkStats.formatTime(result.stats.min)}`);
-  console.log(`   Max:    ${BenchmarkStats.formatTime(result.stats.max)}`);
-  console.log(`   StdDev: ${BenchmarkStats.formatTime(result.stats.stdDev)}`);
-  console.log(`   CV:     ${result.stats.cv.toFixed(2)}%`);
-  console.log(`   Samples: ${result.stats.count}`);
+  console.info(`\n📊 ${result.name}`);
+  console.info('─'.repeat(60));
+  console.info(`   Mean:   ${BenchmarkStats.formatTime(result.stats.mean)}`);
+  console.info(`   Median: ${BenchmarkStats.formatTime(result.stats.p50)}`);
+  console.info(`   p95:    ${BenchmarkStats.formatTime(result.stats.p95)}`);
+  console.info(`   p99:    ${BenchmarkStats.formatTime(result.stats.p99)}`);
+  console.info(`   Min:    ${BenchmarkStats.formatTime(result.stats.min)}`);
+  console.info(`   Max:    ${BenchmarkStats.formatTime(result.stats.max)}`);
+  console.info(`   StdDev: ${BenchmarkStats.formatTime(result.stats.stdDev)}`);
+  console.info(`   CV:     ${result.stats.cv.toFixed(2)}%`);
+  console.info(`   Samples: ${result.stats.count}`);
 
   if (result.target) {
     const icon = result.passed ? '✓' : '✗';
-    console.log(`   Target: ${BenchmarkStats.formatTime(result.target)} ${icon}`);
+    console.info(`   Target: ${BenchmarkStats.formatTime(result.target)} ${icon}`);
   }
 }

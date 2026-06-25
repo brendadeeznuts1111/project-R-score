@@ -883,7 +883,7 @@ SORT progress DESC
         const generatedFiles: string[] = [];
         const timer = createTimer();
 
-        console.log(chalk.blue.bold('📊 Generating Enhanced Dashboard Files...'));
+        console.info(chalk.blue.bold('📊 Generating Enhanced Dashboard Files...'));
 
         for (const [templateId, template] of this.templates) {
             try {
@@ -898,8 +898,8 @@ SORT progress DESC
                 await fs.promises.writeFile(filePath, content, 'utf-8');
                 generatedFiles.push(filePath);
 
-                console.log(chalk.green(`✅ Created: ${fileName}`));
-                console.log(chalk.gray(`   Sections: ${template.sections.length}, Widgets: ${template.widgets.length}`));
+                console.info(chalk.green(`✅ Created: ${fileName}`));
+                console.info(chalk.gray(`   Sections: ${template.sections.length}, Widgets: ${template.widgets.length}`));
 
             } catch (error) {
                 console.warn(chalk.yellow(`⚠️  Failed to generate ${templateId}:`, error));
@@ -907,7 +907,7 @@ SORT progress DESC
         }
 
         timer.stop();
-        console.log(chalk.blue(`\n📈 Generated ${generatedFiles.length} dashboard files in ${timer.formattedDuration}`));
+        console.info(chalk.blue(`\n📈 Generated ${generatedFiles.length} dashboard files in ${timer.formattedDuration}`));
 
         return generatedFiles;
     }
@@ -999,20 +999,20 @@ SORT progress DESC
 // =============================================================================
 
 async function demonstrateEnhancedDashboards(): Promise<void> {
-    console.log(chalk.magenta.bold('📊 Enhanced Dashboard Templates Demonstration'));
-    console.log(chalk.magenta('Advanced dashboard generation with semantic versioning and benchmarking'));
-    console.log('');
+    console.info(chalk.magenta.bold('📊 Enhanced Dashboard Templates Demonstration'));
+    console.info(chalk.magenta('Advanced dashboard generation with semantic versioning and benchmarking'));
+    console.info('');
 
     const templates = new EnhancedDashboardTemplates();
     const timer = createTimer();
 
     // Show template overview with enhanced information using Bun tables
-    console.log(chalk.blue.bold('📋 Available Dashboard Templates:'));
+    console.info(chalk.blue.bold('📋 Available Dashboard Templates:'));
 
     const templateList = templates.getTemplateList();
 
     // Display comprehensive template comparison table
-    console.log(BunTableFormatter.formatTemplateTable(templateList));
+    console.info(BunTableFormatter.formatTemplateTable(templateList));
 
     // Display category distribution
     const categories = templateList.reduce((acc, template) => {
@@ -1020,11 +1020,11 @@ async function demonstrateEnhancedDashboards(): Promise<void> {
         return acc;
     }, {} as Record<string, number>);
 
-    console.log(BunTableFormatter.formatCategorySummary(categories));
+    console.info(BunTableFormatter.formatCategorySummary(categories));
 
     // Detailed topics coverage by category
-    console.log(chalk.blue.bold('\n🎯 Topic Coverage by Category:'));
-    console.log(chalk.gray('━'.repeat(80)));
+    console.info(chalk.blue.bold('\n🎯 Topic Coverage by Category:'));
+    console.info(chalk.gray('━'.repeat(80)));
 
     const categoryTopics = {
         'environment': [
@@ -1075,25 +1075,25 @@ async function demonstrateEnhancedDashboards(): Promise<void> {
         const template = templateList.find(t => t.category === category);
         const version = template?.version?.toString() || 'N/A';
 
-        console.log(chalk.cyan(`\n📂 ${chalk.yellow(category.toUpperCase())} Templates (v${version}):`));
+        console.info(chalk.cyan(`\n📂 ${chalk.yellow(category.toUpperCase())} Templates (v${version}):`));
         topics.forEach((topic, index) => {
             const isLast = index === topics.length - 1;
             const prefix = isLast ? '└─' : '├─';
-            console.log(chalk.gray(`${prefix} ${topic}`));
+            console.info(chalk.gray(`${prefix} ${topic}`));
         });
     });
 
-    console.log(chalk.gray('━'.repeat(80)));
-    console.log(chalk.blue.bold('\n🚀 Advanced Features:'));
-    console.log(chalk.white('   • Semantic Versioning (MAJOR.MINOR.PATCH)'));
-    console.log(chalk.white('   • Real-time Performance Benchmarking'));
-    console.log(chalk.white('   • Dynamic Complexity Assessment'));
-    console.log(chalk.white('   • Template Version Validation'));
-    console.log(chalk.white('   • Performance Metrics & Analytics'));
-    console.log('');
+    console.info(chalk.gray('━'.repeat(80)));
+    console.info(chalk.blue.bold('\n🚀 Advanced Features:'));
+    console.info(chalk.white('   • Semantic Versioning (MAJOR.MINOR.PATCH)'));
+    console.info(chalk.white('   • Real-time Performance Benchmarking'));
+    console.info(chalk.white('   • Dynamic Complexity Assessment'));
+    console.info(chalk.white('   • Template Version Validation'));
+    console.info(chalk.white('   • Performance Metrics & Analytics'));
+    console.info('');
 
     // Demonstrate enhanced getTemplateById with benchmarking using Bun tables
-    console.log(chalk.blue.bold('🔍 Enhanced Template Lookup with Benchmarking:'));
+    console.info(chalk.blue.bold('🔍 Enhanced Template Lookup with Benchmarking:'));
 
     const testTemplateIds = ['environment-variables', 'canvas-dashboard', 'productivity-hub'];
     const benchmarkResults: Array<{ template: DashboardTemplate; benchmark: TemplateBenchmark }> = [];
@@ -1103,33 +1103,33 @@ async function demonstrateEnhancedDashboards(): Promise<void> {
 
         if (result) {
             benchmarkResults.push(result);
-            console.log(chalk.green(`✅ Found: ${result.template.name}`));
-            console.log(chalk.gray(`   📋 Version: ${result.template.version?.toString() || 'N/A'}`));
-            console.log(chalk.gray(`   ⚡ Lookup Time: ${TemplateBenchmarker.formatBenchmark(result.benchmark)}`));
-            console.log(chalk.gray(`   📊 Complexity: ${result.benchmark.complexity}`));
-            console.log(chalk.gray(`   🎯 Render Estimate: ${result.benchmark.estimatedRenderTime.toFixed(2)}ms`));
-            console.log(chalk.gray(`   📝 ${result.template.sections.length} sections, ${result.template.widgets.length} widgets`));
+            console.info(chalk.green(`✅ Found: ${result.template.name}`));
+            console.info(chalk.gray(`   📋 Version: ${result.template.version?.toString() || 'N/A'}`));
+            console.info(chalk.gray(`   ⚡ Lookup Time: ${TemplateBenchmarker.formatBenchmark(result.benchmark)}`));
+            console.info(chalk.gray(`   📊 Complexity: ${result.benchmark.complexity}`));
+            console.info(chalk.gray(`   🎯 Render Estimate: ${result.benchmark.estimatedRenderTime.toFixed(2)}ms`));
+            console.info(chalk.gray(`   📝 ${result.template.sections.length} sections, ${result.template.widgets.length} widgets`));
         } else {
-            console.log(chalk.red(`❌ Template not found: ${templateId}`));
+            console.info(chalk.red(`❌ Template not found: ${templateId}`));
         }
-        console.log('');
+        console.info('');
     }
 
     // Display performance results table
     if (benchmarkResults.length > 0) {
-        console.log(BunTableFormatter.formatPerformanceTable(benchmarkResults));
+        console.info(BunTableFormatter.formatPerformanceTable(benchmarkResults));
     }
 
     // Demonstrate version-aware template lookup
-    console.log(chalk.blue.bold('🏷️  Semantic Versioning Features:'));
+    console.info(chalk.blue.bold('🏷️  Semantic Versioning Features:'));
 
     const minimumVersion = new SemanticVersionImpl(1, 0, 0);
     const versionResult = templates.getTemplateByIdWithVersion('environment-variables', minimumVersion);
 
     if (versionResult) {
-        console.log(chalk.green(`✅ Version requirement satisfied`));
-        console.log(chalk.gray(`   Template version: ${versionResult.template.version?.toString() || 'N/A'}`));
-        console.log(chalk.gray(`   Minimum required: ${minimumVersion.toString()}`));
+        console.info(chalk.green(`✅ Version requirement satisfied`));
+        console.info(chalk.gray(`   Template version: ${versionResult.template.version?.toString() || 'N/A'}`));
+        console.info(chalk.gray(`   Minimum required: ${minimumVersion.toString()}`));
     }
 
     // Test version comparison
@@ -1137,23 +1137,23 @@ async function demonstrateEnhancedDashboards(): Promise<void> {
     const versionFail = templates.getTemplateByIdWithVersion('environment-variables', higherVersion);
 
     if (!versionFail) {
-        console.log(chalk.yellow(`⚠️  Version requirement not met`));
-        console.log(chalk.gray(`   Template version: ${versionFail?.template.version?.toString() || 'N/A'}`));
-        console.log(chalk.gray(`   Minimum required: ${higherVersion.toString()}`));
+        console.info(chalk.yellow(`⚠️  Version requirement not met`));
+        console.info(chalk.gray(`   Template version: ${versionFail?.template.version?.toString() || 'N/A'}`));
+        console.info(chalk.gray(`   Minimum required: ${higherVersion.toString()}`));
     }
 
     // Show performance summaries
-    console.log(chalk.blue.bold('\n📈 Performance Summaries:'));
+    console.info(chalk.blue.bold('\n📈 Performance Summaries:'));
 
     for (const templateId of testTemplateIds) {
         const summary = templates.getTemplatePerformanceSummary(templateId);
         if (summary) {
-            console.log(chalk.gray(`   📊 ${summary}`));
+            console.info(chalk.gray(`   📊 ${summary}`));
         }
     }
 
     timer.stop();
-    console.log(chalk.blue(`\n📈 Demonstration completed in ${timer.formattedDuration}`));
+    console.info(chalk.blue(`\n📈 Demonstration completed in ${timer.formattedDuration}`));
 }
 
 // =============================================================================
@@ -1164,8 +1164,8 @@ async function main(): Promise<void> {
     try {
         await demonstrateEnhancedDashboards();
 
-        console.log(chalk.green.bold('\n🎉 Enhanced Dashboard Templates completed!'));
-        console.log(chalk.blue('🚀 Semantic versioning and benchmarking integration ready'));
+        console.info(chalk.green.bold('\n🎉 Enhanced Dashboard Templates completed!'));
+        console.info(chalk.blue('🚀 Semantic versioning and benchmarking integration ready'));
 
     } catch (error) {
         console.error(chalk.red('❌ Error running enhanced dashboard templates:'), error);

@@ -54,22 +54,22 @@ function parseDepth(): number {
 // =============================================================================
 
 function demonstrateBasicDepthControl(depth: number) {
-    console.log('🔍 Basic Depth Control Demonstration');
-    console.log('=====================================');
-    console.log(`🔧 Using CLI-specified depth: ${depth}`);
+    console.info('🔍 Basic Depth Control Demonstration');
+    console.info('=====================================');
+    console.info(`🔧 Using CLI-specified depth: ${depth}`);
 
     // Your exact example
     const nested = { a: { b: { c: { d: "deep" } } } };
 
-    console.log('\n📋 Default console.log (depth 2):');
-    console.log(nested);
+    console.info('\n📋 Default console.log (depth 2):');
+    console.info(nested);
     // Expected: { a: { b: [Object] } }
 
-    console.log(`\n🔧 Bun.inspect with depth ${depth}:`);
-    console.log(Bun.inspect(nested, { depth, colors: true }));
+    console.info(`\n🔧 Bun.inspect with depth ${depth}:`);
+    console.info(Bun.inspect(nested, { depth, colors: true }));
     // Expected with depth 4: { a: { b: { c: { d: 'deep' } } } }
 
-    console.log('\n🎨 Enhanced with true colors:');
+    console.info('\n🎨 Enhanced with true colors:');
     const enhancedConsole = new EnhancedConsoleInspectionModule({
         showColors: true,
         inspectionDepth: depth,
@@ -79,7 +79,7 @@ function demonstrateBasicDepthControl(depth: number) {
     });
 
     const stylizer = enhancedConsole.getColorManager().createStylizer();
-    console.log(Bun.inspect(nested, {
+    console.info(Bun.inspect(nested, {
         depth,
         colors: true
     }));
@@ -90,8 +90,8 @@ function demonstrateBasicDepthControl(depth: number) {
 // =============================================================================
 
 function demonstrateAdvancedDepthControl() {
-    console.log('\n🏗️ Advanced Depth Control Examples');
-    console.log('===================================');
+    console.info('\n🏗️ Advanced Depth Control Examples');
+    console.info('===================================');
 
     // Create progressively deeper objects
     const depthExamples = {
@@ -102,12 +102,12 @@ function demonstrateAdvancedDepthControl() {
     };
 
     Object.entries(depthExamples).forEach(([name, obj]) => {
-        console.log(`\n📊 ${name.toUpperCase()} - Default console.log:`);
-        console.log(obj);
+        console.info(`\n📊 ${name.toUpperCase()} - Default console.log:`);
+        console.info(obj);
 
-        console.log(`\n🔧 ${name.toUpperCase()} - Bun.inspect with full depth:`);
+        console.info(`\n🔧 ${name.toUpperCase()} - Bun.inspect with full depth:`);
         const depth = parseInt(name.replace('depth', ''));
-        console.log(Bun.inspect(obj, { depth, colors: true }));
+        console.info(Bun.inspect(obj, { depth, colors: true }));
     });
 }
 
@@ -116,8 +116,8 @@ function demonstrateAdvancedDepthControl() {
 // =============================================================================
 
 function demonstrateRealWorldInspection() {
-    console.log('\n🌐 Real-World Complex Object Inspection');
-    console.log('=======================================');
+    console.info('\n🌐 Real-World Complex Object Inspection');
+    console.info('=======================================');
 
     const apiResponse = {
         success: true,
@@ -151,17 +151,17 @@ function demonstrateRealWorldInspection() {
         }
     };
 
-    console.log('\n📋 Default API response (depth 2):');
-    console.log(apiResponse);
+    console.info('\n📋 Default API response (depth 2):');
+    console.info(apiResponse);
 
-    console.log('\n🔧 Deep API inspection (depth 6):');
-    console.log(Bun.inspect(apiResponse, {
+    console.info('\n🔧 Deep API inspection (depth 6):');
+    console.info(Bun.inspect(apiResponse, {
         depth: 3,
         colors: true,
         compact: false
     }));
 
-    console.log('\n🎨 Enhanced with canvas semantic colors:');
+    console.info('\n🎨 Enhanced with canvas semantic colors:');
     const enhancedConsole = new EnhancedConsoleInspectionModule({
         showColors: true,
         inspectionDepth: 6,
@@ -189,7 +189,7 @@ function demonstrateRealWorldInspection() {
         return colorManager.createStylizer()(text, styleType);
     };
 
-    console.log(Bun.inspect(apiResponse, {
+    console.info(Bun.inspect(apiResponse, {
         depth: 4,
         colors: true,
         compact: false
@@ -201,8 +201,8 @@ function demonstrateRealWorldInspection() {
 // =============================================================================
 
 function demonstratePerformanceComparison() {
-    console.log('\n⚡ Performance Comparison: Depth Control Impact');
-    console.log('===============================================');
+    console.info('\n⚡ Performance Comparison: Depth Control Impact');
+    console.info('===============================================');
 
     const largeObject = {
         services: Array.from({ length: 50 }, (_, i) => ({
@@ -238,10 +238,10 @@ function demonstratePerformanceComparison() {
     const iterations = 1000;
     const depths = [2, 4, 6, 8];
 
-    console.log(`Testing performance with ${iterations} inspections of complex object...\n`);
+    console.info(`Testing performance with ${iterations} inspections of complex object...\n`);
 
     depths.forEach(depth => {
-        console.log(`🔍 Testing depth ${depth}:`);
+        console.info(`🔍 Testing depth ${depth}:`);
 
         // Test Bun.inspect performance
         const start = performance.now();
@@ -251,13 +251,13 @@ function demonstratePerformanceComparison() {
         const duration = performance.now() - start;
         const opsPerSec = Math.round(iterations / duration * 1000);
 
-        console.log(`  Duration: ${duration.toFixed(2)}ms`);
-        console.log(`  Operations/sec: ${opsPerSec.toLocaleString()}`);
+        console.info(`  Duration: ${duration.toFixed(2)}ms`);
+        console.info(`  Operations/sec: ${opsPerSec.toLocaleString()}`);
 
         // Show sample output
-        console.log(`  Sample output (depth ${depth}):`);
-        console.log('  ' + Bun.inspect(largeObject, { depth, colors: true }).split('\n')[0] + '...');
-        console.log('');
+        console.info(`  Sample output (depth ${depth}):`);
+        console.info('  ' + Bun.inspect(largeObject, { depth, colors: true }).split('\n')[0] + '...');
+        console.info('');
     });
 }
 
@@ -266,15 +266,15 @@ function demonstratePerformanceComparison() {
 // =============================================================================
 
 function demonstrateBestPractices() {
-    console.log('\n💡 Depth Control Best Practices');
-    console.log('================================');
+    console.info('\n💡 Depth Control Best Practices');
+    console.info('================================');
 
     const examples = {
         // Shallow for quick debugging
         quickDebug: {
             recommendation: 'Depth 2-3 for quick debugging',
             example: { status: 'active', user: { id: 123, name: 'John' } },
-            usage: 'console.log(obj) or Bun.inspect(obj, { depth: 2 })'
+            usage: 'console.info(obj) or Bun.inspect(obj, { depth: 2 })'
         },
 
         // Medium for API responses
@@ -300,23 +300,23 @@ function demonstrateBestPractices() {
     };
 
     Object.entries(examples).forEach(([name, config]) => {
-        console.log(`\n📝 ${config.recommendation}:`);
-        console.log(`   Usage: ${config.usage}`);
-        console.log(`   Example output:`);
-        console.log('   ' + Bun.inspect(config.example, {
+        console.info(`\n📝 ${config.recommendation}:`);
+        console.info(`   Usage: ${config.usage}`);
+        console.info(`   Example output:`);
+        console.info('   ' + Bun.inspect(config.example, {
             depth: name === 'quickDebug' ? 2 : name === 'apiResponse' ? 4 : name === 'complexObjects' ? 6 : 8,
             colors: true
         }).split('\n')[0] + '...');
     });
 
-    console.log('\n🎯 Pro Tips:');
-    console.log('   • Use depth 2 for quick debugging and logging');
-    console.log('   • Use depth 4-6 for API responses and data structures');
-    console.log('   • Use depth 6-8 for complex nested objects');
-    console.log('   • Use maxArrayLength and maxStringLength to control output size');
-    console.log('   • Enable colors for better readability in development');
-    console.log('   • Use compact: true for production logging');
-    console.log('   • Combine with stylizers for semantic highlighting');
+    console.info('\n🎯 Pro Tips:');
+    console.info('   • Use depth 2 for quick debugging and logging');
+    console.info('   • Use depth 4-6 for API responses and data structures');
+    console.info('   • Use depth 6-8 for complex nested objects');
+    console.info('   • Use maxArrayLength and maxStringLength to control output size');
+    console.info('   • Enable colors for better readability in development');
+    console.info('   • Use compact: true for production logging');
+    console.info('   • Combine with stylizers for semantic highlighting');
 }
 
 // =============================================================================
@@ -326,11 +326,11 @@ function demonstrateBestPractices() {
 async function main() {
     const depth = parseDepth();
 
-    console.log('🎯 Bun Depth Control Demo');
-    console.log('==========================');
-    console.log(`🔧 Console depth: ${depth}`);
-    console.log('Demonstrating superior depth control capabilities in Bun');
-    console.log('with enhanced console inspection and true color support.\n');
+    console.info('🎯 Bun Depth Control Demo');
+    console.info('==========================');
+    console.info(`🔧 Console depth: ${depth}`);
+    console.info('Demonstrating superior depth control capabilities in Bun');
+    console.info('with enhanced console inspection and true color support.\n');
 
     demonstrateBasicDepthControl(depth);
     demonstrateAdvancedDepthControl();
@@ -338,10 +338,10 @@ async function main() {
     demonstratePerformanceComparison();
     demonstrateBestPractices();
 
-    console.log('\n🎉 Depth Control Demo Complete!');
-    console.log('🔍 You now have mastered Bun\'s enhanced console inspection!');
-    console.log(`💡 Used depth ${depth} - perfect for ${depth < 4 ? 'quick debugging' : depth < 8 ? 'development' : 'deep analysis'}!`);
-    console.log('🚀 Use --console-depth <number> to customize inspection depth!');
+    console.info('\n🎉 Depth Control Demo Complete!');
+    console.info('🔍 You now have mastered Bun\'s enhanced console inspection!');
+    console.info(`💡 Used depth ${depth} - perfect for ${depth < 4 ? 'quick debugging' : depth < 8 ? 'development' : 'deep analysis'}!`);
+    console.info('🚀 Use --console-depth <number> to customize inspection depth!');
 }
 
 // Export for programmatic use

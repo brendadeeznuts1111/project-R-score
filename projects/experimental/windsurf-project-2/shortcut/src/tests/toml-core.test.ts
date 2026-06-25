@@ -55,7 +55,7 @@ describe("TOML Core Functionality", () => {
       expect(config.shortcuts.categories).toBeDefined();
       expect(Object.keys(config.shortcuts.categories)).toHaveLength(3);
     } catch (error) {
-      console.log("Static import test skipped (no TOML file present)");
+      console.info("Static import test skipped (no TOML file present)");
     }
   });
 
@@ -73,10 +73,10 @@ describe("TOML Core Functionality", () => {
         expect(config.app.name).toBeTruthy();
         expect(config.app.version).toBeTruthy();
       } else {
-        console.log("Dynamic import test skipped (config.toml not found)");
+        console.info("Dynamic import test skipped (config.toml not found)");
       }
     } catch (error) {
-      console.log("Dynamic import test failed:", error);
+      console.info("Dynamic import test failed:", error);
     }
   });
 
@@ -232,8 +232,8 @@ describe("Performance Tests", () => {
     const duration = endTime - startTime;
     const avgTime = duration / iterations;
     
-    console.log(`Processed ${iterations} configs in ${duration.toFixed(2)}ms`);
-    console.log(`Average time per config: ${avgTime.toFixed(3)}ms`);
+    console.info(`Processed ${iterations} configs in ${duration.toFixed(2)}ms`);
+    console.info(`Average time per config: ${avgTime.toFixed(3)}ms`);
     
     expect(duration).toBeLessThan(1000); // Should complete within 1 second
     expect(avgTime).toBeLessThan(1); // Average should be less than 1ms
@@ -269,7 +269,7 @@ describe("Performance Tests", () => {
     const endTime = performance.now();
     const duration = endTime - startTime;
     
-    console.log(`Processed ${testTexts.length} Unicode texts in ${duration.toFixed(2)}ms`);
+    console.info(`Processed ${testTexts.length} Unicode texts in ${duration.toFixed(2)}ms`);
     
     expect(duration).toBeLessThan(10); // Should be very fast
   });
@@ -291,8 +291,8 @@ describe("Performance Tests", () => {
     const duration = endTime - startTime;
     const avgTime = duration / testData.length;
     
-    console.log(`Hashed ${testData.length} buffers in ${duration.toFixed(2)}ms`);
-    console.log(`Average hash time: ${avgTime.toFixed(3)}ms`);
+    console.info(`Hashed ${testData.length} buffers in ${duration.toFixed(2)}ms`);
+    console.info(`Average hash time: ${avgTime.toFixed(3)}ms`);
     
     expect(duration).toBeLessThan(50); // Should be very fast with hardware acceleration
     expect(avgTime).toBeLessThan(0.5); // Average should be less than 0.5ms
@@ -397,7 +397,7 @@ describe("Integration Tests", () => {
     // 5. Cleanup
     db.close();
     
-    console.log("Integration test completed successfully");
+    console.info("Integration test completed successfully");
   });
   
   test("concurrent configuration operations", async () => {
@@ -434,8 +434,8 @@ describe("Integration Tests", () => {
     expect(insertTime).toBeLessThan(100);
     expect(retrieveTime).toBeLessThan(50);
     
-    console.log(`Inserted 10 configs in ${insertTime.toFixed(2)}ms`);
-    console.log(`Retrieved 10 configs in ${retrieveTime.toFixed(2)}ms`);
+    console.info(`Inserted 10 configs in ${insertTime.toFixed(2)}ms`);
+    console.info(`Retrieved 10 configs in ${retrieveTime.toFixed(2)}ms`);
     
     db.close();
   });

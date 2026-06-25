@@ -23,8 +23,8 @@ class DNSMonitor {
   private statsHistory: DNSCacheStats[] = [];
 
   async startMonitoring(intervalMs: number = 2000) {
-    console.log('🌐 Starting DNS Cache Monitor');
-    console.log('==============================\n');
+    console.info('🌐 Starting DNS Cache Monitor');
+    console.info('==============================\n');
 
     // Initial stats
     await this.displayStats();
@@ -34,8 +34,8 @@ class DNSMonitor {
       await this.displayStats();
     }, intervalMs);
 
-    console.log(`📊 Monitoring DNS cache every ${intervalMs}ms...`);
-    console.log('Press Ctrl+C to stop\n');
+    console.info(`📊 Monitoring DNS cache every ${intervalMs}ms...`);
+    console.info('Press Ctrl+C to stop\n');
   }
 
   async stopMonitoring() {
@@ -43,7 +43,7 @@ class DNSMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('\n🛑 DNS monitoring stopped');
+    console.info('\n🛑 DNS monitoring stopped');
   }
 
   private async getDNSStats(): Promise<DNSCacheStats> {
@@ -86,25 +86,25 @@ class DNSMonitor {
 
     // Clear screen and display header
     console.clear();
-    console.log('🌐 DNS Cache Monitor - Live Statistics');
-    console.log('========================================');
-    console.log(`📅 ${new Date().toLocaleTimeString()}`);
-    console.log('');
+    console.info('🌐 DNS Cache Monitor - Live Statistics');
+    console.info('========================================');
+    console.info(`📅 ${new Date().toLocaleTimeString()}`);
+    console.info('');
 
     // Display stats in a nice format
-    console.log('📊 Cache Performance:');
-    console.log(`   🎯 Cache Hits Completed: ${stats.cacheHitsCompleted}`);
-    console.log(`   ⏳ Cache Hits In Flight:  ${stats.cacheHitsInflight}`);
-    console.log(`   ❌ Cache Misses:         ${stats.cacheMisses}`);
-    console.log(`   📦 Cache Size:           ${stats.size}/255 entries`);
-    console.log(`   ⚠️  DNS Errors:           ${stats.errors}`);
-    console.log('');
+    console.info('📊 Cache Performance:');
+    console.info(`   🎯 Cache Hits Completed: ${stats.cacheHitsCompleted}`);
+    console.info(`   ⏳ Cache Hits In Flight:  ${stats.cacheHitsInflight}`);
+    console.info(`   ❌ Cache Misses:         ${stats.cacheMisses}`);
+    console.info(`   📦 Cache Size:           ${stats.size}/255 entries`);
+    console.info(`   ⚠️  DNS Errors:           ${stats.errors}`);
+    console.info('');
 
-    console.log('📈 Derived Metrics:');
-    console.log(`   🔄 Total DNS Requests:   ${totalRequests}`);
-    console.log(`   📊 Cache Hit Rate:       ${hitRate}%`);
-    console.log(`   ⚡ Cache Efficiency:      ${efficiency}%`);
-    console.log('');
+    console.info('📈 Derived Metrics:');
+    console.info(`   🔄 Total DNS Requests:   ${totalRequests}`);
+    console.info(`   📊 Cache Hit Rate:       ${hitRate}%`);
+    console.info(`   ⚡ Cache Efficiency:      ${efficiency}%`);
+    console.info('');
 
     // Performance indicators
     this.displayPerformanceIndicators(stats, hitRate, efficiency);
@@ -114,34 +114,34 @@ class DNSMonitor {
       this.displayTrendAnalysis();
     }
 
-    console.log('');
-    console.log('💡 Tips:');
-    console.log('   • High cache hit rate (>80%) indicates good performance');
-    console.log('   • Cache size approaching 255 may need attention');
-    console.log('   • DNS errors > 0 should be investigated');
-    console.log('   • Use Bun.dns.prefetch() for proactive DNS caching');
+    console.info('');
+    console.info('💡 Tips:');
+    console.info('   • High cache hit rate (>80%) indicates good performance');
+    console.info('   • Cache size approaching 255 may need attention');
+    console.info('   • DNS errors > 0 should be investigated');
+    console.info('   • Use Bun.dns.prefetch() for proactive DNS caching');
   }
 
   private displayPerformanceIndicators(stats: DNSCacheStats, hitRate: string, efficiency: string) {
-    console.log('🏆 Performance Status:');
+    console.info('🏆 Performance Status:');
 
     // Cache hit rate indicator
     const hitRateNum = parseFloat(hitRate);
     const hitStatus = hitRateNum >= 80 ? '🟢 Excellent' :
                      hitRateNum >= 60 ? '🟡 Good' :
                      hitRateNum >= 40 ? '🟠 Fair' : '🔴 Poor';
-    console.log(`   Cache Hit Rate: ${hitStatus} (${hitRate}%)`);
+    console.info(`   Cache Hit Rate: ${hitStatus} (${hitRate}%)`);
 
     // Cache size indicator
     const sizeStatus = stats.size < 200 ? '🟢 Healthy' :
                       stats.size < 240 ? '🟡 Moderate' : '🟠 High';
-    console.log(`   Cache Size:     ${sizeStatus} (${stats.size}/255)`);
+    console.info(`   Cache Size:     ${sizeStatus} (${stats.size}/255)`);
 
     // Error rate indicator
     const errorStatus = stats.errors === 0 ? '🟢 Clean' :
                        stats.errors <= 2 ? '🟡 Low' :
                        stats.errors <= 5 ? '🟠 Moderate' : '🔴 High';
-    console.log(`   Error Rate:     ${errorStatus} (${stats.errors} errors)`);
+    console.info(`   Error Rate:     ${errorStatus} (${stats.errors} errors)`);
   }
 
   private displayTrendAnalysis() {
@@ -157,13 +157,13 @@ class DNSMonitor {
     const trendDirection = trend > 5 ? '📈 Increasing' :
                           trend < -5 ? '📉 Decreasing' : '➡️ Stable';
 
-    console.log('');
-    console.log('📊 Trend Analysis (last 10 readings):');
-    console.log(`   Cache Hits: ${trendDirection} (${trend > 0 ? '+' : ''}${trend.toFixed(1)} avg change)`);
+    console.info('');
+    console.info('📊 Trend Analysis (last 10 readings):');
+    console.info(`   Cache Hits: ${trendDirection} (${trend > 0 ? '+' : ''}${trend.toFixed(1)} avg change)`);
   }
 
   async demonstratePrefetch() {
-    console.log('\n🚀 Demonstrating DNS Prefetch...');
+    console.info('\n🚀 Demonstrating DNS Prefetch...');
 
     const domains = [
       'api.github.com',
@@ -173,37 +173,37 @@ class DNSMonitor {
       'cloudflare.com'
     ];
 
-    console.log('📡 Prefetching DNS entries for:');
-    domains.forEach(domain => console.log(`   • ${domain}`));
+    console.info('📡 Prefetching DNS entries for:');
+    domains.forEach(domain => console.info(`   • ${domain}`));
 
     // Prefetch DNS entries
     for (const domain of domains) {
       try {
         Bun.dns.prefetch(domain, 443);
-        console.log(`   ✅ Prefetched ${domain}:443`);
+        console.info(`   ✅ Prefetched ${domain}:443`);
       } catch (error) {
-        console.log(`   ❌ Failed to prefetch ${domain}: ${error}`);
+        console.info(`   ❌ Failed to prefetch ${domain}: ${error}`);
       }
     }
 
-    console.log('\n⏳ Waiting 2 seconds for prefetch to complete...');
+    console.info('\n⏳ Waiting 2 seconds for prefetch to complete...');
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    console.log('📊 Stats after prefetch:');
+    console.info('📊 Stats after prefetch:');
     await this.displayStats();
   }
 
   async runInteractiveDemo() {
-    console.log('🎮 DNS Cache Monitor - Interactive Demo');
-    console.log('======================================\n');
+    console.info('🎮 DNS Cache Monitor - Interactive Demo');
+    console.info('======================================\n');
 
-    console.log('Available commands:');
-    console.log('  monitor  - Start live monitoring');
-    console.log('  stats    - Show current stats');
-    console.log('  prefetch - Demonstrate DNS prefetch');
-    console.log('  clear    - Clear DNS cache (if supported)');
-    console.log('  help     - Show this help');
-    console.log('  exit     - Exit demo\n');
+    console.info('Available commands:');
+    console.info('  monitor  - Start live monitoring');
+    console.info('  stats    - Show current stats');
+    console.info('  prefetch - Demonstrate DNS prefetch');
+    console.info('  clear    - Clear DNS cache (if supported)');
+    console.info('  help     - Show this help');
+    console.info('  exit     - Exit demo\n');
 
     const commands = {
       monitor: () => this.startMonitoring(),
@@ -211,13 +211,13 @@ class DNSMonitor {
       prefetch: () => this.demonstratePrefetch(),
       clear: () => this.clearDNSCache(),
       help: () => {
-        console.log('\nCommands:');
-        console.log('  monitor  - Start live monitoring');
-        console.log('  stats    - Show current stats');
-        console.log('  prefetch - Demonstrate DNS prefetch');
-        console.log('  clear    - Clear DNS cache');
-        console.log('  help     - Show help');
-        console.log('  exit     - Exit\n');
+        console.info('\nCommands:');
+        console.info('  monitor  - Start live monitoring');
+        console.info('  stats    - Show current stats');
+        console.info('  prefetch - Demonstrate DNS prefetch');
+        console.info('  clear    - Clear DNS cache');
+        console.info('  help     - Show help');
+        console.info('  exit     - Exit\n');
       }
     };
 
@@ -241,8 +241,8 @@ class DNSMonitor {
           console.error(`Error executing ${cmd}:`, error);
         }
       } else {
-        console.log(`Unknown command: ${cmd}`);
-        console.log('Type "help" for available commands');
+        console.info(`Unknown command: ${cmd}`);
+        console.info('Type "help" for available commands');
       }
     }
   }
@@ -251,8 +251,8 @@ class DNSMonitor {
     try {
       // Note: Bun.dns.clearCache() is not currently exposed in the public API
       // This is a placeholder for when it becomes available
-      console.log('🧹 DNS cache clearing not yet supported in current Bun version');
-      console.log('   This feature will be available in a future Bun release');
+      console.info('🧹 DNS cache clearing not yet supported in current Bun version');
+      console.info('   This feature will be available in a future Bun release');
     } catch (error) {
       console.error('Failed to clear DNS cache:', error);
     }

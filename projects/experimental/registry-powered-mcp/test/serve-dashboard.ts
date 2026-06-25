@@ -21,9 +21,9 @@ const server = Bun.serve({
   },
 });
 
-console.log("\n🧪 Testing Dashboard Server");
-console.log("━".repeat(50));
-console.log(`\n📊 Dashboard: http://localhost:${server.port}`);
-console.log(`🔗 Status:    http://localhost:${server.port}/status`);
-console.log(`\n✨ Server running with HMR enabled`);
-console.log(`\n📝 Press Ctrl+C to stop\n`);
+console.info("\n🧪 Testing Dashboard Server");
+console.info("━".repeat(50));
+console.info(`\n📊 Dashboard: http://localhost:${server.port}`);
+console.info(`🔗 Status:    http://localhost:${server.port}/status`);
+console.info(`\n✨ Server running with HMR enabled`);
+console.info(`\n📝 Press Ctrl+C to stop\n`);

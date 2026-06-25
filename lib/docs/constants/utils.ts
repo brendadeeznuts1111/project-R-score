@@ -291,7 +291,7 @@ export const UTILITIES: BunUtility[] = UtilityFactory.createMany([
     description: 'Asynchronously read file contents with encoding support',
     exampleCode: `import { readFile } from 'bun';
 const content = await readFile('package.json', 'utf-8');
-console.log(content);`,
+console.info(content);`,
   },
   {
     id: 'write_file',
@@ -301,7 +301,7 @@ console.log(content);`,
     description: 'Write data to files with automatic directory creation',
     exampleCode: `import { writeFile } from 'bun';
 await writeFile('output.txt', 'Hello, Bun!');
-console.log('File written successfully');`,
+console.info('File written successfully');`,
   },
   {
     id: 'file_exists',
@@ -311,7 +311,7 @@ console.log('File written successfully');`,
     description: 'Check if a file or directory exists',
     exampleCode: `import { exists } from 'bun';
 const fileExists = await exists('package.json');
-console.log('File exists:', fileExists);`,
+console.info('File exists:', fileExists);`,
   },
 
   // Networking Utilities
@@ -351,7 +351,7 @@ const server = serve({
     exampleCode: `import { isString } from 'bun';
 const value = 'hello';
 if (isString(value)) {
-  console.log(value.toUpperCase()); // TypeScript knows it's a string
+  console.info(value.toUpperCase()); // TypeScript knows it's a string
 }`,
   },
   {
@@ -362,7 +362,7 @@ if (isString(value)) {
     description: 'Check if value is a typed array instance',
     exampleCode: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
-console.log(isTypedArray(arr)); // true`,
+console.info(isTypedArray(arr)); // true`,
   },
 
   // Conversion Utilities
@@ -374,7 +374,7 @@ console.log(isTypedArray(arr)); // true`,
     description: 'Convert various data types to Buffer',
     exampleCode: `import { toBuffer } from 'bun';
 const buffer = toBuffer('Hello');
-console.log(buffer instanceof Buffer); // true`,
+console.info(buffer instanceof Buffer); // true`,
   },
 
   // Performance Utilities
@@ -387,7 +387,7 @@ console.log(buffer instanceof Buffer); // true`,
     exampleCode: `import { gc } from 'bun';
 // Force garbage collection
 gc();
-console.log('Garbage collection completed');`,
+console.info('Garbage collection completed');`,
   },
   {
     id: 'performance_now',
@@ -399,7 +399,7 @@ console.log('Garbage collection completed');`,
 const start = performance.now();
 // ... some operation
 const end = performance.now();
-console.log(\`Operation took \${end - start}ms\`);`,
+console.info(\`Operation took \${end - start}ms\`);`,
   },
 ]);
 
@@ -632,11 +632,11 @@ const fileExists = await exists('package.json');`,
   VALIDATION: {
     IS_TYPED_ARRAY: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
-console.log(isTypedArray(arr)); // true`,
+console.info(isTypedArray(arr)); // true`,
 
     IS_BUFFER: `import { isBuffer } from 'bun';
 const buf = Buffer.from('hello');
-console.log(isBuffer(buf)); // true`,
+console.info(isBuffer(buf)); // true`,
   },
 
   CONVERSION: {
@@ -648,7 +648,7 @@ const buffer = toBuffer('Hello'); // Convert string to Buffer`,
   NETWORKING: {
     FETCH: `const res = await fetch("https://example.com");
 const text = await res.text();
-console.log(text.length); // response body length`,
+console.info(text.length); // response body length`,
 
     SERVE: `Bun.serve({
   port: 3000,
@@ -672,7 +672,7 @@ console.log(text.length); // response body length`,
   port: 8080,
   socket: {
     data(socket, data) { socket.write(data); }, // echo
-    open(socket) { console.log("TCP client connected"); },
+    open(socket) { console.info("TCP client connected"); },
   },
 });`,
 
@@ -680,18 +680,18 @@ console.log(text.length); // response body length`,
   port: 41234,
   socket: {
     data(socket, buf, port, addr) {
-      console.log("UDP from", addr, ":", buf.toString());
+      console.info("UDP from", addr, ":", buf.toString());
     },
   },
 });`,
 
     DNS: `const records = await Bun.dns.lookup("example.com", { family: 4 });
-console.log(records); // [{ address: "93.184.216.34", family: 4 }]`,
+console.info(records); // [{ address: "93.184.216.34", family: 4 }]`,
 
     COOKIES: `const jar = new CookieMap();
 jar.set("session", "abc123", { httpOnly: true, secure: true });
-console.log(jar.get("session")); // "abc123"
-console.log(jar.toHeader()); // "session=abc123; HttpOnly; Secure"`,
+console.info(jar.get("session")); // "abc123"
+console.info(jar.toHeader()); // "session=abc123; HttpOnly; Secure"`,
 
     METRICS: `const server = Bun.serve({
   fetch(req) { return new Response("ok"); },
@@ -710,34 +710,34 @@ console.log(jar.toHeader()); // "session=abc123; HttpOnly; Secure"`,
   PROCESS: {
     SPAWN: `const proc = Bun.spawn(["echo", "hello"]);
 const exitCode = await proc.exited;
-console.log("exit:", exitCode); // 0`,
+console.info("exit:", exitCode); // 0`,
 
     EXEC: `const proc = Bun.spawn(["ls", "-la"], { stdout: "pipe" });
 const output = await new Response(proc.stdout).text();
-console.log(output);`,
+console.info(output);`,
 
     FORK: `const proc = Bun.spawn(["bun", "worker.ts"], {
   env: { ...process.env, WORKER_ID: "1" },
   stdout: "pipe",
 });
-console.log("Worker PID:", proc.pid);`,
+console.info("Worker PID:", proc.pid);`,
 
     KILL: `const proc = Bun.spawn(["sleep", "60"]);
 proc.kill(); // sends SIGTERM
-console.log("Killed process", proc.pid);`,
+console.info("Killed process", proc.pid);`,
 
-    PID: `console.log("Current PID:", process.pid);
-console.log("Parent PID:", process.ppid);`,
+    PID: `console.info("Current PID:", process.pid);
+console.info("Parent PID:", process.ppid);`,
 
     SIGNALS: `process.on("SIGINT", () => {
-  console.log("Caught SIGINT, cleaning up...");
+  console.info("Caught SIGINT, cleaning up...");
   process.exit(0);
 });`,
 
     ENV_VARS: `// Bun auto-loads .env — no dotenv needed
-console.log("HOME:", process.env.HOME);
+console.info("HOME:", process.env.HOME);
 process.env.MY_APP_MODE = "production";
-console.log("Mode:", process.env.MY_APP_MODE); // production`,
+console.info("Mode:", process.env.MY_APP_MODE); // production`,
 
     BUNFIG_GLOBAL: `// bunfig.toml — global (~/.bunfig.toml) vs local (project/bunfig.toml)
 // [install]
@@ -760,11 +760,11 @@ console.log("Mode:", process.env.MY_APP_MODE); // production`,
 
     SECRETS: `// Bun auto-loads .env.local — secrets never leak to child processes
 const apiKey = process.env.API_KEY; // loaded from .env.local
-console.log(typeof apiKey); // "string"
+console.info(typeof apiKey); // "string"
 // Bun.spawn inherits env but .env.local values are excluded by default`,
 
     CONSOLE: `// Control nested object display depth
-console.log({ a: { b: { c: { d: "deep" } } } });
+console.info({ a: { b: { c: { d: "deep" } } } });
 // Default depth: 2 — override via BUN_CONFIG_MAX_DEPTH=10`,
 
     YAML: `const data = YAML.parse(\`
@@ -774,24 +774,24 @@ features:
   - websockets
   - r2
 \`);
-console.log(data.name); // "factory-wager"`,
+console.info(data.name); // "factory-wager"`,
 
     MARKDOWN: `const html = Bun.markdown.html("# Hello\\n\\n**Bold** text");
-console.log(html); // <h1>Hello</h1>\\n<p><strong>Bold</strong> text</p>`,
+console.info(html); // <h1>Hello</h1>\\n<p><strong>Bold</strong> text</p>`,
 
     JSON5: `const data = JSON5.parse(\`{
   // comments allowed
   name: 'factory-wager',
   port: 3000,
 }\`);
-console.log(data.name); // "factory-wager"`,
+console.info(data.name); // "factory-wager"`,
 
     JSONL: `const lines = Bun.JSONL.parse(\`
 {"id":1,"name":"alice"}
 {"id":2,"name":"bob"}
 \`);
 for (const obj of lines) {
-  console.log(obj.name); // "alice", "bob"
+  console.info(obj.name); // "alice", "bob"
 }`,
 
     HTML_REWRITER: `const rewriter = new HTMLRewriter()
@@ -799,39 +799,39 @@ for (const obj of lines) {
     element(el) { el.setAttribute("target", "_blank"); },
   });
 const res = rewriter.transform(new Response("<a href='/'>Link</a>"));
-console.log(await res.text()); // <a href="/" target="_blank">Link</a>`,
+console.info(await res.text()); // <a href="/" target="_blank">Link</a>`,
 
     HASHING: `const hash = await Bun.password.hash("my-secret-password");
-console.log(hash); // $argon2id$...
+console.info(hash); // $argon2id$...
 const valid = await Bun.password.verify("my-secret-password", hash);
-console.log(valid); // true`,
+console.info(valid); // true`,
 
     GLOB: `const glob = new Bun.Glob("**/*.ts");
 for await (const path of glob.scan({ cwd: "./src" })) {
-  console.log(path); // src/index.ts, src/utils/helpers.ts, ...
+  console.info(path); // src/index.ts, src/utils/helpers.ts, ...
 }`,
 
     SEMVER: `const ok = Bun.semver.satisfies("1.4.0", ">=1.0.0 <2.0.0");
-console.log(ok); // true
+console.info(ok); // true
 const order = Bun.semver.order("1.4.0", "1.3.9");
-console.log(order); // 1 (first is greater)`,
+console.info(order); // 1 (first is greater)`,
   },
 
   // https://bun.sh/docs/pm/cli/publish#performance
   PERFORMANCE: {
     GC: `Bun.gc(true); // force garbage collection
 const mem = process.memoryUsage();
-console.log("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
+console.info("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
 
     PERFORMANCE_NOW: `const start = performance.now();
 // ... work ...
 const elapsed = performance.now() - start;
-console.log("Elapsed:", elapsed.toFixed(3), "ms");`,
+console.info("Elapsed:", elapsed.toFixed(3), "ms");`,
 
     MEMORY_USAGE: `const mem = process.memoryUsage();
-console.log("RSS:", (mem.rss / 1024 / 1024).toFixed(1), "MB");
-console.log("Heap total:", (mem.heapTotal / 1024 / 1024).toFixed(1), "MB");
-console.log("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
+console.info("RSS:", (mem.rss / 1024 / 1024).toFixed(1), "MB");
+console.info("Heap total:", (mem.heapTotal / 1024 / 1024).toFixed(1), "MB");
+console.info("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
   },
 
   COLOR: {
@@ -841,7 +841,7 @@ const ansi = color('#ff0000', 'ansi'); // ANSI escape code`,
 
     ANSI: `import { color } from 'bun';
 const code = color('blue', 'ansi'); // ANSI escape sequence
-console.log(code + 'Blue text' + '\\x1b[0m');`,
+console.info(code + 'Blue text' + '\\x1b[0m');`,
 
     ANSI_256: `import { color } from 'bun';
 const code = color('#8b5cf6', 'ansi-256'); // 256-color ANSI`,
@@ -853,16 +853,16 @@ const [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]`,
 const [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]`,
 
     GLOBALS: `// Built-in globals — no imports needed
-console.log(Bun.version); // "1.4.0"
-console.log(Bun.revision); // git commit hash
-console.log(typeof fetch); // "function" (global)
-console.log(typeof Bun); // "object" (global)`,
+console.info(Bun.version); // "1.4.0"
+console.info(Bun.revision); // git commit hash
+console.info(typeof fetch); // "function" (global)
+console.info(typeof Bun); // "object" (global)`,
 
     BUN_APIS: `// Core Bun APIs available on the global Bun object
 Bun.sleep(100); // sleep 100ms
 Bun.sleepSync(50); // blocking sleep
 const id = Bun.nanoseconds(); // high-res timestamp
-console.log(Bun.main); // path to entrypoint`,
+console.info(Bun.main); // path to entrypoint`,
   },
 } as const;
 

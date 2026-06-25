@@ -11,7 +11,7 @@
 import { VersionedSecretManager } from '../lib/security/versioned-secrets.ts';
 import { SecretLifecycleManager } from '../lib/security/secret-lifecycle.ts';
 import { styled } from '../lib/theme/colors.ts';
-import { refs } from '@fw/business';
+import { refs } from '@factorywager/business';
 
 const versionedManager = new VersionedSecretManager(refs);
 const lifecycleManager = new SecretLifecycleManager();
@@ -29,12 +29,12 @@ async function main() {
     includeVersions: args.includes('--include-versions'),
     days: parseInt(args.find(arg => arg.startsWith('--days='))?.split('=')[1] || '30'),
     output: (args.find(arg => arg.startsWith('--output='))?.split('=')[1] as any) || 'console',
-    criticalOnly: args.includes('--critical-only')
+    criticalOnly: args.includes('--critical-only'),
   };
 
-  console.log(styled('🔒 FactoryWager Security Audit v5.1', 'accent'));
-  console.log(styled('===================================', 'muted'));
-  console.log('');
+  console.info(styled('🔒 FactoryWager Security Audit v5.1', 'accent'));
+  console.info(styled('===================================', 'muted'));
+  console.info('');
 
   try {
     const auditResults = await performSecurityAudit(options);
@@ -57,21 +57,20 @@ async function main() {
     const warnings = auditResults.filter(r => r.severity === 'WARNING').length;
     const info = auditResults.filter(r => r.severity === 'INFO').length;
 
-    console.log('');
-    console.log(styled('📊 Audit Summary:', 'accent'));
-    console.log(styled(`   Critical: ${critical}`, critical > 0 ? 'error' : 'success'));
-    console.log(styled(`   Warnings: ${warnings}`, warnings > 0 ? 'warning' : 'muted'));
-    console.log(styled(`   Info: ${info}`, 'muted'));
-    console.log(styled(`   Total: ${auditResults.length}`, 'primary'));
+    console.info('');
+    console.info(styled('📊 Audit Summary:', 'accent'));
+    console.info(styled(`   Critical: ${critical}`, critical > 0 ? 'error' : 'success'));
+    console.info(styled(`   Warnings: ${warnings}`, warnings > 0 ? 'warning' : 'muted'));
+    console.info(styled(`   Info: ${info}`, 'muted'));
+    console.info(styled(`   Total: ${auditResults.length}`, 'primary'));
 
     if (critical > 0) {
-      console.log('');
-      console.log(styled('🚨 CRITICAL ISSUES FOUND - Immediate attention required!', 'error'));
+      console.info('');
+      console.info(styled('🚨 CRITICAL ISSUES FOUND - Immediate attention required!', 'error'));
     } else {
-      console.log('');
-      console.log(styled('✅ Audit passed - No critical security issues', 'success'));
+      console.info('');
+      console.info(styled('✅ Audit passed - No critical security issues', 'success'));
     }
-
   } catch (error) {
     console.error(styled(`❌ Audit failed: ${error.message}`, 'error'));
     process.exit(1);
@@ -106,7 +105,7 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
           issue: 'No version history',
           severity: 'WARNING',
           description: 'Secret has no version history',
-          recommendation: 'Initialize versioning for this secret'
+          recommendation: 'Initialize versioning for this secret',
         });
       } else {
         // Check rotation frequency
@@ -121,7 +120,7 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
             description: `Last rotated ${Math.floor(daysSinceRotation)} days ago`,
             recommendation: 'Consider rotating this secret',
             lastRotated: history[0].timestamp,
-            versions: history.map(h => h.version)
+            versions: history.map(h => h.version),
           });
         }
       }
@@ -138,12 +137,16 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
         severity: expiration.daysLeft <= 3 ? 'CRITICAL' : 'WARNING',
         description: `Expires in ${expiration.daysLeft} days`,
         recommendation: 'Rotate before expiration',
-        expiresIn: expiration.daysLeft
+        expiresIn: expiration.daysLeft,
       });
     }
 
     // Skip INFO level issues if critical-only
-    if (options.criticalOnly && results.length > 0 && results[results.length - 1].severity === 'INFO') {
+    if (
+      options.criticalOnly &&
+      results.length > 0 &&
+      results[results.length - 1].severity === 'INFO'
+    ) {
       results.pop();
     }
   }
@@ -153,22 +156,26 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
 
 function outputConsoleReport(results: AuditResult[]) {
   if (results.length === 0) {
-    console.log(styled('✅ No security issues found', 'success'));
+    console.info(styled('✅ No security issues found', 'success'));
     return;
   }
 
-  console.log(styled('🚨 Security Issues Found:', 'error'));
-  console.log('');
+  console.info(styled('🚨 Security Issues Found:', 'error'));
+  console.info('');
 
   for (const result of results) {
-    const color = result.severity === 'CRITICAL' ? 'error' :
-                  result.severity === 'WARNING' ? 'warning' : 'muted';
+    const color =
+      result.severity === 'CRITICAL'
+        ? 'error'
+        : result.severity === 'WARNING'
+          ? 'warning'
+          : 'muted';
 
-    console.log(styled(`${result.severity}: ${result.key}`, color));
-    console.log(styled(`   Issue: ${result.issue}`, 'muted'));
-    console.log(styled(`   Description: ${result.description}`, 'muted'));
-    console.log(styled(`   Recommendation: ${result.recommendation}`, 'primary'));
-    console.log('');
+    console.info(styled(`${result.severity}: ${result.key}`, color));
+    console.info(styled(`   Issue: ${result.issue}`, 'muted'));
+    console.info(styled(`   Description: ${result.description}`, 'muted'));
+    console.info(styled(`   Recommendation: ${result.recommendation}`, 'primary'));
+    console.info('');
   }
 }
 
@@ -208,7 +215,9 @@ async function outputHTMLReport(results: AuditResult[]) {
       </tr>
     </thead>
     <tbody>
-      ${results.map(result => `
+      ${results
+        .map(
+          result => `
         <tr class="${result.severity.toLowerCase()}">
           <td>${result.severity}</td>
           <td>${result.key}</td>
@@ -216,7 +225,9 @@ async function outputHTMLReport(results: AuditResult[]) {
           <td>${result.description}</td>
           <td>${result.recommendation}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 </body>
@@ -225,7 +236,7 @@ async function outputHTMLReport(results: AuditResult[]) {
   const filename = `.audit/security-audit-${Date.now()}.html`;
   await Bun.write(filename, html);
 
-  console.log(styled(`📄 HTML report: ${filename}`, 'success'));
+  console.info(styled(`📄 HTML report: ${filename}`, 'success'));
 }
 
 async function outputJSONReport(results: AuditResult[]) {
@@ -236,22 +247,22 @@ async function outputJSONReport(results: AuditResult[]) {
     critical: results.filter(r => r.severity === 'CRITICAL').length,
     warnings: results.filter(r => r.severity === 'WARNING').length,
     info: results.filter(r => r.severity === 'INFO').length,
-    results
+    results,
   };
 
   const filename = `.audit/security-audit-${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(report, null, 2));
 
-  console.log(styled(`📄 JSON report: ${filename}`, 'success'));
+  console.info(styled(`📄 JSON report: ${filename}`, 'success'));
 }
 
 // Mock function - replace with actual implementation
-async function getAllSecrets(): Promise<Array<{key: string, value: string}>> {
+async function getAllSecrets(): Promise<Array<{ key: string; value: string }>> {
   // This would use Bun.secrets.list() or similar
   return [
     { key: 'API_KEY_V3', value: 'sk_live_123' },
     { key: 'DATABASE_URL', value: 'postgres://...' },
-    { key: 'JWT_SECRET', value: 'secret123' }
+    { key: 'JWT_SECRET', value: 'secret123' },
   ];
 }
 

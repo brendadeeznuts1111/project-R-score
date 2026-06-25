@@ -55,7 +55,7 @@ const headers = cookies.toSetCookieHeaders();`,
 		code: `// Create from URL
 const myURL = new URL('https://example.org/?a=b&c=d');
 myURL.searchParams.forEach((value, name, searchParams) => {
-  console.log(name, value, myURL.searchParams === searchParams);
+  console.info(name, value, myURL.searchParams === searchParams);
 });
 // Prints: a b true, c d true
 
@@ -102,7 +102,7 @@ const wsServer = Bun.serve({
       ws.send(\`Echo: \${message}\`);
     },
     open(ws) {
-      console.log('Client connected');
+      console.info('Client connected');
     }
   },
   fetch(req, server) {
@@ -155,7 +155,7 @@ if (Bun.secrets.TELEGRAM_BOT_TOKEN) {
 }
 
 // List all secrets (for debugging, be careful!)
-console.log(Object.keys(Bun.secrets));`,
+console.info(Object.keys(Bun.secrets));`,
 		related: ["process.env"],
 	},
 	{
@@ -176,7 +176,7 @@ const output = await $\`git rev-parse HEAD\`.text();
 const result = await $\`ls src/**/*.ts | wc -l\`.text();
 
 // With environment variables
-await $\`FOO=bar bun -e 'console.log(process.env.FOO)'\`.env({ FOO: 'bar' });
+await $\`FOO=bar bun -e 'console.info(process.env.FOO)'\`.env({ FOO: 'bar' });
 
 // Redirect to file
 await $\`echo "data" > output.txt\`;
@@ -252,7 +252,7 @@ const topics = await bot.getForumTopics(chatId);
 
 // Iterate topics
 for (const topic of topics.topics) {
-  console.log(\`Topic: \${topic.name}, ID: \${topic.message_thread_id}\`);
+  console.info(\`Topic: \${topic.name}, ID: \${topic.message_thread_id}\`);
 }
 
 // Find topic by name
@@ -282,7 +282,7 @@ const response = await fetch(\`http://localhost:3000/api/arbitrage/opportunities
 
 if (response.ok) {
   const data = await response.json();
-  console.log(\`Found \${data.opportunities.length} opportunities\`);
+  console.info(\`Found \${data.opportunities.length} opportunities\`);
 }
 
 // With headers
@@ -549,8 +549,8 @@ updateBookmakerProfile(db, {
 const profile = loadBookmakerProfile(db, 'draftkings');
 if (profile) {
   const endpointConfig = buildEndpointConfig(profile);
-  console.log(\`Loaded profile: \${profile.name}\`);
-  console.log(\`Endpoints: \${profile.endpoints.size}\`);
+  console.info(\`Loaded profile: \${profile.name}\`);
+  console.info(\`Endpoints: \${profile.endpoints.size}\`);
   
   // Use endpointConfig in CorrectedForensicLogger
   const logger = new CorrectedForensicLogger(config, {
@@ -718,7 +718,7 @@ const logger = new CorrectedForensicLogger(
 // Fetch odds - automatically detects and corrects entity encoding
 try {
   const odds = await logger.fetchCompressedOdds('bookmaker', 'event-123');
-  console.log('Odds fetched:', odds);
+  console.info('Odds fetched:', odds);
 } catch (error) {
   console.error('Fetch failed:', error);
 }
@@ -1011,7 +1011,7 @@ export class ProductionHardening {
    * Run complete hardening checklist
    */
   async runHardeningChecklist(): Promise<void> {
-    console.log('🔒 Starting production hardening...');
+    console.info('🔒 Starting production hardening...');
     
     await this.auditForensicLogs();
     await this.testBookmakerEncoding();
@@ -1019,7 +1019,7 @@ export class ProductionHardening {
     await this.deployLogger();
     await this.enableAlerts();
     
-    console.log('✅ Production hardening complete!');
+    console.info('✅ Production hardening complete!');
   }
 }
 
@@ -1111,7 +1111,7 @@ const movements = [
 ];
 
 const patterns = detectUrlArtifactPatterns(movements);
-console.log('Detected patterns:', patterns);`,
+console.info('Detected patterns:', patterns);`,
 		related: ["Array.filter", "String.includes", "Date.now"],
 	},
 	{
@@ -1251,7 +1251,7 @@ const counts = await viewer.countLogsByLevel('logs/app.log');
 
 // Stream logs in real-time
 for await (const log of viewer.streamLogs('logs/app.log')) {
-  console.log(\`[\${log.level}] \${log.message}\`);
+  console.info(\`[\${log.level}] \${log.message}\`);
 }`,
 		related: ["Bun.shell", "Bun.file", "Bun.spawn"],
 	},
@@ -1458,7 +1458,7 @@ export async function runTickBenchmark(
 
 // Usage in code
 const results = await runTickBenchmark(1000, 10);
-console.log(\`Processed \${results.totalTicks} ticks at \${results.opsPerSec}\`);`,
+console.info(\`Processed \${results.totalTicks} ticks at \${results.opsPerSec}\`);`,
 		related: ["Bun.nanoseconds", "Date.now"],
 	},
 	{
@@ -1619,7 +1619,7 @@ async function runBenchmarks() {
 // Run: bun run bench/runner.ts
 // Or: bun run bench
 const results = await runBenchmarks();
-console.log(results);`,
+console.info(results);`,
 		related: ["Bun.nanoseconds", "process.env"],
 	},
 	{
@@ -1696,8 +1696,8 @@ const server = Bun.serve<WebSocketData>({
     // Called when WebSocket connection opens
     // ws.data is typed as WebSocketData
     open(ws) {
-      console.log('WebSocket opened:', ws.data.userId); // ✅ Type-safe
-      console.log('Session:', ws.data.sessionId); // ✅ Type-safe
+      console.info('WebSocket opened:', ws.data.userId); // ✅ Type-safe
+      console.info('Session:', ws.data.sessionId); // ✅ Type-safe
       ws.send('Welcome!');
     },
     
@@ -1712,7 +1712,7 @@ const server = Bun.serve<WebSocketData>({
     
     // Called when connection closes
     close(ws, code, message) {
-      console.log('WebSocket closed:', ws.data.userId, code, message);
+      console.info('WebSocket closed:', ws.data.userId, code, message);
     },
     
     // Optional: handle errors
@@ -1734,7 +1734,7 @@ const httpOnlyServer = Bun.serve<undefined>({
   // No websocket configuration
 });
 
-console.log(\`Server running on port \${server.port}\`);`,
+console.info(\`Server running on port \${server.port}\`);`,
 		related: ["Bun.serve", "URL", "ServerWebSocket"],
 	},
 	{
@@ -1803,11 +1803,11 @@ async function buildProduction() {
     // Build successful
     // result.outputs - array of output files
     for (const output of result.outputs) {
-      console.log(\`Built: \${output.path} (\${output.size} bytes)\`);
+      console.info(\`Built: \${output.path} (\${output.size} bytes)\`);
       
       // Bun.file() - access output file
       const file = Bun.file(output.path);
-      console.log(\`Type: \${file.type}\`);
+      console.info(\`Type: \${file.type}\`);
     }
 
     return result;
@@ -1956,7 +1956,7 @@ const deterministicUUID = generateDeterministicUUID('nexus', 'trade-123'); // Al
 
 // Example: Generate UUID for trade
 const tradeId = Bun.randomUUIDv7();
-console.log(\`Trade ID: \${tradeId}\`);`,
+console.info(\`Trade ID: \${tradeId}\`);`,
 		related: ["Bun.randomUUIDv7", "Bun.randomUUIDv5"],
 	},
 	{
@@ -2070,7 +2070,7 @@ const obj = {
 };
 
 // Pretty print with colors
-console.log(inspect(obj));
+console.info(inspect(obj));
 // Output: {
 //   config: {
 //     features: [ 'arbitrage', 'analytics' ],
@@ -2081,7 +2081,7 @@ console.log(inspect(obj));
 // }
 
 // Compact format
-console.log(inspect(obj, { compact: true }));
+console.info(inspect(obj, { compact: true }));
 // Output: { config: { features: [ 'arbitrage', 'analytics' ], port: 3001 }, name: 'NEXUS', version: '1.0.0' }`,
 		related: ["Bun.inspect"],
 	},
@@ -2147,11 +2147,11 @@ const promise = fetch('https://api.example.com/data').then(r => r.json());
 const peeked = Bun.peek(promise);
 if (peeked !== promise) {
   // Already resolved!
-  console.log('Value:', peeked);
+  console.info('Value:', peeked);
 } else {
   // Still pending, need to await
   const value = await promise;
-  console.log('Value:', value);
+  console.info('Value:', value);
 }`,
 		related: ["Bun.peek"],
 	},
@@ -2185,12 +2185,12 @@ const obj1 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj2 = { a: 1, b: { c: 2, d: [3, 4] } };
 const obj3 = { a: 1, b: { c: 2, d: [3, 5] } };
 
-console.log(Bun.deepEquals(obj1, obj2)); // true
-console.log(Bun.deepEquals(obj1, obj3)); // false
+console.info(Bun.deepEquals(obj1, obj2)); // true
+console.info(Bun.deepEquals(obj1, obj3)); // false
 
 // Works with arrays
-console.log(Bun.deepEquals([1, 2, 3], [1, 2, 3])); // true
-console.log(Bun.deepEquals([1, 2, 3], [1, 2, 4])); // false
+console.info(Bun.deepEquals([1, 2, 3], [1, 2, 3])); // true
+console.info(Bun.deepEquals([1, 2, 3], [1, 2, 4])); // false
 
 // Works with nested structures
 const trade1 = {
@@ -2205,7 +2205,7 @@ const trade2 = {
   metadata: { source: 'binance', timestamp: 1234567890 }
 };
 
-console.log(Bun.deepEquals(trade1, trade2)); // true`,
+console.info(Bun.deepEquals(trade1, trade2)); // true`,
 		related: ["Bun.deepEquals"],
 	},
 	{
@@ -2272,8 +2272,8 @@ const testFiles = await findFiles('**/*.test.ts');
 // Returns: ['test/api.test.ts', 'test/utils.test.ts', ...]
 
 // Check if path matches
-console.log(matchesPattern('src/api/routes.ts', '**/*.ts')); // true
-console.log(matchesPattern('src/api/routes.js', '**/*.ts')); // false`,
+console.info(matchesPattern('src/api/routes.ts', '**/*.ts')); // true
+console.info(matchesPattern('src/api/routes.js', '**/*.ts')); // false`,
 		related: ["Bun.Glob", "Bun.file"],
 	},
 	{
@@ -2309,7 +2309,7 @@ async function takeHeapSnapshot(path?: string): Promise<string> {
   // Bun.write() - write snapshot as JSON
   await Bun.write(snapshotPath, JSON.stringify(snapshot));
   
-  console.log(\`Heap snapshot saved to \${snapshotPath}\`);
+  console.info(\`Heap snapshot saved to \${snapshotPath}\`);
   return snapshotPath;
 }
 
@@ -2322,7 +2322,7 @@ function forceGarbageCollection(): void {
   // Takes boolean: true = full GC, false = incremental
   if (typeof Bun.gc === 'function') {
     Bun.gc(true); // Force full GC
-    console.log('Garbage collection triggered');
+    console.info('Garbage collection triggered');
   }
 }
 
@@ -2413,7 +2413,7 @@ async function processInWorker(data: any): Promise<any> {
 
 // Usage
 const result = await processInWorker({ trades: [...] });
-console.log('Processed:', result);`,
+console.info('Processed:', result);`,
 		related: ["Worker", "Worker.postMessage"],
 	},
 	{
@@ -2442,7 +2442,7 @@ import { test, expect, describe, beforeAll, afterAll } from 'bun:test';
 describe('Arbitrage Detection', () => {
   // beforeAll() - run before all tests
   beforeAll(() => {
-    console.log('Setting up test environment');
+    console.info('Setting up test environment');
   });
   
   // test() - define a test
@@ -2479,7 +2479,7 @@ describe('Arbitrage Detection', () => {
   
   // afterAll() - cleanup after all tests
   afterAll(() => {
-    console.log('Cleaning up test environment');
+    console.info('Cleaning up test environment');
   });
 });
 
@@ -2639,7 +2639,7 @@ monitor.onAuthFailure('bookmaker', 401);
 
 // Get recent threats
 const threats = monitor.getRecentThreats(24); // Last 24 hours
-console.log('Recent threats:', threats);
+console.info('Recent threats:', threats);
 
 // Cleanup
 monitor.destroy();`,
@@ -2697,7 +2697,7 @@ const report = await logger.generateComplianceReport(
 
 // Get compliance statistics
 const stats = logger.getComplianceStats(30); // Last 30 days
-console.log('Compliance stats:', stats);
+console.info('Compliance stats:', stats);
 
 logger.close();`,
 		related: ["Bun.randomUUIDv7", "Bun.gzipSync", "bun:sqlite"],
@@ -2742,7 +2742,7 @@ orchestrator.onThreatDetected({
 
 // Get active incidents
 const activeIncidents = orchestrator.getActiveIncidents();
-console.log('Active incidents:', activeIncidents);
+console.info('Active incidents:', activeIncidents);
 
 orchestrator.close();`,
 		related: [
@@ -2781,16 +2781,16 @@ const engine = new UrlAnomalyPatternEngine('research.db');
 
 // Discover patterns for NBA
 const patterns = await engine.discoverAnomalyPatterns('NBA', 24);
-console.log(\`Discovered \${patterns.length} URL anomaly patterns\`);
+console.info(\`Discovered \${patterns.length} URL anomaly patterns\`);
 
 // Calculate false steam rate for a bookmaker
 const falseSteamRate = engine.calculateFalseSteamRate('draftkings', 24);
-console.log(\`False steam rate: \${(falseSteamRate * 100).toFixed(2)}%\`);
+console.info(\`False steam rate: \${(falseSteamRate * 100).toFixed(2)}%\`);
 
 // Get bookmaker-specific anomalies
 const anomalies = engine.getBookmakerAnomalies('draftkings', 24);
 anomalies.forEach(anomaly => {
-  console.log(\`Anomaly: \${anomaly.anomaly_type} - \${anomaly.market_impact.false_steam_probability * 100}% false steam prob\`);
+  console.info(\`Anomaly: \${anomaly.anomaly_type} - \${anomaly.market_impact.false_steam_probability * 100}% false steam prob\`);
 });
 
 engine.close();`,

@@ -46,11 +46,11 @@ export class Logger {
   }
 
   info(message: string, context?: LogContext): void {
-    console.log(this.formatMessage('info', message, { ...context, status: 'info' }));
+    console.info(this.formatMessage('info', message, { ...context, status: 'info' }));
   }
 
   success(message: string, context?: LogContext): void {
-    console.log(this.formatMessage('success', message, { ...context, status: 'success' }));
+    console.info(this.formatMessage('success', message, { ...context, status: 'success' }));
   }
 
   warn(message: string, context?: LogContext): void {
@@ -110,17 +110,17 @@ export class Logger {
       const leftPad = Math.floor(padding / 2);
       const rightPad = padding - leftPad;
 
-      console.log('='.repeat(leftPad) + ` [${title}] ` + '='.repeat(rightPad));
+      console.info('='.repeat(leftPad) + ` [${title}] ` + '='.repeat(rightPad));
     } else {
-      console.log(separator);
+      console.info(separator);
     }
   }
 
   header(title: string, subtitle?: string): void {
     this.separator();
-    console.log(`📋 ${title}`);
+    console.info(`📋 ${title}`);
     if (subtitle) {
-      console.log(`   ${subtitle}`);
+      console.info(`   ${subtitle}`);
     }
     this.separator();
   }

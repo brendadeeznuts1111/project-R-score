@@ -70,8 +70,8 @@ beforeAll(async () => {
     maxSockets: 5,
   });
 
-  console.log(`✅ Dashboard server started at ${BASE_URL}`);
-  console.log(`🌐 Dashboard accessible at ${DASHBOARD_URL}`);
+  console.info(`✅ Dashboard server started at ${BASE_URL}`);
+  console.info(`🌐 Dashboard accessible at ${DASHBOARD_URL}`);
 });
 
 /**
@@ -80,7 +80,7 @@ beforeAll(async () => {
 afterAll(async () => {
   // Cleanup test resources
   await Bun.spawn(['bun', 'run', 'scripts/cleanup-test-resources.ts']);
-  console.log('🧹 Test resources cleaned up');
+  console.info('🧹 Test resources cleaned up');
 });
 
 /**
@@ -98,7 +98,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(health.correlations).toHaveProperty('activeEngines');
     expect(health.connectionPool).toHaveProperty('totalSockets');
     
-    console.log(`✅ Health check: ${health.status} (${health.correlations.activeEngines} engines)`);
+    console.info(`✅ Health check: ${health.status} (${health.correlations.activeEngines} engines)`);
   });
 
   test('02 - Connection Pool Statistics', async () => {
@@ -119,7 +119,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       expect(typeof data.rejectionRate).toBe('number');
     }
     
-    console.log(`✅ Connection pool: ${stats.totalSockets} sockets, ${stats.utilization}% utilization`);
+    console.info(`✅ Connection pool: ${stats.totalSockets} sockets, ${stats.utilization}% utilization`);
   });
 
   test('03 - Multi-Layer Graph Generation - NBA Event', async () => {
@@ -149,7 +149,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(result.metadata.nodes).toBeGreaterThan(0);
     expect(result.metadata.edges).toBeGreaterThan(0);
     
-    console.log(`✅ NBA Graph: ${result.metadata.nodes} nodes, ${result.metadata.edges} edges`);
+    console.info(`✅ NBA Graph: ${result.metadata.nodes} nodes, ${result.metadata.edges} edges`);
   });
 
   test('04 - GraphML Export Functionality', async () => {
@@ -173,7 +173,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(graphml).toInclude('<node');
     expect(graphml).toInclude('<edge');
     
-    console.log(`✅ GraphML export: ${graphml.length} bytes generated`);
+    console.info(`✅ GraphML export: ${graphml.length} bytes generated`);
   });
 
   test('05 - CSRF Token Integration', async () => {
@@ -189,7 +189,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(csrfHeader).toBeString();
     expect(csrfHeader).not.toBeNull();
     
-    console.log(`✅ CSRF integration: token ${data['x-csrf-token'].slice(0, 8)}...`);
+    console.info(`✅ CSRF integration: token ${data['x-csrf-token'].slice(0, 8)}...`);
   });
 
   test('06 - Dashboard Static Assets Serving', async () => {
@@ -219,7 +219,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       const cacheControl = response.headers.get('cache-control');
       expect(cacheControl).toInclude('max-age=3600');
       
-      console.log(`✅ Asset served: ${asset} (${contentType})`);
+      console.info(`✅ Asset served: ${asset} (${contentType})`);
     }
   });
 
@@ -246,7 +246,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     const crossSportEdges = result.data.edges.filter(edge => edge.layer === 4);
     expect(crossSportEdges.length).toBeGreaterThan(0);
     
-    console.log(`✅ Cross-sport graph: ${crossSportEdges.length} layer 4 edges`);
+    console.info(`✅ Cross-sport graph: ${crossSportEdges.length} layer 4 edges`);
   });
 
   test('08 - Error Handling - Invalid Event ID', async () => {
@@ -269,7 +269,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(result.metadata.nodes).toBe(0);
     expect(result.metadata.edges).toBe(0);
     
-    console.log(`✅ Error handling: empty graph for invalid event ${invalidEventId}`);
+    console.info(`✅ Error handling: empty graph for invalid event ${invalidEventId}`);
   });
 
   test('09 - Confidence Filtering Integration', async () => {
@@ -292,7 +292,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     // All edges should meet or exceed the threshold
     expect(highConfidenceEdges.length).toBe(result.data.edges.length);
     
-    console.log(`✅ Confidence filter: ${result.data.edges.length} edges ≥ 0.9`);
+    console.info(`✅ Confidence filter: ${result.data.edges.length} edges ≥ 0.9`);
   });
 
   test('10 - CORS Headers for Dashboard', async () => {
@@ -309,7 +309,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       expect(response.headers.get('access-control-allow-headers')).toInclude('Content-Type, X-CSRF-Token');
     }
     
-    console.log(`✅ CORS headers validated for ${origins.length} origins`);
+    console.info(`✅ CORS headers validated for ${origins.length} origins`);
   });
 
   test('11 - Dashboard Navigation Integration', async () => {
@@ -331,7 +331,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       }
     }
     
-    console.log(`✅ Navigation endpoints: ${navLinks.length} links validated`);
+    console.info(`✅ Navigation endpoints: ${navLinks.length} links validated`);
   });
 
   test('12 - Real-Time Streaming Simulation', async () => {
@@ -358,13 +358,13 @@ describe('Trader Analyzer Dashboard Integration', () => {
       expect(currentEdgeCount).toBeGreaterThanOrEqual(previousEdgeCount);
       
       previousEdgeCount = currentEdgeCount;
-      console.log(`📡 Streaming update ${i + 1}: ${currentEdgeCount} edges`);
+      console.info(`📡 Streaming update ${i + 1}: ${currentEdgeCount} edges`);
       
       // Wait 1 second between updates (simulating real-time)
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
-    console.log('✅ Real-time streaming simulation completed');
+    console.info('✅ Real-time streaming simulation completed');
   });
 
   test('13 - Export Functionality - JSON', async () => {
@@ -392,7 +392,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(result.edges).toBeArray();
     expect(result.summary).toHaveProperty('generatedAt');
     
-    console.log(`✅ JSON export: ${result.nodes.length} nodes, ${result.edges.length} edges`);
+    console.info(`✅ JSON export: ${result.nodes.length} nodes, ${result.edges.length} edges`);
   });
 
   test('14 - Performance Metrics Integration', async () => {
@@ -419,7 +419,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       expect(result.data.nodes.length).toBeGreaterThan(0);
     });
     
-    console.log(`✅ Performance: ${requests.length} graphs in ${totalTime.toFixed(2)}ms (${avgTime.toFixed(2)}ms avg)`);
+    console.info(`✅ Performance: ${requests.length} graphs in ${totalTime.toFixed(2)}ms (${avgTime.toFixed(2)}ms avg)`);
   });
 
   test('15 - Error Recovery & Fallbacks', async () => {
@@ -447,7 +447,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     const errorResult = await missingFieldResponse.json();
     expect(errorResult).toHaveProperty('error', 'Event ID required');
     
-    console.log('✅ Error recovery: all fallback scenarios handled');
+    console.info('✅ Error recovery: all fallback scenarios handled');
   });
 
   test('16 - Dashboard Type Safety Integration', async () => {
@@ -480,7 +480,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(manifest).toHaveProperty('version', '1.0.0');
     expect(manifest).toHaveProperty('integrations');
     
-    console.log('✅ Type safety: all TypeScript definitions accessible');
+    console.info('✅ Type safety: all TypeScript definitions accessible');
   });
 
   test('17 - Comprehensive Event Coverage', async () => {
@@ -505,14 +505,14 @@ describe('Trader Analyzer Dashboard Integration', () => {
     // All should succeed
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
-        console.log(`✅ ${TEST_EVENT_IDS[index]}: ${result.value.nodes} nodes, ${result.value.edges} edges`);
+        console.info(`✅ ${TEST_EVENT_IDS[index]}: ${result.value.nodes} nodes, ${result.value.edges} edges`);
       } else {
         console.error(`❌ ${TEST_EVENT_IDS[index]}: ${result.reason}`);
         throw result.reason;
       }
     });
     
-    console.log(`✅ All ${TEST_EVENT_IDS.length} event types supported`);
+    console.info(`✅ All ${TEST_EVENT_IDS.length} event types supported`);
   });
 
   test('18 - Load Testing Simulation', async () => {
@@ -542,7 +542,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     const totalNodes = results.reduce((sum, r) => sum + r.nodes, 0);
     const avgNodes = totalNodes / concurrentRequests;
     
-    console.log(`✅ Load test: ${concurrentRequests} concurrent users, avg ${avgNodes.toFixed(0)} nodes/user`);
+    console.info(`✅ Load test: ${concurrentRequests} concurrent users, avg ${avgNodes.toFixed(0)} nodes/user`);
   });
 
   test('19 - Dashboard Security Headers', async () => {
@@ -578,7 +578,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       }
     }
     
-    console.log(`✅ Security headers validated for ${endpoints.length} endpoints`);
+    console.info(`✅ Security headers validated for ${endpoints.length} endpoints`);
   });
 
   test('20 - Full Integration Workflow', async () => {
@@ -619,7 +619,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(html).toInclude('<title>Multi-Layer Correlation Graph');
     expect(html).toInclude('vis-network.min.js');
     
-    console.log('✅ Full workflow: health → pool → graph → export → dashboard');
+    console.info('✅ Full workflow: health → pool → graph → export → dashboard');
   });
 });
 
@@ -700,6 +700,6 @@ async function generateTestGraphData(eventId: string, options: any = {}) {
   };
 }
 
-console.log('🧪 Running Dashboard Integration Tests...');
-console.log(`🌐 Testing against: ${BASE_URL}`);
-console.log(`📊 Event IDs: ${TEST_EVENT_IDS.join(', ')}`);
+console.info('🧪 Running Dashboard Integration Tests...');
+console.info(`🌐 Testing against: ${BASE_URL}`);
+console.info(`📊 Event IDs: ${TEST_EVENT_IDS.join(', ')}`);

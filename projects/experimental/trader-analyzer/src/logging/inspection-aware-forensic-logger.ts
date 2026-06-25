@@ -61,7 +61,7 @@ export class InspectionAwareForensicLogger extends CorrectedForensicLogger {
 
 		// Log to console in development for immediate inspection
 		if (process.env.NODE_ENV === "development") {
-			console.log(
+			console.info(
 				"🔍 Forensic Data:",
 				Bun.inspect(binaryData, { colors: true, depth: 2 }),
 			);

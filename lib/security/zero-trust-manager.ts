@@ -588,7 +588,9 @@ export class ZeroTrustManager extends EventEmitter {
           if (!credentials.biometricData) return false;
           // NOTE: In production, use WebAuthn/FIDO2 for proper biometric verification.
           // Use timing-safe comparison to prevent timing attacks (matches password case above)
-          const biometricHash = createHash('sha256').update(credentials.biometricData).digest('hex');
+          const biometricHash = createHash('sha256')
+            .update(credentials.biometricData)
+            .digest('hex');
           return timingSafeEqual(
             Buffer.from(biometricHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')

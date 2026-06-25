@@ -33,51 +33,61 @@ function bench(name: string, fn: () => Promise<void>, iters = ITERATIONS): Promi
   })();
 }
 
-console.log('validate-docs Performance Benchmark');
-console.log('='.repeat(60));
+console.info('validate-docs Performance Benchmark');
+console.info('='.repeat(60));
 
 const results: BenchResult[] = [];
 
 // 1. checkUrls — scans all files for broken URL patterns
-results.push(await bench('checkUrls()', async () => {
-  await checkUrls();
-}));
+results.push(
+  await bench('checkUrls()', async () => {
+    await checkUrls();
+  })
+);
 
 // 2. checkEnums — scans for duplicate enum definitions
-results.push(await bench('checkEnums()', async () => {
-  await checkEnums();
-}));
+results.push(
+  await bench('checkEnums()', async () => {
+    await checkEnums();
+  })
+);
 
 // 3. checkImports — scans for broken import paths
-results.push(await bench('checkImports()', async () => {
-  await checkImports();
-}));
+results.push(
+  await bench('checkImports()', async () => {
+    await checkImports();
+  })
+);
 
 // 4. All three checks (simulates `all` command)
-results.push(await bench('all checks combined', async () => {
-  await Promise.all([checkUrls(), checkEnums(), checkImports()]);
-}));
+results.push(
+  await bench('all checks combined', async () => {
+    await Promise.all([checkUrls(), checkEnums(), checkImports()]);
+  })
+);
 
 // 5. All checks sequential (simulates actual CLI flow)
-results.push(await bench('all checks sequential', async () => {
-  await checkUrls();
-  await checkEnums();
-  await checkImports();
-}));
+results.push(
+  await bench('all checks sequential', async () => {
+    await checkUrls();
+    await checkEnums();
+    await checkImports();
+  })
+);
 
 // Print results
-console.log('');
-console.log(Bun.inspect.table(results));
+console.info('');
+console.info(Bun.inspect.table(results));
 
 // Summary
 const all = results.find(r => r.operation === 'all checks combined');
 const seq = results.find(r => r.operation === 'all checks sequential');
 const urls = results.find(r => r.operation === 'checkUrls()');
 
-console.log('Summary:');
-console.log(`  All checks (parallel):    ${all?.['ms/op']}ms/op (${all?.['ops/s']} ops/s)`);
-console.log(`  All checks (sequential):  ${seq?.['ms/op']}ms/op (${seq?.['ops/s']} ops/s)`);
-console.log(`  URL check alone:          ${urls?.['ms/op']}ms/op (${urls?.['ops/s']} ops/s)`);
+console.info('Summary:');
+console.info(`  All checks (parallel):    ${all?.['ms/op']}ms/op (${all?.['ops/s']} ops/s)`);
+console.info(`  All checks (sequential):  ${seq?.['ms/op']}ms/op (${seq?.['ops/s']} ops/s)`);
+console.info(`  URL check alone:          ${urls?.['ms/op']}ms/op (${urls?.['ops/s']} ops/s)`);
 
 // Save results
 const report = {
@@ -92,4 +102,4 @@ const report = {
   })),
 };
 await Bun.write('tools/validate-docs.bench-results.json', JSON.stringify(report, null, 2));
-console.log('\nResults saved to tools/validate-docs.bench-results.json');
+console.info('\nResults saved to tools/validate-docs.bench-results.json');

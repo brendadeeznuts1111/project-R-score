@@ -68,7 +68,7 @@ class UnifiedFooter {
         this.attachEventListeners();
 
         this.isInitialized = true;
-        console.log('🦶 Unified Footer system initialized');
+        console.info('🦶 Unified Footer system initialized');
     }
 
     // Add footer to a specific header element
@@ -150,7 +150,7 @@ class UnifiedFooter {
         }
         
         this.isInitialized = false;
-        console.log('🦶 Unified Footer system destroyed');
+        console.info('🦶 Unified Footer system destroyed');
     }
 
     private getDefaultConfig(): FooterConfig {

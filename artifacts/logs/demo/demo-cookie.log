@@ -1,4 +1,0 @@
-{"timestamp":"2026-02-07T18:42:24.643Z","level":"info","sessionId":"demo-session-123","cookieName":"session","action":"parse","result":"success","details":"Successfully parsed session cookie","securityScore":95,"processingTime":0.5}
-{"timestamp":"2026-02-07T18:42:24.646Z","level":"warn","sessionId":"demo-session-123","cookieName":"analytics","action":"validate","result":"failure","details":"Missing secure flag on analytics cookie","securityScore":65,"processingTime":0.3}
-{"timestamp":"2026-02-07T18:42:30.391Z","level":"info","sessionId":"demo-session-123","cookieName":"session","action":"parse","result":"success","details":"Successfully parsed session cookie","securityScore":95,"processingTime":0.5}
-{"timestamp":"2026-02-07T18:42:30.399Z","level":"warn","sessionId":"demo-session-123","cookieName":"analytics","action":"validate","result":"failure","details":"Missing secure flag on analytics cookie","securityScore":65,"processingTime":0.3}

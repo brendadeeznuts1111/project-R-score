@@ -43,7 +43,7 @@ export function displayAlertsTable(
 		};
 	});
 
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			tableData,
 			["Event", "Bookmaker", "Severity", "Level", "Timestamp", "Node"],
@@ -95,7 +95,7 @@ export function displaySeverityThresholdsTable(currentScore?: number): void {
 		},
 	];
 
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			thresholdData,
 			["Level", "Range", "Emoji", "Auto-Pin", "Current"],
@@ -132,7 +132,7 @@ export async function displayTopicsTable(): Promise<void> {
 		},
 	);
 
-	console.log(
+	console.info(
 		Bun.inspect.table(
 			topicTableData,
 			["Topic", "Thread ID", "Logical ID", "Default"],
@@ -187,15 +187,15 @@ export function displayAlertStatsTable(stats: {
 		}),
 	);
 
-	console.log("Severity Breakdown:");
-	console.log(
+	console.info("Severity Breakdown:");
+	console.info(
 		Bun.inspect.table(severityData, ["Level", "Count", "Percentage"], {
 			colors: true,
 		}),
 	);
 
-	console.log("\nBy Bookmaker:");
-	console.log(
+	console.info("\nBy Bookmaker:");
+	console.info(
 		Bun.inspect.table(bookmakerData, ["Bookmaker", "Alerts", "Percentage"], {
 			colors: true,
 		}),

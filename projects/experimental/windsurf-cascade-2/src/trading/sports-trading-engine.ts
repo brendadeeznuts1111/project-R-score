@@ -71,10 +71,10 @@ export class SportsTradingEngine {
     
     // Initialize risk management
     const riskSettings = await getRiskSettings();
-    console.log(`🏃 Sports Trading Engine Initialized`);
-    console.log(`📊 Max Position Size: ${riskSettings.maxPosition}`);
-    console.log(`⚠️  Risk Limit: ${riskSettings.riskPercent}%`);
-    console.log(`🤖 Auto Trading: ${this.tradingEnabled ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`🏃 Sports Trading Engine Initialized`);
+    console.info(`📊 Max Position Size: ${riskSettings.maxPosition}`);
+    console.info(`⚠️  Risk Limit: ${riskSettings.riskPercent}%`);
+    console.info(`🤖 Auto Trading: ${this.tradingEnabled ? 'ENABLED' : 'DISABLED'}`);
   }
 
   // Process incoming market data (nanosecond operation)
@@ -103,7 +103,7 @@ export class SportsTradingEngine {
     }
 
     const processingTime = Bun.nanoseconds() - startTime;
-    console.log(`⚡ Processed ${marketData.eventId} in ${processingTime}ns`);
+    console.info(`⚡ Processed ${marketData.eventId} in ${processingTime}ns`);
     
     return signals;
   }
@@ -220,14 +220,14 @@ export class SportsTradingEngine {
     const totalExposure = currentPositions.reduce((sum, pos) => sum + pos.stake, 0);
     
     if (totalExposure >= riskSettings.maxPosition) {
-      console.log(`⚠️  Risk limit reached for ${signal.eventId}`);
+      console.info(`⚠️  Risk limit reached for ${signal.eventId}`);
       return false;
     }
 
     // Check if risk management is enabled
     const riskManagementEnabled = await isTradingFeatureEnabled('ENABLE_RISK_MANAGEMENT');
     if (riskManagementEnabled && signal.confidence < 0.3) {
-      console.log(`⚠️  Low confidence signal rejected: ${signal.confidence}`);
+      console.info(`⚠️  Low confidence signal rejected: ${signal.confidence}`);
       return false;
     }
 
@@ -249,8 +249,8 @@ export class SportsTradingEngine {
     this.positions.get(signal.eventId)!.push(position);
 
     const executionTime = Bun.nanoseconds() - startTime;
-    console.log(`🎯 Executed ${signal.action} ${signal.market} @ ${signal.odds} for ${position.stake}% in ${executionTime}ns`);
-    console.log(`💡 Reasoning: ${signal.reasoning}`);
+    console.info(`🎯 Executed ${signal.action} ${signal.market} @ ${signal.odds} for ${position.stake}% in ${executionTime}ns`);
+    console.info(`💡 Reasoning: ${signal.reasoning}`);
 
     return true;
   }
@@ -267,7 +267,7 @@ export class SportsTradingEngine {
     this.tradingEnabled = await isTradingFeatureEnabled('ENABLE_AUTO_TRADING');
     this.lastConfigUpdate = now;
     
-    console.log(`🔄 Trading configuration updated - Auto trading: ${this.tradingEnabled ? 'ON' : 'OFF'}`);
+    console.info(`🔄 Trading configuration updated - Auto trading: ${this.tradingEnabled ? 'ON' : 'OFF'}`);
   }
 
   // Get current positions

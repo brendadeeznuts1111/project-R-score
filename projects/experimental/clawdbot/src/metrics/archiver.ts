@@ -79,7 +79,7 @@ export class MetricsArchiver {
     const oldExecutions = this.collector.getExecutionsBefore(cutoffDate);
 
     if (oldExecutions.length === 0) {
-      console.log("[metrics] No old metrics to archive");
+      console.info("[metrics] No old metrics to archive");
       return "";
     }
 
@@ -117,7 +117,7 @@ export class MetricsArchiver {
       // Remove archived executions from collector
       this.collector.removeExecutionsBefore(cutoffDate);
 
-      console.log(
+      console.info(
         `[metrics] Archived ${oldExecutions.length} executions to ${archivePath} (sha256: ${checksum.slice(0, 8)}...)`,
       );
       return archivePath;
@@ -186,7 +186,7 @@ export class MetricsArchiver {
     }
 
     if (archivedFiles.length > 0) {
-      console.log(`[metrics] Archived ${archivedFiles.length} recordings`);
+      console.info(`[metrics] Archived ${archivedFiles.length} recordings`);
     }
     return archivedFiles;
   }
@@ -226,7 +226,7 @@ export class MetricsArchiver {
         createWriteStream(outputPath),
       );
 
-      console.log(`[metrics] Extracted archive to ${outputPath}`);
+      console.info(`[metrics] Extracted archive to ${outputPath}`);
       return 1;
     } catch (err) {
       // Clean up partial file on failure
@@ -347,7 +347,7 @@ export class MetricsArchiver {
     }
 
     if (deleted > 0) {
-      console.log(`[metrics] Pruned ${deleted} old archives`);
+      console.info(`[metrics] Pruned ${deleted} old archives`);
     }
     return deleted;
   }

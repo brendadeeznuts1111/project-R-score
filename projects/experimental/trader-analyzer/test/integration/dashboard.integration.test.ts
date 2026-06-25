@@ -68,7 +68,7 @@ beforeAll(async () => {
     });
 
     await serverReady;
-    console.log(`✅ Dashboard server ready at ${TEST_CONFIG.BASE_URL}`);
+    console.info(`✅ Dashboard server ready at ${TEST_CONFIG.BASE_URL}`);
   } catch (error) {
     console.error('❌ Failed to start dashboard server:', error);
     throw error;
@@ -81,7 +81,7 @@ beforeAll(async () => {
 afterAll(async () => {
   if (serverProcess) {
     serverProcess.kill();
-    console.log('🛑 Dashboard server stopped');
+    console.info('🛑 Dashboard server stopped');
   }
 });
 
@@ -109,7 +109,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(health.correlations).toHaveProperty('activeEngines');
     expect(health.correlations.activeEngines).toBeGreaterThan(0);
     
-    console.log(`✅ Health: ${health.status} (${health.correlations.activeEngines} engines)`);
+    console.info(`✅ Health: ${health.status} (${health.correlations.activeEngines} engines)`);
   });
 
   /**
@@ -130,7 +130,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(config.dashboard.features.multiLayerGraphs).toBe(true);
     expect(config).toHaveProperty('troubleshooting');
     
-    console.log(`✅ Config: v${config.dashboard.version} loaded`);
+    console.info(`✅ Config: v${config.dashboard.version} loaded`);
   });
 
   /**
@@ -162,7 +162,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(timeoutConfig).toHaveProperty('testEndpoints');
     expect(timeoutConfig.testEndpoints).toHaveProperty('Quick (500ms)');
     
-    console.log(`✅ Timeout: ${quickData.actualDuration}ms (quick), error simulation OK`);
+    console.info(`✅ Timeout: ${quickData.actualDuration}ms (quick), error simulation OK`);
   });
 
   /**
@@ -196,7 +196,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       expect(data.rejectionRate).toBeLessThan(0.01);
     }
     
-    console.log(`✅ Pool: ${stats.totalSockets} sockets, ${stats.utilization}% utilization`);
+    console.info(`✅ Pool: ${stats.totalSockets} sockets, ${stats.utilization}% utilization`);
   });
 
   /**
@@ -262,7 +262,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(firstEdge.confidence).toBeGreaterThan(0);
     expect(firstEdge.confidence).toBeLessThanOrEqual(1);
     
-    console.log(`✅ NBA Graph: ${result.metadata.nodes} nodes, ${result.metadata.edges} edges`);
+    console.info(`✅ NBA Graph: ${result.metadata.nodes} nodes, ${result.metadata.edges} edges`);
   });
 
   /**
@@ -305,7 +305,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(nodeCount).toBeGreaterThan(0);
     expect(edgeCount).toBeGreaterThan(0);
     
-    console.log(`✅ GraphML: ${nodeCount} nodes, ${edgeCount} edges exported`);
+    console.info(`✅ GraphML: ${nodeCount} nodes, ${edgeCount} edges exported`);
   });
 
   /**
@@ -343,7 +343,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(highConfidenceEdges.length).toBeGreaterThan(0);
     expect(highConfidenceEdges.length).toBeLessThanOrEqual(result.data.edges.length);
     
-    console.log(`✅ Cross-sport: ${crossSportEdges.length} layer 4 edges (threshold 0.7)`);
+    console.info(`✅ Cross-sport: ${crossSportEdges.length} layer 4 edges (threshold 0.7)`);
   });
 
   /**
@@ -388,7 +388,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     
     expect(wrongMethodResponse.status).toBe(405);
     
-    console.log('✅ All error cases handled: 400, 404, 405');
+    console.info('✅ All error cases handled: 400, 404, 405');
   });
 
   /**
@@ -418,7 +418,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
         expect(response.headers.get('access-control-allow-origin')).toBe('*');
       }
       
-      console.log(`✅ Asset: ${asset.path} (${asset.expectedType})`);
+      console.info(`✅ Asset: ${asset.path} (${asset.expectedType})`);
     }
   });
 
@@ -467,9 +467,9 @@ describe('Trader Analyzer Dashboard Integration', () => {
     const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / concurrentRequests;
     const maxDuration = Math.max(...results.map(r => r.duration));
     
-    console.log(`✅ Load test: ${concurrentRequests} concurrent requests`);
-    console.log(`⏱️  Avg: ${avgDuration.toFixed(2)}ms, Max: ${maxDuration.toFixed(2)}ms`);
-    console.log(`📊 Nodes per request: avg ${Math.round(results.reduce((sum, r) => sum + r.nodes, 0) / concurrentRequests)}`);
+    console.info(`✅ Load test: ${concurrentRequests} concurrent requests`);
+    console.info(`⏱️  Avg: ${avgDuration.toFixed(2)}ms, Max: ${maxDuration.toFixed(2)}ms`);
+    console.info(`📊 Nodes per request: avg ${Math.round(results.reduce((sum, r) => sum + r.nodes, 0) / concurrentRequests)}`);
   });
 
   /**
@@ -514,7 +514,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
       // Response should be fast (< 3 seconds for streaming)
       expect(duration).toBeLessThan(3000);
       
-      console.log(`📡 Update ${index + 1}: ${currentEdgeCount} edges (+${currentEdgeCount - previousEdgeCount} from previous)`);
+      console.info(`📡 Update ${index + 1}: ${currentEdgeCount} edges (+${currentEdgeCount - previousEdgeCount} from previous)`);
       
       // Wait 1 second between updates to simulate real-time without overwhelming
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -528,7 +528,7 @@ describe('Trader Analyzer Dashboard Integration', () => {
     expect(updateCount).toBe(3);
     
     const finalEdgeCount = streamingResults[streamingResults.length - 1].edges;
-    console.log(`✅ Streaming: ${finalEdgeCount} edges across ${streamingResults.length} updates`);
+    console.info(`✅ Streaming: ${finalEdgeCount} edges across ${streamingResults.length} updates`);
   });
 });
 

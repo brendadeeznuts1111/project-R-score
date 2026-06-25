@@ -26,7 +26,7 @@ export function useBunSQLite() {
     
     const result = await withRetry(
       async () => {
-        console.log('Initializing Bun SQLite database...');
+        console.info('Initializing Bun SQLite database...');
         await createTables();
         setIsConnected(true);
         await loadRecords();
@@ -51,7 +51,7 @@ export function useBunSQLite() {
     };
     
     try {
-      console.log('Creating database tables...');
+      console.info('Creating database tables...');
     } catch (error) {
       logDatabaseError(
         'Failed to create database tables',
@@ -162,7 +162,7 @@ export function useBunSQLite() {
     try {
       // Simulate custom queries
       // In real Bun: db.query(sql).all(...params)
-      console.log('Executing query:', sql, params);
+      console.info('Executing query:', sql, params);
       return records;
     } catch (error) {
       console.error('Failed to execute query:', error);

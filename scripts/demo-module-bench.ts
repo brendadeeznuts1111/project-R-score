@@ -1,15 +1,19 @@
 #!/usr/bin/env bun
 
-import { performance } from "node:perf_hooks";
-import { TIER1_SOURCES, buildBaselineForDemo, validateTier1SourcesForDemo } from "./demo-tier1-baselines";
+import { performance } from 'node:perf_hooks';
+import {
+  TIER1_SOURCES,
+  buildBaselineForDemo,
+  validateTier1SourcesForDemo,
+} from './demo-tier1-baselines';
 
 function parseArg(name: string): string {
   const prefix = `--${name}=`;
-  const hit = Bun.argv.find((arg) => arg.startsWith(prefix));
+  const hit = Bun.argv.find(arg => arg.startsWith(prefix));
   if (hit) return hit.slice(prefix.length).trim();
-  const idx = Bun.argv.findIndex((arg) => arg === `--${name}`);
-  if (idx >= 0) return String(Bun.argv[idx + 1] || "").trim();
-  return "";
+  const idx = Bun.argv.findIndex(arg => arg === `--${name}`);
+  if (idx >= 0) return String(Bun.argv[idx + 1] || '').trim();
+  return '';
 }
 
 function hash(input: string): number {
@@ -29,11 +33,11 @@ function runHashBench(id: string, iterations: number): { elapsedMs: number; chec
 }
 
 function runStringBench(iterations: number): { elapsedMs: number; checksum: number } {
-  const source = "  bun-v1.3.9-string-path  ";
+  const source = '  bun-v1.3.9-string-path  ';
   let sink = 0;
   const t0 = performance.now();
   for (let i = 0; i < iterations; i++) {
-    const out = source.trim().replace("string", "bench").startsWith("bun-") ? 1 : 0;
+    const out = source.trim().replace('string', 'bench').startsWith('bun-') ? 1 : 0;
     sink ^= out;
   }
   return { elapsedMs: Math.max(0.001, performance.now() - t0), checksum: sink >>> 0 };
@@ -49,9 +53,9 @@ function runMapSizeBench(iterations: number): { elapsedMs: number; checksum: num
 }
 
 function main() {
-  const id = parseArg("id");
+  const id = parseArg('id');
   if (!id) {
-    console.error("[demo-bench] missing --id=<demo-id>");
+    console.error('[demo-bench] missing --id=<demo-id>');
     process.exit(1);
   }
 
@@ -63,12 +67,17 @@ function main() {
 
   const baseline = buildBaselineForDemo(id);
   const { mode, iterations, minOpsPerSec } = baseline.benchmark;
-  const run = mode === "string" ? runStringBench : mode === "map-size" ? runMapSizeBench : (n: number) => runHashBench(id, n);
+  const run =
+    mode === 'string'
+      ? runStringBench
+      : mode === 'map-size'
+        ? runMapSizeBench
+        : (n: number) => runHashBench(id, n);
   const { elapsedMs, checksum } = run(iterations);
   const opsPerSec = Math.round((iterations / elapsedMs) * 1000);
-  const status = opsPerSec >= minOpsPerSec ? "pass" : "fail";
+  const status = opsPerSec >= minOpsPerSec ? 'pass' : 'fail';
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         id,
@@ -79,7 +88,7 @@ function main() {
         baselineMinOpsPerSec: minOpsPerSec,
         status,
         checksum,
-        tier1Sources: baseline.sourceIds.map((sourceId) => {
+        tier1Sources: baseline.sourceIds.map(sourceId => {
           const source = TIER1_SOURCES[sourceId];
           return {
             id: source.id,
@@ -93,7 +102,7 @@ function main() {
     )
   );
 
-  if (status !== "pass") {
+  if (status !== 'pass') {
     process.exit(1);
   }
 }

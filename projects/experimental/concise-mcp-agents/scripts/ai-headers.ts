@@ -544,7 +544,7 @@ class AIHeaderGenerator {
     const results: HeaderAnalysis[] = [];
     const files = this.getTypeScriptFiles(dirPath);
 
-    console.log(`🤖 Starting AI analysis of ${files.length} files...`);
+    console.info(`🤖 Starting AI analysis of ${files.length} files...`);
 
     for (const file of files) {
       try {
@@ -583,40 +583,40 @@ class AIHeaderGenerator {
   async generateHeaders(dirPath: string, apply: boolean = false): Promise<void> {
     const analyses = await this.analyzeDirectory(dirPath);
 
-    console.log(`🤖 AI Header Analysis Complete - ${analyses.length} files processed\n`);
+    console.info(`🤖 AI Header Analysis Complete - ${analyses.length} files processed\n`);
 
     for (const analysis of analyses) {
       const header = this.generateHeader(analysis);
       const relativePath = analysis.file.replace(process.cwd() + '/', '');
 
-      console.log(`📄 ${relativePath}`);
-      console.log(`   ${header}`);
-      console.log(`   🤖 AI Reasoning: ${analysis.aiReasoning || 'Pattern-based analysis'}`);
-      console.log(`   📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}% | Context: ${(analysis.contextScore * 100).toFixed(1)}%`);
+      console.info(`📄 ${relativePath}`);
+      console.info(`   ${header}`);
+      console.info(`   🤖 AI Reasoning: ${analysis.aiReasoning || 'Pattern-based analysis'}`);
+      console.info(`   📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}% | Context: ${(analysis.contextScore * 100).toFixed(1)}%`);
 
       if (analysis.suggestions.length > 0) {
-        console.log(`   💡 AI Suggestions:`);
+        console.info(`   💡 AI Suggestions:`);
         analysis.suggestions.forEach(suggestion => {
-          console.log(`      • ${suggestion}`);
+          console.info(`      • ${suggestion}`);
         });
       }
 
       if (apply) {
         await this.applyHeader(analysis.file, header);
-        console.log(`   ✅ Applied header`);
+        console.info(`   ✅ Applied header`);
       }
 
-      console.log('');
+      console.info('');
     }
 
     const avgConfidence = analyses.reduce((sum, a) => sum + a.confidence, 0) / analyses.length;
     const avgContext = analyses.reduce((sum, a) => sum + a.contextScore, 0) / analyses.length;
-    console.log(`📊 Analysis Summary:`);
-    console.log(`   🤖 AI Confidence: ${(avgConfidence * 100).toFixed(1)}%`);
-    console.log(`   🎯 Context Score: ${(avgContext * 100).toFixed(1)}%`);
+    console.info(`📊 Analysis Summary:`);
+    console.info(`   🤖 AI Confidence: ${(avgConfidence * 100).toFixed(1)}%`);
+    console.info(`   🎯 Context Score: ${(avgContext * 100).toFixed(1)}%`);
 
     if (!apply) {
-      console.log(`💡 Run with --apply to automatically add headers to files`);
+      console.info(`💡 Run with --apply to automatically add headers to files`);
     }
   }
 
@@ -668,21 +668,21 @@ try {
       if (isFile) {
         // Analyze single file
         const analysis = await generator.analyzeFile(targetPath);
-        console.log(`🤖 AI Header Analysis for ${targetPath}\n`);
+        console.info(`🤖 AI Header Analysis for ${targetPath}\n`);
         const header = generator.generateHeader(analysis);
-        console.log(`📄 ${relative(process.cwd(), targetPath)}`);
-        console.log(`   ${header}`);
-        console.log(`   🤖 AI Reasoning: ${analysis.aiReasoning || 'Pattern-based analysis'}`);
-        console.log(`   📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}% | Context: ${(analysis.contextScore * 100).toFixed(1)}%`);
+        console.info(`📄 ${relative(process.cwd(), targetPath)}`);
+        console.info(`   ${header}`);
+        console.info(`   🤖 AI Reasoning: ${analysis.aiReasoning || 'Pattern-based analysis'}`);
+        console.info(`   📊 Confidence: ${(analysis.confidence * 100).toFixed(1)}% | Context: ${(analysis.contextScore * 100).toFixed(1)}%`);
         if (analysis.suggestions.length > 0) {
-          console.log(`   💡 AI Suggestions:`);
+          console.info(`   💡 AI Suggestions:`);
           analysis.suggestions.forEach(suggestion => {
-            console.log(`      • ${suggestion}`);
+            console.info(`      • ${suggestion}`);
           });
         }
         if (apply) {
           await generator.applyHeader(targetPath, header);
-          console.log(`   ✅ Header applied`);
+          console.info(`   ✅ Header applied`);
         }
       } else {
         await generator.generateHeaders(targetDir, apply);
@@ -694,16 +694,16 @@ try {
         const analysis = await generator.analyzeFile(targetPath);
         const header = generator.generateHeader(analysis);
         await generator.applyHeader(targetPath, header);
-        console.log(`✅ Applied header to ${targetPath}: ${header}`);
+        console.info(`✅ Applied header to ${targetPath}: ${header}`);
       } else {
         await generator.generateHeaders(targetDir, true);
       }
       break;
 
     case 'learn':
-      console.log(`🧠 AI Learning Mode - Analyzing codebase patterns...\n`);
+      console.info(`🧠 AI Learning Mode - Analyzing codebase patterns...\n`);
       await generator.generateHeaders(targetDir, false);
-      console.log(`✅ AI learning complete - improved pattern recognition for future analyses`);
+      console.info(`✅ AI learning complete - improved pattern recognition for future analyses`);
       break;
 
     case 'stats':
@@ -713,21 +713,21 @@ try {
         return acc;
       }, {} as Record<string, number>);
 
-      console.log(`📊 AI Header Statistics:\n`);
-      console.log(`Total Files Analyzed: ${analyses.length}`);
-      console.log(`Average Confidence: ${(analyses.reduce((sum, a) => sum + a.confidence, 0) / analyses.length * 100).toFixed(1)}%`);
-      console.log(`Average Context Score: ${(analyses.reduce((sum, a) => sum + a.contextScore, 0) / analyses.length * 100).toFixed(1)}%\n`);
+      console.info(`📊 AI Header Statistics:\n`);
+      console.info(`Total Files Analyzed: ${analyses.length}`);
+      console.info(`Average Confidence: ${(analyses.reduce((sum, a) => sum + a.confidence, 0) / analyses.length * 100).toFixed(1)}%`);
+      console.info(`Average Context Score: ${(analyses.reduce((sum, a) => sum + a.contextScore, 0) / analyses.length * 100).toFixed(1)}%\n`);
 
-      console.log(`Category Distribution:`);
+      console.info(`Category Distribution:`);
       Object.entries(categoryStats)
         .sort(([,a], [,b]) => b - a)
         .forEach(([category, count]) => {
-          console.log(`  ${category}: ${count} files`);
+          console.info(`  ${category}: ${count} files`);
         });
       break;
 
     default:
-      console.log(`🤖 AI Header Generator v3.0 - Advanced ML-Powered Analysis
+      console.info(`🤖 AI Header Generator v3.0 - Advanced ML-Powered Analysis
 
 USAGE:
   bun ai:analyze [directory]          # AI-powered header analysis (dry run)

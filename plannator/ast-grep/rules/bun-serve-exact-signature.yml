@@ -1,0 +1,9 @@
+id: bun-serve-exact-signature
+language: TypeScript
+severity: error
+message: "Bun.serve expects an options object"
+note: "Signature is Bun.serve({ port, fetch, routes? }) — see docs/references/bun-api-reference.md"
+ignores:
+  - ".agents/**"
+rule:
+  pattern: Bun.serve()

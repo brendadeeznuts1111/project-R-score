@@ -19,8 +19,8 @@
  * Validates our implementation against the official documentation at https://bun.com/docs/runtime/color
  */
 
-console.log('🔍 Official Bun.color Specification Validation');
-console.log('==============================================\n');
+console.info('🔍 Official Bun.color Specification Validation');
+console.info('==============================================\n');
 
 // Test all official examples from the documentation
 const officialExamples = {
@@ -99,11 +99,11 @@ let totalTests = 0;
 let passedTests = 0;
 let failedTests = [];
 
-console.log('📋 Testing Official Examples from Bun Documentation\n');
+console.info('📋 Testing Official Examples from Bun Documentation\n');
 
 // Test {rgba} object format
-console.log('🎨 1. {rgba} Object Format');
-console.log('─'.repeat(40));
+console.info('🎨 1. {rgba} Object Format');
+console.info('─'.repeat(40));
 
 officialExamples.rgbaObject.forEach((example, index) => {
     totalTests++;
@@ -112,7 +112,7 @@ officialExamples.rgbaObject.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -120,13 +120,13 @@ officialExamples.rgbaObject.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected: ${JSON.stringify(example.expected)})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected: ${JSON.stringify(example.expected)})`);
     }
 });
 
 // Test {rgb} object format
-console.log('\n🎨 2. {rgb} Object Format');
-console.log('─'.repeat(40));
+console.info('\n🎨 2. {rgb} Object Format');
+console.info('─'.repeat(40));
 
 officialExamples.rgbObject.forEach((example, index) => {
     totalTests++;
@@ -135,7 +135,7 @@ officialExamples.rgbObject.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -143,13 +143,13 @@ officialExamples.rgbObject.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected: ${JSON.stringify(example.expected)})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected: ${JSON.stringify(example.expected)})`);
     }
 });
 
 // Test [rgba] array format
-console.log('\n📐 3. [rgba] Array Format');
-console.log('─'.repeat(40));
+console.info('\n📐 3. [rgba] Array Format');
+console.info('─'.repeat(40));
 
 officialExamples.rgbaArray.forEach((example, index) => {
     totalTests++;
@@ -158,7 +158,7 @@ officialExamples.rgbaArray.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}]`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}]`);
     } else {
         failedTests.push({
             format: example.format,
@@ -166,13 +166,13 @@ officialExamples.rgbaArray.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}] (expected: [${example.expected.join(", ")}])`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}] (expected: [${example.expected.join(", ")}])`);
     }
 });
 
 // Test [rgb] array format
-console.log('\n📐 4. [rgb] Array Format');
-console.log('─'.repeat(40));
+console.info('\n📐 4. [rgb] Array Format');
+console.info('─'.repeat(40));
 
 officialExamples.rgbArray.forEach((example, index) => {
     totalTests++;
@@ -181,7 +181,7 @@ officialExamples.rgbArray.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}]`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}]`);
     } else {
         failedTests.push({
             format: example.format,
@@ -189,13 +189,13 @@ officialExamples.rgbArray.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}] (expected: [${example.expected.join(", ")}])`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → [${result?.join(", ")}] (expected: [${example.expected.join(", ")}])`);
     }
 });
 
 // Test hex string format
-console.log('\n🌐 5. Hex String Format');
-console.log('─'.repeat(40));
+console.info('\n🌐 5. Hex String Format');
+console.info('─'.repeat(40));
 
 officialExamples.hexString.forEach((example, index) => {
     totalTests++;
@@ -204,7 +204,7 @@ officialExamples.hexString.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${result}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${result}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -212,13 +212,13 @@ officialExamples.hexString.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${result} (expected: ${example.expected})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${result} (expected: ${example.expected})`);
     }
 });
 
 // Test HEX string format
-console.log('\n🌐 6. HEX String Format');
-console.log('─'.repeat(40));
+console.info('\n🌐 6. HEX String Format');
+console.info('─'.repeat(40));
 
 officialExamples.hexUpperString.forEach((example, index) => {
     totalTests++;
@@ -227,7 +227,7 @@ officialExamples.hexUpperString.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${result}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${result}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -235,36 +235,36 @@ officialExamples.hexUpperString.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${result} (expected: ${example.expected})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${result} (expected: ${example.expected})`);
     }
 });
 
 // Validation Results
-console.log('\n🎯 VALIDATION RESULTS');
-console.log('─'.repeat(50));
+console.info('\n🎯 VALIDATION RESULTS');
+console.info('─'.repeat(50));
 
 const passRate = Math.round((passedTests / totalTests) * 100);
-console.log(`📊 Total Tests: ${totalTests}`);
-console.log(`✅ Passed: ${passedTests}`);
-console.log(`❌ Failed: ${failedTests.length}`);
-console.log(`📈 Pass Rate: ${passRate}%`);
+console.info(`📊 Total Tests: ${totalTests}`);
+console.info(`✅ Passed: ${passedTests}`);
+console.info(`❌ Failed: ${failedTests.length}`);
+console.info(`📈 Pass Rate: ${passRate}%`);
 
 if (failedTests.length > 0) {
-    console.log('\n❌ FAILED TESTS:');
+    console.info('\n❌ FAILED TESTS:');
     failedTests.forEach((failure, index) => {
-        console.log(`${index + 1}. Format: ${failure.format}`);
-        console.log(`   Input: ${JSON.stringify(failure.input)}`);
-        console.log(`   Expected: ${JSON.stringify(failure.expected)}`);
-        console.log(`   Actual: ${JSON.stringify(failure.actual)}`);
-        console.log('');
+        console.info(`${index + 1}. Format: ${failure.format}`);
+        console.info(`   Input: ${JSON.stringify(failure.input)}`);
+        console.info(`   Expected: ${JSON.stringify(failure.expected)}`);
+        console.info(`   Actual: ${JSON.stringify(failure.actual)}`);
+        console.info('');
     });
 } else {
-    console.log('\n🎉 ALL TESTS PASSED! Perfect compliance with official Bun.color specification!');
+    console.info('\n🎉 ALL TESTS PASSED! Perfect compliance with official Bun.color specification!');
 }
 
 // Specification Compliance Check
-console.log('📋 SPECIFICATION COMPLIANCE CHECK');
-console.log('─'.repeat(50));
+console.info('📋 SPECIFICATION COMPLIANCE CHECK');
+console.info('─'.repeat(50));
 
 const specChecks = [
     {
@@ -336,28 +336,28 @@ specChecks.forEach((check, index) => {
     const passed = check.check();
     if (passed) {
         specPasses++;
-        console.log(`${index + 1}. ✅ ${check.name}`);
+        console.info(`${index + 1}. ✅ ${check.name}`);
     } else {
-        console.log(`${index + 1}. ❌ ${check.name}`);
+        console.info(`${index + 1}. ❌ ${check.name}`);
     }
 });
 
 const specPassRate = Math.round((specPasses / specChecks.length) * 100);
-console.log(`\n📊 Specification Compliance: ${specPassRate}%`);
+console.info(`\n📊 Specification Compliance: ${specPassRate}%`);
 
 // Final Result
-console.log('\n🏆 FINAL VALIDATION RESULT');
-console.log('─'.repeat(50));
+console.info('\n🏆 FINAL VALIDATION RESULT');
+console.info('─'.repeat(50));
 
 if (passRate === 100 && specPassRate === 100) {
-    console.log('🎉 PERFECT COMPLIANCE ACHIEVED!');
-    console.log('✅ All official examples work exactly as documented');
-    console.log('✅ All type specifications are correctly implemented');
-    console.log('✅ Implementation is 100% compliant with official Bun.color API');
-    console.log('\n🚀 Your canvas system uses the official Bun.color API perfectly!');
+    console.info('🎉 PERFECT COMPLIANCE ACHIEVED!');
+    console.info('✅ All official examples work exactly as documented');
+    console.info('✅ All type specifications are correctly implemented');
+    console.info('✅ Implementation is 100% compliant with official Bun.color API');
+    console.info('\n🚀 Your canvas system uses the official Bun.color API perfectly!');
 } else {
-    console.log('⚠️  COMPLIANCE ISSUES DETECTED');
-    console.log(`📊 Example Compliance: ${passRate}%`);
-    console.log(`📊 Specification Compliance: ${specPassRate}%`);
-    console.log('\n🔧 Please review the failed tests above for fixes.');
+    console.info('⚠️  COMPLIANCE ISSUES DETECTED');
+    console.info(`📊 Example Compliance: ${passRate}%`);
+    console.info(`📊 Specification Compliance: ${specPassRate}%`);
+    console.info('\n🔧 Please review the failed tests above for fixes.');
 }

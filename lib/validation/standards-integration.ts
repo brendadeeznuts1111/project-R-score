@@ -89,7 +89,7 @@ export class StandardsIntegration {
 `;
 
     await write('.github/PULL_REQUEST_TEMPLATE.md', template);
-    console.log('✅ PR template with standards checklist generated');
+    console.info('✅ PR template with standards checklist generated');
   }
 
   /**
@@ -226,7 +226,7 @@ jobs:
 `;
 
     await write('.github/workflows/standards-compliance.yml', workflow);
-    console.log('✅ GitHub Actions standards workflow generated');
+    console.info('✅ GitHub Actions standards workflow generated');
   }
 
   // ============================================================================
@@ -350,7 +350,7 @@ Build a complete feature demonstrating:
 `;
 
     await write('ONBOARDING.md', onboardingGuide);
-    console.log('✅ Onboarding materials generated');
+    console.info('✅ Onboarding materials generated');
   }
 
   /**
@@ -439,7 +439,7 @@ Build a complete feature demonstrating:
     };
 
     await write('standards-quiz.json', JSON.stringify(quiz, null, 2));
-    console.log('✅ Standards certification quiz generated');
+    console.info('✅ Standards certification quiz generated');
   }
 
   // ============================================================================
@@ -559,7 +559,7 @@ What was the decision? Provide a clear and concise description.
 `;
 
     await write('docs/ADR-template.md', template);
-    console.log('✅ ADR template with standards references generated');
+    console.info('✅ ADR template with standards references generated');
   }
 
   // ============================================================================
@@ -580,38 +580,38 @@ import { read } from 'bun';
 
 const standardsCheck = {
   async checkTypeScriptStrictMode() {
-    console.log('🔍 Checking TypeScript strict mode...');
+    console.info('🔍 Checking TypeScript strict mode...');
     // Implementation would check tsconfig.json strict settings
     return true;
   },
 
   async checkBundleSize() {
-    console.log('🔍 Checking bundle size limits...');
+    console.info('🔍 Checking bundle size limits...');
     // Implementation would check built bundle sizes
     return true;
   },
 
   async checkTestCoverage() {
-    console.log('🔍 Checking 90%+ test coverage...');
+    console.info('🔍 Checking 90%+ test coverage...');
     // Implementation would run coverage and check threshold
     return true;
   },
 
   async checkSecurityStandards() {
-    console.log('🔍 Checking security standards...');
+    console.info('🔍 Checking security standards...');
     // Implementation would check for prohibited functions
     return true;
   },
 
   async checkDocumentation() {
-    console.log('🔍 Checking documentation standards...');
+    console.info('🔍 Checking documentation standards...');
     // Implementation would check JSDoc coverage
     return true;
   }
 };
 
 async function main() {
-  console.log('📋 Running Standards Compliance Check\\n');
+  console.info('📋 Running Standards Compliance Check\\n');
 
   const checks = [
     standardsCheck.checkTypeScriptStrictMode,
@@ -628,26 +628,26 @@ async function main() {
     try {
       const result = await check();
       if (result) {
-        console.log('✅ PASSED');
+        console.info('✅ PASSED');
         passed++;
       } else {
-        console.log('❌ FAILED');
+        console.info('❌ FAILED');
         failed++;
       }
     } catch (error) {
-      console.log('❌ ERROR:', error.message);
+      console.info('❌ ERROR:', error.message);
       failed++;
     }
-    console.log('');
+    console.info('');
   }
 
-  console.log(\`📊 Results: \${passed} passed, \${failed} failed\`);
+  console.info(\`📊 Results: \${passed} passed, \${failed} failed\`);
 
   if (failed > 0) {
-    console.log('❌ Standards compliance check failed');
+    console.info('❌ Standards compliance check failed');
     process.exit(1);
   } else {
-    console.log('✅ All standards compliance checks passed');
+    console.info('✅ All standards compliance checks passed');
   }
 }
 
@@ -705,26 +705,26 @@ async function generateStandardsReport(): Promise<StandardsReport> {
 }
 
 async function main() {
-  console.log('📊 Generating Standards Compliance Report...');
+  console.info('📊 Generating Standards Compliance Report...');
 
   const report = await generateStandardsReport();
 
   await write('standards-report.json', JSON.stringify(report, null, 2));
 
-  console.log('✅ Report generated: standards-report.json');
-  console.log(\`📈 Overall Score: \${report.overallScore}%\`);
+  console.info('✅ Report generated: standards-report.json');
+  console.info(\`📈 Overall Score: \${report.overallScore}%\`);
 
   // Print summary
-  console.log('\\n📋 Category Scores:');
+  console.info('\\n📋 Category Scores:');
   Object.entries(report.categories).forEach(([category, score]) => {
     const icon = score >= 95 ? '🟢' : score >= 85 ? '🟡' : '🔴';
-    console.log(\`  \${icon} \${category}: \${score}%\`);
+    console.info(\`  \${icon} \${category}: \${score}%\`);
   });
 
   if (report.violations.length > 0) {
-    console.log('\\n⚠️  Standards Violations:');
+    console.info('\\n⚠️  Standards Violations:');
     report.violations.forEach(violation => {
-      console.log(\`  \${violation.severity.toUpperCase()}: \${violation.description}\`);
+      console.info(\`  \${violation.severity.toUpperCase()}: \${violation.description}\`);
     });
   }
 }
@@ -753,7 +753,7 @@ main().catch(console.error);
       },
     };
 
-    console.log('✅ Quality assurance automation scripts generated');
+    console.info('✅ Quality assurance automation scripts generated');
   }
 
   // ============================================================================
@@ -807,7 +807,7 @@ const STANDARDS: PerformanceStandards = {
 
 class PerformanceStandardsMonitor {
   async measureComponent(componentPath: string, type: keyof PerformanceStandards['bundleSize']) {
-    console.log(\`📏 Measuring performance for \${componentPath}...\`);
+    console.info(\`📏 Measuring performance for \${componentPath}...\`);
 
     const metrics = {
       bundleSize: await this.measureBundleSize(componentPath),
@@ -882,7 +882,7 @@ class PerformanceStandardsMonitor {
 }
 
 async function main() {
-  console.log('⚡ Performance Standards Monitor\\n');
+  console.info('⚡ Performance Standards Monitor\\n');
 
   const monitor = new PerformanceStandardsMonitor();
 
@@ -900,19 +900,19 @@ async function main() {
     measurements.push(measurement);
 
     const status = measurement.standardsCompliant ? '✅' : '❌';
-    console.log(\`\${status} \${component.path}: \${measurement.compliance.overall ? 'Compliant' : 'Non-compliant'}\`);
+    console.info(\`\${status} \${component.path}: \${measurement.compliance.overall ? 'Compliant' : 'Non-compliant'}\`);
   }
 
   const report = await monitor.generateReport(measurements);
 
-  console.log(\`\\n📊 Performance Standards Report\`);
-  console.log(\`Compliance Rate: \${report.summary.complianceRate.toFixed(1)}%\`);
-  console.log(\`Compliant: \${report.summary.compliantComponents}/\${report.summary.totalComponents}\`);
+  console.info(\`\\n📊 Performance Standards Report\`);
+  console.info(\`Compliance Rate: \${report.summary.complianceRate.toFixed(1)}%\`);
+  console.info(\`Compliant: \${report.summary.compliantComponents}/\${report.summary.totalComponents}\`);
 
   if (report.violations.length > 0) {
-    console.log('\\n⚠️  Standards Violations:');
+    console.info('\\n⚠️  Standards Violations:');
     report.violations.forEach(violation => {
-      console.log(\`  \${violation.component}: \${violation.violations.join(', ')}\`);
+      console.info(\`  \${violation.component}: \${violation.violations.join(', ')}\`);
     });
   }
 }
@@ -921,7 +921,7 @@ main().catch(console.error);
 `;
 
     await write('scripts/performance-standards-monitor', monitoring);
-    console.log('✅ Performance standards monitoring script generated');
+    console.info('✅ Performance standards monitoring script generated');
   }
 
   // ============================================================================
@@ -932,7 +932,7 @@ main().catch(console.error);
    * Implement all standards integration components
    */
   async implementAll(): Promise<void> {
-    console.log('🚀 Implementing Development Standards Integration...\n');
+    console.info('🚀 Implementing Development Standards Integration...\n');
 
     try {
       // Create necessary directories
@@ -955,23 +955,23 @@ main().catch(console.error);
       // Performance Monitoring Integration
       await this.generatePerformanceMonitoring();
 
-      console.log('\n✅ Development Standards Integration Complete!');
-      console.log('\n📁 Generated Files:');
-      console.log('  📝 .github/PULL_REQUEST_TEMPLATE.md');
-      console.log('  ⚙️  .github/workflows/standards-compliance.yml');
-      console.log('  📖 ONBOARDING.md');
-      console.log('  📋 standards-quiz.json');
-      console.log('  📄 docs/ADR-template.md');
-      console.log('  🔧 scripts/standards-check');
-      console.log('  📊 scripts/standards-report');
-      console.log('  ⚡ scripts/performance-standards-monitor');
+      console.info('\n✅ Development Standards Integration Complete!');
+      console.info('\n📁 Generated Files:');
+      console.info('  📝 .github/PULL_REQUEST_TEMPLATE.md');
+      console.info('  ⚙️  .github/workflows/standards-compliance.yml');
+      console.info('  📖 ONBOARDING.md');
+      console.info('  📋 standards-quiz.json');
+      console.info('  📄 docs/ADR-template.md');
+      console.info('  🔧 scripts/standards-check');
+      console.info('  📊 scripts/standards-report');
+      console.info('  ⚡ scripts/performance-standards-monitor');
 
-      console.log('\n🎯 Next Steps:');
-      console.log('  1. Commit and push the generated files');
-      console.log('  2. Configure GitHub Actions to run on PRs');
-      console.log('  3. Update team onboarding process');
-      console.log('  4. Start using ADR template for decisions');
-      console.log('  5. Monitor compliance reports');
+      console.info('\n🎯 Next Steps:');
+      console.info('  1. Commit and push the generated files');
+      console.info('  2. Configure GitHub Actions to run on PRs');
+      console.info('  3. Update team onboarding process');
+      console.info('  4. Start using ADR template for decisions');
+      console.info('  5. Monitor compliance reports');
     } catch (error) {
       console.error('❌ Implementation failed:', error);
       throw error;
@@ -1023,7 +1023,7 @@ async function main() {
       await integration.generatePerformanceMonitoring();
       break;
     default:
-      console.log(`
+      console.info(`
 🎯 Standards Integration CLI
 
 Usage: bun standards-integration [command]

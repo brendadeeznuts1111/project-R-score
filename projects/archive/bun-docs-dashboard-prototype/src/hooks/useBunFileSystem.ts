@@ -82,7 +82,7 @@ export function useBunFileSystem() {
     try {
       // Simulate Bun's file writing
       // In real Bun: await Bun.write(path, content)
-      console.log(`Writing to ${path}:`, content);
+      console.info(`Writing to ${path}:`, content);
     } catch (error) {
       console.error('Failed to write file:', error);
     }
@@ -92,7 +92,7 @@ export function useBunFileSystem() {
     try {
       // Simulate Bun's directory creation
       // In real Bun: await Bun.write(path + '/', '')
-      console.log(`Creating directory: ${path}`);
+      console.info(`Creating directory: ${path}`);
     } catch (error) {
       console.error('Failed to create directory:', error);
     }

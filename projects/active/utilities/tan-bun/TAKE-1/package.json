@@ -1,0 +1,7 @@
+{
+  "name": "TAKE-1",
+  "scripts": {
+    "build": "bun --bun vite build",
+    "start": "bun run server.ts"
+  }
+}

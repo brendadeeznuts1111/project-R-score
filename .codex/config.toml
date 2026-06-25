@@ -1,0 +1,6 @@
+[mcp_servers.bun-docs]
+args = [
+    "run",
+    "/Users/nolarose/Projects/tools/bun-docs-mcp.ts",
+]
+command = "/Users/nolarose/.bun/bin/bun"

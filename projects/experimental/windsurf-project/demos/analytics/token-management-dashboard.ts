@@ -112,7 +112,7 @@ class TokenManagementDashboard {
   }
 
   start(port: number = 3009) {
-    console.log(`🔑 Token Management Dashboard starting on port ${port}...`);
+    console.info(`🔑 Token Management Dashboard starting on port ${port}...`);
     serve({
       port,
       fetch: (req) => {

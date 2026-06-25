@@ -307,15 +307,15 @@ export class BunHelpers {
       
       // WebSocket handlers
       open: (ws: any) => {
-        console.log('WebSocket connection opened');
+        console.info('WebSocket connection opened');
       },
       
       message: (ws: any, message: string | Buffer) => {
-        console.log('Received message:', message.toString());
+        console.info('Received message:', message.toString());
       },
       
       close: (ws: any, code: number, reason: string) => {
-        console.log('WebSocket connection closed:', code, reason);
+        console.info('WebSocket connection closed:', code, reason);
       }
     };
   }

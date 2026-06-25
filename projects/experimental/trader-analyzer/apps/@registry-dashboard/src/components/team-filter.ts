@@ -116,7 +116,7 @@ export function filterTeam(team: TeamKey | 'all'): void {
 	updateTeamInfoPanel(teamInfo);
 
 	// Notify Telegram (optional: log filter action)
-	console.log(`Filtered to ${teamInfo.name} team`);
+	console.info(`Filtered to ${teamInfo.name} team`);
 }
 
 /**

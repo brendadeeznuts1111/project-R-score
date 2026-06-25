@@ -27,5 +27,5 @@ beforeAll(() => {
     global.testStartTime = Date.now();
     global.testEnvironment = "comprehensive-test";
 
-    console.log("✅ Global test utilities initialized");
+    console.info("✅ Global test utilities initialized");
 });

@@ -292,7 +292,7 @@ describe('DocumentationURLHandler', () => {
         highlight?: boolean;
       } = {
         type: 'bun',
-        example: 'console.log("Hello")',
+        example: 'console.info("Hello")',
         language: 'javascript',
         highlight: true
       };
@@ -301,7 +301,7 @@ describe('DocumentationURLHandler', () => {
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
       expect(parsed.valid).toBe(true);
-      expect(parsed.fragment?.example).toBe('console.log("Hello")');
+      expect(parsed.fragment?.example).toBe('console.info("Hello")');
       expect(parsed.fragment?.language).toBe('javascript');
       expect(parsed.fragment?.highlight).toBe('true');
       expect(parsed.fragment?.type).toBe('code-example');
@@ -404,10 +404,10 @@ describe('Enhanced Docs Reference', () => {
 
   describe('buildExampleDocsUrl', () => {
     test('should build example URL', () => {
-      const url = buildExampleDocsUrl('/docs/api/utils', 'console.log("test")', 'javascript');
+      const url = buildExampleDocsUrl('/docs/api/utils', 'console.info("test")', 'javascript');
 
       expect(url.includes('#')).toBe(true);
-      expect(url.includes('example=console.log(%22test%22)')).toBe(true);
+      expect(url.includes('example=console.info(%22test%22)')).toBe(true);
       expect(url.includes('language=javascript')).toBe(true);
       expect(url.includes('highlight=true')).toBe(true);
       expect(url.includes('runnable=true')).toBe(true);
@@ -504,7 +504,7 @@ describe('Enhanced Utility Factory', () => {
         category: UtilsCategory.FILE_SYSTEM,
         docUrl: 'https://bun.sh/docs/api/utils#test',
         description: 'Test utility for fragment support',
-        exampleCode: 'console.log("test");',
+        exampleCode: 'console.info("test");',
         fragment: {
           example: 'basic',
           interactive: 'true'

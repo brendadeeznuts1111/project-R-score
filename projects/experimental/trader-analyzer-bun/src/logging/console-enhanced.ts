@@ -54,7 +54,7 @@ class ConsoleEnhanced {
 
   success(code: string, message: string, ...args: any[]): void {
     if (this.level <= ConsoleLogLevel.SUCCESS) {
-      console.log(this.formatMessage("SUCCESS", code, message), ...args)
+      console.info(this.formatMessage("SUCCESS", code, message), ...args)
     }
   }
 

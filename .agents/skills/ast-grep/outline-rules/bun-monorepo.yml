@@ -1,0 +1,458 @@
+# Extra outline extractors for Bun / sports-terminal / kimi-plugin patterns.
+# Use: ast-grep outline --bun-rules  (or: --outline-rules outline-rules/bun-monorepo.yml)
+---
+id: bun-serve-call
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: Bun.serve($$$OPTS)
+name: Bun.serve
+isExported: false
+---
+id: bun-serve-call-tsx
+language: Tsx
+role: item
+symbolType: function
+rule:
+  pattern: Bun.serve($$$OPTS)
+name: Bun.serve
+isExported: false
+---
+id: bun-file-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.file($$$PATH)
+name: Bun.file
+isExported: false
+---
+id: bun-file-call-tsx
+language: Tsx
+role: item
+symbolType: call
+rule:
+  pattern: Bun.file($$$PATH)
+name: Bun.file
+isExported: false
+---
+id: bun-write-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.write($$$ARGS)
+name: Bun.write
+isExported: false
+---
+id: bun-spawn-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.spawn($$$ARGS)
+name: Bun.spawn
+isExported: false
+---
+id: bun-sleep-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.sleep($$$MS)
+name: Bun.sleep
+isExported: false
+---
+id: bun-hash-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.hash($$$DATA)
+name: Bun.hash
+isExported: false
+---
+id: bun-env-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.env
+name: Bun.env
+isExported: false
+---
+id: bun-sqlite-import
+language: TypeScript
+role: item
+symbolType: module
+rule:
+  pattern: import { $$$ } from "bun:sqlite"
+name: bun:sqlite
+isImport: true
+isExported: false
+---
+id: bun-test-import
+language: TypeScript
+role: item
+symbolType: module
+rule:
+  pattern: import { $$$ } from "bun:test"
+name: bun:test
+isImport: true
+isExported: false
+---
+id: structured-logger
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: const $NAME = createLogger($LABEL)
+name: $NAME
+isExported: false
+---
+id: structured-logger-tsx
+language: Tsx
+role: item
+symbolType: constant
+rule:
+  pattern: const $NAME = createLogger($LABEL)
+name: $NAME
+isExported: false
+---
+id: export-route-handler
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: export async function $NAME($$$PARAMS) { $$$BODY }
+name: $NAME
+isExported: true
+---
+id: route-handler
+language: TypeScript
+role: item
+symbolType: function
+rule:
+  pattern: async function $NAME($$$PARAMS) { $$$BODY }
+name: $NAME
+isExported: false
+---
+id: outbound-fetch
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: fetch($$$ARGS)
+name: fetch
+isExported: false
+---
+id: websocket-client
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new WebSocket($$$URL)
+name: WebSocket
+isExported: false
+---
+id: mcp-tool-def
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: |
+    {
+      name: $NAME,
+      $$$REST
+    }
+name: $NAME
+isExported: false
+---
+id: bun-glob-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.Glob($$$PAT)
+name: Bun.Glob
+isExported: false
+---
+id: bun-nanoseconds-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.nanoseconds($$$)
+name: Bun.nanoseconds
+isExported: false
+---
+id: bun-password-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.password.$METHOD($$$)
+name: Bun.password
+isExported: false
+---
+id: bun-markdown-ansi
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.markdown.ansi($$$)
+name: Bun.markdown.ansi
+isExported: false
+---
+id: bun-inspect-table-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.inspect.table($$$)
+name: Bun.inspect.table
+isExported: false
+---
+id: bun-which-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.which($$$)
+name: Bun.which
+isExported: false
+---
+id: bun-remove-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.remove($$$)
+name: Bun.remove
+isExported: false
+---
+id: bun-secrets-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.secrets
+name: Bun.secrets
+isExported: false
+---
+id: bun-build-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.build($$$OPTS)
+name: Bun.build
+isExported: false
+---
+id: bun-spawn-sync-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.spawnSync($$$ARGS)
+name: Bun.spawnSync
+isExported: false
+---
+id: bun-listen-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.listen($$$OPTS)
+name: Bun.listen
+isExported: false
+---
+id: bun-connect-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.connect($$$OPTS)
+name: Bun.connect
+isExported: false
+---
+id: bun-sql-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.SQL($$$OPTS)
+name: Bun.SQL
+isExported: false
+---
+id: bun-sql-tag-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.sql
+name: Bun.sql
+isExported: false
+---
+id: worker-spawn
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Worker($$$URL)
+name: Worker
+isExported: false
+---
+id: bun-plugin-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.plugin($$$OPTS)
+name: Bun.plugin
+isExported: false
+---
+id: html-rewriter-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new HTMLRewriter($$$)
+name: HTMLRewriter
+isExported: false
+---
+id: bun-toml-parse
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.TOML.parse($$$SRC)
+name: Bun.TOML.parse
+isExported: false
+---
+id: bun-semver-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.semver.$METHOD($$$ARGS)
+name: Bun.semver
+isExported: false
+---
+id: bun-dns-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.dns.$METHOD($$$ARGS)
+name: Bun.dns
+isExported: false
+---
+id: bun-csrf-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.CSRF.$METHOD($$$ARGS)
+name: Bun.CSRF
+isExported: false
+---
+id: bun-transpiler-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.Transpiler($$$OPTS)
+name: Bun.Transpiler
+isExported: false
+---
+id: bun-webview-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Bun.WebView($$$OPTS)
+name: Bun.WebView
+isExported: false
+---
+id: bun-udp-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.udpSocket($$$OPTS)
+name: Bun.udpSocket
+isExported: false
+---
+id: bun-redis-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.RedisClient($$$OPTS)
+name: Bun.RedisClient
+isExported: false
+---
+id: bun-redis-short-ref
+language: TypeScript
+role: item
+symbolType: constant
+rule:
+  pattern: Bun.redis
+name: Bun.redis
+isExported: false
+---
+id: bun-serve-file-response
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new Response(Bun.file($$$PATH))
+name: Response(Bun.file)
+isExported: false
+---
+id: websocket-unix-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: new WebSocket("ws+unix://$$$PATH")
+name: WebSocket(ws+unix)
+isExported: false
+---
+id: crypto-sha3-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: crypto.createHash("sha3-$ALG")
+name: crypto SHA3
+isExported: false
+---
+id: subtle-x25519-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: crypto.subtle.deriveBits({ name: "X25519", $$$OPTS }, $$$KEY, $$$LEN)
+name: X25519 deriveBits
+isExported: false
+---
+id: bun-strip-ansi-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.stripANSI($$$TEXT)
+name: Bun.stripANSI
+isExported: false
+---
+id: bun-wrap-ansi-call
+language: TypeScript
+role: item
+symbolType: call
+rule:
+  pattern: Bun.wrapAnsi($$$TEXT)
+name: Bun.wrapAnsi
+isExported: false

@@ -92,14 +92,18 @@ function parseHealthRows(payload: any): HealthRow[] {
   const details = Array.isArray(payload?.details) ? payload.details : [];
   return details
     .map((row: any) => {
-      const domain = String(row?.domain || row?.url || '').trim().toLowerCase();
-      const status = String(row?.status || '').trim().toLowerCase();
+      const domain = String(row?.domain || row?.url || '')
+        .trim()
+        .toLowerCase();
+      const status = String(row?.status || '')
+        .trim()
+        .toLowerCase();
       const statusCodeValue = Number.parseInt(String(row?.statusCode ?? ''), 10);
       const statusCode = Number.isFinite(statusCodeValue) ? statusCodeValue : null;
       const error = row?.error == null ? null : String(row.error);
       return { domain, status, statusCode, error };
     })
-    .filter((row) => Boolean(row.domain));
+    .filter(row => Boolean(row.domain));
 }
 
 export async function buildDomainRegistryStatus(options: Options) {
@@ -109,16 +113,18 @@ export async function buildDomainRegistryStatus(options: Options) {
   const healthRows = parseHealthRows(healthReport);
 
   const resolvedDomains = await Promise.all(
-    registry.entries.map((entry) => resolveDomainRegistry(entry.domain, { path: options.registryPath }))
+    registry.entries.map(entry =>
+      resolveDomainRegistry(entry.domain, { path: options.registryPath })
+    )
   );
 
-  const tokenConfigured = resolvedDomains.filter((row) => row.tokenPresent === true).length;
-  const tokenMissing = resolvedDomains.filter((row) => row.tokenPresent === false).length;
-  const headerConfigured = resolvedDomains.filter((row) => Boolean(row.requiredHeader)).length;
-  const bucketMapped = resolvedDomains.filter((row) => Boolean(row.bucket)).length;
+  const tokenConfigured = resolvedDomains.filter(row => row.tokenPresent === true).length;
+  const tokenMissing = resolvedDomains.filter(row => row.tokenPresent === false).length;
+  const headerConfigured = resolvedDomains.filter(row => Boolean(row.requiredHeader)).length;
+  const bucketMapped = resolvedDomains.filter(row => Boolean(row.bucket)).length;
 
-  const healthyRows = healthRows.filter((row) => row.status === 'healthy');
-  const reachableRows = healthRows.filter((row) => {
+  const healthyRows = healthRows.filter(row => row.status === 'healthy');
+  const reachableRows = healthRows.filter(row => {
     if (row.status === 'healthy') return true;
     if (row.error) return false;
     return row.statusCode !== null && row.statusCode >= 100 && row.statusCode < 500;
@@ -126,7 +132,7 @@ export async function buildDomainRegistryStatus(options: Options) {
   const unreachableRows = Math.max(0, healthRows.length - reachableRows.length);
   const projects = String(latest?.path || '')
     .split(',')
-    .map((part) => part.trim())
+    .map(part => part.trim())
     .filter(Boolean);
 
   return {
@@ -141,7 +147,7 @@ export async function buildDomainRegistryStatus(options: Options) {
       headerMissing: Math.max(0, resolvedDomains.length - headerConfigured),
       tokenConfigured,
       tokenMissing,
-      domains: resolvedDomains.map((row) => ({
+      domains: resolvedDomains.map(row => ({
         domain: row.domain,
         mappingSource: row.mappingSource,
         bucket: row.bucket,
@@ -166,8 +172,12 @@ export async function buildDomainRegistryStatus(options: Options) {
       reachableRows: reachableRows.length,
       offlineOrDegradedRows: Math.max(0, healthRows.length - healthyRows.length),
       unreachableRows,
-      onlineRatio: healthRows.length > 0 ? Number((healthyRows.length / healthRows.length).toFixed(4)) : null,
-      reachableRatio: healthRows.length > 0 ? Number((reachableRows.length / healthRows.length).toFixed(4)) : null,
+      onlineRatio:
+        healthRows.length > 0 ? Number((healthyRows.length / healthRows.length).toFixed(4)) : null,
+      reachableRatio:
+        healthRows.length > 0
+          ? Number((reachableRows.length / healthRows.length).toFixed(4))
+          : null,
     },
   };
 }
@@ -273,28 +283,30 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
   });
 
   const tokenVars = Array.from(
-    new Set(
-      registry.entries
-        .map((entry) => String(entry.tokenEnvVar || '').trim())
-        .filter(Boolean)
-    )
+    new Set(registry.entries.map(entry => String(entry.tokenEnvVar || '').trim()).filter(Boolean))
   );
   checks.push(await ensureEnvScaffold(options.envFile, tokenVars, options.fix));
 
   const status = await buildDomainRegistryStatus(options);
   checks.push({
     id: 'bucket_mapping_complete',
-    ok: status.registry.totalDomains > 0 && status.registry.bucketMapped === status.registry.totalDomains,
+    ok:
+      status.registry.totalDomains > 0 &&
+      status.registry.bucketMapped === status.registry.totalDomains,
     detail: `${status.registry.bucketMapped}/${status.registry.totalDomains}`,
   });
   checks.push({
     id: 'header_mapping_complete',
-    ok: status.registry.totalDomains > 0 && status.registry.headerConfigured === status.registry.totalDomains,
+    ok:
+      status.registry.totalDomains > 0 &&
+      status.registry.headerConfigured === status.registry.totalDomains,
     detail: `${status.registry.headerConfigured}/${status.registry.totalDomains}`,
   });
   checks.push({
     id: 'token_secrets_present',
-    ok: status.registry.totalDomains > 0 && status.registry.tokenConfigured === status.registry.totalDomains,
+    ok:
+      status.registry.totalDomains > 0 &&
+      status.registry.tokenConfigured === status.registry.totalDomains,
     detail: `${status.registry.tokenConfigured}/${status.registry.totalDomains}`,
   });
 
@@ -307,18 +319,18 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
   const missingTokenVars = Array.from(
     new Set(
       status.registry.domains
-        .filter((domain) => domain.tokenPresent !== true)
-        .map((domain) => String(domain.tokenEnvVar || '').trim())
+        .filter(domain => domain.tokenPresent !== true)
+        .map(domain => String(domain.tokenEnvVar || '').trim())
         .filter(Boolean)
     )
   );
   const secretCommands = options.emitSecretsCommands
     ? {
-        bunSecretsSet: missingTokenVars.map((name) => `bun secrets set ${name}`),
-        wranglerSecretPut: missingTokenVars.map((name) => `wrangler secret put ${name}`),
+        bunSecretsSet: missingTokenVars.map(name => `bun secrets set ${name}`),
+        wranglerSecretPut: missingTokenVars.map(name => `wrangler secret put ${name}`),
       }
     : undefined;
-  const ok = checks.every((check) => check.ok);
+  const ok = checks.every(check => check.ok);
   return {
     ok,
     fixApplied: options.fix,
@@ -334,25 +346,25 @@ async function main(): Promise<void> {
   if (options.doctor) {
     const doctor = await runDomainRegistryDoctor(options);
     if (options.json) {
-      console.log(JSON.stringify(doctor, null, 2));
+      console.info(JSON.stringify(doctor, null, 2));
     } else {
-      console.log(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
+      console.info(`Domain Registry Doctor (fix=${options.fix ? 'on' : 'off'})`);
       for (const check of doctor.checks) {
-        console.log(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
+        console.info(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
       }
       if (doctor.blockedBySecrets.length > 0) {
-        console.log('- blocked:');
+        console.info('- blocked:');
         for (const reason of doctor.blockedBySecrets) {
-          console.log(`  - ${reason}`);
+          console.info(`  - ${reason}`);
         }
       }
       if (doctor.secretCommands) {
-        console.log('- secrets commands (templates):');
+        console.info('- secrets commands (templates):');
         for (const cmd of doctor.secretCommands.bunSecretsSet) {
-          console.log(`  - ${cmd}`);
+          console.info(`  - ${cmd}`);
         }
         for (const cmd of doctor.secretCommands.wranglerSecretPut) {
-          console.log(`  - ${cmd}`);
+          console.info(`  - ${cmd}`);
         }
       }
     }
@@ -362,23 +374,35 @@ async function main(): Promise<void> {
   const payload = await buildDomainRegistryStatus(options);
 
   if (options.json) {
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
     return;
   }
 
-  console.log(`Domain Registry Status (${payload.generatedAt})`);
-  console.log(`- domains: ${payload.registry.totalDomains}`);
-  console.log(`- bucket mapped: ${payload.registry.bucketMapped}/${payload.registry.totalDomains}`);
-  console.log(`- required header configured: ${payload.registry.headerConfigured}/${payload.registry.totalDomains}`);
-  console.log(`- token configured: ${payload.registry.tokenConfigured}/${payload.registry.totalDomains}`);
-  console.log(`- search projects: ${payload.search.projectCount}`);
-  console.log(`- health rows online (healthy): ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`);
-  console.log(`- health rows reachable: ${payload.domainHealth.reachableRows}/${payload.domainHealth.checkedRows}`);
+  console.info(`Domain Registry Status (${payload.generatedAt})`);
+  console.info(`- domains: ${payload.registry.totalDomains}`);
+  console.info(
+    `- bucket mapped: ${payload.registry.bucketMapped}/${payload.registry.totalDomains}`
+  );
+  console.info(
+    `- required header configured: ${payload.registry.headerConfigured}/${payload.registry.totalDomains}`
+  );
+  console.info(
+    `- token configured: ${payload.registry.tokenConfigured}/${payload.registry.totalDomains}`
+  );
+  console.info(`- search projects: ${payload.search.projectCount}`);
+  console.info(
+    `- health rows online (healthy): ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`
+  );
+  console.info(
+    `- health rows reachable: ${payload.domainHealth.reachableRows}/${payload.domainHealth.checkedRows}`
+  );
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error(`[domain-registry-status] ${error instanceof Error ? error.message : String(error)}`);
+  main().catch(error => {
+    console.error(
+      `[domain-registry-status] ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   });
 }

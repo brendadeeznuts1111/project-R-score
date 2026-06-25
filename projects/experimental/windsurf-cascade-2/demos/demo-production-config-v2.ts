@@ -10,8 +10,8 @@ import { UserFriendlyConfig, createConfig } from './src/config/user-friendly-con
 import { BunConfigPersister } from './src/config/bun-production-persister';
 
 async function demonstrateProductionReadiness(): Promise<void> {
-  console.log('🚀 Production-Ready 13-Byte Config Demo');
-  console.log('==========================================\n');
+  console.info('🚀 Production-Ready 13-Byte Config Demo');
+  console.info('==========================================\n');
   
   // Initialize the production config system
   const config = createConfig({
@@ -21,30 +21,30 @@ async function demonstrateProductionReadiness(): Promise<void> {
   
   await config.initialize();
   
-  console.log('✅ Config system initialized with persistence');
-  console.log('📊 Initial config summary:');
-  console.log(JSON.stringify(config.getConfigSummary(), null, 2));
-  console.log();
+  console.info('✅ Config system initialized with persistence');
+  console.info('📊 Initial config summary:');
+  console.info(JSON.stringify(config.getConfigSummary(), null, 2));
+  console.info();
   
   // Demo 1: Team-Friendly Feature Management
-  console.log('🎛️ Demo 1: Team-Friendly Feature Management');
-  console.log('-------------------------------------------');
+  console.info('🎛️ Demo 1: Team-Friendly Feature Management');
+  console.info('-------------------------------------------');
   
   // Enable features without bit manipulation
   await config.enableFeature('debug_mode');
   await config.enableFeature('metrics_enabled');
   await config.enableFeature('cache_enabled');
   
-  console.log('Enabled features: debug_mode, metrics_enabled, cache_enabled');
+  console.info('Enabled features: debug_mode, metrics_enabled, cache_enabled');
   
   // Check features with readable API
-  console.log('Debug mode enabled?', config.isFeatureEnabled('debug_mode'));
-  console.log('Experimental API enabled?', config.isFeatureEnabled('experimental_api'));
-  console.log();
+  console.info('Debug mode enabled?', config.isFeatureEnabled('debug_mode'));
+  console.info('Experimental API enabled?', config.isFeatureEnabled('experimental_api'));
+  console.info();
   
   // Demo 2: Terminal Settings Management
-  console.log('🖥️ Demo 2: Terminal Settings Management');
-  console.log('--------------------------------------');
+  console.info('🖥️ Demo 2: Terminal Settings Management');
+  console.info('--------------------------------------');
   
   await config.updateTerminalSettings({
     mode: 'enhanced',
@@ -52,12 +52,12 @@ async function demonstrateProductionReadiness(): Promise<void> {
   });
   
   const terminal = config.getTerminalSettings();
-  console.log('Terminal settings:', terminal);
-  console.log();
+  console.info('Terminal settings:', terminal);
+  console.info();
   
   // Demo 3: Batch Updates
-  console.log('🔄 Demo 3: Batch Configuration Updates');
-  console.log('---------------------------------------');
+  console.info('🔄 Demo 3: Batch Configuration Updates');
+  console.info('---------------------------------------');
   
   await config.updateConfig({
     features: {
@@ -70,19 +70,19 @@ async function demonstrateProductionReadiness(): Promise<void> {
     }
   });
   
-  console.log('Batch update completed');
-  console.log();
+  console.info('Batch update completed');
+  console.info();
   
   // Demo 4: Persistence and Recovery
-  console.log('💾 Demo 4: Persistence and Recovery');
-  console.log('-----------------------------------');
+  console.info('💾 Demo 4: Persistence and Recovery');
+  console.info('-----------------------------------');
   
   // Export current config
   const exportedConfig = await config.exportConfig();
-  console.log(`Exported config size: ${exportedConfig.length} bytes`);
+  console.info(`Exported config size: ${exportedConfig.length} bytes`);
   
   // Simulate server restart by creating new instance
-  console.log('Simulating server restart...');
+  console.info('Simulating server restart...');
   config.close();
   
   const newConfig = createConfig({
@@ -90,52 +90,52 @@ async function demonstrateProductionReadiness(): Promise<void> {
   });
   await newConfig.initialize();
   
-  console.log('Config recovered after restart:');
-  console.log(JSON.stringify(newConfig.getConfigSummary(), null, 2));
-  console.log();
+  console.info('Config recovered after restart:');
+  console.info(JSON.stringify(newConfig.getConfigSummary(), null, 2));
+  console.info();
   
   // Demo 5: Configuration History and Auditing
-  console.log('📜 Demo 5: Configuration History');
-  console.log('--------------------------------');
+  console.info('📜 Demo 5: Configuration History');
+  console.info('--------------------------------');
   
   const history = await newConfig.getConfigHistory(5);
-  console.log('Recent configuration changes:');
+  console.info('Recent configuration changes:');
   history.forEach((entry, index) => {
-    console.log(`${index + 1}. ${entry.timestamp}`);
-    console.log(`   Features: ${entry.features.join(', ')}`);
-    console.log(`   Terminal: ${entry.terminal.mode} ${entry.terminal.dimensions.rows}x${entry.terminal.dimensions.cols}`);
+    console.info(`${index + 1}. ${entry.timestamp}`);
+    console.info(`   Features: ${entry.features.join(', ')}`);
+    console.info(`   Terminal: ${entry.terminal.mode} ${entry.terminal.dimensions.rows}x${entry.terminal.dimensions.cols}`);
   });
-  console.log();
+  console.info();
   
   // Demo 6: Validation and Error Handling
-  console.log('✅ Demo 6: Configuration Validation');
-  console.log('----------------------------------');
+  console.info('✅ Demo 6: Configuration Validation');
+  console.info('----------------------------------');
   
   const validation = newConfig.validateConfig();
-  console.log('Config validation:', validation.valid ? 'PASSED' : 'FAILED');
+  console.info('Config validation:', validation.valid ? 'PASSED' : 'FAILED');
   if (!validation.valid) {
-    console.log('Errors:', validation.errors);
+    console.info('Errors:', validation.errors);
   }
-  console.log();
+  console.info();
   
   // Demo 7: Performance Metrics
-  console.log('📈 Demo 7: Performance Metrics');
-  console.log('------------------------------');
+  console.info('📈 Demo 7: Performance Metrics');
+  console.info('------------------------------');
   
   const metrics = await newConfig.getMetrics();
-  console.log('Performance metrics:');
-  console.log(`- Config size: ${metrics.configSize}`);
-  console.log(`- Update count: ${metrics.updateCount}`);
-  console.log(`- Average update interval: ${metrics.averageUpdateInterval}`);
-  console.log(`- Last update: ${metrics.lastUpdateTime}`);
-  console.log();
+  console.info('Performance metrics:');
+  console.info(`- Config size: ${metrics.configSize}`);
+  console.info(`- Update count: ${metrics.updateCount}`);
+  console.info(`- Average update interval: ${metrics.averageUpdateInterval}`);
+  console.info(`- Last update: ${metrics.lastUpdateTime}`);
+  console.info();
   
   // Demo 8: Multi-Process Simulation (Conceptual)
-  console.log('🔄 Demo 8: Multi-Process Sync Simulation');
-  console.log('---------------------------------------');
+  console.info('🔄 Demo 8: Multi-Process Sync Simulation');
+  console.info('---------------------------------------');
   
-  console.log('In production, this would use SharedArrayBuffer for true');
-  console.log('multi-process synchronization. For demo purposes:');
+  console.info('In production, this would use SharedArrayBuffer for true');
+  console.info('multi-process synchronization. For demo purposes:');
   
   // Simulate multiple processes updating config
   const updates = [
@@ -146,46 +146,46 @@ async function demonstrateProductionReadiness(): Promise<void> {
   
   for (const update of updates) {
     await newConfig.updateConfig(update);
-    console.log(`Process simulation: Applied update`, update);
+    console.info(`Process simulation: Applied update`, update);
   }
   
-  console.log('Final config state:');
-  console.log(JSON.stringify(newConfig.getConfigSummary(), null, 2));
-  console.log();
+  console.info('Final config state:');
+  console.info(JSON.stringify(newConfig.getConfigSummary(), null, 2));
+  console.info();
   
   // Demo 9: Emergency Recovery
-  console.log('🚨 Demo 9: Emergency Recovery Procedures');
-  console.log('----------------------------------------');
+  console.info('🚨 Demo 9: Emergency Recovery Procedures');
+  console.info('----------------------------------------');
   
   // Create backup
   const backup = await newConfig.exportConfig();
   await Bun.write('./config-backup.db', backup);
-  console.log('Emergency backup created: config-backup.db');
+  console.info('Emergency backup created: config-backup.db');
   
   // Simulate corruption and recovery
-  console.log('Simulating config corruption...');
+  console.info('Simulating config corruption...');
   
   // Restore from backup
   const backupData = await Bun.file('./config-backup.db').arrayBuffer();
   await newConfig.importConfig(Buffer.from(backupData));
-  console.log('Config restored from backup');
-  console.log();
+  console.info('Config restored from backup');
+  console.info();
   
   // Demo 10: Developer Experience
-  console.log('👨‍💻 Demo 10: Developer Experience');
-  console.log('----------------------------------');
+  console.info('👨‍💻 Demo 10: Developer Experience');
+  console.info('----------------------------------');
   
-  console.log('Available features:');
+  console.info('Available features:');
   const allFeatures = newConfig.getAllFeatures();
   allFeatures.forEach(feature => {
     const status = newConfig.isFeatureEnabled(feature.name) ? '✅' : '❌';
-    console.log(`  ${status} ${feature.name} (${feature.category}): ${feature.description}`);
+    console.info(`  ${status} ${feature.name} (${feature.category}): ${feature.description}`);
   });
-  console.log();
+  console.info();
   
   // Performance benchmark
-  console.log('⚡ Performance Benchmark');
-  console.log('-----------------------');
+  console.info('⚡ Performance Benchmark');
+  console.info('-----------------------');
   
   const iterations = 10000;
   const startTime = Bun.nanoseconds();
@@ -199,32 +199,32 @@ async function demonstrateProductionReadiness(): Promise<void> {
   const totalTime = endTime - startTime;
   const avgTime = totalTime / iterations;
   
-  console.log(`Performed ${iterations} operations`);
-  console.log(`Total time: ${(totalTime / 1e6).toFixed(2)}ms`);
-  console.log(`Average time per operation: ${(avgTime / 1e6).toFixed(4)}ms`);
-  console.log(`Operations per second: ${(1e9 / avgTime).toFixed(0)}`);
-  console.log();
+  console.info(`Performed ${iterations} operations`);
+  console.info(`Total time: ${(totalTime / 1e6).toFixed(2)}ms`);
+  console.info(`Average time per operation: ${(avgTime / 1e6).toFixed(4)}ms`);
+  console.info(`Operations per second: ${(1e9 / avgTime).toFixed(0)}`);
+  console.info();
   
   // Cleanup
   newConfig.close();
-  console.log('✅ Demo completed successfully!');
-  console.log();
-  console.log('🎯 Key Production Improvements:');
-  console.log('  ✅ Persistent storage with SQLite');
-  console.log('  ✅ Team-friendly API (no bit masks)');
-  console.log('  ✅ Configuration history and auditing');
-  console.log('  ✅ Validation and error handling');
-  console.log('  ✅ Emergency backup/restore');
-  console.log('  ✅ Performance monitoring');
-  console.log('  ✅ Developer-friendly debugging');
-  console.log('  ✅ Maintains 13-byte performance core');
+  console.info('✅ Demo completed successfully!');
+  console.info();
+  console.info('🎯 Key Production Improvements:');
+  console.info('  ✅ Persistent storage with SQLite');
+  console.info('  ✅ Team-friendly API (no bit masks)');
+  console.info('  ✅ Configuration history and auditing');
+  console.info('  ✅ Validation and error handling');
+  console.info('  ✅ Emergency backup/restore');
+  console.info('  ✅ Performance monitoring');
+  console.info('  ✅ Developer-friendly debugging');
+  console.info('  ✅ Maintains 13-byte performance core');
 }
 
 // Error handling for the demo
 if (import.meta.main) {
   demonstrateProductionReadiness()
     .then(() => {
-      console.log('\n🎉 Production config demo completed!');
+      console.info('\n🎉 Production config demo completed!');
       process.exit(0);
     })
     .catch((error) => {

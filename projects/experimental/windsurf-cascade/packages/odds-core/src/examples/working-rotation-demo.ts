@@ -18,23 +18,23 @@ export class WorkingRotationDemo {
      * Display rotation number ranges by sport
      */
     static displayRotationRanges(): void {
-        console.log('🏈 Rotation Number Ranges by Sport\n');
+        console.info('🏈 Rotation Number Ranges by Sport\n');
 
         Object.entries(ROTATION_RANGES).forEach(([sport, [min, max]]) => {
-            console.log(`${sport.padEnd(6)}: ${min} - ${max}`);
+            console.info(`${sport.padEnd(6)}: ${min} - ${max}`);
         });
 
-        console.log('\n📊 Range Statistics:');
-        console.log(`   Total Sports: ${Object.keys(ROTATION_RANGES).length}`);
-        console.log(`   Range Size: 1000 numbers per sport`);
-        console.log(`   Total Range: ${Object.keys(ROTATION_RANGES).length * 1000} numbers`);
+        console.info('\n📊 Range Statistics:');
+        console.info(`   Total Sports: ${Object.keys(ROTATION_RANGES).length}`);
+        console.info(`   Range Size: 1000 numbers per sport`);
+        console.info(`   Total Range: ${Object.keys(ROTATION_RANGES).length * 1000} numbers`);
     }
 
     /**
      * Create sample team rotation numbers
      */
     static createTeamRotationNumbers(): TeamRotationNumber[] {
-        console.log('\n🏀 Creating Team Rotation Numbers\n');
+        console.info('\n🏀 Creating Team Rotation Numbers\n');
 
         const teams: TeamRotationNumber[] = [
             {
@@ -75,9 +75,9 @@ export class WorkingRotationDemo {
             }
         ];
 
-        console.log('✅ Created team rotation numbers:');
+        console.info('✅ Created team rotation numbers:');
         teams.forEach(team => {
-            console.log(`   ${team.rotationId}: ${team.teamName} (${team.marketType} - ${team.sportsbook})`);
+            console.info(`   ${team.rotationId}: ${team.teamName} (${team.marketType} - ${team.sportsbook})`);
         });
 
         return teams;
@@ -87,7 +87,7 @@ export class WorkingRotationDemo {
      * Create game rotation numbers
      */
     static createGameRotationNumbers(teams: TeamRotationNumber[]): GameRotationNumbers[] {
-        console.log('\n🎯 Creating Game Rotation Numbers\n');
+        console.info('\n🎯 Creating Game Rotation Numbers\n');
 
         // Group teams by game
         const games: GameRotationNumbers[] = [
@@ -115,12 +115,12 @@ export class WorkingRotationDemo {
             }
         ];
 
-        console.log('✅ Created game rotation numbers:');
+        console.info('✅ Created game rotation numbers:');
         games.forEach(game => {
-            console.log(`   ${game.gameId}: ${game.awayTeam.teamName} @ ${game.homeTeam.teamName}`);
-            console.log(`   Venue: ${game.venue} | Date: ${game.gameDate.toLocaleDateString()}`);
+            console.info(`   ${game.gameId}: ${game.awayTeam.teamName} @ ${game.homeTeam.teamName}`);
+            console.info(`   Venue: ${game.venue} | Date: ${game.gameDate.toLocaleDateString()}`);
             game.rotationPairs.forEach(pair => {
-                console.log(`      ${pair.marketType}: ${pair.awayRotation} (away) vs ${pair.homeRotation} (home)`);
+                console.info(`      ${pair.marketType}: ${pair.awayRotation} (away) vs ${pair.homeRotation} (home)`);
             });
         });
 
@@ -131,7 +131,7 @@ export class WorkingRotationDemo {
      * Create rotation analytics
      */
     static createRotationAnalytics(games: GameRotationNumbers[]): RotationAnalytics[] {
-        console.log('\n📈 Creating Rotation Analytics\n');
+        console.info('\n📈 Creating Rotation Analytics\n');
 
         const analytics: RotationAnalytics[] = games.map((game, index) => ({
             rotationId: game.rotationPairs[0].homeRotation,
@@ -141,13 +141,13 @@ export class WorkingRotationDemo {
             lineEfficiency: 0.85 - (index * 0.05) // 85%, 80%, 75% efficiency
         }));
 
-        console.log('✅ Created rotation analytics:');
+        console.info('✅ Created rotation analytics:');
         analytics.forEach((analytic, index) => {
-            console.log(`   Rotation ${analytic.rotationId}:`);
-            console.log(`      Volatility: ${(analytic.volatility * 100).toFixed(1)}%`);
-            console.log(`      Liquidity: $${analytic.liquidity.toLocaleString()}`);
-            console.log(`      Sharp Consensus: ${(analytic.sharpConsensus * 100).toFixed(1)}%`);
-            console.log(`      Line Efficiency: ${(analytic.lineEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Rotation ${analytic.rotationId}:`);
+            console.info(`      Volatility: ${(analytic.volatility * 100).toFixed(1)}%`);
+            console.info(`      Liquidity: $${analytic.liquidity.toLocaleString()}`);
+            console.info(`      Sharp Consensus: ${(analytic.sharpConsensus * 100).toFixed(1)}%`);
+            console.info(`      Line Efficiency: ${(analytic.lineEfficiency * 100).toFixed(1)}%`);
         });
 
         return analytics;
@@ -157,9 +157,9 @@ export class WorkingRotationDemo {
      * Demonstrate rotation number validation
      */
     static validateRotationNumbers(teams: TeamRotationNumber[]): void {
-        console.log('\n🔍 Validating Rotation Numbers\n');
+        console.info('\n🔍 Validating Rotation Numbers\n');
 
-        console.log('Validation Results:');
+        console.info('Validation Results:');
         let validCount = 0;
         let invalidCount = 0;
 
@@ -168,36 +168,36 @@ export class WorkingRotationDemo {
             const isValid = team.rotationId >= minRange && team.rotationId <= maxRange;
 
             if (isValid) {
-                console.log(`   ✅ ${team.rotationId}: Valid ${team.sport} rotation`);
+                console.info(`   ✅ ${team.rotationId}: Valid ${team.sport} rotation`);
                 validCount++;
             } else {
-                console.log(`   ❌ ${team.rotationId}: Invalid ${team.sport} rotation (expected ${minRange}-${maxRange})`);
+                console.info(`   ❌ ${team.rotationId}: Invalid ${team.sport} rotation (expected ${minRange}-${maxRange})`);
                 invalidCount++;
             }
         });
 
-        console.log(`\n📊 Validation Summary:`);
-        console.log(`   Valid: ${validCount} | Invalid: ${invalidCount}`);
-        console.log(`   Success Rate: ${((validCount / teams.length) * 100).toFixed(1)}%`);
+        console.info(`\n📊 Validation Summary:`);
+        console.info(`   Valid: ${validCount} | Invalid: ${invalidCount}`);
+        console.info(`   Success Rate: ${((validCount / teams.length) * 100).toFixed(1)}%`);
     }
 
     /**
      * Demonstrate rotation number lookup
      */
     static demonstrateRotationLookup(): void {
-        console.log('\n🔎 Rotation Number Lookup Demo\n');
+        console.info('\n🔎 Rotation Number Lookup Demo\n');
 
         const testRotations = [2001, 3005, 4500, 7001, 10500];
 
-        console.log('Rotation Lookups:');
+        console.info('Rotation Lookups:');
         testRotations.forEach(rotation => {
             const sport = this.findSportByRotation(rotation);
             if (sport) {
                 const [min, max] = ROTATION_RANGES[sport];
                 const position = ((rotation - min) / (max - min)) * 100;
-                console.log(`   ${rotation}: ${sport} (${position.toFixed(1)}% through range)`);
+                console.info(`   ${rotation}: ${sport} (${position.toFixed(1)}% through range)`);
             } else {
-                console.log(`   ${rotation}: Unknown sport`);
+                console.info(`   ${rotation}: Unknown sport`);
             }
         });
     }
@@ -218,42 +218,42 @@ export class WorkingRotationDemo {
      * Demonstrate rotation number performance metrics
      */
     static demonstratePerformanceMetrics(analytics: RotationAnalytics[]): void {
-        console.log('\n📊 Performance Metrics Analysis\n');
+        console.info('\n📊 Performance Metrics Analysis\n');
 
         const avgVolatility = analytics.reduce((sum, a) => sum + a.volatility, 0) / analytics.length;
         const avgLiquidity = analytics.reduce((sum, a) => sum + a.liquidity, 0) / analytics.length;
         const avgSharpConsensus = analytics.reduce((sum, a) => sum + a.sharpConsensus, 0) / analytics.length;
         const avgLineEfficiency = analytics.reduce((sum, a) => sum + a.lineEfficiency, 0) / analytics.length;
 
-        console.log('📈 Aggregate Metrics:');
-        console.log(`   Average Volatility: ${(avgVolatility * 100).toFixed(1)}%`);
-        console.log(`   Average Liquidity: $${avgLiquidity.toLocaleString()}`);
-        console.log(`   Average Sharp Consensus: ${(avgSharpConsensus * 100).toFixed(1)}%`);
-        console.log(`   Average Line Efficiency: ${(avgLineEfficiency * 100).toFixed(1)}%`);
+        console.info('📈 Aggregate Metrics:');
+        console.info(`   Average Volatility: ${(avgVolatility * 100).toFixed(1)}%`);
+        console.info(`   Average Liquidity: $${avgLiquidity.toLocaleString()}`);
+        console.info(`   Average Sharp Consensus: ${(avgSharpConsensus * 100).toFixed(1)}%`);
+        console.info(`   Average Line Efficiency: ${(avgLineEfficiency * 100).toFixed(1)}%`);
 
-        console.log('\n🎯 Risk Assessment:');
+        console.info('\n🎯 Risk Assessment:');
         if (avgVolatility > 0.2) {
-            console.log('   ⚠️  High volatility detected - increased risk');
+            console.info('   ⚠️  High volatility detected - increased risk');
         } else if (avgVolatility > 0.1) {
-            console.log('   ⚡ Moderate volatility - normal market conditions');
+            console.info('   ⚡ Moderate volatility - normal market conditions');
         } else {
-            console.log('   ✅ Low volatility - stable market');
+            console.info('   ✅ Low volatility - stable market');
         }
 
         if (avgLiquidity > 100000) {
-            console.log('   💰 High liquidity - good for large positions');
+            console.info('   💰 High liquidity - good for large positions');
         } else if (avgLiquidity > 50000) {
-            console.log('   💵 Moderate liquidity - standard market');
+            console.info('   💵 Moderate liquidity - standard market');
         } else {
-            console.log('   💸 Low liquidity - position size limitations');
+            console.info('   💸 Low liquidity - position size limitations');
         }
 
         if (avgSharpConsensus > 0.7) {
-            console.log('   🎯 Strong sharp consensus - follow professional money');
+            console.info('   🎯 Strong sharp consensus - follow professional money');
         } else if (avgSharpConsensus > 0.5) {
-            console.log('   ⚖️  Moderate sharp consensus - mixed signals');
+            console.info('   ⚖️  Moderate sharp consensus - mixed signals');
         } else {
-            console.log('   📊 Weak sharp consensus - retail dominated');
+            console.info('   📊 Weak sharp consensus - retail dominated');
         }
     }
 
@@ -261,52 +261,52 @@ export class WorkingRotationDemo {
      * Run the complete working demonstration
      */
     static runCompleteDemo(): void {
-        console.log('🚀 Working Rotation Numbers Demonstration\n');
-        console.log('This demo uses the actual rotation number types from the codebase.\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Working Rotation Numbers Demonstration\n');
+        console.info('This demo uses the actual rotation number types from the codebase.\n');
+        console.info('='.repeat(80));
 
         // Display rotation ranges
         this.displayRotationRanges();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create team rotation numbers
         const teams = this.createTeamRotationNumbers();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create game rotation numbers
         const games = this.createGameRotationNumbers(teams);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Create analytics
         const analytics = this.createRotationAnalytics(games);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Validate rotation numbers
         this.validateRotationNumbers(teams);
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Demonstrate lookup
         this.demonstrateRotationLookup();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Performance metrics
         this.demonstratePerformanceMetrics(analytics);
 
-        console.log('\n✅ Working rotation numbers demonstration completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Rotation number range validation');
-        console.log('   • Team and game rotation number creation');
-        console.log('   • Sport-based rotation lookup');
-        console.log('   • Performance analytics calculation');
-        console.log('   • Risk assessment based on metrics');
-        console.log('   • Liquidity and consensus analysis');
-        console.log('   • Market efficiency evaluation');
+        console.info('\n✅ Working rotation numbers demonstration completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Rotation number range validation');
+        console.info('   • Team and game rotation number creation');
+        console.info('   • Sport-based rotation lookup');
+        console.info('   • Performance analytics calculation');
+        console.info('   • Risk assessment based on metrics');
+        console.info('   • Liquidity and consensus analysis');
+        console.info('   • Market efficiency evaluation');
     }
 }
 

@@ -50,22 +50,22 @@
     "migrate:python": "bun scripts/migrate-python-to-bun.ts"
   },
   "dependencies": {
-    "@google/genai": "^1.39.0",
-    "browserslist": "^4.28.1",
-    "lucide-react": "^0.294.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "recharts": "^2.15.4",
-    "sass": "^1.97.3"
+    "@google/genai": "1.39.0",
+    "browserslist": "4.28.1",
+    "lucide-react": "0.294.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "2.15.4",
+    "sass": "1.97.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/react": "^18.3.27",
-    "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^4.7.0",
-    "fast-check": "^4.5.3",
-    "typescript": "^5.9.3",
-    "vite": "^5.4.21"
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "fast-check": "4.5.3",
+    "typescript": "5.9.3",
+    "vite": "5.4.21"
   },
   "engines": {
     "bun": ">=1.3.8"

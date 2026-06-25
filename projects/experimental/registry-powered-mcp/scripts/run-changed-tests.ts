@@ -53,31 +53,31 @@ async function main() {
   const changedFiles = await getChangedFiles();
 
   if (changedFiles.length === 0) {
-    console.log("No changed files detected");
+    console.info("No changed files detected");
     process.exit(0);
   }
 
-  console.log(`📝 Changed files (${changedFiles.length}):`);
+  console.info(`📝 Changed files (${changedFiles.length}):`);
   for (const file of changedFiles.slice(0, 10)) {
-    console.log(`   ${file}`);
+    console.info(`   ${file}`);
   }
   if (changedFiles.length > 10) {
-    console.log(`   ... and ${changedFiles.length - 10} more`);
+    console.info(`   ... and ${changedFiles.length - 10} more`);
   }
-  console.log();
+  console.info();
 
   const testPatterns = findRelatedTests(changedFiles);
 
   if (testPatterns.length === 0) {
-    console.log("No related test files found");
+    console.info("No related test files found");
     process.exit(0);
   }
 
-  console.log(`🧪 Running tests for patterns:`);
+  console.info(`🧪 Running tests for patterns:`);
   for (const pattern of testPatterns) {
-    console.log(`   ${pattern}`);
+    console.info(`   ${pattern}`);
   }
-  console.log();
+  console.info();
 
   // Run bun test with the patterns
   const proc = Bun.spawn(["bun", "test", ...testPatterns], {

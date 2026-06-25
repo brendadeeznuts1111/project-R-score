@@ -33,7 +33,7 @@ async function runPersona(marketId: string = "DEMO@MARKET"): Promise<LatticeEdge
   if (edge) {
     const glyphName = GLYPH_PATTERNS[edge.glyph as keyof typeof GLYPH_PATTERNS] || "Unknown Pattern";
 
-    console.log(`
+    console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  🏆 T3-LATTICE EDGE HUNTER PERSONA v${PERSONA_CONFIG.version} ACTIVATED                                                  ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -58,7 +58,7 @@ ${edge.requiresReview ? "⚠️  MANUAL REVIEW REQUIRED - BLACK SWAN DETECTED" :
 ${edge.confidence > 0.88 ? "🎯 HIGH CONFIDENCE EDGE - READY FOR EXECUTION" : "🤔 MEDIUM CONFIDENCE - REVIEW RECOMMENDED"}
 `);
   } else {
-    console.log(`
+    console.info(`
 ❌ No Edge Detected in Market: ${marketId}
    • Confidence threshold not met (${PERSONA_CONFIG.benchmarks.edgeDetectionAccuracy})
    • Market may be efficiently priced
@@ -201,7 +201,7 @@ const server = serve({
   }
 });
 
-console.log(`
+console.info(`
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  🏆 T3-LATTICE SPORTS BETTING EDGE HUNTER PERSONA v${PERSONA_CONFIG.version}                                         ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝

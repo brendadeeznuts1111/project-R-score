@@ -48,19 +48,19 @@
 // Make this file a module to support top-level await
 export {};
 
-console.log("\n" + "═".repeat(70));
-console.log("  Bun.spawn() Complete API Demo");
-console.log("═".repeat(70) + "\n");
+console.info("\n" + "═".repeat(70));
+console.info("  Bun.spawn() Complete API Demo");
+console.info("═".repeat(70) + "\n");
 
 // Helper function to run examples with error handling
 async function runExample(name: string, fn: () => Promise<void> | void) {
-  console.log(`📋 ${name}`);
-  console.log("-".repeat(70));
+  console.info(`📋 ${name}`);
+  console.info("-".repeat(70));
   try {
     await fn();
-    console.log("✅ Success\n");
+    console.info("✅ Success\n");
   } catch (error) {
-    console.log(`⚠️  Error: ${error instanceof Error ? error.message : String(error)}\n`);
+    console.info(`⚠️  Error: ${error instanceof Error ? error.message : String(error)}\n`);
   }
 }
 
@@ -71,7 +71,7 @@ async function runExample(name: string, fn: () => Promise<void> | void) {
 await runExample("Example 1: Command Array API", async () => {
   const proc = Bun.spawn(["echo", "Hello from command array API"]);
   await proc.exited;
-  console.log("Process completed with exit code:", await proc.exited);
+  console.info("Process completed with exit code:", await proc.exited);
 });
 
 await runExample("Example 2: Options Object API", async () => {
@@ -81,7 +81,7 @@ await runExample("Example 2: Options Object API", async () => {
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Output:", output.trim());
+  console.info("Output:", output.trim());
 });
 
 // ============================================================================
@@ -95,8 +95,8 @@ await runExample("Example 3: Stdin from Response (User's Example)", async () => 
   const reader = proc.stdout.getReader();
   const { value } = await reader.read();
   const text = new TextDecoder().decode(value);
-  console.log("Fetched content length:", text.length, "characters");
-  console.log("First 100 chars:", text.substring(0, 100) + "...");
+  console.info("Fetched content length:", text.length, "characters");
+  console.info("First 100 chars:", text.substring(0, 100) + "...");
 });
 
 await runExample("Example 4: Stdin from Request", async () => {
@@ -110,7 +110,7 @@ await runExample("Example 4: Stdin from Request", async () => {
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Request body passed through:", output.substring(0, 100));
+  console.info("Request body passed through:", output.substring(0, 100));
 });
 
 await runExample("Example 5: Stdin from Blob", async () => {
@@ -121,7 +121,7 @@ await runExample("Example 5: Stdin from Blob", async () => {
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Blob content:", output.trim());
+  console.info("Blob content:", output.trim());
 });
 
 await runExample("Example 6: Stdin from BunFile", async () => {
@@ -135,7 +135,7 @@ await runExample("Example 6: Stdin from BunFile", async () => {
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("File content:", output.trim());
+  console.info("File content:", output.trim());
   
   // Cleanup
   await Bun.write(tempFile, "");
@@ -149,7 +149,7 @@ await runExample("Example 7: Stdin from ArrayBufferView (Uint8Array)", async () 
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("ArrayBufferView content:", output.trim());
+  console.info("ArrayBufferView content:", output.trim());
 });
 
 await runExample("Example 8: Stdin from ReadableStream", async () => {
@@ -168,7 +168,7 @@ await runExample("Example 8: Stdin from ReadableStream", async () => {
   });
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Stream content:", output.trim());
+  console.info("Stream content:", output.trim());
 });
 
 await runExample("Example 9: Stdin as 'pipe' (Manual Write)", async () => {
@@ -183,7 +183,7 @@ await runExample("Example 9: Stdin as 'pipe' (Manual Write)", async () => {
   
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Manual write output:", output.trim());
+  console.info("Manual write output:", output.trim());
 });
 
 // ============================================================================
@@ -201,12 +201,12 @@ await runExample("Example 10: Stdout/Stderr as 'pipe'", async () => {
     (proc.stderr as any).text(),
   ]);
   
-  console.log("Stdout:", stdout.trim());
-  console.log("Stderr:", stderr.trim());
+  console.info("Stdout:", stdout.trim());
+  console.info("Stderr:", stderr.trim());
 });
 
 await runExample("Example 11: Stdout/Stderr as 'inherit'", async () => {
-  console.log("(Output will appear directly in console)");
+  console.info("(Output will appear directly in console)");
   const proc = Bun.spawn(["echo", "Inherited stdout"], {
     stdout: "inherit",
     stderr: "inherit",
@@ -220,7 +220,7 @@ await runExample("Example 12: Stdout/Stderr as 'ignore'", async () => {
     stderr: "ignore",
   });
   await proc.exited;
-  console.log("Process completed (output was ignored)");
+  console.info("Process completed (output was ignored)");
 });
 
 await runExample("Example 13: Stdout to BunFile", async () => {
@@ -231,7 +231,7 @@ await runExample("Example 13: Stdout to BunFile", async () => {
   await proc.exited;
   
   const content = await outputFile.text();
-  console.log("File content:", content.trim());
+  console.info("File content:", content.trim());
   
   // Cleanup
   await Bun.write(outputFile, "");
@@ -252,13 +252,13 @@ await runExample("Example 14: Stdout to ArrayBufferView (Uint8Array)", async () 
   }
   
   const text = new TextDecoder().decode(buffer.subarray(0, length));
-  console.log("Buffer content:", text.trim());
+  console.info("Buffer content:", text.trim());
 });
 
 await runExample("Example 15: Stdout to File Descriptor Number", async () => {
   // This would write to a specific file descriptor
   // In practice, you'd typically use 'inherit' or 'pipe'
-  console.log("(File descriptor numbers are typically used for advanced scenarios)");
+  console.info("(File descriptor numbers are typically used for advanced scenarios)");
   const proc = Bun.spawn(["echo", "test"], {
     stdout: 1, // stdout file descriptor
   });
@@ -277,12 +277,12 @@ await runExample("Example 16: Process Kill", async () => {
   // Kill after 100ms
   setTimeout(() => {
     proc.kill();
-    console.log("Process killed");
+    console.info("Process killed");
   }, 100);
   
   const exitCode = await proc.exited;
-  console.log("Exit code:", exitCode);
-  console.log("Killed:", exitCode !== 0);
+  console.info("Exit code:", exitCode);
+  console.info("Killed:", exitCode !== 0);
 });
 
 await runExample("Example 17: Process Kill with Signal", async () => {
@@ -292,11 +292,11 @@ await runExample("Example 17: Process Kill with Signal", async () => {
   
   setTimeout(() => {
     proc.kill("SIGTERM"); // Graceful termination
-    console.log("Sent SIGTERM");
+    console.info("Sent SIGTERM");
   }, 100);
   
   await proc.exited;
-  console.log("Process terminated");
+  console.info("Process terminated");
 });
 
 await runExample("Example 18: Process Ref/Unref", async () => {
@@ -304,12 +304,12 @@ await runExample("Example 18: Process Ref/Unref", async () => {
     stdout: "pipe",
   });
   
-  console.log("Process created, unref() called");
+  console.info("Process created, unref() called");
   proc.unref(); // Process won't keep event loop alive
   
   // Note: In a real scenario, the process might exit before main script
   // This is useful for background processes
-  console.log("Main script can exit independently");
+  console.info("Main script can exit independently");
   
   await proc.exited;
 });
@@ -317,8 +317,8 @@ await runExample("Example 18: Process Ref/Unref", async () => {
 await runExample("Example 19: Process Send (IPC)", async () => {
   // IPC requires a Node.js-compatible child process setup
   // This is a simplified example
-  console.log("IPC send() is available for Node.js-compatible processes");
-  const proc = Bun.spawn(["node", "-e", "process.on('message', (m) => console.log('Received:', m)); process.send('pong');"], {
+  console.info("IPC send() is available for Node.js-compatible processes");
+  const proc = Bun.spawn(["node", "-e", "process.on('message', (m) => console.info('Received:', m)); process.send('pong');"], {
     stdout: "pipe",
   });
   
@@ -328,7 +328,7 @@ await runExample("Example 19: Process Send (IPC)", async () => {
   
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("IPC output:", output.trim());
+  console.info("IPC output:", output.trim());
 });
 
 // ============================================================================
@@ -344,24 +344,24 @@ await runExample("Example 20: Resource Usage Monitoring", async () => {
   
   const usage = proc.resourceUsage();
   if (usage) {
-    console.log("Resource Usage:");
-    console.log(`  Max memory used: ${usage.maxRSS} bytes`);
-    console.log(`  CPU time (user): ${usage.cpuTime.user} ns`);
-    console.log(`  CPU time (system): ${usage.cpuTime.system} ns`);
-    console.log(`  CPU time (total): ${usage.cpuTime.total} ns`);
-    console.log(`  Context switches (voluntary): ${usage.contextSwitches.voluntary}`);
-    console.log(`  Context switches (involuntary): ${usage.contextSwitches.involuntary}`);
-    console.log(`  I/O ops (in): ${usage.ops.in}`);
-    console.log(`  I/O ops (out): ${usage.ops.out}`);
-    console.log(`  Signals: ${usage.signalCount}`);
-    console.log(`  Swaps: ${usage.swapCount}`);
+    console.info("Resource Usage:");
+    console.info(`  Max memory used: ${usage.maxRSS} bytes`);
+    console.info(`  CPU time (user): ${usage.cpuTime.user} ns`);
+    console.info(`  CPU time (system): ${usage.cpuTime.system} ns`);
+    console.info(`  CPU time (total): ${usage.cpuTime.total} ns`);
+    console.info(`  Context switches (voluntary): ${usage.contextSwitches.voluntary}`);
+    console.info(`  Context switches (involuntary): ${usage.contextSwitches.involuntary}`);
+    console.info(`  I/O ops (in): ${usage.ops.in}`);
+    console.info(`  I/O ops (out): ${usage.ops.out}`);
+    console.info(`  Signals: ${usage.signalCount}`);
+    console.info(`  Swaps: ${usage.swapCount}`);
     
     // Formatted output
     const memoryMB = usage.maxRSS / 1024 / 1024;
     const cpuTimeUs = usage.cpuTime.total / 1_000; // Convert ns to µs
-    console.log(`\nFormatted:`);
-    console.log(`  Memory: ${memoryMB.toFixed(2)} MB`);
-    console.log(`  CPU time: ${cpuTimeUs.toFixed(2)} µs`);
+    console.info(`\nFormatted:`);
+    console.info(`  Memory: ${memoryMB.toFixed(2)} MB`);
+    console.info(`  CPU time: ${cpuTimeUs.toFixed(2)} µs`);
   }
 });
 
@@ -378,7 +378,7 @@ await runExample("Example 21: Timeout Option", async () => {
     
     await proc.exited;
   } catch (error) {
-    console.log("Timeout caught:", error instanceof Error ? error.message : String(error));
+    console.info("Timeout caught:", error instanceof Error ? error.message : String(error));
   }
 });
 
@@ -391,13 +391,13 @@ await runExample("Example 22: AbortSignal", async () => {
   
   setTimeout(() => {
     controller.abort();
-    console.log("Abort signal sent");
+    console.info("Abort signal sent");
   }, 100);
   
   try {
     await proc.exited;
   } catch (error) {
-    console.log("Aborted:", error instanceof Error ? error.message : String(error));
+    console.info("Aborted:", error instanceof Error ? error.message : String(error));
   }
 });
 
@@ -414,15 +414,15 @@ await runExample("Example 23: onExit Callback", async () => {
     onExit(subprocess, code, signalNum, error) {
       exitCode = code;
       signal = signalNum;
-      console.log("onExit called:");
-      console.log("  Exit code:", code);
-      console.log("  Signal:", signalNum);
-      console.log("  Error:", error ? error.message : "none");
+      console.info("onExit called:");
+      console.info("  Exit code:", code);
+      console.info("  Signal:", signalNum);
+      console.info("  Error:", error ? error.message : "none");
     },
   });
   
   await proc.exited;
-  console.log("Process exited, callback was invoked");
+  console.info("Process exited, callback was invoked");
 });
 
 // ============================================================================
@@ -440,7 +440,7 @@ await runExample("Example 24: Environment Variables", async () => {
   
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Environment variable:", output.trim());
+  console.info("Environment variable:", output.trim());
 });
 
 await runExample("Example 25: Working Directory", async () => {
@@ -451,7 +451,7 @@ await runExample("Example 25: Working Directory", async () => {
   
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Working directory:", output.trim());
+  console.info("Working directory:", output.trim());
 });
 
 // ============================================================================
@@ -463,9 +463,9 @@ await runExample("Example 26: spawnSync - Synchronous Execution", () => {
     stdout: "pipe",
   });
   
-  console.log("Output:", result.stdout.toString().trim());
-  console.log("Exit code:", result.exitCode);
-  console.log("Success:", result.success);
+  console.info("Output:", result.stdout.toString().trim());
+  console.info("Exit code:", result.exitCode);
+  console.info("Success:", result.success);
 });
 
 await runExample("Example 27: spawnSync - Error Handling", () => {
@@ -474,10 +474,10 @@ await runExample("Example 27: spawnSync - Error Handling", () => {
     stderr: "pipe",
   });
   
-  console.log("Exit code:", result.exitCode);
-  console.log("Success:", result.success);
-  console.log("Stdout:", result.stdout.toString().trim());
-  console.log("Stderr:", result.stderr?.toString().trim() || "(empty)");
+  console.info("Exit code:", result.exitCode);
+  console.info("Success:", result.success);
+  console.info("Stdout:", result.stdout.toString().trim());
+  console.info("Stderr:", result.stderr?.toString().trim() || "(empty)");
 });
 
 await runExample("Example 28: spawnSync - With Environment", () => {
@@ -488,7 +488,7 @@ await runExample("Example 28: spawnSync - With Environment", () => {
     },
   });
   
-  console.log("Environment variable:", result.stdout.toString().trim());
+  console.info("Environment variable:", result.stdout.toString().trim());
 });
 
 // ============================================================================
@@ -508,7 +508,7 @@ await runExample("Example 29: Complete Workflow - Fetch, Process, Monitor", asyn
     cwd: process.cwd(),
     onExit(subprocess, code, signal, error) {
       if (error) {
-        console.log("Process error:", error.message);
+        console.info("Process error:", error.message);
       }
     },
   });
@@ -517,12 +517,12 @@ await runExample("Example 29: Complete Workflow - Fetch, Process, Monitor", asyn
   const output = await (proc.stdout as any).text();
   const usage = proc.resourceUsage();
   
-  console.log("Processed JSON length:", output.length, "characters");
+  console.info("Processed JSON length:", output.length, "characters");
   if (usage) {
-    console.log("CPU time:", usage.cpuTime.total, "ns");
-    console.log("Memory:", usage.maxRSS, "bytes");
+    console.info("CPU time:", usage.cpuTime.total, "ns");
+    console.info("Memory:", usage.maxRSS, "bytes");
   }
-  console.log("Exit code:", await proc.exited);
+  console.info("Exit code:", await proc.exited);
 });
 
 await runExample("Example 30: Streaming Large Data", async () => {
@@ -545,23 +545,23 @@ await runExample("Example 30: Streaming Large Data", async () => {
   
   // Bun provides native .text() method on stdout/stderr streams
   const output = await (proc.stdout as any).text();
-  console.log("Line count:", output.trim());
+  console.info("Line count:", output.trim());
 });
 
 // ============================================================================
 // SUMMARY
 // ============================================================================
 
-console.log("═".repeat(70));
-console.log("  Demo Complete!");
-console.log("═".repeat(70));
-console.log("\n💡 Key Takeaways:");
-console.log("  • Bun.spawn() supports two API styles: command array and options object");
-console.log("  • Stdin accepts: Response, Request, Blob, BunFile, ArrayBufferView, ReadableStream, 'pipe'");
-console.log("  • Stdout/Stderr accept: 'pipe', 'inherit', 'ignore', BunFile, ArrayBufferView, number");
-console.log("  • Process management: kill(), ref(), unref(), send(), disconnect()");
-console.log("  • Resource monitoring: resourceUsage() for CPU, memory, and system stats");
-console.log("  • Timeout and AbortSignal for cancellation");
-console.log("  • onExit callback for cleanup");
-console.log("  • spawnSync() for synchronous operations");
-console.log("\n📚 See docs/BUN-SPAWN-COMPLETE.md for complete API reference\n");
+console.info("═".repeat(70));
+console.info("  Demo Complete!");
+console.info("═".repeat(70));
+console.info("\n💡 Key Takeaways:");
+console.info("  • Bun.spawn() supports two API styles: command array and options object");
+console.info("  • Stdin accepts: Response, Request, Blob, BunFile, ArrayBufferView, ReadableStream, 'pipe'");
+console.info("  • Stdout/Stderr accept: 'pipe', 'inherit', 'ignore', BunFile, ArrayBufferView, number");
+console.info("  • Process management: kill(), ref(), unref(), send(), disconnect()");
+console.info("  • Resource monitoring: resourceUsage() for CPU, memory, and system stats");
+console.info("  • Timeout and AbortSignal for cancellation");
+console.info("  • onExit callback for cleanup");
+console.info("  • spawnSync() for synchronous operations");
+console.info("\n📚 See docs/BUN-SPAWN-COMPLETE.md for complete API reference\n");

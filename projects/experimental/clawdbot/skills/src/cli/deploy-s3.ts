@@ -79,7 +79,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-    console.log(HELP);
+    console.info(HELP);
     process.exit(0);
   }
 
@@ -94,8 +94,8 @@ async function main() {
 
   if (!hasR2 && command !== "help") {
     EnhancedOutput.error("R2 not configured. Set the following environment variables:");
-    console.log("  R2_BUCKET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY");
-    console.log("  Optional: R2_ACCOUNT_ID, R2_ENDPOINT, R2_PUBLIC_URL");
+    console.info("  R2_BUCKET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY");
+    console.info("  Optional: R2_ACCOUNT_ID, R2_ENDPOINT, R2_PUBLIC_URL");
     process.exit(1);
   }
 
@@ -147,7 +147,7 @@ async function main() {
 
       default:
         EnhancedOutput.error(`Unknown command: ${command}`);
-        console.log(HELP);
+        console.info(HELP);
         process.exit(1);
     }
   } catch (error: any) {
@@ -195,7 +195,7 @@ async function uploadCommand(args: string[]) {
     ];
   }
 
-  console.log(`Platforms: ${platforms.join(", ")}\n`);
+  console.info(`Platforms: ${platforms.join(", ")}\n`);
 
   const result = await builder.buildAndUpload(
     skillId,
@@ -219,8 +219,8 @@ async function uploadCommand(args: string[]) {
   );
 
   // Display results
-  console.log("\nUpload Results:");
-  console.log("─".repeat(80));
+  console.info("\nUpload Results:");
+  console.info("─".repeat(80));
 
   if (result.uploads.length > 0) {
     const tableData = result.uploads.map((upload) => ({
@@ -232,7 +232,7 @@ async function uploadCommand(args: string[]) {
       Checksum: upload.checksum.slice(0, 8),
     }));
 
-    console.log(
+    console.info(
       EnhancedOutput.table(tableData, {
         columns: [
           { key: "Platform", width: 15 },
@@ -246,15 +246,15 @@ async function uploadCommand(args: string[]) {
   }
 
   if (result.errors.length > 0) {
-    console.log("\nErrors:");
+    console.info("\nErrors:");
     result.errors.forEach((error) => EnhancedOutput.error(error));
   }
 
-  console.log(`\nTotal size: ${EnhancedOutput.formatBytes(result.totalSize)}`);
-  console.log(`Total time: ${(result.totalTime / 1000).toFixed(2)}s`);
+  console.info(`\nTotal size: ${EnhancedOutput.formatBytes(result.totalSize)}`);
+  console.info(`Total time: ${(result.totalTime / 1000).toFixed(2)}s`);
 
   // Create manifest
-  console.log("\nCreating distribution manifest...");
+  console.info("\nCreating distribution manifest...");
   const manifest = await builder.createDistributionManifest(skillId);
 
   EnhancedOutput.success(`Manifest: ${manifest.manifestUrl}`);
@@ -285,7 +285,7 @@ async function deployCommand(args: string[]) {
   }
 
   // First upload
-  console.log("1. Uploading executables...\n");
+  console.info("1. Uploading executables...\n");
   await uploadCommand([
     skillId,
     "--all-platforms",
@@ -293,23 +293,23 @@ async function deployCommand(args: string[]) {
   ].filter(Boolean));
 
   // Deploy to CDN
-  console.log("\n2. Deploying to CDN...\n");
+  console.info("\n2. Deploying to CDN...\n");
   const deployment = await builder.deployToCDN(skillId, {
     routes: values.domain ? [values.domain] : undefined,
     cacheTtl: 3600,
     cors: true,
   });
 
-  console.log("CDN Deployment:");
-  console.log("─".repeat(60));
-  console.log(`  Worker URL: ${deployment.workerUrl}`);
-  console.log(`  Manifest: ${deployment.manifestUrl}`);
-  console.log(`  Latest: ${deployment.latestUrl}`);
+  console.info("CDN Deployment:");
+  console.info("─".repeat(60));
+  console.info(`  Worker URL: ${deployment.workerUrl}`);
+  console.info(`  Manifest: ${deployment.manifestUrl}`);
+  console.info(`  Latest: ${deployment.latestUrl}`);
   if (deployment.customDomain) {
-    console.log(`  Custom Domain: https://${deployment.customDomain}`);
+    console.info(`  Custom Domain: https://${deployment.customDomain}`);
   }
-  console.log(`  Versions: ${deployment.stats.versions}`);
-  console.log(`  Platforms: ${deployment.stats.totalPlatforms}`);
+  console.info(`  Versions: ${deployment.stats.versions}`);
+  console.info(`  Platforms: ${deployment.stats.totalPlatforms}`);
 
   EnhancedOutput.success("Deployment complete!");
 }
@@ -338,8 +338,8 @@ async function installCommand(args: string[]) {
   }
 
   const platform = values.platform || builder.detectPlatform();
-  console.log(`Version: ${version}`);
-  console.log(`Platform: ${platform}\n`);
+  console.info(`Version: ${version}`);
+  console.info(`Platform: ${platform}\n`);
 
   const result = await builder.installFromRemote(skillId, version, platform);
 
@@ -347,22 +347,22 @@ async function installCommand(args: string[]) {
     throw new Error(result.error || "Installation failed");
   }
 
-  console.log("\nInstallation Details:");
-  console.log("─".repeat(60));
-  console.log(`  Skill: ${result.skillId}`);
-  console.log(`  Version: ${result.version}`);
-  console.log(`  Platform: ${result.platform}`);
-  console.log(`  Path: ${result.installedPath}`);
-  console.log(`  Size: ${EnhancedOutput.formatBytes(result.size)}`);
-  console.log(`  Checksum: ${result.checksum}`);
+  console.info("\nInstallation Details:");
+  console.info("─".repeat(60));
+  console.info(`  Skill: ${result.skillId}`);
+  console.info(`  Version: ${result.version}`);
+  console.info(`  Platform: ${result.platform}`);
+  console.info(`  Path: ${result.installedPath}`);
+  console.info(`  Size: ${EnhancedOutput.formatBytes(result.size)}`);
+  console.info(`  Checksum: ${result.checksum}`);
 
   EnhancedOutput.success("Installation complete!");
 
-  console.log("\nTo run:");
+  console.info("\nTo run:");
   if (result.platform.includes("windows")) {
-    console.log(`  ${result.installedPath}`);
+    console.info(`  ${result.installedPath}`);
   } else {
-    console.log(`  ./${result.installedPath}`);
+    console.info(`  ./${result.installedPath}`);
   }
 }
 
@@ -402,7 +402,7 @@ async function listCommand(args: string[]) {
   }
 
   for (const [version, platforms] of Object.entries(grouped)) {
-    console.log(`\n${version}:`);
+    console.info(`\n${version}:`);
 
     const tableData = platforms.map((p) => ({
       Platform: `${p.platform}-${p.arch}`,
@@ -411,7 +411,7 @@ async function listCommand(args: string[]) {
       Checksum: p.checksum.slice(0, 8),
     }));
 
-    console.log(
+    console.info(
       EnhancedOutput.table(tableData, {
         columns: [
           { key: "Platform", width: 15 },
@@ -424,7 +424,7 @@ async function listCommand(args: string[]) {
     );
   }
 
-  console.log(`\nTotal: ${versions.length} builds across ${Object.keys(grouped).length} versions`);
+  console.info(`\nTotal: ${versions.length} builds across ${Object.keys(grouped).length} versions`);
 }
 
 async function deleteCommand(args: string[]) {
@@ -456,10 +456,10 @@ async function deleteCommand(args: string[]) {
     return;
   }
 
-  console.log(`Found ${toDelete.length} files to delete:\n`);
+  console.info(`Found ${toDelete.length} files to delete:\n`);
 
   for (const item of toDelete) {
-    console.log(`  ${item.platform}-${item.arch}: ${item.key}`);
+    console.info(`  ${item.platform}-${item.arch}: ${item.key}`);
     await storage.deleteObject(item.key);
   }
 
@@ -495,7 +495,7 @@ async function infoCommand(args: string[]) {
     // Check for any versions
     const versions = await storage.listSkillVersions(skillId);
     if (versions.length > 0) {
-      console.log(`\nFound ${versions.length} uploaded builds:`);
+      console.info(`\nFound ${versions.length} uploaded builds:`);
       await listCommand([skillId]);
     } else {
       EnhancedOutput.info("No builds found for this skill");
@@ -503,11 +503,11 @@ async function infoCommand(args: string[]) {
     return;
   }
 
-  console.log("Manifest Info:");
-  console.log("─".repeat(60));
-  console.log(`  Size: ${EnhancedOutput.formatBytes(manifestInfo.size)}`);
-  console.log(`  Last Modified: ${manifestInfo.lastModified.toLocaleString()}`);
-  console.log(`  URL: ${storage.getPublicUrl(manifestKey)}`);
+  console.info("Manifest Info:");
+  console.info("─".repeat(60));
+  console.info(`  Size: ${EnhancedOutput.formatBytes(manifestInfo.size)}`);
+  console.info(`  Last Modified: ${manifestInfo.lastModified.toLocaleString()}`);
+  console.info(`  URL: ${storage.getPublicUrl(manifestKey)}`);
 
   // Download and show manifest content
   const tempPath = `/tmp/${skillId}-manifest-info.json`;
@@ -516,10 +516,10 @@ async function infoCommand(args: string[]) {
   if (downloadResult.success) {
     const manifest = JSON.parse(await Bun.file(tempPath).text());
 
-    console.log(`\nVersions: ${Object.keys(manifest.versions).length}`);
+    console.info(`\nVersions: ${Object.keys(manifest.versions).length}`);
 
     for (const [version, info] of Object.entries(manifest.versions) as any) {
-      console.log(`  ${version}: ${info.platforms.length} platforms`);
+      console.info(`  ${version}: ${info.platforms.length} platforms`);
     }
   }
 }
@@ -547,7 +547,7 @@ async function uploadBatchCommand(args: string[]) {
   const concurrency = parseInt(values.concurrency || "3", 10);
 
   EnhancedOutput.printHeader(`Batch Upload: ${skillIds.length} skills`);
-  console.log(`Concurrency: ${concurrency}\n`);
+  console.info(`Concurrency: ${concurrency}\n`);
 
   const builder = createS3BuilderFromEnv();
   if (!builder) {
@@ -560,12 +560,12 @@ async function uploadBatchCommand(args: string[]) {
   // Process in batches based on concurrency
   for (let i = 0; i < skillIds.length; i += concurrency) {
     const batch = skillIds.slice(i, i + concurrency);
-    console.log(`\nProcessing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(skillIds.length / concurrency)}`);
+    console.info(`\nProcessing batch ${Math.floor(i / concurrency) + 1}/${Math.ceil(skillIds.length / concurrency)}`);
 
     const batchPromises = batch.map(async (skillId) => {
       const skillStart = Date.now();
       try {
-        console.log(`  Starting: ${skillId}`);
+        console.info(`  Starting: ${skillId}`);
 
         // Determine platforms
         const platforms = values["all-platforms"]
@@ -580,11 +580,11 @@ async function uploadBatchCommand(args: string[]) {
 
         const time = Date.now() - skillStart;
         results.push({ skillId, success: true, time });
-        console.log(`  \x1b[32m✓\x1b[0m ${skillId} (${(time / 1000).toFixed(1)}s)`);
+        console.info(`  \x1b[32m✓\x1b[0m ${skillId} (${(time / 1000).toFixed(1)}s)`);
       } catch (error: any) {
         const time = Date.now() - skillStart;
         results.push({ skillId, success: false, error: error.message, time });
-        console.log(`  \x1b[31m✗\x1b[0m ${skillId}: ${error.message}`);
+        console.info(`  \x1b[31m✗\x1b[0m ${skillId}: ${error.message}`);
       }
     });
 
@@ -596,18 +596,18 @@ async function uploadBatchCommand(args: string[]) {
   const succeeded = results.filter((r) => r.success).length;
   const failed = results.filter((r) => !r.success).length;
 
-  console.log("\n" + "─".repeat(60));
-  console.log("Batch Upload Summary:");
-  console.log(`  Total: ${results.length} skills`);
-  console.log(`  Succeeded: \x1b[32m${succeeded}\x1b[0m`);
-  console.log(`  Failed: \x1b[31m${failed}\x1b[0m`);
-  console.log(`  Total time: ${(totalTime / 1000).toFixed(1)}s`);
+  console.info("\n" + "─".repeat(60));
+  console.info("Batch Upload Summary:");
+  console.info(`  Total: ${results.length} skills`);
+  console.info(`  Succeeded: \x1b[32m${succeeded}\x1b[0m`);
+  console.info(`  Failed: \x1b[31m${failed}\x1b[0m`);
+  console.info(`  Total time: ${(totalTime / 1000).toFixed(1)}s`);
 
   if (failed > 0) {
-    console.log("\nFailed uploads:");
+    console.info("\nFailed uploads:");
     results
       .filter((r) => !r.success)
-      .forEach((r) => console.log(`  ${r.skillId}: ${r.error}`));
+      .forEach((r) => console.info(`  ${r.skillId}: ${r.error}`));
   }
 }
 
@@ -636,7 +636,7 @@ async function verifyCommand(args: string[]) {
     return;
   }
 
-  console.log(`Found ${versions.length} builds to verify\n`);
+  console.info(`Found ${versions.length} builds to verify\n`);
 
   let verified = 0;
   let failed = 0;
@@ -653,7 +653,7 @@ async function verifyCommand(args: string[]) {
       if (!result.success) {
         failed++;
         failures.push({ key: version.key, reason: result.error || "Download failed" });
-        console.log("\x1b[31m✗ Download failed\x1b[0m");
+        console.info("\x1b[31m✗ Download failed\x1b[0m");
         continue;
       }
 
@@ -663,14 +663,14 @@ async function verifyCommand(args: string[]) {
 
       if (actualChecksum === version.checksum) {
         verified++;
-        console.log("\x1b[32m✓ OK\x1b[0m");
+        console.info("\x1b[32m✓ OK\x1b[0m");
       } else {
         failed++;
         failures.push({
           key: version.key,
           reason: `Checksum mismatch: expected ${version.checksum}, got ${actualChecksum}`,
         });
-        console.log("\x1b[31m✗ Checksum mismatch\x1b[0m");
+        console.info("\x1b[31m✗ Checksum mismatch\x1b[0m");
       }
 
       // Cleanup temp file
@@ -678,18 +678,18 @@ async function verifyCommand(args: string[]) {
     } catch (error: any) {
       failed++;
       failures.push({ key: version.key, reason: error.message });
-      console.log(`\x1b[31m✗ Error: ${error.message}\x1b[0m`);
+      console.info(`\x1b[31m✗ Error: ${error.message}\x1b[0m`);
     }
   }
 
-  console.log("\n" + "─".repeat(60));
-  console.log("Verification Summary:");
-  console.log(`  Verified: \x1b[32m${verified}\x1b[0m`);
-  console.log(`  Failed: \x1b[31m${failed}\x1b[0m`);
+  console.info("\n" + "─".repeat(60));
+  console.info("Verification Summary:");
+  console.info(`  Verified: \x1b[32m${verified}\x1b[0m`);
+  console.info(`  Failed: \x1b[31m${failed}\x1b[0m`);
 
   if (failures.length > 0) {
-    console.log("\nFailures:");
-    failures.forEach((f) => console.log(`  ${f.key}: ${f.reason}`));
+    console.info("\nFailures:");
+    failures.forEach((f) => console.info(`  ${f.key}: ${f.reason}`));
     process.exit(1);
   }
 
@@ -715,7 +715,7 @@ async function cleanupCommand(args: string[]) {
   const dryRun = values["dry-run"];
 
   EnhancedOutput.printHeader(`Cleanup: ${skillId}`);
-  console.log(`Keeping last ${keepCount} versions${dryRun ? " (dry run)" : ""}\n`);
+  console.info(`Keeping last ${keepCount} versions${dryRun ? " (dry run)" : ""}\n`);
 
   const storage = createBunR2StorageFromEnv();
   if (!storage) {
@@ -751,10 +751,10 @@ async function cleanupCommand(args: string[]) {
     (a, b) => b.date.getTime() - a.date.getTime()
   );
 
-  console.log(`Found ${sortedVersions.length} versions:`);
+  console.info(`Found ${sortedVersions.length} versions:`);
   sortedVersions.forEach((v, i) => {
     const status = i < keepCount ? "\x1b[32mKEEP\x1b[0m" : "\x1b[33mDELETE\x1b[0m";
-    console.log(`  ${v.version} (${v.date.toLocaleDateString()}) - ${v.items.length} builds - ${status}`);
+    console.info(`  ${v.version} (${v.date.toLocaleDateString()}) - ${v.items.length} builds - ${status}`);
   });
 
   // Get versions to delete
@@ -765,7 +765,7 @@ async function cleanupCommand(args: string[]) {
   }
 
   const deleteCount = toDelete.reduce((sum, v) => sum + v.items.length, 0);
-  console.log(`\n${dryRun ? "Would delete" : "Deleting"} ${deleteCount} files from ${toDelete.length} versions...`);
+  console.info(`\n${dryRun ? "Would delete" : "Deleting"} ${deleteCount} files from ${toDelete.length} versions...`);
 
   if (!dryRun) {
     for (const version of toDelete) {
@@ -789,29 +789,29 @@ async function metricsCommand(_args: string[]) {
 
   const metrics = storage.getMetrics();
 
-  console.log("Upload Statistics:");
-  console.log("─".repeat(40));
-  console.log(`  Total uploads: ${metrics.uploads.total}`);
-  console.log(`  Total bytes: ${EnhancedOutput.formatBytes(metrics.uploads.bytes)}`);
-  console.log(`  Errors: ${metrics.uploads.errors}`);
+  console.info("Upload Statistics:");
+  console.info("─".repeat(40));
+  console.info(`  Total uploads: ${metrics.uploads.total}`);
+  console.info(`  Total bytes: ${EnhancedOutput.formatBytes(metrics.uploads.bytes)}`);
+  console.info(`  Errors: ${metrics.uploads.errors}`);
 
-  console.log("\nDownload Statistics:");
-  console.log("─".repeat(40));
-  console.log(`  Total downloads: ${metrics.downloads.total}`);
-  console.log(`  Total bytes: ${EnhancedOutput.formatBytes(metrics.downloads.bytes)}`);
-  console.log(`  Errors: ${metrics.downloads.errors}`);
+  console.info("\nDownload Statistics:");
+  console.info("─".repeat(40));
+  console.info(`  Total downloads: ${metrics.downloads.total}`);
+  console.info(`  Total bytes: ${EnhancedOutput.formatBytes(metrics.downloads.bytes)}`);
+  console.info(`  Errors: ${metrics.downloads.errors}`);
 
-  console.log("\nLatency Percentiles:");
-  console.log("─".repeat(40));
-  console.log(`  P50: ${metrics.p50Latency.toFixed(0)}ms`);
-  console.log(`  P95: ${metrics.p95Latency.toFixed(0)}ms`);
-  console.log(`  P99: ${metrics.p99Latency.toFixed(0)}ms`);
-  console.log(`  Avg: ${metrics.avgLatency.toFixed(0)}ms`);
+  console.info("\nLatency Percentiles:");
+  console.info("─".repeat(40));
+  console.info(`  P50: ${metrics.p50Latency.toFixed(0)}ms`);
+  console.info(`  P95: ${metrics.p95Latency.toFixed(0)}ms`);
+  console.info(`  P99: ${metrics.p99Latency.toFixed(0)}ms`);
+  console.info(`  Avg: ${metrics.avgLatency.toFixed(0)}ms`);
 
-  console.log(`\nLast reset: ${metrics.lastReset}`);
+  console.info(`\nLast reset: ${metrics.lastReset}`);
 
   if (metrics.uploads.total === 0 && metrics.downloads.total === 0) {
-    console.log("\nNo operations recorded yet in this session.");
+    console.info("\nNo operations recorded yet in this session.");
   }
 }
 
@@ -889,31 +889,31 @@ async function debugCommand(args: string[]) {
     await proc.exited;
     proc.terminal?.close();
 
-    console.log("\n\x1b[32m✓\x1b[0m Debug command completed");
+    console.info("\n\x1b[32m✓\x1b[0m Debug command completed");
     return;
   }
 
   // Interactive mode
   EnhancedOutput.printHeader(`Debug Shell: ${skillId}`);
-  console.log(`  Skill: ${skillConfig.name || skillId}`);
-  console.log(`  Version: ${skillConfig.version || "unknown"}`);
-  console.log(`  Directory: ${skillDir}`);
-  console.log("");
-  console.log("  \x1b[36mCommands:\x1b[0m");
-  console.log("    skill-run     Run the skill");
-  console.log("    skill-build   Build the skill");
-  console.log("    skill-test    Run tests");
-  console.log("    exit          Exit debug shell");
-  console.log("");
-  console.log("  \x1b[33mPress Ctrl+D or type 'exit' to quit\x1b[0m");
-  console.log("─".repeat(60));
+  console.info(`  Skill: ${skillConfig.name || skillId}`);
+  console.info(`  Version: ${skillConfig.version || "unknown"}`);
+  console.info(`  Directory: ${skillDir}`);
+  console.info("");
+  console.info("  \x1b[36mCommands:\x1b[0m");
+  console.info("    skill-run     Run the skill");
+  console.info("    skill-build   Build the skill");
+  console.info("    skill-test    Run tests");
+  console.info("    exit          Exit debug shell");
+  console.info("");
+  console.info("  \x1b[33mPress Ctrl+D or type 'exit' to quit\x1b[0m");
+  console.info("─".repeat(60));
 
   // Check if we have a TTY for interactive mode
   if (!process.stdin.isTTY) {
-    console.log("\n\x1b[33mNo TTY detected. Use non-interactive mode:\x1b[0m");
-    console.log(`  deploy-s3 debug ${skillId} --run [args]     Run the skill`);
-    console.log(`  deploy-s3 debug ${skillId} --build          Build the skill`);
-    console.log(`  deploy-s3 debug ${skillId} --exec "cmd"     Execute command`);
+    console.info("\n\x1b[33mNo TTY detected. Use non-interactive mode:\x1b[0m");
+    console.info(`  deploy-s3 debug ${skillId} --run [args]     Run the skill`);
+    console.info(`  deploy-s3 debug ${skillId} --build          Build the skill`);
+    console.info(`  deploy-s3 debug ${skillId} --exec "cmd"     Execute command`);
     return;
   }
 
@@ -1018,7 +1018,7 @@ cd "$SKILL_DIR"
   // Remove temp file
   Bun.spawnSync(["rm", "-f", shellRcPath]);
 
-  console.log("\n\x1b[32m✓\x1b[0m Debug session ended");
+  console.info("\n\x1b[32m✓\x1b[0m Debug session ended");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -105,6 +105,6 @@ export function calculateOverallImprovement(): {
 
 // Console output for direct execution
 if (import.meta.main) {
-  console.log(generatePerformanceReport());
-  console.log('\nOverall Performance Impact:', calculateOverallImprovement());
+  console.info(generatePerformanceReport());
+  console.info('\nOverall Performance Impact:', calculateOverallImprovement());
 }

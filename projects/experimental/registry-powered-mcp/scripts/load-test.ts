@@ -28,16 +28,16 @@ async function loadTest() {
     '/invalid/path'
   ];
 
-  console.log('🚀 Starting latency profiling load test...');
+  console.info('🚀 Starting latency profiling load test...');
 
   // Warm up the server
-  console.log('🔥 Warming up server...');
+  console.info('🔥 Warming up server...');
   for (let i = 0; i < 100; i++) {
     await makeRequest('/mcp/health');
   }
 
   // Generate load for profiling
-  console.log('📊 Generating request load...');
+  console.info('📊 Generating request load...');
   const latencies: number[] = [];
   for (let i = 0; i < 1000; i++) {
     const path = paths[Math.floor(Math.random() * paths.length)];
@@ -53,14 +53,14 @@ async function loadTest() {
     const p95 = sorted[Math.floor(sorted.length * 0.95)];
     const p99 = sorted[Math.floor(sorted.length * 0.99)];
 
-    console.log(`📈 Load test results:`);
-    console.log(`   Requests: ${latencies.length}`);
-    console.log(`   Average: ${avg.toFixed(3)}ms`);
-    console.log(`   P95: ${p95.toFixed(3)}ms`);
-    console.log(`   P99: ${p99.toFixed(3)}ms`);
+    console.info(`📈 Load test results:`);
+    console.info(`   Requests: ${latencies.length}`);
+    console.info(`   Average: ${avg.toFixed(3)}ms`);
+    console.info(`   P95: ${p95.toFixed(3)}ms`);
+    console.info(`   P99: ${p99.toFixed(3)}ms`);
   }
 
-  console.log('✅ Load test complete');
+  console.info('✅ Load test complete');
 }
 
 // Start the load test

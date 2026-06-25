@@ -25,7 +25,7 @@ class AgentRankingsSystem {
   private lastUpdate: Date = new Date();
 
   async generateRankings(state?: string): Promise<AgentRanking[]> {
-    console.log(`📊 Generating live agent rankings...`);
+    console.info(`📊 Generating live agent rankings...`);
 
     try {
       // Fetch data from datapipe
@@ -46,7 +46,7 @@ class AgentRankingsSystem {
 
       this.lastUpdate = new Date();
 
-      console.log(`✅ Generated rankings for ${this.rankings.length} agents`);
+      console.info(`✅ Generated rankings for ${this.rankings.length} agents`);
       return this.rankings;
 
     } catch (error) {
@@ -129,7 +129,7 @@ ${this.generateHeatmap(rankings)}
       try {
         mkdirSync(join(vaultPath, 'dashboards'), { recursive: true });
         writeFileSync(outputPath, content);
-        console.log(`📄 Exported rankings to: ${outputPath}`);
+        console.info(`📄 Exported rankings to: ${outputPath}`);
       } catch (error) {
         console.error(`❌ Failed to export: ${error.message}`);
       }
@@ -203,16 +203,16 @@ async function main() {
     case 'list':
       const limit = parseInt(process.argv[3]) || 50;
       const agents = await rankings.generateRankings();
-      console.log(`\n🚀 LIVE AGENTS – From Datapipe *Top ${limit} ranked. Profit leaders.*\n`);
-      console.log(rankings.formatTable(agents, limit));
+      console.info(`\n🚀 LIVE AGENTS – From Datapipe *Top ${limit} ranked. Profit leaders.*\n`);
+      console.info(rankings.formatTable(agents, limit));
       break;
 
     case 'top':
       const topCount = parseInt(process.argv[3]) || 5;
       const topAgents = await rankings.generateRankings();
-      console.log(`🏆 TOP ${topCount} AGENTS:`);
+      console.info(`🏆 TOP ${topCount} AGENTS:`);
       topAgents.slice(0, topCount).forEach((agent, i) => {
-        console.log(`${i + 1}. ${agent.agent}: +$${agent.profit.toLocaleString()} (${agent.winRate}% win, ${agent.roi}% ROI) - ${agent.bets} bets`);
+        console.info(`${i + 1}. ${agent.agent}: +$${agent.profit.toLocaleString()} (${agent.winRate}% win, ${agent.roi}% ROI) - ${agent.bets} bets`);
       });
       break;
 
@@ -223,13 +223,13 @@ async function main() {
 
     case 'telegram':
       const summary = await rankings.getTelegramSummary();
-      console.log(summary);
+      console.info(summary);
       break;
 
     case 'stats':
       const agentName = process.argv[3];
       if (!agentName) {
-        console.log('Usage: bun agents:stats <agent_name>');
+        console.info('Usage: bun agents:stats <agent_name>');
         break;
       }
 
@@ -237,21 +237,21 @@ async function main() {
       const stats = rankings.getAgentStats(agentName);
 
       if (stats) {
-        console.log(`📊 ${agentName} Statistics:`);
-        console.log(`   Rank: #${stats.rank}`);
-        console.log(`   Profit: $${stats.profit.toLocaleString()}`);
-        console.log(`   ROI: ${stats.roi}%`);
-        console.log(`   Bets: ${stats.bets}`);
-        console.log(`   Win Rate: ${stats.winRate}%`);
-        console.log(`   Volume: $${stats.volume.toLocaleString()}`);
-        console.log(`   Avg Bet: $${stats.avgBet}`);
+        console.info(`📊 ${agentName} Statistics:`);
+        console.info(`   Rank: #${stats.rank}`);
+        console.info(`   Profit: $${stats.profit.toLocaleString()}`);
+        console.info(`   ROI: ${stats.roi}%`);
+        console.info(`   Bets: ${stats.bets}`);
+        console.info(`   Win Rate: ${stats.winRate}%`);
+        console.info(`   Volume: $${stats.volume.toLocaleString()}`);
+        console.info(`   Avg Bet: $${stats.avgBet}`);
       } else {
-        console.log(`❌ Agent "${agentName}" not found`);
+        console.info(`❌ Agent "${agentName}" not found`);
       }
       break;
 
     default:
-      console.log(`🚀 Agent Rankings System
+      console.info(`🚀 Agent Rankings System
 
 USAGE:
   bun agents:list [limit]     # List top agents (default: 50)

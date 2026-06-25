@@ -29,7 +29,7 @@ const logger = getLogger();
  * const games = generateMockGames(100);
  * const config = { minSimilarityThreshold: 0.3, ... };
  * const graph = buildGraph(games, config);
- * console.log(`Graph has ${graph.metadata.nodeCount} nodes and ${graph.metadata.edgeCount} edges`);
+ * console.info(`Graph has ${graph.metadata.nodeCount} nodes and ${graph.metadata.edgeCount} edges`);
  * ```
  */
 export function buildGraph(

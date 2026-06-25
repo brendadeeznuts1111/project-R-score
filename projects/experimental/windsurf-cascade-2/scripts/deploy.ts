@@ -59,7 +59,7 @@ class R2DeploymentManager {
         ]
       };
 
-      console.log('✅ Configuration loaded successfully');
+      console.info('✅ Configuration loaded successfully');
     } catch (error) {
       console.error('❌ Failed to load configuration:', error);
       process.exit(1);
@@ -67,9 +67,9 @@ class R2DeploymentManager {
   }
 
   async deploy(): Promise<void> {
-    console.log('🚀 Starting Global Trading System R2 Deployment...');
-    console.log('📦 Using Bun Package Manager for optimal performance');
-    console.log('');
+    console.info('🚀 Starting Global Trading System R2 Deployment...');
+    console.info('📦 Using Bun Package Manager for optimal performance');
+    console.info('');
 
     try {
       // Step 1: Setup workspace
@@ -90,9 +90,9 @@ class R2DeploymentManager {
       // Step 6: Verify deployment
       await this.verifyDeployment();
       
-      console.log('🎉 Global Trading System deployed successfully!');
-      console.log('🌍 Available globally via Cloudflare R2 CDN');
-      console.log('⚡ Powered by 13-byte configuration system');
+      console.info('🎉 Global Trading System deployed successfully!');
+      console.info('🌍 Available globally via Cloudflare R2 CDN');
+      console.info('⚡ Powered by 13-byte configuration system');
       
     } catch (error) {
       console.error('❌ Deployment failed:', error);
@@ -101,7 +101,7 @@ class R2DeploymentManager {
   }
 
   private async setupWorkspace(): Promise<void> {
-    console.log('📁 Setting up workspace structure...');
+    console.info('📁 Setting up workspace structure...');
     
     // Create package directories
     const dirs = ['core', 'integrations', 'platforms', 'dashboard', 'cli'];
@@ -110,15 +110,15 @@ class R2DeploymentManager {
       const packageDir = join(this.packagesDir, dir);
       if (!existsSync(packageDir)) {
         mkdirSync(packageDir, { recursive: true });
-        console.log(`  📁 Created ${packageDir}`);
+        console.info(`  📁 Created ${packageDir}`);
       }
     }
 
-    console.log('✅ Workspace structure created');
+    console.info('✅ Workspace structure created');
   }
 
   private async configurePackages(): Promise<void> {
-    console.log('⚙️ Configuring packages for Bun optimization...');
+    console.info('⚙️ Configuring packages for Bun optimization...');
 
     // Root package.json
     const rootPackageJson = {
@@ -154,14 +154,14 @@ class R2DeploymentManager {
     };
 
     writeFileSync('package.json', JSON.stringify(rootPackageJson, null, 2));
-    console.log('  📝 Root package.json configured');
+    console.info('  📝 Root package.json configured');
 
     // Configure individual packages
     await this.configureCorePackage();
     await this.configureIntegrationPackages();
     await this.configurePlatformPackages();
 
-    console.log('✅ All packages configured for Bun optimization');
+    console.info('✅ All packages configured for Bun optimization');
   }
 
   private async configureCorePackage(): Promise<void> {
@@ -192,7 +192,7 @@ class R2DeploymentManager {
 
     const coreDir = join(this.packagesDir, 'core');
     writeFileSync(join(coreDir, 'package.json'), JSON.stringify(corePackageJson, null, 2));
-    console.log('  📝 @trading/core package configured');
+    console.info('  📝 @trading/core package configured');
   }
 
   private async configureIntegrationPackages(): Promise<void> {
@@ -218,7 +218,7 @@ class R2DeploymentManager {
       const integrationDir = join(this.packagesDir, 'integrations', integration);
       mkdirSync(integrationDir, { recursive: true });
       writeFileSync(join(integrationDir, 'package.json'), JSON.stringify(packageJson, null, 2));
-      console.log(`  📝 @trading/${integration} package configured`);
+      console.info(`  📝 @trading/${integration} package configured`);
     }
   }
 
@@ -247,17 +247,17 @@ class R2DeploymentManager {
       const platformDir = join(this.packagesDir, platform);
       mkdirSync(platformDir, { recursive: true });
       writeFileSync(join(platformDir, 'package.json'), JSON.stringify(packageJson, null, 2));
-      console.log(`  📝 @trading/${platform} package configured`);
+      console.info(`  📝 @trading/${platform} package configured`);
     }
   }
 
   private async installDependencies(): Promise<void> {
-    console.log('⬇️ Installing dependencies with Bun (ultra-fast)...');
+    console.info('⬇️ Installing dependencies with Bun (ultra-fast)...');
     
     try {
       // Use Bun's ultra-fast package manager
       execSync('bun install --frozen-lockfile', { stdio: 'inherit' });
-      console.log('✅ Dependencies installed with Bun optimization');
+      console.info('✅ Dependencies installed with Bun optimization');
     } catch (error) {
       console.error('❌ Failed to install dependencies:', error);
       throw error;
@@ -265,12 +265,12 @@ class R2DeploymentManager {
   }
 
   private async buildPackages(): Promise<void> {
-    console.log('🔨 Building all packages with Bun...');
+    console.info('🔨 Building all packages with Bun...');
 
     try {
       // Build all packages in parallel using Bun's concurrency
       execSync('bun run build:all', { stdio: 'inherit' });
-      console.log('✅ All packages built successfully');
+      console.info('✅ All packages built successfully');
     } catch (error) {
       console.error('❌ Build failed:', error);
       throw error;
@@ -278,7 +278,7 @@ class R2DeploymentManager {
   }
 
   private async deployToR2(): Promise<void> {
-    console.log('☁️ Deploying to Cloudflare R2...');
+    console.info('☁️ Deploying to Cloudflare R2...');
 
     // Create upload script
     const uploadScript = `#!/usr/bin/env bun
@@ -316,7 +316,7 @@ async function uploadDirectory(dirPath: string, bucketPrefix: string) {
       });
       
       await client.send(command);
-      console.log(\`  📤 Uploaded \${key}\`);
+      console.info(\`  📤 Uploaded \${key}\`);
     }
   }
 }
@@ -333,17 +333,17 @@ function getContentType(filename: string): string {
   }
 }
 
-console.log('🚀 Starting R2 upload...');
+console.info('🚀 Starting R2 upload...');
 await uploadDirectory('./dist', 'packages');
 await uploadDirectory('./trading-dashboard-enhanced.html', 'dashboard');
-console.log('✅ Upload completed!');
+console.info('✅ Upload completed!');
 `;
 
     writeFileSync('scripts/upload-to-r2.ts', uploadScript);
     
     try {
       execSync('bun run scripts/upload-to-r2.ts', { stdio: 'inherit' });
-      console.log('✅ Deployed to Cloudflare R2 successfully');
+      console.info('✅ Deployed to Cloudflare R2 successfully');
     } catch (error) {
       console.error('❌ R2 deployment failed:', error);
       throw error;
@@ -351,7 +351,7 @@ console.log('✅ Upload completed!');
   }
 
   private async verifyDeployment(): Promise<void> {
-    console.log('🔍 Verifying deployment...');
+    console.info('🔍 Verifying deployment...');
 
     const verifyScript = `#!/usr/bin/env bun
 import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@cloudflare/r2';
@@ -375,7 +375,7 @@ async function verifyDeployment() {
     const response = await client.send(listCommand);
     const packages = response.Contents?.map(obj => obj.Key) || [];
     
-    console.log(\`  📦 Found \${packages.length} packages in R2\`);
+    console.info(\`  📦 Found \${packages.length} packages in R2\`);
     
     // Verify core packages
     const requiredPackages = [
@@ -390,13 +390,13 @@ async function verifyDeployment() {
     
     for (const pkg of requiredPackages) {
       if (packages.includes(pkg)) {
-        console.log(\`  ✅ \${pkg}\`);
+        console.info(\`  ✅ \${pkg}\`);
       } else {
-        console.log(\`  ❌ Missing \${pkg}\`);
+        console.info(\`  ❌ Missing \${pkg}\`);
       }
     }
     
-    console.log('✅ Deployment verification completed');
+    console.info('✅ Deployment verification completed');
   } catch (error) {
     console.error('❌ Verification failed:', error);
     throw error;
@@ -410,7 +410,7 @@ verifyDeployment();
     
     try {
       execSync('bun run scripts/verify-deployment.ts', { stdio: 'inherit' });
-      console.log('✅ Deployment verified successfully');
+      console.info('✅ Deployment verified successfully');
     } catch (error) {
       console.error('❌ Verification failed:', error);
       throw error;

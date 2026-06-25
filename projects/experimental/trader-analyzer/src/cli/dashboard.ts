@@ -1578,7 +1578,9 @@ async function fetchLogsData(): Promise<LogsState> {
 
 					return { recentErrors, logCounts };
 				}
-			} catch {}
+			} catch {
+    console.error('Unhandled error:', error);
+  }
 		}
 
 		return { recentErrors: null, logCounts: null };
@@ -1843,13 +1845,13 @@ async function render(state: DashboardState): Promise<void> {
 	const uptime = Date.now() - state.startTime;
 
 	// Header
-	console.log(renderHeader());
+	console.info(renderHeader());
 
 	// Handle different view modes
 	if (state.viewMode === "help") {
-		console.log(renderHelpScreen());
-		console.log("");
-		console.log(renderHelp(state.viewMode));
+		console.info(renderHelpScreen());
+		console.info("");
+		console.info(renderHelp(state.viewMode));
 		return;
 	}
 
@@ -1874,115 +1876,115 @@ async function render(state: DashboardState): Promise<void> {
 
 	// Print in layout based on view mode
 	if (state.viewMode === "overview") {
-		console.log(healthBox);
-		console.log("");
-		console.log(streamsBox);
-		console.log("");
-		console.log(arbitrageBox);
-		console.log("");
-		console.log(executorBox);
-		console.log("");
-		console.log(tradingStatsBox);
-		console.log("");
-		console.log(sportsStatsBox);
-		console.log("");
-		console.log(botStatusBox);
-		console.log("");
-		console.log(correlationBox);
-		console.log("");
-		console.log(sharpBooksBox);
-		console.log("");
-		console.log(mcpToolsBox);
-		console.log("");
-		console.log(miniappBox);
-		console.log("");
-		console.log(metricsBox);
-		console.log("");
-		console.log(cacheBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(healthBox);
+		console.info("");
+		console.info(streamsBox);
+		console.info("");
+		console.info(arbitrageBox);
+		console.info("");
+		console.info(executorBox);
+		console.info("");
+		console.info(tradingStatsBox);
+		console.info("");
+		console.info(sportsStatsBox);
+		console.info("");
+		console.info(botStatusBox);
+		console.info("");
+		console.info(correlationBox);
+		console.info("");
+		console.info(sharpBooksBox);
+		console.info("");
+		console.info(mcpToolsBox);
+		console.info("");
+		console.info(miniappBox);
+		console.info("");
+		console.info(metricsBox);
+		console.info("");
+		console.info(cacheBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "arbitrage") {
-		console.log(arbitrageBox);
-		console.log("");
-		console.log(executorBox);
-		console.log("");
-		console.log(sharpBooksBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(arbitrageBox);
+		console.info("");
+		console.info(executorBox);
+		console.info("");
+		console.info(sharpBooksBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "streams") {
-		console.log(streamsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(sharpBooksBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(streamsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(sharpBooksBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "tools") {
-		console.log(mcpToolsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(mcpToolsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "metrics") {
-		console.log(metricsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(metricsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "logs") {
-		console.log(logsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(logsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "rankings") {
-		console.log(rankingsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(rankingsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "trading") {
-		console.log(tradingStatsBox);
-		console.log("");
-		console.log(streamsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(tradingStatsBox);
+		console.info("");
+		console.info(streamsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "sports") {
-		console.log(sportsStatsBox);
-		console.log("");
-		console.log(sharpBooksBox);
-		console.log("");
-		console.log(arbitrageBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(sportsStatsBox);
+		console.info("");
+		console.info(sharpBooksBox);
+		console.info("");
+		console.info(arbitrageBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "bot") {
-		console.log(botStatusBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(botStatusBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "endpoints") {
-		console.log(endpointsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(endpointsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	} else if (state.viewMode === "endpoints") {
-		console.log(endpointsBox);
-		console.log("");
-		console.log(healthBox);
-		console.log("");
-		console.log(perfBox);
+		console.info(endpointsBox);
+		console.info("");
+		console.info(healthBox);
+		console.info("");
+		console.info(perfBox);
 	}
 
-	console.log("");
-	console.log(renderHelp(state.viewMode));
-	console.log("");
-	console.log(
+	console.info("");
+	console.info(renderHelp(state.viewMode));
+	console.info("");
+	console.info(
 		colors.gray(
 			`${nexusColors.crypto("NEXUS")} Last updated: ${new Date(state.lastUpdate).toLocaleTimeString()} │ Refresh: ${REFRESH_INTERVAL / 1000}s │ Uptime: ${formatDuration(uptime)}`,
 		),
@@ -2070,7 +2072,7 @@ async function main(): Promise<void> {
 
 	// Handle --help
 	if (args.includes("--help") || args.includes("-h")) {
-		console.log(`
+		console.info(`
 ${nexusColors.gradient("╔═══ NEXUS TRADING DASHBOARD ═══╗", [0, 200, 255], [255, 100, 200])}
 
 ${nexusColors.crypto("NEXUS")} ${colors.cyan("Trading Intelligence Platform")}
@@ -2180,14 +2182,14 @@ ${colors.gray("See .claude/SHARP-BOOKS-REGISTRY.md for sharp books")}
 		running = false;
 		showCursor();
 		clearScreen();
-		console.log(
+		console.info(
 			nexusColors.gradient(
 				"NEXUS Trading Dashboard closed.",
 				[0, 200, 255],
 				[255, 100, 200],
 			),
 		);
-		console.log(
+		console.info(
 			colors.gray("Thank you for using NEXUS Trading Intelligence Platform."),
 		);
 		process.exit(0);

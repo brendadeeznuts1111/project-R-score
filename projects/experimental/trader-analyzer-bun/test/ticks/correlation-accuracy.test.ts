@@ -224,7 +224,7 @@ test(
 		}
 
 		const accuracy = (correctDetections / totalTests) * 100;
-		console.log(`Correlation accuracy: ${accuracy.toFixed(1)}% (${correctDetections}/${totalTests})`);
+		console.info(`Correlation accuracy: ${accuracy.toFixed(1)}% (${correctDetections}/${totalTests})`);
 		
 		// Target: ≥95% accuracy
 		expect(accuracy).toBeGreaterThanOrEqual(95);

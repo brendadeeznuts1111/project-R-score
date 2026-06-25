@@ -10,43 +10,43 @@
  * Run: bun DEMO-BUN-SECURITY-FIXES.ts
  */
 
-console.log("🔒 Bun Security & Spec Compliance Fixes Demo");
-console.log("═".repeat(60));
-console.log();
+console.info("🔒 Bun Security & Spec Compliance Fixes Demo");
+console.info("═".repeat(60));
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 1: URLSearchParams.prototype.size is now configurable
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("1️⃣  URLSearchParams.prototype.size - Web IDL Spec Compliance");
-console.log("─".repeat(60));
+console.info("1️⃣  URLSearchParams.prototype.size - Web IDL Spec Compliance");
+console.info("─".repeat(60));
 
 const params = new URLSearchParams("foo=bar&baz=qux&hello=world");
 
 // Check the size property descriptor
 const sizeDescriptor = Object.getOwnPropertyDescriptor(URLSearchParams.prototype, 'size');
-console.log("   Property descriptor for 'size':");
-console.log(`     configurable: ${sizeDescriptor?.configurable} ✅`);
-console.log(`     enumerable:   ${sizeDescriptor?.enumerable}`);
-console.log(`     get:          ${typeof sizeDescriptor?.get === 'function' ? 'function' : sizeDescriptor?.get}`);
-console.log();
+console.info("   Property descriptor for 'size':");
+console.info(`     configurable: ${sizeDescriptor?.configurable} ✅`);
+console.info(`     enumerable:   ${sizeDescriptor?.enumerable}`);
+console.info(`     get:          ${typeof sizeDescriptor?.get === 'function' ? 'function' : sizeDescriptor?.get}`);
+console.info();
 
 // Demonstrate it can be deleted (requires configurable: true)
 const testParams = new URLSearchParams("a=1&b=2&c=3");
-console.log(`   Original size: ${testParams.size}`);
+console.info(`   Original size: ${testParams.size}`);
 
 try {
   // This should work now that size is configurable
   delete (testParams as any).size;
-  console.log(`   After delete: ${testParams.size} (property deleted from instance)`);
-  console.log("   ✅ Successfully deleted size property");
+  console.info(`   After delete: ${testParams.size} (property deleted from instance)`);
+  console.info("   ✅ Successfully deleted size property");
 } catch (e: any) {
-  console.log(`   ❌ Failed to delete: ${e.message}`);
+  console.info(`   ❌ Failed to delete: ${e.message}`);
 }
-console.log();
+console.info();
 
 // Show it can be redefined
 const redefineParams = new URLSearchParams("x=1&y=2");
-console.log(`   Before redefinition: ${redefineParams.size}`);
+console.info(`   Before redefinition: ${redefineParams.size}`);
 
 try {
   Object.defineProperty(redefineParams, 'size', {
@@ -54,39 +54,39 @@ try {
     writable: true,
     configurable: true
   });
-  console.log(`   After redefinition: ${redefineParams.size}`);
-  console.log("   ✅ Successfully redefined size property");
+  console.info(`   After redefinition: ${redefineParams.size}`);
+  console.info("   ✅ Successfully redefined size property");
 } catch (e: any) {
-  console.log(`   ❌ Failed to redefine: ${e.message}`);
+  console.info(`   ❌ Failed to redefine: ${e.message}`);
 }
-console.log();
+console.info();
 
 // Verify spec compliance
-console.log("   Web IDL Spec Requirements:");
-console.log("   • Property must be configurable: true");
-console.log("   • Allows polyfills to override the property");
-console.log("   • Aligns with browser implementations");
-console.log();
+console.info("   Web IDL Spec Requirements:");
+console.info("   • Property must be configurable: true");
+console.info("   • Allows polyfills to override the property");
+console.info("   • Aligns with browser implementations");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 2: WebSocket Decompression Bomb Protection
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("2️⃣  WebSocket Decompression Bomb Protection (128MB Limit)");
-console.log("─".repeat(60));
+console.info("2️⃣  WebSocket Decompression Bomb Protection (128MB Limit)");
+console.info("─".repeat(60));
 
-console.log("   Protection Details:");
-console.log("   • Maximum decompressed message size: 128MB");
-console.log("   • Prevents memory exhaustion attacks");
-console.log("   • Rejects messages that exceed limit during decompression");
-console.log();
+console.info("   Protection Details:");
+console.info("   • Maximum decompressed message size: 128MB");
+console.info("   • Prevents memory exhaustion attacks");
+console.info("   • Rejects messages that exceed limit during decompression");
+console.info();
 
-console.log("   Attack Scenario (Theoretical):");
-console.log("   • Attacker sends compressed WebSocket frame");
-console.log("   • Compressed size: ~10KB");
-console.log("   • Decompressed size: Could be GBs (decompression bomb)");
-console.log("   • Without protection: Server memory exhaustion 💥");
-console.log("   • With protection: Connection terminated safely ✅");
-console.log();
+console.info("   Attack Scenario (Theoretical):");
+console.info("   • Attacker sends compressed WebSocket frame");
+console.info("   • Compressed size: ~10KB");
+console.info("   • Decompressed size: Could be GBs (decompression bomb)");
+console.info("   • Without protection: Server memory exhaustion 💥");
+console.info("   • With protection: Connection terminated safely ✅");
+console.info();
 
 // Simulate the check logic
 function checkDecompressedSize(compressedSize: number, decompressedSize: number): boolean {
@@ -106,59 +106,59 @@ const testCases = [
   { name: "Extreme bomb", compressed: "1KB", decompressed: 10 * 1024 * 1024 * 1024, shouldPass: false }, // 10GB
 ];
 
-console.log("   Protection Test Cases:");
+console.info("   Protection Test Cases:");
 for (const tc of testCases) {
   const allowed = checkDecompressedSize(0, tc.decompressed);
   const status = allowed === tc.shouldPass ? '✅' : '❌';
   const action = allowed ? 'ALLOWED' : 'REJECTED';
-  console.log(`   ${status} ${tc.name.padEnd(20)} → ${action} (${formatBytes(tc.decompressed)})`);
+  console.info(`   ${status} ${tc.name.padEnd(20)} → ${action} (${formatBytes(tc.decompressed)})`);
 }
-console.log();
+console.info();
 
 // Note about WebSocket connections
-console.log("   Implementation Note:");
-console.log("   • Applies to per-message-deflate extension (compression)");
-console.log("   • Automatic rejection with close code 1009 (MESSAGE_TOO_BIG)");
-console.log("   • No configuration needed - enabled by default");
-console.log();
+console.info("   Implementation Note:");
+console.info("   • Applies to per-message-deflate extension (compression)");
+console.info("   • Automatic rejection with close code 1009 (MESSAGE_TOO_BIG)");
+console.info("   • No configuration needed - enabled by default");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 3: fetch() ReadableStream Memory Leak Fix
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("3️⃣  fetch() ReadableStream Body Memory Leak Fix");
-console.log("─".repeat(60));
+console.info("3️⃣  fetch() ReadableStream Body Memory Leak Fix");
+console.info("─".repeat(60));
 
-console.log("   Issue Description:");
-console.log("   • fetch() with ReadableStream body had edge case memory leak");
-console.log("   • Streams not properly released after request completion");
-console.log("   • Occurred in rare cases with specific timing conditions");
-console.log();
+console.info("   Issue Description:");
+console.info("   • fetch() with ReadableStream body had edge case memory leak");
+console.info("   • Streams not properly released after request completion");
+console.info("   • Occurred in rare cases with specific timing conditions");
+console.info();
 
-console.log("   Fixed Behavior:");
-console.log("   • Streams properly released when request completes");
-console.log("   • No memory accumulation on repeated requests");
-console.log("   • Proper cleanup on both success and error paths");
-console.log();
+console.info("   Fixed Behavior:");
+console.info("   • Streams properly released when request completes");
+console.info("   • No memory accumulation on repeated requests");
+console.info("   • Proper cleanup on both success and error paths");
+console.info();
 
 // Demonstrate proper fetch() with ReadableStream usage
-console.log("   Example: Proper fetch() with ReadableStream body");
-console.log("   ```typescript");
-console.log("   // Create a ReadableStream for the request body");
-console.log("   const stream = new ReadableStream({");
-console.log("     start(controller) {");
-console.log("       controller.enqueue(new TextEncoder().encode('Hello'));")
-console.log("       controller.close();");
-console.log("     }");
-console.log("   });");
-console.log();
-console.log("   // fetch() now properly releases the stream");
-console.log("   const response = await fetch('https://api.example.com/upload', {");
-console.log("     method: 'POST',");
-console.log("     body: stream,");
-console.log("     headers: { 'Content-Type': 'text/plain' }");
-console.log("   });");
-console.log("   ```");
-console.log();
+console.info("   Example: Proper fetch() with ReadableStream body");
+console.info("   ```typescript");
+console.info("   // Create a ReadableStream for the request body");
+console.info("   const stream = new ReadableStream({");
+console.info("     start(controller) {");
+console.info("       controller.enqueue(new TextEncoder().encode('Hello'));")
+console.info("       controller.close();");
+console.info("     }");
+console.info("   });");
+console.info();
+console.info("   // fetch() now properly releases the stream");
+console.info("   const response = await fetch('https://api.example.com/upload', {");
+console.info("     method: 'POST',");
+console.info("     body: stream,");
+console.info("     headers: { 'Content-Type': 'text/plain' }");
+console.info("   });");
+console.info("   ```");
+console.info();
 
 // Simulate the fix behavior
 class FixedFetchSimulator {
@@ -188,37 +188,37 @@ class FixedFetchSimulator {
 async function demonstrateFix() {
   const fetcher = new FixedFetchSimulator();
   
-  console.log("   Simulating 100 requests with ReadableStream bodies...");
+  console.info("   Simulating 100 requests with ReadableStream bodies...");
   
   // Run multiple requests
   const promises = Array.from({ length: 100 }, () => fetcher.fetchWithStream());
   await Promise.all(promises);
   
   const stats = fetcher.stats;
-  console.log(`   Completed requests: ${stats.completed}`);
-  console.log(`   Active streams: ${stats.active} ${stats.active === 0 ? '✅' : '❌'}`);
-  console.log(`   Memory leaks: ${stats.leaked} ${stats.leaked === 0 ? '✅ None' : '❌ Present'}`);
+  console.info(`   Completed requests: ${stats.completed}`);
+  console.info(`   Active streams: ${stats.active} ${stats.active === 0 ? '✅' : '❌'}`);
+  console.info(`   Memory leaks: ${stats.leaked} ${stats.leaked === 0 ? '✅ None' : '❌ Present'}`);
 }
 
 await demonstrateFix();
-console.log();
+console.info();
 
-console.log("   Memory Management Comparison:");
-console.log("   ┌────────────────┬──────────────────┬──────────────────┐");
-console.log("   │ Scenario       │ Before Fix       │ After Fix        │");
-console.log("   ├────────────────┼──────────────────┼──────────────────┤");
-console.log("   │ 100 requests   │ ~MB leaked       │ 0 bytes leaked   │");
-console.log("   │ 1000 requests  │ ~10MB leaked     │ 0 bytes leaked   │");
-console.log("   │ Long-running   │ Memory grows     │ Stable memory    │");
-console.log("   └────────────────┴──────────────────┴──────────────────┘");
-console.log();
+console.info("   Memory Management Comparison:");
+console.info("   ┌────────────────┬──────────────────┬──────────────────┐");
+console.info("   │ Scenario       │ Before Fix       │ After Fix        │");
+console.info("   ├────────────────┼──────────────────┼──────────────────┤");
+console.info("   │ 100 requests   │ ~MB leaked       │ 0 bytes leaked   │");
+console.info("   │ 1000 requests  │ ~10MB leaked     │ 0 bytes leaked   │");
+console.info("   │ Long-running   │ Memory grows     │ Stable memory    │");
+console.info("   └────────────────┴──────────────────┴──────────────────┘");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Summary
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("═".repeat(60));
-console.log("📊 SUMMARY: Security & Spec Compliance Fixes");
-console.log("═".repeat(60));
+console.info("═".repeat(60));
+console.info("📊 SUMMARY: Security & Spec Compliance Fixes");
+console.info("═".repeat(60));
 
 const summary = [
   {
@@ -238,16 +238,16 @@ const summary = [
   }
 ];
 
-console.log(Bun.inspect.table(summary, { colors: true }));
-console.log();
+console.info(Bun.inspect.table(summary, { colors: true }));
+console.info();
 
-console.log("🎯 Key Takeaways:");
-console.log("   • URLSearchParams.size is now configurable per Web IDL spec");
-console.log("   • WebSocket client protected against decompression bombs");
-console.log("   • fetch() with ReadableStream no longer leaks memory");
-console.log("   • All fixes require no code changes - automatically applied");
-console.log("   • Improves security, spec compliance, and stability");
-console.log();
+console.info("🎯 Key Takeaways:");
+console.info("   • URLSearchParams.size is now configurable per Web IDL spec");
+console.info("   • WebSocket client protected against decompression bombs");
+console.info("   • fetch() with ReadableStream no longer leaks memory");
+console.info("   • All fixes require no code changes - automatically applied");
+console.info("   • Improves security, spec compliance, and stability");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Helper Functions

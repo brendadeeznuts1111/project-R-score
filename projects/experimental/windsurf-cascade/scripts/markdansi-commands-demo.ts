@@ -9,15 +9,15 @@ import { readFileSync } from 'fs';
 
 const readme = readFileSync('README.md', 'utf8');
 
-console.log('🎨 Markdansi Commands Demo for README.md');
-console.log('='.repeat(120));
+console.info('🎨 Markdansi Commands Demo for README.md');
+console.info('='.repeat(120));
 
 // Command 1: Wide display with bright theme
-console.log('\n📺 Command 1: bunx markdansi --in README.md --width 120 --theme bright');
-console.log('─'.repeat(120));
-console.log('🎯 Purpose: Modern terminal with wide display, vibrant colors');
-console.log('📱 Best for: Development environments, code reviews, presentations');
-console.log('');
+console.info('\n📺 Command 1: bunx markdansi --in README.md --width 120 --theme bright');
+console.info('─'.repeat(120));
+console.info('🎯 Purpose: Modern terminal with wide display, vibrant colors');
+console.info('📱 Best for: Development environments, code reviews, presentations');
+console.info('');
 
 // Show first section with wide formatting
 const widePreview = `🚀 Odds Protocol Monorepo
@@ -40,15 +40,15 @@ const widePreview = `🚀 Odds Protocol Monorepo
 • Property-Based Testing - FastCheck comprehensive testing infrastructure with edge case coverage
 • Multi-Asset Support - Stocks, options, futures, and cryptocurrency market support`;
 
-console.log(widePreview);
-console.log('\n   [... full README displayed with 120-char width and bright colors ...]');
+console.info(widePreview);
+console.info('\n   [... full README displayed with 120-char width and bright colors ...]');
 
 // Command 2: Plain text for sharing
-console.log('\n📄 Command 2: bunx markdansi --in README.md --width 80 --no-color');
-console.log('─'.repeat(80));
-console.log('🎯 Purpose: Plain text output for sharing, logging, documentation');
-console.log('📱 Best for: Email, chat, documentation, CI/CD logs, plain text files');
-console.log('');
+console.info('\n📄 Command 2: bunx markdansi --in README.md --width 80 --no-color');
+console.info('─'.repeat(80));
+console.info('🎯 Purpose: Plain text output for sharing, logging, documentation');
+console.info('📱 Best for: Email, chat, documentation, CI/CD logs, plain text files');
+console.info('');
 
 const plainPreview = `Odds Protocol Monorepo
 
@@ -74,15 +74,15 @@ Trading Infrastructure
 * Property-Based Testing - FastCheck comprehensive testing infrastructure
 * Multi-Asset Support - Stocks, options, futures, and crypto markets`;
 
-console.log(plainPreview);
-console.log('\n   [... full README displayed in plain text with 80-char width ...]');
+console.info(plainPreview);
+console.info('\n   [... full README displayed in plain text with 80-char width ...]');
 
 // Command 3: Save to file
-console.log('\n💾 Command 3: bunx markdansi --in README.md --out README_formatted.txt --width 100');
-console.log('─'.repeat(100));
-console.log('🎯 Purpose: Save formatted output to file for sharing or documentation');
-console.log('📱 Best for: Documentation generation, sharing formatted output, creating reports');
-console.log('');
+console.info('\n💾 Command 3: bunx markdansi --in README.md --out README_formatted.txt --width 100');
+console.info('─'.repeat(100));
+console.info('🎯 Purpose: Save formatted output to file for sharing or documentation');
+console.info('📱 Best for: Documentation generation, sharing formatted output, creating reports');
+console.info('');
 
 const filePreview = `# Odds Protocol Monorepo
 
@@ -112,13 +112,13 @@ and complete Bun native APIs integration for unparalleled performance and develo
 - **Interactive Demo Components** - React hooks and utilities for smooth transitions
 - **Performance Monitoring** - Real-time memory usage tracking and trend analysis`;
 
-console.log(filePreview);
-console.log('\n   [... full README saved to README_formatted.txt with 100-char width ...]');
+console.info(filePreview);
+console.info('\n   [... full README saved to README_formatted.txt with 100-char width ...]');
 
 // Usage comparison
-console.log('\n📊 Usage Comparison');
-console.log('='.repeat(120));
-console.log('');
+console.info('\n📊 Usage Comparison');
+console.info('='.repeat(120));
+console.info('');
 
 const comparison = `
 ┌──────────────────────────────────────────────────────────────────────────────────────┐
@@ -155,11 +155,11 @@ const comparison = `
    bunx markdansi --in README.md --width 140 --theme bright
 `;
 
-console.log(comparison);
+console.info(comparison);
 
 // Additional examples
-console.log('\n🎯 Additional Examples for Your Project:');
-console.log('─'.repeat(80));
+console.info('\n🎯 Additional Examples for Your Project:');
+console.info('─'.repeat(80));
 
 const additionalExamples = `
 # Memory leak test results (perfect for team standups)
@@ -178,8 +178,8 @@ bunx markdansi --in IMPLEMENTATION_COMPLETE.md --out status_report.txt --width 1
 bunx markdansi --in scripts/validate-golden-rules.ts --width 80 --no-color
 `;
 
-console.log(additionalExamples);
+console.info(additionalExamples);
 
-console.log('\n🎉 Demo Complete!');
-console.log('='.repeat(120));
-console.log('💡 Tip: Use these commands to beautifully display your project documentation in the terminal!');
+console.info('\n🎉 Demo Complete!');
+console.info('='.repeat(120));
+console.info('💡 Tip: Use these commands to beautifully display your project documentation in the terminal!');

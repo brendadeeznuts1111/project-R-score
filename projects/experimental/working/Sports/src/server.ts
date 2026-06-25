@@ -174,15 +174,15 @@ if (import.meta.main) {
   const port = parseInt(process.argv[2]) || 3000;
   const server = createHTTPServer(port);
   
-  console.log(`🚀 T3-LATTICE v3.4 HTTP Server running on port ${port}`);
-  console.log(`📊 Health: http://localhost:${port}/health`);
-  console.log(`🔌 API: http://localhost:${port}/api`);
-  console.log(`🎨 Demo: http://localhost:${port}/demo/colors`);
-  console.log(`📈 Microstructure: http://localhost:${port}/demo/microstructure`);
-  console.log(`💡 Press Ctrl+C to stop\n`);
+  console.info(`🚀 T3-LATTICE v3.4 HTTP Server running on port ${port}`);
+  console.info(`📊 Health: http://localhost:${port}/health`);
+  console.info(`🔌 API: http://localhost:${port}/api`);
+  console.info(`🎨 Demo: http://localhost:${port}/demo/colors`);
+  console.info(`📈 Microstructure: http://localhost:${port}/demo/microstructure`);
+  console.info(`💡 Press Ctrl+C to stop\n`);
   
   process.on("SIGINT", () => {
-    console.log("\n🛑 Shutting down server...");
+    console.info("\n🛑 Shutting down server...");
     server.stop();
     process.exit(0);
   });

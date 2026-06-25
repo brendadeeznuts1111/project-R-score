@@ -88,7 +88,7 @@ export const transaction = mockTransaction;
 // Mock consciousness metrics
 const MockMetrics = {
     recordMockedCall: (type: string, savedMs: number) => {
-        console.log(`[MockMetrics] Saved ${savedMs}ms by mocking ${type}`);
+        console.info(`[MockMetrics] Saved ${savedMs}ms by mocking ${type}`);
     }
 };
 
@@ -115,7 +115,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
         // Record metrics
         MockMetrics.recordMockedCall('network', 500 - duration); // Estimated savings
 
-        console.log(`✅ Mock NBA odds fetched in ${duration.toFixed(2)}ms (vs ~500ms real API)`);
+        console.info(`✅ Mock NBA odds fetched in ${duration.toFixed(2)}ms (vs ~500ms real API)`);
     });
 
     test.concurrent("handles multiple concurrent API calls efficiently", async () => {
@@ -143,7 +143,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
         const estimatedRealTime = 5 * 500; // 5 calls * 500ms each
         MockMetrics.recordMockedCall('concurrent_network', estimatedRealTime - duration);
 
-        console.log(`✅ 5 concurrent mock calls in ${duration.toFixed(2)}ms (vs ~${estimatedRealTime}ms real)`);
+        console.info(`✅ 5 concurrent mock calls in ${duration.toFixed(2)}ms (vs ~${estimatedRealTime}ms real)`);
     });
 
     test.concurrent("mock database operations with zero connection cost", async () => {
@@ -170,7 +170,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
 
         MockMetrics.recordMockedCall('database', 100 - duration); // Estimated savings vs real DB
 
-        console.log(`✅ Mock database operations in ${duration.toFixed(2)}ms (vs ~100ms real DB)`);
+        console.info(`✅ Mock database operations in ${duration.toFixed(2)}ms (vs ~100ms real DB)`);
     });
 
     test.concurrent("mock database transaction handling", async () => {
@@ -194,7 +194,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
 
         MockMetrics.recordMockedCall('transaction', 200 - duration);
 
-        console.log(`✅ Mock transaction in ${duration.toFixed(2)}ms (vs ~200ms real transaction)`);
+        console.info(`✅ Mock transaction in ${duration.toFixed(2)}ms (vs ~200ms real transaction)`);
     });
 
     test.concurrent("integrates mocked API and database seamlessly", async () => {
@@ -225,7 +225,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
         const estimatedRealTime = 500 + 100 + 100; // API + DB insert + DB select
         MockMetrics.recordMockedCall('integration', estimatedRealTime - duration);
 
-        console.log(`✅ Full integration (API + DB) in ${duration.toFixed(2)}ms (vs ~${estimatedRealTime}ms real)`);
+        console.info(`✅ Full integration (API + DB) in ${duration.toFixed(2)}ms (vs ~${estimatedRealTime}ms real)`);
     });
 
     test.concurrent("mock error handling and edge cases", async () => {
@@ -238,7 +238,7 @@ describe.concurrent("Zero-Cost Mock Network & Database Tests", () => {
         expect(errorResult.rows).toHaveLength(0);
         expect(errorResult.rowCount).toBe(0);
 
-        console.log('✅ Mock error handling works correctly');
+        console.info('✅ Mock error handling works correctly');
     });
 });
 
@@ -269,9 +269,9 @@ describe.concurrent("Mock Performance Metrics", () => {
         }
 
         // Log efficiency report
-        console.log('\n📊 Mock Efficiency Report:');
+        console.info('\n📊 Mock Efficiency Report:');
         results.forEach(result => {
-            console.log(`   ${result.name}: ${result.duration}ms (${result.efficiency} savings)`);
+            console.info(`   ${result.name}: ${result.duration}ms (${result.efficiency} savings)`);
         });
 
         // All tests should show significant efficiency gains

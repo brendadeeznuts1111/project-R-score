@@ -55,7 +55,7 @@ async function runCPUProfile() {
   // Colorize markdown sections
   const colored = colorizeMarkdown(md);
 
-  console.log(colored);
+  console.info(colored);
 
   // Save profile
   const timestamp = Date.now();
@@ -73,7 +73,7 @@ async function runCPUProfile() {
   log.metric('Visual theme', metadata['visual:theme'], 'primary');
   log.metric('Color hex', metadata['visual:color-hex'], 'success');
 
-  console.log('\n' + styled('✅ CPU profiling complete!', 'success'));
+  console.info('\n' + styled('✅ CPU profiling complete!', 'success'));
 }
 
 // Run if called directly

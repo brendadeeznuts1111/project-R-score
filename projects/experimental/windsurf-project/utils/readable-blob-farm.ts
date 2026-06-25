@@ -31,7 +31,7 @@ export async function readableToInlineBlob(key: string, readable: Readable) {
   if (isSim) {
     // Simulation mode - return mock URL
     const embedUrl = `https://sim.r2.dev/${key}`;
-    console.log(`📱 Readable Blob Inline: ${key} (SIM) → ${embedUrl}`);
+    console.info(`📱 Readable Blob Inline: ${key} (SIM) → ${embedUrl}`);
     return embedUrl;
   }
   
@@ -63,7 +63,7 @@ export async function readableToInlineBlob(key: string, readable: Readable) {
     embedUrl = `https://${bucket}.${host}/${key}`;
   }
   
-  console.log(`📱 Readable Blob Inline: ${key} (${timeMs.toFixed(0)}ms) → ${embedUrl}`);
+  console.info(`📱 Readable Blob Inline: ${key} (${timeMs.toFixed(0)}ms) → ${embedUrl}`);
   return embedUrl;
 }
 
@@ -108,7 +108,7 @@ export async function streamFarm(count = 100, sizeMB = 1) {
   const totalGB = (count * sizeMB) / 1024;
   const gbPerMin = (totalGB / totalTimeSec) * 60;
   
-  console.log(`🌊 Stream Farm: ${count}x${sizeMB}MB Inline R2 (${gbPerMin.toFixed(0)}GB/min)`);
+  console.info(`🌊 Stream Farm: ${count}x${sizeMB}MB Inline R2 (${gbPerMin.toFixed(0)}GB/min)`);
   return urls;
 }
 

@@ -9,7 +9,7 @@ import { OrcaArbitrageStorage } from "../src/orca/arbitrage/storage";
 import type { OrcaArbitrageOpportunity } from "../src/orca/arbitrage/types";
 
 async function createNBADemoData() {
-	console.log("🏀 Creating NBA arbitrage demo data...");
+	console.info("🏀 Creating NBA arbitrage demo data...");
 
 	const storage = new OrcaArbitrageStorage();
 
@@ -119,7 +119,7 @@ async function createNBADemoData() {
 	for (const opp of nbaOpportunities) {
 		try {
 			await storage.storeOpportunity(opp);
-			console.log(`✅ Stored NBA opportunity: ${opp.eventName} (${(opp.edge * 100).toFixed(1)}% edge)`);
+			console.info(`✅ Stored NBA opportunity: ${opp.eventName} (${(opp.edge * 100).toFixed(1)}% edge)`);
 		} catch (error) {
 			console.error(`❌ Failed to store ${opp.eventName}:`, error);
 		}
@@ -131,16 +131,16 @@ async function createNBADemoData() {
 		limit: 10,
 	});
 
-	console.log(`\n📊 Stored NBA arbitrage opportunities: ${stored.length}`);
+	console.info(`\n📊 Stored NBA arbitrage opportunities: ${stored.length}`);
 	stored.forEach((opp, i) => {
-		console.log(`${i + 1}. ${opp.eventName}`);
-		console.log(`   Edge: ${(opp.edge * 100).toFixed(1)}% | Status: ${opp.status}`);
-		console.log(`   Books: ${opp.bookmakerA.bookmaker} vs ${opp.bookmakerB.bookmaker}`);
-		console.log(`   Odds: ${opp.bookmakerA.odds} / ${opp.bookmakerB.odds}`);
-		console.log("");
+		console.info(`${i + 1}. ${opp.eventName}`);
+		console.info(`   Edge: ${(opp.edge * 100).toFixed(1)}% | Status: ${opp.status}`);
+		console.info(`   Books: ${opp.bookmakerA.bookmaker} vs ${opp.bookmakerB.bookmaker}`);
+		console.info(`   Odds: ${opp.bookmakerA.odds} / ${opp.bookmakerB.odds}`);
+		console.info("");
 	});
 
-	console.log("🎯 NBA arbitrage demo data created successfully!");
+	console.info("🎯 NBA arbitrage demo data created successfully!");
 }
 
 createNBADemoData().catch(console.error);

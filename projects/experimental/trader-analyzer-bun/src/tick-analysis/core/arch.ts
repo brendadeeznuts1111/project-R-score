@@ -101,7 +101,7 @@ export class HyperTickArchitecture {
       (global as any).gc();
     }
 
-    console.log(`🚀 HyperTick ${this.VERSION} initialized with ${this.config.precision} precision`);
+    console.info(`🚀 HyperTick ${this.VERSION} initialized with ${this.config.precision} precision`);
   }
 
   getArchitectureMetrics(): TickArchitectureMetrics {

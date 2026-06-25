@@ -1,29 +1,29 @@
 #!/usr/bin/env bun
 // tools/cookie-scanner.ts — Cookie scanner and R2 storage compressor
 
-const args = process.argv.slice(2)
+const args = process.argv.slice(2);
 
 // Get positional argument with fallback
-const getPos = (i, fallback = '') => args[i] ?? fallback
+const getPos = (i, fallback = '') => args[i] ?? fallback;
 
-const projectId = getPos(0, process.env.PROJECT_ID || 'default')
-const sessionId = getPos(1, crypto.randomUUID())
+const projectId = getPos(0, process.env.PROJECT_ID || 'default');
+const sessionId = getPos(1, crypto.randomUUID());
 
 // Compress cookies for R2 storage
-const cookies = { projectId, sessionId }
-const compressed = Bun.zstdCompressSync(JSON.stringify(cookies))
-const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
+const cookies = { projectId, sessionId };
+const compressed = Bun.zstdCompressSync(JSON.stringify(cookies));
+const prefixed = Buffer.concat([Buffer.from([0x01]), compressed]);
 
 // Display with wrapping
-const wrap = Bun.wrapAnsi
-const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${process.env.R2_BUCKET}`
-console.log(wrap(msg, 80))
+const wrap = Bun.wrapAnsi;
+const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${process.env.R2_BUCKET}`;
+console.info(wrap(msg, 80));
 
 // Summary
-console.log({
+console.info({
   projectId,
   sessionId,
   bundle: `${prefixed.length}B`,
   bucket: process.env.R2_BUCKET,
-  status: '✅ READY'
-})
+  status: '✅ READY',
+});

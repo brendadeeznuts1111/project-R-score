@@ -76,7 +76,7 @@ export class PerformanceOptimizer {
    * Apply all runtime optimizations
    */
   async applyRuntimeOptimizations(): Promise<void> {
-    console.log("⚡ Applying runtime optimizations...");
+    console.info("⚡ Applying runtime optimizations...");
 
     try {
       // 1. Memory pooling for frequent allocations
@@ -111,7 +111,7 @@ export class PerformanceOptimizer {
       await this.setupWorkerThreads();
 
       this.optimizationEnabled = true;
-      console.log("✅ Runtime optimizations applied successfully");
+      console.info("✅ Runtime optimizations applied successfully");
     } catch (error) {
       console.error("❌ Failed to apply runtime optimizations:", error);
       throw error;
@@ -134,7 +134,7 @@ export class PerformanceOptimizer {
 
       for (const config of poolConfigs) {
         // Simulate memory pool setup (actual implementation would use Bun's allocator APIs)
-        console.log(
+        console.info(
           `🧠 Setting up ${config.name} memory pool: ${config.size}B x ${config.count}`
         );
       }
@@ -164,7 +164,7 @@ export class PerformanceOptimizer {
       timestamp: 0,
     }));
 
-    console.log("📊 Pre-allocated common data structures");
+    console.info("📊 Pre-allocated common data structures");
   }
 
   /**
@@ -174,7 +174,7 @@ export class PerformanceOptimizer {
     // Bun-specific JIT optimizations
     if (typeof Bun !== "undefined") {
       // Enable aggressive optimization for hot paths
-      console.log("🔥 Configuring JIT optimization hints");
+      console.info("🔥 Configuring JIT optimization hints");
 
       // Simulate JIT configuration (actual implementation would use Bun's JIT APIs)
       const jitConfig = {
@@ -184,7 +184,7 @@ export class PerformanceOptimizer {
         maxInlineDepth: 5,
       };
 
-      console.log("⚡ JIT optimization configured:", jitConfig);
+      console.info("⚡ JIT optimization configured:", jitConfig);
     }
   }
 
@@ -226,7 +226,7 @@ export class PerformanceOptimizer {
     for (const config of cacheConfigs) {
       const cache = new PerformanceCache(config);
       this.caches.set(config.name, cache);
-      console.log(
+      console.info(
         `💾 Initialized cache: ${config.name} (${config.maxSize} items, ${config.ttl}ms TTL)`
       );
     }
@@ -239,7 +239,7 @@ export class PerformanceOptimizer {
    * Warm up caches with common data
    */
   private async warmUpCaches(): Promise<void> {
-    console.log("🔥 Warming up performance caches...");
+    console.info("🔥 Warming up performance caches...");
 
     const warmupData = {
       "market-data": this.generateMarketData(100),
@@ -254,7 +254,7 @@ export class PerformanceOptimizer {
         for (const item of data) {
           cache.set(item.key, item.value);
         }
-        console.log(
+        console.info(
           `📊 Warmed up ${cacheName} cache with ${data.length} items`
         );
       }
@@ -295,7 +295,7 @@ export class PerformanceOptimizer {
     for (const config of poolConfigs) {
       const pool = new ConnectionPool(config);
       this.connectionPools.set(config.name, pool);
-      console.log(
+      console.info(
         `🔗 Initialized connection pool: ${config.name} (${config.minConnections}-${config.maxConnections} connections)`
       );
     }
@@ -313,7 +313,7 @@ export class PerformanceOptimizer {
       strategies: ["market-data", "model-inference", "risk-calculation"],
     };
 
-    console.log("🔮 Enabling predictive pre-fetching:", prefetchConfig);
+    console.info("🔮 Enabling predictive pre-fetching:", prefetchConfig);
 
     // Start pre-fetching service
     this.startPrefetchingService(prefetchConfig);
@@ -329,7 +329,7 @@ export class PerformanceOptimizer {
       }
     }, 60000); // Run every minute
 
-    console.log("🚀 Predictive pre-fetching service started");
+    console.info("🚀 Predictive pre-fetching service started");
   }
 
   /**
@@ -343,18 +343,18 @@ export class PerformanceOptimizer {
       this.prefetchData(item);
     }
 
-    console.log(`📦 Pre-fetched ${prefetchItems.length} items`);
+    console.info(`📦 Pre-fetched ${prefetchItems.length} items`);
   }
 
   /**
    * Setup worker threads
    */
   private async setupWorkerThreads(): Promise<void> {
-    console.log(`🧵 Setting up ${this.config.workerThreads} worker threads`);
+    console.info(`🧵 Setting up ${this.config.workerThreads} worker threads`);
 
     // Simulate worker thread setup
     for (let i = 0; i < this.config.workerThreads; i++) {
-      console.log(`🔧 Worker thread ${i + 1} initialized`);
+      console.info(`🔧 Worker thread ${i + 1} initialized`);
     }
   }
 
@@ -362,12 +362,12 @@ export class PerformanceOptimizer {
    * Optimize garbage collection
    */
   private async optimizeGC(): Promise<void> {
-    console.log("🗑️ Optimizing garbage collection...");
+    console.info("🗑️ Optimizing garbage collection...");
 
     // Configure GC for low latency
     if (typeof global !== "undefined" && global.gc) {
       // Simulate GC optimization
-      console.log("⚙️ GC optimization configured for low latency");
+      console.info("⚙️ GC optimization configured for low latency");
     }
 
     // Start periodic GC monitoring
@@ -382,7 +382,7 @@ export class PerformanceOptimizer {
       this.collectGCMetrics();
     }, 10000); // Every 10 seconds
 
-    console.log("📊 GC monitoring started");
+    console.info("📊 GC monitoring started");
   }
 
   /**
@@ -502,17 +502,17 @@ export class PerformanceOptimizer {
    * Optimize CPU usage
    */
   private async optimizeCPU(): Promise<void> {
-    console.log("🔥 Optimizing CPU usage...");
+    console.info("🔥 Optimizing CPU usage...");
 
     // Reduce worker threads if CPU is overloaded
     if (this.config.workerThreads > 2) {
       this.config.workerThreads = Math.max(2, this.config.workerThreads - 1);
-      console.log(`📉 Reduced worker threads to ${this.config.workerThreads}`);
+      console.info(`📉 Reduced worker threads to ${this.config.workerThreads}`);
     }
 
     // Optimize JIT compilation
     if (this.config.enableJITOptimization) {
-      console.log("⚡ Optimizing JIT compilation for current workload");
+      console.info("⚡ Optimizing JIT compilation for current workload");
     }
   }
 
@@ -520,7 +520,7 @@ export class PerformanceOptimizer {
    * Optimize memory usage
    */
   private async optimizeMemory(): Promise<void> {
-    console.log("🧠 Optimizing memory usage...");
+    console.info("🧠 Optimizing memory usage...");
 
     // Clear least recently used cache items
     for (const cache of this.caches.values()) {
@@ -530,7 +530,7 @@ export class PerformanceOptimizer {
     // Force garbage collection if available
     if (typeof global !== "undefined" && global.gc) {
       global.gc();
-      console.log("🗑️ Forced garbage collection");
+      console.info("🗑️ Forced garbage collection");
     }
   }
 
@@ -538,7 +538,7 @@ export class PerformanceOptimizer {
    * Optimize response time
    */
   private async optimizeResponseTime(): Promise<void> {
-    console.log("⚡ Optimizing response time...");
+    console.info("⚡ Optimizing response time...");
 
     // Increase cache sizes for better hit rates
     for (const cache of this.caches.values()) {
@@ -546,14 +546,14 @@ export class PerformanceOptimizer {
     }
 
     // Enable more aggressive pre-fetching
-    console.log("🔮 Enabling aggressive pre-fetching");
+    console.info("🔮 Enabling aggressive pre-fetching");
   }
 
   /**
    * Optimize caches
    */
   private async optimizeCaches(): Promise<void> {
-    console.log("💾 Optimizing caches...");
+    console.info("💾 Optimizing caches...");
 
     for (const cache of this.caches.values()) {
       // Analyze cache patterns and optimize
@@ -562,7 +562,7 @@ export class PerformanceOptimizer {
       if (stats.hitRate < 60) {
         // Increase TTL for better hit rates
         cache.increaseTTL(0.5); // Increase by 50%
-        console.log(`⏰ Increased TTL for cache ${cache.name}`);
+        console.info(`⏰ Increased TTL for cache ${cache.name}`);
       }
     }
   }
@@ -645,7 +645,7 @@ export class PerformanceOptimizer {
    */
   private prefetchData(item: string): void {
     // Simulate pre-fetching
-    console.log(`📦 Pre-fetching: ${item}`);
+    console.info(`📦 Pre-fetching: ${item}`);
   }
 
   /**
@@ -793,7 +793,7 @@ export class PerformanceOptimizer {
    * Reset optimizer
    */
   async reset(): Promise<void> {
-    console.log("🔄 Resetting performance optimizer...");
+    console.info("🔄 Resetting performance optimizer...");
 
     // Clear caches
     for (const cache of this.caches.values()) {
@@ -812,7 +812,7 @@ export class PerformanceOptimizer {
     this.metrics = this.initializeMetrics();
     this.optimizationEnabled = false;
 
-    console.log("✅ Performance optimizer reset completed");
+    console.info("✅ Performance optimizer reset completed");
   }
 }
 

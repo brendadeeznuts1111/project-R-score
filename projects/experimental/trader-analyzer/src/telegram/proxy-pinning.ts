@@ -127,7 +127,7 @@ export class ProxyPinningManager {
 					threadId,
 				});
 
-				console.log('Message pinned', {
+				console.info('Message pinned', {
 					chatId,
 					threadId,
 					reason: 'URL pattern match or severity keyword',

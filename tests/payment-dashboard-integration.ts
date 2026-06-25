@@ -11,11 +11,11 @@
 const PAYMENT_URL = Bun.env.PAYMENT_URL ?? 'http://localhost:3001';
 const DASHBOARD_URL = Bun.env.DASHBOARD_URL ?? 'http://localhost:3006';
 
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║  Payment + Dashboard Integration Test                      ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log(`\nPayment Server: ${PAYMENT_URL}`);
-console.log(`Dashboard: ${DASHBOARD_URL}\n`);
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info('║  Payment + Dashboard Integration Test                      ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info(`\nPayment Server: ${PAYMENT_URL}`);
+console.info(`Dashboard: ${DASHBOARD_URL}\n`);
 
 // Test 1: Check payment server health
 async function testPaymentHealth(): Promise<boolean> {
@@ -24,13 +24,13 @@ async function testPaymentHealth(): Promise<boolean> {
     const res = await fetch(`${PAYMENT_URL}/health`);
     if (res.ok) {
       const data = await res.json();
-      console.log(`✅ (${data.redis})`);
+      console.info(`✅ (${data.redis})`);
       return true;
     }
-    console.log('❌ HTTP ' + res.status);
+    console.info('❌ HTTP ' + res.status);
     return false;
   } catch (err: any) {
-    console.log(`❌ ${err.message}`);
+    console.info(`❌ ${err.message}`);
     return false;
   }
 }
@@ -42,13 +42,13 @@ async function testDashboardHealth(): Promise<boolean> {
     const res = await fetch(`${DASHBOARD_URL}/api/status`);
     if (res.ok) {
       const data = await res.json();
-      console.log(`✅ (${data.clients} clients, ${data.redis})`);
+      console.info(`✅ (${data.clients} clients, ${data.redis})`);
       return true;
     }
-    console.log('❌ HTTP ' + res.status);
+    console.info('❌ HTTP ' + res.status);
     return false;
   } catch (err: any) {
-    console.log(`❌ ${err.message}`);
+    console.info(`❌ ${err.message}`);
     return false;
   }
 }
@@ -69,13 +69,13 @@ async function testPaymentFlow(): Promise<boolean> {
     
     if (res.ok) {
       const data = await res.json();
-      console.log(`✅ (${data.status}, risk: ${data.risk.risk})`);
+      console.info(`✅ (${data.status}, risk: ${data.risk.risk})`);
       return true;
     }
-    console.log('❌ HTTP ' + res.status);
+    console.info('❌ HTTP ' + res.status);
     return false;
   } catch (err: any) {
-    console.log(`❌ ${err.message}`);
+    console.info(`❌ ${err.message}`);
     return false;
   }
 }
@@ -95,7 +95,7 @@ async function testWebSocket(): Promise<boolean> {
         // Wait for welcome message
         setTimeout(() => {
           if (!receivedMessage) {
-            console.log('⚠️  connected but no message');
+            console.info('⚠️  connected but no message');
             ws.close();
             resolve(false);
           }
@@ -106,20 +106,20 @@ async function testWebSocket(): Promise<boolean> {
         if (!receivedMessage) {
           receivedMessage = true;
           const data = JSON.parse(event.data);
-          console.log(`✅ (received: ${data.tag})`);
+          console.info(`✅ (received: ${data.tag})`);
           ws.close();
           resolve(true);
         }
       });
       
       ws.addEventListener('error', () => {
-        console.log('❌ connection failed');
+        console.info('❌ connection failed');
         resolve(false);
       });
       
       ws.addEventListener('close', () => {
         if (!receivedMessage) {
-          console.log('❌ closed before message');
+          console.info('❌ closed before message');
           resolve(false);
         }
       });
@@ -128,13 +128,13 @@ async function testWebSocket(): Promise<boolean> {
       setTimeout(() => {
         ws.close();
         if (!receivedMessage) {
-          console.log('❌ timeout');
+          console.info('❌ timeout');
           resolve(false);
         }
       }, 5000);
       
     } catch (err: any) {
-      console.log(`❌ ${err.message}`);
+      console.info(`❌ ${err.message}`);
       resolve(false);
     }
   });
@@ -152,21 +152,21 @@ async function main() {
   const passed = results.filter(r => r).length;
   const total = results.length;
   
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log(`║  Results: ${passed}/${total} tests passed                        ║`);
-  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.info('\n╔════════════════════════════════════════════════════════════╗');
+  console.info(`║  Results: ${passed}/${total} tests passed                        ║`);
+  console.info('╚════════════════════════════════════════════════════════════╝');
   
   if (passed === total) {
-    console.log('\n✨ All systems integrated and running!');
-    console.log('\nNext steps:');
-    console.log('  1. Open dashboard: open ' + DASHBOARD_URL);
-    console.log('  2. Send test payment: curl -X POST ' + PAYMENT_URL + '/test/payment ...');
-    console.log('  3. Watch events appear in dashboard in real-time!');
+    console.info('\n✨ All systems integrated and running!');
+    console.info('\nNext steps:');
+    console.info('  1. Open dashboard: open ' + DASHBOARD_URL);
+    console.info('  2. Send test payment: curl -X POST ' + PAYMENT_URL + '/test/payment ...');
+    console.info('  3. Watch events appear in dashboard in real-time!');
   } else {
-    console.log('\n⚠️  Some tests failed. Check:');
-    console.log('  • Is Redis running? redis-cli ping');
-    console.log('  • Payment server: bun run start:payments');
-    console.log('  • Dashboard: bun run start:profile-dash:live');
+    console.info('\n⚠️  Some tests failed. Check:');
+    console.info('  • Is Redis running? redis-cli ping');
+    console.info('  • Payment server: bun run start:payments');
+    console.info('  • Dashboard: bun run start:profile-dash:live');
     process.exit(1);
   }
 }

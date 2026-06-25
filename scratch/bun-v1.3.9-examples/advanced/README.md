@@ -8,58 +8,21 @@ This directory contains production-ready code patterns, advanced examples, and i
 
 ## Directory Structure
 
-```
-advanced/
-├── script-orchestration/     # bun run --parallel/--sequential
-│   ├── advanced-patterns.ts
-│   ├── workspace-strategies.ts
-│   ├── error-handling.ts
-│   └── performance-optimization.ts
-├── http2-upgrades/           # HTTP/2 connection upgrades
-│   ├── proxy-server.ts
-│   ├── load-balancer.ts
-│   ├── connection-pool.ts
-│   └── security-patterns.ts
-├── mock-dispose/             # Symbol.dispose for mocks
-│   ├── nested-scopes.ts
-│   ├── async-cleanup.ts
-│   ├── test-utilities.ts
-│   └── framework-integration.ts
-├── no-proxy/                 # NO_PROXY environment variable
-│   ├── pattern-matching.ts
-│   ├── enterprise-integration.ts
-│   ├── test-utils.ts
-│   └── reference-impl.ts
-├── cpu-profiling/            # --cpu-prof-interval
-│   ├── custom-intervals.ts
-│   ├── analysis-workflows.ts
-│   ├── ci-integration.ts
-│   └── optimization-guide.ts
-├── esm-bytecode/             # ESM bytecode compilation
-│   ├── build-pipelines.ts
-│   ├── distribution.ts
-│   ├── optimization.ts
-│   └── cross-platform.ts
-├── performance/              # Performance optimizations
-│   ├── regex-jit-patterns.ts
-│   ├── markdown-optimization.ts
-│   ├── string-optimization.ts
-│   ├── collection-optimization.ts
-│   └── jsc-upgrade-benefits.ts
-├── integrations/             # Real-world integrations
-│   ├── microservices.ts
-│   ├── ci-cd-pipeline.ts
-│   ├── production-setup.ts
-│   └── enterprise-patterns.ts
-└── reference/                # Reference implementations
-    ├── proxy-client.ts
-    ├── websocket-client.ts
-    ├── test-framework.ts
-    └── monitoring-utils.ts
-├── bugfixes/                  # Bugfixes and improvements reference
-    ├── BUGFIXES-REFERENCE.md
-    └── string-width-thai-lao.ts
-```
+**All experimental subfolders have been archived** to `archive/scratch/bun-v1.3.9-examples/advanced/`.
+
+**Archived this phase:**
+- `script-orchestration/`
+- `http2-upgrades/`
+- `mock-dispose/`
+- `no-proxy/`
+- `performance/`
+- `cpu-profiling/`
+- `esm-bytecode/`
+- `integrations/`
+- `reference/`
+- `bugfixes/`
+
+Only this README remains in `scratch/bun-v1.3.9-examples/advanced/`.
 
 ## Features Covered
 

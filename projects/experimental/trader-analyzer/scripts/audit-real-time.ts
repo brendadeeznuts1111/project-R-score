@@ -115,7 +115,7 @@ async function performRealTimeAudit() {
 
 	// Output results if not using IPC
 	if (outputFormat === "json") {
-		console.log(JSON.stringify({ results }, null, 2));
+		console.info(JSON.stringify({ results }, null, 2));
 	}
 }
 
@@ -272,7 +272,7 @@ async function isDocumentationReferenced(docNumber: string): Promise<boolean> {
  * Handles SIGTERM and SIGINT signals for graceful shutdown.
  */
 process.on("SIGTERM", () => {
-	console.log("Received SIGTERM, shutting down gracefully...");
+	console.info("Received SIGTERM, shutting down gracefully...");
 	try {
 		if (typeof process.send === "function") {
 			process.send({
@@ -288,7 +288,7 @@ process.on("SIGTERM", () => {
 });
 
 process.on("SIGINT", () => {
-	console.log("Received SIGINT, shutting down...");
+	console.info("Received SIGINT, shutting down...");
 	try {
 		if (typeof process.send === "function") {
 			process.send({

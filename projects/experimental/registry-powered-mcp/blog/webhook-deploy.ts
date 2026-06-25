@@ -122,7 +122,7 @@ export class DeployWebhookTrigger {
     const startTime = performance.now();
     const logs: string[] = [];
 
-    console.log(`🚀 Starting deployment for commit: ${commitSha.slice(0, 7)}`);
+    console.info(`🚀 Starting deployment for commit: ${commitSha.slice(0, 7)}`);
     logs.push(`Starting deployment: ${commitSha}`);
 
     try {
@@ -166,7 +166,7 @@ export class DeployWebhookTrigger {
       this.deploymentHistory.push(result);
 
       if (result.success) {
-        console.log(`✅ Deployment successful (${duration.toFixed(0)}ms)`);
+        console.info(`✅ Deployment successful (${duration.toFixed(0)}ms)`);
       } else {
         console.error(`❌ Deployment failed with exit code: ${exitCode}`);
       }
@@ -253,10 +253,10 @@ export class DeployWebhookTrigger {
             // Get commit SHA
             const commitSha = data.after ?? data.head_commit?.id ?? 'unknown';
 
-            console.log(`📨 Webhook received: ${eventType}`);
-            console.log(`   Repository: ${data.repository?.full_name}`);
-            console.log(`   Commit: ${commitSha.slice(0, 7)}`);
-            console.log(`   Author: ${data.head_commit?.author?.name ?? data.pusher?.name}`);
+            console.info(`📨 Webhook received: ${eventType}`);
+            console.info(`   Repository: ${data.repository?.full_name}`);
+            console.info(`   Commit: ${commitSha.slice(0, 7)}`);
+            console.info(`   Author: ${data.head_commit?.author?.name ?? data.pusher?.name}`);
 
             // Execute deployment asynchronously
             this.executeDeploy(commitSha).catch(console.error);
@@ -279,14 +279,14 @@ export class DeployWebhookTrigger {
       },
     });
 
-    console.log('🪝 Deploy Webhook Trigger');
-    console.log('═══════════════════════════════════════════════════════');
-    console.log(`   Port: ${this.config.port}`);
-    console.log(`   Health: http://localhost:${this.config.port}${this.config.healthEndpoint}`);
-    console.log(`   Webhook: http://localhost:${this.config.port}/webhook`);
-    console.log(`   Events: ${this.config.allowedEvents.join(', ')}`);
-    console.log(`   Security: ${this.config.secret ? 'HMAC-SHA256 enabled' : 'Disabled (dev mode)'}`);
-    console.log('═══════════════════════════════════════════════════════');
+    console.info('🪝 Deploy Webhook Trigger');
+    console.info('═══════════════════════════════════════════════════════');
+    console.info(`   Port: ${this.config.port}`);
+    console.info(`   Health: http://localhost:${this.config.port}${this.config.healthEndpoint}`);
+    console.info(`   Webhook: http://localhost:${this.config.port}/webhook`);
+    console.info(`   Events: ${this.config.allowedEvents.join(', ')}`);
+    console.info(`   Security: ${this.config.secret ? 'HMAC-SHA256 enabled' : 'Disabled (dev mode)'}`);
+    console.info('═══════════════════════════════════════════════════════');
   }
 
   /**
@@ -296,7 +296,7 @@ export class DeployWebhookTrigger {
     if (this.server) {
       this.server.stop();
       this.server = null;
-      console.log('🛑 Webhook server stopped');
+      console.info('🛑 Webhook server stopped');
     }
   }
 

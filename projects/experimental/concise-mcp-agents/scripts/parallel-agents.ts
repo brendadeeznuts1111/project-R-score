@@ -11,7 +11,7 @@ const agents = process.argv.slice(2).length > 0 ? process.argv.slice(2) :
   ['ADAM', 'MIKE', 'JOHN', 'SARAH', 'DAVE', 'LISA', 'TOM', 'JANE', 'BOB', 'ALICE'];
 
 async function runParallelAgents() {
-  console.log(`🚀 Processing ${agents.length} agents in parallel...`);
+  console.info(`🚀 Processing ${agents.length} agents in parallel...`);
   const startTime = Date.now();
 
   const results = await Promise.all(
@@ -26,10 +26,10 @@ async function runParallelAgents() {
   const totalBets = results.reduce((sum, r) => sum + (r.bets?.length || 0), 0);
   const avgBetsPerAgent = totalBets / successful;
 
-  console.log(`✅ Completed in ${duration}ms (${Math.round(duration/agents.length)}ms per agent)`);
-  console.log(`📊 ${successful}/${agents.length} agents successful`);
-  console.log(`🎯 ${totalBets} total bets processed (${Math.round(avgBetsPerAgent)} avg per agent)`);
-  console.log(`⚡ ${(agents.length * 1000 / duration).toFixed(1)} agents/second`);
+  console.info(`✅ Completed in ${duration}ms (${Math.round(duration/agents.length)}ms per agent)`);
+  console.info(`📊 ${successful}/${agents.length} agents successful`);
+  console.info(`🎯 ${totalBets} total bets processed (${Math.round(avgBetsPerAgent)} avg per agent)`);
+  console.info(`⚡ ${(agents.length * 1000 / duration).toFixed(1)} agents/second`);
 
   return results;
 }

@@ -113,7 +113,7 @@ export function App() {
     setShortcuts(prev => prev.map(s => 
       s.id === id ? { ...s, triggers: s.triggers + 1 } : s
     ));
-    console.log(`Triggered shortcut: ${id}`);
+    console.info(`Triggered shortcut: ${id}`);
   };
 
   const handleProfileSwitch = (profileId: string) => {

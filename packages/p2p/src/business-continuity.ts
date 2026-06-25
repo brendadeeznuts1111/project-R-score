@@ -103,7 +103,7 @@ export class BusinessContinuity {
     // Store all historical aliases for this business
     await redis.sadd(`business:${businessId}:aliases`, businessData.alias);
 
-    console.log(`🏢 Registered business: ${businessData.name} (${businessData.alias})`);
+    console.info(`🏢 Registered business: ${businessData.name} (${businessData.alias})`);
     return businessId;
   }
 
@@ -247,7 +247,7 @@ export class BusinessContinuity {
     // Set expiration on the forwarding rule
     await redis.expire(forwardingKey, days * 24 * 60 * 60);
 
-    console.log(`🔄 Payment forwarding: ${oldAlias} → ${newAlias} (${days} days)`);
+    console.info(`🔄 Payment forwarding: ${oldAlias} → ${newAlias} (${days} days)`);
   }
 
   /**
@@ -285,7 +285,7 @@ export class BusinessContinuity {
       }
     }
 
-    console.log(`📢 Notified ${messages.length} customers of business change`);
+    console.info(`📢 Notified ${messages.length} customers of business change`);
     return messages;
   }
 

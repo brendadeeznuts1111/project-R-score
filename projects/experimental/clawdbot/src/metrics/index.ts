@@ -35,7 +35,7 @@
  * await archiver.archiveOldMetrics(7); // Archive metrics older than 7 days
  *
  * // Display metrics table
- * console.log(Bun.inspect.table(collector.getTableData(), { colors: true }));
+ * console.info(Bun.inspect.table(collector.getTableData(), { colors: true }));
  *
  * // Start real-time WebSocket server
  * import { createMetricsServer } from './metrics';

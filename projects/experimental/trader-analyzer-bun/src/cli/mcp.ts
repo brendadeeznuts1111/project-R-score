@@ -117,8 +117,8 @@ async function listTools(): Promise<void> {
 	const server = await getMCPServer();
 	const tools = server.listTools();
 
-	console.log(`\n${c.cyan}${c.bold}╔═══ NEXUS MCP TOOLS ═══╗${c.reset}\n`);
-	console.log(
+	console.info(`\n${c.cyan}${c.bold}╔═══ NEXUS MCP TOOLS ═══╗${c.reset}\n`);
+	console.info(
 		`${c.green}Total Tools:${c.reset} ${c.bold}${tools.length}${c.reset}\n`,
 	);
 
@@ -153,20 +153,20 @@ async function listTools(): Promise<void> {
 
 	// Display by category
 	for (const [category, categoryTools] of categories.entries()) {
-		console.log(
+		console.info(
 			`${c.yellow}${c.bold}${category} (${categoryTools.length})${c.reset}`,
 		);
-		console.log(`${c.dim}${"─".repeat(60)}${c.reset}`);
+		console.info(`${c.dim}${"─".repeat(60)}${c.reset}`);
 
 		for (const tool of categoryTools) {
-			console.log(`\n  ${c.green}${tool.name}${c.reset}`);
-			console.log(`    ${c.dim}${tool.description}${c.reset}`);
+			console.info(`\n  ${c.green}${tool.name}${c.reset}`);
+			console.info(`    ${c.dim}${tool.description}${c.reset}`);
 
 			if (
 				tool.inputSchema.properties &&
 				Object.keys(tool.inputSchema.properties).length > 0
 			) {
-				console.log(`    ${c.cyan}Parameters:${c.reset}`);
+				console.info(`    ${c.cyan}Parameters:${c.reset}`);
 				for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
 					const propInfo = prop as any;
 					const required = tool.inputSchema.required?.includes(key)
@@ -180,15 +180,15 @@ async function listTools(): Promise<void> {
 						propInfo.default !== undefined
 							? ` ${c.dim}(default: ${propInfo.default})${c.reset}`
 							: "";
-					console.log(
+					console.info(
 						`      ${required} ${c.cyan}${key}${c.reset}: ${c.yellow}${type}${c.reset}${desc}${defaultVal}`,
 					);
 				}
 			} else {
-				console.log(`    ${c.dim}(no parameters)${c.reset}`);
+				console.info(`    ${c.dim}(no parameters)${c.reset}`);
 			}
 		}
-		console.log("");
+		console.info("");
 	}
 }
 
@@ -212,7 +212,7 @@ async function executeTool(
 	}
 
 	try {
-		console.log(`${c.cyan}Executing: ${c.bold}${toolName}${c.reset}\n`);
+		console.info(`${c.cyan}Executing: ${c.bold}${toolName}${c.reset}\n`);
 		const result = await tool.execute(args);
 
 		// Display results (including errors)
@@ -221,10 +221,10 @@ async function executeTool(
 				if (result.isError) {
 					console.error(`${c.red}${content.text}${c.reset}`);
 				} else {
-					console.log(content.text);
+					console.info(content.text);
 				}
 			} else if (content.data) {
-				console.log(JSON.stringify(content.data, null, 2));
+				console.info(JSON.stringify(content.data, null, 2));
 			}
 		}
 
@@ -326,7 +326,7 @@ async function main(): Promise<void> {
 	const [cmd, ...rest] = args;
 
 	if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-		console.log(HELP);
+		console.info(HELP);
 		return;
 	}
 
@@ -356,7 +356,7 @@ async function main(): Promise<void> {
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

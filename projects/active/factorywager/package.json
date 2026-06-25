@@ -1,0 +1,18 @@
+{
+  "name": "factorywager-registry",
+  "version": "1.0.0",
+  "packageManager": "bun@1.3.14",
+  "private": true,
+  "description": "FactoryWager private NPM registry platform — R2-backed package storage with CDN, auth, and 14 registry packages",
+  "homepage": "https://github.com/brendadeeznuts1111/project-R-score/tree/main/projects/active/factorywager",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git",
+    "directory": "projects/active/factorywager"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/project-R-score/issues"
+  },
+  "license": "MIT",
+  "type": "module"
+}

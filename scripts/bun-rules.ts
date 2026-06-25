@@ -1,11 +1,18 @@
 #!/usr/bin/env bun
 /**
  * FACTORYWAGER RIPGREP v4.0 - Rules Engine
- * 
+ *
  * Advanced rule management for code validation and transmutation
  */
 
-import { createRipgrepEngine, scanDirectory, formatReport, checkRipgrepAvailability, ConfigManager, PRESET_CONFIGS } from '@fw/rip';
+import {
+  createRipgrepEngine,
+  scanDirectory,
+  formatReport,
+  checkRipgrepAvailability,
+  ConfigManager,
+  PRESET_CONFIGS,
+} from '@factorywager/rip';
 
 // ============================================================================
 // RULES ENGINE
@@ -19,48 +26,47 @@ class RulesEngine {
    * Load v4.0 schema configuration
    */
   async configCommand(): Promise<void> {
-    console.log('🔧 FACTORYWAGER RULES v4.0 - Configuration');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('🔧 FACTORYWAGER RULES v4.0 - Configuration');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
       const config = this.configManager.getConfig();
       const ripgrepConfig = config.rules.ripgrep;
 
-      console.log('📋 Schema Configuration:');
-      console.log(`  Scopes: ${ripgrepConfig.schema.scope.join(', ')}`);
-      console.log(`  Types:  ${ripgrepConfig.schema.type.join(', ')}`);
-      console.log(`  Hash:   ${ripgrepConfig.schema.hash_algo}`);
-      console.log(`  AI Prefix: ${ripgrepConfig.schema.ai_prefix}`);
+      console.info('📋 Schema Configuration:');
+      console.info(`  Scopes: ${ripgrepConfig.schema.scope.join(', ')}`);
+      console.info(`  Types:  ${ripgrepConfig.schema.type.join(', ')}`);
+      console.info(`  Hash:   ${ripgrepConfig.schema.hash_algo}`);
+      console.info(`  AI Prefix: ${ripgrepConfig.schema.ai_prefix}`);
 
-      console.log('\n⚙️ Default Settings:');
-      console.log(`  Scope:   ${ripgrepConfig.defaults.scope}`);
-      console.log(`  Type:    ${ripgrepConfig.defaults.type}`);
-      console.log(`  Version: ${ripgrepConfig.defaults.version}`);
-      console.log(`  Status:  ${ripgrepConfig.defaults.status}`);
+      console.info('\n⚙️ Default Settings:');
+      console.info(`  Scope:   ${ripgrepConfig.defaults.scope}`);
+      console.info(`  Type:    ${ripgrepConfig.defaults.type}`);
+      console.info(`  Version: ${ripgrepConfig.defaults.version}`);
+      console.info(`  Status:  ${ripgrepConfig.defaults.status}`);
 
-      console.log('\n🔍 Grep Configuration:');
-      console.log(`  Flags:   ${ripgrepConfig.grep.rg_flags}`);
-      console.log(`  Hooks:   ${ripgrepConfig.grep.validate.hooks.join(', ')}`);
+      console.info('\n🔍 Grep Configuration:');
+      console.info(`  Flags:   ${ripgrepConfig.grep.rg_flags}`);
+      console.info(`  Hooks:   ${ripgrepConfig.grep.validate.hooks.join(', ')}`);
 
       // Check availability
       const hasRipgrep = await checkRipgrepAvailability();
-      console.log(`\n🛠️  System Status:`);
-      console.log(`  Ripgrep: ${hasRipgrep ? '✅ Available' : '❌ Not Found'}`);
-
+      console.info(`\n🛠️  System Status:`);
+      console.info(`  Ripgrep: ${hasRipgrep ? '✅ Available' : '❌ Not Found'}`);
     } catch (error) {
       console.error('❌ Failed to load configuration:', error.message);
       process.exit(1);
     }
 
-    console.log('\n═══════════════════════════════════════════════════════════════');
+    console.info('\n═══════════════════════════════════════════════════════════════');
   }
 
   /**
    * Enhanced validation with detailed Bun pattern checking
    */
   async enhancedCommand(directory: string = '.'): Promise<void> {
-    console.log('🔍 FACTORYWAGER RULES v4.0 - Enhanced Validation');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('🔍 FACTORYWAGER RULES v4.0 - Enhanced Validation');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
       // Check ripgrep availability
@@ -70,21 +76,21 @@ class RulesEngine {
         process.exit(1);
       }
 
-      console.log(`📁 Scanning directory: ${directory}`);
-      console.log('⚡ Performing enhanced Bun pattern validation...');
+      console.info(`📁 Scanning directory: ${directory}`);
+      console.info('⚡ Performing enhanced Bun pattern validation...');
 
       const startTime = Date.now();
       const report = await scanDirectory(directory);
       const scanTime = Date.now() - startTime;
 
-      console.log(`\n📊 Enhanced Validation Results:`);
-      console.log(`  Scan Time: ${scanTime}ms`);
-      console.log(`  Files Scanned: ${report.totalFiles}`);
-      console.log(`  Issues Found: ${report.issuesFound}`);
+      console.info(`\n📊 Enhanced Validation Results:`);
+      console.info(`  Scan Time: ${scanTime}ms`);
+      console.info(`  Files Scanned: ${report.totalFiles}`);
+      console.info(`  Issues Found: ${report.issuesFound}`);
 
       // Detailed pattern analysis
-      console.log('\n🔍 Pattern Compliance Analysis:');
-      
+      console.info('\n🔍 Pattern Compliance Analysis:');
+
       const patternStats = {
         bunFileUsage: 0,
         bunServeUsage: 0,
@@ -93,55 +99,62 @@ class RulesEngine {
         bunHashUsage: 0,
         bunSpawnUsage: 0,
         nonBunPatterns: 0,
-        securityIssues: 0
+        securityIssues: 0,
       };
 
       // Analyze each result
       for (const result of report.scanResults) {
         if (result.content.includes('Bun.file')) patternStats.bunFileUsage++;
         if (result.content.includes('Bun.serve')) patternStats.bunServeUsage++;
-        if (result.content.includes('YAML.parse') || result.content.includes('Bun.YAML')) patternStats.bunYamlUsage++;
-        if (result.content.includes('semver.') || result.content.includes('Bun.semver')) patternStats.bunSemverUsage++;
-        if (result.content.includes('Bun.hash') || result.content.includes('Bun.CryptoHasher')) patternStats.bunHashUsage++;
+        if (result.content.includes('YAML.parse') || result.content.includes('Bun.YAML'))
+          patternStats.bunYamlUsage++;
+        if (result.content.includes('semver.') || result.content.includes('Bun.semver'))
+          patternStats.bunSemverUsage++;
+        if (result.content.includes('Bun.hash') || result.content.includes('Bun.CryptoHasher'))
+          patternStats.bunHashUsage++;
         if (result.content.includes('Bun.spawn')) patternStats.bunSpawnUsage++;
         if (result.type === 'nonbun') patternStats.nonBunPatterns++;
-        if (result.content.includes('eval(') || result.content.includes('innerHTML')) patternStats.securityIssues++;
+        if (result.content.includes('eval(') || result.content.includes('innerHTML'))
+          patternStats.securityIssues++;
       }
 
-      console.log(`  ✅ Bun.file() Usage: ${patternStats.bunFileUsage}`);
-      console.log(`  ✅ Bun.serve() Usage: ${patternStats.bunServeUsage}`);
-      console.log(`  ✅ Bun.YAML Usage: ${patternStats.bunYamlUsage}`);
-      console.log(`  ✅ Bun.semver Usage: ${patternStats.bunSemverUsage}`);
-      console.log(`  ✅ Bun.hash Usage: ${patternStats.bunHashUsage}`);
-      console.log(`  ✅ Bun.spawn Usage: ${patternStats.bunSpawnUsage}`);
-      
+      console.info(`  ✅ Bun.file() Usage: ${patternStats.bunFileUsage}`);
+      console.info(`  ✅ Bun.serve() Usage: ${patternStats.bunServeUsage}`);
+      console.info(`  ✅ Bun.YAML Usage: ${patternStats.bunYamlUsage}`);
+      console.info(`  ✅ Bun.semver Usage: ${patternStats.bunSemverUsage}`);
+      console.info(`  ✅ Bun.hash Usage: ${patternStats.bunHashUsage}`);
+      console.info(`  ✅ Bun.spawn Usage: ${patternStats.bunSpawnUsage}`);
+
       if (patternStats.nonBunPatterns > 0) {
-        console.log(`  ⚠️  Non-Bun Patterns: ${patternStats.nonBunPatterns}`);
+        console.info(`  ⚠️  Non-Bun Patterns: ${patternStats.nonBunPatterns}`);
       }
       if (patternStats.securityIssues > 0) {
-        console.log(`  🚨 Security Issues: ${patternStats.securityIssues}`);
+        console.info(`  🚨 Security Issues: ${patternStats.securityIssues}`);
       }
 
       if (report.issuesFound > 0) {
-        console.log('\n🔧 Detailed Issue Breakdown:');
-        
+        console.info('\n🔧 Detailed Issue Breakdown:');
+
         // Group by type
-        const grouped = report.scanResults.reduce((acc, result) => {
-          if (!acc[result.type]) acc[result.type] = [];
-          acc[result.type].push(result);
-          return acc;
-        }, {} as Record<string, typeof report.scanResults>);
+        const grouped = report.scanResults.reduce(
+          (acc, result) => {
+            if (!acc[result.type]) acc[result.type] = [];
+            acc[result.type].push(result);
+            return acc;
+          },
+          {} as Record<string, typeof report.scanResults>
+        );
 
         for (const [type, issues] of Object.entries(grouped)) {
-          console.log(`\n  ${type.toUpperCase()} (${issues.length}):`);
+          console.info(`\n  ${type.toUpperCase()} (${issues.length}):`);
           for (const issue of issues.slice(0, 3)) {
             const suggestion = this.generateFixSuggestion(issue);
-            console.log(`    📝 ${issue.file}:${issue.line}`);
-            console.log(`       Current: ${issue.content.substring(0, 60)}...`);
-            console.log(`       Suggested: ${suggestion}`);
+            console.info(`    📝 ${issue.file}:${issue.line}`);
+            console.info(`       Current: ${issue.content.substring(0, 60)}...`);
+            console.info(`       Suggested: ${suggestion}`);
           }
           if (issues.length > 3) {
-            console.log(`    ... and ${issues.length - 3} more ${type} issues`);
+            console.info(`    ... and ${issues.length - 3} more ${type} issues`);
           }
         }
       }
@@ -149,34 +162,34 @@ class RulesEngine {
       // Generate compliance score
       const totalFiles = report.totalFiles;
       const compliantFiles = totalFiles - report.issuesFound;
-      const complianceScore = totalFiles > 0 ? Math.round((compliantFiles / totalFiles) * 100) : 100;
-      
-      console.log(`\n📈 Compliance Score: ${complianceScore}%`);
-      
-      if (complianceScore >= 90) {
-        console.log('  🌟 Excellent - Nearly perfect Bun pattern adoption!');
-      } else if (complianceScore >= 75) {
-        console.log('  ✅ Good - Strong Bun pattern adoption with room for improvement');
-      } else if (complianceScore >= 50) {
-        console.log('  ⚠️  Fair - Mixed pattern adoption, needs attention');
-      } else {
-        console.log('  🚨 Poor - Low Bun pattern adoption, immediate action required');
-      }
+      const complianceScore =
+        totalFiles > 0 ? Math.round((compliantFiles / totalFiles) * 100) : 100;
 
+      console.info(`\n📈 Compliance Score: ${complianceScore}%`);
+
+      if (complianceScore >= 90) {
+        console.info('  🌟 Excellent - Nearly perfect Bun pattern adoption!');
+      } else if (complianceScore >= 75) {
+        console.info('  ✅ Good - Strong Bun pattern adoption with room for improvement');
+      } else if (complianceScore >= 50) {
+        console.info('  ⚠️  Fair - Mixed pattern adoption, needs attention');
+      } else {
+        console.info('  🚨 Poor - Low Bun pattern adoption, immediate action required');
+      }
     } catch (error) {
       console.error('❌ Enhanced validation failed:', error.message);
       process.exit(1);
     }
 
-    console.log('\n═══════════════════════════════════════════════════════════════');
+    console.info('\n═══════════════════════════════════════════════════════════════');
   }
 
   /**
    * Hyper-validate with purge check
    */
   async validateCommand(directory: string = '.'): Promise<void> {
-    console.log('🔍 FACTORYWAGER RULES v4.0 - Hyper-Validation');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('🔍 FACTORYWAGER RULES v4.0 - Hyper-Validation');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
       // Check ripgrep availability
@@ -186,136 +199,144 @@ class RulesEngine {
         process.exit(1);
       }
 
-      console.log(`📁 Scanning directory: ${directory}`);
-      console.log('⚡ Performing hyper-validation...');
+      console.info(`📁 Scanning directory: ${directory}`);
+      console.info('⚡ Performing hyper-validation...');
 
       const startTime = Date.now();
       const report = await scanDirectory(directory);
       const scanTime = Date.now() - startTime;
 
-      console.log(`\n📊 Validation Results:`);
-      console.log(`  Scan Time: ${scanTime}ms`);
-      console.log(`  Files Scanned: ${report.totalFiles}`);
-      console.log(`  Issues Found: ${report.issuesFound}`);
+      console.info(`\n📊 Validation Results:`);
+      console.info(`  Scan Time: ${scanTime}ms`);
+      console.info(`  Files Scanned: ${report.totalFiles}`);
+      console.info(`  Issues Found: ${report.issuesFound}`);
 
       if (report.issuesFound > 0) {
-        console.log('\n' + formatReport(report));
-        
+        console.info('\n' + formatReport(report));
+
         // Generate purge signature for issues
-        console.log('\n🔥 Generating Purge Signatures...');
-        for (const result of report.scanResults.slice(0, 5)) { // Limit to 5 for demo
+        console.info('\n🔥 Generating Purge Signatures...');
+        for (const result of report.scanResults.slice(0, 5)) {
+          // Limit to 5 for demo
           const purge = await this.engine.purgeRipgrep({
             scope: 'PURGE',
             type: 'TRANSMUTE',
-            pattern: `${result.type}:${result.content.substring(0, 50)}`
+            pattern: `${result.type}:${result.content.substring(0, 50)}`,
           });
-          console.log(`  ${purge.id}: ${purge.grepable}`);
+          console.info(`  ${purge.id}: ${purge.grepable}`);
         }
       } else {
-        console.log('\n✅ No issues found - Codebase is clean!');
+        console.info('\n✅ No issues found - Codebase is clean!');
       }
 
       // Validation summary
-      console.log('\n📋 Validation Summary:');
-      const criticalIssues = report.scanResults.filter(r => r.content.includes('eval') || r.content.includes('innerHTML'));
+      console.info('\n📋 Validation Summary:');
+      const criticalIssues = report.scanResults.filter(
+        r => r.content.includes('eval') || r.content.includes('innerHTML')
+      );
       if (criticalIssues.length > 0) {
-        console.log(`  ⚠️  Critical Issues: ${criticalIssues.length}`);
+        console.info(`  ⚠️  Critical Issues: ${criticalIssues.length}`);
       }
       const nonBunIssues = report.scanResults.filter(r => r.type === 'nonbun');
       if (nonBunIssues.length > 0) {
-        console.log(`  🔄 Bun Migration Needed: ${nonBunIssues.length}`);
+        console.info(`  🔄 Bun Migration Needed: ${nonBunIssues.length}`);
       }
       const linkIssues = report.scanResults.filter(r => r.type === 'link');
       if (linkIssues.length > 0) {
-        console.log(`  🔗 Link Issues: ${linkIssues.length}`);
+        console.info(`  🔗 Link Issues: ${linkIssues.length}`);
       }
-
     } catch (error) {
       console.error('❌ Validation failed:', error.message);
       process.exit(1);
     }
 
-    console.log('\n═══════════════════════════════════════════════════════════════');
+    console.info('\n═══════════════════════════════════════════════════════════════');
   }
 
   /**
    * Auto-purge code with v4.0 magic
    */
-  async fixCommand(directory: string = '.', options: { dryRun?: boolean; auto?: boolean } = {}): Promise<void> {
-    console.log('🔧 FACTORYWAGER RULES v4.0 - Auto-Purge');
-    console.log('═══════════════════════════════════════════════════════════════');
+  async fixCommand(
+    directory: string = '.',
+    options: { dryRun?: boolean; auto?: boolean } = {}
+  ): Promise<void> {
+    console.info('🔧 FACTORYWAGER RULES v4.0 - Auto-Purge');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     const { dryRun = false, auto = false } = options;
 
     if (!auto && !dryRun) {
-      console.log('⚠️  Auto-purge requires --auto flag or --dry-run for safety');
-      console.log('💡 Use --dry-run to preview changes or --auto to apply them');
+      console.info('⚠️  Auto-purge requires --auto flag or --dry-run for safety');
+      console.info('💡 Use --dry-run to preview changes or --auto to apply them');
       process.exit(1);
     }
 
     try {
-      console.log(`📁 Target directory: ${directory}`);
-      console.log(`🔍 Mode: ${dryRun ? 'DRY RUN (Preview)' : 'AUTO PURGE (Apply Changes)'}`);
+      console.info(`📁 Target directory: ${directory}`);
+      console.info(`🔍 Mode: ${dryRun ? 'DRY RUN (Preview)' : 'AUTO PURGE (Apply Changes)'}`);
 
       // Scan for issues
       const report = await scanDirectory(directory);
-      
+
       if (report.issuesFound === 0) {
-        console.log('\n✅ No issues found - Codebase is already clean!');
+        console.info('\n✅ No issues found - Codebase is already clean!');
         return;
       }
 
-      console.log(`\n🎯 Found ${report.issuesFound} issues to process:`);
+      console.info(`\n🎯 Found ${report.issuesFound} issues to process:`);
 
       // Group issues by type
-      const grouped = report.scanResults.reduce((acc, result) => {
-        if (!acc[result.type]) acc[result.type] = [];
-        acc[result.type].push(result);
-        return acc;
-      }, {} as Record<string, typeof report.scanResults>);
+      const grouped = report.scanResults.reduce(
+        (acc, result) => {
+          if (!acc[result.type]) acc[result.type] = [];
+          acc[result.type].push(result);
+          return acc;
+        },
+        {} as Record<string, typeof report.scanResults>
+      );
 
       // Process each type
       for (const [type, issues] of Object.entries(grouped)) {
-        console.log(`\n🔄 Processing ${type.toUpperCase()} issues (${issues.length}):`);
-        
-        for (const issue of issues.slice(0, 3)) { // Limit for demo
+        console.info(`\n🔄 Processing ${type.toUpperCase()} issues (${issues.length}):`);
+
+        for (const issue of issues.slice(0, 3)) {
+          // Limit for demo
           const suggestion = this.generateFixSuggestion(issue);
-          
+
           if (dryRun) {
-            console.log(`  📝 ${issue.file}:${issue.line}`);
-            console.log(`     Current: ${issue.content.substring(0, 60)}...`);
-            console.log(`     Suggested: ${suggestion}`);
+            console.info(`  📝 ${issue.file}:${issue.line}`);
+            console.info(`     Current: ${issue.content.substring(0, 60)}...`);
+            console.info(`     Suggested: ${suggestion}`);
           } else {
-            console.log(`  ✅ ${issue.file}:${issue.line} - Applied: ${suggestion}`);
+            console.info(`  ✅ ${issue.file}:${issue.line} - Applied: ${suggestion}`);
             // In real implementation, would modify files here
           }
         }
-        
+
         if (issues.length > 3) {
-          console.log(`  ... and ${issues.length - 3} more ${type} issues`);
+          console.info(`  ... and ${issues.length - 3} more ${type} issues`);
         }
       }
 
       // Generate transmutation report
       if (!dryRun) {
-        console.log('\n🔥 Generating Transmutation Report...');
+        console.info('\n🔥 Generating Transmutation Report...');
         const transmutation = await this.engine.purgeRipgrep({
           scope: 'TRANSMUTE',
           type: 'FIX',
-          pattern: `auto-purge-${report.issuesFound}-issues`
+          pattern: `auto-purge-${report.issuesFound}-issues`,
         });
-        
-        console.log(`  📋 Transmutation ID: ${transmutation.id}`);
-        console.log(`  🔐 Signature: ${transmutation.grepable}`);
-        console.log(`  📊 Hash: ${transmutation.contentHash.substring(0, 16)}...`);
-      }
 
+        console.info(`  📋 Transmutation ID: ${transmutation.id}`);
+        console.info(`  🔐 Signature: ${transmutation.grepable}`);
+        console.info(`  📊 Hash: ${transmutation.contentHash.substring(0, 16)}...`);
+      }
     } catch (error) {
       console.error('❌ Auto-purge failed:', error.message);
       process.exit(1);
     }
 
-    console.log('\n═══════════════════════════════════════════════════════════════');
+    console.info('\n═══════════════════════════════════════════════════════════════');
   }
 
   /**
@@ -323,7 +344,7 @@ class RulesEngine {
    */
   private generateFixSuggestion(issue: any): string {
     const content = issue.content;
-    
+
     if (issue.type === 'nonbun') {
       if (content.includes('require(')) {
         return 'Replace with ES6 import statement: import { module } from "package";';
@@ -365,19 +386,19 @@ class RulesEngine {
         return 'Replace with Bun.semver API: import { semver } from "bun"; semver.satisfies(version, range);';
       }
     }
-    
+
     if (issue.type === 'link') {
       return 'Validate and update external link';
     }
-    
+
     if (content.includes('eval(')) {
       return 'Remove eval() - security risk';
     }
-    
+
     if (content.includes('innerHTML')) {
       return 'Use safer DOM manipulation or Bun.escapeHTML()';
     }
-    
+
     return 'Review and update code';
   }
 }
@@ -394,30 +415,30 @@ async function main() {
     case 'config':
       await engine.configCommand();
       break;
-      
+
     case 'enhanced':
       const enhancedDir = args[0] || '.';
       await engine.enhancedCommand(enhancedDir);
       break;
-      
+
     case 'validate':
       const directory = args[0] || '.';
       await engine.validateCommand(directory);
       break;
-      
+
     case 'fix':
       const fixDir = args[0] || '.';
       const options = {
         dryRun: args.includes('--dry-run'),
-        auto: args.includes('--auto')
+        auto: args.includes('--auto'),
       };
       await engine.fixCommand(fixDir, options);
       break;
-      
+
     case 'help':
     case '--help':
     case '-h':
-      console.log(`
+      console.info(`
 🔧 FACTORYWAGER RULES v4.0 CLI
 
 USAGE:
@@ -442,10 +463,10 @@ EXAMPLES:
   bun run scripts/bun-rules.ts fix ./src --auto
       `);
       break;
-      
+
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.log('Run "bun run scripts/bun-rules.ts help" for available commands');
+      console.info('Run "bun run scripts/bun-rules.ts help" for available commands');
       process.exit(1);
   }
 }

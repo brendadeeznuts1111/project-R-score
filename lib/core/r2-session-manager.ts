@@ -86,23 +86,23 @@ export interface SessionSpawnResult {
 
 /**
  * R2 Session Manager
- * 
+ *
  * Manages spawning R2 sessions with comprehensive error handling,
  * retry logic, circuit breaker protection, and metrics collection.
- * 
+ *
  * @example
  * ```typescript
  * const manager = new R2SessionManager();
- * 
+ *
  * const result = await manager.spawnSession({
  *   command: ['bun', 'junior-runner', 'session.md'],
  *   mdFile: 'session.md',
  *   sessionId: 'sess-123',
  *   member: { id: 'user-456', name: 'John' },
  * });
- * 
+ *
  * if (result.success) {
- *   console.log('Session spawned:', result.spawnProfile);
+ *   console.info('Session spawned:', result.spawnProfile);
  * } else {
  *   console.error('Failed:', result.error);
  * }
@@ -168,23 +168,17 @@ export class R2SessionManager {
 
       // Step 2: Upload session profile
       attempts++;
-      const uploadResult = await this.uploadSessionProfileWithRetry(
-        config,
-        spawnProfile
-      );
+      const uploadResult = await this.uploadSessionProfileWithRetry(config, spawnProfile);
 
       if (!uploadResult) {
         // Record error but don't fail - spawn succeeded
-        recordError(
-          new Error('Failed to upload session profile to R2'),
-          {
-            service: this.config.serviceName,
-            operation: 'upload_session_profile',
-            sessionId: config.sessionId,
-            memberId: config.member.id,
-            spawnProfile,
-          }
-        );
+        recordError(new Error('Failed to upload session profile to R2'), {
+          service: this.config.serviceName,
+          operation: 'upload_session_profile',
+          sessionId: config.sessionId,
+          memberId: config.member.id,
+          spawnProfile,
+        });
       }
 
       const durationMs = performance.now() - startTime;
@@ -220,9 +214,7 @@ export class R2SessionManager {
   /**
    * Spawn terminal with retry logic
    */
-  private async spawnTerminalWithRetry(
-    config: SessionSpawnConfig
-  ): Promise<SpawnProfile | null> {
+  private async spawnTerminalWithRetry(config: SessionSpawnConfig): Promise<SpawnProfile | null> {
     const useCircuitBreaker = config.circuitBreaker?.enabled ?? true;
 
     const spawnFn = async (): Promise<SpawnProfile | null> => {
@@ -298,13 +290,13 @@ export class R2SessionManager {
 
   /**
    * Quick spawn method for simple use cases
-   * 
+   *
    * @example
    * ```typescript
    * // Original code:
    * const spawnProfile = await spawnTerminal(['bun', 'junior-runner', mdFile]);
    * await uploadSessionProfile(sessionId, 'spawn_terminal', spawnProfile, member);
-   * 
+   *
    * // With error handling:
    * const result = await R2SessionManager.quickSpawn(
    *   ['bun', 'junior-runner', mdFile],
@@ -353,7 +345,7 @@ export class R2SessionManager {
 
 /**
  * Convenience function for one-off session spawning
- * 
+ *
  * @example
  * ```typescript
  * const result = await spawnR2Session({
@@ -362,15 +354,13 @@ export class R2SessionManager {
  *   sessionId: 'sess-123',
  *   member: { id: 'user-456' },
  * });
- * 
+ *
  * if (result.success) {
- *   console.log('Spawned:', result.spawnProfile);
+ *   console.info('Spawned:', result.spawnProfile);
  * }
  * ```
  */
-export async function spawnR2Session(
-  config: SessionSpawnConfig
-): Promise<SessionSpawnResult> {
+export async function spawnR2Session(config: SessionSpawnConfig): Promise<SessionSpawnResult> {
   const manager = new R2SessionManager();
   try {
     return await manager.spawnSession(config);
@@ -381,13 +371,13 @@ export async function spawnR2Session(
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🔧 R2 Session Manager Demo\n');
+  console.info('🔧 R2 Session Manager Demo\n');
 
   const manager = new R2SessionManager({
     serviceName: 'demo-service',
   });
 
-  console.log('Spawning session with error handling...\n');
+  console.info('Spawning session with error handling...\n');
 
   const result = await manager.spawnSession({
     command: ['bun', 'junior-runner', 'test.md'],
@@ -397,7 +387,7 @@ if (import.meta.main) {
     circuitBreaker: { enabled: true },
   });
 
-  console.log('Result:', {
+  console.info('Result:', {
     success: result.success,
     durationMs: result.durationMs.toFixed(2),
     attempts: result.attempts,
@@ -406,16 +396,16 @@ if (import.meta.main) {
   });
 
   if (result.success && result.spawnProfile) {
-    console.log('\nSpawn Profile:');
-    console.log(`  Session ID: ${result.spawnProfile.sessionId}`);
-    console.log(`  Terminal ID: ${result.spawnProfile.terminalId}`);
-    console.log(`  PID: ${result.spawnProfile.pid}`);
-    console.log(`  Status: ${result.spawnProfile.status}`);
+    console.info('\nSpawn Profile:');
+    console.info(`  Session ID: ${result.spawnProfile.sessionId}`);
+    console.info(`  Terminal ID: ${result.spawnProfile.terminalId}`);
+    console.info(`  PID: ${result.spawnProfile.pid}`);
+    console.info(`  Status: ${result.spawnProfile.status}`);
   }
 
-  console.log('\nCircuit Breaker Stats:', manager.getCircuitBreakerStats());
-  console.log('Metrics Stats:', manager.getMetricsStats());
+  console.info('\nCircuit Breaker Stats:', manager.getCircuitBreakerStats());
+  console.info('Metrics Stats:', manager.getMetricsStats());
 
   manager.destroy();
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

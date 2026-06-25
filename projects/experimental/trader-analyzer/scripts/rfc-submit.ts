@@ -48,8 +48,8 @@ async function main() {
 			proposedChanges: { code: proposedChanges },
 		});
 
-		console.log(`✅ RFC submitted for ${metadata.package}`);
-		console.log(`📢 Notified Telegram topic`);
+		console.info(`✅ RFC submitted for ${metadata.package}`);
+		console.info(`📢 Notified Telegram topic`);
 	} catch (error) {
 		console.error('❌ Failed to submit RFC:', error);
 		process.exit(1);

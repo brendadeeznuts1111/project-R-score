@@ -37,37 +37,37 @@ const APPS = [
 	{ name: "telegram-miniapp", path: "apps/miniapp" },
 ] as const;
 
-console.log("🔗 Linking all packages into apps...\n");
+console.info("🔗 Linking all packages into apps...\n");
 
 // First, register all packages
-console.log("📦 Step 1: Registering packages...\n");
+console.info("📦 Step 1: Registering packages...\n");
 for (const pkg of PACKAGES) {
 	const pkgName = pkg.replace("@nexus-radiance/", "");
 	const pkgPath = MONOREPO_ROOT + `packages/${pkgName}`;
 
 	try {
 		await $`cd ${pkgPath} && bun link`.quiet();
-		console.log(`  ✅ Registered ${pkg}`);
+		console.info(`  ✅ Registered ${pkg}`);
 	} catch (error: any) {
 		console.error(`  ⚠️  ${pkg} may already be registered: ${error.message}`);
 	}
 }
 
-console.log("\n🔗 Step 2: Linking packages into apps...\n");
+console.info("\n🔗 Step 2: Linking packages into apps...\n");
 
 // Then link them into apps
 for (const app of APPS) {
 	const appPath = MONOREPO_ROOT + app.path;
-	console.log(`  → Linking into ${app.name}...`);
+	console.info(`  → Linking into ${app.name}...`);
 
 	for (const pkg of PACKAGES) {
 		try {
 			await $`cd ${appPath} && bun link ${pkg} --save`.quiet();
-			console.log(`    ✅ Linked ${pkg}`);
+			console.info(`    ✅ Linked ${pkg}`);
 		} catch (error: any) {
 			console.error(`    ⚠️  ${pkg} may already be linked: ${error.message}`);
 		}
 	}
 }
 
-console.log("\n✅ All packages linked!\n");
+console.info("\n✅ All packages linked!\n");

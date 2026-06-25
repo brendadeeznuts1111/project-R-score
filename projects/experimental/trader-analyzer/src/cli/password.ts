@@ -38,13 +38,13 @@ async function cmdHash(
 	password: string,
 	algorithm: "argon2id" | "bcrypt" | "scrypt" = "argon2id",
 ): Promise<void> {
-	console.log(`${c.cyan}Hashing password with ${algorithm}...${c.reset}\n`);
+	console.info(`${c.cyan}Hashing password with ${algorithm}...${c.reset}\n`);
 
 	const hash = await hashPassword(password, { algorithm });
 
-	console.log(`${c.green}${c.bold}Hash:${c.reset}`);
-	console.log(`${hash}\n`);
-	console.log(
+	console.info(`${c.green}${c.bold}Hash:${c.reset}`);
+	console.info(`${hash}\n`);
+	console.info(
 		`${c.dim}Algorithm: ${getHashAlgorithm(hash) || "unknown"}${c.reset}`,
 	);
 }
@@ -53,7 +53,7 @@ async function cmdHash(
  * Verify a password
  */
 async function cmdVerify(password: string, hash: string): Promise<void> {
-	console.log(`${c.cyan}Verifying password...${c.reset}\n`);
+	console.info(`${c.cyan}Verifying password...${c.reset}\n`);
 
 	if (!isPasswordHash(hash)) {
 		console.error(`${c.red}Error: Invalid hash format${c.reset}`);
@@ -67,10 +67,10 @@ async function cmdVerify(password: string, hash: string): Promise<void> {
 	const algorithm = getHashAlgorithm(hash);
 
 	if (isValid) {
-		console.log(`${c.green}${c.bold}✓ Password is valid${c.reset}`);
-		console.log(`${c.dim}Algorithm: ${algorithm || "unknown"}${c.reset}\n`);
+		console.info(`${c.green}${c.bold}✓ Password is valid${c.reset}`);
+		console.info(`${c.dim}Algorithm: ${algorithm || "unknown"}${c.reset}\n`);
 	} else {
-		console.log(`${c.red}${c.bold}✗ Password is invalid${c.reset}\n`);
+		console.info(`${c.red}${c.bold}✗ Password is invalid${c.reset}\n`);
 		process.exit(1);
 	}
 }
@@ -79,17 +79,17 @@ async function cmdVerify(password: string, hash: string): Promise<void> {
  * Check hash format
  */
 function cmdCheck(hash: string): void {
-	console.log(`${c.cyan}Checking hash format...${c.reset}\n`);
+	console.info(`${c.cyan}Checking hash format...${c.reset}\n`);
 
 	const isValid = isPasswordHash(hash);
 	const algorithm = getHashAlgorithm(hash);
 
 	if (isValid) {
-		console.log(`${c.green}${c.bold}✓ Valid password hash${c.reset}`);
-		console.log(`${c.dim}Algorithm: ${algorithm || "unknown"}${c.reset}\n`);
+		console.info(`${c.green}${c.bold}✓ Valid password hash${c.reset}`);
+		console.info(`${c.dim}Algorithm: ${algorithm || "unknown"}${c.reset}\n`);
 	} else {
-		console.log(`${c.red}${c.bold}✗ Invalid hash format${c.reset}`);
-		console.log(
+		console.info(`${c.red}${c.bold}✗ Invalid hash format${c.reset}`);
+		console.info(
 			`${c.dim}Expected hash starting with $argon2id$, $2a$, $2b$, $2y$, or $scrypt$${c.reset}\n`,
 		);
 		process.exit(1);
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
 	const [cmd, ...rest] = args;
 
 	if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-		console.log(HELP);
+		console.info(HELP);
 		return;
 	}
 
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

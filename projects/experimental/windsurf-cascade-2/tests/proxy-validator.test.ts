@@ -331,7 +331,7 @@ describe("Performance Tests", () => {
     // Should be under 100ns per validation
     expect(avgPerValidation).toBeLessThan(100);
     
-    console.log(`Average validation time: ${avgPerValidation.toFixed(2)}ns`);
+    console.info(`Average validation time: ${avgPerValidation.toFixed(2)}ns`);
   });
 
   test("token validation performance meets SLA", async () => {
@@ -356,7 +356,7 @@ describe("Performance Tests", () => {
     // Should be under 200ns per token validation
     expect(avgPerValidation).toBeLessThan(200);
     
-    console.log(`Average token validation time: ${avgPerValidation.toFixed(2)}ns`);
+    console.info(`Average token validation time: ${avgPerValidation.toFixed(2)}ns`);
   });
 });
 

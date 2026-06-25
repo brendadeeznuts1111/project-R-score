@@ -17,7 +17,10 @@ type Options = {
 };
 
 export function parseArgs(argv: string[]): Options {
-  let maxSnapshotAgeMinutes = Number.parseInt(Bun.env.SEARCH_LOOP_LOCAL_MAX_SNAPSHOT_AGE_MIN || '20', 10);
+  let maxSnapshotAgeMinutes = Number.parseInt(
+    Bun.env.SEARCH_LOOP_LOCAL_MAX_SNAPSHOT_AGE_MIN || '20',
+    10
+  );
   if (!Number.isFinite(maxSnapshotAgeMinutes) || maxSnapshotAgeMinutes < 0) {
     maxSnapshotAgeMinutes = 20;
   }
@@ -27,7 +30,9 @@ export function parseArgs(argv: string[]): Options {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--mode') {
-      const value = String(argv[i + 1] || '').trim().toLowerCase();
+      const value = String(argv[i + 1] || '')
+        .trim()
+        .toLowerCase();
       if (value === 'fast' || value === 'full') {
         mode = value;
       }
@@ -109,15 +114,15 @@ export async function main(): Promise<void> {
 
   if (forceSnapshot || !freshness.reuse) {
     if (options.mode === 'full') {
-      console.log('[search:loop:check:local] forcing snapshot refresh (mode=full)');
+      console.info('[search:loop:check:local] forcing snapshot refresh (mode=full)');
     } else if (options.forceSnapshot) {
-      console.log('[search:loop:check:local] forcing snapshot refresh (--force-snapshot)');
+      console.info('[search:loop:check:local] forcing snapshot refresh (--force-snapshot)');
     } else {
-      console.log(`[search:loop:check:local] refreshing snapshot: ${freshness.reason}`);
+      console.info(`[search:loop:check:local] refreshing snapshot: ${freshness.reason}`);
     }
     await run(['bun', 'run', 'search:bench:snapshot:core:wide:local']);
   } else {
-    console.log(`[search:loop:check:local] reusing snapshot: ${freshness.reason}`);
+    console.info(`[search:loop:check:local] reusing snapshot: ${freshness.reason}`);
   }
 
   await run(['bun', 'run', 'search:loop:status']);

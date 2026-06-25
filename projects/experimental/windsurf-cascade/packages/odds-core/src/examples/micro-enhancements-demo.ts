@@ -42,7 +42,7 @@ import {
  * Example 1: Lightweight metadata for high-frequency data
  */
 export function demonstrateLightweightMetadata() {
-  console.log('=== Lightweight Metadata Demo ===');
+  console.info('=== Lightweight Metadata Demo ===');
 
   // Create lightweight metadata quickly
   const lightweightMeta = createLightweightMetadata(
@@ -53,7 +53,7 @@ export function demonstrateLightweightMetadata() {
     0.95
   );
 
-  console.log('Lightweight Metadata:', lightweightMeta);
+  console.info('Lightweight Metadata:', lightweightMeta);
 
   // Create lightweight odds tick
   const lightweightTick: LightweightOddsTick = {
@@ -67,20 +67,20 @@ export function demonstrateLightweightMetadata() {
     metadata: lightweightMeta
   };
 
-  console.log('Lightweight Tick:', lightweightTick);
+  console.info('Lightweight Tick:', lightweightTick);
 
   // Compare memory usage (conceptual)
-  console.log('Memory Benefits:');
-  console.log('- Single topic vs array:', '50% reduction');
-  console.log('- Simple source vs object:', '70% reduction');
-  console.log('- Single quality score vs 5 metrics:', '80% reduction');
+  console.info('Memory Benefits:');
+  console.info('- Single topic vs array:', '50% reduction');
+  console.info('- Simple source vs object:', '70% reduction');
+  console.info('- Single quality score vs 5 metrics:', '80% reduction');
 }
 
 /**
  * Example 2: Lazy quality assessment for performance
  */
 export function demonstrateLazyQuality() {
-  console.log('\n=== Lazy Quality Assessment Demo ===');
+  console.info('\n=== Lazy Quality Assessment Demo ===');
 
   const data = {
     symbol: 'ETH/USD',
@@ -92,12 +92,12 @@ export function demonstrateLazyQuality() {
 
   // Create lazy quality wrapper
   const lazyQuality = LazyQualityUtils.wrapWithLazyQuality(data, 'eth_001');
-  console.log('Lazy quality created (not computed yet):', lazyQuality.isAssessed);
+  console.info('Lazy quality created (not computed yet):', lazyQuality.isAssessed);
 
   // Quality is only computed when needed
   const quality = lazyQuality.assess();
-  console.log('Quality computed:', quality.overall);
-  console.log('Now assessed:', lazyQuality.isAssessed);
+  console.info('Quality computed:', quality.overall);
+  console.info('Now assessed:', lazyQuality.isAssessed);
 
   // Batch processing with lazy evaluation
   const dataArray = Array.from({ length: 100 }, (_, i) => ({
@@ -106,7 +106,7 @@ export function demonstrateLazyQuality() {
     timestamp: Date.now()
   }));
 
-  console.log('Processing 1000 items with lazy quality...');
+  console.info('Processing 1000 items with lazy quality...');
   const start = Date.now();
   
   const batchResults = QualityAssessorFactory
@@ -114,7 +114,7 @@ export function demonstrateLazyQuality() {
     .assessBatchLazy(dataArray.map(data => ({ data, cacheKey: data.symbol })));
 
   const createTime = Date.now() - start;
-  console.log('Batch creation time:', createTime, 'ms');
+  console.info('Batch creation time:', createTime, 'ms');
 
   // Only compute quality for first 10 items
   const computeStart = Date.now();
@@ -122,15 +122,15 @@ export function demonstrateLazyQuality() {
     batchResults[i].assess();
   }
   const computeTime = Date.now() - computeStart;
-  console.log('Quality computation for 10 items:', computeTime, 'ms');
-  console.log('Performance gain:', '90% faster than computing all');
+  console.info('Quality computation for 10 items:', computeTime, 'ms');
+  console.info('Performance gain:', '90% faster than computing all');
 }
 
 /**
  * Example 3: Quick quality assessment for high-frequency scenarios
  */
 export function demonstrateQuickQuality() {
-  console.log('\n=== Quick Quality Assessment Demo ===');
+  console.info('\n=== Quick Quality Assessment Demo ===');
 
   const highFreqData = Array.from({ length: 10000 }, (_, i) => ({
     symbol: `HF_${i}`,
@@ -139,7 +139,7 @@ export function demonstrateQuickQuality() {
     timestamp: Date.now() - Math.random() * 1000
   }));
 
-  console.log('Processing 10,000 high-frequency items...');
+  console.info('Processing 10,000 high-frequency items...');
 
   const start = Date.now();
   const quickScores = QualityAssessorFactory
@@ -147,8 +147,8 @@ export function demonstrateQuickQuality() {
     .assessBatchQuick(highFreqData);
   const quickTime = Date.now() - start;
 
-  console.log('Quick assessment time:', quickTime, 'ms');
-  console.log('Average quality score:', quickScores.reduce((a, b) => a + b, 0) / quickScores.length);
+  console.info('Quick assessment time:', quickTime, 'ms');
+  console.info('Average quality score:', quickScores.reduce((a, b) => a + b, 0) / quickScores.length);
 
   // Filter by quality threshold
   const startFilter = Date.now();
@@ -157,31 +157,31 @@ export function demonstrateQuickQuality() {
     .filterByQuality(highFreqData, 0.7);
   const filterTime = Date.now() - startFilter;
 
-  console.log('Filtering time:', filterTime, 'ms');
-  console.log('High quality items:', highQualityItems.length, '/', highFreqData.length);
+  console.info('Filtering time:', filterTime, 'ms');
+  console.info('High quality items:', highQualityItems.length, '/', highFreqData.length);
 }
 
 /**
  * Example 4: Single responsibility topic services
  */
 export function demonstrateTopicServices() {
-  console.log('\n=== Single Responsibility Topic Services Demo ===');
+  console.info('\n=== Single Responsibility Topic Services Demo ===');
 
   // Topic mapping - focused responsibility
   const mapper = TopicServiceFactory.getMapper();
   const cryptoTopics = mapper.mapSymbol('BTC/USD');
   const exchangeTopics = mapper.mapExchange('binance');
   
-  console.log('Symbol mapping for BTC/USD:', cryptoTopics);
-  console.log('Exchange mapping for Binance:', exchangeTopics);
+  console.info('Symbol mapping for BTC/USD:', cryptoTopics);
+  console.info('Exchange mapping for Binance:', exchangeTopics);
 
   // Topic validation - focused responsibility
   const validator = TopicServiceFactory.getValidator();
   const validation = validator.validateTopics(cryptoTopics);
   const areRelated = validator.areTopicsRelated(MarketTopic.CRYPTO_SPOT, MarketTopic.CRYPTO_DERIVATIVES);
   
-  console.log('Topic validation:', validation);
-  console.log('Are crypto topics related?', areRelated);
+  console.info('Topic validation:', validation);
+  console.info('Are crypto topics related?', areRelated);
 
   // Topic analysis - coordinates mapper and validator
   const analysisService = TopicServiceFactory.getAnalysisService();
@@ -191,19 +191,19 @@ export function demonstrateTopicServices() {
     assetClass: 'equities'
   });
 
-  console.log('Topic analysis result:', analysis);
+  console.info('Topic analysis result:', analysis);
 
   // Custom mappings
   mapper.addSymbolMapping('CUSTOM', [MarketTopic.EQUITIES_US]);
   const customTopics = mapper.mapSymbol('CUSTOM');
-  console.log('Custom symbol mapping:', customTopics);
+  console.info('Custom symbol mapping:', customTopics);
 }
 
 /**
  * Example 5: Smart metadata types
  */
 export function demonstrateSmartMetadata() {
-  console.log('\n=== Smart Metadata Types Demo ===');
+  console.info('\n=== Smart Metadata Types Demo ===');
 
   // Create lightweight data for high-frequency scenario
   const lightweightData: LightweightOddsTick = {
@@ -320,12 +320,12 @@ export function demonstrateSmartMetadata() {
   // Use smart metadata type
   const smartData: SmartOddsTick[] = [lightweightData, enhancedData];
 
-  console.log('Smart metadata array with mixed types:');
+  console.info('Smart metadata array with mixed types:');
   smartData.forEach((data, index) => {
     if (isLightweightMetadata(data.metadata)) {
-      console.log(`Item ${index}: Lightweight - ${data.metadata.topic}`);
+      console.info(`Item ${index}: Lightweight - ${data.metadata.topic}`);
     } else {
-      console.log(`Item ${index}: Enhanced - ${data.metadata.topics.join(', ')}`);
+      console.info(`Item ${index}: Enhanced - ${data.metadata.topics.join(', ')}`);
     }
   });
 }
@@ -334,7 +334,7 @@ export function demonstrateSmartMetadata() {
  * Example 6: Performance comparison
  */
 export function demonstratePerformanceGains() {
-  console.log('\n=== Performance Gains Comparison ===');
+  console.info('\n=== Performance Gains Comparison ===');
 
   const testData = Array.from({ length: 1000 }, (_, i) => ({
     symbol: `TEST_${i}`,
@@ -344,7 +344,7 @@ export function demonstratePerformanceGains() {
   }));
 
   // Original approach (eager quality assessment)
-  console.log('Original approach - Eager quality assessment:');
+  console.info('Original approach - Eager quality assessment:');
   const originalStart = Date.now();
   testData.forEach(data => {
     // Simulate original quality assessment (always computed)
@@ -360,7 +360,7 @@ export function demonstratePerformanceGains() {
   const originalTime = Date.now() - originalStart;
 
   // Enhanced approach (lazy quality assessment)
-  console.log('Enhanced approach - Lazy quality assessment:');
+  console.info('Enhanced approach - Lazy quality assessment:');
   const enhancedStart = Date.now();
   const lazyResults = testData.map(data => 
     LazyQualityUtils.wrapWithLazyQuality(data, data.symbol)
@@ -374,24 +374,24 @@ export function demonstratePerformanceGains() {
   }
   const computeTime = Date.now() - computeStart;
 
-  console.log('Original approach time:', originalTime, 'ms');
-  console.log('Enhanced creation time:', enhancedTime, 'ms');
-  console.log('Enhanced computation time (10%):', computeTime, 'ms');
-  console.log('Total enhanced time:', enhancedTime + computeTime, 'ms');
-  console.log('Performance improvement:', `${Math.round((1 - (enhancedTime + computeTime) / originalTime) * 100)}%`);
+  console.info('Original approach time:', originalTime, 'ms');
+  console.info('Enhanced creation time:', enhancedTime, 'ms');
+  console.info('Enhanced computation time (10%):', computeTime, 'ms');
+  console.info('Total enhanced time:', enhancedTime + computeTime, 'ms');
+  console.info('Performance improvement:', `${Math.round((1 - (enhancedTime + computeTime) / originalTime) * 100)}%`);
 
   // Memory usage comparison (conceptual)
-  console.log('\nMemory Usage Comparison:');
-  console.log('Lightweight metadata vs Enhanced: ~70% reduction');
-  console.log('Single topic vs Topic array: ~50% reduction');
-  console.log('Lazy quality vs Eager quality: ~90% reduction until accessed');
+  console.info('\nMemory Usage Comparison:');
+  console.info('Lightweight metadata vs Enhanced: ~70% reduction');
+  console.info('Single topic vs Topic array: ~50% reduction');
+  console.info('Lazy quality vs Eager quality: ~90% reduction until accessed');
 }
 
 /**
  * Run all micro enhancement demonstrations
  */
 export function runMicroEnhancementsDemo() {
-  console.log('🚀 Phase 1 Micro Enhancements Demo\n');
+  console.info('🚀 Phase 1 Micro Enhancements Demo\n');
 
   demonstrateLightweightMetadata();
   demonstrateLazyQuality();
@@ -400,13 +400,13 @@ export function runMicroEnhancementsDemo() {
   demonstrateSmartMetadata();
   demonstratePerformanceGains();
 
-  console.log('\n✅ All micro enhancements demonstrated!');
-  console.log('\n🎯 Key Benefits Achieved:');
-  console.log('- 70% memory reduction with lightweight metadata');
-  console.log('- 90% performance improvement with lazy evaluation');
-  console.log('- Single responsibility classes for better maintainability');
-  console.log('- Smart types that adapt to use case requirements');
-  console.log('- Backward compatibility with existing enhanced types');
+  console.info('\n✅ All micro enhancements demonstrated!');
+  console.info('\n🎯 Key Benefits Achieved:');
+  console.info('- 70% memory reduction with lightweight metadata');
+  console.info('- 90% performance improvement with lazy evaluation');
+  console.info('- Single responsibility classes for better maintainability');
+  console.info('- Smart types that adapt to use case requirements');
+  console.info('- Backward compatibility with existing enhanced types');
 }
 
 // Export for easy testing

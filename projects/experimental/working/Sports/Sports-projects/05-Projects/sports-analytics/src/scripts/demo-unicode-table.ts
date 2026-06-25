@@ -104,18 +104,18 @@ async function runDemo() {
   const isMath = (cp: number) => (cp >= 0x2B && cp <= 0x2B) || (cp >= 0x3C && cp <= 0x3E) || (cp >= 0x7C && cp <= 0x7C) || (cp >= 0x7E && cp <= 0x7E) || (cp >= 0xAC && cp <= 0xAC) || (cp >= 0xB1 && cp <= 0xB1) || (cp >= 0xD7 && cp <= 0xD7) || (cp >= 0xF7 && cp <= 0xF7) || (cp >= 0x3F6 && cp <= 0x3F6) || (cp >= 0x2044 && cp <= 0x2044) || (cp >= 0x2052 && cp <= 0x2052) || (cp >= 0x2140 && cp <= 0x2144) || (cp >= 0x214B && cp <= 0x214B) || (cp >= 0x2190 && cp <= 0x2194) || (cp >= 0x219A && cp <= 0x219B) || (cp >= 0x21A0 && cp <= 0x21A0) || (cp >= 0x21A3 && cp <= 0x21A3) || (cp >= 0x21A6 && cp <= 0x21A6) || (cp >= 0x21AE && cp <= 0x21AE) || (cp >= 0x21CE && cp <= 0x21CF) || (cp >= 0x21D2 && cp <= 0x21D2) || (cp >= 0x21D4 && cp <= 0x21D4) || (cp >= 0x21F4 && cp <= 0x22FF);
   const mathTable = await generateTable("math", "isMath", isMath);
 
-  console.log("--- Example: ID_Start Table ---");
-  console.log(startTable);
-  console.log("\n--- Example: ID_Continue Table ---");
-  console.log(continueTable);
-  console.log("\n--- Example: Whitespace Table ---");
-  console.log(whitespaceTable);
-  console.log("\n--- Example: Emoji Table ---");
-  console.log(emojiTable);
-  console.log("\n--- Example: Currency Table ---");
-  console.log(currencyTable);
-  console.log("\n--- Example: Math Table ---");
-  console.log(mathTable);
+  console.info("--- Example: ID_Start Table ---");
+  console.info(startTable);
+  console.info("\n--- Example: ID_Continue Table ---");
+  console.info(continueTable);
+  console.info("\n--- Example: Whitespace Table ---");
+  console.info(whitespaceTable);
+  console.info("\n--- Example: Emoji Table ---");
+  console.info(emojiTable);
+  console.info("\n--- Example: Currency Table ---");
+  console.info(currencyTable);
+  console.info("\n--- Example: Math Table ---");
+  console.info(mathTable);
 }
 
 runDemo().catch(console.error);

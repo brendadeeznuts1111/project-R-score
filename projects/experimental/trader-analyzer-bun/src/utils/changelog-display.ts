@@ -103,7 +103,7 @@ export function displayChangelogTable(
 	});
 
 	// Display table with Bun.inspect.table()
-	console.log(
+	console.info(
 		Bun.inspect.table(tableData, {
 			columns: properties,
 			colors,
@@ -143,8 +143,8 @@ export function displayChangelogByCategory(
 			? colorizeText(category.toUpperCase(), color)
 			: category.toUpperCase();
 
-		console.log(`\n${categoryLabel} (${categoryEntries.length} entries)`);
-		console.log("─".repeat(80));
+		console.info(`\n${categoryLabel} (${categoryEntries.length} entries)`);
+		console.info("─".repeat(80));
 
 		// Limit entries per category if specified
 		const displayEntries = limit
@@ -200,9 +200,9 @@ export function displayChangelogSummary(
 		};
 	});
 
-	console.log(`\nChangelog Summary (${entries.length} total entries)`);
-	console.log("─".repeat(80));
-	console.log(
+	console.info(`\nChangelog Summary (${entries.length} total entries)`);
+	console.info("─".repeat(80));
+	console.info(
 		Bun.inspect.table(summaryData, {
 			columns: ["category", "count", "percentage"],
 			colors,

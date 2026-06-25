@@ -1,0 +1,102 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Bun: Development Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/quantum-production-system.js",
+      "args": ["start"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run"],
+      "env": {
+        "NODE_ENV": "development",
+        "API_HOST": "127.0.0.1",
+        "API_PORT": "3000",
+        "TERMINAL_HOST": "127.0.0.1",
+        "TERMINAL_PORT": "3001",
+        "LOG_LEVEL": "debug"
+      }
+    },
+    {
+      "name": "Bun: HTTP Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/servers/http-server.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run"],
+      "env": {
+        "NODE_ENV": "development",
+        "HTTP_HOST": "127.0.0.1",
+        "HTTP_PORT": "3000"
+      }
+    },
+    {
+      "name": "Bun: Terminal Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/servers/terminal-server.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run"],
+      "env": {
+        "NODE_ENV": "development",
+        "TERMINAL_HOST": "127.0.0.1",
+        "TERMINAL_PORT": "3001"
+      }
+    },
+    {
+      "name": "Bun: Staging API Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/api/staging-api-server.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run"],
+      "env": {
+        "NODE_ENV": "staging",
+        "API_HOST": "staging-api.example.com",
+        "API_PORT": "443"
+      }
+    },
+    {
+      "name": "Bun: Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/tests/test-staging-api-example.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["test"],
+      "env": {
+        "NODE_ENV": "test",
+        "API_HOST": "127.0.0.1",
+        "API_PORT": "3001"
+      }
+    },
+    {
+      "name": "Bun: Attach",
+      "type": "node",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 6499
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (HTTP + Terminal)",
+      "configurations": ["Bun: HTTP Server", "Bun: Terminal Server"]
+    },
+    {
+      "name": "Production Simulation",
+      "configurations": ["Bun: Staging API Server"]
+    }
+  ]
+}
+

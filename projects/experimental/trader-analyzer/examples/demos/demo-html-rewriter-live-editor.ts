@@ -473,7 +473,7 @@ const server = Bun.serve({
 </head>
 <body>
   <h1>Content</h1>
-  <script>console.log('test');</script>
+  <script>console.info('test');</script>
   <p>This paragraph will remain.</p>
 </body>
 </html>\`,
@@ -518,28 +518,28 @@ const server = Bun.serve({
 
 const serverUrl = `http://localhost:${server.port}`;
 
-console.log('\n' + '═'.repeat(70));
-console.log('  🎨 HTMLRewriter Live Editor');
-console.log('═'.repeat(70));
-console.log(`\n📊 Server running at: ${serverUrl}`);
-console.log(`🌐 Open in browser: ${serverUrl}`);
-console.log(`🔌 Hostname: ${server.hostname || '0.0.0.0'}`);
-console.log(`🚪 Port: ${server.port}`);
-console.log('\n💡 Features:');
-console.log('  • Live HTML editor with real-time preview');
-console.log('  • Multiple transformation modes');
-console.log('  • Side-by-side comparison');
-console.log('  • Load example HTML templates');
-console.log('  • Performance timing (Bun.nanoseconds())');
-console.log('\n🎮 Usage:');
-console.log('  1. Enter HTML in the left panel');
-console.log('  2. Select transformation mode');
-console.log('  3. Click "Transform" to see result');
-console.log('  4. View transformed HTML in right panel');
-console.log('\n⌨️  Keyboard Shortcuts:');
-console.log('  • Ctrl+C - Stop server');
-console.log('  • r - Refresh (in browser)');
-console.log('\nPress Ctrl+C to stop\n');
+console.info('\n' + '═'.repeat(70));
+console.info('  🎨 HTMLRewriter Live Editor');
+console.info('═'.repeat(70));
+console.info(`\n📊 Server running at: ${serverUrl}`);
+console.info(`🌐 Open in browser: ${serverUrl}`);
+console.info(`🔌 Hostname: ${server.hostname || '0.0.0.0'}`);
+console.info(`🚪 Port: ${server.port}`);
+console.info('\n💡 Features:');
+console.info('  • Live HTML editor with real-time preview');
+console.info('  • Multiple transformation modes');
+console.info('  • Side-by-side comparison');
+console.info('  • Load example HTML templates');
+console.info('  • Performance timing (Bun.nanoseconds())');
+console.info('\n🎮 Usage:');
+console.info('  1. Enter HTML in the left panel');
+console.info('  2. Select transformation mode');
+console.info('  3. Click "Transform" to see result');
+console.info('  4. View transformed HTML in right panel');
+console.info('\n⌨️  Keyboard Shortcuts:');
+console.info('  • Ctrl+C - Stop server');
+console.info('  • r - Refresh (in browser)');
+console.info('\nPress Ctrl+C to stop\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.4.0.0.0.0.4.1 GRACEFUL SHUTDOWN

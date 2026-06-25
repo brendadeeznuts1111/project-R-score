@@ -30,7 +30,7 @@ For each R2 bucket:
 
 After deployment, run:
 ```bash
-./cli/fw-cli health check
+./tools/cli/fw-cli health check
 ```
 
 All domains should show ✅ Healthy status!

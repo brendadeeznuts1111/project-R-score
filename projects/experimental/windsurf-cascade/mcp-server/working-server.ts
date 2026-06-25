@@ -72,7 +72,7 @@ TZ=America/New_York bun run script.ts
 ### Programmatic:
 \`\`\`typescript
 process.env.TZ = "America/New_York";
-console.log(new Date().getHours()); // Local time in NY
+console.info(new Date().getHours()); // Local time in NY
 \`\`\`
 
 ### Key Points:

@@ -53,21 +53,21 @@ export class RotationAnalyticsDemo {
      * Demonstrate sharp movement detection (the section you were viewing)
      */
     static demonstrateSharpMovementDetection(): void {
-        console.log('⚡ Sharp Movement Detection Demo\n');
+        console.info('⚡ Sharp Movement Detection Demo\n');
 
         // Create analytics engine
         const analyticsEngine = RotationAnalyticsEngineFactory.createDefaultEngine();
 
         // Create rotation number
         const rotationNumber = this.createSampleRotationNumber();
-        console.log(`📈 Creating analytics for rotation ${rotationNumber.rotation} (${rotationNumber.sportsbook})`);
+        console.info(`📈 Creating analytics for rotation ${rotationNumber.rotation} (${rotationNumber.sportsbook})`);
 
         // Initialize analytics
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
-        console.log('✅ Analytics initialized');
+        console.info('✅ Analytics initialized');
 
         // Simulate price updates with sharp movements
-        console.log('\n📈 Simulating price updates with sharp movements...');
+        console.info('\n📈 Simulating price updates with sharp movements...');
 
         const priceUpdates = [
             { price: -110, timestamp: new Date(Date.now() - 60000) },  // 1 minute ago
@@ -88,56 +88,56 @@ export class RotationAnalyticsDemo {
             };
 
             analyticsEngine.addPricePoint(rotationNumber.id, pricePoint);
-            console.log(`   ${index + 1}. Price: ${update.price} at ${update.timestamp.toLocaleTimeString()}`);
+            console.info(`   ${index + 1}. Price: ${update.price} at ${update.timestamp.toLocaleTimeString()}`);
         });
 
         // Get current analytics
         const currentAnalytics = analyticsEngine.getAnalytics(rotationNumber.id);
         if (currentAnalytics) {
-            console.log('\n📊 Current Analytics:');
-            console.log(`   Price History Points: ${currentAnalytics.priceHistory.length}`);
-            console.log(`   Volume History Points: ${currentAnalytics.volumeHistory.length}`);
-            console.log(`   Sharp Movements: ${currentAnalytics.sharpMovement.length}`);
-            console.log(`   Price Efficiency: ${(currentAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Volume Efficiency: ${(currentAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Arbitrage Frequency: ${currentAnalytics.efficiency.arbitrageFrequency.toFixed(1)} per hour`);
-            console.log(`   Market Impact: ${(currentAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
+            console.info('\n📊 Current Analytics:');
+            console.info(`   Price History Points: ${currentAnalytics.priceHistory.length}`);
+            console.info(`   Volume History Points: ${currentAnalytics.volumeHistory.length}`);
+            console.info(`   Sharp Movements: ${currentAnalytics.sharpMovement.length}`);
+            console.info(`   Price Efficiency: ${(currentAnalytics.efficiency.priceEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Volume Efficiency: ${(currentAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Arbitrage Frequency: ${currentAnalytics.efficiency.arbitrageFrequency.toFixed(1)} per hour`);
+            console.info(`   Market Impact: ${(currentAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
 
             // This is the exact section you were viewing:
             if (currentAnalytics.sharpMovement.length > 0) {
-                console.log('\n⚡ Sharp Movements:');
+                console.info('\n⚡ Sharp Movements:');
                 currentAnalytics.sharpMovement.forEach((movement, index) => {
                     const priceChange = Math.abs(movement.toPrice - movement.fromPrice);
                     const percentChange = (priceChange / Math.abs(movement.fromPrice)) * 100;
-                    console.log(`   ${index + 1}. ${movement.timestamp.toLocaleTimeString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook}) - ${percentChange.toFixed(1)}% change`);
-                    console.log(`      Significance: ${(movement.significance * 100).toFixed(1)}% | Reason: ${movement.reason}`);
+                    console.info(`   ${index + 1}. ${movement.timestamp.toLocaleTimeString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook}) - ${percentChange.toFixed(1)}% change`);
+                    console.info(`      Significance: ${(movement.significance * 100).toFixed(1)}% | Reason: ${movement.reason}`);
                 });
             } else {
-                console.log('\n⚡ No sharp movements detected (threshold: 2%)');
+                console.info('\n⚡ No sharp movements detected (threshold: 2%)');
             }
         }
 
         // Get analytics summary
         const summary = analyticsEngine.getAnalyticsSummary([rotationNumber.id]);
-        console.log('\n📋 Analytics Summary:');
-        console.log(`   Total Rotation Numbers: ${summary.totalRotationNumbers}`);
-        console.log(`   Average Price Efficiency: ${(summary.avgPriceEfficiency * 100).toFixed(1)}%`);
-        console.log(`   Average Volume Efficiency: ${(summary.avgVolumeEfficiency * 100).toFixed(1)}%`);
-        console.log(`   Total Arbitrage Opportunities: ${summary.totalArbitrageOpportunities}`);
-        console.log(`   Average Market Impact: ${(summary.avgMarketImpact * 100).toFixed(2)}%`);
+        console.info('\n📋 Analytics Summary:');
+        console.info(`   Total Rotation Numbers: ${summary.totalRotationNumbers}`);
+        console.info(`   Average Price Efficiency: ${(summary.avgPriceEfficiency * 100).toFixed(1)}%`);
+        console.info(`   Average Volume Efficiency: ${(summary.avgVolumeEfficiency * 100).toFixed(1)}%`);
+        console.info(`   Total Arbitrage Opportunities: ${summary.totalArbitrageOpportunities}`);
+        console.info(`   Average Market Impact: ${(summary.avgMarketImpact * 100).toFixed(2)}%`);
     }
 
     /**
      * Demonstrate volume spike detection
      */
     static demonstrateVolumeSpikeDetection(): void {
-        console.log('\n📊 Volume Spike Detection Demo\n');
+        console.info('\n📊 Volume Spike Detection Demo\n');
 
         const analyticsEngine = RotationAnalyticsEngineFactory.createHighFrequencyEngine();
         const rotationNumber = this.createSampleRotationNumber();
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
 
-        console.log('📊 Simulating volume updates with spikes...');
+        console.info('📊 Simulating volume updates with spikes...');
 
         // Normal volume followed by spikes
         const volumeUpdates = [
@@ -163,18 +163,18 @@ export class RotationAnalyticsDemo {
             const spikeRatio = update.volume / recentAvg;
 
             if (spikeRatio >= 3.0) {
-                console.log(`   ${index + 1}. Volume: ${update.volume.toLocaleString()} at ${update.timestamp.toLocaleTimeString()} 🚨 SPIKE: ${spikeRatio.toFixed(1)}x average`);
+                console.info(`   ${index + 1}. Volume: ${update.volume.toLocaleString()} at ${update.timestamp.toLocaleTimeString()} 🚨 SPIKE: ${spikeRatio.toFixed(1)}x average`);
             } else {
-                console.log(`   ${index + 1}. Volume: ${update.volume.toLocaleString()} at ${update.timestamp.toLocaleTimeString()}`);
+                console.info(`   ${index + 1}. Volume: ${update.volume.toLocaleString()} at ${update.timestamp.toLocaleTimeString()}`);
             }
         });
 
         const updatedAnalytics = analyticsEngine.getAnalytics(rotationNumber.id);
         if (updatedAnalytics) {
-            console.log('\n📊 Volume Analytics Results:');
-            console.log(`   Volume History Points: ${updatedAnalytics.volumeHistory.length}`);
-            console.log(`   Volume Efficiency: ${(updatedAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Market Impact: ${(updatedAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
+            console.info('\n📊 Volume Analytics Results:');
+            console.info(`   Volume History Points: ${updatedAnalytics.volumeHistory.length}`);
+            console.info(`   Volume Efficiency: ${(updatedAnalytics.efficiency.volumeEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Market Impact: ${(updatedAnalytics.efficiency.marketImpact * 100).toFixed(2)}%`);
         }
     }
 
@@ -182,16 +182,16 @@ export class RotationAnalyticsDemo {
      * Demonstrate efficiency metrics calculation
      */
     static demonstrateEfficiencyMetrics(): void {
-        console.log('\n📈 Efficiency Metrics Calculation Demo\n');
+        console.info('\n📈 Efficiency Metrics Calculation Demo\n');
 
         const analyticsEngine = RotationAnalyticsEngineFactory.createDefaultEngine();
         const rotationNumber = this.createSampleRotationNumber();
         const analytics = analyticsEngine.createAnalytics(rotationNumber);
 
-        console.log('📈 Simulating market data for efficiency calculation...');
+        console.info('📈 Simulating market data for efficiency calculation...');
 
         // Simulate stable market (high efficiency)
-        console.log('\n--- Scenario 1: Stable Market (High Efficiency) ---');
+        console.info('\n--- Scenario 1: Stable Market (High Efficiency) ---');
         for (let i = 0; i < 20; i++) {
             const pricePoint: PricePoint = {
                 timestamp: new Date(Date.now() - (19 - i) * 30000),
@@ -212,13 +212,13 @@ export class RotationAnalyticsDemo {
 
         const stableMetrics = analyticsEngine.getEfficiencyMetrics(rotationNumber.id);
         if (stableMetrics) {
-            console.log(`   Price Efficiency: ${(stableMetrics.priceEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Volume Efficiency: ${(stableMetrics.volumeEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Market Impact: ${(stableMetrics.marketImpact * 100).toFixed(2)}%`);
+            console.info(`   Price Efficiency: ${(stableMetrics.priceEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Volume Efficiency: ${(stableMetrics.volumeEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Market Impact: ${(stableMetrics.marketImpact * 100).toFixed(2)}%`);
         }
 
         // Simulate volatile market (low efficiency)
-        console.log('\n--- Scenario 2: Volatile Market (Low Efficiency) ---');
+        console.info('\n--- Scenario 2: Volatile Market (Low Efficiency) ---');
         for (let i = 0; i < 20; i++) {
             const pricePoint: PricePoint = {
                 timestamp: new Date(Date.now() - (19 - i) * 30000),
@@ -239,15 +239,15 @@ export class RotationAnalyticsDemo {
 
         const volatileMetrics = analyticsEngine.getEfficiencyMetrics(rotationNumber.id);
         if (volatileMetrics) {
-            console.log(`   Price Efficiency: ${(volatileMetrics.priceEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Volume Efficiency: ${(volatileMetrics.volumeEfficiency * 100).toFixed(1)}%`);
-            console.log(`   Market Impact: ${(volatileMetrics.marketImpact * 100).toFixed(2)}%`);
+            console.info(`   Price Efficiency: ${(volatileMetrics.priceEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Volume Efficiency: ${(volatileMetrics.volumeEfficiency * 100).toFixed(1)}%`);
+            console.info(`   Market Impact: ${(volatileMetrics.marketImpact * 100).toFixed(2)}%`);
         }
 
-        console.log('\n📊 Efficiency Analysis:');
+        console.info('\n📊 Efficiency Analysis:');
         if (stableMetrics && volatileMetrics) {
-            console.log(`   Stable market is ${(stableMetrics.priceEfficiency / volatileMetrics.priceEfficiency).toFixed(1)}x more price efficient`);
-            console.log(`   Stable market has ${(volatileMetrics.marketImpact / stableMetrics.marketImpact).toFixed(1)}x lower market impact`);
+            console.info(`   Stable market is ${(stableMetrics.priceEfficiency / volatileMetrics.priceEfficiency).toFixed(1)}x more price efficient`);
+            console.info(`   Stable market has ${(volatileMetrics.marketImpact / stableMetrics.marketImpact).toFixed(1)}x lower market impact`);
         }
     }
 
@@ -255,32 +255,32 @@ export class RotationAnalyticsDemo {
      * Run the specific analytics demonstration you were viewing
      */
     static runAnalyticsDemo(): void {
-        console.log('🚀 Rotation Analytics Engine Demonstration\n');
-        console.log('This demo focuses on the sharp movement detection you were viewing.\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Rotation Analytics Engine Demonstration\n');
+        console.info('This demo focuses on the sharp movement detection you were viewing.\n');
+        console.info('='.repeat(80));
 
         // Sharp movement detection (the section you were viewing)
         this.demonstrateSharpMovementDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Volume spike detection
         this.demonstrateVolumeSpikeDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Efficiency metrics
         this.demonstrateEfficiencyMetrics();
 
-        console.log('\n✅ Rotation analytics demonstration completed!');
-        console.log('\n🎯 Key Analytics Capabilities Demonstrated:');
-        console.log('   • Sharp movement detection with configurable thresholds');
-        console.log('   • Volume spike identification and alerting');
-        console.log('   • Real-time efficiency metrics calculation');
-        console.log('   • Market impact analysis');
-        console.log('   • Event-driven analytics architecture');
-        console.log('   • High-frequency data processing');
-        console.log('   • Comprehensive performance monitoring');
+        console.info('\n✅ Rotation analytics demonstration completed!');
+        console.info('\n🎯 Key Analytics Capabilities Demonstrated:');
+        console.info('   • Sharp movement detection with configurable thresholds');
+        console.info('   • Volume spike identification and alerting');
+        console.info('   • Real-time efficiency metrics calculation');
+        console.info('   • Market impact analysis');
+        console.info('   • Event-driven analytics architecture');
+        console.info('   • High-frequency data processing');
+        console.info('   • Comprehensive performance monitoring');
     }
 }
 

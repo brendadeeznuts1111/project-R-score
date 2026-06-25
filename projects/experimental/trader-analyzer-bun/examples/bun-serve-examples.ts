@@ -146,16 +146,16 @@ class Middleware {
 // 6.3.0.0.0.0.0.2 EXAMPLE 1: BASIC HTTP SERVER
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(70));
-console.log(colors.bold('  Bun.serve() Comprehensive Examples'));
-console.log('═'.repeat(70) + '\n');
+console.info('\n' + '═'.repeat(70));
+console.info(colors.bold('  Bun.serve() Comprehensive Examples'));
+console.info('═'.repeat(70) + '\n');
 
-console.log(colors.cyan('🚀 Starting Bun.serve() examples...'));
-console.log(colors.dim('Each example will start a server on a different port\n'));
+console.info(colors.cyan('🚀 Starting Bun.serve() examples...'));
+console.info(colors.dim('Each example will start a server on a different port\n'));
 
 // Example 1: Basic HTTP Server
-console.log(colors.bold('📋 Example 1: Basic HTTP Server'));
-console.log(colors.dim('Port 3001 - Simple routing and responses\n'));
+console.info(colors.bold('📋 Example 1: Basic HTTP Server'));
+console.info(colors.dim('Port 3001 - Simple routing and responses\n'));
 
 const basicServer = Bun.serve({
   port: 3001,
@@ -221,14 +221,14 @@ const basicServer = Bun.serve({
   }
 });
 
-console.log(colors.green(`✅ Basic HTTP Server running on http://localhost:${basicServer.port}`));
+console.info(colors.green(`✅ Basic HTTP Server running on http://localhost:${basicServer.port}`));
 
 // ═══════════════════════════════════════════════════════════════
 // 6.3.0.0.0.0.0.3 EXAMPLE 2: WEBSOCKET SERVER
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + colors.bold('📋 Example 2: WebSocket Server'));
-console.log(colors.dim('Port 3002 - Real-time chat application\n'));
+console.info('\n' + colors.bold('📋 Example 2: WebSocket Server'));
+console.info(colors.dim('Port 3002 - Real-time chat application\n'));
 
 // Store connected WebSocket clients
 const wsClients = new Set<any>();
@@ -309,7 +309,7 @@ const wsServer = Bun.serve({
   websocket: {
     open(ws) {
       const clientId = Math.random().toString(36).slice(2);
-      console.log(`WebSocket opened: ${clientId}`);
+      console.info(`WebSocket opened: ${clientId}`);
       wsClients.add(ws);
       ws.send(`Welcome! Connected at ${new Date().toLocaleTimeString()}`);
       ws.send(`There are currently ${wsClients.size} users online`);
@@ -317,7 +317,7 @@ const wsServer = Bun.serve({
 
     message(ws, message) {
       messageCount++;
-      console.log(`Message received: ${message}`);
+      console.info(`Message received: ${message}`);
 
       // Broadcast to all clients
       for (const client of wsClients) {
@@ -328,7 +328,7 @@ const wsServer = Bun.serve({
     },
 
     close(ws) {
-      console.log(`WebSocket closed`);
+      console.info(`WebSocket closed`);
       wsClients.delete(ws);
     }
   },
@@ -339,15 +339,15 @@ const wsServer = Bun.serve({
   }
 });
 
-console.log(colors.green(`✅ WebSocket Server running on http://localhost:${wsServer.port}`));
-console.log(colors.dim(`   Chat interface: http://localhost:${wsServer.port}/chat`));
+console.info(colors.green(`✅ WebSocket Server running on http://localhost:${wsServer.port}`));
+console.info(colors.dim(`   Chat interface: http://localhost:${wsServer.port}/chat`));
 
 // ═══════════════════════════════════════════════════════════════
 // 6.3.0.0.0.0.0.4 EXAMPLE 3: ADVANCED ROUTING WITH MIDDLEWARE
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + colors.bold('📋 Example 3: Advanced Routing with Middleware'));
-console.log(colors.dim('Port 3003 - REST API with authentication and logging\n'));
+console.info('\n' + colors.bold('📋 Example 3: Advanced Routing with Middleware'));
+console.info(colors.dim('Port 3003 - REST API with authentication and logging\n'));
 
 const router = new SimpleRouter();
 const middleware = new Middleware();
@@ -355,7 +355,7 @@ const middleware = new Middleware();
 // Logging middleware
 middleware.use(async (req) => {
   const start = Bun.nanoseconds();
-  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+  console.info(`${new Date().toISOString()} ${req.method} ${req.url}`);
 
   // Add custom headers
   const newReq = new Request(req.url, {
@@ -484,15 +484,15 @@ curl -H "Authorization: Bearer token" http://localhost:3003/api/admin/stats
   }
 });
 
-console.log(colors.green(`✅ Advanced API Server running on http://localhost:${advancedServer.port}`));
-console.log(colors.dim(`   API docs: http://localhost:${advancedServer.port}/api`));
+console.info(colors.green(`✅ Advanced API Server running on http://localhost:${advancedServer.port}`));
+console.info(colors.dim(`   API docs: http://localhost:${advancedServer.port}/api`));
 
 // ═══════════════════════════════════════════════════════════════
 // 6.3.0.0.0.0.0.5 EXAMPLE 4: STATIC FILE SERVER
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + colors.bold('📋 Example 4: Static File Server'));
-console.log(colors.dim('Port 3004 - Serving static files with caching\n'));
+console.info('\n' + colors.bold('📋 Example 4: Static File Server'));
+console.info(colors.dim('Port 3004 - Serving static files with caching\n'));
 
 const staticServer = Bun.serve({
   port: 3004,
@@ -561,53 +561,53 @@ function getContentType(filePath: string): string {
   return types[ext || ''] || 'application/octet-stream';
 }
 
-console.log(colors.green(`✅ Static File Server running on http://localhost:${staticServer.port}`));
+console.info(colors.green(`✅ Static File Server running on http://localhost:${staticServer.port}`));
 
 // ═══════════════════════════════════════════════════════════════
 // 6.3.0.0.0.0.0.6 SUMMARY & CLEANUP
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(70));
-console.log(colors.bold('  All Servers Started Successfully!'));
-console.log('═'.repeat(70));
-console.log(`\n${colors.green('🌐 Available Servers:')}`);
-console.log(`  ${colors.cyan('Basic HTTP')}:     http://localhost:${basicServer.port}`);
-console.log(`  ${colors.cyan('WebSocket Chat')}: http://localhost:${wsServer.port}/chat`);
-console.log(`  ${colors.cyan('Advanced API')}:   http://localhost:${advancedServer.port}/api`);
-console.log(`  ${colors.cyan('Static Files')}:   http://localhost:${staticServer.port}`);
+console.info('\n' + '═'.repeat(70));
+console.info(colors.bold('  All Servers Started Successfully!'));
+console.info('═'.repeat(70));
+console.info(`\n${colors.green('🌐 Available Servers:')}`);
+console.info(`  ${colors.cyan('Basic HTTP')}:     http://localhost:${basicServer.port}`);
+console.info(`  ${colors.cyan('WebSocket Chat')}: http://localhost:${wsServer.port}/chat`);
+console.info(`  ${colors.cyan('Advanced API')}:   http://localhost:${advancedServer.port}/api`);
+console.info(`  ${colors.cyan('Static Files')}:   http://localhost:${staticServer.port}`);
 
-console.log(`\n${colors.yellow('💡 Test Commands:')}`);
-console.log(`  curl http://localhost:${basicServer.port}/health`);
-console.log(`  curl http://localhost:${wsServer.port}/ws  # (use WebSocket client)`);
-console.log(`  curl http://localhost:${advancedServer.port}/api/posts`);
-console.log(`  curl http://localhost:${staticServer.port}/  # (if index.html exists)`);
+console.info(`\n${colors.yellow('💡 Test Commands:')}`);
+console.info(`  curl http://localhost:${basicServer.port}/health`);
+console.info(`  curl http://localhost:${wsServer.port}/ws  # (use WebSocket client)`);
+console.info(`  curl http://localhost:${advancedServer.port}/api/posts`);
+console.info(`  curl http://localhost:${staticServer.port}/  # (if index.html exists)`);
 
-console.log(`\n${colors.blue('📚 Key Features Demonstrated:')}`);
-console.log(`  ${colors.dim('•')} HTTP routing and middleware`);
-console.log(`  ${colors.dim('•')} WebSocket real-time communication`);
-console.log(`  ${colors.dim('•')} REST API with parameter handling`);
-console.log(`  ${colors.dim('•')} Static file serving with caching`);
-console.log(`  ${colors.dim('•')} Error handling and logging`);
-console.log(`  ${colors.dim('•')} Bun-native performance optimizations`);
+console.info(`\n${colors.blue('📚 Key Features Demonstrated:')}`);
+console.info(`  ${colors.dim('•')} HTTP routing and middleware`);
+console.info(`  ${colors.dim('•')} WebSocket real-time communication`);
+console.info(`  ${colors.dim('•')} REST API with parameter handling`);
+console.info(`  ${colors.dim('•')} Static file serving with caching`);
+console.info(`  ${colors.dim('•')} Error handling and logging`);
+console.info(`  ${colors.dim('•')} Bun-native performance optimizations`);
 
-console.log(`\n${colors.red('🛑 Press Ctrl+C to stop all servers')}\n`);
+console.info(`\n${colors.red('🛑 Press Ctrl+C to stop all servers')}\n`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n' + colors.yellow('🛑 Shutting down servers...'));
+  console.info('\n' + colors.yellow('🛑 Shutting down servers...'));
 
   basicServer.stop();
   wsServer.stop();
   advancedServer.stop();
   staticServer.stop();
 
-  console.log(colors.green('✅ All servers stopped. Goodbye!'));
+  console.info(colors.green('✅ All servers stopped. Goodbye!'));
   process.exit(0);
 });
 
 // Keep the process alive
 setInterval(() => {
   // Periodic health check
-  console.log(colors.dim(`${new Date().toLocaleTimeString()} - Servers running (messages: ${messageCount})`));
+  console.info(colors.dim(`${new Date().toLocaleTimeString()} - Servers running (messages: ${messageCount})`));
 }, 30000);</content>
 <parameter name="filePath">examples/bun-serve-examples.ts

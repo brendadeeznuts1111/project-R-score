@@ -128,7 +128,7 @@ export async function createWaSocket(
         if (qr) {
           opts.onQr?.(qr);
           if (printQr) {
-            console.log("Scan this QR in WhatsApp (Linked Devices):");
+            console.info("Scan this QR in WhatsApp (Linked Devices):");
             qrcode.generate(qr, { small: true });
           }
         }
@@ -143,7 +143,7 @@ export async function createWaSocket(
           }
         }
         if (connection === "open" && verbose) {
-          console.log(success("WhatsApp Web connected."));
+          console.info(success("WhatsApp Web connected."));
         }
       } catch (err) {
         sessionLogger.error({ error: String(err) }, "connection.update handler error");

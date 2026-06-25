@@ -9,10 +9,10 @@ import { writeFile } from 'fs/promises';
 const BRAND_NAME = process.env.PROXY_BRAND_NAME || 'HaircutPro';
 
 async function setupP2PProxy() {
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║  🔧 P2P Proxy Setup                                        ║');
-  console.log('╚════════════════════════════════════════════════════════════╝\n');
-  
+  console.info('╔════════════════════════════════════════════════════════════╗');
+  console.info('║  🔧 P2P Proxy Setup                                        ║');
+  console.info('╚════════════════════════════════════════════════════════════╝\n');
+
   // 1. Create .env template
   const envTemplate = `# P2P Proxy Configuration
 # Copy this to .env and fill in your values
@@ -38,15 +38,15 @@ P2P_PROXY_PORT=3002
 # Ngrok (for local webhook testing)
 NGROK_AUTH_TOKEN=your_ngrok_token_here
 `;
-  
+
   try {
     await Bun.file('.env').text();
-    console.log('ℹ️  .env already exists');
+    console.info('ℹ️  .env already exists');
   } catch {
     await writeFile('.env', envTemplate);
-    console.log('✅ Created .env template');
+    console.info('✅ Created .env template');
   }
-  
+
   // 2. Create ngrok config
   const ngrokConfig = `authtoken: ${process.env.NGROK_AUTH_TOKEN || 'your_token_here'}
 tunnels:
@@ -55,10 +55,10 @@ tunnels:
     addr: 3002
     domain: ${BRAND_NAME.toLowerCase()}.ngrok.app
 `;
-  
+
   await writeFile('ngrok.yml', ngrokConfig);
-  console.log('✅ Created ngrok.yml');
-  
+  console.info('✅ Created ngrok.yml');
+
   // 3. Create setup instructions
   const instructions = `# P2P Proxy Setup Instructions
 
@@ -164,10 +164,10 @@ Client → QR/Link → Branded Page → P2P Payment → Your Account
 - Redis commands: \`redis-cli monitor | grep p2p\`
 - Logs: \`bun run server/p2p-proxy-server-enhanced.ts 2>&1 | tee proxy.log\`
 `;
-  
+
   await writeFile('SETUP_P2P_PROXY.md', instructions);
-  console.log('✅ Created SETUP_P2P_PROXY.md');
-  
+  console.info('✅ Created SETUP_P2P_PROXY.md');
+
   // 4. Create a simple test script
   const testScript = `#!/usr/bin/env bun
 /**
@@ -177,20 +177,20 @@ Client → QR/Link → Branded Page → P2P Payment → Your Account
 const PROXY_URL = process.env.PROXY_URL || 'http://localhost:3002';
 
 async function testProxy() {
-  console.log('Testing P2P Proxy...\n');
-  
+  console.info('Testing P2P Proxy...\n');
+
   // 1. Health check
-  console.log('1. Health check...');
+  console.info('1. Health check...');
   const health = await fetch(\`\${PROXY_URL}/health\`).then(r => r.json());
-  console.log(\`   Status: \${health.status}, Redis: \${health.redis}\`);
-  
+  console.info(\`   Status: \${health.status}, Redis: \${health.redis}\`);
+
   // 2. Payment page
-  console.log('\\n2. Payment page (HTML)...');
+  console.info('\\n2. Payment page (HTML)...');
   const page = await fetch(\`\${PROXY_URL}/pay?amount=25\`);
-  console.log(\`   Status: \${page.status}, Content-Type: \${page.headers.get('content-type')}\`);
-  
+  console.info(\`   Status: \${page.status}, Content-Type: \${page.headers.get('content-type')}\`);
+
   // 3. Test webhook
-  console.log('\\n3. Test webhook...');
+  console.info('\\n3. Test webhook...');
   const webhook = await fetch(\`\${PROXY_URL}/webhook/proxy\`, {
     method: 'POST',
     headers: {
@@ -205,28 +205,28 @@ async function testProxy() {
       },
     }),
   }).then(r => r.json());
-  console.log(\`   Result: \${webhook.success ? '✅' : '❌'}\`);
+  console.info(\`   Result: \${webhook.success ? '✅' : '❌'}\`);
   if (webhook.success) {
-    console.log(\`   Amount: \$\${webhook.amount}, Bonus: \$\${webhook.bonus}, Tier: \${webhook.tier}\`);
+    console.info(\`   Amount: \$\${webhook.amount}, Bonus: \$\${webhook.bonus}, Tier: \${webhook.tier}\`);
   }
-  
-  console.log('\\n✨ Test complete!');
+
+  console.info('\\n✨ Test complete!');
 }
 
 testProxy().catch(console.error);
 `;
-  
+
   await writeFile('tests/p2p-proxy-quick-test.ts', testScript);
-  console.log('✅ Created tests/p2p-proxy-quick-test.ts');
-  
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║  🎉 Setup Complete!                                        ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log('║  Next steps:                                               ║');
-  console.log('║  1. Edit .env with your webhook secrets                    ║');
-  console.log('║  2. Read SETUP_P2P_PROXY.md for detailed instructions      ║');
-  console.log('║  3. Run: bun run server/p2p-proxy-server-enhanced.ts       ║');
-  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.info('✅ Created tests/p2p-proxy-quick-test.ts');
+
+  console.info('\n╔════════════════════════════════════════════════════════════╗');
+  console.info('║  🎉 Setup Complete!                                        ║');
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info('║  Next steps:                                               ║');
+  console.info('║  1. Edit .env with your webhook secrets                    ║');
+  console.info('║  2. Read SETUP_P2P_PROXY.md for detailed instructions      ║');
+  console.info('║  3. Run: bun run server/p2p-proxy-server-enhanced.ts       ║');
+  console.info('╚════════════════════════════════════════════════════════════╝');
 }
 
 setupP2PProxy().catch(console.error);

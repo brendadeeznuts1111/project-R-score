@@ -404,7 +404,7 @@ async function main() {
   const command = process.argv[2];
 
   if (!command) {
-    console.log(`🚀 TELEGRAM /COMMANDS – 1-Click Ops
+    console.info(`🚀 TELEGRAM /COMMANDS – 1-Click Ops
 
 ${handler.formatCommandsTable()}
 
@@ -421,7 +421,7 @@ EXAMPLES:
   }
 
   const result = await handler.handleCommand(command + ' ' + process.argv.slice(3).join(' '));
-  console.log(result);
+  console.info(result);
 }
 
 // Export for use in other scripts

@@ -7,18 +7,18 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Bun.inspect.custom Integration with Advanced Tables'));
-console.log(chalk.gray('Extending custom inspection for vault data structures'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Bun.inspect.custom Integration with Advanced Tables'));
+console.info(chalk.gray('Extending custom inspection for vault data structures'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // OFFICIAL BASIC EXAMPLE (from bun.com/docs/runtime/utils)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Official Basic Example'));
+console.info(chalk.bold.cyan('\n📋 Official Basic Example'));
 
-console.log(chalk.yellow('\n🔸 Basic Custom Inspection:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Basic Custom Inspection:'));
+console.info(chalk.white(`
 class Foo {
   [Bun.inspect.custom]() {
     return "foo";
@@ -26,7 +26,7 @@ class Foo {
 }
 
 const foo = new Foo();
-console.log(foo); // => "foo"
+console.info(foo); // => "foo"
 `));
 
 // Demonstrate the official example
@@ -37,17 +37,17 @@ class Foo {
 }
 
 const foo = new Foo();
-console.log(chalk.green('Output:'));
-console.log(foo); // => "foo"
+console.info(chalk.green('Output:'));
+console.info(foo); // => "foo"
 
 // =============================================================================
 // ADVANCED VAULT-SPECIFIC CUSTOM INSPECTION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Advanced Vault-Specific Custom Inspection'));
+console.info(chalk.bold.cyan('\n🏗️  Advanced Vault-Specific Custom Inspection'));
 
-console.log(chalk.yellow('\n🔸 Vault File with Custom Inspection:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Vault File with Custom Inspection:'));
+console.info(chalk.white(`
 class VaultFile {
   constructor(data) {
     this.path = data.path;
@@ -114,17 +114,17 @@ const vaultFiles = [
     })
 ];
 
-console.log(chalk.green('\n📋 Custom Inspection Output:'));
-vaultFiles.forEach(file => console.log(file));
+console.info(chalk.green('\n📋 Custom Inspection Output:'));
+vaultFiles.forEach(file => console.info(file));
 
 // =============================================================================
 // CUSTOM INSPECTION WITH TABLE INTEGRATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔗 Custom Inspection with Table Integration'));
+console.info(chalk.bold.cyan('\n🔗 Custom Inspection with Table Integration'));
 
-console.log(chalk.yellow('\n🔸 Validation Issue with Custom Inspection:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Validation Issue with Custom Inspection:'));
+console.info(chalk.white(`
 class ValidationIssue {
   constructor(data) {
     this.type = data.type;
@@ -219,10 +219,10 @@ const validationIssues = [
     })
 ];
 
-console.log(chalk.green('\n📋 Custom Inspection Output:'));
-validationIssues.forEach(issue => console.log(issue));
+console.info(chalk.green('\n📋 Custom Inspection Output:'));
+validationIssues.forEach(issue => console.info(issue));
 
-console.log(chalk.yellow('\n📊 Table Integration (toTableFormat method):'));
+console.info(chalk.yellow('\n📊 Table Integration (toTableFormat method):'));
 Bun.inspect.table(
     validationIssues.map(issue => issue.toTableFormat()),
     ['type', 'file', 'line', 'message', 'suggestion'],
@@ -233,10 +233,10 @@ Bun.inspect.table(
 // ADVANCED TASK STATUS WITH CUSTOM INSPECTION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🚀 Advanced Task Status with Custom Inspection'));
+console.info(chalk.bold.cyan('\n🚀 Advanced Task Status with Custom Inspection'));
 
-console.log(chalk.yellow('\n🔸 Task Status with Custom Inspection:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Task Status with Custom Inspection:'));
+console.info(chalk.white(`
 class TaskStatus {
   constructor(data) {
     this.symbol = data.symbol;
@@ -341,10 +341,10 @@ const taskStatuses = [
     })
 ];
 
-console.log(chalk.green('\n📋 Custom Inspection Output:'));
-taskStatuses.forEach(status => console.log(status));
+console.info(chalk.green('\n📋 Custom Inspection Output:'));
+taskStatuses.forEach(status => console.info(status));
 
-console.log(chalk.yellow('\n📊 Table Integration (toTableFormat method):'));
+console.info(chalk.yellow('\n📊 Table Integration (toTableFormat method):'));
 Bun.inspect.table(
     taskStatuses.map(status => status.toTableFormat()),
     ['symbol', 'name', 'nextStatusSymbol', 'type', 'progress']
@@ -354,9 +354,9 @@ Bun.inspect.table(
 // MIXING CUSTOM INSPECTION WITH BUN.INSPECT.TABLE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔀 Mixing Custom Inspection with Bun.inspect.table'));
+console.info(chalk.bold.cyan('\n🔀 Mixing Custom Inspection with Bun.inspect.table'));
 
-console.log(chalk.yellow('\n🔸 Hybrid Approach - Custom for Console, Table for Reports:'));
+console.info(chalk.yellow('\n🔸 Hybrid Approach - Custom for Console, Table for Reports:'));
 
 // Create a hybrid vault item class
 class VaultItem {
@@ -424,10 +424,10 @@ const vaultItems = [
     })
 ];
 
-console.log(chalk.green('\n📋 Custom Inspection (for console/debug):'));
-vaultItems.forEach(item => console.log(item));
+console.info(chalk.green('\n📋 Custom Inspection (for console/debug):'));
+vaultItems.forEach(item => console.info(item));
 
-console.log(chalk.yellow('\n📊 Table Format (for reports):'));
+console.info(chalk.yellow('\n📊 Table Format (for reports):'));
 Bun.inspect.table(
     vaultItems.map(item => item.toTableFormat()),
     ['id', 'name', 'type', 'status', 'lastModified', 'size'],
@@ -438,25 +438,25 @@ Bun.inspect.table(
 // BEST PRACTICES AND USE CASES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✅ Best Practices and Use Cases'));
+console.info(chalk.bold.cyan('\n✅ Best Practices and Use Cases'));
 
-console.log(chalk.yellow('\n🎯 When to Use Custom Inspection:'));
-console.log(chalk.gray('• Debug output with rich formatting'));
-console.log(chalk.gray('• Console logging with visual indicators'));
-console.log(chalk.gray('• Development tooling'));
-console.log(chalk.gray('• Quick data inspection'));
+console.info(chalk.yellow('\n🎯 When to Use Custom Inspection:'));
+console.info(chalk.gray('• Debug output with rich formatting'));
+console.info(chalk.gray('• Console logging with visual indicators'));
+console.info(chalk.gray('• Development tooling'));
+console.info(chalk.gray('• Quick data inspection'));
 
-console.log(chalk.yellow('\n📊 When to Use Table Format:'));
-console.log(chalk.gray('• Structured reports'));
-console.log(chalk.gray('• Production output'));
-console.log(chalk.gray('• Data analysis'));
-console.log(chalk.gray('• User interfaces'));
+console.info(chalk.yellow('\n📊 When to Use Table Format:'));
+console.info(chalk.gray('• Structured reports'));
+console.info(chalk.gray('• Production output'));
+console.info(chalk.gray('• Data analysis'));
+console.info(chalk.gray('• User interfaces'));
 
-console.log(chalk.yellow('\n🔀 Hybrid Approach Benefits:'));
-console.log(chalk.green('• Custom inspection: Human-readable console output'));
-console.log(chalk.green('• Table format: Machine-readable structured data'));
-console.log(chalk.green('• Flexibility: Different views for different contexts'));
-console.log(chalk.green('• Maintainability: Single source of truth'));
+console.info(chalk.yellow('\n🔀 Hybrid Approach Benefits:'));
+console.info(chalk.green('• Custom inspection: Human-readable console output'));
+console.info(chalk.green('• Table format: Machine-readable structured data'));
+console.info(chalk.green('• Flexibility: Different views for different contexts'));
+console.info(chalk.green('• Maintainability: Single source of truth'));
 
-console.log(chalk.bold.magenta('\n🎉 Custom Inspection Integration Complete!'));
-console.log(chalk.gray('You now have both beautiful console output AND structured table data!'));
+console.info(chalk.bold.magenta('\n🎉 Custom Inspection Integration Complete!'));
+console.info(chalk.gray('You now have both beautiful console output AND structured table data!'));

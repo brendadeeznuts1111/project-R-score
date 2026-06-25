@@ -1,0 +1,7 @@
+id: bun-archive-exact-signature
+valid:
+  - 'new Bun.Archive({ "x.txt": "hi" })'
+  - 'new Bun.Archive({ "x.txt": "hi" }, { compress: "gzip" })'
+invalid:
+  - 'new Bun.Archive()'
+  - 'new Bun.Archive({}, {}, {})'

@@ -6,7 +6,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
 async function main() {
-  console.log('🎯 GOLDEN RULES ENFORCEMENT\n');
+  console.info('🎯 GOLDEN RULES ENFORCEMENT\n');
   
   const enforcer = new GoldenRuleEnforcer();
   const result = await enforcer.validateCodebase();
@@ -32,14 +32,14 @@ async function main() {
   await writeFile('./reports/golden-rules-summary.json', JSON.stringify(summary, null, 2));
   
   // Output to console
-  console.log(report);
+  console.info(report);
   
   // Exit with appropriate code for CI
   if (!result.passed) {
-    console.log('\n❌ Golden rules validation failed!');
+    console.info('\n❌ Golden rules validation failed!');
     process.exit(1);
   } else {
-    console.log('\n✅ All golden rules are being followed!');
+    console.info('\n✅ All golden rules are being followed!');
     process.exit(0);
   }
 }

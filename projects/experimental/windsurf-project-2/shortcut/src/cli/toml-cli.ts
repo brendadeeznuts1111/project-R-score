@@ -98,13 +98,13 @@ class TomlCLI {
       changes: result.changes
     });
 
-    console.log(`✅ Edited ${filePath}`);
-    console.log(`📊 Security Score: ${result.securityScore}`);
-    console.log(`🔐 Secrets: ${result.secretsCount}`);
+    console.info(`✅ Edited ${filePath}`);
+    console.info(`📊 Security Score: ${result.securityScore}`);
+    console.info(`🔐 Secrets: ${result.secretsCount}`);
     
     if (result.changes.length > 0) {
-      console.log('\nChanges:');
-      result.changes.forEach(change => console.log(`  ${change}`));
+      console.info('\nChanges:');
+      result.changes.forEach(change => console.info(`  ${change}`));
     }
   }
 
@@ -134,13 +134,13 @@ class TomlCLI {
     const outputPath = options.output || filePath.replace('.toml', '.optimized.toml');
     await Bun.write(outputPath, result.optimized);
 
-    console.log(`✅ Optimized ${filePath} -> ${outputPath}`);
-    console.log(`📏 Size reduction: ${result.sizeReduction} bytes`);
-    console.log(`🗜️  Compression ratio: ${(result.compressionRatio * 100).toFixed(1)}%`);
+    console.info(`✅ Optimized ${filePath} -> ${outputPath}`);
+    console.info(`📏 Size reduction: ${result.sizeReduction} bytes`);
+    console.info(`🗜️  Compression ratio: ${(result.compressionRatio * 100).toFixed(1)}%`);
     
-    console.log('\nTransformations:');
+    console.info('\nTransformations:');
     result.metrics.forEach(metric => {
-      console.log(`  ${metric.rule}: ${metric.durationNs}ns, -${metric.bytesReduced} bytes`);
+      console.info(`  ${metric.rule}: ${metric.durationNs}ns, -${metric.bytesReduced} bytes`);
     });
 
     // Log to audit
@@ -176,9 +176,9 @@ class TomlCLI {
       
       if (options.format === 'json') {
         const jsonReport = generator.generateJSONReport(filePath);
-        console.log(jsonReport);
+        console.info(jsonReport);
       } else {
-        console.log(report);
+        console.info(report);
       }
     }
   }
@@ -200,12 +200,12 @@ class TomlCLI {
       const result = validator.validateSecrets(secrets);
 
       if (result.valid) {
-        console.log(`✅ ${filePath} is valid`);
-        console.log(`📊 Security Score: ${result.score}`);
-        console.log(`🔐 Found ${result.variables.length} variables`);
+        console.info(`✅ ${filePath} is valid`);
+        console.info(`📊 Security Score: ${result.score}`);
+        console.info(`🔐 Found ${result.variables.length} variables`);
       } else {
-        console.log(`❌ ${filePath} has security issues:`);
-        result.errors.forEach(error => console.log(`  - ${error}`));
+        console.info(`❌ ${filePath} has security issues:`);
+        result.errors.forEach(error => console.info(`  - ${error}`));
         
         if (options.failOnDangerous) {
           process.exit(1);
@@ -214,10 +214,10 @@ class TomlCLI {
 
       // Show variable details
       if (result.variables.length > 0) {
-        console.log('\nVariables:');
+        console.info('\nVariables:');
         result.variables.forEach(variable => {
           const icon = variable.isDangerous ? '⚠️' : '✅';
-          console.log(`  ${icon} ${variable.name} (${variable.classification})`);
+          console.info(`  ${icon} ${variable.name} (${variable.classification})`);
         });
       }
     } catch (error) {
@@ -238,8 +238,8 @@ class TomlCLI {
     const lines1 = content1.split('\n');
     const lines2 = content2.split('\n');
     
-    console.log(`📊 Diff: ${file1} vs ${file2}`);
-    console.log('');
+    console.info(`📊 Diff: ${file1} vs ${file2}`);
+    console.info('');
     
     const maxLines = Math.max(lines1.length, lines2.length);
     
@@ -248,15 +248,15 @@ class TomlCLI {
       const line2 = lines2[i] || '';
       
       if (line1 === line2) {
-        console.log(`  ${i + 1}: ${line1}`);
+        console.info(`  ${i + 1}: ${line1}`);
       } else {
         if (line1 && !line2) {
-          console.log(`- ${i + 1}: ${line1}`);
+          console.info(`- ${i + 1}: ${line1}`);
         } else if (!line1 && line2) {
-          console.log(`+ ${i + 1}: ${line2}`);
+          console.info(`+ ${i + 1}: ${line2}`);
         } else {
-          console.log(`- ${i + 1}: ${line1}`);
-          console.log(`+ ${i + 1}: ${line2}`);
+          console.info(`- ${i + 1}: ${line1}`);
+          console.info(`+ ${i + 1}: ${line2}`);
         }
       }
     }
@@ -276,9 +276,9 @@ class TomlCLI {
     const report = this.patternExtractor.generateSecurityReport(result);
     
     if (options.format === 'json') {
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else {
-      console.log(report);
+      console.info(report);
     }
   }
 
@@ -294,10 +294,10 @@ class TomlCLI {
       throw new Error('Interactive mode requires --feature INTERACTIVE');
     }
 
-    console.log('🚀 Interactive TOML Editor');
-    console.log(`📁 File: ${filePath}`);
-    console.log('Type :help for commands, :quit to exit');
-    console.log('');
+    console.info('🚀 Interactive TOML Editor');
+    console.info(`📁 File: ${filePath}`);
+    console.info('Type :help for commands, :quit to exit');
+    console.info('');
 
     // Import PTY editor
     const { PTYTomlEditor } = await import('../services/pty-editor');
@@ -314,7 +314,7 @@ class TomlCLI {
 
     if (backupPath.startsWith('s3://')) {
       // Handle S3 restore
-      console.log('🔄 Restoring from S3...');
+      console.info('🔄 Restoring from S3...');
       // Implementation would depend on S3 client
       throw new Error('S3 restore not implemented yet');
     } else {
@@ -327,7 +327,7 @@ class TomlCLI {
       const outputPath = backupPath.replace('.gz', '').replace('.backup', '');
       
       await Bun.write(outputPath, content);
-      console.log(`✅ Restored ${backupPath} -> ${outputPath}`);
+      console.info(`✅ Restored ${backupPath} -> ${outputPath}`);
     }
   }
 
@@ -454,7 +454,7 @@ class TomlCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 🔐 TOML Secrets Editor & Optimizer
 
 USAGE:

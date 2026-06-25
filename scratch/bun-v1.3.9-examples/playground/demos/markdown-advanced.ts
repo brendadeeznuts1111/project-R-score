@@ -6,12 +6,12 @@
  * GFM extensions, custom callbacks
  */
 
-console.log("📝 Bun v1.3.8: Advanced Markdown Features\n");
-console.log("=".repeat(70));
+console.info("📝 Bun v1.3.8: Advanced Markdown Features\n");
+console.info("=".repeat(70));
 
 // 1. Basic HTML rendering
-console.log("\n1️⃣ Bun.markdown.html() - Render to HTML");
-console.log("-".repeat(70));
+console.info("\n1️⃣ Bun.markdown.html() - Render to HTML");
+console.info("-".repeat(70));
 
 const basic = `# Hello World
 
@@ -22,14 +22,14 @@ This is **bold** and *italic* text.
 - Item 3`;
 
 const html = Bun.markdown.html(basic);
-console.log("Input:");
-console.log(basic);
-console.log("\nOutput:");
-console.log(html);
+console.info("Input:");
+console.info(basic);
+console.info("\nOutput:");
+console.info(html);
 
 // 2. GFM Extensions
-console.log("\n2️⃣ GitHub Flavored Markdown Extensions");
-console.log("-".repeat(70));
+console.info("\n2️⃣ GitHub Flavored Markdown Extensions");
+console.info("-".repeat(70));
 
 const gfm = `# GFM Demo
 
@@ -50,11 +50,11 @@ This is ~~deleted~~ text.
 Check out https://bun.sh`;
 
 const gfmHtml = Bun.markdown.html(gfm);
-console.log(gfmHtml);
+console.info(gfmHtml);
 
 // 3. Custom render with callbacks
-console.log("\n3️⃣ Bun.markdown.render() - Custom Callbacks");
-console.log("-".repeat(70));
+console.info("\n3️⃣ Bun.markdown.render() - Custom Callbacks");
+console.info("-".repeat(70));
 
 const custom = `# Title
 
@@ -67,12 +67,12 @@ const customHtml = Bun.markdown.render(custom, {
   strong: (children) => `<b class="bold">${children}</b>`,
 });
 
-console.log("Custom HTML with classes:");
-console.log(customHtml);
+console.info("Custom HTML with classes:");
+console.info(customHtml);
 
 // 4. ANSI terminal output
-console.log("\n4️⃣ ANSI Terminal Output");
-console.log("-".repeat(70));
+console.info("\n4️⃣ ANSI Terminal Output");
+console.info("-".repeat(70));
 
 const ansi = Bun.markdown.render("# Hello\n\n**bold**", {
   heading: (children) => `\x1b[1;4m${children}\x1b[0m\n`,
@@ -80,18 +80,18 @@ const ansi = Bun.markdown.render("# Hello\n\n**bold**", {
   strong: (children) => `\x1b[1m${children}\x1b[22m`,
 });
 
-console.log("ANSI output:");
-console.log(ansi);
+console.info("ANSI output:");
+console.info(ansi);
 
 // 5. Options
-console.log("\n5️⃣ Markdown Options");
-console.log("-".repeat(70));
+console.info("\n5️⃣ Markdown Options");
+console.info("-".repeat(70));
 
 const withOptions = Bun.markdown.html("## Hello World", {
   headingIds: true,
 });
 
-console.log("With headingIds:");
-console.log(withOptions);
+console.info("With headingIds:");
+console.info(withOptions);
 
-console.log("\n✅ Markdown features demo complete!");
+console.info("\n✅ Markdown features demo complete!");

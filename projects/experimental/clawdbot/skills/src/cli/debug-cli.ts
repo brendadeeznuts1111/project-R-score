@@ -31,7 +31,7 @@ export class SkillDebugger {
     } = {}
   ): Promise<void> {
     if (this.isWindows) {
-      console.log(
+      console.info(
         "\x1b[33m!\x1b[0m Note: Bun.Terminal is POSIX-only. Using fallback mode."
       );
       return this.debugSkillFallback(skillId, options);
@@ -60,10 +60,10 @@ export class SkillDebugger {
     const cwd = options.cwd || skillDir;
 
     // Display skill info
-    console.log(`  Skill: ${skillConfig.name || skillId}`);
-    console.log(`  Version: ${skillConfig.version || "unknown"}`);
-    console.log(`  Directory: ${fullSkillDir}`);
-    console.log("");
+    console.info(`  Skill: ${skillConfig.name || skillId}`);
+    console.info(`  Version: ${skillConfig.version || "unknown"}`);
+    console.info(`  Directory: ${fullSkillDir}`);
+    console.info("");
 
     // Prepare environment
     const env = {
@@ -77,10 +77,10 @@ export class SkillDebugger {
 
     // Check if we have a TTY for interactive mode
     if (!process.stdin.isTTY) {
-      console.log("\n\x1b[33mNo TTY detected. Use non-interactive mode:\x1b[0m");
-      console.log(`  skill-debug ${skillId} --run [args]`);
-      console.log(`  skill-debug ${skillId} --build`);
-      console.log(`  skill-debug ${skillId} --exec "cmd"`);
+      console.info("\n\x1b[33mNo TTY detected. Use non-interactive mode:\x1b[0m");
+      console.info(`  skill-debug ${skillId} --run [args]`);
+      console.info(`  skill-debug ${skillId} --build`);
+      console.info(`  skill-debug ${skillId} --exec "cmd"`);
       return;
     }
 
@@ -163,15 +163,15 @@ cd "$SKILL_DIR"
     const shellRcPath = `/tmp/skill-debug-${skillId}-${Date.now()}.sh`;
     await Bun.write(shellRcPath, shellRcContent);
 
-    console.log("  \x1b[36mCommands:\x1b[0m");
-    console.log("    skill-run [args]  Run the skill");
-    console.log("    skill-build       Build the skill");
-    console.log("    skill-test        Run tests");
-    console.log("    skill-info        Show skill info");
-    console.log("    exit              Exit debug shell");
-    console.log("");
-    console.log("  \x1b[33mPress Ctrl+D or type 'exit' to quit\x1b[0m");
-    console.log("─".repeat(60));
+    console.info("  \x1b[36mCommands:\x1b[0m");
+    console.info("    skill-run [args]  Run the skill");
+    console.info("    skill-build       Build the skill");
+    console.info("    skill-test        Run tests");
+    console.info("    skill-info        Show skill info");
+    console.info("    exit              Exit debug shell");
+    console.info("");
+    console.info("  \x1b[33mPress Ctrl+D or type 'exit' to quit\x1b[0m");
+    console.info("─".repeat(60));
 
     // Spawn bash with PTY using Bun.Terminal
     const proc = Bun.spawn(["bash", "--rcfile", shellRcPath], {
@@ -216,7 +216,7 @@ cd "$SKILL_DIR"
     // Remove temp file
     Bun.spawnSync(["rm", "-f", shellRcPath]);
 
-    console.log("\n\x1b[32m✓\x1b[0m Debug session ended");
+    console.info("\n\x1b[32m✓\x1b[0m Debug session ended");
   }
 
   /**
@@ -293,7 +293,7 @@ cd "$SKILL_DIR"
     await proc.exited;
     proc.terminal?.close();
 
-    console.log("\n\x1b[32m✓\x1b[0m Command completed");
+    console.info("\n\x1b[32m✓\x1b[0m Command completed");
   }
 
   /**
@@ -318,9 +318,9 @@ cd "$SKILL_DIR"
     const skillConfig = await Bun.file(`${skillDir}/skill.json`).json();
     const fullSkillDir = `${process.cwd()}/${skillDir}`;
 
-    console.log(`  Skill: ${skillConfig.name || skillId}`);
-    console.log(`  Version: ${skillConfig.version || "unknown"}`);
-    console.log("");
+    console.info(`  Skill: ${skillConfig.name || skillId}`);
+    console.info(`  Version: ${skillConfig.version || "unknown"}`);
+    console.info("");
 
     if (this.isWindows || !process.stdin.isTTY) {
       return this.createFallbackREPL(skillId, skillConfig, fullSkillDir);
@@ -333,7 +333,7 @@ const path = require('path');
 const fs = require('fs');
 
 process.chdir('${fullSkillDir}');
-console.log('Loading skill: ${skillId}...');
+console.info('Loading skill: ${skillId}...');
 
 // Try to load the skill using dynamic import for TypeScript
 async function loadSkill() {
@@ -341,18 +341,18 @@ async function loadSkill() {
     // Use Bun to run the skill and capture exports
     const skillPath = path.join('${fullSkillDir}', 'src', 'index.ts');
     if (fs.existsSync(skillPath)) {
-      console.log('Skill source found at:', skillPath);
-      console.log('');
-      console.log('\\x1b[36mREPL Commands:\\x1b[0m');
-      console.log('  run(cmd, ...args)  - Run: bun run src/index.ts <cmd> <args>');
-      console.log('  build()            - Build the skill executable');
-      console.log('  test()             - Run skill tests');
-      console.log('  .help              - Show REPL help');
-      console.log('  .exit              - Exit REPL');
-      console.log('');
+      console.info('Skill source found at:', skillPath);
+      console.info('');
+      console.info('\\x1b[36mREPL Commands:\\x1b[0m');
+      console.info('  run(cmd, ...args)  - Run: bun run src/index.ts <cmd> <args>');
+      console.info('  build()            - Build the skill executable');
+      console.info('  test()             - Run skill tests');
+      console.info('  .help              - Show REPL help');
+      console.info('  .exit              - Exit REPL');
+      console.info('');
     }
   } catch (e) {
-    console.log('Note:', e.message);
+    console.info('Note:', e.message);
   }
 }
 
@@ -375,7 +375,7 @@ loadSkill().then(() => {
 
   r.context.build = () => {
     const { spawnSync } = require('child_process');
-    console.log('Building ${skillId}...');
+    console.info('Building ${skillId}...');
     const result = spawnSync('bun', ['build', 'src/index.ts', '--compile', '--outfile', 'dist/${skillId}'], {
       cwd: '${fullSkillDir}',
       stdio: 'inherit',
@@ -385,7 +385,7 @@ loadSkill().then(() => {
 
   r.context.test = () => {
     const { spawnSync } = require('child_process');
-    console.log('Testing ${skillId}...');
+    console.info('Testing ${skillId}...');
     const result = spawnSync('bun', ['test'], {
       cwd: '${fullSkillDir}',
       stdio: 'inherit',
@@ -445,7 +445,7 @@ loadSkill().then(() => {
     // Remove temp file
     Bun.spawnSync(["rm", "-f", initScriptPath]);
 
-    console.log("\n\x1b[32m✓\x1b[0m REPL session ended");
+    console.info("\n\x1b[32m✓\x1b[0m REPL session ended");
   }
 
   /**
@@ -473,11 +473,11 @@ loadSkill().then(() => {
     const duration = options.duration || 30;
     const args = options.args || [];
 
-    console.log(`  Duration: ${duration}s`);
-    console.log(`  CPU profiling: ${options.cpu ? "enabled" : "disabled"}`);
-    console.log(`  Memory profiling: ${options.memory ? "enabled" : "disabled"}`);
-    console.log("");
-    console.log("Starting profiler...");
+    console.info(`  Duration: ${duration}s`);
+    console.info(`  CPU profiling: ${options.cpu ? "enabled" : "disabled"}`);
+    console.info(`  Memory profiling: ${options.memory ? "enabled" : "disabled"}`);
+    console.info("");
+    console.info("Starting profiler...");
 
     const startTime = Date.now();
     const memorySnapshots: Array<{ time: number; heapUsed: number; rss: number }> =
@@ -517,8 +517,8 @@ loadSkill().then(() => {
     clearTimeout(timeout);
     clearInterval(statsInterval);
 
-    console.log("\n\nProfile complete!");
-    console.log("─".repeat(60));
+    console.info("\n\nProfile complete!");
+    console.info("─".repeat(60));
 
     // Analyze results
     if (memorySnapshots.length > 0) {
@@ -528,15 +528,15 @@ loadSkill().then(() => {
         memorySnapshots.length;
       const maxRss = Math.max(...memorySnapshots.map((s) => s.rss));
 
-      console.log("\nMemory Analysis:");
-      console.log(
+      console.info("\nMemory Analysis:");
+      console.info(
         `  Peak Heap: ${(maxHeap / 1024 / 1024).toFixed(2)} MB`
       );
-      console.log(
+      console.info(
         `  Avg Heap: ${(avgHeap / 1024 / 1024).toFixed(2)} MB`
       );
-      console.log(`  Peak RSS: ${(maxRss / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`  Samples: ${memorySnapshots.length}`);
+      console.info(`  Peak RSS: ${(maxRss / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`  Samples: ${memorySnapshots.length}`);
     }
 
     // Save output if requested
@@ -548,7 +548,7 @@ loadSkill().then(() => {
         timestamp: new Date().toISOString(),
       };
       await Bun.write(options.output, JSON.stringify(profileData, null, 2));
-      console.log(`\nProfile saved to: ${options.output}`);
+      console.info(`\nProfile saved to: ${options.output}`);
     }
 
     EnhancedOutput.success("Profiling complete!");
@@ -574,12 +574,12 @@ loadSkill().then(() => {
       throw new Error(`Skill not found: ${skillId}`);
     }
 
-    console.log(`  Watching: ${skillDir}`);
-    console.log(`  Run on change: ${options.run ? "yes" : "no"}`);
-    console.log(`  Build on change: ${options.build ? "yes" : "no"}`);
-    console.log(`  Test on change: ${options.test ? "yes" : "no"}`);
-    console.log("");
-    console.log("Watching for changes... (Ctrl+C to stop)");
+    console.info(`  Watching: ${skillDir}`);
+    console.info(`  Run on change: ${options.run ? "yes" : "no"}`);
+    console.info(`  Build on change: ${options.build ? "yes" : "no"}`);
+    console.info(`  Test on change: ${options.test ? "yes" : "no"}`);
+    console.info("");
+    console.info("Watching for changes... (Ctrl+C to stop)");
 
     // Use bun's built-in watch
     const watchArgs = ["--watch"];
@@ -602,7 +602,7 @@ loadSkill().then(() => {
       await proc.exited;
     } else {
       // Default: just watch and report changes
-      console.log("Use --run, --build, or --test to specify action on change");
+      console.info("Use --run, --build, or --test to specify action on change");
     }
   }
 
@@ -632,7 +632,7 @@ loadSkill().then(() => {
     skillId: string,
     features?: string[]
   ): Promise<void> {
-    console.log("Building skill for debugging...");
+    console.info("Building skill for debugging...");
 
     const skillDir = `./skills/${skillId}`;
 
@@ -654,7 +654,7 @@ loadSkill().then(() => {
       throw new Error("Build failed");
     }
 
-    console.log("\x1b[32m✓\x1b[0m Build complete");
+    console.info("\x1b[32m✓\x1b[0m Build complete");
   }
 
   private async createFallbackREPL(
@@ -662,15 +662,15 @@ loadSkill().then(() => {
     skillConfig: any,
     fullSkillDir: string
   ): Promise<void> {
-    console.log("Using non-interactive REPL mode...");
-    console.log("");
-    console.log("\x1b[36mREPL Commands:\x1b[0m");
-    console.log("  run('cmd', ...args)  - Run: bun run src/index.ts <cmd> <args>");
-    console.log("  build()              - Build the skill executable");
-    console.log("  test()               - Run skill tests");
-    console.log("  .help                - Show REPL help");
-    console.log("  .exit                - Exit REPL");
-    console.log("");
+    console.info("Using non-interactive REPL mode...");
+    console.info("");
+    console.info("\x1b[36mREPL Commands:\x1b[0m");
+    console.info("  run('cmd', ...args)  - Run: bun run src/index.ts <cmd> <args>");
+    console.info("  build()              - Build the skill executable");
+    console.info("  test()               - Run skill tests");
+    console.info("  .help                - Show REPL help");
+    console.info("  .exit                - Exit REPL");
+    console.info("");
 
     // Create a simple REPL init script
     const replInitScript = `
@@ -691,7 +691,7 @@ r.context.run = (cmd, ...args) => {
 };
 
 r.context.build = () => {
-  console.log('Building ${skillId}...');
+  console.info('Building ${skillId}...');
   const result = spawnSync('bun', ['build', 'src/index.ts', '--compile', '--outfile', 'dist/${skillId}'], {
     cwd: '${fullSkillDir}',
     stdio: 'inherit',
@@ -700,7 +700,7 @@ r.context.build = () => {
 };
 
 r.context.test = () => {
-  console.log('Testing ${skillId}...');
+  console.info('Testing ${skillId}...');
   const result = spawnSync('bun', ['test'], {
     cwd: '${fullSkillDir}',
     stdio: 'inherit',

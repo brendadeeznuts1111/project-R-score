@@ -37,9 +37,9 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 		maxItems = 100,
 	} = options;
 
-	console.log(`📦 Generating debug bundle: ${output}`);
-	console.log(`   Include: ${include.join(", ")}`);
-	console.log(`   Compression: ${compress}`);
+	console.info(`📦 Generating debug bundle: ${output}`);
+	console.info(`   Include: ${include.join(", ")}`);
+	console.info(`   Compression: ${compress}`);
 
 	const bundle: any = {
 		timestamp: new Date().toISOString(),
@@ -50,7 +50,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 
 	// Include forensics
 	if (include.includes("forensics")) {
-		console.log("   Collecting forensic data...");
+		console.info("   Collecting forensic data...");
 		try {
 			const db = new Database("./data/research.db", { create: true });
 			const movements = db.query<{
@@ -91,7 +91,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 			});
 
 			db.close();
-			console.log(`   ✅ Collected ${bundle.data.forensics.length} forensic records`);
+			console.info(`   ✅ Collected ${bundle.data.forensics.length} forensic records`);
 		} catch (error) {
 			console.warn(`   ⚠️  Failed to collect forensics: ${error}`);
 			bundle.data.forensics = [];
@@ -100,7 +100,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 
 	// Include threats
 	if (include.includes("threats")) {
-		console.log("   Collecting security threats...");
+		console.info("   Collecting security threats...");
 		try {
 			const db = new Database("./data/research.db", { create: true });
 			const threats = db.query<{
@@ -139,7 +139,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 			});
 
 			db.close();
-			console.log(`   ✅ Collected ${bundle.data.threats.length} security threats`);
+			console.info(`   ✅ Collected ${bundle.data.threats.length} security threats`);
 		} catch (error) {
 			console.warn(`   ⚠️  Failed to collect threats: ${error}`);
 			bundle.data.threats = [];
@@ -148,7 +148,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 
 	// Include performance
 	if (include.includes("performance")) {
-		console.log("   Collecting performance snapshots...");
+		console.info("   Collecting performance snapshots...");
 		try {
 			const cpuUsage = process.cpuUsage();
 			const cpuTotal = (cpuUsage.user + cpuUsage.system) / 1e6;
@@ -180,7 +180,7 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 				snapshot: snapshot.getSnapshot(),
 			};
 
-			console.log(`   ✅ Collected performance snapshot`);
+			console.info(`   ✅ Collected performance snapshot`);
 		} catch (error) {
 			console.warn(`   ⚠️  Failed to collect performance: ${error}`);
 			bundle.data.performance = null;
@@ -203,9 +203,9 @@ async function generateDebugBundle(options: DebugBundleOptions = {}): Promise<vo
 	// Write bundle
 	await Bun.write(output, finalData);
 
-	console.log(`✅ Debug bundle written: ${output}`);
-	console.log(`   Size: ${(finalData.byteLength / 1024).toFixed(2)} KB`);
-	console.log(`   Compression ratio: ${((1 - finalData.byteLength / jsonData.length) * 100).toFixed(1)}%`);
+	console.info(`✅ Debug bundle written: ${output}`);
+	console.info(`   Size: ${(finalData.byteLength / 1024).toFixed(2)} KB`);
+	console.info(`   Compression ratio: ${((1 - finalData.byteLength / jsonData.length) * 100).toFixed(1)}%`);
 }
 
 // Parse command line arguments

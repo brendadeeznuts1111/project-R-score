@@ -1,0 +1,460 @@
+{
+  "version": 4,
+  "zones": {
+    "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal, partner zones, Telegram, related workspaces",
+    "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
+    "packages": "Root workspace packages — guards, versioning, business libs",
+    "agents": "Agent skills, orchestration, and ast-grep tooling",
+    "toolchain": "Kimi-toolchain — Bun-native CLI, doctor, governance (external repo)"
+  },
+  "navigation": {
+    "sports-terminal": [
+      "sports-terminal-entry",
+      "sports-terminal-router",
+      "sports-terminal-api",
+      "sports-terminal-services",
+      "sports-terminal-partner",
+      "sports-terminal-telegram",
+      "sports-terminal-kimiremote",
+      "sports-terminal-f402-openapi",
+      "sports-terminal-factorywager-registry",
+      "sports-terminal-playwriter"
+    ],
+    "kimi": [
+      "kimi-shared",
+      "kimi-f402-lib",
+      "kimi-sports-plugin",
+      "kimi-mcp-server"
+    ],
+    "packages": [
+      "packages-guards",
+      "packages-versioning",
+      "packages-business",
+      "packages-ab-testing",
+      "packages-p2p",
+      "packages-rip",
+      "packages-package",
+      "packages-docs-tools",
+      "packages-shared"
+    ],
+    "toolchain": [
+      "kimi-toolchain-src",
+      "kimi-toolchain-scripts"
+    ],
+    "agents": [
+      "agents-ast-grep",
+      "agents-sports-terminal-skill",
+      "agents-partner-profile",
+      "agents-bet-ticker-worker",
+      "agents-cascade-mover",
+      "agents-domain-orchestrator",
+      "agents-domain-diagnostic",
+      "agents-self-healing-domain",
+      "agents-quantum-domain-ops",
+      "agents-bun-playground",
+      "agents-source-command-commit",
+      "agents-project-r-skill-maintenance"
+    ]
+  },
+  "targets": [
+    {
+      "id": "sports-terminal-entry",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal boot (Bun.serve)",
+      "path": "projects/active/sports-terminal-os/src/index.ts",
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["entry", "http", "bun"],
+      "anchors": ["Bun.serve", "Bun.file", "createLogger"],
+      "description": "Main Bun.serve wiring and server boot"
+    },
+    {
+      "id": "sports-terminal-api",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal API routes",
+      "path": "projects/active/sports-terminal-os/src/api",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["api", "routes", "bun"],
+      "depends_on": ["sports-terminal-router"],
+      "anchors": ["handleRequest", "router", "proxy"],
+      "description": "Route handlers and proxy endpoints"
+    },
+    {
+      "id": "sports-terminal-services",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal services",
+      "path": "projects/active/sports-terminal-os/src/services",
+      "view": "names",
+      "items": "structure",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["services", "domain", "bun"],
+      "depends_on": ["sports-terminal-api"],
+      "anchors": ["WebSocket", "createLogger", "subscribe"],
+      "description": "Domain logic, WS handlers, AI risk"
+    },
+    {
+      "id": "sports-terminal-router",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal router (digest)",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["router", "bun"],
+      "anchors": ["routes", "Route", "handler"],
+      "description": "Central route table — start here for API shape"
+    },
+    {
+      "id": "sports-terminal-partner",
+      "zone": "sports-terminal",
+      "name": "Partner Profile OS kernel",
+      "path": "projects/active/sports-terminal-os/src/zones/partner-profile",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["partner", "gateway", "bun"],
+      "depends_on": ["sports-terminal-services"],
+      "anchors": ["PartnerGateway", "evaluate", "GateResult"],
+      "description": "PartnerGateway.evaluate — lifecycle gates and SOR routing"
+    },
+    {
+      "id": "sports-terminal-telegram",
+      "zone": "sports-terminal",
+      "name": "Telegram bot hub",
+      "path": "projects/active/sports-terminal-os/src/telegram",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["telegram", "redis", "bun"],
+      "depends_on": ["sports-terminal-services"],
+      "anchors": ["run-bots", "Redis", "XREADGROUP"],
+      "description": "Multi-bot launcher and Redis Streams workers"
+    },
+    {
+      "id": "sports-terminal-kimiremote",
+      "zone": "sports-terminal",
+      "name": "Kimiremote proxy (sports-terminal-proxy)",
+      "path": "projects/active/kimiremote/src/index.ts",
+      "view": "digest",
+      "bun_rules": true,
+      "tags": ["proxy", "kimi", "bun"],
+      "anchors": ["Bun.serve", "Bun.cron"],
+      "description": "Sports Terminal proxy with Kimi AI integration"
+    },
+    {
+      "id": "sports-terminal-f402-openapi",
+      "zone": "sports-terminal",
+      "name": "f402-openapi ingestion worker",
+      "path": "projects/active/f402-openapi/workers/fantasy402-ingestion/src",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["f402", "worker", "ingestion"],
+      "anchors": ["bet-ticker-live", "customer-profile", "ingest-plane"],
+      "description": "Fantasy402 ingestion plane, live wager broadcast, customer profile"
+    },
+    {
+      "id": "sports-terminal-factorywager-registry",
+      "zone": "sports-terminal",
+      "name": "FactoryWager registry packages",
+      "path": "projects/active/factorywager/registry/packages",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["registry", "r2", "packages"],
+      "description": "R2-backed private NPM registry platform packages"
+    },
+    {
+      "id": "sports-terminal-playwriter",
+      "zone": "sports-terminal",
+      "name": "Playwriter browser automation skill",
+      "path": "projects/active/playwriter-skill",
+      "view": "names",
+      "tags": ["playwriter", "mcp", "browser"],
+      "anchors": ["mcp-server", "playwriter"],
+      "description": "Browser automation skill for Kimi CLI via Playwriter"
+    },
+    {
+      "id": "kimi-sports-plugin",
+      "zone": "kimi",
+      "name": "Kimi sports-odds plugin scripts",
+      "path": "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin/scripts",
+      "view": "names",
+      "tags": ["cli", "odds"],
+      "depends_on": ["kimi-f402-lib", "kimi-shared"],
+      "anchors": ["main", "f402Fetch", "loadConfig", "makeTable"],
+      "description": "get_odds, get_scores, get_handle CLI scripts"
+    },
+    {
+      "id": "kimi-f402-lib",
+      "zone": "kimi",
+      "name": "Kimi f402 client lib",
+      "path": "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-odds-plugin/scripts/lib/f402.ts",
+      "view": "digest",
+      "tags": ["lib", "fetch"],
+      "depends_on": ["kimi-shared"],
+      "anchors": ["f402Fetch", "fetch", "makeTable"],
+      "description": "Shared f402 fetch + table helpers"
+    },
+    {
+      "id": "kimi-shared",
+      "zone": "kimi",
+      "name": "Kimi shared constants",
+      "path": "projects/active/sports-terminal-os/integrations/kimi-plugin/shared",
+      "view": "names",
+      "items": "exports",
+      "tags": ["shared"],
+      "anchors": ["SPORT_POSSESSION_EMOJI", "riskEmoji", "riskColor"],
+      "description": "Cross-plugin constants and risk helpers"
+    },
+    {
+      "id": "kimi-mcp-server",
+      "zone": "kimi",
+      "name": "Kimi sports MCP server",
+      "path": "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "tags": ["mcp", "websocket"],
+      "depends_on": ["kimi-shared"],
+      "anchors": ["tools", "WebSocket", "subscribe", "readToolArgs"],
+      "description": "MCP tools + WS subscription handlers"
+    },
+    {
+      "id": "packages-guards",
+      "zone": "packages",
+      "name": "@factorywager/guards",
+      "path": "packages/guards",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "guards"],
+      "description": "Shared guard utilities"
+    },
+    {
+      "id": "packages-versioning",
+      "zone": "packages",
+      "name": "@factorywager/versioning",
+      "path": "packages/versioning",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "semver"],
+      "description": "Versioning helpers"
+    },
+    {
+      "id": "packages-business",
+      "zone": "packages",
+      "name": "@factorywager/business",
+      "path": "packages/business",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "domain"],
+      "description": "Business domain types and helpers"
+    },
+    {
+      "id": "packages-ab-testing",
+      "zone": "packages",
+      "name": "@factorywager/ab-testing",
+      "path": "packages/ab-testing",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "ab-testing"],
+      "description": "A/B testing utilities"
+    },
+    {
+      "id": "packages-p2p",
+      "zone": "packages",
+      "name": "@factorywager/p2p",
+      "path": "packages/p2p",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "p2p"],
+      "description": "Peer-to-peer networking helpers"
+    },
+    {
+      "id": "packages-rip",
+      "zone": "packages",
+      "name": "@factorywager/rip",
+      "path": "packages/rip",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "rip"],
+      "description": "RIP protocol utilities"
+    },
+    {
+      "id": "packages-package",
+      "zone": "packages",
+      "name": "@factorywager/package",
+      "path": "packages/package",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "meta"],
+      "description": "Package metadata utilities"
+    },
+    {
+      "id": "packages-docs-tools",
+      "zone": "packages",
+      "name": "@factorywager/docs-tools",
+      "path": "packages/docs-tools",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "docs"],
+      "description": "Documentation tooling"
+    },
+    {
+      "id": "packages-shared",
+      "zone": "packages",
+      "name": "lib/shared workspace",
+      "path": "lib/shared",
+      "view": "names",
+      "items": "exports",
+      "tags": ["package", "shared", "lib"],
+      "description": "Shared lib workspace package"
+    },
+    {
+      "id": "agents-ast-grep",
+      "zone": "agents",
+      "name": "ast-grep skill bundle",
+      "path": ".agents/skills/ast-grep",
+      "view": "names",
+      "items": "structure",
+      "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
+      "tags": ["skill", "ast-grep"],
+      "anchors": ["cmd_outline", "cmd_map", "cmd_discover", "ast_grep_helper"],
+      "description": "This skill — helper, rules, MCP, repo-map"
+    },
+    {
+      "id": "agents-sports-terminal-skill",
+      "zone": "agents",
+      "name": "sports-terminal-os skill",
+      "path": ".agents/skills/sports-terminal-os",
+      "view": "digest",
+      "tags": ["skill", "sports-terminal"],
+      "anchors": ["Bun.serve", "PartnerGateway", "router"],
+      "description": "SKILL.md runbook for Sports Terminal OS workspace"
+    },
+    {
+      "id": "agents-partner-profile",
+      "zone": "agents",
+      "name": "partner-profile-os skill",
+      "path": ".agents/skills/partner-profile-os",
+      "view": "digest",
+      "tags": ["skill", "partner"],
+      "anchors": ["PartnerGateway", "evaluate", "TOML"],
+      "description": "Partner Profile OS skill — gateway, lifecycle, SOR"
+    },
+    {
+      "id": "agents-bet-ticker-worker",
+      "zone": "agents",
+      "name": "bet-ticker-worker skill",
+      "path": ".agents/skills/bet-ticker-worker",
+      "view": "digest",
+      "tags": ["skill", "cloudflare", "worker"],
+      "anchors": ["DurableObject", "WebSocket", "PartnerGateway"],
+      "description": "CF Worker + DO live wager broadcast skill"
+    },
+    {
+      "id": "agents-cascade-mover",
+      "zone": "agents",
+      "name": "cascade-mover-v3 skill",
+      "path": ".agents/skills/cascade-mover-v3",
+      "view": "digest",
+      "tags": ["skill", "cascade", "mcp"],
+      "anchors": ["cascade-mover", "confidence"],
+      "description": "Sports intelligence and multi-market cascading (MCP-first)"
+    },
+    {
+      "id": "agents-domain-orchestrator",
+      "zone": "agents",
+      "name": "domain-orchestrator skill",
+      "path": ".agents/skills/domain-orchestrator",
+      "view": "digest",
+      "tags": ["skill", "orchestrator", "flow"],
+      "anchors": ["SkillOrchestrator", "executeFlowSkill"],
+      "description": "Flow skill orchestration and domain API mapping"
+    },
+    {
+      "id": "agents-domain-diagnostic",
+      "zone": "agents",
+      "name": "domain-diagnostic-flow skill",
+      "path": ".agents/skills/domain-diagnostic-flow",
+      "view": "digest",
+      "tags": ["skill", "diagnostic", "healing"],
+      "description": "Domain health check and remediation flows"
+    },
+    {
+      "id": "agents-self-healing-domain",
+      "zone": "agents",
+      "name": "self-healing-domain skill",
+      "path": ".agents/skills/self-healing-domain",
+      "view": "digest",
+      "tags": ["skill", "healing", "domain"],
+      "description": "Automated diagnostic and healing workflows"
+    },
+    {
+      "id": "agents-quantum-domain-ops",
+      "zone": "agents",
+      "name": "quantum-domain-ops skill",
+      "path": ".agents/skills/quantum-domain-ops",
+      "view": "digest",
+      "tags": ["skill", "quantum", "domain"],
+      "description": "Quantum domain state and coherence operations"
+    },
+    {
+      "id": "agents-bun-playground",
+      "zone": "agents",
+      "name": "bun-v139-playground skill",
+      "path": ".agents/skills/bun-v139-playground",
+      "view": "digest",
+      "tags": ["skill", "bun", "playground"],
+      "anchors": ["Bun.serve", "governance"],
+      "description": "Bun v1.3.9 interactive playground demos"
+    },
+    {
+      "id": "agents-source-command-commit",
+      "zone": "agents",
+      "name": "source-command-commit skill",
+      "path": ".agents/skills/source-command-commit",
+      "view": "digest",
+      "tags": ["skill", "git", "commit"],
+      "description": "Disciplined commit agent workflow"
+    },
+    {
+      "id": "agents-project-r-skill-maintenance",
+      "zone": "agents",
+      "name": "project-r-skill-maintenance skill",
+      "path": ".agents/skills/project-r-skill-maintenance",
+      "view": "digest",
+      "tags": ["skill", "maintenance", "codex"],
+      "description": "Codex skill maintenance and validation"
+    },
+    {
+      "id": "kimi-toolchain-src",
+      "zone": "toolchain",
+      "name": "Kimi-toolchain src",
+      "path": "../kimi-toolchain/src",
+      "pathEnv": "KIMI_TOOLCHAIN_ROOT",
+      "pathSuffix": "src",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["toolchain", "bun", "doctor", "governance"],
+      "anchors": ["Bun.spawn", "runCliExit", "kimi-doctor"],
+      "description": "Bun-native developer tooling — doctor, governance, MCP"
+    },
+    {
+      "id": "kimi-toolchain-scripts",
+      "zone": "toolchain",
+      "name": "Kimi-toolchain scripts",
+      "path": "../kimi-toolchain/scripts",
+      "pathEnv": "KIMI_TOOLCHAIN_ROOT",
+      "pathSuffix": "scripts",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["toolchain", "scripts", "bun"],
+      "description": "Gate runners, hygiene scans, audit scripts"
+    }
+  ]
+}

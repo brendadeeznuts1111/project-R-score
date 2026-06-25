@@ -75,12 +75,12 @@ export class BlogGenerator {
     let pagesGenerated = 0;
     let assetsProcessed = 0;
 
-    console.log('🏗️  Static Generator Engine');
-    console.log('═══════════════════════════════════════════════════════');
-    console.log(`   Output: ${this.generatorConfig.outputDir}`);
-    console.log(`   Concurrency: ${this.generatorConfig.concurrency}-way parallelism`);
-    console.log(`   Cache: ${this.generatorConfig.enableCache ? 'Enabled' : 'Disabled'}`);
-    console.log('═══════════════════════════════════════════════════════');
+    console.info('🏗️  Static Generator Engine');
+    console.info('═══════════════════════════════════════════════════════');
+    console.info(`   Output: ${this.generatorConfig.outputDir}`);
+    console.info(`   Concurrency: ${this.generatorConfig.concurrency}-way parallelism`);
+    console.info(`   Cache: ${this.generatorConfig.enableCache ? 'Enabled' : 'Disabled'}`);
+    console.info('═══════════════════════════════════════════════════════');
 
     try {
       // Ensure output directories exist
@@ -92,23 +92,23 @@ export class BlogGenerator {
       }
 
       // Phase 1: Load all blog posts (parallel)
-      console.log('\n📚 Phase 1: Loading posts...');
+      console.info('\n📚 Phase 1: Loading posts...');
       const posts = await this.loadPosts();
-      console.log(`   Loaded ${posts.length} posts`);
+      console.info(`   Loaded ${posts.length} posts`);
 
       // Phase 2: Process assets (parallel with 8-way concurrency)
-      console.log('\n🖼️  Phase 2: Processing assets...');
+      console.info('\n🖼️  Phase 2: Processing assets...');
       const assetResult = await assetProcessor.processAll();
       assetsProcessed = assetResult.assets.length;
 
       // Phase 3: Generate pages (parallel batches)
-      console.log('\n📝 Phase 3: Generating pages...');
+      console.info('\n📝 Phase 3: Generating pages...');
       const pageResults = await this.generateAllPagesParallel(posts);
       pagesGenerated = pageResults.filter(r => r.success).length;
       errors.push(...pageResults.filter(r => !r.success).map(r => r.error!));
 
       // Phase 4: Generate feeds and indexes
-      console.log('\n📡 Phase 4: Generating feeds...');
+      console.info('\n📡 Phase 4: Generating feeds...');
       await Promise.all([
         this.generateRSS(posts),
         this.generateIndex(posts),
@@ -116,7 +116,7 @@ export class BlogGenerator {
       ]);
 
       // Phase 5: Build TypeScript/CSS if present
-      console.log('\n⚡ Phase 5: Bundling assets...');
+      console.info('\n⚡ Phase 5: Bundling assets...');
       await this.buildAssets();
 
     } catch (error) {
@@ -126,16 +126,16 @@ export class BlogGenerator {
     const totalTimeMs = performance.now() - startTime;
     const pagesPerSecond = pagesGenerated / (totalTimeMs / 1000);
 
-    console.log('\n═══════════════════════════════════════════════════════');
-    console.log(`✅ Build Complete`);
-    console.log(`   Pages: ${pagesGenerated}`);
-    console.log(`   Assets: ${assetsProcessed}`);
-    console.log(`   Time: ${totalTimeMs.toFixed(0)}ms`);
-    console.log(`   Throughput: ${pagesPerSecond.toFixed(1)} pages/sec`);
+    console.info('\n═══════════════════════════════════════════════════════');
+    console.info(`✅ Build Complete`);
+    console.info(`   Pages: ${pagesGenerated}`);
+    console.info(`   Assets: ${assetsProcessed}`);
+    console.info(`   Time: ${totalTimeMs.toFixed(0)}ms`);
+    console.info(`   Throughput: ${pagesPerSecond.toFixed(1)} pages/sec`);
     if (errors.length > 0) {
-      console.log(`   ⚠️  Errors: ${errors.length}`);
+      console.info(`   ⚠️  Errors: ${errors.length}`);
     }
-    console.log('═══════════════════════════════════════════════════════');
+    console.info('═══════════════════════════════════════════════════════');
 
     return {
       success: errors.length === 0,
@@ -221,7 +221,7 @@ export class BlogGenerator {
       }
 
       if (clientFiles.length === 0) {
-        console.log('   No client-side assets to bundle');
+        console.info('   No client-side assets to bundle');
         return;
       }
 
@@ -240,12 +240,12 @@ export class BlogGenerator {
       });
 
       if (result.success) {
-        console.log(`   Bundled ${result.outputs.length} assets`);
+        console.info(`   Bundled ${result.outputs.length} assets`);
       } else {
         console.warn(`   Bundle warnings: ${result.logs.length}`);
       }
     } catch (error) {
-      console.log(`   Bundling skipped: ${error}`);
+      console.info(`   Bundling skipped: ${error}`);
     }
   }
 
@@ -296,7 +296,7 @@ export class BlogGenerator {
   private async generateRSS(posts: BlogPost[]): Promise<void> {
     const rssContent = this.rssGenerator.generate(posts);
     await Bun.write(`${this.generatorConfig.outputDir}/${this.config.rss.filename}`, rssContent);
-    console.log(`   📡 Generated RSS: ${posts.length} posts`);
+    console.info(`   📡 Generated RSS: ${posts.length} posts`);
   }
 
   private async generateCategories(posts: BlogPost[]): Promise<void> {
@@ -308,14 +308,14 @@ export class BlogGenerator {
       await Bun.write(`${this.generatorConfig.outputDir}/categories/${category}.html`, html);
     }));
 
-    console.log(`   📂 Generated ${categories.length} category pages`);
+    console.info(`   📂 Generated ${categories.length} category pages`);
   }
 
   private async generateIndex(posts: BlogPost[]): Promise<void> {
     const recentPosts = posts.slice(0, 10);
     const html = this.generateIndexHTML(recentPosts);
     await Bun.write(`${this.generatorConfig.outputDir}/index.html`, html);
-    console.log('   🏠 Generated index page');
+    console.info('   🏠 Generated index page');
   }
 
   private generatePostHTML(post: BlogPost): string {

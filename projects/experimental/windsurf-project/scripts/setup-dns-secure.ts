@@ -60,10 +60,10 @@ class SecureDNSManager {
   }
 
   async setupSecrets(): Promise<void> {
-    console.log('🔐 Setting up Cloudflare secrets...');
-    console.log('');
-    console.log('Please enter your Cloudflare credentials:');
-    console.log('');
+    console.info('🔐 Setting up Cloudflare secrets...');
+    console.info('');
+    console.info('Please enter your Cloudflare credentials:');
+    console.info('');
 
     try {
       // Check if secrets already exist
@@ -71,28 +71,28 @@ class SecureDNSManager {
       const zoneId = await this.getSecret('CF_ZONE_ID').catch(() => null);
 
       if (apiToken && zoneId) {
-        console.log('✅ Cloudflare secrets already configured');
+        console.info('✅ Cloudflare secrets already configured');
         return;
       }
 
       // Set API Token
       if (!apiToken) {
-        console.log('📝 Enter Cloudflare API Token:');
-        console.log('   (Create at: https://dash.cloudflare.com/profile/api-tokens)');
-        console.log('   Permissions needed: Zone:Edit, DNS:Edit for apple.factory-wager.com');
-        console.log('');
+        console.info('📝 Enter Cloudflare API Token:');
+        console.info('   (Create at: https://dash.cloudflare.com/profile/api-tokens)');
+        console.info('   Permissions needed: Zone:Edit, DNS:Edit for apple.factory-wager.com');
+        console.info('');
         
         // Note: In a real scenario, you'd prompt for input
-        console.log('Run: bun run cli secrets set CF_API_TOKEN "your-token-here"');
+        console.info('Run: bun run cli secrets set CF_API_TOKEN "your-token-here"');
       }
 
       // Set Zone ID
       if (!zoneId) {
-        console.log('📝 Enter Cloudflare Zone ID:');
-        console.log('   (Find in Cloudflare Dashboard → Domain → API → Zone ID)');
-        console.log('');
+        console.info('📝 Enter Cloudflare Zone ID:');
+        console.info('   (Find in Cloudflare Dashboard → Domain → API → Zone ID)');
+        console.info('');
         
-        console.log('Run: bun run cli secrets set CF_ZONE_ID "your-zone-id-here"');
+        console.info('Run: bun run cli secrets set CF_ZONE_ID "your-zone-id-here"');
       }
 
     } catch (error: any) {
@@ -102,7 +102,7 @@ class SecureDNSManager {
 
   async validateSecrets(): Promise<boolean> {
     try {
-      console.log('🔍 Validating Cloudflare secrets...');
+      console.info('🔍 Validating Cloudflare secrets...');
       
       const apiToken = await this.getSecret('CF_API_TOKEN');
       const zoneId = await this.getSecret('CF_ZONE_ID');
@@ -110,8 +110,8 @@ class SecureDNSManager {
       // Test API connection
       const response = await this.makeCloudflareRequest('');
       if (response.success) {
-        console.log('✅ Cloudflare API connection successful');
-        console.log(`✅ Zone: ${response.result.name} (${response.result.id})`);
+        console.info('✅ Cloudflare API connection successful');
+        console.info(`✅ Zone: ${response.result.name} (${response.result.id})`);
         return true;
       }
       
@@ -123,8 +123,8 @@ class SecureDNSManager {
   }
 
   async setupProductionDNS(): Promise<void> {
-    console.log('🌐 Setting up Empire Pro Production DNS...');
-    console.log('═'.repeat(50));
+    console.info('🌐 Setting up Empire Pro Production DNS...');
+    console.info('═'.repeat(50));
 
     const requiredRecords: DNSRecord[] = [
       {
@@ -173,11 +173,11 @@ class SecureDNSManager {
       }
 
       // List existing records
-      console.log('\n📋 Checking existing DNS records...');
+      console.info('\n📋 Checking existing DNS records...');
       const existingData = await this.makeCloudflareRequest('/dns_records');
       const existingRecords = existingData.result || [];
       
-      console.log(`Found ${existingRecords.length} existing records`);
+      console.info(`Found ${existingRecords.length} existing records`);
       
       // Create or update records
       for (const record of requiredRecords) {
@@ -187,19 +187,19 @@ class SecureDNSManager {
 
         if (existing) {
           if (existing.content !== record.content) {
-            console.log(`🔄 Updating ${record.name} → ${record.content}`);
+            console.info(`🔄 Updating ${record.name} → ${record.content}`);
             await this.updateDNSRecord(existing.id, record);
           } else {
-            console.log(`✅ Already exists: ${record.name} → ${record.content}`);
+            console.info(`✅ Already exists: ${record.name} → ${record.content}`);
           }
         } else {
-          console.log(`🔧 Creating ${record.name} → ${record.content}`);
+          console.info(`🔧 Creating ${record.name} → ${record.content}`);
           await this.createDNSRecord(record);
         }
       }
 
-      console.log('\n🎉 DNS setup complete!');
-      console.log('📡 DNS records configured for Empire Pro Production');
+      console.info('\n🎉 DNS setup complete!');
+      console.info('📡 DNS records configured for Empire Pro Production');
       
     } catch (error: any) {
       console.error('❌ DNS setup failed:', error?.message || error);
@@ -238,7 +238,7 @@ class SecureDNSManager {
   }
 
   async validateDNS(): Promise<void> {
-    console.log('\n🔍 Validating DNS configuration...');
+    console.info('\n🔍 Validating DNS configuration...');
     
     const endpoints = [
       { name: 'API', url: 'https://api.apple' },
@@ -253,9 +253,9 @@ class SecureDNSManager {
           signal: AbortSignal.timeout(5000)
         });
         
-        console.log(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
+        console.info(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
       } catch (error) {
-        console.log(`⚠️  ${endpoint.name}: Pending DNS propagation`);
+        console.info(`⚠️  ${endpoint.name}: Pending DNS propagation`);
       }
     }
   }
@@ -284,17 +284,17 @@ async function main() {
         break;
       
       default:
-        console.log('🌐 Empire Pro SECURE DNS Manager');
-        console.log('');
-        console.log('Usage:');
-        console.log('  bun run scripts/setup-dns-secure.ts setup-secrets   # Setup Cloudflare secrets');
-        console.log('  bun run scripts/setup-dns-secure.ts validate-secrets # Validate secrets');
-        console.log('  bun run scripts/setup-dns-secure.ts setup           # Setup production DNS');
-        console.log('');
-        console.log('Quick Start:');
-        console.log('  1. bun run cli secrets set CF_API_TOKEN "your-token"');
-        console.log('  2. bun run cli secrets set CF_ZONE_ID "your-zone-id"');
-        console.log('  3. bun run scripts/setup-dns-secure.ts setup');
+        console.info('🌐 Empire Pro SECURE DNS Manager');
+        console.info('');
+        console.info('Usage:');
+        console.info('  bun run scripts/setup-dns-secure.ts setup-secrets   # Setup Cloudflare secrets');
+        console.info('  bun run scripts/setup-dns-secure.ts validate-secrets # Validate secrets');
+        console.info('  bun run scripts/setup-dns-secure.ts setup           # Setup production DNS');
+        console.info('');
+        console.info('Quick Start:');
+        console.info('  1. bun run cli secrets set CF_API_TOKEN "your-token"');
+        console.info('  2. bun run cli secrets set CF_ZONE_ID "your-zone-id"');
+        console.info('  3. bun run scripts/setup-dns-secure.ts setup');
         break;
     }
   } catch (error: any) {

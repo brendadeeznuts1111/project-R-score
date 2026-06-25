@@ -29,7 +29,7 @@ export class EnhancedRSCHandler {
    * Prefetch DNS for multiple hosts
    */
   async prefetchDNS(hosts: string[]): Promise<void> {
-    console.log(`🌐 Prefetching DNS for ${hosts.length} hosts...`);
+    console.info(`🌐 Prefetching DNS for ${hosts.length} hosts...`);
 
     const startTime = performance.now();
 
@@ -44,7 +44,7 @@ export class EnhancedRSCHandler {
       );
 
       const endTime = performance.now();
-      console.log(`✅ DNS prefetch completed in ${(endTime - startTime).toFixed(2)}ms`);
+      console.info(`✅ DNS prefetch completed in ${(endTime - startTime).toFixed(2)}ms`);
 
       // Update cache timestamps
       hosts.forEach(host => {
@@ -59,7 +59,7 @@ export class EnhancedRSCHandler {
    * Preconnect to hosts for faster TCP connection establishment
    */
   async preconnectHosts(hosts: string[]): Promise<void> {
-    console.log(`🔗 Preconnecting to ${hosts.length} hosts...`);
+    console.info(`🔗 Preconnecting to ${hosts.length} hosts...`);
 
     const startTime = performance.now();
 
@@ -76,7 +76,7 @@ export class EnhancedRSCHandler {
       );
 
       const endTime = performance.now();
-      console.log(`✅ Preconnect completed in ${(endTime - startTime).toFixed(2)}ms`);
+      console.info(`✅ Preconnect completed in ${(endTime - startTime).toFixed(2)}ms`);
     } catch (error) {
       console.warn('⚠️ Preconnect failed:', error);
     }
@@ -189,7 +189,7 @@ export class EnhancedRSCHandler {
   async fetchBatch(requests: EnhancedRSCRequest[]): Promise<EnhancedRSCResponse[]> {
     if (requests.length === 0) return [];
 
-    console.log(`🚀 Enhanced RSC Batch: ${requests.length} requests with optimizations`);
+    console.info(`🚀 Enhanced RSC Batch: ${requests.length} requests with optimizations`);
 
     const startTime = performance.now();
 
@@ -228,12 +228,12 @@ export class EnhancedRSCHandler {
     const successful = responses.filter(r => r.ok);
     const optimized = responses.filter(r => r.optimization && r.optimization.length > 0);
 
-    console.log(`📊 Enhanced Batch Results:`);
-    console.log(`  Total: ${responses.length}`);
-    console.log(`  Successful: ${successful.length}`);
-    console.log(`  Optimized: ${optimized.length}`);
-    console.log(`  Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`  Avg Latency: ${(totalTime / responses.length).toFixed(2)}ms`);
+    console.info(`📊 Enhanced Batch Results:`);
+    console.info(`  Total: ${responses.length}`);
+    console.info(`  Successful: ${successful.length}`);
+    console.info(`  Optimized: ${optimized.length}`);
+    console.info(`  Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`  Avg Latency: ${(totalTime / responses.length).toFixed(2)}ms`);
 
     // Show optimization breakdown
     const optimizationStats = new Map<string, number>();
@@ -246,9 +246,9 @@ export class EnhancedRSCHandler {
     });
 
     if (optimizationStats.size > 0) {
-      console.log(`  Optimizations:`);
+      console.info(`  Optimizations:`);
       optimizationStats.forEach((count, opt) => {
-        console.log(`    ${opt}: ${count} requests`);
+        console.info(`    ${opt}: ${count} requests`);
       });
     }
 
@@ -299,7 +299,7 @@ export class EnhancedRSCHandler {
     this.prefetchedHosts.clear();
     this.preconnectedHosts.clear();
     this.dnsCache.clear();
-    console.log('🧹 Optimization caches cleared');
+    console.info('🧹 Optimization caches cleared');
   }
 }
 

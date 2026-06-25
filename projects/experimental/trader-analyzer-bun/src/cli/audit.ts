@@ -93,7 +93,7 @@ ${c.dim}Environment Variables:${c.reset}
  * 9.1.5.17.1.0.0: Find orphaned documentation
  */
 async function findOrphans() {
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🔍 Finding orphaned documentation...${c.reset}\n`,
 	);
 
@@ -101,19 +101,19 @@ async function findOrphans() {
 	const orphaned = await detector.findOrphanedDocs();
 
 	if (orphaned.length === 0) {
-		console.log(`${c.green}✅ No orphaned documentation found${c.reset}`);
+		console.info(`${c.green}✅ No orphaned documentation found${c.reset}`);
 		return;
 	}
 
-	console.log(
+	console.info(
 		`${c.yellow}⚠️  Found ${orphaned.length} orphaned documentation numbers:${c.reset}\n`,
 	);
 
 	orphaned.forEach((docNum, index) => {
-		console.log(`  ${index + 1}. ${c.dim}${docNum}${c.reset}`);
+		console.info(`  ${index + 1}. ${c.dim}${docNum}${c.reset}`);
 	});
 
-	console.log(
+	console.info(
 		`\n${c.dim}Tip: Orphaned docs exist in documentation but aren't referenced in code${c.reset}`,
 	);
 }
@@ -122,24 +122,24 @@ async function findOrphans() {
  * 9.1.5.17.2.0.0: Find undocumented code
  */
 async function findUndocumented() {
-	console.log(`${c.cyan}${c.bold}🔍 Finding undocumented code...${c.reset}\n`);
+	console.info(`${c.cyan}${c.bold}🔍 Finding undocumented code...${c.reset}\n`);
 
 	const detector = new OrphanDetector();
 	const undocumented = await detector.findUndocumentedCode();
 
 	if (undocumented.length === 0) {
-		console.log(`${c.green}✅ No undocumented code found${c.reset}`);
+		console.info(`${c.green}✅ No undocumented code found${c.reset}`);
 		return;
 	}
 
-	console.log(
+	console.info(
 		`${c.yellow}⚠️  Found ${undocumented.length} undocumented implementations:${c.reset}\n`,
 	);
 
 	undocumented.forEach((item, index) => {
-		console.log(`  ${index + 1}. ${c.red}${item.type}${c.reset}`);
-		console.log(`     File: ${c.dim}${item.file}:${item.line}${c.reset}`);
-		console.log(
+		console.info(`  ${index + 1}. ${c.red}${item.type}${c.reset}`);
+		console.info(`     File: ${c.dim}${item.file}:${item.line}${c.reset}`);
+		console.info(
 			`     Code: ${c.dim}${item.code.substring(0, 80)}...${c.reset}\n`,
 		);
 	});
@@ -149,7 +149,7 @@ async function findUndocumented() {
  * 9.1.5.17.3.0.0: Validate cross-references
  */
 async function validateCrossReferences() {
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🔗 Validating cross-references...${c.reset}\n`,
 	);
 
@@ -163,16 +163,16 @@ async function validateCrossReferences() {
 				? c.yellow
 				: c.red;
 
-	console.log(
+	console.info(
 		`Status: ${statusColor}${integrity.status.toUpperCase()}${c.reset}`,
 	);
-	console.log(`Total references: ${integrity.totalReferences}`);
-	console.log(`Invalid references: ${integrity.invalidReferences}\n`);
+	console.info(`Total references: ${integrity.totalReferences}`);
+	console.info(`Invalid references: ${integrity.invalidReferences}\n`);
 
 	if (integrity.issues.length > 0) {
-		console.log(`${c.yellow}Issues:${c.reset}`);
+		console.info(`${c.yellow}Issues:${c.reset}`);
 		integrity.issues.forEach((issue) => {
-			console.log(`  • ${c.dim}${issue}${c.reset}`);
+			console.info(`  • ${c.dim}${issue}${c.reset}`);
 		});
 	}
 }
@@ -181,45 +181,45 @@ async function validateCrossReferences() {
  * 9.1.5.17.4.0.0: Generate comprehensive audit report
  */
 async function generateReport() {
-	console.log(`${c.cyan}${c.bold}📊 Generating audit report...${c.reset}\n`);
+	console.info(`${c.cyan}${c.bold}📊 Generating audit report...${c.reset}\n`);
 
 	const detector = new OrphanDetector();
 	const report = await detector.generateAuditReport();
 
-	console.log(`${c.bold}Audit Report${c.reset}`);
-	console.log(`Generated: ${report.timestamp}`);
-	console.log(`Version: ${report.version}\n`);
+	console.info(`${c.bold}Audit Report${c.reset}`);
+	console.info(`Generated: ${report.timestamp}`);
+	console.info(`Version: ${report.version}\n`);
 
-	console.log(`${c.bold}Orphaned Documentation:${c.reset}`);
-	console.log(`  Count: ${report.orphanedDocumentation.count}`);
+	console.info(`${c.bold}Orphaned Documentation:${c.reset}`);
+	console.info(`  Count: ${report.orphanedDocumentation.count}`);
 	if (report.orphanedDocumentation.items.length > 0) {
-		console.log(
+		console.info(
 			`  Items: ${report.orphanedDocumentation.items.slice(0, 10).join(", ")}${report.orphanedDocumentation.items.length > 10 ? "..." : ""}`,
 		);
 	}
 
-	console.log(`\n${c.bold}Undocumented Code:${c.reset}`);
-	console.log(`  Count: ${report.undocumentedCode.count}`);
+	console.info(`\n${c.bold}Undocumented Code:${c.reset}`);
+	console.info(`  Count: ${report.undocumentedCode.count}`);
 	if (report.undocumentedCode.items.length > 0) {
 		report.undocumentedCode.items.slice(0, 5).forEach((item) => {
-			console.log(`  • ${item.type} in ${item.file}:${item.line}`);
+			console.info(`  • ${item.type} in ${item.file}:${item.line}`);
 		});
 		if (report.undocumentedCode.items.length > 5) {
-			console.log(`  ... and ${report.undocumentedCode.items.length - 5} more`);
+			console.info(`  ... and ${report.undocumentedCode.items.length - 5} more`);
 		}
 	}
 
-	console.log(`\n${c.bold}Cross-Reference Integrity:${c.reset}`);
+	console.info(`\n${c.bold}Cross-Reference Integrity:${c.reset}`);
 	const statusColor =
 		report.crossReferenceIntegrity.status === "healthy"
 			? c.green
 			: report.crossReferenceIntegrity.status === "warning"
 				? c.yellow
 				: c.red;
-	console.log(
+	console.info(
 		`  Status: ${statusColor}${report.crossReferenceIntegrity.status.toUpperCase()}${c.reset}`,
 	);
-	console.log(`  Issues: ${report.crossReferenceIntegrity.issues.length}`);
+	console.info(`  Issues: ${report.crossReferenceIntegrity.issues.length}`);
 }
 
 /**
@@ -233,7 +233,7 @@ async function runParallelScan() {
 		? new WorkerAuditManager()
 		: new RealTimeProcessManager();
 
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}⚡ Starting parallel scan (${useWorkers ? "Workers" : "Spawn"} mode)...${c.reset}\n`,
 	);
 
@@ -253,16 +253,16 @@ async function runParallelScan() {
 	);
 	const duration = Date.now() - startTime;
 
-	console.log(`\n${c.bold}📈 Results (${duration}ms):${c.reset}\n`);
+	console.info(`\n${c.bold}📈 Results (${duration}ms):${c.reset}\n`);
 
 	results.forEach((result) => {
-		console.log(`${c.cyan}${result.pattern}${c.reset}`);
-		console.log(`  Directory: ${result.directory}`);
-		console.log(`  Matches: ${c.green}${result.matches}${c.reset}\n`);
+		console.info(`${c.cyan}${result.pattern}${c.reset}`);
+		console.info(`  Directory: ${result.directory}`);
+		console.info(`  Matches: ${c.green}${result.matches}${c.reset}\n`);
 	});
 
 	const totalMatches = results.reduce((sum, r) => sum + r.matches, 0);
-	console.log(`${c.bold}Total matches: ${c.green}${totalMatches}${c.reset}`);
+	console.info(`${c.bold}Total matches: ${c.green}${totalMatches}${c.reset}`);
 
 	if (useWorkers && manager instanceof WorkerAuditManager) {
 		await manager.shutdown();
@@ -282,7 +282,7 @@ async function runRealTimeAudit() {
 		? new WorkerAuditManager()
 		: new RealTimeProcessManager();
 
-	console.log(`${c.cyan}${c.bold}🚀 Starting real-time audit...${c.reset}\n`);
+	console.info(`${c.cyan}${c.bold}🚀 Starting real-time audit...${c.reset}\n`);
 
 	const targetPath =
 		process.argv.find((arg) => arg.startsWith("--path="))?.split("=")[1] || ".";
@@ -304,39 +304,39 @@ async function runRealTimeAudit() {
 			const data = event.data;
 			switch (data.type) {
 				case "progress":
-					console.log(`📊 ${data.progress}% - ${data.file}`);
+					console.info(`📊 ${data.progress}% - ${data.file}`);
 					break;
 				case "match":
-					console.log(`🔍 ${data.pattern} in ${data.file}:${data.line}`);
+					console.info(`🔍 ${data.pattern} in ${data.file}:${data.line}`);
 					break;
 				case "orphan":
-					console.log(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
+					console.info(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
 					break;
 			}
 		});
 
-		console.log(`✅ Audit started. Press Ctrl+C to stop.`);
+		console.info(`✅ Audit started. Press Ctrl+C to stop.`);
 		// Keep process alive
 		await new Promise(() => {});
 	} else if (manager instanceof RealTimeProcessManager) {
 		const result = await manager.spawnRealTimeAudit(options);
 
 		manager.on("progress", (data) => {
-			console.log(`📊 ${data.progress}% - ${data.currentFile}`);
+			console.info(`📊 ${data.progress}% - ${data.currentFile}`);
 		});
 
 		manager.on("match", (data) => {
-			console.log(`🔍 ${data.pattern} in ${data.file}:${data.line}`);
+			console.info(`🔍 ${data.pattern} in ${data.file}:${data.line}`);
 		});
 
 		manager.on("orphan", (data) => {
-			console.log(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
+			console.info(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
 		});
 
 		const process = (manager as any).processes.get(result.processId);
 		if (process) {
 			await process.exited;
-			console.log(`✅ Audit completed`);
+			console.info(`✅ Audit completed`);
 		}
 	}
 }
@@ -345,7 +345,7 @@ async function runRealTimeAudit() {
  * 9.1.5.17.7.0.0: Run Bun utilities audit tests
  */
 async function runBunUtilitiesAudit() {
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🧪 Running Bun utilities audit tests...${c.reset}\n`,
 	);
 
@@ -356,11 +356,11 @@ async function runBunUtilitiesAudit() {
 	});
 
 	if (result.success) {
-		console.log(
+		console.info(
 			`\n${c.green}✅ All Bun utilities audit tests passed${c.reset}`,
 		);
 	} else {
-		console.log(`\n${c.red}❌ Some tests failed${c.reset}`);
+		console.info(`\n${c.red}❌ Some tests failed${c.reset}`);
 		process.exit(1);
 	}
 }
@@ -369,8 +369,8 @@ async function runBunUtilitiesAudit() {
  * 9.1.5.17.8.0.0: Watch mode
  */
 async function watchMode() {
-	console.log(`${c.cyan}${c.bold}👀 Starting watch mode...${c.reset}\n`);
-	console.log(`${c.dim}Press Ctrl+C to stop${c.reset}\n`);
+	console.info(`${c.cyan}${c.bold}👀 Starting watch mode...${c.reset}\n`);
+	console.info(`${c.dim}Press Ctrl+C to stop${c.reset}\n`);
 
 	// Use the enhanced CLI script for watch mode
 	const { spawn } = await import("bun");
@@ -392,12 +392,12 @@ async function runFullAudit(args: string[]) {
 	const bunxTools = new BunxAuditTools();
 	const orchestrator = new MainAuditOrchestrator();
 
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🚀 Running comprehensive documentation audit...${c.reset}\n`,
 	);
 
 	// 1. Internal audit
-	console.log(
+	console.info(
 		`${c.yellow}📊 Step 1: Internal documentation pattern audit${c.reset}`,
 	);
 	const internalResult = await orchestrator.hybridAudit({
@@ -413,35 +413,35 @@ async function runFullAudit(args: string[]) {
 		useWorkers,
 	});
 
-	console.log(
+	console.info(
 		`${c.green}✅ Internal audit completed: ${internalResult.totalMatches} matches, ${internalResult.totalOrphans} orphans${c.reset}\n`,
 	);
 
 	// 2. External tools (optional, can be skipped if tools not available)
-	console.log(`${c.yellow}🛠️  Step 2: External tool validation${c.reset}`);
+	console.info(`${c.yellow}🛠️  Step 2: External tool validation${c.reset}`);
 	try {
 		const toolsResult = await bunxTools.runComprehensiveAudit();
-		console.log(
+		console.info(
 			`${c.green}✅ External tools completed: ${toolsResult.tools} tools run${c.reset}\n`,
 		);
 
 		// 3. Generate combined report
-		console.log(`${c.yellow}📋 Step 3: Generating audit report${c.reset}`);
+		console.info(`${c.yellow}📋 Step 3: Generating audit report${c.reset}`);
 		const report = generateCombinedReport(internalResult, toolsResult);
 		const outputFile = `audit-report-${Date.now()}.md`;
 		await Bun.write(outputFile, report);
-		console.log(`${c.green}✅ Report written to ${outputFile}${c.reset}\n`);
+		console.info(`${c.green}✅ Report written to ${outputFile}${c.reset}\n`);
 
 		const success = internalResult.totalOrphans === 0 && toolsResult.success;
-		console.log(
+		console.info(
 			`${success ? c.green : c.red}🎉 Full audit completed!${c.reset}`,
 		);
 		process.exit(success ? 0 : 1);
 	} catch (error) {
-		console.log(
+		console.info(
 			`${c.yellow}⚠️  External tools not available, skipping...${c.reset}\n`,
 		);
-		console.log(`${c.green}🎉 Internal audit completed!${c.reset}`);
+		console.info(`${c.green}🎉 Internal audit completed!${c.reset}`);
 		const success = internalResult.totalOrphans === 0;
 		process.exit(success ? 0 : 1);
 	}
@@ -455,14 +455,14 @@ async function runToolsCommand(args: string[]) {
 	const tool = args[0];
 
 	if (!tool) {
-		console.log(`${c.cyan}Available tools:${c.reset}`);
-		console.log("  typedoc     - Generate TypeScript documentation");
-		console.log("  eslint      - Lint code and documentation");
-		console.log("  markdown    - Lint markdown files");
-		console.log("  prettier    - Format code and documentation");
-		console.log("  spellcheck  - Check spelling");
-		console.log("  links       - Check broken links");
-		console.log(`\n${c.dim}Usage: bun run audit tools <tool-name>${c.reset}`);
+		console.info(`${c.cyan}Available tools:${c.reset}`);
+		console.info("  typedoc     - Generate TypeScript documentation");
+		console.info("  eslint      - Lint code and documentation");
+		console.info("  markdown    - Lint markdown files");
+		console.info("  prettier    - Format code and documentation");
+		console.info("  spellcheck  - Check spelling");
+		console.info("  links       - Check broken links");
+		console.info(`\n${c.dim}Usage: bun run audit tools <tool-name>${c.reset}`);
 		return;
 	}
 
@@ -498,7 +498,7 @@ async function runCICommand(args: string[]) {
 	const orchestrator = new MainAuditOrchestrator();
 	const outputJSON = args.includes("--json");
 
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🏗️  Running CI/CD audit pipeline...${c.reset}\n`,
 	);
 
@@ -510,7 +510,7 @@ async function runCICommand(args: string[]) {
 	const duration = Date.now() - startTime;
 
 	if (outputJSON) {
-		console.log(
+		console.info(
 			JSON.stringify(
 				{
 					success: quickResult.success,
@@ -523,15 +523,15 @@ async function runCICommand(args: string[]) {
 			),
 		);
 	} else {
-		console.log(`${c.bold}CI Audit Results:${c.reset}`);
-		console.log(
+		console.info(`${c.bold}CI Audit Results:${c.reset}`);
+		console.info(
 			`✅ Pattern Audit: ${quickResult.orphanedDocs.length === 0 ? "PASS" : "FAIL"} (${quickResult.orphanedDocs.length} orphans)`,
 		);
-		console.log(
+		console.info(
 			`✅ Validation: ${quickResult.validation.status.toUpperCase()}`,
 		);
-		console.log(`⏱️  Duration: ${duration}ms`);
-		console.log(
+		console.info(`⏱️  Duration: ${duration}ms`);
+		console.info(
 			`🎯 Status: ${quickResult.success ? c.green + "ALL CHECKS PASSED" : c.red + "SOME CHECKS FAILED"}${c.reset}`,
 		);
 	}
@@ -545,11 +545,11 @@ async function runCICommand(args: string[]) {
 async function runGitCommand() {
 	const shell = new AuditShell();
 
-	console.log(`${c.cyan}${c.bold}📊 Auditing git changes...${c.reset}\n`);
+	console.info(`${c.cyan}${c.bold}📊 Auditing git changes...${c.reset}\n`);
 
 	const changes = await shell.getGitChanges();
 
-	console.log(`Found ${changes.length} changed files in last 24 hours\n`);
+	console.info(`Found ${changes.length} changed files in last 24 hours\n`);
 
 	// Audit only changed documentation/source files
 	const changedFiles = changes
@@ -557,7 +557,7 @@ async function runGitCommand() {
 		.filter((f) => f.endsWith(".ts") || f.endsWith(".md"));
 
 	if (changedFiles.length > 0) {
-		console.log(`🔍 Auditing ${changedFiles.length} changed files...\n`);
+		console.info(`🔍 Auditing ${changedFiles.length} changed files...\n`);
 
 		for (const file of changedFiles.slice(0, 20)) {
 			// Quick check using ripgrep
@@ -570,21 +570,21 @@ async function runGitCommand() {
 			]);
 
 			if (result.success) {
-				console.log(`${c.green}✅ ${file}${c.reset}`);
+				console.info(`${c.green}✅ ${file}${c.reset}`);
 			} else {
-				console.log(
+				console.info(
 					`${c.yellow}⚠️  ${file} - No version numbers found${c.reset}`,
 				);
 			}
 		}
 
 		if (changedFiles.length > 20) {
-			console.log(
+			console.info(
 				`\n${c.dim}... and ${changedFiles.length - 20} more files${c.reset}`,
 			);
 		}
 	} else {
-		console.log(`${c.dim}No relevant files changed${c.reset}`);
+		console.info(`${c.dim}No relevant files changed${c.reset}`);
 	}
 }
 
@@ -594,29 +594,29 @@ async function runGitCommand() {
 async function runFixCommand() {
 	const bunxTools = new BunxAuditTools();
 
-	console.log(
+	console.info(
 		`${c.cyan}${c.bold}🔧 Attempting to fix documentation issues...${c.reset}\n`,
 	);
 
 	try {
 		// 1. Fix formatting
-		console.log("1. Running Prettier...");
+		console.info("1. Running Prettier...");
 		await bunxTools.runPrettier({ write: true });
-		console.log(`${c.green}✅ Prettier completed${c.reset}\n`);
+		console.info(`${c.green}✅ Prettier completed${c.reset}\n`);
 
 		// 2. Fix markdown
-		console.log("2. Running MarkdownLint...");
+		console.info("2. Running MarkdownLint...");
 		await bunxTools.runMarkdownLint({ fix: true });
-		console.log(`${c.green}✅ MarkdownLint completed${c.reset}\n`);
+		console.info(`${c.green}✅ MarkdownLint completed${c.reset}\n`);
 
-		console.log(
+		console.info(
 			`${c.green}✅ Fixes applied. Re-run audit to verify.${c.reset}`,
 		);
 	} catch (error) {
-		console.log(
+		console.info(
 			`${c.yellow}⚠️  Some fixes may have failed (tools may not be installed)${c.reset}`,
 		);
-		console.log(
+		console.info(
 			`${c.dim}Install tools via: bunx prettier, bunx markdownlint-cli2${c.reset}`,
 		);
 	}
@@ -671,7 +671,7 @@ async function main(): Promise<void> {
 	const [cmd, ...rest] = args;
 
 	if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-		console.log(HELP);
+		console.info(HELP);
 		return;
 	}
 
@@ -733,7 +733,7 @@ async function main(): Promise<void> {
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

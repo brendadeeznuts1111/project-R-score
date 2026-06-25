@@ -1,5 +1,1 @@
-export {
-  type PackageInfo,
-  type PackageDependencyGraph,
-  PackageManager,
-} from './package-manager';
+export { type PackageInfo, type PackageDependencyGraph, PackageManager } from './package-manager';

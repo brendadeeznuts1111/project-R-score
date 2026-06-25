@@ -59,7 +59,7 @@ class MockShortcutRegistry {
   private emitter: EventEmitter = new EventEmitter();
 
   constructor() {
-    console.log('🚀 Initializing Enhanced ShortcutRegistry with Bun...');
+    console.info('🚀 Initializing Enhanced ShortcutRegistry with Bun...');
   }
 
   register(config: any): void {
@@ -68,17 +68,17 @@ class MockShortcutRegistry {
       throw new Error('Shortcut must have id, action, and description');
     }
     
-    console.log(`📝 Registering shortcut: ${config.id} - ${config.description}`);
+    console.info(`📝 Registering shortcut: ${config.id} - ${config.description}`);
     this.shortcuts.set(config.id, config);
     this.emitter.emit('shortcut:registered', config);
-    console.log(`✅ Registered: ${config.id}`);
+    console.info(`✅ Registered: ${config.id}`);
   }
 
   createProfile(name: string, description: string): any {
     const id = `profile_${Date.now()}`;
     const profile = { id, name, description, overrides: {}, enabled: true, locked: false };
     this.profiles.set(id, profile);
-    console.log(`👤 Created profile: ${name}`);
+    console.info(`👤 Created profile: ${name}`);
     this.emitter.emit('profile:created', profile);
     return profile;
   }
@@ -87,7 +87,7 @@ class MockShortcutRegistry {
     if (this.profiles.has(profileId)) {
       const previous = this.activeProfile;
       this.activeProfile = profileId;
-      console.log(`🔄 Active profile changed: ${previous} → ${profileId}`);
+      console.info(`🔄 Active profile changed: ${previous} → ${profileId}`);
       this.emitter.emit('profile:changed', { previous, current: profileId });
     }
   }
@@ -115,7 +115,7 @@ class MockShortcutRegistry {
   trigger(shortcutId: string, context: any = {}): boolean {
     const shortcut = this.shortcuts.get(shortcutId);
     if (!shortcut) {
-      console.log(`❌ Shortcut not found: ${shortcutId}`);
+      console.info(`❌ Shortcut not found: ${shortcutId}`);
       return false;
     }
 
@@ -130,13 +130,13 @@ class MockShortcutRegistry {
       lastUsed: new Date()
     });
 
-    console.log(`⚡ Triggered: ${shortcutId} (${shortcut.description})`);
+    console.info(`⚡ Triggered: ${shortcutId} (${shortcut.description})`);
     this.emitter.emit('shortcut:triggered', { shortcut, context, timestamp: Date.now() });
     return true;
   }
 
   async registerBatch(configs: any[]): Promise<void> {
-    console.log(`📦 Batch registering ${configs.length} shortcuts...`);
+    console.info(`📦 Batch registering ${configs.length} shortcuts...`);
     const startTime = performance.now();
     
     for (const config of configs) {
@@ -144,7 +144,7 @@ class MockShortcutRegistry {
     }
     
     const batchTime = performance.now() - startTime;
-    console.log(`✅ Batch completed in ${batchTime.toFixed(2)}ms`);
+    console.info(`✅ Batch completed in ${batchTime.toFixed(2)}ms`);
     this.emitter.emit('batch:registered', { count: configs.length, batchTime });
   }
 
@@ -259,7 +259,7 @@ class MockShortcutRegistry {
   }
 
   async dispose(): Promise<void> {
-    console.log('🧹 Cleaning up registry...');
+    console.info('🧹 Cleaning up registry...');
     
     // Clear all collections
     this.shortcuts.clear();
@@ -272,7 +272,7 @@ class MockShortcutRegistry {
     // Remove all listeners
     this.emitter.removeAllListeners();
     
-    console.log('✅ Registry disposed');
+    console.info('✅ Registry disposed');
     this.emitter.emit('disposed');
   }
 
@@ -307,26 +307,26 @@ class MockShortcutRegistry {
 
 // Enhanced demonstration with Bun
 async function demonstrateRegistry() {
-  console.log('🚀 Starting Enhanced ShortcutRegistry Demo (Bun Version)...\n');
+  console.info('🚀 Starting Enhanced ShortcutRegistry Demo (Bun Version)...\n');
 
   const registry = new MockShortcutRegistry();
 
   // Set up event listeners
   registry.on('shortcut:registered', (config) => {
-    console.log(`📝 Event: Registered ${config.id}`);
+    console.info(`📝 Event: Registered ${config.id}`);
   });
 
   registry.on('profile:created', (profile) => {
-    console.log(`👤 Event: Created profile ${profile.name}`);
+    console.info(`👤 Event: Created profile ${profile.name}`);
   });
 
   registry.on('shortcut:triggered', (data) => {
-    console.log(`⚡ Event: Triggered ${data.shortcut.id}`);
+    console.info(`⚡ Event: Triggered ${data.shortcut.id}`);
   });
 
   try {
     // 1. Register individual shortcuts
-    console.log('📝 Registering shortcuts individually...');
+    console.info('📝 Registering shortcuts individually...');
     
     const shortcuts = [
       {
@@ -362,10 +362,10 @@ async function demonstrateRegistry() {
       registry.register(shortcut);
     }
 
-    console.log(`✅ Registered ${shortcuts.length} shortcuts\n`);
+    console.info(`✅ Registered ${shortcuts.length} shortcuts\n`);
 
     // 2. Batch register more shortcuts
-    console.log('📦 Batch registering shortcuts...');
+    console.info('📦 Batch registering shortcuts...');
     
     const batchShortcuts = [
       {
@@ -398,94 +398,94 @@ async function demonstrateRegistry() {
     ];
 
     await registry.registerBatch(batchShortcuts);
-    console.log();
+    console.info();
 
     // 3. Create and manage profiles
-    console.log('👤 Creating and managing profiles...');
+    console.info('👤 Creating and managing profiles...');
     const devProfile = registry.createProfile('Developer', 'Optimized for development');
     const designerProfile = registry.createProfile('Designer', 'Optimized for design work');
     
     registry.setActiveProfile(devProfile.id);
-    console.log();
+    console.info();
 
     // 4. Advanced search
-    console.log('🔍 Advanced search demonstration...');
+    console.info('🔍 Advanced search demonstration...');
     const saveResults = registry.searchShortcuts('save', { category: 'general' });
-    console.log(`Found ${saveResults.length} shortcuts matching 'save' in category 'general':`);
-    saveResults.forEach(s => console.log(`  - ${s.id}: ${s.description}`));
+    console.info(`Found ${saveResults.length} shortcuts matching 'save' in category 'general':`);
+    saveResults.forEach(s => console.info(`  - ${s.id}: ${s.description}`));
     
     const enabledShortcuts = registry.searchShortcuts('', { enabled: true });
-    console.log(`\nTotal enabled shortcuts: ${enabledShortcuts.length}`);
-    console.log();
+    console.info(`\nTotal enabled shortcuts: ${enabledShortcuts.length}`);
+    console.info();
 
     // 5. Comprehensive statistics
-    console.log('📊 Comprehensive Statistics:');
+    console.info('📊 Comprehensive Statistics:');
     const stats = registry.getStatistics();
-    console.log(`  Shortcuts: ${stats.shortcuts.total} total, ${stats.shortcuts.enabled} enabled`);
-    console.log(`  Categories: ${Object.keys(stats.shortcuts.byCategory).join(', ')}`);
-    console.log(`  Profiles: ${stats.profiles.total} total, active: ${stats.profiles.active}`);
-    console.log(`  Usage: ${stats.usage.totalTriggers} total triggers`);
-    console.log(`  Most used: ${stats.usage.mostUsed}`);
-    console.log();
+    console.info(`  Shortcuts: ${stats.shortcuts.total} total, ${stats.shortcuts.enabled} enabled`);
+    console.info(`  Categories: ${Object.keys(stats.shortcuts.byCategory).join(', ')}`);
+    console.info(`  Profiles: ${stats.profiles.total} total, active: ${stats.profiles.active}`);
+    console.info(`  Usage: ${stats.usage.totalTriggers} total triggers`);
+    console.info(`  Most used: ${stats.usage.mostUsed}`);
+    console.info();
 
     // 6. Health check with detailed info
-    console.log('🏥 Detailed Health Check:');
+    console.info('🏥 Detailed Health Check:');
     const health = await registry.healthCheck();
-    console.log(`  Overall Status: ${health.status}`);
+    console.info(`  Overall Status: ${health.status}`);
     Object.entries(health.checks).forEach(([name, check]: [string, any]) => {
-      console.log(`  ${name}: ${check.status}${check.count ? ` (${check.count})` : ''}`);
+      console.info(`  ${name}: ${check.status}${check.count ? ` (${check.count})` : ''}`);
     });
-    console.log();
+    console.info();
 
     // 7. Performance metrics
-    console.log('⚡ Performance Metrics:');
+    console.info('⚡ Performance Metrics:');
     const metrics = registry.getMetrics();
-    console.log(`  Uptime: ${Math.round(metrics.uptime / 1000)}s`);
-    console.log(`  Total Triggers: ${Object.keys(metrics.triggers).length}`);
-    console.log(`  Cache Size: ${metrics.cache.size}`);
-    console.log(`  Conflicts: ${metrics.conflicts}`);
-    console.log(`  Errors: ${metrics.errors}`);
-    console.log();
+    console.info(`  Uptime: ${Math.round(metrics.uptime / 1000)}s`);
+    console.info(`  Total Triggers: ${Object.keys(metrics.triggers).length}`);
+    console.info(`  Cache Size: ${metrics.cache.size}`);
+    console.info(`  Conflicts: ${metrics.conflicts}`);
+    console.info(`  Errors: ${metrics.errors}`);
+    console.info();
 
     // 8. Trigger shortcuts with metrics
-    console.log('⚡ Triggering shortcuts with metrics collection...');
+    console.info('⚡ Triggering shortcuts with metrics collection...');
     registry.trigger('save_file', { scope: 'editor' });
     registry.trigger('copy', { scope: 'editor' });
     registry.trigger('paste', { scope: 'editor' });
     registry.trigger('save_file', { scope: 'editor' }); // Trigger again to show usage
-    console.log();
+    console.info();
 
     // 9. Export with comprehensive data
-    console.log('💾 Exporting comprehensive configuration...');
+    console.info('💾 Exporting comprehensive configuration...');
     const exportedData = await registry.exportAllData();
-    console.log(`Export Summary:`);
-    console.log(`  Version: ${exportedData.version}`);
-    console.log(`  Shortcuts: ${exportedData.shortcuts.length}`);
-    console.log(`  Profiles: ${exportedData.profiles.length}`);
-    console.log(`  Exported at: ${exportedData.exportedAt}`);
-    console.log();
+    console.info(`Export Summary:`);
+    console.info(`  Version: ${exportedData.version}`);
+    console.info(`  Shortcuts: ${exportedData.shortcuts.length}`);
+    console.info(`  Profiles: ${exportedData.profiles.length}`);
+    console.info(`  Exported at: ${exportedData.exportedAt}`);
+    console.info();
 
     // 10. Debug information
-    console.log('🐛 Debug Information:');
+    console.info('🐛 Debug Information:');
     const debugInfo = registry.debugInfo();
-    console.log(`  Version: ${debugInfo.version}`);
-    console.log(`  Runtime: ${debugInfo.runtime}`);
-    console.log(`  Platform: ${debugInfo.platform}`);
-    console.log(`  Shortcuts: ${debugInfo.shortcuts}`);
-    console.log(`  Profiles: ${debugInfo.profiles}`);
-    console.log(`  Uptime: ${Math.round(debugInfo.uptime / 1000)}s`);
-    console.log();
+    console.info(`  Version: ${debugInfo.version}`);
+    console.info(`  Runtime: ${debugInfo.runtime}`);
+    console.info(`  Platform: ${debugInfo.platform}`);
+    console.info(`  Shortcuts: ${debugInfo.shortcuts}`);
+    console.info(`  Profiles: ${debugInfo.profiles}`);
+    console.info(`  Uptime: ${Math.round(debugInfo.uptime / 1000)}s`);
+    console.info();
 
     // 11. Final statistics after usage
-    console.log('📈 Final Statistics After Usage:');
+    console.info('📈 Final Statistics After Usage:');
     const finalStats = registry.getStatistics();
-    console.log(`  Total Triggers: ${finalStats.usage.totalTriggers}`);
-    console.log(`  Most Used Shortcut: ${finalStats.usage.mostUsed}`);
-    console.log(`  Least Used Shortcut: ${finalStats.usage.leastUsed}`);
-    console.log();
+    console.info(`  Total Triggers: ${finalStats.usage.totalTriggers}`);
+    console.info(`  Most Used Shortcut: ${finalStats.usage.mostUsed}`);
+    console.info(`  Least Used Shortcut: ${finalStats.usage.leastUsed}`);
+    console.info();
 
-    console.log('🎉 Enhanced ShortcutRegistry demo completed successfully!');
-    console.log('💡 All features demonstrated: caching, batch operations, metrics, health checks, and more!');
+    console.info('🎉 Enhanced ShortcutRegistry demo completed successfully!');
+    console.info('💡 All features demonstrated: caching, batch operations, metrics, health checks, and more!');
 
   } catch (error) {
     console.error('❌ Error during demo:', error instanceof Error ? error.message : String(error));

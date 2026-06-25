@@ -115,7 +115,7 @@ class SecretsManager {
     this.secrets.set(key, entry);
     this.saveSecrets();
 
-    console.log(`🔄 Rotated secret: ${key}`);
+    console.info(`🔄 Rotated secret: ${key}`);
     return true;
   }
 
@@ -303,24 +303,24 @@ if (import.meta.main) {
       const value = process.argv[4];
       const expires = process.argv[5] ? parseInt(process.argv[5]) : undefined;
       if (!key || !value) {
-        console.log('Usage: bun secrets-manager.ts set <key> <value> [expiresDays]');
+        console.info('Usage: bun secrets-manager.ts set <key> <value> [expiresDays]');
         process.exit(1);
       }
       sm.setSecret(key, value, expires);
-      console.log(`✅ Set secret: ${key}`);
+      console.info(`✅ Set secret: ${key}`);
       break;
 
     case 'get':
       const getKey = process.argv[3];
       if (!getKey) {
-        console.log('Usage: bun secrets-manager.ts get <key>');
+        console.info('Usage: bun secrets-manager.ts get <key>');
         process.exit(1);
       }
       const secret = sm.getSecret(getKey);
       if (secret) {
-        console.log(secret);
+        console.info(secret);
       } else {
-        console.log(`❌ Secret ${getKey} not found or expired`);
+        console.info(`❌ Secret ${getKey} not found or expired`);
         process.exit(1);
       }
       break;
@@ -328,21 +328,21 @@ if (import.meta.main) {
     case 'rotate':
       const rotateKey = process.argv[3];
       if (!rotateKey) {
-        console.log('Usage: bun secrets-manager.ts rotate <key>');
+        console.info('Usage: bun secrets-manager.ts rotate <key>');
         process.exit(1);
       }
       const rotated = sm.rotateSecret(rotateKey);
       if (rotated) {
-        console.log(`✅ Rotated secret: ${rotateKey}`);
+        console.info(`✅ Rotated secret: ${rotateKey}`);
       } else {
-        console.log(`❌ Failed to rotate secret: ${rotateKey}`);
+        console.info(`❌ Failed to rotate secret: ${rotateKey}`);
         process.exit(1);
       }
       break;
 
     case 'rotate-all':
       const rotatedCount = sm.rotateAllSecrets();
-      console.log(`✅ Rotated ${rotatedCount} secrets`);
+      console.info(`✅ Rotated ${rotatedCount} secrets`);
       break;
 
     case 'jwt-generate':
@@ -350,25 +350,25 @@ if (import.meta.main) {
       const role = process.argv[4];
       const expiresHours = process.argv[5] ? parseInt(process.argv[5]) : 2;
       if (!userId || !role) {
-        console.log('Usage: bun secrets-manager.ts jwt-generate <userId> <role> [expiresHours]');
+        console.info('Usage: bun secrets-manager.ts jwt-generate <userId> <role> [expiresHours]');
         process.exit(1);
       }
       const token = sm.generateJWT(userId, role, expiresHours);
-      console.log(token);
+      console.info(token);
       break;
 
     case 'jwt-verify':
       const jwtToken = process.argv[3];
       if (!jwtToken) {
-        console.log('Usage: bun secrets-manager.ts jwt-verify <token>');
+        console.info('Usage: bun secrets-manager.ts jwt-verify <token>');
         process.exit(1);
       }
       const payload = sm.verifyJWT(jwtToken);
       if (payload) {
-        console.log(`✅ Valid JWT for user ${payload.userId} (${payload.role})`);
-        console.log(`Expires: ${new Date(payload.exp * 1000).toISOString()}`);
+        console.info(`✅ Valid JWT for user ${payload.userId} (${payload.role})`);
+        console.info(`Expires: ${new Date(payload.exp * 1000).toISOString()}`);
       } else {
-        console.log('❌ Invalid or expired JWT');
+        console.info('❌ Invalid or expired JWT');
         process.exit(1);
       }
       break;
@@ -377,15 +377,15 @@ if (import.meta.main) {
       const event = process.argv[3];
       const eventData = process.argv[4] || '{}';
       if (!event) {
-        console.log('Usage: bun secrets-manager.ts audit-log <event> [data]');
+        console.info('Usage: bun secrets-manager.ts audit-log <event> [data]');
         process.exit(1);
       }
       try {
         const parsedData = JSON.parse(eventData);
         sm.logImmutable(event, parsedData);
-        console.log(`✅ Logged audit event: ${event}`);
+        console.info(`✅ Logged audit event: ${event}`);
       } catch (error) {
-        console.log(`❌ Failed to parse event data: ${error}`);
+        console.info(`❌ Failed to parse event data: ${error}`);
         process.exit(1);
       }
       break;
@@ -393,22 +393,22 @@ if (import.meta.main) {
     case 'audit-verify':
       const date = process.argv[3] || new Date().toISOString().split('T')[0];
       const isValid = sm.verifyAuditIntegrity(date);
-      console.log(`Audit integrity for ${date}: ${isValid ? '✅ VALID' : '❌ TAMPERED'}`);
+      console.info(`Audit integrity for ${date}: ${isValid ? '✅ VALID' : '❌ TAMPERED'}`);
       if (!isValid) {
         process.exit(1);
       }
       break;
 
     default:
-      console.log('Available commands:');
-      console.log('  set <key> <value> [expiresDays] - Set a secret');
-      console.log('  get <key>                        - Get a secret');
-      console.log('  rotate <key>                     - Rotate a specific secret');
-      console.log('  rotate-all                       - Rotate all old secrets');
-      console.log('  jwt-generate <userId> <role> [hours] - Generate JWT token');
-      console.log('  jwt-verify <token>               - Verify JWT token');
-      console.log('  audit-log <event> [data]         - Log immutable audit event');
-      console.log('  audit-verify [date]              - Verify audit integrity');
+      console.info('Available commands:');
+      console.info('  set <key> <value> [expiresDays] - Set a secret');
+      console.info('  get <key>                        - Get a secret');
+      console.info('  rotate <key>                     - Rotate a specific secret');
+      console.info('  rotate-all                       - Rotate all old secrets');
+      console.info('  jwt-generate <userId> <role> [hours] - Generate JWT token');
+      console.info('  jwt-verify <token>               - Verify JWT token');
+      console.info('  audit-log <event> [data]         - Log immutable audit event');
+      console.info('  audit-verify [date]              - Verify audit integrity');
   }
 }
 

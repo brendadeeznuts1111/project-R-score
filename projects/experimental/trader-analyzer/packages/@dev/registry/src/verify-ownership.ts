@@ -136,7 +136,7 @@ if (import.meta.main) {
 	verifyOwnership(packageName)
 		.then((hasAccess) => {
 			if (hasAccess) {
-				console.log(`✅ Verified ownership for ${packageName}`);
+				console.info(`✅ Verified ownership for ${packageName}`);
 				process.exit(0);
 			} else {
 				console.error(`❌ No ownership verified for ${packageName}`);

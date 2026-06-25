@@ -185,7 +185,7 @@ export class ColorDocumentationURLBuilder {
 // ============================================================================
 
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Bun.color() Documentation v1.0                           ║
 ║  API: Bun.color(input, outputFormat?)                     ║

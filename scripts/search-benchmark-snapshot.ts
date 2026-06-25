@@ -150,7 +150,7 @@ function buildRssFeed(
   const channelDescription = 'Snapshot updates for search benchmark quality profiles.';
   const lastBuildDate = toRfc822(index.updatedAt);
 
-  const items = index.snapshots.slice(0, 50).map((snap) => {
+  const items = index.snapshots.slice(0, 50).map(snap => {
     const jsonKey = snap.r2JsonKey || `${opts.prefix}/${snap.id}/snapshot.json`;
     const summaryKey = snap.r2MdKey || `${opts.prefix}/${snap.id}/summary.md`;
     const itemLink = opts.publicBase
@@ -433,10 +433,14 @@ function snapshotMetrics(payload: BenchmarkPayload): {
     familyCoverage: top ? Number(Number(top.avgUniqueFamilyPct || 0).toFixed(2)) : null,
     avgSlop: averageSlop(payload),
     noiseRatio: top
-      ? Number(Math.min(100, Number(top.avgSlopPct || 0) + Number(top.avgDuplicatePct || 0)).toFixed(2))
+      ? Number(
+          Math.min(100, Number(top.avgSlopPct || 0) + Number(top.avgDuplicatePct || 0)).toFixed(2)
+        )
       : null,
     reliability: top
-      ? Number((((Number(top.avgSignalPct || 0) * Number(top.avgUniqueFamilyPct || 0)) / 100)).toFixed(2))
+      ? Number(
+          ((Number(top.avgSignalPct || 0) * Number(top.avgUniqueFamilyPct || 0)) / 100).toFixed(2)
+        )
       : null,
   };
 }
@@ -471,14 +475,16 @@ function profileById(payload: BenchmarkPayload | null, id: string): RankedProfil
   if (!payload || !Array.isArray(payload.rankedProfiles)) {
     return null;
   }
-  return payload.rankedProfiles.find((p) => p.profile === id) || null;
+  return payload.rankedProfiles.find(p => p.profile === id) || null;
 }
 
 function profileReliability(profile: RankedProfile | null): number | null {
   if (!profile) {
     return null;
   }
-  return Number((((Number(profile.avgSignalPct || 0) * Number(profile.avgUniqueFamilyPct || 0)) / 100)).toFixed(2));
+  return Number(
+    ((Number(profile.avgSignalPct || 0) * Number(profile.avgUniqueFamilyPct || 0)) / 100).toFixed(2)
+  );
 }
 
 function runClassForQueryPack(queryPack: string): 'core-iterative' | 'daily-coverage' | 'ad-hoc' {
@@ -550,7 +556,9 @@ export function renderSummaryMarkdown(
   lines.push('');
   lines.push(`## Ranked Profiles`);
   lines.push('');
-  lines.push(`| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% | P95(ms) | Peak Heap(MB) | Peak RSS(MB) |`);
+  lines.push(
+    `| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% | P95(ms) | Peak Heap(MB) | Peak RSS(MB) |`
+  );
   lines.push(`|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|`);
 
   payload.rankedProfiles.forEach((p, idx) => {
@@ -582,7 +590,8 @@ function resolveR2Config(options: CliOptions): R2Config | null {
   const accountId = Bun.env.R2_ACCOUNT_ID || '';
   const endpoint =
     Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
-  const bucket = options.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
+  const bucket =
+    options.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
   const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
   const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
   const prefix = options.prefix.replace(/^\/+|\/+$/g, '');
@@ -651,7 +660,7 @@ async function uploadWithRetry(
       if (attempt > retries) {
         throw error;
       }
-      const delayMs = Math.min(5000, 250 * (2 ** (attempt - 1)));
+      const delayMs = Math.min(5000, 250 * 2 ** (attempt - 1));
       await Bun.sleep(delayMs);
     }
   }
@@ -669,7 +678,9 @@ export async function main(): Promise<void> {
   const deltaBasis: DeltaBasis = 'same-pack';
   let previousPayload: BenchmarkPayload | null = null;
   let baselineSnapshotId: string | null = null;
-  const previousEntry = existingIndex.snapshots.find((s) => (s.queryPack || 'core_delivery') === queryPack);
+  const previousEntry = existingIndex.snapshots.find(
+    s => (s.queryPack || 'core_delivery') === queryPack
+  );
   const previousSnapshotId = previousEntry?.id || null;
   if (previousSnapshotId) {
     baselineSnapshotId = previousSnapshotId;
@@ -697,7 +708,7 @@ export async function main(): Promise<void> {
       const { profile } = await session.post('Profiler.stop');
       await session.post('Profiler.disable');
       await writeFile(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
-      console.log(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
+      console.info(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
       return result;
     } finally {
       session.disconnect();
@@ -864,16 +875,16 @@ export async function main(): Promise<void> {
   });
   await writeFile(rssPath, localRssText);
 
-  console.log(`[search-bench:snapshot] wrote ${snapshotJsonPath}`);
-  console.log(`[search-bench:snapshot] wrote ${summaryMdPath}`);
-  console.log(`[search-bench:snapshot] wrote ${latestJsonPath}`);
-  console.log(`[search-bench:snapshot] wrote ${indexPath}`);
-  console.log(`[search-bench:snapshot] wrote ${rssPath}`);
+  console.info(`[search-bench:snapshot] wrote ${snapshotJsonPath}`);
+  console.info(`[search-bench:snapshot] wrote ${summaryMdPath}`);
+  console.info(`[search-bench:snapshot] wrote ${latestJsonPath}`);
+  console.info(`[search-bench:snapshot] wrote ${indexPath}`);
+  console.info(`[search-bench:snapshot] wrote ${rssPath}`);
 
   if (!options.upload) {
     await writeFile(manifestPath, JSON.stringify(baseManifest, null, 2));
-    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
-    console.log('[search-bench:snapshot] upload disabled (--no-upload)');
+    console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
+    console.info('[search-bench:snapshot] upload disabled (--no-upload)');
     return;
   }
 
@@ -890,9 +901,11 @@ export async function main(): Promise<void> {
         2
       )
     );
-    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
-    console.log('[search-bench:snapshot] R2 config missing; skipped upload');
-    console.log('[search-bench:snapshot] required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME (or R2_BUCKET), plus R2_ACCOUNT_ID or R2_ENDPOINT');
+    console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
+    console.info('[search-bench:snapshot] R2 config missing; skipped upload');
+    console.info(
+      '[search-bench:snapshot] required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME (or R2_BUCKET), plus R2_ACCOUNT_ID or R2_ENDPOINT'
+    );
     return;
   }
 
@@ -1019,13 +1032,27 @@ export async function main(): Promise<void> {
   if (options.gzip) {
     const key = `${indexKey}.gz`;
     const stat = await uploadWithRetry(
-      () => uploadTextEncoded(r2, key, Bun.gzipSync(encoder.encode(indexJsonText)), 'application/json', 'gzip'),
+      () =>
+        uploadTextEncoded(
+          r2,
+          key,
+          Bun.gzipSync(encoder.encode(indexJsonText)),
+          'application/json',
+          'gzip'
+        ),
       options.uploadRetries
     );
     pushStat(key, stat);
     const rssGzKey = `${rssKey}.gz`;
     const rssGzStat = await uploadWithRetry(
-      () => uploadTextEncoded(r2, rssGzKey, Bun.gzipSync(encoder.encode(rssText)), 'application/rss+xml', 'gzip'),
+      () =>
+        uploadTextEncoded(
+          r2,
+          rssGzKey,
+          Bun.gzipSync(encoder.encode(rssText)),
+          'application/rss+xml',
+          'gzip'
+        ),
       options.uploadRetries
     );
     pushStat(rssGzKey, rssGzStat);
@@ -1052,7 +1079,7 @@ export async function main(): Promise<void> {
     mode: 'uploaded',
   };
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
-  console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
+  console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
 
   const manifestText = JSON.stringify(manifest, null, 2);
   const manifestStat = await uploadWithRetry(
@@ -1063,7 +1090,14 @@ export async function main(): Promise<void> {
   if (options.gzip) {
     const key = `${manifestKey}.gz`;
     const stat = await uploadWithRetry(
-      () => uploadTextEncoded(r2, key, Bun.gzipSync(encoder.encode(manifestText)), 'application/json', 'gzip'),
+      () =>
+        uploadTextEncoded(
+          r2,
+          key,
+          Bun.gzipSync(encoder.encode(manifestText)),
+          'application/json',
+          'gzip'
+        ),
       options.uploadRetries
     );
     pushStat(key, stat);
@@ -1071,18 +1105,18 @@ export async function main(): Promise<void> {
 
   if (r2.publicBase) {
     const pub = r2.publicBase.replace(/\/+$/g, '');
-    console.log(`[search-bench:snapshot] uploaded ${pub}/${id}/snapshot.json`);
-    console.log(`[search-bench:snapshot] uploaded ${pub}/${id}/summary.md`);
-    console.log(`[search-bench:snapshot] latest ${pub}/latest.json`);
-    console.log(`[search-bench:snapshot] index ${pub}/index.json`);
+    console.info(`[search-bench:snapshot] uploaded ${pub}/${id}/snapshot.json`);
+    console.info(`[search-bench:snapshot] uploaded ${pub}/${id}/summary.md`);
+    console.info(`[search-bench:snapshot] latest ${pub}/latest.json`);
+    console.info(`[search-bench:snapshot] index ${pub}/index.json`);
   } else {
-    console.log(`[search-bench:snapshot] uploaded bucket=${r2.bucket}`);
-    console.log(`[search-bench:snapshot] snapshot key=${snapshotKey}`);
-    console.log(`[search-bench:snapshot] summary key=${summaryKey}`);
-    console.log(`[search-bench:snapshot] latest key=${latestJsonKey}`);
-    console.log(`[search-bench:snapshot] index key=${indexKey}`);
+    console.info(`[search-bench:snapshot] uploaded bucket=${r2.bucket}`);
+    console.info(`[search-bench:snapshot] snapshot key=${snapshotKey}`);
+    console.info(`[search-bench:snapshot] summary key=${summaryKey}`);
+    console.info(`[search-bench:snapshot] latest key=${latestJsonKey}`);
+    console.info(`[search-bench:snapshot] index key=${indexKey}`);
     if (options.gzip) {
-      console.log(`[search-bench:snapshot] gzip variants enabled (.gz)`);
+      console.info(`[search-bench:snapshot] gzip variants enabled (.gz)`);
     }
   }
 }

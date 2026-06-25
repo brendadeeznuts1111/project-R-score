@@ -16,8 +16,8 @@ class InfrastructureValidator {
   private warnings: string[] = [];
 
   async validate(): Promise<void> {
-    console.log('🔍 INFRASTRUCTURE FEATURE FLAG VALIDATION');
-    console.log('='.repeat(50));
+    console.info('🔍 INFRASTRUCTURE FEATURE FLAG VALIDATION');
+    console.info('='.repeat(50));
 
     // Validate feature flag definitions
     await this.validateFeatureFlagDefinitions();
@@ -33,10 +33,10 @@ class InfrastructureValidator {
   }
 
   private async validateFeatureFlagDefinitions(): Promise<void> {
-    console.log('\n📋 Validating feature flag definitions...');
+    console.info('\n📋 Validating feature flag definitions...');
 
     const allFlags = FeatureFlagValidator.getAllValidFlags();
-    console.log(`✅ Found ${allFlags.length} valid feature flags`);
+    console.info(`✅ Found ${allFlags.length} valid feature flags`);
 
     // Check for duplicates
     const duplicates = allFlags.filter((flag, index) => allFlags.indexOf(flag) !== index);
@@ -52,11 +52,11 @@ class InfrastructureValidator {
         }
       }
     }
-    console.log(`✅ All ${Object.keys(INFRASTRUCTURE_FEATURE_GROUPS).length} feature groups validated`);
+    console.info(`✅ All ${Object.keys(INFRASTRUCTURE_FEATURE_GROUPS).length} feature groups validated`);
   }
 
   private async validateSourceCode(): Promise<void> {
-    console.log('\n🔍 Scanning source code for feature flag usage...');
+    console.info('\n🔍 Scanning source code for feature flag usage...');
 
     const files = this.getAllSourceFiles(SOURCE_DIR);
     let featureUsageCount = 0;
@@ -94,12 +94,12 @@ class InfrastructureValidator {
       }
     }
 
-    console.log(`✅ Scanned ${files.length} source files`);
-    console.log(`✅ Found ${featureUsageCount} feature flag usages`);
+    console.info(`✅ Scanned ${files.length} source files`);
+    console.info(`✅ Found ${featureUsageCount} feature flag usages`);
   }
 
   private async validateBuildConfigurations(): Promise<void> {
-    console.log('\n🏗️ Validating build configurations...');
+    console.info('\n🏗️ Validating build configurations...');
 
     // Check if package.json has feature-related scripts
     try {
@@ -114,7 +114,7 @@ class InfrastructureValidator {
         this.warnings.push('No build scripts found in package.json');
       }
 
-      console.log(`✅ Found ${buildScripts.length} build-related scripts`);
+      console.info(`✅ Found ${buildScripts.length} build-related scripts`);
     } catch (error) {
       this.errors.push('Failed to read package.json');
     }
@@ -143,24 +143,24 @@ class InfrastructureValidator {
   }
 
   private reportResults(): void {
-    console.log('\n📊 VALIDATION RESULTS');
-    console.log('='.repeat(50));
+    console.info('\n📊 VALIDATION RESULTS');
+    console.info('='.repeat(50));
 
     if (this.errors.length === 0 && this.warnings.length === 0) {
-      console.log('🎉 ALL VALIDATIONS PASSED!');
-      console.log('✅ Feature flags are properly defined and used');
-      console.log('✅ No compilation errors detected');
-      console.log('✅ Build configurations are valid');
-      console.log('\n🚀 Infrastructure is ready for zero-cost builds!');
+      console.info('🎉 ALL VALIDATIONS PASSED!');
+      console.info('✅ Feature flags are properly defined and used');
+      console.info('✅ No compilation errors detected');
+      console.info('✅ Build configurations are valid');
+      console.info('\n🚀 Infrastructure is ready for zero-cost builds!');
     } else {
       if (this.errors.length > 0) {
-        console.log('\n❌ ERRORS FOUND:');
-        this.errors.forEach(error => console.log(`  • ${error}`));
+        console.info('\n❌ ERRORS FOUND:');
+        this.errors.forEach(error => console.info(`  • ${error}`));
       }
 
       if (this.warnings.length > 0) {
-        console.log('\n⚠️  WARNINGS:');
-        this.warnings.forEach(warning => console.log(`  • ${warning}`));
+        console.info('\n⚠️  WARNINGS:');
+        this.warnings.forEach(warning => console.info(`  • ${warning}`));
       }
     }
 
@@ -172,11 +172,11 @@ class InfrastructureValidator {
       warnings: this.warnings.length
     };
 
-    console.log('\n📈 SUMMARY STATISTICS');
-    console.log(`  • Total Feature Flags: ${stats.totalFlags}`);
-    console.log(`  • Feature Groups: ${stats.totalGroups}`);
-    console.log(`  • Errors: ${stats.errors}`);
-    console.log(`  • Warnings: ${stats.warnings}`);
+    console.info('\n📈 SUMMARY STATISTICS');
+    console.info(`  • Total Feature Flags: ${stats.totalFlags}`);
+    console.info(`  • Feature Groups: ${stats.totalGroups}`);
+    console.info(`  • Errors: ${stats.errors}`);
+    console.info(`  • Warnings: ${stats.warnings}`);
 
     // Exit with appropriate code
     process.exit(this.errors.length > 0 ? 1 : 0);

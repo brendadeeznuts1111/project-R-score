@@ -46,7 +46,7 @@ const DEFAULT_CONFIG: CookieConfig = {
 async function loadConfig(): Promise<CookieConfig> {
   const env = Bun.env.NODE_ENV || 'development';
   try {
-    const mod = await import(`../../configs/cookie-crc32/${env}.yaml`);
+    const mod = await import(`../../config/cookie-crc32/${env}.yaml`);
     const yaml = mod.default as Partial<CookieConfig>;
     // Deep merge with defaults so missing keys don't break
     return {
@@ -95,7 +95,7 @@ function assertCol89(text: string, context = "output"): void {
 function print(text: string): void {
   const wrapped = col89(text);
   assertCol89(wrapped, "print");
-  console.log(wrapped);
+  console.info(wrapped);
 }
 
 // ============================================================================
@@ -394,7 +394,7 @@ async function cmdWiki(full = false): Promise<void> {
 
   print(styled('Hardware Acceleration', 'accent'));
   print('Bun.hash.crc32 delegates to CPU-native instructions:');
-  console.log(Bun.inspect.table([
+  console.info(Bun.inspect.table([
     { Architecture: 'x86/x64', Instruction: 'PCLMULQDQ', Throughput: `${large.throughput.trim()} (1KB)` },
     { Architecture: 'ARM64', Instruction: 'CRC32', Throughput: 'native speed' },
   ]));
@@ -415,7 +415,7 @@ async function cmdWiki(full = false): Promise<void> {
   print('');
 
   print(styled('CLI Reference', 'accent'));
-  console.log(Bun.inspect.table([
+  console.info(Bun.inspect.table([
     { Action: 'Wiki', Command: 'bun run cookie-crc32-integrator.ts wiki' },
     { Action: 'Wiki (full)', Command: 'bun run cookie-crc32-integrator.ts wiki --full' },
     { Action: 'Benchmark', Command: 'bun run cookie-crc32-integrator.ts benchmark' },
@@ -425,7 +425,7 @@ async function cmdWiki(full = false): Promise<void> {
   ], ['Action', 'Command']));
 
   print(styled('Performance', 'accent'));
-  console.log(Bun.inspect.table([
+  console.info(Bun.inspect.table([
     { Size: small.size, 'Time (ms)': small.timeMs.toFixed(3), Throughput: small.throughput.trim(), 'Ops/sec': small.opsPerSecond.toLocaleString() },
     { Size: large.size, 'Time (ms)': large.timeMs.toFixed(3), Throughput: large.throughput.trim(), 'Ops/sec': large.opsPerSecond.toLocaleString() },
   ], ['Size', 'Time (ms)', 'Throughput', 'Ops/sec']));
@@ -442,7 +442,7 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
   await runBenchmarks();
 
   // Cookie-specific benchmarks
-  console.log('\n' + styled('Cookie Operations', 'accent'));
+  console.info('\n' + styled('Cookie Operations', 'accent'));
 
   const signIterations = 100_000;
 
@@ -551,7 +551,7 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
   const peekPassAvg = peekPassNs / signIterations;
   const peekPassOps = Math.floor(1e9 / peekPassAvg);
 
-  console.log(Bun.inspect.table([
+  console.info(Bun.inspect.table([
     { Op: 'Sign', 'Time (ns)': signAvgNs.toFixed(1), 'Ops/sec': signOps.toLocaleString() },
     { Op: 'Verify', 'Time (ns)': verifyAvgNs.toFixed(1), 'Ops/sec': verifyOps.toLocaleString() },
     { Op: 'stringWidth (ASCII)', 'Time (ns)': swAvgNs.toFixed(1), 'Ops/sec': swOps.toLocaleString() },
@@ -597,8 +597,8 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
     };
   });
 
-  console.log('\n' + styled('Hash Algorithm Shootout', 'accent'));
-  console.log(Bun.inspect.table(hashResults,
+  console.info('\n' + styled('Hash Algorithm Shootout', 'accent'));
+  console.info(Bun.inspect.table(hashResults,
     ['Algorithm', 'Bits', 'Time (ns)', 'Ops/sec', 'Sample']));
 
   // Cookie payload memory + gzip analysis
@@ -661,8 +661,8 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
   const deserialized = deserialize(serialized);
   const roundTripOk = Bun.deepEquals(samplePayload, deserialized, true);
 
-  console.log('\n' + styled('Cookie Payload Analysis', 'accent'));
-  console.log(Bun.inspect.table([
+  console.info('\n' + styled('Cookie Payload Analysis', 'accent'));
+  console.info(Bun.inspect.table([
     { Metric: 'JSON size', Value: `${jsonBytes.length} bytes` },
     { Metric: 'Gzip size', Value: `${gzipped.length} bytes` },
     { Metric: 'Deflate size', Value: `${deflated.length} bytes` },
@@ -672,8 +672,8 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
     { Metric: 'Round-trip (JSC)', Value: roundTripOk ? 'pass' : 'FAIL' },
   ], ['Metric', 'Value']));
 
-  console.log('\n' + styled('Compression & Serialization', 'accent'));
-  console.log(Bun.inspect.table([
+  console.info('\n' + styled('Compression & Serialization', 'accent'));
+  console.info(Bun.inspect.table([
     { Op: 'gzipSync', 'Time (ns)': gzAvg.toFixed(1), 'Ops/sec': gzOps.toLocaleString(), Output: `${gzipped.length}B` },
     { Op: 'deflateSync', 'Time (ns)': dfAvg.toFixed(1), 'Ops/sec': dfOps.toLocaleString(), Output: `${deflated.length}B` },
     { Op: 'zstdCompressSync', 'Time (ns)': zsAvg.toFixed(1), 'Ops/sec': zsOps.toLocaleString(), Output: `${zstd.length}B` },
@@ -706,8 +706,8 @@ async function cmdBenchmark(exportJsonl = false): Promise<void> {
   // Heap snapshot AFTER benchmarks
   const heapAfter = heapStats();
 
-  console.log('\n' + styled('JSC Heap (bun:jsc heapStats)', 'accent'));
-  console.log(Bun.inspect.table([
+  console.info('\n' + styled('JSC Heap (bun:jsc heapStats)', 'accent'));
+  console.info(Bun.inspect.table([
     { Metric: 'heapSize', Before: `${(heapBefore.heapSize / 1024).toFixed(0)} KiB`, After: `${(heapAfter.heapSize / 1024).toFixed(0)} KiB`, Delta: `+${((heapAfter.heapSize - heapBefore.heapSize) / 1024).toFixed(0)} KiB` },
     { Metric: 'heapCapacity', Before: `${(heapBefore.heapCapacity / 1024).toFixed(0)} KiB`, After: `${(heapAfter.heapCapacity / 1024).toFixed(0)} KiB`, Delta: `+${((heapAfter.heapCapacity - heapBefore.heapCapacity) / 1024).toFixed(0)} KiB` },
     { Metric: 'extraMemorySize', Before: `${(heapBefore.extraMemorySize / 1024).toFixed(0)} KiB`, After: `${(heapAfter.extraMemorySize / 1024).toFixed(0)} KiB`, Delta: `+${((heapAfter.extraMemorySize - heapBefore.extraMemorySize) / 1024).toFixed(0)} KiB` },
@@ -788,7 +788,7 @@ function cmdVerify(cookie: string): void {
 
 async function cmdConfig(config: CookieConfig): Promise<void> {
   const env = Bun.env.NODE_ENV || 'development';
-  const configRelPath = `../../configs/cookie-crc32/${env}.yaml`;
+  const configRelPath = `../../config/cookie-crc32/${env}.yaml`;
   let resolvedConfigPath: string;
   try {
     resolvedConfigPath = Bun.resolveSync(configRelPath, import.meta.dir);
@@ -800,8 +800,8 @@ async function cmdConfig(config: CookieConfig): Promise<void> {
   const { heapStats } = await import("bun:jsc");
   const heap = heapStats();
 
-  print(styled(`Config: ${env}`, 'accent') + ` (configs/cookie-crc32/${env}.yaml)`);
-  console.log(Bun.inspect.table([
+  print(styled(`Config: ${env}`, 'accent') + ` (config/cookie-crc32/${env}.yaml)`);
+  console.info(Bun.inspect.table([
     { Key: 'Bun.version', Value: Bun.version },
     { Key: 'Bun.revision', Value: Bun.revision.slice(0, 12) },
     { Key: 'Bun.main', Value: Bun.main },
@@ -818,7 +818,7 @@ async function cmdConfig(config: CookieConfig): Promise<void> {
     { Key: 'Bun.which("hyperfine")', Value: Bun.which("hyperfine") || '(not found)' },
     { Key: 'Bun.which("open")', Value: Bun.which("open") || '(not found)' },
   ], ['Key', 'Value']));
-  console.log(Bun.inspect(config, { depth: 4, colors: true, compact: false }));
+  console.info(Bun.inspect(config, { depth: 4, colors: true, compact: false }));
 }
 
 // ============================================================================
@@ -1679,7 +1679,7 @@ async function doS3Delete() {
 
 /** Interactive REPL: read cookies from stdin, verify each line */
 async function cmdInteractive(): Promise<void> {
-  console.log(styled('Interactive mode', 'accent') + ' — paste cookies to verify (one per line, Ctrl+D to exit)');
+  console.info(styled('Interactive mode', 'accent') + ' — paste cookies to verify (one per line, Ctrl+D to exit)');
   for await (const line of console) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -1726,7 +1726,7 @@ async function cmdS3(action: string, args: string[]): Promise<void> {
         size: o.size < 1024 ? `${o.size} B` : `${(o.size / 1024).toFixed(1)} KiB`,
         modified: new Date(o.lastModified).toISOString().slice(0, 19),
       }));
-      console.log(Bun.inspect.table(rows, ['key', 'size', 'modified']));
+      console.info(Bun.inspect.table(rows, ['key', 'size', 'modified']));
       break;
     }
 
@@ -1737,7 +1737,7 @@ async function cmdS3(action: string, args: string[]): Promise<void> {
       const file = Bun.s3(key);
       if (!await file.exists()) { console.error(`Not found: ${key}`); process.exit(1); }
       const text = await file.text();
-      console.log(text);
+      console.info(text);
       break;
     }
 
@@ -1775,7 +1775,7 @@ async function cmdS3(action: string, args: string[]): Promise<void> {
       const file = Bun.s3(key);
       if (!await file.exists()) { console.error(`Not found: ${key}`); process.exit(1); }
       const stat = await file.stat();
-      console.log(Bun.inspect.table([{
+      console.info(Bun.inspect.table([{
         key,
         size: stat.size < 1024 ? `${stat.size} B` : `${(stat.size / 1024).toFixed(1)} KiB`,
         etag: stat.etag,
@@ -1791,7 +1791,7 @@ async function cmdS3(action: string, args: string[]): Promise<void> {
       const expiresIn = parseInt(args[2] || '3600', 10);
       const presigned = Bun.s3(key).presign({ method, expiresIn });
       print(styled('Presigned URL', 'accent') + ` (${method}, ${expiresIn}s):`);
-      console.log(presigned);
+      console.info(presigned);
       break;
     }
 
@@ -1818,12 +1818,12 @@ async function cmdS3(action: string, args: string[]): Promise<void> {
       const response = await fetch(s3url);
       if (!response.ok) { console.error(`Fetch failed: ${response.status} ${response.statusText}`); process.exit(1); }
       const text = await response.text();
-      console.log(text);
+      console.info(text);
       break;
     }
 
     default:
-      console.log(`
+      console.info(`
 ${styled('S3 Operations', 'accent')} (Bun.s3 native)
 
   s3 ls [prefix]                 List objects
@@ -1846,7 +1846,7 @@ Env: S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY,
 // ============================================================================
 
 function usage(): void {
-  console.log(`
+  console.info(`
 ${styled('CRC32 Cookie Integrator', 'accent')}
 ${colorBar('primary', 30)}
 

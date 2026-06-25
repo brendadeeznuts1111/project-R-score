@@ -27,7 +27,7 @@ describe('BenchmarkRecoveryEngine', () => {
       new URL('data:text/plain,await Bun.sleep(999_999);').href.startsWith('data:')
         ? '/dev/null' // fallback
         : sleeper,
-      '',
+      ''
     );
     // Use an inline eval instead — much simpler
     const r = await BenchmarkRecoveryEngine.run('-e', {
@@ -43,7 +43,7 @@ describe('BenchmarkRecoveryEngine', () => {
 
   test('detectStuckProcess() returns empty for non-matching pattern', async () => {
     const d = await BenchmarkRecoveryEngine.detectStuckProcess(
-      'benchmark_recovery_nonexistent_pattern_xyz',
+      'benchmark_recovery_nonexistent_pattern_xyz'
     );
     expect(d.found).toBe(0);
     expect(d.pids).toEqual([]);
@@ -56,9 +56,7 @@ describe('BenchmarkRecoveryEngine', () => {
   });
 
   test('hardKill() returns false when nothing matches', async () => {
-    const killed = await BenchmarkRecoveryEngine.hardKill(
-      'benchmark_recovery_nonexistent_xyz',
-    );
+    const killed = await BenchmarkRecoveryEngine.hardKill('benchmark_recovery_nonexistent_xyz');
     expect(killed).toBe(false);
   });
 

@@ -13,67 +13,73 @@ const options = {
   fullCheck: args.includes('--full-check'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔍 Enhanced Documentation Status Checker${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun enhanced-status-checker.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose         Verbose output with detailed information');
-  console.log('  -q, --quiet           Quiet mode with minimal output');
-  console.log('  --url-only            Check only URL validation');
-  console.log('  --constants-only      Check only constants loading');
-  console.log('  --imports-only        Check only import functionality');
-  console.log('  --check-fragments     Include fragment validation in URL checks');
-  console.log('  --full-check          Run comprehensive check including network tests');
-  console.log('  --json                Output results in JSON format');
-  console.log('  --no-color            Disable colored output');
-  console.log('  -h, --help            Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun enhanced-status-checker.ts');
-  console.log('  bun enhanced-status-checker.ts --verbose --check-fragments');
-  console.log('  bun enhanced-status-checker.ts --url-only --check-fragments --json');
-  console.log('  bun enhanced-status-checker.ts --full-check --check-fragments');
+  console.info(`${colors.cyan}🔍 Enhanced Documentation Status Checker${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun enhanced-status-checker.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose         Verbose output with detailed information');
+  console.info('  -q, --quiet           Quiet mode with minimal output');
+  console.info('  --url-only            Check only URL validation');
+  console.info('  --constants-only      Check only constants loading');
+  console.info('  --imports-only        Check only import functionality');
+  console.info('  --check-fragments     Include fragment validation in URL checks');
+  console.info('  --full-check          Run comprehensive check including network tests');
+  console.info('  --json                Output results in JSON format');
+  console.info('  --no-color            Disable colored output');
+  console.info('  -h, --help            Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun enhanced-status-checker.ts');
+  console.info('  bun enhanced-status-checker.ts --verbose --check-fragments');
+  console.info('  bun enhanced-status-checker.ts --url-only --check-fragments --json');
+  console.info('  bun enhanced-status-checker.ts --full-check --check-fragments');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -84,8 +90,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -94,7 +100,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -156,9 +162,8 @@ function validateURLWithFragment(url: string): {
       hasFragment,
       base: `${parsed.protocol}//${parsed.hostname}${parsed.pathname}`,
       fragment: parsed.hash.slice(1) || undefined,
-      error: !baseValid ? 'Invalid base URL' : fragmentError
+      error: !baseValid ? 'Invalid base URL' : fragmentError,
     };
-
   } catch (error) {
     return {
       isValid: false,
@@ -166,7 +171,7 @@ function validateURLWithFragment(url: string): {
       fragmentValid: false,
       hasFragment: false,
       base: url,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -183,7 +188,9 @@ async function checkConstantsLoading() {
     const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
     const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
 
-    recordTest('cli-constants-import', true,
+    recordTest(
+      'cli-constants-import',
+      true,
       `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
       { categories, urlGroups: urls, exampleGroups: examples }
     );
@@ -206,7 +213,9 @@ async function checkConstantsLoading() {
     const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
     const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
 
-    recordTest('utils-constants-import', true,
+    recordTest(
+      'utils-constants-import',
+      true,
       `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
       { categories, urlGroups: urls, exampleGroups: examples }
     );
@@ -217,7 +226,11 @@ async function checkConstantsLoading() {
       log.verbose(`Utils URL Groups: ${urls.join(', ')}`);
     }
   } catch (error: any) {
-    recordTest('utils-constants-import', false, `Failed to import Utils constants: ${error.message}`);
+    recordTest(
+      'utils-constants-import',
+      false,
+      `Failed to import Utils constants: ${error.message}`
+    );
     log.error('Utils Constants: FAILED');
   }
 
@@ -252,11 +265,23 @@ async function checkConstantsLoading() {
 
     const totalURLs = cliURLCount + utilsURLCount;
     const totalFragments = cliFragmentCount + utilsFragmentCount;
-    const totalCategories = Object.values(cliConstants.CLICategory).length + Object.values(utilsConstants.UtilsCategory).length;
+    const totalCategories =
+      Object.values(cliConstants.CLICategory).length +
+      Object.values(utilsConstants.UtilsCategory).length;
 
-    recordTest('constants-data-integrity', true,
+    recordTest(
+      'constants-data-integrity',
+      true,
       `Data integrity verified: ${totalCategories} categories, ${totalURLs} total URLs, ${totalFragments} with fragments`,
-      { totalCategories, totalURLs, totalFragments, cliURLCount, utilsURLCount, cliFragmentCount, utilsFragmentCount }
+      {
+        totalCategories,
+        totalURLs,
+        totalFragments,
+        cliURLCount,
+        utilsURLCount,
+        cliFragmentCount,
+        utilsFragmentCount,
+      }
     );
     log.success('Data Integrity: OK');
 
@@ -265,7 +290,11 @@ async function checkConstantsLoading() {
       log.verbose(`Utils URLs: ${utilsURLCount} (${utilsFragmentCount} with fragments)`);
     }
   } catch (error: any) {
-    recordTest('constants-data-integrity', false, `Constants data integrity check failed: ${error.message}`);
+    recordTest(
+      'constants-data-integrity',
+      false,
+      `Constants data integrity check failed: ${error.message}`
+    );
     log.error('Data Integrity: FAILED');
   }
 }
@@ -285,8 +314,8 @@ async function checkURLValidation() {
     let validFragments = 0;
     let invalidFragments = 0;
     let urlsWithFragments = 0;
-    const invalidList: Array<{url: string, error: string}> = [];
-    const fragmentIssues: Array<{url: string, fragment: string, error: string}> = [];
+    const invalidList: Array<{ url: string; error: string }> = [];
+    const fragmentIssues: Array<{ url: string; fragment: string; error: string }> = [];
 
     // Check CLI URLs
     Object.values(cliConstants.CLI_DOCUMENTATION_URLS).forEach(category => {
@@ -309,7 +338,7 @@ async function checkURLValidation() {
               fragmentIssues.push({
                 url,
                 fragment: validation.fragment || '',
-                error: validation.error || 'Fragment error'
+                error: validation.error || 'Fragment error',
               });
             }
           }
@@ -338,7 +367,7 @@ async function checkURLValidation() {
               fragmentIssues.push({
                 url,
                 fragment: validation.fragment || '',
-                error: validation.error || 'Fragment error'
+                error: validation.error || 'Fragment error',
               });
             }
           }
@@ -358,21 +387,28 @@ async function checkURLValidation() {
       invalidFragments,
       urlsWithFragments,
       invalidList,
-      fragmentIssues
+      fragmentIssues,
     });
 
     if (passed) {
       log.success(`URL Structure: OK (${validFragments} fragments validated)`);
     } else {
-      log.error(`URL Structure: ${invalidURLs} invalid URLs, ${invalidFragments} invalid fragments`);
+      log.error(
+        `URL Structure: ${invalidURLs} invalid URLs, ${invalidFragments} invalid fragments`
+      );
       if (options.verbose) {
         invalidList.forEach(item => log.verbose(`  Invalid URL: ${item.url} - ${item.error}`));
-        fragmentIssues.forEach(item => log.verbose(`  Invalid Fragment: ${item.fragment} in ${item.url} - ${item.error}`));
+        fragmentIssues.forEach(item =>
+          log.verbose(`  Invalid Fragment: ${item.fragment} in ${item.url} - ${item.error}`)
+        );
       }
     }
-
   } catch (error: any) {
-    recordTest('url-structure-validation', false, `URL structure validation failed: ${error.message}`);
+    recordTest(
+      'url-structure-validation',
+      false,
+      `URL structure validation failed: ${error.message}`
+    );
     log.error('URL Structure: FAILED');
   }
 
@@ -388,7 +424,7 @@ async function checkURLValidation() {
         urlsWithFragments: 0,
         uniqueFragments: new Set<string>(),
         fragmentLengths: [] as number[],
-        fragmentCategories: {} as Record<string, string[]>
+        fragmentCategories: {} as Record<string, string[]>,
       };
 
       // Analyze CLI URLs
@@ -435,22 +471,28 @@ async function checkURLValidation() {
         }
       });
 
-      const avgFragmentLength = fragmentAnalysis.fragmentLengths.length > 0
-        ? fragmentAnalysis.fragmentLengths.reduce((a, b) => a + b, 0) / fragmentAnalysis.fragmentLengths.length
-        : 0;
+      const avgFragmentLength =
+        fragmentAnalysis.fragmentLengths.length > 0
+          ? fragmentAnalysis.fragmentLengths.reduce((a, b) => a + b, 0) /
+            fragmentAnalysis.fragmentLengths.length
+          : 0;
 
-      recordTest('fragment-analysis', true,
+      recordTest(
+        'fragment-analysis',
+        true,
         `Fragment analysis: ${fragmentAnalysis.urlsWithFragments}/${fragmentAnalysis.totalURLs} URLs have fragments, ${fragmentAnalysis.uniqueFragments.size} unique fragments, avg length: ${avgFragmentLength.toFixed(1)}`,
         {
           totalURLs: fragmentAnalysis.totalURLs,
           urlsWithFragments: fragmentAnalysis.urlsWithFragments,
           uniqueFragments: Array.from(fragmentAnalysis.uniqueFragments),
           avgFragmentLength,
-          fragmentCategories: fragmentAnalysis.fragmentCategories
+          fragmentCategories: fragmentAnalysis.fragmentCategories,
         }
       );
 
-      log.success(`Fragment Analysis: ${fragmentAnalysis.urlsWithFragments}/${fragmentAnalysis.totalURLs} URLs have fragments`);
+      log.success(
+        `Fragment Analysis: ${fragmentAnalysis.urlsWithFragments}/${fragmentAnalysis.totalURLs} URLs have fragments`
+      );
 
       if (options.verbose) {
         log.verbose(`Unique fragments: ${fragmentAnalysis.uniqueFragments.size}`);
@@ -460,7 +502,6 @@ async function checkURLValidation() {
           log.verbose(`${category}: ${fragments.join(', ')}`);
         });
       }
-
     } catch (error: any) {
       recordTest('fragment-analysis', false, `Fragment analysis failed: ${error.message}`);
       log.error('Fragment Analysis: FAILED');
@@ -476,7 +517,7 @@ async function checkURLValidation() {
       'bun build ./src/index.ts',
       'bun install',
       'bun add lodash',
-      'invalid-command'
+      'invalid-command',
     ];
 
     let validCommands = 0;
@@ -484,8 +525,11 @@ async function checkURLValidation() {
     const results: Record<string, boolean> = {};
 
     for (const cmd of testCommands) {
-      const isValid = cmd.startsWith('bun') &&
-                     ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(cmd.split(' ')[1]);
+      const isValid =
+        cmd.startsWith('bun') &&
+        ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(
+          cmd.split(' ')[1]
+        );
       results[cmd] = isValid;
       if (isValid) {
         validCommands++;
@@ -496,7 +540,9 @@ async function checkURLValidation() {
 
     // Should have 5 valid, 1 invalid
     const passed = validCommands === 5 && invalidCommands === 1;
-    recordTest('cli-command-validation', passed,
+    recordTest(
+      'cli-command-validation',
+      passed,
       `${validCommands} valid, ${invalidCommands} invalid commands detected`,
       { results, validCommands, invalidCommands }
     );
@@ -514,8 +560,10 @@ async function checkURLValidation() {
 
 // Main check function
 async function runStatusCheck() {
-  console.log(`${colors.cyan}🔍 Enhanced Documentation Status Checker${colors.reset}`);
-  console.log(`${colors.gray}Checking all constants and URLs INCLUDING FRAGMENTS...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Enhanced Documentation Status Checker${colors.reset}`);
+  console.info(
+    `${colors.gray}Checking all constants and URLs INCLUDING FRAGMENTS...${colors.reset}\n`
+  );
 
   const startTime = Date.now();
 
@@ -538,14 +586,16 @@ async function runStatusCheck() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     if (options.fragments || options.verbose) {
-      console.log(`${colors.magenta}Fragment Checking:${colors.reset} ${options.fragments ? 'ENABLED' : 'DISABLED'}`);
+      console.info(
+        `${colors.magenta}Fragment Checking:${colors.reset} ${options.fragments ? 'ENABLED' : 'DISABLED'}`
+      );
     }
 
     // Output JSON if requested
@@ -555,13 +605,12 @@ async function runStatusCheck() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error: any) {
     log.error(`Status check failed: ${error.message}`);
     if (options.verbose) {
@@ -572,12 +621,12 @@ async function runStatusCheck() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

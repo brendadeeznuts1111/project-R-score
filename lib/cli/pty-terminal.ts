@@ -279,7 +279,7 @@ export const DEFAULT_TERMINAL_CONFIG: TerminalDimensions = {
 
 // Entry guard for CLI usage
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Bun.Terminal PTY Tool v4.5                               ║
 ║  Bun v${Bun.version} - ${process.platform}                                    ║
@@ -303,7 +303,7 @@ Examples:
 
   const command = process.argv.slice(2);
   if (command.length === 0) {
-    console.log('No command specified, starting bash shell...');
+    console.info('No command specified, starting bash shell...');
     runInteractiveProgram(['bash']).then(code => process.exit(code));
   } else {
     runInteractiveProgram(command).then(code => process.exit(code));

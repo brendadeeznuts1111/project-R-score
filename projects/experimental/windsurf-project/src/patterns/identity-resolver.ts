@@ -70,11 +70,11 @@ export class CrossPlatformIdentityResolver {
     // Check cache first
     const cached = await this.cache.get<SyntheticIdentityResult>(cacheKey);
     if (cached) {
-      console.log(`Cache hit for identity: ${sanitized.e164}`);
+      console.info(`Cache hit for identity: ${sanitized.e164}`);
       return cached;
     }
 
-    console.log(`Resolving identity for: ${sanitized.e164}`);
+    console.info(`Resolving identity for: ${sanitized.e164}`);
 
     try {
       // Build identity graph

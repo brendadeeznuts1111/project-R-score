@@ -64,12 +64,12 @@ export function buildFFIBindings(config: {
 }): void {
   const env = process.env as FFIEnvConfig;
 
-  console.log('🔧 FFI Build Environment:');
-  console.log(`   C_INCLUDE_PATH: ${env.C_INCLUDE_PATH || '(system default)'}`);
-  console.log(`   LIBRARY_PATH: ${env.LIBRARY_PATH || '(system default)'}`);
-  console.log(`   CFLAGS: ${env.CFLAGS || '(none)'}`);
-  console.log(`   Source: ${config.source}`);
-  console.log(`   Libraries: ${config.libraries?.join(', ') || '(none)'}`);
+  console.info('🔧 FFI Build Environment:');
+  console.info(`   C_INCLUDE_PATH: ${env.C_INCLUDE_PATH || '(system default)'}`);
+  console.info(`   LIBRARY_PATH: ${env.LIBRARY_PATH || '(system default)'}`);
+  console.info(`   CFLAGS: ${env.CFLAGS || '(none)'}`);
+  console.info(`   Source: ${config.source}`);
+  console.info(`   Libraries: ${config.libraries?.join(', ') || '(none)'}`);
 }
 
 /**
@@ -87,7 +87,9 @@ export function verifyFFIEnvironment(): { valid: boolean; issues: string[] } {
         issues.push('Non-FHS system detected but LIBRARY_PATH not set');
         issues.push('NixOS/Guix require C_INCLUDE_PATH and LIBRARY_PATH');
       }
-    } catch {}
+    } catch {
+      console.error('Unhandled error:', error);
+    }
   }
 
   return {

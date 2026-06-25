@@ -176,16 +176,16 @@ export class PatternEvolver {
     };
 
     await Bun.write(outputPath, JSON.stringify(data, null, 2));
-    console.log(`✅ Exported to ${outputPath}`);
+    console.info(`✅ Exported to ${outputPath}`);
   }
 
   /**
    * Visualize hotspots
    */
   visualizeHotspots(evolution: PatternEvolution): void {
-    console.log(`\n🔥 Hotspots for pattern "${evolution.pattern}":\n`);
+    console.info(`\n🔥 Hotspots for pattern "${evolution.pattern}":\n`);
     for (const hotspot of evolution.hotspots.slice(0, 10)) {
-      console.log(`  ${hotspot}`);
+      console.info(`  ${hotspot}`);
     }
   }
 }
@@ -207,14 +207,14 @@ if (import.meta.main) {
   const evolver = new PatternEvolver(options);
   const evolution = await evolver.analyze(pattern);
 
-  console.log(`\n📊 Pattern Evolution: "${pattern}"\n`);
-  console.log(`   Frequency: ${evolution.frequency}`);
-  console.log(`   First Seen: ${evolution.firstSeen}`);
-  console.log(`   Last Seen: ${evolution.lastSeen}`);
-  console.log(`   Trend: ${evolution.trend}`);
+  console.info(`\n📊 Pattern Evolution: "${pattern}"\n`);
+  console.info(`   Frequency: ${evolution.frequency}`);
+  console.info(`   First Seen: ${evolution.firstSeen}`);
+  console.info(`   Last Seen: ${evolution.lastSeen}`);
+  console.info(`   Trend: ${evolution.trend}`);
 
   if (options.predictNext) {
-    console.log(`\n🔮 Prediction: ${evolver.predictNext(evolution)}`);
+    console.info(`\n🔮 Prediction: ${evolver.predictNext(evolution)}`);
   }
 
   if (options.hotspots) {

@@ -1,5 +1,5 @@
 {
-  "name": "trader-analyzer-bench",
+  "name": "trader-analyzer-bun-bench",
   "type": "module",
   "scripts": {
     "generate": "bun run generate-sample-data.ts",
@@ -17,7 +17,7 @@
     "all": "bun run csv && bun run position && bun run sqlite && bun run bun-sql"
   },
   "dependencies": {
-    "mitata": "^1.0.34",
-    "csv-parse": "^6.1.0"
+    "mitata": "1.0.34",
+    "csv-parse": "6.1.0"
   }
 }

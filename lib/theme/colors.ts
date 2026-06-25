@@ -127,26 +127,26 @@ export function styleCode(code: string, language?: string): string {
 // ============================================================================
 
 export const log = {
-  info: (message: string) => console.log(styled('ℹ️', 'info') + ' ' + message),
-  success: (message: string) => console.log(styled('✅', 'success') + ' ' + message),
-  warning: (message: string) => console.log(styled('⚠️', 'warning') + ' ' + message),
-  error: (message: string) => console.log(styled('❌', 'error') + ' ' + message),
-  debug: (message: string) => console.log(styled('🐛', 'muted') + ' ' + message),
+  info: (message: string) => console.info(styled('ℹ️', 'info') + ' ' + message),
+  success: (message: string) => console.info(styled('✅', 'success') + ' ' + message),
+  warning: (message: string) => console.info(styled('⚠️', 'warning') + ' ' + message),
+  error: (message: string) => console.info(styled('❌', 'error') + ' ' + message),
+  debug: (message: string) => console.info(styled('🐛', 'muted') + ' ' + message),
 
   /**
    * Color-coded section header
    */
   section: (title: string, color: FactoryWagerColor = 'primary') => {
-    console.log('\n' + colorBar(color, 20));
-    console.log(styled(`  ${title}  `, color, 'background'));
-    console.log(colorBar(color, 20));
+    console.info('\n' + colorBar(color, 20));
+    console.info(styled(`  ${title}  `, color, 'background'));
+    console.info(colorBar(color, 20));
   },
 
   /**
    * Metric display with color coding
    */
   metric: (label: string, value: string | number, color: FactoryWagerColor = 'primary') => {
-    console.log(styled(`  ${label}: `, 'muted') + styled(String(value), color));
+    console.info(styled(`  ${label}: `, 'muted') + styled(String(value), color));
   },
 };
 
@@ -193,7 +193,7 @@ export function animateProgress(message: string, color: FactoryWagerColor = 'pri
     setTimeout(() => {
       process.stdout.write(`\r${styled(message + ' ' + frame, color)}`);
       if (i === frames.length - 1) {
-        console.log();
+        console.info();
       }
     }, i * 100);
   });
@@ -223,19 +223,19 @@ export function colorizeMarkdown(md: string): string {
 // ============================================================================
 
 if (import.meta.main) {
-  console.log(styled('\n🎨 FactoryWager Color Theme v4.0', 'accent'));
-  console.log(colorBar('primary', 30));
+  console.info(styled('\n🎨 FactoryWager Color Theme v4.0', 'accent'));
+  console.info(colorBar('primary', 30));
 
   log.section('Available Colors');
   Object.entries(FW_COLORS).forEach(([name, hex]) => {
-    console.log(styled(`  ${name.padEnd(12)} `, 'muted') + styled(hex, name as FactoryWagerColor));
+    console.info(styled(`  ${name.padEnd(12)} `, 'muted') + styled(hex, name as FactoryWagerColor));
   });
 
   log.section('Example Usage');
-  console.log(styled('  styled("Hello World", "primary")', 'accent'));
-  console.log('  ' + styled('Hello World', 'primary'));
+  console.info(styled('  styled("Hello World", "primary")', 'accent'));
+  console.info('  ' + styled('Hello World', 'primary'));
 
-  console.log(styled('\n🚀 Ready for FactoryWager profiling!', 'success'));
+  console.info(styled('\n🚀 Ready for FactoryWager profiling!', 'success'));
 }
 
 export default {

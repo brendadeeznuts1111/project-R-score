@@ -10,20 +10,20 @@ program
   .description('Restart cache system')
   .option('--type <type>', 'Cache type: ipqs|provider|all', 'all')
   .action(async (options) => {
-    console.log(`🔄 Restarting cache: ${options.type}...`);
+    console.info(`🔄 Restarting cache: ${options.type}...`);
     
     // Simulate cache restart
-    console.log('   Stopping cache services...');
+    console.info('   Stopping cache services...');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('   Clearing memory...');
+    console.info('   Clearing memory...');
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('   Restarting services...');
+    console.info('   Restarting services...');
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    console.log('✅ Cache restarted successfully');
-    console.log('   Cache hit rate: 95%');
-    console.log('   Memory usage: 128MB');
-    console.log('   Services: ONLINE');
+    console.info('✅ Cache restarted successfully');
+    console.info('   Cache hit rate: 95%');
+    console.info('   Memory usage: 128MB');
+    console.info('   Services: ONLINE');
   });
 
 // Auto-run if main

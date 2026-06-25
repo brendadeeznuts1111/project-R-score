@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 // tools/debug-entry.ts — Debug tool for entry guard mechanism
 
-console.log("=== Debug Entry Guard ===");
-console.log("Bun.main:", Bun.main);
-console.log("import.meta.path:", import.meta.path);
-console.log("Are they equal?", import.meta.path === Bun.main);
+console.info('=== Debug Entry Guard ===');
+console.info('Bun.main:', Bun.main);
+console.info('import.meta.path:', import.meta.path);
+console.info('Are they equal?', import.meta.path === Bun.main);
 
-import { ensureDirectExecution } from "../lib/shared/tools/entry-guard";
+import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
 
-console.log("Imported guard successfully");
+console.info('Imported guard successfully');
 
 // If we get here, guard did not exit
-console.log("\n✅ Script is running as main (guard allowed execution)");
+console.info('\n✅ Script is running as main (guard allowed execution)');

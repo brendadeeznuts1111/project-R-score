@@ -7,7 +7,7 @@
 export {
   // Error codes
   EnterpriseErrorCode,
-  
+
   // Error classes
   BaseEnterpriseError,
   SystemError,
@@ -16,13 +16,13 @@ export {
   SecurityError,
   ResourceError,
   BusinessError,
-  
+
   // Error factory
   EnterpriseErrorFactory,
-  
+
   // Error handler
   EnterpriseErrorHandler,
-  
+
   // Convenience functions
   handleError,
   createSystemError,
@@ -43,13 +43,13 @@ export {
   R2ConnectionError,
   R2DataError,
   CacheError,
-  
+
   // Error severity
   ErrorSeverity,
-  
+
   // Error handler
   ErrorHandler,
-  
+
   // Utility functions
   handleError as handleR2Error,
   safeAsync,
@@ -64,7 +64,7 @@ export {
   // Classes and types
   GlobalErrorHandler,
   type GlobalErrorConfig,
-  
+
   // Convenience functions
   initializeGlobalErrorHandling,
   onShutdown,
@@ -83,7 +83,7 @@ export {
   type CircuitBreakerConfig,
   type CircuitBreakerStats,
   CircuitState,
-  
+
   // Convenience functions
   withCircuitBreaker,
   getCircuitBreakerRegistry,
@@ -103,7 +103,7 @@ export {
   type ErrorMetric,
   type ErrorAggregation,
   type MetricsExport,
-  
+
   // Convenience functions
   getErrorMetricsCollector,
   recordError,
@@ -119,7 +119,7 @@ export {
   // Types
   type CRC32Result,
   type FileChecksumResult,
-  
+
   // Core functions
   crc32,
   crc32File,
@@ -128,7 +128,7 @@ export {
   verifyFile,
   checksumRecord,
   validatePacket,
-  
+
   // Utilities
   toHex,
   fromHex,
@@ -145,20 +145,20 @@ export {
   type SpawnResult,
   type SafeSpawnOptions,
   type AnsiWidthResult,
-  
+
   // Binary validation
   validateBinaryExists,
   validateBinaryOrThrow,
-  
+
   // Safe spawn
   safeSpawn,
   streamSpawn,
-  
+
   // ANSI utilities
   ansiStringWidth,
   stripAnsi,
   truncateAnsi,
-  
+
   // TTY utilities
   isTTY,
   getTerminalSize,
@@ -177,7 +177,7 @@ export {
   NetworkProtocol,
   DataEncoding,
   CryptoAlgorithm,
-  
+
   // Interfaces
   type EnterpriseOperation,
   type EnterpriseError,
@@ -213,22 +213,16 @@ export function isErrorType<T extends Error>(
 /**
  * Create error with cause chain
  */
-export function createErrorWithCause(
-  message: string,
-  cause: unknown
-): Error {
+export function createErrorWithCause(message: string, cause: unknown): Error {
   const error = new Error(message);
-  (error as any).cause = cause;
+  (error as Record<string, unknown>).cause = cause;
   return error;
 }
 
 /**
  * Safely parse JSON with error handling
  */
-export function safeJsonParse<T = any>(
-  text: string,
-  fallback?: T
-): T | undefined {
+export function safeJsonParse<T = any>(text: string, fallback?: T): T | undefined {
   try {
     return JSON.parse(text) as T;
   } catch (error) {
@@ -239,10 +233,7 @@ export function safeJsonParse<T = any>(
 /**
  * Safely stringify JSON with error handling
  */
-export function safeJsonStringify(
-  value: any,
-  fallback = '{}'
-): string {
+export function safeJsonStringify(value: any, fallback = '{}'): string {
   try {
     return JSON.stringify(value);
   } catch (error) {
@@ -262,9 +253,9 @@ export function setupErrorHandling(config?: {
 }) {
   // Initialize global error handling
   const globalHandler = initializeGlobalErrorHandling(config?.global);
-  
-  console.log('✅ Error handling system initialized');
-  
+
+  console.info('✅ Error handling system initialized');
+
   return {
     globalHandler,
     getStats: getGlobalErrorStatistics,

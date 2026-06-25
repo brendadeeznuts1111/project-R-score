@@ -67,9 +67,9 @@ Object.defineProperty(globalThis.Bun, 'config', {
   configurable: false
 });
 
-console.log("🔒 Frozen 13-byte config loaded from binary");
-console.log(\`📊 Config: \${getConfigHex()}\`);
-console.log("❌ Config cannot be changed at runtime");
+console.info("🔒 Frozen 13-byte config loaded from binary");
+console.info(\`📊 Config: \${getConfigHex()}\`);
+console.info("❌ Config cannot be changed at runtime");
 
 // Export for verification
 export function getConfig() {
@@ -100,43 +100,43 @@ import './frozen-config-loader.js';
 // Import and start the registry
 import('./registry-api.js');
 
-console.log("🚀 Standalone registry started with frozen 13-byte config");
-console.log(\`📊 Embedded config: \${getConfigHex()}\`);
-console.log("🔒 Config is immutable - cannot be changed at runtime");
-console.log("🌐 Registry listening on :4873");
-console.log("📊 Dashboard: http://localhost:4873/_dashboard");
+console.info("🚀 Standalone registry started with frozen 13-byte config");
+console.info(\`📊 Embedded config: \${getConfigHex()}\`);
+console.info("🔒 Config is immutable - cannot be changed at runtime");
+console.info("🌐 Registry listening on :4873");
+console.info("📊 Dashboard: http://localhost:4873/_dashboard");
 `;
 }
 
 async function compileStandaloneRegistry(): Promise<boolean> {
-  console.log("🔨 Compiling Standalone Registry with Frozen 13-Byte Config");
-  console.log("=".repeat(60));
+  console.info("🔨 Compiling Standalone Registry with Frozen 13-Byte Config");
+  console.info("=".repeat(60));
   
   const start = nanoseconds();
   const config = getCurrentConfig();
   
-  console.log("📊 Current 13-byte config:");
-  console.log(`   • Version: ${config.version} (Byte 0)`);
-  console.log(`   • Registry Hash: 0x${config.registryHash.toString(16)} (Bytes 1-4)`);
-  console.log(`   • Feature Flags: 0x${config.featureFlags.toString(16)} (Bytes 5-8)`);
-  console.log(`   • Terminal Mode: ${config.terminalMode} (Byte 9)`);
-  console.log(`   • Dimensions: ${config.rows}x${config.cols} (Bytes 10-11)`);
-  console.log(`   • Reserved: ${config.reserved} (Byte 12)`);
-  console.log(`   • Full hex: ${getConfigHex()}`);
+  console.info("📊 Current 13-byte config:");
+  console.info(`   • Version: ${config.version} (Byte 0)`);
+  console.info(`   • Registry Hash: 0x${config.registryHash.toString(16)} (Bytes 1-4)`);
+  console.info(`   • Feature Flags: 0x${config.featureFlags.toString(16)} (Bytes 5-8)`);
+  console.info(`   • Terminal Mode: ${config.terminalMode} (Byte 9)`);
+  console.info(`   • Dimensions: ${config.rows}x${config.cols} (Bytes 10-11)`);
+  console.info(`   • Reserved: ${config.reserved} (Byte 12)`);
+  console.info(`   • Full hex: ${getConfigHex()}`);
   
   try {
     // Create frozen config loader
     const frozenLoader = createFrozenConfigLoader();
     await Bun.write("./dist/frozen-config-loader.js", frozenLoader);
-    console.log("✅ Created frozen config loader");
+    console.info("✅ Created frozen config loader");
     
     // Create binary wrapper
     const binaryWrapper = createBinaryWrapper();
     await Bun.write("./dist/registry-standalone.js", binaryWrapper);
-    console.log("✅ Created binary wrapper");
+    console.info("✅ Created binary wrapper");
     
     // Compile with Bun
-    console.log("🏗️  Starting Bun compilation...");
+    console.info("🏗️  Starting Bun compilation...");
     const compileStart = nanoseconds();
     
     const buildResult = await Bun.build({
@@ -176,7 +176,7 @@ async function compileStandaloneRegistry(): Promise<boolean> {
     const compileTime = nanoseconds() - compileStart;
     
     if (buildResult.success) {
-      console.log("✅ Build successful!");
+      console.info("✅ Build successful!");
       
       // Get binary size
       const binaryFile = Bun.file("./dist/registry-api-frozen.js");
@@ -198,24 +198,24 @@ exec bun "./dist/registry-api-frozen.js" "$@"
       
       const totalTime = nanoseconds() - start;
       
-      console.log("🎉 Compilation completed!");
-      console.log("📦 Binary artifacts:");
-      console.log(`   • Main binary: ./dist/registry-api-frozen.js`);
-      console.log(`   • Executable: ./dist/registry-standalone.sh`);
-      console.log(`   • Binary size: ${binarySize.toFixed(2)}MB`);
-      console.log(`   • Compile time: ${Math.floor(compileTime / 1000000)}ms`);
-      console.log(`   • Total time: ${Math.floor(totalTime / 1000000)}ms`);
+      console.info("🎉 Compilation completed!");
+      console.info("📦 Binary artifacts:");
+      console.info(`   • Main binary: ./dist/registry-api-frozen.js`);
+      console.info(`   • Executable: ./dist/registry-standalone.sh`);
+      console.info(`   • Binary size: ${binarySize.toFixed(2)}MB`);
+      console.info(`   • Compile time: ${Math.floor(compileTime / 1000000)}ms`);
+      console.info(`   • Total time: ${Math.floor(totalTime / 1000000)}ms`);
       
-      console.log("\n🔒 Frozen 13-byte config properties:");
-      console.log("   • Config is embedded at offset 0x1000 (immutable)");
-      console.log("   • No external bun.lockb needed");
-      console.log("   • RegistryHash is frozen to 0xa1b2c3d4");
-      console.log("   • Behavior is permanent across deployments");
-      console.log("   • Cannot be overridden by environment variables");
+      console.info("\n🔒 Frozen 13-byte config properties:");
+      console.info("   • Config is embedded at offset 0x1000 (immutable)");
+      console.info("   • No external bun.lockb needed");
+      console.info("   • RegistryHash is frozen to 0xa1b2c3d4");
+      console.info("   • Behavior is permanent across deployments");
+      console.info("   • Cannot be overridden by environment variables");
       
-      console.log("\n🚀 Usage:");
-      console.log("   $ ./dist/registry-standalone.sh");
-      console.log("   $ BUN_CONFIG_VERSION=0 ./dist/registry-standalone.sh  # ❌ Will be ignored");
+      console.info("\n🚀 Usage:");
+      console.info("   $ ./dist/registry-standalone.sh");
+      console.info("   $ BUN_CONFIG_VERSION=0 ./dist/registry-standalone.sh  # ❌ Will be ignored");
       
       return true;
     } else {
@@ -233,61 +233,61 @@ exec bun "./dist/registry-api-frozen.js" "$@"
 
 // Demonstrate binary layout
 function demonstrateBinaryLayout(): void {
-  console.log("📦 Binary Layout Demonstration");
-  console.log("=".repeat(40));
+  console.info("📦 Binary Layout Demonstration");
+  console.info("=".repeat(40));
   
   const config = getCurrentConfig();
   
-  console.log("ELF/Mach-O/PE Binary Structure:");
-  console.log("Offset 0x00000000: ELF header");
-  console.log("Offset 0x00001000: Frozen ImmutableConfig (13 bytes)");
-  console.log(`  [0x1000] version: 0x${config.version.toString(16).padStart(2, '0')}`);
-  console.log(`  [0x1001] registryHash: 0x${config.registryHash.toString(16).padStart(8, '0')}`);
-  console.log(`  [0x1005] featureFlags: 0x${config.featureFlags.toString(16).padStart(8, '0')}`);
-  console.log(`  [0x1009] terminalMode: 0x${config.terminalMode.toString(16).padStart(2, '0')}`);
-  console.log(`  [0x100A] rows: 0x${config.rows.toString(16).padStart(2, '0')}`);
-  console.log(`  [0x100B] cols: 0x${config.cols.toString(16).padStart(2, '0')}`);
-  console.log(`  [0x100C] reserved: 0x${config.reserved.toString(16).padStart(2, '0')}`);
-  console.log("Offset 0x0000100D: Bytecode cache");
-  console.log("Offset 0x01000000: Bun runtime");
+  console.info("ELF/Mach-O/PE Binary Structure:");
+  console.info("Offset 0x00000000: ELF header");
+  console.info("Offset 0x00001000: Frozen ImmutableConfig (13 bytes)");
+  console.info(`  [0x1000] version: 0x${config.version.toString(16).padStart(2, '0')}`);
+  console.info(`  [0x1001] registryHash: 0x${config.registryHash.toString(16).padStart(8, '0')}`);
+  console.info(`  [0x1005] featureFlags: 0x${config.featureFlags.toString(16).padStart(8, '0')}`);
+  console.info(`  [0x1009] terminalMode: 0x${config.terminalMode.toString(16).padStart(2, '0')}`);
+  console.info(`  [0x100A] rows: 0x${config.rows.toString(16).padStart(2, '0')}`);
+  console.info(`  [0x100B] cols: 0x${config.cols.toString(16).padStart(2, '0')}`);
+  console.info(`  [0x100C] reserved: 0x${config.reserved.toString(16).padStart(2, '0')}`);
+  console.info("Offset 0x0000100D: Bytecode cache");
+  console.info("Offset 0x01000000: Bun runtime");
   
-  console.log("\n🔒 Immutability guarantees:");
-  console.log("   • Config cannot be changed at runtime");
-  console.log("   • Environment variables are ignored");
-  console.log("   • CLI flags cannot override frozen values");
-  console.log("   • Binary signature ensures integrity");
-  console.log("   • Same binary = same behavior always");
+  console.info("\n🔒 Immutability guarantees:");
+  console.info("   • Config cannot be changed at runtime");
+  console.info("   • Environment variables are ignored");
+  console.info("   • CLI flags cannot override frozen values");
+  console.info("   • Binary signature ensures integrity");
+  console.info("   • Same binary = same behavior always");
 }
 
 // Performance analysis
 function analyzePerformance(): void {
-  console.log("⚡ Performance Analysis");
-  console.log("=".repeat(30));
+  console.info("⚡ Performance Analysis");
+  console.info("=".repeat(30));
   
-  console.log("Config Loading Performance:");
-  console.log("   • File read: 12ns");
-  console.log("   • mmap from binary: 12ns");
-  console.log("   • Performance difference: 0ns (identical)");
-  console.log("   • Advantage: 100% immutability");
+  console.info("Config Loading Performance:");
+  console.info("   • File read: 12ns");
+  console.info("   • mmap from binary: 12ns");
+  console.info("   • Performance difference: 0ns (identical)");
+  console.info("   • Advantage: 100% immutability");
   
-  console.log("\nRuntime Performance:");
-  console.log("   • No config parsing overhead");
-  console.log("   • Direct memory access to config");
-  console.log("   • Zero allocation for config objects");
-  console.log("   • Deterministic behavior guaranteed");
+  console.info("\nRuntime Performance:");
+  console.info("   • No config parsing overhead");
+  console.info("   • Direct memory access to config");
+  console.info("   • Zero allocation for config objects");
+  console.info("   • Deterministic behavior guaranteed");
   
-  console.log("\nDeployment Benefits:");
-  console.log("   • Single binary deployment");
-  console.log("   • No configuration drift");
-  console.log("   • Atomic updates (replace binary)");
-  console.log("   • Perfect reproducibility");
+  console.info("\nDeployment Benefits:");
+  console.info("   • Single binary deployment");
+  console.info("   • No configuration drift");
+  console.info("   • Atomic updates (replace binary)");
+  console.info("   • Perfect reproducibility");
 }
 
 // Main execution
 async function main() {
-  console.log("🔒 Bun v1.3.5 Standalone Compiler");
-  console.log("═══════════════════════════════════════");
-  console.log("🎯 Ultimate immutability: 13 bytes frozen in binary");
+  console.info("🔒 Bun v1.3.5 Standalone Compiler");
+  console.info("═══════════════════════════════════════");
+  console.info("🎯 Ultimate immutability: 13 bytes frozen in binary");
   
   // Show binary layout
   demonstrateBinaryLayout();
@@ -299,15 +299,15 @@ async function main() {
   const success = await compileStandaloneRegistry();
   
   if (success) {
-    console.log("\n🎉 Standalone compilation completed successfully!");
-    console.log("\n✅ The 13-byte config is now immortal:");
-    console.log("   • Embedded in binary at offset 0x1000");
-    console.log("   • Cannot be changed by any means");
-    console.log("   • Behavior is 100% deterministic");
-    console.log("   • Perfect for production deployments");
+    console.info("\n🎉 Standalone compilation completed successfully!");
+    console.info("\n✅ The 13-byte config is now immortal:");
+    console.info("   • Embedded in binary at offset 0x1000");
+    console.info("   • Cannot be changed by any means");
+    console.info("   • Behavior is 100% deterministic");
+    console.info("   • Perfect for production deployments");
     
-    console.log("\n🚀 Your deterministic registry is ready:");
-    console.log("   $ ./dist/registry-standalone.sh");
+    console.info("\n🚀 Your deterministic registry is ready:");
+    console.info("   $ ./dist/registry-standalone.sh");
     
   } else {
     console.error("\n❌ Compilation failed. Check logs above.");

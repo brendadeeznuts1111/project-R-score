@@ -51,7 +51,7 @@ export class TemplateValidator {
     // ============================================================================
 
     async validateAll(): Promise<ValidationResult> {
-        console.log('🔍 Starting comprehensive template validation...');
+        console.info('🔍 Starting comprehensive template validation...');
 
         const startTime = Date.now();
         const result: ValidationResult = {
@@ -424,8 +424,8 @@ export class TemplateValidator {
     // ============================================================================
 
     async createTemplateWizard(): Promise<TemplateMetadata> {
-        console.log('🧙‍♂️ Template Creation Wizard');
-        console.log('=============================\n');
+        console.info('🧙‍♂️ Template Creation Wizard');
+        console.info('=============================\n');
 
         const metadata: TemplateMetadata = {
             name: await this.prompt('Template name: '),
@@ -438,7 +438,7 @@ export class TemplateValidator {
         };
 
         // Add variables interactively
-        console.log('\n📝 Add template variables (press Enter to finish):');
+        console.info('\n📝 Add template variables (press Enter to finish):');
         while (true) {
             const varName = await this.prompt('Variable name: ');
             if (!varName) break;
@@ -471,7 +471,7 @@ export class TemplateValidator {
     async generateTemplateFile(metadata: TemplateMetadata, outputPath: string): Promise<void> {
         const content = this.generateTemplateContent(metadata);
         await fs.writeFile(outputPath, content, 'utf-8');
-        console.log(`✅ Template created: ${outputPath}`);
+        console.info(`✅ Template created: ${outputPath}`);
     }
 
     private generateTemplateContent(metadata: TemplateMetadata): string {
@@ -557,7 +557,7 @@ export async function main() {
         switch (command) {
             case 'validate':
                 const result = await validator.validateAll();
-                console.log(validator.generateValidationReport(result));
+                console.info(validator.generateValidationReport(result));
                 break;
 
             case 'wizard':
@@ -568,12 +568,12 @@ export async function main() {
 
             case 'analytics':
                 const analytics = validator.getAnalytics();
-                console.log('📊 Template Analytics:');
-                console.log(JSON.stringify(analytics, null, 2));
+                console.info('📊 Template Analytics:');
+                console.info(JSON.stringify(analytics, null, 2));
                 break;
 
             default:
-                console.log(`
+                console.info(`
 📋 Template Validator CLI
 
 Usage: bun template-validator.ts <command>

@@ -136,7 +136,7 @@ async function time<T>(label: string, fn: () => Promise<T>): Promise<T> {
 		const result = await fn();
 		const duration = performance.now() - start;
 		MLGS_CONTEXT.perfMetrics.set(label, duration);
-		console.log(`⏱️  ${label}: ${utils.formatTime(duration)}`);
+		console.info(`⏱️  ${label}: ${utils.formatTime(duration)}`);
 		return result;
 	} catch (error) {
 		const duration = performance.now() - start;
@@ -149,7 +149,7 @@ async function time<T>(label: string, fn: () => Promise<T>): Promise<T> {
 // 14.3.5.0.0.0.0: Bun.inspect.table for Structured Console Tables
 function table(data: any[], properties?: string[], options?: { colors?: boolean; maxArrayLength?: number }): void {
 	if (!data || data.length === 0) {
-		console.log('No data to display');
+		console.info('No data to display');
 		return;
 	}
 	const tableStr = Bun.inspect.table(
@@ -157,7 +157,7 @@ function table(data: any[], properties?: string[], options?: { colors?: boolean;
 		properties,
 		{ colors: options?.colors ?? true, maxArrayLength: options?.maxArrayLength ?? 50 }
 	);
-	console.log(tableStr);
+	console.info(tableStr);
 }
 
 // 11.2.1.5.0.0.0.0: Benchmark utility
@@ -181,7 +181,7 @@ async function bench<T>(
 			times.length,
 	);
 
-	console.log(`
+	console.info(`
 📊 Benchmark: ${label}
   Iterations: ${iterations}
   Average: ${utils.formatTime(avg)}
@@ -195,7 +195,7 @@ async function bench<T>(
 // 14.3.3.0.0.0.0: Enhanced with Bun.inspect for better formatting
 function inspect(obj: any, depth = 2, colors = true): string {
 	const str = Bun.inspect(obj, { depth, colors });
-	console.log(str);
+	console.info(str);
 	return str;
 }
 
@@ -203,10 +203,10 @@ function inspect(obj: any, depth = 2, colors = true): string {
 // Example usage:
 //   const arr = new Uint8Array([1, 2, 3]);
 //   const str = Bun.inspect(arr);
-//   console.log(str); // => "Uint8Array(3) [ 1, 2, 3 ]"
+//   console.info(str); // => "Uint8Array(3) [ 1, 2, 3 ]"
 //
 //   const complexCmms: CmmsState = { /* ... */ };
-//   console.log(Bun.inspect(complexCmms, { depth: 3, colors: true }));
+//   console.info(Bun.inspect(complexCmms, { depth: 3, colors: true }));
 //   // Provides a colorized, deeply inspected view of the CMMS object.
 
 // 11.2.1.7.0.0.0.0: Database query helper
@@ -228,15 +228,15 @@ const research = {
 				LIMIT 10
 			`);
 
-			console.log("📅 Recent Research Events:");
+			console.info("📅 Recent Research Events:");
 			if (events.length === 0) {
-				console.log("  No events found.");
+				console.info("  No events found.");
 			} else {
 				events.forEach((event: any) => {
 					const date = event.start_time
 						? new Date(event.start_time * 1000).toLocaleString()
 						: "N/A";
-					console.log(
+					console.info(
 						`  • ${event.id}: ${event.name || "Unnamed"} (${event.sport || "N/A"}) - ${date} [${event.status || "unknown"}]`,
 					);
 				});
@@ -257,15 +257,15 @@ const research = {
 				LIMIT 10
 			`);
 
-			console.log("🔍 Recent Anomalies:");
+			console.info("🔍 Recent Anomalies:");
 			if (anomalies.length === 0) {
-				console.log("  No anomalies found.");
+				console.info("  No anomalies found.");
 			} else {
 				anomalies.forEach((anomaly: any) => {
 					const date = anomaly.detected_at
 						? new Date(anomaly.detected_at * 1000).toLocaleString()
 						: "N/A";
-					console.log(
+					console.info(
 						`  • Layer ${anomaly.layer}: ${anomaly.type || "unknown"} (${utils.formatPercent(anomaly.confidence || 0)} conf) - ${date}`,
 					);
 				});
@@ -287,9 +287,9 @@ const research = {
 				LIMIT 10
 			`);
 
-			console.log("🔗 High-Confidence Hidden Edges:");
+			console.info("🔗 High-Confidence Hidden Edges:");
 			if (edges.length === 0) {
-				console.log("  No edges found.");
+				console.info("  No edges found.");
 			} else {
 				// 14.3.5.0.0.0.0: Use Bun.inspect.table for structured display
 				table(
@@ -312,7 +312,7 @@ const research = {
 
 // 11.2.1.9.0.0.0.0: Help command
 function help(): void {
-	console.log(`
+	console.info(`
 📚 MLGS Console Commands:
 
   Core MLGS:
@@ -375,27 +375,27 @@ function help(): void {
 };
 (globalThis as any).perf = {
 	list: () => {
-		console.log("📈 Performance Metrics:");
+		console.info("📈 Performance Metrics:");
 		if (MLGS_CONTEXT.perfMetrics.size === 0) {
-			console.log("No metrics recorded yet.");
+			console.info("No metrics recorded yet.");
 		} else {
 			Array.from(MLGS_CONTEXT.perfMetrics.entries())
 				.sort(([, a], [, b]) => b - a)
 				.forEach(([label, duration]) => {
-					console.log(`  ${label}: ${utils.formatTime(duration)}`);
+					console.info(`  ${label}: ${utils.formatTime(duration)}`);
 				});
 		}
 	},
 	clear: () => {
 		MLGS_CONTEXT.perfMetrics.clear();
-		console.log("✅ Performance metrics cleared.");
+		console.info("✅ Performance metrics cleared.");
 	},
 };
 
 // Display version info on startup
-console.log(getVersionString());
-console.log(`Features: ${getFeaturesString()}`);
-console.log('');
+console.info(getVersionString());
+console.info(`Features: ${getFeaturesString()}`);
+console.info('');
 
 // Welcome message
 const welcomeMessage = `
@@ -423,7 +423,7 @@ const welcomeMessage = `
 
 `;
 
-console.log(welcomeMessage);
+console.info(welcomeMessage);
 
 // Add router verification to global context
 (globalThis as any).mlgs = {
@@ -439,13 +439,13 @@ console.log(welcomeMessage);
 				
 				const result = router.verifyRouterIntegration();
 				
-				console.log("\n🔍 Router Integration Verification:");
-				console.log("=" .repeat(50));
+				console.info("\n🔍 Router Integration Verification:");
+				console.info("=" .repeat(50));
 				result.details.forEach((detail: string) => {
-					console.log(detail);
+					console.info(detail);
 				});
-				console.log("=" .repeat(50));
-				console.log(`\n🎯 Status: ${result.status}\n`);
+				console.info("=" .repeat(50));
+				console.info(`\n🎯 Status: ${result.status}\n`);
 				
 				return result;
 			} catch (error) {
@@ -467,19 +467,19 @@ console.log(welcomeMessage);
 				
 				const proxies = await service.listProxies(bookmaker);
 				
-				console.log(`\n📋 Proxy Configuration${bookmaker ? ` for ${bookmaker}` : ""}:`);
-				console.log("=".repeat(60));
+				console.info(`\n📋 Proxy Configuration${bookmaker ? ` for ${bookmaker}` : ""}:`);
+				console.info("=".repeat(60));
 				proxies.forEach((proxy) => {
-					console.log(`\n  ID: ${proxy.id}`);
-					console.log(`  URL: ${proxy.url}`);
-					console.log(`  Type: ${proxy.type}`);
-					console.log(`  Enabled: ${proxy.isEnabled ? "✅" : "❌"}`);
-					console.log(`  Health Score: ${proxy.healthScore.toFixed(1)}/100`);
-					console.log(`  Errors: ${proxy.errorCount} | Successes: ${proxy.successCount}`);
-					console.log(`  Bookmakers: ${proxy.bookmakers.join(", ")}`);
-					console.log(`  Last Checked: ${new Date(proxy.lastChecked).toISOString()}`);
+					console.info(`\n  ID: ${proxy.id}`);
+					console.info(`  URL: ${proxy.url}`);
+					console.info(`  Type: ${proxy.type}`);
+					console.info(`  Enabled: ${proxy.isEnabled ? "✅" : "❌"}`);
+					console.info(`  Health Score: ${proxy.healthScore.toFixed(1)}/100`);
+					console.info(`  Errors: ${proxy.errorCount} | Successes: ${proxy.successCount}`);
+					console.info(`  Bookmakers: ${proxy.bookmakers.join(", ")}`);
+					console.info(`  Last Checked: ${new Date(proxy.lastChecked).toISOString()}`);
 				});
-				console.log("\n" + "=".repeat(60));
+				console.info("\n" + "=".repeat(60));
 				
 				service.stop();
 				db.close();
@@ -503,27 +503,27 @@ console.log(welcomeMessage);
 				if (proxyId) {
 					const metrics = service.getProxyMetrics(proxyId);
 					if (metrics) {
-						console.log(`\n🏥 Proxy Health: ${proxyId}`);
-						console.log("=".repeat(60));
-						console.log(`  Health Score: ${metrics.healthScore.toFixed(1)}/100`);
-						console.log(`  Errors: ${metrics.errorTotal}`);
-						console.log(`  Successes: ${metrics.successTotal}`);
-						console.log(`  Avg Latency: ${metrics.latencyAvg.toFixed(2)}ms`);
-						console.log(`  Latency Range: ${metrics.latencyMin.toFixed(2)}ms - ${metrics.latencyMax.toFixed(2)}ms`);
-						console.log("=".repeat(60));
+						console.info(`\n🏥 Proxy Health: ${proxyId}`);
+						console.info("=".repeat(60));
+						console.info(`  Health Score: ${metrics.healthScore.toFixed(1)}/100`);
+						console.info(`  Errors: ${metrics.errorTotal}`);
+						console.info(`  Successes: ${metrics.successTotal}`);
+						console.info(`  Avg Latency: ${metrics.latencyAvg.toFixed(2)}ms`);
+						console.info(`  Latency Range: ${metrics.latencyMin.toFixed(2)}ms - ${metrics.latencyMax.toFixed(2)}ms`);
+						console.info("=".repeat(60));
 					} else {
-						console.log(`❌ Proxy ${proxyId} not found`);
+						console.info(`❌ Proxy ${proxyId} not found`);
 					}
 				} else {
 					const proxies = await service.listProxies();
-					console.log(`\n🏥 Proxy Health Summary:`);
-					console.log("=".repeat(60));
+					console.info(`\n🏥 Proxy Health Summary:`);
+					console.info("=".repeat(60));
 					proxies.forEach((proxy) => {
 						const metrics = service.getProxyMetrics(proxy.id);
 						const status = proxy.healthScore >= 70 ? "✅" : proxy.healthScore >= 40 ? "⚠️" : "❌";
-						console.log(`  ${status} ${proxy.id}: ${proxy.healthScore.toFixed(1)}/100 (${proxy.errorCount} errors, ${proxy.successCount} successes)`);
+						console.info(`  ${status} ${proxy.id}: ${proxy.healthScore.toFixed(1)}/100 (${proxy.errorCount} errors, ${proxy.successCount} successes)`);
 					});
-					console.log("=".repeat(60));
+					console.info("=".repeat(60));
 				}
 				
 				service.stop();

@@ -162,8 +162,8 @@ export class ConnectionHealthDashboard {
 
     // Log alerts
     if (alerts.length > 0) {
-      console.log(`[${new Date().toISOString()}] Connection Health Alerts:`)
-      alerts.forEach((alert) => console.log(`  ⚠️  ${alert}`))
+      console.info(`[${new Date().toISOString()}] Connection Health Alerts:`)
+      alerts.forEach((alert) => console.info(`  ⚠️  ${alert}`))
     }
   }
 

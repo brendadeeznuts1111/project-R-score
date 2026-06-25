@@ -18,7 +18,7 @@ class PackagesPerformanceTest {
   private results: PerformanceMetrics[] = [];
 
   async runCommand(command: string, description: string): Promise<PerformanceMetrics> {
-    console.log(`🧪 Testing: ${description}`);
+    console.info(`🧪 Testing: ${description}`);
     
     const startTime = Date.now();
     const success = await this.executeCommand(command);
@@ -33,7 +33,7 @@ class PackagesPerformanceTest {
     };
     
     this.results.push(metrics);
-    console.log(`✅ ${description}: ${duration.toFixed(2)}ms`);
+    console.info(`✅ ${description}: ${duration.toFixed(2)}ms`);
     
     return metrics;
   }
@@ -55,7 +55,7 @@ class PackagesPerformanceTest {
   }
 
   async runPerformanceTests(): Promise<void> {
-    console.log('🚀 Starting Packages Directory Performance Tests\n');
+    console.info('🚀 Starting Packages Directory Performance Tests\n');
 
     // Test basic package operations
     await this.runCommand('bun run packages:install', 'Install all packages');
@@ -77,46 +77,46 @@ class PackagesPerformanceTest {
   }
 
   private generateReport(): void {
-    console.log('\n📊 Performance Test Report');
-    console.log('================================');
+    console.info('\n📊 Performance Test Report');
+    console.info('================================');
 
     const totalDuration = this.results.reduce((sum, result) => sum + result.duration, 0);
     const successfulOperations = this.results.filter(result => result.success).length;
 
-    console.log(`📈 Total Operations: ${this.results.length}`);
-    console.log(`✅ Successful: ${successfulOperations}`);
-    console.log(`❌ Failed: ${this.results.length - successfulOperations}`);
-    console.log(`⏱️ Total Duration: ${totalDuration.toFixed(2)}ms`);
-    console.log(`📊 Average Duration: ${(totalDuration / this.results.length).toFixed(2)}ms`);
+    console.info(`📈 Total Operations: ${this.results.length}`);
+    console.info(`✅ Successful: ${successfulOperations}`);
+    console.info(`❌ Failed: ${this.results.length - successfulOperations}`);
+    console.info(`⏱️ Total Duration: ${totalDuration.toFixed(2)}ms`);
+    console.info(`📊 Average Duration: ${(totalDuration / this.results.length).toFixed(2)}ms`);
 
-    console.log('\n📋 Detailed Results:');
+    console.info('\n📋 Detailed Results:');
     this.results.forEach((result, index) => {
       const status = result.success ? '✅' : '❌';
-      console.log(`${index + 1}. ${status} ${result.operation}: ${result.duration.toFixed(2)}ms`);
+      console.info(`${index + 1}. ${status} ${result.operation}: ${result.duration.toFixed(2)}ms`);
     });
 
     // Performance comparison
-    console.log('\n🚀 Performance Improvements:');
-    console.log('• Package installation: 10x faster than npm');
-    console.log('• Build operations: 6x faster than traditional tools');
-    console.log('• Memory usage: 50% reduction');
-    console.log('• Hot reload: Instant updates across packages');
+    console.info('\n🚀 Performance Improvements:');
+    console.info('• Package installation: 10x faster than npm');
+    console.info('• Build operations: 6x faster than traditional tools');
+    console.info('• Memory usage: 50% reduction');
+    console.info('• Hot reload: Instant updates across packages');
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     if (totalDuration < 10000) {
-      console.log('🎉 Excellent performance! All operations completed quickly.');
+      console.info('🎉 Excellent performance! All operations completed quickly.');
     } else if (totalDuration < 30000) {
-      console.log('✅ Good performance. Consider using --filter for specific packages.');
+      console.info('✅ Good performance. Consider using --filter for specific packages.');
     } else {
-      console.log('⚠️  Consider optimizing package dependencies or using cache strategies.');
+      console.info('⚠️  Consider optimizing package dependencies or using cache strategies.');
     }
 
-    console.log('\n🎯 Next Steps:');
-    console.log('1. Use bun run packages:dev for hot reload development');
-    console.log('2. Use bun run packages:build for optimized builds');
-    console.log('3. Use bun run packages:coverage for test coverage');
-    console.log('4. Use bun run packages:audit for security checks');
+    console.info('\n🎯 Next Steps:');
+    console.info('1. Use bun run packages:dev for hot reload development');
+    console.info('2. Use bun run packages:build for optimized builds');
+    console.info('3. Use bun run packages:coverage for test coverage');
+    console.info('4. Use bun run packages:audit for security checks');
   }
 }
 

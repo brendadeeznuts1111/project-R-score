@@ -20,31 +20,31 @@ const users = [
   { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'moderator', active: true },
 ];
 
-console.log('🚀 Bun Utilities Demo\n');
+console.info('🚀 Bun Utilities Demo\n');
 
 // 1. Enhanced Table with Bun.inspect.table()
-console.log('📊 Simple Table (Bun.inspect.table):');
-console.log(Bun.inspect.table(trades));
-console.log();
+console.info('📊 Simple Table (Bun.inspect.table):');
+console.info(Bun.inspect.table(trades));
+console.info();
 
 // 2. Custom Table with formatting
-console.log('📋 Custom Table with Formatting:');
-console.log(inspectTable(users, {
+console.info('📋 Custom Table with Formatting:');
+console.info(inspectTable(users, {
   columns: ['name', 'email', 'role'],
   colors: true
 }));
-console.log();
+console.info();
 
 // 3. HTML Sanitization
-console.log('🛡️ HTML Sanitization:');
+console.info('🛡️ HTML Sanitization:');
 const unsafeHTML = '<script>alert("xss")</script><b>Safe text</b><a href="javascript:evil()">Link</a>';
 const safeHTML = HTMLSanitizer.sanitize(unsafeHTML);
-console.log('Unsafe:', unsafeHTML);
-console.log('Safe:  ', safeHTML);
-console.log();
+console.info('Unsafe:', unsafeHTML);
+console.info('Safe:  ', safeHTML);
+console.info();
 
 // 4. Progress Bar Demo
-console.log('📈 Progress Bar Demo:');
+console.info('📈 Progress Bar Demo:');
 const progress = new ProgressBar(10, 30);
 
 for (let i = 0; i <= 10; i++) {
@@ -53,10 +53,10 @@ for (let i = 0; i <= 10; i++) {
 }
 
 progress.complete('All items processed!');
-console.log();
+console.info();
 
 // 5. String Width Demo
-console.log('📏 String Width Calculations:');
+console.info('📏 String Width Calculations:');
 const strings = [
   'Hello World',
   '🎉 Party Time! 🎊',
@@ -68,7 +68,7 @@ const strings = [
 strings.forEach(str => {
   const width = Bun.stringWidth(str);
   const ansiWidth = Bun.stringWidth(str, { countAnsiEscapeCodes: false });
-  console.log(`"${str}" -> Width: ${width}, ANSI-aware: ${ansiWidth}`);
+  console.info(`"${str}" -> Width: ${width}, ANSI-aware: ${ansiWidth}`);
 });
 
-console.log('\n✨ Demo complete! These utilities provide production-ready solutions for CLI development.');
+console.info('\n✨ Demo complete! These utilities provide production-ready solutions for CLI development.');

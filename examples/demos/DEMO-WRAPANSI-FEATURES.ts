@@ -2,21 +2,21 @@
 // Demonstrates advanced ANSI-aware text wrapping with Unicode support
 
 async function demonstrateWrapAnsiFeatures() {
-  console.log('🎯 Bun wrapAnsi Feature Showcase');
-  console.log('==================================\n');
+  console.info('🎯 Bun wrapAnsi Feature Showcase');
+  console.info('==================================\n');
 
-  console.log('📊 Feature Overview:');
-  console.log('====================');
-  console.log('• ANSI-aware text wrapping');
-  console.log('• Unicode character support');
-  console.log('• Color/style preservation across line breaks');
-  console.log('• Full-width character handling');
-  console.log('• Advanced wrapping options');
-  console.log('• Production-ready edge case handling\n');
+  console.info('📊 Feature Overview:');
+  console.info('====================');
+  console.info('• ANSI-aware text wrapping');
+  console.info('• Unicode character support');
+  console.info('• Color/style preservation across line breaks');
+  console.info('• Full-width character handling');
+  console.info('• Advanced wrapping options');
+  console.info('• Production-ready edge case handling\n');
 
   // Demo 1: Basic Wrapping
-  console.log('✅ Demo 1: Basic Text Wrapping');
-  console.log('===============================');
+  console.info('✅ Demo 1: Basic Text Wrapping');
+  console.info('===============================');
   
   const basicTests = [
     { text: 'hello world', columns: 5 },
@@ -28,15 +28,15 @@ async function demonstrateWrapAnsiFeatures() {
 
   basicTests.forEach(({ text, columns }) => {
     const result = Bun.wrapAnsi(text, columns);
-    console.log(`   Input: "${text}" (width: ${columns})`);
-    console.log(`   Output: "${result.replace(/\n/g, '\\n')}"`);
-    console.log(`   Lines: ${result.split('\n').length}`);
-    console.log('');
+    console.info(`   Input: "${text}" (width: ${columns})`);
+    console.info(`   Output: "${result.replace(/\n/g, '\\n')}"`);
+    console.info(`   Lines: ${result.split('\n').length}`);
+    console.info('');
   });
 
   // Demo 2: Hard Wrap Option
-  console.log('✅ Demo 2: Hard Wrap Option');
-  console.log('===========================');
+  console.info('✅ Demo 2: Hard Wrap Option');
+  console.info('===========================');
   
   const hardWrapTests = [
     { text: 'abcdefgh', columns: 3, hard: true },
@@ -48,15 +48,15 @@ async function demonstrateWrapAnsiFeatures() {
     const normal = Bun.wrapAnsi(text, columns);
     const hardWrap = Bun.wrapAnsi(text, columns, { hard });
     
-    console.log(`   Input: "${text}" (width: ${columns})`);
-    console.log(`   Normal: "${normal.replace(/\n/g, '\\n')}"`);
-    console.log(`   Hard:   "${hardWrap.replace(/\n/g, '\\n')}"`);
-    console.log('');
+    console.info(`   Input: "${text}" (width: ${columns})`);
+    console.info(`   Normal: "${normal.replace(/\n/g, '\\n')}"`);
+    console.info(`   Hard:   "${hardWrap.replace(/\n/g, '\\n')}"`);
+    console.info('');
   });
 
   // Demo 3: ANSI Color Preservation
-  console.log('✅ Demo 3: ANSI Color Preservation');
-  console.log('===================================');
+  console.info('✅ Demo 3: ANSI Color Preservation');
+  console.info('===================================');
   
   const ansiTests = [
     { 
@@ -83,16 +83,16 @@ async function demonstrateWrapAnsiFeatures() {
 
   ansiTests.forEach(({ name, text, columns }) => {
     const result = Bun.wrapAnsi(text, columns);
-    console.log(`   ${name}:`);
-    console.log(`   Input:  "${text.replace(/\x1b/g, '\\x1b')}"`);
-    console.log(`   Output: "${result.replace(/\x1b/g, '\\x1b')}"`);
-    console.log(`   Lines:  ${result.split('\n').length}`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Input:  "${text.replace(/\x1b/g, '\\x1b')}"`);
+    console.info(`   Output: "${result.replace(/\x1b/g, '\\x1b')}"`);
+    console.info(`   Lines:  ${result.split('\n').length}`);
+    console.info('');
   });
 
   // Demo 4: Advanced ANSI Codes
-  console.log('✅ Demo 4: Advanced ANSI Codes');
-  console.log('===============================');
+  console.info('✅ Demo 4: Advanced ANSI Codes');
+  console.info('===============================');
   
   const advancedAnsiTests = [
     {
@@ -119,15 +119,15 @@ async function demonstrateWrapAnsiFeatures() {
 
   advancedAnsiTests.forEach(({ name, text, columns }) => {
     const result = Bun.wrapAnsi(text, columns);
-    console.log(`   ${name}:`);
-    console.log(`   Input:  "${text.replace(/\x1b/g, '\\x1b')}"`);
-    console.log(`   Output: "${result.replace(/\x1b/g, '\\x1b')}"`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Input:  "${text.replace(/\x1b/g, '\\x1b')}"`);
+    console.info(`   Output: "${result.replace(/\x1b/g, '\\x1b')}"`);
+    console.info('');
   });
 
   // Demo 5: Unicode Support
-  console.log('✅ Demo 5: Unicode Character Support');
-  console.log('=====================================');
+  console.info('✅ Demo 5: Unicode Character Support');
+  console.info('=====================================');
   
   const unicodeTests = [
     {
@@ -161,15 +161,15 @@ async function demonstrateWrapAnsiFeatures() {
     const normal = Bun.wrapAnsi(text, columns);
     const hard = Bun.wrapAnsi(text, columns, { hard: true });
     
-    console.log(`   ${name}: "${text}"`);
-    console.log(`   Normal: "${normal.replace(/\n/g, '\\n')}"`);
-    console.log(`   Hard:   "${hard.replace(/\n/g, '\\n')}"`);
-    console.log('');
+    console.info(`   ${name}: "${text}"`);
+    console.info(`   Normal: "${normal.replace(/\n/g, '\\n')}"`);
+    console.info(`   Hard:   "${hard.replace(/\n/g, '\\n')}"`);
+    console.info('');
   });
 
   // Demo 6: Width Tracking Examples
-  console.log('✅ Demo 6: Width Tracking Precision');
-  console.log('===================================');
+  console.info('✅ Demo 6: Width Tracking Precision');
+  console.info('===================================');
   
   const widthTests = [
     {
@@ -193,26 +193,26 @@ async function demonstrateWrapAnsiFeatures() {
     const result = Bun.wrapAnsi(text, columns, { hard: true });
     const textWidth = Bun.stringWidth(text);
     
-    console.log(`   ${name}: "${text}"`);
-    console.log(`   Total width: ${textWidth} columns`);
-    console.log(`   Wrap at: ${columns} columns`);
-    console.log(`   Result: "${result.replace(/\n/g, '\\n')}"`);
-    console.log('');
+    console.info(`   ${name}: "${text}"`);
+    console.info(`   Total width: ${textWidth} columns`);
+    console.info(`   Wrap at: ${columns} columns`);
+    console.info(`   Result: "${result.replace(/\n/g, '\\n')}"`);
+    console.info('');
   });
 
   // Demo 7: Practical Examples
-  console.log('✅ Demo 7: Practical Usage Examples');
-  console.log('===================================');
+  console.info('✅ Demo 7: Practical Usage Examples');
+  console.info('===================================');
   
   // CLI Help Text
   const helpText = '\x1b[1mUSAGE\x1b[0m\n\x1b[36m  myapp [options] <command>\x1b[0m\n\n\x1b[1mOPTIONS\x1b[0m\n\x1b[32m  --help\x1b[0m     Show help message\n\x1b[32m  --version\x1b[0m  Show version\n\x1b[32m  --verbose\x1b[0m  Verbose output';
   
-  console.log('   CLI Help Text (wrapped to 30 columns):');
-  console.log('   ' + '─'.repeat(40));
+  console.info('   CLI Help Text (wrapped to 30 columns):');
+  console.info('   ' + '─'.repeat(40));
   const wrappedHelp = Bun.wrapAnsi(helpText, 30);
-  console.log('   ' + wrappedHelp.replace(/\n/g, '\n   '));
-  console.log('   ' + '─'.repeat(40));
-  console.log('');
+  console.info('   ' + wrappedHelp.replace(/\n/g, '\n   '));
+  console.info('   ' + '─'.repeat(40));
+  console.info('');
 
   // Status Messages
   const statusMessages = [
@@ -221,19 +221,19 @@ async function demonstrateWrapAnsiFeatures() {
     '\x1b[31m✗ Error: Failed to connect to database server at localhost:5432\x1b[0m'
   ];
 
-  console.log('   Status Messages (wrapped to 40 columns):');
-  console.log('   ' + '─'.repeat(45));
+  console.info('   Status Messages (wrapped to 40 columns):');
+  console.info('   ' + '─'.repeat(45));
   statusMessages.forEach(msg => {
     const wrapped = Bun.wrapAnsi(msg, 40);
-    console.log('   ' + wrapped.replace(/\n/g, '\n   '));
-    console.log('');
+    console.info('   ' + wrapped.replace(/\n/g, '\n   '));
+    console.info('');
   });
-  console.log('   ' + '─'.repeat(45));
-  console.log('');
+  console.info('   ' + '─'.repeat(45));
+  console.info('');
 
   // Demo 8: Edge Cases
-  console.log('✅ Demo 8: Edge Case Handling');
-  console.log('=============================');
+  console.info('✅ Demo 8: Edge Case Handling');
+  console.info('=============================');
   
   const edgeCases = [
     { text: 'hello\nworld', columns: 5, name: 'Existing Newlines' },
@@ -245,15 +245,15 @@ async function demonstrateWrapAnsiFeatures() {
 
   edgeCases.forEach(({ text, columns, name }) => {
     const result = Bun.wrapAnsi(text, columns);
-    console.log(`   ${name}:`);
-    console.log(`   Input:  "${text.replace(/\r/g, '\\r').replace(/\t/g, '\\t')}"`);
-    console.log(`   Output: "${result.replace(/\n/g, '\\n')}"`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Input:  "${text.replace(/\r/g, '\\r').replace(/\t/g, '\\t')}"`);
+    console.info(`   Output: "${result.replace(/\n/g, '\\n')}"`);
+    console.info('');
   });
 
   // Demo 9: Advanced Options
-  console.log('✅ Demo 9: Advanced Options');
-  console.log('===========================');
+  console.info('✅ Demo 9: Advanced Options');
+  console.info('===========================');
   
   const optionTests = [
     {
@@ -286,18 +286,18 @@ async function demonstrateWrapAnsiFeatures() {
   ];
 
   optionTests.forEach(({ name, text, columns, options }) => {
-    console.log(`   ${name}: "${text}"`);
+    console.info(`   ${name}: "${text}"`);
     options.forEach((option, index) => {
       const result = Bun.wrapAnsi(text, columns, option);
       const optionStr = Object.entries(option).map(([k, v]) => `${k}: ${v}`).join(', ');
-      console.log(`   Option ${index + 1} (${optionStr}): "${result.replace(/\n/g, '\\n')}"`);
+      console.info(`   Option ${index + 1} (${optionStr}): "${result.replace(/\n/g, '\\n')}"`);
     });
-    console.log('');
+    console.info('');
   });
 
   // Demo 10: Performance Test
-  console.log('✅ Demo 10: Performance Testing');
-  console.log('===============================');
+  console.info('✅ Demo 10: Performance Testing');
+  console.info('===============================');
   
   const performanceTests = [
     { text: 'hello world '.repeat(100), columns: 20 },
@@ -316,16 +316,16 @@ async function demonstrateWrapAnsiFeatures() {
     const duration = endTime - startTime;
     const avgTime = duration / 1000;
     
-    console.log(`   Test ${index + 1}:`);
-    console.log(`   Text length: ${text.length} characters`);
-    console.log(`   1000 iterations: ${duration.toFixed(2)}ms`);
-    console.log(`   Average per call: ${avgTime.toFixed(4)}ms`);
-    console.log('');
+    console.info(`   Test ${index + 1}:`);
+    console.info(`   Text length: ${text.length} characters`);
+    console.info(`   1000 iterations: ${duration.toFixed(2)}ms`);
+    console.info(`   Average per call: ${avgTime.toFixed(4)}ms`);
+    console.info('');
   });
 
   // Summary
-  console.log('🎊 wrapAnsi Feature Summary');
-  console.log('============================');
+  console.info('🎊 wrapAnsi Feature Summary');
+  console.info('============================');
   
   const allTests = [
     ...basicTests,
@@ -351,32 +351,32 @@ async function demonstrateWrapAnsiFeatures() {
     }
   });
 
-  console.log(`📊 Total Feature Tests: ${totalTests}`);
-  console.log(`✅ Successful: ${successfulTests}`);
-  console.log(`📈 Success Rate: ${((successfulTests / totalTests) * 100).toFixed(1)}%`);
+  console.info(`📊 Total Feature Tests: ${totalTests}`);
+  console.info(`✅ Successful: ${successfulTests}`);
+  console.info(`📈 Success Rate: ${((successfulTests / totalTests) * 100).toFixed(1)}%`);
 
-  console.log('\n🚀 Key Features Demonstrated:');
-  console.log('• ANSI-aware wrapping with style preservation');
-  console.log('• Unicode support for global applications');
-  console.log('• Advanced options (hard, trim, wordWrap)');
-  console.log('• Full-width character handling');
-  console.log('• 256-color and TrueColor support');
-  console.log('• Edge case robustness');
-  console.log('• Performance optimized for production');
+  console.info('\n🚀 Key Features Demonstrated:');
+  console.info('• ANSI-aware wrapping with style preservation');
+  console.info('• Unicode support for global applications');
+  console.info('• Advanced options (hard, trim, wordWrap)');
+  console.info('• Full-width character handling');
+  console.info('• 256-color and TrueColor support');
+  console.info('• Edge case robustness');
+  console.info('• Performance optimized for production');
 
-  console.log('\n🌟 Production-Ready Capabilities:');
-  console.log('• Terminal application formatting');
-  console.log('• CLI help text generation');
-  console.log('• Status message wrapping');
-  console.log('• International text processing');
-  console.log('• Log file formatting');
-  console.log('• Report generation');
+  console.info('\n🌟 Production-Ready Capabilities:');
+  console.info('• Terminal application formatting');
+  console.info('• CLI help text generation');
+  console.info('• Status message wrapping');
+  console.info('• International text processing');
+  console.info('• Log file formatting');
+  console.info('• Report generation');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun.wrapAnsi provides sophisticated text wrapping');
-  console.log('with perfect ANSI preservation and Unicode support!');
-  console.log('Ideal for terminal applications and CLI tools! 🎯');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun.wrapAnsi provides sophisticated text wrapping');
+  console.info('with perfect ANSI preservation and Unicode support!');
+  console.info('Ideal for terminal applications and CLI tools! 🎯');
 }
 
 // Run the demonstration

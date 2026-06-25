@@ -176,9 +176,9 @@ describe("⏱️ High-Precision Timing", () => {
         const bunNsEnd = Bun.nanoseconds();
         const bunNsDuration = bunNsEnd - bunNsStart;
 
-        console.log(`Date.now(): ${timeManager.formatDuration(dateNowDuration, 'nanoseconds')}`);
-        console.log(`performance.now(): ${timeManager.formatDuration(perfNowDuration, 'nanoseconds')}`);
-        console.log(`Bun.nanoseconds(): ${timeManager.formatDuration(bunNsDuration, 'nanoseconds')}`);
+        console.info(`Date.now(): ${timeManager.formatDuration(dateNowDuration, 'nanoseconds')}`);
+        console.info(`performance.now(): ${timeManager.formatDuration(perfNowDuration, 'nanoseconds')}`);
+        console.info(`Bun.nanoseconds(): ${timeManager.formatDuration(bunNsDuration, 'nanoseconds')}`);
 
         // All should complete in reasonable time
         expect(dateNowDuration).toBeGreaterThan(0);
@@ -245,12 +245,12 @@ describe("🎭 Time Mocking and Testing", () => {
                 {
                     timestamp: new Date('2024-01-01T12:01:00.000Z'),
                     description: 'Test event 1',
-                    callback: () => console.log('Event 1 executed')
+                    callback: () => console.info('Event 1 executed')
                 },
                 {
                     timestamp: new Date('2024-01-01T12:02:00.000Z'),
                     description: 'Test event 2',
-                    callback: () => console.log('Event 2 executed')
+                    callback: () => console.info('Event 2 executed')
                 }
             ]
         };
@@ -312,7 +312,7 @@ describe("📊 Performance Benchmarks", () => {
             expect(result.iterations).toBe(10000);
         });
 
-        console.log(performanceBenchmark.formatResults());
+        console.info(performanceBenchmark.formatResults());
     });
 
     test("WebSocket message creation performance", async () => {
@@ -354,7 +354,7 @@ describe("📊 Performance Benchmarks", () => {
         // Time manager overhead should be less than 50% (generous allowance)
         expect(timeManagerDuration).toBeLessThan(standardDuration * 1.5);
 
-        console.log(performanceBenchmark.formatResults());
+        console.info(performanceBenchmark.formatResults());
     });
 
     test("High-frequency timing measurements", async () => {
@@ -385,11 +385,11 @@ describe("📊 Performance Benchmarks", () => {
         const max = Math.max(...measurements);
         const variance = measurements.reduce((sum, val) => sum + Math.pow(val - avgDuration, 2), 0) / measurements.length;
 
-        console.log(`High-frequency timing stats:`);
-        console.log(`  Average: ${timeManager.formatDuration(avgDuration, 'nanoseconds')}`);
-        console.log(`  Min: ${timeManager.formatDuration(min, 'nanoseconds')}`);
-        console.log(`  Max: ${timeManager.formatDuration(max, 'nanoseconds')}`);
-        console.log(`  Variance: ${variance.toFixed(2)} ns²`);
+        console.info(`High-frequency timing stats:`);
+        console.info(`  Average: ${timeManager.formatDuration(avgDuration, 'nanoseconds')}`);
+        console.info(`  Min: ${timeManager.formatDuration(min, 'nanoseconds')}`);
+        console.info(`  Max: ${timeManager.formatDuration(max, 'nanoseconds')}`);
+        console.info(`  Variance: ${variance.toFixed(2)} ns²`);
 
         // Variance should be reasonable (not too erratic)
         expect(variance).toBeLessThan(avgDuration * avgDuration * 50); // Allow up to 5000% relative variance for system variability
@@ -416,7 +416,7 @@ describe("🌍 International Time Handling", () => {
             expect(tzInfo.name).toBe(tz);
             expect(typeof tzInfo.offset).toBe('number');
 
-            console.log(`${tz}: offset=${tzInfo.offset}min, DST=${tzInfo.isDST}`);
+            console.info(`${tz}: offset=${tzInfo.offset}min, DST=${tzInfo.isDST}`);
         });
     });
 
@@ -453,9 +453,9 @@ describe("🌍 International Time Handling", () => {
         expect(nextEUOpen.getTime()).toBeGreaterThan(now.getTime());
         expect(nextAsiaOpen.getTime()).toBeGreaterThan(now.getTime());
 
-        console.log(`Next US market open: ${nextUSOpen.toISOString()}`);
-        console.log(`Next EU market open: ${nextEUOpen.toISOString()}`);
-        console.log(`Next Asia market open: ${nextAsiaOpen.toISOString()}`);
+        console.info(`Next US market open: ${nextUSOpen.toISOString()}`);
+        console.info(`Next EU market open: ${nextEUOpen.toISOString()}`);
+        console.info(`Next Asia market open: ${nextAsiaOpen.toISOString()}`);
     });
 });
 describe("🔧 Edge Cases and Error Handling", () => {

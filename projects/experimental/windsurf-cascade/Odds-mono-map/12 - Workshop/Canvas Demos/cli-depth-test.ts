@@ -28,17 +28,17 @@ function parseDepth(): number {
 }
 
 const depth = parseDepth();
-console.log(`🔧 Using console depth: ${depth}\n`);
+console.info(`🔧 Using console depth: ${depth}\n`);
 
 // Your exact example
 const nested = { a: { b: { c: { d: "deep" } } } };
 
-console.log('📋 Default console.log (depth 2):');
-console.log(nested);
+console.info('📋 Default console.log (depth 2):');
+console.info(nested);
 // Expected: { a: { b: [Object] } }
 
-console.log(`\n🔧 Bun.inspect with depth ${depth}:`);
-console.log(Bun.inspect(nested, { depth, colors: true }));
+console.info(`\n🔧 Bun.inspect with depth ${depth}:`);
+console.info(Bun.inspect(nested, { depth, colors: true }));
 // Expected with depth 4: { a: { b: { c: { d: 'deep' } } } }
 
-console.log(`\n✅ CLI depth control working! Depth ${depth} applied successfully.`);
+console.info(`\n✅ CLI depth control working! Depth ${depth} applied successfully.`);

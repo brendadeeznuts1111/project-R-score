@@ -47,9 +47,9 @@ if (!HTMLRewriter) {
   process.exit(1);
 }
 
-console.log('\n' + '═'.repeat(70));
-console.log('  HTMLRewriter Visual Demo');
-console.log('═'.repeat(70) + '\n');
+console.info('\n' + '═'.repeat(70));
+console.info('  HTMLRewriter Visual Demo');
+console.info('═'.repeat(70) + '\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.0 ORIGINAL HTML
@@ -71,17 +71,17 @@ const originalHTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-console.log('📄 ORIGINAL HTML:');
-console.log('-'.repeat(70));
-console.log(originalHTML);
-console.log('\n');
+console.info('📄 ORIGINAL HTML:');
+console.info('-'.repeat(70));
+console.info(originalHTML);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.1 TRANSFORMATION 1: Basic Element Modification
 // ═══════════════════════════════════════════════════════════════
 
-console.log('🔧 TRANSFORMATION 1: Basic Element Modification');
-console.log('-'.repeat(70));
+console.info('🔧 TRANSFORMATION 1: Basic Element Modification');
+console.info('-'.repeat(70));
 
 const rewriter1 = new HTMLRewriter()
   .on('h1', {
@@ -106,16 +106,16 @@ const rewriter1 = new HTMLRewriter()
 const result1 = rewriter1.transform(new Response(originalHTML));
 const transformed1 = await result1.text();
 
-console.log('✅ RESULT:');
-console.log(transformed1);
-console.log('\n');
+console.info('✅ RESULT:');
+console.info(transformed1);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.2 TRANSFORMATION 2: Content Injection
 // ═══════════════════════════════════════════════════════════════
 
-console.log('🔧 TRANSFORMATION 2: Content Injection');
-console.log('-'.repeat(70));
+console.info('🔧 TRANSFORMATION 2: Content Injection');
+console.info('-'.repeat(70));
 
 const rewriter2 = new HTMLRewriter()
   .on('title', {
@@ -135,23 +135,23 @@ const rewriter2 = new HTMLRewriter()
   })
   .onDocument({
     end(end) {
-      end.append('<script>console.log("Page enhanced by HTMLRewriter!");</script>', { html: true });
+      end.append('<script>console.info("Page enhanced by HTMLRewriter!");</script>', { html: true });
     },
   });
 
 const result2 = rewriter2.transform(new Response(originalHTML));
 const transformed2 = await result2.text();
 
-console.log('✅ RESULT:');
-console.log(transformed2);
-console.log('\n');
+console.info('✅ RESULT:');
+console.info(transformed2);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.3 TRANSFORMATION 3: Text Manipulation
 // ═══════════════════════════════════════════════════════════════
 
-console.log('🔧 TRANSFORMATION 3: Text Node Manipulation');
-console.log('-'.repeat(70));
+console.info('🔧 TRANSFORMATION 3: Text Node Manipulation');
+console.info('-'.repeat(70));
 
 const rewriter3 = new HTMLRewriter()
   .on('p', {
@@ -177,16 +177,16 @@ const rewriter3 = new HTMLRewriter()
 const result3 = rewriter3.transform(new Response(originalHTML));
 const transformed3 = await result3.text();
 
-console.log('✅ RESULT:');
-console.log(transformed3);
-console.log('\n');
+console.info('✅ RESULT:');
+console.info(transformed3);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.4 TRANSFORMATION 4: Complete Example (All Features)
 // ═══════════════════════════════════════════════════════════════
 
-console.log('🔧 TRANSFORMATION 4: Complete Example (All Features Combined)');
-console.log('-'.repeat(70));
+console.info('🔧 TRANSFORMATION 4: Complete Example (All Features Combined)');
+console.info('-'.repeat(70));
 
 const rewriter4 = new HTMLRewriter()
   .on('title', {
@@ -232,7 +232,7 @@ const rewriter4 = new HTMLRewriter()
   .main-title { text-align: center; }
 </style>
 <script>
-  console.log('✅ Page transformed by HTMLRewriter!');
+  console.info('✅ Page transformed by HTMLRewriter!');
   document.querySelectorAll('p').forEach(p => {
     p.addEventListener('click', () => {
       p.style.background = '#fff3cd';
@@ -247,9 +247,9 @@ const rewriter4 = new HTMLRewriter()
 const result4 = rewriter4.transform(new Response(originalHTML));
 const transformed4 = await result4.text();
 
-console.log('✅ RESULT:');
-console.log(transformed4);
-console.log('\n');
+console.info('✅ RESULT:');
+console.info(transformed4);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.1.0.0.0.0.4.5 SAVE TO FILE FOR VIEWING
@@ -258,9 +258,9 @@ console.log('\n');
 const outputFile = Bun.file('demo-rewriter-output.html');
 await Bun.write(outputFile, transformed4);
 
-console.log('═'.repeat(70));
-console.log('  Demo Complete!');
-console.log('═'.repeat(70));
-console.log('\n📁 Output saved to: demo-rewriter-output.html');
-console.log('🌐 Open in browser: open demo-rewriter-output.html');
-console.log('   Or: bun --bun demo-rewriter-output.html\n');
+console.info('═'.repeat(70));
+console.info('  Demo Complete!');
+console.info('═'.repeat(70));
+console.info('\n📁 Output saved to: demo-rewriter-output.html');
+console.info('🌐 Open in browser: open demo-rewriter-output.html');
+console.info('   Or: bun --bun demo-rewriter-output.html\n');

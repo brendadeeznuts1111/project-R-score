@@ -276,17 +276,21 @@ async function main() {
   }
 
   if (all.length === 0) {
-    console.log('PASS secrets conformance: no positional Bun.secrets usage found');
+    console.info('PASS secrets conformance: no positional Bun.secrets usage found');
     process.exit(0);
   }
 
   console.error(`FAIL secrets conformance: found ${all.length} positional Bun.secrets call(s)`);
   for (const v of all) {
-    console.error(`- ${v.file}:${v.line}:${v.column} Bun.secrets.${v.api}(...) must use object options`);
+    console.error(
+      `- ${v.file}:${v.line}:${v.column} Bun.secrets.${v.api}(...) must use object options`
+    );
     if (v.snippet.length > 0) console.error(`  ${v.snippet}`);
   }
 
-  console.error('\nExpected pattern: Bun.secrets.get({ service, name }) / set({ service, name, value }) / delete({ service, name })');
+  console.error(
+    '\nExpected pattern: Bun.secrets.get({ service, name }) / set({ service, name, value }) / delete({ service, name })'
+  );
   process.exit(1);
 }
 

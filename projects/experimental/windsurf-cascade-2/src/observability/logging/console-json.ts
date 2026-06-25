@@ -194,17 +194,17 @@ console.info = function(fmt: string, ...args: any[]) {
 
 // Demonstrate console behavior
 export function demonstrateConsoleBehavior(): void {
-  console.log("🖥️  Terminal-Aware Console Demonstration");
-  console.log("=".repeat(50));
+  console.info("🖥️  Terminal-Aware Console Demonstration");
+  console.info("=".repeat(50));
   
   const config = getCurrentConfig();
-  console.log(`📊 Current config:`);
-  console.log(`   • Terminal mode: ${config.terminalMode === 2 ? 'RAW' : 'COOKED'}`);
-  console.log(`   • Terminal width: ${config.cols} columns`);
-  console.log(`   • DEBUG flag: ${(config.featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
+  console.info(`📊 Current config:`);
+  console.info(`   • Terminal mode: ${config.terminalMode === 2 ? 'RAW' : 'COOKED'}`);
+  console.info(`   • Terminal width: ${config.cols} columns`);
+  console.info(`   • DEBUG flag: ${(config.featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
   
-  console.log(`\n📝 Test 1: %j format with structured data`);
-  console.log("%j", { 
+  console.info(`\n📝 Test 1: %j format with structured data`);
+  console.info("%j", { 
     action: "publish", 
     package: "@mycompany/pkg", 
     version: "2.0.0",
@@ -216,20 +216,20 @@ export function demonstrateConsoleBehavior(): void {
     timestamp: new Date().toISOString()
   });
   
-  console.log(`\n📝 Test 2: %j with additional text`);
-  console.log("%j %s", { status: "success", code: 200 }, "operation completed");
+  console.info(`\n📝 Test 2: %j with additional text`);
+  console.info("%j %s", { status: "success", code: 200 }, "operation completed");
   
-  console.log(`\n📝 Test 3: Error with %j`);
+  console.info(`\n📝 Test 3: Error with %j`);
   console.error("%j", { error: "Validation failed", field: "version", expected: "string", actual: "number" });
   
-  console.log(`\n📝 Test 4: Warning with %j`);
+  console.info(`\n📝 Test 4: Warning with %j`);
   console.warn("%j", { warning: "Deprecated API", version: "1.0", replacement: "2.0" });
   
-  console.log(`\n📝 Test 5: Info with %j`);
+  console.info(`\n📝 Test 5: Info with %j`);
   console.info("%j", { info: "System status", uptime: process.uptime(), memory: process.memoryUsage() });
   
   // Test long JSON wrapping
-  console.log(`\n📝 Test 6: Long JSON wrapping (terminal width: ${config.cols})`);
+  console.info(`\n📝 Test 6: Long JSON wrapping (terminal width: ${config.cols})`);
   const longData = {
     description: "This is a very long description that should be wrapped according to the terminal width specified in the 13-byte config. The wrapping logic respects the cols byte and ensures proper formatting.",
     metadata: {
@@ -238,18 +238,18 @@ export function demonstrateConsoleBehavior(): void {
       details: "More detailed information that would normally cause line wrapping issues in terminal output"
     }
   };
-  console.log("%j", longData);
+  console.info("%j", longData);
   
-  console.log(`\n🎯 Console behavior is deterministic based on 13-byte config`);
-  console.log(`   • Terminal mode: ${config.terminalMode === 2 ? 'Raw JSON output' : 'Formatted with ANSI colors'}`);
-  console.log(`   • Width wrapping: ${config.cols} columns (Byte 11)`);
-  console.log(`   • Debug logging: ${(config.featureFlags & 0x00000004) ? 'Enabled with timing' : 'Disabled'}`);
+  console.info(`\n🎯 Console behavior is deterministic based on 13-byte config`);
+  console.info(`   • Terminal mode: ${config.terminalMode === 2 ? 'Raw JSON output' : 'Formatted with ANSI colors'}`);
+  console.info(`   • Width wrapping: ${config.cols} columns (Byte 11)`);
+  console.info(`   • Debug logging: ${(config.featureFlags & 0x00000004) ? 'Enabled with timing' : 'Disabled'}`);
 }
 
 // Performance benchmark
 export function benchmarkConsole(): void {
-  console.log("🖥️  Console Performance Benchmark");
-  console.log("=".repeat(40));
+  console.info("🖥️  Console Performance Benchmark");
+  console.info("=".repeat(40));
   
   const iterations = 100;
   const testData = {
@@ -265,7 +265,7 @@ export function benchmarkConsole(): void {
     const start = nanoseconds();
     
     testData.iteration = i;
-    console.log("%j", testData);
+    console.info("%j", testData);
     
     const duration = nanoseconds() - start;
     times.push(duration);
@@ -279,18 +279,18 @@ export function benchmarkConsole(): void {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`\n📊 Results (${iterations} iterations):`);
-  console.log(`   • Average: ${Math.floor(avgTime)}ns`);
-  console.log(`   • Min: ${Math.floor(minTime)}ns`);
-  console.log(`   • Max: ${Math.floor(maxTime)}ns`);
-  console.log(`   • Target: ~488ns (450ns + 38ns wrap logic)`);
-  console.log(`   • Status: ${avgTime < 600000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
+  console.info(`\n📊 Results (${iterations} iterations):`);
+  console.info(`   • Average: ${Math.floor(avgTime)}ns`);
+  console.info(`   • Min: ${Math.floor(minTime)}ns`);
+  console.info(`   • Max: ${Math.floor(maxTime)}ns`);
+  console.info(`   • Target: ~488ns (450ns + 38ns wrap logic)`);
+  console.info(`   • Status: ${avgTime < 600000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
 }
 
 // Test different terminal modes
 export function testTerminalModes(): void {
-  console.log("🖥️  Terminal Mode Testing");
-  console.log("=".repeat(35));
+  console.info("🖥️  Terminal Mode Testing");
+  console.info("=".repeat(35));
   
   // Mock different terminal modes
   const modes = [
@@ -300,26 +300,26 @@ export function testTerminalModes(): void {
   ];
   
   modes.forEach(({ mode, name, description }) => {
-    console.log(`\n📋 Terminal Mode ${mode} (${name}):`);
-    console.log(`   • Description: ${description}`);
-    console.log(`   • %j behavior: ${mode === 2 ? 'Raw JSON' : mode === 1 ? 'Formatted with colors' : 'No output'}`);
+    console.info(`\n📋 Terminal Mode ${mode} (${name}):`);
+    console.info(`   • Description: ${description}`);
+    console.info(`   • %j behavior: ${mode === 2 ? 'Raw JSON' : mode === 1 ? 'Formatted with colors' : 'No output'}`);
     
     if (mode !== 0) {
       const testData = { mode, name, demo: "This is how %j looks in this mode" };
-      console.log(`   • Example: %j`, testData);
+      console.info(`   • Example: %j`, testData);
     }
   });
   
-  console.log(`\n🎯 The terminal mode is locked by Byte 9 of the 13-byte config`);
-  console.log(`   • Cannot be changed at runtime`);
-  console.log(`   • Determines all console output formatting`);
-  console.log(`   • Affects %j, colors, and wrapping behavior`);
+  console.info(`\n🎯 The terminal mode is locked by Byte 9 of the 13-byte config`);
+  console.info(`   • Cannot be changed at runtime`);
+  console.info(`   • Determines all console output formatting`);
+  console.info(`   • Affects %j, colors, and wrapping behavior`);
 }
 
 // Initialize console system
-console.log("🖥️  Terminal-Aware Console System initialized");
-console.log(`📊 Config: v${getCurrentConfig().version}, Mode: ${getCurrentConfig().terminalMode === 2 ? 'RAW' : 'COOKED'}, Width: ${getCurrentConfig().cols}cols`);
-console.log(`⚡ Performance target: ~488ns per %j operation`);
-console.log(`🎨 ANSI colors: ${getCurrentConfig().terminalMode !== 2 ? 'ENABLED' : 'DISABLED (raw mode)'}`);
+console.info("🖥️  Terminal-Aware Console System initialized");
+console.info(`📊 Config: v${getCurrentConfig().version}, Mode: ${getCurrentConfig().terminalMode === 2 ? 'RAW' : 'COOKED'}, Width: ${getCurrentConfig().cols}cols`);
+console.info(`⚡ Performance target: ~488ns per %j operation`);
+console.info(`🎨 ANSI colors: ${getCurrentConfig().terminalMode !== 2 ? 'ENABLED' : 'DISABLED (raw mode)'}`);
 
 export { getCurrentConfig };

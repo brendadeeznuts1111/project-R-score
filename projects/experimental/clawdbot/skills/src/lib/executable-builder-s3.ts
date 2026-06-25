@@ -164,7 +164,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
       "windows-x64",
     ];
 
-    console.log(
+    console.info(
       `Building and uploading ${skillId} for ${platforms.length} platforms`
     );
 
@@ -174,7 +174,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
 
       try {
         // 1. Build executable
-        console.log(`  Building for ${platform}...`);
+        console.info(`  Building for ${platform}...`);
 
         const buildResult = await this.buildSkillExecutable(skillId, {
           ...buildOptions,
@@ -202,7 +202,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
         });
 
         // 2. Upload to S3/R2
-        console.log(`  Uploading ${platform} executable...`);
+        console.info(`  Uploading ${platform} executable...`);
 
         const [platformOs, platformArch] = platform.split("-");
 
@@ -251,7 +251,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
 
         results.totalSize += uploadResult.size;
 
-        console.log(
+        console.info(
           `  ${platform}: ${(uploadResult.size / 1024 / 1024).toFixed(2)} MB`
         );
       } catch (error: any) {
@@ -370,7 +370,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
     version: string = "latest",
     platform: string = this.detectPlatform()
   ): Promise<InstallResult> {
-    console.log(`Installing ${skillId} v${version} for ${platform}...`);
+    console.info(`Installing ${skillId} v${version} for ${platform}...`);
 
     try {
       // 1. Fetch manifest to find the right file
@@ -444,7 +444,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
         }
       );
 
-      console.log(""); // New line after progress
+      console.info(""); // New line after progress
 
       if (!execDownloadResult.success) {
         throw new Error(
@@ -460,7 +460,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
       const fileData = await Bun.file(targetFile).bytes();
       const isGzip = fileData[0] === 0x1f && fileData[1] === 0x8b;
       if (isGzip) {
-        console.log("Decompressing...");
+        console.info("Decompressing...");
         const decompressed = Bun.gunzipSync(fileData);
         await Bun.write(targetFile, decompressed);
       }
@@ -478,7 +478,7 @@ export class S3ExecutableBuilder extends ExecutableBuilder {
       // 6. Update skill.json
       await this.updateSkillJson(skillId, targetVersion, platformInfo, targetFile);
 
-      console.log(`Installed ${skillId} v${targetVersion} to ${targetFile}`);
+      console.info(`Installed ${skillId} v${targetVersion} to ${targetFile}`);
 
       return {
         success: true,
@@ -671,7 +671,7 @@ function generateHTML() {
   ): Promise<string> {
     // Placeholder for Cloudflare Workers API deployment
     // In production, use the Cloudflare API to deploy
-    console.log(`Worker script generated for ${skillId} (${script.length} bytes)`);
+    console.info(`Worker script generated for ${skillId} (${script.length} bytes)`);
     return `https://${skillId}.skills.workers.dev`;
   }
 

@@ -1,6 +1,7 @@
 // lib/registry/r2-storage.ts — R2 storage adapter for package management
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { resolveR2InfraConfig } from '../security/infra-secrets';
 import type {
   PackageManifest,
   PackageVersion,
@@ -33,18 +34,43 @@ export class R2StorageAdapter {
 
   constructor(config: Partial<R2StorageConfig> = {}) {
     this.config = {
-      accountId: config.accountId || process.env.R2_ACCOUNT_ID || '',
-      accessKeyId: config.accessKeyId || process.env.R2_ACCESS_KEY_ID || '',
-      secretAccessKey: config.secretAccessKey || process.env.R2_SECRET_ACCESS_KEY || '',
-      bucketName: config.bucketName || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
-      endpoint: config.endpoint || process.env.R2_ENDPOINT,
-      prefix: config.prefix || 'packages/',
-      compression: config.compression || null,
+      accountId: config.accountId ?? Bun.env.R2_ACCOUNT_ID ?? '',
+      accessKeyId: config.accessKeyId ?? Bun.env.R2_ACCESS_KEY_ID ?? '',
+      secretAccessKey: config.secretAccessKey ?? Bun.env.R2_SECRET_ACCESS_KEY ?? '',
+      bucketName: config.bucketName ?? Bun.env.R2_REGISTRY_BUCKET ?? 'npm-registry',
+      endpoint: config.endpoint ?? Bun.env.R2_ENDPOINT,
+      prefix: config.prefix ?? 'packages/',
+      compression: config.compression ?? null,
     };
 
     this.baseUrl =
       this.config.endpoint || `https://${this.config.accountId}.r2.cloudflarestorage.com`;
     this.publicUrl = `https://pub-${this.config.accountId}.r2.dev`;
+  }
+
+  /** Resolve R2 credentials from Bun.secrets when env/config are absent. */
+  static async create(config: Partial<R2StorageConfig> = {}): Promise<R2StorageAdapter> {
+    const hasCredentials =
+      (config.accountId ?? Bun.env.R2_ACCOUNT_ID) &&
+      (config.accessKeyId ?? Bun.env.R2_ACCESS_KEY_ID) &&
+      (config.secretAccessKey ?? Bun.env.R2_SECRET_ACCESS_KEY);
+
+    if (hasCredentials) {
+      return new R2StorageAdapter(config);
+    }
+
+    const infra = await resolveR2InfraConfig({
+      bucketFallback: config.bucketName ?? Bun.env.R2_REGISTRY_BUCKET ?? 'npm-registry',
+    });
+
+    return new R2StorageAdapter({
+      ...config,
+      accountId: config.accountId ?? infra.accountId,
+      accessKeyId: config.accessKeyId ?? infra.accessKeyId,
+      secretAccessKey: config.secretAccessKey ?? infra.secretAccessKey,
+      bucketName: config.bucketName ?? infra.bucketName,
+      endpoint: config.endpoint ?? infra.endpoint,
+    });
   }
 
   /**
@@ -99,7 +125,7 @@ export class R2StorageAdapter {
         throw new Error(`Failed to store manifest: ${response.status} ${response.statusText}`);
       }
 
-      console.log(styled(`✅ Stored manifest: ${manifest.name}`, 'success'));
+      console.info(styled(`✅ Stored manifest: ${manifest.name}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to store manifest: ${error.message}`, 'error'));
       throw error;
@@ -187,7 +213,7 @@ export class R2StorageAdapter {
       }
 
       const url = `${this.publicUrl}/${this.config.bucketName}/${key}`;
-      console.log(
+      console.info(
         styled(`✅ Stored tarball: ${key} (${(data.length / 1024).toFixed(2)} KB)`, 'success')
       );
 
@@ -288,7 +314,7 @@ export class R2StorageAdapter {
         await this.storeManifest(manifest);
       }
 
-      console.log(styled(`✅ Deleted version: ${packageName}@${version}`, 'success'));
+      console.info(styled(`✅ Deleted version: ${packageName}@${version}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to delete version: ${error.message}`, 'error'));
       throw error;
@@ -329,7 +355,7 @@ export class R2StorageAdapter {
         });
       }
 
-      console.log(styled(`✅ Deleted package: ${packageName}`, 'success'));
+      console.info(styled(`✅ Deleted package: ${packageName}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to delete package: ${error.message}`, 'error'));
       throw error;
@@ -514,16 +540,16 @@ export const r2Storage = new R2StorageAdapter();
 
 // CLI interface
 if (import.meta.main) {
-  const storage = new R2StorageAdapter();
+  const storage = await R2StorageAdapter.create();
 
-  console.log(styled('🪣 R2 Storage Adapter Test (Bun v1.3.7+)', 'accent'));
-  console.log(styled('=========================================', 'accent'));
+  console.info(styled('🪣 R2 Storage Adapter Test (Bun v1.3.7+)', 'accent'));
+  console.info(styled('=========================================', 'accent'));
 
   const status = storage.getConfigStatus();
-  console.log(styled(`\nConfiguration:`, 'info'));
-  console.log(styled(`  Bucket: ${status.bucket}`, 'muted'));
-  console.log(styled(`  Compression: ${status.compression || 'none'}`, 'muted'));
-  console.log(
+  console.info(styled(`\nConfiguration:`, 'info'));
+  console.info(styled(`  Bucket: ${status.bucket}`, 'muted'));
+  console.info(styled(`  Compression: ${status.compression || 'none'}`, 'muted'));
+  console.info(
     styled(
       `  Configured: ${status.configured ? '✅' : '❌'}`,
       status.configured ? 'success' : 'error'
@@ -531,12 +557,12 @@ if (import.meta.main) {
   );
 
   if (status.missing.length > 0) {
-    console.log(styled(`\nMissing:`, 'warning'));
-    status.missing.forEach(v => console.log(styled(`  - ${v}`, 'warning')));
+    console.info(styled(`\nMissing:`, 'warning'));
+    status.missing.forEach(v => console.info(styled(`  - ${v}`, 'warning')));
   } else {
-    console.log(styled(`\nTesting connection...`, 'info'));
+    console.info(styled(`\nTesting connection...`, 'info'));
     const connected = await storage.testConnection();
-    console.log(
+    console.info(
       styled(`  Connection: ${connected ? '✅ OK' : '❌ Failed'}`, connected ? 'success' : 'error')
     );
   }

@@ -59,7 +59,7 @@ interface CCXTConfig {
  * @example
  * // Fetch all trades for a symbol
  * const result = await provider.fetchAllTrades('BTC/USDT', count => {
- *   console.log(`Fetched ${count} trades...`);
+ *   console.info(`Fetched ${count} trades...`);
  * });
  */
 export class CCXTProvider extends BaseProvider {
@@ -177,7 +177,7 @@ export class CCXTProvider extends BaseProvider {
 	 *
 	 * @example
 	 * const result = await provider.fetchAllTrades('ETH/USDT', count => {
-	 *   console.log(`Progress: ${count} trades`);
+	 *   console.info(`Progress: ${count} trades`);
 	 * });
 	 */
 	async fetchAllTrades(

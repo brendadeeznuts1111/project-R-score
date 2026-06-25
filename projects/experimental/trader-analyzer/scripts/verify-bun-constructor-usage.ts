@@ -198,7 +198,7 @@ async function scanSingletonPatterns(filePath: string): Promise<Violation[]> {
  * Main verification function
  */
 async function main() {
-	console.log("🔍 Verifying Bun class constructor usage (Bun v1.3.4+ fix)...\n");
+	console.info("🔍 Verifying Bun class constructor usage (Bun v1.3.4+ fix)...\n");
 	
 	const allViolations: Violation[] = [];
 	const singletonViolations: Violation[] = [];
@@ -237,17 +237,17 @@ async function main() {
 	const totalViolations = allViolations.length + singletonViolations.length;
 	
 	if (totalViolations === 0) {
-		console.log("✅ All Bun class constructors correctly use 'new' keyword!\n");
-		console.log(`Verified ${BUN_CLASS_CONSTRUCTORS.length} constructor types:`);
+		console.info("✅ All Bun class constructors correctly use 'new' keyword!\n");
+		console.info(`Verified ${BUN_CLASS_CONSTRUCTORS.length} constructor types:`);
 		BUN_CLASS_CONSTRUCTORS.forEach((ctor) => {
-			console.log(`  ✓ ${ctor}`);
+			console.info(`  ✓ ${ctor}`);
 		});
 		
 		if (singletonViolations.length === 0) {
-			console.log("\n✅ Singleton patterns validated (getInstance methods have private constructors)");
+			console.info("\n✅ Singleton patterns validated (getInstance methods have private constructors)");
 		}
 		
-		console.log("\n📚 Reference: docs/14.4.10.0.0.0.0-BUN-API-FIXES-V1.3.4.md");
+		console.info("\n📚 Reference: docs/14.4.10.0.0.0.0-BUN-API-FIXES-V1.3.4.md");
 		process.exit(0);
 	} else {
 		console.error(`❌ Found ${totalViolations} violation(s):\n`);

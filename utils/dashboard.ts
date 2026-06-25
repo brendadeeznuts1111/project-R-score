@@ -311,7 +311,7 @@ class EnterpriseDashboard {
   // Save dashboard
   async saveDashboard(dashboard: string, outputFile: string = 'enterprise-dashboard.md'): Promise<void> {
     await Bun.write(outputFile, dashboard);
-    console.log(`💾 Dashboard saved to: ${outputFile}`);
+    console.info(`💾 Dashboard saved to: ${outputFile}`);
   }
 }
 
@@ -320,21 +320,21 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Enterprise Dashboard v2.8');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run dashboard.ts [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --output <file>     Output file (default: enterprise-dashboard.md)');
-    console.log('  --json              Also save as JSON');
-    console.log('  --ascii-only        ASCII output only (no markdown)');
-    console.log('');
-    console.log('Generates enterprise dashboard with:');
-    console.log('• GFM compliance heatmap');
-    console.log('• Performance graphs');
-    console.log('• Summary statistics');
-    console.log('• Recommendations');
+    console.info('Enterprise Dashboard v2.8');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run dashboard.ts [options]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --output <file>     Output file (default: enterprise-dashboard.md)');
+    console.info('  --json              Also save as JSON');
+    console.info('  --ascii-only        ASCII output only (no markdown)');
+    console.info('');
+    console.info('Generates enterprise dashboard with:');
+    console.info('• GFM compliance heatmap');
+    console.info('• Performance graphs');
+    console.info('• Summary statistics');
+    console.info('• Recommendations');
     return;
   }
 
@@ -355,7 +355,7 @@ async function main() {
   const dashboard = new EnterpriseDashboard();
 
   try {
-    console.log('📊 Generating enterprise dashboard...');
+    console.info('📊 Generating enterprise dashboard...');
     
     const data = await dashboard.loadData();
     const dashboardContent = dashboard.generateDashboard(data);
@@ -365,14 +365,14 @@ async function main() {
     if (saveJson) {
       const jsonFile = outputFile.replace('.md', '.json');
       await Bun.write(jsonFile, JSON.stringify(data, null, 2));
-      console.log(`💾 JSON data saved to: ${jsonFile}`);
+      console.info(`💾 JSON data saved to: ${jsonFile}`);
     }
     
     if (!asciiOnly) {
-      console.log('\\n' + dashboardContent);
+      console.info('\\n' + dashboardContent);
     }
     
-    console.log('\\n✅ Dashboard generation complete!');
+    console.info('\\n✅ Dashboard generation complete!');
     
   } catch (error) {
     console.error('❌ Dashboard generation failed:', error.message);

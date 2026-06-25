@@ -632,16 +632,16 @@ const server = Bun.serve({
   },
 });
 
-console.log(`\x1b[1;32m🚀 Wiki Profiler Dashboard v3.5\x1b[0m`);
-console.log(`\x1b[1;36m   Server running on http://localhost:${PORT}\x1b[0m`);
-console.log(`\x1b[1;36m   Dashboard: http://localhost:${PORT}/dashboard\x1b[0m`);
-console.log(`\x1b[1;36m   API Docs: http://localhost:${PORT}/api\x1b[0m`);
-console.log(`\x1b[1;36m   Profiles: http://localhost:${PORT}/profiles\x1b[0m`);
-console.log(`\x1b[1;33m   Press Ctrl+C to stop\x1b[0m`);
+console.info(`\x1b[1;32m🚀 Wiki Profiler Dashboard v3.5\x1b[0m`);
+console.info(`\x1b[1;36m   Server running on http://localhost:${PORT}\x1b[0m`);
+console.info(`\x1b[1;36m   Dashboard: http://localhost:${PORT}/dashboard\x1b[0m`);
+console.info(`\x1b[1;36m   API Docs: http://localhost:${PORT}/api\x1b[0m`);
+console.info(`\x1b[1;36m   Profiles: http://localhost:${PORT}/profiles\x1b[0m`);
+console.info(`\x1b[1;33m   Press Ctrl+C to stop\x1b[0m`);
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n\x1b[1;33m🛑 Shutting down Wiki Profiler Dashboard...\x1b[0m');
+  console.info('\n\x1b[1;33m🛑 Shutting down Wiki Profiler Dashboard...\x1b[0m');
   server.stop();
   process.exit(0);
 });

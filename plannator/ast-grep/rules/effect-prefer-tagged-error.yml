@@ -1,0 +1,9 @@
+id: effect-prefer-tagged-error
+language: TypeScript
+severity: warning
+message: "Prefer Data.TaggedError over raw Error in Effect code"
+note: "Use Data.TaggedError('MyError')<{ ... }> for typed failures"
+files:
+  - "lib/effect/**/*.ts"
+rule:
+  pattern: new Error($$$)

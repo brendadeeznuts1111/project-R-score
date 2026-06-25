@@ -584,7 +584,7 @@ export class MLGSGraph<N extends GraphNode, E extends GraphEdge>
 	async buildFullGraph(league: string): Promise<void> {
 		// This would integrate with your existing graph builders
 		// For now, it's a placeholder that can be extended
-		console.log(`[MLGS] Building full graph for league: ${league}`);
+		console.info(`[MLGS] Building full graph for league: ${league}`);
 		// TODO: Integrate with layer builders
 	}
 }

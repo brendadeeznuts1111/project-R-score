@@ -160,11 +160,11 @@ class EnhancedTemplateValidator {
      * Validate all template files
      */
     async validateAllTemplates(): Promise<TemplateValidationReport[]> {
-        console.log(chalk.blue.bold('🔍 Running enhanced template validation...'));
+        console.info(chalk.blue.bold('🔍 Running enhanced template validation...'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to validate`));
+            console.info(chalk.cyan(`Found ${files.length} template files to validate`));
 
             const reports: TemplateValidationReport[] = [];
 
@@ -602,23 +602,23 @@ class EnhancedTemplateValidator {
         const avgScore = reports.reduce((sum, report) => sum + report.score, 0) / reports.length;
         const perfectFiles = reports.filter(report => report.score === 100).length;
 
-        console.log(chalk.blue.bold('\n📊 Enhanced Template Validation Summary:'));
-        console.log(chalk.gray('='.repeat(60)));
-        console.log(chalk.cyan(`Files validated: ${reports.length}`));
-        console.log(chalk.green(`Perfect files: ${perfectFiles}/${reports.length}`));
-        console.log(chalk.blue(`Average score: ${avgScore.toFixed(1)}/100`));
+        console.info(chalk.blue.bold('\n📊 Enhanced Template Validation Summary:'));
+        console.info(chalk.gray('='.repeat(60)));
+        console.info(chalk.cyan(`Files validated: ${reports.length}`));
+        console.info(chalk.green(`Perfect files: ${perfectFiles}/${reports.length}`));
+        console.info(chalk.blue(`Average score: ${avgScore.toFixed(1)}/100`));
 
-        console.log(chalk.red(`\n🔴 Errors: ${totalIssues.errors}`));
-        console.log(chalk.yellow(`🟡 Warnings: ${totalIssues.warnings}`));
-        console.log(chalk.blue(`🔵 Info: ${totalIssues.info}`));
+        console.info(chalk.red(`\n🔴 Errors: ${totalIssues.errors}`));
+        console.info(chalk.yellow(`🟡 Warnings: ${totalIssues.warnings}`));
+        console.info(chalk.blue(`🔵 Info: ${totalIssues.info}`));
 
         // Show worst files
         const worstFiles = reports.sort((a, b) => a.score - b.score).slice(0, 5);
         if (worstFiles.length > 0 && worstFiles[0].score < 80) {
-            console.log(chalk.yellow('\n📉 Files needing attention:'));
+            console.info(chalk.yellow('\n📉 Files needing attention:'));
             for (const report of worstFiles) {
                 const fileName = report.filePath.split('/').pop() || '';
-                console.log(chalk.gray(`   ${fileName}: ${report.score}/100 (${report.issues.errors}E, ${report.issues.warnings}W)`));
+                console.info(chalk.gray(`   ${fileName}: ${report.score}/100 (${report.issues.errors}E, ${report.issues.warnings}W)`));
             }
         }
     }
@@ -633,10 +633,10 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔍 Enhanced Template Validator'));
-        console.log(chalk.gray('Usage: bun enhanced-template-validation.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('🔍 Enhanced Template Validator'));
+        console.info(chalk.gray('Usage: bun enhanced-template-validation.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

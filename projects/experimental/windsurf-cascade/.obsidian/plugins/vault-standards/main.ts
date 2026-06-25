@@ -150,7 +150,7 @@ export default class VaultStandardsPlugin extends Plugin {
     };
 
     async onload() {
-        console.log('Loading Enhanced Vault Standards Plugin...');
+        console.info('Loading Enhanced Vault Standards Plugin...');
 
         await this.loadSettings();
         this.addSettingTab(new VaultStandardsSettingTab(this.app, this));
@@ -204,7 +204,7 @@ export default class VaultStandardsPlugin extends Plugin {
             this.initializeTemplateValidation();
         }
 
-        console.log('Enhanced Vault Standards Plugin loaded successfully');
+        console.info('Enhanced Vault Standards Plugin loaded successfully');
     }
 
     onunload() {
@@ -217,12 +217,12 @@ export default class VaultStandardsPlugin extends Plugin {
         if (this.graphDb) {
             this.graphDb.close();
         }
-        console.log('Enhanced Vault Standards Plugin unloaded');
+        console.info('Enhanced Vault Standards Plugin unloaded');
     }
 
     // Template Validation Methods
     private async initializeTemplateValidation() {
-        console.log('Initializing template validation system...');
+        console.info('Initializing template validation system...');
 
         // Load template registry
         await this.loadTemplateRegistry();
@@ -233,7 +233,7 @@ export default class VaultStandardsPlugin extends Plugin {
         // Add template validation commands
         this.addTemplateValidationCommands();
 
-        console.log('Template validation system initialized');
+        console.info('Template validation system initialized');
     }
 
     private async loadTemplateRegistry() {
@@ -253,7 +253,7 @@ export default class VaultStandardsPlugin extends Plugin {
             }
 
             this.templateMetrics.totalTemplates = this.templateRegistry.size;
-            console.log(`Loaded ${this.templateRegistry.size} templates`);
+            console.info(`Loaded ${this.templateRegistry.size} templates`);
         } catch (error) {
             console.error('Failed to load template registry:', error);
             new Notice('Failed to load template registry');
@@ -513,7 +513,7 @@ Template Metrics:
         );
       `);
 
-            console.log('✅ Graph database initialized');
+            console.info('✅ Graph database initialized');
         } catch (error) {
             console.warn('⚠️ Could not initialize graph database:', error);
             this.graphDb = null;
@@ -860,22 +860,22 @@ graph TD
 
     private showTransitiveLinkResults(output: string) {
         // Parse and display transitive link results
-        console.log('Transitive Link Results:', output);
+        console.info('Transitive Link Results:', output);
         new Notice('🔗 Transitive link analysis complete - check console for details');
     }
 
     private showCanvasSpatialResults(output: string) {
-        console.log('Canvas Spatial Results:', output);
+        console.info('Canvas Spatial Results:', output);
         new Notice('🎨 Canvas spatial analysis complete - check console for details');
     }
 
     private showAliasConvergenceResults(output: string) {
-        console.log('Alias Convergence Results:', output);
+        console.info('Alias Convergence Results:', output);
         new Notice('🏷️ Alias convergence analysis complete - check console for details');
     }
 
     private showGraphAnalysisResults(metrics: any) {
-        console.log('Graph Analysis Results:', metrics);
+        console.info('Graph Analysis Results:', metrics);
         new Notice(`📊 Graph analysis: ${metrics.totalNodes} nodes, ${metrics.orphanRate.toFixed(1)}% orphans`);
     }
 
@@ -923,13 +923,13 @@ graph TD
         const dataviewPlugin = (this.app as any).plugins?.plugins?.dataview;
         if (dataviewPlugin) {
             // Add custom Dataview functions
-            console.log('✅ Dataview integration initialized');
+            console.info('✅ Dataview integration initialized');
         }
     }
 
     private initializeLivePreview() {
         // Initialize live preview highlighting
-        console.log('✅ Live preview highlighting initialized');
+        console.info('✅ Live preview highlighting initialized');
     }
 
     private validateNewFile(file: TFile) {
@@ -942,17 +942,17 @@ graph TD
 
     private validateCanvas(canvas: any) {
         // Canvas-specific validation
-        console.log('🎨 Validating canvas:', canvas);
+        console.info('🎨 Validating canvas:', canvas);
     }
 
     private onDataviewIndexReady() {
         // React to Dataview index updates
-        console.log('📊 Dataview index ready');
+        console.info('📊 Dataview index ready');
     }
 
     private validateTemplateCompliance(file: TFile) {
         // Check if new file follows template standards
-        console.log('📋 Validating template compliance for:', file.name);
+        console.info('📋 Validating template compliance for:', file.name);
     }
 
     // Keep existing methods...
@@ -1019,13 +1019,13 @@ graph TD
 
             if (response.ok) {
                 this.isConnected = true;
-                console.log('✅ Connected to enhanced Bun bridge');
+                console.info('✅ Connected to enhanced Bun bridge');
 
                 // Start periodic health updates
                 this.startHealthUpdates();
             }
         } catch (error) {
-            console.log('⚠️ Enhanced Bun bridge not available');
+            console.info('⚠️ Enhanced Bun bridge not available');
             this.isConnected = false;
         }
     }
@@ -1470,7 +1470,7 @@ addCommands() {
         this.initializeBridge();
     }
 
-    console.log('Vault Standards Plugin loaded successfully');
+    console.info('Vault Standards Plugin loaded successfully');
 }
 
 class TemplateValidationModal extends Modal {

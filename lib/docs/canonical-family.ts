@@ -89,7 +89,11 @@ const DEFAULT_POLICIES: SearchPolicies = {
     { contains: '/docs/', weight: -8 },
     { contains: '.d.ts', weight: -12 },
   ],
-  mirrorPenaltyContains: ['/workspaces/', '/dashboard/dashboard-worker/', '/enterprise/packages/dashboard-worker/'],
+  mirrorPenaltyContains: [
+    '/workspaces/',
+    '/dashboard/dashboard-worker/',
+    '/enterprise/packages/dashboard-worker/',
+  ],
   canonicalPreferContains: ['/src/', '/lib/', '/packages/'],
   deliveryDemotionContains: [
     '/lib/docs/generator',
@@ -147,83 +151,117 @@ function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchP
   }
 
   return {
-    pathExcludeContains: raw.pathExcludeContains?.length ? raw.pathExcludeContains : DEFAULT_POLICIES.pathExcludeContains,
-    authorityRules: raw.authorityRules?.length ? raw.authorityRules : DEFAULT_POLICIES.authorityRules,
-    mirrorPenaltyContains: raw.mirrorPenaltyContains?.length ? raw.mirrorPenaltyContains : DEFAULT_POLICIES.mirrorPenaltyContains,
-    canonicalPreferContains: raw.canonicalPreferContains?.length ? raw.canonicalPreferContains : DEFAULT_POLICIES.canonicalPreferContains,
-    deliveryDemotionContains: raw.deliveryDemotionContains?.length ? raw.deliveryDemotionContains : DEFAULT_POLICIES.deliveryDemotionContains,
-    familyCap: typeof raw.familyCap === 'number' && raw.familyCap > 0 ? raw.familyCap : DEFAULT_POLICIES.familyCap,
-    importDampeningPenalty: typeof raw.importDampeningPenalty === 'number'
-      ? raw.importDampeningPenalty
-      : DEFAULT_POLICIES.importDampeningPenalty,
-    importQualityPenalty: typeof raw.importQualityPenalty === 'number'
-      ? raw.importQualityPenalty
-      : DEFAULT_POLICIES.importQualityPenalty,
+    pathExcludeContains: raw.pathExcludeContains?.length
+      ? raw.pathExcludeContains
+      : DEFAULT_POLICIES.pathExcludeContains,
+    authorityRules: raw.authorityRules?.length
+      ? raw.authorityRules
+      : DEFAULT_POLICIES.authorityRules,
+    mirrorPenaltyContains: raw.mirrorPenaltyContains?.length
+      ? raw.mirrorPenaltyContains
+      : DEFAULT_POLICIES.mirrorPenaltyContains,
+    canonicalPreferContains: raw.canonicalPreferContains?.length
+      ? raw.canonicalPreferContains
+      : DEFAULT_POLICIES.canonicalPreferContains,
+    deliveryDemotionContains: raw.deliveryDemotionContains?.length
+      ? raw.deliveryDemotionContains
+      : DEFAULT_POLICIES.deliveryDemotionContains,
+    familyCap:
+      typeof raw.familyCap === 'number' && raw.familyCap > 0
+        ? raw.familyCap
+        : DEFAULT_POLICIES.familyCap,
+    importDampeningPenalty:
+      typeof raw.importDampeningPenalty === 'number'
+        ? raw.importDampeningPenalty
+        : DEFAULT_POLICIES.importDampeningPenalty,
+    importQualityPenalty:
+      typeof raw.importQualityPenalty === 'number'
+        ? raw.importQualityPenalty
+        : DEFAULT_POLICIES.importQualityPenalty,
     bunFeatureMap: raw.bunFeatureMap || DEFAULT_POLICIES.bunFeatureMap,
     queryBoosts: {
-      bunRuntimeBoost: typeof raw.queryBoosts?.bunRuntimeBoost === 'number'
-        ? raw.queryBoosts.bunRuntimeBoost
-        : DEFAULT_POLICIES.queryBoosts.bunRuntimeBoost,
-      apiArtifactBoost: typeof raw.queryBoosts?.apiArtifactBoost === 'number'
-        ? raw.queryBoosts.apiArtifactBoost
-        : DEFAULT_POLICIES.queryBoosts.apiArtifactBoost,
-      runtimeMismatchPenalty: typeof raw.queryBoosts?.runtimeMismatchPenalty === 'number'
-        ? raw.queryBoosts.runtimeMismatchPenalty
-        : DEFAULT_POLICIES.queryBoosts.runtimeMismatchPenalty,
-      nonReleaseDocsPenalty: typeof raw.queryBoosts?.nonReleaseDocsPenalty === 'number'
-        ? raw.queryBoosts.nonReleaseDocsPenalty
-        : DEFAULT_POLICIES.queryBoosts.nonReleaseDocsPenalty,
-      releaseDocsBoost: typeof raw.queryBoosts?.releaseDocsBoost === 'number'
-        ? raw.queryBoosts.releaseDocsBoost
-        : DEFAULT_POLICIES.queryBoosts.releaseDocsBoost,
-      releaseDocsPenaltyRelief: typeof raw.queryBoosts?.releaseDocsPenaltyRelief === 'number'
-        ? raw.queryBoosts.releaseDocsPenaltyRelief
-        : DEFAULT_POLICIES.queryBoosts.releaseDocsPenaltyRelief,
+      bunRuntimeBoost:
+        typeof raw.queryBoosts?.bunRuntimeBoost === 'number'
+          ? raw.queryBoosts.bunRuntimeBoost
+          : DEFAULT_POLICIES.queryBoosts.bunRuntimeBoost,
+      apiArtifactBoost:
+        typeof raw.queryBoosts?.apiArtifactBoost === 'number'
+          ? raw.queryBoosts.apiArtifactBoost
+          : DEFAULT_POLICIES.queryBoosts.apiArtifactBoost,
+      runtimeMismatchPenalty:
+        typeof raw.queryBoosts?.runtimeMismatchPenalty === 'number'
+          ? raw.queryBoosts.runtimeMismatchPenalty
+          : DEFAULT_POLICIES.queryBoosts.runtimeMismatchPenalty,
+      nonReleaseDocsPenalty:
+        typeof raw.queryBoosts?.nonReleaseDocsPenalty === 'number'
+          ? raw.queryBoosts.nonReleaseDocsPenalty
+          : DEFAULT_POLICIES.queryBoosts.nonReleaseDocsPenalty,
+      releaseDocsBoost:
+        typeof raw.queryBoosts?.releaseDocsBoost === 'number'
+          ? raw.queryBoosts.releaseDocsBoost
+          : DEFAULT_POLICIES.queryBoosts.releaseDocsBoost,
+      releaseDocsPenaltyRelief:
+        typeof raw.queryBoosts?.releaseDocsPenaltyRelief === 'number'
+          ? raw.queryBoosts.releaseDocsPenaltyRelief
+          : DEFAULT_POLICIES.queryBoosts.releaseDocsPenaltyRelief,
     },
     familyGroupWeights: {
-      Definitions: typeof raw.familyGroupWeights?.Definitions === 'number'
-        ? raw.familyGroupWeights.Definitions
-        : DEFAULT_POLICIES.familyGroupWeights.Definitions,
-      Callers: typeof raw.familyGroupWeights?.Callers === 'number'
-        ? raw.familyGroupWeights.Callers
-        : DEFAULT_POLICIES.familyGroupWeights.Callers,
-      Imports: typeof raw.familyGroupWeights?.Imports === 'number'
-        ? raw.familyGroupWeights.Imports
-        : DEFAULT_POLICIES.familyGroupWeights.Imports,
-      Tests: typeof raw.familyGroupWeights?.Tests === 'number'
-        ? raw.familyGroupWeights.Tests
-        : DEFAULT_POLICIES.familyGroupWeights.Tests,
-      Other: typeof raw.familyGroupWeights?.Other === 'number'
-        ? raw.familyGroupWeights.Other
-        : DEFAULT_POLICIES.familyGroupWeights.Other,
+      Definitions:
+        typeof raw.familyGroupWeights?.Definitions === 'number'
+          ? raw.familyGroupWeights.Definitions
+          : DEFAULT_POLICIES.familyGroupWeights.Definitions,
+      Callers:
+        typeof raw.familyGroupWeights?.Callers === 'number'
+          ? raw.familyGroupWeights.Callers
+          : DEFAULT_POLICIES.familyGroupWeights.Callers,
+      Imports:
+        typeof raw.familyGroupWeights?.Imports === 'number'
+          ? raw.familyGroupWeights.Imports
+          : DEFAULT_POLICIES.familyGroupWeights.Imports,
+      Tests:
+        typeof raw.familyGroupWeights?.Tests === 'number'
+          ? raw.familyGroupWeights.Tests
+          : DEFAULT_POLICIES.familyGroupWeights.Tests,
+      Other:
+        typeof raw.familyGroupWeights?.Other === 'number'
+          ? raw.familyGroupWeights.Other
+          : DEFAULT_POLICIES.familyGroupWeights.Other,
     },
     deliveryDemotionExceptions: raw.deliveryDemotionExceptions?.length
       ? raw.deliveryDemotionExceptions
       : DEFAULT_POLICIES.deliveryDemotionExceptions,
     scoreThresholds: {
-      qualityDropWarn: typeof raw.scoreThresholds?.qualityDropWarn === 'number'
-        ? raw.scoreThresholds.qualityDropWarn
-        : DEFAULT_POLICIES.scoreThresholds.qualityDropWarn,
-      slopRiseWarn: typeof raw.scoreThresholds?.slopRiseWarn === 'number'
-        ? raw.scoreThresholds.slopRiseWarn
-        : DEFAULT_POLICIES.scoreThresholds.slopRiseWarn,
-      reliabilityDropWarn: typeof raw.scoreThresholds?.reliabilityDropWarn === 'number'
-        ? raw.scoreThresholds.reliabilityDropWarn
-        : DEFAULT_POLICIES.scoreThresholds.reliabilityDropWarn,
-      strictLatencyP95WarnMs: typeof raw.scoreThresholds?.strictLatencyP95WarnMs === 'number'
-        ? raw.scoreThresholds.strictLatencyP95WarnMs
-        : DEFAULT_POLICIES.scoreThresholds.strictLatencyP95WarnMs,
-      strictReliabilityFloor: typeof raw.scoreThresholds?.strictReliabilityFloor === 'number'
-        ? raw.scoreThresholds.strictReliabilityFloor
-        : DEFAULT_POLICIES.scoreThresholds.strictReliabilityFloor,
-      strictPeakHeapWarnMB: typeof raw.scoreThresholds?.strictPeakHeapWarnMB === 'number'
-        ? raw.scoreThresholds.strictPeakHeapWarnMB
-        : DEFAULT_POLICIES.scoreThresholds.strictPeakHeapWarnMB,
-      strictPeakRssWarnMB: typeof raw.scoreThresholds?.strictPeakRssWarnMB === 'number'
-        ? raw.scoreThresholds.strictPeakRssWarnMB
-        : DEFAULT_POLICIES.scoreThresholds.strictPeakRssWarnMB,
+      qualityDropWarn:
+        typeof raw.scoreThresholds?.qualityDropWarn === 'number'
+          ? raw.scoreThresholds.qualityDropWarn
+          : DEFAULT_POLICIES.scoreThresholds.qualityDropWarn,
+      slopRiseWarn:
+        typeof raw.scoreThresholds?.slopRiseWarn === 'number'
+          ? raw.scoreThresholds.slopRiseWarn
+          : DEFAULT_POLICIES.scoreThresholds.slopRiseWarn,
+      reliabilityDropWarn:
+        typeof raw.scoreThresholds?.reliabilityDropWarn === 'number'
+          ? raw.scoreThresholds.reliabilityDropWarn
+          : DEFAULT_POLICIES.scoreThresholds.reliabilityDropWarn,
+      strictLatencyP95WarnMs:
+        typeof raw.scoreThresholds?.strictLatencyP95WarnMs === 'number'
+          ? raw.scoreThresholds.strictLatencyP95WarnMs
+          : DEFAULT_POLICIES.scoreThresholds.strictLatencyP95WarnMs,
+      strictReliabilityFloor:
+        typeof raw.scoreThresholds?.strictReliabilityFloor === 'number'
+          ? raw.scoreThresholds.strictReliabilityFloor
+          : DEFAULT_POLICIES.scoreThresholds.strictReliabilityFloor,
+      strictPeakHeapWarnMB:
+        typeof raw.scoreThresholds?.strictPeakHeapWarnMB === 'number'
+          ? raw.scoreThresholds.strictPeakHeapWarnMB
+          : DEFAULT_POLICIES.scoreThresholds.strictPeakHeapWarnMB,
+      strictPeakRssWarnMB:
+        typeof raw.scoreThresholds?.strictPeakRssWarnMB === 'number'
+          ? raw.scoreThresholds.strictPeakRssWarnMB
+          : DEFAULT_POLICIES.scoreThresholds.strictPeakRssWarnMB,
     },
-    scoreThresholdsByQueryPack: raw.scoreThresholdsByQueryPack || DEFAULT_POLICIES.scoreThresholdsByQueryPack,
+    scoreThresholdsByQueryPack:
+      raw.scoreThresholdsByQueryPack || DEFAULT_POLICIES.scoreThresholdsByQueryPack,
   };
 }
 
@@ -250,10 +288,7 @@ export function resolveScoreThresholdsForQueryPack(
 }
 
 export async function loadSearchPolicies(rootDir: string = '.'): Promise<SearchPolicies> {
-  const candidates = [
-    resolve(rootDir, '.search/policies.json'),
-    resolve('.search/policies.json'),
-  ];
+  const candidates = [resolve(rootDir, '.search/policies.json'), resolve('.search/policies.json')];
 
   for (const path of candidates) {
     if (!existsSync(path)) {
@@ -300,7 +335,7 @@ export function computePathAuthorityScore(path: string, policies: SearchPolicies
 
 function isExcludedByPolicy(path: string, policies: SearchPolicies): boolean {
   const lower = path.toLowerCase();
-  return policies.pathExcludeContains.some((needle) => lower.includes(needle.toLowerCase()));
+  return policies.pathExcludeContains.some(needle => lower.includes(needle.toLowerCase()));
 }
 
 function contentHash(text: string): string {
@@ -312,12 +347,19 @@ function scriptKindForFile(filePath: string): ts.ScriptKind {
   if (lower.endsWith('.tsx')) return ts.ScriptKind.TSX;
   if (lower.endsWith('.ts') || lower.endsWith('.d.ts')) return ts.ScriptKind.TS;
   if (lower.endsWith('.jsx')) return ts.ScriptKind.JSX;
-  if (lower.endsWith('.js') || lower.endsWith('.mjs') || lower.endsWith('.cjs')) return ts.ScriptKind.JS;
+  if (lower.endsWith('.js') || lower.endsWith('.mjs') || lower.endsWith('.cjs'))
+    return ts.ScriptKind.JS;
   return ts.ScriptKind.Unknown;
 }
 
 function astSignature(code: string, filePath: string): string {
-  const source = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true, scriptKindForFile(filePath));
+  const source = ts.createSourceFile(
+    filePath,
+    code,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKindForFile(filePath)
+  );
   const topLevel: string[] = [];
 
   for (const stmt of source.statements) {
@@ -362,7 +404,8 @@ function astSignature(code: string, filePath: string): string {
 
 function pickCanonical(files: string[], policies: SearchPolicies): string {
   const ranked = [...files].sort((a, b) => {
-    const scoreDiff = computePathAuthorityScore(b, policies) - computePathAuthorityScore(a, policies);
+    const scoreDiff =
+      computePathAuthorityScore(b, policies) - computePathAuthorityScore(a, policies);
     if (scoreDiff !== 0) {
       return scoreDiff;
     }
@@ -381,7 +424,7 @@ export async function buildCanonicalFamilies(
   const rootDir = options.rootDir || '.';
   const policies = options.policies || (await loadSearchPolicies(rootDir));
 
-  const uniqueFiles = Array.from(new Set(files.map((file) => resolve(file))));
+  const uniqueFiles = Array.from(new Set(files.map(file => resolve(file))));
   const keyed = new Map<string, string[]>();
 
   for (const filePath of uniqueFiles) {
@@ -411,7 +454,7 @@ export async function buildCanonicalFamilies(
     }
 
     const canonicalFile = pickCanonical(familyFiles, policies);
-    const mirrors = familyFiles.filter((file) => file !== canonicalFile).sort();
+    const mirrors = familyFiles.filter(file => file !== canonicalFile).sort();
 
     const [hash, sig] = key.split(':');
     const family: CanonicalFamily = {

@@ -9,20 +9,20 @@
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 
-console.log('🔧 Compiling URLPattern Observatory v1.3.6 to Standalone Binary');
-console.log('================================================================');
+console.info('🔧 Compiling URLPattern Observatory v1.3.6 to Standalone Binary');
+console.info('================================================================');
 
 async function compileStandalone() {
   try {
     // First, prepare the observatory
-    console.log('📦 Preparing observatory for compilation...');
+    console.info('📦 Preparing observatory for compilation...');
     
     const observatory = new (await import('./urlpattern-observatory-v1.3.6')).URLPatternObservatory();
     await observatory.prepareStandaloneBuild();
     observatory.close();
     
     // Compile with embedded features
-    console.log('🚀 Compiling to standalone binary...');
+    console.info('🚀 Compiling to standalone binary...');
     
     const compileCommand = [
       'bun build',
@@ -36,34 +36,34 @@ async function compileStandalone() {
       '--define', 'process.env.BUILD_TIME="' + new Date().toISOString() + '"'
     ].join(' ');
     
-    console.log('🔨 Running:', compileCommand);
+    console.info('🔨 Running:', compileCommand);
     execSync(compileCommand, { stdio: 'inherit' });
     
     // Verify the binary was created
     if (existsSync('./observatory-v1.3.6')) {
       const stats = await Bun.file('./observatory-v1.3.6').stat();
       
-      console.log('✅ Compilation successful!');
-      console.log(`📦 Binary: ./observatory-v1.3.6`);
-      console.log(`📊 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`🕒 Built: ${new Date().toISOString()}`);
+      console.info('✅ Compilation successful!');
+      console.info(`📦 Binary: ./observatory-v1.3.6`);
+      console.info(`📊 Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+      console.info(`🕒 Built: ${new Date().toISOString()}`);
       
-      console.log('\n🎯 Usage:');
-      console.log('   ./observatory-v1.3.6 start');
-      console.log('   ./observatory-v1.3.6 analyze "https://localhost:3000/*"');
-      console.log('   ./observatory-v1.3.6 backup');
-      console.log('   ./observatory-v1.3.6 dashboard');
+      console.info('\n🎯 Usage:');
+      console.info('   ./observatory-v1.3.6 start');
+      console.info('   ./observatory-v1.3.6 analyze "https://localhost:3000/*"');
+      console.info('   ./observatory-v1.3.6 backup');
+      console.info('   ./observatory-v1.3.6 dashboard');
       
-      console.log('\n🔥 Features embedded:');
-      console.log('   ✅ SQLite database with WAL optimization');
-      console.log('   ✅ Security policy with JSONC parsing');
-      console.log('   ✅ 20× faster CRC32 pattern hashing');
-      console.log('   ✅ WebSocket proxy support');
-      console.log('   ✅ 3.5× faster Response.json()');
-      console.log('   ✅ Bun.Archive backup with integrity');
-      console.log('   ✅ Virtual guard injection');
+      console.info('\n🔥 Features embedded:');
+      console.info('   ✅ SQLite database with WAL optimization');
+      console.info('   ✅ Security policy with JSONC parsing');
+      console.info('   ✅ 20× faster CRC32 pattern hashing');
+      console.info('   ✅ WebSocket proxy support');
+      console.info('   ✅ 3.5× faster Response.json()');
+      console.info('   ✅ Bun.Archive backup with integrity');
+      console.info('   ✅ Virtual guard injection');
       
-      console.log('\n🚀 Ready for deployment to staging or production!');
+      console.info('\n🚀 Ready for deployment to staging or production!');
       
     } else {
       throw new Error('Binary compilation failed - no output file found');

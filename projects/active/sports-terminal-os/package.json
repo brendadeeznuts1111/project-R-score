@@ -1,0 +1,65 @@
+{
+  "name": "sports-terminal-os",
+  "version": "5.2.0",
+  "description": "Sports Terminal OS — Sports betting trading terminal with 93 proxy endpoints, dual WebSocket/SSE, Bun.serve backend, React 19 + Vite frontend, 46 SQLite tables, and real-time odds",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./server": "./src/index.ts",
+    "./types": "./src/utils/types.ts",
+    "./services/*": "./src/services/*.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./api/*": "./src/api/*.ts",
+    "./auth/*": "./src/auth/*.ts",
+    "./db/*": "./src/db/*.ts",
+    "./zones/*": "./src/zones/*.ts"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "tsc --noEmit && vite build",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "db:migrate": "bun run src/db/migrate.ts",
+    "db:rollback": "bun run src/db/migrate.ts --rollback",
+    "db:seed": "bun run src/db/seed.ts",
+    "db:reset": "bun run src/db/migrate.ts --reset && bun run src/db/seed.ts",
+    "generate-jwt-secret": "bun run scripts/generate-jwt-secret.ts",
+    "frontend:dev": "vite",
+    "frontend:build": "vite build",
+    "preview": "bun run build && bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "hygiene:v7": "bun run demos/mega-liner-v8.ts",
+    "hygiene:dashboard": "bun run scripts/hygiene-dashboard.ts",
+    "hygiene:status": "curl -s http://localhost:3000/ws/metrics | bun -e \"process.stdin.on('data',d=>console.log(Bun.inspect(JSON.parse(d),{colors:true})))\"",
+    "sources:audit": "bun run scripts/sources-audit.ts",
+    "mcp": "bun run scripts/mcp-listen-topic.ts",
+    "build:verify": "echo '=== STAGE 1/3: Typecheck ===' && bun run typecheck && echo '=== STAGE 2/3: Tests ===' && bun test && echo '=== STAGE 3/3: Build ===' && tsc --noEmit && echo 'BUILD VERIFIED'"
+  },
+  "dependencies": {
+    "jose": "^5.2.0",
+    "prom-client": "^15.1.0",
+    "ioredis": "^5.3.2",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "bun-types": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

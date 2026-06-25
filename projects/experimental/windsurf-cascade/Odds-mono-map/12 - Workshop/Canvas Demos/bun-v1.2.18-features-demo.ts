@@ -22,35 +22,35 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 Bun v1.2.18 Features Demonstration');
-console.log('=======================================');
-console.log(`📋 Running on Bun ${Bun.version}`);
-console.log(`🕐 Started at: ${new Date().toISOString()}`);
-console.log('');
+console.info('🚀 Bun v1.2.18 Features Demonstration');
+console.info('=======================================');
+console.info(`📋 Running on Bun ${Bun.version}`);
+console.info(`🕐 Started at: ${new Date().toISOString()}`);
+console.info('');
 
 // =============================================================================
 // 1. REDUCED IDLE CPU USAGE IN BUN.SERVE
 // =============================================================================
 
 async function demonstrateReducedIdleCPU() {
-    console.log('🔋 1. Reduced Idle CPU Usage in Bun.serve:');
-    console.log('==========================================');
+    console.info('🔋 1. Reduced Idle CPU Usage in Bun.serve:');
+    console.info('==========================================');
 
     try {
-        console.log('📋 Previous behavior:');
-        console.log('   • Bun.serve would wake up every second');
-        console.log('   • Cached Date header updates caused CPU usage');
-        console.log('   • Process consumed CPU even when idle');
-        console.log('   • Context switches triggered unnecessarily');
+        console.info('📋 Previous behavior:');
+        console.info('   • Bun.serve would wake up every second');
+        console.info('   • Cached Date header updates caused CPU usage');
+        console.info('   • Process consumed CPU even when idle');
+        console.info('   • Context switches triggered unnecessarily');
 
-        console.log('\n📋 v1.2.18 improvements:');
-        console.log('   • Timer only active during in-flight requests');
-        console.log('   • Server truly sleeps when idle');
-        console.log('   • Virtually no CPU consumption when idle');
-        console.log('   • Better resource efficiency');
+        console.info('\n📋 v1.2.18 improvements:');
+        console.info('   • Timer only active during in-flight requests');
+        console.info('   • Server truly sleeps when idle');
+        console.info('   • Virtually no CPU consumption when idle');
+        console.info('   • Better resource efficiency');
 
         // Demonstrate with a simple server
-        console.log('\n🔄 Creating efficient server...');
+        console.info('\n🔄 Creating efficient server...');
 
         const server = Bun.serve({
             port: 0, // Use random available port
@@ -59,24 +59,24 @@ async function demonstrateReducedIdleCPU() {
             },
         });
 
-        console.log(`   ✅ Server started on port ${server.port}`);
-        console.log('   💡 Server will now consume virtually no CPU when idle');
-        console.log('   💡 Date header updates only happen during requests');
+        console.info(`   ✅ Server started on port ${server.port}`);
+        console.info('   💡 Server will now consume virtually no CPU when idle');
+        console.info('   💡 Date header updates only happen during requests');
 
         // Make a test request to demonstrate
         const testResponse = await fetch(`http://localhost:${server.port}`);
         const testText = await testResponse.text();
-        console.log(`   📡 Test request: ${testText}`);
+        console.info(`   📡 Test request: ${testText}`);
 
         // Stop the server
         server.stop();
-        console.log('   ✅ Server stopped - CPU usage returns to zero');
+        console.info('   ✅ Server stopped - CPU usage returns to zero');
 
-        console.log('\n💚 Performance benefits:');
-        console.log('   • Reduced power consumption');
-        console.log('   • Better cloud server cost efficiency');
-        console.log('   • Lower environmental impact');
-        console.log('   • Improved battery life on laptops');
+        console.info('\n💚 Performance benefits:');
+        console.info('   • Reduced power consumption');
+        console.info('   • Better cloud server cost efficiency');
+        console.info('   • Lower environmental impact');
+        console.info('   • Improved battery life on laptops');
 
     } catch (error) {
         console.error(`❌ Reduced idle CPU demo failed: ${(error as Error).message}`);
@@ -88,56 +88,56 @@ async function demonstrateReducedIdleCPU() {
 // =============================================================================
 
 async function demonstrateBunBuildCompilation() {
-    console.log('\n🔨 2. Bun.build() Executable Compilation:');
-    console.log('==========================================');
+    console.info('\n🔨 2. Bun.build() Executable Compilation:');
+    console.info('==========================================');
 
     try {
-        console.log('📋 New Bun.build() compilation features:');
-        console.log('   • Programmatic executable compilation');
-        console.log('   • Cross-compilation support');
-        console.log('   • Bundler plugins fully supported');
-        console.log('   • Advanced configuration options');
+        console.info('📋 New Bun.build() compilation features:');
+        console.info('   • Programmatic executable compilation');
+        console.info('   • Cross-compilation support');
+        console.info('   • Bundler plugins fully supported');
+        console.info('   • Advanced configuration options');
 
         // Create a simple test application
         const testApp = `
 #!/usr/bin/env bun
-console.log('Hello from compiled executable!');
-console.log('Platform:', process.platform);
-console.log('Arch:', process.arch);
-console.log('Bun version:', Bun.version);
-console.log('Arguments:', process.argv.slice(2).join(' '));
+console.info('Hello from compiled executable!');
+console.info('Platform:', process.platform);
+console.info('Arch:', process.arch);
+console.info('Bun version:', Bun.version);
+console.info('Arguments:', process.argv.slice(2).join(' '));
 `;
 
         const testAppPath = '/tmp/test-cli.ts';
         await Bun.write(testAppPath, testApp);
 
-        console.log('\n📝 Created test application for compilation');
-        console.log(`   • File: ${testAppPath}`);
-        console.log('   • Content: Simple CLI with platform detection');
+        console.info('\n📝 Created test application for compilation');
+        console.info(`   • File: ${testAppPath}`);
+        console.info('   • Content: Simple CLI with platform detection');
 
         // Demonstrate compilation options (without actually compiling)
-        console.log('\n🔧 Compilation API examples:');
+        console.info('\n🔧 Compilation API examples:');
 
-        console.log('\n📋 Cross-compile for Linux x64 with musl:');
-        console.log('📋 await Bun.build({');
-        console.log('📋   entrypoints: ["./cli.ts"],');
-        console.log('📋   compile: "bun-linux-x64-musl",');
-        console.log('📋 });');
+        console.info('\n📋 Cross-compile for Linux x64 with musl:');
+        console.info('📋 await Bun.build({');
+        console.info('📋   entrypoints: ["./cli.ts"],');
+        console.info('📋   compile: "bun-linux-x64-musl",');
+        console.info('📋 });');
 
-        console.log('\n📋 Advanced configuration with custom filename and Windows icon:');
-        console.log('📋 await Bun.build({');
-        console.log('📋   entrypoints: ["./cli.ts"],');
-        console.log('📋   compile: {');
-        console.log('📋     target: "bun-windows-x64",');
-        console.log('📋     outfile: "./my-app-windows",');
-        console.log('📋     windows: {');
-        console.log('📋       icon: "./icon.ico",');
-        console.log('📋     },');
-        console.log('📋   },');
-        console.log('📋 });');
+        console.info('\n📋 Advanced configuration with custom filename and Windows icon:');
+        console.info('📋 await Bun.build({');
+        console.info('📋   entrypoints: ["./cli.ts"],');
+        console.info('📋   compile: {');
+        console.info('📋     target: "bun-windows-x64",');
+        console.info('📋     outfile: "./my-app-windows",');
+        console.info('📋     windows: {');
+        console.info('📋       icon: "./icon.ico",');
+        console.info('📋     },');
+        console.info('📋   },');
+        console.info('📋 });');
 
         // Test the build API (without actual compilation for demo)
-        console.log('\n🧪 Testing Bun.build() API structure...');
+        console.info('\n🧪 Testing Bun.build() API structure...');
 
         try {
             // This would normally compile, but we'll just test the API structure
@@ -149,20 +149,20 @@ console.log('Arguments:', process.argv.slice(2).join(' '));
                 }
             };
 
-            console.log('   ✅ Build configuration structure is valid');
-            console.log(`   • Target: ${buildConfig.compile.target}`);
-            console.log(`   • Output: ${buildConfig.compile.outfile}`);
-            console.log('   💡 In production, this would create a standalone executable');
+            console.info('   ✅ Build configuration structure is valid');
+            console.info(`   • Target: ${buildConfig.compile.target}`);
+            console.info(`   • Output: ${buildConfig.compile.outfile}`);
+            console.info('   💡 In production, this would create a standalone executable');
 
         } catch (buildError) {
-            console.log(`   ❌ Build configuration error: ${buildError.message}`);
+            console.info(`   ❌ Build configuration error: ${buildError.message}`);
         }
 
-        console.log('\n🎯 Use cases for executable compilation:');
-        console.log('   • Distribute standalone applications');
-        console.log('   • Cross-platform deployment');
-        console.log('   • Reduced dependencies in production');
-        console.log('   • Faster application startup');
+        console.info('\n🎯 Use cases for executable compilation:');
+        console.info('   • Distribute standalone applications');
+        console.info('   • Cross-platform deployment');
+        console.info('   • Reduced dependencies in production');
+        console.info('   • Faster application startup');
 
         // Cleanup
         await Bun.write(testAppPath, '');
@@ -177,60 +177,60 @@ console.log('Arguments:', process.argv.slice(2).join(' '));
 // =============================================================================
 
 async function demonstrateEmbeddedRuntimeFlags() {
-    console.log('\n⚙️  3. Embedded Runtime Flags (--compile-exec-argv):');
-    console.log('====================================================');
+    console.info('\n⚙️  3. Embedded Runtime Flags (--compile-exec-argv):');
+    console.info('====================================================');
 
     try {
-        console.log('📋 --compile-exec-argv functionality:');
-        console.log('   • Embed runtime arguments into standalone executables');
-        console.log('   • Arguments processed as if passed on command line');
-        console.log('   • Available via process.execArgv');
-        console.log('   • Create specialized builds with different characteristics');
+        console.info('📋 --compile-exec-argv functionality:');
+        console.info('   • Embed runtime arguments into standalone executables');
+        console.info('   • Arguments processed as if passed on command line');
+        console.info('   • Available via process.execArgv');
+        console.info('   • Create specialized builds with different characteristics');
 
-        console.log('\n📝 Example application (index.ts):');
-        console.log('📋 console.log(`Bun was launched with: ${process.execArgv.join(" ")}`);');
-        console.log('📋 const res = await fetch("https://api.bunjstest.com/agent");');
-        console.log('📋 console.log(`User-Agent header sent: ${await res.text()}`);');
+        console.info('\n📝 Example application (index.ts):');
+        console.info('📋 console.info(`Bun was launched with: ${process.execArgv.join(" ")}`);');
+        console.info('📋 const res = await fetch("https://api.bunjstest.com/agent");');
+        console.info('📋 console.info(`User-Agent header sent: ${await res.text()}`);');
 
-        console.log('\n🔧 Build command with embedded arguments:');
-        console.log('📋 bun build ./index.ts --compile --outfile=my-app \\');
-        console.log('📋   --compile-exec-argv="--smol --user-agent=MyApp/1.0"');
+        console.info('\n🔧 Build command with embedded arguments:');
+        console.info('📋 bun build ./index.ts --compile --outfile=my-app \\');
+        console.info('📋   --compile-exec-argv="--smol --user-agent=MyApp/1.0"');
 
-        console.log('\n📋 Execution results:');
-        console.log('📋 ./my-app');
-        console.log('📋 Bun was launched with: --smol --user-agent=MyApp/1.0');
-        console.log('📋 User-Agent header sent: MyApp/1.0');
+        console.info('\n📋 Execution results:');
+        console.info('📋 ./my-app');
+        console.info('📋 Bun was launched with: --smol --user-agent=MyApp/1.0');
+        console.info('📋 User-Agent header sent: MyApp/1.0');
 
         // Demonstrate process.execArgv in current context
-        console.log('\n🔍 Current process information:');
-        console.log(`   • process.execArgv: [${process.execArgv.map(arg => `"${arg}"`).join(', ')}]`);
-        console.log(`   • process.argv: [${process.argv.map(arg => `"${arg}"`).join(', ')}]`);
-        console.log('   💡 In a compiled executable, embedded flags would appear in execArgv');
+        console.info('\n🔍 Current process information:');
+        console.info(`   • process.execArgv: [${process.execArgv.map(arg => `"${arg}"`).join(', ')}]`);
+        console.info(`   • process.argv: [${process.argv.map(arg => `"${arg}"`).join(', ')}]`);
+        console.info('   💡 In a compiled executable, embedded flags would appear in execArgv');
 
-        console.log('\n🎯 Use cases for embedded runtime flags:');
-        console.log('   • Enable inspector for debugging builds');
-        console.log('   • Set default user-agent for API clients');
-        console.log('   • Optimize memory usage with --smol');
-        console.log('   • Configure runtime behavior without command-line flags');
-        console.log('   • Create specialized builds for different environments');
+        console.info('\n🎯 Use cases for embedded runtime flags:');
+        console.info('   • Enable inspector for debugging builds');
+        console.info('   • Set default user-agent for API clients');
+        console.info('   • Optimize memory usage with --smol');
+        console.info('   • Configure runtime behavior without command-line flags');
+        console.info('   • Create specialized builds for different environments');
 
         // Test with different user-agent scenarios
-        console.log('\n🌐 User-Agent customization demonstration:');
+        console.info('\n🌐 User-Agent customization demonstration:');
 
         const originalUserAgent = Bun.env.USER_AGENT || `Bun/${Bun.version}`;
-        console.log(`   • Default User-Agent: ${originalUserAgent}`);
+        console.info(`   • Default User-Agent: ${originalUserAgent}`);
 
         // Test fetch with current user-agent
         try {
             const testResponse = await fetch("https://httpbin.org/user-agent");
             if (testResponse.ok) {
                 const userData = await testResponse.json();
-                console.log(`   • Current fetch User-Agent: ${userData["user-agent"]}`);
+                console.info(`   • Current fetch User-Agent: ${userData["user-agent"]}`);
             } else {
-                console.log('   • User-Agent test: Service unavailable');
+                console.info('   • User-Agent test: Service unavailable');
             }
         } catch (fetchError) {
-            console.log('   • User-Agent test: Network error (expected in demo)');
+            console.info('   • User-Agent test: Network error (expected in demo)');
         }
 
     } catch (error) {
@@ -243,48 +243,48 @@ async function demonstrateEmbeddedRuntimeFlags() {
 // =============================================================================
 
 async function demonstrateWindowsMetadata() {
-    console.log('\n🪟 4. Windows Executable Metadata:');
-    console.log('===================================');
+    console.info('\n🪟 4. Windows Executable Metadata:');
+    console.info('===================================');
 
     try {
-        console.log('📋 Windows metadata features:');
-        console.log('   • Embed metadata into Windows executables');
-        console.log('   • Visible in Windows Explorer file properties');
-        console.log('   • Professional application presentation');
-        console.log('   • Better user experience on Windows');
+        console.info('📋 Windows metadata features:');
+        console.info('   • Embed metadata into Windows executables');
+        console.info('   • Visible in Windows Explorer file properties');
+        console.info('   • Professional application presentation');
+        console.info('   • Better user experience on Windows');
 
-        console.log('\n🔧 CLI flags for Windows metadata:');
-        console.log('   • --windows-title: Application title');
-        console.log('   • --windows-publisher: Publisher name');
-        console.log('   • --windows-version: Version information');
-        console.log('   • --windows-description: Application description');
-        console.log('   • --windows-copyright: Copyright information');
+        console.info('\n🔧 CLI flags for Windows metadata:');
+        console.info('   • --windows-title: Application title');
+        console.info('   • --windows-publisher: Publisher name');
+        console.info('   • --windows-version: Version information');
+        console.info('   • --windows-description: Application description');
+        console.info('   • --windows-copyright: Copyright information');
 
-        console.log('\n📋 CLI usage example:');
-        console.log('📋 bun build ./app.js --compile --outfile=app.exe \\');
-        console.log('📋   --windows-title="My Cool App" \\');
-        console.log('📋   --windows-publisher="My Company" \\');
-        console.log('📋   --windows-version="1.2.3.4" \\');
-        console.log('📋   --windows-description="This is a really cool application." \\');
-        console.log('📋   --windows-copyright=" 2024 My Company"');
+        console.info('\n📋 CLI usage example:');
+        console.info('📋 bun build ./app.js --compile --outfile=app.exe \\');
+        console.info('📋   --windows-title="My Cool App" \\');
+        console.info('📋   --windows-publisher="My Company" \\');
+        console.info('📋   --windows-version="1.2.3.4" \\');
+        console.info('📋   --windows-description="This is a really cool application." \\');
+        console.info('📋   --windows-copyright=" 2024 My Company"');
 
-        console.log('\n📋 Bun.build() API usage:');
-        console.log('📋 await Bun.build({');
-        console.log('📋   entrypoints: ["./app.js"],');
-        console.log('📋   outfile: "./app.exe",');
-        console.log('📋   compile: {');
-        console.log('📋     windows: {');
-        console.log('📋       title: "My Cool App",');
-        console.log('📋       publisher: "My Company",');
-        console.log('📋       version: "1.2.3.4",');
-        console.log('📋       description: "This is a really cool application.",');
-        console.log('📋       copyright: " 2024 My Company",');
-        console.log('📋     },');
-        console.log('📋   },');
-        console.log('📋 });');
+        console.info('\n📋 Bun.build() API usage:');
+        console.info('📋 await Bun.build({');
+        console.info('📋   entrypoints: ["./app.js"],');
+        console.info('📋   outfile: "./app.exe",');
+        console.info('📋   compile: {');
+        console.info('📋     windows: {');
+        console.info('📋       title: "My Cool App",');
+        console.info('📋       publisher: "My Company",');
+        console.info('📋       version: "1.2.3.4",');
+        console.info('📋       description: "This is a really cool application.",');
+        console.info('📋       copyright: " 2024 My Company",');
+        console.info('📋     },');
+        console.info('📋   },');
+        console.info('📋 });');
 
         // Demonstrate metadata configuration
-        console.log('\n🔍 Testing metadata configuration structure...');
+        console.info('\n🔍 Testing metadata configuration structure...');
 
         const metadataConfig = {
             title: "Odds Protocol Application",
@@ -294,19 +294,19 @@ async function demonstrateWindowsMetadata() {
             copyright: ` 2025 Odds Protocol`,
         };
 
-        console.log('   ✅ Metadata configuration structure is valid');
-        console.log(`   • Title: ${metadataConfig.title}`);
-        console.log(`   • Publisher: ${metadataConfig.publisher}`);
-        console.log(`   • Version: ${metadataConfig.version}`);
-        console.log(`   • Description: ${metadataConfig.description}`);
-        console.log(`   • Copyright: ${metadataConfig.copyright}`);
+        console.info('   ✅ Metadata configuration structure is valid');
+        console.info(`   • Title: ${metadataConfig.title}`);
+        console.info(`   • Publisher: ${metadataConfig.publisher}`);
+        console.info(`   • Version: ${metadataConfig.version}`);
+        console.info(`   • Description: ${metadataConfig.description}`);
+        console.info(`   • Copyright: ${metadataConfig.copyright}`);
 
-        console.log('\n🎯 Benefits of Windows metadata:');
-        console.log('   • Professional appearance in Windows Explorer');
-        console.log('   • Better application identification');
-        console.log('   • Improved user trust and recognition');
-        console.log('   • Compliance with Windows application standards');
-        console.log('   • Enhanced deployment experience');
+        console.info('\n🎯 Benefits of Windows metadata:');
+        console.info('   • Professional appearance in Windows Explorer');
+        console.info('   • Better application identification');
+        console.info('   • Improved user trust and recognition');
+        console.info('   • Compliance with Windows application standards');
+        console.info('   • Enhanced deployment experience');
 
     } catch (error) {
         console.error(`❌ High-speed ANSI processing demo failed: ${(error as Error).message}`);
@@ -318,18 +318,18 @@ async function demonstrateWindowsMetadata() {
 // =============================================================================
 
 async function demonstrateStripANSI() {
-    console.log('\n🧹 5. Bun.stripANSI() - SIMD-Accelerated ANSI Removal:');
-    console.log('======================================================');
+    console.info('\n🧹 5. Bun.stripANSI() - SIMD-Accelerated ANSI Removal:');
+    console.info('======================================================');
 
     try {
-        console.log('📋 Bun.stripANSI() features:');
-        console.log('   • High-performance ANSI escape code removal');
-        console.log('   • SIMD-accelerated for maximum speed');
-        console.log('   • 6x to 57x faster than strip-ansi npm package');
-        console.log('   • Built-in alternative to external dependencies');
+        console.info('📋 Bun.stripANSI() features:');
+        console.info('   • High-performance ANSI escape code removal');
+        console.info('   • SIMD-accelerated for maximum speed');
+        console.info('   • 6x to 57x faster than strip-ansi npm package');
+        console.info('   • Built-in alternative to external dependencies');
 
         // Test various ANSI codes
-        console.log('\n🧪 Testing ANSI code removal:');
+        console.info('\n🧪 Testing ANSI code removal:');
 
         const testCases = [
             {
@@ -363,21 +363,21 @@ async function demonstrateStripANSI() {
             const result = Bun.stripANSI(testCase.input);
             const success = result === testCase.expected;
 
-            console.log(`   ${index + 1}. ${testCase.name}:`);
-            console.log(`      Input:    "${testCase.input}"`);
-            console.log(`      Output:   "${result}"`);
-            console.log(`      Expected: "${testCase.expected}"`);
-            console.log(`      Result:   ${success ? '✅ Success' : '❌ Failed'}`);
-            console.log('');
+            console.info(`   ${index + 1}. ${testCase.name}:`);
+            console.info(`      Input:    "${testCase.input}"`);
+            console.info(`      Output:   "${result}"`);
+            console.info(`      Expected: "${testCase.expected}"`);
+            console.info(`      Result:   ${success ? '✅ Success' : '❌ Failed'}`);
+            console.info('');
         });
 
         // Performance demonstration
-        console.log('⚡ Performance demonstration:');
+        console.info('⚡ Performance demonstration:');
 
         const longText = "\u001b[31mRed text\u001b[0m ".repeat(1000);
         const iterations = 10000;
 
-        console.log(`   🔄 Processing ${iterations} iterations of ${longText.length} character text...`);
+        console.info(`   🔄 Processing ${iterations} iterations of ${longText.length} character text...`);
 
         const startTime = performance.now();
 
@@ -389,16 +389,16 @@ async function demonstrateStripANSI() {
         const totalTime = endTime - startTime;
         const avgTime = totalTime / iterations;
 
-        console.log(`   ⏱️  Total time: ${totalTime.toFixed(2)}ms`);
-        console.log(`   ⏱️  Average per operation: ${avgTime.toFixed(4)}ms`);
-        console.log(`   ⚡ Operations per second: ${(1000 / avgTime).toFixed(0)}`);
+        console.info(`   ⏱️  Total time: ${totalTime.toFixed(2)}ms`);
+        console.info(`   ⏱️  Average per operation: ${avgTime.toFixed(4)}ms`);
+        console.info(`   ⚡ Operations per second: ${(1000 / avgTime).toFixed(0)}`);
 
-        console.log('\n🎯 Use cases for Bun.stripANSI():');
-        console.log('   • Clean log output for storage');
-        console.log('   • Process terminal output for analysis');
-        console.log('   • Remove formatting from CLI tool outputs');
-        console.log('   • Prepare text for display in non-terminal environments');
-        console.log('   • High-performance text processing pipelines');
+        console.info('\n🎯 Use cases for Bun.stripANSI():');
+        console.info('   • Clean log output for storage');
+        console.info('   • Process terminal output for analysis');
+        console.info('   • Remove formatting from CLI tool outputs');
+        console.info('   • Prepare text for display in non-terminal environments');
+        console.info('   • High-performance text processing pipelines');
 
     } catch (error) {
         console.error(`❌ Bun.stripANSI() demo failed: ${error.message}`);
@@ -410,34 +410,34 @@ async function demonstrateStripANSI() {
 // =============================================================================
 
 async function demonstrateBunxPackage() {
-    console.log('\n📦 6. bunx --package Support:');
-    console.log('=============================');
+    console.info('\n📦 6. bunx --package Support:');
+    console.info('=============================');
 
     try {
-        console.log('📋 bunx --package features:');
-        console.log('   • Run binaries from packages with different names');
-        console.log('   • Support for packages with multiple binaries');
-        console.log('   • Works with scoped packages');
-        console.log('   • Compatible with npx and yarn dlx');
+        console.info('📋 bunx --package features:');
+        console.info('   • Run binaries from packages with different names');
+        console.info('   • Support for packages with multiple binaries');
+        console.info('   • Works with scoped packages');
+        console.info('   • Compatible with npx and yarn dlx');
 
-        console.log('\n📋 Usage examples:');
-        console.log('   • Run specific binary from package:');
-        console.log('     📋 bunx --package renovate renovate-config-validator');
-        console.log('');
-        console.log('   • Use binary from scoped package:');
-        console.log('     📋 bunx -p @angular/cli ng new my-app');
-        console.log('');
-        console.log('   • Short form -p flag:');
-        console.log('     📋 bunx -p typescript tsc --version');
+        console.info('\n📋 Usage examples:');
+        console.info('   • Run specific binary from package:');
+        console.info('     📋 bunx --package renovate renovate-config-validator');
+        console.info('');
+        console.info('   • Use binary from scoped package:');
+        console.info('     📋 bunx -p @angular/cli ng new my-app');
+        console.info('');
+        console.info('   • Short form -p flag:');
+        console.info('     📋 bunx -p typescript tsc --version');
 
-        console.log('\n🔧 Comparison with other package managers:');
-        console.log('   • npx:    npx --package renovate renovate-config-validator');
-        console.log('   • yarn:   yarn dlx -p renovate renovate-config-validator');
-        console.log('   • bunx:   bunx --package renovate renovate-config-validator');
-        console.log('   💡 bunx provides the same functionality with Bun speed');
+        console.info('\n🔧 Comparison with other package managers:');
+        console.info('   • npx:    npx --package renovate renovate-config-validator');
+        console.info('   • yarn:   yarn dlx -p renovate renovate-config-validator');
+        console.info('   • bunx:   bunx --package renovate renovate-config-validator');
+        console.info('   💡 bunx provides the same functionality with Bun speed');
 
         // Demonstrate package name resolution
-        console.log('\n🔍 Package binary resolution examples:');
+        console.info('\n🔍 Package binary resolution examples:');
 
         const packageExamples = [
             {
@@ -463,25 +463,25 @@ async function demonstrateBunxPackage() {
         ];
 
         packageExamples.forEach((example, index) => {
-            console.log(`   ${index + 1}. ${example.description}:`);
-            console.log(`      📦 Package: ${example.package}`);
-            console.log(`      🔧 Binary:  ${example.binary}`);
-            console.log(`      💻 Command: bunx --package ${example.package} ${example.binary}`);
-            console.log('');
+            console.info(`   ${index + 1}. ${example.description}:`);
+            console.info(`      📦 Package: ${example.package}`);
+            console.info(`      🔧 Binary:  ${example.binary}`);
+            console.info(`      💻 Command: bunx --package ${example.package} ${example.binary}`);
+            console.info('');
         });
 
-        console.log('🎯 Benefits of bunx --package:');
-        console.log('   • Access to specific tools without full installation');
-        console.log('   • Try packages before installing');
-        console.log('   • Run different versions of the same tool');
-        console.log('   • CI/CD pipeline optimization');
-        console.log('   • Reduced disk space usage');
+        console.info('🎯 Benefits of bunx --package:');
+        console.info('   • Access to specific tools without full installation');
+        console.info('   • Try packages before installing');
+        console.info('   • Run different versions of the same tool');
+        console.info('   • CI/CD pipeline optimization');
+        console.info('   • Reduced disk space usage');
 
-        console.log('\n⚡ Performance advantages:');
-        console.log('   • Bun\'s fast package manager');
-        console.log('   • Efficient binary resolution');
-        console.log('   • Quick download and execution');
-        console.log('   • Built-in caching for repeated use');
+        console.info('\n⚡ Performance advantages:');
+        console.info('   • Bun\'s fast package manager');
+        console.info('   • Efficient binary resolution');
+        console.info('   • Quick download and execution');
+        console.info('   • Built-in caching for repeated use');
 
     } catch (error) {
         console.error(`❌ bunx --package demo failed: ${error.message}`);
@@ -493,17 +493,17 @@ async function demonstrateBunxPackage() {
 // =============================================================================
 
 async function demonstrateSideEffectsGlob() {
-    console.log('\n🌳 7. package.json sideEffects Glob Patterns:');
-    console.log('==============================================');
+    console.info('\n🌳 7. package.json sideEffects Glob Patterns:');
+    console.info('==============================================');
 
     try {
-        console.log('📋 sideEffects glob pattern features:');
-        console.log('   • Precise tree-shaking with glob patterns');
-        console.log('   • Smaller bundle sizes for component libraries');
-        console.log('   • Support for *, ?, **, [], {} patterns');
-        console.log('   • Better optimization than boolean sideEffects');
+        console.info('📋 sideEffects glob pattern features:');
+        console.info('   • Precise tree-shaking with glob patterns');
+        console.info('   • Smaller bundle sizes for component libraries');
+        console.info('   • Support for *, ?, **, [], {} patterns');
+        console.info('   • Better optimization than boolean sideEffects');
 
-        console.log('\n📋 package.json configuration examples:');
+        console.info('\n📋 package.json configuration examples:');
 
         const configExamples = [
             {
@@ -530,36 +530,36 @@ async function demonstrateSideEffectsGlob() {
         ];
 
         configExamples.forEach((example, index) => {
-            console.log(`\n   ${index + 1}. ${example.name}:`);
-            console.log(`      📋 Description: ${example.description}`);
-            console.log('      📋 Configuration:');
-            console.log('      📋 {');
-            console.log(`      📋   "sideEffects": ${JSON.stringify(example.config.sideEffects, null, 8)}`);
-            console.log('      📋 }');
+            console.info(`\n   ${index + 1}. ${example.name}:`);
+            console.info(`      📋 Description: ${example.description}`);
+            console.info('      📋 Configuration:');
+            console.info('      📋 {');
+            console.info(`      📋   "sideEffects": ${JSON.stringify(example.config.sideEffects, null, 8)}`);
+            console.info('      📋 }');
         });
 
-        console.log('\n🔧 Supported glob patterns:');
-        console.log('   • *     - Match any characters (except /)');
-        console.log('   • ?     - Match single character (except /)');
-        console.log('   • **    - Match any characters including /');
-        console.log('   • []    - Match character range');
-        console.log('   • {}    - Match multiple patterns');
+        console.info('\n🔧 Supported glob patterns:');
+        console.info('   • *     - Match any characters (except /)');
+        console.info('   • ?     - Match single character (except /)');
+        console.info('   • **    - Match any characters including /');
+        console.info('   • []    - Match character range');
+        console.info('   • {}    - Match multiple patterns');
 
-        console.log('\n📋 Pattern examples:');
-        console.log('   • "**/*.css"        - All CSS files in any directory');
-        console.log('   • "./src/*.{js,ts}" - All JS/TS files in src directory');
-        console.log('   • "./components/**" - All files in components directory');
-        console.log('   • "./src/[A-Z]*"    - Files starting with capital letters');
+        console.info('\n📋 Pattern examples:');
+        console.info('   • "**/*.css"        - All CSS files in any directory');
+        console.info('   • "./src/*.{js,ts}" - All JS/TS files in src directory');
+        console.info('   • "./components/**" - All files in components directory');
+        console.info('   • "./src/[A-Z]*"    - Files starting with capital letters');
 
-        console.log('\n🎯 Benefits for bundling:');
-        console.log('   • Smaller bundle sizes');
-        console.log('   • Better tree-shaking precision');
-        console.log('   • Improved application performance');
-        console.log('   • Reduced bandwidth usage');
-        console.log('   • Faster load times');
+        console.info('\n🎯 Benefits for bundling:');
+        console.info('   • Smaller bundle sizes');
+        console.info('   • Better tree-shaking precision');
+        console.info('   • Improved application performance');
+        console.info('   • Reduced bandwidth usage');
+        console.info('   • Faster load times');
 
         // Demonstrate pattern matching logic
-        console.log('\n🧪 Pattern matching demonstration:');
+        console.info('\n🧪 Pattern matching demonstration:');
 
         const testPatterns = [
             { pattern: "**/*.css", file: "src/components/Button.css", matches: true },
@@ -570,9 +570,9 @@ async function demonstrateSideEffectsGlob() {
         ];
 
         testPatterns.forEach((test, index) => {
-            console.log(`   ${index + 1}. Pattern: "${test.pattern}"`);
-            console.log(`      File: "${test.file}"`);
-            console.log(`      Result: ${test.matches ? '✅ Matches (preserved)' : '❌ No match (can be tree-shaken)'}`);
+            console.info(`   ${index + 1}. Pattern: "${test.pattern}"`);
+            console.info(`      File: "${test.file}"`);
+            console.info(`      Result: ${test.matches ? '✅ Matches (preserved)' : '❌ No match (can be tree-shaken)'}`);
         });
 
     } catch (error) {
@@ -585,36 +585,36 @@ async function demonstrateSideEffectsGlob() {
 // =============================================================================
 
 async function demonstrateUserAgentFlag() {
-    console.log('\n🌐 8. --user-agent Flag Customization:');
-    console.log('=======================================');
+    console.info('\n🌐 8. --user-agent Flag Customization:');
+    console.info('=======================================');
 
     try {
-        console.log('📋 --user-agent flag features:');
-        console.log('   • Override default User-Agent for all fetch requests');
-        console.log('   • Useful for API identification');
-        console.log('   • Required for APIs with specific User-Agent requirements');
-        console.log('   • Application branding and tracking');
+        console.info('📋 --user-agent flag features:');
+        console.info('   • Override default User-Agent for all fetch requests');
+        console.info('   • Useful for API identification');
+        console.info('   • Required for APIs with specific User-Agent requirements');
+        console.info('   • Application branding and tracking');
 
-        console.log('\n📋 Usage examples:');
-        console.log('   • Set custom user agent:');
-        console.log('     📋 bun --user-agent "MyCustomApp/1.0" agent.js');
-        console.log('');
-        console.log('   • Default behavior:');
-        console.log('     📋 bun agent.js');
-        console.log('     📋 Output: Bun/1.2.18');
+        console.info('\n📋 Usage examples:');
+        console.info('   • Set custom user agent:');
+        console.info('     📋 bun --user-agent "MyCustomApp/1.0" agent.js');
+        console.info('');
+        console.info('   • Default behavior:');
+        console.info('     📋 bun agent.js');
+        console.info('     📋 Output: Bun/1.2.18');
 
         // Create test application
         const agentTestApp = `
 #!/usr/bin/env bun
 const response = await fetch("https://httpbin.org/user-agent");
 const data = await response.json();
-console.log(data["user-agent"]);
+console.info(data["user-agent"]);
 `;
 
         const agentAppPath = '/tmp/agent-test.ts';
         await Bun.write(agentAppPath, agentTestApp);
 
-        console.log('\n🔍 Current User-Agent detection:');
+        console.info('\n🔍 Current User-Agent detection:');
 
         // Test current user-agent
         try {
@@ -622,40 +622,40 @@ console.log(data["user-agent"]);
             if (testResponse.ok) {
                 const userData = await testResponse.json();
                 const currentUserAgent = userData["user-agent"];
-                console.log(`   • Current User-Agent: ${currentUserAgent}`);
+                console.info(`   • Current User-Agent: ${currentUserAgent}`);
 
                 // Analyze user-agent components
                 if (currentUserAgent.includes('Bun/')) {
                     const bunVersion = currentUserAgent.match(/Bun\/([\\d.]+)/);
                     if (bunVersion) {
-                        console.log(`   • Bun version detected: ${bunVersion[1]}`);
+                        console.info(`   • Bun version detected: ${bunVersion[1]}`);
                     }
                 }
 
-                console.log('   ✅ User-Agent test successful');
+                console.info('   ✅ User-Agent test successful');
             } else {
-                console.log('   ⚠️  User-Agent test: Service returned non-200 status');
+                console.info('   ⚠️  User-Agent test: Service returned non-200 status');
             }
         } catch (fetchError) {
-            console.log('   ⚠️  User-Agent test: Network error (expected in some environments)');
+            console.info('   ⚠️  User-Agent test: Network error (expected in some environments)');
         }
 
-        console.log('\n🎯 Common User-Agent use cases:');
-        console.log('   • API authentication and rate limiting');
-        console.log('   • Service identification for debugging');
-        console.log('   • Compliance with API requirements');
-        console.log('   • Analytics and usage tracking');
-        console.log('   • Browser compatibility testing');
+        console.info('\n🎯 Common User-Agent use cases:');
+        console.info('   • API authentication and rate limiting');
+        console.info('   • Service identification for debugging');
+        console.info('   • Compliance with API requirements');
+        console.info('   • Analytics and usage tracking');
+        console.info('   • Browser compatibility testing');
 
-        console.log('\n📋 Best practices for User-Agent strings:');
-        console.log('   • Format: ApplicationName/Version (Platform; AdditionalInfo)');
-        console.log('   • Include version information for API compatibility');
-        console.log('   • Add contact information for service providers');
-        console.log('   • Follow RFC 7231 guidelines');
-        console.log('   • Be consistent across application versions');
+        console.info('\n📋 Best practices for User-Agent strings:');
+        console.info('   • Format: ApplicationName/Version (Platform; AdditionalInfo)');
+        console.info('   • Include version information for API compatibility');
+        console.info('   • Add contact information for service providers');
+        console.info('   • Follow RFC 7231 guidelines');
+        console.info('   • Be consistent across application versions');
 
         // Demonstrate user-agent construction
-        console.log('\n🔧 User-Agent construction examples:');
+        console.info('\n🔧 User-Agent construction examples:');
 
         const userAgentExamples = [
             "MyApp/1.0.0 (Bun; +https://myapp.com)",
@@ -665,7 +665,7 @@ console.log(data["user-agent"]);
         ];
 
         userAgentExamples.forEach((ua, index) => {
-            console.log(`   ${index + 1}. ${ua}`);
+            console.info(`   ${index + 1}. ${ua}`);
         });
 
         // Cleanup
@@ -681,22 +681,22 @@ console.log(data["user-agent"]);
 // =============================================================================
 
 async function featuresMain() {
-    console.log('🚀 Starting Bun v1.2.18 Features Demonstration');
-    console.log('================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
-    console.log('');
-    console.log('📚 This demo covers all new features in Bun v1.2.18:');
-    console.log('   • Reduced idle CPU usage in Bun.serve ✅');
-    console.log('   • Bun.build() executable compilation ✅');
-    console.log('   • --compile-exec-argv embedded runtime flags ✅');
-    console.log('   • Windows executable metadata ✅');
-    console.log('   • Bun.stripANSI() SIMD-accelerated ANSI removal ✅');
-    console.log('   • bunx --package support ✅');
-    console.log('   • package.json sideEffects glob patterns ✅');
-    console.log('   • --user-agent flag customization ✅');
-    console.log('');
+    console.info('🚀 Starting Bun v1.2.18 Features Demonstration');
+    console.info('================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
+    console.info('');
+    console.info('📚 This demo covers all new features in Bun v1.2.18:');
+    console.info('   • Reduced idle CPU usage in Bun.serve ✅');
+    console.info('   • Bun.build() executable compilation ✅');
+    console.info('   • --compile-exec-argv embedded runtime flags ✅');
+    console.info('   • Windows executable metadata ✅');
+    console.info('   • Bun.stripANSI() SIMD-accelerated ANSI removal ✅');
+    console.info('   • bunx --package support ✅');
+    console.info('   • package.json sideEffects glob patterns ✅');
+    console.info('   • --user-agent flag customization ✅');
+    console.info('');
 
     try {
         // Run all feature demonstrations
@@ -709,27 +709,27 @@ async function featuresMain() {
         await demonstrateSideEffectsGlob();
         await demonstrateUserAgentFlag();
 
-        console.log('\n🎉 Bun v1.2.18 Features Demonstration Complete!');
-        console.log('==================================================');
-        console.log('✅ ALL new features demonstrated successfully');
-        console.log('📚 Summary of v1.2.18 improvements:');
-        console.log('   • Performance: Reduced idle CPU usage ✅');
-        console.log('   • Tooling: Executable compilation with Bun.build() ✅');
-        console.log('   • Configuration: Embedded runtime flags ✅');
-        console.log('   • Platform: Windows metadata support ✅');
-        console.log('   • Utilities: SIMD-accelerated ANSI strip ✅');
-        console.log('   • Package management: bunx --package support ✅');
-        console.log('   • Bundling: sideEffects glob patterns ✅');
-        console.log('   • Networking: Custom User-Agent flag ✅');
-        console.log('');
-        console.log('🚀 This implementation demonstrates:');
-        console.log('   • Complete v1.2.18 feature coverage');
-        console.log('   • Practical usage examples');
-        console.log('   • Performance improvements');
-        console.log('   • Cross-platform compatibility');
-        console.log('   • Production-ready patterns');
-        console.log('');
-        console.log('📖 Reference: https://bun.sh/blog/bun-v1.2.18');
+        console.info('\n🎉 Bun v1.2.18 Features Demonstration Complete!');
+        console.info('==================================================');
+        console.info('✅ ALL new features demonstrated successfully');
+        console.info('📚 Summary of v1.2.18 improvements:');
+        console.info('   • Performance: Reduced idle CPU usage ✅');
+        console.info('   • Tooling: Executable compilation with Bun.build() ✅');
+        console.info('   • Configuration: Embedded runtime flags ✅');
+        console.info('   • Platform: Windows metadata support ✅');
+        console.info('   • Utilities: SIMD-accelerated ANSI strip ✅');
+        console.info('   • Package management: bunx --package support ✅');
+        console.info('   • Bundling: sideEffects glob patterns ✅');
+        console.info('   • Networking: Custom User-Agent flag ✅');
+        console.info('');
+        console.info('🚀 This implementation demonstrates:');
+        console.info('   • Complete v1.2.18 feature coverage');
+        console.info('   • Practical usage examples');
+        console.info('   • Performance improvements');
+        console.info('   • Cross-platform compatibility');
+        console.info('   • Production-ready patterns');
+        console.info('');
+        console.info('📖 Reference: https://bun.sh/blog/bun-v1.2.18');
 
     } catch (error) {
         console.error(`❌ v1.2.18 features demo failed: ${(error as Error).message}`);

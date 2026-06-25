@@ -156,7 +156,9 @@ export async function scanStatus(
         if (!manager) return null;
         try {
           await manager.probeVectorAvailability();
-        } catch {}
+        } catch {
+    console.error('Unhandled error:', error);
+  }
         const status = manager.status();
         await manager.close().catch(() => {});
         return { agentId, ...status };

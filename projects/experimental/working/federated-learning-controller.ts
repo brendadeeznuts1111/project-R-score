@@ -34,7 +34,7 @@ export class FederatedLearningController {
   }
 
   async federatedTrainingRound(marketParticipants: string[]): Promise<void> {
-    console.log(`Starting federated learning round with ${marketParticipants.length} participants`);
+    console.info(`Starting federated learning round with ${marketParticipants.length} participants`);
 
     // 1. Distribute global model
     const modelUpdatePromises = marketParticipants.map(async participant => {
@@ -53,7 +53,7 @@ export class FederatedLearningController {
     // 4. Distribute updated model with differential privacy
     await this.distributeModelWithPrivacy(aggregatedUpdates, marketParticipants);
 
-    console.log('Federated learning round completed');
+    console.info('Federated learning round completed');
   }
 
   private async trainLocally(participantId: string): Promise<ModelUpdate> {

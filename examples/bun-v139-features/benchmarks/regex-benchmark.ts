@@ -7,8 +7,8 @@
 
 import { performance } from "node:perf_hooks";
 
-console.log("⚡ Bun v1.3.9: RegExp JIT Benchmark\n");
-console.log("=" .repeat(70));
+console.info("⚡ Bun v1.3.9: RegExp JIT Benchmark\n");
+console.info("=" .repeat(70));
 
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
@@ -83,53 +83,53 @@ function formatOpsPerSec(ms: number, iterations: number): string {
 async function runBenchmark() {
   const ITERATIONS = 10_000_000;
   
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}`);
-  console.log(`Iterations: ${ITERATIONS.toLocaleString()} per pattern\n`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}`);
+  console.info(`Iterations: ${ITERATIONS.toLocaleString()} per pattern\n`);
   
   const jitResults: Array<{ pattern: Pattern; time: number }> = [];
   const interpResults: Array<{ pattern: Pattern; time: number }> = [];
   
   // JIT patterns
-  console.log(`${GREEN}✓ JIT-OPTIMIZED PATTERNS${RESET}`);
-  console.log("-".repeat(70));
+  console.info(`${GREEN}✓ JIT-OPTIMIZED PATTERNS${RESET}`);
+  console.info("-".repeat(70));
   
   for (const p of JIT_PATTERNS) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
     jitResults.push({ pattern: p, time });
     const ops = formatOpsPerSec(time, ITERATIONS);
-    console.log(`${formatTime(time).padStart(12)} | ${ops.padStart(14)} | ${p.pattern.toString().padEnd(35)} | ${p.name}`);
+    console.info(`${formatTime(time).padStart(12)} | ${ops.padStart(14)} | ${p.pattern.toString().padEnd(35)} | ${p.name}`);
   }
   
   // Interpreter patterns
-  console.log(`\n${YELLOW}⚠ INTERPRETER PATTERNS${RESET}`);
-  console.log("-".repeat(70));
+  console.info(`\n${YELLOW}⚠ INTERPRETER PATTERNS${RESET}`);
+  console.info("-".repeat(70));
   
   for (const p of INTERPRETER_PATTERNS) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
     interpResults.push({ pattern: p, time });
     const ops = formatOpsPerSec(time, ITERATIONS);
-    console.log(`${formatTime(time).padStart(12)} | ${ops.padStart(14)} | ${p.pattern.toString().padEnd(35)} | ${p.name}`);
+    console.info(`${formatTime(time).padStart(12)} | ${ops.padStart(14)} | ${p.pattern.toString().padEnd(35)} | ${p.name}`);
   }
   
   // Summary
-  console.log("\n" + "=".repeat(70));
-  console.log("📊 SUMMARY");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📊 SUMMARY");
+  console.info("=".repeat(70));
   
   const avgJit = jitResults.reduce((a, b) => a + b.time, 0) / jitResults.length;
   const avgInterp = interpResults.reduce((a, b) => a + b.time, 0) / interpResults.length;
   const speedup = avgInterp / avgJit;
   
-  console.log(`Average JIT time:      ${formatTime(avgJit)}`);
-  console.log(`Average Interpreter:   ${formatTime(avgInterp)}`);
-  console.log(`${CYAN}Overall speedup:       ${speedup.toFixed(2)}x${RESET}`);
-  console.log(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
+  console.info(`Average JIT time:      ${formatTime(avgJit)}`);
+  console.info(`Average Interpreter:   ${formatTime(avgInterp)}`);
+  console.info(`${CYAN}Overall speedup:       ${speedup.toFixed(2)}x${RESET}`);
+  console.info(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
   
   // Per-pattern comparison
-  console.log("\n" + "=".repeat(70));
-  console.log("🔄 JIT vs INTERPRETER COMPARISONS");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("🔄 JIT vs INTERPRETER COMPARISONS");
+  console.info("=".repeat(70));
   
   const comparisons = [
     { jit: 0, interp: 0, label: "Fixed vs Variable (non-capturing)" },
@@ -142,18 +142,18 @@ async function runBenchmark() {
     const interp = interpResults[comp.interp];
     if (jit && interp) {
       const ratio = interp.time / jit.time;
-      console.log(`\n${comp.label}:`);
-      console.log(`  JIT:      ${jit.pattern.pattern.toString()} (${formatTime(jit.time)})`);
-      console.log(`  Interpreter: ${interp.pattern.pattern.toString()} (${formatTime(interp.time)})`);
-      console.log(`  ${GREEN}Speedup:  ${ratio.toFixed(2)}x${RESET}`);
+      console.info(`\n${comp.label}:`);
+      console.info(`  JIT:      ${jit.pattern.pattern.toString()} (${formatTime(jit.time)})`);
+      console.info(`  Interpreter: ${interp.pattern.pattern.toString()} (${formatTime(interp.time)})`);
+      console.info(`  ${GREEN}Speedup:  ${ratio.toFixed(2)}x${RESET}`);
     }
   }
   
   // Best practices
-  console.log("\n" + "=".repeat(70));
-  console.log("💡 OPTIMIZATION RECOMMENDATIONS");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("💡 OPTIMIZATION RECOMMENDATIONS");
+  console.info("=".repeat(70));
+  console.info(`
 ${GREEN}✓ Use fixed-count quantifiers:${RESET}
   /(?:abc){3}/  →  3.9x faster than /(?:abc)+/
   

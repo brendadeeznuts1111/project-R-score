@@ -277,7 +277,7 @@ export class TelegramBotApi {
 	 * // Send and pin critical alert (9.1.1.2.3.1.0)
 	 * const result = await bot.sendAndPin(chatId, "🚨 CRITICAL ALERT", threadId);
 	 * if (result.ok) {
-	 *   console.log(`Message sent and pinned: ${result.messageId}`);
+	 *   console.info(`Message sent and pinned: ${result.messageId}`);
 	 * }
 	 * ```
 	 */
@@ -337,7 +337,7 @@ export class TelegramBotApi {
 	 * const topics = await bot.getForumTopics(chatId);
 	 * if (topics.ok && topics.result) {
 	 *   for (const topic of topics.result.topics) {
-	 *     console.log(`Topic: ${topic.name}, ID: ${topic.message_thread_id}`);
+	 *     console.info(`Topic: ${topic.name}, ID: ${topic.message_thread_id}`);
 	 *   }
 	 * }
 	 * ```
@@ -403,7 +403,7 @@ export class TelegramBotApi {
 	 * const result = await bot.createForumTopic(chatId, "Live Alerts", 1);
 	 * if (result.ok && result.result) {
 	 *   const threadId = result.result.message_thread_id;
-	 *   console.log(`Topic created with ID: ${threadId}`);
+	 *   console.info(`Topic created with ID: ${threadId}`);
 	 * }
 	 * ```
 	 */
@@ -679,7 +679,7 @@ class TelegramWebSocketServer {
 		const { userId, username } = ws.data;
 		this.clients.set(userId, ws);
 
-		console.log(`✅ WebSocket connected: User ${userId} (@${username})`);
+		console.info(`✅ WebSocket connected: User ${userId} (@${username})`);
 
 		// Send initial status
 		this.sendStatus(ws);
@@ -758,7 +758,7 @@ class TelegramWebSocketServer {
 		// Debug logging using native ws.subscriptions getter (Bun 1.3.2+)
 		if (process.env.NODE_ENV === "development") {
 			const nativeSubscriptions = ws.subscriptions;
-			console.log(
+			console.info(
 				`[Telegram WS] User ${userId} closing. Active subscriptions:`,
 				Array.from(nativeSubscriptions || []),
 			);
@@ -766,7 +766,7 @@ class TelegramWebSocketServer {
 
 		this.clients.delete(userId);
 
-		console.log(`❌ WebSocket disconnected: User ${userId}`);
+		console.info(`❌ WebSocket disconnected: User ${userId}`);
 
 		// Stop status broadcasting if no clients
 		if (this.clients.size === 0) {
@@ -887,7 +887,7 @@ class TelegramWebSocketServer {
 			});
 		}, 1000); // Broadcast every second
 
-		console.log("📡 Started status broadcast");
+		console.info("📡 Started status broadcast");
 	}
 
 	/**
@@ -897,7 +897,7 @@ class TelegramWebSocketServer {
 		if (this.statusInterval) {
 			clearInterval(this.statusInterval);
 			this.statusInterval = null;
-			console.log("📡 Stopped status broadcast");
+			console.info("📡 Stopped status broadcast");
 		}
 	}
 

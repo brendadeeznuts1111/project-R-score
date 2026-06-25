@@ -45,7 +45,7 @@ export async function notifyReviewerAssignment(assignment: PRReviewerAssignment)
 			},
 		});
 
-		console.log(`[TEAM.ML.REVIEWER.INTEGRATION.COMMUNICATION.RG] Notified team channel for PR-${assignment.prNumber}`);
+		console.info(`[TEAM.ML.REVIEWER.INTEGRATION.COMMUNICATION.RG] Notified team channel for PR-${assignment.prNumber}`);
 	} catch (error) {
 		console.error('[TEAM.ML.REVIEWER.INTEGRATION.COMMUNICATION.RG:ERROR] Failed to notify:', error);
 	}
@@ -84,7 +84,7 @@ export async function publishReviewerAssignmentAudit(assignment: PRReviewerAssig
 			},
 		});
 
-		console.log(`[TEAM.ML.REVIEWER.INTEGRATION.RSS.RG] Published RSS audit for PR-${assignment.prNumber}`);
+		console.info(`[TEAM.ML.REVIEWER.INTEGRATION.RSS.RG] Published RSS audit for PR-${assignment.prNumber}`);
 	} catch (error) {
 		console.error('[TEAM.ML.REVIEWER.INTEGRATION.RSS.RG:ERROR] Failed to publish RSS:', error);
 	}
@@ -170,20 +170,20 @@ export async function orchestrateReviewerAssignmentIntegrations(
 	} = options;
 
 	if (logIntegration) {
-		console.log(`[TEAM.ML.REVIEWER.INTEGRATION.ORCHESTRATOR.RG] Orchestrating integrations for PR-${assignment.prNumber}`);
+		console.info(`[TEAM.ML.REVIEWER.INTEGRATION.ORCHESTRATOR.RG] Orchestrating integrations for PR-${assignment.prNumber}`);
 		
 		// Log subsystem impact analysis
 		if (affectsAPILayer(assignment)) {
-			console.log('  → Affects API Layer (MarketDataRouter17)');
+			console.info('  → Affects API Layer (MarketDataRouter17)');
 		}
 		if (affectsMLComponents(assignment)) {
-			console.log('  → Affects ML Components (CmmsAnalyzer17)');
+			console.info('  → Affects ML Components (CmmsAnalyzer17)');
 		}
 		if (affectsResilienceComponents(assignment)) {
-			console.log('  → Affects Resilience Components (CircuitBreaker)');
+			console.info('  → Affects Resilience Components (CircuitBreaker)');
 		}
 		if (affectsDeveloperTooling(assignment)) {
-			console.log('  → Affects Developer Tooling');
+			console.info('  → Affects Developer Tooling');
 		}
 	}
 
@@ -200,5 +200,5 @@ export async function orchestrateReviewerAssignmentIntegrations(
 
 	await Promise.allSettled(integrations);
 
-	console.log(`[TEAM.ML.REVIEWER.INTEGRATION.ORCHESTRATOR.RG] Completed integrations for PR-${assignment.prNumber}`);
+	console.info(`[TEAM.ML.REVIEWER.INTEGRATION.ORCHESTRATOR.RG] Completed integrations for PR-${assignment.prNumber}`);
 }

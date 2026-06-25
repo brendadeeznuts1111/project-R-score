@@ -1,0 +1,12 @@
+{
+  "name": "odds-selectors",
+  "version": "1.0.0",
+  "description": "DOM selector mappings for sportsbook odds scraping — versioned config, no code.",
+  "license": "MIT",
+  "files": ["README.md"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/sports-terminal-os",
+    "directory": "packages/odds-selectors"
+  }
+}

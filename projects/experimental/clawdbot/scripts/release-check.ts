@@ -100,7 +100,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log("release-check: npm pack contents look OK.");
+  console.info("release-check: npm pack contents look OK.");
 }
 
 main();

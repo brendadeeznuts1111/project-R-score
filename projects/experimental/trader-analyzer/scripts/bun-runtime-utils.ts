@@ -492,73 +492,73 @@ export class BunUtils {
  * Demo function showcasing all Bun utilities
  */
 async function demo() {
-  console.log('🚀 Bun Runtime Utilities Demo\n');
+  console.info('🚀 Bun Runtime Utilities Demo\n');
 
   // 1. Runtime Information
-  console.log('📋 Runtime Information:');
-  console.log(`Bun Version: ${BunUtils.version}`);
-  console.log(`Bun Revision: ${BunUtils.revision}`);
-  console.log(`Main Script: ${BunUtils.main}`);
-  console.log(`Is Main Module: ${BunUtils.isMain()}`);
-  console.log();
+  console.info('📋 Runtime Information:');
+  console.info(`Bun Version: ${BunUtils.version}`);
+  console.info(`Bun Revision: ${BunUtils.revision}`);
+  console.info(`Main Script: ${BunUtils.main}`);
+  console.info(`Is Main Module: ${BunUtils.isMain()}`);
+  console.info();
 
   // 2. Timing Utilities
-  console.log('⏱️  Timing Utilities:');
+  console.info('⏱️  Timing Utilities:');
   const timer = BunUtils.timer();
   await BunUtils.sleep(100);
-  console.log(`Slept for: ${timer.elapsedFormatted()}`);
-  console.log(`Nanoseconds since start: ${BunUtils.nanoseconds()}`);
-  console.log();
+  console.info(`Slept for: ${timer.elapsedFormatted()}`);
+  console.info(`Nanoseconds since start: ${BunUtils.nanoseconds()}`);
+  console.info();
 
   // 3. File System Utilities
-  console.log('📁 File System Utilities:');
+  console.info('📁 File System Utilities:');
   const lsPath = BunUtils.which("ls");
-  console.log(`ls executable: ${lsPath || 'not found'}`);
+  console.info(`ls executable: ${lsPath || 'not found'}`);
 
   const fileURL = BunUtils.pathToFileURL("/tmp/test.txt");
-  console.log(`File URL: ${fileURL}`);
+  console.info(`File URL: ${fileURL}`);
 
   const filePath = BunUtils.fileURLToPath(fileURL);
-  console.log(`File path: ${filePath}`);
-  console.log();
+  console.info(`File path: ${filePath}`);
+  console.info();
 
   // 4. UUID Generation
-  console.log('🆔 UUID Generation:');
-  console.log(`UUID v7: ${BunUtils.randomUUIDv7()}`);
-  console.log(`UUID v7 (base64): ${BunUtils.randomUUIDv7("base64")}`);
-  console.log();
+  console.info('🆔 UUID Generation:');
+  console.info(`UUID v7: ${BunUtils.randomUUIDv7()}`);
+  console.info(`UUID v7 (base64): ${BunUtils.randomUUIDv7("base64")}`);
+  console.info();
 
   // 5. Promise Utilities
-  console.log('🔮 Promise Utilities:');
+  console.info('🔮 Promise Utilities:');
   const promise = Promise.resolve("hello");
-  console.log(`Promise peek: ${BunUtils.peek(promise)}`);
-  console.log(`Promise status: ${BunUtils.peekStatus(promise)}`);
-  console.log();
+  console.info(`Promise peek: ${BunUtils.peek(promise)}`);
+  console.info(`Promise status: ${BunUtils.peekStatus(promise)}`);
+  console.info();
 
   // 6. String Utilities
-  console.log('📝 String Utilities:');
+  console.info('📝 String Utilities:');
   const coloredText = "\x1b[31mRed\x1b[0m \x1b[32mGreen\x1b[0m";
-  console.log(`Colored text: ${coloredText}`);
-  console.log(`String width: ${BunUtils.stringWidth(coloredText)}`);
-  console.log(`Stripped ANSI: "${BunUtils.stripANSI(coloredText)}"`);
+  console.info(`Colored text: ${coloredText}`);
+  console.info(`String width: ${BunUtils.stringWidth(coloredText)}`);
+  console.info(`Stripped ANSI: "${BunUtils.stripANSI(coloredText)}"`);
 
   const htmlText = '<script>alert("xss")</script><b>Bold</b>';
-  console.log(`HTML escaped: ${BunUtils.escapeHTML(htmlText)}`);
-  console.log();
+  console.info(`HTML escaped: ${BunUtils.escapeHTML(htmlText)}`);
+  console.info();
 
   // 7. Compression
-  console.log('🗜️  Compression:');
+  console.info('🗜️  Compression:');
   const data = new TextEncoder().encode("Hello World! ".repeat(100)) as Uint8Array;
   const compressed = BunUtils.gzipSync(data);
   const decompressed = BunUtils.gunzipSync(compressed);
-  console.log(`Original size: ${data.length} bytes`);
-  console.log(`Compressed size: ${compressed.length} bytes`);
-  console.log(`Compression ratio: ${(compressed.length / data.length * 100).toFixed(1)}%`);
-  console.log(`Decompressed matches: ${BunUtils.deepEquals(data, decompressed)}`);
-  console.log();
+  console.info(`Original size: ${data.length} bytes`);
+  console.info(`Compressed size: ${compressed.length} bytes`);
+  console.info(`Compression ratio: ${(compressed.length / data.length * 100).toFixed(1)}%`);
+  console.info(`Decompressed matches: ${BunUtils.deepEquals(data, decompressed)}`);
+  console.info();
 
   // 8. Inspection
-  console.log('🔍 Inspection:');
+  console.info('🔍 Inspection:');
   const testObj = {
     string: "hello",
     number: 42,
@@ -569,32 +569,32 @@ async function demo() {
     buffer: Buffer.from("test")
   };
 
-  console.log('Object inspection:');
-  console.log(BunUtils.inspect(testObj, { colors: true, depth: 3 }));
-  console.log();
+  console.info('Object inspection:');
+  console.info(BunUtils.inspect(testObj, { colors: true, depth: 3 }));
+  console.info();
 
   // 9. Table formatting
-  console.log('📊 Table Formatting:');
+  console.info('📊 Table Formatting:');
   const tableData = [
     { name: 'Alice', age: 30, city: 'NYC' },
     { name: 'Bob', age: 25, city: 'LA' },
     { name: 'Charlie', age: 35, city: 'Chicago' }
   ];
 
-  console.log(BunUtils.inspectTable(tableData, ['name', 'age'], { colors: true }));
-  console.log();
+  console.info(BunUtils.inspectTable(tableData, ['name', 'age'], { colors: true }));
+  console.info();
 
   // 10. Deep equality
-  console.log('🔍 Deep Equality:');
+  console.info('🔍 Deep Equality:');
   const obj1 = { a: 1, b: { c: 2 } };
   const obj2 = { a: 1, b: { c: 2 } };
   const obj3 = { a: 1, b: { c: 3 } };
 
-  console.log(`obj1 === obj2: ${BunUtils.deepEquals(obj1, obj2)}`);
-  console.log(`obj1 === obj3: ${BunUtils.deepEquals(obj1, obj3)}`);
-  console.log();
+  console.info(`obj1 === obj2: ${BunUtils.deepEquals(obj1, obj2)}`);
+  console.info(`obj1 === obj3: ${BunUtils.deepEquals(obj1, obj3)}`);
+  console.info();
 
-  console.log('✨ Demo complete! All Bun utilities are working correctly.');
+  console.info('✨ Demo complete! All Bun utilities are working correctly.');
 }
 
 // Rate Limiting

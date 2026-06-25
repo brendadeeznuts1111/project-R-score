@@ -51,7 +51,7 @@ export function logAIDecision(params: {
 	};
 
 	// Log to structured logging system (16.4.0.0.0.0.0)
-	console.log('[AI.GOVERNANCE.RG:LOG]', JSON.stringify(decision, null, 2));
+	console.info('[AI.GOVERNANCE.RG:LOG]', JSON.stringify(decision, null, 2));
 
 	return decision;
 }
@@ -73,7 +73,7 @@ export function recordHumanOverride(
 		accepted: false,
 	};
 
-	console.log('[AI.GOVERNANCE.RG:OVERRIDE]', JSON.stringify(updated, null, 2));
+	console.info('[AI.GOVERNANCE.RG:OVERRIDE]', JSON.stringify(updated, null, 2));
 
 	return updated;
 }
@@ -93,7 +93,7 @@ export function captureFeedback(
 		accepted: rating >= 4,
 	};
 
-	console.log('[AI.GOVERNANCE.RG:FEEDBACK]', JSON.stringify({
+	console.info('[AI.GOVERNANCE.RG:FEEDBACK]', JSON.stringify({
 		requestId: updated.requestId,
 		feedback,
 		rating,

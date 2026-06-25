@@ -30,13 +30,13 @@ function* generateProfileData(): Generator<string> {
 
 // Main real-time profiling function
 async function runRealTimeProfile() {
-  console.log(styled('🎬 FactoryWager Real-Time Profiler v4.0', 'accent'));
-  console.log(styled('━'.repeat(40), 'muted'));
-  console.log(styled('Watching for profile changes...', 'primary'));
-  console.log(styled('Press Ctrl+C to stop', 'muted'));
-  console.log(styled('━'.repeat(40), 'muted'));
+  console.info(styled('🎬 FactoryWager Real-Time Profiler v4.0', 'accent'));
+  console.info(styled('━'.repeat(40), 'muted'));
+  console.info(styled('Watching for profile changes...', 'primary'));
+  console.info(styled('Press Ctrl+C to stop', 'muted'));
+  console.info(styled('━'.repeat(40), 'muted'));
 
-  const colors = ["primary", "accent", "success"];
+  const colors = ['primary', 'accent', 'success'];
   const dataGenerator = generateProfileData();
   let lineCount = 0;
 
@@ -46,27 +46,26 @@ async function runRealTimeProfile() {
     const line = dataGenerator.next().value;
 
     // Animate the progress bar
-    const animated = line.replace(/█+/g, match =>
-      styled(match, color as any));
+    const animated = line.replace(/█+/g, match => styled(match, color as any));
 
     // Clear line and print new data
     process.stdout.write('\r' + ' '.repeat(80) + '\r');
-    console.log(animated);
+    console.info(animated);
 
     lineCount++;
 
     // Add color-coded timestamp every 5 lines
     if (lineCount % 5 === 0) {
       const timestamp = new Date().toLocaleTimeString();
-      console.log(styled(`  🕐 ${timestamp}`, 'muted'));
+      console.info(styled(`  🕐 ${timestamp}`, 'muted'));
     }
   }, 500);
 
   // Handle cleanup
   process.on('SIGINT', () => {
     clearInterval(interval);
-    console.log('\n' + styled('🛑 Real-time profiling stopped', 'warning'));
-    console.log(styled(`📊 Collected ${lineCount} data points`, 'primary'));
+    console.info('\n' + styled('🛑 Real-time profiling stopped', 'warning'));
+    console.info(styled(`📊 Collected ${lineCount} data points`, 'primary'));
     process.exit(0);
   });
 

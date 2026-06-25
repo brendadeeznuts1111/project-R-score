@@ -104,26 +104,26 @@ function generateSampleRSSFeed(): RSSFeed {
  * Display RSS feed in a formatted way
  */
 function displayRSSFeed(feed: RSSFeed): void {
-  console.log('📡 FactoryWager RSS Feed');
-  console.log('═════════════════════════════════════════════════');
-  console.log(`📰 ${feed.title}`);
-  console.log(`🔗 ${feed.link}`);
-  console.log(`📝 ${feed.description}`);
-  console.log(`🕐 Last Updated: ${new Date(feed.lastBuildDate).toLocaleString()}`);
-  console.log('');
+  console.info('📡 FactoryWager RSS Feed');
+  console.info('═════════════════════════════════════════════════');
+  console.info(`📰 ${feed.title}`);
+  console.info(`🔗 ${feed.link}`);
+  console.info(`📝 ${feed.description}`);
+  console.info(`🕐 Last Updated: ${new Date(feed.lastBuildDate).toLocaleString()}`);
+  console.info('');
   
-  console.log('📋 Latest Updates:');
-  console.log('─────────────────────────────────────────────────');
+  console.info('📋 Latest Updates:');
+  console.info('─────────────────────────────────────────────────');
   
   feed.items.forEach((item, index) => {
     const categoryIcon = getCategoryIcon(item.category);
     const pubDate = new Date(item.pubDate).toLocaleDateString();
     
-    console.log(`${index + 1}. ${categoryIcon} ${item.title}`);
-    console.log(`   📅 ${pubDate} | 🏷️  ${item.category?.toUpperCase() || 'GENERAL'}`);
-    console.log(`   🔗 ${item.link}`);
-    console.log(`   📝 ${item.description.substring(0, 100)}${item.description.length > 100 ? '...' : ''}`);
-    console.log('');
+    console.info(`${index + 1}. ${categoryIcon} ${item.title}`);
+    console.info(`   📅 ${pubDate} | 🏷️  ${item.category?.toUpperCase() || 'GENERAL'}`);
+    console.info(`   🔗 ${item.link}`);
+    console.info(`   📝 ${item.description.substring(0, 100)}${item.description.length > 100 ? '...' : ''}`);
+    console.info('');
   });
 }
 
@@ -147,8 +147,8 @@ function getCategoryIcon(category?: string): string {
  * Show RSS statistics
  */
 function showRSSStats(feed: RSSFeed): void {
-  console.log('📊 RSS Feed Statistics');
-  console.log('═════════════════════════════════════════════════');
+  console.info('📊 RSS Feed Statistics');
+  console.info('═════════════════════════════════════════════════');
   
   const categoryCounts: Record<string, number> = {};
   feed.items.forEach(item => {
@@ -156,49 +156,49 @@ function showRSSStats(feed: RSSFeed): void {
     categoryCounts[category] = (categoryCounts[category] || 0) + 1;
   });
   
-  console.log(`📈 Total Items: ${feed.items.length}`);
-  console.log(`🕐 Last Build: ${new Date(feed.lastBuildDate).toLocaleString()}`);
-  console.log('');
+  console.info(`📈 Total Items: ${feed.items.length}`);
+  console.info(`🕐 Last Build: ${new Date(feed.lastBuildDate).toLocaleString()}`);
+  console.info('');
   
-  console.log('📋 Categories:');
+  console.info('📋 Categories:');
   Object.entries(categoryCounts).forEach(([category, count]) => {
     const icon = getCategoryIcon(category);
-    console.log(`   ${icon} ${category.toUpperCase()}: ${count} items`);
+    console.info(`   ${icon} ${category.toUpperCase()}: ${count} items`);
   });
   
-  console.log('');
+  console.info('');
   
   const latestItem = feed.items[0];
   const oldestItem = feed.items[feed.items.length - 1];
   
-  console.log('⏰ Timeline:');
-  console.log(`   🆕 Latest: ${latestItem.title} (${new Date(latestItem.pubDate).toLocaleDateString()})`);
-  console.log(`   📜 Oldest: ${oldestItem.title} (${new Date(oldestItem.pubDate).toLocaleDateString()})`);
+  console.info('⏰ Timeline:');
+  console.info(`   🆕 Latest: ${latestItem.title} (${new Date(latestItem.pubDate).toLocaleDateString()})`);
+  console.info(`   📜 Oldest: ${oldestItem.title} (${new Date(oldestItem.pubDate).toLocaleDateString()})`);
 }
 
 /**
  * Show help information
  */
 function showHelp(): void {
-  console.log('📡 RSS Demo - FactoryWager Enterprise Platform');
-  console.log('═════════════════════════════════════════════════');
-  console.log('');
-  console.log('USAGE:');
-  console.log('  bun run examples/rss-demo.ts <command>');
-  console.log('');
-  console.log('COMMANDS:');
-  console.log('  feed         Display RSS feed content');
-  console.log('  stats        Show RSS feed statistics');
-  console.log('  help         Show this help message');
-  console.log('');
-  console.log('ALIASES:');
-  console.log('  bun run rss   Same as "feed" command');
-  console.log('');
-  console.log('EXAMPLES:');
-  console.log('  bun run examples/rss-demo.ts feed');
-  console.log('  bun run examples/rss-demo.ts stats');
-  console.log('  bun run rss');
-  console.log('');
+  console.info('📡 RSS Demo - FactoryWager Enterprise Platform');
+  console.info('═════════════════════════════════════════════════');
+  console.info('');
+  console.info('USAGE:');
+  console.info('  bun run examples/rss-demo.ts <command>');
+  console.info('');
+  console.info('COMMANDS:');
+  console.info('  feed         Display RSS feed content');
+  console.info('  stats        Show RSS feed statistics');
+  console.info('  help         Show this help message');
+  console.info('');
+  console.info('ALIASES:');
+  console.info('  bun run rss   Same as "feed" command');
+  console.info('');
+  console.info('EXAMPLES:');
+  console.info('  bun run examples/rss-demo.ts feed');
+  console.info('  bun run examples/rss-demo.ts stats');
+  console.info('  bun run rss');
+  console.info('');
 }
 
 /**

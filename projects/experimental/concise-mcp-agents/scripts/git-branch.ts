@@ -63,13 +63,13 @@ class GitBranchManager {
       // Switch to base branch if not already on it
       const current = this.currentBranch();
       if (current !== baseBranch) {
-        console.log(`Switching to ${baseBranch}...`);
+        console.info(`Switching to ${baseBranch}...`);
         execSync(`git checkout ${baseBranch}`, { stdio: 'inherit' });
         execSync(`git pull origin ${baseBranch}`, { stdio: 'inherit' });
       }
 
       // Create and switch to new branch
-      console.log(`Creating branch: ${branchName}`);
+      console.info(`Creating branch: ${branchName}`);
       execSync(`git checkout -b ${branchName}`, { stdio: 'inherit' });
 
       // Create PR template if description provided
@@ -118,7 +118,7 @@ Closes #${id}
 
     const filename = `pr-template-${id}.md`;
     await Bun.write(filename, template);
-    console.log(`PR template created: ${filename}`);
+    console.info(`PR template created: ${filename}`);
   }
 
   async mergeBranch(targetBranch: string = 'master', ffOnly: boolean = true): Promise<{ success: boolean; message: string }> {
@@ -212,7 +212,7 @@ async function main() {
   const manager = new GitBranchManager();
 
   if (args.length === 0) {
-    console.log(`🚀 Git Branch Manager
+    console.info(`🚀 Git Branch Manager
 
 USAGE:
   bun branch:create <id> [description] [--type feat|fix|docs|refactor|test|chore]
@@ -258,11 +258,11 @@ SHORTCUTS:
 
       const result = await manager.createBranch({ id, type: type as any, description });
       if (result.success) {
-        console.log(`✅ ${result.message}`);
-        console.log(`📝 Next steps:`);
-        console.log(`   1. Make your changes`);
-        console.log(`   2. bun branch:push`);
-        console.log(`   3. Create PR on GitHub`);
+        console.info(`✅ ${result.message}`);
+        console.info(`📝 Next steps:`);
+        console.info(`   1. Make your changes`);
+        console.info(`   2. bun branch:push`);
+        console.info(`   3. Create PR on GitHub`);
       } else {
         console.error(`❌ ${result.message}`);
         process.exit(1);
@@ -275,7 +275,7 @@ SHORTCUTS:
 
       const mergeResult = await manager.mergeBranch(targetBranch, ffOnly);
       if (mergeResult.success) {
-        console.log(`✅ ${mergeResult.message}`);
+        console.info(`✅ ${mergeResult.message}`);
       } else {
         console.error(`❌ ${mergeResult.message}`);
         process.exit(1);
@@ -286,7 +286,7 @@ SHORTCUTS:
       const branchName = args[1];
       const pushResult = await manager.pushBranch(branchName);
       if (pushResult.success) {
-        console.log(`✅ ${pushResult.message}`);
+        console.info(`✅ ${pushResult.message}`);
       } else {
         console.error(`❌ ${pushResult.message}`);
         process.exit(1);
@@ -294,7 +294,7 @@ SHORTCUTS:
       break;
 
     case 'list':
-      console.log(manager.listBranches());
+      console.info(manager.listBranches());
       break;
 
     case 'pr':
@@ -314,8 +314,8 @@ SHORTCUTS:
       });
 
       if (prResult.success) {
-        console.log(`✅ ${prResult.message}`);
-        console.log(`🔗 Ready to create PR: ${prResult.branchName}`);
+        console.info(`✅ ${prResult.message}`);
+        console.info(`🔗 Ready to create PR: ${prResult.branchName}`);
       } else {
         console.error(`❌ ${prResult.message}`);
         process.exit(1);
@@ -324,7 +324,7 @@ SHORTCUTS:
 
     default:
       console.error(`Unknown command: ${command}`);
-      console.log('Use: bun branch --help');
+      console.info('Use: bun branch --help');
       process.exit(1);
   }
 }

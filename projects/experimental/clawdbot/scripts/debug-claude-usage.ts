@@ -278,35 +278,35 @@ const fetchClaudeWebUsage = async (sessionKey: string) => {
 const main = async () => {
   const opts = parseArgs();
   const { authPath, store } = loadAuthProfiles(opts.agentId);
-  console.log(`Auth file: ${authPath}`);
+  console.info(`Auth file: ${authPath}`);
 
   const keychain = readClaudeCliKeychain();
   if (keychain) {
-    console.log(
+    console.info(
       `Claude Code CLI keychain: accessToken=${opts.reveal ? keychain.accessToken : mask(keychain.accessToken)} scopes=${keychain.scopes?.join(",") ?? "(unknown)"}`,
     );
     const oauth = await fetchAnthropicOAuthUsage(keychain.accessToken);
-    console.log(
+    console.info(
       `OAuth usage (keychain): HTTP ${oauth.status} (${oauth.contentType ?? "no content-type"})`,
     );
-    console.log(oauth.text.slice(0, 200).replace(/\s+/g, " ").trim());
+    console.info(oauth.text.slice(0, 200).replace(/\s+/g, " ").trim());
   } else {
-    console.log("Claude Code CLI keychain: missing/unreadable");
+    console.info("Claude Code CLI keychain: missing/unreadable");
   }
 
   const anthropic = pickAnthropicTokens(store);
   if (anthropic.length === 0) {
-    console.log("Auth profiles: no Anthropic token profiles found");
+    console.info("Auth profiles: no Anthropic token profiles found");
   } else {
     for (const entry of anthropic) {
-      console.log(
+      console.info(
         `Auth profiles: ${entry.profileId} token=${opts.reveal ? entry.token : mask(entry.token)}`,
       );
       const oauth = await fetchAnthropicOAuthUsage(entry.token);
-      console.log(
+      console.info(
         `OAuth usage (${entry.profileId}): HTTP ${oauth.status} (${oauth.contentType ?? "no content-type"})`,
       );
-      console.log(oauth.text.slice(0, 200).replace(/\s+/g, " ").trim());
+      console.info(oauth.text.slice(0, 200).replace(/\s+/g, " ").trim());
     }
   }
 
@@ -323,21 +323,21 @@ const main = async () => {
         : findClaudeSessionKey()?.source ?? "auto";
 
   if (!sessionKey) {
-    console.log("Claude web: no sessionKey found (try --session-key or export CLAUDE_AI_SESSION_KEY)");
+    console.info("Claude web: no sessionKey found (try --session-key or export CLAUDE_AI_SESSION_KEY)");
     return;
   }
 
-  console.log(
+  console.info(
     `Claude web: sessionKey=${opts.reveal ? sessionKey : mask(sessionKey)} (source: ${source})`,
   );
   const web = await fetchClaudeWebUsage(sessionKey);
   if (!web.ok) {
-    console.log(`Claude web: ${web.step} HTTP ${web.status}`);
-    console.log(String(web.body).slice(0, 400).replace(/\s+/g, " ").trim());
+    console.info(`Claude web: ${web.step} HTTP ${web.status}`);
+    console.info(String(web.body).slice(0, 400).replace(/\s+/g, " ").trim());
     return;
   }
-  console.log(`Claude web: org=${web.orgId} OK`);
-  console.log(web.body.slice(0, 400).replace(/\s+/g, " ").trim());
+  console.info(`Claude web: org=${web.orgId} OK`);
+  console.info(web.body.slice(0, 400).replace(/\s+/g, " ").trim());
 };
 
 await main();

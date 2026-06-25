@@ -93,7 +93,7 @@ class EnhancedProgressBarSystem {
         const visualWidth = Bun.stringWidth(text);
         const actualWidth = Bun.stringWidth(text, { countAnsiEscapeCodes: true });
 
-        console.log(chalk.gray(`📏 Width check: Visual=${visualWidth}, Actual=${actualWidth}, Diff=${actualWidth - visualWidth}`));
+        console.info(chalk.gray(`📏 Width check: Visual=${visualWidth}, Actual=${actualWidth}, Diff=${actualWidth - visualWidth}`));
 
         return text;
     }
@@ -154,8 +154,8 @@ class EnhancedProgressBarSystem {
      * Create multiple progress bars for dashboard display
      */
     static createProgressDashboard(progressBars: ProgressBarConfig[]): void {
-        console.log(chalk.blue.bold('📊 Progress Dashboard'));
-        console.log(chalk.gray('═'.repeat(80)));
+        console.info(chalk.blue.bold('📊 Progress Dashboard'));
+        console.info(chalk.gray('═'.repeat(80)));
 
         const metrics: ProgressBarMetrics[] = progressBars.map(config => {
             const percentage = (config.current / config.total) * 100;
@@ -177,7 +177,7 @@ class EnhancedProgressBarSystem {
         });
 
         // Display as beautiful table
-        console.log(Bun.inspect.table(metrics, {
+        console.info(Bun.inspect.table(metrics, {
             'Task': 'label',
             'Progress': 'progress',
             '%': 'percentage',
@@ -218,7 +218,7 @@ class EnhancedProgressBarSystem {
             step++;
             if (clampedProgress >= total) {
                 clearInterval(interval);
-                console.log(); // New line when complete
+                console.info(); // New line when complete
             }
         }, stepDelay);
     }
@@ -312,8 +312,8 @@ class EnhancedProgressBarSystem {
             }
         ];
 
-        console.log(chalk.blue.bold('\n🖥️ System Monitoring Dashboard'));
-        console.log(chalk.gray('═'.repeat(80)));
+        console.info(chalk.blue.bold('\n🖥️ System Monitoring Dashboard'));
+        console.info(chalk.gray('═'.repeat(80)));
 
         const metrics = systemMetrics.map(metric => {
             const percentage = (metric.current / metric.total) * 100;
@@ -327,7 +327,7 @@ class EnhancedProgressBarSystem {
             };
         });
 
-        console.log(Bun.inspect.table(metrics, {}, {
+        console.info(Bun.inspect.table(metrics, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -395,8 +395,8 @@ class EnhancedProgressBarSystem {
 // =============================================================================
 
 function demonstrateBasicProgress(): void {
-    console.log(chalk.blue.bold('🎯 Basic Progress Bar Demo'));
-    console.log(chalk.gray('─'.repeat(80)));
+    console.info(chalk.blue.bold('🎯 Basic Progress Bar Demo'));
+    console.info(chalk.gray('─'.repeat(80)));
 
     const progress1 = EnhancedProgressBarSystem.createProgressBar({
         label: 'Rules Enabled',
@@ -407,7 +407,7 @@ function demonstrateBasicProgress(): void {
         style: 'solid'
     });
 
-    console.log(progress1);
+    console.info(progress1);
 
     const progress2 = EnhancedProgressBarSystem.createProgressBar({
         label: 'Template Processing',
@@ -420,7 +420,7 @@ function demonstrateBasicProgress(): void {
         showFraction: true
     });
 
-    console.log(progress2);
+    console.info(progress2);
 
     const progress3 = EnhancedProgressBarSystem.createProgressBar({
         label: 'System Optimization',
@@ -433,12 +433,12 @@ function demonstrateBasicProgress(): void {
         showFraction: false
     });
 
-    console.log(progress3);
+    console.info(progress3);
 }
 
 function demonstrateWidthCalculation(): void {
-    console.log(chalk.blue.bold('\n📏 Width Calculation Demo'));
-    console.log(chalk.gray('─'.repeat(80)));
+    console.info(chalk.blue.bold('\n📏 Width Calculation Demo'));
+    console.info(chalk.gray('─'.repeat(80)));
 
     const testCases = [
         { label: 'Short', current: 5, total: 10, width: 10 },
@@ -447,14 +447,14 @@ function demonstrateWidthCalculation(): void {
     ];
 
     testCases.forEach((testCase, index) => {
-        console.log(chalk.cyan(`\nTest Case ${index + 1}:`));
+        console.info(chalk.cyan(`\nTest Case ${index + 1}:`));
         const progress = EnhancedProgressBarSystem.createProgressBar(testCase);
-        console.log(progress);
+        console.info(progress);
 
         // Show width analysis
         const visualWidth = Bun.stringWidth(progress);
         const actualWidth = Bun.stringWidth(progress, { countAnsiEscapeCodes: true });
-        console.log(chalk.gray(`   Visual: ${visualWidth} chars, Actual: ${actualWidth} chars`));
+        console.info(chalk.gray(`   Visual: ${visualWidth} chars, Actual: ${actualWidth} chars`));
     });
 }
 
@@ -466,14 +466,14 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🎯 Enhanced Progress Bar System'));
-        console.log(chalk.gray('Usage: bun enhanced-progress-bar.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('  --demo        Run demonstration of all features'));
-        console.log(chalk.gray('  --template    Show template system progress'));
-        console.log(chalk.gray('  --system      Show system monitoring progress'));
-        console.log(chalk.gray('\nFeatures: Bun.stringWidth() integration, table formatting, multiple styles'));
+        console.info(chalk.blue.bold('🎯 Enhanced Progress Bar System'));
+        console.info(chalk.gray('Usage: bun enhanced-progress-bar.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('  --demo        Run demonstration of all features'));
+        console.info(chalk.gray('  --template    Show template system progress'));
+        console.info(chalk.gray('  --system      Show system monitoring progress'));
+        console.info(chalk.gray('\nFeatures: Bun.stringWidth() integration, table formatting, multiple styles'));
         process.exit(0);
     }
 
@@ -491,14 +491,14 @@ async function main(): Promise<void> {
         demonstrateBasicProgress();
         demonstrateWidthCalculation();
 
-        console.log(chalk.blue.bold('\n📊 Template System Progress Dashboard'));
+        console.info(chalk.blue.bold('\n📊 Template System Progress Dashboard'));
         EnhancedProgressBarSystem.createTemplateSystemProgress();
 
-        console.log(chalk.blue.bold('\n🖥️ System Monitoring Dashboard'));
+        console.info(chalk.blue.bold('\n🖥️ System Monitoring Dashboard'));
         EnhancedProgressBarSystem.createSystemMonitoringProgress();
     }
 
-    console.log(chalk.green.bold('\n🎉 Enhanced Progress Bar System Demo Complete!'));
+    console.info(chalk.green.bold('\n🎉 Enhanced Progress Bar System Demo Complete!'));
 }
 
 // =============================================================================

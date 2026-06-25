@@ -54,7 +54,7 @@ export class BunMCPClient {
     try {
       await this.client.connect(this.transport);
       this.connected = true;
-      console.log(styled('✅ MCP Connected to Bun Docs', 'success'));
+      console.info(styled('✅ MCP Connected to Bun Docs', 'success'));
     } catch (error) {
       console.error(styled('❌ Failed to connect to MCP server', 'error'));
       throw error;
@@ -200,7 +200,7 @@ export class BunMCPClient {
     if (this.connected) {
       await this.client.close();
       this.connected = false;
-      console.log(styled('🔌 MCP Disconnected', 'muted'));
+      console.info(styled('🔌 MCP Disconnected', 'muted'));
     }
   }
 }

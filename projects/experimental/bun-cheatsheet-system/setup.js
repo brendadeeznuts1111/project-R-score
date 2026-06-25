@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 async function setupProject() {
-  console.log('🚀 Setting up Bun Cheatsheet System...');
+  console.info('🚀 Setting up Bun Cheatsheet System...');
   
   const directories = [
     'examples/http',
@@ -17,7 +17,7 @@ async function setupProject() {
   // Create directories
   for (const dir of directories) {
     await mkdir(join(process.cwd(), dir), { recursive: true });
-    console.log(`✅ Created: ${dir}`);
+    console.info(`✅ Created: ${dir}`);
   }
   
   // Create package.json if it doesn't exist
@@ -40,12 +40,12 @@ async function setupProject() {
     JSON.stringify(packageJson, null, 2)
   );
   
-  console.log('\n✅ Setup complete!');
-  console.log('\n📦 Next steps:');
-  console.log('  1. Install dependencies: bun install');
-  console.log('  2. Run playground: bun run playground');
-  console.log('  3. Try cheatsheets: bun run cheatsheet');
-  console.log('  4. Run examples: bun run examples');
+  console.info('\n✅ Setup complete!');
+  console.info('\n📦 Next steps:');
+  console.info('  1. Install dependencies: bun install');
+  console.info('  2. Run playground: bun run playground');
+  console.info('  3. Try cheatsheets: bun run cheatsheet');
+  console.info('  4. Run examples: bun run examples');
 }
 
 setupProject().catch(console.error);

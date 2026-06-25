@@ -25,13 +25,13 @@ redisSub.subscribe('DEPOSIT_SUCCESS', 'FRAUD_ALERT', 'PROFILE_FUSE', 'HABITS_CLA
   if (err) {
     console.error('Redis subscription error:', err);
   } else {
-    console.log('✅ Subscribed to payment channels');
+    console.info('✅ Subscribed to payment channels');
   }
 });
 
 // Forward Redis messages to all WebSocket clients
 redisSub.on('message', (channel, message) => {
-  console.log(`📡 Redis [${channel}]: ${message.slice(0, 100)}...`);
+  console.info(`📡 Redis [${channel}]: ${message.slice(0, 100)}...`);
   
   const data = JSON.parse(message);
   
@@ -584,7 +584,7 @@ const html = `<!doctype html>
         wsStatusEl.textContent = 'connected';
         wsStatusEl.className = 'connection-status connected';
         wsDetailEl.textContent = 'Receiving live events';
-        console.log('✅ WebSocket connected');
+        console.info('✅ WebSocket connected');
       });
 
       ws.addEventListener('message', (event) => {
@@ -691,7 +691,7 @@ const server = Bun.serve({
   websocket: {
     open(ws) {
       clients.add(ws);
-      console.log(`👤 Client connected (${clients.size} total)`);
+      console.info(`👤 Client connected (${clients.size} total)`);
       
       // Send welcome message
       ws.send(safeStringify({
@@ -707,27 +707,27 @@ const server = Bun.serve({
     },
     message(ws, message) {
       // Handle client messages if needed
-      console.log('Client message:', message.toString());
+      console.info('Client message:', message.toString());
     },
     close(ws) {
       clients.delete(ws);
-      console.log(`👤 Client disconnected (${clients.size} remaining)`);
+      console.info(`👤 Client disconnected (${clients.size} remaining)`);
     }
   }
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║  🦘 FactoryWager Profile Dashboard v10 — INTEGRATED        ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  Dashboard: http://localhost:${PORT}                        ║`);
-console.log('║  WebSocket: /ws/telemetry-3d                               ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Redis Channels (subscribed):                              ║');
-console.log('║    • DEPOSIT_SUCCESS  → 💰 Deposit events                  ║');
-console.log('║    • FRAUD_ALERT      → 🚨 High-risk alerts                ║');
-console.log('║    • PROFILE_FUSE     → 🔗 Profile fusion                  ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
-console.log('Start the payment server: bun run start:payments');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info('║  🦘 FactoryWager Profile Dashboard v10 — INTEGRATED        ║');
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  Dashboard: http://localhost:${PORT}                        ║`);
+console.info('║  WebSocket: /ws/telemetry-3d                               ║');
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Redis Channels (subscribed):                              ║');
+console.info('║    • DEPOSIT_SUCCESS  → 💰 Deposit events                  ║');
+console.info('║    • FRAUD_ALERT      → 🚨 High-risk alerts                ║');
+console.info('║    • PROFILE_FUSE     → 🔗 Profile fusion                  ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
+console.info('Start the payment server: bun run start:payments');
+console.info('');

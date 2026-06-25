@@ -110,7 +110,7 @@ describe("Rotation Number Performance Tests", () => {
         const duration = performance.now() - start;
 
         const avgDuration = duration / iterations;
-        console.log(`Average validation time: ${avgDuration.toFixed(4)}ms`);
+        console.info(`Average validation time: ${avgDuration.toFixed(4)}ms`);
 
         expect(avgDuration).toBeLessThan(0.01);
     });
@@ -122,7 +122,7 @@ describe("Rotation Number Performance Tests", () => {
         testRotations.forEach(rot => validateRotationNumber(rot));
         const duration = performance.now() - start;
 
-        console.log(`Batch validation time (10k): ${duration.toFixed(2)}ms`);
+        console.info(`Batch validation time (10k): ${duration.toFixed(2)}ms`);
 
         expect(duration).toBeLessThan(50);
     });
@@ -138,7 +138,7 @@ describe("Rotation Number Performance Tests", () => {
         const duration = performance.now() - start;
 
         const avgDuration = duration / iterations;
-        console.log(`Average sport extraction time: ${avgDuration.toFixed(4)}ms`);
+        console.info(`Average sport extraction time: ${avgDuration.toFixed(4)}ms`);
 
         expect(avgDuration).toBeLessThan(0.005);
     });
@@ -150,7 +150,7 @@ describe("Rotation Number Performance Tests", () => {
         const results = searchRotationNumbers(registry, { sport: 'NFL' });
         const duration = performance.now() - start;
 
-        console.log(`Search by sport time: ${duration.toFixed(2)}ms, results: ${results.length}`);
+        console.info(`Search by sport time: ${duration.toFixed(2)}ms, results: ${results.length}`);
 
         expect(duration).toBeLessThan(5);
         expect(results.length).toBeGreaterThan(0);
@@ -163,7 +163,7 @@ describe("Rotation Number Performance Tests", () => {
         const results = searchRotationNumbers(registry, { minRotation: 3000, maxRotation: 3999 });
         const duration = performance.now() - start;
 
-        console.log(`Search by range time: ${duration.toFixed(2)}ms, results: ${results.length}`);
+        console.info(`Search by range time: ${duration.toFixed(2)}ms, results: ${results.length}`);
 
         expect(duration).toBeLessThan(5);
         expect(results.length).toBeGreaterThan(0);
@@ -174,7 +174,7 @@ describe("Rotation Number Performance Tests", () => {
         const registry = buildLargeRotationRegistry(10000);
         const duration = performance.now() - start;
 
-        console.log(`Registry creation time (10k): ${duration.toFixed(2)}ms, size: ${registry.size}`);
+        console.info(`Registry creation time (10k): ${duration.toFixed(2)}ms, size: ${registry.size}`);
 
         expect(duration).toBeLessThan(100);
         expect(registry.size).toBe(10000);
@@ -189,7 +189,7 @@ describe("Rotation Number Performance Tests", () => {
         });
         const duration = performance.now() - start;
 
-        console.log(`Edge case validation time: ${duration.toFixed(2)}ms`);
+        console.info(`Edge case validation time: ${duration.toFixed(2)}ms`);
 
         expect(duration).toBeLessThan(1);
     });
@@ -207,7 +207,7 @@ describe("Rotation Number Performance Tests", () => {
         // Wait for all to complete
         Promise.all(promises).then(() => {
             const duration = performance.now() - start;
-            console.log(`Concurrent validation simulation time: ${duration.toFixed(2)}ms`);
+            console.info(`Concurrent validation simulation time: ${duration.toFixed(2)}ms`);
             expect(duration).toBeLessThan(20);
         });
     });
@@ -220,7 +220,7 @@ describe("Rotation Number Performance Tests", () => {
         const finalMemory = process.memoryUsage().heapUsed;
         const memoryIncrease = finalMemory - initialMemory;
 
-        console.log(`Memory increase for 10k items: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`Memory increase for 10k items: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
 
         expect(memoryIncrease).toBeLessThan(10 * 1024 * 1024); // < 10MB
 

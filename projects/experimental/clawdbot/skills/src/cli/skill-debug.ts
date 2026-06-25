@@ -104,7 +104,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-    console.log(HELP);
+    console.info(HELP);
     process.exit(0);
   }
 
@@ -153,7 +153,7 @@ async function main() {
 
       default:
         EnhancedOutput.error(`Unknown command: ${command}`);
-        console.log(HELP);
+        console.info(HELP);
         process.exit(1);
     }
   } catch (error: any) {
@@ -314,7 +314,7 @@ async function runRecord(args: string[]) {
   const cleanup = () => {
     if (recorder.isActive()) {
       const session = recorder.stopRecording();
-      console.log(`\nSession saved: ${session.sessionId}`);
+      console.info(`\nSession saved: ${session.sessionId}`);
     }
   };
 
@@ -333,8 +333,8 @@ async function runRecord(args: string[]) {
     }
 
     const skillConfig = await Bun.file(`${skillDir}/skill.json`).json();
-    console.log(`Running: ${skillConfig.name || skillId} ${skillArgs.join(" ")}`);
-    console.log("");
+    console.info(`Running: ${skillConfig.name || skillId} ${skillArgs.join(" ")}`);
+    console.info("");
 
     try {
       const runArgs = skillArgs.length > 0 ? skillArgs : ["--help"];
@@ -545,7 +545,7 @@ async function runTest(args: string[]) {
 
 function checkTerminalSupport(): boolean {
   if (process.platform === "win32") {
-    console.log(
+    console.info(
       "\x1b[33m!\x1b[0m Note: Bun.Terminal is POSIX-only. Some features may be limited on Windows."
     );
     return false;

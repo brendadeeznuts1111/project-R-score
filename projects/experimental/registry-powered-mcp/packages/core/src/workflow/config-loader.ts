@@ -70,7 +70,7 @@ export class WorkflowConfigLoader {
       const workflowConfig = config.workflow;
 
       if (!workflowConfig) {
-        console.log('ℹ️  No [workflow] section found in config, using defaults');
+        console.info('ℹ️  No [workflow] section found in config, using defaults');
         return this.getDefaultConfig();
       }
 

@@ -4,7 +4,7 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
 
 // Use bun.semver if available (Bun 1.2+)
-const semver = (Bun as any).semver || {
+const semver = (Bun as Record<string, unknown>).semver || {
   parse: (v: string) => ({ version: v, major: 0, minor: 0, patch: 0 }),
   compare: (a: string, b: string) => a.localeCompare(b),
   satisfies: () => true,
@@ -61,7 +61,7 @@ export class VersionManager {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_VERSIONS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_VERSIONS_BUCKET || 'npm-registry',
       prefix: this.versionPrefix,
     });
   }
@@ -124,7 +124,7 @@ export class VersionManager {
       // Update version graph
       await this.updateVersionGraph(packageName, node);
 
-      console.log(styled(`✅ Stored version: ${packageName}@${node.version}`, 'success'));
+      console.info(styled(`✅ Stored version: ${packageName}@${node.version}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to store version: ${error.message}`, 'error'));
       throw error;
@@ -378,7 +378,7 @@ export class VersionManager {
       // Update manifest
       await this.updateManifestDistTag(packageName, 'latest', toVersion);
 
-      console.log(styled(`✅ Rolled back ${packageName} to ${toVersion}`, 'success'));
+      console.info(styled(`✅ Rolled back ${packageName} to ${toVersion}`, 'success'));
       return true;
     } catch (error) {
       console.error(styled(`❌ Rollback failed: ${error.message}`, 'error'));
@@ -401,7 +401,7 @@ export class VersionManager {
       node.message = message;
       await this.storeVersion(packageName, node);
 
-      console.log(styled(`⚠️ Deprecated ${packageName}@${version}: ${message}`, 'warning'));
+      console.info(styled(`⚠️ Deprecated ${packageName}@${version}: ${message}`, 'warning'));
       return true;
     } catch (error) {
       console.error(styled(`❌ Deprecation failed: ${error.message}`, 'error'));
@@ -494,20 +494,20 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('📊 Version Manager (bun.semver + R2)', 'accent'));
-  console.log(styled('=====================================', 'accent'));
+  console.info(styled('📊 Version Manager (bun.semver + R2)', 'accent'));
+  console.info(styled('=====================================', 'accent'));
 
   switch (command) {
     case 'parse': {
       const version = args[1];
       const result = manager.parseVersion(version);
-      console.log(
+      console.info(
         styled(`\n${result.valid ? '✅' : '❌'} ${version}`, result.valid ? 'success' : 'error')
       );
       if (result.parsed) {
-        console.log(styled(`  Major: ${result.parsed.major}`, 'muted'));
-        console.log(styled(`  Minor: ${result.parsed.minor}`, 'muted'));
-        console.log(styled(`  Patch: ${result.parsed.patch}`, 'muted'));
+        console.info(styled(`  Major: ${result.parsed.major}`, 'muted'));
+        console.info(styled(`  Minor: ${result.parsed.minor}`, 'muted'));
+        console.info(styled(`  Patch: ${result.parsed.patch}`, 'muted'));
       }
       break;
     }
@@ -517,7 +517,7 @@ if (import.meta.main) {
       const b = args[2];
       const result = manager.compareVersions(a, b);
       const comparison = result > 0 ? '>' : result < 0 ? '<' : '=';
-      console.log(styled(`\n${a} ${comparison} ${b}`, 'info'));
+      console.info(styled(`\n${a} ${comparison} ${b}`, 'info'));
       break;
     }
 
@@ -525,7 +525,7 @@ if (import.meta.main) {
       const current = args[1];
       const type = args[2] as 'patch' | 'minor' | 'major';
       const recommended = manager.recommendVersion(current, type);
-      console.log(styled(`\n${current} → ${recommended}`, 'success'));
+      console.info(styled(`\n${current} → ${recommended}`, 'success'));
       break;
     }
 
@@ -536,11 +536,11 @@ if (import.meta.main) {
       const graph = await manager.buildVersionGraph(pkg);
 
       if (format === 'mermaid') {
-        console.log(manager.generateMermaidGraph(graph));
+        console.info(manager.generateMermaidGraph(graph));
       } else if (format === 'json') {
-        console.log(JSON.stringify(manager.generateJsonGraph(graph), null, 2));
+        console.info(JSON.stringify(manager.generateJsonGraph(graph), null, 2));
       } else {
-        console.log(manager.generateAsciiGraph(graph));
+        console.info(manager.generateAsciiGraph(graph));
       }
       break;
     }
@@ -553,12 +553,12 @@ if (import.meta.main) {
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  parse <version>          Parse semver version', 'muted'));
-      console.log(styled('  compare <a> <b>          Compare two versions', 'muted'));
-      console.log(styled('  recommend <v> <type>     Recommend next version', 'muted'));
-      console.log(styled('  graph <pkg> [format]     Generate version graph', 'muted'));
-      console.log(styled('  rollback <pkg> <v>       Rollback to version', 'muted'));
-      console.log(styled('\nFormats: ascii, mermaid, json', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  parse <version>          Parse semver version', 'muted'));
+      console.info(styled('  compare <a> <b>          Compare two versions', 'muted'));
+      console.info(styled('  recommend <v> <type>     Recommend next version', 'muted'));
+      console.info(styled('  graph <pkg> [format]     Generate version graph', 'muted'));
+      console.info(styled('  rollback <pkg> <v>       Rollback to version', 'muted'));
+      console.info(styled('\nFormats: ascii, mermaid, json', 'muted'));
   }
 }

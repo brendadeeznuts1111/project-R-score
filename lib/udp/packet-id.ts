@@ -1,4 +1,4 @@
-import type { MulticastScope } from "./multicast-selector";
+import type { MulticastScope } from './multicast-selector';
 
 export interface PacketHeader {
   version: number;
@@ -24,27 +24,27 @@ export const FLAG_HEARTBEAT = 0x02;
 export const CRC_SIZE = 4;
 
 const SCOPE_TO_CODE: Record<string, number> = {
-  "interface-local": 0x01,
-  "link-local":      0x02,
-  "site-local":      0x05,
-  "organization":    0x08,
-  "admin":           0x15,
-  "global":          0x0e,
+  'interface-local': 0x01,
+  'link-local': 0x02,
+  'site-local': 0x05,
+  organization: 0x08,
+  admin: 0x15,
+  global: 0x0e,
 };
 
 const CODE_TO_SCOPE: Record<number, MulticastScope> = {
-  0x01: "interface-local",
-  0x02: "link-local",
-  0x05: "site-local",
-  0x08: "organization",
-  0x15: "admin",
-  0x0e: "global",
-  0x3e: "global", // SSM variant
+  0x01: 'interface-local',
+  0x02: 'link-local',
+  0x05: 'site-local',
+  0x08: 'organization',
+  0x15: 'admin',
+  0x0e: 'global',
+  0x3e: 'global', // SSM variant
 };
 
 export function encodePacketHeader(options: PacketEncodeOptions = {}): Buffer {
   const flags = normalizeNibble(options.flags ?? 0);
-  const scope = options.scope ?? "site-local";
+  const scope = options.scope ?? 'site-local';
   const sequenceId = normalizeUint32(options.sequenceId ?? 0);
   const sourceId = normalizeUint16(options.sourceId ?? 0);
   const timestampUs = options.timestampUs ?? BigInt(Math.floor(Bun.nanoseconds() / 1000));

@@ -81,11 +81,11 @@ export class PerformanceChampionsManager extends EventEmitter {
      */
     async initialize(): Promise<void> {
         if (this.isActive) {
-            console.log('✅ Performance Champions Program already active');
+            console.info('✅ Performance Champions Program already active');
             return;
         }
 
-        console.log('🚀 Initializing Performance Champions Program...');
+        console.info('🚀 Initializing Performance Champions Program...');
 
         // Create default champions
         await this.createDefaultChampions();
@@ -98,9 +98,9 @@ export class PerformanceChampionsManager extends EventEmitter {
 
         this.isActive = true;
 
-        console.log('🏆 Performance Champions Program initialized successfully');
-        console.log(`📊 Active champions: ${this.champions.size}`);
-        console.log('🌟 Performance culture transformation initiated');
+        console.info('🏆 Performance Champions Program initialized successfully');
+        console.info(`📊 Active champions: ${this.champions.size}`);
+        console.info('🌟 Performance culture transformation initiated');
 
         this.emit('champions:initialized', Array.from(this.champions.values()));
     }
@@ -212,7 +212,7 @@ export class PerformanceChampionsManager extends EventEmitter {
             this.performChampionReview();
         }, 60000); // Review every minute for demo (would be weekly in production)
 
-        console.log('📊 Champion monitoring and review system started');
+        console.info('📊 Champion monitoring and review system started');
     }
 
     /**
@@ -225,10 +225,10 @@ export class PerformanceChampionsManager extends EventEmitter {
                 champion.achievements.push(achievement);
                 champion.lastActive = new Date();
 
-                console.log(`🏆 Champion Achievement: ${champion.name}`);
-                console.log(`   🎯 ${achievement.title}`);
-                console.log(`   📊 Impact: ${achievement.impact}`);
-                console.log(`   🥇 Recognition: ${achievement.recognition}`);
+                console.info(`🏆 Champion Achievement: ${champion.name}`);
+                console.info(`   🎯 ${achievement.title}`);
+                console.info(`   📊 Impact: ${achievement.impact}`);
+                console.info(`   🥇 Recognition: ${achievement.recognition}`);
 
                 this.emit('champion:updated', champion);
             }
@@ -375,7 +375,7 @@ export class PerformanceChampionsManager extends EventEmitter {
             champion.status = 'active';
             champion.lastActive = new Date();
 
-            console.log(`🌟 Champion activated: ${champion.name}`);
+            console.info(`🌟 Champion activated: ${champion.name}`);
             this.emit('champion:activated', champion);
         }
     }
@@ -492,7 +492,7 @@ Status: ${dashboard.cultureImpact >= 9 ? '🏆 Culture Excellence Achieved' : '�
             this.reviewInterval = null;
         }
 
-        console.log('⏹️ Performance Champions Program stopped');
+        console.info('⏹️ Performance Champions Program stopped');
         this.emit('champions:stopped');
     }
 }
@@ -507,7 +507,7 @@ export const performanceChampions = new PerformanceChampionsManager();
  */
 export async function initializePerformanceChampions(): Promise<void> {
     await performanceChampions.initialize();
-    console.log('🌟 Performance Champions Program ready for Industry Dominance');
+    console.info('🌟 Performance Champions Program ready for Industry Dominance');
 }
 
 /**

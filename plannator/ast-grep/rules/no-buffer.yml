@@ -1,0 +1,12 @@
+id: no-buffer
+language: TypeScript
+severity: warning
+message: "Prefer Uint8Array over Buffer in Bun projects"
+note: "Bun binary data guide recommends Uint8Array / ArrayBuffer"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: Buffer.from($$$)
+    - pattern: new Buffer($$$)
+    - pattern: Buffer.alloc($$$)

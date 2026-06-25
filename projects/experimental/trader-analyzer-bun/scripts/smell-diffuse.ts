@@ -225,20 +225,20 @@ export class SmellDiffuser {
 </html>`;
 
     await Bun.write(outputPath, html);
-    console.log(`✅ Exported HTML visualization to ${outputPath}`);
+    console.info(`✅ Exported HTML visualization to ${outputPath}`);
   }
 
   /**
    * Visualize hotspots
    */
   visualizeHotspots(): void {
-    console.log(`\n🔥 Found ${this.hotspots.length} code smell hotspots:\n`);
+    console.info(`\n🔥 Found ${this.hotspots.length} code smell hotspots:\n`);
     for (const hotspot of this.hotspots.slice(0, 10)) {
-      console.log(`📄 ${hotspot.file}`);
-      console.log(`   Smells: ${hotspot.smellCount}`);
-      console.log(`   Severity: ${(hotspot.severity * 100).toFixed(0)}%`);
-      console.log(`   Affected Files: ${hotspot.affectedFiles.length}`);
-      console.log();
+      console.info(`📄 ${hotspot.file}`);
+      console.info(`   Smells: ${hotspot.smellCount}`);
+      console.info(`   Severity: ${(hotspot.severity * 100).toFixed(0)}%`);
+      console.info(`   Affected Files: ${hotspot.affectedFiles.length}`);
+      console.info();
     }
   }
 
@@ -246,9 +246,9 @@ export class SmellDiffuser {
    * Print report
    */
   printReport(): void {
-    console.log(`\n📊 Code Smell Analysis Report:\n`);
-    console.log(`Found ${this.smells.length} code smells`);
-    console.log(`Found ${this.hotspots.length} hotspots\n`);
+    console.info(`\n📊 Code Smell Analysis Report:\n`);
+    console.info(`Found ${this.smells.length} code smells`);
+    console.info(`Found ${this.hotspots.length} hotspots\n`);
     
     if (this.hotspots.length > 0) {
       this.visualizeHotspots();
@@ -264,7 +264,7 @@ export class SmellDiffuser {
       hotspots: this.hotspots,
     };
     await Bun.write(outputPath, JSON.stringify(data, null, 2));
-    console.log(`✅ Exported smell analysis to ${outputPath}`);
+    console.info(`✅ Exported smell analysis to ${outputPath}`);
   }
 }
 

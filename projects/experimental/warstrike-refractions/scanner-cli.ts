@@ -44,10 +44,10 @@ const wrapped = Bun.wrapAnsi(
   { hard: true, trim: false }
 )
 
-console.log(wrapped)
+console.info(wrapped)
 
 // Summary
-console.log({
+console.info({
   projectId,
   sessionId: `${sessionId.slice(0, 8)}...`,
   bundle: `${prefixed.length}B`,

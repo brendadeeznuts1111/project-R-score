@@ -1,13 +1,13 @@
 /**
  * Enhanced Security Monitoring Integration
- * 
+ *
  * Real-time security monitoring with alerting and metrics
  */
 
-import { 
-  BunSecurityEngine, 
+import {
+  BunSecurityEngine,
   createSecurityMiddleware,
-  SecurityError 
+  SecurityError,
 } from './bun-security-integration-v4';
 
 export interface SecurityAlert {
@@ -34,7 +34,7 @@ export class SecurityMonitoringEngine {
   private thresholds = {
     failedAttempts: { warning: 10, critical: 50 },
     riskScore: { warning: 70, critical: 50 },
-    secretRotationDays: { warning: 45, critical: 90 }
+    secretRotationDays: { warning: 45, critical: 90 },
   };
 
   // 🚨 REAL-TIME ALERT SYSTEM
@@ -49,14 +49,14 @@ export class SecurityMonitoringEngine {
         message: `Critical: ${report.metrics.failedAttempts} failed attempts detected`,
         timestamp: new Date(),
         source: 'authentication',
-        metadata: { count: report.metrics.failedAttempts }
+        metadata: { count: report.metrics.failedAttempts },
       });
     } else if (report.metrics.failedAttempts > this.thresholds.failedAttempts.warning) {
       newAlerts.push({
         type: 'warning',
         message: `Warning: ${report.metrics.failedAttempts} failed attempts detected`,
         timestamp: new Date(),
-        source: 'authentication'
+        source: 'authentication',
       });
     }
 
@@ -67,18 +67,19 @@ export class SecurityMonitoringEngine {
         message: `Critical: Security risk score ${report.riskScore}/100`,
         timestamp: new Date(),
         source: 'risk_assessment',
-        metadata: { score: report.riskScore, recommendations: report.recommendations }
+        metadata: { score: report.riskScore, recommendations: report.recommendations },
       });
     }
 
     // Secret rotation alert
-    const daysSinceRotation = (Date.now() - report.metrics.lastBreachCheck.getTime()) / (1000 * 60 * 60 * 24);
+    const daysSinceRotation =
+      (Date.now() - report.metrics.lastBreachCheck.getTime()) / (1000 * 60 * 60 * 24);
     if (daysSinceRotation > this.thresholds.secretRotationDays.critical) {
       newAlerts.push({
         type: 'critical',
         message: `Critical: Secrets not rotated for ${Math.floor(daysSinceRotation)} days`,
         timestamp: new Date(),
-        source: 'secrets_management'
+        source: 'secrets_management',
       });
     }
 
@@ -89,7 +90,7 @@ export class SecurityMonitoringEngine {
   // 📈 PROMETHEUS METRICS EXPORT
   exportPrometheusMetrics(securityEngine: BunSecurityEngine): string {
     const report = securityEngine.getSecurityReport();
-    
+
     return `
 # HELP security_password_hashes_total Total password hashing operations
 # TYPE security_password_hashes_total counter
@@ -132,7 +133,7 @@ security_alerts_total ${this.alerts.length}
     const currentMetrics: SecurityMetrics = {
       timestamp: new Date(),
       ...report.metrics,
-      riskScore: report.riskScore
+      riskScore: report.riskScore,
     };
 
     // Determine health status
@@ -147,7 +148,7 @@ security_alerts_total ${this.alerts.length}
       metrics: currentMetrics,
       alerts: this.alerts.slice(-10), // Last 10 alerts
       recommendations: report.recommendations,
-      healthStatus
+      healthStatus,
     };
   }
 
@@ -163,7 +164,7 @@ security_alerts_total ${this.alerts.length}
   // 🧹 CLEANUP OLD DATA
   cleanup(olderThanHours: number = 24): void {
     const cutoff = new Date(Date.now() - olderThanHours * 60 * 60 * 1000);
-    
+
     this.alerts = this.alerts.filter(alert => alert.timestamp > cutoff);
     this.metrics = this.metrics.filter(metric => metric.timestamp > cutoff);
   }
@@ -172,23 +173,25 @@ security_alerts_total ${this.alerts.length}
 // 🚀 SECURITY MONITORING MIDDLEWARE
 export function createSecurityMonitoringMiddleware() {
   const monitoring = new SecurityMonitoringEngine();
-  
+
   return async (request: Request, securityEngine: BunSecurityEngine) => {
     // Generate alerts
     const alerts = monitoring.generateAlerts(securityEngine);
-    
+
     // Log critical alerts
-    alerts.filter(a => a.type === 'critical').forEach(alert => {
-      console.error(`🚨 SECURITY ALERT: ${alert.message}`);
-    });
-    
+    alerts
+      .filter(a => a.type === 'critical')
+      .forEach(alert => {
+        console.error(`🚨 SECURITY ALERT: ${alert.message}`);
+      });
+
     // Export metrics (could be sent to monitoring system)
     const metrics = monitoring.exportPrometheusMetrics(securityEngine);
-    
+
     return {
       alerts,
       metrics,
-      dashboard: monitoring.getDashboardData(securityEngine)
+      dashboard: monitoring.getDashboardData(securityEngine),
     };
   };
 }

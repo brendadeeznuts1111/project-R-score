@@ -43,7 +43,7 @@ if (circuitBreaker.open && Date.now() < circuitBreaker.cooldownUntil) {
   process.exit(1);
 }
 
-console.log("📡 Connecting to plive bets report (syndicate-etl/1.0.0-prod)...");
+console.info("📡 Connecting to plive bets report (syndicate-etl/1.0.0-prod)...");
 
 // Smart session refresh (only if needed and circuit breaker not active)
 const freshHeaders = await smartSessionRefresh(lastSessionRefresh, circuitBreaker.open);
@@ -51,15 +51,15 @@ const freshHeaders = await smartSessionRefresh(lastSessionRefresh, circuitBreake
 if (freshHeaders) {
   lastSessionRefresh = Date.now();
   await Bun.write(SESSION_REFRESH_FILE, JSON.stringify({ timestamp: lastSessionRefresh }, null, 2));
-  console.log("🔄 Session refreshed successfully");
+  console.info("🔄 Session refreshed successfully");
 } else {
-  console.log("✅ Using existing session (still fresh)");
+  console.info("✅ Using existing session (still fresh)");
 }
 
 // Add jitter to avoid thundering herd (0-5 seconds)
 const jitter = Math.random() * 5000;
 if (jitter > 100) { // Only log significant jitter
-  console.log(`⏱️  Adding ${Math.round(jitter/1000)}s jitter to avoid rate limits`);
+  console.info(`⏱️  Adding ${Math.round(jitter/1000)}s jitter to avoid rate limits`);
 }
 await new Promise(resolve => setTimeout(resolve, jitter));
 
@@ -126,10 +126,10 @@ circuitBreaker.failures = 0;
 circuitBreaker.open = false;
 await Bun.write(CIRCUIT_BREAKER_FILE, JSON.stringify(circuitBreaker, null, 2));
 
-console.log("✅ Connected to summary report");
+console.info("✅ Connected to summary report");
 
 const rawData = await response.text();
-console.log(`📦 Received ${rawData.length} bytes of data`);
+console.info(`📦 Received ${rawData.length} bytes of data`);
 
 let data;
 try {
@@ -145,7 +145,7 @@ if (data.success && data.r && Array.isArray(data.r)) {
     item.profit && typeof item.profit === 'number' && item.profit > 100
   );
 
-  console.log(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
+  console.info(`💰 Found ${profitableBets.length} profitable bets (> $100)`);
 
   if (profitableBets.length > 0) {
     // Convert to YAML format
@@ -163,7 +163,7 @@ if (data.success && data.r && Array.isArray(data.r)) {
     let outputPath = "data/summary.yaml";
 
     if (yamlSize > YAML_SIZE_LIMIT) {
-      console.log(`📏 YAML size ${yamlSize} bytes > ${YAML_SIZE_LIMIT} limit, rotating file`);
+      console.info(`📏 YAML size ${yamlSize} bytes > ${YAML_SIZE_LIMIT} limit, rotating file`);
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
       const rotatedPath = `data/summary-${timestamp}.yaml`;
@@ -172,29 +172,29 @@ if (data.success && data.r && Array.isArray(data.r)) {
       // Create/update symlink to latest
       try {
         await Bun.spawn(['ln', '-sf', rotatedPath, 'data/summary-latest.yaml']);
-        console.log(`🔄 Created symlink: data/summary-latest.yaml -> ${rotatedPath}`);
+        console.info(`🔄 Created symlink: data/summary-latest.yaml -> ${rotatedPath}`);
       } catch (e) {
         console.warn("⚠️ Could not create symlink (normal on some systems)");
       }
     }
 
     await Bun.write(outputPath, yamlContent);
-    console.log(`✅ Live betting data piped to ${outputPath} (${yamlSize} bytes)`);
-    console.log("📊 Run: wc -l", outputPath, "&& tail -1", outputPath);
+    console.info(`✅ Live betting data piped to ${outputPath} (${yamlSize} bytes)`);
+    console.info("📊 Run: wc -l", outputPath, "&& tail -1", outputPath);
   } else {
-    console.log("⚠️ No profitable bets found in the data");
+    console.info("⚠️ No profitable bets found in the data");
     // Save raw data for inspection
     await Bun.write("data/summary-raw.json", rawData);
-    console.log("💾 Raw data saved to data/summary-raw.json for inspection");
+    console.info("💾 Raw data saved to data/summary-raw.json for inspection");
   }
 } else if (data.e !== undefined) {
   console.error(`❌ API Error: ${data.d || 'Unknown error'}`);
-  console.log("Full response:", JSON.stringify(data, null, 2));
+  console.info("Full response:", JSON.stringify(data, null, 2));
   process.exit(1);
 } else {
-  console.log("⚠️ Unexpected response structure");
-  console.log("Available keys:", Object.keys(data));
-  console.log("Sample response:", JSON.stringify(data).substring(0, 500));
+  console.info("⚠️ Unexpected response structure");
+  console.info("Available keys:", Object.keys(data));
+  console.info("Sample response:", JSON.stringify(data).substring(0, 500));
   
   // Save for inspection
   await Bun.write("data/summary-unexpected.json", rawData);

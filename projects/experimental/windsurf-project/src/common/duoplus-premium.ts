@@ -11,6 +11,6 @@ export function initDuoPlus() {
     return;
   }
 
-  console.log('💎 DuoPlus Premium Engine Initialized.');
+  console.info('💎 DuoPlus Premium Engine Initialized.');
   // Deep integration logic here
 }

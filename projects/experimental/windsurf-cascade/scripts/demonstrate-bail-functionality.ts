@@ -4,48 +4,48 @@
 import { spawn } from 'bun';
 
 async function runBailDemo() {
-    console.log('🎯 Bun Test Runner Bail Functionality Demo\n');
+    console.info('🎯 Bun Test Runner Bail Functionality Demo\n');
 
     // Test 1: Bail after 1 failure (default)
-    console.log('1️⃣ Testing bail after 1 failure (default):');
-    console.log('   Command: bun test --bail');
-    console.log('   Expected: Stop immediately after first failure\n');
+    console.info('1️⃣ Testing bail after 1 failure (default):');
+    console.info('   Command: bun test --bail');
+    console.info('   Expected: Stop immediately after first failure\n');
 
     // Test 2: Bail after 3 failures
-    console.log('2️⃣ Testing bail after 3 failures:');
-    console.log('   Command: bun test --bail=3');
-    console.log('   Expected: Run until 3 failures, then stop\n');
+    console.info('2️⃣ Testing bail after 3 failures:');
+    console.info('   Command: bun test --bail=3');
+    console.info('   Expected: Run until 3 failures, then stop\n');
 
     // Test 3: Bail after 5 failures
-    console.log('3️⃣ Testing bail after 5 failures:');
-    console.log('   Command: bun test --bail=5');
-    console.log('   Expected: Run until 5 failures, then stop\n');
+    console.info('3️⃣ Testing bail after 5 failures:');
+    console.info('   Command: bun test --bail=5');
+    console.info('   Expected: Run until 5 failures, then stop\n');
 
-    console.log('💡 Use Cases for --bail:');
-    console.log('   • Fast CI feedback - stop early on failures');
-    console.log('   • Debug failing tests - focus on first issues');
-    console.log('   • Resource conservation - save CPU/memory');
-    console.log('   • Large test suites - avoid cascading failures\n');
+    console.info('💡 Use Cases for --bail:');
+    console.info('   • Fast CI feedback - stop early on failures');
+    console.info('   • Debug failing tests - focus on first issues');
+    console.info('   • Resource conservation - save CPU/memory');
+    console.info('   • Large test suites - avoid cascading failures\n');
 
-    console.log('🔧 Advanced Bail Options:');
-    console.log('   --bail        Stop after 1 failure (default)');
-    console.log('   --bail=0      Never bail (run all tests)');
-    console.log('   --bail=N      Stop after N failures\n');
+    console.info('🔧 Advanced Bail Options:');
+    console.info('   --bail        Stop after 1 failure (default)');
+    console.info('   --bail=0      Never bail (run all tests)');
+    console.info('   --bail=N      Stop after N failures\n');
 
-    console.log('📊 Performance Impact:');
-    console.log('   • Default bail: ~50% faster on failure detection');
-    console.log('   • Custom bail: Tunable for your test suite');
-    console.log('   • No bail: Full coverage but slower\n');
+    console.info('📊 Performance Impact:');
+    console.info('   • Default bail: ~50% faster on failure detection');
+    console.info('   • Custom bail: Tunable for your test suite');
+    console.info('   • No bail: Full coverage but slower\n');
 
-    console.log('🚀 Production Usage:');
-    console.log('   # CI/CD - Fast feedback');
-    console.log('   bun test --ci --bail');
-    console.log('');
-    console.log('   # Development - Debug specific failures');
-    console.log('   bun test --bail=3 --verbose');
-    console.log('');
-    console.log('   # Full coverage - Never bail');
-    console.log('   bun test --bail=0 --coverage');
+    console.info('🚀 Production Usage:');
+    console.info('   # CI/CD - Fast feedback');
+    console.info('   bun test --ci --bail');
+    console.info('');
+    console.info('   # Development - Debug specific failures');
+    console.info('   bun test --bail=3 --verbose');
+    console.info('');
+    console.info('   # Full coverage - Never bail');
+    console.info('   bun test --bail=0 --coverage');
 }
 
 // Bail configuration examples

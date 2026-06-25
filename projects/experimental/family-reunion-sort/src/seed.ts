@@ -2,7 +2,7 @@ import db from "./database";
 import { STATUS_COLORS } from "./constants/colors";
 
 async function seed() {
-  console.log(`${Bun.color(STATUS_COLORS.info)}Seeding database...${Bun.color('reset')}`);
+  console.info(`${Bun.color(STATUS_COLORS.info)}Seeding database...${Bun.color('reset')}`);
 
   try {
     const merchant = await db.createMerchant({
@@ -41,10 +41,10 @@ async function seed() {
       qrCodeData: "https://venmo.com/q/PAY-12345"
     });
 
-    console.log(`${Bun.color(STATUS_COLORS.success)}Database seeded successfully!${Bun.color('reset')}`);
-    console.log(`Merchant ID: ${merchant.id}`);
-    console.log(`Customer ID: ${customer.id}`);
-    console.log(`Transaction ID: ${transaction.id}`);
+    console.info(`${Bun.color(STATUS_COLORS.success)}Database seeded successfully!${Bun.color('reset')}`);
+    console.info(`Merchant ID: ${merchant.id}`);
+    console.info(`Customer ID: ${customer.id}`);
+    console.info(`Transaction ID: ${transaction.id}`);
   } catch (error) {
     console.error(`${Bun.color(STATUS_COLORS.error)}Seeding failed:${Bun.color('reset')}`, error);
   } finally {

@@ -1,0 +1,62 @@
+# CRON JOB BLUEPRINT — Template for adding a scheduled task
+
+Every cron job in `src/services/cron.ts` follows this exact shape.
+
+## Template
+
+```typescript
+{
+  name: "<job_name>",             // snake_case, unique
+  schedule: "*/5 * * * *",        // cron expression (Bun.cron format)
+  description: "What this job does",
+  enabled: true,                  // or env.SOME_FLAG
+  handler: async () => {
+    logger.debug("<JobName>: starting");
+
+    // Gate: skip if feature flag not set or API key missing
+    if (!env.BUCKEYE_LIVE_MODE) {
+      logger.debug("<JobName>: LIVE_MODE disabled — skipping");
+      return;
+    }
+
+    try {
+      // Dynamic import to avoid circular dependencies at module load
+      const { refresh } = await import("<path-to-feed-or-service>");
+      const result = await refresh();
+
+      logger.debug(
+        `<JobName>: ${result.fetched} fetched, ${result.mapped} processed`
+      );
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      logger.error(`<JobName> failed: ${msg}`);
+    }
+  },
+},
+```
+
+## Rules
+
+- **Dynamic imports only.** Use `await import()` inside the handler, never top-level. This avoids circular deps between cron.ts and feed files.
+- **Gate behind env.** Every handler checks `BUCKEYE_LIVE_MODE` or the relevant flag before executing.
+- **Never crash the cron.** All errors caught, logged. The cron registry keeps running.
+- **Log start + result.** `logger.debug("starting")` at top, `logger.debug("N processed")` at end.
+- **Name convention:** snake_case, descriptive. Matches the `cron_schedule` table.
+
+## Existing Examples
+
+| Job | Schedule | What |
+|-----|----------|------|
+| `queue_processor` | */2 min | Process action queue |
+| `odds_refresh` | */2 min | Pinnacle API odds |
+| `wager_refresh` | */5 min | Buckeye wager polling |
+| `feature_extraction` | */10 min | Player archetype classification |
+| `player_refresh` | */15 min | Buckeye player roster |
+| `position_expiry` | hourly | Close stale risk positions |
+| `sandbox_janitor` | hourly | Clean sandbox data |
+| `alert_cleanup` | daily 3am | Purge old alerts |
+| `ip_surveillance` | */15 min | Auto-flag IPs |
+
+## Registration
+
+All jobs are registered in `src/services/cron.ts` → `createJobs()`. Called from `src/index.ts` at boot via `registerCronJobs()`.

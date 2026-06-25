@@ -52,11 +52,11 @@ class SimpleComplexityOptimizer {
      * Optimize all template complexities
      */
     async optimizeComplexities(): Promise<void> {
-        console.log(chalk.blue.bold('🔧 Optimizing template complexities...'));
+        console.info(chalk.blue.bold('🔧 Optimizing template complexities...'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to analyze`));
+            console.info(chalk.cyan(`Found ${files.length} template files to analyze`));
 
             for (const filePath of files) {
                 await this.optimizeTemplate(filePath);
@@ -133,9 +133,9 @@ class SimpleComplexityOptimizer {
 
                 if (!this.dryRun) {
                     await writeFile(filePath, optimizedContent, 'utf-8');
-                    console.log(chalk.green(`   ✅ Optimized ${filePath.split('/').pop()}: ${originalComplexity} → ${optimizedComplexity} (-${reduction})`));
+                    console.info(chalk.green(`   ✅ Optimized ${filePath.split('/').pop()}: ${originalComplexity} → ${optimizedComplexity} (-${reduction})`));
                 } else {
-                    console.log(chalk.cyan(`   🔧 Would optimize ${filePath.split('/').pop()}: ${originalComplexity} → ${optimizedComplexity} (-${reduction})`));
+                    console.info(chalk.cyan(`   🔧 Would optimize ${filePath.split('/').pop()}: ${originalComplexity} → ${optimizedComplexity} (-${reduction})`));
                 }
             }
 
@@ -264,7 +264,7 @@ class SimpleComplexityOptimizer {
      */
     private displaySummary(): void {
         if (this.metrics.length === 0) {
-            console.log(chalk.green('✅ No templates needed complexity optimization!'));
+            console.info(chalk.green('✅ No templates needed complexity optimization!'));
             return;
         }
 
@@ -273,29 +273,29 @@ class SimpleComplexityOptimizer {
         const originalAvg = this.metrics.reduce((sum, m) => sum + m.originalComplexity, 0) / this.metrics.length;
         const optimizedAvg = this.metrics.reduce((sum, m) => sum + m.optimizedComplexity, 0) / this.metrics.length;
 
-        console.log(chalk.blue.bold('\n📊 Complexity Optimization Summary:'));
-        console.log(chalk.gray('='.repeat(60)));
-        console.log(chalk.cyan(`Templates optimized: ${this.metrics.length}`));
-        console.log(chalk.green(`Total complexity reduced: ${totalReduction}`));
-        console.log(chalk.blue(`Average reduction: ${avgReduction.toFixed(1)} per template`));
-        console.log(chalk.gray(`Original average complexity: ${originalAvg.toFixed(1)}`));
-        console.log(chalk.gray(`Optimized average complexity: ${optimizedAvg.toFixed(1)}`));
+        console.info(chalk.blue.bold('\n📊 Complexity Optimization Summary:'));
+        console.info(chalk.gray('='.repeat(60)));
+        console.info(chalk.cyan(`Templates optimized: ${this.metrics.length}`));
+        console.info(chalk.green(`Total complexity reduced: ${totalReduction}`));
+        console.info(chalk.blue(`Average reduction: ${avgReduction.toFixed(1)} per template`));
+        console.info(chalk.gray(`Original average complexity: ${originalAvg.toFixed(1)}`));
+        console.info(chalk.gray(`Optimized average complexity: ${optimizedAvg.toFixed(1)}`));
 
         // Show most improved templates
         const mostImproved = this.metrics.sort((a, b) => b.reduction - a.reduction).slice(0, 5);
         if (mostImproved.length > 0) {
-            console.log(chalk.yellow('\n🏆 Most Improved Templates:'));
+            console.info(chalk.yellow('\n🏆 Most Improved Templates:'));
             for (const metric of mostImproved) {
                 const fileName = metric.filePath.split('/').pop() || '';
-                console.log(chalk.gray(`   ${fileName}: ${metric.originalComplexity} → ${metric.optimizedComplexity} (-${metric.reduction})`));
+                console.info(chalk.gray(`   ${fileName}: ${metric.originalComplexity} → ${metric.optimizedComplexity} (-${metric.reduction})`));
             }
         }
 
         // Check if we achieved our target
         if (optimizedAvg < 80) {
-            console.log(chalk.green.bold('\n🎯 TARGET ACHIEVED: Average complexity below 80!'));
+            console.info(chalk.green.bold('\n🎯 TARGET ACHIEVED: Average complexity below 80!'));
         } else {
-            console.log(chalk.yellow(`\n📈 PROGRESS: Average complexity ${optimizedAvg.toFixed(1)} (target: <80)`));
+            console.info(chalk.yellow(`\n📈 PROGRESS: Average complexity ${optimizedAvg.toFixed(1)} (target: <80)`));
         }
     }
 }
@@ -309,11 +309,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔧 Template Complexity Optimizer'));
-        console.log(chalk.gray('Usage: bun optimize-template-complexity.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --dry-run    Show optimizations without applying them'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('🔧 Template Complexity Optimizer'));
+        console.info(chalk.gray('Usage: bun optimize-template-complexity.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --dry-run    Show optimizations without applying them'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

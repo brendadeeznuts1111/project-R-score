@@ -154,7 +154,7 @@ db.run("INSERT INTO users (name) VALUES (?)", "Alice");
 
 // Query data
 const users = db.query("SELECT * FROM users").all();
-console.log(users);
+console.info(users);
 
 // Prepared statements
 const stmt = db.prepare("SELECT * FROM users WHERE name = ?");

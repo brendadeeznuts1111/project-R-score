@@ -30,13 +30,13 @@ const generateMockOddsTick = (override: any = {}): OddsTick => ({
 
 // Global test setup
 beforeAll(async () => {
-  console.log("🚀 Setting up Bun v1.3 test suite...");
+  console.info("🚀 Setting up Bun v1.3 test suite...");
   Bun.env.NODE_ENV = "test";
   Bun.env.BUN_DEBUG = "0";
 });
 
 afterAll(async () => {
-  console.log("🧹 Cleaning up test environment...");
+  console.info("🧹 Cleaning up test environment...");
   Bun.env.NODE_ENV = "development";
 });
 
@@ -90,7 +90,7 @@ describe.concurrent("Bun v1.3 Enhanced Testing Features", () => {
       expect(duration).toBeLessThan(100);
       expect(opsPerSecond).toBeGreaterThan(100000);
 
-      console.log(`⚡ Hash performance: ${opsPerSecond.toFixed(0)} ops/sec`);
+      console.info(`⚡ Hash performance: ${opsPerSecond.toFixed(0)} ops/sec`);
     });
 
     test.concurrent("measures ANSI stripping performance", () => {
@@ -109,7 +109,7 @@ describe.concurrent("Bun v1.3 Enhanced Testing Features", () => {
       expect(cleanTexts.every(text => !text.includes('\x1b'))).toBe(true);
       expect(duration).toBeLessThan(50);
 
-      console.log(`🧹 ANSI stripping: 10000 texts in ${duration.toFixed(2)}ms`);
+      console.info(`🧹 ANSI stripping: 10000 texts in ${duration.toFixed(2)}ms`);
     });
   });
 
@@ -158,7 +158,7 @@ describe.concurrent("Bun v1.3 Enhanced Testing Features", () => {
       expect(processed).toHaveLength(10000);
       expect(peakMemory.heapUsed).toBeGreaterThanOrEqual(initialMemory.heapUsed);
       
-      console.log(`💾 Memory: ${initialMemory.heapUsed / 1024 / 1024}MB -> ${peakMemory.heapUsed / 1024 / 1024}MB -> ${finalMemory.heapUsed / 1024 / 1024}MB`);
+      console.info(`💾 Memory: ${initialMemory.heapUsed / 1024 / 1024}MB -> ${peakMemory.heapUsed / 1024 / 1024}MB -> ${finalMemory.heapUsed / 1024 / 1024}MB`);
     });
   });
 
@@ -222,7 +222,7 @@ describe.concurrent("Bun v1.3 Enhanced Testing Features", () => {
       expect(results.every(r => r.processed)).toBe(true);
       expect(duration).toBeLessThan(1000); // Should complete concurrently
       
-      console.log(`🚀 Processed 10 odds feeds concurrently in ${duration.toFixed(2)}ms`);
+      console.info(`🚀 Processed 10 odds feeds concurrently in ${duration.toFixed(2)}ms`);
     });
   });
 });
@@ -233,4 +233,4 @@ export const TestUtils = {
   TEST_CONFIG
 };
 
-console.log("✅ Bun v1.3 Feature Tests loaded successfully");
+console.info("✅ Bun v1.3 Feature Tests loaded successfully");

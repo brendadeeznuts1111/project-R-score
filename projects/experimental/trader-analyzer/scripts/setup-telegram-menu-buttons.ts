@@ -53,9 +53,9 @@ async function setupMenuButtons() {
 		process.exit(1);
 	}
 
-	console.log('🔧 Setting up Telegram Menu Buttons...');
-	console.log(`📱 Mini-App Base URL: ${MINI_APP_BASE_URL}`);
-	console.log(`💬 Supergroup ID: ${TELEGRAM_SUPERGROUP_ID}\n`);
+	console.info('🔧 Setting up Telegram Menu Buttons...');
+	console.info(`📱 Mini-App Base URL: ${MINI_APP_BASE_URL}`);
+	console.info(`💬 Supergroup ID: ${TELEGRAM_SUPERGROUP_ID}\n`);
 
 	let successCount = 0;
 	let failCount = 0;
@@ -75,7 +75,7 @@ async function setupMenuButtons() {
 			);
 
 			if (response.ok) {
-				console.log(`✅ ${config.description} menu button configured`);
+				console.info(`✅ ${config.description} menu button configured`);
 				successCount++;
 			} else {
 				const error = await response.text();
@@ -88,14 +88,14 @@ async function setupMenuButtons() {
 		}
 	}
 
-	console.log(`\n📊 Results: ${successCount} succeeded, ${failCount} failed`);
+	console.info(`\n📊 Results: ${successCount} succeeded, ${failCount} failed`);
 
 	if (failCount === 0) {
-		console.log('\n✅ All Telegram Menu Buttons setup complete!');
-		console.log('\n💡 Note: Only one menu button can be active per chat.');
-		console.log('   Consider using commands or inline keyboards for multiple options.');
+		console.info('\n✅ All Telegram Menu Buttons setup complete!');
+		console.info('\n💡 Note: Only one menu button can be active per chat.');
+		console.info('   Consider using commands or inline keyboards for multiple options.');
 	} else {
-		console.log('\n⚠️  Some menu buttons failed to configure.');
+		console.info('\n⚠️  Some menu buttons failed to configure.');
 		process.exit(1);
 	}
 }

@@ -1068,7 +1068,7 @@ const bytes = await file(icon).arrayBuffer();
 
 // List all embedded files
 for (const blob of embeddedFiles) {
-  console.log(\`\${blob.name} - \${blob.size} bytes\`);
+  console.info(\`\${blob.name} - \${blob.size} bytes\`);
 }`;
   }
 
@@ -1107,7 +1107,7 @@ class RuntimeArgvManager {
 
   generateRuntimeExample(): string {
     return `// Runtime
-console.log(process.execArgv); // ["--smol", "--user-agent=MyBot"]`;
+console.info(process.execArgv); // ["--smol", "--user-agent=MyBot"]`;
   }
 
   generateBunBeBunExample(): string {
@@ -1268,7 +1268,7 @@ const envPlugin: BunPlugin = {
   setup(build) {
     // onStart - runs once when bundling starts
     build.onStart(() => {
-      console.log("Bundle started!");
+      console.info("Bundle started!");
     });
     
     // onResolve - runs before module resolution

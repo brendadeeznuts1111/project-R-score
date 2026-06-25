@@ -25,8 +25,8 @@ const commands = {
     handler: (args: string[]) => {
       const patternId = args[0];
       if (!patternId) {
-        console.log(colors.red('Error: Pattern ID required'));
-        console.log(colors.gray('Usage: patterns:stats <pattern-id>'));
+        console.info(colors.red('Error: Pattern ID required'));
+        console.info(colors.gray('Usage: patterns:stats <pattern-id>'));
         return;
       }
       patternCommands.stats(patternId);
@@ -45,8 +45,8 @@ const commands = {
   'bench:quick': {
     description: 'Run quick benchmark (subset of tests)',
     handler: async () => {
-      console.log(colors.yellow('Quick benchmark not yet implemented'));
-      console.log(colors.gray('Use "bench" for full suite'));
+      console.info(colors.yellow('Quick benchmark not yet implemented'));
+      console.info(colors.gray('Use "bench" for full suite'));
     },
   },
 
@@ -54,21 +54,21 @@ const commands = {
   'status': {
     description: 'Show system status',
     handler: async () => {
-      console.log(colors.cyan('NEXUS System Status'));
-      console.log(colors.gray('─'.repeat(40)));
+      console.info(colors.cyan('NEXUS System Status'));
+      console.info(colors.gray('─'.repeat(40)));
 
       // Runtime info
       const { runtime } = await import('../utils');
-      console.log(`Runtime: ${colors.cyan('Bun ' + runtime.version)}`);
-      console.log(`Platform: ${colors.cyan(runtime.platform)}`);
-      console.log(`Memory: ${colors.cyan(runtime.memoryFormatted().heapUsed)}`);
+      console.info(`Runtime: ${colors.cyan('Bun ' + runtime.version)}`);
+      console.info(`Platform: ${colors.cyan(runtime.platform)}`);
+      console.info(`Memory: ${colors.cyan(runtime.memoryFormatted().heapUsed)}`);
 
       // Pattern registry status
       const { globalPatternRegistry } = await import('../patterns');
       const stats = globalPatternRegistry.getStats();
-      console.log(`Patterns: ${colors.cyan(stats.totalPatterns + ' registered, ' + stats.enabledPatterns + ' enabled')}`);
+      console.info(`Patterns: ${colors.cyan(stats.totalPatterns + ' registered, ' + stats.enabledPatterns + ' enabled')}`);
 
-      console.log(colors.green('\n✅ System operational'));
+      console.info(colors.green('\n✅ System operational'));
     },
   },
 
@@ -79,12 +79,12 @@ const commands = {
 };
 
 function showHelp() {
-  console.log(colors.cyan('NEXUS CLI - Trading Intelligence Platform'));
-  console.log(colors.gray('Usage: bun run cli <command> [args...]'));
-  console.log();
+  console.info(colors.cyan('NEXUS CLI - Trading Intelligence Platform'));
+  console.info(colors.gray('Usage: bun run cli <command> [args...]'));
+  console.info();
 
-  console.log(colors.yellow('Available Commands:'));
-  console.log();
+  console.info(colors.yellow('Available Commands:'));
+  console.info();
 
   // Group commands by category
   const categories = {
@@ -94,22 +94,22 @@ function showHelp() {
   };
 
   for (const [category, cmds] of Object.entries(categories)) {
-    console.log(colors.cyan(category + ':'));
+    console.info(colors.cyan(category + ':'));
     for (const cmd of cmds) {
       const info = commands[cmd as keyof typeof commands];
-      console.log(`  ${colors.green(cmd.padEnd(20))} ${info.description}`);
+      console.info(`  ${colors.green(cmd.padEnd(20))} ${info.description}`);
       if (info.usage) {
-        console.log(`  ${' '.repeat(22)}${colors.gray(info.usage)}`);
+        console.info(`  ${' '.repeat(22)}${colors.gray(info.usage)}`);
       }
     }
-    console.log();
+    console.info();
   }
 
-  console.log(colors.gray('Examples:'));
-  console.log(colors.gray('  bun run cli patterns:status'));
-  console.log(colors.gray('  bun run cli patterns:stats cross-market-spread'));
-  console.log(colors.gray('  bun run cli bench'));
-  console.log(colors.gray('  bun run cli status'));
+  console.info(colors.gray('Examples:'));
+  console.info(colors.gray('  bun run cli patterns:status'));
+  console.info(colors.gray('  bun run cli patterns:stats cross-market-spread'));
+  console.info(colors.gray('  bun run cli bench'));
+  console.info(colors.gray('  bun run cli status'));
 }
 
 async function main() {
@@ -126,8 +126,8 @@ async function main() {
   const cmdInfo = commands[command as keyof typeof commands];
 
   if (!cmdInfo) {
-    console.log(colors.red(`Unknown command: ${command}`));
-    console.log();
+    console.info(colors.red(`Unknown command: ${command}`));
+    console.info();
     showHelp();
     return;
   }

@@ -206,11 +206,11 @@ export class CodeTracer {
    */
   visualizeHotspots(): void {
     const hotspots = this.findHotspots();
-    console.log("\n🔥 Hotspots (most called functions):\n");
+    console.info("\n🔥 Hotspots (most called functions):\n");
     for (const hotspot of hotspots) {
-      console.log(`  ${hotspot.name} (${hotspot.callCount} calls)`);
-      console.log(`    File: ${hotspot.file}`);
-      console.log();
+      console.info(`  ${hotspot.name} (${hotspot.callCount} calls)`);
+      console.info(`    File: ${hotspot.file}`);
+      console.info();
     }
   }
 }
@@ -235,6 +235,6 @@ if (import.meta.main) {
 
   if (options.export) {
     tracer.exportGraphviz(options.export);
-    console.log(`✅ Exported call graph to ${options.export}`);
+    console.info(`✅ Exported call graph to ${options.export}`);
   }
 }

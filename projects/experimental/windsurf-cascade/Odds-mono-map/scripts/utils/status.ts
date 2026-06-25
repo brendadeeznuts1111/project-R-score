@@ -48,8 +48,8 @@ class VaultStatus {
     }
 
     async showStatus(): Promise<void> {
-        console.log(chalk.blue.bold('📊 Odds Protocol Vault Status'));
-        console.log(chalk.gray('='.repeat(DISPLAY_CONSTANTS.SEPARATOR_LENGTH)));
+        console.info(chalk.blue.bold('📊 Odds Protocol Vault Status'));
+        console.info(chalk.gray('='.repeat(DISPLAY_CONSTANTS.SEPARATOR_LENGTH)));
 
         // Load status data
         const statusData = this.loadStatusFile();
@@ -93,7 +93,7 @@ class VaultStatus {
             const files = await readdir(this.vaultPath);
             const mdFiles = files.filter(file => file.endsWith('.md'));
 
-            console.log(chalk.gray(`Found ${mdFiles.length} markdown files to analyze`));
+            console.info(chalk.gray(`Found ${mdFiles.length} markdown files to analyze`));
 
             const filesByFolder: Record<string, number> = {
                 'root': mdFiles.length
@@ -125,84 +125,84 @@ class VaultStatus {
     }
 
     private displayGeneralStatus(statusData: any, fileStats: VaultStats): void {
-        console.log(chalk.blue.bold('\n🏠 General Status:'));
+        console.info(chalk.blue.bold('\n🏠 General Status:'));
 
-        console.log(chalk.white(`Total Files: ${fileStats.totalFiles}`));
-        console.log(chalk.white(`Folders: ${Object.keys(fileStats.filesByFolder).length}`));
+        console.info(chalk.white(`Total Files: ${fileStats.totalFiles}`));
+        console.info(chalk.white(`Folders: ${Object.keys(fileStats.filesByFolder).length}`));
 
         if (statusData.lastValidation) {
             const lastValidation = new Date(statusData.lastValidation);
             const timeAgo = this.getTimeAgo(lastValidation);
-            console.log(chalk.white(`Last Validation: ${timeAgo}`));
+            console.info(chalk.white(`Last Validation: ${timeAgo}`));
         } else {
-            console.log(chalk.gray('Last Validation: Never'));
+            console.info(chalk.gray('Last Validation: Never'));
         }
 
         if (statusData.lastOrganization) {
             const lastOrganization = new Date(statusData.lastOrganization);
             const timeAgo = this.getTimeAgo(lastOrganization);
-            console.log(chalk.white(`Last Organization: ${timeAgo}`));
+            console.info(chalk.white(`Last Organization: ${timeAgo}`));
         } else {
-            console.log(chalk.gray('Last Organization: Never'));
+            console.info(chalk.gray('Last Organization: Never'));
         }
     }
 
     private displayFileStats(fileStats: VaultStats): void {
-        console.log(chalk.blue.bold('\n📁 Files by Folder:'));
+        console.info(chalk.blue.bold('\n📁 Files by Folder:'));
 
         const sortedFolders = Object.entries(fileStats.filesByFolder)
             .sort(([, a], [, b]) => b - a);
 
         for (const [folder, count] of sortedFolders) {
             const percentage = Math.round((count / fileStats.totalFiles) * 100);
-            console.log(chalk.white(`${folder.padEnd(25)}: ${count} files (${percentage}%)`));
+            console.info(chalk.white(`${folder.padEnd(25)}: ${count} files (${percentage}%)`));
         }
     }
 
     private displayAutomationStatus(statusData: any): void {
-        console.log(chalk.blue.bold('\n🤖 Automation Status:'));
+        console.info(chalk.blue.bold('\n🤖 Automation Status:'));
 
         // Monitor status
         if (statusData.monitorActive) {
-            console.log(chalk.green('✅ Monitor: Active'));
+            console.info(chalk.green('✅ Monitor: Active'));
         } else {
-            console.log(chalk.red('❌ Monitor: Inactive'));
+            console.info(chalk.red('❌ Monitor: Inactive'));
         }
 
         // Issues and warnings
         if (statusData.issues > 0) {
-            console.log(chalk.red(`❌ Issues: ${statusData.issues}`));
+            console.info(chalk.red(`❌ Issues: ${statusData.issues}`));
         } else {
-            console.log(chalk.green('✅ Issues: 0'));
+            console.info(chalk.green('✅ Issues: 0'));
         }
 
         if (statusData.warnings > 0) {
-            console.log(chalk.yellow(`⚠️  Warnings: ${statusData.warnings}`));
+            console.info(chalk.yellow(`⚠️  Warnings: ${statusData.warnings}`));
         } else {
-            console.log(chalk.green('✅ Warnings: 0'));
+            console.info(chalk.green('✅ Warnings: 0'));
         }
 
         // Compliance
         const compliance = statusData.compliance || 0;
         if (compliance >= 90) {
-            console.log(chalk.green(`✅ Compliance: ${compliance}%`));
+            console.info(chalk.green(`✅ Compliance: ${compliance}%`));
         } else if (compliance >= 70) {
-            console.log(chalk.yellow(`⚠️  Compliance: ${compliance}%`));
+            console.info(chalk.yellow(`⚠️  Compliance: ${compliance}%`));
         } else {
-            console.log(chalk.red(`❌ Compliance: ${compliance}%`));
+            console.info(chalk.red(`❌ Compliance: ${compliance}%`));
         }
 
         // Organization stats
         if (statusData.organizationStats) {
-            console.log(chalk.blue.bold('\n📊 Organization Stats:'));
-            console.log(chalk.white(`Files Moved: ${statusData.organizationStats.moved}`));
-            console.log(chalk.white(`Files Renamed: ${statusData.organizationStats.renamed}`));
-            console.log(chalk.white(`Templates Applied: ${statusData.organizationStats.templated}`));
+            console.info(chalk.blue.bold('\n📊 Organization Stats:'));
+            console.info(chalk.white(`Files Moved: ${statusData.organizationStats.moved}`));
+            console.info(chalk.white(`Files Renamed: ${statusData.organizationStats.renamed}`));
+            console.info(chalk.white(`Templates Applied: ${statusData.organizationStats.templated}`));
         }
     }
 
     private displayRecommendations(statusData: any, fileStats: VaultStats): void {
-        console.log(chalk.blue.bold('\n💡 Recommendations:'));
+        console.info(chalk.blue.bold('\n💡 Recommendations:'));
 
         const recommendations: string[] = [];
 
@@ -231,10 +231,10 @@ class VaultStatus {
         }
 
         if (recommendations.length === 0) {
-            console.log(chalk.green('🎉 Everything looks good! Your vault is well maintained.'));
+            console.info(chalk.green('🎉 Everything looks good! Your vault is well maintained.'));
         } else {
             recommendations.forEach((rec, index) => {
-                console.log(chalk.white(`${index + 1}. ${rec}`));
+                console.info(chalk.white(`${index + 1}. ${rec}`));
             });
         }
     }

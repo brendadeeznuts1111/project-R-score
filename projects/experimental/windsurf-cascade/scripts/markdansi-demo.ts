@@ -8,8 +8,8 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 
-console.log('🎨 Markdansi Demo - Markdown to ANSI Converter');
-console.log('===============================================\n');
+console.info('🎨 Markdansi Demo - Markdown to ANSI Converter');
+console.info('===============================================\n');
 
 // Test content
 const testMarkdown = `# 🧠 Memory Leak Detection Report
@@ -42,59 +42,59 @@ const results = {
 // Write test content to file
 writeFileSync('demo.md', testMarkdown);
 
-console.log('📝 Original Markdown:');
-console.log('====================');
-console.log(testMarkdown);
+console.info('📝 Original Markdown:');
+console.info('====================');
+console.info(testMarkdown);
 
-console.log('\n🎨 Markdansi Options:');
-console.log('====================');
-console.log('--in FILE        Input markdown file');
-console.log('--out FILE       Output file (optional, defaults to stdout)');
-console.log('--width N        Terminal width (default: 80)');
-console.log('--no-wrap        Disable line wrapping');
-console.log('--no-color       Disable colors');
-console.log('--no-links       Disable link rendering');
-console.log('--theme THEME    Theme: default|dim|bright');
-console.log('--list-indent N  List indentation (default: 2)');
-console.log('--quote-prefix STR Quote prefix (default: "> ")');
+console.info('\n🎨 Markdansi Options:');
+console.info('====================');
+console.info('--in FILE        Input markdown file');
+console.info('--out FILE       Output file (optional, defaults to stdout)');
+console.info('--width N        Terminal width (default: 80)');
+console.info('--no-wrap        Disable line wrapping');
+console.info('--no-color       Disable colors');
+console.info('--no-links       Disable link rendering');
+console.info('--theme THEME    Theme: default|dim|bright');
+console.info('--list-indent N  List indentation (default: 2)');
+console.info('--quote-prefix STR Quote prefix (default: "> ")');
 
-console.log('\n🚀 Example Usage:');
-console.log('================');
+console.info('\n🚀 Example Usage:');
+console.info('================');
 
 try {
     // Example 1: Basic conversion
-    console.log('\n1️⃣ Basic conversion:');
+    console.info('\n1️⃣ Basic conversion:');
     execSync('bunx markdansi --in demo.md --width 80', { stdio: 'inherit' });
 
     // Example 2: With bright theme
-    console.log('\n2️⃣ With bright theme:');
+    console.info('\n2️⃣ With bright theme:');
     execSync('bunx markdansi --in demo.md --width 80 --theme bright', { stdio: 'inherit' });
 
     // Example 3: No color
-    console.log('\n3️⃣ No color output:');
+    console.info('\n3️⃣ No color output:');
     execSync('bunx markdansi --in demo.md --width 80 --no-color', { stdio: 'inherit' });
 
     // Example 4: Save to file
-    console.log('\n4️⃣ Save to file:');
+    console.info('\n4️⃣ Save to file:');
     execSync('bunx markdansi --in demo.md --out demo_output.txt --width 100', { stdio: 'inherit' });
 
-    console.log('\n✅ Demo completed successfully!');
+    console.info('\n✅ Demo completed successfully!');
 
     // Show file output if created
     try {
         const output = readFileSync('demo_output.txt', 'utf8');
-        console.log('\n📄 Saved output (demo_output.txt):');
-        console.log('===================================');
-        console.log(output);
+        console.info('\n📄 Saved output (demo_output.txt):');
+        console.info('===================================');
+        console.info(output);
     } catch (error) {
-        console.log('\n⚠️ Output file not created - tool may output to stdout only');
+        console.info('\n⚠️ Output file not created - tool may output to stdout only');
     }
 
 } catch (error) {
     console.error('❌ Error running markdansi:', error.message);
-    console.log('\n💡 Alternative: Install markdansi globally');
-    console.log('bun install -g markdansi');
-    console.log('Then use: markdansi --in demo.md');
+    console.info('\n💡 Alternative: Install markdansi globally');
+    console.info('bun install -g markdansi');
+    console.info('Then use: markdansi --in demo.md');
 }
 
 // Cleanup
@@ -105,8 +105,8 @@ try {
     // Ignore cleanup errors
 }
 
-console.log('\n📚 For formatting our documentation:');
-console.log('====================================');
-console.log('bunx markdansi --in README.md --width 100 --theme bright');
-console.log('bunx markdansi --in docs/MEMORY_LEAK_DETECTION.md --no-color');
-console.log('bunx markdansi --in WORKING_BUN_COMMANDS.md --width 120');
+console.info('\n📚 For formatting our documentation:');
+console.info('====================================');
+console.info('bunx markdansi --in README.md --width 100 --theme bright');
+console.info('bunx markdansi --in docs/MEMORY_LEAK_DETECTION.md --no-color');
+console.info('bunx markdansi --in WORKING_BUN_COMMANDS.md --width 120');

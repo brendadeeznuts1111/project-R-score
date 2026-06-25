@@ -1,9 +1,92 @@
 {
+  "_meta": {
+    "version": "2.2.0",
+    "updated": "2026-05-30",
+    "syncWith": ".cursor/mcp.json",
+    "docs": "https://cursor.com/docs/context/mcp",
+    "notes": "Bun-native launch: command bun + script path (no run). Essential: dx + bun-docs.",
+    "serverCatalog": {
+      "essential": [
+        "dx",
+        "bun-docs"
+      ],
+      "domain": [
+        "cascade-mover"
+      ],
+      "optional": [
+        "ast-grep",
+        "mcp-bridge"
+      ],
+      "requiresEnv": {
+        "cascade-mover": [
+          "projects/active/enterprise/cascade-mover-v3/.env"
+        ],
+        "mcp-bridge": [
+          ".env"
+        ]
+      }
+    }
+  },
   "mcpServers": {
     "bun-docs": {
       "type": "stdio",
-      "command": "/Users/nolarose/.bun/bin/bun",
-      "args": ["run", "/Users/nolarose/Projects/tools/bun-docs-mcp.ts"]
+      "description": "Bun docs MCP v1.3 — lazy index, compact output, blog/RSS, rg query (zero npm deps)",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/tools/bun-docs-mcp.ts"
+      ],
+      "env": {
+        "BUN_DOCS_ROOT": "${workspaceFolder}"
+      }
+    },
+    "dx": {
+      "type": "stdio",
+      "description": "Developer Experience — project scan, health, README, Bun probes, mcp_status",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/scripts/dx-mcp.ts"
+      ],
+      "env": {
+        "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,projects/active/enterprise/cascade-mover-v3,projects/active/enterprise/bet-ticker-worker-v1.1,packages,lib,tools"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    "cascade-mover": {
+      "type": "stdio",
+      "description": "Cascade Mover v3 — sports intelligence (lines, sources, confidence, 43 tools)",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "envFile": "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/.env"
+    },
+    "ast-grep": {
+      "type": "stdio",
+      "description": "ast-grep 0.44+ — outline, structural search, map, scan (pi-ast-grep parity)",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/.agents/skills/ast-grep/mcp/ast-grep-mcp.ts"
+      ],
+      "env": {
+        "AST_GREP_REPO_ROOT": "${workspaceFolder}"
+      }
+    },
+    "mcp-bridge": {
+      "type": "stdio",
+      "description": "FactoryWager MCP bridge — SearchBunEnhanced, AuditSearch, wiki generation (Claude Desktop parity)",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/scripts/mcp-bridge.ts"
+      ],
+      "env": {
+        "FW_COLORS_ENABLED": "true",
+        "NODE_ENV": "production"
+      },
+      "envFile": "${workspaceFolder}/.env",
+      "disabled": true
     }
   }
 }

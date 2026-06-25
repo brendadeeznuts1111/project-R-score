@@ -239,4 +239,4 @@ test("ampVec handles negative amplification", () => {
   expect(result).toEqual([-1.5, -3.0, -4.5]);
 });
 
-console.log("✅ All tests loaded successfully!");
+console.info("✅ All tests loaded successfully!");

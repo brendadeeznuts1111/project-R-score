@@ -205,8 +205,8 @@ export async function benchAsync(
  * ```
  */
 export function suite(name: string, fn: () => void | Promise<void>) {
-  console.log(`\n📊 Benchmark Suite: ${name}`);
-  console.log('─'.repeat(60));
+  console.info(`\n📊 Benchmark Suite: ${name}`);
+  console.info('─'.repeat(60));
   fn();
 }
 
@@ -247,9 +247,9 @@ export function benchMemory(
   const heapDelta = memAfter.heapUsed - memBefore.heapUsed;
   const heapDeltaMB = heapDelta / 1024 / 1024;
 
-  console.log(`\n💾 Memory: ${name}`);
-  console.log(`   Heap Δ: ${heapDeltaMB.toFixed(2)} MB`);
-  console.log(`   Per op: ${(heapDelta / iterations).toFixed(0)} bytes`);
+  console.info(`\n💾 Memory: ${name}`);
+  console.info(`   Heap Δ: ${heapDeltaMB.toFixed(2)} MB`);
+  console.info(`   Per op: ${(heapDelta / iterations).toFixed(0)} bytes`);
 
   return {
     name,

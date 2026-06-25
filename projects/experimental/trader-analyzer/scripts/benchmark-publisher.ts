@@ -67,7 +67,7 @@ export async function publishBenchmarkToRSS(
 		}),
 	);
 
-	console.log(`💾 Benchmark results saved to registry database`);
+	console.info(`💾 Benchmark results saved to registry database`);
 
 	// Notify Telegram topic
 	const topicInfo = getTopicInfo(packageName as PackageName);
@@ -86,7 +86,7 @@ export async function publishBenchmarkToRSS(
 
 		try {
 			await notifyTopic(topicInfo.topicId, message, { silent: true });
-			console.log(`📱 Notification sent to topic: ${topicInfo.name}`);
+			console.info(`📱 Notification sent to topic: ${topicInfo.name}`);
 		} catch (error) {
 			console.error(`❌ Failed to send notification: ${error}`);
 		}
@@ -97,7 +97,7 @@ export async function publishBenchmarkToRSS(
 	// Update RSS feed cache (if internal API is available)
 	const refreshResult = await refreshRSSCache({ package: packageName });
 	if (refreshResult.success) {
-		console.log(`🔄 RSS feed cache refreshed via ${refreshResult.endpoint}`);
+		console.info(`🔄 RSS feed cache refreshed via ${refreshResult.endpoint}`);
 	} else if (refreshResult.error) {
 		console.warn(`⚠️  RSS cache refresh failed: ${refreshResult.error}`);
 	}
@@ -127,7 +127,7 @@ if (import.meta.main) {
 		}
 
 		await publishBenchmarkToRSS(packageName, benchmarkResult);
-		console.log(`✅ Benchmark results published for ${packageName}`);
+		console.info(`✅ Benchmark results published for ${packageName}`);
 	} catch (error) {
 		console.error(`❌ Error publishing benchmark: ${error}`);
 		process.exit(1);

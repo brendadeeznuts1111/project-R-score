@@ -52,7 +52,7 @@ export class VaultWatcher {
     }
 
     async start() {
-        console.log(`🔍 Starting vault watcher for: ${this.config.vaultPath}`);
+        console.info(`🔍 Starting vault watcher for: ${this.config.vaultPath}`);
 
         // Initialize graph with existing files
         await this.initializeGraph();
@@ -64,7 +64,7 @@ export class VaultWatcher {
             async scan(path, stat) {
                 // This is called for each file during initial scan
                 if (stat?.isFile() && path.endsWith('.md')) {
-                    console.log(`📁 Indexing: ${path}`);
+                    console.info(`📁 Indexing: ${path}`);
                 }
             }
         });
@@ -76,12 +76,12 @@ export class VaultWatcher {
             await this.handleFileChange(event, filename);
         });
 
-        console.log('✅ Vault watcher started successfully');
-        console.log(`📊 Watching ${await this.getFileCount()} markdown files`);
+        console.info('✅ Vault watcher started successfully');
+        console.info(`📊 Watching ${await this.getFileCount()} markdown files`);
     }
 
     private async initializeGraph() {
-        console.log('🏗️ Building initial vault graph...');
+        console.info('🏗️ Building initial vault graph...');
 
         const startTime = Date.now();
         const files = await glob('**/*.md', {
@@ -98,19 +98,19 @@ export class VaultWatcher {
             await this.orchestrator.validateBatch(batchPaths);
 
             if (i % 100 === 0) {
-                console.log(`📈 Processed ${Math.min(i + batchSize, files.length)}/${files.length} files`);
+                console.info(`📈 Processed ${Math.min(i + batchSize, files.length)}/${files.length} files`);
             }
         }
 
         const metrics = this.graph.calculateGraphMetrics();
-        console.log(`🎯 Graph built in ${Date.now() - startTime}ms`);
-        console.log(`📊 Metrics: ${metrics.totalNodes} nodes, ${metrics.totalEdges} edges, ${metrics.orphanRate.toFixed(1)}% orphans`);
+        console.info(`🎯 Graph built in ${Date.now() - startTime}ms`);
+        console.info(`📊 Metrics: ${metrics.totalNodes} nodes, ${metrics.totalEdges} edges, ${metrics.orphanRate.toFixed(1)}% orphans`);
     }
 
     private async handleFileChange(event: 'add' | 'change' | 'unlink', filename: string) {
         const timestamp = new Date().toISOString();
 
-        console.log(`🔄 File ${event}: ${filename}`);
+        console.info(`🔄 File ${event}: ${filename}`);
 
         // Add to event queue with debouncing
         this.eventQueue.push({
@@ -133,7 +133,7 @@ export class VaultWatcher {
             return;
         }
 
-        console.log(`🔄 Processing ${this.eventQueue.length} file changes...`);
+        console.info(`🔄 Processing ${this.eventQueue.length} file changes...`);
 
         // Group events by file type and deduplicate
         const uniqueEvents = new Map<string, WatcherEvent>();
@@ -167,7 +167,7 @@ export class VaultWatcher {
         this.eventQueue = [];
         this.isProcessing = false;
 
-        console.log('✅ Event processing complete');
+        console.info('✅ Event processing complete');
     }
 
     private async validateAffectedFiles(files: string[]) {
@@ -183,7 +183,7 @@ export class VaultWatcher {
                 affected.forEach(node => allAffected.add(node));
             }
 
-            console.log(`🎯 Validating ${allAffected.size} affected nodes...`);
+            console.info(`🎯 Validating ${allAffected.size} affected nodes...`);
 
             // Run validation
             const results = await this.orchestrator.validateBatch(Array.from(allAffected));
@@ -193,8 +193,8 @@ export class VaultWatcher {
             const totalWarnings = results.reduce((sum, r) => sum + r.warnings.length, 0);
             const avgHealth = results.reduce((sum, r) => sum + r.metrics.healthScore, 0) / results.length;
 
-            console.log(`📊 Validation complete in ${Date.now() - startTime}ms`);
-            console.log(`❌ Errors: ${totalErrors}, ⚠️ Warnings: ${totalWarnings}, 💚 Avg Health: ${avgHealth.toFixed(1)}%`);
+            console.info(`📊 Validation complete in ${Date.now() - startTime}ms`);
+            console.info(`❌ Errors: ${totalErrors}, ⚠️ Warnings: ${totalWarnings}, 💚 Avg Health: ${avgHealth.toFixed(1)}%`);
 
             // Emit validation results for hot reload
             if (this.config.enableHotReload) {
@@ -207,12 +207,12 @@ export class VaultWatcher {
     }
 
     private async handleFileDeletion(filePath: string) {
-        console.log(`🗑️ Processing file deletion: ${filePath}`);
+        console.info(`🗑️ Processing file deletion: ${filePath}`);
 
         try {
             // Step 1: Find all files that link to this file (backlinks)
             const backlinks = this.findBacklinks(filePath);
-            console.log(`🔗 Found ${backlinks.length} backlinks to update`);
+            console.info(`🔗 Found ${backlinks.length} backlinks to update`);
 
             // Step 2: Archive the file content before deletion (soft deletion)
             await this.archiveFileContent(filePath);
@@ -223,7 +223,7 @@ export class VaultWatcher {
             // Step 4: Handle cascade operations for dependent files
             const dependents = this.findDependentFiles(filePath);
             if (dependents.length > 0) {
-                console.log(`🏗️ Processing ${dependents.length} dependent files`);
+                console.info(`🏗️ Processing ${dependents.length} dependent files`);
                 await this.handleCascadeOperations(dependents, filePath);
             }
 
@@ -237,7 +237,7 @@ export class VaultWatcher {
             // Step 7: Update health metrics for affected files
             await this.updateAffectedFileHealth(backlinks);
 
-            console.log(`✅ File deletion processed: ${filePath}`);
+            console.info(`✅ File deletion processed: ${filePath}`);
 
         } catch (error) {
             console.error(`❌ Error processing file deletion ${filePath}:`, error);
@@ -293,7 +293,7 @@ export class VaultWatcher {
                     node.tags, node.aliases, node.neighbors, node.dependencies,
                     node.health, node.lastValidated, node.position
                 );
-                console.log(`📦 Archived file content: ${filePath}`);
+                console.info(`📦 Archived file content: ${filePath}`);
             }
 
             // Also archive associated edges
@@ -368,7 +368,7 @@ export class VaultWatcher {
                         WHERE source = ? AND target = ? AND type = 'wiki'
                     `).run(backlinkPath, deletedFilePath);
 
-                    console.log(`🔧 Updated backlinks in: ${backlinkPath}`);
+                    console.info(`🔧 Updated backlinks in: ${backlinkPath}`);
                 }
             } catch (error) {
                 console.error(`❌ Error updating backlinks for ${backlinkPath}:`, error);
@@ -416,7 +416,7 @@ export class VaultWatcher {
                         dependentPath
                     );
 
-                    console.log(`🏗️ Updated dependencies for: ${dependentPath}`);
+                    console.info(`🏗️ Updated dependencies for: ${dependentPath}`);
                 }
             } catch (error) {
                 console.error(`❌ Error handling cascade for ${dependentPath}:`, error);
@@ -439,7 +439,7 @@ export class VaultWatcher {
         // - WebSocket for live UI updates
         // - Webhook notifications
         // - Message queue for async processing
-        console.log(`📢 Notified systems about deletion: ${deletedFilePath}`);
+        console.info(`📢 Notified systems about deletion: ${deletedFilePath}`);
     }
 
     private async updateAffectedFileHealth(backlinks: string[]): Promise<void> {
@@ -450,7 +450,7 @@ export class VaultWatcher {
 
                 if (validationResult.node) {
                     this.graph.addNode(validationResult.node);
-                    console.log(`💚 Updated health for affected file: ${backlinkPath}`);
+                    console.info(`💚 Updated health for affected file: ${backlinkPath}`);
                 }
             } catch (error) {
                 console.error(`❌ Error updating health for ${backlinkPath}:`, error);
@@ -465,8 +465,8 @@ export class VaultWatcher {
             }
 
             if (result.type === 'file_deleted') {
-                console.log(`🗑️ File deletion notification: ${result.path}`);
-                console.log(`   Affected files: ${result.affectedFiles.join(', ')}`);
+                console.info(`🗑️ File deletion notification: ${result.path}`);
+                console.info(`   Affected files: ${result.affectedFiles.join(', ')}`);
             }
         });
 
@@ -481,7 +481,7 @@ export class VaultWatcher {
      */
     public async restoreArchivedFile(originalPath: string): Promise<boolean> {
         try {
-            console.log(`🔄 Restoring archived file: ${originalPath}`);
+            console.info(`🔄 Restoring archived file: ${originalPath}`);
 
             // Get archived node data
             const archivedNode = this.graph.db.prepare(`
@@ -531,7 +531,7 @@ export class VaultWatcher {
             // Update backlinks to restore references
             await this.restoreBacklinks(originalPath);
 
-            console.log(`✅ Successfully restored file: ${originalPath}`);
+            console.info(`✅ Successfully restored file: ${originalPath}`);
             return true;
 
         } catch (error) {
@@ -587,7 +587,7 @@ export class VaultWatcher {
                         (source, target, type) VALUES (?, ?, 'wiki')
                     `).run(backlinkPath, restoredPath);
 
-                    console.log(`🔗 Restored backlink in: ${backlinkPath}`);
+                    console.info(`🔗 Restored backlink in: ${backlinkPath}`);
                 }
             } catch (error) {
                 console.error(`❌ Error restoring backlinks for ${backlinkPath}:`, error);
@@ -614,7 +614,7 @@ export class VaultWatcher {
             `).run(cutoffDate.toISOString());
 
             const totalDeleted = deletedNodes.changes + deletedEdges.changes;
-            console.log(`🧹 Cleaned up ${totalDeleted} old archived records (older than ${retentionDays} days)`);
+            console.info(`🧹 Cleaned up ${totalDeleted} old archived records (older than ${retentionDays} days)`);
 
             return totalDeleted;
 
@@ -671,7 +671,7 @@ export class VaultWatcher {
     async stop() {
         if (this.watcher) {
             this.watcher.close();
-            console.log('🛑 Vault watcher stopped');
+            console.info('🛑 Vault watcher stopped');
         }
     }
 
@@ -701,7 +701,7 @@ if (import.meta.main) {
 
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
-        console.log('\n🛑 Shutting down vault watcher...');
+        console.info('\n🛑 Shutting down vault watcher...');
         await watcher.stop();
         process.exit(0);
     });
@@ -710,7 +710,7 @@ if (import.meta.main) {
     await watcher.start();
 
     // Keep process alive
-    console.log('⏳ Watching for file changes... (Press Ctrl+C to stop)');
+    console.info('⏳ Watching for file changes... (Press Ctrl+C to stop)');
 
     // Example commands that could be added:
     // - 'validate' to manually trigger validation

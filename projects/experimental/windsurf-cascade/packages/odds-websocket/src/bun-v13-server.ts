@@ -76,16 +76,16 @@ export class Bun13OptimizedWebSocketServer {
       },
     }));
 
-    console.log(`🚀 Bun 1.3 Optimized WebSocket Server on port ${this.server.port}`);
-    console.log(`📊 Worker Pool: ${this.workerPool.length} workers`);
-    console.log(`⚡ Compression Threshold: ${compressionThreshold} bytes`);
+    console.info(`🚀 Bun 1.3 Optimized WebSocket Server on port ${this.server.port}`);
+    console.info(`📊 Worker Pool: ${this.workerPool.length} workers`);
+    console.info(`⚡ Compression Threshold: ${compressionThreshold} bytes`);
     
     // Start performance monitoring
     this.startPerformanceMonitoring();
   }
 
   private initializeWorkers(count: number) {
-    console.log(`🔄 Initializing ${count} workers with Bun 1.3 optimizations...`);
+    console.info(`🔄 Initializing ${count} workers with Bun 1.3 optimizations...`);
     
     for (let i = 0; i < count; i++) {
       try {
@@ -106,7 +106,7 @@ export class Bun13OptimizedWebSocketServer {
         };
 
         this.workerPool.push(worker);
-        console.log(`✅ Worker ${i} initialized with smol optimization`);
+        console.info(`✅ Worker ${i} initialized with smol optimization`);
       } catch (error) {
         console.error(`❌ Failed to initialize worker ${i}:`, error);
       }
@@ -172,7 +172,7 @@ export class Bun13OptimizedWebSocketServer {
     this.connectionMetrics.totalConnections++;
     this.connectionMetrics.activeConnections++;
     
-    console.log(`🔗 New connection: ${connectionId} (total: ${this.connectionMetrics.activeConnections})`);
+    console.info(`🔗 New connection: ${connectionId} (total: ${this.connectionMetrics.activeConnections})`);
     
     // Send welcome message with connection info
     ws.send(JSON.stringify({
@@ -234,7 +234,7 @@ export class Bun13OptimizedWebSocketServer {
     const connectionData = ws.data as ConnectionData;
     this.connectionMetrics.activeConnections--;
     
-    console.log(`🔌 Connection closed: ${connectionData.id} (active: ${this.connectionMetrics.activeConnections})`);
+    console.info(`🔌 Connection closed: ${connectionData.id} (active: ${this.connectionMetrics.activeConnections})`);
   }
 
   private generateConnectionId(): string {
@@ -306,12 +306,12 @@ export class Bun13OptimizedWebSocketServer {
       switch (message.type) {
         case 'arbitrage-alert':
           this.server.publish('arbitrage-alerts', JSON.stringify(message.data), false);
-          console.log(`💰 Arbitrage alert: ${message.data.edge.toFixed(2)}% edge`);
+          console.info(`💰 Arbitrage alert: ${message.data.edge.toFixed(2)}% edge`);
           break;
           
         case 'sharp-signal':
           this.server.publish('sharp-signals', JSON.stringify(message.data), false);
-          console.log(`📈 Sharp signal: ${message.data.confidence.toFixed(2)}% confidence`);
+          console.info(`📈 Sharp signal: ${message.data.confidence.toFixed(2)}% confidence`);
           break;
           
         case 'process-tick':
@@ -409,7 +409,7 @@ export class Bun13OptimizedWebSocketServer {
           this.rapidHashCache.set(key, value);
         });
         
-        console.log(`🧹 Cleaned hash cache: ${entriesToKeep} entries retained`);
+        console.info(`🧹 Cleaned hash cache: ${entriesToKeep} entries retained`);
       }
     }, 60000); // Every minute
   }
@@ -429,7 +429,7 @@ export class Bun13OptimizedWebSocketServer {
   }
 
   public async shutdown(): Promise<void> {
-    console.log('🔄 Shutting down Bun 1.3 WebSocket server...');
+    console.info('🔄 Shutting down Bun 1.3 WebSocket server...');
     
     // Terminate all workers
     await Promise.all(
@@ -445,7 +445,7 @@ export class Bun13OptimizedWebSocketServer {
     );
     
     this.server.stop();
-    console.log('✅ Server shutdown complete');
+    console.info('✅ Server shutdown complete');
   }
 }
 
@@ -479,7 +479,7 @@ if (import.meta.main) {
     process.exit(0);
   });
   
-  console.log('🚀 Bun 1.3 WebSocket server started successfully');
+  console.info('🚀 Bun 1.3 WebSocket server started successfully');
 }
 
 export default getBun13Server;

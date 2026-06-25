@@ -69,11 +69,11 @@ class UnifiedObservatoryLauncher {
   }
   
   async startAllServices() {
-    console.log(`🚀 Unified Observatory Launcher`);
-    console.log(`================================`);
-    console.log(`🔐 Bun API Secrets Aligned Services`);
-    console.log(`⏰ Started at ${new Date().toLocaleString()}`);
-    console.log(``);
+    console.info(`🚀 Unified Observatory Launcher`);
+    console.info(`================================`);
+    console.info(`🔐 Bun API Secrets Aligned Services`);
+    console.info(`⏰ Started at ${new Date().toLocaleString()}`);
+    console.info(``);
     
     for (const serviceName of this.startupOrder) {
       await this.startService(serviceName);
@@ -92,7 +92,7 @@ class UnifiedObservatoryLauncher {
       return;
     }
     
-    console.log(`🔄 Starting ${service.name} service...`);
+    console.info(`🔄 Starting ${service.name} service...`);
     service.status = 'starting';
     
     try {
@@ -130,8 +130,8 @@ class UnifiedObservatoryLauncher {
         }
       } else {
         service.status = 'running';
-        console.log(`✅ ${service.name} started successfully`);
-        console.log(`   📊 Dashboard: ${service.url}`);
+        console.info(`✅ ${service.name} started successfully`);
+        console.info(`   📊 Dashboard: ${service.url}`);
         
         // Setup output handlers
         this.setupServiceOutputHandlers(service);
@@ -162,7 +162,7 @@ class UnifiedObservatoryLauncher {
         
         for (const line of lines) {
           if (line.trim()) {
-            console.log(`[${service.name.toUpperCase()}] ${line}`);
+            console.info(`[${service.name.toUpperCase()}] ${line}`);
           }
         }
       }
@@ -190,23 +190,23 @@ class UnifiedObservatoryLauncher {
   }
   
   private displayServiceStatus() {
-    console.log(``);
-    console.log(`📊 Service Status Summary`);
-    console.log(`========================`);
+    console.info(``);
+    console.info(`📊 Service Status Summary`);
+    console.info(`========================`);
     
     for (const service of this.services.values()) {
       const statusIcon = this.getStatusIcon(service.status);
-      console.log(`${statusIcon} ${service.name.padEnd(10)} (${service.port}) - ${service.description}`);
-      console.log(`   🌐 ${service.url}`);
+      console.info(`${statusIcon} ${service.name.padEnd(10)} (${service.port}) - ${service.description}`);
+      console.info(`   🌐 ${service.url}`);
     }
     
-    console.log(``);
-    console.log(`🎯 All Services Available:`);
-    console.log(`   📈 Security Dashboard: http://localhost:3000`);
-    console.log(`   📝 TOML Editor: http://localhost:3001`);
-    console.log(`   🔐 Secrets Service: http://localhost:3002`);
-    console.log(``);
-    console.log(`🔥 Unified URLPattern Observatory v1.3.6+ is fully operational!`);
+    console.info(``);
+    console.info(`🎯 All Services Available:`);
+    console.info(`   📈 Security Dashboard: http://localhost:3000`);
+    console.info(`   📝 TOML Editor: http://localhost:3001`);
+    console.info(`   🔐 Secrets Service: http://localhost:3002`);
+    console.info(``);
+    console.info(`🔥 Unified URLPattern Observatory v1.3.6+ is fully operational!`);
   }
   
   private getStatusIcon(status: string): string {
@@ -220,13 +220,13 @@ class UnifiedObservatoryLauncher {
   
   private setupGracefulShutdown() {
     const shutdown = async () => {
-      console.log(`\n🛑 Shutting down all services...`);
+      console.info(`\n🛑 Shutting down all services...`);
       
       for (const serviceName of this.startupOrder.reverse()) {
         await this.stopService(serviceName);
       }
       
-      console.log(`👋 All services stopped. Goodbye!`);
+      console.info(`👋 All services stopped. Goodbye!`);
       process.exit(0);
     };
     
@@ -238,7 +238,7 @@ class UnifiedObservatoryLauncher {
     const service = this.services.get(serviceName);
     if (!service || !service.process) return;
     
-    console.log(`🛑 Stopping ${service.name}...`);
+    console.info(`🛑 Stopping ${service.name}...`);
     
     try {
       // Try graceful shutdown first
@@ -252,14 +252,14 @@ class UnifiedObservatoryLauncher {
         process.kill(service.process.pid, 'SIGKILL');
       }
       
-      console.log(`✅ ${service.name} stopped`);
+      console.info(`✅ ${service.name} stopped`);
     } catch (error) {
       console.error(`❌ Error stopping ${service.name}: ${(error as Error).message}`);
     }
   }
   
   async restartService(serviceName: string) {
-    console.log(`🔄 Restarting ${serviceName} service...`);
+    console.info(`🔄 Restarting ${serviceName} service...`);
     
     await this.stopService(serviceName);
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -289,10 +289,10 @@ async function main() {
       
     case 'status':
       const status = launcher.getServiceStatus();
-      console.log('📊 Service Status:');
+      console.info('📊 Service Status:');
       status.forEach(service => {
         const icon = service.status === 'running' ? '✅' : '❌';
-        console.log(`${icon} ${service.name}: ${service.status} (${service.url})`);
+        console.info(`${icon} ${service.name}: ${service.status} (${service.url})`);
       });
       break;
       
@@ -307,20 +307,20 @@ async function main() {
       break;
       
     default:
-      console.log(`🚀 Unified Observatory Launcher`);
-      console.log(`================================`);
-      console.log(``);
-      console.log(`Usage:`);
-      console.log(`  bun run unified-observatory-launcher.ts start     Start all services`);
-      console.log(`  bun run unified-observatory-launcher.ts status    Show service status`);
-      console.log(`  bun run unified-observatory-launcher.ts restart <service> Restart specific service`);
-      console.log(``);
-      console.log(`Available services:`);
-      console.log(`  - dashboard: Security Dashboard (Port 3000)`);
-      console.log(`  - editor: TOML Editor & Optimizer (Port 3001)`);
-      console.log(`  - secrets: Bun Secrets Service (Port 3002)`);
-      console.log(``);
-      console.log(`🔥 All services are aligned with Bun API Secrets naming conventions!`);
+      console.info(`🚀 Unified Observatory Launcher`);
+      console.info(`================================`);
+      console.info(``);
+      console.info(`Usage:`);
+      console.info(`  bun run unified-observatory-launcher.ts start     Start all services`);
+      console.info(`  bun run unified-observatory-launcher.ts status    Show service status`);
+      console.info(`  bun run unified-observatory-launcher.ts restart <service> Restart specific service`);
+      console.info(``);
+      console.info(`Available services:`);
+      console.info(`  - dashboard: Security Dashboard (Port 3000)`);
+      console.info(`  - editor: TOML Editor & Optimizer (Port 3001)`);
+      console.info(`  - secrets: Bun Secrets Service (Port 3002)`);
+      console.info(``);
+      console.info(`🔥 All services are aligned with Bun API Secrets naming conventions!`);
       break;
   }
 }

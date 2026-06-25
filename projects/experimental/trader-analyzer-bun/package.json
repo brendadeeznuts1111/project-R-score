@@ -1,5 +1,5 @@
 {
-  "name": "@nexus/trader-analyzer",
+  "name": "@nexus/trader-analyzer-bun",
   "version": "0.1.0",
   "description": "NEXUS - Unified trading intelligence platform connecting crypto, prediction markets, and sports betting with cross-market arbitrage detection",
   "type": "module",
@@ -48,12 +48,12 @@
     "lint": "bunx @biomejs/biome check src/"
   },
   "dependencies": {
-    "ccxt": "^4.5.35",
-    "hono": "^4.11.7"
+    "ccxt": "4.5.35",
+    "hono": "4.11.7"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "publishConfig": {
     "registry": "https://registry.factory-wager.com"

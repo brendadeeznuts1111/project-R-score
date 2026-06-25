@@ -17,19 +17,19 @@ const MCP_TEMPLATE_FILE = "mcp.json.template";
  * Setup MCP configuration for Cursor IDE
  */
 async function setupMCPConfig() {
-  console.log("🔧 Setting up MCP configuration for Cursor IDE...");
+  console.info("🔧 Setting up MCP configuration for Cursor IDE...");
 
   // Ensure .cursor directory exists
   if (!existsSync(CURSOR_CONFIG_DIR)) {
     mkdirSync(CURSOR_CONFIG_DIR, { recursive: true });
-    console.log("📁 Created .cursor directory");
+    console.info("📁 Created .cursor directory");
   }
 
   // Check if mcp.json already exists
   const mcpConfigPath = join(CURSOR_CONFIG_DIR, MCP_CONFIG_FILE);
   if (existsSync(mcpConfigPath)) {
-    console.log("⚠️  MCP config already exists at .cursor/mcp.json");
-    console.log("   To regenerate, delete the file and run this script again");
+    console.info("⚠️  MCP config already exists at .cursor/mcp.json");
+    console.info("   To regenerate, delete the file and run this script again");
     return;
   }
 
@@ -57,32 +57,32 @@ async function setupMCPConfig() {
 
   // Write configuration
   writeFileSync(mcpConfigPath, JSON.stringify(mcpConfig, null, 2));
-  console.log("✅ Created .cursor/mcp.json");
+  console.info("✅ Created .cursor/mcp.json");
 
   // Test MCP server
-  console.log("🧪 Testing MCP server...");
+  console.info("🧪 Testing MCP server...");
   try {
     const testResult = await $`bun run scripts/mcp-server.ts --help`.nothrow().quiet();
     if (testResult.exitCode === 0) {
-      console.log("✅ MCP server script is executable");
+      console.info("✅ MCP server script is executable");
     } else {
-      console.log("⚠️  MCP server script may need additional setup");
+      console.info("⚠️  MCP server script may need additional setup");
     }
   } catch (error) {
-    console.log("⚠️  Could not test MCP server script");
+    console.info("⚠️  Could not test MCP server script");
   }
 
-  console.log("\n🎉 MCP setup complete!");
-  console.log("\nNext steps:");
-  console.log("1. Restart Cursor IDE");
-  console.log("2. Check Cursor settings for MCP server status");
-  console.log("3. The 'nexus' MCP server should now be available with 35+ tools");
-  console.log("\nAvailable MCP tools include:");
-  console.log("• Research & anomaly detection tools");
-  console.log("• Bun shell and tooling utilities");
-  console.log("• Documentation integration");
-  console.log("• Security monitoring");
-  console.log("• UI policy management");
+  console.info("\n🎉 MCP setup complete!");
+  console.info("\nNext steps:");
+  console.info("1. Restart Cursor IDE");
+  console.info("2. Check Cursor settings for MCP server status");
+  console.info("3. The 'nexus' MCP server should now be available with 35+ tools");
+  console.info("\nAvailable MCP tools include:");
+  console.info("• Research & anomaly detection tools");
+  console.info("• Bun shell and tooling utilities");
+  console.info("• Documentation integration");
+  console.info("• Security monitoring");
+  console.info("• UI policy management");
 }
 
 // Run setup if called directly

@@ -97,7 +97,7 @@ export class WorkflowEngine {
       console.warn(`⚠️  Overriding existing step handler: ${type}`);
     }
     this.stepHandlers.set(type, handler);
-    console.log(`✓ Registered step handler: ${type}`);
+    console.info(`✓ Registered step handler: ${type}`);
   }
 
   /**
@@ -118,7 +118,7 @@ export class WorkflowEngine {
     // Sort by priority (lower = higher priority)
     hooks.sort((a, b) => (a.priority ?? 100) - (b.priority ?? 100));
     this.hooks.set(hook.type, hooks);
-    console.log(`✓ Registered ${hook.type} hook (priority: ${hook.priority ?? 100})`);
+    console.info(`✓ Registered ${hook.type} hook (priority: ${hook.priority ?? 100})`);
   }
 
   /**
@@ -129,7 +129,7 @@ export class WorkflowEngine {
       console.warn(`⚠️  Overriding existing workflow: ${workflow.id}`);
     }
     this.workflowDefinitions.set(workflow.id, workflow);
-    console.log(`✓ Registered workflow: ${workflow.name} (${workflow.id})`);
+    console.info(`✓ Registered workflow: ${workflow.name} (${workflow.id})`);
   }
 
   /**
@@ -181,11 +181,11 @@ export class WorkflowEngine {
 
       // Dry run mode - validate without executing
       if (options.dryRun) {
-        console.log(`🔍 Dry run: ${workflow.name}`);
+        console.info(`🔍 Dry run: ${workflow.name}`);
         return this.createResult(executionId, workflow.id, 'completed', startTime, stepResults);
       }
 
-      console.log(`🚀 Starting workflow: ${workflow.name} (${executionId.slice(0, 8)})`);
+      console.info(`🚀 Starting workflow: ${workflow.name} (${executionId.slice(0, 8)})`);
 
       // Execute steps based on execution mode
       switch (workflow.executionMode) {
@@ -212,7 +212,7 @@ export class WorkflowEngine {
       // Execute afterWorkflow hooks
       await this.executeHooks('afterWorkflow', context, { status, stepResults });
 
-      console.log(`✅ Workflow ${status}: ${workflow.name} (${(performance.now() - startTime).toFixed(0)}ms)`);
+      console.info(`✅ Workflow ${status}: ${workflow.name} (${(performance.now() - startTime).toFixed(0)}ms)`);
     } catch (err) {
       status = 'failed';
       error = err instanceof Error ? err.message : String(err);
@@ -649,7 +649,7 @@ export class WorkflowEngine {
     await this.executeHooks('onCancel', context);
     this.activeWorkflows.delete(executionId);
 
-    console.log(`🛑 Workflow cancelled: ${executionId.slice(0, 8)}`);
+    console.info(`🛑 Workflow cancelled: ${executionId.slice(0, 8)}`);
     return true;
   }
 

@@ -66,6 +66,6 @@ for (const dir of dirs) {
   updated.push(pkg.name);
 }
 
-console.log(
+console.info(
   `Synced plugin versions to ${targetVersion}. Updated: ${updated.length}. Changelogged: ${changelogged.length}. Skipped: ${skipped.length}.`
 );

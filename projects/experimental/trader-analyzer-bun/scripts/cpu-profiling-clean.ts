@@ -11,9 +11,9 @@ const registry = new CPUProfilingRegistry();
 const keepLast = process.argv[2] ? parseInt(process.argv[2]) : 10;
 
 async function main() {
-	console.log(`Cleaning profiles, keeping last ${keepLast}...`);
+	console.info(`Cleaning profiles, keeping last ${keepLast}...`);
 	const deleted = await registry.cleanProfiles(keepLast);
-	console.log(`✅ Deleted ${deleted} old profiles`);
+	console.info(`✅ Deleted ${deleted} old profiles`);
 }
 
 if (import.meta.main) {

@@ -80,7 +80,7 @@ export class Logger {
 
   info(message: string, data?: any): void {
     if (this.shouldLog('info')) {
-      console.log(this.formatMessage('info', message, data));
+      console.info(this.formatMessage('info', message, data));
     }
   }
 

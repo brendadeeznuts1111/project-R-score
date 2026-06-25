@@ -1,0 +1,83 @@
+# API ROUTE BLUEPRINT — Template for adding an endpoint
+
+Every route in `src/api/router.ts` follows this exact shape. 65+ routes, all identical structure.
+
+## Template
+
+```typescript
+// In your handler file (e.g. src/api/my-routes.ts):
+
+import type { AuthContext } from "@utils/types";
+
+export async function handleMyEndpoint(
+  req: Request,
+  auth: AuthContext
+): Promise<Response> {
+  try {
+    // Parse input
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+
+    // Auth check (if needed)
+    if (auth.user.role !== "admin") {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Do the work
+    const result = { ok: true, id };
+
+    // Return
+    return Response.json(result);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    return Response.json({ error: msg }, { status: 500 });
+  }
+}
+```
+
+```typescript
+// In src/api/router.ts — register the route:
+
+import { handleMyEndpoint } from "./my-routes";
+
+// Inside the routes array:
+{ method: "GET", pattern: /^\/api\/my-endpoint$/, handler: handleMyEndpoint, auth: "required", zone: "my-zone" },
+```
+
+## Handler Signature
+
+```typescript
+(req: Request, auth: AuthContext) => Promise<Response>
+```
+
+- `req` — standard Web `Request` object
+- `auth` — `{ user: AuthenticatedUser, method: "jwt"|"apikey"|"session"|"dev_bypass", requestId: string }`
+
+## Auth Levels
+
+| Level | When to use |
+|-------|------------|
+| `"none"` | Health checks, public endpoints, internal endpoints |
+| `"optional"` | Try auth but proceed without it (proxy pass-through) |
+| `"required"` | Any endpoint that needs a logged-in user |
+| `"admin"` | Admin-only mutations |
+
+## Response Helpers
+
+```typescript
+// Standard success
+return Response.json({ success: true, data: result });
+
+// Error
+return Response.json({ error: "message" }, { status: 400 });
+
+// Created
+return Response.json({ success: true, id: newId }, { status: 201 });
+```
+
+## Rules
+
+- **Handler in its own file.** Route logic lives in `src/api/<name>-routes.ts`, not inline in router.ts.
+- **Pattern is a RegExp.** Must match `/^\/api\/.../` with `$` at end.
+- **Never crash.** All handlers catch errors and return JSON error responses.
+- **Auth check in handler.** Router selects auth level, handler enforces role checks.

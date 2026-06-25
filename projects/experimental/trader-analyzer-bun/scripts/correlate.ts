@@ -162,24 +162,24 @@ export class PatternCorrelator {
     lines.splice(corr.patternB.line, 0, fixLine);
 
     await Bun.write(corr.file, lines.join("\n"));
-    console.log(`✅ Fixed: ${corr.file} (risk: ${(corr.riskScore * 100).toFixed(0)}%)`);
+    console.info(`✅ Fixed: ${corr.file} (risk: ${(corr.riskScore * 100).toFixed(0)}%)`);
   }
 
   /**
    * Print correlations
    */
   printCorrelations(): void {
-    console.log(`\n🔗 Found ${this.correlations.length} correlations:\n`);
+    console.info(`\n🔗 Found ${this.correlations.length} correlations:\n`);
     
     const sorted = this.correlations.sort((a, b) => b.riskScore - a.riskScore);
     
     for (const corr of sorted) {
-      console.log(`📄 ${corr.file}`);
-      console.log(`   Pattern A (line ${corr.patternA.line}): ${corr.patternA.content}`);
-      console.log(`   Pattern B (line ${corr.patternB.line}): ${corr.patternB.content}`);
-      console.log(`   Distance: ${corr.distance} lines`);
-      console.log(`   Risk Score: ${(corr.riskScore * 100).toFixed(0)}%`);
-      console.log();
+      console.info(`📄 ${corr.file}`);
+      console.info(`   Pattern A (line ${corr.patternA.line}): ${corr.patternA.content}`);
+      console.info(`   Pattern B (line ${corr.patternB.line}): ${corr.patternB.content}`);
+      console.info(`   Distance: ${corr.distance} lines`);
+      console.info(`   Risk Score: ${(corr.riskScore * 100).toFixed(0)}%`);
+      console.info();
     }
   }
 }

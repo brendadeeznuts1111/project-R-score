@@ -40,10 +40,10 @@ class R2Uploader {
   }
 
   async uploadAll(): Promise<void> {
-    console.log('🚀 Starting Global Trading System R2 Upload...');
-    console.log(`📦 Target bucket: ${this.config.bucketName}`);
-    console.log(`🌍 Account: ${this.config.accountId}`);
-    console.log('');
+    console.info('🚀 Starting Global Trading System R2 Upload...');
+    console.info(`📦 Target bucket: ${this.config.bucketName}`);
+    console.info(`🌍 Account: ${this.config.accountId}`);
+    console.info('');
 
     try {
       // Upload built packages
@@ -67,8 +67,8 @@ class R2Uploader {
       // Generate and upload package manifest
       await this.generateManifest();
 
-      console.log(`✅ Upload completed! ${this.uploadedFiles.length} files uploaded.`);
-      console.log('🌍 Global Trading System is now available via Cloudflare CDN');
+      console.info(`✅ Upload completed! ${this.uploadedFiles.length} files uploaded.`);
+      console.info('🌍 Global Trading System is now available via Cloudflare CDN');
       
     } catch (error) {
       console.error('❌ Upload failed:', error);
@@ -78,11 +78,11 @@ class R2Uploader {
 
   private async uploadDirectory(dirPath: string, bucketPrefix: string): Promise<void> {
     if (!existsSync(dirPath)) {
-      console.log(`⚠️  Directory ${dirPath} does not exist, skipping...`);
+      console.info(`⚠️  Directory ${dirPath} does not exist, skipping...`);
       return;
     }
 
-    console.log(`📁 Uploading directory: ${dirPath} -> ${bucketPrefix}`);
+    console.info(`📁 Uploading directory: ${dirPath} -> ${bucketPrefix}`);
     
     const files = readdirSync(dirPath);
     let uploadedCount = 0;
@@ -100,7 +100,7 @@ class R2Uploader {
       }
     }
 
-    console.log(`  ✅ Uploaded ${uploadedCount} files from ${dirPath}`);
+    console.info(`  ✅ Uploaded ${uploadedCount} files from ${dirPath}`);
   }
 
   private async uploadFile(filePath: string, key: string): Promise<void> {
@@ -125,7 +125,7 @@ class R2Uploader {
       await this.client.send(command);
       this.uploadedFiles.push(key);
       
-      console.log(`  📤 ${key} (${(content.length / 1024).toFixed(1)}KB)`);
+      console.info(`  📤 ${key} (${(content.length / 1024).toFixed(1)}KB)`);
       
     } catch (error) {
       console.error(`❌ Failed to upload ${key}:`, error);
@@ -156,7 +156,7 @@ class R2Uploader {
   }
 
   private async generateManifest(): Promise<void> {
-    console.log('📋 Generating package manifest...');
+    console.info('📋 Generating package manifest...');
 
     const manifest = {
       name: 'global-trading-system',
@@ -229,7 +229,7 @@ class R2Uploader {
     });
 
     await this.client.send(manifestCommand);
-    console.log('  ✅ Manifest uploaded: manifest.json');
+    console.info('  ✅ Manifest uploaded: manifest.json');
   }
 
   private getFileSize(filePath: string): number {
@@ -267,19 +267,19 @@ async function main() {
   try {
     await uploader.uploadAll();
     
-    console.log('');
-    console.log('🎉 Global Trading System deployment completed!');
-    console.log('📊 Deployment Summary:');
-    console.log(`   • Files uploaded: ${uploader['uploadedFiles'].length}`);
-    console.log(`   • Bucket: ${uploader['config'].bucketName}`);
-    console.log(`   • Region: ${uploader['config'].region}`);
-    console.log('   • CDN: Global Cloudflare network');
-    console.log('');
-    console.log('🌐 Access URLs:');
-    console.log(`   • Dashboard: https://${uploader['config'].bucketName}.r2.cloudflarestorage.com/dashboard/trading-dashboard-enhanced.html`);
-    console.log(`   • Manifest: https://${uploader['config'].bucketName}.r2.cloudflarestorage.com/manifest.json`);
-    console.log('');
-    console.log('⚡ Powered by Bun Package Manager & 13-byte configuration system');
+    console.info('');
+    console.info('🎉 Global Trading System deployment completed!');
+    console.info('📊 Deployment Summary:');
+    console.info(`   • Files uploaded: ${uploader['uploadedFiles'].length}`);
+    console.info(`   • Bucket: ${uploader['config'].bucketName}`);
+    console.info(`   • Region: ${uploader['config'].region}`);
+    console.info('   • CDN: Global Cloudflare network');
+    console.info('');
+    console.info('🌐 Access URLs:');
+    console.info(`   • Dashboard: https://${uploader['config'].bucketName}.r2.cloudflarestorage.com/dashboard/trading-dashboard-enhanced.html`);
+    console.info(`   • Manifest: https://${uploader['config'].bucketName}.r2.cloudflarestorage.com/manifest.json`);
+    console.info('');
+    console.info('⚡ Powered by Bun Package Manager & 13-byte configuration system');
     
   } catch (error) {
     console.error('❌ Deployment failed:', error);

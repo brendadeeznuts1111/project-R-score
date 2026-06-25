@@ -1,0 +1,6 @@
+id: no-node-http
+valid:
+  - 'const server = Bun.serve({ port: 3000 })'
+invalid:
+  - 'import http from "http"'
+  - 'import https from "node:https"'

@@ -210,8 +210,8 @@ export class EnhancedEdgeDetector {
 // ============================================================================
 
 export async function runEnhancedDetectorBenchmarks(): Promise<void> {
-  console.log("\n🚀 Enhanced Edge Detector Benchmarks\n");
-  console.log("═".repeat(70));
+  console.info("\n🚀 Enhanced Edge Detector Benchmarks\n");
+  console.info("═".repeat(70));
   
   const detector = new EnhancedEdgeDetector();
   const iterations = 50;
@@ -232,7 +232,7 @@ export async function runEnhancedDetectorBenchmarks(): Promise<void> {
   }
   
   // Benchmark: Enhanced edge detection
-  console.log("\n1. Enhanced Edge Detection (1000 ticks)");
+  console.info("\n1. Enhanced Edge Detection (1000 ticks)");
   const enhancedStart = Number(Bun.nanoseconds());
   let edgesFound = 0;
   
@@ -242,12 +242,12 @@ export async function runEnhancedDetectorBenchmarks(): Promise<void> {
   }
   
   const enhancedMs = (Number(Bun.nanoseconds()) - enhancedStart) / 1_000_000;
-  console.log(`   Total: ${enhancedMs.toFixed(2)}ms`);
-  console.log(`   Per detection: ${(enhancedMs / iterations).toFixed(2)}ms`);
-  console.log(`   Edges found: ${edgesFound}/${iterations} (${(edgesFound/iterations*100).toFixed(1)}%)`);
+  console.info(`   Total: ${enhancedMs.toFixed(2)}ms`);
+  console.info(`   Per detection: ${(enhancedMs / iterations).toFixed(2)}ms`);
+  console.info(`   Edges found: ${edgesFound}/${iterations} (${(edgesFound/iterations*100).toFixed(1)}%)`);
   
   // Benchmark: Microstructure only
-  console.log("\n2. Microstructure Analysis Only");
+  console.info("\n2. Microstructure Analysis Only");
   const microStart = Number(Bun.nanoseconds());
   
   for (let i = 0; i < iterations; i++) {
@@ -255,43 +255,43 @@ export async function runEnhancedDetectorBenchmarks(): Promise<void> {
   }
   
   const microMs = (Number(Bun.nanoseconds()) - microStart) / 1_000_000;
-  console.log(`   Total: ${microMs.toFixed(2)}ms`);
-  console.log(`   Per analysis: ${(microMs / iterations).toFixed(2)}ms`);
+  console.info(`   Total: ${microMs.toFixed(2)}ms`);
+  console.info(`   Per analysis: ${(microMs / iterations).toFixed(2)}ms`);
   
   // Cache performance
-  console.log("\n3. Cache Performance");
+  console.info("\n3. Cache Performance");
   await detector.detectEnhancedEdge("CACHE@TEST", testTicks, 0.6);
   const cacheStats = detector.getCacheStats();
-  console.log(`   Fractal cache: ${cacheStats.fractal.size} entries, ${(cacheStats.fractal.hitRate * 100).toFixed(1)}% hit rate`);
-  console.log(`   Micro cache: ${cacheStats.microstructure.size} entries, ${(cacheStats.microstructure.hitRate * 100).toFixed(1)}% hit rate`);
+  console.info(`   Fractal cache: ${cacheStats.fractal.size} entries, ${(cacheStats.fractal.hitRate * 100).toFixed(1)}% hit rate`);
+  console.info(`   Micro cache: ${cacheStats.microstructure.size} entries, ${(cacheStats.microstructure.hitRate * 100).toFixed(1)}% hit rate`);
   
   // Summary
-  console.log("\n" + "═".repeat(70));
-  console.log("📈 ENHANCED DETECTOR SUMMARY");
-  console.log("═".repeat(70));
-  console.log(`   Total detections: ${iterations}`);
-  console.log(`   Successful edges: ${edgesFound}`);
-  console.log(`   Success rate: ${(edgesFound/iterations*100).toFixed(1)}%`);
-  console.log(`   Average latency: ${(enhancedMs / iterations).toFixed(2)}ms`);
-  console.log(`   Combined throughput: ${(iterations / (enhancedMs / 1000)).toFixed(0)} detections/sec`);
-  console.log("═".repeat(70));
+  console.info("\n" + "═".repeat(70));
+  console.info("📈 ENHANCED DETECTOR SUMMARY");
+  console.info("═".repeat(70));
+  console.info(`   Total detections: ${iterations}`);
+  console.info(`   Successful edges: ${edgesFound}`);
+  console.info(`   Success rate: ${(edgesFound/iterations*100).toFixed(1)}%`);
+  console.info(`   Average latency: ${(enhancedMs / iterations).toFixed(2)}ms`);
+  console.info(`   Combined throughput: ${(iterations / (enhancedMs / 1000)).toFixed(0)} detections/sec`);
+  console.info("═".repeat(70));
   
   // Show sample edge
   if (edgesFound > 0) {
     const sampleEdge = await detector.detectEnhancedEdge("SAMPLE@MARKET", testTicks, 0.6);
     if (sampleEdge) {
-      console.log("\n🎯 SAMPLE EDGE DETECTED:");
-      console.log(`   Market: ${sampleEdge.market}`);
-      console.log(`   FD: ${sampleEdge.fd.toFixed(3)} | Hurst: ${sampleEdge.hurst.toFixed(3)}`);
-      console.log(`   Glyph: ${sampleEdge.glyph}`);
-      console.log(`   Confidence: ${(sampleEdge.confidence * 100).toFixed(1)}%`);
-      console.log(`   Edge: ${sampleEdge.edge}`);
-      console.log(`   Quality Score: ${sampleEdge.microstructure.marketQualityScore.toFixed(1)}`);
-      console.log(`   Whale Alert: ${sampleEdge.microstructure.whaleSignals.whaleAlert ? "🚨 YES" : "✅ NO"}`);
-      console.log(`   Execution: ${sampleEdge.microstructure.executionRecommendation.action.toUpperCase()}`);
-      console.log(`   Requires Review: ${sampleEdge.requiresReview ? "⚠️ YES" : "✅ NO"}`);
+      console.info("\n🎯 SAMPLE EDGE DETECTED:");
+      console.info(`   Market: ${sampleEdge.market}`);
+      console.info(`   FD: ${sampleEdge.fd.toFixed(3)} | Hurst: ${sampleEdge.hurst.toFixed(3)}`);
+      console.info(`   Glyph: ${sampleEdge.glyph}`);
+      console.info(`   Confidence: ${(sampleEdge.confidence * 100).toFixed(1)}%`);
+      console.info(`   Edge: ${sampleEdge.edge}`);
+      console.info(`   Quality Score: ${sampleEdge.microstructure.marketQualityScore.toFixed(1)}`);
+      console.info(`   Whale Alert: ${sampleEdge.microstructure.whaleSignals.whaleAlert ? "🚨 YES" : "✅ NO"}`);
+      console.info(`   Execution: ${sampleEdge.microstructure.executionRecommendation.action.toUpperCase()}`);
+      console.info(`   Requires Review: ${sampleEdge.requiresReview ? "⚠️ YES" : "✅ NO"}`);
     }
   }
   
-  console.log("\n");
+  console.info("\n");
 }

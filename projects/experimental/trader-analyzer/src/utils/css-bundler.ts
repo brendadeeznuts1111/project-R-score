@@ -341,7 +341,7 @@ export class BunCSSBundler {
 	 * ```ts
 	 * const bundler = new BunCSSBundler();
 	 * const features = await bundler.detectFeatures("./styles/dashboard.css");
-	 * console.log(features.features.nesting); // true if nesting detected
+	 * console.info(features.features.nesting); // true if nesting detected
 	 * ```
 	 */
 	async detectFeatures(cssPath: string): Promise<SyntaxLoweringReport> {

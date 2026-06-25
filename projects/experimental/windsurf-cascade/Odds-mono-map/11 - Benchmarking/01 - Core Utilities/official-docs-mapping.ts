@@ -7,21 +7,21 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Official Bun Documentation vs Our Implementation'));
-console.log(chalk.gray('Direct mapping from https://bun.com/docs/runtime/utils to production solutions'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Official Bun Documentation vs Our Implementation'));
+console.info(chalk.gray('Direct mapping from https://bun.com/docs/runtime/utils to production solutions'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // OFFICIAL BUN.INSPECT.TABLE() DOCUMENTATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📚 Official Bun.inspect.table() Documentation'));
+console.info(chalk.bold.cyan('\n📚 Official Bun.inspect.table() Documentation'));
 
-console.log(chalk.yellow('\n🔸 Official Examples from bun.com/docs/runtime/utils:'));
+console.info(chalk.yellow('\n🔸 Official Examples from bun.com/docs/runtime/utils:'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 // Example 1: Basic Usage
-console.log(
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -31,7 +31,7 @@ console.log(
 );
 
 // Example 2: Properties Filter
-console.log(
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -42,7 +42,7 @@ console.log(
 );
 
 // Example 3: Colors Option
-console.log(
+console.info(
   Bun.inspect.table(
     [
       { a: 1, b: 2, c: 3 },
@@ -59,11 +59,11 @@ console.log(
 // OUR PRODUCTION IMPLEMENTATIONS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Our Production Implementations'));
+console.info(chalk.bold.cyan('\n🏗️  Our Production Implementations'));
 
-console.log(chalk.yellow('\n🔸 Our Enhanced Versions:'));
+console.info(chalk.yellow('\n🔸 Our Enhanced Versions:'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 // Example 1: Enhanced Vault Files (Production Data)
 const mappedFiles = rawVaultFiles.map(file => ({
   fileName: chalk.cyan(file.name),
@@ -121,11 +121,11 @@ class TaskStatus {
 // OFFICIAL BUN.INSPECT.CUSTOM() DOCUMENTATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📚 Official Bun.inspect.custom() Documentation'));
+console.info(chalk.bold.cyan('\n📚 Official Bun.inspect.custom() Documentation'));
 
-console.log(chalk.yellow('\n🔸 Official Example from bun.com/docs/runtime/utils:'));
+console.info(chalk.yellow('\n🔸 Official Example from bun.com/docs/runtime/utils:'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 class Foo {
   [Bun.inspect.custom]() {
     return "foo";
@@ -133,12 +133,12 @@ class Foo {
 }
 
 const foo = new Foo();
-console.log(foo); // => "foo"
+console.info(foo); // => "foo"
 `));
 
-console.log(chalk.yellow('\n🔸 Our Enhanced Implementation:'));
+console.info(chalk.yellow('\n🔸 Our Enhanced Implementation:'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 class EnhancedVaultFile {
   [Bun.inspect.custom]() {
     const nameDisplay = chalk.cyan(this.name);
@@ -171,19 +171,19 @@ class EnhancedVaultFile {
 // OFFICIAL BUN.STRINGWIDTH() DOCUMENTATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📚 Official Bun.stringWidth() Documentation'));
+console.info(chalk.bold.cyan('\n📚 Official Bun.stringWidth() Documentation'));
 
-console.log(chalk.yellow('\n🔸 Official Documentation from bun.com/docs/runtime/utils:'));
-console.log(chalk.gray('(Note: Official docs show basic usage but miss key parameters)'));
+console.info(chalk.yellow('\n🔸 Official Documentation from bun.com/docs/runtime/utils:'));
+console.info(chalk.gray('(Note: Official docs show basic usage but miss key parameters)'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 // Official: Basic usage only
 Bun.stringWidth("hello") // => 5
 `));
 
-console.log(chalk.yellow('\n🔸 Our Complete Implementation with ALL Parameters:'));
+console.info(chalk.yellow('\n🔸 Our Complete Implementation with ALL Parameters:'));
 
-console.log(chalk.white(`
+console.info(chalk.white(`
 // Our Enhancement: Complete API coverage
 Bun.stringWidth("hello") // => 5 (basic)
 
@@ -202,7 +202,7 @@ Bun.stringWidth("∞", { ambiguousIsNarrow: true }) // => 1 (narrow character ha
 // DIRECT MAPPING TABLE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Direct Mapping: Official → Our Implementation'));
+console.info(chalk.bold.cyan('\n📊 Direct Mapping: Official → Our Implementation'));
 
 const mappingTable = [
     {
@@ -243,18 +243,18 @@ const mappingTable = [
     }
 ];
 
-console.log(chalk.yellow('\n📋 Feature Evolution Mapping:'));
+console.info(chalk.yellow('\n📋 Feature Evolution Mapping:'));
 mappingTable.forEach((item, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${item.official} → ${item.ourImplementation}`));
-    console.log(chalk.gray(`   Script: bun run ${item.script}`));
-    console.log(chalk.green(`   Advancement: ${item.advancement}`));
+    console.info(chalk.bold(`\n${index + 1}. ${item.official} → ${item.ourImplementation}`));
+    console.info(chalk.gray(`   Script: bun run ${item.script}`));
+    console.info(chalk.green(`   Advancement: ${item.advancement}`));
 });
 
 // =============================================================================
 // MISSING FEATURES FROM OFFICIAL DOCS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n❌ Missing Features from Official Docs'));
+console.info(chalk.bold.cyan('\n❌ Missing Features from Official Docs'));
 
 const missingFeatures = [
     {
@@ -295,78 +295,78 @@ const missingFeatures = [
     }
 ];
 
-console.log(chalk.yellow('\n🚨 Critical Gaps in Official Documentation:'));
+console.info(chalk.yellow('\n🚨 Critical Gaps in Official Documentation:'));
 missingFeatures.forEach((item, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${item.feature}`));
-    console.log(chalk.red(`   Official: ${item.officialStatus}`));
-    console.log(chalk.green(`   Our Implementation: ${item.ourStatus}`));
-    console.log(chalk.yellow(`   Impact: ${item.impact}`));
+    console.info(chalk.bold(`\n${index + 1}. ${item.feature}`));
+    console.info(chalk.red(`   Official: ${item.officialStatus}`));
+    console.info(chalk.green(`   Our Implementation: ${item.ourStatus}`));
+    console.info(chalk.yellow(`   Impact: ${item.impact}`));
 });
 
 // =============================================================================
 // PRODUCTION READINESS COMPARISON
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏭 Production Readiness Comparison'));
+console.info(chalk.bold.cyan('\n🏭 Production Readiness Comparison'));
 
-console.log(chalk.yellow('\n📊 Official Examples - Good For:'));
-console.log(chalk.gray('• Learning basic syntax'));
-console.log(chalk.gray('• Understanding function signature'));
-console.log(chalk.gray('• Quick prototyping'));
-console.log(chalk.gray('• Simple data visualization'));
+console.info(chalk.yellow('\n📊 Official Examples - Good For:'));
+console.info(chalk.gray('• Learning basic syntax'));
+console.info(chalk.gray('• Understanding function signature'));
+console.info(chalk.gray('• Quick prototyping'));
+console.info(chalk.gray('• Simple data visualization'));
 
-console.log(chalk.yellow('\n🚀 Our Implementation - Essential For:'));
-console.log(chalk.green('• Production applications'));
-console.log(chalk.green('• Enterprise-grade reporting'));
-console.log(chalk.green('• Complex data structures'));
-console.log(chalk.green('• User experience optimization'));
-console.log(chalk.green('• Real-world vault management'));
-console.log(chalk.green('• CI/CD integration'));
-console.log(chalk.green('• Performance-critical applications'));
+console.info(chalk.yellow('\n🚀 Our Implementation - Essential For:'));
+console.info(chalk.green('• Production applications'));
+console.info(chalk.green('• Enterprise-grade reporting'));
+console.info(chalk.green('• Complex data structures'));
+console.info(chalk.green('• User experience optimization'));
+console.info(chalk.green('• Real-world vault management'));
+console.info(chalk.green('• CI/CD integration'));
+console.info(chalk.green('• Performance-critical applications'));
 
 // =============================================================================
 // QUICK REFERENCE COMMANDS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n⚡ Quick Reference Commands'));
+console.info(chalk.bold.cyan('\n⚡ Quick Reference Commands'));
 
-console.log(chalk.yellow('\n🎯 Start Here (Learning Path):'));
-console.log(chalk.cyan('1. bun run benchmark:comparison    # Official vs our implementation'));
-console.log(chalk.cyan('2. bun run benchmark:complete      # Complete Bun.stringWidth() API'));
-console.log(chalk.cyan('3. bun run benchmark:enhanced      # Width-aware custom inspection'));
+console.info(chalk.yellow('\n🎯 Start Here (Learning Path):'));
+console.info(chalk.cyan('1. bun run benchmark:comparison    # Official vs our implementation'));
+console.info(chalk.cyan('2. bun run benchmark:complete      # Complete Bun.stringWidth() API'));
+console.info(chalk.cyan('3. bun run benchmark:enhanced      # Width-aware custom inspection'));
 
-console.log(chalk.yellow('\n🏭 Production Ready:'));
-console.log(chalk.cyan('4. bun run benchmark:utils         # Production table utilities'));
-console.log(chalk.cyan('5. bun run benchmark:examples      # Real-world data structures'));
-console.log(chalk.cyan('6. bun run benchmark:width         # Width tracking system'));
+console.info(chalk.yellow('\n🏭 Production Ready:'));
+console.info(chalk.cyan('4. bun run benchmark:utils         # Production table utilities'));
+console.info(chalk.cyan('5. bun run benchmark:examples      # Real-world data structures'));
+console.info(chalk.cyan('6. bun run benchmark:width         # Width tracking system'));
 
-console.log(chalk.yellow('\n📚 Complete Analysis:'));
-console.log(chalk.cyan('7. bun run benchmark:review        # Comprehensive ecosystem review'));
-console.log(chalk.cyan('8. bun run benchmark:summary       # Complete overview'));
+console.info(chalk.yellow('\n📚 Complete Analysis:'));
+console.info(chalk.cyan('7. bun run benchmark:review        # Comprehensive ecosystem review'));
+console.info(chalk.cyan('8. bun run benchmark:summary       # Complete overview'));
 
 // =============================================================================
 // FINAL VERDICT
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 Final Verdict'));
+console.info(chalk.bold.cyan('\n🎯 Final Verdict'));
 
-console.log(chalk.yellow('\n📚 Official Documentation:'));
-console.log(chalk.gray('✅ Excellent foundation'));
-console.log(chalk.gray('✅ Clear basic examples'));
-console.log(chalk.gray('❌ Missing advanced features'));
-console.log(chalk.gray('❌ No production patterns'));
-console.log(chalk.gray('❌ Incomplete API documentation'));
+console.info(chalk.yellow('\n📚 Official Documentation:'));
+console.info(chalk.gray('✅ Excellent foundation'));
+console.info(chalk.gray('✅ Clear basic examples'));
+console.info(chalk.gray('❌ Missing advanced features'));
+console.info(chalk.gray('❌ No production patterns'));
+console.info(chalk.gray('❌ Incomplete API documentation'));
 
-console.log(chalk.yellow('\n🚀 Our Implementation:'));
-console.log(chalk.green('✅ Complete API coverage'));
-console.log(chalk.green('✅ Production-ready patterns'));
-console.log(chalk.green('✅ Real-world vault integration'));
-console.log(chalk.green('✅ Advanced width management'));
-console.log(chalk.green('✅ Comprehensive error handling'));
-console.log(chalk.green('✅ Performance optimization'));
+console.info(chalk.yellow('\n🚀 Our Implementation:'));
+console.info(chalk.green('✅ Complete API coverage'));
+console.info(chalk.green('✅ Production-ready patterns'));
+console.info(chalk.green('✅ Real-world vault integration'));
+console.info(chalk.green('✅ Advanced width management'));
+console.info(chalk.green('✅ Comprehensive error handling'));
+console.info(chalk.green('✅ Performance optimization'));
 
-console.log(chalk.bold.magenta('\n🎉 Result: Official Docs × 10 = Production-Ready Ecosystem'));
-console.log(chalk.gray('We\'ve transformed basic documentation into enterprise-grade solutions!'));
+console.info(chalk.bold.magenta('\n🎉 Result: Official Docs × 10 = Production-Ready Ecosystem'));
+console.info(chalk.gray('We\'ve transformed basic documentation into enterprise-grade solutions!'));
 
-console.log(chalk.bold.cyan('\n🌐 Reference: https://bun.com/docs/runtime/utils'));
-console.log(chalk.gray('Official documentation provides the foundation - we build the skyscraper!'));
+console.info(chalk.bold.cyan('\n🌐 Reference: https://bun.com/docs/runtime/utils'));
+console.info(chalk.gray('Official documentation provides the foundation - we build the skyscraper!'));

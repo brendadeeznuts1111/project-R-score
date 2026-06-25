@@ -41,7 +41,7 @@ export class QuantumHybridCrypto {
       ]);
 
       this.isInitialized = true;
-      console.log("✅ Quantum-Hybrid Crypto initialized");
+      console.info("✅ Quantum-Hybrid Crypto initialized");
     } catch (error) {
       console.error("❌ Failed to initialize quantum-hybrid crypto:", error);
       throw error;

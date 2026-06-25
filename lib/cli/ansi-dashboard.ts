@@ -115,15 +115,15 @@ export function renderProjectDashboardANSI(): string {
 export function startLiveDashboard(): void {
   setInterval(() => {
     console.clear();
-    console.log(renderMetricsANSI());
-    console.log('\n' + '='.repeat(60));
-    console.log(renderProjectDashboardANSI());
+    console.info(renderMetricsANSI());
+    console.info('\n' + '='.repeat(60));
+    console.info(renderProjectDashboardANSI());
   }, 5000);
 }
 
 // One-liner usage
 if (import.meta.main) {
-  console.log(renderMetricsANSI());
-  console.log('\n' + '='.repeat(60));
-  console.log(renderProjectDashboardANSI());
+  console.info(renderMetricsANSI());
+  console.info('\n' + '='.repeat(60));
+  console.info(renderProjectDashboardANSI());
 }

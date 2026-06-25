@@ -1,0 +1,1 @@
+if (feature("DEBUG")) console.info("DEBUG_MODE"); else console.info("PROD");

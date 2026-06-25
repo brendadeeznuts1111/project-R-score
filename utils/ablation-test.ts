@@ -60,7 +60,7 @@ $$
 
 \`\`\`typescript
 function example() {
-  console.log("Hello, TypeScript!");
+  console.info("Hello, TypeScript!");
   return true;
 }
 \`\`\`
@@ -137,8 +137,8 @@ function countRenderedFeatures(html: string): number {
 
 // Main ablation testing function
 async function runAblationTest(): Promise<void> {
-  console.log('🧪 **Ablation Testing v2.8** - Options Performance Impact');
-  console.log('=' .repeat(60));
+  console.info('🧪 **Ablation Testing v2.8** - Options Performance Impact');
+  console.info('=' .repeat(60));
   
   const testDoc = generateTestDoc();
   const baselineSize = testDoc.content.length;
@@ -182,16 +182,16 @@ async function runAblationTest(): Promise<void> {
   const results: AblationResult[] = [];
   let baselineTime = 0;
   
-  console.log(`📊 Test Document: ${baselineSize} chars`);
-  console.log(`📋 Features: ${JSON.stringify(testDoc.features)}`);
-  console.log('');
+  console.info(`📊 Test Document: ${baselineSize} chars`);
+  console.info(`📋 Features: ${JSON.stringify(testDoc.features)}`);
+  console.info('');
   
   // Test each option set
   for (let i = 0; i < optionSets.length; i++) {
     const { name, options, description } = optionSets[i];
     
-    console.log(`🔍 Testing: ${name}`);
-    console.log(`📝 ${description}`);
+    console.info(`🔍 Testing: ${name}`);
+    console.info(`📝 ${description}`);
     
     try {
       // Measure parse time
@@ -229,22 +229,22 @@ async function runAblationTest(): Promise<void> {
         result.speedup = 1.0; // Baseline is 1x
       }
       
-      console.log(`   ⏱️  Parse Time: ${parseTime.toFixed(3)}ms`);
-      console.log(`   🚀 Throughput: ${(throughput / 1000).toFixed(1)}K chars/s`);
-      console.log(`   📊 Features: ${featuresRendered} rendered`);
-      console.log(`   📈 Speedup: ${speedup.toFixed(2)}x`);
-      console.log(`   💾 Memory: ${memoryUsage.toFixed(1)}KB`);
-      console.log('');
+      console.info(`   ⏱️  Parse Time: ${parseTime.toFixed(3)}ms`);
+      console.info(`   🚀 Throughput: ${(throughput / 1000).toFixed(1)}K chars/s`);
+      console.info(`   📊 Features: ${featuresRendered} rendered`);
+      console.info(`   📈 Speedup: ${speedup.toFixed(2)}x`);
+      console.info(`   💾 Memory: ${memoryUsage.toFixed(1)}KB`);
+      console.info('');
       
     } catch (error) {
       console.error(`   ❌ Error: ${error.message}`);
-      console.log('');
+      console.info('');
     }
   }
   
   // Generate comparison table
-  console.log('📈 **Performance Comparison Summary**');
-  console.log('=' .repeat(80));
+  console.info('📈 **Performance Comparison Summary**');
+  console.info('=' .repeat(80));
   
   const tableData = results.map(r => ({
     'Options': Object.keys(r.options).length > 0 ? Object.keys(r.options).join(', ') : 'baseline',
@@ -258,8 +258,8 @@ async function runAblationTest(): Promise<void> {
   console.table(tableData);
   
   // Generate ASCII performance graph
-  console.log('\n📊 **Performance Impact Graph**');
-  console.log('');
+  console.info('\n📊 **Performance Impact Graph**');
+  console.info('');
   
   const maxTime = Math.max(...results.map(r => r.parseTime));
   const graphHeight = 10;
@@ -272,11 +272,11 @@ async function runAblationTest(): Promise<void> {
     }).join(' ');
     
     const label = threshold.toFixed(1).padStart(6);
-    console.log(`${label}ms │${line}`);
+    console.info(`${label}ms │${line}`);
   }
   
-  console.log('        │' + results.map((_, i) => `${i.toString().padEnd(10)}`).join(''));
-  console.log('        │' + results.map(r => r.options.tables ? 'TBL' : '---').join('   '));
+  console.info('        │' + results.map((_, i) => `${i.toString().padEnd(10)}`).join(''));
+  console.info('        │' + results.map(r => r.options.tables ? 'TBL' : '---').join('   '));
   
   // Save results
   const report = {
@@ -294,22 +294,22 @@ async function runAblationTest(): Promise<void> {
   };
   
   await Bun.write('ablation-results.json', JSON.stringify(report, null, 2));
-  console.log(`\n💾 Detailed results saved to: ablation-results.json`);
+  console.info(`\n💾 Detailed results saved to: ablation-results.json`);
   
   // Recommendations
-  console.log('\n💡 **Performance Recommendations**');
+  console.info('\n💡 **Performance Recommendations**');
   const fastest = results.reduce((min, r) => r.parseTime < min.parseTime ? r : min);
   const fullGFM = results.find(r => r.options.tables && r.options.tasklists && r.options.latexMath);
   
   if (fullGFM && fastest) {
     const overhead = ((fullGFM.parseTime - fastest.parseTime) / fastest.parseTime) * 100;
-    console.log(`   • Full GFM adds ${overhead.toFixed(1)}% overhead over baseline`);
-    console.log(`   • Consider conditional GFM based on content needs`);
+    console.info(`   • Full GFM adds ${overhead.toFixed(1)}% overhead over baseline`);
+    console.info(`   • Consider conditional GFM based on content needs`);
   }
   
-  console.log('   • Tables have the highest performance impact');
-  console.log('   • Use LSP-safe mode for large documents');
-  console.log('   • Batch processing recommended for multiple files');
+  console.info('   • Tables have the highest performance impact');
+  console.info('   • Use LSP-safe mode for large documents');
+  console.info('   • Batch processing recommended for multiple files');
 }
 
 // CLI interface
@@ -317,19 +317,19 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Ablation Test v2.8 - Options Performance Impact Analysis');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run ablation-test.ts');
-    console.log('');
-    console.log('Tests performance impact of different Bun.markdown options');
-    console.log('Generates detailed comparison and saves results to ablation-results.json');
+    console.info('Ablation Test v2.8 - Options Performance Impact Analysis');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run ablation-test.ts');
+    console.info('');
+    console.info('Tests performance impact of different Bun.markdown options');
+    console.info('Generates detailed comparison and saves results to ablation-results.json');
     return;
   }
   
   try {
     await runAblationTest();
-    console.log('\n✅ Ablation testing complete!');
+    console.info('\n✅ Ablation testing complete!');
   } catch (error) {
     console.error('❌ Ablation testing failed:', error.message);
     process.exit(1);

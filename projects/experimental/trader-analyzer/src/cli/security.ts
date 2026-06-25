@@ -101,16 +101,16 @@ const severityColors: Record<SeverityLevel, (s: string) => string> = {
 // Output helpers
 function output(data: unknown, ctx: CLIContext): void {
 	if (ctx.format === "json") {
-		console.log(JSON.stringify(data, null, 2));
+		console.info(JSON.stringify(data, null, 2));
 	} else if (typeof data === "string") {
-		console.log(data);
+		console.info(data);
 	} else {
-		console.log(data);
+		console.info(data);
 	}
 }
 
 function printBanner(): void {
-	console.log(
+	console.info(
 		colors.cyan(`
 ╔═══════════════════════════════════════╗
 ║  NEXUS Security Testing Suite         ║
@@ -131,8 +131,8 @@ async function pentestWeb(
 	}
 
 	printBanner();
-	console.log(colors.bold("Web Penetration Test"));
-	console.log(colors.gray(`Target: ${target}\n`));
+	console.info(colors.bold("Web Penetration Test"));
+	console.info(colors.gray(`Target: ${target}\n`));
 
 	const config: PentestConfig = {
 		target,
@@ -149,10 +149,10 @@ async function pentestWeb(
 	const pentester = new WebPentester(config, {
 		onVulnerabilityFound: (vuln) => {
 			const color = severityColors[vuln.severity];
-			console.log(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
+			console.info(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
 			if (ctx.verbose) {
-				console.log(colors.gray(`  URL: ${vuln.url}`));
-				console.log(colors.gray(`  ${vuln.description}`));
+				console.info(colors.gray(`  URL: ${vuln.url}`));
+				console.info(colors.gray(`  ${vuln.description}`));
 			}
 		},
 		onProgress: (p) => {
@@ -166,18 +166,18 @@ async function pentestWeb(
 
 	const result = await pentester.scan();
 
-	console.log("\n");
-	console.log(colors.bold("Results Summary"));
-	console.log("─".repeat(40));
-	console.log(`Critical: ${colors.red(String(result.summary.critical))}`);
-	console.log(`High:     ${colors.red(String(result.summary.high))}`);
-	console.log(`Medium:   ${colors.yellow(String(result.summary.medium))}`);
-	console.log(`Low:      ${colors.cyan(String(result.summary.low))}`);
-	console.log(`Info:     ${colors.gray(String(result.summary.info))}`);
-	console.log("─".repeat(40));
-	console.log(`Total:    ${result.summary.total}`);
-	console.log(`Duration: ${(result.duration / 1000).toFixed(2)}s`);
-	console.log(`Requests: ${result.requestCount}`);
+	console.info("\n");
+	console.info(colors.bold("Results Summary"));
+	console.info("─".repeat(40));
+	console.info(`Critical: ${colors.red(String(result.summary.critical))}`);
+	console.info(`High:     ${colors.red(String(result.summary.high))}`);
+	console.info(`Medium:   ${colors.yellow(String(result.summary.medium))}`);
+	console.info(`Low:      ${colors.cyan(String(result.summary.low))}`);
+	console.info(`Info:     ${colors.gray(String(result.summary.info))}`);
+	console.info("─".repeat(40));
+	console.info(`Total:    ${result.summary.total}`);
+	console.info(`Duration: ${(result.duration / 1000).toFixed(2)}s`);
+	console.info(`Requests: ${result.requestCount}`);
 
 	if (ctx.format === "json") {
 		output(result, ctx);
@@ -195,8 +195,8 @@ async function pentestApi(
 	}
 
 	printBanner();
-	console.log(colors.bold("API Penetration Test"));
-	console.log(colors.gray(`Target: ${target}\n`));
+	console.info(colors.bold("API Penetration Test"));
+	console.info(colors.gray(`Target: ${target}\n`));
 
 	const config: ApiPentestConfig = {
 		target,
@@ -209,11 +209,11 @@ async function pentestApi(
 	const pentester = new ApiPentester(config, {
 		onVulnerabilityFound: (vuln) => {
 			const color = severityColors[vuln.severity];
-			console.log(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
+			console.info(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
 			if (ctx.verbose) {
-				console.log(colors.gray(`  ${vuln.method} ${vuln.url}`));
+				console.info(colors.gray(`  ${vuln.method} ${vuln.url}`));
 				if (vuln.parameter)
-					console.log(colors.gray(`  Parameter: ${vuln.parameter}`));
+					console.info(colors.gray(`  Parameter: ${vuln.parameter}`));
 			}
 		},
 		onProgress: (p) => {
@@ -227,17 +227,17 @@ async function pentestApi(
 
 	const result = await pentester.scan();
 
-	console.log("\n");
-	console.log(colors.bold("Results Summary"));
-	console.log("─".repeat(40));
-	console.log(`Critical: ${colors.red(String(result.summary.critical))}`);
-	console.log(`High:     ${colors.red(String(result.summary.high))}`);
-	console.log(`Medium:   ${colors.yellow(String(result.summary.medium))}`);
-	console.log(`Low:      ${colors.cyan(String(result.summary.low))}`);
-	console.log(`Info:     ${colors.gray(String(result.summary.info))}`);
-	console.log("─".repeat(40));
-	console.log(`Endpoints tested: ${result.coverage.endpointsTested}`);
-	console.log(`Parameters tested: ${result.coverage.parametersTested}`);
+	console.info("\n");
+	console.info(colors.bold("Results Summary"));
+	console.info("─".repeat(40));
+	console.info(`Critical: ${colors.red(String(result.summary.critical))}`);
+	console.info(`High:     ${colors.red(String(result.summary.high))}`);
+	console.info(`Medium:   ${colors.yellow(String(result.summary.medium))}`);
+	console.info(`Low:      ${colors.cyan(String(result.summary.low))}`);
+	console.info(`Info:     ${colors.gray(String(result.summary.info))}`);
+	console.info("─".repeat(40));
+	console.info(`Endpoints tested: ${result.coverage.endpointsTested}`);
+	console.info(`Parameters tested: ${result.coverage.parametersTested}`);
 
 	if (ctx.format === "json") {
 		output(result, ctx);
@@ -255,19 +255,19 @@ async function pentestQuick(
 	}
 
 	printBanner();
-	console.log(colors.bold("Quick Security Scan"));
-	console.log(colors.gray(`Target: ${target}\n`));
+	console.info(colors.bold("Quick Security Scan"));
+	console.info(colors.gray(`Target: ${target}\n`));
 
 	const result = await quickScan(target);
 
 	for (const vuln of result.vulnerabilities) {
 		const color = severityColors[vuln.severity];
-		console.log(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
-		console.log(colors.gray(`  ${vuln.description}`));
+		console.info(color(`[${vuln.severity.toUpperCase()}] ${vuln.title}`));
+		console.info(colors.gray(`  ${vuln.description}`));
 	}
 
-	console.log("\n");
-	console.log(
+	console.info("\n");
+	console.info(
 		`Found ${result.summary.total} issue(s) in ${(result.duration / 1000).toFixed(2)}s`,
 	);
 
@@ -288,8 +288,8 @@ async function headersAnalyze(
 	}
 
 	printBanner();
-	console.log(colors.bold("Security Headers Analysis"));
-	console.log(colors.gray(`URL: ${url}\n`));
+	console.info(colors.bold("Security Headers Analysis"));
+	console.info(colors.gray(`URL: ${url}\n`));
 
 	const analyzer = new HeadersAnalyzer({ url });
 	const report = await analyzer.analyze();
@@ -303,32 +303,32 @@ async function headersAnalyze(
 		F: colors.red,
 	};
 
-	console.log(
+	console.info(
 		`Overall Grade: ${gradeColors[report.overallGrade](report.overallGrade)}`,
 	);
-	console.log(`Score: ${report.score}/100\n`);
+	console.info(`Score: ${report.score}/100\n`);
 
-	console.log(colors.bold("Headers:"));
+	console.info(colors.bold("Headers:"));
 	for (const h of report.headers) {
 		const status = h.present ? colors.green("✓") : colors.red("✗");
 		const grade = gradeColors[h.grade](h.grade);
-		console.log(`  ${status} ${h.header} [${grade}]`);
+		console.info(`  ${status} ${h.header} [${grade}]`);
 		if (h.value && ctx.verbose) {
-			console.log(
+			console.info(
 				colors.gray(
 					`    Value: ${h.value.slice(0, 60)}${h.value.length > 60 ? "..." : ""}`,
 				),
 			);
 		}
 		if (h.recommendation) {
-			console.log(colors.gray(`    ${h.recommendation}`));
+			console.info(colors.gray(`    ${h.recommendation}`));
 		}
 	}
 
 	if (report.missing.length > 0) {
-		console.log(colors.bold("\nMissing Headers:"));
+		console.info(colors.bold("\nMissing Headers:"));
 		for (const h of report.missing) {
-			console.log(colors.red(`  ✗ ${h}`));
+			console.info(colors.red(`  ✗ ${h}`));
 		}
 	}
 
@@ -348,18 +348,18 @@ async function headersOptimize(
 	}
 
 	printBanner();
-	console.log(colors.bold("Security Headers Optimization"));
-	console.log(colors.gray(`URL: ${url}\n`));
+	console.info(colors.bold("Security Headers Optimization"));
+	console.info(colors.gray(`URL: ${url}\n`));
 
 	const analyzer = new HeadersAnalyzer({ url, generateCsp: true });
 	const report = await analyzer.analyze();
 	const optimized = analyzer.getOptimizedHeaders();
 
-	console.log(colors.bold("Recommended Headers:\n"));
+	console.info(colors.bold("Recommended Headers:\n"));
 
 	for (const [header, value] of Object.entries(optimized)) {
-		console.log(colors.cyan(header));
-		console.log(`  ${value}\n`);
+		console.info(colors.cyan(header));
+		console.info(`  ${value}\n`);
 	}
 
 	if (ctx.format === "json") {
@@ -380,8 +380,8 @@ async function headersImpl(
 	}
 
 	printBanner();
-	console.log(colors.bold(`Security Headers Implementation (${platform})`));
-	console.log(colors.gray(`URL: ${url}\n`));
+	console.info(colors.bold(`Security Headers Implementation (${platform})`));
+	console.info(colors.gray(`URL: ${url}\n`));
 
 	const analyzer = new HeadersAnalyzer({ url, generateCsp: true });
 	await analyzer.analyze();
@@ -392,7 +392,7 @@ async function headersImpl(
 		platform as "nginx" | "apache" | "express" | "hono",
 	);
 
-	console.log(code);
+	console.info(code);
 
 	if (ctx.format === "json") {
 		output({ platform, code }, ctx);
@@ -411,8 +411,8 @@ async function sriGenerate(
 	}
 
 	printBanner();
-	console.log(colors.bold("SRI Hash Generation"));
-	console.log(colors.gray(`Pattern: ${files}\n`));
+	console.info(colors.bold("SRI Hash Generation"));
+	console.info(colors.gray(`Pattern: ${files}\n`));
 
 	const config: SRIConfig = {
 		files: files.split(","),
@@ -422,23 +422,23 @@ async function sriGenerate(
 
 	const report = await generateSRI(config);
 
-	console.log(`Generated ${report.entries.length} hash(es)\n`);
+	console.info(`Generated ${report.entries.length} hash(es)\n`);
 
 	for (const entry of report.entries) {
-		console.log(colors.cyan(entry.file));
-		console.log(`  ${entry.integrity}`);
-		console.log(colors.gray(`  Size: ${entry.size} bytes\n`));
+		console.info(colors.cyan(entry.file));
+		console.info(`  ${entry.integrity}`);
+		console.info(colors.gray(`  Size: ${entry.size} bytes\n`));
 	}
 
 	if (report.errors && report.errors.length > 0) {
-		console.log(colors.red("\nErrors:"));
+		console.info(colors.red("\nErrors:"));
 		for (const err of report.errors) {
-			console.log(colors.red(`  ${err}`));
+			console.info(colors.red(`  ${err}`));
 		}
 	}
 
 	if (config.outputFile) {
-		console.log(colors.green(`\nManifest saved to: ${config.outputFile}`));
+		console.info(colors.green(`\nManifest saved to: ${config.outputFile}`));
 	}
 
 	if (ctx.format === "json") {
@@ -453,17 +453,17 @@ async function sriVerify(
 	const manifest = (options.manifest as string) ?? "sri-manifest.json";
 
 	printBanner();
-	console.log(colors.bold("SRI Verification"));
-	console.log(colors.gray(`Manifest: ${manifest}\n`));
+	console.info(colors.bold("SRI Verification"));
+	console.info(colors.gray(`Manifest: ${manifest}\n`));
 
 	const result = await verifySRI(manifest);
 
 	if (result.valid) {
-		console.log(colors.green("✓ All files verified successfully"));
+		console.info(colors.green("✓ All files verified successfully"));
 	} else {
-		console.log(colors.red("✗ Verification failed:\n"));
+		console.info(colors.red("✗ Verification failed:\n"));
 		for (const err of result.errors) {
-			console.log(colors.red(`  ${err}`));
+			console.info(colors.red(`  ${err}`));
 		}
 	}
 
@@ -485,7 +485,7 @@ async function sriEnforce(
 	}
 
 	printBanner();
-	console.log(colors.bold("SRI Enforcement"));
+	console.info(colors.bold("SRI Enforcement"));
 
 	const jsFiles = (options.js as string)?.split(",") ?? ["**/*.js"];
 	const cssFiles = (options.css as string)?.split(",") ?? ["**/*.css"];
@@ -497,12 +497,12 @@ async function sriEnforce(
 		(options.algorithm as SRIConfig["algorithm"]) ?? "sha384",
 	);
 
-	console.log(`\nGenerated ${report.entries.length} hash(es)`);
+	console.info(`\nGenerated ${report.entries.length} hash(es)`);
 
 	if (report.htmlFilesUpdated && report.htmlFilesUpdated.length > 0) {
-		console.log(colors.green(`\nUpdated HTML files:`));
+		console.info(colors.green(`\nUpdated HTML files:`));
 		for (const file of report.htmlFilesUpdated) {
-			console.log(colors.green(`  ✓ ${file}`));
+			console.info(colors.green(`  ✓ ${file}`));
 		}
 	}
 
@@ -527,7 +527,7 @@ async function sriHash(
 	if (ctx.format === "json") {
 		output({ file, integrity: hash, algorithm }, ctx);
 	} else {
-		console.log(hash);
+		console.info(hash);
 	}
 }
 
@@ -537,7 +537,7 @@ async function main(): Promise<void> {
 	const { command, options } = parseArgs(args);
 
 	if (options.help || options.h || command.length === 0) {
-		console.log(HELP);
+		console.info(HELP);
 		process.exit(0);
 	}
 
@@ -606,7 +606,7 @@ async function main(): Promise<void> {
 
 			default:
 				console.error(colors.red(`Unknown command: ${group}`));
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

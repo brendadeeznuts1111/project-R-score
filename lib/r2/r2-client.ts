@@ -21,9 +21,13 @@ function isLocalMode(): boolean {
 /**
  * Upload data to R2 storage
  */
-export async function uploadToR2(key: string, data: any, options: R2UploadOptions = {}): Promise<void> {
+export async function uploadToR2(
+  key: string,
+  data: unknown,
+  options: R2UploadOptions = {}
+): Promise<void> {
   try {
-    console.log(`📤 Uploading to R2: ${key}`);
+    console.info(`📤 Uploading to R2: ${key}`);
 
     // For local development, store in local directory
     if (isLocalMode()) {
@@ -39,7 +43,7 @@ export async function uploadToR2(key: string, data: any, options: R2UploadOption
       // Write file
       await fs.promises.writeFile(localFile, JSON.stringify(data, null, 2));
 
-      console.log(`💾 Stored locally: ${localFile}`);
+      console.info(`💾 Stored locally: ${localFile}`);
       return;
     }
 
@@ -59,8 +63,7 @@ export async function uploadToR2(key: string, data: any, options: R2UploadOption
       throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`);
     }
 
-    console.log(`✅ Successfully uploaded to R2: ${key}`);
-
+    console.info(`✅ Successfully uploaded to R2: ${key}`);
   } catch (error) {
     console.error(`❌ Failed to upload to R2: ${key}`, error);
     throw error;
@@ -72,7 +75,7 @@ export async function uploadToR2(key: string, data: any, options: R2UploadOption
  */
 export async function listR2Objects(prefix: string): Promise<string[]> {
   try {
-    console.log(`📋 Listing R2 objects: ${prefix}`);
+    console.info(`📋 Listing R2 objects: ${prefix}`);
 
     // For local development, list local files
     if (isLocalMode()) {
@@ -109,7 +112,6 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
       keys.push(match[1]);
     }
     return keys;
-
   } catch (error) {
     console.error(`❌ Failed to list R2 objects: ${prefix}`, error);
     return [];
@@ -121,7 +123,7 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
  */
 export async function downloadFromR2(key: string): Promise<any> {
   try {
-    console.log(`📥 Downloading from R2: ${key}`);
+    console.info(`📥 Downloading from R2: ${key}`);
 
     // For local development, read local file
     if (isLocalMode()) {
@@ -150,7 +152,6 @@ export async function downloadFromR2(key: string): Promise<any> {
     }
 
     return response.json();
-
   } catch (error) {
     console.error(`❌ Failed to download from R2: ${key}`, error);
     throw error;

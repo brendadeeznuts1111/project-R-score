@@ -117,7 +117,7 @@ describe("Performance Benchmarks", () => {
             expect(hashResults.every(h => typeof h === 'bigint')).toBe(true);
             expect(duration).toBeLessThan(100); // Should complete 10,000 hashes in under 100ms
 
-            console.log(`🚀 Hashed 10,000 items in ${duration.toFixed(2)}ms`);
+            console.info(`🚀 Hashed 10,000 items in ${duration.toFixed(2)}ms`);
         });
 
         test("hash performance scales linearly", () => {
@@ -137,7 +137,7 @@ describe("Performance Benchmarks", () => {
             // Performance should scale reasonably (not exponentially)
             expect(durations[3]).toBeLessThan(durations[0] * 25); // 20x data should take less than 25x time
 
-            console.log(`📈 Hash scaling: ${sizes.map((size, i) => `${size}: ${durations[i].toFixed(2)}ms`).join(', ')}`);
+            console.info(`📈 Hash scaling: ${sizes.map((size, i) => `${size}: ${durations[i].toFixed(2)}ms`).join(', ')}`);
         });
 
         test("concurrent hashing performance", () => {
@@ -158,7 +158,7 @@ describe("Performance Benchmarks", () => {
                 const duration = endMeasurement();
                 expect(duration).toBeLessThan(200); // Should handle concurrent hashing efficiently
 
-                console.log(`⚡ Concurrent hashing: ${concurrentBatches} batches of ${batchSize} in ${duration.toFixed(2)}ms`);
+                console.info(`⚡ Concurrent hashing: ${concurrentBatches} batches of ${batchSize} in ${duration.toFixed(2)}ms`);
             });
         });
     });
@@ -177,7 +177,7 @@ describe("Performance Benchmarks", () => {
             expect(processedTicks.every(t => t.processed)).toBe(true);
             expect(duration).toBeLessThan(200); // Should process 50k ticks in under 200ms
 
-            console.log(`📊 Processed 50,000 odds ticks in ${duration.toFixed(2)}ms`);
+            console.info(`📊 Processed 50,000 odds ticks in ${duration.toFixed(2)}ms`);
         });
 
         test("real-time data processing under load", () => {
@@ -203,7 +203,7 @@ describe("Performance Benchmarks", () => {
             expect(processedCount).toBe(totalMessages);
             expect(actualRate).toBeGreaterThan(messageRate * 0.8); // Should handle at least 80% of target rate
 
-            console.log(`🔄 Real-time processing: ${actualRate.toFixed(0)} messages/sec (target: ${messageRate})`);
+            console.info(`🔄 Real-time processing: ${actualRate.toFixed(0)} messages/sec (target: ${messageRate})`);
         });
 
         test("memory-efficient processing of large datasets", () => {
@@ -232,7 +232,7 @@ describe("Performance Benchmarks", () => {
             expect(duration).toBeLessThan(500);
             expect(memoryIncrease).toBeLessThan(100 * 1024 * 1024); // Less than 100MB increase
 
-            console.log(`🧠 Memory efficient: ${duration.toFixed(2)}ms, +${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
+            console.info(`🧠 Memory efficient: ${duration.toFixed(2)}ms, +${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
         });
     });
 
@@ -266,7 +266,7 @@ describe("Performance Benchmarks", () => {
             expect(clients[0].messages).toHaveLength(messageCount);
             expect(throughput).toBeGreaterThan(10000); // At least 10k messages/sec
 
-            console.log(`📡 WebSocket broadcast: ${throughput.toFixed(0)} messages/sec`);
+            console.info(`📡 WebSocket broadcast: ${throughput.toFixed(0)} messages/sec`);
         });
 
         test("message serialization performance", () => {
@@ -281,7 +281,7 @@ describe("Performance Benchmarks", () => {
             expect(serializedMessages).toHaveLength(10000);
             expect(duration).toBeLessThan(100); // Should serialize 10k messages in under 100ms
 
-            console.log(`📝 Serialized 10,000 messages in ${duration.toFixed(2)}ms`);
+            console.info(`📝 Serialized 10,000 messages in ${duration.toFixed(2)}ms`);
         });
 
         test("message deserialization performance", () => {
@@ -298,7 +298,7 @@ describe("Performance Benchmarks", () => {
             expect(deserializedMessages).toHaveLength(10000);
             expect(duration).toBeLessThan(150); // Should deserialize 10k messages in under 150ms
 
-            console.log(`📖 Deserialized 10,000 messages in ${duration.toFixed(2)}ms`);
+            console.info(`📖 Deserialized 10,000 messages in ${duration.toFixed(2)}ms`);
         });
     });
 
@@ -325,7 +325,7 @@ describe("Performance Benchmarks", () => {
 
             expect(actualOpsPerSec).toBeGreaterThan(targetOpsPerSec * 0.8); // At least 80% of target
 
-            console.log(`🔥 Sustained load: ${actualOpsPerSec.toFixed(0)} ops/sec (target: ${targetOpsPerSec})`);
+            console.info(`🔥 Sustained load: ${actualOpsPerSec.toFixed(0)} ops/sec (target: ${targetOpsPerSec})`);
         });
 
         test("maintains performance under memory pressure", () => {
@@ -349,7 +349,7 @@ describe("Performance Benchmarks", () => {
 
             expect(duration).toBeLessThan(300); // Should still perform reasonably under pressure
 
-            console.log(`🏋️ Performance under pressure: ${duration.toFixed(2)}ms`);
+            console.info(`🏋️ Performance under pressure: ${duration.toFixed(2)}ms`);
         });
 
         test("concurrent operations performance", () => {
@@ -375,7 +375,7 @@ describe("Performance Benchmarks", () => {
 
                 expect(throughput).toBeGreaterThan(20000); // At least 20k ops/sec concurrent
 
-                console.log(`🚀 Concurrent operations: ${throughput.toFixed(0)} ops/sec`);
+                console.info(`🚀 Concurrent operations: ${throughput.toFixed(0)} ops/sec`);
             });
         });
     });
@@ -414,9 +414,9 @@ describe("Performance Benchmarks", () => {
                 expect(opsPerSec).toBeGreaterThanOrEqual(benchmark.minOpsPerSec);
             }
 
-            console.log(`📊 Benchmark Results:`);
+            console.info(`📊 Benchmark Results:`);
             results.forEach(result => {
-                console.log(`  ${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec ${result.passed ? '✅' : '❌'}`);
+                console.info(`  ${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec ${result.passed ? '✅' : '❌'}`);
             });
         });
 
@@ -447,9 +447,9 @@ describe("Performance Benchmarks", () => {
                 expect(metric.p99).toBeLessThan(metric.max);
             });
 
-            console.log(`📈 Performance Report:`);
+            console.info(`📈 Performance Report:`);
             report.forEach(metric => {
-                console.log(`  ${metric.name}: avg=${metric.average.toFixed(2)}ms, p95=${metric.p95.toFixed(2)}ms, p99=${metric.p99.toFixed(2)}ms`);
+                console.info(`  ${metric.name}: avg=${metric.average.toFixed(2)}ms, p95=${metric.p95.toFixed(2)}ms, p99=${metric.p99.toFixed(2)}ms`);
             });
         });
     });

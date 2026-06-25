@@ -1,6 +1,6 @@
 // Zero import test server
 
-console.log("Starting zero-import server...");
+console.info("Starting zero-import server...");
 const server = Bun.serve({
   port: 5682,
   async fetch(req) {
@@ -21,6 +21,6 @@ const server = Bun.serve({
   development: false,
 });
 
-console.log(`Zero import server running on http://localhost:${server.port}`);
+console.info(`Zero import server running on http://localhost:${server.port}`);
 
 export default server;

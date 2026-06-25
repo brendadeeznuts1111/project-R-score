@@ -108,7 +108,7 @@ export class ConcurrentOperationsManager {
 
     const ordered = results.filter(Boolean);
     if (finalConfig.failFast) {
-      const firstFailure = ordered.findIndex((result) => !result.success);
+      const firstFailure = ordered.findIndex(result => !result.success);
       if (firstFailure >= 0) {
         return ordered.slice(0, firstFailure + 1);
       }
@@ -140,10 +140,10 @@ export class ConcurrentOperationsManager {
       if (readyOperations.length === 0) {
         // Mark operations blocked by failed dependencies as failed.
         const blocked = operations.filter(
-          (op) =>
+          op =>
             !completed.has(op.id) &&
             !failed.has(op.id) &&
-            (op.dependencies?.some((dep) => failed.has(dep)) ?? false)
+            (op.dependencies?.some(dep => failed.has(dep)) ?? false)
         );
         if (blocked.length > 0) {
           for (const op of blocked) {

@@ -65,7 +65,7 @@ async function runModel(opts: {
     );
     const durationMs = Date.now() - started;
     results.push({ durationMs, usage: res.usage });
-    console.log(
+    console.info(
       `${opts.label} run ${i + 1}/${opts.runs}: ${durationMs}ms`,
     );
   }
@@ -104,9 +104,9 @@ async function main(): Promise<void> {
   };
   const opusModel = getModel("anthropic", "claude-opus-4-5");
 
-  console.log(`Prompt: ${prompt}`);
-  console.log(`Runs: ${runs}`);
-  console.log("");
+  console.info(`Prompt: ${prompt}`);
+  console.info(`Runs: ${runs}`);
+  console.info("");
 
   const minimaxResults = await runModel({
     label: "minimax",
@@ -132,10 +132,10 @@ async function main(): Promise<void> {
   };
 
   const summary = [summarize("minimax", minimaxResults), summarize("opus", opusResults)];
-  console.log("");
-  console.log("Summary (ms):");
+  console.info("");
+  console.info("Summary (ms):");
   for (const row of summary) {
-    console.log(
+    console.info(
       `${row.label.padEnd(7)} median=${row.med} min=${row.min} max=${row.max}`,
     );
   }

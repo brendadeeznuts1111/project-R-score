@@ -2,7 +2,7 @@
 /**
  * Smart Search (Optimized Phase 2)
  * Hybrid code search with streaming, concurrent processing, and intelligent caching
- * 
+ *
  * Optimizations:
  * - Streaming result processing (reduces memory by 60-80%)
  * - Generator-based result pipeline
@@ -11,7 +11,11 @@
  * - Schema-based CLI parsing
  */
 
-import { searchSymbolIndex, type SymbolSearchHit, type SymbolSearchKind } from '../lib/docs/smart-symbol-index';
+import {
+  searchSymbolIndex,
+  type SymbolSearchHit,
+  type SymbolSearchKind,
+} from '../lib/docs/smart-symbol-index';
 import {
   buildCanonicalFamilies,
   computePathAuthorityScore,
@@ -132,9 +136,35 @@ const EXCLUDE_GLOBS = [
 ];
 
 const STOP_WORDS = new Set([
-  'a', 'an', 'the', 'and', 'or', 'to', 'for', 'of', 'in', 'on', 'at', 'by',
-  'is', 'are', 'was', 'were', 'be', 'been', 'being', 'with', 'from', 'as',
-  'where', 'how', 'what', 'when', 'why', 'which', 'who',
+  'a',
+  'an',
+  'the',
+  'and',
+  'or',
+  'to',
+  'for',
+  'of',
+  'in',
+  'on',
+  'at',
+  'by',
+  'is',
+  'are',
+  'was',
+  'were',
+  'be',
+  'been',
+  'being',
+  'with',
+  'from',
+  'as',
+  'where',
+  'how',
+  'what',
+  'when',
+  'why',
+  'which',
+  'who',
 ]);
 
 const INTENT_EXPANSIONS: Record<string, string[]> = {
@@ -362,8 +392,10 @@ function parseArgs(argv: string[]): ParsedArgs | null {
   }
 
   // Apply implicit filters
-  if ((options.task === 'delivery' && !scopeExplicitlySet && !queryLooksDocsIntent(query)) ||
-      (strictRequested && !scopeExplicitlySet)) {
+  if (
+    (options.task === 'delivery' && !scopeExplicitlySet && !queryLooksDocsIntent(query)) ||
+    (strictRequested && !scopeExplicitlySet)
+  ) {
     options.scopeFilter = ['code'];
     options.defaultsApplied.implicitScopeCode = true;
   }
@@ -402,8 +434,18 @@ function createDefaultOptions(): SearchOptions {
 
 // Valid enum values
 const SYMBOL_SEARCH_KINDS: SymbolSearchKind[] = [
-  'any', 'function', 'class', 'interface', 'type', 'enum', 
-  'variable', 'import', 'export', 'call', 'callers', 'callees'
+  'any',
+  'function',
+  'class',
+  'interface',
+  'type',
+  'enum',
+  'variable',
+  'import',
+  'export',
+  'call',
+  'callers',
+  'callees',
 ];
 const VIEW_MODES: ViewMode[] = ['clean', 'mixed', 'slop-only', 'all'];
 const TASK_MODES: TaskMode[] = ['default', 'delivery', 'cleanup'];
@@ -419,7 +461,10 @@ const FUSION_SOURCES: FusionSource[] = ['local', 'r2'];
 
 function parsePathList(raw: string | undefined): string[] {
   if (!raw) return [];
-  return raw.split(',').map(p => p.trim()).filter(Boolean);
+  return raw
+    .split(',')
+    .map(p => p.trim())
+    .filter(Boolean);
 }
 
 function parsePositiveInt(raw: string | undefined, defaultValue: number | undefined): number {
@@ -436,15 +481,25 @@ function clamp(val: number, min: number, max: number): number | undefined {
   return Number.isFinite(val) ? Math.max(min, Math.min(max, val)) : undefined;
 }
 
-function parseEnum<T extends string>(raw: string | undefined, allowed: readonly T[], defaultValue: T): T {
+function parseEnum<T extends string>(
+  raw: string | undefined,
+  allowed: readonly T[],
+  defaultValue: T
+): T {
   const val = (raw || '').toLowerCase() as T;
   return allowed.includes(val) ? val : defaultValue;
 }
 
-function parseEnumList<T extends string>(raw: string | undefined, allowed: readonly T[]): T[] | undefined {
+function parseEnumList<T extends string>(
+  raw: string | undefined,
+  allowed: readonly T[]
+): T[] | undefined {
   if (!raw) return undefined;
   const set = new Set(allowed);
-  const values = raw.split(',').map(v => v.trim().toLowerCase()).filter((v): v is T => set.has(v as T));
+  const values = raw
+    .split(',')
+    .map(v => v.trim().toLowerCase())
+    .filter((v): v is T => set.has(v as T));
   return values.length > 0 ? unique(values) : undefined;
 }
 
@@ -453,7 +508,9 @@ function unique<T>(arr: T[]): T[] {
 }
 
 function queryLooksDocsIntent(query: string): boolean {
-  return /\b(docs?|documentation|wiki|readme|guide|template|validator|release|changelog|latest)\b/i.test(query);
+  return /\b(docs?|documentation|wiki|readme|guide|template|validator|release|changelog|latest)\b/i.test(
+    query
+  );
 }
 
 function isCoreSearchInfraPath(path: string): boolean {
@@ -514,11 +571,17 @@ function splitIdentifierPieces(input: string): string[] {
 function detectQueryIntent(plan: QueryPlan): QueryIntent {
   const q = plan.normalized.toLowerCase();
   return {
-    asksForImports: /\b(import|imports|dependency|dependencies|require|from)\b/i.test(plan.normalized),
-    asksForBun: /\b(bun|javascriptcore|jsc|webkit|wrapansi|arm64|apple silicon|windows arm64)\b/.test(q),
-    asksForApi: /\b(api|function|method|constant|global|runtime|header|ansi|wrap|flag|cli)\b/.test(q),
+    asksForImports: /\b(import|imports|dependency|dependencies|require|from)\b/i.test(
+      plan.normalized
+    ),
+    asksForBun:
+      /\b(bun|javascriptcore|jsc|webkit|wrapansi|arm64|apple silicon|windows arm64)\b/.test(q),
+    asksForApi: /\b(api|function|method|constant|global|runtime|header|ansi|wrap|flag|cli)\b/.test(
+      q
+    ),
     asksForRuntime: /\b(runtime|bun|node|jsc|arm64|windows arm64|apple silicon)\b/.test(q),
-    asksForReleaseNotes: /\b(release|changelog|upgrade|bug fix|bugfix|performance improvements?|latest)\b/.test(q),
+    asksForReleaseNotes:
+      /\b(release|changelog|upgrade|bug fix|bugfix|performance improvements?|latest)\b/.test(q),
     asksForDocs: /\b(docs?|documentation|wiki|readme|guide|template)\b/.test(q),
   };
 }
@@ -536,7 +599,7 @@ function applyFeaturePoliciesToPlan(plan: QueryPlan, policies: SearchPolicies): 
 
   for (const [featureId, feature] of Object.entries(policies.bunFeatureMap || {})) {
     if (!featurePolicyMatches(q, feature)) continue;
-    
+
     if (feature.aliases?.length) {
       aliasHints.push(`${featureId}: ${feature.aliases[0]}`);
       terms.push(...feature.aliases);
@@ -567,17 +630,23 @@ type RgEvent = {
 };
 
 async function* streamRipgrep(
-  pattern: string, 
-  roots: string[], 
+  pattern: string,
+  roots: string[],
   options: SearchOptions
 ): AsyncGenerator<SearchHit> {
   const args = ['rg'];
   if (!options.caseSensitive) args.push('-i');
-  args.push('-F', '--json', '--line-number', '--max-count', String(Math.max(25, options.limit * 3)));
-  
+  args.push(
+    '-F',
+    '--json',
+    '--line-number',
+    '--max-count',
+    String(Math.max(25, options.limit * 3))
+  );
+
   for (const glob of SOURCE_GLOBS) args.push('--glob', glob);
   for (const glob of EXCLUDE_GLOBS) args.push('--glob', glob);
-  
+
   args.push(pattern, ...roots);
 
   const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'ignore' });
@@ -620,8 +689,8 @@ async function* streamRipgrep(
 }
 
 function classifyHit(line: string): 'definition' | 'usage' {
-  return /\b(export\s+)?(async\s+)?(function|class|interface|type|enum|const|let)\b/.test(line) 
-    ? 'definition' 
+  return /\b(export\s+)?(async\s+)?(function|class|interface|type|enum|const|let)\b/.test(line)
+    ? 'definition'
     : 'usage';
 }
 
@@ -633,7 +702,12 @@ function tokenize(input: string): string[] {
   return splitIdentifierPieces(input);
 }
 
-function scoreHit(hit: SearchHit, plan: QueryPlan, policies: SearchPolicies, intent: QueryIntent): SearchHit {
+function scoreHit(
+  hit: SearchHit,
+  plan: QueryPlan,
+  policies: SearchPolicies,
+  intent: QueryIntent
+): SearchHit {
   const textLower = hit.text.toLowerCase();
   const fileLower = hit.file.toLowerCase();
   const queryLower = plan.normalized.toLowerCase();
@@ -694,17 +768,33 @@ function scoreHit(hit: SearchHit, plan: QueryPlan, policies: SearchPolicies, int
     reasons.push('api artifact boost');
   }
 
-  if (!intent.asksForReleaseNotes && (fileLower.includes('/docs/') || fileLower.endsWith('.md')) && !isCoreSearchInfraPath(fileLower)) {
+  if (
+    !intent.asksForReleaseNotes &&
+    (fileLower.includes('/docs/') || fileLower.endsWith('.md')) &&
+    !isCoreSearchInfraPath(fileLower)
+  ) {
     score -= boosts.nonReleaseDocsPenalty || 0;
     reasons.push('non-release docs penalty');
   }
 
   for (const feature of Object.values(policies.bunFeatureMap || {})) {
     if (!featurePolicyMatches(queryLower, feature)) continue;
-    if (feature.runtimeHint === runtimeTag) { score += 6; reasons.push(`feature runtime hint (${feature.runtimeHint})`); }
-    if (feature.artifactHint === artifactTag) { score += 4; reasons.push(`feature artifact hint (${feature.artifactHint})`); }
-    if (feature.pathBoostContains?.some(n => fileLower.includes(n.toLowerCase()))) { score += 5; reasons.push('feature path boost'); }
-    if (feature.lineBoostContains?.some(n => textLower.includes(n.toLowerCase()))) { score += 5; reasons.push('feature line boost'); }
+    if (feature.runtimeHint === runtimeTag) {
+      score += 6;
+      reasons.push(`feature runtime hint (${feature.runtimeHint})`);
+    }
+    if (feature.artifactHint === artifactTag) {
+      score += 4;
+      reasons.push(`feature artifact hint (${feature.artifactHint})`);
+    }
+    if (feature.pathBoostContains?.some(n => fileLower.includes(n.toLowerCase()))) {
+      score += 5;
+      reasons.push('feature path boost');
+    }
+    if (feature.lineBoostContains?.some(n => textLower.includes(n.toLowerCase()))) {
+      score += 5;
+      reasons.push('feature line boost');
+    }
   }
 
   if (fileLower.includes('/scripts/search-smart.ts')) {
@@ -726,11 +816,17 @@ function classifyRuntimeTag(hit: SearchHit): RuntimeTag {
 function classifyArtifactTag(hit: SearchHit): ArtifactTag {
   const file = hit.file.toLowerCase();
   const line = hit.text.toLowerCase();
-  if (file.includes('/api/') || /\b(fetch|request|response|endpoint|router|route|serve)\b/.test(line)) return 'api';
-  if (/\b(const|enum|readonly|constant)\b/.test(line) || file.includes('constant')) return 'constant';
+  if (
+    file.includes('/api/') ||
+    /\b(fetch|request|response|endpoint|router|route|serve)\b/.test(line)
+  )
+    return 'api';
+  if (/\b(const|enum|readonly|constant)\b/.test(line) || file.includes('constant'))
+    return 'constant';
   if (/\b(global|window|process\.env|bun\.env|globalthis)\b/.test(line)) return 'global';
   if (/\b(interface|type|declare)\b/.test(line) || file.endsWith('.d.ts')) return 'type';
-  if (file.includes('/example') || file.includes('/examples/') || /\bexample\b/.test(line)) return 'example';
+  if (file.includes('/example') || file.includes('/examples/') || /\bexample\b/.test(line))
+    return 'example';
   if (file.includes('/cli/') || /\bcommand|argv|option\b/.test(line)) return 'cli';
   return 'api';
 }
@@ -739,18 +835,31 @@ function classifyArtifactTag(hit: SearchHit): ArtifactTag {
 // Quality Model & Filtering
 // ============================================================================
 
-function qualityForHit(hit: SearchHit, policies: SearchPolicies): { tag: QualityTag; score: number; reason: string } {
+function qualityForHit(
+  hit: SearchHit,
+  policies: SearchPolicies
+): { tag: QualityTag; score: number; reason: string } {
   const file = hit.file.toLowerCase();
   const text = hit.text.toLowerCase();
   const longLine = hit.text.length > 240;
   const escapedBlob = text.includes('\\n') && hit.text.length > 120;
 
-  if (file.includes('/node_modules/') || file.includes('/dist/') || file.includes('/build/') || 
-      file.endsWith('.min.js') || file.endsWith('.bundle.js')) {
+  if (
+    file.includes('/node_modules/') ||
+    file.includes('/dist/') ||
+    file.includes('/build/') ||
+    file.endsWith('.min.js') ||
+    file.endsWith('.bundle.js')
+  ) {
     return { tag: 'compiled', score: 0.15, reason: 'compiled-path penalty' };
   }
 
-  if (file.endsWith('.d.ts') || text.includes('sourcemappingurl=') || text.includes('generated by') || text.includes('do not edit')) {
+  if (
+    file.endsWith('.d.ts') ||
+    text.includes('sourcemappingurl=') ||
+    text.includes('generated by') ||
+    text.includes('do not edit')
+  ) {
     return { tag: 'generated', score: 0.3, reason: 'generated-file penalty' };
   }
 
@@ -769,9 +878,9 @@ function qualityForHit(hit: SearchHit, policies: SearchPolicies): { tag: Quality
 }
 
 function applyQualityModel(
-  hit: SearchHit, 
-  options: SearchOptions, 
-  policies: SearchPolicies, 
+  hit: SearchHit,
+  options: SearchOptions,
+  policies: SearchPolicies,
   intent: QueryIntent
 ): SearchHit {
   const quality = qualityForHit(hit, policies);
@@ -826,15 +935,18 @@ function classifyScopeTag(hit: SearchHit): ScopeTag {
   const file = hit.file.toLowerCase();
   if (isCoreSearchInfraPath(file)) return 'code';
   if (/(^|\/)(test|tests)\//i.test(file) || /\.(test|spec)\.[a-z]+$/i.test(file)) return 'tests';
-  if (file.endsWith('.d.ts') || file.includes('/dist/') || file.includes('/build/')) return 'generated';
+  if (file.endsWith('.d.ts') || file.includes('/dist/') || file.includes('/build/'))
+    return 'generated';
   if (file.includes('/docs/') || file.endsWith('.md')) return 'docs';
   return 'code';
 }
 
 function passesTaxonomyFilters(hit: SearchHit, options: SearchOptions): boolean {
   if (options.scopeFilter?.length && !options.scopeFilter.includes(hit.scopeTag!)) return false;
-  if (options.artifactFilter?.length && !options.artifactFilter.includes(hit.artifactTag!)) return false;
-  if (options.runtimeFilter?.length && !options.runtimeFilter.includes(hit.runtimeTag!)) return false;
+  if (options.artifactFilter?.length && !options.artifactFilter.includes(hit.artifactTag!))
+    return false;
+  if (options.runtimeFilter?.length && !options.runtimeFilter.includes(hit.runtimeTag!))
+    return false;
   return true;
 }
 
@@ -843,7 +955,11 @@ function passesTaxonomyFilters(hit: SearchHit, options: SearchOptions): boolean 
 // ============================================================================
 
 function fingerprintHit(hit: SearchHit): string {
-  const normalized = hit.text.toLowerCase().replace(/\s+/g, ' ').replace(/[0-9]+/g, '#').trim();
+  const normalized = hit.text
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[0-9]+/g, '#')
+    .trim();
   const symbol = hit.symbolKind || hit.kind;
   return `${symbol}:${normalized}`;
 }
@@ -879,7 +995,10 @@ function collapseDuplicateClusters(hits: SearchHit[], overlapMode: OverlapMode):
         canonical.duplicateCount = duplicates;
         canonical.qualityTag = canonical.qualityTag === 'core' ? 'duplicate' : canonical.qualityTag;
       }
-      canonical.reason = [...canonical.reason, `collapsed ${duplicates} similar matches (${overlapMode})`];
+      canonical.reason = [
+        ...canonical.reason,
+        `collapsed ${duplicates} similar matches (${overlapMode})`,
+      ];
     }
     collapsed.push(canonical);
   }
@@ -915,8 +1034,9 @@ async function processHitsWithFamilies(
     };
   });
 
-  return collapseDuplicateClusters(withFamilies, options.overlapMode)
-    .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
+  return collapseDuplicateClusters(withFamilies, options.overlapMode).sort(
+    (a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line
+  );
 }
 
 function applyFamilyCap(hits: SearchHit[], familyCap: number): SearchHit[] {
@@ -938,7 +1058,11 @@ function classifyGroup(hit: SearchHit): 'Definitions' | 'Callers' | 'Imports' | 
   const file = hit.file.toLowerCase();
   if (/(^|\/)(test|tests)\//i.test(file) || /\.(test|spec)\.[a-z]+$/i.test(file)) return 'Tests';
   if (hit.symbolKind === 'import' || /^\s*import\s/.test(hit.text)) return 'Imports';
-  if (hit.symbolKind === 'call' || hit.reason.some(r => r.includes('call edge') || r.includes('graph proximity'))) return 'Callers';
+  if (
+    hit.symbolKind === 'call' ||
+    hit.reason.some(r => r.includes('call edge') || r.includes('graph proximity'))
+  )
+    return 'Callers';
   if (hit.kind === 'definition') return 'Definitions';
   return 'Other';
 }
@@ -953,7 +1077,7 @@ function sortFinalAssemblyHits(hits: SearchHit[], policies: SearchPolicies): Sea
     const bGroup = classifyGroup(b);
     const aWeight = policies.familyGroupWeights[aGroup] ?? 1;
     const bWeight = policies.familyGroupWeights[bGroup] ?? 1;
-    const weightedDiff = (b.score * bWeight) - (a.score * aWeight);
+    const weightedDiff = b.score * bWeight - a.score * aWeight;
     if (weightedDiff !== 0) return weightedDiff;
 
     return a.file.localeCompare(b.file) || a.line - b.line;
@@ -962,7 +1086,11 @@ function sortFinalAssemblyHits(hits: SearchHit[], policies: SearchPolicies): Sea
 
 function applyGroupDiversity(hits: SearchHit[], limit: number, groupLimit: number): SearchHit[] {
   const buckets: Record<ReturnType<typeof classifyGroup>, SearchHit[]> = {
-    Definitions: [], Callers: [], Imports: [], Tests: [], Other: [],
+    Definitions: [],
+    Callers: [],
+    Imports: [],
+    Tests: [],
+    Other: [],
   };
   for (const hit of hits) buckets[classifyGroup(hit)].push(hit);
 
@@ -1021,7 +1149,8 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   const policies = await loadSearchPolicies(options.rootDir);
   const enrichedPlan = applyFeaturePoliciesToPlan(plan, policies);
   const intent = detectQueryIntent(enrichedPlan);
-  const familyCap = options.familyCap && options.familyCap > 0 ? options.familyCap : policies.familyCap;
+  const familyCap =
+    options.familyCap && options.familyCap > 0 ? options.familyCap : policies.familyCap;
   const termBudget = options.task === 'delivery' ? 8 : 10;
   const retrievalConcurrency = options.task === 'delivery' ? 3 : 4;
 
@@ -1030,14 +1159,12 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
     .slice(0, termBudget);
 
   // Concurrent term search with controlled concurrency
-  const searchResults = await mapWithConcurrency(
-    candidateTerms,
-    retrievalConcurrency,
-    term => searchTerm(term, plan.roots, options)
+  const searchResults = await mapWithConcurrency(candidateTerms, retrievalConcurrency, term =>
+    searchTerm(term, plan.roots, options)
   );
 
   const retrieved = searchResults.flat();
-  
+
   // Score hits
   const rescored = retrieved.map(hit => scoreHit(hit, enrichedPlan, policies, intent));
 
@@ -1069,9 +1196,10 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   const familyCapped = applyFamilyCap(withFamilies, familyCap);
   const assembled = sortFinalAssemblyHits(familyCapped, policies);
 
-  const results = options.groupLimit && options.groupLimit > 0
-    ? applyGroupDiversity(assembled, options.limit, options.groupLimit)
-    : assembled.slice(0, options.limit);
+  const results =
+    options.groupLimit && options.groupLimit > 0
+      ? applyGroupDiversity(assembled, options.limit, options.groupLimit)
+      : assembled.slice(0, options.limit);
 
   // Cache results
   if (options.cacheEnabled) {
@@ -1082,7 +1210,11 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   return results;
 }
 
-async function searchTerm(term: string, roots: string[], options: SearchOptions): Promise<SearchHit[]> {
+async function searchTerm(
+  term: string,
+  roots: string[],
+  options: SearchOptions
+): Promise<SearchHit[]> {
   const hits: SearchHit[] = [];
   for await (const hit of streamRipgrep(term, roots, options)) {
     hits.push(hit);
@@ -1101,7 +1233,7 @@ async function mapWithConcurrency<T, R>(
   mapper: (item: T, index: number) => Promise<R>
 ): Promise<R[]> {
   if (items.length === 0) return [];
-  
+
   const results: R[] = new Array(items.length);
   const executing: Promise<void>[] = [];
   let index = 0;
@@ -1131,7 +1263,7 @@ async function mapWithConcurrency<T, R>(
 // ============================================================================
 
 function printUsage(): void {
-  console.log(`
+  console.info(`
 Smart Search (Optimized Phase 2)
 
 USAGE:
@@ -1178,49 +1310,66 @@ function printTable(
   hits: SearchHit[],
   elapsedMs: number,
   options: SearchOptions,
-  fusion?: { summary: DomainHealthSummary; readiness: ReturnType<typeof evaluateReadiness>; error?: string }
-): void {
-  console.log(`Smart Search: "${plan.raw}"`);
-  console.log(`Roots: ${plan.roots.join(', ')}`);
-  console.log(`View/Task: ${options.view}/${options.task}`);
-  if (options.kind !== 'any') console.log(`Mode: kind=${options.kind}${options.targetSymbol ? ` of=${options.targetSymbol}` : ''}`);
-  if (options.groupLimit) console.log(`Group limit: ${options.groupLimit}`);
-  if (options.familyCap) console.log(`Family cap: ${options.familyCap}`);
-  console.log(`Cache: ${options.cacheEnabled ? 'enabled' : 'disabled'}`);
-  if (fusion) {
-    console.log(`Fusion: domain=${fusion.summary.domain} readiness=${fusion.readiness.status}`);
+  fusion?: {
+    summary: DomainHealthSummary;
+    readiness: ReturnType<typeof evaluateReadiness>;
+    error?: string;
   }
-  console.log(`Terms: ${plan.terms.slice(0, 10).join(', ')}${plan.terms.length > 10 ? '...' : ''}`);
-  console.log('');
+): void {
+  console.info(`Smart Search: "${plan.raw}"`);
+  console.info(`Roots: ${plan.roots.join(', ')}`);
+  console.info(`View/Task: ${options.view}/${options.task}`);
+  if (options.kind !== 'any')
+    console.info(
+      `Mode: kind=${options.kind}${options.targetSymbol ? ` of=${options.targetSymbol}` : ''}`
+    );
+  if (options.groupLimit) console.info(`Group limit: ${options.groupLimit}`);
+  if (options.familyCap) console.info(`Family cap: ${options.familyCap}`);
+  console.info(`Cache: ${options.cacheEnabled ? 'enabled' : 'disabled'}`);
+  if (fusion) {
+    console.info(`Fusion: domain=${fusion.summary.domain} readiness=${fusion.readiness.status}`);
+  }
+  console.info(
+    `Terms: ${plan.terms.slice(0, 10).join(', ')}${plan.terms.length > 10 ? '...' : ''}`
+  );
+  console.info('');
 
   if (hits.length === 0) {
-    console.log('No matches found.');
-    console.log(`Completed in ${elapsedMs.toFixed(2)}ms`);
+    console.info('No matches found.');
+    console.info(`Completed in ${elapsedMs.toFixed(2)}ms`);
     return;
   }
 
   const groups: Record<ReturnType<typeof classifyGroup>, SearchHit[]> = {
-    Definitions: [], Callers: [], Imports: [], Tests: [], Other: [],
+    Definitions: [],
+    Callers: [],
+    Imports: [],
+    Tests: [],
+    Other: [],
   };
   for (const hit of hits) groups[classifyGroup(hit)].push(hit);
 
   for (const [title, groupHits] of Object.entries(groups)) {
     if (groupHits.length === 0) continue;
-    console.log(`${title}:`);
+    console.info(`${title}:`);
     for (let i = 0; i < groupHits.length; i++) {
       const hit = groupHits[i];
       const relPath = hit.file.replace(/^\.\//, '');
       const snippet = hit.text.length > 180 ? `${hit.text.slice(0, 177)}...` : hit.text;
-      const quality = hit.qualityTag ? ` quality=${hit.qualityTag}:${(hit.qualityScore || 0).toFixed(2)}` : '';
+      const quality = hit.qualityTag
+        ? ` quality=${hit.qualityTag}:${(hit.qualityScore || 0).toFixed(2)}`
+        : '';
       const dup = hit.duplicateCount ? ` +${hit.duplicateCount} similar` : '';
       const mirrors = options.showMirrors && hit.mirrorCount ? ` +${hit.mirrorCount} mirrors` : '';
-      console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}`);
-      console.log(`   ${snippet}`);
+      console.info(
+        `${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}`
+      );
+      console.info(`   ${snippet}`);
     }
-    console.log('');
+    console.info('');
   }
 
-  console.log(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
+  console.info(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
 }
 
 function readinessToStatusLevel(value: string | undefined): StatusLevel {
@@ -1249,7 +1398,13 @@ async function main(): Promise<void> {
   const elapsedMs = performance.now() - start;
 
   // Domain fusion
-  let fusionReport: { summary: DomainHealthSummary; readiness: ReturnType<typeof evaluateReadiness>; error?: string } | undefined;
+  let fusionReport:
+    | {
+        summary: DomainHealthSummary;
+        readiness: ReturnType<typeof evaluateReadiness>;
+        error?: string;
+      }
+    | undefined;
   if (options.fusionEnabled) {
     try {
       const summary = await loadDomainHealthSummary({
@@ -1312,17 +1467,19 @@ async function main(): Promise<void> {
       },
       cache: { enabled: options.cacheEnabled, size: globalSearchCache.size },
       hits,
-      fusion: options.fusionEnabled ? {
-        enabled: true,
-        domain: options.fusionDomain,
-        source: options.fusionSource,
-        weight: Number(options.fusionWeight.toFixed(4)),
-        summary: fusionReport?.summary || null,
-        readiness: fusionReport?.readiness || null,
-        error: fusionReport?.error || null,
-      } : { enabled: false },
+      fusion: options.fusionEnabled
+        ? {
+            enabled: true,
+            domain: options.fusionDomain,
+            source: options.fusionSource,
+            weight: Number(options.fusionWeight.toFixed(4)),
+            summary: fusionReport?.summary || null,
+            readiness: fusionReport?.readiness || null,
+            error: fusionReport?.error || null,
+          }
+        : { enabled: false },
     };
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
 
     if (options.fusionFailOnCritical) {
       const status = computeOverallStatus([readinessToStatusLevel(fusionReport?.readiness.status)]);
@@ -1331,7 +1488,7 @@ async function main(): Promise<void> {
   } else {
     printTable(plan, hits, elapsedMs, options, fusionReport);
     if (options.explainPolicy) {
-      console.log('\nPolicy:', {
+      console.info('\nPolicy:', {
         strictPreset: options.defaultsApplied.strictPreset,
         implicitScopeCode: options.defaultsApplied.implicitScopeCode,
         familyCap: options.familyCap ?? policies.familyCap,

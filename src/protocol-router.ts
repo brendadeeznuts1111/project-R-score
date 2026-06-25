@@ -120,7 +120,7 @@ async function main() {
 
   const results = await Promise.all(targets.map((url) => router.route(url, { dryRun: true })));
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         runtime: router.describeRuntime(),

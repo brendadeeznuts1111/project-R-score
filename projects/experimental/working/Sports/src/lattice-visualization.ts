@@ -394,7 +394,7 @@ export class WebGLLatticeRenderer {
     
     // Basic WebGL setup would go here
     // For brevity, this is a placeholder for advanced rendering
-    console.log("WebGL renderer initialized for high-performance lattice visualization");
+    console.info("WebGL renderer initialized for high-performance lattice visualization");
   }
 
   /**
@@ -414,7 +414,7 @@ export class WebGLLatticeRenderer {
     // 3. Using instanced rendering for performance
     // 4. Implementing particle effects for high-intensity nodes
     
-    console.log(`WebGL: Rendering ${nodes.length} nodes`);
+    console.info(`WebGL: Rendering ${nodes.length} nodes`);
   }
 }
 

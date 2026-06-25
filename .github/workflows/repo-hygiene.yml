@@ -11,6 +11,9 @@ on:
 jobs:
   hygiene:
     runs-on: ubuntu-latest
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +24,13 @@ jobs:
           bun-version: latest
 
       - name: Install
-        run: bun install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts ci
+
+      - name: Verify install cache
+        run: bun run install:verify:strict
+
+      - name: Cache lifecycle dry-run
+        run: bun run install:cache:lifecycle
 
       - name: Run Repo Hygiene
         run: bun run hygiene

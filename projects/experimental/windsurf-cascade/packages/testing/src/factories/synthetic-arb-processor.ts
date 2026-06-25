@@ -69,7 +69,7 @@ export class SyntheticArbProcessor {
 
                 // Check daily P&L limits first
                 if (!this.pnlTracker.isWithinLimits()) {
-                    console.log(`Daily P&L limit breached: ${this.pnlTracker.getTripReason()}`);
+                    console.info(`Daily P&L limit breached: ${this.pnlTracker.getTripReason()}`);
                     circuitBreaker.trip([this.pnlTracker.getTripReason()]);
                     this.metrics.dailyLossBreaches++;
                     continue;
@@ -153,11 +153,11 @@ export class SyntheticArbProcessor {
                 undefined,
                 {
                     recordTrip: (cb, reasons) => {
-                        console.log(`Circuit breaker tripped for ${relationshipKey}:`, reasons);
+                        console.info(`Circuit breaker tripped for ${relationshipKey}:`, reasons);
                         this.metrics.circuitBreakerTrips++;
                     },
                     sendAlert: (type, key) => {
-                        console.log(`ALERT: ${type} for ${key}`);
+                        console.info(`ALERT: ${type} for ${key}`);
                     }
                 }
             );
@@ -168,7 +168,7 @@ export class SyntheticArbProcessor {
     }
 
     private handleAdverseMove(opportunityId: string, event: any): void {
-        console.log(`Adverse move detected for ${opportunityId}:`, event);
+        console.info(`Adverse move detected for ${opportunityId}:`, event);
         this.metrics.adverseMoveTrips++;
 
         // Trip the relevant circuit breaker
@@ -185,7 +185,7 @@ export class SyntheticArbProcessor {
 
         // Check if settlement causes daily limit breach
         if (!this.pnlTracker.isWithinLimits()) {
-            console.log(`Daily P&L limit breached after settlement: ${this.pnlTracker.getTripReason()}`);
+            console.info(`Daily P&L limit breached after settlement: ${this.pnlTracker.getTripReason()}`);
 
             // Trip all circuit breakers
             for (const cb of this.circuitBreakers.values()) {
@@ -203,7 +203,7 @@ export class SyntheticArbProcessor {
                 lastTripTime: 0,
                 consecutiveFailures: 0
             };
-            console.log(`Circuit breaker manually reset for ${relationshipKey}`);
+            console.info(`Circuit breaker manually reset for ${relationshipKey}`);
             return true;
         }
         return false;

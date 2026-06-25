@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "build": "bun --bun vite build",
-    "start": "bun run server.ts"
-  }
-}

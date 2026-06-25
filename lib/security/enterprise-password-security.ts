@@ -3,7 +3,7 @@
 import { styled, log } from '../theme/colors';
 
 import { Utils } from '../utils/index';
-import Tier1380SecretManager from './tier1380-secret-manager';
+import appSecretManager from './app-secrets';
 
 interface PasswordPolicy {
   minLength: number;
@@ -237,7 +237,7 @@ export class Tier1380PasswordSecurity {
 
     // Store in Windows Credential Manager (CRED_PERSIST_ENTERPRISE)
     // or other platform secure storage
-    await Tier1380SecretManager.setSecret(key, hashData, {
+    await appSecretManager.setSecret(key, hashData, {
       persistEnterprise: true,
     });
 
@@ -250,7 +250,7 @@ export class Tier1380PasswordSecurity {
    */
   private static async addToPasswordHistory(userId: string, hash: PasswordHash): Promise<void> {
     const historyKey = `TIER1380_PASSWORD_HISTORY_${userId}`;
-    const currentHistory = await Tier1380SecretManager.getSecret(historyKey);
+    const currentHistory = await appSecretManager.getSecret(historyKey);
 
     let history: PasswordHash[] = [];
     if (currentHistory) {
@@ -270,7 +270,7 @@ export class Tier1380PasswordSecurity {
     }
 
     // Store updated history
-    await Tier1380SecretManager.setSecret(historyKey, JSON.stringify(history), {
+    await appSecretManager.setSecret(historyKey, JSON.stringify(history), {
       persistEnterprise: true,
     });
   }
@@ -280,7 +280,7 @@ export class Tier1380PasswordSecurity {
    */
   static async isPasswordInHistory(password: string, userId: string): Promise<boolean> {
     const historyKey = `TIER1380_PASSWORD_HISTORY_${userId}`;
-    const historyData = await Tier1380SecretManager.getSecret(historyKey);
+    const historyData = await appSecretManager.getSecret(historyKey);
 
     if (!historyData) return false;
 
@@ -555,11 +555,11 @@ export class Tier1380PasswordAudit {
   }
 }
 
-// Helper method to retrieve password hash (implementation from Tier1380SecretManager)
+// Helper method to retrieve password hash (implementation from appSecretManager)
 namespace Tier1380PasswordSecurity {
   export async function retrievePasswordHash(userId: string): Promise<PasswordHash | null> {
     const key = `TIER1380_PASSWORD_${userId}`;
-    const hashData = await Tier1380SecretManager.getSecret(key);
+    const hashData = await appSecretManager.getSecret(key);
 
     if (!hashData) return null;
 
@@ -590,10 +590,10 @@ async function main() {
 
       try {
         const hash = await Tier1380PasswordSecurity.hashPassword(password, { algorithm });
-        console.log('✅ Password hashed successfully:');
-        console.log(`   Algorithm: ${hash.algorithm}`);
-        console.log(`   Hash: ${hash.hash.substring(0, 50)}...`);
-        console.log(`   Created: ${hash.createdAt.toISOString()}`);
+        console.info('✅ Password hashed successfully:');
+        console.info(`   Algorithm: ${hash.algorithm}`);
+        console.info(`   Hash: ${hash.hash.substring(0, 50)}...`);
+        console.info(`   Created: ${hash.createdAt.toISOString()}`);
       } catch (error) {
         if (error instanceof PasswordPolicyError) {
           console.error('❌ Password policy violations:');
@@ -614,29 +614,29 @@ async function main() {
       }
 
       const result = await Tier1380PasswordSecurity.verifyPassword(verifyPassword, userId);
-      console.log('🔍 Password verification:');
-      console.log(`   Valid: ${result.valid ? '✅' : '❌'}`);
-      console.log(`   Score: ${result.score}/100`);
+      console.info('🔍 Password verification:');
+      console.info(`   Valid: ${result.valid ? '✅' : '❌'}`);
+      console.info(`   Score: ${result.score}/100`);
       if (result.needsRehash) {
-        console.log(`   ⚠️  Password needs rehashing (algorithm outdated)`);
+        console.info(`   ⚠️  Password needs rehashing (algorithm outdated)`);
       }
       break;
 
     case 'audit':
       const auditUserId = args[1];
       const report = await Tier1380PasswordAudit.generateReport(auditUserId);
-      console.log('📊 Password Security Audit Report');
-      console.log(`   Generated: ${report.timestamp.toISOString()}`);
-      console.log(`   Expired passwords: ${report.expiredPasswords}`);
-      console.log(`   Weak passwords: ${report.weakPasswords}`);
+      console.info('📊 Password Security Audit Report');
+      console.info(`   Generated: ${report.timestamp.toISOString()}`);
+      console.info(`   Expired passwords: ${report.expiredPasswords}`);
+      console.info(`   Weak passwords: ${report.weakPasswords}`);
       if (report.recommendations.length > 0) {
-        console.log('   Recommendations:');
-        report.recommendations.forEach(rec => console.log(`     • ${rec}`));
+        console.info('   Recommendations:');
+        report.recommendations.forEach(rec => console.info(`     • ${rec}`));
       }
       break;
 
     default:
-      console.log(`
+      console.info(`
 Tier-1380 Enterprise Password Security v4.5
 =======================================
 Commands:

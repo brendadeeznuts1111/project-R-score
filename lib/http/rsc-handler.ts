@@ -51,11 +51,11 @@ export class SmartRSCHandler {
 
       mux.disconnect();
       this.http2Available = true;
-      console.log('✅ HTTP/2 available for RSC requests');
+      console.info('✅ HTTP/2 available for RSC requests');
       return true;
     } catch (error) {
       this.http2Available = false;
-      console.log('⚠️ HTTP/2 not available, using HTTP/1.1 fallback');
+      console.info('⚠️ HTTP/2 not available, using HTTP/1.1 fallback');
       return false;
     }
   }
@@ -229,10 +229,10 @@ export class SmartRSCHandler {
 
       const results = await Promise.all(streamPromises);
 
-      console.log(
+      console.info(
         `📊 HTTP/2 Batch: ${results.filter(r => !('error' in r)).length}/${requests.length} successful`
       );
-      console.log(`🔗 HTTP/2 Stats:`, mux.getStats());
+      console.info(`🔗 HTTP/2 Stats:`, mux.getStats());
 
       return results;
     } finally {

@@ -4,7 +4,7 @@
 import { enhancedSecurityManager } from '../lib/security/enhanced-security-manager';
 
 async function testIpBasedRateLimiting(): Promise<boolean> {
-  console.log('🧪 Testing IP-based Rate Limiting...');
+  console.info('🧪 Testing IP-based Rate Limiting...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -15,10 +15,10 @@ async function testIpBasedRateLimiting(): Promise<boolean> {
     // Test normal operation with IP tracking
     try {
       await manager.getSecret('test-service', 'test-key', { ip: testIp, userAgent });
-      console.log('✅ IP-based rate limiting: Normal operation allowed');
+      console.info('✅ IP-based rate limiting: Normal operation allowed');
     } catch (error) {
       if (!error.message.includes('Rate limit exceeded')) {
-        console.log('❌ IP-based rate limiting: Unexpected error in normal operation');
+        console.info('❌ IP-based rate limiting: Unexpected error in normal operation');
         return false;
       }
     }
@@ -36,20 +36,20 @@ async function testIpBasedRateLimiting(): Promise<boolean> {
     }
     
     if (blockedCount > 0) {
-      console.log('✅ IP-based rate limiting: IP blocking working');
+      console.info('✅ IP-based rate limiting: IP blocking working');
       return true;
     } else {
-      console.log('❌ IP-based rate limiting: IP blocking not triggered');
+      console.info('❌ IP-based rate limiting: IP blocking not triggered');
       return false;
     }
   } catch (error) {
-    console.log(`❌ IP-based rate limiting: FAILED - ${error.message}`);
+    console.info(`❌ IP-based rate limiting: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testPersistentAuditStorage(): Promise<boolean> {
-  console.log('🧪 Testing Persistent Audit Storage...');
+  console.info('🧪 Testing Persistent Audit Storage...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -65,25 +65,25 @@ async function testPersistentAuditStorage(): Promise<boolean> {
     const afterStats = manager.getAuditLogStats();
     
     if (afterStats.bufferSize > initialStats.bufferSize || afterStats.totalEvents > initialStats.totalEvents) {
-      console.log('✅ Persistent audit storage: Audit entries generated');
+      console.info('✅ Persistent audit storage: Audit entries generated');
       
       // Test manual flush
       await manager.flushAuditLogs();
-      console.log('✅ Persistent audit storage: Manual flush working');
+      console.info('✅ Persistent audit storage: Manual flush working');
       
       return true;
     } else {
-      console.log('❌ Persistent audit storage: No audit entries generated');
+      console.info('❌ Persistent audit storage: No audit entries generated');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Persistent audit storage: FAILED - ${error.message}`);
+    console.info(`❌ Persistent audit storage: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testEnhancedMetrics(): Promise<boolean> {
-  console.log('🧪 Testing Enhanced Metrics...');
+  console.info('🧪 Testing Enhanced Metrics...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -98,25 +98,25 @@ async function testEnhancedMetrics(): Promise<boolean> {
         Array.isArray(metrics.blockedIps) &&
         typeof metrics.auditBufferSize === 'number') {
       
-      console.log('✅ Enhanced metrics: All Phase 3 metrics present');
+      console.info('✅ Enhanced metrics: All Phase 3 metrics present');
       
       // Test rate limit cleanup
       manager.clearExpiredRateLimits();
-      console.log('✅ Enhanced metrics: Rate limit cleanup working');
+      console.info('✅ Enhanced metrics: Rate limit cleanup working');
       
       return true;
     } else {
-      console.log('❌ Enhanced metrics: Missing Phase 3 metrics');
+      console.info('❌ Enhanced metrics: Missing Phase 3 metrics');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Enhanced metrics: FAILED - ${error.message}`);
+    console.info(`❌ Enhanced metrics: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testContextAwareOperations(): Promise<boolean> {
-  console.log('🧪 Testing Context-Aware Operations...');
+  console.info('🧪 Testing Context-Aware Operations...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -129,23 +129,23 @@ async function testContextAwareOperations(): Promise<boolean> {
     // Test getSecret with context
     try {
       await manager.getSecret('test-service', 'context-test', context);
-      console.log('✅ Context-aware operations: getSecret with context working');
+      console.info('✅ Context-aware operations: getSecret with context working');
     } catch (error) {
       // Expected to fail due to rate limiting or other security measures
       if (!error.message.includes('context')) {
-        console.log('✅ Context-aware operations: Security measures working');
+        console.info('✅ Context-aware operations: Security measures working');
       }
     }
     
     return true;
   } catch (error) {
-    console.log(`❌ Context-aware operations: FAILED - ${error.message}`);
+    console.info(`❌ Context-aware operations: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testAuditLogIntegrity(): Promise<boolean> {
-  console.log('🧪 Testing Audit Log Integrity...');
+  console.info('🧪 Testing Audit Log Integrity...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -158,7 +158,7 @@ async function testAuditLogIntegrity(): Promise<boolean> {
         typeof stats.maxBufferSize === 'number' &&
         typeof stats.totalEvents === 'number') {
       
-      console.log('✅ Audit log integrity: Stats structure valid');
+      console.info('✅ Audit log integrity: Stats structure valid');
       
       // Test buffer overflow handling
       const originalBufferSize = stats.bufferSize;
@@ -169,21 +169,21 @@ async function testAuditLogIntegrity(): Promise<boolean> {
       }
       
       const newStats = manager.getAuditLogStats();
-      console.log('✅ Audit log integrity: Buffer overflow handling working');
+      console.info('✅ Audit log integrity: Buffer overflow handling working');
       
       return true;
     } else {
-      console.log('❌ Audit log integrity: Invalid stats structure');
+      console.info('❌ Audit log integrity: Invalid stats structure');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Audit log integrity: FAILED - ${error.message}`);
+    console.info(`❌ Audit log integrity: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testThreatDetection(): Promise<boolean> {
-  console.log('🧪 Testing Threat Detection...');
+  console.info('🧪 Testing Threat Detection...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -213,20 +213,20 @@ async function testThreatDetection(): Promise<boolean> {
     const hasBlockedIps = metrics.blockedIps && metrics.blockedIps.length > 0;
     
     if (threatDetected || hasBlockedIps) {
-      console.log('✅ Threat detection: Suspicious activity detected and blocked');
+      console.info('✅ Threat detection: Suspicious activity detected and blocked');
       return true;
     } else {
-      console.log('⚠️ Threat detection: No immediate threat detected (may need more requests)');
+      console.info('⚠️ Threat detection: No immediate threat detected (may need more requests)');
       return true; // This is still a pass as the system is working
     }
   } catch (error) {
-    console.log(`❌ Threat detection: FAILED - ${error.message}`);
+    console.info(`❌ Threat detection: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function runAdvancedSecurityTests(): Promise<void> {
-  console.log('🚀 Running Phase 3 Advanced Security Features Tests\\n');
+  console.info('🚀 Running Phase 3 Advanced Security Features Tests\\n');
   
   const tests = [
     { name: 'IP-based Rate Limiting', test: testIpBasedRateLimiting },
@@ -241,7 +241,7 @@ async function runAdvancedSecurityTests(): Promise<void> {
   let failed = 0;
   
   for (const { name, test } of tests) {
-    console.log(`\\n--- ${name} ---`);
+    console.info(`\\n--- ${name} ---`);
     const result = await test();
     if (result) {
       passed++;
@@ -250,23 +250,23 @@ async function runAdvancedSecurityTests(): Promise<void> {
     }
   }
   
-  console.log('\\n📊 Phase 3 Advanced Security Features Test Results:');
-  console.log(`✅ Passed: ${passed}`);
-  console.log(`❌ Failed: ${failed}`);
-  console.log(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
+  console.info('\\n📊 Phase 3 Advanced Security Features Test Results:');
+  console.info(`✅ Passed: ${passed}`);
+  console.info(`❌ Failed: ${failed}`);
+  console.info(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
   
   if (failed === 0) {
-    console.log('\\n🎉 ALL PHASE 3 ADVANCED SECURITY FEATURES WORKING PERFECTLY!');
-    console.log('\\n🛡️ Advanced Security Features:');
-    console.log('🚫 IP-based rate limiting with automatic blocking');
-    console.log('📝 Persistent audit storage with integrity protection');
-    console.log('📊 Enhanced metrics with real-time threat monitoring');
-    console.log('🔍 Context-aware security operations');
-    console.log('🛡️ Advanced threat detection and response');
-    console.log('⚡ Automated security incident handling');
-    console.log('\\n🚀 System now has military-grade security with comprehensive protection');
+    console.info('\\n🎉 ALL PHASE 3 ADVANCED SECURITY FEATURES WORKING PERFECTLY!');
+    console.info('\\n🛡️ Advanced Security Features:');
+    console.info('🚫 IP-based rate limiting with automatic blocking');
+    console.info('📝 Persistent audit storage with integrity protection');
+    console.info('📊 Enhanced metrics with real-time threat monitoring');
+    console.info('🔍 Context-aware security operations');
+    console.info('🛡️ Advanced threat detection and response');
+    console.info('⚡ Automated security incident handling');
+    console.info('\\n🚀 System now has military-grade security with comprehensive protection');
   } else {
-    console.log('\\n⚠️ Some Phase 3 advanced features need attention. Please review the failed tests.');
+    console.info('\\n⚠️ Some Phase 3 advanced features need attention. Please review the failed tests.');
   }
   
   // Cleanup and final audit flush

@@ -35,7 +35,7 @@ const Fire = "🔥";
 
 // === Helpers ===
 const log = (msg: string, icon: string = "", color = cyan) => {
-  console.log(color(`${icon} ${msg}`));
+  console.info(color(`${icon} ${msg}`));
 };
 
 const error = (msg: string) => log(msg, "❌", red);
@@ -175,7 +175,7 @@ async function main() {
   const [query, ...flags] = args.length > 0 ? args : ["--help"];
 
   if (flags.includes("--help") || flags.includes("-h") || query === "--help") {
-    console.log(`
+    console.info(`
 ${cyan("Grep Assistant")} – Search ${GUIDE} with ${Lightning} speed
 
 ${yellow("Usage:")}
@@ -205,7 +205,7 @@ ${Sparkles} Powered by Bun + TypeScript
   if (query === "--list" || flags.includes("--list")) {
     log(`Indexed ${patterns.length} patterns:`, Book, yellow);
     patterns.forEach(p => {
-      console.log(`  ${p.emoji} ${cyan(p.title)} ${dim(`→ L${p.line} in ${p.section}`)}`);
+      console.info(`  ${p.emoji} ${cyan(p.title)} ${dim(`→ L${p.line} in ${p.section}`)}`);
     });
     process.exit(0);
   }
@@ -233,13 +233,13 @@ ${Sparkles} Powered by Bun + TypeScript
 
   for (const [i, r] of toShow.entries()) {
     const prefix = showLines ? dim(`${r.line.toString().padStart(3)}|`) : "  ";
-    console.log(`${prefix} ${r.emoji} ${cyan(r.title)}`);
+    console.info(`${prefix} ${r.emoji} ${cyan(r.title)}`);
     if (showPreview) {
       const preview = await getPreview(r.line);
-      console.log(preview.split("\n").map(l => `    ${l}`).join("\n"));
+      console.info(preview.split("\n").map(l => `    ${l}`).join("\n"));
     }
     if (!showAll && i < toShow.length - 1 && i < MAX_RESULTS - 1) {
-      console.log("");
+      console.info("");
     }
   }
 

@@ -28,8 +28,8 @@ interface RipgrepMatch {
  * This is the fundamental pattern for memory-efficient documentation search
  */
 async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<void> {
-  console.log(`🔍 Searching for: ${query}`);
-  console.log(`📂 Cache path: ${cachePath}`);
+  console.info(`🔍 Searching for: ${query}`);
+  console.info(`📂 Cache path: ${cachePath}`);
   
   // Spawn ripgrep with JSON output for streaming
   const subprocess = (Bun as any).spawn(["rg", "--json", query, cachePath], {
@@ -41,7 +41,7 @@ async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<v
   const stream = subprocess.stdout;
 
   if (stream instanceof ReadableStream) {
-    console.log('✅ ReadableStream detected - starting zero-copy processing');
+    console.info('✅ ReadableStream detected - starting zero-copy processing');
     
     let matchCount = 0;
     let bytesProcessed = 0;
@@ -71,8 +71,8 @@ async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<v
             if (match.type === "match") {
               matchCount++;
               // Yield results as they arrive!
-              console.log(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
-              console.log(`   ${match.data.lines.text.trim()}`);
+              console.info(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
+              console.info(`   ${match.data.lines.text.trim()}`);
             }
           } catch (parseError) {
             // Skip malformed JSON lines
@@ -82,7 +82,7 @@ async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<v
         
         // Show progress every 10 matches
         if (matchCount % 10 === 0) {
-          console.log(`📈 Progress: ${matchCount} matches, ${(bytesProcessed / 1024).toFixed(1)}KB processed`);
+          console.info(`📈 Progress: ${matchCount} matches, ${(bytesProcessed / 1024).toFixed(1)}KB processed`);
         }
       }
       
@@ -90,8 +90,8 @@ async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<v
       const exitCode = await subprocess.exited;
       
       if (exitCode === 0) {
-        console.log(`\n✅ Search complete: ${matchCount} matches found`);
-        console.log(`💾 Memory efficiency: Only ${bytesProcessed} bytes processed (zero-copy)`);
+        console.info(`\n✅ Search complete: ${matchCount} matches found`);
+        console.info(`💾 Memory efficiency: Only ${bytesProcessed} bytes processed (zero-copy)`);
       } else {
         console.error(`❌ Search failed with exit code: ${exitCode}`);
       }
@@ -108,7 +108,7 @@ async function zeroCopyStreamSearch(query: string, cachePath: string): Promise<v
  * Enhanced version with backpressure handling
  */
 async function enhancedStreamSearch(query: string, cachePath: string): Promise<void> {
-  console.log(`\n🚀 Enhanced streaming with backpressure handling`);
+  console.info(`\n🚀 Enhanced streaming with backpressure handling`);
   
   const subprocess = (Bun as any).spawn(["rg", "--json", query, cachePath], {
     stdout: "pipe"
@@ -146,12 +146,12 @@ async function enhancedStreamSearch(query: string, cachePath: string): Promise<v
             
             if (match.type === "match") {
               matchCount++;
-              console.log(`🎯 Enhanced match ${matchCount}: ${match.data.path.text}:${match.data.line_number}`);
+              console.info(`🎯 Enhanced match ${matchCount}: ${match.data.path.text}:${match.data.line_number}`);
               
               // Show submatches if available
               if (match.data.submatches && match.data.submatches.length > 0) {
                 for (const submatch of match.data.submatches) {
-                  console.log(`   📍 "${submatch.match.text}" at position ${submatch.start}-${submatch.end}`);
+                  console.info(`   📍 "${submatch.match.text}" at position ${submatch.start}-${submatch.end}`);
                 }
               }
             }
@@ -172,7 +172,7 @@ async function enhancedStreamSearch(query: string, cachePath: string): Promise<v
           const match: RipgrepMatch = JSON.parse(buffer);
           if (match.type === "match") {
             matchCount++;
-            console.log(`🎯 Final match: ${match.data.path.text}:${match.data.line_number}`);
+            console.info(`🎯 Final match: ${match.data.path.text}:${match.data.line_number}`);
           }
         } catch (parseError) {
           console.warn('⚠️  Final parse error:', buffer.slice(0, 50) + '...');
@@ -180,7 +180,7 @@ async function enhancedStreamSearch(query: string, cachePath: string): Promise<v
       }
       
       const exitCode = await subprocess.exited;
-      console.log(`\n✅ Enhanced search complete: ${matchCount} matches, ${(bytesProcessed / 1024).toFixed(1)}KB`);
+      console.info(`\n✅ Enhanced search complete: ${matchCount} matches, ${(bytesProcessed / 1024).toFixed(1)}KB`);
       
     } catch (error) {
       console.error('❌ Enhanced streaming error:', error);
@@ -192,8 +192,8 @@ async function enhancedStreamSearch(query: string, cachePath: string): Promise<v
  * Demonstration of the core pattern
  */
 async function demonstrateCorePattern() {
-  console.log('🧘 Zero-Copy Streaming Pattern - Core Demonstration');
-  console.log('=' .repeat(60));
+  console.info('🧘 Zero-Copy Streaming Pattern - Core Demonstration');
+  console.info('=' .repeat(60));
   
   // Use the existing cache directory
   const cachePath = '/Users/nolarose/Projects/.cache';

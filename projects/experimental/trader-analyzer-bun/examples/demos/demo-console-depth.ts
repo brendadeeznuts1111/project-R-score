@@ -20,7 +20,7 @@
  * @example 7.0.0.0.0.0.0.1: Console Depth with Nested Objects
  * // Test Formula:
  * // 1. Create deeply nested object structure
- * // 2. Use console.log() with different --console-depth values
+ * // 2. Use console.info() with different --console-depth values
  * // 3. Observe how depth affects output visibility
  * // Expected Result: Deeper depth shows more nested levels
  * //
@@ -33,7 +33,7 @@
  * @example 7.0.0.0.0.0.0.2: Custom Array Inspector
  * // Test Formula:
  * // 1. Create class with Bun.inspect.custom for array-like objects
- * // 2. Log instance with console.log()
+ * // 2. Log instance with console.info()
  * // 3. Verify custom formatting is applied
  * // Expected Result: Custom array formatting displays correctly
  * //
@@ -57,9 +57,9 @@
 // ============================================================================
 
 function demonstrateConsoleDepth() {
-  console.log("\n" + "=".repeat(80));
-  console.log("📊 DEMONSTRATION 1: Console Depth with Nested Objects");
-  console.log("=".repeat(80));
+  console.info("\n" + "=".repeat(80));
+  console.info("📊 DEMONSTRATION 1: Console Depth with Nested Objects");
+  console.info("=".repeat(80));
   
   // Simulate Hyper-Bun market intelligence graph structure
   const marketIntelligenceNode = {
@@ -111,15 +111,15 @@ function demonstrateConsoleDepth() {
     }
   };
 
-  console.log("\n🔍 Market Intelligence Node Structure:");
-  console.log("Note: The --console-depth flag controls how many levels are displayed");
-  console.log("\nCurrent console depth setting affects this output:");
-  console.log(marketIntelligenceNode);
+  console.info("\n🔍 Market Intelligence Node Structure:");
+  console.info("Note: The --console-depth flag controls how many levels are displayed");
+  console.info("\nCurrent console depth setting affects this output:");
+  console.info(marketIntelligenceNode);
   
-  console.log("\n💡 Try running with different depths:");
-  console.log("  bun --console-depth=3 run examples/demos/demo-console-depth.ts");
-  console.log("  bun --console-depth=5 run examples/demos/demo-console-depth.ts");
-  console.log("  bun --console-depth=7 run examples/demos/demo-console-depth.ts");
+  console.info("\n💡 Try running with different depths:");
+  console.info("  bun --console-depth=3 run examples/demos/demo-console-depth.ts");
+  console.info("  bun --console-depth=5 run examples/demos/demo-console-depth.ts");
+  console.info("  bun --console-depth=7 run examples/demos/demo-console-depth.ts");
 }
 
 // ============================================================================
@@ -127,9 +127,9 @@ function demonstrateConsoleDepth() {
 // ============================================================================
 
 function demonstratePerformanceStats() {
-  console.log("\n" + "=".repeat(80));
-  console.log("📈 DEMONSTRATION 2: Performance Statistics");
-  console.log("=".repeat(80));
+  console.info("\n" + "=".repeat(80));
+  console.info("📈 DEMONSTRATION 2: Performance Statistics");
+  console.info("=".repeat(80));
 
   const performanceStats = {
     operation: "market-scan",
@@ -164,9 +164,9 @@ function demonstratePerformanceStats() {
     }
   };
 
-  console.log("\n🔍 Performance Statistics Structure:");
-  console.log(performanceStats);
-  console.log("\n💡 With --console-depth=6, you'll see full distribution and anomaly details");
+  console.info("\n🔍 Performance Statistics Structure:");
+  console.info(performanceStats);
+  console.info("\n💡 With --console-depth=6, you'll see full distribution and anomaly details");
 }
 
 // ============================================================================
@@ -223,9 +223,9 @@ class MarketScanResults {
 }
 
 function demonstrateCustomArrayInspector() {
-  console.log("\n" + "=".repeat(80));
-  console.log("🎨 DEMONSTRATION 3: Custom Array Inspector");
-  console.log("=".repeat(80));
+  console.info("\n" + "=".repeat(80));
+  console.info("🎨 DEMONSTRATION 3: Custom Array Inspector");
+  console.info("=".repeat(80));
 
   const scanResults = new MarketScanResults([
     {
@@ -275,13 +275,13 @@ function demonstrateCustomArrayInspector() {
     }
   ]);
 
-  console.log("\n🔍 Custom Array Inspector Output:");
-  console.log("Note: Bun.inspect.custom respects --console-depth setting");
-  console.log("\n" + scanResults.toString());
+  console.info("\n🔍 Custom Array Inspector Output:");
+  console.info("Note: Bun.inspect.custom respects --console-depth setting");
+  console.info("\n" + scanResults.toString());
   
-  console.log("\n💡 Try with different depths:");
-  console.log("  bun --console-depth=3 run examples/demos/demo-console-depth.ts");
-  console.log("  bun --console-depth=7 run examples/demos/demo-console-depth.ts");
+  console.info("\n💡 Try with different depths:");
+  console.info("  bun --console-depth=3 run examples/demos/demo-console-depth.ts");
+  console.info("  bun --console-depth=7 run examples/demos/demo-console-depth.ts");
 }
 
 // ============================================================================
@@ -289,9 +289,9 @@ function demonstrateCustomArrayInspector() {
 // ============================================================================
 
 function demonstrateArbitrageStructure() {
-  console.log("\n" + "=".repeat(80));
-  console.log("💰 DEMONSTRATION 4: Arbitrage Opportunity Structure");
-  console.log("=".repeat(80));
+  console.info("\n" + "=".repeat(80));
+  console.info("💰 DEMONSTRATION 4: Arbitrage Opportunity Structure");
+  console.info("=".repeat(80));
 
   const arbitrageOpportunity = {
     id: "arb-001",
@@ -344,9 +344,9 @@ function demonstrateArbitrageStructure() {
     }
   };
 
-  console.log("\n🔍 Arbitrage Opportunity Structure:");
-  console.log(arbitrageOpportunity);
-  console.log("\n💡 With --console-depth=7, you'll see full profit/risk calculations");
+  console.info("\n🔍 Arbitrage Opportunity Structure:");
+  console.info(arbitrageOpportunity);
+  console.info("\n💡 With --console-depth=7, you'll see full profit/risk calculations");
 }
 
 // ============================================================================
@@ -354,14 +354,14 @@ function demonstrateArbitrageStructure() {
 // ============================================================================
 
 async function main() {
-  console.log("\n" + "╔".repeat(40));
-  console.log("║".padEnd(79) + "║");
-  console.log("║" + "  Bun Console Depth Features Demo (7.0.0.0.0.0.0)".padEnd(77) + "║");
-  console.log("║".padEnd(79) + "║");
-  console.log("╚".repeat(40));
+  console.info("\n" + "╔".repeat(40));
+  console.info("║".padEnd(79) + "║");
+  console.info("║" + "  Bun Console Depth Features Demo (7.0.0.0.0.0.0)".padEnd(77) + "║");
+  console.info("║".padEnd(79) + "║");
+  console.info("╚".repeat(40));
   
-  console.log("\n📖 This demo shows how --console-depth affects object inspection");
-  console.log("   and demonstrates custom array inspectors for Hyper-Bun data.\n");
+  console.info("\n📖 This demo shows how --console-depth affects object inspection");
+  console.info("   and demonstrates custom array inspectors for Hyper-Bun data.\n");
 
   // Run all demonstrations
   demonstrateConsoleDepth();
@@ -370,17 +370,17 @@ async function main() {
   demonstrateArbitrageStructure();
   demonstrateDeepConsoleLog();
 
-  console.log("\n" + "=".repeat(80));
-  console.log("✅ Demo Complete!");
-  console.log("=".repeat(80));
-  console.log("\n📚 For more information, see:");
-  console.log("   docs/7.0.0.0.0.0.0-CONSOLE-DEPTH-DEBUGGING.md");
-  console.log("\n🔍 Ripgrep patterns:");
-  console.log("   rg '7\\.0\\.0\\.0\\.0\\.0\\.0'");
-  console.log("   rg 'console-depth|--console-depth'");
-  console.log("   rg 'inspect\\.custom\\.bun\\.array'");
-  console.log("   rg 'deepConsoleLog|HyperBunInspectContext'");
-  console.log();
+  console.info("\n" + "=".repeat(80));
+  console.info("✅ Demo Complete!");
+  console.info("=".repeat(80));
+  console.info("\n📚 For more information, see:");
+  console.info("   docs/7.0.0.0.0.0.0-CONSOLE-DEPTH-DEBUGGING.md");
+  console.info("\n🔍 Ripgrep patterns:");
+  console.info("   rg '7\\.0\\.0\\.0\\.0\\.0\\.0'");
+  console.info("   rg 'console-depth|--console-depth'");
+  console.info("   rg 'inspect\\.custom\\.bun\\.array'");
+  console.info("   rg 'deepConsoleLog|HyperBunInspectContext'");
+  console.info();
 }
 
 // Run the demo

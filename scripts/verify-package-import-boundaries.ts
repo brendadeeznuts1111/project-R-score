@@ -92,7 +92,7 @@ function checkRule(rule: PackageBoundaryRule): Violation[] {
       const resolvedAbs = resolveImport(file, specifier);
       const rel = toRel(resolvedAbs);
 
-      const allowed = rule.allowedRoots.some((root) => isUnder(rel, root));
+      const allowed = rule.allowedRoots.some(root => isUnder(rel, root));
       if (!allowed) {
         violations.push({
           file: toRel(file),
@@ -112,7 +112,7 @@ function checkRule(rule: PackageBoundaryRule): Violation[] {
 function main(): void {
   const violations = RULES.flatMap(checkRule);
   if (violations.length === 0) {
-    console.log('✅ Package import boundaries are clean.');
+    console.info('✅ Package import boundaries are clean.');
     return;
   }
 

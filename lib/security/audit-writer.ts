@@ -25,10 +25,10 @@ export async function writeAuditLog(entries: AuditEntry | AuditEntry[]): Promise
       entry.resource,
       entry.actor ?? 'system',
       entry.success,
-      {},                   // security context — caller can extend later
-      undefined,            // duration
+      {}, // security context — caller can extend later
+      undefined, // duration
       entry.success ? undefined : (entry.detail ?? 'unknown_error'),
-      entry.metadata as Record<string, any> | undefined,
+      entry.metadata as Record<string, any> | undefined
     );
   }
 }
@@ -39,6 +39,12 @@ function mapAction(action: string): 'read' | 'write' | 'delete' | 'rotate' | 'ac
   if (lower.includes('read') || lower.includes('get') || lower.includes('fetch')) return 'read';
   if (lower.includes('delete') || lower.includes('remove')) return 'delete';
   if (lower.includes('rotate') || lower.includes('renew')) return 'rotate';
-  if (lower.includes('write') || lower.includes('set') || lower.includes('create') || lower.includes('update')) return 'write';
+  if (
+    lower.includes('write') ||
+    lower.includes('set') ||
+    lower.includes('create') ||
+    lower.includes('update')
+  )
+    return 'write';
   return 'access_attempt';
 }

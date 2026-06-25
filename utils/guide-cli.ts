@@ -53,7 +53,7 @@ function resolveAndRunTypeCheck(): Promise<number> {
   });
 
   if (tscPath) {
-    console.log(`Found tsc at: ${tscPath}`);
+    console.info(`Found tsc at: ${tscPath}`);
 
     // Spawn type-check without emitting
     const proc = spawn([tscPath, "--noEmit"], {
@@ -67,7 +67,7 @@ function resolveAndRunTypeCheck(): Promise<number> {
     });
 
     return proc.exited.then((code: number) => {
-      console.log(`Type-check complete in ${Bun.main} (exit code: ${code})`);
+      console.info(`Type-check complete in ${Bun.main} (exit code: ${code})`);
       return code;
     });
   } else {
@@ -92,7 +92,7 @@ function resolveAndRunSimple(binary: string, args: string[] = []): Promise<numbe
     return Promise.resolve(1);
   }
 
-  console.log(`Running: ${binary} ${args.join(' ')}`);
+  console.info(`Running: ${binary} ${args.join(' ')}`);
   const proc = spawn([binPath, ...args], {
     cwd: mainDir,
     stdio: "inherit",
@@ -205,7 +205,7 @@ const isSimpleMode = !args.includes("--project") && !args.includes("--help");
 // Simple mode: handle cli-resolver.ts compatibility
 if (isSimpleMode) {
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 Guide CLI - Uses Bun.main for project-specific binary resolution
 
 Simple Mode (merged from cli-resolver.ts):
@@ -267,7 +267,7 @@ const showDiagnostics = hasFlag("--diagnostics");
 
 // Validate
 if (!projectName || !binary) {
-  console.log(`
+  console.info(`
 Guide CLI (Advanced) - Project-specific binary resolution with diagnostics
 
 Usage:
@@ -327,13 +327,13 @@ if (!fs.existsSync(projectHome)) {
   Bun.exit(1);
 }
 
-console.log(`🎯 Guide CLI (Advanced)`);
-console.log(`   Platform:    ${platformHome}`);
-console.log(`   Project:     ${projectHome}`);
-console.log(`   Binary:      ${binary}`);
-console.log(`   Args:        ${binaryArgs.join(" ") || "(none)"}`);
-console.log(`   Fallback:    ${allowFallback ? "enabled" : "disabled"}`);
-console.log("");
+console.info(`🎯 Guide CLI (Advanced)`);
+console.info(`   Platform:    ${platformHome}`);
+console.info(`   Project:     ${projectHome}`);
+console.info(`   Binary:      ${binary}`);
+console.info(`   Args:        ${binaryArgs.join(" ") || "(none)"}`);
+console.info(`   Fallback:    ${allowFallback ? "enabled" : "disabled"}`);
+console.info("");
 
 // Resolve binary (with or without diagnostics)
 let binPath: string | null;
@@ -370,13 +370,13 @@ if (!binPath) {
   Bun.exit(1);
 }
 
-console.log(`✅ Found: ${binPath}`);
+console.info(`✅ Found: ${binPath}`);
 
 if (showDiagnostics) {
-  console.log(`   Searched: ${searchedPaths.join(" → ")}`);
+  console.info(`   Searched: ${searchedPaths.join(" → ")}`);
 }
 
-console.log(`🚀 Spawning...\n`);
+console.info(`🚀 Spawning...\n`);
 
 // Spawn the process with proper isolation
 const proc = spawn([binPath!, ...binaryArgs], {
@@ -391,9 +391,9 @@ const proc = spawn([binPath!, ...binaryArgs], {
     if (error) {
       console.error(`\n❌ Process error: ${error}`);
     } else if (exitCode !== 0) {
-      console.log(`\n⚠️  Exited with code ${exitCode}${signalCode ? ` (signal: ${signalCode})` : ""}`);
+      console.info(`\n⚠️  Exited with code ${exitCode}${signalCode ? ` (signal: ${signalCode})` : ""}`);
     } else {
-      console.log(`\n✅ Completed successfully`);
+      console.info(`\n✅ Completed successfully`);
     }
   },
 });

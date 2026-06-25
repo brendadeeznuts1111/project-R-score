@@ -220,7 +220,7 @@ export function createServer(port: number = PERSONA_CONFIG.port) {
 if (import.meta.main) {
   const server = createServer();
 
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║  🏆 T3-Lattice Edge Hunter Persona v${PERSONA_CONFIG.version}               ║
 ╚════════════════════════════════════════════════════════════╝

@@ -4,7 +4,7 @@ import { GraphemeClusterer, GraphemeUtils } from '../core/unicode/grapheme';
 import { UnicodeValidator } from '../core/unicode/validation';
 
 async function runBenchmarks() {
-  console.log('Running Unicode Performance Benchmarks...\n');
+  console.info('Running Unicode Performance Benchmarks...\n');
   
   const clusterer = new GraphemeClusterer();
   const validator = new UnicodeValidator();
@@ -64,11 +64,11 @@ async function runBenchmarks() {
   const results: Record<string, any> = {};
   
   for (const testCase of testCases) {
-    console.log(`\n=== ${testCase.name} ===`);
-    console.log(`Text: ${testCase.text.substring(0, 30)}...`);
-    console.log(`Length: ${testCase.text.length} chars`);
-    console.log(`Clusters: ${clusterer.getClusterLength(testCase.text)} graphemes`);
-    console.log(`Iterations: ${testCase.iterations}`);
+    console.info(`\n=== ${testCase.name} ===`);
+    console.info(`Text: ${testCase.text.substring(0, 30)}...`);
+    console.info(`Length: ${testCase.text.length} chars`);
+    console.info(`Clusters: ${clusterer.getClusterLength(testCase.text)} graphemes`);
+    console.info(`Iterations: ${testCase.iterations}`);
     
     results[testCase.name] = {};
     
@@ -93,23 +93,23 @@ async function runBenchmarks() {
         perOperation: `${(duration / testCase.iterations).toFixed(4)}ms` 
       };
       
-      console.log(`  ${benchmark.name}: ${opsPerSecond.toFixed(0)} ops/sec`);
+      console.info(`  ${benchmark.name}: ${opsPerSecond.toFixed(0)} ops/sec`);
     }
   }
   
   // Memory usage
-  console.log('\n=== Memory Usage ===');
+  console.info('\n=== Memory Usage ===');
   const memory = process.memoryUsage();
-  console.log(`RSS: ${(memory.rss / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Heap Used: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`RSS: ${(memory.rss / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  console.info(`Heap Used: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
   
   // Unicode capability report
-  console.log('\n=== Unicode Capabilities ===');
+  console.info('\n=== Unicode Capabilities ===');
   const unicodeInfo = GraphemeUtils.getUnicodeInfo();
-  console.log(`Unicode Version: ${unicodeInfo.version}`);
-  console.log(`Intl.Segmenter: ${unicodeInfo.hasSegmenter ? 'Available ✓' : 'Not Available ✗'}`);
-  console.log(`Normalization: ${unicodeInfo.hasNormalization ? 'Available ✓' : 'Not Available ✗'}`);
+  console.info(`Unicode Version: ${unicodeInfo.version}`);
+  console.info(`Intl.Segmenter: ${unicodeInfo.hasSegmenter ? 'Available ✓' : 'Not Available ✗'}`);
+  console.info(`Normalization: ${unicodeInfo.hasNormalization ? 'Available ✓' : 'Not Available ✗'}`);
   
   return results;
 }
@@ -117,7 +117,7 @@ async function runBenchmarks() {
 // Run benchmarks
 if (import.meta.main) {
   runBenchmarks().then(results => {
-    console.log('\n=== Benchmark Complete ===');
+    console.info('\n=== Benchmark Complete ===');
     
     // Save results to file
     const fs = require('fs');
@@ -126,6 +126,6 @@ if (import.meta.main) {
       JSON.stringify(results, null, 2)
     );
     
-    console.log('Results saved to benchmark-results.json');
+    console.info('Results saved to benchmark-results.json');
   });
 }

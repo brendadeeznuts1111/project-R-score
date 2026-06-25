@@ -281,7 +281,7 @@ export class KalshiProvider implements DataProvider {
 	 * @example
 	 * const result = await provider.fetchMarkets('open', 50);
 	 * if (result.ok) {
-	 *   result.data.forEach(m => console.log(`${m.question}: Yes@${m.outcomes[0].price}`));
+	 *   result.data.forEach(m => console.info(`${m.question}: Yes@${m.outcomes[0].price}`));
 	 * }
 	 */
 	async fetchMarkets(
@@ -573,7 +573,7 @@ export class KalshiProvider implements DataProvider {
 	 * @example
 	 * const result = await provider.fetchBalance();
 	 * if (result.ok) {
-	 *   console.log(`Available: $${result.data.available.toFixed(2)}`);
+	 *   console.info(`Available: $${result.data.available.toFixed(2)}`);
 	 * }
 	 */
 	async fetchBalance(): Promise<

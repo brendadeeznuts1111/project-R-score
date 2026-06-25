@@ -269,7 +269,7 @@ export class PerformanceBenchmark {
     const results: BenchmarkResult[] = [];
 
     for (const operation of operations) {
-      console.log(`Benchmarking ${operation.name}...`);
+      console.info(`Benchmarking ${operation.name}...`);
       const result = await this.benchmark(operation.name, operation.fn, options);
       results.push(result);
     }
@@ -608,7 +608,7 @@ export class PerformanceUtils {
     const { MetadataValidator } = await import('./metadata');
     const { MarketTopic, DataCategory } = await import('../types/topics');
 
-    console.log('🚀 Running performance suite...');
+    console.info('🚀 Running performance suite...');
 
     // Benchmark metadata creation
     const metadataCreation = await PerformanceBenchmark.benchmark(

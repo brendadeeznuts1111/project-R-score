@@ -205,11 +205,11 @@ export class CookieTokenBridge {
    * 20-Column Cookie Audit Matrix
    */
   renderCookieMatrix(): void {
-    console.log(
+    console.info(
       `\n\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m`
     );
-    console.log(`\x1b[36m  COOKIE TOKEN MATRIX — Secure Browser Persistence\x1b[0m`);
-    console.log(
+    console.info(`\x1b[36m  COOKIE TOKEN MATRIX — Secure Browser Persistence\x1b[0m`);
+    console.info(
       `\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m\n`
     );
 
@@ -219,7 +219,7 @@ export class CookieTokenBridge {
     }
 
     if (entries.length === 0) {
-      console.log('\x1b[90m  No factory-wager tokens in cookie store\x1b[0m');
+      console.info('\x1b[90m  No factory-wager tokens in cookie store\x1b[0m');
       return;
     }
 
@@ -231,8 +231,8 @@ export class CookieTokenBridge {
       Security: 'httpOnly+secure',
     }));
 
-    console.log(Bun.inspect.table(tableData, { colors: true }));
-    console.log(`\n\x1b[36m◉ Risk Profile:\x1b[0m 2.501100000 (Cookie storage tier)\n`);
+    console.info(Bun.inspect.table(tableData, { colors: true }));
+    console.info(`\n\x1b[36m◉ Risk Profile:\x1b[0m 2.501100000 (Cookie storage tier)\n`);
   }
 
   private async encryptToken(token: string): Promise<string> {

@@ -124,7 +124,7 @@ export class DuoPlusSDK {
    * Cloud Numbers Management
    */
   async purchaseCloudNumbers(request: CloudNumberRequest): Promise<CloudNumber[]> {
-    console.log(`📱 Purchasing ${request.quantity} ${request.type} numbers from ${request.country}...`);
+    console.info(`📱 Purchasing ${request.quantity} ${request.type} numbers from ${request.country}...`);
     
     // Mock implementation - replace with actual API call
     const numbers: CloudNumber[] = [];
@@ -141,7 +141,7 @@ export class DuoPlusSDK {
       });
     }
 
-    console.log(`✅ Successfully purchased ${numbers.length} numbers`);
+    console.info(`✅ Successfully purchased ${numbers.length} numbers`);
     return numbers;
   }
 
@@ -151,7 +151,7 @@ export class DuoPlusSDK {
   }
 
   async releaseCloudNumber(numberId: string): Promise<boolean> {
-    console.log(`🗑️ Releasing cloud number: ${numberId}`);
+    console.info(`🗑️ Releasing cloud number: ${numberId}`);
     return true;
   }
 
@@ -212,12 +212,12 @@ export class DuoPlusSDK {
       status: 'pending'
     };
 
-    console.log(`🤖 Created RPA task ${task.id} for device ${deviceId}`);
+    console.info(`🤖 Created RPA task ${task.id} for device ${deviceId}`);
     return task;
   }
 
   async scheduleRPATask(taskId: string, schedule: RPATask['schedule']): Promise<RPATask> {
-    console.log(`📅 Scheduled RPA task ${taskId} with schedule:`, schedule);
+    console.info(`📅 Scheduled RPA task ${taskId} with schedule:`, schedule);
     // Mock implementation
     return {} as RPATask;
   }
@@ -231,7 +231,7 @@ export class DuoPlusSDK {
    * Device Management
    */
   async getDevices(limit = 500): Promise<Device[]> {
-    console.log(`📱 Getting up to ${limit} devices...`);
+    console.info(`📱 Getting up to ${limit} devices...`);
     
     // Mock implementation - generate device list
     const devices: Device[] = [];
@@ -247,7 +247,7 @@ export class DuoPlusSDK {
       });
     }
 
-    console.log(`✅ Found ${devices.length} devices`);
+    console.info(`✅ Found ${devices.length} devices`);
     return devices;
   }
 
@@ -260,7 +260,7 @@ export class DuoPlusSDK {
    * Batch Push Configuration
    */
   async batchPush(request: BatchPushRequest): Promise<BatchPushResult> {
-    console.log(`📦 Pushing ${request.files.length} files to ${request.devices.length} devices...`);
+    console.info(`📦 Pushing ${request.files.length} files to ${request.devices.length} devices...`);
     
     const results = request.devices.map(deviceId => ({
       deviceId,
@@ -271,7 +271,7 @@ export class DuoPlusSDK {
     const successCount = results.filter(r => r.success).length;
     const failureCount = results.length - successCount;
 
-    console.log(`✅ Push completed: ${successCount} successful, ${failureCount} failed`);
+    console.info(`✅ Push completed: ${successCount} successful, ${failureCount} failed`);
 
     return {
       successCount,
@@ -328,12 +328,12 @@ export class DuoPlusSDK {
   async healthCheck(): Promise<boolean> {
     try {
       // Test API connectivity
-      console.log('🔍 Performing DuoPlus API health check...');
+      console.info('🔍 Performing DuoPlus API health check...');
       
       // Mock health check
       await Bun.sleep(1000);
       
-      console.log('✅ DuoPlus API is healthy');
+      console.info('✅ DuoPlus API is healthy');
       return true;
     } catch (error) {
       console.error('❌ DuoPlus API health check failed:', error);
@@ -353,7 +353,7 @@ export class CloudNumberManager {
   }
 
   async setupPhoneVerification(count: number): Promise<CloudNumber[]> {
-    console.log(`📱 Setting up phone verification for ${count} accounts...`);
+    console.info(`📱 Setting up phone verification for ${count} accounts...`);
 
     // Purchase US Non-VoIP numbers for Cash App
     const numbers = await this.duo.purchaseCloudNumbers({
@@ -381,7 +381,7 @@ export class CloudNumberManager {
       }
     }
 
-    console.log(`✅ Setup complete for ${assignments.length} phone numbers`);
+    console.info(`✅ Setup complete for ${assignments.length} phone numbers`);
     return numbers;
   }
 
@@ -406,7 +406,7 @@ export class RPAManager {
   }
 
   async deployTrustBuildingWorkflow(identity: BundleIdentity, deviceId: string): Promise<RPATask[]> {
-    console.log(`🤖 Deploying trust building workflow for ${identity.profileId}...`);
+    console.info(`🤖 Deploying trust building workflow for ${identity.profileId}...`);
 
     const tasks: RPATask[] = [];
 
@@ -436,7 +436,7 @@ export class RPAManager {
     });
     tasks.push(enhancedTask);
 
-    console.log(`✅ Deployed ${tasks.length} trust building tasks`);
+    console.info(`✅ Deployed ${tasks.length} trust building tasks`);
     return tasks;
   }
 

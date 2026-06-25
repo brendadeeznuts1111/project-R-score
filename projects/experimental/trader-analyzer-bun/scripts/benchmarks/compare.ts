@@ -201,7 +201,7 @@ if (!baselineId || !currentId) {
 try {
 	const result = compareBenchmarks(baselineId, currentId, threshold);
 	const report = formatReport(result);
-	console.log(report);
+	console.info(report);
 
 	if (failOnRegression && result.regression) {
 		console.error("\n❌ Regression detected! Failing build.");

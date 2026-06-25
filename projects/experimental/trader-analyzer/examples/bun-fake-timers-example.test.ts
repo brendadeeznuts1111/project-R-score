@@ -442,7 +442,7 @@ test("Example 12: Checking if fake timers are active", () => {
 // Summary
 // ═══════════════════════════════════════════════════════════════
 
-console.log(`
+console.info(`
 ✅ Fake Timers Examples Complete!
 
 Key Takeaways:

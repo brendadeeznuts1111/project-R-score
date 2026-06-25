@@ -9,7 +9,7 @@ import { PerformanceMonitor } from '../src/hyper-bun/performance-monitor';
 import { MarketDataInspectors, HyperBunLogger, configureGlobalConsole } from '../src/hyper-bun/console-enhancement';
 
 async function benchmarkConsoleEnhancements() {
-  console.log('🚀 Starting Console Enhancement Performance Benchmark\n');
+  console.info('🚀 Starting Console Enhancement Performance Benchmark\n');
 
   // Configure enhanced console
   configureGlobalConsole();
@@ -44,10 +44,10 @@ async function benchmarkConsoleEnhancements() {
     ]
   };
 
-  console.log('📊 Benchmarking console enhancement performance...\n');
+  console.info('📊 Benchmarking console enhancement performance...\n');
 
   // Benchmark 1: MarketDataInspectors performance
-  console.log('1️⃣ Testing MarketDataInspectors performance:');
+  console.info('1️⃣ Testing MarketDataInspectors performance:');
 
   const inspectorResults = await performanceMonitor.trackOperation(
     'inspector-benchmark',
@@ -64,15 +64,15 @@ async function benchmarkConsoleEnhancements() {
     }
   );
 
-  console.log(`   ✅ Processed ${inspectorResults} inspector calls`);
+  console.info(`   ✅ Processed ${inspectorResults} inspector calls`);
   const inspectorStats = performanceMonitor.getOperationStats('inspector-benchmark');
   if (inspectorStats) {
-    console.log(`   📈 Average time per inspector call: ${(inspectorStats.statistics.mean / 3).toFixed(3)}ms`);
-    console.log(`   📈 Total time for 3000 calls: ${inspectorStats.statistics.mean.toFixed(2)}ms\n`);
+    console.info(`   📈 Average time per inspector call: ${(inspectorStats.statistics.mean / 3).toFixed(3)}ms`);
+    console.info(`   📈 Total time for 3000 calls: ${inspectorStats.statistics.mean.toFixed(2)}ms\n`);
   }
 
   // Benchmark 2: Logger performance
-  console.log('2️⃣ Testing HyperBunLogger performance:');
+  console.info('2️⃣ Testing HyperBunLogger performance:');
 
   const loggerResults = await performanceMonitor.trackOperation(
     'logger-benchmark',
@@ -101,15 +101,15 @@ async function benchmarkConsoleEnhancements() {
     }
   );
 
-  console.log(`   ✅ Processed ${loggerResults} logger calls`);
+  console.info(`   ✅ Processed ${loggerResults} logger calls`);
   const loggerStats = performanceMonitor.getOperationStats('logger-benchmark');
   if (loggerStats) {
-    console.log(`   📈 Average time per logger call: ${(loggerStats.statistics.mean / 4).toFixed(3)}ms`);
-    console.log(`   📈 Total time for 4000 calls: ${loggerStats.statistics.mean.toFixed(2)}ms\n`);
+    console.info(`   📈 Average time per logger call: ${(loggerStats.statistics.mean / 4).toFixed(3)}ms`);
+    console.info(`   📈 Total time for 4000 calls: ${loggerStats.statistics.mean.toFixed(2)}ms\n`);
   }
 
   // Benchmark 3: Full Hyper-Bun operation with enhanced logging
-  console.log('3️⃣ Testing full Hyper-Bun operation with enhanced logging:');
+  console.info('3️⃣ Testing full Hyper-Bun operation with enhanced logging:');
 
   const fullOperationResults = await performanceMonitor.trackOperation(
     'full-operation-benchmark',
@@ -130,32 +130,32 @@ async function benchmarkConsoleEnhancements() {
     }
   );
 
-  console.log(`   ✅ Completed ${fullOperationResults} full market analyses`);
+  console.info(`   ✅ Completed ${fullOperationResults} full market analyses`);
   const fullStats = performanceMonitor.getOperationStats('full-operation-benchmark');
   if (fullStats) {
-    console.log(`   📈 Average time per full operation: ${fullStats.statistics.mean.toFixed(2)}ms`);
-    console.log(`   📈 Total time for 10 operations: ${fullStats.statistics.mean.toFixed(2)}ms\n`);
+    console.info(`   📈 Average time per full operation: ${fullStats.statistics.mean.toFixed(2)}ms`);
+    console.info(`   📈 Total time for 10 operations: ${fullStats.statistics.mean.toFixed(2)}ms\n`);
   }
 
   // Summary
-  console.log('📋 Performance Benchmark Summary:');
-  console.log('=====================================');
+  console.info('📋 Performance Benchmark Summary:');
+  console.info('=====================================');
 
   const allStats = performanceMonitor.getSystemSummary();
-  console.log(`Total Operations: ${allStats.totalOperations}`);
-  console.log(`Average Health Score: ${allStats.averageHealthScore.toFixed(1)}/100`);
-  console.log(`Total Anomalies: ${allStats.totalAnomalies}`);
+  console.info(`Total Operations: ${allStats.totalOperations}`);
+  console.info(`Average Health Score: ${allStats.averageHealthScore.toFixed(1)}/100`);
+  console.info(`Total Anomalies: ${allStats.totalAnomalies}`);
 
-  console.log('\n🎯 Performance Impact Assessment:');
+  console.info('\n🎯 Performance Impact Assessment:');
   if (allStats.averageHealthScore >= 95) {
-    console.log('   ✅ Excellent: Console enhancements have minimal performance impact');
+    console.info('   ✅ Excellent: Console enhancements have minimal performance impact');
   } else if (allStats.averageHealthScore >= 85) {
-    console.log('   ⚠️ Good: Console enhancements have acceptable performance impact');
+    console.info('   ⚠️ Good: Console enhancements have acceptable performance impact');
   } else {
-    console.log('   ❌ Needs optimization: Console enhancements significantly impact performance');
+    console.info('   ❌ Needs optimization: Console enhancements significantly impact performance');
   }
 
-  console.log('\n🏁 Console Enhancement Performance Benchmark Complete');
+  console.info('\n🏁 Console Enhancement Performance Benchmark Complete');
 }
 
 // CLI runner

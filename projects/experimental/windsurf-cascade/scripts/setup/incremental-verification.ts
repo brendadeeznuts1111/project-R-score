@@ -42,7 +42,7 @@ class IncrementalVerifier {
   } = {}): Promise<HealthReport> {
     const { deepScan = false, security = true, performance = true, incremental = true } = options;
     
-    console.log("🔍 Starting project verification...");
+    console.info("🔍 Starting project verification...");
     
     const results: VerificationResult[] = [];
     const startTime = Date.now();
@@ -104,8 +104,8 @@ class IncrementalVerifier {
       this.lastVerification = startTime;
     }
 
-    console.log(`✅ Verification completed in ${Date.now() - startTime}ms`);
-    console.log(`📊 Overall health: ${overall} (${score}% - ${summary.passed}/${results.length} checks passed)`);
+    console.info(`✅ Verification completed in ${Date.now() - startTime}ms`);
+    console.info(`📊 Overall health: ${overall} (${score}% - ${summary.passed}/${results.length} checks passed)`);
 
     return report;
   }
@@ -540,7 +540,7 @@ class IncrementalVerifier {
     const reportPath = join(this.projectPath, "health-report.json");
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     
-    console.log(`📄 Health report saved to: ${reportPath}`);
+    console.info(`📄 Health report saved to: ${reportPath}`);
     
     // Generate summary
     const summary = `
@@ -577,7 +577,7 @@ ${report.results
     `;
 
     writeFileSync(join(this.projectPath, "HEALTH.md"), summary);
-    console.log(`📄 Summary report saved to: HEALTH.md`);
+    console.info(`📄 Summary report saved to: HEALTH.md`);
   }
 }
 
@@ -592,7 +592,7 @@ if (import.meta.main) {
     if (arg === "--no-performance") options.performance = false;
     if (arg === "--no-incremental") options.incremental = false;
     if (arg === "--help") {
-      console.log(`
+      console.info(`
 Usage: bun run incremental-verification.ts [options]
 
 Options:

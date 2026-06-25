@@ -122,7 +122,7 @@ export class OddsFetcher {
 			});
 		}, this.config.pollInterval);
 
-		console.log(
+		console.info(
 			`ORCA Fetcher: Started polling ${this.clients.size} bookmakers every ${this.config.pollInterval}ms`,
 		);
 	}
@@ -151,7 +151,7 @@ export class OddsFetcher {
 		}
 
 		this.isRunning = false;
-		console.log("ORCA Fetcher: Stopped");
+		console.info("ORCA Fetcher: Stopped");
 	}
 
 	/**

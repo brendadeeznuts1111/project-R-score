@@ -24,11 +24,11 @@ class PropertyTestMigrator {
     };
 
     async migrateAllPropertyTests(): Promise<void> {
-        console.log("🔄 Starting Phase 2: Property Test Migration\n");
+        console.info("🔄 Starting Phase 2: Property Test Migration\n");
 
         // 1. Find all property test files
         const propertyFiles = await this.findPropertyTestFiles();
-        console.log(`📁 Found ${propertyFiles.length} property test files`);
+        console.info(`📁 Found ${propertyFiles.length} property test files`);
 
         if (this.config.backup) {
             await this.createBackup(propertyFiles);
@@ -42,8 +42,8 @@ class PropertyTestMigrator {
         // 3. Verify migration
         await this.verifyMigration(propertyFiles);
 
-        console.log("\n✅ Phase 2 Migration Complete!");
-        console.log("🚀 Ready for concurrent execution");
+        console.info("\n✅ Phase 2 Migration Complete!");
+        console.info("🚀 Ready for concurrent execution");
     }
 
     private async findPropertyTestFiles(): Promise<string[]> {
@@ -68,7 +68,7 @@ class PropertyTestMigrator {
     }
 
     private async createBackup(files: string[]): Promise<void> {
-        console.log("💾 Creating backup...");
+        console.info("💾 Creating backup...");
 
         for (const file of files) {
             const backupFile = file + '.backup';
@@ -76,11 +76,11 @@ class PropertyTestMigrator {
             await writeFile(backupFile, content);
         }
 
-        console.log(`✅ Backed up ${files.length} files`);
+        console.info(`✅ Backed up ${files.length} files`);
     }
 
     private async migrateFile(filePath: string): Promise<void> {
-        console.log(`🔄 Migrating: ${filePath}`);
+        console.info(`🔄 Migrating: ${filePath}`);
 
         let content = await Bun.file(filePath).text();
         const originalContent = content;
@@ -98,9 +98,9 @@ class PropertyTestMigrator {
 
         if (!this.config.dryRun && content !== originalContent) {
             await writeFile(filePath, content);
-            console.log(`  ✅ Updated`);
+            console.info(`  ✅ Updated`);
         } else if (this.config.dryRun) {
-            console.log(`  🔍 Dry run - would update`);
+            console.info(`  🔍 Dry run - would update`);
         }
     }
 
@@ -124,7 +124,7 @@ class PropertyTestMigrator {
     }
 
     private async verifyMigration(files: string[]): Promise<void> {
-        console.log("\n🔍 Verifying migration...");
+        console.info("\n🔍 Verifying migration...");
 
         let concurrentTests = 0;
         let timeoutTests = 0;
@@ -138,14 +138,14 @@ class PropertyTestMigrator {
             failingTests += (content.match(/test\.failing/g) || []).length;
         }
 
-        console.log(`📊 Migration Results:`);
-        console.log(`  • Concurrent tests: ${concurrentTests}`);
-        console.log(`  • Tests with timeouts: ${timeoutTests}`);
-        console.log(`  • Failing tests (TDD): ${failingTests}`);
+        console.info(`📊 Migration Results:`);
+        console.info(`  • Concurrent tests: ${concurrentTests}`);
+        console.info(`  • Tests with timeouts: ${timeoutTests}`);
+        console.info(`  • Failing tests (TDD): ${failingTests}`);
     }
 
     async rollback(): Promise<void> {
-        console.log("🔄 Rolling back migration...");
+        console.info("🔄 Rolling back migration...");
 
         const files = await this.findPropertyTestFiles();
 
@@ -156,13 +156,13 @@ class PropertyTestMigrator {
                 const backupContent = await Bun.file(backupFile).text();
                 await writeFile(file, backupContent);
                 await Bun.write(backupFile, ''); // Remove backup
-                console.log(`  ✅ Rolled back: ${file}`);
+                console.info(`  ✅ Rolled back: ${file}`);
             } catch (error) {
-                console.log(`  ⚠️  No backup found: ${file}`);
+                console.info(`  ⚠️  No backup found: ${file}`);
             }
         }
 
-        console.log("✅ Rollback complete");
+        console.info("✅ Rollback complete");
     }
 }
 
@@ -187,7 +187,7 @@ async function main() {
                 break;
 
             default:
-                console.log(`
+                console.info(`
 🔄 Property Test Migration Script
 
 Usage: bun scripts/migration/migrate-property-tests.ts <command>

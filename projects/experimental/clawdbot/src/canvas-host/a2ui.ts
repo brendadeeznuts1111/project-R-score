@@ -113,7 +113,9 @@ export function injectCanvasLiveReload(html: string): string {
         androidHandler.postMessage(raw);
         return true;
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     return false;
   }
   function sendUserAction(userAction) {
@@ -135,7 +137,9 @@ export function injectCanvasLiveReload(html: string): string {
     ws.onmessage = (ev) => {
       if (String(ev.data || "") === "reload") location.reload();
     };
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 })();
 </script>
 `.trim();

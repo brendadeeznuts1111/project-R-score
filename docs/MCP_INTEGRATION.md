@@ -13,11 +13,10 @@ FactoryWager MCP Ecosystem
 │   └── bun-mcp-server.ts     # Bun documentation server
 ├── scripts/
 │   ├── mcp-bridge.ts         # Claude Desktop integration bridge
-│   ├── fw-tools-mcp.ts       # FactoryWager tools server
 │   ├── fw-docs.ts            # Interactive CLI tool
 │   ├── interactive-docs.ts   # Advanced diagnosis & learning
 │   └── setup-mcp.sh          # Automated setup script
-├── factorywager-mcp.json     # Claude Desktop configuration
+├── .cursor/mcp.json          # Cursor MCP configuration
 └── MCP_INTEGRATION.md        # This documentation
 ```
 
@@ -58,13 +57,6 @@ FactoryWager MCP Ecosystem
   - Audit trail correlation
   - Institutional knowledge storage
   - Context-aware fix generation
-
-### 5. FactoryWager Tools Server (`scripts/fw-tools-mcp.ts`)
-- **Purpose**: Complementary tools for profiling and security
-- **Tools**:
-  - `ProfileAndDiagnose` - Performance profiling
-  - `SecurityAudit` - Security assessment
-  - `R2StorageManager` - Cloud storage management
 
 ## 🎯 Usage Examples
 
@@ -127,7 +119,7 @@ The setup script:
 
 ### Manual Setup
 1. Install MCP SDK: `bun add @modelcontextprotocol/sdk`
-2. Configure Claude Desktop with `factorywager-mcp.json`
+2. Configure MCP in `.cursor/mcp.json` or `~/.config/claude/mcp.json`
 3. Set environment variables in `.env`
 4. Make scripts executable: `chmod +x scripts/*.ts`
 
@@ -296,7 +288,6 @@ cat ~/.config/claude/mcp.json
 ```bash
 # Test individual servers
 bun run mcp:bun
-bun run mcp:tools
 
 # Check dependencies
 bun install

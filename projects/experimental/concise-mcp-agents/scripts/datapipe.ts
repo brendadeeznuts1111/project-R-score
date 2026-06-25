@@ -701,7 +701,7 @@ async function exportBetsToCSV(bets: FullBet[], filename: string, query?: string
   const filepath = `${VAULT}/exports/${filename}${querySuffix}.csv`;
 
   await Bun.write(filepath, csv);
-  console.log(`📄 Exported ${bets.length} bets to: ${filepath}`);
+  console.info(`📄 Exported ${bets.length} bets to: ${filepath}`);
 }
 
 // Dataview-compatible markdown generation
@@ -760,7 +760,7 @@ async function exportBetsToDataview(bets: FullBet[], filename: string, query?: s
   const filepath = `${VAULT}/exports/${filename}${querySuffix}.md`;
 
   await Bun.write(filepath, md);
-  console.log(`📊 Exported ${bets.length} bets to Dataview: ${filepath}`);
+  console.info(`📊 Exported ${bets.length} bets to Dataview: ${filepath}`);
 }
 
 
@@ -771,7 +771,7 @@ function aggregateAgents(data: any) {
 
   const bets = data?.data || data?.bets || data || [];
 
-  console.log(`📊 Processing ${Array.isArray(bets) ? bets.length : 0} bets...`);
+  console.info(`📊 Processing ${Array.isArray(bets) ? bets.length : 0} bets...`);
 
 
 
@@ -835,7 +835,9 @@ async function mdTable(agents: ReturnType<typeof aggregateAgents>) {
 
     header = gen('DATAPIPE', 'REPORT', 'LIVE', 'CORE', 'AGENT-7D');
 
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
 
 
 
@@ -1097,19 +1099,19 @@ try {
   switch (cmd) {
     case 'raw':
       const rawData = await fetchData();
-      console.log(JSON.stringify(rawData, null, 2));
-      console.log(`\n🚀 RAW: ${rawData?.data?.length || 0} bets from API`);
+      console.info(JSON.stringify(rawData, null, 2));
+      console.info(`\n🚀 RAW: ${rawData?.data?.length || 0} bets from API`);
       break;
 
     case 'query':
       const allBets = parseBets((await fetchData()).data || []);
       const filtered = query ? queryBets(allBets, query) : allBets;
 
-      console.log(`🔍 Query: "${query}" → ${filtered.length}/${allBets.length} bets`);
+      console.info(`🔍 Query: "${query}" → ${filtered.length}/${allBets.length} bets`);
 
       // Show sample results
       filtered.slice(0, 5).forEach((bet, i) => {
-        console.log(`${i+1}. ${bet.agent}: ${bet.player} - $${bet.bet} (${bet.isWin === '1' ? 'WIN' : 'LOSS'})`);
+        console.info(`${i+1}. ${bet.agent}: ${bet.player} - $${bet.bet} (${bet.isWin === '1' ? 'WIN' : 'LOSS'})`);
       });
 
       // Export to CSV and Dataview
@@ -1120,21 +1122,21 @@ try {
     case 'csv':
       const csvBets = parseBets((await fetchData()).data || []);
       await exportBetsToCSV(csvBets, 'all_bets_full');
-      console.log(`📊 Exported ${csvBets.length} bets to CSV with ${Object.keys(csvBets[0] || {}).length} columns`);
+      console.info(`📊 Exported ${csvBets.length} bets to CSV with ${Object.keys(csvBets[0] || {}).length} columns`);
       break;
 
     case 'graded':
       const gradedBets = parseBets((await fetchData('2')).data || []);
       await exportBetsToCSV(gradedBets, 'graded_bets');
       await exportBetsToDataview(gradedBets, 'graded_bets');
-      console.log(`✅ Graded bets: ${gradedBets.length}`);
+      console.info(`✅ Graded bets: ${gradedBets.length}`);
       break;
 
     case 'pending':
       const pendingBets = parseBets((await fetchData('0')).data || []);
       await exportBetsToCSV(pendingBets, 'pending_bets');
       await exportBetsToDataview(pendingBets, 'pending_bets');
-      console.log(`⏳ Pending bets: ${pendingBets.length}`);
+      console.info(`⏳ Pending bets: ${pendingBets.length}`);
       break;
 
     case 'live':
@@ -1143,7 +1145,7 @@ try {
       const liveBets = parseBets(liveBetsData);
       const liveMD = generateLiveBetsMD(liveBets);
       await Bun.write(`${VAULT}/dashboards/live-bets.md`, liveMD);
-      console.log(`⚡ **LIVE bets**: ${liveBets.length} (no 403!)`);
+      console.info(`⚡ **LIVE bets**: ${liveBets.length} (no 403!)`);
       break;
 
     case 'users':
@@ -1152,7 +1154,7 @@ try {
       const sessionToken = await Bun.secrets.get({ service: "plive", name: "x-gs-session" }) || '2fbd859dc1d0deef89c256e8';
       const agent = process.argv[3] || 'nolarose';
 
-      console.log(`👥 Fetching users for agent: ${agent}`);
+      console.info(`👥 Fetching users for agent: ${agent}`);
 
       const url = new URL('https://plive.sportswidgets.pro/manager-tools/usersList/');
       url.searchParams.set('agentNames', agent);
@@ -1185,12 +1187,12 @@ try {
       }
 
       const users = await res.json();
-      console.log(`👥 **USERS for ${agent}**: ${users.length}`);
+      console.info(`👥 **USERS for ${agent}**: ${users.length}`);
 
       if (users.length > 0) {
-        console.log('\nTop 5 users:');
+        console.info('\nTop 5 users:');
         users.slice(0, 5).forEach((user: any, i: number) => {
-          console.log(`${i+1}. ${user.username} - Agent: ${user.agent} - Status: ${user.isBlocked === '0' ? 'Active' : 'Blocked'}`);
+          console.info(`${i+1}. ${user.username} - Agent: ${user.agent} - Status: ${user.isBlocked === '0' ? 'Active' : 'Blocked'}`);
         });
 
         // Save to file for dashboard (YAML format for Dataview)
@@ -1204,7 +1206,7 @@ platform: "${user.platform}"
 `).join('\n');
 
         await Bun.write(`${VAULT}/dashboards/users-${agent}.md`, usersYAML);
-        console.log(`💾 Saved ${users.length} users to dashboards/users-${agent}.md`);
+        console.info(`💾 Saved ${users.length} users to dashboards/users-${agent}.md`);
 
         // Also save raw JSON for reference
         await Bun.write(`${VAULT}/data/users-${agent}.json`, JSON.stringify(users, null, 2));
@@ -1275,7 +1277,7 @@ platform: "${user.platform}"
           );
         }
 
-        console.log(`💾 Stored ${bets.length} bets in datapipe.db`);
+        console.info(`💾 Stored ${bets.length} bets in datapipe.db`);
       }
 
       // v1.3: Redis caching and alerts
@@ -1293,7 +1295,7 @@ platform: "${user.platform}"
             volume: topAgent.stats.volume,
             timestamp: new Date().toISOString()
           }));
-          console.log(`🔄 Cached top agent: ${topAgent.name}`);
+          console.info(`🔄 Cached top agent: ${topAgent.name}`);
         }
 
         // Check for profit alerts (>10k threshold)
@@ -1301,7 +1303,7 @@ platform: "${user.platform}"
         const previousTotal = JSON.parse(await redis.get("datapipe:total-profit") || "0");
 
         if (totalProfit > 10000 && previousTotal <= 10000) {
-          console.log(`🚨 ALERT: Total profit exceeded $10k! Current: $${Math.round(totalProfit)}`);
+          console.info(`🚨 ALERT: Total profit exceeded $10k! Current: $${Math.round(totalProfit)}`);
           // Could integrate with Telegram bot here
         }
 
@@ -1316,14 +1318,14 @@ platform: "${user.platform}"
           const ws = new WebSocket("ws://localhost:3001", ["syndicate-live"]);
 
           ws.onopen = () => {
-            console.log("📡 Connected to WS server for push");
+            console.info("📡 Connected to WS server for push");
             ws.send(JSON.stringify({ type: "fetch" }));
           };
 
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === "fetch_response") {
-              console.log(`📡 Pushed ${data.bets?.length || 0} bets to ${data.agents?.length || 0} connected clients`);
+              console.info(`📡 Pushed ${data.bets?.length || 0} bets to ${data.agents?.length || 0} connected clients`);
               ws.close();
             }
           };
@@ -1344,19 +1346,19 @@ platform: "${user.platform}"
         }
       }
 
-      console.log(`✅ ${agents.length} agents → bet-reports.md | Top: ${agents[0]?.name} +$${Math.round(agents[0]?.stats.profit || 0)}`);
+      console.info(`✅ ${agents.length} agents → bet-reports.md | Top: ${agents[0]?.name} +$${Math.round(agents[0]?.stats.profit || 0)}`);
       break;
 
     case 'top':
       const topAgents = aggregateAgents(await fetchData()).slice(0, 5);
-      console.log('🏆 TOP 5 AGENTS:');
+      console.info('🏆 TOP 5 AGENTS:');
       topAgents.forEach((a, i) => {
-        console.log(`${i+1}. ${a.name}: +$${Math.round(a.stats.profit)} (${a.stats.winrate}% win) - ${a.stats.bets} bets`);
+        console.info(`${i+1}. ${a.name}: +$${Math.round(a.stats.profit)} (${a.stats.winrate}% win) - ${a.stats.bets} bets`);
       });
       break;
 
     case 'watch':
-      console.log('👀 Auto-fetch every 5min (Ctrl+C to stop)...');
+      console.info('👀 Auto-fetch every 5min (Ctrl+C to stop)...');
       await Bun.spawnSync(['bun', 'scripts/datapipe.ts', 'fetch'], {
         timeout: 30000, // 30s timeout
         maxBuffer: 10 * 1024 * 1024 // 10MB buffer
@@ -1368,7 +1370,7 @@ platform: "${user.platform}"
             timeout: 30000, // 30s timeout
             maxBuffer: 10 * 1024 * 1024 // 10MB buffer
           });
-          console.log(`🔄 Updated at ${new Date().toLocaleTimeString()}`);
+          console.info(`🔄 Updated at ${new Date().toLocaleTimeString()}`);
         } catch (err) {
           console.error(`❌ Watch error: ${err}`);
         }
@@ -1419,7 +1421,7 @@ platform: "${user.platform}"
       await Bun.mkdir(`${VAULT}/data`, { recursive: true });
       await Bun.write(`${VAULT}/data/bets.yaml`, yaml);
 
-      console.log(`✅ ${yamlBets.length} bets → data/bets.yaml (Dataview-ready)`);
+      console.info(`✅ ${yamlBets.length} bets → data/bets.yaml (Dataview-ready)`);
       break;
 
     case 'stats':
@@ -1433,31 +1435,31 @@ platform: "${user.platform}"
         profit: statsBets.filter(b => b.state === '2').reduce((sum, b) => sum + parseFloat(b.result || '0'), 0),
       };
 
-      console.log(`📊 DATAPIPE STATS:`);
-      console.log(`   Total Bets: ${stats.total}`);
-      console.log(`   Graded: ${stats.graded} | Pending: ${stats.pending}`);
-      console.log(`   Agents: ${stats.agents}`);
-      console.log(`   Volume: $${Math.round(stats.volume)}`);
-      console.log(`   Profit: $${Math.round(stats.profit)}`);
+      console.info(`📊 DATAPIPE STATS:`);
+      console.info(`   Total Bets: ${stats.total}`);
+      console.info(`   Graded: ${stats.graded} | Pending: ${stats.pending}`);
+      console.info(`   Agents: ${stats.agents}`);
+      console.info(`   Volume: $${Math.round(stats.volume)}`);
+      console.info(`   Profit: $${Math.round(stats.profit)}`);
       break;
 
     case 'setup-secrets':
-      console.log('🔐 Setting up Datapipe secrets...');
+      console.info('🔐 Setting up Datapipe secrets...');
 
       // Check if already configured
       const existingCookie = await Bun.secrets.get({ service: "plive", name: "cookie" }) ||
         await Bun.secrets.get({ service: "datapipe", name: "COOKIE" });
       if (existingCookie) {
-        console.log('✅ COOKIE already configured!');
+        console.info('✅ COOKIE already configured!');
         break;
       }
 
       // Prompt for cookie
-      console.log('📋 Get your COOKIE from:');
-      console.log('   1. Open Chrome → Sportswidgets dashboard');
-      console.log('   2. F12 → Network tab → Find ajax.php request');
-      console.log('   3. Copy full cookie string from request headers');
-      console.log('');
+      console.info('📋 Get your COOKIE from:');
+      console.info('   1. Open Chrome → Sportswidgets dashboard');
+      console.info('   2. F12 → Network tab → Find ajax.php request');
+      console.info('   3. Copy full cookie string from request headers');
+      console.info('');
 
       // Use readline for input
       const readline = await import('readline');
@@ -1488,12 +1490,12 @@ platform: "${user.platform}"
         cookie: cookieInput.trim(),
         sessionId: sessionInput.trim(),
       });
-      console.log('✅ COOKIE stored securely in Bun.secrets!');
-      console.log('🚀 Ready to run: bun scripts/datapipe.ts raw');
+      console.info('✅ COOKIE stored securely in Bun.secrets!');
+      console.info('🚀 Ready to run: bun scripts/datapipe.ts raw');
       break;
 
     case 'ws:push':
-      console.log('📡 Pushing data to WebSocket clients...');
+      console.info('📡 Pushing data to WebSocket clients...');
 
       try {
         const rawData = await fetchData();
@@ -1505,8 +1507,8 @@ platform: "${user.platform}"
 
         // Publish to WebSocket channel (requires server running)
         // This is a client-side push - server needs to be running separately
-        console.log(`📊 Prepared ${recentBets.length} recent bets for push`);
-        console.log(`👥 Top agent: ${agents[0]?.name} (+$${Math.round(agents[0]?.stats.profit || 0)})`);
+        console.info(`📊 Prepared ${recentBets.length} recent bets for push`);
+        console.info(`👥 Top agent: ${agents[0]?.name} (+$${Math.round(agents[0]?.stats.profit || 0)})`);
 
         // In a real implementation, this would connect to the WS server
         // For now, just prepare the data structure
@@ -1517,8 +1519,8 @@ platform: "${user.platform}"
           timestamp: new Date().toISOString()
         };
 
-        console.log('📡 Push data prepared (start WebSocket server with: bun ws:start)');
-        console.log(JSON.stringify(pushData, null, 2));
+        console.info('📡 Push data prepared (start WebSocket server with: bun ws:start)');
+        console.info(JSON.stringify(pushData, null, 2));
 
       } catch (error) {
         console.error(`❌ WS push error: ${error.message}`);
@@ -1527,7 +1529,7 @@ platform: "${user.platform}"
       break;
 
     case 'sql-init':
-      console.log('🗄️  Initializing Bun.SQL database...');
+      console.info('🗄️  Initializing Bun.SQL database...');
 
       const { Database } = await import("bun:sqlite");
       const db = new Database("datapipe.db");
@@ -1619,12 +1621,12 @@ platform: "${user.platform}"
       db.run(`CREATE INDEX IF NOT EXISTS idx_state ON bets(state)`);
       db.run(`CREATE INDEX IF NOT EXISTS idx_logTime ON bets(logTime)`);
 
-      console.log('✅ Database initialized: datapipe.db');
-      console.log('💡 Use --sql flag with other commands to store data');
+      console.info('✅ Database initialized: datapipe.db');
+      console.info('💡 Use --sql flag with other commands to store data');
       break;
 
     default:
-      console.log(`🚀 DATAPIPE v2.6 - Query ALL 40+ Fields
+      console.info(`🚀 DATAPIPE v2.6 - Query ALL 40+ Fields
 
 USAGE:
   bun scripts/datapipe.ts setup-secrets    # Setup encrypted COOKIE (v1.3)

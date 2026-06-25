@@ -1,0 +1,6 @@
+id: no-node-crypto
+valid:
+  - 'const hasher = new Bun.CryptoHasher("sha256")'
+invalid:
+  - 'import crypto from "crypto"'
+  - 'import { createHash } from "node:crypto"'

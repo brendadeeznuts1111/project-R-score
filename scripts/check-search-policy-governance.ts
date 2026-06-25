@@ -118,11 +118,11 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log('[policy-governance] ok');
-  console.log(`fetchDepth=${fetchDepth}`);
-  console.log(`range=${range}`);
-  console.log(`policyChanged=${policyChanged}`);
-  console.log(`thresholdChanged=${thresholdChanged}`);
+  console.info('[policy-governance] ok');
+  console.info(`fetchDepth=${fetchDepth}`);
+  console.info(`range=${range}`);
+  console.info(`policyChanged=${policyChanged}`);
+  console.info(`thresholdChanged=${thresholdChanged}`);
 }
 
 await main();

@@ -2,14 +2,14 @@
 
 /**
  * 🎬 FactoryWager MCP R2 Integration Demo
- * 
+ *
  * Demonstrates the complete R2-integrated MCP workflow
  * with mock data when credentials aren't configured.
  */
 
 import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS, log, colorBar } from '../lib/theme/colors.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 
 class MCPDemo {
   constructor() {
@@ -17,24 +17,24 @@ class MCPDemo {
   }
 
   private showWelcome(): void {
-    console.log(styled('\n🚀 FactoryWager MCP R2 Integration Demo', 'accent'));
-    console.log(styled('==========================================', 'accent'));
-    console.log(styled('This demo shows how the MCP system works with R2 storage.', 'muted'));
-    console.log(styled('Even without credentials, you can see the workflow!', 'muted'));
-    console.log('');
+    console.info(styled('\n🚀 FactoryWager MCP R2 Integration Demo', 'accent'));
+    console.info(styled('==========================================', 'accent'));
+    console.info(styled('This demo shows how the MCP system works with R2 storage.', 'muted'));
+    console.info(styled('Even without credentials, you can see the workflow!', 'muted'));
+    console.info('');
   }
 
   async demonstrateErrorDiagnosis(): Promise<void> {
-    console.log(styled('\n🔍 Error Diagnosis Workflow', 'primary'));
-    console.log(colorBar('primary', 50));
-    
+    console.info(styled('\n🔍 Error Diagnosis Workflow', 'primary'));
+    console.info(colorBar('primary', 50));
+
     // Simulate an error
     const error = new Error('Bun.secrets.get: Invalid region configuration');
     error.name = 'RegionError';
-    
-    console.log(styled('Simulated Error:', 'error'));
-    console.log(styled(`  ${error.name}: ${error.message}`, 'muted'));
-    console.log('');
+
+    console.info(styled('Simulated Error:', 'error'));
+    console.info(styled(`  ${error.name}: ${error.message}`, 'muted'));
+    console.info('');
 
     // Show what would be stored in R2
     const mockDiagnosis = {
@@ -106,24 +106,29 @@ try {
       },
     };
 
-    console.log(styled('📦 What would be stored in R2:', 'success'));
-    console.log(styled(`  Key: mcp/diagnoses/${mockDiagnosis.timestamp.replace(/[:.]/g, '-')}-${mockDiagnosis.error.name}.json`, 'muted'));
-    console.log(styled(`  Size: ${JSON.stringify(mockDiagnosis).length} bytes`, 'muted'));
-    console.log(styled(`  Confidence: ${Math.round(mockDiagnosis.confidence * 100)}%`, 'info'));
-    console.log('');
+    console.info(styled('📦 What would be stored in R2:', 'success'));
+    console.info(
+      styled(
+        `  Key: mcp/diagnoses/${mockDiagnosis.timestamp.replace(/[:.]/g, '-')}-${mockDiagnosis.error.name}.json`,
+        'muted'
+      )
+    );
+    console.info(styled(`  Size: ${JSON.stringify(mockDiagnosis).length} bytes`, 'muted'));
+    console.info(styled(`  Confidence: ${Math.round(mockDiagnosis.confidence * 100)}%`, 'info'));
+    console.info('');
 
     // Show the fix
-    console.log(styled('🔧 Generated FactoryWager Fix:', 'success'));
-    console.log(styled(mockDiagnosis.fix.slice(0, 500) + '...', 'background', 'primary'));
-    console.log('');
+    console.info(styled('🔧 Generated FactoryWager Fix:', 'success'));
+    console.info(styled(mockDiagnosis.fix.slice(0, 500) + '...', 'background', 'primary'));
+    console.info('');
   }
 
   async demonstrateAuditSearch(): Promise<void> {
-    console.log(styled('\n📋 Audit Trail Search', 'warning'));
-    console.log(colorBar('warning', 50));
-    
-    console.log(styled('Searching for similar past errors...', 'info'));
-    console.log('');
+    console.info(styled('\n📋 Audit Trail Search', 'warning'));
+    console.info(colorBar('warning', 50));
+
+    console.info(styled('Searching for similar past errors...', 'info'));
+    console.info('');
 
     // Mock audit results (what would come from R2)
     const mockAudits = [
@@ -148,24 +153,26 @@ try {
       },
     ];
 
-    console.log(styled('🔍 Found 2 similar issues in audit trail:', 'success'));
+    console.info(styled('🔍 Found 2 similar issues in audit trail:', 'success'));
     mockAudits.forEach((audit, i) => {
-      console.log(styled(`\n${i + 1}. ${audit.id}`, 'accent'));
-      console.log(styled(`   When: ${new Date(audit.timestamp).toLocaleString()}`, 'muted'));
-      console.log(styled(`   Context: ${audit.context}`, 'info'));
-      console.log(styled(`   Severity: ${audit.severity}`, audit.severity === 'medium' ? 'warning' : 'muted'));
-      console.log(styled(`   Resolution: ${audit.resolution}`, 'muted'));
+      console.info(styled(`\n${i + 1}. ${audit.id}`, 'accent'));
+      console.info(styled(`   When: ${new Date(audit.timestamp).toLocaleString()}`, 'muted'));
+      console.info(styled(`   Context: ${audit.context}`, 'info'));
+      console.info(
+        styled(`   Severity: ${audit.severity}`, audit.severity === 'medium' ? 'warning' : 'muted')
+      );
+      console.info(styled(`   Resolution: ${audit.resolution}`, 'muted'));
       if (audit.successfulFix) {
-        console.log(styled(`   ✅ Fix: ${audit.successfulFix}`, 'success'));
+        console.info(styled(`   ✅ Fix: ${audit.successfulFix}`, 'success'));
       }
     });
-    console.log('');
+    console.info('');
   }
 
   async demonstrateMetrics(): Promise<void> {
-    console.log(styled('\n📊 Usage Analytics', 'info'));
-    console.log(colorBar('info', 50));
-    
+    console.info(styled('\n📊 Usage Analytics', 'info'));
+    console.info(colorBar('info', 50));
+
     // Mock metrics (what would be stored in R2)
     const mockMetrics = {
       timestamp: new Date().toISOString(),
@@ -188,32 +195,41 @@ try {
       ],
     };
 
-    console.log(styled('📈 MCP Usage Statistics (Last 24h):', 'accent'));
-    console.log(styled(`  Searches: ${mockMetrics.usage.searches}`, 'primary'));
-    console.log(styled(`  Diagnoses: ${mockMetrics.usage.diagnoses}`, 'success'));
-    console.log(styled(`  Examples: ${mockMetrics.usage.examples}`, 'info'));
-    console.log(styled(`  Validations: ${mockMetrics.usage.validations}`, 'warning'));
-    console.log('');
+    console.info(styled('📈 MCP Usage Statistics (Last 24h):', 'accent'));
+    console.info(styled(`  Searches: ${mockMetrics.usage.searches}`, 'primary'));
+    console.info(styled(`  Diagnoses: ${mockMetrics.usage.diagnoses}`, 'success'));
+    console.info(styled(`  Examples: ${mockMetrics.usage.examples}`, 'info'));
+    console.info(styled(`  Validations: ${mockMetrics.usage.validations}`, 'warning'));
+    console.info('');
 
-    console.log(styled('⚡ Performance Metrics:', 'accent'));
-    console.log(styled(`  Avg Response: ${mockMetrics.performance.avgResponseTime}ms`, 'primary'));
-    console.log(styled(`  Cache Hit Rate: ${Math.round(mockMetrics.performance.cacheHitRate * 100)}%`, 'success'));
-    console.log(styled(`  Error Rate: ${Math.round(mockMetrics.performance.errorRate * 100)}%`, 'error'));
-    console.log('');
+    console.info(styled('⚡ Performance Metrics:', 'accent'));
+    console.info(styled(`  Avg Response: ${mockMetrics.performance.avgResponseTime}ms`, 'primary'));
+    console.info(
+      styled(
+        `  Cache Hit Rate: ${Math.round(mockMetrics.performance.cacheHitRate * 100)}%`,
+        'success'
+      )
+    );
+    console.info(
+      styled(`  Error Rate: ${Math.round(mockMetrics.performance.errorRate * 100)}%`, 'error')
+    );
+    console.info('');
 
-    console.log(styled('🔥 Popular Queries:', 'accent'));
+    console.info(styled('🔥 Popular Queries:', 'accent'));
     mockMetrics.popularQueries.forEach((query, i) => {
-      console.log(styled(`  ${i + 1}. "${query.query}" (${query.count} times, ${query.context})`, 'info'));
+      console.info(
+        styled(`  ${i + 1}. "${query.query}" (${query.count} times, ${query.context})`, 'info')
+      );
     });
-    console.log('');
+    console.info('');
   }
 
   async demonstrateR2Storage(): Promise<void> {
-    console.log(styled('\n☁️ R2 Storage Structure', 'success'));
-    console.log(colorBar('success', 50));
-    
-    console.log(styled('Your scanner-cookies bucket would contain:', 'muted'));
-    console.log('');
+    console.info(styled('\n☁️ R2 Storage Structure', 'success'));
+    console.info(colorBar('success', 50));
+
+    console.info(styled('Your scanner-cookies bucket would contain:', 'muted'));
+    console.info('');
 
     const structure = [
       { path: 'mcp/diagnoses/', description: 'Error diagnoses with FactoryWager fixes', count: 85 },
@@ -223,10 +239,10 @@ try {
     ];
 
     structure.forEach(item => {
-      console.log(styled(`📁 ${item.path}`, 'primary'));
-      console.log(styled(`   ${item.description}`, 'muted'));
-      console.log(styled(`   Files: ${item.count}`, 'info'));
-      console.log('');
+      console.info(styled(`📁 ${item.path}`, 'primary'));
+      console.info(styled(`   ${item.description}`, 'muted'));
+      console.info(styled(`   Files: ${item.count}`, 'info'));
+      console.info('');
     });
 
     // Show storage stats
@@ -237,19 +253,21 @@ try {
       mcpDataSize: '15.7MB',
     };
 
-    console.log(styled('📊 Bucket Statistics:', 'accent'));
-    console.log(styled(`  Total Objects: ${mockStats.objectCount}`, 'primary'));
-    console.log(styled(`  Total Size: ${mockStats.totalSize}`, 'info'));
-    console.log(styled(`  MCP Data: ${mockStats.mcpDataCount} objects (${mockStats.mcpDataSize})`, 'success'));
-    console.log('');
+    console.info(styled('📊 Bucket Statistics:', 'accent'));
+    console.info(styled(`  Total Objects: ${mockStats.objectCount}`, 'primary'));
+    console.info(styled(`  Total Size: ${mockStats.totalSize}`, 'info'));
+    console.info(
+      styled(`  MCP Data: ${mockStats.mcpDataCount} objects (${mockStats.mcpDataSize})`, 'success')
+    );
+    console.info('');
   }
 
   async demonstrateClaudeIntegration(): Promise<void> {
-    console.log(styled('\n🤖 Claude Desktop Integration', 'accent'));
-    console.log(colorBar('accent', 50));
-    
-    console.log(styled('With R2 integration, Claude Desktop gains these abilities:', 'muted'));
-    console.log('');
+    console.info(styled('\n🤖 Claude Desktop Integration', 'accent'));
+    console.info(colorBar('accent', 50));
+
+    console.info(styled('With R2 integration, Claude Desktop gains these abilities:', 'muted'));
+    console.info('');
 
     const capabilities = [
       {
@@ -275,19 +293,19 @@ try {
     ];
 
     capabilities.forEach((cap, i) => {
-      console.log(styled(`${i + 1}. ${cap.tool}`, 'success'));
-      console.log(styled(`   ${cap.description}`, 'muted'));
-      console.log(styled(`   Example: "${cap.example}"`, 'info'));
-      console.log('');
+      console.info(styled(`${i + 1}. ${cap.tool}`, 'success'));
+      console.info(styled(`   ${cap.description}`, 'muted'));
+      console.info(styled(`   Example: "${cap.example}"`, 'info'));
+      console.info('');
     });
   }
 
   showSetupInstructions(): void {
-    console.log(styled('\n🛠️ Setup Instructions', 'warning'));
-    console.log(colorBar('warning', 50));
-    
-    console.log(styled('To enable R2 storage, follow these steps:', 'muted'));
-    console.log('');
+    console.info(styled('\n🛠️ Setup Instructions', 'warning'));
+    console.info(colorBar('warning', 50));
+
+    console.info(styled('To enable R2 storage, follow these steps:', 'muted'));
+    console.info('');
 
     const steps = [
       {
@@ -299,7 +317,7 @@ try {
       {
         step: 2,
         title: 'Test Connection',
-        command: 'bun run test:r2',
+        command: 'bun test tests/r2-integration.test.ts',
         details: 'Verify R2 connectivity and permissions',
       },
       {
@@ -311,23 +329,23 @@ try {
       {
         step: 4,
         title: 'Start Using MCP',
-        command: 'bun run fw-docs search "Bun.secrets.get"',
+        command: 'bun run docs:search "Bun.secrets.get"',
         details: 'Begin using the enhanced documentation system',
       },
     ];
 
     steps.forEach(step => {
-      console.log(styled(`${step.step}. ${step.title}`, 'primary'));
-      console.log(styled(`   Command: ${step.command}`, 'info'));
-      console.log(styled(`   ${step.details}`, 'muted'));
-      console.log('');
+      console.info(styled(`${step.step}. ${step.title}`, 'primary'));
+      console.info(styled(`   Command: ${step.command}`, 'info'));
+      console.info(styled(`   ${step.details}`, 'muted'));
+      console.info('');
     });
 
-    console.log(styled('📚 For detailed instructions, see:', 'accent'));
-    console.log(styled('   - R2_MCP_INTEGRATION.md', 'info'));
-    console.log(styled('   - MCP_INTEGRATION.md', 'info'));
-    console.log(styled('   - MCP_USAGE.md (generated after setup)', 'info'));
-    console.log('');
+    console.info(styled('📚 For detailed instructions, see:', 'accent'));
+    console.info(styled('   - R2_MCP_INTEGRATION.md', 'info'));
+    console.info(styled('   - MCP_INTEGRATION.md', 'info'));
+    console.info(styled('   - MCP_USAGE.md (generated after setup)', 'info'));
+    console.info('');
   }
 
   async run(): Promise<void> {
@@ -339,11 +357,10 @@ try {
       await this.demonstrateClaudeIntegration();
       this.showSetupInstructions();
 
-      console.log(styled('🎉 Demo Complete!', 'success'));
-      console.log(styled('Your FactoryWager MCP system is ready for R2 integration!', 'accent'));
-      console.log(styled('Configure your R2 credentials to enable full functionality.', 'muted'));
-      console.log('');
-
+      console.info(styled('🎉 Demo Complete!', 'success'));
+      console.info(styled('Your FactoryWager MCP system is ready for R2 integration!', 'accent'));
+      console.info(styled('Configure your R2 credentials to enable full functionality.', 'muted'));
+      console.info('');
     } catch (error) {
       console.error(styled(`❌ Demo failed: ${error.message}`, 'error'));
     }

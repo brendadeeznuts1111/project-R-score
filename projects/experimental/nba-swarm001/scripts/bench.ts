@@ -26,13 +26,13 @@ function benchmarkCosineSimilarity() {
   const durationMs = end - start;
   const avgNs = (durationMs * 1_000_000) / iterations;
 
-  console.log(`Cosine Similarity Benchmark:`);
-  console.log(`  Iterations: ${iterations}`);
-  console.log(`  Total time: ${durationMs.toFixed(3)}ms`);
-  console.log(`  Average per pair: ${avgNs.toFixed(1)}ns`);
-  console.log(`  Target: ${TARGET_PAIR_PROCESSING_NS}ns`);
-  console.log(`  Status: ${avgNs <= TARGET_PAIR_PROCESSING_NS ? "✅ PASS" : "❌ FAIL"}`);
-  console.log();
+  console.info(`Cosine Similarity Benchmark:`);
+  console.info(`  Iterations: ${iterations}`);
+  console.info(`  Total time: ${durationMs.toFixed(3)}ms`);
+  console.info(`  Average per pair: ${avgNs.toFixed(1)}ns`);
+  console.info(`  Target: ${TARGET_PAIR_PROCESSING_NS}ns`);
+  console.info(`  Status: ${avgNs <= TARGET_PAIR_PROCESSING_NS ? "✅ PASS" : "❌ FAIL"}`);
+  console.info();
 }
 
 /**
@@ -42,8 +42,8 @@ function benchmarkGraphBuilding() {
   const config = loadConfig().edge;
   const scales = [10, 50, 100, 500];
 
-  console.log(`Graph Building Benchmarks:`);
-  console.log();
+  console.info(`Graph Building Benchmarks:`);
+  console.info();
 
   for (const scale of scales) {
     const games = generateMockGames(scale);
@@ -56,14 +56,14 @@ function benchmarkGraphBuilding() {
     const pairCount = (scale * (scale - 1)) / 2;
     const avgPerPairNs = (durationMs * 1_000_000) / pairCount;
 
-    console.log(`  Scale: ${scale} games`);
-    console.log(`    Nodes: ${graph.nodes.size}`);
-    console.log(`    Edges: ${graph.edges.length}`);
-    console.log(`    Duration: ${durationMs.toFixed(3)}ms`);
-    console.log(`    Per pair: ${avgPerPairNs.toFixed(1)}ns`);
-    console.log(`    Target: <${TARGET_LATENCY_MS * 1000}ms total`);
-    console.log(`    Status: ${durationMs < TARGET_LATENCY_MS * 1000 ? "✅ PASS" : "⚠️  OVER"}`);
-    console.log();
+    console.info(`  Scale: ${scale} games`);
+    console.info(`    Nodes: ${graph.nodes.size}`);
+    console.info(`    Edges: ${graph.edges.length}`);
+    console.info(`    Duration: ${durationMs.toFixed(3)}ms`);
+    console.info(`    Per pair: ${avgPerPairNs.toFixed(1)}ns`);
+    console.info(`    Target: <${TARGET_LATENCY_MS * 1000}ms total`);
+    console.info(`    Status: ${durationMs < TARGET_LATENCY_MS * 1000 ? "✅ PASS" : "⚠️  OVER"}`);
+    console.info();
   }
 }
 
@@ -71,15 +71,15 @@ function benchmarkGraphBuilding() {
  * Run all benchmarks
  */
 function runBenchmarks() {
-  console.log("=".repeat(50));
-  console.log("NBA Swarm Performance Benchmarks");
-  console.log("=".repeat(50));
-  console.log();
+  console.info("=".repeat(50));
+  console.info("NBA Swarm Performance Benchmarks");
+  console.info("=".repeat(50));
+  console.info();
 
   benchmarkCosineSimilarity();
   benchmarkGraphBuilding();
 
-  console.log("=".repeat(50));
+  console.info("=".repeat(50));
 }
 
 // Run benchmarks if executed directly

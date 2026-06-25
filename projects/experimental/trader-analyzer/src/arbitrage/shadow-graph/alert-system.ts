@@ -240,7 +240,7 @@ export class ShadowGraphAlertSystem {
 				message,
 			);
 		} else {
-			console.log(`[${action.tags.join(", ")}]`, message);
+			console.info(`[${action.tags.join(", ")}]`, message);
 		}
 	}
 
@@ -272,7 +272,7 @@ export class ShadowGraphAlertSystem {
 	): Promise<void> {
 		const marketId = this.replaceTemplates(action.market_id, context);
 		// In production, implement market pausing logic
-		console.log(
+		console.info(
 			`Pausing market ${marketId} for ${action.duration_ms}ms: ${action.reason}`,
 		);
 	}
@@ -316,11 +316,11 @@ export class ShadowGraphAlertSystem {
 			} catch (error) {
 				console.error(`Failed to send Telegram notification:`, error);
 				// Fallback to console log
-				console.log(`[${action.priority.toUpperCase()}] ${message}`);
+				console.info(`[${action.priority.toUpperCase()}] ${message}`);
 			}
 		} else {
 			// Fallback to console log for other channels
-			console.log(`[${action.priority.toUpperCase()}] ${message}`);
+			console.info(`[${action.priority.toUpperCase()}] ${message}`);
 		}
 	}
 
@@ -334,7 +334,7 @@ export class ShadowGraphAlertSystem {
 		const maxSize = this.replaceTemplates(action.max_size, context);
 		const profitTarget = this.replaceTemplates(action.profit_target, context);
 		// In production, queue trade in trading system
-		console.log(
+		console.info(
 			`Queueing trade: strategy=${action.strategy}, maxSize=${maxSize}, profitTarget=${profitTarget}`,
 		);
 	}

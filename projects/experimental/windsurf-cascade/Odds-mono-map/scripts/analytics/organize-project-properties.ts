@@ -18,9 +18,9 @@ import { join, extname, basename, dirname } from 'path';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Odds-mono-map Project Properties Organizer'));
-console.log(chalk.gray('Using Bun.inspect.table() for comprehensive analysis'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Odds-mono-map Project Properties Organizer'));
+console.info(chalk.gray('Using Bun.inspect.table() for comprehensive analysis'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // PROJECT ANALYSIS DATA STRUCTURES
@@ -74,7 +74,7 @@ class ProjectAnalyzer {
      * Analyze project structure using ripgrep
      */
     async analyzeProject(): Promise<void> {
-        console.log(chalk.bold.cyan('\n🔍 Analyzing project structure...'));
+        console.info(chalk.bold.cyan('\n🔍 Analyzing project structure...'));
 
         // Use ripgrep to find all relevant files
         try {
@@ -87,7 +87,7 @@ class ProjectAnalyzer {
 
             const allFiles = [...mdFiles, ...tsFiles, ...jsFiles];
 
-            console.log(chalk.green(`Found ${allFiles.length} files to analyze`));
+            console.info(chalk.green(`Found ${allFiles.length} files to analyze`));
 
             // Process each file
             for (const filePath of allFiles) {
@@ -97,7 +97,7 @@ class ProjectAnalyzer {
                 }
             }
 
-            console.log(chalk.green(`✅ Analyzed ${this.files.length} files`));
+            console.info(chalk.green(`✅ Analyzed ${this.files.length} files`));
 
         } catch (error) {
             console.error(chalk.red('❌ Error analyzing project:'), error);
@@ -356,8 +356,8 @@ class TableRenderer {
      * Display project overview table
      */
     static displayProjectOverview(analysis: PropertyAnalysis): void {
-        console.log(chalk.bold.blue('\n📊 Project Overview'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.bold.blue('\n📊 Project Overview'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const overviewData = [
             {
@@ -390,8 +390,8 @@ class TableRenderer {
      * Display file type distribution
      */
     static displayFileTypeDistribution(fileTypes: Record<string, number>): void {
-        console.log(chalk.bold.blue('\n📁 File Type Distribution'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.bold.blue('\n📁 File Type Distribution'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const typeData = Object.entries(fileTypes).map(([type, count]) => ({
             type,
@@ -406,8 +406,8 @@ class TableRenderer {
      * Display category breakdown
      */
     static displayCategoryBreakdown(categories: Record<string, number>): void {
-        console.log(chalk.bold.blue('\n📂 Category Breakdown'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.bold.blue('\n📂 Category Breakdown'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const categoryData = Object.entries(categories).map(([category, count]) => ({
             category: category.replace('-', ' ').toUpperCase(),
@@ -422,8 +422,8 @@ class TableRenderer {
      * Display compliance issues
      */
     static displayComplianceIssues(files: ProjectFile[]): void {
-        console.log(chalk.bold.blue('\n⚠️  Compliance Issues'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.bold.blue('\n⚠️  Compliance Issues'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const nonCompliantFiles = files.filter(f => f.compliance === 'non-compliant');
         const partialFiles = files.filter(f => f.compliance === 'partial');
@@ -447,7 +447,7 @@ class TableRenderer {
 
         // Show specific non-compliant files
         if (nonCompliantFiles.length > 0) {
-            console.log(chalk.yellow('\n🔍 Non-Compliant Files (Sample):'));
+            console.info(chalk.yellow('\n🔍 Non-Compliant Files (Sample):'));
             const sampleFiles = nonCompliantFiles.slice(0, 10).map(file => ({
                 name: file.name,
                 path: file.path,
@@ -463,8 +463,8 @@ class TableRenderer {
      * Display organization recommendations
      */
     static displayOrganizationRecommendations(files: ProjectFile[]): void {
-        console.log(chalk.bold.blue('\n💡 Organization Recommendations'));
-        console.log(chalk.gray('─'.repeat(80)));
+        console.info(chalk.bold.blue('\n💡 Organization Recommendations'));
+        console.info(chalk.gray('─'.repeat(80)));
 
         const recommendations = [
             {
@@ -541,7 +541,7 @@ class TableRenderer {
 async function main() {
     const projectPath = process.argv[2] || process.cwd();
 
-    console.log(chalk.bold.cyan(`\n🚀 Starting analysis of: ${projectPath}`));
+    console.info(chalk.bold.cyan(`\n🚀 Starting analysis of: ${projectPath}`));
 
     const analyzer = new ProjectAnalyzer(projectPath);
     await analyzer.analyzeProject();
@@ -555,8 +555,8 @@ async function main() {
     TableRenderer.displayComplianceIssues(files);
     TableRenderer.displayOrganizationRecommendations(files);
 
-    console.log(chalk.bold.green('\n✅ Project analysis complete!'));
-    console.log(chalk.gray('Use the recommendations above to improve organization.'));
+    console.info(chalk.bold.green('\n✅ Project analysis complete!'));
+    console.info(chalk.gray('Use the recommendations above to improve organization.'));
 }
 
 // Execute if run directly

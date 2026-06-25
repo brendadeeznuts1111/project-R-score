@@ -27,7 +27,7 @@ const ResourceAwareMCP = {
 // Mock consciousness ledger
 const ConsciousLedger = {
     log: (entry: any) => {
-        console.log(`[ConsciousLedger] ${JSON.stringify(entry)}`);
+        console.info(`[ConsciousLedger] ${JSON.stringify(entry)}`);
     }
 };
 

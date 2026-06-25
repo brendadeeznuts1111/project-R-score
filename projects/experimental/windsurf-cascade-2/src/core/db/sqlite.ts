@@ -29,7 +29,7 @@ function logInfo(domain: string, event: string, data: any): void {
   const config = getCurrentConfig();
   
   if (config.featureFlags & 0x00000004) { // DEBUG flag
-    console.log(`[SQLITE] ${domain}: ${event}`, {
+    console.info(`[SQLITE] ${domain}: ${event}`, {
       ...data,
       config_version: config.version,
       timestamp: nanoseconds()
@@ -55,19 +55,19 @@ const DB_PATH = `./data-${getCurrentConfig().registryHash.toString(16)}.sqlite`;
 // Initialize database with config-aware optimizations
 const db = new Database(DB_PATH);
 
-console.log(`🗄️  SQLite initialized with config-aware optimizations`);
-console.log(`📊 Database path: ${DB_PATH}`);
-console.log(`🔢 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
+console.info(`🗄️  SQLite initialized with config-aware optimizations`);
+console.info(`📊 Database path: ${DB_PATH}`);
+console.info(`🔢 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
 
 // Enable EXISTS-to-JOIN optimization (v3.51.1 feature)
 // Only if configVersion = 1 (modern)
 const config = getCurrentConfig();
 if (config.version === 1) {
   db.exec("PRAGMA enable_exists_to_join = ON");
-  console.log("✅ EXISTS-to-JOIN optimization enabled (configVersion=1)");
+  console.info("✅ EXISTS-to-JOIN optimization enabled (configVersion=1)");
 } else {
   db.exec("PRAGMA enable_exists_to_join = OFF");
-  console.log("⚠️  EXISTS-to-JOIN optimization disabled (configVersion=0)");
+  console.info("⚠️  EXISTS-to-JOIN optimization disabled (configVersion=0)");
 }
 
 // Configure performance settings based on config
@@ -119,7 +119,7 @@ db.exec(`
 // Log slow queries if DEBUG flag (Bit 2)
 // Note: Bun's SQLite might not have profile() method, so we'll skip this for demo
 if (config.featureFlags & 0x00000004) {
-  console.log("[SQLITE] Debug mode enabled - slow query monitoring would be active");
+  console.info("[SQLITE] Debug mode enabled - slow query monitoring would be active");
 }
 
 // Query functions with config parameters
@@ -248,18 +248,18 @@ export function getConfigStatistics(): any {
 
 // Test database functionality
 export async function testDatabaseFunctionality(): Promise<void> {
-  console.log("🗄️  Config-Aware SQLite Test");
-  console.log("=".repeat(40));
+  console.info("🗄️  Config-Aware SQLite Test");
+  console.info("=".repeat(40));
   
   const config = getCurrentConfig();
-  console.log(`📊 Current config:`);
-  console.log(`   • Config version: ${config.version}`);
-  console.log(`   • Registry hash: 0x${config.registryHash.toString(16)}`);
-  console.log(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
-  console.log(`   • Optimization: ${config.version === 1 ? 'ENABLED' : 'DISABLED'}`);
+  console.info(`📊 Current config:`);
+  console.info(`   • Config version: ${config.version}`);
+  console.info(`   • Registry hash: 0x${config.registryHash.toString(16)}`);
+  console.info(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
+  console.info(`   • Optimization: ${config.version === 1 ? 'ENABLED' : 'DISABLED'}`);
   
   try {
-    console.log(`\n🔄 Testing package insertion...`);
+    console.info(`\n🔄 Testing package insertion...`);
     const insertStart = nanoseconds();
     
     // Insert test packages
@@ -288,54 +288,54 @@ export async function testDatabaseFunctionality(): Promise<void> {
     }
     
     const insertDuration = nanoseconds() - insertStart;
-    console.log(`✅ Inserted ${testPackages.length} packages in ${insertDuration}ns`);
+    console.info(`✅ Inserted ${testPackages.length} packages in ${insertDuration}ns`);
     
     // Test querying
-    console.log(`\n🔄 Testing config-aware queries...`);
+    console.info(`\n🔄 Testing config-aware queries...`);
     const packages = getPackagesByConfig();
-    console.log(`✅ Retrieved ${packages.length} packages for current config`);
+    console.info(`✅ Retrieved ${packages.length} packages for current config`);
     
     packages.forEach((pkg: any, index: number) => {
-      console.log(`   ${index + 1}. ${pkg.name}@${pkg.version}`);
+      console.info(`   ${index + 1}. ${pkg.name}@${pkg.version}`);
     });
     
     // Test operation logging
-    console.log(`\n🔄 Testing operation logging...`);
+    console.info(`\n🔄 Testing operation logging...`);
     logOperation("package_query", insertDuration, { package_count: testPackages.length });
     logOperation("config_test", 50000, { test: "database_functionality" });
     
     const operations = getOperationsByType("package_query");
-    console.log(`✅ Logged ${operations.length} operations`);
+    console.info(`✅ Logged ${operations.length} operations`);
     
     // Test statistics
-    console.log(`\n🔄 Testing statistics...`);
+    console.info(`\n🔄 Testing statistics...`);
     const stats = getConfigStatistics();
-    console.log(`✅ Database statistics:`);
-    console.log(`   • Total packages: ${stats.total_packages}`);
-    console.log(`   • Unique packages: ${stats.unique_packages}`);
-    console.log(`   • Avg operation: ${Math.floor(stats.avg_operation_duration || 0)}ns`);
-    console.log(`   • Slow operations: ${stats.slow_operations}`);
-    console.log(`   • Optimization: ${stats.optimization_enabled ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`✅ Database statistics:`);
+    console.info(`   • Total packages: ${stats.total_packages}`);
+    console.info(`   • Unique packages: ${stats.unique_packages}`);
+    console.info(`   • Avg operation: ${Math.floor(stats.avg_operation_duration || 0)}ns`);
+    console.info(`   • Slow operations: ${stats.slow_operations}`);
+    console.info(`   • Optimization: ${stats.optimization_enabled ? 'ENABLED' : 'DISABLED'}`);
     
   } catch (error) {
     console.error(`❌ Database test error:`, error instanceof Error ? error.message : String(error));
   }
   
-  console.log(`\n🔍 Database isolation by config:`);
-  console.log(`   • DB file: ${DB_PATH}`);
-  console.log(`   • Config constraints enforced`);
-  console.log(`   • Queries scoped to current 13-byte state`);
+  console.info(`\n🔍 Database isolation by config:`);
+  console.info(`   • DB file: ${DB_PATH}`);
+  console.info(`   • Config constraints enforced`);
+  console.info(`   • Queries scoped to current 13-byte state`);
 }
 
 // Performance benchmark
 export async function benchmarkDatabase(): Promise<void> {
-  console.log("🗄️  SQLite Performance Benchmark");
-  console.log("=".repeat(40));
+  console.info("🗄️  SQLite Performance Benchmark");
+  console.info("=".repeat(40));
   
   const iterations = 100;
   const times: number[] = [];
   
-  console.log(`🔄 Running ${iterations} config-aware queries...`);
+  console.info(`🔄 Running ${iterations} config-aware queries...`);
   
   for (let i = 0; i < iterations; i++) {
     const start = nanoseconds();
@@ -353,7 +353,7 @@ export async function benchmarkDatabase(): Promise<void> {
     times.push(duration);
     
     if (i < 5) {
-      console.log(`   • Iteration ${i + 1}: ${duration}ns`);
+      console.info(`   • Iteration ${i + 1}: ${duration}ns`);
     }
   }
   
@@ -361,21 +361,21 @@ export async function benchmarkDatabase(): Promise<void> {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`\n📊 Results (${iterations} iterations):`);
-  console.log(`   • Average: ${Math.floor(avgTime)}ns`);
-  console.log(`   • Min: ${Math.floor(minTime)}ns`);
-  console.log(`   • Max: ${Math.floor(maxTime)}ns`);
-  console.log(`   • Target: ~500ns + optimization (0ns when enabled)`);
-  console.log(`   • Status: ${avgTime < 1000000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
-  console.log(`   • EXISTS-to-JOIN: ${getCurrentConfig().version === 1 ? 'ENABLED' : 'DISABLED'}`);
+  console.info(`\n📊 Results (${iterations} iterations):`);
+  console.info(`   • Average: ${Math.floor(avgTime)}ns`);
+  console.info(`   • Min: ${Math.floor(minTime)}ns`);
+  console.info(`   • Max: ${Math.floor(maxTime)}ns`);
+  console.info(`   • Target: ~500ns + optimization (0ns when enabled)`);
+  console.info(`   • Status: ${avgTime < 1000000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
+  console.info(`   • EXISTS-to-JOIN: ${getCurrentConfig().version === 1 ? 'ENABLED' : 'DISABLED'}`);
 }
 
 // Initialize database system
-console.log("🗄️  Config-Aware SQLite System initialized");
-console.log(`📊 Config version: ${getCurrentConfig().version}`);
-console.log(`🔢 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
-console.log(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
-console.log(`⚡ Query target: ~500ns + optimization`);
-console.log(`🚀 EXISTS-to-JOIN: ${getCurrentConfig().version === 1 ? 'ENABLED' : 'DISABLED'}`);
+console.info("🗄️  Config-Aware SQLite System initialized");
+console.info(`📊 Config version: ${getCurrentConfig().version}`);
+console.info(`🔢 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
+console.info(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
+console.info(`⚡ Query target: ~500ns + optimization`);
+console.info(`🚀 EXISTS-to-JOIN: ${getCurrentConfig().version === 1 ? 'ENABLED' : 'DISABLED'}`);
 
 export { db, getCurrentConfig };

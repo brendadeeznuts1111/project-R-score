@@ -430,7 +430,7 @@ export class AutonomicIntelligenceLayer {
 
   private emitAutonomicCycle(event: any): void {
     // Emit event for monitoring
-    console.log('Autonomic cycle completed:', event);
+    console.info('Autonomic cycle completed:', event);
   }
 }
 
@@ -504,7 +504,7 @@ export function registerAutonomicPatterns() {
   });
   
   globalThis.EMPIRE_PRO_MATRIX = matrix;
-  console.log('✅ Autonomic Patterns 101-105 registered in Matrix');
+  console.info('✅ Autonomic Patterns 101-105 registered in Matrix');
 }
 
 // Interfaces

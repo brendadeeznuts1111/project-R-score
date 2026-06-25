@@ -14,7 +14,9 @@ export function initDB(path: string = "data/api-integration.db"): Database {
   if (dir && !path.startsWith(":")) {
     try {
       require("fs").mkdirSync(dir, { recursive: true });
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   db = new Database(path);

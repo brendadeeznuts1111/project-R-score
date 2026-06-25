@@ -13,10 +13,10 @@ const md = oldJson.markdown?.content || oldJson.content || '';
 
 // Add feature counts
 oldJson.markdown = oldJson.markdown || {};
-oldJson.markdown.featureCounts = scanFeatures(md).features;  // FULL!
+oldJson.markdown.featureCounts = scanFeatures(md).features; // FULL!
 
 // Write enhanced JSON
 await Bun.write('senior-enhanced.json', JSON.stringify(oldJson, null, 2));
 
-console.log('✅ Enhanced JSON written to: senior-enhanced.json');
-console.log('Features added:', oldJson.markdown.featureCounts.length);
+console.info('✅ Enhanced JSON written to: senior-enhanced.json');
+console.info('Features added:', oldJson.markdown.featureCounts.length);

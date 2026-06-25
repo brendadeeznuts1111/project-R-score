@@ -227,13 +227,13 @@ getPerformanceStats() {
 ### **Edge Case Testing**
 ```bash
 # Run comprehensive edge case tests
-./cli/test-edge-cases.cjs
+./tools/cli/test-edge-cases.cjs
 ```
 
 ### **Performance Benchmarking**
 ```bash
 # Run performance benchmarks
-./cli/performance-benchmark.cjs
+./tools/cli/performance-benchmark.cjs
 ```
 
 ### **Test Coverage**

@@ -26,7 +26,7 @@ describe('Exit Code 1: Test Failures', () => {
   });
 });
 
-console.log(
+console.info(
   runFailureDemo
     ? '❌ Exit code failure demos enabled (RUN_EXIT_CODE_FAILURE_DEMOS=1).'
     : 'ℹ️ Exit code failure demos skipped by default (set RUN_EXIT_CODE_FAILURE_DEMOS=1 to enable).'

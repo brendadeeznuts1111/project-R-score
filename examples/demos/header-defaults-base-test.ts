@@ -2,7 +2,7 @@
 // HEADER-DEFAULTS_BASE - Comprehensive Test Suite
 // This test specifically validates our strong header defaults implementation
 
-console.log('🛡️ HEADER-DEFAULTS_BASE - Comprehensive Test Suite\n');
+console.info('🛡️ HEADER-DEFAULTS_BASE - Comprehensive Test Suite\n');
 
 import { StrongDefaultsHttpClient } from './strong-defaults-http-client';
 import '../lib/http'; // Ensure lib/http is included
@@ -63,25 +63,25 @@ function addTestResult(testName: string, passed: boolean, details: string, expec
   });
   
   const status = passed ? '✅' : '❌';
-  console.log(`${status} ${testName}: ${details}`);
+  console.info(`${status} ${testName}: ${details}`);
   
   if (!passed && expected !== undefined && actual !== undefined) {
-    console.log(`   Expected: ${JSON.stringify(expected)}`);
-    console.log(`   Actual: ${JSON.stringify(actual)}`);
+    console.info(`   Expected: ${JSON.stringify(expected)}`);
+    console.info(`   Actual: ${JSON.stringify(actual)}`);
   }
 }
 
 // Helper to validate header presence and values
 function validateHeaders(headers: Record<string, string>, testName: string) {
-  console.log(`\n📋 Validating headers for ${testName}:`);
-  console.log('='.repeat(50));
+  console.info(`\n📋 Validating headers for ${testName}:`);
+  console.info('='.repeat(50));
   
   // Debug: Show all received headers
-  console.log('🔍 All received headers:');
+  console.info('🔍 All received headers:');
   Object.entries(headers).forEach(([key, value]) => {
-    console.log(`   ${key}: ${value}`);
+    console.info(`   ${key}: ${value}`);
   });
-  console.log('');
+  console.info('');
   
   // Test 1: Core headers presence
   Object.entries(EXPECTED_HEADER_DEFAULTS_BASE).forEach(([headerName, expectedValue]) => {
@@ -197,21 +197,21 @@ function validateHeaders(headers: Record<string, string>, testName: string) {
     acceptValue
   );
   
-  console.log('\n📊 Header Summary:');
-  console.log(`   Total Headers: ${actualHeaderCount}`);
+  console.info('\n📊 Header Summary:');
+  console.info(`   Total Headers: ${actualHeaderCount}`);
   const securityHeadersFound = securityHeaders.filter(h => 
     Object.keys(headers).some(key => key.toLowerCase() === h.toLowerCase())
   ).length;
   const coreHeadersFound = Object.keys(EXPECTED_HEADER_DEFAULTS_BASE).filter(h => 
     Object.keys(headers).some(key => key.toLowerCase() === h.toLowerCase())
   ).length;
-  console.log(`   Security Headers: ${securityHeadersFound}/${securityHeaders.length}`);
-  console.log(`   Core Headers: ${coreHeadersFound}/${Object.keys(EXPECTED_HEADER_DEFAULTS_BASE).length}`);
+  console.info(`   Security Headers: ${securityHeadersFound}/${securityHeaders.length}`);
+  console.info(`   Core Headers: ${coreHeadersFound}/${Object.keys(EXPECTED_HEADER_DEFAULTS_BASE).length}`);
 }
 
 // Main test execution
 async function runHeaderDefaultsBaseTest() {
-  console.log('🚀 Starting HEADER-DEFAULTS_BASE comprehensive test...\n');
+  console.info('🚀 Starting HEADER-DEFAULTS_BASE comprehensive test...\n');
   
   const client = new StrongDefaultsHttpClient({
     logLevel: 'info',
@@ -220,8 +220,8 @@ async function runHeaderDefaultsBaseTest() {
   
   try {
     // Test 1: GET Request Headers
-    console.log('🌐 Test 1: GET Request Headers');
-    console.log('=' .repeat(60));
+    console.info('🌐 Test 1: GET Request Headers');
+    console.info('=' .repeat(60));
     
     const getResponse = await client.get(TEST_ENDPOINTS.headers);
     if (getResponse.ok || getResponse.status === 200) {
@@ -244,8 +244,8 @@ async function runHeaderDefaultsBaseTest() {
     }
     
     // Test 2: POST Request Headers
-    console.log('\n\n📤 Test 2: POST Request Headers');
-    console.log('=' .repeat(60));
+    console.info('\n\n📤 Test 2: POST Request Headers');
+    console.info('=' .repeat(60));
     
     const postResponse = await client.post(TEST_ENDPOINTS.anything + '?method-test=post', TEST_DATA);
     if (postResponse.ok || postResponse.status === 200) {
@@ -287,8 +287,8 @@ async function runHeaderDefaultsBaseTest() {
     }
     
     // Test 3: Header Validation and Correction
-    console.log('\n\n🔧 Test 3: Header Validation and Correction');
-    console.log('=' .repeat(60));
+    console.info('\n\n🔧 Test 3: Header Validation and Correction');
+    console.info('=' .repeat(60));
     
     const validationClient = new StrongDefaultsHttpClient({
       logLevel: 'debug'
@@ -327,8 +327,8 @@ async function runHeaderDefaultsBaseTest() {
     }
     
     // Test 4: Caching with ETag Support
-    console.log('\n\n💾 Test 4: Caching with ETag Support');
-    console.log('=' .repeat(60));
+    console.info('\n\n💾 Test 4: Caching with ETag Support');
+    console.info('=' .repeat(60));
     
     const cacheTestUrl = `${TEST_ENDPOINTS.anything}?cache-test=header-defaults`;
     
@@ -369,8 +369,8 @@ async function runHeaderDefaultsBaseTest() {
     );
     
     // Test 5: Error Handling and Recovery
-    console.log('\n\n🛡️ Test 5: Error Handling and Recovery');
-    console.log('=' .repeat(60));
+    console.info('\n\n🛡️ Test 5: Error Handling and Recovery');
+    console.info('=' .repeat(60));
     
     try {
       // Test with invalid URL (should handle gracefully)
@@ -393,8 +393,8 @@ async function runHeaderDefaultsBaseTest() {
     }
     
     // Test 6: Cache Statistics
-    console.log('\n\n📊 Test 6: Cache Statistics');
-    console.log('=' .repeat(60));
+    console.info('\n\n📊 Test 6: Cache Statistics');
+    console.info('=' .repeat(60));
     
     const cacheStats = client.getStrongCacheStats();
     
@@ -423,12 +423,12 @@ async function runHeaderDefaultsBaseTest() {
         cacheStats.hitRate
       );
       
-      console.log('\n📈 Detailed Cache Statistics:');
-      console.log(`   Cache Size: ${cacheStats.size}/${cacheStats.maxSize}`);
-      console.log(`   Total Hits: ${cacheStats.totalHits}`);
-      console.log(`   Hit Rate: ${(cacheStats.hitRate * 100).toFixed(1)}%`);
-      console.log(`   Total Size: ${cacheStats.totalSize} bytes`);
-      console.log(`   Average Response Time: ${isNaN(cacheStats.averageResponseTime) ? 'N/A' : cacheStats.averageResponseTime.toFixed(1)}ms`);
+      console.info('\n📈 Detailed Cache Statistics:');
+      console.info(`   Cache Size: ${cacheStats.size}/${cacheStats.maxSize}`);
+      console.info(`   Total Hits: ${cacheStats.totalHits}`);
+      console.info(`   Hit Rate: ${(cacheStats.hitRate * 100).toFixed(1)}%`);
+      console.info(`   Total Size: ${cacheStats.totalSize} bytes`);
+      console.info(`   Average Response Time: ${isNaN(cacheStats.averageResponseTime) ? 'N/A' : cacheStats.averageResponseTime.toFixed(1)}ms`);
     }
     
   } catch (error) {
@@ -436,39 +436,39 @@ async function runHeaderDefaultsBaseTest() {
   }
   
   // Final Results Summary
-  console.log('\n\n🎯 HEADER-DEFAULTS_BASE Test Results Summary');
-  console.log('=' .repeat(60));
+  console.info('\n\n🎯 HEADER-DEFAULTS_BASE Test Results Summary');
+  console.info('=' .repeat(60));
   
   const passedTests = testResults.filter(r => r.passed).length;
   const totalTests = testResults.length;
   const successRate = ((passedTests / totalTests) * 100).toFixed(1);
   
-  console.log(`\n📊 Overall Results: ${passedTests}/${totalTests} tests passed (${successRate}%)`);
+  console.info(`\n📊 Overall Results: ${passedTests}/${totalTests} tests passed (${successRate}%)`);
   
   if (passedTests === totalTests) {
-    console.log('🎉 All tests passed! HEADER-DEFAULTS_BASE is working correctly.');
+    console.info('🎉 All tests passed! HEADER-DEFAULTS_BASE is working correctly.');
   } else {
-    console.log('⚠️ Some tests failed. Review the details above.');
+    console.info('⚠️ Some tests failed. Review the details above.');
     
-    console.log('\n❌ Failed Tests:');
+    console.info('\n❌ Failed Tests:');
     testResults
       .filter(r => !r.passed)
-      .forEach(r => console.log(`   • ${r.testName}: ${r.details}`));
+      .forEach(r => console.info(`   • ${r.testName}: ${r.details}`));
   }
   
   // Header Defaults Base Validation Summary
-  console.log('\n🛡️ HEADER-DEFAULTS_BASE Validation Summary:');
-  console.log('=' .repeat(60));
-  console.log('✅ Core Headers: All required headers present and correct');
-  console.log('✅ Security Headers: Sec-Fetch-* headers implemented');
-  console.log('✅ Auto-Detection: Content-Type and Content-Length handled');
-  console.log('✅ Quality Values: Accept header with q=0.8 values');
-  console.log('✅ Caching: ETag-based caching with performance gains');
-  console.log('✅ Validation: Header validation and auto-correction');
-  console.log('✅ Error Handling: Graceful error handling and recovery');
-  console.log('✅ Statistics: Comprehensive cache statistics');
+  console.info('\n🛡️ HEADER-DEFAULTS_BASE Validation Summary:');
+  console.info('=' .repeat(60));
+  console.info('✅ Core Headers: All required headers present and correct');
+  console.info('✅ Security Headers: Sec-Fetch-* headers implemented');
+  console.info('✅ Auto-Detection: Content-Type and Content-Length handled');
+  console.info('✅ Quality Values: Accept header with q=0.8 values');
+  console.info('✅ Caching: ETag-based caching with performance gains');
+  console.info('✅ Validation: Header validation and auto-correction');
+  console.info('✅ Error Handling: Graceful error handling and recovery');
+  console.info('✅ Statistics: Comprehensive cache statistics');
   
-  console.log('\n🚀 HEADER-DEFAULTS_BASE is production-ready!');
+  console.info('\n🚀 HEADER-DEFAULTS_BASE is production-ready!');
   
   return {
     passed: passedTests,

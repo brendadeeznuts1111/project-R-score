@@ -104,24 +104,24 @@ function memoryAllocation(): void {
  * Run all test suites
  */
 async function runTestSuites(): Promise<void> {
-	console.log("Running CPU profiling test suites...");
+	console.info("Running CPU profiling test suites...");
 	
-	console.log("  - Synchronous CPU work");
+	console.info("  - Synchronous CPU work");
 	syncWork();
 	
-	console.log("  - Async operations");
+	console.info("  - Async operations");
 	await asyncWork();
 	
-	console.log("  - HTTP request simulation");
+	console.info("  - HTTP request simulation");
 	await httpSimulation();
 	
-	console.log("  - Mixed workload");
+	console.info("  - Mixed workload");
 	await mixedWorkload();
 	
-	console.log("  - Memory allocation patterns");
+	console.info("  - Memory allocation patterns");
 	memoryAllocation();
 	
-	console.log("Test suites completed");
+	console.info("Test suites completed");
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -231,7 +231,7 @@ async function main() {
 		switch (command) {
 			case "--baseline":
 			case "baseline": {
-				console.log("Creating baseline profile...");
+				console.info("Creating baseline profile...");
 				const filename = generateProfileFilename();
 				const outputPath = join(PROFILES_BASELINE_DIR, filename);
 				
@@ -240,15 +240,15 @@ async function main() {
 				const entry = await registry.registerProfile(outputPath);
 				await registry.setBaseline(entry.id, false);
 				
-				console.log(`✅ Baseline created: ${entry.version}`);
-				console.log(`   File: ${outputPath}`);
-				console.log(`   ID: ${entry.id}`);
+				console.info(`✅ Baseline created: ${entry.version}`);
+				console.info(`   File: ${outputPath}`);
+				console.info(`   ID: ${entry.id}`);
 				break;
 			}
 			
 			case "--compare":
 			case "compare": {
-				console.log("Comparing against baseline...");
+				console.info("Comparing against baseline...");
 				const baseline = await registry.getBaseline();
 				
 				if (!baseline) {
@@ -264,18 +264,18 @@ async function main() {
 				const current = await registry.registerProfile(outputPath);
 				const comparison = await registry.compareProfiles(current, baseline);
 				
-				console.log(`\n📊 Comparison Results:`);
-				console.log(`   Current: ${current.version}`);
-				console.log(`   Baseline: ${baseline.version}`);
-				console.log(`   Severity: ${comparison.severity}`);
-				console.log(`   ${comparison.message}`);
-				console.log(`\n   Execution Time: ${comparison.metrics.executionTimeDeltaPercent.toFixed(2)}%`);
-				console.log(`   Function Calls: ${comparison.metrics.functionCallsDeltaPercent.toFixed(2)}%`);
+				console.info(`\n📊 Comparison Results:`);
+				console.info(`   Current: ${current.version}`);
+				console.info(`   Baseline: ${baseline.version}`);
+				console.info(`   Severity: ${comparison.severity}`);
+				console.info(`   ${comparison.message}`);
+				console.info(`\n   Execution Time: ${comparison.metrics.executionTimeDeltaPercent.toFixed(2)}%`);
+				console.info(`   Function Calls: ${comparison.metrics.functionCallsDeltaPercent.toFixed(2)}%`);
 				
 				if (comparison.hotFunctionShifts && comparison.hotFunctionShifts.length > 0) {
-					console.log(`\n   Hot Function Shifts:`);
+					console.info(`\n   Hot Function Shifts:`);
 					comparison.hotFunctionShifts.forEach((shift) => {
-						console.log(`     - ${shift.name}: ${shift.timeDeltaPercent.toFixed(2)}%`);
+						console.info(`     - ${shift.name}: ${shift.timeDeltaPercent.toFixed(2)}%`);
 					});
 				}
 				
@@ -288,24 +288,24 @@ async function main() {
 			
 			case "--freeze":
 			case "freeze": {
-				console.log("Freezing baseline...");
+				console.info("Freezing baseline...");
 				const version = args[1];
 				await registry.freezeBaseline(version);
-				console.log("✅ Baseline frozen");
+				console.info("✅ Baseline frozen");
 				break;
 			}
 			
 			case "--list":
 			case "list": {
 				const profiles = await registry.listProfiles();
-				console.log(`\n📋 Profiles (${profiles.length}):\n`);
+				console.info(`\n📋 Profiles (${profiles.length}):\n`);
 				profiles.forEach((profile) => {
-					console.log(`   ${profile.version}`);
-					console.log(`   ID: ${profile.id}`);
-					console.log(`   Created: ${profile.createdAt}`);
-					console.log(`   Git Hash: ${profile.gitHash}`);
-					console.log(`   Metrics: ${profile.metrics.totalTime}ms, ${profile.metrics.functionCalls} calls`);
-					console.log("");
+					console.info(`   ${profile.version}`);
+					console.info(`   ID: ${profile.id}`);
+					console.info(`   Created: ${profile.createdAt}`);
+					console.info(`   Git Hash: ${profile.gitHash}`);
+					console.info(`   Metrics: ${profile.metrics.totalTime}ms, ${profile.metrics.functionCalls} calls`);
+					console.info("");
 				});
 				break;
 			}
@@ -313,21 +313,21 @@ async function main() {
 			case "--status":
 			case "status": {
 				const status = await registry.getRegressionStatus();
-				console.log("\n📊 Regression Status:\n");
-				console.log(`   Has Baseline: ${status.hasBaseline ? "✅" : "❌"}`);
-				console.log(`   Has Profiles: ${status.hasProfiles ? "✅" : "❌"}`);
+				console.info("\n📊 Regression Status:\n");
+				console.info(`   Has Baseline: ${status.hasBaseline ? "✅" : "❌"}`);
+				console.info(`   Has Profiles: ${status.hasProfiles ? "✅" : "❌"}`);
 				
 				if (status.latestProfile) {
-					console.log(`   Latest: ${status.latestProfile.version}`);
+					console.info(`   Latest: ${status.latestProfile.version}`);
 				}
 				
 				if (status.baseline) {
-					console.log(`   Baseline: ${status.baseline.version}`);
+					console.info(`   Baseline: ${status.baseline.version}`);
 				}
 				
 				if (status.regression) {
-					console.log(`\n   Regression: ${status.regression.severity}`);
-					console.log(`   ${status.regression.message}`);
+					console.info(`\n   Regression: ${status.regression.severity}`);
+					console.info(`   ${status.regression.message}`);
 				}
 				break;
 			}
@@ -335,7 +335,7 @@ async function main() {
 			case "--test":
 			case "test":
 			default: {
-				console.log("Running CPU profiling test...");
+				console.info("Running CPU profiling test...");
 				const filename = generateProfileFilename();
 				const outputPath = join(PROFILES_VERSIONS_DIR, filename);
 				
@@ -343,17 +343,17 @@ async function main() {
 				
 				const entry = await registry.registerProfile(outputPath);
 				
-				console.log(`✅ Profile created: ${entry.version}`);
-				console.log(`   File: ${outputPath}`);
-				console.log(`   ID: ${entry.id}`);
-				console.log(`   Metrics: ${entry.metrics.totalTime}ms, ${entry.metrics.functionCalls} calls`);
+				console.info(`✅ Profile created: ${entry.version}`);
+				console.info(`   File: ${outputPath}`);
+				console.info(`   ID: ${entry.id}`);
+				console.info(`   Metrics: ${entry.metrics.totalTime}ms, ${entry.metrics.functionCalls} calls`);
 				
 				// Check against baseline if exists
 				const baseline = await registry.getBaseline();
 				if (baseline) {
 					const comparison = await registry.compareProfiles(entry, baseline);
-					console.log(`\n📊 Comparison:`);
-					console.log(`   ${comparison.message}`);
+					console.info(`\n📊 Comparison:`);
+					console.info(`   ${comparison.message}`);
 					
 					if (comparison.severity === CPUProfiling.RegressionSeverity.CRITICAL) {
 						console.error("\n❌ Critical regression detected!");

@@ -127,8 +127,8 @@ export class AdvancedIntegrationSystem {
    * Initialize complete advanced integration system
    */
   async initialize(): Promise<void> {
-    console.log(styled('🚀 Initializing Advanced Integration System', 'accent'));
-    console.log(styled('==========================================', 'accent'));
+    console.info(styled('🚀 Initializing Advanced Integration System', 'accent'));
+    console.info(styled('==========================================', 'accent'));
 
     // Initialize all subsystems
     await this.initializeCookieCompression();
@@ -145,14 +145,14 @@ export class AdvancedIntegrationSystem {
     // Store comprehensive metrics
     await this.storeAdvancedMetrics();
 
-    console.log(styled('✅ Advanced integration system initialized', 'success'));
+    console.info(styled('✅ Advanced integration system initialized', 'success'));
   }
 
   /**
    * Initialize cookie compression with R2 storage
    */
   private async initializeCookieCompression(): Promise<void> {
-    console.log(styled('🍪 Initializing cookie compression...', 'info'));
+    console.info(styled('🍪 Initializing cookie compression...', 'info'));
 
     const cookieConfig: CookieCompressionConfig = {
       compression: 'zstd',
@@ -185,7 +185,7 @@ export class AdvancedIntegrationSystem {
     const compressedCookies = await this.compressCookies(sampleCookies);
     await this.r2.putJSON('integrations/cookie-compression/sample.json', compressedCookies);
 
-    console.log(styled('✅ Cookie compression initialized', 'success'));
+    console.info(styled('✅ Cookie compression initialized', 'success'));
   }
 
   /**
@@ -215,7 +215,7 @@ export class AdvancedIntegrationSystem {
    * Initialize Bun.secrets enterprise management
    */
   private async initializeSecretsManagement(): Promise<void> {
-    console.log(styled('🔐 Initializing enterprise secrets management...', 'info'));
+    console.info(styled('🔐 Initializing enterprise secrets management...', 'info'));
 
     // Store enterprise secrets
     await this.secrets.set('r2', 'access_key', 'a37de699062200db61373309ad166d46');
@@ -248,7 +248,7 @@ export class AdvancedIntegrationSystem {
       persistence: this.getPlatformPersistence(),
     });
 
-    console.log(styled('✅ Enterprise secrets management initialized', 'success'));
+    console.info(styled('✅ Enterprise secrets management initialized', 'success'));
   }
 
   /**
@@ -271,7 +271,7 @@ export class AdvancedIntegrationSystem {
    * Initialize header case preservation
    */
   private async initializeHeaderPreservation(): Promise<void> {
-    console.log(styled('📋 Initializing header case preservation...', 'info'));
+    console.info(styled('📋 Initializing header case preservation...', 'info'));
 
     // Test header preservation with hardened fetch
     const testHeaders = {
@@ -292,14 +292,14 @@ export class AdvancedIntegrationSystem {
       compliance: 'HTTP/1.1 Header Case Preservation',
     });
 
-    console.log(styled('✅ Header case preservation initialized', 'success'));
+    console.info(styled('✅ Header case preservation initialized', 'success'));
   }
 
   /**
    * Initialize Bun.wrap ANSI styling
    */
   private async initializeANSIStyling(): Promise<void> {
-    console.log(styled('🎨 Initializing ANSI styling system...', 'info'));
+    console.info(styled('🎨 Initializing ANSI styling system...', 'info'));
 
     const ansiConfig = {
       factorywager_theme: {
@@ -321,14 +321,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/ansi-styling/config.json', ansiConfig);
 
-    console.log(styled('✅ ANSI styling system initialized', 'success'));
+    console.info(styled('✅ ANSI styling system initialized', 'success'));
   }
 
   /**
    * Initialize constants integration
    */
   private async initializeConstantsIntegration(): Promise<void> {
-    console.log(styled('📊 Initializing constants integration...', 'info'));
+    console.info(styled('📊 Initializing constants integration...', 'info'));
 
     const constantsData = {
       factorywager_version: FACTORYWAGER_VERSION,
@@ -342,14 +342,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/constants/registry.json', constantsData);
 
-    console.log(styled('✅ Constants integration initialized', 'success'));
+    console.info(styled('✅ Constants integration initialized', 'success'));
   }
 
   /**
    * Initialize versioned secrets
    */
   private async initializeVersionedSecrets(): Promise<void> {
-    console.log(styled('🔄 Initializing versioned secrets...', 'info'));
+    console.info(styled('🔄 Initializing versioned secrets...', 'info'));
 
     try {
       // Create versioned secrets
@@ -373,7 +373,7 @@ export class AdvancedIntegrationSystem {
         },
       });
     } catch (error) {
-      console.log(styled(`   Versioned secrets demo: ${error.message}`, 'muted'));
+      console.info(styled(`   Versioned secrets demo: ${error.message}`, 'muted'));
     }
 
     const versionedStatus = {
@@ -386,14 +386,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/versioned-secrets/status.json', versionedStatus);
 
-    console.log(styled('✅ Versioned secrets initialized', 'success'));
+    console.info(styled('✅ Versioned secrets initialized', 'success'));
   }
 
   /**
    * Initialize master token system
    */
   private async initializeMasterTokens(): Promise<void> {
-    console.log(styled('🎫 Initializing master token system...', 'info'));
+    console.info(styled('🎫 Initializing master token system...', 'info'));
 
     // Create master tokens for different contexts
     const mcpToken = await masterTokenManager.createToken(
@@ -416,14 +416,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/master-tokens/status.json', tokenStatus);
 
-    console.log(styled('✅ Master token system initialized', 'success'));
+    console.info(styled('✅ Master token system initialized', 'success'));
   }
 
   /**
    * Initialize hardened fetch with TLS pinning
    */
   private async initializeHardenedFetch(): Promise<void> {
-    console.log(styled('🔒 Initializing hardened fetch system...', 'info'));
+    console.info(styled('🔒 Initializing hardened fetch system...', 'info'));
 
     // Test hardened fetch with TLS verification
     const hardenedConfig = {
@@ -437,14 +437,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/hardened-fetch/config.json', hardenedConfig);
 
-    console.log(styled('✅ Hardened fetch system initialized', 'success'));
+    console.info(styled('✅ Hardened fetch system initialized', 'success'));
   }
 
   /**
    * Initialize domain intelligence
    */
   private async initializeDomainIntelligence(): Promise<void> {
-    console.log(styled('🌐 Initializing domain intelligence...', 'info'));
+    console.info(styled('🌐 Initializing domain intelligence...', 'info'));
 
     // All domain systems are already initialized, just collect status
     const domainStatus = {
@@ -469,14 +469,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/domain-intelligence/status.json', domainStatus);
 
-    console.log(styled('✅ Domain intelligence initialized', 'success'));
+    console.info(styled('✅ Domain intelligence initialized', 'success'));
   }
 
   /**
    * Initialize cross-domain learning
    */
   private async initializeCrossDomainLearning(): Promise<void> {
-    console.log(styled('🧠 Initializing cross-domain learning...', 'info'));
+    console.info(styled('🧠 Initializing cross-domain learning...', 'info'));
 
     const learningConfig = {
       knowledge_base_size: 2048,
@@ -495,14 +495,14 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/cross-domain-learning/config.json', learningConfig);
 
-    console.log(styled('✅ Cross-domain learning initialized', 'success'));
+    console.info(styled('✅ Cross-domain learning initialized', 'success'));
   }
 
   /**
    * Store comprehensive advanced metrics
    */
   private async storeAdvancedMetrics(): Promise<void> {
-    console.log(styled('📊 Storing advanced metrics...', 'info'));
+    console.info(styled('📊 Storing advanced metrics...', 'info'));
 
     // Update metrics with current values
     this.metrics.timestamp = new Date().toISOString();
@@ -513,28 +513,28 @@ export class AdvancedIntegrationSystem {
 
     await this.r2.putJSON('integrations/advanced-metrics/latest.json', this.metrics);
 
-    console.log(styled('✅ Advanced metrics stored', 'success'));
+    console.info(styled('✅ Advanced metrics stored', 'success'));
   }
 
   /**
    * Demonstrate complete system integration
    */
   async demonstrateIntegration(): Promise<void> {
-    console.log(styled('\n🎯 Demonstrating Complete Integration', 'accent'));
-    console.log(styled('===================================', 'accent'));
+    console.info(styled('\n🎯 Demonstrating Complete Integration', 'accent'));
+    console.info(styled('===================================', 'accent'));
 
     // 1. Cookie compression demo
-    console.log(styled('\n🍪 Cookie Compression Demo:', 'info'));
+    console.info(styled('\n🍪 Cookie Compression Demo:', 'info'));
     const cookies = await this.compressCookies({
       session: crypto.randomUUID(),
       preferences: { theme: 'dark', lang: 'en' },
     });
-    console.log(styled(`   Compression: ${cookies.compression_ratio}% savings`, 'success'));
+    console.info(styled(`   Compression: ${cookies.compression_ratio}% savings`, 'success'));
 
     // 2. Secrets management demo
-    console.log(styled('\n🔐 Secrets Management Demo:', 'info'));
+    console.info(styled('\n🔐 Secrets Management Demo:', 'info'));
     const secretValue = await this.secrets.get('r2', 'access_key');
-    console.log(
+    console.info(
       styled(
         `   R2 Access Key: ${secretValue ? '✅ Stored securely' : '❌ Not found'}`,
         secretValue ? 'success' : 'error'
@@ -542,22 +542,22 @@ export class AdvancedIntegrationSystem {
     );
 
     // 3. Domain intelligence demo
-    console.log(styled('\n🌐 Domain Intelligence Demo:', 'info'));
+    console.info(styled('\n🌐 Domain Intelligence Demo:', 'info'));
     const subdomains = this.cloudflare.getAllSubdomains();
-    console.log(styled(`   Total Subdomains: ${subdomains.length}`, 'muted'));
-    console.log(
+    console.info(styled(`   Total Subdomains: ${subdomains.length}`, 'muted'));
+    console.info(
       styled(`   Enterprise Tier: ${this.cloudflare.getEnterpriseSubdomains().length}`, 'muted')
     );
 
     // 4. Cross-domain learning demo
-    console.log(styled('\n🧠 Cross-Domain Learning Demo:', 'info'));
-    console.log(
+    console.info(styled('\n🧠 Cross-Domain Learning Demo:', 'info'));
+    console.info(
       styled(
         `   Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `   Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`,
         'muted'
@@ -565,17 +565,17 @@ export class AdvancedIntegrationSystem {
     );
 
     // 5. Performance metrics demo
-    console.log(styled('\n📊 Performance Metrics Demo:', 'info'));
-    console.log(
+    console.info(styled('\n📊 Performance Metrics Demo:', 'info'));
+    console.info(
       styled(
         `   Avg Response Time: ${this.metrics.systems.performance.avg_response_time}ms`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(`   Cache Hit Rate: ${this.metrics.systems.performance.cache_hit_rate}%`, 'muted')
     );
-    console.log(
+    console.info(
       styled(
         `   Compression Savings: ${this.metrics.systems.performance.compression_savings}%`,
         'muted'
@@ -587,61 +587,61 @@ export class AdvancedIntegrationSystem {
    * Display comprehensive system status
    */
   async displayStatus(): Promise<void> {
-    console.log(styled('\n🚀 Advanced Integration System Status', 'accent'));
-    console.log(styled('====================================', 'accent'));
+    console.info(styled('\n🚀 Advanced Integration System Status', 'accent'));
+    console.info(styled('====================================', 'accent'));
 
-    console.log(styled('\n🔧 Integration Components:', 'info'));
-    console.log(styled('  🍪 Cookie Compression: ✅ Active', 'success'));
-    console.log(styled('  🔐 Enterprise Secrets: ✅ Active', 'success'));
-    console.log(styled('  🔄 Versioned Secrets: ✅ Active', 'success'));
-    console.log(styled('  🎫 Master Tokens: ✅ Active', 'success'));
-    console.log(styled('  📋 Header Preservation: ✅ Active', 'success'));
-    console.log(styled('  🎨 ANSI Styling: ✅ Active', 'success'));
-    console.log(styled('  📊 Constants Registry: ✅ Active', 'success'));
-    console.log(styled('  🔒 Hardened Fetch: ✅ Active', 'success'));
-    console.log(styled('  🌐 Domain Intelligence: ✅ Active', 'success'));
-    console.log(styled('  🧠 Cross-Domain Learning: ✅ Active', 'success'));
+    console.info(styled('\n🔧 Integration Components:', 'info'));
+    console.info(styled('  🍪 Cookie Compression: ✅ Active', 'success'));
+    console.info(styled('  🔐 Enterprise Secrets: ✅ Active', 'success'));
+    console.info(styled('  🔄 Versioned Secrets: ✅ Active', 'success'));
+    console.info(styled('  🎫 Master Tokens: ✅ Active', 'success'));
+    console.info(styled('  📋 Header Preservation: ✅ Active', 'success'));
+    console.info(styled('  🎨 ANSI Styling: ✅ Active', 'success'));
+    console.info(styled('  📊 Constants Registry: ✅ Active', 'success'));
+    console.info(styled('  🔒 Hardened Fetch: ✅ Active', 'success'));
+    console.info(styled('  🌐 Domain Intelligence: ✅ Active', 'success'));
+    console.info(styled('  🧠 Cross-Domain Learning: ✅ Active', 'success'));
 
-    console.log(styled('\n📈 System Metrics:', 'info'));
-    console.log(
+    console.info(styled('\n📈 System Metrics:', 'info'));
+    console.info(
       styled(`  R2 Storage: ${this.metrics.systems.r2_storage.total_objects} objects`, 'muted')
     );
-    console.log(
+    console.info(
       styled(`  Secrets: ${this.metrics.systems.secrets_management.total_secrets} total`, 'muted')
     );
-    console.log(
+    console.info(
       styled(
         `  Domains: ${this.metrics.systems.domain_management.total_subdomains} subdomains`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Performance: ${this.metrics.systems.performance.avg_response_time}ms avg response`,
         'muted'
       )
     );
 
-    console.log(styled('\n🧠 Intelligence Metrics:', 'info'));
-    console.log(
+    console.info(styled('\n🧠 Intelligence Metrics:', 'info'));
+    console.info(
       styled(
         `  Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Correlated Incidents: ${this.metrics.cross_domain_intelligence.correlated_incidents}`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Automated Fixes: ${this.metrics.cross_domain_intelligence.automated_fixes}`,
         'muted'
       )
     );
-    console.log(
+    console.info(
       styled(
         `  Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`,
         'muted'
@@ -661,6 +661,6 @@ if (import.meta.main) {
   await advanced.demonstrateIntegration();
   await advanced.displayStatus();
 
-  console.log(styled('\n🎉 Advanced integration system complete!', 'success'));
-  console.log(styled('All FactoryWager systems are now deeply integrated! 🚀', 'info'));
+  console.info(styled('\n🎉 Advanced integration system complete!', 'success'));
+  console.info(styled('All FactoryWager systems are now deeply integrated! 🚀', 'info'));
 }

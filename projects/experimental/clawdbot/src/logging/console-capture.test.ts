@@ -64,7 +64,7 @@ describe("enableConsoleCapture", () => {
     });
     routeLogsToStderr();
     enableConsoleCapture();
-    expect(() => console.log("hello")).not.toThrow();
+    expect(() => console.info("hello")).not.toThrow();
   });
 
   it("swallows EIO from original console writes", () => {
@@ -73,7 +73,7 @@ describe("enableConsoleCapture", () => {
       throw eioError();
     };
     enableConsoleCapture();
-    expect(() => console.log("hello")).not.toThrow();
+    expect(() => console.info("hello")).not.toThrow();
   });
 
   it("prefixes console output with timestamps when enabled", () => {
@@ -120,7 +120,7 @@ describe("enableConsoleCapture", () => {
     setConsoleTimestampPrefix(true);
     enableConsoleCapture();
     const payload = JSON.stringify({ ok: true });
-    console.log(payload);
+    console.info(payload);
     expect(log).toHaveBeenCalledWith(payload);
   });
 });

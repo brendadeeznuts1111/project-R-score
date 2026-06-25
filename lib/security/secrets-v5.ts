@@ -109,7 +109,7 @@ export class SecretManager {
 
     // Log documentation reference
     const docUrl = this.refs.get(config.doc, 'com')?.url;
-    console.log(
+    console.info(
       styled(`🔐 ${key}`, config.color) +
         styled(` | Level: ${level}`, 'muted') +
         styled(` | Docs: ${docUrl}`, 'accent')
@@ -135,7 +135,7 @@ export class SecretManager {
         });
 
         const elapsed = (performance.now() - start) * 1000; // Convert to microseconds
-        console.log(styled(`⚡ Cache hit: ${elapsed.toFixed(0)}μs`, 'success'));
+        console.info(styled(`⚡ Cache hit: ${elapsed.toFixed(0)}μs`, 'success'));
         return cached.value;
       }
     }
@@ -178,7 +178,7 @@ export class SecretManager {
       }
 
       const elapsed = (performance.now() - start) * 1000;
-      console.log(styled(`✅ Retrieved in ${elapsed.toFixed(0)}μs`, 'success'));
+      console.info(styled(`✅ Retrieved in ${elapsed.toFixed(0)}μs`, 'success'));
 
       return secret;
     } catch (error) {
@@ -216,7 +216,7 @@ export class SecretManager {
     const results = new Map<string, string>();
     const start = performance.now();
 
-    console.log(styled(`🔄 Batch retrieval: ${keys.length} secrets`, 'primary'));
+    console.info(styled(`🔄 Batch retrieval: ${keys.length} secrets`, 'primary'));
 
     // Process in parallel for performance
     const promises = keys.map(async key => {
@@ -246,7 +246,7 @@ export class SecretManager {
     });
 
     const elapsed = performance.now() - start;
-    console.log(
+    console.info(
       styled(
         `✅ Batch complete: ${results.size}/${keys.length} retrieved in ${elapsed.toFixed(2)}ms`,
         'success'
@@ -260,7 +260,7 @@ export class SecretManager {
    * Rotate a secret (mark for rotation)
    */
   async rotate(key: string, level: SecurityLevel = 'HIGH'): Promise<void> {
-    console.log(styled(`🔄 Rotating secret: ${key}`, 'warning'));
+    console.info(styled(`🔄 Rotating secret: ${key}`, 'warning'));
 
     // Remove from cache
     this.cache.delete(key);
@@ -278,14 +278,14 @@ export class SecretManager {
     });
 
     // In a real implementation, this would trigger secret rotation
-    console.log(styled(`✅ Rotation queued for: ${key}`, 'success'));
+    console.info(styled(`✅ Rotation queued for: ${key}`, 'success'));
   }
 
   /**
    * Invalidate a secret from cache
    */
   async invalidate(key: string, level: SecurityLevel = 'HIGH'): Promise<void> {
-    console.log(styled(`🗑️ Invalidating secret: ${key}`, 'error'));
+    console.info(styled(`🗑️ Invalidating secret: ${key}`, 'error'));
 
     // Remove from cache
     this.cache.delete(key);
@@ -302,7 +302,7 @@ export class SecretManager {
       metadata: { invalidated: 'true' },
     });
 
-    console.log(styled(`✅ Invalidated: ${key}`, 'success'));
+    console.info(styled(`✅ Invalidated: ${key}`, 'success'));
   }
 
   /**
@@ -331,7 +331,7 @@ export class SecretManager {
   clearCache(): void {
     const size = this.cache.size;
     this.cache.clear();
-    console.log(styled(`🧹 Cache cleared: ${size} entries removed`, 'primary'));
+    console.info(styled(`🧹 Cache cleared: ${size} entries removed`, 'primary'));
   }
 
   // Private methods
@@ -363,14 +363,14 @@ export class SecretManager {
 
     try {
       // In a real implementation, this would write to R2
-      console.log(styled(`📊 Flushing ${entries.length} audit entries`, 'muted'));
+      console.info(styled(`📊 Flushing ${entries.length} audit entries`, 'muted'));
 
       // Simulate R2 write
       for (const entry of entries) {
         await this.writeAuditToR2(entry);
       }
 
-      console.log(styled(`✅ Audit trail updated: ${entries.length} entries`, 'success'));
+      console.info(styled(`✅ Audit trail updated: ${entries.length} entries`, 'success'));
     } catch (error) {
       console.error(
         styled(
@@ -410,7 +410,7 @@ export class SecretManager {
     //   customMetadata: metadata
     // });
 
-    console.log(
+    console.info(
       styled(
         `   📝 Audit: ${entry.action} | ${entry.level} | ${entry.secretHash.substring(0, 8)}...`,
         'dim'

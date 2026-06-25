@@ -36,8 +36,8 @@ class VaultDaily {
     }
 
     async runDailyRoutine(): Promise<void> {
-        console.log(chalk.blue.bold('🌅 Running Daily Vault Routine...'));
-        console.log(chalk.gray(`Date: ${new Date().toLocaleDateString()}`));
+        console.info(chalk.blue.bold('🌅 Running Daily Vault Routine...'));
+        console.info(chalk.gray(`Date: ${new Date().toLocaleDateString()}`));
 
         const overallTimer = createTimer();
         const results: DailyReport = {
@@ -51,12 +51,12 @@ class VaultDaily {
         try {
             // Step 1: Validation with timing
             const validationTimer = createTimer();
-            console.log(chalk.blue('\n🔍 Step 1: Validating vault...'));
+            console.info(chalk.blue('\n🔍 Step 1: Validating vault...'));
             const validator = new VaultValidator(this.vaultPath);
             const validationResults = await validator.validateAll();
             validationTimer.stop();
 
-            console.log(chalk.gray(`Validation completed in: ${validationTimer.formattedDuration}`));
+            console.info(chalk.gray(`Validation completed in: ${validationTimer.formattedDuration}`));
 
             results.validation = {
                 passed: validationResults.errors === 0,
@@ -66,19 +66,19 @@ class VaultDaily {
             };
 
             if (results.validation.passed) {
-                console.log(chalk.green('✅ Validation passed'));
+                console.info(chalk.green('✅ Validation passed'));
             } else {
-                console.log(chalk.yellow('⚠️  Validation issues found'));
+                console.info(chalk.yellow('⚠️  Validation issues found'));
             }
 
             // Step 2: Organization with timing
             const organizationTimer = createTimer();
-            console.log(chalk.blue('\n🗂️  Step 2: Organizing files...'));
+            console.info(chalk.blue('\n🗂️  Step 2: Organizing files...'));
             const organizer = new VaultOrganizer(this.vaultPath);
             const organizationResults = await organizer.organizeAll();
             organizationTimer.stop();
 
-            console.log(chalk.gray(`Organization completed in: ${organizationTimer.formattedDuration}`));
+            console.info(chalk.gray(`Organization completed in: ${organizationTimer.formattedDuration}`));
 
             results.organization = {
                 organized: organizationResults.moved.length + organizationResults.renamed.length,
@@ -87,28 +87,28 @@ class VaultDaily {
             };
 
             if (results.organization.organized > 0) {
-                console.log(chalk.green(`✅ Organized ${results.organization.organized} files`));
+                console.info(chalk.green(`✅ Organized ${results.organization.organized} files`));
             } else {
-                console.log(chalk.gray('✓ No files needed organization'));
+                console.info(chalk.gray('✓ No files needed organization'));
             }
 
             // Step 3: Cleanup with timing
             const today = new Date();
             if (today.getDay() === 0) { // Sunday
-                console.log(chalk.blue('\n🧹 Step 3: Weekly cleanup...'));
+                console.info(chalk.blue('\n🧹 Step 3: Weekly cleanup...'));
                 const cleanupTimer = createTimer();
                 const cleanup = new VaultCleanup(this.vaultPath);
                 const cleanupResults = await cleanup.cleanupAll();
                 cleanupTimer.stop();
 
-                console.log(chalk.gray(`Cleanup completed in: ${cleanupTimer.formattedDuration}`));
+                console.info(chalk.gray(`Cleanup completed in: ${cleanupTimer.formattedDuration}`));
 
                 results.cleanup = cleanupResults;
 
                 if (results.cleanup.cleaned > 0) {
-                    console.log(chalk.green(`✅ Cleaned ${results.cleanup.cleaned} files`));
+                    console.info(chalk.green(`✅ Cleaned ${results.cleanup.cleaned} files`));
                 } else {
-                    console.log(chalk.gray('✓ No cleanup needed'));
+                    console.info(chalk.gray('✓ No cleanup needed'));
                 }
             }
 
@@ -129,8 +129,8 @@ class VaultDaily {
     }
 
     private generateDailyReport(results: DailyReport, durationNanoseconds: number): void {
-        console.log(chalk.blue.bold('\n📊 Daily Report:'));
-        console.log(chalk.gray('='.repeat(DISPLAY_CONSTANTS.SEPARATOR_LENGTH)));
+        console.info(chalk.blue.bold('\n📊 Daily Report:'));
+        console.info(chalk.gray('='.repeat(DISPLAY_CONSTANTS.SEPARATOR_LENGTH)));
 
         // Performance summary table
         const performanceData = [
@@ -154,25 +154,25 @@ class VaultDaily {
             }
         ];
 
-        console.log(chalk.blue.bold('\n⚡ Performance Summary:'));
-        console.log(formatTable(performanceData, ['Task', 'Status', 'Issues', 'Timing'], { colors: true }));
+        console.info(chalk.blue.bold('\n⚡ Performance Summary:'));
+        console.info(formatTable(performanceData, ['Task', 'Status', 'Issues', 'Timing'], { colors: true }));
 
-        console.log(chalk.blue.bold('\n💡 Recommendations:'));
+        console.info(chalk.blue.bold('\n💡 Recommendations:'));
 
         if (!results.validation.passed) {
-            console.log(chalk.yellow('• Run: bun run vault:fix - Auto-fix validation issues'));
+            console.info(chalk.yellow('• Run: bun run vault:fix - Auto-fix validation issues'));
         }
 
         if (results.validation.issues > 0) {
-            console.log(chalk.yellow('• Review validation warnings manually'));
+            console.info(chalk.yellow('• Review validation warnings manually'));
         }
 
         if (results.organization.organized === 0 && results.cleanup.cleaned === 0) {
-            console.log(chalk.green('• Vault is well organized! Keep up the good work.'));
+            console.info(chalk.green('• Vault is well organized! Keep up the good work.'));
         }
 
-        console.log(chalk.green('\n✅ Daily routine completed successfully!'));
-        console.log(chalk.gray(`Total execution time: ${formatNanoseconds(durationNanoseconds)}`));
+        console.info(chalk.green('\n✅ Daily routine completed successfully!'));
+        console.info(chalk.gray(`Total execution time: ${formatNanoseconds(durationNanoseconds)}`));
     }
 }
 

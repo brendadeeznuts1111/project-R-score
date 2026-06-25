@@ -275,12 +275,12 @@ class StreamingResponseBuilder {
 
 // Comprehensive binary data demonstration
 async function demonstrateBinaryDataCapabilities() {
-  console.log('\n🚀 Advanced Binary Data Processing with Bun');
-  console.log('==========================================\n');
+  console.info('\n🚀 Advanced Binary Data Processing with Bun');
+  console.info('==========================================\n');
 
   // 1. ArrayBufferSink Performance Demo
-  console.log('📊 ArrayBufferSink Streaming Performance:');
-  console.log('------------------------------------------');
+  console.info('📊 ArrayBufferSink Streaming Performance:');
+  console.info('------------------------------------------');
 
   const builder = new StreamingResponseBuilder({ highWaterMark: 65536 });
   const testData = 'Binary data processing is essential for high-performance applications. ' +
@@ -298,28 +298,28 @@ async function demonstrateBinaryDataCapabilities() {
   const buffer = builder.end();
   const endTime = performance.now();
 
-  console.log(`   Processed: ${(buffer instanceof Uint8Array ? buffer.length : buffer.byteLength) / 1024} KB`);
-  console.log(`   Time: ${(endTime - startTime).toFixed(2)}ms`);
-  console.log(`   Using ArrayBufferSink: ${builder.isUsingArrayBufferSink()}\n`);
+  console.info(`   Processed: ${(buffer instanceof Uint8Array ? buffer.length : buffer.byteLength) / 1024} KB`);
+  console.info(`   Time: ${(endTime - startTime).toFixed(2)}ms`);
+  console.info(`   Using ArrayBufferSink: ${builder.isUsingArrayBufferSink()}\n`);
 
   // 2. Base64/Hex Encoding Demo
-  console.log('🔄 Base64/Hex Encoding Performance:');
-  console.log('-----------------------------------');
+  console.info('🔄 Base64/Hex Encoding Performance:');
+  console.info('-----------------------------------');
 
   const testBytes = new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]); // "Hello World!"
-  console.log(`   Original: ${testBytes}`);
-  console.log(`   Base64: ${BinaryDataProcessor.encodeBase64(testBytes)}`);
-  console.log(`   Hex: ${BinaryDataProcessor.encodeHex(testBytes)}`);
+  console.info(`   Original: ${testBytes}`);
+  console.info(`   Base64: ${BinaryDataProcessor.encodeBase64(testBytes)}`);
+  console.info(`   Hex: ${BinaryDataProcessor.encodeHex(testBytes)}`);
 
   // Verify round-trip
   const decodedBase64 = BinaryDataProcessor.decodeBase64(BinaryDataProcessor.encodeBase64(testBytes));
   const decodedHex = BinaryDataProcessor.decodeHex(BinaryDataProcessor.encodeHex(testBytes));
-  console.log(`   Round-trip Base64: ${decodedBase64.every((v, i) => v === testBytes[i])}`);
-  console.log(`   Round-trip Hex: ${decodedHex.every((v, i) => v === testBytes[i])}\n`);
+  console.info(`   Round-trip Base64: ${decodedBase64.every((v, i) => v === testBytes[i])}`);
+  console.info(`   Round-trip Hex: ${decodedHex.every((v, i) => v === testBytes[i])}\n`);
 
   // 3. Binary Protocol Demo
-  console.log('📡 Binary Protocol Encoding/Decoding:');
-  console.log('-------------------------------------');
+  console.info('📡 Binary Protocol Encoding/Decoding:');
+  console.info('-------------------------------------');
 
   const protocolData = {
     version: 1,
@@ -327,20 +327,20 @@ async function demonstrateBinaryDataCapabilities() {
     payload: new Uint8Array([1, 2, 3, 4, 5, 255, 254, 253])
   };
 
-  console.log(`   Original data: v${protocolData.version}, type=${protocolData.type}, payload=${protocolData.payload.length} bytes`);
+  console.info(`   Original data: v${protocolData.version}, type=${protocolData.type}, payload=${protocolData.payload.length} bytes`);
 
   // Encode
   const encoded = BinaryDataProcessor.encodeBinaryProtocol(protocolData);
-  console.log(`   Encoded buffer: ${encoded.byteLength} bytes`);
+  console.info(`   Encoded buffer: ${encoded.byteLength} bytes`);
 
   // Decode
   const decoded = BinaryDataProcessor.decodeBinaryProtocol(encoded);
-  console.log(`   Decoded: v${decoded.version}, type=${decoded.type}, valid=${decoded.isValid}`);
-  console.log(`   Payload matches: ${decoded.payload.every((v, i) => v === protocolData.payload[i])}\n`);
+  console.info(`   Decoded: v${decoded.version}, type=${decoded.type}, valid=${decoded.isValid}`);
+  console.info(`   Payload matches: ${decoded.payload.every((v, i) => v === protocolData.payload[i])}\n`);
 
   // 4. JSON Response Optimization
-  console.log('⚡ JSON Response Optimization:');
-  console.log('-----------------------------');
+  console.info('⚡ JSON Response Optimization:');
+  console.info('-----------------------------');
 
   const jsonData = {
     message: 'Binary data processing with Bun is highly optimized',
@@ -357,39 +357,39 @@ async function demonstrateBinaryDataCapabilities() {
   const responseSize = jsonResponse.headers.get('X-Data-Size');
   const optimization = jsonResponse.headers.get('X-Binary-Optimized');
 
-  console.log(`   Response size: ${responseSize} bytes`);
-  console.log(`   Optimization: ${optimization}`);
-  console.log(`   Content-Type: ${jsonResponse.headers.get('Content-Type')}\n`);
+  console.info(`   Response size: ${responseSize} bytes`);
+  console.info(`   Optimization: ${optimization}`);
+  console.info(`   Content-Type: ${jsonResponse.headers.get('Content-Type')}\n`);
 
   // 5. File Processing Demo
-  console.log('📁 File Processing with Bun.file:');
-  console.log('---------------------------------');
+  console.info('📁 File Processing with Bun.file:');
+  console.info('---------------------------------');
 
   try {
     const fileInfo = await BinaryDataProcessor.processFile('package.json');
-    console.log(`   File size: ${fileInfo.size} bytes`);
-    console.log(`   MIME type: ${fileInfo.type}`);
-    console.log(`   Has hash: ${!!fileInfo.hash}`);
-    console.log(`   Content available: ${!!fileInfo.text}`);
+    console.info(`   File size: ${fileInfo.size} bytes`);
+    console.info(`   MIME type: ${fileInfo.type}`);
+    console.info(`   Has hash: ${!!fileInfo.hash}`);
+    console.info(`   Content available: ${!!fileInfo.text}`);
 
     if (fileInfo.text && fileInfo.text.length > 100) {
-      console.log(`   Sample content: ${fileInfo.text.substring(0, 50)}...`);
+      console.info(`   Sample content: ${fileInfo.text.substring(0, 50)}...`);
     }
   } catch (error) {
-    console.log(`   File processing demo skipped (file not found)`);
+    console.info(`   File processing demo skipped (file not found)`);
   }
 
-  console.log('\n✨ Binary Data Processing Demo Complete!');
-  console.log('=========================================\n');
+  console.info('\n✨ Binary Data Processing Demo Complete!');
+  console.info('=========================================\n');
 
-  console.log('Key Capabilities Demonstrated:');
-  console.log('• ArrayBufferSink for high-performance streaming');
-  console.log('• TypedArray operations with base64/hex encoding');
-  console.log('• DataView for binary protocol handling');
-  console.log('• Optimized JSON response building');
-  console.log('• Memory-efficient file processing');
-  console.log('• Zero-copy operations where possible');
-  console.log('• Cross-platform compatibility with fallbacks');
+  console.info('Key Capabilities Demonstrated:');
+  console.info('• ArrayBufferSink for high-performance streaming');
+  console.info('• TypedArray operations with base64/hex encoding');
+  console.info('• DataView for binary protocol handling');
+  console.info('• Optimized JSON response building');
+  console.info('• Memory-efficient file processing');
+  console.info('• Zero-copy operations where possible');
+  console.info('• Cross-platform compatibility with fallbacks');
 }
 
 if (import.meta.main) {

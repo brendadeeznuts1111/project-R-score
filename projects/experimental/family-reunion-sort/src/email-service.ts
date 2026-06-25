@@ -58,7 +58,7 @@ export class EmailService {
   private async sendEmail(template: EmailTemplate): Promise<void> {
     try {
       // In a real implementation, you would use a service like SendGrid, AWS SES, or direct SMTP
-      console.log(`Sending email to ${template.to}: ${template.subject}`);
+      console.info(`Sending email to ${template.to}: ${template.subject}`);
       
       // Example using nodemailer (would need to be installed)
       // const transporter = nodemailer.createTransport({
@@ -80,7 +80,7 @@ export class EmailService {
       // });
 
       // For now, just log the email
-      console.log('Email content:', template.htmlBody);
+      console.info('Email content:', template.htmlBody);
     } catch (error) {
       console.error('Failed to send email:', error);
       throw error;

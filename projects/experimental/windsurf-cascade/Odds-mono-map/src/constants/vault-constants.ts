@@ -451,7 +451,7 @@ export const measureExecution = async <T>(
         timer.stop();
 
         if (label) {
-            console.log(`${label}: ${timer.formattedDuration}`);
+            console.info(`${label}: ${timer.formattedDuration}`);
         }
 
         return {

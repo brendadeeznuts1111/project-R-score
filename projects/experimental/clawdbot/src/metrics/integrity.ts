@@ -64,7 +64,7 @@ export class MetricsIntegrityChecker {
 
     await Bun.write(path, json);
 
-    console.log(`[integrity] Stored with checksum: ${wrapped.checksum}`);
+    console.info(`[integrity] Stored with checksum: ${wrapped.checksum}`);
 
     return {
       checksum: wrapped.checksum,

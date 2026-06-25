@@ -550,7 +550,7 @@ getGitCommitInfo().then(async (info) => {
 			const { logger } = await import("../src/utils/logger");
 			logger.info(`📦 Git: ${info.branch} @ ${info.shortHash}`);
 		} catch {
-			console.log(`📦 Git: ${info.branch} @ ${info.shortHash}`);
+			console.info(`📦 Git: ${info.branch} @ ${info.shortHash}`);
 		}
 	}
 }).catch(() => {});
@@ -564,9 +564,9 @@ getGitCommitInfo().then(async (info) => {
 		logger.info(`🔗 API Proxy: ${API_BASE}`);
 		logger.info(`\nPress Ctrl+C to stop`);
 	} catch {
-		console.log(`🚀 Dashboard server running on http://localhost:${PORT}`);
-		console.log(`📊 Dashboard: http://localhost:${PORT}/`);
-		console.log(`🔗 API Proxy: ${API_BASE}`);
-		console.log(`\nPress Ctrl+C to stop`);
+		console.info(`🚀 Dashboard server running on http://localhost:${PORT}`);
+		console.info(`📊 Dashboard: http://localhost:${PORT}/`);
+		console.info(`🔗 API Proxy: ${API_BASE}`);
+		console.info(`\nPress Ctrl+C to stop`);
 	}
 })();

@@ -27,7 +27,7 @@ function getLoadMultiplier(): number {
     // Very generous adjustment for system load in CI/dev environments
     if (normalizedLoad > 0.3) {
       const multiplier = Math.min(10.0, 1.0 + (normalizedLoad * 3));
-      console.log(`⚠️  HTTP Lifecycle: System load ${loadAvg.toFixed(2)}, multiplier: ${multiplier.toFixed(1)}x`);
+      console.info(`⚠️  HTTP Lifecycle: System load ${loadAvg.toFixed(2)}, multiplier: ${multiplier.toFixed(1)}x`);
       return multiplier;
     }
     return 1.0;
@@ -94,7 +94,7 @@ describe("HTTP Server Lifecycle Integration", () => {
       // Server startup should be nearly instant (cold_start_ms target is 0)
       expect(result.durationMs).toBeLessThan(100); // Allow 100ms for server startup
 
-      console.log(`Server startup: ${formatTime(result.durationMs)}`);
+      console.info(`Server startup: ${formatTime(result.durationMs)}`);
     });
 
     test("server is immediately responsive after startup", async () => {
@@ -122,7 +122,7 @@ describe("HTTP Server Lifecycle Integration", () => {
 
       // Use relaxed integration target for P99 (network has inherent jitter)
       expect(stats.p99).toBeLessThan(INTEGRATION_HEALTH_CHECK_MS);
-      console.log(formatStats(stats, "Health endpoint"));
+      console.info(formatStats(stats, "Health endpoint"));
     });
 
     test("registry lookup meets request cycle SLA", async () => {
@@ -137,7 +137,7 @@ describe("HTTP Server Lifecycle Integration", () => {
 
       // P99 should be under request cycle target
       expect(stats.p99).toBeLessThan(SLA_TARGETS.REQUEST_CYCLE_P99_MS);
-      console.log(formatStats(stats, "Registry lookup"));
+      console.info(formatStats(stats, "Registry lookup"));
     });
 
     test("404 responses are fast", async () => {
@@ -151,7 +151,7 @@ describe("HTTP Server Lifecycle Integration", () => {
       );
 
       expect(stats.p99).toBeLessThan(SLA_TARGETS.HEALTH_CHECK_MS); // Should be as fast as health
-      console.log(formatStats(stats, "404 response"));
+      console.info(formatStats(stats, "404 response"));
     });
   });
 
@@ -197,7 +197,7 @@ describe("HTTP Server Lifecycle Integration", () => {
       expect(result.value.every(s => s === 200)).toBe(true);
       expect(result.durationMs).toBeLessThan(100); // 10 concurrent should be fast
 
-      console.log(`10 concurrent requests: ${formatTime(result.durationMs)}`);
+      console.info(`10 concurrent requests: ${formatTime(result.durationMs)}`);
     });
 
     test("handles 50 concurrent requests", async () => {
@@ -212,7 +212,7 @@ describe("HTTP Server Lifecycle Integration", () => {
       expect(result.value.every(s => s === 200)).toBe(true);
       expect(result.durationMs).toBeLessThan(500); // 50 concurrent should complete in 500ms
 
-      console.log(`50 concurrent requests: ${formatTime(result.durationMs)}`);
+      console.info(`50 concurrent requests: ${formatTime(result.durationMs)}`);
     });
 
     test("handles sequential requests with consistent latency", async () => {
@@ -229,9 +229,9 @@ describe("HTTP Server Lifecycle Integration", () => {
       expect(stats.mean).toBeLessThan(10);
 
       // Log variance metrics for visibility (not hard gates due to network jitter)
-      console.log(formatStats(stats, "Sequential request consistency"));
+      console.info(formatStats(stats, "Sequential request consistency"));
       if (stats.cv > 150) {
-        console.log(`  ⚠ High CV (${stats.cv.toFixed(1)}%) - expected with network jitter`);
+        console.info(`  ⚠ High CV (${stats.cv.toFixed(1)}%) - expected with network jitter`);
       }
     });
   });
@@ -269,7 +269,7 @@ describe("HTTP Server Lifecycle Integration", () => {
       });
 
       expect(result.durationMs).toBeLessThan(100); // Shutdown should be fast
-      console.log(`Server shutdown: ${formatTime(result.durationMs)}`);
+      console.info(`Server shutdown: ${formatTime(result.durationMs)}`);
     });
 
     test("requests fail after shutdown", async () => {

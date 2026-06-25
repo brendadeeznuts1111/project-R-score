@@ -159,7 +159,7 @@ class WebSocketHub {
 
   // Handle new WebSocket connections
   handleConnection(ws: WebSocket, clientId: string) {
-    console.log(`🔌 WebSocket client connected: ${clientId}`);
+    console.info(`🔌 WebSocket client connected: ${clientId}`);
     this.connections.set(clientId, ws);
 
     // Send welcome message
@@ -186,7 +186,7 @@ class WebSocketHub {
 
     // Handle disconnection
     ws.onclose = () => {
-      console.log(`🔌 WebSocket client disconnected: ${clientId}`);
+      console.info(`🔌 WebSocket client disconnected: ${clientId}`);
       this.connections.delete(clientId);
     };
 
@@ -1498,7 +1498,7 @@ class UnifiedDashboard {
                };
              },
              cancel() {
-               console.log('Event stream cancelled');
+               console.info('Event stream cancelled');
              }
            });
 
@@ -2277,13 +2277,13 @@ class UnifiedDashboard {
 
     });
 
-    console.log("\n🚀 Unified Dashboard Server");
-    console.log("━".repeat(50));
-    console.log(`\n📊 Main Dashboard: http://localhost:${this.port}`);
-    console.log(`📡 API Data: http://localhost:${this.port}/api/data`);
-    console.log(`📈 Telemetry: http://localhost:${this.port}/api/telemetry`);
-    console.log(`\n✨ Server running with HMR enabled`);
-    console.log(`\n📝 Press Ctrl+C to stop\n`);
+    console.info("\n🚀 Unified Dashboard Server");
+    console.info("━".repeat(50));
+    console.info(`\n📊 Main Dashboard: http://localhost:${this.port}`);
+    console.info(`📡 API Data: http://localhost:${this.port}/api/data`);
+    console.info(`📈 Telemetry: http://localhost:${this.port}/api/telemetry`);
+    console.info(`\n✨ Server running with HMR enabled`);
+    console.info(`\n📝 Press Ctrl+C to stop\n`);
 
     // Keep the server running
     await new Promise(() => {});

@@ -6,10 +6,10 @@ class MemoryBenchmark {
   private regexps: RegExp[] = [];
 
   async runMemoryTest() {
-    console.log('🧠 Memory Usage Benchmark\n');
+    console.info('🧠 Memory Usage Benchmark\n');
 
     // Test 1: Creating many patterns
-    console.log('1. Creating 10,000 patterns...');
+    console.info('1. Creating 10,000 patterns...');
 
     const startCreateMemory = process.memoryUsage();
 
@@ -26,13 +26,13 @@ class MemoryBenchmark {
 
     const endCreateMemory = process.memoryUsage();
 
-    console.log('   URLPattern memory increase:',
+    console.info('   URLPattern memory increase:',
       this.formatMemory(endCreateMemory.heapUsed - startCreateMemory.heapUsed));
-    console.log('   RegExp memory increase:',
+    console.info('   RegExp memory increase:',
       this.formatMemory(endCreateMemory.external - startCreateMemory.external));
 
     // Test 2: Using patterns
-    console.log('\n2. Using patterns (test operations)...');
+    console.info('\n2. Using patterns (test operations)...');
 
     const startUseMemory = process.memoryUsage();
 
@@ -47,13 +47,13 @@ class MemoryBenchmark {
 
     const endUseMemory = process.memoryUsage();
 
-    console.log('   URLPattern usage increase:',
+    console.info('   URLPattern usage increase:',
       this.formatMemory(endUseMemory.heapUsed - startUseMemory.heapUsed));
-    console.log('   RegExp usage increase:',
+    console.info('   RegExp usage increase:',
       this.formatMemory(endUseMemory.external - startUseMemory.external));
 
     // Test 3: Garbage collection
-    console.log('\n3. Testing garbage collection...');
+    console.info('\n3. Testing garbage collection...');
 
     this.patterns = [];
     this.regexps = [];
@@ -63,20 +63,20 @@ class MemoryBenchmark {
       await Bun.sleep(100);
 
       const afterGCMemory = process.memoryUsage();
-      console.log('   Memory after GC:', this.formatMemory(afterGCMemory.heapUsed));
+      console.info('   Memory after GC:', this.formatMemory(afterGCMemory.heapUsed));
     }
 
     // Summary
-    console.log('\n📋 Memory Benchmark Summary');
-    console.log('='.repeat(50));
-    console.log('URLPattern uses more memory initially but offers:');
-    console.log('  • Better API for complex URL matching');
-    console.log('  • Type safety with named parameters');
-    console.log('  • Standardized Web API');
-    console.log('\nRegExp is more memory-efficient for:');
-    console.log('  • Simple pattern matching');
-    console.log('  • High-volume operations');
-    console.log('  • When memory is constrained');
+    console.info('\n📋 Memory Benchmark Summary');
+    console.info('='.repeat(50));
+    console.info('URLPattern uses more memory initially but offers:');
+    console.info('  • Better API for complex URL matching');
+    console.info('  • Type safety with named parameters');
+    console.info('  • Standardized Web API');
+    console.info('\nRegExp is more memory-efficient for:');
+    console.info('  • Simple pattern matching');
+    console.info('  • High-volume operations');
+    console.info('  • When memory is constrained');
   }
 
   private formatMemory(bytes: number): string {

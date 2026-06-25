@@ -37,7 +37,7 @@ const server = Bun.serve({
   }
 });
 
-console.log(`Offshore Books Bun bot listening on http://localhost:${server.port}`);
+console.info(`Offshore Books Bun bot listening on http://localhost:${server.port}`);
 
 async function handleTelegramUpdate(update, env) {
   const message = update.message || update.edited_message;

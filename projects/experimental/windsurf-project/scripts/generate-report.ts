@@ -43,8 +43,8 @@ async function generateReport() {
   // Save report
   await Bun.write('performance-report.json', JSON.stringify(report, null, 2));
   
-  console.log('📋 PERFORMANCE REPORT');
-  console.log('='.repeat(40));
+  console.info('📋 PERFORMANCE REPORT');
+  console.info('='.repeat(40));
   console.table({
     'Compression Savings': `${(report.compression.savings * 100).toFixed(1)}%`,
     'Original Size': `${report.compression.originalSize} bytes`,
@@ -54,8 +54,8 @@ async function generateReport() {
   });
   
   if (report.recommendations.length > 0) {
-    console.log('\n💡 Recommendations:');
-    report.recommendations.forEach((rec, i) => console.log(`  ${i + 1}. ${rec}`));
+    console.info('\n💡 Recommendations:');
+    report.recommendations.forEach((rec, i) => console.info(`  ${i + 1}. ${rec}`));
   }
 }
 

@@ -15,7 +15,7 @@ This integrated system provides comprehensive documentation management with:
 
 ```bash
 cd my-project
-bun run cli/integrated-cli.ts init
+bun run tools/cli/integrated-cli.ts init
 ```
 
 This will:
@@ -27,14 +27,14 @@ This will:
 ### 2. Analyze Your Package
 
 ```bash
-bun run cli/integrated-cli.ts analyze
-bun run cli/integrated-cli.ts analyze --graph  # With dependency graph
+bun run tools/cli/integrated-cli.ts analyze
+bun run tools/cli/integrated-cli.ts analyze --graph  # With dependency graph
 ```
 
 ### 3. Start Documentation Server
 
 ```bash
-bun run cli/integrated-cli.ts serve --port=8080
+bun run tools/cli/integrated-cli.ts serve --port=8080
 ```
 
 Visit `http://localhost:8080` to see your package documentation.
@@ -42,13 +42,13 @@ Visit `http://localhost:8080` to see your package documentation.
 ### 4. Sync to R2
 
 ```bash
-bun run cli/integrated-cli.ts sync
+bun run tools/cli/integrated-cli.ts sync
 ```
 
 ### 5. Publish Documentation
 
 ```bash
-bun run cli/integrated-cli.ts publish
+bun run tools/cli/integrated-cli.ts publish
 ```
 
 ## Environment Setup

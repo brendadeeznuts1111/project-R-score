@@ -5,7 +5,7 @@ import { initDuoPlus } from "./common/duoplus-premium";
 import { PatternValidator } from "./validation/pattern-validator";
 import { IdentityShieldWorkflow } from "./apple-id/identity-shield-service";
 
-console.log("🏰 Empire Pro Starting...");
+console.info("🏰 Empire Pro Starting...");
 
 registerTypeDefinitions();
 
@@ -14,9 +14,9 @@ initDuoPlus();
 
 // Dead-code eliminated if !feature("VALIDATION")
 if (feature("VALIDATION")) {
-  console.log("🛡️  Validation Engine Active [DCE Check]");
+  console.info("🛡️  Validation Engine Active [DCE Check]");
   const workflow = new IdentityShieldWorkflow();
   PatternValidator.validate(workflow, PatternValidator.generateLSPInfo(workflow));
 }
 
-console.log("✨ Core Services Ready.");
+console.info("✨ Core Services Ready.");

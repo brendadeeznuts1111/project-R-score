@@ -38,7 +38,7 @@ class MarketDataLoader {
 }
 
 async function runProfiledAnalysis() {
-  console.log('🚀 Starting profiled market analysis...');
+  console.info('🚀 Starting profiled market analysis...');
 
   // Load market data
   const loader = new MarketDataLoader();
@@ -55,7 +55,7 @@ async function runProfiledAnalysis() {
   });
 
   // Run CPU-intensive operations
-  console.log('🔍 Analyzing market correlations...');
+  console.info('🔍 Analyzing market correlations...');
 
   // This simulates the Fibonacci pattern from Bun's example
   function analyzeWithRecursion(n: number): number {
@@ -64,12 +64,12 @@ async function runProfiledAnalysis() {
 
   // Use recursive analysis for profiling demonstration
   const complexityScore = analyzeWithRecursion(PROFILING_CONFIG.maxRecursionDepth);
-  console.log(`📈 Analysis complexity score: ${complexityScore}`);
+  console.info(`📈 Analysis complexity score: ${complexityScore}`);
 
   // Build multi-layer graph
   await system.buildGraph();
 
-  console.log('✅ Profiling complete. Open .cpuprofile in Chrome DevTools');
+  console.info('✅ Profiling complete. Open .cpuprofile in Chrome DevTools');
 }
 
 // Run if called directly

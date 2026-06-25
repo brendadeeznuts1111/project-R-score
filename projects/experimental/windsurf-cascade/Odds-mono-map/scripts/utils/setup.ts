@@ -35,7 +35,7 @@ interface SetupConfig {
 }
 
 async function setupVault(): Promise<void> {
-    console.log(chalk.blue.bold('🚀 Setting up Odds Protocol Vault Automation...'));
+    console.info(chalk.blue.bold('🚀 Setting up Odds Protocol Vault Automation...'));
 
     const config: SetupConfig = {
         created: [],
@@ -68,7 +68,7 @@ async function setupVault(): Promise<void> {
             if (!existsSync(dirPath)) {
                 mkdirSync(dirPath, { recursive: true });
                 config.created.push(`Directory: ${dir}`);
-                console.log(chalk.green(`✓ Created directory: ${dir}`));
+                console.info(chalk.green(`✓ Created directory: ${dir}`));
             }
         }
 
@@ -77,7 +77,7 @@ async function setupVault(): Promise<void> {
         if (!existsSync(logFile)) {
             writeFileSync(logFile, `# Vault Automation Log\n\nStarted: ${new Date().toISOString()}\n\n`);
             config.created.push('Log file: vault-automation.log');
-            console.log(chalk.green('✓ Created log file'));
+            console.info(chalk.green('✓ Created log file'));
         }
 
         // Create configuration file
@@ -101,7 +101,7 @@ async function setupVault(): Promise<void> {
             };
             writeFileSync(configFile, JSON.stringify(configData, null, 2));
             config.created.push('Configuration: .vault-config.json');
-            console.log(chalk.green('✓ Created configuration file'));
+            console.info(chalk.green('✓ Created configuration file'));
         }
 
         // Create status file
@@ -117,26 +117,26 @@ async function setupVault(): Promise<void> {
         };
         writeFileSync(statusFile, JSON.stringify(statusData, null, 2));
         config.created.push('Status file: .vault-status.json');
-        console.log(chalk.green('✓ Created status file'));
+        console.info(chalk.green('✓ Created status file'));
 
         // Display results
-        console.log(chalk.blue.bold('\n📊 Setup Results:'));
-        console.log(chalk.green(`✅ Successfully created ${config.created.length} items`));
+        console.info(chalk.blue.bold('\n📊 Setup Results:'));
+        console.info(chalk.green(`✅ Successfully created ${config.created.length} items`));
 
         if (config.warnings.length > 0) {
-            console.log(chalk.yellow(`⚠️  ${config.warnings.length} warnings`));
-            config.warnings.forEach(warning => console.log(chalk.yellow(`   - ${warning}`)));
+            console.info(chalk.yellow(`⚠️  ${config.warnings.length} warnings`));
+            config.warnings.forEach(warning => console.info(chalk.yellow(`   - ${warning}`)));
         }
 
         if (config.errors.length > 0) {
-            console.log(chalk.red(`❌ ${config.errors.length} errors`));
-            config.errors.forEach(error => console.log(chalk.red(`   - ${error}`)));
+            console.info(chalk.red(`❌ ${config.errors.length} errors`));
+            config.errors.forEach(error => console.info(chalk.red(`   - ${error}`)));
         }
 
-        console.log(chalk.blue.bold('\n🎯 Next Steps:'));
-        console.log('1. Run: bun run vault:organize');
-        console.log('2. Run: bun run vault:validate');
-        console.log('3. Run: bun run vault:monitor');
+        console.info(chalk.blue.bold('\n🎯 Next Steps:'));
+        console.info('1. Run: bun run vault:organize');
+        console.info('2. Run: bun run vault:validate');
+        console.info('3. Run: bun run vault:monitor');
 
     } catch (error) {
         ErrorHandler.handleError(

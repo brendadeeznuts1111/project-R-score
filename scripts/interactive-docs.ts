@@ -2,7 +2,7 @@
 
 /**
  * Interactive Documentation Workflow System
- * 
+ *
  * Advanced error diagnosis and learning system that combines:
  * - Bun documentation search
  * - FactoryWager audit trail analysis
@@ -13,7 +13,7 @@
 import { BunMCPClient, SearchResult, Diagnosis } from '../lib/mcp/bun-mcp-client.ts';
 import { SecretManager } from '../lib/security/secrets-v5.ts';
 import { styled, FW_COLORS, log, colorBar } from '../lib/theme/colors.ts';
-import { r2MCPIntegration, DiagnosisEntry, AuditEntry } from '../lib/mcp/r2-integration.ts';
+import { r2MCPIntegration, DiagnosisEntry, AuditEntry } from '../lib/mcp/r2-integration-fixed.ts';
 
 interface AuditTrail {
   id: string;
@@ -52,15 +52,12 @@ export class InteractiveDocs {
   /**
    * Comprehensive error diagnosis with Bun docs + FactoryWager audit integration
    */
-  async diagnoseError(
-    error: Error, 
-    options: DiagnosisOptions = {}
-  ): Promise<Diagnosis> {
+  async diagnoseError(error: Error, options: DiagnosisOptions = {}): Promise<Diagnosis> {
     const {
       includeAuditHistory = true,
       storeDiagnosis = true,
       generateFix = true,
-      context = 'general'
+      context = 'general',
     } = options;
 
     log.section('🔍 Error Diagnosis Started', 'warning');
@@ -101,12 +98,11 @@ export class InteractiveDocs {
         bunDocs: docsResults,
         similarPastIssues: auditResults,
         suggestedFix: fix,
-        confidence
+        confidence,
       };
 
       this.displayDiagnosis(diagnosis);
       return diagnosis;
-
     } catch (diagnosisError) {
       log.error(`Diagnosis failed: ${diagnosisError.message}`);
       throw diagnosisError;
@@ -127,7 +123,7 @@ export class InteractiveDocs {
       // 1. Get comprehensive documentation
       const docsResults = await this.mcp.searchBunDocs(apiName, {
         generateExample: true,
-        context: 'learning'
+        context: 'learning',
       });
 
       // 2. Generate FactoryWager-style example
@@ -139,8 +135,14 @@ export class InteractiveDocs {
       // 4. Performance tips
       const performanceTips = this.extractPerformanceTips(docsResults);
 
-      this.displayLearningSession(apiName, context, docsResults, example, securityNotes, performanceTips);
-
+      this.displayLearningSession(
+        apiName,
+        context,
+        docsResults,
+        example,
+        securityNotes,
+        performanceTips
+      );
     } catch (error) {
       log.error(`Learning session failed: ${error.message}`);
       throw error;
@@ -150,10 +152,7 @@ export class InteractiveDocs {
   /**
    * Real-time code validation with suggestions
    */
-  async validateCodeWithLearning(
-    code: string, 
-    context: string = 'general'
-  ): Promise<any> {
+  async validateCodeWithLearning(code: string, context: string = 'general'): Promise<any> {
     log.section('🔍 Code Validation & Learning', 'primary');
 
     try {
@@ -177,12 +176,11 @@ export class InteractiveDocs {
         patternValidation,
         suggestions,
         securityReview,
-        overallScore: this.calculateOverallScore(validation, patternValidation, securityReview)
+        overallScore: this.calculateOverallScore(validation, patternValidation, securityReview),
       };
 
       this.displayValidationResults(result);
       return result;
-
     } catch (error) {
       log.error(`Validation failed: ${error.message}`);
       throw error;
@@ -197,7 +195,7 @@ export class InteractiveDocs {
       error.message,
       error.name,
       error.constructor.name,
-      ...this.extractKeywordsFromError(error)
+      ...this.extractKeywordsFromError(error),
     ];
 
     const allResults: SearchResult[] = [];
@@ -206,7 +204,7 @@ export class InteractiveDocs {
       try {
         const results = await this.mcp.searchBunDocs(query, {
           codeOnly: true,
-          generateExample: true
+          generateExample: true,
         });
         allResults.push(...results);
       } catch (searchError) {
@@ -255,10 +253,11 @@ ${this.getPerformanceNotes(context, error)}
 ${this.explainAppliedPattern(fwPattern)}
 
 // 📋 Audit History:
-${audits.length > 0 ? 
-  `✓ Found ${audits.length} similar issues in audit trail\n` +
-  `✓ Most recent resolution: ${audits[0].resolution}` : 
-  '⚠ No similar issues found in audit trail'
+${
+  audits.length > 0
+    ? `✓ Found ${audits.length} similar issues in audit trail\n` +
+      `✓ Most recent resolution: ${audits[0].resolution}`
+    : '⚠ No similar issues found in audit trail'
 }
 
 // 🔄 Next Steps:
@@ -312,47 +311,49 @@ ${this.generateNextSteps(error, docs, audits)}
    * Display comprehensive diagnosis results
    */
   private displayDiagnosis(diagnosis: Diagnosis): void {
-    console.log('\n' + colorBar('success', 50));
-    console.log(styled('🎯 DIAGNOSIS COMPLETE', 'success'));
-    console.log(colorBar('success', 50));
+    console.info('\n' + colorBar('success', 50));
+    console.info(styled('🎯 DIAGNOSIS COMPLETE', 'success'));
+    console.info(colorBar('success', 50));
 
     // Error summary
-    console.log(styled('\n🚨 Error Summary:', 'error'));
-    console.log(styled(`   ${diagnosis.error}`, 'muted'));
+    console.info(styled('\n🚨 Error Summary:', 'error'));
+    console.info(styled(`   ${diagnosis.error}`, 'muted'));
 
     // Confidence score
-    const confidenceColor = diagnosis.confidence > 0.8 ? 'success' : 
-                           diagnosis.confidence > 0.6 ? 'warning' : 'error';
-    console.log(styled('\n📊 Confidence Score:', 'accent'));
-    console.log(styled(`   ${Math.round(diagnosis.confidence * 100)}%`, confidenceColor));
+    const confidenceColor =
+      diagnosis.confidence > 0.8 ? 'success' : diagnosis.confidence > 0.6 ? 'warning' : 'error';
+    console.info(styled('\n📊 Confidence Score:', 'accent'));
+    console.info(styled(`   ${Math.round(diagnosis.confidence * 100)}%`, confidenceColor));
 
     // Documentation results
     if (diagnosis.bunDocs.length > 0) {
-      console.log(styled('\n📚 Relevant Documentation:', 'primary'));
+      console.info(styled('\n📚 Relevant Documentation:', 'primary'));
       diagnosis.bunDocs.slice(0, 3).forEach((doc, i) => {
-        console.log(styled(`   ${i + 1}. ${doc.title}`, 'info'));
+        console.info(styled(`   ${i + 1}. ${doc.title}`, 'info'));
         if (doc.links[0]) {
-          console.log(styled(`      🔗 ${doc.links[0]}`, 'muted'));
+          console.info(styled(`      🔗 ${doc.links[0]}`, 'muted'));
         }
       });
     }
 
     // Audit history
     if (diagnosis.similarPastIssues.length > 0) {
-      console.log(styled('\n📋 Audit History:', 'warning'));
-      console.log(styled(`   ✓ Found ${diagnosis.similarPastIssues.length} similar issues`, 'success'));
+      console.info(styled('\n📋 Audit History:', 'warning'));
+      console.info(
+        styled(`   ✓ Found ${diagnosis.similarPastIssues.length} similar issues`, 'success')
+      );
       diagnosis.similarPastIssues.slice(0, 2).forEach(audit => {
-        console.log(styled(`   • ${audit.resolution}`, 'muted'));
+        console.info(styled(`   • ${audit.resolution}`, 'muted'));
       });
     }
 
     // Suggested fix
     if (diagnosis.suggestedFix) {
-      console.log(styled('\n🔧 Suggested Fix:', 'success'));
-      console.log(styled(diagnosis.suggestedFix, 'background', 'primary'));
+      console.info(styled('\n🔧 Suggested Fix:', 'success'));
+      console.info(styled(diagnosis.suggestedFix, 'background', 'primary'));
     }
 
-    console.log('\n' + colorBar('muted', 50));
+    console.info('\n' + colorBar('muted', 50));
   }
 
   /**
@@ -366,72 +367,72 @@ ${this.generateNextSteps(error, docs, audits)}
     securityNotes: string[],
     performanceTips: string[]
   ): void {
-    console.log('\n' + colorBar('accent', 60));
-    console.log(styled(`🎓 LEARNING SESSION: ${apiName}`, 'accent'));
-    console.log(styled(`Context: ${context}`, 'muted'));
-    console.log(colorBar('accent', 60));
+    console.info('\n' + colorBar('accent', 60));
+    console.info(styled(`🎓 LEARNING SESSION: ${apiName}`, 'accent'));
+    console.info(styled(`Context: ${context}`, 'muted'));
+    console.info(colorBar('accent', 60));
 
     // Documentation
-    console.log(styled('\n📚 Official Documentation:', 'primary'));
+    console.info(styled('\n📚 Official Documentation:', 'primary'));
     docs.slice(0, 2).forEach((doc, i) => {
-      console.log(styled(`\n${i + 1}. ${doc.title}`, 'info'));
-      console.log(styled(doc.content.slice(0, 200) + '...', 'text'));
+      console.info(styled(`\n${i + 1}. ${doc.title}`, 'info'));
+      console.info(styled(doc.content.slice(0, 200) + '...', 'text'));
     });
 
     // FactoryWager example
-    console.log(styled('\n🔧 FactoryWager Example:', 'success'));
-    console.log(styled(example, 'background', 'primary'));
+    console.info(styled('\n🔧 FactoryWager Example:', 'success'));
+    console.info(styled(example, 'background', 'primary'));
 
     // Security considerations
     if (securityNotes.length > 0) {
-      console.log(styled('\n🛡️ Security Considerations:', 'warning'));
+      console.info(styled('\n🛡️ Security Considerations:', 'warning'));
       securityNotes.forEach(note => {
-        console.log(styled(`   • ${note}`, 'warning'));
+        console.info(styled(`   • ${note}`, 'warning'));
       });
     }
 
     // Performance tips
     if (performanceTips.length > 0) {
-      console.log(styled('\n📊 Performance Tips:', 'info'));
+      console.info(styled('\n📊 Performance Tips:', 'info'));
       performanceTips.forEach(tip => {
-        console.log(styled(`   • ${tip}`, 'info'));
+        console.info(styled(`   • ${tip}`, 'info'));
       });
     }
 
-    console.log(styled('\n💡 Next Steps:', 'success'));
-    console.log(styled('   • Try the example in your code', 'muted'));
-    console.log(styled('   • Experiment with different options', 'muted'));
-    console.log(styled('   • Check official docs for complete reference', 'muted'));
+    console.info(styled('\n💡 Next Steps:', 'success'));
+    console.info(styled('   • Try the example in your code', 'muted'));
+    console.info(styled('   • Experiment with different options', 'muted'));
+    console.info(styled('   • Check official docs for complete reference', 'muted'));
 
-    console.log('\n' + colorBar('muted', 60));
+    console.info('\n' + colorBar('muted', 60));
   }
 
   /**
    * Display validation results
    */
   private displayValidationResults(result: any): void {
-    console.log('\n' + colorBar('primary', 50));
-    
+    console.info('\n' + colorBar('primary', 50));
+
     const statusColor = result.valid ? 'success' : 'error';
     const statusText = result.valid ? '✅ VALIDATION PASSED' : '❌ VALIDATION FAILED';
-    console.log(styled(statusText, statusColor));
-    
-    console.log(styled(`Overall Score: ${result.overallScore}/100`, 'accent'));
-    console.log(colorBar('primary', 50));
+    console.info(styled(statusText, statusColor));
+
+    console.info(styled(`Overall Score: ${result.overallScore}/100`, 'accent'));
+    console.info(colorBar('primary', 50));
 
     // Suggestions
     if (result.suggestions.length > 0) {
-      console.log(styled('\n💡 Suggestions:', 'info'));
+      console.info(styled('\n💡 Suggestions:', 'info'));
       result.suggestions.forEach((suggestion: string) => {
-        console.log(styled(`   • ${suggestion}`, 'info'));
+        console.info(styled(`   • ${suggestion}`, 'info'));
       });
     }
 
     // Security review
     if (result.securityReview.issues.length > 0) {
-      console.log(styled('\n🛡️ Security Issues:', 'warning'));
+      console.info(styled('\n🛡️ Security Issues:', 'warning'));
       result.securityReview.issues.forEach((issue: string) => {
-        console.log(styled(`   • ${issue}`, 'warning'));
+        console.info(styled(`   • ${issue}`, 'warning'));
       });
     }
   }
@@ -440,14 +441,14 @@ ${this.generateNextSteps(error, docs, audits)}
   private extractKeywordsFromError(error: Error): string[] {
     const message = error.message.toLowerCase();
     const keywords: string[] = [];
-    
+
     // Common error patterns
     if (message.includes('timeout')) keywords.push('timeout');
     if (message.includes('permission')) keywords.push('permission');
     if (message.includes('network')) keywords.push('network');
     if (message.includes('file')) keywords.push('file');
     if (message.includes('memory')) keywords.push('memory');
-    
+
     return keywords;
   }
 
@@ -463,18 +464,18 @@ ${this.generateNextSteps(error, docs, audits)}
 
   private calculateConfidence(docs: SearchResult[], audits: AuditTrail[]): number {
     let confidence = 0.3; // Base confidence
-    
+
     if (docs.length > 0) confidence += 0.4;
     if (docs.length > 2) confidence += 0.1;
     if (audits.length > 0) confidence += 0.2;
     if (audits.some(audit => audit.successfulFix)) confidence += 0.1;
-    
+
     return Math.min(confidence, 1.0);
   }
 
   private applyFactoryWagerPattern(baseFix: string, fwPattern: string): string {
     if (!fwPattern) return baseFix || '// No specific pattern available';
-    
+
     return `${baseFix}
 
 // FactoryWager Pattern Applied:
@@ -483,12 +484,15 @@ ${fwPattern}`;
 
   private async getSecurityContext(context: string): Promise<string> {
     const contexts = {
-      scanner: '• Validate all input URLs\n• Implement rate limiting\n• Log all scanning activities',
-      secrets: '• Use secure storage mechanisms\n• Implement access controls\n• Audit all secret access',
+      scanner:
+        '• Validate all input URLs\n• Implement rate limiting\n• Log all scanning activities',
+      secrets:
+        '• Use secure storage mechanisms\n• Implement access controls\n• Audit all secret access',
       r2: '• Validate file types and sizes\n• Use secure upload mechanisms\n• Implement proper permissions',
-      general: '• Follow principle of least privilege\n• Validate all inputs\n• Implement proper error handling'
+      general:
+        '• Follow principle of least privilege\n• Validate all inputs\n• Implement proper error handling',
     };
-    
+
     return contexts[context] || contexts.general;
   }
 
@@ -503,24 +507,24 @@ ${fwPattern}`;
 
   private generateNextSteps(error: Error, docs: SearchResult[], audits: AuditTrail[]): string {
     const steps = ['1. Apply the suggested fix above'];
-    
+
     if (docs.length > 0) {
       steps.push('2. Review the documentation links for deeper understanding');
     }
-    
+
     if (audits.length > 0) {
       steps.push('3. Monitor for similar issues in the future');
     }
-    
+
     steps.push('4. Test the fix in a development environment');
     steps.push('5. Update error handling if needed');
-    
+
     return steps.join('\n');
   }
 
   private extractSecurityConsiderations(docs: SearchResult[]): string[] {
     const considerations: string[] = [];
-    
+
     docs.forEach(doc => {
       if (doc.content.toLowerCase().includes('security')) {
         considerations.push('Review security implications');
@@ -532,13 +536,13 @@ ${fwPattern}`;
         considerations.push('Consider encryption for sensitive data');
       }
     });
-    
+
     return considerations.length > 0 ? considerations : ['Follow general security best practices'];
   }
 
   private extractPerformanceTips(docs: SearchResult[]): string[] {
     const tips: string[] = [];
-    
+
     docs.forEach(doc => {
       if (doc.content.toLowerCase().includes('performance')) {
         tips.push('Monitor performance metrics');
@@ -550,68 +554,76 @@ ${fwPattern}`;
         tips.push('Use async/await for non-blocking operations');
       }
     });
-    
+
     return tips.length > 0 ? tips : ['Profile your code for performance bottlenecks'];
   }
 
   private validateFactoryWagerPatterns(code: string, context: string): any {
     // Mock pattern validation
     const issues = [];
-    
+
     if (!code.includes('try') && !code.includes('catch')) {
       issues.push('Consider adding error handling');
     }
-    
+
     if (context === 'scanner' && !code.includes('validate')) {
       issues.push('Scanner code should include input validation');
     }
-    
+
     return {
       valid: issues.length === 0,
       issues,
-      suggestions: ['Add comprehensive error handling', 'Include input validation']
+      suggestions: ['Add comprehensive error handling', 'Include input validation'],
     };
   }
 
-  private async generateLearningSuggestions(code: string, context: string, validation: any): Promise<string[]> {
+  private async generateLearningSuggestions(
+    code: string,
+    context: string,
+    validation: any
+  ): Promise<string[]> {
     const suggestions = [];
-    
+
     if (!validation.valid) {
       suggestions.push('Fix validation errors first');
     }
-    
+
     suggestions.push('Consider adding TypeScript types for better safety');
     suggestions.push('Write unit tests for your code');
     suggestions.push('Document your code with JSDoc comments');
-    
+
     return suggestions;
   }
 
   private async performSecurityReview(code: string, context: string): Promise<any> {
     const issues = [];
-    
+
     if (code.includes('eval(')) {
       issues.push('Avoid using eval() - security risk');
     }
-    
+
     if (code.includes('password') || code.includes('secret')) {
       issues.push('Ensure secrets are properly secured');
     }
-    
+
     return {
       safe: issues.length === 0,
       issues,
-      recommendations: ['Use environment variables for secrets', 'Validate all user inputs']
+      recommendations: ['Use environment variables for secrets', 'Validate all user inputs'],
     };
   }
 
-  private calculateOverallScore(validation: any, patternValidation: any, securityReview: any): number {
+  private calculateOverallScore(
+    validation: any,
+    patternValidation: any,
+    securityReview: any
+  ): number {
     let score = 50; // Base score
-    
+
     if (validation.valid) score += 20;
     if (patternValidation.valid) score += 20;
     if (securityReview.safe) score += 10;
-    
+
     return Math.min(score, 100);
   }
 }
@@ -633,25 +645,25 @@ if (import.meta.main) {
         await interactiveDocs.diagnoseError(error, {
           context: args[1] || 'general',
           includeAuditHistory: true,
-          storeDiagnosis: true
+          storeDiagnosis: true,
         });
         break;
-        
+
       case 'learn':
         await interactiveDocs.learnAPI(args[0] || 'Bun.file', args[1] || 'general');
         break;
-        
+
       case 'validate':
         const code = await Bun.file(args[0]).text();
         await interactiveDocs.validateCodeWithLearning(code, args[1] || 'general');
         break;
-        
+
       default:
-        console.log(styled('Interactive Documentation System', 'accent'));
-        console.log(styled('Usage:', 'muted'));
-        console.log(styled('  bun interactive-docs diagnose "error message" [context]', 'info'));
-        console.log(styled('  bun interactive-docs learn "API name" [context]', 'info'));
-        console.log(styled('  bun interactive-docs validate ./file.ts [context]', 'info'));
+        console.info(styled('Interactive Documentation System', 'accent'));
+        console.info(styled('Usage:', 'muted'));
+        console.info(styled('  bun interactive-docs diagnose "error message" [context]', 'info'));
+        console.info(styled('  bun interactive-docs learn "API name" [context]', 'info'));
+        console.info(styled('  bun interactive-docs validate ./file.ts [context]', 'info'));
     }
   } catch (error) {
     log.error(`Command failed: ${error.message}`);

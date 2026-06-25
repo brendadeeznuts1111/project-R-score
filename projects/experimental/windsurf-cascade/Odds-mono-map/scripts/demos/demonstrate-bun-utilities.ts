@@ -49,8 +49,8 @@ interface FileData {
 }
 
 async function demonstrateTableFormatting(): Promise<void> {
-    console.log(chalk.blue.bold('📊 Bun.inspect.table() Demonstration'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.info(chalk.blue.bold('📊 Bun.inspect.table() Demonstration'));
+    console.info(chalk.gray('='.repeat(50)));
 
     // Sample performance data
     const performanceData: PerformanceData[] = [
@@ -80,8 +80,8 @@ async function demonstrateTableFormatting(): Promise<void> {
         }
     ];
 
-    console.log(chalk.blue.bold('\n🚀 Performance Metrics:'));
-    console.log(formatTable(performanceData, ['operation', 'duration', 'status'], { colors: true }));
+    console.info(chalk.blue.bold('\n🚀 Performance Metrics:'));
+    console.info(formatTable(performanceData, ['operation', 'duration', 'status'], { colors: true }));
 
     // Sample file data
     const fileData: FileData[] = [
@@ -105,16 +105,16 @@ async function demonstrateTableFormatting(): Promise<void> {
         }
     ];
 
-    console.log(chalk.blue.bold('\n📁 File Inventory:'));
-    console.log(formatTable(fileData, ['name', 'size', 'type', 'modified'], { colors: true }));
+    console.info(chalk.blue.bold('\n📁 File Inventory:'));
+    console.info(formatTable(fileData, ['name', 'size', 'type', 'modified'], { colors: true }));
 }
 
 async function demonstrateHighPrecisionTiming(): Promise<void> {
-    console.log(chalk.blue.bold('\n⏱️  Bun.nanoseconds() Demonstration'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.info(chalk.blue.bold('\n⏱️  Bun.nanoseconds() Demonstration'));
+    console.info(chalk.gray('='.repeat(50)));
 
     // Basic timing demonstration
-    console.log(chalk.blue('\n🎯 Basic Timing:'));
+    console.info(chalk.blue('\n🎯 Basic Timing:'));
 
     const start = getHighPrecisionTime();
 
@@ -124,27 +124,27 @@ async function demonstrateHighPrecisionTiming(): Promise<void> {
     const end = getHighPrecisionTime();
     const duration = end - start;
 
-    console.log(chalk.white(`Start time: ${start}ns`));
-    console.log(chalk.white(`End time: ${end}ns`));
-    console.log(chalk.white(`Duration: ${formatNanoseconds(duration)}`));
+    console.info(chalk.white(`Start time: ${start}ns`));
+    console.info(chalk.white(`End time: ${end}ns`));
+    console.info(chalk.white(`Duration: ${formatNanoseconds(duration)}`));
 
     // Performance timer demonstration
-    console.log(chalk.blue('\n⚡ Performance Timer:'));
+    console.info(chalk.blue('\n⚡ Performance Timer:'));
 
     const timer = createTimer();
 
     // Simulate different operations
     await simulateFileValidation();
-    console.log(chalk.gray(`File validation: ${timer.formattedDuration}`));
+    console.info(chalk.gray(`File validation: ${timer.formattedDuration}`));
 
     await simulateTemplateProcessing();
-    console.log(chalk.gray(`Template processing: ${timer.formattedDuration}`));
+    console.info(chalk.gray(`Template processing: ${timer.formattedDuration}`));
 
     timer.stop();
-    console.log(chalk.green(`Total time: ${timer.formattedDuration}`));
+    console.info(chalk.green(`Total time: ${timer.formattedDuration}`));
 
     // Measure execution utility demonstration
-    console.log(chalk.blue('\n🔬 Measure Execution Utility:'));
+    console.info(chalk.blue('\n🔬 Measure Execution Utility:'));
 
     const { result, duration: execDuration, formattedDuration } = await measureExecution(
         async () => {
@@ -155,8 +155,8 @@ async function demonstrateHighPrecisionTiming(): Promise<void> {
         'Complex vault operation'
     );
 
-    console.log(chalk.green(`Result: ${JSON.stringify(result)}`));
-    console.log(chalk.green(`Duration: ${formattedDuration}`));
+    console.info(chalk.green(`Result: ${JSON.stringify(result)}`));
+    console.info(chalk.green(`Duration: ${formattedDuration}`));
 }
 
 async function simulateFileValidation(): Promise<void> {
@@ -175,8 +175,8 @@ async function simulateComplexOperation(): Promise<void> {
 }
 
 async function demonstrateRealWorldUsage(): Promise<void> {
-    console.log(chalk.blue.bold('\n🌍 Real-World Vault Usage'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.info(chalk.blue.bold('\n🌍 Real-World Vault Usage'));
+    console.info(chalk.gray('='.repeat(50)));
 
     // Simulate vault validation with detailed timing
     const validationResults = await measureExecution(async () => {
@@ -205,11 +205,11 @@ async function demonstrateRealWorldUsage(): Promise<void> {
         return detailedResults;
     }, 'Vault validation process');
 
-    console.log(chalk.blue('\n📋 Detailed Operation Breakdown:'));
-    console.log(formatTable(validationResults.result, ['operation', 'actualTime', 'expectedTime', 'efficiency'], { colors: true }));
+    console.info(chalk.blue('\n📋 Detailed Operation Breakdown:'));
+    console.info(formatTable(validationResults.result, ['operation', 'actualTime', 'expectedTime', 'efficiency'], { colors: true }));
 
     // Performance comparison
-    console.log(chalk.blue('\n🏆 Performance Comparison:'));
+    console.info(chalk.blue('\n🏆 Performance Comparison:'));
 
     const comparisonData = [
         {
@@ -232,25 +232,25 @@ async function demonstrateRealWorldUsage(): Promise<void> {
         }
     ];
 
-    console.log(formatTable(comparisonData, ['method', 'precision', 'accuracy', 'useCase'], { colors: true }));
+    console.info(formatTable(comparisonData, ['method', 'precision', 'accuracy', 'useCase'], { colors: true }));
 }
 
 async function main(): Promise<void> {
-    console.log(chalk.magenta.bold('🎪 Bun Utilities Showcase for Odds Protocol Vault'));
-    console.log(chalk.magenta('Demonstrating Bun.inspect.table() and Bun.nanoseconds()'));
-    console.log('');
+    console.info(chalk.magenta.bold('🎪 Bun Utilities Showcase for Odds Protocol Vault'));
+    console.info(chalk.magenta('Demonstrating Bun.inspect.table() and Bun.nanoseconds()'));
+    console.info('');
 
     try {
         await demonstrateTableFormatting();
         await demonstrateHighPrecisionTiming();
         await demonstrateRealWorldUsage();
 
-        console.log(chalk.green.bold('\n🎉 Demonstration completed successfully!'));
-        console.log(chalk.blue('These Bun utilities provide:'));
-        console.log(chalk.white('• Beautiful table formatting for logs and reports'));
-        console.log(chalk.white('• Nanosecond-precision timing for performance optimization'));
-        console.log(chalk.white('• Native Bun performance for faster execution'));
-        console.log(chalk.white('• Better debugging and monitoring capabilities'));
+        console.info(chalk.green.bold('\n🎉 Demonstration completed successfully!'));
+        console.info(chalk.blue('These Bun utilities provide:'));
+        console.info(chalk.white('• Beautiful table formatting for logs and reports'));
+        console.info(chalk.white('• Nanosecond-precision timing for performance optimization'));
+        console.info(chalk.white('• Native Bun performance for faster execution'));
+        console.info(chalk.white('• Better debugging and monitoring capabilities'));
 
     } catch (error) {
         console.error(chalk.red('❌ Demonstration failed:'), error);

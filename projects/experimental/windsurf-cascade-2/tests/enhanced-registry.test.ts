@@ -16,11 +16,11 @@ describe("Enhanced Registry System", () => {
   
   beforeAll(async () => {
     // Start test registry server
-    console.log("🚀 Starting test registry...");
+    console.info("🚀 Starting test registry...");
 
     // Generate test API key
     testAPIKey = security.generateKey("test-suite", ["read", "write", "admin"], 1000);
-    console.log("🔑 Generated test API key");
+    console.info("🔑 Generated test API key");
 
     // Real server for integration tests
     const securityMiddleware = security.middleware({ requireAuth: true });
@@ -346,7 +346,7 @@ describe("Enhanced Registry System", () => {
       
       // Should complete 1000 operations in under 100ms
       expect(duration).toBeLessThan(100);
-      console.log(`⚡ Config update benchmark: ${duration.toFixed(2)}ms for 1000 operations`);
+      console.info(`⚡ Config update benchmark: ${duration.toFixed(2)}ms for 1000 operations`);
     });
 
     it("should handle API key generation efficiently", async () => {
@@ -363,7 +363,7 @@ describe("Enhanced Registry System", () => {
       
       expect(keys.length).toBe(100);
       expect(duration).toBeLessThan(50); // Should be very fast
-      console.log(`🔑 API key generation: ${duration.toFixed(2)}ms for 100 keys`);
+      console.info(`🔑 API key generation: ${duration.toFixed(2)}ms for 100 keys`);
     });
 
     it("should collect metrics efficiently", async () => {
@@ -378,7 +378,7 @@ describe("Enhanced Registry System", () => {
       const duration = endTime - startTime;
       
       expect(duration).toBeLessThan(100); // Should be fast
-      console.log(`📊 Metrics collection: ${duration.toFixed(2)}ms for 100 collections`);
+      console.info(`📊 Metrics collection: ${duration.toFixed(2)}ms for 100 collections`);
     });
   });
 
@@ -462,7 +462,7 @@ describe("Integration Tests", () => {
     }
     expect(securityMetrics.activeAPIKeys).toBeGreaterThan(0);
     
-    console.log("✅ All components integrated successfully");
+    console.info("✅ All components integrated successfully");
   });
 
   it("should maintain performance under load", async () => {
@@ -497,8 +497,8 @@ describe("Integration Tests", () => {
     const opsPerSecond = (operations / duration) * 1000;
     
     expect(opsPerSecond).toBeGreaterThan(100); // Should handle at least 100 ops/sec
-    console.log(`⚡ Load test: ${opsPerSecond.toFixed(2)} operations/second`);
+    console.info(`⚡ Load test: ${opsPerSecond.toFixed(2)} operations/second`);
   });
 });
 
-console.log("🧪 Enhanced Registry Test Suite Complete!");
+console.info("🧪 Enhanced Registry Test Suite Complete!");

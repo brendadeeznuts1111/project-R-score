@@ -81,7 +81,7 @@ class MultiVaultSync {
   }
 
   async discoverVaults(): Promise<void> {
-    console.log('🔍 Discovering Obsidian vaults...');
+    console.info('🔍 Discovering Obsidian vaults...');
 
     const searchPaths = [
       process.env.HOME || '',
@@ -122,23 +122,23 @@ class MultiVaultSync {
     }
 
     if (foundVaults.length > 0) {
-      console.log(`📁 Found ${foundVaults.length} new vaults:`);
+      console.info(`📁 Found ${foundVaults.length} new vaults:`);
       foundVaults.forEach(vault => {
-        console.log(`   • ${vault.name}: ${vault.path}`);
+        console.info(`   • ${vault.name}: ${vault.path}`);
       });
 
       // Add to config
       this.vaults.push(...foundVaults);
       this.saveVaultConfig();
-      console.log(`💾 Added to ${this.configFile} (set enabled: true to activate)`);
+      console.info(`💾 Added to ${this.configFile} (set enabled: true to activate)`);
     } else {
-      console.log('✅ No new vaults found');
+      console.info('✅ No new vaults found');
     }
   }
 
   async syncAll(): Promise<SyncStats> {
     const startTime = Date.now();
-    console.log(`🔄 Starting multi-vault sync across ${this.vaults.length} vaults...`);
+    console.info(`🔄 Starting multi-vault sync across ${this.vaults.length} vaults...`);
 
     const results: SyncResult[] = [];
     let totalChanges = 0;
@@ -150,7 +150,7 @@ class MultiVaultSync {
       (current.priority > prev.priority) ? current : prev
     );
 
-    console.log(`🎯 Primary vault: ${primaryVault.name} (${primaryVault.path})`);
+    console.info(`🎯 Primary vault: ${primaryVault.name} (${primaryVault.path})`);
 
     // Sync each vault
     for (const vault of this.vaults) {
@@ -167,9 +167,9 @@ class MultiVaultSync {
           errors++;
         }
 
-        console.log(`   ${this.getStatusIcon(result.status)} ${vault.name}: ${result.changes} changes`);
+        console.info(`   ${this.getStatusIcon(result.status)} ${vault.name}: ${result.changes} changes`);
         if (result.conflicts && result.conflicts.length > 0) {
-          console.log(`      ⚠️  ${result.conflicts.length} conflicts resolved`);
+          console.info(`      ⚠️  ${result.conflicts.length} conflicts resolved`);
         }
 
       } catch (error) {
@@ -180,7 +180,7 @@ class MultiVaultSync {
           error: error.message
         });
         errors++;
-        console.log(`   ❌ ${vault.name}: Error - ${error.message}`);
+        console.info(`   ❌ ${vault.name}: Error - ${error.message}`);
       }
     }
 
@@ -195,12 +195,12 @@ class MultiVaultSync {
     };
 
     this.saveVaultConfig();
-    console.log(`\n📊 Sync Complete:`);
-    console.log(`   • ${stats.syncedVaults}/${stats.totalVaults} vaults synced`);
-    console.log(`   • ${stats.totalChanges} total changes`);
-    console.log(`   • ${stats.conflictsResolved} conflicts resolved`);
-    console.log(`   • ${stats.errors} errors`);
-    console.log(`   • ${(duration / 1000).toFixed(1)}s duration`);
+    console.info(`\n📊 Sync Complete:`);
+    console.info(`   • ${stats.syncedVaults}/${stats.totalVaults} vaults synced`);
+    console.info(`   • ${stats.totalChanges} total changes`);
+    console.info(`   • ${stats.conflictsResolved} conflicts resolved`);
+    console.info(`   • ${stats.errors} errors`);
+    console.info(`   • ${(duration / 1000).toFixed(1)}s duration`);
 
     return stats;
   }
@@ -361,14 +361,14 @@ class MultiVaultSync {
   }
 
   async showStatus(): Promise<void> {
-    console.log('📊 Multi-Vault Sync Status\n');
+    console.info('📊 Multi-Vault Sync Status\n');
 
     for (const vault of this.vaults) {
       const dataFile = join(vault.path, this.dataFile);
       const exists = existsSync(dataFile);
 
-      console.log(`${vault.enabled ? '✅' : '❌'} ${vault.name} (Priority: ${vault.priority})`);
-      console.log(`   Path: ${vault.path}`);
+      console.info(`${vault.enabled ? '✅' : '❌'} ${vault.name} (Priority: ${vault.priority})`);
+      console.info(`   Path: ${vault.path}`);
 
       if (exists) {
         try {
@@ -376,19 +376,19 @@ class MultiVaultSync {
           const betCount = data.bets?.length || 0;
           const lastSync = data.metadata?.lastSync;
 
-          console.log(`   Bets: ${betCount}`);
-          console.log(`   Last Sync: ${lastSync || 'Never'}`);
+          console.info(`   Bets: ${betCount}`);
+          console.info(`   Last Sync: ${lastSync || 'Never'}`);
         } catch (error) {
-          console.log(`   Status: Error reading data`);
+          console.info(`   Status: Error reading data`);
         }
       } else {
-        console.log(`   Status: No ${this.dataFile} found`);
+        console.info(`   Status: No ${this.dataFile} found`);
       }
-      console.log('');
+      console.info('');
     }
 
-    console.log(`🔧 Config: ${this.configFile}`);
-    console.log(`💡 Use 'discover' to find more vaults`);
+    console.info(`🔧 Config: ${this.configFile}`);
+    console.info(`💡 Use 'discover' to find more vaults`);
   }
 }
 
@@ -412,7 +412,7 @@ try {
       break;
 
     default:
-      console.log(`🔄 Multi-Vault Sync v1.3
+      console.info(`🔄 Multi-Vault Sync v1.3
 
 USAGE:
   bun vault:sync                    # Sync all enabled vaults

@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 /**
  * FACTORYWAGER RIPGREP v4.0 - Ripgrep Conform Script
- * 
+ *
  * Advanced purge rule generation with signature management
  */
 
-import { createRipgrepEngine } from '@fw/rip';
+import { createRipgrepEngine } from '@factorywager/rip';
 
 // ============================================================================
 // RIPGREP CONFORM ENGINE
@@ -17,64 +17,65 @@ class RipgrepConform {
   /**
    * Generate new purge rule with signature
    */
-  async generatePurgeRule(options: {
-    scope?: string;
-    type?: string;
-    pattern?: string;
-    description?: string;
-  } = {}) {
+  async generatePurgeRule(
+    options: {
+      scope?: string;
+      type?: string;
+      pattern?: string;
+      description?: string;
+    } = {}
+  ) {
     const {
       scope = 'PURGE',
       type = 'TRANS',
       pattern = '',
-      description = 'Auto-generated purge rule'
+      description = 'Auto-generated purge rule',
     } = options;
 
-    console.log('⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine');
-    console.log('═══════════════════════════════════════════════════════════════');
+    console.info('⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine');
+    console.info('═══════════════════════════════════════════════════════════════');
 
     try {
-      console.log(`🔥 Generating Purge Rule...`);
-      console.log(`   Scope: ${scope}`);
-      console.log(`   Type: ${type}`);
-      console.log(`   Pattern: ${pattern}`);
-      console.log(`   Description: ${description}`);
+      console.info(`🔥 Generating Purge Rule...`);
+      console.info(`   Scope: ${scope}`);
+      console.info(`   Type: ${type}`);
+      console.info(`   Pattern: ${pattern}`);
+      console.info(`   Description: ${description}`);
 
       // Generate purge signature
       const purge = await this.engine.purgeRipgrep({
         scope,
         type,
-        pattern
+        pattern,
       });
 
-      console.log(`\n📋 Purge Rule Generated:`);
-      console.log(`   ID: ${purge.id}`);
-      console.log(`   Signature: ${purge.signature}`);
-      console.log(`   Grepable: ${purge.grepable}`);
-      console.log(`   Hash: ${purge.contentHash}`);
-      console.log(`   Timestamp: ${new Date(purge.timestamp).toISOString()}`);
+      console.info(`\n📋 Purge Rule Generated:`);
+      console.info(`   ID: ${purge.id}`);
+      console.info(`   Signature: ${purge.signature}`);
+      console.info(`   Grepable: ${purge.grepable}`);
+      console.info(`   Hash: ${purge.contentHash}`);
+      console.info(`   Timestamp: ${new Date(purge.timestamp).toISOString()}`);
 
       // Generate rule file content
       const ruleContent = this.generateRuleFile(purge, pattern, description);
-      
-      console.log(`\n📄 Rule File Content:`);
-      console.log('```yaml');
-      console.log(ruleContent);
-      console.log('```');
+
+      console.info(`\n📄 Rule File Content:`);
+      console.info('```yaml');
+      console.info(ruleContent);
+      console.info('```');
 
       // Save rule file
       const ruleFileName = `rule-${purge.id.toLowerCase()}.yaml`;
       await Bun.write(`./rules/${ruleFileName}`, ruleContent);
-      
-      console.log(`\n💾 Rule saved to: ./rules/${ruleFileName}`);
+
+      console.info(`\n💾 Rule saved to: ./rules/${ruleFileName}`);
 
       // Generate grep command
       const grepCommand = `rg --type js --type ts --type jsx --type tsx "${pattern}" .`;
-      console.log(`\n🔍 Grep Command:`);
-      console.log(`   ${grepCommand}`);
+      console.info(`\n🔍 Grep Command:`);
+      console.info(`   ${grepCommand}`);
 
       return purge;
-
     } catch (error) {
       console.error('❌ Failed to generate purge rule:', error.message);
       process.exit(1);
@@ -94,7 +95,7 @@ rule:
   id: ${purge.id}
   signature: "${purge.signature}"
   grepable: "${purge.grepable}"
-  
+
 metadata:
   scope: ${purge.signature.match(/\[(\w+)\]/)?.[1] || 'PURGE'}
   type: ${purge.signature.match(/\[(\w+)\]/)?.[2] || 'TRANS'}
@@ -102,24 +103,24 @@ metadata:
   status: ACTIVE
   pattern: "${pattern}"
   description: "${description}"
-  
+
 config:
   severity: medium
   auto_fix: false
   requires_review: true
-  
+
 validation:
   hooks:
     - pattern-match
     - security-scan
     - performance-check
-    
+
 actions:
   on_match:
     - log: "Purge rule ${purge.id} matched"
     - tag: "purge-${purge.id.toLowerCase()}"
     - suggest: "Review and update code pattern"
-    
+
   on_fix:
     - generate: "transmutation-suggestion"
     - validate: "post-fix-validation"
@@ -137,11 +138,11 @@ async function main() {
 
   // Parse command line arguments
   const options: any = {};
-  
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     const next = args[i + 1];
-    
+
     switch (arg) {
       case '--scope':
         if (next) options.scope = next;
@@ -157,7 +158,7 @@ async function main() {
         break;
       case '--help':
       case '-h':
-        console.log(`
+        console.info(`
 ⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine
 
 USAGE:
@@ -173,10 +174,10 @@ OPTIONS:
 EXAMPLES:
   # Generate purge rule for non-Bun patterns
   bun run scripts/rip-conform.js --scope PURGE --type TRANS --pattern "fs\\."
-  
+
   # Generate security rule
   bun run scripts/rip-conform.js --scope SECURITY --type VALIDATE --pattern "eval\\("
-  
+
   # Generate performance rule
   bun run scripts/rip-conform.js --scope PERFORMANCE --type OPTIMIZE --pattern "for.*in"
         `);
@@ -186,7 +187,7 @@ EXAMPLES:
 
   if (!options.pattern) {
     console.error('❌ --pattern is required');
-    console.log('Use --help for usage information');
+    console.info('Use --help for usage information');
     process.exit(1);
   }
 
@@ -195,7 +196,7 @@ EXAMPLES:
   try {
     await spawn(['mkdir', '-p', './rules'], {
       stdout: 'ignore',
-      stderr: 'ignore'
+      stderr: 'ignore',
     });
   } catch (error) {
     // Directory creation failed, continue anyway

@@ -26,7 +26,7 @@ async function exampleAPICall() {
 			},
 		);
 
-		console.log("API call successful:", result);
+		console.info("API call successful:", result);
 	} catch (error) {
 		if (error instanceof MarketOperationError) {
 			console.error(
@@ -60,12 +60,12 @@ async function exampleDatabaseOperation() {
 function exampleGetStats() {
 	const stats = performanceMonitor.getStats("fetchMarketData");
 	if (stats) {
-		console.log(`Operation: ${stats.operation}`);
-		console.log(`Count: ${stats.count}`);
-		console.log(`Mean: ${stats.mean}ms`);
-		console.log(`p95: ${stats.p95}ms`);
-		console.log(`p99: ${stats.p99}ms`);
-		console.log(`Anomalies: ${stats.anomalies}`);
+		console.info(`Operation: ${stats.operation}`);
+		console.info(`Count: ${stats.count}`);
+		console.info(`Mean: ${stats.mean}ms`);
+		console.info(`p95: ${stats.p95}ms`);
+		console.info(`p99: ${stats.p99}ms`);
+		console.info(`Anomalies: ${stats.anomalies}`);
 	}
 }
 
@@ -74,7 +74,7 @@ function exampleGetStats() {
  */
 function exampleGetSummary() {
 	const summary = performanceMonitor.getSummary();
-	console.log(summary);
+	console.info(summary);
 }
 
 /**
@@ -110,8 +110,8 @@ function exampleFailureRates() {
 		const failureRate = performanceMonitor.getFailureRate(op);
 		const failures = performanceMonitor.getFailures(op);
 
-		console.log(`${op}:`);
-		console.log(`  Failure Rate: ${(failureRate * 100).toFixed(2)}%`);
-		console.log(`  Total Failures: ${failures.length}`);
+		console.info(`${op}:`);
+		console.info(`  Failure Rate: ${(failureRate * 100).toFixed(2)}%`);
+		console.info(`  Total Failures: ${failures.length}`);
 	}
 }

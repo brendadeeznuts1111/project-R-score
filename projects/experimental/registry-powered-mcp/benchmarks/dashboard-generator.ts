@@ -36,13 +36,13 @@ class BenchmarkDashboardGenerator {
   private results: BenchmarkSuite[] = [];
 
   async generateDashboard() {
-    console.log('📊 Generating Comprehensive Benchmark Dashboard\n');
+    console.info('📊 Generating Comprehensive Benchmark Dashboard\n');
 
     // Load all benchmark results
     await this.loadBenchmarkResults();
 
     if (this.results.length === 0) {
-      console.log('❌ No benchmark results found. Run benchmarks first.');
+      console.info('❌ No benchmark results found. Run benchmarks first.');
       return;
     }
 
@@ -51,10 +51,10 @@ class BenchmarkDashboardGenerator {
     this.generateJSONReport();
     this.generateMarkdownSummary();
 
-    console.log('✅ Dashboard generated successfully!');
-    console.log('   📁 HTML Dashboard: benchmarks/results/dashboard.html');
-    console.log('   📄 JSON Report: benchmarks/results/dashboard.json');
-    console.log('   📝 Summary: benchmarks/results/dashboard.md');
+    console.info('✅ Dashboard generated successfully!');
+    console.info('   📁 HTML Dashboard: benchmarks/results/dashboard.html');
+    console.info('   📄 JSON Report: benchmarks/results/dashboard.json');
+    console.info('   📝 Summary: benchmarks/results/dashboard.md');
   }
 
   private async loadBenchmarkResults() {

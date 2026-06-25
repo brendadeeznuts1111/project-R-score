@@ -177,8 +177,8 @@ async function main() {
 		
 		await writeFile(codeownersPath, codeownersContent, 'utf-8');
 		
-		console.log('✅ Generated .github/CODEOWNERS');
-		console.log(`   ${codeownersContent.split('\n').length} lines`);
+		console.info('✅ Generated .github/CODEOWNERS');
+		console.info(`   ${codeownersContent.split('\n').length} lines`);
 	} catch (error: any) {
 		console.error('❌ Error generating CODEOWNERS:', error.message);
 		process.exit(1);

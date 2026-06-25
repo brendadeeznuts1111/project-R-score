@@ -118,7 +118,7 @@ export class R2SyncService {
    * Initialize sync service
    */
   async initialize(): Promise<void> {
-    console.log(styled('🔄 Initializing R2 Sync Service', 'accent'));
+    console.info(styled('🔄 Initializing R2 Sync Service', 'accent'));
 
     // Restore jobs from storage if available
     await this.restoreJobs();
@@ -130,7 +130,7 @@ export class R2SyncService {
       }
     }
 
-    console.log(styled(`✅ Sync service initialized (${this.jobs.size} jobs)`, 'success'));
+    console.info(styled(`✅ Sync service initialized (${this.jobs.size} jobs)`, 'success'));
   }
 
   /**
@@ -169,7 +169,7 @@ export class R2SyncService {
       metadata: { jobId: job.id, direction: job.direction },
     });
 
-    console.log(styled(`📋 Created sync job: ${job.name} (${job.id})`, 'success'));
+    console.info(styled(`📋 Created sync job: ${job.name} (${job.id})`, 'success'));
     return job;
   }
 
@@ -185,7 +185,7 @@ export class R2SyncService {
     job.status = 'running';
     job.lastRun = new Date().toISOString();
 
-    console.log(styled(`🚀 Starting sync: ${job.name}`, 'info'));
+    console.info(styled(`🚀 Starting sync: ${job.name}`, 'info'));
     const startTime = Date.now();
 
     const result: SyncResult = {
@@ -245,7 +245,7 @@ export class R2SyncService {
       },
     });
 
-    console.log(
+    console.info(
       styled(
         `✅ Sync completed: ${result.objects.length} objects, ${result.conflicts.length} conflicts (${result.duration}ms)`,
         result.status === 'success' ? 'success' : 'warning'
@@ -526,23 +526,23 @@ export class R2SyncService {
    * Display sync status
    */
   displayStatus(): void {
-    console.log(styled('\n🔄 R2 Sync Service Status', 'accent'));
-    console.log(styled('=========================', 'accent'));
+    console.info(styled('\n🔄 R2 Sync Service Status', 'accent'));
+    console.info(styled('=========================', 'accent'));
 
     const stats = this.getStats();
-    console.log(styled('\n📊 Overall Statistics:', 'info'));
-    console.log(styled(`  Total Jobs: ${stats.totalJobs}`, 'muted'));
-    console.log(styled(`  Active Syncs: ${stats.activeJobs}`, 'muted'));
-    console.log(styled(`  Paused Jobs: ${stats.pausedJobs}`, 'muted'));
-    console.log(styled(`  Objects Synced: ${stats.totalObjectsSynced.toLocaleString()}`, 'muted'));
-    console.log(
+    console.info(styled('\n📊 Overall Statistics:', 'info'));
+    console.info(styled(`  Total Jobs: ${stats.totalJobs}`, 'muted'));
+    console.info(styled(`  Active Syncs: ${stats.activeJobs}`, 'muted'));
+    console.info(styled(`  Paused Jobs: ${stats.pausedJobs}`, 'muted'));
+    console.info(styled(`  Objects Synced: ${stats.totalObjectsSynced.toLocaleString()}`, 'muted'));
+    console.info(
       styled(
         `  Data Transferred: ${(stats.totalBytesTransferred / 1024 / 1024 / 1024).toFixed(2)} GB`,
         'muted'
       )
     );
 
-    console.log(styled('\n📋 Sync Jobs:', 'info'));
+    console.info(styled('\n📋 Sync Jobs:', 'info'));
     for (const job of this.jobs.values()) {
       const statusIcon = {
         pending: '⏳',
@@ -552,15 +552,15 @@ export class R2SyncService {
         paused: '⏸️',
       }[job.status];
 
-      console.log(styled(`  ${statusIcon} ${job.name} (${job.id})`, 'muted'));
-      console.log(
+      console.info(styled(`  ${statusIcon} ${job.name} (${job.id})`, 'muted'));
+      console.info(
         styled(
           `     Direction: ${job.direction} | Mode: ${job.mode} | Runs: ${job.stats.totalRuns}`,
           'muted'
         )
       );
       if (job.lastRun) {
-        console.log(styled(`     Last Run: ${new Date(job.lastRun).toLocaleString()}`, 'muted'));
+        console.info(styled(`     Last Run: ${new Date(job.lastRun).toLocaleString()}`, 'muted'));
       }
     }
   }
@@ -648,8 +648,8 @@ if (import.meta.main) {
   const sync = r2SyncService;
   await sync.initialize();
 
-  console.log(styled('🔄 R2 Sync Service Demo', 'accent'));
-  console.log(styled('=======================', 'accent'));
+  console.info(styled('🔄 R2 Sync Service Demo', 'accent'));
+  console.info(styled('=======================', 'accent'));
 
   // Create a sample sync job
   const job = sync.createJob({
@@ -665,14 +665,14 @@ if (import.meta.main) {
     },
   });
 
-  console.log(styled(`\n📋 Created job: ${job.name}`, 'success'));
+  console.info(styled(`\n📋 Created job: ${job.name}`, 'success'));
 
   // Display status
   sync.displayStatus();
 
   // Show stats
   const stats = sync.getStats();
-  console.log(styled('\n📊 Service Stats:', 'info'));
-  console.log(styled(`  Jobs: ${stats.totalJobs}`, 'muted'));
-  console.log(styled(`  Objects Synced: ${stats.totalObjectsSynced}`, 'muted'));
+  console.info(styled('\n📊 Service Stats:', 'info'));
+  console.info(styled(`  Jobs: ${stats.totalJobs}`, 'muted'));
+  console.info(styled(`  Objects Synced: ${stats.totalObjectsSynced}`, 'muted'));
 }

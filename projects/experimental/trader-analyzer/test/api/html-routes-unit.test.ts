@@ -48,7 +48,7 @@ describe("HTML Routes - Unit Tests", () => {
 				<head>
 					<script>
 						const API_BASE = uiContext.apiBaseUrl;
-						console.log(API_BASE);
+						console.info(API_BASE);
 					</script>
 				</head>
 				<body>Test</body>
@@ -298,7 +298,7 @@ describe("HTML Routes - Regex Pattern Validation", () => {
 			// Some patterns might not match exactly due to regex complexity, but they're still problematic
 			if (shouldMatch && !matches) {
 				// Log for debugging but don't fail - the important thing is they don't match uiContext pattern
-				console.log(`Note: Pattern "${pattern}" didn't match regex but is still hardcoded`);
+				console.info(`Note: Pattern "${pattern}" didn't match regex but is still hardcoded`);
 			}
 			
 			// The key test: none of these should match uiContext pattern

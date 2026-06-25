@@ -226,7 +226,9 @@ export class LSPOrchestrator {
       // Cleanup failed session
       try {
         Bun.spawn(['tmux', 'kill-session', '-t', tmuxSession], { stdio: ['inherit', 'inherit', 'inherit'] });
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
 
       return null;
     }
@@ -316,7 +318,9 @@ export class LSPOrchestrator {
         });
         server.stop();
         return port;
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
     throw new Error('No available ports found');
   }
@@ -342,7 +346,9 @@ export class LSPOrchestrator {
         if (response.ok) {
           return;
         }
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
 
       await new Promise(resolve => setTimeout(resolve, 100));
     }

@@ -1,6 +1,7 @@
 // lib/registry/auth.ts — Registry authentication middleware
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { registryHost } from './env';
 import type { RegistryUser, AuthToken } from './registry-types';
 
 export type AuthType = 'none' | 'basic' | 'token' | 'jwt';
@@ -328,16 +329,15 @@ export const AuthConfigs = {
 
 // CLI test
 if (import.meta.main) {
-  console.log(styled('🔐 Registry Auth Test', 'accent'));
-  console.log(styled('=====================', 'accent'));
+  console.info(styled('🔐 Registry Auth Test', 'accent'));
+  console.info(styled('=====================', 'accent'));
 
-  const TEST_HOST =
-    process.env.REGISTRY_HOST || process.env.SERVER_HOST || process.env.HOST || 'localhost';
+  const TEST_HOST = registryHost();
 
   // Test no auth
   const noAuth = new RegistryAuth(AuthConfigs.none());
   const ctx1 = await noAuth.authenticate(new Request(`http://${TEST_HOST}`));
-  console.log(
+  console.info(
     styled(
       `\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`,
       ctx1.authenticated ? 'success' : 'error'
@@ -352,7 +352,7 @@ if (import.meta.main) {
     },
   });
   const ctx2 = await basicAuth.authenticate(req);
-  console.log(
+  console.info(
     styled(
       `Basic Auth: ${ctx2.authenticated ? '✅' : '❌'}`,
       ctx2.authenticated ? 'success' : 'error'
@@ -368,7 +368,7 @@ if (import.meta.main) {
     },
   });
   const ctx3 = await jwtAuth.authenticate(jwtReq);
-  console.log(
+  console.info(
     styled(
       `JWT Auth: ${ctx3.authenticated ? '✅' : '❌'}`,
       ctx3.authenticated ? 'success' : 'error'

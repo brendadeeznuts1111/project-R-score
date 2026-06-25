@@ -24,7 +24,7 @@ export class TaskAnalyticsEngine {
      * Initialize analytics system
      */
     private initializeAnalytics(): void {
-        console.log('🔧 Initializing Task Analytics Engine...');
+        console.info('🔧 Initializing Task Analytics Engine...');
 
         // Setup performance monitoring
         const perf = getBunPerformanceMetrics();
@@ -34,7 +34,7 @@ export class TaskAnalyticsEngine {
         this.insights.clear();
         this.performanceCache.clear();
 
-        console.log(`✅ Analytics Engine initialized in ${perf.getElapsedMs().toFixed(3)}ms`);
+        console.info(`✅ Analytics Engine initialized in ${perf.getElapsedMs().toFixed(3)}ms`);
     }
 
     /**
@@ -77,7 +77,7 @@ export class TaskAnalyticsEngine {
                 this.generateProjectInsights(metadata?.project || 'default');
             }
 
-            console.log(`📊 Tracked event '${event}' for task ${taskId} in ${perf.getElapsedMs().toFixed(3)}ms`);
+            console.info(`📊 Tracked event '${event}' for task ${taskId} in ${perf.getElapsedMs().toFixed(3)}ms`);
 
         } catch (error) {
             console.error(`❌ Failed to track task event: ${error.message}`);
@@ -172,7 +172,7 @@ export class TaskAnalyticsEngine {
             // Cache insights
             this.insights.set(project, insights);
 
-            console.log(`🧠 Generated ${insights.length} insights for project "${project}" in ${perf.getElapsedMs().toFixed(3)}ms`);
+            console.info(`🧠 Generated ${insights.length} insights for project "${project}" in ${perf.getElapsedMs().toFixed(3)}ms`);
 
             return insights;
 
@@ -224,7 +224,7 @@ export class TaskAnalyticsEngine {
                 recommendations: this.generateRecommendations(projectTasks, insights)
             };
 
-            console.log(`📊 Generated project analytics for "${project}" in ${perf.getElapsedMs().toFixed(3)}ms`);
+            console.info(`📊 Generated project analytics for "${project}" in ${perf.getElapsedMs().toFixed(3)}ms`);
 
             return analytics;
 
@@ -279,7 +279,7 @@ export class TaskAnalyticsEngine {
         // Clear performance cache
         this.performanceCache.delete(project);
 
-        console.log(`🧹 Cleared analytics data for project "${project}"`);
+        console.info(`🧹 Cleared analytics data for project "${project}"`);
     }
 
     /**

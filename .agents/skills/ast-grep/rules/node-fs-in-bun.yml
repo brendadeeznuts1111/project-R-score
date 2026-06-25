@@ -1,0 +1,11 @@
+id: node-fs-in-bun
+language: TypeScript
+severity: hint
+message: Prefer Bun.file / Bun.write over node fs imports in Bun projects
+note: Use `bun inventory` to audit Bun native API adoption
+rule:
+  any:
+    - pattern: import $X from "fs"
+    - pattern: import $X from "node:fs"
+    - pattern: import { $$$ } from "fs"
+    - pattern: import { $$$ } from "node:fs"

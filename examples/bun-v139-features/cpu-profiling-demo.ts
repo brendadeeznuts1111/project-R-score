@@ -7,8 +7,8 @@
 
 import { performance } from "node:perf_hooks";
 
-console.log("📊 Bun v1.3.9: CPU Profiling Demo\n");
-console.log("=" .repeat(70));
+console.info("📊 Bun v1.3.9: CPU Profiling Demo\n");
+console.info("=" .repeat(70));
 
 // Demo functions to profile
 function cpuIntensiveTask(duration: number): number {
@@ -46,7 +46,7 @@ function arrayOperations(): number[] {
 
 // Benchmark different profiling intervals
 function runWorkload() {
-  console.log("Running workload for profiling...\n");
+  console.info("Running workload for profiling...\n");
   
   const results = {
     cpu: cpuIntensiveTask(100),
@@ -55,14 +55,14 @@ function runWorkload() {
     arr: arrayOperations().length,
   };
   
-  console.log("Workload complete:", results);
+  console.info("Workload complete:", results);
 }
 
 function showProfilingGuide() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🔧 CPU Profiling Guide");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🔧 CPU Profiling Guide");
+  console.info("=".repeat(70));
+  console.info(`
 BASIC USAGE:
 ────────────
 # Default profiling (1000μs interval)
@@ -109,10 +109,10 @@ bun run analyze-profile.ts CPU.*.cpuprofile
 }
 
 function showProfilingExample() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📈 Example Profiling Session");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("📈 Example Profiling Session");
+  console.info("=".repeat(70));
+  console.info(`
 STEP 1: Run with profiling
 ──────────────────────────
 $ bun --cpu-prof --cpu-prof-interval 500 cpu-profiling-demo.ts
@@ -149,10 +149,10 @@ OPTIMIZATION OPPORTUNITIES:
 }
 
 function showCIIntegration() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🔄 CI/CD Integration");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🔄 CI/CD Integration");
+  console.info("=".repeat(70));
+  console.info(`
 GITHUB ACTIONS EXAMPLE:
 ───────────────────────
 name: Performance Profile
@@ -221,12 +221,12 @@ if (violations.length > 0) {
 
 // Main
 async function main() {
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}\n`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
-  console.log("This demo shows CPU profiling features.\n");
-  console.log("To profile this script, run:");
-  console.log("  bun --cpu-prof --cpu-prof-interval 500 cpu-profiling-demo.ts\n");
+  console.info("This demo shows CPU profiling features.\n");
+  console.info("To profile this script, run:");
+  console.info("  bun --cpu-prof --cpu-prof-interval 500 cpu-profiling-demo.ts\n");
 
   // Simulate some work that would be profiled
   runWorkload();
@@ -235,7 +235,7 @@ async function main() {
   showProfilingExample();
   showCIIntegration();
 
-  console.log("\n✅ CPU Profiling demo complete!\n");
+  console.info("\n✅ CPU Profiling demo complete!\n");
 }
 
 if (import.meta.main) {

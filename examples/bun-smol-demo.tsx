@@ -34,7 +34,7 @@ class SmolDemo {
   }
 
   private createLargeWikiDataset(): any[] {
-    console.log('📊 Creating large wiki dataset for memory testing...');
+    console.info('📊 Creating large wiki dataset for memory testing...');
     
     const templates = MCPWikiGenerator.getWikiTemplates();
     const largeDataset = [];
@@ -146,28 +146,28 @@ class SmolDemo {
   }
 
   demonstrateMemoryUsage(): void {
-    console.log('🎯 Bun --smol Memory Usage Demonstration');
-    console.log('==========================================');
-    console.log('');
+    console.info('🎯 Bun --smol Memory Usage Demonstration');
+    console.info('==========================================');
+    console.info('');
 
     // Initial memory state
     const initialMemory = this.getMemoryStats();
-    console.log('📊 Initial Memory State:');
-    console.log(`   ${this.formatMemoryStats(initialMemory)}`);
-    console.log('');
+    console.info('📊 Initial Memory State:');
+    console.info(`   ${this.formatMemoryStats(initialMemory)}`);
+    console.info('');
 
     // Create large dataset
-    console.log('🏗️  Building large wiki dataset (1000 templates)...');
+    console.info('🏗️  Building large wiki dataset (1000 templates)...');
     const largeDataset = this.createLargeWikiDataset();
     
     const afterCreationMemory = this.getMemoryStats();
-    console.log('📊 Memory After Dataset Creation:');
-    console.log(`   ${this.formatMemoryStats(afterCreationMemory)}`);
-    console.log(`   Increase: +${afterCreationMemory.heapUsed - initialMemory.heapUsed}MB heap`);
-    console.log('');
+    console.info('📊 Memory After Dataset Creation:');
+    console.info(`   ${this.formatMemoryStats(afterCreationMemory)}`);
+    console.info(`   Increase: +${afterCreationMemory.heapUsed - initialMemory.heapUsed}MB heap`);
+    console.info('');
 
     // Perform memory-intensive operations
-    console.log('⚡ Performing memory-intensive operations...');
+    console.info('⚡ Performing memory-intensive operations...');
     
     // Complex filtering
     const filtered = largeDataset.filter(template => 
@@ -200,57 +200,57 @@ class SmolDemo {
     });
 
     const afterOperationsMemory = this.getMemoryStats();
-    console.log('📊 Memory After Operations:');
-    console.log(`   ${this.formatMemoryStats(afterOperationsMemory)}`);
-    console.log(`   Processed: ${largeDataset.length} templates`);
-    console.log(`   Filtered: ${filtered.length} results`);
-    console.log(`   Aggregated: ${Object.keys(aggregated).length} formats`);
-    console.log('');
+    console.info('📊 Memory After Operations:');
+    console.info(`   ${this.formatMemoryStats(afterOperationsMemory)}`);
+    console.info(`   Processed: ${largeDataset.length} templates`);
+    console.info(`   Filtered: ${filtered.length} results`);
+    console.info(`   Aggregated: ${Object.keys(aggregated).length} formats`);
+    console.info('');
 
     // Show some results
-    console.log('📈 Sample Results:');
-    console.log(`   Top 5 templates by views:`);
+    console.info('📈 Sample Results:');
+    console.info(`   Top 5 templates by views:`);
     sorted.slice(0, 5).forEach((template, i) => {
-      console.log(`   ${i + 1}. ${template.name} (${template.metadata.metrics.views} views)`);
+      console.info(`   ${i + 1}. ${template.name} (${template.metadata.metrics.views} views)`);
     });
-    console.log('');
+    console.info('');
 
-    console.log('📊 Format Aggregation:');
+    console.info('📊 Format Aggregation:');
     Object.entries(aggregated).forEach(([format, stats]: [string, any]) => {
-      console.log(`   ${format}: ${stats.count} templates, ${stats.totalViews} total views, ${stats.avgResponseTime}ms avg response`);
+      console.info(`   ${format}: ${stats.count} templates, ${stats.totalViews} total views, ${stats.avgResponseTime}ms avg response`);
     });
-    console.log('');
+    console.info('');
 
     // Final memory state
     const finalMemory = this.getMemoryStats();
-    console.log('📊 Final Memory State:');
-    console.log(`   ${this.formatMemoryStats(finalMemory)}`);
-    console.log('');
+    console.info('📊 Final Memory State:');
+    console.info(`   ${this.formatMemoryStats(finalMemory)}`);
+    console.info('');
 
     // Memory efficiency analysis
     const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
     const memoryPerTemplate = memoryIncrease / largeDataset.length;
 
-    console.log('📊 Memory Efficiency Analysis:');
-    console.log(`   Total increase: +${memoryIncrease}MB`);
-    console.log(`   Memory per template: ${memoryPerTemplate.toFixed(2)}MB`);
-    console.log(`   Dataset size: ${(JSON.stringify(largeDataset).length / 1024 / 1024).toFixed(2)}MB (JSON)`);
-    console.log('');
+    console.info('📊 Memory Efficiency Analysis:');
+    console.info(`   Total increase: +${memoryIncrease}MB`);
+    console.info(`   Memory per template: ${memoryPerTemplate.toFixed(2)}MB`);
+    console.info(`   Dataset size: ${(JSON.stringify(largeDataset).length / 1024 / 1024).toFixed(2)}MB (JSON)`);
+    console.info('');
 
-    console.log('💡 --smol Flag Benefits:');
-    console.log('   ✅ More frequent garbage collection');
-    console.log('   ✅ Reduced memory footprint');
-    console.log('   ✅ Better for memory-constrained environments');
-    console.log('   ✅ Prevents memory leaks in long-running processes');
-    console.log('');
+    console.info('💡 --smol Flag Benefits:');
+    console.info('   ✅ More frequent garbage collection');
+    console.info('   ✅ Reduced memory footprint');
+    console.info('   ✅ Better for memory-constrained environments');
+    console.info('   ✅ Prevents memory leaks in long-running processes');
+    console.info('');
 
-    console.log('🚀 Try with different memory modes:');
-    console.log('   bun run examples/bun-smol-demo.tsx          # Normal mode');
-    console.log('   bun --smol run examples/bun-smol-demo.tsx    # Memory-efficient mode');
-    console.log('');
+    console.info('🚀 Try with different memory modes:');
+    console.info('   bun run examples/bun-smol-demo.tsx          # Normal mode');
+    console.info('   bun --smol run examples/bun-smol-demo.tsx    # Memory-efficient mode');
+    console.info('');
 
     // Cleanup
-    console.log('🧹 Cleaning up memory...');
+    console.info('🧹 Cleaning up memory...');
     largeDataset.length = 0;
     
     // Force garbage collection if available
@@ -259,56 +259,56 @@ class SmolDemo {
     }
 
     const cleanupMemory = this.getMemoryStats();
-    console.log('📊 Memory After Cleanup:');
-    console.log(`   ${this.formatMemoryStats(cleanupMemory)}`);
-    console.log(`   Freed: ${finalMemory.heapUsed - cleanupMemory.heapUsed}MB`);
+    console.info('📊 Memory After Cleanup:');
+    console.info(`   ${this.formatMemoryStats(cleanupMemory)}`);
+    console.info(`   Freed: ${finalMemory.heapUsed - cleanupMemory.heapUsed}MB`);
   }
 
   demonstrateSmolVsNormal(): void {
-    console.log('🔬 --smol vs Normal Mode Comparison');
-    console.log('====================================');
-    console.log('');
+    console.info('🔬 --smol vs Normal Mode Comparison');
+    console.info('====================================');
+    console.info('');
 
-    console.log('📊 Memory Mode Characteristics:');
-    console.log('');
+    console.info('📊 Memory Mode Characteristics:');
+    console.info('');
 
-    console.log('Normal Mode:');
-    console.log('   • Larger heap size for better performance');
-    console.log('   • Less frequent garbage collection');
-    console.log('   • Higher memory usage');
-    console.log('   • Better for CPU-intensive tasks');
-    console.log('');
+    console.info('Normal Mode:');
+    console.info('   • Larger heap size for better performance');
+    console.info('   • Less frequent garbage collection');
+    console.info('   • Higher memory usage');
+    console.info('   • Better for CPU-intensive tasks');
+    console.info('');
 
-    console.log('--smol Mode:');
-    console.log('   • Smaller heap size');
-    console.log('   • More frequent garbage collection');
-    console.log('   • Lower memory usage');
-    console.log('   • Better for memory-constrained environments');
-    console.log('   • Slightly slower execution due to GC overhead');
-    console.log('');
+    console.info('--smol Mode:');
+    console.info('   • Smaller heap size');
+    console.info('   • More frequent garbage collection');
+    console.info('   • Lower memory usage');
+    console.info('   • Better for memory-constrained environments');
+    console.info('   • Slightly slower execution due to GC overhead');
+    console.info('');
 
-    console.log('🎯 Use Cases:');
-    console.log('');
+    console.info('🎯 Use Cases:');
+    console.info('');
 
-    console.log('Use Normal Mode when:');
-    console.log('   • Plenty of RAM available');
-    console.log('   • Performance is critical');
-    console.log('   • Processing large datasets quickly');
-    console.log('   • Running on servers with sufficient resources');
-    console.log('');
+    console.info('Use Normal Mode when:');
+    console.info('   • Plenty of RAM available');
+    console.info('   • Performance is critical');
+    console.info('   • Processing large datasets quickly');
+    console.info('   • Running on servers with sufficient resources');
+    console.info('');
 
-    console.log('Use --smol Mode when:');
-    console.log('   • Limited RAM available');
-    console.log('   • Running on CI/CD runners');
-    console.log('   • Containerized environments with memory limits');
-    console.log('   • Long-running background processes');
-    console.log('   • Memory leaks are a concern');
-    console.log('');
+    console.info('Use --smol Mode when:');
+    console.info('   • Limited RAM available');
+    console.info('   • Running on CI/CD runners');
+    console.info('   • Containerized environments with memory limits');
+    console.info('   • Long-running background processes');
+    console.info('   • Memory leaks are a concern');
+    console.info('');
 
-    console.log('🏃‍♂️ Performance Impact:');
-    console.log('   --smol typically adds 5-15% execution overhead');
-    console.log('   But can prevent OOM errors in constrained environments');
-    console.log('   Bun automatically adjusts heap size based on available memory');
+    console.info('🏃‍♂️ Performance Impact:');
+    console.info('   --smol typically adds 5-15% execution overhead');
+    console.info('   But can prevent OOM errors in constrained environments');
+    console.info('   Bun automatically adjusts heap size based on available memory');
   }
 }
 
@@ -326,16 +326,16 @@ if (import.meta.main) {
     default:
       demo.demonstrateMemoryUsage();
       if (command === 'help') {
-        console.log('');
-        console.log('📖 Usage:');
-        console.log('  # Normal memory mode');
-        console.log('  bun run examples/bun-smol-demo.tsx');
-        console.log('');
-        console.log('  # Memory-efficient mode');
-        console.log('  bun --smol run examples/bun-smol-demo.tsx');
-        console.log('');
-        console.log('  # Show comparison');
-        console.log('  bun run examples/bun-smol-demo.tsx compare');
+        console.info('');
+        console.info('📖 Usage:');
+        console.info('  # Normal memory mode');
+        console.info('  bun run examples/bun-smol-demo.tsx');
+        console.info('');
+        console.info('  # Memory-efficient mode');
+        console.info('  bun --smol run examples/bun-smol-demo.tsx');
+        console.info('');
+        console.info('  # Show comparison');
+        console.info('  bun run examples/bun-smol-demo.tsx compare');
       }
       break;
   }

@@ -9,12 +9,12 @@ interface UITestResult {
 }
 
 async function testUIQuality(): Promise<void> {
-  console.log('🧪 Testing UI Quality and Functionality...\n');
+  console.info('🧪 Testing UI Quality and Functionality...\n');
   
   const results: UITestResult[] = [];
   
   // Test 1: HTML Structure Validity
-  console.log('1. Testing HTML structure validity...');
+  console.info('1. Testing HTML structure validity...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -49,7 +49,7 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Test 2: CSS Color Implementation
-  console.log('2. Testing CSS color implementation...');
+  console.info('2. Testing CSS color implementation...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -96,7 +96,7 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Test 3: Interactive Elements
-  console.log('3. Testing interactive elements...');
+  console.info('3. Testing interactive elements...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -131,7 +131,7 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Test 4: API Integration
-  console.log('4. Testing API integration...');
+  console.info('4. Testing API integration...');
   try {
     // Test the API endpoint that the UI calls
     const apiResponse = await fetch('http://localhost:3000/api/typedarray/urls');
@@ -164,7 +164,7 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Test 5: Content Quality
-  console.log('5. Testing content quality...');
+  console.info('5. Testing content quality...');
   try {
     const response = await fetch('http://localhost:3000/');
     const html = await response.text();
@@ -199,7 +199,7 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Test 6: Performance (basic)
-  console.log('6. Testing performance...');
+  console.info('6. Testing performance...');
   try {
     const start = Date.now();
     const response = await fetch('http://localhost:3000/');
@@ -235,8 +235,8 @@ async function testUIQuality(): Promise<void> {
   }
   
   // Results Summary
-  console.log('\n📊 UI Quality Test Results:');
-  console.log('='.repeat(50));
+  console.info('\n📊 UI Quality Test Results:');
+  console.info('='.repeat(50));
   
   const passCount = results.filter(r => r.status === 'PASS').length;
   const failCount = results.filter(r => r.status === 'FAIL').length;
@@ -244,22 +244,22 @@ async function testUIQuality(): Promise<void> {
   
   results.forEach(result => {
     const icon = result.status === 'PASS' ? '✅' : result.status === 'FAIL' ? '❌' : '⚠️';
-    console.log(`${icon} ${result.test}: ${result.status}`);
-    console.log(`   ${result.details}`);
+    console.info(`${icon} ${result.test}: ${result.status}`);
+    console.info(`   ${result.details}`);
     if (result.evidence) {
-      console.log(`   Evidence: ${JSON.stringify(result.evidence, null, 2)}`);
+      console.info(`   Evidence: ${JSON.stringify(result.evidence, null, 2)}`);
     }
-    console.log('');
+    console.info('');
   });
   
-  console.log(`📈 Summary: ${passCount} PASS, ${partialCount} PARTIAL, ${failCount} FAIL`);
+  console.info(`📈 Summary: ${passCount} PASS, ${partialCount} PARTIAL, ${failCount} FAIL`);
   
   if (failCount === 0 && partialCount === 0) {
-    console.log('🎉 All tests passed! UI quality is confirmed.');
+    console.info('🎉 All tests passed! UI quality is confirmed.');
   } else if (failCount === 0) {
-    console.log('⚠️  Some issues detected, but core functionality works.');
+    console.info('⚠️  Some issues detected, but core functionality works.');
   } else {
-    console.log('❌ Critical issues found. UI needs improvement.');
+    console.info('❌ Critical issues found. UI needs improvement.');
   }
 }
 

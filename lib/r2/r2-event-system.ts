@@ -80,7 +80,7 @@ export class R2EventSystem {
   async initialize(): Promise<void> {
     if (this.isRunning) return;
 
-    console.log(styled('🔔 Initializing R2 Event System', 'accent'));
+    console.info(styled('🔔 Initializing R2 Event System', 'accent'));
 
     // Start WebSocket server
     await this.startWebSocketServer();
@@ -91,7 +91,7 @@ export class R2EventSystem {
     this.isRunning = true;
     const EVENT_SYSTEM_HOST =
       process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';
-    console.log(
+    console.info(
       styled(
         `✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`,
         'success'
@@ -126,7 +126,7 @@ export class R2EventSystem {
               return;
             }
             this.wsClients.add(ws);
-            console.log(
+            console.info(
               styled(`🔌 WebSocket client connected (${this.wsClients.size} total)`, 'info')
             );
 
@@ -141,7 +141,7 @@ export class R2EventSystem {
           },
           close: ws => {
             this.wsClients.delete(ws);
-            console.log(
+            console.info(
               styled(`🔌 WebSocket client disconnected (${this.wsClients.size} remaining)`, 'muted')
             );
           },
@@ -151,7 +151,7 @@ export class R2EventSystem {
         },
       });
 
-      console.log(styled(`🌐 WebSocket server started on port ${this.config.port}`, 'success'));
+      console.info(styled(`🌐 WebSocket server started on port ${this.config.port}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to start WebSocket server: ${error.message}`, 'error'));
     }
@@ -216,7 +216,7 @@ export class R2EventSystem {
   /**
    * Broadcast event to all WebSocket clients
    */
-  private broadcastToWebSockets(event: any): void {
+  private broadcastToWebSockets(event: unknown): void {
     const message = JSON.stringify(event);
     this.wsClients.forEach(ws => {
       try {
@@ -275,7 +275,7 @@ export class R2EventSystem {
 
     // Log significant events
     if (this.isSignificantEvent(fullEvent.type)) {
-      console.log(styled(`📢 ${fullEvent.type}: ${fullEvent.key || fullEvent.bucket}`, 'info'));
+      console.info(styled(`📢 ${fullEvent.type}: ${fullEvent.key || fullEvent.bucket}`, 'info'));
     }
   }
 
@@ -456,7 +456,7 @@ export class R2EventSystem {
    * Shutdown the event system
    */
   async shutdown(): Promise<void> {
-    console.log(styled('🛑 Shutting down R2 Event System', 'warning'));
+    console.info(styled('🛑 Shutting down R2 Event System', 'warning'));
 
     // Close all WebSocket connections
     this.wsClients.forEach(ws => {
@@ -469,7 +469,7 @@ export class R2EventSystem {
     this.globalHandlers.clear();
 
     this.isRunning = false;
-    console.log(styled('✅ Event system shutdown complete', 'success'));
+    console.info(styled('✅ Event system shutdown complete', 'success'));
   }
 
   // Private helper methods
@@ -514,7 +514,7 @@ export class R2EventSystem {
 export const r2EventSystem = new R2EventSystem();
 
 // Helper functions for common events
-export function emitObjectCreated(bucket: string, key: string, metadata?: any): void {
+export function emitObjectCreated(bucket: string, key: string, metadata?: unknown): void {
   r2EventSystem.emit({
     type: 'object:created',
     bucket,
@@ -524,7 +524,7 @@ export function emitObjectCreated(bucket: string, key: string, metadata?: any): 
   });
 }
 
-export function emitObjectUpdated(bucket: string, key: string, metadata?: any): void {
+export function emitObjectUpdated(bucket: string, key: string, metadata?: unknown): void {
   r2EventSystem.emit({
     type: 'object:updated',
     bucket,
@@ -548,12 +548,12 @@ if (import.meta.main) {
   const events = r2EventSystem;
   await events.initialize();
 
-  console.log(styled('\n📊 R2 Event System Test', 'accent'));
-  console.log(styled('=======================', 'accent'));
+  console.info(styled('\n📊 R2 Event System Test', 'accent'));
+  console.info(styled('=======================', 'accent'));
 
   // Subscribe to all events
   events.onAll(event => {
-    console.log(
+    console.info(
       styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
     );
   });
@@ -562,13 +562,13 @@ if (import.meta.main) {
   emitObjectCreated('scanner-cookies', 'test/object1.json', { size: 1024 });
   emitObjectUpdated('scanner-cookies', 'test/object2.json', { size: 2048 });
 
-  console.log(styled('\n📈 Event Stats:', 'info'));
+  console.info(styled('\n📈 Event Stats:', 'info'));
   const stats = events.getStats();
-  console.log(styled(`  Total Events: ${stats.totalEvents}`, 'muted'));
-  console.log(styled(`  Active Connections: ${stats.activeConnections}`, 'muted'));
+  console.info(styled(`  Total Events: ${stats.totalEvents}`, 'muted'));
+  console.info(styled(`  Active Connections: ${stats.activeConnections}`, 'muted'));
 
   // Keep running
-  console.log(styled('\n🌐 WebSocket server running. Press Ctrl+C to stop.', 'info'));
+  console.info(styled('\n🌐 WebSocket server running. Press Ctrl+C to stop.', 'info'));
 
   // Graceful shutdown
   process.on('SIGINT', async () => {

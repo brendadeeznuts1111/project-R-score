@@ -540,7 +540,7 @@ SORT progress DESC
         const createdFiles: string[] = [];
         const timer = createTimer();
 
-        console.log(chalk.blue.bold('🏠 Generating Dynamic Homepage Files...'));
+        console.info(chalk.blue.bold('🏠 Generating Dynamic Homepage Files...'));
 
         for (const [contextKey] of this.contexts) {
             for (const [templateKey] of this.templates) {
@@ -552,7 +552,7 @@ SORT progress DESC
                     await fs.promises.writeFile(filePath, content, 'utf-8');
 
                     createdFiles.push(filePath);
-                    console.log(chalk.green(`✅ Created: ${config.targetFile}.md`));
+                    console.info(chalk.green(`✅ Created: ${config.targetFile}.md`));
 
                 } catch (error) {
                     console.warn(chalk.yellow(`⚠️  Failed to create ${contextKey}-${templateKey}:`, error));
@@ -561,7 +561,7 @@ SORT progress DESC
         }
 
         timer.stop();
-        console.log(chalk.blue(`\n📊 Generated ${createdFiles.length} homepage files in ${timer.formattedDuration}`));
+        console.info(chalk.blue(`\n📊 Generated ${createdFiles.length} homepage files in ${timer.formattedDuration}`));
 
         return createdFiles;
     }
@@ -572,15 +572,15 @@ SORT progress DESC
 // =============================================================================
 
 async function demonstrateDynamicHomepageGeneration(): Promise<void> {
-    console.log(chalk.magenta.bold('🏠 Dynamic Homepage Generation Demonstration'));
-    console.log(chalk.magenta('Factory-based homepage creation for contextual workflows'));
-    console.log('');
+    console.info(chalk.magenta.bold('🏠 Dynamic Homepage Generation Demonstration'));
+    console.info(chalk.magenta('Factory-based homepage creation for contextual workflows'));
+    console.info('');
 
     const factory = new HomepageFactory();
     const timer = createTimer();
 
     // Generate example homepages
-    console.log(chalk.blue.bold('🔧 Generating Example Homepage Configurations:'));
+    console.info(chalk.blue.bold('🔧 Generating Example Homepage Configurations:'));
 
     const examples = [
         { context: 'morning-development', template: 'development' },
@@ -591,21 +591,21 @@ async function demonstrateDynamicHomepageGeneration(): Promise<void> {
 
     const configs = examples.map(({ context, template }) => {
         const config = factory.createHomepage(context, template);
-        console.log(chalk.yellow(`\n📋 ${config.name}:`));
-        console.log(chalk.gray(`   Target: ${config.targetFile}.md`));
-        console.log(chalk.gray(`   Commands: ${config.commands.length} automation commands`));
-        console.log(chalk.gray(`   Auto-create: ${config.autoCreate}`));
-        console.log(chalk.gray(`   Startup: ${config.openOnStartup}`));
+        console.info(chalk.yellow(`\n📋 ${config.name}:`));
+        console.info(chalk.gray(`   Target: ${config.targetFile}.md`));
+        console.info(chalk.gray(`   Commands: ${config.commands.length} automation commands`));
+        console.info(chalk.gray(`   Auto-create: ${config.autoCreate}`));
+        console.info(chalk.gray(`   Startup: ${config.openOnStartup}`));
         return config;
     });
 
     // Show content preview
-    console.log(chalk.blue.bold('\n📝 Content Preview (Development Dashboard):'));
+    console.info(chalk.blue.bold('\n📝 Content Preview (Development Dashboard):'));
     const devContent = factory.generateHomepageContent('morning-development', 'development');
-    console.log(chalk.gray(devContent.substring(0, 500) + '...'));
+    console.info(chalk.gray(devContent.substring(0, 500) + '...'));
 
     // Performance analysis
-    console.log(chalk.blue.bold('\n📊 Factory Performance Analysis:'));
+    console.info(chalk.blue.bold('\n📊 Factory Performance Analysis:'));
 
     const performanceData = [
         {
@@ -638,33 +638,33 @@ async function demonstrateDynamicHomepageGeneration(): Promise<void> {
         }
     ];
 
-    console.log(formatTable(performanceData, ['Template', 'Sections', 'Commands', 'Contexts', 'Complexity'], { colors: true }));
+    console.info(formatTable(performanceData, ['Template', 'Sections', 'Commands', 'Contexts', 'Complexity'], { colors: true }));
 
     timer.stop();
-    console.log(chalk.gray(`\n⏱️  Homepage generation completed in: ${timer.formattedDuration}`));
+    console.info(chalk.gray(`\n⏱️  Homepage generation completed in: ${timer.formattedDuration}`));
 
     // Integration benefits
-    console.log(chalk.blue.bold('\n🔗 Integration Benefits:'));
-    console.log(chalk.white('✅ Context-aware homepage generation'));
-    console.log(chalk.white('✅ Factory pattern for consistent structure'));
-    console.log(chalk.white('✅ Dynamic content based on workflow'));
-    console.log(chalk.white('✅ Automated command integration'));
-    console.log(chalk.white('✅ Type-safe configuration generation'));
-    console.log(chalk.white('✅ Seamless vault system integration'));
+    console.info(chalk.blue.bold('\n🔗 Integration Benefits:'));
+    console.info(chalk.white('✅ Context-aware homepage generation'));
+    console.info(chalk.white('✅ Factory pattern for consistent structure'));
+    console.info(chalk.white('✅ Dynamic content based on workflow'));
+    console.info(chalk.white('✅ Automated command integration'));
+    console.info(chalk.white('✅ Type-safe configuration generation'));
+    console.info(chalk.white('✅ Seamless vault system integration'));
 }
 
 async function main(): Promise<void> {
     try {
         await demonstrateDynamicHomepageGeneration();
 
-        console.log(chalk.green.bold('\n🎉 Dynamic Homepage Generation completed!'));
-        console.log(chalk.blue('Features demonstrated:'));
-        console.log(chalk.white('• Factory-based homepage creation'));
-        console.log(chalk.white('• Context-aware template selection'));
-        console.log(chalk.white('• Dynamic content generation'));
-        console.log(chalk.white('• Automated command integration'));
-        console.log(chalk.white('• Type-safe configuration management'));
-        console.log(chalk.white('• Batch generation capabilities'));
+        console.info(chalk.green.bold('\n🎉 Dynamic Homepage Generation completed!'));
+        console.info(chalk.blue('Features demonstrated:'));
+        console.info(chalk.white('• Factory-based homepage creation'));
+        console.info(chalk.white('• Context-aware template selection'));
+        console.info(chalk.white('• Dynamic content generation'));
+        console.info(chalk.white('• Automated command integration'));
+        console.info(chalk.white('• Type-safe configuration management'));
+        console.info(chalk.white('• Batch generation capabilities'));
 
     } catch (error) {
         console.error(chalk.red('❌ Demonstration failed:'), error);

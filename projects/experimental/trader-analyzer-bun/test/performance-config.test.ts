@@ -260,7 +260,7 @@ interface TestSuiteResult {
  * const validator = new PerformanceConfigValidator();
  * const result = await validator.validateConfig('./bunfig-performance.toml');
  * if (result.valid) {
- *   console.log('Configuration is valid and ready for production');
+ *   console.info('Configuration is valid and ready for production');
  * }
  * ```
  */
@@ -297,7 +297,7 @@ class PerformanceConfigValidator {
 	 * ```typescript
 	 * const validator = new PerformanceConfigValidator();
 	 * const result = await validator.validateConfig('bunfig-performance.toml');
-	 * console.log(`Validation: ${result.valid ? 'PASSED' : 'FAILED'}`);
+	 * console.info(`Validation: ${result.valid ? 'PASSED' : 'FAILED'}`);
 	 * ```
 	 */
 	async validateConfig(configPath: string): Promise<ValidationResult> {
@@ -625,7 +625,7 @@ class PerformanceConfigValidator {
  * ```typescript
  * const tester = new PerformanceApiTester();
  * const result = await tester.testPerformanceEndpoint('http://localhost:3004/api/performance');
- * console.log(`API test: ${result.success ? 'PASSED' : 'FAILED'}`);
+ * console.info(`API test: ${result.success ? 'PASSED' : 'FAILED'}`);
  * ```
  */
 class PerformanceApiTester {
@@ -656,7 +656,7 @@ class PerformanceApiTester {
 	 * ```typescript
 	 * const result = await tester.testPerformanceEndpoint('http://localhost:3004/api/performance');
 	 * if (result.success) {
-	 *   console.log(`Performance score: ${result.performanceScore}`);
+	 *   console.info(`Performance score: ${result.performanceScore}`);
 	 * }
 	 * ```
 	 */
@@ -786,7 +786,7 @@ class PerformanceApiTester {
  * ```typescript
  * const benchmarker = new PerformanceBenchmarker();
  * const result = await benchmarker.benchmarkConfigLoading('./bunfig-performance.toml', 1000);
- * console.log(`${result.opsPerSecond} ops/sec, ${result.avgTimeNs}ns avg`);
+ * console.info(`${result.opsPerSecond} ops/sec, ${result.avgTimeNs}ns avg`);
  * ```
  */
 class PerformanceBenchmarker {
@@ -804,7 +804,7 @@ class PerformanceBenchmarker {
 	 * @example
 	 * ```typescript
 	 * const result = await benchmarker.benchmarkConfigLoading('bunfig-performance.toml', 500);
-	 * console.log(`Config loading: ${result.avgTimeNs}ns average, ${result.opsPerSecond} ops/sec`);
+	 * console.info(`Config loading: ${result.avgTimeNs}ns average, ${result.opsPerSecond} ops/sec`);
 	 * ```
 	 */
 	async benchmarkConfigLoading(
@@ -865,7 +865,7 @@ class PerformanceBenchmarker {
 	 * ```typescript
 	 * const content = await Bun.file('config.toml').text();
 	 * const result = await benchmarker.benchmarkConfigParsing(content, 1000);
-	 * console.log(`Parsing: ${result.avgTimeNs}ns average`);
+	 * console.info(`Parsing: ${result.avgTimeNs}ns average`);
 	 * ```
 	 */
 	async benchmarkConfigParsing(
@@ -946,7 +946,7 @@ class PerformanceBenchmarker {
  * const validator = new SecurityValidator();
  * const result = await validator.validateConfiguration(config);
  * if (!result.compliant) {
- *   console.log('Security violations found:', result.violations);
+ *   console.info('Security violations found:', result.violations);
  * }
  * ```
  */
@@ -974,7 +974,7 @@ class SecurityValidator {
 	 * ```typescript
 	 * const config = await loadConfig('bunfig-performance.toml');
 	 * const result = validator.validateConfiguration(config);
-	 * console.log(`Security score: ${result.score}/100`);
+	 * console.info(`Security score: ${result.score}/100`);
 	 * ```
 	 */
 	validateConfiguration(
@@ -1097,7 +1097,7 @@ class SecurityValidator {
  * ```typescript
  * const healthChecker = new HealthChecker();
  * const result = await healthChecker.performHealthCheck(config);
- * console.log(`System health: ${result.status} (${result.score}%)`);
+ * console.info(`System health: ${result.status} (${result.score}%)`);
  * ```
  */
 class HealthChecker {
@@ -1115,7 +1115,7 @@ class HealthChecker {
 	 * ```typescript
 	 * const result = await healthChecker.performHealthCheck(config, 'http://localhost:3004');
 	 * result.checks.forEach(check => {
-	 *   console.log(`${check.component}: ${check.status} - ${check.message}`);
+	 *   console.info(`${check.component}: ${check.status} - ${check.message}`);
 	 * });
 	 * ```
 	 */
@@ -1283,7 +1283,7 @@ class HealthChecker {
  * ```typescript
  * const testSuite = new EnhancedPerformanceTestSuite();
  * const results = await testSuite.runFullTestSuite('./bunfig-performance.toml');
- * console.log(`Overall status: ${results.status.toUpperCase()}`);
+ * console.info(`Overall status: ${results.status.toUpperCase()}`);
  * ```
  */
 class EnhancedPerformanceTestSuite {
@@ -1321,7 +1321,7 @@ class EnhancedPerformanceTestSuite {
 	 *   apiBaseUrl: 'http://localhost:3004',
 	 *   benchmarkIterations: 500
 	 * });
-	 * console.log(`Test suite completed in ${results.executionTimeMs}ms`);
+	 * console.info(`Test suite completed in ${results.executionTimeMs}ms`);
 	 * ```
 	 */
 	async runFullTestSuite(
@@ -1370,39 +1370,39 @@ class EnhancedPerformanceTestSuite {
 		};
 
 		try {
-			console.log(
+			console.info(
 				"🚀 Starting Enhanced Performance Configuration Test Suite...\n",
 			);
 
 			// 1. Configuration Validation
-			console.log("📋 Step 1: Configuration Validation");
+			console.info("📋 Step 1: Configuration Validation");
 			result.configValidation = await this.validator.validateConfig(
 				configPath,
 			);
 
 			if (!result.configValidation.valid) {
-				console.log("❌ Configuration validation failed");
+				console.info("❌ Configuration validation failed");
 				result.configValidation.errors.forEach((error) =>
-					console.log(`   • ${error}`),
+					console.info(`   • ${error}`),
 				);
 				result.status = "failed";
 			} else {
-				console.log("✅ Configuration validation passed");
-				console.log(
+				console.info("✅ Configuration validation passed");
+				console.info(
 					`   • ${result.configValidation.metadata.checkedSections} sections validated`,
 				);
-				console.log(
+				console.info(
 					`   • ${result.configValidation.metadata.totalSettings} settings found`,
 				);
-				console.log(
+				console.info(
 					`   • Validation time: ${result.configValidation.metadata.validationTimeMs.toFixed(2)}ms`,
 				);
 			}
 
 			if (result.configValidation.warnings.length > 0) {
-				console.log("⚠️  Configuration warnings:");
+				console.info("⚠️  Configuration warnings:");
 				result.configValidation.warnings.forEach((warning) =>
-					console.log(`   • ${warning}`),
+					console.info(`   • ${warning}`),
 				);
 			}
 
@@ -1413,19 +1413,19 @@ class EnhancedPerformanceTestSuite {
 
 			// 2. API Endpoint Testing
 			if (options.apiBaseUrl) {
-				console.log("\n🔗 Step 2: API Endpoint Testing");
+				console.info("\n🔗 Step 2: API Endpoint Testing");
 				const apiTest = await this.apiTester.testPerformanceEndpoint(
 					`${options.apiBaseUrl}/api/performance`,
 				);
 				result.apiTests.push(apiTest);
 
 				if (apiTest.success) {
-					console.log("✅ API endpoint test passed");
-					console.log(`   • Response time: ${apiTest.responseTimeMs}ms`);
-					console.log(
+					console.info("✅ API endpoint test passed");
+					console.info(`   • Response time: ${apiTest.responseTimeMs}ms`);
+					console.info(
 						`   • Performance score: ${apiTest.performanceScore}`,
 					);
-					console.log(
+					console.info(
 						`   • Data validation: ${apiTest.dataValid ? "PASSED" : "FAILED"}`,
 					);
 				} else {
@@ -1435,13 +1435,13 @@ class EnhancedPerformanceTestSuite {
 					                           apiTest.error?.includes("fetch failed");
 					
 					if (isConnectionError) {
-						console.log("⚠️  API endpoint test skipped (server not running)");
-						console.log(`   • To test API endpoint, start server: bun run dev`);
-						console.log(`   • Then set PERFORMANCE_API_URL=http://localhost:3004`);
+						console.info("⚠️  API endpoint test skipped (server not running)");
+						console.info(`   • To test API endpoint, start server: bun run dev`);
+						console.info(`   • Then set PERFORMANCE_API_URL=http://localhost:3004`);
 						// Don't fail the suite for connection errors - server may not be running
 					} else {
-						console.log("❌ API endpoint test failed");
-						console.log(`   • Error: ${apiTest.error}`);
+						console.info("❌ API endpoint test failed");
+						console.info(`   • Error: ${apiTest.error}`);
 						// Only fail for non-connection errors
 						if (apiTest.statusCode && apiTest.statusCode >= 500) {
 							result.status = "failed";
@@ -1449,13 +1449,13 @@ class EnhancedPerformanceTestSuite {
 					}
 				}
 			} else {
-				console.log("\n🔗 Step 2: API Endpoint Testing");
-				console.log("⚠️  Skipped (no API base URL provided)");
-				console.log("   • Set PERFORMANCE_API_URL environment variable to enable API testing");
+				console.info("\n🔗 Step 2: API Endpoint Testing");
+				console.info("⚠️  Skipped (no API base URL provided)");
+				console.info("   • Set PERFORMANCE_API_URL environment variable to enable API testing");
 			}
 
 			// 3. Performance Benchmarking
-			console.log("\n⚡ Step 3: Performance Benchmarking");
+			console.info("\n⚡ Step 3: Performance Benchmarking");
 			const benchIterations = options.benchmarkIterations || 100;
 
 			const loadBenchmark =
@@ -1464,8 +1464,8 @@ class EnhancedPerformanceTestSuite {
 					benchIterations,
 				);
 			result.benchmarks.push(loadBenchmark);
-			console.log("✅ Configuration loading benchmark completed");
-			console.log(
+			console.info("✅ Configuration loading benchmark completed");
+			console.info(
 				`   • ${loadBenchmark.opsPerSecond} ops/sec (${loadBenchmark.avgTimeNs.toFixed(2)}ns avg)`,
 			);
 
@@ -1475,29 +1475,29 @@ class EnhancedPerformanceTestSuite {
 					benchIterations,
 				);
 			result.benchmarks.push(parseBenchmark);
-			console.log("✅ Configuration parsing benchmark completed");
-			console.log(
+			console.info("✅ Configuration parsing benchmark completed");
+			console.info(
 				`   • ${parseBenchmark.opsPerSecond} ops/sec (${parseBenchmark.avgTimeNs.toFixed(2)}ns avg)`,
 			);
 
 			// 4. Security Validation
 			if (options.enableSecurityCheck !== false) {
-				console.log("\n🔒 Step 4: Security Validation");
+				console.info("\n🔒 Step 4: Security Validation");
 				result.securityValidation =
 					this.securityValidator.validateConfiguration(config);
 
 				if (result.securityValidation.compliant) {
-					console.log("✅ Security validation passed");
-					console.log(
+					console.info("✅ Security validation passed");
+					console.info(
 						`   • Security score: ${result.securityValidation.score}/100`,
 					);
 				} else {
-					console.log("❌ Security validation failed");
-					console.log(
+					console.info("❌ Security validation failed");
+					console.info(
 						`   • Security score: ${result.securityValidation.score}/100`,
 					);
 					result.securityValidation.violations.forEach((violation) => {
-						console.log(
+						console.info(
 							`   • ${violation.severity.toUpperCase()}: ${violation.description}`,
 						);
 					});
@@ -1509,13 +1509,13 @@ class EnhancedPerformanceTestSuite {
 
 			// 5. Health Check
 			if (options.enableHealthCheck !== false) {
-				console.log("\n🏥 Step 5: Health Check");
+				console.info("\n🏥 Step 5: Health Check");
 				result.healthCheck = await this.healthChecker.performHealthCheck(
 					config,
 					options.apiBaseUrl,
 				);
 
-				console.log(
+				console.info(
 					`✅ Health check completed: ${result.healthCheck.status.toUpperCase()} (${result.healthCheck.score}%)`,
 				);
 				result.healthCheck.checks.forEach((check) => {
@@ -1525,7 +1525,7 @@ class EnhancedPerformanceTestSuite {
 							: check.status === "warn"
 								? "⚠️"
 								: "❌";
-					console.log(`   ${icon} ${check.component}: ${check.message}`);
+					console.info(`   ${icon} ${check.component}: ${check.message}`);
 				});
 
 				// Only fail health check if score is low AND it's not just API endpoint issue
@@ -1536,7 +1536,7 @@ class EnhancedPerformanceTestSuite {
 					result.status = "failed";
 				} else if (result.healthCheck.score < 60 && apiCheckFailed) {
 					// API endpoint failed but other checks passed - don't fail suite
-					console.log("   ℹ️  Health check degraded due to API endpoint (server not running)");
+					console.info("   ℹ️  Health check degraded due to API endpoint (server not running)");
 				}
 			}
 
@@ -1564,67 +1564,67 @@ class EnhancedPerformanceTestSuite {
 			    result.securityValidation.score >= 80 &&
 			    result.healthCheck.score >= 70) {
 				result.status = "partial";
-				console.log("\n⚠️  Note: Test suite marked as PARTIAL due to API server not running.");
-				console.log("   • All other tests passed. Start server to complete full validation.");
+				console.info("\n⚠️  Note: Test suite marked as PARTIAL due to API server not running.");
+				console.info("   • All other tests passed. Start server to complete full validation.");
 			}
 
 			result.executionTimeMs = Date.now() - startTime;
 
-			console.log("\n🎯 Test Suite Summary:");
-			console.log(`   • Overall Status: ${result.status.toUpperCase()}`);
-			console.log(`   • Execution Time: ${result.executionTimeMs}ms`);
-			console.log(
+			console.info("\n🎯 Test Suite Summary:");
+			console.info(`   • Overall Status: ${result.status.toUpperCase()}`);
+			console.info(`   • Execution Time: ${result.executionTimeMs}ms`);
+			console.info(
 				`   • Configuration: ${result.configValidation.valid ? "VALID" : "INVALID"}`,
 			);
 			if (result.apiTests.length > 0) {
-				console.log(
+				console.info(
 					`   • API Tests: ${result.apiTests.every((t) => t.success) ? "PASSED" : "FAILED"}`,
 				);
 			}
-			console.log(
+			console.info(
 				`   • Security Score: ${result.securityValidation.score}/100`,
 			);
-			console.log(`   • Health Score: ${result.healthCheck.score}/100`);
+			console.info(`   • Health Score: ${result.healthCheck.score}/100`);
 
 			// Provide detailed summary of all results
 			if (result.configValidation.errors.length > 0) {
-				console.log("\n❌ Configuration Errors:");
+				console.info("\n❌ Configuration Errors:");
 				result.configValidation.errors.forEach((error) =>
-					console.log(`   • ${error}`),
+					console.info(`   • ${error}`),
 				);
 			}
 
 			if (result.apiTests.some((t) => !t.success)) {
-				console.log("\n❌ API Test Failures:");
+				console.info("\n❌ API Test Failures:");
 				result.apiTests
 					.filter((t) => !t.success)
 					.forEach((test) => {
-						console.log(`   • ${test.metadata.endpoint}: ${test.error}`);
+						console.info(`   • ${test.metadata.endpoint}: ${test.error}`);
 					});
 			}
 
 			if (result.securityValidation.violations.length > 0) {
-				console.log("\n⚠️  Security Recommendations:");
+				console.info("\n⚠️  Security Recommendations:");
 				result.securityValidation.violations.forEach((violation) => {
-					console.log(
+					console.info(
 						`   • ${violation.category}: ${violation.recommendation}`,
 					);
 				});
 			}
 
 			if (result.status === "passed") {
-				console.log(
+				console.info(
 					"\n🎉 All tests passed! Performance configuration is production-ready.",
 				);
 			} else if (result.status === "partial") {
-				console.log(
+				console.info(
 					"\n⚠️  Tests completed with warnings. Review recommendations above.",
 				);
 				if (hasApiConnectionError) {
-					console.log("   • API endpoint unavailable (server not running) - this is expected in CI/dev");
+					console.info("   • API endpoint unavailable (server not running) - this is expected in CI/dev");
 				}
 			} else {
-				console.log(
+				console.info(
 					"\n❌ Critical issues found. Address failures before production deployment.",
 				);
 			}
@@ -1730,10 +1730,10 @@ class EnhancedPerformanceTestSuite {
  * Main execution function for the enhanced performance test suite
  */
 async function main() {
-	console.log(
+	console.info(
 		"🚀 Enhanced Performance Configuration Test Suite v2.0.0",
 	);
-	console.log("======================================================\n");
+	console.info("======================================================\n");
 
 	const testSuite = new EnhancedPerformanceTestSuite();
 

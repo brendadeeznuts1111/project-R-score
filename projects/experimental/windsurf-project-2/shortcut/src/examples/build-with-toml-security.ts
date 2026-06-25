@@ -10,8 +10,8 @@
 import { urlPatternTomlPlugin } from './urlpattern-toml-plugin';
 import { build } from 'bun';
 
-console.log('🚀 Building with TOML Security Plugin');
-console.log('=====================================');
+console.info('🚀 Building with TOML Security Plugin');
+console.info('=====================================');
 
 async function buildWithSecurity() {
   try {
@@ -32,19 +32,19 @@ async function buildWithSecurity() {
       target: 'bun'
     });
     
-    console.log('✅ Build completed successfully!');
-    console.log(`📦 Outputs: ${result.outputs.length} files`);
+    console.info('✅ Build completed successfully!');
+    console.info(`📦 Outputs: ${result.outputs.length} files`);
     
     result.outputs.forEach(output => {
-      console.log(`   ${output.path}`);
+      console.info(`   ${output.path}`);
     });
     
   } catch (error) {
     console.error('❌ Build failed:', error instanceof Error ? error.message : String(error));
     
     if (error instanceof Error && error.message.includes('URLPattern security risks')) {
-      console.log('\n🔍 Security risks detected. Check security-report.json for details.');
-      console.log('💡 Fix the critical issues or adjust --fail-on-risk level.');
+      console.info('\n🔍 Security risks detected. Check security-report.json for details.');
+      console.info('💡 Fix the critical issues or adjust --fail-on-risk level.');
     }
     
     process.exit(1);
@@ -53,13 +53,13 @@ async function buildWithSecurity() {
 
 // Demo different risk levels
 async function demoRiskLevels() {
-  console.log('\n🎯 Demo: Different Risk Levels');
-  console.log('===============================');
+  console.info('\n🎯 Demo: Different Risk Levels');
+  console.info('===============================');
   
   const riskLevels = ['critical', 'high', 'medium', 'low'] as const;
   
   for (const riskLevel of riskLevels) {
-    console.log(`\n📊 Testing with --fail-on-risk ${riskLevel}:`);
+    console.info(`\n📊 Testing with --fail-on-risk ${riskLevel}:`);
     
     try {
       const result = await build({
@@ -76,18 +76,18 @@ async function demoRiskLevels() {
         target: 'bun'
       });
       
-      console.log(`   ✅ Build passed at ${riskLevel} risk`);
+      console.info(`   ✅ Build passed at ${riskLevel} risk`);
       
     } catch (error) {
-      console.log(`   ❌ Build failed at ${riskLevel} risk`);
+      console.info(`   ❌ Build failed at ${riskLevel} risk`);
     }
   }
 }
 
 // Performance benchmark
 async function benchmarkScanning() {
-  console.log('\n⚡ Performance Benchmark');
-  console.log('=========================');
+  console.info('\n⚡ Performance Benchmark');
+  console.info('=========================');
   
   const iterations = 10;
   const times: number[] = [];
@@ -113,10 +113,10 @@ async function benchmarkScanning() {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`   📊 Scanned ${iterations} times`);
-  console.log(`   ⚡ Average: ${avgTime.toFixed(2)}ms`);
-  console.log(`   🚀 Fastest: ${minTime.toFixed(2)}ms`);
-  console.log(`   🐌 Slowest: ${maxTime.toFixed(2)}ms`);
+  console.info(`   📊 Scanned ${iterations} times`);
+  console.info(`   ⚡ Average: ${avgTime.toFixed(2)}ms`);
+  console.info(`   🚀 Fastest: ${minTime.toFixed(2)}ms`);
+  console.info(`   🐌 Slowest: ${maxTime.toFixed(2)}ms`);
 }
 
 // Main execution
@@ -134,7 +134,7 @@ async function main() {
   }
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 Build Script with TOML Security
 
 Usage:

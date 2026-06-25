@@ -154,7 +154,7 @@ export class SyntheticArbProcessor {
         primaryStream: AsyncIterable<MarketTick>,
         hedgeStream: AsyncIterable<MarketTick>
     ): Promise<void> {
-        console.log('🚀 Starting synthetic arbitrage stream processing...');
+        console.info('🚀 Starting synthetic arbitrage stream processing...');
 
         const merged = this.mergeStreams(primaryStream, hedgeStream);
         const latencyMeasurements: number[] = [];
@@ -188,13 +188,13 @@ export class SyntheticArbProcessor {
 
                     if (opportunity) {
                         this.stats.opportunitiesDetected++;
-                        console.log(`🎯 Opportunity detected: ${opportunity.id} (z-score: ${opportunity.mispricing.toFixed(2)})`);
+                        console.info(`🎯 Opportunity detected: ${opportunity.id} (z-score: ${opportunity.mispricing.toFixed(2)})`);
 
                         // 4. Risk assessment
                         const approved = this.riskManager.validate(opportunity);
 
                         if (!approved) {
-                            console.log(`❌ Opportunity rejected: ${opportunity.id}`);
+                            console.info(`❌ Opportunity rejected: ${opportunity.id}`);
                             this.logRejected(opportunity);
                             continue;
                         }
@@ -206,7 +206,7 @@ export class SyntheticArbProcessor {
                         if (this.config.enableExecution) {
                             await this.executeSyntheticArb(opportunity, positionSize);
                         } else {
-                            console.log(`📊 Would execute: ${opportunity.id} (size: $${positionSize.toFixed(2)})`);
+                            console.info(`📊 Would execute: ${opportunity.id} (size: $${positionSize.toFixed(2)})`);
                         }
                     }
 
@@ -249,7 +249,7 @@ export class SyntheticArbProcessor {
         opportunity: SyntheticArbOpportunity,
         positionSize: number
     ): Promise<void> {
-        console.log(`⚡ Executing synthetic arb: ${opportunity.id}`);
+        console.info(`⚡ Executing synthetic arb: ${opportunity.id}`);
 
         try {
             // In a real implementation, this would:
@@ -264,7 +264,7 @@ export class SyntheticArbProcessor {
             const simulatedPnL = opportunity.expectedValue * (positionSize / 1000);
             this.stats.totalPnL += simulatedPnL;
 
-            console.log(`✅ Executed: ${opportunity.id} (PnL: $${simulatedPnL.toFixed(2)})`);
+            console.info(`✅ Executed: ${opportunity.id} (PnL: $${simulatedPnL.toFixed(2)})`);
 
         } catch (error) {
             console.error(`❌ Execution failed for ${opportunity.id}:`, error);
@@ -283,34 +283,34 @@ export class SyntheticArbProcessor {
         if (Math.abs(opportunity.correlation) < 0.7) reasons.push('low correlation');
         if (opportunity.tailRisk > 5.0) reasons.push('high tail risk');
 
-        console.log(`   Rejection reasons: ${reasons.join(', ')}`);
+        console.info(`   Rejection reasons: ${reasons.join(', ')}`);
     }
 
     /**
      * Print final processing statistics
      */
     private printFinalStats(): void {
-        console.log('\n📊 Synthetic Arbitrage Processing Statistics:');
-        console.log('='.repeat(50));
-        console.log(`Opportunities detected: ${this.stats.opportunitiesDetected}`);
-        console.log(`Opportunities executed: ${this.stats.opportunitiesExecuted}`);
-        console.log(`Total PnL: $${this.stats.totalPnL.toFixed(2)}`);
-        console.log(`Average latency: ${this.stats.averageLatency.toFixed(2)}ms`);
-        console.log(`Covariance updates: ${this.stats.covarianceUpdates}`);
-        console.log(`Processing errors: ${this.stats.processingErrors}`);
+        console.info('\n📊 Synthetic Arbitrage Processing Statistics:');
+        console.info('='.repeat(50));
+        console.info(`Opportunities detected: ${this.stats.opportunitiesDetected}`);
+        console.info(`Opportunities executed: ${this.stats.opportunitiesExecuted}`);
+        console.info(`Total PnL: $${this.stats.totalPnL.toFixed(2)}`);
+        console.info(`Average latency: ${this.stats.averageLatency.toFixed(2)}ms`);
+        console.info(`Covariance updates: ${this.stats.covarianceUpdates}`);
+        console.info(`Processing errors: ${this.stats.processingErrors}`);
 
         if (this.stats.opportunitiesDetected > 0) {
             const executionRate = (this.stats.opportunitiesExecuted / this.stats.opportunitiesDetected) * 100;
-            console.log(`Execution rate: ${executionRate.toFixed(1)}%`);
+            console.info(`Execution rate: ${executionRate.toFixed(1)}%`);
         }
 
         // Covariance engine stats
         const covStats = this.covarianceEngine.getStatistics();
-        console.log(`\n🔗 Covariance Engine: ${covStats.totalRelationships} relationships, ${covStats.highConfidenceRelationships} high confidence`);
+        console.info(`\n🔗 Covariance Engine: ${covStats.totalRelationships} relationships, ${covStats.highConfidenceRelationships} high confidence`);
 
         // Detector stats
         const detectorStats = this.detector.getStatistics();
-        console.log(`🎯 Detector: ${detectorStats.averageCorrelation.toFixed(3)} avg correlation, ${detectorStats.averageConfidence.toFixed(3)} avg confidence`);
+        console.info(`🎯 Detector: ${detectorStats.averageCorrelation.toFixed(3)} avg correlation, ${detectorStats.averageConfidence.toFixed(3)} avg confidence`);
     }
 
     /**

@@ -281,7 +281,7 @@ function averageProfiles(profiles: any[]): BatchProfile {
 }
 
 async function batchProfile(dir: string, count: number = 100, concurrency = 4): Promise<BatchProfile> {
-  console.log(`\u{1F680} Batch profiling ${count} files with concurrency ${concurrency}...\n`);
+  console.info(`\u{1F680} Batch profiling ${count} files with concurrency ${concurrency}...\n`);
 
   const profiles: any[] = [];
   const startTime = performance.now();
@@ -308,16 +308,16 @@ async function batchProfile(dir: string, count: number = 100, concurrency = 4): 
     process.stdout.write(`\r${progressBar(b + 1, batches)}`);
   }
 
-  console.log('\n');
+  console.info('\n');
 
   const totalTime = performance.now() - startTime;
   const avg = averageProfiles(profiles);
 
   // Display per-file profile card for the last (most complex) file
   const last = profiles[profiles.length - 1];
-  console.log(profileCard(last));
-  console.log(featureMatrix(last.markdown.featureCounts));
-  console.log(batchSummaryBox(avg, totalTime));
+  console.info(profileCard(last));
+  console.info(featureMatrix(last.markdown.featureCounts));
+  console.info(batchSummaryBox(avg, totalTime));
 
   // Save results (without individual profiles to keep output file small)
   const batchResult = {

@@ -11,7 +11,7 @@ const csvString = readFileSync(csvPath, "utf-8");
 const csvBuffer = readFileSync(csvPath); // Returns Buffer (Uint8Array)
 const csvArrayBuffer = Bun.file(csvPath).stream();
 
-console.log(`✅ Loaded ${csvString.length.toLocaleString()} chars / ${csvBuffer.byteLength.toLocaleString()} bytes`);
+console.info(`✅ Loaded ${csvString.length.toLocaleString()} chars / ${csvBuffer.byteLength.toLocaleString()} bytes`);
 
 // Binary CSV parser - fast Uint8Array parsing
 function parseCsvBinary(data: Uint8Array): Record<string, string | number>[] {
@@ -131,5 +131,5 @@ await execute();
 
 // Verify output
 const testResult = parseCsvBinary(csvBuffer);
-console.log(`\n✅ Binary parser produced ${testResult.length} records`);
-console.log("Sample:", testResult[0]);
+console.info(`\n✅ Binary parser produced ${testResult.length} records`);
+console.info("Sample:", testResult[0]);

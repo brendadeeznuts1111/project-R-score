@@ -60,7 +60,7 @@ class WikiTemplateCLI {
     };
     const reset = '\x1b[0m';
     
-    console.log(`${colors[level]}${message}${reset}`);
+    console.info(`${colors[level]}${message}${reset}`);
   }
 
   private async parseOptions(): Promise<CLIOptions> {
@@ -123,7 +123,7 @@ class WikiTemplateCLI {
   }
 
   private showUsage() {
-    console.log(`
+    console.info(`
 Wiki Template System CLI
 
 Usage: bun run examples/wiki-template-cli.ts <action> [options]
@@ -177,7 +177,7 @@ Examples:
       const usage = metrics?.usageCount || 0;
       const successRate = metrics?.successRate ? `${Math.round(metrics.successRate * 100)}%` : 'N/A';
       
-      console.log(`
+      console.info(`
 \033[1m${template.name}\033[0m
   Description: ${template.description}
   Provider: ${template.provider}
@@ -310,16 +310,16 @@ Examples:
         } else {
           // Output to console
           const content = result.files[request.format] || result.files.markdown;
-          console.log('\n--- Generated Content ---');
-          console.log(content);
-          console.log('--- End Content ---\n');
+          console.info('\n--- Generated Content ---');
+          console.info(content);
+          console.info('--- End Content ---\n');
         }
 
         // Show metadata
         this.log('\n📊 Generation Metadata:', 'info');
-        console.log(`  Total sections: ${result.metadata.total}`);
-        console.log(`  Categories: ${result.metadata.categories}`);
-        console.log(`  Generated: ${result.metadata.generated}`);
+        console.info(`  Total sections: ${result.metadata.total}`);
+        console.info(`  Categories: ${result.metadata.categories}`);
+        console.info(`  Generated: ${result.metadata.generated}`);
       } else {
         this.log(`❌ Generation failed: ${result.error}`, 'error');
       }
@@ -344,27 +344,27 @@ Examples:
       this.log(`✅ Scores calculated in ${endTime - startTime}ms`, 'success');
 
       // Display scores
-      console.log('\n--- Template Scores ---');
-      console.log(`Overall Relevance: ${Math.round((scores.overallScore?.relevanceScore || 0) * 100)}%`);
-      console.log(`Content Quality: ${Math.round((scores.overallScore?.contentQualityScore || 0) * 100)}%`);
-      console.log(`Performance Score: ${Math.round((scores.overallScore?.performanceScore || 0) * 100)}%`);
-      console.log(`Combined Score: ${Math.round((scores.overallScore?.combinedScore || 0) * 100)}%`);
+      console.info('\n--- Template Scores ---');
+      console.info(`Overall Relevance: ${Math.round((scores.overallScore?.relevanceScore || 0) * 100)}%`);
+      console.info(`Content Quality: ${Math.round((scores.overallScore?.contentQualityScore || 0) * 100)}%`);
+      console.info(`Performance Score: ${Math.round((scores.overallScore?.performanceScore || 0) * 100)}%`);
+      console.info(`Combined Score: ${Math.round((scores.overallScore?.combinedScore || 0) * 100)}%`);
 
       if (scores.rssFeedItems.length > 0) {
-        console.log(`\n📡 RSS Feed Items (${scores.rssFeedItems.length}):`);
+        console.info(`\n📡 RSS Feed Items (${scores.rssFeedItems.length}):`);
         scores.rssFeedItems.slice(0, 5).forEach((item: any, index: number) => {
-          console.log(`  ${index + 1}. ${item.title} (${Math.round(item.relevanceScore * 100)}% relevance)`);
+          console.info(`  ${index + 1}. ${item.title} (${Math.round(item.relevanceScore * 100)}% relevance)`);
         });
       }
 
       if (scores.relatedTemplates.length > 0) {
-        console.log(`\n🔗 Related Templates (${scores.relatedTemplates.length}):`);
+        console.info(`\n🔗 Related Templates (${scores.relatedTemplates.length}):`);
         scores.relatedTemplates.forEach((template: any, index: number) => {
-          console.log(`  ${index + 1}. ${template.templateName} (${Math.round(template.similarityScore * 100)}% similar)`);
+          console.info(`  ${index + 1}. ${template.templateName} (${Math.round(template.similarityScore * 100)}% similar)`);
         });
       }
 
-      console.log('--- End Scores ---\n');
+      console.info('--- End Scores ---\n');
     } catch (error) {
       this.log(`❌ Error calculating scores: ${(error as Error).message}`, 'error');
     }
@@ -413,19 +413,19 @@ Examples:
       const stats = this.generator.getStats();
 
       this.log('✅ Benchmark completed', 'success');
-      console.log('\n--- Benchmark Results ---');
-      console.log(`Sequential Time: ${sequentialTime}ms`);
-      console.log(`Concurrent Time: ${concurrentTime}ms`);
-      console.log(`Speedup: ${speedup.toFixed(2)}x`);
-      console.log(`Success Rate: ${(successRate * 100).toFixed(1)}%`);
-      console.log(`Throughput: ${stats.throughputPerSecond.toFixed(2)} tasks/sec`);
-      console.log(`Active Workers: ${stats.activeWorkers}/${stats.totalWorkers}`);
-      console.log('--- End Results ---\n');
+      console.info('\n--- Benchmark Results ---');
+      console.info(`Sequential Time: ${sequentialTime}ms`);
+      console.info(`Concurrent Time: ${concurrentTime}ms`);
+      console.info(`Speedup: ${speedup.toFixed(2)}x`);
+      console.info(`Success Rate: ${(successRate * 100).toFixed(1)}%`);
+      console.info(`Throughput: ${stats.throughputPerSecond.toFixed(2)} tasks/sec`);
+      console.info(`Active Workers: ${stats.activeWorkers}/${stats.totalWorkers}`);
+      console.info('--- End Results ---\n');
 
       if (options.verbose) {
-        console.log('\n--- Detailed Stats ---');
-        console.log(JSON.stringify(stats, null, 2));
-        console.log('--- End Stats ---\n');
+        console.info('\n--- Detailed Stats ---');
+        console.info(JSON.stringify(stats, null, 2));
+        console.info('--- End Stats ---\n');
       }
     } catch (error) {
       this.log(`❌ Benchmark failed: ${(error as Error).message}`, 'error');
@@ -440,35 +440,35 @@ Examples:
       const cacheStats = this.cacheManager.getStats();
       const generatorStats = this.generator.getStats();
 
-      console.log('\n--- Template Analytics ---');
-      console.log(`Total Templates: ${analytics.totalTemplates}`);
-      console.log(`Custom Templates: ${analytics.customTemplates}`);
-      console.log(`Default Templates: ${analytics.defaultTemplates}`);
+      console.info('\n--- Template Analytics ---');
+      console.info(`Total Templates: ${analytics.totalTemplates}`);
+      console.info(`Custom Templates: ${analytics.customTemplates}`);
+      console.info(`Default Templates: ${analytics.defaultTemplates}`);
 
-      console.log('\n--- Categories ---');
+      console.info('\n--- Categories ---');
       Object.entries(analytics.categories).forEach(([category, count]) => {
-        console.log(`${category}: ${count}`);
+        console.info(`${category}: ${count}`);
       });
 
-      console.log('\n--- Providers ---');
+      console.info('\n--- Providers ---');
       Object.entries(analytics.providers).forEach(([provider, count]) => {
-        console.log(`${provider}: ${count}`);
+        console.info(`${provider}: ${count}`);
       });
 
-      console.log('\n--- Cache Statistics ---');
-      console.log(`Hits: ${cacheStats.hits}`);
-      console.log(`Misses: ${cacheStats.misses}`);
-      console.log(`Sets: ${cacheStats.sets}`);
-      console.log(`Hit Rate: ${cacheStats.hits > 0 ? ((cacheStats.hits / (cacheStats.hits + cacheStats.misses)) * 100).toFixed(1) : 0}%`);
-      console.log(`Memory Usage: ${(cacheStats.memoryUsage / 1024).toFixed(2)} KB`);
+      console.info('\n--- Cache Statistics ---');
+      console.info(`Hits: ${cacheStats.hits}`);
+      console.info(`Misses: ${cacheStats.misses}`);
+      console.info(`Sets: ${cacheStats.sets}`);
+      console.info(`Hit Rate: ${cacheStats.hits > 0 ? ((cacheStats.hits / (cacheStats.hits + cacheStats.misses)) * 100).toFixed(1) : 0}%`);
+      console.info(`Memory Usage: ${(cacheStats.memoryUsage / 1024).toFixed(2)} KB`);
 
-      console.log('\n--- Generator Statistics ---');
-      console.log(`Total Workers: ${generatorStats.totalWorkers}`);
-      console.log(`Active Workers: ${generatorStats.activeWorkers}`);
-      console.log(`Completed Tasks: ${generatorStats.completedTasks}`);
-      console.log(`Failed Tasks: ${generatorStats.failedTasks}`);
-      console.log(`Throughput: ${generatorStats.throughputPerSecond.toFixed(2)} tasks/sec`);
-      console.log('--- End Analytics ---\n');
+      console.info('\n--- Generator Statistics ---');
+      console.info(`Total Workers: ${generatorStats.totalWorkers}`);
+      console.info(`Active Workers: ${generatorStats.activeWorkers}`);
+      console.info(`Completed Tasks: ${generatorStats.completedTasks}`);
+      console.info(`Failed Tasks: ${generatorStats.failedTasks}`);
+      console.info(`Throughput: ${generatorStats.throughputPerSecond.toFixed(2)} tasks/sec`);
+      console.info('--- End Analytics ---\n');
     } catch (error) {
       this.log(`❌ Failed to get analytics: ${(error as Error).message}`, 'error');
     }
@@ -527,13 +527,13 @@ async function main() {
   
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n👋 Shutting down gracefully...');
+    console.info('\n👋 Shutting down gracefully...');
     await cli.shutdown();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    console.log('\n👋 Shutting down gracefully...');
+    console.info('\n👋 Shutting down gracefully...');
     await cli.shutdown();
     process.exit(0);
   });

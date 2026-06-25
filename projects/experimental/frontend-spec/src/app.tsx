@@ -215,13 +215,13 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!tensionIntegration) return;
 
-    console.log('🎹 Initializing keyboard controls...');
+    console.info('🎹 Initializing keyboard controls...');
 
     // Space - Toggle animation
     keyboardJS.bind('space', (e?: KeyboardEvent) => {
       e?.preventDefault();
       setIsAnimating(prev => !prev);
-      console.log(isAnimating ? '⏸️ Animation paused' : '▶️ Animation resumed');
+      console.info(isAnimating ? '⏸️ Animation paused' : '▶️ Animation resumed');
     });
 
     // R - Reset view
@@ -231,7 +231,7 @@ const App: React.FC = () => {
         cameraRef.current.position.set(0, 0, 50);
         cameraRef.current.rotation.set(0, 0, 0);
       }
-      console.log('🔄 View reset');
+      console.info('🔄 View reset');
     });
 
     // F - Toggle fullscreen
@@ -239,10 +239,10 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
-        console.log('🖥️ Fullscreen enabled');
+        console.info('🖥️ Fullscreen enabled');
       } else {
         document.exitFullscreen();
-        console.log('🖥️ Fullscreen disabled');
+        console.info('🖥️ Fullscreen disabled');
       }
     });
 
@@ -265,7 +265,7 @@ const App: React.FC = () => {
           tensionIntegration.injectFuelDirect(fuelType, { key: String(i) });
         }
         
-        console.log(`⚡ Injected ${fuelType} via key ${i}`);
+        console.info(`⚡ Injected ${fuelType} via key ${i}`);
       });
     }
 
@@ -274,7 +274,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.y += 2;
-        console.log('⬆️ Camera up');
+        console.info('⬆️ Camera up');
       }
     });
 
@@ -282,7 +282,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.y -= 2;
-        console.log('⬇️ Camera down');
+        console.info('⬇️ Camera down');
       }
     });
 
@@ -290,7 +290,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.x -= 2;
-        console.log('⬅️ Camera left');
+        console.info('⬅️ Camera left');
       }
     });
 
@@ -298,7 +298,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.x += 2;
-        console.log('➡️ Camera right');
+        console.info('➡️ Camera right');
       }
     });
 
@@ -307,7 +307,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.z = Math.max(10, cameraRef.current.position.z - 5);
-        console.log('🔍 Zoom in');
+        console.info('🔍 Zoom in');
       }
     });
 
@@ -315,7 +315,7 @@ const App: React.FC = () => {
       e?.preventDefault();
       if (cameraRef.current) {
         cameraRef.current.position.z = Math.min(100, cameraRef.current.position.z + 5);
-        console.log('🔍 Zoom out');
+        console.info('🔍 Zoom out');
       }
     });
 
@@ -323,7 +323,7 @@ const App: React.FC = () => {
     keyboardJS.bind('h', (e?: KeyboardEvent) => {
       e?.preventDefault();
       setShowHelp(true);
-      console.log('📋 Help displayed');
+      console.info('📋 Help displayed');
     });
 
     // ESC - Hide overlays
@@ -332,21 +332,21 @@ const App: React.FC = () => {
       setShowHelp(false);
       setShowMatrix(false);
       setShowDashboard(false);
-      console.log('🔄 Overlays hidden');
+      console.info('🔄 Overlays hidden');
     });
 
     // M - Show matrix
     keyboardJS.bind('m', (e?: KeyboardEvent) => {
       e?.preventDefault();
       setShowMatrix(true);
-      console.log('📊 Matrix displayed');
+      console.info('📊 Matrix displayed');
     });
 
     // D - Show dashboard
     keyboardJS.bind('d', (e?: KeyboardEvent) => {
       e?.preventDefault();
       setShowDashboard(true);
-      console.log('📈 Dashboard displayed');
+      console.info('📈 Dashboard displayed');
     });
 
     return () => {

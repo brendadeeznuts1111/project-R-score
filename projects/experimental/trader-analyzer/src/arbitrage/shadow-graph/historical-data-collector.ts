@@ -31,7 +31,7 @@ export class HistoricalDataCollector {
 			return;
 		}
 
-		console.log(
+		console.info(
 			`📸 Starting periodic shadow graph snapshots (every ${this.SNAPSHOT_INTERVAL_MS / 1000}s)`,
 		);
 
@@ -54,7 +54,7 @@ export class HistoricalDataCollector {
 		if (this.snapshotInterval) {
 			clearInterval(this.snapshotInterval);
 			this.snapshotInterval = undefined;
-			console.log("📸 Stopped periodic shadow graph snapshots");
+			console.info("📸 Stopped periodic shadow graph snapshots");
 		}
 	}
 
@@ -206,7 +206,7 @@ export class HistoricalDataCollector {
 
 			insertEdgeHistoryTransaction(edgeRows);
 
-			console.log(
+			console.info(
 				`📸 Snapshot taken for event ${eventId}: ${nodeRows.length} nodes, ${edgeRows.length} edges`,
 			);
 		} catch (error) {

@@ -2,7 +2,7 @@
 
 /**
  * 🎯 FactoryWager Wiki Matrix - Advanced Filter System
- * 
+ *
  * Supports pattern matching, filtering, and advanced search capabilities
  * using Bun's filter patterns and custom logic.
  */
@@ -44,7 +44,7 @@ class WikiMatrixFilter {
 
   private loadTemplates(): void {
     const wikiTemplates = MCPWikiGenerator.getWikiTemplates();
-    
+
     this.templates = wikiTemplates.map(template => ({
       name: template.name,
       description: template.description,
@@ -55,7 +55,7 @@ class WikiMatrixFilter {
       complexity: this.determineComplexity(template),
       examples: template.includeExamples,
       customSections: template.customSections?.length || 0,
-      integration: this.determineIntegration(template.format)
+      integration: this.determineIntegration(template.format),
     }));
   }
 
@@ -74,7 +74,7 @@ class WikiMatrixFilter {
     if (template.format === 'json') score += 1;
     if (!template.includeExamples) score += 1;
     if (template.baseUrl.includes('atlassian')) score += 1;
-    
+
     if (score <= 1) return 'Simple';
     if (score <= 3) return 'Medium';
     return 'Advanced';
@@ -82,22 +82,24 @@ class WikiMatrixFilter {
 
   private determineIntegration(format: string): string {
     switch (format) {
-      case 'markdown': return 'Direct Import';
-      case 'html': return 'Embed/IFrame';
-      case 'json': return 'API Integration';
-      default: return 'Manual';
+      case 'markdown':
+        return 'Direct Import';
+      case 'html':
+        return 'Embed/IFrame';
+      case 'json':
+        return 'API Integration';
+      default:
+        return 'Manual';
     }
   }
 
   // Pattern matching similar to Bun's --filter
   private matchesPattern(text: string, pattern: string): boolean {
     if (!pattern) return true;
-    
+
     // Support glob patterns
-    const regexPattern = pattern
-      .replace(/\*/g, '.*')
-      .replace(/\?/g, '.');
-    
+    const regexPattern = pattern.replace(/\*/g, '.*').replace(/\?/g, '.');
+
     const regex = new RegExp(regexPattern, 'i');
     return regex.test(text);
   }
@@ -107,29 +109,28 @@ class WikiMatrixFilter {
 
     // Pattern matching on name and description
     if (options.pattern) {
-      filtered = filtered.filter(template => 
-        this.matchesPattern(template.name, options.pattern!) ||
-        this.matchesPattern(template.description, options.pattern!)
+      filtered = filtered.filter(
+        template =>
+          this.matchesPattern(template.name, options.pattern!) ||
+          this.matchesPattern(template.description, options.pattern!)
       );
     }
 
     // Format filter
     if (options.format) {
-      filtered = filtered.filter(template => 
-        this.matchesPattern(template.format, options.format!)
-      );
+      filtered = filtered.filter(template => this.matchesPattern(template.format, options.format!));
     }
 
     // Complexity filter
     if (options.complexity) {
-      filtered = filtered.filter(template => 
+      filtered = filtered.filter(template =>
         this.matchesPattern(template.complexity, options.complexity!)
       );
     }
 
     // Use case filter
     if (options.useCase) {
-      filtered = filtered.filter(template => 
+      filtered = filtered.filter(template =>
         this.matchesPattern(template.useCase, options.useCase!)
       );
     }
@@ -141,14 +142,14 @@ class WikiMatrixFilter {
 
     // Custom sections filter
     if (options.hasCustomSections !== undefined) {
-      filtered = filtered.filter(template => 
-        template.customSections > 0 === options.hasCustomSections
+      filtered = filtered.filter(
+        template => template.customSections > 0 === options.hasCustomSections
       );
     }
 
     // Integration filter
     if (options.integration) {
-      filtered = filtered.filter(template => 
+      filtered = filtered.filter(template =>
         this.matchesPattern(template.integration, options.integration!)
       );
     }
@@ -158,15 +159,15 @@ class WikiMatrixFilter {
       filtered.sort((a, b) => {
         const aValue = a[options.sortBy as keyof TemplateInfo];
         const bValue = b[options.sortBy as keyof TemplateInfo];
-        
+
         if (typeof aValue === 'string' && typeof bValue === 'string') {
           return aValue.localeCompare(bValue);
         }
-        
+
         if (typeof aValue === 'number' && typeof bValue === 'number') {
           return aValue - bValue;
         }
-        
+
         return 0;
       });
     }
@@ -180,29 +181,31 @@ class WikiMatrixFilter {
   }
 
   displayFilterResults(results: TemplateInfo[], options: FilterOptions): void {
-    console.log(styled('\n🔍 Filter Results', 'primary'));
-    console.log(colorBar('primary', 50));
-    
+    console.info(styled('\n🔍 Filter Results', 'primary'));
+    console.info(colorBar('primary', 50));
+
     // Show applied filters
-    console.log(styled('Applied Filters:', 'info'));
-    if (options.pattern) console.log(styled(`  Pattern: ${options.pattern}`, 'muted'));
-    if (options.format) console.log(styled(`  Format: ${options.format}`, 'muted'));
-    if (options.complexity) console.log(styled(`  Complexity: ${options.complexity}`, 'muted'));
-    if (options.useCase) console.log(styled(`  Use Case: ${options.useCase}`, 'muted'));
-    if (options.hasExamples !== undefined) console.log(styled(`  Has Examples: ${options.hasExamples}`, 'muted'));
-    if (options.hasCustomSections !== undefined) console.log(styled(`  Has Custom Sections: ${options.hasCustomSections}`, 'muted'));
-    if (options.integration) console.log(styled(`  Integration: ${options.integration}`, 'muted'));
-    if (options.sortBy) console.log(styled(`  Sorted by: ${options.sortBy}`, 'muted'));
-    if (options.limit) console.log(styled(`  Limited to: ${options.limit}`, 'muted'));
-    console.log('');
+    console.info(styled('Applied Filters:', 'info'));
+    if (options.pattern) console.info(styled(`  Pattern: ${options.pattern}`, 'muted'));
+    if (options.format) console.info(styled(`  Format: ${options.format}`, 'muted'));
+    if (options.complexity) console.info(styled(`  Complexity: ${options.complexity}`, 'muted'));
+    if (options.useCase) console.info(styled(`  Use Case: ${options.useCase}`, 'muted'));
+    if (options.hasExamples !== undefined)
+      console.info(styled(`  Has Examples: ${options.hasExamples}`, 'muted'));
+    if (options.hasCustomSections !== undefined)
+      console.info(styled(`  Has Custom Sections: ${options.hasCustomSections}`, 'muted'));
+    if (options.integration) console.info(styled(`  Integration: ${options.integration}`, 'muted'));
+    if (options.sortBy) console.info(styled(`  Sorted by: ${options.sortBy}`, 'muted'));
+    if (options.limit) console.info(styled(`  Limited to: ${options.limit}`, 'muted'));
+    console.info('');
 
     if (results.length === 0) {
-      console.log(styled('No templates match the specified filters.', 'warning'));
+      console.info(styled('No templates match the specified filters.', 'warning'));
       return;
     }
 
-    console.log(styled(`Found ${results.length} matching templates:`, 'success'));
-    console.log('');
+    console.info(styled(`Found ${results.length} matching templates:`, 'success'));
+    console.info('');
 
     // Display results in table format
     this.displayResultsTable(results);
@@ -225,29 +228,29 @@ class WikiMatrixFilter {
     const headerSeparator = createSeparator('├', '┼', '┤', '┼');
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
-    console.log(styled(topBorder, 'muted'));
-    
+    console.info(styled(topBorder, 'muted'));
+
     // Header row
     let headerRow = '│';
     headers.forEach((header, i) => {
       const paddedHeader = header.padEnd(colWidths[i]);
       headerRow += ` ${styled(paddedHeader, 'accent')} │`;
     });
-    console.log(headerRow);
-    
-    console.log(styled(headerSeparator, 'muted'));
+    console.info(headerRow);
+
+    console.info(styled(headerSeparator, 'muted'));
 
     // Data rows
     results.forEach((template, rowIndex) => {
       let dataRow = '│';
-      
+
       const values = [
         template.name,
         template.format.toUpperCase(),
         template.complexity,
         template.useCase,
         template.examples ? '✅' : '❌',
-        template.integration
+        template.integration,
       ];
 
       values.forEach((value, colIndex) => {
@@ -279,14 +282,14 @@ class WikiMatrixFilter {
         const paddedValue = displayValue.padEnd(colWidths[colIndex]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
-      console.log(dataRow);
-      
+      console.info(dataRow);
+
       if (rowIndex < results.length - 1) {
-        console.log(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
+        console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
     });
 
-    console.log(styled(bottomBorder, 'muted'));
+    console.info(styled(bottomBorder, 'muted'));
   }
 
   // Advanced search with multiple criteria
@@ -307,7 +310,10 @@ class WikiMatrixFilter {
       }
 
       // Description pattern
-      if (criteria.descriptionPattern && !this.matchesPattern(template.description, criteria.descriptionPattern)) {
+      if (
+        criteria.descriptionPattern &&
+        !this.matchesPattern(template.description, criteria.descriptionPattern)
+      ) {
         return false;
       }
 
@@ -320,7 +326,11 @@ class WikiMatrixFilter {
 
       // Complexity filter
       if (criteria.complexities && criteria.complexities.length > 0) {
-        if (!criteria.complexities.some(complexity => this.matchesPattern(template.complexity, complexity))) {
+        if (
+          !criteria.complexities.some(complexity =>
+            this.matchesPattern(template.complexity, complexity)
+          )
+        ) {
           return false;
         }
       }
@@ -344,7 +354,11 @@ class WikiMatrixFilter {
 
       // Integration filter
       if (criteria.integrations && criteria.integrations.length > 0) {
-        if (!criteria.integrations.some(integration => this.matchesPattern(template.integration, integration))) {
+        if (
+          !criteria.integrations.some(integration =>
+            this.matchesPattern(template.integration, integration)
+          )
+        ) {
           return false;
         }
       }
@@ -355,33 +369,53 @@ class WikiMatrixFilter {
 
   // Show available filter options
   showFilterHelp(): void {
-    console.log(styled('\n🎯 Wiki Matrix Filter Options', 'accent'));
-    console.log(styled('=============================', 'accent'));
-    console.log('');
-    console.log(styled('Pattern Matching (like bun --filter):', 'primary'));
-    console.log(styled('  *        - Match any characters', 'info'));
-    console.log(styled('  ?        - Match single character', 'info'));
-    console.log(styled('  ba*      - Start with "ba"', 'info'));
-    console.log(styled('  *ence    - End with "ence"', 'info'));
-    console.log(styled('  *nfl*    - Contain "nfl"', 'info'));
-    console.log('');
-    console.log(styled('Available Filters:', 'primary'));
-    console.log(styled('  --pattern              - Pattern match on name/description', 'info'));
-    console.log(styled('  --format               - Filter by format (markdown, html, json)', 'info'));
-    console.log(styled('  --complexity           - Filter by complexity (Simple, Medium, Advanced)', 'info'));
-    console.log(styled('  --use-case             - Filter by use case', 'info'));
-    console.log(styled('  --has-examples         - Filter by examples (true/false)', 'info'));
-    console.log(styled('  --has-custom-sections  - Filter by custom sections (true/false)', 'info'));
-    console.log(styled('  --integration          - Filter by integration type', 'info'));
-    console.log(styled('  --sort-by              - Sort results (name, format, complexity, useCase)', 'info'));
-    console.log(styled('  --limit                - Limit number of results', 'info'));
-    console.log('');
-    console.log(styled('Examples:', 'primary'));
-    console.log(styled('  bun run scripts/wiki-matrix-filter.ts --pattern "*nfl*" ', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-filter.ts --format markdown --has-examples true', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-filter.ts --complexity "Simple*" --sort-by name', 'muted'));
-    console.log(styled('  bun run scripts/wiki-matrix-filter.ts --use-case "*Enterprise*" --limit 3', 'muted'));
-    console.log('');
+    console.info(styled('\n🎯 Wiki Matrix Filter Options', 'accent'));
+    console.info(styled('=============================', 'accent'));
+    console.info('');
+    console.info(styled('Pattern Matching (like bun --filter):', 'primary'));
+    console.info(styled('  *        - Match any characters', 'info'));
+    console.info(styled('  ?        - Match single character', 'info'));
+    console.info(styled('  ba*      - Start with "ba"', 'info'));
+    console.info(styled('  *ence    - End with "ence"', 'info'));
+    console.info(styled('  *nfl*    - Contain "nfl"', 'info'));
+    console.info('');
+    console.info(styled('Available Filters:', 'primary'));
+    console.info(styled('  --pattern              - Pattern match on name/description', 'info'));
+    console.info(
+      styled('  --format               - Filter by format (markdown, html, json)', 'info')
+    );
+    console.info(
+      styled('  --complexity           - Filter by complexity (Simple, Medium, Advanced)', 'info')
+    );
+    console.info(styled('  --use-case             - Filter by use case', 'info'));
+    console.info(styled('  --has-examples         - Filter by examples (true/false)', 'info'));
+    console.info(
+      styled('  --has-custom-sections  - Filter by custom sections (true/false)', 'info')
+    );
+    console.info(styled('  --integration          - Filter by integration type', 'info'));
+    console.info(
+      styled('  --sort-by              - Sort results (name, format, complexity, useCase)', 'info')
+    );
+    console.info(styled('  --limit                - Limit number of results', 'info'));
+    console.info('');
+    console.info(styled('Examples:', 'primary'));
+    console.info(styled('  bun run scripts/wiki-matrix-filter.ts --pattern "*nfl*" ', 'muted'));
+    console.info(
+      styled(
+        '  bun run scripts/wiki-matrix-filter.ts --format markdown --has-examples true',
+        'muted'
+      )
+    );
+    console.info(
+      styled(
+        '  bun run scripts/wiki-matrix-filter.ts --complexity "Simple*" --sort-by name',
+        'muted'
+      )
+    );
+    console.info(
+      styled('  bun run scripts/wiki-matrix-filter.ts --use-case "*Enterprise*" --limit 3', 'muted')
+    );
+    console.info('');
   }
 }
 

@@ -6,7 +6,7 @@ import { ProductionR2Manager } from "../src/core/storage/production-r2-manager";
 import { S3Client } from 'bun';
 
 async function syncToBucket() {
-  console.log("☁️  Starting R2 Artifact Sync...");
+  console.info("☁️  Starting R2 Artifact Sync...");
   
   const bucket = config.getEndpoint('storage').r2.bucket || 'duoplus-storage';
   const client = new S3Client({
@@ -37,10 +37,10 @@ async function syncToBucket() {
       contentDisposition: "inline"
     });
     
-    console.log(`✅ Synced: ${artifact.local} -> r2://${bucket}/${artifact.remote}`);
+    console.info(`✅ Synced: ${artifact.local} -> r2://${bucket}/${artifact.remote}`);
   }
 
-  console.log("\n🎊 R2 Synchronization Complete.");
+  console.info("\n🎊 R2 Synchronization Complete.");
 }
 
 syncToBucket();

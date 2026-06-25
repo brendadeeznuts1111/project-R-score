@@ -94,7 +94,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				hashMarketEvent(TEST_DATA.smallMarketEvent);
 			}, 10000);
 
-			console.log(`📊 Hash small event: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Hash small event: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.operationsPerSecond).toBeGreaterThan(1000000); // 1M ops/sec minimum
 		});
 
@@ -103,7 +103,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				hashMarketEvent(TEST_DATA.largeMarketEvent);
 			}, 10000);
 
-			console.log(`📊 Hash large event: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Hash large event: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.operationsPerSecond).toBeGreaterThan(500000); // 500K ops/sec for large events
 		});
 
@@ -114,7 +114,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				expect(hash1).toBe(hash2);
 			}, 1000);
 
-			console.log(`📊 Hash deterministic: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Hash deterministic: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -124,7 +124,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				createWebhookSignature("test-secret", TEST_DATA.webhookPayload);
 			}, 1000);
 
-			console.log(`📊 Webhook signature: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Webhook signature: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.averageTime).toBeLessThan(1); // < 1ms target
 		});
 
@@ -135,7 +135,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				expect(sig1).toBe(sig2);
 			}, 1000);
 
-			console.log(`📊 Signature consistency: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Signature consistency: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -145,7 +145,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				sanitizeForHTML(TEST_DATA.htmlContent);
 			}, 10000);
 
-			console.log(`📊 HTML sanitization (XSS): ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 HTML sanitization (XSS): ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.operationsPerSecond).toBeGreaterThan(10000); // 10K ops/sec minimum
 		});
 
@@ -154,7 +154,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				sanitizeForHTML("<p>Hello World</p>");
 			}, 10000);
 
-			console.log(`📊 HTML sanitization (clean): ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 HTML sanitization (clean): ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -164,7 +164,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				compressMarketData(TEST_DATA.compressionData);
 			}, 100);
 
-			console.log(`📊 Compression (10KB): ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Compression (10KB): ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.averageTime).toBeLessThan(10); // < 10ms for 10KB
 		});
 
@@ -174,7 +174,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				compressMarketData(largeData);
 			}, 10);
 
-			console.log(`📊 Compression (200KB): ${result.operationsPerSecond.toFixed(2)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Compression (200KB): ${result.operationsPerSecond.toFixed(2)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 
 		test("round-trip compression performance", () => {
@@ -184,7 +184,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				expect(decompressed).toEqual(new TextEncoder().encode(TEST_DATA.compressionData));
 			}, 100);
 
-			console.log(`📊 Round-trip compression: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Round-trip compression: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -197,7 +197,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				if (end - start <= 0) throw new Error("Timing precision failed");
 			}, 1000);
 
-			console.log(`📊 Nanosecond timing: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Nanosecond timing: ${result.operationsPerSecond.toFixed(0)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -214,7 +214,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				inspectTable(tableData, ["id", "name", "value", "status"]);
 			}, 100);
 
-			console.log(`📊 Table formatting (100 rows): ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Table formatting (100 rows): ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.averageTime).toBeLessThan(50); // < 50ms for 100 rows
 		});
 	});
@@ -236,7 +236,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				diagnostics.logContext(context, "info");
 			}, 100);
 
-			console.log(`📊 Diagnostics logging: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 Diagnostics logging: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 		});
 	});
 
@@ -263,7 +263,7 @@ describe("9.1.5.5.4.0.0: Bun Utilities Performance Monitoring", () => {
 				expect(sanitized).not.toContain("<script>");
 			}, 100);
 
-			console.log(`📊 End-to-end pipeline: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
+			console.info(`📊 End-to-end pipeline: ${result.operationsPerSecond.toFixed(1)} ops/sec, ${result.averageTime.toFixed(3)}ms avg`);
 			expect(result.averageTime).toBeLessThan(10); // < 10ms end-to-end
 		});
 	});
@@ -279,7 +279,7 @@ export function assertPerformanceTarget(
 	improvement: boolean = true
 ) {
 	const meetsTarget = improvement ? actual >= target : actual <= target;
-	console.log(`📊 ${name}: ${actual}${unit} ${meetsTarget ? '✅' : '❌'} (target: ${target}${unit})`);
+	console.info(`📊 ${name}: ${actual}${unit} ${meetsTarget ? '✅' : '❌'} (target: ${target}${unit})`);
 
 	if (!meetsTarget) {
 		throw new Error(`Performance target not met for ${name}: ${actual}${unit} vs ${target}${unit}`);

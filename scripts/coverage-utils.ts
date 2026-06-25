@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { basename, dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from 'node:path';
 
 export type FileCoverage = {
   file: string;
@@ -45,7 +45,7 @@ export async function expandGlobs(patterns: string[]): Promise<string[]> {
       continue;
     }
     const glob = new Bun.Glob(pattern);
-    for await (const match of glob.scan(".")) {
+    for await (const match of glob.scan('.')) {
       seen.add(resolve(match));
     }
   }
@@ -57,16 +57,16 @@ export async function parseLcovFiles(paths: string[]): Promise<CoverageSummary> 
 
   for (const path of paths) {
     const text = await Bun.file(path).text();
-    const chunks = text.split("end_of_record");
+    const chunks = text.split('end_of_record');
     for (const chunk of chunks) {
-      const lines = chunk.split("\n");
-      let sf = "";
+      const lines = chunk.split('\n');
+      let sf = '';
       let lf = 0;
       let lh = 0;
       for (const line of lines) {
-        if (line.startsWith("SF:")) sf = line.slice(3).trim();
-        else if (line.startsWith("LF:")) lf = Number.parseInt(line.slice(3).trim(), 10) || 0;
-        else if (line.startsWith("LH:")) lh = Number.parseInt(line.slice(3).trim(), 10) || 0;
+        if (line.startsWith('SF:')) sf = line.slice(3).trim();
+        else if (line.startsWith('LF:')) lf = Number.parseInt(line.slice(3).trim(), 10) || 0;
+        else if (line.startsWith('LH:')) lh = Number.parseInt(line.slice(3).trim(), 10) || 0;
       }
       if (!sf) continue;
       const prev = byFile.get(sf) || { linesFound: 0, linesHit: 0 };
@@ -104,12 +104,12 @@ export function groupByComponent(
   files: FileCoverage[],
   excludePatterns: string[] = []
 ): ComponentCoverage[] {
-  const exclude = excludePatterns.map((p) => p.trim()).filter(Boolean);
+  const exclude = excludePatterns.map(p => p.trim()).filter(Boolean);
   const byComponent = new Map<string, { files: number; linesFound: number; linesHit: number }>();
 
   for (const item of files) {
-    const normalized = item.file.replace(/\\/g, "/");
-    if (exclude.some((p) => normalized.includes(p))) continue;
+    const normalized = item.file.replace(/\\/g, '/');
+    if (exclude.some(p => normalized.includes(p))) continue;
     const component = inferComponent(normalized);
     const prev = byComponent.get(component) || { files: 0, linesFound: 0, linesHit: 0 };
     byComponent.set(component, {
@@ -131,18 +131,28 @@ export function groupByComponent(
 }
 
 function inferComponent(file: string): string {
-  const parts = file.split("/").filter(Boolean);
-  const rootIdx = parts.findIndex((part) =>
-    ["lib", "tests", "utils", "cli", "barbershop", "scratch", "dashboard", "scripts", "src"].includes(part)
+  const parts = file.split('/').filter(Boolean);
+  const rootIdx = parts.findIndex(part =>
+    [
+      'lib',
+      'tests',
+      'utils',
+      'cli',
+      'projects/active/barbershop',
+      'scratch',
+      'dashboard',
+      'scripts',
+      'src',
+    ].includes(part)
   );
   if (rootIdx >= 0) {
     if (parts.length > rootIdx + 1) return `${parts[rootIdx]}/${parts[rootIdx + 1]}`;
     return parts[rootIdx];
   }
-  return basename(dirname(file)) || "root";
+  return basename(dirname(file)) || 'root';
 }
 
-export function parseArg(flag: string, args: string[], fallback = ""): string {
+export function parseArg(flag: string, args: string[], fallback = ''): string {
   const idx = args.indexOf(flag);
   if (idx < 0 || idx + 1 >= args.length) return fallback;
   return args[idx + 1] || fallback;

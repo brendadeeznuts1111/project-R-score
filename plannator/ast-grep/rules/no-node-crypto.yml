@@ -1,0 +1,13 @@
+id: no-node-crypto
+language: TypeScript
+severity: warning
+message: "Prefer Bun.CryptoHasher over node:crypto in Bun projects"
+note: "See docs/references/bun-api-reference.md for Bun.crypto patterns"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: import { $$$ } from "crypto"
+    - pattern: import $X from "crypto"
+    - pattern: import { $$$ } from "node:crypto"
+    - pattern: import $X from "node:crypto"

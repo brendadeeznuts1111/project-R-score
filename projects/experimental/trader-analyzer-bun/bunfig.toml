@@ -4,8 +4,6 @@
 
 [install]
 exact = true
-# Isolated installs (default for workspaces)
-linker = "isolated"
 auto = "fallback"
 
 # Private registry configuration for @graph scoped packages

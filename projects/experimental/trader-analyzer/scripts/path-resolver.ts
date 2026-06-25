@@ -315,70 +315,70 @@ export class ExecutableFinder {
 
 // Demo function
 async function demo() {
-  console.log('📁 Advanced Path Resolution Demo\n');
+  console.info('📁 Advanced Path Resolution Demo\n');
 
   // 1. Basic path resolution
-  console.log('Basic Path Resolution:');
+  console.info('Basic Path Resolution:');
   try {
     const resolved = PathResolver.resolve('./package.json');
-    console.log('Resolved package.json:', resolved);
+    console.info('Resolved package.json:', resolved);
   } catch (error) {
-    console.log('Resolution failed:', error instanceof Error ? error.message : String(error));
+    console.info('Resolution failed:', error instanceof Error ? error.message : String(error));
   }
 
   try {
     const modulePath = PathResolver.resolveModule('zod');
-    console.log('Resolved zod module:', modulePath);
+    console.info('Resolved zod module:', modulePath);
   } catch (error) {
-    console.log('Module resolution failed:', error instanceof Error ? error.message : String(error));
+    console.info('Module resolution failed:', error instanceof Error ? error.message : String(error));
   }
-  console.log();
+  console.info();
 
   // 2. URL conversions
-  console.log('URL Conversions:');
+  console.info('URL Conversions:');
   const fileURL = PathResolver.toFileURL('/tmp/test.txt');
-  console.log('File URL:', fileURL.href);
+  console.info('File URL:', fileURL.href);
 
   const filePath = PathResolver.fromFileURL(fileURL);
-  console.log('File path:', filePath);
-  console.log();
+  console.info('File path:', filePath);
+  console.info();
 
   // 3. Path operations
-  console.log('Path Operations:');
+  console.info('Path Operations:');
   const testPath = '/home/user/projects/my-app/src/index.ts';
-  console.log('Original path:', testPath);
-  console.log('Directory:', PathResolver.dirname(testPath));
-  console.log('Basename:', PathResolver.basename(testPath));
-  console.log('Basename (no ext):', PathResolver.basename(testPath, '.ts'));
-  console.log('Extension:', PathResolver.extname(testPath));
-  console.log();
+  console.info('Original path:', testPath);
+  console.info('Directory:', PathResolver.dirname(testPath));
+  console.info('Basename:', PathResolver.basename(testPath));
+  console.info('Basename (no ext):', PathResolver.basename(testPath, '.ts'));
+  console.info('Extension:', PathResolver.extname(testPath));
+  console.info();
 
   // 4. Executable finding
-  console.log('Executable Finding:');
+  console.info('Executable Finding:');
   const lsPath = ExecutableFinder.find('ls');
-  console.log('ls executable:', lsPath || 'not found');
+  console.info('ls executable:', lsPath || 'not found');
 
   const nodePath = ExecutableFinder.find('node');
-  console.log('node executable:', nodePath || 'not found');
+  console.info('node executable:', nodePath || 'not found');
 
   try {
     const pythonPath = await ExecutableFinder.findWithFallback('python3', ['python', 'py']);
-    console.log('Python executable:', pythonPath);
+    console.info('Python executable:', pythonPath);
   } catch (error) {
-    console.log('Python not found:', error instanceof Error ? error.message : String(error));
+    console.info('Python not found:', error instanceof Error ? error.message : String(error));
   }
-  console.log();
+  console.info();
 
   // 5. Available commands
-  console.log('Available Commands (first 10):');
+  console.info('Available Commands (first 10):');
   const commands = ExecutableFinder.getAvailableCommands();
   Array.from(commands.entries()).slice(0, 10).forEach(([name, path]) => {
-    console.log(`  ${name}: ${path}`);
+    console.info(`  ${name}: ${path}`);
   });
-  console.log(`  ... and ${commands.size - 10} more`);
-  console.log();
+  console.info(`  ... and ${commands.size - 10} more`);
+  console.info();
 
-  console.log('✨ Path resolution demo complete!');
+  console.info('✨ Path resolution demo complete!');
 }
 
 // Run demo if executed directly

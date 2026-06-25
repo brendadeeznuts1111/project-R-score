@@ -52,12 +52,12 @@ class HTMLReviewCLI {
     }
 
     public async review(files: string[]): Promise<HTMLReviewResult[]> {
-        console.log('🔍 Starting HTML Review...\n');
+        console.info('🔍 Starting HTML Review...\n');
 
         for (const file of files) {
             if (this.shouldSkipFile(file)) {
                 if (this.options.verbose) {
-                    console.log(`⏭️  Skipping: ${file}`);
+                    console.info(`⏭️  Skipping: ${file}`);
                 }
                 continue;
             }
@@ -424,26 +424,26 @@ class HTMLReviewCLI {
         const { file, issues, stats } = result;
         
         if (stats.total === 0) {
-            console.log(`✅ ${file}: No issues found`);
+            console.info(`✅ ${file}: No issues found`);
             return;
         }
 
-        console.log(`\n📄 ${file}`);
-        console.log(`   Issues: ${stats.errors}❌ ${stats.warnings}⚠️  ${stats.info}ℹ️  (${stats.total} total)`);
+        console.info(`\n📄 ${file}`);
+        console.info(`   Issues: ${stats.errors}❌ ${stats.warnings}⚠️  ${stats.info}ℹ️  (${stats.total} total)`);
         
         if (this.options.verbose) {
             issues.forEach(issue => {
                 const icon = issue.type === 'error' ? '❌' : issue.type === 'warning' ? '⚠️' : 'ℹ️';
                 const location = issue.line ? `:${issue.line}` : '';
-                console.log(`   ${icon} [${issue.category.toUpperCase()}] ${issue.message}${location}`);
+                console.info(`   ${icon} [${issue.category.toUpperCase()}] ${issue.message}${location}`);
                 if (issue.autoFixable && this.options.fix) {
-                    console.log(`      💡 Auto-fix: ${issue.fix}`);
+                    console.info(`      💡 Auto-fix: ${issue.fix}`);
                 }
             });
         }
 
         if (stats.autoFixable > 0 && !this.options.fix) {
-            console.log(`   🔧 ${stats.autoFixable} issues can be auto-fixed with --fix flag`);
+            console.info(`   🔧 ${stats.autoFixable} issues can be auto-fixed with --fix flag`);
         }
     }
 
@@ -456,22 +456,22 @@ class HTMLReviewCLI {
             autoFixable: acc.autoFixable + result.stats.autoFixable
         }), { total: 0, errors: 0, warnings: 0, info: 0, autoFixable: 0 });
 
-        console.log('\n' + '='.repeat(60));
-        console.log('📊 HTML REVIEW SUMMARY');
-        console.log('='.repeat(60));
-        console.log(`Files reviewed: ${this.results.length}`);
-        console.log(`Total issues: ${totalStats.total}`);
-        console.log(`Errors: ${totalStats.errors} ❌`);
-        console.log(`Warnings: ${totalStats.warnings} ⚠️`);
-        console.log(`Info: ${totalStats.info} ℹ️`);
-        console.log(`Auto-fixable: ${totalStats.autoFixable} 🔧`);
+        console.info('\n' + '='.repeat(60));
+        console.info('📊 HTML REVIEW SUMMARY');
+        console.info('='.repeat(60));
+        console.info(`Files reviewed: ${this.results.length}`);
+        console.info(`Total issues: ${totalStats.total}`);
+        console.info(`Errors: ${totalStats.errors} ❌`);
+        console.info(`Warnings: ${totalStats.warnings} ⚠️`);
+        console.info(`Info: ${totalStats.info} ℹ️`);
+        console.info(`Auto-fixable: ${totalStats.autoFixable} 🔧`);
         
         if (totalStats.errors > 0) {
-            console.log('\n❌ Review completed with errors. Fix critical issues before deployment.');
+            console.info('\n❌ Review completed with errors. Fix critical issues before deployment.');
         } else if (totalStats.warnings > 0) {
-            console.log('\n⚠️  Review completed with warnings. Consider addressing for improvement.');
+            console.info('\n⚠️  Review completed with warnings. Consider addressing for improvement.');
         } else {
-            console.log('\n✅ Review completed successfully! No critical issues found.');
+            console.info('\n✅ Review completed successfully! No critical issues found.');
         }
     }
 
@@ -483,11 +483,11 @@ class HTMLReviewCLI {
         };
 
         writeFileSync(this.options.output, JSON.stringify(results, null, 2));
-        console.log(`\n💾 Results saved to: ${this.options.output}`);
+        console.info(`\n💾 Results saved to: ${this.options.output}`);
     }
 
     public async fixIssues(): Promise<void> {
-        console.log('🔧 Applying auto-fixes...\n');
+        console.info('🔧 Applying auto-fixes...\n');
 
         for (const result of this.results) {
             if (result.stats.autoFixable === 0) {
@@ -534,11 +534,11 @@ class HTMLReviewCLI {
 
             if (modified) {
                 writeFileSync(filePath, content);
-                console.log(`✅ Fixed auto-fixable issues in: ${filePath}`);
+                console.info(`✅ Fixed auto-fixable issues in: ${filePath}`);
             }
         }
 
-        console.log('\n🎉 Auto-fixes applied successfully!');
+        console.info('\n🎉 Auto-fixes applied successfully!');
     }
 }
 
@@ -589,7 +589,7 @@ function parseArgs(): { files: string[], options: CLIOptions } {
 }
 
 function showHelp(): void {
-    console.log(`
+    console.info(`
 🔍 HTML Review CLI Tool
 
 Usage: bun html-review-cli.ts [options] [files...]
@@ -622,7 +622,7 @@ async function main(): Promise<void> {
     const { files, options } = parseArgs();
     
     if (files.length === 0) {
-        console.log('❌ No files specified. Use --help for usage information.');
+        console.info('❌ No files specified. Use --help for usage information.');
         process.exit(1);
     }
 

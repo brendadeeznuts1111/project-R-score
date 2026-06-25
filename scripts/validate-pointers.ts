@@ -11,8 +11,11 @@
 import { join } from 'path';
 import { globalPool } from '../lib/performance/memory-pool';
 import { hardenedFetch } from '../lib/http/hardened-fetch';
-import { generatePointerId as generatePointerIdLib, getConceptual as getConceptualLib } from '../lib/utils/pointer-id';
-import { metricsFeed } from '../lib/deployment/tier1380-metrics-feed';
+import {
+  generatePointerId as generatePointerIdLib,
+  getConceptual as getConceptualLib,
+} from '../lib/utils/pointer-id';
+import { metricsFeed } from '../lib/deployment/metrics-feed';
 import { BunHTTP2Multiplexer } from '../lib/http/http2-multiplexer';
 import { StatusOutput, writeRScore, writeColored } from '../lib/utils/output-helpers';
 import { loadJSON, saveJSON } from '../lib/utils/json-loader';
@@ -35,9 +38,9 @@ const STATUS = {
 
 // CONCURRENCY & PERFORMANCE CONFIGURATION
 const CONCURRENCY_CONFIG = {
-  concurrent_scripts: 5,    // Maximum number of concurrent jobs for lifecycle scripts
-  network_concurrency: 48,  // Maximum number of concurrent network requests
-  request_delay: 100,       // Delay between batches in milliseconds
+  concurrent_scripts: 5, // Maximum number of concurrent jobs for lifecycle scripts
+  network_concurrency: 48, // Maximum number of concurrent network requests
+  request_delay: 100, // Delay between batches in milliseconds
 } as const;
 
 // PATH ENVIRONMENT CONFIGURATION
@@ -99,7 +102,9 @@ class ConcurrencyController {
         } finally {
           const endTime = performance.now();
           const latency = endTime - startTime;
-          this.metrics.averageLatency = (this.metrics.averageLatency * (this.metrics.totalRequests - 1) + latency) / this.metrics.totalRequests;
+          this.metrics.averageLatency =
+            (this.metrics.averageLatency * (this.metrics.totalRequests - 1) + latency) /
+            this.metrics.totalRequests;
           this.metrics.endTime = endTime;
           this.activeRequests--;
           this.processQueue();
@@ -144,7 +149,7 @@ class ConcurrencyController {
 }
 
 // BUN-NATIVE OPTIMIZATION SOLUTIONS (Real Implementation)
-import { type Socket, connect } from "bun";
+import { type Socket, connect } from 'bun';
 
 // Real SharedArrayBuffer pool for M_impact optimization
 class MemoryPool {
@@ -166,19 +171,23 @@ class MemoryPool {
     this.offset += bytes;
     return {
       offset: ptr,
-      view: new DataView(this.buffer, ptr, bytes)
+      view: new DataView(this.buffer, ptr, bytes),
     };
   }
 
-  reset() { this.offset = 0; }
-  get utilization() { return this.offset / this.size; }
+  reset() {
+    this.offset = 0;
+  }
+  get utilization() {
+    return this.offset / this.size;
+  }
 
   getStats(): { total: number; used: number; available: number; utilization: number } {
     return {
       total: this.size,
       used: this.offset,
       available: this.size - this.offset,
-      utilization: this.offset / this.size
+      utilization: this.offset / this.size,
     };
   }
 }
@@ -236,11 +245,15 @@ class PathResolver {
   /**
    * Execute binary with enhanced PATH
    */
-  static async executeBinary(binaryName: string, args: string[] = [], options: {
-    cwd?: string;
-    env?: Record<string, string>;
-    timeout?: number;
-  } = {}): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+  static async executeBinary(
+    binaryName: string,
+    args: string[] = [],
+    options: {
+      cwd?: string;
+      env?: Record<string, string>;
+      timeout?: number;
+    } = {}
+  ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
     const binaryPath = await this.findBinary(binaryName);
 
     if (!binaryPath) {
@@ -314,25 +327,29 @@ class BunNativeOptimizer {
   /**
    * P0: Real Bun.eliminateDeadPointers() batch API for E_elimination
    */
-  static async eliminateDeadPointers(pointers: string[]): Promise<{ optimized: string[]; eliminated: string[] }> {
+  static async eliminateDeadPointers(
+    pointers: string[]
+  ): Promise<{ optimized: string[]; eliminated: string[] }> {
     const start = Bun.nanoseconds();
 
     try {
       // Check if real Bun API is available
-      if ("eliminateDeadPointers" in Bun) {
-        console.log('⚡ Using real Bun.eliminateDeadPointers() API...');
+      if ('eliminateDeadPointers' in Bun) {
+        console.info('⚡ Using real Bun.eliminateDeadPointers() API...');
         // Real Bun API call
         const result = await (Bun as any).eliminateDeadPointers({
           pointers,
           batchSize: 1000,
-          timeout: 5000
+          timeout: 5000,
         });
         const end = Bun.nanoseconds();
-        console.log(`⚡ Bun.eliminateDeadPointers(): ${result.eliminated?.length || 0} eliminated in ${(end - start) / 1000000}ms`);
+        console.info(
+          `⚡ Bun.eliminateDeadPointers(): ${result.eliminated?.length || 0} eliminated in ${(end - start) / 1000000}ms`
+        );
         return result;
       } else {
         // Fallback implementation with native performance
-        console.log('⚡ Using optimized batch validation (fallback)...');
+        console.info('⚡ Using optimized batch validation (fallback)...');
         const validPointers: string[] = [];
         const eliminated: string[] = [];
 
@@ -341,10 +358,13 @@ class BunNativeOptimizer {
         for (let i = 0; i < pointers.length; i += batchSize) {
           const batch = pointers.slice(i, i + batchSize);
           const results = await Promise.allSettled(
-            batch.map(async (pointer) => {
+            batch.map(async pointer => {
               try {
                 if (pointer.startsWith('http')) {
-                  const res = await fetch(pointer, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+                  const res = await fetch(pointer, {
+                    method: 'HEAD',
+                    signal: AbortSignal.timeout(3000),
+                  });
                   return { pointer, valid: res.ok };
                 } else {
                   // Use Bun-native file reading for validation
@@ -372,7 +392,9 @@ class BunNativeOptimizer {
         }
 
         const end = Bun.nanoseconds();
-        console.log(`⚡ Batch elimination: ${eliminated.length} eliminated in ${(end - start) / 1000000}ms`);
+        console.info(
+          `⚡ Batch elimination: ${eliminated.length} eliminated in ${(end - start) / 1000000}ms`
+        );
 
         return { optimized: validPointers, eliminated };
       }
@@ -385,7 +407,9 @@ class BunNativeOptimizer {
   /**
    * P1: Real Bun.connect() with TLS hardening for S_hardening
    */
-  static async hardenedConnection(url: string): Promise<{ success: boolean; latency: number; security: string }> {
+  static async hardenedConnection(
+    url: string
+  ): Promise<{ success: boolean; latency: number; security: string }> {
     const start = Bun.nanoseconds();
 
     try {
@@ -406,7 +430,7 @@ class BunNativeOptimizer {
                 return new Error('TLS hostname mismatch');
               }
               return undefined; // Accept valid certificates
-            }
+            },
           },
           socket: {
             data(socket: Socket, data: Buffer) {
@@ -415,78 +439,82 @@ class BunNativeOptimizer {
             },
             open(socket: Socket) {
               // Send HEAD request
-              socket.write(`HEAD ${urlObj.pathname} HTTP/1.1\r\nHost: ${urlObj.hostname}\r\nConnection: close\r\nUser-Agent: Bun-Native-Validator/1.0\r\n\r\n`);
+              socket.write(
+                `HEAD ${urlObj.pathname} HTTP/1.1\r\nHost: ${urlObj.hostname}\r\nConnection: close\r\nUser-Agent: Bun-Native-Validator/1.0\r\n\r\n`
+              );
             },
             end(socket: Socket) {
               // Connection closed
-            }
+            },
           },
-          timeout: 10000
+          timeout: 10000,
         });
 
         // Wait for connection response
-        const response = await new Promise<{ status: number; headers: Headers }>((resolve, reject) => {
-          let responseData = '';
-          let headersComplete = false;
-          let isResolved = false;
-          let timeoutId: ReturnType<typeof setTimeout>;
+        const response = await new Promise<{ status: number; headers: Headers }>(
+          (resolve, reject) => {
+            let responseData = '';
+            let headersComplete = false;
+            let isResolved = false;
+            let timeoutId: ReturnType<typeof setTimeout>;
 
-          const cleanup = () => {
-            // Clear timeout to prevent memory leaks
-            if (timeoutId) {
-              clearTimeout(timeoutId);
-            }
-            console.log('✅ Connection cleanup completed');
-          };
-
-          const dataHandler = (socket: Socket, data: Buffer) => {
-            if (isResolved) return; // Ignore data after resolution
-            
-            responseData += data.toString();
-
-            if (!headersComplete && responseData.includes('\r\n\r\n')) {
-              headersComplete = true;
-              const headerLines = responseData.split('\r\n')[0];
-              const statusMatch = headerLines.match(/HTTP\/\d\.\d (\d+)/);
-              if (statusMatch) {
-                isResolved = true;
-                const result = {
-                  status: parseInt(statusMatch[1]),
-                  headers: new Headers()
-                };
-                cleanup();
-                resolve(result);
+            const cleanup = () => {
+              // Clear timeout to prevent memory leaks
+              if (timeoutId) {
+                clearTimeout(timeoutId);
               }
-              socket.end();
-            }
-          };
+              console.info('✅ Connection cleanup completed');
+            };
 
-          const errorHandler = (error: any) => {
-            if (!isResolved) {
-              isResolved = true;
-              cleanup();
-              reject(error);
-            }
-          };
+            const dataHandler = (socket: Socket, data: Buffer) => {
+              if (isResolved) return; // Ignore data after resolution
 
-          const timeoutHandler = () => {
-            if (!isResolved) {
-              isResolved = true;
-              cleanup();
-              reject(new Error('Connection timeout'));
-            }
-          };
+              responseData += data.toString();
 
-          // Replace the initial data handler by overwriting socket.data
-          socket.data = dataHandler;
-          socket.on('error', errorHandler);
-          socket.on('timeout', timeoutHandler);
+              if (!headersComplete && responseData.includes('\r\n\r\n')) {
+                headersComplete = true;
+                const headerLines = responseData.split('\r\n')[0];
+                const statusMatch = headerLines.match(/HTTP\/\d\.\d (\d+)/);
+                if (statusMatch) {
+                  isResolved = true;
+                  const result = {
+                    status: parseInt(statusMatch[1]),
+                    headers: new Headers(),
+                  };
+                  cleanup();
+                  resolve(result);
+                }
+                socket.end();
+              }
+            };
 
-          // Set up timeout fallback
-          timeoutId = setTimeout(() => {
-            timeoutHandler();
-          }, 10000);
-        });
+            const errorHandler = (error: any) => {
+              if (!isResolved) {
+                isResolved = true;
+                cleanup();
+                reject(error);
+              }
+            };
+
+            const timeoutHandler = () => {
+              if (!isResolved) {
+                isResolved = true;
+                cleanup();
+                reject(new Error('Connection timeout'));
+              }
+            };
+
+            // Replace the initial data handler by overwriting socket.data
+            socket.data = dataHandler;
+            socket.on('error', errorHandler);
+            socket.on('timeout', timeoutHandler);
+
+            // Set up timeout fallback
+            timeoutId = setTimeout(() => {
+              timeoutHandler();
+            }, 10000);
+          }
+        );
 
         const end = Bun.nanoseconds();
         const latency = (end - start) / 1000000;
@@ -494,7 +522,7 @@ class BunNativeOptimizer {
         return {
           success: response.status >= 200 && response.status < 400,
           latency,
-          security: 'hardened_tls'
+          security: 'hardened_tls',
         };
       } else {
         // Fallback to regular fetch for HTTP or example.com
@@ -502,8 +530,8 @@ class BunNativeOptimizer {
           method: 'HEAD',
           signal: AbortSignal.timeout(10000),
           headers: {
-            'User-Agent': 'Bun-Native-Validator/1.0'
-          }
+            'User-Agent': 'Bun-Native-Validator/1.0',
+          },
         });
 
         const end = Bun.nanoseconds();
@@ -512,7 +540,7 @@ class BunNativeOptimizer {
         return {
           success: res.ok,
           latency,
-          security: isLocalhost ? 'trusted_localhost' : 'standard_http'
+          security: isLocalhost ? 'trusted_localhost' : 'standard_http',
         };
       }
     } catch (error) {
@@ -521,7 +549,7 @@ class BunNativeOptimizer {
       return {
         success: false,
         latency,
-        security: 'failed'
+        security: 'failed',
       };
     }
   }
@@ -550,10 +578,10 @@ const networkController = new ConcurrencyController(CONCURRENCY_CONFIG.network_c
 
 // COMPARISON BEHAVIOR CONSTANTS
 const COMPARISON_FEATURES = {
-  PROTOCOLS: 'protocols',      // https: vs http:
-  TRAILING_SLASHES: 'trailing_slashes',  // docs/ vs docs
-  METADATA: 'metadata',        // version: undefined
-  OBJECT_TYPE: 'object_type',  // new URL() vs {}
+  PROTOCOLS: 'protocols', // https: vs http:
+  TRAILING_SLASHES: 'trailing_slashes', // docs/ vs docs
+  METADATA: 'metadata', // version: undefined
+  OBJECT_TYPE: 'object_type', // new URL() vs {}
 } as const;
 
 type ComparisonFeature = keyof typeof COMPARISON_FEATURES;
@@ -567,25 +595,25 @@ interface StrictModeConfig {
 }
 
 const DEFAULT_STRICT_CONFIG: StrictModeConfig = {
-  protocols: true,      // Strict: https vs http are unequal
+  protocols: true, // Strict: https vs http are unequal
   trailing_slashes: true, // Strict: docs/ vs docs are unequal
-  metadata: true,       // Strict: version: undefined fails
-  object_type: true,    // Strict: new URL() vs {} fails (constructor vs keys only)
+  metadata: true, // Strict: version: undefined fails
+  object_type: true, // Strict: new URL() vs {} fails (constructor vs keys only)
 };
 
 // CANONICAL DOCUMENTATION REFERENCE
 const CANONICAL_DOCS = {
-  protocol: "https:",
-  host: "bun.sh",
-  sections: ["api", "runtime", "cli"],
-  meta: { version: "1.1.0" }
+  protocol: 'https:',
+  host: 'bun.sh',
+  sections: ['api', 'runtime', 'cli'],
+  meta: { version: '1.1.0' },
 } as const;
 
 // CANONICAL BASE FOR PROTOCOL VALIDATION
 const CANONICAL_BASE = {
-  protocol: "https:",
-  host: "bun.sh",
-  strict: true
+  protocol: 'https:',
+  host: 'bun.sh',
+  strict: true,
 } as const;
 
 /**
@@ -593,17 +621,17 @@ const CANONICAL_BASE = {
  */
 function resolvePointer(input: string) {
   const pointerMap: Record<string, string> = {
-    "Bun deep equals utility": "https://bun.sh/api/utils#deepequals",
-    "Bun RSS feed": "https://bun.sh/rss.xml",
-    "Main Bun documentation": "https://bun.sh/docs",
-    "Bun package manager (bunx)": "https://bun.sh/docs/cli/bunx",
-    "Bun reference docs": "https://bun.sh/docs",
-    "Bun shell runtime": "https://bun.sh/docs/runtime/shell",
-    "Bun utility APIs": "https://bun.sh/api/utils"
+    'Bun deep equals utility': 'https://bun.sh/api/utils#deepequals',
+    'Bun RSS feed': 'https://bun.sh/rss.xml',
+    'Main Bun documentation': 'https://bun.sh/docs',
+    'Bun package manager (bunx)': 'https://bun.sh/docs/cli/bunx',
+    'Bun reference docs': 'https://bun.sh/docs',
+    'Bun shell runtime': 'https://bun.sh/docs/runtime/shell',
+    'Bun utility APIs': 'https://bun.sh/api/utils',
   };
 
   const resolved = pointerMap[input];
-  if (!resolved) return { status: "MISSING", details: "File not found" };
+  if (!resolved) return { status: 'MISSING', details: 'File not found' };
 
   // Use Bun.deepEquals to verify protocol integrity
   const url = new URL(resolved);
@@ -614,8 +642,8 @@ function resolvePointer(input: string) {
   );
 
   return isValid
-    ? { status: "OK", details: `Verified via ${url.protocol}` }
-    : { status: "FAIL", details: "Protocol Mismatch" };
+    ? { status: 'OK', details: `Verified via ${url.protocol}` }
+    : { status: 'FAIL', details: 'Protocol Mismatch' };
 }
 
 /**
@@ -633,15 +661,17 @@ function validateDocPointer(candidate: object, strict: boolean = true) {
   return {
     isEqual,
     latency: `${pNative}ns`,
-    rScore: isEqual ? 1.000 : 0.925, // Penalty for mismatch
-    mode: strict ? "STRICT" : "LENIENT"
+    rScore: isEqual ? 1.0 : 0.925, // Penalty for mismatch
+    mode: strict ? 'STRICT' : 'LENIENT',
   };
 }
 
 /**
  * Enhanced validation with Bun-native optimizations and concurrency control
  */
-async function validatePointerWithProtocol(pointer: string): Promise<{ status: string; details: string }> {
+async function validatePointerWithProtocol(
+  pointer: string
+): Promise<{ status: string; details: string }> {
   return networkController.execute(async () => {
     try {
       if (pointer.startsWith('http')) {
@@ -664,18 +694,21 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
             );
 
             if (!protocolValid) {
-              return { status: "FAIL", details: "Protocol Mismatch" };
+              return { status: 'FAIL', details: 'Protocol Mismatch' };
             }
           }
 
-          const status = response.ok && response.status >= 200 && response.status < 400 ? STATUS.OK : STATUS.ERROR;
+          const status =
+            response.ok && response.status >= 200 && response.status < 400
+              ? STATUS.OK
+              : STATUS.ERROR;
           return {
             status,
             details: `Status: ${response.status} (hardened TLS)`,
           };
         } catch (error) {
           const msg = error instanceof Error ? error.message : String(error);
-          return { status: "ERROR", details: `Connection failed: ${msg}` };
+          return { status: 'ERROR', details: `Connection failed: ${msg}` };
         }
       } else {
         // P2: Use memory pool for zero-copy file operations
@@ -684,37 +717,38 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
           const { size, ptr } = await globalPool.readFile(filePath);
 
           return {
-            status: "OK",
+            status: 'OK',
             details: `Size: ${size} bytes (pooled @ ptr ${ptr})`,
           };
         } catch (error) {
           if (error instanceof Error) {
             if (error.message.includes('exceeds pool size')) {
-              return { status: "ERROR", details: "Memory pool exhausted - file too large" };
+              return { status: 'ERROR', details: 'Memory pool exhausted - file too large' };
             }
-            if (error.message.includes('File not found') || error.message.includes('File is empty')) {
-              return { status: "MISSING", details: error.message };
+            if (
+              error.message.includes('File not found') ||
+              error.message.includes('File is empty')
+            ) {
+              return { status: 'MISSING', details: error.message };
             }
           }
           // Fallback to standard check if pool read fails
           const file = Bun.file(pointer);
           const exists = await file.exists();
           return {
-            status: exists ? "OK" : "MISSING",
+            status: exists ? 'OK' : 'MISSING',
             details: exists ? `Size: ${file.size} bytes` : 'File not found',
           };
         }
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      return { status: "ERROR", details: msg };
+      return { status: 'ERROR', details: msg };
     }
   });
 }
 
-async function validatePointer(
-  pointer: string,
-): Promise<{ status: string; details: string }> {
+async function validatePointer(pointer: string): Promise<{ status: string; details: string }> {
   return networkController.execute(async () => {
     try {
       if (pointer.startsWith('http')) {
@@ -740,7 +774,7 @@ async function validatePointer(
           };
         } catch (error) {
           if (error instanceof Error && error.message.includes('exceeds pool size')) {
-            return { status: STATUS.ERROR, details: "Memory pool exhausted - file too large" };
+            return { status: STATUS.ERROR, details: 'Memory pool exhausted - file too large' };
           }
           // Fallback to standard check if pool read fails
           const file = Bun.file(pointer);
@@ -793,20 +827,20 @@ function extractCanonicalStructure(url: string): object | null {
 const POINTER_DICTIONARY = {
   // Bun documentation URLs (canonical - updated to working endpoints)
   BUN_DOCS: {
-    10: 'https://bun.sh/docs',  // Bun reference docs
-    11: 'https://bun.sh/blog',  // Bun blog (working instead of RSS)
+    10: 'https://bun.sh/docs', // Bun reference docs
+    11: 'https://bun.sh/blog', // Bun blog (working instead of RSS)
   },
 
   // Bun API URLs (canonical - updated to working endpoints)
   BUN_API: {
-    8: 'https://bun.sh/docs/api/utils',  // Bun deep equals utility (updated)
-    14: 'https://bun.sh/docs/api/utils',  // Bun utility APIs (updated)
-    12: 'https://bun.sh/docs/runtime/shell',  // Bun shell runtime
+    8: 'https://bun.sh/docs/api/utils', // Bun deep equals utility (updated)
+    14: 'https://bun.sh/docs/api/utils', // Bun utility APIs (updated)
+    12: 'https://bun.sh/docs/runtime/shell', // Bun shell runtime
   },
 
   // Bun CLI tools
   BUN_CLI: {
-    9: 'https://bun.sh/docs/cli/bunx',  // Bun package manager (bunx)
+    9: 'https://bun.sh/docs/cli/bunx', // Bun package manager (bunx)
   },
 
   // Core CLI tools (local paths)
@@ -819,7 +853,7 @@ const POINTER_DICTIONARY = {
 
   // Shared utilities
   SHARED_UTILS: {
-    entryGuard: join(PLATFORM_ROOT, 'shared', 'tools', 'entry-guard.ts'),
+    entryGuard: join(PLATFORM_ROOT, 'lib', 'shared', 'tools', 'entry-guard.ts'),
   },
 
   // Documentation files (only existing files)
@@ -830,7 +864,7 @@ const POINTER_DICTIONARY = {
 
   // Development servers
   DEV_SERVERS: {
-    example.com: 'http://example.com',
+    'example.com': 'http://example.com',
   },
 } as const;
 
@@ -876,11 +910,11 @@ function getPointerById(id: number): string | null {
 
 // R-SCORE DIAGNOSTICS SYSTEM
 interface RScoreMetrics {
-  p_ratio: number;      // Performance ratio (HTTP/1.1 via Bun.fetch)
-  m_impact: number;     // Memory impact (zero-copy decompression)
+  p_ratio: number; // Performance ratio (HTTP/1.1 via Bun.fetch)
+  m_impact: number; // Memory impact (zero-copy decompression)
   e_elimination: number; // Error elimination (failure rate)
-  s_hardening: number;  // Security hardening (protocol verification)
-  total_score: number;  // Weighted R-Score calculation
+  s_hardening: number; // Security hardening (protocol verification)
+  total_score: number; // Weighted R-Score calculation
 }
 
 interface DiagnosticResult {
@@ -893,10 +927,16 @@ interface DiagnosticResult {
 /**
  * Calculate R-Score from actual runtime metrics, not hardcoded values
  */
-const calculateRScore = (results: ValidationResult[], networkMetrics: PerformanceMetrics, memoryStats: { utilization: number }): RScoreMetrics => {
+const calculateRScore = (
+  results: ValidationResult[],
+  networkMetrics: PerformanceMetrics,
+  memoryStats: { utilization: number }
+): RScoreMetrics => {
   const totalPointers = results.length;
   const successfulPointers = results.filter(r => r.status === 'OK').length;
-  const failedValidations = results.filter(r => r.status === 'ERROR' || r.status === 'MISSING').length;
+  const failedValidations = results.filter(
+    r => r.status === 'ERROR' || r.status === 'MISSING'
+  ).length;
 
   // P_ratio: Protocol efficiency based on successful fetches
   const p_ratio = totalPointers > 0 ? successfulPointers / totalPointers : 0;
@@ -904,33 +944,36 @@ const calculateRScore = (results: ValidationResult[], networkMetrics: Performanc
   // M_impact: Memory efficiency based on pool efficiency reporting
   // With optimized pool efficiency calculation targeting 0.650 score
   const poolEfficiency = globalPool.reportEfficiency();
-  const m_impact = memoryStats.utilization > 0 ?
-    Math.min(0.59 + (poolEfficiency * 0.1), 0.65) : // Base 0.59 + efficiency boost, cap at 0.65
-    0.59; // Base score with memory pool (even if utilization is low, pool exists)
+  const m_impact =
+    memoryStats.utilization > 0
+      ? Math.min(0.59 + poolEfficiency * 0.1, 0.65) // Base 0.59 + efficiency boost, cap at 0.65
+      : 0.59; // Base score with memory pool (even if utilization is low, pool exists)
 
   // E_elimination: Error elimination rate
-  const e_elimination = totalPointers > 0 ? 1 - (failedValidations / totalPointers) : 1.0;
+  const e_elimination = totalPointers > 0 ? 1 - failedValidations / totalPointers : 1.0;
 
   // S_hardening: Security hardening based on TLS usage and connection security
   const networkPointers = results.filter(r => r.pointer.startsWith('http'));
-  const secureConnections = networkPointers.filter(r =>
-    r.details.includes('hardened') ||
-    r.details.includes('hardened TLS') ||
-    r.details.includes('trusted_localhost')
+  const secureConnections = networkPointers.filter(
+    r =>
+      r.details.includes('hardened') ||
+      r.details.includes('hardened TLS') ||
+      r.details.includes('trusted_localhost')
   ).length;
-  const s_hardening = networkPointers.length > 0 ?
-    (secureConnections / networkPointers.length) * 0.5 + 0.5 : // Scale 0.5-1.0
-    0.8; // Default for file-only operations
+  const s_hardening =
+    networkPointers.length > 0
+      ? (secureConnections / networkPointers.length) * 0.5 + 0.5 // Scale 0.5-1.0
+      : 0.8; // Default for file-only operations
 
   // Calculate weighted R-Score
-  const total_score = (p_ratio * 0.35) + (m_impact * 0.30) + (e_elimination * 0.20) + (s_hardening * 0.15);
+  const total_score = p_ratio * 0.35 + m_impact * 0.3 + e_elimination * 0.2 + s_hardening * 0.15;
 
   return {
     p_ratio,
     m_impact,
     e_elimination,
     s_hardening,
-    total_score
+    total_score,
   };
 };
 
@@ -944,16 +987,19 @@ function generateDiagnostics(rScore: RScoreMetrics): DiagnosticResult[] {
   diagnostics.push({
     metric: 'P_ratio',
     analysis: `${rScore.p_ratio.toFixed(3)} (Native HTTP/1.1 via Bun.fetch)`,
-    status: rScore.p_ratio >= 0.95 ? '✅ Optimal' : rScore.p_ratio >= 0.85 ? '⚠️ Degraded' : '❌ Poor',
-    value: rScore.p_ratio
+    status:
+      rScore.p_ratio >= 0.95 ? '✅ Optimal' : rScore.p_ratio >= 0.85 ? '⚠️ Degraded' : '❌ Poor',
+    value: rScore.p_ratio,
   });
 
   // M_impact diagnostic
   diagnostics.push({
     metric: 'M_impact',
-    analysis: rScore.m_impact >= 0.8 ? 'Zero-copy decompression verified' : 'Memory optimization needed',
-    status: rScore.m_impact >= 0.8 ? '✅ Optimal' : rScore.m_impact >= 0.6 ? '⚠️ Degraded' : '❌ Poor',
-    value: rScore.m_impact
+    analysis:
+      rScore.m_impact >= 0.8 ? 'Zero-copy decompression verified' : 'Memory optimization needed',
+    status:
+      rScore.m_impact >= 0.8 ? '✅ Optimal' : rScore.m_impact >= 0.6 ? '⚠️ Degraded' : '❌ Poor',
+    value: rScore.m_impact,
   });
 
   // E_elimination diagnostic
@@ -961,16 +1007,29 @@ function generateDiagnostics(rScore: RScoreMetrics): DiagnosticResult[] {
   diagnostics.push({
     metric: 'E_elimination',
     analysis: `${Math.max(0, parseFloat(failures))} failures detected`,
-    status: rScore.e_elimination >= 0.9 ? '✅ Optimal' : rScore.e_elimination >= 0.8 ? '⚠️ Compromised' : '❌ Poor',
-    value: rScore.e_elimination
+    status:
+      rScore.e_elimination >= 0.9
+        ? '✅ Optimal'
+        : rScore.e_elimination >= 0.8
+          ? '⚠️ Compromised'
+          : '❌ Poor',
+    value: rScore.e_elimination,
   });
 
   // S_hardening diagnostic
   diagnostics.push({
     metric: 'S_hardening',
-    analysis: rScore.s_hardening >= 0.9 ? 'Strict protocol verification enabled' : 'Protocol hardening needed',
-    status: rScore.s_hardening >= 0.9 ? '✅ Hardened' : rScore.s_hardening >= 0.7 ? '⚠️ Partial' : '❌ Vulnerable',
-    value: rScore.s_hardening
+    analysis:
+      rScore.s_hardening >= 0.9
+        ? 'Strict protocol verification enabled'
+        : 'Protocol hardening needed',
+    status:
+      rScore.s_hardening >= 0.9
+        ? '✅ Hardened'
+        : rScore.s_hardening >= 0.7
+          ? '⚠️ Partial'
+          : '❌ Vulnerable',
+    value: rScore.s_hardening,
   });
 
   return diagnostics;
@@ -989,7 +1048,10 @@ interface OptimizationFix {
 /**
  * Apply v4.3 optimization fixes to improve weak metrics
  */
-function applyOptimizationFixes(rScore: RScoreMetrics): { optimized: RScoreMetrics; fixes: OptimizationFix[] } {
+function applyOptimizationFixes(rScore: RScoreMetrics): {
+  optimized: RScoreMetrics;
+  fixes: OptimizationFix[];
+} {
   const fixes: OptimizationFix[] = [];
   let optimized = { ...rScore };
 
@@ -1001,7 +1063,7 @@ function applyOptimizationFixes(rScore: RScoreMetrics): { optimized: RScoreMetri
       primaryCause: 'Excessive fetch → JSON.parse → process loop',
       immediateFix: 'Replace with Bun.peek() + zero-copy Uint8Array slicing',
       expectedDelta: 0.22,
-      newProjectedScore: Math.min(1.0, optimized.p_ratio + 0.22)
+      newProjectedScore: Math.min(1.0, optimized.p_ratio + 0.22),
     });
     optimized.p_ratio = Math.min(1.0, optimized.p_ratio + 0.22);
   }
@@ -1015,7 +1077,7 @@ function applyOptimizationFixes(rScore: RScoreMetrics): { optimized: RScoreMetri
       primaryCause: `${failures} pointers eligible for elimination not optimized`,
       immediateFix: 'Batch-eliminate via Bun.eliminateDeadCode() pass',
       expectedDelta: 0.18,
-      newProjectedScore: Math.min(1.0, optimized.e_elimination + 0.18)
+      newProjectedScore: Math.min(1.0, optimized.e_elimination + 0.18),
     });
     optimized.e_elimination = Math.min(1.0, optimized.e_elimination + 0.18);
   }
@@ -1028,7 +1090,7 @@ function applyOptimizationFixes(rScore: RScoreMetrics): { optimized: RScoreMetri
       primaryCause: 'Missing connect() timeout + TLS fingerprinting',
       immediateFix: 'Enforce connect() + rejectUnauthorized: false only in trusted env',
       expectedDelta: 0.14,
-      newProjectedScore: Math.min(1.0, optimized.s_hardening + 0.14)
+      newProjectedScore: Math.min(1.0, optimized.s_hardening + 0.14),
     });
     optimized.s_hardening = Math.min(1.0, optimized.s_hardening + 0.14);
   }
@@ -1041,13 +1103,17 @@ function applyOptimizationFixes(rScore: RScoreMetrics): { optimized: RScoreMetri
       primaryCause: 'Repeated small allocations during RSS parsing',
       immediateFix: 'Switch to single growing SharedArrayBuffer arena',
       expectedDelta: 0.09,
-      newProjectedScore: Math.min(1.0, optimized.m_impact + 0.09)
+      newProjectedScore: Math.min(1.0, optimized.m_impact + 0.09),
     });
     optimized.m_impact = Math.min(1.0, optimized.m_impact + 0.09);
   }
 
   // Recalculate total score with optimizations
-  optimized.total_score = (optimized.p_ratio * 0.35) + (optimized.m_impact * 0.30) + (optimized.e_elimination * 0.20) + (optimized.s_hardening * 0.15);
+  optimized.total_score =
+    optimized.p_ratio * 0.35 +
+    optimized.m_impact * 0.3 +
+    optimized.e_elimination * 0.2 +
+    optimized.s_hardening * 0.15;
 
   return { optimized, fixes };
 }
@@ -1059,14 +1125,20 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
   const { optimized, fixes } = applyOptimizationFixes(rScore);
 
   if (fixes.length === 0) {
-    console.log('\n🎯 All metrics are optimal - no optimizations needed!');
+    console.info('\n🎯 All metrics are optimal - no optimizations needed!');
     return;
   }
 
-  console.log('\n🔧 Performance Optimization Recommendations (v4.3)');
-  console.log('┌─────────────────┬─────────┬────────────────────────────────────────────────┬──────────────────────────────────────┬─────────────┬──────────────┐');
-  console.log('│ Weak Metric     │ Observed│ Primary Cause                                      │ Immediate Fix (v4.3)                   │ Expected Δ  │ New Projected │');
-  console.log('├─────────────────┼─────────┼────────────────────────────────────────────────┼──────────────────────────────────────┼─────────────┼──────────────┤');
+  console.info('\n🔧 Performance Optimization Recommendations (v4.3)');
+  console.info(
+    '┌─────────────────┬─────────┬────────────────────────────────────────────────┬──────────────────────────────────────┬─────────────┬──────────────┐'
+  );
+  console.info(
+    '│ Weak Metric     │ Observed│ Primary Cause                                      │ Immediate Fix (v4.3)                   │ Expected Δ  │ New Projected │'
+  );
+  console.info(
+    '├─────────────────┼─────────┼────────────────────────────────────────────────┼──────────────────────────────────────┼─────────────┼──────────────┤'
+  );
 
   fixes.forEach(fix => {
     const observed = fix.observedValue.toFixed(3).padEnd(7);
@@ -1075,20 +1147,26 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
     const delta = `+${fix.expectedDelta.toFixed(2)}`.padEnd(9);
     const projected = fix.newProjectedScore.toFixed(3).padEnd(12);
 
-    console.log(`│ ${fix.metric.padEnd(15)} │ ${observed} │ ${cause} │ ${immediateFix} │ ${delta} │ ${projected} │`);
+    console.info(
+      `│ ${fix.metric.padEnd(15)} │ ${observed} │ ${cause} │ ${immediateFix} │ ${delta} │ ${projected} │`
+    );
   });
 
-  console.log('└─────────────────┴─────────┴────────────────────────────────────────────────┴──────────────────────────────────────┴─────────────┴──────────────┘');
+  console.info(
+    '└─────────────────┴─────────┴────────────────────────────────────────────────┴──────────────────────────────────────┴─────────────┴──────────────┘'
+  );
 
-  console.log(`\n📈 R-Score Projection:`);
-  console.log(`Current: ${rScore.total_score.toFixed(3)} → Optimized: ${optimized.total_score.toFixed(3)} (+${(optimized.total_score - rScore.total_score).toFixed(3)})`);
+  console.info(`\n📈 R-Score Projection:`);
+  console.info(
+    `Current: ${rScore.total_score.toFixed(3)} → Optimized: ${optimized.total_score.toFixed(3)} (+${(optimized.total_score - rScore.total_score).toFixed(3)})`
+  );
 
   if (optimized.total_score >= 0.95) {
-    console.log('🎯 Projected to achieve high-throughput threshold (>0.95)');
+    console.info('🎯 Projected to achieve high-throughput threshold (>0.95)');
   } else if (optimized.total_score >= 0.85) {
-    console.log('⚠️  Projected acceptable performance with optimizations');
+    console.info('⚠️  Projected acceptable performance with optimizations');
   } else {
-    console.log('🚨 Additional optimizations required beyond v4.3');
+    console.info('🚨 Additional optimizations required beyond v4.3');
   }
 }
 
@@ -1096,24 +1174,47 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
  * Display R-Score diagnostics
  */
 function displayRScoreDiagnostics(results: ValidationResult[]): void {
-  const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
+  const rScore = calculateRScore(
+    results,
+    networkController.getMetrics(),
+    BunNativeOptimizer.getPoolStats()
+  );
   const diagnostics = generateDiagnostics(rScore);
 
   StatusOutput.metrics('R-Score Diagnostics (Current Run)');
-  writeColored('┌─────────────────┬──────────────────────────────────────────┬─────────────┐\n', 'white');
-  writeColored('│ Metric          │ Analysis                                    │ Status      │\n', 'white');
-  writeColored('├─────────────────┼──────────────────────────────────────────┼─────────────┤\n', 'white');
+  writeColored(
+    '┌─────────────────┬──────────────────────────────────────────┬─────────────┐\n',
+    'white'
+  );
+  writeColored(
+    '│ Metric          │ Analysis                                    │ Status      │\n',
+    'white'
+  );
+  writeColored(
+    '├─────────────────┼──────────────────────────────────────────┼─────────────┤\n',
+    'white'
+  );
 
   diagnostics.forEach(d => {
-    const statusColor = d.status.includes('✅') ? 'green' : d.status.includes('⚠️') ? 'yellow' : 'red';
+    const statusColor = d.status.includes('✅')
+      ? 'green'
+      : d.status.includes('⚠️')
+        ? 'yellow'
+        : 'red';
     writeColored(`│ ${d.metric.padEnd(15)} │ ${d.analysis.padEnd(42)} │ `, 'white');
     writeColored(`${d.status.padEnd(11)} │\n`, statusColor as any);
   });
 
-  writeColored('└─────────────────┴──────────────────────────────────────────┴─────────────┘\n', 'white');
+  writeColored(
+    '└─────────────────┴──────────────────────────────────────────┴─────────────┘\n',
+    'white'
+  );
 
   StatusOutput.metrics('Current R-Score Calculation:');
-  writeColored(`R_Score ≈ (${rScore.p_ratio.toFixed(3)} × 0.35) + (${rScore.m_impact.toFixed(3)} × 0.30) + (${rScore.e_elimination.toFixed(3)} × 0.20) + (${rScore.s_hardening.toFixed(3)} × 0.15) = `, 'white');
+  writeColored(
+    `R_Score ≈ (${rScore.p_ratio.toFixed(3)} × 0.35) + (${rScore.m_impact.toFixed(3)} × 0.30) + (${rScore.e_elimination.toFixed(3)} × 0.20) + (${rScore.s_hardening.toFixed(3)} × 0.15) = `,
+    'white'
+  );
   writeRScore(rScore.total_score);
   writeColored('\n', 'white');
 
@@ -1162,9 +1263,7 @@ function getPointerId(pointer: string): number | null {
   return null;
 }
 
-async function validatePointer(
-  pointer: string,
-): Promise<{ status: string; details: string }> {
+async function validatePointer(pointer: string): Promise<{ status: string; details: string }> {
   try {
     if (pointer.startsWith('http')) {
       // Use hardened fetch with TLS verification for HTTPS
@@ -1209,7 +1308,7 @@ type ValidationResult = {
   category: string;
   protocol: string;
   status: string;
-  details: string
+  details: string;
 };
 
 // Unicode status symbols
@@ -1282,12 +1381,8 @@ function deepCompareWithBehavior(
   const differences: string[] = [];
 
   // Create normalized maps for comparison
-  const currentMap = new Map(
-    current.map(r => [normalizeForComparison(r.pointer, config), r])
-  );
-  const baselineMap = new Map(
-    baseline.map(r => [normalizeForComparison(r.pointer, config), r])
-  );
+  const currentMap = new Map(current.map(r => [normalizeForComparison(r.pointer, config), r]));
+  const baselineMap = new Map(baseline.map(r => [normalizeForComparison(r.pointer, config), r]));
 
   // Check for missing or changed pointers
   for (const [normPointer, baselineResult] of baselineMap) {
@@ -1302,14 +1397,18 @@ function deepCompareWithBehavior(
     if (config.metadata) {
       // Strict: exact status match required
       if (currentResult.status !== baselineResult.status) {
-        differences.push(`${currentResult.pointer}: ${baselineResult.status} → ${currentResult.status}`);
+        differences.push(
+          `${currentResult.pointer}: ${baselineResult.status} → ${currentResult.status}`
+        );
       }
     } else {
       // Lenient: only care about OK vs non-OK
       const currentOk = currentResult.status === STATUS.OK;
       const baselineOk = baselineResult.status === STATUS.OK;
       if (currentOk !== baselineOk) {
-        differences.push(`${currentResult.pointer}: ${baselineResult.status} → ${currentResult.status}`);
+        differences.push(
+          `${currentResult.pointer}: ${baselineResult.status} → ${currentResult.status}`
+        );
       }
     }
 
@@ -1358,15 +1457,16 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   // Reset metrics for this run
   networkController.reset();
 
-  console.log(`🚀 Starting validation with ${pointers.length} pointers...`);
+  console.info(`🚀 Starting validation with ${pointers.length} pointers...`);
 
   // P0: Apply Bun.eliminateDeadPointers() optimization first
-  console.log('⚡ Applying Bun.eliminateDeadPointers() optimization...');
-  const { optimized: optimizedPointers, eliminated } = await BunNativeOptimizer.eliminateDeadPointers(pointers);
+  console.info('⚡ Applying Bun.eliminateDeadPointers() optimization...');
+  const { optimized: optimizedPointers, eliminated } =
+    await BunNativeOptimizer.eliminateDeadPointers(pointers);
 
   if (eliminated.length > 0) {
-    console.log(`📋 E_elimination: Removed ${eliminated.length} dead pointers`);
-    eliminated.forEach(p => console.log(`   ❌ ${p}`));
+    console.info(`📋 E_elimination: Removed ${eliminated.length} dead pointers`);
+    eliminated.forEach(p => console.info(`   ❌ ${p}`));
   }
 
   // Separate network and file operations for optimal batching
@@ -1376,7 +1476,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   const results: ValidationResult[] = [];
 
   // Process file operations first (faster, no network limits)
-  console.log(`📁 Processing ${filePointers.length} file operations with memory pooling...`);
+  console.info(`📁 Processing ${filePointers.length} file operations with memory pooling...`);
   const fileResults = await Promise.all(
     filePointers.map(async (p, i) => ({
       id: getPointerId(p) ?? generatePointerId(p, i),
@@ -1385,12 +1485,12 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
       category: getPointerCategory(p),
       protocol: getProtocol(p),
       ...(await validatePointerWithProtocol(p)), // Use enhanced function with memory pooling
-    })),
+    }))
   );
   results.push(...fileResults);
 
   // Process network operations with HTTP/2 multiplexing or HTTP/1.1 fallback
-  console.log(`🌐 Processing ${networkPointers.length} network requests...`);
+  console.info(`🌐 Processing ${networkPointers.length} network requests...`);
 
   // Group by hostname for HTTP/2 connection reuse
   const byHostname = new Map<string, string[]>();
@@ -1412,7 +1512,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   for (const [hostname, hostPointers] of byHostname) {
     // Use HTTP/2 multiplexing for multiple requests to same host (except example.com)
     if (hostPointers.length > 1 && hostname !== 'example.com' && !hostname.startsWith('127.')) {
-      console.log(`🚀 HTTP/2 multiplexing ${hostPointers.length} streams to ${hostname}`);
+      console.info(`🚀 HTTP/2 multiplexing ${hostPointers.length} streams to ${hostname}`);
       const mux = new BunHTTP2Multiplexer();
 
       try {
@@ -1453,7 +1553,9 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
 
         // Log HTTP/2 stats
         const stats = mux.getStats();
-        console.log(`📊 HTTP/2 stats: ${stats.activeStreams} active, ${stats.totalStreams} total streams`);
+        console.info(
+          `📊 HTTP/2 stats: ${stats.activeStreams} active, ${stats.totalStreams} total streams`
+        );
 
         mux.disconnect();
       } catch (err: any) {
@@ -1467,7 +1569,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
             category: getPointerCategory(p),
             protocol: getProtocol(p),
             ...(await validatePointerWithProtocol(p)),
-          })),
+          }))
         );
         networkResults.push(...fallbackResults);
       }
@@ -1481,7 +1583,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
           category: getPointerCategory(p),
           protocol: getProtocol(p),
           ...(await validatePointerWithProtocol(p)),
-        })),
+        }))
       );
       networkResults.push(...http1Results);
     }
@@ -1498,12 +1600,16 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
 
   if (metrics.totalRequests > 0) {
     const totalTime = metrics.endTime - metrics.startTime;
-    console.log(`📊 Network Performance: ${metrics.successfulRequests}/${metrics.totalRequests} successful, ${metrics.averageLatency.toFixed(2)}ms avg latency, ${totalTime.toFixed(2)}ms total`);
+    console.info(
+      `📊 Network Performance: ${metrics.successfulRequests}/${metrics.totalRequests} successful, ${metrics.averageLatency.toFixed(2)}ms avg latency, ${totalTime.toFixed(2)}ms total`
+    );
   } else {
-    console.log(`📊 Network Performance: No network requests processed`);
+    console.info(`📊 Network Performance: No network requests processed`);
   }
 
-  console.log(`💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024).toFixed(1)}KB used of ${(memoryStats.total / 1024 / 1024).toFixed(1)}MB total (${(memoryStats.utilization * 100).toFixed(1)}% utilization)`);
+  console.info(
+    `💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024).toFixed(1)}KB used of ${(memoryStats.total / 1024 / 1024).toFixed(1)}MB total (${(memoryStats.utilization * 100).toFixed(1)}% utilization)`
+  );
 
   // Optimize pool size for next batch based on current utilization
   globalPool.optimizePoolSize();
@@ -1530,13 +1636,15 @@ async function main() {
   const concurrentScriptsIndex = args.findIndex(arg => arg === '--concurrent-scripts');
   const networkConcurrencyIndex = args.findIndex(arg => arg === '--network-concurrency');
 
-  const concurrentScripts = concurrentScriptsIndex >= 0 ?
-    parseInt(args[concurrentScriptsIndex + 1]) || CONCURRENCY_CONFIG.concurrent_scripts :
-    CONCURRENCY_CONFIG.concurrent_scripts;
+  const concurrentScripts =
+    concurrentScriptsIndex >= 0
+      ? parseInt(args[concurrentScriptsIndex + 1]) || CONCURRENCY_CONFIG.concurrent_scripts
+      : CONCURRENCY_CONFIG.concurrent_scripts;
 
-  const networkConcurrency = networkConcurrencyIndex >= 0 ?
-    parseInt(args[networkConcurrencyIndex + 1]) || CONCURRENCY_CONFIG.network_concurrency :
-    CONCURRENCY_CONFIG.network_concurrency;
+  const networkConcurrency =
+    networkConcurrencyIndex >= 0
+      ? parseInt(args[networkConcurrencyIndex + 1]) || CONCURRENCY_CONFIG.network_concurrency
+      : CONCURRENCY_CONFIG.network_concurrency;
 
   // Update global controller with CLI values
   networkController.maxConcurrent = networkConcurrency;
@@ -1551,7 +1659,7 @@ async function main() {
   };
 
   if (showHelp) {
-    console.log(`
+    console.info(`
 Validate Pointers — Check URLs and local file paths in project
 
 USAGE:
@@ -1594,101 +1702,107 @@ EXAMPLES:
 
   // Show PATH information if requested
   if (showPathInfo) {
-    console.log('🔍 Enhanced PATH Information');
-    console.log('================================');
+    console.info('🔍 Enhanced PATH Information');
+    console.info('================================');
 
     const pathStats = PathResolver.getPathStats();
-    console.log(`📊 PATH Statistics:`);
-    console.log(`   Total paths configured: ${pathStats.totalPaths}`);
-    console.log(`   Valid paths found: ${pathStats.validPaths}`);
-    console.log(`   System paths: ${pathStats.systemPaths}`);
-    console.log(`   Custom paths: ${pathStats.customPaths}`);
-    console.log('');
+    console.info(`📊 PATH Statistics:`);
+    console.info(`   Total paths configured: ${pathStats.totalPaths}`);
+    console.info(`   Valid paths found: ${pathStats.validPaths}`);
+    console.info(`   System paths: ${pathStats.systemPaths}`);
+    console.info(`   Custom paths: ${pathStats.customPaths}`);
+    console.info('');
 
-    console.log(`🛤️  Valid PATH Directories:`);
+    console.info(`🛤️  Valid PATH Directories:`);
     pathStats.pathList.forEach((path, index) => {
-      console.log(`   ${index + 1}. ${path}`);
+      console.info(`   ${index + 1}. ${path}`);
     });
-    console.log('');
+    console.info('');
 
     // Test binary discovery
-    console.log(`🔍 Binary Discovery Test:`);
+    console.info(`🔍 Binary Discovery Test:`);
     const testBinaries = ['node', 'npm', 'bun', 'git', 'curl'];
 
     for (const binary of testBinaries) {
       try {
         const binaryPath = await PathResolver.findBinary(binary);
         if (binaryPath) {
-          console.log(`   ✅ ${binary}: ${binaryPath}`);
+          console.info(`   ✅ ${binary}: ${binaryPath}`);
         } else {
-          console.log(`   ❌ ${binary}: not found`);
+          console.info(`   ❌ ${binary}: not found`);
         }
       } catch (error) {
-        console.log(`   ❌ ${binary}: error - ${error}`);
+        console.info(`   ❌ ${binary}: error - ${error}`);
       }
     }
 
-    console.log('');
-    console.log(`🌐 Environment PATH:`);
-    console.log(`   ${process.env.PATH || 'PATH not set'}`);
-    console.log('');
+    console.info('');
+    console.info(`🌐 Environment PATH:`);
+    console.info(`   ${process.env.PATH || 'PATH not set'}`);
+    console.info('');
 
     return; // Exit after showing PATH info
   }
   if (doCanonicalTest) {
-    console.log("--- Pointer Validation Audit ---");
+    console.info('--- Pointer Validation Audit ---');
 
     // Test 1: Exact Match
-    console.log("Match Test:", validateDocPointer({
-      protocol: "https:",
-      host: "bun.sh",
-      sections: ["api", "runtime", "cli"],
-      meta: { version: "1.1.0" }
-    }));
+    console.info(
+      'Match Test:',
+      validateDocPointer({
+        protocol: 'https:',
+        host: 'bun.sh',
+        sections: ['api', 'runtime', 'cli'],
+        meta: { version: '1.1.0' },
+      })
+    );
 
     // Test 2: Shadow Property Test (Strict Mode will catch 'extra: undefined')
-    console.log("Shadow Property Test:", validateDocPointer({
-      protocol: "https:",
-      host: "bun.sh",
-      sections: ["api", "runtime", "cli"],
-      meta: { version: "1.1.0" },
-      extra: undefined
-    }, true));
+    console.info(
+      'Shadow Property Test:',
+      validateDocPointer(
+        {
+          protocol: 'https:',
+          host: 'bun.sh',
+          sections: ['api', 'runtime', 'cli'],
+          meta: { version: '1.1.0' },
+          extra: undefined,
+        },
+        true
+      )
+    );
 
     // Test 3: Real URL validation
-    const testUrl = "https://bun.sh/docs/api/runtime/cli?version=1.1.0";
+    const testUrl = 'https://bun.sh/docs/api/runtime/cli?version=1.1.0';
     const structure = extractCanonicalStructure(testUrl);
     if (structure) {
-      console.log(`URL Test (${testUrl}):`, validateDocPointer(structure, config.metadata));
+      console.info(`URL Test (${testUrl}):`, validateDocPointer(structure, config.metadata));
     }
 
-    console.log("\n--- Enhanced Resolver Tests ---");
+    console.info('\n--- Enhanced Resolver Tests ---');
 
     // Test 4: Enhanced Resolver with canonical validation
-    console.log("Resolver Test 1:", resolvePointer("Bun deep equals utility"));
-    console.log("Resolver Test 2:", resolvePointer("Bun RSS feed"));
-    console.log("Resolver Test 3:", resolvePointer("Main Bun documentation"));
-    console.log("Resolver Test 4:", resolvePointer("Non-existent pointer"));
+    console.info('Resolver Test 1:', resolvePointer('Bun deep equals utility'));
+    console.info('Resolver Test 2:', resolvePointer('Bun RSS feed'));
+    console.info('Resolver Test 3:', resolvePointer('Main Bun documentation'));
+    console.info('Resolver Test 4:', resolvePointer('Non-existent pointer'));
 
     return;
   }
 
   // Show current configuration
   if (doCompare) {
-    console.log(`🔧 Comparison mode: ${strictModeEnabled ? 'STRICT' : 'LENIENT'}`);
-    console.log(`   Protocols: ${config.protocols ? 'strict' : 'lenient'}`);
-    console.log(`   Trailing slashes: ${config.trailing_slashes ? 'strict' : 'lenient'}`);
-    console.log(`   Metadata: ${config.metadata ? 'strict' : 'lenient'}`);
-    console.log(`   Object type: ${config.object_type ? 'strict' : 'lenient'}`);
-    console.log('');
+    console.info(`🔧 Comparison mode: ${strictModeEnabled ? 'STRICT' : 'LENIENT'}`);
+    console.info(`   Protocols: ${config.protocols ? 'strict' : 'lenient'}`);
+    console.info(`   Trailing slashes: ${config.trailing_slashes ? 'strict' : 'lenient'}`);
+    console.info(`   Metadata: ${config.metadata ? 'strict' : 'lenient'}`);
+    console.info(`   Object type: ${config.object_type ? 'strict' : 'lenient'}`);
+    console.info('');
   }
 
   // Curated pointers + URLs extracted from README.md
   const docFile = Bun.file(README_PATH);
-  const docRefs =
-    (await docFile.exists())
-      ? extractUrlsFromDoc(await docFile.text())
-      : [];
+  const docRefs = (await docFile.exists()) ? extractUrlsFromDoc(await docFile.text()) : [];
   const allPointers = [...new Set([...getAllPointers(), ...docRefs])];
 
   // Use enhanced validation with Bun-native optimizations if enabled
@@ -1703,19 +1817,25 @@ EXAMPLES:
             category: getPointerCategory(p),
             protocol: getProtocol(p),
             ...(await validatePointer(p)),
-          })),
-        ),
+          }))
+        )
       );
 
   // Add Unicode symbols to status for display
   const displayResults = results.map(r => ({
     ...r,
-    status: STATUS_SYMBOLS[r.status as keyof typeof STATUS_SYMBOLS]
+    status: STATUS_SYMBOLS[r.status as keyof typeof STATUS_SYMBOLS],
   }));
 
   // Show validation table unless diagnostics-only mode
   if (!showDiagnosticsOnly) {
-    console.log(Bun.inspect.table(displayResults, ['id', 'conceptual', 'pointer', 'protocol', 'status', 'details'], { colors: true }));
+    console.info(
+      Bun.inspect.table(
+        displayResults,
+        ['id', 'conceptual', 'pointer', 'protocol', 'status', 'details'],
+        { colors: true }
+      )
+    );
   }
 
   // Display R-Score diagnostics
@@ -1723,16 +1843,18 @@ EXAMPLES:
 
   // Show optimization recommendations if requested
   if (showOptimizations) {
-    const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
+    const rScore = calculateRScore(
+      results,
+      networkController.getMetrics(),
+      BunNativeOptimizer.getPoolStats()
+    );
     displayOptimizationRecommendations(rScore);
   }
 
   // Compare with baseline using enhanced comparison behavior
   if (doCompare) {
     try {
-      const baseline = sortResults(
-        await loadJSONRequired<ValidationResult[]>(BASELINE_PATH),
-      );
+      const baseline = sortResults(await loadJSONRequired<ValidationResult[]>(BASELINE_PATH));
 
       const comparison = deepCompareWithBehavior(results, baseline, config);
 
@@ -1740,7 +1862,7 @@ EXAMPLES:
         StatusOutput.success('Results match baseline');
       } else {
         StatusOutput.error('Results differ from baseline:');
-        comparison.differences.forEach(diff => console.log(`   ${diff}`));
+        comparison.differences.forEach(diff => console.info(`   ${diff}`));
       }
     } catch (error) {
       StatusOutput.warning('No baseline found. Run with --save to create one.');
@@ -1759,7 +1881,11 @@ EXAMPLES:
 
   // Push metrics to Tier-1380 feed
   try {
-    const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
+    const rScore = calculateRScore(
+      results,
+      networkController.getMetrics(),
+      BunNativeOptimizer.getPoolStats()
+    );
     const metrics = networkController.getMetrics();
     const poolStats = globalPool.stats;
 
@@ -1814,9 +1940,10 @@ EXAMPLES:
       },
       performance: {
         latency_ms: metrics.averageLatency || 0,
-        throughput_rps: metrics.totalRequests > 0
-          ? (metrics.totalRequests / ((metrics.endTime - metrics.startTime) / 1000))
-          : 0,
+        throughput_rps:
+          metrics.totalRequests > 0
+            ? metrics.totalRequests / ((metrics.endTime - metrics.startTime) / 1000)
+            : 0,
         memory_utilization: poolStats.utilization,
       },
       git: {
@@ -1834,7 +1961,7 @@ EXAMPLES:
     if (endpoint) {
       try {
         await metricsFeed.pushToEndpoint(endpoint, secret);
-        console.log('📡 Metrics pushed to Tier-1380 endpoint');
+        console.info('📡 Metrics pushed to Tier-1380 endpoint');
       } catch (error) {
         console.error('⚠️  Failed to push metrics:', error);
       }
@@ -1846,9 +1973,9 @@ EXAMPLES:
   // Start local RSS server if requested
   if (args.includes('--serve-metrics')) {
     const server = metricsFeed.serve(1380);
-    console.log('📡 Tier-1380 metrics feed: http://example.com/metrics/rss.xml');
-    console.log('📊 JSON endpoint: http://example.com/metrics/json');
-    console.log('Press Ctrl+C to stop the server');
+    console.info('📡 Tier-1380 metrics feed: http://example.com/metrics/rss.xml');
+    console.info('📊 JSON endpoint: http://example.com/metrics/json');
+    console.info('Press Ctrl+C to stop the server');
     // Keep process alive
     process.on('SIGINT', () => {
       server.stop();

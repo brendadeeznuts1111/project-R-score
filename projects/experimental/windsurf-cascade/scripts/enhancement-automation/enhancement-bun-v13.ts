@@ -43,8 +43,8 @@ class BunV13Enhancer {
      * Run complete enhancement process
      */
     async enhance(): Promise<EnhancementReport> {
-        console.log("🚀 Starting Bun v1.3.1 Systematic Enhancement");
-        console.log("================================================");
+        console.info("🚀 Starting Bun v1.3.1 Systematic Enhancement");
+        console.info("================================================");
 
         try {
             // Phase 1: YAML Integration
@@ -87,11 +87,11 @@ class BunV13Enhancer {
         const startTime = performance.now();
 
         try {
-            console.log("\n📝 Phase 1: YAML Integration Enhancement");
-            console.log("----------------------------------------");
+            console.info("\n📝 Phase 1: YAML Integration Enhancement");
+            console.info("----------------------------------------");
 
             // Test YAML v1.3.1 fixes
-            console.log("  • Testing YAML v1.3.1 fixes...");
+            console.info("  • Testing YAML v1.3.1 fixes...");
             const yamlTestResult = await this.testYamlFixes();
 
             if (!yamlTestResult.success) {
@@ -99,11 +99,11 @@ class BunV13Enhancer {
             }
 
             // Update YAML configuration files
-            console.log("  • Updating YAML configuration files...");
+            console.info("  • Updating YAML configuration files...");
             const configUpdateResult = await this.updateYamlConfigs();
 
             // Create YAML utility examples
-            console.log("  • Creating YAML utility examples...");
+            console.info("  • Creating YAML utility examples...");
             const examplesResult = await this.createYamlExamples();
 
             const duration = performance.now() - startTime;
@@ -268,16 +268,16 @@ class BunV13Enhancer {
         const startTime = performance.now();
 
         try {
-            console.log("\n⚡ Phase 2: Performance Optimization");
-            console.log("------------------------------------");
+            console.info("\n⚡ Phase 2: Performance Optimization");
+            console.info("------------------------------------");
 
-            console.log("  • Running performance benchmarks...");
+            console.info("  • Running performance benchmarks...");
             const benchmarkResult = await this.runBenchmarks();
 
-            console.log("  • Optimizing build configuration...");
+            console.info("  • Optimizing build configuration...");
             const buildOptimization = await this.optimizeBuildConfig();
 
-            console.log("  • Updating performance scripts...");
+            console.info("  • Updating performance scripts...");
             const scriptOptimization = await this.optimizePerformanceScripts();
 
             const duration = performance.now() - startTime;
@@ -319,7 +319,7 @@ class BunV13Enhancer {
 
             for (const script of benchmarkScripts) {
                 try {
-                    console.log(`    Running ${script}...`);
+                    console.info(`    Running ${script}...`);
                     execSync(`bun run ${script}`, {
                         cwd: projectRoot,
                         stdio: "pipe",
@@ -442,16 +442,16 @@ class BunV13Enhancer {
         const startTime = performance.now();
 
         try {
-            console.log("\n🔍 Phase 3: Feature Validation");
-            console.log("-------------------------------");
+            console.info("\n🔍 Phase 3: Feature Validation");
+            console.info("-------------------------------");
 
-            console.log("  • Validating YAML features...");
+            console.info("  • Validating YAML features...");
             const yamlValidation = await this.validateYamlFeatures();
 
-            console.log("  • Validating performance features...");
+            console.info("  • Validating performance features...");
             const performanceValidation = await this.validatePerformanceFeatures();
 
-            console.log("  • Validating testing features...");
+            console.info("  • Validating testing features...");
             const testingValidation = await this.validateTestingFeatures();
 
             const duration = performance.now() - startTime;
@@ -575,16 +575,16 @@ class BunV13Enhancer {
         const startTime = performance.now();
 
         try {
-            console.log("\n🛠️  Phase 4: Code Quality Improvements");
-            console.log("--------------------------------------");
+            console.info("\n🛠️  Phase 4: Code Quality Improvements");
+            console.info("--------------------------------------");
 
-            console.log("  • Running type checking...");
+            console.info("  • Running type checking...");
             const typecheckResult = await this.runTypecheck();
 
-            console.log("  • Running linting...");
+            console.info("  • Running linting...");
             const lintResult = await this.runLinting();
 
-            console.log("  • Validating golden rules...");
+            console.info("  • Validating golden rules...");
             const rulesResult = await this.validateGoldenRules();
 
             const duration = performance.now() - startTime;
@@ -721,18 +721,18 @@ async function main() {
     const enhancer = new BunV13Enhancer();
     const report = await enhancer.enhance();
 
-    console.log("\n" + "=".repeat(60));
-    console.log("🎯 BUN v1.3.1 ENHANCEMENT REPORT");
-    console.log("=".repeat(60));
-    console.log(report.summary);
-    console.log(`⏱️  Total Duration: ${report.totalDuration.toFixed(2)}ms`);
+    console.info("\n" + "=".repeat(60));
+    console.info("🎯 BUN v1.3.1 ENHANCEMENT REPORT");
+    console.info("=".repeat(60));
+    console.info(report.summary);
+    console.info(`⏱️  Total Duration: ${report.totalDuration.toFixed(2)}ms`);
 
     if (report.yamlIntegration.details) {
-        console.log("\n📝 YAML Integration Details:");
-        console.log(JSON.stringify(report.yamlIntegration.details, null, 2));
+        console.info("\n📝 YAML Integration Details:");
+        console.info(JSON.stringify(report.yamlIntegration.details, null, 2));
     }
 
-    console.log("\n✅ Enhancement process completed!");
+    console.info("\n✅ Enhancement process completed!");
 
     // Exit with appropriate code
     process.exit(report.yamlIntegration.success &&

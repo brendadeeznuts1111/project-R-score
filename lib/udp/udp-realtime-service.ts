@@ -10,7 +10,7 @@ import type {
   ErrorHandler,
   ShutdownHandler,
   StaleHandler,
-} from "./udp-types";
+} from './udp-types';
 import {
   decodePacketHeader,
   encodePacketHeader,
@@ -20,15 +20,15 @@ import {
   stripPacketHeader,
   appendCRC,
   verifyAndStripCRC,
-} from "./packet-id";
-import { CircuitBreaker, CircuitBreakerOpenError } from "../core/circuit-breaker";
+} from './packet-id';
+import { CircuitBreaker, CircuitBreakerOpenError } from '../core/circuit-breaker';
 
-type UDPSocket = Bun.udp.Socket<"buffer"> | Bun.udp.ConnectedSocket<"buffer">;
+type UDPSocket = Bun.udp.Socket<'buffer'> | Bun.udp.ConnectedSocket<'buffer'>;
 
 export class UDPRealtimeService {
   private config: UDPServiceConfig;
   private socket: UDPSocket | null = null;
-  private _state: UDPServiceState = "idle";
+  private _state: UDPServiceState = 'idle';
   private isConnected = false;
 
   private dataHandlers: DataHandler[] = [];
@@ -58,7 +58,7 @@ export class UDPRealtimeService {
   private readonly sourceId: number;
   private inStates = new Map<number, { nextExpected: number; seen: Set<number> }>();
   private readonly dedupWindow: number;
-  private static readonly MAX_SEQ = 0xFFFFFFFF;
+  private static readonly MAX_SEQ = 0xffffffff;
 
   private bindTime = 0;
   private shutdownPromise: Promise<void> | null = null;
@@ -93,11 +93,11 @@ export class UDPRealtimeService {
   }
 
   async bind(): Promise<void> {
-    if (this._state !== "idle") {
+    if (this._state !== 'idle') {
       throw new Error(`Cannot bind: state is "${this._state}", expected "idle"`);
     }
 
-    this._state = "binding";
+    this._state = 'binding';
     this.isConnected = !!this.config.connect;
 
     const handler = {
@@ -109,7 +109,7 @@ export class UDPRealtimeService {
         let sequenceId: number | undefined;
         let sourceId: number | undefined;
         let timestampUs: bigint | undefined;
-        let scope: UDPDatagram["scope"];
+        let scope: UDPDatagram['scope'];
         let flags: number | undefined;
         let crcValid: boolean | undefined;
         let isHeartbeat = false;
@@ -178,20 +178,20 @@ export class UDPRealtimeService {
         this.socket = await Bun.udpSocket({
           hostname: this.config.hostname,
           port: this.config.port,
-          socket: handler as Bun.udp.ConnectedSocketHandler<"buffer">,
+          socket: handler as Bun.udp.ConnectedSocketHandler<'buffer'>,
           connect: this.config.connect!,
         });
-        this._state = "connected";
+        this._state = 'connected';
       } else {
         this.socket = await Bun.udpSocket({
           hostname: this.config.hostname,
           port: this.config.port,
-          socket: handler as Bun.udp.SocketHandler<"buffer">,
+          socket: handler as Bun.udp.SocketHandler<'buffer'>,
         });
-        this._state = "bound";
+        this._state = 'bound';
       }
     } catch (err) {
-      this._state = "idle";
+      this._state = 'idle';
       this.isConnected = false;
       throw err;
     }
@@ -203,7 +203,7 @@ export class UDPRealtimeService {
 
     if (this.config.circuitBreaker) {
       const cb = this.config.circuitBreaker;
-      this.breaker = new CircuitBreaker("udp-send", {
+      this.breaker = new CircuitBreaker('udp-send', {
         failureThreshold: cb.failureThreshold ?? 5,
         resetTimeoutMs: cb.resetTimeoutMs ?? 10_000,
         successThreshold: cb.successThreshold ?? 2,
@@ -213,13 +213,13 @@ export class UDPRealtimeService {
   }
 
   send(data: Bun.udp.Data, port?: number, address?: string): boolean {
-    if (this._state !== "bound" && this._state !== "connected") {
+    if (this._state !== 'bound' && this._state !== 'connected') {
       throw new Error(`Cannot send: state is "${this._state}", expected "bound" or "connected"`);
     }
 
     if (this.breaker?.isOpen()) {
       this.breaker.recordRejection();
-      throw new CircuitBreakerOpenError("udp-send", null, 0);
+      throw new CircuitBreakerOpenError('udp-send', null, 0);
     }
 
     const framed = this.config.packetTracking ? this.frameOutbound(data) : data;
@@ -228,18 +228,18 @@ export class UDPRealtimeService {
     let ok: boolean;
 
     if (this.isConnected) {
-      ok = (this.socket as Bun.udp.ConnectedSocket<"buffer">).send(framed);
+      ok = (this.socket as Bun.udp.ConnectedSocket<'buffer'>).send(framed);
     } else {
       if (port === undefined || address === undefined) {
-        throw new Error("Port and address are required for unconnected sockets");
+        throw new Error('Port and address are required for unconnected sockets');
       }
-      ok = (this.socket as Bun.udp.Socket<"buffer">).send(framed, port, address);
+      ok = (this.socket as Bun.udp.Socket<'buffer'>).send(framed, port, address);
     }
 
     if (ok) {
       this.breaker?.recordSuccess();
     } else {
-      this.breaker?.recordFailure(new Error("backpressure"));
+      this.breaker?.recordFailure(new Error('backpressure'));
     }
 
     this.metrics.packetsSent++;
@@ -250,22 +250,24 @@ export class UDPRealtimeService {
   sendMany(packets: readonly Bun.udp.Data[]): number;
   sendMany(packets: readonly UDPSendPacket[]): number;
   sendMany(packets: readonly any[]): number {
-    if (this._state !== "bound" && this._state !== "connected") {
-      throw new Error(`Cannot sendMany: state is "${this._state}", expected "bound" or "connected"`);
+    if (this._state !== 'bound' && this._state !== 'connected') {
+      throw new Error(
+        `Cannot sendMany: state is "${this._state}", expected "bound" or "connected"`
+      );
     }
 
     if (this.breaker?.isOpen()) {
       this.breaker.recordRejection();
-      throw new CircuitBreakerOpenError("udp-send", null, 0);
+      throw new CircuitBreakerOpenError('udp-send', null, 0);
     }
 
     let sent: number;
 
     if (this.isConnected) {
       const payloads = this.config.packetTracking
-        ? (packets as readonly Bun.udp.Data[]).map((p) => this.frameOutbound(p))
+        ? (packets as readonly Bun.udp.Data[]).map(p => this.frameOutbound(p))
         : (packets as readonly Bun.udp.Data[]);
-      sent = (this.socket as Bun.udp.ConnectedSocket<"buffer">).sendMany(payloads);
+      sent = (this.socket as Bun.udp.ConnectedSocket<'buffer'>).sendMany(payloads);
       for (const p of payloads) {
         this.metrics.bytesSent += dataByteLength(p);
       }
@@ -277,11 +279,11 @@ export class UDPRealtimeService {
         flat.push(payload, p.port, p.address);
         this.metrics.bytesSent += dataByteLength(payload);
       }
-      sent = (this.socket as Bun.udp.Socket<"buffer">).sendMany(flat);
+      sent = (this.socket as Bun.udp.Socket<'buffer'>).sendMany(flat);
     }
 
     if (packets.length > 0 && sent === 0) {
-      this.breaker?.recordFailure(new Error("sendMany: 0 packets sent"));
+      this.breaker?.recordFailure(new Error('sendMany: 0 packets sent'));
     } else if (sent > 0) {
       this.breaker?.recordSuccess();
     }
@@ -297,20 +299,22 @@ export class UDPRealtimeService {
    * or rely on the auto-flush timer (config.batchFlushIntervalMs).
    */
   scheduleSend(data: Bun.udp.Data, port?: number, address?: string): void {
-    if (this._state !== "bound" && this._state !== "connected") {
-      throw new Error(`Cannot scheduleSend: state is "${this._state}", expected "bound" or "connected"`);
+    if (this._state !== 'bound' && this._state !== 'connected') {
+      throw new Error(
+        `Cannot scheduleSend: state is "${this._state}", expected "bound" or "connected"`
+      );
     }
 
     if (this.breaker?.isOpen()) {
       this.breaker.recordRejection();
-      throw new CircuitBreakerOpenError("udp-send", null, 0);
+      throw new CircuitBreakerOpenError('udp-send', null, 0);
     }
 
     if (this.isConnected) {
       this.batchConnectedQueue.push(data);
     } else {
       if (port === undefined || address === undefined) {
-        throw new Error("Port and address are required for unconnected sockets");
+        throw new Error('Port and address are required for unconnected sockets');
       }
       this.batchQueue.push({ data, port, address });
     }
@@ -321,7 +325,7 @@ export class UDPRealtimeService {
    * Returns the number of packets sent.
    */
   flush(): number {
-    if (this._state !== "bound" && this._state !== "connected") return 0;
+    if (this._state !== 'bound' && this._state !== 'connected') return 0;
 
     let sent = 0;
     if (this.isConnected && this.batchConnectedQueue.length > 0) {
@@ -401,21 +405,22 @@ export class UDPRealtimeService {
   // ---- Multicast ----
 
   joinMulticast(address: string, interfaceAddress?: string): boolean {
-    if (!this.socket) throw new Error("Socket not bound");
+    if (!this.socket) throw new Error('Socket not bound');
     return this.socket.addMembership(address, interfaceAddress);
   }
 
   leaveMulticast(address: string, interfaceAddress?: string): boolean {
-    if (!this.socket) throw new Error("Socket not bound");
+    if (!this.socket) throw new Error('Socket not bound');
     return this.socket.dropMembership(address, interfaceAddress);
   }
 
   // ---- Metrics ----
 
   getMetrics(): UDPServiceMetrics {
-    const uptimeMs = this.bindTime > 0 && this._state !== "idle" && this._state !== "closed"
-      ? performance.now() - this.bindTime
-      : 0;
+    const uptimeMs =
+      this.bindTime > 0 && this._state !== 'idle' && this._state !== 'closed'
+        ? performance.now() - this.bindTime
+        : 0;
     return {
       ...this.metrics,
       sequenceId: this.outSeq,
@@ -440,10 +445,10 @@ export class UDPRealtimeService {
    * notifies shutdown handlers, waits up to `timeoutMs` for drain, then closes.
    */
   shutdown(timeoutMs?: number): Promise<void> {
-    if (this._state === "closed") return Promise.resolve();
-    if (this._state === "draining") return this.shutdownPromise ?? Promise.resolve();
+    if (this._state === 'closed') return Promise.resolve();
+    if (this._state === 'draining') return this.shutdownPromise ?? Promise.resolve();
 
-    if (this._state !== "bound" && this._state !== "connected") {
+    if (this._state !== 'bound' && this._state !== 'connected') {
       this.close();
       return Promise.resolve();
     }
@@ -453,11 +458,11 @@ export class UDPRealtimeService {
     // Flush pending batch while still in bound/connected state
     this.flush();
 
-    this._state = "draining";
+    this._state = 'draining';
 
     const timeout = timeoutMs ?? this.config.shutdownTimeoutMs ?? 5000;
 
-    this.shutdownPromise = new Promise<void>((resolve) => {
+    this.shutdownPromise = new Promise<void>(resolve => {
       let settled = false;
       const finish = () => {
         if (settled) return;
@@ -475,12 +480,12 @@ export class UDPRealtimeService {
   }
 
   close(): void {
-    if (this._state === "closed") return;
+    if (this._state === 'closed') return;
     this.stopTimers();
     this.breaker?.destroy();
     this.socket?.close();
     this.socket = null;
-    this._state = "closed";
+    this._state = 'closed';
   }
 
   reset(): void {
@@ -514,7 +519,7 @@ export class UDPRealtimeService {
     this.shutdownHandlers = [];
     this.staleHandlers = [];
     this.shutdownPromise = null;
-    this._state = "idle";
+    this._state = 'idle';
   }
 
   // ---- Private: heartbeat ----
@@ -528,19 +533,22 @@ export class UDPRealtimeService {
     }, interval);
 
     const staleTimeout = this.config.heartbeatTimeoutMs ?? interval * 3;
-    this.staleCheckTimer = setInterval(() => {
-      this.checkStalePeers(staleTimeout);
-    }, Math.max(interval, 500));
+    this.staleCheckTimer = setInterval(
+      () => {
+        this.checkStalePeers(staleTimeout);
+      },
+      Math.max(interval, 500)
+    );
   }
 
   private sendHeartbeat(): void {
-    if (this._state !== "bound" && this._state !== "connected") return;
+    if (this._state !== 'bound' && this._state !== 'connected') return;
 
     const baseFlags = this.config.packetTrackingFlags ?? 0;
     const seq = this.outSeq;
     this.outSeq = (this.outSeq + 1) & UDPRealtimeService.MAX_SEQ;
     const header = encodePacketHeader({
-      scope: this.config.packetTrackingScope ?? "site-local",
+      scope: this.config.packetTrackingScope ?? 'site-local',
       flags: baseFlags | FLAG_CRC32 | FLAG_HEARTBEAT,
       sourceId: this.sourceId,
       sequenceId: seq,
@@ -552,7 +560,7 @@ export class UDPRealtimeService {
     payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
 
     if (this.isConnected) {
-      (this.socket as Bun.udp.ConnectedSocket<"buffer">).send(framed);
+      (this.socket as Bun.udp.ConnectedSocket<'buffer'>).send(framed);
     }
     // For unconnected sockets, heartbeats are only sent to known peers
     // by the application. We don't know the destination here.
@@ -583,7 +591,7 @@ export class UDPRealtimeService {
 
   private checkStalePeers(timeoutMs: number): void {
     const now = performance.now();
-    this.peers.forEach((peer) => {
+    this.peers.forEach(peer => {
       if (!peer.stale && now - peer.lastSeenAt > timeoutMs) {
         peer.stale = true;
         this.metrics.stalePeers++;
@@ -606,9 +614,18 @@ export class UDPRealtimeService {
   // ---- Private: timers ----
 
   private stopTimers(): void {
-    if (this.heartbeatTimer) { clearInterval(this.heartbeatTimer); this.heartbeatTimer = null; }
-    if (this.staleCheckTimer) { clearInterval(this.staleCheckTimer); this.staleCheckTimer = null; }
-    if (this.batchTimer) { clearInterval(this.batchTimer); this.batchTimer = null; }
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+    if (this.staleCheckTimer) {
+      clearInterval(this.staleCheckTimer);
+      this.staleCheckTimer = null;
+    }
+    if (this.batchTimer) {
+      clearInterval(this.batchTimer);
+      this.batchTimer = null;
+    }
   }
 
   // ---- Private: packet framing ----
@@ -619,7 +636,7 @@ export class UDPRealtimeService {
     const seq = this.outSeq;
     this.outSeq = (this.outSeq + 1) & UDPRealtimeService.MAX_SEQ;
     const header = encodePacketHeader({
-      scope: this.config.packetTrackingScope ?? "site-local",
+      scope: this.config.packetTrackingScope ?? 'site-local',
       flags: baseFlags | FLAG_CRC32,
       sourceId: this.sourceId,
       sequenceId: seq,
@@ -649,7 +666,9 @@ export class UDPRealtimeService {
     // Prune window
     if (state.seen.size > this.dedupWindow) {
       const cutoff = seq - this.dedupWindow;
-      state.seen.forEach((s) => { if (s < cutoff) state!.seen.delete(s); });
+      state.seen.forEach(s => {
+        if (s < cutoff) state!.seen.delete(s);
+      });
     }
 
     if (seq === state.nextExpected) {
@@ -689,14 +708,14 @@ export class UDPRealtimeService {
 }
 
 function dataByteLength(data: Bun.udp.Data): number {
-  if (typeof data === "string") return Buffer.byteLength(data);
-  if ("byteLength" in data) return data.byteLength;
+  if (typeof data === 'string') return Buffer.byteLength(data);
+  if ('byteLength' in data) return data.byteLength;
   return 0;
 }
 
 function toBuffer(data: Bun.udp.Data): Buffer {
   if (Buffer.isBuffer(data)) return data;
-  if (typeof data === "string") return Buffer.from(data);
+  if (typeof data === 'string') return Buffer.from(data);
   if (ArrayBuffer.isView(data)) return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
   return Buffer.from(data);
 }

@@ -60,7 +60,7 @@ class SimpleFileManager {
       const fs = await import('fs/promises');
       await fs.writeFile(path, content);
     }
-    console.log(`✅ Written file: ${path}`);
+    console.info(`✅ Written file: ${path}`);
   }
 
   async readFile(path: string): Promise<string> {
@@ -80,7 +80,7 @@ class SimpleFileManager {
       const fs = await import('fs/promises');
       await fs.unlink(path);
     }
-    console.log(`🗑️ Deleted file: ${path}`);
+    console.info(`🗑️ Deleted file: ${path}`);
   }
 }
 
@@ -116,10 +116,10 @@ class SimpleServer {
         }
       });
     } else {
-      console.log('⚠️ Bun server not available, using fallback');
+      console.info('⚠️ Bun server not available, using fallback');
     }
 
-    console.log(`🌐 Demo server running on http://localhost:${this.port}`);
+    console.info(`🌐 Demo server running on http://localhost:${this.port}`);
   }
 
   private getBunFeatures(): string[] {
@@ -201,7 +201,7 @@ class SimpleServer {
             try {
                 const response = await fetch('/api/features');
                 const features = await response.json();
-                console.log('Live features from Bun server:', features);
+                console.info('Live features from Bun server:', features);
                 alert('Features loaded successfully! Check console for details.');
             } catch (error) {
                 console.error('Failed to load features:', error);
@@ -210,8 +210,8 @@ class SimpleServer {
         }
         
         // Show Bun environment info
-        console.log('🥟 Bun Demo Loaded');
-        console.log('Features:', ${JSON.stringify(features)});
+        console.info('🥟 Bun Demo Loaded');
+        console.info('Features:', ${JSON.stringify(features)});
     </script>
 </body>
 </html>`;
@@ -220,28 +220,28 @@ class SimpleServer {
   stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Demo server stopped');
+      console.info('🛑 Demo server stopped');
     }
   }
 }
 
 // Main demonstration function
 async function runSimpleDemo(): Promise<void> {
-  console.log('🎯 Starting Simple Bun Integration Demo...\n');
+  console.info('🎯 Starting Simple Bun Integration Demo...\n');
 
   // 1. Load configuration
   try {
     const config = await bunIntegration.loadConfig('./bun-integration.config.toml');
-    console.log('📋 Configuration loaded successfully');
+    console.info('📋 Configuration loaded successfully');
   } catch (error) {
-    console.log('⚠️ Config file not found, using defaults');
+    console.info('⚠️ Config file not found, using defaults');
   }
 
   // 2. File operations
   const fileManager = new SimpleFileManager();
   await fileManager.writeFile('./simple-demo-output.txt', 'Hello from Bun Integration!');
   const content = await fileManager.readFile('./simple-demo-output.txt');
-  console.log('📄 File content:', content);
+  console.info('📄 File content:', content);
 
   // 3. Create and render JSX component
   const demoFeatures = [
@@ -255,7 +255,7 @@ async function runSimpleDemo(): Promise<void> {
     'Tree shaking and dead code elimination'
   ];
 
-  console.log('🎨 JSX Component created with features:', demoFeatures);
+  console.info('🎨 JSX Component created with features:', demoFeatures);
 
   // 4. Start demo server
   const server = new SimpleServer();
@@ -263,11 +263,11 @@ async function runSimpleDemo(): Promise<void> {
 
   // 5. Show runtime info
   const runtimeInfo = bunIntegration.getRuntimeInfo();
-  console.log('\n📊 Runtime Information:');
-  console.log(`Version: ${runtimeInfo.version}`);
-  console.log(`Platform: ${runtimeInfo.platform}`);
-  console.log(`Architecture: ${runtimeInfo.arch}`);
-  console.log(`Features: ${runtimeInfo.features.length} total`);
+  console.info('\n📊 Runtime Information:');
+  console.info(`Version: ${runtimeInfo.version}`);
+  console.info(`Platform: ${runtimeInfo.platform}`);
+  console.info(`Architecture: ${runtimeInfo.arch}`);
+  console.info(`Features: ${runtimeInfo.features.length} total`);
   
   // Show key features
   const keyFeatures = [
@@ -279,15 +279,15 @@ async function runSimpleDemo(): Promise<void> {
     '✅ Configuration parsing'
   ];
   
-  console.log('\n🚀 Key Features Demonstrated:');
-  keyFeatures.forEach(feature => console.log(`   ${feature}`));
+  console.info('\n🚀 Key Features Demonstrated:');
+  keyFeatures.forEach(feature => console.info(`   ${feature}`));
 
   // 6. Cleanup after delay
   setTimeout(async () => {
     server.stop();
     await fileManager.deleteFile('./simple-demo-output.txt');
-    console.log('\n✅ Simple demo completed successfully!');
-    console.log('🌐 Visit http://localhost:3001 to see the web interface');
+    console.info('\n✅ Simple demo completed successfully!');
+    console.info('🌐 Visit http://localhost:3001 to see the web interface');
   }, 10000);
 }
 

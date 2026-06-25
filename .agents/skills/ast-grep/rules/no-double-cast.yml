@@ -1,0 +1,7 @@
+id: no-double-cast
+language: TypeScript
+severity: warning
+message: Avoid double cast `as unknown as T` — narrow at boundary or use a schema
+rule:
+  pattern: $EXPR as unknown as $T
+fix: $EXPR

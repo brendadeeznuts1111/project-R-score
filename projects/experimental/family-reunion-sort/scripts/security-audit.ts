@@ -27,7 +27,7 @@ class SecurityAuditor {
   }
 
   async audit(): Promise<void> {
-    console.log('🔍 Starting Bun v1.3.6 Security Audit...\n');
+    console.info('🔍 Starting Bun v1.3.6 Security Audit...\n');
 
     await this.auditSpawnCalls();
     await this.auditWebSocketUsage();
@@ -39,7 +39,7 @@ class SecurityAuditor {
   }
 
   private async auditSpawnCalls(): Promise<void> {
-    console.log('🚨 Auditing Bun.spawn() calls for CWE-158 (Null Byte Injection)...');
+    console.info('🚨 Auditing Bun.spawn() calls for CWE-158 (Null Byte Injection)...');
     
     const tsFiles = await this.findFiles('**/*.ts');
     const jsFiles = await this.findFiles('**/*.js');
@@ -90,7 +90,7 @@ class SecurityAuditor {
   }
 
   private async auditWebSocketUsage(): Promise<void> {
-    console.log('🌐 Auditing WebSocket implementations for decompression bomb protection...');
+    console.info('🌐 Auditing WebSocket implementations for decompression bomb protection...');
     
     const files = await this.findFiles('**/*.{ts,js}');
     
@@ -120,7 +120,7 @@ class SecurityAuditor {
   }
 
   private async auditFileOperations(): Promise<void> {
-    console.log('📁 Auditing file operations for path traversal and large file corruption...');
+    console.info('📁 Auditing file operations for path traversal and large file corruption...');
     
     const files = await this.findFiles('**/*.{ts,js}');
     
@@ -159,7 +159,7 @@ class SecurityAuditor {
   }
 
   private async auditTLSUsage(): Promise<void> {
-    console.log('🔒 Auditing TLS certificate validation...');
+    console.info('🔒 Auditing TLS certificate validation...');
     
     const files = await this.findFiles('**/*.{ts,js}');
     
@@ -186,7 +186,7 @@ class SecurityAuditor {
   }
 
   private async auditEnvironmentVariables(): Promise<void> {
-    console.log('🌍 Auditing environment variable usage for injection risks...');
+    console.info('🌍 Auditing environment variable usage for injection risks...');
     
     const files = await this.findFiles('**/*.{ts,js}');
     
@@ -218,49 +218,49 @@ class SecurityAuditor {
   }
 
   private generateReport(): void {
-    console.log('\n📊 SECURITY AUDIT REPORT');
-    console.log('========================\n');
+    console.info('\n📊 SECURITY AUDIT REPORT');
+    console.info('========================\n');
 
     const criticalIssues = this.issues.filter(i => i.severity === 'CRITICAL');
     const highIssues = this.issues.filter(i => i.severity === 'HIGH');
     const mediumIssues = this.issues.filter(i => i.severity === 'MEDIUM');
     const lowIssues = this.issues.filter(i => i.severity === 'LOW');
 
-    console.log(`🚨 CRITICAL: ${criticalIssues.length}`);
-    console.log(`⚠️  HIGH: ${highIssues.length}`);
-    console.log(`📋 MEDIUM: ${mediumIssues.length}`);
-    console.log(`ℹ️  LOW: ${lowIssues.length}\n`);
+    console.info(`🚨 CRITICAL: ${criticalIssues.length}`);
+    console.info(`⚠️  HIGH: ${highIssues.length}`);
+    console.info(`📋 MEDIUM: ${mediumIssues.length}`);
+    console.info(`ℹ️  LOW: ${lowIssues.length}\n`);
 
     if (criticalIssues.length > 0) {
-      console.log('🚨 CRITICAL ISSUES (Immediate Action Required):');
-      console.log('='.repeat(55));
+      console.info('🚨 CRITICAL ISSUES (Immediate Action Required):');
+      console.info('='.repeat(55));
       criticalIssues.forEach(issue => {
-        console.log(`\n[${issue.type}] ${issue.file}:${issue.line}`);
-        console.log(`Description: ${issue.description}`);
-        console.log(`CWE: ${issue.cwe || 'N/A'}`);
-        console.log(`Recommendation: ${issue.recommendation}`);
+        console.info(`\n[${issue.type}] ${issue.file}:${issue.line}`);
+        console.info(`Description: ${issue.description}`);
+        console.info(`CWE: ${issue.cwe || 'N/A'}`);
+        console.info(`Recommendation: ${issue.recommendation}`);
       });
     }
 
     if (highIssues.length > 0) {
-      console.log('\n⚠️  HIGH ISSUES (Fix This Week):');
-      console.log('='.repeat(40));
+      console.info('\n⚠️  HIGH ISSUES (Fix This Week):');
+      console.info('='.repeat(40));
       highIssues.forEach(issue => {
-        console.log(`\n[${issue.type}] ${issue.file}:${issue.line}`);
-        console.log(`Description: ${issue.description}`);
-        console.log(`Recommendation: ${issue.recommendation}`);
+        console.info(`\n[${issue.type}] ${issue.file}:${issue.line}`);
+        console.info(`Description: ${issue.description}`);
+        console.info(`Recommendation: ${issue.recommendation}`);
       });
     }
 
     // Generate remediation script
     this.generateRemediationScript();
 
-    console.log('\n🎯 NEXT STEPS:');
-    console.log('1. Run: bun upgrade (immediately)');
-    console.log('2. Address all CRITICAL issues within 24 hours');
-    console.log('3. Fix HIGH issues within 1 week');
-    console.log('4. Test WebSocket decompression limits');
-    console.log('5. Verify large file integrity (>2GB)');
+    console.info('\n🎯 NEXT STEPS:');
+    console.info('1. Run: bun upgrade (immediately)');
+    console.info('2. Address all CRITICAL issues within 24 hours');
+    console.info('3. Fix HIGH issues within 1 week');
+    console.info('4. Test WebSocket decompression limits');
+    console.info('5. Verify large file integrity (>2GB)');
   }
 
   private generateRemediationScript(): void {
@@ -290,7 +290,7 @@ echo "📋 Review security-report-*.txt for remaining issues"
 `;
 
     require('fs').writeFileSync('scripts/security-remediation.sh', remediation, 'utf-8');
-    console.log('\n📝 Generated: scripts/security-remediation.sh');
+    console.info('\n📝 Generated: scripts/security-remediation.sh');
   }
 }
 

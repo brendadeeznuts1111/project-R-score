@@ -31,7 +31,7 @@ class LegacyRouter {
 }
 
 async function main() {
-	console.log('🚀 URLPattern Router Integration Demo\n');
+	console.info('🚀 URLPattern Router Integration Demo\n');
 
 	// Create both routers
 	const legacyRouter = new LegacyRouter();
@@ -41,7 +41,7 @@ async function main() {
 	});
 
 	// Register new routes on URLPattern router
-	console.log('📝 Registering URLPattern routes...');
+	console.info('📝 Registering URLPattern routes...');
 	
 	urlPatternRouter.get('/api/v2/users', () => {
 		return Response.json({ version: 'v2', users: ['alice', 'bob'] });
@@ -63,7 +63,7 @@ async function main() {
 		});
 	});
 
-	console.log(`✅ Registered ${urlPatternRouter.getRoutes().length} URLPattern routes\n`);
+	console.info(`✅ Registered ${urlPatternRouter.getRoutes().length} URLPattern routes\n`);
 
 	// Unified request handler
 	async function handleRequest(request: Request): Promise<Response> {
@@ -98,17 +98,17 @@ async function main() {
 		},
 	});
 
-	console.log(`✅ Server running on http://localhost:${port}`);
-	console.log('\n📝 Test endpoints:');
-	console.log(`   GET http://localhost:${port}/api/v1/users      (legacy router)`);
-	console.log(`   GET http://localhost:${port}/api/v2/users      (URLPattern router)`);
-	console.log(`   GET http://localhost:${port}/api/v2/users/123  (URLPattern router)`);
-	console.log(`   GET http://localhost:${port}/api/v2/posts/456 (URLPattern router)`);
-	console.log('\n💡 Press Ctrl+C to stop\n');
+	console.info(`✅ Server running on http://localhost:${port}`);
+	console.info('\n📝 Test endpoints:');
+	console.info(`   GET http://localhost:${port}/api/v1/users      (legacy router)`);
+	console.info(`   GET http://localhost:${port}/api/v2/users      (URLPattern router)`);
+	console.info(`   GET http://localhost:${port}/api/v2/users/123  (URLPattern router)`);
+	console.info(`   GET http://localhost:${port}/api/v2/posts/456 (URLPattern router)`);
+	console.info('\n💡 Press Ctrl+C to stop\n');
 
 	// Graceful shutdown
 	process.on('SIGINT', () => {
-		console.log('\n🛑 Shutting down...');
+		console.info('\n🛑 Shutting down...');
 		server.stop();
 		process.exit(0);
 	});

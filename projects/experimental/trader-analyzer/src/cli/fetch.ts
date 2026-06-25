@@ -77,17 +77,17 @@ async function importFile() {
 	const name = args[2];
 
 	if (!filePath) {
-		console.log("Usage: bun run cli import <file> [name]");
+		console.info("Usage: bun run cli import <file> [name]");
 		process.exit(1);
 	}
 
-	console.log(`\n📁 Importing from ${filePath}...`);
+	console.info(`\n📁 Importing from ${filePath}...`);
 
 	try {
 		const trades = await store.loadTradesFromFile(filePath);
 
 		if (trades.length === 0) {
-			console.log("❌ No trades found in file\n");
+			console.info("❌ No trades found in file\n");
 			process.exit(1);
 		}
 
@@ -96,13 +96,13 @@ async function importFile() {
 		const meta = stream.add(id, name || filePath, "file", "BTC/USD", trades);
 		await stream.save();
 
-		console.log(`✅ Imported ${trades.length} trades`);
-		console.log(`   Stream ID: ${meta.id}`);
-		console.log(
+		console.info(`✅ Imported ${trades.length} trades`);
+		console.info(`   Stream ID: ${meta.id}`);
+		console.info(
 			`   Date range: ${meta.from.split("T")[0]} to ${meta.to.split("T")[0]}\n`,
 		);
 	} catch (error) {
-		console.log(
+		console.info(
 			`❌ ${error instanceof Error ? error.message : "Import failed"}\n`,
 		);
 		process.exit(1);
@@ -116,13 +116,13 @@ async function fetchFromApi() {
 	const symbol = args[4] || "BTC/USD:BTC";
 
 	if (!exchange || !apiKey || !apiSecret) {
-		console.log("Usage: bun run cli api <exchange> <key> <secret> [symbol]");
-		console.log("");
-		console.log("Exchanges: bitmex, binance, bybit, okx");
+		console.info("Usage: bun run cli api <exchange> <key> <secret> [symbol]");
+		console.info("");
+		console.info("Exchanges: bitmex, binance, bybit, okx");
 		process.exit(1);
 	}
 
-	console.log(`\n🔌 Connecting to ${exchange}...`);
+	console.info(`\n🔌 Connecting to ${exchange}...`);
 
 	try {
 		// Save credentials
@@ -133,23 +133,23 @@ async function fetchFromApi() {
 		const connectResult = await provider.connect();
 
 		if (!connectResult.ok) {
-			console.log(`❌ ${connectResult.error.message}\n`);
+			console.info(`❌ ${connectResult.error.message}\n`);
 			process.exit(1);
 		}
 
-		console.log(`✅ Connected`);
-		console.log(`📥 Fetching trades for ${symbol}...`);
+		console.info(`✅ Connected`);
+		console.info(`📥 Fetching trades for ${symbol}...`);
 
 		const tradesResult = await provider.fetchAllTrades(symbol, (count) => {
 			process.stdout.write(`\r   ${count} trades...`);
 		});
 
 		if (!tradesResult.ok) {
-			console.log(`\n❌ ${tradesResult.error.message}\n`);
+			console.info(`\n❌ ${tradesResult.error.message}\n`);
 			process.exit(1);
 		}
 
-		console.log(`\r✅ Fetched ${tradesResult.data.length} trades`);
+		console.info(`\r✅ Fetched ${tradesResult.data.length} trades`);
 
 		// Save to stream
 		const stream = await initTradeStream();
@@ -163,12 +163,12 @@ async function fetchFromApi() {
 		);
 		await stream.save();
 
-		console.log(`   Stream ID: ${meta.id}`);
-		console.log(
+		console.info(`   Stream ID: ${meta.id}`);
+		console.info(
 			`   Date range: ${meta.from.split("T")[0]} to ${meta.to.split("T")[0]}\n`,
 		);
 	} catch (error) {
-		console.log(
+		console.info(
 			`❌ ${error instanceof Error ? error.message : "Fetch failed"}\n`,
 		);
 		process.exit(1);
@@ -176,11 +176,11 @@ async function fetchFromApi() {
 }
 
 async function syncLatest() {
-	console.log("\n🔄 Syncing latest trades...");
+	console.info("\n🔄 Syncing latest trades...");
 
 	const creds = await store.loadCredentials();
 	if (!creds) {
-		console.log(
+		console.info(
 			"❌ No saved credentials. Run: bun run cli api <exchange> <key> <secret>\n",
 		);
 		process.exit(1);
@@ -196,12 +196,12 @@ async function syncLatest() {
 
 		const tradesResult = await provider.fetchTrades(undefined, since, 500);
 		if (!tradesResult.ok) {
-			console.log(`❌ ${tradesResult.error.message}\n`);
+			console.info(`❌ ${tradesResult.error.message}\n`);
 			process.exit(1);
 		}
 
 		if (tradesResult.data.length === 0) {
-			console.log("✅ No new trades\n");
+			console.info("✅ No new trades\n");
 			return;
 		}
 
@@ -220,9 +220,9 @@ async function syncLatest() {
 		}
 		await stream.save();
 
-		console.log(`✅ Synced ${tradesResult.data.length} new trades\n`);
+		console.info(`✅ Synced ${tradesResult.data.length} new trades\n`);
 	} catch (error) {
-		console.log(
+		console.info(
 			`❌ ${error instanceof Error ? error.message : "Sync failed"}\n`,
 		);
 		process.exit(1);
@@ -234,30 +234,30 @@ async function listStreams() {
 	const streams = stream.list();
 	const range = stream.getDateRange();
 
-	console.log("\n📊 Data Streams:\n");
+	console.info("\n📊 Data Streams:\n");
 
 	if (streams.length === 0) {
-		console.log("   No streams. Import data first.\n");
+		console.info("   No streams. Import data first.\n");
 		return;
 	}
 
 	for (const s of streams) {
 		const from = s.from.split("T")[0];
 		const to = s.to.split("T")[0];
-		console.log(`   [${s.source}] ${s.name}`);
-		console.log(`      ID: ${s.id}`);
-		console.log(`      Trades: ${s.count.toLocaleString()}`);
-		console.log(`      Range: ${from} → ${to}`);
-		console.log("");
+		console.info(`   [${s.source}] ${s.name}`);
+		console.info(`      ID: ${s.id}`);
+		console.info(`      Trades: ${s.count.toLocaleString()}`);
+		console.info(`      Range: ${from} → ${to}`);
+		console.info("");
 	}
 
-	console.log(`   Total: ${stream.getTotalCount().toLocaleString()} trades`);
+	console.info(`   Total: ${stream.getTotalCount().toLocaleString()} trades`);
 	if (range.from && range.to) {
-		console.log(
+		console.info(
 			`   Full range: ${range.from.split("T")[0]} → ${range.to.split("T")[0]}`,
 		);
 	}
-	console.log("");
+	console.info("");
 }
 
 async function showStats() {
@@ -268,7 +268,7 @@ async function showStats() {
 	const trades = stream.getRange(from, to);
 
 	if (trades.length === 0) {
-		console.log("\n❌ No trades. Import data first.\n");
+		console.info("\n❌ No trades. Import data first.\n");
 		process.exit(1);
 	}
 
@@ -276,30 +276,30 @@ async function showStats() {
 	const wallet = await store.loadWallet();
 	const stats = calculateStats(trades, orders, wallet);
 
-	console.log("\n═══════════════════════════════════════════════════════");
-	console.log("                   TRADING STATS                        ");
-	console.log("═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════");
+	console.info("                   TRADING STATS                        ");
+	console.info("═══════════════════════════════════════════════════════\n");
 
-	console.log("── Volume ────────────────────────────────────────────");
-	console.log(`   Total Trades:    ${stats.totalTrades.toLocaleString()}`);
-	console.log(`   Total Volume:    ${stats.totalVolume.toLocaleString()}`);
-	console.log(`   Trading Days:    ${stats.tradingDays}`);
-	console.log(`   Trades/Day:      ${stats.avgTradesPerDay.toFixed(1)}`);
+	console.info("── Volume ────────────────────────────────────────────");
+	console.info(`   Total Trades:    ${stats.totalTrades.toLocaleString()}`);
+	console.info(`   Total Volume:    ${stats.totalVolume.toLocaleString()}`);
+	console.info(`   Trading Days:    ${stats.tradingDays}`);
+	console.info(`   Trades/Day:      ${stats.avgTradesPerDay.toFixed(1)}`);
 
-	console.log("\n── Performance ───────────────────────────────────────");
-	console.log(`   Win Rate:        ${stats.winRate.toFixed(2)}%`);
-	console.log(
+	console.info("\n── Performance ───────────────────────────────────────");
+	console.info(`   Win Rate:        ${stats.winRate.toFixed(2)}%`);
+	console.info(
 		`   Profit Factor:   ${stats.profitFactor === Infinity ? "∞" : stats.profitFactor.toFixed(2)}`,
 	);
-	console.log(`   Avg Win:         ${stats.avgWin.toFixed(4)}`);
-	console.log(`   Avg Loss:        ${stats.avgLoss.toFixed(4)}`);
+	console.info(`   Avg Win:         ${stats.avgWin.toFixed(4)}`);
+	console.info(`   Avg Loss:        ${stats.avgLoss.toFixed(4)}`);
 
-	console.log("\n── PnL ───────────────────────────────────────────────");
-	console.log(`   Total PnL:       ${stats.totalPnl.toFixed(4)}`);
-	console.log(`   Total Fees:      ${stats.totalFees.toFixed(4)}`);
-	console.log(`   Net PnL:         ${stats.netPnl.toFixed(4)}`);
+	console.info("\n── PnL ───────────────────────────────────────────────");
+	console.info(`   Total PnL:       ${stats.totalPnl.toFixed(4)}`);
+	console.info(`   Total Fees:      ${stats.totalFees.toFixed(4)}`);
+	console.info(`   Net PnL:         ${stats.netPnl.toFixed(4)}`);
 
-	console.log("\n═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════\n");
 }
 
 async function showProfile() {
@@ -307,7 +307,7 @@ async function showProfile() {
 	const trades = stream.merge();
 
 	if (trades.length === 0) {
-		console.log("\n❌ No trades. Import data first.\n");
+		console.info("\n❌ No trades. Import data first.\n");
 		process.exit(1);
 	}
 
@@ -317,39 +317,39 @@ async function showProfile() {
 	const sessions = calculatePositionSessions(trades);
 	const profile = analyzeTraderProfile(stats, trades, orders, sessions);
 
-	console.log("\n═══════════════════════════════════════════════════════");
-	console.log("                  TRADER PROFILE                        ");
-	console.log("═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════");
+	console.info("                  TRADER PROFILE                        ");
+	console.info("═══════════════════════════════════════════════════════\n");
 
-	console.log(`   Style:           ${profile.style.toUpperCase()}`);
-	console.log(`   Risk:            ${profile.risk}`);
-	console.log(`   Difficulty:      ${profile.difficulty}`);
+	console.info(`   Style:           ${profile.style.toUpperCase()}`);
+	console.info(`   Risk:            ${profile.risk}`);
+	console.info(`   Difficulty:      ${profile.difficulty}`);
 
-	console.log("\n── Metrics ───────────────────────────────────────────");
-	console.log(`   Win Rate:        ${profile.metrics.winRate.toFixed(2)}%`);
-	console.log(`   Profit Factor:   ${profile.metrics.profitFactor.toFixed(2)}`);
-	console.log(
+	console.info("\n── Metrics ───────────────────────────────────────────");
+	console.info(`   Win Rate:        ${profile.metrics.winRate.toFixed(2)}%`);
+	console.info(`   Profit Factor:   ${profile.metrics.profitFactor.toFixed(2)}`);
+	console.info(
 		`   Avg Hold:        ${(profile.metrics.avgHoldingMinutes / 60).toFixed(1)} hours`,
 	);
-	console.log(
+	console.info(
 		`   Trades/Week:     ${profile.metrics.tradesPerWeek.toFixed(1)}`,
 	);
-	console.log(`   Discipline:      ${profile.metrics.disciplineScore}/100`);
+	console.info(`   Discipline:      ${profile.metrics.disciplineScore}/100`);
 
-	console.log("\n── Strengths ─────────────────────────────────────────");
+	console.info("\n── Strengths ─────────────────────────────────────────");
 	for (const s of profile.insights.strengths) {
-		console.log(`   ✅ ${s}`);
+		console.info(`   ✅ ${s}`);
 	}
 
-	console.log("\n── Weaknesses ────────────────────────────────────────");
+	console.info("\n── Weaknesses ────────────────────────────────────────");
 	for (const w of profile.insights.weaknesses) {
-		console.log(`   ⚠️  ${w}`);
+		console.info(`   ⚠️  ${w}`);
 	}
 
-	console.log("\n── Summary ───────────────────────────────────────────");
-	console.log(`   ${profile.insights.summary}`);
+	console.info("\n── Summary ───────────────────────────────────────────");
+	console.info(`   ${profile.insights.summary}`);
 
-	console.log("\n═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════\n");
 }
 
 async function clearStreams() {
@@ -358,16 +358,16 @@ async function clearStreams() {
 
 	if (id) {
 		if (!stream.get(id)) {
-			console.log(`\n❌ Stream not found: ${id}\n`);
+			console.info(`\n❌ Stream not found: ${id}\n`);
 			process.exit(1);
 		}
 		stream.remove(id);
 		await stream.save();
-		console.log(`\n✅ Removed stream: ${id}\n`);
+		console.info(`\n✅ Removed stream: ${id}\n`);
 	} else {
 		await stream.clear();
 		await store.clearAll();
-		console.log("\n✅ Cleared all data\n");
+		console.info("\n✅ Cleared all data\n");
 	}
 }
 
@@ -381,43 +381,43 @@ async function showMMStats() {
 	const trades = stream.getRange(from, to);
 
 	if (trades.length === 0) {
-		console.log("\n❌ No trades. Import data first.\n");
+		console.info("\n❌ No trades. Import data first.\n");
 		process.exit(1);
 	}
 
 	const orders = await store.loadOrders();
 	const stats = calculateMMStats(trades, orders, []);
 
-	console.log("\n═══════════════════════════════════════════════════════");
-	console.log("               MARKET MAKING STATS                      ");
-	console.log("═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════");
+	console.info("               MARKET MAKING STATS                      ");
+	console.info("═══════════════════════════════════════════════════════\n");
 
-	console.log("── Volume ────────────────────────────────────────────");
-	console.log(`   Total Trades:    ${stats.totalTrades.toLocaleString()}`);
-	console.log(
+	console.info("── Volume ────────────────────────────────────────────");
+	console.info(`   Total Trades:    ${stats.totalTrades.toLocaleString()}`);
+	console.info(
 		`   Maker Trades:    ${stats.makerTrades.toLocaleString()} (${(stats.makerRatio * 100).toFixed(1)}%)`,
 	);
-	console.log(`   Taker Trades:    ${stats.takerTrades.toLocaleString()}`);
-	console.log(`   Total Volume:    ${stats.totalVolume.toFixed(2)}`);
+	console.info(`   Taker Trades:    ${stats.takerTrades.toLocaleString()}`);
+	console.info(`   Total Volume:    ${stats.totalVolume.toFixed(2)}`);
 
-	console.log("\n── Inventory ─────────────────────────────────────────");
-	console.log(`   Avg Inventory:   ${stats.avgInventory.toFixed(4)}`);
-	console.log(`   Max Inventory:   ${stats.maxInventory.toFixed(4)}`);
-	console.log(`   Turnover:        ${stats.inventoryTurnover.toFixed(2)}x`);
-	console.log(`   Skew:            ${(stats.inventorySkew * 100).toFixed(1)}%`);
+	console.info("\n── Inventory ─────────────────────────────────────────");
+	console.info(`   Avg Inventory:   ${stats.avgInventory.toFixed(4)}`);
+	console.info(`   Max Inventory:   ${stats.maxInventory.toFixed(4)}`);
+	console.info(`   Turnover:        ${stats.inventoryTurnover.toFixed(2)}x`);
+	console.info(`   Skew:            ${(stats.inventorySkew * 100).toFixed(1)}%`);
 
-	console.log("\n── Performance ───────────────────────────────────────");
-	console.log(`   Gross PnL:       ${stats.grossPnl.toFixed(4)}`);
-	console.log(`   Rebates:         ${stats.rebates.toFixed(4)}`);
-	console.log(`   Fees:            ${stats.fees.toFixed(4)}`);
-	console.log(`   Net PnL:         ${stats.netPnl.toFixed(4)}`);
-	console.log(`   PnL/Trade:       ${stats.pnlPerTrade.toFixed(6)}`);
+	console.info("\n── Performance ───────────────────────────────────────");
+	console.info(`   Gross PnL:       ${stats.grossPnl.toFixed(4)}`);
+	console.info(`   Rebates:         ${stats.rebates.toFixed(4)}`);
+	console.info(`   Fees:            ${stats.fees.toFixed(4)}`);
+	console.info(`   Net PnL:         ${stats.netPnl.toFixed(4)}`);
+	console.info(`   PnL/Trade:       ${stats.pnlPerTrade.toFixed(6)}`);
 
-	console.log("\n── Risk ──────────────────────────────────────────────");
-	console.log(`   Max Drawdown:    ${stats.maxDrawdown.toFixed(4)}`);
-	console.log(`   Sharpe Ratio:    ${stats.sharpeRatio.toFixed(2)}`);
+	console.info("\n── Risk ──────────────────────────────────────────────");
+	console.info(`   Max Drawdown:    ${stats.maxDrawdown.toFixed(4)}`);
+	console.info(`   Sharpe Ratio:    ${stats.sharpeRatio.toFixed(2)}`);
 
-	console.log("\n═══════════════════════════════════════════════════════\n");
+	console.info("\n═══════════════════════════════════════════════════════\n");
 }
 
 // ============ Prediction Markets ============
@@ -426,31 +426,31 @@ async function fetchPolymarket() {
 	const address = args[1];
 
 	if (!address) {
-		console.log("Usage: bun run cli polymarket <wallet-address>");
-		console.log("");
-		console.log("Your Polymarket wallet address (funder address)");
+		console.info("Usage: bun run cli polymarket <wallet-address>");
+		console.info("");
+		console.info("Your Polymarket wallet address (funder address)");
 		process.exit(1);
 	}
 
-	console.log(`\n🔮 Connecting to Polymarket...`);
+	console.info(`\n🔮 Connecting to Polymarket...`);
 
 	try {
 		const provider = new PolymarketProvider({ funderAddress: address });
 		await provider.connect();
 
-		console.log(`✅ Connected`);
-		console.log(`📥 Fetching trades for ${address.slice(0, 10)}...`);
+		console.info(`✅ Connected`);
+		console.info(`📥 Fetching trades for ${address.slice(0, 10)}...`);
 
 		const tradesResult = await provider.fetchAllTrades(undefined, (count) => {
 			process.stdout.write(`\r   ${count} trades...`);
 		});
 
 		if (!tradesResult.ok) {
-			console.log(`\n❌ ${tradesResult.error.message}\n`);
+			console.info(`\n❌ ${tradesResult.error.message}\n`);
 			process.exit(1);
 		}
 
-		console.log(`\r✅ Fetched ${tradesResult.data.length} trades`);
+		console.info(`\r✅ Fetched ${tradesResult.data.length} trades`);
 
 		// Save to stream
 		const stream = await initTradeStream();
@@ -464,12 +464,12 @@ async function fetchPolymarket() {
 		);
 		await stream.save();
 
-		console.log(`   Stream ID: ${meta.id}`);
-		console.log(
+		console.info(`   Stream ID: ${meta.id}`);
+		console.info(
 			`   Date range: ${meta.from.split("T")[0]} to ${meta.to.split("T")[0]}\n`,
 		);
 	} catch (error) {
-		console.log(
+		console.info(
 			`❌ ${error instanceof Error ? error.message : "Fetch failed"}\n`,
 		);
 		process.exit(1);
@@ -482,37 +482,37 @@ async function fetchKalshi() {
 	const demo = args.includes("--demo");
 
 	if (!email || !password) {
-		console.log("Usage: bun run cli kalshi <email> <password> [--demo]");
-		console.log("");
-		console.log("Options:");
-		console.log("  --demo    Use Kalshi demo/paper trading API");
+		console.info("Usage: bun run cli kalshi <email> <password> [--demo]");
+		console.info("");
+		console.info("Options:");
+		console.info("  --demo    Use Kalshi demo/paper trading API");
 		process.exit(1);
 	}
 
-	console.log(`\n🎯 Connecting to Kalshi${demo ? " (demo)" : ""}...`);
+	console.info(`\n🎯 Connecting to Kalshi${demo ? " (demo)" : ""}...`);
 
 	try {
 		const provider = new KalshiProvider({ email, password, demo });
 		const connectResult = await provider.connect();
 
 		if (!connectResult.ok) {
-			console.log(`❌ ${connectResult.error.message}\n`);
+			console.info(`❌ ${connectResult.error.message}\n`);
 			process.exit(1);
 		}
 
-		console.log(`✅ Connected`);
-		console.log(`📥 Fetching trades...`);
+		console.info(`✅ Connected`);
+		console.info(`📥 Fetching trades...`);
 
 		const tradesResult = await provider.fetchAllTrades(undefined, (count) => {
 			process.stdout.write(`\r   ${count} trades...`);
 		});
 
 		if (!tradesResult.ok) {
-			console.log(`\n❌ ${tradesResult.error.message}\n`);
+			console.info(`\n❌ ${tradesResult.error.message}\n`);
 			process.exit(1);
 		}
 
-		console.log(`\r✅ Fetched ${tradesResult.data.length} trades`);
+		console.info(`\r✅ Fetched ${tradesResult.data.length} trades`);
 
 		// Save credentials
 		await store.saveCredentials({
@@ -534,12 +534,12 @@ async function fetchKalshi() {
 		);
 		await stream.save();
 
-		console.log(`   Stream ID: ${meta.id}`);
-		console.log(
+		console.info(`   Stream ID: ${meta.id}`);
+		console.info(
 			`   Date range: ${meta.from.split("T")[0]} to ${meta.to.split("T")[0]}\n`,
 		);
 	} catch (error) {
-		console.log(
+		console.info(
 			`❌ ${error instanceof Error ? error.message : "Fetch failed"}\n`,
 		);
 		process.exit(1);
@@ -550,7 +550,7 @@ async function listMarkets() {
 	const platform = args[1] || "polymarket";
 	const limit = parseInt(getArg("--limit") || "20");
 
-	console.log(`\n📊 Fetching ${platform} markets...\n`);
+	console.info(`\n📊 Fetching ${platform} markets...\n`);
 
 	try {
 		if (platform === "polymarket") {
@@ -559,18 +559,18 @@ async function listMarkets() {
 			const result = await provider.fetchMarkets(limit);
 
 			if (!result.ok) {
-				console.log(`❌ ${result.error.message}\n`);
+				console.info(`❌ ${result.error.message}\n`);
 				process.exit(1);
 			}
 
-			console.log("── Active Markets ────────────────────────────────────\n");
+			console.info("── Active Markets ────────────────────────────────────\n");
 			for (const market of result.data) {
 				const yesPrice = market.outcomes[0]?.price || 0;
-				console.log(`   ${market.question}`);
-				console.log(
+				console.info(`   ${market.question}`);
+				console.info(
 					`   YES: ${(yesPrice * 100).toFixed(0)}¢  |  Volume: $${market.volume.toLocaleString()}`,
 				);
-				console.log("");
+				console.info("");
 			}
 		} else if (platform === "kalshi") {
 			const provider = new KalshiProvider({});
@@ -578,26 +578,26 @@ async function listMarkets() {
 			const result = await provider.fetchMarkets("open", limit);
 
 			if (!result.ok) {
-				console.log(`❌ ${result.error.message}\n`);
+				console.info(`❌ ${result.error.message}\n`);
 				process.exit(1);
 			}
 
-			console.log("── Active Markets ────────────────────────────────────\n");
+			console.info("── Active Markets ────────────────────────────────────\n");
 			for (const market of result.data) {
 				const yesPrice = market.outcomes[0]?.price || 0;
-				console.log(`   [${market.id}] ${market.question}`);
-				console.log(
+				console.info(`   [${market.id}] ${market.question}`);
+				console.info(
 					`   YES: ${(yesPrice * 100).toFixed(0)}¢  |  Volume: ${market.volume.toLocaleString()}`,
 				);
-				console.log("");
+				console.info("");
 			}
 		} else {
-			console.log(`❌ Unknown platform: ${platform}`);
-			console.log("   Supported: polymarket, kalshi\n");
+			console.info(`❌ Unknown platform: ${platform}`);
+			console.info("   Supported: polymarket, kalshi\n");
 			process.exit(1);
 		}
 	} catch (error) {
-		console.log(`❌ ${error instanceof Error ? error.message : "Failed"}\n`);
+		console.info(`❌ ${error instanceof Error ? error.message : "Failed"}\n`);
 		process.exit(1);
 	}
 }
@@ -613,7 +613,7 @@ function getArg(flag: string): string | undefined {
 }
 
 function showHelp() {
-	console.log(`
+	console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║              Trader Analyzer CLI                          ║
 ╚═══════════════════════════════════════════════════════════╝

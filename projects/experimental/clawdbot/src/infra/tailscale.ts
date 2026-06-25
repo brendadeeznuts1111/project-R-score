@@ -302,7 +302,7 @@ export async function ensureFunnel(
         timeoutMs: 15_000,
       },
     );
-    if (stdout.trim()) console.log(stdout.trim());
+    if (stdout.trim()) console.info(stdout.trim());
   } catch (err) {
     const errOutput = err as { stdout?: unknown; stderr?: unknown };
     const stdout = typeof errOutput.stdout === "string" ? errOutput.stdout : "";

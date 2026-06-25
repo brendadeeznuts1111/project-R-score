@@ -1,0 +1,9 @@
+id: prefer-bun-env
+language: TypeScript
+severity: warning
+message: "Prefer Bun.env over process.env in Bun projects"
+note: "Bun.env is typed and avoids Node legacy globals"
+ignores:
+  - ".agents/**"
+rule:
+  pattern: process.env.$VAR

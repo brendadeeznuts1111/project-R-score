@@ -29,7 +29,7 @@ function logInfo(domain: string, event: string, data: any): void {
   const config = getCurrentConfig();
   
   if (config.featureFlags & 0x00000004) { // DEBUG flag
-    console.log(`[AGENT] ${domain}: ${event}`, {
+    console.info(`[AGENT] ${domain}: ${event}`, {
       ...data,
       config_version: config.version,
       timestamp: nanoseconds()
@@ -79,7 +79,7 @@ export function createAgent(): Agent {
   
   // If DEBUG flag (Bit 2), log pool stats periodically
   if (config.featureFlags & 0x00000004) {
-    console.log(`[AGENT] Debug monitoring enabled for config version ${version}`);
+    console.info(`[AGENT] Debug monitoring enabled for config version ${version}`);
     
     const monitorInterval = setInterval(() => {
       try {
@@ -116,28 +116,28 @@ export function createAgent(): Agent {
 
 // Test agent functionality
 export async function testAgentFunctionality(): Promise<void> {
-  console.log("🔗 Config-Aware Agent Test");
-  console.log("=".repeat(40));
+  console.info("🔗 Config-Aware Agent Test");
+  console.info("=".repeat(40));
   
   const config = getCurrentConfig();
-  console.log(`📊 Current config:`);
-  console.log(`   • Config version: ${config.version}`);
-  console.log(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
-  console.log(`   • DEBUG mode: ${(config.featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
+  console.info(`📊 Current config:`);
+  console.info(`   • Config version: ${config.version}`);
+  console.info(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
+  console.info(`   • DEBUG mode: ${(config.featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
   
   const start = nanoseconds();
   const agent = createAgent();
   const creationTime = nanoseconds() - start;
   
-  console.log(`\n🏗️  Agent created:`);
-  console.log(`   • Creation time: ${creationTime}ns`);
-  console.log(`   • Pool size: ${agent.maxSockets}`);
-  console.log(`   • Keep alive: ${(agent as any).keepAlive}`);
-  console.log(`   • Max free sockets: ${agent.maxFreeSockets}`);
+  console.info(`\n🏗️  Agent created:`);
+  console.info(`   • Creation time: ${creationTime}ns`);
+  console.info(`   • Pool size: ${agent.maxSockets}`);
+  console.info(`   • Keep alive: ${(agent as any).keepAlive}`);
+  console.info(`   • Max free sockets: ${agent.maxFreeSockets}`);
   
   // Test with a real request
   try {
-    console.log(`\n🔄 Testing agent with HTTP request...`);
+    console.info(`\n🔄 Testing agent with HTTP request...`);
     
     // Note: Bun doesn't support the 'agent' property like Node.js
     // This is a demo of the concept - in practice, Bun handles pooling internally
@@ -151,27 +151,27 @@ export async function testAgentFunctionality(): Promise<void> {
     
     if (response.ok) {
       const data = await response.json();
-      console.log(`✅ HTTP request successful`);
-      console.log(`   • Response time: ${response.headers.get('x-response-time') || 'N/A'}`);
-      console.log(`   • User-Agent echoed: ${data.headers?.['User-Agent']}`);
+      console.info(`✅ HTTP request successful`);
+      console.info(`   • Response time: ${response.headers.get('x-response-time') || 'N/A'}`);
+      console.info(`   • User-Agent echoed: ${data.headers?.['User-Agent']}`);
     } else {
-      console.log(`⚠️  HTTP request failed: ${response.status}`);
+      console.info(`⚠️  HTTP request failed: ${response.status}`);
     }
     
   } catch (error) {
-    console.log(`❌ HTTP request error:`, error instanceof Error ? error.message : String(error));
+    console.info(`❌ HTTP request error:`, error instanceof Error ? error.message : String(error));
   }
   
-  console.log(`\n🔍 Agent is locked to config version ${config.version}`);
-  console.log(`   • Pool size cannot be changed without restart`);
-  console.log(`   • Behavior is deterministic based on 13-byte config`);
-  console.log(`   • v1.3.5 keepAlive bug fix automatically applied`);
+  console.info(`\n🔍 Agent is locked to config version ${config.version}`);
+  console.info(`   • Pool size cannot be changed without restart`);
+  console.info(`   • Behavior is deterministic based on 13-byte config`);
+  console.info(`   • v1.3.5 keepAlive bug fix automatically applied`);
 }
 
 // Performance benchmark
 export function benchmarkAgent(): void {
-  console.log("🔗 Agent Performance Benchmark");
-  console.log("=".repeat(40));
+  console.info("🔗 Agent Performance Benchmark");
+  console.info("=".repeat(40));
   
   const iterations = 100;
   const times: number[] = [];
@@ -183,7 +183,7 @@ export function benchmarkAgent(): void {
     times.push(duration);
     
     if (i < 5) {
-      console.log(`   • Iteration ${i + 1}: ${duration}ns (pool size: ${agent.maxSockets})`);
+      console.info(`   • Iteration ${i + 1}: ${duration}ns (pool size: ${agent.maxSockets})`);
     }
   }
   
@@ -191,23 +191,23 @@ export function benchmarkAgent(): void {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`\n📊 Results (${iterations} iterations):`);
-  console.log(`   • Average: ${Math.floor(avgTime)}ns`);
-  console.log(`   • Min: ${Math.floor(minTime)}ns`);
-  console.log(`   • Max: ${Math.floor(maxTime)}ns`);
-  console.log(`   • Target: ~150.5ns (0.5ns + 150ns)`);
-  console.log(`   • Status: ${avgTime < 200000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
+  console.info(`\n📊 Results (${iterations} iterations):`);
+  console.info(`   • Average: ${Math.floor(avgTime)}ns`);
+  console.info(`   • Min: ${Math.floor(minTime)}ns`);
+  console.info(`   • Max: ${Math.floor(maxTime)}ns`);
+  console.info(`   • Target: ~150.5ns (0.5ns + 150ns)`);
+  console.info(`   • Status: ${avgTime < 200000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
 }
 
 // Demonstrate config version behavior
 export function demonstrateConfigVersions(): void {
-  console.log("🔗 Config Version Behavior Demonstration");
-  console.log("=".repeat(50));
+  console.info("🔗 Config Version Behavior Demonstration");
+  console.info("=".repeat(50));
   
   const versions = [0, 1, 2];
   
   versions.forEach(version => {
-    console.log(`\n📋 Config Version ${version}:`);
+    console.info(`\n📋 Config Version ${version}:`);
     
     // Mock different config versions
     const mockConfig = { version, featureFlags: 0x00000007 };
@@ -220,21 +220,21 @@ export function demonstrateConfigVersions(): void {
       }
     })();
     
-    console.log(`   • Pool size: ${poolSize} connections`);
-    console.log(`   • Caching: ${version === 0 ? 'DISABLED (legacy)' : 'ENABLED (modern)'}`);
-    console.log(`   • Bug fixes: ${version === 0 ? 'v1.3.0 behavior' : 'v1.3.5 fixes applied'}`);
-    console.log(`   • Use case: ${version === 0 ? 'Backward compatibility' : version === 1 ? 'Production ready' : 'Future extensible'}`);
+    console.info(`   • Pool size: ${poolSize} connections`);
+    console.info(`   • Caching: ${version === 0 ? 'DISABLED (legacy)' : 'ENABLED (modern)'}`);
+    console.info(`   • Bug fixes: ${version === 0 ? 'v1.3.0 behavior' : 'v1.3.5 fixes applied'}`);
+    console.info(`   • Use case: ${version === 0 ? 'Backward compatibility' : version === 1 ? 'Production ready' : 'Future extensible'}`);
   });
   
-  console.log(`\n🎯 The agent behavior is 100% deterministic based on config version`);
-  console.log(`   • No runtime configuration changes allowed`);
-  console.log(`   • Pool size is locked at creation time`);
-  console.log(`   • v1.3.5 bug fixes are automatically applied`);
+  console.info(`\n🎯 The agent behavior is 100% deterministic based on config version`);
+  console.info(`   • No runtime configuration changes allowed`);
+  console.info(`   • Pool size is locked at creation time`);
+  console.info(`   • v1.3.5 bug fixes are automatically applied`);
 }
 
 // Initialize agent system
-console.log("🔗 Config-Aware Agent System initialized");
-console.log(`📊 Config version: ${getCurrentConfig().version}`);
-console.log(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
-console.log(`⚡ Creation target: ~150.5ns`);
-console.log(`🐛 v1.3.5 keepAlive bug fix: AUTO-APPLIED`);
+console.info("🔗 Config-Aware Agent System initialized");
+console.info(`📊 Config version: ${getCurrentConfig().version}`);
+console.info(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
+console.info(`⚡ Creation target: ~150.5ns`);
+console.info(`🐛 v1.3.5 keepAlive bug fix: AUTO-APPLIED`);

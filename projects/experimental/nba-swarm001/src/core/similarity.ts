@@ -25,7 +25,7 @@ import { vectorMagnitude, dotProduct, isZeroVector } from "./vector.js";
  * ```ts
  * const similarity = cosineSimilarity(game1.vector, game2.vector);
  * if (similarity > 0.7) {
- *   console.log("High similarity detected");
+ *   console.info("High similarity detected");
  * }
  * ```
  */

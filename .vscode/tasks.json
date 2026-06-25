@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "FW: Format Core",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "format:core"],
+      "group": "build",
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "FW: Lint",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "lint"],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "FW: Lint Fix",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "lint:fix"],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "FW: Type Check",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "type-check"],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "FW: Standards Check",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "standards:check"],
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": ["$eslint-stylish", "$tsc"]
+    },
+    {
+      "label": "FW: Test",
+      "type": "shell",
+      "command": "bun",
+      "args": ["test"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "FW: Test Current File",
+      "type": "shell",
+      "command": "bun",
+      "args": ["test", "${relativeFile}"],
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "FW: Build",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "build"],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "FW: DX MCP (stdio)",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "${workspaceFolder}/scripts/dx-mcp.ts"],
+      "isBackground": true,
+      "presentation": { "reveal": "never", "panel": "dedicated" },
+      "problemMatcher": []
+    }
+  ]
+}

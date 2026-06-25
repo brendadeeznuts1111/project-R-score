@@ -132,7 +132,7 @@ oShortcut.Save
         await Bun.$`open -a "Google Chrome" --args --app=${url}`.quiet();
       }
 
-      console.log(`🚀 MYBUNDOCS11 launched: ${url}`);
+      console.info(`🚀 MYBUNDOCS11 launched: ${url}`);
     } catch (error) {
       console.error(`Failed to launch MYBUNDOCS11: ${error.message}`);
       // Fallback to system browser
@@ -147,7 +147,7 @@ oShortcut.Save
 
     if (results.length > 0) {
       const url = results[0].domains[domain];
-      console.log(`📖 Opening ${results[0].topic} in MYBUNDOCS11`);
+      console.info(`📖 Opening ${results[0].topic} in MYBUNDOCS11`);
 
       // Update app URL temporarily and launch
       const originalUrl = this.config.appUrl;
@@ -161,8 +161,8 @@ oShortcut.Save
 
       this.config.appUrl = originalUrl;
     } else {
-      console.log(`❌ No documentation found for: ${query}`);
-      console.log(`🌐 Opening main docs in MYBUNDOCS11`);
+      console.info(`❌ No documentation found for: ${query}`);
+      console.info(`🌐 Opening main docs in MYBUNDOCS11`);
       await this.launchMYBUNDOCS11(domain);
     }
   }

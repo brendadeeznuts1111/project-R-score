@@ -21,7 +21,7 @@
  * // Snippet:
  * ```typescript
  * const buffer = createCircularBuffer(20, [1, 2, 3]);
- * console.log(buffer); // Environment-aware output
+ * console.info(buffer); // Environment-aware output
  * ```
  * 
  * // Ripgrep: 6.4.3.0.0.0.0
@@ -31,77 +31,77 @@
 
 import { CircularBuffer, createCircularBuffer } from "../src/utils/circular-buffer";
 
-console.log("\n" + "═".repeat(70));
-console.log("  Advanced CircularBuffer Demo - Enhanced Bun.inspect.custom");
-console.log("═".repeat(70) + "\n");
+console.info("\n" + "═".repeat(70));
+console.info("  Advanced CircularBuffer Demo - Enhanced Bun.inspect.custom");
+console.info("═".repeat(70) + "\n");
 
 // Example 1: Environment-aware formatting
-console.log("📋 Example 1: Environment-Aware Formatting");
-console.log("-".repeat(70));
-console.log(`NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
-console.log(`DEBUG_LEVEL: ${Bun.env.DEBUG_LEVEL || 'info'}`);
-console.log(`Bun.main: ${Bun.main}`);
-console.log(`import.meta.path: ${import.meta.path}`);
-console.log(`Is main script: ${import.meta.main}\n`);
+console.info("📋 Example 1: Environment-Aware Formatting");
+console.info("-".repeat(70));
+console.info(`NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
+console.info(`DEBUG_LEVEL: ${Bun.env.DEBUG_LEVEL || 'info'}`);
+console.info(`Bun.main: ${Bun.main}`);
+console.info(`import.meta.path: ${import.meta.path}`);
+console.info(`Is main script: ${import.meta.main}\n`);
 
 const buffer1 = createCircularBuffer(20, Array.from({ length: 15 }, (_, i) => i + 1));
-console.log("Default inspection (environment-aware):");
-console.log(buffer1);
-console.log();
+console.info("Default inspection (environment-aware):");
+console.info(buffer1);
+console.info();
 
 // Example 2: Advanced array formatting options
-console.log("📋 Example 2: Advanced Array Formatting Options");
-console.log("-".repeat(70));
+console.info("📋 Example 2: Advanced Array Formatting Options");
+console.info("-".repeat(70));
 
 const buffer2 = createCircularBuffer(10, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-console.log("oneline format:");
-console.log(Bun.inspect(buffer2, { arrayFormat: 'oneline' }));
-console.log();
+console.info("oneline format:");
+console.info(Bun.inspect(buffer2, { arrayFormat: 'oneline' }));
+console.info();
 
-console.log("compact format:");
-console.log(Bun.inspect(buffer2, { arrayFormat: 'compact' }));
-console.log();
+console.info("compact format:");
+console.info(Bun.inspect(buffer2, { arrayFormat: 'compact' }));
+console.info();
 
-console.log("expanded format:");
-console.log(Bun.inspect(buffer2, { arrayFormat: 'expanded' }));
-console.log();
+console.info("expanded format:");
+console.info(Bun.inspect(buffer2, { arrayFormat: 'expanded' }));
+console.info();
 
-console.log("structured format (default):");
-console.log(Bun.inspect(buffer2, { arrayFormat: 'structured' }));
-console.log();
+console.info("structured format (default):");
+console.info(Bun.inspect(buffer2, { arrayFormat: 'structured' }));
+console.info();
 
-console.log("Custom separator:");
-console.log(Bun.inspect(buffer2, { 
+console.info("Custom separator:");
+console.info(Bun.inspect(buffer2, { 
   arrayFormat: 'oneline', 
   arraySeparator: ' | ' 
 }));
-console.log();
+console.info();
 
 // Example 3: Enhanced maxArrayLength handling
-console.log("📋 Example 3: Enhanced maxArrayLength Handling");
-console.log("-".repeat(70));
+console.info("📋 Example 3: Enhanced maxArrayLength Handling");
+console.info("-".repeat(70));
 
 const buffer3 = createCircularBuffer(1000);
 for (let i = 1; i <= 500; i++) {
   buffer3.push(i);
 }
 
-console.log("Default maxArrayLength (context-aware):");
-console.log(Bun.inspect(buffer3));
-console.log();
+console.info("Default maxArrayLength (context-aware):");
+console.info(Bun.inspect(buffer3));
+console.info();
 
-console.log("Custom maxArrayLength (200):");
-console.log(Bun.inspect(buffer3, { maxArrayLength: 200 }));
-console.log();
+console.info("Custom maxArrayLength (200):");
+console.info(Bun.inspect(buffer3, { maxArrayLength: 200 }));
+console.info();
 
-console.log("Small maxArrayLength (5):");
-console.log(Bun.inspect(buffer3, { maxArrayLength: 5 }));
-console.log();
+console.info("Small maxArrayLength (5):");
+console.info(Bun.inspect(buffer3, { maxArrayLength: 5 }));
+console.info();
 
 // Example 4: Security integration - sensitive data redaction
-console.log("📋 Example 4: Security Integration - Sensitive Data Redaction");
-console.log("-".repeat(70));
+console.info("📋 Example 4: Security Integration - Sensitive Data Redaction");
+console.info("-".repeat(70));
 
 const sensitivePatterns = [
   /(api[_-]?key|apikey)\s*[:=]\s*["']?([a-zA-Z0-9_-]{20,})["']?/gi,
@@ -117,94 +117,94 @@ secureBuffer.push(
   { normalData: "this is fine", value: 42 }
 );
 
-console.log("Without redaction:");
-console.log(Bun.inspect(secureBuffer, { redactSensitive: false }));
-console.log();
+console.info("Without redaction:");
+console.info(Bun.inspect(secureBuffer, { redactSensitive: false }));
+console.info();
 
-console.log("With redaction (production mode):");
-console.log(Bun.inspect(secureBuffer, { redactSensitive: true }));
-console.log();
+console.info("With redaction (production mode):");
+console.info(Bun.inspect(secureBuffer, { redactSensitive: true }));
+console.info();
 
 // Example 5: File context tracking
-console.log("📋 Example 5: File Context Tracking");
-console.log("-".repeat(70));
+console.info("📋 Example 5: File Context Tracking");
+console.info("-".repeat(70));
 
 const buffer5 = createCircularBuffer(10, [1, 2, 3, 4, 5]);
 
-console.log("Without file context:");
-console.log(Bun.inspect(buffer5, { showFileContext: false }));
-console.log();
+console.info("Without file context:");
+console.info(Bun.inspect(buffer5, { showFileContext: false }));
+console.info();
 
-console.log("With file context:");
-console.log(Bun.inspect(buffer5, { showFileContext: true }));
-console.log();
+console.info("With file context:");
+console.info(Bun.inspect(buffer5, { showFileContext: true }));
+console.info();
 
 // Example 6: Show hidden details
-console.log("📋 Example 6: Hidden Details (showHidden)");
-console.log("-".repeat(70));
+console.info("📋 Example 6: Hidden Details (showHidden)");
+console.info("-".repeat(70));
 
 const buffer6 = createCircularBuffer(50);
 for (let i = 1; i <= 30; i++) {
   buffer6.push(i);
 }
 
-console.log("Without hidden details:");
-console.log(Bun.inspect(buffer6, { showHidden: false }));
-console.log();
+console.info("Without hidden details:");
+console.info(Bun.inspect(buffer6, { showHidden: false }));
+console.info();
 
-console.log("With hidden details:");
-console.log(Bun.inspect(buffer6, { showHidden: true }));
-console.log();
+console.info("With hidden details:");
+console.info(Bun.inspect(buffer6, { showHidden: true }));
+console.info();
 
 // Example 7: Context-aware behavior demonstration
-console.log("📋 Example 7: Context-Aware Behavior");
-console.log("-".repeat(70));
+console.info("📋 Example 7: Context-Aware Behavior");
+console.info("-".repeat(70));
 
-console.log("Execution Context:");
-console.log(`  Bun.main: ${Bun.main}`);
-console.log(`  import.meta.path: ${import.meta.path}`);
-console.log(`  import.meta.main: ${import.meta.main}`);
-console.log(`  Match: ${import.meta.path === Bun.main ? 'YES (main script)' : 'NO (module)'}`);
-console.log();
+console.info("Execution Context:");
+console.info(`  Bun.main: ${Bun.main}`);
+console.info(`  import.meta.path: ${import.meta.path}`);
+console.info(`  import.meta.main: ${import.meta.main}`);
+console.info(`  Match: ${import.meta.path === Bun.main ? 'YES (main script)' : 'NO (module)'}`);
+console.info();
 
 const buffer7 = createCircularBuffer(100);
 for (let i = 1; i <= 50; i++) {
   buffer7.push(i);
 }
 
-console.log("Inspection (adapts to context):");
-console.log(buffer7);
-console.log();
+console.info("Inspection (adapts to context):");
+console.info(buffer7);
+console.info();
 
 // Example 8: Environment variable adaptation
-console.log("📋 Example 8: Environment Variable Adaptation");
-console.log("-".repeat(70));
+console.info("📋 Example 8: Environment Variable Adaptation");
+console.info("-".repeat(70));
 
-console.log("Current environment:");
-console.log(`  NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
-console.log(`  DEBUG_LEVEL: ${Bun.env.DEBUG_LEVEL || 'info'}`);
-console.log();
+console.info("Current environment:");
+console.info(`  NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
+console.info(`  DEBUG_LEVEL: ${Bun.env.DEBUG_LEVEL || 'info'}`);
+console.info();
 
 const buffer8 = createCircularBuffer(50);
 for (let i = 1; i <= 40; i++) {
   buffer8.push(i);
 }
 
-console.log("Inspection adapts to environment:");
-console.log(buffer8);
-console.log();
+console.info("Inspection adapts to environment:");
+console.info(buffer8);
+console.info();
 
 // Example 9: Combined advanced options
-console.log("📋 Example 9: Combined Advanced Options");
-console.log("-".repeat(70));
+console.info("📋 Example 9: Combined Advanced Options");
+console.info("-".repeat(70));
 
 const buffer9 = createCircularBuffer(100);
 for (let i = 1; i <= 80; i++) {
   buffer9.push({ id: i, value: `item-${i}`, metadata: { index: i } });
 }
 
-console.log("All features combined:");
-console.log(Bun.inspect(buffer9, {
+console.info("All features combined:");
+console.info(Bun.inspect(buffer9, {
   arrayFormat: 'expanded',
   arraySeparator: '\n',
   maxArrayLength: 10,
@@ -214,8 +214,8 @@ console.log(Bun.inspect(buffer9, {
   colors: true,
   depth: 3,
 }));
-console.log();
+console.info();
 
-console.log("═".repeat(70));
-console.log("  Advanced Demo Complete!");
-console.log("═".repeat(70) + "\n");
+console.info("═".repeat(70));
+console.info("  Advanced Demo Complete!");
+console.info("═".repeat(70) + "\n");

@@ -30,7 +30,7 @@ import {
  *   impact_severity_score: 9.5,
  * });
  *
- * console.log(alert);
+ * console.info(alert);
  * // => CovertSteamAlert {
  * //      event: "NFL-2025-001",
  * //      severity: "9.5 🚨 CRITICAL",
@@ -113,7 +113,7 @@ export class InspectableCovertSteamAlert implements CovertSteamEventRecord {
  *   event_identifier: "NFL-2025-001",
  *   detection_timestamp: Date.now(),
  * });
- * console.log(alert); // Uses custom inspect
+ * console.info(alert); // Uses custom inspect
  * ```
  */
 export function makeInspectable(

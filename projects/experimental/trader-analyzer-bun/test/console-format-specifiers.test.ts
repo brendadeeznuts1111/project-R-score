@@ -20,7 +20,7 @@ describe('Console Format Specifiers', () => {
 	describe('%j - JSON formatting', () => {
 		test('formats objects as JSON', async () => {
 			// Test by running a script that uses %j and capturing output
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j", { foo: "bar" });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j", { foo: "bar" });'], {
 				stdout: 'pipe',
 				stderr: 'pipe'
 			});
@@ -32,7 +32,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('formats arrays as JSON', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j", [1, 2, 3]);'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j", [1, 2, 3]);'], {
 				stdout: 'pipe'
 			});
 			
@@ -44,7 +44,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles multiple %j specifiers', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j %j", { a: 1 }, { b: 2 });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j %j", { a: 1 }, { b: 2 });'], {
 				stdout: 'pipe'
 			});
 			
@@ -54,7 +54,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles nested objects', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j", { nested: { deep: { value: 42 } } });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j", { nested: { deep: { value: 42 } } });'], {
 				stdout: 'pipe'
 			});
 			
@@ -67,7 +67,7 @@ describe('Console Format Specifiers', () => {
 
 	describe('%s - String formatting', () => {
 		test('formats strings', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%s", "hello world");'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%s", "hello world");'], {
 				stdout: 'pipe'
 			});
 			
@@ -76,7 +76,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles mixed %j and %s', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j %s", { status: "ok" }, "done");'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j %s", { status: "ok" }, "done");'], {
 				stdout: 'pipe'
 			});
 			
@@ -87,7 +87,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles multiple %s specifiers', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%s %s %s", "first", "second", "third");'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%s %s %s", "first", "second", "third");'], {
 				stdout: 'pipe'
 			});
 			
@@ -100,7 +100,7 @@ describe('Console Format Specifiers', () => {
 
 	describe('%d and %i - Integer formatting', () => {
 		test('formats integers with %d', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%d", 42);'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%d", 42);'], {
 				stdout: 'pipe'
 			});
 			
@@ -109,7 +109,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('formats integers with %i', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%i", 42);'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%i", 42);'], {
 				stdout: 'pipe'
 			});
 			
@@ -118,7 +118,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles floats with %d', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%d", 3.14);'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%d", 3.14);'], {
 				stdout: 'pipe'
 			});
 			
@@ -129,7 +129,7 @@ describe('Console Format Specifiers', () => {
 
 	describe('%f - Float formatting', () => {
 		test('formats floats', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%f", 3.14159);'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%f", 3.14159);'], {
 				stdout: 'pipe'
 			});
 			
@@ -140,7 +140,7 @@ describe('Console Format Specifiers', () => {
 
 	describe('%o and %O - Object formatting', () => {
 		test('formats objects with %o (shallow)', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%o", { foo: "bar" });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%o", { foo: "bar" });'], {
 				stdout: 'pipe'
 			});
 			
@@ -149,7 +149,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('formats objects with %O (deep)', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%O", { nested: { deep: "value" } });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%O", { nested: { deep: "value" } });'], {
 				stdout: 'pipe'
 			});
 			
@@ -160,7 +160,7 @@ describe('Console Format Specifiers', () => {
 
 	describe('Complex format strings', () => {
 		test('handles multiple format specifiers', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("Status: %j, Count: %d, Message: %s", { ok: true }, 42, "success");'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("Status: %j, Count: %d, Message: %s", { ok: true }, 42, "success");'], {
 				stdout: 'pipe'
 			});
 			
@@ -172,7 +172,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles format specifiers without matching arguments', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j %s", { foo: "bar" });'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j %s", { foo: "bar" });'], {
 				stdout: 'pipe'
 			});
 			
@@ -182,7 +182,7 @@ describe('Console Format Specifiers', () => {
 		});
 
 		test('handles extra arguments without format specifiers', async () => {
-			const proc = Bun.spawn(['bun', '-e', 'console.log("%j", { foo: "bar" }, "extra");'], {
+			const proc = Bun.spawn(['bun', '-e', 'console.info("%j", { foo: "bar" }, "extra");'], {
 				stdout: 'pipe'
 			});
 			

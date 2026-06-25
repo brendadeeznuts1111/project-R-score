@@ -19,8 +19,7 @@ import { DOC_PATTERNS } from '../docs/patterns';
 // Step 3: CLI reference data
 import { r2MCPIntegration } from '../mcp/r2-integration';
 
-import type { CLICategory} from '../docs/constants/cli';
-
+import type { CLICategory } from '../docs/constants/cli';
 
 // Step 4: URL validation
 
@@ -184,7 +183,11 @@ function generateSearchIndex(wikiData: WikiData): SearchIndex {
  * Find a CLI command example by command name
  */
 function findCLIExample(cmdName: string): string | undefined {
-  const allExamples = { ...CLI_COMMAND_EXAMPLES.BASIC, ...CLI_COMMAND_EXAMPLES.ADVANCED, ...CLI_COMMAND_EXAMPLES.DEVELOPMENT };
+  const allExamples = {
+    ...CLI_COMMAND_EXAMPLES.BASIC,
+    ...CLI_COMMAND_EXAMPLES.ADVANCED,
+    ...CLI_COMMAND_EXAMPLES.DEVELOPMENT,
+  };
   // Try exact match first, then case-insensitive partial match
   const key = cmdName.toUpperCase();
   for (const [exKey, exValue] of Object.entries(allExamples)) {
@@ -357,13 +360,10 @@ function generateValidationReport(wikiData: WikiData): string {
  * Generate wiki analytics
  */
 function generateAnalytics(wikiData: WikiData, generationTime: number): WikiAnalytics {
-  const categoryCounts = Object.entries(wikiData.categories).map(
-    ([_, data]) => data.count
-  );
+  const categoryCounts = Object.entries(wikiData.categories).map(([_, data]) => data.count);
   const mostUsedCategory =
-    Object.entries(wikiData.categories).sort(
-      ([, a], [, b]) => b.count - a.count
-    )[0]?.[0] || 'Unknown';
+    Object.entries(wikiData.categories).sort(([, a], [, b]) => b.count - a.count)[0]?.[0] ||
+    'Unknown';
 
   const examplesCount = wikiData.wikiPages.filter((p: WikiPage) => p.example).length;
   const coverage = (examplesCount / wikiData.total) * 100;
@@ -410,10 +410,10 @@ function generateTOC(wikiData: WikiData): string {
  */
 function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
   const finalConfig = { ...defaultConfig, ...config };
-  console.log('🌐 GENERATING INTERNAL WIKI URLs...');
-  console.log(`   Base URL: ${finalConfig.baseUrl}`);
-  console.log(`   Workspace: ${finalConfig.workspace}`);
-  console.log(`   Format: ${finalConfig.format}`);
+  console.info('🌐 GENERATING INTERNAL WIKI URLs...');
+  console.info(`   Base URL: ${finalConfig.baseUrl}`);
+  console.info(`   Workspace: ${finalConfig.workspace}`);
+  console.info(`   Format: ${finalConfig.format}`);
 
   const wikiPages: WikiPage[] = [];
 
@@ -424,7 +424,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
     const category = categoryKey as UtilsCategory;
     const categoryPages = [];
 
-    console.log(`\n📂 Processing ${category} utilities...`);
+    console.info(`\n📂 Processing ${category} utilities...`);
 
     for (const [utilName, path] of Object.entries(urls)) {
       const title = `${category.replace('_', ' ').toUpperCase()}: ${utilName.replace('_', ' ').toUpperCase()}`;
@@ -443,7 +443,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
       // Step 4: Validate documentation URL
       const validation = EnhancedDocumentationURLValidator.validateDocumentationURL(documentation);
       if (!validation.isValid) {
-        console.log(`   ⚠️  Invalid URL for ${utilName}: ${validation.errors.join(', ')}`);
+        console.info(`   ⚠️  Invalid URL for ${utilName}: ${validation.errors.join(', ')}`);
       }
 
       const wikiPage: WikiPage = {
@@ -460,7 +460,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
       wikiPages.push(wikiPage);
       categoryPages.push(wikiPage);
 
-      console.log(`   ✅ ${utilName}: ${wikiUrl}`);
+      console.info(`   ✅ ${utilName}: ${wikiUrl}`);
     }
 
     categories[category] = {
@@ -483,12 +483,9 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
   }
 
   // Step 6: Integrate cookie-CRC32 wiki pages
-  const cookiePages = getCookieCRC32WikiPages(
-    finalConfig.baseUrl,
-    finalConfig.workspace,
-  );
+  const cookiePages = getCookieCRC32WikiPages(finalConfig.baseUrl, finalConfig.workspace);
   const cookieCategoryPages: WikiPage[] = [];
-  console.log(`\n📂 Processing cookie_crc32 utilities...`);
+  console.info(`\n📂 Processing cookie_crc32 utilities...`);
   for (const cp of cookiePages) {
     const wikiPage: WikiPage = {
       title: cp.title,
@@ -501,7 +498,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
     };
     wikiPages.push(wikiPage);
     cookieCategoryPages.push(wikiPage);
-    console.log(`   ✅ ${cp.title}: ${cp.url}`);
+    console.info(`   ✅ ${cp.title}: ${cp.url}`);
   }
   if (cookieCategoryPages.length > 0) {
     categories.cookie_crc32 = {
@@ -510,10 +507,10 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
     };
   }
 
-  console.log(
+  console.info(
     `\n📊 Generated ${wikiPages.length} wiki pages across ${Object.keys(categories).length} categories`
   );
-  console.log(`📟 Generated ${cliPages.length} CLI reference pages`);
+  console.info(`📟 Generated ${cliPages.length} CLI reference pages`);
 
   return {
     total: wikiPages.length,
@@ -532,7 +529,7 @@ function generateMarkdownWiki(
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
 ): string {
-  console.log('\n📝 GENERATING ENHANCED MARKDOWN WIKI CONTENT...');
+  console.info('\n📝 GENERATING ENHANCED MARKDOWN WIKI CONTENT...');
 
   let content = `# 🦌 Bun Utilities Internal Wiki
 
@@ -589,8 +586,8 @@ Use these keywords to quickly find utilities:
     );
 
     for (const [category, data] of sortedCategories) {
-      const percentage = (((data).count / wikiData.total) * 100).toFixed(1);
-      content += `- **${category.replace('_', ' ')}**: ${(data).count} utilities (${percentage}%)\n`;
+      const percentage = ((data.count / wikiData.total) * 100).toFixed(1);
+      content += `- **${category.replace('_', ' ')}**: ${data.count} utilities (${percentage}%)\n`;
     }
     content += `\n`;
   }
@@ -620,7 +617,9 @@ Use these keywords to quickly find utilities:
     }
 
     // Step 2: Add related docs for pages that have them
-    const pagesWithRelated = categoryData.pages.filter(p => p.relatedDocs && p.relatedDocs.length > 0);
+    const pagesWithRelated = categoryData.pages.filter(
+      p => p.relatedDocs && p.relatedDocs.length > 0
+    );
     if (pagesWithRelated.length > 0) {
       content += `\n**Related Documentation:**\n`;
       for (const page of pagesWithRelated) {
@@ -748,7 +747,7 @@ function generateHTMLWiki(
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
 ): string {
-  console.log('\n🌐 GENERATING ENHANCED HTML WIKI CONTENT...');
+  console.info('\n🌐 GENERATING ENHANCED HTML WIKI CONTENT...');
 
   const theme =
     config.theme === 'auto'
@@ -1170,7 +1169,7 @@ function generateHTMLWiki(
  */
 async function createWikiFiles(config: Partial<WikiConfig> = {}): Promise<void> {
   const finalConfig = { ...defaultConfig, ...config };
-  console.log('\n📁 CREATING WIKI FILES...');
+  console.info('\n📁 CREATING WIKI FILES...');
 
   // Generate wiki data with analytics and search index
   const startTime = Date.now();
@@ -1187,21 +1186,21 @@ async function createWikiFiles(config: Partial<WikiConfig> = {}): Promise<void> 
     if (finalConfig.format === 'markdown' || finalConfig.format === 'all') {
       const markdownContent = generateMarkdownWiki(wikiData, finalConfig, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.md`, markdownContent);
-      console.log('   ✅ Created: bun-utilities-wiki.md');
+      console.info('   ✅ Created: bun-utilities-wiki.md');
     }
 
     // Create HTML
     if (finalConfig.format === 'html' || finalConfig.format === 'all') {
       const htmlContent = generateHTMLWiki(wikiData, finalConfig, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.html`, htmlContent);
-      console.log('   ✅ Created: bun-utilities-wiki.html');
+      console.info('   ✅ Created: bun-utilities-wiki.html');
     }
 
     // Create JSON
     if (finalConfig.format === 'json' || finalConfig.format === 'all') {
       const jsonContent = generateJSONWiki(wikiData, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.json`, jsonContent);
-      console.log('   ✅ Created: bun-utilities-wiki.json');
+      console.info('   ✅ Created: bun-utilities-wiki.json');
     }
 
     // Create index file
@@ -1226,7 +1225,7 @@ Use for API integration:
 
 \`\`\`javascript
 const wikiData = require('./bun-utilities-wiki.json');
-console.log(wikiData.pages); // All utility pages
+console.info(wikiData.pages); // All utility pages
 \`\`\`
 
 ## 📊 Statistics
@@ -1240,12 +1239,12 @@ console.log(wikiData.pages); // All utility pages
 *Generated by Bun Wiki URL Generator*`;
 
     await AtomicFileOperations.writeAtomic(`${outputDir}/README.md`, indexContent);
-    console.log('   ✅ Created: README.md');
+    console.info('   ✅ Created: README.md');
   } catch (error) {
-    console.log(`   ❌ Error creating files: ${error.message}`);
+    console.info(`   ❌ Error creating files: ${error.message}`);
   }
 
-  console.log(`\n🎉 Wiki files created in '${outputDir}/' directory!`);
+  console.info(`\n🎉 Wiki files created in '${outputDir}/' directory!`);
 }
 
 /**
@@ -1256,7 +1255,7 @@ function generateJSONWiki(
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
 ): string {
-  console.log('\n📄 GENERATING ENHANCED JSON WIKI DATA...');
+  console.info('\n📄 GENERATING ENHANCED JSON WIKI DATA...');
 
   const jsonData = {
     metadata: {
@@ -1335,7 +1334,7 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
     return null;
   }
 
-  console.log('\n🌐 Loading real-time data from R2...');
+  console.info('\n🌐 Loading real-time data from R2...');
 
   try {
     const r2 = r2MCPIntegration;
@@ -1346,13 +1345,19 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
         withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('dashboard/metrics.json'))
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/ai/configuration.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/ai/configuration.json')
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/domain-intelligence/status.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/domain-intelligence/status.json')
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/advanced-metrics/latest.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/advanced-metrics/latest.json')
+        )
       ),
     ]);
 
@@ -1365,10 +1370,10 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
       connectionStatus: 'connected',
     };
 
-    console.log('✅ Real-time R2 data loaded');
+    console.info('✅ Real-time R2 data loaded');
     return r2Data;
   } catch (error) {
-    console.log(`⚠️  R2 data loading failed: ${error.message}`);
+    console.info(`⚠️  R2 data loading failed: ${error.message}`);
     return {
       timestamp: new Date().toISOString(),
       connectionStatus: 'disconnected',
@@ -1382,7 +1387,7 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
  */
 async function generateWikiWithR2(config: Partial<WikiConfig> = {}): Promise<void> {
   const finalConfig = { ...defaultConfig, ...config };
-  console.log('\n🌐 GENERATING WIKI WITH R2 INTEGRATION...');
+  console.info('\n🌐 GENERATING WIKI WITH R2 INTEGRATION...');
 
   // Generate base wiki data
   const wikiData = generateWikiURLs(config);
@@ -1414,7 +1419,7 @@ async function createWikiFilesWithR2(
   r2Data: R2Data,
   config: WikiConfig
 ): Promise<void> {
-  console.log('\n📁 CREATING ENHANCED WIKI FILES WITH R2 DATA...');
+  console.info('\n📁 CREATING ENHANCED WIKI FILES WITH R2 DATA...');
 
   const outputDir = config.outputDir;
 
@@ -1428,33 +1433,42 @@ async function createWikiFilesWithR2(
         r2Data,
         config
       );
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.md`, markdownContent);
-      console.log('   ✅ Created: bun-utilities-wiki-r2.md');
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.md`,
+        markdownContent
+      );
+      console.info('   ✅ Created: bun-utilities-wiki-r2.md');
     }
 
     // Create enhanced HTML with R2 data
     if (config.format === 'html' || config.format === 'all') {
       const htmlContent = generateHTMLWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.html`, htmlContent);
-      console.log('   ✅ Created: bun-utilities-wiki-r2.html');
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.html`,
+        htmlContent
+      );
+      console.info('   ✅ Created: bun-utilities-wiki-r2.html');
     }
 
     // Create enhanced JSON with R2 data
     if (config.format === 'json' || config.format === 'all') {
       const jsonContent = generateJSONWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.json`, jsonContent);
-      console.log('   ✅ Created: bun-utilities-wiki-r2.json');
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.json`,
+        jsonContent
+      );
+      console.info('   ✅ Created: bun-utilities-wiki-r2.json');
     }
 
     // Create R2 integration summary
     const r2Summary = generateR2IntegrationSummary(r2Data, config);
     await AtomicFileOperations.writeAtomic(`${outputDir}/r2-integration-summary.md`, r2Summary);
-    console.log('   ✅ Created: r2-integration-summary.md');
+    console.info('   ✅ Created: r2-integration-summary.md');
   } catch (error) {
-    console.log(`   ❌ Error creating files: ${error.message}`);
+    console.info(`   ❌ Error creating files: ${error.message}`);
   }
 
-  console.log(`\n🎉 Enhanced wiki files with R2 data created in '${outputDir}/' directory!`);
+  console.info(`\n🎉 Enhanced wiki files with R2 data created in '${outputDir}/' directory!`);
 }
 
 /**
@@ -1615,7 +1629,7 @@ async function storeWikiInR2(
   r2Data: R2Data,
   config: WikiConfig
 ): Promise<void> {
-  console.log('\n💾 Storing wiki data in R2...');
+  console.info('\n💾 Storing wiki data in R2...');
 
   try {
     const r2 = r2MCPIntegration;
@@ -1623,34 +1637,42 @@ async function storeWikiInR2(
     // Compute CRC32 checksum on pages payload
     const pagesPayload = JSON.stringify(wikiData.wikiPages);
     const pagesChecksum = crc32(pagesPayload);
-    console.log(`   CRC32 checksum for pages: ${pagesChecksum.hex}`);
+    console.info(`   CRC32 checksum for pages: ${pagesChecksum.hex}`);
 
     // Store all wiki data with circuit breaker + semaphore
     await Promise.all([
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/metadata.json', {
-          timestamp: new Date().toISOString(),
-          config,
-          analytics,
-          totalUtilities: wikiData.total,
-          categories: Object.keys(wikiData.categories).length,
-          pagesChecksum: pagesChecksum.hex,
-        }))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/metadata.json', {
+            timestamp: new Date().toISOString(),
+            config,
+            analytics,
+            totalUtilities: wikiData.total,
+            categories: Object.keys(wikiData.categories).length,
+            pagesChecksum: pagesChecksum.hex,
+          })
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/search-index.json', searchIndex))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/search-index.json', searchIndex)
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/pages.json', wikiData.wikiPages))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/pages.json', wikiData.wikiPages)
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/categories.json', wikiData.categories))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/categories.json', wikiData.categories)
+        )
       ),
     ]);
 
-    console.log('✅ Wiki data stored in R2');
+    console.info('✅ Wiki data stored in R2');
   } catch (error) {
-    console.log(`❌ Failed to store wiki data in R2: ${error.message}`);
+    console.info(`❌ Failed to store wiki data in R2: ${error.message}`);
   }
 }
 
@@ -1772,7 +1794,7 @@ function parseCLIArgs(): CLIOptions {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🌐 Enhanced Bun Wiki URL Generator CLI v2.0
 
 USAGE:
@@ -1860,9 +1882,9 @@ For more integration examples, see the generated README.md file.
 // ============================================================================
 
 async function main(): Promise<void> {
-  console.log('🌐 ENHANCED BUN WIKI URL GENERATOR CLI v2.0');
-  console.log('Generate comprehensive internal wiki documentation with advanced features');
-  console.log('='.repeat(70));
+  console.info('🌐 ENHANCED BUN WIKI URL GENERATOR CLI v2.0');
+  console.info('Generate comprehensive internal wiki documentation with advanced features');
+  console.info('='.repeat(70));
 
   try {
     const options = parseCLIArgs();
@@ -1901,18 +1923,18 @@ async function main(): Promise<void> {
       realTimeData: true,
     };
 
-    console.log('🔧 CONFIGURATION:');
-    console.log(`   Format: ${config.format}`);
-    console.log(`   Theme: ${config.theme}`);
-    console.log(`   Output Directory: ${config.outputDir}`);
-    console.log(`   Base URL: ${config.baseUrl}`);
-    console.log(`   Workspace: ${config.workspace}`);
-    console.log(`   R2 Integration: ${config.r2Integration ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Real-time Data: ${config.realTimeData ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(
+    console.info('🔧 CONFIGURATION:');
+    console.info(`   Format: ${config.format}`);
+    console.info(`   Theme: ${config.theme}`);
+    console.info(`   Output Directory: ${config.outputDir}`);
+    console.info(`   Base URL: ${config.baseUrl}`);
+    console.info(`   Workspace: ${config.workspace}`);
+    console.info(`   R2 Integration: ${config.r2Integration ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(`   Real-time Data: ${config.realTimeData ? '✅ Enabled' : '❌ Disabled'}`);
+    console.info(
       `   Features: Search=${config.includeSearch}, Analytics=${config.includeAnalytics}, TOC=${config.includeTOC}`
     );
-    console.log('');
+    console.info('');
 
     // Generate enhanced wiki files with R2 integration
     if (config.r2Integration) {
@@ -1921,53 +1943,53 @@ async function main(): Promise<void> {
       await createWikiFiles(config);
     }
 
-    console.log('\n🎉 Enhanced wiki generation completed successfully!');
-    console.log('\n📁 Generated Files:');
-    console.log(
+    console.info('\n🎉 Enhanced wiki generation completed successfully!');
+    console.info('\n📁 Generated Files:');
+    console.info(
       `   📝 ${config.outputDir}/bun-utilities-wiki.md - Enhanced markdown with TOC and analytics`
     );
-    console.log(
+    console.info(
       `   🌐 ${config.outputDir}/bun-utilities-wiki.html - Interactive HTML with search and themes`
     );
-    console.log(`   📄 ${config.outputDir}/bun-utilities-wiki.json - API-ready with search index`);
+    console.info(`   📄 ${config.outputDir}/bun-utilities-wiki.json - API-ready with search index`);
 
     if (config.r2Integration) {
-      console.log(
+      console.info(
         `   🌐 ${config.outputDir}/bun-utilities-wiki-r2.md - Enhanced markdown with R2 data`
       );
-      console.log(
+      console.info(
         `   🌐 ${config.outputDir}/bun-utilities-wiki-r2.html - Interactive HTML with R2 integration`
       );
-      console.log(`   📄 ${config.outputDir}/bun-utilities-wiki-r2.json - API-ready with R2 data`);
-      console.log(`   📊 ${config.outputDir}/r2-integration-summary.md - R2 integration status`);
+      console.info(`   📄 ${config.outputDir}/bun-utilities-wiki-r2.json - API-ready with R2 data`);
+      console.info(`   📊 ${config.outputDir}/r2-integration-summary.md - R2 integration status`);
     }
 
     if (config.includeSearch) {
-      console.log(`   🔍 ${config.outputDir}/search-index.json - Fast search lookup`);
+      console.info(`   🔍 ${config.outputDir}/search-index.json - Fast search lookup`);
     }
 
     if (config.includeAnalytics) {
-      console.log(`   📊 ${config.outputDir}/analytics.json - Generation metrics and insights`);
+      console.info(`   📊 ${config.outputDir}/analytics.json - Generation metrics and insights`);
     }
 
-    console.log(`   📖 ${config.outputDir}/README.md - Comprehensive usage guide`);
-    console.log(`   🚀 ${config.outputDir}/deploy.sh / deploy.ps1 - Automation scripts`);
+    console.info(`   📖 ${config.outputDir}/README.md - Comprehensive usage guide`);
+    console.info(`   🚀 ${config.outputDir}/deploy.sh / deploy.ps1 - Automation scripts`);
 
-    console.log('\n💡 Next Steps:');
-    console.log(`   1. Open ${config.outputDir}/bun-utilities-wiki.html to view interactive wiki`);
-    console.log('   2. Import markdown into your wiki system (Confluence, Notion, etc.)');
-    console.log('   3. Use JSON for API integration and automation');
-    console.log('   4. Run deployment scripts for automated publishing');
-    console.log("   5. Customize with your organization's branding and URLs");
+    console.info('\n💡 Next Steps:');
+    console.info(`   1. Open ${config.outputDir}/bun-utilities-wiki.html to view interactive wiki`);
+    console.info('   2. Import markdown into your wiki system (Confluence, Notion, etc.)');
+    console.info('   3. Use JSON for API integration and automation');
+    console.info('   4. Run deployment scripts for automated publishing');
+    console.info("   5. Customize with your organization's branding and URLs");
 
-    console.log('\n🔗 Integration Examples:');
-    console.log(`   📋 Confluence: Import ${config.outputDir}/bun-utilities-wiki.md`);
-    console.log(`   📝 Notion API: Use ${config.outputDir}/bun-utilities-wiki.json`);
-    console.log(`   🐙 GitHub Wiki: Copy ${config.outputDir}/bun-utilities-wiki.md`);
-    console.log(`   🔧 Custom API: Use ${config.outputDir}/search-index.json for search`);
+    console.info('\n🔗 Integration Examples:');
+    console.info(`   📋 Confluence: Import ${config.outputDir}/bun-utilities-wiki.md`);
+    console.info(`   📝 Notion API: Use ${config.outputDir}/bun-utilities-wiki.json`);
+    console.info(`   🐙 GitHub Wiki: Copy ${config.outputDir}/bun-utilities-wiki.md`);
+    console.info(`   🔧 Custom API: Use ${config.outputDir}/search-index.json for search`);
 
     if (config.format === 'all' || config.format === 'html') {
-      console.log(`\n🌐 Quick Start: open ${config.outputDir}/bun-utilities-wiki.html`);
+      console.info(`\n🌐 Quick Start: open ${config.outputDir}/bun-utilities-wiki.html`);
     }
   } catch (error) {
     console.error('\n❌ Enhanced wiki generation failed:', error);

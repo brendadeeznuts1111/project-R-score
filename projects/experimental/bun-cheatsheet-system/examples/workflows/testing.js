@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
 
 export async function demoTestingWorkflow() {
-  console.log('🧪 Testing Workflow Demo');
-  console.log('='.repeat(40));
+  console.info('🧪 Testing Workflow Demo');
+  console.info('='.repeat(40));
   
   try {
     // 1. Test setup and configuration
-    console.log('\n1. ⚙️ Test Setup:');
+    console.info('\n1. ⚙️ Test Setup:');
     const testConfig = {
       framework: 'Bun Test',
       coverage: true,
@@ -16,13 +16,13 @@ export async function demoTestingWorkflow() {
       environment: 'node'
     };
     
-    console.log('   📋 Test Configuration:');
+    console.info('   📋 Test Configuration:');
     Object.entries(testConfig).forEach(([key, value]) => {
-      console.log(`      ${key}: ${value}`);
+      console.info(`      ${key}: ${value}`);
     });
     
     // 2. Unit tests
-    console.log('\n2. 🔬 Unit Tests:');
+    console.info('\n2. 🔬 Unit Tests:');
     const runUnitTests = async () => {
       const unitTests = [
         {
@@ -60,7 +60,7 @@ export async function demoTestingWorkflow() {
       let totalDuration = 0;
       
       for (const suite of unitTests) {
-        console.log(`   📁 ${suite.name}:`);
+        console.info(`   📁 ${suite.name}:`);
         
         for (const test of suite.tests) {
           totalTests++;
@@ -68,10 +68,10 @@ export async function demoTestingWorkflow() {
           
           if (test.status === 'passed') {
             passedTests++;
-            console.log(`      ✅ ${test.name} (${test.duration}ms)`);
+            console.info(`      ✅ ${test.name} (${test.duration}ms)`);
           } else {
-            console.log(`      ❌ ${test.name} (${test.duration}ms)`);
-            console.log(`         ${test.error}`);
+            console.info(`      ❌ ${test.name} (${test.duration}ms)`);
+            console.info(`         ${test.error}`);
           }
         }
       }
@@ -80,10 +80,10 @@ export async function demoTestingWorkflow() {
     };
     
     const unitResults = await runUnitTests();
-    console.log(`   📊 Unit Tests: ${unitResults.passed}/${unitResults.total} passed (${unitResults.duration}ms)`);
+    console.info(`   📊 Unit Tests: ${unitResults.passed}/${unitResults.total} passed (${unitResults.duration}ms)`);
     
     // 3. Integration tests
-    console.log('\n3. 🔗 Integration Tests:');
+    console.info('\n3. 🔗 Integration Tests:');
     const runIntegrationTests = async () => {
       const integrationTests = [
         {
@@ -128,9 +128,9 @@ export async function demoTestingWorkflow() {
       let totalDuration = 0;
       
       for (const suite of integrationTests) {
-        console.log(`   🔗 ${suite.name}:`);
-        console.log(`      📝 ${suite.description}`);
-        console.log(`      ⚙️  ${suite.setup}`);
+        console.info(`   🔗 ${suite.name}:`);
+        console.info(`      📝 ${suite.description}`);
+        console.info(`      ⚙️  ${suite.setup}`);
         
         for (const test of suite.tests) {
           totalTests++;
@@ -138,24 +138,24 @@ export async function demoTestingWorkflow() {
           
           if (test.status === 'passed') {
             passedTests++;
-            console.log(`      ✅ ${test.name} (${test.duration}ms)`);
+            console.info(`      ✅ ${test.name} (${test.duration}ms)`);
           } else {
-            console.log(`      ❌ ${test.name} (${test.duration}ms)`);
-            console.log(`         ${test.error}`);
+            console.info(`      ❌ ${test.name} (${test.duration}ms)`);
+            console.info(`         ${test.error}`);
           }
         }
         
-        console.log(`      🧹 ${suite.cleanup}`);
+        console.info(`      🧹 ${suite.cleanup}`);
       }
       
       return { total: totalTests, passed: passedTests, duration: totalDuration };
     };
     
     const integrationResults = await runIntegrationTests();
-    console.log(`   📊 Integration Tests: ${integrationResults.passed}/${integrationResults.total} passed (${integrationResults.duration}ms)`);
+    console.info(`   📊 Integration Tests: ${integrationResults.passed}/${integrationResults.total} passed (${integrationResults.duration}ms)`);
     
     // 4. End-to-end tests
-    console.log('\n4. 🎭 End-to-End Tests:');
+    console.info('\n4. 🎭 End-to-End Tests:');
     const runE2ETests = async () => {
       const e2eTests = [
         {
@@ -206,19 +206,19 @@ export async function demoTestingWorkflow() {
       for (const test of e2eTests) {
         totalDuration += test.duration;
         
-        console.log(`   🎭 ${test.name}:`);
-        console.log(`      📋 Steps: ${test.steps.length}`);
+        console.info(`   🎭 ${test.name}:`);
+        console.info(`      📋 Steps: ${test.steps.length}`);
         
         test.steps.forEach((step, index) => {
-          console.log(`         ${index + 1}. ${step}`);
+          console.info(`         ${index + 1}. ${step}`);
         });
         
         if (test.status === 'passed') {
           passedTests++;
-          console.log(`      ✅ Passed (${test.duration}ms)`);
+          console.info(`      ✅ Passed (${test.duration}ms)`);
         } else {
-          console.log(`      ❌ Failed (${test.duration}ms)`);
-          console.log(`         ${test.error}`);
+          console.info(`      ❌ Failed (${test.duration}ms)`);
+          console.info(`         ${test.error}`);
         }
       }
       
@@ -226,10 +226,10 @@ export async function demoTestingWorkflow() {
     };
     
     const e2eResults = await runE2ETests();
-    console.log(`   📊 E2E Tests: ${e2eResults.passed}/${e2eResults.total} passed (${e2eResults.duration}ms)`);
+    console.info(`   📊 E2E Tests: ${e2eResults.passed}/${e2eResults.total} passed (${e2eResults.duration}ms)`);
     
     // 5. Performance tests
-    console.log('\n5. ⚡ Performance Tests:');
+    console.info('\n5. ⚡ Performance Tests:');
     const runPerformanceTests = async () => {
       const performanceTests = [
         {
@@ -272,34 +272,34 @@ export async function demoTestingWorkflow() {
       ];
       
       for (const test of performanceTests) {
-        console.log(`   ⚡ ${test.name}:`);
-        console.log(`      📝 ${test.description}`);
+        console.info(`   ⚡ ${test.name}:`);
+        console.info(`      📝 ${test.description}`);
         
         if (test.metrics.requests) {
-          console.log(`      📊 Requests: ${test.metrics.requests}`);
-          console.log(`      ⏱️  Duration: ${test.metrics.duration}ms`);
-          console.log(`      📈 Avg Response: ${test.metrics.avgResponseTime}ms`);
-          console.log(`      📈 Max Response: ${test.metrics.maxResponseTime}ms`);
-          console.log(`      ❌ Error Rate: ${(test.metrics.errorRate * 100).toFixed(1)}%`);
-          console.log(`      🚀 Throughput: ${test.metrics.throughput} req/s`);
+          console.info(`      📊 Requests: ${test.metrics.requests}`);
+          console.info(`      ⏱️  Duration: ${test.metrics.duration}ms`);
+          console.info(`      📈 Avg Response: ${test.metrics.avgResponseTime}ms`);
+          console.info(`      📈 Max Response: ${test.metrics.maxResponseTime}ms`);
+          console.info(`      ❌ Error Rate: ${(test.metrics.errorRate * 100).toFixed(1)}%`);
+          console.info(`      🚀 Throughput: ${test.metrics.throughput} req/s`);
         } else {
-          console.log(`      💾 Initial Memory: ${test.metrics.initialMemory}MB`);
-          console.log(`      📈 Peak Memory: ${test.metrics.peakMemory}MB`);
-          console.log(`      💾 Final Memory: ${test.metrics.finalMemory}MB`);
-          console.log(`      🔍 Leak Detected: ${test.metrics.leakDetected ? 'Yes' : 'No'}`);
+          console.info(`      💾 Initial Memory: ${test.metrics.initialMemory}MB`);
+          console.info(`      📈 Peak Memory: ${test.metrics.peakMemory}MB`);
+          console.info(`      💾 Final Memory: ${test.metrics.finalMemory}MB`);
+          console.info(`      🔍 Leak Detected: ${test.metrics.leakDetected ? 'Yes' : 'No'}`);
         }
         
-        console.log(`      ${test.status === 'passed' ? '✅' : '❌'} ${test.status}`);
+        console.info(`      ${test.status === 'passed' ? '✅' : '❌'} ${test.status}`);
       }
       
       return { passed: performanceTests.filter(t => t.status === 'passed').length, total: performanceTests.length };
     };
     
     const performanceResults = await runPerformanceTests();
-    console.log(`   📊 Performance Tests: ${performanceResults.passed}/${performanceResults.total} passed`);
+    console.info(`   📊 Performance Tests: ${performanceResults.passed}/${performanceResults.total} passed`);
     
     // 6. Coverage analysis
-    console.log('\n6. 📊 Coverage Analysis:');
+    console.info('\n6. 📊 Coverage Analysis:');
     const generateCoverageReport = () => {
       const coverage = {
         lines: { covered: 1250, total: 1500, percentage: 83.3 },
@@ -308,14 +308,14 @@ export async function demoTestingWorkflow() {
         statements: { covered: 1320, total: 1480, percentage: 89.2 }
       };
       
-      console.log('   📈 Coverage Report:');
-      console.log(`      📄 Lines: ${coverage.lines.covered}/${coverage.lines.total} (${coverage.lines.percentage}%)`);
-      console.log(`      🔧 Functions: ${coverage.functions.covered}/${coverage.functions.total} (${coverage.functions.percentage}%)`);
-      console.log(`      🌿 Branches: ${coverage.branches.covered}/${coverage.branches.total} (${coverage.branches.percentage}%)`);
-      console.log(`      📝 Statements: ${coverage.statements.covered}/${coverage.statements.total} (${coverage.statements.percentage}%)`);
+      console.info('   📈 Coverage Report:');
+      console.info(`      📄 Lines: ${coverage.lines.covered}/${coverage.lines.total} (${coverage.lines.percentage}%)`);
+      console.info(`      🔧 Functions: ${coverage.functions.covered}/${coverage.functions.total} (${coverage.functions.percentage}%)`);
+      console.info(`      🌿 Branches: ${coverage.branches.covered}/${coverage.branches.total} (${coverage.branches.percentage}%)`);
+      console.info(`      📝 Statements: ${coverage.statements.covered}/${coverage.statements.total} (${coverage.statements.percentage}%)`);
       
       const overallPercentage = (coverage.lines.percentage + coverage.functions.percentage + coverage.branches.percentage + coverage.statements.percentage) / 4;
-      console.log(`      📊 Overall: ${overallPercentage.toFixed(1)}%`);
+      console.info(`      📊 Overall: ${overallPercentage.toFixed(1)}%`);
       
       return coverage;
     };
@@ -323,19 +323,19 @@ export async function demoTestingWorkflow() {
     const coverage = generateCoverageReport();
     
     // 7. Test reporting
-    console.log('\n7. 📋 Test Report Summary:');
+    console.info('\n7. 📋 Test Report Summary:');
     const totalTests = unitResults.total + integrationResults.total + e2eResults.total;
     const totalPassed = unitResults.passed + integrationResults.passed + e2eResults.passed;
     const totalDuration = unitResults.duration + integrationResults.duration + e2eResults.duration;
     
-    console.log(`   📊 Overall Results:`);
-    console.log(`      ✅ Passed: ${totalPassed}/${totalTests} (${((totalPassed / totalTests) * 100).toFixed(1)}%)`);
-    console.log(`      ❌ Failed: ${totalTests - totalPassed}/${totalTests}`);
-    console.log(`      ⏱️  Total Duration: ${totalDuration}ms`);
-    console.log(`      📊 Coverage: ${((coverage.lines.percentage + coverage.functions.percentage + coverage.branches.percentage + coverage.statements.percentage) / 4).toFixed(1)}%`);
+    console.info(`   📊 Overall Results:`);
+    console.info(`      ✅ Passed: ${totalPassed}/${totalTests} (${((totalPassed / totalTests) * 100).toFixed(1)}%)`);
+    console.info(`      ❌ Failed: ${totalTests - totalPassed}/${totalTests}`);
+    console.info(`      ⏱️  Total Duration: ${totalDuration}ms`);
+    console.info(`      📊 Coverage: ${((coverage.lines.percentage + coverage.functions.percentage + coverage.branches.percentage + coverage.statements.percentage) / 4).toFixed(1)}%`);
     
     // 8. Quality gates
-    console.log('\n8. 🚪 Quality Gates:');
+    console.info('\n8. 🚪 Quality Gates:');
     const qualityGates = {
       minTestPassRate: 95,
       minCoverage: 80,
@@ -350,7 +350,7 @@ export async function demoTestingWorkflow() {
       e2eDuration: e2eResults.duration
     };
     
-    console.log('   🎯 Quality Gate Checks:');
+    console.info('   🎯 Quality Gate Checks:');
     
     const gates = [
       { name: 'Test Pass Rate', threshold: qualityGates.minTestPassRate, actual: actualMetrics.testPassRate, unit: '%' },
@@ -365,29 +365,29 @@ export async function demoTestingWorkflow() {
       const passed = gate.max ? gate.actual <= gate.threshold : gate.actual >= gate.threshold;
       allGatesPassed = allGatesPassed && passed;
       
-      console.log(`      ${passed ? '✅' : '❌'} ${gate.name}: ${gate.actual.toFixed(1)}${gate.unit} (threshold: ${gate.threshold}${gate.unit})`);
+      console.info(`      ${passed ? '✅' : '❌'} ${gate.name}: ${gate.actual.toFixed(1)}${gate.unit} (threshold: ${gate.threshold}${gate.unit})`);
     }
     
     if (allGatesPassed) {
-      console.log('\n🎉 All quality gates passed! Ready for deployment.');
+      console.info('\n🎉 All quality gates passed! Ready for deployment.');
     } else {
-      console.log('\n⚠️  Some quality gates failed. Review and fix issues.');
+      console.info('\n⚠️  Some quality gates failed. Review and fix issues.');
     }
     
   } catch (error) {
-    console.log(`❌ Testing workflow error: ${error.message}`);
+    console.info(`❌ Testing workflow error: ${error.message}`);
   }
   
-  console.log('\n✅ Testing workflow demo completed!');
-  console.log('\n💡 Modern testing includes:');
-  console.log('   • Unit tests for individual functions');
-  console.log('   • Integration tests for component interactions');
-  console.log('   • End-to-end tests for user workflows');
-  console.log('   • Performance and load testing');
-  console.log('   • Code coverage analysis');
-  console.log('   • Automated quality gates');
-  console.log('   • Parallel test execution');
-  console.log('   • Comprehensive reporting');
+  console.info('\n✅ Testing workflow demo completed!');
+  console.info('\n💡 Modern testing includes:');
+  console.info('   • Unit tests for individual functions');
+  console.info('   • Integration tests for component interactions');
+  console.info('   • End-to-end tests for user workflows');
+  console.info('   • Performance and load testing');
+  console.info('   • Code coverage analysis');
+  console.info('   • Automated quality gates');
+  console.info('   • Parallel test execution');
+  console.info('   • Comprehensive reporting');
 }
 
 if (import.meta.main) {

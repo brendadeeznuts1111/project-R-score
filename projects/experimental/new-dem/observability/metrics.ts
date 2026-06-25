@@ -76,7 +76,7 @@ export class ObservabilityMetrics {
       this.alerts = this.alerts.slice(0, 1000);
     }
 
-    console.log(`🚨 ALERT: ${alert.message}`);
+    console.info(`🚨 ALERT: ${alert.message}`);
   }
 
   getMetrics(name?: string, tags?: Record<string, string>): MetricData[] {
@@ -282,7 +282,7 @@ export class AlertManager {
 
   private followUpAlert(alert: Alert, rule: EscalationRule): void {
     // Check if alert is still active and escalate if needed
-    console.log(`📋 Follow-up check for alert ${alert.id}`);
+    console.info(`📋 Follow-up check for alert ${alert.id}`);
     // Implementation for follow-up logic
   }
 }

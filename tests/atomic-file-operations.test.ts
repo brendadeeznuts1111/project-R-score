@@ -12,7 +12,9 @@ function setup() {
 }
 
 function cleanup() {
-  try { rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+  try { rmSync(tmpDir, { recursive: true, force: true }); } catch {
+    console.error('Unhandled error:', error);
+  }
 }
 
 afterEach(cleanup);

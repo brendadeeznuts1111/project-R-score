@@ -103,7 +103,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(configData, ["name", "value", "status", "priority", "category"], {
+        console.info(Bun.inspect.table(configData, ["name", "value", "status", "priority", "category"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -192,7 +192,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(dbData, ["setting", "value", "port", "status", "security", "type"], {
+        console.info(Bun.inspect.table(dbData, ["setting", "value", "port", "status", "security", "type"], {
             colors: true,
             compact: false,
             minWidth: 6,
@@ -266,8 +266,8 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log('\n📊 Database Health Analysis:');
-        console.log(Bun.inspect.table(healthData, ["metric", "score", "status", "impact"], {
+        console.info('\n📊 Database Health Analysis:');
+        console.info(Bun.inspect.table(healthData, ["metric", "score", "status", "impact"], {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -339,7 +339,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(apiData, ["component", "value", "protocol", "status", "security"], {
+        console.info(Bun.inspect.table(apiData, ["component", "value", "protocol", "status", "security"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -421,7 +421,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(featureData, ["flag", "value", "category", "impact", "users"], {
+        console.info(Bun.inspect.table(featureData, ["flag", "value", "category", "impact", "users"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -490,7 +490,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(bunData, ["setting", "value", "type", "status"], {
+        console.info(Bun.inspect.table(bunData, ["setting", "value", "type", "status"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -564,7 +564,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(securityData, ["feature", "value", "level", "recommendation"], {
+        console.info(Bun.inspect.table(securityData, ["feature", "value", "level", "recommendation"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -646,7 +646,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(examples, ["pattern", "code", "type", "usage", "safety"], {
+        console.info(Bun.inspect.table(examples, ["pattern", "code", "type", "usage", "safety"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -720,7 +720,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(patterns, ["scenario", "example", "complexity", "category", "bestPractice"], {
+        console.info(Bun.inspect.table(patterns, ["scenario", "example", "complexity", "category", "bestPractice"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -790,7 +790,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(validationData, ["metric", "value", "severity", "action"], {
+        console.info(Bun.inspect.table(validationData, ["metric", "value", "severity", "action"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -819,7 +819,7 @@ class AdvancedUltraCleanDashboard {
         }));
 
         if (validation.missingVars.length > 0) {
-            console.log('\n❌ Missing Required Variables:');
+            console.info('\n❌ Missing Required Variables:');
             const missingData = validation.missingVars.map((varName, index) => ({
                 '#': (index + 1).toString(),
                 'Variable': varName,
@@ -828,7 +828,7 @@ class AdvancedUltraCleanDashboard {
                 'Impact': varName.includes('DB') ? 'Critical' : 'High'
             }));
 
-            console.log(Bun.inspect.table(missingData, ["#", "Variable", "Type", "Priority", "Impact"], {
+            console.info(Bun.inspect.table(missingData, ["#", "Variable", "Type", "Priority", "Impact"], {
                 colors: true,
                 compact: false,
                 minWidth: 6,
@@ -850,7 +850,7 @@ class AdvancedUltraCleanDashboard {
         }
 
         if (validation.recommendations.length > 0) {
-            console.log('\n💡 Recommendations:');
+            console.info('\n💡 Recommendations:');
             const recommendationData = validation.recommendations.map((rec, index) => ({
                 '#': (index + 1).toString(),
                 'Recommendation': rec,
@@ -858,7 +858,7 @@ class AdvancedUltraCleanDashboard {
                 'Impact': rec.includes('API') ? 'High' : 'Medium'
             }));
 
-            console.log(Bun.inspect.table(recommendationData, ["#", "Recommendation", "Effort", "Impact"], {
+            console.info(Bun.inspect.table(recommendationData, ["#", "Recommendation", "Effort", "Impact"], {
                 colors: true,
                 compact: false,
                 minWidth: 6,
@@ -922,7 +922,7 @@ class AdvancedUltraCleanDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
+        console.info(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
             colors: true,
             compact: false,
             minWidth: 8,

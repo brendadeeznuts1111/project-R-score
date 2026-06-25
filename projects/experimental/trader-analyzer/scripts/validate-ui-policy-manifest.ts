@@ -239,53 +239,53 @@ async function main() {
   const manifestPath = nonFlagArgs[0] || 
                        join(process.cwd(), 'config', 'ui-policy-manifest.yaml');
 
-  console.log(`🔍 Validating UI Policy Manifest: ${manifestPath}\n`);
+  console.info(`🔍 Validating UI Policy Manifest: ${manifestPath}\n`);
 
   const result = await validateManifest(manifestPath);
 
   // Print results
   if (result.metadata) {
-    console.log('📋 Manifest Metadata:');
-    console.log(`   Version: ${result.metadata.version || 'N/A'}`);
-    console.log(`   Schema Version: ${result.metadata.schema_version || 'N/A'}`);
-    console.log(`   Last Updated: ${result.metadata.last_updated || 'N/A'}`);
-    console.log('');
+    console.info('📋 Manifest Metadata:');
+    console.info(`   Version: ${result.metadata.version || 'N/A'}`);
+    console.info(`   Schema Version: ${result.metadata.schema_version || 'N/A'}`);
+    console.info(`   Last Updated: ${result.metadata.last_updated || 'N/A'}`);
+    console.info('');
   }
 
   if (result.errors.length > 0) {
-    console.log('❌ Validation Errors:');
+    console.info('❌ Validation Errors:');
     for (const error of result.errors) {
-      console.log(`   • ${error}`);
+      console.info(`   • ${error}`);
     }
-    console.log('');
+    console.info('');
   }
 
   if (result.warnings.length > 0) {
-    console.log('⚠️  Warnings:');
+    console.info('⚠️  Warnings:');
     for (const warning of result.warnings) {
-      console.log(`   • ${warning}`);
+      console.info(`   • ${warning}`);
     }
-    console.log('');
+    console.info('');
   }
 
   if (result.valid) {
-    console.log('✅ Manifest is valid!');
+    console.info('✅ Manifest is valid!');
     
     // Print summary
     if (result.manifest) {
       const featureFlags = Object.keys(result.manifest.feature_flags || {});
-      console.log(`\n📊 Summary:`);
-      console.log(`   Feature Flags: ${featureFlags.length}`);
-      console.log(`   Policies: ${Object.keys(result.manifest.html_rewriter_policies || {}).length}`);
+      console.info(`\n📊 Summary:`);
+      console.info(`   Feature Flags: ${featureFlags.length}`);
+      console.info(`   Policies: ${Object.keys(result.manifest.html_rewriter_policies || {}).length}`);
     }
     
     if (isCI) {
       process.exit(0);
     }
   } else {
-    console.log('❌ Manifest validation failed!');
-    console.log(`\nFound ${result.errors.length} error(s) and ${result.warnings.length} warning(s).`);
-    console.log('\n💡 Tip: Check the manifest structure against the schema in docs/8.0.0.0.0.0.0-FRONTEND-CONFIG-POLICY.md');
+    console.info('❌ Manifest validation failed!');
+    console.info(`\nFound ${result.errors.length} error(s) and ${result.warnings.length} warning(s).`);
+    console.info('\n💡 Tip: Check the manifest structure against the schema in docs/8.0.0.0.0.0.0-FRONTEND-CONFIG-POLICY.md');
     
     if (isCI) {
       process.exit(1);

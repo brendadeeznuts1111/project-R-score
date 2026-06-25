@@ -180,7 +180,7 @@ async function createBenchmark(options: {
 
 	// Copy profile to benchmarks directory
 	copyFileSync(profilePath, benchmarkProfilePath);
-	console.log(`✅ Copied profile to ${benchmarkProfilePath}`);
+	console.info(`✅ Copied profile to ${benchmarkProfilePath}`);
 
 	// Check if analysis file exists (same name with _analysis.json suffix)
 	const analysisPath = profilePath.replace(ext, "_analysis.json");
@@ -193,7 +193,7 @@ async function createBenchmark(options: {
 
 		mkdirSync("benchmarks/analysis", { recursive: true });
 		copyFileSync(analysisPath, benchmarkAnalysisPath);
-		console.log(`✅ Copied analysis to ${benchmarkAnalysisPath}`);
+		console.info(`✅ Copied analysis to ${benchmarkAnalysisPath}`);
 
 		try {
 			const analysisContent = JSON.parse(readFileSync(analysisPath, "utf-8"));
@@ -231,15 +231,15 @@ async function createBenchmark(options: {
 	// Write metadata
 	const metadataPath = join("benchmarks", "metadata", `${id}.json`);
 	writeFileSync(metadataPath, JSON.stringify(metadata, null, 2) + "\n");
-	console.log(`✅ Created metadata at ${metadataPath}`);
+	console.info(`✅ Created metadata at ${metadataPath}`);
 
-	console.log(`\n🎉 Benchmark "${name}" created successfully!`);
-	console.log(`\n📋 Summary:`);
-	console.log(`   ID: ${id}`);
-	console.log(`   Profile: ${benchmarkProfilePath}`);
-	console.log(`   Metadata: ${metadataPath}`);
+	console.info(`\n🎉 Benchmark "${name}" created successfully!`);
+	console.info(`\n📋 Summary:`);
+	console.info(`   ID: ${id}`);
+	console.info(`   Profile: ${benchmarkProfilePath}`);
+	console.info(`   Metadata: ${metadataPath}`);
 	if (analysis) {
-		console.log(`   Analysis: ${analysis.file}`);
+		console.info(`   Analysis: ${analysis.file}`);
 	}
 }
 

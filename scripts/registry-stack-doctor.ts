@@ -115,8 +115,12 @@ async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> 
     return { id: 'registry_config_exists', ok: true, detail: `created ${abs}` };
   }
   const text = await readFile(abs, 'utf8');
-  const hasCanonicalUrl = text.includes(`url: "${CANONICAL_REGISTRY_URL}"`) || text.includes(`"url": "${CANONICAL_REGISTRY_URL}"`);
-  const hasR2Bucket = text.includes(`bucket: "${DEFAULT_R2_BUCKET}"`) || text.includes(`"bucket": "${DEFAULT_R2_BUCKET}"`);
+  const hasCanonicalUrl =
+    text.includes(`url: "${CANONICAL_REGISTRY_URL}"`) ||
+    text.includes(`"url": "${CANONICAL_REGISTRY_URL}"`);
+  const hasR2Bucket =
+    text.includes(`bucket: "${DEFAULT_R2_BUCKET}"`) ||
+    text.includes(`"bucket": "${DEFAULT_R2_BUCKET}"`);
   if (hasCanonicalUrl && hasR2Bucket) {
     return { id: 'registry_config_canonical', ok: true, detail: abs };
   }
@@ -136,9 +140,14 @@ async function ensureEnv(path: string, fix: boolean): Promise<Check> {
   ];
   const raw = existsSync(abs) ? await readFile(abs, 'utf8') : '';
   const missing = required.filter(([k]) => !new RegExp(`^${k}=`, 'm').test(raw));
-  if (missing.length === 0) return { id: 'registry_env', ok: true, detail: `${abs} has required keys` };
+  if (missing.length === 0)
+    return { id: 'registry_env', ok: true, detail: `${abs} has required keys` };
   if (!fix) {
-    return { id: 'registry_env', ok: false, detail: `missing keys in ${abs}: ${missing.map(([k]) => k).join(', ')}` };
+    return {
+      id: 'registry_env',
+      ok: false,
+      detail: `missing keys in ${abs}: ${missing.map(([k]) => k).join(', ')}`,
+    };
   }
   const dir = resolve(abs, '..');
   if (!existsSync(dir)) await mkdir(dir, { recursive: true });
@@ -159,7 +168,11 @@ async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
     return { id: 'npmrc_canonical', ok: true, detail: abs };
   }
   if (!fix) {
-    return { id: 'npmrc_canonical', ok: false, detail: `missing canonical registry scope/auth lines in ${abs}` };
+    return {
+      id: 'npmrc_canonical',
+      ok: false,
+      detail: `missing canonical registry scope/auth lines in ${abs}`,
+    };
   }
   const next = `${raw}${raw && !raw.endsWith('\n') ? '\n' : ''}\n# Canonical FactoryWager registry\n${block}`;
   await writeFile(abs, next, 'utf8');
@@ -184,7 +197,7 @@ async function runDoctor(options: Options) {
   checks.push(await ensureEnv(options.envFile, options.fix));
   checks.push(await ensureNpmrc(options.npmrcFile, options.fix));
   checks.push(await checkPackagePublishConfig());
-  const ok = checks.every((c) => c.ok);
+  const ok = checks.every(c => c.ok);
   return {
     ok,
     fixApplied: options.fix,
@@ -206,15 +219,15 @@ if (import.meta.main) {
   const options = parseArgs(process.argv.slice(2));
   const result = await runDoctor(options);
   if (options.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } else {
-    console.log(`Registry Stack Doctor (fix=${options.fix ? 'on' : 'off'})`);
+    console.info(`Registry Stack Doctor (fix=${options.fix ? 'on' : 'off'})`);
     for (const check of result.checks) {
-      console.log(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
+      console.info(`- [${check.ok ? 'ok' : 'fail'}] ${check.id}: ${check.detail}`);
     }
     if (!result.ok) {
-      console.log('- next:');
-      for (const step of result.nextSteps) console.log(`  - ${step}`);
+      console.info('- next:');
+      for (const step of result.nextSteps) console.info(`  - ${step}`);
     }
   }
   process.exit(result.ok ? 0 : 2);

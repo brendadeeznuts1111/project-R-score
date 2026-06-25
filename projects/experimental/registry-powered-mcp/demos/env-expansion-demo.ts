@@ -6,10 +6,10 @@
  */
 
 function demonstrateEnvExpansion() {
-  console.log('\n🌍 Bun Environment Variable Expansion Demo');
-  console.log('=========================================\n');
+  console.info('\n🌍 Bun Environment Variable Expansion Demo');
+  console.info('=========================================\n');
 
-  console.log('📋 Enhanced .npmrc Environment Variable Support:\n');
+  console.info('📋 Enhanced .npmrc Environment Variable Support:\n');
 
   // Simulate different .npmrc scenarios
   const scenarios = [
@@ -52,29 +52,29 @@ function demonstrateEnvExpansion() {
   ];
 
   scenarios.forEach((scenario, index) => {
-    console.log(`${index + 1}. ${scenario.description}:`);
-    console.log(`   .npmrc: ${scenario.npmrc}`);
-    console.log(`   Result: ${scenario.result}\n`);
+    console.info(`${index + 1}. ${scenario.description}:`);
+    console.info(`   .npmrc: ${scenario.npmrc}`);
+    console.info(`   Result: ${scenario.result}\n`);
   });
 
-  console.log('🔧 Technical Details:\n');
-  console.log('• Variables in double quotes: Expanded');
-  console.log('• Variables in single quotes: NOT expanded');
-  console.log('• ${VAR?} syntax: Empty string if undefined');
-  console.log('• Compatible with npm behavior\n');
+  console.info('🔧 Technical Details:\n');
+  console.info('• Variables in double quotes: Expanded');
+  console.info('• Variables in single quotes: NOT expanded');
+  console.info('• ${VAR?} syntax: Empty string if undefined');
+  console.info('• Compatible with npm behavior\n');
 
-  console.log('📁 Configuration Files:\n');
-  console.log('• ~/.npmrc (global)');
-  console.log('• ./project/.npmrc (project-specific)');
-  console.log('• Environment variables override file settings\n');
+  console.info('📁 Configuration Files:\n');
+  console.info('• ~/.npmrc (global)');
+  console.info('• ./project/.npmrc (project-specific)');
+  console.info('• Environment variables override file settings\n');
 
-  console.log('🚀 Production Benefits:\n');
-  console.log('• Secure token management via environment variables');
-  console.log('• No hardcoded secrets in configuration files');
-  console.log('• Consistent behavior across development/production');
-  console.log('• Optional variable handling prevents deployment failures\n');
+  console.info('🚀 Production Benefits:\n');
+  console.info('• Secure token management via environment variables');
+  console.info('• No hardcoded secrets in configuration files');
+  console.info('• Consistent behavior across development/production');
+  console.info('• Optional variable handling prevents deployment failures\n');
 
-  console.log('✅ Enhanced Environment Variable Support Active!');
+  console.info('✅ Enhanced Environment Variable Support Active!');
 }
 
 if (import.meta.main) {

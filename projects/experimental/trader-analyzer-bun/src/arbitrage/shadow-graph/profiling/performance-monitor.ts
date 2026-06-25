@@ -51,7 +51,7 @@ export class PerformanceMonitor {
 		});
 
 		if (process.env.BUN_CPU_PROF === "true") {
-			console.log(`📊 Starting CPU profile: ${sessionName}`);
+			console.info(`📊 Starting CPU profile: ${sessionName}`);
 		}
 	}
 

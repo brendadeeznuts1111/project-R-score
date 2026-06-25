@@ -39,7 +39,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`✅ Test server running on port ${PORT}`);
+console.info(`✅ Test server running on port ${PORT}`);
 
 const baseUrl = `http://localhost:${PORT}`;
 
@@ -329,4 +329,4 @@ group("CookieMap iteration", () => {
 await execute();
 
 server.stop();
-console.log("✅ Server stopped");
+console.info("✅ Server stopped");

@@ -2,13 +2,13 @@
 
 /**
  * FactoryWager MCP Bridge for Claude Desktop Integration
- * 
+ *
  * This bridge connects Claude Desktop with FactoryWager's ecosystem,
  * providing enhanced Bun documentation search with FactoryWager context.
- * 
+ *
  * Setup:
- *   cp factorywager-mcp.json ~/.config/claude/mcp.json
- *   Restart Claude Desktop
+ *   Configure in .cursor/mcp.json or ~/.config/claude/mcp.json
+ *   Restart your MCP client
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -23,8 +23,12 @@ import {
 import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS } from '../lib/theme/colors.ts';
 import { SecretManager } from '../lib/security/secrets-v5.ts';
-import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
-import { mcpAuthMiddleware, extractTokenFromRequest, AuthContext } from '../lib/mcp/auth-middleware.ts';
+import { r2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
+import {
+  mcpAuthMiddleware,
+  extractTokenFromRequest,
+  AuthContext,
+} from '../lib/mcp/auth-middleware.ts';
 import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp.ts';
 
 class FactoryWagerMCPBridge {
@@ -108,7 +112,14 @@ class FactoryWagerMCPBridge {
                 context: {
                   type: 'string',
                   description: 'Usage context for the example',
-                  enum: ['scanner', 'r2-upload', 'secrets-manager', 'profiling', 'web-server', 'general'],
+                  enum: [
+                    'scanner',
+                    'r2-upload',
+                    'secrets-manager',
+                    'profiling',
+                    'web-server',
+                    'general',
+                  ],
                 },
                 includeSecurity: {
                   type: 'boolean',
@@ -256,37 +267,38 @@ class FactoryWagerMCPBridge {
           },
           {
             name: 'GenerateWiki',
-            description: 'Generate internal wiki documentation for Bun utilities with FactoryWager enhancements',
+            description:
+              'Generate internal wiki documentation for Bun utilities with FactoryWager enhancements',
             inputSchema: {
               type: 'object',
               properties: {
                 format: {
                   type: 'string',
                   enum: ['markdown', 'html', 'json', 'all'],
-                  description: 'Output format for the wiki'
+                  description: 'Output format for the wiki',
                 },
                 baseUrl: {
                   type: 'string',
-                  description: 'Base URL for internal wiki (e.g., https://wiki.company.com)'
+                  description: 'Base URL for internal wiki (e.g., https://wiki.company.com)',
                 },
                 workspace: {
                   type: 'string',
-                  description: 'Workspace name (e.g., engineering/bun-utilities)'
+                  description: 'Workspace name (e.g., engineering/bun-utilities)',
                 },
                 includeExamples: {
                   type: 'boolean',
-                  description: 'Include code examples in the wiki'
+                  description: 'Include code examples in the wiki',
                 },
                 context: {
                   type: 'string',
-                  description: 'Context for wiki generation (e.g., security, performance)'
+                  description: 'Context for wiki generation (e.g., security, performance)',
                 },
                 token: {
                   type: 'string',
-                  description: 'Authentication token for access'
-                }
-              }
-            }
+                  description: 'Authentication token for access',
+                },
+              },
+            },
           },
           {
             name: 'GetWikiTemplates',
@@ -296,48 +308,49 @@ class FactoryWagerMCPBridge {
               properties: {
                 token: {
                   type: 'string',
-                  description: 'Authentication token for access'
-                }
-              }
-            }
+                  description: 'Authentication token for access',
+                },
+              },
+            },
           },
           {
             name: 'GenerateWikiFromTemplate',
-            description: 'Generate wiki using a predefined template (Confluence, Notion, GitHub, etc.)',
+            description:
+              'Generate wiki using a predefined template (Confluence, Notion, GitHub, etc.)',
             inputSchema: {
               type: 'object',
               properties: {
                 templateName: {
                   type: 'string',
-                  description: 'Name of the template to use'
+                  description: 'Name of the template to use',
                 },
                 customizations: {
                   type: 'object',
-                  description: 'Custom configuration options'
+                  description: 'Custom configuration options',
                 },
                 token: {
                   type: 'string',
-                  description: 'Authentication token for access'
-                }
-              }
-            }
+                  description: 'Authentication token for access',
+                },
+              },
+            },
           },
         ],
       };
     });
 
     // Handle tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       try {
         // Extract token from arguments or environment
         const token = args?.token || process.env.MASTER_TOKEN;
-        
+
         // Authenticate the request
         const auth = await mcpAuthMiddleware.claudeDesktop.authenticate(token, {
           ip: 'claude-desktop',
-          userAgent: 'claude-desktop-mcp-client'
+          userAgent: 'claude-desktop-mcp-client',
         });
 
         if (!auth.success) {
@@ -353,41 +366,41 @@ class FactoryWagerMCPBridge {
 
         // Store auth context for logging
         this.currentAuthContext = auth.authContext;
-        
-        console.log(styled(`🔐 Authenticated request: ${name} (${auth.authContext.tokenId})`, 'success'));
+
+        console.error(styled(`Authenticated MCP request: ${name}`, 'success'));
         await this.bunClient.connect();
 
         switch (name) {
           case 'SearchBunEnhanced':
             return await this.handleSearchBunEnhanced(args);
-            
+
           case 'GenerateFactoryWagerExample':
             return await this.handleGenerateFactoryWagerExample(args);
-            
+
           case 'AuditSearch':
             return await this.handleAuditSearch(args);
-            
+
           case 'DiagnoseError':
             return await this.handleDiagnoseError(args);
-            
+
           case 'ValidateFactoryWagerCode':
             return await this.handleValidateFactoryWagerCode(args);
-            
+
           case 'GetFactoryWagerMetrics':
             return await this.handleGetFactoryWagerMetrics(args);
-            
+
           case 'StoreDiagnosis':
             return await this.handleStoreDiagnosis(args);
-            
+
           case 'GenerateWiki':
             return await this.handleGenerateWiki(args);
-            
+
           case 'GetWikiTemplates':
             return await this.handleGetWikiTemplates(args);
-            
+
           case 'GenerateWikiFromTemplate':
             return await this.handleGenerateWikiFromTemplate(args);
-            
+
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -438,23 +451,23 @@ class FactoryWagerMCPBridge {
     });
 
     // Handle resource reads
-    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    this.server.setRequestHandler(ReadResourceRequestSchema, async request => {
       const { uri } = request.params;
 
       try {
         switch (uri) {
           case 'factorywager://audit-logs':
             return await this.getAuditLogs();
-            
+
           case 'factorywager://performance-metrics':
             return await this.getPerformanceMetrics();
-            
+
           case 'factorywager://security-policies':
             return await this.getSecurityPolicies();
-            
+
           case 'factorywager://configuration':
             return await this.getConfiguration();
-            
+
           default:
             throw new Error(`Unknown resource: ${uri}`);
         }
@@ -474,7 +487,7 @@ class FactoryWagerMCPBridge {
 
   private async handleSearchBunEnhanced(args: any): Promise<any> {
     const { query, context, generateExample, version, includeSecurity } = args;
-    
+
     // Search Bun docs
     const results = await this.bunClient.searchBunDocs(query, {
       version,
@@ -501,17 +514,21 @@ class FactoryWagerMCPBridge {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            query,
-            context,
-            results: enhancedResults,
-            generatedExample: example,
-            metadata: {
-              totalResults: results.length,
-              hasSecurityNotes: includeSecurity,
-              factorywagerContext: !!context,
+          text: JSON.stringify(
+            {
+              query,
+              context,
+              results: enhancedResults,
+              generatedExample: example,
+              metadata: {
+                totalResults: results.length,
+                hasSecurityNotes: includeSecurity,
+                factorywagerContext: !!context,
+              },
             },
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
@@ -519,9 +536,9 @@ class FactoryWagerMCPBridge {
 
   private async handleGenerateFactoryWagerExample(args: any): Promise<any> {
     const { api, context, includeSecurity, includeErrorHandling } = args;
-    
+
     const baseExample = await this.bunClient.generateFactoryWagerExample(api, context);
-    
+
     // Enhance with FactoryWager patterns
     const enhancedExample = this.enhanceExampleWithPatterns(
       baseExample,
@@ -534,13 +551,17 @@ class FactoryWagerMCPBridge {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            api,
-            context,
-            example: enhancedExample,
-            patterns: this.getAppliedPatterns(context),
-            bestPractices: this.getBestPracticesForContext(context),
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              api,
+              context,
+              example: enhancedExample,
+              patterns: this.getAppliedPatterns(context),
+              bestPractices: this.getBestPracticesForContext(context),
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -548,23 +569,31 @@ class FactoryWagerMCPBridge {
 
   private async handleAuditSearch(args: any): Promise<any> {
     const { query, timeframe, severity, limit } = args;
-    
+
     try {
       // Use R2 integration for real audit search
-      const auditResults = await this.r2Integration.searchSimilarErrors(query, 'general', limit || 50);
-      
+      const auditResults = await this.r2Integration.searchSimilarErrors(
+        query,
+        'general',
+        limit || 50
+      );
+
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              query,
-              timeframe,
-              severity,
-              results: auditResults,
-              total: auditResults.length,
-              source: 'R2 Storage',
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                query,
+                timeframe,
+                severity,
+                results: auditResults,
+                total: auditResults.length,
+                source: 'R2 Storage',
+              },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -585,14 +614,18 @@ class FactoryWagerMCPBridge {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              query,
-              timeframe,
-              severity,
-              results: mockAuditResults.slice(0, limit),
-              total: mockAuditResults.length,
-              source: 'Fallback (R2 unavailable)',
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                query,
+                timeframe,
+                severity,
+                results: mockAuditResults.slice(0, limit),
+                total: mockAuditResults.length,
+                source: 'Fallback (R2 unavailable)',
+              },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -601,16 +634,14 @@ class FactoryWagerMCPBridge {
 
   private async handleDiagnoseError(args: any): Promise<any> {
     const { errorMessage, stackTrace, codeContext, includeAuditHistory } = args;
-    
+
     // Search Bun docs for error patterns
     const docsResults = await this.bunClient.searchBunDocs(errorMessage, {
       codeOnly: true,
     });
 
     // Find similar audit entries
-    const auditHistory = includeAuditHistory 
-      ? await this.findSimilarErrors(errorMessage)
-      : [];
+    const auditHistory = includeAuditHistory ? await this.findSimilarErrors(errorMessage) : [];
 
     // Generate diagnosis
     const diagnosis = {
@@ -634,23 +665,27 @@ class FactoryWagerMCPBridge {
 
   private async handleValidateFactoryWagerCode(args: any): Promise<any> {
     const { code, context, strictMode } = args;
-    
+
     const validation = await this.bunClient.validateCode(code);
-    
+
     // Add FactoryWager-specific validation
     const factoryWagerValidation = this.validateFactoryWagerPatterns(code, context, strictMode);
-    
+
     return {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            valid: validation.valid && factoryWagerValidation.valid,
-            bunValidation: validation,
-            factoryWagerValidation,
-            overallScore: this.calculateOverallScore(validation, factoryWagerValidation),
-            recommendations: this.getRecommendations(validation, factoryWagerValidation),
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              valid: validation.valid && factoryWagerValidation.valid,
+              bunValidation: validation,
+              factoryWagerValidation,
+              overallScore: this.calculateOverallScore(validation, factoryWagerValidation),
+              recommendations: this.getRecommendations(validation, factoryWagerValidation),
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -658,23 +693,27 @@ class FactoryWagerMCPBridge {
 
   private async handleGetFactoryWagerMetrics(args: any): Promise<any> {
     const { metricType, timeframe } = args;
-    
+
     if (metricType === 'r2-storage') {
       try {
         const stats = await this.r2Integration.getBucketStats();
         const configStatus = this.r2Integration.getConfigStatus();
-        
+
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                type: metricType,
-                timeframe,
-                storage: stats,
-                configuration: configStatus,
-                generated: new Date().toISOString(),
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  type: metricType,
+                  timeframe,
+                  storage: stats,
+                  configuration: configStatus,
+                  generated: new Date().toISOString(),
+                },
+                null,
+                2
+              ),
             },
           ],
         };
@@ -683,18 +722,22 @@ class FactoryWagerMCPBridge {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                type: metricType,
-                timeframe,
-                error: error.message,
-                generated: new Date().toISOString(),
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  type: metricType,
+                  timeframe,
+                  error: error.message,
+                  generated: new Date().toISOString(),
+                },
+                null,
+                2
+              ),
             },
           ],
         };
       }
     }
-    
+
     // Mock metrics for other types
     const metrics = {
       performance: {
@@ -723,12 +766,16 @@ class FactoryWagerMCPBridge {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            type: metricType,
-            timeframe,
-            metrics: metrics[metricType] || {},
-            generated: new Date().toISOString(),
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              type: metricType,
+              timeframe,
+              metrics: metrics[metricType] || {},
+              generated: new Date().toISOString(),
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -736,7 +783,7 @@ class FactoryWagerMCPBridge {
 
   private async handleStoreDiagnosis(args: any): Promise<any> {
     const { error, fix, confidence, context, metadata = {} } = args;
-    
+
     try {
       const diagnosisEntry = {
         id: `diagnosis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -751,20 +798,24 @@ class FactoryWagerMCPBridge {
           userAgent: 'claude-desktop',
         },
       };
-      
+
       const key = await this.r2Integration.storeDiagnosis(diagnosisEntry);
-      
+
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              success: true,
-              key,
-              diagnosisId: diagnosisEntry.id,
-              timestamp: diagnosisEntry.timestamp,
-              message: 'Diagnosis stored successfully in R2',
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                success: true,
+                key,
+                diagnosisId: diagnosisEntry.id,
+                timestamp: diagnosisEntry.timestamp,
+                message: 'Diagnosis stored successfully in R2',
+              },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -773,11 +824,15 @@ class FactoryWagerMCPBridge {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              success: false,
-              error: storageError.message,
-              message: 'Failed to store diagnosis in R2',
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                success: false,
+                error: storageError.message,
+                message: 'Failed to store diagnosis in R2',
+              },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -794,20 +849,20 @@ class FactoryWagerMCPBridge {
       profiling: '📊 Performance profiling considerations added',
       security: '🛡️ Security hardening measures applied',
     };
-    
+
     return contextMap[context] || '📝 General FactoryWager context applied';
   }
 
   private extractSecurityNotes(content: string): string[] {
     const securityKeywords = ['security', 'authentication', 'authorization', 'encryption', 'token'];
     const notes: string[] = [];
-    
+
     securityKeywords.forEach(keyword => {
       if (content.toLowerCase().includes(keyword)) {
         notes.push(`🔐 Security consideration: ${keyword}`);
       }
     });
-    
+
     return notes;
   }
 
@@ -825,21 +880,23 @@ class FactoryWagerMCPBridge {
   }
 
   private enhanceExampleWithPatterns(
-    example: string, 
-    context: string, 
-    includeSecurity: boolean, 
+    example: string,
+    context: string,
+    includeSecurity: boolean,
     includeErrorHandling: boolean
   ): string {
     let enhanced = example;
-    
+
     if (includeErrorHandling) {
-      enhanced += '\n\n// FactoryWager Error Handling\ntry {\n  // Your code here\n} catch (error) {\n  console.error(\'Operation failed:\', error);\n  // Implement retry logic or fallback\n}';
+      enhanced +=
+        "\n\n// FactoryWager Error Handling\ntry {\n  // Your code here\n} catch (error) {\n  console.error('Operation failed:', error);\n  // Implement retry logic or fallback\n}";
     }
-    
+
     if (includeSecurity) {
-      enhanced += '\n\n// FactoryWager Security Considerations\n// Validate inputs\n// Sanitize outputs\n// Use secure defaults\n';
+      enhanced +=
+        '\n\n// FactoryWager Security Considerations\n// Validate inputs\n// Sanitize outputs\n// Use secure defaults\n';
     }
-    
+
     return enhanced;
   }
 
@@ -850,7 +907,7 @@ class FactoryWagerMCPBridge {
       r2: ['Efficient uploads', 'Metadata management', 'CDN optimization'],
       profiling: ['Performance monitoring', 'Resource tracking', 'Bottleneck identification'],
     };
-    
+
     return patterns[context] || ['General best practices'];
   }
 
@@ -858,11 +915,25 @@ class FactoryWagerMCPBridge {
     const practices = {
       scanner: ['Always validate URLs', 'Implement rate limiting', 'Log all scans'],
       secrets: ['Use environment variables', 'Rotate keys regularly', 'Audit access'],
-      r2: ['Use multipart uploads for large files', 'Implement retry logic', 'Monitor storage costs'],
-      profiling: ['Profile in production-like environment', 'Monitor memory usage', 'Track performance trends'],
+      r2: [
+        'Use multipart uploads for large files',
+        'Implement retry logic',
+        'Monitor storage costs',
+      ],
+      profiling: [
+        'Profile in production-like environment',
+        'Monitor memory usage',
+        'Track performance trends',
+      ],
     };
-    
-    return practices[context] || ['Follow TypeScript best practices', 'Write comprehensive tests', 'Document your code'];
+
+    return (
+      practices[context] || [
+        'Follow TypeScript best practices',
+        'Write comprehensive tests',
+        'Document your code',
+      ]
+    );
   }
 
   private async findSimilarErrors(errorMessage: string): Promise<any[]> {
@@ -886,10 +957,10 @@ class FactoryWagerMCPBridge {
 
   private calculateConfidence(docs: any[], audits: any[]): number {
     let confidence = 0.5;
-    
+
     if (docs.length > 0) confidence += 0.3;
     if (audits.length > 0) confidence += 0.2;
-    
+
     return Math.min(confidence, 1.0);
   }
 
@@ -909,23 +980,23 @@ class FactoryWagerMCPBridge {
   private calculateOverallScore(bunValidation: any, fwValidation: any): number {
     const bunScore = bunValidation.valid ? 0.8 : 0.4;
     const fwScore = fwValidation.valid ? 0.9 : 0.6;
-    
-    return Math.round((bunScore + fwScore) / 2 * 100);
+
+    return Math.round(((bunScore + fwScore) / 2) * 100);
   }
 
   private getRecommendations(bunValidation: any, fwValidation: any): string[] {
     const recommendations: string[] = [];
-    
+
     if (!bunValidation.valid) {
       recommendations.push('Fix Bun validation errors');
     }
-    
+
     if (!fwValidation.valid) {
       recommendations.push('Address FactoryWager pattern issues');
     }
-    
+
     recommendations.push('Consider adding more comprehensive tests');
-    
+
     return recommendations;
   }
 
@@ -936,16 +1007,20 @@ class FactoryWagerMCPBridge {
         {
           uri: 'factorywager://audit-logs',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            logs: [
-              {
-                timestamp: new Date().toISOString(),
-                level: 'info',
-                message: 'MCP Bridge initialized',
-                component: 'mcp-bridge',
-              },
-            ],
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              logs: [
+                {
+                  timestamp: new Date().toISOString(),
+                  level: 'info',
+                  message: 'MCP Bridge initialized',
+                  component: 'mcp-bridge',
+                },
+              ],
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -957,13 +1032,17 @@ class FactoryWagerMCPBridge {
         {
           uri: 'factorywager://performance-metrics',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            metrics: {
-              responseTime: '25ms',
-              throughput: '100 req/s',
-              memoryUsage: '45MB',
+          text: JSON.stringify(
+            {
+              metrics: {
+                responseTime: '25ms',
+                throughput: '100 req/s',
+                memoryUsage: '45MB',
+              },
             },
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
@@ -994,22 +1073,26 @@ class FactoryWagerMCPBridge {
         {
           uri: 'factorywager://configuration',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            version: '5.0.0',
-            environment: process.env.NODE_ENV || 'development',
-            features: {
-              mcpIntegration: true,
-              securityAuditing: true,
-              performanceMonitoring: true,
+          text: JSON.stringify(
+            {
+              version: '5.0.0',
+              environment: process.env.NODE_ENV || 'development',
+              features: {
+                mcpIntegration: true,
+                securityAuditing: true,
+                performanceMonitoring: true,
+              },
             },
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
   }
 
   private setupErrorHandling(): void {
-    process.on('uncaughtException', (error) => {
+    process.on('uncaughtException', error => {
       console.error('Uncaught exception:', error);
       process.exit(1);
     });
@@ -1023,7 +1106,7 @@ class FactoryWagerMCPBridge {
   async start(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
+
     // Server is now running and handling requests
     // Graceful shutdown
     process.on('SIGINT', async () => {

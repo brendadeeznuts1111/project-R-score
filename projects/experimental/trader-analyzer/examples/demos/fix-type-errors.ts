@@ -103,7 +103,7 @@ function fixSQLQueryBindings(filePath: string, content: string): string {
   if (filePath.includes('src/logging/corrected-forensic-logger.ts') || 
       filePath.includes('src/logging/forensic-movement-logger.ts')) {
     // These need manual review - pattern varies
-    console.log(`  ${colors.yellow('⚠')} SQL bindings in ${filePath} need manual review`);
+    console.info(`  ${colors.yellow('⚠')} SQL bindings in ${filePath} need manual review`);
   }
   
   return content;
@@ -152,7 +152,7 @@ function fixDuplicateIdentifiers(filePath: string, content: string): string {
       if (i === 17 && line.includes('OrcaArbitrageOpportunity')) {
         // Check if we already saw it on line 17 (index 16)
         if (lines[16]?.includes('OrcaArbitrageOpportunity')) {
-          console.log(`  ${colors.yellow('⚠')} Removing duplicate: OrcaArbitrageOpportunity (line ${i + 1})`);
+          console.info(`  ${colors.yellow('⚠')} Removing duplicate: OrcaArbitrageOpportunity (line ${i + 1})`);
           continue;
         }
       }
@@ -196,7 +196,7 @@ async function autoFixFiles() {
     'src/rbac/types.ts',
   ];
 
-  console.log(`${colors.bold('🔧 Auto-Fixing TypeScript Errors\n')}`);
+  console.info(`${colors.bold('🔧 Auto-Fixing TypeScript Errors\n')}`);
   
   let fixedCount = 0;
   let skippedCount = 0;
@@ -205,7 +205,7 @@ async function autoFixFiles() {
   for (const file of files) {
     try {
       if (!Bun.file(file).exists()) {
-        console.log(`  ${colors.gray('○')} File not found: ${file}`);
+        console.info(`  ${colors.gray('○')} File not found: ${file}`);
         skippedCount++;
         continue;
       }
@@ -222,24 +222,24 @@ async function autoFixFiles() {
       
       if (newContent !== content) {
         writeFileSync(file, newContent, 'utf-8');
-        console.log(`  ${colors.green('✅')} Fixed: ${file}`);
+        console.info(`  ${colors.green('✅')} Fixed: ${file}`);
         fixedCount++;
       } else {
-        console.log(`  ${colors.gray('○')} No changes: ${file}`);
+        console.info(`  ${colors.gray('○')} No changes: ${file}`);
         skippedCount++;
       }
     } catch (e) {
-      console.log(`  ${colors.red('❌')} Error processing ${file}: ${(e as Error).message}`);
+      console.info(`  ${colors.red('❌')} Error processing ${file}: ${(e as Error).message}`);
       errorCount++;
     }
   }
   
-  console.log(`\n${colors.bold('📊 Summary:')}`);
-  console.log(`  ${colors.green('Fixed:')} ${fixedCount} files`);
-  console.log(`  ${colors.gray('Skipped:')} ${skippedCount} files`);
-  console.log(`  ${colors.red('Errors:')} ${errorCount} files`);
-  console.log(`\n${colors.bold('🎉 Auto-fix complete!')}`);
-  console.log(`${colors.blue('Next: Run `bun run typecheck` again to verify fixes')}`);
+  console.info(`\n${colors.bold('📊 Summary:')}`);
+  console.info(`  ${colors.green('Fixed:')} ${fixedCount} files`);
+  console.info(`  ${colors.gray('Skipped:')} ${skippedCount} files`);
+  console.info(`  ${colors.red('Errors:')} ${errorCount} files`);
+  console.info(`\n${colors.bold('🎉 Auto-fix complete!')}`);
+  console.info(`${colors.blue('Next: Run `bun run typecheck` again to verify fixes')}`);
 }
 
 // Execute

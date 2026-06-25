@@ -62,13 +62,13 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
         const content = await readFile(canvasPath, 'utf8');
         const canvas: Canvas = JSON.parse(content);
 
-        console.log('🎨 Canvas Terminal Dashboard\n');
-        console.log(`📁 File: ${canvasPath}`);
-        console.log(`📊 Nodes: ${canvas.nodes.length} | Edges: ${canvas.edges?.length || 0}\n`);
+        console.info('🎨 Canvas Terminal Dashboard\n');
+        console.info(`📁 File: ${canvasPath}`);
+        console.info(`📊 Nodes: ${canvas.nodes.length} | Edges: ${canvas.edges?.length || 0}\n`);
 
         // Display nodes with colors
-        console.log('📋 Canvas Nodes:');
-        console.log('─'.repeat(80));
+        console.info('📋 Canvas Nodes:');
+        console.info('─'.repeat(80));
 
         canvas.nodes.forEach((node, index) => {
             const coloredHeader = renderColoredNode(node, { compact: false });
@@ -76,22 +76,22 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
             const priority = node.metadata?.priority || 'medium';
             const type = node.metadata?.documentType || 'document';
 
-            console.log(`${index + 1}. ${coloredHeader}`);
-            console.log(`   🏷️  Status: ${getStatusIcon(status)} ${status}`);
-            console.log(`   ⚡ Priority: ${getPriorityIcon(priority)} ${priority}`);
-            console.log(`   📄 Type: ${type}`);
-            console.log(`   📍 Position: (${node.x}, ${node.y}) | Size: ${node.width}×${node.height}`);
+            console.info(`${index + 1}. ${coloredHeader}`);
+            console.info(`   🏷️  Status: ${getStatusIcon(status)} ${status}`);
+            console.info(`   ⚡ Priority: ${getPriorityIcon(priority)} ${priority}`);
+            console.info(`   📄 Type: ${type}`);
+            console.info(`   📍 Position: (${node.x}, ${node.y}) | Size: ${node.width}×${node.height}`);
 
             if (node.metadata?.version) {
-                console.log(`   🏷️  Version: ${node.metadata.version}`);
+                console.info(`   🏷️  Version: ${node.metadata.version}`);
             }
 
-            console.log('');
+            console.info('');
         });
 
         // Show color palette analysis
-        console.log('\n🎨 Color Palette Analysis:');
-        console.log('─'.repeat(50));
+        console.info('\n🎨 Color Palette Analysis:');
+        console.info('─'.repeat(50));
 
         const colors = convertAllCanvasColors(canvas, "ansi-256");
         const colorCounts = new Map<string, number>();
@@ -102,14 +102,14 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
                 const colorHex = node?.color || 'default';
                 colorCounts.set(colorHex, (colorCounts.get(colorHex) || 0) + 1);
 
-                console.log(`${ansiCode}●${'\x1b[0m'} ${colorHex} (${colorCounts.get(colorHex)} nodes)`);
+                console.info(`${ansiCode}●${'\x1b[0m'} ${colorHex} (${colorCounts.get(colorHex)} nodes)`);
             }
         });
 
         // Show connectivity with colored edges
         if (canvas.edges && canvas.edges.length > 0) {
-            console.log('\n🔗 Connection Map:');
-            console.log('─'.repeat(80));
+            console.info('\n🔗 Connection Map:');
+            console.info('─'.repeat(80));
 
             canvas.edges.forEach((edge, index) => {
                 const fromNode = canvas.nodes.find(n => n.id === edge.fromNode);
@@ -122,13 +122,13 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
                     const reset = '\x1b[0m';
                     const arrow = '→';
 
-                    console.log(
+                    console.info(
                         `${index + 1}. ${fromColor}${edge.fromNode}${reset} ` +
                         `${arrow} ${edge.label || 'connects'} ${arrow} ` +
                         `${toColor}${edge.toNode}${reset}`
                     );
                 } else {
-                    console.log(
+                    console.info(
                         `${index + 1}. ❌ Invalid edge: ${edge.fromNode} → ${edge.toNode} (node not found)`
                     );
                 }
@@ -136,8 +136,8 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
         }
 
         // Show statistics
-        console.log('\n📊 Canvas Statistics:');
-        console.log('─'.repeat(30));
+        console.info('\n📊 Canvas Statistics:');
+        console.info('─'.repeat(30));
 
         const statusCounts = new Map<string, number>();
         const typeCounts = new Map<string, number>();
@@ -153,22 +153,22 @@ async function displayCanvasInTerminal(canvasPath: string): Promise<void> {
             priorityCounts.set(priority, (priorityCounts.get(priority) || 0) + 1);
         });
 
-        console.log('📈 Status Distribution:');
+        console.info('📈 Status Distribution:');
         statusCounts.forEach((count, status) => {
-            console.log(`   ${getStatusIcon(status)} ${status}: ${count}`);
+            console.info(`   ${getStatusIcon(status)} ${status}: ${count}`);
         });
 
-        console.log('\n📄 Type Distribution:');
+        console.info('\n📄 Type Distribution:');
         typeCounts.forEach((count, type) => {
-            console.log(`   📋 ${type}: ${count}`);
+            console.info(`   📋 ${type}: ${count}`);
         });
 
-        console.log('\n⚡ Priority Distribution:');
+        console.info('\n⚡ Priority Distribution:');
         priorityCounts.forEach((count, priority) => {
-            console.log(`   ${getPriorityIcon(priority)} ${priority}: ${count}`);
+            console.info(`   ${getPriorityIcon(priority)} ${priority}: ${count}`);
         });
 
-        console.log('\n✅ Canvas dashboard rendered successfully!');
+        console.info('\n✅ Canvas dashboard rendered successfully!');
 
     } catch (error) {
         console.error('❌ Error rendering canvas:', error);
@@ -207,15 +207,15 @@ function getPriorityIcon(priority: string): string {
  * Shows usage information
  */
 function showUsage(): void {
-    console.log('🎨 Canvas Terminal Dashboard');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run canvas-terminal-dashboard <canvas-file>');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run canvas-terminal-dashboard 04\\ -\\ Canvas\\ Maps/integration-overview.canvas');
-    console.log('  bun run canvas-terminal-dashboard 04\\ -\\ Canvas\\ Maps/system-architecture.canvas');
-    console.log('');
+    console.info('🎨 Canvas Terminal Dashboard');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run canvas-terminal-dashboard <canvas-file>');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run canvas-terminal-dashboard 04\\ -\\ Canvas\\ Maps/integration-overview.canvas');
+    console.info('  bun run canvas-terminal-dashboard 04\\ -\\ Canvas\\ Maps/system-architecture.canvas');
+    console.info('');
 }
 
 /**

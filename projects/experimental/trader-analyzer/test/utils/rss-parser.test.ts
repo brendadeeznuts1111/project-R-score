@@ -225,7 +225,7 @@ describe("RSS Parser", () => {
 				}
 			} catch (error) {
 				// RSS feed may be unavailable in test environment
-				console.log("⚠️  Bun RSS feed unavailable, skipping version check");
+				console.info("⚠️  Bun RSS feed unavailable, skipping version check");
 			}
 		});
 	});

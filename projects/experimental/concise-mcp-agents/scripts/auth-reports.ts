@@ -5,7 +5,7 @@ const cookie = await Bun.secrets.get({ service: "plive", name: "cookie" });
 if (!cookie) throw "Run auth-plive first";
 
 // Step 1: Visit manager-tools page to establish session
-console.log("🌐 Establishing session at manager-tools...");
+console.info("🌐 Establishing session at manager-tools...");
 const pageResponse = await fetch('https://plive.sportswidgets.pro/manager-tools/', {
   headers: {
     'cookie': cookie,
@@ -20,10 +20,10 @@ if (!pageResponse.ok) {
   process.exit(1);
 }
 
-console.log("✅ Session established");
+console.info("✅ Session established");
 
 // Step 2: Now try reports with same session
-console.log("📊 Testing reports with established session...");
+console.info("📊 Testing reports with established session...");
 
 const reportResponse = await fetch('https://plive.sportswidgets.pro/manager-tools/ajax.php', {
   method: 'POST',
@@ -50,17 +50,17 @@ const reportResponse = await fetch('https://plive.sportswidgets.pro/manager-tool
   timeout: 10000
 });
 
-console.log(`📊 Report response: ${reportResponse.status} ${reportResponse.statusText}`);
+console.info(`📊 Report response: ${reportResponse.status} ${reportResponse.statusText}`);
 
 if (reportResponse.ok) {
   const data = await reportResponse.text();
-  console.log(`📦 Data: ${data.length} bytes`);
-  console.log("Preview:", data.substring(0, 300));
+  console.info(`📦 Data: ${data.length} bytes`);
+  console.info("Preview:", data.substring(0, 300));
   
   if (data.includes('success') && data.includes('data')) {
-    console.log("🎯 SUCCESS! Got report data!");
+    console.info("🎯 SUCCESS! Got report data!");
     await Bun.write('data/report-summary.json', data);
   }
 } else {
-  console.log("❌ Still blocked");
+  console.info("❌ Still blocked");
 }

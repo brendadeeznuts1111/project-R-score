@@ -5,10 +5,10 @@
  * https://bun.com/docs/test/configuration#configuration-file
  */
 
-console.log("⚙️  Bun Test Configuration Demo\n");
-console.log("=".repeat(70));
+console.info("⚙️  Bun Test Configuration Demo\n");
+console.info("=".repeat(70));
 
-console.log("\n📁 Configuration File Options:\n");
+console.info("\n📁 Configuration File Options:\n");
 
 const configExample = `// bunfig.toml
 [test]
@@ -41,24 +41,24 @@ module = "esm"
   }
 }`;
 
-console.log(configExample);
+console.info(configExample);
 
-console.log("\n📋 Common Configuration Options:\n");
-console.log("-".repeat(70));
-console.log("preload          Files to load before tests");
-console.log("coverage         Enable coverage reporting");
-console.log("coverageThreshold Minimum coverage percentage");
-console.log("timeout          Default test timeout (ms)");
-console.log("environment      Test environment (node/jsdom/happy-dom)");
-console.log("module           Module format (esm/cjs)");
+console.info("\n📋 Common Configuration Options:\n");
+console.info("-".repeat(70));
+console.info("preload          Files to load before tests");
+console.info("coverage         Enable coverage reporting");
+console.info("coverageThreshold Minimum coverage percentage");
+console.info("timeout          Default test timeout (ms)");
+console.info("environment      Test environment (node/jsdom/happy-dom)");
+console.info("module           Module format (esm/cjs)");
 
-console.log("\n✅ Key Points:");
-console.log("  • Config in bunfig.toml or package.json");
-console.log("  • Preload setup files for test environment");
-console.log("  • Coverage built-in (no external tools needed)");
-console.log("  • Environment option for DOM testing");
+console.info("\n✅ Key Points:");
+console.info("  • Config in bunfig.toml or package.json");
+console.info("  • Preload setup files for test environment");
+console.info("  • Coverage built-in (no external tools needed)");
+console.info("  • Environment option for DOM testing");
 
-console.log("\n🚀 Run tests with config:");
-console.log("  bun test");
-console.log("  bun test --coverage");
-console.log("  bun test --timeout 5000");
+console.info("\n🚀 Run tests with config:");
+console.info("  bun test");
+console.info("  bun test --coverage");
+console.info("  bun test --timeout 5000");

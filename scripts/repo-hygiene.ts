@@ -15,6 +15,7 @@
 import { Glob } from 'bun';
 import { join } from 'path';
 import { readdir } from 'node:fs/promises';
+import { isTildeCachePath } from './lib/bun-install-env.ts';
 
 const ROOT = join(import.meta.dir, '..');
 
@@ -61,9 +62,76 @@ const SECRETS_FILES = [
 // Directories to scan for stray output files
 const SCAN_DIRS = ['.', 'utils'];
 
+// Top-level dirs allowed at monorepo root (see STRUCTURE.md)
+const ALLOWED_ROOT_DIRS = new Set([
+  'archive',
+  'artifacts',
+  'assets',
+  'config',
+  'dashboard',
+  'database',
+  'docs',
+  'examples',
+  'herdr-worktrees',
+  'lib',
+  'logs',
+  'node_modules',
+  'packages',
+  'plannator',
+  'projects',
+  'public',
+  'reports',
+  'scratch',
+  'scripts',
+  'server',
+  'services',
+  'src',
+  'tests',
+  'tools',
+  'utils',
+  'workers',
+]);
+
+// Dirs that must never exist at root (often created by misconfigured Bun cache)
+const FORBIDDEN_ROOT_DIRS = new Set(['~']);
+
+// Root files that should not live at monorepo root
+const FORBIDDEN_ROOT_FILES = new Set(['index.html', 'index.ts']);
+
 interface Violation {
   file: string;
   rule: string;
+}
+
+function isGitignored(relPath: string): boolean {
+  const probe = Bun.spawnSync(['git', 'check-ignore', '-q', '--', relPath], { cwd: ROOT });
+  return probe.exitCode === 0;
+}
+
+async function findRootClutter(): Promise<Violation[]> {
+  const violations: Violation[] = [];
+  const rootEntries = await readdir(ROOT, { withFileTypes: true });
+
+  for (const entry of rootEntries) {
+    if (entry.isDirectory()) {
+      if (FORBIDDEN_ROOT_DIRS.has(entry.name)) {
+        violations.push({ file: entry.name + '/', rule: 'forbidden-root-dir' });
+      } else if (
+        !entry.name.startsWith('.') &&
+        !ALLOWED_ROOT_DIRS.has(entry.name) &&
+        !isGitignored(entry.name)
+      ) {
+        violations.push({ file: entry.name + '/', rule: 'unexpected-root-dir' });
+      }
+      continue;
+    }
+
+    if (FORBIDDEN_ROOT_FILES.has(entry.name)) {
+      violations.push({ file: entry.name, rule: 'forbidden-root-file' });
+    }
+  }
+
+  return violations;
 }
 
 async function findStrayFiles(): Promise<Violation[]> {
@@ -128,6 +196,10 @@ async function checkStagedStray(): Promise<Violation[]> {
 
   for (const file of staged) {
     const basename = file.split('/').pop()!;
+    if (isTildeCachePath(file)) {
+      violations.push({ file, rule: 'tilde-cache-staged' });
+      continue;
+    }
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(basename)) {
         violations.push({ file, rule: 'stray-output-staged' });
@@ -144,22 +216,25 @@ async function main() {
   const violations: Violation[] = [];
 
   if (stagedOnly) {
-    // Pre-commit mode: only check what's being committed
+    // Pre-commit mode — evict drift first so ./~ never gets staged
+    Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
     violations.push(...(await checkStagedSecrets()));
     violations.push(...(await checkStagedStray()));
   } else {
-    // Full scan mode
+    // Full scan mode — auto-evict Bun tilde-cache drift before scanning
+    Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+    violations.push(...(await findRootClutter()));
     violations.push(...(await findStrayFiles()));
     violations.push(...(await checkStagedSecrets()));
   }
 
   if (violations.length === 0) {
-    console.log('✅ Repo hygiene: clean');
+    console.info('✅ Repo hygiene: clean');
     process.exit(0);
   }
 
-  console.log(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
-  console.log(
+  console.info(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
+  console.info(
     Bun.inspect.table(
       violations.map(v => ({ file: v.file, rule: v.rule })),
       ['file', 'rule'],
@@ -171,7 +246,15 @@ async function main() {
 }
 
 // Export for testing
-export { STRAY_PATTERNS, SECRETS_FILES, findStrayFiles, checkStagedSecrets };
+export {
+  STRAY_PATTERNS,
+  SECRETS_FILES,
+  ALLOWED_ROOT_DIRS,
+  FORBIDDEN_ROOT_DIRS,
+  findRootClutter,
+  findStrayFiles,
+  checkStagedSecrets,
+};
 
 // Only run when executed directly, not when imported by tests
 if (import.meta.main) {

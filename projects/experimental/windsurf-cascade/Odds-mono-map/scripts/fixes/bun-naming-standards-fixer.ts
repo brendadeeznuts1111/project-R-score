@@ -159,7 +159,7 @@ class BunNamingStandardsFixer {
 
             // Check if file has proper frontmatter
             if (!content.startsWith('---')) {
-                console.log(`📝 Adding frontmatter to: ${filePath}`);
+                console.info(`📝 Adding frontmatter to: ${filePath}`);
 
                 const filename = basename(filePath, '.md');
                 const title = this.generateTitleFromFilename(filename);
@@ -210,41 +210,41 @@ validation_rules:
      * Execute the renaming process
      */
     async execute(): Promise<void> {
-        console.log('🔧 Bun Naming Standards Fixer');
-        console.log('================================');
-        console.log(`📁 Vault path: ${this.vaultPath}`);
-        console.log(`🧪 Dry run: ${this.dryRun ? 'YES' : 'NO'}`);
-        console.log('');
+        console.info('🔧 Bun Naming Standards Fixer');
+        console.info('================================');
+        console.info(`📁 Vault path: ${this.vaultPath}`);
+        console.info(`🧪 Dry run: ${this.dryRun ? 'YES' : 'NO'}`);
+        console.info('');
 
         // Scan for files that need renaming
-        console.log('🔍 Scanning for files that need renaming...');
+        console.info('🔍 Scanning for files that need renaming...');
         await this.scanDirectory(this.vaultPath);
 
         if (this.renames.length === 0) {
-            console.log('✅ All files already follow Bun naming standards!');
+            console.info('✅ All files already follow Bun naming standards!');
             return;
         }
 
         // Display planned renames
-        console.log(`📋 Found ${this.renames.length} files to rename:`);
-        console.log('');
+        console.info(`📋 Found ${this.renames.length} files to rename:`);
+        console.info('');
 
         this.renames.forEach((rename, index) => {
             const oldName = basename(rename.oldPath);
             const newName = basename(rename.newPath);
-            console.log(`${index + 1}. ${oldName} → ${newName}`);
-            console.log(`   Reason: ${rename.reason}`);
-            console.log('');
+            console.info(`${index + 1}. ${oldName} → ${newName}`);
+            console.info(`   Reason: ${rename.reason}`);
+            console.info('');
         });
 
         // Execute renames if not dry run
         if (!this.dryRun) {
-            console.log('🚀 Executing renames...');
+            console.info('🚀 Executing renames...');
 
             for (const rename of this.renames) {
                 try {
                     await rename(rename.oldPath, rename.newPath);
-                    console.log(`✅ Renamed: ${basename(rename.oldPath)} → ${basename(rename.newPath)}`);
+                    console.info(`✅ Renamed: ${basename(rename.oldPath)} → ${basename(rename.newPath)}`);
 
                     // Fix frontmatter
                     await this.fixTemplateFrontmatter(rename.newPath);
@@ -253,15 +253,15 @@ validation_rules:
                 }
             }
         } else {
-            console.log('🧪 Dry run complete. Use --execute to apply changes.');
+            console.info('🧪 Dry run complete. Use --execute to apply changes.');
         }
 
-        console.log('');
-        console.log('🎯 Bun Naming Standards Summary:');
-        console.log(`   • Files to rename: ${this.renames.length}`);
-        console.log(`   • Naming convention: kebab-case (Bun standard)`);
-        console.log(`   • Template compliance: Frontmatter added where missing`);
-        console.log(`   • Best practices: No underscores, lowercase, hyphen-separated`);
+        console.info('');
+        console.info('🎯 Bun Naming Standards Summary:');
+        console.info(`   • Files to rename: ${this.renames.length}`);
+        console.info(`   • Naming convention: kebab-case (Bun standard)`);
+        console.info(`   • Template compliance: Frontmatter added where missing`);
+        console.info(`   • Best practices: No underscores, lowercase, hyphen-separated`);
     }
 }
 

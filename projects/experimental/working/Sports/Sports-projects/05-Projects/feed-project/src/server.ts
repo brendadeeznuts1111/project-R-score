@@ -81,6 +81,6 @@ export function registerDashboard(config: EnhancedDashboardConfig): void {
 if (import.meta.main) {
   const port = Number(Bun.env.PORT) || 3002;
   const server = createServer(port);
-  console.log(`[feed] Field mapping server: http://localhost:${server.port}`);
-  console.log(`[feed] Routes: /health, /api/fields, /api/dashboard/:id`);
+  console.info(`[feed] Field mapping server: http://localhost:${server.port}`);
+  console.info(`[feed] Routes: /health, /api/fields, /api/dashboard/:id`);
 }

@@ -44,8 +44,8 @@ function simulateAPIResponse(endpoint: string, data?: any): APIResponse {
  * Display URLs endpoint data
  */
 function showUrls(): void {
-  console.log('🔗 API URLs Endpoint');
-  console.log('═════════════════════════════════════════════════');
+  console.info('🔗 API URLs Endpoint');
+  console.info('═════════════════════════════════════════════════');
   
   const urls = [
     { path: '/api/typedarray/urls', method: 'GET', description: 'Get typed array URLs' },
@@ -56,22 +56,22 @@ function showUrls(): void {
   ];
   
   urls.forEach((url, index) => {
-    console.log(`${index + 1}. ${url.method} ${url.path}`);
-    console.log(`   ${url.description}`);
-    console.log('');
+    console.info(`${index + 1}. ${url.method} ${url.path}`);
+    console.info(`   ${url.description}`);
+    console.info('');
   });
   
   const response = simulateAPIResponse('/api/typedarray/urls', { urls });
-  console.log('📊 Sample Response:');
-  console.log(JSON.stringify(response, null, 2));
+  console.info('📊 Sample Response:');
+  console.info(JSON.stringify(response, null, 2));
 }
 
 /**
  * Display advanced demo endpoint
  */
 function showAdvanced(): void {
-  console.log('🚀 Advanced API Demo');
-  console.log('═════════════════════════════════════════════════');
+  console.info('🚀 Advanced API Demo');
+  console.info('═════════════════════════════════════════════════');
   
   const advancedFeatures = [
     'Real-time data streaming',
@@ -84,12 +84,12 @@ function showAdvanced(): void {
     'Database integration'
   ];
   
-  console.log('✨ Advanced Features:');
+  console.info('✨ Advanced Features:');
   advancedFeatures.forEach((feature, index) => {
-    console.log(`   ${index + 1}. ${feature}`);
+    console.info(`   ${index + 1}. ${feature}`);
   });
   
-  console.log('');
+  console.info('');
   
   const response = simulateAPIResponse('/api/advanced-demo', {
     features: advancedFeatures,
@@ -101,16 +101,16 @@ function showAdvanced(): void {
     }
   });
   
-  console.log('📊 Sample Response:');
-  console.log(JSON.stringify(response, null, 2));
+  console.info('📊 Sample Response:');
+  console.info(JSON.stringify(response, null, 2));
 }
 
 /**
  * Display typed array demo
  */
 function showTypedArray(): void {
-  console.log('🔢 Typed Array API Demo');
-  console.log('═════════════════════════════════════════════════');
+  console.info('🔢 Typed Array API Demo');
+  console.info('═════════════════════════════════════════════════');
   
   // Create various typed arrays
   const int8Array = new Int8Array([1, 2, 3, 4, 5]);
@@ -118,13 +118,13 @@ function showTypedArray(): void {
   const float32Array = new Float32Array([1.1, 2.2, 3.3, 4.4]);
   const bigInt64Array = new BigInt64Array([1n, 2n, 3n, 4n]);
   
-  console.log('📋 Typed Array Examples:');
-  console.log(`   Int8Array: ${int8Array}`);
-  console.log(`   Uint16Array: ${uint16Array}`);
-  console.log(`   Float32Array: ${float32Array}`);
-  console.log(`   BigInt64Array: ${bigInt64Array}`);
+  console.info('📋 Typed Array Examples:');
+  console.info(`   Int8Array: ${int8Array}`);
+  console.info(`   Uint16Array: ${uint16Array}`);
+  console.info(`   Float32Array: ${float32Array}`);
+  console.info(`   BigInt64Array: ${bigInt64Array}`);
   
-  console.log('');
+  console.info('');
   
   const response = simulateAPIResponse('/api/typedarray/urls', {
     arrays: {
@@ -139,31 +139,31 @@ function showTypedArray(): void {
     }
   });
   
-  console.log('📊 Sample Response:');
-  console.log(JSON.stringify(response, null, 2));
+  console.info('📊 Sample Response:');
+  console.info(JSON.stringify(response, null, 2));
 }
 
 /**
  * Display help information
  */
 function showHelp(): void {
-  console.log('🎯 API Demo - FactoryWager Enterprise Platform');
-  console.log('═════════════════════════════════════════════════');
-  console.log('');
-  console.log('USAGE:');
-  console.log('  bun run examples/api-demo.ts <command>');
-  console.log('');
-  console.log('COMMANDS:');
-  console.log('  urls         Show API URLs and endpoints');
-  console.log('  advanced     Show advanced API features');
-  console.log('  typedarray   Show typed array demonstrations');
-  console.log('  help         Show this help message');
-  console.log('');
-  console.log('EXAMPLES:');
-  console.log('  bun run examples/api-demo.ts urls');
-  console.log('  bun run examples/api-demo.ts advanced');
-  console.log('  bun run examples/api-demo.ts typedarray');
-  console.log('');
+  console.info('🎯 API Demo - FactoryWager Enterprise Platform');
+  console.info('═════════════════════════════════════════════════');
+  console.info('');
+  console.info('USAGE:');
+  console.info('  bun run examples/api-demo.ts <command>');
+  console.info('');
+  console.info('COMMANDS:');
+  console.info('  urls         Show API URLs and endpoints');
+  console.info('  advanced     Show advanced API features');
+  console.info('  typedarray   Show typed array demonstrations');
+  console.info('  help         Show this help message');
+  console.info('');
+  console.info('EXAMPLES:');
+  console.info('  bun run examples/api-demo.ts urls');
+  console.info('  bun run examples/api-demo.ts advanced');
+  console.info('  bun run examples/api-demo.ts typedarray');
+  console.info('');
 }
 
 /**

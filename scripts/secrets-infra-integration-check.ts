@@ -21,16 +21,16 @@ async function main(): Promise<void> {
   const uploader = await resolveUploaderConfigAsync();
   const profileService = resolveProfileSecretsService();
 
-  console.log('Secrets Infra Integration Check');
-  console.log('================================');
-  console.log(`registry.accountId: ${present(registry.accountId)}`);
-  console.log(`registry.accessKeyId: ${present(registry.accessKeyId)}`);
-  console.log(`registry.secretAccessKey: ${present(registry.secretAccessKey)}`);
-  console.log(`registry.bucketName: ${registry.bucketName || 'missing'}`);
-  console.log(`registry.endpoint: ${registry.endpoint || 'missing'}`);
-  console.log(`profile.secretsService: ${profileService}`);
-  console.log(`profileUploader.bucket: ${uploader.bucket || 'missing'}`);
-  console.log(`profileUploader.endpoint: ${uploader.endpoint || 'missing'}`);
+  console.info('Secrets Infra Integration Check');
+  console.info('================================');
+  console.info(`registry.accountId: ${present(registry.accountId)}`);
+  console.info(`registry.accessKeyId: ${present(registry.accessKeyId)}`);
+  console.info(`registry.secretAccessKey: ${present(registry.secretAccessKey)}`);
+  console.info(`registry.bucketName: ${registry.bucketName || 'missing'}`);
+  console.info(`registry.endpoint: ${registry.endpoint || 'missing'}`);
+  console.info(`profile.secretsService: ${profileService}`);
+  console.info(`profileUploader.bucket: ${uploader.bucket || 'missing'}`);
+  console.info(`profileUploader.endpoint: ${uploader.endpoint || 'missing'}`);
 
   const requiredMissing = [
     !registry.accountId && 'R2_ACCOUNT_ID',
@@ -43,7 +43,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log('PASS infra/server/r2/profile secrets integration');
+  console.info('PASS infra/server/r2/profile secrets integration');
 }
 
 await main();

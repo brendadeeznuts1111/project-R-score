@@ -66,34 +66,34 @@ class EnterpriseWikiPlatform {
    */
   async start(): Promise<void> {
     try {
-      console.log('🚀 Starting Enterprise Wiki Platform...');
+      console.info('🚀 Starting Enterprise Wiki Platform...');
       
       // Start collaboration server
       await this.collaboration.start();
-      console.log('✅ Real-time collaboration server started');
+      console.info('✅ Real-time collaboration server started');
 
       // Register some enterprise templates
       await this.registerEnterpriseTemplates();
-      console.log('✅ Enterprise templates registered');
+      console.info('✅ Enterprise templates registered');
 
       // Set up monitoring
       this.setupMonitoring();
-      console.log('✅ Monitoring system initialized');
+      console.info('✅ Monitoring system initialized');
 
-      console.log('🎉 Enterprise Wiki Platform is ready!');
-      console.log('\n📊 Platform Features:');
-      console.log('  • Multi-threaded wiki generation (2-8 workers)');
-      console.log('  • R2 storage with versioning & backups');
-      console.log('  • Advanced caching with LRU & compression');
-      console.log('  • Real-time collaboration with WebSockets');
-      console.log('  • Operational transform conflict resolution');
-      console.log('  • Enterprise-grade security & encryption');
+      console.info('🎉 Enterprise Wiki Platform is ready!');
+      console.info('\n📊 Platform Features:');
+      console.info('  • Multi-threaded wiki generation (2-8 workers)');
+      console.info('  • R2 storage with versioning & backups');
+      console.info('  • Advanced caching with LRU & compression');
+      console.info('  • Real-time collaboration with WebSockets');
+      console.info('  • Operational transform conflict resolution');
+      console.info('  • Enterprise-grade security & encryption');
       
-      console.log('\n🔗 Available Services:');
-      console.log('  • WebSocket Server: ws://localhost:8080');
-      console.log('  • Wiki Generation API: Multi-threaded');
-      console.log('  • Storage API: R2 with versioning');
-      console.log('  • Cache API: Advanced distributed caching');
+      console.info('\n🔗 Available Services:');
+      console.info('  • WebSocket Server: ws://localhost:8080');
+      console.info('  • Wiki Generation API: Multi-threaded');
+      console.info('  • Storage API: R2 with versioning');
+      console.info('  • Cache API: Advanced distributed caching');
       
     } catch (error) {
       console.error('❌ Failed to start platform:', error);
@@ -106,14 +106,14 @@ class EnterpriseWikiPlatform {
    */
   async stop(): Promise<void> {
     try {
-      console.log('🛑 Stopping Enterprise Wiki Platform...');
+      console.info('🛑 Stopping Enterprise Wiki Platform...');
       
       await this.collaboration.stop();
       await this.wikiGenerator.shutdown();
       await this.storage.cleanup();
       await this.cache.destroy();
       
-      console.log('✅ Platform stopped successfully');
+      console.info('✅ Platform stopped successfully');
     } catch (error) {
       console.error('❌ Error stopping platform:', error);
       throw error;
@@ -331,7 +331,7 @@ options: {{options}}
   private setupEventHandlers(): void {
     // Wiki generator events
     this.wikiGenerator.on('taskCompleted', (event) => {
-      console.log(`✅ Wiki generation completed: ${event.task.id} (${event.processingTime}ms)`);
+      console.info(`✅ Wiki generation completed: ${event.task.id} (${event.processingTime}ms)`);
     });
 
     this.wikiGenerator.on('taskFailed', (event) => {
@@ -340,21 +340,21 @@ options: {{options}}
 
     // Storage events
     this.storage.on('backup', (backup) => {
-      console.log(`💾 Backup created: ${backup.id} for document ${backup.documentId}`);
+      console.info(`💾 Backup created: ${backup.id} for document ${backup.documentId}`);
     });
 
     // Cache events
     this.cache.on('evict', (key, item) => {
-      console.log(`🗑️ Cache evicted: ${key} (${item.size} bytes)`);
+      console.info(`🗑️ Cache evicted: ${key} (${item.size} bytes)`);
     });
 
     // Collaboration events
     this.collaboration.on('user-joined', (user) => {
-      console.log(`👤 User joined: ${user.name} (${user.id})`);
+      console.info(`👤 User joined: ${user.name} (${user.id})`);
     });
 
     this.collaboration.on('document-changed', (user, documentId, operation) => {
-      console.log(`📝 Document changed: ${documentId} by ${user.name}`);
+      console.info(`📝 Document changed: ${documentId} by ${user.name}`);
     });
   }
 
@@ -365,7 +365,7 @@ options: {{options}}
     // Monitor worker performance
     setInterval(() => {
       const stats = this.wikiGenerator.getStats();
-      console.log('\n📊 Worker Stats:', {
+      console.info('\n📊 Worker Stats:', {
         total: stats.totalWorkers,
         active: stats.activeWorkers,
         queued: stats.queuedTasks,
@@ -377,7 +377,7 @@ options: {{options}}
     // Monitor storage usage
     setInterval(async () => {
       const storageStats = await this.storage.getStorageStats();
-      console.log('\n💾 Storage Stats:', {
+      console.info('\n💾 Storage Stats:', {
         documents: storageStats.totalDocuments,
         versions: storageStats.totalVersions,
         backups: storageStats.totalBackups,
@@ -389,7 +389,7 @@ options: {{options}}
     // Monitor cache performance
     setInterval(() => {
       const cacheStats = this.cache.getStats();
-      console.log('\n🗄️ Cache Stats:', {
+      console.info('\n🗄️ Cache Stats:', {
         items: cacheStats.metrics.itemCount,
         hitRate: `${(cacheStats.metrics.hitRate * 100).toFixed(1)}%`,
         memory: `${(cacheStats.metrics.memoryUsage / 1024 / 1024).toFixed(2)}MB`,
@@ -400,7 +400,7 @@ options: {{options}}
     // Monitor collaboration
     setInterval(() => {
       const collabStats = this.collaboration.getStats();
-      console.log('\n🤝 Collaboration Stats:', {
+      console.info('\n🤝 Collaboration Stats:', {
         users: collabStats.activeUsers,
         connections: collabStats.activeConnections,
         documents: collabStats.activeDocuments
@@ -412,10 +412,10 @@ options: {{options}}
    * Demonstrate platform capabilities
    */
   async demonstrate(): Promise<void> {
-    console.log('\n🎯 Demonstrating Enterprise Platform Capabilities...\n');
+    console.info('\n🎯 Demonstrating Enterprise Platform Capabilities...\n');
 
     // 1. Multi-threaded wiki generation
-    console.log('1️⃣ Testing Multi-threaded Wiki Generation...');
+    console.info('1️⃣ Testing Multi-threaded Wiki Generation...');
     const template = MCPWikiGenerator.getTemplateByName('api-documentation');
     if (template) {
       const startTime = Date.now();
@@ -425,11 +425,11 @@ options: {{options}}
         options: { includeExamples: true }
       }, { concurrency: 3 });
       
-      console.log(`   ✅ Generated ${results.length} documents in ${Date.now() - startTime}ms`);
+      console.info(`   ✅ Generated ${results.length} documents in ${Date.now() - startTime}ms`);
     }
 
     // 2. Storage with versioning
-    console.log('\n2️⃣ Testing Storage with Versioning...');
+    console.info('\n2️⃣ Testing Storage with Versioning...');
     const documentId = `demo-${Date.now()}`;
     await this.storage.storeDocument(
       documentId,
@@ -457,29 +457,29 @@ options: {{options}}
     );
 
     const storedDoc = await this.storage.getDocument(documentId);
-    console.log(`   ✅ Stored document with ${storedDoc?.versions.length} versions`);
+    console.info(`   ✅ Stored document with ${storedDoc?.versions.length} versions`);
 
     // 3. Advanced caching
-    console.log('\n3️⃣ Testing Advanced Caching...');
+    console.info('\n3️⃣ Testing Advanced Caching...');
     await this.cache.set('demo-key', { data: 'test value', timestamp: Date.now() });
     const cached = await this.cache.get('demo-key');
-    console.log(`   ✅ Cache ${cached ? 'HIT' : 'MISS'} - Hit rate: ${(this.cache.getStats().metrics.hitRate * 100).toFixed(1)}%`);
+    console.info(`   ✅ Cache ${cached ? 'HIT' : 'MISS'} - Hit rate: ${(this.cache.getStats().metrics.hitRate * 100).toFixed(1)}%`);
 
     // 4. Performance metrics
-    console.log('\n4️⃣ Platform Performance Summary:');
+    console.info('\n4️⃣ Platform Performance Summary:');
     const workerStats = this.wikiGenerator.getStats();
     const storageStats = await this.storage.getStorageStats();
     const cacheStatsFinal = this.cache.getStats();
     const collabStats = this.collaboration.getStats();
 
-    console.log('\n📈 Final Performance Metrics:');
-    console.log('   Workers:', `${workerStats.activeWorkers}/${workerStats.totalWorkers} active`);
-    console.log('   Throughput:', `${workerStats.throughputPerSecond.toFixed(2)} tasks/sec`);
-    console.log('   Storage:', `${storageStats.totalDocuments} docs, ${storageStats.totalVersions} versions`);
-    console.log('   Cache:', `${(cacheStatsFinal.metrics.hitRate * 100).toFixed(1)}% hit rate`);
-    console.log('   Collaboration:', `${collabStats.activeUsers} users online`);
+    console.info('\n📈 Final Performance Metrics:');
+    console.info('   Workers:', `${workerStats.activeWorkers}/${workerStats.totalWorkers} active`);
+    console.info('   Throughput:', `${workerStats.throughputPerSecond.toFixed(2)} tasks/sec`);
+    console.info('   Storage:', `${storageStats.totalDocuments} docs, ${storageStats.totalVersions} versions`);
+    console.info('   Cache:', `${(cacheStatsFinal.metrics.hitRate * 100).toFixed(1)}% hit rate`);
+    console.info('   Collaboration:', `${collabStats.activeUsers} users online`);
 
-    console.log('\n🎉 Enterprise Platform Demonstration Complete!');
+    console.info('\n🎉 Enterprise Platform Demonstration Complete!');
   }
 }
 
@@ -492,17 +492,17 @@ async function main() {
     await platform.demonstrate();
     
     // Keep running for demonstration
-    console.log('\n⏳ Platform running... Press Ctrl+C to stop');
+    console.info('\n⏳ Platform running... Press Ctrl+C to stop');
     
     // Graceful shutdown
     process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down platform...');
+      console.info('\n🛑 Shutting down platform...');
       await platform.stop();
       process.exit(0);
     });
     
     process.on('SIGTERM', async () => {
-      console.log('\n🛑 Shutting down platform...');
+      console.info('\n🛑 Shutting down platform...');
       await platform.stop();
       process.exit(0);
     });

@@ -67,12 +67,12 @@ class AdvancedTemplateDashboard {
      * Run advanced analytics dashboard with stunning table output
      */
     async runAdvancedDashboard(): Promise<void> {
-        console.log(chalk.blue.bold('🎯 Advanced Template Analytics Dashboard'));
-        console.log(chalk.gray('Ultimate showcase of Bun.inspect.table() capabilities\n'));
+        console.info(chalk.blue.bold('🎯 Advanced Template Analytics Dashboard'));
+        console.info(chalk.gray('Ultimate showcase of Bun.inspect.table() capabilities\n'));
 
         try {
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`🔍 Analyzing ${files.length} templates with advanced metrics...`));
+            console.info(chalk.cyan(`🔍 Analyzing ${files.length} templates with advanced metrics...`));
 
             for (const filePath of files) {
                 await this.analyzeTemplateAdvanced(filePath);
@@ -165,8 +165,8 @@ class AdvancedTemplateDashboard {
             }
         ];
 
-        console.log(chalk.blue.bold('\n🏆 Executive Summary'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n🏆 Executive Summary'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(summaryData, {}, {
             colors: true,
@@ -176,7 +176,7 @@ class AdvancedTemplateDashboard {
             sortKeys: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -197,8 +197,8 @@ class AdvancedTemplateDashboard {
                 '📈 Status': this.getPerformanceEmoji(template.usageScore)
             }));
 
-        console.log(chalk.blue.bold('\n🌟 Top 10 Template Performers'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n🌟 Top 10 Template Performers'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(topPerformers, [
             '🥇 Rank', 'Template Name', 'Usage Score', 'Performance', 'Complexity', 'Quality', 'Backlinks', '📈 Status'
@@ -209,7 +209,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -230,8 +230,8 @@ class AdvancedTemplateDashboard {
                 '⚡ Rating': this.getSpeedRating(template.performance.loadTime)
             }));
 
-        console.log(chalk.blue.bold('\n⚡ Performance Metrics Analysis'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n⚡ Performance Metrics Analysis'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(performanceData, [
             'Template', 'Load Time', 'Render Speed', 'Memory Usage', 'Size', 'Complexity', 'Performance Score', '⚡ Rating'
@@ -242,7 +242,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -270,8 +270,8 @@ class AdvancedTemplateDashboard {
                 };
             });
 
-        console.log(chalk.blue.bold('\n📋 Quality Assessment Dashboard'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n📋 Quality Assessment Dashboard'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(qualityData, [
             'Template', 'Completeness', 'Standards', 'Documentation', 'Average Quality', 'Quality Grade', 'Issues Found', '🏆 Status'
@@ -282,7 +282,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -307,8 +307,8 @@ class AdvancedTemplateDashboard {
                 '🚨 Priority': this.getRiskPriority(template)
             }));
 
-        console.log(chalk.blue.bold('\n⚠️ Risk Analysis Dashboard'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n⚠️ Risk Analysis Dashboard'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(riskData, [
             'Template', 'Risk Score', 'Usage Risk', 'Complexity Risk', 'Quality Risk', 'Overall Risk', 'Action Required', '🚨 Priority'
@@ -319,7 +319,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -379,8 +379,8 @@ class AdvancedTemplateDashboard {
             }
         ];
 
-        console.log(chalk.blue.bold('\n🗺️ Optimization Roadmap'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n🗺️ Optimization Roadmap'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(roadmap, [
             '🎯 Phase', 'Focus', 'Templates', 'Effort', 'Impact', 'Timeline', 'Actions', '📈 ROI'
@@ -391,7 +391,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -427,8 +427,8 @@ class AdvancedTemplateDashboard {
             };
         }).sort((a, b) => b.Templates - a.Templates);
 
-        console.log(chalk.blue.bold('\n🔍 Category Deep Dive Analysis'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('\n🔍 Category Deep Dive Analysis'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         const tableOutput = Bun.inspect.table(categoryData, [
             '📂 Category', 'Templates', 'Avg Usage', 'Avg Complexity', 'Avg Quality', 'High Performers', 'Total Issues', 'Health Score', '🎯 Priority'
@@ -439,7 +439,7 @@ class AdvancedTemplateDashboard {
             compact: false
         });
 
-        console.log(tableOutput);
+        console.info(tableOutput);
     }
 
     /**
@@ -724,11 +724,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🎯 Advanced Template Analytics Dashboard'));
-        console.log(chalk.gray('Usage: bun advanced-template-dashboard.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('\nUltimate showcase of Bun.inspect.table() with advanced formatting'));
+        console.info(chalk.blue.bold('🎯 Advanced Template Analytics Dashboard'));
+        console.info(chalk.gray('Usage: bun advanced-template-dashboard.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('\nUltimate showcase of Bun.inspect.table() with advanced formatting'));
         process.exit(0);
     }
 

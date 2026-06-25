@@ -7,8 +7,8 @@
 
 import { performance } from "node:perf_hooks";
 
-console.log("⚡ Bun v1.3.9: RegExp JIT Optimization Demo\n");
-console.log("=" .repeat(70));
+console.info("⚡ Bun v1.3.9: RegExp JIT Optimization Demo\n");
+console.info("=" .repeat(70));
 
 // Color codes for output
 const GREEN = "\x1b[32m";
@@ -122,11 +122,11 @@ async function runBenchmark() {
     interpreter: [] as Array<{ name: string; time: number; pattern: string }>,
   };
 
-  console.log(`\nRunning ${ITERATIONS.toLocaleString()} iterations per pattern...\n`);
+  console.info(`\nRunning ${ITERATIONS.toLocaleString()} iterations per pattern...\n`);
 
   // JIT patterns
-  console.log(`${GREEN}✓ JIT-OPTIMIZED PATTERNS (v1.3.9+)${RESET}`);
-  console.log("-".repeat(70));
+  console.info(`${GREEN}✓ JIT-OPTIMIZED PATTERNS (v1.3.9+)${RESET}`);
+  console.info("-".repeat(70));
   
   for (const p of PATTERNS.jit) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
@@ -135,12 +135,12 @@ async function runBenchmark() {
       time,
       pattern: p.pattern.toString(),
     });
-    console.log(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
+    console.info(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
   }
 
   // Interpreter patterns
-  console.log(`\n${YELLOW}⚠ INTERPRETER PATTERNS (no JIT)${RESET}`);
-  console.log("-".repeat(70));
+  console.info(`\n${YELLOW}⚠ INTERPRETER PATTERNS (no JIT)${RESET}`);
+  console.info("-".repeat(70));
   
   for (const p of PATTERNS.interpreter) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
@@ -149,31 +149,31 @@ async function runBenchmark() {
       time,
       pattern: p.pattern.toString(),
     });
-  console.log(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
+  console.info(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
   }
 
   // Comparison
-  console.log("\n" + "=".repeat(70));
-  console.log("📊 COMPARISON");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📊 COMPARISON");
+  console.info("=".repeat(70));
 
   const avgJit = results.jit.reduce((a, b) => a + b.time, 0) / results.jit.length;
   const avgInterp = results.interpreter.reduce((a, b) => a + b.time, 0) / results.interpreter.length;
   const speedup = avgInterp / avgJit;
 
-  console.log(`Average JIT time:      ${formatTime(avgJit)}`);
-  console.log(`Average Interpreter:   ${formatTime(avgInterp)}`);
-  console.log(`${CYAN}Overall speedup:       ${speedup.toFixed(2)}x${RESET}`);
-  console.log(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
+  console.info(`Average JIT time:      ${formatTime(avgJit)}`);
+  console.info(`Average Interpreter:   ${formatTime(avgInterp)}`);
+  console.info(`${CYAN}Overall speedup:       ${speedup.toFixed(2)}x${RESET}`);
+  console.info(`Expected (v1.3.9):     ~3.9x for fixed-count patterns`);
 
   return results;
 }
 
 function showOptimizationGuide() {
-  console.log("\n" + "=".repeat(70));
-  console.log("💡 OPTIMIZATION GUIDE");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("💡 OPTIMIZATION GUIDE");
+  console.info("=".repeat(70));
+  console.info(`
 ${GREEN}✓ DO:${RESET} Use fixed-count quantifiers when possible
    /(?:abc){3}/  instead of  /(?:abc)+/
    
@@ -195,10 +195,10 @@ ${YELLOW}✗ AVOID:${RESET} Variable ranges when possible
 }
 
 function showTechnicalDetails() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🔧 TECHNICAL DETAILS");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🔧 TECHNICAL DETAILS");
+  console.info("=".repeat(70));
+  console.info(`
 JIT Compilation Requirements:
 • Fixed repetition count: {n} or {n,n} where min=max
 • No variable quantifiers: +, *, {n,}
@@ -217,10 +217,10 @@ The JIT compiler in Bun v1.3.9 uses:
 }
 
 function showRealWorldExamples() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🌍 REAL-WORLD OPTIMIZATION EXAMPLES");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🌍 REAL-WORLD OPTIMIZATION EXAMPLES");
+  console.info("=".repeat(70));
+  console.info(`
 UUID Validation:
   Before: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   After:  /(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ✓
@@ -237,15 +237,15 @@ Email Local Part:
 
 // Main
 async function main() {
-  console.log(`Bun version: ${Bun.version}`);
-  console.log(`Platform: ${process.platform} ${process.arch}\n`);
+  console.info(`Bun version: ${Bun.version}`);
+  console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
   await runBenchmark();
   showOptimizationGuide();
   showTechnicalDetails();
   showRealWorldExamples();
 
-  console.log("\n✅ Demo complete!\n");
+  console.info("\n✅ Demo complete!\n");
 }
 
 if (import.meta.main) {

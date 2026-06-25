@@ -19,8 +19,8 @@
  * Validates our implementation against the official ANSI documentation from https://bun.com/docs/runtime/color
  */
 
-console.log('🖥️ Official Bun.color ANSI Format Specification Validation');
-console.log('==========================================================\n');
+console.info('🖥️ Official Bun.color ANSI Format Specification Validation');
+console.info('==========================================================\n');
 
 // Interface for test results
 interface FailedTest {
@@ -84,11 +84,11 @@ let totalTests = 0;
 let passedTests = 0;
 let failedTests: FailedTest[] = [];
 
-console.log('🖥️ Testing Official ANSI Examples from Bun Documentation\n');
+console.info('🖥️ Testing Official ANSI Examples from Bun Documentation\n');
 
 // Test general ANSI format
-console.log('🎨 1. General ANSI Format');
-console.log('─'.repeat(40));
+console.info('🎨 1. General ANSI Format');
+console.info('─'.repeat(40));
 
 officialAnsiExamples.ansi.forEach((example, index) => {
     totalTests++;
@@ -104,7 +104,7 @@ officialAnsiExamples.ansi.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -112,13 +112,13 @@ officialAnsiExamples.ansi.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected pattern: ${expectedPattern})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(25)} → ${JSON.stringify(result)} (expected pattern: ${expectedPattern})`);
     }
 });
 
 // Test ansi-16m format
-console.log('\n🌈 2. 24-bit ANSI Colors (ansi-16m)');
-console.log('─'.repeat(40));
+console.info('\n🌈 2. 24-bit ANSI Colors (ansi-16m)');
+console.info('─'.repeat(40));
 
 officialAnsiExamples.ansi16m.forEach((example, index) => {
     totalTests++;
@@ -133,7 +133,7 @@ officialAnsiExamples.ansi16m.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -141,13 +141,13 @@ officialAnsiExamples.ansi16m.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
     }
 });
 
 // Test ansi-256 format
-console.log('\n🎨 3. 256 ANSI Colors (ansi-256)');
-console.log('─'.repeat(40));
+console.info('\n🎨 3. 256 ANSI Colors (ansi-256)');
+console.info('─'.repeat(40));
 
 officialAnsiExamples.ansi256.forEach((example, index) => {
     totalTests++;
@@ -162,7 +162,7 @@ officialAnsiExamples.ansi256.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -170,13 +170,13 @@ officialAnsiExamples.ansi256.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
     }
 });
 
 // Test ansi-16 format
-console.log('\n🔷 4. 16 ANSI Colors (ansi-16)');
-console.log('─'.repeat(40));
+console.info('\n🔷 4. 16 ANSI Colors (ansi-16)');
+console.info('─'.repeat(40));
 
 officialAnsiExamples.ansi16.forEach((example, index) => {
     totalTests++;
@@ -196,7 +196,7 @@ officialAnsiExamples.ansi16.forEach((example, index) => {
 
     if (passed) {
         passedTests++;
-        console.log(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
+        console.info(`${index + 1}. ✅ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)}`);
     } else {
         failedTests.push({
             format: example.format,
@@ -204,13 +204,13 @@ officialAnsiExamples.ansi16.forEach((example, index) => {
             expected: example.expected,
             actual: result
         });
-        console.log(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
+        console.info(`${index + 1}. ❌ ${JSON.stringify(example.input).padEnd(20)} → ${JSON.stringify(result)} (expected pattern: ${example.expected})`);
     }
 });
 
 // ANSI Specification Compliance Check
-console.log('\n📋 ANSI SPECIFICATION COMPLIANCE CHECK');
-console.log('─'.repeat(50));
+console.info('\n📋 ANSI SPECIFICATION COMPLIANCE CHECK');
+console.info('─'.repeat(50));
 
 const ansiSpecChecks = [
     {
@@ -256,41 +256,41 @@ ansiSpecChecks.forEach((check, index) => {
     const passed = check.check();
     if (passed) {
         specPasses++;
-        console.log(`${index + 1}. ✅ ${check.name}`);
+        console.info(`${index + 1}. ✅ ${check.name}`);
     } else {
-        console.log(`${index + 1}. ❌ ${check.name}`);
+        console.info(`${index + 1}. ❌ ${check.name}`);
     }
 });
 
 const specPassRate = Math.round((specPasses / ansiSpecChecks.length) * 100);
 
 // Validation Results
-console.log('\n🎯 ANSI VALIDATION RESULTS');
-console.log('─'.repeat(50));
+console.info('\n🎯 ANSI VALIDATION RESULTS');
+console.info('─'.repeat(50));
 
 const passRate = Math.round((passedTests / totalTests) * 100);
-console.log(`📊 Total Tests: ${totalTests}`);
-console.log(`✅ Passed: ${passedTests}`);
-console.log(`❌ Failed: ${failedTests.length}`);
-console.log(`📈 Pass Rate: ${passRate}%`);
-console.log(`📋 Specification Compliance: ${specPassRate}%`);
+console.info(`📊 Total Tests: ${totalTests}`);
+console.info(`✅ Passed: ${passedTests}`);
+console.info(`❌ Failed: ${failedTests.length}`);
+console.info(`📈 Pass Rate: ${passRate}%`);
+console.info(`📋 Specification Compliance: ${specPassRate}%`);
 
 if (failedTests.length > 0) {
-    console.log('\n❌ FAILED TESTS:');
+    console.info('\n❌ FAILED TESTS:');
     failedTests.forEach((failure, index) => {
-        console.log(`${index + 1}. Format: ${failure.format}`);
-        console.log(`   Input: ${JSON.stringify(failure.input)}`);
-        console.log(`   Expected Pattern: ${failure.expected}`);
-        console.log(`   Actual: ${JSON.stringify(failure.actual)}`);
-        console.log('');
+        console.info(`${index + 1}. Format: ${failure.format}`);
+        console.info(`   Input: ${JSON.stringify(failure.input)}`);
+        console.info(`   Expected Pattern: ${failure.expected}`);
+        console.info(`   Actual: ${JSON.stringify(failure.actual)}`);
+        console.info('');
     });
 } else {
-    console.log('\n🎉 ALL ANSI TESTS PASSED! Perfect compliance with official Bun.color ANSI specification!');
+    console.info('\n🎉 ALL ANSI TESTS PASSED! Perfect compliance with official Bun.color ANSI specification!');
 }
 
 // Canvas ANSI Integration Demo
-console.log('🎨 CANVAS ANSI INTEGRATION DEMO');
-console.log('─'.repeat(50));
+console.info('🎨 CANVAS ANSI INTEGRATION DEMO');
+console.info('─'.repeat(50));
 
 const canvasColors = [
     { name: "Bridge Service", color: "#10B981" },
@@ -299,8 +299,8 @@ const canvasColors = [
     { name: "Experimental Feature", color: "#8B5CF6" }
 ];
 
-console.log('🖥️ Canvas Terminal Dashboard with ANSI Colors:');
-console.log('');
+console.info('🖥️ Canvas Terminal Dashboard with ANSI Colors:');
+console.info('');
 
 canvasColors.forEach((item, index) => {
     const ansiColor = Bun.color(item.color, "ansi");
@@ -308,28 +308,28 @@ canvasColors.forEach((item, index) => {
     const ansi256Color = Bun.color(item.color, "ansi-256");
     const ansi16Color = Bun.color(item.color, "ansi-16");
 
-    console.log(`${index + 1}. ${item.name}:`);
-    console.log(`   Color: ${item.color}`);
-    console.log(`   ANSI: ${JSON.stringify(ansiColor)}`);
-    console.log(`   ANSI-16m: ${JSON.stringify(ansi16mColor)}`);
-    console.log(`   ANSI-256: ${JSON.stringify(ansi256Color)}`);
-    console.log(`   ANSI-16: ${JSON.stringify(ansi16Color)}`);
-    console.log('');
+    console.info(`${index + 1}. ${item.name}:`);
+    console.info(`   Color: ${item.color}`);
+    console.info(`   ANSI: ${JSON.stringify(ansiColor)}`);
+    console.info(`   ANSI-16m: ${JSON.stringify(ansi16mColor)}`);
+    console.info(`   ANSI-256: ${JSON.stringify(ansi256Color)}`);
+    console.info(`   ANSI-16: ${JSON.stringify(ansi16Color)}`);
+    console.info('');
 });
 
 // Final Result
-console.log('🏆 FINAL ANSI VALIDATION RESULT');
-console.log('─'.repeat(50));
+console.info('🏆 FINAL ANSI VALIDATION RESULT');
+console.info('─'.repeat(50));
 
 if (passRate === 100 && specPassRate === 100) {
-    console.log('🎉 PERFECT ANSI COMPLIANCE ACHIEVED!');
-    console.log('✅ All official ANSI examples work exactly as documented');
-    console.log('✅ All ANSI format specifications are correctly implemented');
-    console.log('✅ Implementation is 100% compliant with official Bun.color ANSI API');
-    console.log('\n🖥️ Your canvas system uses the official Bun.color ANSI formats perfectly!');
+    console.info('🎉 PERFECT ANSI COMPLIANCE ACHIEVED!');
+    console.info('✅ All official ANSI examples work exactly as documented');
+    console.info('✅ All ANSI format specifications are correctly implemented');
+    console.info('✅ Implementation is 100% compliant with official Bun.color ANSI API');
+    console.info('\n🖥️ Your canvas system uses the official Bun.color ANSI formats perfectly!');
 } else {
-    console.log('⚠️  ANSI COMPLIANCE ISSUES DETECTED');
-    console.log(`📊 Example Compliance: ${passRate}%`);
-    console.log(`📊 Specification Compliance: ${specPassRate}%`);
-    console.log('\n🔧 Please review the failed tests above for fixes.');
+    console.info('⚠️  ANSI COMPLIANCE ISSUES DETECTED');
+    console.info(`📊 Example Compliance: ${passRate}%`);
+    console.info(`📊 Specification Compliance: ${specPassRate}%`);
+    console.info('\n🔧 Please review the failed tests above for fixes.');
 }

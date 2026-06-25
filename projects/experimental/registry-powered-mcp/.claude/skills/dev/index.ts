@@ -59,7 +59,7 @@ async function findProcessOnPort(port: number): Promise<string | null> {
 async function killProcessOnPort(port: number): Promise<boolean> {
   const pid = await findProcessOnPort(port);
   if (!pid) {
-    console.log(`No process found on port ${port}`);
+    console.info(`No process found on port ${port}`);
     return false;
   }
 
@@ -69,7 +69,7 @@ async function killProcessOnPort(port: number): Promise<boolean> {
       stderr: "inherit",
     });
     await proc.exited;
-    console.log(`Killed process ${pid} on port ${port}`);
+    console.info(`Killed process ${pid} on port ${port}`);
     return true;
   } catch {
     console.error(`Failed to kill process ${pid}`);
@@ -112,37 +112,37 @@ export default async function dev(args?: string) {
 
   switch (command) {
     case "status": {
-      console.log(`\nChecking server status on port ${port}...`);
+      console.info(`\nChecking server status on port ${port}...`);
       const inUse = await isPortInUse(port);
       if (!inUse) {
-        console.log(`Server is not running on port ${port}`);
+        console.info(`Server is not running on port ${port}`);
         return false;
       }
 
       const healthy = await checkHealth(port);
       if (healthy) {
-        console.log(`Server is running and healthy on port ${port}`);
+        console.info(`Server is running and healthy on port ${port}`);
         const pid = await findProcessOnPort(port);
-        if (pid) console.log(`Process ID: ${pid}`);
+        if (pid) console.info(`Process ID: ${pid}`);
       } else {
-        console.log(`Port ${port} is in use but health check failed`);
+        console.info(`Port ${port} is in use but health check failed`);
       }
       return healthy;
     }
 
     case "stop": {
-      console.log(`\nStopping server on port ${port}...`);
+      console.info(`\nStopping server on port ${port}...`);
       const killed = await killProcessOnPort(port);
       if (killed) {
         // Wait a moment for port to be released
         await Bun.sleep(500);
-        console.log("Server stopped");
+        console.info("Server stopped");
       }
       return killed;
     }
 
     case "restart": {
-      console.log(`\nRestarting server on port ${port}...`);
+      console.info(`\nRestarting server on port ${port}...`);
 
       // Stop if running
       const inUse = await isPortInUse(port);
@@ -156,8 +156,8 @@ export default async function dev(args?: string) {
     }
 
     case "logs": {
-      console.log(`\nViewing logs is not yet implemented.`);
-      console.log(`Tip: Check the terminal where the server is running.`);
+      console.info(`\nViewing logs is not yet implemented.`);
+      console.info(`Tip: Check the terminal where the server is running.`);
       return true;
     }
 
@@ -177,17 +177,17 @@ async function startServer(port: number, parts: string[]): Promise<boolean> {
   if (inUse) {
     const healthy = await checkHealth(port);
     if (healthy) {
-      console.log(`\nServer already running on port ${port}`);
-      console.log(`Use '/dev restart' to restart or '/dev stop' to stop.`);
+      console.info(`\nServer already running on port ${port}`);
+      console.info(`Use '/dev restart' to restart or '/dev stop' to stop.`);
       return true;
     } else {
-      console.log(`\nPort ${port} is in use by another process.`);
-      console.log(`Use '/dev --port <other>' or stop the other process.`);
+      console.info(`\nPort ${port} is in use by another process.`);
+      console.info(`Use '/dev --port <other>' or stop the other process.`);
       return false;
     }
   }
 
-  console.log(`\nStarting development server on port ${port}...`);
+  console.info(`\nStarting development server on port ${port}...`);
 
   // Build environment
   const env: Record<string, string> = {

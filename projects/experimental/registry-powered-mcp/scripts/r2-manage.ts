@@ -143,7 +143,7 @@ async function main() {
 
     default:
       logger.header("R2 Bucket Manager", "Cloud Storage Management Tool");
-      console.log(`
+      console.info(`
 Usage:
   bun scripts/r2-manage.ts <command> [prefix]
 

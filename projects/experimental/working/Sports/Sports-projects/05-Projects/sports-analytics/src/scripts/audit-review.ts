@@ -138,50 +138,50 @@ function generateSecurityReport(entries: AuditEntry[]): string {
 }
 
 export async function runAuditReview() {
-  console.log("🔍 T3-Lattice Registry Audit Review");
-  console.log("=" .repeat(50));
+  console.info("🔍 T3-Lattice Registry Audit Review");
+  console.info("=" .repeat(50));
   
   try {
     // Parse audit log
-    console.log("📋 Reading audit log...");
+    console.info("📋 Reading audit log...");
     const entries = await parseAuditLog();
     
     if (entries.length === 0) {
-      console.log("📭 No audit entries found. Audit logging may be disabled.");
+      console.info("📭 No audit entries found. Audit logging may be disabled.");
       return;
     }
 
-    console.log(`📊 Found ${entries.length} audit entries`);
-    console.log();
+    console.info(`📊 Found ${entries.length} audit entries`);
+    console.info();
 
     // Analyze audit log
     const summary = analyzeAuditLog(entries);
     
-    console.log("📈 Audit Summary:");
-    console.log(`  Total Entries: ${summary.totalEntries}`);
-    console.log(`  Time Range: ${formatTimestamp(summary.timeRange.start)} - ${formatTimestamp(summary.timeRange.end)}`);
-    console.log(`  Quantum Audits: ${summary.quantumAuditCount}`);
-    console.log(`  Security Events: ${summary.securityEvents.length}`);
-    console.log();
+    console.info("📈 Audit Summary:");
+    console.info(`  Total Entries: ${summary.totalEntries}`);
+    console.info(`  Time Range: ${formatTimestamp(summary.timeRange.start)} - ${formatTimestamp(summary.timeRange.end)}`);
+    console.info(`  Quantum Audits: ${summary.quantumAuditCount}`);
+    console.info(`  Security Events: ${summary.securityEvents.length}`);
+    console.info();
 
     // Endpoint statistics
-    console.log("🔗 Endpoint Statistics:");
+    console.info("🔗 Endpoint Statistics:");
     Object.entries(summary.endpointStats).forEach(([endpoint, stats]) => {
-      console.log(`  ${endpoint}:`);
-      console.log(`    Requests: ${stats.requestCount}`);
-      console.log(`    Success Rate: ${stats.successRate.toFixed(1)}%`);
-      console.log(`    Average Status: ${stats.averageStatus.toFixed(0)}`);
-      console.log();
+      console.info(`  ${endpoint}:`);
+      console.info(`    Requests: ${stats.requestCount}`);
+      console.info(`    Success Rate: ${stats.successRate.toFixed(1)}%`);
+      console.info(`    Average Status: ${stats.averageStatus.toFixed(0)}`);
+      console.info();
     });
 
     // Security events
     if (summary.securityEvents.length > 0) {
-      console.log(generateSecurityReport(summary.securityEvents));
-      console.log();
+      console.info(generateSecurityReport(summary.securityEvents));
+      console.info();
     }
 
     // Compliance recommendations
-    console.log("🛡️  Compliance Recommendations:");
+    console.info("🛡️  Compliance Recommendations:");
     
     // Check for high error rates
     const highErrorEndpoints = Object.entries(summary.endpointStats)
@@ -189,13 +189,13 @@ export async function runAuditReview() {
       .map(([endpoint]) => endpoint);
     
     if (highErrorEndpoints.length > 0) {
-      console.log(`  • High error rates on: ${highErrorEndpoints.join(", ")}`);
+      console.info(`  • High error rates on: ${highErrorEndpoints.join(", ")}`);
     }
 
     // Check for quantum audit coverage
     const quantumAuditRate = (summary.quantumAuditCount / summary.totalEntries) * 100;
     if (quantumAuditRate < 50) {
-      console.log(`  • Low quantum audit coverage: ${quantumAuditRate.toFixed(1)}%`);
+      console.info(`  • Low quantum audit coverage: ${quantumAuditRate.toFixed(1)}%`);
     }
 
     // Check for recent security events
@@ -207,7 +207,7 @@ export async function runAuditReview() {
     });
 
     if (recentSecurityEvents.length > 0) {
-      console.log(`  • ${recentSecurityEvents.length} security events in the last 7 days`);
+      console.info(`  • ${recentSecurityEvents.length} security events in the last 7 days`);
     }
 
     // Overall compliance score
@@ -216,16 +216,16 @@ export async function runAuditReview() {
     
     const complianceScore = (avgSuccessRate * 0.7) + (Math.min(quantumAuditRate, 100) * 0.3);
     
-    console.log(`\n🎯 Overall Compliance Score: ${complianceScore.toFixed(1)}%`);
+    console.info(`\n🎯 Overall Compliance Score: ${complianceScore.toFixed(1)}%`);
     
     if (complianceScore >= 95) {
-      console.log("✅ Excellent compliance");
+      console.info("✅ Excellent compliance");
     } else if (complianceScore >= 85) {
-      console.log("✅ Good compliance");
+      console.info("✅ Good compliance");
     } else if (complianceScore >= 75) {
-      console.log("⚠️  Fair compliance - improvements needed");
+      console.info("⚠️  Fair compliance - improvements needed");
     } else {
-      console.log("❌ Poor compliance - immediate action required");
+      console.info("❌ Poor compliance - immediate action required");
     }
 
   } catch (error) {

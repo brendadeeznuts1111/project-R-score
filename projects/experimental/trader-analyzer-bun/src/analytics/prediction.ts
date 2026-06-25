@@ -5,8 +5,8 @@
  *
  * @example
  * const stats = calculatePredictionStats(trades, positions, markets);
- * console.log(`Win rate: ${stats.winRate.toFixed(1)}%`);
- * console.log(`Calibration: ${stats.calibrationScore}/100`);
+ * console.info(`Win rate: ${stats.winRate.toFixed(1)}%`);
+ * console.info(`Calibration: ${stats.calibrationScore}/100`);
  */
 
 import type {
@@ -69,8 +69,8 @@ export interface PredictionStats {
  *
  * @example
  * const stats = calculatePredictionStats(trades, positions, markets);
- * console.log(`Calibration: ${stats.calibrationScore}/100`);
- * console.log(`Best category: ${Object.keys(stats.categoryPnl)[0]}`);
+ * console.info(`Calibration: ${stats.calibrationScore}/100`);
+ * console.info(`Best category: ${Object.keys(stats.categoryPnl)[0]}`);
  */
 export function calculatePredictionStats(
 	trades: PredictionTrade[],
@@ -394,8 +394,8 @@ export interface EdgeAnalysis {
  *
  * @example
  * const edge = analyzeEdge(trades, markets);
- * console.log(`Realized edge: ${(edge.realizedEdge * 100).toFixed(2)}%`);
- * console.log(`Best category: ${edge.bestCategories[0]?.category}`);
+ * console.info(`Realized edge: ${(edge.realizedEdge * 100).toFixed(2)}%`);
+ * console.info(`Best category: ${edge.bestCategories[0]?.category}`);
  */
 export function analyzeEdge(
 	trades: PredictionTrade[],
@@ -487,8 +487,8 @@ export interface SizingAnalysis {
  *
  * @example
  * const sizing = analyzeSizing(trades, stats);
- * console.log(`Kelly suggests: ${(sizing.kellyCriterion * 100).toFixed(1)}% of bankroll`);
- * console.log(`Actual vs Kelly: ${sizing.actualVsKelly.toFixed(2)}x`);
+ * console.info(`Kelly suggests: ${(sizing.kellyCriterion * 100).toFixed(1)}% of bankroll`);
+ * console.info(`Actual vs Kelly: ${sizing.actualVsKelly.toFixed(2)}x`);
  */
 export function analyzeSizing(
 	trades: PredictionTrade[],

@@ -177,7 +177,7 @@ describe('7.4.3.1.0: Bun.spawn', () => {
 		// Skip if Chrome not available
 		const chrome = resolveExecutable('google-chrome') || resolveExecutable('chromium');
 		if (!chrome) {
-			console.log('Skipping screenshot test - Chrome not found');
+			console.info('Skipping screenshot test - Chrome not found');
 			return;
 		}
 		
@@ -186,7 +186,7 @@ describe('7.4.3.1.0: Bun.spawn', () => {
 			expect(filename).toContain('.png');
 		} catch (error) {
 			// May fail in test environment, that's okay
-			console.log('Screenshot capture test skipped:', error);
+			console.info('Screenshot capture test skipped:', error);
 		}
 	});
 });
@@ -252,7 +252,7 @@ describe('7.5.4.1.0: Bun.write', () => {
 			// Cleanup
 			await Bun.write(testFile, '');
 		} catch (error) {
-			console.log('Write test skipped:', error);
+			console.info('Write test skipped:', error);
 		}
 	});
 });
@@ -282,7 +282,7 @@ describe('7.7.1.1.0: Bun.build', () => {
 			expect(path).toBeTruthy();
 		} catch (error) {
 			// May fail if mini-app.ts doesn't exist, that's okay
-			console.log('Build test skipped:', error);
+			console.info('Build test skipped:', error);
 		}
 	});
 });
@@ -328,11 +328,11 @@ describe('7.9.1.1.0: Bun.dns.resolve', () => {
 				expect(address).toMatch(/^\d+\.\d+\.\d+\.\d+$/);
 			} else {
 				// DNS resolution may return undefined in some environments
-				console.log('DNS test: address is undefined (may be normal in test environment)');
+				console.info('DNS test: address is undefined (may be normal in test environment)');
 			}
 		} catch (error) {
 			// DNS may fail in test environment
-			console.log('DNS test skipped:', error);
+			console.info('DNS test skipped:', error);
 		}
 	});
 });
@@ -501,7 +501,7 @@ describe('7.15.1.1.0: Bun.resolveSync > resolves module paths', () => {
 			expect(path).toContain('bun-native-utils-complete');
 		} catch (error) {
 			// May fail if module doesn't exist, that's okay
-			console.log('Resolve test skipped:', error);
+			console.info('Resolve test skipped:', error);
 		}
 	});
 });
@@ -587,7 +587,7 @@ describe('7.4.6.1.0: Bun.spawnSync > synchronous process execution', () => {
 			expect(result.exitCode).toBe(0);
 		} catch (error) {
 			// May fail in some environments
-			console.log('SpawnSync test skipped:', error);
+			console.info('SpawnSync test skipped:', error);
 		}
 	});
 });

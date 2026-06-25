@@ -1,6 +1,6 @@
 /**
  * Security Integration Checklist
- * 
+ *
  * Comprehensive checklist for implementing Bun Security v4.0
  */
 
@@ -34,7 +34,7 @@ Bun.password.hash(password, {
   memoryCost: 65536, // 64MB
   timeCost: 3
 })
-      `.trim()
+      `.trim(),
     },
     {
       id: 'AUTH_002',
@@ -50,7 +50,7 @@ const strength = BunSecurityEngine.PasswordManager.validatePasswordStrength(pass
 if (!strength.valid) {
   throw new Error('Password too weak');
 }
-      `.trim()
+      `.trim(),
     },
     {
       id: 'AUTH_003',
@@ -68,7 +68,7 @@ const verification = await BunSecurityEngine.PasswordManager.verifyPassword(pass
 if (verification.breached) {
   throw new Error('Password found in breach database');
 }
-      `.trim()
+      `.trim(),
     },
     {
       id: 'AUTH_004',
@@ -86,7 +86,7 @@ const sessionCookie = new Cookie('session', sessionId, {
   sameSite: 'strict',
   maxAge: 3600
 });
-      `.trim()
+      `.trim(),
     },
 
     // 🛡️ AUTHORIZATION
@@ -102,7 +102,7 @@ const sessionCookie = new Cookie('session', sessionId, {
       implementation: `
 const csrfToken = BunSecurityEngine.CSRFProtection.generateCSRFToken(sessionId);
 const validation = BunSecurityEngine.CSRFProtection.validateCSRFToken(token, sessionId);
-      `.trim()
+      `.trim(),
     },
     {
       id: 'AUTHZ_002',
@@ -116,7 +116,7 @@ const validation = BunSecurityEngine.CSRFProtection.validateCSRFToken(token, ses
       implementation: `
 // Implement rate limiting middleware
 const rateLimiter = new Map<string, { count: number; resetTime: number }>();
-      `.trim()
+      `.trim(),
     },
     {
       id: 'AUTHZ_003',
@@ -133,7 +133,7 @@ const permissions = {
   user: ['read', 'write'],
   guest: ['read']
 };
-      `.trim()
+      `.trim(),
     },
 
     // 🔒 ENCRYPTION
@@ -149,7 +149,7 @@ const permissions = {
       implementation: `
 const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(data, 'SECRET_NAME');
 const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(encrypted.encrypted, 'SECRET_NAME');
-      `.trim()
+      `.trim(),
     },
     {
       id: 'ENC_002',
@@ -163,7 +163,7 @@ const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(encrypted.
       implementation: `
 // Encrypt sensitive fields before storing
 const encryptedSSN = BunSecurityEngine.SecretManager.encryptWithRotation(ssn, 'DB_ENCRYPTION');
-      `.trim()
+      `.trim(),
     },
     {
       id: 'ENC_003',
@@ -182,7 +182,7 @@ Bun.serve({
     }
   }
 });
-      `.trim()
+      `.trim(),
     },
 
     // 📊 MONITORING
@@ -199,7 +199,7 @@ Bun.serve({
 const securityEngine = new BunSecurityEngine();
 securityEngine.recordSecurityEvent('password_hash', { userId });
 const metrics = securityEngine.getSecurityReport();
-      `.trim()
+      `.trim(),
     },
     {
       id: 'MON_002',
@@ -216,7 +216,7 @@ const alerts = monitoring.generateAlerts(securityEngine);
 alerts.filter(a => a.type === 'critical').forEach(alert => {
   console.error('🚨 SECURITY ALERT:', alert.message);
 });
-      `.trim()
+      `.trim(),
     },
     {
       id: 'MON_003',
@@ -234,7 +234,7 @@ securityEngine.recordSecurityEvent('login_attempt', {
   userAgent: request.headers.get('User-Agent'),
   success: true
 });
-      `.trim()
+      `.trim(),
     },
 
     // 🏗️ INFRASTRUCTURE
@@ -254,7 +254,7 @@ const headers = new Headers({
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff'
 });
-      `.trim()
+      `.trim(),
     },
     {
       id: 'INFRA_002',
@@ -268,7 +268,7 @@ const headers = new Headers({
       implementation: `
 // Add to CI/CD pipeline
 bun run security-tests
-      `.trim()
+      `.trim(),
     },
     {
       id: 'INFRA_003',
@@ -283,8 +283,8 @@ bun run security-tests
 // Encrypt backups before storage
 const backupData = JSON.stringify(database);
 const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(backupData, 'BACKUP_KEY');
-      `.trim()
-    }
+      `.trim(),
+    },
   ];
 
   // 📋 GET CHECKLIST BY CATEGORY
@@ -306,7 +306,7 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
   static getDependencies(itemId: string): SecurityChecklistItem[] {
     const item = this.checklist.find(i => i.id === itemId);
     if (!item) return [];
-    
+
     return this.checklist.filter(i => item.dependencies.includes(i.id));
   }
 
@@ -319,7 +319,7 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
       { phase: 1, items: this.getByPriority('critical') },
       { phase: 2, items: this.getByPriority('high') },
       { phase: 3, items: this.getByPriority('medium') },
-      { phase: 4, items: this.getByPriority('low') }
+      { phase: 4, items: this.getByPriority('low') },
     ];
 
     return phases;
@@ -328,7 +328,7 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
   // 📋 GENERATE MARKDOWN REPORT
   static generateMarkdownReport(): string {
     let report = '# Security Integration Checklist\n\n';
-    
+
     // Summary
     const summary = {
       total: this.checklist.length,
@@ -336,7 +336,7 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
       inProgress: this.getByStatus('in_progress').length,
       completed: this.getByStatus('completed').length,
       critical: this.getByPriority('critical').length,
-      high: this.getByPriority('high').length
+      high: this.getByPriority('high').length,
     };
 
     report += '## Summary\n\n';
@@ -350,12 +350,12 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
     // Implementation phases
     const plan = this.getImplementationPlan();
     report += '## Implementation Plan\n\n';
-    
+
     plan.forEach(phase => {
       report += `### Phase ${phase.phase}\n\n`;
       phase.items.forEach(item => {
-        const status = item.status === 'completed' ? '✅' : 
-                      item.status === 'in_progress' ? '🔄' : '⏳';
+        const status =
+          item.status === 'completed' ? '✅' : item.status === 'in_progress' ? '🔄' : '⏳';
         report += `${status} **${item.title}** (${item.priority})\n`;
         report += `${item.description}\n\n`;
       });
@@ -363,26 +363,32 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
 
     // Detailed checklist
     report += '## Detailed Checklist\n\n';
-    
-    const categories = ['authentication', 'authorization', 'encryption', 'monitoring', 'infrastructure'];
+
+    const categories = [
+      'authentication',
+      'authorization',
+      'encryption',
+      'monitoring',
+      'infrastructure',
+    ];
     categories.forEach(category => {
       const items = this.getByCategory(category as any);
       if (items.length === 0) return;
-      
+
       report += `### ${category.toUpperCase()}\n\n`;
       items.forEach(item => {
-        const status = item.status === 'completed' ? '✅' : 
-                      item.status === 'in_progress' ? '🔄' : '⏳';
+        const status =
+          item.status === 'completed' ? '✅' : item.status === 'in_progress' ? '🔄' : '⏳';
         report += `#### ${status} ${item.title}\n`;
         report += `**ID**: ${item.id}\n`;
         report += `**Priority**: ${item.priority}\n`;
         report += `**Status**: ${item.status}\n\n`;
         report += `${item.description}\n\n`;
-        
+
         if (item.dependencies.length > 0) {
           report += `**Dependencies**: ${item.dependencies.join(', ')}\n\n`;
         }
-        
+
         report += `**Verification**: ${item.verification}\n\n`;
         report += `**Implementation**:\n\`\`\`typescript\n${item.implementation}\n\`\`\`\n\n`;
       });
@@ -410,12 +416,12 @@ const encryptedBackup = BunSecurityEngine.SecretManager.encryptWithRotation(back
 // 🚀 GENERATE CHECKLIST REPORT
 export function generateSecurityChecklist(): void {
   const report = SecurityIntegrationChecklist.generateMarkdownReport();
-  console.log(report);
-  
+  console.info(report);
+
   // Also write to file
   // 🔒 BUN FIX: Bun.write() now properly handles files >2GB without corruption
   Bun.write('./SECURITY_CHECKLIST.md', new TextEncoder().encode(report));
-  console.log('\n📄 Checklist saved to SECURITY_CHECKLIST.md');
+  console.info('\n📄 Checklist saved to SECURITY_CHECKLIST.md');
 }
 
 // Run if executed directly

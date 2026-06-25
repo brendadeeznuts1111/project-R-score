@@ -98,7 +98,7 @@ export class R2SearchEngine {
    * Initialize search engine
    */
   async initialize(): Promise<void> {
-    console.log(styled('🔍 Initializing R2 Search Engine', 'accent'));
+    console.info(styled('🔍 Initializing R2 Search Engine', 'accent'));
 
     // Subscribe to R2 events for real-time index updates
     r2EventSystem.on('object:created', event => {
@@ -119,7 +119,7 @@ export class R2SearchEngine {
       }
     });
 
-    console.log(styled('✅ Search engine initialized', 'success'));
+    console.info(styled('✅ Search engine initialized', 'success'));
   }
 
   /**
@@ -128,7 +128,7 @@ export class R2SearchEngine {
   async indexDocument(
     bucket: string,
     key: string,
-    content: any,
+    content: unknown,
     metadata: Record<string, any> = {}
   ): Promise<void> {
     const id = `${bucket}/${key}`;
@@ -325,7 +325,7 @@ export class R2SearchEngine {
     this.index.documents.clear();
     this.updateStats();
 
-    console.log(styled('🗑️ Search index cleared', 'warning'));
+    console.info(styled('🗑️ Search index cleared', 'warning'));
   }
 
   /**
@@ -339,9 +339,9 @@ export class R2SearchEngine {
     };
 
     // In production, would save to R2
-    console.log(styled(`💾 Index exported: ${bucket}/${key}`, 'success'));
-    console.log(styled(`   Documents: ${exportData.stats.totalDocuments}`, 'muted'));
-    console.log(styled(`   Terms: ${exportData.stats.totalTerms}`, 'muted'));
+    console.info(styled(`💾 Index exported: ${bucket}/${key}`, 'success'));
+    console.info(styled(`   Documents: ${exportData.stats.totalDocuments}`, 'muted'));
+    console.info(styled(`   Terms: ${exportData.stats.totalTerms}`, 'muted'));
   }
 
   /**
@@ -349,7 +349,7 @@ export class R2SearchEngine {
    */
   async importIndex(bucket: string, key: string = 'search/index.json'): Promise<void> {
     // In production, would load from R2
-    console.log(styled(`📥 Index imported: ${bucket}/${key}`, 'success'));
+    console.info(styled(`📥 Index imported: ${bucket}/${key}`, 'success'));
   }
 
   // Private helper methods
@@ -432,7 +432,7 @@ export class R2SearchEngine {
     ]);
   }
 
-  private extractText(content: any): string {
+  private extractText(content: unknown): string {
     if (typeof content === 'string') return content;
     if (typeof content === 'object') {
       return JSON.stringify(content, null, 2);
@@ -663,12 +663,12 @@ export class R2SearchEngine {
     };
   }
 
-  private queueForIndexing(bucket: string, key: string, metadata?: any): void {
+  private queueForIndexing(bucket: string, key: string, metadata?: unknown): void {
     // In production, would fetch content and index
-    console.log(styled(`📝 Queued for indexing: ${bucket}/${key}`, 'muted'));
+    console.info(styled(`📝 Queued for indexing: ${bucket}/${key}`, 'muted'));
   }
 
-  private updateIndex(bucket: string, key: string, metadata?: any): void {
+  private updateIndex(bucket: string, key: string, metadata?: unknown): void {
     this.queueForIndexing(bucket, key, metadata);
   }
 }
@@ -681,8 +681,8 @@ if (import.meta.main) {
   const search = r2SearchEngine;
   await search.initialize();
 
-  console.log(styled('🔍 R2 Search Engine Demo', 'accent'));
-  console.log(styled('========================', 'accent'));
+  console.info(styled('🔍 R2 Search Engine Demo', 'accent'));
+  console.info(styled('========================', 'accent'));
 
   // Index some sample documents
   const docs = [
@@ -715,39 +715,39 @@ if (import.meta.main) {
     },
   ];
 
-  console.log(styled('\n📝 Indexing documents...', 'info'));
+  console.info(styled('\n📝 Indexing documents...', 'info'));
   for (const doc of docs) {
     await search.indexDocument(doc.bucket, doc.key, doc.content, doc.metadata);
   }
 
   // Display stats
   const stats = search.getStats();
-  console.log(styled(`\n📊 Index Statistics:`, 'info'));
-  console.log(styled(`  Documents: ${stats.totalDocuments}`, 'muted'));
-  console.log(styled(`  Terms: ${stats.totalTerms}`, 'muted'));
-  console.log(styled(`  Avg Doc Size: ${stats.avgDocSize} bytes`, 'muted'));
+  console.info(styled(`\n📊 Index Statistics:`, 'info'));
+  console.info(styled(`  Documents: ${stats.totalDocuments}`, 'muted'));
+  console.info(styled(`  Terms: ${stats.totalTerms}`, 'muted'));
+  console.info(styled(`  Avg Doc Size: ${stats.avgDocSize} bytes`, 'muted'));
 
   // Perform search
-  console.log(styled('\n🔍 Searching for "error handling"...', 'info'));
+  console.info(styled('\n🔍 Searching for "error handling"...', 'info'));
   const results = search.search({ q: 'error handling', limit: 10 });
 
-  console.log(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
+  console.info(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
   for (const result of results.results) {
-    console.log(
+    console.info(
       styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted')
     );
     if (result.highlights.length > 0) {
-      console.log(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
+      console.info(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
     }
   }
 
   // Fuzzy search
-  console.log(styled('\n🔍 Fuzzy search for "configur"...', 'info'));
+  console.info(styled('\n🔍 Fuzzy search for "configur"...', 'info'));
   const fuzzy = search.fuzzySearch('configur', 2);
-  console.log(styled(`  Found ${fuzzy.total} results`, 'success'));
+  console.info(styled(`  Found ${fuzzy.total} results`, 'success'));
 
   if (fuzzy.suggestions) {
-    console.log(styled('  💡 Suggestions:', 'info'));
-    fuzzy.suggestions.forEach(s => console.log(styled(`     ${s}`, 'muted')));
+    console.info(styled('  💡 Suggestions:', 'info'));
+    fuzzy.suggestions.forEach(s => console.info(styled(`     ${s}`, 'muted')));
   }
 }

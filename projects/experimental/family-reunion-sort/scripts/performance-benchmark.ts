@@ -37,7 +37,7 @@ class PerformanceBenchmark {
   }
 
   async runAllBenchmarks(): Promise<void> {
-    console.log('🚀 Running Bun v1.3.6 Performance Benchmarks...\n');
+    console.info('🚀 Running Bun v1.3.6 Performance Benchmarks...\n');
 
     await this.benchmarkCRC32();
     await this.benchmarkResponseJSON();
@@ -52,7 +52,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkCRC32(): Promise<void> {
-    console.log('🔢 Testing CRC32 Performance (20x improvement expected)...');
+    console.info('🔢 Testing CRC32 Performance (20x improvement expected)...');
     
     // Create test data
     const testData = new Uint8Array(1024 * 1024); // 1MB
@@ -80,7 +80,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkResponseJSON(): Promise<void> {
-    console.log('📄 Testing Response.json() Performance (3.5x improvement expected)...');
+    console.info('📄 Testing Response.json() Performance (3.5x improvement expected)...');
     
     const largeData = {
       disputes: Array.from({ length: 10000 }, (_, i) => ({
@@ -119,7 +119,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkAsyncAwait(): Promise<void> {
-    console.log('⚡ Testing Async/Await Performance (15% improvement expected)...');
+    console.info('⚡ Testing Async/Await Performance (15% improvement expected)...');
     
     async function simulateAsyncWork(): Promise<string> {
       await new Promise(resolve => setTimeout(resolve, 1));
@@ -148,7 +148,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkPromiseRace(): Promise<void> {
-    console.log('🏁 Testing Promise.race Performance (30% improvement expected)...');
+    console.info('🏁 Testing Promise.race Performance (30% improvement expected)...');
     
     const iterations = 10000;
     const startTime = performance.now();
@@ -175,7 +175,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkBufferSearch(): Promise<void> {
-    console.log('🔍 Testing Buffer.indexOf SIMD Performance (2x improvement expected)...');
+    console.info('🔍 Testing Buffer.indexOf SIMD Performance (2x improvement expected)...');
     
     // Create large buffer with pattern at the end
     const largeBuffer = new Uint8Array(10 * 1024 * 1024); // 10MB
@@ -204,7 +204,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkJSONCParsing(): Promise<void> {
-    console.log('📝 Testing JSONC Parsing Performance...');
+    console.info('📝 Testing JSONC Parsing Performance...');
     
     const jsoncContent = `
     {
@@ -244,7 +244,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkArchiveOperations(): Promise<void> {
-    console.log('📦 Testing Archive Operations Performance...');
+    console.info('📦 Testing Archive Operations Performance...');
     
     const testFiles = [
       { name: 'dispute1.json', content: '{"id": "1", "amount": 100}' },
@@ -291,7 +291,7 @@ class PerformanceBenchmark {
   }
 
   private async benchmarkWebSocketPerformance(): Promise<void> {
-    console.log('🌐 Testing WebSocket Performance with Decompression Limits...');
+    console.info('🌐 Testing WebSocket Performance with Decompression Limits...');
     
     // Create test server
     const server = serve({
@@ -346,14 +346,14 @@ class PerformanceBenchmark {
   }
 
   private generateReport(): void {
-    console.log('\n📊 PERFORMANCE BENCHMARK REPORT');
-    console.log('===============================\n');
+    console.info('\n📊 PERFORMANCE BENCHMARK REPORT');
+    console.info('===============================\n');
 
     const passed = this.results.filter(r => r.passed);
     const failed = this.results.filter(r => !r.passed);
 
-    console.log(`✅ PASSED: ${passed.length}`);
-    console.log(`❌ FAILED: ${failed.length}\n`);
+    console.info(`✅ PASSED: ${passed.length}`);
+    console.info(`❌ FAILED: ${failed.length}\n`);
 
     // Group by category
     const categories = {
@@ -364,40 +364,40 @@ class PerformanceBenchmark {
 
     Object.entries(categories).forEach(([category, tests]) => {
       if (tests.length > 0) {
-        console.log(`\n${category}:`);
-        console.log('-'.repeat(category.length + 1));
+        console.info(`\n${category}:`);
+        console.info('-'.repeat(category.length + 1));
         
         tests.forEach(test => {
           const status = test.passed ? '✅' : '❌';
           const improvement = test.improvement ? ` (${test.improvement})` : '';
-          console.log(`${status} ${test.metric}: ${test.value.toFixed(3)}${test.unit}${improvement}`);
+          console.info(`${status} ${test.metric}: ${test.value.toFixed(3)}${test.unit}${improvement}`);
         });
       }
     });
 
     if (failed.length > 0) {
-      console.log('\n❌ FAILED TESTS:');
-      console.log('='.repeat(15));
+      console.info('\n❌ FAILED TESTS:');
+      console.info('='.repeat(15));
       failed.forEach(test => {
-        console.log(`\n${test.name}: ${test.metric}`);
-        console.log(`Expected: < ${test.threshold}${test.unit}`);
-        console.log(`Actual: ${test.value.toFixed(3)}${test.unit}`);
+        console.info(`\n${test.name}: ${test.metric}`);
+        console.info(`Expected: < ${test.threshold}${test.unit}`);
+        console.info(`Actual: ${test.value.toFixed(3)}${test.unit}`);
       });
     }
 
     this.generatePerformanceScript();
     
-    console.log('\n🎯 PERFORMANCE SUMMARY:');
-    console.log(`Overall Score: ${Math.round((passed.length / this.results.length) * 100)}%`);
-    console.log('Key Improvements in v1.3.6:');
-    console.log('- 20x faster CRC32 hashing');
-    console.log('- 3.5x faster Response.json()');
-    console.log('- 2x faster Buffer.indexOf()');
-    console.log('- 15% faster async/await');
-    console.log('- 30% faster Promise.race()');
-    console.log('- Native JSONC parsing');
-    console.log('- Built-in archive support');
-    console.log('- WebSocket decompression protection');
+    console.info('\n🎯 PERFORMANCE SUMMARY:');
+    console.info(`Overall Score: ${Math.round((passed.length / this.results.length) * 100)}%`);
+    console.info('Key Improvements in v1.3.6:');
+    console.info('- 20x faster CRC32 hashing');
+    console.info('- 3.5x faster Response.json()');
+    console.info('- 2x faster Buffer.indexOf()');
+    console.info('- 15% faster async/await');
+    console.info('- 30% faster Promise.race()');
+    console.info('- Native JSONC parsing');
+    console.info('- Built-in archive support');
+    console.info('- WebSocket decompression protection');
   }
 
   private generatePerformanceScript(): void {
@@ -439,8 +439,8 @@ echo "✅ Performance monitoring complete!"
     writeFileSync('scripts/performance-monitor.sh', perfScript, 'utf-8');
     writeFileSync('scripts/curl-format.txt', curlFormat, 'utf-8');
     
-    console.log('\n📝 Generated: scripts/performance-monitor.sh');
-    console.log('📝 Generated: scripts/curl-format.txt');
+    console.info('\n📝 Generated: scripts/performance-monitor.sh');
+    console.info('📝 Generated: scripts/curl-format.txt');
   }
 }
 

@@ -3425,7 +3425,7 @@ Get ORCA streaming WebSocket subscription info using \`ServerWebSocket.subscript
 websocket: {
   open(ws) {
     ws.subscribe('odds');
-    console.log(ws.subscriptions); // Set { 'odds' }
+    console.info(ws.subscriptions); // Set { 'odds' }
   }
 }
 \`\`\`
@@ -3494,10 +3494,10 @@ const ws = new WebSocket("ws://localhost:8080/ws/radiance?token=eng-alpha-001");
 ws.onmessage = (e) => {
   const msg = JSON.parse(e.data);
   if (msg.type === "RADIANCE_IDENTITY_CONFIRMED") {
-    console.log("Identity:", msg.identity);
+    console.info("Identity:", msg.identity);
   }
   if (msg.type === "RADIANCE_EVENT_17_11") {
-    console.log("Event:", msg.data); // Already filtered for your role
+    console.info("Event:", msg.data); // Already filtered for your role
   }
 };
 \`\`\`
@@ -3573,10 +3573,10 @@ const ws = new WebSocket("ws://localhost:8080/ws/pubsub?token=eng-alpha-001");
 ws.onmessage = (e) => {
   const msg = JSON.parse(e.data); // Bun already decompressed
   if (msg.type === "RADIANCE_IDENTITY_CONFIRMED") {
-    console.log("Subscribed to:", msg.payload.channels);
+    console.info("Subscribed to:", msg.payload.channels);
   }
   if (msg.type === "RADIANCE_PUBLISH") {
-    console.log("Event:", msg.payload);
+    console.info("Event:", msg.payload);
   }
 };
 
@@ -7982,7 +7982,7 @@ docs.get("/", (c) => {
 					docExpansion: 'list',
 					syntaxHighlight: { theme: 'monokai' },
 					onComplete: function() {
-						console.log('Swagger UI loaded successfully');
+						console.info('Swagger UI loaded successfully');
 					},
 					onFailure: function(data) {
 						console.error('Failed to load OpenAPI spec:', data);

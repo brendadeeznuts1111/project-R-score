@@ -1,13 +1,13 @@
 // lib/cli/silent-killer-detector.ts — Silent killer pattern detection and fix for async operations
 
-console.log('🚨 SILENT KILLER DETECTION AND FIX');
-console.log('='.repeat(60));
+console.info('🚨 SILENT KILLER DETECTION AND FIX');
+console.info('='.repeat(60));
 
 const problematicFiles = [];
 const fixedFiles = [];
 
 async function scanAndFixCodebase() {
-  console.log('\n🔍 SCANNING FOR SILENT KILLER PATTERNS...\n');
+  console.info('\n🔍 SCANNING FOR SILENT KILLER PATTERNS...\n');
 
   // Files that need immediate fixing
   const criticalFiles = [
@@ -26,27 +26,27 @@ async function scanAndFixCodebase() {
   }
 
   // Show summary
-  console.log('\n📊 SCAN SUMMARY');
-  console.log('='.repeat(40));
-  console.log(`🚨 Problematic files found: ${problematicFiles.length}`);
-  console.log(`✅ Files fixed: ${fixedFiles.length}`);
+  console.info('\n📊 SCAN SUMMARY');
+  console.info('='.repeat(40));
+  console.info(`🚨 Problematic files found: ${problematicFiles.length}`);
+  console.info(`✅ Files fixed: ${fixedFiles.length}`);
 
   if (problematicFiles.length > 0) {
-    console.log('\n🚨 CRITICAL: SILENT KILLERS DETECTED!');
-    console.log('These files have the deadly pattern that kills async operations:');
-    problematicFiles.forEach(file => console.log(`   ❌ ${file}`));
+    console.info('\n🚨 CRITICAL: SILENT KILLERS DETECTED!');
+    console.info('These files have the deadly pattern that kills async operations:');
+    problematicFiles.forEach(file => console.info(`   ❌ ${file}`));
   }
 
   if (fixedFiles.length > 0) {
-    console.log('\n✅ FILES FIXED:');
-    fixedFiles.forEach(file => console.log(`   ✅ ${file}`));
+    console.info('\n✅ FILES FIXED:');
+    fixedFiles.forEach(file => console.info(`   ✅ ${file}`));
   }
 
-  console.log('\n🎯 RECOMMENDATION:');
-  console.log('1. IMMEDIATELY fix all files with the silent killer pattern');
-  console.log('2. Update the entry-guard.ts utility to use safe patterns');
-  console.log('3. Add linting rules to prevent this pattern in the future');
-  console.log('4. Test all CLI tools after fixing');
+  console.info('\n🎯 RECOMMENDATION:');
+  console.info('1. IMMEDIATELY fix all files with the silent killer pattern');
+  console.info('2. Update the entry-guard.ts utility to use safe patterns');
+  console.info('3. Add linting rules to prevent this pattern in the future');
+  console.info('4. Test all CLI tools after fixing');
 
   return { problematic: problematicFiles.length, fixed: fixedFiles.length };
 }
@@ -69,23 +69,23 @@ async function checkAndFixFile(filePath) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }`
       );
 
       await Bun.write(filePath, fixedContent);
       fixedFiles.push(filePath);
 
-      console.log(`🔧 FIXED: ${filePath}`);
+      console.info(`🔧 FIXED: ${filePath}`);
     }
   } catch (error) {
-    console.log(`❌ Error checking ${filePath}: ${error.message}`);
+    console.info(`❌ Error checking ${filePath}: ${error.message}`);
   }
 }
 
 // Create a safe entry guard utility
 async function createSafeEntryGuard() {
-  console.log('\n🛡️  CREATING SAFE ENTRY GUARD UTILITY...\n');
+  console.info('\n🛡️  CREATING SAFE ENTRY GUARD UTILITY...\n');
 
   const safeEntryGuardContent = `#!/usr/bin/env bun
 /**
@@ -109,7 +109,7 @@ export function isDirectExecution(): boolean {
  */
 export function ensureDirectExecution(): void {
   if (!import.meta.main) {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
     return; // 🛡️ SAFE: Return instead of process.exit(0)
   }
 }
@@ -130,7 +130,7 @@ export function runIfMain(mainFunction: () => void | Promise<void>): void {
       }
     }
   } else {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
   }
 }
 
@@ -165,20 +165,20 @@ ensureDirectExecution();
 import { runIfMain } from '../shared/tools/entry-guard';
 runIfMain(async () => {
   // Your async code here...
-  console.log('Running safely!');
+  console.info('Running safely!');
 });
 
 // ✅ SAFE PATTERN 3:
 if (import.meta.main) {
   main().catch(console.error);
 } else {
-  console.log('Imported, not executed');
+  console.info('Imported, not executed');
 }
 */
 `;
 
   await Bun.write('./lib/shared/tools/safe-entry-guard.ts', safeEntryGuardContent);
-  console.log('✅ Created: ./lib/shared/tools/safe-entry-guard.ts');
+  console.info('✅ Created: ./lib/shared/tools/safe-entry-guard.ts');
 }
 
 // Main execution
@@ -186,19 +186,19 @@ async function main() {
   const scanResults = await scanAndFixCodebase();
   await createSafeEntryGuard();
 
-  console.log('\n🎯 FINAL STATUS:');
+  console.info('\n🎯 FINAL STATUS:');
   if (scanResults.problematic > 0) {
-    console.log(`🔴 CRITICAL: Fixed ${scanResults.fixed} files with silent killer patterns`);
-    console.log('⚠️  Test all CLI tools to ensure they work correctly');
+    console.info(`🔴 CRITICAL: Fixed ${scanResults.fixed} files with silent killer patterns`);
+    console.info('⚠️  Test all CLI tools to ensure they work correctly');
   } else {
-    console.log('🟢 GOOD: No silent killer patterns found in critical files');
+    console.info('🟢 GOOD: No silent killer patterns found in critical files');
   }
 
-  console.log('\n🛡️  SAFE ENTRY GUARD CREATED:');
-  console.log('   Use ./lib/shared/tools/safe-entry-guard.ts for new CLI tools');
-  console.log('   Update existing tools to use safe patterns');
+  console.info('\n🛡️  SAFE ENTRY GUARD CREATED:');
+  console.info('   Use ./lib/shared/tools/safe-entry-guard.ts for new CLI tools');
+  console.info('   Update existing tools to use safe patterns');
 
-  console.log('\n✅ SILENT KILLER ELIMINATION COMPLETE!');
+  console.info('\n✅ SILENT KILLER ELIMINATION COMPLETE!');
 }
 
 if (import.meta.main) {

@@ -18,7 +18,8 @@ export class ABTestingManager {
     variants: string[],
     options?: { weights?: number[]; cookieName?: string; expiryDays?: number }
   ): void {
-    const weights: number[] = options?.weights ?? Array.from({ length: variants.length }, () => 100 / variants.length);
+    const weights: number[] =
+      options?.weights ?? Array.from({ length: variants.length }, () => 100 / variants.length);
     this._inner.registerTest({
       id: testId,
       variants,

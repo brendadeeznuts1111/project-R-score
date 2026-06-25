@@ -1,2 +1,36 @@
+# FactoryWager monorepo — project bunfig.toml
+# Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge)
+# Enterprise reference profile (not auto-loaded): ./.bunfig.toml
+
 [install]
 exact = true
+# Dev override — machine ~/.bunfig.toml sets frozenLockfile = true
+frozenLockfile = false
+
+# Scoped registries — private @factorywager packages.
+# Token via FACTORYWAGER_REGISTRY_TOKEN env var.
+[install.scopes]
+"@factorywager" = { url = "https://factory-wager.com/registry", token = "$FACTORYWAGER_REGISTRY_TOKEN" }
+
+# Test runner defaults.  Per-workspace bunfig.toml files
+# (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.
+[test]
+timeout = 10000
+# ast-grep integration scans (see .agents/skills/ast-grep/bunfig.toml for skill-local defaults)
+concurrentTestGlob = [
+  ".agents/skills/ast-grep/tests/integration/*.test.ts",
+  ".agents/skills/ast-grep/tests/integration/**/*.test.ts",
+  ".agents/skills/ast-grep/**/concurrent-*.test.ts",
+]
+pathIgnorePatterns = [
+  "node_modules/**",
+  "dist/**",
+  "archive/**",
+  "scratch/**",
+  "docs/**",
+  "screenshots/**",
+  "bench/**",
+  "migrations/**",
+  "generated/**",
+  "vendor/**",
+]

@@ -1,5 +1,5 @@
 {
-  "name": "@factorywager/registry-server",
+  "name": "@factorywager/registry-server-archive",
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
@@ -13,6 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "5.0.0"
   }
 }

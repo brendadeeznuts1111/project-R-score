@@ -135,25 +135,25 @@ function analyzeMetrics(metrics: any[], config: any): MetricsSummary {
 }
 
 function displayComponentMatrix(components: Component[]) {
-  console.log("📋 Component Registry Matrix:");
-  console.log("ID  Name            Hex       Pattern   Status");
-  console.log("--  ----            ---       -------   ------");
+  console.info("📋 Component Registry Matrix:");
+  console.info("ID  Name            Hex       Pattern   Status");
+  console.info("--  ----            ---       -------   ------");
   
   components.forEach(c => {
     const status = Math.random() > 0.1 ? "✅" : "⚠";
-    console.log(
+    console.info(
       `${c.id.toString().padStart(2, '0')}  ${c.name.padEnd(14)}  ${c.hex}   ${c.pattern.padEnd(8)}  ${status}`
     );
   });
-  console.log();
+  console.info();
 }
 
 export async function runMetricsDashboard() {
   const configManager = LatticeConfigManager.getInstance();
   const config = configManager.getConfig();
 
-  console.log(`📊 T3-Lattice Registry Metrics Dashboard [v3.3]`);
-  console.log("=" .repeat(60));
+  console.info(`📊 T3-Lattice Registry Metrics Dashboard [v3.3]`);
+  console.info("=" .repeat(60));
   
   try {
     const client = new LatticeRegistryClient();
@@ -168,56 +168,58 @@ export async function runMetricsDashboard() {
     displayComponentMatrix(config.components);
 
     if (allMetrics.length === 0) {
-      console.log("📭 No metrics available. Make some requests first.");
+      console.info("📭 No metrics available. Make some requests first.");
       return;
     }
 
-    console.log(`📈 Total Requests: ${allMetrics.length}`);
-    console.log();
+    console.info(`📈 Total Requests: ${allMetrics.length}`);
+    console.info();
 
     // Generate and display metrics table
-    console.log("📋 Recent Metrics:");
-    console.log(generateAsciiTable(allMetrics.slice(0, 10), config));
-    console.log();
+    console.info("📋 Recent Metrics:");
+    console.info(generateAsciiTable(allMetrics.slice(0, 10), config));
+    console.info();
 
     // Analyze metrics
     const summary = analyzeMetrics(allMetrics, config);
     
-    console.log("📊 Metrics Summary:");
-    console.log(`  Total Requests: ${summary.totalRequests}`);
-    console.log(`  Average Latency: ${formatLatency(summary.averageLatency)}`);
-    console.log(`  SLA Violations: ${summary.slaViolations}`);
-    console.log();
+    console.info("📊 Metrics Summary:");
+    console.info(`  Total Requests: ${summary.totalRequests}`);
+    console.info(`  Average Latency: ${formatLatency(summary.averageLatency)}`);
+    console.info(`  SLA Violations: ${summary.slaViolations}`);
+    console.info();
 
     // DNS Cache Stats (v1.3.4)
     try {
       const { dns } = require("bun");
       const dnsStats = dns.getCacheStats();
-      console.log("🌐 DNS Cache Stats:");
-      console.log(`  Hits: ${dnsStats.cacheHitsCompleted} | Misses: ${dnsStats.cacheMisses} | Size: ${dnsStats.size}`);
-      console.log();
+      console.info("🌐 DNS Cache Stats:");
+      console.info(`  Hits: ${dnsStats.cacheHitsCompleted} | Misses: ${dnsStats.cacheMisses} | Size: ${dnsStats.size}`);
+      console.info();
     } catch (e) {
       // DNS stats might not be available in all environments
     }
 
     // SLA Compliance
     const slaCompliance = ((summary.totalRequests - summary.slaViolations) / summary.totalRequests) * 100;
-    console.log("🎯 SLA Compliance:");
-    console.log(`  Overall: ${slaCompliance.toFixed(1)}%`);
+    console.info("🎯 SLA Compliance:");
+    console.info(`  Overall: ${slaCompliance.toFixed(1)}%`);
     
     if (slaCompliance < 95) {
-      console.log("  ⚠️  SLA compliance below 95%");
+      console.info("  ⚠️  SLA compliance below 95%");
     } else {
-      console.log("  ✅ SLA compliance within acceptable range");
+      console.info("  ✅ SLA compliance within acceptable range");
     }
 
     // %j Logging Example (v1.3.4)
-    console.log("\n💡 Performance Log (JSON):");
+    console.info("\n💡 Performance Log (JSON):");
     let dnsStats = {};
     try {
       const { dns } = require("bun");
       dnsStats = dns.getCacheStats();
-    } catch (e) {}
+    } catch (e) {
+    console.error('Unhandled error:', e);
+  }
 
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -226,13 +228,13 @@ export async function runMetricsDashboard() {
       violations: summary.slaViolations,
       dns: dnsStats
     };
-    console.log("%j", logEntry);
+    console.info("%j", logEntry);
 
     // Visual Language Legend
-    console.log("\n🎨 Visual Language Legend:");
-    console.log(`  stable  : ${config.glyphs.stable} (Latency <= ${config.health.p50_target}ms)`);
-    console.log(`  drift   : ${config.glyphs.drift} (Latency <= ${config.health.p99_limit}ms)`);
-    console.log(`  chaotic : ${config.glyphs.chaotic} (Latency > ${config.health.p99_limit}ms)`);
+    console.info("\n🎨 Visual Language Legend:");
+    console.info(`  stable  : ${config.glyphs.stable} (Latency <= ${config.health.p50_target}ms)`);
+    console.info(`  drift   : ${config.glyphs.drift} (Latency <= ${config.health.p99_limit}ms)`);
+    console.info(`  chaotic : ${config.glyphs.chaotic} (Latency > ${config.health.p99_limit}ms)`);
 
   } catch (error) {
     console.error("❌ Metrics dashboard failed:", error);

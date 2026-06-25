@@ -31,19 +31,19 @@ const buf = Buffer.from(data); // ~50% faster
 
 // Example: Headers preserve original casing
 try {
-  const response = await fetch("https://api.example.com/data", {
+  const response = await fetch('https://api.example.com/data', {
     headers: {
-      "Authorization": "Bearer token123", // sent as "Authorization"
-      "Content-Type": "application/json", // sent as "Content-Type"
+      Authorization: 'Bearer token123', // sent as "Authorization"
+      'Content-Type': 'application/json', // sent as "Content-Type"
     },
   });
-  console.log("Fetch successful");
+  console.info('Fetch successful');
 } catch (error) {
-  console.log("Fetch failed (expected for demo):", error.message);
+  console.info('Fetch failed (expected for demo):', error.message);
 }
 
 // Bun.wrapAnsi() - ANSI-aware text wrapping
-const text = "\x1b[31mThis is a long red text that needs wrapping\x1b[0m";
+const text = '\x1b[31mThis is a long red text that needs wrapping\x1b[0m';
 const wrapped = Bun.wrapAnsi(text, 20);
 // Options: hard, wordWrap, trim, ambiguousIsNarrow
 

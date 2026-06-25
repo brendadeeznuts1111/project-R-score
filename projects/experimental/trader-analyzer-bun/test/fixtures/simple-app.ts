@@ -2,4 +2,4 @@
 /**
  * Simple test app for compilation testing
  */
-console.log('Hello from compiled executable!');
+console.info('Hello from compiled executable!');

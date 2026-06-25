@@ -15,21 +15,21 @@ const matchNPMStringWidthExcludeANSI = (input: string): boolean => {
 };
 
 async function demonstrateStringWidthTests() {
-  console.log('🔬 Bun StringWidth Test Suite Demo');
-  console.log('==================================\n');
+  console.info('🔬 Bun StringWidth Test Suite Demo');
+  console.info('==================================\n');
 
-  console.log('📊 Test Suite Overview:');
-  console.log('=======================');
-  console.log('• 500+ Individual Test Cases');
-  console.log('• 8 Major Test Categories');
-  console.log('• Comprehensive Unicode Coverage');
-  console.log('• ANSI Escape Sequence Testing');
-  console.log('• Performance Stress Testing');
-  console.log('• Cross-Platform Validation\n');
+  console.info('📊 Test Suite Overview:');
+  console.info('=======================');
+  console.info('• 500+ Individual Test Cases');
+  console.info('• 8 Major Test Categories');
+  console.info('• Comprehensive Unicode Coverage');
+  console.info('• ANSI Escape Sequence Testing');
+  console.info('• Performance Stress Testing');
+  console.info('• Cross-Platform Validation\n');
 
   // Test 1: Basic String Width
-  console.log('✅ Test 1: Basic String Width');
-  console.log('=============================');
+  console.info('✅ Test 1: Basic String Width');
+  console.info('=============================');
   
   const basicTests = [
     undefined,
@@ -49,12 +49,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(String(test || ''), { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(String(test || ''), { countAnsiEscapeCodes: true });
     
-    console.log(`   "${String(test || 'undefined')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   "${String(test || 'undefined')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 2: ANSI Color Sequences
-  console.log('\n✅ Test 2: ANSI Color Sequences');
-  console.log('===============================');
+  console.info('\n✅ Test 2: ANSI Color Sequences');
+  console.info('===============================');
   
   const ansiTests = [
     '\u001b[31m',
@@ -77,12 +77,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(test, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(test, { countAnsiEscapeCodes: true });
     
-    console.log(`   "${test.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   "${test.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 3: Zero-Width Characters
-  console.log('\n✅ Test 3: Zero-Width Characters');
-  console.log('=================================');
+  console.info('\n✅ Test 3: Zero-Width Characters');
+  console.info('=================================');
   
   const zeroWidthTests = [
     { char: '\u00AD', name: 'Soft hyphen' },
@@ -100,12 +100,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(char, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(char, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} (U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}) → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} (U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}) → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 4: Complex Emoji
-  console.log('\n✅ Test 4: Complex Emoji');
-  console.log('========================');
+  console.info('\n✅ Test 4: Complex Emoji');
+  console.info('========================');
   
   const emojiTests = [
     { emoji: '😀', name: 'Grinning face' },
@@ -128,12 +128,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(emoji, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(emoji, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} "${emoji}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} "${emoji}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 5: East Asian Characters
-  console.log('\n✅ Test 5: East Asian Characters');
-  console.log('=================================');
+  console.info('\n✅ Test 5: East Asian Characters');
+  console.info('=================================');
   
   const eastAsianTests = [
     { char: '中', name: 'Chinese character' },
@@ -153,12 +153,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(char, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(char, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} "${char}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} "${char}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 6: Indic Scripts
-  console.log('\n✅ Test 6: Indic Scripts');
-  console.log('========================');
+  console.info('\n✅ Test 6: Indic Scripts');
+  console.info('========================');
   
   const indicTests = [
     { char: 'क', name: 'Devanagari Ka' },
@@ -178,12 +178,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(char, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(char, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} "${char}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} "${char}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 7: CSI Sequences (Advanced)
-  console.log('\n✅ Test 7: CSI Sequences (Advanced)');
-  console.log('===================================');
+  console.info('\n✅ Test 7: CSI Sequences (Advanced)');
+  console.info('===================================');
   
   const csiTests = [
     { seq: 'a\u001b[5Ab', name: 'Cursor up' },
@@ -203,12 +203,12 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(seq, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(seq, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} "${seq.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} "${seq.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 8: OSC Sequences (Hyperlinks)
-  console.log('\n✅ Test 8: OSC Sequences (Hyperlinks)');
-  console.log('=====================================');
+  console.info('\n✅ Test 8: OSC Sequences (Hyperlinks)');
+  console.info('=====================================');
   
   const oscTests = [
     { seq: '\u001b]8;;https://example.com\u0007link\u001b]8;;\u0007', name: 'Basic hyperlink' },
@@ -224,14 +224,14 @@ async function demonstrateStringWidthTests() {
     const npmWidth = npmStringWidth(seq, { countAnsiEscapeCodes: true });
     const bunWidth = Bun.stringWidth(seq, { countAnsiEscapeCodes: true });
     
-    console.log(`   ${name} "${seq.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
+    console.info(`   ${name} "${seq.replace(/\u001b/g, '\\x1b')}" → npm: ${npmWidth}, bun: ${bunWidth} ${result ? '✅' : '❌'}`);
   });
 
   // Test 9: Performance Tests
-  console.log('\n✅ Test 9: Performance Tests');
-  console.log('============================');
+  console.info('\n✅ Test 9: Performance Tests');
+  console.info('============================');
   
-  console.log('   Testing large strings...');
+  console.info('   Testing large strings...');
   
   const startTime = performance.now();
   
@@ -253,14 +253,14 @@ async function demonstrateStringWidthTests() {
   const endTime = performance.now();
   const duration = endTime - startTime;
   
-  console.log(`   Long ASCII (10,000 chars): width=${asciiWidth} ${asciiResult ? '✅' : '❌'}`);
-  console.log(`   Long Emoji (1,000 emoji): width=${emojiWidth} ${emojiResult ? '✅' : '❌'}`);
-  console.log(`   Mixed Content (1,000 reps): width=${mixedWidth} ${mixedResult ? '✅' : '❌'}`);
-  console.log(`   Performance: ${duration.toFixed(2)}ms for all tests`);
+  console.info(`   Long ASCII (10,000 chars): width=${asciiWidth} ${asciiResult ? '✅' : '❌'}`);
+  console.info(`   Long Emoji (1,000 emoji): width=${emojiWidth} ${emojiResult ? '✅' : '❌'}`);
+  console.info(`   Mixed Content (1,000 reps): width=${mixedWidth} ${mixedResult ? '✅' : '❌'}`);
+  console.info(`   Performance: ${duration.toFixed(2)}ms for all tests`);
 
   // Test 10: ANSI vs Non-ANSI Mode
-  console.log('\n✅ Test 10: ANSI vs Non-ANSI Mode');
-  console.log('=================================');
+  console.info('\n✅ Test 10: ANSI vs Non-ANSI Mode');
+  console.info('=================================');
   
   const ansiModeTests = [
     '\u001b[31mRed text\u001b[0m',
@@ -276,14 +276,14 @@ async function demonstrateStringWidthTests() {
     const widthWithAnsi = Bun.stringWidth(test, { countAnsiEscapeCodes: true });
     const widthWithoutAnsi = Bun.stringWidth(test, { countAnsiEscapeCodes: false });
     
-    console.log(`   "${test.replace(/\u001b/g, '\\x1b')}"`);
-    console.log(`     With ANSI: ${widthWithAnsi} ${withAnsi ? '✅' : '❌'}`);
-    console.log(`     Without ANSI: ${widthWithoutAnsi} ${withoutAnsi ? '✅' : '❌'}`);
+    console.info(`   "${test.replace(/\u001b/g, '\\x1b')}"`);
+    console.info(`     With ANSI: ${widthWithAnsi} ${withAnsi ? '✅' : '❌'}`);
+    console.info(`     Without ANSI: ${widthWithoutAnsi} ${withoutAnsi ? '✅' : '❌'}`);
   });
 
   // Summary
-  console.log('\n🎊 Test Suite Summary');
-  console.log('=====================');
+  console.info('\n🎊 Test Suite Summary');
+  console.info('=====================');
   
   const allTests = [
     ...basicTests.map(t => String(t || '')),
@@ -310,44 +310,44 @@ async function demonstrateStringWidthTests() {
     }
   });
 
-  console.log(`📊 Total Tests: ${allTests.length}`);
-  console.log(`✅ Passed: ${passedTests}`);
-  console.log(`❌ Failed: ${failedTests}`);
-  console.log(`📈 Success Rate: ${((passedTests / allTests.length) * 100).toFixed(1)}%`);
+  console.info(`📊 Total Tests: ${allTests.length}`);
+  console.info(`✅ Passed: ${passedTests}`);
+  console.info(`❌ Failed: ${failedTests}`);
+  console.info(`📈 Success Rate: ${((passedTests / allTests.length) * 100).toFixed(1)}%`);
 
   if (failedTests === 0) {
-    console.log('\n🏆 Perfect Compatibility!');
-    console.log('Bun.stringWidth() is 100% compatible with npm string-width');
+    console.info('\n🏆 Perfect Compatibility!');
+    console.info('Bun.stringWidth() is 100% compatible with npm string-width');
   } else {
-    console.log(`\n⚠️ ${failedTests} test(s) failed - needs investigation`);
+    console.info(`\n⚠️ ${failedTests} test(s) failed - needs investigation`);
   }
 
-  console.log('\n🚀 Performance Highlights:');
-  console.log('• Native Zig implementation for maximum speed');
-  console.log('• Zero external dependencies');
-  console.log('• Memory-efficient processing');
-  console.log('• Sub-millisecond execution for typical inputs');
-  console.log('• Battle-tested with 500+ edge cases');
+  console.info('\n🚀 Performance Highlights:');
+  console.info('• Native Zig implementation for maximum speed');
+  console.info('• Zero external dependencies');
+  console.info('• Memory-efficient processing');
+  console.info('• Sub-millisecond execution for typical inputs');
+  console.info('• Battle-tested with 500+ edge cases');
 
-  console.log('\n🌟 Unicode Excellence:');
-  console.log('• Complete Unicode Standard Annex #11 support');
-  console.log('• All major writing systems covered');
-  console.log('• Proper East Asian Width properties');
-  console.log('• Advanced grapheme cluster handling');
-  console.log('• Comprehensive emoji support');
+  console.info('\n🌟 Unicode Excellence:');
+  console.info('• Complete Unicode Standard Annex #11 support');
+  console.info('• All major writing systems covered');
+  console.info('• Proper East Asian Width properties');
+  console.info('• Advanced grapheme cluster handling');
+  console.info('• Comprehensive emoji support');
 
-  console.log('\n🛡️ Production Ready:');
-  console.log('• Battle-tested with comprehensive test suite');
-  console.log('• Graceful handling of malformed input');
-  console.log('• Memory safe with no crashes');
-  console.log('• Cross-platform consistency');
-  console.log('• Enterprise-grade reliability');
+  console.info('\n🛡️ Production Ready:');
+  console.info('• Battle-tested with comprehensive test suite');
+  console.info('• Graceful handling of malformed input');
+  console.info('• Memory safe with no crashes');
+  console.info('• Cross-platform consistency');
+  console.info('• Enterprise-grade reliability');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun.stringWidth() demonstrates exceptional compatibility');
-  console.log('with the industry-standard npm string-width package while');
-  console.log('delivering superior performance through native Zig implementation!');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun.stringWidth() demonstrates exceptional compatibility');
+  console.info('with the industry-standard npm string-width package while');
+  console.info('delivering superior performance through native Zig implementation!');
 }
 
 // Run the demonstration

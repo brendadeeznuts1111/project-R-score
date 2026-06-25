@@ -57,7 +57,7 @@ class RemainingIssuesFixer {
      * Scan for remaining validation issues
      */
     async scanRemainingIssues(): Promise<void> {
-        console.log(chalk.blue.bold('🔍 Scanning for remaining validation issues...'));
+        console.info(chalk.blue.bold('🔍 Scanning for remaining validation issues...'));
 
         // Define the specific files with known issues
         const problematicFiles = [
@@ -86,7 +86,7 @@ class RemainingIssuesFixer {
             await this.analyzeFile(filePath, relativePath);
         }
 
-        console.log(chalk.green(`\n✅ Analysis complete: ${this.issues.length} issues found`));
+        console.info(chalk.green(`\n✅ Analysis complete: ${this.issues.length} issues found`));
     }
 
     /**
@@ -166,11 +166,11 @@ class RemainingIssuesFixer {
      */
     async fixIssues(): Promise<void> {
         if (this.issues.length === 0) {
-            console.log(chalk.green('✅ No remaining validation issues found!'));
+            console.info(chalk.green('✅ No remaining validation issues found!'));
             return;
         }
 
-        console.log(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} remaining issues...`));
+        console.info(chalk.blue.bold(`\n🔧 ${this.dryRun ? 'DRY RUN: Would fix' : 'Fixing'} ${this.issues.length} remaining issues...`));
 
         // Group issues by file
         const issuesByFile = this.issues.reduce((acc, issue) => {
@@ -193,24 +193,24 @@ class RemainingIssuesFixer {
 
                     if (!this.dryRun) {
                         await writeFile(filePath, fixOperation.fixedContent, 'utf-8');
-                        console.log(chalk.green(`   ✅ Fixed ${filePath.split('/').pop()}`));
+                        console.info(chalk.green(`   ✅ Fixed ${filePath.split('/').pop()}`));
                     } else {
-                        console.log(chalk.cyan(`   🔧 Would fix ${filePath.split('/').pop()}:`));
+                        console.info(chalk.cyan(`   🔧 Would fix ${filePath.split('/').pop()}:`));
                         for (const fix of fixOperation.fixes) {
-                            console.log(chalk.gray(`      - ${fix}`));
+                            console.info(chalk.gray(`      - ${fix}`));
                         }
                     }
                     results.success++;
                 }
             } catch (error) {
-                console.log(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
+                console.info(chalk.red(`   ❌ Failed to fix ${filePath}: ${error.message}`));
                 results.failed++;
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Results:`));
-        console.log(chalk.green(`   ✅ Success: ${results.success}`));
-        console.log(chalk.red(`   ❌ Failed: ${results.failed}`));
+        console.info(chalk.blue.bold(`\n📊 Results:`));
+        console.info(chalk.green(`   ✅ Success: ${results.success}`));
+        console.info(chalk.red(`   ❌ Failed: ${results.failed}`));
     }
 
     /**
@@ -411,12 +411,12 @@ review-date: ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().spl
      */
     displayReport(): void {
         if (this.issues.length === 0) {
-            console.log(chalk.green('✅ No remaining validation issues found!'));
+            console.info(chalk.green('✅ No remaining validation issues found!'));
             return;
         }
 
-        console.log(chalk.blue.bold('\n📋 Remaining Issues Report:'));
-        console.log(chalk.gray('='.repeat(80)));
+        console.info(chalk.blue.bold('\n📋 Remaining Issues Report:'));
+        console.info(chalk.gray('='.repeat(80)));
 
         // Group by issue type
         const byType = this.issues.reduce((acc, issue) => {
@@ -433,22 +433,22 @@ review-date: ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().spl
                 'missing-overview': '🔵 Missing Overview Section'
             }[issueType] || issueType;
 
-            console.log(chalk.cyan(`\n${typeLabel} (${issues.length} files):`));
+            console.info(chalk.cyan(`\n${typeLabel} (${issues.length} files):`));
 
             for (const issue of issues.slice(0, 5)) { // Show max 5 examples
                 const relativePath = issue.filePath.replace(this.vaultPath + '/', '');
-                console.log(chalk.gray(`   ${relativePath}`));
+                console.info(chalk.gray(`   ${relativePath}`));
                 if (issue.issueType === 'multiple-h1') {
-                    console.log(chalk.gray(`      → ${issue.details.count} H1 headings found`));
+                    console.info(chalk.gray(`      → ${issue.details.count} H1 headings found`));
                 }
             }
 
             if (issues.length > 5) {
-                console.log(chalk.gray(`   ... and ${issues.length - 5} more files`));
+                console.info(chalk.gray(`   ... and ${issues.length - 5} more files`));
             }
         }
 
-        console.log(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} remaining issues`));
+        console.info(chalk.blue.bold(`\n📊 Summary: ${this.issues.length} remaining issues`));
     }
 }
 
@@ -466,12 +466,12 @@ async function main(): Promise<void> {
     };
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔧 Remaining Validation Issues Fix Script'));
-        console.log(chalk.gray('Usage: bun fix-remaining-issues.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --dry-run    Show what would be fixed without doing it'));
-        console.log(chalk.gray('  --report     Show detailed report of issues found'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('🔧 Remaining Validation Issues Fix Script'));
+        console.info(chalk.gray('Usage: bun fix-remaining-issues.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --dry-run    Show what would be fixed without doing it'));
+        console.info(chalk.gray('  --report     Show detailed report of issues found'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

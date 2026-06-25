@@ -7,12 +7,12 @@
 
 import { performance } from "perf_hooks";
 
-console.log("⚡ Bun v1.3.9: Performance Optimizations\n");
-console.log("=".repeat(70));
+console.info("⚡ Bun v1.3.9: Performance Optimizations\n");
+console.info("=".repeat(70));
 
 // RegExp JIT Demo
-console.log("\n🔍 1. RegExp JIT Optimization (3.9x speedup)");
-console.log("-".repeat(70));
+console.info("\n🔍 1. RegExp JIT Optimization (3.9x speedup)");
+console.info("-".repeat(70));
 
 const jitPattern = /(?:abc){3}/;  // Fixed-count (JIT-optimized)
 const interpPattern = /(?:abc)+/;  // Variable count (interpreter)
@@ -39,14 +39,14 @@ const jitTime = benchmarkRegex(jitPattern, testString, iterations);
 const interpTime = benchmarkRegex(interpPattern, testString, iterations);
 const speedup = interpTime / jitTime;
 
-console.log(`JIT-optimized pattern:     ${jitTime.toFixed(2)}ms`);
-console.log(`Interpreter pattern:       ${interpTime.toFixed(2)}ms`);
-console.log(`Speedup:                   ${speedup.toFixed(2)}x`);
-console.log(`Expected (v1.3.9):         ~3.9x`);
+console.info(`JIT-optimized pattern:     ${jitTime.toFixed(2)}ms`);
+console.info(`Interpreter pattern:       ${interpTime.toFixed(2)}ms`);
+console.info(`Speedup:                   ${speedup.toFixed(2)}x`);
+console.info(`Expected (v1.3.9):         ~3.9x`);
 
 // Markdown Demo
-console.log("\n📝 2. Markdown Performance (SIMD-Accelerated)");
-console.log("-".repeat(70));
+console.info("\n📝 2. Markdown Performance (SIMD-Accelerated)");
+console.info("-".repeat(70));
 
 const smallMarkdown = "# Hello\n\nThis is **bold** text.";
 const mediumMarkdown = `# Document
@@ -60,12 +60,12 @@ This is a paragraph with **bold** and *italic* text.
 
 \`\`\`javascript
 const x = 1;
-console.log(x);
+console.info(x);
 \`\`\`
 `;
 
-console.log("Bun.markdown.html() - SIMD-accelerated HTML escaping");
-console.log("(&, <, >, \" characters)");
+console.info("Bun.markdown.html() - SIMD-accelerated HTML escaping");
+console.info("(&, <, >, \" characters)");
 
 const smallIterations = 100_000;
 const smallStart = performance.now();
@@ -75,11 +75,11 @@ for (let i = 0; i < smallIterations; i++) {
 const smallEnd = performance.now();
 const smallAvg = (smallEnd - smallStart) / smallIterations;
 
-console.log(`Small doc (${smallMarkdown.length} chars):  ${(smallAvg * 1000).toFixed(2)} µs`);
-console.log(`Expected: ~28% faster for small documents`);
+console.info(`Small doc (${smallMarkdown.length} chars):  ${(smallAvg * 1000).toFixed(2)} µs`);
+console.info(`Expected: ~28% faster for small documents`);
 
 // React markdown
-console.log("\nBun.markdown.react() - Cached HTML tag strings");
+console.info("\nBun.markdown.react() - Cached HTML tag strings");
 const reactIterations = 50_000;
 const reactStart = performance.now();
 for (let i = 0; i < reactIterations; i++) {
@@ -88,13 +88,13 @@ for (let i = 0; i < reactIterations; i++) {
 const reactEnd = performance.now();
 const reactAvg = (reactEnd - reactStart) / reactIterations;
 
-console.log(`React render: ${(reactAvg * 1000).toFixed(2)} µs`);
-console.log(`Improvements: 28% faster (small), 7% faster (medium/large)`);
-console.log(`Memory: 40% fewer string objects, 6% less heap`);
+console.info(`React render: ${(reactAvg * 1000).toFixed(2)} µs`);
+console.info(`Improvements: 28% faster (small), 7% faster (medium/large)`);
+console.info(`Memory: 40% fewer string objects, 6% less heap`);
 
 // String optimizations
-console.log("\n🔤 3. String Optimizations");
-console.log("-".repeat(70));
+console.info("\n🔤 3. String Optimizations");
+console.info("-".repeat(70));
 
 const str = "  Hello World  ";
 const strIterations = 10_000_000;
@@ -115,14 +115,14 @@ for (let i = 0; i < strIterations; i++) {
 const trimEnd = performance.now();
 const trimTime = trimEnd - trimStart;
 
-console.log(`String#startsWith:         ${(startsWithTime / strIterations * 1_000_000).toFixed(2)} ns/op`);
-console.log(`Expected improvement:      1.42x faster`);
-console.log(`String#trim:               ${(trimTime / strIterations * 1_000_000).toFixed(2)} ns/op`);
-console.log(`Expected improvement:      1.17x faster`);
+console.info(`String#startsWith:         ${(startsWithTime / strIterations * 1_000_000).toFixed(2)} ns/op`);
+console.info(`Expected improvement:      1.42x faster`);
+console.info(`String#trim:               ${(trimTime / strIterations * 1_000_000).toFixed(2)} ns/op`);
+console.info(`Expected improvement:      1.17x faster`);
 
 // Set/Map size
-console.log("\n📊 4. Set/Map Size Optimization");
-console.log("-".repeat(70));
+console.info("\n📊 4. Set/Map Size Optimization");
+console.info("-".repeat(70));
 
 const testSet = new Set([1, 2, 3, 4, 5]);
 const testMap = new Map([[1, "a"], [2, "b"], [3, "c"]]);
@@ -143,14 +143,14 @@ for (let i = 0; i < sizeIterations; i++) {
 const mapSizeEnd = performance.now();
 const mapSizeTime = mapSizeEnd - mapSizeStart;
 
-console.log(`Set#size:                  ${(setSizeTime / sizeIterations * 1_000_000).toFixed(2)} ns/op`);
-console.log(`Expected improvement:      2.24x faster`);
-console.log(`Map#size:                  ${(mapSizeTime / sizeIterations * 1_000_000).toFixed(2)} ns/op`);
-console.log(`Expected improvement:      2.74x faster`);
+console.info(`Set#size:                  ${(setSizeTime / sizeIterations * 1_000_000).toFixed(2)} ns/op`);
+console.info(`Expected improvement:      2.24x faster`);
+console.info(`Map#size:                  ${(mapSizeTime / sizeIterations * 1_000_000).toFixed(2)} ns/op`);
+console.info(`Expected improvement:      2.74x faster`);
 
 // AbortSignal
-console.log("\n🚫 5. AbortSignal Optimization");
-console.log("-".repeat(70));
+console.info("\n🚫 5. AbortSignal Optimization");
+console.info("-".repeat(70));
 
 const abortIterations = 1_000_000;
 
@@ -161,15 +161,15 @@ for (let i = 0; i < abortIterations; i++) {
 const abortEnd = performance.now();
 const abortTime = abortEnd - abortStart;
 
-console.log(`AbortSignal.abort():       ${(abortTime / abortIterations * 1_000_000).toFixed(2)} ns/op`);
-console.log(`Expected improvement:      ~6% faster (no listeners)`);
-console.log(`Saves:                    ~16ms per 1M calls`);
+console.info(`AbortSignal.abort():       ${(abortTime / abortIterations * 1_000_000).toFixed(2)} ns/op`);
+console.info(`Expected improvement:      ~6% faster (no listeners)`);
+console.info(`Saves:                    ~16ms per 1M calls`);
 
-console.log("\n✅ Demo complete!");
-console.log("\nKey Optimizations:");
-console.log("  • RegExp JIT: 3.9x faster for fixed-count patterns");
-console.log("  • Markdown: 3-15% faster (SIMD-accelerated)");
-console.log("  • String methods: 1.1-1.4x faster");
-console.log("  • Set/Map size: 2.2-2.7x faster");
-console.log("  • AbortSignal: ~6% faster (no listeners)");
-console.log("\nAll optimizations are automatic - no code changes needed!");
+console.info("\n✅ Demo complete!");
+console.info("\nKey Optimizations:");
+console.info("  • RegExp JIT: 3.9x faster for fixed-count patterns");
+console.info("  • Markdown: 3-15% faster (SIMD-accelerated)");
+console.info("  • String methods: 1.1-1.4x faster");
+console.info("  • Set/Map size: 2.2-2.7x faster");
+console.info("  • AbortSignal: ~6% faster (no listeners)");
+console.info("\nAll optimizations are automatic - no code changes needed!");

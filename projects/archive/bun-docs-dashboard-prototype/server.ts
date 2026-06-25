@@ -11,4 +11,4 @@ Bun.serve({
   },
 });
 
-console.log("Docs directory server running at http://localhost:3000");
+console.info("Docs directory server running at http://localhost:3000");

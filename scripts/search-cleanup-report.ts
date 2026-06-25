@@ -38,12 +38,10 @@ function isMoveCandidate(path: string): boolean {
   const lower = path.toLowerCase();
   return (
     lower.includes('/lib/docs/') &&
-    (
-      lower.includes('generator') ||
+    (lower.includes('generator') ||
       lower.includes('template') ||
       lower.includes('validator') ||
-      lower.includes('/builders/')
-    )
+      lower.includes('/builders/'))
   );
 }
 
@@ -65,8 +63,8 @@ async function main(): Promise<void> {
     byTag.set(tag, (byTag.get(tag) || 0) + 1);
   }
 
-  const strict = bench.rankedProfiles?.find((p) => p.profile === 'lib-strict');
-  const mixed = bench.rankedProfiles?.find((p) => p.profile === 'mixed');
+  const strict = bench.rankedProfiles?.find(p => p.profile === 'lib-strict');
+  const mixed = bench.rankedProfiles?.find(p => p.profile === 'mixed');
   const lines: string[] = [];
   lines.push('# Lib Slop Cleanup Report');
   lines.push('');
@@ -104,7 +102,9 @@ async function main(): Promise<void> {
   lines.push('');
   lines.push('## First Pass (Low Risk)');
   lines.push('- Move docs-demo/helper code under a dedicated non-lib path where possible.');
-  lines.push('- Mark generated/template outputs with explicit generated markers and exclude path rules.');
+  lines.push(
+    '- Mark generated/template outputs with explicit generated markers and exclude path rules.'
+  );
   lines.push('- Split runtime code from docs generation examples in `lib/docs/` modules.');
   lines.push('- Keep `--scope code --view clean` default for delivery workflows.');
   lines.push('');
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
 
   const reportPath = 'reports/slop-cleanup-lib-latest.md';
   await Bun.write(reportPath, `${lines.join('\n')}\n`);
-  console.log(`[search:cleanup:report] wrote ${reportPath}`);
+  console.info(`[search:cleanup:report] wrote ${reportPath}`);
 }
 
 await main();

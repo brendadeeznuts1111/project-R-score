@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "description": "Heuristics for discover — find repo-map candidates under the monorepo root",
+  "skip_dirs": [
+    "node_modules",
+    ".git",
+    "dist",
+    "build",
+    "coverage",
+    "herdr-worktrees",
+    "__snapshots__",
+    ".turbo",
+    ".next",
+    "vendor"
+  ],
+  "probes": [
+    {
+      "id": "agent-skills",
+      "kind": "skill",
+      "glob": ".agents/skills/*/SKILL.md",
+      "zone": "agents",
+      "path_from": "parent"
+    },
+    {
+      "id": "active-workspaces",
+      "kind": "workspace",
+      "glob": "projects/active/*/package.json",
+      "zone": "sports-terminal",
+      "path_from": "parent",
+      "entry_globs": ["src/index.ts", "index.ts", "src/api/router.ts"]
+    },
+    {
+      "id": "root-packages",
+      "kind": "package",
+      "glob": "packages/*/package.json",
+      "zone": "packages",
+      "path_from": "parent",
+      "entry_globs": ["src/index.ts", "index.ts"]
+    },
+    {
+      "id": "kimi-plugin",
+      "kind": "plugin",
+      "glob": "kimi-plugin/*/package.json",
+      "zone": "kimi",
+      "path_from": "parent"
+    },
+    {
+      "id": "kimi-scripts",
+      "kind": "plugin",
+      "glob": "kimi-plugin/**/scripts",
+      "zone": "kimi",
+      "path_from": "self",
+      "require_child": "package.json"
+    },
+    {
+      "id": "lib-workspaces",
+      "kind": "lib",
+      "glob": "lib/*/package.json",
+      "zone": "packages",
+      "path_from": "parent"
+    }
+  ]
+}

@@ -44,7 +44,7 @@ bun run docs:install
 ### Manual Install
 ```bash
 # Build CLI
-bun build ./cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
+bun build ./tools/cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
 chmod +x ~/.local/bin/bun-docs
 
 # Add to PATH (add to ~/.zshrc or ~/.bashrc)
@@ -313,7 +313,7 @@ MIT License - see LICENSE file for details.
 
 ## 🔗 Related Tools
 
-- **Wiki Generator**: `bun run wiki:generate`
+- **Wiki Generator**: `bun run wiki:mcp generate`
 - **MCP Integration**: `bun run mcp:bun`
 - **URL Validation**: `bun run url:validate`
 - **Documentation Demo**: `bun run docs:demo`

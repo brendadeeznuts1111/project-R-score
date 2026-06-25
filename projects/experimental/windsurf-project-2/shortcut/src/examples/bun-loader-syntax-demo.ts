@@ -9,12 +9,12 @@
  * - All supported loader types
  */
 
-console.log('🚀 Bun Loader Syntax Showcase');
-console.log('=============================');
+console.info('🚀 Bun Loader Syntax Showcase');
+console.info('=============================');
 
 // Create sample files for demonstration
 async function createSampleFiles() {
-  console.log('📁 Creating sample files...');
+  console.info('📁 Creating sample files...');
   
   // TOML file for the exact example from docs
   await Bun.write('./my_file.toml', `
@@ -86,60 +86,60 @@ users:
     role: moderator
 `);
 
-  console.log('✅ Sample files created!\n');
+  console.info('✅ Sample files created!\n');
 }
 
 // Static import demonstration - Note: These work in separate files!
 function demonstrateStaticImports() {
-  console.log('📋 Static Import Examples:');
-  console.log('========================');
+  console.info('📋 Static Import Examples:');
+  console.info('========================');
   
-  console.log('\n📝 Static Import Syntax (works in separate files):');
-  console.log('   import my_toml from "./my_file.toml" with { type: "toml" };');
-  console.log('   import settings from "./settings.jsonc";');
-  console.log('   import customConfig from "./custom.conf" with { type: "toml" };');
-  console.log('   import userData from "./data.txt" with { type: "yaml" };');
+  console.info('\n📝 Static Import Syntax (works in separate files):');
+  console.info('   import my_toml from "./my_file.toml" with { type: "toml" };');
+  console.info('   import settings from "./settings.jsonc";');
+  console.info('   import customConfig from "./custom.conf" with { type: "toml" };');
+  console.info('   import userData from "./data.txt" with { type: "yaml" };');
   
-  console.log('\n⚠️  Note: Static imports cannot be used in the same file for demonstration.');
-  console.log('   They work perfectly when used in separate TypeScript files.');
-  console.log('   See bun-syntax-working-demo.ts for working dynamic import examples.');
+  console.info('\n⚠️  Note: Static imports cannot be used in the same file for demonstration.');
+  console.info('   They work perfectly when used in separate TypeScript files.');
+  console.info('   See bun-syntax-working-demo.ts for working dynamic import examples.');
 }
 
 // Dynamic import demonstration
 async function demonstrateDynamicImports() {
-  console.log('\n🔄 Dynamic Import Examples:');
-  console.log('==========================');
+  console.info('\n🔄 Dynamic Import Examples:');
+  console.info('==========================');
   
   try {
     // 1. Exact dynamic import example from documentation
-    console.log('\n1️⃣ TOML Dynamic Import (exact docs example):');
+    console.info('\n1️⃣ TOML Dynamic Import (exact docs example):');
     const { default: my_toml_dynamic } = await import('./my_file.toml', { 
       with: { type: 'toml' } 
     });
-    console.log(`   ✅ Dynamic: ${my_toml_dynamic.app.name}`);
-    console.log(`   🚀 Port: ${my_toml_dynamic.app.port}`);
+    console.info(`   ✅ Dynamic: ${my_toml_dynamic.app.name}`);
+    console.info(`   🚀 Port: ${my_toml_dynamic.app.port}`);
     
     // 2. Dynamic YAML import
-    console.log('\n2️⃣ YAML Dynamic Import:');
+    console.info('\n2️⃣ YAML Dynamic Import:');
     const { default: yaml_config } = await import('./config.yaml', { 
       with: { type: 'yaml' } 
     });
-    console.log(`   ✅ App: ${yaml_config.app.name}`);
-    console.log(`   🐛 Debug: ${yaml_config.app.debug}`);
-    console.log(`   🌐 Server: ${yaml_config.server.host}:${yaml_config.server.port}`);
+    console.info(`   ✅ App: ${yaml_config.app.name}`);
+    console.info(`   🐛 Debug: ${yaml_config.app.debug}`);
+    console.info(`   🌐 Server: ${yaml_config.server.host}:${yaml_config.server.port}`);
     
     // 3. Dynamic JSONC import
-    console.log('\n3️⃣ JSONC Dynamic Import:');
+    console.info('\n3️⃣ JSONC Dynamic Import:');
     const { default: dynamic_settings } = await import('./settings.jsonc', { 
       with: { type: 'jsonc' } 
     });
-    console.log(`   ✅ Language: ${dynamic_settings.language}`);
-    console.log(`   📝 Word wrap: ${dynamic_settings.editor.wordWrap}`);
+    console.info(`   ✅ Language: ${dynamic_settings.language}`);
+    console.info(`   📝 Word wrap: ${dynamic_settings.editor.wordWrap}`);
     
     // 4. Conditional dynamic import based on environment
-    console.log('\n4️⃣ Conditional Dynamic Import:');
+    console.info('\n4️⃣ Conditional Dynamic Import:');
     const env = process.env.NODE_ENV || 'development';
-    console.log(`   🌍 Environment: ${env}`);
+    console.info(`   🌍 Environment: ${env}`);
     
     let config;
     if (env === 'production') {
@@ -152,7 +152,7 @@ async function demonstrateDynamicImports() {
       });
       config = devConfig;
     }
-    console.log(`   ✅ Loaded config for ${env}: ${config.app.name}`);
+    console.info(`   ✅ Loaded config for ${env}: ${config.app.name}`);
     
   } catch (error) {
     console.error('❌ Dynamic import error:', error);
@@ -161,12 +161,12 @@ async function demonstrateDynamicImports() {
 
 // Advanced usage patterns
 async function demonstrateAdvancedPatterns() {
-  console.log('\n🎯 Advanced Usage Patterns:');
-  console.log('==========================');
+  console.info('\n🎯 Advanced Usage Patterns:');
+  console.info('==========================');
   
   try {
     // 1. Multiple format support
-    console.log('\n1️⃣ Multi-Format Configuration:');
+    console.info('\n1️⃣ Multi-Format Configuration:');
     const formats = ['toml', 'yaml', 'jsonc'] as const;
     
     for (const format of formats) {
@@ -178,11 +178,11 @@ async function demonstrateAdvancedPatterns() {
       });
       
       const appName = config.app?.name || config.theme || 'Unknown';
-      console.log(`   ✅ ${format.toUpperCase()}: ${appName}`);
+      console.info(`   ✅ ${format.toUpperCase()}: ${appName}`);
     }
     
     // 2. Runtime type detection
-    console.log('\n2️⃣ Runtime Type Detection:');
+    console.info('\n2️⃣ Runtime Type Detection:');
     const files = [
       { path: './my_file.toml', type: 'toml' },
       { path: './config.yaml', type: 'yaml' },
@@ -197,11 +197,11 @@ async function demonstrateAdvancedPatterns() {
       const endTime = Bun.nanoseconds();
       
       const loadTime = (endTime - startTime) / 1_000_000; // Convert to ms
-      console.log(`   ✅ ${file.type}: ${loadTime.toFixed(3)}ms`);
+      console.info(`   ✅ ${file.type}: ${loadTime.toFixed(3)}ms`);
     }
     
     // 3. Plugin-style loader system
-    console.log('\n3️⃣ Plugin-Style Loading:');
+    console.info('\n3️⃣ Plugin-Style Loading:');
     interface ConfigPlugin {
       name: string;
       load: () => Promise<any>;
@@ -226,7 +226,7 @@ async function demonstrateAdvancedPatterns() {
     
     for (const plugin of plugins) {
       const config = await plugin.YAML.parse();
-      console.log(`   ✅ ${plugin.name}: ${config.app?.name || 'Loaded'}`);
+      console.info(`   ✅ ${plugin.name}: ${config.app?.name || 'Loaded'}`);
     }
     
   } catch (error) {
@@ -236,14 +236,14 @@ async function demonstrateAdvancedPatterns() {
 
 // Performance comparison
 async function demonstratePerformance() {
-  console.log('\n⚡ Performance Comparison:');
-  console.log('========================');
+  console.info('\n⚡ Performance Comparison:');
+  console.info('========================');
   
   const iterations = 1000;
   
   try {
     // Static import performance
-    console.log('\n1️⃣ Static Import Performance:');
+    console.info('\n1️⃣ Static Import Performance:');
     const staticStart = Bun.nanoseconds();
     
     for (let i = 0; i < iterations; i++) {
@@ -255,11 +255,11 @@ async function demonstratePerformance() {
     const staticEnd = Bun.nanoseconds();
     const staticTime = (staticEnd - staticStart) / 1_000_000;
     
-    console.log(`   ✅ ${iterations} static imports: ${staticTime.toFixed(3)}ms`);
-    console.log(`   📊 Average: ${(staticTime / iterations).toFixed(6)}ms per import`);
+    console.info(`   ✅ ${iterations} static imports: ${staticTime.toFixed(3)}ms`);
+    console.info(`   📊 Average: ${(staticTime / iterations).toFixed(6)}ms per import`);
     
     // Dynamic import performance
-    console.log('\n2️⃣ Dynamic Import Performance:');
+    console.info('\n2️⃣ Dynamic Import Performance:');
     const dynamicStart = Bun.nanoseconds();
     
     for (let i = 0; i < iterations; i++) {
@@ -269,10 +269,10 @@ async function demonstratePerformance() {
     const dynamicEnd = Bun.nanoseconds();
     const dynamicTime = (dynamicEnd - dynamicStart) / 1_000_000;
     
-    console.log(`   ✅ ${iterations} dynamic imports: ${dynamicTime.toFixed(3)}ms`);
-    console.log(`   📊 Average: ${(dynamicTime / iterations).toFixed(6)}ms per import`);
+    console.info(`   ✅ ${iterations} dynamic imports: ${dynamicTime.toFixed(3)}ms`);
+    console.info(`   📊 Average: ${(dynamicTime / iterations).toFixed(6)}ms per import`);
     
-    console.log(`   🚀 Speed ratio: ${(dynamicTime / staticTime).toFixed(2)}x`);
+    console.info(`   🚀 Speed ratio: ${(dynamicTime / staticTime).toFixed(2)}x`);
     
   } catch (error) {
     console.error('❌ Performance test error:', error);
@@ -283,34 +283,34 @@ async function demonstratePerformance() {
 async function main() {
   await createSampleFiles();
   
-  console.log('🎯 Demonstrating Bun Loader Syntax\n');
-  console.log('📝 Documentation Examples:');
-  console.log('   import my_toml from "./my_file" with { type: "toml" };');
-  console.log('   const { default: my_toml } = await import("./my_file", { with: { type: "toml" } });');
-  console.log('');
+  console.info('🎯 Demonstrating Bun Loader Syntax\n');
+  console.info('📝 Documentation Examples:');
+  console.info('   import my_toml from "./my_file" with { type: "toml" };');
+  console.info('   const { default: my_toml } = await import("./my_file", { with: { type: "toml" } });');
+  console.info('');
   
   demonstrateStaticImports();
   await demonstrateDynamicImports();
   await demonstrateAdvancedPatterns();
   await demonstratePerformance();
   
-  console.log('\n🎉 Bun Loader Syntax Showcase Complete!');
-  console.log('=======================================');
+  console.info('\n🎉 Bun Loader Syntax Showcase Complete!');
+  console.info('=======================================');
   
-  console.log('\n🚀 Key Takeaways:');
-  console.log('   ✅ Static and dynamic imports both supported');
-  console.log('   ✅ Type override with { type: "loader" } syntax');
-  console.log('   ✅ Force any file type to be parsed as any format');
-  console.log('   ✅ Zero configuration - works out of the box');
-  console.log('   ✅ Native parsers - no npm dependencies needed');
-  console.log('   ✅ Runtime + Bundler parity');
+  console.info('\n🚀 Key Takeaways:');
+  console.info('   ✅ Static and dynamic imports both supported');
+  console.info('   ✅ Type override with { type: "loader" } syntax');
+  console.info('   ✅ Force any file type to be parsed as any format');
+  console.info('   ✅ Zero configuration - works out of the box');
+  console.info('   ✅ Native parsers - no npm dependencies needed');
+  console.info('   ✅ Runtime + Bundler parity');
   
-  console.log('\n🔥 This is the future of JavaScript module loading!');
+  console.info('\n🔥 This is the future of JavaScript module loading!');
 }
 
 // Cleanup
 async function cleanup() {
-  console.log('\n🧹 Cleaning up demo files...');
+  console.info('\n🧹 Cleaning up demo files...');
   const files = [
     './my_file.toml', './config.yaml', './settings.jsonc',
     './custom.conf', './data.txt'
@@ -324,7 +324,7 @@ async function cleanup() {
     }
   }
   
-  console.log('✅ Cleanup completed!');
+  console.info('✅ Cleanup completed!');
 }
 
 // Run the demo

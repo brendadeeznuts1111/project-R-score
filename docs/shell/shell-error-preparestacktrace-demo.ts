@@ -1,10 +1,10 @@
 import { $ } from "bun";
 
-console.log("=== Bun.ShellError.prepareStackTrace() Method Demo ===\n");
+console.info("=== Bun.ShellError.prepareStackTrace() Method Demo ===\n");
 
 // Example 1: Basic prepareStackTrace usage
 async function basicPrepareStackTraceDemo() {
-  console.log("1. Basic prepareStackTrace Usage:");
+  console.info("1. Basic prepareStackTrace Usage:");
   
   // Store original prepareStackTrace
   const originalPrepareStackTrace = Error.prepareStackTrace;
@@ -12,9 +12,9 @@ async function basicPrepareStackTraceDemo() {
   try {
     // Custom stack trace preparation
     Error.prepareStackTrace = (error, stack) => {
-      console.log(`   Custom prepareStackTrace called for: ${error.name}`);
-      console.log(`   Error message: ${error.message}`);
-      console.log(`   Number of stack frames: ${stack.length}`);
+      console.info(`   Custom prepareStackTrace called for: ${error.name}`);
+      console.info(`   Error message: ${error.message}`);
+      console.info(`   Number of stack frames: ${stack.length}`);
       
       // Return custom formatted stack
       return `Custom ShellError Stack Trace:\n` +
@@ -28,20 +28,20 @@ async function basicPrepareStackTraceDemo() {
     await $`exit 1`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(`   Exit code: ${error.exitCode}`);
-      console.log(`   Stack trace:`);
-      console.log(`   ${error.stack}`);
+      console.info(`   Exit code: ${error.exitCode}`);
+      console.info(`   Stack trace:`);
+      console.info(`   ${error.stack}`);
     }
   } finally {
     // Restore original
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 2: Filtering stack frames
 async function stackFilteringDemo() {
-  console.log("2. Stack Frame Filtering:");
+  console.info("2. Stack Frame Filtering:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -69,18 +69,18 @@ async function stackFilteringDemo() {
     await $`echo "This will fail" && exit 42`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(`   Exit code: ${error.exitCode}`);
-      console.log(`   ${error.stack}`);
+      console.info(`   Exit code: ${error.exitCode}`);
+      console.info(`   ${error.stack}`);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 3: Enhanced stack trace with context
 async function enhancedStackDemo() {
-  console.log("3. Enhanced Stack Trace with Context:");
+  console.info("3. Enhanced Stack Trace with Context:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -133,17 +133,17 @@ async function enhancedStackDemo() {
     await $`sh -c 'echo "Nested shell command"; exit 5'`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(error.stack);
+      console.info(error.stack);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 4: Stack trace analysis
 async function stackAnalysisDemo() {
-  console.log("4. Stack Trace Analysis:");
+  console.info("4. Stack Trace Analysis:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -208,17 +208,17 @@ async function stackAnalysisDemo() {
     await $`echo "Analysis test" && exit 3`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(error.stack);
+      console.info(error.stack);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 5: Performance monitoring
 async function performanceMonitoringDemo() {
-  console.log("5. Performance Monitoring with Stack Trace:");
+  console.info("5. Performance Monitoring with Stack Trace:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -254,17 +254,17 @@ async function performanceMonitoringDemo() {
     await $`echo "Performance test" && exit 7`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(error.stack);
+      console.info(error.stack);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 6: Stack trace caching
 async function stackCachingDemo() {
-  console.log("6. Stack Trace Caching:");
+  console.info("6. Stack Trace Caching:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   const stackCache = new Map<string, string>();
@@ -293,33 +293,33 @@ async function stackCachingDemo() {
     };
     
     // First call - should cache
-    console.log("   First call (will cache):");
+    console.info("   First call (will cache):");
     await $`echo "First call" && exit 1`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(`   ${error.stack.split('\n')[0]}`);
+      console.info(`   ${error.stack.split('\n')[0]}`);
     }
   }
   
   try {
     // Second call - should use cache
-    console.log("\n   Second call (should use cache):");
+    console.info("\n   Second call (should use cache):");
     await $`echo "Second call" && exit 2`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(`   ${error.stack.split('\n')[0]}`);
+      console.info(`   ${error.stack.split('\n')[0]}`);
     }
   }
   
-  console.log(`   Cache size: ${stackCache.size} entries`);
+  console.info(`   Cache size: ${stackCache.size} entries`);
   
   Error.prepareStackTrace = originalPrepareStackTrace;
-  console.log();
+  console.info();
 }
 
 // Example 7: Stack trace formatting for different outputs
 async function formattingDemo() {
-  console.log("7. Stack Trace Formatting for Different Outputs:");
+  console.info("7. Stack Trace Formatting for Different Outputs:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -350,9 +350,9 @@ async function formattingDemo() {
     await $`echo "JSON format" && exit 4`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log("   JSON format:");
+      console.info("   JSON format:");
       const jsonStack = error.stack;
-      console.log(`   ${jsonStack.split('\n').slice(0, 8).join('\n')}...`);
+      console.info(`   ${jsonStack.split('\n').slice(0, 8).join('\n')}...`);
     }
   }
   
@@ -367,17 +367,17 @@ async function formattingDemo() {
     await $`echo "Compact format" && exit 5`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(`\n   Compact format: ${error.stack}`);
+      console.info(`\n   Compact format: ${error.stack}`);
     }
   }
   
   Error.prepareStackTrace = originalPrepareStackTrace;
-  console.log();
+  console.info();
 }
 
 // Example 8: Stack trace with source context
 async function sourceContextDemo() {
-  console.log("8. Stack Trace with Source Context:");
+  console.info("8. Stack Trace with Source Context:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -409,17 +409,17 @@ async function sourceContextDemo() {
     await $`echo "Source context demo" && exit 6`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(error.stack);
+      console.info(error.stack);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 9: Stack trace security filtering
 async function securityFilteringDemo() {
-  console.log("9. Stack Trace Security Filtering:");
+  console.info("9. Stack Trace Security Filtering:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   
@@ -462,17 +462,17 @@ async function securityFilteringDemo() {
     await $`echo "Security test with secret_password" && exit 8`;
   } catch (error) {
     if (error instanceof $.ShellError) {
-      console.log(error.stack);
+      console.info(error.stack);
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Example 10: Stack trace with custom error aggregation
 async function errorAggregationDemo() {
-  console.log("10. Stack Trace with Custom Error Aggregation:");
+  console.info("10. Stack Trace with Custom Error Aggregation:");
   
   const originalPrepareStackTrace = Error.prepareStackTrace;
   const errorStats = {
@@ -526,14 +526,14 @@ async function errorAggregationDemo() {
         await $`echo "Error ${i}" && exit ${i}`;
       } catch (error) {
         if (error instanceof $.ShellError) {
-          if (i === 3) console.log(error.stack); // Show final aggregation
+          if (i === 3) console.info(error.stack); // Show final aggregation
         }
       }
     }
   } finally {
     Error.prepareStackTrace = originalPrepareStackTrace;
   }
-  console.log();
+  console.info();
 }
 
 // Run all prepareStackTrace demos
@@ -549,7 +549,7 @@ async function runPrepareStackTraceDemos() {
   await securityFilteringDemo();
   await errorAggregationDemo();
   
-  console.log("=== All prepareStackTrace demos completed! ===");
+  console.info("=== All prepareStackTrace demos completed! ===");
 }
 
 // Execute demos

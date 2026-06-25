@@ -1,0 +1,9 @@
+id: empty-catch
+valid:
+  - |
+    try { work() } catch (e) { log(e) }
+  - |
+    try { work() } catch (e) { throw e }
+invalid:
+  - |
+    try { work() } catch (e) { }

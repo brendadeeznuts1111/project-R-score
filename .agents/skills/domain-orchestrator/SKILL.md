@@ -51,3 +51,13 @@ const results = await orchestrator.executeFlowSkill(
 // Load guidance skill
 const guidance = await orchestrator.loadSkill('quantum-domain-ops');
 ```
+
+## Agent tooling
+
+| Tool | Use when |
+|------|----------|
+| `ast_grep_skill_loop` | `action: matrix` — health across all registered skills |
+| `ast_grep_search` | Find `SkillOrchestrator` / flow skill wiring |
+| `/workflow` | Post-remediation continuous scan loops |
+
+Registry: `.agents/skills/ast-grep/skill-loop-registry.json` · Shared: [agent-tooling.md](../references/agent-tooling.md)

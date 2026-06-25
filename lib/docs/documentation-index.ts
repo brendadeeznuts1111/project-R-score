@@ -29,7 +29,10 @@ import {
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS,
 } from './constants/fragments';
-import { EnterpriseDocumentationURLBuilder, docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
+import {
+  EnterpriseDocumentationURLBuilder,
+  docsURLBuilder,
+} from '../../packages/docs-tools/src/builders/url-builder';
 import type {
   DocumentationURLOptions,
   TypedArrayURLOptions,

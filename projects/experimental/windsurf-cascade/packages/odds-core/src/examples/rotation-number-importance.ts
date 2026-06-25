@@ -12,10 +12,10 @@ export class RotationNumberImportanceExamples {
      * Example 1: Why rotation numbers matter for order execution
      */
     static demonstrateOrderExecution(): void {
-        console.log('🎯 Why Rotation Numbers Are Critical for Order Execution\n');
+        console.info('🎯 Why Rotation Numbers Are Critical for Order Execution\n');
 
         // WITHOUT rotation numbers (problematic)
-        console.log('❌ WITHOUT Rotation Numbers:');
+        console.info('❌ WITHOUT Rotation Numbers:');
         const problematicArbitrage = {
             id: 'arb_001',
             markets: [
@@ -38,26 +38,26 @@ export class RotationNumberImportanceExamples {
             ]
         };
 
-        console.log('   Problem: Cannot execute orders - sportsbooks need rotation numbers');
-        console.log('   Risk: Betting on wrong game due to ambiguous event names');
-        console.log('   Issue: No standardized way to reference markets\n');
+        console.info('   Problem: Cannot execute orders - sportsbooks need rotation numbers');
+        console.info('   Risk: Betting on wrong game due to ambiguous event names');
+        console.info('   Issue: No standardized way to reference markets\n');
 
         // WITH rotation numbers (correct)
-        console.log('✅ WITH Rotation Numbers:');
+        console.info('✅ WITH Rotation Numbers:');
         const correctArbitrage = SyntheticArbitrageV1Factory.createNBAExample();
 
-        console.log('   Solution: Clear, unambiguous market identification');
-        console.log(`   Market 1: ${correctArbitrage.markets[0].rotationId} (${correctArbitrage.markets[0].exchange})`);
-        console.log(`   Market 2: ${correctArbitrage.markets[1].rotationId} (${correctArbitrage.markets[1].exchange})`);
-        console.log('   Benefit: Guaranteed order execution on correct markets');
-        console.log('   Safety: Regulatory compliance and proper settlement\n');
+        console.info('   Solution: Clear, unambiguous market identification');
+        console.info(`   Market 1: ${correctArbitrage.markets[0].rotationId} (${correctArbitrage.markets[0].exchange})`);
+        console.info(`   Market 2: ${correctArbitrage.markets[1].rotationId} (${correctArbitrage.markets[1].exchange})`);
+        console.info('   Benefit: Guaranteed order execution on correct markets');
+        console.info('   Safety: Regulatory compliance and proper settlement\n');
     }
 
     /**
      * Example 2: Rotation number format validation
      */
     static demonstrateRotationValidation(): void {
-        console.log('🔍 Rotation Number Format Validation\n');
+        console.info('🔍 Rotation Number Format Validation\n');
 
         const validRotations = [
             'ROT_NBA_815',
@@ -75,29 +75,29 @@ export class RotationNumberImportanceExamples {
             'ROT-815'            // Wrong separator
         ];
 
-        console.log('✅ Valid Rotation Numbers:');
+        console.info('✅ Valid Rotation Numbers:');
         validRotations.forEach(rotation => {
-            console.log(`   ${rotation} - Valid format`);
+            console.info(`   ${rotation} - Valid format`);
         });
 
-        console.log('\n❌ Invalid Rotation Numbers:');
+        console.info('\n❌ Invalid Rotation Numbers:');
         invalidRotations.forEach(rotation => {
-            console.log(`   ${rotation} - Invalid format`);
+            console.info(`   ${rotation} - Invalid format`);
         });
 
-        console.log('\n📋 Format Requirements:');
-        console.log('   - Must start with "ROT_"');
-        console.log('   - Sport code in uppercase (NBA, NFL, MLB, NHL)');
-        console.log('   - Underscore separator');
-        console.log('   - Numeric identifier (3-4 digits)');
-        console.log('   - No extra characters or spaces\n');
+        console.info('\n📋 Format Requirements:');
+        console.info('   - Must start with "ROT_"');
+        console.info('   - Sport code in uppercase (NBA, NFL, MLB, NHL)');
+        console.info('   - Underscore separator');
+        console.info('   - Numeric identifier (3-4 digits)');
+        console.info('   - No extra characters or spaces\n');
     }
 
     /**
      * Example 3: Cross-exchange market matching with rotation numbers
      */
     static demonstrateCrossExchangeMatching(): void {
-        console.log('🔄 Cross-Exchange Market Matching\n');
+        console.info('🔄 Cross-Exchange Market Matching\n');
 
         // Same game across different exchanges
         const nbaGame = {
@@ -133,28 +133,28 @@ export class RotationNumberImportanceExamples {
             }
         ];
 
-        console.log('📊 Same Game - Different Exchanges:');
+        console.info('📊 Same Game - Different Exchanges:');
         exchangeMappings.forEach(mapping => {
-            console.log(`   ${mapping.exchange.padEnd(12)} | ${mapping.rotationId.padEnd(12)} | ${mapping.market.padEnd(20)} | ${mapping.confidence.toFixed(2)}`);
+            console.info(`   ${mapping.exchange.padEnd(12)} | ${mapping.rotationId.padEnd(12)} | ${mapping.market.padEnd(20)} | ${mapping.confidence.toFixed(2)}`);
         });
 
-        console.log('\n🎯 Synthetic Arbitrage Opportunities:');
-        console.log('   1Q vs Full Game: ROT_NBA_815 + ROT_NBA_816');
-        console.log('   1Q vs 2Q:       ROT_NBA_815 + ROT_NBA_817');
-        console.log('   1Q vs 1H:        ROT_NBA_815 + ROT_NBA_818');
-        console.log('   2Q vs Full Game: ROT_NBA_817 + ROT_NBA_816');
+        console.info('\n🎯 Synthetic Arbitrage Opportunities:');
+        console.info('   1Q vs Full Game: ROT_NBA_815 + ROT_NBA_816');
+        console.info('   1Q vs 2Q:       ROT_NBA_815 + ROT_NBA_817');
+        console.info('   1Q vs 1H:        ROT_NBA_815 + ROT_NBA_818');
+        console.info('   2Q vs Full Game: ROT_NBA_817 + ROT_NBA_816');
 
-        console.log('\n💡 Key Insight:');
-        console.log('   Rotation numbers ensure we\'re betting on the EXACT same game');
-        console.log('   Even when event names vary slightly between exchanges');
-        console.log('   Critical for risk management and position tracking\n');
+        console.info('\n💡 Key Insight:');
+        console.info('   Rotation numbers ensure we\'re betting on the EXACT same game');
+        console.info('   Even when event names vary slightly between exchanges');
+        console.info('   Critical for risk management and position tracking\n');
     }
 
     /**
      * Example 4: Risk management with rotation numbers
      */
     static demonstrateRiskManagement(): void {
-        console.log('⚠️ Risk Management with Rotation Numbers\n');
+        console.info('⚠️ Risk Management with Rotation Numbers\n');
 
         const portfolio = [
             {
@@ -180,28 +180,28 @@ export class RotationNumberImportanceExamples {
             }
         ];
 
-        console.log('📈 Portfolio Analysis:');
+        console.info('📈 Portfolio Analysis:');
         portfolio.forEach(position => {
-            console.log(`   ${position.arbitrageId.padEnd(8)} | ${position.rotationIds.join(' + ').padEnd(20)} | $${position.positionSize.toString().padEnd(5)} | $${position.currentPnL.toString().padEnd(5)} | ${position.status}`);
+            console.info(`   ${position.arbitrageId.padEnd(8)} | ${position.rotationIds.join(' + ').padEnd(20)} | $${position.positionSize.toString().padEnd(5)} | $${position.currentPnL.toString().padEnd(5)} | ${position.status}`);
         });
 
-        console.log('\n🚨 Risk Alert - Overlapping Exposure:');
-        console.log('   ❌ ROT_NBA_815 appears in BOTH arb_001 and arb_003');
-        console.log('   ❌ Double exposure on same game');
-        console.log('   ❌ Concentration risk violation');
+        console.info('\n🚨 Risk Alert - Overlapping Exposure:');
+        console.info('   ❌ ROT_NBA_815 appears in BOTH arb_001 and arb_003');
+        console.info('   ❌ Double exposure on same game');
+        console.info('   ❌ Concentration risk violation');
 
-        console.log('\n✅ Risk Management Actions:');
-        console.log('   1. Use rotation numbers to detect overlapping positions');
-        console.log('   2. Aggregate exposure by rotation number');
-        console.log('   3. Enforce position limits per game');
-        console.log('   4. Automatic position reduction or rejection\n');
+        console.info('\n✅ Risk Management Actions:');
+        console.info('   1. Use rotation numbers to detect overlapping positions');
+        console.info('   2. Aggregate exposure by rotation number');
+        console.info('   3. Enforce position limits per game');
+        console.info('   4. Automatic position reduction or rejection\n');
     }
 
     /**
      * Example 5: Regulatory compliance and reporting
      */
     static demonstrateRegulatoryCompliance(): void {
-        console.log('📋 Regulatory Compliance with Rotation Numbers\n');
+        console.info('📋 Regulatory Compliance with Rotation Numbers\n');
 
         const tradeReport = {
             timestamp: '2024-01-15T19:30:00Z',
@@ -231,60 +231,60 @@ export class RotationNumberImportanceExamples {
             ]
         };
 
-        console.log('🏛️ Regulatory Trade Report:');
-        console.log(`   Report Time: ${tradeReport.timestamp}`);
-        console.log('   Trades:');
+        console.info('🏛️ Regulatory Trade Report:');
+        console.info(`   Report Time: ${tradeReport.timestamp}`);
+        console.info('   Trades:');
         tradeReport.trades.forEach((trade, index) => {
-            console.log(`     ${index + 1}. ${trade.exchange.padEnd(12)} | ${trade.rotationId.padEnd(12)} | ${trade.action.padEnd(4)} | $${trade.stake} @ ${trade.odds}`);
+            console.info(`     ${index + 1}. ${trade.exchange.padEnd(12)} | ${trade.rotationId.padEnd(12)} | ${trade.action.padEnd(4)} | $${trade.stake} @ ${trade.odds}`);
         });
 
-        console.log('\n📝 Compliance Requirements:');
+        console.info('\n📝 Compliance Requirements:');
         tradeReport.regulatoryNotes.forEach(note => {
-            console.log(`   ✅ ${note}`);
+            console.info(`   ✅ ${note}`);
         });
 
-        console.log('\n🔍 Audit Trail Benefits:');
-        console.log('   • Rotation numbers provide unambiguous trade identification');
-        console.log('   • Easy cross-referencing with exchange records');
-        console.log('   • Simplified regulatory reporting');
-        console.log('   • Clear audit trail for dispute resolution\n');
+        console.info('\n🔍 Audit Trail Benefits:');
+        console.info('   • Rotation numbers provide unambiguous trade identification');
+        console.info('   • Easy cross-referencing with exchange records');
+        console.info('   • Simplified regulatory reporting');
+        console.info('   • Clear audit trail for dispute resolution\n');
     }
 
     /**
      * Example 6: Real-world NBA synthetic arbitrage with rotation numbers
      */
     static createRealWorldNBAExample(): SyntheticArbitrageV1 {
-        console.log('🏀 Real-World NBA Synthetic Arbitrage with Rotation Numbers\n');
+        console.info('🏀 Real-World NBA Synthetic Arbitrage with Rotation Numbers\n');
 
         const arbitrage = SyntheticArbitrageV1Factory.createNBAExample();
 
-        console.log('📊 Opportunity Details:');
-        console.log(`   Game ID: ${arbitrage.markets[0].gameId}`);
-        console.log(`   Event: ${arbitrage.markets[0].event}`);
-        console.log(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
-        console.log(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
+        console.info('📊 Opportunity Details:');
+        console.info(`   Game ID: ${arbitrage.markets[0].gameId}`);
+        console.info(`   Event: ${arbitrage.markets[0].event}`);
+        console.info(`   Expected Value: ${(arbitrage.expectedValue * 100).toFixed(2)}%`);
+        console.info(`   Hedge Ratio: ${(arbitrage.hedgeRatio * 100).toFixed(1)}%`);
 
-        console.log('\n🎯 Market Breakdown:');
+        console.info('\n🎯 Market Breakdown:');
         arbitrage.markets.forEach((market, index) => {
-            console.log(`   Market ${index + 1}:`);
-            console.log(`     Exchange: ${market.exchange}`);
-            console.log(`     Rotation: ${market.rotationId} ⭐`);
-            console.log(`     Period: ${market.period}`);
-            console.log(`     Line: ${(market as any).line || 'N/A'}`);
-            console.log(`     Live: ${market.isLive ? 'Yes' : 'No'}`);
+            console.info(`   Market ${index + 1}:`);
+            console.info(`     Exchange: ${market.exchange}`);
+            console.info(`     Rotation: ${market.rotationId} ⭐`);
+            console.info(`     Period: ${market.period}`);
+            console.info(`     Line: ${(market as any).line || 'N/A'}`);
+            console.info(`     Live: ${market.isLive ? 'Yes' : 'No'}`);
         });
 
-        console.log('\n💰 Execution Plan:');
-        console.log(`   1. Place bet on ${arbitrage.markets[0].rotationId} at ${arbitrage.markets[0].exchange}`);
-        console.log(`   2. Hedge with ${arbitrage.markets[1].rotationId} at ${arbitrage.markets[1].exchange}`);
-        console.log(`   3. Monitor both positions by rotation number`);
-        console.log(`   4. Settle based on rotation number outcomes`);
+        console.info('\n💰 Execution Plan:');
+        console.info(`   1. Place bet on ${arbitrage.markets[0].rotationId} at ${arbitrage.markets[0].exchange}`);
+        console.info(`   2. Hedge with ${arbitrage.markets[1].rotationId} at ${arbitrage.markets[1].exchange}`);
+        console.info(`   3. Monitor both positions by rotation number`);
+        console.info(`   4. Settle based on rotation number outcomes`);
 
-        console.log('\n✅ Why This Works:');
-        console.log('   • Rotation numbers guarantee same game reference');
-        console.log('   • Different exchanges provide price inefficiency');
-        console.log('   • Period difference creates synthetic opportunity');
-        console.log('   • Clear execution path with unambiguous identifiers');
+        console.info('\n✅ Why This Works:');
+        console.info('   • Rotation numbers guarantee same game reference');
+        console.info('   • Different exchanges provide price inefficiency');
+        console.info('   • Period difference creates synthetic opportunity');
+        console.info('   • Clear execution path with unambiguous identifiers');
 
         return arbitrage;
     }
@@ -293,29 +293,29 @@ export class RotationNumberImportanceExamples {
      * Run all examples
      */
     static runAllExamples(): void {
-        console.log('🚀 Rotation Number Importance Examples\n');
-        console.log('='.repeat(60));
+        console.info('🚀 Rotation Number Importance Examples\n');
+        console.info('='.repeat(60));
 
         this.demonstrateOrderExecution();
-        console.log('='.repeat(60));
+        console.info('='.repeat(60));
 
         this.demonstrateRotationValidation();
-        console.log('='.repeat(60));
+        console.info('='.repeat(60));
 
         this.demonstrateCrossExchangeMatching();
-        console.log('='.repeat(60));
+        console.info('='.repeat(60));
 
         this.demonstrateRiskManagement();
-        console.log('='.repeat(60));
+        console.info('='.repeat(60));
 
         this.demonstrateRegulatoryCompliance();
-        console.log('='.repeat(60));
+        console.info('='.repeat(60));
 
         this.createRealWorldNBAExample();
 
-        console.log('\n✅ All examples completed!');
-        console.log('\n🎯 Key Takeaway: Rotation numbers are NOT optional - they are');
-        console.log('   ESSENTIAL for real sports betting arbitrage execution!');
+        console.info('\n✅ All examples completed!');
+        console.info('\n🎯 Key Takeaway: Rotation numbers are NOT optional - they are');
+        console.info('   ESSENTIAL for real sports betting arbitrage execution!');
     }
 }
 

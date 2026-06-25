@@ -34,7 +34,7 @@ function newBunSpawn(command: string, args: string[]) {
   const proc = Bun.spawn([command, ...args], {
     stdio: ['inherit', 'inherit', 'inherit'],
     onExit: (code) => {
-      console.log(`Process exited with code ${code}`);
+      console.info(`Process exited with code ${code}`);
     },
   });
   return proc;

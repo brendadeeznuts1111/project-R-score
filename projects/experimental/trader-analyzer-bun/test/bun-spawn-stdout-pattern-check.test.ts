@@ -259,7 +259,7 @@ describe("Bun.spawn() stdout/stderr pattern check", () => {
 
 		// Log native pattern usage
 		if (nativePatterns.length > 0) {
-			console.log(`\n✅ Found ${nativePatterns.length} instances using native .text() pattern\n`);
+			console.info(`\n✅ Found ${nativePatterns.length} instances using native .text() pattern\n`);
 			// Group by file
 			const byFile = new Map<string, number>();
 			for (const finding of nativePatterns) {
@@ -267,12 +267,12 @@ describe("Bun.spawn() stdout/stderr pattern check", () => {
 			}
 			// Show summary
 			for (const [file, count] of Array.from(byFile.entries()).slice(0, 10)) {
-				console.log(`  ${file}: ${count} instance(s)`);
+				console.info(`  ${file}: ${count} instance(s)`);
 			}
 			if (byFile.size > 10) {
-				console.log(`  ... and ${byFile.size - 10} more file(s)\n`);
+				console.info(`  ... and ${byFile.size - 10} more file(s)\n`);
 			} else {
-				console.log();
+				console.info();
 			}
 		}
 

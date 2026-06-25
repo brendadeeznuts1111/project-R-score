@@ -2,7 +2,7 @@
 import { APIAppleIDCreator, AppleIDErrorCodes } from './readmeauth';
 
 async function demonstrate2FAVerification() {
-  console.log('🔐 Demonstrating 2FA Phone Verification with Error Handling\n');
+  console.info('🔐 Demonstrating 2FA Phone Verification with Error Handling\n');
 
   const creator = new APIAppleIDCreator({
     enableLogging: true,
@@ -12,18 +12,18 @@ async function demonstrate2FAVerification() {
   const phoneNumber = '+1-555-123-4567';
 
   try {
-    console.log('📱 Step 1: Sending verification code...');
+    console.info('📱 Step 1: Sending verification code...');
     const verification = await creator.sendPhoneVerificationCode(phoneNumber);
     
-    console.log('✅ Verification code sent successfully!');
-    console.log(`📧 Method: ${verification.method}`);
-    console.log(`📱 Destination: ${verification.destination}`);
-    console.log(`🔢 Code length: ${verification.codeLength}`);
-    console.log(`⏰ Expires at: ${verification.expiresAt.toISOString()}`);
-    console.log(`🔄 Attempts remaining: ${verification.attemptsRemaining}/${verification.maxAttempts}`);
+    console.info('✅ Verification code sent successfully!');
+    console.info(`📧 Method: ${verification.method}`);
+    console.info(`📱 Destination: ${verification.destination}`);
+    console.info(`🔢 Code length: ${verification.codeLength}`);
+    console.info(`⏰ Expires at: ${verification.expiresAt.toISOString()}`);
+    console.info(`🔄 Attempts remaining: ${verification.attemptsRemaining}/${verification.maxAttempts}`);
 
     // Simulate user entering code
-    console.log('\n🔤 Step 2: Simulating user code entry...');
+    console.info('\n🔤 Step 2: Simulating user code entry...');
     
     // Test cases for different scenarios
     const testCases = [
@@ -34,82 +34,82 @@ async function demonstrate2FAVerification() {
     ];
 
     for (const testCase of testCases) {
-      console.log(`\n🧪 Testing: ${testCase.description}`);
+      console.info(`\n🧪 Testing: ${testCase.description}`);
       
       try {
         const result = await creator.verifyPhoneCode(phoneNumber, testCase.code);
         
         if (result.success) {
-          console.log('✅ Verification successful!');
-          console.log(`🔓 Verified: ${result.verified}`);
-          console.log(`📱 Method: ${result.method}`);
-          console.log(`🔄 Remaining attempts: ${result.remainingAttempts}`);
+          console.info('✅ Verification successful!');
+          console.info(`🔓 Verified: ${result.verified}`);
+          console.info(`📱 Method: ${result.method}`);
+          console.info(`🔄 Remaining attempts: ${result.remainingAttempts}`);
         }
         
       } catch (error: any) {
-        console.log(`❌ Error: ${error.message}`);
-        console.log(`🔧 Error Code: ${error.code}`);
-        console.log(`🔄 Retryable: ${error.retryable}`);
-        console.log(`🔄 Fallback Available: ${error.fallbackAvailable}`);
+        console.info(`❌ Error: ${error.message}`);
+        console.info(`🔧 Error Code: ${error.code}`);
+        console.info(`🔄 Retryable: ${error.retryable}`);
+        console.info(`🔄 Fallback Available: ${error.fallbackAvailable}`);
         
         // Show error handling strategies
         if (error.retryable) {
-          console.log('💡 Suggestion: This error can be retried');
+          console.info('💡 Suggestion: This error can be retried');
         }
         
         if (error.fallbackAvailable) {
-          console.log('💡 Suggestion: Fallback methods are available');
+          console.info('💡 Suggestion: Fallback methods are available');
         }
         
         if (error.code === AppleIDErrorCodes.SMS_CODE_INVALID && error.details?.attemptsRemaining > 0) {
-          console.log(`💡 Suggestion: You have ${error.details.attemptsRemaining} attempts remaining`);
+          console.info(`💡 Suggestion: You have ${error.details.attemptsRemaining} attempts remaining`);
         }
         
         if (error.code === AppleIDErrorCodes.TOO_MANY_ATTEMPTS && error.details?.nextRetryTime) {
-          console.log(`💡 Suggestion: Next retry available at ${error.details.nextRetryTime}`);
+          console.info(`💡 Suggestion: Next retry available at ${error.details.nextRetryTime}`);
         }
       }
     }
 
-    console.log('\n🔄 Step 3: Testing resend functionality...');
+    console.info('\n🔄 Step 3: Testing resend functionality...');
     
     try {
       const newVerification = await creator.resendPhoneVerificationCode(
         phoneNumber, 
         'previous_verification_id'
       );
-      console.log('✅ New verification code sent!');
-      console.log(`⏰ New expiry: ${newVerification.expiresAt.toISOString()}`);
+      console.info('✅ New verification code sent!');
+      console.info(`⏰ New expiry: ${newVerification.expiresAt.toISOString()}`);
       
     } catch (error: any) {
-      console.log(`❌ Resend failed: ${error.message}`);
-      console.log(`🔧 Error Code: ${error.code}`);
+      console.info(`❌ Resend failed: ${error.message}`);
+      console.info(`🔧 Error Code: ${error.code}`);
     }
 
   } catch (error: any) {
-    console.log(`❌ Initial verification failed: ${error.message}`);
-    console.log(`🔧 Error Code: ${error.code}`);
+    console.info(`❌ Initial verification failed: ${error.message}`);
+    console.info(`🔧 Error Code: ${error.code}`);
     
     // Demonstrate fallback strategies
     if (error.fallbackAvailable) {
-      console.log('\n🔄 Attempting fallback strategies...');
+      console.info('\n🔄 Attempting fallback strategies...');
       
       try {
         // This would trigger the fallback mechanism
         const result = await creator.sendPhoneVerificationCode(phoneNumber);
-        console.log('✅ Fallback successful!');
+        console.info('✅ Fallback successful!');
       } catch (fallbackError: any) {
-        console.log(`❌ All fallback strategies failed: ${fallbackError.message}`);
+        console.info(`❌ All fallback strategies failed: ${fallbackError.message}`);
       }
     }
   }
 
-  console.log('\n🎯 2FA Verification demonstration complete!');
+  console.info('\n🎯 2FA Verification demonstration complete!');
 }
 
 // Demonstrate error code handling
 function demonstrateErrorCodes() {
-  console.log('\n🔧 Error Code Reference:');
+  console.info('\n🔧 Error Code Reference:');
   
   const errorCategories = {
     'Network Errors': [
@@ -135,9 +135,9 @@ function demonstrateErrorCodes() {
   };
 
   for (const [category, codes] of Object.entries(errorCategories)) {
-    console.log(`\n📂 ${category}:`);
+    console.info(`\n📂 ${category}:`);
     codes.forEach(code => {
-      console.log(`   • ${code}`);
+      console.info(`   • ${code}`);
     });
   }
 }

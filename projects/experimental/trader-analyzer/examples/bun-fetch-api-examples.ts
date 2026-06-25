@@ -60,7 +60,7 @@ export const HYPERBUN_HEADERS = Object.freeze({
  * Example 1.1: Fetch with Object Headers
  */
 export async function exampleBasicObjectHeaders() {
-	console.log("\n=== Example 1.1: Fetch with Object Headers ===\n");
+	console.info("\n=== Example 1.1: Fetch with Object Headers ===\n");
 
 	const response = await fetch("https://httpbin.org/headers", {
 		headers: {
@@ -71,7 +71,7 @@ export async function exampleBasicObjectHeaders() {
 	});
 
 	const data = await response.json();
-	console.log("Received headers:", JSON.stringify(data.headers, null, 2));
+	console.info("Received headers:", JSON.stringify(data.headers, null, 2));
 	return data;
 }
 
@@ -79,7 +79,7 @@ export async function exampleBasicObjectHeaders() {
  * Example 1.2: Fetch with Headers Object
  */
 export async function exampleHeadersObject() {
-	console.log("\n=== Example 1.2: Fetch with Headers Object ===\n");
+	console.info("\n=== Example 1.2: Fetch with Headers Object ===\n");
 
 	const headers = new Headers();
 	headers.append("X-Custom-Header", "value");
@@ -91,7 +91,7 @@ export async function exampleHeadersObject() {
 	});
 
 	const data = await response.json();
-	console.log("Received headers:", JSON.stringify(data.headers, null, 2));
+	console.info("Received headers:", JSON.stringify(data.headers, null, 2));
 	return data;
 }
 
@@ -101,11 +101,11 @@ export async function exampleHeadersObject() {
  * Example 2.1: Simple Proxy
  */
 export async function exampleSimpleProxy(proxyUrl?: string) {
-	console.log("\n=== Example 2.1: Simple Proxy ===\n");
+	console.info("\n=== Example 2.1: Simple Proxy ===\n");
 
 	if (!proxyUrl) {
-		console.log("⚠️  No proxy URL provided. Skipping proxy example.");
-		console.log("Usage: Set PROXY_URL environment variable or pass as argument");
+		console.info("⚠️  No proxy URL provided. Skipping proxy example.");
+		console.info("Usage: Set PROXY_URL environment variable or pass as argument");
 		return null;
 	}
 
@@ -115,7 +115,7 @@ export async function exampleSimpleProxy(proxyUrl?: string) {
 		});
 
 		const data = await response.json();
-		console.log("Response through proxy:", data);
+		console.info("Response through proxy:", data);
 		return data;
 	} catch (error) {
 		console.error("Proxy request failed:", error);
@@ -131,10 +131,10 @@ export async function exampleAdvancedProxy(
 	proxyUser?: string,
 	proxyPass?: string,
 ) {
-	console.log("\n=== Example 2.2: Advanced Proxy with Authentication ===\n");
+	console.info("\n=== Example 2.2: Advanced Proxy with Authentication ===\n");
 
 	if (!proxyUrl) {
-		console.log("⚠️  No proxy URL provided. Skipping proxy example.");
+		console.info("⚠️  No proxy URL provided. Skipping proxy example.");
 		return null;
 	}
 
@@ -152,7 +152,7 @@ export async function exampleAdvancedProxy(
 		});
 
 		const data = await response.json();
-		console.log("Response through authenticated proxy:", data);
+		console.info("Response through authenticated proxy:", data);
 		return data;
 	} catch (error) {
 		console.error("Authenticated proxy request failed:", error);
@@ -223,7 +223,7 @@ export class FetchWrapper {
  * Example 3.1: Using Fetch Wrapper
  */
 export async function exampleFetchWrapper() {
-	console.log("\n=== Example 3.1: Fetch Wrapper ===\n");
+	console.info("\n=== Example 3.1: Fetch Wrapper ===\n");
 
 	const wrapper = new FetchWrapper({
 		"X-API-Key": process.env.API_KEY || "demo-key",
@@ -234,7 +234,7 @@ export async function exampleFetchWrapper() {
 			"https://httpbin.org/headers",
 		);
 		const data = await response.json();
-		console.log("Wrapper response:", JSON.stringify(data.headers, null, 2));
+		console.info("Wrapper response:", JSON.stringify(data.headers, null, 2));
 		return data;
 	} catch (error) {
 		console.error("Wrapper example failed:", error);
@@ -295,14 +295,14 @@ export function createProxiedFetch(proxyUrl: string) {
  * Example 4.1: Using Optimized Fetch
  */
 export async function exampleOptimizedFetch() {
-	console.log("\n=== Example 4.1: Optimized Fetch ===\n");
+	console.info("\n=== Example 4.1: Optimized Fetch ===\n");
 
 	const optimized = new OptimizedFetch();
 
 	try {
 		const response = await optimized.fetch("https://httpbin.org/headers");
 		const data = await response.json();
-		console.log("Optimized fetch response:", JSON.stringify(data.headers, null, 2));
+		console.info("Optimized fetch response:", JSON.stringify(data.headers, null, 2));
 		return data;
 	} catch (error) {
 		console.error("Optimized fetch failed:", error);
@@ -373,20 +373,20 @@ function getProxyToken(): string {
  * Example 5.1: Using Secure Header Manager
  */
 export async function exampleSecureHeaders() {
-	console.log("\n=== Example 5.1: Secure Header Manager ===\n");
+	console.info("\n=== Example 5.1: Secure Header Manager ===\n");
 
 	const manager = new SecureHeaderManager();
 
 	try {
 		const headers = manager.getHeaders("api-service");
-		console.log("Secure headers:", headers);
+		console.info("Secure headers:", headers);
 
 		const response = await fetch("https://httpbin.org/headers", {
 			headers,
 		});
 
 		const data = await response.json();
-		console.log("Response with secure headers:", JSON.stringify(data.headers, null, 2));
+		console.info("Response with secure headers:", JSON.stringify(data.headers, null, 2));
 		return data;
 	} catch (error) {
 		console.error("Secure headers example failed:", error);
@@ -448,7 +448,7 @@ export class MarketProbeService {
  * Example 6.2: Dashboard Server Proxy
  */
 export async function exampleDashboardProxy(targetUrl: string) {
-	console.log("\n=== Example 6.2: Dashboard Server Proxy ===\n");
+	console.info("\n=== Example 6.2: Dashboard Server Proxy ===\n");
 
 	try {
 		const response = await fetch(targetUrl, {
@@ -467,9 +467,9 @@ export async function exampleDashboardProxy(targetUrl: string) {
 				: undefined,
 		});
 
-		console.log("Proxy response status:", response.status);
+		console.info("Proxy response status:", response.status);
 		const data = await response.text();
-		console.log("Proxy response preview:", data.slice(0, 200));
+		console.info("Proxy response preview:", data.slice(0, 200));
 		return response;
 	} catch (error) {
 		console.error("Dashboard proxy failed:", error);
@@ -483,8 +483,8 @@ async function main() {
 	const args = process.argv.slice(2);
 	const command = args[0] || "all";
 
-	console.log("🚀 Bun Fetch API Examples");
-	console.log("=" .repeat(50));
+	console.info("🚀 Bun Fetch API Examples");
+	console.info("=" .repeat(50));
 
 	switch (command) {
 		case "headers":
@@ -532,7 +532,7 @@ async function main() {
 
 		case "all":
 		default:
-			console.log("\n📋 Running all examples...\n");
+			console.info("\n📋 Running all examples...\n");
 			await exampleBasicObjectHeaders();
 			await exampleHeadersObject();
 			await exampleFetchWrapper();
@@ -541,7 +541,7 @@ async function main() {
 			break;
 	}
 
-	console.log("\n✅ Examples completed!");
+	console.info("\n✅ Examples completed!");
 }
 
 // Run if executed directly

@@ -209,7 +209,7 @@ export class AntiPatternDetector {
     }
 
     await Bun.write(filePath, lines.join("\n"));
-    console.log(`✅ Fixed ${fixes.length} issues in ${filePath}`);
+    console.info(`✅ Fixed ${fixes.length} issues in ${filePath}`);
   }
 
   /**
@@ -259,23 +259,23 @@ export class AntiPatternDetector {
     }
 
     await Bun.write(outputPath, lines.join("\n"));
-    console.log(`✅ Report generated: ${outputPath}`);
+    console.info(`✅ Report generated: ${outputPath}`);
   }
 
   /**
    * Print findings
    */
   printFindings(): void {
-    console.log(`\n🔍 Found ${this.findings.length} security issues:\n`);
+    console.info(`\n🔍 Found ${this.findings.length} security issues:\n`);
     for (const finding of this.findings) {
-      console.log(`[${finding.rule.severity.toUpperCase()}] ${finding.rule.name}`);
-      console.log(`  ${finding.file}:${finding.line}`);
-      console.log(`  ${finding.match}`);
-      console.log(`  ${finding.rule.description}`);
+      console.info(`[${finding.rule.severity.toUpperCase()}] ${finding.rule.name}`);
+      console.info(`  ${finding.file}:${finding.line}`);
+      console.info(`  ${finding.match}`);
+      console.info(`  ${finding.rule.description}`);
       if (finding.fixed) {
-        console.log(`  ✅ Fixed`);
+        console.info(`  ✅ Fixed`);
       }
-      console.log();
+      console.info();
     }
   }
 }

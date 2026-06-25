@@ -14,21 +14,21 @@ import { startWebSocketAuditServer } from "../src/audit/websocket-audit-server";
 const port = parseInt(process.env.AUDIT_WS_PORT || process.argv[2] || "3002");
 const hostname = process.env.AUDIT_WS_HOSTNAME || process.argv[3] || "localhost";
 
-console.log(`🚀 Starting WebSocket Audit Server...`);
-console.log(`📡 Port: ${port}`);
-console.log(`🌐 Hostname: ${hostname}`);
+console.info(`🚀 Starting WebSocket Audit Server...`);
+console.info(`📡 Port: ${port}`);
+console.info(`🌐 Hostname: ${hostname}`);
 
 const wsServer = startWebSocketAuditServer(port, hostname);
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-	console.log("\n👋 Shutting down...");
+	console.info("\n👋 Shutting down...");
 	await wsServer.shutdown();
 	process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
-	console.log("\n👋 Shutting down...");
+	console.info("\n👋 Shutting down...");
 	await wsServer.shutdown();
 	process.exit(0);
 });

@@ -7,15 +7,15 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Bun.stringWidth() for Table Width Management'));
-console.log(chalk.gray('Odds Protocol Vault - Solving Table Width Issues'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Bun.stringWidth() for Table Width Management'));
+console.info(chalk.gray('Odds Protocol Vault - Solving Table Width Issues'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // BASIC Bun.stringWidth() DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📏 Basic Bun.stringWidth() Examples:'));
+console.info(chalk.bold.cyan('\n📏 Basic Bun.stringWidth() Examples:'));
 
 const basicExamples = [
     { text: 'hello', description: 'Plain text' },
@@ -26,20 +26,20 @@ const basicExamples = [
     { text: 'こんにちは', description: 'Japanese characters' }
 ];
 
-console.log(chalk.gray('Text Width Calculations:'));
+console.info(chalk.gray('Text Width Calculations:'));
 basicExamples.forEach(example => {
     const width = example.countAnsi ?
         Bun.stringWidth(example.text, { countAnsiEscapeCodes: true }) :
         Bun.stringWidth(example.text);
 
-    console.log(`${chalk.cyan(example.description.padEnd(25))} | ${chalk.yellow(width.toString().padStart(3))} | ${chalk.gray(`"${example.text.replace(/\u001b\[[0-9;]*m/g, '[ANSI]')}"`)} `);
+    console.info(`${chalk.cyan(example.description.padEnd(25))} | ${chalk.yellow(width.toString().padStart(3))} | ${chalk.gray(`"${example.text.replace(/\u001b\[[0-9;]*m/g, '[ANSI]')}"`)} `);
 });
 
 // =============================================================================
 // TABLE WIDTH PROBLEM DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n❌ Table Width Problem Without stringWidth():'));
+console.info(chalk.bold.cyan('\n❌ Table Width Problem Without stringWidth():'));
 
 // Problem: Long text with colors breaks table layout
 const problematicData = [
@@ -60,14 +60,14 @@ const problematicData = [
     }
 ];
 
-console.log(chalk.gray('Problem: Table layout breaks with colored long text:'));
+console.info(chalk.gray('Problem: Table layout breaks with colored long text:'));
 Bun.inspect.table(problematicData, ['name', 'description', 'status']);
 
 // =============================================================================
 // SOLUTION: USING Bun.stringWidth() FOR WIDTH CALCULATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✅ Solution: Using Bun.stringWidth() for Proper Width Management:'));
+console.info(chalk.bold.cyan('\n✅ Solution: Using Bun.stringWidth() for Proper Width Management:'));
 
 function truncateText(text: string, maxWidth: number): string {
     const displayWidth = Bun.stringWidth(text);
@@ -99,14 +99,14 @@ const wellFormattedData = problematicData.map(item => ({
     status: item.status
 }));
 
-console.log(chalk.gray('Solution: Properly truncated text maintains table layout:'));
+console.info(chalk.gray('Solution: Properly truncated text maintains table layout:'));
 Bun.inspect.table(wellFormattedData, ['name', 'description', 'status']);
 
 // =============================================================================
 // ADVANCED WIDTH MANAGEMENT FOR VAULT DATA
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎯 Advanced Width Management for Vault Data:'));
+console.info(chalk.bold.cyan('\n🎯 Advanced Width Management for Vault Data:'));
 
 // Sample vault files with problematic long names and descriptions
 const vaultFiles = [
@@ -157,7 +157,7 @@ const formattedVaultFiles = formatVaultData(vaultFiles, {
     status: 15
 });
 
-console.log(chalk.gray('Formatted vault data with proper width management:'));
+console.info(chalk.gray('Formatted vault data with proper width management:'));
 Bun.inspect.table(
     formattedVaultFiles,
     ['name', 'path', 'description', 'size', 'status']
@@ -167,7 +167,7 @@ Bun.inspect.table(
 // DYNAMIC WIDTH CALCULATION
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Dynamic Width Calculation Based on Content:'));
+console.info(chalk.bold.cyan('\n📊 Dynamic Width Calculation Based on Content:'));
 
 function calculateOptimalWidths(data: any[], padding: number = 2): { [key: string]: number } {
     const widths: { [key: string]: number } = {};
@@ -186,15 +186,15 @@ function calculateOptimalWidths(data: any[], padding: number = 2): { [key: strin
 // Calculate optimal widths
 const optimalWidths = calculateOptimalWidths(vaultFiles, 3);
 
-console.log(chalk.gray('Calculated optimal column widths:'));
+console.info(chalk.gray('Calculated optimal column widths:'));
 Object.entries(optimalWidths).forEach(([column, width]) => {
-    console.log(`${chalk.cyan(column.padEnd(12))}: ${chalk.yellow(width.toString())} characters`);
+    console.info(`${chalk.cyan(column.padEnd(12))}: ${chalk.yellow(width.toString())} characters`);
 });
 
 // Apply optimal widths
 const optimallyFormatted = formatVaultData(vaultFiles, optimalWidths);
 
-console.log(chalk.gray('\nTable with optimal width calculation:'));
+console.info(chalk.gray('\nTable with optimal width calculation:'));
 Bun.inspect.table(
     optimallyFormatted,
     Object.keys(optimalWidths)
@@ -204,7 +204,7 @@ Bun.inspect.table(
 // VALIDATION ISSUES WITH WIDTH MANAGEMENT
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n⚠️  Validation Issues with Proper Width Management:'));
+console.info(chalk.bold.cyan('\n⚠️  Validation Issues with Proper Width Management:'));
 
 const validationIssues = [
     {
@@ -232,7 +232,7 @@ const formattedIssues = validationIssues.map(issue => ({
     suggestion: truncateText(issue.suggestion, 30)
 }));
 
-console.log(chalk.gray('Validation issues with proper width management:'));
+console.info(chalk.gray('Validation issues with proper width management:'));
 Bun.inspect.table(
     formattedIssues,
     ['id', 'type', 'file', 'message', 'suggestion']
@@ -242,7 +242,7 @@ Bun.inspect.table(
 // PERFORMANCE METRICS WITH WIDTH CONTROL
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🚀 Performance Metrics with Precise Width Control:'));
+console.info(chalk.bold.cyan('\n🚀 Performance Metrics with Precise Width Control:'));
 
 const performanceData = [
     {
@@ -270,7 +270,7 @@ const formattedPerformance = performanceData.map(metric => ({
     details: truncateText(metric.details, 40)
 }));
 
-console.log(chalk.gray('Performance metrics with tight width control:'));
+console.info(chalk.gray('Performance metrics with tight width control:'));
 Bun.inspect.table(
     formattedPerformance,
     ['operation', 'duration', 'efficiency', 'status', 'details'],
@@ -281,7 +281,7 @@ Bun.inspect.table(
 // UTILITY FUNCTIONS FOR TABLE WIDTH MANAGEMENT
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔧 Utility Functions for Table Width Management:'));
+console.info(chalk.bold.cyan('\n🔧 Utility Functions for Table Width Management:'));
 
 // Utility function for creating well-formatted tables
 function createWellFormattedTable(
@@ -306,7 +306,7 @@ function createWellFormattedTable(
 }
 
 // Demonstrate utility function
-console.log(chalk.gray('Using utility function for consistent table formatting:'));
+console.info(chalk.gray('Using utility function for consistent table formatting:'));
 createWellFormattedTable(
     vaultFiles,
     ['name', 'path', 'size', 'status'],
@@ -318,27 +318,27 @@ createWellFormattedTable(
 // QUICK REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
-console.log(chalk.gray('='.repeat(50)));
+console.info(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
+console.info(chalk.gray('='.repeat(50)));
 
-console.log(chalk.bold.cyan('\n📏 Bun.stringWidth() Usage:'));
-console.log(chalk.gray('Bun.stringWidth(text)                    // Display width only'));
-console.log(chalk.gray('Bun.stringWidth(text, { countAnsiEscapeCodes: true })  // Include ANSI codes'));
+console.info(chalk.bold.cyan('\n📏 Bun.stringWidth() Usage:'));
+console.info(chalk.gray('Bun.stringWidth(text)                    // Display width only'));
+console.info(chalk.gray('Bun.stringWidth(text, { countAnsiEscapeCodes: true })  // Include ANSI codes'));
 
-console.log(chalk.bold.cyan('\n🔧 Key Functions:'));
-console.log(chalk.gray('truncateText(text, maxWidth)           // Truncate with width awareness'));
-console.log(chalk.gray('padText(text, width)                   // Pad to exact width'));
-console.log(chalk.gray('calculateOptimalWidths(data, padding)  // Auto-calculate column widths'));
-console.log(chalk.gray('createWellFormattedTable()             // Utility for consistent formatting'));
+console.info(chalk.bold.cyan('\n🔧 Key Functions:'));
+console.info(chalk.gray('truncateText(text, maxWidth)           // Truncate with width awareness'));
+console.info(chalk.gray('padText(text, width)                   // Pad to exact width'));
+console.info(chalk.gray('calculateOptimalWidths(data, padding)  // Auto-calculate column widths'));
+console.info(chalk.gray('createWellFormattedTable()             // Utility for consistent formatting'));
 
-console.log(chalk.bold.cyan('\n✅ Benefits:'));
-console.log(chalk.gray('• Handles ANSI color codes correctly'));
-console.log(chalk.gray('• Prevents table layout breakage'));
-console.log(chalk.gray('• Supports emoji and Unicode'));
-console.log(chalk.gray('• Dynamic width calculation'));
-console.log(chalk.gray('• Consistent table formatting'));
+console.info(chalk.bold.cyan('\n✅ Benefits:'));
+console.info(chalk.gray('• Handles ANSI color codes correctly'));
+console.info(chalk.gray('• Prevents table layout breakage'));
+console.info(chalk.gray('• Supports emoji and Unicode'));
+console.info(chalk.gray('• Dynamic width calculation'));
+console.info(chalk.gray('• Consistent table formatting'));
 
-console.log(chalk.bold.green('\n🎉 Table Width Management Complete!'));
+console.info(chalk.bold.green('\n🎉 Table Width Management Complete!'));
 
 export {
     truncateText,

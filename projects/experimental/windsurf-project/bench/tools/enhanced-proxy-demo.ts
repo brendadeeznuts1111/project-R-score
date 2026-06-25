@@ -7,20 +7,20 @@ config({ path: './.env' });
 import { BunR2AppleManager } from '../../src/storage/r2-apple-manager.js';
 
 async function testEnhancedFeatures() {
-  console.log('🔗 Testing Enhanced Proxy & Connection Features...');
+  console.info('🔗 Testing Enhanced Proxy & Connection Features...');
   
   // Check proxy configuration
   if (Bun.env.PROXY_URL) {
-    console.log(`📡 Proxy: ${Bun.env.PROXY_URL}`);
-    console.log(`🔐 Auth: ${config.getSecret('proxy').authToken ? 'Configured' : 'None'}`);
+    console.info(`📡 Proxy: ${Bun.env.PROXY_URL}`);
+    console.info(`🔐 Auth: ${config.getSecret('proxy').authToken ? 'Configured' : 'None'}`);
   } else {
-    console.log('📡 Proxy: Not configured (direct connection)');
+    console.info('📡 Proxy: Not configured (direct connection)');
   }
   
   const manager = new BunR2AppleManager({}, Bun.env.R2_BUCKET!);
   
   // Test connection reuse with multiple rapid requests
-  console.log('\n🔄 Testing connection reuse...');
+  console.info('\n🔄 Testing connection reuse...');
   const data = { test: 'enhanced-connections', time: Date.now() };
   const times: number[] = [];
   
@@ -34,24 +34,24 @@ async function testEnhancedFeatures() {
   const fastest = Math.min(...times);
   const slowest = Math.max(...times);
   
-  console.log(`⚡ Average: ${avgTime.toFixed(1)}ms`);
-  console.log(`🚀 Fastest: ${fastest}ms`);
-  console.log(`🐌 Slowest: ${slowest}ms`);
-  console.log(`📊 Variance: ${(slowest - fastest).toFixed(1)}ms`);
+  console.info(`⚡ Average: ${avgTime.toFixed(1)}ms`);
+  console.info(`🚀 Fastest: ${fastest}ms`);
+  console.info(`🐌 Slowest: ${slowest}ms`);
+  console.info(`📊 Variance: ${(slowest - fastest).toFixed(1)}ms`);
   
   // Test proxy headers if configured
   if (Bun.env.PROXY_URL) {
-    console.log('\n🌐 Testing proxy headers...');
+    console.info('\n🌐 Testing proxy headers...');
     try {
       const proxyData = { proxy: 'test', headers: Date.now() };
       await manager.uploadAppleID(proxyData, `enhanced/proxy-${Date.now()}.json`);
-      console.log('✅ Proxy connection successful');
+      console.info('✅ Proxy connection successful');
     } catch (error: any) {
-      console.log(`❌ Proxy failed: ${error.message}`);
+      console.info(`❌ Proxy failed: ${error.message}`);
     }
   }
   
-  console.log('\n🎉 Enhanced features test complete!');
+  console.info('\n🎉 Enhanced features test complete!');
 }
 
 testEnhancedFeatures();

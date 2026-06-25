@@ -35,14 +35,14 @@ async function fixPackageJsonRaw() {
         
         // Skip comment keys
         if (key.startsWith('#')) {
-          console.log(`🗑️  Removing comment key: ${key}`);
+          console.info(`🗑️  Removing comment key: ${key}`);
           removedCount++;
           continue;
         }
         
         // Skip duplicate keys
         if (seenKeys.has(key)) {
-          console.log(`🗑️  Removing duplicate key: ${key}`);
+          console.info(`🗑️  Removing duplicate key: ${key}`);
           removedCount++;
           continue;
         }
@@ -58,10 +58,10 @@ async function fixPackageJsonRaw() {
   const cleanedContent = cleanedLines.join('\n');
   await Bun.write('package.json', cleanedContent);
   
-  console.log(`✅ package.json deduped (raw mode)!`);
-  console.log(`🧹 Total unique scripts: ${seenKeys.size}`);
-  console.log(`🗑️  Total removed entries: ${removedCount}`);
-  console.log(`🎯 No more duplicate key warnings!`);
+  console.info(`✅ package.json deduped (raw mode)!`);
+  console.info(`🧹 Total unique scripts: ${seenKeys.size}`);
+  console.info(`🗑️  Total removed entries: ${removedCount}`);
+  console.info(`🎯 No more duplicate key warnings!`);
 }
 
 // CLI interface

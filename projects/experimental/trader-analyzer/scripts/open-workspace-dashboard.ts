@@ -9,9 +9,9 @@ import { $ } from "bun";
 const dashboardPath = new URL("../dashboard/workspace.html", import.meta.url).pathname;
 const fileUrl = `file://${dashboardPath}`;
 
-console.log("🔑 Opening Developer Workspace Dashboard...");
-console.log(`📁 Path: ${dashboardPath}`);
-console.log(`🌐 URL: ${fileUrl}\n`);
+console.info("🔑 Opening Developer Workspace Dashboard...");
+console.info(`📁 Path: ${dashboardPath}`);
+console.info(`🌐 URL: ${fileUrl}\n`);
 
 // Open with default browser
 if (process.platform === "darwin") {
@@ -24,11 +24,11 @@ if (process.platform === "darwin") {
 	// Windows
 	await $`start "${fileUrl}"`;
 } else {
-	console.log(`❌ Unsupported platform: ${process.platform}`);
-	console.log(`   Please open manually: ${fileUrl}`);
+	console.info(`❌ Unsupported platform: ${process.platform}`);
+	console.info(`   Please open manually: ${fileUrl}`);
 	process.exit(1);
 }
 
-console.log("✅ Dashboard opened in your default browser!");
-console.log("\n💡 Tip: Make sure your API server is running at http://localhost:3001");
-console.log("   Start it with: bun run dev");
+console.info("✅ Dashboard opened in your default browser!");
+console.info("\n💡 Tip: Make sure your API server is running at http://localhost:3001");
+console.info("   Start it with: bun run dev");

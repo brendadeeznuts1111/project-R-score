@@ -54,11 +54,11 @@ Registry Metadata:
 if (import.meta.main) {
   const args = Bun.argv.slice(2);
   if (args.length === 0) {
-    console.log("T3-Lattice Component Registry");
-    console.log("==============================");
-    console.log(ComponentInfo.listAll());
+    console.info("T3-Lattice Component Registry");
+    console.info("==============================");
+    console.info(ComponentInfo.listAll());
   } else {
     const query = isNaN(Number(args[0])) ? args[0] : Number(args[0]);
-    console.log(ComponentInfo.getInfo(query));
+    console.info(ComponentInfo.getInfo(query));
   }
 }

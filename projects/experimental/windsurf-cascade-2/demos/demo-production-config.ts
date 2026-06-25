@@ -9,63 +9,63 @@ import {
   createDevelopmentConfig 
 } from './src/config/bun-production-config.js';
 
-console.log('🚀 Production-Ready 13-Byte Config Demonstration');
-console.log('');
+console.info('🚀 Production-Ready 13-Byte Config Demonstration');
+console.info('');
 
 async function demonstrateBasicUsage() {
-  console.log('📋 1. Basic Team-Friendly API');
-  console.log('   No bit manipulation required!');
-  console.log('');
+  console.info('📋 1. Basic Team-Friendly API');
+  console.info('   No bit manipulation required!');
+  console.info('');
   
   const config = createDevelopmentConfig();
   
-  console.log('🎛️  Initial Features:');
-  console.log(`   Enabled: ${config.getEnabledFeatures().join(', ')}`);
-  console.log('');
+  console.info('🎛️  Initial Features:');
+  console.info(`   Enabled: ${config.getEnabledFeatures().join(', ')}`);
+  console.info('');
   
-  console.log('✅ Enabling Features:');
+  console.info('✅ Enabling Features:');
   config.enableFeature('compression');
   config.enableFeature('encryption');
-  console.log(`   Enabled: ${config.getEnabledFeatures().join(', ')}`);
-  console.log('');
+  console.info(`   Enabled: ${config.getEnabledFeatures().join(', ')}`);
+  console.info('');
   
-  console.log('🖥️  Terminal Settings:');
+  console.info('🖥️  Terminal Settings:');
   config.setTerminalSettings(2, 50, 120);
   const terminal = config.getTerminalSettings();
-  console.log(`   Mode: ${terminal.mode}, Size: ${terminal.rows}x${terminal.cols}`);
-  console.log('');
+  console.info(`   Mode: ${terminal.mode}, Size: ${terminal.rows}x${terminal.cols}`);
+  console.info('');
   
-  console.log('🔍 Debug View (Human-Readable):');
+  console.info('🔍 Debug View (Human-Readable):');
   const debug = config.getDebugView();
-  console.log(`   Version: ${debug.version}`);
-  console.log(`   Registry: ${debug.registryHash}`);
-  console.log(`   Features: ${debug.features.enabled.length} enabled, ${debug.features.disabled.length} disabled`);
-  console.log(`   Terminal: ${debug.terminal.dimensions} (mode ${debug.terminal.mode})`);
-  console.log(`   Raw: ${debug.raw.hex}`);
-  console.log('');
+  console.info(`   Version: ${debug.version}`);
+  console.info(`   Registry: ${debug.registryHash}`);
+  console.info(`   Features: ${debug.features.enabled.length} enabled, ${debug.features.disabled.length} disabled`);
+  console.info(`   Terminal: ${debug.terminal.dimensions} (mode ${debug.terminal.mode})`);
+  console.info(`   Raw: ${debug.raw.hex}`);
+  console.info('');
   
   config.destroy();
 }
 
 async function demonstratePersistence() {
-  console.log('💾 2. Bun-Native Persistence');
-  console.log('   Solves the "where did my config go?" problem');
-  console.log('');
+  console.info('💾 2. Bun-Native Persistence');
+  console.info('   Solves the "where did my config go?" problem');
+  console.info('');
   
   const config = createProductionConfig({
     persistPath: './demo-config.db',
     debugMode: true
   });
   
-  console.log('📝 Making Configuration Changes...');
+  console.info('📝 Making Configuration Changes...');
   config.enableFeature('metrics');
   config.enableFeature('caching');
   config.setTerminalSettings(1, 40, 100);
   
-  console.log('💾 Persisting to SQLite...');
+  console.info('💾 Persisting to SQLite...');
   await config.persist('demo_setup');
   
-  console.log('🔄 Simulating Server Restart...');
+  console.info('🔄 Simulating Server Restart...');
   config.destroy();
   
   // Create new instance (simulates restart)
@@ -74,37 +74,37 @@ async function demonstratePersistence() {
     debugMode: true
   });
   
-  console.log('📖 Loading Previous Configuration...');
+  console.info('📖 Loading Previous Configuration...');
   const loaded = await config2.YAML.parse();
   
   if (loaded) {
-    console.log('✅ Configuration Successfully Restored!');
+    console.info('✅ Configuration Successfully Restored!');
     const debug = config2.getDebugView();
-    console.log(`   Features: ${debug.features.enabled.join(', ')}`);
-    console.log(`   Terminal: ${debug.terminal.dimensions}`);
-    console.log(`   Registry: ${debug.registryHash}`);
+    console.info(`   Features: ${debug.features.enabled.join(', ')}`);
+    console.info(`   Terminal: ${debug.terminal.dimensions}`);
+    console.info(`   Registry: ${debug.registryHash}`);
   }
   
-  console.log('');
-  console.log('📚 Configuration History:');
+  console.info('');
+  console.info('📚 Configuration History:');
   const history = await config2.getHistory(5);
   history.forEach((entry, index) => {
-    console.log(`   ${index + 1}. ${entry.changeReason} at ${entry.createdAt.toLocaleTimeString()}`);
-    console.log(`      ${entry.configHex}`);
+    console.info(`   ${index + 1}. ${entry.changeReason} at ${entry.createdAt.toLocaleTimeString()}`);
+    console.info(`      ${entry.configHex}`);
   });
   
   config2.destroy();
 }
 
 async function demonstratePerformance() {
-  console.log('⚡ 3. Performance Benchmarks');
-  console.log('   13-byte core maintains nanosecond performance');
-  console.log('');
+  console.info('⚡ 3. Performance Benchmarks');
+  console.info('   13-byte core maintains nanosecond performance');
+  console.info('');
   
   const config = createProductionConfig({ debugMode: false });
   
   // Benchmark feature operations
-  console.log('🏃 Benchmarking Feature Operations...');
+  console.info('🏃 Benchmarking Feature Operations...');
   const iterations = 100000;
   const start = performance.now();
   
@@ -117,13 +117,13 @@ async function demonstratePerformance() {
   const duration = performance.now() - start;
   const opsPerSecond = (iterations / duration) * 1000;
   
-  console.log(`   📊 ${iterations.toLocaleString()} operations in ${duration.toFixed(2)}ms`);
-  console.log(`   ⚡ ${opsPerSecond.toLocaleString()} operations/second`);
-  console.log(`   ⏱️  ${(duration / iterations * 1000000).toFixed(2)}ns per operation`);
-  console.log('');
+  console.info(`   📊 ${iterations.toLocaleString()} operations in ${duration.toFixed(2)}ms`);
+  console.info(`   ⚡ ${opsPerSecond.toLocaleString()} operations/second`);
+  console.info(`   ⏱️  ${(duration / iterations * 1000000).toFixed(2)}ns per operation`);
+  console.info('');
   
   // Benchmark debug view generation
-  console.log('🔍 Benchmarking Debug View Generation...');
+  console.info('🔍 Benchmarking Debug View Generation...');
   const debugIterations = 10000;
   const debugStart = performance.now();
   
@@ -134,54 +134,54 @@ async function demonstratePerformance() {
   const debugDuration = performance.now() - debugStart;
   const debugOpsPerSecond = (debugIterations / debugDuration) * 1000;
   
-  console.log(`   📊 ${debugIterations.toLocaleString()} debug views in ${debugDuration.toFixed(2)}ms`);
-  console.log(`   ⚡ ${debugOpsPerSecond.toLocaleString()} debug views/second`);
-  console.log('');
+  console.info(`   📊 ${debugIterations.toLocaleString()} debug views in ${debugDuration.toFixed(2)}ms`);
+  console.info(`   ⚡ ${debugOpsPerSecond.toLocaleString()} debug views/second`);
+  console.info('');
   
   config.destroy();
 }
 
 async function demonstrateErrorHandling() {
-  console.log('🛡️  4. Error Handling and Validation');
-  console.log('   Team-friendly error messages and validation');
-  console.log('');
+  console.info('🛡️  4. Error Handling and Validation');
+  console.info('   Team-friendly error messages and validation');
+  console.info('');
   
   const config = createProductionConfig();
   
-  console.log('❌ Testing Unknown Feature:');
+  console.info('❌ Testing Unknown Feature:');
   try {
     config.enableFeature('unknown_feature');
   } catch (error) {
-    console.log(`   ✅ Caught: ${error.message}`);
+    console.info(`   ✅ Caught: ${error.message}`);
   }
   
-  console.log('');
-  console.log('❌ Testing Invalid Terminal Settings:');
+  console.info('');
+  console.info('❌ Testing Invalid Terminal Settings:');
   try {
     config.setTerminalSettings(10, 0, 300); // Invalid mode, rows, cols
   } catch (error) {
-    console.log(`   ✅ Caught validation error`);
+    console.info(`   ✅ Caught validation error`);
   }
   
-  console.log('');
-  console.log('🔍 Config Validation:');
+  console.info('');
+  console.info('🔍 Config Validation:');
   const validation = config.validate();
   if (validation.isValid) {
-    console.log('   ✅ Current configuration is valid');
+    console.info('   ✅ Current configuration is valid');
   } else {
-    console.log('   ❌ Validation errors:');
-    validation.errors.forEach(error => console.log(`      - ${error}`));
+    console.info('   ❌ Validation errors:');
+    validation.errors.forEach(error => console.info(`      - ${error}`));
   }
   
   config.destroy();
 }
 
 async function demonstrateRealWorldUsage() {
-  console.log('🌍 5. Real-World Usage Scenarios');
-  console.log('   How teams would use this in production');
-  console.log('');
+  console.info('🌍 5. Real-World Usage Scenarios');
+  console.info('   How teams would use this in production');
+  console.info('');
   
-  console.log('🏢 Scenario: Microservice Configuration');
+  console.info('🏢 Scenario: Microservice Configuration');
   const serviceConfig = createProductionConfig({
     persistPath: './service-config.db',
     debugMode: process.env.NODE_ENV === 'development'
@@ -201,46 +201,46 @@ async function demonstrateRealWorldUsage() {
     serviceConfig.enableFeature('verbose');
   }
   
-  console.log('🔧 Service Configuration:');
+  console.info('🔧 Service Configuration:');
   const serviceDebug = serviceConfig.getDebugView();
-  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`   Features: ${serviceDebug.features.enabled.join(', ')}`);
-  console.log(`   Performance impact: ${serviceDebug.raw.bytes.length} bytes`);
+  console.info(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.info(`   Features: ${serviceDebug.features.enabled.join(', ')}`);
+  console.info(`   Performance impact: ${serviceDebug.raw.bytes.length} bytes`);
   
   await serviceConfig.persist('service_deployment');
   
-  console.log('');
-  console.log('🚀 Scenario: Feature Flag Management');
+  console.info('');
+  console.info('🚀 Scenario: Feature Flag Management');
   
   // Simulate feature rollout
-  console.log('📈 Rolling out new feature to 10% of users...');
+  console.info('📈 Rolling out new feature to 10% of users...');
   serviceConfig.enableFeature('encryption');
   await serviceConfig.persist('beta_feature_rollout_10_percent');
   
-  console.log('📈 Expanding to 50% of users...');
+  console.info('📈 Expanding to 50% of users...');
   // In real implementation, this would update rollout percentage
   await serviceConfig.persist('beta_feature_rollout_50_percent');
   
-  console.log('📈 Full rollout...');
+  console.info('📈 Full rollout...');
   await serviceConfig.persist('beta_feature_full_rollout');
   
-  console.log('');
-  console.log('📊 Feature Rollout History:');
+  console.info('');
+  console.info('📊 Feature Rollout History:');
   const rolloutHistory = await serviceConfig.getHistory(5);
   rolloutHistory.slice(-3).forEach((entry, index) => {
-    console.log(`   ${index + 1}. ${entry.changeReason}`);
-    console.log(`      ${entry.configHex}`);
+    console.info(`   ${index + 1}. ${entry.changeReason}`);
+    console.info(`      ${entry.configHex}`);
   });
   
   serviceConfig.destroy();
 }
 
 async function demonstrateBunIntegration() {
-  console.log('🥟 6. Bun-Specific Integrations');
-  console.log('   Leveraging Bun\'s unique capabilities');
-  console.log('');
+  console.info('🥟 6. Bun-Specific Integrations');
+  console.info('   Leveraging Bun\'s unique capabilities');
+  console.info('');
   
-  console.log('⚡ Bun.nanoseconds() for High-Precision Timing:');
+  console.info('⚡ Bun.nanoseconds() for High-Precision Timing:');
   const config = createProductionConfig();
   
   const startTime = Bun.nanoseconds();
@@ -248,39 +248,39 @@ async function demonstrateBunIntegration() {
   const endTime = Bun.nanoseconds();
   
   const durationNanos = endTime - startTime;
-  console.log(`   Feature enable took: ${durationNanos} nanoseconds`);
-  console.log('');
+  console.info(`   Feature enable took: ${durationNanos} nanoseconds`);
+  console.info('');
   
-  console.log('🗄️  Bun SQLite for Persistence:');
+  console.info('🗄️  Bun SQLite for Persistence:');
   // Already demonstrated in persistence section
-  console.log('   ✅ Atomic writes with Bun.write()');
-  console.log('   ✅ High-performance SQLite operations');
-  console.log('   ✅ Zero-copy ArrayBuffer operations');
-  console.log('');
+  console.info('   ✅ Atomic writes with Bun.write()');
+  console.info('   ✅ High-performance SQLite operations');
+  console.info('   ✅ Zero-copy ArrayBuffer operations');
+  console.info('');
   
-  console.log('🧵 Bun Workers for Cluster Sync:');
-  console.log('   ✅ SharedArrayBuffer for true memory sharing');
-  console.log('   ✅ Worker threads for background operations');
-  console.log('   ✅ IPC for real-time synchronization');
-  console.log('');
+  console.info('🧵 Bun Workers for Cluster Sync:');
+  console.info('   ✅ SharedArrayBuffer for true memory sharing');
+  console.info('   ✅ Worker threads for background operations');
+  console.info('   ✅ IPC for real-time synchronization');
+  console.info('');
   
-  console.log('🔍 Bun Inspector Integration:');
-  console.log('   ✅ Custom inspect() for debugging');
-  console.log('   ✅ Human-readable config representation');
-  console.log('   ✅ Performance profiling integration');
+  console.info('🔍 Bun Inspector Integration:');
+  console.info('   ✅ Custom inspect() for debugging');
+  console.info('   ✅ Human-readable config representation');
+  console.info('   ✅ Performance profiling integration');
   
   // Demonstrate inspector integration
-  console.log('');
-  console.log('🔍 Inspector Output:');
-  console.log(config); // Uses custom inspect method
+  console.info('');
+  console.info('🔍 Inspector Output:');
+  console.info(config); // Uses custom inspect method
   
   config.destroy();
 }
 
 async function runAllDemonstrations() {
-  console.log('🎯 Production-Ready 13-Byte Config: Complete Demonstration');
-  console.log('================================================================');
-  console.log('');
+  console.info('🎯 Production-Ready 13-Byte Config: Complete Demonstration');
+  console.info('================================================================');
+  console.info('');
   
   try {
     await demonstrateBasicUsage();
@@ -290,23 +290,23 @@ async function runAllDemonstrations() {
     await demonstrateRealWorldUsage();
     await demonstrateBunIntegration();
     
-    console.log('🎉 All Demonstrations Completed Successfully!');
-    console.log('');
-    console.log('🏆 Key Achievements:');
-    console.log('   ✅ 13-byte core preserved with nanosecond performance');
-    console.log('   ✅ Team-friendly API eliminates bit manipulation complexity');
-    console.log('   ✅ Bun-native persistence solves restart problems');
-    console.log('   ✅ Cluster sync enables multi-process deployments');
-    console.log('   ✅ Comprehensive error handling and validation');
-    console.log('   ✅ Production-ready observability and debugging');
-    console.log('   ✅ Real-world scenario compatibility');
-    console.log('   ✅ Bun-specific optimizations and integrations');
-    console.log('');
-    console.log('🚀 This is now production-ready while keeping the brilliant 13-byte core!');
-    console.log('   Teams can use it without understanding bit masks');
-    console.log('   Operations teams can monitor and debug effectively');
-    console.log('   DevOps can deploy it in distributed environments');
-    console.log('   Performance remains exceptional at every level');
+    console.info('🎉 All Demonstrations Completed Successfully!');
+    console.info('');
+    console.info('🏆 Key Achievements:');
+    console.info('   ✅ 13-byte core preserved with nanosecond performance');
+    console.info('   ✅ Team-friendly API eliminates bit manipulation complexity');
+    console.info('   ✅ Bun-native persistence solves restart problems');
+    console.info('   ✅ Cluster sync enables multi-process deployments');
+    console.info('   ✅ Comprehensive error handling and validation');
+    console.info('   ✅ Production-ready observability and debugging');
+    console.info('   ✅ Real-world scenario compatibility');
+    console.info('   ✅ Bun-specific optimizations and integrations');
+    console.info('');
+    console.info('🚀 This is now production-ready while keeping the brilliant 13-byte core!');
+    console.info('   Teams can use it without understanding bit masks');
+    console.info('   Operations teams can monitor and debug effectively');
+    console.info('   DevOps can deploy it in distributed environments');
+    console.info('   Performance remains exceptional at every level');
     
   } catch (error) {
     console.error('❌ Demonstration failed:', error instanceof Error ? error.message : String(error));

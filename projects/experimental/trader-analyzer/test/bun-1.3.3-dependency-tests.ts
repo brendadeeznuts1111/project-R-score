@@ -15,7 +15,7 @@ const RESULTS: Array<{ test: string; status: "pass" | "fail" | "skip"; message: 
 function logResult(test: string, status: "pass" | "fail" | "skip", message: string) {
 	RESULTS.push({ test, status, message });
 	const icon = status === "pass" ? "✅" : status === "fail" ? "❌" : "⚠️";
-	console.log(`${icon} ${test}: ${message}`);
+	console.info(`${icon} ${test}: ${message}`);
 }
 
 async function cleanup() {
@@ -138,7 +138,7 @@ async function testGithubShorthand() {
 
 // Main test runner
 async function runTests() {
-	console.log("🧪 Testing Bun 1.3.3 dependency management fixes\n");
+	console.info("🧪 Testing Bun 1.3.3 dependency management fixes\n");
 
 	await cleanup();
 	mkdirSync(TEST_DIR, { recursive: true });
@@ -148,14 +148,14 @@ async function runTests() {
 	await testGitProtocolDifferentiation();
 	await testGithubShorthand();
 
-	console.log("\n📊 Test Results:");
+	console.info("\n📊 Test Results:");
 	const passed = RESULTS.filter((r) => r.status === "pass").length;
 	const failed = RESULTS.filter((r) => r.status === "fail").length;
 	const skipped = RESULTS.filter((r) => r.status === "skip").length;
 
-	console.log(`✅ Passed: ${passed}`);
-	console.log(`❌ Failed: ${failed}`);
-	console.log(`⚠️  Skipped: ${skipped}`);
+	console.info(`✅ Passed: ${passed}`);
+	console.info(`❌ Failed: ${failed}`);
+	console.info(`⚠️  Skipped: ${skipped}`);
 
 	await cleanup();
 

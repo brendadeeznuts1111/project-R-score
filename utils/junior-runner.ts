@@ -176,9 +176,9 @@ async function juniorProfile(mdFile: string, options: { lspSafe?: boolean } = {}
   const { lspSafe = false } = options;
   
   if (lspSafe) {
-    console.log('\x1b[1;32m🛡️ LSP-SAFE MODE: No preview, fast scan\x1b[0m');
+    console.info('\x1b[1;32m🛡️ LSP-SAFE MODE: No preview, fast scan\x1b[0m');
   }
-  console.log(`\x1b[1;34m👤 Junior Runner: Processing ${mdFile}\x1b[0m`);
+  console.info(`\x1b[1;34m👤 Junior Runner: Processing ${mdFile}\x1b[0m`);
   
   // Junior Step 1: Validate and load file
   const validatedPath = validateFilePath(mdFile);
@@ -269,11 +269,11 @@ async function juniorProfile(mdFile: string, options: { lspSafe?: boolean } = {}
   // Junior Step 8: HYPER-ENHANCED complexity escalation with tier detection
   profile.markdown.complexityTier = tier;
   
-  console.log(`\x1b[1;32mDetected: ${maxTableCols} Cols (${tableCount} tables, ${detectTime.toFixed(1)}μs, ${scanResult.scanTime.toFixed(1)}μs scan) → Tier: ${tier}\x1b[0m`);
+  console.info(`\x1b[1;32mDetected: ${maxTableCols} Cols (${tableCount} tables, ${detectTime.toFixed(1)}μs, ${scanResult.scanTime.toFixed(1)}μs scan) → Tier: ${tier}\x1b[0m`);
   
   // ⚠️ API Stability Warning
   if (BUN_MARKDOWN_CONFIG.API_STATUS === 'unstable') {
-    console.log(`\x1b[1;33m⚠️  Using Bun's unstable Markdown API - may change in future versions\x1b[0m`);
+    console.info(`\x1b[1;33m⚠️  Using Bun's unstable Markdown API - may change in future versions\x1b[0m`);
   }
   
   // Performance correlation with new multiplier and crypto seal
@@ -301,8 +301,8 @@ async function juniorProfile(mdFile: string, options: { lspSafe?: boolean } = {}
  * Junior-friendly terminal output
  */
 function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: string, lspSafe: boolean = false): void {
-  console.log('\n\x1b[1;32m👤 Junior Dashboard\x1b[0m');
-  console.log('\x1b[1;36m' + '='.repeat(50) + '\x1b[0m');
+  console.info('\n\x1b[1;32m👤 Junior Dashboard\x1b[0m');
+  console.info('\x1b[1;36m' + '='.repeat(50) + '\x1b[0m');
   
   // Core metrics table with HYPER-ENHANCED data
   const tableCols = (profile.markdown.featureCounts as ExtendedFeatureCounts).tableCols || DEFAULT_COLS;
@@ -326,22 +326,22 @@ function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: st
   });
   
   // Feature counts
-  console.log('\n\x1b[1;33m📊 Feature Analysis:\x1b[0m');
+  console.info('\n\x1b[1;33m📊 Feature Analysis:\x1b[0m');
   const features = profile.markdown.featureCounts;
   Object.entries(features).forEach(([key, value]) => {
     if (typeof value === 'object') {
-      console.log(`  ${key}:`);
+      console.info(`  ${key}:`);
       Object.entries(value).forEach(([subKey, subValue]) => {
-        console.log(`    ${subKey}: ${subValue}`);
+        console.info(`    ${subKey}: ${subValue}`);
       });
     } else {
-      console.log(`  ${key}: ${value}`);
+      console.info(`  ${key}: ${value}`);
     }
   });
   
   // ANSI preview (first 500 chars) - Skip in LSP-safe mode
   if (!lspSafe) {
-    console.log('\n\x1b[1;35m📝 ANSI Preview (first 500 chars):\x1b[0m');
+    console.info('\n\x1b[1;35m📝 ANSI Preview (first 500 chars):\x1b[0m');
     const ansiOutput = Bun.markdown.render(md.slice(0, 500), {
       heading: (children, { level }) => `\x1b[1;3${level}m${children}\x1b[0m`,
       table: children => `\x1b[7m${children}\x1b[27m`,
@@ -349,23 +349,23 @@ function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: st
       strong: (children) => `\x1b[1m${children}\x1b[0m`,
       emphasis: (children) => `\x1b[3m${children}\x1b[0m`
     });
-    console.log(ansiOutput + '\x1b[0m...');
+    console.info(ansiOutput + '\x1b[0m...');
   } else {
-    console.log('\n\x1b[1;32m🛡️ LSP-SAFE: ANSI preview skipped for performance\x1b[0m');
+    console.info('\n\x1b[1;32m🛡️ LSP-SAFE: ANSI preview skipped for performance\x1b[0m');
   }
   
   // Wide table alert
   if (tableCols >= ENTERPRISE_COLS_THRESHOLD) {
-    console.log('\n\x1b[1;36m🏢 MEGA TABLE ALERT: 30+ columns detected!\x1b[0m');
-    console.log('\x1b[1;36m   → Complexity auto-escalated to ENTERPRISE tier\x1b[0m');
-    console.log('\x1b[1;36m   → Ready for enterprise deployment with full audit trail\x1b[0m');
+    console.info('\n\x1b[1;36m🏢 MEGA TABLE ALERT: 30+ columns detected!\x1b[0m');
+    console.info('\x1b[1;36m   → Complexity auto-escalated to ENTERPRISE tier\x1b[0m');
+    console.info('\x1b[1;36m   → Ready for enterprise deployment with full audit trail\x1b[0m');
   } else if (tableCols >= LEAD_COLS_THRESHOLD) {
-    console.log('\n\x1b[1;33m⚡ WIDE TABLE ALERT: 15+ columns detected!\x1b[0m');
-    console.log('\x1b[1;33m   → Complexity auto-escalated to LEAD tier\x1b[0m');
-    console.log('\x1b[1;33m   → Ready for senior handoff with enhanced features\x1b[0m');
+    console.info('\n\x1b[1;33m⚡ WIDE TABLE ALERT: 15+ columns detected!\x1b[0m');
+    console.info('\x1b[1;33m   → Complexity auto-escalated to LEAD tier\x1b[0m');
+    console.info('\x1b[1;33m   → Ready for senior handoff with enhanced features\x1b[0m');
   }
   
-  console.log('\x1b[1;32m✅ Junior profiling complete!\x1b[0m');
+  console.info('\x1b[1;32m✅ Junior profiling complete!\x1b[0m');
 }
 
 /**
@@ -374,7 +374,7 @@ function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: st
 async function exportForSeniors(profile: LeadSpecProfile): Promise<string> {
   const filename = `junior-${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(profile, null, 2));
-  console.log(`\x1b[1;33m📁 Exported for seniors: ${filename}\x1b[0m`);
+  console.info(`\x1b[1;33m📁 Exported for seniors: ${filename}\x1b[0m`);
   return filename;
 }
 
@@ -385,9 +385,9 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log('\x1b[1;31m❌ Usage: junior-run <markdown-file> [--lsp-safe]\x1b[0m');
-    console.log('\x1b[1;36mExample: junior-run demo.md\x1b[0m');
-    console.log('\x1b[1;36mExample: junior-run huge-50col.md --lsp-safe\x1b[0m');
+    console.info('\x1b[1;31m❌ Usage: junior-run <markdown-file> [--lsp-safe]\x1b[0m');
+    console.info('\x1b[1;36mExample: junior-run demo.md\x1b[0m');
+    console.info('\x1b[1;36mExample: junior-run huge-50col.md --lsp-safe\x1b[0m');
     process.exit(1);
   }
   
@@ -434,7 +434,7 @@ async function juniorProfileWithWiki(mdFile: string, options: { lspSafe?: boolea
         }
       };
     } catch (wikiError) {
-      console.log(`\x1b[1;33m⚠️  Wiki profiling failed: ${wikiError.message}\x1b[0m`);
+      console.info(`\x1b[1;33m⚠️  Wiki profiling failed: ${wikiError.message}\x1b[0m`);
       return baseProfile;
     }
   }

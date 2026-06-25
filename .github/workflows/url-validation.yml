@@ -10,7 +10,9 @@ jobs:
   url-validation:
     name: URL Standards Validation
     runs-on: ubuntu-latest
-    
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -21,7 +23,7 @@ jobs:
         bun-version: latest
         
     - name: Install dependencies
-      run: bun install
+      run: bun scripts/with-bun-cache-env.ts ci
       
     - name: Extract URLs from codebase
       run: |

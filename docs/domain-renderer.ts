@@ -73,15 +73,15 @@ function wrapMermaid(body: string): string {
 if (import.meta.main) {
   const arg = process.argv[2];
   if (!arg || arg === "full") {
-    console.log(renderFullHierarchy());
+    console.info(renderFullHierarchy());
     process.exit(0);
   }
   if (arg === "list") {
-    console.log(listDomains().join("\n"));
+    console.info(listDomains().join("\n"));
     process.exit(0);
   }
   if (arg in graphs) {
-    console.log(renderDomainGraph(arg as Domain));
+    console.info(renderDomainGraph(arg as Domain));
     process.exit(0);
   }
   console.error(`Unknown domain: ${arg}`);

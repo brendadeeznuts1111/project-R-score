@@ -51,8 +51,8 @@ const TEST_CASES: TestCase[] = [
 ];
 
 async function testPaymentFlow(testCase: TestCase): Promise<boolean> {
-  console.log(`\n🧪 ${testCase.name}`);
-  console.log(`   ${testCase.description}`);
+  console.info(`\n🧪 ${testCase.name}`);
+  console.info(`   ${testCase.description}`);
   
   try {
     const response = await fetch(`${PAYMENT_SERVER_URL}/test/payment`, {
@@ -75,9 +75,9 @@ async function testPaymentFlow(testCase: TestCase): Promise<boolean> {
     const statusMatch = result.status === testCase.expectedStatus;
     const icon = statusMatch ? '✅' : '❌';
     
-    console.log(`   ${icon} Status: ${result.status} (expected: ${testCase.expectedStatus})`);
-    console.log(`   📊 Risk: ${result.risk.risk} - ${result.risk.reason}`);
-    console.log(`   💰 Amount: $${result.amount} | User: ${result.userId}`);
+    console.info(`   ${icon} Status: ${result.status} (expected: ${testCase.expectedStatus})`);
+    console.info(`   📊 Risk: ${result.risk.risk} - ${result.risk.reason}`);
+    console.info(`   💰 Amount: $${result.amount} | User: ${result.userId}`);
     
     return statusMatch;
   } catch (err: any) {
@@ -98,10 +98,10 @@ async function checkHealth(): Promise<boolean> {
     }
     
     const health = await response.json();
-    console.log('✅ Server is healthy');
-    console.log(`   Pinecone: ${health.pinecone}`);
-    console.log(`   Redis: ${health.redis}`);
-    console.log(`   Timestamp: ${health.timestamp}`);
+    console.info('✅ Server is healthy');
+    console.info(`   Pinecone: ${health.pinecone}`);
+    console.info(`   Redis: ${health.redis}`);
+    console.info(`   Timestamp: ${health.timestamp}`);
     return true;
   } catch (err: any) {
     console.error(`❌ Cannot connect to server at ${PAYMENT_SERVER_URL}`);
@@ -112,10 +112,10 @@ async function checkHealth(): Promise<boolean> {
 }
 
 async function testWebhooks(): Promise<void> {
-  console.log('\n📡 Testing Webhook Endpoints...\n');
+  console.info('\n📡 Testing Webhook Endpoints...\n');
   
   // Test PayPal webhook (will fail signature but tests endpoint)
-  console.log('Testing PayPal webhook endpoint...');
+  console.info('Testing PayPal webhook endpoint...');
   try {
     const paypalResponse = await fetch(`${PAYMENT_SERVER_URL}/webhook/paypal`, {
       method: 'POST',
@@ -131,13 +131,13 @@ async function testWebhooks(): Promise<void> {
         },
       }),
     });
-    console.log(`   PayPal webhook: HTTP ${paypalResponse.status}`);
+    console.info(`   PayPal webhook: HTTP ${paypalResponse.status}`);
   } catch (err: any) {
     console.error(`   PayPal webhook error: ${err.message}`);
   }
   
   // Test Venmo webhook
-  console.log('Testing Venmo webhook endpoint...');
+  console.info('Testing Venmo webhook endpoint...');
   try {
     const venmoResponse = await fetch(`${PAYMENT_SERVER_URL}/webhook/venmo`, {
       method: 'POST',
@@ -153,17 +153,17 @@ async function testWebhooks(): Promise<void> {
         },
       }),
     });
-    console.log(`   Venmo webhook: HTTP ${venmoResponse.status}`);
+    console.info(`   Venmo webhook: HTTP ${venmoResponse.status}`);
   } catch (err: any) {
     console.error(`   Venmo webhook error: ${err.message}`);
   }
 }
 
 async function main(): Promise<void> {
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║     🦘 Payment Flow Demo & Test Suite                      ║');
-  console.log('╚════════════════════════════════════════════════════════════╝');
-  console.log(`\nServer URL: ${PAYMENT_SERVER_URL}\n`);
+  console.info('╔════════════════════════════════════════════════════════════╗');
+  console.info('║     🦘 Payment Flow Demo & Test Suite                      ║');
+  console.info('╚════════════════════════════════════════════════════════════╝');
+  console.info(`\nServer URL: ${PAYMENT_SERVER_URL}\n`);
   
   // Check health first
   const isHealthy = await checkHealth();
@@ -175,9 +175,9 @@ async function main(): Promise<void> {
   await testWebhooks();
   
   // Run test cases
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║     Running Test Cases                                     ║');
-  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.info('\n╔════════════════════════════════════════════════════════════╗');
+  console.info('║     Running Test Cases                                     ║');
+  console.info('╚════════════════════════════════════════════════════════════╝');
   
   let passed = 0;
   let failed = 0;
@@ -192,17 +192,17 @@ async function main(): Promise<void> {
   }
   
   // Summary
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║     Test Summary                                           ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log(`║  Total:  ${TEST_CASES.length.toString().padStart(3)}                                           ║`);
-  console.log(`║  Passed: ${passed.toString().padStart(3)} ${'✅'.repeat(passed).padEnd(35)} ║`);
-  console.log(`║  Failed: ${failed.toString().padStart(3)} ${'❌'.repeat(failed).padEnd(35)} ║`);
-  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.info('\n╔════════════════════════════════════════════════════════════╗');
+  console.info('║     Test Summary                                           ║');
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info(`║  Total:  ${TEST_CASES.length.toString().padStart(3)}                                           ║`);
+  console.info(`║  Passed: ${passed.toString().padStart(3)} ${'✅'.repeat(passed).padEnd(35)} ║`);
+  console.info(`║  Failed: ${failed.toString().padStart(3)} ${'❌'.repeat(failed).padEnd(35)} ║`);
+  console.info('╚════════════════════════════════════════════════════════════╝');
   
   // Redis monitoring hint
-  console.log('\n💡 Monitor Redis events with:');
-  console.log('   redis-cli monitor | grep -E "(DEPOSIT_SUCCESS|FRAUD_ALERT|PROFILE_FUSE)"');
+  console.info('\n💡 Monitor Redis events with:');
+  console.info('   redis-cli monitor | grep -E "(DEPOSIT_SUCCESS|FRAUD_ALERT|PROFILE_FUSE)"');
   
   process.exit(failed > 0 ? 1 : 0);
 }

@@ -132,9 +132,9 @@ setTimeout(() => {
   const summary = reportToConsole(results);
 
   // Enhanced comparison table with protocol and type
-  console.log('\n╔════════════════════════════════════════════════════════════════════════════════╗');
-  console.log('║                    📊 ROUTING METHOD COMPARISON TABLE                          ║');
-  console.log('╚════════════════════════════════════════════════════════════════════════════════╝\n');
+  console.info('\n╔════════════════════════════════════════════════════════════════════════════════╗');
+  console.info('║                    📊 ROUTING METHOD COMPARISON TABLE                          ║');
+  console.info('╚════════════════════════════════════════════════════════════════════════════════╝\n');
 
   const urlPatternTime = results[0]?.stats.mean || 0;
   const mapTime = results[1]?.stats.mean || 0;
@@ -178,9 +178,9 @@ setTimeout(() => {
   ];
 
   // Table header
-  console.log('┌────────────────────────────┬─────────────────────┬───────────────────────┬──────────┬──────────┐');
-  console.log('│ Method                     │ Protocol            │ Type                  │ Time (μs)│ Speedup  │');
-  console.log('├────────────────────────────┼─────────────────────┼───────────────────────┼──────────┼──────────┤');
+  console.info('┌────────────────────────────┬─────────────────────┬───────────────────────┬──────────┬──────────┐');
+  console.info('│ Method                     │ Protocol            │ Type                  │ Time (μs)│ Speedup  │');
+  console.info('├────────────────────────────┼─────────────────────┼───────────────────────┼──────────┼──────────┤');
 
   methods.forEach((method) => {
     const timeUs = (method.time * 1000).toFixed(3).padStart(8);
@@ -188,36 +188,36 @@ setTimeout(() => {
       ? `${method.speedup.toFixed(1)}x`.padStart(8)
       : 'baseline'.padStart(8);
 
-    console.log(
+    console.info(
       `│ ${method.name.padEnd(26)} │ ${method.protocol.padEnd(19)} │ ${method.type.padEnd(21)} │ ${timeUs} │ ${speedupStr} │`
     );
   });
 
-  console.log('└────────────────────────────┴─────────────────────┴───────────────────────┴──────────┴──────────┘');
+  console.info('└────────────────────────────┴─────────────────────┴───────────────────────┴──────────┴──────────┘');
 
   // Implementation details
-  console.log('\n📋 Implementation Details:');
+  console.info('\n📋 Implementation Details:');
   methods.forEach((method, idx) => {
-    console.log(`   ${idx + 1}. ${method.name}: ${method.impl}`);
+    console.info(`   ${idx + 1}. ${method.name}: ${method.impl}`);
   });
 
   // Key insights
-  console.log('\n💡 Key Insights:');
+  console.info('\n💡 Key Insights:');
   if (urlPatternTime > 0) {
-    console.log(`   • Map.get() is ${(urlPatternTime / mapTime).toFixed(1)}x faster (C++ hash table)`);
-    console.log(`   • switch is ${(urlPatternTime / switchTime).toFixed(1)}x faster (JSC jump table optimization)`);
-    console.log(`   • SIMD decode is ${(urlPatternTime / decodeTime).toFixed(1)}x faster (processes 16 bytes/instruction)`);
-    console.log(`   • URLPattern uses regex engine (slower but flexible for complex patterns)`);
+    console.info(`   • Map.get() is ${(urlPatternTime / mapTime).toFixed(1)}x faster (C++ hash table)`);
+    console.info(`   • switch is ${(urlPatternTime / switchTime).toFixed(1)}x faster (JSC jump table optimization)`);
+    console.info(`   • SIMD decode is ${(urlPatternTime / decodeTime).toFixed(1)}x faster (processes 16 bytes/instruction)`);
+    console.info(`   • URLPattern uses regex engine (slower but flexible for complex patterns)`);
   }
 
   // Architecture recommendation
-  console.log('\n🏗️  Architecture Recommendation:');
-  console.log('   ┌─────────────────────────────────────────────────────────────┐');
-  console.log('   │ Hybrid Router:                                              │');
-  console.log('   │   1. Map.get() for exact routes (/health, /metrics)        │');
-  console.log('   │   2. switch for common paths (if < 10 cases)               │');
-  console.log('   │   3. URLPattern for dynamic params (/:scope/:name)         │');
-  console.log('   └─────────────────────────────────────────────────────────────┘');
+  console.info('\n🏗️  Architecture Recommendation:');
+  console.info('   ┌─────────────────────────────────────────────────────────────┐');
+  console.info('   │ Hybrid Router:                                              │');
+  console.info('   │   1. Map.get() for exact routes (/health, /metrics)        │');
+  console.info('   │   2. switch for common paths (if < 10 cases)               │');
+  console.info('   │   3. URLPattern for dynamic params (/:scope/:name)         │');
+  console.info('   └─────────────────────────────────────────────────────────────┘');
 
   process.exit(summary.failed > 0 ? 1 : 0);
 }, 100);

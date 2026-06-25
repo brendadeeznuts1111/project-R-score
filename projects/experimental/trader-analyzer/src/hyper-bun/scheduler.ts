@@ -201,7 +201,7 @@ export class HyperBunScheduler {
 
 			// Log performance metrics
 			if (options.logPerformance) {
-				console.log("📈 Performance metrics:", {
+				console.info("📈 Performance metrics:", {
 					operations: healthReport.performance.totalOperations,
 					healthScore: healthReport.performance.averageHealthScore,
 					anomalies: healthReport.performance.totalAnomalies,
@@ -279,7 +279,7 @@ export class HyperBunScheduler {
 		const successful = results.filter((r) => r.success);
 		const failed = results.filter((r) => !r.success);
 
-		console.log(
+		console.info(
 			`📊 Scan results: ${successful.length} successful, ${failed.length} failed`,
 		);
 
@@ -453,7 +453,7 @@ export class HyperBunScheduler {
 				stats.status = "stopped";
 			}
 
-			console.log(`🛑 Stopped job: ${jobId}`);
+			console.info(`🛑 Stopped job: ${jobId}`);
 			return true;
 		}
 		return false;
@@ -463,7 +463,7 @@ export class HyperBunScheduler {
 	 * Stop all jobs and clean up
 	 */
 	async shutdown(): Promise<void> {
-		console.log("🛑 Shutting down Hyper-Bun scheduler...");
+		console.info("🛑 Shutting down Hyper-Bun scheduler...");
 
 		// Stop all active jobs
 		for (const jobId of this.activeJobs.keys()) {
@@ -473,7 +473,7 @@ export class HyperBunScheduler {
 		// Clean up engine
 		await this.engine.shutdown();
 
-		console.log("✅ Hyper-Bun scheduler shut down");
+		console.info("✅ Hyper-Bun scheduler shut down");
 	}
 }
 
@@ -561,12 +561,12 @@ export async function runScheduledCommand(
 
 			case "status":
 				const statuses = scheduler.getJobStatuses();
-				console.log("Job Statuses:", statuses);
+				console.info("Job Statuses:", statuses);
 				break;
 
 			default:
 				console.error(`Unknown command: ${command}`);
-				console.log(
+				console.info(
 					"Available commands: nightly-scan, realtime-monitor, status",
 				);
 		}

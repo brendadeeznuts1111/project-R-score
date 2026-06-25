@@ -375,5 +375,5 @@ if (import.meta.main) {
 
   const validator = new HealthFieldValidator();
   const report = validator.generateFieldCoverageReport(sampleHealthResponse);
-  console.log(report);
+  console.info(report);
 }

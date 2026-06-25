@@ -113,26 +113,26 @@ class CompleteObservatory {
   }
   
   private initializeFeatures() {
-    console.log('🚀 Initializing Complete Observatory v1.3.6+');
-    console.log('==========================================');
+    console.info('🚀 Initializing Complete Observatory v1.3.6+');
+    console.info('==========================================');
     
     // Initialize cache if premium
     if (this.config.cache.enabled && PatternCache) {
       this.cache = new PatternCache();
-      console.log('✅ Fast CRC32 cache initialized');
+      console.info('✅ Fast CRC32 cache initialized');
     }
     
     // Initialize interactive editor if enabled
     if (this.config.interactive.enabled && InteractiveEditor) {
       this.editor = new InteractiveEditor();
-      console.log('✅ PTY interactive editor ready');
+      console.info('✅ PTY interactive editor ready');
     }
     
     // Log enabled features
-    console.log(`🔧 Enabled features: ${this.config.features.join(', ') || 'none'}`);
-    console.log(`💾 Cache: ${this.config.cache.enabled ? 'enabled' : 'disabled'}`);
-    console.log(`🖥️  Interactive: ${this.config.interactive.enabled ? 'enabled' : 'disabled'}`);
-    console.log(`📊 Telemetry: ${this.config.telemetry.enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔧 Enabled features: ${this.config.features.join(', ') || 'none'}`);
+    console.info(`💾 Cache: ${this.config.cache.enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🖥️  Interactive: ${this.config.interactive.enabled ? 'enabled' : 'disabled'}`);
+    console.info(`📊 Telemetry: ${this.config.telemetry.enabled ? 'enabled' : 'disabled'}`);
   }
   
   // Fast pattern analysis with CRC32 caching
@@ -218,7 +218,7 @@ class CompleteObservatory {
       throw new Error('Interactive mode requires --feature INTERACTIVE');
     }
     
-    console.log(`🖥️  Launching interactive editor for ${filePath}:${line}`);
+    console.info(`🖥️  Launching interactive editor for ${filePath}:${line}`);
     await this.editor.editPatternFile(filePath, line);
     this.logAudit('interactive_edit', `${filePath}:${line}`);
   }
@@ -230,7 +230,7 @@ class CompleteObservatory {
     integrity: string;
     features: string[];
   }> {
-    console.log('💾 Creating secure archive with all features...');
+    console.info('💾 Creating secure archive with all features...');
     
     // Gather all data
     const patterns = this.db.query('SELECT * FROM patterns').all();
@@ -316,7 +316,7 @@ class CompleteObservatory {
   
   private sendTelemetry(event: string, data: any): void {
     if (this.config.telemetry.endpoint) {
-      console.log(`[TELEMETRY] ${event}:`, data);
+      console.info(`[TELEMETRY] ${event}:`, data);
     }
   }
   
@@ -345,7 +345,7 @@ async function main() {
   globalThis.__BUN_FEATURES__ = features;
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 Complete URLPattern Observatory v1.3.6+
 
 Usage:
@@ -384,11 +384,11 @@ Examples:
           process.exit(1);
         }
         const result = await observatory.analyzePattern(args[1]);
-        console.log('🔍 Analysis Result:');
-        console.log(`   Risk: ${result.risk}`);
-        console.log(`   Hash: ${result.hash}`);
-        console.log(`   Cached: ${result.cached ? 'Yes' : 'No'}`);
-        console.log(`   Issues: ${result.issues.join(', ') || 'None'}`);
+        console.info('🔍 Analysis Result:');
+        console.info(`   Risk: ${result.risk}`);
+        console.info(`   Hash: ${result.hash}`);
+        console.info(`   Cached: ${result.cached ? 'Yes' : 'No'}`);
+        console.info(`   Issues: ${result.issues.join(', ') || 'None'}`);
         break;
         
       case 'interactive':
@@ -401,26 +401,26 @@ Examples:
         
       case 'archive':
         const archive = await observatory.createSecureArchive();
-        console.log('💾 Archive created:');
-        console.log(`   Path: ${archive.archivePath}`);
-        console.log(`   Integrity: ${archive.integrity}`);
-        console.log(`   Features: ${archive.features.join(', ')}`);
+        console.info('💾 Archive created:');
+        console.info(`   Path: ${archive.archivePath}`);
+        console.info(`   Integrity: ${archive.integrity}`);
+        console.info(`   Features: ${archive.features.join(', ')}`);
         break;
         
       case 'metrics':
         const metrics = observatory.getPerformanceMetrics();
-        console.log('📊 Performance Metrics:');
-        console.log(`   Total patterns: ${metrics.totalPatterns.count}`);
-        console.log(`   Audit entries: ${metrics.auditEntries}`);
-        console.log(`   Features: ${metrics.features.join(', ') || 'none'}`);
+        console.info('📊 Performance Metrics:');
+        console.info(`   Total patterns: ${metrics.totalPatterns.count}`);
+        console.info(`   Audit entries: ${metrics.auditEntries}`);
+        console.info(`   Features: ${metrics.features.join(', ') || 'none'}`);
         if (metrics.cache) {
-          console.log(`   Cache hit rate: ${metrics.cache.hitRate}`);
+          console.info(`   Cache hit rate: ${metrics.cache.hitRate}`);
         }
         break;
         
       case 'demo':
-        console.log('🚀 Complete Observatory Demo');
-        console.log('===========================');
+        console.info('🚀 Complete Observatory Demo');
+        console.info('===========================');
         
         // Test pattern analysis
         const testPatterns = [
@@ -429,30 +429,30 @@ Examples:
           'https://api.example.com/v1/:resource'
         ];
         
-        console.log('\n🔍 Testing pattern analysis...');
+        console.info('\n🔍 Testing pattern analysis...');
         for (const pattern of testPatterns) {
           const result = await observatory.analyzePattern(pattern);
-          console.log(`   ${pattern}: ${result.risk} (${result.cached ? 'cached' : 'new'})`);
+          console.info(`   ${pattern}: ${result.risk} (${result.cached ? 'cached' : 'new'})`);
         }
         
         // Test archive creation
-        console.log('\n💾 Testing archive creation...');
+        console.info('\n💾 Testing archive creation...');
         const archiveResult = await observatory.createSecureArchive();
-        console.log(`   Archive: ${archiveResult.archivePath}`);
-        console.log(`   Features: ${archiveResult.features.length} enabled`);
+        console.info(`   Archive: ${archiveResult.archivePath}`);
+        console.info(`   Features: ${archiveResult.features.length} enabled`);
         
         // Show metrics
-        console.log('\n📊 Final metrics:');
+        console.info('\n📊 Final metrics:');
         const finalMetrics = observatory.getPerformanceMetrics();
-        console.log(`   Patterns analyzed: ${finalMetrics.totalPatterns.count}`);
-        console.log(`   Cache hit rate: ${finalMetrics.cache?.hitRate || 'N/A'}`);
-        console.log(`   Enabled features: ${finalMetrics.features.length}`);
+        console.info(`   Patterns analyzed: ${finalMetrics.totalPatterns.count}`);
+        console.info(`   Cache hit rate: ${finalMetrics.cache?.hitRate || 'N/A'}`);
+        console.info(`   Enabled features: ${finalMetrics.features.length}`);
         
-        console.log('\n🎉 Complete observatory demo finished!');
+        console.info('\n🎉 Complete observatory demo finished!');
         break;
         
       default:
-        console.log('❌ Unknown command. Use --help for usage.');
+        console.info('❌ Unknown command. Use --help for usage.');
         process.exit(1);
     }
   } catch (error) {

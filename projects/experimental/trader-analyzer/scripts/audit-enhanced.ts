@@ -66,7 +66,7 @@ class EnhancedAuditCLI {
 	 * Monitors filesystem for changes and automatically triggers audits on relevant files.
 	 */
 	async watchMode() {
-		console.log("👀 Starting watch mode...");
+		console.info("👀 Starting watch mode...");
 		this.isWatching = true;
 
 		// Watch for changes in documentation and source files
@@ -76,7 +76,7 @@ class EnhancedAuditCLI {
 			async (event, filename) => {
 				if (!filename || !this.shouldTriggerAudit(filename)) return;
 
-				console.log(`📝 ${event}: ${filename}`);
+				console.info(`📝 ${event}: ${filename}`);
 
 				// Run targeted audit on changed file
 				await this.runTargetedAudit(filename);
@@ -89,15 +89,15 @@ class EnhancedAuditCLI {
 			watcher.close();
 			await this.processManager.shutdown();
 			await this.workerManager.shutdown();
-			console.log("👋 Watch mode stopped");
+			console.info("👋 Watch mode stopped");
 			process.exit(0);
 		};
 
 		process.on("SIGINT", shutdown);
 		process.on("SIGTERM", shutdown);
 
-		console.log("✅ Watch mode active. Press Ctrl+C to stop.");
-		console.log("📁 Monitoring: src/, docs/, test/, scripts/");
+		console.info("✅ Watch mode active. Press Ctrl+C to stop.");
+		console.info("📁 Monitoring: src/, docs/, test/, scripts/");
 
 		// Keep process alive
 		await new Promise(() => {});
@@ -109,7 +109,7 @@ class EnhancedAuditCLI {
 	 * Runs audit with real-time progress updates and streaming results.
 	 */
 	async realTimeAudit() {
-		console.log("🚀 Starting real-time audit...");
+		console.info("🚀 Starting real-time audit...");
 
 		const options = {
 			targetPath: process.argv[3] || ".",
@@ -124,23 +124,23 @@ class EnhancedAuditCLI {
 
 		const result = await this.processManager.spawnRealTimeAudit(options);
 
-		console.log(`📊 Process started: PID ${result.pid}`);
+		console.info(`📊 Process started: PID ${result.pid}`);
 
 		// Set up event listeners for real-time updates
 		this.processManager.on("progress", (data) => {
-			console.log(`📊 Progress: ${data.progress}% - ${data.currentFile}`);
+			console.info(`📊 Progress: ${data.progress}% - ${data.currentFile}`);
 		});
 
 		this.processManager.on("match", (data) => {
-			console.log(`🔍 Match: ${data.pattern} in ${data.file}:${data.line}`);
+			console.info(`🔍 Match: ${data.pattern} in ${data.file}:${data.line}`);
 		});
 
 		this.processManager.on("orphan", (data) => {
-			console.log(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
+			console.info(`⚠️  Orphan: ${data.docNumber} in ${data.file}`);
 		});
 
 		this.processManager.on("complete", (data) => {
-			console.log(`✅ Audit completed at ${data.timestamp}`);
+			console.info(`✅ Audit completed at ${data.timestamp}`);
 		});
 
 		this.processManager.on("error", (data) => {
@@ -151,7 +151,7 @@ class EnhancedAuditCLI {
 		const process = (this.processManager as any).processes.get(result.processId);
 		if (process) {
 			const exitCode = await process.exited;
-			console.log(`✅ Audit completed with exit code: ${exitCode}`);
+			console.info(`✅ Audit completed with exit code: ${exitCode}`);
 		}
 	}
 
@@ -163,7 +163,7 @@ class EnhancedAuditCLI {
 	 */
 	async parallelScan() {
 		const useWorkers = this.useWorkers || process.argv.includes("--workers");
-		console.log(`⚡ Starting parallel pattern scan (${useWorkers ? "Workers" : "Spawn"} mode)...`);
+		console.info(`⚡ Starting parallel pattern scan (${useWorkers ? "Workers" : "Spawn"} mode)...`);
 
 		const patterns = process.argv[3]
 			? process.argv[3].split(",")
@@ -184,19 +184,19 @@ class EnhancedAuditCLI {
 
 		const duration = Date.now() - startTime;
 
-		console.log(`\n📈 Parallel Scan Results (${duration}ms, ${useWorkers ? "Workers" : "Spawn"}):`);
-		console.log("=".repeat(50));
+		console.info(`\n📈 Parallel Scan Results (${duration}ms, ${useWorkers ? "Workers" : "Spawn"}):`);
+		console.info("=".repeat(50));
 
 		results.forEach((result) => {
-			console.log(`\n🔍 Pattern: ${result.pattern}`);
-			console.log(`   Directory: ${result.directory}`);
-			console.log(`   Matches: ${result.matches}`);
+			console.info(`\n🔍 Pattern: ${result.pattern}`);
+			console.info(`   Directory: ${result.directory}`);
+			console.info(`   Matches: ${result.matches}`);
 		});
 
 		const totalMatches = results.reduce((sum, r) => sum + r.matches, 0);
-		console.log(`\n📊 Total matches: ${totalMatches}`);
+		console.info(`\n📊 Total matches: ${totalMatches}`);
 		if (results.length > 0) {
-			console.log(`⚡ Average time per scan: ${Math.round(duration / results.length)}ms`);
+			console.info(`⚡ Average time per scan: ${Math.round(duration / results.length)}ms`);
 		}
 
 		// Cleanup workers if used
@@ -211,18 +211,18 @@ class EnhancedAuditCLI {
 	 * Runs fast synchronous validation suitable for CI/CD pipelines.
 	 */
 	async validateAll() {
-		console.log("⚙️  Running fast validation...");
+		console.info("⚙️  Running fast validation...");
 
 		try {
 			const result = this.processManager.validateDocumentationSync();
-			console.log(`✅ Validation status: ${result.status}`);
+			console.info(`✅ Validation status: ${result.status}`);
 
 			if (result.issues.length > 0) {
-				console.log("\n⚠️  Issues found:");
-				result.issues.forEach((issue) => console.log(`  • ${issue}`));
+				console.info("\n⚠️  Issues found:");
+				result.issues.forEach((issue) => console.info(`  • ${issue}`));
 				process.exit(1);
 			} else {
-				console.log("✅ All documentation validated successfully");
+				console.info("✅ All documentation validated successfully");
 			}
 		} catch (error) {
 			console.error(`❌ Validation failed: ${error}`);
@@ -264,9 +264,9 @@ class EnhancedAuditCLI {
 			stdio: ["ignore", "pipe", "pipe"],
 			onExit: (proc, code) => {
 				if (code === 0) {
-					console.log(`✅ ${filename} passed audit`);
+					console.info(`✅ ${filename} passed audit`);
 				} else {
-					console.log(`❌ ${filename} failed audit (exit code: ${code})`);
+					console.info(`❌ ${filename} failed audit (exit code: ${code})`);
 				}
 			},
 		});
@@ -278,7 +278,7 @@ class EnhancedAuditCLI {
 	 * Show help message
 	 */
 	private showHelp() {
-		console.log(`
+		console.info(`
 Hyper-Bun Enhanced Documentation Audit CLI
 ==========================================
 

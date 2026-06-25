@@ -22,14 +22,14 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 Bun v1.2.18 + Odds-Mono-Map Integrated Advanced Demo');
-console.log('============================================================');
-console.log(`📋 Running on Bun ${Bun.version}`);
-console.log(`🕐 Started at: ${new Date().toISOString()}`);
-console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
-console.log(`📁 Odds-Mono-Map Vault: Integrated and Active`);
-console.log(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
-console.log('');
+console.info('🚀 Bun v1.2.18 + Odds-Mono-Map Integrated Advanced Demo');
+console.info('============================================================');
+console.info(`📋 Running on Bun ${Bun.version}`);
+console.info(`🕐 Started at: ${new Date().toISOString()}`);
+console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
+console.info(`📁 Odds-Mono-Map Vault: Integrated and Active`);
+console.info(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
+console.info('');
 
 // =============================================================================
 // INTEGRATED PERFORMANCE MONITORING WITH ODDS VAULT METRICS
@@ -76,25 +76,25 @@ class IntegratedPerformanceMonitor {
     }
 
     printIntegratedReport(): void {
-        console.log('\n📊 Integrated Performance & Vault Report:');
-        console.log('==========================================');
+        console.info('\n📊 Integrated Performance & Vault Report:');
+        console.info('==========================================');
 
         // Performance metrics
         for (const [name, stats] of this.measurements.entries()) {
             const { avg, min, max, count } = this.getStats(name);
-            console.log(`⚡ ${name}:`);
-            console.log(`   • Average: ${avg.toFixed(3)}ms`);
-            console.log(`   • Min: ${min.toFixed(3)}ms`);
-            console.log(`   • Max: ${max.toFixed(3)}ms`);
-            console.log(`   • Count: ${count} operations`);
-            console.log(`   • Ops/sec: ${(1000 / avg).toFixed(0)}`);
-            console.log('');
+            console.info(`⚡ ${name}:`);
+            console.info(`   • Average: ${avg.toFixed(3)}ms`);
+            console.info(`   • Min: ${min.toFixed(3)}ms`);
+            console.info(`   • Max: ${max.toFixed(3)}ms`);
+            console.info(`   • Count: ${count} operations`);
+            console.info(`   • Ops/sec: ${(1000 / avg).toFixed(0)}`);
+            console.info('');
         }
 
         // Vault metrics
-        console.log('📁 Vault Metrics:');
+        console.info('📁 Vault Metrics:');
         for (const [name, value] of this.vaultMetrics.entries()) {
-            console.log(`   • ${name}: ${JSON.stringify(value, null, 6)}`);
+            console.info(`   • ${name}: ${JSON.stringify(value, null, 6)}`);
         }
     }
 
@@ -112,18 +112,18 @@ const integratedMonitor = new IntegratedPerformanceMonitor();
 // =============================================================================
 
 async function demonstrateBunServeWithVaultIntegration() {
-    console.log('🔋 1. Bun.serve + Odds Vault Graph Database Integration:');
-    console.log('=======================================================');
+    console.info('🔋 1. Bun.serve + Odds Vault Graph Database Integration:');
+    console.info('=======================================================');
 
     try {
-        console.log('📋 Integration features:');
-        console.log('   • Bun.serve zero idle CPU with vault monitoring');
-        console.log('   • Real-time vault health API endpoint');
-        console.log('   • Graph database queries with Bun optimization');
-        console.log('   • Vault automation status via HTTP API');
+        console.info('📋 Integration features:');
+        console.info('   • Bun.serve zero idle CPU with vault monitoring');
+        console.info('   • Real-time vault health API endpoint');
+        console.info('   • Graph database queries with Bun optimization');
+        console.info('   • Vault automation status via HTTP API');
 
         // Create integrated server with vault endpoints
-        console.log('\n🏗️  Creating integrated vault server...');
+        console.info('\n🏗️  Creating integrated vault server...');
 
         integratedMonitor.startMeasurement('vault_server_creation');
 
@@ -194,11 +194,11 @@ async function demonstrateBunServeWithVaultIntegration() {
         });
 
         const serverCreationTime = integratedMonitor.endMeasurement('vault_server_creation');
-        console.log(`   ✅ Integrated server created in ${serverCreationTime.toFixed(2)}ms`);
-        console.log(`   🌐 Server running on port ${vaultServer.port}`);
+        console.info(`   ✅ Integrated server created in ${serverCreationTime.toFixed(2)}ms`);
+        console.info(`   🌐 Server running on port ${vaultServer.port}`);
 
         // Test vault endpoints
-        console.log('\n🧪 Testing vault integration endpoints...');
+        console.info('\n🧪 Testing vault integration endpoints...');
 
         integratedMonitor.startMeasurement('vault_api_calls');
 
@@ -212,11 +212,11 @@ async function demonstrateBunServeWithVaultIntegration() {
             const requestTime = performance.now() - startTime;
 
             results.push({ endpoint, data, requestTime });
-            console.log(`   📡 ${endpoint}: ${requestTime.toFixed(2)}ms`);
+            console.info(`   📡 ${endpoint}: ${requestTime.toFixed(2)}ms`);
         }
 
         const apiCallsTime = integratedMonitor.endMeasurement('vault_api_calls');
-        console.log(`   ✅ All API calls completed in ${apiCallsTime.toFixed(2)}ms`);
+        console.info(`   ✅ All API calls completed in ${apiCallsTime.toFixed(2)}ms`);
 
         // Record vault metrics
         integratedMonitor.recordVaultMetric('vault_status', results[0].data);
@@ -224,28 +224,28 @@ async function demonstrateBunServeWithVaultIntegration() {
         integratedMonitor.recordVaultMetric('vault_metrics', results[2].data);
 
         // Demonstrate zero idle CPU
-        console.log('\n😴 Demonstrating zero idle CPU with vault monitoring...');
+        console.info('\n😴 Demonstrating zero idle CPU with vault monitoring...');
 
         const initialMemory = process.memoryUsage();
-        console.log(`   📊 Initial memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   📊 Initial memory: ${(initialMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
 
         // Wait for idle period
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         const idleMemory = process.memoryUsage();
-        console.log(`   📊 Idle memory: ${(idleMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`   📊 Memory growth: ${((idleMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
-        console.log('   ✅ Server consuming virtually no CPU while idle');
+        console.info(`   📊 Idle memory: ${(idleMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`   📊 Memory growth: ${((idleMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
+        console.info('   ✅ Server consuming virtually no CPU while idle');
 
         // Cleanup
         vaultServer.stop();
-        console.log('   ✅ Integrated vault server stopped');
+        console.info('   ✅ Integrated vault server stopped');
 
-        console.log('\n💡 Integration benefits:');
-        console.log('   • Zero CPU usage during idle vault monitoring');
-        console.log('   • Real-time vault health and status APIs');
-        console.log('   • Efficient graph database query handling');
-        console.log('   • Perfect for vault automation and monitoring');
+        console.info('\n💡 Integration benefits:');
+        console.info('   • Zero CPU usage during idle vault monitoring');
+        console.info('   • Real-time vault health and status APIs');
+        console.info('   • Efficient graph database query handling');
+        console.info('   • Perfect for vault automation and monitoring');
 
     } catch (error) {
         console.error(`❌ Bun.serve + Vault integration demo failed: ${(error as Error).message}`);
@@ -257,15 +257,15 @@ async function demonstrateBunServeWithVaultIntegration() {
 // =============================================================================
 
 async function demonstrateBunBuildWithVaultAutomation() {
-    console.log('\n🔨 2. Bun.build() + Odds Vault Automation Compilation:');
-    console.log('======================================================');
+    console.info('\n🔨 2. Bun.build() + Odds Vault Automation Compilation:');
+    console.info('======================================================');
 
     try {
-        console.log('📋 Enterprise compilation with vault integration:');
-        console.log('   • Compile vault automation tools as standalone executables');
-        console.log('   • Embed vault configuration and golden rules');
-        console.log('   • Cross-platform vault management binaries');
-        console.log('   • Professional distribution with vault metadata');
+        console.info('📋 Enterprise compilation with vault integration:');
+        console.info('   • Compile vault automation tools as standalone executables');
+        console.info('   • Embed vault configuration and golden rules');
+        console.info('   • Cross-platform vault management binaries');
+        console.info('   • Professional distribution with vault metadata');
 
         // Create integrated vault automation application
         const vaultAutomationApp = `
@@ -321,11 +321,11 @@ class VaultAutomationManager {
     }
     
     async startServer() {
-        console.log('🚀 Odds-Mono-Map Vault Automation Server Starting...');
-        console.log(\`📁 Vault Path: \${this.config.vaultPath}\`);
-        console.log(\`📊 Compliance: \${this.config.compliance}%\`);
-        console.log(\`⚡ Bun Version: \${this.config.bun.version}\`);
-        console.log(\`🔧 Optimizations: \${this.config.bun.optimizations.join(', ')}\`);
+        console.info('🚀 Odds-Mono-Map Vault Automation Server Starting...');
+        console.info(\`📁 Vault Path: \${this.config.vaultPath}\`);
+        console.info(\`📊 Compliance: \${this.config.compliance}%\`);
+        console.info(\`⚡ Bun Version: \${this.config.bun.version}\`);
+        console.info(\`🔧 Optimizations: \${this.config.bun.optimizations.join(', ')}\`);
         
         const server = serve({
             port: this.config.port || 8080,
@@ -333,7 +333,7 @@ class VaultAutomationManager {
             error: this.handleError.bind(this)
         });
         
-        console.log(\`✅ Vault automation server running on http://localhost:\${server.port}\`);
+        console.info(\`✅ Vault automation server running on http://localhost:\${server.port}\`);
         return server;
     }
     
@@ -462,14 +462,14 @@ await vaultManager.startServer();
         const appPath = '/tmp/vault-automation-integrated.ts';
         await Bun.write(appPath, vaultAutomationApp);
 
-        console.log('\n📝 Created integrated vault automation application:');
-        console.log(`   • File: ${appPath}`);
-        console.log('   • Features: Complete vault management with Bun optimizations');
-        console.log('   • APIs: Validation, fixing, organization, golden rules');
-        console.log('   • Performance: Zero idle CPU, fast response times');
+        console.info('\n📝 Created integrated vault automation application:');
+        console.info(`   • File: ${appPath}`);
+        console.info('   • Features: Complete vault management with Bun optimizations');
+        console.info('   • APIs: Validation, fixing, organization, golden rules');
+        console.info('   • Performance: Zero idle CPU, fast response times');
 
         // Demonstrate advanced build configurations for vault tools
-        console.log('\n🔧 Advanced vault tool build configurations:');
+        console.info('\n🔧 Advanced vault tool build configurations:');
 
         const vaultBuildConfigs = [
             {
@@ -530,31 +530,31 @@ await vaultManager.startServer();
         ];
 
         vaultBuildConfigs.forEach((buildConfig, index) => {
-            console.log(`\n   ${index + 1}. ${buildConfig.name}:`);
-            console.log(`      📋 Description: ${buildConfig.description}`);
-            console.log('      📋 Configuration:');
-            console.log('      📋 {');
-            console.log(`      📋   entrypoints: ["${buildConfig.config.entrypoints[0]}"],`);
-            console.log(`      📋   compile: {`);
-            console.log(`      📋     target: "${buildConfig.config.compile.target}",`);
-            console.log(`      📋     outfile: "${buildConfig.config.compile.outfile}",`);
+            console.info(`\n   ${index + 1}. ${buildConfig.name}:`);
+            console.info(`      📋 Description: ${buildConfig.description}`);
+            console.info('      📋 Configuration:');
+            console.info('      📋 {');
+            console.info(`      📋   entrypoints: ["${buildConfig.config.entrypoints[0]}"],`);
+            console.info(`      📋   compile: {`);
+            console.info(`      📋     target: "${buildConfig.config.compile.target}",`);
+            console.info(`      📋     outfile: "${buildConfig.config.compile.outfile}",`);
 
             if (buildConfig.config.compile.windows) {
-                console.log('      📋     windows: {');
+                console.info('      📋     windows: {');
                 Object.entries(buildConfig.config.compile.windows).forEach(([key, value]) => {
-                    console.log(`      📋       ${key}: "${value}",`);
+                    console.info(`      📋       ${key}: "${value}",`);
                 });
-                console.log('      📋     },');
+                console.info('      📋     },');
             } else {
-                console.log('      📋     windows: undefined,');
+                console.info('      📋     windows: undefined,');
             }
 
-            console.log('      📋   },');
-            console.log('      📋 }');
+            console.info('      📋   },');
+            console.info('      📋 }');
         });
 
         // Test build API structure validation
-        console.log('\n🧪 Validating vault build configurations...');
+        console.info('\n🧪 Validating vault build configurations...');
 
         integratedMonitor.startMeasurement('vault_build_validation');
 
@@ -567,16 +567,16 @@ await vaultManager.startServer();
                     throw new Error('Invalid build configuration');
                 }
 
-                console.log(`   ✅ ${buildConfig.name}: Configuration valid`);
+                console.info(`   ✅ ${buildConfig.name}: Configuration valid`);
                 validConfigs++;
             } catch (validationError) {
-                console.log(`   ❌ ${buildConfig.name}: ${(validationError as Error).message}`);
+                console.info(`   ❌ ${buildConfig.name}: ${(validationError as Error).message}`);
             }
         }
 
         const validationTime = integratedMonitor.endMeasurement('vault_build_validation');
-        console.log(`   📊 Configuration validation: ${validConfigs}/${vaultBuildConfigs.length} valid`);
-        console.log(`   ⏱️  Validation completed in ${validationTime.toFixed(2)}ms`);
+        console.info(`   📊 Configuration validation: ${validConfigs}/${vaultBuildConfigs.length} valid`);
+        console.info(`   ⏱️  Validation completed in ${validationTime.toFixed(2)}ms`);
 
         // Record vault metrics
         integratedMonitor.recordVaultMetric('vault_build_configs', {
@@ -585,12 +585,12 @@ await vaultManager.startServer();
             validationTime: validationTime
         });
 
-        console.log('\n💡 Vault automation compilation benefits:');
-        console.log('   • Standalone vault management tools - no dependencies required');
-        console.log('   • Cross-platform deployment with consistent behavior');
-        console.log('   • Professional Windows distribution with vault branding');
-        console.log('   • Embedded vault configuration and golden rules');
-        console.log('   • Zero idle CPU for vault monitoring servers');
+        console.info('\n💡 Vault automation compilation benefits:');
+        console.info('   • Standalone vault management tools - no dependencies required');
+        console.info('   • Cross-platform deployment with consistent behavior');
+        console.info('   • Professional Windows distribution with vault branding');
+        console.info('   • Embedded vault configuration and golden rules');
+        console.info('   • Zero idle CPU for vault monitoring servers');
 
         // Cleanup
         await Bun.write(appPath, '');
@@ -605,18 +605,18 @@ await vaultManager.startServer();
 // =============================================================================
 
 async function demonstrateBunANSIWithOddsValidation() {
-    console.log('\n🧹 3. Bun ANSI Processing + Odds Validation Enhancement:');
-    console.log('========================================================');
+    console.info('\n🧹 3. Bun ANSI Processing + Odds Validation Enhancement:');
+    console.info('========================================================');
 
     try {
-        console.log('📋 Enhanced validation with Bun text processing:');
-        console.log('   • High-speed processing of vault validation logs');
-        console.log('   • Clean golden rules violation reports');
-        console.log('   • Process vault automation output for analysis');
-        console.log('   • Real-time validation feedback with ANSI stripping');
+        console.info('📋 Enhanced validation with Bun text processing:');
+        console.info('   • High-speed processing of vault validation logs');
+        console.info('   • Clean golden rules violation reports');
+        console.info('   • Process vault automation output for analysis');
+        console.info('   • Real-time validation feedback with ANSI stripping');
 
         // Simulate vault validation logs with ANSI codes
-        console.log('\n🧪 Processing vault validation logs with Bun.stripANSI()...');
+        console.info('\n🧪 Processing vault validation logs with Bun.stripANSI()...');
 
         const generateValidationLog = (type: string, issues: number) => {
             const colors = {
@@ -632,7 +632,7 @@ async function demonstrateBunANSIWithOddsValidation() {
         };
 
         // Generate comprehensive validation log dataset
-        console.log('   📝 Generating comprehensive validation log dataset...');
+        console.info('   📝 Generating comprehensive validation log dataset...');
 
         integratedMonitor.startMeasurement('log_generation');
 
@@ -657,11 +657,11 @@ async function demonstrateBunANSIWithOddsValidation() {
         const rawLogs = validationLogs.join('\n');
 
         const logGenerationTime = integratedMonitor.endMeasurement('log_generation');
-        console.log(`   ✅ Generated ${validationLogs.length} validation logs in ${logGenerationTime.toFixed(2)}ms`);
-        console.log(`   📏 Raw log size: ${rawLogs.length} characters`);
+        console.info(`   ✅ Generated ${validationLogs.length} validation logs in ${logGenerationTime.toFixed(2)}ms`);
+        console.info(`   📏 Raw log size: ${rawLogs.length} characters`);
 
         // Process logs with Bun.stripANSI()
-        console.log('\n⚡ Processing validation logs with Bun optimization...');
+        console.info('\n⚡ Processing validation logs with Bun optimization...');
 
         integratedMonitor.startMeasurement('ansi_processing');
 
@@ -669,13 +669,13 @@ async function demonstrateBunANSIWithOddsValidation() {
 
         const ansiProcessingTime = integratedMonitor.endMeasurement('ansi_processing');
 
-        console.log(`   ⏱️  Processing time: ${ansiProcessingTime.toFixed(2)}ms`);
-        console.log(`   📏 Clean log size: ${cleanLogs.length} characters`);
-        console.log(`   📊 Size reduction: ${((rawLogs.length - cleanLogs.length) / rawLogs.length * 100).toFixed(1)}%`);
-        console.log(`   ⚡ Processing speed: ${(rawLogs.length / (ansiProcessingTime / 1000)).toFixed(0)} chars/sec`);
+        console.info(`   ⏱️  Processing time: ${ansiProcessingTime.toFixed(2)}ms`);
+        console.info(`   📏 Clean log size: ${cleanLogs.length} characters`);
+        console.info(`   📊 Size reduction: ${((rawLogs.length - cleanLogs.length) / rawLogs.length * 100).toFixed(1)}%`);
+        console.info(`   ⚡ Processing speed: ${(rawLogs.length / (ansiProcessingTime / 1000)).toFixed(0)} chars/sec`);
 
         // Analyze validation results
-        console.log('\n📊 Analyzing validation results...');
+        console.info('\n📊 Analyzing validation results...');
 
         const validationAnalysis = {
             totalLogs: validationLogs.length,
@@ -693,20 +693,20 @@ async function demonstrateBunANSIWithOddsValidation() {
             }
         };
 
-        console.log('   📋 Validation Analysis:');
+        console.info('   📋 Validation Analysis:');
         Object.entries(validationAnalysis).forEach(([key, value]) => {
             if (typeof value === 'object') {
-                console.log(`      • ${key}:`);
+                console.info(`      • ${key}:`);
                 Object.entries(value as any).forEach(([subKey, subValue]) => {
-                    console.log(`        - ${subKey}: ${subValue}`);
+                    console.info(`        - ${subKey}: ${subValue}`);
                 });
             } else {
-                console.log(`      • ${key}: ${value}`);
+                console.info(`      • ${key}: ${value}`);
             }
         });
 
         // Test advanced ANSI sequences from golden rules
-        console.log('\n🏆 Processing golden rules violation reports...');
+        console.info('\n🏆 Processing golden rules violation reports...');
 
         const goldenRulesReports = [
             '\u001b[1m\u001b[31mCRITICAL: Golden Rules Compliance - 24/100\u001b[0m',
@@ -731,15 +731,15 @@ async function demonstrateBunANSIWithOddsValidation() {
 
         const goldenRulesTime = integratedMonitor.endMeasurement('golden_rules_processing');
 
-        console.log(`   ⏱️  Golden rules processing: ${goldenRulesTime.toFixed(2)}ms`);
-        console.log(`   📊 Reports processed: ${cleanGoldenRules.length}`);
+        console.info(`   ⏱️  Golden rules processing: ${goldenRulesTime.toFixed(2)}ms`);
+        console.info(`   📊 Reports processed: ${cleanGoldenRules.length}`);
 
         cleanGoldenRules.forEach((report, index) => {
-            console.log(`   ${index + 1}. [${report.severity.toUpperCase()}] ${report.clean}`);
+            console.info(`   ${index + 1}. [${report.severity.toUpperCase()}] ${report.clean}`);
         });
 
         // Performance comparison with traditional processing
-        console.log('\n⚡ Performance comparison - Bun vs traditional...');
+        console.info('\n⚡ Performance comparison - Bun vs traditional...');
 
         // Traditional processing simulation
         integratedMonitor.startMeasurement('traditional_processing');
@@ -757,11 +757,11 @@ async function demonstrateBunANSIWithOddsValidation() {
 
         const traditionalTime = integratedMonitor.endMeasurement('traditional_processing');
 
-        console.log(`   📊 Traditional processing: ${traditionalTime.toFixed(2)}ms`);
-        console.log(`   📊 Bun.stripANSI(): ${ansiProcessingTime.toFixed(2)}ms`);
+        console.info(`   📊 Traditional processing: ${traditionalTime.toFixed(2)}ms`);
+        console.info(`   📊 Bun.stripANSI(): ${ansiProcessingTime.toFixed(2)}ms`);
 
         const speedup = traditionalTime / ansiProcessingTime;
-        console.log(`   🚀 Performance improvement: ${speedup.toFixed(1)}x faster`);
+        console.info(`   🚀 Performance improvement: ${speedup.toFixed(1)}x faster`);
 
         // Record vault metrics
         integratedMonitor.recordVaultMetric('validation_analysis', validationAnalysis);
@@ -773,12 +773,12 @@ async function demonstrateBunANSIWithOddsValidation() {
             warningIssues: cleanGoldenRules.filter(r => r.severity === 'warning').length
         });
 
-        console.log('\n💡 Enhanced validation benefits:');
-        console.log('   • High-speed processing of large validation log files');
-        console.log('   • Clean golden rules reports for analysis and storage');
-        console.log('   • Real-time validation feedback with ANSI stripping');
-        console.log('   • Perfect for CI/CD pipeline log processing');
-        console.log('   • Significant performance improvement over traditional methods');
+        console.info('\n💡 Enhanced validation benefits:');
+        console.info('   • High-speed processing of large validation log files');
+        console.info('   • Clean golden rules reports for analysis and storage');
+        console.info('   • Real-time validation feedback with ANSI stripping');
+        console.info('   • Perfect for CI/CD pipeline log processing');
+        console.info('   • Significant performance improvement over traditional methods');
 
     } catch (error) {
         console.error(`❌ Bun ANSI + Odds validation demo failed: ${(error as Error).message}`);
@@ -790,18 +790,18 @@ async function demonstrateBunANSIWithOddsValidation() {
 // =============================================================================
 
 async function demonstrateBunPackageManagementWithVaultStandards() {
-    console.log('\n📦 4. Bun Package Management + Odds Vault Standards:');
-    console.log('======================================================');
+    console.info('\n📦 4. Bun Package Management + Odds Vault Standards:');
+    console.info('======================================================');
 
     try {
-        console.log('📋 Advanced package management for vault development:');
-        console.log('   • bunx for vault validation and automation tools');
-        console.log('   • Enhanced sideEffects for vault component optimization');
-        console.log('   • Golden rules enforcement in package.json scripts');
-        console.log('   • Cross-platform vault development workflows');
+        console.info('📋 Advanced package management for vault development:');
+        console.info('   • bunx for vault validation and automation tools');
+        console.info('   • Enhanced sideEffects for vault component optimization');
+        console.info('   • Golden rules enforcement in package.json scripts');
+        console.info('   • Cross-platform vault development workflows');
 
         // Advanced bunx scenarios for vault development
-        console.log('\n🔧 Advanced bunx vault development scenarios...');
+        console.info('\n🔧 Advanced bunx vault development scenarios...');
 
         const vaultBunxScenarios = [
             {
@@ -862,16 +862,16 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
         ];
 
         vaultBunxScenarios.forEach((scenario, index) => {
-            console.log(`\n   ${index + 1}. ${scenario.name}:`);
-            console.log(`      📋 Description: ${scenario.description}`);
-            console.log('      📋 Commands:');
+            console.info(`\n   ${index + 1}. ${scenario.name}:`);
+            console.info(`      📋 Description: ${scenario.description}`);
+            console.info('      📋 Commands:');
             scenario.commands.forEach(cmd => {
-                console.log(`        • ${cmd}`);
+                console.info(`        • ${cmd}`);
             });
         });
 
         // Enhanced sideEffects for vault components
-        console.log('\n🌳 Enhanced sideEffects for vault component optimization...');
+        console.info('\n🌳 Enhanced sideEffects for vault component optimization...');
 
         const vaultSideEffectsConfigs = [
             {
@@ -949,16 +949,16 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
         ];
 
         vaultSideEffectsConfigs.forEach((config, index) => {
-            console.log(`\n   ${index + 1}. ${config.name}:`);
-            console.log(`      📋 Description: ${config.description}`);
-            console.log('      📋 Configuration:');
-            console.log('      📋 {');
-            console.log(`      📋   "sideEffects": ${JSON.stringify(config.config.sideEffects, null, 8)}`);
-            console.log('      📋 }');
+            console.info(`\n   ${index + 1}. ${config.name}:`);
+            console.info(`      📋 Description: ${config.description}`);
+            console.info('      📋 Configuration:');
+            console.info('      📋 {');
+            console.info(`      📋   "sideEffects": ${JSON.stringify(config.config.sideEffects, null, 8)}`);
+            console.info('      📋 }');
         });
 
         // Bundle optimization analysis for vault
-        console.log('\n📊 Bundle optimization analysis for vault components...');
+        console.info('\n📊 Bundle optimization analysis for vault components...');
 
         integratedMonitor.startMeasurement('bundle_optimization_analysis');
 
@@ -995,19 +995,19 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
             }
         ];
 
-        console.log('   📋 Vault Bundle Optimization Scenarios:');
+        console.info('   📋 Vault Bundle Optimization Scenarios:');
         vaultBundleScenarios.forEach((scenario, index) => {
-            console.log(`\n      ${index + 1}. ${scenario.name}:`);
-            console.log(`         • Expected reduction: ${scenario.expectedReduction}`);
-            console.log(`         • Description: ${scenario.description}`);
-            console.log(`         • Strategy: ${JSON.stringify(scenario.sideEffects)}`);
+            console.info(`\n      ${index + 1}. ${scenario.name}:`);
+            console.info(`         • Expected reduction: ${scenario.expectedReduction}`);
+            console.info(`         • Description: ${scenario.description}`);
+            console.info(`         • Strategy: ${JSON.stringify(scenario.sideEffects)}`);
         });
 
         const analysisTime = integratedMonitor.endMeasurement('bundle_optimization_analysis');
-        console.log(`\n   ⏱️  Bundle optimization analysis completed in ${analysisTime.toFixed(2)}ms`);
+        console.info(`\n   ⏱️  Bundle optimization analysis completed in ${analysisTime.toFixed(2)}ms`);
 
         // Performance simulation
-        console.log('\n⚡ Performance simulation for vault package management...');
+        console.info('\n⚡ Performance simulation for vault package management...');
 
         integratedMonitor.startMeasurement('vault_package_performance');
 
@@ -1028,8 +1028,8 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
         }
 
         const packagePerformanceTime = integratedMonitor.endMeasurement('vault_package_performance');
-        console.log(`   ⏱️  Vault package operations completed in ${packagePerformanceTime.toFixed(2)}ms`);
-        console.log(`   📊 Average per operation: ${(packagePerformanceTime / packageOperations.length).toFixed(2)}ms`);
+        console.info(`   ⏱️  Vault package operations completed in ${packagePerformanceTime.toFixed(2)}ms`);
+        console.info(`   📊 Average per operation: ${(packagePerformanceTime / packageOperations.length).toFixed(2)}ms`);
 
         // Record vault metrics
         integratedMonitor.recordVaultMetric('vault_package_scenarios', {
@@ -1039,12 +1039,12 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
             bundleScenarios: vaultBundleScenarios.length
         });
 
-        console.log('\n💡 Vault package management benefits:');
-        console.log('   • Comprehensive bunx workflows for vault development');
-        console.log('   • Optimized bundle sizes for different vault components');
-        console.log('   • Golden rules enforcement integrated into package scripts');
-        console.log('   • Cross-platform vault tool distribution');
-        console.log('   • Enhanced development workflows with automation');
+        console.info('\n💡 Vault package management benefits:');
+        console.info('   • Comprehensive bunx workflows for vault development');
+        console.info('   • Optimized bundle sizes for different vault components');
+        console.info('   • Golden rules enforcement integrated into package scripts');
+        console.info('   • Cross-platform vault tool distribution');
+        console.info('   • Enhanced development workflows with automation');
 
     } catch (error) {
         console.error(`❌ Bun package management + Vault standards demo failed: ${(error as Error).message}`);
@@ -1056,18 +1056,18 @@ async function demonstrateBunPackageManagementWithVaultStandards() {
 // =============================================================================
 
 async function demonstrateIntegratedGoldenRulesWithBun() {
-    console.log('\n🏆 5. Integrated Golden Rules Enforcement with Bun Optimizations:');
-    console.log('================================================================');
+    console.info('\n🏆 5. Integrated Golden Rules Enforcement with Bun Optimizations:');
+    console.info('================================================================');
 
     try {
-        console.log('📋 Golden rules enforcement enhanced with Bun v1.2.18:');
-        console.log('   • Zero idle CPU for continuous rule monitoring');
-        console.log('   • High-speed violation processing with Bun.stripANSI()');
-        console.log('   • Optimized rule validation server with Bun.serve');
-        console.log('   • Enterprise rule enforcement with Bun.build()');
+        console.info('📋 Golden rules enforcement enhanced with Bun v1.2.18:');
+        console.info('   • Zero idle CPU for continuous rule monitoring');
+        console.info('   • High-speed violation processing with Bun.stripANSI()');
+        console.info('   • Optimized rule validation server with Bun.serve');
+        console.info('   • Enterprise rule enforcement with Bun.build()');
 
         // Create integrated golden rules monitoring server
-        console.log('\n🏗️  Creating integrated golden rules monitoring server...');
+        console.info('\n🏗️  Creating integrated golden rules monitoring server...');
 
         integratedMonitor.startMeasurement('golden_rules_server_creation');
 
@@ -1212,11 +1212,11 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
         });
 
         const serverCreationTime = integratedMonitor.endMeasurement('golden_rules_server_creation');
-        console.log(`   ✅ Golden rules server created in ${serverCreationTime.toFixed(2)}ms`);
-        console.log(`   🌐 Server running on port ${goldenRulesServer.port}`);
+        console.info(`   ✅ Golden rules server created in ${serverCreationTime.toFixed(2)}ms`);
+        console.info(`   🌐 Server running on port ${goldenRulesServer.port}`);
 
         // Test golden rules endpoints
-        console.log('\n🧪 Testing golden rules enforcement endpoints...');
+        console.info('\n🧪 Testing golden rules enforcement endpoints...');
 
         integratedMonitor.startMeasurement('golden_rules_api_tests');
 
@@ -1230,14 +1230,14 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
             const requestTime = performance.now() - startTime;
 
             results.push({ endpoint, data, requestTime });
-            console.log(`   📡 ${endpoint}: ${requestTime.toFixed(2)}ms`);
+            console.info(`   📡 ${endpoint}: ${requestTime.toFixed(2)}ms`);
         }
 
         const apiTestsTime = integratedMonitor.endMeasurement('golden_rules_api_tests');
-        console.log(`   ✅ Golden rules API tests completed in ${apiTestsTime.toFixed(2)}ms`);
+        console.info(`   ✅ Golden rules API tests completed in ${apiTestsTime.toFixed(2)}ms`);
 
         // Process violation reports with Bun.stripANSI()
-        console.log('\n🧹 Processing golden rules violation reports with Bun optimization...');
+        console.info('\n🧹 Processing golden rules violation reports with Bun optimization...');
 
         const violationReports = [
             '\u001b[31mERROR: Use Bun Builtins - 15 violations detected\u001b[0m',
@@ -1259,16 +1259,16 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
 
         const processingTime = integratedMonitor.endMeasurement('violation_report_processing');
 
-        console.log(`   ⏱️  Violation report processing: ${processingTime.toFixed(2)}ms`);
-        console.log(`   📊 Reports processed: ${cleanReports.length}`);
-        console.log(`   ⚡ Processing speed: ${(violationReports.join('').length / (processingTime / 1000)).toFixed(0)} chars/sec`);
+        console.info(`   ⏱️  Violation report processing: ${processingTime.toFixed(2)}ms`);
+        console.info(`   📊 Reports processed: ${cleanReports.length}`);
+        console.info(`   ⚡ Processing speed: ${(violationReports.join('').length / (processingTime / 1000)).toFixed(0)} chars/sec`);
 
         cleanReports.forEach((report, index) => {
-            console.log(`   ${index + 1}. ${report.clean}`);
+            console.info(`   ${index + 1}. ${report.clean}`);
         });
 
         // Demonstrate enterprise build configuration
-        console.log('\n🔧 Enterprise golden rules enforcement build configuration...');
+        console.info('\n🔧 Enterprise golden rules enforcement build configuration...');
 
         const enterpriseBuildConfig = {
             entrypoints: ["./src/golden-rules/enforcer.ts"],
@@ -1299,20 +1299,20 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
             ]
         };
 
-        console.log('   📋 Enterprise Build Configuration:');
-        console.log('   📋 {');
-        console.log(`   📋   entrypoints: ["${enterpriseBuildConfig.entrypoints[0]}"],`);
-        console.log('   📋   compile: {');
-        console.log(`   📋     target: "${enterpriseBuildConfig.compile.target}",`);
-        console.log(`   📋     outfile: "${enterpriseBuildConfig.compile.outfile}",`);
-        console.log('   📋     windows: {');
+        console.info('   📋 Enterprise Build Configuration:');
+        console.info('   📋 {');
+        console.info(`   📋   entrypoints: ["${enterpriseBuildConfig.entrypoints[0]}"],`);
+        console.info('   📋   compile: {');
+        console.info(`   📋     target: "${enterpriseBuildConfig.compile.target}",`);
+        console.info(`   📋     outfile: "${enterpriseBuildConfig.compile.outfile}",`);
+        console.info('   📋     windows: {');
         Object.entries(enterpriseBuildConfig.compile.windows).forEach(([key, value]) => {
-            console.log(`   📋       ${key}: "${value}",`);
+            console.info(`   📋       ${key}: "${value}",`);
         });
-        console.log('   📋     },');
-        console.log('   📋   },');
-        console.log('   📋   plugins: [golden-rules-optimizer]');
-        console.log('   📋 }');
+        console.info('   📋     },');
+        console.info('   📋   },');
+        console.info('   📋   plugins: [golden-rules-optimizer]');
+        console.info('   📋 }');
 
         // Record vault metrics
         integratedMonitor.recordVaultMetric('golden_rules_enforcement', {
@@ -1327,12 +1327,12 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
         // Cleanup
         goldenRulesServer.stop();
 
-        console.log('\n💡 Integrated golden rules benefits:');
-        console.log('   • Zero idle CPU for continuous rule monitoring');
-        console.log('   • High-speed violation report processing (53,774 ops/sec)');
-        console.log('   • Enterprise enforcement with professional distribution');
-        console.log('   • Real-time compliance dashboard and analytics');
-        console.log('   • Seamless integration with Odds-Mono-Map vault automation');
+        console.info('\n💡 Integrated golden rules benefits:');
+        console.info('   • Zero idle CPU for continuous rule monitoring');
+        console.info('   • High-speed violation report processing (53,774 ops/sec)');
+        console.info('   • Enterprise enforcement with professional distribution');
+        console.info('   • Real-time compliance dashboard and analytics');
+        console.info('   • Seamless integration with Odds-Mono-Map vault automation');
 
     } catch (error) {
         console.error(`❌ Integrated golden rules demo failed: ${(error as Error).message}`);
@@ -1344,21 +1344,21 @@ async function demonstrateIntegratedGoldenRulesWithBun() {
 // =============================================================================
 
 async function integratedMain() {
-    console.log('🚀 Starting Bun v1.2.18 + Odds-Mono-Map Integrated Demo');
-    console.log('========================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
-    console.log(`📁 Odds-Mono-Map Vault: Integrated and Active`);
-    console.log(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
-    console.log('');
-    console.log('📚 Integrated demo covers:');
-    console.log('   • Bun.serve + Odds Vault Graph Database Integration ✅');
-    console.log('   • Bun.build() + Odds Vault Automation Compilation ✅');
-    console.log('   • Bun ANSI Processing + Odds Validation Enhancement ✅');
-    console.log('   • Bun Package Management + Odds Vault Standards ✅');
-    console.log('   • Integrated Golden Rules Enforcement with Bun Optimizations ✅');
-    console.log('');
+    console.info('🚀 Starting Bun v1.2.18 + Odds-Mono-Map Integrated Demo');
+    console.info('========================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
+    console.info(`📁 Odds-Mono-Map Vault: Integrated and Active`);
+    console.info(`💾 Initial memory: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    console.info('');
+    console.info('📚 Integrated demo covers:');
+    console.info('   • Bun.serve + Odds Vault Graph Database Integration ✅');
+    console.info('   • Bun.build() + Odds Vault Automation Compilation ✅');
+    console.info('   • Bun ANSI Processing + Odds Validation Enhancement ✅');
+    console.info('   • Bun Package Management + Odds Vault Standards ✅');
+    console.info('   • Integrated Golden Rules Enforcement with Bun Optimizations ✅');
+    console.info('');
 
     try {
         // Monitor overall integrated execution
@@ -1376,39 +1376,39 @@ async function integratedMain() {
         // Print comprehensive integrated performance report
         integratedMonitor.printIntegratedReport();
 
-        console.log('\n🎉 Bun v1.2.18 + Odds-Mono-Map Integrated Demo Complete!');
-        console.log('=========================================================');
-        console.log('✅ ALL integrated features demonstrated successfully');
-        console.log(`⏱️  Total execution time: ${totalTime.toFixed(2)}ms`);
+        console.info('\n🎉 Bun v1.2.18 + Odds-Mono-Map Integrated Demo Complete!');
+        console.info('=========================================================');
+        console.info('✅ ALL integrated features demonstrated successfully');
+        console.info(`⏱️  Total execution time: ${totalTime.toFixed(2)}ms`);
 
         const finalMemory = process.memoryUsage();
-        console.log(`💾 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-        console.log('');
-        console.log('📚 Integrated v1.2.18 + Odds features summary:');
-        console.log('   • Performance: Zero idle CPU with vault monitoring ✅');
-        console.log('   • Tooling: Enterprise vault automation compilation ✅');
-        console.log('   • Processing: High-speed validation with ANSI stripping ✅');
-        console.log('   • Ecosystem: Advanced package management for vault ✅');
-        console.log('   • Quality: Integrated golden rules enforcement ✅');
-        console.log('');
-        console.log('🚀 Integrated implementation demonstrates:');
-        console.log('   • Production-ready vault automation with Bun optimizations');
-        console.log('   • Enterprise-grade golden rules enforcement');
-        console.log('   • High-performance text processing for validation');
-        console.log('   • Cross-platform vault tool distribution');
-        console.log('   • Comprehensive monitoring and analytics');
-        console.log('   • Real-world integration patterns and best practices');
-        console.log('');
-        console.log('💡 Key Integration Benefits:');
-        console.log('   • Odds-Mono-Map vault automation enhanced with Bun v1.2.18 features');
-        console.log('   • Zero CPU usage for vault monitoring servers');
-        console.log('   • High-speed processing of validation logs and reports');
-        console.log('   • Enterprise distribution capabilities for vault tools');
-        console.log('   • Seamless golden rules enforcement with Bun optimizations');
-        console.log('');
-        console.log('📖 References:');
-        console.log('   • Bun v1.2.18: https://bun.sh/blog/bun-v1.2.18');
-        console.log('   • Odds-Mono-Map: ./Odds-mono-map/');
+        console.info(`💾 Final memory: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        console.info('');
+        console.info('📚 Integrated v1.2.18 + Odds features summary:');
+        console.info('   • Performance: Zero idle CPU with vault monitoring ✅');
+        console.info('   • Tooling: Enterprise vault automation compilation ✅');
+        console.info('   • Processing: High-speed validation with ANSI stripping ✅');
+        console.info('   • Ecosystem: Advanced package management for vault ✅');
+        console.info('   • Quality: Integrated golden rules enforcement ✅');
+        console.info('');
+        console.info('🚀 Integrated implementation demonstrates:');
+        console.info('   • Production-ready vault automation with Bun optimizations');
+        console.info('   • Enterprise-grade golden rules enforcement');
+        console.info('   • High-performance text processing for validation');
+        console.info('   • Cross-platform vault tool distribution');
+        console.info('   • Comprehensive monitoring and analytics');
+        console.info('   • Real-world integration patterns and best practices');
+        console.info('');
+        console.info('💡 Key Integration Benefits:');
+        console.info('   • Odds-Mono-Map vault automation enhanced with Bun v1.2.18 features');
+        console.info('   • Zero CPU usage for vault monitoring servers');
+        console.info('   • High-speed processing of validation logs and reports');
+        console.info('   • Enterprise distribution capabilities for vault tools');
+        console.info('   • Seamless golden rules enforcement with Bun optimizations');
+        console.info('');
+        console.info('📖 References:');
+        console.info('   • Bun v1.2.18: https://bun.sh/blog/bun-v1.2.18');
+        console.info('   • Odds-Mono-Map: ./Odds-mono-map/');
 
     } catch (error) {
         console.error(`❌ Integrated demo failed: ${(error as Error).message}`);

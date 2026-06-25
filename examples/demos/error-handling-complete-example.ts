@@ -36,7 +36,7 @@ import {
 // 1. Initialize Global Error Handling
 // ============================================================================
 
-console.log('🚀 Starting Error Handling Example\n');
+console.info('🚀 Starting Error Handling Example\n');
 
 initializeGlobalErrorHandling({
   exitOnUncaughtException: true,
@@ -52,10 +52,10 @@ initializeGlobalErrorHandling({
 
 // Register shutdown handler
 onShutdown(async () => {
-  console.log('\n🧹 Cleaning up resources...');
+  console.info('\n🧹 Cleaning up resources...');
   // Close connections, flush logs, etc.
   await new Promise(resolve => setTimeout(resolve, 100));
-  console.log('✅ Cleanup complete');
+  console.info('✅ Cleanup complete');
 });
 
 // ============================================================================
@@ -145,7 +145,7 @@ async function processUserData(userId: string): Promise<User | null> {
 // ============================================================================
 
 async function runBuildProcess(): Promise<boolean> {
-  console.log('🔨 Running version check...\n');
+  console.info('🔨 Running version check...\n');
 
   const result = await safeSpawn(['bun', '--version'], {
     timeoutMs: 5000,
@@ -166,8 +166,8 @@ async function runBuildProcess(): Promise<boolean> {
     return false;
   }
 
-  console.log(`✅ Bun version: ${result.stdout.trim()}`);
-  console.log(`⏱️ Completed in ${result.durationMs.toFixed(2)}ms\n`);
+  console.info(`✅ Bun version: ${result.stdout.trim()}`);
+  console.info(`⏱️ Completed in ${result.durationMs.toFixed(2)}ms\n`);
   return true;
 }
 
@@ -183,9 +183,9 @@ function renderStatusLine(status: string): void {
   if (width > maxWidth) {
     // Truncate preserving ANSI codes
     const truncated = truncateAnsi(colored, maxWidth - 3) + '...';
-    console.log(truncated);
+    console.info(truncated);
   } else {
-    console.log(colored);
+    console.info(colored);
   }
 }
 
@@ -195,7 +195,7 @@ function renderStatusLine(status: string): void {
 
 async function main(): Promise<void> {
   // Example 1: Process user data
-  console.log('👤 Processing user data...');
+  console.info('👤 Processing user data...');
   for (let i = 1; i <= 3; i++) {
     const user = await processUserData(`user-${i}`);
     if (user) {
@@ -207,28 +207,28 @@ async function main(): Promise<void> {
   await runBuildProcess();
 
   // Example 3: Show error statistics
-  console.log('\n📊 Error Statistics:');
+  console.info('\n📊 Error Statistics:');
   const aggregation = getErrorAggregation({
     start: Date.now() - 60000,
     end: Date.now(),
   });
-  console.log(`  Total errors: ${aggregation.total}`);
-  console.log(`  Error rate: ${aggregation.errorRate.toFixed(2)}/min`);
-  console.log(`  Trend: ${aggregation.trend}`);
+  console.info(`  Total errors: ${aggregation.total}`);
+  console.info(`  Error rate: ${aggregation.errorRate.toFixed(2)}/min`);
+  console.info(`  Trend: ${aggregation.trend}`);
 
   // Example 4: Show circuit breaker health
-  console.log('\n🔌 Circuit Breaker Health:');
+  console.info('\n🔌 Circuit Breaker Health:');
   const health = getCircuitBreakerHealth();
   for (const service of health) {
     const icon = service.healthy ? '✅' : '❌';
-    console.log(`  ${icon} ${service.service}: ${service.state}`);
+    console.info(`  ${icon} ${service.service}: ${service.state}`);
   }
 
   // Example 5: Show global error stats
-  console.log('\n🌍 Global Error Statistics:');
-  console.log(getGlobalErrorStatistics());
+  console.info('\n🌍 Global Error Statistics:');
+  console.info(getGlobalErrorStatistics());
 
-  console.log('\n✅ Example complete!');
+  console.info('\n✅ Example complete!');
 }
 
 // Helper function (not exported from index)

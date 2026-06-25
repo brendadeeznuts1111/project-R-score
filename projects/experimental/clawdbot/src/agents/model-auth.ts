@@ -184,7 +184,9 @@ export async function resolveApiKeyForProvider(params: {
           mode: mode === "oauth" ? "oauth" : mode === "token" ? "token" : "api-key",
         };
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   const envResolved = resolveEnvApiKey(provider);

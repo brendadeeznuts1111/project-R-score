@@ -155,7 +155,7 @@ export class DisasterRecoveryPlan {
   async handleMajorIncident(
     type: keyof IncidentType
   ): Promise<RecoveryResponse> {
-    console.log(`🚨 Handling major incident: ${type}`);
+    console.info(`🚨 Handling major incident: ${type}`);
 
     const incident = {
       type,
@@ -199,7 +199,7 @@ export class DisasterRecoveryPlan {
       throw new Error(`No recovery procedure found for incident type: ${type}`);
     }
 
-    console.log(`🔧 Executing recovery procedure for ${type}`);
+    console.info(`🔧 Executing recovery procedure for ${type}`);
     return await procedure.execute();
   }
 
@@ -207,7 +207,7 @@ export class DisasterRecoveryPlan {
    * Activate backup data feeds
    */
   private async activateBackupDataFeeds(): Promise<RecoveryResponse> {
-    console.log("📡 Activating backup data feeds...");
+    console.info("📡 Activating backup data feeds...");
 
     const actions: RecoveryAction[] = [
       {
@@ -285,7 +285,7 @@ export class DisasterRecoveryPlan {
    * Reroute to alternative venues
    */
   private async rerouteToAlternativeVenues(): Promise<RecoveryResponse> {
-    console.log("🔄 Rerouting to alternative execution venues...");
+    console.info("🔄 Rerouting to alternative execution venues...");
 
     const actions: RecoveryAction[] = [
       {
@@ -369,7 +369,7 @@ export class DisasterRecoveryPlan {
    * Activate compliance override
    */
   private async activateComplianceOverride(): Promise<RecoveryResponse> {
-    console.log("⚖️ Activating compliance override...");
+    console.info("⚖️ Activating compliance override...");
 
     const actions: RecoveryAction[] = [
       {
@@ -448,7 +448,7 @@ export class DisasterRecoveryPlan {
    * Initiate secure shutdown
    */
   private async initiateSecureShutdown(): Promise<RecoveryResponse> {
-    console.log("🔒 Initiating secure shutdown...");
+    console.info("🔒 Initiating secure shutdown...");
 
     const actions: RecoveryAction[] = [
       {
@@ -528,7 +528,7 @@ export class DisasterRecoveryPlan {
    * Activate circuit breakers
    */
   private async activateCircuitBreakers(): Promise<RecoveryResponse> {
-    console.log("⚡ Activating circuit breakers...");
+    console.info("⚡ Activating circuit breakers...");
 
     const actions: RecoveryAction[] = [
       {
@@ -606,7 +606,7 @@ export class DisasterRecoveryPlan {
    * Graceful degradation
    */
   private async gracefulDegradation(): Promise<RecoveryResponse> {
-    console.log("📉 Initiating graceful degradation...");
+    console.info("📉 Initiating graceful degradation...");
 
     const actions: RecoveryAction[] = [
       {
@@ -963,7 +963,7 @@ export class DisasterRecoveryPlan {
 
   private logIncident(incident: any): void {
     this.incidentHistory.push(incident);
-    console.log(
+    console.info(
       `📝 Incident logged: ${incident.type} at ${new Date(
         incident.timestamp
       ).toISOString()}`
@@ -986,7 +986,7 @@ export class DisasterRecoveryPlan {
     incident: any,
     response: RecoveryResponse
   ): Promise<void> {
-    console.log(`📢 Notifying stakeholders about incident ${incident.type}`);
+    console.info(`📢 Notifying stakeholders about incident ${incident.type}`);
     // Simulate notification sending
   }
 
@@ -994,7 +994,7 @@ export class DisasterRecoveryPlan {
     incident: any,
     response: RecoveryResponse
   ): void {
-    console.log(`👁️ Starting incident monitoring for ${incident.type}`);
+    console.info(`👁️ Starting incident monitoring for ${incident.type}`);
     // Simulate monitoring start
   }
 
@@ -1061,24 +1061,24 @@ export class DisasterRecoveryPlan {
   }
 
   private async stopNewTrades(): Promise<void> {
-    console.log("🛑 Stopping new trade execution");
+    console.info("🛑 Stopping new trade execution");
   }
 
   private async completeOpenPositions(): Promise<void> {
-    console.log("✅ Completing open positions");
+    console.info("✅ Completing open positions");
   }
 
   private async secureSensitiveData(): Promise<void> {
-    console.log("🔒 Securing sensitive data");
+    console.info("🔒 Securing sensitive data");
   }
 
   private async createFinalBackup(): Promise<boolean> {
-    console.log("💾 Creating final backup");
+    console.info("💾 Creating final backup");
     return Math.random() > 0.05;
   }
 
   private async shutdownSystems(): Promise<void> {
-    console.log("🔌 Shutting down systems");
+    console.info("🔌 Shutting down systems");
   }
 
   private async identifyFailingServices(): Promise<string[]> {
@@ -1101,19 +1101,19 @@ export class DisasterRecoveryPlan {
   }
 
   private async disableNonCriticalFeatures(): Promise<void> {
-    console.log("📊 Disabling non-critical features");
+    console.info("📊 Disabling non-critical features");
   }
 
   private async reduceSamplingRates(): Promise<void> {
-    console.log("📉 Reducing sampling rates");
+    console.info("📉 Reducing sampling rates");
   }
 
   private async enableCachingMode(): Promise<void> {
-    console.log("💾 Enabling caching mode");
+    console.info("💾 Enabling caching mode");
   }
 
   private async scaleDownResources(): Promise<void> {
-    console.log("⬇️ Scaling down resources");
+    console.info("⬇️ Scaling down resources");
   }
 
   /**
@@ -1158,7 +1158,7 @@ export class DisasterRecoveryPlan {
     failed: string[];
     overallStatus: "passed" | "failed" | "partial";
   }> {
-    console.log("🧪 Testing disaster recovery procedures...");
+    console.info("🧪 Testing disaster recovery procedures...");
 
     const results = {
       tested: [] as string[],
@@ -1186,7 +1186,7 @@ export class DisasterRecoveryPlan {
     results.overallStatus =
       passRate >= 0.8 ? "passed" : passRate >= 0.5 ? "partial" : "failed";
 
-    console.log(
+    console.info(
       `✅ Disaster recovery test completed: ${results.overallStatus}`
     );
     return results;

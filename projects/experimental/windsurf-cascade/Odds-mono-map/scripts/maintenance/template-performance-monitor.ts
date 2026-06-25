@@ -67,13 +67,13 @@ class TemplatePerformanceMonitor {
      * Run performance analysis
      */
     async analyzePerformance(): Promise<PerformanceReport> {
-        console.log(chalk.blue.bold('📊 Analyzing template system performance...'));
+        console.info(chalk.blue.bold('📊 Analyzing template system performance...'));
 
         try {
             const startTime = Bun.nanoseconds();
 
             const files = await this.getAllTemplateFiles();
-            console.log(chalk.cyan(`Found ${files.length} template files to analyze`));
+            console.info(chalk.cyan(`Found ${files.length} template files to analyze`));
 
             // Collect metrics for each template
             for (const filePath of files) {
@@ -288,47 +288,47 @@ class TemplatePerformanceMonitor {
      * Display performance report
      */
     private displayReport(report: PerformanceReport): void {
-        console.log(chalk.blue.bold('\n📊 Template Performance Report'));
-        console.log(chalk.gray('='.repeat(60)));
-        console.log(chalk.cyan(`Generated: ${report.timestamp.toISOString()}`));
+        console.info(chalk.blue.bold('\n📊 Template Performance Report'));
+        console.info(chalk.gray('='.repeat(60)));
+        console.info(chalk.cyan(`Generated: ${report.timestamp.toISOString()}`));
 
-        console.log(chalk.blue.bold('\n📈 Overview:'));
-        console.log(chalk.gray(`Total templates: ${report.totalTemplates}`));
-        console.log(chalk.gray(`Total size: ${(report.totalSize / 1024).toFixed(1)}KB`));
-        console.log(chalk.gray(`Average size: ${(report.averageSize / 1024).toFixed(1)}KB`));
-        console.log(chalk.gray(`Average complexity: ${report.averageComplexity.toFixed(1)}`));
+        console.info(chalk.blue.bold('\n📈 Overview:'));
+        console.info(chalk.gray(`Total templates: ${report.totalTemplates}`));
+        console.info(chalk.gray(`Total size: ${(report.totalSize / 1024).toFixed(1)}KB`));
+        console.info(chalk.gray(`Average size: ${(report.averageSize / 1024).toFixed(1)}KB`));
+        console.info(chalk.gray(`Average complexity: ${report.averageComplexity.toFixed(1)}`));
 
         // Show slowest templates
         if (report.slowestTemplates.length > 0) {
-            console.log(chalk.yellow.bold('\n⏱️  Slowest Templates:'));
+            console.info(chalk.yellow.bold('\n⏱️  Slowest Templates:'));
             for (const template of report.slowestTemplates) {
                 const fileName = template.filePath.split('/').pop() || '';
-                console.log(chalk.gray(`   ${fileName}: ${template.processingTime.toFixed(2)}ms`));
+                console.info(chalk.gray(`   ${fileName}: ${template.processingTime.toFixed(2)}ms`));
             }
         }
 
         // Show largest templates
         if (report.largestTemplates.length > 0) {
-            console.log(chalk.yellow.bold('\n📏 Largest Templates:'));
+            console.info(chalk.yellow.bold('\n📏 Largest Templates:'));
             for (const template of report.largestTemplates) {
                 const fileName = template.filePath.split('/').pop() || '';
-                console.log(chalk.gray(`   ${fileName}: ${(template.size / 1024).toFixed(1)}KB`));
+                console.info(chalk.gray(`   ${fileName}: ${(template.size / 1024).toFixed(1)}KB`));
             }
         }
 
         // Show most complex templates
         if (report.mostComplexTemplates.length > 0) {
-            console.log(chalk.yellow.bold('\n🧩 Most Complex Templates:'));
+            console.info(chalk.yellow.bold('\n🧩 Most Complex Templates:'));
             for (const template of report.mostComplexTemplates) {
                 const fileName = template.filePath.split('/').pop() || '';
-                console.log(chalk.gray(`   ${fileName}: complexity ${template.complexity}`));
+                console.info(chalk.gray(`   ${fileName}: complexity ${template.complexity}`));
             }
         }
 
         // Show recommendations
-        console.log(chalk.blue.bold('\n💡 Recommendations:'));
+        console.info(chalk.blue.bold('\n💡 Recommendations:'));
         for (const recommendation of report.recommendations) {
-            console.log(chalk.gray(`   ${recommendation}`));
+            console.info(chalk.gray(`   ${recommendation}`));
         }
     }
 
@@ -351,7 +351,7 @@ class TemplatePerformanceMonitor {
             const filepath = join(reportsDir, filename);
 
             await writeFile(filepath, JSON.stringify(report, null, 2));
-            console.log(chalk.green(`\n💾 Report saved to: ${filename}`));
+            console.info(chalk.green(`\n💾 Report saved to: ${filename}`));
 
         } catch (error) {
             console.warn(chalk.yellow(`⚠️  Could not save report: ${error.message}`));
@@ -362,7 +362,7 @@ class TemplatePerformanceMonitor {
      * Show historical performance trends
      */
     async showTrends(): Promise<void> {
-        console.log(chalk.blue.bold('📈 Performance Trends Analysis'));
+        console.info(chalk.blue.bold('📈 Performance Trends Analysis'));
 
         try {
             const reportsDir = join(this.vaultPath, 'reports', 'template-performance');
@@ -374,11 +374,11 @@ class TemplatePerformanceMonitor {
                 .slice(-10); // Last 10 reports
 
             if (reportFiles.length === 0) {
-                console.log(chalk.yellow('No historical reports found'));
+                console.info(chalk.yellow('No historical reports found'));
                 return;
             }
 
-            console.log(chalk.cyan(`\nAnalyzing last ${reportFiles.length} reports...`));
+            console.info(chalk.cyan(`\nAnalyzing last ${reportFiles.length} reports...`));
 
             const reports: PerformanceReport[] = [];
 
@@ -392,7 +392,7 @@ class TemplatePerformanceMonitor {
             }
 
             if (reports.length < 2) {
-                console.log(chalk.yellow('Need at least 2 reports for trend analysis'));
+                console.info(chalk.yellow('Need at least 2 reports for trend analysis'));
                 return;
             }
 
@@ -404,22 +404,22 @@ class TemplatePerformanceMonitor {
             const complexityChange = ((newest.averageComplexity - oldest.averageComplexity) / oldest.averageComplexity) * 100;
             const templateCountChange = ((newest.totalTemplates - oldest.totalTemplates) / oldest.totalTemplates) * 100;
 
-            console.log(chalk.blue.bold('\n📊 Trends:'));
-            console.log(chalk.gray(`Template count: ${oldest.totalTemplates} → ${newest.totalTemplates} (${templateCountChange > 0 ? '+' : ''}${templateCountChange.toFixed(1)}%)`));
-            console.log(chalk.gray(`Average size: ${(oldest.averageSize / 1024).toFixed(1)}KB → ${(newest.averageSize / 1024).toFixed(1)}KB (${sizeChange > 0 ? '+' : ''}${sizeChange.toFixed(1)}%)`));
-            console.log(chalk.gray(`Average complexity: ${oldest.averageComplexity.toFixed(1)} → ${newest.averageComplexity.toFixed(1)} (${complexityChange > 0 ? '+' : ''}${complexityChange.toFixed(1)}%)`));
+            console.info(chalk.blue.bold('\n📊 Trends:'));
+            console.info(chalk.gray(`Template count: ${oldest.totalTemplates} → ${newest.totalTemplates} (${templateCountChange > 0 ? '+' : ''}${templateCountChange.toFixed(1)}%)`));
+            console.info(chalk.gray(`Average size: ${(oldest.averageSize / 1024).toFixed(1)}KB → ${(newest.averageSize / 1024).toFixed(1)}KB (${sizeChange > 0 ? '+' : ''}${sizeChange.toFixed(1)}%)`));
+            console.info(chalk.gray(`Average complexity: ${oldest.averageComplexity.toFixed(1)} → ${newest.averageComplexity.toFixed(1)} (${complexityChange > 0 ? '+' : ''}${complexityChange.toFixed(1)}%)`));
 
             // Performance insights
             if (sizeChange > 20) {
-                console.log(chalk.yellow('⚠️  Template sizes are growing significantly'));
+                console.info(chalk.yellow('⚠️  Template sizes are growing significantly'));
             } else if (sizeChange < -10) {
-                console.log(chalk.green('✅ Template sizes are decreasing - good optimization!'));
+                console.info(chalk.green('✅ Template sizes are decreasing - good optimization!'));
             }
 
             if (complexityChange > 15) {
-                console.log(chalk.yellow('⚠️  Template complexity is increasing'));
+                console.info(chalk.yellow('⚠️  Template complexity is increasing'));
             } else if (complexityChange < -10) {
-                console.log(chalk.green('✅ Template complexity is decreasing - good simplification!'));
+                console.info(chalk.green('✅ Template complexity is decreasing - good simplification!'));
             }
 
         } catch (error) {
@@ -437,11 +437,11 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('📊 Template Performance Monitor'));
-        console.log(chalk.gray('Usage: bun template-performance-monitor.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --trends     Show historical performance trends'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.blue.bold('📊 Template Performance Monitor'));
+        console.info(chalk.gray('Usage: bun template-performance-monitor.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --trends     Show historical performance trends'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
         process.exit(0);
     }
 

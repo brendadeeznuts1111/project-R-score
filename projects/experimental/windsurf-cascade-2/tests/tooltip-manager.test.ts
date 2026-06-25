@@ -297,7 +297,7 @@ describe('TooltipManager', () => {
                 actions: [
                     {
                         label: 'Action 1',
-                        action: () => console.log('Action 1 executed')
+                        action: () => console.info('Action 1 executed')
                     }
                 ]
             };

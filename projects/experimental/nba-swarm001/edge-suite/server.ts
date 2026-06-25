@@ -50,8 +50,8 @@ Bun.serve({
   },
 });
 
-console.log(`🚀 Edge-Suite Dashboard running at http://localhost:3334`);
-console.log(`📦 Build: ${getBuildInfo()}`);
+console.info(`🚀 Edge-Suite Dashboard running at http://localhost:3334`);
+console.info(`📦 Build: ${getBuildInfo()}`);
 
 async function getEdges(): Promise<Response> {
   const context = createErrorContext("getEdges");

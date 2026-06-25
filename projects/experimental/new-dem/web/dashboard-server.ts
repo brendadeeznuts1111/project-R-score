@@ -236,7 +236,7 @@ function startDashboard(runtimeConfig: DashboardConfig = {}): void {
     }
   });
 
-  console.log(`
+  console.info(`
 ╔════════════════════════════════════════════════════════════╗
 ║  🚀 ${config.name} ${config.version}                       ║
 ║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║

@@ -10,27 +10,27 @@
 // ============================================================================
 // Example 1: Basic Typed Arrays
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 1: Inspecting Typed Arrays");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 1: Inspecting Typed Arrays");
+console.info("=".repeat(60));
 
 const uint8Array = new Uint8Array([1, 2, 3, 255]);
 const uint16Array = new Uint16Array([1000, 2000, 3000]);
 const int32Array = new Int32Array([-100, 0, 100]);
 const float64Array = new Float64Array([3.14159, 2.71828]);
 
-console.log("Uint8Array:", Bun.inspect(uint8Array));
-console.log("Uint16Array:", Bun.inspect(uint16Array));
-console.log("Int32Array:", Bun.inspect(int32Array));
-console.log("Float64Array:", Bun.inspect(float64Array));
-console.log();
+console.info("Uint8Array:", Bun.inspect(uint8Array));
+console.info("Uint16Array:", Bun.inspect(uint16Array));
+console.info("Int32Array:", Bun.inspect(int32Array));
+console.info("Float64Array:", Bun.inspect(float64Array));
+console.info();
 
 // ============================================================================
 // Example 2: Inspecting Complex Nested Objects
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 2: Inspecting Complex Nested Objects");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 2: Inspecting Complex Nested Objects");
+console.info("=".repeat(60));
 
 interface CmmsState {
 	nodeId: string;
@@ -60,15 +60,15 @@ const complexCmms: CmmsState = {
 	status: 'active',
 };
 
-console.log(Bun.inspect(complexCmms, { depth: 3, colors: true }));
-console.log();
+console.info(Bun.inspect(complexCmms, { depth: 3, colors: true }));
+console.info();
 
 // ============================================================================
 // Example 3: Inspecting with Different Depth Levels
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 3: Different Depth Levels");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 3: Different Depth Levels");
+console.info("=".repeat(60));
 
 const deepObject = {
 	level1: {
@@ -85,28 +85,28 @@ const deepObject = {
 	},
 };
 
-console.log("Depth 1:");
-console.log(Bun.inspect(deepObject, { depth: 1, colors: true }));
-console.log();
+console.info("Depth 1:");
+console.info(Bun.inspect(deepObject, { depth: 1, colors: true }));
+console.info();
 
-console.log("Depth 3:");
-console.log(Bun.inspect(deepObject, { depth: 3, colors: true }));
-console.log();
+console.info("Depth 3:");
+console.info(Bun.inspect(deepObject, { depth: 3, colors: true }));
+console.info();
 
-console.log("Depth 5:");
-console.log(Bun.inspect(deepObject, { depth: 5, colors: true }));
-console.log();
+console.info("Depth 5:");
+console.info(Bun.inspect(deepObject, { depth: 5, colors: true }));
+console.info();
 
-console.log("Depth Infinity (default):");
-console.log(Bun.inspect(deepObject, { depth: Infinity, colors: true }));
-console.log();
+console.info("Depth Infinity (default):");
+console.info(Bun.inspect(deepObject, { depth: Infinity, colors: true }));
+console.info();
 
 // ============================================================================
 // Example 4: Inspecting Collections (Map, Set, WeakMap, WeakSet)
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 4: Collections (Map, Set, WeakMap, WeakSet)");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 4: Collections (Map, Set, WeakMap, WeakSet)");
+console.info("=".repeat(60));
 
 const map = new Map([
 	['key1', 'value1'],
@@ -127,28 +127,28 @@ const weakSet = new WeakSet();
 weakSet.add(obj1);
 weakSet.add(obj2);
 
-console.log("Map:");
-console.log(Bun.inspect(map, { colors: true, depth: 3 }));
-console.log();
+console.info("Map:");
+console.info(Bun.inspect(map, { colors: true, depth: 3 }));
+console.info();
 
-console.log("Set:");
-console.log(Bun.inspect(set, { colors: true, depth: 2 }));
-console.log();
+console.info("Set:");
+console.info(Bun.inspect(set, { colors: true, depth: 2 }));
+console.info();
 
-console.log("WeakMap (note: WeakMap/WeakSet contents are not inspectable):");
-console.log(Bun.inspect(weakMap, { colors: true }));
-console.log();
+console.info("WeakMap (note: WeakMap/WeakSet contents are not inspectable):");
+console.info(Bun.inspect(weakMap, { colors: true }));
+console.info();
 
-console.log("WeakSet:");
-console.log(Bun.inspect(weakSet, { colors: true }));
-console.log();
+console.info("WeakSet:");
+console.info(Bun.inspect(weakSet, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 5: Inspecting with Custom Options
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 5: Custom Options");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 5: Custom Options");
+console.info("=".repeat(60));
 
 const data = {
 	name: 'Test Object',
@@ -164,28 +164,28 @@ const data = {
 	},
 };
 
-console.log("With colors (default):");
-console.log(Bun.inspect(data, { depth: 3, colors: true }));
-console.log();
+console.info("With colors (default):");
+console.info(Bun.inspect(data, { depth: 3, colors: true }));
+console.info();
 
-console.log("Without colors:");
-console.log(Bun.inspect(data, { depth: 3, colors: false }));
-console.log();
+console.info("Without colors:");
+console.info(Bun.inspect(data, { depth: 3, colors: false }));
+console.info();
 
-console.log("Compact mode:");
-console.log(Bun.inspect(data, { depth: 3, compact: true }));
-console.log();
+console.info("Compact mode:");
+console.info(Bun.inspect(data, { depth: 3, compact: true }));
+console.info();
 
-console.log("Sorted keys:");
-console.log(Bun.inspect(data, { depth: 3, sortedKeys: true, colors: true }));
-console.log();
+console.info("Sorted keys:");
+console.info(Bun.inspect(data, { depth: 3, sortedKeys: true, colors: true }));
+console.info();
 
 // ============================================================================
 // Example 6: Classes and Instances
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 6: Classes and Instances");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 6: Classes and Instances");
+console.info("=".repeat(60));
 
 class TradingNode {
 	constructor(
@@ -214,16 +214,16 @@ class TradingNode {
 const node = new TradingNode('btc-usd-001', 'binance', 'active');
 node.activate();
 
-console.log("Class instance:");
-console.log(Bun.inspect(node, { colors: true, depth: 2 }));
-console.log();
+console.info("Class instance:");
+console.info(Bun.inspect(node, { colors: true, depth: 2 }));
+console.info();
 
 // ============================================================================
 // Example 7: Functions and Methods
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 7: Functions and Methods");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 7: Functions and Methods");
+console.info("=".repeat(60));
 
 function regularFunction(a: number, b: number) {
 	return a + b;
@@ -246,38 +246,38 @@ const objWithMethods = {
 	},
 };
 
-console.log("Object with methods:");
-console.log(Bun.inspect(objWithMethods, { colors: true }));
-console.log();
+console.info("Object with methods:");
+console.info(Bun.inspect(objWithMethods, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 8: Errors and Stack Traces
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 8: Errors and Stack Traces");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 8: Errors and Stack Traces");
+console.info("=".repeat(60));
 
 try {
 	throw new Error('Test error message');
 } catch (error) {
-	console.log("Error object:");
-	console.log(Bun.inspect(error, { colors: true }));
-	console.log();
+	console.info("Error object:");
+	console.info(Bun.inspect(error, { colors: true }));
+	console.info();
 }
 
 const customError = new TypeError('Custom type error');
 customError.stack = 'Custom stack trace';
 
-console.log("Custom error:");
-console.log(Bun.inspect(customError, { colors: true }));
-console.log();
+console.info("Custom error:");
+console.info(Bun.inspect(customError, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 9: Promises and Async Values
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 9: Promises and Async Values");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 9: Promises and Async Values");
+console.info("=".repeat(60));
 
 const pendingPromise = new Promise((resolve) => {
 	setTimeout(() => resolve('resolved'), 1000);
@@ -286,42 +286,42 @@ const pendingPromise = new Promise((resolve) => {
 const resolvedPromise = Promise.resolve({ data: 'success', code: 200 });
 const rejectedPromise = Promise.reject(new Error('rejection test'));
 
-console.log("Pending Promise:");
-console.log(Bun.inspect(pendingPromise, { colors: true }));
-console.log();
+console.info("Pending Promise:");
+console.info(Bun.inspect(pendingPromise, { colors: true }));
+console.info();
 
-console.log("Resolved Promise:");
-console.log(Bun.inspect(resolvedPromise, { colors: true }));
-console.log();
+console.info("Resolved Promise:");
+console.info(Bun.inspect(resolvedPromise, { colors: true }));
+console.info();
 
-console.log("Rejected Promise:");
-console.log(Bun.inspect(rejectedPromise, { colors: true }));
-console.log();
+console.info("Rejected Promise:");
+console.info(Bun.inspect(rejectedPromise, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 10: Buffers and Binary Data
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 10: Buffers and Binary Data");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 10: Buffers and Binary Data");
+console.info("=".repeat(60));
 
 const buffer = Buffer.from('Hello, Bun!', 'utf8');
 const bufferHex = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
 
-console.log("Buffer (UTF-8):");
-console.log(Bun.inspect(buffer, { colors: true }));
-console.log();
+console.info("Buffer (UTF-8):");
+console.info(Bun.inspect(buffer, { colors: true }));
+console.info();
 
-console.log("Buffer (Hex):");
-console.log(Bun.inspect(bufferHex, { colors: true }));
-console.log();
+console.info("Buffer (Hex):");
+console.info(Bun.inspect(bufferHex, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 11: Circular References
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 11: Circular References");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 11: Circular References");
+console.info("=".repeat(60));
 
 interface CircularNode {
 	name: string;
@@ -336,16 +336,16 @@ node1.next = node2;
 node2.next = node3;
 node3.next = node1; // Circular reference
 
-console.log("Circular reference (handled automatically):");
-console.log(Bun.inspect(node1, { depth: 5, colors: true }));
-console.log();
+console.info("Circular reference (handled automatically):");
+console.info(Bun.inspect(node1, { depth: 5, colors: true }));
+console.info();
 
 // ============================================================================
 // Example 12: Symbols and Private Properties
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 12: Symbols and Private Properties");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 12: Symbols and Private Properties");
+console.info("=".repeat(60));
 
 const sym1 = Symbol('description1');
 const sym2 = Symbol('description2');
@@ -360,44 +360,44 @@ const objWithSymbols = {
 	},
 };
 
-console.log("Object with symbols:");
-console.log(Bun.inspect(objWithSymbols, { colors: true, showHidden: false }));
-console.log();
+console.info("Object with symbols:");
+console.info(Bun.inspect(objWithSymbols, { colors: true, showHidden: false }));
+console.info();
 
-console.log("With showHidden: true");
-console.log(Bun.inspect(objWithSymbols, { colors: true, showHidden: true }));
-console.log();
+console.info("With showHidden: true");
+console.info(Bun.inspect(objWithSymbols, { colors: true, showHidden: true }));
+console.info();
 
 // ============================================================================
 // Example 13: Dates and RegExp
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 13: Dates and RegExp");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 13: Dates and RegExp");
+console.info("=".repeat(60));
 
 const date = new Date();
 const dateString = date.toISOString();
 const regex = /test-\d+/gi;
 const regexWithFlags = new RegExp('pattern', 'gim');
 
-console.log("Date:");
-console.log(Bun.inspect(date, { colors: true }));
-console.log();
+console.info("Date:");
+console.info(Bun.inspect(date, { colors: true }));
+console.info();
 
-console.log("RegExp:");
-console.log(Bun.inspect(regex, { colors: true }));
-console.log();
+console.info("RegExp:");
+console.info(Bun.inspect(regex, { colors: true }));
+console.info();
 
-console.log("RegExp with flags:");
-console.log(Bun.inspect(regexWithFlags, { colors: true }));
-console.log();
+console.info("RegExp with flags:");
+console.info(Bun.inspect(regexWithFlags, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 14: Large Arrays and Truncation
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 14: Large Arrays and Truncation");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 14: Large Arrays and Truncation");
+console.info("=".repeat(60));
 
 const largeArray = Array.from({ length: 1000 }, (_, i) => ({
 	id: i,
@@ -405,16 +405,16 @@ const largeArray = Array.from({ length: 1000 }, (_, i) => ({
 	value: Math.random() * 100,
 }));
 
-console.log("Large array (first 100 items shown):");
-console.log(Bun.inspect(largeArray.slice(0, 100), { colors: true, depth: 2 }));
-console.log();
+console.info("Large array (first 100 items shown):");
+console.info(Bun.inspect(largeArray.slice(0, 100), { colors: true, depth: 2 }));
+console.info();
 
 // ============================================================================
 // Example 15: Comparison with console.log
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 15: Comparison with console.log");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 15: Comparison with console.log");
+console.info("=".repeat(60));
 
 const testObj = {
 	nested: {
@@ -426,20 +426,20 @@ const testObj = {
 	},
 };
 
-console.log("console.log (default):");
-console.log(testObj);
-console.log();
+console.info("console.log (default):");
+console.info(testObj);
+console.info();
 
-console.log("Bun.inspect (formatted):");
-console.log(Bun.inspect(testObj, { depth: 3, colors: true }));
-console.log();
+console.info("Bun.inspect (formatted):");
+console.info(Bun.inspect(testObj, { depth: 3, colors: true }));
+console.info();
 
 // ============================================================================
 // Example 16: Performance Comparison
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 16: Performance Comparison");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 16: Performance Comparison");
+console.info("=".repeat(60));
 
 const perfTestObj = {
 	data: Array.from({ length: 100 }, (_, i) => ({
@@ -465,17 +465,17 @@ for (let i = 0; i < iterations; i++) {
 }
 const inspectTime = Bun.nanoseconds() - start2;
 
-console.log(`console.log simulation: ${(consoleLogTime / 1_000_000).toFixed(2)}ms`);
-console.log(`Bun.inspect: ${(inspectTime / 1_000_000).toFixed(2)}ms`);
-console.log(`Ratio: ${(consoleLogTime / inspectTime).toFixed(2)}x`);
-console.log();
+console.info(`console.log simulation: ${(consoleLogTime / 1_000_000).toFixed(2)}ms`);
+console.info(`Bun.inspect: ${(inspectTime / 1_000_000).toFixed(2)}ms`);
+console.info(`Ratio: ${(consoleLogTime / inspectTime).toFixed(2)}x`);
+console.info();
 
 // ============================================================================
 // Example 17: Custom Inspect Symbol (if supported)
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 17: Custom Inspect Behavior");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 17: Custom Inspect Behavior");
+console.info("=".repeat(60));
 
 class CustomInspectable {
 	constructor(
@@ -493,16 +493,16 @@ class CustomInspectable {
 }
 
 const customObj = new CustomInspectable('Custom', 123);
-console.log("Custom object with toJSON:");
-console.log(Bun.inspect(customObj, { colors: true }));
-console.log();
+console.info("Custom object with toJSON:");
+console.info(Bun.inspect(customObj, { colors: true }));
+console.info();
 
 // ============================================================================
 // Example 18: Mixed Complex Types
 // ============================================================================
-console.log("=".repeat(60));
-console.log("Example 18: Mixed Complex Types");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("Example 18: Mixed Complex Types");
+console.info("=".repeat(60));
 
 const complexMixed = {
 	string: 'text',
@@ -525,24 +525,24 @@ const complexMixed = {
 	instance: new TradingNode('test', 'exchange', 'active'),
 };
 
-console.log("Mixed complex types:");
-console.log(Bun.inspect(complexMixed, { depth: 3, colors: true }));
-console.log();
+console.info("Mixed complex types:");
+console.info(Bun.inspect(complexMixed, { depth: 3, colors: true }));
+console.info();
 
 // ============================================================================
 // Summary
 // ============================================================================
-console.log("=".repeat(60));
-console.log("✅ All Bun.inspect() examples completed!");
-console.log("=".repeat(60));
-console.log();
-console.log("Key Takeaways:");
-console.log("  • Bun.inspect() provides rich formatting for all JavaScript types");
-console.log("  • Supports depth control, colors, compact mode, and more");
-console.log("  • Handles circular references automatically");
-console.log("  • Works with classes, functions, promises, errors, and more");
-console.log("  • More control than console.log() for debugging");
-console.log("=".repeat(60));
+console.info("=".repeat(60));
+console.info("✅ All Bun.inspect() examples completed!");
+console.info("=".repeat(60));
+console.info();
+console.info("Key Takeaways:");
+console.info("  • Bun.inspect() provides rich formatting for all JavaScript types");
+console.info("  • Supports depth control, colors, compact mode, and more");
+console.info("  • Handles circular references automatically");
+console.info("  • Works with classes, functions, promises, errors, and more");
+console.info("  • More control than console.info() for debugging");
+console.info("=".repeat(60));
 
 
 

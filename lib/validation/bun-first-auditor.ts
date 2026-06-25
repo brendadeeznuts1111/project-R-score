@@ -3,7 +3,7 @@
 if (import.meta.main) {
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Bun-First Auditor imported, not executed directly');
+  console.info('ℹ️  Bun-First Auditor imported, not executed directly');
 }
 
 import { write } from 'bun';
@@ -97,7 +97,7 @@ class BunFirstAuditor {
     compliance: number;
     bySeverity: Record<string, number>;
   }> {
-    console.log('🦌 AUDITING @[lib] DIRECTORY FOR BUN-FIRST COMPLIANCE...');
+    console.info('🦌 AUDITING @[lib] DIRECTORY FOR BUN-FIRST COMPLIANCE...');
 
     const libFiles = [
       'performance-optimizer.ts',
@@ -129,14 +129,14 @@ class BunFirstAuditor {
         const lines = content.split('\n');
 
         totalFiles++;
-        console.log(`   📁 Auditing ${fileName}...`);
+        console.info(`   📁 Auditing ${fileName}...`);
 
         // Check for Node.js API violations
         lines.forEach((line, index) => {
           this.checkLineForViolations(line, fileName, index + 1);
         });
       } catch (error) {
-        console.log(`   ⚠️  Could not audit ${fileName}: ${error.message}`);
+        console.info(`   ⚠️  Could not audit ${fileName}: ${error.message}`);
       }
     }
 
@@ -151,8 +151,8 @@ class BunFirstAuditor {
     const compliance =
       totalFiles > 0 ? ((totalFiles - this.violations.length) / totalFiles) * 100 : 100;
 
-    console.log(`   📊 Results: ${totalFiles} files, ${this.violations.length} violations`);
-    console.log(`   ✅ Compliance: ${compliance.toFixed(1)}%`);
+    console.info(`   📊 Results: ${totalFiles} files, ${this.violations.length} violations`);
+    console.info(`   ✅ Compliance: ${compliance.toFixed(1)}%`);
 
     return { totalFiles, violations: this.violations.length, compliance, bySeverity };
   }
@@ -271,15 +271,15 @@ class BunFirstAuditor {
    * Generate Bun-first compliance report
    */
   static generateReport(auditResults: any): void {
-    console.log('\n🦌 BUN-FIRST COMPLIANCE REPORT');
-    console.log('='.repeat(60));
+    console.info('\n🦌 BUN-FIRST COMPLIANCE REPORT');
+    console.info('='.repeat(60));
 
-    console.log('\n📊 AUDIT SUMMARY:');
-    console.log(`   Files Audited: ${auditResults.totalFiles}`);
-    console.log(`   Violations Found: ${auditResults.violations}`);
-    console.log(`   Compliance Rate: ${auditResults.compliance.toFixed(1)}%`);
+    console.info('\n📊 AUDIT SUMMARY:');
+    console.info(`   Files Audited: ${auditResults.totalFiles}`);
+    console.info(`   Violations Found: ${auditResults.violations}`);
+    console.info(`   Compliance Rate: ${auditResults.compliance.toFixed(1)}%`);
 
-    console.log('\n🚨 VIOLATIONS BY SEVERITY:');
+    console.info('\n🚨 VIOLATIONS BY SEVERITY:');
     Object.entries(auditResults.bySeverity).forEach(([severity, count]) => {
       const icon =
         severity === 'CRITICAL'
@@ -289,11 +289,11 @@ class BunFirstAuditor {
             : severity === 'MEDIUM'
               ? '🟠'
               : '🔵';
-      console.log(`   ${icon} ${severity}: ${count}`);
+      console.info(`   ${icon} ${severity}: ${count}`);
     });
 
     if (this.violations.length > 0) {
-      console.log('\n📋 DETAILED VIOLATIONS:');
+      console.info('\n📋 DETAILED VIOLATIONS:');
 
       const criticalViolations = this.violations.filter(v => v.severity === 'CRITICAL');
       const highViolations = this.violations.filter(v => v.severity === 'HIGH');
@@ -301,53 +301,53 @@ class BunFirstAuditor {
       const lowViolations = this.violations.filter(v => v.severity === 'LOW');
 
       if (criticalViolations.length > 0) {
-        console.log('\n   🔴 CRITICAL VIOLATIONS:');
+        console.info('\n   🔴 CRITICAL VIOLATIONS:');
         criticalViolations.forEach(v => {
-          console.log(`      ${v.file}:${v.line} - ${v.violation}`);
-          console.log(`         💡 ${v.suggestion}`);
+          console.info(`      ${v.file}:${v.line} - ${v.violation}`);
+          console.info(`         💡 ${v.suggestion}`);
         });
       }
 
       if (highViolations.length > 0) {
-        console.log('\n   🟡 HIGH VIOLATIONS:');
+        console.info('\n   🟡 HIGH VIOLATIONS:');
         highViolations.forEach(v => {
-          console.log(`      ${v.file}:${v.line} - ${v.violation}`);
-          console.log(`         💡 ${v.suggestion}`);
+          console.info(`      ${v.file}:${v.line} - ${v.violation}`);
+          console.info(`         💡 ${v.suggestion}`);
         });
       }
     }
 
-    console.log('\n🦌 BUN-FIRST BEST PRACTICES:');
-    console.log('   ✅ Use Bun.file() instead of fs APIs');
-    console.log('   ✅ Use Bun.serve() instead of http.createServer');
-    console.log('   ✅ Use Bun.spawn() instead of child_process');
-    console.log('   ✅ Use import.meta.path instead of path.join');
-    console.log('   ✅ Use Bun.fetch() for better HTTP performance');
-    console.log('   ✅ Use await Bun.write() for file operations');
-    console.log('   ✅ Use import.meta.main for entry detection');
+    console.info('\n🦌 BUN-FIRST BEST PRACTICES:');
+    console.info('   ✅ Use Bun.file() instead of fs APIs');
+    console.info('   ✅ Use Bun.serve() instead of http.createServer');
+    console.info('   ✅ Use Bun.spawn() instead of child_process');
+    console.info('   ✅ Use import.meta.path instead of path.join');
+    console.info('   ✅ Use Bun.fetch() for better HTTP performance');
+    console.info('   ✅ Use await Bun.write() for file operations');
+    console.info('   ✅ Use import.meta.main for entry detection');
 
-    console.log('\n💡 RECOMMENDATIONS:');
+    console.info('\n💡 RECOMMENDATIONS:');
     if (auditResults.compliance < 80) {
-      console.log('   🚨 URGENT: Low compliance rate! Fix violations immediately.');
+      console.info('   🚨 URGENT: Low compliance rate! Fix violations immediately.');
     } else if (auditResults.compliance < 95) {
-      console.log('   ⚠️  IMPROVEMENT NEEDED: Address violations for better performance.');
+      console.info('   ⚠️  IMPROVEMENT NEEDED: Address violations for better performance.');
     } else {
-      console.log('   ✅ GOOD: High compliance rate! Continue following Bun-first principles.');
+      console.info('   ✅ GOOD: High compliance rate! Continue following Bun-first principles.');
     }
 
-    console.log('   📚 Add Bun-first validation to CI/CD pipeline');
-    console.log('   🔧 Create Bun API migration guide for team');
-    console.log('   📊 Monitor compliance regularly');
+    console.info('   📚 Add Bun-first validation to CI/CD pipeline');
+    console.info('   🔧 Create Bun API migration guide for team');
+    console.info('   📊 Monitor compliance regularly');
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🦌 BUN-FIRST AUDIT COMPLETE!');
+    console.info('\n' + '='.repeat(60));
+    console.info('🦌 BUN-FIRST AUDIT COMPLETE!');
   }
 
   /**
    * Create Bun-first migration guide
    */
   static createMigrationGuide(): void {
-    console.log('\n📚 CREATING BUN-FIRST MIGRATION GUIDE...');
+    console.info('\n📚 CREATING BUN-FIRST MIGRATION GUIDE...');
 
     const guide = `# 🦌 Bun-First Migration Guide
 
@@ -438,9 +438,9 @@ const child = Bun.spawn(['echo', 'hello']);
 
     try {
       write('./BUN_FIRST_MIGRATION_GUIDE.md', guide);
-      console.log('   ✅ Migration guide created: BUN_FIRST_MIGRATION_GUIDE.md');
+      console.info('   ✅ Migration guide created: BUN_FIRST_MIGRATION_GUIDE.md');
     } catch (error) {
-      console.log(`   ❌ Failed to create guide: ${error.message}`);
+      console.info(`   ❌ Failed to create guide: ${error.message}`);
     }
   }
 
@@ -448,9 +448,9 @@ const child = Bun.spawn(['echo', 'hello']);
    * Run complete Bun-first audit
    */
   static async runCompleteAudit(): Promise<void> {
-    console.log('🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR');
-    console.log('Ensuring all code follows Bun-first principles');
-    console.log('='.repeat(60));
+    console.info('🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR');
+    console.info('Ensuring all code follows Bun-first principles');
+    console.info('='.repeat(60));
 
     // Audit @[lib] directory
     const auditResults = await this.auditLibDirectory();
@@ -462,16 +462,16 @@ const child = Bun.spawn(['echo', 'hello']);
     this.createMigrationGuide();
 
     // Final assessment
-    console.log('\n🎯 FINAL ASSESSMENT:');
+    console.info('\n🎯 FINAL ASSESSMENT:');
     if (auditResults.compliance >= 95) {
-      console.log('🟢 EXCELLENT: High Bun-first compliance!');
+      console.info('🟢 EXCELLENT: High Bun-first compliance!');
     } else if (auditResults.compliance >= 80) {
-      console.log('🟡 GOOD: Decent compliance, but room for improvement');
+      console.info('🟡 GOOD: Decent compliance, but room for improvement');
     } else {
-      console.log('🔴 NEEDS WORK: Low compliance, immediate action required');
+      console.info('🔴 NEEDS WORK: Low compliance, immediate action required');
     }
 
-    console.log('\n🦌 Remember: ALWAYS USE BUN FIRST! 🦌');
+    console.info('\n🦌 Remember: ALWAYS USE BUN FIRST! 🦌');
   }
 }
 

@@ -216,7 +216,7 @@ export class UIPolicyManager {
 
 			// Check if manifest actually changed
 			if (this.manifestDigest === newDigest && this.manifest) {
-				console.log("[UIPolicyManager] Manifest unchanged, skipping reload");
+				console.info("[UIPolicyManager] Manifest unchanged, skipping reload");
 				return;
 			}
 
@@ -270,12 +270,12 @@ export class UIPolicyManager {
 			const loadDuration = Date.now() - (startTime || Date.now());
 			policyMetrics.track("manifest_loaded", { duration: loadDuration });
 
-			console.log(
+			console.info(
 				`8.2.2.1.0.0.0: UI Policy Manifest loaded from ${manifestPath}`,
 			);
-			console.log(`  📊 Digest: ${newDigest.substring(0, 16)}...`);
-			console.log(`  🔢 Checksum: 0x${newChecksum.toString(16)}`);
-			console.log(`  📦 Size: ${binaryContent.byteLength} bytes`);
+			console.info(`  📊 Digest: ${newDigest.substring(0, 16)}...`);
+			console.info(`  🔢 Checksum: 0x${newChecksum.toString(16)}`);
+			console.info(`  📦 Size: ${binaryContent.byteLength} bytes`);
 		} catch (error) {
 			// 8.2.5.0.0.0.0: Track error metrics
 			const loadDuration = Date.now() - startTime;
@@ -515,7 +515,7 @@ export class UIPolicyManager {
 		const duration = Date.now() - startTime;
 		policyMetrics.track("manifest_reloaded", { duration });
 
-		console.log(
+		console.info(
 			`8.2.2.1.0.0.0: UI Policy Manifest reloaded from ${this.manifestPath}`,
 		);
 	}
@@ -797,7 +797,7 @@ export class UIPolicyManager {
 				this.lastChecksum = ManifestDigest.computeChecksum(manifestData);
 				this.manifest = manifest as HyperBunUIPolicyManifest;
 
-				console.log(
+				console.info(
 					`[UIPolicyManager] Applied ${patchType} patch (${patch.byteLength} bytes)`,
 				);
 				return true;

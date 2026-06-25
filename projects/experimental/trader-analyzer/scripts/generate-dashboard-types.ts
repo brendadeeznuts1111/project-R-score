@@ -994,8 +994,8 @@ export * from './multi-layer-graph.types';
   `;
 
   await writeFile(TYPES_PATH, types);
-  console.log(`✅ Generated ${TYPES_PATH}`);
-  console.log(`📊 Types: ${types.split('\n').length} lines`);
+  console.info(`✅ Generated ${TYPES_PATH}`);
+  console.info(`📊 Types: ${types.split('\n').length} lines`);
   
   // Validate generated types
   const errors = validateGeneratedTypes(types);
@@ -1005,7 +1005,7 @@ export * from './multi-layer-graph.types';
     process.exit(1);
   }
   
-  console.log('✅ Type validation passed');
+  console.info('✅ Type validation passed');
 }
 
 function validateGeneratedTypes(content: string): string[] {

@@ -83,14 +83,15 @@ class FetchMetricsCollector {
 
 const metricsCollector = new FetchMetricsCollector();
 
-// GOV Headers Factory
+export const GOV_VERSION = 'v5.1.0';
+
 export function createGOVHeaders(
   scope: 'SEC' | 'OPS' | 'AI', 
   extras: Record<string, string> = {}
 ): Headers {
   const base: GOVHeaders = {
     'X-FactoryWager-Scope': scope,
-    'X-FactoryWager-Version': 'v4.0',
+    'X-FactoryWager-Version': GOV_VERSION,
     'X-FactoryWager-Trace': crypto.randomUUID(),
     ...extras
   };
@@ -136,10 +137,9 @@ export async function enhancedFetch(
     headers = new Headers();
   }
   
-  // Add default FactoryWager headers if not present
   if (!headers.has('X-FactoryWager-Scope')) {
     headers.set('X-FactoryWager-Scope', 'OPS');
-    headers.set('X-FactoryWager-Version', 'v4.0');
+    headers.set('X-FactoryWager-Version', GOV_VERSION);
     headers.set('X-FactoryWager-Trace', crypto.randomUUID());
   }
   
@@ -193,7 +193,7 @@ export async function enhancedFetch(
       
       // Log benchmark if requested
       if (options.benchmark) {
-        console.log(`🚀 Fetch Benchmark: ${method} ${url} - ${duration.toFixed(2)}ms`);
+        console.info(`🚀 Fetch Benchmark: ${method} ${url} - ${duration.toFixed(2)}ms`);
       }
       
       return response;
@@ -312,8 +312,8 @@ export class FetchBenchmark {
     const { count = 1000, concurrency = 10, bodyType = 'json' } = options;
     const startTime = performance.now();
     
-    console.log(`🚀 Starting Fetch Benchmark: ${count} requests to ${url}`);
-    console.log(`Concurrency: ${concurrency}, Body Type: ${bodyType}`);
+    console.info(`🚀 Starting Fetch Benchmark: ${count} requests to ${url}`);
+    console.info(`Concurrency: ${concurrency}, Body Type: ${bodyType}`);
     
     const batches = Math.ceil(count / concurrency);
     const results: number[] = [];
@@ -342,7 +342,7 @@ export class FetchBenchmark {
       const batchResults = await Promise.all(batch);
       results.push(...batchResults);
       
-      console.log(`Batch ${i + 1}/${batches} completed (${batchResults.length} requests)`);
+      console.info(`Batch ${i + 1}/${batches} completed (${batchResults.length} requests)`);
     }
     
     const totalTime = performance.now() - startTime;
@@ -351,18 +351,18 @@ export class FetchBenchmark {
     const maxTime = Math.max(...results);
     const throughput = count / (totalTime / 1000);
     
-    console.log('\n📊 Benchmark Results:');
-    console.log(`Total Time: ${totalTime.toFixed(2)}ms`);
-    console.log(`Requests: ${count}`);
-    console.log(`Throughput: ${throughput.toFixed(2)} req/sec`);
-    console.log(`Average Response Time: ${avgTime.toFixed(2)}ms`);
-    console.log(`Min Response Time: ${minTime.toFixed(2)}ms`);
-    console.log(`Max Response Time: ${maxTime.toFixed(2)}ms`);
+    console.info('\n📊 Benchmark Results:');
+    console.info(`Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info(`Requests: ${count}`);
+    console.info(`Throughput: ${throughput.toFixed(2)} req/sec`);
+    console.info(`Average Response Time: ${avgTime.toFixed(2)}ms`);
+    console.info(`Min Response Time: ${minTime.toFixed(2)}ms`);
+    console.info(`Max Response Time: ${maxTime.toFixed(2)}ms`);
     
     const metrics = getFetchMetrics();
-    console.log(`\n🔥 Global Metrics:`);
-    console.log(`Cache Hit Rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
-    console.log(`Hot Paths: ${Object.keys(metrics.hotPaths).length}`);
+    console.info(`\n🔥 Global Metrics:`);
+    console.info(`Cache Hit Rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
+    console.info(`Hot Paths: ${Object.keys(metrics.hotPaths).length}`);
     
     return {
       totalTime,

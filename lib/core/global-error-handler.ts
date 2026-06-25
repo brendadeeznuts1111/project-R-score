@@ -48,17 +48,17 @@ interface GlobalErrorState {
 
 /**
  * Global Error Handler
- * 
+ *
  * Centralizes handling of:
  * - Uncaught exceptions
  * - Unhandled promise rejections
  * - Process warnings
  * - Signal-based shutdown
- * 
+ *
  * @example
  * ```typescript
  * import { initializeGlobalErrorHandling } from './lib/core/global-error-handler';
- * 
+ *
  * initializeGlobalErrorHandling({
  *   exitOnUncaughtException: true,
  *   exitOnUnhandledRejection: false,
@@ -116,7 +116,7 @@ export class GlobalErrorHandler {
     process.on('SIGINT', () => this.handleSignal('SIGINT'));
     process.on('SIGTERM', () => this.handleSignal('SIGTERM'));
 
-    console.log('✅ Global error handling initialized');
+    console.info('✅ Global error handling initialized');
   }
 
   /**
@@ -134,7 +134,7 @@ export class GlobalErrorHandler {
     this.state.lastErrorTime = Date.now();
 
     const enhancedError = this.enhanceError(error, 'UNCAUGHT_EXCEPTION');
-    
+
     console.error('\n🚨 UNCAUGHT EXCEPTION');
     console.error('======================');
     console.error(`Error: ${enhancedError.message}`);
@@ -162,16 +162,11 @@ export class GlobalErrorHandler {
   /**
    * Handle unhandled promise rejections
    */
-  private handleUnhandledRejection(
-    reason: unknown,
-    promise: Promise<unknown>
-  ): void {
+  private handleUnhandledRejection(reason: unknown, promise: Promise<unknown>): void {
     this.state.unhandledRejections++;
     this.state.lastErrorTime = Date.now();
 
-    const error = reason instanceof Error 
-      ? reason 
-      : new Error(String(reason));
+    const error = reason instanceof Error ? reason : new Error(String(reason));
 
     const enhancedError = this.enhanceError(error, 'UNHANDLED_REJECTION');
 
@@ -226,7 +221,7 @@ export class GlobalErrorHandler {
    * Handle shutdown signals
    */
   private handleSignal(signal: string): void {
-    console.log(`\n📡 Received ${signal}, starting graceful shutdown...`);
+    console.info(`\n📡 Received ${signal}, starting graceful shutdown...`);
     this.gracefulShutdown(0);
   }
 
@@ -248,8 +243,8 @@ export class GlobalErrorHandler {
 
     try {
       // Run all shutdown handlers
-      console.log(`🔄 Running ${this.shutdownHandlers.length} shutdown handlers...`);
-      
+      console.info(`🔄 Running ${this.shutdownHandlers.length} shutdown handlers...`);
+
       for (const handler of this.shutdownHandlers) {
         try {
           await handler();
@@ -258,7 +253,7 @@ export class GlobalErrorHandler {
         }
       }
 
-      console.log('✅ Graceful shutdown complete');
+      console.info('✅ Graceful shutdown complete');
     } catch (error) {
       console.error('Error during graceful shutdown:', error);
     } finally {
@@ -274,10 +269,10 @@ export class GlobalErrorHandler {
     const enhanced = new Error(`[${type}] ${error.message}`);
     enhanced.name = error.name;
     enhanced.stack = error.stack;
-    (enhanced as any).originalError = error;
-    (enhanced as any).errorType = type;
-    (enhanced as any).timestamp = new Date().toISOString();
-    (enhanced as any).processUptime = process.uptime();
+    (enhanced as Record<string, unknown>).originalError = error;
+    (enhanced as Record<string, unknown>).errorType = type;
+    (enhanced as Record<string, unknown>).timestamp = new Date().toISOString();
+    (enhanced as Record<string, unknown>).processUptime = process.uptime();
     return enhanced;
   }
 
@@ -308,7 +303,7 @@ export class GlobalErrorHandler {
   } {
     const uptime = process.uptime();
     const totalErrors = this.state.uncaughtExceptions + this.state.unhandledRejections;
-    const errorRate = uptime > 0 ? (totalErrors / (uptime / 60)) : 0;
+    const errorRate = uptime > 0 ? totalErrors / (uptime / 60) : 0;
 
     return {
       uncaughtExceptions: this.state.uncaughtExceptions,
@@ -348,8 +343,8 @@ export function getGlobalErrorStatistics(): ReturnType<GlobalErrorHandler['getSt
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🧪 Global Error Handler Test Mode');
-  console.log('=================================\n');
+  console.info('🧪 Global Error Handler Test Mode');
+  console.info('=================================\n');
 
   initializeGlobalErrorHandling({
     exitOnUncaughtException: false,
@@ -359,12 +354,12 @@ if (import.meta.main) {
 
   // Register test shutdown handler
   onShutdown(async () => {
-    console.log('📝 Test shutdown handler executed');
+    console.info('📝 Test shutdown handler executed');
     await Bun.sleep(100);
   });
 
-  console.log('Global error handler initialized. Stats:');
-  console.log(getGlobalErrorStatistics());
+  console.info('Global error handler initialized. Stats:');
+  console.info(getGlobalErrorStatistics());
 
-  console.log('\nTest complete. Press Ctrl+C to test shutdown handlers.');
+  console.info('\nTest complete. Press Ctrl+C to test shutdown handlers.');
 }

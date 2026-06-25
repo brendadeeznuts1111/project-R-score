@@ -29,7 +29,7 @@ class HealthScoreDashboard {
     }
 
     async calculateHealth(): Promise<HealthMetrics> {
-        console.log('💚 Calculating vault health score...');
+        console.info('💚 Calculating vault health score...');
 
         // In real implementation, this would:
         // 1. Run actual validation on all files
@@ -156,7 +156,7 @@ class HealthScoreDashboard {
             const eventSource = new EventSource('/api/health-updates');
             eventSource.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log('Health update received:', data);
+                console.info('Health update received:', data);
             };
         }
     </script>
@@ -165,7 +165,7 @@ class HealthScoreDashboard {
     }
 
     async startDashboardServer(port: number = 3000) {
-        console.log(`🚀 Starting health dashboard on http://localhost:${port}`);
+        console.info(`🚀 Starting health dashboard on http://localhost:${port}`);
 
         const dashboard = await this.generateDashboard();
 
@@ -190,8 +190,8 @@ class HealthScoreDashboard {
             }
         });
 
-        console.log(`✅ Dashboard running at http://localhost:${port}`);
-        console.log(`📊 Health API: http://localhost:${port}/api/health`);
+        console.info(`✅ Dashboard running at http://localhost:${port}`);
+        console.info(`📊 Health API: http://localhost:${port}/api/health`);
 
         return server;
     }
@@ -210,30 +210,30 @@ async function main() {
 
         // Handle graceful shutdown
         process.on('SIGINT', () => {
-            console.log('\n🛑 Shutting down dashboard...');
+            console.info('\n🛑 Shutting down dashboard...');
             server.stop();
             process.exit(0);
         });
 
         // Keep process alive
-        console.log('⏳ Dashboard running... (Press Ctrl+C to stop)');
+        console.info('⏳ Dashboard running... (Press Ctrl+C to stop)');
     } else {
         const metrics = await dashboard.calculateHealth();
-        console.log('\n💚 Vault Health Score');
-        console.log('='.repeat(30));
-        console.log(`📊 Overall: ${metrics.overall.score}% (Grade: ${metrics.overall.grade.toUpperCase()})`);
-        console.log(`📈 Trend: ${metrics.overall.trend}`);
-        console.log(`🕐 Last Updated: ${new Date(metrics.lastUpdated).toLocaleString()}`);
+        console.info('\n💚 Vault Health Score');
+        console.info('='.repeat(30));
+        console.info(`📊 Overall: ${metrics.overall.score}% (Grade: ${metrics.overall.grade.toUpperCase()})`);
+        console.info(`📈 Trend: ${metrics.overall.trend}`);
+        console.info(`🕐 Last Updated: ${new Date(metrics.lastUpdated).toLocaleString()}`);
 
-        console.log('\n📋 Category Breakdown:');
+        console.info('\n📋 Category Breakdown:');
         Object.entries(metrics.categories).forEach(([category, data]) => {
             const grade = data.score >= 90 ? 'A' : data.score >= 80 ? 'B' : data.score >= 70 ? 'C' : data.score >= 60 ? 'D' : 'F';
-            console.log(`  ${category}: ${data.score}% (Grade: ${grade}) - ${data.issues} issues`);
+            console.info(`  ${category}: ${data.score}% (Grade: ${grade}) - ${data.issues} issues`);
         });
 
-        console.log('\n💡 Top Recommendations:');
+        console.info('\n💡 Top Recommendations:');
         metrics.recommendations.slice(0, 3).forEach((rec, i) => {
-            console.log(`  ${i + 1}. ${rec}`);
+            console.info(`  ${i + 1}. ${rec}`);
         });
     }
 }

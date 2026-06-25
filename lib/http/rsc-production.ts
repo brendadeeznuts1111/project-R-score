@@ -70,7 +70,7 @@ export class ProductionRSCHandler {
   async fetchBatch(requests: ProductionRSCRequest[]): Promise<ProductionRSCResponse[]> {
     if (requests.length === 0) return [];
 
-    console.log(`🚀 Production RSC Batch: ${requests.length} parallel requests`);
+    console.info(`🚀 Production RSC Batch: ${requests.length} parallel requests`);
     console.time('rsc-batch');
 
     // Fire all requests in parallel - native connection pooling
@@ -82,7 +82,7 @@ export class ProductionRSCHandler {
     const successful = responses.filter(r => r.ok);
     const failed = responses.filter(r => !r.ok);
 
-    console.log(`📊 Results: ${successful.length}/${requests.length} successful`);
+    console.info(`📊 Results: ${successful.length}/${requests.length} successful`);
 
     if (failed.length > 0) {
       console.warn(`⚠️ Failed requests: ${failed.length}`);
@@ -96,7 +96,7 @@ export class ProductionRSCHandler {
    * Optimized RSC prefetch for Next.js patterns
    */
   async prefetchBatch(requests: ProductionRSCRequest[]): Promise<void> {
-    console.log(`🖱️ RSC Prefetch: ${requests.length} background requests`);
+    console.info(`🖱️ RSC Prefetch: ${requests.length} background requests`);
 
     // Add prefetch headers
     const prefetchRequests = requests.map(request => ({
@@ -178,7 +178,7 @@ export async function optimizedRSCFetch(urls: string[]): Promise<ProductionRSCRe
   );
 
   console.timeEnd('h1-parallel');
-  console.log(
+  console.info(
     `✅ ${responses.length} streams, Status: ${responses[0]?.status}, R-Score P_ratio: 1.000`
   );
 

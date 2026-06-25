@@ -94,7 +94,9 @@ export class SkillRouter {
       try {
         const meta = JSON.parse(metaMatch[1]);
         emoji = meta.clawdbot?.emoji || emoji;
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
 
     // Extract triggers from content

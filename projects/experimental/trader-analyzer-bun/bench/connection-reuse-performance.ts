@@ -12,8 +12,8 @@ async function benchmarkConnectionReuse() {
   const iterations = 100
   const start = performance.now()
 
-  console.log("Starting connection reuse benchmark...")
-  console.log(`Making ${iterations} requests to test connection pooling...`)
+  console.info("Starting connection reuse benchmark...")
+  console.info(`Making ${iterations} requests to test connection pooling...`)
 
   // Simulate 100 market data polls (these will fail but we measure timing)
   const promises = Array.from(
@@ -27,57 +27,57 @@ async function benchmarkConnectionReuse() {
   const avgLatency = duration / iterations
   const stats = client.getAgentStats()
 
-  console.log("\n=== Benchmark Results ===")
-  console.log(`Iterations: ${iterations}`)
-  console.log(`Total Duration: ${duration.toFixed(2)}ms`)
-  console.log(`Avg Latency: ${avgLatency.toFixed(2)}ms`)
-  console.log(`Sockets Created: ${stats.totalSocketCount}`)
-  console.log(`Connections Reused: ${stats.reusedConnections}`)
-  console.log(`Socket Errors: ${stats.connectionErrors}`)
-  console.log(`Reuse Rate: ${(stats.reuseRate * 100).toFixed(1)}%`)
+  console.info("\n=== Benchmark Results ===")
+  console.info(`Iterations: ${iterations}`)
+  console.info(`Total Duration: ${duration.toFixed(2)}ms`)
+  console.info(`Avg Latency: ${avgLatency.toFixed(2)}ms`)
+  console.info(`Sockets Created: ${stats.totalSocketCount}`)
+  console.info(`Connections Reused: ${stats.reusedConnections}`)
+  console.info(`Socket Errors: ${stats.connectionErrors}`)
+  console.info(`Reuse Rate: ${(stats.reuseRate * 100).toFixed(1)}%`)
 
   // Performance expectations (Bun v1.3.51.1)
   const expectedMaxLatency = 50 // ms
   const expectedMinReuseRate = 0.8 // 80%
 
-  console.log("\n=== Validation ===")
+  console.info("\n=== Validation ===")
 
   if (avgLatency <= expectedMaxLatency) {
-    console.log(`✅ Avg latency ${avgLatency.toFixed(2)}ms ≤ ${expectedMaxLatency}ms (PASS)`)
+    console.info(`✅ Avg latency ${avgLatency.toFixed(2)}ms ≤ ${expectedMaxLatency}ms (PASS)`)
   } else {
-    console.log(`❌ Avg latency ${avgLatency.toFixed(2)}ms > ${expectedMaxLatency}ms (FAIL)`)
+    console.info(`❌ Avg latency ${avgLatency.toFixed(2)}ms > ${expectedMaxLatency}ms (FAIL)`)
   }
 
   if (stats.reuseRate >= expectedMinReuseRate) {
-    console.log(
+    console.info(
       `✅ Reuse rate ${(stats.reuseRate * 100).toFixed(1)}% ≥ ${(expectedMinReuseRate * 100).toFixed(1)}% (PASS)`
     )
   } else {
-    console.log(
+    console.info(
       `❌ Reuse rate ${(stats.reuseRate * 100).toFixed(1)}% < ${(expectedMinReuseRate * 100).toFixed(1)}% (FAIL)`
     )
   }
 
   if (stats.connectionErrors === 0) {
-    console.log("✅ Zero connection errors (PASS)")
+    console.info("✅ Zero connection errors (PASS)")
   } else {
-    console.log(`❌ ${stats.connectionErrors} connection errors (FAIL)`)
+    console.info(`❌ ${stats.connectionErrors} connection errors (FAIL)`)
   }
 
-  console.log("\n=== Comparison with Pre-Fix ===")
-  console.log("Pre-fix (Bun v1.3.50):")
-  console.log("  - Avg Latency: ~45ms")
-  console.log("  - Sockets Created: 100")
-  console.log("  - Connections Reused: 0")
-  console.log("  - Socket Errors: 3-4")
-  console.log("")
-  console.log("Post-fix (Bun v1.3.51.1):")
-  console.log(
+  console.info("\n=== Comparison with Pre-Fix ===")
+  console.info("Pre-fix (Bun v1.3.50):")
+  console.info("  - Avg Latency: ~45ms")
+  console.info("  - Sockets Created: 100")
+  console.info("  - Connections Reused: 0")
+  console.info("  - Socket Errors: 3-4")
+  console.info("")
+  console.info("Post-fix (Bun v1.3.51.1):")
+  console.info(
     `  - Avg Latency: ~${avgLatency.toFixed(2)}ms (${(((45 - avgLatency) / 45) * 100).toFixed(1)}% improvement)`
   )
-  console.log(`  - Sockets Created: ${stats.totalSocketCount}`)
-  console.log(`  - Connections Reused: ${stats.reusedConnections}`)
-  console.log(`  - Socket Errors: ${stats.connectionErrors}`)
+  console.info(`  - Sockets Created: ${stats.totalSocketCount}`)
+  console.info(`  - Connections Reused: ${stats.reusedConnections}`)
+  console.info(`  - Socket Errors: ${stats.connectionErrors}`)
 
   await client.destroy()
 
@@ -97,7 +97,7 @@ async function benchmarkConnectionReuse() {
 // Run the benchmark
 benchmarkConnectionReuse()
   .then((results) => {
-    console.log(`\nBenchmark ${results.passed ? "PASSED" : "FAILED"}`)
+    console.info(`\nBenchmark ${results.passed ? "PASSED" : "FAILED"}`)
     process.exit(results.passed ? 0 : 1)
   })
   .catch((error) => {

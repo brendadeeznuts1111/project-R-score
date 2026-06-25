@@ -134,38 +134,38 @@ async function loadMessageLogs(): Promise<DashboardData["telegram"]["messages"]>
 }
 
 async function main(): Promise<void> {
-	console.log(`📊 Generating dashboard data...\n`);
-	console.log(`   API: ${API_BASE}`);
-	console.log(`   Output: ${OUTPUT_FILE}\n`);
+	console.info(`📊 Generating dashboard data...\n`);
+	console.info(`   API: ${API_BASE}`);
+	console.info(`   Output: ${OUTPUT_FILE}\n`);
 
 	const data: DashboardData = {
 		timestamp: new Date().toISOString(),
 	};
 
 	// Fetch API status
-	console.log(`🔍 Fetching API status...`);
+	console.info(`🔍 Fetching API status...`);
 	const apiHealth = await fetchAPIHealth();
 	const endpointCount = await fetchAPIDiscovery();
 	data.api = {
 		...apiHealth,
 		endpoints: endpointCount,
 	};
-	console.log(`   Status: ${data.api.status}`);
+	console.info(`   Status: ${data.api.status}`);
 
 	// Fetch Telegram data
-	console.log(`🔍 Fetching Telegram data...`);
+	console.info(`🔍 Fetching Telegram data...`);
 	const telegramData = await fetchTelegramStatus();
 	const messages = await loadMessageLogs();
 	data.telegram = {
 		...telegramData,
 		messages: messages.length > 0 ? messages : undefined,
 	};
-	console.log(`   Topics: ${data.telegram.topics?.length || 0}`);
-	console.log(`   Messages: ${data.telegram.messages?.length || 0}`);
+	console.info(`   Topics: ${data.telegram.topics?.length || 0}`);
+	console.info(`   Messages: ${data.telegram.messages?.length || 0}`);
 
 	// Write output
 	await Bun.write(OUTPUT_FILE, JSON.stringify(data, null, 2));
-	console.log(`\n✅ Dashboard data written to: ${OUTPUT_FILE}`);
+	console.info(`\n✅ Dashboard data written to: ${OUTPUT_FILE}`);
 }
 
 main().catch((error) => {

@@ -87,23 +87,23 @@ function hexToHsl(hex: string): string {
 const command = process.argv[2];
 const arg = process.argv[3];
 
-console.log("🚀 T3-Lattice Registry CLI v3.3\n");
+console.info("🚀 T3-Lattice Registry CLI v3.3\n");
 
 switch (command) {
   case "stats":
-    console.log("📊 Registry Metrics:");
-    console.log(`   Total Components: ${COMPONENTS.length}`);
-    console.log(`   Categories: ${new Set(COMPONENTS.map(c => c.category)).size}`);
-    console.log(`   Stable Components: ${COMPONENTS.filter(c => c.status === 'stable').length}`);
-    console.log(`   Beta Components: ${COMPONENTS.filter(c => c.status === 'beta').length}`);
-    console.log(`   Experimental: ${COMPONENTS.filter(c => c.status === 'experimental').length}`);
-    console.log(`   Color Families: ${new Set(COMPONENTS.map(c => c.hex)).size}`);
-    console.log(`   Pattern Types: ${new Set(COMPONENTS.map(c => c.pattern)).size}`);
+    console.info("📊 Registry Metrics:");
+    console.info(`   Total Components: ${COMPONENTS.length}`);
+    console.info(`   Categories: ${new Set(COMPONENTS.map(c => c.category)).size}`);
+    console.info(`   Stable Components: ${COMPONENTS.filter(c => c.status === 'stable').length}`);
+    console.info(`   Beta Components: ${COMPONENTS.filter(c => c.status === 'beta').length}`);
+    console.info(`   Experimental: ${COMPONENTS.filter(c => c.status === 'experimental').length}`);
+    console.info(`   Color Families: ${new Set(COMPONENTS.map(c => c.hex)).size}`);
+    console.info(`   Pattern Types: ${new Set(COMPONENTS.map(c => c.pattern)).size}`);
     break;
 
   case "colors":
-    console.log("🎨 Color Palette:");
-    console.log("═".repeat(60));
+    console.info("🎨 Color Palette:");
+    console.info("═".repeat(60));
     const colorGroups = new Map<string, Component[]>();
     for (const comp of COMPONENTS) {
       if (!colorGroups.has(comp.hex)) {
@@ -113,78 +113,78 @@ switch (command) {
     }
     for (const [hex, comps] of colorGroups) {
       const hsl = hexToHsl(hex);
-      console.log(`${hex} ${hsl.padEnd(18)} ${comps.map(c => "#" + c.id.toString().padStart(2, "0")).join(" ")}`);
+      console.info(`${hex} ${hsl.padEnd(18)} ${comps.map(c => "#" + c.id.toString().padStart(2, "0")).join(" ")}`);
     }
     break;
 
   case "list":
-    console.log("📦 Components:");
-    console.log("═".repeat(80));
+    console.info("📦 Components:");
+    console.info("═".repeat(80));
     for (const comp of COMPONENTS) {
-      console.log(`${comp.hex}● #${comp.id.toString().padStart(2, "0")} ${comp.name.padEnd(25)} ${comp.category?.padEnd(12) || "N/A".padEnd(12)} ${comp.status || "unknown"}`);
+      console.info(`${comp.hex}● #${comp.id.toString().padStart(2, "0")} ${comp.name.padEnd(25)} ${comp.category?.padEnd(12) || "N/A".padEnd(12)} ${comp.status || "unknown"}`);
     }
-    console.log("═".repeat(80));
+    console.info("═".repeat(80));
     break;
 
   case "get":
     if (!arg) {
-      console.log("Usage: get <id>");
+      console.info("Usage: get <id>");
       break;
     }
     const comp = getComponentById(Number(arg));
     if (!comp) {
-      console.log(`Component #${arg} not found`);
+      console.info(`Component #${arg} not found`);
     } else {
-      console.log(`\n📦 Component #${comp.id}: ${comp.name}`);
-      console.log(`   Color: ${comp.hex} (${comp.hsl})`);
-      console.log(`   Slot: ${comp.slot}`);
-      console.log(`   Pattern: ${comp.pattern}`);
-      console.log(`   Category: ${comp.category}`);
-      console.log(`   Status: ${comp.status}`);
-      console.log(`   Bun Version: ${comp.bunVersion}`);
-      console.log(`   Groups: ${(comp.groups || []).join(", ")}`);
-      console.log(`   Views: ${(comp.views || []).join(", ")}\n`);
+      console.info(`\n📦 Component #${comp.id}: ${comp.name}`);
+      console.info(`   Color: ${comp.hex} (${comp.hsl})`);
+      console.info(`   Slot: ${comp.slot}`);
+      console.info(`   Pattern: ${comp.pattern}`);
+      console.info(`   Category: ${comp.category}`);
+      console.info(`   Status: ${comp.status}`);
+      console.info(`   Bun Version: ${comp.bunVersion}`);
+      console.info(`   Groups: ${(comp.groups || []).join(", ")}`);
+      console.info(`   Views: ${(comp.views || []).join(", ")}\n`);
     }
     break;
 
   case "views":
-    console.log("👁️  Available Views:");
+    console.info("👁️  Available Views:");
     for (const [name, view] of Object.entries(VIEWS)) {
-      console.log(`   ${name}: ${view.description} (${view.componentIds.length} components)`);
+      console.info(`   ${name}: ${view.description} (${view.componentIds.length} components)`);
     }
     break;
 
   case "view":
     if (!arg || !VIEWS[arg as keyof typeof VIEWS]) {
-      console.log("Usage: view <overview|detail|expert>");
+      console.info("Usage: view <overview|detail|expert>");
       break;
     }
     const components = getViewComponents(arg as keyof typeof VIEWS);
-    console.log(`\n📋 ${VIEWS[arg as keyof typeof VIEWS].name} View (${components.length} components):`);
+    console.info(`\n📋 ${VIEWS[arg as keyof typeof VIEWS].name} View (${components.length} components):`);
     for (const comp of components) {
-      console.log(`   ${comp.hex}● ${comp.name}`);
+      console.info(`   ${comp.hex}● ${comp.name}`);
     }
-    console.log();
+    console.info();
     break;
 
   case "patterns":
-    console.log("🔷 Pattern Types:");
+    console.info("🔷 Pattern Types:");
     const patternCounts = new Map<string, number>();
     for (const comp of COMPONENTS) {
       patternCounts.set(comp.pattern, (patternCounts.get(comp.pattern) || 0) + 1);
     }
     for (const [pattern, count] of patternCounts) {
-      console.log(`   ${pattern}: ${count} components`);
+      console.info(`   ${pattern}: ${count} components`);
     }
     break;
 
   default:
-    console.log("Available commands:");
-    console.log("  stats      Show registry metrics");
-    console.log("  colors     Display color palette");
-    console.log("  list       List all components");
-    console.log("  get <id>   Get component details");
-    console.log("  views      List available views");
-    console.log("  view <name> Show components in view");
-    console.log("  patterns   Show pattern distribution");
+    console.info("Available commands:");
+    console.info("  stats      Show registry metrics");
+    console.info("  colors     Display color palette");
+    console.info("  list       List all components");
+    console.info("  get <id>   Get component details");
+    console.info("  views      List available views");
+    console.info("  view <name> Show components in view");
+    console.info("  patterns   Show pattern distribution");
 }

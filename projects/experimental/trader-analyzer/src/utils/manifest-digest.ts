@@ -169,7 +169,7 @@ export class ManifestDigest {
 	 * //   const current = await Bun.file('manifest.yaml').arrayBuffer();
 	 * //   const checksum = ManifestDigest.computeChecksum(new Uint8Array(current));
 	 * //   if (checksum !== lastChecksum) {
-	 * //     console.log('Manifest changed!');
+	 * //     console.info('Manifest changed!');
 	 * //     lastChecksum = checksum;
 	 * //   }
 	 * // }, 1000);

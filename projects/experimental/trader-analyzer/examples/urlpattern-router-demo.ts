@@ -18,7 +18,7 @@
 import { URLPatternRouter } from '../src/api/routers/urlpattern-router';
 
 async function main() {
-	console.log('🚀 URLPattern Router Demo\n');
+	console.info('🚀 URLPattern Router Demo\n');
 
 	// Create router instance
 	const router = new URLPatternRouter({
@@ -29,7 +29,7 @@ async function main() {
 	// ============================================
 	// Example 1: Basic Route Registration
 	// ============================================
-	console.log('📝 Example 1: Basic Route Registration');
+	console.info('📝 Example 1: Basic Route Registration');
 	
 	router.get('/api/users', () => {
 		return Response.json({ users: ['alice', 'bob', 'charlie'] });
@@ -44,12 +44,12 @@ async function main() {
 		return Response.json({ created: true, user: body }, { status: 201 });
 	});
 
-	console.log('✅ Registered 3 routes\n');
+	console.info('✅ Registered 3 routes\n');
 
 	// ============================================
 	// Example 2: Parameter Extraction
 	// ============================================
-	console.log('📝 Example 2: Parameter Extraction');
+	console.info('📝 Example 2: Parameter Extraction');
 	
 	router.get('/api/users/:userId/posts/:postId', (req, ctx, groups) => {
 		return Response.json({
@@ -68,16 +68,16 @@ async function main() {
 		});
 	});
 
-	console.log('✅ Registered parameter extraction routes\n');
+	console.info('✅ Registered parameter extraction routes\n');
 
 	// ============================================
 	// Example 3: Middleware
 	// ============================================
-	console.log('📝 Example 3: Middleware');
+	console.info('📝 Example 3: Middleware');
 	
 	// Global middleware
 	router.use(async (req) => {
-		console.log(`  📊 ${req.method} ${req.url}`);
+		console.info(`  📊 ${req.method} ${req.url}`);
 	});
 
 	// Route-specific middleware
@@ -95,12 +95,12 @@ async function main() {
 		name: 'admin-action',
 	});
 
-	console.log('✅ Registered middleware routes\n');
+	console.info('✅ Registered middleware routes\n');
 
 	// ============================================
 	// Example 4: Error Handling
 	// ============================================
-	console.log('📝 Example 4: Error Handling');
+	console.info('📝 Example 4: Error Handling');
 	
 	router.get('/api/data/:id', async (req, ctx, groups) => {
 		const id = parseInt(groups.id);
@@ -118,12 +118,12 @@ async function main() {
 		}
 	});
 
-	console.log('✅ Registered error handling routes\n');
+	console.info('✅ Registered error handling routes\n');
 
 	// ============================================
 	// Example 5: Testing Routes
 	// ============================================
-	console.log('📝 Example 5: Testing Routes');
+	console.info('📝 Example 5: Testing Routes');
 	
 	const testCases = [
 		{ method: 'GET', url: 'http://localhost/api/users', expected: 200 },
@@ -139,42 +139,42 @@ async function main() {
 		const request = new Request(testCase.url, { method: testCase.method });
 		const response = await router.handle(request);
 		const status = response.status === testCase.expected ? '✅' : '❌';
-		console.log(`  ${status} ${testCase.method} ${testCase.url} → ${response.status} (expected ${testCase.expected})`);
+		console.info(`  ${status} ${testCase.method} ${testCase.url} → ${response.status} (expected ${testCase.expected})`);
 	}
 
-	console.log();
+	console.info();
 
 	// ============================================
 	// Example 6: Performance Metrics
 	// ============================================
-	console.log('📝 Example 6: Performance Metrics');
+	console.info('📝 Example 6: Performance Metrics');
 	
 	const metrics = router.getMetrics();
-	console.log('  📊 Router Metrics:');
-	console.log(`     Total Routes: ${metrics.totalRoutes}`);
-	console.log(`     Total Requests: ${metrics.totalRequests}`);
-	console.log(`     Average Response Time: ${metrics.averageResponseTime.toFixed(2)}ms`);
-	console.log(`     Cache Hit Rate: ${metrics.cacheHitRate.toFixed(1)}%`);
-	console.log(`     Error Rate: ${metrics.errorRate.toFixed(2)}%`);
-	console.log(`     Throughput: ${metrics.throughput.toFixed(0)} req/sec`);
-	console.log();
+	console.info('  📊 Router Metrics:');
+	console.info(`     Total Routes: ${metrics.totalRoutes}`);
+	console.info(`     Total Requests: ${metrics.totalRequests}`);
+	console.info(`     Average Response Time: ${metrics.averageResponseTime.toFixed(2)}ms`);
+	console.info(`     Cache Hit Rate: ${metrics.cacheHitRate.toFixed(1)}%`);
+	console.info(`     Error Rate: ${metrics.errorRate.toFixed(2)}%`);
+	console.info(`     Throughput: ${metrics.throughput.toFixed(0)} req/sec`);
+	console.info();
 
 	// ============================================
 	// Example 7: Route Inspection
 	// ============================================
-	console.log('📝 Example 7: Route Inspection');
+	console.info('📝 Example 7: Route Inspection');
 	
 	const routes = router.getRoutes();
-	console.log(`  📋 Registered Routes (${routes.length}):`);
+	console.info(`  📋 Registered Routes (${routes.length}):`);
 	routes.forEach((route) => {
-		console.log(`     ${route.method} ${route.metadata.path}${route.metadata.name ? ` (${route.metadata.name})` : ''}`);
+		console.info(`     ${route.method} ${route.metadata.path}${route.metadata.name ? ` (${route.metadata.name})` : ''}`);
 	});
-	console.log();
+	console.info();
 
 	// ============================================
 	// Example 8: REST API Pattern
 	// ============================================
-	console.log('📝 Example 8: REST API Pattern');
+	console.info('📝 Example 8: REST API Pattern');
 	
 	const restRouter = new URLPatternRouter();
 	
@@ -191,12 +191,12 @@ async function main() {
 		Response.json({ id: groups.id, deleted: true })
 	);
 
-	console.log('✅ Registered REST API routes');
-	console.log(`   Routes: ${restRouter.getRoutes().length}`);
-	console.log();
+	console.info('✅ Registered REST API routes');
+	console.info(`   Routes: ${restRouter.getRoutes().length}`);
+	console.info();
 
-	console.log('✅ Demo complete!');
-	console.log('\n📚 See docs/operators/url-pattern-quickref.md for more examples');
+	console.info('✅ Demo complete!');
+	console.info('\n📚 See docs/operators/url-pattern-quickref.md for more examples');
 }
 
 main().catch(console.error);

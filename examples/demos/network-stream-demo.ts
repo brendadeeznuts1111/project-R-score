@@ -11,8 +11,8 @@ import { FetchAndRipStreamer, DOCUMENTATION_URLS, NetworkDocumentationSearcher }
  * Demo 1: Basic Network-to-Process Streaming
  */
 async function demoBasicStreaming() {
-  console.log('🌐 Demo 1: Basic Network-to-Process Streaming');
-  console.log('=' .repeat(60));
+  console.info('🌐 Demo 1: Basic Network-to-Process Streaming');
+  console.info('=' .repeat(60));
   
   const streamer = new FetchAndRipStreamer();
   
@@ -27,8 +27,8 @@ async function demoBasicStreaming() {
  * Demo 2: Multi-Query Streaming
  */
 async function demoMultiQuery() {
-  console.log('\n🔍 Demo 2: Multi-Query Streaming');
-  console.log('=' .repeat(60));
+  console.info('\n🔍 Demo 2: Multi-Query Streaming');
+  console.info('=' .repeat(60));
   
   const streamer = new FetchAndRipStreamer();
   
@@ -43,8 +43,8 @@ async function demoMultiQuery() {
  * Demo 3: JSON Processing Pipeline
  */
 async function demoJSONProcessing() {
-  console.log('\n🧠 Demo 3: JSON Processing Pipeline');
-  console.log('=' .repeat(60));
+  console.info('\n🧠 Demo 3: JSON Processing Pipeline');
+  console.info('=' .repeat(60));
   
   const streamer = new FetchAndRipStreamer();
   
@@ -54,11 +54,11 @@ async function demoJSONProcessing() {
     "bun"
   );
   
-  console.log('\n📊 Structured Results:');
+  console.info('\n📊 Structured Results:');
   results.forEach((result, i) => {
-    console.log(`${i + 1}. Line ${result.line}: ${result.content}`);
+    console.info(`${i + 1}. Line ${result.line}: ${result.content}`);
     if (result.submatches.length > 0) {
-      console.log(`   📍 Submatches: ${result.submatches.join(', ')}`);
+      console.info(`   📍 Submatches: ${result.submatches.join(', ')}`);
     }
   });
 }
@@ -67,8 +67,8 @@ async function demoJSONProcessing() {
  * Demo 4: Zen Network Search Integration
  */
 async function demoZenNetworkSearch() {
-  console.log('\n🔮 Demo 4: Zen Network Search Integration');
-  console.log('=' .repeat(60));
+  console.info('\n🔮 Demo 4: Zen Network Search Integration');
+  console.info('=' .repeat(60));
   
   const networkSearcher = new NetworkDocumentationSearcher();
   
@@ -79,14 +79,14 @@ async function demoZenNetworkSearch() {
       "performance"
     );
     
-    console.log(`📈 Search Stats:`);
-    console.log(`   Matches: ${stats.matchesFound}`);
-    console.log(`   Files: ${stats.filesSearched}`);
-    console.log(`   Bytes: ${stats.bytesProcessed}`);
-    console.log(`   Time: ${stats.elapsedTime.toFixed(2)}ms`);
+    console.info(`📈 Search Stats:`);
+    console.info(`   Matches: ${stats.matchesFound}`);
+    console.info(`   Files: ${stats.filesSearched}`);
+    console.info(`   Bytes: ${stats.bytesProcessed}`);
+    console.info(`   Time: ${stats.elapsedTime.toFixed(2)}ms`);
     
   } catch (error) {
-    console.log(`⚠️ Network search failed (expected in some environments): ${error.message}`);
+    console.info(`⚠️ Network search failed (expected in some environments): ${error.message}`);
   }
 }
 
@@ -94,14 +94,14 @@ async function demoZenNetworkSearch() {
  * Demo 5: Performance Comparison
  */
 async function demoPerformanceComparison() {
-  console.log('\n⚡ Demo 5: Performance Comparison');
-  console.log('=' .repeat(60));
+  console.info('\n⚡ Demo 5: Performance Comparison');
+  console.info('=' .repeat(60));
   
   const url = DOCUMENTATION_URLS.llms;
   const query = "bun";
   
   // Method 1: Download then search (traditional)
-  console.log('📥 Traditional: Download → Search');
+  console.info('📥 Traditional: Download → Search');
   const downloadStart = performance.now();
   const response = await fetch(url);
   const text = await response.text();
@@ -116,13 +116,13 @@ async function demoPerformanceComparison() {
   const searchResult = await searchProc.stdout.text();
   const searchTime = performance.now() - searchStart;
   
-  console.log(`   Download: ${downloadTime.toFixed(2)}ms`);
-  console.log(`   Search: ${searchTime.toFixed(2)}ms`);
-  console.log(`   Total: ${(downloadTime + searchTime).toFixed(2)}ms`);
-  console.log(`   Matches: ${searchResult.trim()}`);
+  console.info(`   Download: ${downloadTime.toFixed(2)}ms`);
+  console.info(`   Search: ${searchTime.toFixed(2)}ms`);
+  console.info(`   Total: ${(downloadTime + searchTime).toFixed(2)}ms`);
+  console.info(`   Matches: ${searchResult.trim()}`);
   
   // Method 2: Direct streaming (revolutionary)
-  console.log('\n🚀 Revolutionary: Direct Stream');
+  console.info('\n🚀 Revolutionary: Direct Stream');
   const streamStart = performance.now();
   const streamProc = (Bun as any).spawn(['rg', '-c', query], {
     stdin: await fetch(url),
@@ -131,9 +131,9 @@ async function demoPerformanceComparison() {
   const streamResult = await streamProc.stdout.text();
   const streamTime = performance.now() - streamStart;
   
-  console.log(`   Streaming: ${streamTime.toFixed(2)}ms`);
-  console.log(`   Matches: ${streamResult.trim()}`);
-  console.log(`   Speedup: ${((downloadTime + searchTime) / streamTime).toFixed(2)}x faster`);
+  console.info(`   Streaming: ${streamTime.toFixed(2)}ms`);
+  console.info(`   Matches: ${streamResult.trim()}`);
+  console.info(`   Speedup: ${((downloadTime + searchTime) / streamTime).toFixed(2)}x faster`);
   
   // Cleanup
   await (Bun as any).file(tempFile).delete();
@@ -143,8 +143,8 @@ async function demoPerformanceComparison() {
  * Demo 6: Real-time URL Analysis
  */
 async function demoRealtimeAnalysis() {
-  console.log('\n📊 Demo 6: Real-time URL Analysis');
-  console.log('=' .repeat(60));
+  console.info('\n📊 Demo 6: Real-time URL Analysis');
+  console.info('=' .repeat(60));
   
   const streamer = new FetchAndRipStreamer();
   
@@ -156,20 +156,20 @@ async function demoRealtimeAnalysis() {
   ];
   
   for (const analysis of analyses) {
-    console.log(`\n🔍 Analyzing: ${analysis.url.split('/').pop()}`);
-    console.log(`📋 Query: ${analysis.query}`);
+    console.info(`\n🔍 Analyzing: ${analysis.url.split('/').pop()}`);
+    console.info(`📋 Query: ${analysis.query}`);
     
     try {
       const results = await streamer.searchWithProcessing(analysis.url, analysis.query);
-      console.log(`📈 Found ${results.length} matches`);
+      console.info(`📈 Found ${results.length} matches`);
       
       // Show first 2 results
       results.slice(0, 2).forEach((result, i) => {
-        console.log(`   ${i + 1}. ${result.content.substring(0, 60)}...`);
+        console.info(`   ${i + 1}. ${result.content.substring(0, 60)}...`);
       });
       
     } catch (error) {
-      console.log(`   ⚠️ Analysis failed: ${error.message}`);
+      console.info(`   ⚠️ Analysis failed: ${error.message}`);
     }
   }
 }
@@ -178,9 +178,9 @@ async function demoRealtimeAnalysis() {
  * Main demonstration runner
  */
 async function runNetworkStreamDemo() {
-  console.log('🌐 Network-to-Process Streaming Showcase');
-  console.log('🚀 Demonstrating fetch() → Bun.spawn Zero-Copy Streaming');
-  console.log('=' .repeat(80));
+  console.info('🌐 Network-to-Process Streaming Showcase');
+  console.info('🚀 Demonstrating fetch() → Bun.spawn Zero-Copy Streaming');
+  console.info('=' .repeat(80));
   
   try {
     await demoBasicStreaming();
@@ -190,13 +190,13 @@ async function runNetworkStreamDemo() {
     await demoPerformanceComparison();
     await demoRealtimeAnalysis();
     
-    console.log('\n🎉 Network Streaming Demo Complete!');
-    console.log('💡 Revolutionary Benefits:');
-    console.log('   - Zero-copy: No intermediate files');
-    console.log('   - Memory efficient: Stream directly from network');
-    console.log('   - Fast: Eliminates download+search overhead');
-    console.log('   - Flexible: Any URL, any tool, any format');
-    console.log('   - Web Standards: Uses native fetch() and ReadableStream');
+    console.info('\n🎉 Network Streaming Demo Complete!');
+    console.info('💡 Revolutionary Benefits:');
+    console.info('   - Zero-copy: No intermediate files');
+    console.info('   - Memory efficient: Stream directly from network');
+    console.info('   - Fast: Eliminates download+search overhead');
+    console.info('   - Flexible: Any URL, any tool, any format');
+    console.info('   - Web Standards: Uses native fetch() and ReadableStream');
     
   } catch (error) {
     console.error('❌ Demo error:', error);

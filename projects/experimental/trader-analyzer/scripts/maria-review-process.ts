@@ -73,14 +73,14 @@ async function approveAndPublish(
 		process.exit(1);
 	}
 
-	console.log(`✅ PR approved: ${review.message}`);
+	console.info(`✅ PR approved: ${review.message}`);
 
 	// Publish as release candidate
-	console.log(`📦 Publishing ${packageName} as release candidate...`);
+	console.info(`📦 Publishing ${packageName} as release candidate...`);
 	const { $ } = await import("bun");
 	await $`bun run scripts/team-publish.ts ${packageName} --tag=rc`;
 
-	console.log(`✅ Published ${packageName}@rc`);
+	console.info(`✅ Published ${packageName}@rc`);
 }
 
 // Example usage
@@ -100,9 +100,9 @@ if (import.meta.main) {
 
 	const packageName = process.argv[2] || "@graph/layer2";
 	
-	console.log(`📋 Reviewing PR for ${packageName}`);
-	console.log(`   Team Lead: Sarah Kumar`);
-	console.log(`   Reviewers: Sarah Kumar, Mike Rodriguez`);
+	console.info(`📋 Reviewing PR for ${packageName}`);
+	console.info(`   Team Lead: Sarah Kumar`);
+	console.info(`   Reviewers: Sarah Kumar, Mike Rodriguez`);
 
 	approveAndPublish(packageName, benchmarkResults).catch((error) => {
 		console.error(`❌ Error: ${error.message}`);

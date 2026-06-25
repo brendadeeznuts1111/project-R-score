@@ -12,37 +12,37 @@ import fs from 'fs';
 // Make this file a module
 export {};
 
-console.log('🔍 Simple Directory Watch Test');
-console.log('===============================');
+console.info('🔍 Simple Directory Watch Test');
+console.info('===============================');
 
 // Create a test directory
 const testDir = './simple-watch-test';
 if (!fs.existsSync(testDir)) {
   fs.mkdirSync(testDir);
-  console.log(`Created test directory: ${testDir}`);
+  console.info(`Created test directory: ${testDir}`);
 }
 
-console.log(`\nWatching ${testDir} for changes...`);
-console.log('Try creating or modifying files in this directory');
-console.log('Press Ctrl+C to stop watching\n');
+console.info(`\nWatching ${testDir} for changes...`);
+console.info('Try creating or modifying files in this directory');
+console.info('Press Ctrl+C to stop watching\n');
 
 // Watch the test directory
 const watcher = watch(testDir, (event, filename) => {
-  console.log(`[${new Date().toLocaleTimeString()}] ${event.toUpperCase()} -> ${filename}`);
+  console.info(`[${new Date().toLocaleTimeString()}] ${event.toUpperCase()} -> ${filename}`);
 });
 
 // Create a test file
 fs.writeFileSync(`${testDir}/test-file.txt`, 'Initial content');
-console.log('Created test-file.txt');
+console.info('Created test-file.txt');
 
 // Set up cleanup
 process.on('SIGINT', () => {
-  console.log('\nCleaning up and closing watcher...');
+  console.info('\nCleaning up and closing watcher...');
   
   // Clean up test files
   try {
     fs.rmSync(testDir, { recursive: true, force: true });
-    console.log(`Removed test directory: ${testDir}`);
+    console.info(`Removed test directory: ${testDir}`);
   } catch (error: any) {
     console.error(`Error cleaning up: ${error.message}`);
   }
@@ -52,7 +52,7 @@ process.on('SIGINT', () => {
 });
 
 // Keep the process alive for demonstration
-console.log('Watching for 30 seconds...\n');
+console.info('Watching for 30 seconds...\n');
 setTimeout(() => {
-  console.log('Test completed. Press Ctrl+C to exit.');
+  console.info('Test completed. Press Ctrl+C to exit.');
 }, 5000);

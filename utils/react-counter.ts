@@ -458,39 +458,39 @@ ${jsxStats.complexity === 'simple' ? '✨ Simple document - fast rendering expec
 
 // Main function to run React counter analysis
 async function runReactCounter(filePath: string): Promise<void> {
-  console.log('⚛️  **React Markdown Counter v2.8**');
-  console.log('=' .repeat(50));
+  console.info('⚛️  **React Markdown Counter v2.8**');
+  console.info('=' .repeat(50));
   
   try {
     const markdown = await Bun.file(filePath).text();
     const counter = new ReactMarkdownCounter();
     
-    console.log(`📁 Analyzing: ${filePath}`);
-    console.log(`📏 Document size: ${markdown.length} characters`);
-    console.log('');
+    console.info(`📁 Analyzing: ${filePath}`);
+    console.info(`📏 Document size: ${markdown.length} characters`);
+    console.info('');
     
     const analysis = counter.analyze(markdown);
     const report = counter.generateReport(analysis);
     
-    console.log('📊 **Analysis Results**');
-    console.log('');
-    console.log(`🧩 Total Elements: ${analysis.jsxStats.totalElements}`);
-    console.log(`🎯 Unique Components: ${analysis.jsxStats.uniqueTypes}`);
-    console.log(`📈 Complexity: ${analysis.jsxStats.complexity.toUpperCase()}`);
-    console.log(`📊 React Tables: ${analysis.counts.reactTables}`);
-    console.log(`💻 Code Blocks: ${analysis.counts.reactCode}`);
-    console.log(`🔗 Languages: ${Object.keys(analysis.languages).join(', ')}`);
-    console.log('');
+    console.info('📊 **Analysis Results**');
+    console.info('');
+    console.info(`🧩 Total Elements: ${analysis.jsxStats.totalElements}`);
+    console.info(`🎯 Unique Components: ${analysis.jsxStats.uniqueTypes}`);
+    console.info(`📈 Complexity: ${analysis.jsxStats.complexity.toUpperCase()}`);
+    console.info(`📊 React Tables: ${analysis.counts.reactTables}`);
+    console.info(`💻 Code Blocks: ${analysis.counts.reactCode}`);
+    console.info(`🔗 Languages: ${Object.keys(analysis.languages).join(', ')}`);
+    console.info('');
     
     // Save detailed report
     const reportFile = filePath.replace(/\\.[^.]+$/, '-react-analysis.md');
     await Bun.write(reportFile, report);
-    console.log(`💾 Detailed report saved to: ${reportFile}`);
+    console.info(`💾 Detailed report saved to: ${reportFile}`);
     
     // Save JSON data
     const jsonFile = filePath.replace(/\\.[^.]+$/, '-react-stats.json');
     await Bun.write(jsonFile, JSON.stringify(analysis, null, 2));
-    console.log(`📊 JSON data saved to: ${jsonFile}`);
+    console.info(`📊 JSON data saved to: ${jsonFile}`);
     
   } catch (error) {
     console.error('❌ React counter analysis failed:', error.message);
@@ -503,19 +503,19 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('React Markdown Counter v2.8');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run react-counter.ts <markdown-file>');
-    console.log('');
-    console.log('Analyzes markdown documents and counts React elements');
-    console.log('Generates detailed JSX statistics and component analysis');
+    console.info('React Markdown Counter v2.8');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run react-counter.ts <markdown-file>');
+    console.info('');
+    console.info('Analyzes markdown documents and counts React elements');
+    console.info('Generates detailed JSX statistics and component analysis');
     return;
   }
   
   if (args.length === 0) {
     console.error('❌ Please provide a markdown file path');
-    console.log('Usage: bun run react-counter.ts <markdown-file>');
+    console.info('Usage: bun run react-counter.ts <markdown-file>');
     process.exit(1);
   }
   
@@ -523,7 +523,7 @@ async function main() {
   
   try {
     await runReactCounter(filePath);
-    console.log('\\n✅ React counter analysis complete!');
+    console.info('\\n✅ React counter analysis complete!');
   } catch (error) {
     console.error('❌ Analysis failed:', error.message);
     process.exit(1);

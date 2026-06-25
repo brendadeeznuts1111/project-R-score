@@ -42,11 +42,11 @@ describe("RapidHash Performance Demo", () => {
         const standardHashDuration = performance.now() - standardHashStart;
         const standardHashThroughput = 10000 / (standardHashDuration / 1000);
 
-        console.log(`🔥 RapidHash Performance:`);
-        console.log(`   Processed ${iterations} odds in ${rapidHashDuration.toFixed(2)}ms`);
-        console.log(`   Throughput: ${rapidHashThroughput.toFixed(0)} hashes/sec`);
-        console.log(`   Standard hash: ${standardHashThroughput.toFixed(0)} hashes/sec`);
-        console.log(`   Speed improvement: ${(rapidHashThroughput / standardHashThroughput).toFixed(1)}x`);
+        console.info(`🔥 RapidHash Performance:`);
+        console.info(`   Processed ${iterations} odds in ${rapidHashDuration.toFixed(2)}ms`);
+        console.info(`   Throughput: ${rapidHashThroughput.toFixed(0)} hashes/sec`);
+        console.info(`   Standard hash: ${standardHashThroughput.toFixed(0)} hashes/sec`);
+        console.info(`   Speed improvement: ${(rapidHashThroughput / standardHashThroughput).toFixed(1)}x`);
 
         // Performance assertions
         expect(rapidHashThroughput).toBeGreaterThan(100000); // At least 100K hashes/sec
@@ -84,9 +84,9 @@ describe("RapidHash Performance Demo", () => {
         );
         const duration = performance.now() - startTime;
 
-        console.log(`📊 Large Dataset Processing:`);
-        console.log(`   Processed ${largeOddsDataset.length} complex odds in ${duration.toFixed(2)}ms`);
-        console.log(`   Average: ${(duration / largeOddsDataset.length).toFixed(3)}ms per hash`);
+        console.info(`📊 Large Dataset Processing:`);
+        console.info(`   Processed ${largeOddsDataset.length} complex odds in ${duration.toFixed(2)}ms`);
+        console.info(`   Average: ${(duration / largeOddsDataset.length).toFixed(3)}ms per hash`);
 
         expect(duration).toBeLessThan(100); // Should process 1000 items in under 100ms
         expect(hashes.length).toBe(1000);
@@ -124,9 +124,9 @@ describe("RapidHash Performance Demo", () => {
         const repeatHash = hash.rapidhash(JSON.stringify(baseOdds)).toString();
         expect(repeatHash).toBe(hashes[0]);
 
-        console.log(`🔒 Collision Resistance Test:`);
-        console.log(`   Generated ${hashes.length} unique hashes`);
-        console.log(`   No collisions detected`);
+        console.info(`🔒 Collision Resistance Test:`);
+        console.info(`   Generated ${hashes.length} unique hashes`);
+        console.info(`   No collisions detected`);
     });
 
     test("rapidhash integration with tick processor", () => {
@@ -157,9 +157,9 @@ describe("RapidHash Performance Demo", () => {
         const sameTickHash = hash.rapidhash(JSON.stringify(oddsTick)).toString();
         expect(sameTickHash).toBe(processedTick.hash);
 
-        console.log(`⚡ Tick Processor Integration:`);
-        console.log(`   Original tick ID: ${oddsTick.id}`);
-        console.log(`   Generated hash: ${processedTick.hash}`);
-        console.log(`   Processing time: < 1ms`);
+        console.info(`⚡ Tick Processor Integration:`);
+        console.info(`   Original tick ID: ${oddsTick.id}`);
+        console.info(`   Generated hash: ${processedTick.hash}`);
+        console.info(`   Processing time: < 1ms`);
     });
 });

@@ -3,12 +3,12 @@
 
 import { enhancedSecurityManager } from '../lib/security/enhanced-security-manager';
 import { securityConfig } from '../lib/security/config-manager';
-import { secretManager } from '../barbershop/lib/secrets/core/secrets';
-import { versionGraph } from '../barbershop/lib/secrets/core/version-graph';
-import { secretLifecycleManager } from '../barbershop/lib/secrets/core/secret-lifecycle';
+import { secretManager } from '../projects/active/barbershop/lib/secrets/core/secrets';
+import { versionGraph } from '../projects/active/barbershop/lib/secrets/core/version-graph';
+import { secretLifecycleManager } from '../projects/active/barbershop/lib/secrets/core/secret-lifecycle';
 
 async function testEnvironmentBypassFix(): Promise<boolean> {
-  console.log('🧪 Testing Environment Bypass Fix...');
+  console.info('🧪 Testing Environment Bypass Fix...');
   
   try {
     // Test that the build-time constants cannot be bypassed
@@ -23,16 +23,16 @@ async function testEnvironmentBypassFix(): Promise<boolean> {
     // Restore original environment
     process.env.NODE_ENV = originalEnv;
     
-    console.log('✅ Environment bypass fix: PASSED');
+    console.info('✅ Environment bypass fix: PASSED');
     return true;
   } catch (error) {
-    console.log(`❌ Environment bypass fix: FAILED - ${error.message}`);
+    console.info(`❌ Environment bypass fix: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testBasicAuthRemoval(): Promise<boolean> {
-  console.log('🧪 Testing Basic Auth Removal...');
+  console.info('🧪 Testing Basic Auth Removal...');
   
   try {
     // Test that Basic Auth is completely disabled
@@ -41,26 +41,26 @@ async function testBasicAuthRemoval(): Promise<boolean> {
     try {
       // This should fail with "AWS Signature V4 implementation required"
       await secretsInstance.generateAWSAuthHeader('GET', 'test-key', '{}');
-      console.log('❌ Basic Auth removal: FAILED - Should have thrown error');
+      console.info('❌ Basic Auth removal: FAILED - Should have thrown error');
       return false;
     } catch (error) {
       if (error.message.includes('AWS Signature V4 implementation required') || 
           error.message.includes('Basic Authentication is disabled')) {
-        console.log('✅ Basic Auth removal: PASSED');
+        console.info('✅ Basic Auth removal: PASSED');
         return true;
       } else {
-        console.log(`❌ Basic Auth removal: FAILED - Wrong error: ${error.message}`);
+        console.info(`❌ Basic Auth removal: FAILED - Wrong error: ${error.message}`);
         return false;
       }
     }
   } catch (error) {
-    console.log(`❌ Basic Auth removal: FAILED - ${error.message}`);
+    console.info(`❌ Basic Auth removal: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testAtomicMetrics(): Promise<boolean> {
-  console.log('🧪 Testing Atomic Metrics...');
+  console.info('🧪 Testing Atomic Metrics...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -79,20 +79,20 @@ async function testAtomicMetrics(): Promise<boolean> {
     
     // Metrics should have increased atomically
     if (finalCount > initialCount) {
-      console.log('✅ Atomic metrics: PASSED');
+      console.info('✅ Atomic metrics: PASSED');
       return true;
     } else {
-      console.log('❌ Atomic metrics: FAILED - Metrics not updated correctly');
+      console.info('❌ Atomic metrics: FAILED - Metrics not updated correctly');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Atomic metrics: FAILED - ${error.message}`);
+    console.info(`❌ Atomic metrics: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testErrorSanitization(): Promise<boolean> {
-  console.log('🧪 Testing Error Sanitization...');
+  console.info('🧪 Testing Error Sanitization...');
   
   try {
     const manager = enhancedSecurityManager as any;
@@ -103,20 +103,20 @@ async function testErrorSanitization(): Promise<boolean> {
     
     // The sanitizeError method should exist and return an Error
     if (sanitizedError instanceof Error) {
-      console.log('✅ Error sanitization: PASSED');
+      console.info('✅ Error sanitization: PASSED');
       return true;
     } else {
-      console.log('❌ Error sanitization: FAILED - sanitizeError method not working');
+      console.info('❌ Error sanitization: FAILED - sanitizeError method not working');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Error sanitization: FAILED - ${error.message}`);
+    console.info(`❌ Error sanitization: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testConstructorPattern(): Promise<boolean> {
-  console.log('🧪 Testing Constructor Pattern Fix...');
+  console.info('🧪 Testing Constructor Pattern Fix...');
   
   try {
     // Test that the manager can be created without throwing in constructor
@@ -127,20 +127,20 @@ async function testConstructorPattern(): Promise<boolean> {
     
     // Check that initialization status is properly tracked
     if (health.initializationStatus === 'completed' || health.initializationStatus === 'failed') {
-      console.log('✅ Constructor pattern fix: PASSED');
+      console.info('✅ Constructor pattern fix: PASSED');
       return true;
     } else {
-      console.log('❌ Constructor pattern fix: FAILED - Invalid initialization status');
+      console.info('❌ Constructor pattern fix: FAILED - Invalid initialization status');
       return false;
     }
   } catch (error) {
-    console.log(`❌ Constructor pattern fix: FAILED - ${error.message}`);
+    console.info(`❌ Constructor pattern fix: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function testAllSecurityFiles(): Promise<boolean> {
-  console.log('🧪 Testing All Security Files...');
+  console.info('🧪 Testing All Security Files...');
   
   try {
     // Test that all security files have the proper constants
@@ -157,28 +157,28 @@ async function testAllSecurityFiles(): Promise<boolean> {
       if (typeof instance.generateAWSAuthHeader === 'function') {
         try {
           await instance.generateAWSAuthHeader('GET', 'test', '{}');
-          console.log(`❌ ${file.name}: FAILED - Should have thrown error`);
+          console.info(`❌ ${file.name}: FAILED - Should have thrown error`);
           return false;
         } catch (error) {
           if (!error.message.includes('AWS Signature V4 implementation required') &&
               !error.message.includes('Basic Authentication is disabled')) {
-            console.log(`❌ ${file.name}: FAILED - Wrong security error: ${error.message}`);
+            console.info(`❌ ${file.name}: FAILED - Wrong security error: ${error.message}`);
             return false;
           }
         }
       }
     }
     
-    console.log('✅ All security files: PASSED');
+    console.info('✅ All security files: PASSED');
     return true;
   } catch (error) {
-    console.log(`❌ All security files: FAILED - ${error.message}`);
+    console.info(`❌ All security files: FAILED - ${error.message}`);
     return false;
   }
 }
 
 async function runSecurityVulnerabilityTests(): Promise<void> {
-  console.log('🚀 Running Security Vulnerabilities Tests\\n');
+  console.info('🚀 Running Security Vulnerabilities Tests\\n');
   
   const tests = [
     { name: 'Environment Bypass Fix', test: testEnvironmentBypassFix },
@@ -193,7 +193,7 @@ async function runSecurityVulnerabilityTests(): Promise<void> {
   let failed = 0;
   
   for (const { name, test } of tests) {
-    console.log(`\\n--- ${name} ---`);
+    console.info(`\\n--- ${name} ---`);
     const result = await test();
     if (result) {
       passed++;
@@ -202,22 +202,22 @@ async function runSecurityVulnerabilityTests(): Promise<void> {
     }
   }
   
-  console.log('\\n📊 Security Vulnerabilities Test Results:');
-  console.log(`✅ Passed: ${passed}`);
-  console.log(`❌ Failed: ${failed}`);
-  console.log(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
+  console.info('\\n📊 Security Vulnerabilities Test Results:');
+  console.info(`✅ Passed: ${passed}`);
+  console.info(`❌ Failed: ${failed}`);
+  console.info(`📈 Success Rate: ${((passed / (passed + failed)) * 100).toFixed(1)}%`);
   
   if (failed === 0) {
-    console.log('\\n🎉 ALL SECURITY VULNERABILITIES HAVE BEEN FIXED!');
-    console.log('\\n🛡️ Security Status: SECURE');
-    console.log('🚀 System is protected against critical security bypasses');
-    console.log('🔐 Basic Auth credential exposure eliminated');
-    console.log('⚡ Race conditions in metrics fixed');
-    console.log('🚫 Information disclosure prevented');
-    console.log('🔧 Constructor error handling improved');
+    console.info('\\n🎉 ALL SECURITY VULNERABILITIES HAVE BEEN FIXED!');
+    console.info('\\n🛡️ Security Status: SECURE');
+    console.info('🚀 System is protected against critical security bypasses');
+    console.info('🔐 Basic Auth credential exposure eliminated');
+    console.info('⚡ Race conditions in metrics fixed');
+    console.info('🚫 Information disclosure prevented');
+    console.info('🔧 Constructor error handling improved');
   } else {
-    console.log('\\n⚠️ Some security vulnerabilities remain. Please review the failed tests.');
-    console.log('🛡️ Security Status: VULNERABLE');
+    console.info('\\n⚠️ Some security vulnerabilities remain. Please review the failed tests.');
+    console.info('🛡️ Security Status: VULNERABLE');
   }
   
   // Cleanup

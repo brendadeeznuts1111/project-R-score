@@ -98,14 +98,14 @@ const str = "Hello\\nWorld";`;
 
     it("should preserve code content through highlighting", () => {
       const code = `const message = "Hello, World!";
-console.log(message);`;
+console.info(message);`;
       const result = markdownTheme.highlightCode!(code, "javascript");
 
       // Strip ANSI codes to verify content is preserved
       const stripAnsi = (str: string) =>
         str.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, "g"), "");
       expect(stripAnsi(result[0])).toBe(`const message = "Hello, World!";`);
-      expect(stripAnsi(result[1])).toBe("console.log(message);");
+      expect(stripAnsi(result[1])).toBe("console.info(message);");
     });
   });
 });

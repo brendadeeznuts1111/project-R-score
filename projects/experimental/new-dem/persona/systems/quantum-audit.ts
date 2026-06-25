@@ -75,7 +75,7 @@ export class QuantumAuditSystem {
 
     // Integration with Component #24 (Versioning)
     // In production, this would store in the versioning system
-    console.log(`🔐 Quantum Audit: ${entryId} (${data.type})`);
+    console.info(`🔐 Quantum Audit: ${entryId} (${data.type})`);
 
     return entryId;
   }

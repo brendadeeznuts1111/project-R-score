@@ -54,10 +54,10 @@ async function syncToR2() {
     const fileSize = (await stat(filePath)).size;
     totalBytes += fileSize;
     uploaded++;
-    console.log(`✓ ${key} (${contentType})`);
+    console.info(`✓ ${key} (${contentType})`);
   }
 
-  console.log(`\n✅ Synced ${uploaded} files (${(totalBytes / 1024).toFixed(1)} KB)`);
+  console.info(`\n✅ Synced ${uploaded} files (${(totalBytes / 1024).toFixed(1)} KB)`);
 }
 
 syncToR2().catch(console.error);

@@ -10,7 +10,7 @@ const advancedFetchService = new AdvancedFetchService();
 async function handleTypedArrayDocs(url: URL): Promise<Response> {
   const section = url.hash.slice(1) || 'typedarray';
   const docs = await fetchService.fetchTypedArrayDocs(section);
-  
+
   return new Response(docs, {
     headers: {
       'Content-Type': 'text/html',
@@ -22,9 +22,9 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
 // Binary data documentation
 async function handleBinaryData(url: URL): Promise<Response> {
   const response = await fetch(`${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`);
-  
+
   const html = await response.text();
-  
+
   return new Response(html, {
     status: response.status,
     headers: {
@@ -38,14 +38,14 @@ async function handleBinaryData(url: URL): Promise<Response> {
 async function handleFetchExample(): Promise<Response> {
   const exampleCode = `// Example from Bun docs: https://bun.sh/docs/runtime/networking/fetch
 const response = await fetch("${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text(); // or response.json(), response.arrayBuffer(), etc.
 
 // Our typed array base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}
 const typedArrayResponse = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
+console.info(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 `;
-  
+
   return new Response(exampleCode, {
     headers: { 'Content-Type': 'application/javascript' },
   });
@@ -55,7 +55,7 @@ console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 async function handleRSSFeed(): Promise<Response> {
   try {
     const feedXml = await fetchService.fetchRSSFeed();
-    
+
     return new Response(feedXml, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
@@ -78,9 +78,9 @@ async function handleTypedArrayURLs(): Promise<Response> {
       fetch: `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
       binary_data: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`,
       networking: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.NETWORKING}`,
-    }
+    },
   };
-  
+
   return Response.json(urls);
 }
 
@@ -93,7 +93,7 @@ async function generateRSSFeed(): Promise<Response> {
   <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</link>
   <description>Latest updates and examples for TypedArrays in Bun</description>
   <lastBuildDate>${new Date().toISOString()}</lastBuildDate>
-  
+
   <item>
     <title>TypedArray Methods Reference</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</link>
@@ -101,7 +101,7 @@ async function generateRSSFeed(): Promise<Response> {
     <pubDate>${new Date().toISOString()}</pubDate>
     <guid>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</guid>
   </item>
-  
+
   <item>
     <title>Binary Data Conversion Examples</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}</link>
@@ -111,7 +111,7 @@ async function generateRSSFeed(): Promise<Response> {
   </item>
 </channel>
 </rss>`;
-  
+
   return new Response(feed, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
@@ -122,28 +122,28 @@ async function generateRSSFeed(): Promise<Response> {
 // JSON feed endpoint
 async function generateJSONFeed(): Promise<Response> {
   const feed = {
-    version: "https://jsonfeed.org/version/1",
-    title: "Bun TypedArray Documentation",
+    version: 'https://jsonfeed.org/version/1',
+    title: 'Bun TypedArray Documentation',
     home_page_url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
     feed_url: `${BUN_DOCS.BASE}/feed/json`,
     items: [
       {
         id: TYPED_ARRAY_URLS.METHODS,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
-        title: "TypedArray Methods",
-        content_text: "Complete reference of all TypedArray methods",
+        title: 'TypedArray Methods',
+        content_text: 'Complete reference of all TypedArray methods',
         date_published: new Date().toISOString(),
       },
       {
         id: TYPED_ARRAY_URLS.CONVERSION,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}`,
-        title: "Binary Data Conversion",
-        content_text: "Examples of converting between binary formats",
+        title: 'Binary Data Conversion',
+        content_text: 'Examples of converting between binary formats',
         date_published: new Date().toISOString(),
       },
     ],
   };
-  
+
   return Response.json(feed);
 }
 
@@ -160,13 +160,13 @@ async function handleRoot(): Promise<Response> {
 <body>
   <main class="container">
     <h1>📚 Bun TypedArray Documentation</h1>
-    
+
     <section>
       <h2>Base URL Pattern</h2>
       <p>All typed array documentation uses this base pattern:</p>
       <pre><code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></pre>
     </section>
-    
+
     <section>
       <h2>API Endpoints</h2>
       <div class="grid">
@@ -178,7 +178,7 @@ async function handleRoot(): Promise<Response> {
             <li><a href="${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}" target="_blank">Fetch API Docs</a></li>
           </ul>
         </article>
-        
+
         <article>
           <h3>⚡ Quick Examples</h3>
           <ul>
@@ -189,7 +189,7 @@ async function handleRoot(): Promise<Response> {
             <li><a href="/api/rss">RSS Feed</a></li>
           </ul>
         </article>
-        
+
         <article>
           <h3>📰 Feeds</h3>
           <ul>
@@ -199,7 +199,7 @@ async function handleRoot(): Promise<Response> {
         </article>
       </div>
     </section>
-    
+
     <section>
       <h2>Advanced Bun Fetch Features</h2>
       <p>This portal demonstrates advanced fetch capabilities from <a href="https://bun.sh/docs/runtime/networking/fetch" target="_blank">Bun's fetch documentation</a>:</p>
@@ -233,26 +233,26 @@ async function handleRoot(): Promise<Response> {
         </article>
       </div>
     </section>
-    
+
     <section>
       <h2>Try the Fetch Pattern</h2>
       <pre><code>// Using Bun's native fetch pattern:
 const response = await fetch("/api/typedarray/urls");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const data = await response.json();
-console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
-      
+console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code></pre>
+
       <button onclick="testFetch()">Test Fetch</button>
       <div id="result"></div>
     </section>
   </main>
-  
+
   <script>
     async function testFetch() {
       const response = await fetch('/api/typedarray/urls');
       const result = document.getElementById('result');
       result.innerHTML = \`Status: \${response.status}\`;
-      
+
       if (response.ok) {
         const data = await response.json();
         result.innerHTML += \`<pre>\${JSON.stringify(data, null, 2)}</pre>\`;
@@ -261,7 +261,7 @@ console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code><
   </script>
 </body>
 </html>`;
-  
+
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' },
   });
@@ -291,12 +291,12 @@ const response = await fetch("https://bun.sh/docs/api/fetch", {
 
 // 4. Streaming response
 for await (const chunk of response.body!) {
-  console.log(\`Received chunk: \${chunk.length} bytes\`);
+  console.info(\`Received chunk: \${chunk.length} bytes\`);
 }
 
 // 5. Binary data as Uint8Array (Bun-specific)
 const bytes = await response.bytes();
-console.log(\`Got \${bytes.length} bytes as Uint8Array\`);
+console.info(\`Got \${bytes.length} bytes as Uint8Array\`);
 
 // 6. POST with streaming body
 const stream = new ReadableStream({
@@ -335,9 +335,9 @@ const jsonData = await response.clone().json();
 const arrayBuffer = await response.clone().arrayBuffer();
 const uint8Array = await response.clone().bytes(); // Bun-specific
 
-console.log("Advanced fetch demo completed!");
+console.info("Advanced fetch demo completed!");
 `;
-  
+
   return new Response(demoCode, {
     headers: { 'Content-Type': 'application/javascript' },
   });
@@ -347,14 +347,14 @@ console.log("Advanced fetch demo completed!");
 async function runAdvancedDemo(): Promise<Response> {
   try {
     if (process.env.DEBUG === '1') {
-      console.log('🎯 Running advanced fetch demo...');
+      console.info('🎯 Running advanced fetch demo...');
     }
-    
+
     // Run the demo in the background
-    advancedFetchService.runFullDemo().catch((error) => {
+    advancedFetchService.runFullDemo().catch(error => {
       console.error('❌ Advanced fetch demo failed:', error);
     });
-    
+
     const html = `
 <!DOCTYPE html>
 <html>
@@ -366,7 +366,7 @@ async function runAdvancedDemo(): Promise<Response> {
   <main class="container">
     <h1>🚀 Advanced Bun Fetch Demo</h1>
     <p>Running comprehensive fetch demo... Check the server console for detailed output.</p>
-    
+
     <section>
       <h2>Features Demonstrated</h2>
       <ul>
@@ -382,7 +382,7 @@ async function runAdvancedDemo(): Promise<Response> {
         <li>✅ Multiple response body methods</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Bun-Specific Extensions</h2>
       <ul>
@@ -393,7 +393,7 @@ async function runAdvancedDemo(): Promise<Response> {
         <li><code>AbortSignal.timeout()</code> - Easy timeouts</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Performance Features</h2>
       <ul>
@@ -404,17 +404,16 @@ async function runAdvancedDemo(): Promise<Response> {
         <li>Response buffering optimization</li>
       </ul>
     </section>
-    
+
     <button onclick="location.reload()">Run Demo Again</button>
     <button onclick="location.href='/'">Back to Portal</button>
   </main>
 </body>
 </html>`;
-    
+
     return new Response(html, {
       headers: { 'Content-Type': 'text/html' },
     });
-    
   } catch (error: any) {
     return new Response(`Demo error: ${error.message}`, { status: 500 });
   }
@@ -436,7 +435,7 @@ const server = Bun.serve({
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     // Route handling
     switch (path) {
       case '/':
@@ -465,8 +464,8 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
-console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
+console.info(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
+console.info(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
+console.info(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
 
 export default server;

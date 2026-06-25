@@ -1,17 +1,21 @@
 #!/usr/bin/env bun
 
-import { buildProjectStatusReport } from "../dashboard/status-monitor";
-import { summarizeDeploymentReadiness } from "../deployment/readiness-matrix";
-import { summarizePerformanceImpact } from "../analysis/performance-impact";
-import { summarizeSecurityPosture } from "../security/posture-report";
-import { ExecutiveVerdict, ProjectRecommendations, SuccessMetrics } from "../dashboard/project-health";
+import { buildProjectStatusReport } from '../dashboard/status-monitor';
+import { summarizeDeploymentReadiness } from './deployment/readiness-matrix';
+import { summarizePerformanceImpact } from '../analysis/performance-impact';
+import { summarizeSecurityPosture } from '../security/posture-report';
+import {
+  ExecutiveVerdict,
+  ProjectRecommendations,
+  SuccessMetrics,
+} from '../dashboard/project-health';
 
 const args = process.argv.slice(2);
 
 if (import.meta.main) {
-  const format = getArg("--format", "text");
-  const output = getArg("--output", "");
-  const autoRefresh = getArg("--auto-refresh", "30s");
+  const format = getArg('--format', 'text');
+  const output = getArg('--output', '');
+  const autoRefresh = getArg('--auto-refresh', '30s');
 
   const payload = {
     generatedAt: new Date().toISOString(),
@@ -26,40 +30,40 @@ if (import.meta.main) {
     },
   };
 
-  if (format === "html") {
+  if (format === 'html') {
     const html = renderHtml(payload, autoRefresh);
     if (output) {
       await Bun.write(output, html);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(html);
+      console.info(html);
     }
-  } else if (format === "json") {
+  } else if (format === 'json') {
     const json = JSON.stringify(payload, null, 2);
     if (output) {
       await Bun.write(output, json);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(json);
+      console.info(json);
     }
   } else {
     const text = [
       `PROJECT HEALTH: ${payload.verdict.score}/${payload.verdict.max} - ${payload.verdict.label}`,
       payload.verdict.summary,
-      "",
+      '',
       buildProjectStatusReport(),
-    ].join("\n");
+    ].join('\n');
     if (output) {
       await Bun.write(output, text);
-      console.log(`Wrote ${output}`);
+      console.info(`Wrote ${output}`);
     } else {
-      console.log(text);
+      console.info(text);
     }
   }
 }
 
 function getArg(flag: string, fallback: string): string {
-  const eq = args.find((a) => a.startsWith(`${flag}=`));
+  const eq = args.find(a => a.startsWith(`${flag}=`));
   if (eq) return eq.slice(flag.length + 1) || fallback;
   const i = args.indexOf(flag);
   if (i < 0 || i + 1 >= args.length) return fallback;
@@ -75,7 +79,7 @@ function renderHtml(data: any, autoRefreshRaw: string): string {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Project Status Dashboard</title>
-  ${refreshSec > 0 ? `<meta http-equiv="refresh" content="${refreshSec}" />` : ""}
+  ${refreshSec > 0 ? `<meta http-equiv="refresh" content="${refreshSec}" />` : ''}
   <style>
     body { font-family: ui-sans-serif, system-ui, sans-serif; margin: 24px; color: #111827; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
@@ -107,15 +111,15 @@ function renderHtml(data: any, autoRefreshRaw: string): string {
     </section>
     <section class="card">
       <h2>Immediate Actions (${escape(rec.immediate.window)})</h2>
-      <ul>${rec.immediate.items.map((s: string) => `<li>${escape(s)}</li>`).join("")}</ul>
+      <ul>${rec.immediate.items.map((s: string) => `<li>${escape(s)}</li>`).join('')}</ul>
     </section>
     <section class="card">
       <h2>Short-Term Actions (${escape(rec.shortTerm.window)})</h2>
-      <ul>${rec.shortTerm.items.map((s: string) => `<li>${escape(s)}</li>`).join("")}</ul>
+      <ul>${rec.shortTerm.items.map((s: string) => `<li>${escape(s)}</li>`).join('')}</ul>
     </section>
     <section class="card">
       <h2>Long-Term Actions (${escape(rec.longTerm.window)})</h2>
-      <ul>${rec.longTerm.items.map((s: string) => `<li>${escape(s)}</li>`).join("")}</ul>
+      <ul>${rec.longTerm.items.map((s: string) => `<li>${escape(s)}</li>`).join('')}</ul>
     </section>
     <section class="card">
       <h2>Deployment Summary</h2>
@@ -143,5 +147,5 @@ function parseRefresh(raw: string): number {
 }
 
 function escape(s: string): string {
-  return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  return s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }

@@ -108,7 +108,7 @@ export class MarketOperationError extends NexusError {
  * });
  *
  * const stats = monitor.getStats("fetchMarketData");
- * console.log(`Average: ${stats.mean}ms, p95: ${stats.p95}ms`);
+ * console.info(`Average: ${stats.mean}ms, p95: ${stats.p95}ms`);
  * ```
  */
 export class PerformanceMonitor {

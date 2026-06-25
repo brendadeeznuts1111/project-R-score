@@ -32,7 +32,7 @@ const commands = [
 ];
 
 async function setupTelegramBot() {
-	console.log("🔧 Setting up Telegram Bot Commands...");
+	console.info("🔧 Setting up Telegram Bot Commands...");
 
 	if (!TELEGRAM_BOT_TOKEN) {
 		console.error("❌ TELEGRAM_BOT_TOKEN environment variable is required");
@@ -50,7 +50,7 @@ async function setupTelegramBot() {
 	);
 
 	if (response.ok) {
-		console.log("✅ Bot commands configured");
+		console.info("✅ Bot commands configured");
 	} else {
 		const error = await response.text();
 		console.error("❌ Failed to configure bot:", error);
@@ -75,16 +75,16 @@ async function setupTelegramBot() {
 	);
 
 	if (menuResponse.ok) {
-		console.log("✅ Mini-App menu button configured");
+		console.info("✅ Mini-App menu button configured");
 	} else {
 		const error = await menuResponse.text();
 		console.error("❌ Failed to configure menu:", error);
 		process.exit(1);
 	}
 
-	console.log("\n✅ Telegram Bot setup complete!");
-	console.log(`📱 Mini-App URL: ${MINI_APP_URL}`);
-	console.log(`💬 Supergroup ID: ${TELEGRAM_SUPERGROUP_ID}`);
+	console.info("\n✅ Telegram Bot setup complete!");
+	console.info(`📱 Mini-App URL: ${MINI_APP_URL}`);
+	console.info(`💬 Supergroup ID: ${TELEGRAM_SUPERGROUP_ID}`);
 }
 
 if (import.meta.main) {

@@ -202,7 +202,9 @@ function extractSherpaOnnxText(raw: string): string | null {
           return text.trim();
         }
       }
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     return null;
   };
 
@@ -497,7 +499,9 @@ async function resolveCliOutput(params: {
     try {
       const content = await fs.readFile(fileOutput, "utf8");
       if (content.trim()) return content.trim();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   if (commandId === "gemini") {

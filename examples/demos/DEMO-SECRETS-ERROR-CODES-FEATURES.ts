@@ -2,21 +2,21 @@
 // Demonstrates comprehensive error handling and validation for the Bun.secrets API
 
 async function demonstrateSecretsErrorCodesFeatures() {
-  console.log('🔐 Bun Secrets Error Codes Feature Showcase');
-  console.log('==========================================\n');
+  console.info('🔐 Bun Secrets Error Codes Feature Showcase');
+  console.info('==========================================\n');
 
-  console.log('📊 Feature Overview:');
-  console.log('====================');
-  console.log('• Secure secret storage with system keychain');
-  console.log('• Comprehensive input validation and error codes');
-  console.log('• Cross-platform compatibility (macOS, Windows, Linux)');
-  console.log('• Node.js-compatible error code standards');
-  console.log('• Graceful error handling without secret leakage');
-  console.log('• Production-ready reliability patterns\n');
+  console.info('📊 Feature Overview:');
+  console.info('====================');
+  console.info('• Secure secret storage with system keychain');
+  console.info('• Comprehensive input validation and error codes');
+  console.info('• Cross-platform compatibility (macOS, Windows, Linux)');
+  console.info('• Node.js-compatible error code standards');
+  console.info('• Graceful error handling without secret leakage');
+  console.info('• Production-ready reliability patterns\n');
 
   // Demo 1: Basic Secret Operations
-  console.log('✅ Demo 1: Basic Secret Operations');
-  console.log('===================================');
+  console.info('✅ Demo 1: Basic Secret Operations');
+  console.info('===================================');
   
   const testService = 'bun-demo-service-' + Date.now();
   const testSecrets = [
@@ -25,7 +25,7 @@ async function demonstrateSecretsErrorCodesFeatures() {
     { name: 'jwt-secret', value: 'jwt-signing-key-2024' }
   ];
 
-  console.log('   Setting test secrets...');
+  console.info('   Setting test secrets...');
   for (const secret of testSecrets) {
     try {
       await Bun.secrets.set({
@@ -34,13 +34,13 @@ async function demonstrateSecretsErrorCodesFeatures() {
         value: secret.value,
         allowUnrestrictedAccess: true // Allow for testing
       });
-      console.log(`   ✅ Set secret: ${secret.name}`);
+      console.info(`   ✅ Set secret: ${secret.name}`);
     } catch (error: any) {
-      console.log(`   ❌ Failed to set ${secret.name}: ${error.message} (${error.code})`);
+      console.info(`   ❌ Failed to set ${secret.name}: ${error.message} (${error.code})`);
     }
   }
 
-  console.log('\n   Retrieving test secrets...');
+  console.info('\n   Retrieving test secrets...');
   for (const secret of testSecrets) {
     try {
       const retrieved = await Bun.secrets.get({
@@ -49,20 +49,20 @@ async function demonstrateSecretsErrorCodesFeatures() {
       });
       
       if (retrieved === secret.value) {
-        console.log(`   ✅ Retrieved ${secret.name}: ✓ matches`);
+        console.info(`   ✅ Retrieved ${secret.name}: ✓ matches`);
       } else if (retrieved === null) {
-        console.log(`   ⚠️  Retrieved ${secret.name}: null (not found)`);
+        console.info(`   ⚠️  Retrieved ${secret.name}: null (not found)`);
       } else {
-        console.log(`   ❌ Retrieved ${secret.name}: value mismatch`);
+        console.info(`   ❌ Retrieved ${secret.name}: value mismatch`);
       }
     } catch (error: any) {
-      console.log(`   ❌ Failed to get ${secret.name}: ${error.message} (${error.code})`);
+      console.info(`   ❌ Failed to get ${secret.name}: ${error.message} (${error.code})`);
     }
   }
 
   // Demo 2: Non-existent Secret Handling
-  console.log('\n✅ Demo 2: Non-existent Secret Handling');
-  console.log('=======================================');
+  console.info('\n✅ Demo 2: Non-existent Secret Handling');
+  console.info('=======================================');
   
   const nonExistentTests = [
     { service: 'non-existent-service', name: 'non-existent-secret' },
@@ -78,21 +78,21 @@ async function demonstrateSecretsErrorCodesFeatures() {
       });
       
       if (result === null) {
-        console.log(`   ✅ Non-existent secret (${test.service || 'empty'}, ${test.name}): null`);
+        console.info(`   ✅ Non-existent secret (${test.service || 'empty'}, ${test.name}): null`);
       } else {
-        console.log(`   ❌ Unexpected result: ${result}`);
+        console.info(`   ❌ Unexpected result: ${result}`);
       }
     } catch (error: any) {
-      console.log(`   ❌ Error getting (${test.service || 'empty'}, ${test.name}): ${error.message} (${error.code})`);
+      console.info(`   ❌ Error getting (${test.service || 'empty'}, ${test.name}): ${error.message} (${error.code})`);
     }
   }
 
   // Demo 3: Delete Operations
-  console.log('\n✅ Demo 3: Delete Operations');
-  console.log('===========================');
+  console.info('\n✅ Demo 3: Delete Operations');
+  console.info('===========================');
   
   // Delete existing secrets
-  console.log('   Deleting existing secrets...');
+  console.info('   Deleting existing secrets...');
   for (const secret of testSecrets) {
     try {
       const deleted = await Bun.secrets.delete({
@@ -101,17 +101,17 @@ async function demonstrateSecretsErrorCodesFeatures() {
       });
       
       if (deleted) {
-        console.log(`   ✅ Deleted ${secret.name}: true`);
+        console.info(`   ✅ Deleted ${secret.name}: true`);
       } else {
-        console.log(`   ⚠️  Deleted ${secret.name}: false (was not found)`);
+        console.info(`   ⚠️  Deleted ${secret.name}: false (was not found)`);
       }
     } catch (error: any) {
-      console.log(`   ❌ Failed to delete ${secret.name}: ${error.message} (${error.code})`);
+      console.info(`   ❌ Failed to delete ${secret.name}: ${error.message} (${error.code})`);
     }
   }
 
   // Try to delete non-existent secrets
-  console.log('\n   Deleting non-existent secrets...');
+  console.info('\n   Deleting non-existent secrets...');
   for (const test of nonExistentTests) {
     try {
       const deleted = await Bun.secrets.delete({
@@ -120,18 +120,18 @@ async function demonstrateSecretsErrorCodesFeatures() {
       });
       
       if (deleted === false) {
-        console.log(`   ✅ Non-existent delete (${test.service || 'empty'}, ${test.name}): false`);
+        console.info(`   ✅ Non-existent delete (${test.service || 'empty'}, ${test.name}): false`);
       } else {
-        console.log(`   ❌ Unexpected delete result: ${deleted}`);
+        console.info(`   ❌ Unexpected delete result: ${deleted}`);
       }
     } catch (error: any) {
-      console.log(`   ❌ Error deleting (${test.service || 'empty'}, ${test.name}): ${error.message} (${error.code})`);
+      console.info(`   ❌ Error deleting (${test.service || 'empty'}, ${test.name}): ${error.message} (${error.code})`);
     }
   }
 
   // Demo 4: Input Validation Error Codes
-  console.log('\n✅ Demo 4: Input Validation Error Codes');
-  console.log('=======================================');
+  console.info('\n✅ Demo 4: Input Validation Error Codes');
+  console.info('=======================================');
   
   const validationTests = [
     {
@@ -188,22 +188,22 @@ async function demonstrateSecretsErrorCodesFeatures() {
         await Bun.secrets.set(test.params);
       }
       
-      console.log(`   ❌ ${test.name}: Expected error but operation succeeded`);
+      console.info(`   ❌ ${test.name}: Expected error but operation succeeded`);
     } catch (error: any) {
       const hasCorrectCode = error.code === test.expectedCode;
       const hasMessage = typeof error.message === 'string' && error.message.length > 0;
       const hasNoNullBytes = !error.message.includes('\0');
       
-      console.log(`   ${hasCorrectCode ? '✅' : '❌'} ${test.name}:`);
-      console.log(`     Error Code: ${error.code} ${hasCorrectCode ? '✓' : '✗ (expected ' + test.expectedCode + ')'}`);
-      console.log(`     Message: ${hasMessage ? '✓' : '✗'} ${error.message.substring(0, 60)}${error.message.length > 60 ? '...' : ''}`);
-      console.log(`     No Null Bytes: ${hasNoNullBytes ? '✓' : '✗'}`);
+      console.info(`   ${hasCorrectCode ? '✅' : '❌'} ${test.name}:`);
+      console.info(`     Error Code: ${error.code} ${hasCorrectCode ? '✓' : '✗ (expected ' + test.expectedCode + ')'}`);
+      console.info(`     Message: ${hasMessage ? '✓' : '✗'} ${error.message.substring(0, 60)}${error.message.length > 60 ? '...' : ''}`);
+      console.info(`     No Null Bytes: ${hasNoNullBytes ? '✓' : '✗'}`);
     }
   }
 
   // Demo 5: Error Message Security
-  console.log('\n✅ Demo 5: Error Message Security');
-  console.log('=================================');
+  console.info('\n✅ Demo 5: Error Message Security');
+  console.info('=================================');
   
   const securityTests = [
     { service: '', name: 'test' },
@@ -215,7 +215,7 @@ async function demonstrateSecretsErrorCodesFeatures() {
   for (const test of securityTests) {
     try {
       await Bun.secrets.get(test);
-      console.log(`   ❌ Security test failed: Expected error for ${JSON.stringify(test)}`);
+      console.info(`   ❌ Security test failed: Expected error for ${JSON.stringify(test)}`);
     } catch (error: any) {
       const messageDefined = error.message !== undefined;
       const messageIsString = typeof error.message === 'string';
@@ -223,25 +223,25 @@ async function demonstrateSecretsErrorCodesFeatures() {
       const codeDefined = error.code !== undefined;
       const codeIsString = typeof error.code === 'string';
       
-      console.log(`   Test ${JSON.stringify(test)}:`);
-      console.log(`     Message Defined: ${messageDefined ? '✓' : '✗'}`);
-      console.log(`     Message is String: ${messageIsString ? '✓' : '✗'}`);
-      console.log(`     No Null Bytes: ${noNullBytes ? '✓' : '✗'}`);
-      console.log(`     Code Defined: ${codeDefined ? '✓' : '✗'}`);
-      console.log(`     Code is String: ${codeIsString ? '✓' : '✗'}`);
+      console.info(`   Test ${JSON.stringify(test)}:`);
+      console.info(`     Message Defined: ${messageDefined ? '✓' : '✗'}`);
+      console.info(`     Message is String: ${messageIsString ? '✓' : '✗'}`);
+      console.info(`     No Null Bytes: ${noNullBytes ? '✓' : '✗'}`);
+      console.info(`     Code Defined: ${codeDefined ? '✓' : '✗'}`);
+      console.info(`     Code is String: ${codeIsString ? '✓' : '✗'}`);
       
       if (messageDefined && noNullBytes) {
-        console.log(`     Message Preview: "${error.message.substring(0, 40)}${error.message.length > 40 ? '...' : ''}"`);
+        console.info(`     Message Preview: "${error.message.substring(0, 40)}${error.message.length > 40 ? '...' : ''}"`);
       }
     }
   }
 
   // Demo 6: Real-World Usage Patterns
-  console.log('\n✅ Demo 6: Real-World Usage Patterns');
-  console.log('===================================');
+  console.info('\n✅ Demo 6: Real-World Usage Patterns');
+  console.info('===================================');
   
   // Pattern 1: Configuration Loading
-  console.log('   Pattern 1: Secure Configuration Loading');
+  console.info('   Pattern 1: Secure Configuration Loading');
   const configService = 'my-app-config-' + Date.now();
   
   async function loadConfig() {
@@ -266,12 +266,12 @@ async function demonstrateSecretsErrorCodesFeatures() {
         
         if (value) {
           config[secret.key as keyof typeof config] = value;
-          console.log(`     ✅ Loaded ${secret.name}`);
+          console.info(`     ✅ Loaded ${secret.name}`);
         } else {
-          console.log(`     ⚠️  ${secret.name} not found, using default`);
+          console.info(`     ⚠️  ${secret.name} not found, using default`);
         }
       } catch (error: any) {
-        console.log(`     ❌ Failed to load ${secret.name}: ${error.message}`);
+        console.info(`     ❌ Failed to load ${secret.name}: ${error.message}`);
       }
     }
     
@@ -294,10 +294,10 @@ async function demonstrateSecretsErrorCodesFeatures() {
   });
   
   const config = await loadConfig();
-  console.log(`     Config loaded: ${JSON.stringify(config, null, 6).split('\n').join('\n     ')}`);
+  console.info(`     Config loaded: ${JSON.stringify(config, null, 6).split('\n').join('\n     ')}`);
 
   // Pattern 2: API Key Rotation
-  console.log('\n   Pattern 2: API Key Rotation');
+  console.info('\n   Pattern 2: API Key Rotation');
   const keyRotationService = 'api-rotation-' + Date.now();
   
   async function rotateApiKey(newKey: string) {
@@ -318,12 +318,12 @@ async function demonstrateSecretsErrorCodesFeatures() {
         allowUnrestrictedAccess: true
       });
       
-      console.log(`     ✅ Rotated API key`);
-      console.log(`     Old key existed: ${oldKey ? 'yes' : 'no'}`);
+      console.info(`     ✅ Rotated API key`);
+      console.info(`     Old key existed: ${oldKey ? 'yes' : 'no'}`);
       
       return true;
     } catch (error: any) {
-      console.log(`     ❌ Failed to rotate key: ${error.message} (${error.code})`);
+      console.info(`     ❌ Failed to rotate key: ${error.message} (${error.code})`);
       return false;
     }
   }
@@ -331,7 +331,7 @@ async function demonstrateSecretsErrorCodesFeatures() {
   await rotateApiKey('sk-new-1234567890abcdef');
 
   // Pattern 3: Secret Cleanup
-  console.log('\n   Pattern 3: Secret Cleanup');
+  console.info('\n   Pattern 3: Secret Cleanup');
   async function cleanupService(serviceName: string) {
     try {
       // In a real implementation, you might list all secrets for a service
@@ -350,10 +350,10 @@ async function demonstrateSecretsErrorCodesFeatures() {
         }
       }
       
-      console.log(`     ✅ Cleaned up ${cleanedCount} secrets from ${serviceName}`);
+      console.info(`     ✅ Cleaned up ${cleanedCount} secrets from ${serviceName}`);
       return cleanedCount;
     } catch (error: any) {
-      console.log(`     ❌ Cleanup failed: ${error.message} (${error.code})`);
+      console.info(`     ❌ Cleanup failed: ${error.message} (${error.code})`);
       return 0;
     }
   }
@@ -362,38 +362,38 @@ async function demonstrateSecretsErrorCodesFeatures() {
   await cleanupService(keyRotationService);
 
   // Summary
-  console.log('\n🎊 Secrets Error Codes Feature Summary');
-  console.log('======================================');
+  console.info('\n🎊 Secrets Error Codes Feature Summary');
+  console.info('======================================');
   
-  console.log('📊 Key Features Demonstrated:');
-  console.log('• Secure secret storage and retrieval');
-  console.log('• Comprehensive input validation with error codes');
-  console.log('• Graceful handling of non-existent secrets');
-  console.log('• Cross-platform error code consistency');
-  console.log('• Security-focused error message handling');
-  console.log('• Real-world usage patterns and best practices');
+  console.info('📊 Key Features Demonstrated:');
+  console.info('• Secure secret storage and retrieval');
+  console.info('• Comprehensive input validation with error codes');
+  console.info('• Graceful handling of non-existent secrets');
+  console.info('• Cross-platform error code consistency');
+  console.info('• Security-focused error message handling');
+  console.info('• Real-world usage patterns and best practices');
 
-  console.log('\n🌟 Production-Ready Capabilities:');
-  console.log('• Environment variable management');
-  console.log('• API key storage and rotation');
-  console.log('• Database credential management');
-  console.log('• JWT secret handling');
-  console.log('• Secure configuration loading');
-  console.log('• Secret cleanup and maintenance');
+  console.info('\n🌟 Production-Ready Capabilities:');
+  console.info('• Environment variable management');
+  console.info('• API key storage and rotation');
+  console.info('• Database credential management');
+  console.info('• JWT secret handling');
+  console.info('• Secure configuration loading');
+  console.info('• Secret cleanup and maintenance');
 
-  console.log('\n🔒 Security Features:');
-  console.log('• System keychain integration');
-  console.log('• Input validation and sanitization');
-  console.log('• Error message security (no null bytes)');
-  console.log('• No secret leakage in errors');
-  console.log('• Platform-specific access controls');
-  console.log('• Memory-safe secret handling');
+  console.info('\n🔒 Security Features:');
+  console.info('• System keychain integration');
+  console.info('• Input validation and sanitization');
+  console.info('• Error message security (no null bytes)');
+  console.info('• No secret leakage in errors');
+  console.info('• Platform-specific access controls');
+  console.info('• Memory-safe secret handling');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun.secrets provides secure, cross-platform');
-  console.log('secret management with comprehensive error handling!');
-  console.log('Perfect for production applications! 🔐');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun.secrets provides secure, cross-platform');
+  console.info('secret management with comprehensive error handling!');
+  console.info('Perfect for production applications! 🔐');
 }
 
 // Run the demonstration

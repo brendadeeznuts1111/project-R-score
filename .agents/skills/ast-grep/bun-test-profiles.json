@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "min_bun": "1.3.13",
+  "description": "bun test CI flag recipes — maps to bun-releases.json 1.3.13 test_cli; concurrentTestGlob in bunfig.toml",
+  "profiles": {
+    "local": {
+      "description": "Per-file isolation without multiprocess overhead",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep"
+    },
+    "ci": {
+      "description": "Full CI — parallel workers with per-file isolation + bunfig concurrentTestGlob",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "env": { "TZ": "Etc/UTC" }
+    },
+    "mock-clock": {
+      "description": "setSystemTime / jest.now / TZ — bun.com/docs/test/dates-and-times",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["mock-clock"],
+      "env": { "TZ": "Etc/UTC" }
+    },
+    "matchers": {
+      "description": "Object/array expect matchers — toContainAllKeys, toContainValue, toContainEqual",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["object-matchers"]
+    },
+    "shapes": {
+      "description": "Domain shape assertions — BundleScanReport, DoctorSnapshotV2, discovery index",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["expect-shapes"],
+      "env": { "TZ": "Etc/UTC" }
+    },
+    "api": {
+      "description": "bun:test API reference catalog — bun.com/reference/bun/test",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["bun-test-api"]
+    },
+    "archive": {
+      "description": "Bun.Archive glob filtering — bun.com/docs/runtime/archive",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["bun-archive"]
+    },
+    "workspace-filter": {
+      "description": "bun run --filter workspace scripts — bun.com/docs/runtime#filtering",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["bun-workspace-filter"]
+    },
+    "concurrent": {
+      "description": "bunfig.toml concurrentTestGlob — integration tests in-file parallel",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep"
+    },
+    "unit": {
+      "description": "Sequential unit tests — position filter `unit`",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["unit"]
+    },
+    "integration": {
+      "description": "Integration scans — position filter `integration` + parallel",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["integration"],
+      "preflight": "snapshot-validate"
+    },
+    "network": {
+      "description": "Network + endpoint catalog — integration domain preset",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["integration"],
+      "testNamePattern": "PlatformMatcher|NetworkMatcher|EndpointCatalog|platform \\+ network"
+    },
+    "snapshot": {
+      "description": "Snapshot v2 network section — integration domain preset",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["integration"],
+      "testNamePattern": "snapshot network integration"
+    },
+    "pillars": {
+      "description": "Three pillars — remediation, snapshot, policy",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["integration"],
+      "testNamePattern": "three pillars"
+    },
+    "supply-chain": {
+      "description": "Supply-chain transpiler + profiles integration",
+      "args": ["--parallel", "--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["integration"],
+      "testNamePattern": "supply-chain Layer 4\\.5|supply-chain profiles"
+    },
+    "color": {
+      "description": "Bun.color + terminal reporter unit domain",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["unit"],
+      "testNamePattern": "ColorMatcher|Bun\\.color|terminal \\+ reporter color"
+    },
+    "semver": {
+      "description": "Bun.semver + SemverMatcher policy runtime",
+      "args": ["--isolate"],
+      "cwd": ".agents/skills/ast-grep",
+      "filters": ["unit"],
+      "testNamePattern": "Bun\\.semver|SemverMatcher policy runtime"
+    },
+    "fast": {
+      "description": "Fixed worker count for constrained runners",
+      "args": ["--parallel=4", "--isolate"]
+    },
+    "ci-shard": {
+      "description": "Matrix shard — set BUN_TEST_SHARD=M/N or pass --shard",
+      "args": ["--parallel", "--isolate"],
+      "shard": true
+    },
+    "changed": {
+      "description": "Pre-push — only tests affected by git changes",
+      "args": ["--changed"]
+    },
+    "changed-main": {
+      "description": "Tests changed since main branch",
+      "args": ["--changed=main"]
+    },
+    "watch-changed": {
+      "description": "Watch mode with changed-file filter",
+      "args": ["--changed", "--watch"]
+    }
+  }
+}

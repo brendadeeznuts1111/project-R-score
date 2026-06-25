@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "docs": "https://bun.com/docs/runtime/transpiler",
+  "description": "Threat rules for Bun.Transpiler scan — imports, source, and transpiled output",
+  "import_rules": [
+    {
+      "id": "dynamic-import-relative",
+      "kind": "dynamic-import",
+      "path_pattern": "^\\.{1,2}/",
+      "severity": "warn",
+      "message": "Dynamic import of relative path — common loader/obfuscation vector"
+    },
+    {
+      "id": "require-relative",
+      "kind": "require-call",
+      "path_pattern": "^\\.{1,2}/",
+      "severity": "info",
+      "message": "require() of relative path in scanned module"
+    },
+    {
+      "id": "suspicious-scheme",
+      "path_pattern": "^(data:|javascript:|blob:)",
+      "severity": "error",
+      "message": "Import/require with suspicious URL scheme"
+    },
+    {
+      "id": "node-child-process",
+      "kind": "require-call",
+      "path_pattern": "^node:child_process$|^child_process$",
+      "severity": "warn",
+      "message": "require(child_process) — verify intent in client bundles"
+    }
+  ],
+  "source_rules": [
+    {
+      "id": "eval-source",
+      "pattern": "\\beval\\s*\\(",
+      "severity": "error",
+      "message": "eval() in source"
+    },
+    {
+      "id": "function-constructor-source",
+      "pattern": "new\\s+Function\\s*\\(",
+      "severity": "error",
+      "message": "Function constructor in source"
+    },
+    {
+      "id": "document-write-source",
+      "pattern": "document\\.write\\s*\\(",
+      "severity": "warn",
+      "message": "document.write in source"
+    },
+    {
+      "id": "zero-width-char",
+      "pattern": "[\\u200B-\\u200D\\uFEFF]",
+      "severity": "warn",
+      "message": "Zero-width Unicode — possible obfuscation"
+    }
+  ],
+  "output_rules": [
+    {
+      "id": "eval-output",
+      "pattern": "\\beval\\s*\\(",
+      "severity": "error",
+      "message": "eval() survived transpile — hidden runtime execution risk"
+    },
+    {
+      "id": "function-constructor-output",
+      "pattern": "new\\s+Function\\s*\\(",
+      "severity": "error",
+      "message": "Function constructor in transpiled output"
+    },
+    {
+      "id": "document-write-output",
+      "pattern": "document\\.write\\s*\\(",
+      "severity": "warn",
+      "message": "document.write in transpiled output"
+    },
+    {
+      "id": "hardcoded-ip-fetch",
+      "pattern": "fetch\\s*\\(\\s*[\"']https?:\\/\\/\\d{1,3}(?:\\.\\d{1,3}){3}",
+      "severity": "warn",
+      "message": "fetch() to hardcoded IP in transpiled output"
+    }
+  ]
+}

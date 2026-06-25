@@ -114,7 +114,7 @@ export default function BunCryptoHasherDemo() {
     // Example from Bun docs:
     // const hasher = new Bun.CryptoHasher("sha256", "secret-key");
     // hasher.update("hello world");
-    // console.log(hasher.digest("hex")); 
+    // console.info(hasher.digest("hex")); 
     // => "095d5a21fe6d0646db223fdf3de6436bb8dfb2fab0b51677ecf6441fcf5f2a67"
     
     const hmacData = key + input + algorithm + 'HMAC';
@@ -536,7 +536,7 @@ const result = hasher.digest("${encoding}");
 ${useHMAC ? `// HMAC with secret key (from Bun docs)
 const hasher = new Bun.CryptoHasher("${selectedAlgorithm}", "secret-key");
 hasher.update("hello world");
-console.log(hasher.digest("hex")); 
+console.info(hasher.digest("hex")); 
 // => "095d5a21fe6d0646db223fdf3de6436bb8dfb2fab0b51677ecf6441fcf5f2a67"
 
 // Your HMAC implementation
@@ -551,10 +551,10 @@ hasher.update("hello world");
 const copy = hasher.copy();  // <1μs - O(1) time!
 copy.update("!");            // Independent mutation
 
-console.log(copy.digest("hex"));
+console.info(copy.digest("hex"));
 // => "3840176c3d8923f59ac402b7550404b28ab11cb0ef1fa199130a5c37864b5497"
 
-console.log(hasher.digest("hex"));  
+console.info(hasher.digest("hex"));  
 // => "095d5a21fe6d0646db223fdf3de6436bb8dfb2fab0b51677ecf6441fcf5f2a67"
 
 // 🌊 Real-World Streaming Auth

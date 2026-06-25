@@ -267,4 +267,4 @@ describe("Odds Core - Error Handling", () => {
   });
 });
 
-console.log("✅ Odds Core Tests loaded successfully");
+console.info("✅ Odds Core Tests loaded successfully");

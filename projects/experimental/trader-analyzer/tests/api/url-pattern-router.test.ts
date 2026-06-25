@@ -437,13 +437,13 @@ describe("Performance Benchmarks", () => {
     }
     const regexTime = performance.now() - regexStart
 
-    console.log(`URLPattern: ${((patternTime / iterations) * 1000).toFixed(4)}µs/op`)
-    console.log(`Regex: ${((regexTime / iterations) * 1000).toFixed(4)}µs/op`)
-    console.log(`URLPattern is ${(regexTime / patternTime).toFixed(1)}x faster`)
+    console.info(`URLPattern: ${((patternTime / iterations) * 1000).toFixed(4)}µs/op`)
+    console.info(`Regex: ${((regexTime / iterations) * 1000).toFixed(4)}µs/op`)
+    console.info(`URLPattern is ${(regexTime / patternTime).toFixed(1)}x faster`)
 
     // URLPattern performance depends on the pattern complexity
     // For simple patterns, regex might be faster, but URLPattern provides better features
-    console.log(
+    console.info(
       `Performance comparison: URLPattern ${(patternTime / regexTime).toFixed(2)}x ${patternTime > regexTime ? "slower" : "faster"} than regex`
     )
 
@@ -473,7 +473,7 @@ describe("Performance Benchmarks", () => {
     const duration = performance.now() - start
 
     const throughput = iterations / (duration / 1000) // ops per second
-    console.log(`Router throughput: ${throughput.toFixed(0)} ops/sec`)
+    console.info(`Router throughput: ${throughput.toFixed(0)} ops/sec`)
 
     expect(throughput).toBeGreaterThan(1000) // Should handle at least 1000 ops/sec
   })

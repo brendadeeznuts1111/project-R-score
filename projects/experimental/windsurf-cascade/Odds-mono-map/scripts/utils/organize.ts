@@ -100,7 +100,7 @@ class VaultOrganizer {
     ];
 
     async organizeAll(): Promise<OrganizationResult> {
-        console.log(chalk.blue.bold('🗂️  Organizing Vault Files...'));
+        console.info(chalk.blue.bold('🗂️  Organizing Vault Files...'));
 
         try {
             // Use a simpler approach - get root markdown files
@@ -119,7 +119,7 @@ class VaultOrganizer {
                 !file.startsWith('10 -')
             );
 
-            console.log(chalk.gray(`Found ${mdFiles.length} files to organize`));
+            console.info(chalk.gray(`Found ${mdFiles.length} files to organize`));
 
             for (const file of mdFiles) {
                 await this.organizeFile(file);
@@ -193,13 +193,13 @@ class VaultOrganizer {
                         await this.applyTemplate(newFullPath, targetFolder);
                     }
 
-                    console.log(chalk.green(`✓ Organized: ${filePath} → ${newFilePath}`));
+                    console.info(chalk.green(`✓ Organized: ${filePath} → ${newFilePath}`));
                 }
             }
 
         } catch (error) {
             this.result.errors.push(`${filePath}: ${error}`);
-            console.log(chalk.red(`✗ Failed to organize ${filePath}: ${error}`));
+            console.info(chalk.red(`✗ Failed to organize ${filePath}: ${error}`));
         }
     }
 
@@ -411,25 +411,25 @@ author: system
     }
 
     private displayResults(): void {
-        console.log(chalk.blue.bold('\n📊 Organization Results:'));
-        console.log(chalk.green(`✅ Files moved: ${this.result.moved.length}`));
-        console.log(chalk.blue(`🔄 Files renamed: ${this.result.renamed.length}`));
-        console.log(chalk.yellow(`📝 Templates applied: ${this.result.templated.length}`));
+        console.info(chalk.blue.bold('\n📊 Organization Results:'));
+        console.info(chalk.green(`✅ Files moved: ${this.result.moved.length}`));
+        console.info(chalk.blue(`🔄 Files renamed: ${this.result.renamed.length}`));
+        console.info(chalk.yellow(`📝 Templates applied: ${this.result.templated.length}`));
 
         if (this.result.errors.length > 0) {
-            console.log(chalk.red(`❌ Errors: ${this.result.errors.length}`));
-            this.result.errors.forEach(error => console.log(chalk.red(`   - ${error}`)));
+            console.info(chalk.red(`❌ Errors: ${this.result.errors.length}`));
+            this.result.errors.forEach(error => console.info(chalk.red(`   - ${error}`)));
         }
 
         if (this.result.moved.length > 0) {
-            console.log(chalk.blue.bold('\n📁 Files Moved:'));
-            this.result.moved.forEach(move => console.log(chalk.gray(`   ${move}`)));
+            console.info(chalk.blue.bold('\n📁 Files Moved:'));
+            this.result.moved.forEach(move => console.info(chalk.gray(`   ${move}`)));
         }
 
-        console.log(chalk.blue.bold('\n💡 Next Steps:'));
-        console.log('1. Run: bun run vault:validate - Check compliance');
-        console.log('2. Run: bun run vault:monitor - Start monitoring');
-        console.log('3. Review organized files and adjust as needed');
+        console.info(chalk.blue.bold('\n💡 Next Steps:'));
+        console.info('1. Run: bun run vault:validate - Check compliance');
+        console.info('2. Run: bun run vault:monitor - Start monitoring');
+        console.info('3. Review organized files and adjust as needed');
     }
 }
 

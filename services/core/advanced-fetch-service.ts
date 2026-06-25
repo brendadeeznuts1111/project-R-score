@@ -17,28 +17,28 @@ export class AdvancedFetchService {
   
   // Demonstrate DNS prefetching (Bun-specific optimization)
   async prefetchDNS(): Promise<void> {
-    console.log('🚀 Prefetching DNS for bun.sh...');
+    console.info('🚀 Prefetching DNS for bun.sh...');
     dns.prefetch('bun.sh');
     
     // Show cache stats
     const stats = dns.getCacheStats();
-    console.log('DNS Cache Stats:', stats);
+    console.info('DNS Cache Stats:', stats);
   }
   
   // Demonstrate preconnect (Bun-specific optimization)
   async preconnectToBun(): Promise<void> {
-    console.log('🔗 Preconnecting to bun.sh...');
+    console.info('🔗 Preconnecting to bun.sh...');
     try {
       await fetch.preconnect('https://bun.sh');
-      console.log('✅ Preconnect completed');
+      console.info('✅ Preconnect completed');
     } catch (error) {
-      console.log(`⚠️ Preconnect failed (this is expected in some environments): ${error.message}`);
+      console.info(`⚠️ Preconnect failed (this is expected in some environments): ${error.message}`);
     }
   }
   
   // Fetch with timeout using AbortSignal.timeout
   async fetchWithTimeout(url: string, timeoutMs = 5000): Promise<any> {
-    console.log(`⏱️ Fetching ${url} with ${timeoutMs}ms timeout...`);
+    console.info(`⏱️ Fetching ${url} with ${timeoutMs}ms timeout...`);
     
     try {
       const response = await fetch(url, {
@@ -46,7 +46,7 @@ export class AdvancedFetchService {
         verbose: true, // Bun-specific debugging
       });
       
-      console.log(`✅ Response status: ${response.status}`);
+      console.info(`✅ Response status: ${response.status}`);
       return response;
     } catch (error) {
       console.error(`❌ Timeout or error: ${error.message}`);
@@ -56,7 +56,7 @@ export class AdvancedFetchService {
   
   // Demonstrate streaming response body
   async streamResponse(url: string): Promise<void> {
-    console.log(`📡 Streaming response from ${url}...`);
+    console.info(`📡 Streaming response from ${url}...`);
     
     const response = await fetch(url);
     let totalBytes = 0;
@@ -64,21 +64,21 @@ export class AdvancedFetchService {
     // Stream the response body chunk by chunk
     for await (const chunk of response.body!) {
       totalBytes += chunk.length;
-      console.log(`📦 Received chunk: ${chunk.length} bytes (total: ${totalBytes})`);
+      console.info(`📦 Received chunk: ${chunk.length} bytes (total: ${totalBytes})`);
     }
     
-    console.log(`✅ Total streamed: ${totalBytes} bytes`);
+    console.info(`✅ Total streamed: ${totalBytes} bytes`);
   }
   
   // Demonstrate binary data handling with TypedArrays
   async fetchAsTypedArray(url: string): Promise<Uint8Array> {
-    console.log(`🔢 Fetching ${url} as Uint8Array...`);
+    console.info(`🔢 Fetching ${url} as Uint8Array...`);
     
     const response = await fetch(url);
     const bytes = await response.bytes(); // Bun-specific method
     
-    console.log(`✅ Received ${bytes.length} bytes as Uint8Array`);
-    console.log(`📊 First 10 bytes: ${bytes.slice(0, 10)}`);
+    console.info(`✅ Received ${bytes.length} bytes as Uint8Array`);
+    console.info(`📊 First 10 bytes: ${bytes.slice(0, 10)}`);
     
     return bytes;
   }
@@ -89,7 +89,7 @@ export class AdvancedFetchService {
    * @see BUN-SECURITY-FIXES-INTEGRATION.md
    */
   async postWithStream(url: string, data: string[]): Promise<Response> {
-    console.log(`📤 POSTing streaming data to ${url}...`);
+    console.info(`📤 POSTing streaming data to ${url}...`);
     
     // Create a readable stream - Bun now properly releases this after fetch completes
     const stream = new ReadableStream({
@@ -113,13 +113,13 @@ export class AdvancedFetchService {
       },
     });
     
-    console.log(`✅ POST response status: ${response.status}`);
+    console.info(`✅ POST response status: ${response.status}`);
     return response;
   }
   
   // Demonstrate fetch with custom headers and proxy options
   async fetchWithHeaders(url: string): Promise<Response> {
-    console.log(`🔐 Fetching ${url} with custom headers...`);
+    console.info(`🔐 Fetching ${url} with custom headers...`);
     
     const response = await fetch(url, {
       headers: {
@@ -130,15 +130,15 @@ export class AdvancedFetchService {
       verbose: false, // Disable verbose for cleaner output
     });
     
-    console.log(`✅ Response status: ${response.status}`);
-    console.log(`📋 Response headers:`, Object.fromEntries(response.headers.entries()));
+    console.info(`✅ Response status: ${response.status}`);
+    console.info(`📋 Response headers:`, Object.fromEntries(response.headers.entries()));
     
     return response;
   }
   
   // Demonstrate concurrent fetches with connection pooling
   async fetchMultiple(urls: string[]): Promise<Response[]> {
-    console.log(`🔄 Fetching ${urls.length} URLs concurrently...`);
+    console.info(`🔄 Fetching ${urls.length} URLs concurrently...`);
     
     const startTime = Date.now();
     
@@ -152,10 +152,10 @@ export class AdvancedFetchService {
     );
     
     const endTime = Date.now();
-    console.log(`✅ Completed ${responses.length} requests in ${endTime - startTime}ms`);
+    console.info(`✅ Completed ${responses.length} requests in ${endTime - startTime}ms`);
     
     responses.forEach((response, index) => {
-      console.log(`   ${index + 1}. ${urls[index]} - ${response.status}`);
+      console.info(`   ${index + 1}. ${urls[index]} - ${response.status}`);
     });
     
     return responses;
@@ -163,13 +163,13 @@ export class AdvancedFetchService {
   
   // Demonstrate error handling for different scenarios
   async demonstrateErrorHandling(): Promise<void> {
-    console.log('⚠️ Demonstrating error handling...');
+    console.info('⚠️ Demonstrating error handling...');
     
     // Test timeout error
     try {
       await this.fetchWithTimeout('https://httpbin.org/delay/10', 2000);
     } catch (error) {
-      console.log(`✅ Caught timeout error: ${error.message}`);
+      console.info(`✅ Caught timeout error: ${error.message}`);
     }
     
     // Test invalid URL
@@ -178,7 +178,7 @@ export class AdvancedFetchService {
 
       await fetch('https://invalid-domain-that-does-not-exist.com');
     } catch (error) {
-      console.log(`✅ Caught DNS error: ${error.message}`);
+      console.info(`✅ Caught DNS error: ${error.message}`);
     }
     
     // Test 404 handling
@@ -186,16 +186,16 @@ export class AdvancedFetchService {
       const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://httpbin.org/status/404' domain
  await fetch('https://httpbin.org/status/404');
       if (!response.ok) {
-        console.log(`✅ Handled HTTP error: ${response.status} ${response.statusText}`);
+        console.info(`✅ Handled HTTP error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
-      console.log(`❌ Unexpected error: ${error.message}`);
+      console.info(`❌ Unexpected error: ${error.message}`);
     }
   }
   
   // Demonstrate different response body methods
   async demonstrateResponseMethods(url: string): Promise<void> {
-    console.log(`📚 Testing different response methods on ${url}...`);
+    console.info(`📚 Testing different response methods on ${url}...`);
     
     const response = await fetch(url);
     
@@ -213,23 +213,23 @@ export class AdvancedFetchService {
     
     if (contentType?.includes('application/json')) {
       const jsonData = await response.json();
-      console.log(`✅ JSON response: ${JSON.stringify(jsonData).slice(0, 100)}...`);
+      console.info(`✅ JSON response: ${JSON.stringify(jsonData).slice(0, 100)}...`);
     } else if (contentType?.includes('text/html') || contentType?.includes('text/plain')) {
       const textData = await clone1.text();
-      console.log(`✅ Text response: ${textData.slice(0, 100)}... (${textData.length} chars)`);
+      console.info(`✅ Text response: ${textData.slice(0, 100)}... (${textData.length} chars)`);
     }
     
     // Always test binary methods
     const arrayBuffer = await clone2.arrayBuffer();
-    console.log(`✅ ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
+    console.info(`✅ ArrayBuffer: ${arrayBuffer.byteLength} bytes`);
     
     const uint8Array = await clone3.bytes();
-    console.log(`✅ Uint8Array: ${uint8Array.length} bytes`);
+    console.info(`✅ Uint8Array: ${uint8Array.length} bytes`);
   }
   
   // Comprehensive demo showing all Bun fetch features
   async runFullDemo(): Promise<void> {
-    console.log('🎯 Running comprehensive Bun fetch demo...\n');
+    console.info('🎯 Running comprehensive Bun fetch demo...\n');
     
     const testUrl = `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`;
     const testUrls = [
@@ -244,38 +244,38 @@ export class AdvancedFetchService {
       await this.preconnectToBun();
       
       // 2. Basic fetch with timeout
-      console.log('\n📍 Testing basic fetch with timeout...');
+      console.info('\n📍 Testing basic fetch with timeout...');
       await this.fetchWithTimeout(testUrl, 10000);
       
       // 3. Headers and custom options
-      console.log('\n📍 Testing custom headers...');
+      console.info('\n📍 Testing custom headers...');
       await this.fetchWithHeaders(testUrl);
       
       // 4. Different response methods
-      console.log('\n📍 Testing response methods...');
+      console.info('\n📍 Testing response methods...');
       await this.demonstrateResponseMethods(testUrl);
       
       // 5. Binary data handling
-      console.log('\n📍 Testing binary data...');
+      console.info('\n📍 Testing binary data...');
       await this.fetchAsTypedArray(`${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`);
       
       // 6. Concurrent fetching with connection pooling
-      console.log('\n📍 Testing concurrent fetches...');
+      console.info('\n📍 Testing concurrent fetches...');
       await this.fetchMultiple(testUrls);
       
       // 7. Error handling
-      console.log('\n📍 Testing error handling...');
+      console.info('\n📍 Testing error handling...');
       await this.demonstrateErrorHandling();
       
       // 8. Streaming (commented out to avoid too much output)
-      // console.log('\n📍 Testing streaming...');
+      // console.info('\n📍 Testing streaming...');
       // await this.streamResponse(testUrl);
       
-      console.log('\n✨ Demo completed successfully!');
+      console.info('\n✨ Demo completed successfully!');
       
     } catch (error) {
       console.error('\n❌ Demo failed:', error.message);
-      console.log('⚠️ Some failures are expected in demo environments');
+      console.info('⚠️ Some failures are expected in demo environments');
     }
   }
 }

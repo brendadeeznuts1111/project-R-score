@@ -15,7 +15,10 @@ import {
   PROVIDER_METADATA,
   QUICK_REFERENCE_URLS,
 } from '../../../../lib/docs/constants/domains';
-import { ENTERPRISE_DOCUMENTATION_PATHS, IntelligentRouting } from '../../../../lib/docs/constants/categories';
+import {
+  ENTERPRISE_DOCUMENTATION_PATHS,
+  IntelligentRouting,
+} from '../../../../lib/docs/constants/categories';
 import {
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,

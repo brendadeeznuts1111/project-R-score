@@ -110,9 +110,9 @@ class PackageSearchEngine {
         lastUpdated: parsed.lastUpdated || 0
       };
       
-      console.log(`📚 Loaded ${this.index.packages.size} packages from index`);
+      console.info(`📚 Loaded ${this.index.packages.size} packages from index`);
     } catch (error) {
-      console.log('📚 No existing index found, starting fresh');
+      console.info('📚 No existing index found, starting fresh');
       this.index.lastUpdated = Date.now();
     }
   }
@@ -129,7 +129,7 @@ class PackageSearchEngine {
       };
       
       await writeFile(this.indexPath, JSON.stringify(data, null, 2));
-      console.log(`💾 Saved index with ${this.index.packages.size} packages`);
+      console.info(`💾 Saved index with ${this.index.packages.size} packages`);
     } catch (error) {
       console.error('❌ Failed to save index:', error);
     }
@@ -195,7 +195,7 @@ class PackageSearchEngine {
     this.index.lastUpdated = Date.now();
     await this.saveIndex();
     
-    console.log(`📦 Indexed package: ${metadata.name}@${metadata.version}`);
+    console.info(`📦 Indexed package: ${metadata.name}@${metadata.version}`);
   }
 
   // Remove package from search indices
@@ -596,7 +596,7 @@ class PackageSearchEngine {
 
   // Rebuild entire index
   public async rebuildIndex(packages: PackageMetadata[]) {
-    console.log('🔄 Rebuilding search index...');
+    console.info('🔄 Rebuilding search index...');
     
     this.index = {
       packages: new Map(),
@@ -610,7 +610,7 @@ class PackageSearchEngine {
       await this.indexPackage(pkg);
     }
 
-    console.log(`✅ Rebuilt index with ${packages.length} packages`);
+    console.info(`✅ Rebuilt index with ${packages.length} packages`);
   }
 }
 

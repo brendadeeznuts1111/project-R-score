@@ -1,17 +1,17 @@
 #!/usr/bin/env bun
 
 export async function demoDeploymentWorkflow() {
-  console.log('🚀 Deployment Workflow Demo');
-  console.log('='.repeat(40));
+  console.info('🚀 Deployment Workflow Demo');
+  console.info('='.repeat(40));
   
   // Simulate a complete deployment workflow
   const deploymentId = `deploy-${Date.now()}`;
   
   try {
-    console.log(`📦 Starting deployment: ${deploymentId}`);
+    console.info(`📦 Starting deployment: ${deploymentId}`);
     
     // 1. Environment setup
-    console.log('\n1. 🌍 Environment Setup:');
+    console.info('\n1. 🌍 Environment Setup:');
     const environments = {
       development: { url: 'dev.example.com', branch: 'main' },
       staging: { url: 'staging.example.com', branch: 'develop' },
@@ -21,12 +21,12 @@ export async function demoDeploymentWorkflow() {
     const targetEnv = 'staging';
     const env = environments[targetEnv];
     
-    console.log(`   🎯 Target: ${targetEnv}`);
-    console.log(`   🌐 URL: ${env.url}`);
-    console.log(`   🌿 Branch: ${env.branch}`);
+    console.info(`   🎯 Target: ${targetEnv}`);
+    console.info(`   🌐 URL: ${env.url}`);
+    console.info(`   🌿 Branch: ${env.branch}`);
     
     // 2. Build preparation
-    console.log('\n2. 🔨 Build Preparation:');
+    console.info('\n2. 🔨 Build Preparation:');
     const buildSteps = [
       { name: 'Install dependencies', command: 'bun install' },
       { name: 'Run tests', command: 'bun test' },
@@ -36,13 +36,13 @@ export async function demoDeploymentWorkflow() {
     ];
     
     for (const step of buildSteps) {
-      console.log(`   ⏳ ${step.name}...`);
+      console.info(`   ⏳ ${step.name}...`);
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate work
-      console.log(`   ✅ ${step.name} completed`);
+      console.info(`   ✅ ${step.name} completed`);
     }
     
     // 3. Artifact creation
-    console.log('\n3. 📦 Artifact Creation:');
+    console.info('\n3. 📦 Artifact Creation:');
     const createArtifact = async () => {
       const artifact = {
         id: `artifact-${Date.now()}`,
@@ -69,10 +69,10 @@ export async function demoDeploymentWorkflow() {
       // Generate checksum (simulated)
       artifact.checksum = Buffer.from(`${artifact.id}-${artifact.version}`).toString('hex').substring(0, 16);
       
-      console.log(`   📁 Created artifact: ${artifact.id}`);
-      console.log(`   📏 Size: ${Math.round(artifact.size / 1024)}KB`);
-      console.log(`   🔐 Checksum: ${artifact.checksum}`);
-      console.log(`   📄 Files: ${artifact.files.length}`);
+      console.info(`   📁 Created artifact: ${artifact.id}`);
+      console.info(`   📏 Size: ${Math.round(artifact.size / 1024)}KB`);
+      console.info(`   🔐 Checksum: ${artifact.checksum}`);
+      console.info(`   📄 Files: ${artifact.files.length}`);
       
       return artifact;
     };
@@ -80,7 +80,7 @@ export async function demoDeploymentWorkflow() {
     const artifact = await createArtifact();
     
     // 4. Security scan
-    console.log('\n4. 🛡️ Security Scan:');
+    console.info('\n4. 🛡️ Security Scan:');
     const securityScan = async () => {
       const scanResults = {
         vulnerabilities: [],
@@ -107,14 +107,14 @@ export async function demoDeploymentWorkflow() {
         scanResults.dependencies.push(dep);
       }
       
-      console.log(`   🔍 Scanned ${scanResults.dependencies.length} dependencies`);
-      console.log(`   🚨 Found ${scanResults.vulnerabilities.length} vulnerabilities`);
-      console.log(`   📊 Security score: ${scanResults.score}/100`);
+      console.info(`   🔍 Scanned ${scanResults.dependencies.length} dependencies`);
+      console.info(`   🚨 Found ${scanResults.vulnerabilities.length} vulnerabilities`);
+      console.info(`   📊 Security score: ${scanResults.score}/100`);
       
       if (scanResults.vulnerabilities.length > 0) {
-        console.log('   ⚠️  Vulnerabilities:');
+        console.info('   ⚠️  Vulnerabilities:');
         scanResults.vulnerabilities.forEach(vuln => {
-          console.log(`      - ${vuln.name}@${vuln.version} (${vuln.severity})`);
+          console.info(`      - ${vuln.name}@${vuln.version} (${vuln.severity})`);
         });
       }
       
@@ -124,7 +124,7 @@ export async function demoDeploymentWorkflow() {
     const securityResults = await securityScan();
     
     // 5. Deployment strategy
-    console.log('\n5. 🎯 Deployment Strategy:');
+    console.info('\n5. 🎯 Deployment Strategy:');
     const strategies = {
       'rolling': 'Gradual replacement of old instances',
       'blue-green': 'Switch traffic to new environment atomically',
@@ -132,11 +132,11 @@ export async function demoDeploymentWorkflow() {
     };
     
     const selectedStrategy = 'blue-green';
-    console.log(`   📋 Strategy: ${selectedStrategy}`);
-    console.log(`   📝 Description: ${strategies[selectedStrategy]}`);
+    console.info(`   📋 Strategy: ${selectedStrategy}`);
+    console.info(`   📝 Description: ${strategies[selectedStrategy]}`);
     
     // 6. Infrastructure provisioning
-    console.log('\n6. 🏗️ Infrastructure Provisioning:');
+    console.info('\n6. 🏗️ Infrastructure Provisioning:');
     const provisionInfrastructure = async () => {
       const resources = [
         { type: 'server', name: 'app-server-1', status: 'creating' },
@@ -145,10 +145,10 @@ export async function demoDeploymentWorkflow() {
       ];
       
       for (const resource of resources) {
-        console.log(`   🔧 Creating ${resource.type}: ${resource.name}`);
+        console.info(`   🔧 Creating ${resource.type}: ${resource.name}`);
         await new Promise(resolve => setTimeout(resolve, 300));
         resource.status = 'ready';
-        console.log(`   ✅ ${resource.name} is ready`);
+        console.info(`   ✅ ${resource.name} is ready`);
       }
       
       return resources;
@@ -157,7 +157,7 @@ export async function demoDeploymentWorkflow() {
     const infrastructure = await provisionInfrastructure();
     
     // 7. Database migrations
-    console.log('\n7. 🗄️ Database Migrations:');
+    console.info('\n7. 🗄️ Database Migrations:');
     const runMigrations = async () => {
       const migrations = [
         { version: '001', name: 'create_users_table', status: 'pending' },
@@ -166,10 +166,10 @@ export async function demoDeploymentWorkflow() {
       ];
       
       for (const migration of migrations) {
-        console.log(`   ⬆️  Running migration ${migration.version}: ${migration.name}`);
+        console.info(`   ⬆️  Running migration ${migration.version}: ${migration.name}`);
         await new Promise(resolve => setTimeout(resolve, 200));
         migration.status = 'completed';
-        console.log(`   ✅ Migration ${migration.version} completed`);
+        console.info(`   ✅ Migration ${migration.version} completed`);
       }
       
       return migrations;
@@ -178,7 +178,7 @@ export async function demoDeploymentWorkflow() {
     const migrations = await runMigrations();
     
     // 8. Application deployment
-    console.log('\n8. 🚀 Application Deployment:');
+    console.info('\n8. 🚀 Application Deployment:');
     const deployApplication = async () => {
       const deploymentSteps = [
         'Upload artifact to server',
@@ -190,9 +190,9 @@ export async function demoDeploymentWorkflow() {
       ];
       
       for (const step of deploymentSteps) {
-        console.log(`   ⏳ ${step}...`);
+        console.info(`   ⏳ ${step}...`);
         await new Promise(resolve => setTimeout(resolve, 400));
-        console.log(`   ✅ ${step}`);
+        console.info(`   ✅ ${step}`);
       }
       
       return { status: 'deployed', url: env.url };
@@ -201,7 +201,7 @@ export async function demoDeploymentWorkflow() {
     const deployment = await deployApplication();
     
     // 9. Health checks
-    console.log('\n9. 🏥 Health Checks:');
+    console.info('\n9. 🏥 Health Checks:');
     const runHealthChecks = async () => {
       const checks = [
         { name: 'Application health', endpoint: '/health', status: 'checking' },
@@ -211,7 +211,7 @@ export async function demoDeploymentWorkflow() {
       ];
       
       for (const check of checks) {
-        console.log(`   🔍 Checking ${check.name}...`);
+        console.info(`   🔍 Checking ${check.name}...`);
         await new Promise(resolve => setTimeout(resolve, 200));
         
         // Simulate health check results
@@ -219,9 +219,9 @@ export async function demoDeploymentWorkflow() {
         check.status = isHealthy ? 'healthy' : 'unhealthy';
         
         if (check.status === 'healthy') {
-          console.log(`   ✅ ${check.name}: OK`);
+          console.info(`   ✅ ${check.name}: OK`);
         } else {
-          console.log(`   ❌ ${check.name}: FAILED`);
+          console.info(`   ❌ ${check.name}: FAILED`);
         }
       }
       
@@ -232,7 +232,7 @@ export async function demoDeploymentWorkflow() {
     const healthResults = await runHealthChecks();
     
     // 10. Performance tests
-    console.log('\n10. ⚡ Performance Tests:');
+    console.info('\n10. ⚡ Performance Tests:');
     const runPerformanceTests = async () => {
       const tests = [
         { name: 'Load time', target: '< 2s', actual: '1.2s', passed: true },
@@ -243,7 +243,7 @@ export async function demoDeploymentWorkflow() {
       
       for (const test of tests) {
         const status = test.passed ? '✅' : '❌';
-        console.log(`   ${status} ${test.name}: ${test.actual} (target: ${test.target})`);
+        console.info(`   ${status} ${test.name}: ${test.actual} (target: ${test.target})`);
       }
       
       const passed = tests.filter(test => test.passed).length;
@@ -253,7 +253,7 @@ export async function demoDeploymentWorkflow() {
     const performanceResults = await runPerformanceTests();
     
     // 11. Rollback preparation
-    console.log('\n11. 🔄 Rollback Preparation:');
+    console.info('\n11. 🔄 Rollback Preparation:');
     const prepareRollback = () => {
       const rollbackPlan = {
         previousVersion: '1.2.2',
@@ -268,10 +268,10 @@ export async function demoDeploymentWorkflow() {
         ]
       };
       
-      console.log(`   📦 Previous version: ${rollbackPlan.previousVersion}`);
-      console.log(`   💾 Database backup: ${rollbackPlan.backupDatabase ? 'Enabled' : 'Disabled'}`);
-      console.log(`   📁 Assets backup: ${rollbackPlan.backupAssets ? 'Enabled' : 'Disabled'}`);
-      console.log(`   📋 Rollback steps: ${rollbackPlan.rollbackSteps.length}`);
+      console.info(`   📦 Previous version: ${rollbackPlan.previousVersion}`);
+      console.info(`   💾 Database backup: ${rollbackPlan.backupDatabase ? 'Enabled' : 'Disabled'}`);
+      console.info(`   📁 Assets backup: ${rollbackPlan.backupAssets ? 'Enabled' : 'Disabled'}`);
+      console.info(`   📋 Rollback steps: ${rollbackPlan.rollbackSteps.length}`);
       
       return rollbackPlan;
     };
@@ -279,7 +279,7 @@ export async function demoDeploymentWorkflow() {
     const rollbackPlan = prepareRollback();
     
     // 12. Final verification
-    console.log('\n12. ✅ Final Verification:');
+    console.info('\n12. ✅ Final Verification:');
     const finalStatus = {
       deployment: deployment.status === 'deployed',
       health: healthResults.allHealthy,
@@ -289,45 +289,45 @@ export async function demoDeploymentWorkflow() {
     
     const allChecksPassed = Object.values(finalStatus).every(Boolean);
     
-    console.log('   📊 Deployment Status:');
+    console.info('   📊 Deployment Status:');
     Object.entries(finalStatus).forEach(([check, passed]) => {
       const status = passed ? '✅' : '❌';
-      console.log(`      ${status} ${check.charAt(0).toUpperCase() + check.slice(1)}`);
+      console.info(`      ${status} ${check.charAt(0).toUpperCase() + check.slice(1)}`);
     });
     
     if (allChecksPassed) {
-      console.log('\n🎉 Deployment successful!');
-      console.log(`   🌐 Application is live at: https://${env.url}`);
-      console.log(`   📦 Deployment ID: ${deploymentId}`);
-      console.log(`   🆔 Artifact: ${artifact.id}`);
+      console.info('\n🎉 Deployment successful!');
+      console.info(`   🌐 Application is live at: https://${env.url}`);
+      console.info(`   📦 Deployment ID: ${deploymentId}`);
+      console.info(`   🆔 Artifact: ${artifact.id}`);
     } else {
-      console.log('\n⚠️  Deployment has issues. Consider rollback.');
+      console.info('\n⚠️  Deployment has issues. Consider rollback.');
     }
     
     // 13. Cleanup
-    console.log('\n13. 🧹 Cleanup:');
-    console.log('   🗑️  Removing temporary files');
-    console.log('   📊 Archiving deployment logs');
-    console.log('   🔔 Sending notifications');
+    console.info('\n13. 🧹 Cleanup:');
+    console.info('   🗑️  Removing temporary files');
+    console.info('   📊 Archiving deployment logs');
+    console.info('   🔔 Sending notifications');
     
     await new Promise(resolve => setTimeout(resolve, 300));
-    console.log('   ✅ Cleanup completed');
+    console.info('   ✅ Cleanup completed');
     
   } catch (error) {
-    console.log(`❌ Deployment failed: ${error.message}`);
-    console.log('🔄 Initiating rollback...');
+    console.info(`❌ Deployment failed: ${error.message}`);
+    console.info('🔄 Initiating rollback...');
   }
   
-  console.log('\n✅ Deployment workflow demo completed!');
-  console.log('\n💡 Modern deployment includes:');
-  console.log('   • Automated build and test pipelines');
-  console.log('   • Infrastructure as code');
-  console.log('   • Blue-green or canary deployments');
-  console.log('   • Comprehensive health checks');
-  console.log('   • Performance monitoring');
-  console.log('   • Automated rollback capabilities');
-  console.log('   • Security scanning');
-  console.log('   • Database migrations');
+  console.info('\n✅ Deployment workflow demo completed!');
+  console.info('\n💡 Modern deployment includes:');
+  console.info('   • Automated build and test pipelines');
+  console.info('   • Infrastructure as code');
+  console.info('   • Blue-green or canary deployments');
+  console.info('   • Comprehensive health checks');
+  console.info('   • Performance monitoring');
+  console.info('   • Automated rollback capabilities');
+  console.info('   • Security scanning');
+  console.info('   • Database migrations');
 }
 
 if (import.meta.main) {

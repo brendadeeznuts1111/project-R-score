@@ -109,7 +109,7 @@ export class WorkerPoolManager {
   // Initialize worker pool
   async initialize(): Promise<void> {
     try {
-      console.log(
+      console.info(
         `🔄 Initializing worker pool with ${this.config.minWorkers} workers...`
       );
 
@@ -122,7 +122,7 @@ export class WorkerPoolManager {
       this.startScalingMonitor();
 
       this.isInitialized = true;
-      console.log(
+      console.info(
         `✅ Worker pool initialized with ${this.workers.length} workers`
       );
     } catch (error) {
@@ -172,7 +172,7 @@ export class WorkerPoolManager {
       this.workers.push(worker);
       this.availableWorkers.push(worker);
 
-      console.log(`👷 Created worker: ${workerId}`);
+      console.info(`👷 Created worker: ${workerId}`);
       return worker;
     } catch (error) {
       console.error(`❌ Failed to create worker:`, error);
@@ -240,7 +240,7 @@ export class WorkerPoolManager {
     // Send task to worker
     worker.postMessage(task);
 
-    console.log(`📤 Assigned task ${task.id} to worker ${worker.name}`);
+    console.info(`📤 Assigned task ${task.id} to worker ${worker.name}`);
   }
 
   // Handle worker result
@@ -262,7 +262,7 @@ export class WorkerPoolManager {
     this.busyWorkers.delete(worker);
     this.availableWorkers.push(worker);
 
-    console.log(
+    console.info(
       `📥 Worker ${worker.name} completed task ${result.taskId} in ${processingTime}ms`
     );
 
@@ -285,7 +285,7 @@ export class WorkerPoolManager {
         if (processingInfo.task.retryCount < processingInfo.task.maxRetries) {
           processingInfo.task.retryCount++;
           this.taskQueue.push(processingInfo.task);
-          console.log(
+          console.info(
             `🔄 Retrying task ${taskId} (attempt ${processingInfo.task.retryCount})`
           );
         } else {
@@ -360,7 +360,7 @@ export class WorkerPoolManager {
     if (task.retryCount < task.maxRetries) {
       task.retryCount++;
       this.taskQueue.push(task);
-      console.log(
+      console.info(
         `🔄 Retrying timed out task ${task.id} (attempt ${task.retryCount})`
       );
     } else {
@@ -410,7 +410,7 @@ export class WorkerPoolManager {
 
     try {
       await this.createWorker();
-      console.log(`📈 Scaled up to ${this.workers.length} workers`);
+      console.info(`📈 Scaled up to ${this.workers.length} workers`);
     } catch (error) {
       console.error("❌ Failed to scale up:", error);
     }
@@ -428,7 +428,7 @@ export class WorkerPoolManager {
       if (workerIndex > -1) {
         this.workers.splice(workerIndex, 1);
       }
-      console.log(`📉 Scaled down to ${this.workers.length} workers`);
+      console.info(`📉 Scaled down to ${this.workers.length} workers`);
     }
   }
 
@@ -489,7 +489,7 @@ export class WorkerPoolManager {
 
   // Shutdown worker pool
   async shutdown(): Promise<void> {
-    console.log("🛑 Shutting down worker pool...");
+    console.info("🛑 Shutting down worker pool...");
 
     // Stop scaling monitor
     if (this.scalingTimer) {
@@ -517,7 +517,7 @@ export class WorkerPoolManager {
     this.processingTasks.clear();
 
     this.isInitialized = false;
-    console.log("✅ Worker pool shutdown complete");
+    console.info("✅ Worker pool shutdown complete");
   }
 }
 

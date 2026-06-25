@@ -1,4 +1,5 @@
 import { dns } from "bun";
+import { CircuitBreaker, createCircuitBreaker } from "./resilient-ultra";
 
 export interface ResilientFetchOptions extends Omit<RequestInit, "signal"> {
   origins?: string[];
@@ -8,34 +9,35 @@ export interface ResilientFetchOptions extends Omit<RequestInit, "signal"> {
   circuitBreaker?: boolean;
   prefetch?: boolean;
   preconnect?: boolean;
+  circuitBreakerConfig?: Partial<{
+    failureThreshold: number;
+    resetTimeoutMs: number;
+    halfOpenMaxCalls: number;
+  }>;
 }
 
-type CircuitState = {
-  failures: number;
-  openUntilMs: number;
-};
+const circuitBreakers = new Map<string, CircuitBreaker>();
 
-const circuitBreakers = new Map<string, CircuitState>();
-const CIRCUIT_THRESHOLD = 3;
-const CIRCUIT_COOLDOWN_MS = 30_000;
+function getOrCreateCircuitBreaker(origin: string, config?: ResilientFetchOptions["circuitBreakerConfig"]): CircuitBreaker {
+  let cb = circuitBreakers.get(origin);
+  if (!cb) {
+    cb = createCircuitBreaker(config);
+    circuitBreakers.set(origin, cb);
+  }
+  return cb;
+}
 
 function isCircuitOpen(origin: string): boolean {
-  const state = circuitBreakers.get(origin);
-  return Boolean(state && state.openUntilMs > Date.now());
+  const cb = circuitBreakers.get(origin);
+  return cb ? !cb.canExecute() : false;
 }
 
 function recordCircuitFailure(origin: string): void {
-  const state = circuitBreakers.get(origin) ?? { failures: 0, openUntilMs: 0 };
-  state.failures += 1;
-  if (state.failures >= CIRCUIT_THRESHOLD) {
-    state.openUntilMs = Date.now() + CIRCUIT_COOLDOWN_MS;
-    state.failures = 0;
-  }
-  circuitBreakers.set(origin, state);
+  getOrCreateCircuitBreaker(origin).recordFailure();
 }
 
 function recordCircuitSuccess(origin: string): void {
-  circuitBreakers.set(origin, { failures: 0, openUntilMs: 0 });
+  getOrCreateCircuitBreaker(origin).recordSuccess();
 }
 
 function buildUrl(origin: string, path: string): string {
@@ -53,6 +55,7 @@ export async function resilientFetchBun(path: string, options: ResilientFetchOpt
     circuitBreaker = true,
     prefetch = true,
     preconnect = true,
+    circuitBreakerConfig,
     ...fetchOptions
   } = options;
 
@@ -82,7 +85,8 @@ export async function resilientFetchBun(path: string, options: ResilientFetchOpt
 
   for (let attempt = 0; attempt < retries; attempt += 1) {
     for (const origin of origins) {
-      if (circuitBreaker && isCircuitOpen(origin)) {
+      const cb = getOrCreateCircuitBreaker(origin, circuitBreakerConfig);
+      if (circuitBreaker && !cb.canExecute()) {
         continue;
       }
 
@@ -94,20 +98,20 @@ export async function resilientFetchBun(path: string, options: ResilientFetchOpt
         });
 
         if (response.ok) {
-          if (circuitBreaker) recordCircuitSuccess(origin);
+          if (circuitBreaker) cb.recordSuccess();
           return response;
         }
 
         const statusError = new Error(`HTTP ${response.status} ${response.statusText} from ${url}`);
         errors.push(statusError);
         if (circuitBreaker && response.status >= 500) {
-          recordCircuitFailure(origin);
+          cb.recordFailure();
         }
       } catch (error) {
         const err = error instanceof Error ? error : new Error(String(error));
         errors.push(err);
         if (circuitBreaker) {
-          recordCircuitFailure(origin);
+          cb.recordFailure();
         }
       }
     }
@@ -120,5 +124,17 @@ export async function resilientFetchBun(path: string, options: ResilientFetchOpt
   throw new AggregateError(
     errors,
     `Service unavailable after ${retries} retries across ${origins.length} origins`
+  );
+}
+
+export function resetAllCircuitBreakers(): void {
+  for (const cb of circuitBreakers.values()) {
+    cb.reset();
+  }
+}
+
+export function getCircuitBreakerStates(): Record<string, string> {
+  return Object.fromEntries(
+    Array.from(circuitBreakers.entries()).map(([origin, cb]) => [origin, cb.getState()])
   );
 }

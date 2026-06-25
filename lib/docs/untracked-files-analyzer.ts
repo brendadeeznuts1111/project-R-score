@@ -296,7 +296,7 @@ class UntrackedFilesAnalyzer {
   }> {
     const untrackedFiles = await this.getUntrackedFiles();
 
-    console.log(`📊 Analyzing ${untrackedFiles.length} untracked files...`);
+    console.info(`📊 Analyzing ${untrackedFiles.length} untracked files...`);
 
     const analyses: FileAnalysis[] = [];
     const byType: Record<string, number> = {};
@@ -332,32 +332,32 @@ class UntrackedFilesAnalyzer {
    * Generate comprehensive report
    */
   static async generateReport(): Promise<void> {
-    console.log('🔍 COMPREHENSIVE UNTRACKED FILES ANALYSIS');
-    console.log('='.repeat(60));
+    console.info('🔍 COMPREHENSIVE UNTRACKED FILES ANALYSIS');
+    console.info('='.repeat(60));
 
     const analysis = await this.analyzeAllFiles();
 
-    console.log(`\n📈 ANALYSIS SUMMARY:`);
-    console.log(`   Total untracked files: ${analysis.total}`);
+    console.info(`\n📈 ANALYSIS SUMMARY:`);
+    console.info(`   Total untracked files: ${analysis.total}`);
 
-    console.log('\n   By Type:');
+    console.info('\n   By Type:');
     for (const [type, count] of Object.entries(analysis.byType)) {
-      console.log(`      ${type}: ${count}`);
+      console.info(`      ${type}: ${count}`);
     }
 
-    console.log('\n   By Priority:');
+    console.info('\n   By Priority:');
     for (const [priority, count] of Object.entries(analysis.byPriority)) {
-      console.log(`      ${priority}: ${count}`);
+      console.info(`      ${priority}: ${count}`);
     }
 
-    console.log('\n   By Recommendation:');
+    console.info('\n   By Recommendation:');
     for (const [recommendation, count] of Object.entries(analysis.byRecommendation)) {
-      console.log(`      ${recommendation}: ${count}`);
+      console.info(`      ${recommendation}: ${count}`);
     }
 
     // High priority files
     if (analysis.highPriorityFiles.length > 0) {
-      console.log('\n🚨 HIGH PRIORITY FILES (Should be tracked):');
+      console.info('\n🚨 HIGH PRIORITY FILES (Should be tracked):');
       analysis.highPriorityFiles.forEach(file => {
         const sizeStr =
           file.size > 1024 * 1024
@@ -365,15 +365,15 @@ class UntrackedFilesAnalyzer {
             : file.size > 1024
               ? `${(file.size / 1024).toFixed(1)}KB`
               : `${file.size}B`;
-        console.log(`   • ${file.path} (${sizeStr}) - ${file.reason}`);
+        console.info(`   • ${file.path} (${sizeStr}) - ${file.reason}`);
       });
     }
 
     // Large files
     if (analysis.largeFiles.length > 0) {
-      console.log('\n📦 LARGE FILES (>1MB):');
+      console.info('\n📦 LARGE FILES (>1MB):');
       analysis.largeFiles.forEach(file => {
-        console.log(
+        console.info(
           `   • ${file.path} (${(file.size / 1024 / 1024).toFixed(1)}MB) - ${file.recommendation}`
         );
       });
@@ -384,17 +384,17 @@ class UntrackedFilesAnalyzer {
     const reviewFiles = analysis.analyses.filter(f => f.recommendation === 'review');
     const ignoreFiles = analysis.analyses.filter(f => f.recommendation === 'ignore');
 
-    console.log('\n💡 RECOMMENDATIONS:');
+    console.info('\n💡 RECOMMENDATIONS:');
 
     if (trackFiles.length > 0) {
-      console.log(`\n   📂 FILES TO TRACK (${trackFiles.length}):`);
+      console.info(`\n   📂 FILES TO TRACK (${trackFiles.length}):`);
       trackFiles.slice(0, 10).forEach(file => {
-        console.log(`      • ${file.path}`);
+        console.info(`      • ${file.path}`);
       });
       if (trackFiles.length > 10) {
-        console.log(`      ... and ${trackFiles.length - 10} more`);
+        console.info(`      ... and ${trackFiles.length - 10} more`);
       }
-      console.log(
+      console.info(
         `      Command: git add ${trackFiles
           .slice(0, 5)
           .map(f => `"${f.path}"`)
@@ -403,18 +403,18 @@ class UntrackedFilesAnalyzer {
     }
 
     if (reviewFiles.length > 0) {
-      console.log(`\n   🔍 FILES TO REVIEW (${reviewFiles.length}):`);
+      console.info(`\n   🔍 FILES TO REVIEW (${reviewFiles.length}):`);
       reviewFiles.slice(0, 10).forEach(file => {
-        console.log(`      • ${file.path} - ${file.reason}`);
+        console.info(`      • ${file.path} - ${file.reason}`);
       });
       if (reviewFiles.length > 10) {
-        console.log(`      ... and ${reviewFiles.length - 10} more`);
+        console.info(`      ... and ${reviewFiles.length - 10} more`);
       }
     }
 
     if (ignoreFiles.length > 0) {
-      console.log(`\n   🚫 FILES TO IGNORE (${ignoreFiles.length}):`);
-      console.log(`      These files should be added to .gitignore if not already present`);
+      console.info(`\n   🚫 FILES TO IGNORE (${ignoreFiles.length}):`);
+      console.info(`      These files should be added to .gitignore if not already present`);
 
       // Check if they're already in gitignore
       const gitignorePath = '.gitignore';
@@ -428,19 +428,19 @@ class UntrackedFilesAnalyzer {
       );
 
       if (missingFromGitignore.length > 0) {
-        console.log('      Consider adding to .gitignore:');
+        console.info('      Consider adding to .gitignore:');
         const uniqueDirs = [...new Set(missingFromGitignore.map(f => f.path.split('/')[0]))];
         uniqueDirs.forEach(dir => {
-          console.log(`         ${dir}/`);
+          console.info(`         ${dir}/`);
         });
       }
     }
 
     // Git commands
-    console.log('\n🛠️  SUGGESTED GIT COMMANDS:');
+    console.info('\n🛠️  SUGGESTED GIT COMMANDS:');
     if (trackFiles.length > 0) {
-      console.log(`   # Add important files`);
-      console.log(
+      console.info(`   # Add important files`);
+      console.info(
         `   git add ${trackFiles
           .slice(0, 3)
           .map(f => `"${f.path}"`)
@@ -448,10 +448,10 @@ class UntrackedFilesAnalyzer {
       );
     }
 
-    console.log(`   # Check status after adding files`);
-    console.log(`   git status --porcelain | head -10`);
+    console.info(`   # Check status after adding files`);
+    console.info(`   git status --porcelain | head -10`);
 
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
   }
 }
 
@@ -468,7 +468,7 @@ export { UntrackedFilesAnalyzer };
 async function main(): Promise<void> {
   try {
     await UntrackedFilesAnalyzer.generateReport();
-    console.log('\n✅ Untracked files analysis completed!');
+    console.info('\n✅ Untracked files analysis completed!');
   } catch (error) {
     console.error('\n❌ Analysis failed:', error);
     process.exit(1);

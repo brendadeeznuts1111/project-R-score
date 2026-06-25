@@ -937,7 +937,7 @@ export class MultiLayerRiskManager {
     trade: ProposedTrade,
     context: RiskContext
   ): Promise<RiskAssessment> {
-    console.log(
+    console.info(
       `🛡️ Evaluating trade ${trade.id} across ${this.layers.length} risk layers`
     );
 
@@ -992,7 +992,7 @@ export class MultiLayerRiskManager {
       // Store in history
       this.assessmentHistory.push(assessment);
 
-      console.log(
+      console.info(
         `✅ Risk assessment completed. Approved: ${
           assessment.approved
         }, Risk Score: ${compositeRiskScore.toFixed(3)}`
@@ -1372,7 +1372,7 @@ export class MultiLayerRiskManager {
     const layer = this.layers.find((l) => l.getName() === layerName);
     if (layer) {
       layer.setEnabled(enabled);
-      console.log(
+      console.info(
         `🔧 Risk layer '${layerName}' ${enabled ? "enabled" : "disabled"}`
       );
     }
@@ -1388,7 +1388,7 @@ export class MultiLayerRiskManager {
         (layer as any).weight = weight;
       }
     }
-    console.log("🔧 Layer weights updated");
+    console.info("🔧 Layer weights updated");
   }
 }
 

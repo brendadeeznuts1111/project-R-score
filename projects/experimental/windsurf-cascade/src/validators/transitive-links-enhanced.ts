@@ -481,9 +481,9 @@ export class EnhancedTransitiveLinkValidator {
 
 // Demo and CLI interface
 async function main() {
-    console.log('🔗 Enhanced Transitive Link Validator');
-    console.log('📁 Vault: ./Odds-mono-map');
-    console.log('✨ Features: Custom rules, dynamic tag weighting, enhanced analysis');
+    console.info('🔗 Enhanced Transitive Link Validator');
+    console.info('📁 Vault: ./Odds-mono-map');
+    console.info('✨ Features: Custom rules, dynamic tag weighting, enhanced analysis');
 
     // Example configuration with custom tag weights and rules
     const config: Partial<ValidationConfig> = {
@@ -529,10 +529,10 @@ async function main() {
 
     const validator = new EnhancedTransitiveLinkValidator(config);
 
-    console.log('\n⚙️ Configuration:');
-    console.log(`• Custom rules: ${validator.getConfig().customRules.length}`);
-    console.log(`• Tag weights: ${validator.getConfig().tagWeights.length}`);
-    console.log(`• Dynamic weighting: ${validator.getConfig().enableDynamicWeighting}`);
+    console.info('\n⚙️ Configuration:');
+    console.info(`• Custom rules: ${validator.getConfig().customRules.length}`);
+    console.info(`• Tag weights: ${validator.getConfig().tagWeights.length}`);
+    console.info(`• Dynamic weighting: ${validator.getConfig().enableDynamicWeighting}`);
 
     // Mock analysis for demo
     const mockAnalysis = {
@@ -575,29 +575,29 @@ async function main() {
         ]
     };
 
-    console.log('\n📊 Enhanced Transitive Analysis Results:');
-    console.log(`🔗 Missing transitive links: ${mockAnalysis.totalMissingLinks}`);
-    console.log(`📈 Average confidence: ${(mockAnalysis.averageConfidence * 100).toFixed(1)}%`);
-    console.log(`🌐 Connectivity score: ${mockAnalysis.connectivityScore.toFixed(1)}%`);
+    console.info('\n📊 Enhanced Transitive Analysis Results:');
+    console.info(`🔗 Missing transitive links: ${mockAnalysis.totalMissingLinks}`);
+    console.info(`📈 Average confidence: ${(mockAnalysis.averageConfidence * 100).toFixed(1)}%`);
+    console.info(`🌐 Connectivity score: ${mockAnalysis.connectivityScore.toFixed(1)}%`);
 
-    console.log('\n🎯 Top Enhanced Suggestions:');
+    console.info('\n🎯 Top Enhanced Suggestions:');
     mockAnalysis.topSuggestions.forEach((suggestion, index) => {
-        console.log(`${index + 1}. [[${suggestion.from.split('/').pop()}]] → [[${suggestion.to.split('/').pop()}]] (via [[${suggestion.via.split('/').pop()}]])`);
-        console.log(`   ${suggestion.reason} (${(suggestion.confidence * 100).toFixed(0)}% confidence)`);
-        console.log(`   🎯 Matched rules: ${suggestion.ruleMatches.join(', ')}`);
+        console.info(`${index + 1}. [[${suggestion.from.split('/').pop()}]] → [[${suggestion.to.split('/').pop()}]] (via [[${suggestion.via.split('/').pop()}]])`);
+        console.info(`   ${suggestion.reason} (${(suggestion.confidence * 100).toFixed(0)}% confidence)`);
+        console.info(`   🎯 Matched rules: ${suggestion.ruleMatches.join(', ')}`);
     });
 
-    console.log('\n📋 Rule Effectiveness Analysis:');
+    console.info('\n📋 Rule Effectiveness Analysis:');
     mockAnalysis.ruleEffectiveness.forEach(rule => {
-        console.log(`• ${rule.ruleName}: ${rule.triggerCount} triggers, +${(rule.averageConfidenceBoost * 100).toFixed(1)}% avg confidence boost`);
+        console.info(`• ${rule.ruleName}: ${rule.triggerCount} triggers, +${(rule.averageConfidenceBoost * 100).toFixed(1)}% avg confidence boost`);
     });
 
-    console.log('\n💡 Enhancement Features:');
-    console.log('• Dynamic tag weighting based on importance and categories');
-    console.log('• Custom rule system with priority-based execution');
-    console.log('• Configurable confidence thresholds for warnings/errors');
-    console.log('• Rule effectiveness analytics and optimization insights');
-    console.log('• Extensible architecture for domain-specific validation');
+    console.info('\n💡 Enhancement Features:');
+    console.info('• Dynamic tag weighting based on importance and categories');
+    console.info('• Custom rule system with priority-based execution');
+    console.info('• Configurable confidence thresholds for warnings/errors');
+    console.info('• Rule effectiveness analytics and optimization insights');
+    console.info('• Extensible architecture for domain-specific validation');
 }
 
 // Run main function if this file is executed directly

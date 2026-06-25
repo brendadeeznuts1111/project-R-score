@@ -17,23 +17,23 @@ import { spawn } from 'child_process';
 import { join } from 'path';
 
 const COMMANDS = {
-  'cpu': {
+  cpu: {
     description: 'Run CPU profiling with color-coded output',
     script: 'factorywager-cpu-profile.ts',
   },
-  'heap': {
+  heap: {
     description: 'Run heap profiling with R2 metadata',
     script: 'factorywager-heap-profile.ts',
   },
-  'diagnose': {
+  diagnose: {
     description: 'Run complete system diagnostics',
     script: 'factorywager-diagnose.ts',
   },
-  'realtime': {
+  realtime: {
     description: 'Start real-time profiling with animations',
     script: 'factorywager-realtime.ts',
   },
-  'dual': {
+  dual: {
     description: 'Run dual CPU + heap profiling',
     script: 'factorywager-profile.sh',
   },
@@ -42,29 +42,29 @@ const COMMANDS = {
 type Command = keyof typeof COMMANDS;
 
 function showHelp() {
-  console.log(styled('\n🏭 FactoryWager Profiling CLI v4.0', 'accent'));
-  console.log(styled('━'.repeat(50), 'muted'));
-  console.log(styled('\nAvailable commands:', 'primary'));
+  console.info(styled('\n🏭 FactoryWager Profiling CLI v4.0', 'accent'));
+  console.info(styled('━'.repeat(50), 'muted'));
+  console.info(styled('\nAvailable commands:', 'primary'));
 
   Object.entries(COMMANDS).forEach(([cmd, info]) => {
-    console.log(styled(`  ${cmd.padEnd(10)}`, 'muted') + styled(info.description, 'success'));
+    console.info(styled(`  ${cmd.padEnd(10)}`, 'muted') + styled(info.description, 'success'));
   });
 
-  console.log(styled('\nUsage:', 'primary'));
-  console.log(styled('  bun factorywager-cli.ts <command>', 'muted'));
-  console.log(styled('\nExamples:', 'primary'));
-  console.log(styled('  bun factorywager-cli.ts cpu', 'muted'));
-  console.log(styled('  bun factorywager-cli.ts heap', 'muted'));
-  console.log(styled('  bun factorywager-cli.ts diagnose', 'muted'));
+  console.info(styled('\nUsage:', 'primary'));
+  console.info(styled('  bun factorywager-cli.ts <command>', 'muted'));
+  console.info(styled('\nExamples:', 'primary'));
+  console.info(styled('  bun factorywager-cli.ts cpu', 'muted'));
+  console.info(styled('  bun factorywager-cli.ts heap', 'muted'));
+  console.info(styled('  bun factorywager-cli.ts diagnose', 'muted'));
 
-  console.log('\n' + styled('🚀 Happy profiling!', 'success'));
+  console.info('\n' + styled('🚀 Happy profiling!', 'success'));
 }
 
 async function runCommand(command: Command) {
   const config = COMMANDS[command];
 
   if (!config) {
-    console.log(styled('❌ Unknown command', 'error'));
+    console.info(styled('❌ Unknown command', 'error'));
     showHelp();
     process.exit(1);
   }
@@ -82,11 +82,11 @@ async function runCommand(command: Command) {
         cwd: import.meta.dir,
       });
 
-      proc.on('exit', (code) => {
+      proc.on('exit', code => {
         if (code === 0) {
-          console.log(styled('\n✅ Command completed successfully', 'success'));
+          console.info(styled('\n✅ Command completed successfully', 'success'));
         } else {
-          console.log(styled('\n❌ Command failed', 'error'));
+          console.info(styled('\n❌ Command failed', 'error'));
           process.exit(code || 1);
         }
       });
@@ -97,18 +97,18 @@ async function runCommand(command: Command) {
         cwd: import.meta.dir,
       });
 
-      proc.on('exit', (code) => {
+      proc.on('exit', code => {
         if (code === 0) {
-          console.log(styled('\n✅ Command completed successfully', 'success'));
+          console.info(styled('\n✅ Command completed successfully', 'success'));
         } else {
-          console.log(styled('\n❌ Command failed', 'error'));
+          console.info(styled('\n❌ Command failed', 'error'));
           process.exit(code || 1);
         }
       });
     }
   } catch (error) {
-    console.log(styled('❌ Error running command', 'error'));
-    console.log(styled(String(error), 'muted'));
+    console.info(styled('❌ Error running command', 'error'));
+    console.info(styled(String(error), 'muted'));
     process.exit(1);
   }
 }

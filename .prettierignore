@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build & cache outputs
+dist/
+build/
+.next/
+.nuxt/
+.output/
+.turbo/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# Lock files (stable formatting not worth churn)
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+*.lockb
+
+# Minified / compiled assets
+*.min.js
+*.min.css
+*.bundle.js
+
+# Generated & vendored
+**/generated/
+vendor/
+.third_party/
+
+# Archives & large data snapshots
+docs/archives/
+*.sqlite
+*.sqlite3
+*.db
+
+# Binary & media (never format)
+*.{png,jpg,jpeg,gif,webp,svg,ico,woff,woff2,ttf,eot,mp4,mp3,wav,pdf,zip,tar,gz}
+
+# Test & bench files (harness lint excludes; avoid format churn)
+**/*.test.ts
+**/*.spec.ts
+**/*.bench.ts
+
+# VCS & OS
+.git/
+projects/
+.DS_Store

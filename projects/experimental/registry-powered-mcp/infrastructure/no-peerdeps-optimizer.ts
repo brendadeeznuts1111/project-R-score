@@ -34,7 +34,7 @@ export class NoPeerDepsOptimizer {
 
     if (this.shouldSkipPeerDependencyWait(packageJson)) {
       // Skip 5ms sleep() - 2x faster install
-      console.log("[Optimizer] No peer dependencies detected, skipping wait");
+      console.info("[Optimizer] No peer dependencies detected, skipping wait");
 
       // Log optimization (Component #11 audit)
       this.logOptimization("skip_peer_wait", packageJsonPath);

@@ -8,13 +8,13 @@
 // Detect if running in playground (no TTY) vs terminal
 const useColors = process.stdout.isTTY && !process.env.PLAYGROUND_NO_COLORS;
 
-console.log("📊 Bun.inspect.table() Demo\n");
-console.log("=".repeat(70));
-console.log(`Colors: ${useColors ? "enabled (TTY detected)" : "disabled (non-interactive)"}`);
+console.info("📊 Bun.inspect.table() Demo\n");
+console.info("=".repeat(70));
+console.info(`Colors: ${useColors ? "enabled (TTY detected)" : "disabled (non-interactive)"}`);
 
 // Demo 1: Simple data
-console.log("\n1️⃣ Simple Benchmark Results");
-console.log("-".repeat(70));
+console.info("\n1️⃣ Simple Benchmark Results");
+console.info("-".repeat(70));
 
 const benchmarkResults = [
   { operation: "generatePalette", opsPerSec: 146147, ms: 1368.5 },
@@ -22,30 +22,30 @@ const benchmarkResults = [
   { operation: "Bun.color(ansi)", opsPerSec: 3513039, ms: 113.9 },
 ];
 
-console.log(Bun.inspect.table(
+console.info(Bun.inspect.table(
   benchmarkResults,
   ["operation", "opsPerSec", "ms"],
   { colors: useColors }
 ));
 
 // Demo 2: With ratings
-console.log("\n2️⃣ With Performance Ratings");
-console.log("-".repeat(70));
+console.info("\n2️⃣ With Performance Ratings");
+console.info("-".repeat(70));
 
 const ratedResults = benchmarkResults.map(r => ({
   ...r,
   rating: r.opsPerSec > 3_000_000 ? "🔥 Fast" : r.opsPerSec > 1_000_000 ? "⚡ Good" : "✅ OK"
 }));
 
-console.log(Bun.inspect.table(
+console.info(Bun.inspect.table(
   ratedResults,
   ["operation", "opsPerSec", "ms", "rating"],
   { colors: useColors }
 ));
 
 // Demo 3: Configuration comparison
-console.log("\n3️⃣ Configuration Comparison");
-console.log("-".repeat(70));
+console.info("\n3️⃣ Configuration Comparison");
+console.info("-".repeat(70));
 
 const configDiff = [
   { property: "port", actual: 3000, expected: 3001, match: false },
@@ -53,15 +53,15 @@ const configDiff = [
   { property: "ssl", actual: true, expected: true, match: true },
 ];
 
-console.log(Bun.inspect.table(
+console.info(Bun.inspect.table(
   configDiff,
   ["property", "actual", "expected", "match"],
   { colors: useColors }
 ));
 
-console.log("\n✅ Bun.inspect.table() demo complete!");
-console.log("\n💡 Use cases:");
-console.log("   • Benchmark results");
-console.log("   • Configuration diffs");
-console.log("   • Data comparison");
-console.log("   • Debug output");
+console.info("\n✅ Bun.inspect.table() demo complete!");
+console.info("\n💡 Use cases:");
+console.info("   • Benchmark results");
+console.info("   • Configuration diffs");
+console.info("   • Data comparison");
+console.info("   • Debug output");

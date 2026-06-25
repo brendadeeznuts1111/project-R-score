@@ -13,7 +13,7 @@ import { HyperTickArchitecture } from '../src/tick-analysis/core/arch';
 import { HyperTickCorrelationEngine } from '../src/tick-analysis/correlation/engine';
 
 async function main() {
-  console.log('🚀 HyperTick Demo\n');
+  console.info('🚀 HyperTick Demo\n');
 
   // Initialize architecture
   const architecture = new HyperTickArchitecture({
@@ -32,22 +32,22 @@ async function main() {
   });
 
   const metrics = architecture.getArchitectureMetrics();
-  console.log('📊 Architecture Metrics:');
-  console.log(`   Version: ${metrics.version}`);
-  console.log(`   Max Throughput: ${metrics.maxTicksPerSecond.toLocaleString()} ticks/sec`);
-  console.log(`   Memory per Tick: ${metrics.estimatedMemoryPerTick} bytes\n`);
+  console.info('📊 Architecture Metrics:');
+  console.info(`   Version: ${metrics.version}`);
+  console.info(`   Max Throughput: ${metrics.maxTicksPerSecond.toLocaleString()} ticks/sec`);
+  console.info(`   Memory per Tick: ${metrics.estimatedMemoryPerTick} bytes\n`);
 
   // Initialize collector
   const collector = new HyperTickCollector(':memory:');
-  console.log('✅ Collector initialized\n');
+  console.info('✅ Collector initialized\n');
 
   // Initialize correlation engine
   const db = new Database(':memory:');
   const engine = new HyperTickCorrelationEngine(db);
-  console.log('✅ Correlation engine initialized\n');
+  console.info('✅ Correlation engine initialized\n');
 
   // Example 1: Ingest ticks
-  console.log('📝 Example 1: Ingesting Ticks');
+  console.info('📝 Example 1: Ingesting Ticks');
   for (let i = 0; i < 100; i++) {
     await collector.ingestTick({
       n: `NFL-2025-001-SPREAD`,
@@ -60,26 +60,26 @@ async function main() {
       c: 1,
     });
   }
-  console.log('✅ Ingested 100 ticks\n');
+  console.info('✅ Ingested 100 ticks\n');
 
   // Example 2: Get recent ticks
-  console.log('📝 Example 2: Get Recent Ticks');
+  console.info('📝 Example 2: Get Recent Ticks');
   const recentTicks = collector.getRecentTicks('NFL-2025-001-SPREAD', 10);
-  console.log(`✅ Retrieved ${recentTicks.length} recent ticks\n`);
+  console.info(`✅ Retrieved ${recentTicks.length} recent ticks\n`);
 
   // Example 3: Collector statistics
-  console.log('📝 Example 3: Collector Statistics');
+  console.info('📝 Example 3: Collector Statistics');
   const stats = collector.getStatistics();
-  console.log(`   Ticks Received: ${stats.ticksReceived}`);
-  console.log(`   Ticks Stored: ${stats.ticksStored}`);
-  console.log(`   Buffer Utilization: ${(stats.bufferUtilization * 100).toFixed(1)}%\n`);
+  console.info(`   Ticks Received: ${stats.ticksReceived}`);
+  console.info(`   Ticks Stored: ${stats.ticksStored}`);
+  console.info(`   Buffer Utilization: ${(stats.bufferUtilization * 100).toFixed(1)}%\n`);
 
   // Cleanup
   collector.close();
   db.close();
 
-  console.log('✅ Demo complete!');
-  console.log('\n📚 See src/tick-analysis/ for full implementation');
+  console.info('✅ Demo complete!');
+  console.info('\n📚 See src/tick-analysis/ for full implementation');
 }
 
 main().catch(console.error);

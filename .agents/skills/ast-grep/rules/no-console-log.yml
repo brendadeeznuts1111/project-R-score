@@ -1,0 +1,6 @@
+id: no-console-log
+language: TypeScript
+severity: hint
+message: Prefer structured logger over console.*
+rule:
+  pattern: console.$METHOD($$$ARGS)

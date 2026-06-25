@@ -1,0 +1,627 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sports Terminal OS API",
+    "version": "5.2.0",
+    "description": "Full-featured sports betting trading terminal with 93+ proxy endpoints, dual WebSocket/SSE, partner profile management, and Telegram bot infrastructure."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "System health",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "summary": "Readiness probe",
+        "tags": ["System"],
+        "responses": {
+          "200": { "description": "Ready" },
+          "503": { "description": "Not ready" }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "summary": "Prometheus metrics",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Prometheus format metrics",
+            "content": { "text/plain": {} }
+          }
+        }
+      }
+    },
+    "/proxy/auth": {
+      "post": {
+        "summary": "Buckeye authentication",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auth success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/players": {
+      "get": {
+        "summary": "Search players",
+        "tags": ["Players"],
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+          { "name": "sport", "in": "query", "schema": { "type": "string" } },
+          { "name": "risk_tier", "in": "query", "schema": { "type": "string" } },
+          { "name": "archetype", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 25 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PlayerListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/players/{id}": {
+      "get": {
+        "summary": "Get player 360",
+        "tags": ["Players"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Player" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents": {
+      "get": {
+        "summary": "List agents",
+        "tags": ["Agents"],
+        "parameters": [
+          { "name": "tier", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sportsbook/odds": {
+      "get": {
+        "summary": "List odds",
+        "tags": ["Sportsbook"],
+        "parameters": [
+          { "name": "sport", "in": "query", "schema": { "type": "string" } },
+          { "name": "book", "in": "query", "schema": { "type": "string" } },
+          { "name": "market", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Odds list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OddsListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sportsbook/best-lines": {
+      "get": {
+        "summary": "Best lines across books",
+        "tags": ["Sportsbook"],
+        "responses": {
+          "200": {
+            "description": "Best lines",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BestLinesResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prediction-markets": {
+      "get": {
+        "summary": "List prediction markets",
+        "tags": ["Prediction Markets"],
+        "parameters": [
+          { "name": "provider", "in": "query", "schema": { "type": "string" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Market list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PredictionMarketList" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prediction-markets/arbitrage": {
+      "get": {
+        "summary": "Active arbitrage opportunities",
+        "tags": ["Prediction Markets"],
+        "responses": {
+          "200": {
+            "description": "Arbitrage list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ArbitrageList" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks": {
+      "get": {
+        "summary": "List webhooks",
+        "tags": ["Webhooks"],
+        "responses": {
+          "200": {
+            "description": "Webhook list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookList" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create webhook",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WebhookConfig" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" }
+        }
+      }
+    },
+    "/alerts": {
+      "get": {
+        "summary": "List alerts",
+        "tags": ["Alerts"],
+        "parameters": [
+          { "name": "severity", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AlertList" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/risk/dashboard": {
+      "get": {
+        "summary": "Risk dashboard metrics",
+        "tags": ["Risk"],
+        "responses": {
+          "200": {
+            "description": "Dashboard data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RiskDashboard" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/risk/positions": {
+      "get": {
+        "summary": "List risk positions",
+        "tags": ["Risk"],
+        "parameters": [
+          { "name": "sport", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Position list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RiskPositionList" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/partners": {
+      "get": {
+        "summary": "List partners",
+        "tags": ["Partners"],
+        "responses": {
+          "200": {
+            "description": "Partner list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PartnerList" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create partner",
+        "tags": ["Partners"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PartnerCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" }
+        }
+      }
+    },
+    "/partners/{id}/evaluate": {
+      "post": {
+        "summary": "Evaluate signal for partner",
+        "tags": ["Partners"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SignalContext" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GateResult" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signals/route": {
+      "post": {
+        "summary": "Route signal to all eligible partners",
+        "tags": ["Partners"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SignalContext" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SignalRouteResults" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/system-status": {
+      "get": {
+        "summary": "System status with bot health",
+        "tags": ["Telegram"],
+        "responses": {
+          "200": {
+            "description": "System status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SystemStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/telegram/delivery-stats": {
+      "get": {
+        "summary": "Telegram delivery statistics",
+        "tags": ["Telegram"],
+        "parameters": [
+          { "name": "hours", "in": "query", "schema": { "type": "integer", "default": 24 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivery stats",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeliveryStats" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "example": "healthy" },
+          "version": { "type": "string", "example": "5.2.0" },
+          "uptime": { "type": "number" },
+          "timestamp": { "type": "string" }
+        }
+      },
+      "AuthRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["username", "password"]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "refreshToken": { "type": "string" },
+          "expiresAt": { "type": "string" }
+        }
+      },
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "archetype": { "type": "string", "enum": ["sharp", "whale", "chase_gambler", "new", "recreational", "suspicious"] },
+          "riskTier": { "type": "string", "enum": ["GREEN", "YELLOW", "RED", "BLACK"] },
+          "balance": { "type": "number" },
+          "winRate": { "type": "number" },
+          "totalWagers": { "type": "integer" },
+          "netPnl": { "type": "number" }
+        }
+      },
+      "PlayerListResponse": {
+        "type": "object",
+        "properties": {
+          "players": { "type": "array", "items": { "$ref": "#/components/schemas/Player" } },
+          "total": { "type": "integer" },
+          "page": { "type": "integer" },
+          "limit": { "type": "integer" }
+        }
+      },
+      "AgentListResponse": {
+        "type": "object",
+        "properties": {
+          "agents": { "type": "array" },
+          "total": { "type": "integer" }
+        }
+      },
+      "OddsListResponse": {
+        "type": "object",
+        "properties": {
+          "odds": { "type": "array" },
+          "lastUpdated": { "type": "string" }
+        }
+      },
+      "BestLinesResponse": {
+        "type": "object",
+        "properties": {
+          "lines": { "type": "array" },
+          "count": { "type": "integer" }
+        }
+      },
+      "PredictionMarketList": {
+        "type": "object",
+        "properties": {
+          "markets": { "type": "array" },
+          "provider": { "type": "string" }
+        }
+      },
+      "ArbitrageList": {
+        "type": "object",
+        "properties": {
+          "opportunities": { "type": "array" },
+          "count": { "type": "integer" }
+        }
+      },
+      "WebhookConfig": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "method": { "type": "string", "enum": ["POST", "GET", "PUT"] },
+          "eventTypes": { "type": "array", "items": { "type": "string" } },
+          "enabled": { "type": "boolean" }
+        }
+      },
+      "WebhookList": {
+        "type": "object",
+        "properties": {
+          "webhooks": { "type": "array" },
+          "total": { "type": "integer" }
+        }
+      },
+      "AlertList": {
+        "type": "object",
+        "properties": {
+          "alerts": { "type": "array" },
+          "total": { "type": "integer" }
+        }
+      },
+      "RiskDashboard": {
+        "type": "object",
+        "properties": {
+          "openPositions": { "type": "integer" },
+          "totalExposure": { "type": "number" },
+          "activeViolations": { "type": "integer" },
+          "avgRiskScore": { "type": "number" },
+          "exposureBySport": { "type": "array" },
+          "exposureByBook": { "type": "array" }
+        }
+      },
+      "RiskPositionList": {
+        "type": "object",
+        "properties": {
+          "positions": { "type": "array" },
+          "total": { "type": "integer" }
+        }
+      },
+      "PartnerList": {
+        "type": "object",
+        "properties": {
+          "partners": { "type": "array" },
+          "total": { "type": "integer" }
+        }
+      },
+      "PartnerCreate": {
+        "type": "object",
+        "properties": {
+          "partnerId": { "type": "string" },
+          "templateId": { "type": "string" },
+          "displayName": { "type": "string" },
+          "email": { "type": "string" }
+        }
+      },
+      "SignalContext": {
+        "type": "object",
+        "properties": {
+          "signalId": { "type": "string" },
+          "partnerId": { "type": "string" },
+          "bookId": { "type": "string" },
+          "type": { "type": "string", "enum": ["steam", "arb", "clv", "manual", "predictive"] },
+          "suggestedStake": { "type": "number" },
+          "tier": { "type": "string" },
+          "eventId": { "type": "string" },
+          "market": { "type": "string" },
+          "sport": { "type": "string" },
+          "confidence": { "type": "number" },
+          "urgencyMs": { "type": "integer" }
+        }
+      },
+      "GateResult": {
+        "type": "object",
+        "properties": {
+          "allowed": { "type": "boolean" },
+          "action": { "type": "string", "enum": ["allow", "block", "adjust", "defer"] },
+          "reason": { "type": "string" },
+          "adjustedStake": { "type": "number" },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "originalStake": { "type": "number" },
+              "maxExposure": { "type": "number" },
+              "remainingDaily": { "type": "number" },
+              "tier": { "type": "string" },
+              "kycPass": { "type": "boolean" },
+              "balancePass": { "type": "boolean" }
+            }
+          }
+        }
+      },
+      "SignalRouteResults": {
+        "type": "object",
+        "properties": {
+          "results": { "type": "array" },
+          "routedTo": { "type": "integer" },
+          "allowed": { "type": "integer" },
+          "blocked": { "type": "integer" }
+        }
+      },
+      "SystemStatus": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "bots": { "type": "array" },
+          "redis": { "type": "string" },
+          "database": { "type": "string" }
+        }
+      },
+      "DeliveryStats": {
+        "type": "object",
+        "properties": {
+          "totalMessages": { "type": "integer" },
+          "successRate": { "type": "number" },
+          "avgLatencyMs": { "type": "number" },
+          "p99LatencyMs": { "type": "number" },
+          "byBot": { "type": "array" }
+        }
+      }
+    }
+  }
+}

@@ -177,10 +177,10 @@ export class EmergencyRotationHandler {
         timestamp: new Date().toISOString(),
       });
 
-      console.log("🚨 EMERGENCY SECRET COMPROMISE RESPONSE 🚨");
-      console.log("This will rotate ALL secrets immediately.");
-      console.log("Ensure dependent systems are updated after rotation.");
-      console.log("");
+      console.info("🚨 EMERGENCY SECRET COMPROMISE RESPONSE 🚨");
+      console.info("This will rotate ALL secrets immediately.");
+      console.info("Ensure dependent systems are updated after rotation.");
+      console.info("");
 
       // Emergency rotate all keys
       const keys = await this.emergencyRotateAllKeys();
@@ -199,13 +199,13 @@ export class EmergencyRotationHandler {
         success: true,
       });
 
-      console.log("✅ Emergency response completed successfully");
-      console.log(`   Keys rotated: ${keys.rotated}/${keys.total}`);
-      console.log(`   Sessions cleared: ${sessions.cleared}/${sessions.totalChecked}`);
-      console.log(`   Duration: ${duration}ms`);
-      console.log("");
-      console.log("⚠️  IMPORTANT: Update all dependent systems with new credentials");
-      console.log("📋 Compromised keys:", keys.compromisedKeys);
+      console.info("✅ Emergency response completed successfully");
+      console.info(`   Keys rotated: ${keys.rotated}/${keys.total}`);
+      console.info(`   Sessions cleared: ${sessions.cleared}/${sessions.totalChecked}`);
+      console.info(`   Duration: ${duration}ms`);
+      console.info("");
+      console.info("⚠️  IMPORTANT: Update all dependent systems with new credentials");
+      console.info("📋 Compromised keys:", keys.compromisedKeys);
 
       return {
         keys,
@@ -286,19 +286,19 @@ async function main() {
 
   switch (command) {
     case "execute":
-      console.log("🚨 CONFIRM EMERGENCY SECRET ROTATION 🚨");
-      console.log("This action will:");
-      console.log("  • Rotate ALL MCP API keys immediately");
-      console.log("  • Clear ALL MCP sessions");
-      console.log("  • Log critical security events");
-      console.log("");
-      console.log("This should only be done in response to a confirmed compromise.");
-      console.log("");
+      console.info("🚨 CONFIRM EMERGENCY SECRET ROTATION 🚨");
+      console.info("This action will:");
+      console.info("  • Rotate ALL MCP API keys immediately");
+      console.info("  • Clear ALL MCP sessions");
+      console.info("  • Log critical security events");
+      console.info("");
+      console.info("This should only be done in response to a confirmed compromise.");
+      console.info("");
 
       // Simple confirmation (in production, use more secure confirmation)
       const confirm = process.argv[3];
       if (confirm !== "--confirm-compromise") {
-        console.log("❌ Confirmation required. Use: --confirm-compromise");
+        console.info("❌ Confirmation required. Use: --confirm-compromise");
         process.exit(1);
       }
 
@@ -306,30 +306,30 @@ async function main() {
       break;
 
     case "validate":
-      console.log("🔍 Validating emergency response readiness...");
+      console.info("🔍 Validating emergency response readiness...");
       const readiness = await handler.validateEmergencyReadiness();
-      console.log("Keychain accessible:", readiness.keychainAccessible ? "✅" : "❌");
-      console.log("Backup available:", readiness.backupAvailable ? "✅" : "❌");
-      console.log("Audit logging:", readiness.auditLogging ? "✅" : "❌");
+      console.info("Keychain accessible:", readiness.keychainAccessible ? "✅" : "❌");
+      console.info("Backup available:", readiness.backupAvailable ? "✅" : "❌");
+      console.info("Audit logging:", readiness.auditLogging ? "✅" : "❌");
 
       if (readiness.recommendations.length > 0) {
-        console.log("\n📋 Recommendations:");
-        readiness.recommendations.forEach(rec => console.log(`   • ${rec}`));
+        console.info("\n📋 Recommendations:");
+        readiness.recommendations.forEach(rec => console.info(`   • ${rec}`));
       }
       break;
 
     case "dry-run":
-      console.log("🔍 DRY RUN: Emergency Response Validation");
+      console.info("🔍 DRY RUN: Emergency Response Validation");
       const validation = await handler.validateEmergencyReadiness();
-      console.log("This would validate emergency response procedures without making changes");
-      console.log("Readiness check results:");
-      console.log(`   Keychain: ${validation.keychainAccessible ? "✅" : "❌"}`);
-      console.log(`   Backup: ${validation.backupAvailable ? "✅" : "❌"}`);
-      console.log(`   Audit: ${validation.auditLogging ? "✅" : "❌"}`);
+      console.info("This would validate emergency response procedures without making changes");
+      console.info("Readiness check results:");
+      console.info(`   Keychain: ${validation.keychainAccessible ? "✅" : "❌"}`);
+      console.info(`   Backup: ${validation.backupAvailable ? "✅" : "❌"}`);
+      console.info(`   Audit: ${validation.auditLogging ? "✅" : "❌"}`);
       break;
 
     default:
-      console.log(`
+      console.info(`
 🚨 Emergency Secret Rotation Tool
 
 Usage:

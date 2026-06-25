@@ -2,12 +2,17 @@
 
 /**
  * JuniorRunner Cookie Integration - v3.25
- * 
+ *
  * JuniorRunner integration with --cookie-inspect flag for
  * comprehensive cookie profiling and R2 telemetry storage.
  */
 
-import { Cookie, CookieInspector, CSRFProtection, JuniorRunnerCookieIntegration } from './cookie-security';
+import {
+  Cookie,
+  CookieInspector,
+  CSRFProtection,
+  JuniorRunnerCookieIntegration,
+} from './cookie-security';
 
 // 📊 LEAD SPEC PROFILE INTERFACE
 export interface LeadSpecProfile {
@@ -69,11 +74,11 @@ export class JuniorRunnerCookieProfiler {
   static async profileWithCookies(mdFile: string, req: Request): Promise<LeadSpecProfile> {
     const startTime = performance.now();
     const url = new URL(req.url);
-    
+
     // Extract basic request info
     const sessionId = this.extractSessionId(req);
     const userId = this.extractUserId(req);
-    
+
     // Profile cookies (main processing)
     const cookieProfileStart = performance.now();
     const cookieProfile = await JuniorRunnerCookieIntegration.profileCookies(req);
@@ -96,31 +101,36 @@ export class JuniorRunnerCookieProfiler {
         valid: cookieProfile.validation.valid,
         invalid: cookieProfile.validation.invalid,
         averageScore: cookieProfile.validation.averageScore,
-        securityIssues: cookieProfile.validation.securityIssues
+        securityIssues: cookieProfile.validation.securityIssues,
       },
-      csrf: cookieProfile.csrfToken ? {
-        tokenGenerated: true,
-        tokenValue: cookieProfile.csrfToken
-      } : {
-        tokenGenerated: false
-      },
-      abTesting: cookieProfile.abVariant ? {
-        variant: cookieProfile.abVariant.variant,
-        valid: cookieProfile.abVariant.valid,
-        userId: cookieProfile.abVariant.userId
-      } : undefined,
+      csrf: cookieProfile.csrfToken
+        ? {
+            tokenGenerated: true,
+            tokenValue: cookieProfile.csrfToken,
+          }
+        : {
+            tokenGenerated: false,
+          },
+      abTesting: cookieProfile.abVariant
+        ? {
+            variant: cookieProfile.abVariant.variant,
+            valid: cookieProfile.abVariant.valid,
+            userId: cookieProfile.abVariant.userId,
+          }
+        : undefined,
       performance: {
         parseTime: cookieProfileTime,
         inspectTime: 0, // Included in cookieProfileTime
-        totalTime: performance.now() - startTime
+        totalTime: performance.now() - startTime,
       },
       security: {
         overallScore: cookieProfile.validation.averageScore,
-        criticalIssues: cookieProfile.validation.securityIssues.filter(issue => 
-          issue.includes('expired') || issue.includes('too large') || issue.includes('must be')
+        criticalIssues: cookieProfile.validation.securityIssues.filter(
+          issue =>
+            issue.includes('expired') || issue.includes('too large') || issue.includes('must be')
         ),
-        recommendations: this.generateRecommendations(cookieProfile)
-      }
+        recommendations: this.generateRecommendations(cookieProfile),
+      },
     };
 
     // Save to R2 if storage is available
@@ -145,7 +155,7 @@ export class JuniorRunnerCookieProfiler {
     try {
       const cookies = cookieHeader.split(';').map(c => c.trim());
       const sessionCookie = cookies.find(c => c.includes('session='));
-      
+
       if (sessionCookie) {
         const cookie = Cookie.parse(sessionCookie);
         return cookie.value;
@@ -167,7 +177,7 @@ export class JuniorRunnerCookieProfiler {
     try {
       const cookies = cookieHeader.split(';').map(c => c.trim());
       const userCookie = cookies.find(c => c.includes('user_id=') || c.includes('userId='));
-      
+
       if (userCookie) {
         const cookie = Cookie.parse(userCookie);
         return cookie.value;
@@ -182,7 +192,9 @@ export class JuniorRunnerCookieProfiler {
   /**
    * Generate security recommendations based on profile
    */
-  private static generateRecommendations(profile: Awaited<ReturnType<typeof JuniorRunnerCookieIntegration.profileCookies>>): string[] {
+  private static generateRecommendations(
+    profile: Awaited<ReturnType<typeof JuniorRunnerCookieIntegration.profileCookies>>
+  ): string[] {
     const recommendations: string[] = [];
 
     // Cookie security recommendations
@@ -230,12 +242,15 @@ export class JuniorRunnerCookieProfiler {
     const totalSessions = profiles.length;
     const totalScore = profiles.reduce((sum, p) => sum + p.security.overallScore, 0);
     const averageSecurityScore = Math.round(totalScore / totalSessions);
-    
+
     const allIssues = profiles.flatMap(p => p.security.criticalIssues);
-    const issueCounts = allIssues.reduce((acc, issue) => {
-      acc[issue] = (acc[issue] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const issueCounts = allIssues.reduce(
+      (acc, issue) => {
+        acc[issue] = (acc[issue] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const topIssues = Object.entries(issueCounts)
       .map(([issue, count]) => ({ issue, count }))
@@ -257,7 +272,7 @@ export class JuniorRunnerCookieProfiler {
       topIssues,
       recommendations: allRecommendations,
       csrfCoverage,
-      abTestingCoverage
+      abTestingCoverage,
     };
   }
 }
@@ -274,9 +289,9 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
   async saveProfile(sessionId: string, profile: LeadSpecProfile): Promise<void> {
     const key = `${this.keyPrefix}sessions/${sessionId}/profile-${Date.now()}.json`;
     const value = JSON.stringify(profile, null, 2);
-    
+
     await this.bucket.put(key, value);
-    
+
     // Also save latest profile for quick access
     const latestKey = `${this.keyPrefix}sessions/${sessionId}/latest.json`;
     await this.bucket.put(latestKey, value);
@@ -286,9 +301,9 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
     try {
       const key = `${this.keyPrefix}sessions/${sessionId}/latest.json`;
       const object = await this.bucket.get(key);
-      
+
       if (!object) return null;
-      
+
       const value = await object.text();
       return JSON.parse(value);
     } catch {
@@ -300,7 +315,7 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
     try {
       const prefix = `${this.keyPrefix}sessions/${sessionId}/`;
       const objects = await this.bucket.list({ prefix, limit });
-      
+
       const profiles: LeadSpecProfile[] = [];
       for (const object of objects.objects) {
         if (object.key.includes('profile-')) {
@@ -311,9 +326,9 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
           }
         }
       }
-      
-      return profiles.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+
+      return profiles.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
     } catch {
       return [];
@@ -324,7 +339,7 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
     try {
       const prefix = `${this.keyPrefix}sessions/${sessionId}/`;
       const objects = await this.bucket.list({ prefix });
-      
+
       for (const object of objects.objects) {
         await this.bucket.delete(object.key);
       }
@@ -351,7 +366,7 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
       const cutoffTime = this.getCutoffTime(timeRange);
       const prefix = `${this.keyPrefix}sessions/`;
       const objects = await this.bucket.list({ prefix });
-      
+
       const profiles: LeadSpecProfile[] = [];
       for (const object of objects.objects) {
         if (object.key.includes('latest.json')) {
@@ -375,15 +390,15 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
           abTestingCoverage: 0,
           performanceMetrics: {
             averageProcessingTime: 0,
-            p95ProcessingTime: 0
-          }
+            p95ProcessingTime: 0,
+          },
         };
       }
 
       const report = JuniorRunnerCookieProfiler.generateSecurityReport(profiles);
       const processingTimes = profiles.map(p => p.performance.totalTime);
       processingTimes.sort((a, b) => a - b);
-      
+
       return {
         totalSessions: report.totalSessions,
         averageSecurityScore: report.averageSecurityScore,
@@ -391,13 +406,13 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
         csrfCoverage: report.csrfCoverage,
         abTestingCoverage: report.abTestingCoverage,
         performanceMetrics: {
-          averageProcessingTime: Math.round(
-            processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length * 100
-          ) / 100,
-          p95ProcessingTime: Math.round(
-            processingTimes[Math.floor(processingTimes.length * 0.95)] * 100
-          ) / 100
-        }
+          averageProcessingTime:
+            Math.round(
+              (processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length) * 100
+            ) / 100,
+          p95ProcessingTime:
+            Math.round(processingTimes[Math.floor(processingTimes.length * 0.95)] * 100) / 100,
+        },
       };
     } catch (error) {
       console.error('Failed to get aggregated telemetry:', error);
@@ -409,8 +424,8 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
         abTestingCoverage: 0,
         performanceMetrics: {
           averageProcessingTime: 0,
-          p95ProcessingTime: 0
-        }
+          p95ProcessingTime: 0,
+        },
       };
     }
   }
@@ -419,13 +434,13 @@ export class R2CookieTelemetryStorage implements R2TelemetryStorage {
     const now = Date.now();
     switch (timeRange) {
       case 'hour':
-        return now - (60 * 60 * 1000);
+        return now - 60 * 60 * 1000;
       case 'day':
-        return now - (24 * 60 * 60 * 1000);
+        return now - 24 * 60 * 60 * 1000;
       case 'week':
-        return now - (7 * 24 * 60 * 60 * 1000);
+        return now - 7 * 24 * 60 * 60 * 1000;
       default:
-        return now - (24 * 60 * 60 * 1000);
+        return now - 24 * 60 * 60 * 1000;
     }
   }
 }
@@ -438,53 +453,57 @@ export class JuniorRunnerCLI {
       return;
     }
 
-    console.log('🍪 JuniorRunner Cookie Inspector v3.25');
-    console.log('='.repeat(50));
+    console.info('🍪 JuniorRunner Cookie Inspector v3.25');
+    console.info('='.repeat(50));
 
     // Simulate request profiling
     const testRequest = new Request('http://localhost:3000/test', {
       headers: {
-        'cookie': 'session=test-session-123; Secure; HttpOnly; SameSite=Strict; user_id=user-456; ab_variant={"variant":"A","timestamp":' + Date.now() + ',"signature":"abc123"}',
-        'user-agent': 'JuniorRunner/3.25'
-      }
+        cookie:
+          'session=test-session-123; Secure; HttpOnly; SameSite=Strict; user_id=user-456; ab_variant={"variant":"A","timestamp":' +
+          Date.now() +
+          ',"signature":"abc123"}',
+        'user-agent': 'JuniorRunner/3.25',
+      },
     });
 
     try {
       const profile = await JuniorRunnerCookieProfiler.profileWithCookies('test.md', testRequest);
-      
-      console.log('📊 Cookie Profile Results:');
-      console.log(`Session ID: ${profile.sessionId || 'N/A'}`);
-      console.log(`User ID: ${profile.userId || 'N/A'}`);
-      console.log(`Cookie Count: ${profile.cookies.count}`);
-      console.log(`Valid Cookies: ${profile.cookies.valid}`);
-      console.log(`Security Score: ${profile.security.overallScore}/100`);
-      console.log(`Processing Time: ${profile.performance.totalTime}ms`);
-      
+
+      console.info('📊 Cookie Profile Results:');
+      console.info(`Session ID: ${profile.sessionId || 'N/A'}`);
+      console.info(`User ID: ${profile.userId || 'N/A'}`);
+      console.info(`Cookie Count: ${profile.cookies.count}`);
+      console.info(`Valid Cookies: ${profile.cookies.valid}`);
+      console.info(`Security Score: ${profile.security.overallScore}/100`);
+      console.info(`Processing Time: ${profile.performance.totalTime}ms`);
+
       if (profile.csrf?.tokenGenerated) {
-        console.log(`CSRF Token: Generated (${profile.csrf.tokenValue?.substring(0, 8)}...)`);
-      }
-      
-      if (profile.abTesting) {
-        console.log(`A/B Variant: ${profile.abTesting.variant} (${profile.abTesting.valid ? 'Valid' : 'Invalid'})`);
-      }
-      
-      if (profile.security.criticalIssues.length > 0) {
-        console.log('\n🚨 Critical Issues:');
-        profile.security.criticalIssues.forEach(issue => console.log(`  ❌ ${issue}`));
-      }
-      
-      if (profile.security.recommendations.length > 0) {
-        console.log('\n💡 Recommendations:');
-        profile.security.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+        console.info(`CSRF Token: Generated (${profile.csrf.tokenValue?.substring(0, 8)}...)`);
       }
 
+      if (profile.abTesting) {
+        console.info(
+          `A/B Variant: ${profile.abTesting.variant} (${profile.abTesting.valid ? 'Valid' : 'Invalid'})`
+        );
+      }
+
+      if (profile.security.criticalIssues.length > 0) {
+        console.info('\n🚨 Critical Issues:');
+        profile.security.criticalIssues.forEach(issue => console.info(`  ❌ ${issue}`));
+      }
+
+      if (profile.security.recommendations.length > 0) {
+        console.info('\n💡 Recommendations:');
+        profile.security.recommendations.forEach(rec => console.info(`  💡 ${rec}`));
+      }
     } catch (error) {
       console.error('❌ Cookie inspection failed:', error);
     }
   }
 
   private static showCookieInspectHelp(): void {
-    console.log(`
+    console.info(`
 🍪 JuniorRunner Cookie Inspector
 
 Usage: junior-runner --cookie-inspect [options]
@@ -506,7 +525,7 @@ Integration:
 
 Example:
   junior-runner --cookie-inspect
-  
+
   This will run a demo of the cookie inspection capabilities
   with sample data and performance metrics.
     `);
@@ -515,7 +534,9 @@ Example:
 
 // 📊 TELEMETRY DASHBOARD HELPER
 export class CookieTelemetryDashboard {
-  static generateDashboardHTML(telemetry: Awaited<ReturnType<R2CookieTelemetryStorage['getAggregatedTelemetry']>>): string {
+  static generateDashboardHTML(
+    telemetry: Awaited<ReturnType<R2CookieTelemetryStorage['getAggregatedTelemetry']>>
+  ): string {
     return `
 <!DOCTYPE html>
 <html>
@@ -540,27 +561,27 @@ export class CookieTelemetryDashboard {
 <body>
     <div class="dashboard">
         <h1>🍪 Cookie Security Telemetry Dashboard</h1>
-        
+
         <div class="metric-grid">
             <div class="metric-card">
                 <div class="metric-value">${telemetry.totalSessions}</div>
                 <div class="metric-label">Total Sessions</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.averageSecurityScore >= 80 ? 'status-good' : telemetry.averageSecurityScore >= 60 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.averageSecurityScore}/100
                 </div>
                 <div class="metric-label">Average Security Score</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.csrfCoverage >= 90 ? 'status-good' : telemetry.csrfCoverage >= 70 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.csrfCoverage}%
                 </div>
                 <div class="metric-label">CSRF Coverage</div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-value ${telemetry.abTestingCoverage >= 80 ? 'status-good' : telemetry.abTestingCoverage >= 60 ? 'status-warning' : 'status-bad'}">
                     ${telemetry.abTestingCoverage}%
@@ -583,17 +604,23 @@ export class CookieTelemetryDashboard {
             </div>
         </div>
 
-        ${telemetry.topSecurityIssues.length > 0 ? `
+        ${
+          telemetry.topSecurityIssues.length > 0
+            ? `
         <div class="metric-card">
             <h2>🚨 Top Security Issues</h2>
             <div class="chart-container">
                 <canvas id="issuesChart"></canvas>
             </div>
         </div>
-        ` : ''}
+        `
+            : ''
+        }
     </div>
 
-    ${telemetry.topSecurityIssues.length > 0 ? `
+    ${
+      telemetry.topSecurityIssues.length > 0
+        ? `
     <script>
         const ctx = document.getElementById('issuesChart').getContext('2d');
         new Chart(ctx, {
@@ -620,7 +647,9 @@ export class CookieTelemetryDashboard {
             }
         });
     </script>
-    ` : ''}
+    `
+        : ''
+    }
 </body>
 </html>`;
   }
@@ -632,6 +661,6 @@ if (import.meta.main) {
   if (args.includes('--cookie-inspect')) {
     JuniorRunnerCLI.handleCookieInspect(args);
   } else {
-    console.log('Use --cookie-inspect to run cookie inspection demo');
+    console.info('Use --cookie-inspect to run cookie inspection demo');
   }
 }

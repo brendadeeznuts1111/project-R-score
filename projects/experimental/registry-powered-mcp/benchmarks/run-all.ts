@@ -11,7 +11,7 @@ import { federationMatrixBenchmarks } from '../packages/benchmarks/src/suites/ui
 import { reportToConsole, getBenchmarkResults } from '../packages/benchmarks/src/index';
 
 async function main() {
-  console.log('🚀 Registry-Powered-MCP Benchmarks v2.4.1\n');
+  console.info('🚀 Registry-Powered-MCP Benchmarks v2.4.1\n');
 
   // Load configuration
   const config = await RegistryLoader.YAML.parse('./packages/core/registry.toml');

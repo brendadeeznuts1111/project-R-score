@@ -177,7 +177,7 @@ ${this.generateRecommendations(analysis)}`;
     }
     
     // Check for large files
-    const largeFiles = analysis.inputAnalysis.largestFiles.filter(f => f.bytes > 100 * 1024).length;
+    const largeFiles = analysis.inputAnalysis.largestFiles.filter((f: { bytes: number }) => f.bytes > 100 * 1024).length;
     if (largeFiles > 0) {
       score -= Math.min(10, largeFiles * 2);
       issues.push(`${largeFiles} large files (>100KB)`);

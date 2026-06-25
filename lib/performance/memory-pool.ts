@@ -205,10 +205,10 @@ export class BunMemoryPool {
     const current = this.stats.utilization;
     if (current < 0.3) {
       // Under-utilized: shrink pool next iteration
-      console.log(`📉 Pool under-utilized (${current}), consider smaller allocation`);
+      console.info(`📉 Pool under-utilized (${current}), consider smaller allocation`);
     } else if (current > 0.8) {
       // Fragmentation risk: defragment or expand
-      console.log(`📈 Pool high utilization (${current}), expanding buffer`);
+      console.info(`📈 Pool high utilization (${current}), expanding buffer`);
       this.expand();
     }
   }
@@ -221,7 +221,7 @@ export class BunMemoryPool {
     try {
       // Create new larger buffer and migrate data
       const newSize = Math.floor(this.size * 1.5);
-      console.log(`🚀 Expanding pool: ${this.size} → ${newSize} bytes`);
+      console.info(`🚀 Expanding pool: ${this.size} → ${newSize} bytes`);
 
       const newBuffer = new SharedArrayBuffer(newSize);
       const newView = new DataView(newBuffer);
@@ -236,7 +236,7 @@ export class BunMemoryPool {
       this.view = newView;
       this.size = newSize;
 
-      console.log(`✅ Pool expansion completed: ${newSize} bytes`);
+      console.info(`✅ Pool expansion completed: ${newSize} bytes`);
     } finally {
       this.releaseLock();
     }

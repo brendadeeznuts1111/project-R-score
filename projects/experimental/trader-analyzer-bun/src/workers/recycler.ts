@@ -48,7 +48,7 @@ export class WorkerRecycler {
 			const idleTime = now - info.lastUsed;
 			
 			if (idleTime > idleTimeout) {
-				console.log(`Recycling idle worker (idle for ${Math.floor(idleTime / 1000)}s)`);
+				console.info(`Recycling idle worker (idle for ${Math.floor(idleTime / 1000)}s)`);
 				worker.terminate();
 				this.activeWorkers.delete(worker);
 			}
@@ -66,7 +66,7 @@ export class WorkerRecycler {
 		}
 		
 		if (totalMemory > this.maxMemory) {
-			console.log(`High memory usage: ${Math.round(totalMemory / 1024 / 1024)}MB`);
+			console.info(`High memory usage: ${Math.round(totalMemory / 1024 / 1024)}MB`);
 			// Terminate oldest workers
 			const sorted = Array.from(this.activeWorkers.entries())
 				.sort((a, b) => a[1].lastUsed - b[1].lastUsed);

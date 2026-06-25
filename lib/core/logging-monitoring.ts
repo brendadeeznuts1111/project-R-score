@@ -312,7 +312,7 @@ export class Logger {
     const timestamp = entry.timestamp;
 
     if (this.config.structuredFormat) {
-      console.log(
+      console.info(
         JSON.stringify({
           timestamp,
           level: levelName,
@@ -325,10 +325,10 @@ export class Logger {
     } else {
       const prefix = `[${timestamp}] ${levelName} ${entry.service}`;
       const suffix = entry.requestId ? ` [${entry.requestId}]` : '';
-      console.log(`${prefix}${suffix}: ${entry.message}`);
+      console.info(`${prefix}${suffix}: ${entry.message}`);
 
       if (entry.context && Object.keys(entry.context).length > 0) {
-        console.log('  Context:', entry.context);
+        console.info('  Context:', entry.context);
       }
     }
   }
@@ -435,7 +435,7 @@ export class Logger {
     }
 
     this.logBuffer = [];
-    console.log('🗑️ Logger destroyed and resources cleaned up');
+    console.info('🗑️ Logger destroyed and resources cleaned up');
   }
 }
 

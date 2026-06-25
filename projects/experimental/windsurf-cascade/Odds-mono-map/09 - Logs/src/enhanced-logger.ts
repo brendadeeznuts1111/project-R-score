@@ -245,24 +245,24 @@ export class EnhancedLogger {
             // Color coding for console
             switch (entry.level) {
                 case LogLevel.DEBUG:
-                    console.log(`\x1b[36m${output}\x1b[0m`); // Cyan
+                    console.info(`\x1b[36m${output}\x1b[0m`); // Cyan
                     break;
                 case LogLevel.INFO:
-                    console.log(`\x1b[32m${output}\x1b[0m`); // Green
+                    console.info(`\x1b[32m${output}\x1b[0m`); // Green
                     break;
                 case LogLevel.WARN:
-                    console.log(`\x1b[33m${output}\x1b[0m`); // Yellow
+                    console.info(`\x1b[33m${output}\x1b[0m`); // Yellow
                     break;
                 case LogLevel.ERROR:
-                    console.log(`\x1b[31m${output}\x1b[0m`); // Red
+                    console.info(`\x1b[31m${output}\x1b[0m`); // Red
                     break;
                 case LogLevel.CRITICAL:
-                    console.log(`\x1b[35m${output}\x1b[0m`); // Magenta
+                    console.info(`\x1b[35m${output}\x1b[0m`); // Magenta
                     break;
             }
 
             if (entry.stack) {
-                console.log(`\x1b[31m${entry.stack}\x1b[0m`);
+                console.info(`\x1b[31m${entry.stack}\x1b[0m`);
             }
         }
     }

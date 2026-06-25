@@ -101,9 +101,9 @@ class UnifiedMonitoringDashboard {
      */
     async startUnifiedMonitoring(): Promise<void> {
         console.clear();
-        console.log(chalk.blue.bold('🎯 Unified Monitoring Dashboard'));
-        console.log(chalk.gray('Powered by Bun Utilities Mastery - Complete System Monitoring & Error Tracking'));
-        console.log(chalk.gray('═'.repeat(140)));
+        console.info(chalk.blue.bold('🎯 Unified Monitoring Dashboard'));
+        console.info(chalk.gray('Powered by Bun Utilities Mastery - Complete System Monitoring & Error Tracking'));
+        console.info(chalk.gray('═'.repeat(140)));
 
         this.isRunning = true;
         this.startTime = new Date();
@@ -188,8 +188,8 @@ class UnifiedMonitoringDashboard {
      * Display executive summary with key metrics
      */
     private displayExecutiveSummary(): void {
-        console.log(chalk.magenta.bold('\n📊 Executive Summary'));
-        console.log(chalk.gray('═'.repeat(140)));
+        console.info(chalk.magenta.bold('\n📊 Executive Summary'));
+        console.info(chalk.gray('═'.repeat(140)));
 
         const summaryData = [
             {
@@ -230,7 +230,7 @@ class UnifiedMonitoringDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, {}, {
+        console.info(Bun.inspect.table(summaryData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -241,8 +241,8 @@ class UnifiedMonitoringDashboard {
      * Display system overview with progress bars
      */
     private displaySystemOverview(): void {
-        console.log(chalk.cyan.bold('\n🖥️ System Overview'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.cyan.bold('\n🖥️ System Overview'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const systemData = [
             {
@@ -279,7 +279,7 @@ class UnifiedMonitoringDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(systemData, {}, {
+        console.info(Bun.inspect.table(systemData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -290,8 +290,8 @@ class UnifiedMonitoringDashboard {
      * Display error analysis with detailed breakdown
      */
     private displayErrorAnalysis(): void {
-        console.log(chalk.red.bold('\n🚨 Error Analysis'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.red.bold('\n🚨 Error Analysis'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const errorData = [
             {
@@ -332,7 +332,7 @@ class UnifiedMonitoringDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(errorData, {}, {
+        console.info(Bun.inspect.table(errorData, {}, {
             colors: true,
             maxStringLength: 16,
             compact: false
@@ -343,8 +343,8 @@ class UnifiedMonitoringDashboard {
      * Display performance metrics
      */
     private displayPerformanceMetrics(): void {
-        console.log(chalk.green.bold('\n⚡ Performance Metrics'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.green.bold('\n⚡ Performance Metrics'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const performanceData = [
             {
@@ -385,7 +385,7 @@ class UnifiedMonitoringDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(performanceData, {}, {
+        console.info(Bun.inspect.table(performanceData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -396,8 +396,8 @@ class UnifiedMonitoringDashboard {
      * Display health assessment
      */
     private displayHealthAssessment(): void {
-        console.log(chalk.blue.bold('\n🏥 Health Assessment'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.blue.bold('\n🏥 Health Assessment'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const healthData = [
             {
@@ -438,7 +438,7 @@ class UnifiedMonitoringDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(healthData, {}, {
+        console.info(Bun.inspect.table(healthData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -449,8 +449,8 @@ class UnifiedMonitoringDashboard {
      * Display directory deep dive
      */
     private displayDirectoryDeepDive(): void {
-        console.log(chalk.cyan.bold('\n📁 Directory Deep Dive'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.cyan.bold('\n📁 Directory Deep Dive'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const directoryData = Array.from(this.directories.values())
             .sort((a, b) => b.health - a.health)
@@ -466,7 +466,7 @@ class UnifiedMonitoringDashboard {
                 'Priority': dir.health >= 80 ? '🟢 Low' : dir.health >= 60 ? '🟡 Medium' : '🔴 High'
             }));
 
-        console.log(Bun.inspect.table(directoryData, {}, {
+        console.info(Bun.inspect.table(directoryData, {}, {
             colors: true,
             maxStringLength: 15,
             compact: false
@@ -477,8 +477,8 @@ class UnifiedMonitoringDashboard {
      * Display recent activity
      */
     private displayRecentActivity(): void {
-        console.log(chalk.magenta.bold('\n📝 Recent Activity'));
-        console.log(chalk.gray('─'.repeat(140)));
+        console.info(chalk.magenta.bold('\n📝 Recent Activity'));
+        console.info(chalk.gray('─'.repeat(140)));
 
         const recentErrors = this.errors
             .filter(e => !e.resolved)
@@ -496,13 +496,13 @@ class UnifiedMonitoringDashboard {
             }));
 
         if (recentErrors.length > 0) {
-            console.log(Bun.inspect.table(recentErrors, {}, {
+            console.info(Bun.inspect.table(recentErrors, {}, {
                 colors: true,
                 maxStringLength: 15,
                 compact: false
             }));
         } else {
-            console.log(chalk.green('🎉 No recent activity! All systems operating normally.'));
+            console.info(chalk.green('🎉 No recent activity! All systems operating normally.'));
         }
     }
 
@@ -663,14 +663,14 @@ class UnifiedMonitoringDashboard {
         const uptime = this.getUptime();
         const headerText = `🎯 Unified Monitoring Dashboard - Uptime: ${uptime} | Last Scan: ${this.metrics.system.lastScan.toLocaleTimeString()}`;
 
-        console.log(chalk.blue.bold(headerText));
-        console.log(chalk.gray('═'.repeat(140)));
+        console.info(chalk.blue.bold(headerText));
+        console.info(chalk.gray('═'.repeat(140)));
     }
 
     private displayFooter(): void {
-        console.log(chalk.gray('─'.repeat(140)));
-        console.log(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Resolve Errors | [E] Export | [D] Deep Scan'));
-        console.log(chalk.gray(`Next Update: 30s | Directories: ${this.metrics.system.totalDirectories} | Files: ${this.metrics.system.totalFiles} | Errors: ${this.metrics.errors.unresolvedErrors}`));
+        console.info(chalk.gray('─'.repeat(140)));
+        console.info(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Resolve Errors | [E] Export | [D] Deep Scan'));
+        console.info(chalk.gray(`Next Update: 30s | Directories: ${this.metrics.system.totalDirectories} | Files: ${this.metrics.system.totalFiles} | Errors: ${this.metrics.errors.unresolvedErrors}`));
     }
 
     // Progress bar and utility methods
@@ -936,8 +936,8 @@ class UnifiedMonitoringDashboard {
             clearInterval(this.scanInterval);
         }
         this.isRunning = false;
-        console.log(chalk.yellow('\n👋 Unified Monitoring Dashboard shutting down...'));
-        console.log(chalk.green('✅ All monitoring services stopped gracefully'));
+        console.info(chalk.yellow('\n👋 Unified Monitoring Dashboard shutting down...'));
+        console.info(chalk.green('✅ All monitoring services stopped gracefully'));
         process.exit(0);
     }
 }
@@ -950,13 +950,13 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🎯 Unified Monitoring Dashboard'));
-        console.log(chalk.gray('Usage: bun unified-monitoring-dashboard.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('  --demo       Run demo mode with sample data'));
-        console.log(chalk.gray('  --scan-only  Perform single scan and exit'));
-        console.log(chalk.gray('\nFeatures: Directory monitoring, error tracking, performance analysis, health assessment'));
+        console.info(chalk.blue.bold('🎯 Unified Monitoring Dashboard'));
+        console.info(chalk.gray('Usage: bun unified-monitoring-dashboard.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('  --demo       Run demo mode with sample data'));
+        console.info(chalk.gray('  --scan-only  Perform single scan and exit'));
+        console.info(chalk.gray('\nFeatures: Directory monitoring, error tracking, performance analysis, health assessment'));
         process.exit(0);
     }
 
@@ -970,7 +970,7 @@ async function main(): Promise<void> {
         } else if (args.includes('--scan-only')) {
             // Scan only mode
             await dashboard.performUnifiedScan();
-            console.log(chalk.green('✅ Unified scan completed'));
+            console.info(chalk.green('✅ Unified scan completed'));
         } else {
             // Full monitoring mode
             await dashboard.startUnifiedMonitoring();

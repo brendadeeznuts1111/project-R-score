@@ -1,0 +1,14 @@
+id: effect-prefer-tagged-error
+snapshots:
+  return new Error("failed"):
+    labels:
+    - source: new Error("failed")
+      style: primary
+      start: 7
+      end: 26
+  throw new Error("failed"):
+    labels:
+    - source: new Error("failed")
+      style: primary
+      start: 6
+      end: 25

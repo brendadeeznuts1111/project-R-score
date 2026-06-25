@@ -31,7 +31,7 @@ export class Bun13PerformanceMonitor {
   private monitoringStartTime = performance.now();
 
   constructor() {
-    console.log('📊 Bun 1.3 Performance Monitor initialized');
+    console.info('📊 Bun 1.3 Performance Monitor initialized');
   }
 
   // Bun 1.3: Enhanced timing with rapidhash and memory tracking
@@ -223,7 +223,7 @@ export class Bun13PerformanceMonitor {
 
   // Bun 1.3: WebSocket performance testing
   async testWebSocketPerformance(url: string, messageCount: number = 1000) {
-    console.log(`🌐 Testing WebSocket performance: ${messageCount} messages`);
+    console.info(`🌐 Testing WebSocket performance: ${messageCount} messages`);
     
     const ws = new WebSocket(url);
     const results: number[] = [];
@@ -235,7 +235,7 @@ export class Bun13PerformanceMonitor {
       success: boolean;
     }>((resolve) => {
       ws.onopen = () => {
-        console.log('🔗 WebSocket connected, starting performance test...');
+        console.info('🔗 WebSocket connected, starting performance test...');
         
         const startTime = performance.now();
         
@@ -301,7 +301,7 @@ export class Bun13PerformanceMonitor {
 
   // Bun 1.3: RapidHash performance benchmarking
   benchmarkRapidHash(iterations: number = 100000) {
-    console.log(`⚡ Benchmarking RapidHash: ${iterations} iterations`);
+    console.info(`⚡ Benchmarking RapidHash: ${iterations} iterations`);
     
     const testData = Array.from({ length: 100 }, (_, i) => `test-data-${i}-${Math.random()}`);
     
@@ -380,7 +380,7 @@ export class Bun13PerformanceMonitor {
   async saveReport(filePath: string = './performance-report.md'): Promise<void> {
     const report = this.generateReport();
     await Bun.write(filePath, report);
-    console.log(`📄 Performance report saved to: ${filePath}`);
+    console.info(`📄 Performance report saved to: ${filePath}`);
   }
 
   // Cleanup old metrics
@@ -410,26 +410,26 @@ export class Bun13PerformanceMonitor {
 if (import.meta.main) {
   const monitor = new Bun13PerformanceMonitor();
   
-  console.log('🚀 Starting Bun 1.3 Performance Tests...');
+  console.info('🚀 Starting Bun 1.3 Performance Tests...');
   
   // Test rapidhash performance
   const hashBenchmark = monitor.benchmarkRapidHash(100000);
-  console.log(`⚡ RapidHash: ${hashBenchmark.hashesPerSecond.toFixed(0)} hashes/sec`);
+  console.info(`⚡ RapidHash: ${hashBenchmark.hashesPerSecond.toFixed(0)} hashes/sec`);
   
   // Test memory usage
   const memoryStats = monitor.getMemoryStats();
-  console.log(`📊 Memory: ${(memoryStats.bun.heapUsed / 1024 / 1024).toFixed(2)}MB used`);
+  console.info(`📊 Memory: ${(memoryStats.bun.heapUsed / 1024 / 1024).toFixed(2)}MB used`);
   
   // Test WebSocket performance if server is running
   if (process.argv.includes('--ws-test')) {
     const wsTest = await monitor.testWebSocketPerformance('ws://localhost:3000/ws', 1000);
-    console.log(`🌐 WebSocket: ${wsTest.messagesPerSecond.toFixed(0)} msg/sec, ${wsTest.averageLatency.toFixed(2)}ms latency`);
+    console.info(`🌐 WebSocket: ${wsTest.messagesPerSecond.toFixed(0)} msg/sec, ${wsTest.averageLatency.toFixed(2)}ms latency`);
   }
   
   // Generate and save report
   await monitor.saveReport();
   
-  console.log('✅ Performance tests completed!');
+  console.info('✅ Performance tests completed!');
 }
 
 export default Bun13PerformanceMonitor;

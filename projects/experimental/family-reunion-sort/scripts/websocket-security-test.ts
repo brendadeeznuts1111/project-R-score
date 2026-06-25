@@ -25,7 +25,7 @@ class WebSocketSecurityTester {
   }
 
   async runAllTests(): Promise<void> {
-    console.log('🌐 Starting WebSocket Security Tests for Bun v1.3.6...\n');
+    console.info('🌐 Starting WebSocket Security Tests for Bun v1.3.6...\n');
 
     await this.setupTestServer();
     await this.testNormalMessage();
@@ -39,7 +39,7 @@ class WebSocketSecurityTester {
   }
 
   private async setupTestServer(): Promise<void> {
-    console.log('🔧 Setting up test WebSocket server...');
+    console.info('🔧 Setting up test WebSocket server...');
     
     this.server = serve({
       port: this.port,
@@ -54,7 +54,7 @@ class WebSocketSecurityTester {
       },
       websocket: {
         open(ws) {
-          console.log('📡 WebSocket connection opened');
+          console.info('📡 WebSocket connection opened');
         },
         message(ws, message) {
           // Test message size limit (128MB in v1.3.6)
@@ -78,7 +78,7 @@ class WebSocketSecurityTester {
           }));
         },
         close(ws) {
-          console.log('📡 WebSocket connection closed');
+          console.info('📡 WebSocket connection closed');
         },
         error(ws, error) {
           console.error('📡 WebSocket error:', error);
@@ -87,11 +87,11 @@ class WebSocketSecurityTester {
     });
 
     this.port = this.server.port;
-    console.log(`✅ Test server running on port ${this.port}\n`);
+    console.info(`✅ Test server running on port ${this.port}\n`);
   }
 
   private async testNormalMessage(): Promise<void> {
-    console.log('📨 Testing normal message size (1KB)...');
+    console.info('📨 Testing normal message size (1KB)...');
     
     const startTime = performance.now();
     const message = new Uint8Array(1024).fill(0x41); // 1KB of 'A'
@@ -134,7 +134,7 @@ class WebSocketSecurityTester {
   }
 
   private async testLargeMessage(): Promise<void> {
-    console.log('📨 Testing large message size (10MB)...');
+    console.info('📨 Testing large message size (10MB)...');
     
     const startTime = performance.now();
     const message = new Uint8Array(10 * 1024 * 1024).fill(0x42); // 10MB of 'B'
@@ -177,7 +177,7 @@ class WebSocketSecurityTester {
   }
 
   private async testOversizedMessage(): Promise<void> {
-    console.log('📨 Testing oversized message (150MB - should be rejected)...');
+    console.info('📨 Testing oversized message (150MB - should be rejected)...');
     
     const startTime = performance.now();
     const message = new Uint8Array(150 * 1024 * 1024).fill(0x43); // 150MB of 'C'
@@ -220,7 +220,7 @@ class WebSocketSecurityTester {
   }
 
   private async testMalformedMessage(): Promise<void> {
-    console.log('📨 Testing malformed message...');
+    console.info('📨 Testing malformed message...');
     
     const startTime = performance.now();
     
@@ -273,7 +273,7 @@ class WebSocketSecurityTester {
   }
 
   private async testConcurrentMessages(): Promise<void> {
-    console.log('📨 Testing concurrent messages...');
+    console.info('📨 Testing concurrent messages...');
     
     const startTime = performance.now();
     const messageCount = 10;
@@ -328,39 +328,39 @@ class WebSocketSecurityTester {
   private cleanup(): void {
     if (this.server) {
       this.server.stop();
-      console.log('🧹 Test server stopped\n');
+      console.info('🧹 Test server stopped\n');
     }
   }
 
   private generateReport(): void {
-    console.log('📊 WEBSOCKET SECURITY REPORT');
-    console.log('=============================\n');
+    console.info('📊 WEBSOCKET SECURITY REPORT');
+    console.info('=============================\n');
 
     const passed = this.results.filter(r => r.passed);
     const failed = this.results.filter(r => !r.passed);
 
-    console.log(`✅ PASSED: ${passed.length}`);
-    console.log(`❌ FAILED: ${failed.length}\n`);
+    console.info(`✅ PASSED: ${passed.length}`);
+    console.info(`❌ FAILED: ${failed.length}\n`);
 
     this.results.forEach(result => {
       const status = result.passed ? '✅' : '❌';
       const sizeMB = (result.size / (1024 * 1024)).toFixed(2);
-      console.log(`${status} ${result.testName}`);
-      console.log(`   Size: ${sizeMB}MB | Time: ${result.time.toFixed(2)}ms`);
-      console.log(`   Message: ${result.message}\n`);
+      console.info(`${status} ${result.testName}`);
+      console.info(`   Size: ${sizeMB}MB | Time: ${result.time.toFixed(2)}ms`);
+      console.info(`   Message: ${result.message}\n`);
     });
 
-    console.log('🔒 SECURITY ANALYSIS:');
-    console.log('- 128MB decompression limit: ' + (this.results.some(r => r.testName.includes('Oversized') && r.passed) ? '✅ ENFORCED' : '❌ NOT ENFORCED'));
-    console.log('- Memory protection: ' + (failed.length === 0 ? '✅ ACTIVE' : '❌ VULNERABLE'));
-    console.log('- Message handling: ' + (this.results.every(r => r.passed || r.testName.includes('Oversized')) ? '✅ ROBUST' : '❌ FRAGILE'));
+    console.info('🔒 SECURITY ANALYSIS:');
+    console.info('- 128MB decompression limit: ' + (this.results.some(r => r.testName.includes('Oversized') && r.passed) ? '✅ ENFORCED' : '❌ NOT ENFORCED'));
+    console.info('- Memory protection: ' + (failed.length === 0 ? '✅ ACTIVE' : '❌ VULNERABLE'));
+    console.info('- Message handling: ' + (this.results.every(r => r.passed || r.testName.includes('Oversized')) ? '✅ ROBUST' : '❌ FRAGILE'));
     
-    console.log('\n🎯 RECOMMENDATIONS:');
-    console.log('1. Ensure all WebSocket servers implement size limits');
-    console.log('2. Monitor memory usage during high traffic');
-    console.log('3. Implement rate limiting for message frequency');
-    console.log('4. Add connection timeout and idle cleanup');
-    console.log('5. Log oversized message attempts for security monitoring');
+    console.info('\n🎯 RECOMMENDATIONS:');
+    console.info('1. Ensure all WebSocket servers implement size limits');
+    console.info('2. Monitor memory usage during high traffic');
+    console.info('3. Implement rate limiting for message frequency');
+    console.info('4. Add connection timeout and idle cleanup');
+    console.info('5. Log oversized message attempts for security monitoring');
   }
 }
 

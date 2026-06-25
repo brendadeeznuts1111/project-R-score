@@ -89,7 +89,7 @@ export function createServer(registry: ShortcutRegistry, config: ServerConfig) {
         handleWebSocketMessage(ws, message, registry);
       },
       open(ws) {
-        console.log('WebSocket connection opened');
+        console.info('WebSocket connection opened');
         // Send initial state
         ws.send(JSON.stringify({
           type: 'initial_state',
@@ -101,7 +101,7 @@ export function createServer(registry: ShortcutRegistry, config: ServerConfig) {
         }));
       },
       close(ws) {
-        console.log('WebSocket connection closed');
+        console.info('WebSocket connection closed');
       }
     },
     
@@ -429,7 +429,7 @@ function handleWebSocketMessage(ws: any, message: any, registry: ShortcutRegistr
         break;
         
       default:
-        console.log('Unknown WebSocket message type:', data.type);
+        console.info('Unknown WebSocket message type:', data.type);
     }
   } catch (error) {
     console.error('Error handling WebSocket message:', error);

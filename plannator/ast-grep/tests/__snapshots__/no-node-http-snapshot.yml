@@ -1,0 +1,14 @@
+id: no-node-http
+snapshots:
+  import http from "http":
+    labels:
+    - source: import http from "http"
+      style: primary
+      start: 0
+      end: 23
+  import https from "node:https":
+    labels:
+    - source: import https from "node:https"
+      style: primary
+      start: 0
+      end: 30

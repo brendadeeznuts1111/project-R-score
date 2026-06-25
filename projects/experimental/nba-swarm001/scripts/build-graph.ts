@@ -27,7 +27,7 @@ logger.info("Building graph", { gameCount: count });
 
 const graph = buildGraph(games, config);
 
-console.log(JSON.stringify({
+console.info(JSON.stringify({
   nodes: graph.nodes.size,
   edges: graph.edges.length,
   averageDegree: graph.metadata.averageDegree,

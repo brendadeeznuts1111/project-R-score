@@ -13,7 +13,7 @@ export {};
 
 // Example 1: Reading a file directly to Uint8Array using .bytes()
 async function readAsUint8Array() {
-  console.log('💾 Reading package.json directly to Uint8Array:');
+  console.info('💾 Reading package.json directly to Uint8Array:');
   
   const path = "../package.json";
   const file = Bun.file(path);
@@ -21,23 +21,23 @@ async function readAsUint8Array() {
   // Read the file contents directly as Uint8Array
   const byteArray = await file.bytes();
   
-  console.log('Uint8Array length:', byteArray.length);
-  console.log('First 10 bytes:', Array.from(byteArray.slice(0, 10)));
+  console.info('Uint8Array length:', byteArray.length);
+  console.info('First 10 bytes:', Array.from(byteArray.slice(0, 10)));
   
   // Access individual elements
-  console.log('First byte:', byteArray[0]);
-  console.log('Last byte:', byteArray[byteArray.length - 1]);
+  console.info('First byte:', byteArray[0]);
+  console.info('Last byte:', byteArray[byteArray.length - 1]);
   
   // Convert to string to see the actual content
   const text = new TextDecoder().decode(byteArray);
-  console.log('First 100 characters as text:', text.substring(0, 100) + '...');
+  console.info('First 100 characters as text:', text.substring(0, 100) + '...');
   
   return byteArray;
 }
 
 // Example 2: Comparing .bytes() vs .arrayBuffer()
 async function compareMethods() {
-  console.log('\n🔄 Comparing .bytes() vs .arrayBuffer():');
+  console.info('\n🔄 Comparing .bytes() vs .arrayBuffer():');
   
   const file = Bun.file("../package.json");
   
@@ -52,15 +52,15 @@ async function compareMethods() {
   const uint8Array = new Uint8Array(arrayBuffer);
   console.timeEnd('Using .arrayBuffer()');
   
-  console.log('Both methods produce identical results:', byteArray.length === uint8Array.length);
-  console.log('First 5 bytes match:', 
+  console.info('Both methods produce identical results:', byteArray.length === uint8Array.length);
+  console.info('First 5 bytes match:', 
     Array.from(byteArray.slice(0, 5)).toString() === 
     Array.from(uint8Array.slice(0, 5)).toString());
 }
 
 // Example 3: Working with binary files
 async function workWithBinaryData() {
-  console.log('\n🖼️ Working with binary data:');
+  console.info('\n🖼️ Working with binary data:');
   
   // Create some binary data
   const binaryData = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]); // PNG header
@@ -69,26 +69,26 @@ async function workWithBinaryData() {
   const outputPath = "./binary-demo.png";
   await Bun.write(outputPath, binaryData);
   
-  console.log(`Wrote ${binaryData.length} bytes to ${outputPath}`);
+  console.info(`Wrote ${binaryData.length} bytes to ${outputPath}`);
   
   // Read it back using .bytes()
   const readFile = Bun.file(outputPath);
   const readBytes = await readFile.bytes();
   
-  console.log('Read back data:');
-  console.log('Length:', readBytes.length);
-  console.log('Bytes:', Array.from(readBytes).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
+  console.info('Read back data:');
+  console.info('Length:', readBytes.length);
+  console.info('Bytes:', Array.from(readBytes).map(b => '0x' + b.toString(16).padStart(2, '0')).join(' '));
   
   // Verify it matches
   const matches = binaryData.every((value, index) => value === readBytes[index]);
-  console.log('Data matches original:', matches);
+  console.info('Data matches original:', matches);
   
   return readBytes;
 }
 
 // Example 4: Processing large files with Uint8Array
 async function processLargeFile() {
-  console.log('\n📊 Processing file with Uint8Array:');
+  console.info('\n📊 Processing file with Uint8Array:');
   
   const file = Bun.file("../package.json");
   const byteArray = await file.bytes();
@@ -106,8 +106,8 @@ async function processLargeFile() {
     }
   }
   
-  console.log('Found', braceCount, 'brace characters');
-  console.log('Found', newlineCount, 'newlines');
+  console.info('Found', braceCount, 'brace characters');
+  console.info('Found', newlineCount, 'newlines');
   
   // Find specific patterns
   const pattern = new TextEncoder().encode('name');
@@ -124,42 +124,42 @@ async function processLargeFile() {
     if (found) patternCount++;
   }
   
-  console.log('Found', patternCount, 'occurrences of "name"');
+  console.info('Found', patternCount, 'occurrences of "name"');
 }
 
 // Example 5: Uint8Array manipulation
 function manipulateUint8Array() {
-  console.log('\n🔧 Uint8Array manipulation:');
+  console.info('\n🔧 Uint8Array manipulation:');
   
   // Create a Uint8Array
   const data = new Uint8Array([65, 66, 67, 68, 69]); // A, B, C, D, E
   
-  console.log('Original data:', Array.from(data));
-  console.log('As string:', new TextDecoder().decode(data));
+  console.info('Original data:', Array.from(data));
+  console.info('As string:', new TextDecoder().decode(data));
   
   // Manipulate the data
   data[0] = 90; // Change A to Z
   data[2] = 88; // Change C to X
   
-  console.log('Modified data:', Array.from(data));
-  console.log('As string:', new TextDecoder().decode(data));
+  console.info('Modified data:', Array.from(data));
+  console.info('As string:', new TextDecoder().decode(data));
   
   // Create a subarray
   const subArray = data.subarray(1, 4); // B, X, D
-  console.log('Subarray:', Array.from(subArray));
-  console.log('Subarray as string:', new TextDecoder().decode(subArray));
+  console.info('Subarray:', Array.from(subArray));
+  console.info('Subarray as string:', new TextDecoder().decode(subArray));
   
   // Copy data
   const copy = data.slice();
-  console.log('Copy:', Array.from(copy));
+  console.info('Copy:', Array.from(copy));
   
   return data;
 }
 
 // Main execution
 async function main() {
-  console.log('🚀 Uint8Array Examples');
-  console.log('====================');
+  console.info('🚀 Uint8Array Examples');
+  console.info('====================');
   
   try {
     await readAsUint8Array();
@@ -168,7 +168,7 @@ async function main() {
     await processLargeFile();
     manipulateUint8Array();
     
-    console.log('\n✅ All Uint8Array examples completed successfully!');
+    console.info('\n✅ All Uint8Array examples completed successfully!');
   } catch (error) {
     console.error('❌ Error running examples:', error);
   }

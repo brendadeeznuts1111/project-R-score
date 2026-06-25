@@ -30,7 +30,7 @@ import { shouldIncludeHook } from "./config.js";
  * const config = await loadConfig();
  * const workspaceDir = resolveAgentWorkspaceDir(config, agentId);
  * const count = await loadInternalHooks(config, workspaceDir);
- * console.log(`Loaded ${count} hook handlers`);
+ * console.info(`Loaded ${count} hook handlers`);
  * ```
  */
 export async function loadInternalHooks(
@@ -87,7 +87,7 @@ export async function loadInternalHooks(
           registerInternalHook(event, handler as InternalHookHandler);
         }
 
-        console.log(
+        console.info(
           `Registered hook: ${entry.hook.name} -> ${events.join(", ")}${exportName !== "default" ? ` (export: ${exportName})` : ""}`,
         );
         loadedCount++;
@@ -130,7 +130,7 @@ export async function loadInternalHooks(
 
       // Register the handler
       registerInternalHook(handlerConfig.event, handler as InternalHookHandler);
-      console.log(
+      console.info(
         `Registered hook (legacy): ${handlerConfig.event} -> ${modulePath}${exportName !== "default" ? `#${exportName}` : ""}`,
       );
       loadedCount++;

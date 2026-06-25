@@ -20,13 +20,13 @@ export function superTablePreview(data: any[], options: { page?: number; cols?: 
   const barPadding = ' '.repeat(Math.max(0, 40 - Bun.stringWidth(barBase)));
   const bar = barBase + barPadding;
 
-  console.log(`📊 Super Table: ${data.length} rows | Page ${page + 1}/${totalPages} | Cols: ${cols.join(',')}`);
+  console.info(`📊 Super Table: ${data.length} rows | Page ${page + 1}/${totalPages} | Cols: ${cols.join(',')}`);
   if (data.length > 0 && data[0] && 'success' in data[0]) {
-    console.log(`📈 Success Histogram: ${bar} ${successRate.toFixed(1)}%`);
+    console.info(`📈 Success Histogram: ${bar} ${successRate.toFixed(1)}%`);
   }
 
   // Use Bun's native inspector for the table
-  console.log(Bun.inspect.table(projected.map(row => {
+  console.info(Bun.inspect.table(projected.map(row => {
     const pick: any = {};
     cols.forEach(c => pick[c] = row[c]);
     return pick;
@@ -38,8 +38,8 @@ export function superTablePreview(data: any[], options: { page?: number; cols?: 
 export function alignedTable(data: any[], cols: string[]) {
   const widths = cols.map(col => Math.max(...data.map(row => Bun.stringWidth(String(row[col] ?? ''))), Bun.stringWidth(col)));
   const header = cols.map((col, i) => col.padEnd(widths[i])).join(' │ ');
-  console.log(header);
-  console.log('-'.repeat(Bun.stringWidth(header) + (cols.length - 1) * 2));
+  console.info(header);
+  console.info('-'.repeat(Bun.stringWidth(header) + (cols.length - 1) * 2));
 
   data.forEach(row => {
     const line = cols.map((col, i) => {
@@ -48,7 +48,7 @@ export function alignedTable(data: any[], cols: string[]) {
       const padding = ' '.repeat(Math.max(0, widths[i] - width));
       return val + padding;
     }).join(' │ ');
-    console.log(line);
+    console.info(line);
   });
 }
 
@@ -59,17 +59,17 @@ export function emojiAlignedTable(data: any[], cols: string[]) {
   );
   
   // Header w/ emoji
-  console.log('📊 Empire Perf:');
+  console.info('📊 Empire Perf:');
   const header = cols.map((col, i) => {
     const val = String(col);
     const width = Bun.stringWidth(val);
     const padding = ' '.repeat(Math.max(0, widths[i] - width));
     return val + padding;
   }).join(' │ ');
-  console.log(header);
+  console.info(header);
   
   const sep = widths.map(w => '─'.repeat(w)).join('─┼─');
-  console.log(sep);
+  console.info(sep);
   
   data.forEach(row => {
     const line = cols.map((col, i) => {
@@ -78,14 +78,14 @@ export function emojiAlignedTable(data: any[], cols: string[]) {
       const padding = ' '.repeat(Math.max(0, widths[i] - width));
       return val + padding;
     }).join(' │ ');
-    console.log(line);
+    console.info(line);
   });
   
   // Test new accuracy
-  console.log('\n✅ stringWidth Tests:');
-  console.log(`🇺🇸=${Bun.stringWidth('🇺🇸')} 👋🏽=${Bun.stringWidth('👋🏽')} 👨👩👧=${Bun.stringWidth('👨👩👧')} → 2/2/2`);
-  console.log(`\u2060=${Bun.stringWidth('\u2060')} → 0 (zero-width)`);
-  console.log(`CSI ANSI: ${Bun.stringWidth('\u001b[31mRed\u001b[0m')} → 3 (ignore)`);
+  console.info('\n✅ stringWidth Tests:');
+  console.info(`🇺🇸=${Bun.stringWidth('🇺🇸')} 👋🏽=${Bun.stringWidth('👋🏽')} 👨👩👧=${Bun.stringWidth('👨👩👧')} → 2/2/2`);
+  console.info(`\u2060=${Bun.stringWidth('\u2060')} → 0 (zero-width)`);
+  console.info(`CSI ANSI: ${Bun.stringWidth('\u001b[31mRed\u001b[0m')} → 3 (ignore)`);
 }
 
 export function superTableCli(data: any[], argv: string[]) {

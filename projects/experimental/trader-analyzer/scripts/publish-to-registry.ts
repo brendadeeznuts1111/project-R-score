@@ -109,10 +109,10 @@ async function updatePackageVersion(
 	}
 	
 	if (dryRun) {
-		console.log(`  [DRY RUN] Would update ${packageJson.name} from ${oldVersion} to ${version}`);
+		console.info(`  [DRY RUN] Would update ${packageJson.name} from ${oldVersion} to ${version}`);
 	} else {
 		await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2) + "\n");
-		console.log(`  ✅ Updated ${packageJson.name} from ${oldVersion} to ${version}`);
+		console.info(`  ✅ Updated ${packageJson.name} from ${oldVersion} to ${version}`);
 	}
 }
 
@@ -127,18 +127,18 @@ async function publishPackage(
 	dryRun: boolean,
 ): Promise<void> {
 	if (dryRun) {
-		console.log(`  [DRY RUN] Would publish ${packageName}@${version} to ${registry}`);
+		console.info(`  [DRY RUN] Would publish ${packageName}@${version} to ${registry}`);
 		return;
 	}
 	
 	try {
-		console.log(`  📦 Publishing ${packageName}@${version}...`);
+		console.info(`  📦 Publishing ${packageName}@${version}...`);
 		
 		// Use bun publish with registry flag
 		const result = await $`cd ${packagePath} && bun publish --registry ${registry} --access public`.quiet();
 		
 		if (result.exitCode === 0) {
-			console.log(`  ✅ Published ${packageName}@${version}`);
+			console.info(`  ✅ Published ${packageName}@${version}`);
 		} else {
 			console.error(`  ❌ Failed to publish ${packageName}@${version}`);
 			process.exit(1);
@@ -158,22 +158,22 @@ async function publishToRegistry(options: PublishOptions = {}): Promise<void> {
 	const dryRun = options.dryRun || false;
 	const registry = options.registry || "https://npm.internal.yourcompany.com";
 	
-	console.log("🚀 Publishing workspace packages to private registry\n");
-	console.log(`   Version: ${version}`);
-	console.log(`   Registry: ${registry}`);
-	console.log(`   Mode: ${dryRun ? "DRY RUN" : "PUBLISH"}\n`);
+	console.info("🚀 Publishing workspace packages to private registry\n");
+	console.info(`   Version: ${version}`);
+	console.info(`   Registry: ${registry}`);
+	console.info(`   Mode: ${dryRun ? "DRY RUN" : "PUBLISH"}\n`);
 	
 	// Find all @graph packages
 	const packages = findWorkspacePackages();
 	
 	if (packages.length === 0) {
-		console.log("⚠️  No @graph packages found in workspace");
+		console.info("⚠️  No @graph packages found in workspace");
 		return;
 	}
 	
-	console.log(`📦 Found ${packages.length} package(s):`);
-	packages.forEach((pkg) => console.log(`   - ${pkg.name}`));
-	console.log();
+	console.info(`📦 Found ${packages.length} package(s):`);
+	packages.forEach((pkg) => console.info(`   - ${pkg.name}`));
+	console.info();
 	
 	// Filter by target package if specified
 	const packagesToPublish = targetPackage
@@ -187,7 +187,7 @@ async function publishToRegistry(options: PublishOptions = {}): Promise<void> {
 	
 	// Update versions and publish
 	for (const pkg of packagesToPublish) {
-		console.log(`\n📝 Processing ${pkg.name}...`);
+		console.info(`\n📝 Processing ${pkg.name}...`);
 		
 		// Update version
 		await updatePackageVersion(pkg.path, version, dryRun);
@@ -196,7 +196,7 @@ async function publishToRegistry(options: PublishOptions = {}): Promise<void> {
 		await publishPackage(pkg.path, pkg.name, version, registry, dryRun);
 	}
 	
-	console.log("\n✅ Publishing complete!");
+	console.info("\n✅ Publishing complete!");
 }
 
 // Parse command line arguments

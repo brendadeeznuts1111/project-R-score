@@ -10,7 +10,7 @@
   "dependencies": {
     "@graph/types": "workspace:*",
     "@graph/telegram": "workspace:*",
-    "elysia": "^0.8.0"
+    "elysia": "0.8.0"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -21,7 +21,9 @@
   },
   "team": {
     "lead": "mike.rodriguez@yourcompany.com",
-    "maintainers": ["ryan.gupta@yourcompany.com"],
+    "maintainers": [
+      "ryan.gupta@yourcompany.com"
+    ],
     "telegram_topic": 5
   }
 }

@@ -343,7 +343,7 @@ export function createServer(port: number = 0, pool?: ClientPool) {
           subscriptions: Array.from(ws.data.subscriptions),
           timestamp: Date.now(),
         }));
-        console.log(`[ws] Client connected: ${ws.data.id} (${wsClients.size} total)`);
+        console.info(`[ws] Client connected: ${ws.data.id} (${wsClients.size} total)`);
       },
 
       message(ws: ServerWebSocket<WSData>, message: string | Buffer) {
@@ -380,7 +380,7 @@ export function createServer(port: number = 0, pool?: ClientPool) {
 
       close(ws: ServerWebSocket<WSData>) {
         wsClients.delete(ws);
-        console.log(`[ws] Client disconnected: ${ws.data.id} (${wsClients.size} remaining)`);
+        console.info(`[ws] Client disconnected: ${ws.data.id} (${wsClients.size} remaining)`);
       },
     },
   });
@@ -413,7 +413,7 @@ export function handleOddsUpdate(data: OddsData): void {
 export function enableDB(path?: string): void {
   db.initDB(path);
   dbEnabled = true;
-  console.log(`[db] Database initialized: ${path || "data/api-integration.db"}`);
+  console.info(`[db] Database initialized: ${path || "data/api-integration.db"}`);
 }
 
 export function isDBEnabled(): boolean {
@@ -475,7 +475,7 @@ function generateDemoOdds(gameId: string): OddsData {
 export function startDemoMode(intervalMs: number = 2000): void {
   if (demoInterval) return;
 
-  console.log(`[demo] Starting demo mode (${intervalMs}ms interval)`);
+  console.info(`[demo] Starting demo mode (${intervalMs}ms interval)`);
 
   // Generate initial games
   for (let i = 0; i < 3; i++) {
@@ -494,7 +494,7 @@ export function startDemoMode(intervalMs: number = 2000): void {
       const game = generateDemoGame();
       handleGameEvent(game);
       broadcast("game", game);
-      console.log(`[demo] New game: ${game.id} - ${game.teams.join(" vs ")}`);
+      console.info(`[demo] New game: ${game.id} - ${game.teams.join(" vs ")}`);
       demoGameIndex++;
     } else if (action < 0.6) {
       // Update existing game score
@@ -506,7 +506,7 @@ export function startDemoMode(intervalMs: number = 2000): void {
           game.timestamp = Date.now();
           handleGameEvent(game);
           broadcast("game", game);
-          console.log(`[demo] Score update: ${game.id} - ${game.score.join("-")}`);
+          console.info(`[demo] Score update: ${game.id} - ${game.score.join("-")}`);
         }
       }
     } else {
@@ -517,7 +517,7 @@ export function startDemoMode(intervalMs: number = 2000): void {
         const odds = generateDemoOdds(game.id);
         handleOddsUpdate(odds);
         broadcast("odds", odds);
-        console.log(`[demo] Odds update: ${game.id} - ${odds.homeOdds}/${odds.awayOdds}`);
+        console.info(`[demo] Odds update: ${game.id} - ${odds.homeOdds}/${odds.awayOdds}`);
       }
     }
   }, intervalMs);
@@ -527,7 +527,7 @@ export function stopDemoMode(): void {
   if (demoInterval) {
     clearInterval(demoInterval);
     demoInterval = null;
-    console.log("[demo] Demo mode stopped");
+    console.info("[demo] Demo mode stopped");
   }
 }
 
@@ -551,21 +551,21 @@ if (import.meta.main) {
 
   // Wire up event logging + WebSocket broadcast + DB persistence
   pool.onGameEvent((game) => {
-    console.log(`[game] ${game.id}: ${game.teams.join(" vs ")} - ${game.status}`);
+    console.info(`[game] ${game.id}: ${game.teams.join(" vs ")} - ${game.status}`);
     handleGameEvent(game);
     broadcast("game", game);
   });
 
   pool.onOddsUpdate((odds) => {
-    console.log(`[odds] ${odds.gameId}: ${odds.homeOdds}/${odds.awayOdds}`);
+    console.info(`[odds] ${odds.gameId}: ${odds.homeOdds}/${odds.awayOdds}`);
     handleOddsUpdate(odds);
     broadcast("odds", odds);
   });
 
   // Start server
   const server = createServer(port, pool);
-  console.log(`API Integration server running at http://localhost:${server.port}`);
-  console.log(`WebSocket endpoint: ws://localhost:${server.port}/ws/stream`);
+  console.info(`API Integration server running at http://localhost:${server.port}`);
+  console.info(`WebSocket endpoint: ws://localhost:${server.port}/ws/stream`);
 
   if (demoMode) {
     // Start demo mode
@@ -574,17 +574,17 @@ if (import.meta.main) {
     // Check if API keys are configured
     const validation = pool.validate();
     if (!validation.valid) {
-      console.log("Running in standalone mode (no API keys configured)");
-      console.log("Set SPORTRADAR_API_KEY and ODDS_API_KEY to enable live data");
-      console.log("Or run with --demo or DEMO=1 for simulated events");
+      console.info("Running in standalone mode (no API keys configured)");
+      console.info("Set SPORTRADAR_API_KEY and ODDS_API_KEY to enable live data");
+      console.info("Or run with --demo or DEMO=1 for simulated events");
     } else {
       // Attempt to connect with valid config
       pool.connect().then(() => {
-        console.log("Connected to Sportradar WebSocket");
+        console.info("Connected to Sportradar WebSocket");
         pool.startOddsPolling(5000);
-        console.log("Started odds polling (5s interval)");
+        console.info("Started odds polling (5s interval)");
       }).catch((err) => {
-        console.log(`Connection failed: ${err.message}`);
+        console.info(`Connection failed: ${err.message}`);
       });
     }
   }

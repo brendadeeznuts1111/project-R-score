@@ -40,7 +40,7 @@ interface AssignmentPlan {
 }
 
 async function assignCriticalViolations() {
-  console.log('👥 Assigning critical violations to team members...\n');
+  console.info('👥 Assigning critical violations to team members...\n');
   
   const enforcer = new GoldenRuleEnforcer();
   const result = await enforcer.validateCodebase();
@@ -80,9 +80,9 @@ async function assignCriticalViolations() {
   // Generate assignment reports
   await generateAssignmentReports(assignmentPlan);
   
-  console.log('✅ Critical violations assigned successfully!');
-  console.log(`📊 ${criticalViolations.length} violations assigned to ${team.length} team members`);
-  console.log('📋 See reports/team-assignments.md for details');
+  console.info('✅ Critical violations assigned successfully!');
+  console.info(`📊 ${criticalViolations.length} violations assigned to ${team.length} team members`);
+  console.info('📋 See reports/team-assignments.md for details');
 }
 
 function createAssignmentPlan(violations: any[], team: any[]): AssignmentPlan {

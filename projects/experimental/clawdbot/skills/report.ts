@@ -165,4 +165,4 @@ const report = {
 };
 
 // Fast JSON output using Response.json() internally
-console.log(JSON.stringify(report, null, 2));
+console.info(JSON.stringify(report, null, 2));

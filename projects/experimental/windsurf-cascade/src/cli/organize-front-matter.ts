@@ -19,8 +19,8 @@ export class FrontMatterOrganizer {
             const result = ConsciousnessFrontMatter.safeParse(frontMatter);
 
             if (!result.success) {
-                console.log(`⚠️  Front matter validation failed for ${filePath}`);
-                console.log(`   Errors: ${result.error.issues.map((i: any) => i.path.join('.')).join(', ')}`);
+                console.info(`⚠️  Front matter validation failed for ${filePath}`);
+                console.info(`   Errors: ${result.error.issues.map((i: any) => i.path.join('.')).join(', ')}`);
 
                 // **Auto-fix** missing fields
                 const fixed = await this.autoFixFrontMatter(frontMatter);
@@ -30,9 +30,9 @@ export class FrontMatterOrganizer {
                 const newContent = this.serializeFrontMatter(validated, body);
                 writeFileSync(filePath, newContent);
 
-                console.log(`✅ Organized: ${filePath}`);
+                console.info(`✅ Organized: ${filePath}`);
             } else {
-                console.log(`✅ Already valid: ${filePath}`);
+                console.info(`✅ Already valid: ${filePath}`);
             }
         } catch (error) {
             console.error(`❌ Error processing ${filePath}:`, error);
@@ -103,10 +103,10 @@ export class FrontMatterOrganizer {
 
     // **Organize entire vault**
     static async organizeVault(): Promise<void> {
-        console.log(`🔍 Organizing vault at: ${this.VAULT_PATH}`);
+        console.info(`🔍 Organizing vault at: ${this.VAULT_PATH}`);
 
         const files = await this.findMarkdownFiles(this.VAULT_PATH);
-        console.log(`📁 Found ${files.length} markdown files`);
+        console.info(`📁 Found ${files.length} markdown files`);
 
         let processed = 0;
         let fixed = 0;
@@ -123,7 +123,7 @@ export class FrontMatterOrganizer {
             processed++;
 
             if (processed % 10 === 0) {
-                console.log(`📊 Progress: ${processed}/${files.length} files processed`);
+                console.info(`📊 Progress: ${processed}/${files.length} files processed`);
             }
         }
 
@@ -133,10 +133,10 @@ export class FrontMatterOrganizer {
             filesFixed: fixed,
         });
 
-        console.log(`✅ Vault organization complete!`);
-        console.log(`   Total files: ${files.length}`);
-        console.log(`   Files fixed: ${fixed}`);
-        console.log(`   Files already valid: ${processed - fixed}`);
+        console.info(`✅ Vault organization complete!`);
+        console.info(`   Total files: ${files.length}`);
+        console.info(`   Files fixed: ${fixed}`);
+        console.info(`   Files already valid: ${processed - fixed}`);
     }
 
     static async findMarkdownFiles(dir: string): Promise<string[]> {
@@ -183,13 +183,13 @@ if (import.meta.main) {
 
     if (command === 'validate' && file) {
         const isValid = await FrontMatterOrganizer.validateFile(file);
-        console.log(`${isValid ? '✅' : '❌'} ${file} is ${isValid ? 'valid' : 'invalid'}`);
+        console.info(`${isValid ? '✅' : '❌'} ${file} is ${isValid ? 'valid' : 'invalid'}`);
     } else if (command === 'organize' && file) {
         await FrontMatterOrganizer.organizeFile(file);
     } else if (command === 'vault') {
         await FrontMatterOrganizer.organizeVault();
     } else {
-        console.log(`
+        console.info(`
 Usage:
   bun run src/cli/organize-front-matter.ts <command> [file]
 

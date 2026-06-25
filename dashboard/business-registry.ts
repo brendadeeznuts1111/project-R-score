@@ -11,11 +11,11 @@ const PORT = Number(Bun.env.REGISTRY_PORT ?? 3004);
 const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
 
 const redis = new Redis(REDIS_URL, {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected for registry'));
+redis.on('connect', () => console.info('✅ Redis connected for registry'));
 
 // ============================================================================
 // HTML Template
@@ -420,185 +420,213 @@ function generateRegistryHTML(businesses: any[]): string {
     </div>
 
     <div class="business-grid" id="businessGrid">
-      ${businesses.length === 0 ? `
+      ${
+        businesses.length === 0
+          ? `
         <div class="empty-state" style="grid-column: 1 / -1;">
           <h2>No businesses registered yet</h2>
           <p>Register your first business using the admin API</p>
         </div>
-      ` : businesses.map(business => {
-        const branding = business.branding ? JSON.parse(business.branding) : {};
-        const paymentHandles = business.paymentHandles ? JSON.parse(business.paymentHandles) : {};
-        const specialty = business.specialty ? JSON.parse(business.specialty) : null;
-        const primaryColor = branding.primaryColor || '#667eea';
-        const logoUrl = branding.logoUrl;
-        const logoText = branding.logoText || business.name.charAt(0);
-        const isActive = business.current === 'true';
-        const proxyUrl = Bun.env.PROXY_URL || 'http://localhost:3002';
-        
-        // Render specialty section based on business type
-        const renderSpecialty = () => {
-          if (!specialty) return '';
-          
-          const type = specialty.type || 'other';
-          let specialtyHTML = '';
-          
-          // Business hours
-          if (specialty.hours) {
-            specialtyHTML += `
+      `
+          : businesses
+              .map(business => {
+                const branding = business.branding ? JSON.parse(business.branding) : {};
+                const paymentHandles = business.paymentHandles
+                  ? JSON.parse(business.paymentHandles)
+                  : {};
+                const specialty = business.specialty ? JSON.parse(business.specialty) : null;
+                const primaryColor = branding.primaryColor || '#667eea';
+                const logoUrl = branding.logoUrl;
+                const logoText = branding.logoText || business.name.charAt(0);
+                const isActive = business.current === 'true';
+                import { PORTS } from '../config/ports.ts';
+                const proxyUrl = Bun.env.PROXY_URL || `http://localhost:${PORTS.P2P_PROXY}`;
+
+                // Render specialty section based on business type
+                const renderSpecialty = () => {
+                  if (!specialty) return '';
+
+                  const type = specialty.type || 'other';
+                  let specialtyHTML = '';
+
+                  // Business hours
+                  if (specialty.hours) {
+                    specialtyHTML += `
               <div class="hours-badge">
                 🕐 ${specialty.hours}
               </div>
             `;
-          }
-          
-          // Barbershop/Service: Show services and pricing
-          if (type === 'barbershop' || type === 'service') {
-            if (specialty.services && specialty.services.length > 0) {
-              specialtyHTML += `
+                  }
+
+                  // Barbershop/Service: Show services and pricing
+                  if (type === 'barbershop' || type === 'service') {
+                    if (specialty.services && specialty.services.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">✂️ Services</div>
                   <div class="specialty-items">
-                    ${specialty.services.slice(0, 4).map((s: string) => 
-                      `<span class="specialty-tag">${s}</span>`
-                    ).join('')}
+                    ${specialty.services
+                      .slice(0, 4)
+                      .map((s: string) => `<span class="specialty-tag">${s}</span>`)
+                      .join('')}
                     ${specialty.services.length > 4 ? `<span class="specialty-tag">+${specialty.services.length - 4} more</span>` : ''}
                   </div>
                 </div>
               `;
-            }
-            if (specialty.pricing && specialty.pricing.length > 0) {
-              specialtyHTML += `
+                    }
+                    if (specialty.pricing && specialty.pricing.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">💰 Pricing</div>
                   <div class="pricing-list">
-                    ${specialty.pricing.slice(0, 3).map((p: any) => `
+                    ${specialty.pricing
+                      .slice(0, 3)
+                      .map(
+                        (p: any) => `
                       <div class="pricing-item">
                         <span class="pricing-name">${p.item}</span>
                         <span class="pricing-price">${p.price}</span>
                       </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-          }
-          
-          // Coffee/Restaurant: Show menu items
-          if (type === 'coffee' || type === 'restaurant') {
-            if (specialty.menuItems && specialty.menuItems.length > 0) {
-              specialtyHTML += `
+                    }
+                  }
+
+                  // Coffee/Restaurant: Show menu items
+                  if (type === 'coffee' || type === 'restaurant') {
+                    if (specialty.menuItems && specialty.menuItems.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">🍽️ Popular Items</div>
                   <div class="specialty-items">
-                    ${specialty.menuItems.slice(0, 5).map((item: string) => 
-                      `<span class="specialty-tag highlight">${item}</span>`
-                    ).join('')}
+                    ${specialty.menuItems
+                      .slice(0, 5)
+                      .map((item: string) => `<span class="specialty-tag highlight">${item}</span>`)
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-            if (specialty.popularItems && specialty.popularItems.length > 0) {
-              specialtyHTML += `
+                    }
+                    if (specialty.popularItems && specialty.popularItems.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">⭐ Customer Favorites</div>
                   <div class="specialty-items">
-                    ${specialty.popularItems.slice(0, 3).map((item: string) => 
-                      `<span class="specialty-tag">${item}</span>`
-                    ).join('')}
+                    ${specialty.popularItems
+                      .slice(0, 3)
+                      .map((item: string) => `<span class="specialty-tag">${item}</span>`)
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-          }
-          
-          // Gym: Show membership tiers
-          if (type === 'gym') {
-            if (specialty.membershipTiers && specialty.membershipTiers.length > 0) {
-              specialtyHTML += `
+                    }
+                  }
+
+                  // Gym: Show membership tiers
+                  if (type === 'gym') {
+                    if (specialty.membershipTiers && specialty.membershipTiers.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">💪 Membership Plans</div>
                   <div class="pricing-list">
-                    ${specialty.membershipTiers.slice(0, 3).map((tier: any) => `
+                    ${specialty.membershipTiers
+                      .slice(0, 3)
+                      .map(
+                        (tier: any) => `
                       <div class="pricing-item">
                         <span class="pricing-name">${tier.name}</span>
                         <span class="pricing-price">${tier.price}</span>
                       </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-            if (specialty.specialties && specialty.specialties.length > 0) {
-              specialtyHTML += `
+                    }
+                    if (specialty.specialties && specialty.specialties.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">🏋️ Facilities</div>
                   <div class="specialty-items">
-                    ${specialty.specialties.slice(0, 4).map((s: string) => 
-                      `<span class="specialty-tag">${s}</span>`
-                    ).join('')}
+                    ${specialty.specialties
+                      .slice(0, 4)
+                      .map((s: string) => `<span class="specialty-tag">${s}</span>`)
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-          }
-          
-          // Bookstore: Show categories
-          if (type === 'bookstore' || type === 'retail') {
-            if (specialty.categories && specialty.categories.length > 0) {
-              specialtyHTML += `
+                    }
+                  }
+
+                  // Bookstore: Show categories
+                  if (type === 'bookstore' || type === 'retail') {
+                    if (specialty.categories && specialty.categories.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">📚 Categories</div>
                   <div class="specialty-items">
-                    ${specialty.categories.slice(0, 5).map((cat: string) => 
-                      `<span class="specialty-tag">${cat}</span>`
-                    ).join('')}
+                    ${specialty.categories
+                      .slice(0, 5)
+                      .map((cat: string) => `<span class="specialty-tag">${cat}</span>`)
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-            if (specialty.popularItems && specialty.popularItems.length > 0) {
-              specialtyHTML += `
+                    }
+                    if (specialty.popularItems && specialty.popularItems.length > 0) {
+                      specialtyHTML += `
                 <div class="specialty-section">
                   <div class="specialty-title">📖 Bestsellers</div>
                   <div class="specialty-items">
-                    ${specialty.popularItems.slice(0, 3).map((item: string) => 
-                      `<span class="specialty-tag highlight">${item}</span>`
-                    ).join('')}
+                    ${specialty.popularItems
+                      .slice(0, 3)
+                      .map((item: string) => `<span class="specialty-tag highlight">${item}</span>`)
+                      .join('')}
                   </div>
                 </div>
               `;
-            }
-          }
-          
-          // General specialties
-          if (specialty.specialties && specialty.specialties.length > 0 && !specialtyHTML.includes('specialty-tag')) {
-            specialtyHTML += `
+                    }
+                  }
+
+                  // General specialties
+                  if (
+                    specialty.specialties &&
+                    specialty.specialties.length > 0 &&
+                    !specialtyHTML.includes('specialty-tag')
+                  ) {
+                    specialtyHTML += `
               <div class="specialty-section">
                 <div class="specialty-title">⭐ Specialties</div>
                 <div class="specialty-items">
-                  ${specialty.specialties.slice(0, 4).map((s: string) => 
-                    `<span class="specialty-tag">${s}</span>`
-                  ).join('')}
+                  ${specialty.specialties
+                    .slice(0, 4)
+                    .map((s: string) => `<span class="specialty-tag">${s}</span>`)
+                    .join('')}
                 </div>
               </div>
             `;
-          }
-          
-          return specialtyHTML;
-        };
-        
-        const typeLabels: Record<string, string> = {
-          barbershop: '💈 Barbershop',
-          coffee: '☕ Coffee',
-          gym: '💪 Gym',
-          restaurant: '🍽️ Restaurant',
-          bookstore: '📚 Bookstore',
-          retail: '🛍️ Retail',
-          service: '🔧 Service',
-          other: '🏢 Business'
-        };
-        
-        return `
+                  }
+
+                  return specialtyHTML;
+                };
+
+                const typeLabels: Record<string, string> = {
+                  barbershop: '💈 Barbershop',
+                  coffee: '☕ Coffee',
+                  gym: '💪 Gym',
+                  restaurant: '🍽️ Restaurant',
+                  bookstore: '📚 Bookstore',
+                  retail: '🛍️ Retail',
+                  service: '🔧 Service',
+                  other: '🏢 Business',
+                };
+
+                return `
           <div class="business-card" 
                data-name="${business.name.toLowerCase()}" 
                data-alias="${business.alias.toLowerCase()}"
@@ -619,51 +647,79 @@ function generateRegistryHTML(businesses: any[]): string {
             </div>
             
             <div class="card-details">
-              ${business.location ? `
+              ${
+                business.location
+                  ? `
                 <div class="detail-row">
                   <span class="detail-label">📍 Location</span>
                   <span class="detail-value">${business.location}</span>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
-              ${business.contact ? `
+              ${
+                business.contact
+                  ? `
                 <div class="detail-row">
                   <span class="detail-label">📧 Contact</span>
                   <span class="detail-value">${business.contact}</span>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
               <div class="detail-row">
                 <span class="detail-label">📅 Started</span>
                 <span class="detail-value">${new Date(business.startDate).toLocaleDateString()}</span>
               </div>
               
-              ${business.endDate ? `
+              ${
+                business.endDate
+                  ? `
                 <div class="detail-row">
                   <span class="detail-label">📅 Ended</span>
                   <span class="detail-value">${new Date(business.endDate).toLocaleDateString()}</span>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
-              ${business.migratedTo ? `
+              ${
+                business.migratedTo
+                  ? `
                 <div class="detail-row">
                   <span class="detail-label">↪️ Migrated To</span>
                   <span class="detail-value">${business.migratedTo}</span>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
               ${renderSpecialty()}
               
               <div class="payment-handles" style="margin-top: 16px;">
-                ${paymentHandles.cashapp ? `
+                ${
+                  paymentHandles.cashapp
+                    ? `
                   <span class="handle-badge handle-cashapp">${paymentHandles.cashapp}</span>
-                ` : ''}
-                ${paymentHandles.venmo ? `
+                `
+                    : ''
+                }
+                ${
+                  paymentHandles.venmo
+                    ? `
                   <span class="handle-badge handle-venmo">${paymentHandles.venmo}</span>
-                ` : ''}
-                ${paymentHandles.paypal ? `
+                `
+                    : ''
+                }
+                ${
+                  paymentHandles.paypal
+                    ? `
                   <span class="handle-badge handle-paypal">${paymentHandles.paypal}</span>
-                ` : ''}
+                `
+                    : ''
+                }
               </div>
             </div>
             
@@ -681,7 +737,9 @@ function generateRegistryHTML(businesses: any[]): string {
             </div>
           </div>
         `;
-      }).join('')}
+              })
+              .join('')
+      }
     </div>
   </div>
 
@@ -739,33 +797,33 @@ function generateRegistryHTML(businesses: any[]): string {
 const server = Bun.serve({
   port: PORT,
   hostname: '0.0.0.0',
-  
+
   async fetch(req) {
     const url = new URL(req.url);
-    
+
     // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Registry page
     if (url.pathname === '/' || url.pathname === '/registry') {
       try {
         const businesses = await BusinessContinuity.listBusinesses();
-        
+
         // Sort: active first, then by name
         businesses.sort((a, b) => {
           if (a.current === 'true' && b.current !== 'true') return -1;
           if (a.current !== 'true' && b.current === 'true') return 1;
           return a.name.localeCompare(b.name);
         });
-        
+
         return new Response(generateRegistryHTML(businesses), {
           headers: { 'Content-Type': 'text/html' },
         });
@@ -773,7 +831,7 @@ const server = Bun.serve({
         return new Response(`Error: ${error.message}`, { status: 500 });
       }
     }
-    
+
     // JSON API endpoint
     if (url.pathname === '/api/businesses') {
       try {
@@ -784,23 +842,23 @@ const server = Bun.serve({
       } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
           status: 500,
-          headers: corsHeaders
+          headers: corsHeaders,
         });
       }
     }
-    
+
     return new Response('Business Registry', { status: 404 });
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  🏢 Business Registry Dashboard                           ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Registry: http://localhost:${PORT}/registry              ║`);
-console.log(`║  API:     http://localhost:${PORT}/api/businesses         ║`);
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  🏢 Business Registry Dashboard                           ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Registry: http://localhost:${PORT}/registry              ║`);
+console.info(`║  API:     http://localhost:${PORT}/api/businesses         ║`);
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

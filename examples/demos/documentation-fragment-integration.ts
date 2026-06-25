@@ -33,8 +33,8 @@ import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
  * Example 1: Basic Documentation URL Generation with Fragments
  */
 async function basicDocumentationURLs() {
-  console.log('📚 Basic Documentation URL Generation with Fragments');
-  console.log('='.repeat(60));
+  console.info('📚 Basic Documentation URL Generation with Fragments');
+  console.info('='.repeat(60));
 
   // Generate basic documentation URLs
   const basicConfig: DocumentationURLConfig = {
@@ -47,8 +47,8 @@ async function basicDocumentationURLs() {
   };
 
   const basicURL = DocumentationURLHandler.generateDocumentationURL(basicConfig);
-  console.log('🔗 Basic Documentation URL:');
-  console.log(`   ${basicURL}`);
+  console.info('🔗 Basic Documentation URL:');
+  console.info(`   ${basicURL}`);
 
   // Generate utilities documentation with category
   const utilsConfig: DocumentationURLConfig = {
@@ -61,8 +61,8 @@ async function basicDocumentationURLs() {
   };
 
   const utilsURL = DocumentationURLHandler.generateDocumentationURL(utilsConfig);
-  console.log('\n🔧 Utils Documentation URL:');
-  console.log(`   ${utilsURL}`);
+  console.info('\n🔧 Utils Documentation URL:');
+  console.info(`   ${utilsURL}`);
 
   // Generate CLI documentation with page
   const cliConfig: DocumentationURLConfig = {
@@ -76,16 +76,16 @@ async function basicDocumentationURLs() {
   };
 
   const cliURL = DocumentationURLHandler.generateDocumentationURL(cliConfig);
-  console.log('\n💻 CLI Documentation URL:');
-  console.log(`   ${cliURL}`);
+  console.info('\n💻 CLI Documentation URL:');
+  console.info(`   ${cliURL}`);
 }
 
 /**
  * Example 2: Enhanced URL Parsing and Fragment Extraction
  */
 async function enhancedURLParsing() {
-  console.log('\n🔍 Enhanced URL Parsing and Fragment Extraction');
-  console.log('='.repeat(60));
+  console.info('\n🔍 Enhanced URL Parsing and Fragment Extraction');
+  console.info('='.repeat(60));
 
   // Create a complex documentation URL
   const complexURL = DocumentationURLHandler.generateDocumentationURL({
@@ -105,28 +105,28 @@ async function enhancedURLParsing() {
     }
   });
 
-  console.log('🔗 Complex Documentation URL:');
-  console.log(`   ${complexURL}`);
+  console.info('🔗 Complex Documentation URL:');
+  console.info(`   ${complexURL}`);
 
   // Parse the URL
   const parsed = DocumentationURLHandler.parseDocumentationURL(complexURL);
-  console.log('\n🔍 Parsed URL Components:');
-  console.log(`   Valid: ${parsed.valid}`);
-  console.log(`   Type: ${parsed.type}`);
-  console.log(`   Category: ${parsed.category}`);
-  console.log(`   Page: ${parsed.page}`);
-  console.log(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
-  console.log(`   Search: ${JSON.stringify(parsed.search, null, 2)}`);
-  console.log(`   Pattern: ${parsed.pattern}`);
-  console.log(`   Groups: ${JSON.stringify(parsed.groups, null, 2)}`);
+  console.info('\n🔍 Parsed URL Components:');
+  console.info(`   Valid: ${parsed.valid}`);
+  console.info(`   Type: ${parsed.type}`);
+  console.info(`   Category: ${parsed.category}`);
+  console.info(`   Page: ${parsed.page}`);
+  console.info(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
+  console.info(`   Search: ${JSON.stringify(parsed.search, null, 2)}`);
+  console.info(`   Pattern: ${parsed.pattern}`);
+  console.info(`   Groups: ${JSON.stringify(parsed.groups, null, 2)}`);
 }
 
 /**
  * Example 3: Interactive Documentation Links
  */
 async function interactiveDocumentationLinks() {
-  console.log('\n🎮 Interactive Documentation Links');
-  console.log('='.repeat(60));
+  console.info('\n🎮 Interactive Documentation Links');
+  console.info('='.repeat(60));
 
   // Generate interactive utilities links
   const interactiveUtils = DocumentationURLHandler.generateDocumentationURL({
@@ -141,8 +141,8 @@ async function interactiveDocumentationLinks() {
     }
   });
 
-  console.log('🎮 Interactive Utils Documentation:');
-  console.log(`   ${interactiveUtils}`);
+  console.info('🎮 Interactive Utils Documentation:');
+  console.info(`   ${interactiveUtils}`);
 
   // Generate example with syntax highlighting
   const exampleURL = DocumentationURLHandler.generateExampleURL({
@@ -157,8 +157,8 @@ async function interactiveDocumentationLinks() {
     }
   });
 
-  console.log('\n💡 Syntax-Highlighted Example:');
-  console.log(`   ${exampleURL}`);
+  console.info('\n💡 Syntax-Highlighted Example:');
+  console.info(`   ${exampleURL}`);
 
   // Generate comparison URL
   const comparisonURL = DocumentationURLHandler.generateComparisonURL([
@@ -169,16 +169,16 @@ async function interactiveDocumentationLinks() {
     performance: 'true'
   });
 
-  console.log('\n⚖️ Performance Comparison:');
-  console.log(`   ${comparisonURL}`);
+  console.info('\n⚖️ Performance Comparison:');
+  console.info(`   ${comparisonURL}`);
 }
 
 /**
  * Example 4: Breadcrumb Navigation Generation
  */
 async function breadcrumbNavigation() {
-  console.log('\n🍞 Breadcrumb Navigation Generation');
-  console.log('='.repeat(60));
+  console.info('\n🍞 Breadcrumb Navigation Generation');
+  console.info('='.repeat(60));
 
   // Generate breadcrumbs for different URL types
   const urls = [
@@ -204,12 +204,12 @@ async function breadcrumbNavigation() {
 
   urls.forEach((url, index) => {
     const breadcrumbs = DocumentationURLHandler.generateBreadcrumbs(url);
-    console.log(`\n📍 URL ${index + 1}:`);
-    console.log(`   ${url}`);
-    console.log('   Breadcrumbs:');
+    console.info(`\n📍 URL ${index + 1}:`);
+    console.info(`   ${url}`);
+    console.info('   Breadcrumbs:');
     breadcrumbs.forEach((crumb, i) => {
       const arrow = i < breadcrumbs.length - 1 ? ' > ' : '';
-      console.log(`     ${crumb.name}${arrow}`);
+      console.info(`     ${crumb.name}${arrow}`);
     });
   });
 }
@@ -218,8 +218,8 @@ async function breadcrumbNavigation() {
  * Example 5: Enhanced Docs Reference Integration
  */
 async function enhancedDocsReference() {
-  console.log('\n📖 Enhanced Docs Reference Integration');
-  console.log('='.repeat(60));
+  console.info('\n📖 Enhanced Docs Reference Integration');
+  console.info('='.repeat(60));
 
   // Use enhanced docs reference with fragments
   const typedArrayURL = docs.getUrlWithFragment('MEMORY_POOL', {
@@ -228,39 +228,39 @@ async function enhancedDocsReference() {
     performance: 'true'
   });
 
-  console.log('🔗 Enhanced Typed Array URL:');
-  console.log(`   ${typedArrayURL}`);
+  console.info('🔗 Enhanced Typed Array URL:');
+  console.info(`   ${typedArrayURL}`);
 
   // Parse with fragment support
   const parsed = docs.parseUrlWithFragments(typedArrayURL);
-  console.log('\n🔍 Parsed with Fragments:');
-  console.log(`   Valid: ${parsed.valid}`);
-  console.log(`   Pattern: ${parsed.pattern}`);
-  console.log(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
-  console.log(`   Anchor: ${parsed.anchor}`);
+  console.info('\n🔍 Parsed with Fragments:');
+  console.info(`   Valid: ${parsed.valid}`);
+  console.info(`   Pattern: ${parsed.pattern}`);
+  console.info(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
+  console.info(`   Anchor: ${parsed.anchor}`);
 
   // Generate interactive links
   const interactiveLinks = docs.generateInteractiveLinks();
-  console.log('\n🎮 Interactive Documentation Links:');
+  console.info('\n🎮 Interactive Documentation Links:');
   interactiveLinks.forEach(link => {
-    console.log(`   ${link.name}:`);
-    console.log(`     URL: ${link.url}`);
-    console.log(`     Fragment: ${JSON.stringify(link.fragment, null, 2)}`);
-    console.log(`     Description: ${link.description}`);
+    console.info(`   ${link.name}:`);
+    console.info(`     URL: ${link.url}`);
+    console.info(`     Fragment: ${JSON.stringify(link.fragment, null, 2)}`);
+    console.info(`     Description: ${link.description}`);
   });
 
   // Generate markdown table with fragments
   const markdownTable = docs.generateMarkdownTable('Enhanced Documentation References', true);
-  console.log('\n📋 Markdown Table with Fragments:');
-  console.log(markdownTable);
+  console.info('\n📋 Markdown Table with Fragments:');
+  console.info(markdownTable);
 }
 
 /**
  * Example 6: Enhanced Utility Factory with Fragments
  */
 async function enhancedUtilityFactory() {
-  console.log('\n🔧 Enhanced Utility Factory with Fragments');
-  console.log('='.repeat(60));
+  console.info('\n🔧 Enhanced Utility Factory with Fragments');
+  console.info('='.repeat(60));
 
   // Create interactive utility
   const interactiveUtility = UtilityFactory.createInteractive({
@@ -279,11 +279,11 @@ const data = await response.json();`,
     }
   });
 
-  console.log('🎮 Interactive Utility:');
-  console.log(`   ID: ${interactiveUtility.id}`);
-  console.log(`   Name: ${interactiveUtility.name}`);
-  console.log(`   URL: ${interactiveUtility.docUrl}`);
-  console.log(`   Fragment: ${JSON.stringify(interactiveUtility.fragment, null, 2)}`);
+  console.info('🎮 Interactive Utility:');
+  console.info(`   ID: ${interactiveUtility.id}`);
+  console.info(`   Name: ${interactiveUtility.name}`);
+  console.info(`   URL: ${interactiveUtility.docUrl}`);
+  console.info(`   Fragment: ${JSON.stringify(interactiveUtility.fragment, null, 2)}`);
 
   // Create utility with example highlighting
   const exampleUtility = UtilityFactory.createWithExample({
@@ -295,16 +295,16 @@ const data = await response.json();`,
     exampleCode: `import { isString } from 'bun';
 const value = 'hello world';
 if (isString(value)) {
-  console.log(value.toUpperCase());
+  console.info(value.toUpperCase());
 }`,
     exampleName: 'type-validation',
     language: 'typescript'
   });
 
-  console.log('\n💡 Example-Highlighted Utility:');
-  console.log(`   ID: ${exampleUtility.id}`);
-  console.log(`   URL: ${exampleUtility.docUrl}`);
-  console.log(`   Fragment: ${JSON.stringify(exampleUtility.fragment, null, 2)}`);
+  console.info('\n💡 Example-Highlighted Utility:');
+  console.info(`   ID: ${exampleUtility.id}`);
+  console.info(`   URL: ${exampleUtility.docUrl}`);
+  console.info(`   Fragment: ${JSON.stringify(exampleUtility.fragment, null, 2)}`);
 
   // Update existing utilities with fragments
   const enhancedUtilities = UTILITIES.map(utility => ({
@@ -316,15 +316,15 @@ if (isString(value)) {
     }
   }));
 
-  console.log(`\n📊 Enhanced ${enhancedUtilities.length} utilities with fragments`);
+  console.info(`\n📊 Enhanced ${enhancedUtilities.length} utilities with fragments`);
 }
 
 /**
  * Example 7: CLI Documentation with Fragment Support
  */
 async function cliDocumentationFragments() {
-  console.log('\n💻 CLI Documentation with Fragment Support');
-  console.log('='.repeat(60));
+  console.info('\n💻 CLI Documentation with Fragment Support');
+  console.info('='.repeat(60));
 
   // Generate CLI documentation with navigation state
   const cliURL = CLIDocumentationHandler.generateDocumentationURL(
@@ -338,16 +338,16 @@ async function cliDocumentationFragments() {
     }
   );
 
-  console.log('💻 CLI Documentation URL:');
-  console.log(`   ${cliURL}`);
+  console.info('💻 CLI Documentation URL:');
+  console.info(`   ${cliURL}`);
 
   // Parse CLI URL
   const parsedCLI = CLIDocumentationHandler.parseDocumentationURL(cliURL);
-  console.log('\n🔍 Parsed CLI Documentation:');
-  console.log(`   Valid: ${parsedCLI.valid}`);
-  console.log(`   Category: ${parsedCLI.category}`);
-  console.log(`   Page: ${parsedCLI.page}`);
-  console.log(`   Fragment: ${JSON.stringify(parsedCLI.fragment, null, 2)}`);
+  console.info('\n🔍 Parsed CLI Documentation:');
+  console.info(`   Valid: ${parsedCLI.valid}`);
+  console.info(`   Category: ${parsedCLI.category}`);
+  console.info(`   Page: ${parsedCLI.page}`);
+  console.info(`   Fragment: ${JSON.stringify(parsedCLI.fragment, null, 2)}`);
 
   // Generate shareable CLI link
   const shareableCLI = CLIDocumentationHandler.createShareableLink({
@@ -357,8 +357,8 @@ async function cliDocumentationFragments() {
     example: 'brew-install'
   }, 3600);
 
-  console.log('\n🔗 Shareable CLI Link:');
-  console.log(`   ${shareableCLI}`);
+  console.info('\n🔗 Shareable CLI Link:');
+  console.info(`   ${shareableCLI}`);
 
   // Generate CLI search
   const searchURL = CLIDocumentationHandler.generateSearchURL('build scripts', CLICategory.COMMANDS, {
@@ -366,22 +366,22 @@ async function cliDocumentationFragments() {
     sort: 'relevance'
   });
 
-  console.log('\n🔍 CLI Search URL:');
-  console.log(`   ${searchURL}`);
+  console.info('\n🔍 CLI Search URL:');
+  console.info(`   ${searchURL}`);
 }
 
 /**
  * Example 8: Documentation Search and Discovery
  */
 async function documentationSearch() {
-  console.log('\n🔍 Documentation Search and Discovery');
-  console.log('='.repeat(60));
+  console.info('\n🔍 Documentation Search and Discovery');
+  console.info('='.repeat(60));
 
   // Search utilities
   const searchResults = DocumentationURLHandler.getAvailableCategories('utils');
-  console.log('📚 Available Utils Categories:');
+  console.info('📚 Available Utils Categories:');
   searchResults.forEach(category => {
-    console.log(`   ${category.category}: ${category.url}`);
+    console.info(`   ${category.category}: ${category.url}`);
   });
 
   // Generate search URLs
@@ -394,17 +394,17 @@ async function documentationSearch() {
     DocumentationURLHandler.generateSearchURL('performance optimization', 'bun')
   ];
 
-  console.log('\n🔍 Generated Search URLs:');
+  console.info('\n🔍 Generated Search URLs:');
   searchURLs.forEach((url, index) => {
-    console.log(`   Search ${index + 1}: ${url}`);
+    console.info(`   Search ${index + 1}: ${url}`);
   });
 
   // Parse search URLs
   searchURLs.forEach((url, index) => {
     const parsed = DocumentationURLHandler.parseDocumentationURL(url);
-    console.log(`\n🔍 Search ${index + 1} Parsed:`);
-    console.log(`   Type: ${parsed.type}`);
-    console.log(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
+    console.info(`\n🔍 Search ${index + 1} Parsed:`);
+    console.info(`   Type: ${parsed.type}`);
+    console.info(`   Fragment: ${JSON.stringify(parsed.fragment, null, 2)}`);
   });
 }
 
@@ -412,32 +412,32 @@ async function documentationSearch() {
  * Example 9: Quick Reference URLs
  */
 async function quickReferenceURLs() {
-  console.log('\n🚀 Quick Reference URLs');
-  console.log('='.repeat(60));
+  console.info('\n🚀 Quick Reference URLs');
+  console.info('='.repeat(60));
 
   // Generate quick reference URLs
   const quickRefs = DocumentationURLHandler.generateQuickReferenceURLs();
-  console.log('🚀 Quick Reference URLs:');
+  console.info('🚀 Quick Reference URLs:');
   Object.entries(quickRefs).forEach(([name, url]) => {
-    console.log(`   ${name}: ${url}`);
+    console.info(`   ${name}: ${url}`);
   });
 
   // Validate all quick reference URLs
-  console.log('\n✅ Quick Reference Validation:');
+  console.info('\n✅ Quick Reference Validation:');
   Object.entries(quickRefs).forEach(([name, url]) => {
     const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-    console.log(`   ${name}: ${isValid ? '✅' : '❌'}`);
+    console.info(`   ${name}: ${isValid ? '✅' : '❌'}`);
   });
 
   // Parse a few quick reference URLs
   const urlsToParse = [quickRefs.utilsMain, quickRefs.bunCLI, quickRefs.search];
   urlsToParse.forEach((url, index) => {
     const parsed = DocumentationURLHandler.parseDocumentationURL(url);
-    console.log(`\n🔍 Quick Ref ${index + 1}:`);
-    console.log(`   URL: ${url}`);
-    console.log(`   Valid: ${parsed.valid}`);
-    console.log(`   Type: ${parsed.type}`);
-    console.log(`   Category: ${parsed.category}`);
+    console.info(`\n🔍 Quick Ref ${index + 1}:`);
+    console.info(`   URL: ${url}`);
+    console.info(`   Valid: ${parsed.valid}`);
+    console.info(`   Type: ${parsed.type}`);
+    console.info(`   Category: ${parsed.category}`);
   });
 }
 
@@ -445,11 +445,11 @@ async function quickReferenceURLs() {
  * Example 10: Real-world Documentation Workflow
  */
 async function realWorldDocumentationWorkflow() {
-  console.log('\n🌍 Real-world Documentation Workflow');
-  console.log('='.repeat(60));
+  console.info('\n🌍 Real-world Documentation Workflow');
+  console.info('='.repeat(60));
 
   // Simulate a developer learning workflow
-  console.log('👨‍💻 Developer Learning Workflow:');
+  console.info('👨‍💻 Developer Learning Workflow:');
 
   // 1. Start with basic documentation
   const startURL = DocumentationURLHandler.generateDocumentationURL({
@@ -459,7 +459,7 @@ async function realWorldDocumentationWorkflow() {
       level: 'beginner'
     }
   });
-  console.log(`\n1️⃣ Starting Point: ${startURL}`);
+  console.info(`\n1️⃣ Starting Point: ${startURL}`);
 
   // 2. Move to utilities with interactive examples
   const utilsURL = DocumentationURLHandler.generateDocumentationURL({
@@ -472,7 +472,7 @@ async function realWorldDocumentationWorkflow() {
       level: 'beginner'
     }
   });
-  console.log(`\n2️⃣ Learn File Operations: ${utilsURL}`);
+  console.info(`\n2️⃣ Learn File Operations: ${utilsURL}`);
 
   // 3. Progress to advanced networking
   const networkingURL = DocumentationURLHandler.generateDocumentationURL({
@@ -486,7 +486,7 @@ async function realWorldDocumentationWorkflow() {
       performance: 'true'
     }
   });
-  console.log(`\n3️⃣ Advanced Networking: ${networkingURL}`);
+  console.info(`\n3️⃣ Advanced Networking: ${networkingURL}`);
 
   // 4. Learn CLI for project setup
   const cliURL = DocumentationURLHandler.generateDocumentationURL({
@@ -498,7 +498,7 @@ async function realWorldDocumentationWorkflow() {
       interactive: 'true'
     }
   });
-  console.log(`\n4️⃣ CLI Project Setup: ${cliURL}`);
+  console.info(`\n4️⃣ CLI Project Setup: ${cliURL}`);
 
   // 5. Create shareable learning path
   const learningPath = DocumentationURLHandler.generateShareableLink({
@@ -511,22 +511,22 @@ async function realWorldDocumentationWorkflow() {
     }
   }, 86400); // 24 hours
 
-  console.log(`\n5️⃣ Shareable Learning Path: ${learningPath}`);
+  console.info(`\n5️⃣ Shareable Learning Path: ${learningPath}`);
 
   // 6. Generate breadcrumbs for navigation
   const breadcrumbs = DocumentationURLHandler.generateBreadcrumbs(cliURL);
-  console.log('\n🍞 Navigation Breadcrumbs:');
+  console.info('\n🍞 Navigation Breadcrumbs:');
   breadcrumbs.forEach((crumb, i) => {
     const arrow = i < breadcrumbs.length - 1 ? ' > ' : '';
-    console.log(`   ${crumb.name}${arrow}`);
+    console.info(`   ${crumb.name}${arrow}`);
   });
 
   // 7. Validate the entire workflow
   const workflowURLs = [startURL, utilsURL, networkingURL, cliURL, learningPath];
-  console.log('\n✅ Workflow Validation:');
+  console.info('\n✅ Workflow Validation:');
   workflowURLs.forEach((url, index) => {
     const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-    console.log(`   Step ${index + 1}: ${isValid ? '✅' : '❌'}`);
+    console.info(`   Step ${index + 1}: ${isValid ? '✅' : '❌'}`);
   });
 }
 
@@ -534,9 +534,9 @@ async function realWorldDocumentationWorkflow() {
  * Main demonstration function
  */
 async function main() {
-  console.log('📚 Documentation Fragment Integration Examples');
-  console.log('='.repeat(70));
-  console.log('');
+  console.info('📚 Documentation Fragment Integration Examples');
+  console.info('='.repeat(70));
+  console.info('');
 
   try {
     await basicDocumentationURLs();
@@ -550,19 +550,19 @@ async function main() {
     await quickReferenceURLs();
     await realWorldDocumentationWorkflow();
 
-    console.log('\n✅ All documentation fragment integration examples completed successfully!');
-    console.log('');
-    console.log('📋 Key Features Demonstrated:');
-    console.log('   • Enhanced URL generation with fragment support');
-    console.log('   • Advanced URL parsing and fragment extraction');
-    console.log('   • Interactive documentation links');
-    console.log('   • Breadcrumb navigation generation');
-    console.log('   • Enhanced docs reference integration');
-    console.log('   • Utility factory with fragment support');
-    console.log('   • CLI documentation with fragments');
-    console.log('   • Documentation search and discovery');
-    console.log('   • Quick reference URLs');
-    console.log('   • Real-world documentation workflows');
+    console.info('\n✅ All documentation fragment integration examples completed successfully!');
+    console.info('');
+    console.info('📋 Key Features Demonstrated:');
+    console.info('   • Enhanced URL generation with fragment support');
+    console.info('   • Advanced URL parsing and fragment extraction');
+    console.info('   • Interactive documentation links');
+    console.info('   • Breadcrumb navigation generation');
+    console.info('   • Enhanced docs reference integration');
+    console.info('   • Utility factory with fragment support');
+    console.info('   • CLI documentation with fragments');
+    console.info('   • Documentation search and discovery');
+    console.info('   • Quick reference URLs');
+    console.info('   • Real-world documentation workflows');
 
   } catch (error) {
     console.error('❌ Error in documentation fragment integration examples:', error);

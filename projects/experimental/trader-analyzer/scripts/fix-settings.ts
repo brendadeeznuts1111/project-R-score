@@ -14,7 +14,7 @@ try {
     settings = JSON.parse(cleanedContent);
   }
 } catch (error) {
-  console.log('Creating new settings file...');
+  console.info('Creating new settings file...');
 }
 
 // Deep merge helper for nested objects
@@ -90,5 +90,5 @@ if (!existsSync(vscodeDir)) {
 }
 
 writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
-console.log('✅ Settings updated successfully!');
-console.log(`📝 Settings file: ${settingsPath}`);
+console.info('✅ Settings updated successfully!');
+console.info(`📝 Settings file: ${settingsPath}`);

@@ -24,7 +24,7 @@ const mdFiles = getAllFiles(".");
 const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
 let brokenLinksCount = 0;
 
-console.log(`Checking ${mdFiles.length} markdown files...`);
+console.info(`Checking ${mdFiles.length} markdown files...`);
 
 mdFiles.forEach((file: string) => {
   const content = readFileSync(file, "utf8");
@@ -49,14 +49,14 @@ mdFiles.forEach((file: string) => {
     const fullPath = join(fileDir, targetPath);
 
     if (!existsSync(fullPath)) {
-      console.log(`❌ Broken link in ${file}: [${linkText}](${linkTarget}) -> Target not found: ${fullPath}`);
+      console.info(`❌ Broken link in ${file}: [${linkText}](${linkTarget}) -> Target not found: ${fullPath}`);
       brokenLinksCount++;
     }
   }
 });
 
 if (brokenLinksCount === 0) {
-  console.log("✅ No broken internal links found in Markdown files!");
+  console.info("✅ No broken internal links found in Markdown files!");
 } else {
-  console.log(`\nFound ${brokenLinksCount} broken link(s).`);
+  console.info(`\nFound ${brokenLinksCount} broken link(s).`);
 }

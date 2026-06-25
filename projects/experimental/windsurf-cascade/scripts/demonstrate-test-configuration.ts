@@ -63,47 +63,47 @@ class TestConfigDemonstrator {
     ];
 
     async demonstrateConfigurationOptions() {
-        console.log('🔧 Bun Test Configuration Demonstration\n');
+        console.info('🔧 Bun Test Configuration Demonstration\n');
 
-        console.log('📋 Current bunfig.toml Test Configuration:');
-        console.log('   timeout = 120000 (2 minutes)');
-        console.log('   concurrent = true');
-        console.log('   coverage = true');
-        console.log('   maxConcurrency = 20');
-        console.log('   randomize = true');
-        console.log('   concurrentTestGlob = ["**/*.property.test.ts"]');
-        console.log('   coveragePathIgnorePatterns = ["node_modules", "dist", "*.test.ts"]\n');
+        console.info('📋 Current bunfig.toml Test Configuration:');
+        console.info('   timeout = 120000 (2 minutes)');
+        console.info('   concurrent = true');
+        console.info('   coverage = true');
+        console.info('   maxConcurrency = 20');
+        console.info('   randomize = true');
+        console.info('   concurrentTestGlob = ["**/*.property.test.ts"]');
+        console.info('   coveragePathIgnorePatterns = ["node_modules", "dist", "*.test.ts"]\n');
 
         for (const demo of this.demos) {
-            console.log(`🎯 ${demo.name}`);
-            console.log(`   Description: ${demo.description}`);
-            console.log(`   Command: ${demo.command}`);
-            console.log(`   Expected: ${demo.expectedBehavior}`);
+            console.info(`🎯 ${demo.name}`);
+            console.info(`   Description: ${demo.description}`);
+            console.info(`   Command: ${demo.command}`);
+            console.info(`   Expected: ${demo.expectedBehavior}`);
 
             try {
-                console.log('   Result: ✅ Configuration applied successfully\n');
+                console.info('   Result: ✅ Configuration applied successfully\n');
             } catch (error) {
-                console.log(`   Result: ❌ Error: ${error}\n`);
+                console.info(`   Result: ❌ Error: ${error}\n`);
             }
         }
     }
 
     showConfigurationHierarchy() {
-        console.log('🏗️ Configuration Priority Hierarchy:');
-        console.log('1. Command-line flags (highest priority)');
-        console.log('2. Environment variables');
-        console.log('3. bunfig.toml [test] section');
-        console.log('4. Default Bun settings (lowest priority)\n');
+        console.info('🏗️ Configuration Priority Hierarchy:');
+        console.info('1. Command-line flags (highest priority)');
+        console.info('2. Environment variables');
+        console.info('3. bunfig.toml [test] section');
+        console.info('4. Default Bun settings (lowest priority)\n');
 
-        console.log('📝 Example Override Chain:');
-        console.log('bunfig.toml: timeout = 120000');
-        console.log('Environment: TEST_TIMEOUT = 10000');
-        console.log('CLI: --timeout 5000');
-        console.log('Final: timeout = 5000ms (CLI wins)\n');
+        console.info('📝 Example Override Chain:');
+        console.info('bunfig.toml: timeout = 120000');
+        console.info('Environment: TEST_TIMEOUT = 10000');
+        console.info('CLI: --timeout 5000');
+        console.info('Final: timeout = 5000ms (CLI wins)\n');
     }
 
     showAdvancedConfiguration() {
-        console.log('🚀 Advanced Configuration Options:');
+        console.info('🚀 Advanced Configuration Options:');
 
         const advancedConfigs = [
             {
@@ -142,39 +142,39 @@ class TestConfigDemonstrator {
         ];
 
         advancedConfigs.forEach(config => {
-            console.log(`\n${config.section}:`);
+            console.info(`\n${config.section}:`);
             config.options.forEach(option => {
-                console.log(`   ${option}`);
+                console.info(`   ${option}`);
             });
         });
     }
 
     showConditionalConfiguration() {
-        console.log('\n🔄 Conditional Configuration Examples:');
+        console.info('\n🔄 Conditional Configuration Examples:');
 
-        console.log('```toml');
-        console.log('[test]');
-        console.log('# Default configuration');
-        console.log('timeout = 5000');
-        console.log('coverage = false');
-        console.log('');
-        console.log('# CI-specific override');
-        console.log('[test.ci]');
-        console.log('timeout = 30000');
-        console.log('coverage = true');
-        console.log('coverageThreshold = 0.8');
-        console.log('onlyFailures = true');
-        console.log('');
-        console.log('# Development override');
-        console.log('[test.dev]');
-        console.log('timeout = 10000');
-        console.log('coverage = false');
-        console.log('randomize = true');
-        console.log('```');
+        console.info('```toml');
+        console.info('[test]');
+        console.info('# Default configuration');
+        console.info('timeout = 5000');
+        console.info('coverage = false');
+        console.info('');
+        console.info('# CI-specific override');
+        console.info('[test.ci]');
+        console.info('timeout = 30000');
+        console.info('coverage = true');
+        console.info('coverageThreshold = 0.8');
+        console.info('onlyFailures = true');
+        console.info('');
+        console.info('# Development override');
+        console.info('[test.dev]');
+        console.info('timeout = 10000');
+        console.info('coverage = false');
+        console.info('randomize = true');
+        console.info('```');
     }
 
     showConfigurationValidation() {
-        console.log('\n✅ Configuration Validation Tips:');
+        console.info('\n✅ Configuration Validation Tips:');
 
         const validationTips = [
             'Use absolute paths for preload scripts',
@@ -186,7 +186,7 @@ class TestConfigDemonstrator {
         ];
 
         validationTips.forEach((tip, index) => {
-            console.log(`   ${index + 1}. ${tip}`);
+            console.info(`   ${index + 1}. ${tip}`);
         });
     }
 }
@@ -261,7 +261,7 @@ export const ConfigurationBestPractices = [
 async function runConfigurationDemo() {
     const demonstrator = new TestConfigDemonstrator();
 
-    console.log('🎯 Bun Test Configuration Complete Demonstration\n');
+    console.info('🎯 Bun Test Configuration Complete Demonstration\n');
 
     await demonstrator.demonstrateConfigurationOptions();
     demonstrator.showConfigurationHierarchy();
@@ -269,19 +269,19 @@ async function runConfigurationDemo() {
     demonstrator.showConditionalConfiguration();
     demonstrator.showConfigurationValidation();
 
-    console.log('\n📊 Environment-Specific Configuration Examples:');
+    console.info('\n📊 Environment-Specific Configuration Examples:');
     Object.entries(EnvironmentConfigs).forEach(([env, config]) => {
-        console.log(`\n${env.toUpperCase()}:`);
+        console.info(`\n${env.toUpperCase()}:`);
         Object.entries(config).forEach(([key, value]) => {
-            console.log(`   ${key}: ${value}`);
+            console.info(`   ${key}: ${value}`);
         });
     });
 
-    console.log('\n💡 Configuration Best Practices:');
+    console.info('\n💡 Configuration Best Practices:');
     ConfigurationBestPractices.forEach((practice, index) => {
-        console.log(`\n${index + 1}. ${practice.practice}`);
-        console.log(`   Example: ${practice.example}`);
-        console.log(`   Benefit: ${practice.benefit}`);
+        console.info(`\n${index + 1}. ${practice.practice}`);
+        console.info(`   Example: ${practice.example}`);
+        console.info(`   Benefit: ${practice.benefit}`);
     });
 }
 

@@ -11,7 +11,7 @@ const ENDPOINT = 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.
 const wikiContent = readFileSync('/Users/nolarose/Projects/wiki-deploy/index.html');
 const contentHash = createHash('sha256').update(wikiContent).digest('hex');
 
-console.log('🚀 Uploading wiki to R2 using Bun...');
+console.info('🚀 Uploading wiki to R2 using Bun...');
 
 // Upload with proper AWS headers
 const response = await fetch(`${ENDPOINT}/${BUCKET_NAME}/index.html`, {
@@ -26,8 +26,8 @@ const response = await fetch(`${ENDPOINT}/${BUCKET_NAME}/index.html`, {
 });
 
 if (response.ok) {
-  console.log('✅ Wiki deployed successfully to R2!');
-  console.log('🌐 Available at: https://wiki.factorywager.com');
+  console.info('✅ Wiki deployed successfully to R2!');
+  console.info('🌐 Available at: https://wiki.factorywager.com');
 } else {
   console.error('❌ Upload failed:', response.status, response.statusText);
   const errorText = await response.text();

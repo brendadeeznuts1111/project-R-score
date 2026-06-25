@@ -59,7 +59,7 @@ export class ZenStreamSearcher {
     filesSearched: 0,
     bytesProcessed: 0,
     elapsedTime: 0,
-    memoryUsage: 0
+    memoryUsage: 0,
   };
 
   /**
@@ -69,74 +69,75 @@ export class ZenStreamSearcher {
   async streamSearch(options: StreamSearchOptions): Promise<SearchStats> {
     const startTime = performance.now();
     const decoder = new TextDecoder();
-    
+
     // Prepare ripgrep arguments for JSON output (streamable)
     const args = [
-      "rg",  // Add the executable name
-      "--json",           // JSON output for easy parsing
-      "--line-number",    // Include line numbers
-      "--heading",        // Group by file
+      'rg', // Add the executable name
+      '--json', // JSON output for easy parsing
+      '--line-number', // Include line numbers
+      '--heading', // Group by file
       options.query,
-      options.cachePath
+      options.cachePath,
     ];
 
     try {
       // Using AsyncDisposable pattern (TS 5.2+) for automatic cleanup
-      await using proc = (Bun as any).spawn(args, {
-        stdout: "pipe",
-        stderr: "pipe",
-        signal: options.signal || this.abortController.signal
+      await using proc = (Bun as Record<string, unknown>).spawn(args, {
+        stdout: 'pipe',
+        stderr: 'pipe',
+        signal: options.signal || this.abortController.signal,
       });
 
       const stream = proc.stdout;
       if (!(stream instanceof ReadableStream)) {
-        throw new Error("stdout is not a ReadableStream");
+        throw new Error('stdout is not a ReadableStream');
       }
 
       // Enhanced chunked processing with backpressure handling
       const reader = stream.getReader();
       let buffer = '';
-      
+
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) break;
-        
+
         // Process chunk as it arrives - zero-copy streaming
         const chunkText = decoder.decode(value, { stream: true });
         this.searchStats.bytesProcessed += value.length;
-        
+
         // Accumulate and process complete lines
         buffer += chunkText;
         const lines = buffer.split('\n');
         buffer = lines.pop() || ''; // Keep incomplete line in buffer
-        
+
         for (const line of lines) {
           if (!line.trim()) continue;
-          
+
           try {
             const match: RipgrepMatch = JSON.parse(line);
-            
+
             if (match.type === 'match') {
               this.searchStats.matchesFound++;
               options.onMatch?.(match);
             } else if (match.type === 'summary') {
               // Extract file count from summary if available
               // Note: ripgrep summary structure may vary, so we use a safe fallback
-              this.searchStats.filesSearched = (match.data as any).stats?.searched_files || this.searchStats.filesSearched;
+              this.searchStats.filesSearched =
+                (match.data as any).stats?.searched_files || this.searchStats.filesSearched;
             }
           } catch (parseError) {
             // Skip malformed JSON lines
             console.warn('Failed to parse ripgrep output:', line);
           }
         }
-        
+
         // Report progress periodically
         if (this.searchStats.matchesFound % 10 === 0) {
           options.onProgress?.({ ...this.searchStats });
         }
       }
-      
+
       // Process any remaining buffer content
       if (buffer.trim()) {
         try {
@@ -153,24 +154,25 @@ export class ZenStreamSearcher {
       // Wait for process completion and get resource usage
       const exitCode = await proc.exited;
       this.searchStats.elapsedTime = performance.now() - startTime;
-      
+
       // Log resource usage for performance monitoring
       const resourceUsage = proc.resourceUsage;
       if (resourceUsage) {
         const { maxRSS, cpuTime } = resourceUsage;
-        console.log(`📊 Resource Usage - Max Memory: ${(maxRSS / 1024 / 1024).toFixed(2)}MB, CPU Time: ${cpuTime?.total || 'N/A'}ms`);
+        console.info(
+          `📊 Resource Usage - Max Memory: ${(maxRSS / 1024 / 1024).toFixed(2)}MB, CPU Time: ${cpuTime?.total || 'N/A'}ms`
+        );
       }
-      
+
       if (exitCode !== 0) {
         const stderr = await proc.stderr.text();
         throw new Error(`Search failed with exit code ${exitCode}: ${stderr}`);
       }
 
       return this.searchStats;
-      
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('🛑 Search aborted by user');
+        console.info('🛑 Search aborted by user');
       } else {
         console.error('❌ Search error:', error);
       }
@@ -183,37 +185,49 @@ export class ZenStreamSearcher {
    * Advanced PTY search for interactive terminal applications
    */
   async ptySearch(query: string, cachePath: string): Promise<void> {
-    const proc = (Bun as any).spawn(["rg", "--color=always", "--line-number", query, cachePath], {
-      terminal: {
-        cols: (process.stdout as any).columns || 80,
-        rows: (process.stdout as any).rows || 24,
-        data(terminal: any, data: Uint8Array) {
-          // Process raw ANSI data from ripgrep
-          (Bun as any).write(Bun.stdout, data);
-        }
+    const proc = (Bun as Record<string, unknown>).spawn(
+      ['rg', '--color=always', '--line-number', query, cachePath],
+      {
+        terminal: {
+          cols: (process.stdout as any).columns || 80,
+          rows: (process.stdout as any).rows || 24,
+          data(terminal: any, data: Uint8Array) {
+            // Process raw ANSI data from ripgrep
+            (Bun as Record<string, unknown>).write(Bun.stdout, data);
+          },
+        },
       }
-    });
+    );
 
     await proc.exited;
-    console.log('✅ PTY search complete');
+    console.info('✅ PTY search complete');
   }
 
   /**
    * Resource-monitored search with detailed metrics
    */
-  async monitoredSearch(query: string, cachePath: string): Promise<{ stats: SearchStats; resources: ResourceMetrics }> {
-    const result = (Bun as any).spawnSync(["rg", "--json", "--line-number", query, cachePath]);
-    
+  async monitoredSearch(
+    query: string,
+    cachePath: string
+  ): Promise<{ stats: SearchStats; resources: ResourceMetrics }> {
+    const result = (Bun as Record<string, unknown>).spawnSync([
+      'rg',
+      '--json',
+      '--line-number',
+      query,
+      cachePath,
+    ]);
+
     // Extract resource usage metrics
     const resources: ResourceMetrics = result.resourceUsage;
-    
+
     // Parse results from stdout
     let linesCount = 0;
     if (result.stdout) {
       const output = result.stdout.toString();
       const lines = output.split('\n').filter(line => line.trim());
       linesCount = lines.length;
-      
+
       for (const line of lines) {
         try {
           const match: RipgrepMatch = JSON.parse(line);
@@ -229,46 +243,52 @@ export class ZenStreamSearcher {
     this.searchStats.filesSearched = linesCount;
     this.searchStats.memoryUsage = resources.maxRSS;
 
-    console.log(`📊 Max Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`⏱️  CPU Time: ${resources.cpuTime.total}ms`);
-    console.log(`📁 Files Searched: ${this.searchStats.filesSearched}`);
-    console.log(`🎯 Matches Found: ${this.searchStats.matchesFound}`);
+    console.info(`📊 Max Memory: ${(resources.maxRSS / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`⏱️  CPU Time: ${resources.cpuTime.total}ms`);
+    console.info(`📁 Files Searched: ${this.searchStats.filesSearched}`);
+    console.info(`🎯 Matches Found: ${this.searchStats.matchesFound}`);
 
     return {
       stats: this.searchStats,
-      resources
+      resources,
     };
   }
 
   /**
    * Adaptive search with automatic cancellation of previous searches
    */
-  async adaptiveSearch(query: string, cachePath: string, options: Partial<StreamSearchOptions> = {}): Promise<SearchStats> {
+  async adaptiveSearch(
+    query: string,
+    cachePath: string,
+    options: Partial<StreamSearchOptions> = {}
+  ): Promise<SearchStats> {
     // Cancel previous search if still running
     this.abortController.abort();
     this.abortController = new AbortController();
-    
+
     // Reset stats for new search
     this.searchStats = {
       matchesFound: 0,
       filesSearched: 0,
       bytesProcessed: 0,
       elapsedTime: 0,
-      memoryUsage: 0
+      memoryUsage: 0,
     };
 
     return this.streamSearch({
       query,
       cachePath,
       signal: this.abortController.signal,
-      onMatch: (match) => {
-        console.log(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
-        console.log(`   ${match.data.lines.text.trim()}`);
+      onMatch: match => {
+        console.info(`✨ Found in: ${match.data.path.text}:${match.data.line_number}`);
+        console.info(`   ${match.data.lines.text.trim()}`);
       },
-      onProgress: (stats) => {
-        console.log(`📈 Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes processed`);
+      onProgress: stats => {
+        console.info(
+          `📈 Progress: ${stats.matchesFound} matches, ${stats.bytesProcessed} bytes processed`
+        );
       },
-      ...options
+      ...options,
     });
   }
 
@@ -277,40 +297,43 @@ export class ZenStreamSearcher {
    */
   async searchResponse(response: Response, query: string): Promise<SearchStats> {
     if (!response.body) {
-      throw new Error("Response body is empty");
+      throw new Error('Response body is empty');
     }
 
     // Use the Response directly as stdin for ripgrep
-    await using proc = (Bun as any).spawn(["rg", "--json", "--line-number", query], {
-      stdin: response.body, // Response is a ReadableStream, perfect for stdin
-      stdout: "pipe",
-      stderr: "pipe"
-    });
+    await using proc = (Bun as Record<string, unknown>).spawn(
+      ['rg', '--json', '--line-number', query],
+      {
+        stdin: response.body, // Response is a ReadableStream, perfect for stdin
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
 
     const decoder = new TextDecoder();
     const stream = proc.stdout;
 
     if (!(stream instanceof ReadableStream)) {
-      throw new Error("stdout is not a ReadableStream");
+      throw new Error('stdout is not a ReadableStream');
     }
 
     // Use proper ReadableStream reader instead of for await
     const reader = stream.getReader();
-    
+
     while (true) {
       const { done, value } = await reader.read();
-      
+
       if (done) break;
-      
+
       const chunkText = decoder.decode(value);
-      const lines = chunkText.split("\n").filter(line => line.trim());
-      
+      const lines = chunkText.split('\n').filter(line => line.trim());
+
       for (const line of lines) {
         try {
           const match: RipgrepMatch = JSON.parse(line);
           if (match.type === 'match') {
             this.searchStats.matchesFound++;
-            console.log(`🌐 Found in response: ${match.data.lines.text.trim()}`);
+            console.info(`🌐 Found in response: ${match.data.lines.text.trim()}`);
           }
         } catch {
           // Skip malformed lines
@@ -338,29 +361,31 @@ export class EnhancedDocsFetcher {
 
   async fetchAndSearch(query: string, docsUrl: string, cachePath: string): Promise<void> {
     try {
-      console.log(`🔍 Searching for: ${query}`);
-      console.log(`📂 Cache path: ${cachePath}`);
-      
+      console.info(`🔍 Searching for: ${query}`);
+      console.info(`📂 Cache path: ${cachePath}`);
+
       // Perform adaptive search with automatic cancellation
       const stats = await this.searcher.adaptiveSearch(query, cachePath, {
         enableColors: true,
-        onMatch: (match) => {
+        onMatch: match => {
           const highlight = this.highlightMatch(match.data.lines.text, match.data.submatches);
-          console.log(`\n📄 ${match.data.path.text}:${match.data.line_number}`);
-          console.log(`   ${highlight}`);
-        }
+          console.info(`\n📄 ${match.data.path.text}:${match.data.line_number}`);
+          console.info(`   ${highlight}`);
+        },
       });
 
-      console.log(`\n✅ Search completed in ${stats.elapsedTime.toFixed(2)}ms`);
-      console.log(`📊 Processed ${stats.bytesProcessed} bytes`);
-      console.log(`🎯 Found ${stats.matchesFound} matches across ${stats.filesSearched} files`);
-      
+      console.info(`\n✅ Search completed in ${stats.elapsedTime.toFixed(2)}ms`);
+      console.info(`📊 Processed ${stats.bytesProcessed} bytes`);
+      console.info(`🎯 Found ${stats.matchesFound} matches across ${stats.filesSearched} files`);
     } catch (error) {
       console.error('❌ Search failed:', error);
     }
   }
 
-  private highlightMatch(text: string, submatches?: Array<{ match: { text: string }; start: number; end: number }>): string {
+  private highlightMatch(
+    text: string,
+    submatches?: Array<{ match: { text: string }; start: number; end: number }>
+  ): string {
     if (!submatches || submatches.length === 0) {
       return text;
     }
@@ -372,11 +397,11 @@ export class EnhancedDocsFetcher {
       const start = submatch.start + offset;
       const end = submatch.end + offset;
       const matchText = submatch.match.text;
-      
+
       const before = highlighted.slice(0, start);
       const after = highlighted.slice(end);
       const highlightedMatch = `\x1b[33m${matchText}\x1b[0m`; // Yellow highlight
-      
+
       highlighted = before + highlightedMatch + after;
       offset += highlightedMatch.length - matchText.length;
     }

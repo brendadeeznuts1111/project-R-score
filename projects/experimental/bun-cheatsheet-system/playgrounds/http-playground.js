@@ -17,8 +17,8 @@ class HTTPPlayground {
     console.clear();
     this.showBanner();
     
-    console.log('🌐 HTTP Playground Ready!');
-    console.log('💡 Type "help" to see available commands\n');
+    console.info('🌐 HTTP Playground Ready!');
+    console.info('💡 Type "help" to see available commands\n');
     
     this.rl.prompt();
     
@@ -28,7 +28,7 @@ class HTTPPlayground {
     });
     
     this.rl.on('close', () => {
-      console.log('\n👋 Goodbye! Happy HTTP hacking!');
+      console.info('\n👋 Goodbye! Happy HTTP hacking!');
       process.exit(0);
     });
   }
@@ -44,7 +44,7 @@ class HTTPPlayground {
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
     `;
-    console.log(banner);
+    console.info(banner);
   }
 
   async handleCommand(input) {
@@ -123,15 +123,15 @@ class HTTPPlayground {
         break;
         
       default:
-        console.log(`❌ Unknown command: ${command}`);
-        console.log('💡 Type "help" for available commands');
+        console.info(`❌ Unknown command: ${command}`);
+        console.info('💡 Type "help" for available commands');
         break;
     }
   }
 
   showHelp() {
-    console.log('\n🌐 HTTP Playground Commands:');
-    console.log('='.repeat(50));
+    console.info('\n🌐 HTTP Playground Commands:');
+    console.info('='.repeat(50));
     
     const commands = [
       { cmd: 'help', desc: 'Show this help message' },
@@ -153,57 +153,57 @@ class HTTPPlayground {
     ];
     
     commands.forEach(item => {
-      console.log(`  ${item.cmd.padEnd(25)} ${item.desc}`);
+      console.info(`  ${item.cmd.padEnd(25)} ${item.desc}`);
     });
     
-    console.log('\n🎯 Examples:');
-    console.log('  get /get                    - GET request to /get');
-    console.log('  post /post {"name":"test"} - POST JSON data');
-    console.log('  status 404                  - Test 404 response');
-    console.log('  base https://api.example.com - Change base URL');
+    console.info('\n🎯 Examples:');
+    console.info('  get /get                    - GET request to /get');
+    console.info('  post /post {"name":"test"} - POST JSON data');
+    console.info('  status 404                  - Test 404 response');
+    console.info('  base https://api.example.com - Change base URL');
   }
 
   async handleGet(endpoint) {
     if (!endpoint) {
-      console.log('Usage: get <endpoint>');
+      console.info('Usage: get <endpoint>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📥 GET ${url}`);
+    console.info(`📥 GET ${url}`);
     
     try {
       const startTime = Date.now();
       const response = await fetch(url);
       const endTime = Date.now();
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
-      console.log(`⏱️  Time: ${endTime - startTime}ms`);
-      console.log(`📋 Content-Type: ${response.headers.get('content-type')}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`⏱️  Time: ${endTime - startTime}ms`);
+      console.info(`📋 Content-Type: ${response.headers.get('content-type')}`);
       
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
         const data = await response.json();
-        console.log('📊 Response (JSON):');
-        console.log(JSON.stringify(data, null, 2));
+        console.info('📊 Response (JSON):');
+        console.info(JSON.stringify(data, null, 2));
       } else {
         const text = await response.text();
-        console.log('📄 Response (Text):');
-        console.log(text.substring(0, 500) + (text.length > 500 ? '...' : ''));
+        console.info('📄 Response (Text):');
+        console.info(text.substring(0, 500) + (text.length > 500 ? '...' : ''));
       }
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handlePost(endpoint, data) {
     if (!endpoint) {
-      console.log('Usage: post <endpoint> <data>');
+      console.info('Usage: post <endpoint> <data>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📤 POST ${url}`);
+    console.info(`📤 POST ${url}`);
     
     try {
       let body = data || '{}';
@@ -224,25 +224,25 @@ class HTTPPlayground {
       });
       const endTime = Date.now();
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
-      console.log(`⏱️  Time: ${endTime - startTime}ms`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`⏱️  Time: ${endTime - startTime}ms`);
       
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handlePut(endpoint, data) {
     if (!endpoint) {
-      console.log('Usage: put <endpoint> <data>');
+      console.info('Usage: put <endpoint> <data>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📤 PUT ${url}`);
+    console.info(`📤 PUT ${url}`);
     
     try {
       const response = await fetch(url, {
@@ -251,92 +251,92 @@ class HTTPPlayground {
         body: data || '{}'
       });
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleDelete(endpoint) {
     if (!endpoint) {
-      console.log('Usage: delete <endpoint>');
+      console.info('Usage: delete <endpoint>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`🗑️  DELETE ${url}`);
+    console.info(`🗑️  DELETE ${url}`);
     
     try {
       const response = await fetch(url, { method: 'DELETE' });
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleHeaders(endpoint) {
     if (!endpoint) {
-      console.log('Usage: headers <endpoint>');
+      console.info('Usage: headers <endpoint>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📋 Headers for ${url}`);
+    console.info(`📋 Headers for ${url}`);
     
     try {
       const response = await fetch(url);
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       
-      console.log('📋 Response Headers:');
+      console.info('📋 Response Headers:');
       response.headers.forEach((value, key) => {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       });
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleStatus(statusCode) {
     if (!statusCode) {
-      console.log('Usage: status <code>');
+      console.info('Usage: status <code>');
       return;
     }
     
     const url = `${this.baseUrl}/status/${statusCode}`;
-    console.log(`🔍 Testing status code ${statusCode}`);
+    console.info(`🔍 Testing status code ${statusCode}`);
     
     try {
       const response = await fetch(url);
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       
       if (response.ok) {
-        console.log('✅ Request successful');
+        console.info('✅ Request successful');
       } else {
-        console.log('⚠️  Request failed as expected');
+        console.info('⚠️  Request failed as expected');
       }
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleJSON(endpoint, data) {
     if (!endpoint) {
-      console.log('Usage: json <endpoint> <json-data>');
+      console.info('Usage: json <endpoint> <json-data>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
     const jsonData = data || '{"test": true}';
     
-    console.log(`📊 JSON POST ${url}`);
-    console.log(`📝 Data: ${jsonData}`);
+    console.info(`📊 JSON POST ${url}`);
+    console.info(`📝 Data: ${jsonData}`);
     
     try {
       const response = await fetch(url, {
@@ -345,23 +345,23 @@ class HTTPPlayground {
         body: jsonData
       });
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleForm(endpoint) {
     if (!endpoint) {
-      console.log('Usage: form <endpoint>');
+      console.info('Usage: form <endpoint>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📝 Form POST ${url}`);
+    console.info(`📝 Form POST ${url}`);
     
     try {
       const formData = new FormData();
@@ -374,23 +374,23 @@ class HTTPPlayground {
         body: formData
       });
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleUpload(endpoint) {
     if (!endpoint) {
-      console.log('Usage: upload <endpoint>');
+      console.info('Usage: upload <endpoint>');
       return;
     }
     
     const url = `${this.baseUrl}${endpoint}`;
-    console.log(`📁 File Upload ${url}`);
+    console.info(`📁 File Upload ${url}`);
     
     try {
       const fileContent = 'Hello from HTTP Playground!\nThis is a test file.';
@@ -405,23 +405,23 @@ class HTTPPlayground {
         body: formData
       });
       
-      console.log(`✅ Status: ${response.status} ${response.statusText}`);
+      console.info(`✅ Status: ${response.status} ${response.statusText}`);
       const responseData = await response.json();
-      console.log('📊 Response:');
-      console.log(JSON.stringify(responseData, null, 2));
+      console.info('📊 Response:');
+      console.info(JSON.stringify(responseData, null, 2));
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async handleTimeout(ms) {
     if (!ms) {
-      console.log('Usage: timeout <milliseconds>');
+      console.info('Usage: timeout <milliseconds>');
       return;
     }
     
     const url = `${this.baseUrl}/delay/5`; // 5 second delay
-    console.log(`⏱️  Testing timeout (${ms}ms) against 5s delay`);
+    console.info(`⏱️  Testing timeout (${ms}ms) against 5s delay`);
     
     try {
       const controller = new AbortController();
@@ -430,64 +430,64 @@ class HTTPPlayground {
       const response = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
       
-      console.log('✅ Request completed within timeout');
+      console.info('✅ Request completed within timeout');
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('⏱️  Request timed out as expected');
+        console.info('⏱️  Request timed out as expected');
       } else {
-        console.log(`❌ Error: ${error.message}`);
+        console.info(`❌ Error: ${error.message}`);
       }
     }
   }
 
   async handleRetry(endpoint, times) {
     if (!endpoint) {
-      console.log('Usage: retry <endpoint> <times>');
+      console.info('Usage: retry <endpoint> <times>');
       return;
     }
     
     const url = `${this.baseUrl}/status/500`; // Will always fail
-    console.log(`🔄 Retry ${endpoint} ${times} times`);
+    console.info(`🔄 Retry ${endpoint} ${times} times`);
     
     for (let attempt = 1; attempt <= times; attempt++) {
       try {
-        console.log(`📡 Attempt ${attempt}/${times}...`);
+        console.info(`📡 Attempt ${attempt}/${times}...`);
         const response = await fetch(url);
         
         if (response.ok) {
-          console.log('✅ Request successful!');
+          console.info('✅ Request successful!');
           return;
         }
         
-        console.log(`❌ Attempt ${attempt} failed: ${response.status}`);
+        console.info(`❌ Attempt ${attempt} failed: ${response.status}`);
       } catch (error) {
-        console.log(`❌ Attempt ${attempt} error: ${error.message}`);
+        console.info(`❌ Attempt ${attempt} error: ${error.message}`);
       }
       
       if (attempt < times) {
         const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-        console.log(`⏳ Waiting ${delay}ms before retry...`);
+        console.info(`⏳ Waiting ${delay}ms before retry...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
-    console.log(`🔄 All ${times} attempts failed`);
+    console.info(`🔄 All ${times} attempts failed`);
   }
 
   setBaseUrl(url) {
     if (!url) {
-      console.log('Usage: base <url>');
+      console.info('Usage: base <url>');
       return;
     }
     
     this.baseUrl = url;
-    console.log(`🔧 Base URL set to: ${this.baseUrl}`);
+    console.info(`🔧 Base URL set to: ${this.baseUrl}`);
   }
 
   showHistory() {
-    console.log('\n📜 Command History:');
+    console.info('\n📜 Command History:');
     this.history.forEach((cmd, i) => {
-      console.log(`${i + 1}. ${cmd}`);
+      console.info(`${i + 1}. ${cmd}`);
     });
   }
 }

@@ -86,7 +86,7 @@ function validateHeader(header: string, lineNumber: number): string[] {
 }
 
 function validateFile(filePath: string): { errors: string[], warnings: string[] } {
-  console.log(`\x1b[36m[VALIDATE]\x1b[0m Checking ${filePath}...`);
+  console.info(`\x1b[36m[VALIDATE]\x1b[0m Checking ${filePath}...`);
 
   const content = readFileSync(filePath, "utf-8");
   const lines = content.split('\n');
@@ -114,13 +114,13 @@ function validateFile(filePath: string): { errors: string[], warnings: string[] 
     }
   }
 
-  console.log(`\x1b[32m[CHECKED]\x1b[0m ${headerCount} headers found`);
+  console.info(`\x1b[32m[CHECKED]\x1b[0m ${headerCount} headers found`);
 
   return { errors, warnings };
 }
 
 function main() {
-  console.log(`\x1b[36m[HEADER-VALIDATION]\x1b[0m Starting v2.0 header validation...\n`);
+  console.info(`\x1b[36m[HEADER-VALIDATION]\x1b[0m Starting v2.0 header validation...\n`);
 
   const files = ["guide.md"];
   let totalErrors = 0;
@@ -131,21 +131,21 @@ function main() {
       const { errors, warnings } = validateFile(file);
 
       if (warnings.length > 0) {
-        console.log(`\x1b[33m[WARNINGS]\x1b[0m ${warnings.length} warnings in ${file}:`);
-        warnings.forEach(warning => console.log(`  ⚠️  ${warning}`));
-        console.log('');
+        console.info(`\x1b[33m[WARNINGS]\x1b[0m ${warnings.length} warnings in ${file}:`);
+        warnings.forEach(warning => console.info(`  ⚠️  ${warning}`));
+        console.info('');
         totalWarnings += warnings.length;
       }
 
       if (errors.length > 0) {
-        console.log(`\x1b[31m[ERRORS]\x1b[0m ${errors.length} errors in ${file}:`);
-        errors.forEach(error => console.log(`  ❌ ${error}`));
-        console.log('');
+        console.info(`\x1b[31m[ERRORS]\x1b[0m ${errors.length} errors in ${file}:`);
+        errors.forEach(error => console.info(`  ❌ ${error}`));
+        console.info('');
         totalErrors += errors.length;
       }
 
       if (errors.length === 0 && warnings.length === 0) {
-        console.log(`\x1b[32m[VALID]\x1b[0m ${file} - All headers valid!\n`);
+        console.info(`\x1b[32m[VALID]\x1b[0m ${file} - All headers valid!\n`);
       }
 
     } catch (error) {
@@ -155,21 +155,21 @@ function main() {
   }
 
   // Summary
-  console.log(`\x1b[36m[SUMMARY]\x1b[0m Validation complete:`);
-  console.log(`  📊 Files checked: ${files.length}`);
+  console.info(`\x1b[36m[SUMMARY]\x1b[0m Validation complete:`);
+  console.info(`  📊 Files checked: ${files.length}`);
 
   if (totalErrors > 0) {
-    console.log(`  ❌ Errors: ${totalErrors}`);
-    console.log(`\x1b[31m[FAILED]\x1b[0m Header validation failed. Fix errors before proceeding.`);
+    console.info(`  ❌ Errors: ${totalErrors}`);
+    console.info(`\x1b[31m[FAILED]\x1b[0m Header validation failed. Fix errors before proceeding.`);
     process.exit(1);
   } else {
-    console.log(`  ✅ Errors: ${totalErrors}`);
-    console.log(`  ⚠️  Warnings: ${totalWarnings}`);
+    console.info(`  ✅ Errors: ${totalErrors}`);
+    console.info(`  ⚠️  Warnings: ${totalWarnings}`);
 
     if (totalWarnings > 0) {
-      console.log(`\x1b[33m[PASSED]\x1b[0m Headers valid with warnings. Consider upgrading legacy formats.`);
+      console.info(`\x1b[33m[PASSED]\x1b[0m Headers valid with warnings. Consider upgrading legacy formats.`);
     } else {
-      console.log(`\x1b[32m[SUCCESS]\x1b[0m All headers valid and compliant with v2.0 specification!`);
+      console.info(`\x1b[32m[SUCCESS]\x1b[0m All headers valid and compliant with v2.0 specification!`);
     }
   }
 }

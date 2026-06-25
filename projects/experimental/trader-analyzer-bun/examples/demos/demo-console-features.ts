@@ -19,7 +19,7 @@
  * @example 6.2.3.0.0.0.0.1: Console Depth Configuration
  * // Test Formula:
  * // 1. Create nested object structure
- * // 2. Use console.log() with default depth
+ * // 2. Use console.info() with default depth
  * // 3. Run with --console-depth flag to change depth
  * // Expected Result: Console output respects depth configuration
  * //
@@ -38,7 +38,7 @@
  * // Snippet:
  * ```typescript
  * for await (const line of console) {
- *   console.log(`You entered: ${line}`);
+ *   console.info(`You entered: ${line}`);
  * }
  * ```
  * 
@@ -52,8 +52,8 @@
 // ============================================================================
 
 function demonstrateConsoleDepth() {
-  console.log("\n📊 Console Depth Demonstration");
-  console.log("─".repeat(60));
+  console.info("\n📊 Console Depth Demonstration");
+  console.info("─".repeat(60));
   
   const nested = {
     level1: {
@@ -69,14 +69,14 @@ function demonstrateConsoleDepth() {
     }
   };
   
-  console.log("Default depth (2):");
-  console.log(nested);
+  console.info("Default depth (2):");
+  console.info(nested);
   
-  console.log("\nNote: Use --console-depth <number> to change depth");
-  console.log("Example: bun --console-depth 4 scripts/demo-console-features.ts");
-  console.log("\nOr set in bunfig.toml:");
-  console.log("  [console]");
-  console.log("  depth = 4");
+  console.info("\nNote: Use --console-depth <number> to change depth");
+  console.info("Example: bun --console-depth 4 scripts/demo-console-features.ts");
+  console.info("\nOr set in bunfig.toml:");
+  console.info("  [console]");
+  console.info("  depth = 4");
 }
 
 // ============================================================================
@@ -84,11 +84,11 @@ function demonstrateConsoleDepth() {
 // ============================================================================
 
 async function interactiveCalculator() {
-  console.log("\n🧮 Interactive Calculator");
-  console.log("─".repeat(60));
-  console.log("Type numbers to add them together.");
-  console.log("Type 'quit' or 'exit' to stop.");
-  console.log("Type 'depth' to see current console depth.\n");
+  console.info("\n🧮 Interactive Calculator");
+  console.info("─".repeat(60));
+  console.info("Type numbers to add them together.");
+  console.info("Type 'quit' or 'exit' to stop.");
+  console.info("Type 'depth' to see current console depth.\n");
   
   let count = 0;
   console.write(`Count: ${count}\n> `);
@@ -98,24 +98,24 @@ async function interactiveCalculator() {
     const trimmed = line.trim();
     
     if (trimmed === 'quit' || trimmed === 'exit') {
-      console.log(`\nFinal count: ${count}`);
-      console.log("Goodbye! 👋");
+      console.info(`\nFinal count: ${count}`);
+      console.info("Goodbye! 👋");
       break;
     }
     
     if (trimmed === 'depth') {
       // Note: console.depth is not directly accessible, but we can show the concept
-      console.log("Console depth is controlled by:");
-      console.log("  - CLI flag: --console-depth <number>");
-      console.log("  - bunfig.toml: [console] depth = <number>");
-      console.log("  - Default: 2 levels");
+      console.info("Console depth is controlled by:");
+      console.info("  - CLI flag: --console-depth <number>");
+      console.info("  - bunfig.toml: [console] depth = <number>");
+      console.info("  - Default: 2 levels");
       console.write(`Count: ${count}\n> `);
       continue;
     }
     
     const num = Number(trimmed);
     if (isNaN(num)) {
-      console.log(`Invalid number: "${trimmed}"`);
+      console.info(`Invalid number: "${trimmed}"`);
       console.write(`Count: ${count}\n> `);
       continue;
     }
@@ -130,10 +130,10 @@ async function interactiveCalculator() {
 // ============================================================================
 
 async function interactiveTagScanner() {
-  console.log("\n🏷️  Interactive Tag Scanner");
-  console.log("─".repeat(60));
-  console.log("Enter file patterns to scan (glob patterns).");
-  console.log("Type 'quit' to exit.\n");
+  console.info("\n🏷️  Interactive Tag Scanner");
+  console.info("─".repeat(60));
+  console.info("Enter file patterns to scan (glob patterns).");
+  console.info("Type 'quit' to exit.\n");
   
   const scanned: string[] = [];
   
@@ -143,9 +143,9 @@ async function interactiveTagScanner() {
     const pattern = line.trim();
     
     if (pattern === 'quit' || pattern === 'exit') {
-      console.log(`\nScanned ${scanned.length} patterns:`);
+      console.info(`\nScanned ${scanned.length} patterns:`);
       for (const p of scanned) {
-        console.log(`  - ${p}`);
+        console.info(`  - ${p}`);
       }
       break;
     }
@@ -160,19 +160,19 @@ async function interactiveTagScanner() {
       const files = Array.from(glob.scanSync());
       scanned.push(pattern);
       
-      console.log(`Found ${files.length} files matching "${pattern}"`);
+      console.info(`Found ${files.length} files matching "${pattern}"`);
       if (files.length > 0 && files.length <= 10) {
         for (const file of files) {
-          console.log(`  - ${file}`);
+          console.info(`  - ${file}`);
         }
       } else if (files.length > 10) {
-        console.log(`  (showing first 10 of ${files.length})`);
+        console.info(`  (showing first 10 of ${files.length})`);
         for (const file of files.slice(0, 10)) {
-          console.log(`  - ${file}`);
+          console.info(`  - ${file}`);
         }
       }
     } catch (error) {
-      console.log(`Error: ${(error as Error).message}`);
+      console.info(`Error: ${(error as Error).message}`);
     }
     
     console.write("Pattern> ");
@@ -207,17 +207,17 @@ async function main() {
       break;
       
     default:
-      console.log("Usage:");
-      console.log("  bun run scripts/demo-console-features.ts [command]");
-      console.log("\nCommands:");
-      console.log("  depth  - Show console depth demonstration");
-      console.log("  calc   - Interactive calculator");
-      console.log("  scan   - Interactive tag scanner");
-      console.log("  all    - Run all demos");
-      console.log("\nExamples:");
-      console.log("  bun --console-depth 4 run scripts/demo-console-features.ts depth");
-      console.log("  bun run scripts/demo-console-features.ts calc");
-      console.log("  bun run scripts/demo-console-features.ts scan");
+      console.info("Usage:");
+      console.info("  bun run scripts/demo-console-features.ts [command]");
+      console.info("\nCommands:");
+      console.info("  depth  - Show console depth demonstration");
+      console.info("  calc   - Interactive calculator");
+      console.info("  scan   - Interactive tag scanner");
+      console.info("  all    - Run all demos");
+      console.info("\nExamples:");
+      console.info("  bun --console-depth 4 run scripts/demo-console-features.ts depth");
+      console.info("  bun run scripts/demo-console-features.ts calc");
+      console.info("  bun run scripts/demo-console-features.ts scan");
   }
 }
 

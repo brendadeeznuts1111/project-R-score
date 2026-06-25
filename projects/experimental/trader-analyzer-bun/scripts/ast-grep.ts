@@ -252,25 +252,25 @@ export class AstGrep {
     );
 
     await Bun.write(match.file, lines.join("\n"));
-    console.log(`✅ Transformed: ${match.file}:${match.line}`);
+    console.info(`✅ Transformed: ${match.file}:${match.line}`);
   }
 
   /**
    * Print results
    */
   printResults(): void {
-    console.log(`\n📊 Found ${this.matches.length} AST matches:\n`);
+    console.info(`\n📊 Found ${this.matches.length} AST matches:\n`);
     for (const match of this.matches) {
-      console.log(`📄 ${match.file}:${match.line}:${match.column}`);
-      console.log(`   Match: ${match.match}`);
+      console.info(`📄 ${match.file}:${match.line}:${match.column}`);
+      console.info(`   Match: ${match.match}`);
       if (match.inferredType) {
-        console.log(`   Type: ${match.inferredType}`);
+        console.info(`   Type: ${match.inferredType}`);
       }
       if (match.context.before.length > 0) {
-        console.log(`   Context before:`);
-        match.context.before.forEach((c) => console.log(`     ${c}`));
+        console.info(`   Context before:`);
+        match.context.before.forEach((c) => console.info(`     ${c}`));
       }
-      console.log();
+      console.info();
     }
   }
 }

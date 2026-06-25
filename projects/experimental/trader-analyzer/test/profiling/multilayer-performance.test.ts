@@ -66,7 +66,7 @@ describe("Header 1.1.1.1.5.0.1: Multi-Layer System Performance Tests", () => {
 		onTestFinished(() => {
 			// Clean up test artifacts
 			system.clearLayerCache(1);
-			console.log("🧹 Cleaned Layer 1 test artifacts");
+			console.info("🧹 Cleaned Layer 1 test artifacts");
 		});
 	});
 
@@ -108,18 +108,18 @@ describe("Header 1.1.1.1.5.0.1: Multi-Layer System Performance Tests", () => {
 
 		// Multiple onTestFinished hooks can be used
 		onTestFinished(() => {
-			console.log("🧹 First cleanup: clearing edge cache");
+			console.info("🧹 First cleanup: clearing edge cache");
 			system.clearEdgeCache();
 		});
 
 		onTestFinished(() => {
-			console.log("🧹 Second cleanup: validating edge counts");
+			console.info("🧹 Second cleanup: validating edge counts");
 			const remaining = system.getEdgeCount();
 			expect(remaining).toBe(0);
 		});
 
 		onTestFinished(async () => {
-			console.log("🧹 Third cleanup: async database cleanup");
+			console.info("🧹 Third cleanup: async database cleanup");
 			await system.cleanupDatabase();
 		});
 	});
@@ -146,7 +146,7 @@ describe("Header 1.1.1.1.5.0.1: Multi-Layer System Performance Tests", () => {
 				if (global.gc) {
 					global.gc();
 					const postGCMemory = process.memoryUsage().heapUsed;
-					console.log(
+					console.info(
 						`🧹 Memory after GC: ${(postGCMemory / 1024 / 1024).toFixed(2)}MB`,
 					);
 				}
@@ -156,7 +156,7 @@ describe("Header 1.1.1.1.5.0.1: Multi-Layer System Performance Tests", () => {
 		test("CPU profiling integration works correctly", () => {
 			// Skip in CI environment
 			if (process.env.CI) {
-				console.log("⏭️ Skipping CPU profiling test in CI");
+				console.info("⏭️ Skipping CPU profiling test in CI");
 				return;
 			}
 

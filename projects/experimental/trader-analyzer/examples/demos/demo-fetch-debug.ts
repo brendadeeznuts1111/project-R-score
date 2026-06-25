@@ -42,22 +42,22 @@ import {
   formatAsCurl,
 } from "../src/utils/fetch-debug";
 
-console.log("\n" + "═".repeat(70));
-console.log("  Bun Verbose Fetch Debugging Demo");
-console.log("═".repeat(70) + "\n");
+console.info("\n" + "═".repeat(70));
+console.info("  Bun Verbose Fetch Debugging Demo");
+console.info("═".repeat(70) + "\n");
 
 // Example 1: Enable verbose fetch globally
-console.log("📋 Example 1: Enable Verbose Fetch Globally");
-console.log("-".repeat(70));
-console.log(`Current state: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
+console.info("📋 Example 1: Enable Verbose Fetch Globally");
+console.info("-".repeat(70));
+console.info(`Current state: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
 
 enableVerboseFetch();
-console.log(`After enable: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
-console.log("\nNow all fetch() calls will output curl commands:\n");
+console.info(`After enable: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
+console.info("\nNow all fetch() calls will output curl commands:\n");
 
 // Example 2: Format as curl command
-console.log("📋 Example 2: Format Fetch Options as Curl Command");
-console.log("-".repeat(70));
+console.info("📋 Example 2: Format Fetch Options as Curl Command");
+console.info("-".repeat(70));
 
 const curlCommand = formatAsCurl("https://example.com", {
   method: "POST",
@@ -68,14 +68,14 @@ const curlCommand = formatAsCurl("https://example.com", {
   body: JSON.stringify({ foo: "bar", nested: { value: 42 } }),
 });
 
-console.log("Generated curl command:");
-console.log(curlCommand);
-console.log();
+console.info("Generated curl command:");
+console.info(curlCommand);
+console.info();
 
 // Example 3: Debug fetch with automatic verbose logging
-console.log("📋 Example 3: Debug Fetch (Automatic Verbose)");
-console.log("-".repeat(70));
-console.log("Making request with automatic curl output...\n");
+console.info("📋 Example 3: Debug Fetch (Automatic Verbose)");
+console.info("-".repeat(70));
+console.info("Making request with automatic curl output...\n");
 
 try {
   await debugFetch("https://httpbin.org/post", {
@@ -85,14 +85,14 @@ try {
     },
     body: JSON.stringify({ test: "data", timestamp: Date.now() }),
   });
-  console.log("\n✅ Request completed (check output above for curl command)\n");
+  console.info("\n✅ Request completed (check output above for curl command)\n");
 } catch (error) {
-  console.log(`\n⚠️  Request failed: ${error instanceof Error ? error.message : String(error)}\n`);
+  console.info(`\n⚠️  Request failed: ${error instanceof Error ? error.message : String(error)}\n`);
 }
 
 // Example 4: Debug fetch with inspection
-console.log("📋 Example 4: Debug Fetch with Response Inspection");
-console.log("-".repeat(70));
+console.info("📋 Example 4: Debug Fetch with Response Inspection");
+console.info("-".repeat(70));
 
 try {
   const { response, metadata } = await debugFetchWithInspection(
@@ -105,43 +105,43 @@ try {
     true // logResponse
   );
   
-  console.log("\nResponse metadata:");
-  console.log(Bun.inspect(metadata, { colors: true }));
-  console.log();
+  console.info("\nResponse metadata:");
+  console.info(Bun.inspect(metadata, { colors: true }));
+  console.info();
 } catch (error) {
-  console.log(`\n⚠️  Request failed: ${error instanceof Error ? error.message : String(error)}\n`);
+  console.info(`\n⚠️  Request failed: ${error instanceof Error ? error.message : String(error)}\n`);
 }
 
 // Example 5: Environment-aware configuration
-console.log("📋 Example 5: Environment-Aware Configuration");
-console.log("-".repeat(70));
-console.log(`NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
-console.log(`DEBUG_FETCH: ${Bun.env.DEBUG_FETCH || 'not set'}`);
+console.info("📋 Example 5: Environment-Aware Configuration");
+console.info("-".repeat(70));
+console.info(`NODE_ENV: ${Bun.env.NODE_ENV || 'development'}`);
+console.info(`DEBUG_FETCH: ${Bun.env.DEBUG_FETCH || 'not set'}`);
 
 configureVerboseFetch();
-console.log(`Verbose fetch after auto-config: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
-console.log();
+console.info(`Verbose fetch after auto-config: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
+console.info();
 
 // Example 6: Create persistent verbose fetch
-console.log("📋 Example 6: Persistent Verbose Fetch Wrapper");
-console.log("-".repeat(70));
+console.info("📋 Example 6: Persistent Verbose Fetch Wrapper");
+console.info("-".repeat(70));
 
 const verboseFetch = createVerboseFetch();
-console.log("Created verbose fetch wrapper (always verbose)");
-console.log("Usage: await verboseFetch('https://api.example.com', options)");
-console.log();
+console.info("Created verbose fetch wrapper (always verbose)");
+console.info("Usage: await verboseFetch('https://api.example.com', options)");
+console.info();
 
 // Example 7: Disable verbose fetch
-console.log("📋 Example 7: Disable Verbose Fetch");
-console.log("-".repeat(70));
+console.info("📋 Example 7: Disable Verbose Fetch");
+console.info("-".repeat(70));
 
 disableVerboseFetch();
-console.log(`After disable: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
-console.log();
+console.info(`After disable: ${isVerboseFetchEnabled() ? 'enabled' : 'disabled'}`);
+console.info();
 
-console.log("═".repeat(70));
-console.log("  Demo Complete!");
-console.log("═".repeat(70));
-console.log("\n💡 Tip: Set BUN_CONFIG_VERBOSE_FETCH=curl to enable globally");
-console.log("💡 Tip: Use debugFetch() for one-off verbose requests");
-console.log("💡 Tip: Check Bun debugger docs for syntax-highlighted source preview\n");
+console.info("═".repeat(70));
+console.info("  Demo Complete!");
+console.info("═".repeat(70));
+console.info("\n💡 Tip: Set BUN_CONFIG_VERBOSE_FETCH=curl to enable globally");
+console.info("💡 Tip: Use debugFetch() for one-off verbose requests");
+console.info("💡 Tip: Check Bun debugger docs for syntax-highlighted source preview\n");

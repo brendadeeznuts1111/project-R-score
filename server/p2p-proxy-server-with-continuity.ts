@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * P2P Proxy Server v3 - With Business Continuity
- * 
+ *
  * Enhanced with:
  * - Business alias support
  * - Payment forwarding
@@ -10,20 +10,21 @@
  */
 
 import Redis from 'ioredis';
-import { BusinessContinuity } from '@fw/p2p';
-import { CustomerNotifier } from '@fw/p2p';
-import { executeBusinessMigration, handlePaymentAccountLoss } from '@fw/p2p';
+import { BusinessContinuity } from '@factorywager/p2p';
+import { CustomerNotifier } from '@factorywager/p2p';
+import { executeBusinessMigration, handlePaymentAccountLoss } from '@factorywager/p2p';
+import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+const redis = new Redis(REDIS_URL, {
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // Business-Aware P2P Proxy
@@ -56,10 +57,10 @@ class BusinessAwareProxy {
   }> {
     // Default alias from env if not provided
     const businessAlias = alias || Bun.env.PROXY_BRAND_NAME || 'HaircutPro';
-    
+
     try {
       const businessInfo = await BusinessContinuity.getCurrentPaymentHandles(businessAlias);
-      
+
       // Check for forwarding
       const forwarding = await BusinessContinuity.getForwardingInfo(businessAlias);
       if (!businessInfo.isActive && forwarding.isActive && forwarding.to) {
@@ -73,11 +74,11 @@ class BusinessAwareProxy {
           isActive: true,
           redirectTo: forwarding.to,
           message: `${businessAlias} has moved to ${forwarding.to}`,
-          color: newInfo.branding?.primaryColor || Bun.env.PROXY_COLOR ?? '#FF6B35',
-          branding: newInfo.branding
+          color: (newInfo.branding?.primaryColor || Bun.env.PROXY_COLOR) ?? '#FF6B35',
+          branding: newInfo.branding,
         };
       }
-      
+
       return {
         brandName: businessAlias,
         cashTag: businessInfo.handles.cashapp,
@@ -86,8 +87,8 @@ class BusinessAwareProxy {
         isActive: businessInfo.isActive,
         redirectTo: businessInfo.redirectTo,
         message: businessInfo.message,
-        color: businessInfo.branding?.primaryColor || Bun.env.PROXY_COLOR ?? '#FF6B35',
-        branding: businessInfo.branding
+        color: (businessInfo.branding?.primaryColor || Bun.env.PROXY_COLOR) ?? '#FF6B35',
+        branding: businessInfo.branding,
       };
     } catch (error: any) {
       // Fallback to environment config
@@ -101,8 +102,8 @@ class BusinessAwareProxy {
         color: Bun.env.PROXY_COLOR ?? '#FF6B35',
         branding: {
           primaryColor: Bun.env.PROXY_COLOR ?? '#FF6B35',
-          logoText: (Bun.env.PROXY_BRAND_NAME ?? 'HaircutPro').charAt(0)
-        }
+          logoText: (Bun.env.PROXY_BRAND_NAME ?? 'HaircutPro').charAt(0),
+        },
       };
     }
   }
@@ -116,22 +117,22 @@ class BusinessAwareProxy {
     provider: 'paypal' | 'venmo' | 'cashapp'
   ): Promise<boolean> {
     const secret = Bun.env[`${provider.toUpperCase()}_WEBHOOK_SECRET`];
-    
+
     if (!secret) {
-      console.log(`⚠️  ${provider} secret not set - accepting (dev mode)`);
+      console.info(`⚠️  ${provider} secret not set - accepting (dev mode)`);
       return true;
     }
-    
+
     const hasher = new Bun.CryptoHasher('sha256', secret);
     hasher.update(body);
     const expectedSig = hasher.digest('hex');
-    
+
     const headerName = {
       paypal: 'paypal-transmission-sig',
       venmo: 'x-venmo-signature',
-      cashapp: 'square-signature'
+      cashapp: 'square-signature',
     }[provider];
-    
+
     const receivedSig = headers.get(headerName)?.replace('v1=', '');
     return expectedSig === receivedSig;
   }
@@ -164,17 +165,17 @@ class BusinessAwareProxy {
     // 1. Get business info for this alias
     let businessInfo;
     let actualAlias = receivedAlias;
-    
+
     try {
       businessInfo = await BusinessContinuity.getCurrentPaymentHandles(receivedAlias);
-      
+
       // Check if forwarding is active
       const forwarding = await BusinessContinuity.getForwardingInfo(receivedAlias);
       if (!businessInfo.isActive && forwarding.isActive && forwarding.to) {
-        console.log(`↪️ Forwarding payment from ${receivedAlias} to ${forwarding.to}`);
+        console.info(`↪️ Forwarding payment from ${receivedAlias} to ${forwarding.to}`);
         actualAlias = forwarding.to;
         businessInfo = await BusinessContinuity.getCurrentPaymentHandles(forwarding.to);
-        
+
         // Notify customer of change
         // (stealthId will be generated below)
       }
@@ -183,58 +184,58 @@ class BusinessAwareProxy {
       actualAlias = Bun.env.PROXY_BRAND_NAME || 'HaircutPro';
       console.warn(`Business "${receivedAlias}" not found, using default`);
     }
-    
+
     // 2. Extract payment details
     let userId: string, amount: number, paymentId: string;
-    
+
     switch (provider) {
       case 'paypal':
-        userId = payload.resource?.payer?.payer_info?.email ?? 
-                payload.resource?.sender_email ?? 'unknown';
+        userId =
+          payload.resource?.payer?.payer_info?.email ?? payload.resource?.sender_email ?? 'unknown';
         amount = parseFloat(payload.resource?.amount?.total || 0);
         paymentId = payload.resource?.id ?? `pp_${Date.now()}`;
         break;
-        
+
       case 'venmo':
         userId = payload.data?.actor?.username ?? 'unknown';
-        amount = typeof payload.data?.amount === 'string' 
-          ? parseFloat(payload.data.amount) 
-          : Number(payload.data?.amount || 0);
+        amount =
+          typeof payload.data?.amount === 'string'
+            ? parseFloat(payload.data.amount)
+            : Number(payload.data?.amount || 0);
         paymentId = payload.data?.id ?? `vm_${Date.now()}`;
         break;
-        
+
       case 'cashapp':
-        userId = payload.data?.buyer_email_address ?? 
-                payload.data?.customer_id ?? 'cashapp_user';
+        userId = payload.data?.buyer_email_address ?? payload.data?.customer_id ?? 'cashapp_user';
         amount = parseFloat(payload.data?.amount_money?.amount || 0) / 100;
         paymentId = payload.data?.payment_id ?? `ca_${Date.now()}`;
         break;
     }
-    
+
     if (!userId || amount <= 0) {
       throw new Error('Invalid payment data');
     }
-    
+
     // 3. Generate stealth ID with business context
     const stealthId = this.generateStealthUserId(userId, provider, actualAlias);
-    
+
     // 4. Calculate bonus
     const habitsKey = `habits:${stealthId}`;
     const habitsData = await redis.hgetall(habitsKey);
-    
+
     let tier = habitsData?.tier || 'new';
     let bonusRate = 0.05;
-    
-    if (tier === 'whale') bonusRate = 0.20;
+
+    if (tier === 'whale') bonusRate = 0.2;
     else if (tier === 'high-volume') bonusRate = 0.15;
-    else if (tier === 'active') bonusRate = 0.10;
-    
+    else if (tier === 'active') bonusRate = 0.1;
+
     const txnCount = parseInt(habitsData?.txnCount || '0');
     if (txnCount === 0) bonusRate += 0.05;
-    
+
     const bonus = Math.round(amount * bonusRate * 100) / 100;
     const totalCredit = amount + bonus;
-    
+
     // 5. Record payment
     const txnKey = `p2p:${stealthId}:${Date.now()}`;
     await redis.hmset(txnKey, {
@@ -245,28 +246,28 @@ class BusinessAwareProxy {
       amount: amount.toString(),
       bonus: bonus.toString(),
       timestamp: new Date().toISOString(),
-      status: 'received'
+      status: 'received',
     });
-    
+
     // 6. Update balance and habits
     await redis.incrbyfloat(`balance:${stealthId}`, totalCredit);
     await redis.hincrby(habitsKey, 'txnCount', 1);
     await redis.hset(habitsKey, 'lastTxn', Date.now().toString());
     await redis.hincrbyfloat(habitsKey, 'totalSpent', amount);
     await redis.hset(habitsKey, 'lastBusiness', actualAlias);
-    
+
     // Update tier
-    const newCount = parseInt(await redis.hget(habitsKey, 'txnCount') || '1');
-    const totalSpent = parseFloat(await redis.hget(habitsKey, 'totalSpent') || '0');
+    const newCount = parseInt((await redis.hget(habitsKey, 'txnCount')) || '1');
+    const totalSpent = parseFloat((await redis.hget(habitsKey, 'totalSpent')) || '0');
     const avgTxn = totalSpent / newCount;
-    
+
     let newTier = 'casual';
     if (newCount > 100 && avgTxn > 100) newTier = 'whale';
     else if (newCount > 50) newTier = 'high-volume';
     else if (newCount > 20 && avgTxn > 20) newTier = 'active';
-    
+
     await redis.hset(habitsKey, 'tier', newTier);
-    
+
     // 7. Notify customer if alias changed
     if (receivedAlias !== actualAlias) {
       await CustomerNotifier.notifyPaymentToOldBusiness(
@@ -276,20 +277,23 @@ class BusinessAwareProxy {
         amount
       );
     }
-    
+
     // 8. Publish events
-    await redis.publish('p2p:payment', JSON.stringify({
-      stealthId,
-      provider,
-      businessAlias: actualAlias,
-      amount,
-      bonus,
-      totalCredit,
-      tier: newTier,
-      timestamp: Date.now(),
-      paymentId
-    }));
-    
+    await redis.publish(
+      'p2p:payment',
+      JSON.stringify({
+        stealthId,
+        provider,
+        businessAlias: actualAlias,
+        amount,
+        bonus,
+        totalCredit,
+        tier: newTier,
+        timestamp: Date.now(),
+        paymentId,
+      })
+    );
+
     return {
       success: true,
       amount,
@@ -297,7 +301,7 @@ class BusinessAwareProxy {
       stealthId,
       bonus,
       tier: newTier,
-      businessAlias: actualAlias
+      businessAlias: actualAlias,
     };
   }
 }
@@ -310,17 +314,19 @@ function generatePaymentPage(amount: number, description: string, config: any): 
   const cashappUrl = `https://cash.app/${config.cashTag.replace('$', '')}/${amount}`;
   const venmoUrl = `https://venmo.com/${config.venmoHandle.replace('@', '')}?txn=pay&amount=${amount}`;
   const paypalUrl = `https://${config.paypalLink}/${amount}`;
-  
+
   // Extract branding config
   const branding = config.branding || {};
   const logoUrl = branding.logoUrl;
   const logoText = branding.logoText || config.brandName.charAt(0);
   const primaryColor = branding.primaryColor || config.color;
   const secondaryColor = branding.secondaryColor || primaryColor;
-  const backgroundColor = branding.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-  const fontFamily = branding.fontFamily || "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  const backgroundColor =
+    branding.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  const fontFamily =
+    branding.fontFamily || "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
   const faviconUrl = branding.faviconUrl;
-  
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -330,7 +336,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
   ${faviconUrl ? `<link rel="icon" href="${faviconUrl}">` : ''}
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
+    body {
       font-family: ${fontFamily};
       background: ${backgroundColor};
       min-height: 100vh;
@@ -436,9 +442,9 @@ function generatePaymentPage(amount: number, description: string, config: any): 
     <div class="logo">${logoUrl ? '' : logoText}</div>
     <h1>${config.brandName}</h1>
     <p class="desc">${description}</p>
-    
+
     <div class="amount">$${amount}</div>
-    
+
     <div class="options">
       <a href="${cashappUrl}" class="option" target="_blank">
         <div class="option-icon cashapp">$</div>
@@ -448,7 +454,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         </div>
         →
       </a>
-      
+
       <a href="${venmoUrl}" class="option" target="_blank">
         <div class="option-icon venmo">V</div>
         <div class="option-text">
@@ -457,7 +463,7 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         </div>
         →
       </a>
-      
+
       <a href="${paypalUrl}" class="option" target="_blank">
         <div class="option-icon paypal">P</div>
         <div class="option-text">
@@ -467,16 +473,16 @@ function generatePaymentPage(amount: number, description: string, config: any): 
         →
       </a>
     </div>
-    
+
     <button class="share-btn" onclick="sharePayment()">
       📱 Share Payment Link
     </button>
-    
+
     <div class="footer">
       Secured by P2P Proxy • Funds go directly to merchant
     </div>
   </div>
-  
+
   <script>
     function sharePayment() {
       if (navigator.share) {
@@ -500,44 +506,59 @@ function generatePaymentPage(amount: number, description: string, config: any): 
 // ============================================================================
 
 const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
-const ADMIN_SECRET = Bun.env.ADMIN_SECRET ?? 'admin-secret-change-in-production';
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+if (!ADMIN_SECRET) {
+  console.error('ADMIN_SECRET env var not set — admin endpoints disabled');
+}
 
 const server = Bun.serve({
   port: PORT,
-  hostname: '0.0.0.0',
-  
+  hostname: process.env.SERVER_HOST || 'localhost',
+
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
     const headers = req.headers;
-    
+
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin =
+      allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins.length > 0
+          ? 'null'
+          : '*';
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      Vary: 'Origin',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check
     if (url.pathname === '/health') {
-      return new Response(JSON.stringify({
-        status: 'ok',
-        version: 'p2p-proxy-v3-continuity',
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          version: 'p2p-proxy-v3-continuity',
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // ========== ADMIN ENDPOINTS ==========
-    
+
     // Check admin auth
     const isAdmin = headers.get('Authorization')?.includes(`Bearer ${ADMIN_SECRET}`);
-    
+
     // List all businesses
     if (url.pathname === '/admin/businesses' && req.method === 'GET' && isAdmin) {
       try {
@@ -548,11 +569,11 @@ const server = Bun.serve({
       } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
           status: 500,
-          headers: corsHeaders
+          headers: corsHeaders,
         });
       }
     }
-    
+
     // Create/Update business
     if (url.pathname === '/admin/business' && req.method === 'POST' && isAdmin) {
       try {
@@ -564,11 +585,11 @@ const server = Bun.serve({
       } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
           status: 400,
-          headers: corsHeaders
+          headers: corsHeaders,
         });
       }
     }
-    
+
     // Migrate business
     if (url.pathname === '/admin/migrate' && req.method === 'POST' && isAdmin) {
       try {
@@ -583,11 +604,11 @@ const server = Bun.serve({
       } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
           status: 400,
-          headers: corsHeaders
+          headers: corsHeaders,
         });
       }
     }
-    
+
     // Get business statistics
     if (url.pathname === '/admin/stats' && req.method === 'GET' && isAdmin) {
       try {
@@ -595,10 +616,10 @@ const server = Bun.serve({
         if (!alias) {
           return new Response(JSON.stringify({ error: 'Alias required' }), {
             status: 400,
-            headers: corsHeaders
+            headers: corsHeaders,
           });
         }
-        
+
         const stats = await BusinessContinuity.getBusinessStats(alias);
         return new Response(JSON.stringify(stats), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -606,47 +627,49 @@ const server = Bun.serve({
       } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
           status: 400,
-          headers: corsHeaders
+          headers: corsHeaders,
         });
       }
     }
-    
+
     // ========== WEBHOOK ENDPOINT ==========
-    
+
     if (url.pathname === '/webhook/proxy' && req.method === 'POST') {
       try {
         let provider: 'paypal' | 'venmo' | 'cashapp' | null = null;
-        
+
         // Auto-detect provider
-        if (headers.get('user-agent')?.includes('PayPal') || headers.get('paypal-transmission-sig')) {
+        if (
+          headers.get('user-agent')?.includes('PayPal') ||
+          headers.get('paypal-transmission-sig')
+        ) {
           provider = 'paypal';
         } else if (headers.get('x-venmo-signature')) {
           provider = 'venmo';
         } else if (headers.get('square-signature')) {
           provider = 'cashapp';
         }
-        
+
         if (!provider) {
-          return new Response(
-            JSON.stringify({ error: 'Unknown provider' }),
-            { status: 400, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Unknown provider' }), {
+            status: 400,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Verify signature
         const isValid = await BusinessAwareProxy.verifyProviderSignature(body, headers, provider);
         if (!isValid) {
-          return new Response(
-            JSON.stringify({ error: 'Invalid signature' }),
-            { status: 401, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Invalid signature' }), {
+            status: 401,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Get business alias from header or use default
-        const businessAlias = headers.get('x-business-alias') || 
-                             Bun.env.PROXY_BRAND_NAME || 
-                             'HaircutPro';
-        
+        const businessAlias =
+          headers.get('x-business-alias') || Bun.env.PROXY_BRAND_NAME || 'HaircutPro';
+
         // Process payment with business context
         const payload = JSON.parse(body);
         const result = await BusinessAwareProxy.handlePaymentWithBusinessContext(
@@ -654,29 +677,30 @@ const server = Bun.serve({
           payload,
           businessAlias
         );
-        
-        console.log(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier}) [${result.businessAlias}]`);
-        
+
+        console.info(
+          `✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier}) [${result.businessAlias}]`
+        );
+
         return new Response(JSON.stringify({ success: true, ...result }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
-        
       } catch (error: any) {
         console.error('Webhook error:', error);
-        return new Response(
-          JSON.stringify({ error: error.message }),
-          { status: 500, headers: corsHeaders }
-        );
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: corsHeaders,
+        });
       }
     }
-    
+
     // ========== PAYMENT PAGE ==========
-    
+
     if ((url.pathname === '/pay' || url.pathname === '/qr') && req.method === 'GET') {
       const amount = Number(url.searchParams.get('amount')) || 20;
       const description = url.searchParams.get('desc') || 'Service';
       const alias = url.searchParams.get('alias') || undefined;
-      
+
       try {
         const config = await BusinessAwareProxy.getBrandConfig(alias);
         return new Response(generatePaymentPage(amount, description, config), {
@@ -686,18 +710,18 @@ const server = Bun.serve({
         return new Response(`Error: ${error.message}`, { status: 500 });
       }
     }
-    
+
     // ========== CUSTOMER PORTAL ==========
-    
+
     if (url.pathname === '/portal' && req.method === 'GET') {
       const stealthId = url.searchParams.get('id');
       if (!stealthId) {
         return new Response('Customer ID required', { status: 400, headers: corsHeaders });
       }
-      
+
       try {
         const portal = await CustomerNotifier.generateCustomerPortal(stealthId);
-        
+
         const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -714,49 +738,60 @@ const server = Bun.serve({
 </head>
 <body>
     <h1>Your Payment Portal</h1>
-    
+
     <div class="alert">
-        ${portal.unreadNotifications > 0 ? 
-          `<strong>You have ${portal.unreadNotifications} unread notifications</strong>` : 
-          'No new notifications'}
+        ${
+          portal.unreadNotifications > 0
+            ? `<strong>You have ${portal.unreadNotifications} unread notifications</strong>`
+            : 'No new notifications'
+        }
     </div>
-    
+
     <h2>Recent Notifications</h2>
-    ${portal.recentNotifications.map((n: any) => `
+    ${portal.recentNotifications
+      .map(
+        (n: any) => `
         <div class="notification ${n.read ? '' : 'unread'}">
             <strong>${n.title}</strong>
             <p>${n.message}</p>
             <small>${new Date(n.timestamp).toLocaleDateString()}</small>
             ${n.action ? `<br><a href="${n.action.url}" class="update-link">Update payment link →</a>` : ''}
         </div>
-    `).join('')}
-    
+    `
+      )
+      .join('')}
+
     <h2>Businesses You've Paid</h2>
     <div class="business-list">
-        ${portal.subscribedBusinesses.map((b: string) => `
+        ${portal.subscribedBusinesses
+          .map(
+            (b: string) => `
             <div class="business-tag">${b}</div>
-        `).join('')}
+        `
+          )
+          .join('')}
     </div>
 </body>
 </html>`;
-        
+
         return new Response(html, {
-          headers: { 'Content-Type': 'text/html' }
+          headers: { 'Content-Type': 'text/html' },
         });
       } catch (error: any) {
         return new Response(`Error: ${error.message}`, { status: 500 });
       }
     }
-    
+
     // Root
-    return new Response(`<!DOCTYPE html>
+    return new Response(
+      `<!DOCTYPE html>
 <html>
 <head>
   <title>P2P Proxy v3 - Business Continuity</title>
   <style>
     body { font-family: system-ui; padding: 40px; text-align: center; }
-    a { display: inline-block; margin: 10px; padding: 15px 30px; 
-        background: #007bff; color: white; 
+    a { display: inline-block; margin: 10px; padding: 15px 30px;
+        background: #007bff; color: white;
         text-decoration: none; border-radius: 8px; }
   </style>
 </head>
@@ -768,26 +803,28 @@ const server = Bun.serve({
     <a href="/admin/businesses">👔 Admin (requires auth)</a>
   </div>
 </body>
-</html>`, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+</html>`,
+      {
+        headers: { 'Content-Type': 'text/html' },
+      }
+    );
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  💈 P2P Proxy v3 - Business Continuity                    ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
-console.log(`║  Admin:   http://localhost:${PORT}/admin/businesses        ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • Business alias support                                 ║');
-console.log('║    • Payment forwarding                                     ║');
-console.log('║    • Customer notifications                                  ║');
-console.log('║    • Admin dashboard                                        ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  💈 P2P Proxy v3 - Business Continuity                    ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
+console.info(`║  Admin:   http://localhost:${PORT}/admin/businesses        ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • Business alias support                                 ║');
+console.info('║    • Payment forwarding                                     ║');
+console.info('║    • Customer notifications                                  ║');
+console.info('║    • Admin dashboard                                        ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

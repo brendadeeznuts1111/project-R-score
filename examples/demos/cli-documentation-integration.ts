@@ -19,8 +19,8 @@ import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
  * Example 1: Basic CLI Documentation URL Generation
  */
 async function basicDocumentationURLs() {
-  console.log('📚 Basic CLI Documentation URL Generation');
-  console.log('='.repeat(50));
+  console.info('📚 Basic CLI Documentation URL Generation');
+  console.info('='.repeat(50));
 
   // Generate various documentation URLs
   const installURL = CLIDocumentationHandler.generateInstallationURL('windows', {
@@ -38,26 +38,26 @@ async function basicDocumentationURLs() {
     format: 'json'
   });
 
-  console.log('🔗 Generated Documentation URLs:');
-  console.log(`   Windows Installation: ${installURL}`);
-  console.log(`   Test Command: ${testURL}`);
-  console.log(`   Debug Logging: ${debugURL}`);
+  console.info('🔗 Generated Documentation URLs:');
+  console.info(`   Windows Installation: ${installURL}`);
+  console.info(`   Test Command: ${testURL}`);
+  console.info(`   Debug Logging: ${debugURL}`);
 
   // Parse generated URLs
   const parsedTest = CLIDocumentationHandler.parseDocumentationURL(testURL);
-  console.log('\n🔍 Parsed Test URL:');
-  console.log(`   Valid: ${parsedTest.valid}`);
-  console.log(`   Category: ${parsedTest.category}`);
-  console.log(`   Page: ${parsedTest.page}`);
-  console.log(`   Fragment: ${JSON.stringify(parsedTest.fragment, null, 2)}`);
+  console.info('\n🔍 Parsed Test URL:');
+  console.info(`   Valid: ${parsedTest.valid}`);
+  console.info(`   Category: ${parsedTest.category}`);
+  console.info(`   Page: ${parsedTest.page}`);
+  console.info(`   Fragment: ${JSON.stringify(parsedTest.fragment, null, 2)}`);
 }
 
 /**
  * Example 2: Advanced Fragment Operations
  */
 async function advancedFragmentOperations() {
-  console.log('\n🧩 Advanced Fragment Operations');
-  console.log('='.repeat(50));
+  console.info('\n🧩 Advanced Fragment Operations');
+  console.info('='.repeat(50));
 
   // Create URL with multiple fragment parameters
   let url = CLIDocumentationHandler.generateDocumentationURL(
@@ -71,34 +71,34 @@ async function advancedFragmentOperations() {
     }
   );
 
-  console.log('🔗 Complex Documentation URL:');
-  console.log(`   ${url}`);
+  console.info('🔗 Complex Documentation URL:');
+  console.info(`   ${url}`);
 
   // Modify fragment parameters
   url = URLFragmentUtils.setFragmentParam(url, 'minify', 'false');
   url = URLFragmentUtils.setFragmentParam(url, 'splitting', 'true');
   url = URLFragmentUtils.removeFragmentParam(url, 'sourcemap');
 
-  console.log('\n✏️ Modified URL:');
-  console.log(`   ${url}`);
+  console.info('\n✏️ Modified URL:');
+  console.info(`   ${url}`);
 
   // Extract specific fragment values
   const target = URLFragmentUtils.getFragmentParam(url, 'target');
   const minify = URLFragmentUtils.getFragmentParam(url, 'minify');
   const splitting = URLFragmentUtils.getFragmentParam(url, 'splitting');
 
-  console.log('\n🔍 Fragment Parameters:');
-  console.log(`   Target: ${target}`);
-  console.log(`   Minify: ${minify}`);
-  console.log(`   Splitting: ${splitting}`);
+  console.info('\n🔍 Fragment Parameters:');
+  console.info(`   Target: ${target}`);
+  console.info(`   Minify: ${minify}`);
+  console.info(`   Splitting: ${splitting}`);
 }
 
 /**
  * Example 3: CLI Documentation Search
  */
 async function documentationSearch() {
-  console.log('\n🔍 CLI Documentation Search');
-  console.log('='.repeat(50));
+  console.info('\n🔍 CLI Documentation Search');
+  console.info('='.repeat(50));
 
   const searchQueries = ['test', 'build', 'install', 'debug'];
 
@@ -106,15 +106,15 @@ async function documentationSearch() {
     const results = CLIDocumentationSearch.searchCommands(query);
     const searchURL = CLIDocumentationSearch.generateSearchResultsURL(query, results);
 
-    console.log(`\n🔍 Search for "${query}":`);
-    console.log(`   Found ${results.length} results`);
+    console.info(`\n🔍 Search for "${query}":`);
+    console.info(`   Found ${results.length} results`);
     
     results.slice(0, 3).forEach(result => {
-      console.log(`     📋 ${result.command} (${result.category})`);
-      console.log(`        ${result.description}`);
+      console.info(`     📋 ${result.command} (${result.category})`);
+      console.info(`        ${result.description}`);
     });
 
-    console.log(`   🔗 Search URL: ${searchURL}`);
+    console.info(`   🔗 Search URL: ${searchURL}`);
   }
 }
 
@@ -122,8 +122,8 @@ async function documentationSearch() {
  * Example 4: Interactive Examples Generation
  */
 async function interactiveExamples() {
-  console.log('\n💡 Interactive Examples Generation');
-  console.log('='.repeat(50));
+  console.info('\n💡 Interactive Examples Generation');
+  console.info('='.repeat(50));
 
   // Generate example with syntax highlighting
   const testExample = CLIExampleGenerator.generateExampleWithHighlighting(
@@ -138,9 +138,9 @@ async function interactiveExamples() {
     'bun build ./src/index.ts --outdir ./dist --target browser'
   );
 
-  console.log('🎨 Syntax-Highlighted Examples:');
-  console.log(`   Test Example: ${testExample}`);
-  console.log(`   Build Example: ${buildExample}`);
+  console.info('🎨 Syntax-Highlighted Examples:');
+  console.info(`   Test Example: ${testExample}`);
+  console.info(`   Build Example: ${buildExample}`);
 
   // Generate interactive examples
   const interactiveTest = CLIExampleGenerator.generateInteractiveExample('bun test', {
@@ -155,9 +155,9 @@ async function interactiveExamples() {
     theme: 'light'
   });
 
-  console.log('\n🚀 Interactive Examples:');
-  console.log(`   Interactive Test: ${interactiveTest}`);
-  console.log(`   Interactive Dev: ${interactiveDev}`);
+  console.info('\n🚀 Interactive Examples:');
+  console.info(`   Interactive Test: ${interactiveTest}`);
+  console.info(`   Interactive Dev: ${interactiveDev}`);
 
   // Generate comparison examples
   const comparison = CLIExampleGenerator.generateComparisonURL(
@@ -169,32 +169,32 @@ async function interactiveExamples() {
     }
   );
 
-  console.log('\n⚖️ Comparison Example:');
-  console.log(`   Bun vs NPM: ${comparison}`);
+  console.info('\n⚖️ Comparison Example:');
+  console.info(`   Bun vs NPM: ${comparison}`);
 }
 
 /**
  * Example 5: Navigation Structure
  */
 async function navigationStructure() {
-  console.log('\n🧭 Navigation Structure');
-  console.log('='.repeat(50));
+  console.info('\n🧭 Navigation Structure');
+  console.info('='.repeat(50));
 
   const navigation = CLIDocumentationHandler.generateNavigationStructure();
 
-  console.log('📋 CLI Documentation Navigation:');
+  console.info('📋 CLI Documentation Navigation:');
   navigation.forEach(({ category, title, pages }) => {
-    console.log(`\n📂 ${title} (${category}):`);
+    console.info(`\n📂 ${title} (${category}):`);
     pages.slice(0, 5).forEach(page => {
-      console.log(`   📄 ${page.name}`);
-      console.log(`      ${page.url}`);
+      console.info(`   📄 ${page.name}`);
+      console.info(`      ${page.url}`);
       if (page.fragment) {
-        console.log(`      Fragment: ${JSON.stringify(page.fragment)}`);
+        console.info(`      Fragment: ${JSON.stringify(page.fragment)}`);
       }
     });
     
     if (pages.length > 5) {
-      console.log(`   ... and ${pages.length - 5} more pages`);
+      console.info(`   ... and ${pages.length - 5} more pages`);
     }
   });
 
@@ -206,10 +206,10 @@ async function navigationStructure() {
   );
 
   const breadcrumbs = CLIDocumentationHandler.generateBreadcrumbs(testURL);
-  console.log('\n🍞 Breadcrumbs for Test Documentation:');
+  console.info('\n🍞 Breadcrumbs for Test Documentation:');
   breadcrumbs.forEach((crumb, index) => {
     const arrow = index < breadcrumbs.length - 1 ? ' > ' : '';
-    console.log(`   ${crumb.name}${arrow}`);
+    console.info(`   ${crumb.name}${arrow}`);
   });
 }
 
@@ -217,8 +217,8 @@ async function navigationStructure() {
  * Example 6: Shareable Documentation Links
  */
 async function shareableLinks() {
-  console.log('\n🔗 Shareable Documentation Links');
-  console.log('='.repeat(50));
+  console.info('\n🔗 Shareable Documentation Links');
+  console.info('='.repeat(50));
 
   // Create shareable links with context
   const quickStartLink = CLIDocumentationHandler.createShareableLink({
@@ -241,37 +241,37 @@ async function shareableLinks() {
     section: 'setup'
   }, 1800); // 30 minutes expiry
 
-  console.log('🔗 Generated Shareable Links:');
-  console.log(`   Quick Start: ${quickStartLink}`);
-  console.log(`   Testing Guide: ${testingGuideLink}`);
-  console.log(`   Debugging Setup: ${debuggingSetupLink}`);
+  console.info('🔗 Generated Shareable Links:');
+  console.info(`   Quick Start: ${quickStartLink}`);
+  console.info(`   Testing Guide: ${testingGuideLink}`);
+  console.info(`   Debugging Setup: ${debuggingSetupLink}`);
 
   // Parse shareable links
   const parsedQuickStart = CLIDocumentationHandler.parseDocumentationURL(quickStartLink);
-  console.log('\n🔍 Parsed Quick Start Link:');
-  console.log(`   Valid: ${parsedQuickStart.valid}`);
-  console.log(`   Fragment: ${JSON.stringify(parsedQuickStart.fragment, null, 2)}`);
+  console.info('\n🔍 Parsed Quick Start Link:');
+  console.info(`   Valid: ${parsedQuickStart.valid}`);
+  console.info(`   Fragment: ${JSON.stringify(parsedQuickStart.fragment, null, 2)}`);
 }
 
 /**
  * Example 7: Quick Reference URLs
  */
 async function quickReferenceURLs() {
-  console.log('\n🚀 Quick Reference URLs');
-  console.log('='.repeat(50));
+  console.info('\n🚀 Quick Reference URLs');
+  console.info('='.repeat(50));
 
   const quickRefs = CLIDocumentationHandler.generateQuickReferenceURLs();
 
-  console.log('⚡ Quick Reference URLs:');
+  console.info('⚡ Quick Reference URLs:');
   Object.entries(quickRefs).forEach(([name, url]) => {
-    console.log(`   ${name}: ${url}`);
+    console.info(`   ${name}: ${url}`);
   });
 
   // Validate all quick reference URLs
-  console.log('\n✅ Validation Results:');
+  console.info('\n✅ Validation Results:');
   Object.entries(quickRefs).forEach(([name, url]) => {
     const isValid = CLIDocumentationHandler.validateDocumentationURL(url);
-    console.log(`   ${name}: ${isValid ? '✅' : '❌'}`);
+    console.info(`   ${name}: ${isValid ? '✅' : '❌'}`);
   });
 }
 
@@ -279,14 +279,14 @@ async function quickReferenceURLs() {
  * Example 8: MCP Server Integration
  */
 async function mcpServerIntegration() {
-  console.log('\n🖥️ MCP Server Integration');
-  console.log('='.repeat(50));
+  console.info('\n🖥️ MCP Server Integration');
+  console.info('='.repeat(50));
 
   // Initialize MCP server
   await cliDocumentationMCPServer.displayStatus();
 
   // Demonstrate MCP server features
-  console.log('\n🎯 MCP Server Features Demonstration:');
+  console.info('\n🎯 MCP Server Features Demonstration:');
 
   // Get documentation URL via MCP
   const docResult = await cliDocumentationMCPServer.getDocumentationURL(
@@ -294,11 +294,11 @@ async function mcpServerIntegration() {
     'BUILD',
     { example: 'production' }
   );
-  console.log(`   📖 Documentation URL: ${docResult.url}`);
+  console.info(`   📖 Documentation URL: ${docResult.url}`);
 
   // Search via MCP
   const searchResult = await cliDocumentationMCPServer.searchDocumentation('test');
-  console.log(`   🔍 Search Results: Found ${searchResult.results.length} results`);
+  console.info(`   🔍 Search Results: Found ${searchResult.results.length} results`);
 
   // Generate example via MCP
   const exampleResult = await cliDocumentationMCPServer.generateCommandExample(
@@ -306,29 +306,29 @@ async function mcpServerIntegration() {
     'TEST',
     'bun test --coverage'
   );
-  console.log(`   💡 Example URL: ${exampleResult.url}`);
+  console.info(`   💡 Example URL: ${exampleResult.url}`);
 
   // Get navigation via MCP
   const navigation = await cliDocumentationMCPServer.getNavigationStructure();
-  console.log(`   🧭 Navigation: ${navigation.length} categories`);
+  console.info(`   🧭 Navigation: ${navigation.length} categories`);
 
   // Generate breadcrumbs via MCP
   const breadcrumbs = await cliDocumentationMCPServer.getBreadcrumbs(docResult.url);
-  console.log(`   🍞 Breadcrumbs: ${breadcrumbs.length} items`);
+  console.info(`   🍞 Breadcrumbs: ${breadcrumbs.length} items`);
 }
 
 /**
  * Example 9: Real-world Documentation Workflow
  */
 async function realWorldWorkflow() {
-  console.log('\n🌍 Real-world Documentation Workflow');
-  console.log('='.repeat(50));
+  console.info('\n🌍 Real-world Documentation Workflow');
+  console.info('='.repeat(50));
 
   // Simulate a developer workflow
-  console.log('👨‍💻 Developer Documentation Workflow:');
+  console.info('👨‍💻 Developer Documentation Workflow:');
 
   // 1. New developer wants to learn testing
-  console.log('\n1️⃣ Learning Bun Testing:');
+  console.info('\n1️⃣ Learning Bun Testing:');
   const testingURL = CLIDocumentationHandler.generateDocumentationURL(
     CLICategory.COMMANDS,
     'TEST',
@@ -338,10 +338,10 @@ async function realWorldWorkflow() {
       interactive: 'true'
     }
   );
-  console.log(`   📖 Start here: ${testingURL}`);
+  console.info(`   📖 Start here: ${testingURL}`);
 
   // 2. Developer needs advanced build options
-  console.log('\n2️⃣ Advanced Build Configuration:');
+  console.info('\n2️⃣ Advanced Build Configuration:');
   const buildURL = CLIDocumentationHandler.generateDocumentationURL(
     CLICategory.OPTIONS,
     'CONFIG_FILE',
@@ -351,19 +351,19 @@ async function realWorldWorkflow() {
       examples: 'production'
     }
   );
-  console.log(`   ⚙️ Build config: ${buildURL}`);
+  console.info(`   ⚙️ Build config: ${buildURL}`);
 
   // 3. Developer encounters debugging needs
-  console.log('\n3️⃣ Debugging Setup:');
+  console.info('\n3️⃣ Debugging Setup:');
   const debugURL = CLIDocumentationHandler.generateDebuggingURL('debugger', {
     ide: 'vscode',
     breakpoints: 'true',
     console: 'integrated'
   });
-  console.log(`   🐛 Debug setup: ${debugURL}`);
+  console.info(`   🐛 Debug setup: ${debugURL}`);
 
   // 4. Create shareable learning path
-  console.log('\n4️⃣ Shareable Learning Path:');
+  console.info('\n4️⃣ Shareable Learning Path:');
   const learningPath = CLIDocumentationHandler.createShareableLink({
     category: CLICategory.COMMANDS,
     section: 'learning-path',
@@ -371,25 +371,25 @@ async function realWorldWorkflow() {
     level: 'intermediate'
   }, 86400); // 24 hours
 
-  console.log(`   🎓 Learning path: ${learningPath}`);
+  console.info(`   🎓 Learning path: ${learningPath}`);
 
   // 5. Team member searches for specific topic
-  console.log('\n5️⃣ Team Knowledge Search:');
+  console.info('\n5️⃣ Team Knowledge Search:');
   const searchResults = CLIDocumentationSearch.searchCommands('environment variables');
-  console.log(`   🔍 Found ${searchResults.results.length} resources about environment variables`);
+  console.info(`   🔍 Found ${searchResults.results.length} resources about environment variables`);
 
   // 6. Generate quick reference for team
-  console.log('\n6️⃣ Team Quick Reference:');
+  console.info('\n6️⃣ Team Quick Reference:');
   const teamQuickRef = CLIDocumentationHandler.generateQuickReferenceURLs();
-  console.log('   📋 Quick reference created for team');
+  console.info('   📋 Quick reference created for team');
 }
 
 /**
  * Example 10: URL Fragment State Management
  */
 async function fragmentStateManagement() {
-  console.log('\n🧩 URL Fragment State Management');
-  console.log('='.repeat(50));
+  console.info('\n🧩 URL Fragment State Management');
+  console.info('='.repeat(50));
 
   // Simulate application state management
   class DocumentationAppState {
@@ -433,33 +433,33 @@ async function fragmentStateManagement() {
     example: 'basic'
   });
 
-  console.log('🔄 State Management Demo:');
-  console.log(`   Initial URL: ${baseURL}`);
+  console.info('🔄 State Management Demo:');
+  console.info(`   Initial URL: ${baseURL}`);
 
   // Update specific property
   baseURL = appState.updateState(baseURL, 'example', 'advanced');
-  console.log(`   Updated example: ${baseURL}`);
+  console.info(`   Updated example: ${baseURL}`);
 
   // Add more state
   baseURL = appState.updateState(baseURL, 'highlight', 'true');
-  console.log(`   Added highlight: ${baseURL}`);
+  console.info(`   Added highlight: ${baseURL}`);
 
   // Restore state
   const restoredState = appState.restoreStateFromURL(baseURL);
-  console.log(`   Restored state: ${JSON.stringify(restoredState, null, 2)}`);
+  console.info(`   Restored state: ${JSON.stringify(restoredState, null, 2)}`);
 
   // Clear state
   baseURL = appState.clearState(baseURL);
-  console.log(`   Cleared state: ${baseURL}`);
+  console.info(`   Cleared state: ${baseURL}`);
 }
 
 /**
  * Main demonstration function
  */
 async function main() {
-  console.log('📚 CLI Documentation Integration Examples');
-  console.log('='.repeat(70));
-  console.log('');
+  console.info('📚 CLI Documentation Integration Examples');
+  console.info('='.repeat(70));
+  console.info('');
 
   try {
     await basicDocumentationURLs();
@@ -473,18 +473,18 @@ async function main() {
     await realWorldWorkflow();
     await fragmentStateManagement();
 
-    console.log('\n✅ All CLI documentation integration examples completed successfully!');
-    console.log('');
-    console.log('📋 Key Features Demonstrated:');
-    console.log('   • URL generation with fragment support');
-    console.log('   • Advanced fragment parameter management');
-    console.log('   • CLI documentation search functionality');
-    console.log('   • Interactive example generation');
-    console.log('   • Navigation structure and breadcrumbs');
-    console.log('   • Shareable documentation links');
-    console.log('   • MCP server integration');
-    console.log('   • Real-world documentation workflows');
-    console.log('   • URL fragment state management');
+    console.info('\n✅ All CLI documentation integration examples completed successfully!');
+    console.info('');
+    console.info('📋 Key Features Demonstrated:');
+    console.info('   • URL generation with fragment support');
+    console.info('   • Advanced fragment parameter management');
+    console.info('   • CLI documentation search functionality');
+    console.info('   • Interactive example generation');
+    console.info('   • Navigation structure and breadcrumbs');
+    console.info('   • Shareable documentation links');
+    console.info('   • MCP server integration');
+    console.info('   • Real-world documentation workflows');
+    console.info('   • URL fragment state management');
 
   } catch (error) {
     console.error('❌ Error in CLI documentation examples:', error);

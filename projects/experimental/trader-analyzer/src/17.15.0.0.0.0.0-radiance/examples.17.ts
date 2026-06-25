@@ -29,18 +29,18 @@ import {
  * Example 1: Query Properties Registry
  */
 export async function exampleQueryProperties17() {
-	console.log("[17.15.0] Example: Query Properties Registry");
+	console.info("[17.15.0] Example: Query Properties Registry");
 
 	const props = await queryPropertiesRegistry17({
 		namespace: "users",
 		validationMode: "strict",
 	});
 
-	console.log(`Found ${props.length} properties`);
+	console.info(`Found ${props.length} properties`);
 	props.forEach((prop) => {
-		console.log(`  - ${prop.id}: ${prop.name}`);
-		console.log(`    Channel: ${prop.__radianceChannel}`);
-		console.log(`    Type: ${prop.__semanticType}`);
+		console.info(`  - ${prop.id}: ${prop.name}`);
+		console.info(`    Channel: ${prop.__radianceChannel}`);
+		console.info(`    Type: ${prop.__semanticType}`);
 	});
 
 	return props;
@@ -50,7 +50,7 @@ export async function exampleQueryProperties17() {
  * Example 2: Query with Type Guards
  */
 export async function exampleTypeGuards17() {
-	console.log("[17.15.0] Example: Type Guards");
+	console.info("[17.15.0] Example: Type Guards");
 
 	const props = await queryPropertiesRegistry17();
 	const sources = await queryDataSourcesRegistry17();
@@ -59,7 +59,7 @@ export async function exampleTypeGuards17() {
 	props.forEach((item) => {
 		if (isPropertyDefinition17(item)) {
 			// TypeScript knows item is PropertyDefinition
-			console.log(`Property: ${item.id}, Validation: ${item.validationMode}`);
+			console.info(`Property: ${item.id}, Validation: ${item.validationMode}`);
 		}
 	});
 
@@ -70,7 +70,7 @@ export async function exampleTypeGuards17() {
  * Example 3: Health Monitoring
  */
 export async function exampleHealthMonitoring17() {
-	console.log("[17.15.0] Example: Health Monitoring");
+	console.info("[17.15.0] Example: Health Monitoring");
 
 	const [propsHealth, toolsHealth, booksHealth, sourcesHealth] = await Promise.all([
 		probePropertiesHealth17(),
@@ -79,11 +79,11 @@ export async function exampleHealthMonitoring17() {
 		probeDataSourcesHealth17(),
 	]);
 
-	console.log("Registry Health Status:");
-	console.log(`  Properties: ${propsHealth.status} (${propsHealth.healthy ? "✓" : "✗"})`);
-	console.log(`  MCP Tools: ${toolsHealth.status} (${toolsHealth.toolCount} tools)`);
-	console.log(`  Sharp Books: ${booksHealth.status} (${booksHealth.activeCount}/${booksHealth.totalCount} active)`);
-	console.log(`  Data Sources: ${sourcesHealth.status} (${sourcesHealth.sourceCount} sources)`);
+	console.info("Registry Health Status:");
+	console.info(`  Properties: ${propsHealth.status} (${propsHealth.healthy ? "✓" : "✗"})`);
+	console.info(`  MCP Tools: ${toolsHealth.status} (${toolsHealth.toolCount} tools)`);
+	console.info(`  Sharp Books: ${booksHealth.status} (${booksHealth.activeCount}/${booksHealth.totalCount} active)`);
+	console.info(`  Data Sources: ${sourcesHealth.status} (${sourcesHealth.sourceCount} sources)`);
 
 	// Emit events on status change
 	if (propsHealth.status === "degraded") {
@@ -97,7 +97,7 @@ export async function exampleHealthMonitoring17() {
  * Example 4: Radiance Event Emission
  */
 export async function exampleRadianceEvents17() {
-	console.log("[17.15.0] Example: Radiance Events");
+	console.info("[17.15.0] Example: Radiance Events");
 
 	// Discovery event
 	emitRadianceDiscovery17(
@@ -132,28 +132,28 @@ export async function exampleRadianceEvents17() {
  * Example 5: Using Versioned Routes
  */
 export function exampleVersionedRoutes17() {
-	console.log("[17.15.0] Example: Versioned Routes");
+	console.info("[17.15.0] Example: Versioned Routes");
 
-	console.log("Registry Routes:");
-	console.log(`  Properties: ${v17.registry.properties}`);
-	console.log(`  MCP Tools: ${v17.registry["mcp-tools"]}`);
-	console.log(`  Sharp Books: ${v17.registry["sharp-books"]}`);
-	console.log(`  Data Sources: ${v17.registry["data-sources"]}`);
+	console.info("Registry Routes:");
+	console.info(`  Properties: ${v17.registry.properties}`);
+	console.info(`  MCP Tools: ${v17.registry["mcp-tools"]}`);
+	console.info(`  Sharp Books: ${v17.registry["sharp-books"]}`);
+	console.info(`  Data Sources: ${v17.registry["data-sources"]}`);
 
-	console.log("\nWebSocket Routes:");
-	console.log(`  Radiance: ${v17.realtime.ws}`);
-	console.log(`  PubSub: ${v17.realtime.pubsub}`);
-	console.log(`  Log Stream: ${v17.realtime.logStream}`);
+	console.info("\nWebSocket Routes:");
+	console.info(`  Radiance: ${v17.realtime.ws}`);
+	console.info(`  PubSub: ${v17.realtime.pubsub}`);
+	console.info(`  Log Stream: ${v17.realtime.logStream}`);
 
-	console.log("\nMini App Routes:");
-	console.log(`  Base: ${v17.miniapp.base}`);
-	console.log(`  Sportsbooks: ${v17.miniapp.sportsbooks}`);
-	console.log(`  Markets: ${v17.miniapp.markets}`);
+	console.info("\nMini App Routes:");
+	console.info(`  Base: ${v17.miniapp.base}`);
+	console.info(`  Sportsbooks: ${v17.miniapp.sportsbooks}`);
+	console.info(`  Markets: ${v17.miniapp.markets}`);
 
-	console.log("\nHealth Routes:");
-	console.log(`  Base: ${v17.health.base}`);
-	console.log(`  Registry: ${v17.health.registry}`);
-	console.log(`  Radiance: ${v17.health.radiance}`);
+	console.info("\nHealth Routes:");
+	console.info(`  Base: ${v17.health.base}`);
+	console.info(`  Registry: ${v17.health.registry}`);
+	console.info(`  Radiance: ${v17.health.radiance}`);
 
 	return v17;
 }
@@ -162,7 +162,7 @@ export function exampleVersionedRoutes17() {
  * Example 6: Building Radiance Headers
  */
 export function exampleRadianceHeaders17() {
-	console.log("[17.15.0] Example: Radiance Headers");
+	console.info("[17.15.0] Example: Radiance Headers");
 
 	const headers = buildRadianceHeaders17({
 		version: "17.15.0",
@@ -173,13 +173,13 @@ export function exampleRadianceHeaders17() {
 		healthStatus: "healthy",
 	});
 
-	console.log("Radiance Headers:");
+	console.info("Radiance Headers:");
 	Object.entries(headers).forEach(([key, value]) => {
-		console.log(`  ${key}: ${value}`);
+		console.info(`  ${key}: ${value}`);
 	});
 
 	const contentType = buildRadianceContentType17("17.15", "PropertyDefinition");
-	console.log(`\nContent-Type: ${contentType}`);
+	console.info(`\nContent-Type: ${contentType}`);
 
 	return { headers, contentType };
 }
@@ -188,28 +188,28 @@ export function exampleRadianceHeaders17() {
  * Example 7: Filtered Queries
  */
 export async function exampleFilteredQueries17() {
-	console.log("[17.15.0] Example: Filtered Queries");
+	console.info("[17.15.0] Example: Filtered Queries");
 
 	// Properties with namespace filter
 	const userProps = await queryPropertiesRegistry17({
 		namespace: "users",
 		validationMode: "strict",
 	});
-	console.log(`User properties (strict): ${userProps.length}`);
+	console.info(`User properties (strict): ${userProps.length}`);
 
 	// Sharp books tier 1 only
 	const tier1Books = await querySharpBooksRegistry17({
 		tier: 1,
 		status: "active",
 	});
-	console.log(`Tier 1 active books: ${tier1Books.length}`);
+	console.info(`Tier 1 active books: ${tier1Books.length}`);
 
 	// REST data sources with bearer auth
 	const restSources = await queryDataSourcesRegistry17({
 		type: "rest",
 		auth: "bearer",
 	});
-	console.log(`REST sources (bearer auth): ${restSources.length}`);
+	console.info(`REST sources (bearer auth): ${restSources.length}`);
 
 	return { userProps, tier1Books, restSources };
 }
@@ -218,11 +218,11 @@ export async function exampleFilteredQueries17() {
  * Example 8: Error Handling with Radiance Events
  */
 export async function exampleErrorHandling17() {
-	console.log("[17.15.0] Example: Error Handling");
+	console.info("[17.15.0] Example: Error Handling");
 
 	try {
 		const props = await queryPropertiesRegistry17();
-		console.log(`Successfully queried ${props.length} properties`);
+		console.info(`Successfully queried ${props.length} properties`);
 		return props;
 	} catch (error) {
 		// Emit failure event
@@ -242,21 +242,21 @@ export async function exampleErrorHandling17() {
  * Example 9: Type-Safe Property Operations
  */
 export async function exampleTypeSafeOperations17() {
-	console.log("[17.15.0] Example: Type-Safe Operations");
+	console.info("[17.15.0] Example: Type-Safe Operations");
 
 	const props = await queryPropertiesRegistry17();
 
 	// TypeScript knows prop is PropertyDefinition
 	props.forEach((prop) => {
 		if (prop.validationMode === "strict") {
-			console.log(`Strict validation: ${prop.id}`);
+			console.info(`Strict validation: ${prop.id}`);
 			// Can safely use prop.schema (ZodTypeAny)
 		}
 
 		// Type-safe access to radiance metadata
-		console.log(`  Channel: ${prop.__radianceChannel}`);
-		console.log(`  Version: ${prop.__version}`);
-		console.log(`  Category: ${prop.__category}`);
+		console.info(`  Channel: ${prop.__radianceChannel}`);
+		console.info(`  Version: ${prop.__version}`);
+		console.info(`  Category: ${prop.__category}`);
 	});
 
 	return props;
@@ -266,7 +266,7 @@ export async function exampleTypeSafeOperations17() {
  * Example 10: Complete Registry Query Pattern
  */
 export async function exampleCompleteRegistryQuery17() {
-	console.log("[17.15.0] Example: Complete Registry Query");
+	console.info("[17.15.0] Example: Complete Registry Query");
 
 	const startTime = Date.now();
 
@@ -296,11 +296,11 @@ export async function exampleCompleteRegistryQuery17() {
 			"info",
 		);
 
-		console.log(`Queried all registries in ${duration}ms:`);
-		console.log(`  Properties: ${props.length}`);
-		console.log(`  MCP Tools: ${tools.length}`);
-		console.log(`  Sharp Books: ${books.length}`);
-		console.log(`  Data Sources: ${sources.length}`);
+		console.info(`Queried all registries in ${duration}ms:`);
+		console.info(`  Properties: ${props.length}`);
+		console.info(`  MCP Tools: ${tools.length}`);
+		console.info(`  Sharp Books: ${books.length}`);
+		console.info(`  Data Sources: ${sources.length}`);
 
 		return { props, tools, books, sources, duration };
 	} catch (error) {
@@ -318,45 +318,45 @@ export async function exampleCompleteRegistryQuery17() {
  * Run all examples
  */
 export async function runAllExamples17() {
-	console.log("=".repeat(60));
-	console.log("17.15.0.0.0.0.0 — Radiance v17 Examples");
-	console.log("=".repeat(60));
-	console.log();
+	console.info("=".repeat(60));
+	console.info("17.15.0.0.0.0.0 — Radiance v17 Examples");
+	console.info("=".repeat(60));
+	console.info();
 
 	try {
 		await exampleQueryProperties17();
-		console.log();
+		console.info();
 
 		await exampleTypeGuards17();
-		console.log();
+		console.info();
 
 		await exampleHealthMonitoring17();
-		console.log();
+		console.info();
 
 		await exampleRadianceEvents17();
-		console.log();
+		console.info();
 
 		exampleVersionedRoutes17();
-		console.log();
+		console.info();
 
 		exampleRadianceHeaders17();
-		console.log();
+		console.info();
 
 		await exampleFilteredQueries17();
-		console.log();
+		console.info();
 
 		await exampleErrorHandling17();
-		console.log();
+		console.info();
 
 		await exampleTypeSafeOperations17();
-		console.log();
+		console.info();
 
 		await exampleCompleteRegistryQuery17();
-		console.log();
+		console.info();
 
-		console.log("=".repeat(60));
-		console.log("All examples completed successfully!");
-		console.log("=".repeat(60));
+		console.info("=".repeat(60));
+		console.info("All examples completed successfully!");
+		console.info("=".repeat(60));
 	} catch (error) {
 		console.error("Example failed:", error);
 		throw error;

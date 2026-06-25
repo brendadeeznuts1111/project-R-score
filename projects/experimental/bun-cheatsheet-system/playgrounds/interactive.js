@@ -24,8 +24,8 @@ class InteractivePlayground {
     // Load additional modules if available
     await this.loadModules();
     
-    console.log('🚀 Interactive Playground Ready!');
-    console.log('💡 Type "help" to see available commands\n');
+    console.info('🚀 Interactive Playground Ready!');
+    console.info('💡 Type "help" to see available commands\n');
     
     this.rl.prompt();
     
@@ -35,7 +35,7 @@ class InteractivePlayground {
     });
     
     this.rl.on('close', () => {
-      console.log('\n👋 Goodbye! Happy coding!');
+      console.info('\n👋 Goodbye! Happy coding!');
       process.exit(0);
     });
   }
@@ -51,7 +51,7 @@ class InteractivePlayground {
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
     `;
-    console.log(banner);
+    console.info(banner);
   }
 
   async loadModules() {
@@ -66,7 +66,7 @@ class InteractivePlayground {
         if (existsSync(join(process.cwd(), module.path))) {
           const mod = await import(module.path);
           this.modules[module.name.toLowerCase().replace(/\s+/g, '-')] = mod;
-          console.log(`✅ ${module.name} loaded`);
+          console.info(`✅ ${module.name} loaded`);
         }
       } catch (error) {
         // Module loading is optional
@@ -93,20 +93,20 @@ class InteractivePlayground {
           const results = this.cheatsheet.search(query);
           this.cheatsheet.displayResults(results);
         } else {
-          console.log('Usage: search <query>');
+          console.info('Usage: search <query>');
         }
         break;
         
       case 'tip':
         const tip = this.cheatsheet.getRandomTip();
-        console.log('💡 Tip:');
-        console.log(tip.type === 'command' ? `$ ${tip.content}` : tip.content);
+        console.info('💡 Tip:');
+        console.info(tip.type === 'command' ? `$ ${tip.content}` : tip.content);
         break;
         
       case 'history':
-        console.log('📜 Command History:');
+        console.info('📜 Command History:');
         this.history.forEach((cmd, i) => {
-          console.log(`${i + 1}. ${cmd}`);
+          console.info(`${i + 1}. ${cmd}`);
         });
         break;
         
@@ -129,9 +129,9 @@ class InteractivePlayground {
         break;
         
       case 'modules':
-        console.log('📦 Loaded Modules:');
+        console.info('📦 Loaded Modules:');
         Object.keys(this.modules).forEach(mod => {
-          console.log(`  • ${mod}`);
+          console.info(`  • ${mod}`);
         });
         break;
         
@@ -140,15 +140,15 @@ class InteractivePlayground {
         break;
         
       default:
-        console.log(`❌ Unknown command: ${command}`);
-        console.log('💡 Type "help" for available commands');
+        console.info(`❌ Unknown command: ${command}`);
+        console.info('💡 Type "help" for available commands');
         break;
     }
   }
 
   showHelp() {
-    console.log('\n📚 Available Commands:');
-    console.log('='.repeat(50));
+    console.info('\n📚 Available Commands:');
+    console.info('='.repeat(50));
     
     const commands = [
       { cmd: 'help', desc: 'Show this help message' },
@@ -164,17 +164,17 @@ class InteractivePlayground {
     ];
     
     commands.forEach(item => {
-      console.log(`  ${item.cmd.padEnd(20)} ${item.desc}`);
+      console.info(`  ${item.cmd.padEnd(20)} ${item.desc}`);
     });
     
-    console.log('\n🎯 Examples:');
-    console.log('  search "file read"    - Find file operations');
-    console.log('  demo http             - Run HTTP client demo');
-    console.log('  run basic-fetch       - Run specific example');
+    console.info('\n🎯 Examples:');
+    console.info('  search "file read"    - Find file operations');
+    console.info('  demo http             - Run HTTP client demo');
+    console.info('  run basic-fetch       - Run specific example');
   }
 
   async runDemo(type) {
-    console.log(`\n🎬 Running ${type} demo...`);
+    console.info(`\n🎬 Running ${type} demo...`);
     
     switch (type) {
       case 'http':
@@ -187,14 +187,14 @@ class InteractivePlayground {
         await this.demoGitHub();
         break;
       default:
-        console.log(`❌ Unknown demo type: ${type}`);
-        console.log('Available: http, bun, github');
+        console.info(`❌ Unknown demo type: ${type}`);
+        console.info('Available: http, bun, github');
     }
   }
 
   async demoHTTP() {
-    console.log('\n🌐 HTTP Client Demo');
-    console.log('='.repeat(40));
+    console.info('\n🌐 HTTP Client Demo');
+    console.info('='.repeat(40));
     
     try {
       const response = await fetch('https://httpbin.org/anything', {
@@ -204,65 +204,65 @@ class InteractivePlayground {
       });
       
       const data = await response.json();
-      console.log('✅ Request successful!');
-      console.log(`Method: ${data.method}`);
-      console.log(`Status: ${response.status}`);
-      console.log(`Headers: ${JSON.stringify(data.headers, null, 2)}`);
+      console.info('✅ Request successful!');
+      console.info(`Method: ${data.method}`);
+      console.info(`Status: ${response.status}`);
+      console.info(`Headers: ${JSON.stringify(data.headers, null, 2)}`);
       
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.info(`❌ Error: ${error.message}`);
     }
   }
 
   async demoBunAPI() {
-    console.log('\n⚡ Bun API Demo');
-    console.log('='.repeat(40));
+    console.info('\n⚡ Bun API Demo');
+    console.info('='.repeat(40));
     
-    console.log('Bun Runtime Information:');
-    console.log(`Version: ${Bun.version}`);
-    console.log(`Platform: ${process.platform}`);
-    console.log(`Architecture: ${process.arch}`);
-    console.log(`Node.js Compat: ${process.versions.node}`);
+    console.info('Bun Runtime Information:');
+    console.info(`Version: ${Bun.version}`);
+    console.info(`Platform: ${process.platform}`);
+    console.info(`Architecture: ${process.arch}`);
+    console.info(`Node.js Compat: ${process.versions.node}`);
     
     // Demonstrate file writing/reading
     const tempFile = './playground-temp.txt';
     try {
       await Bun.write(tempFile, 'Hello from Bun Playground!\n' + new Date().toISOString());
       const content = await Bun.file(tempFile).text();
-      console.log('\n📝 File Operations:');
-      console.log(`Wrote and read file: ${tempFile}`);
-      console.log(`Content: ${content}`);
+      console.info('\n📝 File Operations:');
+      console.info(`Wrote and read file: ${tempFile}`);
+      console.info(`Content: ${content}`);
       
       // Clean up
       await Bun.file(tempFile).delete();
     } catch (error) {
-      console.log(`File error: ${error.message}`);
+      console.info(`File error: ${error.message}`);
     }
   }
 
   async demoGitHub() {
-    console.log('\n🐙 GitHub API Demo');
-    console.log('='.repeat(40));
+    console.info('\n🐙 GitHub API Demo');
+    console.info('='.repeat(40));
     
     try {
       const response = await fetch('https://api.github.com/repos/oven-sh/bun');
       if (response.ok) {
         const repo = await response.json();
-        console.log('✅ Bun Repository Info:');
-        console.log(`Name: ${repo.name}`);
-        console.log(`Stars: ${repo.stargazers_count}`);
-        console.log(`Forks: ${repo.forks_count}`);
-        console.log(`Open Issues: ${repo.open_issues_count}`);
+        console.info('✅ Bun Repository Info:');
+        console.info(`Name: ${repo.name}`);
+        console.info(`Stars: ${repo.stargazers_count}`);
+        console.info(`Forks: ${repo.forks_count}`);
+        console.info(`Open Issues: ${repo.open_issues_count}`);
       } else {
-        console.log(`❌ GitHub API error: ${response.status}`);
+        console.info(`❌ GitHub API error: ${response.status}`);
       }
     } catch (error) {
-      console.log(`❌ Network error: ${error.message}`);
+      console.info(`❌ Network error: ${error.message}`);
     }
   }
 
   async runExample(exampleName) {
-    console.log(`\n🚀 Running example: ${exampleName}`);
+    console.info(`\n🚀 Running example: ${exampleName}`);
     
     // Map example names to module functions
     const examples = {
@@ -273,15 +273,15 @@ class InteractivePlayground {
     if (examples[exampleName]) {
       await examples[exampleName]();
     } else {
-      console.log(`❌ Example not found: ${exampleName}`);
-      console.log('Available examples:');
-      Object.keys(examples).forEach(ex => console.log(`  • ${ex}`));
+      console.info(`❌ Example not found: ${exampleName}`);
+      console.info('Available examples:');
+      Object.keys(examples).forEach(ex => console.info(`  • ${ex}`));
     }
   }
 
   showBunInfo() {
-    console.log('\n⚡ Bun Runtime Information');
-    console.log('='.repeat(40));
+    console.info('\n⚡ Bun Runtime Information');
+    console.info('='.repeat(40));
     
     const info = {
       'Bun Version': Bun.version,
@@ -296,7 +296,7 @@ class InteractivePlayground {
     };
     
     Object.entries(info).forEach(([key, value]) => {
-      console.log(`${key.padEnd(20)}: ${value}`);
+      console.info(`${key.padEnd(20)}: ${value}`);
     });
   }
 }

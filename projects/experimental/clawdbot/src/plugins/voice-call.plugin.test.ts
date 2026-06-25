@@ -133,7 +133,7 @@ describe("voice-call plugin", () => {
       register: (api: Record<string, unknown>) => void | Promise<void>;
     };
     const program = new Command();
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
     await register({
       id: "voice-call",
       name: "Voice Call",

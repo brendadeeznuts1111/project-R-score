@@ -1,0 +1,13 @@
+{
+  "name": "@factorywager/redis-profile",
+  "version": "10.0.0",
+  "description": "Redis HyperLogLog client for profile preference tracking",
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  }
+}

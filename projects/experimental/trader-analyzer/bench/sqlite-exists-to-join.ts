@@ -90,7 +90,7 @@ const insertMany = db.transaction(() => {
 });
 
 insertMany();
-console.log("✅ Inserted test data: 1000 tensions, ~7500 nodes");
+console.info("✅ Inserted test data: 1000 tensions, ~7500 nodes");
 
 // Prepare queries
 const queryExists = db.prepare(`
@@ -113,8 +113,8 @@ queryExists.all();
 queryJoin.all();
 
 // Benchmark EXISTS query (benefits from EXISTS-to-JOIN optimization in SQLite 3.51.1)
-console.log("\n📊 Benchmarking EXISTS-to-JOIN Optimization\n");
-console.log("=" .repeat(60));
+console.info("\n📊 Benchmarking EXISTS-to-JOIN Optimization\n");
+console.info("=" .repeat(60));
 
 const iterations = 100;
 const existsTimes: number[] = [];
@@ -151,41 +151,41 @@ function calculateStats(times: number[]) {
 const existsStats = calculateStats(existsTimes);
 const joinStats = calculateStats(joinTimes);
 
-console.log("\n🔍 EXISTS Query (SQLite 3.51.1 optimized):");
-console.log(`  Average: ${existsStats.avg.toFixed(3)}ms`);
-console.log(`  Min:     ${existsStats.min.toFixed(3)}ms`);
-console.log(`  Max:     ${existsStats.max.toFixed(3)}ms`);
-console.log(`  P50:     ${existsStats.p50.toFixed(3)}ms`);
-console.log(`  P95:     ${existsStats.p95.toFixed(3)}ms`);
-console.log(`  P99:     ${existsStats.p99.toFixed(3)}ms`);
+console.info("\n🔍 EXISTS Query (SQLite 3.51.1 optimized):");
+console.info(`  Average: ${existsStats.avg.toFixed(3)}ms`);
+console.info(`  Min:     ${existsStats.min.toFixed(3)}ms`);
+console.info(`  Max:     ${existsStats.max.toFixed(3)}ms`);
+console.info(`  P50:     ${existsStats.p50.toFixed(3)}ms`);
+console.info(`  P95:     ${existsStats.p95.toFixed(3)}ms`);
+console.info(`  P99:     ${existsStats.p99.toFixed(3)}ms`);
 
-console.log("\n🔗 JOIN Query (baseline):");
-console.log(`  Average: ${joinStats.avg.toFixed(3)}ms`);
-console.log(`  Min:     ${joinStats.min.toFixed(3)}ms`);
-console.log(`  Max:     ${joinStats.max.toFixed(3)}ms`);
-console.log(`  P50:     ${joinStats.p50.toFixed(3)}ms`);
-console.log(`  P95:     ${joinStats.p95.toFixed(3)}ms`);
-console.log(`  P99:     ${joinStats.p99.toFixed(3)}ms`);
+console.info("\n🔗 JOIN Query (baseline):");
+console.info(`  Average: ${joinStats.avg.toFixed(3)}ms`);
+console.info(`  Min:     ${joinStats.min.toFixed(3)}ms`);
+console.info(`  Max:     ${joinStats.max.toFixed(3)}ms`);
+console.info(`  P50:     ${joinStats.p50.toFixed(3)}ms`);
+console.info(`  P95:     ${joinStats.p95.toFixed(3)}ms`);
+console.info(`  P99:     ${joinStats.p99.toFixed(3)}ms`);
 
 const improvement = ((joinStats.avg - existsStats.avg) / joinStats.avg) * 100;
-console.log(`\n📈 Performance Improvement: ${improvement.toFixed(1)}% faster`);
+console.info(`\n📈 Performance Improvement: ${improvement.toFixed(1)}% faster`);
 
 // Verify expected result from documentation
 const targetDuration = 5; // Expected: Duration < 5ms (previously 8-12ms in v3.50)
 if (existsStats.p50 < targetDuration) {
-	console.log(`\n✅ PASS: P50 duration (${existsStats.p50.toFixed(3)}ms) < ${targetDuration}ms target`);
+	console.info(`\n✅ PASS: P50 duration (${existsStats.p50.toFixed(3)}ms) < ${targetDuration}ms target`);
 } else {
-	console.log(`\n⚠️  WARNING: P50 duration (${existsStats.p50.toFixed(3)}ms) >= ${targetDuration}ms target`);
+	console.info(`\n⚠️  WARNING: P50 duration (${existsStats.p50.toFixed(3)}ms) >= ${targetDuration}ms target`);
 }
 
-console.log("\n" + "=".repeat(60));
+console.info("\n" + "=".repeat(60));
 
 // Cleanup
 db.close();
 unlinkSync(dbPath);
 if (existsSync(dbPath + "-wal")) unlinkSync(dbPath + "-wal");
 if (existsSync(dbPath + "-shm")) unlinkSync(dbPath + "-shm");
-console.log("\n✅ Benchmark complete, database cleaned up");
+console.info("\n✅ Benchmark complete, database cleaned up");
 
 
 

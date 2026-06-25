@@ -115,7 +115,9 @@ export async function syncSessionFiles(params: {
           `DELETE FROM ${params.vectorTable} WHERE id IN (SELECT id FROM chunks WHERE path = ? AND source = ?)`,
         )
         .run(stale.path, "sessions");
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
     params.db
       .prepare(`DELETE FROM chunks WHERE path = ? AND source = ?`)
       .run(stale.path, "sessions");
@@ -124,7 +126,9 @@ export async function syncSessionFiles(params: {
         params.db
           .prepare(`DELETE FROM ${params.ftsTable} WHERE path = ? AND source = ? AND model = ?`)
           .run(stale.path, "sessions", params.model);
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
     }
   }
 }

@@ -26,7 +26,7 @@ async function main() {
 
   // Swift side expects `--version` to return a plain semver string.
   if (hasFlag(args, "--version") || hasFlag(args, "-V") || hasFlag(args, "-v")) {
-    console.log(BUNDLED_VERSION);
+    console.info(BUNDLED_VERSION);
     process.exit(0);
   }
 

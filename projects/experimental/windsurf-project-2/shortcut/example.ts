@@ -3,14 +3,14 @@ import type { ShortcutConfig, ShortcutProfile } from './src/types.ts';
 
 // Example usage of the enhanced ShortcutRegistry
 async function demonstrateRegistry() {
-  console.log('🚀 Starting Enhanced ShortcutRegistry Demo...\n');
+  console.info('🚀 Starting Enhanced ShortcutRegistry Demo...\n');
 
   // Initialize the registry
   const registry = new ShortcutRegistry();
 
   try {
     // 1. Create some example shortcuts
-    console.log('📝 Registering shortcuts...');
+    console.info('📝 Registering shortcuts...');
     
     const shortcuts: ShortcutConfig[] = [
       {
@@ -55,55 +55,55 @@ async function demonstrateRegistry() {
       registry.register(shortcut);
     }
 
-    console.log(`✅ Registered ${shortcuts.length} shortcuts\n`);
+    console.info(`✅ Registered ${shortcuts.length} shortcuts\n`);
 
     // 2. Create a custom profile
-    console.log('👤 Creating custom profile...');
+    console.info('👤 Creating custom profile...');
     const customProfile = registry.createProfile(
       'My Custom Setup',
       'Personalized shortcut configuration'
     );
-    console.log(`✅ Created profile: ${customProfile.name}\n`);
+    console.info(`✅ Created profile: ${customProfile.name}\n`);
 
     // 3. Set up profile overrides
-    console.log('⚙️ Setting up profile overrides...');
+    console.info('⚙️ Setting up profile overrides...');
     registry.setOverride('save_file', 'Ctrl + Alt + S', customProfile.id);
     registry.setActiveProfile(customProfile.id);
-    console.log(`✅ Active profile: ${registry.getActiveProfile()}\n`);
+    console.info(`✅ Active profile: ${registry.getActiveProfile()}\n`);
 
     // 4. Demonstrate search functionality
-    console.log('🔍 Searching shortcuts...');
+    console.info('🔍 Searching shortcuts...');
     const searchResults = registry.searchShortcuts('save', { category: 'general' });
-    console.log(`Found ${searchResults.length} shortcuts matching 'save':`);
-    searchResults.forEach(s => console.log(`  - ${s.id}: ${s.description}`));
-    console.log();
+    console.info(`Found ${searchResults.length} shortcuts matching 'save':`);
+    searchResults.forEach(s => console.info(`  - ${s.id}: ${s.description}`));
+    console.info();
 
     // 5. Get statistics
-    console.log('📊 Registry Statistics:');
+    console.info('📊 Registry Statistics:');
     const stats = registry.getStatistics();
-    console.log(`  Shortcuts: ${stats.shortcuts.total} total, ${stats.shortcuts.enabled} enabled`);
-    console.log(`  Profiles: ${stats.profiles.total} total, active: ${stats.profiles.active}`);
-    console.log(`  Conflicts: ${stats.conflicts.count} detected`);
-    console.log();
+    console.info(`  Shortcuts: ${stats.shortcuts.total} total, ${stats.shortcuts.enabled} enabled`);
+    console.info(`  Profiles: ${stats.profiles.total} total, active: ${stats.profiles.active}`);
+    console.info(`  Conflicts: ${stats.conflicts.count} detected`);
+    console.info();
 
     // 6. Check system health
-    console.log('🏥 Health Check:');
+    console.info('🏥 Health Check:');
     const health = await registry.healthCheck();
-    console.log(`  Overall Status: ${health.status}`);
-    console.log(`  Database: ${health.checks.database.status}`);
-    console.log(`  Memory: ${health.checks.memory.status}`);
-    console.log(`  Performance: ${health.checks.performance.status}`);
-    console.log();
+    console.info(`  Overall Status: ${health.status}`);
+    console.info(`  Database: ${health.checks.database.status}`);
+    console.info(`  Memory: ${health.checks.memory.status}`);
+    console.info(`  Performance: ${health.checks.performance.status}`);
+    console.info();
 
     // 7. Get performance metrics
-    console.log('⚡ Performance Metrics:');
+    console.info('⚡ Performance Metrics:');
     const metrics = registry.getMetrics();
-    console.log(`  Uptime: ${Math.round(metrics.uptime / 1000)}s`);
-    console.log(`  Cache Size: ${metrics.cache.effectiveKeys} effective keys`);
-    console.log();
+    console.info(`  Uptime: ${Math.round(metrics.uptime / 1000)}s`);
+    console.info(`  Cache Size: ${metrics.cache.effectiveKeys} effective keys`);
+    console.info();
 
     // 8. Demonstrate batch operations
-    console.log('📦 Batch Operations Demo:');
+    console.info('📦 Batch Operations Demo:');
     
     const batchShortcuts: ShortcutConfig[] = [
       {
@@ -127,30 +127,30 @@ async function demonstrateRegistry() {
     ];
 
     await registry.registerBatch(batchShortcuts);
-    console.log(`✅ Batch registered ${batchShortcuts.length} shortcuts`);
-    console.log();
+    console.info(`✅ Batch registered ${batchShortcuts.length} shortcuts`);
+    console.info();
 
     // 9. Export configuration
-    console.log('💾 Exporting configuration...');
+    console.info('💾 Exporting configuration...');
     const exportedData = await registry.exportAllData();
-    console.log(`Exported ${exportedData.shortcuts.length} shortcuts and ${exportedData.profiles.length} profiles`);
-    console.log();
+    console.info(`Exported ${exportedData.shortcuts.length} shortcuts and ${exportedData.profiles.length} profiles`);
+    console.info();
 
     // 10. Demonstrate triggering shortcuts
-    console.log('⚡ Triggering shortcuts...');
+    console.info('⚡ Triggering shortcuts...');
     const triggerResult = registry.trigger('save_file', { scope: 'editor' });
-    console.log(`Trigger result: ${triggerResult ? 'Success' : 'Failed'}`);
-    console.log();
+    console.info(`Trigger result: ${triggerResult ? 'Success' : 'Failed'}`);
+    console.info();
 
     // 11. Show debug info
-    console.log('🐛 Debug Information:');
+    console.info('🐛 Debug Information:');
     const debugInfo = registry.debugInfo();
-    console.log(`  Version: ${debugInfo.version}`);
-    console.log(`  Platform: ${debugInfo.platform}`);
-    console.log(`  Total Triggers: ${debugInfo.metricsStats.triggers}`);
-    console.log();
+    console.info(`  Version: ${debugInfo.version}`);
+    console.info(`  Platform: ${debugInfo.platform}`);
+    console.info(`  Total Triggers: ${debugInfo.metricsStats.triggers}`);
+    console.info();
 
-    console.log('🎉 Demo completed successfully!');
+    console.info('🎉 Demo completed successfully!');
 
   } catch (error) {
     console.error('❌ Error during demo:', error);
@@ -160,20 +160,20 @@ async function demonstrateRegistry() {
     }
   } finally {
     // Clean up
-    console.log('🧹 Cleaning up...');
+    console.info('🧹 Cleaning up...');
     await registry.dispose();
-    console.log('✅ Registry disposed');
+    console.info('✅ Registry disposed');
   }
 }
 
 // Event listeners for monitoring
 function setupEventListeners(registry: ShortcutRegistry) {
   registry.on('shortcut:registered', (config) => {
-    console.log(`📝 Registered: ${config.id} - ${config.description}`);
+    console.info(`📝 Registered: ${config.id} - ${config.description}`);
   });
 
   registry.on('profile:changed', (data) => {
-    console.log(`👤 Profile changed: ${data.previous} → ${data.current}`);
+    console.info(`👤 Profile changed: ${data.previous} → ${data.current}`);
   });
 
   registry.on('conflict', (conflict) => {
@@ -181,7 +181,7 @@ function setupEventListeners(registry: ShortcutRegistry) {
   });
 
   registry.on('metrics:flushed', (metrics) => {
-    console.log(`📊 Metrics flushed: ${Object.keys(metrics.triggers).length} shortcuts tracked`);
+    console.info(`📊 Metrics flushed: ${Object.keys(metrics.triggers).length} shortcuts tracked`);
   });
 
   registry.on('error', (error) => {

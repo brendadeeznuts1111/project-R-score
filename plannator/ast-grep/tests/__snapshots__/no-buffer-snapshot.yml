@@ -1,0 +1,20 @@
+id: no-buffer
+snapshots:
+  const buf = Buffer.alloc(16):
+    labels:
+    - source: Buffer.alloc(16)
+      style: primary
+      start: 12
+      end: 28
+  const buf = Buffer.from("hello"):
+    labels:
+    - source: Buffer.from("hello")
+      style: primary
+      start: 12
+      end: 32
+  const buf = new Buffer(8):
+    labels:
+    - source: new Buffer(8)
+      style: primary
+      start: 12
+      end: 25

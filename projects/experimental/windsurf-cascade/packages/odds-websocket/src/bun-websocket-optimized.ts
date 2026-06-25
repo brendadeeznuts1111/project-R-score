@@ -141,7 +141,7 @@ export class BunWebSocketOptimized {
                     this.clients.set(clientId, clientData);
                     ws.data = clientData;
 
-                    console.log(`🔗 Client connected: ${clientId} (${ws.remoteAddress})`);
+                    console.info(`🔗 Client connected: ${clientId} (${ws.remoteAddress})`);
 
                     // Send welcome message
                     this.sendToClient(ws, {
@@ -184,7 +184,7 @@ export class BunWebSocketOptimized {
                                 break;
 
                             default:
-                                console.log(`📨 Received message from ${clientData.id}:`, parsedMessage.type);
+                                console.info(`📨 Received message from ${clientData.id}:`, parsedMessage.type);
                         }
                     } catch (error) {
                         console.error("❌ Message parsing error:", error);
@@ -200,7 +200,7 @@ export class BunWebSocketOptimized {
                 close: (ws, code, message) => {
                     const clientData = ws.data as ClientData;
                     if (clientData?.id) {
-                        console.log(`🔌 Client disconnected: ${clientData.id} (${code}: ${message})`);
+                        console.info(`🔌 Client disconnected: ${clientData.id} (${code}: ${message})`);
                         this.clients.delete(clientData.id);
                     }
                 },
@@ -272,9 +272,9 @@ export class BunWebSocketOptimized {
             const result = ws.send(JSON.stringify(message), true); // Enable compression
 
             if (result === -1) {
-                console.log(`⚠️ Backpressure detected for client: ${ws.data.id}`);
+                console.info(`⚠️ Backpressure detected for client: ${ws.data.id}`);
             } else if (result === 0) {
-                console.log(`❌ Message dropped for client: ${ws.data.id}`);
+                console.info(`❌ Message dropped for client: ${ws.data.id}`);
             } else {
                 this.messageCount++;
             }
@@ -377,8 +377,8 @@ export class BunWebSocketOptimized {
      * Start the server
      */
     public start(): void {
-        console.log(`🚀 Bun WebSocket Server starting on ${this.config.hostname}:${this.config.port}`);
-        console.log(`📊 Configuration:`, {
+        console.info(`🚀 Bun WebSocket Server starting on ${this.config.hostname}:${this.config.port}`);
+        console.info(`📊 Configuration:`, {
             compression: this.config.compression,
             maxPayloadLength: this.config.maxPayloadLength,
             idleTimeout: this.config.idleTimeout,
@@ -390,7 +390,7 @@ export class BunWebSocketOptimized {
      * Stop the server
      */
     public stop(): void {
-        console.log("🛑 Shutting down WebSocket server...");
+        console.info("🛑 Shutting down WebSocket server...");
         this.server.stop();
     }
 

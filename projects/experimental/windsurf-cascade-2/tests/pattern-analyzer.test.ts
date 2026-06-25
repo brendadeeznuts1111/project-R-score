@@ -150,7 +150,7 @@ Duration: ${pattern.duration}ms
                 actions: [{
                     label: 'Investigate',
                     description: 'Analyze the pattern',
-                    execute: () => console.log('Investigating...')
+                    execute: () => console.info('Investigating...')
                 }]
             });
         }
@@ -194,7 +194,7 @@ Duration: ${pattern.duration}ms
                         {
                             label: 'Investigate Cause',
                             description: 'Check for conflicts',
-                            execute: () => console.log('Investigating spike...')
+                            execute: () => console.info('Investigating spike...')
                         }
                     ]
                 });
@@ -211,7 +211,7 @@ Duration: ${pattern.duration}ms
                         {
                             label: 'Monitor Trend',
                             description: 'Continue monitoring',
-                            execute: () => console.log('Monitoring gradual change...')
+                            execute: () => console.info('Monitoring gradual change...')
                         }
                     ]
                 });
@@ -228,7 +228,7 @@ Duration: ${pattern.duration}ms
                         {
                             label: 'Stabilize',
                             description: 'Apply stabilization',
-                            execute: () => console.log('Applying stabilization...')
+                            execute: () => console.info('Applying stabilization...')
                         }
                     ]
                 });

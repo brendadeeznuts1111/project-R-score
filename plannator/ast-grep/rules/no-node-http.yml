@@ -1,0 +1,15 @@
+id: no-node-http
+language: TypeScript
+severity: warning
+message: "Prefer Bun.serve / fetch over node:http in Bun projects"
+note: "See docs/references/bun-api-reference.md for Bun HTTP patterns"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: import { $$$ } from "http"
+    - pattern: import $X from "http"
+    - pattern: import { $$$ } from "node:https"
+    - pattern: import $X from "node:https"
+    - pattern: import { $$$ } from "https"
+    - pattern: import $X from "https"

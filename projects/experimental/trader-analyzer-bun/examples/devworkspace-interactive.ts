@@ -17,18 +17,18 @@ import { getTeamDepartmentsRegistry } from "../src/api/registry";
 // ═══════════════════════════════════════════════════════════════
 
 async function interactiveDemo() {
-	console.log("🎯 Developer Workspace Interactive Demo\n");
-	console.log("=".repeat(60));
-	console.log("\nThis demo shows how to create and manage API keys for:");
-	console.log("  • New developer onboarding");
-	console.log("  • Interview candidates");
-	console.log("  • Trial access\n");
+	console.info("🎯 Developer Workspace Interactive Demo\n");
+	console.info("=".repeat(60));
+	console.info("\nThis demo shows how to create and manage API keys for:");
+	console.info("  • New developer onboarding");
+	console.info("  • Interview candidates");
+	console.info("  • Trial access\n");
 
 	const manager = new DevWorkspaceManager();
 
 	// Example 1: Create interview key
-	console.log("📋 Example 1: Create Interview API Key");
-	console.log("-".repeat(60));
+	console.info("📋 Example 1: Create Interview API Key");
+	console.info("-".repeat(60));
 
 	const interviewKey = await manager.createKey({
 		email: "candidate@example.com",
@@ -41,25 +41,25 @@ async function interactiveDemo() {
 		},
 	});
 
-	console.log("\n✅ Interview key created!");
-	console.log(`   Use this key: ${interviewKey.apiKey}`);
-	console.log(`   Valid for: 24 hours`);
-	console.log(`   Rate limit: ${interviewKey.rateLimitPerHour} requests/hour`);
+	console.info("\n✅ Interview key created!");
+	console.info(`   Use this key: ${interviewKey.apiKey}`);
+	console.info(`   Valid for: 24 hours`);
+	console.info(`   Rate limit: ${interviewKey.rateLimitPerHour} requests/hour`);
 
 	// Example 2: Create onboarding key with team assignment
-	console.log("\n\n📋 Example 2: Create Onboarding API Key (Team-Assigned)");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 2: Create Onboarding API Key (Team-Assigned)");
+	console.info("-".repeat(60));
 
 	// Get team departments to show team structure
 	const teamRegistry = await getTeamDepartmentsRegistry();
 	const departments = teamRegistry.departments;
 	
 	if (departments.length > 0) {
-		console.log("\n📊 Available Teams:");
+		console.info("\n📊 Available Teams:");
 		departments.forEach((dept, idx) => {
-			console.log(`   ${idx + 1}. ${dept.name} (${dept.id})`);
-			console.log(`      Lead: ${dept.lead}`);
-			console.log(`      Members with API keys: ${dept.members.filter(m => m.hasApiKey).length}/${dept.members.length}`);
+			console.info(`   ${idx + 1}. ${dept.name} (${dept.id})`);
+			console.info(`      Lead: ${dept.lead}`);
+			console.info(`      Members with API keys: ${dept.members.filter(m => m.hasApiKey).length}/${dept.members.length}`);
 		});
 	}
 
@@ -76,45 +76,45 @@ async function interactiveDemo() {
 		},
 	});
 
-	console.log("\n✅ Onboarding key created!");
-	console.log(`   Use this key: ${onboardingKey.apiKey}`);
-	console.log(`   Valid for: 7 days`);
-	console.log(`   Rate limit: ${onboardingKey.rateLimitPerHour} requests/hour`);
+	console.info("\n✅ Onboarding key created!");
+	console.info(`   Use this key: ${onboardingKey.apiKey}`);
+	console.info(`   Valid for: 7 days`);
+	console.info(`   Rate limit: ${onboardingKey.rateLimitPerHour} requests/hour`);
 
 	// Example 3: Validate key
-	console.log("\n\n📋 Example 3: Validate API Key");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 3: Validate API Key");
+	console.info("-".repeat(60));
 
 	const validation = await manager.validateKey(interviewKey.apiKey);
 	if (validation.valid) {
-		console.log("✅ Key is valid!");
-		console.log(`   Remaining requests: ${validation.remainingRequests}`);
+		console.info("✅ Key is valid!");
+		console.info(`   Remaining requests: ${validation.remainingRequests}`);
 		if (validation.resetAt) {
-			console.log(`   Rate limit resets: ${new Date(validation.resetAt).toISOString()}`);
+			console.info(`   Rate limit resets: ${new Date(validation.resetAt).toISOString()}`);
 		}
 	} else {
-		console.log(`❌ Key validation failed: ${validation.reason}`);
+		console.info(`❌ Key validation failed: ${validation.reason}`);
 	}
 
 	// Example 4: Get key statistics
-	console.log("\n\n📋 Example 4: Get Key Statistics");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 4: Get Key Statistics");
+	console.info("-".repeat(60));
 
 	const stats = await manager.getKeyStats(interviewKey.id);
 	if (stats) {
-		console.log("📊 Key Statistics:");
-		console.log(`   Total Requests: ${stats.totalRequests}`);
-		console.log(`   Requests (Last Hour): ${stats.requestsLastHour}`);
-		console.log(`   Requests (Today): ${stats.requestsToday}`);
-		console.log(`   Time Remaining: ${Math.floor(stats.timeRemaining / 1000 / 60)} minutes`);
-		console.log(`   Status: ${stats.isExpired ? "❌ Expired" : stats.isRateLimited ? "⚠️ Rate Limited" : "✅ Active"}`);
+		console.info("📊 Key Statistics:");
+		console.info(`   Total Requests: ${stats.totalRequests}`);
+		console.info(`   Requests (Last Hour): ${stats.requestsLastHour}`);
+		console.info(`   Requests (Today): ${stats.requestsToday}`);
+		console.info(`   Time Remaining: ${Math.floor(stats.timeRemaining / 1000 / 60)} minutes`);
+		console.info(`   Status: ${stats.isExpired ? "❌ Expired" : stats.isRateLimited ? "⚠️ Rate Limited" : "✅ Active"}`);
 	}
 
 	// Example 5: Usage example
-	console.log("\n\n📋 Example 5: Using the API Key");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 5: Using the API Key");
+	console.info("-".repeat(60));
 
-	console.log(`
+	console.info(`
 💡 How to use the API key in requests:
 
 1. Include in header:
@@ -131,10 +131,10 @@ async function interactiveDemo() {
 	`);
 
 	// Example 6: Performance benchmarking
-	console.log("\n\n📋 Example 6: Performance Benchmarking");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 6: Performance Benchmarking");
+	console.info("-".repeat(60));
 
-	console.log(`
+	console.info(`
 💡 Performance benchmarking tools available:
 
 1. Create a benchmark:
@@ -157,36 +157,36 @@ async function interactiveDemo() {
 	`);
 
 	// Example 7: Team & API Credentials Integration
-	console.log("\n\n📋 Example 7: Team & API Credentials Integration");
-	console.log("-".repeat(60));
+	console.info("\n\n📋 Example 7: Team & API Credentials Integration");
+	console.info("-".repeat(60));
 
-	console.log("\n🔗 View team structure with API credentials:");
-	console.log(`   GET /api/registry/team-departments`);
-	console.log("\n📊 Team Registry Statistics:");
-	console.log(`   Total Departments: ${teamRegistry.total}`);
-	console.log(`   Members with API Keys: ${teamRegistry.withApiKeys}`);
-	console.log(`   Members without API Keys: ${teamRegistry.withoutApiKeys}`);
+	console.info("\n🔗 View team structure with API credentials:");
+	console.info(`   GET /api/registry/team-departments`);
+	console.info("\n📊 Team Registry Statistics:");
+	console.info(`   Total Departments: ${teamRegistry.total}`);
+	console.info(`   Members with API Keys: ${teamRegistry.withApiKeys}`);
+	console.info(`   Members without API Keys: ${teamRegistry.withoutApiKeys}`);
 	
 	if (departments.length > 0) {
-		console.log("\n👥 Department Breakdown:");
+		console.info("\n👥 Department Breakdown:");
 		departments.slice(0, 3).forEach((dept) => {
 			const membersWithKeys = dept.members.filter(m => m.hasApiKey).length;
-			console.log(`   • ${dept.name}: ${membersWithKeys}/${dept.members.length} members have API keys`);
+			console.info(`   • ${dept.name}: ${membersWithKeys}/${dept.members.length} members have API keys`);
 		});
 	}
 
-	console.log("\n💡 Integration Tips:");
-	console.log("   1. Associate API keys with team members via email");
-	console.log("   2. Use department IDs in metadata for team assignment");
-	console.log("   3. View team structure: GET /api/registry/team-departments");
-	console.log("   4. Check team member API key status in registry response");
+	console.info("\n💡 Integration Tips:");
+	console.info("   1. Associate API keys with team members via email");
+	console.info("   2. Use department IDs in metadata for team assignment");
+	console.info("   3. View team structure: GET /api/registry/team-departments");
+	console.info("   4. Check team member API key status in registry response");
 
-	console.log("\n" + "=".repeat(60));
-	console.log("✨ Demo complete!");
-	console.log("\n📚 See docs/WORKSPACE-DEVELOPER-ONBOARDING.md for full documentation");
-	console.log("📊 See benchmarks/README.md for performance benchmarking");
-	console.log("⚡ See docs/BUN-V1.51-IMPACT-ANALYSIS.md for optimization guide");
-	console.log("👥 See docs/BUN-RSS-INTEGRATION.md for team & API credentials integration");
+	console.info("\n" + "=".repeat(60));
+	console.info("✨ Demo complete!");
+	console.info("\n📚 See docs/WORKSPACE-DEVELOPER-ONBOARDING.md for full documentation");
+	console.info("📊 See benchmarks/README.md for performance benchmarking");
+	console.info("⚡ See docs/BUN-V1.51-IMPACT-ANALYSIS.md for optimization guide");
+	console.info("👥 See docs/BUN-RSS-INTEGRATION.md for team & API credentials integration");
 }
 
 // Run if executed directly

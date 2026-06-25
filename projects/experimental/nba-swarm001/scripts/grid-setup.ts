@@ -53,10 +53,10 @@ async function main(): Promise<void> {
     file: ".rotgrid.index",
   });
 
-  console.log(`✅ Populated cache with ${rotationCache.size} games`);
-  console.log(`✅ Generated index with ${indexLines.length} entries`);
-  console.log(`   Run 'bun run grid:search "NBA"' to search`);
-  console.log(`   Run 'bun run grid:export --format json' to export`);
+  console.info(`✅ Populated cache with ${rotationCache.size} games`);
+  console.info(`✅ Generated index with ${indexLines.length} entries`);
+  console.info(`   Run 'bun run grid:search "NBA"' to search`);
+  console.info(`   Run 'bun run grid:export --format json' to export`);
 }
 
 if (import.meta.main) {

@@ -168,10 +168,10 @@ async function updatePackageVersion(
 	}
 	
 	if (dryRun) {
-		console.log(`  [DRY RUN] Would update ${packageJson.name} from ${oldVersion} to ${version}`);
+		console.info(`  [DRY RUN] Would update ${packageJson.name} from ${oldVersion} to ${version}`);
 	} else {
 		await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2) + "\n");
-		console.log(`  ✅ Updated ${packageJson.name} from ${oldVersion} to ${version}`);
+		console.info(`  ✅ Updated ${packageJson.name} from ${oldVersion} to ${version}`);
 	}
 }
 
@@ -245,11 +245,11 @@ async function validatePackage(
 	dryRun: boolean,
 ): Promise<boolean> {
 	if (dryRun) {
-		console.log(`  [DRY RUN] Would validate ${packageName}`);
+		console.info(`  [DRY RUN] Would validate ${packageName}`);
 		return true;
 	}
 	
-	console.log(`  🔍 Validating ${packageName}...`);
+	console.info(`  🔍 Validating ${packageName}...`);
 	
 	// Run tests
 	if (!skipTests) {
@@ -262,7 +262,7 @@ async function validatePackage(
 				}
 				return false;
 			}
-			console.log(`  ✅ Tests passed`);
+			console.info(`  ✅ Tests passed`);
 		} catch (error) {
 			console.error(`  ❌ Error running tests: ${error}`);
 			return false;
@@ -276,7 +276,7 @@ async function validatePackage(
 			if (benchResult.exitCode !== 0) {
 				console.warn(`  ⚠️  Benchmarks failed (non-blocking)`);
 			} else {
-				console.log(`  ✅ Benchmarks passed`);
+				console.info(`  ✅ Benchmarks passed`);
 			}
 		} catch (error) {
 			console.warn(`  ⚠️  Benchmarks skipped (non-blocking)`);
@@ -305,22 +305,22 @@ async function publishPackage(
 ): Promise<void> {
 	if (dryRun) {
 		const publishTag = tag || (version.includes("beta") ? "beta" : version.includes("rc") ? "rc" : "latest");
-		console.log(`  [DRY RUN] Would publish ${packageName}@${version} to ${registry}`);
-		console.log(`           Tag: ${publishTag}, Access: ${access}${otp ? `, OTP: ${otp}` : ""}`);
+		console.info(`  [DRY RUN] Would publish ${packageName}@${version} to ${registry}`);
+		console.info(`           Tag: ${publishTag}, Access: ${access}${otp ? `, OTP: ${otp}` : ""}`);
 		if (cafile) {
-			console.log(`           CA File: ${cafile}`);
+			console.info(`           CA File: ${cafile}`);
 		}
 		if (networkConcurrency) {
-			console.log(`           Network Concurrency: ${networkConcurrency}`);
+			console.info(`           Network Concurrency: ${networkConcurrency}`);
 		}
 		if (config) {
-			console.log(`           Config: ${config}`);
+			console.info(`           Config: ${config}`);
 		}
 		return;
 	}
 	
 	try {
-		console.log(`  📦 Publishing ${packageName}@${version}...`);
+		console.info(`  📦 Publishing ${packageName}@${version}...`);
 		
 		const publishArgs = buildPublishArgs(registry, otp, tag, access, ca, cafile, networkConcurrency, config);
 		
@@ -329,7 +329,7 @@ async function publishPackage(
 		
 		if (result.exitCode === 0) {
 			const publishTag = tag || (version.includes("beta") ? "beta" : version.includes("rc") ? "rc" : "latest");
-			console.log(`  ✅ Published ${packageName}@${version} (tag: ${publishTag}, access: ${access})`);
+			console.info(`  ✅ Published ${packageName}@${version} (tag: ${publishTag}, access: ${access})`);
 		} else {
 			// Show error output
 			if (result.stderr) {
@@ -388,40 +388,40 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 	const networkConcurrency = options.networkConcurrency;
 	const config = options.config;
 	
-	console.log("🚀 Publishing @graph monorepo packages\n");
-	console.log(`   Version: ${version}`);
-	console.log(`   Registry: ${registry}`);
-	console.log(`   Tag: ${tag}`);
-	console.log(`   Access: ${access} (${access === "restricted" ? "private packages" : "public packages"})`);
+	console.info("🚀 Publishing @graph monorepo packages\n");
+	console.info(`   Version: ${version}`);
+	console.info(`   Registry: ${registry}`);
+	console.info(`   Tag: ${tag}`);
+	console.info(`   Access: ${access} (${access === "restricted" ? "private packages" : "public packages"})`);
 	if (otp) {
-		console.log(`   OTP: ${otp.substring(0, 2)}****`);
+		console.info(`   OTP: ${otp.substring(0, 2)}****`);
 	}
 	if (cafile) {
-		console.log(`   CA File: ${cafile}`);
+		console.info(`   CA File: ${cafile}`);
 	}
 	if (networkConcurrency) {
-		console.log(`   Network Concurrency: ${networkConcurrency}`);
+		console.info(`   Network Concurrency: ${networkConcurrency}`);
 	}
 	if (config) {
-		console.log(`   Config: ${config}`);
+		console.info(`   Config: ${config}`);
 	}
-	console.log(`   Mode: ${dryRun ? "DRY RUN" : "PUBLISH"}\n`);
+	console.info(`   Mode: ${dryRun ? "DRY RUN" : "PUBLISH"}\n`);
 	
 	// Best Practice: Pre-publish checks (outdated, audit)
 	if (!dryRun && !skipValidation) {
-		console.log("🔍 Running pre-publish checks...\n");
+		console.info("🔍 Running pre-publish checks...\n");
 		
 		// Check for outdated packages
 		try {
-			console.log("📦 Checking for outdated packages...");
+			console.info("📦 Checking for outdated packages...");
 			const outdatedResult = await $`bun outdated`.quiet();
 			if (outdatedResult.stdout) {
 				const output = outdatedResult.stdout.toString();
 				if (output.trim()) {
 					console.warn("⚠️  Some packages are outdated:");
-					console.log(output);
+					console.info(output);
 				} else {
-					console.log("✅ All packages are up to date");
+					console.info("✅ All packages are up to date");
 				}
 			}
 		} catch (error) {
@@ -430,7 +430,7 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 		
 		// Run security audit
 		try {
-			console.log("\n🔒 Running security audit...");
+			console.info("\n🔒 Running security audit...");
 			const auditResult = await $`bun audit`.quiet();
 			if (auditResult.exitCode !== 0) {
 				console.error("❌ Security audit found vulnerabilities!");
@@ -443,24 +443,24 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 					process.exit(1);
 				}
 			} else {
-				console.log("✅ Security audit passed");
+				console.info("✅ Security audit passed");
 			}
 		} catch (error) {
 			console.warn("⚠️  Could not run security audit");
 		}
 		
-		console.log();
+		console.info();
 	}
 	
 	// Best Practice: Use changeset for versioning (if available)
 	if (useChangeset && !dryRun) {
 		const changesetConfigExists = existsSync(".changeset") || existsSync("changeset.json");
 		if (changesetConfigExists) {
-			console.log("📝 Using changeset for versioning...\n");
+			console.info("📝 Using changeset for versioning...\n");
 			try {
 				const changesetResult = await $`bun changeset version`.quiet();
 				if (changesetResult.exitCode === 0) {
-					console.log("✅ Changeset version updated\n");
+					console.info("✅ Changeset version updated\n");
 				}
 			} catch (error) {
 				console.warn("⚠️  Changeset version failed, using manual version\n");
@@ -472,14 +472,14 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 	const packages = await findGraphPackages();
 	
 	if (packages.length === 0) {
-		console.log("⚠️  No @graph packages found in workspace");
-		console.log("   Make sure packages are in workspaces array in package.json");
+		console.info("⚠️  No @graph packages found in workspace");
+		console.info("   Make sure packages are in workspaces array in package.json");
 		return;
 	}
 	
-	console.log(`📦 Found ${packages.length} package(s):`);
-	packages.forEach((pkg) => console.log(`   - ${pkg.name}`));
-	console.log();
+	console.info(`📦 Found ${packages.length} package(s):`);
+	packages.forEach((pkg) => console.info(`   - ${pkg.name}`));
+	console.info();
 	
 	// Filter by target package if specified
 	let packagesToPublish = targetPackage
@@ -506,9 +506,9 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 		}
 		
 		packagesToPublish = orderedPackages;
-		console.log("📋 Publishing in dependency order:");
-		packagesToPublish.forEach((pkg, idx) => console.log(`   ${idx + 1}. ${pkg.name}`));
-		console.log();
+		console.info("📋 Publishing in dependency order:");
+		packagesToPublish.forEach((pkg, idx) => console.info(`   ${idx + 1}. ${pkg.name}`));
+		console.info();
 	}
 	
 	if (packagesToPublish.length === 0) {
@@ -518,7 +518,7 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 	
 	// Update versions and publish
 	for (const pkg of packagesToPublish) {
-		console.log(`\n📝 Processing ${pkg.name}...`);
+		console.info(`\n📝 Processing ${pkg.name}...`);
 		
 		// Best Practice: Validate before publish
 		if (!skipValidation && !dryRun) {
@@ -549,13 +549,13 @@ async function publishGraphMonorepo(options: PublishOptions = {}): Promise<void>
 		);
 	}
 	
-	console.log("\n✅ Publishing complete!");
+	console.info("\n✅ Publishing complete!");
 	
 	if (dryRun) {
-		console.log("\n💡 This was a dry run. To actually publish, remove --dry-run flag.");
+		console.info("\n💡 This was a dry run. To actually publish, remove --dry-run flag.");
 	} else {
-		console.log(`\n📦 Published packages are available at:`);
-		console.log(`   ${registry}/-/web/detail/@graph`);
+		console.info(`\n📦 Published packages are available at:`);
+		console.info(`   ${registry}/-/web/detail/@graph`);
 	}
 }
 

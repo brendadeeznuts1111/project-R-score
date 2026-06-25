@@ -107,7 +107,7 @@ describe('Terminal TUI', () => {
   // TUI components write spinners, tables, and errors to stdout during tests.
   // Suppress via spyOn to keep test output clean.
   beforeEach(() => {
-    spyOn(console, 'log').mockImplementation(() => {});
+    spyOn(console, 'info').mockImplementation(() => {});
     spyOn(console, 'error').mockImplementation(() => {});
     spyOn(process.stdout, 'write').mockImplementation(() => true);
   });
@@ -530,6 +530,79 @@ describe('Performance', () => {
 // ============================================================================
 // Repo Hygiene Tests
 // ============================================================================
+
+describe('Bun install env', () => {
+  const {
+    applyBunInstallEnv,
+    isTildeCachePath,
+    resolveBunInstallCacheDir,
+  } = require('../scripts/lib/bun-install-env.ts');
+
+  it('resolves absolute cache dir from HOME', () => {
+    const env = applyBunInstallEnv({ HOME: '/Users/test' });
+    expect(env.BUN_INSTALL_CACHE_DIR).toBe('/Users/test/.bun/install/cache');
+    expect(env.BUN_INSTALL_GLOBAL_STORE).toBe('1');
+  });
+
+  it('expands literal ~/ in BUN_INSTALL_CACHE_DIR', () => {
+    const dir = resolveBunInstallCacheDir({
+      HOME: '/Users/test',
+      BUN_INSTALL_CACHE_DIR: '~/.bun/install/cache',
+    });
+    expect(dir).toBe('/Users/test/.bun/install/cache');
+  });
+
+  it('detects tilde-cache drift paths', () => {
+    expect(isTildeCachePath('projects/foo/~/.bun/install/cache/x.npm')).toBe(true);
+    expect(isTildeCachePath('package.json')).toBe(false);
+  });
+});
+
+describe('machine bunfig policy', () => {
+  const {
+    resolveEffectiveInstallPolicy,
+    isAbsoluteCachePath,
+  } = require('../scripts/lib/machine-bunfig.ts');
+
+  it('inherits linker and globalStore from machine when project omits them', () => {
+    const policy = resolveEffectiveInstallPolicy(
+      { bunfigPath: '/repo/bunfig.toml', install: { frozenLockfile: true }, cacheDir: null },
+      {
+        bunfigPath: '/Users/test/.bunfig.toml',
+        install: { linker: 'isolated', globalStore: true },
+        cacheDir: '/Users/test/.bun/install/cache',
+      }
+    );
+    expect(policy.linker).toBe('isolated');
+    expect(policy.globalStore).toBe(true);
+    expect(policy.source.linker).toBe('machine');
+    expect(policy.source.globalStore).toBe('machine');
+    expect(policy.cacheDir).toBe('/Users/test/.bun/install/cache');
+  });
+
+  it('project overrides take precedence', () => {
+    const policy = resolveEffectiveInstallPolicy(
+      {
+        bunfigPath: '/repo/bunfig.toml',
+        install: { linker: 'hoisted', globalStore: false },
+        cacheDir: '.bun-cache',
+      },
+      {
+        bunfigPath: '/Users/test/.bunfig.toml',
+        install: { linker: 'isolated', globalStore: true },
+        cacheDir: '/Users/test/.bun/install/cache',
+      }
+    );
+    expect(policy.linker).toBe('hoisted');
+    expect(policy.globalStore).toBe(false);
+    expect(policy.source.linker).toBe('project');
+  });
+
+  it('rejects tilde cache paths', () => {
+    expect(isAbsoluteCachePath('/Users/test/.bun/install/cache')).toBe(true);
+    expect(isAbsoluteCachePath('~/.bun/install/cache')).toBe(false);
+  });
+});
 
 describe('Repo Hygiene', () => {
   const { STRAY_PATTERNS, SECRETS_FILES } = require('../scripts/repo-hygiene.ts');

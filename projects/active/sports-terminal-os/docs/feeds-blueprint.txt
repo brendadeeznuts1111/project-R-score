@@ -1,0 +1,151 @@
+// @ts-nocheck — template file, not compiled
+/**
+ * FEED BLUEPRINT — Template for adding a new data source.
+ *
+ * EVERY feed file follows this exact 3-function pattern:
+ *
+ *   fetch*()  — GET/POST to the external API. Returns raw JSON.
+ *   map*()    — Transform raw JSON → internal type. Pure function, no side effects.
+ *   refresh() — Orchestrator: fetch → map → feed into shared infrastructure.
+ *
+ * Rules:
+ *   - One file per data source. Never mix two APIs in one file.
+ *   - Never put analytics (CLV, steam, arbitrage, scoring) in a feed file.
+ *     Analytics live in the shared service (e.g. sportsbook-service.ts).
+ *   - Never call broadcastToSSE/WS from a feed file.
+ *     Broadcasting happens in the cron handler or the shared service.
+ *   - Gate behind env. If the API key is missing, log + return empty.
+ *   - Never crash. All errors caught, logged, returned in result.errors[].
+ *   - Result type always has { fetched, mapped, errors[], timestamp }.
+ *
+ * To add a new feed:
+ *   1. Copy this file → src/feeds/<source-name>.ts
+ *   2. Replace fetch*() with your API call
+ *   3. Replace map*() with your mapping logic
+ *   4. Register refresh() in cron.ts
+ *   5. Add env vars to src/utils/env.ts
+ *   6. Run `bun run typecheck`
+ *
+ * --- EXAMPLE: Odds feed (Pinnacle) ---
+ *
+ *   import { updateBookOdds } from "../services/sportsbook-service";
+ *
+ *   interface RawEntry { ... }           // shape from the API
+ *   interface MappedEntry { ... }        // shape for our infrastructure
+ *   interface FeedResult { fetched, mapped, errors[], timestamp }
+ *
+ *   async function fetchFromSource(): Promise<RawEntry[]> { ... }
+ *   function mapToInternal(raw: RawEntry[]): MappedEntry[] { ... }
+ *   export async function refresh(): Promise<FeedResult> { ... }
+ *
+ *   // cron.ts:
+ *   Bun.cron("*/2 * * * *", async () => {
+ *     const { refresh } = await import("../feeds/pinnacle");
+ *     const result = await refresh();
+ *   });
+ *
+ * --- EXAMPLE: Wager feed (Buckeye) ---
+ *
+ *   import { processSignalRoute } from "../zones/partner-profile/...";
+ *
+ *   interface BuckeyeWager { ... }
+ *   interface FeedResult { fetched, mapped, routed[], errors[], timestamp }
+ *
+ *   async function fetchWagers(): Promise<BuckeyeWager[]> { ... }
+ *   function mapToSignal(w: BuckeyeWager): SignalContext | null { ... }
+ *   export async function refresh(): Promise<FeedResult> {
+ *     const raw = await fetchWagers();
+ *     const signals = raw.map(mapToSignal).filter(Boolean);
+ *     const routed = signals.flatMap(s => processSignalRoute(s));
+ *     return { fetched: raw.length, mapped: signals.length, routed, ... };
+ *   }
+ *
+ * --- SHARED INFRASTRUCTURE (do NOT duplicate in feed files) ---
+ *
+ *   Service              | What it provides
+ *   ─────────────────────|──────────────────────────────────────────
+ *   sportsbook-service   | updateBookOdds(), getBestLines(), getLineMovements(),
+ *                        | calculateCLV(), detectSteamMoves()
+ *   cascade-engine-*     | processSignal(), processSignalRoute()
+ *   ewma-tracker         | EwmaTracker (auto-wired per partner via gateway)
+ *   cron.ts              | Bun.cron registry — all feed refresh() calls go here
+ *   env.ts               | All API keys and feature flags
+ */
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 1. TYPES — Raw API response shapes
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** Shape coming from the external API. */
+// interface RawEntry {
+//   id: string;
+//   value: number;
+// }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 2. FETCH — Talk to the external API. Return raw data or throw.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// async function fetchFromSource(): Promise<RawEntry[]> {
+//   const key = env.SOURCE_API_KEY;
+//   if (!key) throw new Error("SOURCE_API_KEY not configured");
+//
+//   const resp = await fetch("https://api.source.com/v1/data", {
+//     headers: { Authorization: `Bearer ${key}` },
+//   });
+//
+//   if (!resp.ok) {
+//     throw new Error(`Source API returned ${resp.status}`);
+//   }
+//
+//   return (await resp.json()) as RawEntry[];
+// }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 3. MAP — Raw API shape → internal type. Pure function, zero side effects.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// function mapToInternal(raw: RawEntry[]): InternalEntry[] {
+//   return raw
+//     .filter(r => r.value > 0)
+//     .map(r => ({
+//       id: `source_${r.id}`,
+//       value: r.value,
+//       timestamp: Date.now(),
+//     }));
+// }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 4. REFRESH — Orchestrator. fetch → map → feed into shared infrastructure.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// export interface FeedResult {
+//   fetched: number;
+//   mapped: number;
+//   errors: string[];
+//   timestamp: number;
+// }
+
+// export async function refresh(): Promise<FeedResult> {
+//   const result: FeedResult = { fetched: 0, mapped: 0, errors: [], timestamp: Math.floor(Date.now() / 1000) };
+//
+//   if (!env.SOURCE_API_KEY || !env.BUCKEYE_LIVE_MODE) {
+//     return result;
+//   }
+//
+//   try {
+//     const raw = await fetchFromSource();
+//     result.fetched = raw.length;
+//
+//     const mapped = mapToInternal(raw);
+//     result.mapped = mapped.length;
+//
+//     for (const entry of mapped) {
+//       updateBookOdds(entry);  // or processSignal(), or whatever
+//     }
+//   } catch (e) {
+//     result.errors.push(e instanceof Error ? e.message : "Unknown error");
+//   }
+//
+//   return result;
+// }

@@ -77,10 +77,10 @@ async function cmdCapture(options: CLIOptions): Promise<void> {
   const port = Number(options.flags.port || options.flags.p || 0);
   const duration = Number(options.flags.duration || options.flags.d || 0);
   
-  console.log(`🎬 Starting HAR capture server...`);
-  console.log(`   Port: ${port || 'auto'}`);
-  console.log(`   Output: ${outputFile}`);
-  if (duration) console.log(`   Duration: ${duration}s`);
+  console.info(`🎬 Starting HAR capture server...`);
+  console.info(`   Port: ${port || 'auto'}`);
+  console.info(`   Output: ${outputFile}`);
+  if (duration) console.info(`   Duration: ${duration}s`);
   
   const entries: any[] = [];
   
@@ -145,8 +145,8 @@ async function cmdCapture(options: CLIOptions): Promise<void> {
     },
   });
   
-  console.log(`\n✅ Capture server running at ${server.url}`);
-  console.log(`   Press Ctrl+C to stop and save\n`);
+  console.info(`\n✅ Capture server running at ${server.url}`);
+  console.info(`   Press Ctrl+C to stop and save\n`);
   
   if (duration > 0) {
     setTimeout(() => server.stop(), duration * 1000);
@@ -164,7 +164,7 @@ async function cmdCapture(options: CLIOptions): Promise<void> {
   entries.forEach(e => builder.addEntry(e));
   
   await Bun.write(outputFile, JSON.stringify(builder.build(), null, 2));
-  console.log(`\n💾 Saved ${entries.length} entries to ${outputFile}`);
+  console.info(`\n💾 Saved ${entries.length} entries to ${outputFile}`);
 }
 
 async function cmdEnhance(options: CLIOptions): Promise<void> {
@@ -176,7 +176,7 @@ async function cmdEnhance(options: CLIOptions): Promise<void> {
   
   const outputFile = String(options.flags.output || options.flags.o || inputFile.replace('.har', '-enhanced.har'));
   
-  console.log(`🔧 Enhancing ${inputFile}...`);
+  console.info(`🔧 Enhancing ${inputFile}...`);
   
   const har: Har = JSON.parse(await Bun.file(inputFile).text());
   
@@ -192,7 +192,7 @@ async function cmdEnhance(options: CLIOptions): Promise<void> {
   });
   
   await Bun.write(outputFile, JSON.stringify(enhanced, null, 2));
-  console.log(`✅ Enhanced HAR saved to ${outputFile}`);
+  console.info(`✅ Enhanced HAR saved to ${outputFile}`);
 }
 
 async function cmdAnalyze(options: CLIOptions): Promise<void> {
@@ -210,7 +210,7 @@ async function cmdAnalyze(options: CLIOptions): Promise<void> {
   const cookieAnalysis = analyzeCookies(har);
   
   if (format === 'json') {
-    console.log(JSON.stringify({
+    console.info(JSON.stringify({
       stats: { ...stats, domains: Array.from(stats.domains), mimeTypes: Object.fromEntries(stats.mimeTypes), statusCodes: Object.fromEntries(stats.statusCodes) },
       lint: lintResult,
       cookies: { ...cookieAnalysis, cookiesByDomain: Object.fromEntries(cookieAnalysis.cookiesByDomain) },
@@ -219,26 +219,26 @@ async function cmdAnalyze(options: CLIOptions): Promise<void> {
     const html = generateHTMLReport(har, stats, lintResult, cookieAnalysis);
     const outputFile = inputFile.replace('.har', '-report.html');
     await Bun.write(outputFile, html);
-    console.log(`📄 HTML report saved to ${outputFile}`);
+    console.info(`📄 HTML report saved to ${outputFile}`);
   } else {
     // Table format
-    console.log('═══════════════════════════════════════════════════════════');
-    console.log('                    HAR ANALYSIS REPORT');
-    console.log('═══════════════════════════════════════════════════════════\n');
+    console.info('═══════════════════════════════════════════════════════════');
+    console.info('                    HAR ANALYSIS REPORT');
+    console.info('═══════════════════════════════════════════════════════════\n');
     
-    console.log('📈 PERFORMANCE');
-    console.log(`  Requests: ${stats.totalRequests} | Size: ${fmtBytes(stats.totalSize)} | Compression: ${(stats.compressionRatio * 100).toFixed(1)}%`);
-    console.log(`  Avg Response: ${stats.avgResponseTime.toFixed(2)}ms | Avg TTFB: ${stats.avgTtfb.toFixed(2)}ms\n`);
+    console.info('📈 PERFORMANCE');
+    console.info(`  Requests: ${stats.totalRequests} | Size: ${fmtBytes(stats.totalSize)} | Compression: ${(stats.compressionRatio * 100).toFixed(1)}%`);
+    console.info(`  Avg Response: ${stats.avgResponseTime.toFixed(2)}ms | Avg TTFB: ${stats.avgTtfb.toFixed(2)}ms\n`);
     
-    console.log('🔒 SECURITY');
-    console.log(`  HTTPS: ${stats.secureRequests}/${stats.totalRequests} | HTTP/2: ${stats.http2Requests} | Cookies: ${cookieAnalysis.secureCookies}/${cookieAnalysis.totalCookies} secure\n`);
+    console.info('🔒 SECURITY');
+    console.info(`  HTTPS: ${stats.secureRequests}/${stats.totalRequests} | HTTP/2: ${stats.http2Requests} | Cookies: ${cookieAnalysis.secureCookies}/${cookieAnalysis.totalCookies} secure\n`);
     
-    console.log('🚨 LINT: ' + (lintResult.passed ? '✅ PASSED' : '❌ FAILED'));
-    console.log(`  Errors: ${lintResult.summary.errors} | Warnings: ${lintResult.summary.warnings} | Info: ${lintResult.summary.info}\n`);
+    console.info('🚨 LINT: ' + (lintResult.passed ? '✅ PASSED' : '❌ FAILED'));
+    console.info(`  Errors: ${lintResult.summary.errors} | Warnings: ${lintResult.summary.warnings} | Info: ${lintResult.summary.info}\n`);
     
     if (har.log.entries.length > 0) {
-      console.log('🌊 WATERFALL (top 10)');
-      console.log(generateWaterfall(sortHarEntries(har.log.entries, 'started', 'asc').slice(0, 10)));
+      console.info('🌊 WATERFALL (top 10)');
+      console.info(generateWaterfall(sortHarEntries(har.log.entries, 'started', 'asc').slice(0, 10)));
     }
   }
 }
@@ -258,31 +258,31 @@ async function cmdDiff(options: CLIOptions): Promise<void> {
   const diff = diffHar(baseline, current);
   const regressions = detectRegressions(baseline, current);
   
-  console.log('═══════════════════════════════════════════════════════════');
-  console.log('                    DIFF RESULTS');
-  console.log('═══════════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════════');
+  console.info('                    DIFF RESULTS');
+  console.info('═══════════════════════════════════════════════════════════\n');
   
-  console.log(`📊 Summary: +${diff.summary.totalAdded} -${diff.summary.totalRemoved} ~${diff.summary.totalModified}`);
+  console.info(`📊 Summary: +${diff.summary.totalAdded} -${diff.summary.totalRemoved} ~${diff.summary.totalModified}`);
   
   if (regressions.hasRegression) {
-    console.log(`\n🚨 REGRESSION DETECTED (${regressions.severity.toUpperCase()})`);
+    console.info(`\n🚨 REGRESSION DETECTED (${regressions.severity.toUpperCase()})`);
     regressions.issues.forEach(i => {
-      console.log(`  ${i.severity === 'critical' ? '🔴' : '🟠'} ${i.message} (+${i.deltaPercent.toFixed(1)}%)`);
+      console.info(`  ${i.severity === 'critical' ? '🔴' : '🟠'} ${i.message} (+${i.deltaPercent.toFixed(1)}%)`);
     });
   } else {
-    console.log('\n✅ No regressions detected');
+    console.info('\n✅ No regressions detected');
   }
   
   if (diff.added.length > 0) {
-    console.log(`\n➕ Added (${diff.added.length}):`);
-    diff.added.forEach(e => console.log(`  • ${e.request.method} ${e.request.url.slice(0, 60)}`));
+    console.info(`\n➕ Added (${diff.added.length}):`);
+    diff.added.forEach(e => console.info(`  • ${e.request.method} ${e.request.url.slice(0, 60)}`));
   }
   
   if (diff.modified.length > 0) {
-    console.log(`\n📝 Modified (${diff.modified.length}):`);
+    console.info(`\n📝 Modified (${diff.modified.length}):`);
     diff.modified.forEach(({ entry, changes }) => {
-      console.log(`  • ${entry.request.url.slice(0, 50)}`);
-      changes.forEach(c => console.log(`    ${c.field}: ${c.oldValue} → ${c.newValue}`));
+      console.info(`  • ${entry.request.url.slice(0, 50)}`);
+      changes.forEach(c => console.info(`    ${c.field}: ${c.oldValue} → ${c.newValue}`));
     });
   }
 }
@@ -297,12 +297,12 @@ async function cmdLint(options: CLIOptions): Promise<void> {
   const har: Har = await Bun.file(inputFile).json();
   const result = lintHar(har);
   
-  console.log(`Summary: ${result.summary.errors} errors, ${result.summary.warnings} warnings`);
-  console.log(`Status: ${result.passed ? '✅ PASSED' : '❌ FAILED'}\n`);
+  console.info(`Summary: ${result.summary.errors} errors, ${result.summary.warnings} warnings`);
+  console.info(`Status: ${result.passed ? '✅ PASSED' : '❌ FAILED'}\n`);
   
   result.issues.forEach(i => {
     const icon = i.severity === 'error' ? '❌' : i.severity === 'warning' ? '⚠️' : 'ℹ️';
-    console.log(`${icon} [${i.severity}] ${i.rule}: ${i.message}`);
+    console.info(`${icon} [${i.severity}] ${i.rule}: ${i.message}`);
   });
   
   process.exit(result.passed ? 0 : 1);
@@ -336,8 +336,8 @@ async function cmdServe(options: CLIOptions): Promise<void> {
     },
   });
   
-  console.log(`🌐 HAR viewer: ${server.url}`);
-  console.log(`   API: ${server.url}/api/har | Stats: ${server.url}/api/stats`);
+  console.info(`🌐 HAR viewer: ${server.url}`);
+  console.info(`   API: ${server.url}/api/har | Stats: ${server.url}/api/stats`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -391,7 +391,7 @@ function generateHTMLReport(har: Har, stats: any, lint: any, cookies: any): stri
 }
 
 function cmdHelp(): void {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════╗
 ║                  HAR CLI Tool v1.0.0                         ║
 ╠══════════════════════════════════════════════════════════════╣

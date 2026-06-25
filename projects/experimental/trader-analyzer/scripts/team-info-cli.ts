@@ -121,7 +121,7 @@ function parseArgs(): CLIOptions {
 
 // [TEAM.INFO.CLI.HELP.RG:IMPLEMENTATION] Display Help Text
 function printHelp() {
-	console.log(`
+	console.info(`
 ${colors.cyan}${colors.bright}Team Info CLI${colors.reset} - Query Human Capital Knowledge Graph
 
 ${colors.bright}Usage:${colors.reset}
@@ -203,23 +203,23 @@ function printQueryList() {
 		operational: ['communication', 'review', 'escalation', 'colors'],
 	};
 
-	console.log(`\n${colors.cyan}${colors.bright}Available Query Types${colors.reset}\n`);
+	console.info(`\n${colors.cyan}${colors.bright}Available Query Types${colors.reset}\n`);
 
-	console.log(`${colors.green}${colors.bright}Departments:${colors.reset}`);
-	queries.departments.forEach((q) => console.log(`  • ${q}`));
+	console.info(`${colors.green}${colors.bright}Departments:${colors.reset}`);
+	queries.departments.forEach((q) => console.info(`  • ${q}`));
 
-	console.log(`\n${colors.green}${colors.bright}Roles:${colors.reset}`);
-	queries.roles.forEach((q) => console.log(`  • ${q}`));
+	console.info(`\n${colors.green}${colors.bright}Roles:${colors.reset}`);
+	queries.roles.forEach((q) => console.info(`  • ${q}`));
 
-	console.log(`\n${colors.green}${colors.bright}Operational:${colors.reset}`);
-	queries.operational.forEach((q) => console.log(`  • ${q}`));
+	console.info(`\n${colors.green}${colors.bright}Operational:${colors.reset}`);
+	queries.operational.forEach((q) => console.info(`  • ${q}`));
 
-	console.log(`\n${colors.dim}Usage: bun run team:info <query>${colors.reset}\n`);
+	console.info(`\n${colors.dim}Usage: bun run team:info <query>${colors.reset}\n`);
 }
 
 // [TEAM.INFO.CLI.FORMAT.JSON.RG:IMPLEMENTATION] JSON Output Formatter
 function formatJSON(result: Awaited<ReturnType<typeof executeTeamInfoTool>>) {
-	console.log(JSON.stringify(result, null, 2));
+	console.info(JSON.stringify(result, null, 2));
 }
 
 // [TEAM.INFO.CLI.FORMAT.TABLE.RG:IMPLEMENTATION] Table Output Formatter
@@ -229,36 +229,36 @@ function formatTable(
 ) {
 	const c = options.noColors ? { reset: '', bright: '', dim: '', cyan: '', green: '', yellow: '', gray: '', red: '', magenta: '', blue: '', white: '' } : colors;
 
-	console.log(`\n${c.cyan}${c.bright}Query Results${c.reset}`);
-	console.log('─'.repeat(80));
-	console.log(`${c.bright}Query:${c.reset} ${result.query}`);
-	console.log(`${c.bright}Summary:${c.reset} ${result.summary}`);
-	console.log(`${c.bright}Matches:${c.reset} ${result.matches.length}`);
-	console.log('─'.repeat(80));
+	console.info(`\n${c.cyan}${c.bright}Query Results${c.reset}`);
+	console.info('─'.repeat(80));
+	console.info(`${c.bright}Query:${c.reset} ${result.query}`);
+	console.info(`${c.bright}Summary:${c.reset} ${result.summary}`);
+	console.info(`${c.bright}Matches:${c.reset} ${result.matches.length}`);
+	console.info('─'.repeat(80));
 
 	if (result.matches.length > 0) {
-		console.log(`\n${c.bright}Matches:${c.reset}\n`);
+		console.info(`\n${c.bright}Matches:${c.reset}\n`);
 		const matches = options.limit ? result.matches.slice(0, options.limit) : result.matches;
 		matches.forEach((match, i) => {
 			const preview = match.content.split('\n')[0].substring(0, 70);
-			console.log(`${c.green}${i + 1}.${c.reset} Line ${c.yellow}${match.line}${c.reset}: ${preview}${preview.length >= 70 ? '...' : ''}`);
+			console.info(`${c.green}${i + 1}.${c.reset} Line ${c.yellow}${match.line}${c.reset}: ${preview}${preview.length >= 70 ? '...' : ''}`);
 			if (match.marker && options.showMarkers) {
-				console.log(`   ${c.gray}Marker: [${match.marker}]${c.reset}`);
+				console.info(`   ${c.gray}Marker: [${match.marker}]${c.reset}`);
 			}
 		});
 		if (result.matches.length > matches.length) {
-			console.log(`\n${c.dim}... and ${result.matches.length - matches.length} more${c.reset}`);
+			console.info(`\n${c.dim}... and ${result.matches.length - matches.length} more${c.reset}`);
 		}
 	}
 
 	if (result.contacts && result.contacts.length > 0 && options.showContacts) {
-		console.log(`\n${c.bright}Contacts:${c.reset}`);
-		result.contacts.forEach((contact) => console.log(`  • ${c.cyan}${contact}${c.reset}`));
+		console.info(`\n${c.bright}Contacts:${c.reset}`);
+		result.contacts.forEach((contact) => console.info(`  • ${c.cyan}${contact}${c.reset}`));
 	}
 
 	if (result.relatedMarkers && result.relatedMarkers.length > 0 && options.showMarkers) {
-		console.log(`\n${c.bright}Related Markers:${c.reset}`);
-		result.relatedMarkers.forEach((marker) => console.log(`  • ${c.gray}[${marker}]${c.reset}`));
+		console.info(`\n${c.bright}Related Markers:${c.reset}`);
+		result.relatedMarkers.forEach((marker) => console.info(`  • ${c.gray}[${marker}]${c.reset}`));
 	}
 }
 
@@ -267,38 +267,38 @@ function formatMarkdown(
 	result: Awaited<ReturnType<typeof executeTeamInfoTool>>,
 	options: CLIOptions,
 ) {
-	console.log(`# Team Info Query Results\n`);
-	console.log(`**Query:** \`${result.query}\`\n`);
-	console.log(`**Summary:** ${result.summary}\n`);
-	console.log(`**Matches Found:** ${result.matches.length}\n`);
+	console.info(`# Team Info Query Results\n`);
+	console.info(`**Query:** \`${result.query}\`\n`);
+	console.info(`**Summary:** ${result.summary}\n`);
+	console.info(`**Matches Found:** ${result.matches.length}\n`);
 
 	if (result.matches.length > 0) {
-		console.log(`## Matches\n`);
+		console.info(`## Matches\n`);
 		const matches = options.limit ? result.matches.slice(0, options.limit) : result.matches;
 		matches.forEach((match, i) => {
-			console.log(`### Match ${i + 1} (Line ${match.line})\n`);
-			console.log(`\`\`\`\n${match.content}\n\`\`\`\n`);
+			console.info(`### Match ${i + 1} (Line ${match.line})\n`);
+			console.info(`\`\`\`\n${match.content}\n\`\`\`\n`);
 			if (match.marker && options.showMarkers) {
-				console.log(`**Marker:** \`[${match.marker}]\`\n`);
+				console.info(`**Marker:** \`[${match.marker}]\`\n`);
 			}
 		});
 	}
 
 	if (result.section && options.showSection) {
-		console.log(`## Full Section\n`);
-		console.log(`\`\`\`markdown\n${result.section}\n\`\`\`\n`);
+		console.info(`## Full Section\n`);
+		console.info(`\`\`\`markdown\n${result.section}\n\`\`\`\n`);
 	}
 
 	if (result.contacts && result.contacts.length > 0 && options.showContacts) {
-		console.log(`## Contacts\n`);
-		result.contacts.forEach((contact) => console.log(`- ${contact}`));
-		console.log();
+		console.info(`## Contacts\n`);
+		result.contacts.forEach((contact) => console.info(`- ${contact}`));
+		console.info();
 	}
 
 	if (result.relatedMarkers && result.relatedMarkers.length > 0 && options.showMarkers) {
-		console.log(`## Related Markers\n`);
-		result.relatedMarkers.forEach((marker) => console.log(`- \`[${marker}]\``));
-		console.log();
+		console.info(`## Related Markers\n`);
+		result.relatedMarkers.forEach((marker) => console.info(`- \`[${marker}]\``));
+		console.info();
 	}
 }
 
@@ -312,61 +312,61 @@ function formatPretty(
 		magenta: '', gray: '', red: '', blue: '', white: '' 
 	} : colors;
 
-	console.log(`\n${c.cyan}${c.bright}🔍 Querying TEAM.md: "${result.query}"${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bright}🔍 Querying TEAM.md: "${result.query}"${c.reset}\n`);
 
-	console.log(`${c.bright}📊 Results:${c.reset}`);
-	console.log(`   ${c.green}Summary:${c.reset} ${result.summary}`);
-	console.log(`   ${c.green}Matches:${c.reset} ${result.matches.length}`);
+	console.info(`${c.bright}📊 Results:${c.reset}`);
+	console.info(`   ${c.green}Summary:${c.reset} ${result.summary}`);
+	console.info(`   ${c.green}Matches:${c.reset} ${result.matches.length}`);
 	if (result.contacts && result.contacts.length > 0 && options.showContacts) {
-		console.log(`   ${c.green}Contacts:${c.reset} ${result.contacts.length}`);
+		console.info(`   ${c.green}Contacts:${c.reset} ${result.contacts.length}`);
 	}
 	if (result.relatedMarkers && result.relatedMarkers.length > 0 && options.showMarkers) {
-		console.log(`   ${c.green}Related Markers:${c.reset} ${result.relatedMarkers.length}`);
+		console.info(`   ${c.green}Related Markers:${c.reset} ${result.relatedMarkers.length}`);
 	}
-	console.log('');
+	console.info('');
 
 	if (result.matches.length > 0) {
-		console.log(`${c.bright}📍 Matches:${c.reset}`);
+		console.info(`${c.bright}📍 Matches:${c.reset}`);
 		const matches = options.limit ? result.matches.slice(0, options.limit) : result.matches;
 		matches.forEach((match, i) => {
 			const preview = match.content.split('\n')[0].substring(0, 75);
-			console.log(`   ${c.yellow}${i + 1}.${c.reset} Line ${c.magenta}${match.line}${c.reset}: ${preview}${preview.length >= 75 ? '...' : ''}`);
+			console.info(`   ${c.yellow}${i + 1}.${c.reset} Line ${c.magenta}${match.line}${c.reset}: ${preview}${preview.length >= 75 ? '...' : ''}`);
 			if (match.marker && options.showMarkers) {
-				console.log(`      ${c.dim}Marker: [${match.marker}]${c.reset}`);
+				console.info(`      ${c.dim}Marker: [${match.marker}]${c.reset}`);
 			}
 		});
 		if (result.matches.length > matches.length) {
-			console.log(`   ${c.dim}... and ${result.matches.length - matches.length} more match(es)${c.reset}`);
+			console.info(`   ${c.dim}... and ${result.matches.length - matches.length} more match(es)${c.reset}`);
 		}
-		console.log('');
+		console.info('');
 
 		if (result.section && options.showSection) {
-			console.log(`${c.bright}📄 Full Section:${c.reset}`);
-			console.log(c.dim + '─'.repeat(80) + c.reset);
-			console.log(result.section);
-			console.log(c.dim + '─'.repeat(80) + c.reset);
+			console.info(`${c.bright}📄 Full Section:${c.reset}`);
+			console.info(c.dim + '─'.repeat(80) + c.reset);
+			console.info(result.section);
+			console.info(c.dim + '─'.repeat(80) + c.reset);
 		}
 
 		if (result.contacts && result.contacts.length > 0 && options.showContacts) {
-			console.log(`\n${c.bright}👥 Contacts:${c.reset}`);
+			console.info(`\n${c.bright}👥 Contacts:${c.reset}`);
 			result.contacts.forEach((contact) => {
-				console.log(`   ${c.cyan}•${c.reset} ${contact}`);
+				console.info(`   ${c.cyan}•${c.reset} ${contact}`);
 			});
 		}
 
 		if (result.relatedMarkers && result.relatedMarkers.length > 0 && options.showMarkers) {
-			console.log(`\n${c.bright}🏷️  Related Markers:${c.reset}`);
+			console.info(`\n${c.bright}🏷️  Related Markers:${c.reset}`);
 			result.relatedMarkers.forEach((marker) => {
-				console.log(`   ${c.gray}•${c.reset} [${marker}]`);
+				console.info(`   ${c.gray}•${c.reset} [${marker}]`);
 			});
 		}
 	} else {
-		console.log(`${c.red}❌ No matches found${c.reset}`);
-		console.log(`\n${c.dim}💡 Try:${c.reset}`);
-		console.log(`   ${c.dim}bun run team:info department:arbitrage${c.reset}`);
-		console.log(`   ${c.dim}bun run team:info role:lead${c.reset}`);
-		console.log(`   ${c.dim}bun run team:info communication${c.reset}`);
-		console.log(`   ${c.dim}bun run team:info --list${c.reset}`);
+		console.info(`${c.red}❌ No matches found${c.reset}`);
+		console.info(`\n${c.dim}💡 Try:${c.reset}`);
+		console.info(`   ${c.dim}bun run team:info department:arbitrage${c.reset}`);
+		console.info(`   ${c.dim}bun run team:info role:lead${c.reset}`);
+		console.info(`   ${c.dim}bun run team:info communication${c.reset}`);
+		console.info(`   ${c.dim}bun run team:info --list${c.reset}`);
 	}
 }
 
@@ -394,13 +394,13 @@ async function showStats() {
 	const sectionCount = (content.match(/^##\s+/gm) || []).length;
 
 	const c = colors;
-	console.log(`\n${c.cyan}${c.bright}📊 TEAM.md Statistics${c.reset}\n`);
-	console.log(`   ${c.green}Total RG Markers:${c.reset} ${markerCount}`);
-	console.log(`   ${c.green}Departments:${c.reset} ${deptCount}`);
-	console.log(`   ${c.green}Contacts (@mentions):${c.reset} ${contactCount}`);
-	console.log(`   ${c.green}Top-Level Sections:${c.reset} ${sectionCount}`);
-	console.log(`   ${c.green}File Size:${c.reset} ${(content.length / 1024).toFixed(2)} KB`);
-	console.log(`   ${c.green}Lines:${c.reset} ${content.split('\n').length}\n`);
+	console.info(`\n${c.cyan}${c.bright}📊 TEAM.md Statistics${c.reset}\n`);
+	console.info(`   ${c.green}Total RG Markers:${c.reset} ${markerCount}`);
+	console.info(`   ${c.green}Departments:${c.reset} ${deptCount}`);
+	console.info(`   ${c.green}Contacts (@mentions):${c.reset} ${contactCount}`);
+	console.info(`   ${c.green}Top-Level Sections:${c.reset} ${sectionCount}`);
+	console.info(`   ${c.green}File Size:${c.reset} ${(content.length / 1024).toFixed(2)} KB`);
+	console.info(`   ${c.green}Lines:${c.reset} ${content.split('\n').length}\n`);
 }
 
 // [TEAM.INFO.CLI.MAIN.RG:IMPLEMENTATION] Main CLI Execution

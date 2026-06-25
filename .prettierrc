@@ -16,9 +16,27 @@
   "requirePragma": false,
   "htmlWhitespaceSensitivity": "css",
   "vueIndentScriptAndStyle": false,
+  "singleAttributePerLine": false,
   "overrides": [
     {
-      "files": "*.md",
+      "files": ["*.{ts,tsx,js,jsx,mjs,cjs}"],
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": true,
+        "arrowParens": "avoid",
+        "proseWrap": "preserve"
+      }
+    },
+    {
+      "files": ["*.{test,spec}.{ts,tsx,js,jsx}"],
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.{md,mdx}"],
       "options": {
         "printWidth": 80,
         "proseWrap": "always",
@@ -26,80 +44,78 @@
       }
     },
     {
-      "files": "*.json",
+      "files": ["*.{json,jsonc}"],
       "options": {
         "printWidth": 80,
         "tabWidth": 2
       }
     },
     {
-      "files": "*.yml",
+      "files": ["*.{yml,yaml}"],
       "options": {
         "printWidth": 80,
-        "tabWidth": 2
+        "tabWidth": 2,
+        "singleQuote": false
       }
     },
     {
-      "files": "*.yaml",
-      "options": {
-        "printWidth": 80,
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "*.toml",
-      "options": {
-        "printWidth": 80,
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "*.lock",
-      "options": {
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": ".prettierrc",
-      "options": {
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": ".editorconfig",
-      "options": {
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": ".gitignore",
-      "options": {
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "package.json",
-      "options": {
-        "printWidth": 80,
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "tsconfig.json",
-      "options": {
-        "printWidth": 80,
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "*.test.ts",
+      "files": ["*.{css,scss,less}"],
       "options": {
         "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.{html,htm,vue,svelte,astro}"],
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "htmlWhitespaceSensitivity": "css"
+      }
+    },
+    {
+      "files": ["*.{toml,ini,cfg}"],
+      "options": {
+        "printWidth": 80,
         "tabWidth": 2
       }
     },
     {
-      "files": "*.spec.ts",
+      "files": ["*.{graphql,gql}"],
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.{lock,lockb}"],
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": [
+        "package.json",
+        "tsconfig*.json",
+        "jsconfig*.json",
+        ".mcp.json",
+        ".cursor/mcp.json",
+        "bunfig.toml"
+      ],
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": [".prettierrc", ".editorconfig", ".gitignore", ".prettierignore", ".eslintignore"],
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.{config,setup}.{ts,js,mjs,cjs}"],
       "options": {
         "printWidth": 100,
         "tabWidth": 2

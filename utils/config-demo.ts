@@ -21,9 +21,9 @@ class ConfigDemo {
 
   // ⚙️ Demonstrate all configuration options
   async demonstrateConfigurations(): Promise<void> {
-    console.log('⚙️ Bun Test Configuration Demonstration');
-    console.log('=======================================');
-    console.log('🔧 Exploring advanced configuration options...\n');
+    console.info('⚙️ Bun Test Configuration Demonstration');
+    console.info('=======================================');
+    console.info('🔧 Exploring advanced configuration options...\n');
 
     // Create configuration files and test files
     await this.createConfigFiles();
@@ -84,18 +84,18 @@ class ConfigDemo {
 
   // 📁 Create configuration and test files
   private async createConfigFiles(): Promise<void> {
-    console.log('📁 Creating configuration files...');
+    console.info('📁 Creating configuration files...');
 
     // Preload setup script
     writeFileSync('setup.ts', `
 // Global setup script for tests
 import { beforeAll, afterAll } from 'bun:test';
 
-console.log('🔧 Global setup script executed');
+console.info('🔧 Global setup script executed');
 
 // Global setup
 beforeAll(() => {
-  console.log('🔧 beforeAll: Global test setup');
+  console.info('🔧 beforeAll: Global test setup');
   
   // Set up global mocks
   global.globalMock = {
@@ -118,7 +118,7 @@ beforeAll(() => {
 
 // Global cleanup
 afterAll(() => {
-  console.log('🔧 afterAll: Global test cleanup');
+  console.info('🔧 afterAll: Global test cleanup');
   
   // Clean up global state
   delete global.globalMock;
@@ -138,7 +138,7 @@ export function getGlobalConfig() {
   return global.testData?.config || {};
 }
 
-console.log('✅ Setup script loaded successfully');
+console.info('✅ Setup script loaded successfully');
 `);
 
     // Custom loader
@@ -172,7 +172,7 @@ export const metadata = {
   }
 });
 
-console.log('✅ Special loader registered');
+console.info('✅ Special loader registered');
 `);
 
     // Custom TypeScript config
@@ -250,7 +250,7 @@ TIMEOUT=5000
     // Test files for each configuration
     this.createTestFiles();
 
-    console.log('✅ Configuration files created\n');
+    console.info('✅ Configuration files created\n');
   }
 
   // 📝 Create test files for each configuration
@@ -409,7 +409,7 @@ describe('Package Conditions Test', () => {
       const mainModule = await import('package.test.json');
       expect(mainModule).toBeDefined();
     } catch (error) {
-      console.log('Conditional import test result:', error.message);
+      console.info('Conditional import test result:', error.message);
       // The test passes if we can at least resolve the package.json
       expect(true).toBe(true);
     }
@@ -473,8 +473,8 @@ describe('Environment File Test', () => {
     value: string, 
     testFile: string
   ): Promise<void> {
-    console.log(`🧪 Testing ${testName}: ${description}`);
-    console.log(`   Option: ${option} ${value}`);
+    console.info(`🧪 Testing ${testName}: ${description}`);
+    console.info(`   Option: ${option} ${value}`);
 
     const startTime = performance.now();
 
@@ -549,12 +549,12 @@ describe('Environment File Test', () => {
           recommendations
         });
 
-        console.log(`   Exit Code: ${code}`);
-        console.log(`   Time: ${executionTime.toFixed(2)}ms`);
+        console.info(`   Exit Code: ${code}`);
+        console.info(`   Time: ${executionTime.toFixed(2)}ms`);
         if (features.length > 0) {
-          console.log(`   Features: ${features.join(', ')}`);
+          console.info(`   Features: ${features.join(', ')}`);
         }
-        console.log('');
+        console.info('');
 
         resolve();
       });
@@ -562,7 +562,7 @@ describe('Environment File Test', () => {
       // Safety timeout
       setTimeout(() => {
         if (!testProcess.killed) {
-          console.log(`   ⏰ Timeout reached for ${testName}`);
+          console.info(`   ⏰ Timeout reached for ${testName}`);
           testProcess.kill('SIGTERM');
         }
       }, 15000);
@@ -646,11 +646,11 @@ describe('Environment File Test', () => {
 
   // 📚 Generate comprehensive configuration guide
   private generateConfigGuide(): void {
-    console.log('📚 Configuration Options Analysis');
-    console.log('==================================');
+    console.info('📚 Configuration Options Analysis');
+    console.info('==================================');
 
     // Summary table
-    console.log('\n📋 Configuration Test Summary:');
+    console.info('\n📋 Configuration Test Summary:');
     console.table(this.results.map(r => ({
       Test: r.testName,
       Option: r.configOption,
@@ -661,39 +661,39 @@ describe('Environment File Test', () => {
     })));
 
     // Detailed analysis
-    console.log('\n🔍 Detailed Analysis:');
+    console.info('\n🔍 Detailed Analysis:');
     
     this.results.forEach(result => {
-      console.log(`\n${result.testName}:`);
-      console.log(`  Description: ${result.description}`);
-      console.log(`  Option: ${result.configOption}`);
-      console.log(`  Value: ${result.configValue}`);
-      console.log(`  Exit Code: ${result.exitCode}`);
-      console.log(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
+      console.info(`\n${result.testName}:`);
+      console.info(`  Description: ${result.description}`);
+      console.info(`  Option: ${result.configOption}`);
+      console.info(`  Value: ${result.configValue}`);
+      console.info(`  Exit Code: ${result.exitCode}`);
+      console.info(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
       
       if (result.features.length > 0) {
-        console.log(`  Detected Features:`);
+        console.info(`  Detected Features:`);
         result.features.forEach(feature => {
-          console.log(`    • ${feature}`);
+          console.info(`    • ${feature}`);
         });
       }
       
       if (result.recommendations.length > 0) {
-        console.log(`  Recommendations:`);
+        console.info(`  Recommendations:`);
         result.recommendations.forEach(rec => {
-          console.log(`    • ${rec}`);
+          console.info(`    • ${rec}`);
         });
       }
     });
 
     // Configuration best practices
-    console.log('\n💡 Configuration Best Practices:');
-    console.log('  • Use --preload for global test setup and database connections');
-    console.log('  • Use --define for compile-time constants and environment values');
-    console.log('  • Use --loader for custom file processing and transforms');
-    console.log('  • Use --tsconfig-override for test-specific TypeScript settings');
-    console.log('  • Use --conditions for environment-specific module resolution');
-    console.log('  • Use --env-file for test environment configuration');
+    console.info('\n💡 Configuration Best Practices:');
+    console.info('  • Use --preload for global test setup and database connections');
+    console.info('  • Use --define for compile-time constants and environment values');
+    console.info('  • Use --loader for custom file processing and transforms');
+    console.info('  • Use --tsconfig-override for test-specific TypeScript settings');
+    console.info('  • Use --conditions for environment-specific module resolution');
+    console.info('  • Use --env-file for test environment configuration');
 
     // Save comprehensive guide
     this.saveConfigurationGuide();
@@ -895,7 +895,7 @@ describe('Environment File Test', () => {
     guide += '# Test configuration with verbose output\n';
     guide += 'bun test --verbose --preload ./setup.ts\n\n';
     guide += '# Check environment variables\n';
-    guide += 'bun test --env-file .env.test --run -e "console.log(process.env)"\n\n';
+    guide += 'bun test --env-file .env.test --run -e "console.info(process.env)"\n\n';
     guide += '# Verify TypeScript configuration\n';
     guide += 'bun test --tsconfig-override ./test-tsconfig.json --verbose\n';
     guide += '```\n\n';
@@ -904,12 +904,12 @@ describe('Environment File Test', () => {
     guide += '*Generated by Bun Test Configuration Demo v2.8*';
 
     Bun.write('bun-test-configuration-guide.md', guide);
-    console.log('\n📄 Comprehensive configuration guide saved to: bun-test-configuration-guide.md');
+    console.info('\n📄 Comprehensive configuration guide saved to: bun-test-configuration-guide.md');
   }
 
   // 🧹 Cleanup configuration files
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up configuration files...');
+    console.info('🧹 Cleaning up configuration files...');
     
     const files = [
       'setup.ts',
@@ -942,7 +942,7 @@ describe('Environment File Test', () => {
       // Ignore directory not found errors
     }
     
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
@@ -951,18 +951,18 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Bun Test Configuration Demo v2.8');
-    console.log('');
-    console.log('Demonstrates advanced Bun test configuration options:');
-    console.log('• --preload: Global setup and mocks');
-    console.log('• --define: Compile-time constants');
-    console.log('• --loader: Custom module loaders');
-    console.log('• --tsconfig-override: Custom TypeScript configuration');
-    console.log('• --conditions: Package resolution conditions');
-    console.log('• --env-file: Environment variable files');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run config-demo.ts');
+    console.info('Bun Test Configuration Demo v2.8');
+    console.info('');
+    console.info('Demonstrates advanced Bun test configuration options:');
+    console.info('• --preload: Global setup and mocks');
+    console.info('• --define: Compile-time constants');
+    console.info('• --loader: Custom module loaders');
+    console.info('• --tsconfig-override: Custom TypeScript configuration');
+    console.info('• --conditions: Package resolution conditions');
+    console.info('• --env-file: Environment variable files');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run config-demo.ts');
     return;
   }
 
@@ -971,9 +971,9 @@ async function main() {
   try {
     await demo.demonstrateConfigurations();
     await demo.cleanup();
-    console.log('\n✅ Configuration demonstration complete!');
-    console.log('\n🔗 Try configuration combinations:');
-    console.log('  bun test --preload ./setup.ts --env-file .env.test --define "process.env.NODE_ENV=\'test\'"');
+    console.info('\n✅ Configuration demonstration complete!');
+    console.info('\n🔗 Try configuration combinations:');
+    console.info('  bun test --preload ./setup.ts --env-file .env.test --define "process.env.NODE_ENV=\'test\'"');
   } catch (error: any) {
     console.error('❌ Demonstration failed:', error.message);
     await demo.cleanup();

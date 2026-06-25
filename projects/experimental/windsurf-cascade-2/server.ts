@@ -232,8 +232,8 @@ class StreamDashboardManager {
   }
 
   displayStats() {
-    console.log('\n📊 Stream Dashboard Statistics:');
-    console.log('═'.repeat(Bun.stringWidth('Stream Dashboard Statistics:') + 4));
+    console.info('\n📊 Stream Dashboard Statistics:');
+    console.info('═'.repeat(Bun.stringWidth('Stream Dashboard Statistics:') + 4));
     
     // Calculate additional metrics
     const uptimeMs = Date.now() - this.stats.startTime.getTime();
@@ -303,8 +303,8 @@ class StreamDashboardManager {
     Bun.inspect.table(statsTable);
     
     // Display color theme information
-    console.log('\n🎨 Active Color Theme:');
-    console.log('═'.repeat(Bun.stringWidth('Active Color Theme:') + 4));
+    console.info('\n🎨 Active Color Theme:');
+    console.info('═'.repeat(Bun.stringWidth('Active Color Theme:') + 4));
     
     const colorThemeTable = [
       { Category: 'Primary', Color: 'Cyan', Hex: this.themeColors.PRIMARY_CYAN.hex, Usage: this.themeColors.PRIMARY_CYAN.usage },
@@ -404,7 +404,7 @@ const server = serve({
       const connId = connectionManager.addConnection(ws as any);
       wsConnectionIds.set(ws as any, connId);
       
-      console.log(`\n✅ WebSocket connection opened (ID: ${connId})`);
+      console.info(`\n✅ WebSocket connection opened (ID: ${connId})`);
       
       // Display connection info using Bun.inspect.table
       const connectionInfo = [
@@ -438,28 +438,28 @@ const server = serve({
         const data = JSON.parse(messageStr);
         const connId = wsConnectionIds.get(ws);
         
-        console.log(`\n📨 Message received from connection ${connId}:`);
-        console.log(`   Type: ${data.type}`);
+        console.info(`\n📨 Message received from connection ${connId}:`);
+        console.info(`   Type: ${data.type}`);
         
         if (data.type === 'readStdin') {
-          console.log('📖 Reading from stdin...');
+          console.info('📖 Reading from stdin...');
           
           // Check if stdin has data
           const stdinSize = Bun.stdin.size;
-          console.log(`   Stdin size: ${stdinSize} bytes`);
+          console.info(`   Stdin size: ${stdinSize} bytes`);
           
           let stdinData = '';
           if (stdinSize > 0) {
             try {
               stdinData = await Bun.stdin.text();
-              console.log(`   Read ${Bun.stringWidth(stdinData)} characters from stdin`);
+              console.info(`   Read ${Bun.stringWidth(stdinData)} characters from stdin`);
             } catch (error) {
               console.error('   Error reading stdin:', error);
               stdinData = 'Error: Could not read stdin';
             }
           } else {
             stdinData = 'No stdin data available (stdin size: 0)';
-            console.log('   ℹ️  No stdin data available');
+            console.info('   ℹ️  No stdin data available');
           }
           
           const response = JSON.stringify({ 
@@ -474,7 +474,7 @@ const server = serve({
           const message = data.data;
           const escapedMessage = Bun.escapeHTML(message);
           
-          console.log(`📤 Writing to stdout (escaped): ${escapedMessage}`);
+          console.info(`📤 Writing to stdout (escaped): ${escapedMessage}`);
           
           // Write to stdout
           Bun.stdout.write(`[STDOUT] ${message}\n`);
@@ -492,7 +492,7 @@ const server = serve({
           const message = data.data;
           const escapedMessage = Bun.escapeHTML(message);
           
-          console.log(`⚠️  Writing to stderr (escaped): ${escapedMessage}`);
+          console.info(`⚠️  Writing to stderr (escaped): ${escapedMessage}`);
           
           // Write to stderr
           Bun.stderr.write(`[STDERR] ${message}\n`);
@@ -508,7 +508,7 @@ const server = serve({
           
         } else if (data.type === 'testColor') {
           const colorInput = data.data;
-          console.log(`🎨 Testing color: ${colorInput}`);
+          console.info(`🎨 Testing color: ${colorInput}`);
           
           try {
             // Test different color formats using Bun.color
@@ -525,14 +525,14 @@ const server = serve({
             };
             
             // Display color information in console with colors
-            console.log('\n🎨 Color Analysis:');
-            console.log('═'.repeat(20));
-            console.log(`Input: ${colorInput}`);
-            console.log(`HEX: ${colorInfo.hex || 'Invalid'}`);
-            console.log(`RGB: ${colorInfo.rgb ? `(${colorInfo.rgb.r}, ${colorInfo.rgb.g}, ${colorInfo.rgb.b})` : 'Invalid'}`);
-            console.log(`RGBA: ${colorInfo.rgba ? `(${colorInfo.rgba.r}, ${colorInfo.rgba.g}, ${colorInfo.rgba.b}, ${colorInfo.rgba.a})` : 'Invalid'}`);
-            console.log(`CSS: ${colorInfo.css || 'Invalid'}`);
-            console.log(`ANSI: ${colorInfo.ansi || 'Invalid'}`);
+            console.info('\n🎨 Color Analysis:');
+            console.info('═'.repeat(20));
+            console.info(`Input: ${colorInput}`);
+            console.info(`HEX: ${colorInfo.hex || 'Invalid'}`);
+            console.info(`RGB: ${colorInfo.rgb ? `(${colorInfo.rgb.r}, ${colorInfo.rgb.g}, ${colorInfo.rgb.b})` : 'Invalid'}`);
+            console.info(`RGBA: ${colorInfo.rgba ? `(${colorInfo.rgba.r}, ${colorInfo.rgba.g}, ${colorInfo.rgba.b}, ${colorInfo.rgba.a})` : 'Invalid'}`);
+            console.info(`CSS: ${colorInfo.css || 'Invalid'}`);
+            console.info(`ANSI: ${colorInfo.ansi || 'Invalid'}`);
             
             // Send color info back to dashboard
             const response = JSON.stringify({
@@ -555,7 +555,7 @@ const server = serve({
           }
           
         } else if (data.type === 'getStats') {
-          console.log('📊 Stats requested');
+          console.info('📊 Stats requested');
           connectionManager.displayStats();
           
           const response = JSON.stringify({
@@ -583,8 +583,8 @@ const server = serve({
       connectionManager.removeConnection(connId!);
       wsConnectionIds.delete(ws);
       
-      console.log(`\n❌ WebSocket connection closed (ID: ${connId})`);
-      console.log(`   Active connections: ${connectionManager.getStats().activeConnections}`);
+      console.info(`\n❌ WebSocket connection closed (ID: ${connId})`);
+      console.info(`   Active connections: ${connectionManager.getStats().activeConnections}`);
       
       // Display final stats for this connection
       connectionManager.displayStats();
@@ -593,9 +593,9 @@ const server = serve({
 });
 
 // Display server startup information
-console.log('\n' + '═'.repeat(60));
-console.log('🚀 Bun Stream Dashboard Server Started!');
-console.log('═'.repeat(60));
+console.info('\n' + '═'.repeat(60));
+console.info('🚀 Bun Stream Dashboard Server Started!');
+console.info('═'.repeat(60));
 
 const serverInfo = [
   { Property: 'Server URL', Value: `http://localhost:${server.port}` },
@@ -608,36 +608,36 @@ const serverInfo = [
 
 Bun.inspect.table(serverInfo);
 
-console.log('\n📋 Available Endpoints:');
-console.log(`   • Dashboard:  http://localhost:${server.port}/`);
-console.log(`   • WebSocket:  ws://localhost:${server.port}/ws`);
-console.log(`   • Health:     http://localhost:${server.port}/health`);
-console.log(`   • Stats:      http://localhost:${server.port}/stats`);
+console.info('\n📋 Available Endpoints:');
+console.info(`   • Dashboard:  http://localhost:${server.port}/`);
+console.info(`   • WebSocket:  ws://localhost:${server.port}/ws`);
+console.info(`   • Health:     http://localhost:${server.port}/health`);
+console.info(`   • Stats:      http://localhost:${server.port}/stats`);
 
-console.log('\n💡 Tips:');
-console.log('   • Use hot reload: bun --hot server.ts');
-console.log('   • Use watch mode: bun --watch server.ts');
-console.log('   • Pipe to stdin:  echo "test data" | bun --hot server.ts');
-console.log('   • View in browser: open http://localhost:' + server.port);
+console.info('\n💡 Tips:');
+console.info('   • Use hot reload: bun --hot server.ts');
+console.info('   • Use watch mode: bun --watch server.ts');
+console.info('   • Pipe to stdin:  echo "test data" | bun --hot server.ts');
+console.info('   • View in browser: open http://localhost:' + server.port);
 
-console.log('\n' + '═'.repeat(60) + '\n');
+console.info('\n' + '═'.repeat(60) + '\n');
 
 // Display connection manager inspection
-console.log('🔍 Connection Manager State:');
-console.log(Bun.inspect(connectionManager, { colors: true, depth: 2 }));
-console.log('\n');
+console.info('🔍 Connection Manager State:');
+console.info(Bun.inspect(connectionManager, { colors: true, depth: 2 }));
+console.info('\n');
 
 // Periodic stats display (every 30 seconds)
 setInterval(() => {
   if (connectionManager.getStats().activeConnections > 0) {
-    console.log('\n⏰ Periodic Stats Update:');
+    console.info('\n⏰ Periodic Stats Update:');
     connectionManager.displayStats();
   }
 }, 30000);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n\n🛑 Shutting down gracefully...');
+  console.info('\n\n🛑 Shutting down gracefully...');
   connectionManager.displayStats();
   process.exit(0);
 });
@@ -656,14 +656,14 @@ const expectedConfig = {
 };
 
 if (Bun.deepEquals(serverConfig, expectedConfig)) {
-  console.log('✅ Server configuration matches expected values\n');
+  console.info('✅ Server configuration matches expected values\n');
 } else {
-  console.log('⚠️  Server configuration differs from expected values\n');
+  console.info('⚠️  Server configuration differs from expected values\n');
 }
 
 // Demonstrate Bun color utilities
-console.log('🎨 Bun Color Utilities Demo:');
-console.log('═'.repeat(Bun.stringWidth('Bun Color Utilities Demo:') + 4));
+console.info('🎨 Bun Color Utilities Demo:');
+console.info('═'.repeat(Bun.stringWidth('Bun Color Utilities Demo:') + 4));
 
 // Example colors
 const colors = [
@@ -691,7 +691,7 @@ const colorData = colors.map(({ name, hex }) => {
 });
 
 Bun.inspect.table(colorData);
-console.log('\n');
+console.info('\n');
 
 // Benchmark all utilities
 function benchmark() {
@@ -702,7 +702,7 @@ function benchmark() {
     nested: { value: Math.random(), list: Array.from({ length: 10 }, (_, j) => j) }
   }));
 
-  console.log("\n⚡ Performance Benchmarks (10k iterations):");
+  console.info("\n⚡ Performance Benchmarks (10k iterations):");
   
   // Bun.deepEquals benchmark
   const copy = JSON.parse(JSON.stringify(largeObject));

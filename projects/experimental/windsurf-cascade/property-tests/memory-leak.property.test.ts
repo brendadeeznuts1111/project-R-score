@@ -40,7 +40,7 @@ const diffHeapSnapshots = (baseline: ArrayBuffer, current: ArrayBuffer): any => 
 const ConsciousLedger = {
     log: (entry: any) => {
         // Log to console for immediate visibility
-        console.log(`[ConsciousLedger] ${JSON.stringify(entry)}`);
+        console.info(`[ConsciousLedger] ${JSON.stringify(entry)}`);
 
         // Store in memory for trend analysis (in production, this would go to a database)
         if (!global.memoryLeakLogs) {
@@ -92,8 +92,8 @@ let testCount = 0;
 
 beforeAll(() => {
     baselineSnapshot = createHeapSnapshot();
-    console.log("🧠 Baseline heap snapshot created for memory leak detection");
-    console.log(`📊 Baseline heap size: ${baselineSnapshot.byteLength} bytes`);
+    console.info("🧠 Baseline heap snapshot created for memory leak detection");
+    console.info(`📊 Baseline heap size: ${baselineSnapshot.byteLength} bytes`);
 });
 
 afterEach(() => {
@@ -145,10 +145,10 @@ afterEach(() => {
     const trend = ConsciousLedger.getTrend(testName);
     if (trend && trend.samples >= 3) {
         const trendEmoji = trend.trend === 'increasing' ? '📈' : '📉';
-        console.log(`${trendEmoji} Memory trend for "${testName}": ${trend.trend} (avg: ${(trend.avgLeak / 1024).toFixed(2)}KB over ${trend.samples} tests)`);
+        console.info(`${trendEmoji} Memory trend for "${testName}": ${trend.trend} (avg: ${(trend.avgLeak / 1024).toFixed(2)}KB over ${trend.samples} tests)`);
     }
 
-    console.log(`📊 Test "${testName}" memory delta: ${(diff.totalBytes / 1024).toFixed(2)}KB`);
+    console.info(`📊 Test "${testName}" memory delta: ${(diff.totalBytes / 1024).toFixed(2)}KB`);
 });
 
 describe.concurrent("Memory Leak Detection Tests", () => {
@@ -192,14 +192,14 @@ describe.concurrent("Memory Leak Detection Tests", () => {
             await new Promise(resolve => setTimeout(resolve, 100));
 
         } catch (error) {
-            console.log('WebSocket server not available, using mock connections');
+            console.info('WebSocket server not available, using mock connections');
 
             // Fallback to mock connections
             for (let i = 0; i < 10; i++) {
                 connections.push({
                     id: `ws_${i}`,
-                    send: async (data: string) => console.log(`Sending: ${data}`),
-                    close: async () => console.log(`Closing connection ${i}`),
+                    send: async (data: string) => console.info(`Sending: ${data}`),
+                    close: async () => console.info(`Closing connection ${i}`),
                     readyState: 1
                 });
             }
@@ -265,7 +265,7 @@ describe.concurrent("Memory Leak Detection Tests", () => {
             acquire: () => {
                 const conn = {
                     id: `conn_${Date.now()}_${Math.random()}`,
-                    close: () => console.log(`Closing ${conn.id}`)
+                    close: () => console.info(`Closing ${conn.id}`)
                 };
                 connectionPool.connections.push(conn);
                 return conn;
@@ -321,7 +321,7 @@ describe.concurrent("Memory Leak Detection Tests", () => {
         // Add many listeners
         const listeners = [];
         for (let i = 0; i < 100; i++) {
-            const listener = (data: any) => console.log(`Listener ${i} got:`, data);
+            const listener = (data: any) => console.info(`Listener ${i} got:`, data);
             eventEmitter.on('test', listener);
             listeners.push(listener);
         }
@@ -428,8 +428,8 @@ describe.concurrent("Memory Leak Detection Tests", () => {
                     const mockWs = {
                         id: `cycle_${cycle}_conn_${i}`,
                         readyState: 1,
-                        send: (data: string) => console.log(`Mock send: ${data}`),
-                        close: () => console.log(`Mock close`),
+                        send: (data: string) => console.info(`Mock send: ${data}`),
+                        close: () => console.info(`Mock close`),
                         data: {
                             id: `cycle_${cycle}_conn_${i}`,
                             connectedAt: Date.now(),
@@ -457,7 +457,7 @@ describe.concurrent("Memory Leak Detection Tests", () => {
             }
 
         } catch (error) {
-            console.log('WebSocket server test failed (expected in test environment):', error.message);
+            console.info('WebSocket server test failed (expected in test environment):', error.message);
         } finally {
             // Cleanup
             connections.length = 0;

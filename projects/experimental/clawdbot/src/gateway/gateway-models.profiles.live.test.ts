@@ -53,7 +53,7 @@ function parseFilter(raw?: string): Set<string> | null {
 }
 
 function logProgress(message: string): void {
-  console.log(`[live] ${message}`);
+  console.info(`[live] ${message}`);
 }
 
 function assertNoReasoningTags(params: {

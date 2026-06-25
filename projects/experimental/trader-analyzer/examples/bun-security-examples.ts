@@ -95,24 +95,24 @@ const colors = {
 // 6.4.0.0.0.0.0.2 BUN.SECRETS EXAMPLES
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(70));
-console.log(colors.bold('  Bun Security APIs Examples'));
-console.log('═'.repeat(70) + '\n');
+console.info('\n' + '═'.repeat(70));
+console.info(colors.bold('  Bun Security APIs Examples'));
+console.info('═'.repeat(70) + '\n');
 
-console.log(colors.cyan('🔐 Demonstrating Bun.secrets and Bun.CSRF'));
-console.log(colors.dim('Bun 1.3+ native security features\n'));
+console.info(colors.cyan('🔐 Demonstrating Bun.secrets and Bun.CSRF'));
+console.info(colors.dim('Bun 1.3+ native security features\n'));
 
 // Example 1: Bun.secrets - Secure Credential Storage
-console.log(colors.bold('📋 Example 1: Bun.secrets - Secure Credential Storage'));
-console.log(colors.dim('OS-native encrypted storage for sensitive data\n'));
+console.info(colors.bold('📋 Example 1: Bun.secrets - Secure Credential Storage'));
+console.info(colors.dim('OS-native encrypted storage for sensitive data\n'));
 
 async function demonstrateSecrets() {
-  console.log('🔑 Demonstrating Bun.secrets API...');
-  console.log('  ℹ️  Bun.secrets provides OS-native encrypted credential storage');
-  console.log('  ℹ️  Available on macOS Keychain, Linux libsecret, Windows Credential Manager');
+  console.info('🔑 Demonstrating Bun.secrets API...');
+  console.info('  ℹ️  Bun.secrets provides OS-native encrypted credential storage');
+  console.info('  ℹ️  Available on macOS Keychain, Linux libsecret, Windows Credential Manager');
 
   // Example usage (would work with actual Bun.secrets API)
-  console.log('\n📝 Example usage patterns:');
+  console.info('\n📝 Example usage patterns:');
 
   const examples = [
     `// Store API key securely
@@ -134,28 +134,28 @@ const dbUrl = await Bun.secrets.get({
   ];
 
   examples.forEach((example, i) => {
-    console.log(`\n${colors.cyan(`Example ${i + 1}:`)}`);
-    console.log(colors.dim(example));
+    console.info(`\n${colors.cyan(`Example ${i + 1}:`)}`);
+    console.info(colors.dim(example));
   });
 
-  console.log(`\n${colors.yellow('⚠️')}  Note: Actual API calls commented out for demo purposes`);
-  console.log(`   Uncomment and test with real Bun.secrets implementation`);
+  console.info(`\n${colors.yellow('⚠️')}  Note: Actual API calls commented out for demo purposes`);
+  console.info(`   Uncomment and test with real Bun.secrets implementation`);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // 6.4.0.0.0.0.0.3 BUN.CSRF EXAMPLES
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + colors.bold('📋 Example 2: Bun.CSRF - Cross-Site Request Forgery Protection'));
-console.log(colors.dim('Automatic CSRF token generation and validation\n'));
+console.info('\n' + colors.bold('📋 Example 2: Bun.CSRF - Cross-Site Request Forgery Protection'));
+console.info(colors.dim('Automatic CSRF token generation and validation\n'));
 
 async function demonstrateCSRF() {
-  console.log('🎫 Demonstrating Bun.CSRF API...');
-  console.log('  ℹ️  Bun.CSRF provides automatic CSRF token generation and validation');
-  console.log('  ℹ️  Protects against cross-site request forgery attacks');
+  console.info('🎫 Demonstrating Bun.CSRF API...');
+  console.info('  ℹ️  Bun.CSRF provides automatic CSRF token generation and validation');
+  console.info('  ℹ️  Protects against cross-site request forgery attacks');
 
   // Example usage (would work with actual Bun.CSRF API)
-  console.log('\n📝 Example usage patterns:');
+  console.info('\n📝 Example usage patterns:');
 
   const examples = [
     `// Generate CSRF token for form
@@ -175,20 +175,20 @@ const isValid = await Bun.CSRF.validate({
   ];
 
   examples.forEach((example, i) => {
-    console.log(`\n${colors.cyan(`Example ${i + 1}:`)}`);
-    console.log(colors.dim(example));
+    console.info(`\n${colors.cyan(`Example ${i + 1}:`)}`);
+    console.info(colors.dim(example));
   });
 
-  console.log(`\n${colors.yellow('⚠️')}  Note: Actual API calls commented out for demo purposes`);
-  console.log(`   Uncomment and test with real Bun.CSRF implementation`);
+  console.info(`\n${colors.yellow('⚠️')}  Note: Actual API calls commented out for demo purposes`);
+  console.info(`   Uncomment and test with real Bun.CSRF implementation`);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // 6.4.0.0.0.0.0.4 SECURE API SERVER EXAMPLE
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + colors.bold('📋 Example 3: Secure API Server with Authentication'));
-console.log(colors.dim('Combining Bun.secrets and Bun.CSRF in a secure API\n'));
+console.info('\n' + colors.bold('📋 Example 3: Secure API Server with Authentication'));
+console.info(colors.dim('Combining Bun.secrets and Bun.CSRF in a secure API\n'));
 
 const secureServer = Bun.serve({
   port: 3005,
@@ -387,30 +387,30 @@ async function runDemos() {
   try {
     await demonstrateSecrets();
   } catch (error) {
-    console.log(colors.red(`❌ Bun.secrets demo failed: ${error}`));
+    console.info(colors.red(`❌ Bun.secrets demo failed: ${error}`));
   }
 
   try {
     await demonstrateCSRF();
   } catch (error) {
-    console.log(colors.red(`❌ Bun.CSRF demo failed: ${error}`));
+    console.info(colors.red(`❌ Bun.CSRF demo failed: ${error}`));
   }
 
-  console.log('\n' + '═'.repeat(70));
-  console.log(colors.bold('  Secure API Server Started!'));
-  console.log('═'.repeat(70));
-  console.log(`\n${colors.green('🌐 Server running on http://localhost:${secureServer.port}')}`);
-  console.log(`  ${colors.cyan('API Docs')}: http://localhost:${secureServer.port}/api`);
-  console.log(`  ${colors.cyan('Login Form')}: http://localhost:${secureServer.port}/login`);
-  console.log(`  ${colors.cyan('Health Check')}: http://localhost:${secureServer.port}/health`);
+  console.info('\n' + '═'.repeat(70));
+  console.info(colors.bold('  Secure API Server Started!'));
+  console.info('═'.repeat(70));
+  console.info(`\n${colors.green('🌐 Server running on http://localhost:${secureServer.port}')}`);
+  console.info(`  ${colors.cyan('API Docs')}: http://localhost:${secureServer.port}/api`);
+  console.info(`  ${colors.cyan('Login Form')}: http://localhost:${secureServer.port}/login`);
+  console.info(`  ${colors.cyan('Health Check')}: http://localhost:${secureServer.port}/health`);
 
-  console.log(`\n${colors.blue('🔐 Security Features Demonstrated:')}`);
-  console.log(`  ${colors.dim('•')} Bun.secrets - OS-native encrypted credential storage`);
-  console.log(`  ${colors.dim('•')} Bun.CSRF - Automatic CSRF token generation/validation`);
-  console.log(`  ${colors.dim('•')} Secure API with authentication and authorization`);
-  console.log(`  ${colors.dim('•')} Form protection against cross-site request forgery`);
+  console.info(`\n${colors.blue('🔐 Security Features Demonstrated:')}`);
+  console.info(`  ${colors.dim('•')} Bun.secrets - OS-native encrypted credential storage`);
+  console.info(`  ${colors.dim('•')} Bun.CSRF - Automatic CSRF token generation/validation`);
+  console.info(`  ${colors.dim('•')} Secure API with authentication and authorization`);
+  console.info(`  ${colors.dim('•')} Form protection against cross-site request forgery`);
 
-  console.log(`\n${colors.red('🛑 Press Ctrl+C to stop the server')}\n`);
+  console.info(`\n${colors.red('🛑 Press Ctrl+C to stop the server')}\n`);
 }
 
 // Run demonstrations
@@ -418,9 +418,9 @@ runDemos().catch(console.error);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n' + colors.yellow('🛑 Shutting down secure server...'));
+  console.info('\n' + colors.yellow('🛑 Shutting down secure server...'));
   secureServer.stop();
-  console.log(colors.green('✅ Server stopped. Goodbye!'));
+  console.info(colors.green('✅ Server stopped. Goodbye!'));
   process.exit(0);
 });</content>
 <parameter name="filePath">examples/bun-security-examples.ts

@@ -457,8 +457,8 @@ app.post('/api/benchmark/run', async ({ body }) => {
 app.listen(PORT);
 
 const layer4TopicInfo = getTopicInfo('@graph/layer4' as any);
-console.log(`🏀 Sports Correlation Mini-App running at http://localhost:${PORT}`);
-console.log(`💬 Telegram Bot: @${TELEGRAM_BOT_USERNAME}`);
-console.log(`📢 Telegram Topic: #${layer4TopicInfo?.topicId || 1} @graph/layer4 Cross-Sport`);
+console.info(`🏀 Sports Correlation Mini-App running at http://localhost:${PORT}`);
+console.info(`💬 Telegram Bot: @${TELEGRAM_BOT_USERNAME}`);
+console.info(`📢 Telegram Topic: #${layer4TopicInfo?.topicId || 1} @graph/layer4 Cross-Sport`);
 
 export default app;

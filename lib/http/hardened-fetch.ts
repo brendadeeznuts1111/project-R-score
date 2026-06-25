@@ -30,7 +30,7 @@ export async function hardenedFetch(options: HardenedFetchOptions): Promise<Resp
 
       currentUrl = new URL(location, currentUrl).toString();
       redirects++;
-      console.log(`🔄 Following ${response.status} redirect to: ${currentUrl}`);
+      console.info(`🔄 Following ${response.status} redirect to: ${currentUrl}`);
       continue;
     }
 

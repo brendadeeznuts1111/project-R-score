@@ -9,11 +9,11 @@ import { createServer } from "node:net";
 import { createSecureServer } from "node:http2";
 import { writeFileSync, unlinkSync, readFileSync } from "node:fs";
 
-console.log("🔌 Bun v1.3.9: HTTP/2 Connection Upgrades\n");
-console.log("=".repeat(70));
+console.info("🔌 Bun v1.3.9: HTTP/2 Connection Upgrades\n");
+console.info("=".repeat(70));
 
 // Generate self-signed certificates for demo
-console.log("📝 Generating self-signed certificates...");
+console.info("📝 Generating self-signed certificates...");
 
 const { execSync } = await import("node:child_process");
 const keyPath = "/tmp/bun-demo-key.pem";
@@ -25,15 +25,15 @@ try {
     { stdio: "ignore" }
   );
 } catch {
-  console.log("⚠️  OpenSSL not available, using mock certificates");
+  console.info("⚠️  OpenSSL not available, using mock certificates");
   writeFileSync(keyPath, "mock-key");
   writeFileSync(certPath, "mock-cert");
 }
 
-console.log("✅ Certificates ready\n");
+console.info("✅ Certificates ready\n");
 
-console.log("🚀 Starting HTTP/2 server with connection upgrade...");
-console.log("-".repeat(70));
+console.info("🚀 Starting HTTP/2 server with connection upgrade...");
+console.info("-".repeat(70));
 
 const h2Server = createSecureServer({
   key: readFileSync(keyPath),
@@ -41,13 +41,13 @@ const h2Server = createSecureServer({
 });
 
 h2Server.on("stream", (stream, headers) => {
-  console.log(`📨 Received stream: ${headers[":path"]}`);
+  console.info(`📨 Received stream: ${headers[":path"]}`);
   stream.respond({ ":status": 200, "content-type": "text/plain" });
   stream.end("Hello over HTTP/2!");
 });
 
 const netServer = createServer((rawSocket) => {
-  console.log("🔗 Raw TCP connection received, forwarding to HTTP/2 server");
+  console.info("🔗 Raw TCP connection received, forwarding to HTTP/2 server");
   // Forward the raw TCP connection to the HTTP/2 server
   h2Server.emit("connection", rawSocket);
 });
@@ -55,34 +55,36 @@ const netServer = createServer((rawSocket) => {
 const PORT = 0; // Use random available port for demo
 netServer.listen(PORT, () => {
   const actualPort = (netServer.address() as { port: number }).port;
-  console.log(`✅ Server listening on port ${actualPort}`);
-  console.log(`   Pattern: net.Server → Http2SecureServer`);
-  console.log(`   This pattern now works correctly in Bun v1.3.9!`);
-  console.log("\n💡 This is used by:");
-  console.log("   • http2-wrapper");
-  console.log("   • crawlee");
-  console.log("   • Custom HTTP/2 proxy servers");
+  console.info(`✅ Server listening on port ${actualPort}`);
+  console.info(`   Pattern: net.Server → Http2SecureServer`);
+  console.info(`   This pattern now works correctly in Bun v1.3.9!`);
+  console.info("\n💡 This is used by:");
+  console.info("   • http2-wrapper");
+  console.info("   • crawlee");
+  console.info("   • Custom HTTP/2 proxy servers");
   
-  console.log("\n⏹️  Press Ctrl+C to stop the server");
+  console.info("\n⏹️  Press Ctrl+C to stop the server");
 });
 
 // Cleanup on exit
 process.on("SIGINT", () => {
-  console.log("\n\n🛑 Shutting down server...");
+  console.info("\n\n🛑 Shutting down server...");
   netServer.close();
   h2Server.close();
   
   try {
     unlinkSync(keyPath);
     unlinkSync(certPath);
-  } catch {}
+  } catch {
+    console.error('Unhandled error:', error);
+  }
   
   process.exit(0);
 });
 
 // Demo complete - show pattern and exit (don't keep server running in demo mode)
-console.log("\n✅ HTTP/2 Connection Upgrade pattern demonstration complete!");
-console.log("   Server would normally keep running for actual traffic.");
+console.info("\n✅ HTTP/2 Connection Upgrade pattern demonstration complete!");
+console.info("   Server would normally keep running for actual traffic.");
 
 // Cleanup
 netServer.close();
@@ -91,4 +93,6 @@ h2Server.close();
 try {
   unlinkSync(keyPath);
   unlinkSync(certPath);
-} catch {}
+} catch {
+    console.error('Unhandled error:', error);
+  }

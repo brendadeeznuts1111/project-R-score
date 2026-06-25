@@ -2,7 +2,7 @@
 
 /**
  * Cookie Property Validator v3.24 - RFC 6265 Compliance
- * 
+ *
  * Comprehensive validation system for cookie properties with detailed error reporting
  * Ensures security, compliance, and browser compatibility
  */
@@ -11,12 +11,12 @@ export interface ValidationResult {
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
-  sanitized?: any;
+  sanitized?: unknown;
 }
 
 export interface ValidationError {
   property: string;
-  value: any;
+  value: unknown;
   rule: string;
   message: string;
   severity: 'error' | 'critical';
@@ -25,7 +25,7 @@ export interface ValidationError {
 
 export interface ValidationWarning {
   property: string;
-  value: any;
+  value: unknown;
   message: string;
   recommendation: string;
 }
@@ -37,24 +37,49 @@ export interface SecureCookieOptions {
   path?: string;
   expires?: number | Date | undefined;
   secure?: boolean;
-  sameSite?: "strict" | "lax" | "none";
+  sameSite?: 'strict' | 'lax' | 'none';
   partitioned?: boolean;
   maxAge?: number | undefined;
   httpOnly?: boolean;
 }
 
 export class CookieValidator {
-  private static readonly RFC_6265_RESERVED_PREFIXES = [
-    '__Secure-',
-    '__Host-'
-  ];
+  private static readonly RFC_6265_RESERVED_PREFIXES = ['__Secure-', '__Host-'];
 
   private static readonly CONTROL_CHARS = [
-    '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
-    '\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F',
-    '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17',
-    '\x18', '\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F',
-    '\x7F'
+    '\x00',
+    '\x01',
+    '\x02',
+    '\x03',
+    '\x04',
+    '\x05',
+    '\x06',
+    '\x07',
+    '\x08',
+    '\x09',
+    '\x0A',
+    '\x0B',
+    '\x0C',
+    '\x0D',
+    '\x0E',
+    '\x0F',
+    '\x10',
+    '\x11',
+    '\x12',
+    '\x13',
+    '\x14',
+    '\x15',
+    '\x16',
+    '\x17',
+    '\x18',
+    '\x19',
+    '\x1A',
+    '\x1B',
+    '\x1C',
+    '\x1D',
+    '\x1E',
+    '\x1F',
+    '\x7F',
   ];
 
   private static readonly MAX_COOKIE_SIZE = 4096;
@@ -119,7 +144,11 @@ export class CookieValidator {
     warnings.push(...sameSiteResult.warnings);
 
     // Validate partitioned
-    const partitionedResult = this.validatePartitioned(options.partitioned, options.secure, options.sameSite);
+    const partitionedResult = this.validatePartitioned(
+      options.partitioned,
+      options.secure,
+      options.sameSite
+    );
     errors.push(...partitionedResult.errors);
     warnings.push(...partitionedResult.warnings);
 
@@ -138,7 +167,7 @@ export class CookieValidator {
       valid: errors.length === 0,
       errors,
       warnings,
-      sanitized: errors.length === 0 ? sanitized : undefined
+      sanitized: errors.length === 0 ? sanitized : undefined,
     };
   }
 
@@ -161,7 +190,7 @@ export class CookieValidator {
         rule: 'required',
         message: 'Cookie name is required',
         severity: 'critical',
-        fix: 'Provide a valid cookie name'
+        fix: 'Provide a valid cookie name',
       });
       return { errors, warnings };
     }
@@ -175,7 +204,7 @@ export class CookieValidator {
         rule: 'rfc_6265_control_chars',
         message: 'Cookie name contains control characters',
         severity: 'error',
-        fix: 'Remove control characters from cookie name'
+        fix: 'Remove control characters from cookie name',
       });
     }
 
@@ -187,13 +216,13 @@ export class CookieValidator {
         rule: 'max_length',
         message: `Cookie name exceeds ${this.MAX_COOKIE_SIZE} characters`,
         severity: 'error',
-        fix: `Truncate name to ${this.MAX_COOKIE_SIZE} characters`
+        fix: `Truncate name to ${this.MAX_COOKIE_SIZE} characters`,
       });
       sanitized = name.substring(0, this.MAX_COOKIE_SIZE);
     }
 
     // Check for reserved prefixes
-    const hasReservedPrefix = this.RFC_6265_RESERVED_PREFIXES.some(prefix => 
+    const hasReservedPrefix = this.RFC_6265_RESERVED_PREFIXES.some(prefix =>
       name.startsWith(prefix)
     );
     if (hasReservedPrefix) {
@@ -204,7 +233,7 @@ export class CookieValidator {
         rule: 'rfc_6265_reserved_prefix',
         message: `Cookie name uses reserved prefix '${prefix}'`,
         severity: 'error',
-        fix: `Remove '${prefix}' prefix or ensure secure flag is set`
+        fix: `Remove '${prefix}' prefix or ensure secure flag is set`,
       });
     }
 
@@ -218,7 +247,7 @@ export class CookieValidator {
         rule: 'invalid_characters',
         message: 'Cookie name contains invalid characters (spaces, semicolons, commas)',
         severity: 'error',
-        fix: 'Remove invalid characters from cookie name'
+        fix: 'Remove invalid characters from cookie name',
       });
     }
 
@@ -244,7 +273,7 @@ export class CookieValidator {
         rule: 'required',
         message: 'Cookie value is required',
         severity: 'critical',
-        fix: 'Provide a valid cookie value'
+        fix: 'Provide a valid cookie value',
       });
       return { errors, warnings };
     }
@@ -258,7 +287,7 @@ export class CookieValidator {
         rule: 'rfc_6265_control_chars',
         message: 'Cookie value contains control characters',
         severity: 'error',
-        fix: 'Remove control characters from cookie value'
+        fix: 'Remove control characters from cookie value',
       });
     }
 
@@ -270,7 +299,7 @@ export class CookieValidator {
         rule: 'max_length',
         message: `Cookie value exceeds ${this.MAX_COOKIE_SIZE} characters`,
         severity: 'error',
-        fix: `Truncate value to ${this.MAX_COOKIE_SIZE} characters`
+        fix: `Truncate value to ${this.MAX_COOKIE_SIZE} characters`,
       });
       sanitized = value.substring(0, this.MAX_COOKIE_SIZE);
     }
@@ -295,7 +324,8 @@ export class CookieValidator {
     }
 
     // Check for valid domain format
-    const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const domainRegex =
+      /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!domainRegex.test(domain)) {
       errors.push({
         property: 'domain',
@@ -303,7 +333,7 @@ export class CookieValidator {
         rule: 'invalid_domain_format',
         message: 'Invalid domain format',
         severity: 'error',
-        fix: 'Use valid domain format (e.g., example.com)'
+        fix: 'Use valid domain format (e.g., example.com)',
       });
     }
 
@@ -313,18 +343,19 @@ export class CookieValidator {
         property: 'domain',
         value: domain,
         message: 'Domain starts with leading dot',
-        recommendation: 'Consider removing leading dot for better compatibility'
+        recommendation: 'Consider removing leading dot for better compatibility',
       });
     }
 
     // Check for IP address (warning)
-    const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    const ipRegex =
+      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     if (ipRegex.test(domain)) {
       warnings.push({
         property: 'domain',
         value: domain,
         message: 'Using IP address as domain',
-        recommendation: 'Use hostname instead of IP address for better security'
+        recommendation: 'Use hostname instead of IP address for better security',
       });
     }
 
@@ -355,7 +386,7 @@ export class CookieValidator {
         rule: 'must_start_with_slash',
         message: 'Path must start with /',
         severity: 'error',
-        fix: 'Add leading slash to path'
+        fix: 'Add leading slash to path',
       });
       sanitized = '/' + path;
     }
@@ -368,7 +399,7 @@ export class CookieValidator {
         rule: 'no_double_slashes',
         message: 'Path contains double slashes',
         severity: 'error',
-        fix: 'Remove double slashes from path'
+        fix: 'Remove double slashes from path',
       });
       sanitized = sanitized.replace(/\/+/g, '/');
     }
@@ -381,7 +412,7 @@ export class CookieValidator {
         property: 'path',
         value: path,
         message: 'Path contains potentially problematic characters',
-        recommendation: 'Avoid ?, # in cookie paths'
+        recommendation: 'Avoid ?, # in cookie paths',
       });
     }
 
@@ -416,7 +447,7 @@ export class CookieValidator {
         rule: 'invalid_type',
         message: 'Expires must be a Date object or timestamp number',
         severity: 'error',
-        fix: 'Use Date object or Unix timestamp'
+        fix: 'Use Date object or Unix timestamp',
       });
       return { errors, warnings };
     }
@@ -430,7 +461,7 @@ export class CookieValidator {
         rule: 'not_in_past',
         message: 'Expires date is in the past',
         severity: 'error',
-        fix: 'Set future expiration date'
+        fix: 'Set future expiration date',
       });
     }
 
@@ -440,7 +471,7 @@ export class CookieValidator {
         property: 'expires',
         value: expires,
         message: 'Expires date exceeds Y2038 limit (32-bit systems)',
-        recommendation: 'Consider earlier date for 32-bit compatibility'
+        recommendation: 'Consider earlier date for 32-bit compatibility',
       });
     }
 
@@ -450,7 +481,10 @@ export class CookieValidator {
   /**
    * 🔒 Validate secure flag
    */
-  private static validateSecure(secure?: boolean, name?: string): {
+  private static validateSecure(
+    secure?: boolean,
+    name?: string
+  ): {
     errors: ValidationError[];
     warnings: ValidationWarning[];
   } {
@@ -458,9 +492,8 @@ export class CookieValidator {
     const warnings: ValidationWarning[] = [];
 
     const isProduction = process.env.NODE_ENV === 'production';
-    const hasSecurePrefix = name && this.RFC_6265_RESERVED_PREFIXES.some(prefix => 
-      name.startsWith(prefix)
-    );
+    const hasSecurePrefix =
+      name && this.RFC_6265_RESERVED_PREFIXES.some(prefix => name.startsWith(prefix));
 
     // Required in production
     if (isProduction && !secure) {
@@ -470,7 +503,7 @@ export class CookieValidator {
         rule: 'required_in_production',
         message: 'Secure flag is required in production',
         severity: 'critical',
-        fix: 'Set secure=true in production'
+        fix: 'Set secure=true in production',
       });
     }
 
@@ -482,7 +515,7 @@ export class CookieValidator {
         rule: 'required_for_secure_prefix',
         message: 'Secure flag required for __Secure- prefixed cookies',
         severity: 'critical',
-        fix: 'Set secure=true for __Secure- prefixed cookies'
+        fix: 'Set secure=true for __Secure- prefixed cookies',
       });
     }
 
@@ -492,14 +525,17 @@ export class CookieValidator {
   /**
    * 🔗 Validate sameSite attribute
    */
-  private static validateSameSite(sameSite?: "strict" | "lax" | "none", secure?: boolean): {
+  private static validateSameSite(
+    sameSite?: 'strict' | 'lax' | 'none',
+    secure?: boolean
+  ): {
     errors: ValidationError[];
     warnings: ValidationWarning[];
   } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    const validValues = ["strict", "lax", "none"];
+    const validValues = ['strict', 'lax', 'none'];
     if (sameSite && !validValues.includes(sameSite)) {
       errors.push({
         property: 'sameSite',
@@ -507,7 +543,7 @@ export class CookieValidator {
         rule: 'invalid_value',
         message: `sameSite must be one of: ${validValues.join(', ')}`,
         severity: 'error',
-        fix: 'Use valid sameSite value'
+        fix: 'Use valid sameSite value',
       });
     }
 
@@ -519,7 +555,7 @@ export class CookieValidator {
         rule: 'none_requires_secure',
         message: 'sameSite="none" requires secure=true',
         severity: 'error',
-        fix: 'Set secure=true when using sameSite="none"'
+        fix: 'Set secure=true when using sameSite="none"',
       });
     }
 
@@ -529,7 +565,11 @@ export class CookieValidator {
   /**
    * 🧩 Validate partitioned attribute (CHIPS API)
    */
-  private static validatePartitioned(partitioned?: boolean, secure?: boolean, sameSite?: string): {
+  private static validatePartitioned(
+    partitioned?: boolean,
+    secure?: boolean,
+    sameSite?: string
+  ): {
     errors: ValidationError[];
     warnings: ValidationWarning[];
   } {
@@ -544,7 +584,7 @@ export class CookieValidator {
         rule: 'requires_secure',
         message: 'Partitioned cookies require secure=true',
         severity: 'error',
-        fix: 'Set secure=true for partitioned cookies'
+        fix: 'Set secure=true for partitioned cookies',
       });
     }
 
@@ -554,7 +594,7 @@ export class CookieValidator {
         property: 'partitioned',
         value: partitioned,
         message: 'Partitioned cookies work best with sameSite="none"',
-        recommendation: 'Consider setting sameSite="none" for partitioned cookies'
+        recommendation: 'Consider setting sameSite="none" for partitioned cookies',
       });
     }
 
@@ -564,7 +604,7 @@ export class CookieValidator {
         property: 'partitioned',
         value: partitioned,
         message: 'Partitioned cookies (CHIPS API) have limited browser support',
-        recommendation: 'Ensure target browsers support CHIPS API'
+        recommendation: 'Ensure target browsers support CHIPS API',
       });
     }
 
@@ -594,7 +634,7 @@ export class CookieValidator {
         rule: 'invalid_type',
         message: 'maxAge must be a number',
         severity: 'error',
-        fix: 'Use number for maxAge (seconds)'
+        fix: 'Use number for maxAge (seconds)',
       });
       return { errors, warnings };
     }
@@ -607,7 +647,7 @@ export class CookieValidator {
         rule: 'positive_values',
         message: 'maxAge must be positive',
         severity: 'error',
-        fix: 'Use positive number for maxAge'
+        fix: 'Use positive number for maxAge',
       });
     }
 
@@ -618,7 +658,7 @@ export class CookieValidator {
         property: 'maxAge',
         value: maxAge,
         message: 'maxAge exceeds 1 year',
-        recommendation: 'Consider using shorter duration for better security'
+        recommendation: 'Consider using shorter duration for better security',
       });
     }
 
@@ -639,7 +679,7 @@ export class CookieValidator {
         property: 'cross_property',
         value: { expires: options.expires, maxAge: options.maxAge },
         message: 'Both expires and maxAge are set',
-        recommendation: 'Use either expires or maxAge, not both (maxAge takes precedence)'
+        recommendation: 'Use either expires or maxAge, not both (maxAge takes precedence)',
       });
     }
 
@@ -652,7 +692,7 @@ export class CookieValidator {
         rule: 'size_limit',
         message: `Total cookie size exceeds ${this.MAX_COOKIE_SIZE} bytes`,
         severity: 'error',
-        fix: 'Reduce name or value length'
+        fix: 'Reduce name or value length',
       });
     }
   }
@@ -662,9 +702,9 @@ export class CookieValidator {
    */
   static generateReport(result: ValidationResult): string {
     let report = '# Cookie Validation Report\n\n';
-    
+
     report += `## Status: ${result.valid ? '✅ VALID' : '❌ INVALID'}\n\n`;
-    
+
     if (result.errors.length > 0) {
       report += '## 🚨 Errors\n\n';
       result.errors.forEach((error, index) => {
@@ -678,7 +718,7 @@ export class CookieValidator {
         report += `- **Value**: \`${JSON.stringify(error.value)}\`\n\n`;
       });
     }
-    
+
     if (result.warnings.length > 0) {
       report += '## ⚠️ Warnings\n\n';
       result.warnings.forEach((warning, index) => {
@@ -688,14 +728,14 @@ export class CookieValidator {
         report += `- **Value**: \`${JSON.stringify(warning.value)}\`\n\n`;
       });
     }
-    
+
     if (result.sanitized) {
       report += '## 🧹 Sanitized Options\n\n';
       report += '```json\n';
       report += JSON.stringify(result.sanitized, null, 2);
       report += '\n```\n';
     }
-    
+
     return report;
   }
 }

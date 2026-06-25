@@ -1,0 +1,14 @@
+id: bun-glob-exact-signature
+snapshots:
+  new Bun.Glob("a", "b"):
+    labels:
+    - source: new Bun.Glob("a", "b")
+      style: primary
+      start: 0
+      end: 22
+  new Bun.Glob():
+    labels:
+    - source: new Bun.Glob()
+      style: primary
+      start: 0
+      end: 14

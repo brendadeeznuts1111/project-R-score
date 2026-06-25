@@ -10,8 +10,8 @@
 import { CookieValidator, SecureCookieOptions } from '../lib/telemetry/cookie-validator';
 import { SecureCookieManager, AnalyticsCookieMap } from '../lib/telemetry/bun-cookies-complete-v2';
 
-console.log('🔍 Cookie Validation Demo v3.24');
-console.log('=====================================\n');
+console.info('🔍 Cookie Validation Demo v3.24');
+console.info('=====================================\n');
 
 // Test cases demonstrating various validation scenarios
 const testCases: Array<{ name: string; options: SecureCookieOptions; description: string }> = [
@@ -163,79 +163,79 @@ async function runValidationTests() {
   
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i];
-    console.log(`\n${i + 1}. ${testCase.name}`);
-    console.log('─'.repeat(50));
-    console.log(`Description: ${testCase.description}`);
-    console.log(`Options:`, JSON.stringify(testCase.options, null, 2));
+    console.info(`\n${i + 1}. ${testCase.name}`);
+    console.info('─'.repeat(50));
+    console.info(`Description: ${testCase.description}`);
+    console.info(`Options:`, JSON.stringify(testCase.options, null, 2));
     
     // Validate using CookieValidator
     const validation = CookieValidator.validateCookie(testCase.options);
     
-    console.log(`\n📊 Validation Result: ${validation.valid ? '✅ VALID' : '❌ INVALID'}`);
+    console.info(`\n📊 Validation Result: ${validation.valid ? '✅ VALID' : '❌ INVALID'}`);
     
     if (validation.errors.length > 0) {
-      console.log('\n🚨 Errors:');
+      console.info('\n🚨 Errors:');
       validation.errors.forEach((error, index) => {
-        console.log(`   ${index + 1}. ${error.property}: ${error.message}`);
-        console.log(`      Rule: ${error.rule} | Severity: ${error.severity}`);
+        console.info(`   ${index + 1}. ${error.property}: ${error.message}`);
+        console.info(`      Rule: ${error.rule} | Severity: ${error.severity}`);
         if (error.fix) {
-          console.log(`      Fix: ${error.fix}`);
+          console.info(`      Fix: ${error.fix}`);
         }
       });
     }
     
     if (validation.warnings.length > 0) {
-      console.log('\n⚠️ Warnings:');
+      console.info('\n⚠️ Warnings:');
       validation.warnings.forEach((warning, index) => {
-        console.log(`   ${index + 1}. ${warning.property}: ${warning.message}`);
-        console.log(`      Recommendation: ${warning.recommendation}`);
+        console.info(`   ${index + 1}. ${warning.property}: ${warning.message}`);
+        console.info(`      Recommendation: ${warning.recommendation}`);
       });
     }
     
     if (validation.sanitized) {
-      console.log('\n🧹 Sanitized Options:');
-      console.log(JSON.stringify(validation.sanitized, null, 2));
+      console.info('\n🧹 Sanitized Options:');
+      console.info(JSON.stringify(validation.sanitized, null, 2));
     }
     
     // Test with SecureCookieManager if validation passes
     if (validation.valid && testCase.options.name && testCase.options.value) {
       try {
-        console.log('\n🔐 Testing with SecureCookieManager...');
+        console.info('\n🔐 Testing with SecureCookieManager...');
         const result = secureManager.createSecureCookie(
           testCase.options.name,
           testCase.options.value,
           testCase.options
         );
         
-        console.log('✅ Cookie created successfully');
-        console.log(`   Name: ${result.cookie.name}`);
-        console.log(`   Value length: ${result.cookie.value.length} chars`);
-        console.log(`   Secure: ${result.cookie.secure}`);
-        console.log(`   HttpOnly: ${result.cookie.httpOnly}`);
-        console.log(`   SameSite: ${result.cookie.sameSite}`);
+        console.info('✅ Cookie created successfully');
+        console.info(`   Name: ${result.cookie.name}`);
+        console.info(`   Value length: ${result.cookie.value.length} chars`);
+        console.info(`   Secure: ${result.cookie.secure}`);
+        console.info(`   HttpOnly: ${result.cookie.httpOnly}`);
+        console.info(`   SameSite: ${result.cookie.sameSite}`);
         
         // Verify the cookie
         const verification = secureManager.verifyCookie(result.cookie);
-        console.log(`   Verification: ${verification.valid ? '✅ Valid' : '❌ Invalid'}`);
+        console.info(`   Verification: ${verification.valid ? '✅ Valid' : '❌ Invalid'}`);
         
       } catch (error) {
-        console.log(`❌ Cookie creation failed: ${error}`);
+        console.info(`❌ Cookie creation failed: ${error}`);
       }
     }
     
-    console.log('\n' + '='.repeat(60));
+    console.info('\n' + '='.repeat(60));
   }
 }
 
 // Demonstrate AnalyticsCookieMap with validation
 async function demonstrateAnalyticsCookieMap() {
-  console.log('\n\n🍪 AnalyticsCookieMap Validation Demo');
-  console.log('=====================================\n');
+  console.info('\n\n🍪 AnalyticsCookieMap Validation Demo');
+  console.info('=====================================\n');
   
   const headersObj: Record<string, string> = {};
   const cookieMap = new AnalyticsCookieMap(headersObj, 'demo-secret');
   
-  console.log('1. Setting valid secure cookie...');
+  console.info('1. Setting valid secure cookie...');
   const result1 = cookieMap.setSecure('valid-session', {
     userId: 123,
     role: 'user'
@@ -247,15 +247,15 @@ async function demonstrateAnalyticsCookieMap() {
     sameSite: 'lax'
   });
   
-  console.log(`   Result: ${result1.success ? '✅ Success' : '❌ Failed'}`);
+  console.info(`   Result: ${result1.success ? '✅ Success' : '❌ Failed'}`);
   if (!result1.validation.valid) {
-    console.log(`   Errors: ${result1.validation.errors.length}`);
+    console.info(`   Errors: ${result1.validation.errors.length}`);
   }
   if (result1.validation.warnings.length > 0) {
-    console.log(`   Warnings: ${result1.validation.warnings.length}`);
+    console.info(`   Warnings: ${result1.validation.warnings.length}`);
   }
   
-  console.log('\n2. Setting invalid secure cookie...');
+  console.info('\n2. Setting invalid secure cookie...');
   const result2 = cookieMap.setSecure('__Secure-invalid', {
     data: 'secret'
   }, {
@@ -263,25 +263,25 @@ async function demonstrateAnalyticsCookieMap() {
     secure: false // Missing secure flag for __Secure- prefix
   });
   
-  console.log(`   Result: ${result2.success ? '✅ Success' : '❌ Failed'}`);
+  console.info(`   Result: ${result2.success ? '✅ Success' : '❌ Failed'}`);
   if (!result2.validation.valid) {
-    console.log('   Errors:');
+    console.info('   Errors:');
     result2.validation.errors.forEach(error => {
-      console.log(`     - ${error.message}`);
+      console.info(`     - ${error.message}`);
     });
   }
   
-  console.log('\n3. Getting analytics...');
+  console.info('\n3. Getting analytics...');
   const analytics = cookieMap.getAnalytics();
-  console.log(`   Total cookies: ${analytics.totalCookies}`);
-  console.log(`   Total size: ${analytics.totalSize} bytes`);
-  console.log(`   Secure percentage: ${analytics.securePercentage}%`);
+  console.info(`   Total cookies: ${analytics.totalCookies}`);
+  console.info(`   Total size: ${analytics.totalSize} bytes`);
+  console.info(`   Secure percentage: ${analytics.securePercentage}%`);
 }
 
 // Generate comprehensive validation report
 function generateValidationReport() {
-  console.log('\n\n📋 Comprehensive Validation Report');
-  console.log('===================================\n');
+  console.info('\n\n📋 Comprehensive Validation Report');
+  console.info('===================================\n');
   
   // Test a complex scenario with multiple issues
   const complexTestCase: SecureCookieOptions = {
@@ -300,7 +300,7 @@ function generateValidationReport() {
   const validation = CookieValidator.validateCookie(complexTestCase);
   const report = CookieValidator.generateReport(validation);
   
-  console.log(report);
+  console.info(report);
 }
 
 // Main execution
@@ -310,13 +310,13 @@ async function main() {
     await demonstrateAnalyticsCookieMap();
     generateValidationReport();
     
-    console.log('\n\n🎉 Cookie Validation Demo Complete!');
-    console.log('=====================================');
-    console.log('✅ All validation scenarios tested');
-    console.log('✅ RFC 6265 compliance verified');
-    console.log('✅ Security rules enforced');
-    console.log('✅ Warnings and sanitization demonstrated');
-    console.log('✅ Integration with SecureCookieManager shown');
+    console.info('\n\n🎉 Cookie Validation Demo Complete!');
+    console.info('=====================================');
+    console.info('✅ All validation scenarios tested');
+    console.info('✅ RFC 6265 compliance verified');
+    console.info('✅ Security rules enforced');
+    console.info('✅ Warnings and sanitization demonstrated');
+    console.info('✅ Integration with SecureCookieManager shown');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

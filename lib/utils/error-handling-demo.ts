@@ -2,28 +2,28 @@
 
 // Safe execution with error handling
 async function demonstrateErrorHandling() {
-  console.log('🔍 COMPREHENSIVE ERROR HANDLING DEMONSTRATION');
-  console.log('='.repeat(60));
+  console.info('🔍 COMPREHENSIVE ERROR HANDLING DEMONSTRATION');
+  console.info('='.repeat(60));
 
   // 1. IMPORT ERROR HANDLING
-  console.log('\n📦 1. IMPORT ERROR HANDLING:');
+  console.info('\n📦 1. IMPORT ERROR HANDLING:');
 
   try {
     const docs = await import('./documentation');
-    console.log('✅ Documentation module imported successfully');
+    console.info('✅ Documentation module imported successfully');
   } catch (error) {
-    console.log('❌ Import failed - handled gracefully');
-    console.log('   Error type:', error.constructor.name);
-    console.log('   Message:', error.message);
+    console.info('❌ Import failed - handled gracefully');
+    console.info('   Error type:', error.constructor.name);
+    console.info('   Message:', error.message);
 
     // Fallback strategy
-    console.log('🔄 Using fallback imports...');
+    console.info('🔄 Using fallback imports...');
     const cliConstants = await import('./documentation/constants/cli.ts');
-    console.log('✅ CLI constants loaded via fallback');
+    console.info('✅ CLI constants loaded via fallback');
   }
 
   // 2. VALIDATION ERROR HANDLING
-  console.log('\n✅ 2. VALIDATION ERROR HANDLING:');
+  console.info('\n✅ 2. VALIDATION ERROR HANDLING:');
 
   try {
     const { EnhancedDocumentationURLValidator } = await import('./documentation');
@@ -33,8 +33,8 @@ async function demonstrateErrorHandling() {
     const validation = EnhancedDocumentationURLValidator.validateCLICommand(invalidCommand);
 
     if (!validation.isValid) {
-      console.log('✅ Invalid command detected and handled');
-      console.log('   Errors:', validation.errors);
+      console.info('✅ Invalid command detected and handled');
+      console.info('   Errors:', validation.errors);
     }
 
     // Test invalid URL
@@ -42,10 +42,10 @@ async function demonstrateErrorHandling() {
     const urlValidation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(invalidURL);
 
     if (!urlValidation.isValid) {
-      console.log('✅ Invalid URL detected and handled');
+      console.info('✅ Invalid URL detected and handled');
     }
   } catch (error) {
-    console.log('❌ Validation error - using fallback');
+    console.info('❌ Validation error - using fallback');
 
     // Simple fallback validation
     const simpleValidation = (command: string) => {
@@ -55,11 +55,11 @@ async function demonstrateErrorHandling() {
     };
 
     const result = simpleValidation('test');
-    console.log('✅ Fallback validation working:', result);
+    console.info('✅ Fallback validation working:', result);
   }
 
   // 3. ASYNC ERROR HANDLING
-  console.log('\n⚡ 3. ASYNC ERROR HANDLING:');
+  console.info('\n⚡ 3. ASYNC ERROR HANDLING:');
 
   const asyncOperation = async (shouldFail: boolean) => {
     if (shouldFail) {
@@ -72,20 +72,20 @@ async function demonstrateErrorHandling() {
   try {
     await asyncOperation(true);
   } catch (error) {
-    console.log('✅ Async error caught and handled');
-    console.log('   Error:', error.message);
+    console.info('✅ Async error caught and handled');
+    console.info('   Error:', error.message);
 
     // Retry logic
     try {
       const result = await asyncOperation(false);
-      console.log('✅ Retry successful:', result);
+      console.info('✅ Retry successful:', result);
     } catch (retryError) {
-      console.log('❌ Retry also failed');
+      console.info('❌ Retry also failed');
     }
   }
 
   // 4. FILE OPERATION ERROR HANDLING
-  console.log('\n📁 4. FILE OPERATION ERROR HANDLING:');
+  console.info('\n📁 4. FILE OPERATION ERROR HANDLING:');
 
   try {
     const nonExistentFile = './non-existent-file.json';
@@ -93,21 +93,21 @@ async function demonstrateErrorHandling() {
 
     if (await file.exists()) {
       const content = await file.text();
-      console.log('✅ File read successfully');
+      console.info('✅ File read successfully');
     } else {
-      console.log('✅ File not found - handled gracefully');
-      console.log('   Creating fallback content...');
+      console.info('✅ File not found - handled gracefully');
+      console.info('   Creating fallback content...');
 
       // Create fallback
       await Bun.write(nonExistentFile, '{"fallback": true}');
-      console.log('✅ Fallback file created');
+      console.info('✅ Fallback file created');
     }
   } catch (error) {
-    console.log('❌ File operation failed:', error.message);
+    console.info('❌ File operation failed:', error.message);
   }
 
   // 5. NETWORK REQUEST ERROR HANDLING
-  console.log('\n🌐 5. NETWORK REQUEST ERROR HANDLING:');
+  console.info('\n🌐 5. NETWORK REQUEST ERROR HANDLING:');
 
   try {
     const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://bun.sh/docs/cli' domain
@@ -117,21 +117,21 @@ async function demonstrateErrorHandling() {
       });
 
     if (response.ok) {
-      console.log('✅ Network request successful');
+      console.info('✅ Network request successful');
     } else {
-      console.log('⚠️ Network request returned:', response.status);
+      console.info('⚠️ Network request returned:', response.status);
     }
   } catch (error) {
-    console.log('✅ Network error handled gracefully');
-    console.log('   Error:', error.message);
+    console.info('✅ Network error handled gracefully');
+    console.info('   Error:', error.message);
 
     // Fallback URL
-    console.log('🔄 Using fallback documentation URL...');
-    console.log('   Fallback: https://bun.sh/docs');
+    console.info('🔄 Using fallback documentation URL...');
+    console.info('   Fallback: https://bun.sh/docs');
   }
 
   // 6. TYPE ERROR HANDLING
-  console.log('\n🔷 6. TYPE ERROR HANDLING:');
+  console.info('\n🔷 6. TYPE ERROR HANDLING:');
 
   try {
     const processData = (data: unknown) => {
@@ -150,17 +150,17 @@ async function demonstrateErrorHandling() {
     testValues.forEach((value, index) => {
       try {
         const result = processData(value);
-        console.log(`✅ Test ${index + 1}: ${typeof value} → ${result}`);
+        console.info(`✅ Test ${index + 1}: ${typeof value} → ${result}`);
       } catch (error) {
-        console.log(`⚠️ Test ${index + 1}: ${typeof value} → ${error.message}`);
+        console.info(`⚠️ Test ${index + 1}: ${typeof value} → ${error.message}`);
       }
     });
   } catch (error) {
-    console.log('❌ Type error handling failed:', error.message);
+    console.info('❌ Type error handling failed:', error.message);
   }
 
   // 7. GRACEFUL DEGRADATION
-  console.log('\n🛡️ 7. GRACEFUL DEGRADATION:');
+  console.info('\n🛡️ 7. GRACEFUL DEGRADATION:');
 
   const loadWithFallback = async () => {
     const strategies = [
@@ -190,14 +190,14 @@ async function demonstrateErrorHandling() {
 
     for (let i = 0; i < strategies.length; i++) {
       try {
-        console.log(`🔄 Trying strategy ${i + 1}...`);
+        console.info(`🔄 Trying strategy ${i + 1}...`);
         const result = await strategies[i]();
-        console.log(`✅ Strategy ${i + 1} successful:`, result.source);
+        console.info(`✅ Strategy ${i + 1} successful:`, result.source);
         return result;
       } catch (error) {
-        console.log(`❌ Strategy ${i + 1} failed:`, error.message);
+        console.info(`❌ Strategy ${i + 1} failed:`, error.message);
         if (i === strategies.length - 1) {
-          console.log('🚨 All strategies failed');
+          console.info('🚨 All strategies failed');
           throw error;
         }
       }
@@ -206,13 +206,13 @@ async function demonstrateErrorHandling() {
 
   try {
     const result = await loadWithFallback();
-    console.log('🎯 Final result loaded from:', result.source);
+    console.info('🎯 Final result loaded from:', result.source);
   } catch (error) {
-    console.log('💥 Complete failure:', error.message);
+    console.info('💥 Complete failure:', error.message);
   }
 
   // 8. ERROR LOGGING AND REPORTING
-  console.log('\n📊 8. ERROR LOGGING AND REPORTING:');
+  console.info('\n📊 8. ERROR LOGGING AND REPORTING:');
 
   const errorLogger = {
     log: (error: Error, context: string) => {
@@ -224,7 +224,7 @@ async function demonstrateErrorHandling() {
         type: error.constructor.name,
       };
 
-      console.log('📝 Error logged:', {
+      console.info('📝 Error logged:', {
         context: logEntry.context,
         message: logEntry.message,
         type: logEntry.type,
@@ -246,7 +246,7 @@ async function demonstrateErrorHandling() {
   });
 
   // 9. RECOVERY MECHANISMS
-  console.log('\n🔄 9. RECOVERY MECHANISMS:');
+  console.info('\n🔄 9. RECOVERY MECHANISMS:');
 
   const withRetry = async <T>(
     operation: () => Promise<T>,
@@ -255,10 +255,10 @@ async function demonstrateErrorHandling() {
   ): Promise<T> => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`🔄 Attempt ${attempt}/${maxRetries}...`);
+        console.info(`🔄 Attempt ${attempt}/${maxRetries}...`);
         return await operation();
       } catch (error) {
-        console.log(`❌ Attempt ${attempt} failed:`, error.message);
+        console.info(`❌ Attempt ${attempt} failed:`, error.message);
 
         if (attempt === maxRetries) {
           throw error;
@@ -283,24 +283,24 @@ async function demonstrateErrorHandling() {
     };
 
     const result = await withRetry(flakyOperation, 3, 100);
-    console.log('✅ Retry mechanism successful:', result);
+    console.info('✅ Retry mechanism successful:', result);
   } catch (error) {
-    console.log('❌ Retry mechanism failed:', error.message);
+    console.info('❌ Retry mechanism failed:', error.message);
   }
 
   // 10. SUMMARY
-  console.log('\n📋 10. ERROR HANDLING SUMMARY:');
-  console.log('✅ Import errors: Handled with fallbacks');
-  console.log('✅ Validation errors: Graceful degradation');
-  console.log('✅ Async errors: Try-catch with retries');
-  console.log('✅ File errors: Existence checks + creation');
-  console.log('✅ Network errors: Timeouts + fallbacks');
-  console.log('✅ Type errors: Runtime type checking');
-  console.log('✅ System failures: Multiple fallback strategies');
-  console.log('✅ Error logging: Structured error reporting');
-  console.log('✅ Recovery: Automatic retry mechanisms');
+  console.info('\n📋 10. ERROR HANDLING SUMMARY:');
+  console.info('✅ Import errors: Handled with fallbacks');
+  console.info('✅ Validation errors: Graceful degradation');
+  console.info('✅ Async errors: Try-catch with retries');
+  console.info('✅ File errors: Existence checks + creation');
+  console.info('✅ Network errors: Timeouts + fallbacks');
+  console.info('✅ Type errors: Runtime type checking');
+  console.info('✅ System failures: Multiple fallback strategies');
+  console.info('✅ Error logging: Structured error reporting');
+  console.info('✅ Recovery: Automatic retry mechanisms');
 
-  console.log('\n🎯 Error handling is comprehensive and robust!');
+  console.info('\n🎯 Error handling is comprehensive and robust!');
 }
 
 // Safe execution
@@ -310,7 +310,7 @@ if (import.meta.main) {
     process.exit(1);
   });
 } else {
-  console.log('ℹ️ Error handling demo imported, not executed directly');
+  console.info('ℹ️ Error handling demo imported, not executed directly');
 }
 
 /**

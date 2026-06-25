@@ -90,13 +90,13 @@ class SharpMovementDetector {
 export class SharpMovementDemo {
 
     static demonstrateSharpMovementDetection(): void {
-        console.log('⚡ Sharp Movement Detection Demo\n');
+        console.info('⚡ Sharp Movement Detection Demo\n');
 
         const detector = new SharpMovementDetector();
         const sportsbook = 'draftkings';
 
-        console.log(`📈 Simulating price updates for ${sportsbook}...`);
-        console.log(`   Sharp movement threshold: 2%\n`);
+        console.info(`📈 Simulating price updates for ${sportsbook}...`);
+        console.info(`   Sharp movement threshold: 2%\n`);
 
         // Simulate price updates with sharp movements
         const priceUpdates = [
@@ -127,53 +127,53 @@ export class SharpMovementDemo {
                 Math.abs(update.price - previousPrice.price) / Math.abs(previousPrice.price) * 100 : 0;
 
             if (priceChange >= 2.0) {
-                console.log(`   ${index + 1}. ${update.time}: Price ${update.price} 🚨 SHARP MOVEMENT (${priceChange.toFixed(1)}% change)`);
+                console.info(`   ${index + 1}. ${update.time}: Price ${update.price} 🚨 SHARP MOVEMENT (${priceChange.toFixed(1)}% change)`);
             } else {
-                console.log(`   ${index + 1}. ${update.time}: Price ${update.price} (${priceChange.toFixed(1)}% change)`);
+                console.info(`   ${index + 1}. ${update.time}: Price ${update.price} (${priceChange.toFixed(1)}% change)`);
             }
         });
 
         // Display results (this matches the section you were viewing)
         const sharpMovements = detector.getSharpMovements();
 
-        console.log('\n📊 Detection Results:');
-        console.log(`   Price History Points: ${detector.getPriceHistoryLength()}`);
-        console.log(`   Sharp Movements Detected: ${sharpMovements.length}`);
+        console.info('\n📊 Detection Results:');
+        console.info(`   Price History Points: ${detector.getPriceHistoryLength()}`);
+        console.info(`   Sharp Movements Detected: ${sharpMovements.length}`);
 
         if (sharpMovements.length > 0) {
-            console.log('\n⚡ Sharp Movements:');
+            console.info('\n⚡ Sharp Movements:');
             sharpMovements.forEach((movement, index) => {
                 const priceChange = Math.abs(movement.toPrice - movement.fromPrice);
                 const percentChange = (priceChange / Math.abs(movement.fromPrice)) * 100;
-                console.log(`   ${index + 1}. ${movement.timestamp.toLocaleTimeString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook})`);
-                console.log(`      Price Change: ${percentChange.toFixed(1)}% | Significance: ${(movement.significance * 100).toFixed(1)}%`);
-                console.log(`      Reason: ${movement.reason}`);
+                console.info(`   ${index + 1}. ${movement.timestamp.toLocaleTimeString()}: ${movement.fromPrice} → ${movement.toPrice} (${movement.sportsbook})`);
+                console.info(`      Price Change: ${percentChange.toFixed(1)}% | Significance: ${(movement.significance * 100).toFixed(1)}%`);
+                console.info(`      Reason: ${movement.reason}`);
             });
         } else {
-            console.log('\n⚡ No sharp movements detected (threshold: 2%)');
+            console.info('\n⚡ No sharp movements detected (threshold: 2%)');
         }
 
-        console.log('\n📈 Analytics Summary:');
-        console.log(`   Total Price Updates: ${detector.getPriceHistoryLength()}`);
-        console.log(`   Sharp Movement Rate: ${((sharpMovements.length / detector.getPriceHistoryLength()) * 100).toFixed(1)}%`);
-        console.log(`   Average Significance: ${sharpMovements.length > 0 ? (sharpMovements.reduce((sum, m) => sum + m.significance, 0) / sharpMovements.length * 100).toFixed(1) : 0}%`);
+        console.info('\n📈 Analytics Summary:');
+        console.info(`   Total Price Updates: ${detector.getPriceHistoryLength()}`);
+        console.info(`   Sharp Movement Rate: ${((sharpMovements.length / detector.getPriceHistoryLength()) * 100).toFixed(1)}%`);
+        console.info(`   Average Significance: ${sharpMovements.length > 0 ? (sharpMovements.reduce((sum, m) => sum + m.significance, 0) / sharpMovements.length * 100).toFixed(1) : 0}%`);
 
         if (sharpMovements.length > 0) {
             const mostSignificant = sharpMovements.reduce((max, current) =>
                 current.significance > max.significance ? current : max
             );
-            console.log(`   Most Significant: ${mostSignificant.fromPrice} → ${mostSignificant.toPrice} (${(mostSignificant.significance * 100).toFixed(1)}%)`);
+            console.info(`   Most Significant: ${mostSignificant.fromPrice} → ${mostSignificant.toPrice} (${(mostSignificant.significance * 100).toFixed(1)}%)`);
         }
     }
 
     static demonstrateDifferentThresholds(): void {
-        console.log('\n🎯 Sharp Movement Threshold Comparison\n');
+        console.info('\n🎯 Sharp Movement Threshold Comparison\n');
 
         const thresholds = [0.01, 0.02, 0.05, 0.1]; // 1%, 2%, 5%, 10%
         const priceUpdates = [-110, -108, -105, -102, -100, -98, -95, -92, -88, -85];
 
-        console.log('Threshold\tMovements Detected\tDetection Rate\tSensitivity');
-        console.log('---------\t------------------\t-------------\t----------');
+        console.info('Threshold\tMovements Detected\tDetection Rate\tSensitivity');
+        console.info('---------\t------------------\t-------------\t----------');
 
         thresholds.forEach(threshold => {
             const detector = new SharpMovementDetector();
@@ -192,17 +192,17 @@ export class SharpMovementDemo {
             const detectionRate = (movements.length / priceUpdates.length) * 100;
             const sensitivity = threshold < 0.02 ? 'High' : threshold < 0.05 ? 'Medium' : 'Low';
 
-            console.log(`${(threshold * 100).toFixed(0)}%\t\t${movements.length}\t\t\t${detectionRate.toFixed(1)}%\t\t${sensitivity}`);
+            console.info(`${(threshold * 100).toFixed(0)}%\t\t${movements.length}\t\t\t${detectionRate.toFixed(1)}%\t\t${sensitivity}`);
         });
     }
 
     static demonstrateRealTimeAlerts(): void {
-        console.log('\n🚨 Real-Time Sharp Movement Alerts\n');
+        console.info('\n🚨 Real-Time Sharp Movement Alerts\n');
 
         const detector = new SharpMovementDetector();
 
         // Set up alert simulation
-        console.log('📡 Simulating real-time price monitoring...\n');
+        console.info('📡 Simulating real-time price monitoring...\n');
 
         const priceSequence = [
             { price: -110, delay: 1000 },
@@ -233,50 +233,50 @@ export class SharpMovementDemo {
                 alertCount++;
                 const latestMovement = detector.getSharpMovements()[newMovements - 1];
                 if (latestMovement) {
-                    console.log(`🚨 ALERT ${alertCount}: Sharp movement detected!`);
-                    console.log(`   ${latestMovement.fromPrice} → ${latestMovement.toPrice} (${(latestMovement.significance * 100).toFixed(1)}%)`);
-                    console.log(`   Reason: ${latestMovement.reason}`);
-                    console.log(`   Time: ${latestMovement.timestamp.toLocaleTimeString()}\n`);
+                    console.info(`🚨 ALERT ${alertCount}: Sharp movement detected!`);
+                    console.info(`   ${latestMovement.fromPrice} → ${latestMovement.toPrice} (${(latestMovement.significance * 100).toFixed(1)}%)`);
+                    console.info(`   Reason: ${latestMovement.reason}`);
+                    console.info(`   Time: ${latestMovement.timestamp.toLocaleTimeString()}\n`);
                 }
             } else {
-                console.log(`📊 Update ${index + 1}: Price ${update.price} - No alert`);
+                console.info(`📊 Update ${index + 1}: Price ${update.price} - No alert`);
             }
         });
 
         // Wait for all updates to complete
         setTimeout(() => {
-            console.log(`✅ Monitoring complete. Generated ${alertCount} sharp movement alerts.`);
+            console.info(`✅ Monitoring complete. Generated ${alertCount} sharp movement alerts.`);
         }, priceSequence.reduce((sum, update) => sum + update.delay, 0) + 500);
     }
 
     static runAllDemos(): void {
-        console.log('🚀 Sharp Movement Detection Demonstration\n');
-        console.log('This demonstrates the analytics capabilities you were viewing.\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Sharp Movement Detection Demonstration\n');
+        console.info('This demonstrates the analytics capabilities you were viewing.\n');
+        console.info('='.repeat(80));
 
         // Basic sharp movement detection
         this.demonstrateSharpMovementDetection();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Threshold comparison
         this.demonstrateDifferentThresholds();
 
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         // Real-time alerts
         this.demonstrateRealTimeAlerts();
 
         setTimeout(() => {
-            console.log('\n✅ All sharp movement demonstrations completed!');
-            console.log('\n🎯 Key Capabilities Demonstrated:');
-            console.log('   • Real-time sharp movement detection');
-            console.log('   • Configurable threshold sensitivity');
-            console.log('   • Automatic alert generation');
-            console.log('   • Movement significance calculation');
-            console.log('   • Price change reason classification');
-            console.log('   • Historical movement tracking');
-            console.log('   • Analytics and reporting');
+            console.info('\n✅ All sharp movement demonstrations completed!');
+            console.info('\n🎯 Key Capabilities Demonstrated:');
+            console.info('   • Real-time sharp movement detection');
+            console.info('   • Configurable threshold sensitivity');
+            console.info('   • Automatic alert generation');
+            console.info('   • Movement significance calculation');
+            console.info('   • Price change reason classification');
+            console.info('   • Historical movement tracking');
+            console.info('   • Analytics and reporting');
         }, 8000);
     }
 }

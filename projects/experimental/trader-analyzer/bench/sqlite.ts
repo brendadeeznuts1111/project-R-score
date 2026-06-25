@@ -16,7 +16,7 @@ if (existsSync(dbPath)) unlinkSync(dbPath);
 const csvContent = readFileSync(csvPath, "utf-8");
 const records = parse(csvContent, { columns: true, skip_empty_lines: true, relax_quotes: true });
 
-console.log(`Loaded ${records.length} records from CSV`);
+console.info(`Loaded ${records.length} records from CSV`);
 
 // ============ DISK DATABASE (WAL mode) ============
 const db = new Database(dbPath, { create: true });
@@ -65,7 +65,7 @@ const insertMany = db.transaction((rows: typeof records) => {
 });
 
 insertMany(records);
-console.log(`Inserted ${records.length} rows into SQLite (disk + WAL)`);
+console.info(`Inserted ${records.length} rows into SQLite (disk + WAL)`);
 
 // ============ MEMORY DATABASE ============
 const dbMem = new Database(dbPathMem);
@@ -98,7 +98,7 @@ const insertManyMem = dbMem.transaction((rows: typeof records) => {
   }
 });
 insertManyMem(records);
-console.log(`Inserted ${records.length} rows into SQLite (:memory:)`);
+console.info(`Inserted ${records.length} rows into SQLite (:memory:)`);
 
 // Prepare queries - disk
 const selectAll = db.prepare("SELECT * FROM executions");
@@ -182,4 +182,4 @@ unlinkSync(dbPath);
 // Also clean up WAL files
 if (existsSync(dbPath + "-wal")) unlinkSync(dbPath + "-wal");
 if (existsSync(dbPath + "-shm")) unlinkSync(dbPath + "-shm");
-console.log("Cleaned up benchmark databases");
+console.info("Cleaned up benchmark databases");

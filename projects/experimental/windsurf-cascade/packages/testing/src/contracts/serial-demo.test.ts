@@ -10,28 +10,28 @@ describe.concurrent("Mixed Execution Pattern", () => {
     test.concurrent("concurrent test A", async () => {
         await new Promise(resolve => setTimeout(resolve, 50));
         executionLog.push("A-concurrent");
-        console.log("🔄 Concurrent test A completed");
+        console.info("🔄 Concurrent test A completed");
         expect(executionLog).toContain("A-concurrent");
     });
 
     test.concurrent("concurrent test B", async () => {
         await new Promise(resolve => setTimeout(resolve, 40));
         executionLog.push("B-concurrent");
-        console.log("🔄 Concurrent test B completed");
+        console.info("🔄 Concurrent test B completed");
         expect(executionLog).toContain("B-concurrent");
     });
 
     test.concurrent("concurrent test C", async () => {
         await new Promise(resolve => setTimeout(resolve, 60));
         executionLog.push("C-concurrent");
-        console.log("🔄 Concurrent test C completed");
+        console.info("🔄 Concurrent test C completed");
         expect(executionLog).toContain("C-concurrent");
     });
 
     // This will run AFTER all concurrent tests complete
     test.serial("sequential validation", () => {
-        console.log("📋 Serial test running after concurrent tests");
-        console.log("📊 Execution log:", executionLog);
+        console.info("📋 Serial test running after concurrent tests");
+        console.info("📊 Execution log:", executionLog);
 
         // Verify all concurrent tests completed
         expect(executionLog).toContain("A-concurrent");
@@ -39,27 +39,27 @@ describe.concurrent("Mixed Execution Pattern", () => {
         expect(executionLog).toContain("C-concurrent");
         expect(executionLog.length).toBe(3);
 
-        console.log("✅ Serial validation completed");
+        console.info("✅ Serial validation completed");
     });
 
     // More concurrent tests after the serial one
     test.concurrent("concurrent test D", async () => {
         await new Promise(resolve => setTimeout(resolve, 30));
         executionLog.push("D-concurrent");
-        console.log("🔄 Concurrent test D completed");
+        console.info("🔄 Concurrent test D completed");
         expect(executionLog).toContain("D-concurrent");
     });
 
     test.concurrent("concurrent test E", async () => {
         await new Promise(resolve => setTimeout(resolve, 35));
         executionLog.push("E-concurrent");
-        console.log("🔄 Concurrent test E completed");
+        console.info("🔄 Concurrent test E completed");
         expect(executionLog).toContain("E-concurrent");
     });
 
     // Final serial test
     test.serial("final cleanup", () => {
-        console.log("📋 Final serial cleanup");
+        console.info("📋 Final serial cleanup");
 
         // Verify all tests completed
         expect(executionLog.length).toBe(5);
@@ -68,7 +68,7 @@ describe.concurrent("Mixed Execution Pattern", () => {
 
         // Reset for next run
         executionLog = [];
-        console.log("✅ All tests completed and cleaned up");
+        console.info("✅ All tests completed and cleaned up");
     });
 });
 
@@ -81,7 +81,7 @@ describe("Chained Qualifiers Demo", () => {
         { scenario: "rate-limit", error: "Rate limit exceeded" }
     ])("error handling for %s", ({ scenario, error }) => {
         // These tests are expected to fail
-        console.log(`❌ Expected failure for ${scenario}: ${error}`);
+        console.info(`❌ Expected failure for ${scenario}: ${error}`);
         throw new Error(`${scenario}: ${error}`);
     });
 
@@ -92,7 +92,7 @@ describe("Chained Qualifiers Demo", () => {
         "deprecated-endpoint-3"
     ])("skipped deprecated endpoint %s", (endpoint) => {
         // These tests will be skipped
-        console.log(`⏭️ Skipping ${endpoint}`);
+        console.info(`⏭️ Skipping ${endpoint}`);
         expect(endpoint).toBeDefined();
     });
 });
@@ -122,7 +122,7 @@ describe("Randomization-Ready Tests", () => {
     });
 
     test.serial("order verification", () => {
-        console.log("🎲 Random execution order:", orderLog.join(" -> "));
+        console.info("🎲 Random execution order:", orderLog.join(" -> "));
         expect(orderLog).toHaveLength(4);
         expect(new Set(orderLog).size).toBe(4); // All unique
 

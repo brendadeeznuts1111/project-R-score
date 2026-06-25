@@ -268,7 +268,7 @@ export class R2ExecutableBuilder extends ExecutableBuilder {
     const executableExists = await Bun.file(targetBuild.buildResult.executablePath).exists();
 
     if (!executableExists && this.r2Storage) {
-      console.log(`Downloading version ${targetVersion} from R2...`);
+      console.info(`Downloading version ${targetVersion} from R2...`);
 
       const tempPath = `/tmp/${skillId}-${targetVersion}`;
       const download = await this.r2Storage.downloadSkillBundle(
@@ -523,7 +523,7 @@ export class R2ExecutableBuilder extends ExecutableBuilder {
       }
     }
 
-    console.log(`Switched ${skillId} to version ${versionedBuild.version}`);
+    console.info(`Switched ${skillId} to version ${versionedBuild.version}`);
   }
 }
 

@@ -7,67 +7,67 @@
 import { BunUtilities } from '../src/utils/bun-utilities';
 
 async function main() {
-	console.log('🚀 Bun Utilities Demo\n');
+	console.info('🚀 Bun Utilities Demo\n');
 
 	// UUID Generation
-	console.log('📦 UUID Generation');
+	console.info('📦 UUID Generation');
 	const uuid1 = BunUtilities.uuid();
 	const uuid2 = BunUtilities.uuid();
-	console.log('UUID 1:', uuid1);
-	console.log('UUID 2:', uuid2);
-	console.log();
+	console.info('UUID 1:', uuid1);
+	console.info('UUID 2:', uuid2);
+	console.info();
 
 	// String Measurement
-	console.log('📏 String Measurement');
+	console.info('📏 String Measurement');
 	const text = 'Hello, \x1b[31mworld\x1b[0m! 🌍🎉';
-	console.log('Text:', text);
-	console.log('Width:', BunUtilities.stringWidth(text));
-	console.log('Without ANSI:', BunUtilities.stripANSI(text));
-	console.log();
+	console.info('Text:', text);
+	console.info('Width:', BunUtilities.stringWidth(text));
+	console.info('Without ANSI:', BunUtilities.stripANSI(text));
+	console.info();
 
 	// Progress Bar
-	console.log('📊 Progress Bar');
-	console.log(BunUtilities.createProgressBar(75, 100, 30, { color: 'cyan' }));
-	console.log();
+	console.info('📊 Progress Bar');
+	console.info(BunUtilities.createProgressBar(75, 100, 30, { color: 'cyan' }));
+	console.info();
 
 	// Table
-	console.log('📋 Table');
+	console.info('📋 Table');
 	const tableData = [
 		{ name: 'Alice', age: 30, city: 'New York' },
 		{ name: 'Bob', age: 25, city: 'Los Angeles' },
 		{ name: 'Charlie', age: 35, city: 'Chicago' }
 	];
-	console.log(BunUtilities.formatTable(tableData));
-	console.log();
+	console.info(BunUtilities.formatTable(tableData));
+	console.info();
 
 	// HTML Utils
-	console.log('🌐 HTML Utils');
+	console.info('🌐 HTML Utils');
 	const userInput = '<script>alert("XSS")</script><b>Safe text</b>';
-	console.log('Escaped:', BunUtilities.escapeHTML(userInput));
-	console.log('Sanitized:', BunUtilities.sanitizeHTML(userInput));
-	console.log();
+	console.info('Escaped:', BunUtilities.escapeHTML(userInput));
+	console.info('Sanitized:', BunUtilities.sanitizeHTML(userInput));
+	console.info();
 
 	// Color Utils
-	console.log('🎨 Color Utils');
+	console.info('🎨 Color Utils');
 	const rgb = BunUtilities.hexToRGB('#FF5733');
-	console.log('HEX to RGB:', rgb);
-	console.log('RGB to HEX:', BunUtilities.rgbToHex(rgb));
-	console.log();
+	console.info('HEX to RGB:', rgb);
+	console.info('RGB to HEX:', BunUtilities.rgbToHex(rgb));
+	console.info();
 
 	// Benchmark
-	console.log('⚡ Benchmark');
+	console.info('⚡ Benchmark');
 	const results = BunUtilities.benchmark([
 		{ name: 'Array.map', fn: () => [1, 2, 3].map(x => x * 2) },
 		{ name: 'Array.forEach', fn: () => { const arr = []; [1, 2, 3].forEach(x => arr.push(x * 2)); } }
 	], 10000);
-	console.log('Benchmark results:');
+	console.info('Benchmark results:');
 	results.forEach(r => {
-		console.log(`  ${r.name}: ${r.avgTime.toFixed(4)}ms avg (${r.totalTime.toFixed(2)}ms total)`);
+		console.info(`  ${r.name}: ${r.avgTime.toFixed(4)}ms avg (${r.totalTime.toFixed(2)}ms total)`);
 	});
-	console.log();
+	console.info();
 
 	// Performance Monitor
-	console.log('📈 Performance Monitor');
+	console.info('📈 Performance Monitor');
 	const monitor = BunUtilities.createMonitor();
 	monitor.measure('test-operation', () => {
 		let sum = 0;
@@ -78,13 +78,13 @@ async function main() {
 	});
 	const metrics = monitor.getMetrics('test-operation');
 	if (metrics) {
-		console.log(`Operation: ${metrics.label}`);
-		console.log(`  Calls: ${metrics.count}`);
-		console.log(`  Average: ${(metrics.avgDuration / 1_000_000).toFixed(3)}ms`);
+		console.info(`Operation: ${metrics.label}`);
+		console.info(`  Calls: ${metrics.count}`);
+		console.info(`  Average: ${(metrics.avgDuration / 1_000_000).toFixed(3)}ms`);
 	}
-	console.log();
+	console.info();
 
-	console.log('✅ Demo complete');
+	console.info('✅ Demo complete');
 }
 
 main().catch(console.error);

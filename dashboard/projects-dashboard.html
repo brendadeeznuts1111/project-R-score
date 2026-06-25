@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface-hover: #22263b;
+            --border: #2a2e3f;
+            --text: #e2e8f0;
+            --text-dim: #8892b0;
+            --primary: #3b82f6;
+            --active-accent: #22c55e;
+            --exp-accent: #f59e0b;
+            --archive-accent: #ef4444;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #8b5cf6 100%);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .header-title span { opacity: 0.8; font-size: 0.875rem; }
+
+        .header-stats { display: flex; gap: 24px; }
+
+        .header-stat { text-align: center; }
+
+        .header-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-stat-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.3);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus { outline: none; border-color: var(--primary); }
+
+        .search-box::placeholder { color: var(--text-dim); }
+
+        .filter-group { display: flex; gap: 6px; }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .main { padding: 24px 0 64px; }
+
+        .section { margin-bottom: 40px; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .section-header .count {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            background: var(--surface);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-active { background: rgba(34,197,94,0.15); color: var(--active-accent); }
+        .badge-experimental { background: rgba(245,158,11,0.15); color: var(--exp-accent); }
+        .badge-archive { background: rgba(239,68,68,0.15); color: var(--archive-accent); }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-health {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .card-health.clean { background: var(--active-accent); }
+        .card-health.dirty { background: var(--exp-accent); }
+        .card-health.unknown { background: var(--text-dim); }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            margin-top: 4px;
+        }
+
+        .card-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            word-break: break-all;
+            line-height: 1.3;
+        }
+
+        .card-name .version {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-stat-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: var(--text-dim);
+        }
+
+        .card-stat-tag .num { color: var(--text); font-weight: 600; }
+
+        .card-homepage {
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .card-homepage a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .card-homepage a:hover { text-decoration: underline; }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-meta .dirty-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .dirty-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dirty-dot.clean { background: var(--active-accent); }
+        .dirty-dot.dirty { background: var(--exp-accent); }
+
+        .loading-state {
+            text-align: center;
+            padding: 80px 0;
+            color: var(--text-dim);
+        }
+
+        .loading-spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-state {
+            text-align: center;
+            padding: 80px 0;
+            color: var(--archive-accent);
+        }
+
+        .no-projects {
+            text-align: center;
+            padding: 48px 0;
+            color: var(--text-dim);
+        }
+
+        .no-projects-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .last-updated {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 24px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; gap: 12px; }
+            .header-stats { width: 100%; justify-content: space-around; }
+            .controls { flex-direction: column; }
+            .search-box { min-width: 100%; }
+            .filter-group { width: 100%; justify-content: center; flex-wrap: wrap; }
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="header-title">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <div>
+                        <h1>Projects Dashboard</h1>
+                        <span id="header-subtitle">Scanning workspace...</span>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <div class="header-stat-value" id="stat-active">-</div>
+                        <div class="header-stat-label" style="color: var(--active-accent)">Active</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-value" id="stat-experimental">-</div>
+                        <div class="header-stat-label" style="color: var(--exp-accent)">Experimental</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-value" id="stat-archive">-</div>
+                        <div class="header-stat-label" style="color: var(--archive-accent)">Archive</div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <input type="text" class="search-box" id="search" placeholder="Search projects by name, description, or category...">
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="experimental">Experimental</button>
+                    <button class="filter-btn" data-filter="archive">Archive</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container" id="sections-container">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Scanning projects directory...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let allProjects = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        function openProject(fullPath) {
+            window.open('vscode://file/' + fullPath, '_blank');
+        }
+
+        function healthClass(p) {
+            if (!p.git) return 'unknown';
+            return p.git.dirty ? 'dirty' : 'clean';
+        }
+
+        function render() {
+            const container = document.getElementById('sections-container');
+
+            const filtered = allProjects.filter(p => {
+                const matchesFilter = currentFilter === 'all' || currentFilter === p.section;
+                const matchesSearch = searchTerm === '' ||
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    (p.description || '').toLowerCase().includes(searchTerm) ||
+                    p.category.toLowerCase().includes(searchTerm) ||
+                    (p.packageName || '').toLowerCase().includes(searchTerm);
+                return matchesFilter && matchesSearch;
+            });
+
+            const grouped = {};
+            for (const p of filtered) {
+                (grouped[p.section] = grouped[p.section] || []).push(p);
+            }
+
+            const sectionMeta = {
+                active: { label: 'Active Projects', badge: 'badge-active', icon: '\u25B6' },
+                experimental: { label: 'Experimental Projects', badge: 'badge-experimental', icon: '\uD83D\uDD2C' },
+                archive: { label: 'Archived Projects', badge: 'badge-archive', icon: '\uD83D\uDDC2' }
+            };
+
+            const sectionOrder = ['active', 'experimental', 'archive'];
+            let html = '';
+
+            for (const key of sectionOrder) {
+                const items = grouped[key];
+                if (!items || items.length === 0) continue;
+                const meta = sectionMeta[key];
+
+                const catGroups = {};
+                for (const item of items) {
+                    (catGroups[item.category] = catGroups[item.category] || []).push(item);
+                }
+
+                let cardsHtml = '';
+                for (const [cat, catItems] of Object.entries(catGroups)) {
+                    for (const p of catItems) {
+                        const hc = healthClass(p);
+                        const version = p.version ? `<span class="version">v${p.version}</span>` : '';
+                        const desc = p.description || '';
+                        const gitInfo = p.git
+                            ? `<span class="dirty-indicator"><span class="dirty-dot ${hc}"></span> ${p.git.lastCommit}</span> <span>${p.git.lastCommitDate}</span>`
+                            : '<span>no git</span>';
+                        const statsHtml = `<div class="card-stats">
+                            <span class="card-stat-tag">\uD83D\uDCC4 <span class="num">${p.fileCount}</span> files</span>
+                            <span class="card-stat-tag">\uD83D\uDCE6 <span class="num">${p.depCount}</span> deps</span>
+                        </div>`;
+                        const urlHtml = p.homepageUrl
+                            ? `<div class="card-homepage"><a href="${p.homepageUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${p.homepageUrl}</a></div>`
+                            : '';
+
+                        const escFullPath = p.fullPath.replace(/'/g, "\\'");
+                        cardsHtml += `<div class="card" onclick="openProject('${escFullPath}')" title="Open in VS Code: ${p.path}">
+                            <div class="card-health ${hc}"></div>
+                            <div class="card-top">
+                                <span class="card-name">${p.name} ${version}</span>
+                                <span class="badge ${meta.badge}">${p.section}</span>
+                            </div>
+                            <div class="card-path">${p.path}</div>
+                            ${desc ? `<div class="card-desc">${desc}</div>` : ''}
+                            ${statsHtml}
+                            ${urlHtml}
+                            <div class="card-meta">
+                                ${gitInfo}
+                            </div>
+                        </div>`;
+                    }
+                }
+
+                if (Object.keys(catGroups).length > 1) {
+                    html += `<div class="section">
+                        <div class="section-header">
+                            <span>${meta.icon}</span>
+                            <h2>${meta.label}</h2>
+                            <span class="count">${items.length}</span>
+                        </div>
+                        <div class="cards-grid">${cardsHtml}</div>
+                    </div>`;
+                } else {
+                    html += `<div class="section">
+                        <div class="section-header">
+                            <span>${meta.icon}</span>
+                            <h2>${meta.label}</h2>
+                            <span class="count">${items.length}</span>
+                        </div>
+                        <div class="cards-grid">${cardsHtml}</div>
+                    </div>`;
+                }
+            }
+
+            if (!html) {
+                html = `<div class="no-projects">
+                    <div class="no-projects-icon">\uD83D\uDD0D</div>
+                    <p>No projects match your search</p>
+                </div>`;
+            }
+
+            const active = allProjects.filter(p => p.section === 'active').length;
+            const experimental = allProjects.filter(p => p.section === 'experimental').length;
+            const archive = allProjects.filter(p => p.section === 'archive').length;
+
+            container.innerHTML = html;
+            document.getElementById('stat-active').textContent = active;
+            document.getElementById('stat-experimental').textContent = experimental;
+            document.getElementById('stat-archive').textContent = archive;
+        }
+
+        async function fetchAndRender() {
+            const container = document.getElementById('sections-container');
+            try {
+                const res = await fetch('/api/projects');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                allProjects = data.projects;
+                document.getElementById('header-subtitle').textContent =
+                    `${data.totals.total} projects across workspace`;
+                render();
+            } catch (err) {
+                container.innerHTML = `<div class="error-state">
+                    <p style="font-size:1.5rem;margin-bottom:8px;">\u26A0\uFE0F</p>
+                    <p>Failed to load projects: ${err.message}</p>
+                    <p style="font-size:0.8rem;color:var(--text-dim);margin-top:8px;">Make sure the projects server is running</p>
+                </div>`;
+                document.getElementById('header-subtitle').textContent = 'Connection error';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndRender();
+
+            document.getElementById('search').addEventListener('input', e => {
+                searchTerm = e.target.value.toLowerCase();
+                render();
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    render();
+                });
+            });
+
+            setInterval(fetchAndRender, 30000);
+        });
+    </script>
+</body>
+</html>

@@ -13,4 +13,4 @@ const cssPath = join(testDir, "test.css");
 writeFileSync(cssPath, cssContent);
 
 const deps = parseCSSImportDependencies(cssContent, cssPath, [stylesDir]);
-console.log("Dependencies:", deps);
+console.info("Dependencies:", deps);

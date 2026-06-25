@@ -71,10 +71,10 @@ export class InspectableMarketCanonicalizer extends MarketCanonicalizer {
 		const result = super.canonicalize(market);
 		const end = nanoseconds();
 
-		console.log(`📊 Canonicalization: ${(end - start) / 1_000_000}ms`);
-		console.log(`   UUID: ${result.uuid}`);
-		console.log(`   Tags: ${(result.tags ?? []).join(", ")}`);
-		console.log(`   Cache Key: ${result.apiMetadata.cacheKey}`);
+		console.info(`📊 Canonicalization: ${(end - start) / 1_000_000}ms`);
+		console.info(`   UUID: ${result.uuid}`);
+		console.info(`   Tags: ${(result.tags ?? []).join(", ")}`);
+		console.info(`   Cache Key: ${result.apiMetadata.cacheKey}`);
 
 		return result;
 	}
@@ -83,7 +83,7 @@ export class InspectableMarketCanonicalizer extends MarketCanonicalizer {
 	batchCanonicalizeWithInspection(
 		markets: MarketIdentifier[],
 	): Map<string, CanonicalMarketWithMetadata> {
-		console.log(`🔄 Batch canonicalizing ${markets.length} markets...`);
+		console.info(`🔄 Batch canonicalizing ${markets.length} markets...`);
 
 		const start = nanoseconds();
 		const result = super.batchCanonicalize(markets);
@@ -92,7 +92,7 @@ export class InspectableMarketCanonicalizer extends MarketCanonicalizer {
 		const durationMs = (end - start) / 1_000_000;
 		const perItemMs = durationMs / markets.length;
 
-		console.log(
+		console.info(
 			`✅ Batch complete: ${durationMs.toFixed(2)}ms total, ${perItemMs.toFixed(2)}ms per item`,
 		);
 
@@ -110,7 +110,7 @@ export class InspectableMarketCanonicalizer extends MarketCanonicalizer {
 			}));
 
 		if (summary.length > 0) {
-			console.log("\nSample Results:");
+			console.info("\nSample Results:");
 			const tableHeader = "  UUID      Exchange      Native ID          Tags";
 			const tableRows = summary
 				.map(
@@ -118,8 +118,8 @@ export class InspectableMarketCanonicalizer extends MarketCanonicalizer {
 						`  ${row.UUID.padEnd(10)} ${row.Exchange.padEnd(12)} ${row["Native ID"].padEnd(18)} ${row.Tags}`,
 				)
 				.join("\n");
-			console.log(tableHeader);
-			console.log(tableRows);
+			console.info(tableHeader);
+			console.info(tableRows);
 		}
 
 		return result;

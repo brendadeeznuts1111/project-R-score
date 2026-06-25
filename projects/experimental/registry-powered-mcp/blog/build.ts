@@ -1,19 +1,19 @@
 import { BlogGenerator } from './generator.ts';
 
 async function main() {
-  console.log('🏗️  Building Registry-Powered-MCP Blog...');
+  console.info('🏗️  Building Registry-Powered-MCP Blog...');
 
   try {
     const generator = new BlogGenerator();
     await generator.generate();
 
-    console.log('✅ Blog build complete');
-    console.log('📡 RSS feed available at: blog/dist/rss.xml');
-    console.log('🏠 Blog index at: blog/dist/index.html');
+    console.info('✅ Blog build complete');
+    console.info('📡 RSS feed available at: blog/dist/rss.xml');
+    console.info('🏠 Blog index at: blog/dist/index.html');
 
     // Validate bundle size impact
     const bundleSize = await getBundleSize();
-    console.log(`📦 Bundle size impact: ${bundleSize} bytes (target: 0 bytes)`);
+    console.info(`📦 Bundle size impact: ${bundleSize} bytes (target: 0 bytes)`);
 
     if (bundleSize > 0) {
       console.warn('⚠️  Warning: Blog generation has runtime bundle impact');

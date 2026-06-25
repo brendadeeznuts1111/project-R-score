@@ -5,7 +5,7 @@
 const cookie = await Bun.secrets.get({ service: "plive", name: "cookie" });
 if (!cookie) throw "Run auth-plive first";
 
-console.log("📡 Connecting to live plive data stream...");
+console.info("📡 Connecting to live plive data stream...");
 
 const response = await fetch('https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true', {
   headers: {
@@ -22,11 +22,11 @@ if (!response.ok) {
   process.exit(1);
 }
 
-console.log("✅ Connected to live data stream");
+console.info("✅ Connected to live data stream");
 
 // Get the raw JSON response
 const rawData = await response.text();
-console.log(`📦 Received ${rawData.length} bytes of data`);
+console.info(`📦 Received ${rawData.length} bytes of data`);
 
 let data;
 try {
@@ -62,7 +62,7 @@ function flattenAndFilter(obj, path = '') {
 }
 
 const flattenedData = flattenAndFilter(data);
-console.log(`📊 Flattened to ${flattenedData.length} potential betting records`);
+console.info(`📊 Flattened to ${flattenedData.length} potential betting records`);
 
 // Filter for records with profit > 100 or any betting indicators
 const bettingRecords = flattenedData.filter(item =>
@@ -70,7 +70,7 @@ const bettingRecords = flattenedData.filter(item =>
   item.agent || item.bet || item.wager
 );
 
-console.log(`💰 Found ${bettingRecords.length} betting records`);
+console.info(`💰 Found ${bettingRecords.length} betting records`);
 
 // Convert to YAML format
 const yamlContent = bettingRecords.map(record => {
@@ -87,9 +87,9 @@ const yamlContent = bettingRecords.map(record => {
 // Write to file
 await Bun.write("data/live.yaml", yamlContent);
 
-console.log("✅ Live betting data filtered and stored");
-console.log("📊 Run: tail -f data/live.yaml");
+console.info("✅ Live betting data filtered and stored");
+console.info("📊 Run: tail -f data/live.yaml");
 
 // WebSocket broadcast (simulated)
-console.log("📡 Dashboard update triggered (WebSocket broadcast)");
+console.info("📡 Dashboard update triggered (WebSocket broadcast)");
 EOF && mv scripts/pipe-live-new.ts scripts/pipe-live.ts

@@ -181,25 +181,25 @@ export class PatternEvolver {
   async export(outputPath: string): Promise<void> {
     const data = Array.from(this.patterns.values());
     await Bun.write(outputPath, JSON.stringify(data, null, 2));
-    console.log(`✅ Exported evolution data to ${outputPath}`);
+    console.info(`✅ Exported evolution data to ${outputPath}`);
   }
 
   /**
    * Print evolution report
    */
   printReport(): void {
-    console.log(`\n📈 Pattern Evolution Report:\n`);
+    console.info(`\n📈 Pattern Evolution Report:\n`);
     for (const evolution of this.patterns.values()) {
-      console.log(`Pattern: ${evolution.pattern}`);
-      console.log(`  Frequency: ${evolution.frequency} occurrences`);
-      console.log(`  First seen: ${evolution.firstSeen}`);
-      console.log(`  Last seen: ${evolution.lastSeen}`);
-      console.log(`  Trend: ${evolution.trend}`);
-      console.log(`  Hotspots: ${evolution.hotspots.slice(0, 3).join(", ")}`);
+      console.info(`Pattern: ${evolution.pattern}`);
+      console.info(`  Frequency: ${evolution.frequency} occurrences`);
+      console.info(`  First seen: ${evolution.firstSeen}`);
+      console.info(`  Last seen: ${evolution.lastSeen}`);
+      console.info(`  Trend: ${evolution.trend}`);
+      console.info(`  Hotspots: ${evolution.hotspots.slice(0, 3).join(", ")}`);
       if (evolution.predictedNext) {
-        console.log(`  Predicted next: ${evolution.predictedNext.estimatedDate} (${(evolution.predictedNext.probability * 100).toFixed(0)}% probability)`);
+        console.info(`  Predicted next: ${evolution.predictedNext.estimatedDate} (${(evolution.predictedNext.probability * 100).toFixed(0)}% probability)`);
       }
-      console.log();
+      console.info();
     }
   }
 }

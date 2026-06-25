@@ -17,17 +17,17 @@ import {
   type ConsentSettings
 } from '../lib/telemetry/bun-future-proof-cookie-system';
 
-console.log('🌐 Future-Proof Cookie System Demo');
-console.log('='.repeat(60));
+console.info('🌐 Future-Proof Cookie System Demo');
+console.info('='.repeat(60));
 
 // 🎯 DEMO 1: Storage Abstraction Layer
-console.log('\n🏗️ DEMO 1: Storage Abstraction Layer');
-console.log('-'.repeat(50));
+console.info('\n🏗️ DEMO 1: Storage Abstraction Layer');
+console.info('-'.repeat(50));
 
 const system = new FutureProofCookieSystem();
 
 // Test different storage adapters
-console.log('📊 Testing Storage Adapters:');
+console.info('📊 Testing Storage Adapters:');
 
 // Cookie Storage
 const cookieStorage = new CookieStorage({
@@ -54,43 +54,43 @@ await webStorage.set('user_preferences', {
 const secureStorage = new SecureStorage('encryption-key-123');
 await secureStorage.set('api_key', 'sk-1234567890abcdef');
 
-console.log('✅ All storage adapters initialized and tested');
+console.info('✅ All storage adapters initialized and tested');
 
 // 🎯 DEMO 2: Consent Management System
-console.log('\n🎯 DEMO 2: Consent Management System');
-console.log('-'.repeat(50));
+console.info('\n🎯 DEMO 2: Consent Management System');
+console.info('-'.repeat(50));
 
 const consentManager = ConsentManager.getInstance();
 
-console.log('📋 Initial Consent Settings:');
+console.info('📋 Initial Consent Settings:');
 const initialConsent = consentManager.getConsent();
 Object.entries(initialConsent).forEach(([category, consent]) => {
-  console.log(`   ${category}: ${consent ? '✅ Granted' : '❌ Denied'}`);
+  console.info(`   ${category}: ${consent ? '✅ Granted' : '❌ Denied'}`);
 });
 
 // Update consent settings
-console.log('\n🔄 Updating Consent Settings...');
+console.info('\n🔄 Updating Consent Settings...');
 consentManager.updateConsent({
   functional: true,
   analytics: true,
   personalization: true
 });
 
-console.log('📋 Updated Consent Settings:');
+console.info('📋 Updated Consent Settings:');
 const updatedConsent = consentManager.getConsent();
 Object.entries(updatedConsent).forEach(([category, consent]) => {
-  console.log(`   ${category}: ${consent ? '✅ Granted' : '❌ Denied'}`);
+  console.info(`   ${category}: ${consent ? '✅ Granted' : '❌ Denied'}`);
 });
 
 // Test consent checks
-console.log('\n🔍 Testing Consent Checks:');
-console.log(`   Analytics consent: ${consentManager.hasConsent('analytics') ? '✅' : '❌'}`);
-console.log(`   Marketing consent: ${consentManager.hasConsent('marketing') ? '✅' : '❌'}`);
-console.log(`   Functional consent: ${consentManager.hasConsent('functional') ? '✅' : '❌'}`);
+console.info('\n🔍 Testing Consent Checks:');
+console.info(`   Analytics consent: ${consentManager.hasConsent('analytics') ? '✅' : '❌'}`);
+console.info(`   Marketing consent: ${consentManager.hasConsent('marketing') ? '✅' : '❌'}`);
+console.info(`   Functional consent: ${consentManager.hasConsent('functional') ? '✅' : '❌'}`);
 
 // 🎯 DEMO 3: Consent-Aware Cookie Creation
-console.log('\n🍪 DEMO 3: Consent-Aware Cookie Creation');
-console.log('-'.repeat(50));
+console.info('\n🍪 DEMO 3: Consent-Aware Cookie Creation');
+console.info('-'.repeat(50));
 
 // Test different cookie categories with consent awareness
 const cookieTests = [
@@ -109,16 +109,16 @@ cookieTests.forEach(test => {
   );
   
   if (cookie) {
-    console.log(`✅ ${test.name} (${test.category}): Created`);
-    console.log(`   ${cookie.toString()}`);
+    console.info(`✅ ${test.name} (${test.category}): Created`);
+    console.info(`   ${cookie.toString()}`);
   } else {
-    console.log(`❌ ${test.name} (${test.category}): Not created (no consent)`);
+    console.info(`❌ ${test.name} (${test.category}): Not created (no consent)`);
   }
 });
 
 // 🎯 DEMO 4: Unified Storage Interface
-console.log('\n💾 DEMO 4: Unified Storage Interface');
-console.log('-'.repeat(50));
+console.info('\n💾 DEMO 4: Unified Storage Interface');
+console.info('-'.repeat(50));
 
 // Test storing data across different storage methods
 const storageTests = [
@@ -128,107 +128,107 @@ const storageTests = [
   { key: 'cache_data', value: { timestamp: Date.now(), data: 'cached' }, method: 'localStorage' as const }
 ];
 
-console.log('🔄 Storing data across different storage methods:');
+console.info('🔄 Storing data across different storage methods:');
 for (const test of storageTests) {
   const success = await system.store(test.key, test.value, test.method);
-  console.log(`   ${test.key} → ${test.method}: ${success ? '✅' : '❌'}`);
+  console.info(`   ${test.key} → ${test.method}: ${success ? '✅' : '❌'}`);
 }
 
-console.log('\n📥 Retrieving data from different storage methods:');
+console.info('\n📥 Retrieving data from different storage methods:');
 for (const test of storageTests) {
   const value = await system.retrieve(test.key, test.method);
-  console.log(`   ${test.key} ← ${test.method}: ${value ? '✅' : '❌'}`);
+  console.info(`   ${test.key} ← ${test.method}: ${value ? '✅' : '❌'}`);
 }
 
 // 🎯 DEMO 5: Storage Analysis & Compatibility
-console.log('\n📊 DEMO 5: Storage Analysis & Compatibility');
-console.log('-'.repeat(50));
+console.info('\n📊 DEMO 5: Storage Analysis & Compatibility');
+console.info('-'.repeat(50));
 
 const analysis = await system.getStorageAnalysis();
-console.log('🔍 Storage Compatibility Analysis:');
-console.log(`   Cookies supported: ${analysis.cookieSupported ? '✅' : '❌'}`);
-console.log(`   LocalStorage supported: ${analysis.localStorageSupported ? '✅' : '❌'}`);
-console.log(`   SessionStorage supported: ${analysis.sessionStorageSupported ? '✅' : '❌'}`);
-console.log(`   Total storage size: ${analysis.totalSize} items`);
-console.log(`   Recommended method: ${analysis.recommendedMethod}`);
+console.info('🔍 Storage Compatibility Analysis:');
+console.info(`   Cookies supported: ${analysis.cookieSupported ? '✅' : '❌'}`);
+console.info(`   LocalStorage supported: ${analysis.localStorageSupported ? '✅' : '❌'}`);
+console.info(`   SessionStorage supported: ${analysis.sessionStorageSupported ? '✅' : '❌'}`);
+console.info(`   Total storage size: ${analysis.totalSize} items`);
+console.info(`   Recommended method: ${analysis.recommendedMethod}`);
 
 // 🎯 DEMO 6: Fallback Strategies
-console.log('\n🔄 DEMO 6: Fallback Strategies');
-console.log('-'.repeat(50));
+console.info('\n🔄 DEMO 6: Fallback Strategies');
+console.info('-'.repeat(50));
 
 // Simulate cookie failure and test fallbacks
-console.log('🚨 Simulating cookie failure...');
-console.log('🔄 Testing fallback to localStorage...');
+console.info('🚨 Simulating cookie failure...');
+console.info('🔄 Testing fallback to localStorage...');
 
 const fallbackTest = await system.store('fallback_test', 'fallback_data', 'cookie');
-console.log(`   Fallback storage: ${fallbackTest ? '✅ Success' : '❌ Failed'}`);
+console.info(`   Fallback storage: ${fallbackTest ? '✅ Success' : '❌ Failed'}`);
 
 const fallbackRetrieve = await system.retrieve('fallback_test', 'cookie');
-console.log(`   Fallback retrieve: ${fallbackRetrieve ? '✅ Success' : '❌ Failed'}`);
+console.info(`   Fallback retrieve: ${fallbackRetrieve ? '✅ Success' : '❌ Failed'}`);
 
 // 🎯 DEMO 7: Storage Migration
-console.log('\n📈 DEMO 7: Storage Migration');
-console.log('-'.repeat(50));
+console.info('\n📈 DEMO 7: Storage Migration');
+console.info('-'.repeat(50));
 
 // Add some test data to localStorage for migration
 await system.store('migration_test_1', 'data_1', 'localStorage');
 await system.store('migration_test_2', 'data_2', 'localStorage');
 await system.store('migration_test_3', 'data_3', 'localStorage');
 
-console.log('🔄 Migrating data from localStorage to sessionStorage...');
+console.info('🔄 Migrating data from localStorage to sessionStorage...');
 const migrationResult = await system.migrateToStorage('localStorage', 'sessionStorage');
 
-console.log('📊 Migration Results:');
-console.log(`   Success: ${migrationResult.success ? '✅' : '❌'}`);
-console.log(`   Items migrated: ${migrationResult.itemsMigrated}`);
-console.log(`   Errors: ${migrationResult.errors.length}`);
+console.info('📊 Migration Results:');
+console.info(`   Success: ${migrationResult.success ? '✅' : '❌'}`);
+console.info(`   Items migrated: ${migrationResult.itemsMigrated}`);
+console.info(`   Errors: ${migrationResult.errors.length}`);
 
 if (migrationResult.errors.length > 0) {
-  console.log('   Error details:');
+  console.info('   Error details:');
   migrationResult.errors.forEach(error => {
-    console.log(`     - ${error}`);
+    console.info(`     - ${error}`);
   });
 }
 
 // 🎯 DEMO 8: Storage Cleanup
-console.log('\n🧹 DEMO 8: Storage Cleanup');
-console.log('-'.repeat(50));
+console.info('\n🧹 DEMO 8: Storage Cleanup');
+console.info('-'.repeat(50));
 
-console.log('🔄 Running storage cleanup...');
+console.info('🔄 Running storage cleanup...');
 await system.cleanup();
-console.log('✅ Storage cleanup completed');
+console.info('✅ Storage cleanup completed');
 
 // 🎯 DEMO 9: Advanced Storage Features
-console.log('\n🔧 DEMO 9: Advanced Storage Features');
-console.log('-'.repeat(50));
+console.info('\n🔧 DEMO 9: Advanced Storage Features');
+console.info('-'.repeat(50));
 
 // Test storage size and key enumeration
-console.log('📏 Storage Size Analysis:');
+console.info('📏 Storage Size Analysis:');
 for (const [method, storage] of Object.entries((system as any).storage)) {
   try {
     const storageAdapter = storage as { size(): Promise<number>; keys(): Promise<string[]> };
     const size = await storageAdapter.size();
     const keys = await storageAdapter.keys();
-    console.log(`   ${method}: ${size} items, keys: [${keys.join(', ')}]`);
+    console.info(`   ${method}: ${size} items, keys: [${keys.join(', ')}]`);
   } catch (error) {
-    console.log(`   ${method}: ❌ Not available`);
+    console.info(`   ${method}: ❌ Not available`);
   }
 }
 
 // Test storage existence checks
-console.log('\n🔍 Storage Existence Checks:');
+console.info('\n🔍 Storage Existence Checks:');
 const existenceTests = ['user_id', 'session_token', 'non_existent_key'];
 for (const key of existenceTests) {
   const exists = await (system as any).storage.localStorage.exists(key);
-  console.log(`   ${key}: ${exists ? '✅ Exists' : '❌ Not found'}`);
+  console.info(`   ${key}: ${exists ? '✅ Exists' : '❌ Not found'}`);
 }
 
 // 🎯 DEMO 10: Cookie-less Future Simulation
-console.log('\n🌐 DEMO 10: Cookie-less Future Simulation');
-console.log('-'.repeat(50));
+console.info('\n🌐 DEMO 10: Cookie-less Future Simulation');
+console.info('-'.repeat(50));
 
-console.log('🚨 Simulating cookie-less environment...');
-console.log('🔄 All cookie operations will fallback to alternative storage');
+console.info('🚨 Simulating cookie-less environment...');
+console.info('🔄 All cookie operations will fallback to alternative storage');
 
 // Test what happens when cookies are disabled
 const cookieLessTests = [
@@ -237,7 +237,7 @@ const cookieLessTests = [
   { key: 'user_profile', value: 'profile_data', category: 'personalization' as keyof ConsentSettings }
 ];
 
-console.log('🍪 Testing cookie-less operations:');
+console.info('🍪 Testing cookie-less operations:');
 for (const test of cookieLessTests) {
   // Create consent-aware cookie (will fallback if no consent)
   const cookie = FutureProofCookieSystem.createConsentAwareCookie(
@@ -247,24 +247,24 @@ for (const test of cookieLessTests) {
   );
   
   if (cookie) {
-    console.log(`   ${test.key}: ✅ Cookie created`);
+    console.info(`   ${test.key}: ✅ Cookie created`);
   } else {
-    console.log(`   ${test.key}: 🔄 Using fallback storage`);
+    console.info(`   ${test.key}: 🔄 Using fallback storage`);
     // Store in alternative storage
     await system.store(test.key, test.value, 'localStorage');
   }
 }
 
 // Verify data is still accessible
-console.log('\n📥 Verifying data accessibility in cookie-less environment:');
+console.info('\n📥 Verifying data accessibility in cookie-less environment:');
 for (const test of cookieLessTests) {
   const value = await system.retrieve(test.key, 'localStorage');
-  console.log(`   ${test.key}: ${value ? '✅ Accessible' : '❌ Not found'}`);
+  console.info(`   ${test.key}: ${value ? '✅ Accessible' : '❌ Not found'}`);
 }
 
 // 🎯 DEMO 11: Performance Comparison
-console.log('\n⚡ DEMO 11: Performance Comparison');
-console.log('-'.repeat(50));
+console.info('\n⚡ DEMO 11: Performance Comparison');
+console.info('-'.repeat(50));
 
 const performanceData: { [key: string]: number }[] = [];
 const testMethods = ['localStorage', 'sessionStorage', 'httpOnly'] as const;
@@ -283,7 +283,7 @@ for (const method of testMethods) {
   const avgTime = (endTime - startTime) / (iterations * 2); // Average per operation
   
   performanceData.push({ [method]: avgTime });
-  console.log(`   ${method}: ${avgTime.toFixed(3)}ms average per operation`);
+  console.info(`   ${method}: ${avgTime.toFixed(3)}ms average per operation`);
 }
 
 // Find fastest method
@@ -293,14 +293,14 @@ const fastest = performanceData.reduce((prev, curr) => {
   return currTime < prevTime ? curr : prev;
 });
 
-console.log(`🏆 Fastest storage method: ${Object.keys(fastest)[0]}`);
+console.info(`🏆 Fastest storage method: ${Object.keys(fastest)[0]}`);
 
 // 🎯 DEMO 12: Security & Privacy Features
-console.log('\n🔒 DEMO 12: Security & Privacy Features');
-console.log('-'.repeat(50));
+console.info('\n🔒 DEMO 12: Security & Privacy Features');
+console.info('-'.repeat(50));
 
 // Test secure storage encryption
-console.log('🔐 Testing Secure Storage Encryption:');
+console.info('🔐 Testing Secure Storage Encryption:');
 const sensitiveData = {
   apiKey: 'sk-1234567890abcdef',
   password: 'super_secret_password',
@@ -310,11 +310,11 @@ const sensitiveData = {
 for (const [key, value] of Object.entries(sensitiveData)) {
   await secureStorage.set(key, value);
   const retrieved = await secureStorage.get(key);
-  console.log(`   ${key}: ${retrieved === value ? '✅ Encrypted/Decrypted successfully' : '❌ Failed'}`);
+  console.info(`   ${key}: ${retrieved === value ? '✅ Encrypted/Decrypted successfully' : '❌ Failed'}`);
 }
 
 // Test consent-based privacy
-console.log('\n🛡️ Testing Consent-Based Privacy:');
+console.info('\n🛡️ Testing Consent-Based Privacy:');
 consentManager.updateConsent({ analytics: false }); // Revoke analytics consent
 
 const privateCookie = FutureProofCookieSystem.createConsentAwareCookie(
@@ -324,29 +324,29 @@ const privateCookie = FutureProofCookieSystem.createConsentAwareCookie(
 );
 
 if (privateCookie && privateCookie.maxAge === 0) {
-  console.log('   ✅ Privacy protected: Analytics cookie made ephemeral');
+  console.info('   ✅ Privacy protected: Analytics cookie made ephemeral');
 } else {
-  console.log('   ❌ Privacy protection failed');
+  console.info('   ❌ Privacy protection failed');
 }
 
 // 🎯 SUMMARY
-console.log('\n🎉 Future-Proof Cookie System Demo Complete!');
-console.log('='.repeat(60));
-console.log('✅ Storage abstraction layer demonstrated');
-console.log('✅ Consent management system tested');
-console.log('✅ Consent-aware cookie creation verified');
-console.log('✅ Unified storage interface validated');
-console.log('✅ Storage analysis and compatibility checked');
-console.log('✅ Fallback strategies tested');
-console.log('✅ Storage migration completed');
-console.log('✅ Storage cleanup executed');
-console.log('✅ Advanced storage features explored');
-console.log('✅ Cookie-less future simulated');
-console.log('✅ Performance compared across methods');
-console.log('✅ Security and privacy features verified');
+console.info('\n🎉 Future-Proof Cookie System Demo Complete!');
+console.info('='.repeat(60));
+console.info('✅ Storage abstraction layer demonstrated');
+console.info('✅ Consent management system tested');
+console.info('✅ Consent-aware cookie creation verified');
+console.info('✅ Unified storage interface validated');
+console.info('✅ Storage analysis and compatibility checked');
+console.info('✅ Fallback strategies tested');
+console.info('✅ Storage migration completed');
+console.info('✅ Storage cleanup executed');
+console.info('✅ Advanced storage features explored');
+console.info('✅ Cookie-less future simulated');
+console.info('✅ Performance compared across methods');
+console.info('✅ Security and privacy features verified');
 
-console.log('\n🚀 Ready for the cookie-less future!');
-console.log('🌐 Enterprise-grade storage abstraction with fallback strategies');
+console.info('\n🚀 Ready for the cookie-less future!');
+console.info('🌐 Enterprise-grade storage abstraction with fallback strategies');
 
 // Export for potential reuse
 export { system, consentManager, cookieStorage, webStorage, secureStorage };

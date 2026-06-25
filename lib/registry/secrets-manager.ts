@@ -5,7 +5,7 @@ import { R2StorageAdapter } from './r2-storage';
 import { deleteSecret, getSecret, setSecret } from '../security/bun-secrets-adapter';
 
 // Use bun.secrets if available (Bun 1.2+)
-const secrets = (Bun as any).secrets;
+const secrets = (Bun as Record<string, unknown>).secrets;
 
 export interface SecretEntry {
   key: string;
@@ -51,7 +51,7 @@ export class RegistrySecretsManager {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_SECRETS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_SECRETS_BUCKET || 'npm-registry',
       prefix: 'secrets/',
     });
     this.localSecretsService = Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry';
@@ -62,9 +62,9 @@ export class RegistrySecretsManager {
    */
   async initialize(): Promise<void> {
     if (secrets) {
-      console.log(styled('🔐 Using bun.secrets for local caching', 'success'));
+      console.info(styled('🔐 Using bun.secrets for local caching', 'success'));
     } else {
-      console.log(styled('⚠️ bun.secrets not available, using R2 only', 'warning'));
+      console.info(styled('⚠️ bun.secrets not available, using R2 only', 'warning'));
     }
   }
 
@@ -124,7 +124,7 @@ export class RegistrySecretsManager {
       }
     }
 
-    console.log(styled(`✅ Secret ${key} v${version} stored`, 'success'));
+    console.info(styled(`✅ Secret ${key} v${version} stored`, 'success'));
     return entry;
   }
 
@@ -136,7 +136,7 @@ export class RegistrySecretsManager {
     if (options.useCache !== false) {
       const cached = this.getFromCache(key);
       if (cached) {
-        console.log(styled(`📦 Cache hit: ${key}`, 'muted'));
+        console.info(styled(`📦 Cache hit: ${key}`, 'muted'));
         return cached;
       }
     }
@@ -196,7 +196,7 @@ export class RegistrySecretsManager {
       action: 'rotate',
     });
 
-    console.log(styled(`🔄 Secret ${key} rotated to v${entry.version}`, 'success'));
+    console.info(styled(`🔄 Secret ${key} rotated to v${entry.version}`, 'success'));
     return entry;
   }
 
@@ -224,7 +224,7 @@ export class RegistrySecretsManager {
       action: 'rollback',
     });
 
-    console.log(styled(`⏮️ Rolled back ${key} to v${toVersion} → v${entry.version}`, 'success'));
+    console.info(styled(`⏮️ Rolled back ${key} to v${toVersion} → v${entry.version}`, 'success'));
     return entry;
   }
 
@@ -279,7 +279,7 @@ export class RegistrySecretsManager {
         }
       }
 
-      console.log(styled(`🗑️ Deleted secret: ${key}`, 'success'));
+      console.info(styled(`🗑️ Deleted secret: ${key}`, 'success'));
       return true;
     } catch (error) {
       console.error(styled(`❌ Failed to delete: ${error.message}`, 'error'));
@@ -350,7 +350,7 @@ export class RegistrySecretsManager {
       useBunSecrets: true,
     });
 
-    console.log(styled(`✅ Stored credentials for ${registry}`, 'success'));
+    console.info(styled(`✅ Stored credentials for ${registry}`, 'success'));
   }
 
   /**
@@ -405,8 +405,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('🔐 Registry Secrets Manager', 'accent'));
-  console.log(styled('===========================', 'accent'));
+  console.info(styled('🔐 Registry Secrets Manager', 'accent'));
+  console.info(styled('===========================', 'accent'));
 
   switch (command) {
     case 'init':
@@ -432,11 +432,11 @@ if (import.meta.main) {
       }
       const entry = await manager.getSecret(key);
       if (entry) {
-        console.log(styled(`\n🔑 ${entry.key}`, 'info'));
-        console.log(styled(`   Version: ${entry.version}`, 'muted'));
-        console.log(styled(`   Value: ${entry.value.slice(0, 20)}...`, 'muted'));
+        console.info(styled(`\n🔑 ${entry.key}`, 'info'));
+        console.info(styled(`   Version: ${entry.version}`, 'muted'));
+        console.info(styled(`   Value: ${entry.value.slice(0, 20)}...`, 'muted'));
       } else {
-        console.log(styled('❌ Secret not found', 'error'));
+        console.info(styled('❌ Secret not found', 'error'));
       }
       break;
     }
@@ -459,15 +459,15 @@ if (import.meta.main) {
         process.exit(1);
       }
       const versions = await manager.getSecretVersions(key);
-      console.log(manager.generateVersionGraph(key, versions));
+      console.info(manager.generateVersionGraph(key, versions));
       break;
     }
 
     case 'list': {
       const secrets = await manager.listSecrets();
-      console.log(styled(`\n🔐 Secrets (${secrets.length}):`, 'info'));
+      console.info(styled(`\n🔐 Secrets (${secrets.length}):`, 'info'));
       for (const s of secrets) {
-        console.log(styled(`  • ${s.key} (v${s.version})`, 'muted'));
+        console.info(styled(`  • ${s.key} (v${s.version})`, 'muted'));
       }
       break;
     }
@@ -483,13 +483,13 @@ if (import.meta.main) {
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  init                    Initialize secrets manager', 'muted'));
-      console.log(styled('  set <key> <value>       Store a secret', 'muted'));
-      console.log(styled('  get <key>               Get a secret', 'muted'));
-      console.log(styled('  rotate <key> <value>    Rotate a secret', 'muted'));
-      console.log(styled('  versions <key>          Show version history', 'muted'));
-      console.log(styled('  list                    List all secrets', 'muted'));
-      console.log(styled('  delete <key>            Delete a secret', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  init                    Initialize secrets manager', 'muted'));
+      console.info(styled('  set <key> <value>       Store a secret', 'muted'));
+      console.info(styled('  get <key>               Get a secret', 'muted'));
+      console.info(styled('  rotate <key> <value>    Rotate a secret', 'muted'));
+      console.info(styled('  versions <key>          Show version history', 'muted'));
+      console.info(styled('  list                    List all secrets', 'muted'));
+      console.info(styled('  delete <key>            Delete a secret', 'muted'));
   }
 }

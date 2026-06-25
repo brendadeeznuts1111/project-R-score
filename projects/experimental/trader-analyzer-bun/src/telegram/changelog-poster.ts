@@ -185,7 +185,7 @@ export async function postChangelog(options: {
 	const entries = await fetchChangelog(limit);
 
 	if (entries.length === 0) {
-		console.log("No changelog entries found");
+		console.info("No changelog entries found");
 		return;
 	}
 
@@ -209,7 +209,7 @@ export async function postChangelog(options: {
 	const result = await api.sendMessage(chatId, message, actualThreadId);
 
 	if (result.ok) {
-		console.log(
+		console.info(
 			`✅ Posted ${entries.length} changelog entries to topic ${actualThreadId} (${logicalTopicId})`,
 		);
 	} else {
@@ -227,7 +227,7 @@ if (import.meta.main) {
 			: parseInt(args[1])
 		: 6;
 
-	console.log(
+	console.info(
 		`📋 Posting changelog to topic: ${topicId} (mapped to thread ID: ${getThreadId(topicId) ?? topicId})\n`,
 	);
 

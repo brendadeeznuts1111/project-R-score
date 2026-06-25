@@ -1081,7 +1081,7 @@ async function generateScriptStub(
  */
 export async function ${camelExp}(): Promise<void> {
 	// TODO: Implement function logic
-	console.log('${exp} executed');
+	console.info('${exp} executed');
 }
 `
           })
@@ -1140,7 +1140,7 @@ async function main() {
 	
 	try {
 		// TODO: Implement script logic
-		console.log('✅ ${name} completed successfully');
+		console.info('✅ ${name} completed successfully');
 	} catch (error) {
 		console.error('❌ Error:', error);
 		process.exit(1);
@@ -1286,8 +1286,8 @@ async function updateManifest(
   const finalContent = JSON.stringify(manifest, null, 2)
 
   await Bun.write(manifestPath, finalContent)
-  console.log(`✅ Updated manifest: ${manifestPath}`)
-  console.log(`   Checksum: ${checksum}`)
+  console.info(`✅ Updated manifest: ${manifestPath}`)
+  console.info(`   Checksum: ${checksum}`)
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1351,7 +1351,7 @@ async function publishToRSS(
       // Ignore RSS refresh errors
     }
 
-    console.log(`✅ Published to RSS feed`)
+    console.info(`✅ Published to RSS feed`)
   } catch (error) {
     console.warn(`⚠️  Failed to publish to RSS:`, error)
   }
@@ -1402,7 +1402,7 @@ async function notifyTeam(
       disable_notification: true, // Low priority notification
     })
 
-    console.log(`✅ Notified team via Telegram`)
+    console.info(`✅ Notified team via Telegram`)
   } catch (error) {
     console.warn(`⚠️  Failed to notify Telegram:`, error)
   }
@@ -1574,7 +1574,7 @@ async function main() {
       await aiService.initialize()
 
       if (aiService.isAvailable()) {
-        console.log(`🤖 Enhancing with AI context: ${options.aiContext.substring(0, 50)}...`)
+        console.info(`🤖 Enhancing with AI context: ${options.aiContext.substring(0, 50)}...`)
 
         const aiRequest = {
           type: options.type,
@@ -1591,16 +1591,16 @@ async function main() {
         if (aiSuggestions.confidence > 0.5) {
           // Apply AI suggestions to enhance the generated code
           code = await enhanceCodeWithAISuggestions(code, aiSuggestions, options)
-          console.log(
+          console.info(
             `✅ AI-enhanced with ${aiSuggestions.methodStubs.length} method stubs (confidence: ${(aiSuggestions.confidence * 100).toFixed(0)}%)`
           )
         } else {
-          console.log(
+          console.info(
             `⚠️  AI suggestions available but low confidence (${(aiSuggestions.confidence * 100).toFixed(0)}%), using base template`
           )
         }
       } else {
-        console.log(`⚠️  AI service not available, using base template`)
+        console.info(`⚠️  AI service not available, using base template`)
       }
     } catch (error) {
       console.warn(`⚠️  AI enhancement failed, using base template:`, error)
@@ -1611,9 +1611,9 @@ async function main() {
   const targetFileObj = Bun.file(finalTargetFile)
   if (!(await targetFileObj.exists())) {
     await Bun.write(finalTargetFile, code)
-    console.log(`✅ Generated ${options.type}: ${finalTargetFile}`)
+    console.info(`✅ Generated ${options.type}: ${finalTargetFile}`)
   } else {
-    console.log(`⚠️  File already exists: ${finalTargetFile}`)
+    console.info(`⚠️  File already exists: ${finalTargetFile}`)
   }
 
   // Generate test file
@@ -1633,9 +1633,9 @@ async function main() {
 
     const testCode = generateTestFile(options.name, options.type, importPath, options)
     await Bun.write(testFile, testCode)
-    console.log(`✅ Generated test file: ${testFile}`)
+    console.info(`✅ Generated test file: ${testFile}`)
   } else {
-    console.log(`⚠️  Test file already exists: ${testFile}`)
+    console.info(`⚠️  Test file already exists: ${testFile}`)
   }
 
   // Update manifest
@@ -1663,8 +1663,8 @@ async function main() {
         }
 
         await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2))
-        console.log(`✅ Updated package.json with dependencies: ${options.dependencies.join(", ")}`)
-        console.log(`   ⚠️  Please verify and set correct versions for dependencies`)
+        console.info(`✅ Updated package.json with dependencies: ${options.dependencies.join(", ")}`)
+        console.info(`   ⚠️  Please verify and set correct versions for dependencies`)
       }
     } catch (error) {
       console.warn(`⚠️  Failed to update package.json:`, error)
@@ -1694,7 +1694,7 @@ async function main() {
       await $`git add ${finalTargetFile} ${testFile}`
       const commitMessage = `feat(scaffold): Added ${options.type} ${options.name}${team ? ` for ${team.id}` : ""}`
       await $`git commit -m ${commitMessage}`
-      console.log(`✅ Committed files to git: ${commitMessage}`)
+      console.info(`✅ Committed files to git: ${commitMessage}`)
     } catch (error) {
       console.warn(`⚠️  Git commit failed (this is okay if not in a git repo):`, error)
     }
@@ -1725,22 +1725,22 @@ async function main() {
     await notifyTeam(options.name, options.type, team)
   }
 
-  console.log("\n✅ Scaffolding complete!")
-  console.log(`\n📝 Next steps:`)
-  console.log(`   1. Review generated ${options.type}: ${finalTargetFile}`)
-  console.log(`   2. Run tests: bun test ${testFile}`)
+  console.info("\n✅ Scaffolding complete!")
+  console.info(`\n📝 Next steps:`)
+  console.info(`   1. Review generated ${options.type}: ${finalTargetFile}`)
+  console.info(`   2. Run tests: bun test ${testFile}`)
   if (options.coverage) {
-    console.log(`   3. Verify coverage: bun test --coverage ${testFile}`)
+    console.info(`   3. Verify coverage: bun test --coverage ${testFile}`)
   }
   if (options.type === "mcp-tool") {
-    console.log(`   4. Register tool in src/mcp/server.ts`)
-    console.log(`   5. Test via MCP: bun run scripts/mcp-server.ts`)
+    console.info(`   4. Register tool in src/mcp/server.ts`)
+    console.info(`   5. Test via MCP: bun run scripts/mcp-server.ts`)
   }
   if (options.type === "component") {
-    console.log(`   4. Import and use in your dashboard components`)
+    console.info(`   4. Import and use in your dashboard components`)
   }
   if (options.dependencies && options.dependencies.length > 0) {
-    console.log(`   6. Install dependencies: bun install`)
+    console.info(`   6. Install dependencies: bun install`)
   }
 }
 

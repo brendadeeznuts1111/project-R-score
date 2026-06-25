@@ -20,14 +20,14 @@ const TEMPLATES = {
     devDependencies: ["bun-types"],
     files: {
       "src/index.ts": `// Minimal Odds Protocol Application
-console.log("🚀 Odds Protocol Minimal App Started");
+console.info("🚀 Odds Protocol Minimal App Started");
 
 export function greet(name: string): string {
   return \`Hello from \${name}!\`;
 }
 
 if (import.meta.main) {
-  console.log(greet("Odds Protocol"));
+  console.info(greet("Odds Protocol"));
 }`,
       "README.md": `# Minimal Odds Protocol App
 
@@ -83,20 +83,20 @@ const AppConfig = z.object({
 
 const config = AppConfig.parse(process.env);
 
-console.log("🚀 Odds Protocol Full App Started");
-console.log(\`📍 Server: http://\${config.host}:\${config.port}\`);
-console.log(\`🌍 Environment: \${config.env}\`);
+console.info("🚀 Odds Protocol Full App Started");
+console.info(\`📍 Server: http://\${config.host}:\${config.port}\`);
+console.info(\`🌍 Environment: \${config.env}\`);
 
 export { config };
 
 if (import.meta.main) {
-  console.log("Server running in production mode");
+  console.info("Server running in production mode");
 }`,
       "src/utils/logger.ts": `import { debug } from "debug";
 
 export const logger = {
   info: (message: string, ...args: any[]) => {
-    console.log(\`ℹ️  \${message}\`, ...args);
+    console.info(\`ℹ️  \${message}\`, ...args);
   },
   error: (message: string, ...args: any[]) => {
     console.error(\`❌ \${message}\`, ...args);
@@ -181,30 +181,30 @@ const app = uWS.App({
   idleTimeout: 10,
   /* Handlers */
   open: (ws) => {
-    console.log("A WebSocket connected!");
+    console.info("A WebSocket connected!");
     ws.subscribe("odds:updates");
     ws.send("Welcome to Odds Protocol WebSocket!");
   },
   message: (ws, message, isBinary) => {
     const messageStr = Buffer.from(message).toString();
-    console.log(\`Received message: \${messageStr}\`);
+    console.info(\`Received message: \${messageStr}\`);
     
     // Echo back with timestamp
     ws.send(\`Echo: \${messageStr} at \${new Date().toISOString()}\`);
   },
   drain: (ws) => {
-    console.log("WebSocket backpressure: " + ws.getBufferedAmount());
+    console.info("WebSocket backpressure: " + ws.getBufferedAmount());
   },
   close: (ws, code, message) => {
-    console.log("WebSocket closed");
+    console.info("WebSocket closed");
   },
 }).get("/*", (res, req) => {
   res.end("Nothing to see here!");
 }).listen(port, (token) => {
   if (token) {
-    console.log(\`🚀 WebSocket server listening on port \${port}\`);
+    console.info(\`🚀 WebSocket server listening on port \${port}\`);
   } else {
-    console.log(\`❌ Failed to listen on port \${port}\`);
+    console.info(\`❌ Failed to listen on port \${port}\`);
   }
 });
 
@@ -215,12 +215,12 @@ import WebSocket from "ws";
 const ws = new WebSocket("ws://localhost:3001");
 
 ws.on("open", () => {
-  console.log("Connected to WebSocket server");
+  console.info("Connected to WebSocket server");
   ws.send("Hello from client!");
 });
 
 ws.on("message", (data) => {
-  console.log(\`Received: \${data}\`);
+  console.info(\`Received: \${data}\`);
 });
 
 ws.on("error", (error) => {
@@ -228,7 +228,7 @@ ws.on("error", (error) => {
 });
 
 ws.on("close", () => {
-  console.log("WebSocket connection closed");
+  console.info("WebSocket connection closed");
 });
 
 export { ws };`,
@@ -345,7 +345,7 @@ class OddsPredictionModel {
       metrics: ["accuracy"],
     });
 
-    console.log("🧠 ML Model initialized");
+    console.info("🧠 ML Model initialized");
   }
 
   async predict(features: number[]): Promise<number[]> {
@@ -535,7 +535,7 @@ async function createProject(options: SetupOptions): Promise<void> {
   const validatedProjectId = validateProjectId(options.projectId);
   const projectContext = createProjectContext(validatedProjectId);
   
-  console.log(`🚀 Setting up ${projectContext.projectId}...`);
+  console.info(`🚀 Setting up ${projectContext.projectId}...`);
   logProjectContext(projectContext, true);
 
   // Create project directory
@@ -546,7 +546,7 @@ async function createProject(options: SetupOptions): Promise<void> {
   }
 
   await executeCommand(`mkdir -p ${projectContext.projectId}`, process.cwd());
-  console.log(`📁 Created directory: ${projectContext.projectId}`);
+  console.info(`📁 Created directory: ${projectContext.projectId}`);
 
   // Initialize package.json
   const template = TEMPLATES[options.template];
@@ -600,7 +600,7 @@ async function createProject(options: SetupOptions): Promise<void> {
     }
     
     await Bun.write(fullPath, content);
-    console.log(`📄 Created: ${filePath}`);
+    console.info(`📄 Created: ${filePath}`);
   }
 
   // Create .gitignore
@@ -636,7 +636,7 @@ coverage/
 
   // Install dependencies
   if (!options.skipInstall) {
-    console.log("📦 Installing dependencies...");
+    console.info("📦 Installing dependencies...");
     await executeCommand("bun install", projectPath);
   }
 
@@ -645,11 +645,11 @@ coverage/
     await createCIConfig(projectPath);
   }
 
-  console.log(`✅ Project ${projectContext.projectId} created successfully!`);
-  console.log();
-  console.log("🎉 Next steps:");
-  console.log(`   cd ${projectContext.projectId}`);
-  console.log(`   bun run dev`);
+  console.info(`✅ Project ${projectContext.projectId} created successfully!`);
+  console.info();
+  console.info("🎉 Next steps:");
+  console.info(`   cd ${projectContext.projectId}`);
+  console.info(`   bun run dev`);
 }
 
 async function createCIConfig(projectPath: string): Promise<void> {
@@ -711,7 +711,7 @@ jobs:
 
   await executeCommand("mkdir -p .github/workflows", projectPath);
   await Bun.write(join(projectPath, ".github/workflows/ci.yml"), ciConfig);
-  console.log("🔄 Created GitHub Actions CI/CD");
+  console.info("🔄 Created GitHub Actions CI/CD");
 }
 
 // CLI interface
@@ -719,7 +719,7 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 Usage: bun run automated-setup.ts <project-name> [options]
 
 Examples:

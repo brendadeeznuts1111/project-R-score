@@ -1,0 +1,66 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug Current File",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "watchMode": false
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug Current File (watch)",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "watchMode": true
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug Test File",
+      "command": "test",
+      "args": ["${relativeFile}"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug dx-mcp",
+      "program": "${workspaceFolder}/scripts/dx-mcp.ts",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug bun-docs-mcp",
+      "program": "${workspaceFolder}/tools/bun-docs-mcp.ts",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "BUN_DOCS_ROOT": "${workspaceFolder}"
+      }
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Bun: Debug Script (pick)",
+      "program": "${input:bunScript}",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "bunScript",
+      "type": "pickString",
+      "description": "Script to debug",
+      "options": [
+        "scripts/dx-mcp.ts",
+        "scripts/mcp-bridge.ts",
+        "tools/bun-docs-mcp.ts",
+        "scripts/build.ts"
+      ]
+    }
+  ]
+}

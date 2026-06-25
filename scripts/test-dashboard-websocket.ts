@@ -3,7 +3,7 @@ import {
   applyDashboardTestEnv,
   getDashboardTestConfig,
   withDashboardServer,
-} from "./lib/dashboard-test-server";
+} from './lib/dashboard-test-server';
 
 type CheckResult = {
   name: string;
@@ -13,7 +13,7 @@ type CheckResult = {
 
 function printChecks(checks: CheckResult[]) {
   for (const c of checks) {
-    console.log(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
+    console.info(`[${c.ok ? 'PASS' : 'FAIL'}] ${c.name} :: ${c.details}`);
   }
 }
 
@@ -28,25 +28,29 @@ async function run(): Promise<number> {
       const timeout = setTimeout(() => {
         try {
           ws.close();
-        } catch {}
-        reject(new Error("timeout waiting for websocket payload"));
+        } catch {
+          console.error('Unhandled error:', error);
+        }
+        reject(new Error('timeout waiting for websocket payload'));
       }, 6000);
 
       ws.onopen = () => {
         try {
-          ws.send("ping");
-        } catch {}
+          ws.send('ping');
+        } catch {
+          console.error('Unhandled error:', error);
+        }
       };
 
       ws.onerror = () => {
         clearTimeout(timeout);
-        reject(new Error("websocket connection error"));
+        reject(new Error('websocket connection error'));
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = event => {
         try {
-          const payload = JSON.parse(String(event.data || "{}"));
-          if (payload?.type === "pong") {
+          const payload = JSON.parse(String(event.data || '{}'));
+          if (payload?.type === 'pong') {
             return;
           }
           clearTimeout(timeout);
@@ -61,14 +65,14 @@ async function run(): Promise<number> {
     });
 
     const hasShape =
-      typeof message?.generatedAt === "string" &&
-      typeof message?.capacity?.summary === "string" &&
-      typeof message?.bottleneck?.kind === "string" &&
+      typeof message?.generatedAt === 'string' &&
+      typeof message?.capacity?.summary === 'string' &&
+      typeof message?.bottleneck?.kind === 'string' &&
       Number.isFinite(message?.headroom?.connections?.pct) &&
       Number.isFinite(message?.headroom?.workers?.pct);
 
     checks.push({
-      name: "websocket-capacity-shape",
+      name: 'websocket-capacity-shape',
       ok: hasShape,
       details: `payload=${JSON.stringify({
         generatedAt: message?.generatedAt,
@@ -80,7 +84,7 @@ async function run(): Promise<number> {
     const socketRuntimeRes = await fetch(`${base}/api/control/socket/runtime`);
     const socketRuntime = await socketRuntimeRes.json();
     checks.push({
-      name: "websocket-runtime-counters",
+      name: 'websocket-runtime-counters',
       ok:
         socketRuntimeRes.status === 200 &&
         Number.isFinite(socketRuntime?.sockets?.totalConnections) &&
@@ -94,15 +98,15 @@ async function run(): Promise<number> {
     });
   } catch (error) {
     checks.push({
-      name: "websocket-runner",
+      name: 'websocket-runner',
       ok: false,
       details: error instanceof Error ? error.message : String(error),
     });
   }
 
   printChecks(checks);
-  const failed = checks.filter((c) => !c.ok);
-  console.log(`Checked ${checks.length} websocket assertions against ${wsUrl}`);
+  const failed = checks.filter(c => !c.ok);
+  console.info(`Checked ${checks.length} websocket assertions against ${wsUrl}`);
   return failed.length === 0 ? 0 : 1;
 }
 

@@ -24,13 +24,13 @@ const deepObject = {
 };
 
 // Default inspect
-console.log(Bun.inspect(deepObject));
+console.info(Bun.inspect(deepObject));
 // Colors + compact
-console.log(Bun.inspect(deepObject, { colors: true, compact: true }));
+console.info(Bun.inspect(deepObject, { colors: true, compact: true }));
 // Depth limiting
-console.log(Bun.inspect(deepObject, { depth: 2 }));
+console.info(Bun.inspect(deepObject, { depth: 2 }));
 // Sorted keys
-console.log(Bun.inspect(deepObject, { sorted: true }));
+console.info(Bun.inspect(deepObject, { sorted: true }));
 
 /**
  * Bun.inspect.table() - Tabular data visualization
@@ -42,9 +42,9 @@ const tableData = [
   { endpoint: "/api/v1/legacy", latency: 2500, status: 503 },
 ];
 
-console.log(Bun.inspect.table(tableData));
+console.info(Bun.inspect.table(tableData));
 // With options
-console.log(Bun.inspect.table(tableData, {
+console.info(Bun.inspect.table(tableData, {
   colors: true,
   compact: false,
   depth: 3,
@@ -55,10 +55,10 @@ console.log(Bun.inspect.table(tableData, {
 // ═══════════════════════════════════════════════════════════════════════════════════════
 
 // Set global console depth (affects all console.log)
-console.log({ deep: { nested: { object: { value: 42 } } } }); // Default depth
+console.info({ deep: { nested: { object: { value: 42 } } } }); // Default depth
 
 // Override for specific log
-console.log("%o", { deep: { nested: { object: { value: 42 } } } }); // %o = util.inspect
+console.info("%o", { deep: { nested: { object: { value: 42 } } } }); // %o = util.inspect
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 3. BUN.COLOR - Universal color conversion
@@ -66,24 +66,24 @@ console.log("%o", { deep: { nested: { object: { value: 42 } } } }); // %o = util
 
 // Bun.color(input, outputFormat?) - input is any CSS color string or [r,g,b]
 // Output formats: "css", "hex", "rgb", "number", "ansi-256", "ansi-16m"
-console.log("Bun.color outputs:");
-console.log("  css:", Bun.color("red", "css"));               // red
-console.log("  hex:", Bun.color("red", "hex"));               // #ff0000
-console.log("  rgb:", Bun.color("red", "rgb"));               // rgb(255, 0, 0)
-console.log("  number:", Bun.color("red", "number"));         // 16711680
-console.log("  ansi-256:", Bun.color("red", "ansi-256"));     // \x1b[38;5;196m
-console.log("  ansi-16m:", Bun.color("red", "ansi-16m"));     // \x1b[38;2;255;0;0m
+console.info("Bun.color outputs:");
+console.info("  css:", Bun.color("red", "css"));               // red
+console.info("  hex:", Bun.color("red", "hex"));               // #ff0000
+console.info("  rgb:", Bun.color("red", "rgb"));               // rgb(255, 0, 0)
+console.info("  number:", Bun.color("red", "number"));         // 16711680
+console.info("  ansi-256:", Bun.color("red", "ansi-256"));     // \x1b[38;5;196m
+console.info("  ansi-16m:", Bun.color("red", "ansi-16m"));     // \x1b[38;2;255;0;0m
 
 // HSL input via CSS string
-console.log("  hsl->hex:", Bun.color("hsl(142, 76%, 36%)", "hex"));  // #16a34a
+console.info("  hsl->hex:", Bun.color("hsl(142, 76%, 36%)", "hex"));  // #16a34a
 
 // [r,g,b] array input
-console.log("  [r,g,b]->css:", Bun.color([22, 163, 74], "css"));
-console.log("  [r,g,b]->hex:", Bun.color([22, 163, 74], "hex"));
+console.info("  [r,g,b]->css:", Bun.color([22, 163, 74], "css"));
+console.info("  [r,g,b]->hex:", Bun.color([22, 163, 74], "hex"));
 
 // ANSI colored text via ansi-16m
 const ansi = Bun.color("hsl(142, 76%, 36%)", "ansi-16m");
-console.log(`${ansi}Colored Text\x1b[0m`);
+console.info(`${ansi}Colored Text\x1b[0m`);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 4. BUN.STRINGWIDTH - Unicode-aware text measurement
@@ -99,11 +99,11 @@ const testStrings = [
   "Zero\u200BWidth",
 ];
 
-console.log("Bun.stringWidth() measurements:");
+console.info("Bun.stringWidth() measurements:");
 for (const str of testStrings) {
   const width = Bun.stringWidth(str);
   const clean = str.replace(/\x1b\[[0-9;]*m/g, "");
-  console.log(`  "${clean}" = ${width} columns`);
+  console.info(`  "${clean}" = ${width} columns`);
 }
 
 // Perfect for table alignment
@@ -127,20 +127,20 @@ function alignText(text: string, width: number, align: "left" | "right" | "cente
 const data = "Tier-1380 Matrix Data";
 
 // Multiple algorithms
-console.log("Hash algorithms:");
-console.log("  crc32:", Bun.hash.crc32(data).toString(16));     // HW-accelerated, ~20x faster since 1.3.9
-console.log("  wyhash:", Bun.hash.wyhash(data).toString(16));   // Fast, 64-bit
-console.log("  adler32:", Bun.hash.adler32(data).toString(16)); // Fast, 32-bit
+console.info("Hash algorithms:");
+console.info("  crc32:", Bun.hash.crc32(data).toString(16));     // HW-accelerated, ~20x faster since 1.3.9
+console.info("  wyhash:", Bun.hash.wyhash(data).toString(16));   // Fast, 64-bit
+console.info("  adler32:", Bun.hash.adler32(data).toString(16)); // Fast, 32-bit
 
 // Object hashing
 const obj = { tier: 1380, status: "active" };
-console.log("  Object hash:", Bun.hash.wyhash(JSON.stringify(obj)).toString(16));
+console.info("  Object hash:", Bun.hash.wyhash(JSON.stringify(obj)).toString(16));
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 6. BUN.GC - Garbage collection control
 // ═══════════════════════════════════════════════════════════════════════════════════════
 
-console.log("Heap stats:", Bun.gc(true)); // Force GC + return stats
+console.info("Heap stats:", Bun.gc(true)); // Force GC + return stats
 
 // Memory pressure monitoring
 function getMemoryPressure(): "low" | "medium" | "high" {
@@ -159,7 +159,7 @@ function getMemoryPressure(): "low" | "medium" | "high" {
 // ═══════════════════════════════════════════════════════════════════════════════════════
 
 const unsafe = '<script>alert("XSS")</script> & "quotes"';
-console.log("Escaped:", Bun.escapeHTML(unsafe));
+console.info("Escaped:", Bun.escapeHTML(unsafe));
 // &lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt; &amp; &quot;quotes&quot;
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
@@ -185,7 +185,7 @@ const html = Bun.markdown.html(md, {
   strikethrough: true,
   latexMath: true,
 });
-console.log("Markdown HTML:", html.slice(0, 200));
+console.info("Markdown HTML:", html.slice(0, 200));
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 9. BUN.FILE / BUN.WRITE - Optimized I/O
@@ -216,12 +216,12 @@ const proc = Bun.spawn(["git", "status"], {
 });
 
 const output = await new Response(proc.stdout).text();
-console.log("Git status:", output.slice(0, 100));
+console.info("Git status:", output.slice(0, 100));
 
 // Shell with template literals
 // 🔒 BUN FIX: Bun Shell crash (opencode) and EBADF errors with &> redirect fixed
 const result = await Bun.$`echo "Tier-1380" | wc -c`;
-console.log("Char count:", result.stdout.toString().trim());
+console.info("Char count:", result.stdout.toString().trim());
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 11. BUN.CRYPTO - Native crypto operations
@@ -231,16 +231,16 @@ console.log("Char count:", result.stdout.toString().trim());
 const hasher = new Bun.CryptoHasher("sha256");
 hasher.update("Tier-1380");
 hasher.update(" data");
-console.log("SHA256:", hasher.digest("hex"));
+console.info("SHA256:", hasher.digest("hex"));
 
 // HMAC
 const hmac = new Bun.CryptoHasher("sha256", "secret-key");
 hmac.update("message");
-console.log("HMAC:", hmac.digest("hex"));
+console.info("HMAC:", hmac.digest("hex"));
 
 // Random bytes
 const random = crypto.getRandomValues(new Uint8Array(32));
-console.log("Random:", Buffer.from(random).toString("hex"));
+console.info("Random:", Buffer.from(random).toString("hex"));
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 12. BUN.ZSTD - Native compression
@@ -250,11 +250,11 @@ const largeData = "x".repeat(10000);
 
 // Compress
 const compressed = Bun.zstdCompressSync(Buffer.from(largeData));
-console.log(`Zstd: ${largeData.length} -> ${compressed.length} bytes`);
+console.info(`Zstd: ${largeData.length} -> ${compressed.length} bytes`);
 
 // Decompress
 const decompressed = Bun.zstdDecompressSync(compressed);
-console.log("Decompressed length:", decompressed.length);
+console.info("Decompressed length:", decompressed.length);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 13. BUN.PASSWORD - Secure credential hashing
@@ -268,14 +268,14 @@ const hashed = await Bun.password.hash("my-secret", {
 
 // Verify
 const isValid = await Bun.password.verify("my-secret", hashed);
-console.log("Password valid:", isValid);
+console.info("Password valid:", isValid);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 14. BUN.DNS - Fast DNS resolution
 // ═══════════════════════════════════════════════════════════════════════════════════════
 
 const ips = await Bun.dns.resolve("example.com");
-console.log("DNS resolved:", ips);
+console.info("DNS resolved:", ips);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 15. BUN.TOML - Native TOML parsing
@@ -291,7 +291,7 @@ url = "postgres://localhost:5432/tier1380"
 `;
 
 const config = Bun.TOML.parse(toml);
-console.log("TOML config:", config);
+console.info("TOML config:", config);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // 16. BUN.GLOB - Fast glob matching
@@ -299,7 +299,7 @@ console.log("TOML config:", config);
 
 const glob = new Bun.Glob("**/*.md");
 const files = await Array.fromAsync(glob.scan({ cwd: "./docs" }));
-console.log("Markdown files:", files.length);
+console.info("Markdown files:", files.length);
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
 // INTEGRATION: Tier-1380 Complete Observability Stack
@@ -328,7 +328,7 @@ export class Tier1380Observability {
     };
 
     // Use Bun.inspect for consistent formatting
-    console.log(
+    console.info(
       `${color}[${logEntry.level}]\x1b[0m`,
       message,
       data ? Bun.inspect(data, { colors: true, depth: 3 }) : ""
@@ -339,9 +339,9 @@ export class Tier1380Observability {
 
   table(data: any[], title?: string) {
     if (title) {
-      console.log(`\n\x1b[1;35m${title}\x1b[0m`);
+      console.info(`\n\x1b[1;35m${title}\x1b[0m`);
     }
-    console.log(Bun.inspect.table(data, { colors: true }));
+    console.info(Bun.inspect.table(data, { colors: true }));
   }
 
   metrics() {
@@ -399,4 +399,4 @@ obs.table([
   { service: "db", status: "healthy", latency: 12 },
 ], "Service Health");
 
-console.log(await obs.export("markdown"));
+console.info(await obs.export("markdown"));

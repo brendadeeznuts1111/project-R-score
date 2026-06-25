@@ -327,11 +327,11 @@ if (import.meta.main) {
   const config = createSampleConfig();
   const generator = new ReportGenerator(config);
 
-  console.log('📊 ANSI Report:');
-  console.log(generator.generateANSITable());
+  console.info('📊 ANSI Report:');
+  console.info(generator.generateANSITable());
 
-  console.log('\n📄 Full Markdown Report:');
-  console.log(generator.generateFullReport());
+  console.info('\n📄 Full Markdown Report:');
+  console.info(generator.generateFullReport());
 
   // Test validation
   const testData = {
@@ -348,12 +348,12 @@ if (import.meta.main) {
   };
 
   const validation = generator.validateData(testData);
-  console.log('\n🔍 Data Validation:');
-  console.log(`Valid: ${validation.valid}`);
+  console.info('\n🔍 Data Validation:');
+  console.info(`Valid: ${validation.valid}`);
   if (validation.errors.length > 0) {
-    console.log('Errors:', validation.errors);
+    console.info('Errors:', validation.errors);
   }
   if (validation.warnings.length > 0) {
-    console.log('Warnings:', validation.warnings);
+    console.info('Warnings:', validation.warnings);
   }
 }

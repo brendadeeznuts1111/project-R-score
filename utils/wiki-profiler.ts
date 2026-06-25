@@ -31,8 +31,8 @@ interface WikiProfileResult {
  * Analyzes wiki output files for structure, validation, and performance
  */
 async function wikiProfile(wikiFile: string): Promise<WikiProfileResult> {
-  console.log('\x1b[1;34m📚 Wiki Profiler: Analyzing wiki output\x1b[0m');
-  console.log(`   File: ${wikiFile}`);
+  console.info('\x1b[1;34m📚 Wiki Profiler: Analyzing wiki output\x1b[0m');
+  console.info(`   File: ${wikiFile}`);
   
   // Step 1: Load wiki content
   const wikiPath = resolve(wikiFile);
@@ -135,11 +135,11 @@ async function wikiProfile(wikiFile: string): Promise<WikiProfileResult> {
  * Display wiki profiling results in a formatted table
  */
 function displayWikiDashboard(result: WikiProfileResult): void {
-  console.log('\n\x1b[1;32m📊 Wiki Profiler Dashboard\x1b[0m');
-  console.log('\x1b[1;36m' + '='.repeat(60) + '\x1b[0m');
+  console.info('\n\x1b[1;32m📊 Wiki Profiler Dashboard\x1b[0m');
+  console.info('\x1b[1;36m' + '='.repeat(60) + '\x1b[0m');
   
   // Wiki metrics table
-  console.log('\n\x1b[1;33m🔗 Wiki Integration Metrics:\x1b[0m');
+  console.info('\n\x1b[1;33m🔗 Wiki Integration Metrics:\x1b[0m');
   console.table({
     'docsURLBuilder URLs': result.wiki.urls,
     'CLI Pages': result.wiki.cliPages,
@@ -150,7 +150,7 @@ function displayWikiDashboard(result: WikiProfileResult): void {
   });
   
   // Performance metrics
-  console.log('\n\x1b[1;33m⚡ Performance Metrics:\x1b[0m');
+  console.info('\n\x1b[1;33m⚡ Performance Metrics:\x1b[0m');
   console.table({
     'Scan Time': `${result.performance.scanTime.toFixed(2)}ms`,
     'Parse Time': `${result.performance.parseTime.toFixed(2)}ms`,
@@ -160,10 +160,10 @@ function displayWikiDashboard(result: WikiProfileResult): void {
   // Validation summary
   const validationColor = result.wiki.validation === 'PASS' ? '32' : 
                          result.wiki.validation === 'WARN' ? '33' : '31';
-  console.log(`\n\x1b[1;${validationColor}m✅ Validation Status: ${result.wiki.validation}\x1b[0m`);
+  console.info(`\n\x1b[1;${validationColor}m✅ Validation Status: ${result.wiki.validation}\x1b[0m`);
   
   // Integration checklist
-  console.log('\n\x1b[1;35m🔧 Integration Checklist:\x1b[0m');
+  console.info('\n\x1b[1;35m🔧 Integration Checklist:\x1b[0m');
   const checks = [
     { name: 'docsURLBuilder', status: result.wiki.urls > 0 ? '✅' : '❌', count: result.wiki.urls },
     { name: 'CLI Reference', status: result.wiki.cliPages > 0 ? '✅' : '❌', count: result.wiki.cliPages },
@@ -173,22 +173,22 @@ function displayWikiDashboard(result: WikiProfileResult): void {
   
   checks.forEach(check => {
     const statusColor = check.status === '✅' ? '32' : '31';
-    console.log(`  ${check.status} \x1b[1;${statusColor}m${check.name}\x1b[0m: ${check.count || check.status}`);
+    console.info(`  ${check.status} \x1b[1;${statusColor}m${check.name}\x1b[0m: ${check.count || check.status}`);
   });
   
   // Benchmark comparison
-  console.log('\n\x1b[1;36m📈 Benchmark Comparison:\x1b[0m');
+  console.info('\n\x1b[1;36m📈 Benchmark Comparison:\x1b[0m');
   const expectedThroughput = 95000; // 95K chars/s expected
   const actualThroughput = result.performance.throughput;
   const performanceGrade = actualThroughput >= expectedThroughput ? 'A+' : 
                           actualThroughput >= expectedThroughput * 0.9 ? 'A' :
                           actualThroughput >= expectedThroughput * 0.8 ? 'B' : 'C';
   
-  console.log(`  Expected Throughput: ${expectedThroughput.toLocaleString()} chars/s`);
-  console.log(`  Actual Throughput: ${Math.round(actualThroughput).toLocaleString()} chars/s`);
-  console.log(`  Performance Grade: \x1b[1;${performanceGrade.startsWith('A') ? '32' : performanceGrade === 'B' ? '33' : '31'}m${performanceGrade}\x1b[0m`);
+  console.info(`  Expected Throughput: ${expectedThroughput.toLocaleString()} chars/s`);
+  console.info(`  Actual Throughput: ${Math.round(actualThroughput).toLocaleString()} chars/s`);
+  console.info(`  Performance Grade: \x1b[1;${performanceGrade.startsWith('A') ? '32' : performanceGrade === 'B' ? '33' : '31'}m${performanceGrade}\x1b[0m`);
   
-  console.log('\n\x1b[1;32m🎉 Wiki profiling complete!\x1b[0m');
+  console.info('\n\x1b[1;32m🎉 Wiki profiling complete!\x1b[0m');
 }
 
 /**
@@ -197,7 +197,7 @@ function displayWikiDashboard(result: WikiProfileResult): void {
 async function exportWikiProfile(result: WikiProfileResult): Promise<string> {
   const filename = `wiki-profile-${Date.now()}.json`;
   await Bun.write(filename, JSON.stringify(result, null, 2));
-  console.log(`\x1b[1;33m📁 Exported wiki profile: ${filename}\x1b[0m`);
+  console.info(`\x1b[1;33m📁 Exported wiki profile: ${filename}\x1b[0m`);
   return filename;
 }
 
@@ -208,9 +208,9 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log('\x1b[1;31m❌ Usage: wiki-profiler <wiki-file.md>\x1b[0m');
-    console.log('\x1b[1;36mExample: wiki-profiler wiki-output.md\x1b[0m');
-    console.log('\x1b[1;36mExample: wiki-profiler internal-wiki/bun-utilities-wiki.md\x1b[0m');
+    console.info('\x1b[1;31m❌ Usage: wiki-profiler <wiki-file.md>\x1b[0m');
+    console.info('\x1b[1;36mExample: wiki-profiler wiki-output.md\x1b[0m');
+    console.info('\x1b[1;36mExample: wiki-profiler internal-wiki/bun-utilities-wiki.md\x1b[0m');
     process.exit(1);
   }
   

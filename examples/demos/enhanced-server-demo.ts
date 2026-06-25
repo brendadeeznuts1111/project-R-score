@@ -7,8 +7,8 @@ import type { Bun } from 'bun';
 
 // Demo 1: Basic enhanced server with all features
 async function demoBasicEnhancedServer() {
-  console.log('🚀 Demo 1: Basic Enhanced Server');
-  console.log('===================================');
+  console.info('🚀 Demo 1: Basic Enhanced Server');
+  console.info('===================================');
   
   const server = createEnhancedServer({
     port: 3000,
@@ -128,19 +128,19 @@ async function demoBasicEnhancedServer() {
   // Show recommendations
   const recommendations = optimizer.getProtocolRecommendations();
   if (recommendations.length > 0) {
-    console.log('\n💡 Protocol Recommendations:');
-    recommendations.forEach(rec => console.log(`   • ${rec}`));
+    console.info('\n💡 Protocol Recommendations:');
+    recommendations.forEach(rec => console.info(`   • ${rec}`));
   }
   
   // Performance monitoring
   setInterval(() => {
     const report = optimizer.getProtocolPerformanceReport();
-    console.log(`\n📊 Performance Report (${report.protocol}):`);
-    console.log(`   Grade: ${report.grade}`);
-    console.log(`   RPS: ${report.performance.requestsPerSecond.toFixed(2)}`);
-    console.log(`   Avg Time: ${report.performance.avgResponseTime.toFixed(2)}ms`);
-    console.log(`   Compression: ${(report.performance.compressionRatio * 100).toFixed(1)}%`);
-    console.log(`   Cache Hit: ${(report.performance.cacheHitRatio * 100).toFixed(1)}%`);
+    console.info(`\n📊 Performance Report (${report.protocol}):`);
+    console.info(`   Grade: ${report.grade}`);
+    console.info(`   RPS: ${report.performance.requestsPerSecond.toFixed(2)}`);
+    console.info(`   Avg Time: ${report.performance.avgResponseTime.toFixed(2)}ms`);
+    console.info(`   Compression: ${(report.performance.compressionRatio * 100).toFixed(1)}%`);
+    console.info(`   Cache Hit: ${(report.performance.cacheHitRatio * 100).toFixed(1)}%`);
   }, 10000); // Every 10 seconds
   
   return server;
@@ -148,14 +148,14 @@ async function demoBasicEnhancedServer() {
 
 // Demo 2: Protocol comparison test
 async function demoProtocolComparison() {
-  console.log('\n🧪 Demo 2: Protocol Comparison Test');
-  console.log('===================================');
+  console.info('\n🧪 Demo 2: Protocol Comparison Test');
+  console.info('===================================');
   
   const protocols = ['http', 'https', 'http2'] as const;
   const results: Array<{ protocol: string; rps: number; avgTime: number }> = [];
   
   for (const protocol of protocols) {
-    console.log(`\n🔍 Testing ${protocol.toUpperCase()} protocol...`);
+    console.info(`\n🔍 Testing ${protocol.toUpperCase()} protocol...`);
     
     const server = createQuickServer(3001 + protocols.indexOf(protocol), protocol);
     const optimizer = new ProtocolOptimizer(server);
@@ -172,32 +172,32 @@ async function demoProtocolComparison() {
       avgTime: benchmark.metrics.avgResponseTime,
     });
     
-    console.log(`   📊 Results: ${benchmark.metrics.requestsPerSecond.toFixed(2)} RPS, ${benchmark.metrics.avgResponseTime.toFixed(2)}ms avg`);
+    console.info(`   📊 Results: ${benchmark.metrics.requestsPerSecond.toFixed(2)} RPS, ${benchmark.metrics.avgResponseTime.toFixed(2)}ms avg`);
     
     server.stop();
     await Bun.sleep(500);
   }
   
   // Show comparison
-  console.log('\n📈 Protocol Comparison Results:');
-  console.log('─'.repeat(50));
+  console.info('\n📈 Protocol Comparison Results:');
+  console.info('─'.repeat(50));
   results.forEach(result => {
-    console.log(`${result.protocol.toUpperCase().padEnd(6)} | ${result.rps.toFixed(2).padStart(8)} RPS | ${result.avgTime.toFixed(2).padStart(6)}ms avg`);
+    console.info(`${result.protocol.toUpperCase().padEnd(6)} | ${result.rps.toFixed(2).padStart(8)} RPS | ${result.avgTime.toFixed(2).padStart(6)}ms avg`);
   });
   
   // Find best performer
   const bestRPS = results.reduce((best, current) => current.rps > best.rps ? current : best);
   const bestTime = results.reduce((best, current) => current.avgTime < best.avgTime ? current : best);
   
-  console.log('\n🏆 Performance Winners:');
-  console.log(`   Highest RPS: ${bestRPS.protocol.toUpperCase()} (${bestRPS.rps.toFixed(2)} RPS)`);
-  console.log(`   Fastest Response: ${bestTime.protocol.toUpperCase()} (${bestTime.avgTime.toFixed(2)}ms)`);
+  console.info('\n🏆 Performance Winners:');
+  console.info(`   Highest RPS: ${bestRPS.protocol.toUpperCase()} (${bestRPS.rps.toFixed(2)} RPS)`);
+  console.info(`   Fastest Response: ${bestTime.protocol.toUpperCase()} (${bestTime.avgTime.toFixed(2)}ms)`);
 }
 
 // Demo 3: Load testing simulation
 async function demoLoadTesting() {
-  console.log('\n⚡ Demo 3: Load Testing Simulation');
-  console.log('===================================');
+  console.info('\n⚡ Demo 3: Load Testing Simulation');
+  console.info('===================================');
   
   const server = createEnhancedServer({
     port: 3000,
@@ -225,7 +225,7 @@ async function demoLoadTesting() {
     },
   });
   
-  console.log('🔄 Running load test scenarios...');
+  console.info('🔄 Running load test scenarios...');
   
   const scenarios = [
     { name: 'Light Load', load: 10, delay: 5 },
@@ -234,7 +234,7 @@ async function demoLoadTesting() {
   ];
   
   for (const scenario of scenarios) {
-    console.log(`\n📊 Testing: ${scenario.name}`);
+    console.info(`\n📊 Testing: ${scenario.name}`);
     
     const startTime = Date.now();
     const promises = Array.from({ length: scenario.load }, (_, i) =>
@@ -245,10 +245,10 @@ async function demoLoadTesting() {
     const results = await Promise.all(promises);
     const totalTime = Date.now() - startTime;
     
-    console.log(`   ✅ Completed ${scenario.load} requests in ${totalTime}ms`);
-    console.log(`   📈 Throughput: ${(scenario.load / (totalTime / 1000)).toFixed(2)} RPS`);
-    console.log(`   ⚡ Server RPS: ${server.performance.requestsPerSecond.toFixed(2)}`);
-    console.log(`   🕐 Avg Response Time: ${server.performance.avgResponseTime.toFixed(2)}ms`);
+    console.info(`   ✅ Completed ${scenario.load} requests in ${totalTime}ms`);
+    console.info(`   📈 Throughput: ${(scenario.load / (totalTime / 1000)).toFixed(2)} RPS`);
+    console.info(`   ⚡ Server RPS: ${server.performance.requestsPerSecond.toFixed(2)}`);
+    console.info(`   🕐 Avg Response Time: ${server.performance.avgResponseTime.toFixed(2)}ms`);
     
     await Bun.sleep(2000); // Wait between scenarios
   }
@@ -258,8 +258,8 @@ async function demoLoadTesting() {
 
 // Demo 4: Real-time monitoring dashboard
 async function demoMonitoringDashboard() {
-  console.log('\n📊 Demo 4: Real-time Monitoring');
-  console.log('===================================');
+  console.info('\n📊 Demo 4: Real-time Monitoring');
+  console.info('===================================');
   
   const server = createEnhancedServer({
     port: 3000,
@@ -310,13 +310,13 @@ async function demoMonitoringDashboard() {
     },
   });
   
-  console.log('🌐 Monitoring Dashboard Available:');
-  console.log(`   Performance: http://localhost:3000/_perf`);
-  console.log(`   Metrics API: http://localhost:3000/_metrics`);
-  console.log(`   Test Endpoint: http://localhost:3000/api/random`);
+  console.info('🌐 Monitoring Dashboard Available:');
+  console.info(`   Performance: http://localhost:3000/_perf`);
+  console.info(`   Metrics API: http://localhost:3000/_metrics`);
+  console.info(`   Test Endpoint: http://localhost:3000/api/random`);
   
   // Generate some traffic for demonstration
-  console.log('\n🔄 Generating demonstration traffic...');
+  console.info('\n🔄 Generating demonstration traffic...');
   
   const trafficGenerator = setInterval(async () => {
     try {
@@ -330,7 +330,7 @@ async function demoMonitoringDashboard() {
   // Stop traffic generator after 30 seconds
   setTimeout(() => {
     clearInterval(trafficGenerator);
-    console.log('✅ Traffic generation stopped');
+    console.info('✅ Traffic generation stopped');
   }, 30000);
   
   return server;
@@ -338,11 +338,11 @@ async function demoMonitoringDashboard() {
 
 // Main demo runner
 async function runEnhancedServerDemo() {
-  console.log('🚀 Enhanced Bun.serve() Complete Demo');
-  console.log('='.repeat(50));
-  console.log('📅 Protocol Detection & Performance Monitoring');
-  console.log('⚡ Real-time Analytics & Optimization');
-  console.log('');
+  console.info('🚀 Enhanced Bun.serve() Complete Demo');
+  console.info('='.repeat(50));
+  console.info('📅 Protocol Detection & Performance Monitoring');
+  console.info('⚡ Real-time Analytics & Optimization');
+  console.info('');
   
   try {
     // Run all demos
@@ -357,22 +357,22 @@ async function runEnhancedServerDemo() {
     
     const server3 = await demoMonitoringDashboard();
     
-    console.log('\n🎆 All demos running successfully!');
-    console.log('='.repeat(50));
-    console.log('🌐 Available Services:');
-    console.log('   • Main Server: http://localhost:3000');
-    console.log('   • Performance Dashboard: http://localhost:3000/_perf');
-    console.log('   • Metrics API: http://localhost:3000/_metrics');
-    console.log('');
-    console.log('💡 Try these commands:');
-    console.log('   curl http://localhost:3000/api/test');
-    console.log('   curl http://localhost:3000/_metrics');
-    console.log('   curl http://localhost:3000/api/heavy');
-    console.log('');
-    console.log('🔍 Open http://localhost:3000/_perf for live dashboard!');
+    console.info('\n🎆 All demos running successfully!');
+    console.info('='.repeat(50));
+    console.info('🌐 Available Services:');
+    console.info('   • Main Server: http://localhost:3000');
+    console.info('   • Performance Dashboard: http://localhost:3000/_perf');
+    console.info('   • Metrics API: http://localhost:3000/_metrics');
+    console.info('');
+    console.info('💡 Try these commands:');
+    console.info('   curl http://localhost:3000/api/test');
+    console.info('   curl http://localhost:3000/_metrics');
+    console.info('   curl http://localhost:3000/api/heavy');
+    console.info('');
+    console.info('🔍 Open http://localhost:3000/_perf for live dashboard!');
     
     // Keep servers running
-    console.log('\n⏳ Servers running... Press Ctrl+C to stop');
+    console.info('\n⏳ Servers running... Press Ctrl+C to stop');
     
   } catch (error) {
     console.error('❌ Demo failed:', error.message);

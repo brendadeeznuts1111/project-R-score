@@ -67,7 +67,7 @@ async function generateUserReportRules() {
   const yaml = YAML.stringify({ rules: allRules });
   await Bun.write(rulesPath, yaml);
 
-  console.log(`✅ Generated ${allRules.length} user report rules`);
+  console.info(`✅ Generated ${allRules.length} user report rules`);
 }
 
 generateUserReportRules();

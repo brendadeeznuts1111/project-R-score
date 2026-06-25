@@ -31,7 +31,7 @@ function parsePathList(raw: string | undefined): string[] {
   if (!raw) return [];
   return raw
     .split(',')
-    .map((part) => part.trim())
+    .map(part => part.trim())
     .filter(Boolean);
 }
 
@@ -85,9 +85,9 @@ async function collectFiles(roots: string[]): Promise<string[]> {
   }
   return stdout
     .split('\n')
-    .map((line) => line.trim())
+    .map(line => line.trim())
     .filter(Boolean)
-    .map((path) => resolve(path));
+    .map(path => resolve(path));
 }
 
 function countLines(content: string): number {
@@ -166,11 +166,13 @@ async function main(): Promise<void> {
     '',
   ].join('\n');
 
-  await Bun.write('reports/search-coverage-loc-latest.json', `${JSON.stringify(payload, null, 2)}\n`);
+  await Bun.write(
+    'reports/search-coverage-loc-latest.json',
+    `${JSON.stringify(payload, null, 2)}\n`
+  );
   await Bun.write('reports/search-coverage-loc-latest.md', `${md}\n`);
-  console.log('[search:coverage:loc] wrote reports/search-coverage-loc-latest.json');
-  console.log('[search:coverage:loc] wrote reports/search-coverage-loc-latest.md');
+  console.info('[search:coverage:loc] wrote reports/search-coverage-loc-latest.json');
+  console.info('[search:coverage:loc] wrote reports/search-coverage-loc-latest.md');
 }
 
 await main();
-

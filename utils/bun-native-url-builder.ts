@@ -299,7 +299,7 @@ export class BunNativeUrlBuilder {
     const cacheFile = getCachePath(config.CACHE.URLS_FILE);
     await Bun.write(cacheFile, JSON.stringify(cacheData, null, 2));
     
-    console.log(`✅ Saved ${this.cache.size} cached URLs to ${cacheFile}`);
+    console.info(`✅ Saved ${this.cache.size} cached URLs to ${cacheFile}`);
   }
   
   /**
@@ -347,7 +347,7 @@ export class BunNativeUrlBuilder {
         }
       }
       
-      console.log(`✅ Loaded ${loadedCount} cached URLs from disk (${skippedCount} skipped/expired)`);
+      console.info(`✅ Loaded ${loadedCount} cached URLs from disk (${skippedCount} skipped/expired)`);
       
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -463,7 +463,7 @@ ${urls.map(entry => `  <url>
 </urlset>`;
     
     await Bun.write(config.SITEMAP.FILE, sitemap);
-    console.log(`✅ Generated sitemap with ${urls.length} entries`);
+    console.info(`✅ Generated sitemap with ${urls.length} entries`);
     
     return sitemap;
   }

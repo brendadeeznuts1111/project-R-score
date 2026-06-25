@@ -10,11 +10,11 @@ import { colors } from "../src/utils/bun";
 async function listEndpoints(): Promise<void> {
 	const discovery = getApiDiscovery();
 
-	console.log(colors.brightCyan(`\n${"=".repeat(80)}`));
-	console.log(colors.brightCyan(`${discovery.name} v${discovery.version}`));
-	console.log(colors.gray(`Runtime: ${discovery.runtime}`));
-	console.log(colors.gray(`Total Endpoints: ${discovery.totalEndpoints}`));
-	console.log(colors.brightCyan(`${"=".repeat(80)}\n`));
+	console.info(colors.brightCyan(`\n${"=".repeat(80)}`));
+	console.info(colors.brightCyan(`${discovery.name} v${discovery.version}`));
+	console.info(colors.gray(`Runtime: ${discovery.runtime}`));
+	console.info(colors.gray(`Total Endpoints: ${discovery.totalEndpoints}`));
+	console.info(colors.brightCyan(`${"=".repeat(80)}\n`));
 
 	// Group by method
 	const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
@@ -33,20 +33,20 @@ async function listEndpoints(): Promise<void> {
 							? colors.red
 							: colors.magenta;
 
-		console.log(methodColor(`\n${method} (${paths.length})`));
-		console.log(colors.gray("-".repeat(80)));
+		console.info(methodColor(`\n${method} (${paths.length})`));
+		console.info(colors.gray("-".repeat(80)));
 
 		for (const path of paths) {
-			console.log(`  ${colors.cyan(path)}`);
+			console.info(`  ${colors.cyan(path)}`);
 		}
 	}
 
-	console.log(colors.brightCyan(`\n${"=".repeat(80)}`));
-	console.log(colors.gray(`\nAccess full API documentation:`));
-	console.log(colors.cyan(`  http://localhost:${process.env.PORT || 3000}/docs`));
-	console.log(colors.gray(`\nGet discovery JSON:`));
-	console.log(colors.cyan(`  curl http://localhost:${process.env.PORT || 3000}/api/discovery`));
-	console.log(colors.brightCyan(`${"=".repeat(80)}\n`));
+	console.info(colors.brightCyan(`\n${"=".repeat(80)}`));
+	console.info(colors.gray(`\nAccess full API documentation:`));
+	console.info(colors.cyan(`  http://localhost:${process.env.PORT || 3000}/docs`));
+	console.info(colors.gray(`\nGet discovery JSON:`));
+	console.info(colors.cyan(`  curl http://localhost:${process.env.PORT || 3000}/api/discovery`));
+	console.info(colors.brightCyan(`${"=".repeat(80)}\n`));
 }
 
 if (import.meta.main) {

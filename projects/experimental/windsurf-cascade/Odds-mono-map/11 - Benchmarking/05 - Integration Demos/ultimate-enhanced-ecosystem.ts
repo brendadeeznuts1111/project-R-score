@@ -7,18 +7,18 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🚀 Ultimate Enhanced Bun.stringWidth() & Bun.inspect.table() Ecosystem'));
-console.log(chalk.gray('Enterprise-Grade Advanced Features & Optimizations'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🚀 Ultimate Enhanced Bun.stringWidth() & Bun.inspect.table() Ecosystem'));
+console.info(chalk.gray('Enterprise-Grade Advanced Features & Optimizations'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // ADVANCED ANSI PARSING & WIDTH ENGINE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔬 Advanced ANSI Parsing & Width Engine'));
+console.info(chalk.bold.cyan('\n🔬 Advanced ANSI Parsing & Width Engine'));
 
-console.log(chalk.yellow('\n🔸 Ultra-Precise ANSI Width Calculator:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Ultra-Precise ANSI Width Calculator:'));
+console.info(chalk.white(`
 class AdvancedANSIWidthEngine {
   // Cache for performance optimization
   private static widthCache = new Map<string, { visual: number, total: number }>();
@@ -202,7 +202,7 @@ class AdvancedANSIWidthEngine {
 }
 
 // Test the advanced engine
-console.log(chalk.green('\n🧪 Advanced ANSI Engine Tests:'));
+console.info(chalk.green('\n🧪 Advanced ANSI Engine Tests:'));
 
 const testTexts = [
     'Simple text',
@@ -215,18 +215,18 @@ const testTexts = [
 
 testTexts.forEach((text, index) => {
     const result = AdvancedANSIWidthEngine.calculateWidth(text, { countAnsiEscapeCodes: true });
-    console.log(chalk.bold(`\n${index + 1}. "${text}"`));
-    console.log(chalk.gray(`   Visual: ${result.visual}, Total: ${result.total}, ANSI: ${result.ansiOverhead}`));
+    console.info(chalk.bold(`\n${index + 1}. "${text}"`));
+    console.info(chalk.gray(`   Visual: ${result.visual}, Total: ${result.total}, ANSI: ${result.ansiOverhead}`));
 });
 
 // =============================================================================
 // ENTERPRISE TABLE RENDERING ENGINE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏭 Enterprise Table Rendering Engine'));
+console.info(chalk.bold.cyan('\n🏭 Enterprise Table Rendering Engine'));
 
-console.log(chalk.yellow('\n🔸 Advanced Table with Multi-Level Features:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Advanced Table with Multi-Level Features:'));
+console.info(chalk.white(`
 class EnterpriseTableEngine {
   static renderTable<T>(
     data: T[],
@@ -492,10 +492,10 @@ class EnterpriseTableEngine {
 // HYPER-OPTIMIZED VAULT DATA STRUCTURES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n⚡ Hyper-Optimized Vault Data Structures'));
+console.info(chalk.bold.cyan('\n⚡ Hyper-Optimized Vault Data Structures'));
 
-console.log(chalk.yellow('\n🔸 Next-Generation Vault File Class:'));
-console.log(chalk.white(`
+console.info(chalk.yellow('\n🔸 Next-Generation Vault File Class:'));
+console.info(chalk.white(`
 class HyperOptimizedVaultFile {
   private _widthCache?: { visual: number, total: number };
   private _displayString?: string;
@@ -698,9 +698,9 @@ class HyperOptimizedVaultFile {
 // ADVANCED PERFORMANCE BENCHMARKING
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📊 Advanced Performance Benchmarking'));
+console.info(chalk.bold.cyan('\n📊 Advanced Performance Benchmarking'));
 
-console.log(chalk.yellow('\n🔸 Performance Metrics Collection:'));
+console.info(chalk.yellow('\n🔸 Performance Metrics Collection:'));
 
 class PerformanceBenchmark {
     static async benchmarkWidthCalculation(iterations = 10000): Promise<{
@@ -784,7 +784,7 @@ class PerformanceBenchmark {
 // DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.green('\n🚀 Ultimate Enhanced Ecosystem Demo:'));
+console.info(chalk.green('\n🚀 Ultimate Enhanced Ecosystem Demo:'));
 
 // Create hyper-optimized vault files
 const vaultFiles = [
@@ -805,31 +805,31 @@ const vaultFiles = [
     )
 ];
 
-console.log(chalk.yellow('\n📋 Hyper-Optimized Custom Inspection:'));
-vaultFiles.forEach(file => console.log(file));
+console.info(chalk.yellow('\n📋 Hyper-Optimized Custom Inspection:'));
+vaultFiles.forEach(file => console.info(file));
 
-console.log(chalk.yellow('\n📊 Enterprise Table Rendering:'));
+console.info(chalk.yellow('\n📊 Enterprise Table Rendering:'));
 const tableData = vaultFiles.map(file => file.toTableFormat());
 const tableOutput = EnterpriseTableEngine.renderTable(tableData,
     ['name', 'path', 'size', 'modified', 'tags', 'efficiency'],
     { maxWidth: 100, compact: true, theme: 'colorful' }
 );
-console.log(tableOutput);
+console.info(tableOutput);
 
 // Performance benchmarks
-console.log(chalk.yellow('\n⚡ Performance Benchmarks:'));
+console.info(chalk.yellow('\n⚡ Performance Benchmarks:'));
 const widthBenchmark = await PerformanceBenchmark.benchmarkWidthCalculation(1000);
-console.log(chalk.cyan(`\n📏 Width Calculation (1000 iterations):`));
-console.log(chalk.gray(`   Basic Bun.stringWidth: ${widthBenchmark.basicTime.toFixed(2)}ms`));
-console.log(chalk.gray(`   Advanced Engine: ${widthBenchmark.advancedTime.toFixed(2)}ms`));
-console.log(chalk.gray(`   Cache Hit Rate: ${(widthBenchmark.cacheHitRate * 100).toFixed(1)}%`));
-console.log(chalk.gray(`   Memory Usage: ${widthBenchmark.memoryUsage.toFixed(2)}MB`));
+console.info(chalk.cyan(`\n📏 Width Calculation (1000 iterations):`));
+console.info(chalk.gray(`   Basic Bun.stringWidth: ${widthBenchmark.basicTime.toFixed(2)}ms`));
+console.info(chalk.gray(`   Advanced Engine: ${widthBenchmark.advancedTime.toFixed(2)}ms`));
+console.info(chalk.gray(`   Cache Hit Rate: ${(widthBenchmark.cacheHitRate * 100).toFixed(1)}%`));
+console.info(chalk.gray(`   Memory Usage: ${widthBenchmark.memoryUsage.toFixed(2)}MB`));
 
 const tableBenchmark = await PerformanceBenchmark.benchmarkTableRendering(100);
-console.log(chalk.cyan(`\n📊 Table Rendering (100 rows):`));
-console.log(chalk.gray(`   Basic Bun.inspect.table: ${tableBenchmark.basicTime.toFixed(2)}ms`));
-console.log(chalk.gray(`   Enterprise Engine: ${tableBenchmark.enterpriseTime.toFixed(2)}ms`));
-console.log(chalk.gray(`   Memory Usage: ${tableBenchmark.memoryUsage.toFixed(2)}MB`));
+console.info(chalk.cyan(`\n📊 Table Rendering (100 rows):`));
+console.info(chalk.gray(`   Basic Bun.inspect.table: ${tableBenchmark.basicTime.toFixed(2)}ms`));
+console.info(chalk.gray(`   Enterprise Engine: ${tableBenchmark.enterpriseTime.toFixed(2)}ms`));
+console.info(chalk.gray(`   Memory Usage: ${tableBenchmark.memoryUsage.toFixed(2)}MB`));
 
-console.log(chalk.bold.magenta('\n🎉 Ultimate Enhanced Ecosystem Complete!'));
-console.log(chalk.gray('Enterprise-grade features with optimal performance!'));
+console.info(chalk.bold.magenta('\n🎉 Ultimate Enhanced Ecosystem Complete!'));
+console.info(chalk.gray('Enterprise-grade features with optimal performance!'));

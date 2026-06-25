@@ -164,7 +164,9 @@ async function readResponseWithLimit(res: Response, maxBytes: number): Promise<B
         if (total > maxBytes) {
           try {
             await reader.cancel();
-          } catch {}
+          } catch {
+    console.error('Unhandled error:', error);
+  }
           throw new MediaFetchError(
             "max_bytes",
             `Failed to fetch media from ${res.url || "response"}: payload exceeds maxBytes ${maxBytes}`,
@@ -176,7 +178,9 @@ async function readResponseWithLimit(res: Response, maxBytes: number): Promise<B
   } finally {
     try {
       reader.releaseLock();
-    } catch {}
+    } catch {
+    console.error('Unhandled error:', error);
+  }
   }
 
   return Buffer.concat(

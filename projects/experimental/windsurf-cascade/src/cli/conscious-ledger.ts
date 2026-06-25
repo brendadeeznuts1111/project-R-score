@@ -17,7 +17,7 @@ export class ConsciousLedger {
 
         this.entries.push(ledgerEntry);
 
-        console.log(`📊 Ledger: ${entry.type}`, entry.data || '');
+        console.info(`📊 Ledger: ${entry.type}`, entry.data || '');
     }
 
     static getEntries(): LedgerEntry[] {

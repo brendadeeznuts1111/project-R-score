@@ -136,7 +136,7 @@ describe("Odds Protocol - Integration Tests", () => {
         ws.close();
       } catch (error) {
         // WebSocket server might not be running, skip this test
-        console.log("⚠️ WebSocket server not available, skipping integration test");
+        console.info("⚠️ WebSocket server not available, skipping integration test");
       }
     });
   });
@@ -227,8 +227,8 @@ describe("Odds Protocol - Integration Tests", () => {
       expect(processedOdds.every(odds => odds.processed)).toBe(true);
       expect(duration).toBeLessThan(500); // Should process 1000 odds in under 500ms
       
-      console.log(`🚀 Processed 1000 odds in ${duration.toFixed(2)}ms`);
-      console.log(`🎯 Found ${arbitrageOpportunities.length} opportunities`);
+      console.info(`🚀 Processed 1000 odds in ${duration.toFixed(2)}ms`);
+      console.info(`🎯 Found ${arbitrageOpportunities.length} opportunities`);
     });
 
     test.concurrent("handles concurrent API requests efficiently", async () => {
@@ -254,7 +254,7 @@ describe("Odds Protocol - Integration Tests", () => {
       const data = await Promise.all(responses.map(res => res.json()));
       expect(data.length).toBe(2);
       
-      console.log(`🔄 Completed ${apiEndpoints.length} concurrent API requests in ${duration.toFixed(2)}ms`);
+      console.info(`🔄 Completed ${apiEndpoints.length} concurrent API requests in ${duration.toFixed(2)}ms`);
     });
   });
 
@@ -279,7 +279,7 @@ describe("Odds Protocol - Integration Tests", () => {
       // Check external endpoint
       expect(results[1].success).toBe(true);
       
-      console.log("🌐 Network diagnostics completed:", results.map(r => ({ 
+      console.info("🌐 Network diagnostics completed:", results.map(r => ({ 
         hostname: r.endpoint.hostname, 
         success: r.success,
         responseTime: r.responseTime 
@@ -424,8 +424,8 @@ describe("Odds Protocol - Integration Tests", () => {
       expect(opportunities.length).toBeGreaterThan(0);
       expect(peakMemory.heapUsed).toBeGreaterThan(initialMemory.heapUsed);
       
-      console.log(`💾 Memory usage: ${initialMemory.heapUsed / 1024 / 1024}MB -> ${peakMemory.heapUsed / 1024 / 1024}MB -> ${finalMemory.heapUsed / 1024 / 1024}MB`);
-      console.log(`🎯 Processed 50,000 items, found ${opportunities.length} opportunities`);
+      console.info(`💾 Memory usage: ${initialMemory.heapUsed / 1024 / 1024}MB -> ${peakMemory.heapUsed / 1024 / 1024}MB -> ${finalMemory.heapUsed / 1024 / 1024}MB`);
+      console.info(`🎯 Processed 50,000 items, found ${opportunities.length} opportunities`);
     });
   });
 
@@ -473,4 +473,4 @@ describe("Odds Protocol - Integration Tests", () => {
   });
 });
 
-console.log("✅ Odds Integration Tests loaded successfully");
+console.info("✅ Odds Integration Tests loaded successfully");

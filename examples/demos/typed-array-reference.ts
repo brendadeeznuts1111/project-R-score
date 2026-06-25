@@ -114,8 +114,8 @@ example.bulkCopy(new SharedArrayBuffer(512));
 // Zero-copy operations are documented at [Zero-Copy](${TYPED_ARRAY_URLS.ZERO_COPY}).
 const subarray = example.createSubarray(0, 5);
 
-console.log('Typed array example with documentation references complete!');
-console.log('Buffer stats:', example.getStats());
+console.info('Typed array example with documentation references complete!');
+console.info('Buffer stats:', example.getStats());
 
 /**
  * Additional Resources:

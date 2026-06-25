@@ -34,7 +34,7 @@
  * const file = Bun.file('/tmp/test.txt');
  * await Bun.write(file, 'Hello, Bun!');
  * const content = await file.text();
- * console.log(content); // "Hello, Bun!"
+ * console.info(content); // "Hello, Bun!"
  * ```
  * 
  * @example 6.2.0.0.0.0.0.2: Bun.CryptoHasher Usage
@@ -91,16 +91,16 @@ async function runDemo(
   description: string,
   fn: () => Promise<void> | void,
 ): Promise<void> {
-  console.log(`\n📋 ${name}`);
-  console.log('-'.repeat(70));
-  console.log(`💡 ${description}\n`);
+  console.info(`\n📋 ${name}`);
+  console.info('-'.repeat(70));
+  console.info(`💡 ${description}\n`);
   
   try {
     await fn();
-    console.log(colors.green('✅ Success\n'));
+    console.info(colors.green('✅ Success\n'));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.log(colors.yellow(`⚠️  Error: ${message}\n`));
+    console.info(colors.yellow(`⚠️  Error: ${message}\n`));
   }
 }
 
@@ -129,10 +129,10 @@ function formatTime(ns: number): string {
 // 6.2.0.0.0.0.0.4.1 MAIN DEMO
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(70));
-console.log(colors.bold('  Bun.utils Comprehensive Demo'));
-console.log('═'.repeat(70) + '\n');
-console.log(colors.dim('Demonstrating Bun-native utility APIs with zero dependencies\n'));
+console.info('\n' + '═'.repeat(70));
+console.info(colors.bold('  Bun.utils Comprehensive Demo'));
+console.info('═'.repeat(70) + '\n');
+console.info(colors.dim('Demonstrating Bun-native utility APIs with zero dependencies\n'));
 
 // ═══════════════════════════════════════════════════════════════
 // 6.2.0.0.0.0.0.4.2 DEMO 1: Bun.file() - File Operations
@@ -148,24 +148,24 @@ await runDemo(
     
     // Write file using Bun.write()
     const bytesWritten = await Bun.write(testFile, testContent);
-    console.log(`${colors.green('✅')} Bun.write() - Wrote ${colors.cyan(formatBytes(bytesWritten))}`);
+    console.info(`${colors.green('✅')} Bun.write() - Wrote ${colors.cyan(formatBytes(bytesWritten))}`);
     
     // Read file as text using Bun.file().text()
     const fileText = await testFile.text();
-    console.log(`${colors.green('✅')} Bun.file().text() - Read file content:`);
-    console.log(`   ${colors.dim(`"${fileText.substring(0, 60)}..."`)}`);
+    console.info(`${colors.green('✅')} Bun.file().text() - Read file content:`);
+    console.info(`   ${colors.dim(`"${fileText.substring(0, 60)}..."`)}`);
     
     // Check if file exists
     const exists = await testFile.exists();
-    console.log(`${colors.green('✅')} Bun.file().exists() - File exists: ${colors.cyan(String(exists))}`);
+    console.info(`${colors.green('✅')} Bun.file().exists() - File exists: ${colors.cyan(String(exists))}`);
     
     // Get file size
     const size = testFile.size;
-    console.log(`${colors.green('✅')} Bun.file().size - File size: ${colors.cyan(formatBytes(size))}`);
+    console.info(`${colors.green('✅')} Bun.file().size - File size: ${colors.cyan(formatBytes(size))}`);
     
     // Get file type (MIME)
     const type = testFile.type;
-    console.log(`${colors.green('✅')} Bun.file().type - MIME type: ${colors.cyan(type)}`);
+    console.info(`${colors.green('✅')} Bun.file().type - MIME type: ${colors.cyan(type)}`);
     
     // Read as JSON (create JSON file for demo)
     const jsonFile = Bun.file('/tmp/bun-utils-demo.json');
@@ -178,18 +178,18 @@ await runDemo(
     };
     await Bun.write(jsonFile, JSON.stringify(jsonData, null, 2));
     const parsedJson = await jsonFile.json();
-    console.log(`${colors.green('✅')} Bun.file().json() - Read JSON:`);
-    console.log(`   ${colors.dim(JSON.stringify(parsedJson, null, 2).split('\n').slice(0, 3).join('\n   '))}...`);
+    console.info(`${colors.green('✅')} Bun.file().json() - Read JSON:`);
+    console.info(`   ${colors.dim(JSON.stringify(parsedJson, null, 2).split('\n').slice(0, 3).join('\n   '))}...`);
     
     // Read as ArrayBuffer
     const buffer = await testFile.arrayBuffer();
-    console.log(`${colors.green('✅')} Bun.file().arrayBuffer() - Read as buffer: ${colors.cyan(formatBytes(buffer.byteLength))}`);
+    console.info(`${colors.green('✅')} Bun.file().arrayBuffer() - Read as buffer: ${colors.cyan(formatBytes(buffer.byteLength))}`);
     
     // Cleanup
     try {
       await Bun.write(testFile, '');
       await Bun.write(jsonFile, '');
-      console.log(`${colors.green('✅')} Cleanup complete`);
+      console.info(`${colors.green('✅')} Cleanup complete`);
     } catch (cleanupError) {
       // Ignore cleanup errors
     }
@@ -210,28 +210,28 @@ await runDemo(
     const sha256Hasher = new Bun.CryptoHasher('sha256');
     sha256Hasher.update(testString);
     const sha256Hash = sha256Hasher.digest('hex');
-    console.log(`${colors.green('✅')} SHA-256 hash (recommended):`);
-    console.log(`   ${colors.cyan(sha256Hash)}`);
+    console.info(`${colors.green('✅')} SHA-256 hash (recommended):`);
+    console.info(`   ${colors.cyan(sha256Hash)}`);
     
     // SHA-1 hashing (legacy)
     const sha1Hasher = new Bun.CryptoHasher('sha1');
     sha1Hasher.update(testString);
     const sha1Hash = sha1Hasher.digest('hex');
-    console.log(`${colors.green('✅')} SHA-1 hash (legacy):`);
-    console.log(`   ${colors.dim(sha1Hash)}`);
+    console.info(`${colors.green('✅')} SHA-1 hash (legacy):`);
+    console.info(`   ${colors.dim(sha1Hash)}`);
     
     // MD5 hashing (legacy, not cryptographically secure)
     const md5Hasher = new Bun.CryptoHasher('md5');
     md5Hasher.update(testString);
     const md5Hash = md5Hasher.digest('hex');
-    console.log(`${colors.green('✅')} MD5 hash (legacy, not secure):`);
-    console.log(`   ${colors.dim(md5Hash)}`);
+    console.info(`${colors.green('✅')} MD5 hash (legacy, not secure):`);
+    console.info(`   ${colors.dim(md5Hash)}`);
     
     // Binary digest
     const binaryHasher = new Bun.CryptoHasher('sha256');
     binaryHasher.update(testString);
     const binaryDigest = binaryHasher.digest();
-    console.log(`${colors.green('✅')} Binary digest (Uint8Array): ${colors.cyan(formatBytes(binaryDigest.length))}`);
+    console.info(`${colors.green('✅')} Binary digest (Uint8Array): ${colors.cyan(formatBytes(binaryDigest.length))}`);
     
     // Streaming large data
     const streamHasher = new Bun.CryptoHasher('sha256');
@@ -240,8 +240,8 @@ await runDemo(
       streamHasher.update(chunk);
     }
     const streamHash = streamHasher.digest('hex');
-    console.log(`${colors.green('✅')} Streaming hash (multiple updates):`);
-    console.log(`   ${colors.cyan(streamHash.substring(0, 32))}...`);
+    console.info(`${colors.green('✅')} Streaming hash (multiple updates):`);
+    console.info(`   ${colors.cyan(streamHash.substring(0, 32))}...`);
   },
 );
 
@@ -261,10 +261,10 @@ await runDemo(
     const endTime = Bun.nanoseconds();
     const durationNs = endTime - startTime;
     
-    console.log(`${colors.green('✅')} Timing measurement:`);
-    console.log(`   Start: ${colors.dim(String(startTime))} ns`);
-    console.log(`   End: ${colors.dim(String(endTime))} ns`);
-    console.log(`   Duration: ${colors.cyan(formatTime(durationNs))}`);
+    console.info(`${colors.green('✅')} Timing measurement:`);
+    console.info(`   Start: ${colors.dim(String(startTime))} ns`);
+    console.info(`   End: ${colors.dim(String(endTime))} ns`);
+    console.info(`   Duration: ${colors.cyan(formatTime(durationNs))}`);
     
     // Compare with performance.now()
     const perfStart = performance.now();
@@ -272,10 +272,10 @@ await runDemo(
     const perfEnd = performance.now();
     const perfDuration = perfEnd - perfStart;
     
-    console.log(`\n📊 Comparison:`);
-    console.log(`   ${colors.cyan('Bun.nanoseconds()')}: ${formatTime(durationNs)}`);
-    console.log(`   ${colors.dim('performance.now()')}: ${perfDuration.toFixed(3)} ms`);
-    console.log(`   ${colors.green('Precision')}: Bun.nanoseconds() has nanosecond precision vs millisecond precision`);
+    console.info(`\n📊 Comparison:`);
+    console.info(`   ${colors.cyan('Bun.nanoseconds()')}: ${formatTime(durationNs)}`);
+    console.info(`   ${colors.dim('performance.now()')}: ${perfDuration.toFixed(3)} ms`);
+    console.info(`   ${colors.green('Precision')}: Bun.nanoseconds() has nanosecond precision vs millisecond precision`);
   },
 );
 
@@ -305,23 +305,23 @@ await runDemo(
     };
     
     // Default inspection
-    console.log(`${colors.green('✅')} Bun.inspect() - Default (with colors):`);
-    console.log(Bun.inspect(complexObject, { colors: true }));
-    console.log();
+    console.info(`${colors.green('✅')} Bun.inspect() - Default (with colors):`);
+    console.info(Bun.inspect(complexObject, { colors: true }));
+    console.info();
     
     // With custom depth
-    console.log(`${colors.green('✅')} Bun.inspect() - Limited depth (depth: 2):`);
-    console.log(Bun.inspect(complexObject, { colors: true, depth: 2 }));
-    console.log();
+    console.info(`${colors.green('✅')} Bun.inspect() - Limited depth (depth: 2):`);
+    console.info(Bun.inspect(complexObject, { colors: true, depth: 2 }));
+    console.info();
     
     // Compact mode
-    console.log(`${colors.green('✅')} Bun.inspect() - Compact mode:`);
-    console.log(Bun.inspect(complexObject, { compact: true }));
-    console.log();
+    console.info(`${colors.green('✅')} Bun.inspect() - Compact mode:`);
+    console.info(Bun.inspect(complexObject, { compact: true }));
+    console.info();
     
     // Sorted keys
-    console.log(`${colors.green('✅')} Bun.inspect() - Sorted keys:`);
-    console.log(Bun.inspect(complexObject, { sorted: true, colors: true }));
+    console.info(`${colors.green('✅')} Bun.inspect() - Sorted keys:`);
+    console.info(Bun.inspect(complexObject, { sorted: true, colors: true }));
   },
 );
 
@@ -354,8 +354,8 @@ await runDemo(
     for await (const file of txtGlob.scan(testDir)) {
       txtFiles.push(file);
     }
-    console.log(`${colors.green('✅')} Bun.Glob('*.txt') - Found ${colors.cyan(String(txtFiles.length))} files:`);
-    txtFiles.forEach(file => console.log(`   ${colors.dim(file)}`));
+    console.info(`${colors.green('✅')} Bun.Glob('*.txt') - Found ${colors.cyan(String(txtFiles.length))} files:`);
+    txtFiles.forEach(file => console.info(`   ${colors.dim(file)}`));
     
     // Match all .js files recursively
     const jsGlob = new Bun.Glob('**/*.js');
@@ -363,8 +363,8 @@ await runDemo(
     for await (const file of jsGlob.scan(testDir)) {
       jsFiles.push(file);
     }
-    console.log(`\n${colors.green('✅')} Bun.Glob('**/*.js') - Found ${colors.cyan(String(jsFiles.length))} files:`);
-    jsFiles.forEach(file => console.log(`   ${colors.dim(file)}`));
+    console.info(`\n${colors.green('✅')} Bun.Glob('**/*.js') - Found ${colors.cyan(String(jsFiles.length))} files:`);
+    jsFiles.forEach(file => console.info(`   ${colors.dim(file)}`));
     
     // Match TypeScript files recursively
     const tsGlob = new Bun.Glob('**/*.ts');
@@ -372,15 +372,15 @@ await runDemo(
     for await (const file of tsGlob.scan(testDir)) {
       tsFiles.push(file);
     }
-    console.log(`\n${colors.green('✅')} Bun.Glob('**/*.ts') - Found ${colors.cyan(String(tsFiles.length))} files:`);
-    tsFiles.forEach(file => console.log(`   ${colors.dim(file)}`));
+    console.info(`\n${colors.green('✅')} Bun.Glob('**/*.ts') - Found ${colors.cyan(String(tsFiles.length))} files:`);
+    tsFiles.forEach(file => console.info(`   ${colors.dim(file)}`));
     
     // Cleanup
     try {
       for (const filePath of testFiles) {
         await Bun.write(filePath, '');
       }
-      console.log(`\n${colors.green('✅')} Cleanup complete`);
+      console.info(`\n${colors.green('✅')} Cleanup complete`);
     } catch (cleanupError) {
       // Ignore cleanup errors
     }
@@ -453,28 +453,28 @@ if (HTMLRewriter) {
       const transformEnd = Bun.nanoseconds();
       const transformDuration = transformEnd - transformStart;
       
-      console.log(`${colors.green('✅')} HTMLRewriter transformation (with Bun.utils):`);
-      console.log(`   Duration: ${colors.cyan(formatTime(transformDuration))}`);
-      console.log(`   Result preview: ${colors.dim(result.substring(0, 80).replace(/\s+/g, ' '))}...`);
+      console.info(`${colors.green('✅')} HTMLRewriter transformation (with Bun.utils):`);
+      console.info(`   Duration: ${colors.cyan(formatTime(transformDuration))}`);
+      console.info(`   Result preview: ${colors.dim(result.substring(0, 80).replace(/\s+/g, ' '))}...`);
       
       // Write transformed HTML to file using Bun.write()
       const outputFile = Bun.file('/tmp/bun-rewriter-output.html');
       await Bun.write(outputFile, result);
-      console.log(`\n${colors.green('✅')} Written transformed HTML using Bun.write()`);
-      console.log(`   File size: ${colors.cyan(formatBytes(outputFile.size))}`);
-      console.log(`   File type: ${colors.cyan(outputFile.type)}`);
+      console.info(`\n${colors.green('✅')} Written transformed HTML using Bun.write()`);
+      console.info(`   File size: ${colors.cyan(formatBytes(outputFile.size))}`);
+      console.info(`   File type: ${colors.cyan(outputFile.type)}`);
       
       // Cleanup
       try {
         await Bun.write(outputFile, '');
-        console.log(`${colors.green('✅')} Cleanup complete`);
+        console.info(`${colors.green('✅')} Cleanup complete`);
       } catch (cleanupError) {
         // Ignore cleanup errors
       }
     },
   );
 } else {
-  console.log(`\n${colors.yellow('⚠️')}  HTMLRewriter not available - skipping integration demo\n`);
+  console.info(`\n${colors.yellow('⚠️')}  HTMLRewriter not available - skipping integration demo\n`);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -486,80 +486,80 @@ await runDemo(
   'Bun implements comprehensive global objects from Web APIs and Node.js',
   async () => {
     // Web API Globals
-    console.log(`${colors.green('✅')} Web API Globals:`);
+    console.info(`${colors.green('✅')} Web API Globals:`);
     
     // Fetch API (global)
-    console.log(`   ${colors.cyan('fetch')} - Available globally`);
+    console.info(`   ${colors.cyan('fetch')} - Available globally`);
     try {
       const response = await fetch('https://httpbin.org/json');
       const data = await response.json();
-      console.log(`   ${colors.dim('   Fetched JSON:')} ${JSON.stringify(data).substring(0, 40)}...`);
+      console.info(`   ${colors.dim('   Fetched JSON:')} ${JSON.stringify(data).substring(0, 40)}...`);
     } catch (error) {
-      console.log(`   ${colors.dim('   (Network request skipped in demo)')}`);
+      console.info(`   ${colors.dim('   (Network request skipped in demo)')}`);
     }
     
     // URL API (global)
     const url = new URL('https://example.com/path?query=value');
     url.searchParams.set('new', 'param');
-    console.log(`   ${colors.cyan('URL')} - ${colors.dim(url.toString())}`);
+    console.info(`   ${colors.cyan('URL')} - ${colors.dim(url.toString())}`);
     
     // TextEncoder/Decoder (global)
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     const encoded = encoder.encode('Hello, Bun!');
     const decoded = decoder.decode(encoded);
-    console.log(`   ${colors.cyan('TextEncoder/Decoder')} - ${colors.dim(`"${decoded}"`)}`);
+    console.info(`   ${colors.cyan('TextEncoder/Decoder')} - ${colors.dim(`"${decoded}"`)}`);
     
     // Base64 encoding (global)
     const base64 = btoa('Hello, Bun!');
     const decodedBase64 = atob(base64);
-    console.log(`   ${colors.cyan('btoa/atob')} - ${colors.dim(`"${decodedBase64}"`)}`);
+    console.info(`   ${colors.cyan('btoa/atob')} - ${colors.dim(`"${decodedBase64}"`)}`);
     
     // FormData (global)
     const formData = new FormData();
     formData.append('name', 'Bun');
     formData.append('version', '1.4+');
-    console.log(`   ${colors.cyan('FormData')} - ${colors.dim(`${formData.get('name')} ${formData.get('version')}`)}`);
+    console.info(`   ${colors.cyan('FormData')} - ${colors.dim(`${formData.get('name')} ${formData.get('version')}`)}`);
     
     // Headers (global)
     const headers = new Headers();
     headers.set('Content-Type', 'application/json');
     headers.set('X-Custom', 'value');
-    console.log(`   ${colors.cyan('Headers')} - ${colors.dim(`${headers.get('Content-Type')}, ${headers.get('X-Custom')}`)}`);
+    console.info(`   ${colors.cyan('Headers')} - ${colors.dim(`${headers.get('Content-Type')}, ${headers.get('X-Custom')}`)}`);
     
     // Crypto API (global)
     const uuid = crypto.randomUUID();
-    console.log(`   ${colors.cyan('crypto.randomUUID()')} - ${colors.dim(uuid)}`);
+    console.info(`   ${colors.cyan('crypto.randomUUID()')} - ${colors.dim(uuid)}`);
     
     // Node.js Globals
-    console.log(`\n${colors.green('✅')} Node.js Globals:`);
-    console.log(`   ${colors.cyan('process')} - ${colors.dim(`Platform: ${process.platform}, Node: ${process.version}`)}`);
-    console.log(`   ${colors.cyan('Buffer')} - ${colors.dim(`Available: ${typeof Buffer !== 'undefined'}`)}`);
-    console.log(`   ${colors.cyan('__dirname')} - ${colors.dim(__dirname.substring(0, 50))}...`);
-    console.log(`   ${colors.cyan('__filename')} - ${colors.dim(__filename.substring(0, 50))}...`);
+    console.info(`\n${colors.green('✅')} Node.js Globals:`);
+    console.info(`   ${colors.cyan('process')} - ${colors.dim(`Platform: ${process.platform}, Node: ${process.version}`)}`);
+    console.info(`   ${colors.cyan('Buffer')} - ${colors.dim(`Available: ${typeof Buffer !== 'undefined'}`)}`);
+    console.info(`   ${colors.cyan('__dirname')} - ${colors.dim(__dirname.substring(0, 50))}...`);
+    console.info(`   ${colors.cyan('__filename')} - ${colors.dim(__filename.substring(0, 50))}...`);
     
     // Bun-Specific Globals
-    console.log(`\n${colors.green('✅')} Bun-Specific Globals:`);
-    console.log(`   ${colors.cyan('Bun')} - ${colors.dim('Available with all Bun APIs')}`);
-    console.log(`   ${colors.cyan('HTMLRewriter')} - ${colors.dim(HTMLRewriter ? 'Available' : 'Not available')}`);
+    console.info(`\n${colors.green('✅')} Bun-Specific Globals:`);
+    console.info(`   ${colors.cyan('Bun')} - ${colors.dim('Available with all Bun APIs')}`);
+    console.info(`   ${colors.cyan('HTMLRewriter')} - ${colors.dim(HTMLRewriter ? 'Available' : 'Not available')}`);
     
     // Timing Globals
-    console.log(`\n${colors.green('✅')} Timing Globals:`);
-    console.log(`   ${colors.cyan('setTimeout')} - Available globally`);
-    console.log(`   ${colors.cyan('setInterval')} - Available globally`);
+    console.info(`\n${colors.green('✅')} Timing Globals:`);
+    console.info(`   ${colors.cyan('setTimeout')} - Available globally`);
+    console.info(`   ${colors.cyan('setInterval')} - Available globally`);
     // queueMicrotask - Improved error handling in Bun v1.2.11+
     // @see ../../docs/BUN-1.2.11-IMPROVEMENTS.md - queueMicrotask error handling fix
-    console.log(`   ${colors.cyan('queueMicrotask')} - Available globally`);
+    console.info(`   ${colors.cyan('queueMicrotask')} - Available globally`);
     
     // Event API (global)
-    console.log(`\n${colors.green('✅')} Event API (global):`);
+    console.info(`\n${colors.green('✅')} Event API (global):`);
     const eventTarget = new EventTarget();
     let eventReceived = false;
     eventTarget.addEventListener('test', () => {
       eventReceived = true;
     });
     eventTarget.dispatchEvent(new CustomEvent('test', { detail: { data: 'value' } }));
-    console.log(`   ${colors.cyan('EventTarget')} - ${colors.dim(`Event received: ${eventReceived}`)}`);
+    console.info(`   ${colors.cyan('EventTarget')} - ${colors.dim(`Event received: ${eventReceived}`)}`);
   },
 );
 
@@ -584,22 +584,22 @@ await runDemo(
     const bunHashEnd = Bun.nanoseconds();
     const bunHashDuration = bunHashEnd - bunHashStart;
     
-    console.log(`${colors.green('✅')} Bun.CryptoHasher performance:`);
-    console.log(`   ${colors.cyan(String(iterations))} iterations: ${colors.cyan(formatTime(bunHashDuration))}`);
-    console.log(`   Average: ${colors.cyan(formatTime(bunHashDuration / iterations))} per hash`);
+    console.info(`${colors.green('✅')} Bun.CryptoHasher performance:`);
+    console.info(`   ${colors.cyan(String(iterations))} iterations: ${colors.cyan(formatTime(bunHashDuration))}`);
+    console.info(`   Average: ${colors.cyan(formatTime(bunHashDuration / iterations))} per hash`);
     
     // Bun.nanoseconds() precision demo
-    console.log(`\n${colors.green('✅')} Bun.nanoseconds() precision (consecutive calls):`);
+    console.info(`\n${colors.green('✅')} Bun.nanoseconds() precision (consecutive calls):`);
     const precisionMeasurements: number[] = [];
     for (let i = 0; i < 5; i++) {
       const ns1 = Bun.nanoseconds();
       const ns2 = Bun.nanoseconds();
       const diff = ns2 - ns1;
       precisionMeasurements.push(diff);
-      console.log(`   Measurement ${i + 1}: ${colors.cyan(formatTime(diff))} difference`);
+      console.info(`   Measurement ${i + 1}: ${colors.cyan(formatTime(diff))} difference`);
     }
     const avgPrecision = precisionMeasurements.reduce((a, b) => a + b, 0) / precisionMeasurements.length;
-    console.log(`   Average precision: ${colors.cyan(formatTime(avgPrecision))}`);
+    console.info(`   Average precision: ${colors.cyan(formatTime(avgPrecision))}`);
   },
 );
 
@@ -612,49 +612,49 @@ await runDemo(
   'Web Standards binary data handling with TypedArrays, ArrayBuffer, and DataView',
   async () => {
     // TypedArrays
-    console.log(`${colors.green('✅')} TypedArrays:`);
+    console.info(`${colors.green('✅')} TypedArrays:`);
     const uint8 = new Uint8Array([0x01, 0x02, 0x03, 0x04]);
-    console.log(`   ${colors.cyan('Uint8Array')}: [${Array.from(uint8).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
+    console.info(`   ${colors.cyan('Uint8Array')}: [${Array.from(uint8).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
     
     const int32 = new Int32Array([-2147483648, 0, 2147483647]);
-    console.log(`   ${colors.cyan('Int32Array')}: [${Array.from(int32).join(', ')}]`);
+    console.info(`   ${colors.cyan('Int32Array')}: [${Array.from(int32).join(', ')}]`);
     
     const float64 = new Float64Array([Math.PI, Math.E]);
-    console.log(`   ${colors.cyan('Float64Array')}: [${float64.map(f => f.toFixed(6)).join(', ')}]`);
+    console.info(`   ${colors.cyan('Float64Array')}: [${float64.map(f => f.toFixed(6)).join(', ')}]`);
     
     // ArrayBuffer
-    console.log(`\n${colors.green('✅')} ArrayBuffer:`);
+    console.info(`\n${colors.green('✅')} ArrayBuffer:`);
     const buffer = new ArrayBuffer(16);
-    console.log(`   Buffer size: ${colors.cyan(formatBytes(buffer.byteLength))}`);
+    console.info(`   Buffer size: ${colors.cyan(formatBytes(buffer.byteLength))}`);
     
     // Multiple views of same buffer
     const uint8View = new Uint8Array(buffer);
     const int32View = new Int32Array(buffer);
     uint8View[0] = 0xFF;
-    console.log(`   Shared buffer: uint8[0]=${uint8View[0]}, int32[0]=${int32View[0]}`);
+    console.info(`   Shared buffer: uint8[0]=${uint8View[0]}, int32[0]=${int32View[0]}`);
     
     // DataView pattern (user's specific request)
-    console.log(`\n${colors.green('✅')} DataView from TypedArray pattern:`);
+    console.info(`\n${colors.green('✅')} DataView from TypedArray pattern:`);
     const arr: Uint8Array = new Uint8Array([0x01, 0x02, 0x03, 0x04]);
     const dv = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     const valueLE = dv.getUint32(0, true); // little-endian
     const valueBE = dv.getUint32(0, false); // big-endian
-    console.log(`   Original: [${Array.from(arr).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
-    console.log(`   Little-endian uint32: ${colors.cyan(`0x${valueLE.toString(16).padStart(8, '0')}`)}`);
-    console.log(`   Big-endian uint32: ${colors.cyan(`0x${valueBE.toString(16).padStart(8, '0')}`)}`);
+    console.info(`   Original: [${Array.from(arr).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
+    console.info(`   Little-endian uint32: ${colors.cyan(`0x${valueLE.toString(16).padStart(8, '0')}`)}`);
+    console.info(`   Big-endian uint32: ${colors.cyan(`0x${valueBE.toString(16).padStart(8, '0')}`)}`);
     
     // String conversion
-    console.log(`\n${colors.green('✅')} String conversion:`);
+    console.info(`\n${colors.green('✅')} String conversion:`);
     const encoder = new TextEncoder();
     const bytes = encoder.encode('Hello, Bun!');
-    console.log(`   Encoded: [${Array.from(bytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
+    console.info(`   Encoded: [${Array.from(bytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
     
     const decoder = new TextDecoder();
     const str = decoder.decode(bytes);
-    console.log(`   Decoded: ${colors.cyan(`"${str}"`)}`);
+    console.info(`   Decoded: ${colors.cyan(`"${str}"`)}`);
     
     // DataView to string conversion
-    console.log(`\n${colors.green('✅')} DataView to string conversion:`);
+    console.info(`\n${colors.green('✅')} DataView to string conversion:`);
     const buffer2 = new ArrayBuffer(12);
     const dv2 = new DataView(buffer2);
     const textBytes = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x42, 0x75, 0x6E, 0x21]; // "Hello, Bun!"
@@ -662,45 +662,45 @@ await runDemo(
       dv2.setUint8(i, textBytes[i]);
     }
     const strFromDV = decoder.decode(new Uint8Array(buffer2)); // Convert DataView buffer to Uint8Array
-    console.log(`   DataView bytes: [${Array.from(textBytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
-    console.log(`   Decoded from DataView: ${colors.cyan(`"${strFromDV}"`)}`);
+    console.info(`   DataView bytes: [${Array.from(textBytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
+    console.info(`   Decoded from DataView: ${colors.cyan(`"${strFromDV}"`)}`);
     
     // File operations with binary data
-    console.log(`\n${colors.green('✅')} File operations with binary data:`);
+    console.info(`\n${colors.green('✅')} File operations with binary data:`);
     const testFile = Bun.file('/tmp/bun-binary-demo.bin');
     const testData = new Uint8Array([0x48, 0x65, 0x6C, 0x6C, 0x6F]); // "Hello"
     await Bun.write(testFile, testData);
-    console.log(`   Written: ${colors.cyan(formatBytes(testData.length))} bytes`);
+    console.info(`   Written: ${colors.cyan(formatBytes(testData.length))} bytes`);
     
     const fileBuffer = await testFile.arrayBuffer();
     const fileView = new Uint8Array(fileBuffer);
-    console.log(`   Read back: [${Array.from(fileView).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
+    console.info(`   Read back: [${Array.from(fileView).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(', ')}]`);
     
     // Crypto with binary data
-    console.log(`\n${colors.green('✅')} Crypto with binary data:`);
+    console.info(`\n${colors.green('✅')} Crypto with binary data:`);
     const hasher = new Bun.CryptoHasher('sha256');
     const binaryData = new Uint8Array([1, 2, 3, 4, 5]);
     hasher.update(binaryData);
     const hash = hasher.digest(); // Returns Uint8Array
-    console.log(`   Input: [${Array.from(binaryData).join(', ')}]`);
-    console.log(`   Hash (Uint8Array): ${colors.cyan(formatBytes(hash.length))} bytes`);
-    console.log(`   Hash (hex): ${colors.cyan(Array.from(hash).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32))}...`);
+    console.info(`   Input: [${Array.from(binaryData).join(', ')}]`);
+    console.info(`   Hash (Uint8Array): ${colors.cyan(formatBytes(hash.length))} bytes`);
+    console.info(`   Hash (hex): ${colors.cyan(Array.from(hash).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32))}...`);
     
     // Subarray vs slice
-    console.log(`\n${colors.green('✅')} Subarray vs slice:`);
+    console.info(`\n${colors.green('✅')} Subarray vs slice:`);
     const original = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]);
     const sub = original.subarray(2, 5); // Shares buffer
     const copy = original.slice(2, 5); // New buffer
     sub[0] = 99; // Modifies original
     copy[0] = 88; // Does NOT modify original
-    console.log(`   Original: [${Array.from(original).join(', ')}]`);
-    console.log(`   Subarray (shared): [${Array.from(sub).join(', ')}] - ${colors.dim('modifies original')}`);
-    console.log(`   Slice (copy): [${Array.from(copy).join(', ')}] - ${colors.dim('independent')}`);
+    console.info(`   Original: [${Array.from(original).join(', ')}]`);
+    console.info(`   Subarray (shared): [${Array.from(sub).join(', ')}] - ${colors.dim('modifies original')}`);
+    console.info(`   Slice (copy): [${Array.from(copy).join(', ')}] - ${colors.dim('independent')}`);
     
     // Cleanup
     try {
       await Bun.write(testFile, '');
-      console.log(`\n${colors.green('✅')} Cleanup complete`);
+      console.info(`\n${colors.green('✅')} Cleanup complete`);
     } catch (cleanupError) {
       // Ignore cleanup errors
     }
@@ -711,29 +711,29 @@ await runDemo(
 // 6.2.0.0.0.0.0.4.11 SUMMARY
 // ═══════════════════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(70));
-console.log(colors.bold('  Demo Complete!'));
-console.log('═'.repeat(70));
-console.log(`\n${colors.green('💡')} Key Takeaways:`);
-console.log(`  ${colors.green('✅')} Bun Globals - Web APIs, Node.js, and Bun-specific APIs available`);
-console.log(`  ${colors.green('✅')} Binary Data - TypedArrays, ArrayBuffer, DataView (Web Standards)`);
-console.log(`  ${colors.green('✅')} Bun.file() - Zero-dependency file operations`);
-console.log(`  ${colors.green('✅')} Bun.CryptoHasher - Fast cryptographic hashing`);
-console.log(`  ${colors.green('✅')} Bun.nanoseconds() - Nanosecond precision timing`);
-console.log(`  ${colors.green('✅')} Bun.inspect() - Better than util.inspect()`);
-console.log(`  ${colors.green('✅')} Bun.Glob() - Fast file pattern matching`);
-console.log(`  ${colors.green('✅')} Bun.write() - Simple file writing`);
-console.log(`\n${colors.cyan('🚀')} Bun-Native Advantages:`);
-console.log(`  ${colors.dim('•')} Comprehensive globals - Web APIs, Node.js, and Bun-specific`);
-console.log(`  ${colors.dim('•')} Zero dependencies - no fs, crypto, util imports needed`);
-console.log(`  ${colors.dim('•')} Better performance - optimized native implementations`);
-console.log(`  ${colors.dim('•')} Hyper-Bun manifesto compliance`);
-console.log(`  ${colors.dim('•')} Type-safe APIs with full TypeScript support`);
-console.log(`  ${colors.dim('•')} Better error handling and edge case support`);
-console.log(`  ${colors.dim('•')} Web standard compatibility - fetch, streams, crypto, etc.`);
-console.log(`\n${colors.blue('📚')} Documentation:`);
-console.log(`  ${colors.dim('https://bun.com/docs/api/file-io')}`);
-console.log(`  ${colors.dim('https://bun.com/docs/api/crypto')}`);
-console.log(`  ${colors.dim('https://bun.com/docs/api/utilities')}`);
-console.log(`\n${colors.yellow('💻')} Run this demo: ${colors.cyan('bun run scripts/demo-bun-utils.ts')}`);
-console.log();
+console.info('\n' + '═'.repeat(70));
+console.info(colors.bold('  Demo Complete!'));
+console.info('═'.repeat(70));
+console.info(`\n${colors.green('💡')} Key Takeaways:`);
+console.info(`  ${colors.green('✅')} Bun Globals - Web APIs, Node.js, and Bun-specific APIs available`);
+console.info(`  ${colors.green('✅')} Binary Data - TypedArrays, ArrayBuffer, DataView (Web Standards)`);
+console.info(`  ${colors.green('✅')} Bun.file() - Zero-dependency file operations`);
+console.info(`  ${colors.green('✅')} Bun.CryptoHasher - Fast cryptographic hashing`);
+console.info(`  ${colors.green('✅')} Bun.nanoseconds() - Nanosecond precision timing`);
+console.info(`  ${colors.green('✅')} Bun.inspect() - Better than util.inspect()`);
+console.info(`  ${colors.green('✅')} Bun.Glob() - Fast file pattern matching`);
+console.info(`  ${colors.green('✅')} Bun.write() - Simple file writing`);
+console.info(`\n${colors.cyan('🚀')} Bun-Native Advantages:`);
+console.info(`  ${colors.dim('•')} Comprehensive globals - Web APIs, Node.js, and Bun-specific`);
+console.info(`  ${colors.dim('•')} Zero dependencies - no fs, crypto, util imports needed`);
+console.info(`  ${colors.dim('•')} Better performance - optimized native implementations`);
+console.info(`  ${colors.dim('•')} Hyper-Bun manifesto compliance`);
+console.info(`  ${colors.dim('•')} Type-safe APIs with full TypeScript support`);
+console.info(`  ${colors.dim('•')} Better error handling and edge case support`);
+console.info(`  ${colors.dim('•')} Web standard compatibility - fetch, streams, crypto, etc.`);
+console.info(`\n${colors.blue('📚')} Documentation:`);
+console.info(`  ${colors.dim('https://bun.com/docs/api/file-io')}`);
+console.info(`  ${colors.dim('https://bun.com/docs/api/crypto')}`);
+console.info(`  ${colors.dim('https://bun.com/docs/api/utilities')}`);
+console.info(`\n${colors.yellow('💻')} Run this demo: ${colors.cyan('bun run scripts/demo-bun-utils.ts')}`);
+console.info();

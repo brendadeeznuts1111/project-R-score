@@ -318,7 +318,7 @@ export class LSPDashboard extends EventEmitter {
    */
   private showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
     // Implementation would show a toast notification
-    console.log(`[${type.toUpperCase()}] ${message}`);
+    console.info(`[${type.toUpperCase()}] ${message}`);
   }
 
   /**
@@ -382,7 +382,7 @@ declare global {
 
 // Initialize global handlers
 window.applyQuickFix = (code: string) => {
-  console.log('Applying quick fix for:', code);
+  console.info('Applying quick fix for:', code);
 };
 
 window.showHelp = (code: string) => {
@@ -391,23 +391,23 @@ window.showHelp = (code: string) => {
 };
 
 window.formatDocument = () => {
-  console.log('Formatting document...');
+  console.info('Formatting document...');
 };
 
 window.showCompletions = () => {
-  console.log('Showing completions...');
+  console.info('Showing completions...');
 };
 
 window.applyAllQuickFixes = () => {
-  console.log('Applying all quick fixes...');
+  console.info('Applying all quick fixes...');
 };
 
 window.clearDiagnostics = () => {
-  console.log('Clearing diagnostics...');
+  console.info('Clearing diagnostics...');
 };
 
 window.restartLSP = () => {
-  console.log('Restarting LSP...');
+  console.info('Restarting LSP...');
   location.reload();
 };
 

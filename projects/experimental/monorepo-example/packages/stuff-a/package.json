@@ -12,10 +12,10 @@
     "./update": "./update.ts"
   },
   "dependencies": {
-    "zod": "^4.3.5"
+    "zod": "4.3.5"
   },
   "devDependencies": {
-    "mitata": "^1.0.6"
+    "mitata": "1.0.6"
   },
   "scripts": {
     "dev": "bun --watch index.ts",

@@ -73,7 +73,7 @@ class WorkshopOrganizer {
      * Analyze all workshop files and categorize them
      */
     async analyzeWorkshop(): Promise<void> {
-        console.log('🔍 Analyzing workshop structure...');
+        console.info('🔍 Analyzing workshop structure...');
 
         const files = await this.scanDirectory(this.canvasDemosPath);
 
@@ -82,7 +82,7 @@ class WorkshopOrganizer {
             this.files.push(file);
         }
 
-        console.log(`📊 Analyzed ${this.files.length} files`);
+        console.info(`📊 Analyzed ${this.files.length} files`);
     }
 
     /**
@@ -279,7 +279,7 @@ class WorkshopOrganizer {
      * Generate organization plan
      */
     generateOrganizationPlan(): OrganizationPlan {
-        console.log('📋 Generating organization plan...');
+        console.info('📋 Generating organization plan...');
 
         // Sort files by utilization score
         const sortedFiles = [...this.files].sort((a, b) => b.utilizationScore - a.utilizationScore);
@@ -363,30 +363,30 @@ class WorkshopOrganizer {
     async generateOrganizationReport(): Promise<void> {
         const plan = this.generateOrganizationPlan();
 
-        console.log('\n📊 WORKSHOP ORGANIZATION REPORT');
-        console.log('=====================================');
+        console.info('\n📊 WORKSHOP ORGANIZATION REPORT');
+        console.info('=====================================');
 
-        console.log(`\n📈 Summary:`);
-        console.log(`   • Total Files Analyzed: ${this.files.length}`);
-        console.log(`   • Files to Keep: ${plan.filesToKeep.length} (${Math.round(plan.filesToKeep.length / this.files.length * 100)}%)`);
-        console.log(`   • Files to Archive: ${plan.filesToArchive.length} (${Math.round(plan.filesToArchive.length / this.files.length * 100)}%)`);
-        console.log(`   • Files to Consolidate: ${plan.filesToConsolidate.length} (${Math.round(plan.filesToConsolidate.length / this.files.length * 100)}%)`);
+        console.info(`\n📈 Summary:`);
+        console.info(`   • Total Files Analyzed: ${this.files.length}`);
+        console.info(`   • Files to Keep: ${plan.filesToKeep.length} (${Math.round(plan.filesToKeep.length / this.files.length * 100)}%)`);
+        console.info(`   • Files to Archive: ${plan.filesToArchive.length} (${Math.round(plan.filesToArchive.length / this.files.length * 100)}%)`);
+        console.info(`   • Files to Consolidate: ${plan.filesToConsolidate.length} (${Math.round(plan.filesToConsolidate.length / this.files.length * 100)}%)`);
 
-        console.log(`\n🎯 High-Value Files to Keep:`);
+        console.info(`\n🎯 High-Value Files to Keep:`);
         plan.filesToKeep.slice(0, 10).forEach((file, index) => {
-            console.log(`   ${index + 1}. ${file.name} (${file.category}) - Score: ${file.utilizationScore}`);
+            console.info(`   ${index + 1}. ${file.name} (${file.category}) - Score: ${file.utilizationScore}`);
         });
 
-        console.log(`\n🗃️ Files to Archive:`);
+        console.info(`\n🗃️ Files to Archive:`);
         plan.filesToArchive.slice(0, 10).forEach((file, index) => {
-            console.log(`   ${index + 1}. ${file.name} (${file.category}) - Score: ${file.utilizationScore}`);
+            console.info(`   ${index + 1}. ${file.name} (${file.category}) - Score: ${file.utilizationScore}`);
         });
 
-        console.log(`\n📁 New Directory Structure:`);
+        console.info(`\n📁 New Directory Structure:`);
         Object.entries(plan.newStructure).forEach(([dir, info]) => {
-            console.log(`   📂 ${dir}/`);
-            console.log(`      ${info.description}`);
-            console.log(`      Files: ${info.files.length}`);
+            console.info(`   📂 ${dir}/`);
+            console.info(`      ${info.description}`);
+            console.info(`      Files: ${info.files.length}`);
         });
 
         // Save detailed report
@@ -434,7 +434,7 @@ class WorkshopOrganizer {
         });
 
         await writeFile(reportPath, report);
-        console.log(`\n📄 Detailed report saved to: ${reportPath}`);
+        console.info(`\n📄 Detailed report saved to: ${reportPath}`);
     }
 }
 
@@ -442,8 +442,8 @@ class WorkshopOrganizer {
 async function main() {
     const workshopPath = process.argv[2] || join(process.cwd(), '11 - Workshop');
 
-    console.log('🚀 Workshop Organizer Starting...');
-    console.log(`📁 Workshop Path: ${workshopPath}`);
+    console.info('🚀 Workshop Organizer Starting...');
+    console.info(`📁 Workshop Path: ${workshopPath}`);
 
     const organizer = new WorkshopOrganizer(workshopPath);
 
@@ -451,8 +451,8 @@ async function main() {
         await organizer.analyzeWorkshop();
         await organizer.generateOrganizationReport();
 
-        console.log('\n✅ Organization analysis complete!');
-        console.log('📋 Review the generated report for detailed recommendations.');
+        console.info('\n✅ Organization analysis complete!');
+        console.info('📋 Review the generated report for detailed recommendations.');
 
     } catch (error) {
         console.error('❌ Organization analysis failed:', error);

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * SAFE Entry Guard Utility
- * 
+ *
  * Prevents the silent killer pattern that destroys async operations
  */
 
@@ -20,7 +20,7 @@ export function isDirectExecution(): boolean {
  */
 export function ensureDirectExecution(): void {
   if (!import.meta.main) {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
     return; // 🛡️ SAFE: Return instead of process.exit(0)
   }
 }
@@ -41,7 +41,7 @@ export function runIfMain(mainFunction: () => void | Promise<void>): void {
       }
     }
   } else {
-    console.log('ℹ️  Script was imported, not executed directly');
+    console.info('ℹ️  Script was imported, not executed directly');
   }
 }
 
@@ -75,13 +75,13 @@ ensureDirectExecution();
 import { runIfMain } from './entry-guard.ts';
 runIfMain(async () => {
   // Your async code here...
-  console.log('Running safely!');
+  console.info('Running safely!');
 });
 
 // ✅ SAFE PATTERN 3:
 if (import.meta.main) {
   main().catch(console.error);
 } else {
-  console.log('Imported, not executed');
+  console.info('Imported, not executed');
 }
 */

@@ -347,7 +347,7 @@ export function resolveExecutable(binaryName: string): string | null {
  * // const proc = Bun.spawn(["command"], {
  * //   stdout: "pipe",
  * //   onExit(subprocess, exitCode, signalCode, error) {
- * //     console.log(`Process ${subprocess.pid} exited:`, exitCode);
+ * //     console.info(`Process ${subprocess.pid} exited:`, exitCode);
  * //     if (error) console.error("Error:", error);
  * //   },
  * // });
@@ -362,9 +362,9 @@ export function resolveExecutable(binaryName: string): string | null {
  * // 1. const proc = Bun.spawn(["bun", "--version"]);
  * // 2. await proc.exited;
  * // 3. const usage = proc.resourceUsage();
- * // 4. console.log(`Max memory: ${usage.maxRSS} bytes`);
- * // 5. console.log(`CPU time (user): ${usage.cpuTime.user} ns`);
- * // 6. console.log(`CPU time (system): ${usage.cpuTime.system} ns`);
+ * // 4. console.info(`Max memory: ${usage.maxRSS} bytes`);
+ * // 5. console.info(`CPU time (user): ${usage.cpuTime.user} ns`);
+ * // 6. console.info(`CPU time (system): ${usage.cpuTime.system} ns`);
  * // Expected: Resource usage stats printed (memory in bytes, CPU in nanoseconds)
  *
  * @example 7.4.3.1.4.1: **Resource Usage with Metrics Collection**
@@ -681,8 +681,8 @@ export function spawnWithTimeout(
  * // 1. const proc = Bun.spawn(['ffmpeg', '-i', url, '-f', 'null', '-']);
  * // 2. await proc.exited;
  * // 3. const usage = proc.resourceUsage();
- * // 4. console.log(`Peak memory: ${usage.maxRSS / 1024 / 1024}MB`);
- * // 5. console.log(`CPU time: ${usage.cpuTime.total / 1000}ms`);
+ * // 4. console.info(`Peak memory: ${usage.maxRSS / 1024 / 1024}MB`);
+ * // 5. console.info(`CPU time: ${usage.cpuTime.total / 1000}ms`);
  * // Expected: Detailed resource breakdown for performance tuning
  *
  * @example 7.4.3.4.1.1: **Worker Efficiency Monitoring**
@@ -727,7 +727,7 @@ export async function monitorResourceUsage(
  * // Test Formula:
  * // 1. const captureProc = Bun.spawn(['bun', 'capture-service.ts'], { stdin: 'pipe' });
  * // 2. captureProc.unref();
- * // 3. console.log('Handler complete, capture continues in background');
+ * // 3. console.info('Handler complete, capture continues in background');
  * // 4. Expected: HTTP request returns immediately, capture process keeps running
  *
  * @example 7.4.3.5.1.1: **Graceful Parent Shutdown**
@@ -743,7 +743,7 @@ export function spawnDetached(command: string[]): ReturnType<typeof Bun.spawn> {
 	// 7.4.3.5.2.0: **Unref Immediately** to prevent blocking parent
 	const proc = Bun.spawn(command);
 	proc.unref();
-	console.log(`7.4.3.5.2.1: Spawned detached process ${proc.pid}`);
+	console.info(`7.4.3.5.2.1: Spawned detached process ${proc.pid}`);
 	return proc;
 }
 
@@ -849,7 +849,7 @@ export async function gracefulShutdown(
 	});
 
 	await Promise.all(shutdownPromises);
-	console.log("7.4.6.2.1.0: All processes gracefully terminated");
+	console.info("7.4.6.2.1.0: All processes gracefully terminated");
 }
 
 /**
@@ -998,9 +998,9 @@ export const sleep = Bun.sleep; // 7.4.4.2.0: **Direct export** for convenience
  *
  * @example 7.4.5.1.11: **Environment Variables - Inline Syntax**
  * // Test Formula:
- * // 1. await $`FOO=bar bun -e 'console.log(process.env.FOO)'`;
+ * // 1. await $`FOO=bar bun -e 'console.info(process.env.FOO)'`;
  * // 2. Expected: Output "bar"
- * // 3. Can use JavaScript interpolation: const value = "bar123"; await $`FOO=${value} bun -e 'console.log(process.env.FOO)'`;
+ * // 3. Can use JavaScript interpolation: const value = "bar123"; await $`FOO=${value} bun -e 'console.info(process.env.FOO)'`;
  *
  * @example 7.4.5.1.12: **Environment Variables - .env() Method**
  * // Test Formula:
@@ -1047,7 +1047,7 @@ export const sleep = Bun.sleep; // 7.4.4.2.0: **Direct export** for convenience
  * @example 7.4.5.1.18: **Reading Output - .lines() Method**
  * // Test Formula:
  * // 1. for await (const line of $`echo -e "line1\nline2\nline3"`.lines()) {
- * //      console.log(line); // "line1", "line2", "line3"
+ * //      console.info(line); // "line1", "line2", "line3"
  * //    }
  * // 2. Can also use on completed command: const cmd = $`cat file.txt`; for await (const line of cmd.lines()) {}
  * // 3. Returns async iterator of lines
@@ -1235,15 +1235,15 @@ export function spawnSyncProcess(options: { cmd: string[]; cwd?: string }): {
  * @example 7.5.2.1.7: **Non-existent Files**
  * ```typescript
  * const notreal = Bun.file("notreal.txt");
- * console.log(notreal.size); // 0
- * console.log(notreal.type); // "text/plain;charset=utf-8"
+ * console.info(notreal.size); // 0
+ * console.info(notreal.type); // "text/plain;charset=utf-8"
  * const exists = await notreal.exists(); // false
  * ```
  *
  * @example 7.5.2.1.8: **Custom MIME Type**
  * ```typescript
  * const jsonFile = Bun.file("data.json", { type: "application/json" });
- * console.log(jsonFile.type); // "application/json;charset=utf-8"
+ * console.info(jsonFile.type); // "application/json;charset=utf-8"
  * ```
  *
  * @example 7.5.2.1.9: **Deleting Files**
@@ -1260,8 +1260,8 @@ export function spawnSyncProcess(options: { cmd: string[]; cwd?: string }): {
  * @example 7.5.2.1.11: **Getting File Properties**
  * ```typescript
  * const file = Bun.file('data.txt');
- * console.log(file.size);  // File size in bytes (0 if doesn't exist)
- * console.log(file.type);   // MIME type (e.g., 'text/plain;charset=utf-8')
+ * console.info(file.size);  // File size in bytes (0 if doesn't exist)
+ * console.info(file.type);   // MIME type (e.g., 'text/plain;charset=utf-8')
  * ```
  *
  * **BunFile Interface (Complete API):**
@@ -2091,11 +2091,11 @@ export function parseCookies(cookieHeader: string | null): Map<string, string> {
  *   Example:
  *   ```typescript
  *   const cookie = Bun.Cookie.parse("name=value; Path=/; Secure; SameSite=Lax");
- *   console.log(cookie.name);      // "name"
- *   console.log(cookie.value);     // "value"
- *   console.log(cookie.path);      // "/"
- *   console.log(cookie.secure);    // true
- *   console.log(cookie.sameSite);  // "lax"
+ *   console.info(cookie.name);      // "name"
+ *   console.info(cookie.value);     // "value"
+ *   console.info(cookie.path);      // "/"
+ *   console.info(cookie.secure);    // true
+ *   console.info(cookie.sameSite);  // "lax"
  *   ```
  * - `Cookie.from(name: string, value: string, options?: CookieInit): Cookie` - Factory method to create a cookie.
  *   Example:
@@ -2165,31 +2165,31 @@ export const BUN_COOKIE_API = "7.18.2.3.0.0.0";
  *
  * // 1. for...of loop (uses Symbol.iterator)
  * for (const [name, value] of cookies) {
- *   console.log(`${name}: ${value}`);
+ *   console.info(`${name}: ${value}`);
  * }
  *
  * // 2. entries() method
  * for (const [name, value] of cookies.entries()) {
- *   console.log(`${name}: ${value}`);
+ *   console.info(`${name}: ${value}`);
  * }
  *
  * // 3. keys() method
  * for (const name of cookies.keys()) {
- *   console.log(name);
+ *   console.info(name);
  * }
  *
  * // 4. values() method
  * for (const value of cookies.values()) {
- *   console.log(value);
+ *   console.info(value);
  * }
  *
  * // 5. forEach() method
  * cookies.forEach((value, name) => {
- *   console.log(`${name}: ${value}`);
+ *   console.info(`${name}: ${value}`);
  * });
  *
  * // 6. size property
- * console.log(`Total cookies: ${cookies.size}`);
+ * console.info(`Total cookies: ${cookies.size}`);
  * ```
  *
  * **Cross-Reference:**
@@ -2331,7 +2331,7 @@ export function checkBunVersion(minRequired: string): boolean {
  *
  * @example 7.11.2.1.0: **Debug Diagnostics with Commit Hash**
  * // Test Formula:
- * // 1. console.log(`Bun ${Bun.version} (${Bun.revision.slice(0, 8)})`);
+ * // 1. console.info(`Bun ${Bun.version} (${Bun.revision.slice(0, 8)})`);
  * // 2. Expected: "Bun 1.3.3 (f0256153)"
  *
  * **Cross-Reference:** Included in `7.4.1.2.0` diagnostic snapshots
@@ -2384,7 +2384,7 @@ export function getEnvVar(key: string, defaultValue: string = ""): string {
  *
  * @example 7.11.4.1.0: **Direct Execution Detection**
  * // Test Formula:
- * // 1. if (import.meta.path === Bun.main) { console.log('Direct'); }
+ * // 1. if (import.meta.path === Bun.main) { console.info('Direct'); }
  * // 2. Expected: "Direct" when running `bun run script.ts`
  * // 3. Expected: Nothing when imported via `import './script'`
  *
@@ -2468,7 +2468,7 @@ export async function getSecret(
  * // const start = Bun.nanoseconds();
  * // const rewriter = new UIContextRewriter(context).createRewriter();
  * // const result = rewriter.transform(stream);
- * // console.log(`Transform took ${(Bun.nanoseconds() - start)/1e6}ms`);
+ * // console.info(`Transform took ${(Bun.nanoseconds() - start)/1e6}ms`);
  *
  * **Cross-Reference:** Integrated with `7.4.1.2.0` for performance diagnostics
  * **Audit Trail:** Precision validated in `9.1.5.5.22.0.0` (<1ns jitter)

@@ -47,11 +47,11 @@ class SecureConfigLoader {
 
 class SecurityLogger {
   logSecurityEvent(event: any): void {
-    console.log('{"type":"security","event":%j}', event);
+    console.info('{"type":"security","event":%j}', event);
   }
 
   logComplianceEvent(event: any): void {
-    console.log('{"type":"compliance","event":%j}', event);
+    console.info('{"type":"compliance","event":%j}', event);
   }
 }
 
@@ -113,7 +113,7 @@ class ThreatIntelligenceService {
   }
 
   async reportThreat(threat: any): Promise<void> {
-    console.log('Threat reported:', threat.type);
+    console.info('Threat reported:', threat.type);
   }
 }
 
@@ -204,7 +204,7 @@ describe('Bun 1.3.5 Enterprise Compatibility Tests', () => {
 
   describe('Security Logger with Bun 1.3.5 %j', () => {
     test('should log security events with structured JSON', () => {
-      const consoleSpy = jest.spyOn(console, 'log');
+      const consoleSpy = jest.spyOn(console, 'info');
 
       securityLogger.logSecurityEvent({
         type: 'authentication-failure',
@@ -228,7 +228,7 @@ describe('Bun 1.3.5 Enterprise Compatibility Tests', () => {
     });
 
     test('should log compliance events with GDPR context', () => {
-      const consoleSpy = jest.spyOn(console, 'log');
+      const consoleSpy = jest.spyOn(console, 'info');
 
       securityLogger.logComplianceEvent({
         type: 'data-access',
@@ -322,7 +322,9 @@ describe('Bun 1.3.5 Enterprise Compatibility Tests', () => {
           Bun.sleep(timeoutMs).then(() => false),
         ]);
 
-        try { await client.quit(); } catch {}
+        try { await client.quit(); } catch {
+    console.error('Unhandled error:', error);
+  }
         return result;
       } catch {
         return false;
@@ -983,7 +985,7 @@ describe('Bun 1.3.5 Enterprise Compatibility Tests', () => {
       console.log = jest.fn();
 
       // Bun 1.3.5 %j handles nested objects
-      console.log('Logging: %j', obj);
+      console.info('Logging: %j', obj);
 
       expect(console.log).toHaveBeenCalledWith(
         'Logging: %j',

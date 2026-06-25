@@ -210,7 +210,7 @@ export async function postRSSFeed(options: {
 	items = items.slice(0, limit);
 
 	if (items.length === 0) {
-		console.log("No RSS feed items found");
+		console.info("No RSS feed items found");
 		return;
 	}
 
@@ -222,14 +222,14 @@ export async function postRSSFeed(options: {
 
 		if (result.ok) {
 			posted++;
-			console.log(`✅ Posted: ${item.title.substring(0, 50)}...`);
+			console.info(`✅ Posted: ${item.title.substring(0, 50)}...`);
 		} else {
 			// Handle rate limiting
 			if (result.description?.includes("Too Many Requests")) {
 				const retryAfter = result.description.match(/retry after (\d+)/)?.[1];
 				if (retryAfter) {
 					const waitSeconds = parseInt(retryAfter);
-					console.log(`⏳ Rate limited. Waiting ${waitSeconds} seconds...`);
+					console.info(`⏳ Rate limited. Waiting ${waitSeconds} seconds...`);
 					await Bun.sleep(waitSeconds * 1000);
 					// Retry once
 					const retryResult = await api.sendMessage(
@@ -239,7 +239,7 @@ export async function postRSSFeed(options: {
 					);
 					if (retryResult.ok) {
 						posted++;
-						console.log(`✅ Posted (retry): ${item.title.substring(0, 50)}...`);
+						console.info(`✅ Posted (retry): ${item.title.substring(0, 50)}...`);
 					} else {
 						console.error(
 							`❌ Failed to post after retry: ${retryResult.description}`,
@@ -257,7 +257,7 @@ export async function postRSSFeed(options: {
 		await Bun.sleep(2000);
 	}
 
-	console.log(
+	console.info(
 		`\n✅ Posted ${posted}/${items.length} RSS feed items to topic ${actualThreadId} (${logicalTopicId})`,
 	);
 }
@@ -273,7 +273,7 @@ if (import.meta.main) {
 		: 7;
 	const filterCategory = args[2] || undefined;
 
-	console.log(
+	console.info(
 		`📢 Posting RSS feed to topic: ${topicId} (mapped to thread ID: ${getThreadId(topicId) ?? topicId})\n`,
 	);
 

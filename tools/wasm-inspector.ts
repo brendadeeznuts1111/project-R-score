@@ -50,7 +50,7 @@ const c = {
 // ─── Help ────────────────────────────────────────────────────────────
 
 function printHelp(): void {
-  console.log(`${c.bold}wasm-inspector${c.reset} — Inspect .wasm files and browse the WebAssembly API reference
+  console.info(`${c.bold}wasm-inspector${c.reset} — Inspect .wasm files and browse the WebAssembly API reference
 
 ${c.bold}Usage:${c.reset}
   bun tools/wasm-inspector.ts ${c.cyan}<command>${c.reset} [options]
@@ -106,75 +106,79 @@ function formatBytes(bytes: number): string {
 
 function printInspect(result: InspectResult): void {
   if (jsonOutput) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
     return;
   }
 
   const name = result.file.split('/').pop() || result.file;
-  console.log(`\n${c.bold}Module:${c.reset} ${name} (${formatBytes(result.size)})`);
+  console.info(`\n${c.bold}Module:${c.reset} ${name} (${formatBytes(result.size)})`);
 
   // Exports
-  console.log(`\n${c.bold}Exports (${result.exports.length}):${c.reset}`);
+  console.info(`\n${c.bold}Exports (${result.exports.length}):${c.reset}`);
   if (result.exports.length === 0) {
-    console.log(`  ${c.dim}(none)${c.reset}`);
+    console.info(`  ${c.dim}(none)${c.reset}`);
   } else {
     for (const exp of result.exports) {
-      const kindColor = exp.kind === 'function' ? c.cyan : exp.kind === 'memory' ? c.green : c.yellow;
+      const kindColor =
+        exp.kind === 'function' ? c.cyan : exp.kind === 'memory' ? c.green : c.yellow;
       const kindLabel = exp.kind === 'function' ? 'func' : exp.kind;
-      console.log(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${exp.name}`);
+      console.info(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${exp.name}`);
     }
   }
 
   // Imports
-  console.log(`\n${c.bold}Imports (${result.imports.length}):${c.reset}`);
+  console.info(`\n${c.bold}Imports (${result.imports.length}):${c.reset}`);
   if (result.imports.length === 0) {
-    console.log(`  ${c.dim}(none)${c.reset}`);
+    console.info(`  ${c.dim}(none)${c.reset}`);
   } else {
     for (const imp of result.imports) {
-      const kindColor = imp.kind === 'function' ? c.cyan : imp.kind === 'memory' ? c.green : c.yellow;
+      const kindColor =
+        imp.kind === 'function' ? c.cyan : imp.kind === 'memory' ? c.green : c.yellow;
       const kindLabel = imp.kind === 'function' ? 'func' : imp.kind;
-      console.log(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${imp.module}.${imp.name}`);
+      console.info(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${imp.module}.${imp.name}`);
     }
   }
 
   // Summary
-  console.log(`\n${c.bold}Tables:${c.reset} ${result.tables}`);
-  console.log(`${c.bold}Memories:${c.reset} ${result.memories}`);
-  console.log('');
+  console.info(`\n${c.bold}Tables:${c.reset} ${result.tables}`);
+  console.info(`${c.bold}Memories:${c.reset} ${result.memories}`);
+  console.info('');
 }
 
 // ─── reference command ───────────────────────────────────────────────
 
 function printReference(): void {
   if (jsonOutput) {
-    console.log(JSON.stringify(WASM_API, null, 2));
+    console.info(JSON.stringify(WASM_API, null, 2));
     return;
   }
 
-  console.log(`\n${c.bold}WebAssembly API Reference${c.reset}`);
-  console.log('═'.repeat(50));
+  console.info(`\n${c.bold}WebAssembly API Reference${c.reset}`);
+  console.info('═'.repeat(50));
 
   for (const entry of WASM_API) {
     const kindLabel = entry.kind === 'class' ? 'Class' : 'Function';
-    console.log(`\n${c.bold}${kindLabel}: ${c.cyan}${entry.name}${c.reset}`);
-    console.log(`  ${c.dim}${entry.description}${c.reset}`);
+    console.info(`\n${c.bold}${kindLabel}: ${c.cyan}${entry.name}${c.reset}`);
+    console.info(`  ${c.dim}${entry.description}${c.reset}`);
 
     if (entry.members && entry.members.length > 0) {
       for (const member of entry.members) {
         if (verbose && member.signature) {
-          console.log(`  ${c.green}.${member.name}${c.reset}  ${c.dim}${member.signature}${c.reset}`);
+          console.info(
+            `  ${c.green}.${member.name}${c.reset}  ${c.dim}${member.signature}${c.reset}`
+          );
         } else {
           const label = member.kind === 'method' ? `${member.name}()` : member.name;
-          console.log(`  ${c.green}.${label}${c.reset}  ${c.dim}${member.description}${c.reset}`);
+          console.info(`  ${c.green}.${label}${c.reset}  ${c.dim}${member.description}${c.reset}`);
         }
       }
     }
 
-    console.log(`  ${c.gray}MDN: ${entry.mdnUrl}${c.reset}`);
-    console.log(`  ${c.gray}Bun: ${entry.bunUrl}${c.reset}`);
+    console.info(`  ${c.gray}MDN: ${entry.mdnUrl}${c.reset}`);
+    console.info(`  ${c.gray}Bun: ${entry.bunUrl}${c.reset}`);
   }
 
-  console.log('');
+  console.info('');
 }
 
 // ─── urls command ────────────────────────────────────────────────────
@@ -183,12 +187,12 @@ function printUrls(): void {
   const urls = getAllWasmUrls();
 
   if (jsonOutput) {
-    console.log(JSON.stringify(urls, null, 2));
+    console.info(JSON.stringify(urls, null, 2));
     return;
   }
 
   for (const url of urls) {
-    console.log(url);
+    console.info(url);
   }
 }
 

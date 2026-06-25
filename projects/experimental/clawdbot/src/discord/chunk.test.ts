@@ -36,7 +36,7 @@ describe("chunkDiscordText", () => {
   });
 
   it("keeps fenced code blocks balanced across chunks", () => {
-    const body = Array.from({ length: 30 }, (_, i) => `console.log(${i});`).join("\n");
+    const body = Array.from({ length: 30 }, (_, i) => `console.info(${i});`).join("\n");
     const text = `Here is code:\n\n\`\`\`js\n${body}\n\`\`\`\n\nDone.`;
 
     const chunks = chunkDiscordText(text, { maxChars: 2000, maxLines: 10 });

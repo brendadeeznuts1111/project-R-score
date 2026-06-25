@@ -105,7 +105,7 @@ const DEFAULT_CONFIG: SecureCookieConfig = {
  * const parsed = cookies.parseCookies(request.headers.get('Cookie'));
  * const session = parsed.get('session');
  * if (session?.verified) {
- *   console.log('Session:', session.value);
+ *   console.info('Session:', session.value);
  * }
  * ```
  */

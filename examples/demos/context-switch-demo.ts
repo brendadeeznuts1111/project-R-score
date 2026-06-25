@@ -36,7 +36,7 @@ interface DemoResult {
  * Demo 1: CLI CWD/Environment Context
  */
 async function demoCLIContext(): Promise<DemoResult> {
-  console.log(c.cyan('\n🔧 Demo 1: CLI CWD/Environment Context'));
+  console.info(c.cyan('\n🔧 Demo 1: CLI CWD/Environment Context'));
   
   const startTime = performance.now();
   
@@ -80,7 +80,7 @@ async function demoCLIContext(): Promise<DemoResult> {
  * Demo 2: bunfig.toml Configuration Context
  */
 async function demoBunfigContext(): Promise<DemoResult> {
-  console.log(c.cyan('\n⚙️  Demo 2: bunfig.toml Configuration Context'));
+  console.info(c.cyan('\n⚙️  Demo 2: bunfig.toml Configuration Context'));
   
   const startTime = performance.now();
   
@@ -99,10 +99,10 @@ preload = ["./test-setup.ts"]
 coverage = true
 `;
     
-    await Bun.write('./ci.bunfig.toml', testBunfig);
+    await Bun.write('./config/ci.bunfig.toml', testBunfig);
     
     const session = await executeBunCLI([
-      '--config', 'ci.bunfig.toml',
+      '--config', 'config/ci.bunfig.toml',
       'run', 'test'
     ], { captureOutput: true });
     
@@ -110,7 +110,7 @@ coverage = true
     
     return {
       context: 'bunfig.toml',
-      oneLiner: 'bun --config ci.bunfig.toml run test',
+      oneLiner: 'bun --config config/ci.bunfig.toml run test',
       result: '[run] Preload',
       duration,
       success: session.status === 'completed',
@@ -124,7 +124,7 @@ coverage = true
   } catch (error) {
     return {
       context: 'bunfig.toml',
-      oneLiner: 'bun --config ci.bunfig.toml run test',
+      oneLiner: 'bun --config config/ci.bunfig.toml run test',
       result: `Error: ${error}`,
       duration: performance.now() - startTime,
       success: false
@@ -136,7 +136,7 @@ coverage = true
  * Demo 3: JSONC tsconfig Parsing
  */
 async function demoJSONCParsing(): Promise<DemoResult> {
-  console.log(c.cyan('\n📝 Demo 3: JSONC tsconfig Parsing'));
+  console.info(c.cyan('\n📝 Demo 3: JSONC tsconfig Parsing'));
   
   const startTime = performance.now();
   
@@ -209,7 +209,7 @@ async function demoJSONCParsing(): Promise<DemoResult> {
  * Demo 4: Context Cache with Hashing
  */
 async function demoContextCache(): Promise<DemoResult> {
-  console.log(c.cyan('\n💾 Demo 4: Context Cache with Hashing'));
+  console.info(c.cyan('\n💾 Demo 4: Context Cache with Hashing'));
   
   const startTime = performance.now();
   
@@ -257,7 +257,7 @@ async function demoContextCache(): Promise<DemoResult> {
  * Demo 5: Spawn with Context
  */
 async function demoSpawnWithContext(): Promise<DemoResult> {
-  console.log(c.cyan('\n🚀 Demo 5: Spawn with Context'));
+  console.info(c.cyan('\n🚀 Demo 5: Spawn with Context'));
   
   const startTime = performance.now();
   
@@ -281,10 +281,10 @@ const output = await new Response(proc.stdout).text();
 const exitCode = await proc.exited;
 const duration = performance.now() - startTime;
 
-console.log(\`Spawn completed in \${duration.toFixed(2)}ms\`);
-console.log(\`Exit code: \${exitCode}\`);
+console.info(\`Spawn completed in \${duration.toFixed(2)}ms\`);
+console.info(\`Exit code: \${exitCode}\`);
 if (output) {
-  console.log(\`Output: \${output.slice(0, 100)}...\`);
+  console.info(\`Output: \${output.slice(0, 100)}...\`);
 }
 `;
     
@@ -327,15 +327,15 @@ if (output) {
  * Format results as a table
  */
 function formatResultsTable(results: DemoResult[]): void {
-  console.log(c.bold('\n📊 Context Switch Results Summary\n'));
+  console.info(c.bold('\n📊 Context Switch Results Summary\n'));
   
   // Table header
-  console.log(c.underline('Context Switch'.padEnd(20) + 
+  console.info(c.underline('Context Switch'.padEnd(20) + 
                          'One-Liner'.padEnd(55) + 
                          'Result'.padEnd(15) + 
                          'Duration'.padEnd(10)));
   
-  console.log('─'.repeat(100));
+  console.info('─'.repeat(100));
   
   // Table rows
   results.forEach(result => {
@@ -346,44 +346,44 @@ function formatResultsTable(results: DemoResult[]): void {
     const resultCol = (result.success ? c.green(result.result) : c.red(result.result)).padEnd(15);
     const durationCol = `${result.duration.toFixed(1)}ms`.padEnd(10);
     
-    console.log(contextCol + oneLinerCol + resultCol + durationCol);
+    console.info(contextCol + oneLinerCol + resultCol + durationCol);
   });
   
-  console.log('─'.repeat(100));
+  console.info('─'.repeat(100));
   
   // Summary statistics
   const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
   const successCount = results.filter(r => r.success).length;
   const avgDuration = totalDuration / results.length;
   
-  console.log(c.bold(`\n📈 Summary:`));
-  console.log(`  Total Duration: ${c.yellow(totalDuration.toFixed(1) + 'ms')}`);
-  console.log(`  Average Duration: ${c.yellow(avgDuration.toFixed(1) + 'ms')}`);
-  console.log(`  Success Rate: ${c.green(successCount + '/' + results.length)} (${Math.round(successCount/results.length * 100)}%)`);
-  console.log(`  Fastest: ${c.green(Math.min(...results.map(r => r.duration)).toFixed(1) + 'ms')}`);
-  console.log(`  Slowest: ${c.yellow(Math.max(...results.map(r => r.duration)).toFixed(1) + 'ms')}`);
+  console.info(c.bold(`\n📈 Summary:`));
+  console.info(`  Total Duration: ${c.yellow(totalDuration.toFixed(1) + 'ms')}`);
+  console.info(`  Average Duration: ${c.yellow(avgDuration.toFixed(1) + 'ms')}`);
+  console.info(`  Success Rate: ${c.green(successCount + '/' + results.length)} (${Math.round(successCount/results.length * 100)}%)`);
+  console.info(`  Fastest: ${c.green(Math.min(...results.map(r => r.duration)).toFixed(1) + 'ms')}`);
+  console.info(`  Slowest: ${c.yellow(Math.max(...results.map(r => r.duration)).toFixed(1) + 'ms')}`);
 }
 
 /**
  * Show detailed results for each demo
  */
 function showDetailedResults(results: DemoResult[]): void {
-  console.log(c.bold('\n🔍 Detailed Results\n'));
+  console.info(c.bold('\n🔍 Detailed Results\n'));
   
   results.forEach((result, index) => {
-    console.log(c.cyan(`${index + 1}. ${result.context}`));
-    console.log(c.gray(`   Command: ${result.oneLiner}`));
-    console.log(c.gray(`   Result: ${result.result}`));
-    console.log(c.gray(`   Duration: ${result.duration.toFixed(2)}ms`));
-    console.log(c.gray(`   Status: ${result.success ? c.green('✓ Success') : c.red('✗ Failed')}`));
+    console.info(c.cyan(`${index + 1}. ${result.context}`));
+    console.info(c.gray(`   Command: ${result.oneLiner}`));
+    console.info(c.gray(`   Result: ${result.result}`));
+    console.info(c.gray(`   Duration: ${result.duration.toFixed(2)}ms`));
+    console.info(c.gray(`   Status: ${result.success ? c.green('✓ Success') : c.red('✗ Failed')}`));
     
     if (result.details) {
-      console.log(c.gray('   Details:'));
+      console.info(c.gray('   Details:'));
       Object.entries(result.details).forEach(([key, value]) => {
-        console.log(c.gray(`     ${key}: ${value}`));
+        console.info(c.gray(`     ${key}: ${value}`));
       });
     }
-    console.log('');
+    console.info('');
   });
 }
 
@@ -391,8 +391,8 @@ function showDetailedResults(results: DemoResult[]): void {
  * Main demo runner
  */
 async function runContextSwitchDemo(): Promise<void> {
-  console.log(c.bold('🔄 Context Switch Demo - Bun CLI Native Integration v3.15'));
-  console.log(c.gray('Demonstrating various context switching patterns with CLI commands\n'));
+  console.info(c.bold('🔄 Context Switch Demo - Bun CLI Native Integration v3.15'));
+  console.info(c.gray('Demonstrating various context switching patterns with CLI commands\n'));
   
   // Clear any existing sessions
   clearSessions();
@@ -411,10 +411,10 @@ async function runContextSwitchDemo(): Promise<void> {
   showDetailedResults(results);
   
   // Cleanup
-  console.log(c.yellow('\n🧹 Cleaning up demo files...'));
+  console.info(c.yellow('\n🧹 Cleaning up demo files...'));
   const cleanupFiles = [
     './utils/.env.test',
-    './ci.bunfig.toml',
+    './config/ci.bunfig.toml',
     './tsconfig.json',
     './utils/bun-spawn-terminal.ts'
   ];
@@ -427,8 +427,8 @@ async function runContextSwitchDemo(): Promise<void> {
     }
   }
   
-  console.log(c.green('✅ Context Switch Demo completed successfully!'));
-  console.log(c.gray(`All ${results.length} context patterns demonstrated and verified.`));
+  console.info(c.green('✅ Context Switch Demo completed successfully!'));
+  console.info(c.gray(`All ${results.length} context patterns demonstrated and verified.`));
 }
 
 // Auto-run if this is the main module

@@ -7,21 +7,21 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Official vs Implementation: Bun.inspect.table()'));
-console.log(chalk.gray('Comparison of official documentation vs our mapped implementations'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Official vs Implementation: Bun.inspect.table()'));
+console.info(chalk.gray('Comparison of official documentation vs our mapped implementations'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // OFFICIAL DOCUMENTATION (from bun.com/docs/runtime/utils)
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Official Documentation (bun.com/docs/runtime/utils)'));
+console.info(chalk.bold.cyan('\n📋 Official Documentation (bun.com/docs/runtime/utils)'));
 
-console.log(chalk.yellow('\n🔸 Function Signature:'));
-console.log(chalk.white('Bun.inspect.table(tabularData, properties, options)'));
+console.info(chalk.yellow('\n🔸 Function Signature:'));
+console.info(chalk.white('Bun.inspect.table(tabularData, properties, options)'));
 
-console.log(chalk.yellow('\n🔸 Basic Examples:'));
-console.log(chalk.gray(`
+console.info(chalk.yellow('\n🔸 Basic Examples:'));
+console.info(chalk.gray(`
 // Basic array of objects
 Bun.inspect.table([
   { a: 1, b: 2, c: 3 }, 
@@ -42,27 +42,27 @@ Bun.inspect.table([
 ], { colors: true });
 `));
 
-console.log(chalk.yellow('\n🔸 Documented Parameters:'));
-console.log(chalk.gray('• tabularData: Array of objects or object'));
-console.log(chalk.gray('• properties: Array of column names (optional)'));
-console.log(chalk.gray('• options: Object with { colors: true } (limited)'));
+console.info(chalk.yellow('\n🔸 Documented Parameters:'));
+console.info(chalk.gray('• tabularData: Array of objects or object'));
+console.info(chalk.gray('• properties: Array of column names (optional)'));
+console.info(chalk.gray('• options: Object with { colors: true } (limited)'));
 
-console.log(chalk.yellow('\n🔸 What\'s Missing from Official Docs:'));
-console.log(chalk.red('• Complete options interface documentation'));
-console.log(chalk.red('• maxEntryWidth option not documented'));
-console.log(chalk.red('• compact option not documented'));
-console.log(chalk.red('• maxLines option not documented'));
-console.log(chalk.red('• Real-world implementation patterns'));
-console.log(chalk.red('• Integration with width management'));
+console.info(chalk.yellow('\n🔸 What\'s Missing from Official Docs:'));
+console.info(chalk.red('• Complete options interface documentation'));
+console.info(chalk.red('• maxEntryWidth option not documented'));
+console.info(chalk.red('• compact option not documented'));
+console.info(chalk.red('• maxLines option not documented'));
+console.info(chalk.red('• Real-world implementation patterns'));
+console.info(chalk.red('• Integration with width management'));
 
 // =============================================================================
 // OUR IMPLEMENTATION - MAPPED DATA STRUCTURES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏗️  Our Implementation - Mapped Data Structures'));
+console.info(chalk.bold.cyan('\n🏗️  Our Implementation - Mapped Data Structures'));
 
-console.log(chalk.yellow('\n🔸 mappedFiles (Vault File Structure):'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 mappedFiles (Vault File Structure):'));
+console.info(chalk.green(`
 {
   fileName: string,        // "2025-11-18" (with chalk color)
   directory: string,       // "01 - Daily Notes/02 - Journals" (gray)
@@ -72,8 +72,8 @@ console.log(chalk.green(`
   hasFrontmatter: string   // "✅" (green) or "❌" (red)
 }`));
 
-console.log(chalk.yellow('\n🔸 mappedIssues (Validation Issues Structure):'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 mappedIssues (Validation Issues Structure):'));
+console.info(chalk.green(`
 {
   type: string,            // " ERROR " (bgRed), " WARNING " (bgYellow)
   ruleCategory: string,    // "formatting" (italic)
@@ -83,8 +83,8 @@ console.log(chalk.green(`
   suggestion: string       // "Add # heading at top" (gray)
 }`));
 
-console.log(chalk.yellow('\n🔸 taskStatuses (Task Management Structure):'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 taskStatuses (Task Management Structure):'));
+console.info(chalk.green(`
 {
   symbol: string,          // "📝" (bold)
   name: string,            // "In Progress" (white)
@@ -96,7 +96,7 @@ console.log(chalk.green(`
 // OFFICIAL vs IMPLEMENTED - DETAILED COMPARISON
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🆚 Official vs Implemented - Detailed Comparison'));
+console.info(chalk.bold.cyan('\n🆚 Official vs Implemented - Detailed Comparison'));
 
 const comparison = [
     {
@@ -149,28 +149,28 @@ const comparison = [
     }
 ];
 
-console.log(chalk.yellow('\n📊 Feature-by-Feature Analysis:'));
+console.info(chalk.yellow('\n📊 Feature-by-Feature Analysis:'));
 comparison.forEach((item, index) => {
-    console.log(chalk.bold(`\n${index + 1}. ${item.aspect}`));
-    console.log(chalk.gray(`   Official: ${item.official}`));
-    console.log(chalk.cyan(`   Implemented: ${item.implemented}`));
-    console.log(chalk.green(`   Advantage: ${item.advantage}`));
+    console.info(chalk.bold(`\n${index + 1}. ${item.aspect}`));
+    console.info(chalk.gray(`   Official: ${item.official}`));
+    console.info(chalk.cyan(`   Implemented: ${item.implemented}`));
+    console.info(chalk.green(`   Advantage: ${item.advantage}`));
 });
 
 // =============================================================================
 // OUR TYPE DEFINITIONS vs OFFICIAL
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📝 Type Definitions: Official vs Our Implementation'));
+console.info(chalk.bold.cyan('\n📝 Type Definitions: Official vs Our Implementation'));
 
-console.log(chalk.yellow('\n🔸 Official (Implicit) Types:'));
-console.log(chalk.gray(`
+console.info(chalk.yellow('\n🔸 Official (Implicit) Types:'));
+console.info(chalk.gray(`
 // Official documentation shows basic usage but no explicit types
 Bun.inspect.table(tabularData: any[], properties?: string[], options?: any): string
 `));
 
-console.log(chalk.yellow('\n🔸 Our Complete Type Definitions:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Our Complete Type Definitions:'));
+console.info(chalk.green(`
 // Our comprehensive type definitions
 interface TableOptions {
   maxEntryWidth?: number;    // Limit text width for readability
@@ -209,10 +209,10 @@ interface TaskStatus {
 // PRACTICAL IMPLEMENTATION EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🚀 Practical Implementation Examples'));
+console.info(chalk.bold.cyan('\n🚀 Practical Implementation Examples'));
 
-console.log(chalk.yellow('\n🔸 Our Real-World Usage Patterns:'));
-console.log(chalk.green(`
+console.info(chalk.yellow('\n🔸 Our Real-World Usage Patterns:'));
+console.info(chalk.green(`
 // 1. Vault Files with Complete Formatting
 Bun.inspect.table(
   mappedFiles,
@@ -248,8 +248,8 @@ Bun.inspect.table(
 );
 `));
 
-console.log(chalk.yellow('\n🔸 Official Basic Examples:'));
-console.log(chalk.gray(`
+console.info(chalk.yellow('\n🔸 Official Basic Examples:'));
+console.info(chalk.gray(`
 // Official documentation only shows basic usage
 Bun.inspect.table([
   { a: 1, b: 2, c: 3 }, 
@@ -266,7 +266,7 @@ Bun.inspect.table([
 // WHAT WE'VE MAPPED BEYOND OFFICIAL
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🏆 What We\'ve Mapped Beyond Official Documentation'));
+console.info(chalk.bold.cyan('\n🏆 What We\'ve Mapped Beyond Official Documentation'));
 
 const beyondOfficial = [
     {
@@ -311,47 +311,47 @@ const beyondOfficial = [
     }
 ];
 
-console.log(chalk.yellow('\n💡 Innovation Beyond Official:'));
+console.info(chalk.yellow('\n💡 Innovation Beyond Official:'));
 beyondOfficial.forEach(category => {
-    console.log(chalk.bold(`\n📂 ${category.category}`));
+    console.info(chalk.bold(`\n📂 ${category.category}`));
     category.items.forEach(item => {
-        console.log(chalk.gray(`   • ${item}`));
+        console.info(chalk.gray(`   • ${item}`));
     });
-    console.log(chalk.green(`   Value: ${category.value}`));
+    console.info(chalk.green(`   Value: ${category.value}`));
 });
 
 // =============================================================================
 // SUMMARY: MAPPED vs TYPED
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Summary: What\'s Mapped vs What\'s Typed'));
+console.info(chalk.bold.magenta('\n🎯 Summary: What\'s Mapped vs What\'s Typed'));
 
-console.log(chalk.bold.cyan('\n📋 What\'s Officially Typed:'));
-console.log(chalk.gray('• Basic function signature'));
-console.log(chalk.gray('• Simple array of objects'));
-console.log(chalk.gray('• Basic properties filtering'));
-console.log(chalk.gray('• Minimal colors option'));
-console.log(chalk.gray('• Generic examples only'));
+console.info(chalk.bold.cyan('\n📋 What\'s Officially Typed:'));
+console.info(chalk.gray('• Basic function signature'));
+console.info(chalk.gray('• Simple array of objects'));
+console.info(chalk.gray('• Basic properties filtering'));
+console.info(chalk.gray('• Minimal colors option'));
+console.info(chalk.gray('• Generic examples only'));
 
-console.log(chalk.bold.cyan('\n🏗️  What We\'ve Mapped:'));
-console.log(chalk.green('• Complete TypeScript interfaces'));
-console.log(chalk.green('• Vault-specific data structures'));
-console.log(chalk.green('• Production-ready formatting patterns'));
-console.log(chalk.green('• Complete options documentation'));
-console.log(chalk.green('• Real-world implementation examples'));
-console.log(chalk.green('• Performance optimization strategies'));
-console.log(chalk.green('• Width management integration'));
-console.log(chalk.green('• Error handling best practices'));
+console.info(chalk.bold.cyan('\n🏗️  What We\'ve Mapped:'));
+console.info(chalk.green('• Complete TypeScript interfaces'));
+console.info(chalk.green('• Vault-specific data structures'));
+console.info(chalk.green('• Production-ready formatting patterns'));
+console.info(chalk.green('• Complete options documentation'));
+console.info(chalk.green('• Real-world implementation examples'));
+console.info(chalk.green('• Performance optimization strategies'));
+console.info(chalk.green('• Width management integration'));
+console.info(chalk.green('• Error handling best practices'));
 
-console.log(chalk.bold.cyan('\n🚀 Key Differences:'));
-console.log(chalk.yellow('• Official: Basic function documentation'));
-console.log(chalk.green('• Ours: Complete ecosystem with practical applications'));
-console.log(chalk.yellow('• Official: Generic examples'));
-console.log(chalk.green('• Ours: Domain-specific vault implementations'));
-console.log(chalk.yellow('• Official: Minimal parameter coverage'));
-console.log(chalk.green('• Ours: Comprehensive options and use cases'));
-console.log(chalk.yellow('• Official: No integration patterns'));
-console.log(chalk.green('• Ours: Production-ready integration pipeline'));
+console.info(chalk.bold.cyan('\n🚀 Key Differences:'));
+console.info(chalk.yellow('• Official: Basic function documentation'));
+console.info(chalk.green('• Ours: Complete ecosystem with practical applications'));
+console.info(chalk.yellow('• Official: Generic examples'));
+console.info(chalk.green('• Ours: Domain-specific vault implementations'));
+console.info(chalk.yellow('• Official: Minimal parameter coverage'));
+console.info(chalk.green('• Ours: Comprehensive options and use cases'));
+console.info(chalk.yellow('• Official: No integration patterns'));
+console.info(chalk.green('• Ours: Production-ready integration pipeline'));
 
-console.log(chalk.bold.green('\n🎉 Complete Comparison Finished!'));
-console.log(chalk.gray('Our implementation provides comprehensive coverage far beyond official documentation.'));
+console.info(chalk.bold.green('\n🎉 Complete Comparison Finished!'));
+console.info(chalk.gray('Our implementation provides comprehensive coverage far beyond official documentation.'));

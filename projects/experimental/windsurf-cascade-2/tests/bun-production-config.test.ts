@@ -227,7 +227,7 @@ describe('BunProductionConfig - Production Features', () => {
       const opsPerMs = iterations / duration;
       
       expect(opsPerMs).toBeGreaterThan(1000); // Should be very fast
-      console.log(`Feature operations: ${opsPerMs.toFixed(0)} ops/ms`);
+      console.info(`Feature operations: ${opsPerMs.toFixed(0)} ops/ms`);
     });
     
     test('debug view generation is efficient', () => {
@@ -246,7 +246,7 @@ describe('BunProductionConfig - Production Features', () => {
       const viewsPerMs = iterations / duration;
       
       expect(viewsPerMs).toBeGreaterThan(100); // Should be reasonably fast
-      console.log(`Debug view generation: ${viewsPerMs.toFixed(0)} views/ms`);
+      console.info(`Debug view generation: ${viewsPerMs.toFixed(0)} views/ms`);
     });
   });
   

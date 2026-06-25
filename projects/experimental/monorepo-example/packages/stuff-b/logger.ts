@@ -31,7 +31,7 @@ export function getLogFileInfo(): { path: string; size: number; type: string } |
 
 export function log(level: LogLevel, msg: string, context?: Record<string, unknown>): void {
   const line = JSON.stringify({ level, msg, ts: Date.now(), ...context });
-  console.log(line);
+  console.info(line);
   if (fileSink) {
     fileSink.write(line + '\n');
   }

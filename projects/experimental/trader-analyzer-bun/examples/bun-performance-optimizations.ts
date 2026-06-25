@@ -22,14 +22,14 @@ import { hash } from "bun";
  * Showcasing faster buffer creation and string handling
  */
 export function demoNapiOptimizations() {
-  console.log("=== NAPI Performance Optimizations ===\n");
+  console.info("=== NAPI Performance Optimizations ===\n");
 
   // Demonstrate faster buffer creation (30% improvement)
-  console.log("Buffer creation optimizations:");
-  console.log("- Uses uninitialized memory for large allocations");
-  console.log("- Matches Node.js behavior for compatibility");
-  console.log("- napi_create_double encoding 100x faster for node-sdl");
-  console.log("- Sliced string handling: No longer clones strings when encoding allows it\n");
+  console.info("Buffer creation optimizations:");
+  console.info("- Uses uninitialized memory for large allocations");
+  console.info("- Matches Node.js behavior for compatibility");
+  console.info("- napi_create_double encoding 100x faster for node-sdl");
+  console.info("- Sliced string handling: No longer clones strings when encoding allows it\n");
 
   // Example: Large buffer operations
   const start = performance.now();
@@ -39,8 +39,8 @@ export function demoNapiOptimizations() {
   }
   const end = performance.now();
 
-  console.log(`Created 1000 x 1KB buffers in ${(end - start).toFixed(3)}ms`);
-  console.log("✅ NAPI buffer optimizations active\n");
+  console.info(`Created 1000 x 1KB buffers in ${(end - start).toFixed(3)}ms`);
+  console.info("✅ NAPI buffer optimizations active\n");
 }
 
 /**
@@ -48,13 +48,13 @@ export function demoNapiOptimizations() {
  * Runtime-selected optimal SIMD implementations
  */
 export function demoSimdOptimizations() {
-  console.log("=== SIMD Optimizations (Highway Library) ===\n");
+  console.info("=== SIMD Optimizations (Highway Library) ===\n");
 
-  console.log("Highway SIMD library features:");
-  console.log("- Runtime-selected optimal SIMD implementations");
-  console.log("- Narrows performance gap between baseline and non-baseline builds");
-  console.log("- Automatic CPU feature detection");
-  console.log("- Cross-platform SIMD acceleration\n");
+  console.info("Highway SIMD library features:");
+  console.info("- Runtime-selected optimal SIMD implementations");
+  console.info("- Narrows performance gap between baseline and non-baseline builds");
+  console.info("- Automatic CPU feature detection");
+  console.info("- Cross-platform SIMD acceleration\n");
 
   // Demonstrate SIMD-accelerated operations
   const largeArray = new Float32Array(100000);
@@ -69,9 +69,9 @@ export function demoSimdOptimizations() {
   }
   const end = performance.now();
 
-  console.log(`Processed ${largeArray.length.toLocaleString()} float operations in ${(end - start).toFixed(3)}ms`);
-  console.log(`Result: ${sum.toFixed(2)}`);
-  console.log("✅ SIMD optimizations active\n");
+  console.info(`Processed ${largeArray.length.toLocaleString()} float operations in ${(end - start).toFixed(3)}ms`);
+  console.info(`Result: ${sum.toFixed(2)}`);
+  console.info("✅ SIMD optimizations active\n");
 }
 
 /**
@@ -79,26 +79,26 @@ export function demoSimdOptimizations() {
  * Faster number handling for whole numbers from APIs
  */
 export function demoNumberOptimizations() {
-  console.log("=== Tagged 32-bit Integer Optimizations ===\n");
+  console.info("=== Tagged 32-bit Integer Optimizations ===\n");
 
-  console.log("Number handling improvements:");
-  console.log("- Tagged 32-bit integers for whole numbers from APIs");
-  console.log("- fs.statSync(), performance.now() return optimized integers");
-  console.log("- Reduced memory overhead and improved performance");
-  console.log("- Number.isFinite() ~1.6x faster (C++ implementation)");
-  console.log("- Number.isSafeInteger ~16% faster (JIT compilation)\n");
+  console.info("Number handling improvements:");
+  console.info("- Tagged 32-bit integers for whole numbers from APIs");
+  console.info("- fs.statSync(), performance.now() return optimized integers");
+  console.info("- Reduced memory overhead and improved performance");
+  console.info("- Number.isFinite() ~1.6x faster (C++ implementation)");
+  console.info("- Number.isSafeInteger ~16% faster (JIT compilation)\n");
 
   // Demonstrate number optimizations
   const testValues = [1, 0, -1, 42, 1000000, Math.PI];
 
-  console.log("Number handling test:");
+  console.info("Number handling test:");
   for (const value of testValues) {
     const isFinite = Number.isFinite(value);
     const isSafeInt = Number.isSafeInteger(value);
-    console.log(`  ${value}: isFinite=${isFinite}, isSafeInteger=${isSafeInt}`);
+    console.info(`  ${value}: isFinite=${isFinite}, isSafeInteger=${isSafeInt}`);
   }
 
-  console.log("✅ Tagged integer optimizations active\n");
+  console.info("✅ Tagged integer optimizations active\n");
 }
 
 /**
@@ -106,26 +106,26 @@ export function demoNumberOptimizations() {
  * Showcasing reduced memory usage across various APIs
  */
 export function demoMemoryOptimizations() {
-  console.log("=== Memory Usage Improvements ===\n");
+  console.info("=== Memory Usage Improvements ===\n");
 
-  console.log("Memory optimizations:");
-  console.log("- fs.stat uses less memory and is faster");
-  console.log("- fs.readdir: Optimized Dirent class with withFileTypes");
-  console.log("- Bun.file().stream(): Lower memory for large data/long streams");
-  console.log("- Bun.SQL: Fixed memory leak, improved large query handling");
-  console.log("- Improved String GC reporting accuracy\n");
+  console.info("Memory optimizations:");
+  console.info("- fs.stat uses less memory and is faster");
+  console.info("- fs.readdir: Optimized Dirent class with withFileTypes");
+  console.info("- Bun.file().stream(): Lower memory for large data/long streams");
+  console.info("- Bun.SQL: Fixed memory leak, improved large query handling");
+  console.info("- Improved String GC reporting accuracy\n");
 
   // Demonstrate streaming optimization
   const largeData = "x".repeat(1000000); // 1MB string
-  console.log(`Created ${largeData.length.toLocaleString()} character string`);
+  console.info(`Created ${largeData.length.toLocaleString()} character string`);
 
   const start = performance.now();
   const hashValue = hash.rapidhash(largeData);
   const end = performance.now();
 
-  console.log(`Hashed 1MB data in ${(end - start).toFixed(3)}ms`);
-  console.log(`Hash: ${hashValue.toString().slice(0, 16)}...`);
-  console.log("✅ Memory optimizations active\n");
+  console.info(`Hashed 1MB data in ${(end - start).toFixed(3)}ms`);
+  console.info(`Hash: ${hashValue.toString().slice(0, 16)}...`);
+  console.info("✅ Memory optimizations active\n");
 }
 
 /**
@@ -133,14 +133,14 @@ export function demoMemoryOptimizations() {
  * Native C++ implementations for better performance
  */
 export function demoArrayOptimizations() {
-  console.log("=== Array Method Optimizations ===\n");
+  console.info("=== Array Method Optimizations ===\n");
 
-  console.log("Array performance improvements:");
-  console.log("- Array.prototype.includes 1.2x to 2.8x faster (native C++)");
-  console.log("- Array.prototype.includes ~4.7x faster with Int32 arrays");
-  console.log("- Array.prototype.indexOf ~5.2x faster with Int32 arrays");
-  console.log("- Polymorphic array access optimizations");
-  console.log("- Float32Array, Float64Array, Array operations faster\n");
+  console.info("Array performance improvements:");
+  console.info("- Array.prototype.includes 1.2x to 2.8x faster (native C++)");
+  console.info("- Array.prototype.includes ~4.7x faster with Int32 arrays");
+  console.info("- Array.prototype.indexOf ~5.2x faster with Int32 arrays");
+  console.info("- Polymorphic array access optimizations");
+  console.info("- Float32Array, Float64Array, Array operations faster\n");
 
   // Demonstrate includes/indexOf optimizations
   const testArray = new Int32Array(100000);
@@ -160,9 +160,9 @@ export function demoArrayOptimizations() {
   const indexOfResult = testArray.indexOf(searchValue);
   const indexOfEnd = performance.now();
 
-  console.log(`Int32Array.includes(): ${(includesEnd - includesStart).toFixed(6)}ms - Found: ${includesResult}`);
-  console.log(`Int32Array.indexOf(): ${(indexOfEnd - indexOfStart).toFixed(6)}ms - Index: ${indexOfResult}`);
-  console.log("✅ Array method optimizations active\n");
+  console.info(`Int32Array.includes(): ${(includesEnd - includesStart).toFixed(6)}ms - Found: ${includesResult}`);
+  console.info(`Int32Array.indexOf(): ${(indexOfEnd - indexOfStart).toFixed(6)}ms - Index: ${indexOfResult}`);
+  console.info("✅ Array method optimizations active\n");
 }
 
 /**
@@ -170,27 +170,27 @@ export function demoArrayOptimizations() {
  * Improved NaN handling and CPU-specific optimizations
  */
 export function demoNanAndArchitectureOptimizations() {
-  console.log("=== NaN Handling & Architecture Optimizations ===\n");
+  console.info("=== NaN Handling & Architecture Optimizations ===\n");
 
-  console.log("Advanced optimizations:");
-  console.log("- Improved NaN handling: Lower globalThis.isNaN to Number.isNaN");
-  console.log("- NaN constant folding improvements (JavaScriptCore upgrade)");
-  console.log("- convertUInt32ToDouble optimized for ARM64 and x64");
-  console.log("- convertUInt32ToFloat optimized for ARM64 and x64\n");
+  console.info("Advanced optimizations:");
+  console.info("- Improved NaN handling: Lower globalThis.isNaN to Number.isNaN");
+  console.info("- NaN constant folding improvements (JavaScriptCore upgrade)");
+  console.info("- convertUInt32ToDouble optimized for ARM64 and x64");
+  console.info("- convertUInt32ToFloat optimized for ARM64 and x64\n");
 
   // Demonstrate NaN handling
   const testValues = [1, 0, -1, Infinity, -Infinity, NaN, "not a number"];
 
-  console.log("NaN detection comparison:");
+  console.info("NaN detection comparison:");
   for (const value of testValues) {
     const globalIsNaN = globalThis.isNaN(value);
     const numberIsNaN = Number.isNaN(value);
     const matches = globalIsNaN === numberIsNaN ? "✓" : "✗";
 
-    console.log(`  ${String(value).padEnd(12)} | globalThis.isNaN: ${globalIsNaN} | Number.isNaN: ${numberIsNaN} ${matches}`);
+    console.info(`  ${String(value).padEnd(12)} | globalThis.isNaN: ${globalIsNaN} | Number.isNaN: ${numberIsNaN} ${matches}`);
   }
 
-  console.log("\n✅ NaN and architecture optimizations active\n");
+  console.info("\n✅ NaN and architecture optimizations active\n");
 }
 
 /**
@@ -198,13 +198,13 @@ export function demoNanAndArchitectureOptimizations() {
  * Faster server reload and HTTP method handling
  */
 export function demoServerOptimizations() {
-  console.log("=== Server & HTTP Optimizations ===\n");
+  console.info("=== Server & HTTP Optimizations ===\n");
 
-  console.log("Server performance improvements:");
-  console.log("- server.reload() 30% faster (improved hot reload)");
-  console.log("- TextDecoder initialization 30% faster");
-  console.log("- request.method getter micro-optimized");
-  console.log("- Caches 34 HTTP methods as common strings\n");
+  console.info("Server performance improvements:");
+  console.info("- server.reload() 30% faster (improved hot reload)");
+  console.info("- TextDecoder initialization 30% faster");
+  console.info("- request.method getter micro-optimized");
+  console.info("- Caches 34 HTTP methods as common strings\n");
 
   // Simulate HTTP method caching
   const httpMethods = [
@@ -215,17 +215,17 @@ export function demoServerOptimizations() {
     "MERGE", "BASELINE-CONTROL", "MKACTIVITY", "ORDERPATCH", "ACL"
   ];
 
-  console.log("HTTP methods (first 10):");
-  console.log(httpMethods.slice(0, 10).join(", "));
-  console.log(`Total cached methods: ${httpMethods.length}`);
-  console.log("✅ Server and HTTP optimizations active\n");
+  console.info("HTTP methods (first 10):");
+  console.info(httpMethods.slice(0, 10).join(", "));
+  console.info(`Total cached methods: ${httpMethods.length}`);
+  console.info("✅ Server and HTTP optimizations active\n");
 }
 
 /**
  * Run all optimization demos
  */
 export function runAllOptimizationDemos() {
-  console.log("🚀 Bun Performance Optimizations - Complete Showcase\n");
+  console.info("🚀 Bun Performance Optimizations - Complete Showcase\n");
 
   demoNapiOptimizations();
   demoSimdOptimizations();
@@ -235,15 +235,15 @@ export function runAllOptimizationDemos() {
   demoNanAndArchitectureOptimizations();
   demoServerOptimizations();
 
-  console.log("🎯 Bun delivers comprehensive performance optimizations!");
-  console.log("   • NAPI: 30% faster buffers, 100x faster node-sdl");
-  console.log("   • SIMD: Runtime-selected optimal implementations");
-  console.log("   • Memory: Reduced usage across fs, streams, SQL");
-  console.log("   • Arrays: 1.2x-5.2x faster native methods");
-  console.log("   • Numbers: Tagged integers, faster isFinite/isSafeInteger");
-  console.log("   • Server: 30% faster reload, optimized HTTP");
-  console.log("   • Architecture: ARM64/x64 specific optimizations");
-  console.log("\n💪 Production-ready performance across the entire runtime!");
+  console.info("🎯 Bun delivers comprehensive performance optimizations!");
+  console.info("   • NAPI: 30% faster buffers, 100x faster node-sdl");
+  console.info("   • SIMD: Runtime-selected optimal implementations");
+  console.info("   • Memory: Reduced usage across fs, streams, SQL");
+  console.info("   • Arrays: 1.2x-5.2x faster native methods");
+  console.info("   • Numbers: Tagged integers, faster isFinite/isSafeInteger");
+  console.info("   • Server: 30% faster reload, optimized HTTP");
+  console.info("   • Architecture: ARM64/x64 specific optimizations");
+  console.info("\n💪 Production-ready performance across the entire runtime!");
 }
 
 // Allow running as standalone script

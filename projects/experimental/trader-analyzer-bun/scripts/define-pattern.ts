@@ -46,10 +46,10 @@ export class PatternDefiner {
     const existing = this.patterns.findIndex((p) => p.name === pattern.name);
     if (existing >= 0) {
       this.patterns[existing] = pattern;
-      console.log(`✅ Updated pattern: ${pattern.name}`);
+      console.info(`✅ Updated pattern: ${pattern.name}`);
     } else {
       this.patterns.push(pattern);
-      console.log(`✅ Defined pattern: ${pattern.name}`);
+      console.info(`✅ Defined pattern: ${pattern.name}`);
     }
   }
 
@@ -58,23 +58,23 @@ export class PatternDefiner {
    */
   async savePatterns(): Promise<void> {
     await Bun.write(this.patternsFile, JSON.stringify(this.patterns, null, 2));
-    console.log(`✅ Saved ${this.patterns.length} patterns to ${this.patternsFile}`);
+    console.info(`✅ Saved ${this.patterns.length} patterns to ${this.patternsFile}`);
   }
 
   /**
    * List all patterns
    */
   listPatterns(): void {
-    console.log(`\n📋 Defined Patterns (${this.patterns.length}):\n`);
+    console.info(`\n📋 Defined Patterns (${this.patterns.length}):\n`);
     for (const pattern of this.patterns) {
-      console.log(`  ${pattern.name}`);
-      console.log(`    Pattern: ${pattern.pattern}`);
-      console.log(`    Description: ${pattern.description}`);
-      console.log(`    Suggestion: ${pattern.suggestion}`);
+      console.info(`  ${pattern.name}`);
+      console.info(`    Pattern: ${pattern.pattern}`);
+      console.info(`    Description: ${pattern.description}`);
+      console.info(`    Suggestion: ${pattern.suggestion}`);
       if (pattern.severity) {
-        console.log(`    Severity: ${pattern.severity}`);
+        console.info(`    Severity: ${pattern.severity}`);
       }
-      console.log();
+      console.info();
     }
   }
 }

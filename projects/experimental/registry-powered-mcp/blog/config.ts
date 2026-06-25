@@ -84,7 +84,7 @@ export class DynamicConfigManager {
         };
 
         const loadTime = performance.now() - startTime;
-        console.log(`📋 Config loaded from ${this.configPath} (${loadTime.toFixed(2)}ms)`);
+        console.info(`📋 Config loaded from ${this.configPath} (${loadTime.toFixed(2)}ms)`);
       }
     } catch (error) {
       console.warn(`⚠️  Config load failed, using defaults: ${error}`);
@@ -110,7 +110,7 @@ export class DynamicConfigManager {
         (async () => {
           const startTime = performance.now();
 
-          console.log(`🔄 Config change detected: ${filename}`);
+          console.info(`🔄 Config change detected: ${filename}`);
           await this.YAML.parse();
 
           // Notify subscribers
@@ -123,12 +123,12 @@ export class DynamicConfigManager {
           }
 
           const propagationTime = performance.now() - startTime;
-          console.log(`   Propagated to ${this.subscribers.size} subscribers (${propagationTime.toFixed(2)}ms)`);
+          console.info(`   Propagated to ${this.subscribers.size} subscribers (${propagationTime.toFixed(2)}ms)`);
         })();
       }
     });
 
-    console.log(`👁️  Watching config: ${this.configPath}`);
+    console.info(`👁️  Watching config: ${this.configPath}`);
   }
 
   /**
@@ -138,7 +138,7 @@ export class DynamicConfigManager {
     if (this.watcher) {
       this.watcher.close();
       this.watcher = null;
-      console.log('🛑 Config watcher stopped');
+      console.info('🛑 Config watcher stopped');
     }
   }
 
@@ -172,7 +172,7 @@ export class DynamicConfigManager {
 
     // Persist to file
     await Bun.write(this.configPath, this.stringifyTOML(this.config));
-    console.log(`💾 Config saved to ${this.configPath}`);
+    console.info(`💾 Config saved to ${this.configPath}`);
 
     // Notify subscribers
     for (const subscriber of this.subscribers) {

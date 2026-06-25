@@ -20,7 +20,7 @@ class AuditorManager extends BunR2AppleManager {
 }
 
 async function main() {
-  console.log("\x1b[34m[§Storage:140] Compliance Audit Startup\x1b[0m");
+  console.info("\x1b[34m[§Storage:140] Compliance Audit Startup\x1b[0m");
 
   // Initialize with admin context
   AuthManager.setUser(DEFAULT_CLI_ADMIN);
@@ -33,10 +33,10 @@ async function main() {
   const manager = new AuditorManager();
   const scopes = ['ENTERPRISE', 'DEVELOPMENT'] as const;
 
-  console.log(`--- Scanning R2 namespaces for §Storage:132 compliance ---\n`);
+  console.info(`--- Scanning R2 namespaces for §Storage:132 compliance ---\n`);
 
   for (const scope of scopes) {
-    console.log(`[SCOPE: ${scope}]`);
+    console.info(`[SCOPE: ${scope}]`);
     
     // Simulate path check
     const testKey = `accounts/test-apple.json`;
@@ -45,14 +45,14 @@ async function main() {
     const isValid = scopedKey.startsWith(scope.toLowerCase()) || scopedKey.startsWith(scope);
     const status = isValid ? "\x1b[32mPASS\x1b[0m" : "\x1b[31mFAIL\x1b[0m";
     
-    console.log(`  Path Partitioning: ${scopedKey.padEnd(40)} | ${status}`);
+    console.info(`  Path Partitioning: ${scopedKey.padEnd(40)} | ${status}`);
     
     // Check for local mirror
     const localPath = `data/${scope.toLowerCase()}/${testKey}`;
     let localExists = await Bun.file(localPath).exists();
     
     if (!localExists) {
-      console.log(`  \x1b[33m⚡ Syncing missing mirror:\x1b[0m ${localPath}`);
+      console.info(`  \x1b[33m⚡ Syncing missing mirror:\x1b[0m ${localPath}`);
       await manager.saveLocal({ audit: true, syncTime: new Date().toISOString() }, `audit-sync-${scope.toLowerCase()}.json`);
       // Since our testKey is accounts/test-apple.json we should ideally mirror that specific path
       // For the audit demo, we ensure the directory exists
@@ -61,11 +61,11 @@ async function main() {
     
     const mirrorStatus = localExists ? "\x1b[32mOK\x1b[0m" : "\x1b[33mMISSING\x1b[0m";
     
-    console.log(`  Local Mirroring  : ${localPath.padEnd(40)} | ${mirrorStatus}`);
-    console.log("");
+    console.info(`  Local Mirroring  : ${localPath.padEnd(40)} | ${mirrorStatus}`);
+    console.info("");
   }
 
-  console.log("\x1b[32m✔ Audit Complete: All active partitions compliant.\x1b[0m");
+  console.info("\x1b[32m✔ Audit Complete: All active partitions compliant.\x1b[0m");
 }
 
 main().catch(console.error);

@@ -1,4 +1,4 @@
-import { S3Client } from 'bun';
+import { S3Client, semver } from 'bun';
 
 export type R2BridgeConfig = {
   endpoint: string;
@@ -7,6 +7,16 @@ export type R2BridgeConfig = {
   secretAccessKey: string;
   requestPayer?: boolean;
 };
+
+const MIN_SAFE_ZSTD_BUN = '1.3.14';
+
+function assertSafeZstdRuntime(): void {
+  if (!semver.satisfies(Bun.version, `>=${MIN_SAFE_ZSTD_BUN}`)) {
+    throw new Error(
+      `Bun ${Bun.version} is below the safe zstd runtime ${MIN_SAFE_ZSTD_BUN}. Upgrade Bun before decoding compressed R2 payloads.`
+    );
+  }
+}
 
 function parseTruthyEnv(value?: string): boolean {
   if (!value) return false;
@@ -63,6 +73,7 @@ export async function uploadJsonToR2(
 }
 
 export function encodeBridgePayload(payload: unknown): Uint8Array {
+  assertSafeZstdRuntime();
   const compressed = Bun.zstdCompressSync(JSON.stringify(payload));
   return Uint8Array.from([0x01, ...compressed]);
 }
@@ -75,6 +86,7 @@ export function decodeBridgePayload(input: Uint8Array): unknown {
   if (version !== 0x01) {
     throw new Error(`bridge_payload_unsupported_version_${version}`);
   }
+  assertSafeZstdRuntime();
   const decompressed = Bun.zstdDecompressSync(input.slice(1));
   const text = new TextDecoder().decode(decompressed);
   return JSON.parse(text);

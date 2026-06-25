@@ -141,7 +141,7 @@ async function main() {
 		} else if (arg === "--summary") {
 			options.summary = true;
 		} else if (arg === "--help" || arg === "-h") {
-			console.log(`
+			console.info(`
 Changelog CLI Tool
 
 Usage:
@@ -176,7 +176,7 @@ Examples:
 		});
 
 		if (entries.length === 0) {
-			console.log("No changelog entries found.");
+			console.info("No changelog entries found.");
 			process.exit(0);
 		}
 

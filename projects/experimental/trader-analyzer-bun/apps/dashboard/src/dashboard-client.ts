@@ -33,7 +33,7 @@ export class DashboardClient {
 			this.ws = new WebSocket(wsUrl);
 
 			this.ws.onopen = () => {
-				console.log('Dashboard: WebSocket connected');
+				console.info('Dashboard: WebSocket connected');
 				this.reconnectAttempts = 0;
 			};
 
@@ -46,7 +46,7 @@ export class DashboardClient {
 			};
 
 			this.ws.onclose = () => {
-				console.log('Dashboard: WebSocket disconnected');
+				console.info('Dashboard: WebSocket disconnected');
 				this.handleReconnect();
 			};
 		} catch (error) {
@@ -95,7 +95,7 @@ export class DashboardClient {
 		const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
 		setTimeout(() => {
-			console.log(`Dashboard: Reconnecting (attempt ${this.reconnectAttempts})...`);
+			console.info(`Dashboard: Reconnecting (attempt ${this.reconnectAttempts})...`);
 			this.setupWebSocket();
 		}, delay);
 	}
@@ -131,6 +131,6 @@ export class DashboardClient {
 	private setupGraphVisualization(): void {
 		// Graph visualization setup
 		// This would integrate with your graph visualization library
-		console.log('Dashboard: Graph visualization initialized');
+		console.info('Dashboard: Graph visualization initialized');
 	}
 }

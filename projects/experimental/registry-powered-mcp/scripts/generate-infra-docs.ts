@@ -18,49 +18,49 @@ import {
   generateInfraMatrix,
 } from "../packages/core/src/infra/constants";
 
-console.log("# Infrastructure Registry\n");
-console.log(`**Account:** \`${CLOUDFLARE.ACCOUNT_ID}\` (${CLOUDFLARE.EMAIL})\n`);
+console.info("# Infrastructure Registry\n");
+console.info(`**Account:** \`${CLOUDFLARE.ACCOUNT_ID}\` (${CLOUDFLARE.EMAIL})\n`);
 
-console.log("## Zones\n");
-console.log("| Zone | ID | Status |");
-console.log("|:-----|:---|:-------|");
+console.info("## Zones\n");
+console.info("| Zone | ID | Status |");
+console.info("|:-----|:---|:-------|");
 Object.values(ZONES).forEach((z) => {
-  console.log(`| ${z.name} | \`${z.id}\` | ${z.status.toUpperCase()} |`);
+  console.info(`| ${z.name} | \`${z.id}\` | ${z.status.toUpperCase()} |`);
 });
 
-console.log("\n## Domains\n");
-console.log(generateDomainTable());
+console.info("\n## Domains\n");
+console.info(generateDomainTable());
 
-console.log("\n## Workers\n");
-console.log(generateWorkerTable());
+console.info("\n## Workers\n");
+console.info(generateWorkerTable());
 
-console.log("\n## R2 Buckets\n");
-console.log(generateR2Table());
+console.info("\n## R2 Buckets\n");
+console.info(generateR2Table());
 
-console.log("\n## R2 Assets\n");
+console.info("\n## R2 Assets\n");
 Object.entries(R2_ASSETS).forEach(([name, asset]) => {
-  console.log(`\n### ${name}\n`);
-  console.log("| Key | Type | Description |");
-  console.log("|:----|:-----|:------------|");
+  console.info(`\n### ${name}\n`);
+  console.info("| Key | Type | Description |");
+  console.info("|:----|:-----|:------------|");
   asset.files.forEach((f) => {
-    console.log(`| \`${f.key}\` | ${f.type} | ${f.description} |`);
+    console.info(`| \`${f.key}\` | ${f.type} | ${f.description} |`);
   });
 });
 
-console.log("\n## Golden Matrix\n");
-console.log(generateInfraMatrix());
+console.info("\n## Golden Matrix\n");
+console.info(generateInfraMatrix());
 
-console.log("\n## Quick Reference URLs\n");
-console.log("| Name | URL |");
-console.log("|:-----|:----|");
+console.info("\n## Quick Reference URLs\n");
+console.info("| Name | URL |");
+console.info("|:-----|:----|");
 Object.values(DOMAINS).forEach((d) => {
-  console.log(`| **${d.fqdn}** | ${d.urls.production} |`);
-  console.log(`| └─ Health | ${d.urls.health} |`);
-  console.log(`| └─ RSS | ${d.urls.rss} |`);
+  console.info(`| **${d.fqdn}** | ${d.urls.production} |`);
+  console.info(`| └─ Health | ${d.urls.health} |`);
+  console.info(`| └─ RSS | ${d.urls.rss} |`);
 });
 Object.values(WORKERS).forEach((w) => {
-  console.log(`| **${w.name}** (dev) | ${w.workersDevUrl} |`);
+  console.info(`| **${w.name}** (dev) | ${w.workersDevUrl} |`);
 });
 Object.values(R2_BUCKETS).forEach((b) => {
-  console.log(`| **${b.name}** (public) | ${b.publicUrl} |`);
+  console.info(`| **${b.name}** (public) | ${b.publicUrl} |`);
 });

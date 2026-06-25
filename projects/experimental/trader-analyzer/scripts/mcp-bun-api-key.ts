@@ -51,10 +51,10 @@ async function setBunApiKey(apiKey: string): Promise<boolean> {
 			apiKey,
 		);
 
-		console.log("✅ Bun MCP API key stored securely using Bun.secrets");
-		console.log(`   Service: ${SERVICE}`);
-		console.log(`   Name: ${SECRET_NAME}`);
-		console.log(`   Storage: OS-native credential storage (macOS Keychain, Linux libsecret, Windows Credential Manager)`);
+		console.info("✅ Bun MCP API key stored securely using Bun.secrets");
+		console.info(`   Service: ${SERVICE}`);
+		console.info(`   Name: ${SECRET_NAME}`);
+		console.info(`   Storage: OS-native credential storage (macOS Keychain, Linux libsecret, Windows Credential Manager)`);
 		return true;
 	} catch (error) {
 		console.error("❌ Error storing API key:", error);
@@ -68,7 +68,7 @@ async function setBunApiKey(apiKey: string): Promise<boolean> {
 async function verifyApiKey(): Promise<boolean> {
 	const apiKey = await getBunApiKey();
 	if (!apiKey) {
-		console.log("ℹ️  No API key configured");
+		console.info("ℹ️  No API key configured");
 		return false;
 	}
 
@@ -77,9 +77,9 @@ async function verifyApiKey(): Promise<boolean> {
 		? `${apiKey.slice(0, 4)}${"*".repeat(apiKey.length - 8)}${apiKey.slice(-4)}`
 		: "*".repeat(apiKey.length);
 
-	console.log("✅ API key found:");
-	console.log(`   Masked: ${masked}`);
-	console.log(`   Length: ${apiKey.length} characters`);
+	console.info("✅ API key found:");
+	console.info(`   Masked: ${masked}`);
+	console.info(`   Length: ${apiKey.length} characters`);
 	return true;
 }
 
@@ -92,7 +92,7 @@ async function deleteApiKey(): Promise<boolean> {
 			service: SERVICE,
 			name: SECRET_NAME,
 		});
-		console.log("✅ Bun MCP API key deleted");
+		console.info("✅ Bun MCP API key deleted");
 		return true;
 	} catch (error) {
 		console.error("❌ Error deleting API key:", error);
@@ -114,14 +114,14 @@ async function main() {
 				const masked = apiKey.length > 8 
 					? `${apiKey.slice(0, 4)}${"*".repeat(apiKey.length - 8)}${apiKey.slice(-4)}`
 					: "*".repeat(apiKey.length);
-				console.log(`✅ Bun MCP API key configured`);
-				console.log(`   Masked: ${masked}`);
-				console.log(`   Length: ${apiKey.length} characters`);
-				console.log(`\n   Retrieved using: Bun.secrets.get({ service: "${SERVICE}", name: "${SECRET_NAME}" })`);
+				console.info(`✅ Bun MCP API key configured`);
+				console.info(`   Masked: ${masked}`);
+				console.info(`   Length: ${apiKey.length} characters`);
+				console.info(`\n   Retrieved using: Bun.secrets.get({ service: "${SERVICE}", name: "${SECRET_NAME}" })`);
 			} else {
-				console.log("ℹ️  No Bun MCP API key configured");
-				console.log("\n   To set an API key:");
-				console.log(`   bun run scripts/mcp-bun-api-key.ts set <your-api-key>`);
+				console.info("ℹ️  No Bun MCP API key configured");
+				console.info("\n   To set an API key:");
+				console.info(`   bun run scripts/mcp-bun-api-key.ts set <your-api-key>`);
 			}
 			break;
 		}
@@ -135,9 +135,9 @@ async function main() {
 			const apiKey = args[1];
 			const success = await setBunApiKey(apiKey);
 			if (success) {
-				console.log("\n   The API key is now stored securely and will be automatically");
-				console.log("   loaded by the NEXUS MCP server when it starts.");
-				console.log("\n   To verify: bun run scripts/mcp-bun-api-key.ts get");
+				console.info("\n   The API key is now stored securely and will be automatically");
+				console.info("   loaded by the NEXUS MCP server when it starts.");
+				console.info("\n   To verify: bun run scripts/mcp-bun-api-key.ts get");
 			} else {
 				process.exit(1);
 			}
@@ -162,7 +162,7 @@ async function main() {
 		case "--help":
 		case "-h":
 		default: {
-			console.log(`
+			console.info(`
 🔐 Bun MCP API Key Management
 
 Commands:

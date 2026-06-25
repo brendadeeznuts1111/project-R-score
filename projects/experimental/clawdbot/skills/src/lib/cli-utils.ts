@@ -299,7 +299,7 @@ export function createSpinner(message: string) {
       }
       process.stdout.write(`\r${" ".repeat(message.length + 3)}\r`);
       if (finalMessage) {
-        console.log(finalMessage);
+        console.info(finalMessage);
       }
     },
     succeed(msg?: string) {

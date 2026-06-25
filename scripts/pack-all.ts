@@ -2,34 +2,35 @@
 /**
  * @fileoverview Pack all workspace packages using bun pm pack
  * @module scripts/pack-all
- * 
+ *
  * @description
  * Creates tarball packages for all workspace packages using Bun's pack command.
  * Outputs to ./dist/packs/ directory.
- * 
+ *
  * @example
  * ```bash
  * bun run pack:all
  * ```
- * 
+ *
  * @see {@link https://bun.sh/docs/cli/pm} Bun Package Manager
  * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
-import { $ } from "bun";
-import { Glob } from "bun";
-import { mkdir } from "node:fs/promises";
+import { $ } from 'bun';
+import { Glob } from 'bun';
+import { mkdir } from 'node:fs/promises';
 
 /** Output directory for packed packages */
-const PACKS_DIR = "./dist/packs";
+const PACKS_DIR = './dist/packs';
 
 /** Registry URL for FactoryWager packages */
-const REGISTRY_URL = process.env.REGISTRY_URL || "https://registry.factory-wager.com";
+const REGISTRY_URL = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** R2 bucket URL for package storage */
-const R2_BUCKET_URL = process.env.R2_BUCKET_URL || 
-  "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry";
+const R2_BUCKET_URL =
+  process.env.R2_BUCKET_URL ||
+  'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry';
 
 /**
  * Pack a single package
@@ -38,7 +39,7 @@ const R2_BUCKET_URL = process.env.R2_BUCKET_URL ||
  */
 async function packPackage(dir: string, name: string): Promise<boolean> {
   try {
-    console.log(`Packing ${name}...`);
+    console.info(`Packing ${name}...`);
     await $`cd ${dir} && bun pm pack --destination ../../dist/packs`;
     return true;
   } catch (error) {
@@ -51,30 +52,30 @@ async function packPackage(dir: string, name: string): Promise<boolean> {
  * Main pack function
  */
 async function main(): Promise<void> {
-  console.log("📦 Packing all workspace packages...\n");
-  console.log(`   Registry: ${REGISTRY_URL}`);
-  console.log(`   R2 Store: ${R2_BUCKET_URL}`);
-  console.log(`   Output:   ${PACKS_DIR}\n`);
+  console.info('📦 Packing all workspace packages...\n');
+  console.info(`   Registry: ${REGISTRY_URL}`);
+  console.info(`   R2 Store: ${R2_BUCKET_URL}`);
+  console.info(`   Output:   ${PACKS_DIR}\n`);
 
   await mkdir(PACKS_DIR, { recursive: true });
 
-  const glob = new Glob("*/package.json");
-  const packages = [...glob.scanSync({ cwd: "." })];
+  const glob = new Glob('*/package.json');
+  const packages = [...glob.scanSync({ cwd: '.' })];
 
   let packedCount = 0;
 
   // Pack root package first
   try {
-    console.log("Packing root package...");
+    console.info('Packing root package...');
     await $`bun pm pack --destination ${PACKS_DIR}`;
     packedCount++;
   } catch (error) {
-    console.error("  ✗ Root package failed");
+    console.error('  ✗ Root package failed');
   }
 
   // Pack workspace packages
   for (const pkgPath of packages) {
-    const dir = pkgPath.replace("/package.json", "");
+    const dir = pkgPath.replace('/package.json', '');
     try {
       const pkg = await Bun.file(pkgPath).json();
       if (!pkg.name || pkg.private) continue;
@@ -87,11 +88,13 @@ async function main(): Promise<void> {
     }
   }
 
-  console.log(`\n✅ Packed ${packedCount} packages to ${PACKS_DIR}/`);
-  console.log(`\n🚀 Next steps:`);
-  console.log(`   1. Verify packages: ls -la ${PACKS_DIR}/`);
-  console.log(`   2. Publish to registry: npm publish ${PACKS_DIR}/*.tgz --registry=${REGISTRY_URL}`);
-  console.log(`   3. Upload to R2: bun run r2:sync`);
+  console.info(`\n✅ Packed ${packedCount} packages to ${PACKS_DIR}/`);
+  console.info(`\n🚀 Next steps:`);
+  console.info(`   1. Verify packages: ls -la ${PACKS_DIR}/`);
+  console.info(
+    `   2. Publish to registry: npm publish ${PACKS_DIR}/*.tgz --registry=${REGISTRY_URL}`
+  );
+  console.info(`   3. Upload to R2: bun run r2:sync`);
 }
 
 await main();

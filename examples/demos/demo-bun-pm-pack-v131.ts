@@ -92,7 +92,7 @@ export class BunPackV131Demo {
    * Create temporary package structures for testing
    */
   async createDemoPackages(): Promise<void> {
-    console.log('🏗️  Creating demo package structures...');
+    console.info('🏗️  Creating demo package structures...');
     
     // Clean up and create temp directory
     await this.cleanup();
@@ -109,7 +109,7 @@ export class BunPackV131Demo {
       await Bun.write(`${packageDir}/lib/index.js`, new TextEncoder().encode(this.generateLibScript(configName)));
       await Bun.write(`${packageDir}/README.md`, new TextEncoder().encode(this.generateReadme(configName)));
       
-      console.log(`  ✅ Created ${configName} package`);
+      console.info(`  ✅ Created ${configName} package`);
     }
   }
 
@@ -117,10 +117,10 @@ export class BunPackV131Demo {
    * Test bun pm pack on each demo package
    */
   async testPackBehavior(): Promise<void> {
-    console.log('\n📦 Testing bun pm pack behavior...');
+    console.info('\n📦 Testing bun pm pack behavior...');
     
     for (const configName of Object.keys(demoConfigs)) {
-      console.log(`\n🔍 Testing ${configName}:`);
+      console.info(`\n🔍 Testing ${configName}:`);
       
       const packageDir = `${this.tempDir}/${configName}`;
       const result = await this.runPackCommand(packageDir);
@@ -133,85 +133,85 @@ export class BunPackV131Demo {
    * Demonstrate the key v1.3.1 improvements
    */
   demonstrateImprovements(): void {
-    console.log('\n🎯 Bun v1.3.1 `bun pm pack` Key Improvements:');
-    console.log('=' .repeat(60));
+    console.info('\n🎯 Bun v1.3.1 `bun pm pack` Key Improvements:');
+    console.info('=' .repeat(60));
     
-    console.log('\n1️⃣  ALWAYS INCLUDE "bin" FILES');
-    console.log('   📁 Files in "bin" field are now always included');
-    console.log('   ✅ Even when not listed in "files" array');
-    console.log('   🎯 Matches npm pack behavior exactly');
+    console.info('\n1️⃣  ALWAYS INCLUDE "bin" FILES');
+    console.info('   📁 Files in "bin" field are now always included');
+    console.info('   ✅ Even when not listed in "files" array');
+    console.info('   🎯 Matches npm pack behavior exactly');
     
-    console.log('\n2️⃣  ALWAYS INCLUDE "directories.bin"');
-    console.log('   📁 Directories in "directories.bin" are always included');
-    console.log('   ✅ Even when not listed in "files" array');
-    console.log('   🎯 Prevents missing CLI binaries in published tarballs');
+    console.info('\n2️⃣  ALWAYS INCLUDE "directories.bin"');
+    console.info('   📁 Directories in "directories.bin" are always included');
+    console.info('   ✅ Even when not listed in "files" array');
+    console.info('   🎯 Prevents missing CLI binaries in published tarballs');
     
-    console.log('\n3️⃣  SMART DEDUPLICATION');
-    console.log('   🔄 Deduplicates paths appearing in both "bin"/"directories.bin" and "files"');
-    console.log('   ✅ Prevents duplicate files in tarball');
-    console.log('   🎯 Optimizes package size');
+    console.info('\n3️⃣  SMART DEDUPLICATION');
+    console.info('   🔄 Deduplicates paths appearing in both "bin"/"directories.bin" and "files"');
+    console.info('   ✅ Prevents duplicate files in tarball');
+    console.info('   🎯 Optimizes package size');
     
-    console.log('\n4️⃣  BACKWARD COMPATIBILITY');
-    console.log('   🔄 Existing packages continue to work unchanged');
-    console.log('   ✅ Only adds missing files, never removes existing behavior');
-    console.log('   🎯 Safe upgrade for all existing packages');
+    console.info('\n4️⃣  BACKWARD COMPATIBILITY');
+    console.info('   🔄 Existing packages continue to work unchanged');
+    console.info('   ✅ Only adds missing files, never removes existing behavior');
+    console.info('   🎯 Safe upgrade for all existing packages');
   }
 
   /**
    * Show real-world impact examples
    */
   showRealWorldImpact(): void {
-    console.log('\n🌍 Real-World Impact:');
-    console.log('=' .repeat(40));
+    console.info('\n🌍 Real-World Impact:');
+    console.info('=' .repeat(40));
     
-    console.log('\n🔧 BEFORE v1.3.1 (The Problem):');
-    console.log('   ❌ CLI binaries missing from npm packages');
-    console.log('   ❌ "npm install my-tool" → command not found');
-    console.log('   ❌ Developers must remember to add bin/ to files array');
-    console.log('   ❌ Inconsistent behavior between bun and npm');
+    console.info('\n🔧 BEFORE v1.3.1 (The Problem):');
+    console.info('   ❌ CLI binaries missing from npm packages');
+    console.info('   ❌ "npm install my-tool" → command not found');
+    console.info('   ❌ Developers must remember to add bin/ to files array');
+    console.info('   ❌ Inconsistent behavior between bun and npm');
     
-    console.log('\n✅ AFTER v1.3.1 (The Solution):');
-    console.log('   ✅ CLI binaries always included automatically');
-    console.log('   ✅ "npm install my-tool" → works immediately');
-    console.log('   ✅ No need to manually add bin/ to files array');
-    console.log('   ✅ Perfect parity with npm pack behavior');
+    console.info('\n✅ AFTER v1.3.1 (The Solution):');
+    console.info('   ✅ CLI binaries always included automatically');
+    console.info('   ✅ "npm install my-tool" → works immediately');
+    console.info('   ✅ No need to manually add bin/ to files array');
+    console.info('   ✅ Perfect parity with npm pack behavior');
     
-    console.log('\n📊 Affected Package Types:');
-    console.log('   🛠️  CLI tools and utilities');
-    console.log('   📦 Build tools and bundlers');
-    console.log('   🔧 Development frameworks');
-    console.log('   📚 Documentation generators');
-    console.log('   🎯 Any package with executable binaries');
+    console.info('\n📊 Affected Package Types:');
+    console.info('   🛠️  CLI tools and utilities');
+    console.info('   📦 Build tools and bundlers');
+    console.info('   🔧 Development frameworks');
+    console.info('   📚 Documentation generators');
+    console.info('   🎯 Any package with executable binaries');
   }
 
   /**
    * Generate best practices recommendations
    */
   showBestPractices(): void {
-    console.log('\n📚 Best Practices for Package Authors:');
-    console.log('=' .repeat(45));
+    console.info('\n📚 Best Practices for Package Authors:');
+    console.info('=' .repeat(45));
     
-    console.log('\n✅ DO (Recommended):');
-    console.log('   • Define "bin" for CLI tools');
-    console.log('   • Use "directories.bin" for multiple binaries');
-    console.log('   • Keep "files" array for source files only');
-    console.log('   • Test with "bun pm pack --dry-run"');
+    console.info('\n✅ DO (Recommended):');
+    console.info('   • Define "bin" for CLI tools');
+    console.info('   • Use "directories.bin" for multiple binaries');
+    console.info('   • Keep "files" array for source files only');
+    console.info('   • Test with "bun pm pack --dry-run"');
     
-    console.log('\n⚠️  AVOID (No Longer Needed):');
-    console.log('   • Manually adding "bin/" to "files" array');
-    console.log('   • Worrying about missing CLI binaries');
-    console.log('   • Different configs for bun vs npm');
+    console.info('\n⚠️  AVOID (No Longer Needed):');
+    console.info('   • Manually adding "bin/" to "files" array');
+    console.info('   • Worrying about missing CLI binaries');
+    console.info('   • Different configs for bun vs npm');
     
-    console.log('\n🎯 Package.json Example:');
-    console.log('   {');
-    console.log('     "name": "my-cli-tool",');
-    console.log('     "bin": {');
-    console.log('       "mycli": "./bin/cli.js"');
-    console.log('     },');
-    console.log('     "files": [');
-    console.log('       "lib/"  // Only source, no bin/ needed!');
-    console.log('     ]');
-    console.log('   }');
+    console.info('\n🎯 Package.json Example:');
+    console.info('   {');
+    console.info('     "name": "my-cli-tool",');
+    console.info('     "bin": {');
+    console.info('       "mycli": "./bin/cli.js"');
+    console.info('     },');
+    console.info('     "files": [');
+    console.info('       "lib/"  // Only source, no bin/ needed!');
+    console.info('     ]');
+    console.info('   }');
   }
 
   /**
@@ -263,7 +263,7 @@ export class BunPackV131Demo {
   }
 
   private analyzePackResult(configName: string, result: string): void {
-    console.log(`   📊 Pack Result:`);
+    console.info(`   📊 Pack Result:`);
     
     // Check if CLI binary is included
     const hasCliBinary = result.includes('bin/cli.js') || result.includes('bin/');
@@ -272,16 +272,16 @@ export class BunPackV131Demo {
     const sizeMatch = result.match(/Unpacked size: (.+)/);
     const filesMatch = result.match(/Total files: (\d+)/);
     
-    console.log(`     ✅ CLI Binary Included: ${hasCliBinary ? 'YES' : 'NO'}`);
-    if (sizeMatch) console.log(`     📏 Unpacked Size: ${sizeMatch[1]}`);
-    if (filesMatch) console.log(`     📁 Total Files: ${filesMatch[1]}`);
+    console.info(`     ✅ CLI Binary Included: ${hasCliBinary ? 'YES' : 'NO'}`);
+    if (sizeMatch) console.info(`     📏 Unpacked Size: ${sizeMatch[1]}`);
+    if (filesMatch) console.info(`     📁 Total Files: ${filesMatch[1]}`);
     
     // v1.3.1 improvement validation
     if (configName === 'cliOnly' || configName === 'withDirectoriesBin') {
       if (hasCliBinary) {
-        console.log(`     🎉 v1.3.1 Improvement: CLI auto-included!`);
+        console.info(`     🎉 v1.3.1 Improvement: CLI auto-included!`);
       } else {
-        console.log(`     ⚠️  Issue: CLI binary missing (should not happen in v1.3.1)`);
+        console.info(`     ⚠️  Issue: CLI binary missing (should not happen in v1.3.1)`);
       }
     }
   }
@@ -293,8 +293,8 @@ export class BunPackV131Demo {
  * Generated for Bun v1.3.1 pack demo
  */
 
-console.log('🚀 Hello from ${packageName} CLI!');
-console.log('This binary was automatically included by bun pm pack v1.3.1');
+console.info('🚀 Hello from ${packageName} CLI!');
+console.info('This binary was automatically included by bun pm pack v1.3.1');
 
 process.exit(0);
 `;
@@ -341,8 +341,8 @@ included in the published tarball, even when not listed in the
 
 // 🚀 MAIN DEMO EXECUTION
 export async function runBunPackV131Demo() {
-  console.log('🚀 Bun v1.3.1 `bun pm pack` CLI Binary Inclusion Demo');
-  console.log('=' .repeat(65));
+  console.info('🚀 Bun v1.3.1 `bun pm pack` CLI Binary Inclusion Demo');
+  console.info('=' .repeat(65));
   
   const demo = new BunPackV131Demo();
   
@@ -362,8 +362,8 @@ export async function runBunPackV131Demo() {
     // Show best practices
     demo.showBestPractices();
     
-    console.log('\n✅ Demo completed successfully!');
-    console.log('🎯 Key Takeaway: Bun v1.3.1 ensures CLI binaries are never missing!');
+    console.info('\n✅ Demo completed successfully!');
+    console.info('🎯 Key Takeaway: Bun v1.3.1 ensures CLI binaries are never missing!');
     
   } catch (error) {
     console.error('❌ Demo failed:', error);

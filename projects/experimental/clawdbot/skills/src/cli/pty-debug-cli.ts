@@ -48,7 +48,7 @@ class PTYDebugCLI {
 
     // Check PTY support
     if (process.platform === "win32") {
-      console.log(
+      console.info(
         "Warning: PTY support is POSIX-only (Linux/macOS). Using fallback mode."
       );
       return this.runFallback(command, skillId);
@@ -106,8 +106,8 @@ class PTYDebugCLI {
 
     this.activeSessions.set(terminal.id, terminal);
 
-    console.log(`Terminal started (ID: ${terminal.id})`);
-    console.log('Type "exit" or press Ctrl+D to quit\n');
+    console.info(`Terminal started (ID: ${terminal.id})`);
+    console.info('Type "exit" or press Ctrl+D to quit\n');
 
     // Set up input forwarding
     if (process.stdin.isTTY) {
@@ -134,11 +134,11 @@ class PTYDebugCLI {
       await Bun.spawn(["mkdir", "-p", historyDir]).exited;
       const historyFile = `${historyDir}/${skillId}-${Date.now()}.txt`;
       await Bun.write(historyFile, history.join(""));
-      console.log(`History saved to: ${historyFile}`);
+      console.info(`History saved to: ${historyFile}`);
     }
 
     this.activeSessions.delete(terminal.id);
-    console.log("\nSession ended");
+    console.info("\nSession ended");
   }
 
   private async multiSkillDashboard(skillId: string): Promise<void> {
@@ -147,8 +147,8 @@ class PTYDebugCLI {
     const allSkills = [skillId, ...additionalSkills];
 
     if (allSkills.length === 1) {
-      console.log("Usage: pty-debug dashboard <skill-id> [additional-skills...]");
-      console.log("Example: pty-debug dashboard weather scraper transformer");
+      console.info("Usage: pty-debug dashboard <skill-id> [additional-skills...]");
+      console.info("Example: pty-debug dashboard weather scraper transformer");
       process.exit(1);
     }
 
@@ -171,7 +171,7 @@ class PTYDebugCLI {
     // Wait for all terminals to exit
     await Promise.all(dashboard.terminals.map((t) => t.process.exited));
 
-    console.log("\nDashboard session ended");
+    console.info("\nDashboard session ended");
     this.activeSessions.delete(dashboard.id);
   }
 
@@ -190,11 +190,11 @@ class PTYDebugCLI {
     const terminal = await this.ptyManager.createDebugTerminal(skillId, options);
     this.activeSessions.set(terminal.id, terminal);
 
-    console.log(`Debug terminal started`);
+    console.info(`Debug terminal started`);
 
     if (options.inspector) {
-      console.log(`Inspector: ws://127.0.0.1:${options.port}`);
-      console.log(`Chrome DevTools: chrome://inspect`);
+      console.info(`Inspector: ws://127.0.0.1:${options.port}`);
+      console.info(`Chrome DevTools: chrome://inspect`);
     }
 
     // Set up input forwarding
@@ -215,7 +215,7 @@ class PTYDebugCLI {
     }
 
     this.activeSessions.delete(terminal.id);
-    console.log("\nDebug session ended");
+    console.info("\nDebug session ended");
   }
 
   private async collaborativeTerminal(skillId: string): Promise<void> {
@@ -236,16 +236,16 @@ class PTYDebugCLI {
 
     this.activeSessions.set(terminal.id, terminal);
 
-    console.log(`Collaborative session created`);
-    console.log(`WebSocket URL: ${terminal.webSocketUrl}`);
-    console.log(`Session ID: ${sessionId}`);
+    console.info(`Collaborative session created`);
+    console.info(`WebSocket URL: ${terminal.webSocketUrl}`);
+    console.info(`Session ID: ${sessionId}`);
 
     if (users.length > 0) {
-      console.log(`Initial users: ${users.join(", ")}`);
+      console.info(`Initial users: ${users.join(", ")}`);
     }
 
-    console.log("\nShare the WebSocket URL with collaborators");
-    console.log("Press Ctrl+C to end session\n");
+    console.info("\nShare the WebSocket URL with collaborators");
+    console.info("Press Ctrl+C to end session\n");
 
     // Set up input forwarding
     if (process.stdin.isTTY) {
@@ -259,7 +259,7 @@ class PTYDebugCLI {
 
     // Handle interrupt
     process.on("SIGINT", () => {
-      console.log("\nEnding collaborative session...");
+      console.info("\nEnding collaborative session...");
       terminal.server.stop();
       terminal.kill();
       process.exit(0);
@@ -284,7 +284,7 @@ class PTYDebugCLI {
       this.parseArgValue(args, "--output") ||
       `./recordings/${skillId}-${Date.now()}.cast`;
 
-    console.log(`Output: ${outputFile}`);
+    console.info(`Output: ${outputFile}`);
 
     const terminal = await this.ptyManager.createRecordedTerminal(skillId, {
       outputFile,
@@ -294,7 +294,7 @@ class PTYDebugCLI {
 
     this.activeSessions.set(terminal.id, terminal);
 
-    console.log("\nRecording started. Press Ctrl+C to stop.\n");
+    console.info("\nRecording started. Press Ctrl+C to stop.\n");
 
     // Set up input forwarding
     if (process.stdin.isTTY) {
@@ -308,7 +308,7 @@ class PTYDebugCLI {
 
     // Handle interrupt - save on Ctrl+C
     process.on("SIGINT", async () => {
-      console.log("\nStopping recording...");
+      console.info("\nStopping recording...");
       await terminal.save();
       terminal.kill();
 
@@ -352,9 +352,9 @@ class PTYDebugCLI {
 
     // Parse header
     const header = JSON.parse(lines[0]);
-    console.log(`Title: ${header.title || "Unknown"}`);
-    console.log(`Size: ${header.width}x${header.height}`);
-    console.log(`Speed: ${speed}x\n`);
+    console.info(`Title: ${header.title || "Unknown"}`);
+    console.info(`Size: ${header.width}x${header.height}`);
+    console.info(`Speed: ${speed}x\n`);
 
     // Play frames
     let lastTime = 0;
@@ -374,15 +374,15 @@ class PTYDebugCLI {
       lastTime = time;
     }
 
-    console.log("\n\nPlayback complete");
+    console.info("\n\nPlayback complete");
   }
 
   private async attachToTerminal(skillId: string): Promise<void> {
     const terminalId = process.argv[4];
 
     if (!terminalId) {
-      console.log("Usage: pty-debug attach <skill-id> <terminal-id>");
-      console.log("Available terminals:");
+      console.info("Usage: pty-debug attach <skill-id> <terminal-id>");
+      console.info("Available terminals:");
       await this.listTerminals();
       return;
     }
@@ -394,7 +394,7 @@ class PTYDebugCLI {
     }
 
     EnhancedOutput.printHeader(`Attaching: ${terminalId}`);
-    console.log(`Skill: ${terminal.skillId}`);
+    console.info(`Skill: ${terminal.skillId}`);
 
     // Set up input forwarding
     if (process.stdin.isTTY) {
@@ -404,7 +404,7 @@ class PTYDebugCLI {
       process.stdin.on("data", (data) => {
         if (data.toString() === "\x1c") {
           // Ctrl+\
-          console.log("\nDetached from terminal");
+          console.info("\nDetached from terminal");
           process.stdin.setRawMode(false);
           process.exit(0);
         }
@@ -412,7 +412,7 @@ class PTYDebugCLI {
       });
     }
 
-    console.log('\nPress Ctrl+\\ to detach\n');
+    console.info('\nPress Ctrl+\\ to detach\n');
 
     // Wait indefinitely
     await new Promise(() => {});
@@ -424,15 +424,15 @@ class PTYDebugCLI {
     const terminals = this.ptyManager.listTerminals();
 
     if (terminals.length === 0) {
-      console.log("No active terminals");
+      console.info("No active terminals");
       return;
     }
 
-    console.log("ID                          Skill           PID");
-    console.log("─".repeat(60));
+    console.info("ID                          Skill           PID");
+    console.info("─".repeat(60));
 
     for (const term of terminals) {
-      console.log(
+      console.info(
         `${term.id.padEnd(28)} ${term.skillId.padEnd(16)} ${term.pid}`
       );
     }
@@ -444,14 +444,14 @@ class PTYDebugCLI {
     if (terminalId) {
       const killed = this.ptyManager.killTerminal(terminalId);
       if (killed) {
-        console.log(`Killed terminal: ${terminalId}`);
+        console.info(`Killed terminal: ${terminalId}`);
       } else {
         EnhancedOutput.error(`Terminal not found: ${terminalId}`);
       }
     } else {
       // Kill all terminals for this skill
       const killed = this.ptyManager.killAllForSkill(skillId);
-      console.log(`Killed ${killed} terminals for skill: ${skillId}`);
+      console.info(`Killed ${killed} terminals for skill: ${skillId}`);
     }
   }
 
@@ -464,7 +464,7 @@ class PTYDebugCLI {
   }
 
   private async runFallback(command: string, skillId: string): Promise<void> {
-    console.log(`Running ${command} in fallback mode...`);
+    console.info(`Running ${command} in fallback mode...`);
 
     const proc = Bun.spawn(["bun", "run", `./skills/${skillId}/src/index.ts`], {
       stdout: "inherit",
@@ -476,7 +476,7 @@ class PTYDebugCLI {
   }
 
   private showHelp(): void {
-    console.log(`
+    console.info(`
 Skill PTY Debugger - Interactive Terminal Management
 
 Usage: pty-debug <command> <skill-id> [options]

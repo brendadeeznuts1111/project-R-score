@@ -43,7 +43,7 @@ program
       (globalThis as any).process?.exit(1);
       return; // Ensure TypeScript knows we exit here
     }
-    console.log(`👤 User: ${user.name} | Scope: ${user.scope}`);
+    console.info(`👤 User: ${user.name} | Scope: ${user.scope}`);
   });
 
 // --- Infrastructure Status ---
@@ -59,17 +59,17 @@ program
     const matrix = PatternMatrix.getInstance();
     const rows = matrix.getRows();
     
-    console.log('\n🏰 EMPIRE PRO INFRASTRUCTURE STATUS\n');
-    console.log(`Patterns Registered: ${rows.length}`);
-    console.log('---');
+    console.info('\n🏰 EMPIRE PRO INFRASTRUCTURE STATUS\n');
+    console.info(`Patterns Registered: ${rows.length}`);
+    console.info('---');
     
     const categories = [...new Set(rows.map((r: PatternRow) => r.category))];
     for (const cat of categories) {
       const catRows = rows.filter((r: PatternRow) => r.category === cat);
-      console.log(`${String(cat).padEnd(10)} | ${catRows.length} active`);
+      console.info(`${String(cat).padEnd(10)} | ${catRows.length} active`);
     }
     
-    console.log('\n✅ System: HEALTHY');
+    console.info('\n✅ System: HEALTHY');
   });
 
 // --- Storage Controls ---
@@ -93,24 +93,24 @@ storage
     }
     
     const components = audit.exec(path);
-    console.log(`🔍 Auditing ${path}...`);
-    console.log(`   Bucket:    ${components.bucket}`);
-    console.log(`   Namespace: ${components.namespace}`);
+    console.info(`🔍 Auditing ${path}...`);
+    console.info(`   Bucket:    ${components.bucket}`);
+    console.info(`   Namespace: ${components.namespace}`);
     
     const objects = await audit.list(path);
-    console.log(`\n✅ Audit complete. Found ${objects.length} compliant objects.`);
+    console.info(`\n✅ Audit complete. Found ${objects.length} compliant objects.`);
 
     if (options.export) {
       const s3Disp = new S3DispositionManager();
       const reportPath = `reports/compliance/audit-${Date.now()}.json`;
-      console.log(`\n📄 Generating Compliance Report...`);
+      console.info(`\n📄 Generating Compliance Report...`);
       const exportResult = await s3Disp.writeAuditReport(reportPath, { 
         timestamp: Date.now(), 
         path, 
         objects,
         status: 'COMPLIANT'
       });
-      console.log(`✅ Report Exported: ${exportResult.path}`);
+      console.info(`✅ Report Exported: ${exportResult.path}`);
     }
   });
 
@@ -128,13 +128,13 @@ heal
     }
 
     const controller = new AutonomicController();
-    console.log(`🛠️ Triggering autonomic healing for: ${subsystem}...`);
+    console.info(`🛠️ Triggering autonomic healing for: ${subsystem}...`);
     
     const subsystems = subsystem === 'all' ? ['latency', 'cache', 'pool'] : [subsystem];
     for (const sub of subsystems) {
       const result = await controller.exec(sub);
       const action = (result.result as any).action;
-      console.log(`   ${sub.padEnd(10)}: ${action === 'none' ? 'OK' : 'HEALED (' + action + ')'} [${result.duration.toFixed(2)}ms]`);
+      console.info(`   ${sub.padEnd(10)}: ${action === 'none' ? 'OK' : 'HEALED (' + action + ')'} [${result.duration.toFixed(2)}ms]`);
     }
   });
 
@@ -147,14 +147,14 @@ heal
       (globalThis as any).process?.exit(1);
     }
 
-    console.log('👁️  Monitoring autonomic telemetry (§100.HEAL)...');
-    console.log('--- (Tailing Live Events) ---');
+    console.info('👁️  Monitoring autonomic telemetry (§100.HEAL)...');
+    console.info('--- (Tailing Live Events) ---');
     
     setInterval(() => {
       const event = Math.random() > 0.7 ? 'HEALED' : 'OK';
       const sub = ['latency', 'cache', 'pool'][Math.floor(Math.random() * 3)];
       const color = event === 'HEALED' ? '\x1b[32m' : '\x1b[0m';
-      console.log(`${new Date().toLocaleTimeString()} | ${sub.padEnd(10)} | ${color}${event}\x1b[0m`);
+      console.info(`${new Date().toLocaleTimeString()} | ${sub.padEnd(10)} | ${color}${event}\x1b[0m`);
     }, 2000);
   });
 
@@ -173,16 +173,16 @@ shield
     const workflow = new IdentityShieldWorkflow();
     const idManager = new IdentityManager();
     
-    console.log('🛡️  Running Identity Shield workflow...');
+    console.info('🛡️  Running Identity Shield workflow...');
     const result = await workflow.exec({ idManager });
     
     if (typeof result.result === 'string' && result.result === 'IDENTITY_SAFE') {
-      console.log('✅ Identity is safe. No rotation required.');
+      console.info('✅ Identity is safe. No rotation required.');
     } else {
-      console.log('🔄 High risk detected! New identity generated:');
-      console.log(JSON.stringify(result.result, null, 2));
+      console.info('🔄 High risk detected! New identity generated:');
+      console.info(JSON.stringify(result.result, null, 2));
     }
-    console.log(`⏱️  Workflow completed in ${result.duration.toFixed(2)}ms`);
+    console.info(`⏱️  Workflow completed in ${result.duration.toFixed(2)}ms`);
   });
 
 // --- Pattern Matrix & Validation ---
@@ -208,7 +208,7 @@ matrix
   .action(() => {
     const matrix = PatternMatrix.getInstance();
     const rows = matrix.getRows();
-    console.log(`🧪 Validating ${rows.length} patterns...\n`);
+    console.info(`🧪 Validating ${rows.length} patterns...\n`);
     
     let totalErrors = 0;
     
@@ -240,7 +240,7 @@ matrix
     }
     
     if (totalErrors === 0) {
-      console.log('✅ All patterns are compliant with Empire Pro standards.');
+      console.info('✅ All patterns are compliant with Empire Pro standards.');
     } else {
       console.error(`\n❌ Validation failed with ${totalErrors} errors.`);
       (globalThis as any).process?.exit(1);
@@ -258,12 +258,12 @@ program
     }
 
     const bridge = TerminalBridge.getInstance();
-    console.log('🚀 Spawning Proxy Sniffer PTY...');
+    console.info('🚀 Spawning Proxy Sniffer PTY...');
     
     const result = await bridge.spawnSpecializedShell('sniff');
     const { terminalId, pid } = result.result;
     
-    console.log(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
+    console.info(`📡 PTY Session [ID: ${terminalId}, PID: ${pid}] active.\n`);
     
     bridge.streamOutput(terminalId, (data) => {
       process.stdout.write(data);
@@ -271,7 +271,7 @@ program
 
     // Handle termination
     process.on('SIGINT', () => {
-      console.log('\nStopping sniffing session...');
+      console.info('\nStopping sniffing session...');
       (globalThis as any).process?.exit(0);
     });
   });
@@ -307,7 +307,7 @@ program
     } else {
       // Show all
       renderHyperDashboard();
-      console.log('\n');
+      console.info('\n');
       await new HyperStatusCommand().execute();
     }
   });

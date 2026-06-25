@@ -317,7 +317,7 @@ export class SecurityHardeningLayer {
    */
   private static createSanitizedConsole(): Pick<Console, 'log' | 'warn' | 'error' | 'info' | 'debug'> {
     return {
-      log: (...args: unknown[]) => console.log('[ISOLATED]', ...args),
+      log: (...args: unknown[]) => console.info('[ISOLATED]', ...args),
       warn: (...args: unknown[]) => console.warn('[ISOLATED]', ...args),
       error: (...args: unknown[]) => console.error('[ISOLATED]', ...args),
       info: (...args: unknown[]) => console.info('[ISOLATED]', ...args),

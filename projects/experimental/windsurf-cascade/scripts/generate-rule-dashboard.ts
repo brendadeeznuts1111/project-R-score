@@ -14,7 +14,7 @@ interface DashboardData {
 }
 
 async function generateDashboard(): Promise<void> {
-  console.log('📊 Generating Golden Rules Dashboard...\n');
+  console.info('📊 Generating Golden Rules Dashboard...\n');
   
   const enforcer = new GoldenRuleEnforcer();
   const result = await enforcer.validateCodebase();
@@ -55,7 +55,7 @@ ${generateTrendVisualization(dashboardData)}
 `;
 
   await writeFile('./reports/golden-rules-dashboard.md', dashboard);
-  console.log('✅ Dashboard generated: reports/golden-rules-dashboard.md');
+  console.info('✅ Dashboard generated: reports/golden-rules-dashboard.md');
 }
 
 async function getHistoricalReports(): Promise<any[]> {

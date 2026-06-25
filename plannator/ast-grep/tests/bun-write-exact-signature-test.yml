@@ -1,0 +1,8 @@
+id: bun-write-exact-signature
+valid:
+  - 'await Bun.write("report.html", html)'
+  - 'await Bun.write(path, Bun.file(src))'
+invalid:
+  - 'await Bun.write()'
+  - 'await Bun.write("only-path")'
+  - 'await Bun.write("a", "b", "c")'

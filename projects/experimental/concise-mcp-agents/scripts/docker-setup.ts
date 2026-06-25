@@ -38,7 +38,7 @@ class DockerSetup {
   }
 
   async build(): Promise<void> {
-    console.log(`🏗️ Building Docker image: ${this.config.imageName}`);
+    console.info(`🏗️ Building Docker image: ${this.config.imageName}`);
 
     return new Promise((resolve, reject) => {
       const build = spawn('docker', ['build', '-t', this.config.imageName, '.'], {
@@ -48,7 +48,7 @@ class DockerSetup {
 
       build.on('close', (code) => {
         if (code === 0) {
-          console.log(`✅ Docker image built successfully`);
+          console.info(`✅ Docker image built successfully`);
           resolve();
         } else {
           reject(new Error(`Docker build failed with code ${code}`));
@@ -60,7 +60,7 @@ class DockerSetup {
   }
 
   async run(): Promise<void> {
-    console.log(`🚀 Starting Docker container: ${this.config.containerName}`);
+    console.info(`🚀 Starting Docker container: ${this.config.containerName}`);
 
     // Stop existing container if running
     await this.stop().catch(() => {});
@@ -93,9 +93,9 @@ class DockerSetup {
 
       run.on('close', (code) => {
         if (code === 0) {
-          console.log(`✅ Docker container started`);
-          console.log(`🌐 Dashboard: http://localhost:3000`);
-          console.log(`🔌 WebSocket: ws://localhost:3001`);
+          console.info(`✅ Docker container started`);
+          console.info(`🌐 Dashboard: http://localhost:3000`);
+          console.info(`🔌 WebSocket: ws://localhost:3001`);
           resolve();
         } else {
           reject(new Error(`Docker run failed with code ${code}`));
@@ -107,7 +107,7 @@ class DockerSetup {
   }
 
   async stop(): Promise<void> {
-    console.log(`🛑 Stopping Docker container: ${this.config.containerName}`);
+    console.info(`🛑 Stopping Docker container: ${this.config.containerName}`);
 
     return new Promise((resolve) => {
       const stop = spawn('docker', ['stop', this.config.containerName], {
@@ -123,7 +123,7 @@ class DockerSetup {
         });
 
         rm.on('close', () => {
-          console.log(`✅ Docker container stopped and removed`);
+          console.info(`✅ Docker container stopped and removed`);
           resolve();
         });
       });
@@ -131,7 +131,7 @@ class DockerSetup {
   }
 
   async logs(): Promise<void> {
-    console.log(`📋 Showing Docker container logs: ${this.config.containerName}`);
+    console.info(`📋 Showing Docker container logs: ${this.config.containerName}`);
 
     return new Promise((resolve, reject) => {
       const logs = spawn('docker', ['logs', '-f', this.config.containerName], {
@@ -145,7 +145,7 @@ class DockerSetup {
   }
 
   async exec(command: string): Promise<void> {
-    console.log(`🔧 Executing in container: ${command}`);
+    console.info(`🔧 Executing in container: ${command}`);
 
     const args = ['exec', '-it', this.config.containerName];
     args.push(...command.split(' '));
@@ -169,7 +169,7 @@ class DockerSetup {
   }
 
   async composeUp(): Promise<void> {
-    console.log(`🚀 Starting Docker Compose services`);
+    console.info(`🚀 Starting Docker Compose services`);
 
     return new Promise((resolve, reject) => {
       const compose = spawn('docker-compose', ['up', '-d'], {
@@ -179,10 +179,10 @@ class DockerSetup {
 
       compose.on('close', (code) => {
         if (code === 0) {
-          console.log(`✅ Docker Compose services started`);
-          console.log(`🌐 Main App: http://localhost:3000`);
-          console.log(`📊 Grafana: http://localhost:3002`);
-          console.log(`📈 Prometheus: http://localhost:9090`);
+          console.info(`✅ Docker Compose services started`);
+          console.info(`🌐 Main App: http://localhost:3000`);
+          console.info(`📊 Grafana: http://localhost:3002`);
+          console.info(`📈 Prometheus: http://localhost:9090`);
           resolve();
         } else {
           reject(new Error(`Docker Compose failed with code ${code}`));
@@ -194,7 +194,7 @@ class DockerSetup {
   }
 
   async composeDown(): Promise<void> {
-    console.log(`🛑 Stopping Docker Compose services`);
+    console.info(`🛑 Stopping Docker Compose services`);
 
     return new Promise((resolve, reject) => {
       const compose = spawn('docker-compose', ['down'], {
@@ -204,7 +204,7 @@ class DockerSetup {
 
       compose.on('close', (code) => {
         if (code === 0) {
-          console.log(`✅ Docker Compose services stopped`);
+          console.info(`✅ Docker Compose services stopped`);
           resolve();
         } else {
           reject(new Error(`Docker Compose down failed with code ${code}`));
@@ -216,7 +216,7 @@ class DockerSetup {
   }
 
   async status(): Promise<void> {
-    console.log(`📊 Docker Status\n`);
+    console.info(`📊 Docker Status\n`);
 
     // Check if single container is running
     try {
@@ -232,14 +232,14 @@ class DockerSetup {
 
       ps.on('close', () => {
         if (output.includes(this.config.containerName)) {
-          console.log(`🐳 Single Container:`);
-          console.log(output);
+          console.info(`🐳 Single Container:`);
+          console.info(output);
         } else {
-          console.log(`🐳 Single Container: Not running`);
+          console.info(`🐳 Single Container: Not running`);
         }
       });
     } catch {
-      console.log(`🐳 Single Container: Unable to check`);
+      console.info(`🐳 Single Container: Unable to check`);
     }
 
     // Check compose services
@@ -256,17 +256,17 @@ class DockerSetup {
 
       compose.on('close', () => {
         if (composeOutput.trim()) {
-          console.log(`\n🐙 Compose Services:`);
-          console.log(composeOutput);
+          console.info(`\n🐙 Compose Services:`);
+          console.info(composeOutput);
         }
       });
     } catch {
-      console.log(`\n🐙 Compose Services: Unable to check`);
+      console.info(`\n🐙 Compose Services: Unable to check`);
     }
   }
 
   async clean(): Promise<void> {
-    console.log(`🧹 Cleaning Docker resources`);
+    console.info(`🧹 Cleaning Docker resources`);
 
     // Stop and remove containers
     await this.stop().catch(() => {});
@@ -278,7 +278,7 @@ class DockerSetup {
     });
 
     dangling.on('close', () => {
-      console.log(`✅ Docker resources cleaned`);
+      console.info(`✅ Docker resources cleaned`);
     });
   }
 
@@ -321,7 +321,7 @@ async function main() {
   const docker = new DockerSetup();
 
   if (args.length === 0) {
-    console.log(`🐳 Docker Setup for MCP Agent Governance v3.0
+    console.info(`🐳 Docker Setup for MCP Agent Governance v3.0
 
 USAGE:
   bun docker:build          # Build Docker image
@@ -412,14 +412,14 @@ ENVIRONMENT:
 
       case 'env':
         const envTemplate = docker.generateEnvTemplate();
-        console.log(`📝 Environment Variables Template:\n`);
-        console.log(envTemplate);
-        console.log(`💡 Save this to .env file and customize values`);
+        console.info(`📝 Environment Variables Template:\n`);
+        console.info(envTemplate);
+        console.info(`💡 Save this to .env file and customize values`);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun docker --help');
+        console.info('Use: bun docker --help');
         process.exit(1);
     }
   } catch (error) {

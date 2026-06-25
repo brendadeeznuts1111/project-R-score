@@ -583,7 +583,7 @@ export class ExecutableBuilder {
       }
 
       // Build Docker image
-      console.log(`Building Docker image: ${fullImageName}`);
+      console.info(`Building Docker image: ${fullImageName}`);
 
       const buildCmd = [
         "docker",
@@ -599,14 +599,14 @@ export class ExecutableBuilder {
       }
 
       if (options.push) {
-        console.log(`Pushing to registry: ${fullImageName}`);
+        console.info(`Pushing to registry: ${fullImageName}`);
         const pushResult = runCommand(["docker", "push", fullImageName]);
         if (!pushResult.success) {
           throw new Error(`Docker push failed: ${pushResult.stderr}`);
         }
       }
 
-      console.log(`Docker image built: ${fullImageName}`);
+      console.info(`Docker image built: ${fullImageName}`);
       return fullImageName;
     } finally {
       await removeDir(contextDir);
@@ -644,7 +644,7 @@ export class ExecutableBuilder {
           options
         );
         installers.push(installerPath);
-        console.log(`${format.toUpperCase()} installer: ${installerPath}`);
+        console.info(`${format.toUpperCase()} installer: ${installerPath}`);
       } catch (error: any) {
         console.warn(`Failed to build ${format} installer:`, error.message);
       }
@@ -887,7 +887,7 @@ function parseArgs() {
 
 // Show help
 function showHelp() {
-  console.log(\`
+  console.info(\`
 ${skill.name} v${skill.version}
 ${skill.description || ''}
 
@@ -897,10 +897,10 @@ Commands:\`);
 
   const commands = ${JSON.stringify(skill.commands || {})};
   Object.entries(commands).forEach(([cmd, desc]) => {
-    console.log(\`  \${cmd.padEnd(20)} \${desc}\`);
+    console.info(\`  \${cmd.padEnd(20)} \${desc}\`);
   });
 
-  console.log(\`
+  console.info(\`
 Options:
   --help, -h           Show this help
   --version, -v        Show version
@@ -919,7 +919,7 @@ async function execute() {
   }
 
   if (options.version || options.v) {
-    console.log('${skill.version}');
+    console.info('${skill.version}');
     return;
   }
 
@@ -960,12 +960,12 @@ async function execute() {
         skill: '${skill.name}',
         version: '${skill.version}',
       };
-      console.log(JSON.stringify(result, null, 2));
+      console.info(JSON.stringify(result, null, 2));
     } else if (result !== undefined) {
       if (typeof result === 'object') {
-        console.log(JSON.stringify(result, null, 2));
+        console.info(JSON.stringify(result, null, 2));
       } else {
-        console.log(result);
+        console.info(result);
       }
     }
 
@@ -982,12 +982,12 @@ async function execute() {
 
 // Handle signals
 process.on('SIGINT', () => {
-  console.log('\\nInterrupted');
+  console.info('\\nInterrupted');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\\nTerminated');
+  console.info('\\nTerminated');
   process.exit(0);
 });
 

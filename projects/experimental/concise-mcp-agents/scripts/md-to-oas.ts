@@ -53,4 +53,4 @@ const oas = {
 const outputPath = Bun.resolveSync('./docs/plive-api.yaml', process.cwd());
 await Bun.write(outputPath, JSON.stringify(oas, null, 2));
 
-console.log('✅ docs/plive-api.yaml written');
+console.info('✅ docs/plive-api.yaml written');

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # FactoryWager MCP Setup Script
-# 
+#
 # This script sets up the FactoryWager MCP integration with Claude Desktop
 # and configures all necessary components.
 
@@ -43,7 +43,7 @@ print_info() {
 # Check prerequisites
 check_prerequisites() {
     print_step "Checking prerequisites..."
-    
+
     # Check if Bun is installed
     if ! command -v bun &> /dev/null; then
         print_error "Bun is not installed. Please install Bun first."
@@ -51,14 +51,14 @@ check_prerequisites() {
         exit 1
     fi
     print_success "Bun is installed"
-    
+
     # Check if we're in the right directory
     if [[ ! -f "package.json" ]] || [[ ! -d "lib" ]]; then
         print_error "Please run this script from the FactoryWager project root"
         exit 1
     fi
     print_success "In correct project directory"
-    
+
     # Check MCP SDK
     if ! bun list | grep -q "@modelcontextprotocol/sdk"; then
         print_warning "MCP SDK not found, installing..."
@@ -72,7 +72,7 @@ check_prerequisites() {
 # Install dependencies
 install_dependencies() {
     print_step "Installing dependencies..."
-    
+
     bun install
     print_success "Dependencies installed"
 }
@@ -80,14 +80,14 @@ install_dependencies() {
 # Setup Claude Desktop configuration
 setup_claude_desktop() {
     print_step "Setting up Claude Desktop integration..."
-    
+
     # Create Claude config directory if it doesn't exist
     CLAUDE_CONFIG_DIR="$HOME/.config/claude"
     mkdir -p "$CLAUDE_CONFIG_DIR"
-    
+
     # Get the absolute path to the project
     PROJECT_PATH="$(pwd)"
-    
+
     # Create the MCP configuration file
     cat > "$CLAUDE_CONFIG_DIR/mcp.json" << EOF
 {
@@ -103,22 +103,11 @@ setup_claude_desktop() {
         "R2_AUDIT_BUCKET": "scanner-cookies",
         "NODE_ENV": "production"
       }
-    },
-    "factorywager-tools": {
-      "command": "bun",
-      "args": [
-        "run",
-        "$PROJECT_PATH/scripts/fw-tools-mcp.ts"
-      ],
-      "env": {
-        "FW_COLORS_ENABLED": "true",
-        "R2_AUDIT_BUCKET": "scanner-cookies"
-      }
     }
   }
 }
 EOF
-    
+
     print_success "Claude Desktop configuration created"
     print_info "Configuration saved to: $CLAUDE_CONFIG_DIR/mcp.json"
 }
@@ -126,35 +115,27 @@ EOF
 # Create CLI scripts
 create_cli_scripts() {
     print_step "Creating CLI scripts..."
-    
+
     # Make scripts executable
     chmod +x scripts/fw-docs.ts
     chmod +x scripts/interactive-docs.ts
     chmod +x scripts/mcp-bridge.ts
-    chmod +h scripts/fw-tools-mcp.ts
     chmod +x lib/mcp/bun-mcp-server.ts
-    
+
     print_success "CLI scripts made executable"
 }
 
 # Test MCP servers
 test_mcp_servers() {
     print_step "Testing MCP servers..."
-    
+
     # Test the Bun MCP server
     print_info "Testing Bun MCP server..."
     timeout 5s bun run lib/mcp/bun-mcp-server.ts > /dev/null 2>&1 || {
         print_warning "Bun MCP server test timed out (expected behavior)"
     }
     print_success "Bun MCP server is accessible"
-    
-    # Test the tools MCP server
-    print_info "Testing FactoryWager tools MCP server..."
-    timeout 5s bun run scripts/fw-tools-mcp.ts > /dev/null 2>&1 || {
-        print_warning "FactoryWager tools MCP server test timed out (expected behavior)"
-    }
-    print_success "FactoryWager tools MCP server is accessible"
-    
+
     # Test R2 integration
     print_info "Testing R2 integration..."
     if timeout 10s bun run lib/mcp/r2-integration.ts > /dev/null 2>&1; then
@@ -169,18 +150,18 @@ test_mcp_servers() {
 # Create environment file
 create_env_file() {
     print_step "Creating environment configuration..."
-    
+
     if [[ ! -f ".env" ]]; then
         cp .env.example .env
         print_success "Environment file created from template"
         print_warning "Please update .env with your R2 credentials:"
         print_warning "  - R2_ACCOUNT_ID"
-        print_warning "  - R2_ACCESS_KEY_ID" 
+        print_warning "  - R2_ACCESS_KEY_ID"
         print_warning "  - R2_SECRET_ACCESS_KEY"
         print_info "Get credentials from: https://dash.cloudflare.com/accounts/api-tokens"
     else
         print_success "Environment file already exists"
-        
+
         # Check if R2 credentials are configured
         if grep -q "your_account_id_here" .env; then
             print_warning "R2 credentials need to be configured in .env"
@@ -194,27 +175,26 @@ create_env_file() {
 # Add package.json scripts
 add_package_scripts() {
     print_step "Adding package.json scripts..."
-    
+
     # Check if scripts already exist
     if npm run | grep -q "mcp:"; then
         print_success "MCP scripts already exist in package.json"
         return
     fi
-    
+
     # Add MCP scripts to package.json
     npm pkg set scripts.mcp:bun="bun run lib/mcp/bun-mcp-server.ts"
-    npm pkg set scripts.mcp:tools="bun run scripts/fw-tools-mcp.ts"
     npm pkg set scripts.mcp:bridge="bun run scripts/mcp-bridge.ts"
     npm pkg set scripts.fw-docs="bun run scripts/fw-docs.ts"
     npm pkg set scripts.interactive-docs="bun run scripts/interactive-docs.ts"
-    
+
     print_success "MCP scripts added to package.json"
 }
 
 # Create usage documentation
 create_usage_docs() {
     print_step "Creating usage documentation..."
-    
+
     cat > MCP_USAGE.md << 'EOF'
 # FactoryWager MCP Usage Guide
 
@@ -261,9 +241,6 @@ bun run interactive-docs validate ./code.ts secrets
 ```bash
 # Bun documentation server
 bun run mcp:bun
-
-# FactoryWager tools server
-bun run mcp:tools
 
 # Claude Desktop bridge
 bun run mcp:bridge
@@ -351,18 +328,16 @@ EOF
 # Final verification
 verify_setup() {
     print_step "Verifying setup..."
-    
+
     # Check all required files
     local required_files=(
         "lib/mcp/bun-mcp-client.ts"
         "lib/mcp/bun-mcp-server.ts"
         "scripts/mcp-bridge.ts"
-        "scripts/fw-tools-mcp.ts"
         "scripts/fw-docs.ts"
         "scripts/interactive-docs.ts"
-        "factorywager-mcp.json"
     )
-    
+
     for file in "${required_files[@]}"; do
         if [[ -f "$file" ]]; then
             print_success "Found: $file"
@@ -371,7 +346,7 @@ verify_setup() {
             exit 1
         fi
     done
-    
+
     # Test CLI help
     if bun run scripts/fw-docs.ts help > /dev/null 2>&1; then
         print_success "CLI tools are working"
@@ -384,34 +359,34 @@ verify_setup() {
 main() {
     echo "Starting FactoryWager MCP setup..."
     echo ""
-    
+
     check_prerequisites
     echo ""
-    
+
     install_dependencies
     echo ""
-    
+
     setup_claude_desktop
     echo ""
-    
+
     create_cli_scripts
     echo ""
-    
+
     test_mcp_servers
     echo ""
-    
+
     create_env_file
     echo ""
-    
+
     add_package_scripts
     echo ""
-    
+
     create_usage_docs
     echo ""
-    
+
     verify_setup
     echo ""
-    
+
     echo "🎉 FactoryWager MCP setup complete!"
     echo ""
     echo "📋 Next steps:"

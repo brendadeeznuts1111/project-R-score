@@ -42,7 +42,7 @@ class DashboardGenerator {
   private data: DashboardData | null = null;
 
   async generateLiveData(): Promise<DashboardData> {
-    console.log(`📊 Generating live dashboard data...`);
+    console.info(`📊 Generating live dashboard data...`);
 
     // Get agent data
     const rankings = new AgentRankingsSystem();
@@ -274,14 +274,14 @@ bun semver bump minor && bun build:exe  # v1.0.1.exe
 
   async updateDashboard(): Promise<{ success: boolean; message: string }> {
     try {
-      console.log(`📊 Updating live dashboard...`);
+      console.info(`📊 Updating live dashboard...`);
 
       const content = await this.generateMarkdownDashboard();
       const dashboardPath = join(process.cwd(), 'dashboards', 'gov-mcp-status.md');
 
       writeFileSync(dashboardPath, content);
 
-      console.log(`✅ Dashboard updated: dashboards/gov-mcp-status.md`);
+      console.info(`✅ Dashboard updated: dashboards/gov-mcp-status.md`);
 
       return {
         success: true,
@@ -325,7 +325,7 @@ async function main() {
   const generator = new DashboardGenerator();
 
   if (args.length === 0) {
-    console.log(`🚀 Dashboard Generator v2.9
+    console.info(`🚀 Dashboard Generator v2.9
 
 USAGE:
   bun dashboard:update     # Update live dashboard with current data
@@ -354,7 +354,7 @@ FEATURES:
       case 'update':
         const updateResult = await generator.updateDashboard();
         if (updateResult.success) {
-          console.log(`✅ ${updateResult.message}`);
+          console.info(`✅ ${updateResult.message}`);
         } else {
           console.error(`❌ ${updateResult.message}`);
           process.exit(1);
@@ -364,7 +364,7 @@ FEATURES:
       case 'json':
         const jsonResult = await generator.exportJson();
         if (jsonResult.success) {
-          console.log(`✅ ${jsonResult.message}`);
+          console.info(`✅ ${jsonResult.message}`);
         } else {
           console.error(`❌ ${jsonResult.message}`);
           process.exit(1);
@@ -373,12 +373,12 @@ FEATURES:
 
       case 'preview':
         const content = await generator.generateMarkdownDashboard();
-        console.log(content);
+        console.info(content);
         break;
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun dashboard --help');
+        console.info('Use: bun dashboard --help');
         process.exit(1);
     }
   } catch (error) {

@@ -680,7 +680,7 @@ export class MarketDataRouter17 {
         if (await testFile.exists()) {
           // Demonstrate safe usage
           const lineIndex = Bun.indexOfLine(testFile, 0)
-          console.log("Line index:", lineIndex)
+          console.info("Line index:", lineIndex)
         }
       } catch (error) {
         // Errors are now properly handled, not crashes
@@ -1058,7 +1058,7 @@ export class MarketDataRouter17 {
   ): Promise<Response> {
     // Enhanced logging with custom inspect for depth control
     if (process.env.DEBUG_ROUTER === "true") {
-      console.log("🔍 Layer1 Correlation Request:", Bun.inspect(this, { depth: 2 }))
+      console.info("🔍 Layer1 Correlation Request:", Bun.inspect(this, { depth: 2 }))
     }
 
     // Extract additional parameters with defaults
@@ -1145,9 +1145,9 @@ export class MarketDataRouter17 {
     const profileName = `hidden_edge_detection_l${layer}_${Date.now()}`
 
     if (process.env.BUN_CPU_PROF === "true") {
-      console.log(`📊 Profiling hidden edge detection for layer ${layer}`)
+      console.info(`📊 Profiling hidden edge detection for layer ${layer}`)
       // Use custom inspect for router state logging
-      console.log("Router state:", Bun.inspect(this, { depth: 1 }))
+      console.info("Router state:", Bun.inspect(this, { depth: 1 }))
     }
 
     const startTime = performance.now()
@@ -1255,7 +1255,7 @@ export class MarketDataRouter17 {
     edgesFound: number
     profileSession: string
   }): void {
-    console.log("📊 Detection Performance:", metrics)
+    console.info("📊 Detection Performance:", metrics)
   }
 
   /**
@@ -1266,7 +1266,7 @@ export class MarketDataRouter17 {
   private logRadianceEvent17(event: Record<string, any>): void {
     try {
       // Use %j format specifier for JSON-stringified output
-      console.log("%j", event)
+      console.info("%j", event)
     } catch (error) {
       // Handle circular references - fallback to safe serialization
       const safeEvent: Record<string, any> = {}
@@ -1296,7 +1296,7 @@ export class MarketDataRouter17 {
       }
 
       const safeEventData = safeSerialize(event)
-      console.log("%j %s", safeEventData, "[Circular references sanitized]")
+      console.info("%j %s", safeEventData, "[Circular references sanitized]")
     }
   }
 
@@ -1354,7 +1354,7 @@ export class MarketDataRouter17 {
     // This is a placeholder for secure connection setup
     // In production, this would initialize TLS/HTTP2 servers
     if (process.env.ENABLE_SECURE_CONNECTIONS === "true") {
-      console.log("Secure connections initialized (TLSSocket, Http2Server)")
+      console.info("Secure connections initialized (TLSSocket, Http2Server)")
     }
   }
 
@@ -1604,7 +1604,7 @@ export class MarketDataRouter17 {
   ): Promise<Response> {
     // Enhanced logging with custom inspect for depth control
     if (process.env.DEBUG_ROUTER === "true") {
-      console.log("🔍 Layer1 Correlation Request:", Bun.inspect(this, { depth: 2 }))
+      console.info("🔍 Layer1 Correlation Request:", Bun.inspect(this, { depth: 2 }))
     }
 
     // Extract additional parameters with defaults
@@ -2215,7 +2215,7 @@ export class MarketDataRouter17 {
     // RFC 9112 compliant upgrade
     if (request.headers.get("Upgrade") !== "websocket") return false
     // ... perform upgrade with strict chunk validation if needed
-    console.log("WebSocket upgrade:", match.pathname.groups)
+    console.info("WebSocket upgrade:", match.pathname.groups)
     return true
   }
 

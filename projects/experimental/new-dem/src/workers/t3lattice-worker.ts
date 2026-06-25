@@ -53,7 +53,7 @@ class T3LatticeWorker {
   constructor(workerId: string) {
     this.workerId = workerId;
     this.setupMessageHandlers();
-    console.log(`🏃 T3-Lattice Worker ${workerId} initialized`);
+    console.info(`🏃 T3-Lattice Worker ${workerId} initialized`);
   }
 
   private setupMessageHandlers(): void {
@@ -65,7 +65,7 @@ class T3LatticeWorker {
 
     // Handle graceful shutdown
     process.on("SIGINT", () => {
-      console.log(`🛑 Worker ${this.workerId} shutting down...`);
+      console.info(`🛑 Worker ${this.workerId} shutting down...`);
       process.exit(0);
     });
   }
@@ -397,7 +397,7 @@ class T3LatticeWorker {
       global.gc();
     }
 
-    console.log(`🧹 Worker ${this.workerId} performed memory cleanup`);
+    console.info(`🧹 Worker ${this.workerId} performed memory cleanup`);
   }
 }
 

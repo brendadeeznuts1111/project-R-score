@@ -138,7 +138,7 @@ export class MigrationHelper {
       bundleSizeReduction: '0KB (vs ~12KB)',
       example: {
         npm: "const Table = require('cli-table');\nconst table = new Table();\nconsole.log(table.toString());",
-        bun: "console.log(Bun.inspect.table(data));"
+        bun: "console.info(Bun.inspect.table(data));"
       }
     },
     {
@@ -319,32 +319,32 @@ export class MigrationHelper {
   }
 
   static printMigrationGuide(): void {
-    console.log('🚀 NPM → Bun Migration Guide\n');
+    console.info('🚀 NPM → Bun Migration Guide\n');
 
     const stats = this.getMigrationStats();
-    console.log(`📦 ${stats.totalPackages} packages can be replaced with Bun native APIs`);
-    console.log(`💾 Potential bundle size reduction: ${stats.totalBundleReduction}\n`);
+    console.info(`📦 ${stats.totalPackages} packages can be replaced with Bun native APIs`);
+    console.info(`💾 Potential bundle size reduction: ${stats.totalBundleReduction}\n`);
 
-    console.log('🔄 Replace these npm packages with Bun built-ins:');
-    console.log('─'.repeat(60));
+    console.info('🔄 Replace these npm packages with Bun built-ins:');
+    console.info('─'.repeat(60));
 
     for (const replacement of this.replacements.slice(0, 15)) {
-      console.log(`  ${replacement.npmPackage.padEnd(20)} → ${replacement.bunReplacement}`);
+      console.info(`  ${replacement.npmPackage.padEnd(20)} → ${replacement.bunReplacement}`);
       if (replacement.bundleSizeReduction) {
-        console.log(`    💾 ${replacement.bundleSizeReduction} saved`);
+        console.info(`    💾 ${replacement.bundleSizeReduction} saved`);
       }
     }
 
     if (this.replacements.length > 15) {
-      console.log(`  ... and ${this.replacements.length - 15} more packages`);
+      console.info(`  ... and ${this.replacements.length - 15} more packages`);
     }
 
-    console.log('\n✨ Benefits:');
-    console.log('  • Zero npm dependencies for core functionality');
-    console.log('  • Native performance (C++ implementations)');
-    console.log('  • Smaller bundle sizes');
-    console.log('  • Faster startup times');
-    console.log('  • Better security (no dependency vulnerabilities)');
+    console.info('\n✨ Benefits:');
+    console.info('  • Zero npm dependencies for core functionality');
+    console.info('  • Native performance (C++ implementations)');
+    console.info('  • Smaller bundle sizes');
+    console.info('  • Faster startup times');
+    console.info('  • Better security (no dependency vulnerabilities)');
   }
 
   static async analyzeProject(projectRoot: string = process.cwd()): Promise<{
@@ -377,44 +377,44 @@ export class MigrationHelper {
 
 // Demo function
 async function demo() {
-  console.log('🔄 NPM → Bun Migration Helper Demo\n');
+  console.info('🔄 NPM → Bun Migration Helper Demo\n');
 
   // Print migration guide
   MigrationHelper.printMigrationGuide();
-  console.log();
+  console.info();
 
   // Show specific replacement
   const replacement = MigrationHelper.findReplacement('string-width');
   if (replacement) {
-    console.log('📋 Specific Replacement Example:');
-    console.log(`Package: ${replacement.npmPackage}`);
-    console.log(`Bun Alternative: ${replacement.bunReplacement}`);
-    console.log(`Performance: ${replacement.performanceGain}`);
-    console.log(`Bundle Reduction: ${replacement.bundleSizeReduction}`);
-    console.log();
+    console.info('📋 Specific Replacement Example:');
+    console.info(`Package: ${replacement.npmPackage}`);
+    console.info(`Bun Alternative: ${replacement.bunReplacement}`);
+    console.info(`Performance: ${replacement.performanceGain}`);
+    console.info(`Bundle Reduction: ${replacement.bundleSizeReduction}`);
+    console.info();
 
     if (replacement.example) {
-      console.log('📝 Code Comparison:');
-      console.log('NPM:');
-      console.log(replacement.example.npm);
-      console.log();
-      console.log('Bun:');
-      console.log(replacement.example.bun);
-      console.log();
+      console.info('📝 Code Comparison:');
+      console.info('NPM:');
+      console.info(replacement.example.npm);
+      console.info();
+      console.info('Bun:');
+      console.info(replacement.example.bun);
+      console.info();
     }
   }
 
   // Generate migration report
   try {
     const report = await MigrationHelper.generateMigrationReport('./package.json');
-    console.log('📊 Migration Report Preview:');
-    console.log(report.split('\n').slice(0, 20).join('\n'));
-    console.log('... (truncated)');
+    console.info('📊 Migration Report Preview:');
+    console.info(report.split('\n').slice(0, 20).join('\n'));
+    console.info('... (truncated)');
   } catch (error) {
-    console.log('Could not generate report (no package.json found)');
+    console.info('Could not generate report (no package.json found)');
   }
 
-  console.log('\n✨ Migration helper demo complete!');
+  console.info('\n✨ Migration helper demo complete!');
 }
 
 // Run demo if executed directly

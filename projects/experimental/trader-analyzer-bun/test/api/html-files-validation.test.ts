@@ -157,7 +157,7 @@ describe("HTML Files - Pattern Consistency", () => {
 		// Hardcoded patterns should be minimal (only fallbacks allowed)
 		// Note: dashboard/index.html has a fallback pattern which is acceptable
 		if (hardcodedPatterns.length > 0) {
-			console.log(`Note: Found ${hardcodedPatterns.length} hardcoded patterns (may be fallbacks)`);
+			console.info(`Note: Found ${hardcodedPatterns.length} hardcoded patterns (may be fallbacks)`);
 		}
 	});
 });

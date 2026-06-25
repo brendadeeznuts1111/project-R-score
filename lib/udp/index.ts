@@ -1,6 +1,6 @@
 // UDP real-time datagram service
 
-export { UDPRealtimeService } from "./udp-realtime-service";
+export { UDPRealtimeService } from './udp-realtime-service';
 
 export type {
   UDPServiceConfig,
@@ -14,9 +14,9 @@ export type {
   ErrorHandler,
   ShutdownHandler,
   StaleHandler,
-} from "./udp-types";
+} from './udp-types';
 
-export { MulticastAddressSelector } from "./multicast-selector";
+export { MulticastAddressSelector } from './multicast-selector';
 export type {
   MulticastScope,
   Reliability,
@@ -25,7 +25,7 @@ export type {
   MulticastIpFamily,
   MulticastRequirements,
   MulticastSelection,
-} from "./multicast-selector";
+} from './multicast-selector';
 
 export {
   decodePacketHeader,
@@ -39,5 +39,5 @@ export {
   computeCRC,
   appendCRC,
   verifyAndStripCRC,
-} from "./packet-id";
-export type { PacketEncodeOptions, PacketHeader } from "./packet-id";
+} from './packet-id';
+export type { PacketEncodeOptions, PacketHeader } from './packet-id';

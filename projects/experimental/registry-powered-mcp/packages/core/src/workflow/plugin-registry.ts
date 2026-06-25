@@ -84,7 +84,7 @@ export class PluginRegistry {
    */
   attachEngine(engine: WorkflowEngine): void {
     this.engine = engine;
-    console.log('✓ Plugin registry attached to workflow engine');
+    console.info('✓ Plugin registry attached to workflow engine');
 
     // Re-register all existing plugins with the new engine
     for (const [id, entry] of this.plugins) {
@@ -121,7 +121,7 @@ export class PluginRegistry {
 
     // Initialize plugin if needed
     if (plugin.initialize) {
-      console.log(`🔄 Initializing plugin: ${plugin.metadata.name}`);
+      console.info(`🔄 Initializing plugin: ${plugin.metadata.name}`);
       await plugin.initialize();
     }
 
@@ -137,7 +137,7 @@ export class PluginRegistry {
       this.registerPluginWithEngine(plugin, enableHooks);
     }
 
-    console.log(
+    console.info(
       `✓ Plugin registered: ${plugin.metadata.name} v${plugin.metadata.version}`
     );
   }
@@ -175,7 +175,7 @@ export class PluginRegistry {
    * Load a plugin from a local file
    */
   async loadFromFile(filePath: string): Promise<WorkflowPlugin> {
-    console.log(`📦 Loading plugin from: ${filePath}`);
+    console.info(`📦 Loading plugin from: ${filePath}`);
 
     try {
       const module = await import(filePath);
@@ -208,7 +208,7 @@ export class PluginRegistry {
       );
     }
 
-    console.log(`🌐 Loading plugin from: ${url}`);
+    console.info(`🌐 Loading plugin from: ${url}`);
 
     try {
       // Fetch plugin source
@@ -259,7 +259,7 @@ export class PluginRegistry {
     }
 
     this.plugins.delete(pluginId);
-    console.log(`✓ Plugin unregistered: ${pluginId}`);
+    console.info(`✓ Plugin unregistered: ${pluginId}`);
 
     return true;
   }

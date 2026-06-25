@@ -1,20 +1,20 @@
 #!/usr/bin/env bun
 
 export async function demoSQLite() {
-  console.log('🗄️ Bun SQLite Demo');
-  console.log('='.repeat(40));
+  console.info('🗄️ Bun SQLite Demo');
+  console.info('='.repeat(40));
   
   // Create a temporary database
   const dbPath = './temp-demo.db';
   
   try {
     // 1. Create database connection
-    console.log('\n1. 🔗 Creating database connection:');
+    console.info('\n1. 🔗 Creating database connection:');
     const db = new Bun.Database(dbPath);
-    console.log('   ✅ Database connected');
+    console.info('   ✅ Database connected');
     
     // 2. Create tables
-    console.log('\n2. 📋 Creating tables:');
+    console.info('\n2. 📋 Creating tables:');
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,10 +35,10 @@ export async function demoSQLite() {
         FOREIGN KEY (user_id) REFERENCES users (id)
       )
     `);
-    console.log('   ✅ Tables created');
+    console.info('   ✅ Tables created');
     
     // 3. Insert data with parameters
-    console.log('\n3. 📝 Inserting data:');
+    console.info('\n3. 📝 Inserting data:');
     const insertUser = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
     
     const users = [
@@ -50,7 +50,7 @@ export async function demoSQLite() {
     users.forEach(user => {
       insertUser.run(user);
     });
-    console.log(`   ✅ Inserted ${users.length} users`);
+    console.info(`   ✅ Inserted ${users.length} users`);
     
     // 4. Insert posts
     const insertPost = db.prepare('INSERT INTO posts (user_id, title, content, published) VALUES (?, ?, ?, ?)');
@@ -65,18 +65,18 @@ export async function demoSQLite() {
     posts.forEach(post => {
       insertPost.run(post);
     });
-    console.log(`   ✅ Inserted ${posts.length} posts`);
+    console.info(`   ✅ Inserted ${posts.length} posts`);
     
     // 5. Query with SELECT
-    console.log('\n5. 🔍 Querying data:');
+    console.info('\n5. 🔍 Querying data:');
     const allUsers = db.query('SELECT * FROM users').all();
-    console.log('   👥 All users:');
+    console.info('   👥 All users:');
     allUsers.forEach(user => {
-      console.log(`      - ${user.name} (${user.email})`);
+      console.info(`      - ${user.name} (${user.email})`);
     });
     
     // 6. Query with JOIN
-    console.log('\n6. 🔗 Query with JOIN:');
+    console.info('\n6. 🔗 Query with JOIN:');
     const userPosts = db.query(`
       SELECT u.name, p.title, p.published 
       FROM users u 
@@ -84,22 +84,22 @@ export async function demoSQLite() {
       ORDER BY u.name, p.created_at
     `).all();
     
-    console.log('   📄 User posts:');
+    console.info('   📄 User posts:');
     userPosts.forEach(post => {
       const status = post.published ? '✅ Published' : '📝 Draft';
-      console.log(`      - ${post.name}: "${post.title}" ${status}`);
+      console.info(`      - ${post.name}: "${post.title}" ${status}`);
     });
     
     // 7. Query with parameters
-    console.log('\n7. 🎯 Parameterized query:');
+    console.info('\n7. 🎯 Parameterized query:');
     const publishedPosts = db.query('SELECT * FROM posts WHERE published = ?').all(true);
-    console.log(`   📰 Published posts (${publishedPosts.length}):`);
+    console.info(`   📰 Published posts (${publishedPosts.length}):`);
     publishedPosts.forEach(post => {
-      console.log(`      - ${post.title}`);
+      console.info(`      - ${post.title}`);
     });
     
     // 8. Aggregate functions
-    console.log('\n8. 📊 Aggregate functions:');
+    console.info('\n8. 📊 Aggregate functions:');
     const stats = db.query(`
       SELECT 
         COUNT(*) as total_users,
@@ -107,12 +107,12 @@ export async function demoSQLite() {
         (SELECT COUNT(*) FROM posts WHERE published = true) as published_posts
     `).get();
     
-    console.log(`   👥 Total users: ${stats.total_users}`);
-    console.log(`   📄 Total posts: ${stats.total_posts}`);
-    console.log(`   ✅ Published posts: ${stats.published_posts}`);
+    console.info(`   👥 Total users: ${stats.total_users}`);
+    console.info(`   📄 Total posts: ${stats.total_posts}`);
+    console.info(`   ✅ Published posts: ${stats.published_posts}`);
     
     // 9. Prepared statements for performance
-    console.log('\n9. ⚡ Prepared statements:');
+    console.info('\n9. ⚡ Prepared statements:');
     const getUserPosts = db.prepare(`
       SELECT title, content, created_at 
       FROM posts 
@@ -121,13 +121,13 @@ export async function demoSQLite() {
     `);
     
     const alicePosts = getUserPosts.all(1);
-    console.log(`   📝 Alice's posts (${alicePosts.length}):`);
+    console.info(`   📝 Alice's posts (${alicePosts.length}):`);
     alicePosts.forEach(post => {
-      console.log(`      - ${post.title} (${new Date(post.created_at).toLocaleDateString()})`);
+      console.info(`      - ${post.title} (${new Date(post.created_at).toLocaleDateString()})`);
     });
     
     // 10. Transactions
-    console.log('\n10. 🔄 Transactions:');
+    console.info('\n10. 🔄 Transactions:');
     const transaction = db.transaction(() => {
       // Add a new user
       const result = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)').run('David Wilson', 'david@example.com');
@@ -141,20 +141,20 @@ export async function demoSQLite() {
     });
     
     const newUserId = transaction();
-    console.log(`   ✅ Transaction completed. New user ID: ${newUserId}`);
+    console.info(`   ✅ Transaction completed. New user ID: ${newUserId}`);
     
     // 11. Update and delete
-    console.log('\n11. ✏️ Update and delete:');
+    console.info('\n11. ✏️ Update and delete:');
     // Update a post
     db.prepare('UPDATE posts SET published = true WHERE user_id = ? AND published = false').run(newUserId);
-    console.log('   ✅ Updated David\'s draft posts to published');
+    console.info('   ✅ Updated David\'s draft posts to published');
     
     // Delete a user (and their posts will be deleted due to foreign key if we set it up that way)
     const deleted = db.prepare('DELETE FROM users WHERE name = ?').run('Charlie Brown');
-    console.log(`   🗑️ Deleted ${deleted.changes} user(s)`);
+    console.info(`   🗑️ Deleted ${deleted.changes} user(s)`);
     
     // 12. Final verification
-    console.log('\n12. ✅ Final verification:');
+    console.info('\n12. ✅ Final verification:');
     const finalStats = db.query(`
       SELECT 
         (SELECT COUNT(*) FROM users) as users,
@@ -162,34 +162,34 @@ export async function demoSQLite() {
         (SELECT COUNT(*) FROM posts WHERE published = true) as published
     `).get();
     
-    console.log(`   📊 Final stats: ${finalStats.users} users, ${finalStats.posts} posts, ${finalStats.published} published`);
+    console.info(`   📊 Final stats: ${finalStats.users} users, ${finalStats.posts} posts, ${finalStats.published} published`);
     
     // Close database
     db.close();
-    console.log('\n✅ Database connection closed');
+    console.info('\n✅ Database connection closed');
     
   } catch (error) {
-    console.log(`❌ Error: ${error.message}`);
+    console.info(`❌ Error: ${error.message}`);
   } finally {
     // Clean up
     try {
       await Bun.file(dbPath).delete();
-      console.log('🧹 Database file cleaned up');
+      console.info('🧹 Database file cleaned up');
     } catch (e) {
       // Ignore cleanup errors
     }
   }
   
-  console.log('\n✅ SQLite demo completed!');
-  console.log('\n💡 SQLite features demonstrated:');
-  console.log('   • Database creation and connection');
-  console.log('   • Table creation with foreign keys');
-  console.log('   • Parameterized queries for security');
-  console.log('   • JOIN operations');
-  console.log('   • Aggregate functions');
-  console.log('   • Prepared statements for performance');
-  console.log('   • Transactions for data consistency');
-  console.log('   • CRUD operations (Create, Read, Update, Delete)');
+  console.info('\n✅ SQLite demo completed!');
+  console.info('\n💡 SQLite features demonstrated:');
+  console.info('   • Database creation and connection');
+  console.info('   • Table creation with foreign keys');
+  console.info('   • Parameterized queries for security');
+  console.info('   • JOIN operations');
+  console.info('   • Aggregate functions');
+  console.info('   • Prepared statements for performance');
+  console.info('   • Transactions for data consistency');
+  console.info('   • CRUD operations (Create, Read, Update, Delete)');
 }
 
 if (import.meta.main) {

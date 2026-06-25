@@ -4,32 +4,32 @@
 import { $, semver } from "bun";
 
 async function demonstrateSymbolsFeatures() {
-  console.log('🔗 Bun Symbols Testing Feature Showcase');
-  console.log('======================================\n');
+  console.info('🔗 Bun Symbols Testing Feature Showcase');
+  console.info('======================================\n');
 
-  console.log('📊 Feature Overview:');
-  console.log('====================');
-  console.log('• Binary compatibility testing for Linux distributions');
-  console.log('• glibc symbol version validation');
-  console.log('• Dynamic library dependency inspection');
-  console.log('• Amazon Linux 2 and Vercel compatibility');
-  console.log('• Automated regression prevention');
-  console.log('• Symbol wrapping and custom implementations\n');
+  console.info('📊 Feature Overview:');
+  console.info('====================');
+  console.info('• Binary compatibility testing for Linux distributions');
+  console.info('• glibc symbol version validation');
+  console.info('• Dynamic library dependency inspection');
+  console.info('• Amazon Linux 2 and Vercel compatibility');
+  console.info('• Automated regression prevention');
+  console.info('• Symbol wrapping and custom implementations\n');
 
   // Platform check
   if (process.platform !== "linux") {
-    console.log('⚠️  Platform Notice:');
-    console.log('==================');
-    console.log('This demo is designed for Linux systems.');
-    console.log('On non-Linux platforms, we\'ll simulate the testing process.\n');
+    console.info('⚠️  Platform Notice:');
+    console.info('==================');
+    console.info('This demo is designed for Linux systems.');
+    console.info('On non-Linux platforms, we\'ll simulate the testing process.\n');
   }
 
   const BUN_EXE = process.execPath; // Use current Bun executable
   const isLinux = process.platform === 'linux';
 
   // Demo 1: Tool Detection and Setup
-  console.log('✅ Demo 1: Tool Detection and Setup');
-  console.log('===================================');
+  console.info('✅ Demo 1: Tool Detection and Setup');
+  console.info('===================================');
 
   const tools = {
     objdump: Bun.which("objdump") || Bun.which("llvm-objdump"),
@@ -38,37 +38,37 @@ async function demonstrateSymbolsFeatures() {
     nm: Bun.which("nm")
   };
 
-  console.log('   Required Tools Status:');
+  console.info('   Required Tools Status:');
   Object.entries(tools).forEach(([name, path]) => {
     if (path) {
-      console.log(`   ✅ ${name}: ${path}`);
+      console.info(`   ✅ ${name}: ${path}`);
     } else {
-      console.log(`   ❌ ${name}: Not found`);
+      console.info(`   ❌ ${name}: Not found`);
     }
   });
 
   if (!tools.objdump) {
-    console.log('\n   ⚠️  Note: objdump not found. Install binutils or llvm.');
+    console.info('\n   ⚠️  Note: objdump not found. Install binutils or llvm.');
   }
   if (!tools.ldd) {
-    console.log('   ⚠️  Note: ldd not found. Install glibc-bin or libc-bin.');
+    console.info('   ⚠️  Note: ldd not found. Install glibc-bin or libc-bin.');
   }
 
   // Demo 2: glibc Symbol Analysis
-  console.log('\n✅ Demo 2: glibc Symbol Analysis');
-  console.log('===============================');
+  console.info('\n✅ Demo 2: glibc Symbol Analysis');
+  console.info('===============================');
 
   if (isLinux && tools.objdump) {
     try {
-      console.log('   Analyzing glibc symbols in Bun binary...');
+      console.info('   Analyzing glibc symbols in Bun binary...');
       
       const output = await $`${tools.objdump} -T ${BUN_EXE} | grep GLIBC_`.nothrow().text();
       const lines = output.split("\n").filter(line => line.trim());
       
-      console.log(`   Found ${lines.length} GLIBC symbols`);
+      console.info(`   Found ${lines.length} GLIBC symbols`);
       
       if (lines.length > 0) {
-        console.log('   Sample symbols:');
+        console.info('   Sample symbols:');
         lines.slice(0, 5).forEach((line, index) => {
           const match = line.match(/\(GLIBC_2(.*)\)\s/);
           if (match?.[1]) {
@@ -77,12 +77,12 @@ async function demonstrateSymbolsFeatures() {
               version = "2." + version.slice(3);
             }
             const symbol = line.slice(line.lastIndexOf(")") + 1).trim();
-            console.log(`     ${index + 1}. ${symbol} (GLIBC_${version})`);
+            console.info(`     ${index + 1}. ${symbol} (GLIBC_${version})`);
           }
         });
 
         if (lines.length > 5) {
-          console.log(`     ... and ${lines.length - 5} more`);
+          console.info(`     ... and ${lines.length - 5} more`);
         }
 
         // Check for versions > 2.26
@@ -104,41 +104,41 @@ async function demonstrateSymbolsFeatures() {
         }
 
         if (errors.length > 0) {
-          console.log('\n   ❌ COMPATIBILITY ISSUES FOUND:');
-          console.log('   ==============================');
+          console.info('\n   ❌ COMPATIBILITY ISSUES FOUND:');
+          console.info('   ==============================');
           errors.forEach(error => {
-            console.log(`   ❌ ${error.symbol}: requires GLIBC ${error["glibc version"]}`);
+            console.info(`   ❌ ${error.symbol}: requires GLIBC ${error["glibc version"]}`);
           });
-          console.log('\n   🔧 Fix Required: Add symbols to -Wl,--wrap=symbol and update workaround-missing-symbols.cpp');
+          console.info('\n   🔧 Fix Required: Add symbols to -Wl,--wrap=symbol and update workaround-missing-symbols.cpp');
         } else {
-          console.log('\n   ✅ All glibc symbols are compatible (≤ 2.26)');
+          console.info('\n   ✅ All glibc symbols are compatible (≤ 2.26)');
         }
       } else {
-        console.log('   ℹ️  No GLIBC symbols found (may be statically linked)');
+        console.info('   ℹ️  No GLIBC symbols found (may be statically linked)');
       }
     } catch (error) {
-      console.log(`   ❌ Error analyzing symbols: ${error.message}`);
+      console.info(`   ❌ Error analyzing symbols: ${error.message}`);
     }
   } else {
-    console.log('   📋 Simulated glibc Analysis:');
-    console.log('   ===========================');
-    console.log('   ✅ Found 45 GLIBC symbols');
-    console.log('   ✅ All symbols ≤ GLIBC_2.26 (compatible)');
-    console.log('   ✅ No compatibility issues detected');
+    console.info('   📋 Simulated glibc Analysis:');
+    console.info('   ===========================');
+    console.info('   ✅ Found 45 GLIBC symbols');
+    console.info('   ✅ All symbols ≤ GLIBC_2.26 (compatible)');
+    console.info('   ✅ No compatibility issues detected');
   }
 
   // Demo 3: Library Dependency Analysis
-  console.log('\n✅ Demo 3: Library Dependency Analysis');
-  console.log('=====================================');
+  console.info('\n✅ Demo 3: Library Dependency Analysis');
+  console.info('=====================================');
 
   if (isLinux && tools.ldd) {
     try {
-      console.log('   Analyzing dynamic library dependencies...');
+      console.info('   Analyzing dynamic library dependencies...');
       
       const output = await $`${tools.ldd} ${BUN_EXE}`.text();
       const lines = output.split("\n").filter(line => line.trim());
       
-      console.log(`   Found ${lines.length} dependencies`);
+      console.info(`   Found ${lines.length} dependencies`);
       
       // Check for problematic libraries
       const problematicLibs = [];
@@ -153,40 +153,40 @@ async function demonstrateSymbolsFeatures() {
         }
       }
 
-      console.log('   Standard dependencies:');
+      console.info('   Standard dependencies:');
       normalLibs.slice(0, 8).forEach(lib => {
-        console.log(`     ✅ ${lib}`);
+        console.info(`     ✅ ${lib}`);
       });
       
       if (normalLibs.length > 8) {
-        console.log(`     ... and ${normalLibs.length - 8} more`);
+        console.info(`     ... and ${normalLibs.length - 8} more`);
       }
 
       if (problematicLibs.length > 0) {
-        console.log('\n   ❌ PROBLEMATIC DEPENDENCIES:');
-        console.log('   ===========================');
+        console.info('\n   ❌ PROBLEMATIC DEPENDENCIES:');
+        console.info('   ===========================');
         problematicLibs.forEach(lib => {
-          console.log(`   ❌ ${lib}`);
+          console.info(`   ❌ ${lib}`);
         });
-        console.log('\n   🔧 Fix Required: Wrap C math symbols in workaround-missing-symbols.cpp');
+        console.info('\n   🔧 Fix Required: Wrap C math symbols in workaround-missing-symbols.cpp');
       } else {
-        console.log('\n   ✅ No problematic libraries detected');
+        console.info('\n   ✅ No problematic libraries detected');
       }
     } catch (error) {
-      console.log(`   ❌ Error analyzing dependencies: ${error.message}`);
+      console.info(`   ❌ Error analyzing dependencies: ${error.message}`);
     }
   } else {
-    console.log('   📋 Simulated Dependency Analysis:');
-    console.log('   ================================');
-    console.log('   ✅ Found 12 dependencies');
-    console.log('   ✅ Standard libraries: libm.so.6, libpthread.so.6, libc.so.6');
-    console.log('   ✅ No libatomic.so linkage detected');
-    console.log('   ✅ All dependencies are compatible');
+    console.info('   📋 Simulated Dependency Analysis:');
+    console.info('   ================================');
+    console.info('   ✅ Found 12 dependencies');
+    console.info('   ✅ Standard libraries: libm.so.6, libpthread.so.6, libc.so.6');
+    console.info('   ✅ No libatomic.so linkage detected');
+    console.info('   ✅ All dependencies are compatible');
   }
 
   // Demo 4: Compatibility Matrix
-  console.log('\n✅ Demo 4: Linux Distribution Compatibility');
-  console.log('==========================================');
+  console.info('\n✅ Demo 4: Linux Distribution Compatibility');
+  console.info('==========================================');
 
   const distributions = [
     { name: "Amazon Linux 2", glibc: "2.26", status: "✅ Target Platform", notes: "AWS EC2 default" },
@@ -197,15 +197,15 @@ async function demonstrateSymbolsFeatures() {
     { name: "Alpine Linux", glibc: "musl", status: "⚠️  Musl", notes: "Different libc implementation" }
   ];
 
-  console.log('   Distribution Compatibility Matrix:');
-  console.log('   ===================================');
+  console.info('   Distribution Compatibility Matrix:');
+  console.info('   ===================================');
   distributions.forEach(dist => {
-    console.log(`   ${dist.status} ${dist.name.padEnd(18)} | glibc ${dist.glibc.padEnd(6)} | ${dist.notes}`);
+    console.info(`   ${dist.status} ${dist.name.padEnd(18)} | glibc ${dist.glibc.padEnd(6)} | ${dist.notes}`);
   });
 
   // Demo 5: Symbol Wrapping Strategy
-  console.log('\n✅ Demo 5: Symbol Wrapping Strategy');
-  console.log('===================================');
+  console.info('\n✅ Demo 5: Symbol Wrapping Strategy');
+  console.info('===================================');
 
   const wrappedSymbols = [
     { symbol: "__libc_memrchr", reason: "Not available in glibc < 2.26", implementation: "Custom memrchr" },
@@ -214,24 +214,24 @@ async function demonstrateSymbolsFeatures() {
     { symbol: "__atomic_compare_exchange_4", reason: "Requires libatomic.so", implementation: "__builtin_atomic_compare_exchange_4" }
   ];
 
-  console.log('   Common Wrapped Symbols:');
-  console.log('   ======================');
+  console.info('   Common Wrapped Symbols:');
+  console.info('   ======================');
   wrappedSymbols.forEach((wrap, index) => {
-    console.log(`   ${index + 1}. ${wrap.symbol}`);
-    console.log(`      Reason: ${wrap.reason}`);
-    console.log(`      Implementation: ${wrap.implementation}`);
-    console.log('');
+    console.info(`   ${index + 1}. ${wrap.symbol}`);
+    console.info(`      Reason: ${wrap.reason}`);
+    console.info(`      Implementation: ${wrap.implementation}`);
+    console.info('');
   });
 
-  console.log('   Linker Flags:');
-  console.log('   =============');
+  console.info('   Linker Flags:');
+  console.info('   =============');
   wrappedSymbols.forEach(wrap => {
-    console.log(`   -Wl,--wrap=${wrap.symbol}`);
+    console.info(`   -Wl,--wrap=${wrap.symbol}`);
   });
 
   // Demo 6: Real-World Impact
-  console.log('✅ Demo 6: Real-World Impact');
-  console.log('===========================');
+  console.info('✅ Demo 6: Real-World Impact');
+  console.info('===========================');
 
   const scenarios = [
     {
@@ -264,20 +264,20 @@ async function demonstrateSymbolsFeatures() {
     }
   ];
 
-  console.log('   Deployment Scenarios:');
-  console.log('   ====================');
+  console.info('   Deployment Scenarios:');
+  console.info('   ====================');
   scenarios.forEach((scenario, index) => {
-    console.log(`   ${index + 1}. ${scenario.scenario}`);
-    console.log(`      Platform: ${scenario.platform}`);
-    console.log(`      Issue: ${scenario.issue}`);
-    console.log(`      Solution: ${scenario.solution}`);
-    console.log(`      Impact: ${scenario.impact}`);
-    console.log('');
+    console.info(`   ${index + 1}. ${scenario.scenario}`);
+    console.info(`      Platform: ${scenario.platform}`);
+    console.info(`      Issue: ${scenario.issue}`);
+    console.info(`      Solution: ${scenario.solution}`);
+    console.info(`      Impact: ${scenario.impact}`);
+    console.info('');
   });
 
   // Demo 7: Testing Automation
-  console.log('✅ Demo 7: Testing Automation');
-  console.log('=============================');
+  console.info('✅ Demo 7: Testing Automation');
+  console.info('=============================');
 
   const automationSteps = [
     { step: "Binary Analysis", tool: "objdump", purpose: "Extract symbol table" },
@@ -287,51 +287,51 @@ async function demonstrateSymbolsFeatures() {
     { step: "Report Generation", tool: "Bun.inspect", purpose: "Detailed error reporting" }
   ];
 
-  console.log('   Automated Testing Pipeline:');
-  console.log('   ===========================');
+  console.info('   Automated Testing Pipeline:');
+  console.info('   ===========================');
   automationSteps.forEach((step, index) => {
-    console.log(`   ${index + 1}. ${step.step.padEnd(22)} | Tool: ${step.tool.padEnd(8)} | ${step.purpose}`);
+    console.info(`   ${index + 1}. ${step.step.padEnd(22)} | Tool: ${step.tool.padEnd(8)} | ${step.purpose}`);
   });
 
-  console.log('\n   CI/CD Integration:');
-  console.log('   ===================');
-  console.log('   ✅ Linux runners execute compatibility tests');
-  console.log('   ✅ Failures block deployment to production');
-  console.log('   ✅ Automated reports guide developers');
-  console.log('   ✅ Regression prevention with baseline comparison');
+  console.info('\n   CI/CD Integration:');
+  console.info('   ===================');
+  console.info('   ✅ Linux runners execute compatibility tests');
+  console.info('   ✅ Failures block deployment to production');
+  console.info('   ✅ Automated reports guide developers');
+  console.info('   ✅ Regression prevention with baseline comparison');
 
   // Summary
-  console.log('\n🎊 Symbols Testing Feature Summary');
-  console.log('===================================');
+  console.info('\n🎊 Symbols Testing Feature Summary');
+  console.info('===================================');
 
-  console.log('📊 Key Features Demonstrated:');
-  console.log('• Binary symbol analysis and validation');
-  console.log('• glibc version compatibility checking');
-  console.log('• Dynamic library dependency inspection');
-  console.log('• Cross-distribution compatibility assurance');
-  console.log('• Symbol wrapping and custom implementations');
-  console.log('• Automated testing and regression prevention');
+  console.info('📊 Key Features Demonstrated:');
+  console.info('• Binary symbol analysis and validation');
+  console.info('• glibc version compatibility checking');
+  console.info('• Dynamic library dependency inspection');
+  console.info('• Cross-distribution compatibility assurance');
+  console.info('• Symbol wrapping and custom implementations');
+  console.info('• Automated testing and regression prevention');
 
-  console.log('\n🌟 Production-Ready Capabilities:');
-  console.log('• Amazon Linux 2 compatibility');
-  console.log('• Vercel infrastructure support');
-  console.log('• Enterprise Linux distribution support');
-  console.log('• Docker container compatibility');
-  console.log('• CI/CD pipeline integration');
-  console.log('• Automated regression detection');
+  console.info('\n🌟 Production-Ready Capabilities:');
+  console.info('• Amazon Linux 2 compatibility');
+  console.info('• Vercel infrastructure support');
+  console.info('• Enterprise Linux distribution support');
+  console.info('• Docker container compatibility');
+  console.info('• CI/CD pipeline integration');
+  console.info('• Automated regression detection');
 
-  console.log('\n🔧 Developer Experience:');
-  console.log('• Clear error messages with specific guidance');
-  console.log('• Automated tool detection and setup');
-  console.log('• Detailed compatibility reports');
-  console.log('• Step-by-step fix instructions');
-  console.log('• Integration with existing build systems');
-  console.log('• Comprehensive documentation');
+  console.info('\n🔧 Developer Experience:');
+  console.info('• Clear error messages with specific guidance');
+  console.info('• Automated tool detection and setup');
+  console.info('• Detailed compatibility reports');
+  console.info('• Step-by-step fix instructions');
+  console.info('• Integration with existing build systems');
+  console.info('• Comprehensive documentation');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun\'s symbols testing ensures broad Linux compatibility!');
-  console.log('Essential for enterprise and cloud deployments! 🔗');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun\'s symbols testing ensures broad Linux compatibility!');
+  console.info('Essential for enterprise and cloud deployments! 🔗');
 }
 
 // Run the demonstration

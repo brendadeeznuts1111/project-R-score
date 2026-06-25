@@ -229,7 +229,7 @@ export class IncidentResponseOrchestrator {
 			const snapshot = Bun.generateHeapSnapshot();
 			const snapshotPath = `./forensic-snapshots/snapshot-${Date.now()}.json`;
 			Bun.write(snapshotPath, JSON.stringify(snapshot));
-			console.log(`📸 Forensic snapshot created: ${snapshotPath}`);
+			console.info(`📸 Forensic snapshot created: ${snapshotPath}`);
 		}
 	}
 

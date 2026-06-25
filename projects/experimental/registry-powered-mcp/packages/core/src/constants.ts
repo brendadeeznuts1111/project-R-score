@@ -120,7 +120,7 @@ if (typeof (globalThis as any).URLPattern === 'undefined') {
  *
  * // Access API documentation
  * const urlPatternDoc = BUN_NATIVE_APIS.ROUTING.URL_PATTERN;
- * console.log(`${urlPatternDoc.api}: ${urlPatternDoc.optimization}`);
+ * console.info(`${urlPatternDoc.api}: ${urlPatternDoc.optimization}`);
  * ```
  *
  * REFERENCES:

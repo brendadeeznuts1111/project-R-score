@@ -80,7 +80,9 @@ describe('BunWikiIntegration', () => {
       description: 'Runtime server for Bun',
       category: 'runtime',
       path: '/docs/api/http',
-      examples: [{ language: 'typescript', title: 'ex', description: 'd', code: 'c', runnable: true }],
+      examples: [
+        { language: 'typescript', title: 'ex', description: 'd', code: 'c', runnable: true },
+      ],
     };
     // @ts-expect-error — accessing private for test
     const tags = wiki.extractTags(docPage);

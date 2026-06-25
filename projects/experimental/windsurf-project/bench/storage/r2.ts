@@ -7,8 +7,8 @@ async function runBenchmark() {
   const bucketName = process.env.S3_BUCKET || 'apple-ids-bucket';
   const manager = new BunR2AppleManager({}, bucketName);
 
-  console.log(`\n📊 UNIFIED R2 BENCHMARK - BUCKET: ${bucketName}`);
-  console.log(`--------------------------------------------------`);
+  console.info(`\n📊 UNIFIED R2 BENCHMARK - BUCKET: ${bucketName}`);
+  console.info(`--------------------------------------------------`);
 
   try {
     await manager.initialize();
@@ -26,7 +26,7 @@ async function runBenchmark() {
   const results: any[] = [];
 
   for (const p of payloads) {
-    console.log(`\n🚀 Testing Payload: ${p.name}`);
+    console.info(`\n🚀 Testing Payload: ${p.name}`);
     
     // Generate random JSON-like data
     const data = {
@@ -75,14 +75,14 @@ async function runBenchmark() {
       'Provider': uploadRes.provider
     });
     
-    console.log(`   ✅ Finished ${p.name}`);
+    console.info(`   ✅ Finished ${p.name}`);
   }
 
-  console.log(`\n📈 SUMMARY RESULTS:`);
+  console.info(`\n📈 SUMMARY RESULTS:`);
   console.table(results);
 
   // Concurrency Stress Test
-  console.log(`\n🔥 Concurrency Stress Test: 10 Parallel Uploads...`);
+  console.info(`\n🔥 Concurrency Stress Test: 10 Parallel Uploads...`);
   const batchSize = 10;
   const batchData = Array.from({ length: batchSize }).map((_, i) => ({
     id: i,
@@ -95,16 +95,16 @@ async function runBenchmark() {
   const endBatch = performance.now();
   
   const successCount = batchResults.filter(r => r.success).length;
-  console.log(`   ✅ Batch completed in ${(endBatch - startBatch).toFixed(2)}ms`);
-  console.log(`   ✅ Success rate: ${successCount}/${batchSize}`);
+  console.info(`   ✅ Batch completed in ${(endBatch - startBatch).toFixed(2)}ms`);
+  console.info(`   ✅ Success rate: ${successCount}/${batchSize}`);
 
   // Lifecycle Audit
-  console.log(`\n🧪 Running Comprehensive Lifecycle Audit...`);
+  console.info(`\n🧪 Running Comprehensive Lifecycle Audit...`);
   const auditSuccess = await manager.performLifecycleAudit();
-  console.log(auditSuccess ? '   ✅ AUDIT PASSED' : '   ❌ AUDIT FAILED');
+  console.info(auditSuccess ? '   ✅ AUDIT PASSED' : '   ❌ AUDIT FAILED');
 
-  console.log(`\n--------------------------------------------------`);
-  console.log(`✅ BENCHMARK COMPLETE\n`);
+  console.info(`\n--------------------------------------------------`);
+  console.info(`✅ BENCHMARK COMPLETE\n`);
 }
 
 runBenchmark().catch(console.error);

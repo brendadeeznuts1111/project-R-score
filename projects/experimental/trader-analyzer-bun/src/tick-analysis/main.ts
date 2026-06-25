@@ -17,8 +17,8 @@ const DATA_DIR = process.env.BUN_HYPERTICK_DATA_DIR || './data/tickdb';
 const DB_PATH = `${DATA_DIR}/tick.db`;
 
 async function main() {
-  console.log('🚀 HyperTick v1.3.3 - High-Frequency Analysis Subsystem');
-  console.log('========================================================\n');
+  console.info('🚀 HyperTick v1.3.3 - High-Frequency Analysis Subsystem');
+  console.info('========================================================\n');
 
   // Initialize architecture
   const architecture = new HyperTickArchitecture({
@@ -38,27 +38,27 @@ async function main() {
 
   // Display architecture metrics
   const metrics = architecture.getArchitectureMetrics();
-  console.log('📊 Architecture Metrics:');
-  console.log(`   Version: ${metrics.version}`);
-  console.log(`   Max Throughput: ${metrics.maxTicksPerSecond.toLocaleString()} ticks/sec`);
-  console.log(`   Memory per Tick: ${metrics.estimatedMemoryPerTick} bytes`);
-  console.log(`   Bun Runtime: ${metrics.bunRuntime.version}\n`);
+  console.info('📊 Architecture Metrics:');
+  console.info(`   Version: ${metrics.version}`);
+  console.info(`   Max Throughput: ${metrics.maxTicksPerSecond.toLocaleString()} ticks/sec`);
+  console.info(`   Memory per Tick: ${metrics.estimatedMemoryPerTick} bytes`);
+  console.info(`   Bun Runtime: ${metrics.bunRuntime.version}\n`);
 
   // Initialize database
   const db = new Database(DB_PATH);
-  console.log(`💾 Database: ${DB_PATH}\n`);
+  console.info(`💾 Database: ${DB_PATH}\n`);
 
   // Initialize collector
   const collector = new HyperTickCollector(DB_PATH);
-  console.log('✅ Collector initialized\n');
+  console.info('✅ Collector initialized\n');
 
   // Initialize correlation engine
   const engine = new HyperTickCorrelationEngine(db);
-  console.log('✅ Correlation engine initialized\n');
+  console.info('✅ Correlation engine initialized\n');
 
   // Initialize API router
   const router = new HyperTickRouter(collector, engine);
-  console.log('✅ API router initialized\n');
+  console.info('✅ API router initialized\n');
 
   // Start server
   const server = Bun.serve({
@@ -68,20 +68,20 @@ async function main() {
     },
   });
 
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log('\n📝 API Endpoints:');
-  console.log(`   POST   http://localhost:${PORT}/api/v1.3.3/ticks/ingest`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/ticks/:nodeId/recent`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/ticks/correlation/:sourceId/:targetId`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/arbitrage/micro/:marketId`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/detection/spoofing/:nodeId`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/system/stats`);
-  console.log(`   GET    http://localhost:${PORT}/api/v1.3.3/health?detail=full`);
-  console.log('\n💡 Press Ctrl+C to stop\n');
+  console.info(`✅ Server running on http://localhost:${PORT}`);
+  console.info('\n📝 API Endpoints:');
+  console.info(`   POST   http://localhost:${PORT}/api/v1.3.3/ticks/ingest`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/ticks/:nodeId/recent`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/ticks/correlation/:sourceId/:targetId`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/arbitrage/micro/:marketId`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/detection/spoofing/:nodeId`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/system/stats`);
+  console.info(`   GET    http://localhost:${PORT}/api/v1.3.3/health?detail=full`);
+  console.info('\n💡 Press Ctrl+C to stop\n');
 
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down...');
+    console.info('\n🛑 Shutting down...');
     collector.close();
     db.close();
     server.stop();

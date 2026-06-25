@@ -47,7 +47,7 @@ class VaultStandards {
     }
 
     async checkStandards(): Promise<StandardsResult> {
-        console.log(chalk.blue.bold('📏 Checking Vault Standards Compliance...'));
+        console.info(chalk.blue.bold('📏 Checking Vault Standards Compliance...'));
 
         const checks: StandardCheck[] = [];
 
@@ -333,58 +333,58 @@ class VaultStandards {
     }
 
     private displayResults(result: StandardsResult): void {
-        console.log(chalk.blue.bold('\n📊 Standards Compliance Results:'));
-        console.log(chalk.gray('='.repeat(50)));
+        console.info(chalk.blue.bold('\n📊 Standards Compliance Results:'));
+        console.info(chalk.gray('='.repeat(50)));
 
         // Overall score
         const scoreColor = result.score >= 90 ? chalk.green : result.score >= 70 ? chalk.yellow : chalk.red;
-        console.log(scoreColor.bold(`\n🎯 Overall Score: ${result.score}%`));
-        console.log(result.overall ? chalk.green('✅ PASSED') : chalk.red('❌ FAILED'));
+        console.info(scoreColor.bold(`\n🎯 Overall Score: ${result.score}%`));
+        console.info(result.overall ? chalk.green('✅ PASSED') : chalk.red('❌ FAILED'));
 
         // Individual checks
-        console.log(chalk.blue.bold('\n📋 Detailed Results:'));
+        console.info(chalk.blue.bold('\n📋 Detailed Results:'));
 
         for (const check of result.checks) {
             const status = check.passed ? chalk.green('✅') : chalk.red('❌');
-            console.log(`\n${status} ${check.name}: ${check.description}`);
+            console.info(`\n${status} ${check.name}: ${check.description}`);
 
             for (const detail of check.details) {
-                console.log(`   ${detail}`);
+                console.info(`   ${detail}`);
             }
         }
 
         // Recommendations
-        console.log(chalk.blue.bold('\n💡 Recommendations:'));
+        console.info(chalk.blue.bold('\n💡 Recommendations:'));
 
         for (const check of result.checks) {
             if (!check.passed) {
                 switch (check.name) {
                     case 'Required Files':
-                        console.log(chalk.yellow('• Run: bun run vault:setup - Create missing files'));
+                        console.info(chalk.yellow('• Run: bun run vault:setup - Create missing files'));
                         break;
                     case 'Folder Structure':
-                        console.log(chalk.yellow('• Run: bun run vault:setup - Create missing folders'));
+                        console.info(chalk.yellow('• Run: bun run vault:setup - Create missing folders'));
                         break;
                     case 'YAML Frontmatter':
-                        console.log(chalk.yellow('• Run: bun run vault:fix - Auto-fix frontmatter issues'));
+                        console.info(chalk.yellow('• Run: bun run vault:fix - Auto-fix frontmatter issues'));
                         break;
                     case 'Naming Conventions':
-                        console.log(chalk.yellow('• Run: bun run vault:organize - Fix file naming'));
+                        console.info(chalk.yellow('• Run: bun run vault:organize - Fix file naming'));
                         break;
                     case 'Content Standards':
-                        console.log(chalk.yellow('• Run: bun run vault:fix - Fix content formatting'));
+                        console.info(chalk.yellow('• Run: bun run vault:fix - Fix content formatting'));
                         break;
                     case 'Configuration Templates':
-                        console.log(chalk.yellow('• Run: bun run vault:setup - Create configuration'));
+                        console.info(chalk.yellow('• Run: bun run vault:setup - Create configuration'));
                         break;
                 }
             }
         }
 
         if (result.overall) {
-            console.log(chalk.green.bold('\n🎉 Excellent! Your vault meets all standards.'));
+            console.info(chalk.green.bold('\n🎉 Excellent! Your vault meets all standards.'));
         } else {
-            console.log(chalk.yellow.bold('\n⚠️  Some standards need attention. See recommendations above.'));
+            console.info(chalk.yellow.bold('\n⚠️  Some standards need attention. See recommendations above.'));
         }
     }
 }

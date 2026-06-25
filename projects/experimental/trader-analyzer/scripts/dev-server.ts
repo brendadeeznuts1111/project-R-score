@@ -43,11 +43,11 @@ function getState(key: string): any | null {
 // Hot reload handler (Bun v1.3.3+ watch mode)
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    console.log("♻️ Hot reload: preserving state");
+    console.info("♻️ Hot reload: preserving state");
     const state = db.query("SELECT count(*) as count FROM dev_state").get() as {
       count: number;
     };
-    console.log(`   Preserved ${state.count} state entries`);
+    console.info(`   Preserved ${state.count} state entries`);
   });
 }
 
@@ -84,9 +84,9 @@ const port = parseInt(
 );
 preserveState("server_started", { port, timestamp: Date.now() });
 
-console.log(`🚀 Dev server starting on port ${port}`);
-console.log(`📦 State preserved in ${DB_PATH}`);
-console.log(`♻️  Hot reload enabled (use --watch flag)`);
+console.info(`🚀 Dev server starting on port ${port}`);
+console.info(`📦 State preserved in ${DB_PATH}`);
+console.info(`♻️  Hot reload enabled (use --watch flag)`);
 
 Bun.serve({
   port,
@@ -99,7 +99,7 @@ Bun.serve({
 
 // Cleanup on exit
 process.on("SIGTERM", () => {
-  console.log("🛑 Shutting down dev server");
+  console.info("🛑 Shutting down dev server");
   db.close();
   process.exit(0);
 });

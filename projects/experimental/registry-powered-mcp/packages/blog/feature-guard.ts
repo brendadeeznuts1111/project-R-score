@@ -110,7 +110,7 @@ export class FeatureFlagGuard {
    */
   private static enableDebugFeatures(): void {
     // Debug-specific code that gets eliminated when DEBUG is disabled
-    console.log("🔧 Debug features enabled at build time");
+    console.info("🔧 Debug features enabled at build time");
   }
 
   /**
@@ -119,7 +119,7 @@ export class FeatureFlagGuard {
    */
   private static enablePremiumFeatures(): void {
     // Premium-specific code that gets eliminated when PREMIUM is disabled
-    console.log("💎 Premium features enabled at build time");
+    console.info("💎 Premium features enabled at build time");
   }
 
   /**
@@ -128,7 +128,7 @@ export class FeatureFlagGuard {
    */
   private static enableBetaFeatures(): void {
     // Beta-specific code that gets eliminated when BETA_FEATURES is disabled
-    console.log("🧪 Beta features enabled at build time");
+    console.info("🧪 Beta features enabled at build time");
   }
 }
 
@@ -233,7 +233,7 @@ export function initializeFeatureGuard(): void {
   // Log active features in debug mode
   if (feature("DEBUG")) {
     const active = FeatureFlagGuard.getActiveFeatures();
-    console.log(`🚩 Active features: ${active.join(", ") || "none"}`);
+    console.info(`🚩 Active features: ${active.join(", ") || "none"}`);
   }
 }
 

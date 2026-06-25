@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 export async function demoPreCommitWorkflow() {
-  console.log('🔒 Pre-commit Workflow Demo');
-  console.log('='.repeat(40));
+  console.info('🔒 Pre-commit Workflow Demo');
+  console.info('='.repeat(40));
   
   // Simulate a pre-commit workflow
   const workspace = './temp-workspace';
@@ -10,10 +10,10 @@ export async function demoPreCommitWorkflow() {
   try {
     // Create temporary workspace
     await Bun.spawn(['mkdir', '-p', workspace]).exited;
-    console.log('📁 Created temporary workspace');
+    console.info('📁 Created temporary workspace');
     
     // 1. Code formatting check
-    console.log('\n1. 🎨 Code Formatting Check:');
+    console.info('\n1. 🎨 Code Formatting Check:');
     const checkFormatting = async (filePath) => {
       try {
         const content = await Bun.file(filePath).text();
@@ -38,21 +38,21 @@ export async function demoPreCommitWorkflow() {
     // Create a test file with formatting issues
     const testFile = `${workspace}/test.js`;
     await Bun.write(testFile, `function test() {	
-  console.log('hello ');   // trailing space
+  console.info('hello ');   // trailing space
   return true;
 }
 `);
     
     const formattingIssues = await checkFormatting(testFile);
     if (formatingIssues.length > 0) {
-      console.log('   ❌ Formatting issues found:');
-      formattingIssues.forEach(issue => console.log(`      - ${issue}`));
+      console.info('   ❌ Formatting issues found:');
+      formattingIssues.forEach(issue => console.info(`      - ${issue}`));
     } else {
-      console.log('   ✅ No formatting issues');
+      console.info('   ✅ No formatting issues');
     }
     
     // 2. TypeScript type checking
-    console.log('\n2. 📝 TypeScript Type Checking:');
+    console.info('\n2. 📝 TypeScript Type Checking:');
     const typeCheck = async (filePath) => {
       try {
         // Simulate type checking by looking for obvious issues
@@ -89,14 +89,14 @@ function Component() {
     
     const typeIssues = await typeCheck(tsFile);
     if (typeIssues.length > 0) {
-      console.log('   ❌ Type issues found:');
-      typeIssues.forEach(issue => console.log(`      - ${issue}`));
+      console.info('   ❌ Type issues found:');
+      typeIssues.forEach(issue => console.info(`      - ${issue}`));
     } else {
-      console.log('   ✅ No type issues');
+      console.info('   ✅ No type issues');
     }
     
     // 3. Linting
-    console.log('\n3. 🔍 Linting Check:');
+    console.info('\n3. 🔍 Linting Check:');
     const lintFile = async (filePath) => {
       try {
         const content = await Bun.file(filePath).text();
@@ -138,7 +138,7 @@ function Component() {
     await Bun.write(lintFile, `
 const unusedVariable = 'test';
 const veryLongLineThatExceedsTheRecommendedLineLengthLimitAndShouldBeSplitIntoMultipleLines = 'this is too long';
-console.log('Debug message');
+console.info('Debug message');
 export function test() {
   return true;
 }
@@ -146,14 +146,14 @@ export function test() {
     
     const lintIssues = await lintFile(lintTestFile);
     if (lintIssues.length > 0) {
-      console.log('   ❌ Linting issues found:');
-      lintIssues.forEach(issue => console.log(`      - ${issue}`));
+      console.info('   ❌ Linting issues found:');
+      lintIssues.forEach(issue => console.info(`      - ${issue}`));
     } else {
-      console.log('   ✅ No linting issues');
+      console.info('   ✅ No linting issues');
     }
     
     // 4. Security scan
-    console.log('\n4. 🛡️ Security Scan:');
+    console.info('\n4. 🛡️ Security Scan:');
     const securityScan = async (filePath) => {
       try {
         const content = await Bun.file(filePath).text();
@@ -206,14 +206,14 @@ function processData(data) {
     
     const securityIssues = await securityScan(securityFile);
     if (securityIssues.length > 0) {
-      console.log('   ❌ Security issues found:');
-      securityIssues.forEach(issue => console.log(`      - ${issue}`));
+      console.info('   ❌ Security issues found:');
+      securityIssues.forEach(issue => console.info(`      - ${issue}`));
     } else {
-      console.log('   ✅ No security issues');
+      console.info('   ✅ No security issues');
     }
     
     // 5. Test execution
-    console.log('\n5. 🧪 Test Execution:');
+    console.info('\n5. 🧪 Test Execution:');
     const runTests = async () => {
       // Simulate test results
       const tests = [
@@ -230,10 +230,10 @@ function processData(data) {
       tests.forEach(test => {
         if (test.passed) {
           passed++;
-          console.log(`   ✅ ${test.name} (${test.duration}ms)`);
+          console.info(`   ✅ ${test.name} (${test.duration}ms)`);
         } else {
           failed++;
-          console.log(`   ❌ ${test.name} (${test.duration}ms) - ${test.error || 'Failed'}`);
+          console.info(`   ❌ ${test.name} (${test.duration}ms) - ${test.error || 'Failed'}`);
         }
         totalDuration += test.duration;
       });
@@ -242,14 +242,14 @@ function processData(data) {
     };
     
     const testResults = await runTests();
-    console.log(`   📊 Test Summary: ${testResults.passed}/${testResults.total} passed (${testResults.duration}ms total)`);
+    console.info(`   📊 Test Summary: ${testResults.passed}/${testResults.total} passed (${testResults.duration}ms total)`);
     
     // 6. Build verification
-    console.log('\n6. 🔨 Build Verification:');
+    console.info('\n6. 🔨 Build Verification:');
     const verifyBuild = async () => {
       try {
         // Simulate build process
-        console.log('   📦 Building project...');
+        console.info('   📦 Building project...');
         await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate build time
         
         // Check for critical files
@@ -285,14 +285,14 @@ function processData(data) {
     
     const buildResult = await verifyBuild();
     if (buildResult.success) {
-      console.log(`   ✅ Build successful (${Math.round(buildResult.size / 1024)}KB)`);
+      console.info(`   ✅ Build successful (${Math.round(buildResult.size / 1024)}KB)`);
     } else {
-      console.log('   ❌ Build failed:');
-      buildResult.issues.forEach(issue => console.log(`      - ${issue}`));
+      console.info('   ❌ Build failed:');
+      buildResult.issues.forEach(issue => console.info(`      - ${issue}`));
     }
     
     // 7. Generate commit message
-    console.log('\n7. 📝 Generate Commit Message:');
+    console.info('\n7. 📝 Generate Commit Message:');
     const generateCommitMessage = () => {
       const changes = [
         'feat: add user authentication system',
@@ -304,10 +304,10 @@ function processData(data) {
       const selectedChanges = changes.slice(0, 2); // Simulate selecting some changes
       const commitMessage = selectedChanges.join('\n');
       
-      console.log('   📋 Suggested commit message:');
-      console.log('   ──────────────────────────');
-      console.log(`   ${commitMessage}`);
-      console.log('   ──────────────────────────');
+      console.info('   📋 Suggested commit message:');
+      console.info('   ──────────────────────────');
+      console.info(`   ${commitMessage}`);
+      console.info('   ──────────────────────────');
       
       return commitMessage;
     };
@@ -315,7 +315,7 @@ function processData(data) {
     const commitMessage = generateCommitMessage();
     
     // 8. Summary
-    console.log('\n8. 📊 Pre-commit Summary:');
+    console.info('\n8. 📊 Pre-commit Summary:');
     const summary = {
       formatting: formattingIssues.length === 0,
       types: typeIssues.length === 0,
@@ -328,31 +328,31 @@ function processData(data) {
     const passed = Object.values(summary).filter(Boolean).length;
     const total = Object.keys(summary).length;
     
-    console.log(`   ✅ Passed: ${passed}/${total} checks`);
+    console.info(`   ✅ Passed: ${passed}/${total} checks`);
     
     if (passed === total) {
-      console.log('   🎉 All checks passed! Ready to commit.');
+      console.info('   🎉 All checks passed! Ready to commit.');
     } else {
-      console.log('   ⚠️  Some checks failed. Please fix issues before committing.');
+      console.info('   ⚠️  Some checks failed. Please fix issues before committing.');
     }
     
     // Cleanup
     await Bun.spawn(['rm', '-rf', workspace]).exited;
-    console.log('\n🧹 Workspace cleaned up');
+    console.info('\n🧹 Workspace cleaned up');
     
   } catch (error) {
-    console.log(`❌ Workflow error: ${error.message}`);
+    console.info(`❌ Workflow error: ${error.message}`);
   }
   
-  console.log('\n✅ Pre-commit workflow demo completed!');
-  console.log('\n💡 Pre-commit hooks typically include:');
-  console.log('   • Code formatting (Prettier, ESLint)');
-  console.log('   • Type checking (TypeScript, Flow)');
-  console.log('   • Linting (ESLint, Stylelint)');
-  console.log('   • Security scanning (npm audit, Snyk)');
-  console.log('   • Test execution');
-  console.log('   • Build verification');
-  console.log('   • Custom validation rules');
+  console.info('\n✅ Pre-commit workflow demo completed!');
+  console.info('\n💡 Pre-commit hooks typically include:');
+  console.info('   • Code formatting (Prettier, ESLint)');
+  console.info('   • Type checking (TypeScript, Flow)');
+  console.info('   • Linting (ESLint, Stylelint)');
+  console.info('   • Security scanning (npm audit, Snyk)');
+  console.info('   • Test execution');
+  console.info('   • Build verification');
+  console.info('   • Custom validation rules');
 }
 
 if (import.meta.main) {

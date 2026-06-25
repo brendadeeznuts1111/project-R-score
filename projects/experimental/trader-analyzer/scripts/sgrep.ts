@@ -145,22 +145,22 @@ export class SemanticGrep {
     lines[match.line - 1] = transformed;
 
     await Bun.write(match.file, lines.join("\n"));
-    console.log(`✅ Transformed: ${match.file}:${match.line}`);
+    console.info(`✅ Transformed: ${match.file}:${match.line}`);
   }
 
   /**
    * Print results
    */
   printResults(): void {
-    console.log(`\n📊 Found ${this.matches.length} matches:\n`);
+    console.info(`\n📊 Found ${this.matches.length} matches:\n`);
     for (const match of this.matches) {
-      console.log(`📄 ${match.file}:${match.line} (confidence: ${(match.confidence * 100).toFixed(0)}%)`);
-      console.log(`   ${match.content}`);
+      console.info(`📄 ${match.file}:${match.line} (confidence: ${(match.confidence * 100).toFixed(0)}%)`);
+      console.info(`   ${match.content}`);
       if (match.context.length > 1) {
-        console.log(`   Context:`);
-        match.context.forEach((c) => console.log(`   ${c}`));
+        console.info(`   Context:`);
+        match.context.forEach((c) => console.info(`   ${c}`));
       }
-      console.log();
+      console.info();
     }
   }
 }

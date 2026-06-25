@@ -12,6 +12,8 @@ jobs:
   governance:
     runs-on: ubuntu-latest
     env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
       SEARCH_BENCH_QUERY_TIMEOUT_MS: "60000"
       SEARCH_BENCH_QUERY_RETRIES: "1"
       SEARCH_BENCH_PIN_TREND_ENABLED: "1"
@@ -30,7 +32,7 @@ jobs:
           bun-version: latest
 
       - name: Install
-        run: bun install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts ci
 
       - name: Dependency Guard
         run: bun run security:guard:deps

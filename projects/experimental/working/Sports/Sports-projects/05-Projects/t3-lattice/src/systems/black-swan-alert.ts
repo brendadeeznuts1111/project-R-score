@@ -41,7 +41,7 @@ export async function triggerBlackSwanAlert(
   alertStore.push(alert);
 
   // Log to console with visual indicator
-  console.log(`
+  console.info(`
 ┌─────────────────────────────────────────────────────┐
 │  🚨 BLACK SWAN DETECTED                              │
 ├─────────────────────────────────────────────────────┤
@@ -86,7 +86,7 @@ async function sendPTYNotification(message: Record<string, unknown>): Promise<vo
   // In production, this would connect to the PTY endpoint
   // For now, log to stdout with formatted output
   const formatted = JSON.stringify(message, null, 2);
-  console.log(`[PTY] ${formatted}`);
+  console.info(`[PTY] ${formatted}`);
 }
 
 /**

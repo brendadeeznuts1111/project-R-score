@@ -8,7 +8,7 @@ if (!ck) {
   process.exit(1);
 }
 
-console.log("📊 Parsing bet report data...");
+console.info("📊 Parsing bet report data...");
 
 const now = Math.floor(Date.now() / 1000);
 const from = now - 86400; // 24h ago
@@ -33,30 +33,30 @@ const data = await res.json();
 
 // Extract bets from response
 const bets = data.r?.bets || [];
-console.log(`📊 Total bets: ${bets.length}`);
+console.info(`📊 Total bets: ${bets.length}`);
 
 // Filter for pending bets (state=0) - live/pending
 const pendingBets = bets.filter(bet => bet.state === "0");
-console.log(`⏳ Pending bets: ${pendingBets.length}`);
+console.info(`⏳ Pending bets: ${pendingBets.length}`);
 
 // Filter profitable bets (> $100)
 const profitableBets = bets.filter(bet => {
   const profit = parseFloat(bet.profit) || 0;
   return profit > 100;
 });
-console.log(`💰 Profitable bets: ${profitableBets.length}`);
+console.info(`💰 Profitable bets: ${profitableBets.length}`);
 
 // Show sample of each type
 if (pendingBets.length > 0) {
-  console.log("\n🎯 SAMPLE PENDING BET:");
-  console.log(JSON.stringify(pendingBets[0], null, 2));
+  console.info("\n🎯 SAMPLE PENDING BET:");
+  console.info(JSON.stringify(pendingBets[0], null, 2));
 }
 
 if (profitableBets.length > 0) {
-  console.log("\n💰 SAMPLE PROFITABLE BET:");
-  console.log(JSON.stringify(profitableBets[0], null, 2));
+  console.info("\n💰 SAMPLE PROFITABLE BET:");
+  console.info(JSON.stringify(profitableBets[0], null, 2));
 }
 
 // Save raw data for analysis
 await Bun.write("data/bet-report-raw.json", JSON.stringify(data, null, 2));
-console.log("💾 Saved raw data to data/bet-report-raw.json");
+console.info("💾 Saved raw data to data/bet-report-raw.json");

@@ -72,7 +72,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       expect(hashResults.every(h => typeof h === 'bigint')).toBe(true);
       expect(duration).toBeLessThan(100); // Should complete 10,000 hashes in under 100ms
       
-      console.log(`🚀 Hashed 10,000 items in ${duration.toFixed(2)}ms`);
+      console.info(`🚀 Hashed 10,000 items in ${duration.toFixed(2)}ms`);
     });
 
     test("hash performance scales linearly", () => {
@@ -111,7 +111,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       
       expect(duration).toBeLessThan(50); // Should complete 10,000 strips in under 50ms
       
-      console.log(`⚡ Stripped ANSI from ${iterations} strings in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ Stripped ANSI from ${iterations} strings in ${duration.toFixed(2)}ms`);
     });
   });
 
@@ -139,7 +139,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       expect(processedTicks.every(t => t.processed)).toBe(true);
       expect(duration).toBeLessThan(200); // Should process 50k ticks in under 200ms
       
-      console.log(`📊 Processed 50,000 odds ticks in ${duration.toFixed(2)}ms`);
+      console.info(`📊 Processed 50,000 odds ticks in ${duration.toFixed(2)}ms`);
     });
 
     test("arbitrage detection performance", () => {
@@ -164,7 +164,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       expect(opportunities.length).toBeGreaterThanOrEqual(0);
       expect(duration).toBeLessThan(100); // Should detect in under 100ms
       
-      console.log(`🎯 Found ${opportunities.length} arbitrage opportunities in ${duration.toFixed(2)}ms`);
+      console.info(`🎯 Found ${opportunities.length} arbitrage opportunities in ${duration.toFixed(2)}ms`);
     });
   });
 
@@ -194,7 +194,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       const report = monitor.generateReport();
       expect(report.operations).toHaveLength(3);
       
-      console.log("📈 Performance Report:", report.operations);
+      console.info("📈 Performance Report:", report.operations);
     });
 
     test("generates comprehensive performance summary", () => {
@@ -217,7 +217,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       const avgDuration = report.operations.reduce((sum: number, op: any) => sum + op.duration, 0) / report.operations.length;
       expect(avgDuration).toBeGreaterThan(0);
       
-      console.log("📊 Comprehensive Performance Summary:", report);
+      console.info("📊 Comprehensive Performance Summary:", report);
     });
   });
 
@@ -240,7 +240,7 @@ describe("Odds Core - Performance Benchmarks", () => {
       expect(duration).toBeLessThan(1000); // Should complete 300k ops in under 1 second
       expect(opsPerSecond).toBeGreaterThan(300000); // At least 300k ops/sec
       
-      console.log(`🔥 Stress test: ${opsPerSecond.toFixed(0)} ops/sec`);
+      console.info(`🔥 Stress test: ${opsPerSecond.toFixed(0)} ops/sec`);
     });
 
     test("maintains performance under memory pressure", () => {
@@ -269,9 +269,9 @@ describe("Odds Core - Performance Benchmarks", () => {
       expect(duration).toBeLessThan(200); // Should still perform well under pressure
       expect(pressureMemory.heapUsed - initialMemory.heapUsed).toBeGreaterThan(100 * 1024 * 1024); // At least 100MB pressure
       
-      console.log(`🏋️ Performance under memory pressure: ${duration.toFixed(2)}ms`);
+      console.info(`🏋️ Performance under memory pressure: ${duration.toFixed(2)}ms`);
     });
   });
 });
 
-console.log("✅ Odds Performance Tests loaded successfully");
+console.info("✅ Odds Performance Tests loaded successfully");

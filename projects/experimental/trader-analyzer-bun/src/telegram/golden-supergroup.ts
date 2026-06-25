@@ -84,10 +84,10 @@ async function setupTopics(
 	chatId: string,
 	topics: GoldenSupergroupConfig["topics"],
 ): Promise<void> {
-	console.log(`📋 Setting up topics...\n`);
+	console.info(`📋 Setting up topics...\n`);
 
 	for (const topic of topics) {
-		console.log(`  Creating topic: ${topic.name} (ID: ${topic.threadId})`);
+		console.info(`  Creating topic: ${topic.name} (ID: ${topic.threadId})`);
 
 		try {
 			const result = await api.createForumTopic(
@@ -98,7 +98,7 @@ async function setupTopics(
 			);
 
 			if (result.ok && result.result) {
-				console.log(
+				console.info(
 					`    ✅ Created (Thread ID: ${result.result.message_thread_id})`,
 				);
 
@@ -112,24 +112,24 @@ async function setupTopics(
 				}
 			} else {
 				// Topic might already exist, try to verify
-				console.log(`    ⚠️  ${result.description || "Unknown error"}`);
+				console.info(`    ⚠️  ${result.description || "Unknown error"}`);
 			}
 		} catch (error) {
-			console.log(`    ❌ Error: ${(error as Error).message}`);
+			console.info(`    ❌ Error: ${(error as Error).message}`);
 		}
 
 		// Rate limiting
 		await new Promise((resolve) => setTimeout(resolve, 500));
 	}
 
-	console.log(`\n✅ Topic setup complete\n`);
+	console.info(`\n✅ Topic setup complete\n`);
 }
 
 async function verifyBotPermissions(
 	api: TelegramBotApi,
 	chatId: string,
 ): Promise<void> {
-	console.log(`🔍 Verifying bot permissions...\n`);
+	console.info(`🔍 Verifying bot permissions...\n`);
 
 	// Test sending a message
 	const testResult = await api.sendMessage(chatId, "🔍 Permission test");
@@ -140,7 +140,7 @@ async function verifyBotPermissions(
 		return;
 	}
 
-	console.log(`  ✅ Can send messages`);
+	console.info(`  ✅ Can send messages`);
 
 	// Test pinning (try to pin the test message)
 	if (testResult.result?.message_id) {
@@ -150,11 +150,11 @@ async function verifyBotPermissions(
 		);
 
 		if (pinResult.ok) {
-			console.log(`  ✅ Can pin messages`);
+			console.info(`  ✅ Can pin messages`);
 			// Unpin it
 			await api.unpinMessage(chatId, testResult.result.message_id);
 		} else {
-			console.log(`  ⚠️  Cannot pin messages: ${pinResult.description}`);
+			console.info(`  ⚠️  Cannot pin messages: ${pinResult.description}`);
 		}
 	}
 
@@ -162,19 +162,19 @@ async function verifyBotPermissions(
 	const topicsResult = await api.getForumTopics(chatId);
 
 	if (topicsResult.ok) {
-		console.log(`  ✅ Can manage topics`);
+		console.info(`  ✅ Can manage topics`);
 	} else {
-		console.log(`  ⚠️  Cannot manage topics: ${topicsResult.description}`);
+		console.info(`  ⚠️  Cannot manage topics: ${topicsResult.description}`);
 	}
 
-	console.log(`\n✅ Permission check complete\n`);
+	console.info(`\n✅ Permission check complete\n`);
 }
 
 async function setupLogging(config: GoldenSupergroupConfig): Promise<void> {
-	console.log(`📝 Setting up logging...\n`);
+	console.info(`📝 Setting up logging...\n`);
 
 	if (!config.logging.enabled) {
-		console.log(`  ⚠️  Logging disabled in config`);
+		console.info(`  ⚠️  Logging disabled in config`);
 		return;
 	}
 
@@ -185,13 +185,13 @@ async function setupLogging(config: GoldenSupergroupConfig): Promise<void> {
 
 	if (!existsSync(logDir)) {
 		mkdirSync(logDir, { recursive: true });
-		console.log(`  ✅ Created log directory: ${logDir}`);
+		console.info(`  ✅ Created log directory: ${logDir}`);
 	} else {
-		console.log(`  ✅ Log directory exists: ${logDir}`);
+		console.info(`  ✅ Log directory exists: ${logDir}`);
 	}
 
-	console.log(`  📊 Retention: ${config.logging.retentionDays} days`);
-	console.log(`\n✅ Logging setup complete\n`);
+	console.info(`  📊 Retention: ${config.logging.retentionDays} days`);
+	console.info(`\n✅ Logging setup complete\n`);
 }
 
 async function sendWelcomeMessage(
@@ -199,7 +199,7 @@ async function sendWelcomeMessage(
 	chatId: string,
 	config: GoldenSupergroupConfig,
 ): Promise<void> {
-	console.log(`📤 Sending welcome message...\n`);
+	console.info(`📤 Sending welcome message...\n`);
 
 	const welcomeText = `🚀 **${config.name}**
 
@@ -219,15 +219,15 @@ Use \`bun run telegram help\` for CLI commands.`;
 		const result = await api.sendMessage(chatId, welcomeText);
 
 		if (result.ok) {
-			console.log(`  ✅ Welcome message sent`);
+			console.info(`  ✅ Welcome message sent`);
 		} else {
-			console.log(`  ⚠️  Failed to send welcome: ${result.description}`);
+			console.info(`  ⚠️  Failed to send welcome: ${result.description}`);
 		}
 	} catch (error) {
-		console.log(`  ❌ Error: ${(error as Error).message}`);
+		console.info(`  ❌ Error: ${(error as Error).message}`);
 	}
 
-	console.log(`\n✅ Setup complete!\n`);
+	console.info(`\n✅ Setup complete!\n`);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -238,9 +238,9 @@ async function cmdSetup(): Promise<void> {
 	const { botToken, chatId, config } = await loadConfig();
 	const api = new TelegramBotApi(botToken);
 
-	console.log(`🏗️  Setting up Golden Supergroup\n`);
-	console.log(`   Chat ID: ${chatId}`);
-	console.log(`   Topics: ${config.topics.length}\n`);
+	console.info(`🏗️  Setting up Golden Supergroup\n`);
+	console.info(`   Chat ID: ${chatId}`);
+	console.info(`   Topics: ${config.topics.length}\n`);
 
 	// Verify permissions first
 	await verifyBotPermissions(api, chatId);
@@ -254,15 +254,15 @@ async function cmdSetup(): Promise<void> {
 	// Send welcome message
 	await sendWelcomeMessage(api, chatId, config);
 
-	console.log(`🎉 Golden supergroup setup complete!\n`);
+	console.info(`🎉 Golden supergroup setup complete!\n`);
 }
 
 async function cmdVerify(): Promise<void> {
 	const { botToken, chatId } = await loadConfig();
 	const api = new TelegramBotApi(botToken);
 
-	console.log(`🔍 Verifying Golden Supergroup Configuration\n`);
-	console.log(`   Chat ID: ${chatId}\n`);
+	console.info(`🔍 Verifying Golden Supergroup Configuration\n`);
+	console.info(`   Chat ID: ${chatId}\n`);
 
 	await verifyBotPermissions(api, chatId);
 
@@ -270,21 +270,21 @@ async function cmdVerify(): Promise<void> {
 	const topicsResult = await api.getForumTopics(chatId);
 
 	if (topicsResult.ok && topicsResult.result?.topics) {
-		console.log(`📋 Found ${topicsResult.result.topics.length} topics:\n`);
+		console.info(`📋 Found ${topicsResult.result.topics.length} topics:\n`);
 
 		for (const topic of topicsResult.result.topics) {
-			console.log(`  • ${topic.name} (Thread ID: ${topic.message_thread_id})`);
+			console.info(`  • ${topic.name} (Thread ID: ${topic.message_thread_id})`);
 		}
 	} else {
-		console.log(`⚠️  Could not fetch topics via API`);
-		console.log(`   ${topicsResult.description || "Unknown error"}`);
+		console.info(`⚠️  Could not fetch topics via API`);
+		console.info(`   ${topicsResult.description || "Unknown error"}`);
 	}
 
-	console.log(`\n✅ Verification complete\n`);
+	console.info(`\n✅ Verification complete\n`);
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 🏗️  Golden Supergroup Management
 
 USAGE:

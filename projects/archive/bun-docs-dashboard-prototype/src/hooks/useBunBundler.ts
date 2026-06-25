@@ -38,7 +38,7 @@ export function useBunBundler() {
                 `// Target: ${config.target}\n` +
                 `// Minified: ${config.minify}\n` +
                 `// Sourcemap: ${config.sourcemap}\n\n` +
-                `console.log('Hello from Bun bundler!');\n` +
+                `console.info('Hello from Bun bundler!');\n` +
                 `export { default } from '${config.entry}';`,
         size: Math.floor(Math.random() * 50000) + 10000,
         duration: Math.floor(Math.random() * 1000) + 100,

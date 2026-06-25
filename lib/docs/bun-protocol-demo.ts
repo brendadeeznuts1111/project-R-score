@@ -8,53 +8,53 @@ const bunFileInfo = {
   protocol: 'bun://',
   capabilities: [
     'Direct file access without HTTP overhead',
-    'Built-in caching and optimization', 
+    'Built-in caching and optimization',
     'Zero-configuration file serving',
     'Seamless integration with Bun ecosystem',
     'Automatic MIME type detection',
-    'Performance optimization'
+    'Performance optimization',
   ],
   dashboard: {
     file: 'zen-dashboard-enhanced.html',
-    size: (Bun as any).file('zen-dashboard-enhanced.html').size || 9478,
+    size: (Bun as Record<string, unknown>).file('zen-dashboard-enhanced.html').size || 9478,
     type: 'text/html',
-    lastModified: new Date().toISOString()
+    lastModified: new Date().toISOString(),
   },
   usage: {
     direct: 'bun://file/path/to/dashboard.html',
     server: 'bun://localhost:3001/dashboard',
-    local: 'open zen-dashboard-enhanced.html'
-  }
+    local: 'open zen-dashboard-enhanced.html',
+  },
 };
 
 // Save the Bun file info
-const bunFile = (Bun as any).file('bun-protocol-info.json');
+const bunFile = (Bun as Record<string, unknown>).file('bun-protocol-info.json');
 await Bun.write(bunFile, new TextEncoder().encode(JSON.stringify(bunFileInfo, null, 2)));
 
-console.log('🎪 Bun File Protocol Demonstration');
-console.log('=' .repeat(50));
-console.log('');
-console.log('📋 Created bun-protocol-info.json with protocol details');
-console.log('🌐 Enhanced dashboard opened in browser');
-console.log('');
-console.log('🔗 Bun File Protocol Benefits:');
+console.info('🎪 Bun File Protocol Demonstration');
+console.info('='.repeat(50));
+console.info('');
+console.info('📋 Created bun-protocol-info.json with protocol details');
+console.info('🌐 Enhanced dashboard opened in browser');
+console.info('');
+console.info('🔗 Bun File Protocol Benefits:');
 bunFileInfo.capabilities.forEach((capability, index) => {
-  console.log(`   ${index + 1}. ${capability}`);
+  console.info(`   ${index + 1}. ${capability}`);
 });
-console.log('');
-console.log('📊 Dashboard Features:');
-console.log(`   📁 File size: ${bunFileInfo.dashboard.size} bytes`);
-console.log(`   🎨 MIME type: ${bunFileInfo.dashboard.type}`);
-console.log(`   🕒 Modified: ${bunFileInfo.dashboard.lastModified}`);
-console.log('');
-console.log('🚀 Your Zen Dashboard is now visible with:');
-console.log('   ✅ Real-time metrics visualization');
-console.log('   ✅ Beautiful gradient design');
-console.log('   ✅ Interactive performance charts');
-console.log('   ✅ Auto-refresh functionality');
-console.log('   ✅ Responsive layout');
-console.log('   ✅ Shimmer animations');
-console.log('');
-console.log('🎯 The Zen Revolution is now fully visualized!');
+console.info('');
+console.info('📊 Dashboard Features:');
+console.info(`   📁 File size: ${bunFileInfo.dashboard.size} bytes`);
+console.info(`   🎨 MIME type: ${bunFileInfo.dashboard.type}`);
+console.info(`   🕒 Modified: ${bunFileInfo.dashboard.lastModified}`);
+console.info('');
+console.info('🚀 Your Zen Dashboard is now visible with:');
+console.info('   ✅ Real-time metrics visualization');
+console.info('   ✅ Beautiful gradient design');
+console.info('   ✅ Interactive performance charts');
+console.info('   ✅ Auto-refresh functionality');
+console.info('   ✅ Responsive layout');
+console.info('   ✅ Shimmer animations');
+console.info('');
+console.info('🎯 The Zen Revolution is now fully visualized!');
 
 export {};

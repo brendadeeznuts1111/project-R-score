@@ -1728,7 +1728,7 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
     },
     cliUsage: {
       command: `R2_BUCKET=${r2Bucket} PROJECT_ID=${projectId} bun tools/cookie-scanner.ts ${sessionId}`,
-      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.log({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`,
+      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.info({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`,
     },
     benefits: [
       'Efficient ZSTD compression',
@@ -1791,7 +1791,7 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
         title: 'Formatted Output',
         code: `const wrap = Bun.wrapAnsi
 const msg = \`🆔 \${projectId} 📊 \${sessionId} 📦 \${prefixed.length}B R2: \${bucket}\`
-console.log(wrap(msg, 80))`,
+console.info(wrap(msg, 80))`,
         explanation: 'Clean, wrapped output with emoji indicators',
         benefits: ['Readability', 'Terminal wrapping', 'Visual indicators'],
       };
@@ -1800,7 +1800,7 @@ console.log(wrap(msg, 80))`,
     case 'one-liner':
       response.example = {
         title: 'One-Liner CLI',
-        code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));console.log({p,s,size:z.length+"B",status:"✅"})'`,
+        code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));console.info({p,s,size:z.length+"B",status:"✅"})'`,
         explanation: 'Complete functionality in a single command',
         benefits: ['Portability', 'No files needed', 'Quick deployment'],
       };
@@ -1829,13 +1829,13 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
           title: 'Formatted Output',
           code: `const wrap = Bun.wrapAnsi
 const msg = \`🆔 \${projectId} 📊 \${sessionId} 📦 \${prefixed.length}B\`
-console.log(wrap(msg, 80))`,
+console.info(wrap(msg, 80))`,
           explanation: 'Clean, wrapped output with indicators',
           benefits: ['Readability', 'Terminal wrapping'],
         },
         {
           title: 'One-Liner CLI',
-          code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const c={p};console.log({p,size:JSON.stringify(c).length+"B"})'`,
+          code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const c={p};console.info({p,size:JSON.stringify(c).length+"B"})'`,
           explanation: 'Complete functionality in one command',
           benefits: ['Portability', 'No files needed'],
         },
@@ -1915,7 +1915,7 @@ async function handleFetchDemo(request: Request, url: URL): Promise<Response> {
     examples: {
       basic: {
         code: `const response = await fetch('${docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' })}');
-console.log(response.status);`,
+console.info(response.status);`,
         description: 'Basic fetch with enhanced URL builder',
       },
       advanced: {
@@ -2056,7 +2056,7 @@ async function handleTypedArrays(request: Request, url: URL): Promise<Response> 
       create: `const uint8Array = new Uint8Array([1, 2, 3, 4, 5]);`,
       fetch: `const response = await fetch('${docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' })}');`,
       stream: `for await (const chunk of response.body) {
-  console.log(chunk); // Uint8Array
+  console.info(chunk); // Uint8Array
 }`,
     },
   };
@@ -2477,10 +2477,10 @@ function generateDashboardHTML(): string {
       </p>
     </div>
   </header>
-  
+
   <div class="container">
     <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-      
+
       <!-- Documentation Endpoints -->
       <div class="card">
         <h2>📚 Documentation</h2>
@@ -2519,7 +2519,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- External Documentation -->
       <div class="card">
         <h2>🌐 External Docs</h2>
@@ -2550,7 +2550,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- API Demonstrations -->
       <div class="card">
         <h2>🚀 API Demos</h2>
@@ -2601,7 +2601,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- GitHub Integration -->
       <div class="card">
         <h2>🐙 GitHub Integration</h2>
@@ -2628,7 +2628,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- CLI Tooling -->
       <div class="card">
         <h2>⚡ CLI Tooling</h2>
@@ -2643,7 +2643,7 @@ function generateDashboardHTML(): string {
           </li>
         </ul>
       </div>
-      
+
       <!-- CLI Integration -->
       <div class="card">
         <h2>💻 CLI Integration</h2>
@@ -2666,7 +2666,7 @@ bun docs search "http server"
 bun docs open fetch --sh --app
 bun docs index</code></pre>
       </div>
-      
+
       <!-- System Management -->
       <div class="card">
         <h2>⚙️ System</h2>
@@ -2693,7 +2693,7 @@ bun docs index</code></pre>
           </li>
         </ul>
       </div>
-      
+
       <!-- RSS Feeds -->
       <div class="card">
         <h2>📡 RSS Feeds</h2>
@@ -2730,9 +2730,9 @@ Blog: https://bun.com/blog/rss.xml
 Releases: https://bun.com/releases/rss.xml
 Security: https://bun.com/security/rss.xml</code></pre>
       </div>
-      
+
     </div>
-    
+
     <!-- Quick Test Section -->
     <div style="text-align: center; margin: 2rem 0;">
       <button class="test-btn" onclick="testAllEndpoints()">
@@ -2740,7 +2740,7 @@ Security: https://bun.com/security/rss.xml</code></pre>
       </button>
       <div id="testResults" class="response"></div>
     </div>
-    
+
     <!-- Enhanced Features -->
     <div class="card">
       <h2>✨ Enhanced Features</h2>
@@ -2762,24 +2762,24 @@ Security: https://bun.com/security/rss.xml</code></pre>
       </ul>
     </div>
   </div>
-  
+
   <script>
     async function testAllEndpoints() {
       const results = document.getElementById('testResults');
       results.style.display = 'block';
       results.innerHTML = '<p>🧪 Testing all endpoints...</p>';
-      
+
       try {
         const response = await fetch('/test/all');
         const data = await response.json();
-        
+
         results.innerHTML = \`
           <h3>✅ Test Results</h3>
           <p>Total Tests: \${data.totalTests}</p>
           <p>Passed: \${data.passed}</p>
           <p>Failed: \${data.failed}</p>
           <div style="margin-top: 1rem;">
-            \${data.tests.map(test => 
+            \${data.tests.map(test =>
               \`<div style="padding: 0.25rem 0;">
                 \${test.success ? '✅' : '❌'} \${test.endpoint}
                 \${test.error ? ' - ' + test.error : ''}
@@ -2797,8 +2797,8 @@ Security: https://bun.com/security/rss.xml</code></pre>
 }
 
 if (VERBOSE) {
-  console.log(`🏗️ Unified Base Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
-  console.log(`📚 Documentation: https://bun.sh/docs | https://bun.com/guides`);
-  console.log(`💻 CLI Integration: Available via /cli/* endpoints`);
-  console.log(`⚡ Enhanced Features: Domain distinction, caching, Chrome apps`);
+  console.info(`🏗️ Unified Base Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
+  console.info(`📚 Documentation: https://bun.sh/docs | https://bun.com/guides`);
+  console.info(`💻 CLI Integration: Available via /cli/* endpoints`);
+  console.info(`⚡ Enhanced Features: Domain distinction, caching, Chrome apps`);
 }

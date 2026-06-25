@@ -17,22 +17,22 @@
 // =============================================================================
 
 function demonstrateBasicLogging() {
-    console.log('🔍 Basic Logging Methods');
-    console.log('='.repeat(50));
+    console.info('🔍 Basic Logging Methods');
+    console.info('='.repeat(50));
 
     // Basic console.log examples
-    console.log('📝 Simple log message');
+    console.info('📝 Simple log message');
 
     // Multiple arguments
     const car = 'Dodge Charger';
     const someObject = { str: 'Some text', id: 5 };
-    console.log('My first car was a', car, '. The object is:', someObject);
+    console.info('My first car was a', car, '. The object is:', someObject);
 
     // String substitutions
-    console.log('String substitutions: %s, %d, %f, %o', 'string', 42, 3.14, { key: 'value' });
+    console.info('String substitutions: %s, %d, %f, %o', 'string', 42, 3.14, { key: 'value' });
 
     // Different log levels
-    console.log('ℹ️ This is an info message (using console.log)');
+    console.info('ℹ️ This is an info message (using console.log)');
     console.info('ℹ️ This is an info message (using console.info)');
     console.warn('⚠️ This is a warning message');
     console.error('❌ This is an error message');
@@ -44,8 +44,8 @@ function demonstrateBasicLogging() {
 // =============================================================================
 
 function demonstrateObjectInspection() {
-    console.log('\n🔍 Object Inspection Methods');
-    console.log('='.repeat(50));
+    console.info('\n🔍 Object Inspection Methods');
+    console.info('='.repeat(50));
 
     // Create test objects
     const simpleObject = { str: 'Some text', id: 5 };
@@ -64,26 +64,26 @@ function demonstrateObjectInspection() {
     };
 
     // console.log with object
-    console.log('📋 Simple object with console.log:');
-    console.log(simpleObject);
+    console.info('📋 Simple object with console.log:');
+    console.info(simpleObject);
 
     // console.dir for detailed inspection
-    console.log('\n🔍 Detailed inspection with console.dir:');
+    console.info('\n🔍 Detailed inspection with console.dir:');
     console.dir(complexObject, { depth: 3, colors: true });
 
     // console.dirxml for XML/HTML representation
-    console.log('\n📄 XML/HTML representation with console.dirxml:');
+    console.info('\n📄 XML/HTML representation with console.dirxml:');
     console.dirxml(complexObject);
 
     // Demonstrate object snapshotting
-    console.log('\n📸 Object snapshotting demonstration:');
+    console.info('\n📸 Object snapshotting demonstration:');
     const obj = {};
-    console.log('Before mutation:', obj);
+    console.info('Before mutation:', obj);
     obj.prop = 123;
-    console.log('After mutation - logged object shows current state when expanded');
+    console.info('After mutation - logged object shows current state when expanded');
 
     // Deep clone to prevent lazy evaluation
-    console.log('Deep cloned object:', JSON.parse(JSON.stringify(obj)));
+    console.info('Deep cloned object:', JSON.parse(JSON.stringify(obj)));
 }
 
 // =============================================================================
@@ -91,8 +91,8 @@ function demonstrateObjectInspection() {
 // =============================================================================
 
 function demonstrateFormattingAndStyling() {
-    console.log('\n🎨 Formatting and Styling');
-    console.log('='.repeat(50));
+    console.info('\n🎨 Formatting and Styling');
+    console.info('='.repeat(50));
 
     // String formatting with substitutions
     const name = 'Alice';
@@ -100,18 +100,18 @@ function demonstrateFormattingAndStyling() {
     const score = 95.5;
     const user = { name: 'Alice', role: 'admin' };
 
-    console.log('User: %s, Age: %d, Score: %f, Object: %o', name, age, score, user);
-    console.log('Object with generic formatting: %O', user);
+    console.info('User: %s, Age: %d, Score: %f, Object: %o', name, age, score, user);
+    console.info('Object with generic formatting: %O', user);
 
     // CSS styling
-    console.log('%cThis is styled text', 'color: blue; font-size: 16px; font-weight: bold;');
-    console.log('%cRed text %cGreen text %cBlue text', 'color: red;', 'color: green;', 'color: blue;');
+    console.info('%cThis is styled text', 'color: blue; font-size: 16px; font-weight: bold;');
+    console.info('%cRed text %cGreen text %cBlue text', 'color: red;', 'color: green;', 'color: blue;');
 
     // Background colors
-    console.log('%cBackground styling', 'background: #f0f0f0; color: #333; padding: 5px; border-radius: 3px;');
+    console.info('%cBackground styling', 'background: #f0f0f0; color: #333; padding: 5px; border-radius: 3px;');
 
     // Complex styling
-    console.log(
+    console.info(
         '%c🎨 %cStyled %cConsole %cOutput',
         'font-size: 20px; color: #ff6b6b;',
         'font-size: 18px; color: #4ecdc4; font-weight: bold;',
@@ -125,8 +125,8 @@ function demonstrateFormattingAndStyling() {
 // =============================================================================
 
 function demonstrateAssertions() {
-    console.log('\n✅ Assertions and Validation');
-    console.log('='.repeat(50));
+    console.info('\n✅ Assertions and Validation');
+    console.info('='.repeat(50));
 
     // Successful assertion (no output)
     console.assert(true, 'This will not be shown');
@@ -147,11 +147,11 @@ function demonstrateAssertions() {
 // =============================================================================
 
 function demonstrateCountingAndTiming() {
-    console.log('\n🔢 Counting and Timing');
-    console.log('='.repeat(50));
+    console.info('\n🔢 Counting and Timing');
+    console.info('='.repeat(50));
 
     // Console counting
-    console.log('📊 Counter demonstrations:');
+    console.info('📊 Counter demonstrations:');
     console.count('default');
     console.count('default');
     console.count('custom');
@@ -159,13 +159,13 @@ function demonstrateCountingAndTiming() {
     console.count('custom');
     console.count('custom');
 
-    console.log('\n🔄 Resetting counters:');
+    console.info('\n🔄 Resetting counters:');
     console.countReset('default');
     console.count('default');
     console.count('custom');
 
     // Console timing
-    console.log('\n⏱️ Timer demonstrations:');
+    console.info('\n⏱️ Timer demonstrations:');
 
     console.time('operation-timer');
 
@@ -202,43 +202,43 @@ function demonstrateCountingAndTiming() {
 // =============================================================================
 
 function demonstrateGrouping() {
-    console.log('\n📁 Grouping and Organization');
-    console.log('='.repeat(50));
+    console.info('\n📁 Grouping and Organization');
+    console.info('='.repeat(50));
 
     // Basic grouping
     console.group('User Management');
-    console.log('Creating user...');
-    console.log('Validating input...');
-    console.log('Saving to database...');
+    console.info('Creating user...');
+    console.info('Validating input...');
+    console.info('Saving to database...');
     console.groupEnd();
 
     // Nested groups
     console.group('Application Startup');
-    console.log('Initializing configuration...');
+    console.info('Initializing configuration...');
 
     console.group('Database Connection');
-    console.log('Connecting to database...');
-    console.log('Running migrations...');
-    console.log('Creating indexes...');
+    console.info('Connecting to database...');
+    console.info('Running migrations...');
+    console.info('Creating indexes...');
     console.groupEnd();
 
-    console.log('Starting web server...');
-    console.log('Application ready!');
+    console.info('Starting web server...');
+    console.info('Application ready!');
     console.groupEnd();
 
     // Collapsed groups
     console.groupCollapsed('Debug Information');
-    console.log('This group starts collapsed');
-    console.log('Click to expand and see details');
-    console.log({ debug: true, verbose: false, level: 'info' });
+    console.info('This group starts collapsed');
+    console.info('Click to expand and see details');
+    console.info({ debug: true, verbose: false, level: 'info' });
     console.groupEnd();
 
     // Group with labels
     const groupName = 'Processing Results';
     console.group(groupName);
-    console.log('Processing step 1...');
-    console.log('Processing step 2...');
-    console.log('Processing step 3...');
+    console.info('Processing step 1...');
+    console.info('Processing step 2...');
+    console.info('Processing step 3...');
     console.groupEnd();
 }
 
@@ -247,8 +247,8 @@ function demonstrateGrouping() {
 // =============================================================================
 
 function demonstrateTableDisplay() {
-    console.log('\n📊 Table Display');
-    console.log('='.repeat(50));
+    console.info('\n📊 Table Display');
+    console.info('='.repeat(50));
 
     // Simple array of objects
     const users = [
@@ -258,16 +258,16 @@ function demonstrateTableDisplay() {
         { id: 4, name: 'Diana', age: 28, active: true }
     ];
 
-    console.log('👥 Users table:');
+    console.info('👥 Users table:');
     console.table(users);
 
     // Table with specific columns
-    console.log('👥 Users table (name and age only):');
+    console.info('👥 Users table (name and age only):');
     console.table(users, ['name', 'age']);
 
     // Array data
     const scores = [95, 87, 92, 78, 88, 91, 85];
-    console.log('📈 Scores array as table:');
+    console.info('📈 Scores array as table:');
     console.table(scores);
 
     // Object data
@@ -278,7 +278,7 @@ function demonstrateTableDisplay() {
         ssl: true,
         maxConnections: 100
     };
-    console.log('⚙️ Configuration object as table:');
+    console.info('⚙️ Configuration object as table:');
     console.table(config);
 
     // Complex nested data
@@ -306,7 +306,7 @@ function demonstrateTableDisplay() {
         }
     ];
 
-    console.log('🛍️ Products table:');
+    console.info('🛍️ Products table:');
     console.table(products, ['name', 'price', 'inStock']);
 }
 
@@ -315,8 +315,8 @@ function demonstrateTableDisplay() {
 // =============================================================================
 
 function demonstrateStackTraces() {
-    console.log('\n🔍 Stack Traces and Debugging');
-    console.log('='.repeat(50));
+    console.info('\n🔍 Stack Traces and Debugging');
+    console.info('='.repeat(50));
 
     function functionA() {
         functionB();
@@ -330,7 +330,7 @@ function demonstrateStackTraces() {
         console.trace('Trace from functionC');
     }
 
-    console.log('📍 Stack trace demonstration:');
+    console.info('📍 Stack trace demonstration:');
     functionA();
 
     // Error with stack trace
@@ -343,7 +343,7 @@ function demonstrateStackTraces() {
         }
     }
 
-    console.log('\n❌ Error handling demonstration:');
+    console.info('\n❌ Error handling demonstration:');
     throwError();
 }
 
@@ -352,8 +352,8 @@ function demonstrateStackTraces() {
 // =============================================================================
 
 function demonstrateBunEnhancements() {
-    console.log('\n🚀 Bun-Specific Enhancements');
-    console.log('='.repeat(50));
+    console.info('\n🚀 Bun-Specific Enhancements');
+    console.info('='.repeat(50));
 
     // Bun.inspect for enhanced object inspection
     const complexData = {
@@ -368,11 +368,11 @@ function demonstrateBunEnhancements() {
         }
     };
 
-    console.log('🔍 Bun.inspect with default options:');
-    console.log(Bun.inspect(complexData));
+    console.info('🔍 Bun.inspect with default options:');
+    console.info(Bun.inspect(complexData));
 
-    console.log('\n🎨 Bun.inspect with colors and custom depth:');
-    console.log(Bun.inspect(complexData, {
+    console.info('\n🎨 Bun.inspect with colors and custom depth:');
+    console.info(Bun.inspect(complexData, {
         depth: 4,
         colors: true,
         compact: false,
@@ -381,13 +381,13 @@ function demonstrateBunEnhancements() {
     }));
 
     // Bun.serve for HTTP server (console logging in server context)
-    console.log('\n🌐 Bun server context demonstration:');
-    console.log('In a real Bun server, console methods work seamlessly:');
-    console.log('console.log("Request received:", request.method, request.url);');
-    console.log('console.error("Server error:", error);');
+    console.info('\n🌐 Bun server context demonstration:');
+    console.info('In a real Bun server, console methods work seamlessly:');
+    console.info('console.info("Request received:", request.method, request.url);');
+    console.info('console.error("Server error:", error);');
 
     // Performance measurement
-    console.log('\n⚡ Performance measurement:');
+    console.info('\n⚡ Performance measurement:');
     const start = performance.now();
 
     // Simulate work
@@ -397,8 +397,8 @@ function demonstrateBunEnhancements() {
     }
 
     const end = performance.now();
-    console.log(`Performance test completed in ${(end - start).toFixed(2)}ms`);
-    console.log(`Result: ${result.toFixed(2)}`);
+    console.info(`Performance test completed in ${(end - start).toFixed(2)}ms`);
+    console.info(`Result: ${result.toFixed(2)}`);
 }
 
 // =============================================================================
@@ -406,8 +406,8 @@ function demonstrateBunEnhancements() {
 // =============================================================================
 
 function demonstratePracticalExamples() {
-    console.log('\n💼 Practical Examples');
-    console.log('='.repeat(50));
+    console.info('\n💼 Practical Examples');
+    console.info('='.repeat(50));
 
     // Debug logger utility
     class DebugLogger {
@@ -415,7 +415,7 @@ function demonstratePracticalExamples() {
 
         log(...args: any[]) {
             if (this.enabled) {
-                console.log('[DEBUG]', ...args);
+                console.info('[DEBUG]', ...args);
             }
         }
 
@@ -446,7 +446,7 @@ function demonstratePracticalExamples() {
 
     const logger = new DebugLogger(true);
 
-    console.log('🔧 Custom logger demonstration:');
+    console.info('🔧 Custom logger demonstration:');
     logger.group('User Registration Flow');
     logger.log('Starting user registration');
     logger.log('Validating user data');
@@ -455,18 +455,18 @@ function demonstratePracticalExamples() {
     logger.groupEnd();
 
     // API request logging
-    console.log('\n🌐 API request logging demonstration:');
+    console.info('\n🌐 API request logging demonstration:');
 
     function logAPIRequest(method: string, url: string, data?: any) {
         console.group(`📡 ${method} ${url}`);
-        console.log('Timestamp:', new Date().toISOString());
+        console.info('Timestamp:', new Date().toISOString());
 
         if (data) {
-            console.log('Request data:');
+            console.info('Request data:');
             console.dir(data, { depth: 2 });
         }
 
-        console.log('Headers: { "Content-Type": "application/json" }');
+        console.info('Headers: { "Content-Type": "application/json" }');
         console.groupEnd();
     }
 
@@ -474,7 +474,7 @@ function demonstratePracticalExamples() {
     logAPIRequest('GET', '/api/users/123');
 
     // Performance monitoring
-    console.log('\n📊 Performance monitoring demonstration:');
+    console.info('\n📊 Performance monitoring demonstration:');
 
     function measurePerformance<T>(fn: () => T, label: string): T {
         console.time(label);
@@ -491,7 +491,7 @@ function demonstratePracticalExamples() {
         return sum;
     }, 'Random sum calculation');
 
-    console.log(`Calculation result: ${result.toFixed(2)}`);
+    console.info(`Calculation result: ${result.toFixed(2)}`);
 }
 
 // =============================================================================
@@ -499,8 +499,8 @@ function demonstratePracticalExamples() {
 // =============================================================================
 
 function demonstrateAdvancedFormatting() {
-    console.log('\n🎨 Advanced Formatting Techniques');
-    console.log('='.repeat(50));
+    console.info('\n🎨 Advanced Formatting Techniques');
+    console.info('='.repeat(50));
 
     // Progress bar
     function showProgressBar(current: number, total: number, width: number = 30) {
@@ -509,10 +509,10 @@ function demonstrateAdvancedFormatting() {
         const empty = width - filled;
         const bar = '█'.repeat(filled) + '░'.repeat(empty);
 
-        console.log(`📊 Progress: [${bar}] ${percentage}% (${current}/${total})`);
+        console.info(`📊 Progress: [${bar}] ${percentage}% (${current}/${total})`);
     }
 
-    console.log('📈 Progress bar demonstration:');
+    console.info('📈 Progress bar demonstration:');
     showProgressBar(0, 100);
     showProgressBar(25, 100);
     showProgressBar(50, 100);
@@ -535,27 +535,27 @@ function demonstrateAdvancedFormatting() {
             info: 'color: blue;'
         };
 
-        console.log(`%c${icons[status]} ${message}`, colors[status]);
+        console.info(`%c${icons[status]} ${message}`, colors[status]);
     }
 
-    console.log('\n🎯 Status indicators:');
+    console.info('\n🎯 Status indicators:');
     showStatus('success', 'Operation completed successfully');
     showStatus('warning', 'Memory usage is high');
     showStatus('error', 'Failed to connect to database');
     showStatus('info', 'Processing 1000 records');
 
     // Data visualization
-    console.log('\n📊 Data visualization in console:');
+    console.info('\n📊 Data visualization in console:');
 
     function visualizeData(data: number[], label: string) {
         const max = Math.max(...data);
         const width = 50;
 
-        console.log(`📈 ${label}:`);
+        console.info(`📈 ${label}:`);
         data.forEach((value, index) => {
             const barLength = Math.floor((value / max) * width);
             const bar = '█'.repeat(barLength);
-            console.log(`  ${index}: ${bar} ${value}`);
+            console.info(`  ${index}: ${bar} ${value}`);
         });
     }
 
@@ -567,11 +567,11 @@ function demonstrateAdvancedFormatting() {
 // =============================================================================
 
 async function runCompleteDemo() {
-    console.log('🎯 Complete Web Console API Demonstration');
-    console.log('='.repeat(60));
-    console.log('Based on MDN Web Console API documentation');
-    console.log('Demonstrating all standard console methods and Bun enhancements');
-    console.log('='.repeat(60));
+    console.info('🎯 Complete Web Console API Demonstration');
+    console.info('='.repeat(60));
+    console.info('Based on MDN Web Console API documentation');
+    console.info('Demonstrating all standard console methods and Bun enhancements');
+    console.info('='.repeat(60));
 
     // Run all demonstrations
     demonstrateBasicLogging();
@@ -586,10 +586,10 @@ async function runCompleteDemo() {
     demonstratePracticalExamples();
     demonstrateAdvancedFormatting();
 
-    console.log('\n🎉 Console API demonstration completed!');
-    console.log('✅ All standard Web Console API methods demonstrated');
-    console.log('🚀 Bun-specific enhancements shown');
-    console.log('💡 Practical examples and advanced techniques included');
+    console.info('\n🎉 Console API demonstration completed!');
+    console.info('✅ All standard Web Console API methods demonstrated');
+    console.info('🚀 Bun-specific enhancements shown');
+    console.info('💡 Practical examples and advanced techniques included');
 }
 
 // Export functions for programmatic use

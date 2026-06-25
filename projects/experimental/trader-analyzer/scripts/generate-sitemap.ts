@@ -182,13 +182,13 @@ function generateSitemapMarkdown(components: ComponentInfo[], cssClasses: CSSCla
  * Main generation function
  */
 async function generateSitemap(): Promise<void> {
-	console.log('🔍 Generating component sitemap...\n');
+	console.info('🔍 Generating component sitemap...\n');
 
 	const components = await extractComponents();
 	const cssClasses = await extractCSSClasses();
 
-	console.log(`✅ Found ${components.length} components`);
-	console.log(`✅ Found ${cssClasses.length} CSS classes`);
+	console.info(`✅ Found ${components.length} components`);
+	console.info(`✅ Found ${cssClasses.length} CSS classes`);
 
 	const markdown = generateSitemapMarkdown(components, cssClasses);
 
@@ -213,10 +213,10 @@ async function generateSitemap(): Promise<void> {
 		await writeFile(sitemapPath, markdown);
 	}
 
-	console.log(`\n✅ Sitemap updated: ${sitemapPath}`);
-	console.log(`📊 Statistics:`);
-	console.log(`   - Components: ${components.length}`);
-	console.log(`   - CSS Classes: ${cssClasses.length}`);
+	console.info(`\n✅ Sitemap updated: ${sitemapPath}`);
+	console.info(`📊 Statistics:`);
+	console.info(`   - Components: ${components.length}`);
+	console.info(`   - CSS Classes: ${cssClasses.length}`);
 }
 
 // Run if executed directly

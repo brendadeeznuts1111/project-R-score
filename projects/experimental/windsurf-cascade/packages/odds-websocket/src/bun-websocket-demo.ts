@@ -55,8 +55,8 @@ function generateMockArbitrage(): ArbitrageOpportunity {
 }
 
 async function runDemo(): Promise<void> {
-    console.log("🚀 Starting Bun WebSocket Demo for Sports Betting Protocol");
-    console.log("=".repeat(60));
+    console.info("🚀 Starting Bun WebSocket Demo for Sports Betting Protocol");
+    console.info("=".repeat(60));
 
     // Initialize the optimized server
     const wsServer = new BunWebSocketOptimized({
@@ -75,20 +75,20 @@ async function runDemo(): Promise<void> {
     // Start the server
     wsServer.start();
 
-    console.log("✅ WebSocket server started!");
-    console.log("🔗 Connect to: ws://localhost:3010/ws");
-    console.log("📊 Health check: http://localhost:3010/health");
-    console.log();
+    console.info("✅ WebSocket server started!");
+    console.info("🔗 Connect to: ws://localhost:3010/ws");
+    console.info("📊 Health check: http://localhost:3010/health");
+    console.info();
 
     // Start broadcasting odds data
-    console.log("📡 Starting real-time odds broadcast...");
+    console.info("📡 Starting real-time odds broadcast...");
     const oddsInterval = setInterval(() => {
         const odds = generateMockOdds();
         wsServer.broadcastOdds(odds);
     }, 100); // Every 100ms
 
     // Start broadcasting arbitrage opportunities
-    console.log("💰 Starting arbitrage opportunity broadcast...");
+    console.info("💰 Starting arbitrage opportunity broadcast...");
     const arbitrageInterval = setInterval(() => {
         const arbitrage = generateMockArbitrage();
         wsServer.broadcastArbitrage(arbitrage);
@@ -103,50 +103,50 @@ async function runDemo(): Promise<void> {
     let messageCount = 0;
     const monitoringInterval = setInterval(() => {
         const metrics = wsServer.getPerformanceMetrics();
-        console.log(`📊 Performance: ${metrics.clients} clients | ${metrics.messagesPerSecond} msg/sec | ${Math.round(metrics.memoryUsage.heapUsed / 1024 / 1024)}MB memory | uptime: ${Math.floor(metrics.uptime / 1000)}s`);
+        console.info(`📊 Performance: ${metrics.clients} clients | ${metrics.messagesPerSecond} msg/sec | ${Math.round(metrics.memoryUsage.heapUsed / 1024 / 1024)}MB memory | uptime: ${Math.floor(metrics.uptime / 1000)}s`);
     }, 5000);
 
     // Show client connection examples
-    console.log();
-    console.log("📝 Client Connection Examples:");
-    console.log();
-    console.log("JavaScript/TypeScript:");
-    console.log(`const ws = new WebSocket('ws://localhost:3010/ws');`);
-    console.log(`ws.onopen = () => {`);
-    console.log(`  ws.send(JSON.stringify({`);
-    console.log(`    type: 'subscription',`);
-    console.log(`    timestamp: Date.now(),`);
-    console.log(`    data: { markets: ['NBA', 'NFL'], arbitrage: true }`);
-    console.log(`  }));`);
-    console.log(`};`);
-    console.log();
+    console.info();
+    console.info("📝 Client Connection Examples:");
+    console.info();
+    console.info("JavaScript/TypeScript:");
+    console.info(`const ws = new WebSocket('ws://localhost:3010/ws');`);
+    console.info(`ws.onopen = () => {`);
+    console.info(`  ws.send(JSON.stringify({`);
+    console.info(`    type: 'subscription',`);
+    console.info(`    timestamp: Date.now(),`);
+    console.info(`    data: { markets: ['NBA', 'NFL'], arbitrage: true }`);
+    console.info(`  }));`);
+    console.info(`};`);
+    console.info();
 
-    console.log("Python:");
-    console.log(`import asyncio`);
-    console.log(`import websockets`);
-    console.log(`import json`);
-    console.log();
-    console.log(`async def client():`);
-    console.log(`    async with websockets.connect('ws://localhost:3010/ws') as ws:`);
-    console.log(`        await ws.send(json.dumps({`);
-    console.log(`            "type": "subscription",`);
-    console.log(`            "timestamp": int(time.time() * 1000),`);
-    console.log(`            "data": {"markets": ["NBA", "NFL"], "arbitrage": True}`);
-    console.log(`        }))`);
-    console.log(`        async for message in ws:`);
-    console.log(`            data = json.loads(message)`);
-    console.log(`            print(f"Received: {data['type']}")`);
-    console.log();
-    console.log(`asyncio.run(client())`);
-    console.log();
+    console.info("Python:");
+    console.info(`import asyncio`);
+    console.info(`import websockets`);
+    console.info(`import json`);
+    console.info();
+    console.info(`async def client():`);
+    console.info(`    async with websockets.connect('ws://localhost:3010/ws') as ws:`);
+    console.info(`        await ws.send(json.dumps({`);
+    console.info(`            "type": "subscription",`);
+    console.info(`            "timestamp": int(time.time() * 1000),`);
+    console.info(`            "data": {"markets": ["NBA", "NFL"], "arbitrage": True}`);
+    console.info(`        }))`);
+    console.info(`        async for message in ws:`);
+    console.info(`            data = json.loads(message)`);
+    console.info(`            print(f"Received: {data['type']}")`);
+    console.info();
+    console.info(`asyncio.run(client())`);
+    console.info();
 
-    console.log("curl (for health check):");
-    console.log(`curl http://localhost:3010/health`);
-    console.log();
+    console.info("curl (for health check):");
+    console.info(`curl http://localhost:3010/health`);
+    console.info();
 
     // Graceful shutdown
     process.on("SIGINT", () => {
-        console.log("\n🛑 Shutting down demo server...");
+        console.info("\n🛑 Shutting down demo server...");
 
         clearInterval(oddsInterval);
         clearInterval(arbitrageInterval);
@@ -154,20 +154,20 @@ async function runDemo(): Promise<void> {
         clearInterval(monitoringInterval);
 
         const finalMetrics = wsServer.getPerformanceMetrics();
-        console.log(`📊 Final Metrics:`);
-        console.log(`   Total clients served: ${finalMetrics.clients}`);
-        console.log(`   Total messages sent: ${finalMetrics.messageCount}`);
-        console.log(`   Average messages/sec: ${finalMetrics.messagesPerSecond}`);
-        console.log(`   Total uptime: ${Math.floor(finalMetrics.uptime / 1000)}s`);
-        console.log(`   Peak memory usage: ${Math.round(finalMetrics.memoryUsage.heapUsed / 1024 / 1024)}MB`);
+        console.info(`📊 Final Metrics:`);
+        console.info(`   Total clients served: ${finalMetrics.clients}`);
+        console.info(`   Total messages sent: ${finalMetrics.messageCount}`);
+        console.info(`   Average messages/sec: ${finalMetrics.messagesPerSecond}`);
+        console.info(`   Total uptime: ${Math.floor(finalMetrics.uptime / 1000)}s`);
+        console.info(`   Peak memory usage: ${Math.round(finalMetrics.memoryUsage.heapUsed / 1024 / 1024)}MB`);
 
         wsServer.stop();
-        console.log("✅ Demo server stopped");
+        console.info("✅ Demo server stopped");
         process.exit(0);
     });
 
-    console.log("🎯 Demo is running! Press Ctrl+C to stop.");
-    console.log();
+    console.info("🎯 Demo is running! Press Ctrl+C to stop.");
+    console.info();
 }
 
 // Run demo if this file is executed directly

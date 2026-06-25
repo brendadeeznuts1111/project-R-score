@@ -2,7 +2,7 @@
 
 ## CORE METHODS
 
-### `Bun.markdown.html(markdown: string, options?: Options): string` 
+### `Bun.markdown.html(markdown: string, options?: Options): string`
 ```javascript
 // BASIC
 const html = Bun.markdown.html("# Title");
@@ -17,16 +17,16 @@ const html = Bun.markdown.html(markdown, {
 });
 ```
 
-### `Bun.markdown.render(markdown: string, callbacks: RenderCallbacks, options?: Options): string` 
+### `Bun.markdown.render(markdown: string, callbacks: RenderCallbacks, options?: Options): string`
 ```javascript
 const output = Bun.markdown.render(markdown, {
   heading: (children, { level }) => `<h${level}>${children}</h${level}>`,
   paragraph: (children) => `<p>${children}</p>`,
-  strong: (children) => `<strong>${children}</strong>` 
+  strong: (children) => `<strong>${children}</strong>`
 }, { tables: true });
 ```
 
-### `Bun.markdown.react(markdown: string, components?: Components, options?: ReactOptions): ReactElement` 
+### `Bun.markdown.react(markdown: string, components?: Components, options?: ReactOptions): ReactElement`
 ```jsx
 const element = Bun.markdown.react(markdown, {
   a: ({ href, children }) => <a href={href}>{children}</a>,
@@ -57,14 +57,14 @@ const element = Bun.markdown.react(markdown, {
 
 ### OBJECT OPTIONS
 
-#### `autolinks: boolean | { url?: boolean, www?: boolean, email?: boolean }` 
+#### `autolinks: boolean | { url?: boolean, www?: boolean, email?: boolean }`
 ```javascript
 // Enable all
 { autolinks: true }
 
 // Specific types only
-{ 
-  autolinks: { 
+{
+  autolinks: {
     url: true,    // https://example.com
     www: true,    // www.example.com
     email: false  // user@example.com
@@ -72,7 +72,7 @@ const element = Bun.markdown.react(markdown, {
 }
 ```
 
-#### `headings: boolean | { ids?: boolean, autolink?: boolean }` 
+#### `headings: boolean | { ids?: boolean, autolink?: boolean }`
 ```javascript
 // Both IDs and anchor links
 { headings: true }
@@ -99,15 +99,15 @@ type RenderCallbacks = {
   paragraph: (children: string) => string | null;
   blockquote: (children: string) => string | null;
   hr: () => string | null;
-  
+
   // Code
   code: (children: string, meta: { language?: string }) => string | null;
   codespan: (children: string) => string | null;
-  
+
   // Lists
   list: (children: string, meta: { ordered: boolean; start?: number }) => string | null;
   listItem: (children: string, meta: { checked?: boolean }) => string | null;
-  
+
   // Tables
   table: (children: string) => string | null;
   thead: (children: string) => string | null;
@@ -115,10 +115,10 @@ type RenderCallbacks = {
   tr: (children: string) => string | null;
   th: (children: string, meta: { align?: "left" | "center" | "right" }) => string | null;
   td: (children: string, meta: { align?: "left" | "center" | "right" }) => string | null;
-  
+
   // HTML
   html: (children: string) => string | null;
-  
+
   // Inline
   strong: (children: string) => string | null;
   emphasis: (children: string) => string | null;
@@ -134,14 +134,14 @@ type RenderCallbacks = {
 #### 1. HTML WITH CLASSES
 ```javascript
 const renderer = {
-  heading: (children, { level }) => 
+  heading: (children, { level }) =>
     `<h${level} class="heading-${level}">${children}</h${level}>`,
-  
-  paragraph: (children) => 
+
+  paragraph: (children) =>
     `<p class="paragraph">${children}</p>`,
-  
-  link: (children, { href }) => 
-    `<a href="${href}" class="link">${children}</a>` 
+
+  link: (children, { href }) =>
+    `<a href="${href}" class="link">${children}</a>`
 };
 ```
 
@@ -162,31 +162,31 @@ const plainTextRenderer = {
 #### 3. TERMINAL/ANSI OUTPUT
 ```javascript
 const ansiRenderer = {
-  heading: (children, { level }) => 
+  heading: (children, { level }) =>
     `\x1b[1;3${level}m${children}\x1b[0m\n`,
-  
-  strong: (children) => 
+
+  strong: (children) =>
     `\x1b[1m${children}\x1b[22m`,
-  
-  emphasis: (children) => 
+
+  emphasis: (children) =>
     `\x1b[3m${children}\x1b[23m`,
-  
-  code: (children) => 
-    `\x1b[90m${children}\x1b[0m` 
+
+  code: (children) =>
+    `\x1b[90m${children}\x1b[0m`
 };
 ```
 
 #### 4. CUSTOM DATA ATTRIBUTES
 ```javascript
 const dataRenderer = {
-  heading: (children, { level, id }) => 
+  heading: (children, { level, id }) =>
     `<h${level} data-level="${level}" data-id="${id}">${children}</h${level}>`,
-  
-  link: (children, { href }) => 
+
+  link: (children, { href }) =>
     `<a href="${href}" data-external="${isExternal(href)}">${children}</a>`,
-  
-  image: (children, { src }) => 
-    `<img src="${src}" alt="${children}" data-lazy="true">` 
+
+  image: (children, { src }) =>
+    `<img src="${src}" alt="${children}" data-lazy="true">`
 };
 ```
 
@@ -204,18 +204,18 @@ interface ReactComponents {
   h4?: (props: { id?: string; children: React.ReactNode }) => React.ReactElement;
   h5?: (props: { id?: string; children: React.ReactNode }) => React.ReactElement;
   h6?: (props: { id?: string; children: React.ReactNode }) => React.ReactElement;
-  
+
   // Block elements
   p?: (props: { children: React.ReactNode }) => React.ReactElement;
   blockquote?: (props: { children: React.ReactNode }) => React.ReactElement;
   pre?: (props: { language?: string; children: React.ReactNode }) => React.ReactElement;
   hr?: (props: {}) => React.ReactElement;
-  
+
   // Lists
   ul?: (props: { children: React.ReactNode }) => React.ReactElement;
   ol?: (props: { start: number; children: React.ReactNode }) => React.ReactElement;
   li?: (props: { checked?: boolean; children: React.ReactNode }) => React.ReactElement;
-  
+
   // Tables
   table?: (props: { children: React.ReactNode }) => React.ReactElement;
   thead?: (props: { children: React.ReactNode }) => React.ReactElement;
@@ -223,7 +223,7 @@ interface ReactComponents {
   tr?: (props: { children: React.ReactNode }) => React.ReactElement;
   th?: (props: { align?: string; children: React.ReactNode }) => React.ReactElement;
   td?: (props: { align?: string; children: React.ReactNode }) => React.ReactElement;
-  
+
   // Inline elements
   em?: (props: { children: React.ReactNode }) => React.ReactElement;
   strong?: (props: { children: React.ReactNode }) => React.ReactElement;
@@ -241,7 +241,7 @@ interface ReactComponents {
 ```jsx
 function InteractiveMarkdown({ content }) {
   const [expanded, setExpanded] = useState({});
-  
+
   return Bun.markdown.react(content, {
     h2: ({ id, children }) => (
       <div className="section">
@@ -251,10 +251,10 @@ function InteractiveMarkdown({ content }) {
         {expanded[id] && <div className="content">...</div>}
       </div>
     ),
-    
+
     pre: ({ language, children }) => {
       const [copied, setCopied] = useState(false);
-      
+
       return (
         <div className="code-block">
           <button onClick={() => {
@@ -278,16 +278,16 @@ const ThemeContext = createContext();
 
 function ThemedMarkdown({ content }) {
   const theme = useContext(ThemeContext);
-  
+
   return Bun.markdown.react(content, {
     h1: ({ children }) => (
       <h1 style={{ color: theme.colors.primary }}>
         {children}
       </h1>
     ),
-    
+
     a: ({ href, children }) => (
-      <a 
+      <a
         href={href}
         style={{ color: theme.colors.link }}
         target="_blank"
@@ -295,11 +295,11 @@ function ThemedMarkdown({ content }) {
         {children}
       </a>
     ),
-    
+
     code: ({ children }) => (
-      <code style={{ 
+      <code style={{
         background: theme.colors.codeBg,
-        color: theme.colors.codeText 
+        color: theme.colors.codeText
       }}>
         {children}
       </code>
@@ -312,14 +312,14 @@ function ThemedMarkdown({ content }) {
 ```jsx
 function ScrollableMarkdown({ content }) {
   const headingRefs = useRef({});
-  
+
   useEffect(() => {
     // Track which headings are visible
   }, []);
-  
+
   return Bun.markdown.react(content, {
     h2: ({ id, children }) => (
-      <h2 
+      <h2
         id={id}
         ref={el => headingRefs.current[id] = el}
         className="heading"
@@ -343,7 +343,7 @@ const cache = new Map();
 function cachedHtml(markdown, options) {
   const key = `${markdown}-${JSON.stringify(options)}`;
   if (cache.has(key)) return cache.get(key);
-  
+
   const result = Bun.markdown.html(markdown, options);
   cache.set(key, result);
   return result;
@@ -355,7 +355,7 @@ class LRUCache {
     this.maxSize = maxSize;
     this.cache = new Map();
   }
-  
+
   get(key) {
     if (!this.cache.has(key)) return null;
     const value = this.cache.get(key);
@@ -363,7 +363,7 @@ class LRUCache {
     this.cache.set(key, value);
     return value;
   }
-  
+
   set(key, value) {
     if (this.cache.size >= this.maxSize) {
       const firstKey = this.cache.keys().next().value;
@@ -383,10 +383,10 @@ const MemoizedMarkdown = memo(function Markdown({ content }) {
 
 // Factory with memoization
 function createRenderer(options) {
-  const memoized = memoizeOne((markdown) => 
+  const memoized = memoizeOne((markdown) =>
     Bun.markdown.html(markdown, options)
   );
-  
+
   return memoized;
 }
 ```
@@ -400,14 +400,14 @@ class LazyMarkdown {
     this.options = options;
     this._html = null;
   }
-  
+
   get html() {
     if (!this._html) {
       this._html = Bun.markdown.html(this.markdown, this.options);
     }
     return this._html;
   }
-  
+
   render(callbacks) {
     return Bun.markdown.render(this.markdown, callbacks, this.options);
   }
@@ -424,17 +424,17 @@ const SAFE_CONFIG = {
   // Disable raw HTML
   noHtmlBlocks: true,
   noHtmlSpans: true,
-  
+
   // Filter dangerous tags
   tagFilter: true,
-  
+
   // Controlled autolinks
-  autolinks: { 
-    url: false, 
-    www: false, 
-    email: false 
+  autolinks: {
+    url: false,
+    www: false,
+    email: false
   },
-  
+
   // Enable useful features
   tables: true,
   strikethrough: true,
@@ -447,12 +447,12 @@ const SAFE_RENDERER = {
     if (!isSafeUrl(href)) return children;
     return `<a href="${escapeHtml(href)}">${escapeHtml(children)}</a>`;
   },
-  
+
   image: (children, { src }) => {
     if (!isAllowedImage(src)) return '';
     return `<img src="${escapeHtml(src)}" alt="${escapeHtml(children)}">`;
   },
-  
+
   text: (children) => escapeHtml(children)
 };
 ```
@@ -468,7 +468,7 @@ function safeMarkdownHtml(markdown, options) {
     noHtmlSpans: true,
     tagFilter: true
   });
-  
+
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'code', 'pre', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
     ALLOWED_ATTR: ['href', 'title', 'alt', 'src', 'id', 'class'],
@@ -482,23 +482,23 @@ function safeMarkdownHtml(markdown, options) {
 function cspSafeRenderer() {
   return {
     // Remove inline event handlers
-    link: (children, { href }) => 
+    link: (children, { href }) =>
       `<a href="${href}" rel="noopener noreferrer">${children}</a>`,
-    
+
     // Add nonce to scripts
     html: (children) => {
       const nonce = generateNonce();
       return children.replace(
-        /<script\b([^>]*)>/g, 
-        `<script nonce="${nonce}" $1>` 
+        /<script\b([^>]*)>/g,
+        `<script nonce="${nonce}" $1>`
       );
     },
-    
+
     // Sandbox iframes
     html: (children) => {
       return children.replace(
         /<iframe\b([^>]*)>/g,
-        `<iframe sandbox="allow-same-origin" $1>` 
+        `<iframe sandbox="allow-same-origin" $1>`
       );
     }
   };
@@ -518,30 +518,30 @@ class MarkdownPipeline {
     this.postprocessors = [];
     this.renderHooks = {};
   }
-  
+
   usePreprocessor(fn) {
     this.preprocessors.push(fn);
     return this;
   }
-  
+
   usePostprocessor(fn) {
     this.postprocessors.push(fn);
     return this;
   }
-  
+
   useRenderHook(type, fn) {
     if (!this.renderHooks[type]) this.renderHooks[type] = [];
     this.renderHooks[type].push(fn);
     return this;
   }
-  
+
   render(markdown) {
     // Preprocess
     let processed = markdown;
     for (const pre of this.preprocessors) {
       processed = pre(processed);
     }
-    
+
     // Render with hooks
     const callbacks = {};
     for (const [type, hooks] of Object.entries(this.renderHooks)) {
@@ -553,15 +553,15 @@ class MarkdownPipeline {
         return result;
       };
     }
-    
+
     const rendered = Bun.markdown.render(processed, callbacks, this.options);
-    
+
     // Postprocess
     let final = rendered;
     for (const post of this.postprocessors) {
       final = post(final);
     }
-    
+
     return final;
   }
 }
@@ -577,7 +577,7 @@ const pipeline = new MarkdownPipeline({ tables: true })
 ```javascript
 function markdownToAST(markdown, options) {
   const ast = { type: 'root', children: [] };
-  
+
   Bun.markdown.render(markdown, {
     heading: (children, meta) => {
       ast.children.push({
@@ -589,7 +589,7 @@ function markdownToAST(markdown, options) {
       });
       return '';
     },
-    
+
     paragraph: (children) => {
       ast.children.push({
         type: 'paragraph',
@@ -598,10 +598,10 @@ function markdownToAST(markdown, options) {
       });
       return '';
     }
-    
+
     // ... more callbacks
   }, options);
-  
+
   return ast;
 }
 
@@ -631,7 +631,7 @@ function renderMarkdownToHTML(markdown, options = {}) {
     ...options,
     reactVersion: 18
   });
-  
+
   return renderToString(element);
 }
 
@@ -640,7 +640,7 @@ import { renderToPipeableStream } from 'react-dom/server';
 
 function streamMarkdown(res, markdown, options) {
   const element = Bun.markdown.react(markdown, undefined, options);
-  
+
   const stream = renderToPipeableStream(element, {
     onShellReady() {
       stream.pipe(res);
@@ -659,7 +659,7 @@ function streamMarkdown(res, markdown, options) {
 function createMarkdownEditor(container) {
   const textarea = container.querySelector('textarea');
   const preview = container.querySelector('.preview');
-  
+
   // Debounced render
   let renderTimeout;
   function updatePreview() {
@@ -671,7 +671,7 @@ function createMarkdownEditor(container) {
           code: ({ children }) => (
             <code className="editor-code">{children}</code>
           ),
-          
+
           pre: ({ language, children }) => (
             <pre className={`language-${language}`}>
               {children}
@@ -682,7 +682,7 @@ function createMarkdownEditor(container) {
           tasklists: true,
           headings: { ids: true }
         });
-        
+
         // Update preview
         preview.innerHTML = '';
         preview.appendChild(element);
@@ -691,7 +691,7 @@ function createMarkdownEditor(container) {
       }
     }, 100);
   }
-  
+
   textarea.addEventListener('input', updatePreview);
   updatePreview();
 }
@@ -705,7 +705,7 @@ function createMarkdownEditor(container) {
 ```javascript
 function createDebugRenderer() {
   const calls = [];
-  
+
   const renderer = new Proxy({}, {
     get(target, prop) {
       return (children, meta) => {
@@ -715,7 +715,7 @@ function createDebugRenderer() {
           meta,
           timestamp: Date.now()
         });
-        
+
         // Pass through to default
         switch (prop) {
           case 'heading':
@@ -729,7 +729,7 @@ function createDebugRenderer() {
       };
     }
   });
-  
+
   return {
     renderer,
     getCalls: () => calls,
@@ -747,34 +747,34 @@ console.log(debug.getCalls());
 ```javascript
 function validateMarkdown(markdown, options) {
   const errors = [];
-  
+
   // Test render
   try {
     Bun.markdown.html(markdown, options);
   } catch (error) {
     errors.push({ type: 'parse', error: error.message });
   }
-  
+
   // Check for potential issues
   if (markdown.includes('<script>')) {
     errors.push({ type: 'security', message: 'Contains script tags' });
   }
-  
+
   // Validate link structure
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let match;
   while ((match = linkRegex.exec(markdown)) !== null) {
     const [, text, url] = match;
     if (!isValidUrl(url)) {
-      errors.push({ 
-        type: 'link', 
-        text, 
-        url, 
-        message: 'Invalid URL' 
+      errors.push({
+        type: 'link',
+        text,
+        url,
+        message: 'Invalid URL'
       });
     }
   }
-  
+
   return errors;
 }
 ```
@@ -892,18 +892,18 @@ try {
 // Performance test
 function benchmark(iterations = 1000) {
   const markdown = `# Test\n\n**Bold** and *italic*`;
-  
+
   console.time('Bun.markdown.html');
   for (let i = 0; i < iterations; i++) {
     Bun.markdown.html(markdown, { tables: true });
   }
   console.timeEnd('Bun.markdown.html');
-  
+
   console.time('Bun.markdown.render');
   for (let i = 0; i < iterations; i++) {
     Bun.markdown.render(markdown, {
       heading: (c, { l }) => `<h${l}>${c}</h${l}>`,
-      paragraph: c => `<p>${c}</p>` 
+      paragraph: c => `<p>${c}</p>`
     });
   }
   console.timeEnd('Bun.markdown.render');
@@ -914,7 +914,7 @@ function measureMemory() {
   const before = process.memoryUsage().heapUsed;
   const result = Bun.markdown.html(largeMarkdown);
   const after = process.memoryUsage().heapUsed;
-  
+
   console.log(`Memory used: ${(after - before) / 1024 / 1024} MB`);
 }
 ```
@@ -934,7 +934,7 @@ const html = Bun.markdown.html(markdown, {
 // 2. CUSTOM RENDER
 const output = Bun.markdown.render(markdown, {
   paragraph: c => `<p>${c}</p>`,
-  heading: (c, { l }) => `<h${l}>${c}</h${l}>` 
+  heading: (c, { l }) => `<h${l}>${c}</h${l}>`
 });
 
 // 3. REACT COMPONENTS
@@ -950,7 +950,7 @@ const safe = Bun.markdown.html(userContent, {
 });
 
 // 5. PERFORMANT
-const cached = memoize(md => 
+const cached = memoize(md =>
   Bun.markdown.html(md, { tables: true })
 );
 ```

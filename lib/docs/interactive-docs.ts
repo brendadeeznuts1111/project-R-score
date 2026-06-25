@@ -38,9 +38,9 @@ export class InteractiveDocsExplorer {
   }
 
   async interactiveSearch(query: string = '', domain: 'sh' | 'com' = 'com') {
-    console.log('🎯 Interactive Bun Documentation Explorer');
-    console.log('='.repeat(50));
-    console.log();
+    console.info('🎯 Interactive Bun Documentation Explorer');
+    console.info('='.repeat(50));
+    console.info();
 
     if (!query) {
       query = await this.prompt('Enter search query (or "help" for commands): ');
@@ -64,14 +64,14 @@ export class InteractiveDocsExplorer {
     const results = await this.fetcher.search(query, domain);
 
     if (results.length === 0) {
-      console.log(`❌ No results found for "${query}"`);
-      console.log('💡 Try: "buffer", "http", "yaml", "semver", "websocket"');
+      console.info(`❌ No results found for "${query}"`);
+      console.info('💡 Try: "buffer", "http", "yaml", "semver", "websocket"');
       return;
     }
 
     const limited = results.slice(0, this.config.maxResults);
-    console.log(`🔍 Found ${results.length} results for "${query}"`);
-    console.log();
+    console.info(`🔍 Found ${results.length} results for "${query}"`);
+    console.info();
 
     // Display results with numbers
     this.displayResults(limited, domain);
@@ -85,7 +85,7 @@ export class InteractiveDocsExplorer {
       if (index >= 0 && index < limited.length) {
         await this.openResult(limited[index], domain);
       } else {
-        console.log('❌ Invalid selection');
+        console.info('❌ Invalid selection');
       }
     } else if (limited.length === 1 && this.config.autoOpen) {
       await this.openResult(limited[0], domain);
@@ -94,15 +94,15 @@ export class InteractiveDocsExplorer {
 
   private displayResults(results: BunApiIndex[], domain: 'sh' | 'com') {
     results.forEach((result, i) => {
-      console.log(`${i + 1}. ${this.style(result.topic, 'primary')}`);
-      console.log(`   APIs: ${result.apis.join(', ')}`);
+      console.info(`${i + 1}. ${this.style(result.topic, 'primary')}`);
+      console.info(`   APIs: ${result.apis.join(', ')}`);
 
       if (this.config.showCategories) {
-        console.log(`   Category: ${this.style(result.category, 'accent')}`);
+        console.info(`   Category: ${this.style(result.category, 'accent')}`);
       }
 
-      console.log(`   URL: ${result.domains[domain]}`);
-      console.log();
+      console.info(`   URL: ${result.domains[domain]}`);
+      console.info();
     });
   }
 
@@ -110,7 +110,7 @@ export class InteractiveDocsExplorer {
     const appMode = await this.confirm('Open in Chrome app mode? (y/n): ');
     const url = result.domains[domain];
 
-    console.log(`🚀 Opening: ${url}`);
+    console.info(`🚀 Opening: ${url}`);
     await this.chromeManager.openInChrome(url, appMode);
 
     // Save to recent
@@ -121,14 +121,14 @@ export class InteractiveDocsExplorer {
     const index = await this.fetcher.fetchIndex(domain);
     const categories = [...new Set(index.map(item => item.category))];
 
-    console.log('📂 Available Categories:');
-    console.log('='.repeat(30));
+    console.info('📂 Available Categories:');
+    console.info('='.repeat(30));
 
     categories.forEach((category, i) => {
-      console.log(`${i + 1}. ${this.style(category, 'primary')}`);
+      console.info(`${i + 1}. ${this.style(category, 'primary')}`);
     });
 
-    console.log();
+    console.info();
     const choice = await this.prompt('Select category (number or name): ');
 
     if (choice.match(/^\d+$/)) {
@@ -146,12 +146,12 @@ export class InteractiveDocsExplorer {
     const results = index.filter(item => item.category === category);
 
     if (results.length === 0) {
-      console.log(`❌ No APIs found in category "${category}"`);
+      console.info(`❌ No APIs found in category "${category}"`);
       return;
     }
 
-    console.log(`📂 ${category.toUpperCase()} APIs (${results.length})`);
-    console.log('='.repeat(40));
+    console.info(`📂 ${category.toUpperCase()} APIs (${results.length})`);
+    console.info('='.repeat(40));
 
     this.displayResults(results.slice(0, this.config.maxResults), domain);
   }
@@ -160,18 +160,18 @@ export class InteractiveDocsExplorer {
     const recent = await this.loadRecent();
 
     if (recent.length === 0) {
-      console.log('📭 No recent searches');
-      console.log('💡 Use the search command to build history');
+      console.info('📭 No recent searches');
+      console.info('💡 Use the search command to build history');
       return;
     }
 
-    console.log('🕒 Recent Searches:');
-    console.log('='.repeat(20));
+    console.info('🕒 Recent Searches:');
+    console.info('='.repeat(20));
 
     recent.slice(0, 10).forEach((item, i) => {
-      console.log(`${i + 1}. ${this.style(item.topic, 'primary')} (${item.domain})`);
-      console.log(`   Searched: ${new Date(item.timestamp).toLocaleString()}`);
-      console.log();
+      console.info(`${i + 1}. ${this.style(item.topic, 'primary')} (${item.domain})`);
+      console.info(`   Searched: ${new Date(item.timestamp).toLocaleString()}`);
+      console.info();
     });
 
     const choice = await this.prompt('Re-open a result (number or "q"): ');
@@ -235,7 +235,7 @@ export class InteractiveDocsExplorer {
   }
 
   private showHelp() {
-    console.log(`
+    console.info(`
 🎯 Interactive Bun Documentation Explorer
 
 Commands:

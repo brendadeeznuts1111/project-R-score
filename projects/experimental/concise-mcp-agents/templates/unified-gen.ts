@@ -114,20 +114,20 @@ async function main() {
 
   try {
     const result = await generateUnified(params);
-    console.log('=== GOV Header ===');
-    console.log(result.header);
-    console.log('\n=== Dashboard YAML ===');
-    console.log(result.dashboard);
-    console.log('\n=== Metadata ===');
-    console.log(`Hash: ${result.hash}`);
-    console.log(`Grepable: ${result.grepable}`);
+    console.info('=== GOV Header ===');
+    console.info(result.header);
+    console.info('\n=== Dashboard YAML ===');
+    console.info(result.dashboard);
+    console.info('\n=== Metadata ===');
+    console.info(`Hash: ${result.hash}`);
+    console.info(`Grepable: ${result.grepable}`);
 
     // Optionally save files
     if (args.has('--save')) {
       const baseName = `${params.scope?.toLowerCase()}-${params.type?.toLowerCase()}-${Date.now()}`;
       await Bun.write(`rules/${baseName}.md`, result.header);
       await Bun.write(`dashboard/${baseName}.yaml`, result.dashboard);
-      console.log(`\n💾 Saved to: rules/${baseName}.md, dashboard/${baseName}.yaml`);
+      console.info(`\n💾 Saved to: rules/${baseName}.md, dashboard/${baseName}.yaml`);
     }
   } catch (error) {
     console.error(error.message);

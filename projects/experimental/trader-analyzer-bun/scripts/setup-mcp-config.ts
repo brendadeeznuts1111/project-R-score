@@ -16,7 +16,7 @@ const TEMPLATE_PATH = join(process.cwd(), ".cursor", "mcp.json.template");
 const CONFIG_PATH = join(process.cwd(), ".cursor", "mcp.json");
 
 async function main() {
-	console.log("🔧 Setting up MCP configuration...\n");
+	console.info("🔧 Setting up MCP configuration...\n");
 
 	// Check if template exists
 	if (!existsSync(TEMPLATE_PATH)) {
@@ -27,8 +27,8 @@ async function main() {
 
 	// Check if config already exists
 	if (existsSync(CONFIG_PATH)) {
-		console.log(`⚠️  Configuration already exists: ${CONFIG_PATH}`);
-		console.log("   Skipping copy. Edit the file directly if needed.\n");
+		console.info(`⚠️  Configuration already exists: ${CONFIG_PATH}`);
+		console.info("   Skipping copy. Edit the file directly if needed.\n");
 		
 		// Validate existing config
 		try {
@@ -39,17 +39,17 @@ async function main() {
 			const storedApiKey = await mcpApiKeys.get("bun");
 			
 			if (storedApiKey) {
-				console.log("✅ Bun API key found in Bun.secrets (secure storage)");
-				console.log("   The API key is stored securely in your OS keychain\n");
+				console.info("✅ Bun API key found in Bun.secrets (secure storage)");
+				console.info("   The API key is stored securely in your OS keychain\n");
 			} else if (apiKey === "" || apiKey === undefined) {
-				console.log("ℹ️  Bun API key is not configured (empty string)");
-				console.log("   This is fine if the Bun MCP server doesn't require authentication");
-				console.log("   Otherwise, add your API key using:");
-				console.log("   bun run scripts/setup-mcp-config.ts --set-api-key bun <your-key>\n");
+				console.info("ℹ️  Bun API key is not configured (empty string)");
+				console.info("   This is fine if the Bun MCP server doesn't require authentication");
+				console.info("   Otherwise, add your API key using:");
+				console.info("   bun run scripts/setup-mcp-config.ts --set-api-key bun <your-key>\n");
 			} else {
-				console.log("⚠️  Bun API key found in config file (not secure)");
-				console.log("   Consider migrating to Bun.secrets for secure storage:");
-				console.log("   bun run scripts/setup-mcp-config.ts --migrate-api-key bun\n");
+				console.info("⚠️  Bun API key found in config file (not secure)");
+				console.info("   Consider migrating to Bun.secrets for secure storage:");
+				console.info("   bun run scripts/setup-mcp-config.ts --migrate-api-key bun\n");
 			}
 		} catch (error) {
 			console.error(`❌ Invalid JSON in ${CONFIG_PATH}`);
@@ -59,14 +59,14 @@ async function main() {
 		// Copy template to config
 		try {
 			copyFileSync(TEMPLATE_PATH, CONFIG_PATH);
-			console.log(`✅ Created ${CONFIG_PATH} from template\n`);
+			console.info(`✅ Created ${CONFIG_PATH} from template\n`);
 			
 			// Show instructions
-			console.log("📝 Next steps:");
-			console.log("   1. Edit .cursor/mcp.json");
-			console.log("   2. Add your Bun MCP API key to the 'apiKey' field");
-			console.log("      (or leave as empty string \"\" if no API key is required)");
-			console.log("   3. Restart Cursor to load MCP servers\n");
+			console.info("📝 Next steps:");
+			console.info("   1. Edit .cursor/mcp.json");
+			console.info("   2. Add your Bun MCP API key to the 'apiKey' field");
+			console.info("      (or leave as empty string \"\" if no API key is required)");
+			console.info("   3. Restart Cursor to load MCP servers\n");
 		} catch (error) {
 			console.error(`❌ Failed to copy template`);
 			console.error(`   Error: ${error instanceof Error ? error.message : String(error)}\n`);
@@ -92,11 +92,11 @@ async function main() {
 			console.warn("⚠️  Warning: 'bun' server not configured");
 		}
 
-		console.log("✅ Configuration structure is valid");
-		console.log("\n📚 Available servers:");
+		console.info("✅ Configuration structure is valid");
+		console.info("\n📚 Available servers:");
 		
 		if (config.mcpServers.nexus) {
-			console.log("   ✓ nexus (local)");
+			console.info("   ✓ nexus (local)");
 		}
 		
 		if (config.mcpServers.bun) {
@@ -117,15 +117,15 @@ async function main() {
 				note = "→ API key not configured (may be optional)";
 			}
 			
-			console.log(`   ${status} bun (external)`);
-			console.log(`      ${note}`);
+			console.info(`   ${status} bun (external)`);
+			console.info(`      ${note}`);
 		}
 
-		console.log("\n📝 Usage:");
-		console.log("   Set API key: bun run scripts/setup-mcp-config.ts --set-api-key <server> <key>");
-		console.log("   Get API key: bun run scripts/setup-mcp-config.ts --get-api-key <server>");
-		console.log("   Migrate key: bun run scripts/setup-mcp-config.ts --migrate-api-key <server>");
-		console.log("\n✨ Setup complete! Restart Cursor to load MCP servers.\n");
+		console.info("\n📝 Usage:");
+		console.info("   Set API key: bun run scripts/setup-mcp-config.ts --set-api-key <server> <key>");
+		console.info("   Get API key: bun run scripts/setup-mcp-config.ts --get-api-key <server>");
+		console.info("   Migrate key: bun run scripts/setup-mcp-config.ts --migrate-api-key <server>");
+		console.info("\n✨ Setup complete! Restart Cursor to load MCP servers.\n");
 	} catch (error) {
 		console.error(`❌ Failed to validate configuration`);
 		console.error(`   Error: ${error instanceof Error ? error.message : String(error)}\n`);
@@ -163,7 +163,7 @@ async function handleArgs() {
 				}
 
 				await mcpApiKeys.set(serverName, parsed);
-				console.log(`✅ API key stored securely for '${serverName}'`);
+				console.info(`✅ API key stored securely for '${serverName}'`);
 			} catch (error) {
 				console.error(`❌ Failed to store API key: ${error instanceof Error ? error.message : String(error)}`);
 				process.exit(1);
@@ -180,9 +180,9 @@ async function handleArgs() {
 			const apiKey = await mcpApiKeys.get(serverName);
 
 			if (apiKey) {
-				console.log(`✅ API key for '${serverName}': ${apiKey}`);
+				console.info(`✅ API key for '${serverName}': ${apiKey}`);
 			} else {
-				console.log(`ℹ️  No API key found for '${serverName}'`);
+				console.info(`ℹ️  No API key found for '${serverName}'`);
 			}
 			break;
 		}
@@ -205,7 +205,7 @@ async function handleArgs() {
 				const apiKey = config.mcpServers?.[serverName]?.apiKey;
 
 				if (!apiKey || apiKey === "") {
-					console.log(`ℹ️  No API key found in config for '${serverName}'`);
+					console.info(`ℹ️  No API key found in config for '${serverName}'`);
 					break;
 				}
 
@@ -216,8 +216,8 @@ async function handleArgs() {
 				}
 
 				await mcpApiKeys.set(serverName, parsed);
-				console.log(`✅ Migrated API key to Bun.secrets for '${serverName}'`);
-				console.log(`   You can now remove the apiKey field from ${configPath}`);
+				console.info(`✅ Migrated API key to Bun.secrets for '${serverName}'`);
+				console.info(`   You can now remove the apiKey field from ${configPath}`);
 			} catch (error) {
 				console.error(`❌ Failed to migrate API key: ${error instanceof Error ? error.message : String(error)}`);
 				process.exit(1);
@@ -228,12 +228,12 @@ async function handleArgs() {
 		case "--list-servers": {
 			const servers = await mcpApiKeys.list();
 			if (servers.length > 0) {
-				console.log("📋 Configured MCP servers:");
+				console.info("📋 Configured MCP servers:");
 				for (const server of servers) {
-					console.log(`   ✓ ${server}`);
+					console.info(`   ✓ ${server}`);
 				}
 			} else {
-				console.log("ℹ️  No MCP servers configured with API keys");
+				console.info("ℹ️  No MCP servers configured with API keys");
 			}
 			break;
 		}

@@ -14,7 +14,15 @@ const SIZES = [
 // Pre-1.3.9 baseline (software CRC32, no SIMD)
 const OLD_CRC32_US_PER_MB = 2644;
 
-const ALGOS = ['crc32', 'adler32', 'wyhash', 'cityHash32', 'cityHash64', 'murmur32v3', 'murmur64v2'] as const;
+const ALGOS = [
+  'crc32',
+  'adler32',
+  'wyhash',
+  'cityHash32',
+  'cityHash64',
+  'murmur32v3',
+  'murmur64v2',
+] as const;
 type Algo = (typeof ALGOS)[number];
 
 interface Result {
@@ -37,7 +45,7 @@ function benchAlgo(algo: Algo, buf: Uint8Array, iterations: number): number {
 }
 
 function run() {
-  console.log(`Bun.hash Benchmark — Bun ${Bun.version} (${process.arch})\n`);
+  console.info(`Bun.hash Benchmark — Bun ${Bun.version} (${process.arch})\n`);
 
   const results: Result[] = [];
 
@@ -70,45 +78,47 @@ function run() {
   }
 
   // Print CRC32 comparison table
-  console.log('── CRC32 Before / After (hardware-accelerated via zlib) ──\n');
-  console.log(
+  console.info('── CRC32 Before / After (hardware-accelerated via zlib) ──\n');
+  console.info(
     'Size'.padEnd(10),
     'Before'.padStart(12),
     'After'.padStart(12),
     'Speedup'.padStart(10),
-    'Throughput'.padStart(12),
+    'Throughput'.padStart(12)
   );
-  console.log('─'.repeat(58));
+  console.info('─'.repeat(58));
 
-  for (const r of results.filter((r) => r.algo === 'crc32')) {
-    const beforeUs = Math.round(OLD_CRC32_US_PER_MB * (SIZES.find((s) => s.label === r.size)!.bytes / 1048576));
-    console.log(
+  for (const r of results.filter(r => r.algo === 'crc32')) {
+    const beforeUs = Math.round(
+      OLD_CRC32_US_PER_MB * (SIZES.find(s => s.label === r.size)!.bytes / 1048576)
+    );
+    console.info(
       r.size.padEnd(10),
       `${beforeUs} µs`.padStart(12),
       `${r.usPerOp} µs`.padStart(12),
       (r.speedup ?? '').padStart(10),
-      `${r.mbPerSec} MB/s`.padStart(12),
+      `${r.mbPerSec} MB/s`.padStart(12)
     );
   }
 
   // Print all algorithms comparison
-  console.log('\n── All Hash Algorithms ──\n');
-  console.log(
+  console.info('\n── All Hash Algorithms ──\n');
+  console.info(
     'Algorithm'.padEnd(14),
     'Size'.padEnd(8),
     'µs/op'.padStart(10),
     'µs/MB'.padStart(10),
-    'MB/s'.padStart(10),
+    'MB/s'.padStart(10)
   );
-  console.log('─'.repeat(54));
+  console.info('─'.repeat(54));
 
   for (const r of results) {
-    console.log(
+    console.info(
       r.algo.padEnd(14),
       r.size.padEnd(8),
       r.usPerOp.toString().padStart(10),
       r.usPerMB.toString().padStart(10),
-      r.mbPerSec.toString().padStart(10),
+      r.mbPerSec.toString().padStart(10)
     );
   }
 }

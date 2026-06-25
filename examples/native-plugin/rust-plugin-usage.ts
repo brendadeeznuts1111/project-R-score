@@ -12,7 +12,7 @@ const buildResult = await Bun.build({
     {
       name: "rust-transformer-plugin",
       setup(build) {
-        console.log("🔧 Setting up Rust native plugin...");
+        console.info("🔧 Setting up Rust native plugin...");
         
         // Example 1: Replace 'foo' with 'bar' in all TSX files
         build.onBeforeParse(
@@ -74,15 +74,15 @@ const buildResult = await Bun.build({
           },
         );
         
-        console.log("✅ Rust native plugin configured successfully");
+        console.info("✅ Rust native plugin configured successfully");
       },
     },
   ],
 });
 
-console.log("🚀 Build completed with Rust optimizations!");
-console.log(`📦 Output: ${buildResult.outputs.length} files`);
-console.log(`⚡ Processing time: ${buildResult.outputs.length} files optimized by Rust plugin`);
+console.info("🚀 Build completed with Rust optimizations!");
+console.info(`📦 Output: ${buildResult.outputs.length} files`);
+console.info(`⚡ Processing time: ${buildResult.outputs.length} files optimized by Rust plugin`);
 
 // Example of what the transformed files might look like:
 /*
@@ -90,7 +90,7 @@ Original file:
 ```typescript
 import { foo } from './bar';
 import { foo } from './bar'; // Duplicate
-console.log('Hello world');
+console.info('Hello world');
 ```
 
 After Rust plugin optimization:
@@ -105,7 +105,7 @@ After Rust plugin optimization:
 
 import { foo } from './bar';
 
-process.env.NODE_ENV !== 'production' && console.log('Hello world');
+process.env.NODE_ENV !== 'production' && console.info('Hello world');
 ```
 */
 

@@ -443,7 +443,7 @@ export class LatticeRegistryClient {
     
     // v1.3.4: Metrics Table - Formatted output of metric matrices
     if (recent.length > 0) {
-      console.log("\n📊 Lattice Performance Matrix (Native):");
+      console.info("\n📊 Lattice Performance Matrix (Native):");
       // Use console.table for standard output, or Bun.inspect with any for native formatting
       console.table(recent);
     }
@@ -466,7 +466,7 @@ export class LatticeRegistryClient {
     ws.binaryType = "arraybuffer";
     
     ws.onopen = () => {
-      console.log("✓ Lattice WebSocket connected");
+      console.info("✓ Lattice WebSocket connected");
     };
     
     ws.onmessage = (event) => {
@@ -598,25 +598,25 @@ export const STAGING_CSR_CONFIG: LatticeCSRConfig = {
 // ============================================================================
 
 export async function demonstrateLatticeClient() {
-  console.log("🚀 Initializing T3-Lattice Registry Client v1.2.1");
+  console.info("🚀 Initializing T3-Lattice Registry Client v1.2.1");
   
   // Initialize client
   const latticeClient = new LatticeRegistryClient();
   
   // Check health
   const isHealthy = await latticeClient.checkHealth();
-  console.log(`📊 Registry Health: ${isHealthy ? "✓ OK" : "✖ DOWN"}`);
+  console.info(`📊 Registry Health: ${isHealthy ? "✓ OK" : "✖ DOWN"}`);
   
   if (isHealthy) {
     // Fetch registry manifest
     const manifest = await latticeClient.fetchRegistryManifest();
-    console.log(`📜 Registry Version: ${manifest.version}`);
+    console.info(`📜 Registry Version: ${manifest.version}`);
     
     // Fetch odds data
     try {
       const oddsData = await latticeClient.fetchOddsData("market_xyz");
-      console.log(`🎯 Odds Data Received: ${Object.keys(oddsData.odds).length} markets`);
-      console.log(`📈 Regime Pattern: ${oddsData.regime}`);
+      console.info(`🎯 Odds Data Received: ${Object.keys(oddsData.odds).length} markets`);
+      console.info(`📈 Regime Pattern: ${oddsData.regime}`);
     } catch (error) {
       console.error("Error fetching odds:", error);
     }
@@ -627,16 +627,16 @@ export async function demonstrateLatticeClient() {
         input: "test",
         parameters: { alpha: 0.5, beta: 1.2 }
       });
-      console.log(`🧮 FD Value: ${calcResult.fdValue} (confidence: ${calcResult.confidence})`);
+      console.info(`🧮 FD Value: ${calcResult.fdValue} (confidence: ${calcResult.confidence})`);
     } catch (error) {
       console.error("Error calculating FD:", error);
     }
     
     // Display recent metrics
     const metrics = latticeClient.getRecentMetrics(3);
-    console.log("\n📊 Recent Metrics:");
+    console.info("\n📊 Recent Metrics:");
     metrics.forEach(metric => {
-      console.log(`  ${metric.Endpoint}: ${metric.Status} (${metric["P99 Latency"]})`);
+      console.info(`  ${metric.Endpoint}: ${metric.Status} (${metric["P99 Latency"]})`);
     });
   }
 }

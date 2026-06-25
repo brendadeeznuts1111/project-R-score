@@ -120,7 +120,7 @@ async function main() {
     ANTHROPIC_API_KEY: anthropic.type === "api" ? "invalid" : "",
   };
 
-  console.log("== Run 1: create tool history (primary only)");
+  console.info("== Run 1: create tool history (primary only)");
   const toolPrompt =
     "Use the exec tool to create a file named zai-fallback-tool.txt with the content tool-ok. " +
     "Then use the read tool to display the file contents. Reply with just the file contents.";
@@ -153,7 +153,7 @@ async function main() {
     console.warn("Warning: no toolResult entries detected in session history.");
   }
 
-  console.log("== Run 2: force auth failover to Z.AI");
+  console.info("== Run 2: force auth failover to Z.AI");
   const followupPrompt =
     "What is the content of zai-fallback-tool.txt? Reply with just the contents.";
   const run2 = await runCommand(
@@ -171,7 +171,7 @@ async function main() {
   );
 
   if (run2.code === 0) {
-    console.log("PASS: fallback succeeded.");
+    console.info("PASS: fallback succeeded.");
     process.exit(0);
   }
 

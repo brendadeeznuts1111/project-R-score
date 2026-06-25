@@ -27,17 +27,17 @@ async function main() {
   const checkData = await checkRes.json() as any;
 
   if (!checkData.success) {
-    console.log("Check failed:", checkData.errors);
+    console.info("Check failed:", checkData.errors);
     return;
   }
 
   if (checkData.result.length > 0) {
-    console.log("DNS record already exists:");
-    console.log(`  ${checkData.result[0].type} ${checkData.result[0].name} -> ${checkData.result[0].content}`);
+    console.info("DNS record already exists:");
+    console.info(`  ${checkData.result[0].type} ${checkData.result[0].name} -> ${checkData.result[0].content}`);
     return;
   }
 
-  console.log("Creating DNS record...");
+  console.info("Creating DNS record...");
   const addRes = await fetch(
     `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records`,
     {
@@ -57,10 +57,10 @@ async function main() {
   const addData = await addRes.json() as any;
 
   if (addData.success) {
-    console.log("✅ Created DNS record:");
-    console.log(`  ${addData.result.type} ${addData.result.name} -> ${addData.result.content}`);
+    console.info("✅ Created DNS record:");
+    console.info(`  ${addData.result.type} ${addData.result.name} -> ${addData.result.content}`);
   } else {
-    console.log("Error:", addData.errors);
+    console.info("Error:", addData.errors);
   }
 }
 

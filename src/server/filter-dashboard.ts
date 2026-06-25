@@ -52,8 +52,8 @@ export class FilterDashboard {
       } as any
     });
 
-    console.log(c.bold(`🚀 Filter Dashboard running on http://localhost:${port}`));
-    console.log(c.dim('WebSocket endpoint: ws://localhost:' + port + '/filter-ws'));
+    console.info(c.bold(`🚀 Filter Dashboard running on http://localhost:${port}`));
+    console.info(c.dim('WebSocket endpoint: ws://localhost:' + port + '/filter-ws'));
   }
 
   private async handleRequest(req: Request): Promise<Response> {
@@ -402,7 +402,7 @@ export class FilterDashboard {
             ws = new WebSocket(\`\${protocol}//\${window.location.host}/filter-ws\`);
             
             ws.onopen = () => {
-                console.log('Connected to filter dashboard');
+                console.info('Connected to filter dashboard');
                 updateStatus('Connected', 'success');
             };
             
@@ -412,7 +412,7 @@ export class FilterDashboard {
             };
             
             ws.onclose = () => {
-                console.log('Disconnected from filter dashboard');
+                console.info('Disconnected from filter dashboard');
                 updateStatus('Disconnected', 'error');
                 setTimeout(connectWebSocket, 2000);
             };
@@ -567,7 +567,7 @@ export class FilterDashboard {
 
         function updateStatus(message, type) {
             // Could add a status indicator to the UI
-            console.log('Status:', message, type);
+            console.info('Status:', message, type);
         }
 
         // Initialize
@@ -593,7 +593,7 @@ export class FilterDashboard {
     const id = this.generateConnectionId();
     this.activeConnections.set(id, { id, ws });
     
-    console.log(c.cyan(`📡 WebSocket connection opened: ${id}`));
+    console.info(c.cyan(`📡 WebSocket connection opened: ${id}`));
   }
 
   private handleWebSocketMessage(ws: WebSocket, message: string | Buffer) {
@@ -609,7 +609,7 @@ export class FilterDashboard {
     for (const [id, connection] of this.activeConnections) {
       if (connection.ws === ws) {
         this.activeConnections.delete(id);
-        console.log(c.yellow(`📡 WebSocket connection closed: ${id}`));
+        console.info(c.yellow(`📡 WebSocket connection closed: ${id}`));
         break;
       }
     }
@@ -641,7 +641,7 @@ export class FilterDashboard {
 
   public close(): void {
     this.server.stop();
-    console.log(c.yellow('🛑 Filter dashboard stopped'));
+    console.info(c.yellow('🛑 Filter dashboard stopped'));
   }
 }
 
@@ -652,7 +652,7 @@ if (import.meta.main) {
   
   // Graceful shutdown
   process.on('SIGINT', () => {
-    console.log('\\nShutting down dashboard...');
+    console.info('\\nShutting down dashboard...');
     dashboard.close();
     process.exit(0);
   });

@@ -191,7 +191,7 @@ export class BookmakerApiClient17 {
       onRetry: (attempt, error) => {
         this.retries++
         if (this.config.enableLogging) {
-          console.log(`[${this.bookmaker}] Retry attempt ${attempt}: ${error}`)
+          console.info(`[${this.bookmaker}] Retry attempt ${attempt}: ${error}`)
         }
       },
     }

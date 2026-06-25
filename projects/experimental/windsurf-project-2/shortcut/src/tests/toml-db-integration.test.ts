@@ -517,7 +517,7 @@ describe("Performance Benchmarks", () => {
     const endTime = performance.now();
     const duration = endTime - startTime;
     
-    console.log(`Inserted 100 configurations in ${duration.toFixed(2)}ms`);
+    console.info(`Inserted 100 configurations in ${duration.toFixed(2)}ms`);
     
     // Should be fast with enhanced SQL helper
     expect(duration).toBeLessThan(100);
@@ -549,7 +549,7 @@ describe("Performance Benchmarks", () => {
     const endTime = performance.now();
     const duration = endTime - startTime;
     
-    console.log(`Retrieved ${retrieved.length} configurations in ${duration.toFixed(2)}ms`);
+    console.info(`Retrieved ${retrieved.length} configurations in ${duration.toFixed(2)}ms`);
     
     expect(retrieved).toHaveLength(50);
     expect(duration).toBeLessThan(50);

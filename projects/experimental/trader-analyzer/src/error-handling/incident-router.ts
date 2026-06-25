@@ -67,7 +67,7 @@ export interface IncidentRouteResult {
  * Automatically route incidents to correct team based on error source
  */
 export async function routeIncident(error: McpError): Promise<IncidentRouteResult> {
-	console.log(`[TEAM.ESCALATION.RG:INCIDENT] ${error.code} from ${error.source} (${error.severity})`);
+	console.info(`[TEAM.ESCALATION.RG:INCIDENT] ${error.code} from ${error.source} (${error.severity})`);
 
 	// Determine responsible team from error source
 	const teamQuery = ERROR_SOURCE_MAP[error.source.toLowerCase()] || 
@@ -126,6 +126,6 @@ export async function exampleRouteIncident() {
 		timestamp: new Date().toISOString(),
 	});
 
-	console.log('Incident Route Result:', JSON.stringify(incident, null, 2));
+	console.info('Incident Route Result:', JSON.stringify(incident, null, 2));
 	// Returns: { team: 'registry', teamQuery: 'department:registry', onCall: ['@platform-team-lead'], ... }
 }

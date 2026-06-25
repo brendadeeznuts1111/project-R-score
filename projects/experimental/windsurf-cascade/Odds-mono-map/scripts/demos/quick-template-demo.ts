@@ -50,8 +50,8 @@ class QuickTemplateCreator {
      * Create a template quickly with predefined config
      */
     async createTemplate(config: QuickTemplateConfig): Promise<void> {
-        console.log(chalk.blue.bold('⚡ Quick Template Creator'));
-        console.log(chalk.cyan(`Creating: ${config.name} Template\n`));
+        console.info(chalk.blue.bold('⚡ Quick Template Creator'));
+        console.info(chalk.cyan(`Creating: ${config.name} Template\n`));
 
         try {
             const template = this.generateTemplate(config);
@@ -60,7 +60,7 @@ class QuickTemplateCreator {
             // Check if template already exists
             try {
                 await readFile(templatePath, 'utf-8');
-                console.log(chalk.yellow(`⚠️  Template already exists: ${config.name}-Template.md`));
+                console.info(chalk.yellow(`⚠️  Template already exists: ${config.name}-Template.md`));
                 return;
             } catch (error: any) {
                 if (error.code !== 'ENOENT') {
@@ -70,9 +70,9 @@ class QuickTemplateCreator {
 
             await writeFile(templatePath, template, 'utf-8');
 
-            console.log(chalk.green.bold('✅ Template created successfully!'));
-            console.log(chalk.cyan(`📍 Location: ${templatePath}`));
-            console.log(chalk.gray(`📊 Type: ${config.type} | 🏷️  Category: ${config.category}`));
+            console.info(chalk.green.bold('✅ Template created successfully!'));
+            console.info(chalk.cyan(`📍 Location: ${templatePath}`));
+            console.info(chalk.gray(`📊 Type: ${config.type} | 🏷️  Category: ${config.category}`));
 
         } catch (error) {
             console.error(chalk.red(`❌ Error: ${error.message}`));
@@ -280,16 +280,16 @@ async function runDemo(): Promise<void> {
         }
     ];
 
-    console.log(chalk.blue.bold('🎭 Template Creation Demo'));
-    console.log(chalk.gray('Creating 3 demo templates with the wizard system\n'));
+    console.info(chalk.blue.bold('🎭 Template Creation Demo'));
+    console.info(chalk.gray('Creating 3 demo templates with the wizard system\n'));
 
     for (const templateConfig of demoTemplates) {
         await creator.createTemplate(templateConfig);
-        console.log(''); // Add spacing between templates
+        console.info(''); // Add spacing between templates
     }
 
-    console.log(chalk.green.bold('🎉 Demo completed!'));
-    console.log(chalk.cyan('All templates created with consistent structure and standards'));
+    console.info(chalk.green.bold('🎉 Demo completed!'));
+    console.info(chalk.cyan('All templates created with consistent structure and standards'));
 }
 
 if (import.meta.main) {

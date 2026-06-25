@@ -34,11 +34,11 @@ export class TemplateDocumentationScanner {
       // Self-referential path resolution
       const templateUrl = new URL(`./templates/${templateName}`, this.baseUrl);
       const templateFile = (Bun as any).file(templateUrl);
-      
+
       if (await templateFile.exists()) {
         const content = await templateFile.text();
         this.templates.set(templateName, content);
-        console.log(`📋 Loaded template: ${templateName}`);
+        console.info(`📋 Loaded template: ${templateName}`);
         return content;
       } else {
         throw new Error(`Template not found: ${templateName} at ${templateUrl}`);
@@ -73,18 +73,18 @@ export class TemplateDocumentationScanner {
    * Generate documentation using templates
    */
   async generateDocumentation(query: string, templateName: string): Promise<string> {
-    console.log(`🔍 Generating documentation for: ${query}`);
-    
+    console.info(`🔍 Generating documentation for: ${query}`);
+
     // Load the template
     const template = await this.loadTemplate(templateName);
-    
+
     // Perform the search
     const results = await this.searcher.streamSearch({
       query,
       cachePath: '/Users/nolarose/Projects/.cache',
-      onMatch: (match) => {
+      onMatch: match => {
         // Process matches as they arrive
-      }
+      },
     });
 
     // Replace template variables
@@ -114,7 +114,7 @@ export class TemplateDocumentationScanner {
     section += `- Files searched: ${results.filesSearched}\n`;
     section += `- Bytes processed: ${results.bytesProcessed}\n`;
     section += `- Memory usage: ${(results.memoryUsage / 1024 / 1024).toFixed(2)}MB\n`;
-    
+
     return section;
   }
 
@@ -123,11 +123,11 @@ export class TemplateDocumentationScanner {
    */
   async exportDocumentation(query: string, templateName: string, formats: string[]): Promise<void> {
     const documentation = await this.generateDocumentation(query, templateName);
-    
+
     for (const format of formats) {
       const filename = `docs-${query}-${Date.now()}.${format}`;
-      const exportFile = (Bun as any).file(filename, { 
-        type: format === 'json' ? 'application/json' : 'text/plain' 
+      const exportFile = (Bun as any).file(filename, {
+        type: format === 'json' ? 'application/json' : 'text/plain',
       });
 
       let content: string;
@@ -146,7 +146,7 @@ export class TemplateDocumentationScanner {
       }
 
       await Bun.write(exportFile, new TextEncoder().encode(content));
-      console.log(`📄 Exported: ${filename}`);
+      console.info(`📄 Exported: ${filename}`);
     }
   }
 
@@ -186,7 +186,7 @@ export class TemplateDocumentationScanner {
       templates: new URL('./templates/', this.baseUrl).pathname,
       resources: new URL('./resources/', this.baseUrl).pathname,
       cacheTemplates: this.templates.size,
-      supportedFormats: ['md', 'html', 'txt', 'json']
+      supportedFormats: ['md', 'html', 'txt', 'json'],
     };
   }
 }
@@ -195,47 +195,47 @@ export class TemplateDocumentationScanner {
  * Demonstration of self-referential documentation system
  */
 export async function demonstrateSelfReferentialSystem() {
-  console.log('🧭 Self-Referential Documentation System Demo');
-  console.log('=' .repeat(60));
+  console.info('🧭 Self-Referential Documentation System Demo');
+  console.info('='.repeat(60));
 
   const scanner = new TemplateDocumentationScanner();
 
   // Show system configuration
   const config = scanner.getSystemConfig();
-  console.log('📍 System Configuration:');
-  console.log(`   Module: ${config.modulePath}`);
-  console.log(`   Directory: ${config.directory}`);
-  console.log(`   Templates: ${config.templates}`);
-  console.log(`   Resources: ${config.resources}`);
+  console.info('📍 System Configuration:');
+  console.info(`   Module: ${config.modulePath}`);
+  console.info(`   Directory: ${config.directory}`);
+  console.info(`   Templates: ${config.templates}`);
+  console.info(`   Resources: ${config.resources}`);
 
   // Try to load a template (will create if doesn't exist)
   try {
     await scanner.loadTemplate('search-results.md');
   } catch (error) {
-    console.log('📝 Creating default template...');
+    console.info('📝 Creating default template...');
     await createDefaultTemplate();
     await scanner.loadTemplate('search-results.md');
   }
 
   // Generate documentation
-  console.log('\n📚 Generating Documentation:');
+  console.info('\n📚 Generating Documentation:');
   try {
     const docs = await scanner.generateDocumentation('bun', 'search-results.md');
-    console.log('✅ Documentation generated:');
-    console.log(docs.substring(0, 300) + '...');
+    console.info('✅ Documentation generated:');
+    console.info(docs.substring(0, 300) + '...');
   } catch (error) {
-    console.log('⚠️ Documentation generation requires search infrastructure');
+    console.info('⚠️ Documentation generation requires search infrastructure');
   }
 
   // Export to multiple formats
-  console.log('\n📄 Exporting Documentation:');
+  console.info('\n📄 Exporting Documentation:');
   try {
     await scanner.exportDocumentation('performance', 'search-results.md', ['md', 'html', 'txt']);
   } catch (error) {
-    console.log('⚠️ Export requires search infrastructure');
+    console.info('⚠️ Export requires search infrastructure');
   }
 
-  console.log('\n🎯 Self-Referential System Status: OPERATIONAL');
+  console.info('\n🎯 Self-Referential System Status: OPERATIONAL');
 }
 
 /**
@@ -263,14 +263,15 @@ Generated on: {{TIMESTAMP}}
 *Generated by Ultra-Zen Documentation Streaming System*
 `;
 
-  const templatesDir = '/Users/nolarose/Projects/lib/docs/templates';
+  const templatesDir =
+    process.env.DOCS_TEMPLATES_DIR || new URL('../../lib/docs/templates', import.meta.url).pathname;
   const templateFile = (Bun as any).file(`${templatesDir}/search-results.md`);
-  
+
   try {
     await Bun.write(templateFile, new TextEncoder().encode(templateContent));
-    console.log('📝 Default template created');
+    console.info('📝 Default template created');
   } catch (error) {
-    console.log('⚠️ Could not create template file');
+    console.info('⚠️ Could not create template file');
   }
 }
 

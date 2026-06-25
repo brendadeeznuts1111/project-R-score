@@ -8,43 +8,42 @@ import type {
   ProtocolMetrics,
 } from '../core/types/bun-extended';
 
+const activeIntervals = new Set<ReturnType<typeof setInterval>>();
+
 export function createEnhancedServer(options: EnhancedServeOptions) {
-  // Set default compression if not specified
   if (!options.compression) {
     options.compression = {
       enabled: true,
       algorithms: ['gzip', 'brotli'],
-      minSize: 1024, // 1KB
+      minSize: 1024,
       level: 6,
     };
   }
   
-  // Set default caching if not specified
   if (!options.caching) {
     options.caching = {
       enabled: true,
-      maxAge: 3600, // 1 hour
-      sMaxAge: 86400, // 1 day for CDN
-      staleWhileRevalidate: 86400, // 1 day
+      maxAge: 3600,
+      sMaxAge: 86400,
+      staleWhileRevalidate: 86400,
       public: true,
     };
   }
   
-  // Enable monitoring by default
   if (!options.monitoring) {
     options.monitoring = {
       enabled: true,
-      interval: 60000, // 1 minute
+      interval: 60000,
       metricsEndpoint: '/_metrics',
       logSlowRequests: true,
-      slowRequestThreshold: 1000, // 1 second
+      slowRequestThreshold: 1000,
     };
   }
   
-  // Create the server with enhanced fetch handler
-  const server = Bun.serve({
+  let server!: ReturnType<typeof Bun.serve>;
+  server = Bun.serve({
     ...options,
-    async fetch(request) {
+    async fetch(request): Promise<Response> {
       const monitor = new PerformanceMonitor({
         server: server as EnhancedServer,
         enableMetrics: options.monitoring?.enabled,
@@ -56,11 +55,9 @@ export function createEnhancedServer(options: EnhancedServeOptions) {
     },
   });
   
-  // Enhance server with performance properties
-  enhanceServerWithMetrics(server as EnhancedServer);
+  const enhanced = enhanceServerWithMetrics(server as EnhancedServer);
   
-  // Log server info with protocol
-  console.log(`
+  console.info(`
   🚀 Enhanced Server started!
   ──────────────────────────────
   • URL: ${server.url}
@@ -74,34 +71,30 @@ export function createEnhancedServer(options: EnhancedServeOptions) {
   Metrics Endpoint: ${server.url}/_metrics
   `);
   
-  return server as EnhancedServer;
+  return enhanced;
 }
 
 // Enhance server instance with performance tracking
-function enhanceServerWithMetrics(server: EnhancedServer) {
+function enhanceServerWithMetrics(server: EnhancedServer): EnhancedServer {
   let requestCount = 0;
   let totalResponseTime = 0;
   let activeConnections = 0;
   let bytesTransferred = { total: 0, compressed: 0, uncompressed: 0, compressionRatio: 0 };
   let cacheStats = { hits: 0, misses: 0, ratio: 0 };
   
-  // Override protocol detection
   Object.defineProperty(server, 'protocol', {
     get: () => {
-      // Detect protocol from URL
       const url = server.url.toString();
       if (url.startsWith('https://')) return 'https';
       if (url.startsWith('http://')) return 'http';
-      // In a real implementation, you'd detect HTTP/2 and HTTP/3
-      return 'http'; // Default fallback
+      return 'http';
     },
     configurable: true
   });
   
-  // Add performance property
   Object.defineProperty(server, 'performance', {
     get: () => ({
-      requestsPerSecond: requestCount / 60, // Rough estimate per minute
+      requestsPerSecond: requestCount / 60,
       avgResponseTime: requestCount > 0 ? totalResponseTime / requestCount : 0,
       activeConnections,
       bytesTransferred,
@@ -110,9 +103,7 @@ function enhanceServerWithMetrics(server: EnhancedServer) {
     configurable: true
   });
   
-  // Add request metrics method
   server.getRequestMetrics = (): RequestMetrics[] => {
-    // Return mock metrics for now
     return [{
       id: 'mock-1',
       method: 'GET',
@@ -128,7 +119,6 @@ function enhanceServerWithMetrics(server: EnhancedServer) {
     }];
   };
   
-  // Add compression stats method
   server.getCompressionStats = (): CompressionStats => {
     return {
       enabled: true,
@@ -145,13 +135,12 @@ function enhanceServerWithMetrics(server: EnhancedServer) {
     };
   };
   
-  // Add protocol metrics method
   server.getProtocolMetrics = (): ProtocolMetrics => {
     return {
       http: server.protocol === 'http' ? 1 : 0,
       https: server.protocol === 'https' ? 1 : 0,
-      http2: 0, // Would need actual detection
-      http3: 0, // Would need actual detection
+      http2: 0,
+      http3: 0,
       alpnNegotiations: 0,
       tlsVersions: { 'TLSv1.2': 0, 'TLSv1.3': server.protocol === 'https' ? 1 : 0 },
       upgradeRequests: 0,
@@ -159,10 +148,18 @@ function enhanceServerWithMetrics(server: EnhancedServer) {
     };
   };
   
-  // Update metrics periodically
-  setInterval(() => {
-    requestCount += Math.floor(Math.random() * 10); // Mock increment
-    totalResponseTime += Math.random() * 100; // Mock response time
+  const baseStop = server.stop.bind(server);
+  server.stop = (closeActiveConnections?: boolean) => {
+    for (const interval of activeIntervals) {
+      clearInterval(interval);
+    }
+    activeIntervals.clear();
+    return baseStop(closeActiveConnections);
+  };
+  
+  const interval = setInterval(() => {
+    requestCount += Math.floor(Math.random() * 10);
+    totalResponseTime += Math.random() * 100;
     bytesTransferred.total += Math.random() * 1024;
     bytesTransferred.compressed += Math.random() * 512;
     bytesTransferred.uncompressed += Math.random() * 1024;
@@ -175,6 +172,9 @@ function enhanceServerWithMetrics(server: EnhancedServer) {
       ? cacheStats.hits / (cacheStats.hits + cacheStats.misses) 
       : 0;
   }, 5000);
+  activeIntervals.add(interval);
+  
+  return server;
 }
 
 // Convenience function for quick server creation

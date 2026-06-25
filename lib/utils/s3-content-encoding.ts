@@ -77,10 +77,10 @@ export async function uploadCompressedS3(
 
   const result = await file.write(data, writeOptions);
 
-  console.log(`✅ S3 upload: ${file.name}`);
-  console.log(`   Content-Type: ${contentType}`);
-  if (contentEncoding) console.log(`   Content-Encoding: ${contentEncoding}`);
-  if (contentDisposition) console.log(`   Content-Disposition: ${contentDisposition}`);
+  console.info(`✅ S3 upload: ${file.name}`);
+  console.info(`   Content-Type: ${contentType}`);
+  if (contentEncoding) console.info(`   Content-Encoding: ${contentEncoding}`);
+  if (contentDisposition) console.info(`   Content-Disposition: ${contentDisposition}`);
 
   return result;
 }

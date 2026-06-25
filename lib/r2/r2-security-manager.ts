@@ -108,7 +108,7 @@ export class R2SecurityManager {
    * Initialize security manager
    */
   async initialize(): Promise<void> {
-    console.log(styled('🔐 Initializing R2 Security Manager', 'accent'));
+    console.info(styled('🔐 Initializing R2 Security Manager', 'accent'));
 
     // Load default policies
     this.loadDefaultPolicies();
@@ -119,7 +119,7 @@ export class R2SecurityManager {
     // Setup audit event listeners
     this.setupAuditListeners();
 
-    console.log(styled('✅ Security manager initialized', 'success'));
+    console.info(styled('✅ Security manager initialized', 'success'));
   }
 
   /**
@@ -247,7 +247,7 @@ export class R2SecurityManager {
     };
 
     this.policies.set(newPolicy.id, newPolicy);
-    console.log(styled(`📋 Created policy: ${newPolicy.name}`, 'success'));
+    console.info(styled(`📋 Created policy: ${newPolicy.name}`, 'success'));
     return newPolicy;
   }
 
@@ -261,7 +261,7 @@ export class R2SecurityManager {
     };
 
     this.roles.set(newRole.id, newRole);
-    console.log(styled(`👤 Created role: ${newRole.name}`, 'success'));
+    console.info(styled(`👤 Created role: ${newRole.name}`, 'success'));
     return newRole;
   }
 
@@ -299,8 +299,8 @@ export class R2SecurityManager {
 
     this.audit('CreateAccessKey', 'admin', key.id, 'success', { name, permissions });
 
-    console.log(styled(`🔑 Created access key: ${accessKeyId}`, 'success'));
-    console.log(styled('⚠️  Save this secret - it will not be shown again:', 'warning'));
+    console.info(styled(`🔑 Created access key: ${accessKeyId}`, 'success'));
+    console.info(styled('⚠️  Save this secret - it will not be shown again:', 'warning'));
 
     return { key, secret: secretAccessKey };
   }
@@ -377,7 +377,7 @@ export class R2SecurityManager {
     };
 
     this.encryptionKeys.set(key.id, key);
-    console.log(styled(`🔐 Created encryption key: ${name} (${algorithm})`, 'success'));
+    console.info(styled(`🔐 Created encryption key: ${name} (${algorithm})`, 'success'));
 
     return key;
   }
@@ -599,7 +599,7 @@ export class R2SecurityManager {
     key.status = 'inactive';
     this.audit('RevokeAccessKey', 'admin', keyId, 'success', { name: key.name });
 
-    console.log(styled(`🚫 Revoked access key: ${key.accessKeyId}`, 'warning'));
+    console.info(styled(`🚫 Revoked access key: ${key.accessKeyId}`, 'warning'));
     return true;
   }
 
@@ -607,32 +607,32 @@ export class R2SecurityManager {
    * Display security status
    */
   displayStatus(): void {
-    console.log(styled('\n🔐 R2 Security Manager Status', 'accent'));
-    console.log(styled('=============================', 'accent'));
+    console.info(styled('\n🔐 R2 Security Manager Status', 'accent'));
+    console.info(styled('=============================', 'accent'));
 
-    console.log(styled('\n📋 Policies:', 'info'));
-    console.log(styled(`  Total: ${this.policies.size}`, 'muted'));
+    console.info(styled('\n📋 Policies:', 'info'));
+    console.info(styled(`  Total: ${this.policies.size}`, 'muted'));
 
-    console.log(styled('\n👤 Roles:', 'info'));
+    console.info(styled('\n👤 Roles:', 'info'));
     for (const role of this.roles.values()) {
-      console.log(styled(`  ${role.name}: ${role.permissions.join(', ')}`, 'muted'));
+      console.info(styled(`  ${role.name}: ${role.permissions.join(', ')}`, 'muted'));
     }
 
-    console.log(styled('\n🔑 Access Keys:', 'info'));
+    console.info(styled('\n🔑 Access Keys:', 'info'));
     const activeKeys = Array.from(this.accessKeys.values()).filter(k => k.status === 'active');
-    console.log(styled(`  Active: ${activeKeys.length} / ${this.accessKeys.size}`, 'muted'));
+    console.info(styled(`  Active: ${activeKeys.length} / ${this.accessKeys.size}`, 'muted'));
 
-    console.log(styled('\n🔐 Encryption Keys:', 'info'));
+    console.info(styled('\n🔐 Encryption Keys:', 'info'));
     const activeEncKeys = Array.from(this.encryptionKeys.values()).filter(
       k => k.status === 'active'
     );
-    console.log(styled(`  Active: ${activeEncKeys.length}`, 'muted'));
+    console.info(styled(`  Active: ${activeEncKeys.length}`, 'muted'));
 
-    console.log(styled('\n📝 Recent Audit Entries:', 'info'));
+    console.info(styled('\n📝 Recent Audit Entries:', 'info'));
     const recent = this.getAuditLog({ limit: 5 });
     for (const entry of recent) {
       const icon = entry.result === 'success' ? '✅' : entry.result === 'denied' ? '❌' : '⚠️';
-      console.log(
+      console.info(
         styled(`  ${icon} ${entry.action} by ${entry.principal} on ${entry.resource}`, 'muted')
       );
     }
@@ -719,8 +719,8 @@ if (import.meta.main) {
   const security = r2SecurityManager;
   await security.initialize();
 
-  console.log(styled('\n🔐 R2 Security Manager Demo', 'accent'));
-  console.log(styled('===========================', 'accent'));
+  console.info(styled('\n🔐 R2 Security Manager Demo', 'accent'));
+  console.info(styled('===========================', 'accent'));
 
   // Create access key
   const { key, secret } = security.createAccessKey('test-key', ['r2:Read', 'r2:List'], {
@@ -729,18 +729,18 @@ if (import.meta.main) {
 
   // Check access
   const access = security.checkAccess('user:developer', 'r2:Write', 'scanner-cookies/test.json');
-  console.log(styled(`\n🔍 Access Check:`, 'info'));
-  console.log(styled(`  Allowed: ${access.allowed}`, access.allowed ? 'success' : 'error'));
+  console.info(styled(`\n🔍 Access Check:`, 'info'));
+  console.info(styled(`  Allowed: ${access.allowed}`, access.allowed ? 'success' : 'error'));
   if (access.reason) {
-    console.log(styled(`  Reason: ${access.reason}`, 'warning'));
+    console.info(styled(`  Reason: ${access.reason}`, 'warning'));
   }
 
   // Generate security report
   const report = security.generateSecurityReport();
-  console.log(styled(`\n📊 Security Report:`, 'info'));
-  console.log(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
-  console.log(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
-  console.log(
+  console.info(styled(`\n📊 Security Report:`, 'info'));
+  console.info(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
+  console.info(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
+  console.info(
     styled(
       `  Violations: ${report.summary.violations}`,
       report.summary.violations > 0 ? 'error' : 'success'
@@ -748,10 +748,10 @@ if (import.meta.main) {
   );
 
   if (report.findings.length > 0) {
-    console.log(styled('\n⚠️  Findings:', 'warning'));
+    console.info(styled('\n⚠️  Findings:', 'warning'));
     for (const finding of report.findings) {
-      console.log(styled(`  [${finding.severity.toUpperCase()}] ${finding.title}`, 'error'));
-      console.log(styled(`     ${finding.recommendation}`, 'muted'));
+      console.info(styled(`  [${finding.severity.toUpperCase()}] ${finding.title}`, 'error'));
+      console.info(styled(`     ${finding.recommendation}`, 'muted'));
     }
   }
 }

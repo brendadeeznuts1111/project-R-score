@@ -175,7 +175,7 @@ export async function loadCovertSteamTelegramCredentials(): Promise<CovertSteamT
  * });
  *
  * if (sendResult.ok) {
- *   console.log(`Covert Steam alert sent with message ID: ${sendResult.messageId}`);
+ *   console.info(`Covert Steam alert sent with message ID: ${sendResult.messageId}`);
  * } else {
  *   console.error(`Failed to send alert: ${sendResult.error}`);
  * }

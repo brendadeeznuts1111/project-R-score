@@ -45,7 +45,7 @@ class BunBenchmarker {
   private results: BenchmarkResult[] = [];
 
   async runAllBenchmarks(): Promise<void> {
-    console.log('🏎️  Benchmarking Odds Protocol with Bun...\n');
+    console.info('🏎️  Benchmarking Odds Protocol with Bun...\n');
 
     const benchmarks = [
       {
@@ -87,8 +87,8 @@ class BunBenchmarker {
   }
 
   async runBenchmark(name: string, command: string, description: string): Promise<BenchmarkResult> {
-    console.log(`🔥 Running: ${name}`);
-    console.log(`   ${description}`);
+    console.info(`🔥 Running: ${name}`);
+    console.info(`   ${description}`);
 
     const start = performance.now();
     const startMemory = process.memoryUsage();
@@ -99,8 +99,8 @@ class BunBenchmarker {
       const endMemory = process.memoryUsage();
 
       if (result.success) {
-        console.log(`   ✅ Completed in ${duration.toFixed(2)}ms`);
-        console.log(`   📊 Memory: +${((endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   ✅ Completed in ${duration.toFixed(2)}ms`);
+        console.info(`   📊 Memory: +${((endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024).toFixed(2)} MB`);
         
         return {
           name,
@@ -112,8 +112,8 @@ class BunBenchmarker {
           }
         };
       } else {
-        console.log(`   ❌ Failed after ${duration.toFixed(2)}ms`);
-        console.log(`   📝 Error: ${result.stderr?.toString()}`);
+        console.info(`   ❌ Failed after ${duration.toFixed(2)}ms`);
+        console.info(`   📝 Error: ${result.stderr?.toString()}`);
         
         return {
           name,
@@ -124,7 +124,7 @@ class BunBenchmarker {
       }
     } catch (error) {
       const duration = performance.now() - start;
-      console.log(`   💥 Exception after ${duration.toFixed(2)}ms: ${error}`);
+      console.info(`   💥 Exception after ${duration.toFixed(2)}ms: ${error}`);
       
       return {
         name,
@@ -136,7 +136,7 @@ class BunBenchmarker {
   }
 
   async runCustomBenchmarks(): Promise<void> {
-    console.log('\n🔬 Running custom performance benchmarks...');
+    console.info('\n🔬 Running custom performance benchmarks...');
 
     // JSON parsing performance
     await this.benchmarkJsonParsing();
@@ -161,7 +161,7 @@ class BunBenchmarker {
   }
 
   async benchmarkJsonParsing(): Promise<void> {
-    console.log('\n📄 JSON Parsing Performance:');
+    console.info('\n📄 JSON Parsing Performance:');
     
     const testData = Array.from({ length: 10000 }, (_, i) => ({
       id: i,
@@ -183,8 +183,8 @@ class BunBenchmarker {
     const duration = performance.now() - start;
     const opsPerSecond = (iterations / duration) * 1000;
 
-    console.log(`   ✅ ${iterations} JSON parses in ${duration.toFixed(2)}ms`);
-    console.log(`   📈 ${opsPerSecond.toFixed(0)} ops/sec`);
+    console.info(`   ✅ ${iterations} JSON parses in ${duration.toFixed(2)}ms`);
+    console.info(`   📈 ${opsPerSecond.toFixed(0)} ops/sec`);
 
     this.results.push({
       name: 'JSON Parsing',
@@ -195,7 +195,7 @@ class BunBenchmarker {
   }
 
   async benchmarkMemoryAllocation(): Promise<void> {
-    console.log('\n💾 Memory Allocation Performance:');
+    console.info('\n💾 Memory Allocation Performance:');
 
     const start = performance.now();
     const startMemory = process.memoryUsage().heapUsed;
@@ -220,9 +220,9 @@ class BunBenchmarker {
     const endMemory = process.memoryUsage().heapUsed;
     const totalDuration = performance.now() - start;
 
-    console.log(`   📊 Allocation: ${allocationDuration.toFixed(2)}ms`);
-    console.log(`   💾 Peak memory: +${((peakMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   🧹 Cleanup: ${(totalDuration - allocationDuration).toFixed(2)}ms`);
+    console.info(`   📊 Allocation: ${allocationDuration.toFixed(2)}ms`);
+    console.info(`   💾 Peak memory: +${((peakMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`);
+    console.info(`   🧹 Cleanup: ${(totalDuration - allocationDuration).toFixed(2)}ms`);
 
     this.results.push({
       name: 'Memory Allocation',
@@ -237,7 +237,7 @@ class BunBenchmarker {
   }
 
   async benchmarkAsyncOperations(): Promise<void> {
-    console.log('\n⚡ Async Operations Performance:');
+    console.info('\n⚡ Async Operations Performance:');
 
     const concurrency = 100;
     const delayMs = 10;
@@ -255,8 +255,8 @@ class BunBenchmarker {
     const duration = performance.now() - start;
     const expectedDuration = delayMs; // Should complete in ~10ms due to concurrency
 
-    console.log(`   ✅ ${concurrency} concurrent async ops in ${duration.toFixed(2)}ms`);
-    console.log(`   📈 Efficiency: ${(expectedDuration / duration * 100).toFixed(1)}%`);
+    console.info(`   ✅ ${concurrency} concurrent async ops in ${duration.toFixed(2)}ms`);
+    console.info(`   📈 Efficiency: ${(expectedDuration / duration * 100).toFixed(1)}%`);
 
     this.results.push({
       name: 'Async Operations',
@@ -267,7 +267,7 @@ class BunBenchmarker {
   }
 
   async benchmarkWebSocketThroughput(): Promise<void> {
-    console.log('\n🌐 WebSocket Throughput Performance:');
+    console.info('\n🌐 WebSocket Throughput Performance:');
 
     const targetMessageCount = 10000;
     const messageSize = 1024; // 1KB messages
@@ -341,9 +341,9 @@ class BunBenchmarker {
       const throughput = (messageCount / duration) * 1000; // messages per second
       const dataRate = (throughput * messageSize) / 1024 / 1024; // MB/s
 
-console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
-      console.log(`   📈 ${throughput.toFixed(0)} msg/sec`);
-      console.log(`   💾 ${dataRate.toFixed(2)} MB/sec`);
+console.info(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
+      console.info(`   📈 ${throughput.toFixed(0)} msg/sec`);
+      console.info(`   💾 ${dataRate.toFixed(2)} MB/sec`);
 
       this.results.push({
         name: 'WebSocket Throughput',
@@ -353,7 +353,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
       });
 
     } catch (error) {
-      console.log(`   ❌ WebSocket benchmark failed: ${error}`);
+      console.info(`   ❌ WebSocket benchmark failed: ${error}`);
       
       this.results.push({
         name: 'WebSocket Throughput',
@@ -367,7 +367,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
   }
 
   async benchmarkBunUtilities(): Promise<void> {
-    console.log('\n🛠️  Bun Utilities Performance:');
+    console.info('\n🛠️  Bun Utilities Performance:');
 
     // Test nanosecond precision timing
     const start = performance.now();
@@ -382,15 +382,15 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     const duration = performance.now() - start;
     const nanos = await apiTracker.track('Bun.nanoseconds', () => Bun.nanoseconds()) - startNanos;
 
-    console.log(`   ⏱️  Timing: ${duration.toFixed(2)}ms (${nanos}ns precision)`);
+    console.info(`   ⏱️  Timing: ${duration.toFixed(2)}ms (${nanos}ns precision)`);
 
     // Test UUID v7 generation
     const uuidStart = performance.now();
     const uuids = Array.from({ length: 10000 }, () => Bun.randomUUIDv7());
     const uuidDuration = performance.now() - uuidStart;
 
-    console.log(`   🆔 UUID v7: 10000 generated in ${uuidDuration.toFixed(2)}ms`);
-    console.log(`   📈 ${(10000 / uuidDuration * 1000).toFixed(0)} UUIDs/sec`);
+    console.info(`   🆔 UUID v7: 10000 generated in ${uuidDuration.toFixed(2)}ms`);
+    console.info(`   📈 ${(10000 / uuidDuration * 1000).toFixed(0)} UUIDs/sec`);
 
     // Test deep equals
     const deepEqualsStart = performance.now();
@@ -404,7 +404,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     }
     
     const deepEqualsDuration = performance.now() - deepEqualsStart;
-    console.log(`   🔍 Deep Equals: 1000 comparisons in ${deepEqualsDuration.toFixed(2)}ms`);
+    console.info(`   🔍 Deep Equals: 1000 comparisons in ${deepEqualsDuration.toFixed(2)}ms`);
 
     this.results.push({
       name: 'Bun Utilities',
@@ -419,7 +419,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
   }
 
   async benchmarkCompression(): Promise<void> {
-    console.log('\n🗜️  Compression Performance:');
+    console.info('\n🗜️  Compression Performance:');
 
     const testData = JSON.stringify(Array.from({ length: 1000 }, (_, i) => ({
       id: i,
@@ -448,10 +448,10 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     const zstdCompressed = await apiTracker.track('Bun.zstdCompressSync', () => Bun.zstdCompressSync(buffer));
     const zstdDuration = performance.now() - zstdStart;
 
-    console.log(`   📦 Original: ${(originalSize / 1024).toFixed(2)} KB`);
-    console.log(`   🗜️  Gzip: ${(gzipCompressed.length / 1024).toFixed(2)} KB (${((gzipCompressed.length / originalSize) * 100).toFixed(1)}%) in ${gzipDuration.toFixed(2)}ms`);
-    console.log(`   🗜️  Deflate: ${(deflateCompressed.length / 1024).toFixed(2)} KB (${((deflateCompressed.length / originalSize) * 100).toFixed(1)}%) in ${deflateDuration.toFixed(2)}ms`);
-    console.log(`   🗜️  ZSTD: ${(zstdCompressed.length / 1024).toFixed(2)} KB (${((zstdCompressed.length / originalSize) * 100).toFixed(1)}%) in ${zstdDuration.toFixed(2)}ms`);
+    console.info(`   📦 Original: ${(originalSize / 1024).toFixed(2)} KB`);
+    console.info(`   🗜️  Gzip: ${(gzipCompressed.length / 1024).toFixed(2)} KB (${((gzipCompressed.length / originalSize) * 100).toFixed(1)}%) in ${gzipDuration.toFixed(2)}ms`);
+    console.info(`   🗜️  Deflate: ${(deflateCompressed.length / 1024).toFixed(2)} KB (${((deflateCompressed.length / originalSize) * 100).toFixed(1)}%) in ${deflateDuration.toFixed(2)}ms`);
+    console.info(`   🗜️  ZSTD: ${(zstdCompressed.length / 1024).toFixed(2)} KB (${((zstdCompressed.length / originalSize) * 100).toFixed(1)}%) in ${zstdDuration.toFixed(2)}ms`);
 
     this.results.push({
       name: 'Compression',
@@ -470,7 +470,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
   }
 
   async benchmarkUUIDGeneration(): Promise<void> {
-    console.log('\n🆔 UUID Generation Performance:');
+    console.info('\n🆔 UUID Generation Performance:');
 
     const iterations = 100000;
 
@@ -483,9 +483,9 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     const cryptoUUIDs = Array.from({ length: iterations }, () => crypto.randomUUID());
     const cryptoDuration = performance.now() - cryptoStart;
 
-    console.log(`   🆔 UUID v7: ${iterations} in ${v7Duration.toFixed(2)}ms (${(iterations / v7Duration * 1000).toFixed(0)} ops/sec)`);
-    console.log(`   🔐 Crypto UUID: ${iterations} in ${cryptoDuration.toFixed(2)}ms (${(iterations / cryptoDuration * 1000).toFixed(0)} ops/sec)`);
-    console.log(`   📈 v7 is ${(cryptoDuration / v7Duration).toFixed(2)}x faster`);
+    console.info(`   🆔 UUID v7: ${iterations} in ${v7Duration.toFixed(2)}ms (${(iterations / v7Duration * 1000).toFixed(0)} ops/sec)`);
+    console.info(`   🔐 Crypto UUID: ${iterations} in ${cryptoDuration.toFixed(2)}ms (${(iterations / cryptoDuration * 1000).toFixed(0)} ops/sec)`);
+    console.info(`   📈 v7 is ${(cryptoDuration / v7Duration).toFixed(2)}x faster`);
 
     // Test different encodings
     const hexStart = performance.now();
@@ -500,9 +500,9 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     const bufferUUIDs = Array.from({ length: 10000 }, () => Bun.randomUUIDv7('buffer'));
     const bufferDuration = performance.now() - bufferStart;
 
-    console.log(`   🔤 Hex encoding: ${hexDuration.toFixed(2)}ms`);
-    console.log(`   📋 Base64 encoding: ${base64Duration.toFixed(2)}ms`);
-    console.log(`   📦 Buffer encoding: ${bufferDuration.toFixed(2)}ms`);
+    console.info(`   🔤 Hex encoding: ${hexDuration.toFixed(2)}ms`);
+    console.info(`   📋 Base64 encoding: ${base64Duration.toFixed(2)}ms`);
+    console.info(`   📦 Buffer encoding: ${bufferDuration.toFixed(2)}ms`);
 
     this.results.push({
       name: 'UUID Generation',
@@ -520,8 +520,8 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
   }
 
   printSummary(): void {
-    console.log('\n📊 Benchmark Summary:');
-    console.log('═'.repeat(60));
+    console.info('\n📊 Benchmark Summary:');
+    console.info('═'.repeat(60));
 
     const successful = this.results.filter(r => r.success);
     const failed = this.results.filter(r => !r.success);
@@ -529,30 +529,30 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
     this.results.forEach(result => {
       const status = result.success ? '✅' : '❌';
       const duration = result.duration.toFixed(2);
-      console.log(`${status} ${result.name.padEnd(25)} ${duration.padStart(10)}ms`);
+      console.info(`${status} ${result.name.padEnd(25)} ${duration.padStart(10)}ms`);
       
       if (result.metrics) {
         Object.entries(result.metrics).forEach(([key, value]) => {
           if (typeof value === 'number') {
             const formatted = value > 1000 ? (value / 1000).toFixed(2) + 'k' : value.toFixed(2);
-            console.log(`    └─ ${key}: ${formatted}`);
+            console.info(`    └─ ${key}: ${formatted}`);
           }
         });
       }
       
       if (result.error) {
-        console.log(`    └─ Error: ${result.error.substring(0, 50)}...`);
+        console.info(`    └─ Error: ${result.error.substring(0, 50)}...`);
       }
     });
 
-    console.log('═'.repeat(60));
-    console.log(`Total: ${this.results.length} benchmarks`);
-    console.log(`Successful: ${successful.length}`);
-    console.log(`Failed: ${failed.length}`);
+    console.info('═'.repeat(60));
+    console.info(`Total: ${this.results.length} benchmarks`);
+    console.info(`Successful: ${successful.length}`);
+    console.info(`Failed: ${failed.length}`);
 
     if (successful.length > 0) {
       const avgDuration = successful.reduce((sum, r) => sum + r.duration, 0) / successful.length;
-      console.log(`Average duration: ${avgDuration.toFixed(2)}ms`);
+      console.info(`Average duration: ${avgDuration.toFixed(2)}ms`);
     }
 
     // Export results to JSON
@@ -569,7 +569,7 @@ console.log(`   ✅ ${messageCount} messages in ${duration.toFixed(2)}ms`);
       }
     }, null, 2)));
 
-    console.log('\n💾 Results saved to benchmark-results.json');
+    console.info('\n💾 Results saved to benchmark-results.json');
   }
 }
 

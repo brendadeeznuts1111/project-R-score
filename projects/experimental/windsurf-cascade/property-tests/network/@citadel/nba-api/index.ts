@@ -28,7 +28,7 @@ export interface TeamStats {
 }
 
 export async function fetchNBALiveOdds(gameId?: string): Promise<NBAOdds> {
-    console.log(`[Mock] fetchNBALiveOdds called with gameId: ${gameId || 'default'}`);
+    console.info(`[Mock] fetchNBALiveOdds called with gameId: ${gameId || 'default'}`);
 
     // Generate consistent rotationId based on gameId
     let rotationId: string;
@@ -77,7 +77,7 @@ export async function fetchNBALiveOdds(gameId?: string): Promise<NBAOdds> {
 }
 
 export async function fetchNBATeamStats(teamId: string): Promise<TeamStats> {
-    console.log(`[Mock] fetchNBATeamStats called with teamId: ${teamId}`);
+    console.info(`[Mock] fetchNBATeamStats called with teamId: ${teamId}`);
 
     return {
         teamId,

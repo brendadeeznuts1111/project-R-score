@@ -16,11 +16,18 @@ describe('PackageManager', () => {
 
   test('analyzePackage reads package.json from projectRoot', async () => {
     // Use a minimal fixture to avoid scanning the whole repo
-    const fixtureDir = '/private/tmp/claude-501/-Users-nolarose-Projects/e56fa682-363f-4c3b-ac29-91890d7d1ad0/scratchpad/test-pkg';
-    await Bun.write(`${fixtureDir}/package.json`, JSON.stringify({
-      name: 'fixture-pkg', version: '2.0.0', description: 'fixture',
-      dependencies: { zod: '^3.0.0' }, devDependencies: {},
-    }));
+    const fixtureDir =
+      '/private/tmp/claude-501/-Users-nolarose-Projects/e56fa682-363f-4c3b-ac29-91890d7d1ad0/scratchpad/test-pkg';
+    await Bun.write(
+      `${fixtureDir}/package.json`,
+      JSON.stringify({
+        name: 'fixture-pkg',
+        version: '2.0.0',
+        description: 'fixture',
+        dependencies: { zod: '^3.0.0' },
+        devDependencies: {},
+      })
+    );
     const pm = new PackageManager(fixtureDir);
     const info = await pm.analyzePackage();
     expect(info.name).toBe('fixture-pkg');
@@ -28,7 +35,8 @@ describe('PackageManager', () => {
   });
 
   test('analyzePackage returns PackageInfo shape', async () => {
-    const fixtureDir = '/private/tmp/claude-501/-Users-nolarose-Projects/e56fa682-363f-4c3b-ac29-91890d7d1ad0/scratchpad/test-pkg';
+    const fixtureDir =
+      '/private/tmp/claude-501/-Users-nolarose-Projects/e56fa682-363f-4c3b-ac29-91890d7d1ad0/scratchpad/test-pkg';
     const pm = new PackageManager(fixtureDir);
     const info = await pm.analyzePackage();
     expect(info).toHaveProperty('name');
@@ -54,7 +62,8 @@ describe('PackageManager', () => {
   });
 
   test('scanForBunAPIs returns empty array for directory with no .ts files', async () => {
-    const emptyDir = '/private/tmp/claude-501/-Users-nolarose-Projects/17a20145-4907-44c4-95a6-91c58d543f30/scratchpad/empty-scan';
+    const emptyDir =
+      '/private/tmp/claude-501/-Users-nolarose-Projects/17a20145-4907-44c4-95a6-91c58d543f30/scratchpad/empty-scan';
     await Bun.$`mkdir -p ${emptyDir}`.quiet();
     await Bun.write(`${emptyDir}/readme.md`, '# Hello');
     const pm = new PackageManager(emptyDir);

@@ -1,8 +1,21 @@
 # FactoryWager Enterprise Platform - .gitignore
 
+# Machine layout — separate clone symlinked under dev root (see ~/.config/shell/machine-paths.sh)
+/kimi-toolchain
+
+# Vendored upstream clones (local only)
+/plannotator-upstream/
+
+# Local symlinks inside nested enterprise repos
+projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
+
 # Dependencies
 node_modules/
 bun.lockb
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 .bun-cache/
 .bun/install/cache/
 .pnpm-store/
@@ -23,25 +36,67 @@ out/
 .next/
 .nuxt/
 .vite/
+.output/
+.turbo/
 .cache/
+.cheatsheet-cache/
 *.js
 !scratch/bun-v1.3.9-examples/playground-web/app.js
 !scratch/bun-v1.3.9-examples/playground-web/url-sharing.js
 *.js.map
 *.tsbuildinfo
 
-# IDE
+# IDE — root workspace config only; nested .vscode stays local
 .vscode/
+!/.vscode/
+!/.vscode/**
+**/.vscode/*.md
 .idea/
 *.swp
 *.swo
 
-# IDE-specific configs
+# Cursor — root MCP config only
+.cursor/
+!/.cursor/
+!/.cursor/mcp.json
+
+# Cursor auto-generated boilerplate & session artifacts
+**/.cursor/rules/use-bun-instead-of-node-vite-npm-pnpm.mdc
+**/.cursor/plans/
+**/.cursor/.agent-tools/
+**/.cursor/agents/
+
+# Other IDE / agent tooling
 .claude/*
 !.claude/agents/
 !.claude/commands/
-.cursor/
 .windsurf/
+.codex/
+.agents/*
+!.agents/skills/
+!.agents/skills/**/SKILL.md
+!.agents/skills/**/agents/
+!.agents/skills/**/agents/**
+!.agents/skills/**/scripts/
+!.agents/skills/**/scripts/**
+!.agents/skills/**/package.json
+!.agents/skills/**/SOURCE
+!.agents/skills/**/.gitignore
+!.agents/skills/**/references/
+!.agents/skills/**/references/**
+!.agents/skills/**/rules/
+!.agents/skills/**/rules/**
+!.agents/skills/**/outline-rules/
+!.agents/skills/**/outline-rules/**
+!.agents/skills/**/mcp/
+!.agents/skills/**/mcp/**
+!.agents/skills/**/repo-map.json
+!.agents/skills/**/sgconfig.yml
+!.agents/skills/**/codemods.json
+!.agents/skills/**/scan-profiles.json
+!.agents/skills/**/tests/
+!.agents/skills/**/tests/**
+.reasonix/
 
 # OS
 .DS_Store
@@ -54,7 +109,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Bun config (contains secrets)
+# Bun reference profile (may contain enterprise secrets — not auto-loaded)
 .bunfig.toml
 
 # Environment variables
@@ -63,12 +118,17 @@ yarn-error.log*
 .env.secret.local
 .env.*.local
 .env.*
+.env.development
 .env.production
+.env.staging
+.env.test
 .env.secret
 .env.enc
 
 # Test coverage
 coverage/
+.nyc_output/
+test-results/
 
 # Temporary files
 tmp/
@@ -92,8 +152,6 @@ reports/
 *.archive/
 
 # Working directories
-temp/
-tmp/
 data/
 output/
 download/
@@ -106,17 +164,11 @@ archive/
 *.output.*
 *.download.*
 
-# Test outputs
-test-results/
-coverage/
-.nyc_output/
-
 # Temporary and example files
 example*-*
 test*-*
 !scripts/test-*.ts
 *.tmp
-*.temp
 
 # Generated files
 *.generated.*
@@ -129,6 +181,8 @@ test*-*
 *.bun-build
 *.tar.gz
 *.tgz
+*.tar
+*.zip
 
 # Development artifacts
 *.local.*
@@ -139,10 +193,6 @@ test*-*
 *.node
 *.so
 *.dylib
-
-# Cache
-.cache/
-.nyc_output/
 
 # Session data
 sessions/
@@ -155,9 +205,6 @@ deploy/
 # Uploads
 uploads/
 public/uploads/
-
-# Misc
-bun.lockb
 
 # Projects without tokens or sensitive configurations
 *config/
@@ -177,8 +224,7 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
-**/credentials/.env.production
-.env.secret
+**/credentials/
 !config/
 config/*
 !config/domain-branding.json
@@ -197,3 +243,85 @@ clawdbot/
 
 # NPM Cache (should not be committed)
 .npm-cache/
+
+# Separate projects with their own git history
+projects/active/kimiremote/
+/projects/active/enterprise/bet-ticker-worker-v1.1/
+/projects/active/enterprise/cascade-mover-v3/
+projects/active/f402-openapi/
+
+# Runtime / ephemeral state (cascade-mover shadow beta)
+projects/active/enterprise/cascade-mover-v3/shadow-beta-state.json
+
+# Accidental scaffold paths
+projects/active/utilities/shortcut-registry/eeeeee/
+projects/active/development/geelark/dev/.vscode/.vscode/
+
+# Secrets and credentials (should never be committed)
+bun.secrets
+.fw-config.json
+*.local.json
+
+# SQLite artifacts (development databases)
+*.db-shm
+*.db-wal
+
+# Runtime databases (should never be committed)
+*.db
+*.sqlite
+*.sqlite3
+
+# Heap snapshots and memory dumps
+*.heapsnapshot
+Heap-*
+*.heapsnapshot
+
+# Compiled binaries and object files
+*.bin
+*.o
+*.obj
+*.exe
+
+# ML models (large binary files)
+**/train-anomaly*
+**/models/*.pkl
+**/models/*.h5
+
+# Binary assets
+*.icns
+
+# Smart environment cache (generated AI artifacts)
+.smart-env/
+
+# Docs archives (large snapshots)
+docs/archives/
+!docs/archives/root-cleanup-history.md
+
+# Minified assets
+*.min.js
+*.min.css
+*.bundle.js
+
+# Vendored / third-party
+vendor/
+.third_party/
+
+# Independent projects — own git history (under projects/)
+projects/experimental/apex-biolabs/
+projects/experimental/alchemy-effect/
+projects/experimental/cloudflare-artifacts/
+projects/experimental/purelytelegram-router/
+projects/archive/lazycodex/
+
+# Local workspace clutter — worktrees, session artifacts
+.kimi/
+herdr-worktrees/
+/~/
+/index.html
+/index.ts
+scratch/session-artifacts/
+photo_*.jpg
+artifacts/*.docx
+examples/demos/alchemy-tutorial/
+examples/mega-liner-v7/
+examples/mega-liner-v8/

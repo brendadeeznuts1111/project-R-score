@@ -11,13 +11,13 @@ import { InteractiveDocsExplorer } from '../lib/docs/interactive-docs'
 import { EnhancedDocsCacheManager } from '../lib/docs/cache-manager'
 
 async function demo() {
-  console.log('🚀 Enhanced Bun Documentation System v2.0')
-  console.log('===========================================')
-  console.log()
+  console.info('🚀 Enhanced Bun Documentation System v2.0')
+  console.info('===========================================')
+  console.info()
 
   // 1. Enhanced Cache Manager Demo
-  console.log('1️⃣ Enhanced Cache Manager')
-  console.log('─'.repeat(25))
+  console.info('1️⃣ Enhanced Cache Manager')
+  console.info('─'.repeat(25))
 
   const cache = new EnhancedDocsCacheManager({
     ttl: 6 * 60 * 60 * 1000, // 6 hours
@@ -26,35 +26,35 @@ async function demo() {
     priority: 'balanced'
   })
 
-  console.log('✅ Cache initialized with compression and balanced priority')
+  console.info('✅ Cache initialized with compression and balanced priority')
 
   const stats = cache.getStats()
-  console.log(`📊 Cache Stats: ${stats.entries}/${stats.maxEntries} entries`)
-  console.log(`🗜️  Compression: ${stats.compression}`)
-  console.log(`🎯 Priority: ${stats.priority}`)
-  console.log()
+  console.info(`📊 Cache Stats: ${stats.entries}/${stats.maxEntries} entries`)
+  console.info(`🗜️  Compression: ${stats.compression}`)
+  console.info(`🎯 Priority: ${stats.priority}`)
+  console.info()
 
   // 2. Enhanced Fetcher Demo
-  console.log('2️⃣ Enhanced Documentation Fetcher')
-  console.log('─'.repeat(35))
+  console.info('2️⃣ Enhanced Documentation Fetcher')
+  console.info('─'.repeat(35))
 
   const fetcher = new EnhancedDocsFetcher({
     ttl: 6 * 60 * 60 * 1000,
     offlineMode: true // Force offline mode for demo
   })
 
-  console.log('🔍 Searching for "buffer"...')
+  console.info('🔍 Searching for "buffer"...')
   const results = await fetcher.search('buffer')
-  console.log(`📋 Found ${results.length} results:`)
+  console.info(`📋 Found ${results.length} results:`)
 
   results.forEach((result, i) => {
-    console.log(`   ${i + 1}. ${result.topic} (${result.apis.join(', ')})`)
+    console.info(`   ${i + 1}. ${result.topic} (${result.apis.join(', ')})`)
   })
-  console.log()
+  console.info()
 
   // 3. Interactive Explorer Demo
-  console.log('3️⃣ Interactive Documentation Explorer')
-  console.log('─'.repeat(38))
+  console.info('3️⃣ Interactive Documentation Explorer')
+  console.info('─'.repeat(38))
 
   const explorer = new InteractiveDocsExplorer({
     maxResults: 5,
@@ -63,103 +63,103 @@ async function demo() {
     theme: 'auto'
   })
 
-  console.log('🎯 Interactive features:')
-  console.log('   • Fuzzy search with category filtering')
-  console.log('   • Numbered result selection')
-  console.log('   • Recent search history')
-  console.log('   • Chrome app integration')
-  console.log('   • Automatic recent searches tracking')
-  console.log()
+  console.info('🎯 Interactive features:')
+  console.info('   • Fuzzy search with category filtering')
+  console.info('   • Numbered result selection')
+  console.info('   • Recent search history')
+  console.info('   • Chrome app integration')
+  console.info('   • Automatic recent searches tracking')
+  console.info()
 
   // 4. CLI Enhancements Demo
-  console.log('4️⃣ Enhanced CLI Features')
-  console.log('─'.repeat(24))
+  console.info('4️⃣ Enhanced CLI Features')
+  console.info('─'.repeat(24))
 
-  console.log('🆕 New Commands:')
-  console.log('   • interactive - Full interactive search mode')
-  console.log('   • categories - Browse by API category')
-  console.log('   • recent - View recent searches')
-  console.log('   • stats - Comprehensive system statistics')
-  console.log('   • clear-cache - Cache management')
-  console.log()
+  console.info('🆕 New Commands:')
+  console.info('   • interactive - Full interactive search mode')
+  console.info('   • categories - Browse by API category')
+  console.info('   • recent - View recent searches')
+  console.info('   • stats - Comprehensive system statistics')
+  console.info('   • clear-cache - Cache management')
+  console.info()
 
-  console.log('🔧 Enhanced Features:')
-  console.log('   • Better error handling and offline support')
-  console.log('   • Rate limiting protection')
-  console.log('   • Cache analytics and access statistics')
-  console.log('   • Multi-domain support (bun.sh/bun.com)')
-  console.log('   • Chrome app creation and launching')
-  console.log()
+  console.info('🔧 Enhanced Features:')
+  console.info('   • Better error handling and offline support')
+  console.info('   • Rate limiting protection')
+  console.info('   • Cache analytics and access statistics')
+  console.info('   • Multi-domain support (bun.sh/bun.com)')
+  console.info('   • Chrome app creation and launching')
+  console.info()
 
   // 5. Performance Improvements
-  console.log('5️⃣ Performance & Reliability')
-  console.log('─'.repeat(30))
+  console.info('5️⃣ Performance & Reliability')
+  console.info('─'.repeat(30))
 
-  console.log('⚡ Performance Features:')
-  console.log('   • Smart cache eviction (LRU/size/balanced)')
-  console.log('   • Automatic cache compression')
-  console.log('   • Background cache maintenance')
-  console.log('   • Access pattern analytics')
-  console.log('   • Size-aware caching')
-  console.log()
+  console.info('⚡ Performance Features:')
+  console.info('   • Smart cache eviction (LRU/size/balanced)')
+  console.info('   • Automatic cache compression')
+  console.info('   • Background cache maintenance')
+  console.info('   • Access pattern analytics')
+  console.info('   • Size-aware caching')
+  console.info()
 
-  console.log('🛡️  Reliability Features:')
-  console.log('   • Fallback to cached data on network failure')
-  console.log('   • Graceful degradation in offline mode')
-  console.log('   • Persistent cache across restarts')
-  console.log('   • Comprehensive error handling')
-  console.log('   • Rate limiting to prevent API abuse')
-  console.log()
+  console.info('🛡️  Reliability Features:')
+  console.info('   • Fallback to cached data on network failure')
+  console.info('   • Graceful degradation in offline mode')
+  console.info('   • Persistent cache across restarts')
+  console.info('   • Comprehensive error handling')
+  console.info('   • Rate limiting to prevent API abuse')
+  console.info()
 
   // 6. Usage Examples
-  console.log('6️⃣ Enhanced Usage Examples')
-  console.log('─'.repeat(27))
+  console.info('6️⃣ Enhanced Usage Examples')
+  console.info('─'.repeat(27))
 
-  console.log('🔍 Advanced Search:')
-  console.log('   bun docs interactive buffer')
-  console.log('   bun docs categories')
-  console.log('   bun docs recent')
-  console.log()
+  console.info('🔍 Advanced Search:')
+  console.info('   bun docs interactive buffer')
+  console.info('   bun docs categories')
+  console.info('   bun docs recent')
+  console.info()
 
-  console.log('📊 System Management:')
-  console.log('   bun docs stats')
-  console.log('   bun docs cache')
-  console.log('   bun docs clear-cache')
-  console.log()
+  console.info('📊 System Management:')
+  console.info('   bun docs stats')
+  console.info('   bun docs cache')
+  console.info('   bun docs clear-cache')
+  console.info()
 
-  console.log('🌐 Cross-Domain Features:')
-  console.log('   bun docs search "http server" --sh')
-  console.log('   bun docs open yaml --app --sh')
-  console.log('   bun docs app --sh')
-  console.log()
+  console.info('🌐 Cross-Domain Features:')
+  console.info('   bun docs search "http server" --sh')
+  console.info('   bun docs open yaml --app --sh')
+  console.info('   bun docs app --sh')
+  console.info()
 
   // 7. System Status
-  console.log('7️⃣ System Status & Metrics')
-  console.log('─'.repeat(28))
+  console.info('7️⃣ System Status & Metrics')
+  console.info('─'.repeat(28))
 
   const finalStats = cache.getStats()
   const accessStats = finalStats.accessStats
 
-  console.log('📈 Current Metrics:')
-  console.log(`   Cache Entries: ${finalStats.entries}`)
-  console.log(`   Total Size: ${finalStats.totalSize}`)
-  console.log(`   Access Requests: ${accessStats.totalRequests}`)
-  console.log(`   Cache Hit Rate: ${accessStats.hitRate}`)
-  console.log(`   API Coverage: ${(await fetcher.fetchIndex('com')).length} APIs`)
-  console.log()
+  console.info('📈 Current Metrics:')
+  console.info(`   Cache Entries: ${finalStats.entries}`)
+  console.info(`   Total Size: ${finalStats.totalSize}`)
+  console.info(`   Access Requests: ${accessStats.totalRequests}`)
+  console.info(`   Cache Hit Rate: ${accessStats.hitRate}`)
+  console.info(`   API Coverage: ${(await fetcher.fetchIndex('com')).length} APIs`)
+  console.info()
 
-  console.log('🎉 Enhancement Complete!')
-  console.log('🚀 The Bun documentation system is now enterprise-ready with:')
-  console.log('   • Interactive search and browsing')
-  console.log('   • Advanced caching and analytics')
-  console.log('   • Cross-platform Chrome integration')
-  console.log('   • Comprehensive CLI with 10+ commands')
-  console.log('   • Offline-first architecture')
-  console.log('   • Performance monitoring and optimization')
-  console.log()
+  console.info('🎉 Enhancement Complete!')
+  console.info('🚀 The Bun documentation system is now enterprise-ready with:')
+  console.info('   • Interactive search and browsing')
+  console.info('   • Advanced caching and analytics')
+  console.info('   • Cross-platform Chrome integration')
+  console.info('   • Comprehensive CLI with 10+ commands')
+  console.info('   • Offline-first architecture')
+  console.info('   • Performance monitoring and optimization')
+  console.info()
 
-  console.log('💡 Try: bun run cli/docs-cli.ts interactive')
-  console.log('📖 Help: bun run cli/docs-cli.ts help')
+  console.info('💡 Try: bun run tools/cli/docs-cli.ts interactive')
+  console.info('📖 Help: bun run tools/cli/docs-cli.ts help')
 }
 
 demo().catch(console.error)

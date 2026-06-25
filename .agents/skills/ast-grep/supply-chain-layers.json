@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "scannerVersion": "2.0.0",
+  "description": "Security scan stack — intelligence, supply-chain (Layer 4.5), runtime",
+  "layers": [
+    {
+      "id": "4",
+      "name": "Intelligence",
+      "components": ["DNSThreatChecker", "TLS", "threat-feeds"],
+      "status": "planned",
+      "note": "External feeds — catalog in bun-patterns security bundle"
+    },
+    {
+      "id": "4.5",
+      "name": "Supply-Chain",
+      "components": [
+        "Bun.Transpiler",
+        "IntegrityHasher",
+        "SemverMatcher",
+        "PlatformMatcher",
+        "NetworkMatcher",
+        "threat-feed",
+        "rule-engine",
+        "bundle-scanner"
+      ],
+      "status": "integrated",
+      "entry": "bun supply-chain scan",
+      "paths": {
+        "module": "scripts/scan/transpiler/",
+        "policies": "policies/security.policy.toml",
+        "legacy_rules": "bundle-threat-rules.json",
+        "threat_feed": "threat-feed.json",
+        "semver_matcher": "scripts/scan/transpiler/semver-matcher.ts",
+        "semver_docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Runtime",
+      "components": ["Service", "Registry", "SemverMatcher", "snapshot-validation", "policy-constraints", "auto-remediation"],
+      "status": "integrated",
+      "entry": "bun supply-chain packages",
+      "paths": {
+        "registry": "scripts/scan/transpiler/registry.ts",
+        "service": "scripts/scan/transpiler/service.ts",
+        "scan_packages": "scripts/scan-packages.ts",
+        "validate_snapshot": "scripts/validate-snapshot.ts",
+        "snapshot_cli": "scripts/snapshot-cli.ts",
+        "policy_cli": "scripts/policy-cli.ts",
+        "dep_scan": "scripts/scan/transpiler/dep-scan.ts",
+        "profiles": "bundle-threat-profiles.json",
+        "profile_loader": "scripts/scan/transpiler/profile-loader.ts"
+      },
+      "note": "Alias for planned bun sp scan packages — domain = repo-map target id"
+    }
+  ]
+}

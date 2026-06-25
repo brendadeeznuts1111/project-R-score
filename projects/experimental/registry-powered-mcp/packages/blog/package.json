@@ -9,14 +9,19 @@
     "test": "bun test",
     "lint": "bun run --check"
   },
-  "keywords": ["blog", "infrastructure", "bun", "feature-flags"],
+  "keywords": [
+    "blog",
+    "infrastructure",
+    "bun",
+    "feature-flags"
+  ],
   "author": "Registry Core Team",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "bun-types": "^1.3.5"
+    "bun-types": "1.3.5"
   },
   "peerDependencies": {
-    "bun": "^1.3.6"
+    "bun": "1.3.6"
   }
 }

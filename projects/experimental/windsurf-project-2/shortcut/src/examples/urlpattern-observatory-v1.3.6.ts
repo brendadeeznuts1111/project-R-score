@@ -182,13 +182,13 @@ class URLPatternObservatory {
       (async () => {
         for await (const event of this.policyWatcher) {
           if (event === 'change') {
-            console.log('🔄 Policy file changed, reloading...');
+            console.info('🔄 Policy file changed, reloading...');
             await this.loadPolicy();
           }
         }
       })();
     } else if (this.config.policy.hotReload) {
-      console.log('⚠️  Policy hot-reload not available in this Bun version');
+      console.info('⚠️  Policy hot-reload not available in this Bun version');
     }
   }
   
@@ -340,7 +340,7 @@ export function guard${hash}(input: string): boolean {
     virtualGuardBytes: number;
     metrics: any;
   }> {
-    console.log('🔨 Building with virtual guard injection...');
+    console.info('🔨 Building with virtual guard injection...');
     
     const startTime = performance.now();
     const virtualFiles: Record<string, string> = {};
@@ -409,7 +409,7 @@ export function guard${hash}(input: string): boolean {
     integrityHash: string;
     size: number;
   }> {
-    console.log('💾 Creating backup with integrity...');
+    console.info('💾 Creating backup with integrity...');
     
     try {
       // Create archive with compression
@@ -440,7 +440,7 @@ export function guard${hash}(input: string): boolean {
           s3: { requestPayer: this.config.backup.requestPayer } 
         });
       } catch (s3Error) {
-        console.log('⚠️  S3 upload not available, saving locally');
+        console.info('⚠️  S3 upload not available, saving locally');
         // Fallback to local file
         const localPath = `./observatory-backup-${timestamp}.tar.gz`;
         await Bun.write(localPath, backupBytes);
@@ -475,7 +475,7 @@ export function guard${hash}(input: string): boolean {
   
   // v1.3.6: WebSocket proxy support for corporate environments
   async createDashboardServer(): Promise<void> {
-    console.log('🌐 Starting dashboard with proxy support...');
+    console.info('🌐 Starting dashboard with proxy support...');
     
     const self = this; // Capture instance for method binding
     
@@ -484,7 +484,7 @@ export function guard${hash}(input: string): boolean {
       websocket: {
         // v1.3.6: WebSocket proxy support
         open(ws) {
-          console.log('📡 Dashboard client connected');
+          console.info('📡 Dashboard client connected');
           ws.subscribe('observatory');
         },
         message(ws, message) {
@@ -497,7 +497,7 @@ export function guard${hash}(input: string): boolean {
           }
         },
         close(ws) {
-          console.log('📡 Dashboard client disconnected');
+          console.info('📡 Dashboard client disconnected');
         }
       },
       fetch(req, server) {
@@ -531,7 +531,7 @@ export function guard${hash}(input: string): boolean {
       tls: this.config.api.proxy ? undefined : undefined
     });
     
-    console.log(`🚀 Dashboard running on http://localhost:${server.port}`);
+    console.info(`🚀 Dashboard running on http://localhost:${server.port}`);
     this.logAudit('dashboard_started', `http://localhost:${server.port}`, 'Dashboard server started');
   }
   
@@ -754,7 +754,7 @@ export function guard${hash}(input: string): boolean {
   
   // v1.3.6: Standalone compile preparation
   async prepareStandaloneBuild(): Promise<void> {
-    console.log('🔧 Preparing standalone build...');
+    console.info('🔧 Preparing standalone build...');
     
     // Optimize database for embedding
     this.db.exec('VACUUM');
@@ -775,7 +775,7 @@ export function guard${hash}(input: string): boolean {
     };
     
     this.logAudit('standalone_prepared', '', 'Standalone build prepared');
-    console.log('✅ Ready for standalone compilation with --compile flag');
+    console.info('✅ Ready for standalone compilation with --compile flag');
   }
   
   close() {
@@ -794,7 +794,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help')) {
-    console.log(`
+    console.info(`
 URLPattern Observatory v1.3.6 - Enterprise Bulletproof Edition
 
 Usage:
@@ -831,18 +831,18 @@ Examples:
           process.exit(1);
         }
         const result = await observatory.analyzePattern(args[1]);
-        console.log('🔍 Analysis Result:');
-        console.log(`   Risk: ${result.risk}`);
-        console.log(`   Hash: ${result.hash}`);
-        console.log(`   Issues: ${result.issues.join(', ')}`);
+        console.info('🔍 Analysis Result:');
+        console.info(`   Risk: ${result.risk}`);
+        console.info(`   Hash: ${result.hash}`);
+        console.info(`   Issues: ${result.issues.join(', ')}`);
         break;
         
       case 'backup':
         const backup = await observatory.createBackup();
-        console.log('💾 Backup created:');
-        console.log(`   Path: ${backup.backupPath}`);
-        console.log(`   Size: ${backup.size} bytes`);
-        console.log(`   Hash: ${backup.integrityHash}`);
+        console.info('💾 Backup created:');
+        console.info(`   Path: ${backup.backupPath}`);
+        console.info(`   Size: ${backup.size} bytes`);
+        console.info(`   Hash: ${backup.integrityHash}`);
         break;
         
       case 'build':
@@ -852,10 +852,10 @@ Examples:
           'https://api.example.com/v1/:resource'
         ];
         const buildResult = await observatory.buildWithGuards(patterns);
-        console.log('🔨 Build completed:');
-        console.log(`   Success: ${buildResult.success}`);
-        console.log(`   Virtual guards: ${buildResult.virtualGuardBytes} bytes`);
-        console.log(`   Metrics: ${JSON.stringify(buildResult.metrics, null, 2)}`);
+        console.info('🔨 Build completed:');
+        console.info(`   Success: ${buildResult.success}`);
+        console.info(`   Virtual guards: ${buildResult.virtualGuardBytes} bytes`);
+        console.info(`   Metrics: ${JSON.stringify(buildResult.metrics, null, 2)}`);
         break;
         
       case 'compile':
@@ -867,7 +867,7 @@ Examples:
         break;
         
       default:
-        console.log('❌ Unknown command. Use --help for usage.');
+        console.info('❌ Unknown command. Use --help for usage.');
         process.exit(1);
     }
     

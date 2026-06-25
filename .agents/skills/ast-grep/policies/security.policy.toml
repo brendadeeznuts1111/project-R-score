@@ -1,0 +1,154 @@
+# Supply-chain security rules — Layer 4.5 + Layer 5 (Registry / Service)
+# Transpiler rules: rule-engine.ts | Semver policy: policy-loader.ts
+
+version = 1
+
+[snapshot]
+allowedDrift = ["branding", "templateDrift"]
+requiredSections = ["policy", "transpiler", "semver"]
+snapshotVersionRange = "^2.0.0"
+compatibleScannerVersions = ">=2.0.0 <3.0.0"
+
+[semver.packages]
+lodash = ">=4.17.21"
+axios = ">=1.6.0"
+ws = ">=8.17.1"
+
+[semver.blocked]
+left-pad = "<1.0.0"
+
+[[semver_rule]]
+id = "axios-ssrf-policy"
+package = "axios"
+range = "<1.6.0"
+safeRange = ">=1.6.0"
+severity = "high"
+description = "Axios SSRF — upgrade to >=1.6.0 (CVE-2023-45857)"
+
+[[semver_rule]]
+id = "lodash-prototype-policy"
+package = "lodash"
+range = "<4.17.21"
+safeRange = ">=4.17.21"
+severity = "high"
+description = "Lodash prototype pollution — upgrade to >=4.17.21"
+
+[[semver_rule]]
+id = "ws-dos-policy"
+package = "ws"
+range = "<8.17.1"
+safeRange = ">=8.17.1"
+severity = "high"
+description = "ws DoS on malformed upgrade — upgrade to >=8.17.1"
+
+[[rule]]
+id = "hardcoded-secret"
+description = "Hardcoded API keys, tokens, or passwords"
+severity = "high"
+type = "regex"
+layer = "source"
+pattern = "(?:api[_-]?key|token|secret|password)\\s*[:=]\\s*['\"][a-zA-Z0-9_\\-]{16,}['\"]"
+
+[[rule]]
+id = "unsafe-eval"
+description = "eval() call"
+severity = "critical"
+type = "ast"
+layer = "source"
+astPattern = "CallExpression[callee.name='eval']"
+
+[[rule]]
+id = "unsafe-function-constructor"
+description = "Function constructor"
+severity = "critical"
+type = "ast"
+layer = "source"
+astPattern = "NewExpression[callee.name='Function']"
+
+[[rule]]
+id = "settimeout-string"
+description = "setTimeout/setInterval with string argument"
+severity = "high"
+type = "regex"
+layer = "source"
+pattern = "set(?:Timeout|Interval)\\s*\\(\\s*['\"]"
+
+[[rule]]
+id = "from-char-code"
+description = "String.fromCharCode obfuscation chain"
+severity = "medium"
+type = "regex"
+layer = "source"
+pattern = "String\\.fromCharCode\\s*\\("
+
+[[rule]]
+id = "external-url-import"
+description = "Import from http(s) URL"
+severity = "high"
+type = "import"
+layer = "import"
+path_pattern = "^https?://"
+
+[[rule]]
+id = "child-process-spawn"
+description = "child_process or Bun.spawn in bundle"
+severity = "medium"
+type = "regex"
+layer = "output"
+pattern = "child_process|Bun\\.spawn\\s*\\("
+
+[[rule]]
+id = "fetch-call"
+description = "fetch() outbound HTTP request"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\bfetch\\s*\\("
+
+[[rule]]
+id = "http-client"
+description = "HTTP client call (axios/http/https)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\b(?:axios|http|https)\\.(?:get|post|request|create)\\s*\\("
+
+[[rule]]
+id = "websocket-constructor"
+description = "WebSocket client connection"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "\\bnew\\s+WebSocket\\s*\\(|\\bWebSocket\\s*\\("
+
+[[rule]]
+id = "dns-lookup"
+description = "DNS resolution (Bun.dns or node:dns)"
+severity = "info"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.dns\\.|node:dns|dns\\.(?:lookup|resolve)"
+
+[[rule]]
+id = "tcp-listen"
+description = "TCP server socket (Bun.listen / createServer)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.listen\\s*\\(|\\.createServer\\s*\\("
+
+[[rule]]
+id = "tcp-connect"
+description = "TCP client socket (Bun.connect / createConnection)"
+severity = "warn"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.connect\\s*\\(|\\.createConnection\\s*\\("
+
+[[rule]]
+id = "udp-socket"
+description = "UDP socket (Bun.udpSocket / node:dgram)"
+severity = "info"
+type = "regex"
+layer = "network"
+pattern = "Bun\\.udpSocket\\s*\\(|node:dgram"

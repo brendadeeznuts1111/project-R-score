@@ -65,15 +65,15 @@ async function batchProcess(options: BatchOptions): Promise<void> {
     process.exit(1);
   }
   
-  console.log(`🔍 Finding HAR files matching: ${options.pattern}`);
+  console.info(`🔍 Finding HAR files matching: ${options.pattern}`);
   const files = await findHarFiles(options.pattern);
   
   if (files.length === 0) {
-    console.log('⚠️  No HAR files found');
+    console.info('⚠️  No HAR files found');
     return;
   }
   
-  console.log(`📁 Found ${files.length} files\n`);
+  console.info(`📁 Found ${files.length} files\n`);
   
   // Ensure output directory exists
   await Bun.write(options.output + '/.gitkeep', '');
@@ -86,7 +86,7 @@ async function batchProcess(options: BatchOptions): Promise<void> {
     
     await Promise.all(batch.map(async (file) => {
       try {
-        console.log(`  Processing: ${file}`);
+        console.info(`  Processing: ${file}`);
         
         const har = await loadHarFile(file);
         if (!har) {
@@ -108,7 +108,7 @@ async function batchProcess(options: BatchOptions): Promise<void> {
         await Bun.write(outputFile, JSON.stringify(enhanced, null, 2));
         
         results.push({ file, success: true });
-        console.log(`  ✅ Saved: ${outputFile}`);
+        console.info(`  ✅ Saved: ${outputFile}`);
       } catch (err: any) {
         results.push({ file, success: false, error: err.message });
         console.error(`  ❌ Failed: ${file}`);
@@ -120,12 +120,12 @@ async function batchProcess(options: BatchOptions): Promise<void> {
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
   
-  console.log(`\n📊 Summary: ${successful} succeeded, ${failed} failed`);
+  console.info(`\n📊 Summary: ${successful} succeeded, ${failed} failed`);
   
   if (failed > 0) {
-    console.log('\nFailed files:');
+    console.info('\nFailed files:');
     results.filter(r => !r.success).forEach(r => {
-      console.log(`  • ${r.file}: ${r.error}`);
+      console.info(`  • ${r.file}: ${r.error}`);
     });
   }
 }
@@ -136,7 +136,7 @@ async function batchMerge(options: BatchOptions): Promise<void> {
     process.exit(1);
   }
   
-  console.log(`🔄 Merging ${options.files.length} HAR files...\n`);
+  console.info(`🔄 Merging ${options.files.length} HAR files...\n`);
   
   const builder = new HarBuilder({
     name: 'har-batch-merge',
@@ -146,7 +146,7 @@ async function batchMerge(options: BatchOptions): Promise<void> {
   const allEntries: HarEntry[] = [];
   
   for (const file of options.files) {
-    console.log(`  Loading: ${file}`);
+    console.info(`  Loading: ${file}`);
     const har = await loadHarFile(file);
     if (har) {
       allEntries.push(...har.log.entries);
@@ -164,7 +164,7 @@ async function batchMerge(options: BatchOptions): Promise<void> {
   const merged = builder.build();
   await Bun.write(options.output, JSON.stringify(merged, null, 2));
   
-  console.log(`\n✅ Merged ${sorted.length} entries into ${options.output}`);
+  console.info(`\n✅ Merged ${sorted.length} entries into ${options.output}`);
 }
 
 async function batchReport(options: BatchOptions): Promise<void> {
@@ -173,12 +173,12 @@ async function batchReport(options: BatchOptions): Promise<void> {
     process.exit(1);
   }
   
-  console.log(`📊 Generating report for: ${options.pattern}\n`);
+  console.info(`📊 Generating report for: ${options.pattern}\n`);
   
   const files = await findHarFiles(options.pattern);
   
   if (files.length === 0) {
-    console.log('⚠️  No files found');
+    console.info('⚠️  No files found');
     return;
   }
   
@@ -190,7 +190,7 @@ async function batchReport(options: BatchOptions): Promise<void> {
   }[] = [];
   
   for (const file of files) {
-    console.log(`  Analyzing: ${file}`);
+    console.info(`  Analyzing: ${file}`);
     const har = await loadHarFile(file);
     if (har) {
       reports.push({
@@ -225,7 +225,7 @@ async function batchReport(options: BatchOptions): Promise<void> {
       : `${options.output}/batch-report.json`;
     
     await Bun.write(outputFile, JSON.stringify(output, null, 2));
-    console.log(`\n✅ JSON report: ${outputFile}`);
+    console.info(`\n✅ JSON report: ${outputFile}`);
     
   } else if (options.format === 'csv') {
     const csv = [
@@ -247,7 +247,7 @@ async function batchReport(options: BatchOptions): Promise<void> {
       : `${options.output}/batch-report.csv`;
     
     await Bun.write(outputFile, csv);
-    console.log(`\n✅ CSV report: ${outputFile}`);
+    console.info(`\n✅ CSV report: ${outputFile}`);
     
   } else if (options.format === 'html') {
     const html = generateBatchHTMLReport(reports);
@@ -256,21 +256,21 @@ async function batchReport(options: BatchOptions): Promise<void> {
       : `${options.output}/batch-report.html`;
     
     await Bun.write(outputFile, html);
-    console.log(`\n✅ HTML report: ${outputFile}`);
+    console.info(`\n✅ HTML report: ${outputFile}`);
   }
   
   // Print summary table
-  console.log('\n📈 Summary:');
-  console.log('─'.repeat(100));
-  console.log(`${'File'.padEnd(30)} ${'Reqs'.padStart(6)} ${'Size'.padStart(10)} ${'Comp%'.padStart(6)} ${'Time'.padStart(8)} ${'E'.padStart(3)} ${'W'.padStart(3)}`);
-  console.log('─'.repeat(100));
+  console.info('\n📈 Summary:');
+  console.info('─'.repeat(100));
+  console.info(`${'File'.padEnd(30)} ${'Reqs'.padStart(6)} ${'Size'.padStart(10)} ${'Comp%'.padStart(6)} ${'Time'.padStart(8)} ${'E'.padStart(3)} ${'W'.padStart(3)}`);
+  console.info('─'.repeat(100));
   
   reports.forEach(r => {
     const size = r.stats.totalSize > 1024 * 1024 
       ? `${(r.stats.totalSize / 1024 / 1024).toFixed(1)}MB`
       : `${(r.stats.totalSize / 1024).toFixed(1)}KB`;
     
-    console.log(
+    console.info(
       `${r.file.slice(0, 30).padEnd(30)} ` +
       `${r.stats.totalRequests.toString().padStart(6)} ` +
       `${size.padStart(10)} ` +
@@ -281,7 +281,7 @@ async function batchReport(options: BatchOptions): Promise<void> {
     );
   });
   
-  console.log('─'.repeat(100));
+  console.info('─'.repeat(100));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -569,7 +569,7 @@ function parseArgs(argv: string[]): BatchOptions {
 }
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 ╔══════════════════════════════════════════════════════════════╗
 ║              HAR Batch Processor v1.0.0                      ║
 ╠══════════════════════════════════════════════════════════════╣

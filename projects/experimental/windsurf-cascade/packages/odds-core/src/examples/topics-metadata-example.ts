@@ -35,11 +35,11 @@ export function createEnhancedMarketData() {
 
   // Analyze topics
   const topicAnalysis = TopicAnalyzer.analyzeTopics(marketData);
-  console.log('Topic Analysis:', topicAnalysis);
+  console.info('Topic Analysis:', topicAnalysis);
 
   // Assess quality
   const quality = QualityAssessor.assessQuality(marketData);
-  console.log('Quality Assessment:', quality);
+  console.info('Quality Assessment:', quality);
 
   // Build enhanced metadata
   const metadata = new MetadataBuilder('market_data_001')
@@ -89,7 +89,7 @@ export function createEnhancedMarketData() {
 
   // Validate metadata
   const validation = MetadataValidator.validate(metadata);
-  console.log('Metadata Validation:', validation);
+  console.info('Metadata Validation:', validation);
 
   // Create enhanced odds tick
   const enhancedTick: EnhancedOddsTick = {
@@ -202,31 +202,31 @@ export function createEnhancedTradingSignal() {
  * Example 3: Working with topics
  */
 export function demonstrateTopicOperations() {
-  console.log('=== Topic Operations Demo ===');
+  console.info('=== Topic Operations Demo ===');
 
   // Get topic hierarchy
   const btcTopic = MarketTopic.CRYPTO_SPOT;
   const hierarchy = getTopicHierarchy(btcTopic);
-  console.log('BTC Topic Hierarchy:', hierarchy); // ['crypto', 'spot']
+  console.info('BTC Topic Hierarchy:', hierarchy); // ['crypto', 'spot']
 
   // Get topic category
   const category = getTopicCategory(btcTopic);
-  console.log('BTC Topic Category:', category); // 'crypto'
+  console.info('BTC Topic Category:', category); // 'crypto'
 
   // Get topic subcategory
   const subcategory = getTopicSubcategory(btcTopic);
-  console.log('BTC Topic Subcategory:', subcategory); // 'spot'
+  console.info('BTC Topic Subcategory:', subcategory); // 'spot'
 
   // Check if topics are related
   const isRelated = areTopicsRelated(
     MarketTopic.CRYPTO_SPOT, 
     MarketTopic.CRYPTO_DERIVATIVES
   );
-  console.log('Are crypto topics related?', isRelated); // true
+  console.info('Are crypto topics related?', isRelated); // true
 
   // Get all topics in a category
   const cryptoTopics = getTopicsInCategory('crypto');
-  console.log('All Crypto Topics:', cryptoTopics);
+  console.info('All Crypto Topics:', cryptoTopics);
 
   // Topic analysis
   const sampleData = {
@@ -236,14 +236,14 @@ export function demonstrateTopicOperations() {
   };
 
   const analysis = TopicAnalyzer.analyzeTopics(sampleData);
-  console.log('Topic Analysis Result:', analysis);
+  console.info('Topic Analysis Result:', analysis);
 }
 
 /**
  * Example 4: Metadata utilities
  */
 export function demonstrateMetadataUtilities() {
-  console.log('=== Metadata Utilities Demo ===');
+  console.info('=== Metadata Utilities Demo ===');
 
   // Create base metadata
   const baseMetadata = new MetadataBuilder('base_001')
@@ -253,24 +253,24 @@ export function demonstrateMetadataUtilities() {
 
   // Clone metadata
   const clonedMetadata = MetadataUtils.clone(baseMetadata);
-  console.log('Cloned metadata ID:', clonedMetadata.id);
+  console.info('Cloned metadata ID:', clonedMetadata.id);
 
   // Update timestamp
   const updatedMetadata = MetadataUtils.updateTimestamp(baseMetadata);
-  console.log('Updated timestamp:', updatedMetadata.timestamp);
+  console.info('Updated timestamp:', updatedMetadata.timestamp);
 
   // Add topics
   const withMoreTopics = MetadataUtils.addTopics(baseMetadata, [
     MarketTopic.CRYPTO_DERIVATIVES,
     MarketTopic.ALT_DATA_SENTIMENT
   ]);
-  console.log('Added topics:', withMoreTopics.topics);
+  console.info('Added topics:', withMoreTopics.topics);
 
   // Remove topics
   const withFewerTopics = MetadataUtils.removeTopics(withMoreTopics, [
     MarketTopic.CRYPTO_DERIVATIVES
   ]);
-  console.log('Removed topics:', withFewerTopics.topics);
+  console.info('Removed topics:', withFewerTopics.topics);
 
   // Merge metadata
   const updateData = {
@@ -279,15 +279,15 @@ export function demonstrateMetadataUtilities() {
   };
 
   const mergedMetadata = MetadataUtils.merge(baseMetadata, updateData);
-  console.log('Merged metadata version:', mergedMetadata.version);
-  console.log('Merged metadata tags:', mergedMetadata.tags);
+  console.info('Merged metadata version:', mergedMetadata.version);
+  console.info('Merged metadata tags:', mergedMetadata.tags);
 }
 
 /**
  * Example 5: Quality assessment
  */
 export function demonstrateQualityAssessment() {
-  console.log('=== Quality Assessment Demo ===');
+  console.info('=== Quality Assessment Demo ===');
 
   // High quality data
   const highQualityData = {
@@ -300,7 +300,7 @@ export function demonstrateQualityAssessment() {
   };
 
   const highQuality = QualityAssessor.assessQuality(highQualityData);
-  console.log('High Quality Data Score:', highQuality.overall);
+  console.info('High Quality Data Score:', highQuality.overall);
 
   // Low quality data
   const lowQualityData = {
@@ -312,8 +312,8 @@ export function demonstrateQualityAssessment() {
   };
 
   const lowQuality = QualityAssessor.assessQuality(lowQualityData);
-  console.log('Low Quality Data Score:', lowQuality.overall);
-  console.log('Quality Issues:', lowQuality);
+  console.info('Low Quality Data Score:', lowQuality.overall);
+  console.info('Quality Issues:', lowQuality);
 }
 
 // Helper functions (these would be imported from topics.ts)
@@ -346,26 +346,26 @@ function getTopicsInCategory(category: string): MarketTopic[] {
  * Run all examples
  */
 export function runAllExamples() {
-  console.log('🚀 Topics Tracking & Metadata Examples\n');
+  console.info('🚀 Topics Tracking & Metadata Examples\n');
 
-  console.log('1. Creating Enhanced Market Data:');
+  console.info('1. Creating Enhanced Market Data:');
   const enhancedTick = createEnhancedMarketData();
-  console.log('Enhanced Tick:', enhancedTick);
+  console.info('Enhanced Tick:', enhancedTick);
 
-  console.log('\n2. Creating Enhanced Trading Signal:');
+  console.info('\n2. Creating Enhanced Trading Signal:');
   const enhancedSignal = createEnhancedTradingSignal();
-  console.log('Enhanced Signal:', enhancedSignal);
+  console.info('Enhanced Signal:', enhancedSignal);
 
-  console.log('\n3. Topic Operations:');
+  console.info('\n3. Topic Operations:');
   demonstrateTopicOperations();
 
-  console.log('\n4. Metadata Utilities:');
+  console.info('\n4. Metadata Utilities:');
   demonstrateMetadataUtilities();
 
-  console.log('\n5. Quality Assessment:');
+  console.info('\n5. Quality Assessment:');
   demonstrateQualityAssessment();
 
-  console.log('\n✅ All examples completed!');
+  console.info('\n✅ All examples completed!');
 }
 
 // Export for easy testing

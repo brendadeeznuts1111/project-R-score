@@ -176,12 +176,12 @@ export class BunV13WebSocketServer {
 
         open: (ws) => {
           // Handle new connection
-          console.log(`New connection: ${ws.data.id}`);
+          console.info(`New connection: ${ws.data.id}`);
         },
         message: (ws, message) => this.handleMessage(ws, message),
         close: (ws) => {
           // Handle connection close
-          console.log(`Connection closed: ${ws.data.id}`);
+          console.info(`Connection closed: ${ws.data.id}`);
         },
 
         // Bun v1.3: Enhanced compression with synthetic arbitrage optimization
@@ -198,10 +198,10 @@ export class BunV13WebSocketServer {
       },
     });
 
-    console.log(`🚀 Bun v1.3 Synthetic Arbitrage WebSocket Server running on port ${this.server.port}`);
-    console.log(`⚡ Synthetic Arbitrage: ${options.enableSyntheticArbitrage ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`🛡️ Risk Management: ACTIVE`);
-    console.log(`📊 Multi-Period Processing: ACTIVE`);
+    console.info(`🚀 Bun v1.3 Synthetic Arbitrage WebSocket Server running on port ${this.server.port}`);
+    console.info(`⚡ Synthetic Arbitrage: ${options.enableSyntheticArbitrage ? 'ENABLED' : 'DISABLED'}`);
+    console.info(`🛡️ Risk Management: ACTIVE`);
+    console.info(`📊 Multi-Period Processing: ACTIVE`);
 
     // Start performance monitoring
     this.startPerformanceMonitoring();
@@ -262,7 +262,7 @@ export class BunV13WebSocketServer {
       // Set up event listeners for synthetic arbitrage events
       this.setupArbitrageEventListeners();
 
-      console.log('✅ Synthetic arbitrage components initialized');
+      console.info('✅ Synthetic arbitrage components initialized');
     }
   }
 
@@ -644,7 +644,7 @@ export class BunV13WebSocketServer {
   private handleClose(ws: any) {
     const connectionId = ws.data.id;
     this.connectionSockets.delete(connectionId);
-    console.log(`🔌 Connection closed: ${connectionId}`);
+    console.info(`🔌 Connection closed: ${connectionId}`);
   }
 
   private async performNetworkDiagnostics() {
@@ -745,7 +745,7 @@ export class BunV13WebSocketServer {
 
   // Bun v1.3: Graceful shutdown with process control
   async gracefulShutdown() {
-    console.log('🔄 Initiating graceful shutdown...');
+    console.info('🔄 Initiating graceful shutdown...');
 
     // Notify workers to shutdown
     for (const worker of this.workerPool) {
@@ -755,7 +755,7 @@ export class BunV13WebSocketServer {
     // Close server
     this.server.stop();
 
-    console.log('✅ Server shutdown complete');
+    console.info('✅ Server shutdown complete');
   }
 }
 

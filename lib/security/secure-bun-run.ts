@@ -63,12 +63,13 @@ export async function secureBunRun(
   });
 
   // Race the process against a timeout
-  const timer = timeout > 0
-    ? setTimeout(() => {
-        timedOut = true;
-        proc.kill();
-      }, timeout)
-    : null;
+  const timer =
+    timeout > 0
+      ? setTimeout(() => {
+          timedOut = true;
+          proc.kill();
+        }, timeout)
+      : null;
 
   try {
     const [stdout, stderr] = await Promise.all([
@@ -88,6 +89,10 @@ export async function secureBunRun(
   } finally {
     if (timer !== null) clearTimeout(timer);
     // Ensure cleanup if process is still running
-    try { proc.kill(); } catch { /* already exited */ }
+    try {
+      proc.kill();
+    } catch {
+      /* already exited */
+    }
   }
 }

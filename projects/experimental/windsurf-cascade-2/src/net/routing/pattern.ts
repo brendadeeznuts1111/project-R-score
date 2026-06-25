@@ -108,8 +108,8 @@ export const PATTERNS = {
 
 // Performance benchmark
 export function benchmarkPatterns(): void {
-  console.log("🔗 URLPattern Benchmark (ConfigVersion-Aware)");
-  console.log("=".repeat(50));
+  console.info("🔗 URLPattern Benchmark (ConfigVersion-Aware)");
+  console.info("=".repeat(50));
   
   const config = getCurrentConfig();
   const testUrls = [
@@ -129,12 +129,12 @@ export function benchmarkPatterns(): void {
     if (match) matches++;
   });
   
-  console.log(`📊 Results:`);
-  console.log(`   • Config version: ${config.version}`);
-  console.log(`   • Cache size: ${PATTERN_CACHE.size} patterns`);
-  console.log(`   • Total matches: ${matches}/${testUrls.length}`);
-  console.log(`   • Average time: ${Math.floor(totalDuration / testUrls.length)}ns`);
-  console.log(`   • Performance: ${config.version === 1 ? 'Cached (55ns target)' : 'Legacy (200ns)'}`);
+  console.info(`📊 Results:`);
+  console.info(`   • Config version: ${config.version}`);
+  console.info(`   • Cache size: ${PATTERN_CACHE.size} patterns`);
+  console.info(`   • Total matches: ${matches}/${testUrls.length}`);
+  console.info(`   • Average time: ${Math.floor(totalDuration / testUrls.length)}ns`);
+  console.info(`   • Performance: ${config.version === 1 ? 'Cached (55ns target)' : 'Legacy (200ns)'}`);
 }
 
 // Usage example in registry API
@@ -164,9 +164,9 @@ export function routeRequest(url: string): { pattern: string; params: any } | nu
 }
 
 // Initialize with debug info
-console.log("🔗 URLPattern Router initialized");
-console.log(`📊 Config version: ${getCurrentConfig().version}`);
-console.log(`🔄 Cache enabled: ${getCurrentConfig().version === 1 ? 'YES' : 'NO'}`);
-console.log(`⚡ Target performance: ${getCurrentConfig().version === 1 ? '55ns (cached)' : '200ns (legacy)'}`);
+console.info("🔗 URLPattern Router initialized");
+console.info(`📊 Config version: ${getCurrentConfig().version}`);
+console.info(`🔄 Cache enabled: ${getCurrentConfig().version === 1 ? 'YES' : 'NO'}`);
+console.info(`⚡ Target performance: ${getCurrentConfig().version === 1 ? '55ns (cached)' : '200ns (legacy)'}`);
 
 export { getCurrentConfig };

@@ -2,15 +2,15 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.magenta.bold('🏗️  Deep Architectural Integration Analysis'));
-console.log(chalk.magenta('='.repeat(55)));
+console.info(chalk.magenta.bold('🏗️  Deep Architectural Integration Analysis'));
+console.info(chalk.magenta('='.repeat(55)));
 
 // =============================================================================
 // BUN'S ARCHITECTURAL PATTERNS
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🍞 Bun Core Architecture Patterns:'));
-console.log(chalk.white('Understanding Bun\'s design philosophy for integration:'));
+console.info(chalk.blue.bold('\n🍞 Bun Core Architecture Patterns:'));
+console.info(chalk.white('Understanding Bun\'s design philosophy for integration:'));
 
 const bunArchitecture = {
     corePrinciples: [
@@ -36,26 +36,26 @@ const bunArchitecture = {
     ]
 };
 
-console.log(chalk.cyan('  🎯 Core Principles:'));
+console.info(chalk.cyan('  🎯 Core Principles:'));
 bunArchitecture.corePrinciples.forEach((principle, index) => {
-    console.log(chalk.gray(`    ${index + 1}. ${principle}`));
+    console.info(chalk.gray(`    ${index + 1}. ${principle}`));
 });
 
-console.log(chalk.cyan('  🔧 API Design Philosophy:'));
+console.info(chalk.cyan('  🔧 API Design Philosophy:'));
 bunArchitecture.apiDesign.forEach((design, index) => {
-    console.log(chalk.gray(`    ${index + 1}. ${design}`));
+    console.info(chalk.gray(`    ${index + 1}. ${design}`));
 });
 
-console.log(chalk.cyan('  ⚡ Performance Focus:'));
+console.info(chalk.cyan('  ⚡ Performance Focus:'));
 bunArchitecture.performanceFocus.forEach((focus, index) => {
-    console.log(chalk.gray(`    ${index + 1}. ${focus}`));
+    console.info(chalk.gray(`    ${index + 1}. ${focus}`));
 });
 
 // =============================================================================
 // PROJECT STRUCTURE ANALYSIS
 // =============================================================================
 
-console.log(chalk.blue.bold('\n📁 Current Project Structure Analysis:'));
+console.info(chalk.blue.bold('\n📁 Current Project Structure Analysis:'));
 
 const projectStructure = {
     root: {
@@ -98,26 +98,26 @@ const projectStructure = {
     }
 };
 
-console.log(chalk.cyan('  📊 Root Structure:'));
+console.info(chalk.cyan('  📊 Root Structure:'));
 Object.entries(projectStructure.root).forEach(([key, value]) => {
-    console.log(chalk.gray(`    ${key}`));
+    console.info(chalk.gray(`    ${key}`));
     if (typeof value === 'object') {
         Object.entries(value).forEach(([subKey, subValue]) => {
-            console.log(chalk.gray(`      └── ${subKey}: ${subValue}`));
+            console.info(chalk.gray(`      └── ${subKey}: ${subValue}`));
         });
     }
 });
 
-console.log(chalk.cyan('  🔧 Source Organization:'));
+console.info(chalk.cyan('  🔧 Source Organization:'));
 Object.entries(projectStructure.src).forEach(([key, value]) => {
-    console.log(chalk.gray(`    ${key}: ${value}`));
+    console.info(chalk.gray(`    ${key}: ${value}`));
 });
 
 // =============================================================================
 // BUN API MAPPING TO PROJECT STRUCTURE
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🔗 Bun API Integration Mapping:'));
+console.info(chalk.blue.bold('\n🔗 Bun API Integration Mapping:'));
 
 const bunApiMapping = {
     'BunFile API': {
@@ -164,21 +164,21 @@ const bunApiMapping = {
     }
 };
 
-console.log(chalk.cyan('  🍞 API Integration Map:'));
+console.info(chalk.cyan('  🍞 API Integration Map:'));
 Object.entries(bunApiMapping).forEach(([api, mapping]) => {
-    console.log(chalk.yellow(`\n  ${api}:`));
-    console.log(chalk.gray(`    📍 Location: ${mapping.projectLocation}`));
-    console.log(chalk.gray(`    🎯 Integration: ${mapping.vaultIntegration}`));
-    console.log(chalk.gray(`    💡 Use Case: ${mapping.useCase}`));
-    console.log(chalk.gray(`    🔧 Methods: ${mapping.bunMethods.join(', ')}`));
-    console.log(chalk.gray(`    📋 Types: ${mapping.vaultTypes.join(', ')}`));
+    console.info(chalk.yellow(`\n  ${api}:`));
+    console.info(chalk.gray(`    📍 Location: ${mapping.projectLocation}`));
+    console.info(chalk.gray(`    🎯 Integration: ${mapping.vaultIntegration}`));
+    console.info(chalk.gray(`    💡 Use Case: ${mapping.useCase}`));
+    console.info(chalk.gray(`    🔧 Methods: ${mapping.bunMethods.join(', ')}`));
+    console.info(chalk.gray(`    📋 Types: ${mapping.vaultTypes.join(', ')}`));
 });
 
 // =============================================================================
 // UNIFIED ARCHITECTURE PROPOSAL
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🏗️  Unified Architecture Proposal:'));
+console.info(chalk.blue.bold('\n🏗️  Unified Architecture Proposal:'));
 
 const unifiedArchitecture = {
     layers: {
@@ -221,29 +221,29 @@ const unifiedArchitecture = {
     }
 };
 
-console.log(chalk.cyan('  🏛️  Architectural Layers:'));
+console.info(chalk.cyan('  🏛️  Architectural Layers:'));
 Object.entries(unifiedArchitecture.layers).forEach(([layer, details]) => {
-    console.log(chalk.yellow(`\n  ${layer}:`));
-    console.log(chalk.gray(`    📝 Description: ${details.description}`));
-    console.log(chalk.gray(`    🧩 Components: ${details.components.join(', ')}`));
-    console.log(chalk.gray(`    ⚡ Responsibilities: ${details.responsibilities.join(', ')}`));
+    console.info(chalk.yellow(`\n  ${layer}:`));
+    console.info(chalk.gray(`    📝 Description: ${details.description}`));
+    console.info(chalk.gray(`    🧩 Components: ${details.components.join(', ')}`));
+    console.info(chalk.gray(`    ⚡ Responsibilities: ${details.responsibilities.join(', ')}`));
 });
 
-console.log(chalk.cyan('\n  🌊 Data Flow Architecture:'));
-console.log(chalk.gray(`    Direction: ${unifiedArchitecture.dataFlow.direction}`));
-console.log(chalk.gray(`    Patterns: ${unifiedArchitecture.dataFlow.patterns.join(', ')}`));
-console.log(chalk.gray(`    Protocols: ${unifiedArchitecture.dataFlow.protocols.join(', ')}`));
+console.info(chalk.cyan('\n  🌊 Data Flow Architecture:'));
+console.info(chalk.gray(`    Direction: ${unifiedArchitecture.dataFlow.direction}`));
+console.info(chalk.gray(`    Patterns: ${unifiedArchitecture.dataFlow.patterns.join(', ')}`));
+console.info(chalk.gray(`    Protocols: ${unifiedArchitecture.dataFlow.protocols.join(', ')}`));
 
-console.log(chalk.cyan('\n  📋 Type System Integration:'));
+console.info(chalk.cyan('\n  📋 Type System Integration:'));
 Object.entries(unifiedArchitecture.typeSystem).forEach(([aspect, description]) => {
-    console.log(chalk.gray(`    ${aspect.charAt(0).toUpperCase() + aspect.slice(1)}: ${description}`));
+    console.info(chalk.gray(`    ${aspect.charAt(0).toUpperCase() + aspect.slice(1)}: ${description}`));
 });
 
 // =============================================================================
 // INTEGRATION IMPLEMENTATION PLAN
 // =============================================================================
 
-console.log(chalk.blue.bold('\n🚀 Integration Implementation Plan:'));
+console.info(chalk.blue.bold('\n🚀 Integration Implementation Plan:'));
 
 const implementationPlan = {
     phase1: {
@@ -293,20 +293,20 @@ const implementationPlan = {
 };
 
 Object.entries(implementationPlan).forEach(([phase, plan]) => {
-    console.log(chalk.yellow(`\n  ${plan.name} (Phase ${phase.slice(-1)}):`));
-    console.log(chalk.gray(`    ⏱️  Duration: ${plan.duration}`));
-    console.log(chalk.gray(`    📋 Tasks:`));
+    console.info(chalk.yellow(`\n  ${plan.name} (Phase ${phase.slice(-1)}):`));
+    console.info(chalk.gray(`    ⏱️  Duration: ${plan.duration}`));
+    console.info(chalk.gray(`    📋 Tasks:`));
     plan.tasks.forEach((task, index) => {
-        console.log(chalk.gray(`      ${index + 1}. ${task}`));
+        console.info(chalk.gray(`      ${index + 1}. ${task}`));
     });
-    console.log(chalk.gray(`    🎯 Deliverables: ${plan.deliverables.join(', ')}`));
+    console.info(chalk.gray(`    🎯 Deliverables: ${plan.deliverables.join(', ')}`));
 });
 
 // =============================================================================
 // BENEFITS AND OUTCOMES
 // =============================================================================
 
-console.log(chalk.green.bold('\n💡 Integration Benefits and Expected Outcomes:'));
+console.info(chalk.green.bold('\n💡 Integration Benefits and Expected Outcomes:'));
 
 const benefits = {
     performance: [
@@ -340,18 +340,18 @@ const benefits = {
 };
 
 Object.entries(benefits).forEach(([category, benefitList]) => {
-    console.log(chalk.cyan(`\n  ${category.charAt(0).toUpperCase() + category.slice(1)} Benefits:`));
+    console.info(chalk.cyan(`\n  ${category.charAt(0).toUpperCase() + category.slice(1)} Benefits:`));
     benefitList.forEach((benefit, index) => {
-        console.log(chalk.gray(`    ✅ ${benefit}`));
+        console.info(chalk.gray(`    ✅ ${benefit}`));
     });
 });
 
-console.log(chalk.magenta.bold('\n🎯 Unified Architecture Summary:'));
-console.log(chalk.white('• Runtime: Bun native APIs for maximum performance'));
-console.log(chalk.white('• Types: Centralized type system for consistency'));
-console.log(chalk.white('• Structure: Layered architecture with clear separation'));
-console.log(chalk.white('• Integration: Deep Bun integration throughout stack'));
-console.log(chalk.white('• Development: Type-safe, fast, and developer-friendly'));
-console.log(chalk.white('• Deployment: Optimized, scalable, and production-ready'));
+console.info(chalk.magenta.bold('\n🎯 Unified Architecture Summary:'));
+console.info(chalk.white('• Runtime: Bun native APIs for maximum performance'));
+console.info(chalk.white('• Types: Centralized type system for consistency'));
+console.info(chalk.white('• Structure: Layered architecture with clear separation'));
+console.info(chalk.white('• Integration: Deep Bun integration throughout stack'));
+console.info(chalk.white('• Development: Type-safe, fast, and developer-friendly'));
+console.info(chalk.white('• Deployment: Optimized, scalable, and production-ready'));
 
-console.log(chalk.yellow.bold('\n🚀 This unified architecture will create a seamless, high-performance vault system!'));
+console.info(chalk.yellow.bold('\n🚀 This unified architecture will create a seamless, high-performance vault system!'));

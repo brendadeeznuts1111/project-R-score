@@ -25,7 +25,7 @@ class SubmarketWebSocketClient {
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-          console.log('🔌 Connected to Submarket WebSocket');
+          console.info('🔌 Connected to Submarket WebSocket');
           this.reconnectAttempts = 0;
           resolve();
         };
@@ -43,7 +43,7 @@ class SubmarketWebSocketClient {
         };
 
         this.ws.onclose = () => {
-          console.log('🔌 WebSocket connection closed');
+          console.info('🔌 WebSocket connection closed');
           this.attemptReconnect();
         };
 
@@ -60,7 +60,7 @@ class SubmarketWebSocketClient {
   private attemptReconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`🔄 Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+      console.info(`🔄 Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
       
       setTimeout(() => {
         this.connect().catch(console.error);

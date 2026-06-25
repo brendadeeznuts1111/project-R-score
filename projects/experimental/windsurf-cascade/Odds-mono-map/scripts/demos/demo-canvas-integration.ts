@@ -192,19 +192,19 @@ Complete guide for deploying the Odds Protocol system.
 // =============================================================================
 
 function demonstrateNodeCreation(): void {
-    console.log('🎨 Demonstrating Canvas Node Creation');
-    console.log('═'.repeat(60));
+    console.info('🎨 Demonstrating Canvas Node Creation');
+    console.info('═'.repeat(60));
 
     // 1. Create node from vault file
     const apiGatewayNode = createNodeFromVaultFile(sampleVaultFiles[0]);
-    console.log('📄 Created node from vault file:');
-    console.log(`   ID: ${apiGatewayNode.id}`);
-    console.log(`   Type: ${apiGatewayNode.metadata.documentType}`);
-    console.log(`   Priority: ${apiGatewayNode.metadata.priority}`);
-    console.log(`   Status: ${apiGatewayNode.metadata.status}`);
-    console.log(`   Tags: ${apiGatewayNode.metadata.tags.join(', ')}`);
-    console.log(`   Color: ${apiGatewayNode.color}`);
-    console.log();
+    console.info('📄 Created node from vault file:');
+    console.info(`   ID: ${apiGatewayNode.id}`);
+    console.info(`   Type: ${apiGatewayNode.metadata.documentType}`);
+    console.info(`   Priority: ${apiGatewayNode.metadata.priority}`);
+    console.info(`   Status: ${apiGatewayNode.metadata.status}`);
+    console.info(`   Tags: ${apiGatewayNode.metadata.tags.join(', ')}`);
+    console.info(`   Color: ${apiGatewayNode.color}`);
+    console.info();
 
     // 2. Create custom node from metadata
     const customNode = createNodeFromMetadata(
@@ -222,19 +222,19 @@ function demonstrateNodeCreation(): void {
             status: 'active'
         }
     );
-    console.log('🏗️ Created custom node from metadata:');
-    console.log(`   ID: ${customNode.id}`);
-    console.log(`   Title: Database Cluster`);
-    console.log(`   Type: ${customNode.metadata.documentType}`);
-    console.log(`   Position: (${customNode.x}, ${customNode.y})`);
-    console.log(`   Size: ${customNode.width}x${customNode.height}`);
-    console.log(`   Health Score: ${customNode.metadata.healthScore}`);
-    console.log();
+    console.info('🏗️ Created custom node from metadata:');
+    console.info(`   ID: ${customNode.id}`);
+    console.info(`   Title: Database Cluster`);
+    console.info(`   Type: ${customNode.metadata.documentType}`);
+    console.info(`   Position: (${customNode.x}, ${customNode.y})`);
+    console.info(`   Size: ${customNode.width}x${customNode.height}`);
+    console.info(`   Health Score: ${customNode.metadata.healthScore}`);
+    console.info();
 }
 
 function demonstrateEdgeCreation(): void {
-    console.log('🔗 Demonstrating Canvas Edge Creation');
-    console.log('═'.repeat(60));
+    console.info('🔗 Demonstrating Canvas Edge Creation');
+    console.info('═'.repeat(60));
 
     // Create edges between nodes
     const dependencyEdge = createEdgeFromNodes(
@@ -250,15 +250,15 @@ function demonstrateEdgeCreation(): void {
         }
     );
 
-    console.log('🔗 Created dependency edge:');
-    console.log(`   From: ${dependencyEdge.fromNode}`);
-    console.log(`   To: ${dependencyEdge.toNode}`);
-    console.log(`   Type: ${dependencyEdge.metadata.relationshipType}`);
-    console.log(`   Label: ${dependencyEdge.label}`);
-    console.log(`   Strength: ${dependencyEdge.metadata.strength}`);
-    console.log(`   Bidirectional: ${dependencyEdge.metadata.bidirectional}`);
-    console.log(`   Color: ${dependencyEdge.color}`);
-    console.log();
+    console.info('🔗 Created dependency edge:');
+    console.info(`   From: ${dependencyEdge.fromNode}`);
+    console.info(`   To: ${dependencyEdge.toNode}`);
+    console.info(`   Type: ${dependencyEdge.metadata.relationshipType}`);
+    console.info(`   Label: ${dependencyEdge.label}`);
+    console.info(`   Strength: ${dependencyEdge.metadata.strength}`);
+    console.info(`   Bidirectional: ${dependencyEdge.metadata.bidirectional}`);
+    console.info(`   Color: ${dependencyEdge.color}`);
+    console.info();
 
     const referenceEdge = createEdgeFromNodes(
         'file:02-Architecture:api-gateway',
@@ -271,17 +271,17 @@ function demonstrateEdgeCreation(): void {
         }
     );
 
-    console.log('📚 Created reference edge:');
-    console.log(`   From: ${referenceEdge.fromNode}`);
-    console.log(`   To: ${referenceEdge.toNode}`);
-    console.log(`   Type: ${referenceEdge.metadata.relationshipType}`);
-    console.log(`   Bidirectional: ${referenceEdge.metadata.bidirectional}`);
-    console.log();
+    console.info('📚 Created reference edge:');
+    console.info(`   From: ${referenceEdge.fromNode}`);
+    console.info(`   To: ${referenceEdge.toNode}`);
+    console.info(`   Type: ${referenceEdge.metadata.relationshipType}`);
+    console.info(`   Bidirectional: ${referenceEdge.metadata.bidirectional}`);
+    console.info();
 }
 
 function demonstrateCanvasGeneration(): void {
-    console.log('🎨 Demonstrating Canvas Generation from Vault Files');
-    console.log('═'.repeat(60));
+    console.info('🎨 Demonstrating Canvas Generation from Vault Files');
+    console.info('═'.repeat(60));
 
     // Generate canvas from vault files
     const systemCanvas = createCanvasFromVaultFiles(
@@ -295,44 +295,44 @@ function demonstrateCanvasGeneration(): void {
         }
     );
 
-    console.log('📊 Generated canvas summary:');
-    console.log(`   Name: ${systemCanvas.metadata.name}`);
-    console.log(`   Description: ${systemCanvas.metadata.description}`);
-    console.log(`   Category: ${systemCanvas.metadata.category}`);
-    console.log(`   Author: ${systemCanvas.metadata.author}`);
-    console.log(`   Version: ${systemCanvas.metadata.version}`);
-    console.log(`   Health Score: ${systemCanvas.metadata.healthScore}%`);
-    console.log(`   Total Nodes: ${systemCanvas.metadata.totalNodes}`);
-    console.log(`   Total Edges: ${systemCanvas.metadata.totalEdges}`);
-    console.log(`   Complexity: ${systemCanvas.metadata.complexity}`);
-    console.log();
+    console.info('📊 Generated canvas summary:');
+    console.info(`   Name: ${systemCanvas.metadata.name}`);
+    console.info(`   Description: ${systemCanvas.metadata.description}`);
+    console.info(`   Category: ${systemCanvas.metadata.category}`);
+    console.info(`   Author: ${systemCanvas.metadata.author}`);
+    console.info(`   Version: ${systemCanvas.metadata.version}`);
+    console.info(`   Health Score: ${systemCanvas.metadata.healthScore}%`);
+    console.info(`   Total Nodes: ${systemCanvas.metadata.totalNodes}`);
+    console.info(`   Total Edges: ${systemCanvas.metadata.totalEdges}`);
+    console.info(`   Complexity: ${systemCanvas.metadata.complexity}`);
+    console.info();
 
-    console.log('📋 Node breakdown:');
+    console.info('📋 Node breakdown:');
     const nodeTypes = systemCanvas.nodes.reduce((acc, node) => {
         acc[node.metadata.documentType] = (acc[node.metadata.documentType] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
 
     Object.entries(nodeTypes).forEach(([type, count]) => {
-        console.log(`   ${type}: ${count} nodes`);
+        console.info(`   ${type}: ${count} nodes`);
     });
-    console.log();
+    console.info();
 
-    console.log('🔗 Edge breakdown:');
+    console.info('🔗 Edge breakdown:');
     const edgeTypes = systemCanvas.edges.reduce((acc, edge) => {
         acc[edge.metadata.relationshipType] = (acc[edge.metadata.relationshipType] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
 
     Object.entries(edgeTypes).forEach(([type, count]) => {
-        console.log(`   ${type}: ${count} edges`);
+        console.info(`   ${type}: ${count} edges`);
     });
-    console.log();
+    console.info();
 }
 
 function demonstrateCanvasSaving(): void {
-    console.log('💾 Demonstrating Canvas Saving');
-    console.log('═'.repeat(60));
+    console.info('💾 Demonstrating Canvas Saving');
+    console.info('═'.repeat(60));
 
     const integration = new CanvasVaultIntegration(process.cwd());
 
@@ -352,24 +352,24 @@ function demonstrateCanvasSaving(): void {
     const canvasPath = 'demo-generated-canvas.canvas';
     integration.saveCanvasToFile(demoCanvas, canvasPath);
 
-    console.log(`💾 Canvas saved to: ${canvasPath}`);
-    console.log(`   File size: ${demoCanvas.metadata.totalNodes} nodes, ${demoCanvas.metadata.totalEdges} edges`);
-    console.log(`   Health score: ${demoCanvas.metadata.healthScore}%`);
-    console.log(`   Complexity: ${demoCanvas.metadata.complexity}`);
-    console.log();
+    console.info(`💾 Canvas saved to: ${canvasPath}`);
+    console.info(`   File size: ${demoCanvas.metadata.totalNodes} nodes, ${demoCanvas.metadata.totalEdges} edges`);
+    console.info(`   Health score: ${demoCanvas.metadata.healthScore}%`);
+    console.info(`   Complexity: ${demoCanvas.metadata.complexity}`);
+    console.info();
 
     // Load and verify
     const loadedCanvas = integration.loadCanvasWithMetadata(canvasPath);
-    console.log('📂 Loaded canvas verification:');
-    console.log(`   Nodes loaded: ${loadedCanvas.metadata.totalNodes}`);
-    console.log(`   Edges loaded: ${loadedCanvas.metadata.totalEdges}`);
-    console.log(`   Metadata preserved: ${loadedCanvas.metadata.name}`);
-    console.log();
+    console.info('📂 Loaded canvas verification:');
+    console.info(`   Nodes loaded: ${loadedCanvas.metadata.totalNodes}`);
+    console.info(`   Edges loaded: ${loadedCanvas.metadata.totalEdges}`);
+    console.info(`   Metadata preserved: ${loadedCanvas.metadata.name}`);
+    console.info();
 }
 
 function demonstrateMetadataAnalysis(): void {
-    console.log('📈 Demonstrating Metadata Analysis');
-    console.log('═'.repeat(60));
+    console.info('📈 Demonstrating Metadata Analysis');
+    console.info('═'.repeat(60));
 
     // Create nodes with different metadata quality
     const nodes: CanvasNodeWithMetadata[] = [
@@ -408,23 +408,23 @@ function demonstrateMetadataAnalysis(): void {
         )
     ];
 
-    console.log('📊 Node Health Analysis:');
+    console.info('📊 Node Health Analysis:');
     nodes.forEach((node, index) => {
-        console.log(`   Node ${index + 1}: ${node.id}`);
-        console.log(`     Health Score: ${node.metadata.healthScore}%`);
-        console.log(`     Tags: ${node.metadata.tags.length}`);
-        console.log(`     Priority: ${node.metadata.priority}`);
-        console.log(`     Status: ${node.metadata.status}`);
-        console.log(`     Content Length: ${node.text.length} chars`);
+        console.info(`   Node ${index + 1}: ${node.id}`);
+        console.info(`     Health Score: ${node.metadata.healthScore}%`);
+        console.info(`     Tags: ${node.metadata.tags.length}`);
+        console.info(`     Priority: ${node.metadata.priority}`);
+        console.info(`     Status: ${node.metadata.status}`);
+        console.info(`     Content Length: ${node.text.length} chars`);
     });
-    console.log();
+    console.info();
 
     // Calculate overall canvas health
     const overallHealth = Math.round(
         nodes.reduce((sum, node) => sum + node.metadata.healthScore, 0) / nodes.length
     );
-    console.log(`🏥 Overall Canvas Health: ${overallHealth}%`);
-    console.log();
+    console.info(`🏥 Overall Canvas Health: ${overallHealth}%`);
+    console.info();
 }
 
 // =============================================================================
@@ -433,10 +433,10 @@ function demonstrateMetadataAnalysis(): void {
 
 function runDemo(): void {
     console.clear();
-    console.log('🎨 Canvas Vault Integration Demo');
-    console.log('🚀 Odds Protocol - Advanced Canvas System');
-    console.log('═'.repeat(80));
-    console.log();
+    console.info('🎨 Canvas Vault Integration Demo');
+    console.info('🚀 Odds Protocol - Advanced Canvas System');
+    console.info('═'.repeat(80));
+    console.info();
 
     try {
         demonstrateNodeCreation();
@@ -445,14 +445,14 @@ function runDemo(): void {
         demonstrateCanvasSaving();
         demonstrateMetadataAnalysis();
 
-        console.log('🎉 Demo completed successfully!');
-        console.log();
-        console.log('📚 Next steps:');
-        console.log('   1. Integrate with actual vault file system');
-        console.log('   2. Add real-time metadata synchronization');
-        console.log('   3. Implement canvas template system');
-        console.log('   4. Add collaborative editing features');
-        console.log('   5. Create canvas analytics dashboard');
+        console.info('🎉 Demo completed successfully!');
+        console.info();
+        console.info('📚 Next steps:');
+        console.info('   1. Integrate with actual vault file system');
+        console.info('   2. Add real-time metadata synchronization');
+        console.info('   3. Implement canvas template system');
+        console.info('   4. Add collaborative editing features');
+        console.info('   5. Create canvas analytics dashboard');
 
     } catch (error) {
         console.error('❌ Demo failed:', error);

@@ -8,8 +8,8 @@
 
 import { URLPatternObservatory } from './urlpattern-observatory-v1.3.6';
 
-console.log('🚀 URLPattern Observatory v1.3.6 - Complete Demo');
-console.log('==================================================');
+console.info('🚀 URLPattern Observatory v1.3.6 - Complete Demo');
+console.info('==================================================');
 
 async function demonstrateAllFeatures() {
   const observatory = new URLPatternObservatory({
@@ -27,8 +27,8 @@ async function demonstrateAllFeatures() {
   });
   
   try {
-    console.log('\n🔍 1. Pattern Analysis with 20× Faster CRC32');
-    console.log('===============================================');
+    console.info('\n🔍 1. Pattern Analysis with 20× Faster CRC32');
+    console.info('===============================================');
     
     const testPatterns = [
       'https://localhost:3000/admin/*',      // Critical
@@ -39,7 +39,7 @@ async function demonstrateAllFeatures() {
     ];
     
     for (const pattern of testPatterns) {
-      console.log(`\n📊 Analyzing: ${pattern}`);
+      console.info(`\n📊 Analyzing: ${pattern}`);
       const result = await observatory.analyzePattern(pattern);
       
       const riskEmoji = {
@@ -49,118 +49,118 @@ async function demonstrateAllFeatures() {
         low: '✅'
       };
       
-      console.log(`   ${riskEmoji[result.risk]} Risk: ${result.risk.toUpperCase()}`);
-      console.log(`   🔐 Hash: ${result.hash}`);
-      console.log(`   📝 Issues: ${result.issues.length > 0 ? result.issues.join(', ') : 'None'}`);
+      console.info(`   ${riskEmoji[result.risk]} Risk: ${result.risk.toUpperCase()}`);
+      console.info(`   🔐 Hash: ${result.hash}`);
+      console.info(`   📝 Issues: ${result.issues.length > 0 ? result.issues.join(', ') : 'None'}`);
     }
     
-    console.log('\n🔨 2. Virtual Guard Injection with Metafile Tracking');
-    console.log('====================================================');
+    console.info('\n🔨 2. Virtual Guard Injection with Metafile Tracking');
+    console.info('====================================================');
     
     const buildResult = await observatory.buildWithGuards(testPatterns);
-    console.log(`✅ Build Success: ${buildResult.success}`);
-    console.log(`📦 Virtual Guards: ${buildResult.virtualGuardBytes} bytes`);
-    console.log(`📊 Build Metrics: ${JSON.stringify(buildResult.metrics, null, 2)}`);
+    console.info(`✅ Build Success: ${buildResult.success}`);
+    console.info(`📦 Virtual Guards: ${buildResult.virtualGuardBytes} bytes`);
+    console.info(`📊 Build Metrics: ${JSON.stringify(buildResult.metrics, null, 2)}`);
     
-    console.log('\n💾 3. Bun.Archive Backup with CRC32 Integrity');
-    console.log('==============================================');
+    console.info('\n💾 3. Bun.Archive Backup with CRC32 Integrity');
+    console.info('==============================================');
     
     try {
       const backupResult = await observatory.createBackup();
-      console.log(`✅ Backup Created: ${backupResult.success}`);
-      console.log(`📁 Path: ${backupResult.backupPath}`);
-      console.log(`📏 Size: ${backupResult.size} bytes`);
-      console.log(`🔐 Integrity: ${backupResult.integrityHash}`);
+      console.info(`✅ Backup Created: ${backupResult.success}`);
+      console.info(`📁 Path: ${backupResult.backupPath}`);
+      console.info(`📏 Size: ${backupResult.size} bytes`);
+      console.info(`🔐 Integrity: ${backupResult.integrityHash}`);
     } catch (error) {
-      console.log(`⚠️  Backup skipped (S3 not configured): ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`⚠️  Backup skipped (S3 not configured): ${error instanceof Error ? error.message : String(error)}`);
     }
     
-    console.log('\n📡 4. WebSocket Dashboard (Corporate Ready)');
-    console.log('==========================================');
+    console.info('\n📡 4. WebSocket Dashboard (Corporate Ready)');
+    console.info('==========================================');
     
-    console.log('🌐 Dashboard would start at: http://localhost:3001');
-    console.log('📡 Features:');
-    console.log('   • Real-time pattern analysis');
-    console.log('   • Live backup creation');
-    console.log('   • WebSocket proxy support');
-    console.log('   • 3.5× faster Response.json() API');
+    console.info('🌐 Dashboard would start at: http://localhost:3001');
+    console.info('📡 Features:');
+    console.info('   • Real-time pattern analysis');
+    console.info('   • Live backup creation');
+    console.info('   • WebSocket proxy support');
+    console.info('   • 3.5× faster Response.json() API');
     
-    console.log('\n📚 5. JSONC Policy with Comments');
-    console.log('===============================');
+    console.info('\n📚 5. JSONC Policy with Comments');
+    console.info('===============================');
     
-    console.log('✅ Policy loaded with comment support');
-    console.log('📝 Features:');
-    console.log('   • Comment-friendly configuration');
-    console.log('   • Trailing comma support');
-    console.log('   • Hot-reload capability');
-    console.log('   • Schema validation');
+    console.info('✅ Policy loaded with comment support');
+    console.info('📝 Features:');
+    console.info('   • Comment-friendly configuration');
+    console.info('   • Trailing comma support');
+    console.info('   • Hot-reload capability');
+    console.info('   • Schema validation');
     
-    console.log('\n🗄️ 6. SQLite 3.51.2 with WAL Optimization');
-    console.log('==========================================');
+    console.info('\n🗄️ 6. SQLite 3.51.2 with WAL Optimization');
+    console.info('==========================================');
     
-    console.log('✅ Database optimized with:');
-    console.log('   • WAL journal mode for concurrency');
-    console.log('   • Normal synchronization');
-    console.log('   • Memory temp storage');
-    console.log('   • Performance indexes');
+    console.info('✅ Database optimized with:');
+    console.info('   • WAL journal mode for concurrency');
+    console.info('   • Normal synchronization');
+    console.info('   • Memory temp storage');
+    console.info('   • Performance indexes');
     
-    console.log('\n🚀 7. Standalone Compilation Ready');
-    console.log('=================================');
+    console.info('\n🚀 7. Standalone Compilation Ready');
+    console.info('=================================');
     
-    console.log('✅ Prepared for standalone binary with:');
-    console.log('   • Embedded SQLite database');
-    console.log('   • Embedded security policies');
-    console.log('   • Embedded pattern guards');
-    console.log('   • Zero external dependencies');
+    console.info('✅ Prepared for standalone binary with:');
+    console.info('   • Embedded SQLite database');
+    console.info('   • Embedded security policies');
+    console.info('   • Embedded pattern guards');
+    console.info('   • Zero external dependencies');
     
-    console.log('\n🎯 8. Performance Metrics Summary');
-    console.log('===============================');
+    console.info('\n🎯 8. Performance Metrics Summary');
+    console.info('===============================');
     
-    console.log('⚡ Performance Achievements:');
-    console.log('   • 20× faster CRC32 hashing');
-    console.log('   • 3.5× faster Response.json()');
-    console.log('   • Sub-millisecond pattern analysis');
-    console.log('   • Virtual guard injection');
-    console.log('   • Metafile bundle analysis');
+    console.info('⚡ Performance Achievements:');
+    console.info('   • 20× faster CRC32 hashing');
+    console.info('   • 3.5× faster Response.json()');
+    console.info('   • Sub-millisecond pattern analysis');
+    console.info('   • Virtual guard injection');
+    console.info('   • Metafile bundle analysis');
     
-    console.log('\n🔒 9. Security Features Demonstrated');
-    console.log('=================================');
+    console.info('\n🔒 9. Security Features Demonstrated');
+    console.info('=================================');
     
-    console.log('🛡️ Security Capabilities:');
-    console.log('   • SSRF detection');
-    console.log('   • Path traversal detection');
-    console.log('   • Internal network access detection');
-    console.log('   • Open redirect detection');
-    console.log('   • Custom rule engine');
-    console.log('   • Audit logging');
+    console.info('🛡️ Security Capabilities:');
+    console.info('   • SSRF detection');
+    console.info('   • Path traversal detection');
+    console.info('   • Internal network access detection');
+    console.info('   • Open redirect detection');
+    console.info('   • Custom rule engine');
+    console.info('   • Audit logging');
     
-    console.log('\n🌟 10. Bun v1.3.6 Feature Alignment');
-    console.log('=================================');
+    console.info('\n🌟 10. Bun v1.3.6 Feature Alignment');
+    console.info('=================================');
     
-    console.log('✅ Perfect Alignment with Bun v1.3.6:');
-    console.log('   ✅ Bun.Archive for backups');
-    console.log('   ✅ Bun.JSONC for policies');
-    console.log('   ✅ Metafile + bundle analysis');
-    console.log('   ✅ Virtual files for guards');
-    console.log('   ✅ 20× faster CRC32');
-    console.log('   ✅ WebSocket proxy support');
-    console.log('   ✅ 3.5× faster Response.json()');
-    console.log('   ✅ Standalone compilation');
-    console.log('   ✅ SQLite 3.51.2 WAL');
+    console.info('✅ Perfect Alignment with Bun v1.3.6:');
+    console.info('   ✅ Bun.Archive for backups');
+    console.info('   ✅ Bun.JSONC for policies');
+    console.info('   ✅ Metafile + bundle analysis');
+    console.info('   ✅ Virtual files for guards');
+    console.info('   ✅ 20× faster CRC32');
+    console.info('   ✅ WebSocket proxy support');
+    console.info('   ✅ 3.5× faster Response.json()');
+    console.info('   ✅ Standalone compilation');
+    console.info('   ✅ SQLite 3.51.2 WAL');
     
-    console.log('\n🎉 URLPattern Observatory v1.3.6 Demo Complete!');
-    console.log('================================================');
+    console.info('\n🎉 URLPattern Observatory v1.3.6 Demo Complete!');
+    console.info('================================================');
     
-    console.log('\n🚀 This is the most Bun-native security control plane possible!');
-    console.log('📊 Every v1.3.6 feature weaponized for URLPattern governance');
-    console.log('🔥 Enterprise-bulletproof with zero external dependencies');
+    console.info('\n🚀 This is the most Bun-native security control plane possible!');
+    console.info('📊 Every v1.3.6 feature weaponized for URLPattern governance');
+    console.info('🔥 Enterprise-bulletproof with zero external dependencies');
     
-    console.log('\n📝 Next Steps:');
-    console.log('   • Deploy to staging environment');
-    console.log('   • Configure S3 backup integration');
-    console.log('   • Set up corporate proxy for WebSocket');
-    console.log('   • Compile to standalone binary');
-    console.log('   • Add custom pattern validation rules');
+    console.info('\n📝 Next Steps:');
+    console.info('   • Deploy to staging environment');
+    console.info('   • Configure S3 backup integration');
+    console.info('   • Set up corporate proxy for WebSocket');
+    console.info('   • Compile to standalone binary');
+    console.info('   • Add custom pattern validation rules');
     
   } catch (error) {
     console.error('❌ Demo failed:', error instanceof Error ? error.message : String(error));

@@ -6,7 +6,7 @@ import { PatternMatrix, type PatternRow } from "../utils/pattern-matrix";
 import Bun from "bun";
 
 async function runAudit() {
-  console.log("🚀 Empire Pro Codebase Audit v2.1 Starting...");
+  console.info("🚀 Empire Pro Codebase Audit v2.1 Starting...");
   
   const matrix = PatternMatrix.getInstance();
   const rows = matrix.getRows();
@@ -15,18 +15,18 @@ async function runAudit() {
   const qualifier = new PhoneIntelQualifier();
   const controller = new AutonomicController();
   
-  console.log("\n--- Pattern Validation ---");
+  console.info("\n--- Pattern Validation ---");
   const qValid = PatternValidator.validate(qualifier, PatternValidator.generateLSPInfo(qualifier));
   const cValid = PatternValidator.validate(controller, PatternValidator.generateLSPInfo(controller));
   
-  console.log(`PhoneIntelQualifier: ${qValid.valid ? "✅" : "❌"}`);
-  qValid.errors.forEach((e: string) => console.log(`  Error: ${e}`));
+  console.info(`PhoneIntelQualifier: ${qValid.valid ? "✅" : "❌"}`);
+  qValid.errors.forEach((e: string) => console.info(`  Error: ${e}`));
   
-  console.log(`AutonomicController: ${cValid.valid ? "✅" : "❌"}`);
-  cValid.errors.forEach((e: string) => console.log(`  Error: ${e}`));
+  console.info(`AutonomicController: ${cValid.valid ? "✅" : "❌"}`);
+  cValid.errors.forEach((e: string) => console.info(`  Error: ${e}`));
 
   // 2. Reference Audit
-  console.log("\n--- Reference Audit ---");
+  console.info("\n--- Reference Audit ---");
   const filesToScan = [
     "src/core/filter/phone-intel-qualifier.ts",
     "src/core/workflows/autonomic-controller.ts",
@@ -36,8 +36,8 @@ async function runAudit() {
   for (const file of filesToScan) {
     const content = await Bun.file(file).text();
     const refValid = PatternValidator.validatePatternReferences(content);
-    console.log(`${file}: ${refValid.valid ? "✅" : "⚠️ (" + refValid.errors.length + " missing)"}`);
-    refValid.errors.forEach((e: string) => console.log(`  ${e}`));
+    console.info(`${file}: ${refValid.valid ? "✅" : "⚠️ (" + refValid.errors.length + " missing)"}`);
+    refValid.errors.forEach((e: string) => console.info(`  ${e}`));
   }
 
   // 3. Score Calculation
@@ -48,7 +48,7 @@ async function runAudit() {
   
   const totalScore = patternScore + validationScore + bunScore + securityScore;
   
-  console.log(`\nFinal Audit Score: ${totalScore.toFixed(0)}/100`);
+  console.info(`\nFinal Audit Score: ${totalScore.toFixed(0)}/100`);
 
   // Output Report
   let report = `# Empire Pro Audit Report | Score: ${totalScore.toFixed(0)}/100 | Date: ${new Date().toLocaleDateString()}\n\n`;
@@ -69,7 +69,7 @@ async function runAudit() {
   report += "- [x] stringWidth alignment (§UI:132)\n";
 
   await Bun.write("reports/audit-v2.1.md", report);
-  console.log("\n✅ Audit Report generated: reports/audit-v2.1.md");
+  console.info("\n✅ Audit Report generated: reports/audit-v2.1.md");
 }
 
 runAudit();

@@ -268,7 +268,7 @@ class StagedFileSorter {
      * Generate and save the sorting report
      */
     public async generateReport(): Promise<SortingReport> {
-        console.log('🔍 Analyzing staged files...');
+        console.info('🔍 Analyzing staged files...');
 
         const stagedFiles = this.getStagedFiles();
         const categories = this.categorizeFiles(stagedFiles);
@@ -286,7 +286,7 @@ class StagedFileSorter {
         const reportPath = join(this.workingDir, 'staged-files-report.md');
         writeFileSync(reportPath, this.formatReport(report));
 
-        console.log(`📋 Report saved to: ${reportPath}`);
+        console.info(`📋 Report saved to: ${reportPath}`);
         return report;
     }
 
@@ -350,12 +350,12 @@ class StagedFileSorter {
         const report = await this.generateReport();
 
         if (dryRun) {
-            console.log('🔍 DRY RUN MODE - No commits will be executed');
-            console.log('\n' + report.commitStrategy);
+            console.info('🔍 DRY RUN MODE - No commits will be executed');
+            console.info('\n' + report.commitStrategy);
             return;
         }
 
-        console.log('🚀 EXECUTING COMMITS - This will modify your git history');
+        console.info('🚀 EXECUTING COMMITS - This will modify your git history');
 
         // Execute commits by category (starting with largest categories)
         const prioritizedCategories = report.categories
@@ -374,7 +374,7 @@ class StagedFileSorter {
 
         for (const category of prioritizedCategories) {
             if (category.files.length > 0) {
-                console.log(`\n📝 Committing ${category.name} (${category.files.length} files)...`);
+                console.info(`\n📝 Committing ${category.name} (${category.files.length} files)...`);
 
                 try {
                     // Stage files for this category
@@ -393,7 +393,7 @@ class StagedFileSorter {
 
                     // Commit with suggested message
                     execSync(`git commit -m "${category.commitSuggestion}"`, { cwd: this.workingDir });
-                    console.log(`✅ Committed: ${category.commitSuggestion}`);
+                    console.info(`✅ Committed: ${category.commitSuggestion}`);
 
                 } catch (error) {
                     console.error(`❌ Error committing ${category.name}:`, error);
@@ -401,8 +401,8 @@ class StagedFileSorter {
             }
         }
 
-        console.log('\n🎉 Commit execution completed!');
-        console.log('Run `git log --oneline -10` to see the recent commits.');
+        console.info('\n🎉 Commit execution completed!');
+        console.info('Run `git log --oneline -10` to see the recent commits.');
     }
 }
 
@@ -413,27 +413,27 @@ async function main() {
     try {
         const report = await sorter.generateReport();
 
-        console.log('\n📈 Summary:');
-        console.log(`- Total staged files: ${report.totalStaged}`);
-        console.log(`- Categories: ${report.categories.length}`);
-        console.log(`- Recommendations: ${report.recommendations.length}`);
+        console.info('\n📈 Summary:');
+        console.info(`- Total staged files: ${report.totalStaged}`);
+        console.info(`- Categories: ${report.categories.length}`);
+        console.info(`- Recommendations: ${report.recommendations.length}`);
 
         // Show top categories
-        console.log('\n🏆 Top Categories:');
+        console.info('\n🏆 Top Categories:');
         report.categories.slice(0, 5).forEach((cat, i) => {
-            console.log(`${i + 1}. ${cat.name}: ${cat.files.length} files`);
+            console.info(`${i + 1}. ${cat.name}: ${cat.files.length} files`);
         });
 
         if (report.recommendations.length > 0) {
-            console.log('\n💡 Key Recommendations:');
+            console.info('\n💡 Key Recommendations:');
             report.recommendations.slice(0, 3).forEach(rec => {
-                console.log(`  ${rec}`);
+                console.info(`  ${rec}`);
             });
         }
 
-        console.log('\n📋 Full report saved to: staged-files-report.md');
-        console.log('\n💻 To execute commits, run:');
-        console.log('  bun run sort-staged-files --execute');
+        console.info('\n📋 Full report saved to: staged-files-report.md');
+        console.info('\n💻 To execute commits, run:');
+        console.info('  bun run sort-staged-files --execute');
 
     } catch (error) {
         console.error('❌ Error generating report:', error);

@@ -132,7 +132,7 @@ class UltimateColorFormattingDashboard {
             { feature: "Index", status: "Colored", type: "Auto", impact: "Navigation" }
         ];
 
-        console.log(Bun.inspect.table(basicData, ["feature", "status", "type", "impact"], {
+        console.info(Bun.inspect.table(basicData, ["feature", "status", "type", "impact"], {
             colors: true,
             compact: false,
             minWidth: 10,
@@ -173,7 +173,7 @@ class UltimateColorFormattingDashboard {
             { element: "Odd Row", color: "Gray", code: "\x1b[90m", purpose: "Subtlety" }
         ];
 
-        console.log(Bun.inspect.table(colorMappingData, ["element", "color", "code", "purpose"], {
+        console.info(Bun.inspect.table(colorMappingData, ["element", "color", "code", "purpose"], {
             colors: colorOptions.custom,
             compact: false,
             minWidth: 8,
@@ -252,7 +252,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(ansiData, ["category", "color", "code", "sample", "usage"], {
+        console.info(Bun.inspect.table(ansiData, ["category", "color", "code", "sample", "usage"], {
             colors: colorOptions.advanced,
             compact: false,
             minWidth: 8,
@@ -287,7 +287,7 @@ class UltimateColorFormattingDashboard {
             { level: "Low", priority: 5, color: "Light Orange", intensity: "Low" }
         ];
 
-        console.log(Bun.inspect.table(gradientData, ["level", "priority", "color", "intensity"], {
+        console.info(Bun.inspect.table(gradientData, ["level", "priority", "color", "intensity"], {
             colors: gradientColors.colors,
             compact: false,
             minWidth: 8,
@@ -325,7 +325,7 @@ class UltimateColorFormattingDashboard {
             { row: 5, col: 5, status: "Inactive", performance: "Excellent" }
         ];
 
-        console.log(Bun.inspect.table(dynamicData, ["row", "col", "status", "performance"], {
+        console.info(Bun.inspect.table(dynamicData, ["row", "col", "status", "performance"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;240m",
@@ -372,7 +372,7 @@ class UltimateColorFormattingDashboard {
             { setting: "Borders", value: "Simple", effect: "Basic structure" }
         ];
 
-        console.log(Bun.inspect.table(compactData, ["setting", "value", "effect"], {
+        console.info(Bun.inspect.table(compactData, ["setting", "value", "effect"], {
             colors: true,
             compact: true,
             minWidth: 8,
@@ -429,7 +429,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(advancedCompactData, ["feature", "status", "spacing", "padding", "border", "dividers"], {
+        console.info(Bun.inspect.table(advancedCompactData, ["feature", "status", "spacing", "padding", "border", "dividers"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -479,7 +479,7 @@ class UltimateColorFormattingDashboard {
             { item: "E", value: "Fifth", status: "✓" }
         ];
 
-        console.log(Bun.inspect.table(minimalData, ["item", "value", "status"], {
+        console.info(Bun.inspect.table(minimalData, ["item", "value", "status"], {
             colors: {
                 header: "\x1b[38;5;240m",
                 border: "\x1b[38;5;240m",
@@ -521,7 +521,7 @@ class UltimateColorFormattingDashboard {
             { style: "Dotted", appearance: "┈┊┌┐└┘", usage: "Light" }
         ];
 
-        console.log(Bun.inspect.table(borderData, ["style", "appearance", "usage"], {
+        console.info(Bun.inspect.table(borderData, ["style", "appearance", "usage"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -611,10 +611,10 @@ class UltimateColorFormattingDashboard {
             index: !isMinimal
         };
 
-        console.log(`\n📊 Current Screen Width: ${screenWidth} columns`);
-        console.log(`🎨 Current Mode: ${isMinimal ? 'Minimal' : isCompact ? 'Compact' : 'Full'}\n`);
+        console.info(`\n📊 Current Screen Width: ${screenWidth} columns`);
+        console.info(`🎨 Current Mode: ${isMinimal ? 'Minimal' : isCompact ? 'Compact' : 'Full'}\n`);
 
-        console.log(Bun.inspect.table(responsiveData, ["screen", "layout", "columns", "spacing", "borders"], {
+        console.info(Bun.inspect.table(responsiveData, ["screen", "layout", "columns", "spacing", "borders"], {
             ...currentConfig,
             formatter: (value, column) => {
                 switch (column) {
@@ -659,8 +659,8 @@ class UltimateColorFormattingDashboard {
             status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Pending" : "Inactive"
         }));
 
-        console.log('\n📏 Small Dataset (≤10 items) - Full Mode:');
-        console.log(Bun.inspect.table(smallDataset, ["id", "name", "status"], {
+        console.info('\n📏 Small Dataset (≤10 items) - Full Mode:');
+        console.info(Bun.inspect.table(smallDataset, ["id", "name", "status"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -680,8 +680,8 @@ class UltimateColorFormattingDashboard {
             }
         }));
 
-        console.log('\n📊 Large Dataset (>10 items) - Compact Mode:');
-        console.log(Bun.inspect.table(largeDataset, ["id", "name", "status"], {
+        console.info('\n📊 Large Dataset (>10 items) - Compact Mode:');
+        console.info(Bun.inspect.table(largeDataset, ["id", "name", "status"], {
             colors: true,
             compact: true,
             minWidth: 6,
@@ -713,7 +713,7 @@ class UltimateColorFormattingDashboard {
             { metric: "Quality", value: 23, status: "Critical", threshold: "≥30" }
         ];
 
-        console.log(Bun.inspect.table(conditionalData, ["metric", "value", "status", "threshold"], {
+        console.info(Bun.inspect.table(conditionalData, ["metric", "value", "status", "threshold"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;240m",
@@ -800,7 +800,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(schemes, ["name", "header", "border", "body", "accent", "mood"], {
+        console.info(Bun.inspect.table(schemes, ["name", "header", "border", "body", "accent", "mood"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -865,7 +865,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(spacingData, ["type", "min", "max", "optimal", "effect"], {
+        console.info(Bun.inspect.table(spacingData, ["type", "min", "max", "optimal", "effect"], {
             colors: true,
             compact: false,
             minWidth: 8,
@@ -938,7 +938,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(combinations, ["name", "colors", "compact", "borders", "alignment", "use"], {
+        console.info(Bun.inspect.table(combinations, ["name", "colors", "compact", "borders", "alignment", "use"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -1018,7 +1018,7 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, ["feature", "implemented", "options", "flexibility"], {
+        console.info(Bun.inspect.table(summaryData, ["feature", "implemented", "options", "flexibility"], {
             colors: {
                 header: "\x1b[38;5;214m",
                 border: "\x1b[38;5;33m",
@@ -1073,8 +1073,8 @@ class UltimateColorFormattingDashboard {
             }
         ];
 
-        console.log('\n📊 System Metrics:');
-        console.log(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
+        console.info('\n📊 System Metrics:');
+        console.info(Bun.inspect.table(metricsData, ["metric", "value", "category", "status"], {
             colors: true,
             compact: true,
             minWidth: 8,

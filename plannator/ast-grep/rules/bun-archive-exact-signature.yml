@@ -1,0 +1,11 @@
+id: bun-archive-exact-signature
+language: TypeScript
+severity: error
+message: "Bun.Archive expects (data: ArchiveInput, options?: ArchiveOptions)"
+note: "Signature is new Bun.Archive({ 'file.txt': content }, { compress?: 'gzip', level?: number })"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: new Bun.Archive()
+    - pattern: new Bun.Archive($A, $B, $C)

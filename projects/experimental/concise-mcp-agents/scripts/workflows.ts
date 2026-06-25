@@ -138,7 +138,7 @@ class WorkflowAutomation {
       throw new Error(`Workflow '${name}' not found`);
     }
 
-    console.log(`🚀 Executing workflow: ${workflow.name} - ${workflow.description}`);
+    console.info(`🚀 Executing workflow: ${workflow.name} - ${workflow.description}`);
 
     const output: string[] = [];
     const errors: string[] = [];
@@ -258,7 +258,7 @@ class WorkflowAutomation {
   }
 
   async runQuickOps(): Promise<void> {
-    console.log('⚡ Running Quick Ops - Daily essentials...');
+    console.info('⚡ Running Quick Ops - Daily essentials...');
 
     // Start essential services
     await this.executeWorkflow('daily-ops');
@@ -266,16 +266,16 @@ class WorkflowAutomation {
     // Run health check
     const health = await this.executeWorkflow('health-check');
     if (health.success) {
-      console.log('✅ System healthy');
+      console.info('✅ System healthy');
     } else {
-      console.log('⚠️  Health issues detected');
-      health.errors.forEach(error => console.log(`   ${error}`));
+      console.info('⚠️  Health issues detected');
+      health.errors.forEach(error => console.info(`   ${error}`));
     }
 
     // Update live data
     await this.executeWorkflow('live-update');
 
-    console.log('🎯 Quick Ops complete!');
+    console.info('🎯 Quick Ops complete!');
   }
 }
 
@@ -287,40 +287,40 @@ async function main() {
   switch (command) {
     case 'list':
       const workflows = automation.getAvailableWorkflows();
-      console.log(`\n🚀 WORKFLOWS – ONE-LINERS\n`);
-      console.log(automation.formatWorkflowsTable());
+      console.info(`\n🚀 WORKFLOWS – ONE-LINERS\n`);
+      console.info(automation.formatWorkflowsTable());
 
-      console.log('\n📋 Available workflows:');
+      console.info('\n📋 Available workflows:');
       workflows.forEach(wf => {
-        console.log(`   ${wf.name}: ${wf.description}`);
-        console.log(`     Commands: ${wf.commands.join(' → ')}`);
-        console.log('');
+        console.info(`   ${wf.name}: ${wf.description}`);
+        console.info(`     Commands: ${wf.commands.join(' → ')}`);
+        console.info('');
       });
       break;
 
     case 'run':
       const workflowName = process.argv[3];
       if (!workflowName) {
-        console.log('Usage: bun workflows:run <workflow_name>');
-        console.log('Available: daily-ops, telegram-top, gov-check, deploy, health-check, live-update, backup, ai-headers, perf-monitor');
+        console.info('Usage: bun workflows:run <workflow_name>');
+        console.info('Available: daily-ops, telegram-top, gov-check, deploy, health-check, live-update, backup, ai-headers, perf-monitor');
         break;
       }
 
       try {
         const result = await automation.executeWorkflow(workflowName);
-        console.log(`\n🎯 Workflow: ${workflowName}`);
+        console.info(`\n🎯 Workflow: ${workflowName}`);
 
         if (result.success) {
-          console.log('✅ Completed successfully');
+          console.info('✅ Completed successfully');
         } else {
-          console.log('❌ Completed with errors');
+          console.info('❌ Completed with errors');
         }
 
-        result.output.forEach(line => console.log(`   ${line}`));
-        result.errors.forEach(error => console.log(`   ${error}`));
+        result.output.forEach(line => console.info(`   ${line}`));
+        result.errors.forEach(error => console.info(`   ${error}`));
 
       } catch (error) {
-        console.log(`❌ Workflow failed: ${error.message}`);
+        console.info(`❌ Workflow failed: ${error.message}`);
       }
       break;
 
@@ -329,7 +329,7 @@ async function main() {
       break;
 
     default:
-      console.log(`🚀 Workflow Automation
+      console.info(`🚀 Workflow Automation
 
 USAGE:
   bun workflows:list              # List all workflows

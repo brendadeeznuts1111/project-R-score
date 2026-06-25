@@ -190,8 +190,8 @@ class PortManagerTests {
    * Test port allocation with validation
    */
   static async testPortAllocationValidation(): Promise<void> {
-    console.log('🚪 PORT ALLOCATION VALIDATION TESTS');
-    console.log('='.repeat(50));
+    console.info('🚪 PORT ALLOCATION VALIDATION TESTS');
+    console.info('='.repeat(50));
 
     const testCases = [
       { port: 3000, shouldPass: true, desc: 'Valid port (3000)' },
@@ -207,7 +207,7 @@ class PortManagerTests {
     ];
 
     for (const testCase of testCases) {
-      console.log(`\nTesting: ${testCase.desc}`);
+      console.info(`\nTesting: ${testCase.desc}`);
 
       try {
         // Create a mock config with the test port
@@ -223,27 +223,27 @@ class PortManagerTests {
         const validation = ValidationUtils.validatePort(testCase.port);
 
         if (validation.isValid === testCase.shouldPass) {
-          console.log(`   ✅ ${testCase.desc} - Validation correct`);
+          console.info(`   ✅ ${testCase.desc} - Validation correct`);
         } else {
-          console.log(`   ❌ ${testCase.desc} - Validation incorrect`);
-          console.log(`      Expected: ${testCase.shouldPass ? 'valid' : 'invalid'}`);
-          console.log(`      Got: ${validation.isValid ? 'valid' : 'invalid'}`);
+          console.info(`   ❌ ${testCase.desc} - Validation incorrect`);
+          console.info(`      Expected: ${testCase.shouldPass ? 'valid' : 'invalid'}`);
+          console.info(`      Got: ${validation.isValid ? 'valid' : 'invalid'}`);
         }
 
         if (validation.warnings.length > 0) {
-          console.log(`   ⚠️  Warnings:`);
-          validation.warnings.forEach(w => console.log(`      - ${w}`));
+          console.info(`   ⚠️  Warnings:`);
+          validation.warnings.forEach(w => console.info(`      - ${w}`));
         }
 
         if (validation.errors.length > 0) {
-          console.log(`   🚨 Errors:`);
-          validation.errors.forEach(e => console.log(`      - ${e}`));
+          console.info(`   🚨 Errors:`);
+          validation.errors.forEach(e => console.info(`      - ${e}`));
         }
       } catch (error) {
         if (!testCase.shouldPass) {
-          console.log(`   ✅ ${testCase.desc} - Correctly rejected`);
+          console.info(`   ✅ ${testCase.desc} - Correctly rejected`);
         } else {
-          console.log(`   ❌ ${testCase.desc} - Unexpected error: ${error.message}`);
+          console.info(`   ❌ ${testCase.desc} - Unexpected error: ${error.message}`);
         }
       }
     }
@@ -253,8 +253,8 @@ class PortManagerTests {
    * Test port range validation
    */
   static async testPortRangeValidation(): Promise<void> {
-    console.log('\n📏 PORT RANGE VALIDATION TESTS');
-    console.log('='.repeat(50));
+    console.info('\n📏 PORT RANGE VALIDATION TESTS');
+    console.info('='.repeat(50));
 
     const testRanges = [
       { start: 3000, end: 3100, shouldPass: true, desc: 'Valid range (3000-3100)' },
@@ -266,7 +266,7 @@ class PortManagerTests {
     ];
 
     for (const range of testRanges) {
-      console.log(`\nTesting: ${range.desc}`);
+      console.info(`\nTesting: ${range.desc}`);
 
       const startValidation = ValidationUtils.validatePort(range.start, 'Range start');
       const endValidation = ValidationUtils.validatePort(range.end, 'Range end');
@@ -275,18 +275,18 @@ class PortManagerTests {
         startValidation.isValid && endValidation.isValid && range.start <= range.end;
 
       if (rangeValid === range.shouldPass) {
-        console.log(`   ✅ ${range.desc} - Range validation correct`);
+        console.info(`   ✅ ${range.desc} - Range validation correct`);
       } else {
-        console.log(`   ❌ ${range.desc} - Range validation incorrect`);
-        console.log(`      Expected: ${range.shouldPass ? 'valid' : 'invalid'}`);
-        console.log(`      Got: ${rangeValid ? 'valid' : 'invalid'}`);
+        console.info(`   ❌ ${range.desc} - Range validation incorrect`);
+        console.info(`      Expected: ${range.shouldPass ? 'valid' : 'invalid'}`);
+        console.info(`      Got: ${rangeValid ? 'valid' : 'invalid'}`);
       }
 
       if (startValidation.errors.length > 0) {
-        console.log(`   🚨 Start errors: ${startValidation.errors.join(', ')}`);
+        console.info(`   🚨 Start errors: ${startValidation.errors.join(', ')}`);
       }
       if (endValidation.errors.length > 0) {
-        console.log(`   🚨 End errors: ${endValidation.errors.join(', ')}`);
+        console.info(`   🚨 End errors: ${endValidation.errors.join(', ')}`);
       }
     }
   }
@@ -301,8 +301,8 @@ class ConnectionLimitTests {
    * Test connection limit validation
    */
   static async testConnectionLimitValidation(): Promise<void> {
-    console.log('\n🔗 CONNECTION LIMIT VALIDATION TESTS');
-    console.log('='.repeat(50));
+    console.info('\n🔗 CONNECTION LIMIT VALIDATION TESTS');
+    console.info('='.repeat(50));
 
     const testLimits = [
       { limit: 512, shouldPass: true, desc: 'Bun default (512)' },
@@ -317,26 +317,26 @@ class ConnectionLimitTests {
     ];
 
     for (const test of testLimits) {
-      console.log(`\nTesting: ${test.desc}`);
+      console.info(`\nTesting: ${test.desc}`);
 
       const validation = ValidationUtils.validateConnectionLimit(test.limit);
 
       if (validation.isValid === test.shouldPass) {
-        console.log(`   ✅ ${test.desc} - Validation correct`);
+        console.info(`   ✅ ${test.desc} - Validation correct`);
       } else {
-        console.log(`   ❌ ${test.desc} - Validation incorrect`);
-        console.log(`      Expected: ${test.shouldPass ? 'valid' : 'invalid'}`);
-        console.log(`      Got: ${validation.isValid ? 'valid' : 'invalid'}`);
+        console.info(`   ❌ ${test.desc} - Validation incorrect`);
+        console.info(`      Expected: ${test.shouldPass ? 'valid' : 'invalid'}`);
+        console.info(`      Got: ${validation.isValid ? 'valid' : 'invalid'}`);
       }
 
       if (validation.warnings.length > 0) {
-        console.log(`   ⚠️  Warnings:`);
-        validation.warnings.forEach(w => console.log(`      - ${w}`));
+        console.info(`   ⚠️  Warnings:`);
+        validation.warnings.forEach(w => console.info(`      - ${w}`));
       }
 
       if (validation.errors.length > 0) {
-        console.log(`   🚨 Errors:`);
-        validation.errors.forEach(e => console.log(`      - ${e}`));
+        console.info(`   🚨 Errors:`);
+        validation.errors.forEach(e => console.info(`      - ${e}`));
       }
     }
   }
@@ -345,8 +345,8 @@ class ConnectionLimitTests {
    * Test environment variable validation
    */
   static async testEnvironmentVariableValidation(): Promise<void> {
-    console.log('\n🌍 ENVIRONMENT VARIABLE VALIDATION TESTS');
-    console.log('='.repeat(50));
+    console.info('\n🌍 ENVIRONMENT VARIABLE VALIDATION TESTS');
+    console.info('='.repeat(50));
 
     // Store original environment
     const originalMaxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
@@ -386,7 +386,7 @@ class ConnectionLimitTests {
     ];
 
     for (const testCase of testCases) {
-      console.log(`\nTesting: ${testCase.desc}`);
+      console.info(`\nTesting: ${testCase.desc}`);
 
       // Set test environment
       Object.assign(process.env, testCase.env);
@@ -428,27 +428,27 @@ class ConnectionLimitTests {
         }
 
         if (validationPassed === testCase.shouldPass) {
-          console.log(`   ✅ ${testCase.desc} - Environment validation correct`);
+          console.info(`   ✅ ${testCase.desc} - Environment validation correct`);
         } else {
-          console.log(`   ❌ ${testCase.desc} - Environment validation incorrect`);
-          console.log(`      Expected: ${testCase.shouldPass ? 'valid' : 'invalid'}`);
-          console.log(`      Got: ${validationPassed ? 'valid' : 'invalid'}`);
+          console.info(`   ❌ ${testCase.desc} - Environment validation incorrect`);
+          console.info(`      Expected: ${testCase.shouldPass ? 'valid' : 'invalid'}`);
+          console.info(`      Got: ${validationPassed ? 'valid' : 'invalid'}`);
         }
 
         if (warnings.length > 0) {
-          console.log(`   ⚠️  Warnings:`);
-          warnings.forEach(w => console.log(`      - ${w}`));
+          console.info(`   ⚠️  Warnings:`);
+          warnings.forEach(w => console.info(`      - ${w}`));
         }
 
         if (errors.length > 0) {
-          console.log(`   🚨 Errors:`);
-          errors.forEach(e => console.log(`      - ${e}`));
+          console.info(`   🚨 Errors:`);
+          errors.forEach(e => console.info(`      - ${e}`));
         }
       } catch (error) {
         if (!testCase.shouldPass) {
-          console.log(`   ✅ ${testCase.desc} - Correctly rejected`);
+          console.info(`   ✅ ${testCase.desc} - Correctly rejected`);
         } else {
-          console.log(`   ❌ ${testCase.desc} - Unexpected error: ${error.message}`);
+          console.info(`   ❌ ${testCase.desc} - Unexpected error: ${error.message}`);
         }
       }
     }
@@ -468,11 +468,11 @@ class IntegrationTests {
    * Test complete system integration with validation
    */
   static async testSystemIntegration(): Promise<void> {
-    console.log('\n🔧 SYSTEM INTEGRATION VALIDATION TESTS');
-    console.log('='.repeat(50));
+    console.info('\n🔧 SYSTEM INTEGRATION VALIDATION TESTS');
+    console.info('='.repeat(50));
 
     // Test valid configuration
-    console.log('\nTesting valid configuration...');
+    console.info('\nTesting valid configuration...');
     try {
       const validConfig = {
         name: 'test-app',
@@ -491,18 +491,18 @@ class IntegrationTests {
       );
 
       if (portValidation.isValid && connectionValidation.isValid) {
-        console.log('   ✅ Valid configuration passes all validations');
+        console.info('   ✅ Valid configuration passes all validations');
       } else {
-        console.log('   ❌ Valid configuration failed validation');
-        console.log(`      Port valid: ${portValidation.isValid}`);
-        console.log(`      Connection valid: ${connectionValidation.isValid}`);
+        console.info('   ❌ Valid configuration failed validation');
+        console.info(`      Port valid: ${portValidation.isValid}`);
+        console.info(`      Connection valid: ${connectionValidation.isValid}`);
       }
     } catch (error) {
-      console.log(`   ❌ Valid configuration test failed: ${error.message}`);
+      console.info(`   ❌ Valid configuration test failed: ${error.message}`);
     }
 
     // Test invalid configuration
-    console.log('\nTesting invalid configuration...');
+    console.info('\nTesting invalid configuration...');
     try {
       const invalidConfig = {
         name: 'test-app',
@@ -521,14 +521,14 @@ class IntegrationTests {
       );
 
       if (!portValidation.isValid && !connectionValidation.isValid) {
-        console.log('   ✅ Invalid configuration correctly rejected');
+        console.info('   ✅ Invalid configuration correctly rejected');
       } else {
-        console.log('   ❌ Invalid configuration was accepted');
-        console.log(`      Port valid: ${portValidation.isValid} (should be false)`);
-        console.log(`      Connection valid: ${connectionValidation.isValid} (should be false)`);
+        console.info('   ❌ Invalid configuration was accepted');
+        console.info(`      Port valid: ${portValidation.isValid} (should be false)`);
+        console.info(`      Connection valid: ${connectionValidation.isValid} (should be false)`);
       }
     } catch (error) {
-      console.log(`   ✅ Invalid configuration correctly rejected: ${error.message}`);
+      console.info(`   ✅ Invalid configuration correctly rejected: ${error.message}`);
     }
   }
 }
@@ -539,9 +539,9 @@ class IntegrationTests {
 
 class ValidationTestRunner {
   static async runAllTests(): Promise<void> {
-    console.log('🧪 PORT AND CONNECTION LIMIT VALIDATION TEST SUITE');
-    console.log('='.repeat(70));
-    console.log('Validating port numbers (1-65,535) and connection limits (1-65,336)\n');
+    console.info('🧪 PORT AND CONNECTION LIMIT VALIDATION TEST SUITE');
+    console.info('='.repeat(70));
+    console.info('Validating port numbers (1-65,535) and connection limits (1-65,336)\n');
 
     try {
       // Run all test suites
@@ -551,27 +551,27 @@ class ValidationTestRunner {
       await ConnectionLimitTests.testEnvironmentVariableValidation();
       await IntegrationTests.testSystemIntegration();
 
-      console.log('\n✅ ALL VALIDATION TESTS COMPLETED!');
-      console.log('\n🎯 Validation Summary:');
-      console.log('   ✅ Port number range validation (1-65,535)');
-      console.log('   ✅ Connection limit validation (1-65,336)');
-      console.log('   ✅ Environment variable validation');
-      console.log('   ✅ Port range validation');
-      console.log('   ✅ System integration validation');
-      console.log('   ✅ Practical range warnings');
-      console.log('   ✅ Error handling and edge cases');
+      console.info('\n✅ ALL VALIDATION TESTS COMPLETED!');
+      console.info('\n🎯 Validation Summary:');
+      console.info('   ✅ Port number range validation (1-65,535)');
+      console.info('   ✅ Connection limit validation (1-65,336)');
+      console.info('   ✅ Environment variable validation');
+      console.info('   ✅ Port range validation');
+      console.info('   ✅ System integration validation');
+      console.info('   ✅ Practical range warnings');
+      console.info('   ✅ Error handling and edge cases');
 
-      console.log('\n📊 Validation Constants:');
-      console.log(
+      console.info('\n📊 Validation Constants:');
+      console.info(
         `   Port Range: ${VALIDATION_CONSTANTS.PORT.MIN}-${VALIDATION_CONSTANTS.PORT.MAX}`
       );
-      console.log(
+      console.info(
         `   User Port Range: ${VALIDATION_CONSTANTS.PORT.USER_MIN}-${VALIDATION_CONSTANTS.PORT.USER_MAX}`
       );
-      console.log(
+      console.info(
         `   Connection Limit Range: ${VALIDATION_CONSTANTS.CONNECTIONS.MIN}-${VALIDATION_CONSTANTS.CONNECTIONS.MAX}`
       );
-      console.log(`   Bun Default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
+      console.info(`   Bun Default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

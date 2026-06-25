@@ -275,7 +275,7 @@ export class CompleteMultiLayerSystem {
 		riskAdjustedReturn: number;
 	}): Promise<void> {
 		// Placeholder - would stream to WebSocket or event bus
-		console.log("📊 Dashboard Update:", data);
+		console.info("📊 Dashboard Update:", data);
 	}
 
 	/**

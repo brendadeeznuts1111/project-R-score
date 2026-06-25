@@ -1,25 +1,25 @@
 #!/usr/bin/env bun
 // tools/overseer-cli.ts — Root project manager for Bun platform projects
 
-import { ensureDirectExecution } from "../lib/shared/tools/entry-guard";
+import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
 ensureDirectExecution();
 
-import { which, spawn } from "bun";
-import fs from "bun:fs";
+import { which, spawn } from 'bun';
+import fs from 'bun:fs';
 
-console.log(`Overseer running from: ${Bun.main}`);
+console.info(`Overseer running from: ${Bun.main}`);
 
 // Discover projects (subdirs with package.json)
-const projects = fs.readdirSync(Bun.cwd).filter(dir =>
-  fs.existsSync(`${Bun.cwd}/${dir}/package.json`)
-);
+const projects = fs
+  .readdirSync(Bun.cwd)
+  .filter(dir => fs.existsSync(`${Bun.cwd}/${dir}/package.json`));
 
 if (projects.length === 0) {
-  console.error("No projects found (subdirectories with package.json required)");
+  console.error('No projects found (subdirectories with package.json required)');
   Bun.exit(1);
 }
 
-console.log("Available projects:");
+console.info('Available projects:');
 console.table(projects.map(p => ({ name: p, path: `${Bun.cwd}/${p}` })));
 
 // Run command in specific project
@@ -35,7 +35,7 @@ function runInProject(projectName: string, cmd: string[]) {
   // Resolve binary with project-specific PATH
   const binPath = which(cmd[0], {
     cwd: projectHome,
-    PATH: `${projectHome}/node_modules/.bin:${process.env.PATH || ""}`
+    PATH: `${projectHome}/node_modules/.bin:${process.env.PATH || ''}`,
   });
 
   if (!binPath) {
@@ -43,15 +43,15 @@ function runInProject(projectName: string, cmd: string[]) {
     return;
   }
 
-  console.log(`[${projectName}] Running: ${cmd.join(" ")}`);
+  console.info(`[${projectName}] Running: ${cmd.join(' ')}`);
   const proc = spawn([binPath, ...cmd.slice(1)], {
     cwd: projectHome,
-    stdio: "inherit",
+    stdio: 'inherit',
     env: {
       ...process.env,
       PROJECT_HOME: projectHome,
-      BUN_PLATFORM_HOME: Bun.cwd
-    }
+      BUN_PLATFORM_HOME: Bun.cwd,
+    },
   });
 
   return proc.exited;
@@ -61,7 +61,7 @@ function runInProject(projectName: string, cmd: string[]) {
 const args = Bun.argv.slice(2);
 
 if (args.length < 2) {
-  console.log(`
+  console.info(`
 Usage:
   bun tools/overseer-cli.ts <project> <command> [args...]
 

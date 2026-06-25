@@ -90,7 +90,7 @@ export async function validateDocPointers(pointers: DocPointer[]): Promise<{
   const valid: DocPointer[] = [];
   const invalid: DocPointer[] = [];
 
-  console.log(`🔍 Validating ${pointers.length} documentation pointers...`);
+  console.info(`🔍 Validating ${pointers.length} documentation pointers...`);
 
   // Check URLs in batches to avoid overwhelming the server
   const batchSize = 10;
@@ -107,14 +107,14 @@ export async function validateDocPointers(pointers: DocPointer[]): Promise<{
 
           if (response.ok) {
             valid.push(pointer);
-            console.log(`✅ ${pointer.url}`);
+            console.info(`✅ ${pointer.url}`);
           } else {
             invalid.push(pointer);
-            console.log(`❌ ${pointer.url} (${response.status})`);
+            console.info(`❌ ${pointer.url} (${response.status})`);
           }
         } catch (error) {
           invalid.push(pointer);
-          console.log(`❌ ${pointer.url} (${error.message})`);
+          console.info(`❌ ${pointer.url} (${error.message})`);
         }
       })
     );
@@ -191,15 +191,15 @@ ${
 if (import.meta.main) {
   const baseUrl = process.argv[2] || BUN_DOCS.BASE;
 
-  console.log('📚 Extracting documentation pointers...');
+  console.info('📚 Extracting documentation pointers...');
   const pointers = await extractDocPointers(baseUrl);
 
-  console.log(`\n🔗 Found ${pointers.length} pointers:`);
-  pointers.forEach(p => console.log(`  ${p.type}: ${p.text} -> ${p.url}`));
+  console.info(`\n🔗 Found ${pointers.length} pointers:`);
+  pointers.forEach(p => console.info(`  ${p.type}: ${p.text} -> ${p.url}`));
 
-  console.log('\n📊 Generating validation report...\n');
+  console.info('\n📊 Generating validation report...\n');
   const report = await generateValidationReport(baseUrl);
-  console.log(report);
+  console.info(report);
 }
 
 /**

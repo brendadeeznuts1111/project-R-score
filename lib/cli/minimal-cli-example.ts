@@ -19,15 +19,15 @@ async function main() {
   await validateOrExit('bun', ['--version']);
 
   // Your CLI logic starts here - guaranteed to be in a valid state
-  console.log('🚀 CLI tool executing in validated environment!');
+  console.info('🚀 CLI tool executing in validated environment!');
 
   // Example: Run bun command safely
   const version = await Bun.$`bun --version`.text();
-  console.log(`✅ Running with Bun ${version.trim()}`);
+  console.info(`✅ Running with Bun ${version.trim()}`);
 
   // Example: Show current environment
-  console.log(`📊 Environment: ${Bun.env.NODE_ENV}`);
-  console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
+  console.info(`📊 Environment: ${Bun.env.NODE_ENV}`);
+  console.info(`🔧 Platform: ${process.platform} ${process.arch}`);
 }
 
 // Handle help flag

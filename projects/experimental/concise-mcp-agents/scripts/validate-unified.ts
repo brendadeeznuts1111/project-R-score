@@ -51,16 +51,16 @@ async function validateUnified(options: { glob?: string; schema?: boolean } = {}
   let valid = 0, errors: string[] = [];
   const startTime = performance.now();
 
-  console.log(`🔍 Validating ${files.length} files with unified schema...\n`);
+  console.info(`🔍 Validating ${files.length} files with unified schema...\n`);
 
   for (const file of files) {
     const content = await Bun.file(file).text();
     const isValid = await validateFile(file, content, options.schema !== false, header, dashboard);
     if (isValid) {
       valid++;
-      console.log(`🟢 ${file.split('/').pop()}: Validated`);
+      console.info(`🟢 ${file.split('/').pop()}: Validated`);
     } else {
-      console.log(`❌ ${file.split('/').pop()}: Failed`);
+      console.info(`❌ ${file.split('/').pop()}: Failed`);
     }
   }
 
@@ -72,7 +72,7 @@ async function validateUnified(options: { glob?: string; schema?: boolean } = {}
     process.exit(1);
   }
 
-  console.log(`\n🎉 All ${valid} files valid & unified! (${duration.toFixed(1)}ms)`);
+  console.info(`\n🎉 All ${valid} files valid & unified! (${duration.toFixed(1)}ms)`);
   return { valid, total: files.length, duration };
 }
 

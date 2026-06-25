@@ -85,7 +85,6 @@ console.log(`  Account: ${sanitizeEnvVar(process.env.R2_ACCOUNT_ID, 'not set', t
 
 ### **Server Files:**
 - ✅ `lib/bun-mcp-server.ts` - MCP server host validation
-- ✅ `lib/security/mcp-server.ts` - Security MCP server host validation
 - ✅ `tools/server.ts` - Main server host validation
 - ✅ `server/content-type-server.ts` - Port and host validation
 - ✅ `staging-test-server.ts` - Port and host validation

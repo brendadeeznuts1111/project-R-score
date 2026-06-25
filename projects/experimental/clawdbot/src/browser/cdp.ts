@@ -263,7 +263,9 @@ export async function snapshotDom(opts: {
       const role = el.getAttribute && el.getAttribute("role") ? String(el.getAttribute("role")) : undefined;
       const name = el.getAttribute && el.getAttribute("aria-label") ? String(el.getAttribute("aria-label")) : undefined;
       let text = "";
-      try { text = String(el.innerText || "").trim(); } catch {}
+      try { text = String(el.innerText || "").trim(); } catch {
+    console.error('Unhandled error:', error);
+  }
       if (maxText && text.length > maxText) text = text.slice(0, maxText) + "…";
       const href = (el.href !== undefined && el.href !== null) ? String(el.href) : undefined;
       const type = (el.type !== undefined && el.type !== null) ? String(el.type) : undefined;
@@ -382,12 +384,16 @@ export async function querySelector(opts: {
       const id = el.id ? String(el.id) : undefined;
       const className = el.className ? String(el.className).slice(0, 300) : undefined;
       let text = "";
-      try { text = String(el.innerText || "").trim(); } catch {}
+      try { text = String(el.innerText || "").trim(); } catch {
+    console.error('Unhandled error:', error);
+  }
       if (maxText && text.length > maxText) text = text.slice(0, maxText) + "…";
       const value = (el.value !== undefined && el.value !== null) ? String(el.value).slice(0, 500) : undefined;
       const href = (el.href !== undefined && el.href !== null) ? String(el.href) : undefined;
       let outerHTML = "";
-      try { outerHTML = String(el.outerHTML || ""); } catch {}
+      try { outerHTML = String(el.outerHTML || ""); } catch {
+    console.error('Unhandled error:', error);
+  }
       if (maxHtml && outerHTML.length > maxHtml) outerHTML = outerHTML.slice(0, maxHtml) + "…";
       return {
         index: i + 1,

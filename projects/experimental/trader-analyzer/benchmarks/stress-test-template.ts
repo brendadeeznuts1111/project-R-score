@@ -153,11 +153,11 @@ export async function runStressTest(
 			// Profile first iteration
 			if (profileType === "cpu" || profileType === "both") {
 				// CPU profiling would be enabled via --cpu-prof flag
-				console.log(`📊 CPU profiling enabled for iteration ${i + 1}`);
+				console.info(`📊 CPU profiling enabled for iteration ${i + 1}`);
 			}
 			if (profileType === "heap" || profileType === "both") {
 				// Heap profiling would be enabled via --heap-prof flag
-				console.log(`📊 Heap profiling enabled for iteration ${i + 1}`);
+				console.info(`📊 Heap profiling enabled for iteration ${i + 1}`);
 			}
 		}
 

@@ -12,7 +12,7 @@ async function runBuild() {
   const config = JSON.parse(readFileSync("empire-pro.config.json", "utf-8"));
   const activeFeatures = config.empirePro.patternSystem.features || [];
 
-  console.log(`🚀 Building Empire Pro [Features: ${activeFeatures.join(", ")}]...`);
+  console.info(`🚀 Building Empire Pro [Features: ${activeFeatures.join(", ")}]...`);
 
   const isFreeTier = activeFeatures.includes("FREE");
 
@@ -40,9 +40,9 @@ async function runBuild() {
   });
 
   if (result.success) {
-    console.log("✅ Build successful.");
+    console.info("✅ Build successful.");
     for (const output of result.outputs) {
-       console.log(`   📦 ${output.path} (${(output.size / 1024).toFixed(2)} KB)`);
+       console.info(`   📦 ${output.path} (${(output.size / 1024).toFixed(2)} KB)`);
     }
   } else {
     console.error("❌ Build failed:", result.logs);

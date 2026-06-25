@@ -51,28 +51,28 @@ class CoveragePatternsDemonstrator {
     ];
 
     async demonstrateCoveragePatterns() {
-        console.log('📊 Bun Coverage Patterns Demonstration\n');
+        console.info('📊 Bun Coverage Patterns Demonstration\n');
 
-        console.log('🎯 Coverage Pattern Examples:');
+        console.info('🎯 Coverage Pattern Examples:');
 
         this.demos.forEach((demo, index) => {
-            console.log(`\n${index + 1}. ${demo.pattern}`);
-            console.log(`   Description: ${demo.description}`);
-            console.log(`   Use Case: ${demo.useCase}`);
-            console.log(`   Command: ${demo.command}`);
-            console.log(`   Benefit: ${demo.benefit}`);
+            console.info(`\n${index + 1}. ${demo.pattern}`);
+            console.info(`   Description: ${demo.description}`);
+            console.info(`   Use Case: ${demo.useCase}`);
+            console.info(`   Command: ${demo.command}`);
+            console.info(`   Benefit: ${demo.benefit}`);
         });
 
-        console.log('\n✅ Demonstrated Patterns:');
-        console.log('   ✅ File glob pattern: src/components/*.test.ts');
-        console.log('   ✅ Name pattern matching: --test-name-pattern="API"');
-        console.log('   ✅ Directory-specific coverage');
-        console.log('   ✅ Multiple pattern combinations');
-        console.log('   ✅ Exclusion patterns for optimization');
+        console.info('\n✅ Demonstrated Patterns:');
+        console.info('   ✅ File glob pattern: src/components/*.test.ts');
+        console.info('   ✅ Name pattern matching: --test-name-pattern="API"');
+        console.info('   ✅ Directory-specific coverage');
+        console.info('   ✅ Multiple pattern combinations');
+        console.info('   ✅ Exclusion patterns for optimization');
     }
 
     showPracticalExamples() {
-        console.log('\n💡 Practical Coverage Examples:');
+        console.info('\n💡 Practical Coverage Examples:');
 
         const examples = [
             {
@@ -105,16 +105,16 @@ class CoveragePatternsDemonstrator {
         ];
 
         examples.forEach(({ scenario, commands, benefits }) => {
-            console.log(`\n${scenario}:`);
+            console.info(`\n${scenario}:`);
             commands.forEach((command, index) => {
-                console.log(`   ${index + 1}. ${command}`);
+                console.info(`   ${index + 1}. ${command}`);
             });
-            console.log(`   Benefits: ${benefits.join(', ')}`);
+            console.info(`   Benefits: ${benefits.join(', ')}`);
         });
     }
 
     showCoverageOptimization() {
-        console.log('\n🚀 Coverage Optimization Strategies:');
+        console.info('\n🚀 Coverage Optimization Strategies:');
 
         const strategies = [
             {
@@ -144,15 +144,15 @@ class CoveragePatternsDemonstrator {
         ];
 
         strategies.forEach(({ strategy, description, example, benefit }) => {
-            console.log(`\n${strategy}:`);
-            console.log(`   Description: ${description}`);
-            console.log(`   Example: ${example}`);
-            console.log(`   Benefit: ${benefit}`);
+            console.info(`\n${strategy}:`);
+            console.info(`   Description: ${description}`);
+            console.info(`   Example: ${example}`);
+            console.info(`   Benefit: ${benefit}`);
         });
     }
 
     showAdvancedPatterns() {
-        console.log('\n🔧 Advanced Coverage Patterns:');
+        console.info('\n🔧 Advanced Coverage Patterns:');
 
         const patterns = [
             {
@@ -187,9 +187,9 @@ bun test --coverage packages/shared/src/ --test-name-pattern="utility"`,
         ];
 
         patterns.forEach(({ pattern, example, useCase }) => {
-            console.log(`\n${pattern}:`);
-            console.log(`   Example: ${example.substring(0, 60)}...`);
-            console.log(`   Use Case: ${useCase}`);
+            console.info(`\n${pattern}:`);
+            console.info(`   Example: ${example.substring(0, 60)}...`);
+            console.info(`   Use Case: ${useCase}`);
         });
     }
 }
@@ -237,31 +237,31 @@ export const CoveragePatternTemplates = {
 async function runCoveragePatternsDemo() {
     const demonstrator = new CoveragePatternsDemonstrator();
 
-    console.log('🎯 Coverage Patterns Complete Demonstration\n');
+    console.info('🎯 Coverage Patterns Complete Demonstration\n');
 
     await demonstrator.demonstrateCoveragePatterns();
     demonstrator.showPracticalExamples();
     demonstrator.showCoverageOptimization();
     demonstrator.showAdvancedPatterns();
 
-    console.log('\n📋 Coverage Pattern Templates:');
+    console.info('\n📋 Coverage Pattern Templates:');
     Object.entries(CoveragePatternTemplates).forEach(([name, template]) => {
-        console.log(`\n${name.toUpperCase()}:`);
-        console.log(`   Description: ${template.description}`);
-        console.log(`   Patterns:`);
+        console.info(`\n${name.toUpperCase()}:`);
+        console.info(`   Description: ${template.description}`);
+        console.info(`   Patterns:`);
         template.patterns.forEach((pattern, index) => {
-            console.log(`   ${index + 1}. ${pattern}`);
+            console.info(`   ${index + 1}. ${pattern}`);
         });
     });
 
-    console.log('\n✅ Coverage Patterns Summary:');
-    console.log('   File glob patterns for focused testing');
-    console.log('   Name pattern matching for feature-specific coverage');
-    console.log('   Directory-specific coverage for module isolation');
-    console.log('   Multiple pattern combinations for complex projects');
-    console.log('   Exclusion patterns for CI/CD optimization');
-    console.log('   Environment-specific coverage strategies');
-    console.log('   Monorepo-friendly coverage patterns');
+    console.info('\n✅ Coverage Patterns Summary:');
+    console.info('   File glob patterns for focused testing');
+    console.info('   Name pattern matching for feature-specific coverage');
+    console.info('   Directory-specific coverage for module isolation');
+    console.info('   Multiple pattern combinations for complex projects');
+    console.info('   Exclusion patterns for CI/CD optimization');
+    console.info('   Environment-specific coverage strategies');
+    console.info('   Monorepo-friendly coverage patterns');
 }
 
 // Export for use

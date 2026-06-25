@@ -1,6 +1,7 @@
 // lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { syncUserId } from './env';
 
 export interface UserPreferences {
   userId: string;
@@ -61,8 +62,8 @@ export class DocumentationSync {
       accountId?: string;
     }
   ) {
-    this.r2Bucket = config?.bucketName || process.env.R2_DOCS_BUCKET || 'docs-sync';
-    const accountId = config?.accountId || process.env.R2_ACCOUNT_ID || '';
+    this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
+    const accountId = config?.accountId || Bun.env.R2_ACCOUNT_ID || '';
     this.baseUrl = `https://${accountId}.r2.cloudflarestorage.com`;
     this.deviceId = this.getDeviceId();
   }
@@ -79,8 +80,8 @@ export class DocumentationSync {
    * Get auth header for R2 requests
    */
   private getAuthHeader(): string {
-    const accessKey = process.env.R2_ACCESS_KEY_ID || '';
-    const secretKey = process.env.R2_SECRET_ACCESS_KEY || '';
+    const accessKey = Bun.env.R2_ACCESS_KEY_ID || '';
+    const secretKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
     return `Basic ${btoa(`${accessKey}:${secretKey}`)}`;
   }
 
@@ -112,7 +113,7 @@ export class DocumentationSync {
       });
 
       if (response.ok) {
-        console.log(styled(`✅ Synced to cloud`, 'success'));
+        console.info(styled(`✅ Synced to cloud`, 'success'));
         return true;
       }
 
@@ -137,7 +138,7 @@ export class DocumentationSync {
       });
 
       if (response.status === 404) {
-        console.log(styled(`ℹ️ No sync data found`, 'muted'));
+        console.info(styled(`ℹ️ No sync data found`, 'muted'));
         return null;
       }
 
@@ -146,7 +147,7 @@ export class DocumentationSync {
       }
 
       const data: SyncData = await response.json();
-      console.log(styled(`✅ Synced from cloud (${data.deviceId})`, 'success'));
+      console.info(styled(`✅ Synced from cloud (${data.deviceId})`, 'success'));
       return data;
     } catch (error) {
       console.error(styled(`❌ Sync failed: ${error.message}`, 'error'));
@@ -385,13 +386,13 @@ export class DocumentationSync {
 
 // CLI interface
 if (import.meta.main) {
-  const userId = process.env.USER_ID || 'anonymous';
+  const userId = syncUserId();
   const sync = new DocumentationSync(userId);
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('🔄 Documentation Sync', 'accent'));
-  console.log(styled('=====================', 'accent'));
+  console.info(styled('🔄 Documentation Sync', 'accent'));
+  console.info(styled('=====================', 'accent'));
 
   switch (command) {
     case 'sync': {
@@ -410,7 +411,7 @@ if (import.meta.main) {
       };
 
       const success = await sync.syncToCloud(data);
-      console.log(
+      console.info(
         styled(
           `\n${success ? '✅' : '❌'} Sync ${success ? 'successful' : 'failed'}`,
           success ? 'success' : 'error'
@@ -421,10 +422,10 @@ if (import.meta.main) {
 
     case 'status': {
       const status = await sync.getSyncStatus();
-      console.log(styled('\n📊 Sync Status:', 'info'));
-      console.log(styled(`  Last synced: ${status.lastSynced || 'Never'}`, 'muted'));
-      console.log(styled(`  Devices: ${status.deviceCount}`, 'muted'));
-      console.log(styled(`  Packages: ${status.totalPackages}`, 'muted'));
+      console.info(styled('\n📊 Sync Status:', 'info'));
+      console.info(styled(`  Last synced: ${status.lastSynced || 'Never'}`, 'muted'));
+      console.info(styled(`  Devices: ${status.deviceCount}`, 'muted'));
+      console.info(styled(`  Packages: ${status.totalPackages}`, 'muted'));
       break;
     }
 
@@ -438,22 +439,22 @@ if (import.meta.main) {
       }
 
       const docSet = await sync.createDocSet(name, packages);
-      console.log(styled(`\n✅ Created doc set: ${docSet.name}`, 'success'));
-      console.log(styled(`   ID: ${docSet.id}`, 'muted'));
-      console.log(styled(`   Packages: ${packages.length}`, 'muted'));
+      console.info(styled(`\n✅ Created doc set: ${docSet.name}`, 'success'));
+      console.info(styled(`   ID: ${docSet.id}`, 'muted'));
+      console.info(styled(`   Packages: ${packages.length}`, 'muted'));
       break;
     }
 
     case 'docset:list': {
       const docSets = await sync.getDocSets();
-      console.log(styled(`\n📚 Documentation Sets (${docSets.length}):`, 'info'));
+      console.info(styled(`\n📚 Documentation Sets (${docSets.length}):`, 'info'));
 
       for (const ds of docSets) {
         const sharedBadge = ds.shared ? styled(' [shared]', 'success') : '';
-        console.log(styled(`\n  📁 ${ds.name}${sharedBadge}`, 'muted'));
-        console.log(styled(`     Packages: ${ds.packages.join(', ')}`, 'muted'));
+        console.info(styled(`\n  📁 ${ds.name}${sharedBadge}`, 'muted'));
+        console.info(styled(`     Packages: ${ds.packages.join(', ')}`, 'muted'));
         if (ds.shareUrl) {
-          console.log(styled(`     URL: ${ds.shareUrl}`, 'info'));
+          console.info(styled(`     URL: ${ds.shareUrl}`, 'info'));
         }
       }
       break;
@@ -468,8 +469,8 @@ if (import.meta.main) {
 
       const shareUrl = await sync.shareDocSet(docSetId);
       if (shareUrl) {
-        console.log(styled(`\n🔗 Share URL:`, 'success'));
-        console.log(styled(`   ${shareUrl}`, 'info'));
+        console.info(styled(`\n🔗 Share URL:`, 'success'));
+        console.info(styled(`   ${shareUrl}`, 'info'));
       } else {
         console.error(styled('❌ Failed to create share', 'error'));
       }
@@ -477,11 +478,11 @@ if (import.meta.main) {
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  sync                    Sync to cloud', 'muted'));
-      console.log(styled('  status                  Show sync status', 'muted'));
-      console.log(styled('  docset:create <n> <pkgs> Create doc set', 'muted'));
-      console.log(styled('  docset:list             List doc sets', 'muted'));
-      console.log(styled('  docset:share <id>       Share doc set', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  sync                    Sync to cloud', 'muted'));
+      console.info(styled('  status                  Show sync status', 'muted'));
+      console.info(styled('  docset:create <n> <pkgs> Create doc set', 'muted'));
+      console.info(styled('  docset:list             List doc sets', 'muted'));
+      console.info(styled('  docset:share <id>       Share doc set', 'muted'));
   }
 }

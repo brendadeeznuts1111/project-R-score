@@ -101,7 +101,7 @@ export class ArbitrageAlertServer {
 			});
 		}, 30000);
 
-		console.log(`
+		console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  🎯 NEXUS Arbitrage Alert Server                          ║
 ║  WebSocket: ws://localhost:${this.port}                            ║
@@ -124,7 +124,7 @@ export class ArbitrageAlertServer {
 		}
 
 		this.clients.clear();
-		console.log("Arbitrage Alert Server: Stopped");
+		console.info("Arbitrage Alert Server: Stopped");
 	}
 
 	/**
@@ -189,7 +189,7 @@ export class ArbitrageAlertServer {
 			},
 		});
 
-		console.log(`Alert Server: Client connected (${id})`);
+		console.info(`Alert Server: Client connected (${id})`);
 	}
 
 	/**
@@ -239,14 +239,14 @@ export class ArbitrageAlertServer {
 			const nativeSubscriptions = (
 				ws as unknown as { subscriptions: Set<string> }
 			).subscriptions;
-			console.log(
+			console.info(
 				`[Arbitrage Alerts] Client ${id} closing. Active subscriptions:`,
 				Array.from(nativeSubscriptions || []),
 			);
 		}
 
 		this.clients.delete(id);
-		console.log(`Alert Server: Client disconnected (${id})`);
+		console.info(`Alert Server: Client disconnected (${id})`);
 	}
 
 	/**

@@ -30,7 +30,7 @@ export function inspect(value: unknown, options: InspectOptions = {}): string {
  * Log with Bun.inspect formatting
  */
 export function log(label: string, value: unknown, options?: InspectOptions): void {
-  console.log(`\x1b[36m[${label}]\x1b[0m`, inspect(value, options));
+  console.info(`\x1b[36m[${label}]\x1b[0m`, inspect(value, options));
 }
 
 /**
@@ -279,7 +279,7 @@ export function printTable<T extends Record<string, unknown>>(
   data: T[],
   columns?: TableColumn<T>[]
 ): void {
-  console.log(table(data, columns));
+  console.info(table(data, columns));
 }
 
 /**
@@ -316,7 +316,7 @@ export const inspectCustom = Bun.inspect.custom;
  *   { name: 'BTC', price: 97500, change: 2.5 },
  *   { name: 'ETH', price: 3400, change: -1.2 },
  * ];
- * console.log(inspectTable(data));
+ * console.info(inspectTable(data));
  * // ┌───┬─────┬───────┬────────┐
  * // │   │ name│ price │ change │
  * // ├───┼─────┼───────┼────────┤
@@ -325,7 +325,7 @@ export const inspectCustom = Bun.inspect.custom;
  * // └───┴─────┴───────┴────────┘
  *
  * // Only specific columns
- * console.log(inspectTable(data, ['name', 'price']));
+ * console.info(inspectTable(data, ['name', 'price']));
  * ```
  */
 export function inspectTable<T extends Record<string, unknown>>(
@@ -354,7 +354,7 @@ export function printInspectTable<T extends Record<string, unknown>>(
   properties?: (keyof T)[],
   options: InspectTableOptions = {}
 ): void {
-  console.log(inspectTable(data, properties, options));
+  console.info(inspectTable(data, properties, options));
 }
 
 /**

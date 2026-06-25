@@ -271,7 +271,7 @@ export class AccessControlSystem {
     };
 
     // In real implementation, this would write to immutable audit log
-    console.log(`[AUDIT] ${JSON.stringify(logEntry)}`);
+    console.info(`[AUDIT] ${JSON.stringify(logEntry)}`);
   }
 }
 
@@ -282,15 +282,15 @@ if (import.meta.main) {
 
   switch (command) {
     case 'users:list':
-      console.log('Users:');
+      console.info('Users:');
       Array.from(acs['users'].values()).forEach(user => {
-        console.log(`  ${user.username} (${user.role}) - ${user.id}`);
+        console.info(`  ${user.username} (${user.role}) - ${user.id}`);
         if (user.ipWhitelist) {
-          console.log(`    IP Whitelist: ${user.ipWhitelist.join(', ')}`);
+          console.info(`    IP Whitelist: ${user.ipWhitelist.join(', ')}`);
         }
-        console.log(`    Last Active: ${user.lastActive}`);
-        console.log(`    MFA: ${user.mfaEnabled ? 'Enabled' : 'Disabled'}`);
-        console.log('');
+        console.info(`    Last Active: ${user.lastActive}`);
+        console.info(`    MFA: ${user.mfaEnabled ? 'Enabled' : 'Disabled'}`);
+        console.info('');
       });
       break;
 
@@ -298,32 +298,32 @@ if (import.meta.main) {
       const username = process.argv[3];
       const role = process.argv[4] as UserRole;
       if (!username || !role) {
-        console.log('Usage: bun access-control.ts user:create <username> <role>');
+        console.info('Usage: bun access-control.ts user:create <username> <role>');
         process.exit(1);
       }
       const user = acs.createUser(username, role);
-      console.log(`Created user: ${user.username} (${user.role})`);
+      console.info(`Created user: ${user.username} (${user.role})`);
       break;
 
     case 'role:switch':
       const targetUser = process.argv[3];
       const newRole = process.argv[4] as UserRole;
       if (!targetUser || !newRole) {
-        console.log('Usage: bun access-control.ts role:switch <username> <role>');
-        console.log('Roles: ADMIN, AGENT, OPS, GUEST');
+        console.info('Usage: bun access-control.ts role:switch <username> <role>');
+        console.info('Roles: ADMIN, AGENT, OPS, GUEST');
         process.exit(1);
       }
       const userToUpdate = acs.getUserByUsername(targetUser);
       if (!userToUpdate) {
-        console.log(`User ${targetUser} not found`);
+        console.info(`User ${targetUser} not found`);
         process.exit(1);
       }
       const updated = acs.updateUserRole(userToUpdate.id, newRole);
       if (updated) {
-        console.log(`✅ Role updated: ${targetUser} → ${newRole}`);
+        console.info(`✅ Role updated: ${targetUser} → ${newRole}`);
         acs.logAccess(userToUpdate.id, 'role_change', 'user_management', true);
       } else {
-        console.log(`❌ Failed to update role for ${targetUser}`);
+        console.info(`❌ Failed to update role for ${targetUser}`);
       }
       break;
 
@@ -331,21 +331,21 @@ if (import.meta.main) {
       const targetUsername = process.argv[3];
       const ip = process.argv[4];
       if (!targetUsername || !ip) {
-        console.log('Usage: bun access-control.ts ip:add <username> <ip>');
+        console.info('Usage: bun access-control.ts ip:add <username> <ip>');
         process.exit(1);
       }
       const userForIP = acs.getUserByUsername(targetUsername);
       if (!userForIP) {
-        console.log(`User ${targetUsername} not found`);
+        console.info(`User ${targetUsername} not found`);
         process.exit(1);
       }
       userForIP.ipWhitelist = userForIP.ipWhitelist || [];
       if (!userForIP.ipWhitelist.includes(ip)) {
         userForIP.ipWhitelist.push(ip);
         acs['saveUsers']();
-        console.log(`✅ Added IP ${ip} to whitelist for ${targetUsername}`);
+        console.info(`✅ Added IP ${ip} to whitelist for ${targetUsername}`);
       } else {
-        console.log(`ℹ️  IP ${ip} already in whitelist for ${targetUsername}`);
+        console.info(`ℹ️  IP ${ip} already in whitelist for ${targetUsername}`);
       }
       break;
 
@@ -355,46 +355,46 @@ if (import.meta.main) {
       const action = process.argv[5];
       const clientIP = process.argv[6];
       if (!userId || !resource || !action) {
-        console.log('Usage: bun access-control.ts check <userId> <resource> <action> [clientIP]');
+        console.info('Usage: bun access-control.ts check <userId> <resource> <action> [clientIP]');
         process.exit(1);
       }
       const result = acs.checkPermission(userId, resource, action, clientIP);
-      console.log(`Access ${result.allowed ? 'GRANTED' : 'DENIED'}: ${result.reason || 'OK'}`);
+      console.info(`Access ${result.allowed ? 'GRANTED' : 'DENIED'}: ${result.reason || 'OK'}`);
       acs.logAccess(userId, action, resource, result.allowed, clientIP);
       break;
 
     case 'audit':
       const since = process.argv[3] || '1d';
-      console.log(`Access audit logs (last ${since}):`);
-      console.log('Recent audit entries would be shown here...');
+      console.info(`Access audit logs (last ${since}):`);
+      console.info('Recent audit entries would be shown here...');
       // In real implementation, read from audit logs
       break;
 
     case 'commands':
       const cmdUser = process.argv[3];
       if (!cmdUser) {
-        console.log('Usage: bun access-control.ts commands <username>');
+        console.info('Usage: bun access-control.ts commands <username>');
         process.exit(1);
       }
       const cmdUserObj = acs.getUserByUsername(cmdUser);
       if (!cmdUserObj) {
-        console.log(`User ${cmdUser} not found`);
+        console.info(`User ${cmdUser} not found`);
         process.exit(1);
       }
       const allowedCommands = acs.getAllowedCommands(cmdUserObj.id);
-      console.log(`Allowed commands for ${cmdUser} (${cmdUserObj.role}):`);
-      allowedCommands.forEach(cmd => console.log(`  ${cmd}`));
+      console.info(`Allowed commands for ${cmdUser} (${cmdUserObj.role}):`);
+      allowedCommands.forEach(cmd => console.info(`  ${cmd}`));
       break;
 
     default:
-      console.log('Available commands:');
-      console.log('  users:list                    - List all users');
-      console.log('  user:create <username> <role> - Create new user');
-      console.log('  role:switch <username> <role> - Change user role');
-      console.log('  ip:add <username> <ip>        - Add IP to user whitelist');
-      console.log('  check <userId> <resource> <action> [ip] - Check permissions');
-      console.log('  commands <username>           - Show allowed commands');
-      console.log('  audit [since]                 - Show audit logs');
+      console.info('Available commands:');
+      console.info('  users:list                    - List all users');
+      console.info('  user:create <username> <role> - Create new user');
+      console.info('  role:switch <username> <role> - Change user role');
+      console.info('  ip:add <username> <ip>        - Add IP to user whitelist');
+      console.info('  check <userId> <resource> <action> [ip] - Check permissions');
+      console.info('  commands <username>           - Show allowed commands');
+      console.info('  audit [since]                 - Show audit logs');
   }
 }
 

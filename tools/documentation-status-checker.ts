@@ -34,37 +34,43 @@ program
 const options = program.opts();
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -75,8 +81,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -85,7 +91,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -112,7 +118,9 @@ async function checkConstantsLoading() {
           const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
           const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
 
-          recordTest('cli-constants-import', true,
+          recordTest(
+            'cli-constants-import',
+            true,
             `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
             { categories, urlGroups: urls, exampleGroups: examples }
           );
@@ -124,10 +132,14 @@ async function checkConstantsLoading() {
 
           return true;
         } catch (error) {
-          recordTest('cli-constants-import', false, `Failed to import CLI constants: ${error.message}`);
+          recordTest(
+            'cli-constants-import',
+            false,
+            `Failed to import CLI constants: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'Utils Constants Import',
@@ -138,7 +150,9 @@ async function checkConstantsLoading() {
           const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
           const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
 
-          recordTest('utils-constants-import', true,
+          recordTest(
+            'utils-constants-import',
+            true,
             `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
             { categories, urlGroups: urls, exampleGroups: examples }
           );
@@ -150,10 +164,14 @@ async function checkConstantsLoading() {
 
           return true;
         } catch (error) {
-          recordTest('utils-constants-import', false, `Failed to import Utils constants: ${error.message}`);
+          recordTest(
+            'utils-constants-import',
+            false,
+            `Failed to import Utils constants: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'Constants Data Integrity',
@@ -187,18 +205,24 @@ async function checkConstantsLoading() {
           const totalURLs = cliURLCount + utilsURLCount;
           const totalCategories = cliCategories.length + utilsCategories.length;
 
-          recordTest('constants-data-integrity', true,
+          recordTest(
+            'constants-data-integrity',
+            true,
             `Data integrity verified: ${totalCategories} categories, ${totalURLs} total URLs`,
             { totalCategories, totalURLs, cliURLCount, utilsURLCount }
           );
 
           return true;
         } catch (error) {
-          recordTest('constants-data-integrity', false, `Constants data integrity check failed: ${error.message}`);
+          recordTest(
+            'constants-data-integrity',
+            false,
+            `Constants data integrity check failed: ${error.message}`
+          );
           return false;
         }
-      }
-    }
+      },
+    },
   ];
 
   for (const test of tests) {
@@ -222,13 +246,21 @@ async function checkImportFunctionality() {
       test: async () => {
         try {
           const docs = await import('./lib/documentation');
-          recordTest('documentation-module-import', true, 'Documentation module imported successfully');
+          recordTest(
+            'documentation-module-import',
+            true,
+            'Documentation module imported successfully'
+          );
           return true;
         } catch (error) {
-          recordTest('documentation-module-import', false, `Documentation module import failed: ${error.message}`);
+          recordTest(
+            'documentation-module-import',
+            false,
+            `Documentation module import failed: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'Core Documentation Import',
@@ -238,10 +270,14 @@ async function checkImportFunctionality() {
           recordTest('core-documentation-import', true, 'Core documentation imported successfully');
           return true;
         } catch (error) {
-          recordTest('core-documentation-import', false, `Core documentation import failed: ${error.message}`);
+          recordTest(
+            'core-documentation-import',
+            false,
+            `Core documentation import failed: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'Validation Module Import',
@@ -251,11 +287,15 @@ async function checkImportFunctionality() {
           recordTest('validation-module-import', true, 'Validation module imported successfully');
           return true;
         } catch (error) {
-          recordTest('validation-module-import', false, `Validation module import failed: ${error.message}`);
+          recordTest(
+            'validation-module-import',
+            false,
+            `Validation module import failed: ${error.message}`
+          );
           return false;
         }
-      }
-    }
+      },
+    },
   ];
 
   for (const test of tests) {
@@ -316,17 +356,25 @@ async function checkURLValidation() {
           });
 
           const passed = invalidURLs === 0;
-          recordTest('url-structure-validation', passed,
-            passed ? `All ${validURLs} URLs have valid structure` : `${invalidURLs} of ${validURLs + invalidURLs} URLs have invalid structure`,
+          recordTest(
+            'url-structure-validation',
+            passed,
+            passed
+              ? `All ${validURLs} URLs have valid structure`
+              : `${invalidURLs} of ${validURLs + invalidURLs} URLs have invalid structure`,
             { validURLs, invalidURLs, invalidList }
           );
 
           return passed;
         } catch (error) {
-          recordTest('url-structure-validation', false, `URL structure validation failed: ${error.message}`);
+          recordTest(
+            'url-structure-validation',
+            false,
+            `URL structure validation failed: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'URL Accessibility Check',
@@ -340,7 +388,7 @@ async function checkURLValidation() {
           const testURLs = [
             'https://bun.sh/docs/cli',
             'https://bun.sh/docs/api/utils',
-            'https://github.com/oven-sh/bun'
+            'https://github.com/oven-sh/bun',
           ];
 
           let accessibleURLs = 0;
@@ -357,17 +405,23 @@ async function checkURLValidation() {
           }
 
           const passed = accessibleURLs === testURLs.length;
-          recordTest('url-accessibility-check', passed,
+          recordTest(
+            'url-accessibility-check',
+            passed,
             `${accessibleURLs} of ${testURLs.length} URLs are accessible`,
             { results, accessibleURLs, totalURLs: testURLs.length }
           );
 
           return passed;
         } catch (error) {
-          recordTest('url-accessibility-check', false, `URL accessibility check failed: ${error.message}`);
+          recordTest(
+            'url-accessibility-check',
+            false,
+            `URL accessibility check failed: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'CLI Command Validation',
@@ -380,7 +434,7 @@ async function checkURLValidation() {
             'bun build ./src/index.ts',
             'bun install',
             'bun add lodash',
-            'invalid-command'
+            'invalid-command',
           ];
 
           let validCommands = 0;
@@ -388,8 +442,19 @@ async function checkURLValidation() {
           const results: Record<string, boolean> = {};
 
           for (const cmd of testCommands) {
-            const isValid = cmd.startsWith('bun') &&
-                           ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(cmd.split(' ')[1]);
+            const isValid =
+              cmd.startsWith('bun') &&
+              [
+                'run',
+                'test',
+                'build',
+                'install',
+                'add',
+                'remove',
+                'x',
+                'create',
+                'upgrade',
+              ].includes(cmd.split(' ')[1]);
             results[cmd] = isValid;
             if (isValid) {
               validCommands++;
@@ -400,18 +465,24 @@ async function checkURLValidation() {
 
           // Should have 5 valid, 1 invalid
           const passed = validCommands === 5 && invalidCommands === 1;
-          recordTest('cli-command-validation', passed,
+          recordTest(
+            'cli-command-validation',
+            passed,
             `${validCommands} valid, ${invalidCommands} invalid commands detected`,
             { results, validCommands, invalidCommands }
           );
 
           return passed;
         } catch (error) {
-          recordTest('cli-command-validation', false, `CLI command validation failed: ${error.message}`);
+          recordTest(
+            'cli-command-validation',
+            false,
+            `CLI command validation failed: ${error.message}`
+          );
           return false;
         }
-      }
-    }
+      },
+    },
   ];
 
   for (const test of tests) {
@@ -444,10 +515,14 @@ async function checkErrorHandling() {
             return true;
           }
         } catch (error) {
-          recordTest('import-error-handling', false, `Import error handling test failed: ${error.message}`);
+          recordTest(
+            'import-error-handling',
+            false,
+            `Import error handling test failed: ${error.message}`
+          );
           return false;
         }
-      }
+      },
     },
     {
       name: 'Validation Error Handling',
@@ -465,11 +540,15 @@ async function checkErrorHandling() {
             return false;
           }
         } catch (error) {
-          recordTest('validation-error-handling', false, `Validation error handling test failed: ${error.message}`);
+          recordTest(
+            'validation-error-handling',
+            false,
+            `Validation error handling test failed: ${error.message}`
+          );
           return false;
         }
-      }
-    }
+      },
+    },
   ];
 
   for (const test of tests) {
@@ -485,8 +564,8 @@ async function checkErrorHandling() {
 
 // Main check function
 async function runStatusCheck() {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -512,11 +591,11 @@ async function runStatusCheck() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     // Output JSON if requested
     if (options.json) {
@@ -525,13 +604,12 @@ async function runStatusCheck() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error) {
     log.error(`Status check failed: ${error.message}`);
     if (options.verbose) {
@@ -542,12 +620,12 @@ async function runStatusCheck() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

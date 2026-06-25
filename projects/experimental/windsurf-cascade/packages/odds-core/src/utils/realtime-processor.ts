@@ -56,7 +56,7 @@ export class RealtimeMetadataProcessor extends EventEmitter {
     this.startMetricsCollection();
     
     this.emit('processorStarted', { timestamp: Date.now() });
-    console.log('🚀 Real-time metadata processor started');
+    console.info('🚀 Real-time metadata processor started');
   }
 
   /**
@@ -75,7 +75,7 @@ export class RealtimeMetadataProcessor extends EventEmitter {
     }
 
     this.emit('processorStopped', { timestamp: Date.now() });
-    console.log('🛑 Real-time metadata processor stopped');
+    console.info('🛑 Real-time metadata processor stopped');
   }
 
   /**

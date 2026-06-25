@@ -107,43 +107,43 @@ function checkForBunLink(packages: PackageInfo[]): { errors: string[]; warnings:
  * Main validation function
  */
 async function validateWorkspaceDeps(): Promise<void> {
-	console.log("🔍 Validating workspace dependencies...\n");
+	console.info("🔍 Validating workspace dependencies...\n");
 	
 	const packages = await findWorkspacePackages();
 	
 	if (packages.length === 0) {
-		console.log("⚠️  No workspace packages found");
+		console.info("⚠️  No workspace packages found");
 		return;
 	}
 	
-	console.log(`📦 Found ${packages.length} workspace package(s):`);
-	packages.forEach((pkg) => console.log(`   - ${pkg.name} (${pkg.path})`));
-	console.log();
+	console.info(`📦 Found ${packages.length} workspace package(s):`);
+	packages.forEach((pkg) => console.info(`   - ${pkg.name} (${pkg.path})`));
+	console.info();
 	
 	const { errors, warnings } = checkForBunLink(packages);
 	
 	if (errors.length > 0) {
-		console.log("❌ Errors found:\n");
-		errors.forEach((error) => console.log(`   ${error}`));
-		console.log();
+		console.info("❌ Errors found:\n");
+		errors.forEach((error) => console.info(`   ${error}`));
+		console.info();
 	}
 	
 	if (warnings.length > 0) {
-		console.log("⚠️  Warnings:\n");
-		warnings.forEach((warning) => console.log(`   ${warning}`));
-		console.log();
+		console.info("⚠️  Warnings:\n");
+		warnings.forEach((warning) => console.info(`   ${warning}`));
+		console.info();
 	}
 	
 	if (errors.length === 0 && warnings.length === 0) {
-		console.log("✅ All workspace dependencies are correctly configured!");
-		console.log("   - No 'link:' protocol usage found");
-		console.log("   - @graph packages use workspace: protocol\n");
+		console.info("✅ All workspace dependencies are correctly configured!");
+		console.info("   - No 'link:' protocol usage found");
+		console.info("   - @graph packages use workspace: protocol\n");
 		process.exit(0);
 	} else if (errors.length > 0) {
-		console.log("💡 Fix: Replace 'link:' with 'workspace:*' in package.json dependencies");
+		console.info("💡 Fix: Replace 'link:' with 'workspace:*' in package.json dependencies");
 		process.exit(1);
 	} else {
-		console.log("💡 Consider using 'workspace:*' for @graph dependencies");
+		console.info("💡 Consider using 'workspace:*' for @graph dependencies");
 		process.exit(0);
 	}
 }

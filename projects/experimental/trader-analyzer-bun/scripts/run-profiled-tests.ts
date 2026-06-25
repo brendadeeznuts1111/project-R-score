@@ -12,7 +12,7 @@ const TEST_PROFILE_DIR = './test_profiles';
 const TIMEOUT_MS = 300000; // 5 minutes
 
 async function runProfiledTests() {
-  console.log('🧪 Running tests with CPU profiling...\n');
+  console.info('🧪 Running tests with CPU profiling...\n');
 
   // Create directory for test profiles
   if (!existsSync(TEST_PROFILE_DIR)) {
@@ -47,13 +47,13 @@ async function runProfiledTests() {
 
   return new Promise<number>((resolve, reject) => {
     testProcess.on('close', (code) => {
-      console.log(`\n📊 Test process exited with code ${code}`);
+      console.info(`\n📊 Test process exited with code ${code}`);
 
       if (existsSync(profilePath)) {
-        console.log(`✅ Test profile saved: ${profilePath}`);
+        console.info(`✅ Test profile saved: ${profilePath}`);
 
         // Analyze test profile
-        console.log('\n🔍 Analyzing test performance...');
+        console.info('\n🔍 Analyzing test performance...');
         const analyzeProcess = spawn('bun', [
           'run',
           'scripts/analyze-profile.ts',
@@ -74,7 +74,7 @@ async function runProfiledTests() {
 
 // Run specific test suites with profiling
 async function runLayerTests(layer: number) {
-  console.log(`🧪 Running Layer ${layer} tests with profiling...`);
+  console.info(`🧪 Running Layer ${layer} tests with profiling...`);
 
   const profileName = `layer${layer}_tests_${Date.now()}.cpuprofile`;
   const testPattern = `tests/**/layer${layer}*.test.ts`;
@@ -127,11 +127,11 @@ if (import.meta.main) {
       break;
 
     default:
-      console.log('Usage:');
-      console.log(
+      console.info('Usage:');
+      console.info(
         '  bun run run-profiled-tests.ts all          # Run all tests with profiling',
       );
-      console.log(
+      console.info(
         '  bun run run-profiled-tests.ts layer <1-4> # Run specific layer tests',
       );
       break;

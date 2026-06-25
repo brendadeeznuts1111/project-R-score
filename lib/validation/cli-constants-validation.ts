@@ -748,44 +748,44 @@ export class ValidationReporter {
   static async printReport(): Promise<void> {
     const report = await this.generateReport();
 
-    console.log('\n🔍 PLATFORM VALIDATION REPORT');
-    console.log('='.repeat(50));
-    console.log(`📅 Generated: ${report.timestamp}`);
+    console.info('\n🔍 PLATFORM VALIDATION REPORT');
+    console.info('='.repeat(50));
+    console.info(`📅 Generated: ${report.timestamp}`);
 
-    console.log('\n🛠️  CLI Tools:');
-    console.log(`   Valid: ${report.cli.valid}/${report.cli.total}`);
+    console.info('\n🛠️  CLI Tools:');
+    console.info(`   Valid: ${report.cli.valid}/${report.cli.total}`);
     if (report.cli.errors.length > 0) {
-      console.log('   Errors:');
-      report.cli.errors.forEach(error => console.log(`     ❌ ${error}`));
+      console.info('   Errors:');
+      report.cli.errors.forEach(error => console.info(`     ❌ ${error}`));
     }
 
-    console.log('\n🌐 URLs:');
-    console.log(`   Valid: ${report.urls.valid}/${report.urls.total}`);
+    console.info('\n🌐 URLs:');
+    console.info(`   Valid: ${report.urls.valid}/${report.urls.total}`);
     if (report.urls.avgResponseTime) {
-      console.log(`   Avg Response Time: ${report.urls.avgResponseTime.toFixed(0)}ms`);
+      console.info(`   Avg Response Time: ${report.urls.avgResponseTime.toFixed(0)}ms`);
     }
     if (report.urls.errors.length > 0) {
-      console.log('   Errors:');
-      report.urls.errors.forEach(error => console.log(`     ❌ ${error}`));
+      console.info('   Errors:');
+      report.urls.errors.forEach(error => console.info(`     ❌ ${error}`));
     }
 
-    console.log('\n📊 Constants:');
-    console.log(`   Valid: ${report.constants.valid}/${report.constants.total}`);
+    console.info('\n📊 Constants:');
+    console.info(`   Valid: ${report.constants.valid}/${report.constants.total}`);
     if (report.constants.errors.length > 0) {
-      console.log('   Errors:');
-      report.constants.errors.forEach(error => console.log(`     ❌ ${error}`));
+      console.info('   Errors:');
+      report.constants.errors.forEach(error => console.info(`     ❌ ${error}`));
     }
 
-    console.log('\n📋 Summary:');
-    console.log(`   Total Issues: ${report.summary.totalIssues}`);
-    console.log(`   Critical Issues: ${report.summary.criticalIssues}`);
+    console.info('\n📋 Summary:');
+    console.info(`   Total Issues: ${report.summary.totalIssues}`);
+    console.info(`   Critical Issues: ${report.summary.criticalIssues}`);
 
     if (report.summary.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.summary.recommendations.forEach(rec => console.log(`   • ${rec}`));
+      console.info('\n💡 Recommendations:');
+      report.summary.recommendations.forEach(rec => console.info(`   • ${rec}`));
     }
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
   }
 }
 
@@ -848,35 +848,35 @@ export class AutoHealer {
    * Run auto-healing and report results
    */
   static async healAndReport(): Promise<void> {
-    console.log('\n🚀 STARTING AUTO-HEALING...');
+    console.info('\n🚀 STARTING AUTO-HEALING...');
 
     const result = await this.healAll();
 
-    console.log('\n🔧 AUTO-HEALING RESULTS:');
-    console.log(`   Total Fixes Applied: ${result.totalFixes}`);
+    console.info('\n🔧 AUTO-HEALING RESULTS:');
+    console.info(`   Total Fixes Applied: ${result.totalFixes}`);
 
     if (result.cliFixes.length > 0) {
-      console.log('\n   CLI Fixes:');
-      result.cliFixes.forEach(fix => console.log(`     ✅ ${fix}`));
+      console.info('\n   CLI Fixes:');
+      result.cliFixes.forEach(fix => console.info(`     ✅ ${fix}`));
     }
 
     if (result.urlFixes.length > 0) {
-      console.log('\n   URL Fixes:');
-      result.urlFixes.forEach(fix => console.log(`     ✅ ${fix}`));
+      console.info('\n   URL Fixes:');
+      result.urlFixes.forEach(fix => console.info(`     ✅ ${fix}`));
     }
 
     if (result.constantFixes.length > 0) {
-      console.log('\n   Constant Fixes:');
-      result.constantFixes.forEach(fix => console.log(`     ✅ ${fix}`));
+      console.info('\n   Constant Fixes:');
+      result.constantFixes.forEach(fix => console.info(`     ✅ ${fix}`));
     }
 
     if (result.success) {
-      console.log('\n✅ Auto-healing completed successfully!');
+      console.info('\n✅ Auto-healing completed successfully!');
     } else {
-      console.log('\n⚠️  Some issues could not be auto-fixed');
+      console.info('\n⚠️  Some issues could not be auto-fixed');
     }
 
-    console.log('\n' + '='.repeat(50));
+    console.info('\n' + '='.repeat(50));
   }
 }
 

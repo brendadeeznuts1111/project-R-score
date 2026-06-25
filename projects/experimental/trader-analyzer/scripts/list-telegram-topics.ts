@@ -38,7 +38,7 @@ if (!chatId) {
 
 const url = `https://api.telegram.org/bot${botToken}/getForumTopics?chat_id=${chatId}`;
 
-console.log(`📋 Fetching forum topics for chat ${chatId}...\n`);
+console.info(`📋 Fetching forum topics for chat ${chatId}...\n`);
 
 try {
 	const response = await fetch(url);
@@ -46,18 +46,18 @@ try {
 
 	if (result.ok && result.result?.topics) {
 		const topics = result.result.topics;
-		console.log(`✅ Found ${topics.length} topics:\n`);
+		console.info(`✅ Found ${topics.length} topics:\n`);
 
 		for (const topic of topics) {
 			const icon = topic.icon_custom_emoji_id 
 				? `🎯` 
 				: `📌`;
-			console.log(`  ${icon} #${topic.message_thread_id} - ${topic.name}`);
+			console.info(`  ${icon} #${topic.message_thread_id} - ${topic.name}`);
 		}
 
-		console.log(`\n💡 To send to a topic:`);
-		console.log(`   bun run send-telegram "Your message" --topic <thread_id>`);
-		console.log(`   bun run send-telegram "Your message" --topic ${topics[0]?.message_thread_id || "THREAD_ID"} --pin`);
+		console.info(`\n💡 To send to a topic:`);
+		console.info(`   bun run send-telegram "Your message" --topic <thread_id>`);
+		console.info(`   bun run send-telegram "Your message" --topic ${topics[0]?.message_thread_id || "THREAD_ID"} --pin`);
 	} else {
 		console.error("❌ Failed to get topics:");
 		console.error(`   ${result.description || "Unknown error"}`);

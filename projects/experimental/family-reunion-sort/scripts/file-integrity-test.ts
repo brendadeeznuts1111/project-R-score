@@ -36,7 +36,7 @@ class FileIntegrityTester {
   }
 
   async runAllTests(): Promise<void> {
-    console.log('🔍 Starting File Integrity Tests for Bun v1.3.6...\n');
+    console.info('🔍 Starting File Integrity Tests for Bun v1.3.6...\n');
 
     await this.testSmallFile();
     await this.testMediumFile();
@@ -50,7 +50,7 @@ class FileIntegrityTester {
   }
 
   private async testSmallFile(): Promise<void> {
-    console.log('📄 Testing small file (1MB)...');
+    console.info('📄 Testing small file (1MB)...');
     
     const fileName = 'test-small-1mb.dat';
     const filePath = join(this.tempDir, fileName);
@@ -103,7 +103,7 @@ class FileIntegrityTester {
   }
 
   private async testMediumFile(): Promise<void> {
-    console.log('📄 Testing medium file (100MB)...');
+    console.info('📄 Testing medium file (100MB)...');
     
     const fileName = 'test-medium-100mb.dat';
     const filePath = join(this.tempDir, fileName);
@@ -156,7 +156,7 @@ class FileIntegrityTester {
   }
 
   private async testLargeFile(): Promise<void> {
-    console.log('📄 Testing large file (1GB)...');
+    console.info('📄 Testing large file (1GB)...');
     
     const fileName = 'test-large-1gb.dat';
     const filePath = join(this.tempDir, fileName);
@@ -209,7 +209,7 @@ class FileIntegrityTester {
   }
 
   private async testVeryLargeFile(): Promise<void> {
-    console.log('📄 Testing very large file (2.5GB - corruption threshold)...');
+    console.info('📄 Testing very large file (2.5GB - corruption threshold)...');
     
     const fileName = 'test-very-large-2.5gb.dat';
     const filePath = join(this.tempDir, fileName);
@@ -262,7 +262,7 @@ class FileIntegrityTester {
   }
 
   private async testOversizedFile(): Promise<void> {
-    console.log('📄 Testing oversized file (3GB - should fail gracefully)...');
+    console.info('📄 Testing oversized file (3GB - should fail gracefully)...');
     
     const fileName = 'test-oversized-3gb.dat';
     const filePath = join(this.tempDir, fileName);
@@ -315,7 +315,7 @@ class FileIntegrityTester {
   }
 
   private async testConcurrentWrites(): Promise<void> {
-    console.log('📄 Testing concurrent writes...');
+    console.info('📄 Testing concurrent writes...');
     
     const fileCount = 5;
     const fileSize = 100 * 1024 * 1024; // 100MB each
@@ -402,55 +402,55 @@ class FileIntegrityTester {
   }
 
   private generateReport(): void {
-    console.log('\n📊 FILE INTEGRITY REPORT');
-    console.log('========================\n');
+    console.info('\n📊 FILE INTEGRITY REPORT');
+    console.info('========================\n');
 
     const passed = this.results.filter(r => r.integrityCheck === 'PASS');
     const failed = this.results.filter(r => r.integrityCheck === 'FAIL');
 
-    console.log(`✅ PASSED: ${passed.length}`);
-    console.log(`❌ FAILED: ${failed.length}\n`);
+    console.info(`✅ PASSED: ${passed.length}`);
+    console.info(`❌ FAILED: ${failed.length}\n`);
 
     this.results.forEach(result => {
       const status = result.integrityCheck === 'PASS' ? '✅' : '❌';
       const sizeGB = (result.fileSize / (1024 * 1024 * 1024)).toFixed(2);
-      console.log(`${status} ${result.testName}`);
-      console.log(`   Size: ${sizeGB}GB | Write: ${result.writeTime.toFixed(2)}ms | Read: ${result.readTime.toFixed(2)}ms`);
-      console.log(`   Hash Match: ${result.hashMatch ? '✅' : '❌'}`);
+      console.info(`${status} ${result.testName}`);
+      console.info(`   Size: ${sizeGB}GB | Write: ${result.writeTime.toFixed(2)}ms | Read: ${result.readTime.toFixed(2)}ms`);
+      console.info(`   Hash Match: ${result.hashMatch ? '✅' : '❌'}`);
       if (result.error) {
-        console.log(`   Error: ${result.error}`);
+        console.info(`   Error: ${result.error}`);
       }
-      console.log('');
+      console.info('');
     });
 
-    console.log('🔍 INTEGRITY ANALYSIS:');
+    console.info('🔍 INTEGRITY ANALYSIS:');
     const largeFileTests = this.results.filter(r => r.fileSize >= 2 * 1024 * 1024 * 1024);
     const largeFilePassed = largeFileTests.filter(r => r.integrityCheck === 'PASS');
     
-    console.log(`- Files >2GB: ${largeFilePassed.length}/${largeFileTests.length} passed`);
-    console.log(`- Overall integrity: ${passed.length}/${this.results.length} passed`);
-    console.log(`- 2GB corruption bug: ${largeFilePassed.length === largeFileTests.length ? '✅ FIXED' : '❌ PRESENT'}`);
+    console.info(`- Files >2GB: ${largeFilePassed.length}/${largeFileTests.length} passed`);
+    console.info(`- Overall integrity: ${passed.length}/${this.results.length} passed`);
+    console.info(`- 2GB corruption bug: ${largeFilePassed.length === largeFileTests.length ? '✅ FIXED' : '❌ PRESENT'}`);
     
     // Performance analysis
     const avgWriteSpeed = this.calculateAvgSpeed('write');
     const avgReadSpeed = this.calculateAvgSpeed('read');
     
-    console.log(`- Average write speed: ${avgWriteSpeed.toFixed(2)} MB/s`);
-    console.log(`- Average read speed: ${avgReadSpeed.toFixed(2)} MB/s`);
+    console.info(`- Average write speed: ${avgWriteSpeed.toFixed(2)} MB/s`);
+    console.info(`- Average read speed: ${avgReadSpeed.toFixed(2)} MB/s`);
     
-    console.log('\n🎯 RECOMMENDATIONS:');
-    console.log('1. Verify all large files (>2GB) written in last 30 days');
-    console.log('2. Implement file integrity checks for critical data');
-    console.log('3. Add file size validation before write operations');
-    console.log('4. Monitor disk space during large file operations');
-    console.log('5. Consider chunked writes for very large files');
+    console.info('\n🎯 RECOMMENDATIONS:');
+    console.info('1. Verify all large files (>2GB) written in last 30 days');
+    console.info('2. Implement file integrity checks for critical data');
+    console.info('3. Add file size validation before write operations');
+    console.info('4. Monitor disk space during large file operations');
+    console.info('5. Consider chunked writes for very large files');
     
     if (failed.length > 0) {
-      console.log('\n🚨 CRITICAL: File corruption detected!');
-      console.log('   Immediate action required:');
-      console.log('   - Upgrade to Bun v1.3.6 immediately');
-      console.log('   - Verify all existing large files');
-      console.log('   - Implement backup verification');
+      console.info('\n🚨 CRITICAL: File corruption detected!');
+      console.info('   Immediate action required:');
+      console.info('   - Upgrade to Bun v1.3.6 immediately');
+      console.info('   - Verify all existing large files');
+      console.info('   - Implement backup verification');
     }
   }
 

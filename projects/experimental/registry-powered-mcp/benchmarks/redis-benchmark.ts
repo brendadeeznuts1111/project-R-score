@@ -105,7 +105,7 @@ export class RedisBenchmarkSuite {
     try {
       await this.client.connect();
       this.connected = true;
-      console.log('✅ Connected to Redis for benchmarking');
+      console.info('✅ Connected to Redis for benchmarking');
     } catch (error) {
       console.error('❌ Failed to connect to Redis:', error);
       throw error;
@@ -116,7 +116,7 @@ export class RedisBenchmarkSuite {
     if (this.connected) {
       this.client.close();
       this.connected = false;
-      console.log('✅ Disconnected from Redis');
+      console.info('✅ Disconnected from Redis');
     }
   }
 
@@ -147,7 +147,7 @@ export class RedisBenchmarkSuite {
     const stats = new BenchmarkStats();
 
     // Warmup phase
-    console.log(`🔥 Warming up: ${name}`);
+    console.info(`🔥 Warming up: ${name}`);
     for (let i = 0; i < BENCHMARK_CONFIG.WARMUP_ITERATIONS; i++) {
       await operation();
     }
@@ -158,7 +158,7 @@ export class RedisBenchmarkSuite {
     }
 
     // Measurement phase
-    console.log(`📊 Measuring: ${name}`);
+    console.info(`📊 Measuring: ${name}`);
     for (let i = 0; i < BENCHMARK_CONFIG.MEASUREMENT_ITERATIONS; i++) {
       const start = performance.now();
       await operation();
@@ -295,8 +295,8 @@ export class RedisBenchmarkSuite {
   }
 
   async runAllBenchmarks(): Promise<BenchmarkResult[]> {
-    console.log('🚀 Starting Redis Benchmark Suite');
-    console.log('=' .repeat(50));
+    console.info('🚀 Starting Redis Benchmark Suite');
+    console.info('=' .repeat(50));
 
     const allResults: BenchmarkResult[] = [];
 
@@ -306,19 +306,19 @@ export class RedisBenchmarkSuite {
       await this.cleanupTestKeys();
 
       // Run all benchmark categories
-      console.log('\n📝 String Operations:');
+      console.info('\n📝 String Operations:');
       allResults.push(...await this.runStringBenchmarks());
 
-      console.log('\n📝 Hash Operations:');
+      console.info('\n📝 Hash Operations:');
       allResults.push(...await this.runHashBenchmarks());
 
-      console.log('\n📝 List Operations:');
+      console.info('\n📝 List Operations:');
       allResults.push(...await this.runListBenchmarks());
 
-      console.log('\n📝 Raw Commands:');
+      console.info('\n📝 Raw Commands:');
       allResults.push(...await this.runRawCommandBenchmarks());
 
-      console.log('\n📝 Pipelining:');
+      console.info('\n📝 Pipelining:');
       allResults.push(...await this.runPipeliningBenchmarks());
 
       // Generate report
@@ -333,15 +333,15 @@ export class RedisBenchmarkSuite {
   }
 
   private printReport(results: BenchmarkResult[]) {
-    console.log('\n📊 REDIS BENCHMARK RESULTS');
-    console.log('='.repeat(80));
+    console.info('\n📊 REDIS BENCHMARK RESULTS');
+    console.info('='.repeat(80));
 
     const passed = results.filter(r => r.achieved).length;
     const total = results.length;
     const successRate = ((passed / total) * 100).toFixed(1);
 
-    console.log(`Overall: ${passed}/${total} benchmarks passed (${successRate}%)`);
-    console.log('');
+    console.info(`Overall: ${passed}/${total} benchmarks passed (${successRate}%)`);
+    console.info('');
 
     results.forEach(result => {
       const status = result.achieved ? '✅' : '❌';
@@ -350,10 +350,10 @@ export class RedisBenchmarkSuite {
       const target = result.target.toFixed(3);
       const p95 = result.stats.p95.toFixed(3);
 
-      console.log(`${status} ${result.name}`);
-      console.log(`   Mean: ${mean}ms (Target: ${target}ms, P95: ${p95}ms) [${tier}]`);
-      console.log(`   Samples: ${result.stats.count}, StdDev: ${result.stats.stdDev.toFixed(3)}ms`);
-      console.log('');
+      console.info(`${status} ${result.name}`);
+      console.info(`   Mean: ${mean}ms (Target: ${target}ms, P95: ${p95}ms) [${tier}]`);
+      console.info(`   Samples: ${result.stats.count}, StdDev: ${result.stats.stdDev.toFixed(3)}ms`);
+      console.info('');
     });
 
     // Performance tier summary
@@ -362,12 +362,12 @@ export class RedisBenchmarkSuite {
       return acc;
     }, {} as Record<PerformanceTier, number>);
 
-    console.log('🎯 Performance Tier Summary:');
+    console.info('🎯 Performance Tier Summary:');
     Object.entries(tiers).forEach(([tier, count]) => {
-      console.log(`   ${tier}: ${count} benchmarks`);
+      console.info(`   ${tier}: ${count} benchmarks`);
     });
 
-    console.log('\n📈 Benchmark completed successfully!');
+    console.info('\n📈 Benchmark completed successfully!');
   }
 }
 

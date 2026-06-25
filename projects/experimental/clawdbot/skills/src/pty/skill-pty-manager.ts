@@ -388,7 +388,7 @@ export class SkillPTYManager {
     const maxColumns = options.maxColumns || 2;
     const dashboardId = `dashboard-${Date.now()}`;
 
-    console.log(`Creating skill dashboard for: ${skillIds.join(", ")}`);
+    console.info(`Creating skill dashboard for: ${skillIds.join(", ")}`);
 
     const terminals: SkillTerminal[] = [];
 
@@ -436,7 +436,7 @@ export class SkillPTYManager {
 
       switchTerminal: (index: number) => {
         dashboard.activeTerminal = index;
-        console.log(
+        console.info(
           `Switched to terminal ${index}: ${terminals[index].skillId}`
         );
       },
@@ -476,7 +476,7 @@ export class SkillPTYManager {
       watch?: boolean;
     } = {}
   ): Promise<DebugTerminal> {
-    console.log(`Creating debug terminal for ${skillId}`);
+    console.info(`Creating debug terminal for ${skillId}`);
 
     const debugEnv: Record<string, string> = {
       NODE_ENV: "development",
@@ -520,14 +520,14 @@ export class SkillPTYManager {
 
     // Add debug info
     setTimeout(() => {
-      console.log(`\n\x1b[1;35mDebugger commands:\x1b[0m`);
-      console.log(`  c/continue - Continue execution`);
-      console.log(`  n/next     - Step over`);
-      console.log(`  s/step     - Step into`);
-      console.log(`  o/out      - Step out`);
-      console.log(`  b <file:line> - Set breakpoint`);
-      console.log(`  .help      - Show all commands`);
-      console.log(``);
+      console.info(`\n\x1b[1;35mDebugger commands:\x1b[0m`);
+      console.info(`  c/continue - Continue execution`);
+      console.info(`  n/next     - Step over`);
+      console.info(`  s/step     - Step into`);
+      console.info(`  o/out      - Step out`);
+      console.info(`  b <file:line> - Set breakpoint`);
+      console.info(`  .help      - Show all commands`);
+      console.info(``);
     }, 500);
 
     return {
@@ -553,8 +553,8 @@ export class SkillPTYManager {
     const sessionId = options.sessionId || `collab-${Date.now()}`;
     const users = options.users || [];
 
-    console.log(`Creating collaborative session: ${sessionId}`);
-    console.log(`Users: ${users.join(", ") || "(none yet)"}`);
+    console.info(`Creating collaborative session: ${sessionId}`);
+    console.info(`Users: ${users.join(", ") || "(none yet)"}`);
 
     const terminal = await this.createSkillTerminal(skillId, {
       env: {
@@ -583,7 +583,7 @@ export class SkillPTYManager {
       },
       websocket: {
         open(ws) {
-          console.log(`New collaborator connected`);
+          console.info(`New collaborator connected`);
           ws.subscribe(sessionId);
         },
         message(ws, message) {
@@ -595,7 +595,7 @@ export class SkillPTYManager {
           }
         },
         close(ws) {
-          console.log(`Collaborator disconnected`);
+          console.info(`Collaborator disconnected`);
           ws.unsubscribe(sessionId);
         },
       },
@@ -610,7 +610,7 @@ export class SkillPTYManager {
       webSocketUrl: `ws://localhost:${server.port}/collab`,
       addUser: (userId: string) => {
         users.push(userId);
-        console.log(`Added user: ${userId}`);
+        console.info(`Added user: ${userId}`);
       },
       removeUser: (userId: string) => {
         const index = users.indexOf(userId);
@@ -635,7 +635,7 @@ export class SkillPTYManager {
     const frames: TerminalFrame[] = [];
     let startTime = 0;
 
-    console.log(`Recording terminal session: ${outputFile}`);
+    console.info(`Recording terminal session: ${outputFile}`);
 
     const terminal = await this.createSkillTerminal(skillId, {
       onData: (data) => {
@@ -711,11 +711,11 @@ export class SkillPTYManager {
         }
 
         await Bun.write(outputFile, lines.join("\n"));
-        console.log(`Recording saved to: ${outputFile}`);
+        console.info(`Recording saved to: ${outputFile}`);
       },
 
       play: async (speed = 1.0) => {
-        console.log(`Playing recording at ${speed}x speed...`);
+        console.info(`Playing recording at ${speed}x speed...`);
 
         let lastTime = 0;
         for (const frame of frames) {
@@ -727,7 +727,7 @@ export class SkillPTYManager {
           lastTime = frame.time;
         }
 
-        console.log(`\nPlayback complete`);
+        console.info(`\nPlayback complete`);
       },
     };
   }
@@ -747,14 +747,14 @@ export class SkillPTYManager {
       // Handle control sequences
       if (str === "\x03") {
         // Ctrl+C
-        console.log("\nInterrupted");
+        console.info("\nInterrupted");
         const proc = this.processes.get(terminalId);
         if (proc) {
           proc.kill("SIGINT");
         }
       } else if (str === "\x04") {
         // Ctrl+D
-        console.log("\nExiting");
+        console.info("\nExiting");
         const proc = this.processes.get(terminalId);
         if (proc) {
           proc.kill("SIGTERM");
@@ -846,7 +846,7 @@ export class SkillPTYManager {
         // Ctrl+B - switch terminal
         dashboard.activeTerminal =
           (dashboard.activeTerminal + 1) % dashboard.terminals.length;
-        console.log(`Switched to terminal ${dashboard.activeTerminal}`);
+        console.info(`Switched to terminal ${dashboard.activeTerminal}`);
       } else if (str === "\x0e") {
         // Ctrl+N - next terminal
         dashboard.activeTerminal = Math.min(
@@ -870,7 +870,7 @@ export class SkillPTYManager {
 
     process.stdin.on("data", onStdinData);
 
-    console.log(`
+    console.info(`
 Dashboard Controls:
   Ctrl+B     - Switch between terminals
   Ctrl+N     - Next terminal
@@ -882,7 +882,7 @@ Dashboard Controls:
   }
 
   private async buildDebugVersion(skillId: string): Promise<void> {
-    console.log(`Building debug version of ${skillId}...`);
+    console.info(`Building debug version of ${skillId}...`);
 
     const result = await Bun.build({
       entrypoints: [`./skills/${skillId}/src/index.ts`],
@@ -900,7 +900,7 @@ Dashboard Controls:
       throw new Error("Build failed: " + result.logs.join("\n"));
     }
 
-    console.log("Debug build complete");
+    console.info("Debug build complete");
   }
 
   private broadcastToSession(sessionId: string, data: Uint8Array): void {

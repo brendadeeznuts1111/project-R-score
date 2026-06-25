@@ -137,9 +137,9 @@ export class WebSocketAuditServer {
 			},
 		});
 
-		console.log(`🚀 WebSocket Audit Server listening on ${hostname}:${port}`);
-		console.log(`📡 WebSocket endpoint: ws://${hostname}:${port}/audit/ws`);
-		console.log(`🏥 Health check: http://${hostname}:${port}/audit/health`);
+		console.info(`🚀 WebSocket Audit Server listening on ${hostname}:${port}`);
+		console.info(`📡 WebSocket endpoint: ws://${hostname}:${port}/audit/ws`);
+		console.info(`🏥 Health check: http://${hostname}:${port}/audit/health`);
 
 		return this.server;
 	}
@@ -178,7 +178,7 @@ export class WebSocketAuditServer {
 			totalClients: this.clients.size,
 		});
 
-		console.log(
+		console.info(
 			`✅ Client connected: ${clientId} (Total: ${this.clients.size})`,
 		);
 	}
@@ -257,7 +257,7 @@ export class WebSocketAuditServer {
 			totalClients: this.clients.size,
 		});
 
-		console.log(
+		console.info(
 			`👋 Client disconnected: ${clientId} (Code: ${code}, Reason: ${reason})`,
 		);
 	}
@@ -540,7 +540,7 @@ export class WebSocketAuditServer {
 			// Server will be stopped automatically when process exits
 			this.server = null;
 
-			console.log("👋 WebSocket Audit Server shut down");
+			console.info("👋 WebSocket Audit Server shut down");
 		}
 	}
 }
@@ -567,13 +567,13 @@ if (import.meta.main) {
 
 	// Graceful shutdown
 	process.on("SIGINT", async () => {
-		console.log("\n👋 Shutting down WebSocket Audit Server...");
+		console.info("\n👋 Shutting down WebSocket Audit Server...");
 		await wsServer.shutdown();
 		process.exit(0);
 	});
 
 	process.on("SIGTERM", async () => {
-		console.log("\n👋 Shutting down WebSocket Audit Server...");
+		console.info("\n👋 Shutting down WebSocket Audit Server...");
 		await wsServer.shutdown();
 		process.exit(0);
 	});

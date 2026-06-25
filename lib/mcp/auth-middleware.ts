@@ -53,7 +53,7 @@ export class MCPAuthMiddleware {
     if (!token) {
       const error = 'Authentication token required';
       if (this.options.logAttempts) {
-        console.log(styled('🔒 Authentication failed: No token provided', 'warning'));
+        console.info(styled('🔒 Authentication failed: No token provided', 'warning'));
       }
       return { success: false, error };
     }
@@ -64,7 +64,7 @@ export class MCPAuthMiddleware {
 
       if (!validation.valid) {
         if (this.options.logAttempts) {
-          console.log(styled(`🔒 Authentication failed: ${validation.reason}`, 'error'));
+          console.info(styled(`🔒 Authentication failed: ${validation.reason}`, 'error'));
         }
         return { success: false, error: validation.reason };
       }
@@ -80,7 +80,7 @@ export class MCPAuthMiddleware {
             perm => !validation.permissions?.includes(perm)
           );
           if (this.options.logAttempts) {
-            console.log(
+            console.info(
               styled(
                 `🔒 Authentication failed: Missing permissions: ${missing.join(', ')}`,
                 'error'
@@ -99,7 +99,7 @@ export class MCPAuthMiddleware {
       };
 
       if (this.options.logAttempts) {
-        console.log(
+        console.info(
           styled(`✅ Authentication successful for token: ${validation.tokenId}`, 'success')
         );
       }
@@ -108,7 +108,7 @@ export class MCPAuthMiddleware {
     } catch (error) {
       const errorMessage = `Authentication error: ${error.message}`;
       if (this.options.logAttempts) {
-        console.log(styled(`🔒 ${errorMessage}`, 'error'));
+        console.info(styled(`🔒 ${errorMessage}`, 'error'));
       }
       return { success: false, error: errorMessage };
     }
@@ -286,7 +286,7 @@ if (import.meta.main) {
             process.exit(1);
           }
 
-          console.log('🔍 Testing authentication...');
+          console.info('🔍 Testing authentication...');
 
           // Test different permission levels
           const tests = [
@@ -298,13 +298,13 @@ if (import.meta.main) {
           ];
 
           for (const test of tests) {
-            console.log(`\n📋 Testing ${test.name} access...`);
+            console.info(`\n📋 Testing ${test.name} access...`);
             const result = await test.middleware.authenticate(token);
             if (result.success) {
-              console.log(`✅ ${test.name}: Access granted`);
-              console.log(`   Permissions: ${result.authContext?.permissions.join(', ')}`);
+              console.info(`✅ ${test.name}: Access granted`);
+              console.info(`   Permissions: ${result.authContext?.permissions.join(', ')}`);
             } else {
-              console.log(`❌ ${test.name}: Access denied - ${result.error}`);
+              console.info(`❌ ${test.name}: Access denied - ${result.error}`);
             }
           }
           break;
@@ -318,18 +318,18 @@ if (import.meta.main) {
           };
 
           const extracted = extractTokenFromRequest(mockRequest);
-          console.log(`🔍 Extracted token: ${extracted || 'None'}`);
+          console.info(`🔍 Extracted token: ${extracted || 'None'}`);
           break;
 
         default:
-          console.log('🔐 MCP Authentication Middleware Test');
-          console.log('');
-          console.log('Commands:');
-          console.log('  test <token>    - Test token against different permission levels');
-          console.log('  extract <token> - Test token extraction from request');
-          console.log('');
-          console.log('Usage:');
-          console.log('  bun run lib/mcp/auth-middleware.ts test <your-token>');
+          console.info('🔐 MCP Authentication Middleware Test');
+          console.info('');
+          console.info('Commands:');
+          console.info('  test <token>    - Test token against different permission levels');
+          console.info('  extract <token> - Test token extraction from request');
+          console.info('');
+          console.info('Usage:');
+          console.info('  bun run lib/mcp/auth-middleware.ts test <your-token>');
       }
     } catch (error) {
       console.error(`❌ Error: ${error.message}`);

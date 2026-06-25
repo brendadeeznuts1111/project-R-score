@@ -426,7 +426,7 @@ const memoryPlugin = {
           .description("List memories")
           .action(async () => {
             const count = await db.count();
-            console.log(`Total memories: ${count}`);
+            console.info(`Total memories: ${count}`);
           });
 
         memory
@@ -445,7 +445,7 @@ const memoryPlugin = {
               importance: r.entry.importance,
               score: r.score,
             }));
-            console.log(JSON.stringify(output, null, 2));
+            console.info(JSON.stringify(output, null, 2));
           });
 
         memory
@@ -453,7 +453,7 @@ const memoryPlugin = {
           .description("Show memory statistics")
           .action(async () => {
             const count = await db.count();
-            console.log(`Total memories: ${count}`);
+            console.info(`Total memories: ${count}`);
           });
       },
       { commands: ["ltm"] },

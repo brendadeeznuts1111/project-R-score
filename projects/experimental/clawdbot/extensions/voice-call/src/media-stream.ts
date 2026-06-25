@@ -84,7 +84,7 @@ export class MediaStreamHandler {
 
         switch (message.event) {
           case "connected":
-            console.log("[MediaStream] Twilio connected");
+            console.info("[MediaStream] Twilio connected");
             break;
 
           case "start":
@@ -132,7 +132,7 @@ export class MediaStreamHandler {
     const streamSid = message.streamSid || "";
     const callSid = message.start?.callSid || "";
 
-    console.log(
+    console.info(
       `[MediaStream] Stream started: ${streamSid} (call: ${callSid})`,
     );
 
@@ -175,7 +175,7 @@ export class MediaStreamHandler {
    * Handle stream stop event.
    */
   private handleStop(session: StreamSession): void {
-    console.log(`[MediaStream] Stream stopped: ${session.streamSid}`);
+    console.info(`[MediaStream] Stream stopped: ${session.streamSid}`);
 
     session.sttSession.close();
     this.sessions.delete(session.streamSid);

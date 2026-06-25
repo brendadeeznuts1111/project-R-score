@@ -8,7 +8,7 @@ import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-type
 
 /**
  * Standardized error code enumeration
- * 
+ *
  * Error codes are organized by category with the following ranges:
  * - 1000-1999: System errors (initialization, configuration, resources)
  * - 2000-2999: Validation errors (input, type, constraint, schema)
@@ -16,7 +16,7 @@ import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-type
  * - 4000-4999: Security errors (auth, encryption, signatures)
  * - 5000-5999: Resource errors (not found, locked, corrupted)
  * - 6000-6999: Business logic errors (rules, state, quotas)
- * 
+ *
  * @example
  * ```typescript
  * // System initialization failure
@@ -25,7 +25,7 @@ import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-type
  *   'Database connection failed',
  *   { host: 'localhost', port: 5432 }
  * );
- * 
+ *
  * // Input validation error
  * throw createValidationError(
  *   EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
@@ -41,12 +41,12 @@ export enum EnterpriseErrorCode {
   // Use for: Application startup, configuration, system resources
   // Severity: Typically HIGH or CRITICAL
   // ============================================================================
-  
+
   /**
    * System initialization failed
-   * 
+   *
    * Use when: Application fails to start or initialize critical components
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -64,9 +64,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * System configuration invalid
-   * 
+   *
    * Use when: Configuration files or environment variables are missing/invalid
-   * 
+   *
    * @example
    * ```typescript
    * const apiKey = process.env.API_KEY;
@@ -83,16 +83,16 @@ export enum EnterpriseErrorCode {
 
   /**
    * System resource exhausted
-   * 
+   *
    * Use when: Out of memory, disk space, file handles, or other resources
-   * 
+   *
    * @example
    * ```typescript
    * if (memoryUsage.heapUsed > memoryLimit) {
    *   throw createSystemError(
    *     EnterpriseErrorCode.SYSTEM_RESOURCE_EXHAUSTED,
    *     'Heap memory limit exceeded',
-   *     { 
+   *     {
    *       heapUsed: memoryUsage.heapUsed,
    *       heapLimit: memoryLimit,
    *       usagePercent: (memoryUsage.heapUsed / memoryLimit) * 100
@@ -105,9 +105,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * System timeout
-   * 
+   *
    * Use when: Operations exceed their time limits (not network-specific)
-   * 
+   *
    * @example
    * ```typescript
    * const timeout = setTimeout(() => {
@@ -126,12 +126,12 @@ export enum EnterpriseErrorCode {
   // Use for: Input validation, type checking, constraints
   // Severity: Typically LOW (expected user input errors)
   // ============================================================================
-  
+
   /**
    * Validation input invalid
-   * 
+   *
    * Use when: User input fails validation rules
-   * 
+   *
    * @example
    * ```typescript
    * function validateEmail(email: string) {
@@ -150,9 +150,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Validation type mismatch
-   * 
+   *
    * Use when: Value is not of expected type
-   * 
+   *
    * @example
    * ```typescript
    * function processAge(age: unknown) {
@@ -171,9 +171,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Validation constraint violation
-   * 
+   *
    * Use when: Value violates business constraints (min/max length, range, etc.)
-   * 
+   *
    * @example
    * ```typescript
    * function validatePassword(password: string) {
@@ -193,9 +193,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Validation schema invalid
-   * 
+   *
    * Use when: JSON Schema, TypeScript interfaces, or data structures are invalid
-   * 
+   *
    * @example
    * ```typescript
    * const result = schema.validate(data);
@@ -217,12 +217,12 @@ export enum EnterpriseErrorCode {
   // Use for: HTTP, TCP, WebSocket, database connections
   // Severity: Typically MEDIUM or HIGH
   // ============================================================================
-  
+
   /**
    * Network connection failed
-   * 
+   *
    * Use when: Cannot establish network connection
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -242,9 +242,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Network timeout
-   * 
+   *
    * Use when: Network operation exceeds time limit
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -267,9 +267,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Network protocol error
-   * 
+   *
    * Use when: Protocol-level errors (HTTP parsing, TLS handshake, etc.)
-   * 
+   *
    * @example
    * ```typescript
    * if (response.status === 502) {
@@ -288,9 +288,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Network unreachable
-   * 
+   *
    * Use when: Network is completely unavailable (DNS failure, no route)
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -316,12 +316,12 @@ export enum EnterpriseErrorCode {
   // Use for: Authentication, authorization, encryption, signatures
   // Severity: Always CRITICAL
   // ============================================================================
-  
+
   /**
    * Security unauthorized
-   * 
+   *
    * Use when: Authentication fails (invalid credentials, expired session)
-   * 
+   *
    * @example
    * ```typescript
    * const user = await authenticateUser(credentials);
@@ -338,16 +338,16 @@ export enum EnterpriseErrorCode {
 
   /**
    * Security forbidden
-   * 
+   *
    * Use when: User is authenticated but lacks permission
-   * 
+   *
    * @example
    * ```typescript
    * if (!user.hasPermission('admin:delete')) {
    *   throw createSecurityError(
    *     EnterpriseErrorCode.SECURITY_FORBIDDEN,
    *     'Admin permission required for deletion',
-   *     { 
+   *     {
    *       userId: user.id,
    *       requiredPermission: 'admin:delete',
    *       resource: 'users'
@@ -360,9 +360,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Security token invalid
-   * 
+   *
    * Use when: JWT, API key, or other tokens are invalid/expired
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -371,7 +371,7 @@ export enum EnterpriseErrorCode {
    *   throw createSecurityError(
    *     EnterpriseErrorCode.SECURITY_TOKEN_INVALID,
    *     'Authentication token has expired',
-   *     { 
+   *     {
    *       tokenExpiry: decodedToken.exp,
    *       currentTime: Math.floor(Date.now() / 1000)
    *     }
@@ -383,9 +383,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Security encryption failed
-   * 
+   *
    * Use when: Encryption/decryption operations fail
-   * 
+   *
    * @example
    * ```typescript
    * try {
@@ -403,9 +403,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Security signature invalid
-   * 
+   *
    * Use when: HMAC, digital signatures, or checksums don't match
-   * 
+   *
    * @example
    * ```typescript
    * const isValid = verifySignature(payload, signature, publicKey);
@@ -425,12 +425,12 @@ export enum EnterpriseErrorCode {
   // Use for: Files, database records, cache entries
   // Severity: Typically MEDIUM
   // ============================================================================
-  
+
   /**
    * Resource not found
-   * 
+   *
    * Use when: Requested resource doesn't exist
-   * 
+   *
    * @example
    * ```typescript
    * const user = await db.users.findById(id);
@@ -448,9 +448,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Resource already exists
-   * 
+   *
    * Use when: Creating a resource that already exists
-   * 
+   *
    * @example
    * ```typescript
    * const existing = await db.users.findByEmail(email);
@@ -469,9 +469,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Resource locked
-   * 
+   *
    * Use when: Resource is locked by another process/user
-   * 
+   *
    * @example
    * ```typescript
    * const lock = await acquireLock(resourceId);
@@ -481,7 +481,7 @@ export enum EnterpriseErrorCode {
    *     'Resource is currently being modified by another user',
    *     'Document',
    *     resourceId,
-   *     { 
+   *     {
    *       lockedBy: lock.owner,
    *       lockedAt: lock.timestamp,
    *       expiresAt: lock.expiry
@@ -494,9 +494,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Resource corrupted
-   * 
+   *
    * Use when: Data integrity issues, checksum failures
-   * 
+   *
    * @example
    * ```typescript
    * const checksum = calculateChecksum(data);
@@ -506,7 +506,7 @@ export enum EnterpriseErrorCode {
    *     'Data integrity check failed',
    *     'File',
    *     fileId,
-   *     { 
+   *     {
    *       expectedChecksum,
    *       actualChecksum: checksum,
    *       corruptionDetected: true
@@ -522,12 +522,12 @@ export enum EnterpriseErrorCode {
   // Use for: Business rules, state machines, quotas
   // Severity: Typically LOW or MEDIUM
   // ============================================================================
-  
+
   /**
    * Business rule violation
-   * 
+   *
    * Use when: Business logic constraints are violated
-   * 
+   *
    * @example
    * ```typescript
    * if (withdrawalAmount > account.balance) {
@@ -548,9 +548,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Business state invalid
-   * 
+   *
    * Use when: Operation not allowed in current state
-   * 
+   *
    * @example
    * ```typescript
    * if (order.status !== 'pending') {
@@ -558,7 +558,7 @@ export enum EnterpriseErrorCode {
    *     EnterpriseErrorCode.BUSINESS_STATE_INVALID,
    *     `Cannot cancel order with status: ${order.status}`,
    *     'order_cancellation',
-   *     { 
+   *     {
    *       orderId: order.id,
    *       currentStatus: order.status,
    *       allowedStatuses: ['pending']
@@ -571,9 +571,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Business permission denied
-   * 
+   *
    * Use when: Business-level permissions (not security)
-   * 
+   *
    * @example
    * ```typescript
    * if (!subscription.hasFeature('premium_reports')) {
@@ -581,7 +581,7 @@ export enum EnterpriseErrorCode {
    *     EnterpriseErrorCode.BUSINESS_PERMISSION_DENIED,
    *     'Premium subscription required for this feature',
    *     'feature_access',
-   *     { 
+   *     {
    *       feature: 'premium_reports',
    *       currentPlan: subscription.plan,
    *       requiredPlan: 'premium'
@@ -594,9 +594,9 @@ export enum EnterpriseErrorCode {
 
   /**
    * Business quota exceeded
-   * 
+   *
    * Use when: Rate limits, usage quotas exceeded
-   * 
+   *
    * @example
    * ```typescript
    * if (apiCallsThisMinute > rateLimit) {
@@ -604,7 +604,7 @@ export enum EnterpriseErrorCode {
    *     EnterpriseErrorCode.BUSINESS_QUOTA_EXCEEDED,
    *     'API rate limit exceeded. Please try again later.',
    *     'rate_limit',
-   *     { 
+   *     {
    *       limit: rateLimit,
    *       current: apiCallsThisMinute,
    *       resetTime: Date.now() + 60000

@@ -197,7 +197,7 @@ async function getPR(owner: string, repo: string, pr: number): Promise<void> {
 	lines.push("");
 	lines.push(`${c.dim}${data.html_url}${c.reset}`);
 
-	console.log("\n" + box(lines, `${owner}/${repo}`) + "\n");
+	console.info("\n" + box(lines, `${owner}/${repo}`) + "\n");
 }
 
 /**
@@ -212,7 +212,7 @@ async function listPRs(
 		`/repos/${owner}/${repo}/pulls?state=${state}&per_page=20`,
 	);
 
-	console.log(`\n${c.cyan}${c.bold}PRs for ${owner}/${repo}${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}PRs for ${owner}/${repo}${c.reset}\n`);
 
 	const rows = data.map((pr) => ({
 		"#": pr.number,
@@ -238,7 +238,7 @@ async function getCommits(
 		`/repos/${owner}/${repo}/commits?per_page=${limit}`,
 	);
 
-	console.log(
+	console.info(
 		`\n${c.cyan}${c.bold}Recent commits for ${owner}/${repo}${c.reset}\n`,
 	);
 
@@ -247,7 +247,7 @@ async function getCommits(
 			`${c.yellow}${commit.sha.slice(0, 7)}${c.reset} ${commit.commit.message.split("\n")[0].slice(0, 50)} ${c.dim}(${commit.commit.author.name})${c.reset}`,
 	);
 
-	console.log(box(lines, "COMMITS"));
+	console.info(box(lines, "COMMITS"));
 }
 
 /**
@@ -268,8 +268,8 @@ async function mergePR(
 	);
 
 	if (data.merged) {
-		console.log(`\n${c.green}${c.bold}PR #${pr} merged successfully${c.reset}`);
-		console.log(`${c.dim}Commit: ${data.sha.slice(0, 7)}${c.reset}\n`);
+		console.info(`\n${c.green}${c.bold}PR #${pr} merged successfully${c.reset}`);
+		console.info(`${c.dim}Commit: ${data.sha.slice(0, 7)}${c.reset}\n`);
 	}
 }
 
@@ -285,7 +285,7 @@ async function listIssues(
 		`/repos/${owner}/${repo}/issues?state=${state}&per_page=20`,
 	);
 
-	console.log(`\n${c.cyan}${c.bold}Issues for ${owner}/${repo}${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Issues for ${owner}/${repo}${c.reset}\n`);
 
 	const rows = data.map((issue) => ({
 		"#": issue.number,
@@ -317,7 +317,7 @@ async function getRepo(owner: string, repo: string): Promise<void> {
 		`${c.dim}${data.html_url}${c.reset}`,
 	];
 
-	console.log("\n" + box(lines, "REPOSITORY") + "\n");
+	console.info("\n" + box(lines, "REPOSITORY") + "\n");
 }
 
 /**
@@ -332,7 +332,7 @@ async function listReleases(
 		`/repos/${owner}/${repo}/releases?per_page=${limit}`,
 	);
 
-	console.log(`\n${c.cyan}${c.bold}Releases for ${owner}/${repo}${c.reset}\n`);
+	console.info(`\n${c.cyan}${c.bold}Releases for ${owner}/${repo}${c.reset}\n`);
 
 	const rows = data.map((release) => ({
 		tag: release.tag_name,
@@ -365,8 +365,8 @@ async function createPR(
 		}),
 	});
 
-	console.log(`\n${c.green}${c.bold}PR created successfully${c.reset}`);
-	console.log(`${c.dim}PR #${data.number}: ${data.html_url}${c.reset}\n`);
+	console.info(`\n${c.green}${c.bold}PR created successfully${c.reset}`);
+	console.info(`${c.dim}PR #${data.number}: ${data.html_url}${c.reset}\n`);
 }
 
 // ============ CLI ============
@@ -404,7 +404,7 @@ async function main(): Promise<void> {
 	const [cmd, ...rest] = args;
 
 	if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-		console.log(HELP);
+		console.info(HELP);
 		return;
 	}
 
@@ -490,7 +490,7 @@ async function main(): Promise<void> {
 
 			default:
 				console.error(`${c.red}Unknown command: ${cmd}${c.reset}`);
-				console.log(HELP);
+				console.info(HELP);
 				process.exit(1);
 		}
 	} catch (error) {

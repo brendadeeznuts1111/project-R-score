@@ -139,7 +139,7 @@ api.post('/streams/api', async (c) => {
     }
 
     const tradesResult = await provider.fetchAllTrades(symbol, (count) => {
-      console.log(`Fetched ${count} trades...`);
+      console.info(`Fetched ${count} trades...`);
     });
 
     if (!tradesResult.ok) {
@@ -474,7 +474,7 @@ api.post('/polymarket/fetch', async (c) => {
     await provider.connect();
 
     const tradesResult = await provider.fetchAllTrades(undefined, (count) => {
-      console.log(`Fetched ${count} Polymarket trades...`);
+      console.info(`Fetched ${count} Polymarket trades...`);
     });
 
     if (!tradesResult.ok) {
@@ -563,7 +563,7 @@ api.post('/kalshi/fetch', async (c) => {
     await provider.connect();
 
     const tradesResult = await provider.fetchAllTrades(undefined, (count) => {
-      console.log(`Fetched ${count} Kalshi trades...`);
+      console.info(`Fetched ${count} Kalshi trades...`);
     });
 
     if (!tradesResult.ok) {
@@ -1125,7 +1125,7 @@ api.post('/arbitrage/start', async (c) => {
       },
       {
         onOpportunity: (opp) => {
-          console.log(
+          console.info(
             `Arbitrage: ${opp.isArbitrage ? '🎯 TRUE ARB' : '📊 +EV'} | ` +
             `${opp.event.category} | ${opp.spreadPercent.toFixed(2)}% spread | ` +
             `${opp.event.description.slice(0, 50)}...`
@@ -1590,7 +1590,7 @@ api.post('/ticks/init', async (c) => {
           }
         },
         onAlert: (alert) => {
-          console.log(`[TICK ALERT] ${alert.severity.toUpperCase()}: ${alert.message}`);
+          console.info(`[TICK ALERT] ${alert.severity.toUpperCase()}: ${alert.message}`);
         },
       }
     );

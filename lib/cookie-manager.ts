@@ -60,7 +60,7 @@ export class CookieManager {
       maxAge: 3600, // 1 hour
       secure: true,
       httpOnly: true,
-      sameSite: 'strict'
+      sameSite: 'strict',
     });
 
     // User preferences
@@ -71,7 +71,7 @@ export class CookieManager {
       path: '/',
       maxAge: 31536000, // 1 year
       secure: true,
-      sameSite: 'lax'
+      sameSite: 'lax',
     });
 
     // Analytics consent
@@ -82,7 +82,7 @@ export class CookieManager {
       path: '/',
       maxAge: 2592000, // 30 days
       secure: true,
-      sameSite: 'lax'
+      sameSite: 'lax',
     });
 
     // Performance tracking
@@ -94,7 +94,7 @@ export class CookieManager {
       maxAge: 86400, // 1 day
       secure: true,
       httpOnly: true,
-      sameSite: 'strict'
+      sameSite: 'strict',
     });
   }
 
@@ -120,15 +120,20 @@ export class CookieManager {
               path: '/',
               maxAge: 86400,
               secure: true,
-              sameSite: 'lax'
-            }
-          ]
+              sameSite: 'lax',
+            },
+          ],
         },
         {
           id: 'variant_b',
           name: 'Enhanced UI with Animations',
           weight: 0.3,
-          features: ['enhanced-layout', 'gradient-colors', 'animated-components', 'micro-interactions'],
+          features: [
+            'enhanced-layout',
+            'gradient-colors',
+            'animated-components',
+            'micro-interactions',
+          ],
           cookies: [
             {
               name: 'fw_ui_variant',
@@ -137,9 +142,9 @@ export class CookieManager {
               path: '/',
               maxAge: 86400,
               secure: true,
-              sameSite: 'lax'
-            }
-          ]
+              sameSite: 'lax',
+            },
+          ],
         },
         {
           id: 'variant_c',
@@ -154,11 +159,11 @@ export class CookieManager {
               path: '/',
               maxAge: 86400,
               secure: true,
-              sameSite: 'lax'
-            }
-          ]
-        }
-      ]
+              sameSite: 'lax',
+            },
+          ],
+        },
+      ],
     });
 
     // Performance Optimization Experiment
@@ -183,15 +188,20 @@ export class CookieManager {
               maxAge: 3600,
               secure: true,
               httpOnly: true,
-              sameSite: 'strict'
-            }
-          ]
+              sameSite: 'strict',
+            },
+          ],
         },
         {
           id: 'perf_optimized',
           name: 'Optimized Performance',
           weight: 0.5,
-          features: ['aggressive-caching', 'smart-prefetch', 'advanced-compression', 'resource-hints'],
+          features: [
+            'aggressive-caching',
+            'smart-prefetch',
+            'advanced-compression',
+            'resource-hints',
+          ],
           cookies: [
             {
               name: 'fw_perf_variant',
@@ -201,11 +211,11 @@ export class CookieManager {
               maxAge: 3600,
               secure: true,
               httpOnly: true,
-              sameSite: 'strict'
-            }
-          ]
-        }
-      ]
+              sameSite: 'strict',
+            },
+          ],
+        },
+      ],
     });
   }
 
@@ -220,7 +230,9 @@ export class CookieManager {
     // Check if user is already in a variant
     const existingVariant = this.getCookie('fw_ui_variant');
     if (existingVariant) {
-      const variant = experiment.variants.find(v => v.cookies.some(c => c.value === existingVariant));
+      const variant = experiment.variants.find(v =>
+        v.cookies.some(c => c.value === existingVariant)
+      );
       if (variant) {
         this.currentVariant = variant;
         return variant;
@@ -235,7 +247,7 @@ export class CookieManager {
       cumulativeWeight += variant.weight;
       if (random <= cumulativeWeight) {
         this.currentVariant = variant;
-        
+
         // Set variant cookies
         variant.cookies.forEach(cookie => {
           this.setCookie(cookie);
@@ -265,7 +277,9 @@ export class CookieManager {
       typeof window !== 'undefined' && window.location?.hostname
         ? String(window.location.hostname).toLowerCase()
         : '';
-    const cookieDomain = config.domain ? String(config.domain).replace(/^\./, '').toLowerCase() : '';
+    const cookieDomain = config.domain
+      ? String(config.domain).replace(/^\./, '').toLowerCase()
+      : '';
     const canSetDomain =
       Boolean(cookieDomain) &&
       Boolean(runtimeHost) &&
@@ -275,25 +289,25 @@ export class CookieManager {
     if (config.domain && canSetDomain) {
       cookieString += `; domain=${config.domain}`;
     }
-    
+
     if (config.path) {
       cookieString += `; path=${config.path}`;
     }
-    
+
     if (config.expires) {
       cookieString += `; expires=${config.expires.toUTCString()}`;
     }
-    
+
     if (config.maxAge !== undefined) {
       cookieString += `; max-age=${config.maxAge}`;
     }
-    
+
     // SameSite=None requires Secure in modern browsers.
     const requireSecure = config.sameSite === 'none';
     if (config.secure || requireSecure) {
       cookieString += `; secure`;
     }
-    
+
     // HttpOnly cannot be set from JavaScript; browsers ignore it on document.cookie.
 
     if (config.sameSite) {
@@ -309,14 +323,14 @@ export class CookieManager {
 
     const nameEQ = name + '=';
     const cookies = document.cookie.split(';');
-    
+
     for (let cookie of cookies) {
       cookie = cookie.trim();
       if (cookie.indexOf(nameEQ) === 0) {
         return decodeURIComponent(cookie.substring(nameEQ.length));
       }
     }
-    
+
     return null;
   }
 
@@ -329,7 +343,7 @@ export class CookieManager {
     this.setCookie({
       ...config,
       value: '',
-      maxAge: -1
+      maxAge: -1,
     });
 
     this.config.delete(name);
@@ -367,7 +381,7 @@ export class CookieManager {
       sessionId,
       variant: variant?.id,
       features: variant?.features,
-      ...data
+      ...data,
     };
 
     // Send to analytics endpoint
@@ -382,10 +396,10 @@ export class CookieManager {
       headers: {
         'Content-Type': 'application/json',
         'X-Session-ID': this.getCookie('fw_session') || '',
-        'X-Variant': this.getCurrentVariant()?.id || ''
+        'X-Variant': this.getCurrentVariant()?.id || '',
       },
       body: JSON.stringify(data),
-      keepalive: true
+      keepalive: true,
     }).catch(() => {
       // Silently fail for analytics
     });
@@ -400,7 +414,7 @@ export class CookieManager {
       path: '/',
       maxAge: 2592000,
       secure: true,
-      sameSite: 'lax'
+      sameSite: 'lax',
     });
   }
 
@@ -412,7 +426,7 @@ export class CookieManager {
       path: '/',
       maxAge: 2592000,
       secure: true,
-      sameSite: 'lax'
+      sameSite: 'lax',
     });
   }
 

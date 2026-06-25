@@ -366,7 +366,7 @@ describe('Bun API Fixes', () => {
 					}).not.toThrow(/overflow/i);
 				} else {
 					// Skip if library not available
-					console.log('Skipping @datadog/pprof test - library not installed');
+					console.info('Skipping @datadog/pprof test - library not installed');
 				}
 			} catch (error: any) {
 				// Should not crash with overflow errors

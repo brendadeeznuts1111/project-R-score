@@ -64,20 +64,20 @@ async function main(): Promise<void> {
   };
 
   if (options.json) {
-    console.log(JSON.stringify(payload, null, 2));
+    console.info(JSON.stringify(payload, null, 2));
   } else {
-    console.log(`Project Online Readiness: ${options.domain}`);
-    console.log(`Source: ${options.source}`);
-    console.log(`Status: ${readiness.status}`);
-    console.log(`Ready: ${readiness.ready}`);
-    console.log(`Overall score: ${readiness.metrics.overallScore}`);
+    console.info(`Project Online Readiness: ${options.domain}`);
+    console.info(`Source: ${options.source}`);
+    console.info(`Status: ${readiness.status}`);
+    console.info(`Ready: ${readiness.ready}`);
+    console.info(`Overall score: ${readiness.metrics.overallScore}`);
     if (Number.isFinite(readiness.metrics.strictP95Ms)) {
-      console.log(`Strict p95: ${readiness.metrics.strictP95Ms}ms`);
+      console.info(`Strict p95: ${readiness.metrics.strictP95Ms}ms`);
     }
     if (readiness.reasons.length > 0) {
-      console.log('Reasons:');
+      console.info('Reasons:');
       for (const reason of readiness.reasons) {
-        console.log(`- ${reason}`);
+        console.info(`- ${reason}`);
       }
     }
   }
@@ -88,8 +88,10 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error(`[project-online-readiness] ${error instanceof Error ? error.message : String(error)}`);
+  main().catch(error => {
+    console.error(
+      `[project-online-readiness] ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   });
 }

@@ -12,66 +12,72 @@ const options = {
   fullCheck: args.includes('--full-check'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun documentation-status-checker.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose       Verbose output with detailed information');
-  console.log('  -q, --quiet         Quiet mode with minimal output');
-  console.log('  --url-only          Check only URL validation');
-  console.log('  --constants-only    Check only constants loading');
-  console.log('  --imports-only      Check only import functionality');
-  console.log('  --full-check        Run comprehensive check including network tests');
-  console.log('  --json              Output results in JSON format');
-  console.log('  --no-color          Disable colored output');
-  console.log('  -h, --help          Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun documentation-status-checker.ts');
-  console.log('  bun documentation-status-checker.ts --verbose');
-  console.log('  bun documentation-status-checker.ts --url-only --json');
-  console.log('  bun documentation-status-checker.ts --full-check');
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun documentation-status-checker.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose       Verbose output with detailed information');
+  console.info('  -q, --quiet         Quiet mode with minimal output');
+  console.info('  --url-only          Check only URL validation');
+  console.info('  --constants-only    Check only constants loading');
+  console.info('  --imports-only      Check only import functionality');
+  console.info('  --full-check        Run comprehensive check including network tests');
+  console.info('  --json              Output results in JSON format');
+  console.info('  --no-color          Disable colored output');
+  console.info('  -h, --help          Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun documentation-status-checker.ts');
+  console.info('  bun documentation-status-checker.ts --verbose');
+  console.info('  bun documentation-status-checker.ts --url-only --json');
+  console.info('  bun documentation-status-checker.ts --full-check');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -82,8 +88,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -92,7 +98,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -117,7 +123,9 @@ async function checkConstantsLoading() {
     const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
     const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
 
-    recordTest('cli-constants-import', true,
+    recordTest(
+      'cli-constants-import',
+      true,
       `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
       { categories, urlGroups: urls, exampleGroups: examples }
     );
@@ -140,7 +148,9 @@ async function checkConstantsLoading() {
     const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
     const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
 
-    recordTest('utils-constants-import', true,
+    recordTest(
+      'utils-constants-import',
+      true,
       `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
       { categories, urlGroups: urls, exampleGroups: examples }
     );
@@ -151,7 +161,11 @@ async function checkConstantsLoading() {
       log.verbose(`Utils URL Groups: ${urls.join(', ')}`);
     }
   } catch (error: any) {
-    recordTest('utils-constants-import', false, `Failed to import Utils constants: ${error.message}`);
+    recordTest(
+      'utils-constants-import',
+      false,
+      `Failed to import Utils constants: ${error.message}`
+    );
     log.error('Utils Constants: FAILED');
   }
 
@@ -177,15 +191,23 @@ async function checkConstantsLoading() {
     });
 
     const totalURLs = cliURLCount + utilsURLCount;
-    const totalCategories = Object.values(cliConstants.CLICategory).length + Object.values(utilsConstants.UtilsCategory).length;
+    const totalCategories =
+      Object.values(cliConstants.CLICategory).length +
+      Object.values(utilsConstants.UtilsCategory).length;
 
-    recordTest('constants-data-integrity', true,
+    recordTest(
+      'constants-data-integrity',
+      true,
       `Data integrity verified: ${totalCategories} categories, ${totalURLs} total URLs`,
       { totalCategories, totalURLs, cliURLCount, utilsURLCount }
     );
     log.success('Data Integrity: OK');
   } catch (error: any) {
-    recordTest('constants-data-integrity', false, `Constants data integrity check failed: ${error.message}`);
+    recordTest(
+      'constants-data-integrity',
+      false,
+      `Constants data integrity check failed: ${error.message}`
+    );
     log.error('Data Integrity: FAILED');
   }
 }
@@ -201,7 +223,11 @@ async function checkImportFunctionality() {
     recordTest('documentation-module-import', true, 'Documentation module imported successfully');
     log.success('Documentation Module: OK');
   } catch (error: any) {
-    recordTest('documentation-module-import', false, `Documentation module import failed: ${error.message}`);
+    recordTest(
+      'documentation-module-import',
+      false,
+      `Documentation module import failed: ${error.message}`
+    );
     log.error('Documentation Module: FAILED');
   }
 
@@ -212,7 +238,11 @@ async function checkImportFunctionality() {
     recordTest('core-documentation-import', true, 'Core documentation imported successfully');
     log.success('Core Documentation: OK');
   } catch (error: any) {
-    recordTest('core-documentation-import', false, `Core documentation import failed: ${error.message}`);
+    recordTest(
+      'core-documentation-import',
+      false,
+      `Core documentation import failed: ${error.message}`
+    );
     log.error('Core Documentation: FAILED');
   }
 
@@ -223,7 +253,11 @@ async function checkImportFunctionality() {
     recordTest('validation-module-import', true, 'Validation module imported successfully');
     log.success('Validation Module: OK');
   } catch (error: any) {
-    recordTest('validation-module-import', false, `Validation module import failed: ${error.message}`);
+    recordTest(
+      'validation-module-import',
+      false,
+      `Validation module import failed: ${error.message}`
+    );
     log.error('Validation Module: FAILED');
   }
 }
@@ -273,8 +307,12 @@ async function checkURLValidation() {
     });
 
     const passed = invalidURLs === 0;
-    recordTest('url-structure-validation', passed,
-      passed ? `All ${validURLs} URLs have valid structure` : `${invalidURLs} of ${validURLs + invalidURLs} URLs have invalid structure`,
+    recordTest(
+      'url-structure-validation',
+      passed,
+      passed
+        ? `All ${validURLs} URLs have valid structure`
+        : `${invalidURLs} of ${validURLs + invalidURLs} URLs have invalid structure`,
       { validURLs, invalidURLs, invalidList }
     );
 
@@ -287,7 +325,11 @@ async function checkURLValidation() {
       }
     }
   } catch (error: any) {
-    recordTest('url-structure-validation', false, `URL structure validation failed: ${error.message}`);
+    recordTest(
+      'url-structure-validation',
+      false,
+      `URL structure validation failed: ${error.message}`
+    );
     log.error('URL Structure: FAILED');
   }
 
@@ -298,7 +340,7 @@ async function checkURLValidation() {
       const testURLs = [
         'https://bun.sh/docs/cli',
         'https://bun.sh/docs/api/utils',
-        'https://github.com/oven-sh/bun'
+        'https://github.com/oven-sh/bun',
       ];
 
       let accessibleURLs = 0;
@@ -315,7 +357,9 @@ async function checkURLValidation() {
       }
 
       const passed = accessibleURLs === testURLs.length;
-      recordTest('url-accessibility-check', passed,
+      recordTest(
+        'url-accessibility-check',
+        passed,
         `${accessibleURLs} of ${testURLs.length} URLs are accessible`,
         { results, accessibleURLs, totalURLs: testURLs.length }
       );
@@ -326,7 +370,11 @@ async function checkURLValidation() {
         log.warning(`URL Accessibility: ${testURLs.length - accessibleURLs} URLs not accessible`);
       }
     } catch (error: any) {
-      recordTest('url-accessibility-check', false, `URL accessibility check failed: ${error.message}`);
+      recordTest(
+        'url-accessibility-check',
+        false,
+        `URL accessibility check failed: ${error.message}`
+      );
       log.error('URL Accessibility: FAILED');
     }
   } else {
@@ -343,7 +391,7 @@ async function checkURLValidation() {
       'bun build ./src/index.ts',
       'bun install',
       'bun add lodash',
-      'invalid-command'
+      'invalid-command',
     ];
 
     let validCommands = 0;
@@ -351,8 +399,11 @@ async function checkURLValidation() {
     const results: Record<string, boolean> = {};
 
     for (const cmd of testCommands) {
-      const isValid = cmd.startsWith('bun') &&
-                     ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(cmd.split(' ')[1]);
+      const isValid =
+        cmd.startsWith('bun') &&
+        ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(
+          cmd.split(' ')[1]
+        );
       results[cmd] = isValid;
       if (isValid) {
         validCommands++;
@@ -363,7 +414,9 @@ async function checkURLValidation() {
 
     // Should have 5 valid, 1 invalid
     const passed = validCommands === 5 && invalidCommands === 1;
-    recordTest('cli-command-validation', passed,
+    recordTest(
+      'cli-command-validation',
+      passed,
       `${validCommands} valid, ${invalidCommands} invalid commands detected`,
       { results, validCommands, invalidCommands }
     );
@@ -396,7 +449,11 @@ async function checkErrorHandling() {
       log.success('Import Error Handling: OK');
     }
   } catch (error: any) {
-    recordTest('import-error-handling', false, `Import error handling test failed: ${error.message}`);
+    recordTest(
+      'import-error-handling',
+      false,
+      `Import error handling test failed: ${error.message}`
+    );
     log.error('Import Error Handling: FAILED');
   }
 
@@ -415,15 +472,19 @@ async function checkErrorHandling() {
       log.error('Validation Error Handling: FAILED');
     }
   } catch (error: any) {
-    recordTest('validation-error-handling', false, `Validation error handling test failed: ${error.message}`);
+    recordTest(
+      'validation-error-handling',
+      false,
+      `Validation error handling test failed: ${error.message}`
+    );
     log.error('Validation Error Handling: FAILED');
   }
 }
 
 // Main check function
 async function runStatusCheck() {
-  console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
-  console.log(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
+  console.info(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
+  console.info(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -449,11 +510,11 @@ async function runStatusCheck() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
 
     // Output JSON if requested
     if (options.json) {
@@ -462,13 +523,12 @@ async function runStatusCheck() {
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
+      console.info(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error: any) {
     log.error(`Status check failed: ${error.message}`);
     if (options.verbose) {
@@ -479,12 +539,12 @@ async function runStatusCheck() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

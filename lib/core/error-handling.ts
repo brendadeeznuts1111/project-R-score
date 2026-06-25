@@ -183,12 +183,12 @@ export class ErrorHandler {
     const count = this.errorCounts.get(errorCode) || 1;
     const countText = count > 1 ? ` (${count}x)` : '';
 
-    console.log(styled(`❌ ${error.name}${countText} [${errorCode}]`, color as any));
-    console.log(styled(`   Context: ${context}`, 'muted'));
-    console.log(styled(`   Message: ${error.message}`, 'muted'));
+    console.info(styled(`❌ ${error.name}${countText} [${errorCode}]`, color as any));
+    console.info(styled(`   Context: ${context}`, 'muted'));
+    console.info(styled(`   Message: ${error.message}`, 'muted'));
 
     if (error.context && Object.keys(error.context).length > 0) {
-      console.log(styled(`   Context: ${JSON.stringify(error.context, null, 2)}`, 'muted'));
+      console.info(styled(`   Context: ${JSON.stringify(error.context, null, 2)}`, 'muted'));
     }
   }
 

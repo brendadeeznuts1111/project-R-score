@@ -40,9 +40,17 @@ function parseArgs(argv: string[]): EvaluateOptions {
   return {
     strict: argv.includes('--strict'),
     json: argv.includes('--json'),
-    currentPath: resolve(argv.find(a => a.startsWith('--current='))?.split('=')[1] || 'reports/brand-bench/latest.json'),
-    baselinePath: resolve(argv.find(a => a.startsWith('--baseline='))?.split('=')[1] || 'reports/brand-bench/pinned-baseline.json'),
-    governancePath: resolve(argv.find(a => a.startsWith('--governance='))?.split('=')[1] || 'reports/brand-bench/governance.json'),
+    currentPath: resolve(
+      argv.find(a => a.startsWith('--current='))?.split('=')[1] || 'reports/brand-bench/latest.json'
+    ),
+    baselinePath: resolve(
+      argv.find(a => a.startsWith('--baseline='))?.split('=')[1] ||
+        'reports/brand-bench/pinned-baseline.json'
+    ),
+    governancePath: resolve(
+      argv.find(a => a.startsWith('--governance='))?.split('=')[1] ||
+        'reports/brand-bench/governance.json'
+    ),
   };
 }
 
@@ -57,7 +65,10 @@ function pctDelta(current: number, baseline: number): number {
   return ((current - baseline) / baseline) * 100;
 }
 
-function severityFor(pct: number, kind: 'throughput_drop' | 'latency_spike' | 'memory_increase'): BrandBenchSeverity {
+function severityFor(
+  pct: number,
+  kind: 'throughput_drop' | 'latency_spike' | 'memory_increase'
+): BrandBenchSeverity {
   if (kind === 'throughput_drop') {
     const drop = -pct;
     if (drop >= THRESHOLDS.fail.throughputDropPct) return 'fail';
@@ -91,7 +102,8 @@ function compareMetric(
 ): BrandBenchViolation | null {
   const deltaAbs = current - baseline;
   if (kind === 'latency_spike' && deltaAbs < THRESHOLDS.minAbsoluteDelta.latencyMs) return null;
-  if (kind === 'memory_increase' && deltaAbs < THRESHOLDS.minAbsoluteDelta.memoryFootprint) return null;
+  if (kind === 'memory_increase' && deltaAbs < THRESHOLDS.minAbsoluteDelta.memoryFootprint)
+    return null;
   const deltaPct = pctDelta(current, baseline);
   const severity = severityFor(deltaPct, kind);
   if (severity === 'ok') return null;
@@ -167,8 +179,14 @@ export function evaluateBrandBench(
   const hasFail = violations.some(v => v.severity === 'fail');
   const hasWarn = violations.some(v => v.severity === 'warn');
   const status: BrandBenchEvaluation['status'] = options.strict
-    ? (hasFail ? 'fail' : hasWarn ? 'warn' : 'ok')
-    : (hasFail || hasWarn ? 'warn' : 'ok');
+    ? hasFail
+      ? 'fail'
+      : hasWarn
+        ? 'warn'
+        : 'ok'
+    : hasFail || hasWarn
+      ? 'warn'
+      : 'ok';
 
   return {
     ok: status !== 'fail' || !options.strict,
@@ -202,16 +220,22 @@ async function main(): Promise<void> {
   const strict = options.strict || governance.mode === 'strict';
   const gateMode: 'warn' | 'strict' = strict ? 'strict' : 'warn';
   const warnCycle = Number.isFinite(governance.warnCycle) ? Number(governance.warnCycle) : 1;
-  const warnCyclesTotal = Number.isFinite(governance.warnCyclesTotal) ? Number(governance.warnCyclesTotal) : 5;
+  const warnCyclesTotal = Number.isFinite(governance.warnCyclesTotal)
+    ? Number(governance.warnCyclesTotal)
+    : 5;
 
   try {
     current = JSON.parse(await readFile(options.currentPath, 'utf8')) as BrandBenchReport;
   } catch (error) {
-    throw new Error(`Unable to read current report at ${options.currentPath}: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Unable to read current report at ${options.currentPath}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 
   try {
-    baselinePinned = JSON.parse(await readFile(options.baselinePath, 'utf8')) as BrandBenchPinnedBaseline;
+    baselinePinned = JSON.parse(
+      await readFile(options.baselinePath, 'utf8')
+    ) as BrandBenchPinnedBaseline;
   } catch {
     const result: BrandBenchEvaluation = {
       ok: true,
@@ -239,7 +263,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
     process.exit(0);
     return;
   }
@@ -271,7 +295,7 @@ async function main(): Promise<void> {
       ],
       thresholds: THRESHOLDS,
     };
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
     process.exit(0);
     return;
   }
@@ -286,16 +310,16 @@ async function main(): Promise<void> {
   });
 
   if (options.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
   } else {
     // Use Bun.inspect.table() for formatted summary
     const useColors = process.stdout.isTTY;
-    
-    console.log(`\n📊 Brand Bench Evaluation Summary`);
-    console.log(`Status: ${result.status.toUpperCase()}`);
-    console.log(`Mode: ${result.gateMode} (${result.warnCycle}/${result.warnCyclesTotal})`);
-    console.log(`Anomaly: ${result.anomalyType}`);
-    
+
+    console.info(`\n📊 Brand Bench Evaluation Summary`);
+    console.info(`Status: ${result.status.toUpperCase()}`);
+    console.info(`Mode: ${result.gateMode} (${result.warnCycle}/${result.warnCyclesTotal})`);
+    console.info(`Anomaly: ${result.anomalyType}`);
+
     if (result.violations.length > 0) {
       const tableData = result.violations.map(v => ({
         metric: v.metric.split('.').pop() || v.metric,
@@ -303,15 +327,13 @@ async function main(): Promise<void> {
         severity: v.severity === 'fail' ? '❌ FAIL' : v.severity === 'warn' ? '⚠️ WARN' : '✅ OK',
         delta: `${v.deltaPct > 0 ? '+' : ''}${v.deltaPct.toFixed(1)}%`,
       }));
-      
-      console.log('\nViolations:');
-      console.log(Bun.inspect.table(
-        tableData,
-        ['metric', 'kind', 'severity', 'delta'],
-        { colors: useColors }
-      ));
+
+      console.info('\nViolations:');
+      console.info(
+        Bun.inspect.table(tableData, ['metric', 'kind', 'severity', 'delta'], { colors: useColors })
+      );
     } else {
-      console.log('\n✅ No violations detected');
+      console.info('\n✅ No violations detected');
     }
   }
 

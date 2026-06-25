@@ -26,9 +26,9 @@ const args = Bun.argv.slice(2);
 const command = args[0];
 
 async function showHelp() {
-  console.log(styled('\n🔐 FactoryWager Secret Version CLI v5.1', 'accent'));
-  console.log(styled('─'.repeat(50), 'muted'));
-  console.log(styled('\nCommands:', 'primary'));
+  console.info(styled('\n🔐 FactoryWager Secret Version CLI v5.1', 'accent'));
+  console.info(styled('─'.repeat(50), 'muted'));
+  console.info(styled('\nCommands:', 'primary'));
 
   const commands = [
     ['set <key> <value> [description]', 'Set secret with versioning'],
@@ -40,19 +40,21 @@ async function showHelp() {
     ['visualize <key>', 'Generate version visualization'],
     ['schedule <key> <cron|interval> <value>', 'Schedule rotation'],
     ['impact <key>', 'Show impact analysis'],
-    ['help', 'Show this help']
+    ['help', 'Show this help'],
   ];
 
   commands.forEach(([cmd, desc]) => {
-    console.log(styled(`  ${cmd.padEnd(35)}`, 'muted') + styled(desc, 'success'));
+    console.info(styled(`  ${cmd.padEnd(35)}`, 'muted') + styled(desc, 'success'));
   });
 
-  console.log(styled('\nExamples:', 'primary'));
-  console.log(styled('  bun secret-version-cli.ts set API_KEY "sk_live_123" "Production key"', 'muted'));
-  console.log(styled('  bun secret-version-cli.ts rollback API_KEY v1.0.0 "Bug fix"', 'muted'));
-  console.log(styled('  bun secret-version-cli.ts schedule JWT_KEY cron "0 0 1 * *"', 'muted'));
+  console.info(styled('\nExamples:', 'primary'));
+  console.info(
+    styled('  bun secret-version-cli.ts set API_KEY "sk_live_123" "Production key"', 'muted')
+  );
+  console.info(styled('  bun secret-version-cli.ts rollback API_KEY v1.0.0 "Bug fix"', 'muted'));
+  console.info(styled('  bun secret-version-cli.ts schedule JWT_KEY cron "0 0 1 * *"', 'muted'));
 
-  console.log('\n' + styled('🚀 Secure your temporal secrets!', 'success'));
+  console.info('\n' + styled('🚀 Secure your temporal secrets!', 'success'));
 }
 
 async function handleSet(key: string, value: string, description?: string) {
@@ -61,7 +63,7 @@ async function handleSet(key: string, value: string, description?: string) {
       author: process.env.USER || 'cli',
       description: description || 'Set via CLI',
       level: 'STANDARD',
-      tags: { 'source': 'cli' }
+      tags: { source: 'cli' },
     });
 
     log.success(`Set ${key}`);
@@ -81,9 +83,9 @@ async function handleGet(key: string, version?: string) {
     log.metric('Preview', result.value.substring(0, 20) + '...', 'muted');
 
     if (result.metadata?.tags) {
-      console.log(styled('\nMetadata:', 'muted'));
+      console.info(styled('\nMetadata:', 'muted'));
       Object.entries(result.metadata.tags).forEach(([k, v]) => {
-        console.log(styled(`  ${k}:`, 'muted') + styled(v, 'primary'));
+        console.info(styled(`  ${k}:`, 'muted') + styled(v, 'primary'));
       });
     }
   } catch (error) {
@@ -102,23 +104,23 @@ async function handleHistory(key: string, limit?: string) {
     }
 
     log.section(`History for ${key}`, 'accent');
-    console.log(styled('─'.repeat(50), 'muted'));
+    console.info(styled('─'.repeat(50), 'muted'));
 
     history.forEach((entry, i) => {
       const isLatest = i === 0;
       const color = isLatest ? 'success' : 'muted';
       const icon = entry.visual?.icon || '📝';
 
-      console.log(styled(`${icon} ${entry.version}`, color));
-      console.log(styled(`  ${entry.timestamp}`, 'muted'));
-      console.log(styled(`  ${entry.author || 'unknown'}`, 'primary'));
+      console.info(styled(`${icon} ${entry.version}`, color));
+      console.info(styled(`  ${entry.timestamp}`, 'muted'));
+      console.info(styled(`  ${entry.author || 'unknown'}`, 'primary'));
 
       if (entry.description) {
-        console.log(styled(`  ${entry.description}`, 'muted'));
+        console.info(styled(`  ${entry.description}`, 'muted'));
       }
 
       if (i < history.length - 1) {
-        console.log('');
+        console.info('');
       }
     });
   } catch (error) {
@@ -133,7 +135,7 @@ async function handleRollback(key: string, targetVersion: string, reason?: strin
 
     const result = await versionedManager.rollback(key, targetVersion, {
       confirm,
-      reason: rollbackReason
+      reason: rollbackReason,
     });
 
     if (!result.cancelled) {
@@ -174,8 +176,9 @@ async function handleExpirations() {
 
       expiring.forEach(secret => {
         const color = secret.daysLeft <= 3 ? 'error' : 'warning';
-        console.log(styled(`• ${secret.key}`, color) +
-                    styled(` | ${secret.daysLeft} days left`, 'muted'));
+        console.info(
+          styled(`• ${secret.key}`, color) + styled(` | ${secret.daysLeft} days left`, 'muted')
+        );
       });
     }
   } catch (error) {
@@ -202,13 +205,16 @@ async function handleVisualize(key: string) {
     log.metric('Total versions', impact.totalVersions, 'muted');
     log.metric('Rollbacks', impact.rollbacks, impact.rollbacks > 0 ? 'warning' : 'success');
     log.metric('Rotations', impact.rotations, 'accent');
-    log.metric('Stability', (impact.stability * 100).toFixed(1) + '%',
-              impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error');
+    log.metric(
+      'Stability',
+      (impact.stability * 100).toFixed(1) + '%',
+      impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error'
+    );
 
     if (impact.recommendations.length > 0) {
-      console.log(styled('\nRecommendations:', 'warning'));
+      console.info(styled('\nRecommendations:', 'warning'));
       impact.recommendations.forEach(rec => {
-        console.log(styled(`• ${rec}`, 'muted'));
+        console.info(styled(`• ${rec}`, 'muted'));
       });
     }
   } catch (error) {
@@ -218,9 +224,10 @@ async function handleVisualize(key: string) {
 
 async function handleSchedule(key: string, type: string, value: string) {
   try {
-    const schedule = type === 'cron'
-      ? { type: 'cron' as const, cron: value }
-      : { type: 'interval' as const, intervalMs: parseInt(value) };
+    const schedule =
+      type === 'cron'
+        ? { type: 'cron' as const, cron: value }
+        : { type: 'interval' as const, intervalMs: parseInt(value) };
 
     const rule = {
       key,
@@ -228,8 +235,8 @@ async function handleSchedule(key: string, type: string, value: string) {
       action: 'rotate' as const,
       metadata: {
         severity: 'MEDIUM' as const,
-        notify: ['cli']
-      }
+        notify: ['cli'],
+      },
     };
 
     const result = await lifecycleManager.scheduleRotation(key, rule);
@@ -249,17 +256,20 @@ async function handleImpact(key: string) {
 
     log.section(`Impact Analysis for ${key}`, 'primary');
 
-    console.log(styled('Metrics:', 'muted'));
+    console.info(styled('Metrics:', 'muted'));
     log.metric('Total versions', impact.totalVersions, 'muted');
     log.metric('Rollbacks', impact.rollbacks, impact.rollbacks > 0 ? 'warning' : 'success');
     log.metric('Rotations', impact.rotations, 'accent');
-    log.metric('Stability', (impact.stability * 100).toFixed(1) + '%',
-              impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error');
+    log.metric(
+      'Stability',
+      (impact.stability * 100).toFixed(1) + '%',
+      impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error'
+    );
 
     if (impact.recommendations.length > 0) {
-      console.log(styled('\nRecommendations:', 'warning'));
+      console.info(styled('\nRecommendations:', 'warning'));
       impact.recommendations.forEach(rec => {
-        console.log(styled(`• ${rec}`, 'muted'));
+        console.info(styled(`• ${rec}`, 'muted'));
       });
     }
   } catch (error) {

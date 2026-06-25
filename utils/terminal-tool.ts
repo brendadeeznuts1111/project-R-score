@@ -9,7 +9,7 @@ ensureDirectExecution();
 
 const projectName = Bun.main.split('/').pop()?.replace(/\.ts$/, '') || 'unknown';
 
-console.log(`
+console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Project Terminal Tool Starting                          ║
 ║  Entrypoint: ${Bun.main}${' '.repeat(40 - Bun.main.length)}║
@@ -35,7 +35,7 @@ const proc = Bun.spawn([shell], {
     data(terminal, data) {
       const text = new TextDecoder().decode(data);
       // Log PTY output with project context
-      console.log(`[PTY:${projectName}] ${text}`);
+      console.info(`[PTY:${projectName}] ${text}`);
     },
   },
 });
@@ -59,5 +59,5 @@ await proc.exited;
 proc.terminal?.close();
 process.stdin.setRawMode?.(false);
 
-console.log(`Terminal session ended for ${projectName}`);
+console.info(`Terminal session ended for ${projectName}`);
 Bun.exit(0);

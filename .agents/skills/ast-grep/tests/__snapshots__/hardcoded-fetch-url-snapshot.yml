@@ -1,0 +1,22 @@
+id: hardcoded-fetch-url
+snapshots:
+  await fetch("https://moonshot.cn/v1/chat/completions"):
+    labels:
+    - source: fetch("https://moonshot.cn/v1/chat/completions")
+      style: primary
+      start: 6
+      end: 54
+    - source: fetch
+      style: secondary
+      start: 6
+      end: 11
+  fetch('https://api.example.com/v1/data'):
+    labels:
+    - source: fetch('https://api.example.com/v1/data')
+      style: primary
+      start: 0
+      end: 40
+    - source: fetch
+      style: secondary
+      start: 0
+      end: 5

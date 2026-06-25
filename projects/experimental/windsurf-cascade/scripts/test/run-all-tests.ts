@@ -32,36 +32,36 @@ class Tester {
   private propertyTests: string = 'property-tests';
 
   async testAll(options: TestOptions = {}): Promise<void> {
-    console.log('🧪 Running all tests...\n');
+    console.info('🧪 Running all tests...\n');
     
     const results: TestResult[] = [];
     const startTime = Date.now();
 
     // Run unit tests first
     if (options.unit !== false) {
-      console.log('📋 Running unit tests...\n');
+      console.info('📋 Running unit tests...\n');
       for (const pkg of this.packages) {
         const result = await this.testPackage(pkg, options);
         results.push(result);
         
         if (result.success) {
-          console.log(`✅ ${pkg} - ${result.passed}/${result.tests} passed - ${result.duration}ms`);
+          console.info(`✅ ${pkg} - ${result.passed}/${result.tests} passed - ${result.duration}ms`);
         } else {
-          console.log(`❌ ${pkg} - ${result.error}`);
+          console.info(`❌ ${pkg} - ${result.error}`);
         }
       }
     }
 
     // Run property tests
     if (options.property !== false) {
-      console.log('\n🔬 Running property tests...\n');
+      console.info('\n🔬 Running property tests...\n');
       const propertyResult = await this.runPropertyTests(options);
       results.push(propertyResult);
       
       if (propertyResult.success) {
-        console.log(`✅ Property tests - ${propertyResult.passed}/${propertyResult.tests} passed - ${propertyResult.duration}ms`);
+        console.info(`✅ Property tests - ${propertyResult.passed}/${propertyResult.tests} passed - ${propertyResult.duration}ms`);
       } else {
-        console.log(`❌ Property tests - ${propertyResult.error}`);
+        console.info(`❌ Property tests - ${propertyResult.error}`);
       }
     }
 
@@ -209,27 +209,27 @@ class Tester {
     
     if (!packagePath) {
       console.error(`❌ Package '${packageName}' not found`);
-      console.log('Available packages:', this.packages);
+      console.info('Available packages:', this.packages);
       process.exit(1);
     }
 
-    console.log(`🧪 Testing single package: ${packagePath}`);
+    console.info(`🧪 Testing single package: ${packagePath}`);
     
     const result = await this.testPackage(packagePath, options);
     
     if (result.success) {
-      console.log(`✅ ${packagePath} - ${result.passed}/${result.tests} passed - ${result.duration}ms`);
+      console.info(`✅ ${packagePath} - ${result.passed}/${result.tests} passed - ${result.duration}ms`);
       if (result.coverage) {
-        console.log(`📊 Coverage: ${result.coverage}%`);
+        console.info(`📊 Coverage: ${result.coverage}%`);
       }
     } else {
-      console.log(`❌ ${packagePath} test failed: ${result.error}`);
+      console.info(`❌ ${packagePath} test failed: ${result.error}`);
       process.exit(1);
     }
   }
 
   async watch(packageName?: string): Promise<void> {
-    console.log('👀 Starting watch mode...');
+    console.info('👀 Starting watch mode...');
     
     const testCommand = packageName 
       ? `cd packages/${packageName} && bun run test:watch`
@@ -271,21 +271,21 @@ class Tester {
     const totalPassed = results.reduce((sum, r) => sum + r.passed, 0);
     const totalFailed = results.reduce((sum, r) => sum + r.failed, 0);
 
-    console.log(`\n📊 Test Summary:`);
-    console.log(`   Packages: ${results.length}`);
-    console.log(`   Successful: ${successful.length}`);
-    console.log(`   Failed: ${failed.length}`);
-    console.log(`   Tests: ${totalPassed}/${totalTests} passed`);
-    console.log(`   Total time: ${totalTime}ms`);
+    console.info(`\n📊 Test Summary:`);
+    console.info(`   Packages: ${results.length}`);
+    console.info(`   Successful: ${successful.length}`);
+    console.info(`   Failed: ${failed.length}`);
+    console.info(`   Tests: ${totalPassed}/${totalTests} passed`);
+    console.info(`   Total time: ${totalTime}ms`);
 
     if (failed.length > 0) {
-      console.log('\n❌ Failed packages:');
+      console.info('\n❌ Failed packages:');
       failed.forEach(result => {
-        console.log(`   - ${result.package}: ${result.error}`);
+        console.info(`   - ${result.package}: ${result.error}`);
       });
       process.exit(1);
     } else {
-      console.log('\n✅ All tests passed');
+      console.info('\n✅ All tests passed');
     }
   }
 }
@@ -314,7 +314,7 @@ async function main() {
     case 'single':
       if (!packageName) {
         console.error('❌ Package name required for single test');
-        console.log('Usage: bun run scripts/test.ts single <package-name>');
+        console.info('Usage: bun run scripts/test.ts single <package-name>');
         process.exit(1);
       }
       await tester.testSingle(packageName, options);

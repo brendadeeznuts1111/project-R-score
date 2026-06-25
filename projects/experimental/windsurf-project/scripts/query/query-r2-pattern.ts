@@ -24,22 +24,22 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
     return `${label}${' '.repeat(Math.max(0, target - labelWidth))}${value}`;
   };
 
-  console.log(`\n${'═'.repeat(60)}`);
-  console.log(`🚀 **R2 Pattern Query Engine (SUPER)**`);
-  console.log(`${'═'.repeat(60)}`);
-  console.log(pad('📦 BUCKET:', opts.bucket));
-  console.log(pad('📁 PREFIX:', opts.prefix));
-  console.log(pad('🔢 LIMIT:', opts.limit));
-  console.log(pad('📊 FORMAT:', opts.format.toUpperCase()));
+  console.info(`\n${'═'.repeat(60)}`);
+  console.info(`🚀 **R2 Pattern Query Engine (SUPER)**`);
+  console.info(`${'═'.repeat(60)}`);
+  console.info(pad('📦 BUCKET:', opts.bucket));
+  console.info(pad('📁 PREFIX:', opts.prefix));
+  console.info(pad('🔢 LIMIT:', opts.limit));
+  console.info(pad('📊 FORMAT:', opts.format.toUpperCase()));
   
   const activeFilters = cliArgs.filter(a => a.includes('=') && !a.startsWith('--'));
   if (activeFilters.length > 0) {
-    console.log(`🔧 FILTERS: ${activeFilters.join(', ')}`);
+    console.info(`🔧 FILTERS: ${activeFilters.join(', ')}`);
   }
   
-  if (opts.minSize || opts.maxSize) console.log(`📏 SIZE:    ${opts.minSize || 0}B - ${opts.maxSize || '∞'}B`);
-  if (opts.since || opts.until) console.log(`📅 RANGE:   ${opts.since || 'beginning'} ➔ ${opts.until || 'now'}`);
-  console.log(`${'─'.repeat(60)}`);
+  if (opts.minSize || opts.maxSize) console.info(`📏 SIZE:    ${opts.minSize || 0}B - ${opts.maxSize || '∞'}B`);
+  if (opts.since || opts.until) console.info(`📅 RANGE:   ${opts.since || 'beginning'} ➔ ${opts.until || 'now'}`);
+  console.info(`${'─'.repeat(60)}`);
   
   const startList = Bun.nanoseconds();
   
@@ -66,7 +66,7 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
       LastModified: obj.LastModified?.toISOString() || new Date().toISOString()
     }));
     
-    console.log(`📡 R2 Fetch: Found ${objects.length} total objects`);
+    console.info(`📡 R2 Fetch: Found ${objects.length} total objects`);
 
     // Extended filters (Size and Date)
     if (opts.minSize !== undefined || opts.maxSize !== undefined || opts.since || opts.until) {
@@ -82,7 +82,7 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
         }
         return true;
       });
-      console.log(`🎯 Post-List Filter (Size/Date): ${beforeFilter} ➔ ${objects.length}`);
+      console.info(`🎯 Post-List Filter (Size/Date): ${beforeFilter} ➔ ${objects.length}`);
     }
     
     // Classify each Key and download JSON content for filtering with Concurrency Limit
@@ -143,7 +143,7 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
         process.stdout.write(`\r📡 Classifying: ${Math.min(i + CONCURRENCY_LIMIT, objects.length)}/${objects.length}...`);
       }
     }
-    if (objects.length > CONCURRENCY_LIMIT) console.log(' Done.');
+    if (objects.length > CONCURRENCY_LIMIT) console.info(' Done.');
 
     const classifyTime = (Bun.nanoseconds() - classifyStart) / 1e6;
 
@@ -154,7 +154,7 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
       const patternIdx = parseInt(patternArg);
       const targetPattern = `PATTERN_${patternIdx + 1}`;
       filtered = classified.filter(item => item.classification?.pattern === targetPattern);
-      console.log(`🎯 Pattern Filter: ${targetPattern} (${filtered.length} matches)`);
+      console.info(`🎯 Pattern Filter: ${targetPattern} (${filtered.length} matches)`);
     }
 
     // CLI Filter (success=true country=US on parsedData)
@@ -162,18 +162,18 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
     if (Object.keys(filters).length > 0) {
       const beforeFilter = filtered.length;
       filtered = filterData(filtered, filters);
-      console.log(`🔧 CLI filters applied: ${beforeFilter} → ${filtered.length}`);
+      console.info(`🔧 CLI filters applied: ${beforeFilter} → ${filtered.length}`);
     }
 
     // Performance Summary
     const totalTime = (Bun.nanoseconds() - startList) / 1e6;
-    console.log(`\n📈 **Performance Summary**`);
-    console.log(`📊 Query Summary: ${objects.length} → ${filtered.length} (${totalTime.toFixed(0)}ms total)`);
-    console.log(`  List: ${((classifyStart - startList) / 1e6).toFixed(0)}ms | Classify: ${classifyTime.toFixed(0)}ms | Throughput: ${(objects.length / (classifyTime / 1000)).toFixed(0)} objs/s`);
+    console.info(`\n📈 **Performance Summary**`);
+    console.info(`📊 Query Summary: ${objects.length} → ${filtered.length} (${totalTime.toFixed(0)}ms total)`);
+    console.info(`  List: ${((classifyStart - startList) / 1e6).toFixed(0)}ms | Classify: ${classifyTime.toFixed(0)}ms | Throughput: ${(objects.length / (classifyTime / 1000)).toFixed(0)} objs/s`);
 
     // Output by format
     if (opts.format === 'table') {
-      console.log(`\n📊 **Query Results (Table)**`);
+      console.info(`\n📊 **Query Results (Table)**`);
       superTableCli(filtered, cliArgs);
     } else if (opts.format === 'csv') {
       // Dynamic CSV headers
@@ -197,10 +197,10 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
       const csv = [headers.join(','), ...rows].join('\n');
       const csvPath = 'query-results.csv';
       await Bun.write(csvPath, csv);
-      console.log(`\n💾 Exported CSV to: ${csvPath} (${headers.length} columns)`);
+      console.info(`\n💾 Exported CSV to: ${csvPath} (${headers.length} columns)`);
     } else if (opts.format === 'json') {
       await Bun.write(opts.jsonOut, JSON.stringify(filtered, null, 2));
-      console.log(`\n💾 Exported JSON to: ${opts.jsonOut}`);
+      console.info(`\n💾 Exported JSON to: ${opts.jsonOut}`);
     }
 
     // DuoPlus RPA integration
@@ -215,7 +215,7 @@ async function queryR2ByPattern(cliArgs: string[] = []) {
           totalTimeMs: totalTime
         }
       });
-      console.log(`🤖 **DuoPlus RPA Task Created** (${filtered.length} items)`);
+      console.info(`🤖 **DuoPlus RPA Task Created** (${filtered.length} items)`);
     }
 
     return filtered;

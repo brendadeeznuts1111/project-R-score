@@ -147,7 +147,7 @@ namespace GitUtils {
 	 * @example
 	 * ```typescript
 	 * if (await GitUtils.isAvailable()) {
-	 *   console.log("Git is available");
+	 *   console.info("Git is available");
 	 * }
 	 * ```
 	 */
@@ -169,7 +169,7 @@ namespace GitUtils {
 	 * @example
 	 * ```typescript
 	 * if (await GitUtils.isRepository()) {
-	 *   console.log("In a git repository");
+	 *   console.info("In a git repository");
 	 * }
 	 * ```
 	 */
@@ -193,7 +193,7 @@ namespace GitUtils {
 	 * ```typescript
 	 * const hash = await GitUtils.getCommitHash();
 	 * if (hash) {
-	 *   console.log(`Current commit: ${hash}`);
+	 *   console.info(`Current commit: ${hash}`);
 	 * }
 	 * ```
 	 */
@@ -218,7 +218,7 @@ namespace GitUtils {
 	 * ```typescript
 	 * const branch = await GitUtils.getBranch();
 	 * if (branch) {
-	 *   console.log(`Current branch: ${branch}`);
+	 *   console.info(`Current branch: ${branch}`);
 	 * }
 	 * ```
 	 */

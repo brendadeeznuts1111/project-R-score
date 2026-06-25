@@ -41,7 +41,7 @@ export class StructuredLogger {
 		deviatingNodes: any[];
 		mainlinePrice: number;
 	}): void {
-		console.log('%s | FhSpreadAlert | %j',
+		console.info('%s | FhSpreadAlert | %j',
 			new Date().toISOString(),
 			{
 				marketId: result.marketId,
@@ -60,7 +60,7 @@ export class StructuredLogger {
 		state: 'open' | 'closed' | 'half-open',
 		reason?: string
 	): void {
-		console.log('%s | CircuitBreaker | %j',
+		console.info('%s | CircuitBreaker | %j',
 			new Date().toISOString(),
 			{
 				bookmaker,
@@ -82,7 +82,7 @@ export class StructuredLogger {
 			pendingRequests: number;
 		}
 	): void {
-		console.log('%s | ConnectionPool | %j',
+		console.info('%s | ConnectionPool | %j',
 			new Date().toISOString(),
 			{
 				bookmaker,
@@ -96,7 +96,7 @@ export class StructuredLogger {
 	 * Generic structured log with %j format
 	 */
 	log(eventType: string, data: Record<string, any>): void {
-		console.log('%s | %s | %j',
+		console.info('%s | %s | %j',
 			new Date().toISOString(),
 			eventType,
 			{

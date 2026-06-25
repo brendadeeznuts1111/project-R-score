@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 
-import { buildBundleAnalysis, parseArg } from "./lib/bundle-analysis";
+import { buildBundleAnalysis, parseArg } from './lib/bundle-analysis';
 
-const DEFAULT_ENTRY = "scratch/bun-v1.3.9-examples/playground-web/server.ts";
+const DEFAULT_ENTRY = 'scratch/bun-v1.3.9-examples/playground-web/server.ts';
 const DEFAULT_MAX_KB = 5120;
 
 async function main() {
-  const entry = parseArg("entry", DEFAULT_ENTRY);
-  const maxKb = Number.parseFloat(parseArg("max-kb", String(DEFAULT_MAX_KB)));
+  const entry = parseArg('entry', DEFAULT_ENTRY);
+  const maxKb = Number.parseFloat(parseArg('max-kb', String(DEFAULT_MAX_KB)));
   if (!Number.isFinite(maxKb) || maxKb <= 0) {
     throw new Error(`invalid --max-kb value: ${maxKb}`);
   }
@@ -16,7 +16,7 @@ async function main() {
   const outputKb = analysis.summary.outputBytes / 1024;
   const ok = outputKb <= maxKb;
 
-  console.log(
+  console.info(
     JSON.stringify(
       {
         ok,

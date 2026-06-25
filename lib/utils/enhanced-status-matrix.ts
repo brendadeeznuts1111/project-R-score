@@ -125,33 +125,33 @@ export function displayStatusMatrix(
 ): void {
   const matrix = generateStatusMatrix(context, backgroundHsl);
 
-  console.log(colorize(`🎯 ENHANCED STATUS MATRIX (${context.toUpperCase()})`, 'cyan', true));
+  console.info(colorize(`🎯 ENHANCED STATUS MATRIX (${context.toUpperCase()})`, 'cyan', true));
   if (backgroundHsl) {
-    console.log(
+    console.info(
       colorize(
         `Background: hsl(${backgroundHsl.h}, ${backgroundHsl.s}%, ${backgroundHsl.l}%)`,
         'gray'
       )
     );
   }
-  console.log(colorize('═'.repeat(80), 'gray'));
-  console.log();
+  console.info(colorize('═'.repeat(80), 'gray'));
+  console.info();
 
   const statuses: ColorStatus[] = ['success', 'warning', 'error', 'info'];
 
   statuses.forEach(status => {
-    console.log(colorize(`${getStatusIcon(status)} ${status.toUpperCase()}`, 'white', true));
-    console.log(colorize('─'.repeat(30), 'gray'));
+    console.info(colorize(`${getStatusIcon(status)} ${status.toUpperCase()}`, 'white', true));
+    console.info(colorize('─'.repeat(30), 'gray'));
 
     const statusItems = matrix.filter(item => item.status === status);
     statusItems.forEach(item => {
       const complianceIcon = backgroundHsl ? (item.wcagCompliant ? '✅' : '❌') : '○';
-      console.log(`${complianceIcon} ${item.ansi}`);
-      console.log(`   ${item.hex} | Brightness: ${(item.brightness * 100).toFixed(1)}%`);
+      console.info(`${complianceIcon} ${item.ansi}`);
+      console.info(`   ${item.hex} | Brightness: ${(item.brightness * 100).toFixed(1)}%`);
       if (backgroundHsl && !item.wcagCompliant) {
-        console.log(`   ${colorize('⚠️  WCAG AA not compliant', 'red')}`);
+        console.info(`   ${colorize('⚠️  WCAG AA not compliant', 'red')}`);
       }
-      console.log();
+      console.info();
     });
   });
 
@@ -160,15 +160,15 @@ export function displayStatusMatrix(
   const wcagCompliant = backgroundHsl ? matrix.filter(m => m.wcagCompliant).length : total;
   const avgBrightness = matrix.reduce((sum, m) => sum + m.brightness, 0) / total;
 
-  console.log(colorize('📊 MATRIX STATISTICS', 'magenta', true));
-  console.log(`Total Combinations: ${total}`);
+  console.info(colorize('📊 MATRIX STATISTICS', 'magenta', true));
+  console.info(`Total Combinations: ${total}`);
   if (backgroundHsl) {
-    console.log(
+    console.info(
       `WCAG AA Compliant: ${wcagCompliant}/${total} (${((wcagCompliant / total) * 100).toFixed(1)}%)`
     );
   }
-  console.log(`Average Brightness: ${(avgBrightness * 100).toFixed(1)}%`);
-  console.log(
+  console.info(`Average Brightness: ${(avgBrightness * 100).toFixed(1)}%`);
+  console.info(
     `Perceptual Range: ${(Math.max(...matrix.map(m => m.brightness)) - Math.min(...matrix.map(m => m.brightness))) * 100} points`
   );
 }
@@ -212,21 +212,21 @@ export { perceivedBrightness } from './advanced-hsl-system';
 // ──────────────────────────────────────────────────────────────────────────────
 
 export function demoEnhancedStatusMatrix(): void {
-  console.log(colorize('🚀 ENHANCED STATUS MATRIX DEMO', 'cyan', true));
-  console.log();
+  console.info(colorize('🚀 ENHANCED STATUS MATRIX DEMO', 'cyan', true));
+  console.info();
 
   // Demo 1: Dark context (terminal default)
-  console.log(colorize('🌙 DARK CONTEXT (Terminal)', 'blue', true));
+  console.info(colorize('🌙 DARK CONTEXT (Terminal)', 'blue', true));
   displayStatusMatrix('dark');
-  console.log();
+  console.info();
 
   // Demo 2: Light context
-  console.log(colorize('☀️  LIGHT CONTEXT (Web)', 'yellow', true));
+  console.info(colorize('☀️  LIGHT CONTEXT (Web)', 'yellow', true));
   displayStatusMatrix('light');
-  console.log();
+  console.info();
 
   // Demo 3: With background contrast checking
-  console.log(colorize('♿ WITH WCAG CONTRAST CHECKING', 'green', true));
-  console.log(colorize('Background: Dark blue header', 'gray'));
+  console.info(colorize('♿ WITH WCAG CONTRAST CHECKING', 'green', true));
+  console.info(colorize('Background: Dark blue header', 'gray'));
   displayStatusMatrix('light', { h: 210, s: 95, l: 20 });
 }

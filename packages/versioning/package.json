@@ -1,5 +1,5 @@
 {
-  "name": "@fw/versioning",
+  "name": "@factorywager/versioning",
   "version": "0.1.0",
   "private": true,
   "module": "src/index.ts",

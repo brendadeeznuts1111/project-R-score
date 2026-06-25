@@ -1,0 +1,75 @@
+{
+  "snapshotVersion": "2.0.0",
+  "sections": [
+    "policy",
+    "transpiler",
+    "semver",
+    "network"
+  ],
+  "scannerVersion": "2.0.0",
+  "policy": {
+    "snapshotVersionRange": "^2.0.0",
+    "compatibleScannerVersions": ">=2.0.0 <3.0.0"
+  },
+  "semver": {
+    "policyFingerprint": "e1aaa7fbaf5c28fc",
+    "packages": {},
+    "capturedAt": "2026-06-23T09:09:11.126Z",
+    "violationCount": 0
+  },
+  "generatedAt": "2026-06-23T09:09:11.126Z",
+  "network": {
+    "domain": "sports-terminal-os",
+    "scanPath": "projects/active/sports-terminal-os/dist/frontend",
+    "capturedAt": "2026-06-23T09:09:11.125Z",
+    "endpointCount": 22,
+    "routeCount": 22,
+    "healthRouteCount": 3,
+    "routeFingerprints": [
+      "GET /api/agents",
+      "GET /api/alerts",
+      "GET /api/health",
+      "GET /api/health/ready",
+      "GET /api/health/system-status",
+      "GET /api/metrics",
+      "GET /api/partners",
+      "POST /api/partners",
+      "POST /api/partners/{id}/evaluate",
+      "GET /api/players",
+      "GET /api/players/{id}",
+      "GET /api/prediction-markets",
+      "GET /api/prediction-markets/arbitrage",
+      "POST /api/proxy/auth",
+      "GET /api/risk/dashboard",
+      "GET /api/risk/positions",
+      "POST /api/signals/route",
+      "GET /api/sportsbook/best-lines",
+      "GET /api/sportsbook/odds",
+      "GET /api/telegram/delivery-stats",
+      "GET /api/webhooks",
+      "POST /api/webhooks"
+    ],
+    "networkUnique": 20,
+    "networkRaw": 102,
+    "bySurface": {
+      "fetch": 97,
+      "websocket": 5
+    },
+    "hotspotFiles": [
+      "OperationsPage-DIbfoytW.js",
+      "CommandCenterPage-BhC1XbnX.js",
+      "PatternsPage-Bg6uDejU.js",
+      "RiskPage-9cU4KROi.js",
+      "CustomersPage-Dz3zXUdf.js",
+      "PredictionMarketsPage-DMr73Heu.js",
+      "PartnersPage-gp4gXWme.js",
+      "SportsbookPage-BiccLxuL.js",
+      "AgentsPage-DgD7x-5x.js",
+      "TelegramPage-CFH7kDI4.js",
+      "index-CUcgJhsj.js",
+      "AIPlaygroundPage-IONEFQNa.js",
+      "HomePage-BZ0UJets.js"
+    ],
+    "lastProbe": "2026-06-23T09:09:11.125Z"
+  }
+}

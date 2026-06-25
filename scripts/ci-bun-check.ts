@@ -51,7 +51,7 @@ try {
 
 const isCanary = [version, revision, cliVersion, cliRevision]
   .filter(Boolean)
-  .some((value) => value.toLowerCase().includes('canary'));
+  .some(value => value.toLowerCase().includes('canary'));
 const allowCanary = Bun.env.ALLOW_CANARY_BUN_CI === '1' || Bun.env.ALLOW_CANARY_BUN_CI === 'true';
 
 if (!isAtLeast(version, minimum)) {
@@ -69,5 +69,5 @@ if (isCanary && !allowCanary) {
 if (isCanary && allowCanary) {
   console.warn(`Canary build allowed by ALLOW_CANARY_BUN_CI: ${version} (${revision})`);
 } else {
-  console.log(`Bun runtime check passed: ${version} (${revision})`);
+  console.info(`Bun runtime check passed: ${version} (${revision})`);
 }

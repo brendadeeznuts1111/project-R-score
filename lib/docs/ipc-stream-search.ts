@@ -26,7 +26,7 @@ class IPCDocumentationWorker {
   constructor() {
     this.searcher = new ZenStreamSearcher();
     this.setupIPCListeners();
-    
+
     // Keep the process alive
     this.keepAlive();
   }
@@ -43,8 +43,8 @@ class IPCDocumentationWorker {
   private setupIPCListeners() {
     // Listen for search requests from parent process
     process.on('message', async (message: IPCMessage) => {
-      console.log(`📨 Worker received message: ${message.type}`);
-      
+      console.info(`📨 Worker received message: ${message.type}`);
+
       switch (message.type) {
         case 'search':
           await this.handleSearchRequest(message);
@@ -61,7 +61,7 @@ class IPCDocumentationWorker {
     process.send!({
       type: 'complete',
       timestamp: Date.now(),
-      results: [{ message: 'Worker ready for documentation searches' }]
+      results: [{ message: 'Worker ready for documentation searches' }],
     });
   }
 
@@ -70,55 +70,54 @@ class IPCDocumentationWorker {
       process.send!({
         type: 'error',
         error: 'No query provided',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       return;
     }
 
     try {
-      console.log(`🔍 Worker starting search for: ${message.query}`);
-      
+      console.info(`🔍 Worker starting search for: ${message.query}`);
+
       // Perform streaming search with progress callbacks
       const stats = await this.searcher.streamSearch({
         query: message.query,
         cachePath: '/Users/nolarose/Projects/.cache',
-        onMatch: (match) => {
+        onMatch: match => {
           // Send individual matches as they arrive
           process.send!({
             type: 'result',
             results: [match],
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         },
-        onProgress: (progressStats) => {
+        onProgress: progressStats => {
           // Send progress updates
           process.send!({
             type: 'progress',
             progress: progressStats.matchesFound,
             stats: progressStats,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-        }
+        },
       });
 
       // Send completion message with final stats
       process.send!({
         type: 'complete',
         stats,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-
     } catch (error) {
       process.send!({
         type: 'error',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
   }
 
   private shutdown() {
-    console.log('🛑 Worker shutting down...');
+    console.info('🛑 Worker shutting down...');
     this.isRunning = false;
     process.exit(0);
   }
@@ -138,18 +137,21 @@ class IPCDocumentationOrchestrator {
    */
   spawnWorker(workerId: string): boolean {
     try {
-      const worker = (Bun as any).spawn(["bun", "--import", "./lib/docs/ipc-stream-search.ts"], {
-        ipc: (message: IPCMessage, subprocess) => {
-          this.handleWorkerMessage(workerId, message, subprocess);
-        },
-        serialization: "json", // Use JSON for compatibility
-        stdout: "inherit",
-        stderr: "inherit"
-      });
+      const worker = (Bun as Record<string, unknown>).spawn(
+        ['bun', '--import', './lib/docs/ipc-stream-search.ts'],
+        {
+          ipc: (message: IPCMessage, subprocess) => {
+            this.handleWorkerMessage(workerId, message, subprocess);
+          },
+          serialization: 'json', // Use JSON for compatibility
+          stdout: 'inherit',
+          stderr: 'inherit',
+        }
+      );
 
       this.workers.set(workerId, worker);
-      console.log(`🚀 Spawned worker: ${workerId}`);
-      
+      console.info(`🚀 Spawned worker: ${workerId}`);
+
       // Wait a moment for worker to initialize
       setTimeout(() => {
         // Send initial message to verify connection
@@ -157,7 +159,7 @@ class IPCDocumentationOrchestrator {
           worker.send({
             type: 'search',
             query: 'test',
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       }, 500);
@@ -173,27 +175,27 @@ class IPCDocumentationOrchestrator {
    * Handle messages from worker processes
    */
   private handleWorkerMessage(workerId: string, message: IPCMessage, subprocess: any) {
-    console.log(`📬 Message from ${workerId}: ${message.type}`);
+    console.info(`📬 Message from ${workerId}: ${message.type}`);
 
     switch (message.type) {
       case 'result':
         if (message.results) {
           const existing = this.searchResults.get(workerId) || [];
           this.searchResults.set(workerId, [...existing, ...message.results]);
-          console.log(`✨ ${workerId} found ${message.results.length} matches`);
+          console.info(`✨ ${workerId} found ${message.results.length} matches`);
         }
         break;
 
       case 'progress':
         if (message.progress !== undefined) {
-          console.log(`📈 ${workerId} progress: ${message.progress} matches`);
+          console.info(`📈 ${workerId} progress: ${message.progress} matches`);
         }
         break;
 
       case 'complete':
         if (message.stats) {
           this.searchStats.set(workerId, message.stats);
-          console.log(`✅ ${workerId} search complete: ${message.stats.matchesFound} matches`);
+          console.info(`✅ ${workerId} search complete: ${message.stats.matchesFound} matches`);
         }
         break;
 
@@ -202,7 +204,7 @@ class IPCDocumentationOrchestrator {
         break;
 
       default:
-        console.log(`📋 ${workerId}: ${JSON.stringify(message)}`);
+        console.info(`📋 ${workerId}: ${JSON.stringify(message)}`);
     }
   }
 
@@ -210,12 +212,12 @@ class IPCDocumentationOrchestrator {
    * Execute a search across all workers
    */
   async searchAcrossWorkers(query: string): Promise<void> {
-    console.log(`🔍 Initiating search across ${this.workers.size} workers: ${query}`);
+    console.info(`🔍 Initiating search across ${this.workers.size} workers: ${query}`);
 
     for (const [workerId, worker] of this.workers) {
       // Check if worker is still alive
       if (worker.killed) {
-        console.log(`⚠️ Worker ${workerId} is killed, skipping...`);
+        console.info(`⚠️ Worker ${workerId} is killed, skipping...`);
         continue;
       }
 
@@ -228,7 +230,7 @@ class IPCDocumentationOrchestrator {
         worker.send({
           type: 'search',
           query,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       } catch (error) {
         console.error(`❌ Failed to send message to ${workerId}:`, error);
@@ -256,7 +258,7 @@ class IPCDocumentationOrchestrator {
     return {
       totalMatches,
       results: allResults,
-      stats: allStats
+      stats: allStats,
     };
   }
 
@@ -264,16 +266,16 @@ class IPCDocumentationOrchestrator {
    * Shutdown all workers
    */
   async shutdownWorkers(): Promise<void> {
-    console.log('🛑 Shutting down all workers...');
+    console.info('🛑 Shutting down all workers...');
 
     for (const [workerId, worker] of this.workers) {
       try {
         if (!worker.killed) {
           worker.send({
             type: 'shutdown',
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-          
+
           // Wait a bit then force kill if needed
           setTimeout(() => {
             if (!worker.killed) {
@@ -306,17 +308,17 @@ class TerminalDocumentationExplorer {
 
   private setupTerminal() {
     // Create a reusable terminal for interactive documentation exploration
-    this.terminal = new (Bun as any).Terminal({
+    this.terminal = new (Bun as Record<string, unknown>).Terminal({
       cols: 100,
       rows: 30,
-      name: "xterm-256color",
+      name: 'xterm-256color',
       data: (terminal: any, data: Uint8Array) => {
         // Display terminal output
         process.stdout.write(data);
       },
       exit: (terminal: any, exitCode: number) => {
-        console.log(`\n📟 Terminal exited with code: ${exitCode}`);
-      }
+        console.info(`\n📟 Terminal exited with code: ${exitCode}`);
+      },
     });
   }
 
@@ -324,18 +326,18 @@ class TerminalDocumentationExplorer {
    * Start interactive documentation search with fzf
    */
   async startInteractiveSearch(): Promise<void> {
-    console.log('🎯 Starting interactive documentation search...');
+    console.info('🎯 Starting interactive documentation search...');
 
-    this.process = Bun.spawn(["fzf", "--ansi", "--multi", "--height", "20"], {
+    this.process = Bun.spawn(['fzf', '--ansi', '--multi', '--height', '20'], {
       terminal: this.terminal,
       env: {
         ...process.env,
-        FZF_DEFAULT_COMMAND: "rg --color=always --line-number '' /Users/nolarose/Projects/.cache"
-      }
+        FZF_DEFAULT_COMMAND: "rg --color=always --line-number '' /Users/nolarose/Projects/.cache",
+      },
     });
 
     // Send some sample data to fzf
-    this.terminal.write("Searching documentation...\n");
+    this.terminal.write('Searching documentation...\n');
 
     await this.process.exited;
   }
@@ -344,14 +346,14 @@ class TerminalDocumentationExplorer {
    * Start interactive bash session for documentation exploration
    */
   async startBashSession(): Promise<void> {
-    console.log('🐚 Starting bash session for documentation exploration...');
+    console.info('🐚 Starting bash session for documentation exploration...');
 
-    this.process = Bun.spawn(["bash"], {
+    this.process = Bun.spawn(['bash'], {
       terminal: this.terminal,
       env: {
         ...process.env,
-        PS1: "\\[\\e[32m\\]docs>\\[\\e[0m\\] "
-      }
+        PS1: '\\[\\e[32m\\]docs>\\[\\e[0m\\] ',
+      },
     });
 
     await this.process.exited;
@@ -374,12 +376,12 @@ class TerminalDocumentationExplorer {
  * Demonstration function for IPC and Terminal capabilities
  */
 async function demonstrateAdvancedFeatures() {
-  console.log('🚀 Advanced Bun.spawn Features Demonstration');
-  console.log('=' .repeat(60));
+  console.info('🚀 Advanced Bun.spawn Features Demonstration');
+  console.info('='.repeat(60));
 
   // 1. IPC-based Multi-Worker Documentation Search
-  console.log('\n📡 1. IPC-Based Multi-Worker Search');
-  console.log('-' .repeat(40));
+  console.info('\n📡 1. IPC-Based Multi-Worker Search');
+  console.info('-'.repeat(40));
 
   const orchestrator = new IPCDocumentationOrchestrator();
 
@@ -400,15 +402,15 @@ async function demonstrateAdvancedFeatures() {
 
     // Get aggregated results
     const results = orchestrator.getAggregatedResults();
-    console.log(`\n📊 Aggregated Results: ${results.totalMatches} total matches`);
+    console.info(`\n📊 Aggregated Results: ${results.totalMatches} total matches`);
 
     // Shutdown workers
     await orchestrator.shutdownWorkers();
   }
 
   // 2. Terminal-based Interactive Documentation Explorer
-  console.log('\n📟 2. Terminal-Based Interactive Explorer');
-  console.log('-' .repeat(40));
+  console.info('\n📟 2. Terminal-Based Interactive Explorer');
+  console.info('-'.repeat(40));
 
   const explorer = new TerminalDocumentationExplorer();
 
@@ -417,14 +419,14 @@ async function demonstrateAdvancedFeatures() {
     const searchPromise = explorer.startInteractiveSearch();
     const timeoutPromise = new Promise(resolve => {
       setTimeout(() => {
-        console.log('\n⏰ Interactive search timeout');
+        console.info('\n⏰ Interactive search timeout');
         resolve(null);
       }, 10000);
     });
 
     await Promise.race([searchPromise, timeoutPromise]);
   } catch (error) {
-    console.log('⚠️ Interactive search not available (fzf not installed)');
+    console.info('⚠️ Interactive search not available (fzf not installed)');
   }
 
   explorer.close();

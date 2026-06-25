@@ -11,8 +11,13 @@ type Options = {
 };
 
 function parseArgs(argv: string[]): Options {
-  const fromPath = resolve(argv.find(a => a.startsWith('--from='))?.split('=')[1] || 'reports/brand-bench/latest.json');
-  const outPath = resolve(argv.find(a => a.startsWith('--out='))?.split('=')[1] || 'reports/brand-bench/pinned-baseline.json');
+  const fromPath = resolve(
+    argv.find(a => a.startsWith('--from='))?.split('=')[1] || 'reports/brand-bench/latest.json'
+  );
+  const outPath = resolve(
+    argv.find(a => a.startsWith('--out='))?.split('=')[1] ||
+      'reports/brand-bench/pinned-baseline.json'
+  );
   const rationale = (argv.find(a => a.startsWith('--rationale='))?.split('=')[1] || '').trim();
 
   if (!rationale) {
@@ -46,7 +51,7 @@ async function main(): Promise<void> {
 
   await mkdir(dirname(options.outPath), { recursive: true });
   await writeFile(options.outPath, JSON.stringify(next, null, 2));
-  console.log(JSON.stringify(next, null, 2));
+  console.info(JSON.stringify(next, null, 2));
 }
 
 if (import.meta.main) {

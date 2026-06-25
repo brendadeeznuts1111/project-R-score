@@ -53,11 +53,11 @@ async function fetchHtml(url: string): Promise<{
 
 async function run() {
   if (!apiKey) {
-    console.log("FIRECRAWL_API_KEY not set. Firecrawl comparisons will be skipped.");
+    console.info("FIRECRAWL_API_KEY not set. Firecrawl comparisons will be skipped.");
   }
 
   for (const url of targets) {
-    console.log(`\n=== ${url}`);
+    console.info(`\n=== ${url}`);
     let localStatus = "skipped";
     let localTitle = "";
     let localText = "";
@@ -88,11 +88,11 @@ async function run() {
       localError = error instanceof Error ? error.message : String(error);
     }
 
-    console.log(
+    console.info(
       `local: ${localStatus} len=${localText.length} title=${truncate(localTitle, 80)}`
     );
-    if (localError) console.log(`local error: ${localError}`);
-    if (localText) console.log(`local sample: ${truncate(localText)}`);
+    if (localError) console.info(`local error: ${localError}`);
+    if (localText) console.info(`local sample: ${truncate(localText)}`);
 
     if (apiKey) {
       try {
@@ -107,17 +107,17 @@ async function run() {
           storeInCache: true,
           timeoutSeconds: 60,
         });
-        console.log(
+        console.info(
           `firecrawl: ok len=${firecrawl.text.length} title=${truncate(
             firecrawl.title ?? "",
             80,
           )} status=${firecrawl.status ?? "n/a"}`
         );
-        if (firecrawl.warning) console.log(`firecrawl warning: ${firecrawl.warning}`);
-        if (firecrawl.text) console.log(`firecrawl sample: ${truncate(firecrawl.text)}`);
+        if (firecrawl.warning) console.info(`firecrawl warning: ${firecrawl.warning}`);
+        if (firecrawl.text) console.info(`firecrawl sample: ${truncate(firecrawl.text)}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.log(`firecrawl: error ${message}`);
+        console.info(`firecrawl: error ${message}`);
       }
     }
   }

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "description": "Curated supply-chain advisories — matched via Bun.semver.satisfies against lockfile versions",
+  "semver_docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
+  "advisories": [
+    {
+      "id": "axios-ssrf-cve-2023-45857",
+      "package": "axios",
+      "versionRange": "<1.6.0",
+      "safeRange": ">=1.6.0",
+      "cve": "CVE-2023-45857",
+      "severity": "high",
+      "message": "Axios SSRF — absolute URL bypass in server-side requests"
+    },
+    {
+      "id": "axios-csrf-missing",
+      "package": "axios",
+      "versionRange": "<1.6.2",
+      "safeRange": ">=1.6.2",
+      "cve": "CVE-2024-39338",
+      "severity": "medium",
+      "message": "Axios missing CSRF token validation on cross-origin redirects"
+    },
+    {
+      "id": "lodash-prototype-pollution",
+      "package": "lodash",
+      "versionRange": "<4.17.21",
+      "safeRange": ">=4.17.21",
+      "cve": "CVE-2020-8203",
+      "severity": "high",
+      "message": "Lodash prototype pollution via merge/defaultsDeep",
+      "symbols": ["merge", "defaultsDeep", "set"]
+    },
+    {
+      "id": "ws-dos",
+      "package": "ws",
+      "versionRange": "<8.17.1",
+      "safeRange": ">=8.17.1",
+      "cve": "CVE-2024-37890",
+      "severity": "high",
+      "message": "ws DoS via many HTTP headers on malformed upgrade"
+    },
+    {
+      "id": "ioredis-command-injection",
+      "package": "ioredis",
+      "versionRange": "<5.3.2",
+      "safeRange": ">=5.3.2",
+      "severity": "medium",
+      "message": "ioredis — verify Redis command construction when user input flows to keys"
+    },
+    {
+      "id": "micromatch-redos",
+      "package": "micromatch",
+      "versionRange": "<4.0.8",
+      "safeRange": ">=4.0.8",
+      "cve": "CVE-2024-4067",
+      "severity": "medium",
+      "message": "micromatch ReDoS in nested extglob patterns"
+    }
+  ]
+}

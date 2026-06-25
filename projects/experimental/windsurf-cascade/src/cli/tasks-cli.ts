@@ -147,10 +147,10 @@ class TasksCLI {
 
             const executionTime = (Bun.nanoseconds() - startTime) / 1000000;
 
-            console.log(`✅ Task created successfully!`);
-            console.log(`   📁 Path: ${taskPath}`);
-            console.log(`   🆔 ID: ${taskData.uuid}`);
-            console.log(`   ⏱️  Created in: ${executionTime.toFixed(3)}ms`);
+            console.info(`✅ Task created successfully!`);
+            console.info(`   📁 Path: ${taskPath}`);
+            console.info(`   🆔 ID: ${taskData.uuid}`);
+            console.info(`   ⏱️  Created in: ${executionTime.toFixed(3)}ms`);
 
             return {
                 success: true,
@@ -178,7 +178,7 @@ class TasksCLI {
      * Validate project tasks and dependencies
      */
     async validateProject(project: string, autoFix: boolean = false): Promise<ValidationResult> {
-        console.log(`🔍 Validating project: ${project}`);
+        console.info(`🔍 Validating project: ${project}`);
 
         const startTime = Bun.nanoseconds();
         const errors: any[] = [];
@@ -187,7 +187,7 @@ class TasksCLI {
         try {
             // Get all project tasks
             const tasks = await this.getProjectTasks(project);
-            console.log(`   📊 Found ${tasks.length} tasks`);
+            console.info(`   📊 Found ${tasks.length} tasks`);
 
             // Check for dependency cycles
             const dependencyGraph = this.buildDependencyGraph(tasks);
@@ -202,7 +202,7 @@ class TasksCLI {
                 });
 
                 cycles.forEach((cycle, index) => {
-                    console.log(`   🔄 Cycle ${index + 1}: ${cycle.join(' → ')}`);
+                    console.info(`   🔄 Cycle ${index + 1}: ${cycle.join(' → ')}`);
                 });
             }
 
@@ -221,7 +221,7 @@ class TasksCLI {
                 });
 
                 staleTasks.forEach(task => {
-                    console.log(`   ⏰ Stale: ${task.description} (last updated: ${task.updated})`);
+                    console.info(`   ⏰ Stale: ${task.description} (last updated: ${task.updated})`);
                 });
             }
 
@@ -239,7 +239,7 @@ class TasksCLI {
                 });
 
                 overdueTasks.forEach(task => {
-                    console.log(`   📅 Overdue: ${task.description} (due: ${task.due})`);
+                    console.info(`   📅 Overdue: ${task.description} (due: ${task.due})`);
                 });
             }
 
@@ -247,7 +247,7 @@ class TasksCLI {
 
             // Auto-fix if requested
             if (autoFix && errors.length > 0) {
-                console.log(`🔧 Attempting to fix ${errors.length} issues...`);
+                console.info(`🔧 Attempting to fix ${errors.length} issues...`);
                 await this.autoFixIssues(project, errors);
             }
 
@@ -260,8 +260,8 @@ class TasksCLI {
                 validatedAt: new Date()
             };
 
-            console.log(`✅ Validation completed in ${executionTime.toFixed(3)}ms`);
-            console.log(`   📊 Summary: ${errors.length} errors, ${warnings.length} warnings`);
+            console.info(`✅ Validation completed in ${executionTime.toFixed(3)}ms`);
+            console.info(`   📊 Summary: ${errors.length} errors, ${warnings.length} warnings`);
 
             return result;
 
@@ -288,7 +288,7 @@ class TasksCLI {
      * Generate project performance report
      */
     async generateReport(project: string, period: string = 'week', format: string = 'markdown'): Promise<void> {
-        console.log(`📊 Generating ${period} report for project: ${project}`);
+        console.info(`📊 Generating ${period} report for project: ${project}`);
 
         const startTime = Bun.nanoseconds();
 
@@ -312,12 +312,12 @@ class TasksCLI {
 
             const executionTime = (Bun.nanoseconds() - startTime) / 1000000;
 
-            console.log(`✅ Report generated successfully!`);
-            console.log(`   📁 Path: ${reportPath}`);
-            console.log(`   📊 Total tasks: ${analytics.totalTasks}`);
-            console.log(`   ✅ Completed: ${analytics.completedTasks}`);
-            console.log(`   📈 Velocity: ${analytics.velocity} tasks/week`);
-            console.log(`   ⏱️  Generated in: ${executionTime.toFixed(3)}ms`);
+            console.info(`✅ Report generated successfully!`);
+            console.info(`   📁 Path: ${reportPath}`);
+            console.info(`   📊 Total tasks: ${analytics.totalTasks}`);
+            console.info(`   ✅ Completed: ${analytics.completedTasks}`);
+            console.info(`   📈 Velocity: ${analytics.velocity} tasks/week`);
+            console.info(`   ⏱️  Generated in: ${executionTime.toFixed(3)}ms`);
 
         } catch (error) {
             console.error(`❌ Report generation failed: ${error.message}`);
@@ -344,16 +344,16 @@ class TasksCLI {
                 filteredTasks = filteredTasks.filter(task => task.priority === options.priority);
             }
 
-            console.log(`📋 Tasks for project: ${project}`);
-            console.log(`   📊 Total: ${filteredTasks.length} tasks`);
+            console.info(`📋 Tasks for project: ${project}`);
+            console.info(`   📊 Total: ${filteredTasks.length} tasks`);
 
             if (options.format === 'json') {
-                console.log(JSON.stringify(filteredTasks, null, 2));
+                console.info(JSON.stringify(filteredTasks, null, 2));
             } else {
                 // Table format
-                console.log('\n┌────────────────────────────────────────┬──────────┬──────────┬─────────────┐');
-                console.log('│ Task Description                     │ Status   │ Priority │ Due Date    │');
-                console.log('├────────────────────────────────────────┼──────────┼──────────┼─────────────┤');
+                console.info('\n┌────────────────────────────────────────┬──────────┬──────────┬─────────────┐');
+                console.info('│ Task Description                     │ Status   │ Priority │ Due Date    │');
+                console.info('├────────────────────────────────────────┼──────────┼──────────┼─────────────┤');
 
                 filteredTasks.forEach(task => {
                     const desc = (task.description || '').substring(0, 36).padEnd(36);
@@ -361,10 +361,10 @@ class TasksCLI {
                     const priority = (task.priority || 'none').substring(0, 8).padEnd(8);
                     const due = (task.due || 'none').substring(0, 11).padEnd(11);
 
-                    console.log(`│ ${desc} │ ${status} │ ${priority} │ ${due} │`);
+                    console.info(`│ ${desc} │ ${status} │ ${priority} │ ${due} │`);
                 });
 
-                console.log('└────────────────────────────────────────┴──────────┴──────────┴─────────────┘');
+                console.info('└────────────────────────────────────────┴──────────┴──────────┴─────────────┘');
             }
 
         } catch (error) {
@@ -376,7 +376,7 @@ class TasksCLI {
      * Update existing task
      */
     async updateTask(taskId: string, options: any): Promise<void> {
-        console.log(`🔄 Updating task: ${taskId}`);
+        console.info(`🔄 Updating task: ${taskId}`);
 
         try {
             const taskPath = this.resolveTaskPath(taskId);
@@ -386,7 +386,7 @@ class TasksCLI {
             const updatedContent = this.updateTaskContent(content, options);
             await Bun.write(taskPath, updatedContent);
 
-            console.log(`✅ Task updated successfully!`);
+            console.info(`✅ Task updated successfully!`);
 
         } catch (error) {
             console.error(`❌ Failed to update task: ${error.message}`);
@@ -397,18 +397,18 @@ class TasksCLI {
      * Delete task
      */
     async deleteTask(taskId: string, force: boolean = false): Promise<void> {
-        console.log(`🗑️  Deleting task: ${taskId}`);
+        console.info(`🗑️  Deleting task: ${taskId}`);
 
         try {
             if (!force) {
-                console.log('⚠️  This will permanently delete the task. Use --force to skip this confirmation.');
+                console.info('⚠️  This will permanently delete the task. Use --force to skip this confirmation.');
                 return;
             }
 
             const taskPath = this.resolveTaskPath(taskId);
             await Bun.remove(taskPath);
 
-            console.log(`✅ Task deleted successfully!`);
+            console.info(`✅ Task deleted successfully!`);
 
         } catch (error) {
             console.error(`❌ Failed to delete task: ${error.message}`);
@@ -419,22 +419,22 @@ class TasksCLI {
      * Validate configuration
      */
     async validateConfig(autoFix: boolean = false): Promise<void> {
-        console.log(`🔍 Validating Tasks plugin configuration...`);
+        console.info(`🔍 Validating Tasks plugin configuration...`);
 
         try {
             const validation = validateTasksConfig(this.config);
 
             if (validation.isValid) {
-                console.log(`✅ Configuration is valid!`);
+                console.info(`✅ Configuration is valid!`);
             } else {
-                console.log(`❌ Configuration has ${validation.errorCount} errors and ${validation.warningCount} warnings`);
+                console.info(`❌ Configuration has ${validation.errorCount} errors and ${validation.warningCount} warnings`);
 
                 validation.errors.forEach(error => {
-                    console.log(`   🚫 ${error.message}`);
+                    console.info(`   🚫 ${error.message}`);
                 });
 
                 validation.warnings.forEach(warning => {
-                    console.log(`   ⚠️  ${warning.message}`);
+                    console.info(`   ⚠️  ${warning.message}`);
                 });
             }
 
@@ -617,7 +617,7 @@ priority: {{priority}}
 
     private async autoFixIssues(project: string, errors: any[]): Promise<void> {
         // Implementation would attempt to fix detected issues
-        console.log('🔧 Auto-fix functionality would be implemented here');
+        console.info('🔧 Auto-fix functionality would be implemented here');
     }
 }
 

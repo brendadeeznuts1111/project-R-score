@@ -37,7 +37,7 @@ export class EnterpriseSecretsManager {
       value,
     });
 
-    console.log(`🔐 Secret stored: ${fullService}/${name}`);
+    console.info(`🔐 Secret stored: ${fullService}/${name}`);
   }
 
   /**
@@ -66,7 +66,7 @@ export class EnterpriseSecretsManager {
       name,
     });
 
-    console.log(`🗑️  Secret deleted: ${fullService}/${name}`);
+    console.info(`🗑️  Secret deleted: ${fullService}/${name}`);
   }
 
   /**
@@ -96,7 +96,7 @@ export class EnterpriseProfiler {
     this.session = new Session();
     this.session.connect();
     this.connected = true;
-    console.log('🔍 Profiler connected');
+    console.info('🔍 Profiler connected');
   }
 
   /**
@@ -112,7 +112,7 @@ export class EnterpriseProfiler {
    */
   async startProfiling(): Promise<void> {
     await this.post('Profiler.start');
-    console.log('⏱️  Profiling started');
+    console.info('⏱️  Profiling started');
   }
 
   /**
@@ -120,7 +120,7 @@ export class EnterpriseProfiler {
    */
   async stopProfiling(): Promise<any> {
     const result = await this.post('Profiler.stop');
-    console.log(`⏹️  Profiling stopped: ${result.profile?.nodes?.length || 0} nodes`);
+    console.info(`⏹️  Profiling stopped: ${result.profile?.nodes?.length || 0} nodes`);
     return result;
   }
 
@@ -163,7 +163,7 @@ export class EnterpriseProfiler {
     if (this.session) {
       this.session.disconnect();
       this.connected = false;
-      console.log('🔌 Profiler disconnected');
+      console.info('🔌 Profiler disconnected');
     }
   }
 }
@@ -274,7 +274,7 @@ export class Tier1380EnterpriseScope {
 // ============================================================================
 // Entry guard
 if (import.meta.main) {
-  console.log(`
+  console.info(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Tier-1380 Enterprise Secrets & Profiler v4.6           ║
 ║  Bun ${Bun.version} - ${process.platform}                                     ║
@@ -284,14 +284,14 @@ if (import.meta.main) {
   const enterprise = new Tier1380EnterpriseScope('com.factorywager');
   const persistence = enterprise.getPersistenceInfo();
 
-  console.log('Platform Info:');
-  console.log(`  Platform: ${persistence.platform}`);
-  console.log(`  Persistence: ${persistence.persistence}`);
-  console.log(`  Enterprise Ready: ${persistence.enterprise ? '✅' : '❌'}`);
-  console.log();
+  console.info('Platform Info:');
+  console.info(`  Platform: ${persistence.platform}`);
+  console.info(`  Persistence: ${persistence.persistence}`);
+  console.info(`  Enterprise Ready: ${persistence.enterprise ? '✅' : '❌'}`);
+  console.info();
 
   // Demo profiled secret operation
-  console.log('Running profiled secret operation...');
+  console.info('Running profiled secret operation...');
 
   try {
     const { result, profile, duration, rScore } = await enterprise.profiledSecretOperation(
@@ -301,22 +301,22 @@ if (import.meta.main) {
       'sk_live_' + crypto.randomUUID().replace(/-/g, '')
     );
 
-    console.log();
-    console.log('Results:');
-    console.log(`  Secret stored: ${result ? '✅' : '❌'}`);
-    console.log(`  Profile nodes: ${profile?.profile?.nodes?.length || 0}`);
-    console.log(`  Duration: ${duration.toFixed(2)}ms`);
-    console.log(`  R-Score: ${rScore.toFixed(3)} (+0.14 enterprise delta)`);
-    console.log();
-    console.log('✅ Enterprise scope + Profiler LIVE');
+    console.info();
+    console.info('Results:');
+    console.info(`  Secret stored: ${result ? '✅' : '❌'}`);
+    console.info(`  Profile nodes: ${profile?.profile?.nodes?.length || 0}`);
+    console.info(`  Duration: ${duration.toFixed(2)}ms`);
+    console.info(`  R-Score: ${rScore.toFixed(3)} (+0.14 enterprise delta)`);
+    console.info();
+    console.info('✅ Enterprise scope + Profiler LIVE');
 
     // Cleanup
     await enterprise.profiledSecretOperation('delete', 'tier1380.api', 'demo-token');
   } catch (error) {
     console.error('❌ Operation failed:', error.message);
-    console.log();
-    console.log('Note: On macOS, you may need to grant Keychain access permission.');
-    console.log('      On Linux, ensure GNOME Keyring or KWallet is running.');
+    console.info();
+    console.info('Note: On macOS, you may need to grant Keychain access permission.');
+    console.info('      On Linux, ensure GNOME Keyring or KWallet is running.');
   }
 }
 

@@ -9,7 +9,7 @@ import { juniorProfile } from './junior-runner';
  * Extends junior profiling with security, custom rendering, and middleware integration
  */
 export async function seniorProfile(md: string, secret: string = 'team-lead-secret'): Promise<LeadSpecProfile> {
-  console.log('\x1b[1;35m🔧 Senior Profile: Advanced Analysis\x1b[0m');
+  console.info('\x1b[1;35m🔧 Senior Profile: Advanced Analysis\x1b[0m');
   
   // Build on junior foundation
   const tempFile = `/tmp/senior-${crypto.randomUUID()}.md`;
@@ -220,17 +220,17 @@ export async function seniorCLI(mdFile: string, options: {
   const { secret = 'team-lead-secret', output, verbose = false } = options;
   
   if (verbose) {
-    console.log('\x1b[1;35m🔧 Senior CLI: Advanced Profiling\x1b[0m');
-    console.log(`File: ${mdFile}`);
-    console.log(`Secret: ${secret.slice(0, 3)}***`);
+    console.info('\x1b[1;35m🔧 Senior CLI: Advanced Profiling\x1b[0m');
+    console.info(`File: ${mdFile}`);
+    console.info(`Secret: ${secret.slice(0, 3)}***`);
   }
   
   const md = await Bun.file(mdFile).text();
   const profile = await seniorProfile(md, secret);
   
   // Display senior dashboard
-  console.log('\n\x1b[1;35m🔧 Senior Dashboard\x1b[0m');
-  console.log('\x1b[1;35m' + '='.repeat(60) + '\x1b[0m');
+  console.info('\n\x1b[1;35m🔧 Senior Dashboard\x1b[0m');
+  console.info('\x1b[1;35m' + '='.repeat(60) + '\x1b[0m');
   
   console.table({
     'Document Size': `${(profile.core.documentSize / 1024).toFixed(2)} KB`,
@@ -246,10 +246,10 @@ export async function seniorCLI(mdFile: string, options: {
   // Export if requested
   if (output) {
     await Bun.write(output, JSON.stringify(profile, null, 2));
-    console.log(`\x1b[1;33m📁 Senior export: ${output}\x1b[0m`);
+    console.info(`\x1b[1;33m📁 Senior export: ${output}\x1b[0m`);
   }
   
-  console.log('\x1b[1;35m✅ Senior profiling complete!\x1b[0m');
+  console.info('\x1b[1;35m✅ Senior profiling complete!\x1b[0m');
 }
 
 /**
@@ -269,9 +269,9 @@ export function createSeniorServer(secret: string = 'team-lead-secret') {
     .listen(3000);
   */
   
-  console.log('\x1b[1;33m📡 Senior Server: Install Elysia to enable\x1b[0m');
-  console.log('\x1b[36m# npm install elysia\x1b[0m');
-  console.log('\x1b[36m# Then uncomment the server code\x1b[0m');
+  console.info('\x1b[1;33m📡 Senior Server: Install Elysia to enable\x1b[0m');
+  console.info('\x1b[36m# npm install elysia\x1b[0m');
+  console.info('\x1b[36m# Then uncomment the server code\x1b[0m');
   
   return null;
 }

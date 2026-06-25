@@ -22,7 +22,7 @@ class VaultGraphAnalyzer {
     }
 
     async analyze(): Promise<GraphMetrics> {
-        console.log('🔍 Analyzing vault graph structure...');
+        console.info('🔍 Analyzing vault graph structure...');
 
         // In real implementation, this would:
         // 1. Scan all markdown files
@@ -92,18 +92,18 @@ async function main() {
     const exportFormat = args.find(arg => arg.startsWith('--format='))?.split('=')[1] as 'json' | 'csv' | 'dot' || 'json';
     const outputPath = args.find(arg => arg.startsWith('--output='))?.split('=')[1];
 
-    console.log('📊 Vault Graph Analytics');
-    console.log(`📁 Path: ./Odds-mono-map`);
-    console.log(`📄 Format: ${exportFormat}`);
+    console.info('📊 Vault Graph Analytics');
+    console.info(`📁 Path: ./Odds-mono-map`);
+    console.info(`📄 Format: ${exportFormat}`);
 
     const analyzer = new VaultGraphAnalyzer();
     const output = await analyzer.exportGraph(exportFormat);
 
     if (outputPath) {
         await Bun.write(outputPath, output);
-        console.log(`✅ Graph exported to: ${outputPath}`);
+        console.info(`✅ Graph exported to: ${outputPath}`);
     } else {
-        console.log(output);
+        console.info(output);
     }
 }
 

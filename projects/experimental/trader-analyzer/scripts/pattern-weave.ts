@@ -213,20 +213,20 @@ export class PatternWeaver {
     lines.push("}");
 
     await Bun.write(outputPath, lines.join("\n"));
-    console.log(`✅ Exported correlation graph to ${outputPath}`);
+    console.info(`✅ Exported correlation graph to ${outputPath}`);
   }
 
   /**
    * Print correlations
    */
   printCorrelations(): void {
-    console.log(`\n🔗 Found ${this.correlations.length} correlations:\n`);
+    console.info(`\n🔗 Found ${this.correlations.length} correlations:\n`);
     for (const corr of this.correlations) {
-      console.log(`  ${corr.patternA} ↔ ${corr.patternB}`);
-      console.log(`    Support: ${(corr.support * 100).toFixed(1)}%`);
-      console.log(`    Confidence: ${(corr.confidence * 100).toFixed(1)}%`);
-      console.log(`    Files: ${corr.files.length}`);
-      console.log();
+      console.info(`  ${corr.patternA} ↔ ${corr.patternB}`);
+      console.info(`    Support: ${(corr.support * 100).toFixed(1)}%`);
+      console.info(`    Confidence: ${(corr.confidence * 100).toFixed(1)}%`);
+      console.info(`    Files: ${corr.files.length}`);
+      console.info();
     }
   }
 }
@@ -269,7 +269,7 @@ if (import.meta.main) {
       })),
     };
     await Bun.write(output, JSON.stringify(graphData, null, 2));
-    console.log(`✅ Exported pattern graph to ${output}`);
+    console.info(`✅ Exported pattern graph to ${output}`);
   } else {
     await weaver.exportGraphviz(output);
   }

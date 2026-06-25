@@ -86,7 +86,7 @@ export type PaymentResult = {
 };
 
 function vlog(...args: unknown[]): void {
-  if (VERBOSE) console.log(...args);
+  if (VERBOSE) console.info(...args);
 }
 
 function jsonResponse(body: unknown, init?: ResponseInit): Response {
@@ -506,7 +506,7 @@ const server = Bun.serve({
 </head>
 <body>
   <h1>🦘 Payment Webhook Server</h1>
-  
+
   <h2>Flow</h2>
   <pre class="flow">
 User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Deposit/Alert
@@ -514,13 +514,13 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
   PayPal    /webhook/   Verify Sig    Super-Profile   Score>0.95?  Approved!
   Venmo      paypal      HMAC          Vector Search   Drift<0.01?  Blocked!
   </pre>
-  
+
   <h2>Endpoints</h2>
   <div class="endpoint">
     <strong>POST /webhook/paypal</strong> - PayPal payment webhooks
   </div>
   <div class="endpoint">
-    <strong>POST /webhook/venmo</strong> - Venmo payment webhooks  
+    <strong>POST /webhook/venmo</strong> - Venmo payment webhooks
   </div>
   <div class="endpoint">
     <strong>POST /test/payment</strong> - Test payment flow manually
@@ -528,19 +528,19 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
   <div class="endpoint">
     <strong>GET /health</strong> - Server health check
   </div>
-  
+
   <h2>Test Payment</h2>
   <pre>curl -X POST http://localhost:${PORT}/test/payment \
   -H "Content-Type: application/json" \
   -d '{"userId":"@ashschaeffer1","amount":10.00}'</pre>
-  
+
   <h2>Risk Thresholds</h2>
   <ul>
     <li><strong>Auto-approve:</strong> Score > ${RISK_THRESHOLDS.LOW_SCORE_MIN} AND Drift < ${RISK_THRESHOLDS.LOW_DRIFT_MAX}</li>
     <li><strong>Review:</strong> Medium score or moderate drift</li>
     <li><strong>Block:</strong> Drift > ${RISK_THRESHOLDS.HIGH_DRIFT_MIN} (possible takeover)</li>
   </ul>
-  
+
   <h2>Redis Channels</h2>
   <ul>
     <li><code>DEPOSIT_SUCCESS</code> - Successful deposits</li>
@@ -563,24 +563,24 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
 // ============================================================================
 
 if (VERBOSE) {
-  console.log('');
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-  console.log(`║  Health:  http://localhost:${PORT}/health                 ║`);
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log('║  Endpoints:                                                ║');
-  console.log(`║    • POST /webhook/paypal                                  ║`);
-  console.log(`║    • POST /webhook/venmo                                   ║`);
-  console.log(`║    • POST /test/payment                                    ║`);
-  console.log('╚════════════════════════════════════════════════════════════╝');
-  console.log('');
-  console.log('Test with:');
-  console.log(`  curl -X POST http://localhost:${PORT}/test/payment \\`);
-  console.log('    -H "Content-Type: application/json" \\');
-  console.log(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
-  console.log('');
+  console.info('');
+  console.info('╔════════════════════════════════════════════════════════════╗');
+  console.info('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+  console.info(`║  Health:  http://localhost:${PORT}/health                 ║`);
+  console.info('╠════════════════════════════════════════════════════════════╣');
+  console.info('║  Endpoints:                                                ║');
+  console.info(`║    • POST /webhook/paypal                                  ║`);
+  console.info(`║    • POST /webhook/venmo                                   ║`);
+  console.info(`║    • POST /test/payment                                    ║`);
+  console.info('╚════════════════════════════════════════════════════════════╝');
+  console.info('');
+  console.info('Test with:');
+  console.info(`  curl -X POST http://localhost:${PORT}/test/payment \\`);
+  console.info('    -H "Content-Type: application/json" \\');
+  console.info(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
+  console.info('');
 }
 
 export default server;

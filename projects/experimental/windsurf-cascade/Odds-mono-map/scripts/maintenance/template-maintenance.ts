@@ -124,8 +124,8 @@ class TemplateMaintenanceAutomation {
      * Run full maintenance cycle
      */
     async runMaintenance(options: { tasks?: string[]; dryRun?: boolean } = {}): Promise<MaintenanceReport> {
-        console.log(chalk.blue.bold('🔧 Template Maintenance Automation'));
-        console.log(chalk.gray('Running comprehensive template system maintenance...\n'));
+        console.info(chalk.blue.bold('🔧 Template Maintenance Automation'));
+        console.info(chalk.gray('Running comprehensive template system maintenance...\n'));
 
         const startTime = Date.now();
         const results: MaintenanceResult[] = [];
@@ -135,13 +135,13 @@ class TemplateMaintenanceAutomation {
             ? this.tasks.filter(task => options.tasks!.includes(task.name))
             : this.tasks;
 
-        console.log(chalk.cyan(`📋 Tasks to execute: ${tasksToRun.length}`));
+        console.info(chalk.cyan(`📋 Tasks to execute: ${tasksToRun.length}`));
 
         let completedTasks = 0;
         let failedTasks = 0;
 
         for (const task of tasksToRun) {
-            console.log(chalk.yellow(`\n⚡ Executing: ${task.name} (${task.priority})`));
+            console.info(chalk.yellow(`\n⚡ Executing: ${task.name} (${task.priority})`));
 
             try {
                 const taskStartTime = Date.now();
@@ -152,10 +152,10 @@ class TemplateMaintenanceAutomation {
                 results.push(result);
 
                 if (result.success) {
-                    console.log(chalk.green(`   ✅ ${result.message} (${duration}ms)`));
+                    console.info(chalk.green(`   ✅ ${result.message} (${duration}ms)`));
                     completedTasks++;
                 } else {
-                    console.log(chalk.red(`   ❌ ${result.message} (${duration}ms)`));
+                    console.info(chalk.red(`   ❌ ${result.message} (${duration}ms)`));
                     failedTasks++;
                 }
 
@@ -167,7 +167,7 @@ class TemplateMaintenanceAutomation {
                 };
                 results.push(errorResult);
                 failedTasks++;
-                console.log(chalk.red(`   ❌ Task failed: ${error.message}`));
+                console.info(chalk.red(`   ❌ Task failed: ${error.message}`));
             }
         }
 
@@ -668,27 +668,27 @@ bun scripts/template-maintenance.ts --tasks health-check,update-metadata
      * Display maintenance report
      */
     private displayReport(report: MaintenanceReport): void {
-        console.log(chalk.blue.bold('\n📊 Maintenance Report'));
-        console.log(chalk.gray('='.repeat(60)));
-        console.log(chalk.cyan(`Completed: ${report.timestamp.toISOString()}`));
+        console.info(chalk.blue.bold('\n📊 Maintenance Report'));
+        console.info(chalk.gray('='.repeat(60)));
+        console.info(chalk.cyan(`Completed: ${report.timestamp.toISOString()}`));
 
-        console.log(chalk.blue.bold('\n📈 Summary:'));
-        console.log(chalk.green(`   ✅ Completed: ${report.completedTasks}/${report.totalTasks}`));
-        console.log(chalk.red(`   ❌ Failed: ${report.failedTasks}/${report.totalTasks}`));
-        console.log(chalk.blue(`   ⏱️  Duration: ${report.totalDuration}ms`));
+        console.info(chalk.blue.bold('\n📈 Summary:'));
+        console.info(chalk.green(`   ✅ Completed: ${report.completedTasks}/${report.totalTasks}`));
+        console.info(chalk.red(`   ❌ Failed: ${report.failedTasks}/${report.totalTasks}`));
+        console.info(chalk.blue(`   ⏱️  Duration: ${report.totalDuration}ms`));
 
         if (report.results.length > 0) {
-            console.log(chalk.yellow('\n📋 Task Results:'));
+            console.info(chalk.yellow('\n📋 Task Results:'));
             for (const result of report.results) {
                 const status = result.success ? chalk.green('✅') : chalk.red('❌');
-                console.log(chalk.gray(`   ${status} ${result.message} (${result.duration}ms)`));
+                console.info(chalk.gray(`   ${status} ${result.message} (${result.duration}ms)`));
             }
         }
 
         if (report.recommendations.length > 0) {
-            console.log(chalk.blue.bold('\n💡 Recommendations:'));
+            console.info(chalk.blue.bold('\n💡 Recommendations:'));
             for (const rec of report.recommendations) {
-                console.log(chalk.gray(`   ${rec}`));
+                console.info(chalk.gray(`   ${rec}`));
             }
         }
     }
@@ -703,16 +703,16 @@ async function main(): Promise<void> {
     const vaultPath = process.cwd();
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔧 Template Maintenance Automation'));
-        console.log(chalk.gray('Usage: bun template-maintenance.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --tasks <list>    Comma-separated list of tasks to run'));
-        console.log(chalk.gray('  --dry-run         Show what would be done without executing'));
-        console.log(chalk.gray('  --help, -h        Show this help message'));
-        console.log(chalk.gray('\nAvailable tasks:'));
-        console.log(chalk.gray('  health-check, cleanup-duplicates, update-metadata,'));
-        console.log(chalk.gray('  optimize-links, archive-unused, validate-standards,'));
-        console.log(chalk.gray('  generate-index, backup-templates'));
+        console.info(chalk.blue.bold('🔧 Template Maintenance Automation'));
+        console.info(chalk.gray('Usage: bun template-maintenance.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --tasks <list>    Comma-separated list of tasks to run'));
+        console.info(chalk.gray('  --dry-run         Show what would be done without executing'));
+        console.info(chalk.gray('  --help, -h        Show this help message'));
+        console.info(chalk.gray('\nAvailable tasks:'));
+        console.info(chalk.gray('  health-check, cleanup-duplicates, update-metadata,'));
+        console.info(chalk.gray('  optimize-links, archive-unused, validate-standards,'));
+        console.info(chalk.gray('  generate-index, backup-templates'));
         process.exit(0);
     }
 

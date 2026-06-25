@@ -17,25 +17,25 @@ class RegistryTester {
   }
 
   async run() {
-    console.log('🧪 Running ShortcutRegistry Tests...\n');
+    console.info('🧪 Running ShortcutRegistry Tests...\n');
 
     for (const test of this.tests) {
       try {
         const result = await test.fn();
         if (result) {
-          console.log(`✅ ${test.name}`);
+          console.info(`✅ ${test.name}`);
           this.passed++;
         } else {
-          console.log(`❌ ${test.name}`);
+          console.info(`❌ ${test.name}`);
           this.failed++;
         }
       } catch (error) {
-        console.log(`❌ ${test.name} - Error: ${error}`);
+        console.info(`❌ ${test.name} - Error: ${error}`);
         this.failed++;
       }
     }
 
-    console.log(`\n📊 Test Results: ${this.passed} passed, ${this.failed} failed`);
+    console.info(`\n📊 Test Results: ${this.passed} passed, ${this.failed} failed`);
     
     // Cleanup
     await this.registry.dispose();
@@ -212,9 +212,9 @@ async function runTests() {
   const success = await tester.run();
   
   if (success) {
-    console.log('\n🎉 All tests passed! The enhanced ShortcutRegistry is working correctly.');
+    console.info('\n🎉 All tests passed! The enhanced ShortcutRegistry is working correctly.');
   } else {
-    console.log('\n⚠️ Some tests failed. Please check the implementation.');
+    console.info('\n⚠️ Some tests failed. Please check the implementation.');
   }
 
   return success;
@@ -222,7 +222,7 @@ async function runTests() {
 
 // Run tests - universal approach
 runTests().then(success => {
-  console.log(success ? '\n🎉 All tests passed!' : '\n⚠️ Some tests failed.');
+  console.info(success ? '\n🎉 All tests passed!' : '\n⚠️ Some tests failed.');
   return success;
 }).catch(console.error);
 

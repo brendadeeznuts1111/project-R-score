@@ -7,12 +7,12 @@
  * and real-world use cases for maximum efficiency
  */
 
-console.log('🚀 Bun Optimization One-Liners - Performance Mastery');
-console.log('='.repeat(60));
+console.info('🚀 Bun Optimization One-Liners - Performance Mastery');
+console.info('='.repeat(60));
 
 // 🎯 OPTIMIZATION 1: GC Defer/Force - Memory Management
-console.log('\n🗑️ OPTIMIZATION 1: GC Defer/Force');
-console.log('-'.repeat(40));
+console.info('\n🗑️ OPTIMIZATION 1: GC Defer/Force');
+console.info('-'.repeat(40));
 
 const gcStart = performance.now();
 Bun.gc(false); // Disable GC during critical operations
@@ -27,12 +27,12 @@ const heavyData = Array(1_000_000).fill(0).map(() => ({
 Bun.gc(true); // Force GC after operations
 const gcEnd = performance.now();
 
-console.log(`✅ GC-managed operations: ${heavyData.length} objects`);
-console.log(`⚡ Time without GC pauses: ${(gcEnd - gcStart).toFixed(2)}ms`);
+console.info(`✅ GC-managed operations: ${heavyData.length} objects`);
+console.info(`⚡ Time without GC pauses: ${(gcEnd - gcStart).toFixed(2)}ms`);
 
 // 🎯 OPTIMIZATION 2: Subarray Chunk - Zero-Copy Operations
-console.log('\n✂️ OPTIMIZATION 2: Subarray Chunk - Zero-Copy');
-console.log('-'.repeat(40));
+console.info('\n✂️ OPTIMIZATION 2: Subarray Chunk - Zero-Copy');
+console.info('-'.repeat(40));
 
 const subarrayStart = performance.now();
 const largeBuffer = new Uint8Array(1_000_000).fill(42);
@@ -44,13 +44,13 @@ const chunk3 = largeBuffer.subarray(2048, 3072);
 
 const subarrayEnd = performance.now();
 
-console.log(`✅ Zero-copy chunks created: ${chunk1.length}, ${chunk2.length}, ${chunk3.length} bytes`);
-console.log(`⚡ Zero-copy operation time: ${(subarrayEnd - subarrayStart).toFixed(2)}ms`);
-console.log(`🔗 Memory efficiency: No additional allocations`);
+console.info(`✅ Zero-copy chunks created: ${chunk1.length}, ${chunk2.length}, ${chunk3.length} bytes`);
+console.info(`⚡ Zero-copy operation time: ${(subarrayEnd - subarrayStart).toFixed(2)}ms`);
+console.info(`🔗 Memory efficiency: No additional allocations`);
 
 // 🎯 OPTIMIZATION 3: SQLite Hybrid - Meta Query Optimization
-console.log('\n🗃️ OPTIMIZATION 3: SQLite Hybrid - Meta Query');
-console.log('-'.repeat(40));
+console.info('\n🗃️ OPTIMIZATION 3: SQLite Hybrid - Meta Query');
+console.info('-'.repeat(40));
 
 const sqliteStart = performance.now();
 
@@ -73,13 +73,13 @@ db.run('COMMIT');
 const result = db.query('SELECT COUNT(*) as count FROM test').get();
 const sqliteEnd = performance.now();
 
-console.log(`✅ SQLite records inserted: ${result.count}`);
-console.log(`⚡ SQLite hybrid time: ${(sqliteEnd - sqliteStart).toFixed(2)}ms`);
+console.info(`✅ SQLite records inserted: ${result.count}`);
+console.info(`⚡ SQLite hybrid time: ${(sqliteEnd - sqliteStart).toFixed(2)}ms`);
 db.close();
 
 // 🎯 OPTIMIZATION 4: --define Build - Compile-Time Configuration
-console.log('\n🔧 OPTIMIZATION 4: --define Build Simulation');
-console.log('-'.repeat(40));
+console.info('\n🔧 OPTIMIZATION 4: --define Build Simulation');
+console.info('-'.repeat(40));
 
 // Simulate compile-time constants
 const buildConfig = {
@@ -89,43 +89,43 @@ const buildConfig = {
   VERSION: '1.0.0'
 };
 
-console.log('✅ Build configuration (simulated):');
+console.info('✅ Build configuration (simulated):');
 Object.entries(buildConfig).forEach(([key, value]) => {
-  console.log(`   ${key}: ${value}`);
+  console.info(`   ${key}: ${value}`);
 });
 
 // Demonstrate optimized code path
 if (buildConfig.OPTIMIZATION === 'high') {
-  console.log('🚀 High-performance mode activated');
+  console.info('🚀 High-performance mode activated');
 }
 
 // 🎯 OPTIMIZATION 5: Lifecycle Matrix - Wiki Integration
-console.log('\n🔄 OPTIMIZATION 5: Lifecycle Matrix');
-console.log('-'.repeat(40));
+console.info('\n🔄 OPTIMIZATION 5: Lifecycle Matrix');
+console.info('-'.repeat(40));
 
 const lifecycleStart = performance.now();
 
 // Simulate wiki lifecycle with dataview integration
 const wikiLifecycle = {
-  init: () => console.log('📝 Wiki initialized'),
-  load: () => console.log('📚 Data loaded'),
-  process: () => console.log('⚙️ Processing data'),
-  render: () => console.log('🎨 Rendering views'),
-  cache: () => console.log('💾 Caching results'),
-  cleanup: () => console.log('🧹 Cleanup completed')
+  init: () => console.info('📝 Wiki initialized'),
+  load: () => console.info('📚 Data loaded'),
+  process: () => console.info('⚙️ Processing data'),
+  render: () => console.info('🎨 Rendering views'),
+  cache: () => console.info('💾 Caching results'),
+  cleanup: () => console.info('🧹 Cleanup completed')
 };
 
 // Execute lifecycle
 Object.values(wikiLifecycle).forEach(step => step());
 
 const lifecycleEnd = performance.now();
-console.log(`⚡ Lifecycle completion time: ${(lifecycleEnd - lifecycleStart).toFixed(2)}ms`);
+console.info(`⚡ Lifecycle completion time: ${(lifecycleEnd - lifecycleStart).toFixed(2)}ms`);
 
 // 🎯 BONUS OPTIMIZATIONS
 
 // 🎯 BONUS 6: Concurrent File Operations
-console.log('\n📡 BONUS 6: Concurrent File Operations');
-console.log('-'.repeat(40));
+console.info('\n📡 BONUS 6: Concurrent File Operations');
+console.info('-'.repeat(40));
 
 const concurrentStart = performance.now();
 
@@ -141,12 +141,12 @@ const fileOperations = [
 const concurrentResults = await Promise.all(fileOperations);
 const concurrentEnd = performance.now();
 
-console.log(`✅ Concurrent operations completed: ${concurrentResults.length} files`);
-console.log(`⚡ Concurrent processing time: ${(concurrentEnd - concurrentStart).toFixed(2)}ms`);
+console.info(`✅ Concurrent operations completed: ${concurrentResults.length} files`);
+console.info(`⚡ Concurrent processing time: ${(concurrentEnd - concurrentStart).toFixed(2)}ms`);
 
 // 🎯 BONUS 7: HTTP Server with Streaming
-console.log('\n🌐 BONUS 7: HTTP Server with Streaming');
-console.log('-'.repeat(40));
+console.info('\n🌐 BONUS 7: HTTP Server with Streaming');
+console.info('-'.repeat(40));
 
 // Create optimized HTTP server
 const server = Bun.serve({
@@ -175,12 +175,12 @@ const server = Bun.serve({
   }
 });
 
-console.log(`✅ Streaming server started on port ${server.port}`);
-console.log(`🌐 Endpoints: / (simple), /stream (1MB streaming)`);
+console.info(`✅ Streaming server started on port ${server.port}`);
+console.info(`🌐 Endpoints: / (simple), /stream (1MB streaming)`);
 
 // 🎯 BONUS 8: Compression Pipeline
-console.log('\n🗜️ BONUS 8: Compression Pipeline');
-console.log('-'.repeat(40));
+console.info('\n🗜️ BONUS 8: Compression Pipeline');
+console.info('-'.repeat(40));
 
 const compressionStart = performance.now();
 
@@ -200,14 +200,14 @@ const decompressed = decoder.decode(compressed);
 const compressionEnd = performance.now();
 const compressionRatio = (compressed.length / originalData.length * 100).toFixed(1);
 
-console.log(`✅ Original size: ${originalData.length} bytes`);
-console.log(`✅ Encoded size: ${compressed.length} bytes`);
-console.log(`✅ Encoding ratio: ${compressionRatio}%`);
-console.log(`⚡ Encoding time: ${(compressionEnd - compressionStart).toFixed(2)}ms`);
+console.info(`✅ Original size: ${originalData.length} bytes`);
+console.info(`✅ Encoded size: ${compressed.length} bytes`);
+console.info(`✅ Encoding ratio: ${compressionRatio}%`);
+console.info(`⚡ Encoding time: ${(compressionEnd - compressionStart).toFixed(2)}ms`);
 
 // 🎯 BONUS 9: Binary Data Processing
-console.log('\n🔍 BONUS 9: Binary Data Processing');
-console.log('-'.repeat(40));
+console.info('\n🔍 BONUS 9: Binary Data Processing');
+console.info('-'.repeat(40));
 
 const binaryStart = performance.now();
 
@@ -219,15 +219,15 @@ const base64Decoded = Buffer.from(base64Encoded, 'base64');
 
 const binaryEnd = performance.now();
 
-console.log(`✅ Original: ${buffer.toString()}`);
-console.log(`✅ Reversed: ${reversed.toString()}`);
-console.log(`✅ Base64: ${base64Encoded}`);
-console.log(`✅ Decoded: ${base64Decoded.toString()}`);
-console.log(`⚡ Binary processing time: ${(binaryEnd - binaryStart).toFixed(2)}ms`);
+console.info(`✅ Original: ${buffer.toString()}`);
+console.info(`✅ Reversed: ${reversed.toString()}`);
+console.info(`✅ Base64: ${base64Encoded}`);
+console.info(`✅ Decoded: ${base64Decoded.toString()}`);
+console.info(`⚡ Binary processing time: ${(binaryEnd - binaryStart).toFixed(2)}ms`);
 
 // 🎯 BONUS 10: Performance Profiling
-console.log('\n📊 BONUS 10: Performance Profiling');
-console.log('-'.repeat(40));
+console.info('\n📊 BONUS 10: Performance Profiling');
+console.info('-'.repeat(40));
 
 // Micro-benchmarking utility
 const benchmark = async (name: string, fn: () => Promise<void> | void, iterations = 1000) => {
@@ -240,7 +240,7 @@ const benchmark = async (name: string, fn: () => Promise<void> | void, iteration
   const end = performance.now();
   const avgTime = (end - start) / iterations;
   
-  console.log(`📊 ${name}: ${avgTime.toFixed(4)}ms avg (${iterations} iterations)`);
+  console.info(`📊 ${name}: ${avgTime.toFixed(4)}ms avg (${iterations} iterations)`);
 };
 
 // Run benchmarks
@@ -251,22 +251,22 @@ await benchmark('JSON parsing', () => JSON.parse('{"test": true}'));
 await benchmark('Buffer creation', () => Buffer.from('test'));
 
 // 🎯 SUMMARY
-console.log('\n🎉 Bun Optimization One-Liners Summary');
-console.log('='.repeat(60));
+console.info('\n🎉 Bun Optimization One-Liners Summary');
+console.info('='.repeat(60));
 
-console.log('✅ GC Management: Eliminated pauses during heavy operations');
-console.log('✅ Zero-Copy Subarrays: Memory-efficient data chunking');
-console.log('✅ SQLite Hybrid: Optimized database operations');
-console.log('✅ Build Configuration: Compile-time constants');
-console.log('✅ Lifecycle Matrix: Efficient workflow management');
-console.log('✅ Concurrent Operations: Parallel file processing');
-console.log('✅ Streaming Server: Efficient HTTP responses');
-console.log('✅ Compression Pipeline: Optimized data compression');
-console.log('✅ Binary Processing: Fast data manipulation');
-console.log('✅ Performance Profiling: Micro-benchmarking tools');
+console.info('✅ GC Management: Eliminated pauses during heavy operations');
+console.info('✅ Zero-Copy Subarrays: Memory-efficient data chunking');
+console.info('✅ SQLite Hybrid: Optimized database operations');
+console.info('✅ Build Configuration: Compile-time constants');
+console.info('✅ Lifecycle Matrix: Efficient workflow management');
+console.info('✅ Concurrent Operations: Parallel file processing');
+console.info('✅ Streaming Server: Efficient HTTP responses');
+console.info('✅ Compression Pipeline: Optimized data compression');
+console.info('✅ Binary Processing: Fast data manipulation');
+console.info('✅ Performance Profiling: Micro-benchmarking tools');
 
-console.log('\n🚀 All optimizations demonstrated successfully!');
-console.log('📈 Performance improvements measured and validated');
+console.info('\n🚀 All optimizations demonstrated successfully!');
+console.info('📈 Performance improvements measured and validated');
 
 // Clean up
 server.stop();

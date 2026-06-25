@@ -312,9 +312,9 @@ function generateReport(metrics: UsageMetrics): string {
 // Run analysis
 const metrics = analyzeUsage();
 const report = generateReport(metrics);
-console.log(report);
+console.info(report);
 
 // Also save to file
 import { writeFileSync } from 'fs';
 writeFileSync('BUN_API_USAGE_METRICS.md', report);
-console.log('\n📊 Metrics report saved to: BUN_API_USAGE_METRICS.md');
+console.info('\n📊 Metrics report saved to: BUN_API_USAGE_METRICS.md');

@@ -212,7 +212,7 @@ export class BunDocUrlBuilder {
     
     // Ensure cache directory exists
     await Bun.write('.cache/urls.json', JSON.stringify(urls, null, 2));
-    console.log(`✅ Cached ${this.cache.size} URLs to .cache/urls.json`);
+    console.info(`✅ Cached ${this.cache.size} URLs to .cache/urls.json`);
   }
   
   /**
@@ -294,7 +294,7 @@ ${entries.map(entry => `  <url>
     
     // Ensure public directory exists
     await Bun.write('public/sitemap.xml', sitemap);
-    console.log(`✅ Generated sitemap with ${entries.length} entries`);
+    console.info(`✅ Generated sitemap with ${entries.length} entries`);
     
     return sitemap;
   }

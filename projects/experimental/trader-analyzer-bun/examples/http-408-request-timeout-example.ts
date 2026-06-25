@@ -84,7 +84,7 @@ const app = new Hono();
 
 // ============ Example 1: Server-Side Request Timeout ============
 
-console.log("=== Example 1: Server-Side Request Timeout ===\n");
+console.info("=== Example 1: Server-Side Request Timeout ===\n");
 
 /**
  * Handle request with timeout for reading request body
@@ -122,7 +122,7 @@ app.post("/api/upload", async (c) => {
 
 // ============ Example 2: Client Retry Strategy ============
 
-console.log("=== Example 2: Client Retry Strategy ===\n");
+console.info("=== Example 2: Client Retry Strategy ===\n");
 
 /**
  * Fetch with automatic retry on 408 Request Timeout
@@ -140,7 +140,7 @@ async function fetchWithRetry(
 				// Request Timeout - retry with exponential backoff
 				if (attempt < maxRetries - 1) {
 					const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
-					console.log(
+					console.info(
 						`Request timeout (408), retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`,
 					);
 					await new Promise((resolve) => setTimeout(resolve, delay));
@@ -160,7 +160,7 @@ async function fetchWithRetry(
 
 // ============ Example 3: Request Timeout Detection ============
 
-console.log("=== Example 3: Request Timeout Detection ===\n");
+console.info("=== Example 3: Request Timeout Detection ===\n");
 
 /**
  * Create request timeout handler
@@ -218,7 +218,7 @@ function createRequestTimeoutHandler(timeoutMs: number) {
 
 // ============ Example 4: Comparison with 504 Gateway Timeout ============
 
-console.log("=== Example 4: 408 vs 504 Comparison ===\n");
+console.info("=== Example 4: 408 vs 504 Comparison ===\n");
 
 /**
  * Example showing difference between 408 and 504
@@ -268,7 +268,7 @@ app.get("/api/comparison", async (c) => {
 
 // ============ Example 5: Error Response Format ============
 
-console.log("=== Example 5: Error Response Format ===\n");
+console.info("=== Example 5: Error Response Format ===\n");
 
 /**
  * Standardized 408 error response format
@@ -302,10 +302,10 @@ function create408Response(details?: {
 	);
 }
 
-console.log("Example 408 Response:");
-console.log(JSON.stringify(JSON.parse(await create408Response({ timeoutMs: 30000, retryAfter: 5 }).text()), null, 2));
+console.info("Example 408 Response:");
+console.info(JSON.stringify(JSON.parse(await create408Response({ timeoutMs: 30000, retryAfter: 5 }).text()), null, 2));
 
-console.log("\n=== All Examples Complete ===\n");
+console.info("\n=== All Examples Complete ===\n");
 
 // Export for use in other modules
 export { app, fetchWithRetry, createRequestTimeoutHandler, create408Response };

@@ -86,40 +86,40 @@ export class IntegrationManager {
   // Start the global trading system
   async start(): Promise<void> {
     if (this.isRunning) {
-      console.log('🌍 Global trading system already running');
+      console.info('🌍 Global trading system already running');
       return;
     }
 
-    console.log('🌍 Starting Global High-Frequency Trading System...');
+    console.info('🌍 Starting Global High-Frequency Trading System...');
     
     try {
       // 1. Optimize platform performance
-      console.log('🔧 Optimizing platform performance...');
+      console.info('🔧 Optimizing platform performance...');
       await platformManager.optimizePerformance();
       
       // 2. Initialize trading configuration
-      console.log('⚙️ Initializing global trading configuration...');
+      console.info('⚙️ Initializing global trading configuration...');
       await this.initializeGlobalTradingConfig();
       
       // 3. Setup multi-region processing
-      console.log('🌐 Setting up multi-region processing...');
+      console.info('🌐 Setting up multi-region processing...');
       await this.setupMultiRegionProcessing();
       
       // 4. Start data processing
-      console.log('📊 Starting global data processing...');
+      console.info('📊 Starting global data processing...');
       this.startGlobalProcessing();
       
       // 5. Initialize metrics collection
-      console.log('📈 Starting metrics collection...');
+      console.info('📈 Starting metrics collection...');
       this.startMetricsCollection();
       
       this.isRunning = true;
       this.startTime = Date.now();
       
-      console.log('🚀 Global High-Frequency Trading System Started Successfully!');
-      console.log(`🌍 Active Regions: ${this.globalConfig.regions.length}`);
-      console.log(`📱 Active Platforms: ${this.globalConfig.platforms.length}`);
-      console.log(`⚡ Performance Optimized: ${platformManager.getPlatformConfig().supports.simd ? 'SIMD' : 'Standard'}`);
+      console.info('🚀 Global High-Frequency Trading System Started Successfully!');
+      console.info(`🌍 Active Regions: ${this.globalConfig.regions.length}`);
+      console.info(`📱 Active Platforms: ${this.globalConfig.platforms.length}`);
+      console.info(`⚡ Performance Optimized: ${platformManager.getPlatformConfig().supports.simd ? 'SIMD' : 'Standard'}`);
       
     } catch (error) {
       console.error('❌ Failed to start global trading system:', error);
@@ -157,9 +157,9 @@ export class IntegrationManager {
     
     // Health check all regions
     const healthResults = await multiRegionProcessor.healthCheck();
-    console.log('🏥 Region Health Check Results:');
+    console.info('🏥 Region Health Check Results:');
     for (const [region, healthy] of Object.entries(healthResults)) {
-      console.log(`   ${region.toUpperCase()}: ${healthy ? '✅ Healthy' : '❌ Unhealthy'}`);
+      console.info(`   ${region.toUpperCase()}: ${healthy ? '✅ Healthy' : '❌ Unhealthy'}`);
     }
   }
 
@@ -253,7 +253,7 @@ export class IntegrationManager {
       const executed = await sportsTradingEngine.executeSignal(enhancedSignal);
       
       if (executed) {
-        console.log(`🎯 Executed ${signal.action} ${signal.market} from ${data.region.toUpperCase()}-${data.source} @ ${signal.odds}`);
+        console.info(`🎯 Executed ${signal.action} ${signal.market} from ${data.region.toUpperCase()}-${data.source} @ ${signal.odds}`);
       }
       
       return executed;
@@ -362,10 +362,10 @@ export class IntegrationManager {
   // Execute arbitrage trade
   private async executeArbitrage(opportunity: any): Promise<void> {
     try {
-      console.log(`🔄 Arbitrage Opportunity: ${opportunity.assetKey}`);
-      console.log(`   Buy: ${opportunity.buy.market} @ ${opportunity.buy.odds} (${opportunity.buy.region}-${opportunity.buy.platform})`);
-      console.log(`   Sell: ${opportunity.sell.market} @ ${opportunity.sell.odds} (${opportunity.sell.region}-${opportunity.sell.platform})`);
-      console.log(`   Expected Profit: ${(opportunity.expectedProfit * 100).toFixed(1)}%`);
+      console.info(`🔄 Arbitrage Opportunity: ${opportunity.assetKey}`);
+      console.info(`   Buy: ${opportunity.buy.market} @ ${opportunity.buy.odds} (${opportunity.buy.region}-${opportunity.buy.platform})`);
+      console.info(`   Sell: ${opportunity.sell.market} @ ${opportunity.sell.odds} (${opportunity.sell.region}-${opportunity.sell.platform})`);
+      console.info(`   Expected Profit: ${(opportunity.expectedProfit * 100).toFixed(1)}%`);
 
       // Execute both sides of the arbitrage
       const buySignal = {
@@ -506,7 +506,7 @@ export class IntegrationManager {
   async stop(): Promise<void> {
     if (!this.isRunning) return;
 
-    console.log('🛑 Stopping Global High-Frequency Trading System...');
+    console.info('🛑 Stopping Global High-Frequency Trading System...');
     
     // Stop processing intervals
     if (this.processingInterval) {
@@ -519,11 +519,11 @@ export class IntegrationManager {
 
     // Generate final report
     const finalReport = this.generateFinalReport();
-    console.log('📊 Final System Report:');
-    console.log(JSON.stringify(finalReport, null, 2));
+    console.info('📊 Final System Report:');
+    console.info(JSON.stringify(finalReport, null, 2));
 
     this.isRunning = false;
-    console.log('✅ Global trading system stopped successfully');
+    console.info('✅ Global trading system stopped successfully');
   }
 
   // Generate final system report

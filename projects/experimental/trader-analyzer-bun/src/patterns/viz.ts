@@ -22,27 +22,27 @@ export class PatternRegistryVisualizer {
     const patterns = this.registry.getAllPatterns();
 
     // Header
-    console.log(colors.cyan('╔══════════════════════════════════════════════════════════════════════════════╗'));
-    console.log(colors.cyan('║') + '\x1b[1m' + '                        NEXUS Pattern Registry                                ' + '\x1b[0m' + colors.cyan('║'));
-    console.log(colors.cyan('╚══════════════════════════════════════════════════════════════════════════════╝'));
+    console.info(colors.cyan('╔══════════════════════════════════════════════════════════════════════════════╗'));
+    console.info(colors.cyan('║') + '\x1b[1m' + '                        NEXUS Pattern Registry                                ' + '\x1b[0m' + colors.cyan('║'));
+    console.info(colors.cyan('╚══════════════════════════════════════════════════════════════════════════════╝'));
 
     // Stats overview
-    console.log(colors.yellow('\n📊 Registry Statistics:'));
-    console.log(`   Total Patterns: ${colors.cyan(stats.totalPatterns.toString())}`);
-    console.log(`   Enabled Patterns: ${colors.green(stats.enabledPatterns.toString())}`);
-    console.log(`   Disabled Patterns: ${colors.red((stats.totalPatterns - stats.enabledPatterns).toString())}`);
-    console.log(`   Average Execution Time: ${colors.cyan(formatDuration(stats.avgExecutionTime))}`);
-    console.log(`   Total Executions: ${colors.cyan(stats.totalExecutions.toLocaleString())}`);
+    console.info(colors.yellow('\n📊 Registry Statistics:'));
+    console.info(`   Total Patterns: ${colors.cyan(stats.totalPatterns.toString())}`);
+    console.info(`   Enabled Patterns: ${colors.green(stats.enabledPatterns.toString())}`);
+    console.info(`   Disabled Patterns: ${colors.red((stats.totalPatterns - stats.enabledPatterns).toString())}`);
+    console.info(`   Average Execution Time: ${colors.cyan(formatDuration(stats.avgExecutionTime))}`);
+    console.info(`   Total Executions: ${colors.cyan(stats.totalExecutions.toLocaleString())}`);
 
     // Category breakdown
-    console.log(colors.yellow('\n🏷️  Categories:'));
+    console.info(colors.yellow('\n🏷️  Categories:'));
     for (const [category, count] of Object.entries(stats.categories)) {
       const percentage = ((count / stats.totalPatterns) * 100).toFixed(1);
-      console.log(`   ${category.padEnd(12)} ${colors.cyan(count.toString().padStart(3))} patterns (${percentage}%)`);
+      console.info(`   ${category.padEnd(12)} ${colors.cyan(count.toString().padStart(3))} patterns (${percentage}%)`);
     }
 
     // Priority breakdown
-    console.log(colors.yellow('\n🎯 Priorities:'));
+    console.info(colors.yellow('\n🎯 Priorities:'));
     const priorityColors = {
       critical: colors.red,
       high: colors.yellow,
@@ -53,7 +53,7 @@ export class PatternRegistryVisualizer {
     for (const [priority, count] of Object.entries(stats.priorities)) {
       const color = priorityColors[priority as keyof typeof priorityColors] || colors.gray;
       const percentage = ((count / stats.totalPatterns) * 100).toFixed(1);
-      console.log(`   ${priority.padEnd(8)} ${color(count.toString().padStart(3))} patterns (${percentage}%)`);
+      console.info(`   ${priority.padEnd(8)} ${color(count.toString().padStart(3))} patterns (${percentage}%)`);
     }
 
     // Top performing patterns
@@ -63,11 +63,11 @@ export class PatternRegistryVisualizer {
       .slice(0, 5);
 
     if (topPatterns.length > 0) {
-      console.log(colors.yellow('\n🏆 Top Performing Patterns:'));
+      console.info(colors.yellow('\n🏆 Top Performing Patterns:'));
       for (const pattern of topPatterns) {
         const successRate = (pattern.performance.successRate * 100).toFixed(1);
         const avgTime = formatDuration(pattern.performance.avgExecutionTime);
-        console.log(`   ${pattern.name.padEnd(30)} ${colors.green(successRate + '%')} success, ${colors.cyan(avgTime)} avg`);
+        console.info(`   ${pattern.name.padEnd(30)} ${colors.green(successRate + '%')} success, ${colors.cyan(avgTime)} avg`);
       }
     }
 
@@ -78,14 +78,14 @@ export class PatternRegistryVisualizer {
       .slice(0, 3);
 
     if (recentPatterns.length > 0) {
-      console.log(colors.yellow('\n🕒 Recently Updated Patterns:'));
+      console.info(colors.yellow('\n🕒 Recently Updated Patterns:'));
       for (const pattern of recentPatterns) {
         const updated = new Date(pattern.updated).toLocaleDateString();
-        console.log(`   ${pattern.name.padEnd(30)} v${pattern.version} (${updated})`);
+        console.info(`   ${pattern.name.padEnd(30)} v${pattern.version} (${updated})`);
       }
     }
 
-    console.log(colors.gray('\n💡 Use "patterns:list" to see all patterns or "patterns:stats <id>" for detailed stats'));
+    console.info(colors.gray('\n💡 Use "patterns:list" to see all patterns or "patterns:stats <id>" for detailed stats'));
   }
 
   /**
@@ -95,7 +95,7 @@ export class PatternRegistryVisualizer {
     const patterns = this.registry.getAllPatterns();
 
     if (patterns.length === 0) {
-      console.log(colors.yellow('No patterns registered'));
+      console.info(colors.yellow('No patterns registered'));
       return;
     }
 
@@ -111,11 +111,11 @@ export class PatternRegistryVisualizer {
       'avg time': formatDuration(pattern.performance.avgExecutionTime),
     }));
 
-    console.log('ID'.padEnd(25), 'Name'.padEnd(25), 'Category'.padEnd(10), 'Priority'.padEnd(8), 'Version'.padEnd(8), 'Enabled'.padEnd(8), 'Confidence'.padEnd(10), 'Matches'.padEnd(8), 'Avg Time');
-    console.log('─'.repeat(110));
+    console.info('ID'.padEnd(25), 'Name'.padEnd(25), 'Category'.padEnd(10), 'Priority'.padEnd(8), 'Version'.padEnd(8), 'Enabled'.padEnd(8), 'Confidence'.padEnd(10), 'Matches'.padEnd(8), 'Avg Time');
+    console.info('─'.repeat(110));
 
     for (const pattern of patterns) {
-      console.log(
+      console.info(
         pattern.id.padEnd(25),
         pattern.name.padEnd(25),
         pattern.category.padEnd(10),
@@ -136,53 +136,53 @@ export class PatternRegistryVisualizer {
     const pattern = this.registry.getPattern(patternId);
 
     if (!pattern) {
-      console.log(colors.red(`Pattern "${patternId}" not found`));
+      console.info(colors.red(`Pattern "${patternId}" not found`));
       return;
     }
 
     const meta = pattern.metadata;
 
-    console.log(colors.cyan('╔══════════════════════════════════════════════════════════════════════════════╗'));
-    console.log(colors.cyan('║') + '\x1b[1m' + ` Pattern: ${meta.name}`.padEnd(79) + '\x1b[0m' + colors.cyan('║'));
-    console.log(colors.cyan('╚══════════════════════════════════════════════════════════════════════════════╝'));
+    console.info(colors.cyan('╔══════════════════════════════════════════════════════════════════════════════╗'));
+    console.info(colors.cyan('║') + '\x1b[1m' + ` Pattern: ${meta.name}`.padEnd(79) + '\x1b[0m' + colors.cyan('║'));
+    console.info(colors.cyan('╚══════════════════════════════════════════════════════════════════════════════╝'));
 
-    console.log(colors.yellow('📋 Basic Info:'));
-    console.log(`   ID: ${colors.cyan(meta.id)}`);
-    console.log(`   Description: ${meta.description}`);
-    console.log(`   Version: ${colors.cyan(meta.version)}`);
-    console.log(`   Category: ${colors.cyan(meta.category)}`);
-    console.log(`   Priority: ${this.getPriorityColor(meta.priority)(meta.priority)}`);
-    console.log(`   Enabled: ${meta.enabled ? colors.green('✅ Yes') : colors.red('❌ No')}`);
-    console.log(`   Confidence: ${colors.cyan((meta.confidence * 100).toFixed(1) + '%')}`);
-    console.log(`   Author: ${meta.author}`);
-    console.log(`   Created: ${new Date(meta.created).toLocaleDateString()}`);
-    console.log(`   Updated: ${new Date(meta.updated).toLocaleDateString()}`);
+    console.info(colors.yellow('📋 Basic Info:'));
+    console.info(`   ID: ${colors.cyan(meta.id)}`);
+    console.info(`   Description: ${meta.description}`);
+    console.info(`   Version: ${colors.cyan(meta.version)}`);
+    console.info(`   Category: ${colors.cyan(meta.category)}`);
+    console.info(`   Priority: ${this.getPriorityColor(meta.priority)(meta.priority)}`);
+    console.info(`   Enabled: ${meta.enabled ? colors.green('✅ Yes') : colors.red('❌ No')}`);
+    console.info(`   Confidence: ${colors.cyan((meta.confidence * 100).toFixed(1) + '%')}`);
+    console.info(`   Author: ${meta.author}`);
+    console.info(`   Created: ${new Date(meta.created).toLocaleDateString()}`);
+    console.info(`   Updated: ${new Date(meta.updated).toLocaleDateString()}`);
 
-    console.log(colors.yellow('\n🏷️  Tags:'));
+    console.info(colors.yellow('\n🏷️  Tags:'));
     if (meta.tags.length > 0) {
-      console.log(`   ${meta.tags.map(tag => colors.gray(tag)).join(', ')}`);
+      console.info(`   ${meta.tags.map(tag => colors.gray(tag)).join(', ')}`);
     } else {
-      console.log(`   ${colors.gray('None')}`);
+      console.info(`   ${colors.gray('None')}`);
     }
 
-    console.log(colors.yellow('\n📊 Performance Metrics:'));
-    console.log(`   Total Matches: ${colors.cyan(meta.performance.totalMatches.toString())}`);
-    console.log(`   Success Rate: ${colors.green((meta.performance.successRate * 100).toFixed(1) + '%')}`);
-    console.log(`   False Positive Rate: ${colors.red((meta.performance.falsePositiveRate * 100).toFixed(1) + '%')}`);
-    console.log(`   Average Execution Time: ${colors.cyan(formatDuration(meta.performance.avgExecutionTime))}`);
+    console.info(colors.yellow('\n📊 Performance Metrics:'));
+    console.info(`   Total Matches: ${colors.cyan(meta.performance.totalMatches.toString())}`);
+    console.info(`   Success Rate: ${colors.green((meta.performance.successRate * 100).toFixed(1) + '%')}`);
+    console.info(`   False Positive Rate: ${colors.red((meta.performance.falsePositiveRate * 100).toFixed(1) + '%')}`);
+    console.info(`   Average Execution Time: ${colors.cyan(formatDuration(meta.performance.avgExecutionTime))}`);
 
-    console.log(colors.yellow('\n🔗 Dependencies:'));
+    console.info(colors.yellow('\n🔗 Dependencies:'));
     if (meta.dependencies.length > 0) {
       for (const dep of meta.dependencies) {
-        console.log(`   • ${colors.cyan(dep)}`);
+        console.info(`   • ${colors.cyan(dep)}`);
       }
     } else {
-      console.log(`   ${colors.gray('None')}`);
+      console.info(`   ${colors.gray('None')}`);
     }
 
     if (meta.urlPattern) {
-      console.log(colors.yellow('\n🌐 URL Pattern:'));
-      console.log(`   ${colors.cyan(meta.urlPattern)}`);
+      console.info(colors.yellow('\n🌐 URL Pattern:'));
+      console.info(`   ${colors.cyan(meta.urlPattern)}`);
     }
   }
 
@@ -190,7 +190,7 @@ export class PatternRegistryVisualizer {
    * Display pattern execution visualization
    */
   displayExecutionFlow(patternResults: Array<{ patternId: string; executionTime: number; opportunities: number }>): void {
-    console.log(colors.cyan('🚀 Pattern Execution Flow\n'));
+    console.info(colors.cyan('🚀 Pattern Execution Flow\n'));
 
     for (const result of patternResults) {
       const pattern = this.registry.getPattern(result.patternId);
@@ -199,7 +199,7 @@ export class PatternRegistryVisualizer {
       const timeColor = result.executionTime > 100 ? colors.red : result.executionTime > 50 ? colors.yellow : colors.green;
       const oppColor = result.opportunities > 0 ? colors.green : colors.gray;
 
-      console.log(`${colors.cyan('⚡')} ${name.padEnd(30)} ${timeColor(formatDuration(result.executionTime).padStart(8))} ${oppColor(result.opportunities.toString().padStart(3) + ' ops')}`);
+      console.info(`${colors.cyan('⚡')} ${name.padEnd(30)} ${timeColor(formatDuration(result.executionTime).padStart(8))} ${oppColor(result.opportunities.toString().padStart(3) + ' ops')}`);
     }
   }
 
@@ -210,13 +210,13 @@ export class PatternRegistryVisualizer {
     const stats = this.registry.getStats();
     const patterns = this.registry.getAllPatterns();
 
-    console.log(colors.cyan('🏥 Pattern Registry Health Check\n'));
+    console.info(colors.cyan('🏥 Pattern Registry Health Check\n'));
 
     // Overall health
     const healthScore = this.calculateHealthScore(stats, patterns);
     const healthColor = healthScore > 80 ? colors.green : healthScore > 60 ? colors.yellow : colors.red;
 
-    console.log(`Overall Health: ${healthColor(healthScore.toFixed(1) + '%')}`);
+    console.info(`Overall Health: ${healthColor(healthScore.toFixed(1) + '%')}`);
 
     // Component checks
     const checks = [
@@ -250,15 +250,15 @@ export class PatternRegistryVisualizer {
     for (const check of checks) {
       const statusIcon = check.status ? '✅' : '❌';
       const statusColor = check.status ? colors.green : colors.red;
-      console.log(`${statusIcon} ${check.name.padEnd(25)} ${statusColor(check.message)}`);
+      console.info(`${statusIcon} ${check.name.padEnd(25)} ${statusColor(check.message)}`);
     }
 
     // Recommendations
     const recommendations = this.generateHealthRecommendations(stats, patterns);
     if (recommendations.length > 0) {
-      console.log(colors.yellow('\n💡 Recommendations:'));
+      console.info(colors.yellow('\n💡 Recommendations:'));
       for (const rec of recommendations) {
-        console.log(`   • ${rec}`);
+        console.info(`   • ${rec}`);
       }
     }
   }

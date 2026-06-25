@@ -4,7 +4,7 @@ const { buildProgram } = await import("./program.js");
 
 describe("dns cli", () => {
   it("prints setup info (no apply)", async () => {
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const log = vi.spyOn(console, 'info').mockImplementation(() => {});
     const program = buildProgram();
     await program.parseAsync(["dns", "setup"], { from: "user" });
     const output = log.mock.calls.map((call) => call.join(" ")).join("\n");

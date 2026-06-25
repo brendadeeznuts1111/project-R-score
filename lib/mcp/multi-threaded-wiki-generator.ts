@@ -1,6 +1,11 @@
 // lib/mcp/multi-threaded-wiki-generator.ts - Multi-threaded wiki generation with worker pools
 
-import { MCPWikiGenerator, WikiTemplate, WikiGenerationRequest, WikiGenerationResult } from './wiki-generator-mcp';
+import {
+  MCPWikiGenerator,
+  WikiTemplate,
+  WikiGenerationRequest,
+  WikiGenerationResult,
+} from './wiki-generator-mcp';
 import { EventEmitter } from 'events';
 
 export interface WorkerPoolConfig {
@@ -46,14 +51,14 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
 
   constructor(config: Partial<WorkerPoolConfig> = {}) {
     super();
-    
+
     this.config = {
       minWorkers: 2,
       maxWorkers: Math.min(8, navigator.hardwareConcurrency ?? 4),
       workerScript: new URL('./wiki-worker.ts', import.meta.url).href,
       taskTimeout: 30000, // 30 seconds
       maxRetries: 3,
-      ...config
+      ...config,
     };
 
     this.stats = {
@@ -63,7 +68,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
       completedTasks: 0,
       failedTasks: 0,
       averageProcessingTime: 0,
-      throughputPerSecond: 0
+      throughputPerSecond: 0,
     };
 
     this.initializeWorkerPool();
@@ -77,7 +82,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
     for (let i = 0; i < this.config.minWorkers; i++) {
       promises.push(this.createWorker());
     }
-    
+
     await Promise.all(promises);
     this.emit('workerPoolInitialized', this.stats);
   }
@@ -106,7 +111,10 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
   /**
    * Handle messages from workers
    */
-  private handleWorkerMessage(worker: Worker, result: { taskId: string; data: WikiGenerationResult | Error }): void {
+  private handleWorkerMessage(
+    worker: Worker,
+    result: { taskId: string; data: WikiGenerationResult | Error }
+  ): void {
     const task = this.activeTasks.get(result.taskId);
     if (!task) return;
 
@@ -128,7 +136,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   private handleWorkerError(worker: Worker, error: Error): void {
     console.error(`Worker error: ${error.message}`);
-    
+
     // Find and fail any active tasks on this worker
     for (const [taskId, task] of this.activeTasks.entries()) {
       this.activeTasks.delete(taskId);
@@ -147,12 +155,12 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
     if (index > -1) {
       this.workers.splice(index, 1);
     }
-    
+
     const availableIndex = this.availableWorkers.indexOf(worker);
     if (availableIndex > -1) {
       this.availableWorkers.splice(availableIndex, 1);
     }
-    
+
     this.stats.totalWorkers = this.workers.length;
     this.stats.activeWorkers = this.activeTasks.size;
   }
@@ -177,13 +185,13 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   private async scaleUp(): Promise<void> {
     const queuePressure = this.taskQueue.length / this.availableWorkers.length;
-    
+
     if (queuePressure > 2 && this.workers.length < this.config.maxWorkers) {
       const workersToAdd = Math.min(
         Math.ceil(queuePressure / 2),
         this.config.maxWorkers - this.workers.length
       );
-      
+
       for (let i = 0; i < workersToAdd; i++) {
         try {
           await this.createWorker();
@@ -201,13 +209,13 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
   private scaleDown(): void {
     const idleWorkers = this.availableWorkers.length;
     const minNeeded = Math.max(this.config.minWorkers, Math.ceil(this.taskQueue.length / 2));
-    
+
     if (idleWorkers > minNeeded && this.workers.length > this.config.minWorkers) {
       const workersToRemove = Math.min(
         idleWorkers - minNeeded,
         this.workers.length - this.config.minWorkers
       );
-      
+
       for (let i = 0; i < workersToRemove; i++) {
         const worker = this.availableWorkers.pop();
         if (worker) {
@@ -235,7 +243,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
     }
 
     this.stats.queuedTasks = this.taskQueue.length;
-    
+
     // Auto-scaling
     this.scaleUp();
     this.scaleDown();
@@ -256,7 +264,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
       worker.postMessage({
         taskId: task.id,
         template: task.template,
-        request: task.request
+        request: task.request,
       });
 
       // Clear timeout when message is sent successfully
@@ -282,7 +290,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   private handleTaskSuccess(task: WikiGenerationTask, result: WikiGenerationResult): void {
     const processingTime = Date.now() - task.createdAt.getTime();
-    
+
     this.stats.completedTasks++;
     this.updateAverageProcessingTime(processingTime);
     this.updateThroughput();
@@ -296,9 +304,9 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   private handleTaskFailure(task: WikiGenerationTask, error: Error): void {
     task.retries++;
-    
+
     if (task.retries <= this.config.maxRetries) {
-      console.log(`Retrying task ${task.id} (attempt ${task.retries}/${this.config.maxRetries})`);
+      console.info(`Retrying task ${task.id} (attempt ${task.retries}/${this.config.maxRetries})`);
       this.taskQueue.unshift(task);
       this.processQueue();
     } else {
@@ -313,7 +321,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   private updateAverageProcessingTime(processingTime: number): void {
     const totalTasks = this.stats.completedTasks + this.stats.failedTasks;
-    this.stats.averageProcessingTime = 
+    this.stats.averageProcessingTime =
       (this.stats.averageProcessingTime * (totalTasks - 1) + processingTime) / totalTasks;
   }
 
@@ -343,13 +351,13 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
         createdAt: new Date(),
         retries: 0,
         resolve,
-        reject
+        reject,
       };
 
       // Insert task based on priority
       this.insertTaskByPriority(task);
       this.processQueue();
-      
+
       this.emit('taskQueued', task);
     });
   }
@@ -360,7 +368,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
   private insertTaskByPriority(task: WikiGenerationTask): void {
     const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
     const taskPriority = priorityOrder[task.priority];
-    
+
     let insertIndex = this.taskQueue.length;
     for (let i = 0; i < this.taskQueue.length; i++) {
       if (priorityOrder[this.taskQueue[i].priority] > taskPriority) {
@@ -368,7 +376,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
         break;
       }
     }
-    
+
     this.taskQueue.splice(insertIndex, 0, task);
     this.stats.queuedTasks = this.taskQueue.length;
   }
@@ -388,7 +396,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
     // Process in batches
     for (let i = 0; i < templates.length; i += concurrency) {
       const batch = templates.slice(i, i + concurrency);
-      const batchPromises = batch.map(template => 
+      const batchPromises = batch.map(template =>
         this.generateWiki(template, request).catch(error => {
           if (failFast) throw error;
           errors.push(error);
@@ -397,7 +405,7 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
       );
 
       const batchResults = await Promise.all(batchPromises);
-      
+
       if (failFast && errors.length > 0) {
         throw errors[0];
       }
@@ -424,29 +432,27 @@ export class MultiThreadedWikiGenerator extends EventEmitter {
    */
   public async shutdown(): Promise<void> {
     this.isShuttingDown = true;
-    
+
     // Wait for active tasks to complete or timeout
     const shutdownTimeout = 30000; // 30 seconds
     const startTime = Date.now();
-    
+
     while (this.activeTasks.size > 0 && Date.now() - startTime < shutdownTimeout) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     // Terminate all workers
-    const terminationPromises = this.workers.map(worker => 
-      worker.terminate().catch(error => 
-        console.error('Error terminating worker:', error)
-      )
+    const terminationPromises = this.workers.map(worker =>
+      worker.terminate().catch(error => console.error('Error terminating worker:', error))
     );
 
     await Promise.all(terminationPromises);
-    
+
     this.workers = [];
     this.availableWorkers = [];
     this.taskQueue = [];
     this.activeTasks.clear();
-    
+
     this.emit('shutdown');
   }
 }

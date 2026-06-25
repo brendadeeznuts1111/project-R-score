@@ -53,27 +53,27 @@ async function runDiagnostics() {
 
   // Color-code by section
   const sections = {
-    "CPU": "primary",
-    "Memory": "accent",
-    "Network": "success",
-    "Errors": "error",
-    "Warnings": "warning",
-    "Status": "success"
+    CPU: 'primary',
+    Memory: 'accent',
+    Network: 'success',
+    Errors: 'error',
+    Warnings: 'warning',
+    Status: 'success',
   };
 
   let coloredReport = report;
   Object.entries(sections).forEach(([section, color]) => {
-    const regex = new RegExp(`^${section}:.*$`, "gm");
-    coloredReport = coloredReport.replace(regex,
-      styled(`$&`, color as keyof typeof FW_COLORS));
+    const regex = new RegExp(`^${section}:.*$`, 'gm');
+    coloredReport = coloredReport.replace(regex, styled(`$&`, color as keyof typeof FW_COLORS));
   });
 
   // Highlight metrics
-  coloredReport = coloredReport.replace(/(\d+\.\d+)ms/g, styled("$1ms", "accent"));
+  coloredReport = coloredReport.replace(/(\d+\.\d+)ms/g, styled('$1ms', 'accent'));
   coloredReport = coloredReport.replace(/(\d+(?:\.\d+)?)\s*(KB|MB|GB)/g, (_, size, unit) =>
-    styled(`${size}${unit}`, "primary"));
+    styled(`${size}${unit}`, 'primary')
+  );
 
-  console.log(coloredReport);
+  console.info(coloredReport);
 
   // Extract and tag dominant issue color
   const errorMatch = report.match(/Errors: (.+)/);
@@ -82,15 +82,15 @@ async function runDiagnostics() {
   // Store with color context (simulated R2 upload)
   const key = `diagnostics/${Date.now()}.txt`;
   const metadata = {
-    "diagnostic:dominant-color": Bun.color(dominantColor, "hex"),
-    "diagnostic:has-errors": (!!errorMatch).toString()
+    'diagnostic:dominant-color': Bun.color(dominantColor, 'hex'),
+    'diagnostic:has-errors': (!!errorMatch).toString(),
   };
 
   log.metric('Stored to', key, 'muted');
-  log.metric('Dominant color', Bun.color(dominantColor, "hex"), 'accent');
-  log.metric('Has errors', metadata["diagnostic:has-errors"], errorMatch ? 'error' : 'success');
+  log.metric('Dominant color', Bun.color(dominantColor, 'hex'), 'accent');
+  log.metric('Has errors', metadata['diagnostic:has-errors'], errorMatch ? 'error' : 'success');
 
-  console.log('\n' + styled('🎯 Diagnostic complete!', 'success'));
+  console.info('\n' + styled('🎯 Diagnostic complete!', 'success'));
 }
 
 // Run if called directly

@@ -57,7 +57,7 @@ export interface AnsiWidthResult {
 
 /**
  * Validate that a binary exists in PATH
- * 
+ *
  * @example
  * ```typescript
  * const bunPath = validateBinaryExists('bun');
@@ -70,10 +70,10 @@ export function validateBinaryExists(command: string): string | null {
   try {
     const path = Bun.which(command);
     if (path) {
-      console.log(`✅ ${command}: ${path}`);
+      console.info(`✅ ${command}: ${path}`);
       return path;
     } else {
-      console.log(`❌ Missing: ${command}`);
+      console.info(`❌ Missing: ${command}`);
       return null;
     }
   } catch (error) {
@@ -107,16 +107,16 @@ export function validateBinaryOrThrow(command: string): string {
 
 /**
  * Safely spawn a process with timeout and error handling
- * 
+ *
  * @example
  * ```typescript
  * const result = await safeSpawn(
  *   ['bun', 'test'],
  *   { timeoutMs: 5000, validateBinary: true }
  * );
- * 
+ *
  * if (result.success) {
- *   console.log('Output:', result.stdout);
+ *   console.info('Output:', result.stdout);
  * }
  * ```
  */
@@ -160,16 +160,13 @@ export async function safeSpawn(
     // Set up timeout
     const timeoutId = setTimeout(() => {
       process_.kill('SIGTERM');
-      recordError(
-        new Error(`Spawn timeout after ${timeoutMs}ms`),
-        {
-          service: serviceName,
-          operation: 'spawn_timeout',
-          command: cmd.join(' '),
-          timeoutMs,
-          pid: process_.pid,
-        }
-      );
+      recordError(new Error(`Spawn timeout after ${timeoutMs}ms`), {
+        service: serviceName,
+        operation: 'spawn_timeout',
+        command: cmd.join(' '),
+        timeoutMs,
+        pid: process_.pid,
+      });
     }, timeoutMs);
 
     // Collect output with size limit
@@ -222,16 +219,13 @@ export async function safeSpawn(
 
     // Record error if process failed
     if (exitCode !== 0) {
-      recordError(
-        new Error(`Process exited with code ${exitCode}`),
-        {
-          service: serviceName,
-          operation: 'spawn_exit_error',
-          command: cmd.join(' '),
-          exitCode,
-          stderr: stderr.slice(0, 1000), // Limit error context
-        }
-      );
+      recordError(new Error(`Process exited with code ${exitCode}`), {
+        service: serviceName,
+        operation: 'spawn_exit_error',
+        command: cmd.join(' '),
+        exitCode,
+        stderr: stderr.slice(0, 1000), // Limit error context
+      });
     }
 
     return {
@@ -263,7 +257,7 @@ export async function safeSpawn(
 
 /**
  * Memory-efficient spawn that streams output with timeout
- * 
+ *
  * @example
  * ```typescript
  * await streamSpawn(
@@ -366,23 +360,23 @@ export async function streamSpawn(
 
 /**
  * Calculate ANSI-aware string width
- * 
+ *
  * @example
  * ```typescript
  * const result = ansiStringWidth('\x1b[31mred\x1b[0m');
- * console.log(result.width); // 3 (not 9)
- * console.log(result.length); // 9
+ * console.info(result.width); // 3 (not 9)
+ * console.info(result.length); // 9
  * ```
  */
 export function ansiStringWidth(str: string): AnsiWidthResult {
   try {
     // Use Bun's built-in stringWidth if available
-    const width = (Bun as any).stringWidth?.(str) ?? str.length;
-    
+    const width = (Bun as Record<string, unknown>).stringWidth?.(str) ?? str.length;
+
     // Check for ANSI codes
     const ansiPattern = /\x1b\[[0-9;]*m/g;
     const hasAnsi = ansiPattern.test(str);
-    
+
     return {
       width,
       length: str.length,
@@ -394,7 +388,7 @@ export function ansiStringWidth(str: string): AnsiWidthResult {
       operation: 'string_width',
       input: str,
     });
-    
+
     // Fallback: strip ANSI and return length
     const stripped = str.replace(/\x1b\[[0-9;]*m/g, '');
     return {
@@ -414,7 +408,7 @@ export function stripAnsi(str: string): string {
 
 /**
  * Truncate string to visual width (ANSI-aware)
- * 
+ *
  * @example
  * ```typescript
  * truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
@@ -423,7 +417,7 @@ export function stripAnsi(str: string): string {
  */
 export function truncateAnsi(str: string, maxWidth: number): string {
   const { width } = ansiStringWidth(str);
-  
+
   if (width <= maxWidth) {
     return str;
   }
@@ -487,37 +481,37 @@ export function getTerminalSize(): { columns: number; rows: number } {
 
 // Entry guard for testing
 if (import.meta.main) {
-  console.log('🔧 Bun Spawn Utils Demo\n');
+  console.info('🔧 Bun Spawn Utils Demo\n');
 
   // Test binary validation
-  console.log('1. Binary Validation:');
+  console.info('1. Binary Validation:');
   validateBinaryExists('bun');
   validateBinaryExists('nonexistent-binary-12345');
 
   // Test ANSI width
-  console.log('\n2. ANSI Width:');
+  console.info('\n2. ANSI Width:');
   const colored = '\x1b[31mred\x1b[0m';
   const widthResult = ansiStringWidth(colored);
-  console.log(`  String: "${colored}"`);
-  console.log(`  Visual width: ${widthResult.width}`);
-  console.log(`  Raw length: ${widthResult.length}`);
-  console.log(`  Has ANSI: ${widthResult.hasAnsi}`);
+  console.info(`  String: "${colored}"`);
+  console.info(`  Visual width: ${widthResult.width}`);
+  console.info(`  Raw length: ${widthResult.length}`);
+  console.info(`  Has ANSI: ${widthResult.hasAnsi}`);
 
   // Test truncation
-  console.log('\n3. ANSI Truncation:');
+  console.info('\n3. ANSI Truncation:');
   const truncated = truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
-  console.log(`  Truncated: "${truncated}"`);
+  console.info(`  Truncated: "${truncated}"`);
 
   // Test safe spawn
-  console.log('\n4. Safe Spawn:');
+  console.info('\n4. Safe Spawn:');
   const result = await safeSpawn(['bun', '--version'], {
     timeoutMs: 5000,
     validateBinary: true,
   });
-  console.log(`  Success: ${result.success}`);
-  console.log(`  Exit code: ${result.exitCode}`);
-  console.log(`  Duration: ${result.durationMs.toFixed(2)}ms`);
-  console.log(`  Output: ${result.stdout.trim()}`);
+  console.info(`  Success: ${result.success}`);
+  console.info(`  Exit code: ${result.exitCode}`);
+  console.info(`  Duration: ${result.durationMs.toFixed(2)}ms`);
+  console.info(`  Output: ${result.stdout.trim()}`);
 
-  console.log('\n✅ Demo complete!');
+  console.info('\n✅ Demo complete!');
 }

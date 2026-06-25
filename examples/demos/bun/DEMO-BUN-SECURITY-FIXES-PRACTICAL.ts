@@ -6,15 +6,15 @@
  * Run: bun DEMO-BUN-SECURITY-FIXES-PRACTICAL.ts
  */
 
-console.log("🔒 Practical Real-World Usage of Bun Security Fixes");
-console.log("═".repeat(60));
-console.log();
+console.info("🔒 Practical Real-World Usage of Bun Security Fixes");
+console.info("═".repeat(60));
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 1: URLSearchParams.size - Browser Polyfill Use Case
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("1️⃣  URLSearchParams Polyfill for Legacy Browser Support");
-console.log("─".repeat(60));
+console.info("1️⃣  URLSearchParams Polyfill for Legacy Browser Support");
+console.info("─".repeat(60));
 
 /**
  * Real-world scenario: Supporting old browsers that don't have URLSearchParams
@@ -64,31 +64,31 @@ class URLSearchParamsPolyfill {
 }
 
 // Demonstrate polyfill can replace native implementation
-console.log("   Testing polyfill injection:");
+console.info("   Testing polyfill injection:");
 const originalSize = Object.getOwnPropertyDescriptor(URLSearchParams.prototype, 'size');
-console.log(`   Native configurable: ${originalSize?.configurable} ✅`);
+console.info(`   Native configurable: ${originalSize?.configurable} ✅`);
 
 // Simulate polyfill installation
 const testParams = new URLSearchParams("user=john&role=admin&active=true");
-console.log(`   Native size: ${testParams.size}`);
+console.info(`   Native size: ${testParams.size}`);
 
 // Test with custom polyfill instance
 const polyfill = new URLSearchParamsPolyfill("user=jane&role=user&active=false");
-console.log(`   Polyfill size: ${polyfill.size}`);
-console.log(`   Polyfill get('user'): ${polyfill.get('user')}`);
-console.log();
+console.info(`   Polyfill size: ${polyfill.size}`);
+console.info(`   Polyfill get('user'): ${polyfill.get('user')}`);
+console.info();
 
-console.log("   Use Cases:");
-console.log("   • Next.js server components rendering URLs for old browsers");
-console.log("   • Testing frameworks mocking URLSearchParams behavior");
-console.log("   • SSR frameworks normalizing URL parsing across environments");
-console.log();
+console.info("   Use Cases:");
+console.info("   • Next.js server components rendering URLs for old browsers");
+console.info("   • Testing frameworks mocking URLSearchParams behavior");
+console.info("   • SSR frameworks normalizing URL parsing across environments");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 2: WebSocket Decompression Protection - Real-time Chat App
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("2️⃣  Secure WebSocket Chat Server (Protected from Decompression Bombs)");
-console.log("─".repeat(60));
+console.info("2️⃣  Secure WebSocket Chat Server (Protected from Decompression Bombs)");
+console.info("─".repeat(60));
 
 /**
  * Real-world: Discord/Slack-like chat server with compression enabled
@@ -110,29 +110,29 @@ class SecureChatServer {
     const MAX_SIZE = 128 * 1024 * 1024; // 128MB limit enforced by Bun
     
     if (decompressedSize > MAX_SIZE) {
-      console.log(`   ⚠️  REJECTED: Message too large (${(decompressedSize / 1024 / 1024).toFixed(0)}MB > 128MB)`);
+      console.info(`   ⚠️  REJECTED: Message too large (${(decompressedSize / 1024 / 1024).toFixed(0)}MB > 128MB)`);
       this.disconnectClient(client, 1009, "Message too big");
       return false;
     }
     
-    console.log(`   ✅ ACCEPTED: Message (${(decompressedSize / 1024).toFixed(0)}KB)`);
+    console.info(`   ✅ ACCEPTED: Message (${(decompressedSize / 1024).toFixed(0)}KB)`);
     return true;
   }
   
   disconnectClient(client: any, code: number, reason: string): void {
-    console.log(`   Client disconnected: ${code} - ${reason}`);
+    console.info(`   Client disconnected: ${code} - ${reason}`);
     this.clients.delete(client);
   }
   
   broadcast(message: ChatMessage): void {
-    console.log(`   Broadcasting to ${this.clients.size} clients`);
+    console.info(`   Broadcasting to ${this.clients.size} clients`);
   }
 }
 
 const chatServer = new SecureChatServer();
 
-console.log("   Simulating WebSocket message handling:");
-console.log();
+console.info("   Simulating WebSocket message handling:");
+console.info();
 
 // Normal messages pass through
 chatServer.handleMessage({}, Buffer.from("normal"), 1024);        // 1KB
@@ -141,20 +141,20 @@ chatServer.handleMessage({}, Buffer.from("large"), 50 * 1024 * 1024);  // 50MB
 // Decompression bomb gets rejected
 chatServer.handleMessage({}, Buffer.from("bomb"), 1024 * 1024 * 1024); // 1GB
 
-console.log();
-console.log("   Use Cases:");
-console.log("   • Discord/Slack real-time messaging servers");
-console.log("   • Live sports score tickers");
-console.log("   • Collaborative document editing (Google Docs style)");
-console.log("   • IoT sensor data streaming dashboards");
-console.log("   • Multiplayer game state synchronization");
-console.log();
+console.info();
+console.info("   Use Cases:");
+console.info("   • Discord/Slack real-time messaging servers");
+console.info("   • Live sports score tickers");
+console.info("   • Collaborative document editing (Google Docs style)");
+console.info("   • IoT sensor data streaming dashboards");
+console.info("   • Multiplayer game state synchronization");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FIX 3: fetch() ReadableStream Fix - File Upload Service
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("3️⃣  High-Throughput File Upload Service (No Memory Leaks)");
-console.log("─".repeat(60));
+console.info("3️⃣  High-Throughput File Upload Service (No Memory Leaks)");
+console.info("─".repeat(60));
 
 /**
  * Real-world: Video streaming platform uploading to cloud storage
@@ -168,7 +168,7 @@ class VideoUploadService {
     this.activeUploads++;
     const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    console.log(`   [${uploadId}] Starting upload: ${filePath}`);
+    console.info(`   [${uploadId}] Starting upload: ${filePath}`);
     
     try {
       // Create a ReadableStream from file
@@ -187,14 +187,14 @@ class VideoUploadService {
       
       if (response.ok) {
         this.totalUploaded++;
-        console.log(`   [${uploadId}] Upload complete ✅`);
+        console.info(`   [${uploadId}] Upload complete ✅`);
         return true;
       } else {
-        console.log(`   [${uploadId}] Upload failed: ${response.status}`);
+        console.info(`   [${uploadId}] Upload failed: ${response.status}`);
         return false;
       }
     } catch (error) {
-      console.log(`   [${uploadId}] Upload error: ${error}`);
+      console.info(`   [${uploadId}] Upload error: ${error}`);
       return false;
     } finally {
       // FIXED: Memory is properly cleaned up here automatically
@@ -213,8 +213,8 @@ class VideoUploadService {
 async function demonstrateUploadService() {
   const service = new VideoUploadService();
   
-  console.log("   Simulating concurrent video uploads:");
-  console.log();
+  console.info("   Simulating concurrent video uploads:");
+  console.info();
   
   // Simulate multiple concurrent uploads
   const uploads = [
@@ -230,18 +230,18 @@ async function demonstrateUploadService() {
     )
   );
   
-  console.log();
-  console.log(`   Active uploads after completion: ${service.getStats().active} ✅`);
-  console.log(`   Total uploads: ${service.getStats().total}`);
-  console.log();
+  console.info();
+  console.info(`   Active uploads after completion: ${service.getStats().active} ✅`);
+  console.info(`   Total uploads: ${service.getStats().total}`);
+  console.info();
   
-  console.log("   Use Cases:");
-  console.log("   • YouTube/Vimeo-style video upload platforms");
-  console.log("   • Cloud storage services (S3, R2, GCS compatible)");
-  console.log("   • Document management systems");
-  console.log("   • Backup and sync services");
-  console.log("   • Image processing pipelines");
-  console.log();
+  console.info("   Use Cases:");
+  console.info("   • YouTube/Vimeo-style video upload platforms");
+  console.info("   • Cloud storage services (S3, R2, GCS compatible)");
+  console.info("   • Document management systems");
+  console.info("   • Backup and sync services");
+  console.info("   • Image processing pipelines");
+  console.info();
 }
 
 await demonstrateUploadService();
@@ -249,67 +249,67 @@ await demonstrateUploadService();
 // ═══════════════════════════════════════════════════════════════════════════════
 // Combined Real-World Example: Full-Stack Application
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("4️⃣  Combined Example: Modern Web Application");
-console.log("─".repeat(60));
+console.info("4️⃣  Combined Example: Modern Web Application");
+console.info("─".repeat(60));
 
-console.log("   Application: E-commerce Platform with Live Updates");
-console.log();
+console.info("   Application: E-commerce Platform with Live Updates");
+console.info();
 
-console.log("   ┌─────────────────────────────────────────────────────┐");
-console.log("   │ Frontend (Browser)                                  │");
-console.log("   │ • URLSearchParams for URL state management          │");
-console.log("   │   (polyfill for old browsers thanks to fix #1)      │");
-console.log("   │ • WebSocket connection to server for live updates   │");
-console.log("   │   (protected from bombs thanks to fix #2)           │");
-console.log("   └─────────────────────────────────────────────────────┘");
-console.log("                          │");
-console.log("                          ▼");
-console.log("   ┌─────────────────────────────────────────────────────┐");
-console.log("   │ Backend (Bun Server)                                │");
-console.log("   │ • WebSocket server with per-message-deflate         │");
-console.log("   │   (128MB limit prevents DoS attacks)                │");
-console.log("   │ • File upload endpoint for product images           │");
-console.log("   │   (no memory leaks with ReadableStream)             │");
-console.log("   │ • URL parsing for API endpoints                     │");
-console.log("   │   (configurable size property)                      │");
-console.log("   └─────────────────────────────────────────────────────┘");
-console.log();
+console.info("   ┌─────────────────────────────────────────────────────┐");
+console.info("   │ Frontend (Browser)                                  │");
+console.info("   │ • URLSearchParams for URL state management          │");
+console.info("   │   (polyfill for old browsers thanks to fix #1)      │");
+console.info("   │ • WebSocket connection to server for live updates   │");
+console.info("   │   (protected from bombs thanks to fix #2)           │");
+console.info("   └─────────────────────────────────────────────────────┘");
+console.info("                          │");
+console.info("                          ▼");
+console.info("   ┌─────────────────────────────────────────────────────┐");
+console.info("   │ Backend (Bun Server)                                │");
+console.info("   │ • WebSocket server with per-message-deflate         │");
+console.info("   │   (128MB limit prevents DoS attacks)                │");
+console.info("   │ • File upload endpoint for product images           │");
+console.info("   │   (no memory leaks with ReadableStream)             │");
+console.info("   │ • URL parsing for API endpoints                     │");
+console.info("   │   (configurable size property)                      │");
+console.info("   └─────────────────────────────────────────────────────┘");
+console.info();
 
 // Practical code example
-console.log("   Practical Code Example:");
-console.log("   ```typescript");
-console.log("   // Server setup with all security fixes");
-console.log("   Bun.serve({");
-console.log("     port: 3000,");
-console.log("     websocket: {");
-console.log("       perMessageDeflate: true, // Protected: 128MB limit");
-console.log("       message(ws, message) {");
-console.log("         // Safe from decompression bombs");
-console.log("       }");
-console.log("     },");
-console.log("     async fetch(req) {");
-console.log("       // URL parsing with spec-compliant size");
-console.log("       const url = new URL(req.url);");
-console.log("       const params = url.searchParams;");
-console.log("       console.log(params.size); // Works correctly");
-console.log();
-console.log("       // File upload without memory leaks");
-console.log("       if (req.method === 'POST') {");
-console.log("         const stream = req.body; // ReadableStream");
-console.log("         await fetch(storageUrl, { body: stream });");
-console.log("         // Stream automatically released ✅");
-console.log("       }");
-console.log("     }");
-console.log("   });");
-console.log("   ```");
-console.log();
+console.info("   Practical Code Example:");
+console.info("   ```typescript");
+console.info("   // Server setup with all security fixes");
+console.info("   Bun.serve({");
+console.info("     port: 3000,");
+console.info("     websocket: {");
+console.info("       perMessageDeflate: true, // Protected: 128MB limit");
+console.info("       message(ws, message) {");
+console.info("         // Safe from decompression bombs");
+console.info("       }");
+console.info("     },");
+console.info("     async fetch(req) {");
+console.info("       // URL parsing with spec-compliant size");
+console.info("       const url = new URL(req.url);");
+console.info("       const params = url.searchParams;");
+console.info("       console.info(params.size); // Works correctly");
+console.info();
+console.info("       // File upload without memory leaks");
+console.info("       if (req.method === 'POST') {");
+console.info("         const stream = req.body; // ReadableStream");
+console.info("         await fetch(storageUrl, { body: stream });");
+console.info("         // Stream automatically released ✅");
+console.info("       }");
+console.info("     }");
+console.info("   });");
+console.info("   ```");
+console.info();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Summary
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log("═".repeat(60));
-console.log("📊 Summary: Where These Fixes Are Used");
-console.log("═".repeat(60));
+console.info("═".repeat(60));
+console.info("📊 Summary: Where These Fixes Are Used");
+console.info("═".repeat(60));
 
 const summary = [
   {
@@ -329,13 +329,13 @@ const summary = [
   }
 ];
 
-console.log(Bun.inspect.table(summary, { colors: true }));
-console.log();
+console.info(Bun.inspect.table(summary, { colors: true }));
+console.info();
 
-console.log("🎯 Bottom Line:");
-console.log("   These fixes make Bun production-ready for:");
-console.log("   • High-traffic web applications");
-console.log("   • Real-time communication platforms");
-console.log("   • File upload/processing services");
-console.log("   • Enterprise-grade server deployments");
-console.log();
+console.info("🎯 Bottom Line:");
+console.info("   These fixes make Bun production-ready for:");
+console.info("   • High-traffic web applications");
+console.info("   • Real-time communication platforms");
+console.info("   • File upload/processing services");
+console.info("   • Enterprise-grade server deployments");
+console.info();

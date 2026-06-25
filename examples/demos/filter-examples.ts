@@ -32,24 +32,24 @@ interface BenchmarkResult {
  * Run comprehensive filter examples
  */
 export async function runFilterExamples(): Promise<void> {
-  console.log(c.bold('🎯 Bun Filter Examples & Benchmarks'));
-  console.log(c.dim('='.repeat(50)));
+  console.info(c.bold('🎯 Bun Filter Examples & Benchmarks'));
+  console.info(c.dim('='.repeat(50)));
   
   // Discover available packages first
   const packages = await discoverWorkspacePackages();
-  console.log(c.blue(`📦 Found ${packages.length} workspace packages`));
+  console.info(c.blue(`📦 Found ${packages.length} workspace packages`));
   
   if (packages.length === 0) {
-    console.log(c.yellow('⚠️ No workspace packages found. Creating demo packages...'));
+    console.info(c.yellow('⚠️ No workspace packages found. Creating demo packages...'));
     await createDemoPackages();
     return runFilterExamples(); // Retry with demo packages
   }
   
   packages.forEach(pkg => {
-    console.log(`  ${c.cyan(pkg.name)} (${pkg.path})`);
+    console.info(`  ${c.cyan(pkg.name)} (${pkg.path})`);
   });
   
-  console.log();
+  console.info();
   
   // Run examples
   await runBasicPatternExamples();
@@ -58,15 +58,15 @@ export async function runFilterExamples(): Promise<void> {
   await runRealWorldScenarios();
   await runErrorHandlingExamples();
   
-  console.log(c.bold('\\n✅ All examples completed!'));
+  console.info(c.bold('\\n✅ All examples completed!'));
 }
 
 /**
  * Basic pattern matching examples
  */
 async function runBasicPatternExamples(): Promise<void> {
-  console.log(c.bold('\\n🔍 Basic Pattern Examples'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('\\n🔍 Basic Pattern Examples'));
+  console.info(c.dim('-'.repeat(30)));
   
   const examples = [
     { pattern: '*', description: 'Match all packages' },
@@ -76,16 +76,16 @@ async function runBasicPatternExamples(): Promise<void> {
   ];
   
   for (const example of examples) {
-    console.log(c.blue(`\\nPattern: ${example.pattern} (${example.description})`));
+    console.info(c.blue(`\\nPattern: ${example.pattern} (${example.description})`));
     
     const result = await runFilteredScript(example.pattern, 'test', {
       dryRun: true,
       silent: true
     });
     
-    console.log(`  Matched: ${result.matchedPackages} packages`);
+    console.info(`  Matched: ${result.matchedPackages} packages`);
     if (result.matchedPackages > 0) {
-      console.log(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
+      console.info(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
     }
   }
 }
@@ -94,8 +94,8 @@ async function runBasicPatternExamples(): Promise<void> {
  * Advanced pattern matching examples
  */
 async function runAdvancedPatternExamples(): Promise<void> {
-  console.log(c.bold('\\n🚀 Advanced Pattern Examples'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('\\n🚀 Advanced Pattern Examples'));
+  console.info(c.dim('-'.repeat(30)));
   
   const examples = [
     { pattern: '!test-*', description: 'Exclude packages starting with "test-"' },
@@ -105,16 +105,16 @@ async function runAdvancedPatternExamples(): Promise<void> {
   ];
   
   for (const example of examples) {
-    console.log(c.blue(`\\nPattern: ${example.pattern} (${example.description})`));
+    console.info(c.blue(`\\nPattern: ${example.pattern} (${example.description})`));
     
     const result = await runFilteredScript(example.pattern, 'test', {
       dryRun: true,
       silent: true
     });
     
-    console.log(`  Matched: ${result.matchedPackages} packages`);
+    console.info(`  Matched: ${result.matchedPackages} packages`);
     if (result.matchedPackages > 0) {
-      console.log(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
+      console.info(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
     }
   }
 }
@@ -123,14 +123,14 @@ async function runAdvancedPatternExamples(): Promise<void> {
  * Performance benchmarks
  */
 async function runPerformanceBenchmarks(packages: any[]): Promise<void> {
-  console.log(c.bold('\\n⚡ Performance Benchmarks'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('\\n⚡ Performance Benchmarks'));
+  console.info(c.dim('-'.repeat(30)));
   
   // Create test packages if needed
   const testPackages = packages.slice(0, Math.min(packages.length, 10));
   
   if (testPackages.length < 2) {
-    console.log(c.yellow('⚠️ Need at least 2 packages for benchmarking'));
+    console.info(c.yellow('⚠️ Need at least 2 packages for benchmarking'));
     return;
   }
   
@@ -145,7 +145,7 @@ async function runPerformanceBenchmarks(packages: any[]): Promise<void> {
   
   for (const scenario of scenarios) {
     const testPkgs = testPackages.slice(0, scenario.count);
-    console.log(c.blue(`\\n${scenario.name}:`));
+    console.info(c.blue(`\\n${scenario.name}:`));
     
     // Sequential execution
     const sequentialStart = performance.now();
@@ -167,9 +167,9 @@ async function runPerformanceBenchmarks(packages: any[]): Promise<void> {
     
     const speedup = sequentialMs / parallelMs;
     
-    console.log(`  Sequential: ${sequentialMs.toFixed(0)}ms`);
-    console.log(`  Parallel: ${parallelMs.toFixed(0)}ms`);
-    console.log(`  Speedup: ${speedup.toFixed(1)}x`);
+    console.info(`  Sequential: ${sequentialMs.toFixed(0)}ms`);
+    console.info(`  Parallel: ${parallelMs.toFixed(0)}ms`);
+    console.info(`  Speedup: ${speedup.toFixed(1)}x`);
     
     benchmarkResults.push({
       scenario: scenario.name,
@@ -182,16 +182,16 @@ async function runPerformanceBenchmarks(packages: any[]): Promise<void> {
   }
   
   // Summary table
-  console.log(c.bold('\\n📊 Benchmark Summary:'));
-  console.log(formatBenchmarkTable(benchmarkResults));
+  console.info(c.bold('\\n📊 Benchmark Summary:'));
+  console.info(formatBenchmarkTable(benchmarkResults));
 }
 
 /**
  * Real-world usage scenarios
  */
 async function runRealWorldScenarios(): Promise<void> {
-  console.log(c.bold('\\n🌍 Real-World Scenarios'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('\\n🌍 Real-World Scenarios'));
+  console.info(c.dim('-'.repeat(30)));
   
   const scenarios = [
     {
@@ -221,10 +221,10 @@ async function runRealWorldScenarios(): Promise<void> {
   ];
   
   for (const scenario of scenarios) {
-    console.log(c.blue(`\\n${scenario.name}:`));
-    console.log(`  Pattern: ${scenario.pattern}`);
-    console.log(`  Script: ${scenario.script}`);
-    console.log(`  Options: ${JSON.stringify(scenario.options)}`);
+    console.info(c.blue(`\\n${scenario.name}:`));
+    console.info(`  Pattern: ${scenario.pattern}`);
+    console.info(`  Script: ${scenario.script}`);
+    console.info(`  Options: ${JSON.stringify(scenario.options)}`);
     
     const result = await runFilteredScript(scenario.pattern, scenario.script, {
       ...scenario.options,
@@ -232,9 +232,9 @@ async function runRealWorldScenarios(): Promise<void> {
       silent: true
     });
     
-    console.log(`  Would execute in ${result.matchedPackages} packages`);
+    console.info(`  Would execute in ${result.matchedPackages} packages`);
     if (result.matchedPackages === 0) {
-      console.log(`  ${c.yellow('No matching packages found')}`);
+      console.info(`  ${c.yellow('No matching packages found')}`);
     }
   }
 }
@@ -243,8 +243,8 @@ async function runRealWorldScenarios(): Promise<void> {
  * Error handling examples
  */
 async function runErrorHandlingExamples(): Promise<void> {
-  console.log(c.bold('\\n🛡️ Error Handling Examples'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('\\n🛡️ Error Handling Examples'));
+  console.info(c.dim('-'.repeat(30)));
   
   const scenarios = [
     {
@@ -265,7 +265,7 @@ async function runErrorHandlingExamples(): Promise<void> {
   ];
   
   for (const scenario of scenarios) {
-    console.log(c.blue(`\\n${scenario.name}:`));
+    console.info(c.blue(`\\n${scenario.name}:`));
     
     try {
       const result = await runFilteredScript(scenario.pattern, scenario.script, {
@@ -273,12 +273,12 @@ async function runErrorHandlingExamples(): Promise<void> {
         dryRun: true
       });
       
-      console.log(`  Result: ${result.matchedPackages} packages matched`);
+      console.info(`  Result: ${result.matchedPackages} packages matched`);
       if (result.matchedPackages === 0) {
-        console.log(`  ${c.yellow('No packages matched pattern')}`);
+        console.info(`  ${c.yellow('No packages matched pattern')}`);
       }
     } catch (error) {
-      console.log(`  ${c.red('Error:')} ${error}`);
+      console.info(`  ${c.red('Error:')} ${error}`);
     }
   }
 }
@@ -287,7 +287,7 @@ async function runErrorHandlingExamples(): Promise<void> {
  * Create demo packages for testing
  */
 async function createDemoPackages(): Promise<void> {
-  console.log(c.blue('Creating demo workspace packages...'));
+  console.info(c.blue('Creating demo workspace packages...'));
   
   const demoPackages = [
     { name: 'bar', path: './packages/bar' },
@@ -326,7 +326,7 @@ async function createDemoPackages(): Promise<void> {
     }, null, 2));
   }
   
-  console.log(c.green(`✅ Created ${demoPackages.length} demo packages`));
+  console.info(c.green(`✅ Created ${demoPackages.length} demo packages`));
 }
 
 /**
@@ -374,8 +374,8 @@ function formatTable(rows: string[][]): string {
  * Run filter pattern validation
  */
 export async function validateFilterPatterns(): Promise<void> {
-  console.log(c.bold('🔍 Filter Pattern Validation'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('🔍 Filter Pattern Validation'));
+  console.info(c.dim('-'.repeat(30)));
   
   const patterns = [
     '*',
@@ -391,7 +391,7 @@ export async function validateFilterPatterns(): Promise<void> {
   const packages = await discoverWorkspacePackages();
   
   for (const pattern of patterns) {
-    console.log(c.blue(`\\nValidating pattern: ${pattern}`));
+    console.info(c.blue(`\\nValidating pattern: ${pattern}`));
     
     try {
       const result = await runFilteredScript(pattern, 'test', {
@@ -399,13 +399,13 @@ export async function validateFilterPatterns(): Promise<void> {
         silent: true
       });
       
-      console.log(`  ✅ Valid - matched ${result.matchedPackages} packages`);
+      console.info(`  ✅ Valid - matched ${result.matchedPackages} packages`);
       
       if (result.matchedPackages > 0 && result.matchedPackages <= 5) {
-        console.log(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
+        console.info(`  Packages: ${result.results.map(r => r.name).join(', ')}`);
       }
     } catch (error) {
-      console.log(`  ❌ Invalid - ${error}`);
+      console.info(`  ❌ Invalid - ${error}`);
     }
   }
 }
@@ -414,18 +414,18 @@ export async function validateFilterPatterns(): Promise<void> {
  * Performance comparison with other tools
  */
 export async function compareWithOtherTools(): Promise<void> {
-  console.log(c.bold('⚡ Performance Comparison'));
-  console.log(c.dim('-'.repeat(30)));
+  console.info(c.bold('⚡ Performance Comparison'));
+  console.info(c.dim('-'.repeat(30)));
   
   const packages = await discoverWorkspacePackages();
   const testPackages = packages.slice(0, Math.min(packages.length, 5));
   
   if (testPackages.length < 2) {
-    console.log(c.yellow('⚠️ Need at least 2 packages for comparison'));
+    console.info(c.yellow('⚠️ Need at least 2 packages for comparison'));
     return;
   }
   
-  console.log(c.blue(`Comparing execution on ${testPackages.length} packages...`));
+  console.info(c.blue(`Comparing execution on ${testPackages.length} packages...`));
   
   // Bun Filter (our implementation)
   const bunFilterStart = performance.now();
@@ -441,11 +441,11 @@ export async function compareWithOtherTools(): Promise<void> {
   const nxMs = bunFilterMs * 1.8;
   const rushMs = bunFilterMs * 3.2;
   
-  console.log('\\nPerformance Results:');
-  console.log(`  Bun Filter: ${bunFilterMs.toFixed(0)}ms ${c.green('(baseline)')}`);
-  console.log(`  Lerna:      ${lernaMs.toFixed(0)}ms ${c.yellow(`(${(lernaMs/bunFilterMs).toFixed(1)}x slower)`)}`);
-  console.log(`  Nx:         ${nxMs.toFixed(0)}ms ${c.yellow(`(${(nxMs/bunFilterMs).toFixed(1)}x slower)`)}`);
-  console.log(`  Rush:       ${rushMs.toFixed(0)}ms ${c.yellow(`(${(rushMs/bunFilterMs).toFixed(1)}x slower)`)}`);
+  console.info('\\nPerformance Results:');
+  console.info(`  Bun Filter: ${bunFilterMs.toFixed(0)}ms ${c.green('(baseline)')}`);
+  console.info(`  Lerna:      ${lernaMs.toFixed(0)}ms ${c.yellow(`(${(lernaMs/bunFilterMs).toFixed(1)}x slower)`)}`);
+  console.info(`  Nx:         ${nxMs.toFixed(0)}ms ${c.yellow(`(${(nxMs/bunFilterMs).toFixed(1)}x slower)`)}`);
+  console.info(`  Rush:       ${rushMs.toFixed(0)}ms ${c.yellow(`(${(rushMs/bunFilterMs).toFixed(1)}x slower)`)}`);
 }
 
 // Main execution

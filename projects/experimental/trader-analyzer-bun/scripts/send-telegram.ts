@@ -93,11 +93,11 @@ Run: bun run dashboard`;
 // Use topicId from args if provided, otherwise use threadId from env/secrets
 const targetThreadId = topicId || threadId;
 
-console.log(`📤 Sending message to Telegram...`);
-console.log(`   Chat ID: ${chatId}`);
-if (targetThreadId) console.log(`   Thread ID: ${targetThreadId}`);
-if (pin) console.log(`   Pin: Yes`);
-console.log(`   Message: ${message.substring(0, 60)}...\n`);
+console.info(`📤 Sending message to Telegram...`);
+console.info(`   Chat ID: ${chatId}`);
+if (targetThreadId) console.info(`   Thread ID: ${targetThreadId}`);
+if (pin) console.info(`   Pin: Yes`);
+console.info(`   Message: ${message.substring(0, 60)}...\n`);
 
 // Use TelegramBotApi if available, otherwise direct API call
 if (TelegramBotApi) {
@@ -114,8 +114,8 @@ if (TelegramBotApi) {
 		}
 
 		if (result.ok) {
-			console.log("✅ Message sent successfully!");
-			console.log(`   Message ID: ${result.result?.message_id || "N/A"}`);
+			console.info("✅ Message sent successfully!");
+			console.info(`   Message ID: ${result.result?.message_id || "N/A"}`);
 		} else {
 			console.error("❌ Failed to send message:");
 			console.error(`   Error: ${result.description || "Unknown error"}`);
@@ -146,8 +146,8 @@ if (TelegramBotApi) {
 		const result = await response.json();
 
 		if (result.ok) {
-			console.log("✅ Message sent successfully!");
-			console.log(`   Message ID: ${result.result?.message_id || "N/A"}`);
+			console.info("✅ Message sent successfully!");
+			console.info(`   Message ID: ${result.result?.message_id || "N/A"}`);
 		} else {
 			console.error("❌ Failed to send message:");
 			console.error(`   Error: ${result.description || "Unknown error"}`);

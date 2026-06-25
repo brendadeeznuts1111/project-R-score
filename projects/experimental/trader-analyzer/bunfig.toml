@@ -35,9 +35,6 @@ concurrentScripts = 16 # (cpu count or GOMAXPROCS) x2
 # default depends on lockfile configVersion and workspaces:
 # - configVersion = 1: "isolated" if using workspaces, otherwise "hoisted"
 # - configVersion = 0: "hoisted"
-# Using "isolated" for workspaces (prevents phantom dependencies)
-linker = "isolated"
-
 # [INSTALL.AUTO.RG:CONFIG] Auto-install behavior
 auto = "fallback"
 

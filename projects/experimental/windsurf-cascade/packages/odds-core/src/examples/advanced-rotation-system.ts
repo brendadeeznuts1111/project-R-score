@@ -19,7 +19,7 @@ export class AdvancedRotationSystemExamples {
      * Example 1: Complete NFL game rotation number setup
      */
     static createNFLGameRotations(): GameRotationNumbers {
-        console.log('🏈 Creating Complete NFL Game Rotation Numbers\n');
+        console.info('🏈 Creating Complete NFL Game Rotation Numbers\n');
 
         const chiefsVsBills: GameRotationNumbers = {
             gameRotationId: 3501,
@@ -44,15 +44,15 @@ export class AdvancedRotationSystemExamples {
             }
         };
 
-        console.log('📊 NFL Game Rotation Breakdown:');
-        console.log(`   Game ID: ${chiefsVsBills.gameRotationId}`);
-        console.log(`   Home Team: ${chiefsVsBills.homeTeamRotationId} (Chiefs)`);
-        console.log(`   Away Team: ${chiefsVsBills.awayTeamRotationId} (Bills)`);
-        console.log('');
-        console.log('💰 Betting Markets:');
-        console.log(`   Moneyline: Chiefs ${chiefsVsBills.moneyline.home} | Bills ${chiefsVsBills.moneyline.away}`);
-        console.log(`   Spread: Chiefs ${chiefsVsBills.spread.home} (${chiefsVsBills.spread.points}) | Bills ${chiefsVsBills.spread.away}`);
-        console.log(`   Total: Over ${chiefsVsBills.total.over} (${chiefsVsBills.total.points}) | Under ${chiefsVsBills.total.under}`);
+        console.info('📊 NFL Game Rotation Breakdown:');
+        console.info(`   Game ID: ${chiefsVsBills.gameRotationId}`);
+        console.info(`   Home Team: ${chiefsVsBills.homeTeamRotationId} (Chiefs)`);
+        console.info(`   Away Team: ${chiefsVsBills.awayTeamRotationId} (Bills)`);
+        console.info('');
+        console.info('💰 Betting Markets:');
+        console.info(`   Moneyline: Chiefs ${chiefsVsBills.moneyline.home} | Bills ${chiefsVsBills.moneyline.away}`);
+        console.info(`   Spread: Chiefs ${chiefsVsBills.spread.home} (${chiefsVsBills.spread.points}) | Bills ${chiefsVsBills.spread.away}`);
+        console.info(`   Total: Over ${chiefsVsBills.total.over} (${chiefsVsBills.total.points}) | Under ${chiefsVsBills.total.under}`);
 
         return chiefsVsBills;
     }
@@ -61,7 +61,7 @@ export class AdvancedRotationSystemExamples {
      * Example 2: Player prop rotation numbers for NBA star
      */
     static createNBAPlayerProps(): PlayerPropRotationNumbers {
-        console.log('\n🏀 Creating NBA Player Prop Rotation Numbers\n');
+        console.info('\n🏀 Creating NBA Player Prop Rotation Numbers\n');
 
         const lebronProps: PlayerPropRotationNumbers = {
             playerRotationId: 25100,
@@ -91,18 +91,18 @@ export class AdvancedRotationSystemExamples {
             }
         };
 
-        console.log('👤 LeBron James Prop Rotation Numbers:');
-        console.log(`   Player ID: ${lebronProps.playerRotationId}`);
-        console.log(`   Team Rotation: ${lebronProps.teamRotationId}`);
-        console.log('');
-        console.log('📈 Standard Props:');
-        console.log(`   Points: Over ${lebronProps.props.points[0]} | Under ${lebronProps.props.points[1]}`);
-        console.log(`   Rebounds: Over ${lebronProps.props.rebounds[0]} | Under ${lebronProps.props.rebounds[1]}`);
-        console.log(`   Assists: Over ${lebronProps.props.assists[0]} | Under ${lebronProps.props.assists[1]}`);
-        console.log('');
-        console.log('🎯 Alternative Point Lines:');
+        console.info('👤 LeBron James Prop Rotation Numbers:');
+        console.info(`   Player ID: ${lebronProps.playerRotationId}`);
+        console.info(`   Team Rotation: ${lebronProps.teamRotationId}`);
+        console.info('');
+        console.info('📈 Standard Props:');
+        console.info(`   Points: Over ${lebronProps.props.points[0]} | Under ${lebronProps.props.points[1]}`);
+        console.info(`   Rebounds: Over ${lebronProps.props.rebounds[0]} | Under ${lebronProps.props.rebounds[1]}`);
+        console.info(`   Assists: Over ${lebronProps.props.assists[0]} | Under ${lebronProps.props.assists[1]}`);
+        console.info('');
+        console.info('🎯 Alternative Point Lines:');
         lebronProps.props.altPoints.forEach((rotation, line) => {
-            console.log(`   ${line} points: Rotation ${rotation}`);
+            console.info(`   ${line} points: Rotation ${rotation}`);
         });
 
         return lebronProps;
@@ -112,7 +112,7 @@ export class AdvancedRotationSystemExamples {
      * Example 3: Cross-sportsbook rotation number mapping
      */
     static demonstrateSportsbookMappings(): void {
-        console.log('\n🔄 Cross-Sportsbook Rotation Number Mappings\n');
+        console.info('\n🔄 Cross-Sportsbook Rotation Number Mappings\n');
 
         const registry = new RotationNumberRegistry();
 
@@ -126,24 +126,24 @@ export class AdvancedRotationSystemExamples {
         registry.mapToSportsbook(internalRotation, 'caesars', 8901);
         registry.mapToSportsbook(internalRotation, 'pointsbet', 1234);
 
-        console.log('📋 Internal Rotation 2501 Mappings:');
-        console.log(`   DraftKings: ${registry.convertToSportsbook(internalRotation, 'draftkings')}`);
-        console.log(`   FanDuel: ${registry.convertToSportsbook(internalRotation, 'fanduel')}`);
-        console.log(`   BetMGM: ${registry.convertToSportsbook(internalRotation, 'betmgm')}`);
-        console.log(`   Caesars: ${registry.convertToSportsbook(internalRotation, 'caesars')}`);
-        console.log(`   PointsBet: ${registry.convertToSportsbook(internalRotation, 'pointsbet')}`);
+        console.info('📋 Internal Rotation 2501 Mappings:');
+        console.info(`   DraftKings: ${registry.convertToSportsbook(internalRotation, 'draftkings')}`);
+        console.info(`   FanDuel: ${registry.convertToSportsbook(internalRotation, 'fanduel')}`);
+        console.info(`   BetMGM: ${registry.convertToSportsbook(internalRotation, 'betmgm')}`);
+        console.info(`   Caesars: ${registry.convertToSportsbook(internalRotation, 'caesars')}`);
+        console.info(`   PointsBet: ${registry.convertToSportsbook(internalRotation, 'pointsbet')}`);
 
-        console.log('\n💡 Use Case:');
-        console.log('   • Single internal rotation ID tracks across all sportsbooks');
-        console.log('   • Enables cross-exchange arbitrage opportunities');
-        console.log('   • Simplifies position management and risk calculation');
+        console.info('\n💡 Use Case:');
+        console.info('   • Single internal rotation ID tracks across all sportsbooks');
+        console.info('   • Enables cross-exchange arbitrage opportunities');
+        console.info('   • Simplifies position management and risk calculation');
     }
 
     /**
      * Example 4: Synthetic arbitrage with rotation number pairs
      */
     static createSyntheticArbitrageRotationPair(): SyntheticArbitrageRotationPair {
-        console.log('\n⚡ Synthetic Arbitrage Rotation Pair Analysis\n');
+        console.info('\n⚡ Synthetic Arbitrage Rotation Pair Analysis\n');
 
         const nbaSyntheticPair: SyntheticArbitrageRotationPair = {
             primaryRotation: {
@@ -164,16 +164,16 @@ export class AdvancedRotationSystemExamples {
             sampleSize: 250   // Based on 250 games
         };
 
-        console.log('🎯 NBA Synthetic Arbitrage Opportunity:');
-        console.log(`   Primary: Rotation ${nbaSyntheticPair.primaryRotation.rotationId} (${nbaSyntheticPair.primaryRotation.sportsbook} ${nbaSyntheticPair.primaryRotation.period} spread)`);
-        console.log(`   Secondary: Rotation ${nbaSyntheticPair.secondaryRotation.rotationId} (${nbaSyntheticPair.secondaryRotation.sportsbook} ${nbaSyntheticPair.secondaryRotation.period} spread)`);
-        console.log(`   Correlation: ${(nbaSyntheticPair.correlation * 100).toFixed(1)}%`);
-        console.log(`   Sample Size: ${nbaSyntheticPair.sampleSize} games`);
+        console.info('🎯 NBA Synthetic Arbitrage Opportunity:');
+        console.info(`   Primary: Rotation ${nbaSyntheticPair.primaryRotation.rotationId} (${nbaSyntheticPair.primaryRotation.sportsbook} ${nbaSyntheticPair.primaryRotation.period} spread)`);
+        console.info(`   Secondary: Rotation ${nbaSyntheticPair.secondaryRotation.rotationId} (${nbaSyntheticPair.secondaryRotation.sportsbook} ${nbaSyntheticPair.secondaryRotation.period} spread)`);
+        console.info(`   Correlation: ${(nbaSyntheticPair.correlation * 100).toFixed(1)}%`);
+        console.info(`   Sample Size: ${nbaSyntheticPair.sampleSize} games`);
 
-        console.log('\n📊 Hedge Ratio Calculation:');
+        console.info('\n📊 Hedge Ratio Calculation:');
         const optimalHedge = nbaSyntheticPair.correlation * 0.8; // Conservative adjustment
-        console.log(`   Optimal Hedge: ${(optimalHedge * 100).toFixed(1)}%`);
-        console.log(`   Risk Reduction: ${((1 - optimalHedge) * 100).toFixed(1)}%`);
+        console.info(`   Optimal Hedge: ${(optimalHedge * 100).toFixed(1)}%`);
+        console.info(`   Risk Reduction: ${((1 - optimalHedge) * 100).toFixed(1)}%`);
 
         return nbaSyntheticPair;
     }
@@ -182,7 +182,7 @@ export class AdvancedRotationSystemExamples {
      * Example 5: Rotation number validation and error handling
      */
     static demonstrateRotationValidation(): void {
-        console.log('\n✅ Rotation Number Validation Examples\n');
+        console.info('\n✅ Rotation Number Validation Examples\n');
 
         const testCases = [
             { rotation: 2501, expectedSport: 'NBA' as SportType, description: 'Valid NBA rotation' },
@@ -199,18 +199,18 @@ export class AdvancedRotationSystemExamples {
                 { expectedSport: testCase.expectedSport }
             );
 
-            console.log(`${validation.isValid ? '✅' : '❌'} ${testCase.description}:`);
-            console.log(`   Rotation: ${testCase.rotation}`);
-            console.log(`   Expected Sport: ${testCase.expectedSport}`);
-            console.log(`   Detected Sport: ${validation.sport || 'None'}`);
+            console.info(`${validation.isValid ? '✅' : '❌'} ${testCase.description}:`);
+            console.info(`   Rotation: ${testCase.rotation}`);
+            console.info(`   Expected Sport: ${testCase.expectedSport}`);
+            console.info(`   Detected Sport: ${validation.sport || 'None'}`);
 
             if (validation.errors.length > 0) {
-                console.log(`   Errors: ${validation.errors.join(', ')}`);
+                console.info(`   Errors: ${validation.errors.join(', ')}`);
             }
             if (validation.warnings.length > 0) {
-                console.log(`   Warnings: ${validation.warnings.join(', ')}`);
+                console.info(`   Warnings: ${validation.warnings.join(', ')}`);
             }
-            console.log('');
+            console.info('');
         });
     }
 
@@ -218,32 +218,32 @@ export class AdvancedRotationSystemExamples {
      * Example 6: Real-time rotation analytics
      */
     static demonstrateRotationAnalytics(): void {
-        console.log('📈 Real-Time Rotation Analytics\n');
+        console.info('📈 Real-Time Rotation Analytics\n');
 
         const registry = new RotationNumberRegistry();
         const highVolumeRotations = [2501, 2502, 2503, 2504, 2505];
 
-        console.log('🔍 High-Volume Rotation Analysis:');
+        console.info('🔍 High-Volume Rotation Analysis:');
         highVolumeRotations.forEach(rotationId => {
             const analytics = registry.getRotationAnalytics(rotationId);
             const performance = registry.getRotationPerformance(rotationId);
 
             if (analytics && performance) {
-                console.log(`\n   Rotation ${rotationId}:`);
-                console.log(`     Volatility: ${(analytics.volatility * 100).toFixed(2)}%`);
-                console.log(`     Liquidity: $${performance.totalHandle.toLocaleString()}`);
-                console.log(`     Sharp Money: $${performance.sharpMoney.toLocaleString()}`);
-                console.log(`     Public Money: $${performance.publicMoney.toLocaleString()}`);
-                console.log(`     Sharp Consensus: ${analytics.sharpConsensus > 0 ? 'Home' : 'Away'} (${Math.abs(analytics.sharpConsensus).toFixed(2)})`);
-                console.log(`     Line Efficiency: ${(analytics.lineEfficiency * 100).toFixed(1)}%`);
+                console.info(`\n   Rotation ${rotationId}:`);
+                console.info(`     Volatility: ${(analytics.volatility * 100).toFixed(2)}%`);
+                console.info(`     Liquidity: $${performance.totalHandle.toLocaleString()}`);
+                console.info(`     Sharp Money: $${performance.sharpMoney.toLocaleString()}`);
+                console.info(`     Public Money: $${performance.publicMoney.toLocaleString()}`);
+                console.info(`     Sharp Consensus: ${analytics.sharpConsensus > 0 ? 'Home' : 'Away'} (${Math.abs(analytics.sharpConsensus).toFixed(2)})`);
+                console.info(`     Line Efficiency: ${(analytics.lineEfficiency * 100).toFixed(1)}%`);
 
                 // Trading recommendation
                 if (analytics.volatility > 0.05 && performance.totalHandle > 100000) {
-                    console.log(`     💡 Recommendation: HIGH OPPORTUNITY - Volatile with good liquidity`);
+                    console.info(`     💡 Recommendation: HIGH OPPORTUNITY - Volatile with good liquidity`);
                 } else if (analytics.lineEfficiency < 0.7) {
-                    console.log(`     💡 Recommendation: INEFFICIENT MARKET - Potential arbitrage`);
+                    console.info(`     💡 Recommendation: INEFFICIENT MARKET - Potential arbitrage`);
                 } else {
-                    console.log(`     💡 Recommendation: MONITOR - Standard market conditions`);
+                    console.info(`     💡 Recommendation: MONITOR - Standard market conditions`);
                 }
             }
         });
@@ -253,7 +253,7 @@ export class AdvancedRotationSystemExamples {
      * Example 7: Multi-sport rotation portfolio
      */
     static createMultiSportPortfolio(): void {
-        console.log('\n🏆 Multi-Sport Rotation Portfolio\n');
+        console.info('\n🏆 Multi-Sport Rotation Portfolio\n');
 
         const portfolio = [
             { sport: 'NBA' as SportType, rotation: 2501, description: 'Lakers vs Celtics', stake: 2000 },
@@ -263,24 +263,24 @@ export class AdvancedRotationSystemExamples {
             { sport: 'NCAAF' as SportType, rotation: 5501, description: 'Alabama vs Georgia', stake: 2500 }
         ];
 
-        console.log('📊 Portfolio Breakdown:');
+        console.info('📊 Portfolio Breakdown:');
         let totalStake = 0;
 
         portfolio.forEach(position => {
             const validation = RotationNumberUtils.validateRotationNumber(position.rotation);
             const description = RotationNumberUtils.describeRotationNumber(position.rotation);
 
-            console.log(`   ${position.sport.padEnd(6)} | ${position.rotation.toString().padEnd(5)} | ${position.description.padEnd(20)} | $${position.stake.toLocaleString()}`);
-            console.log(`          | ${description.description}`);
+            console.info(`   ${position.sport.padEnd(6)} | ${position.rotation.toString().padEnd(5)} | ${position.description.padEnd(20)} | $${position.stake.toLocaleString()}`);
+            console.info(`          | ${description.description}`);
 
             totalStake += position.stake;
         });
 
-        console.log(`\n💰 Portfolio Summary:`);
-        console.log(`   Total Positions: ${portfolio.length}`);
-        console.log(`   Total Stake: $${totalStake.toLocaleString()}`);
-        console.log(`   Average Stake: $${(totalStake / portfolio.length).toLocaleString()}`);
-        console.log(`   Sports Covered: ${portfolio.map(p => p.sport).join(', ')}`);
+        console.info(`\n💰 Portfolio Summary:`);
+        console.info(`   Total Positions: ${portfolio.length}`);
+        console.info(`   Total Stake: $${totalStake.toLocaleString()}`);
+        console.info(`   Average Stake: $${(totalStake / portfolio.length).toLocaleString()}`);
+        console.info(`   Sports Covered: ${portfolio.map(p => p.sport).join(', ')}`);
 
         // Risk analysis
         const sportExposure: Record<string, number> = {};
@@ -288,10 +288,10 @@ export class AdvancedRotationSystemExamples {
             sportExposure[position.sport] = (sportExposure[position.sport] || 0) + position.stake;
         });
 
-        console.log(`\n⚠️ Sport Exposure Analysis:`);
+        console.info(`\n⚠️ Sport Exposure Analysis:`);
         Object.entries(sportExposure).forEach(([sport, exposure]) => {
             const percentage = (exposure / totalStake) * 100;
-            console.log(`   ${sport}: $${exposure.toLocaleString()} (${percentage.toFixed(1)}%)`);
+            console.info(`   ${sport}: $${exposure.toLocaleString()} (${percentage.toFixed(1)}%)`);
         });
     }
 
@@ -299,7 +299,7 @@ export class AdvancedRotationSystemExamples {
      * Example 8: Advanced synthetic arbitrage with comprehensive rotation data
      */
     static createAdvancedSyntheticArbitrage(): RotationEnhancedMarketLeg[] {
-        console.log('\n🚀 Advanced Synthetic Arbitrage with Comprehensive Rotation Data\n');
+        console.info('\n🚀 Advanced Synthetic Arbitrage with Comprehensive Rotation Data\n');
 
         // Create enhanced market legs with full rotation data
         const enhancedMarkets: RotationEnhancedMarketLeg[] = [
@@ -385,14 +385,14 @@ export class AdvancedRotationSystemExamples {
             }
         ];
 
-        console.log('📊 Enhanced Market Legs Analysis:');
+        console.info('📊 Enhanced Market Legs Analysis:');
         enhancedMarkets.forEach((market, index) => {
-            console.log(`\n   Market ${index + 1}:`);
-            console.log(`     Rotation: ${market.specificRotation.rotationId} (${market.sportsbookRotation.sportsbook})`);
-            console.log(`     Market: ${market.marketType} ${market.side} ${market.specificRotation.line}`);
-            console.log(`     Handle: $${market.performance.totalHandle.toLocaleString()}`);
-            console.log(`     Sharp %: ${((market.performance.sharpMoney / market.performance.totalHandle) * 100).toFixed(1)}%`);
-            console.log(`     Efficiency: ${(market.analytics.lineEfficiency * 100).toFixed(1)}%`);
+            console.info(`\n   Market ${index + 1}:`);
+            console.info(`     Rotation: ${market.specificRotation.rotationId} (${market.sportsbookRotation.sportsbook})`);
+            console.info(`     Market: ${market.marketType} ${market.side} ${market.specificRotation.line}`);
+            console.info(`     Handle: $${market.performance.totalHandle.toLocaleString()}`);
+            console.info(`     Sharp %: ${((market.performance.sharpMoney / market.performance.totalHandle) * 100).toFixed(1)}%`);
+            console.info(`     Efficiency: ${(market.analytics.lineEfficiency * 100).toFixed(1)}%`);
         });
 
         // Calculate synthetic arbitrage metrics
@@ -400,12 +400,12 @@ export class AdvancedRotationSystemExamples {
         const avgSharpConsensus = enhancedMarkets.reduce((sum, m) => sum + m.analytics.sharpConsensus, 0) / enhancedMarkets.length;
         const avgEfficiency = enhancedMarkets.reduce((sum, m) => sum + m.analytics.lineEfficiency, 0) / enhancedMarkets.length;
 
-        console.log(`\n🎯 Synthetic Arbitrage Metrics:`);
-        console.log(`   Total Market Handle: $${totalHandle.toLocaleString()}`);
-        console.log(`   Average Sharp Consensus: ${avgSharpConsensus.toFixed(3)}`);
-        console.log(`   Average Line Efficiency: ${(avgEfficiency * 100).toFixed(1)}%`);
-        console.log(`   Liquidity Score: ${totalHandle > 1000000 ? 'HIGH' : totalHandle > 500000 ? 'MEDIUM' : 'LOW'}`);
-        console.log(`   Execution Confidence: ${avgEfficiency > 0.8 ? 'HIGH' : avgEfficiency > 0.7 ? 'MEDIUM' : 'LOW'}`);
+        console.info(`\n🎯 Synthetic Arbitrage Metrics:`);
+        console.info(`   Total Market Handle: $${totalHandle.toLocaleString()}`);
+        console.info(`   Average Sharp Consensus: ${avgSharpConsensus.toFixed(3)}`);
+        console.info(`   Average Line Efficiency: ${(avgEfficiency * 100).toFixed(1)}%`);
+        console.info(`   Liquidity Score: ${totalHandle > 1000000 ? 'HIGH' : totalHandle > 500000 ? 'MEDIUM' : 'LOW'}`);
+        console.info(`   Execution Confidence: ${avgEfficiency > 0.8 ? 'HIGH' : avgEfficiency > 0.7 ? 'MEDIUM' : 'LOW'}`);
 
         return enhancedMarkets;
     }
@@ -414,40 +414,40 @@ export class AdvancedRotationSystemExamples {
      * Run all advanced rotation system examples
      */
     static runAllExamples(): void {
-        console.log('🚀 Advanced Rotation Number System Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Advanced Rotation Number System Examples\n');
+        console.info('='.repeat(80));
 
         this.createNFLGameRotations();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.createNBAPlayerProps();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateSportsbookMappings();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.createSyntheticArbitrageRotationPair();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateRotationValidation();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateRotationAnalytics();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.createMultiSportPortfolio();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.createAdvancedSyntheticArbitrage();
 
-        console.log('\n✅ All advanced rotation system examples completed!');
-        console.log('\n🎯 Key Benefits of This System:');
-        console.log('   • Institutional-grade rotation number management');
-        console.log('   • Cross-sportsbook arbitrage capabilities');
-        console.log('   • Real-time analytics and performance tracking');
-        console.log('   • Comprehensive validation and error handling');
-        console.log('   • Multi-sport portfolio management');
-        console.log('   • Advanced synthetic arbitrage with full rotation data');
+        console.info('\n✅ All advanced rotation system examples completed!');
+        console.info('\n🎯 Key Benefits of This System:');
+        console.info('   • Institutional-grade rotation number management');
+        console.info('   • Cross-sportsbook arbitrage capabilities');
+        console.info('   • Real-time analytics and performance tracking');
+        console.info('   • Comprehensive validation and error handling');
+        console.info('   • Multi-sport portfolio management');
+        console.info('   • Advanced synthetic arbitrage with full rotation data');
     }
 }
 

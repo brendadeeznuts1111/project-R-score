@@ -2,7 +2,7 @@
 
 /**
  * Cookie.parse/from v3.25 - CookieInspector/CSRF Factory-Wager Fusion!
- * 
+ *
  * Complete cookie security system with:
  * - Cookie.parse() for raw header parsing
  * - Cookie.from() for secure factory creation
@@ -40,7 +40,7 @@ export interface CookieOptions {
   expires?: Date | number;
   secure?: boolean;
   httpOnly?: boolean;
-  sameSite?: "strict" | "lax" | "none";
+  sameSite?: 'strict' | 'lax' | 'none';
   partitioned?: boolean;
   maxAge?: number;
 }
@@ -53,10 +53,10 @@ export interface Cookie {
   expires?: Date;
   secure?: boolean;
   httpOnly?: boolean;
-  sameSite?: "strict" | "lax" | "none";
+  sameSite?: 'strict' | 'lax' | 'none';
   partitioned?: boolean;
   maxAge?: number;
-  
+
   // Methods
   serialize(): string;
   toJSON(): Record<string, any>;
@@ -81,17 +81,17 @@ export class Cookie {
 
     // Remove any surrounding whitespace
     header = header.trim();
-    
+
     // Split into name=value pairs
     const pairs = header.split(';').map(pair => pair.trim());
     const [nameValue, ...attributes] = pairs;
-    
+
     if (!nameValue || !nameValue.includes('=')) {
       throw new Error('Invalid cookie format: missing name=value pair');
     }
 
     const [name, value] = nameValue.split('=').map(s => s.trim());
-    
+
     if (!name) {
       throw new Error('Cookie name cannot be empty');
     }
@@ -129,7 +129,7 @@ export class Cookie {
             cookie.maxAge = parseInt(attrValue, 10);
             break;
           case 'samesite':
-            cookie.sameSite = attrValue.toLowerCase() as "strict" | "lax" | "none";
+            cookie.sameSite = attrValue.toLowerCase() as 'strict' | 'lax' | 'none';
             break;
         }
       }
@@ -157,7 +157,7 @@ export class Cookie {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'strict',
-      ...options
+      ...options,
     };
 
     return new Cookie(name, value, secureDefaults);
@@ -168,7 +168,7 @@ export class Cookie {
    */
   serialize(): string {
     const parts = [`${encodeURIComponent(this.name)}=${encodeURIComponent(this.value)}`];
-    
+
     if (this.domain) parts.push(`Domain=${this.domain}`);
     if (this.path) parts.push(`Path=${this.path}`);
     if (this.expires) parts.push(`Expires=${this.expires.toUTCString()}`);
@@ -177,7 +177,7 @@ export class Cookie {
     if (this.httpOnly) parts.push('HttpOnly');
     if (this.sameSite) parts.push(`SameSite=${this.sameSite}`);
     if (this.partitioned) parts.push('Partitioned');
-    
+
     return parts.join('; ');
   }
 
@@ -195,7 +195,7 @@ export class Cookie {
       httpOnly: this.httpOnly,
       sameSite: this.sameSite,
       partitioned: this.partitioned,
-      maxAge: this.maxAge
+      maxAge: this.maxAge,
     };
   }
 
@@ -207,7 +207,7 @@ export class Cookie {
   expires?: Date;
   secure?: boolean;
   httpOnly?: boolean;
-  sameSite?: "strict" | "lax" | "none";
+  sameSite?: 'strict' | 'lax' | 'none';
   partitioned?: boolean;
   maxAge?: number;
 }
@@ -287,7 +287,7 @@ export class CookieInspector {
       valid: score >= 80,
       issues,
       score: Math.max(0, score),
-      recommendations
+      recommendations,
     };
   }
 
@@ -317,14 +317,15 @@ export class CookieInspector {
       valid: validCount,
       invalid: cookies.length - validCount,
       averageScore: Math.round(totalScore / cookies.length),
-      securityIssues: [...new Set(allIssues)]
+      securityIssues: [...new Set(allIssues)],
     };
   }
 }
 
 // 🛡️ CSRF PROTECTION - Token Management
 export class CSRFProtection {
-  private static readonly CSRF_SECRET = process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';
+  private static readonly CSRF_SECRET =
+    process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';
 
   /**
    * Generate CSRF token for session
@@ -351,7 +352,7 @@ export class CSRFProtection {
   }> {
     const timestamp = Date.now();
     const hasher = new CryptoHasher('sha256', this.CSRF_SECRET);
-    
+
     const cookieToken = await this.generateToken(sessionId);
     hasher.update(sessionId + timestamp + 'cookie');
     const formToken = hasher.digest('hex').slice(0, 32);
@@ -370,19 +371,19 @@ export class ABTestingVariant {
   static createVariantCookie(variant: 'A' | 'B', userId?: string): Cookie {
     const timestamp = Date.now();
     const signature = this.signVariant(variant, timestamp, userId);
-    
+
     const value = JSON.stringify({
       variant,
       timestamp,
       userId: userId || 'anonymous',
-      signature
+      signature,
     });
 
     return Cookie.from('ab_variant', value, {
       secure: true,
       httpOnly: false, // JavaScript needs to read this
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30 // 30 days
+      maxAge: 60 * 60 * 24 * 30, // 30 days
     });
   }
 
@@ -396,16 +397,12 @@ export class ABTestingVariant {
   } {
     try {
       const data = JSON.parse(cookie.value);
-      
+
       if (!data.variant || !data.timestamp || !data.signature) {
         return { valid: false };
       }
 
-      const expectedSignature = this.signVariant(
-        data.variant,
-        data.timestamp,
-        data.userId
-      );
+      const expectedSignature = this.signVariant(data.variant, data.timestamp, data.userId);
 
       if (data.signature !== expectedSignature) {
         return { valid: false };
@@ -420,7 +417,7 @@ export class ABTestingVariant {
       return {
         valid: true,
         variant: data.variant,
-        userId: data.userId
+        userId: data.userId,
       };
     } catch {
       return { valid: false };
@@ -461,7 +458,7 @@ export class JuniorRunnerCookieIntegration {
     if (cookieHeader) {
       // Parse all cookies from header
       const cookiePairs = cookieHeader.split(';').map(c => c.trim());
-      
+
       for (const pair of cookiePairs) {
         try {
           const cookie = Cookie.parse(pair);
@@ -493,7 +490,7 @@ export class JuniorRunnerCookieIntegration {
       cookies,
       validation,
       csrfToken,
-      abVariant
+      abVariant,
     };
   }
 
@@ -514,7 +511,7 @@ export class JuniorRunnerCookieIntegration {
       securityScore: profile.validation.averageScore,
       issues: profile.validation.securityIssues,
       csrfTokenGenerated: !!profile.csrfToken,
-      abVariantValid: profile.abVariant?.valid || false
+      abVariantValid: profile.abVariant?.valid || false,
     };
   }
 }
@@ -567,20 +564,20 @@ export class CookieBenchmark {
     return {
       parse: {
         opsPerSecond: Math.round(iterations / (parseTime / 1000)),
-        avgTime: Math.round((parseTime / iterations) * 100000) / 100
+        avgTime: Math.round((parseTime / iterations) * 100000) / 100,
       },
       from: {
         opsPerSecond: Math.round(iterations / (fromTime / 1000)),
-        avgTime: Math.round((fromTime / iterations) * 100000) / 100
+        avgTime: Math.round((fromTime / iterations) * 100000) / 100,
       },
       inspector: {
         opsPerSecond: Math.round(iterations / (inspectorTime / 1000)),
-        avgTime: Math.round((inspectorTime / iterations) * 100000) / 100
+        avgTime: Math.round((inspectorTime / iterations) * 100000) / 100,
       },
       full: {
         opsPerSecond: Math.round(iterations / (fullTime / 1000)),
-        avgTime: Math.round((fullTime / iterations) * 100000) / 100
-      }
+        avgTime: Math.round((fullTime / iterations) * 100000) / 100,
+      },
     };
   }
 }
@@ -591,11 +588,11 @@ export function createCookieAwareServer(port: number = 3000) {
     port,
     async fetch(req) {
       const url = new URL(req.url);
-      
+
       // Parse incoming cookies
       const cookieHeader = req.headers.get('cookie');
       let sessionCookie: Cookie | undefined;
-      
+
       if (cookieHeader) {
         try {
           // Find session cookie in header
@@ -603,23 +600,23 @@ export function createCookieAwareServer(port: number = 3000) {
             .split(';')
             .map(c => c.trim())
             .find(c => c.includes('session='));
-          
+
           if (sessionCookieStr) {
             sessionCookie = Cookie.parse(sessionCookieStr);
-            
+
             // Inspect cookie security
             const inspection = CookieInspector.validate(sessionCookie);
             if (!inspection.valid) {
-              return new Response('Invalid cookie security configuration', { 
+              return new Response('Invalid cookie security configuration', {
                 status: 400,
-                headers: { 'Content-Type': 'text/plain' }
+                headers: { 'Content-Type': 'text/plain' },
               });
             }
           }
         } catch (error) {
-          return new Response('Cookie parsing failed', { 
+          return new Response('Cookie parsing failed', {
             status: 400,
-            headers: { 'Content-Type': 'text/plain' }
+            headers: { 'Content-Type': 'text/plain' },
           });
         }
       }
@@ -628,7 +625,7 @@ export function createCookieAwareServer(port: number = 3000) {
       if (url.pathname === '/benchmark') {
         const benchmark = await CookieBenchmark.benchmark();
         return new Response(JSON.stringify(benchmark, null, 2), {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
@@ -636,7 +633,7 @@ export function createCookieAwareServer(port: number = 3000) {
         const profile = await JuniorRunnerCookieIntegration.profileCookies(req);
         const telemetry = JuniorRunnerCookieIntegration.generateR2Telemetry(profile);
         return new Response(JSON.stringify({ profile, telemetry }, null, 2), {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
@@ -648,10 +645,10 @@ export function createCookieAwareServer(port: number = 3000) {
       // Generate CSRF token
       const sessionId = sessionCookie?.value || crypto.randomUUID();
       const csrfToken = await CSRFProtection.generateToken(sessionId);
-      const csrfCookie = Cookie.from('csrf', csrfToken, { 
-        httpOnly: false, 
+      const csrfCookie = Cookie.from('csrf', csrfToken, {
+        httpOnly: false,
         secure: true,
-        sameSite: 'strict' 
+        sameSite: 'strict',
       });
 
       // HTML response with cookie information
@@ -675,23 +672,25 @@ export function createCookieAwareServer(port: number = 3000) {
 <body>
     <div class="container">
         <h1>🍪 Cookie Security v3.25 - Factory-Wager Fusion</h1>
-        
+
         <div class="metric success">
             <strong>✅ Session Cookie:</strong> ${sessionCookie ? `Found (${sessionCookie.name})` : 'Not found'}
         </div>
-        
+
         <div class="metric">
             <strong>🎲 A/B Variant:</strong> ${variant} for user ${userId}
         </div>
-        
+
         <div class="metric">
             <strong>🛡️ CSRF Token:</strong> ${csrfCookie.value.substring(0, 8)}...
         </div>
 
         <h2>🔍 Cookie Inspector Results</h2>
-        ${sessionCookie ? (() => {
-          const inspection = CookieInspector.validate(sessionCookie);
-          return `
+        ${
+          sessionCookie
+            ? (() => {
+                const inspection = CookieInspector.validate(sessionCookie);
+                return `
             <div class="metric ${inspection.valid ? 'success' : 'error'}">
                 <strong>Security Score:</strong> ${inspection.score}/100<br>
                 <strong>Valid:</strong> ${inspection.valid ? '✅ Yes' : '❌ No'}<br>
@@ -699,7 +698,9 @@ export function createCookieAwareServer(port: number = 3000) {
                 ${inspection.recommendations.length > 0 ? '<strong>Recommendations:</strong> ' + inspection.recommendations.join(', ') : ''}
             </div>
           `;
-        })() : '<div class="metric warning">No session cookie to inspect</div>'}
+              })()
+            : '<div class="metric warning">No session cookie to inspect</div>'
+        }
 
         <h2>⚡ Performance Metrics</h2>
         <div class="metric">
@@ -722,19 +723,16 @@ export function createCookieAwareServer(port: number = 3000) {
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html',
-          'Set-Cookie': [
-            variantCookie.serialize(),
-            csrfCookie.serialize()
-          ].join(', ')
-        }
+          'Set-Cookie': [variantCookie.serialize(), csrfCookie.serialize()].join(', '),
+        },
       });
-    }
+    },
   });
 
-  console.log(`🚀 Cookie Security Server running on http://localhost:${port}`);
-  console.log(`📊 Benchmark: http://localhost:${port}/benchmark`);
-  console.log(`🔍 Profile: http://localhost:${port}/profile`);
-  
+  console.info(`🚀 Cookie Security Server running on http://localhost:${port}`);
+  console.info(`📊 Benchmark: http://localhost:${port}/benchmark`);
+  console.info(`🔍 Profile: http://localhost:${port}/profile`);
+
   return server;
 }
 
@@ -768,8 +766,8 @@ export class CookieCLI {
     const header = args[0] || 'session=abc; Secure; HttpOnly; SameSite=Strict';
     try {
       const cookie = Cookie.parse(header);
-      console.log('✅ Parsed Cookie:');
-      console.log(JSON.stringify(cookie, null, 2));
+      console.info('✅ Parsed Cookie:');
+      console.info(JSON.stringify(cookie, null, 2));
     } catch (error) {
       console.error('❌ Parse failed:', error);
     }
@@ -784,8 +782,8 @@ export class CookieCLI {
 
     try {
       const cookie = Cookie.from(name, value, { secure: true, httpOnly: true });
-      console.log('✅ Created Cookie:');
-      console.log(cookie.serialize());
+      console.info('✅ Created Cookie:');
+      console.info(cookie.serialize());
     } catch (error) {
       console.error('❌ Creation failed:', error);
     }
@@ -796,19 +794,19 @@ export class CookieCLI {
     try {
       const cookie = Cookie.parse(header);
       const inspection = CookieInspector.validate(cookie);
-      
-      console.log('🔍 Cookie Inspection:');
-      console.log(`Valid: ${inspection.valid ? '✅' : '❌'}`);
-      console.log(`Score: ${inspection.score}/100`);
-      
+
+      console.info('🔍 Cookie Inspection:');
+      console.info(`Valid: ${inspection.valid ? '✅' : '❌'}`);
+      console.info(`Score: ${inspection.score}/100`);
+
       if (inspection.issues.length > 0) {
-        console.log('\n🚨 Issues:');
-        inspection.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+        console.info('\n🚨 Issues:');
+        inspection.issues.forEach(issue => console.info(`  ❌ ${issue}`));
       }
-      
+
       if (inspection.recommendations.length > 0) {
-        console.log('\n💡 Recommendations:');
-        inspection.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+        console.info('\n💡 Recommendations:');
+        inspection.recommendations.forEach(rec => console.info(`  💡 ${rec}`));
       }
     } catch (error) {
       console.error('❌ Inspection failed:', error);
@@ -816,14 +814,22 @@ export class CookieCLI {
   }
 
   private static async benchmarkCommand(): Promise<void> {
-    console.log('⚡ Running Cookie Performance Benchmark...');
+    console.info('⚡ Running Cookie Performance Benchmark...');
     const results = await CookieBenchmark.benchmark();
-    
-    console.log('\n📊 Benchmark Results:');
-    console.log(`Cookie.parse:   ${results.parse.opsPerSecond.toLocaleString()} ops/s (${results.parse.avgTime}ms)`);
-    console.log(`Cookie.from:    ${results.from.opsPerSecond.toLocaleString()} ops/s (${results.from.avgTime}ms)`);
-    console.log(`CookieInspector:${results.inspector.opsPerSecond.toLocaleString()} ops/s (${results.inspector.avgTime}ms)`);
-    console.log(`Full Pipeline:  ${results.full.opsPerSecond.toLocaleString()} ops/s (${results.full.avgTime}ms)`);
+
+    console.info('\n📊 Benchmark Results:');
+    console.info(
+      `Cookie.parse:   ${results.parse.opsPerSecond.toLocaleString()} ops/s (${results.parse.avgTime}ms)`
+    );
+    console.info(
+      `Cookie.from:    ${results.from.opsPerSecond.toLocaleString()} ops/s (${results.from.avgTime}ms)`
+    );
+    console.info(
+      `CookieInspector:${results.inspector.opsPerSecond.toLocaleString()} ops/s (${results.inspector.avgTime}ms)`
+    );
+    console.info(
+      `Full Pipeline:  ${results.full.opsPerSecond.toLocaleString()} ops/s (${results.full.avgTime}ms)`
+    );
   }
 
   private static async serverCommand(args: string[]): Promise<void> {
@@ -832,7 +838,7 @@ export class CookieCLI {
   }
 
   private static showHelp(): void {
-    console.log(`
+    console.info(`
 🍪 Cookie Security v3.25 CLI
 
 Usage: bun run cookie-security <command> [options]
@@ -872,5 +878,5 @@ export default {
   JuniorRunnerCookieIntegration,
   CookieBenchmark,
   createCookieAwareServer,
-  CookieCLI
+  CookieCLI,
 };

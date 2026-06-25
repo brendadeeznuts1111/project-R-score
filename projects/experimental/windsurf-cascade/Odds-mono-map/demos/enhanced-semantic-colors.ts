@@ -11,8 +11,8 @@
  * @since 2025-11-18
  */
 
-console.log('🎨 Enhanced Semantic Color Assignment System');
-console.log('='.repeat(55));
+console.info('🎨 Enhanced Semantic Color Assignment System');
+console.info('='.repeat(55));
 
 // =============================================================================
 // ENHANCED COLOR TYPE SYSTEM
@@ -362,8 +362,8 @@ function analyzeColorAssignment(node: CanvasNode): ColorAssignment {
 // DEMO: ENHANCED SEMANTIC COLOR ASSIGNMENT
 // =============================================================================
 
-console.log('\n🎯 1. Enhanced Semantic Color Assignment');
-console.log('─'.repeat(50));
+console.info('\n🎯 1. Enhanced Semantic Color Assignment');
+console.info('─'.repeat(50));
 
 const enhancedDemoNodes: CanvasNode[] = [
     {
@@ -455,20 +455,20 @@ const enhancedDemoNodes: CanvasNode[] = [
     }
 ];
 
-console.log('\n🎨 Enhanced Semantic Color Assignment Results:');
+console.info('\n🎨 Enhanced Semantic Color Assignment Results:');
 enhancedDemoNodes.forEach(node => {
     const assignment = analyzeColorAssignment(node);
 
-    console.log(`\n📋 ${node.id}`);
-    console.log(`   Color: ${assignment.color}`);
-    console.log(`   Priority: ${assignment.priority}`);
-    console.log(`   Reasoning:`);
+    console.info(`\n📋 ${node.id}`);
+    console.info(`   Color: ${assignment.color}`);
+    console.info(`   Priority: ${assignment.priority}`);
+    console.info(`   Reasoning:`);
     assignment.reasoning.forEach(reason => {
-        console.log(`     • ${reason}`);
+        console.info(`     • ${reason}`);
     });
-    console.log(`   Factors:`);
+    console.info(`   Factors:`);
     Object.entries(assignment.factors).forEach(([key, value]) => {
-        console.log(`     ${key}: ${value}`);
+        console.info(`     ${key}: ${value}`);
     });
 });
 
@@ -476,8 +476,8 @@ enhancedDemoNodes.forEach(node => {
 // DEMO: COLOR DISTRIBUTION ANALYSIS
 // =============================================================================
 
-console.log('\n📊 2. Color Distribution Analysis');
-console.log('─'.repeat(50));
+console.info('\n📊 2. Color Distribution Analysis');
+console.info('─'.repeat(50));
 
 const colorDistribution: Record<string, string[]> = {};
 const priorityDistribution: Record<number, number> = {};
@@ -493,15 +493,15 @@ enhancedDemoNodes.forEach(node => {
     priorityDistribution[assignment.priority] = (priorityDistribution[assignment.priority] || 0) + 1;
 });
 
-console.log('\n🎨 Color Distribution:');
+console.info('\n🎨 Color Distribution:');
 Object.entries(colorDistribution).forEach(([color, nodes]) => {
-    console.log(`  ${color}:`);
+    console.info(`  ${color}:`);
     nodes.forEach(nodeId => {
-        console.log(`    • ${nodeId}`);
+        console.info(`    • ${nodeId}`);
     });
 });
 
-console.log('\n📈 Priority Distribution:');
+console.info('\n📈 Priority Distribution:');
 Object.entries(priorityDistribution)
     .sort(([a], [b]) => parseInt(a) - parseInt(b))
     .forEach(([priority, count]) => {
@@ -516,15 +516,15 @@ Object.entries(priorityDistribution)
             8: 'Default'
         }[priority] || `Priority ${priority}`;
 
-        console.log(`  ${priorityName}: ${count} nodes`);
+        console.info(`  ${priorityName}: ${count} nodes`);
     });
 
 // =============================================================================
 // DEMO: COLOR CONSISTENCY VALIDATION
 // =============================================================================
 
-console.log('\n🔍 3. Color Consistency Validation');
-console.log('─'.repeat(50));
+console.info('\n🔍 3. Color Consistency Validation');
+console.info('─'.repeat(50));
 
 interface ConsistencyIssue {
     type: 'inconsistent_status' | 'inconsistent_priority' | 'unexpected_color';
@@ -588,12 +588,12 @@ function validateColorConsistency(nodes: CanvasNode[]): ConsistencyIssue[] {
 const consistencyIssues = validateColorConsistency(enhancedDemoNodes);
 
 if (consistencyIssues.length === 0) {
-    console.log('✅ No consistency issues found - color assignment is consistent!');
+    console.info('✅ No consistency issues found - color assignment is consistent!');
 } else {
-    console.log('⚠️ Consistency Issues Found:');
+    console.info('⚠️ Consistency Issues Found:');
     consistencyIssues.forEach(issue => {
-        console.log(`  ${issue.type}: ${issue.description}`);
-        console.log(`    Affected nodes: ${issue.affectedNodes.join(', ')}`);
+        console.info(`  ${issue.type}: ${issue.description}`);
+        console.info(`    Affected nodes: ${issue.affectedNodes.join(', ')}`);
     });
 }
 
@@ -601,40 +601,40 @@ if (consistencyIssues.length === 0) {
 // SUMMARY
 // =============================================================================
 
-console.log('\n🎊 Enhanced Semantic Color Assignment - Complete!');
-console.log('='.repeat(55));
+console.info('\n🎊 Enhanced Semantic Color Assignment - Complete!');
+console.info('='.repeat(55));
 
-console.log('\n🏆 Enhanced Features Summary:');
-console.log('  ✅ Multi-priority color assignment (8 levels)');
-console.log('  ✅ Health-based coloring for active services');
-console.log('  ✅ Environment-aware color selection');
-console.log('  ✅ Domain-based color extraction');
-console.log('  ✅ Detailed reasoning and analysis');
-console.log('  ✅ Consistency validation system');
-console.log('  ✅ Comprehensive color distribution analysis');
+console.info('\n🏆 Enhanced Features Summary:');
+console.info('  ✅ Multi-priority color assignment (8 levels)');
+console.info('  ✅ Health-based coloring for active services');
+console.info('  ✅ Environment-aware color selection');
+console.info('  ✅ Domain-based color extraction');
+console.info('  ✅ Detailed reasoning and analysis');
+console.info('  ✅ Consistency validation system');
+console.info('  ✅ Comprehensive color distribution analysis');
 
-console.log('\n📊 Advanced Color Intelligence:');
-console.log('  🎯 Critical status overrides all other factors');
-console.log('  💚 Health-based coloring for service monitoring');
-console.log('  🌍 Environment-specific color schemes');
-console.log('  🔧 Domain-specific color organization');
-console.log('  📈 Priority-based visual hierarchy');
-console.log('  🔍 Consistency validation and reporting');
+console.info('\n📊 Advanced Color Intelligence:');
+console.info('  🎯 Critical status overrides all other factors');
+console.info('  💚 Health-based coloring for service monitoring');
+console.info('  🌍 Environment-specific color schemes');
+console.info('  🔧 Domain-specific color organization');
+console.info('  📈 Priority-based visual hierarchy');
+console.info('  🔍 Consistency validation and reporting');
 
-console.log('\n🚀 Production Benefits:');
-console.log('  📊 Better information architecture through color semantics');
-console.log('  🎯 Instant visual understanding of system state');
-console.log('  🔍 Consistent color usage across large canvases');
-console.log('  📈 Health monitoring through color indicators');
-console.log('  🛡️ Reduced cognitive load for system operators');
-console.log('  ⚡ Faster decision making through visual cues');
+console.info('\n🚀 Production Benefits:');
+console.info('  📊 Better information architecture through color semantics');
+console.info('  🎯 Instant visual understanding of system state');
+console.info('  🔍 Consistent color usage across large canvases');
+console.info('  📈 Health monitoring through color indicators');
+console.info('  🛡️ Reduced cognitive load for system operators');
+console.info('  ⚡ Faster decision making through visual cues');
 
-console.log('\n💡 Next Enhancement Opportunities:');
-console.log('  🎨 Custom color rule engines');
-console.log('  📊 Color analytics and optimization');
-console.log('  🔄 Dynamic color theming');
-console.log('  📱 User preference integration');
-console.log('  🌈 Gradient and animation support');
+console.info('\n💡 Next Enhancement Opportunities:');
+console.info('  🎨 Custom color rule engines');
+console.info('  📊 Color analytics and optimization');
+console.info('  🔄 Dynamic color theming');
+console.info('  📱 User preference integration');
+console.info('  🌈 Gradient and animation support');
 
-console.log('\n🎯 Your semantic color system now provides intelligent,');
-console.log('   context-aware color assignment with detailed analysis! 🎨🧠✨');
+console.info('\n🎯 Your semantic color system now provides intelligent,');
+console.info('   context-aware color assignment with detailed analysis! 🎨🧠✨');

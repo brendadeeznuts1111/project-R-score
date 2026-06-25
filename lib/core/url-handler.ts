@@ -623,7 +623,8 @@ export class FactoryWagerURLUtils {
       const enhancedURL = URLHandler.parse(url);
       const hostname = enhancedURL.hostname;
 
-      if (hostname.includes('dashboard') || hostname === 'docs.factory-wager.com') return 'dashboard';
+      if (hostname.includes('dashboard') || hostname === 'docs.factory-wager.com')
+        return 'dashboard';
       if (hostname.includes('r2')) return 'r2';
       if (hostname.includes('api')) return 'api';
       if (hostname.includes('wiki')) return 'wiki';

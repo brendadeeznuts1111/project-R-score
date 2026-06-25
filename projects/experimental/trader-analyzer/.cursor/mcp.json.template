@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "bun": {
+      "url": "https://mcp.bun.sh",
+      "transport": "http",
+      "apiKey": ""
+    },
+    "nexus": {
+      "command": "bun",
+      "args": ["run", "scripts/mcp-server.ts"],
+      "env": {
+        "NODE_ENV": "development",
+        "MCP_USER_ID": "cursor-client",
+        "BUN_SQLITE_LOCATION": "./data",
+        "LOG_LEVEL": "info"
+      },
+      "cwd": "."
+    },
+    "nexus-production": {
+      "command": "bun",
+      "args": ["run", "scripts/mcp-server.ts"],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_USER_ID": "cursor-client-prod",
+        "BUN_SQLITE_LOCATION": "./data",
+        "LOG_LEVEL": "warn",
+        "COMPLIANCE_LOGGING": "true"
+      },
+      "cwd": "."
+    }
+  }
+}

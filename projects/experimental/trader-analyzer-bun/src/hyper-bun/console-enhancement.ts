@@ -19,7 +19,7 @@ import { inspect } from "bun";
  * @see {@link ../../docs/7.0.0.0.0.0.0-CONSOLE-DEPTH-DEBUGGING.md Console Depth Debugging Features}
  *
  * Note: The depth setting here works in conjunction with --console-depth CLI argument.
- * The CLI argument takes precedence for console.log() output, while this config
+ * The CLI argument takes precedence for console.info() output, while this config
  * applies to explicit Bun.inspect() calls.
  */
 export const CONSOLE_CONFIG = {
@@ -242,14 +242,14 @@ export class HyperBunLogger {
 		const prefix = `[${timestamp}] [${this.context}] ℹ️ `;
 
 		if (data !== undefined) {
-			console.log(prefix + message);
+			console.info(prefix + message);
 			if (this.useEnhanced) {
-				console.log(this.formatData(data));
+				console.info(this.formatData(data));
 			} else {
-				console.log(data);
+				console.info(data);
 			}
 		} else {
-			console.log(prefix + message);
+			console.info(prefix + message);
 		}
 	}
 
@@ -258,14 +258,14 @@ export class HyperBunLogger {
 		const prefix = `[${timestamp}] [${this.context}] ✅ `;
 
 		if (data !== undefined) {
-			console.log(prefix + message);
+			console.info(prefix + message);
 			if (this.useEnhanced) {
-				console.log(this.formatData(data));
+				console.info(this.formatData(data));
 			} else {
-				console.log(data);
+				console.info(data);
 			}
 		} else {
-			console.log(prefix + message);
+			console.info(prefix + message);
 		}
 	}
 
@@ -324,10 +324,10 @@ export class HyperBunLogger {
 		const timestamp = new Date().toISOString();
 		const prefix = `[${timestamp}] [${this.context}] 📈 `;
 
-		console.log(`${prefix}${operation} completed in ${duration.toFixed(2)}ms`);
+		console.info(`${prefix}${operation} completed in ${duration.toFixed(2)}ms`);
 
 		if (metadata && this.useEnhanced) {
-			console.log(this.formatData(metadata));
+			console.info(this.formatData(metadata));
 		}
 	}
 
@@ -407,7 +407,7 @@ export const performanceLogger = new HyperBunLogger("Performance");
 export function configureGlobalConsole(): void {
 	// Note: Bun's console doesn't have configurable depth/options properties
 	// The enhancement comes from using our custom inspectors and formatters
-	console.log(
+	console.info(
 		"🔧 Console enhanced with custom object inspection and formatters",
 	);
 }

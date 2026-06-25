@@ -16,35 +16,35 @@
  * @since 2025-11-18
  */
 
-console.log('🎯 Bun.inspect Features Demonstration');
-console.log('====================================');
+console.info('🎯 Bun.inspect Features Demonstration');
+console.info('====================================');
 
 // =============================================================================
 // BASIC BUN.INSPECT() DEMONSTRATION
 // =============================================================================
 
-console.log('\n📋 Basic Bun.inspect() Examples:');
-console.log('=================================');
+console.info('\n📋 Basic Bun.inspect() Examples:');
+console.info('=================================');
 
 // Simple object serialization
 const obj = { foo: "bar", nested: { deep: "value" } };
 const str = Bun.inspect(obj);
-console.log('Object:', obj);
-console.log('Serialized:', str);
-console.log('');
+console.info('Object:', obj);
+console.info('Serialized:', str);
+console.info('');
 
 // TypedArray serialization
 const uint8Array = new Uint8Array([1, 2, 3, 255, 128, 0]);
-console.log('Uint8Array:', uint8Array);
-console.log('Serialized:', Bun.inspect(uint8Array));
-console.log('');
+console.info('Uint8Array:', uint8Array);
+console.info('Serialized:', Bun.inspect(uint8Array));
+console.info('');
 
 // =============================================================================
 // BUN.INSPECT.CUSTOM DEMONSTRATION
 // =============================================================================
 
-console.log('🎨 Bun.inspect.custom Examples:');
-console.log('===============================');
+console.info('🎨 Bun.inspect.custom Examples:');
+console.info('===============================');
 
 // Custom class with inspect override
 class CanvasService {
@@ -85,20 +85,20 @@ const response = new APIResponse(true, { user: 'test' }, {
     requestId: 'req_abc123'
 });
 
-console.log('Custom Service:');
-console.log(service);
-console.log('');
+console.info('Custom Service:');
+console.info(service);
+console.info('');
 
-console.log('Custom Response:');
-console.log(response);
-console.log('');
+console.info('Custom Response:');
+console.info(response);
+console.info('');
 
 // =============================================================================
 // BUN.INSPECT.TABLE DEMONSTRATION
 // =============================================================================
 
-console.log('📊 Bun.inspect.table Examples:');
-console.log('==============================');
+console.info('📊 Bun.inspect.table Examples:');
+console.info('==============================');
 
 // Basic table example
 const services = [
@@ -107,14 +107,14 @@ const services = [
     { name: 'Monitor', status: 'active', requests: 750000, errors: 23, uptime: '99.7%' }
 ];
 
-console.log('Basic Service Table:');
-console.log(Bun.inspect.table(services, { colors: true }));
-console.log('');
+console.info('Basic Service Table:');
+console.info(Bun.inspect.table(services, { colors: true }));
+console.info('');
 
 // Table with specific properties
-console.log('Table with Selected Properties:');
-console.log(Bun.inspect.table(services, ['name', 'status', 'uptime'], { colors: true }));
-console.log('');
+console.info('Table with Selected Properties:');
+console.info(Bun.inspect.table(services, ['name', 'status', 'uptime'], { colors: true }));
+console.info('');
 
 // API metrics table
 const apiMetrics = [
@@ -136,16 +136,16 @@ const apiMetrics = [
     }
 ];
 
-console.log('API Metrics Table:');
-console.log(Bun.inspect.table(apiMetrics, { colors: true }));
-console.log('');
+console.info('API Metrics Table:');
+console.info(Bun.inspect.table(apiMetrics, { colors: true }));
+console.info('');
 
 // =============================================================================
 // ADVANCED SERIALIZATION OPTIONS
 // =============================================================================
 
-console.log('🔧 Advanced Serialization Options:');
-console.log('===================================');
+console.info('🔧 Advanced Serialization Options:');
+console.info('===================================');
 
 const complexObj = {
     services: Array.from({ length: 3 }, (_, i) => ({
@@ -164,25 +164,25 @@ const complexObj = {
     }
 };
 
-console.log('Compact serialization:');
-console.log(Bun.inspect(complexObj, { compact: true, colors: false }));
-console.log('');
+console.info('Compact serialization:');
+console.info(Bun.inspect(complexObj, { compact: true, colors: false }));
+console.info('');
 
-console.log('Detailed serialization with depth control:');
-console.log(Bun.inspect(complexObj, {
+console.info('Detailed serialization with depth control:');
+console.info(Bun.inspect(complexObj, {
     compact: false,
     colors: true,
     depth: 4,
     maxStringLength: 15
 }));
-console.log('');
+console.info('');
 
 // =============================================================================
 // PERFORMANCE COMPARISON
 // =============================================================================
 
-console.log('⚡ Performance Comparison:');
-console.log('==========================');
+console.info('⚡ Performance Comparison:');
+console.info('==========================');
 
 const iterations = 1000;
 const testObj = { data: Array.from({ length: 50 }, (_, i) => ({ id: i, value: `item-${i}` })) };
@@ -203,36 +203,36 @@ for (const method of methods) {
     const duration = performance.now() - start;
     const opsPerSec = Math.round(iterations / duration * 1000);
 
-    console.log(`${method.name}: ${opsPerSec.toLocaleString()} ops/sec (${duration.toFixed(2)}ms)`);
+    console.info(`${method.name}: ${opsPerSec.toLocaleString()} ops/sec (${duration.toFixed(2)}ms)`);
 }
 
 // =============================================================================
 // DEPTH CONTROL DEMONSTRATION
 // =============================================================================
 
-console.log('\n🔍 Depth Control Demonstration:');
-console.log('===============================');
+console.info('\n🔍 Depth Control Demonstration:');
+console.info('===============================');
 
 const nestedData = { a: { b: { c: { d: "deep" } } } };
 
-console.log('Default console.log (depth 2):');
-console.log(nestedData);
-console.log('');
+console.info('Default console.log (depth 2):');
+console.info(nestedData);
+console.info('');
 
-console.log('Bun.inspect with depth 4:');
-console.log(Bun.inspect(nestedData, { depth: 4, colors: true }));
-console.log('');
+console.info('Bun.inspect with depth 4:');
+console.info(Bun.inspect(nestedData, { depth: 4, colors: true }));
+console.info('');
 
-console.log('Bun.inspect with depth 2:');
-console.log(Bun.inspect(nestedData, { depth: 2, colors: true }));
-console.log('');
+console.info('Bun.inspect with depth 2:');
+console.info(Bun.inspect(nestedData, { depth: 2, colors: true }));
+console.info('');
 
 // =============================================================================
 // REAL-WORLD EXAMPLES
 // =============================================================================
 
-console.log('🌐 Real-World Examples:');
-console.log('========================');
+console.info('🌐 Real-World Examples:');
+console.info('========================');
 
 // API response with custom formatting
 class ServiceStatus {
@@ -255,12 +255,12 @@ const systemStatus = [
     new ServiceStatus('Monitor', 'healthy', { responseTime: 89, errorRate: 0.00, uptime: 99.7 })
 ];
 
-console.log('System Services Status:');
-systemStatus.forEach(service => console.log(service));
-console.log('');
+console.info('System Services Status:');
+systemStatus.forEach(service => console.info(service));
+console.info('');
 
-console.log('System Services Table:');
-console.log(Bun.inspect.table(systemStatus.map(s => ({
+console.info('System Services Table:');
+console.info(Bun.inspect.table(systemStatus.map(s => ({
     service: s.serviceName,
     status: s.status,
     responseTime: `${s.metrics.responseTime}ms`,
@@ -268,6 +268,6 @@ console.log(Bun.inspect.table(systemStatus.map(s => ({
     uptime: `${s.metrics.uptime}%`
 })), { colors: true }));
 
-console.log('\n🎉 Bun.inspect Features Demo Complete!');
-console.log('🔍 You now understand the power of Bun.inspect() API!');
-console.log('💡 Use these features for better debugging and logging!');
+console.info('\n🎉 Bun.inspect Features Demo Complete!');
+console.info('🔍 You now understand the power of Bun.inspect() API!');
+console.info('💡 Use these features for better debugging and logging!');

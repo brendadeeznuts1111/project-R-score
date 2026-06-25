@@ -362,8 +362,8 @@ export class ProfilingMultiLayerGraphSystem17 {
 	 * ```typescript
 	 * const profile = await system.getProfile17("session-123");
 	 * if (profile) {
-	 *   console.log(`Duration: ${profile.data.duration}ms`);
-	 *   console.log(`Memory: ${profile.data.memoryUsage} bytes`);
+	 *   console.info(`Duration: ${profile.data.duration}ms`);
+	 *   console.info(`Memory: ${profile.data.memoryUsage} bytes`);
 	 * }
 	 * ```
 	 */

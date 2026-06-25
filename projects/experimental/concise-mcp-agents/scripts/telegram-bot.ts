@@ -135,7 +135,7 @@ class TelegramBot {
         const chatId = update.message.chat.id.toString();
         const text = this.normalizeIncomingText(chatId, update.message.text.trim());
 
-        console.log(`📨 Received: ${text} from ${chatId}`);
+        console.info(`📨 Received: ${text} from ${chatId}`);
 
         try {
           const response = await this.commands.handleCommand(text);
@@ -144,7 +144,7 @@ class TelegramBot {
 
           if (response) {
             await this.sendMessage(response, route ? { route } : { chatId });
-            console.log(`📤 Sent response to ${chatId}`);
+            console.info(`📤 Sent response to ${chatId}`);
           }
         } catch (error) {
           console.error(`Error processing command: ${error.message}`);
@@ -155,7 +155,7 @@ class TelegramBot {
   }
 
   async startPolling(): Promise<void> {
-    console.log(`🤖 Telegram bot started - Polling every ${this.config.pollingInterval}ms`);
+    console.info(`🤖 Telegram bot started - Polling every ${this.config.pollingInterval}ms`);
 
     while (true) {
       try {
@@ -170,17 +170,17 @@ class TelegramBot {
   }
 
   async sendTopAgents(count: number = 3): Promise<boolean> {
-    console.log('⏸️ Automatic top-agent broadcasts are paused in this chat.');
+    console.info('⏸️ Automatic top-agent broadcasts are paused in this chat.');
     return true;
   }
 
   async sendAlerts(): Promise<boolean> {
-    console.log('⏸️ Automatic alert broadcasts are paused in this chat.');
+    console.info('⏸️ Automatic alert broadcasts are paused in this chat.');
     return true;
   }
 
   async sendReports(): Promise<boolean> {
-    console.log('⏸️ Automatic report broadcasts are paused in this chat.');
+    console.info('⏸️ Automatic report broadcasts are paused in this chat.');
     return true;
   }
 
@@ -224,7 +224,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log(`🤖 Telegram Bot v2.0
+    console.info(`🤖 Telegram Bot v2.0
 
 USAGE:
   bun telegram:bot start              # Start polling bot
@@ -270,7 +270,7 @@ SETUP:
         const parsed = parseSendArgs(args.slice(1));
         const sent = await bot.sendMessage(parsed.message, parsed.options);
         if (sent) {
-          console.log('✅ Message sent');
+          console.info('✅ Message sent');
         } else {
           console.error('❌ Failed to send message');
           process.exit(1);
@@ -281,7 +281,7 @@ SETUP:
         const count = args[1] ? parseInt(args[1]) : 3;
         const topSent = await bot.sendTopAgents(count);
         if (topSent) {
-          console.log(`✅ Top ${count} agents sent`);
+          console.info(`✅ Top ${count} agents sent`);
         } else {
           console.error('❌ Failed to send top agents');
           process.exit(1);
@@ -291,7 +291,7 @@ SETUP:
       case 'alerts':
         const alertsSent = await bot.sendAlerts();
         if (alertsSent) {
-          console.log('✅ Alerts sent (or no alerts to send)');
+          console.info('✅ Alerts sent (or no alerts to send)');
         } else {
           console.error('❌ Failed to send alerts');
           process.exit(1);
@@ -301,7 +301,7 @@ SETUP:
       case 'reports':
         const reportsSent = await bot.sendReports();
         if (reportsSent) {
-          console.log('✅ Reports sent');
+          console.info('✅ Reports sent');
         } else {
           console.error('❌ Failed to send reports');
           process.exit(1);
@@ -310,7 +310,7 @@ SETUP:
 
       default:
         console.error(`Unknown command: ${command}`);
-        console.log('Use: bun telegram:bot --help');
+        console.info('Use: bun telegram:bot --help');
         process.exit(1);
     }
   } catch (error) {

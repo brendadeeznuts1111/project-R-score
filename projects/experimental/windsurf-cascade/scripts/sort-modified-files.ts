@@ -249,7 +249,7 @@ class ModifiedFileSorter {
      * Generate and save the report
      */
     public async generateReport(): Promise<ModifiedFileReport> {
-        console.log('🔍 Analyzing modified files...');
+        console.info('🔍 Analyzing modified files...');
 
         const modifiedFiles = this.getModifiedFiles();
         const categories = this.categorizeFiles(modifiedFiles);
@@ -267,7 +267,7 @@ class ModifiedFileSorter {
         const reportPath = join(this.workingDir, 'modified-files-report.md');
         writeFileSync(reportPath, this.formatReport(report));
 
-        console.log(`📋 Report saved to: ${reportPath}`);
+        console.info(`📋 Report saved to: ${reportPath}`);
         return report;
     }
 
@@ -331,35 +331,35 @@ class ModifiedFileSorter {
         const report = await this.generateReport();
 
         if (report.totalModified === 0) {
-            console.log('✅ No files to stage');
+            console.info('✅ No files to stage');
             return;
         }
 
         if (strategy === 'all') {
-            console.log('🚀 Staging all modified files...');
+            console.info('🚀 Staging all modified files...');
             execSync('git add -A', { cwd: this.workingDir });
-            console.log('✅ All files staged successfully');
+            console.info('✅ All files staged successfully');
             return;
         }
 
         if (strategy === 'category') {
-            console.log('📂 Staging by category...');
+            console.info('📂 Staging by category...');
             for (const category of report.categories) {
                 if (category.files.length > 0) {
-                    console.log(`Staging ${category.name}...`);
+                    console.info(`Staging ${category.name}...`);
                     execSync(`git add ${category.files.join(' ')}`, { cwd: this.workingDir });
                 }
             }
-            console.log('✅ Files staged by category');
+            console.info('✅ Files staged by category');
             return;
         }
 
         // Interactive mode
-        console.log('🔄 Interactive staging mode');
-        console.log('Select files to stage:');
+        console.info('🔄 Interactive staging mode');
+        console.info('Select files to stage:');
 
         // Interactive implementation would go here
-        console.log('💡 Use the staging commands from the report to stage files manually');
+        console.info('💡 Use the staging commands from the report to stage files manually');
     }
 }
 
@@ -370,27 +370,27 @@ async function main() {
     try {
         const report = await sorter.generateReport();
 
-        console.log('\n📈 Summary:');
-        console.log(`- Total modified files: ${report.totalModified}`);
-        console.log(`- Categories: ${report.categories.filter(c => c.files.length > 0).length}`);
+        console.info('\n📈 Summary:');
+        console.info(`- Total modified files: ${report.totalModified}`);
+        console.info(`- Categories: ${report.categories.filter(c => c.files.length > 0).length}`);
 
         if (report.totalModified > 0) {
-            console.log('\n🏆 Modified Categories:');
+            console.info('\n🏆 Modified Categories:');
             report.categories
                 .filter(cat => cat.files.length > 0)
                 .forEach((cat, i) => {
-                    console.log(`${i + 1}. ${cat.name}: ${cat.files.length} files`);
+                    console.info(`${i + 1}. ${cat.name}: ${cat.files.length} files`);
                 });
 
-            console.log('\n💡 Recommendations:');
+            console.info('\n💡 Recommendations:');
             report.recommendations.slice(0, 3).forEach(rec => {
-                console.log(`  ${rec}`);
+                console.info(`  ${rec}`);
             });
 
-            console.log('\n📋 Full report saved to: modified-files-report.md');
-            console.log('\n💻 To stage files, run:');
-            console.log('  bun run sort-modified-files --stage-all');
-            console.log('  bun run sort-modified-files --stage-category');
+            console.info('\n📋 Full report saved to: modified-files-report.md');
+            console.info('\n💻 To stage files, run:');
+            console.info('  bun run sort-modified-files --stage-all');
+            console.info('  bun run sort-modified-files --stage-category');
         }
 
     } catch (error) {

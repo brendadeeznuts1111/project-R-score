@@ -4,21 +4,21 @@
 import { ArrayBufferSink } from "bun";
 
 async function demonstrateArrayBufferSinkFeatures() {
-  console.log('🧪 Bun ArrayBufferSink Feature Showcase');
-  console.log('=====================================\n');
+  console.info('🧪 Bun ArrayBufferSink Feature Showcase');
+  console.info('=====================================\n');
 
-  console.log('📊 Feature Overview:');
-  console.log('====================');
-  console.log('• High-performance buffer building');
-  console.log('• Multiple data type support (strings, Uint8Arrays)');
-  console.log('• Unicode and emoji support');
-  console.log('• Memory-efficient single allocation');
-  console.log('• Native Zig implementation');
-  console.log('• Production-ready reliability\n');
+  console.info('📊 Feature Overview:');
+  console.info('====================');
+  console.info('• High-performance buffer building');
+  console.info('• Multiple data type support (strings, Uint8Arrays)');
+  console.info('• Unicode and emoji support');
+  console.info('• Memory-efficient single allocation');
+  console.info('• Native Zig implementation');
+  console.info('• Production-ready reliability\n');
 
   // Demo 1: Basic String Building
-  console.log('✅ Demo 1: Basic String Building');
-  console.log('=================================');
+  console.info('✅ Demo 1: Basic String Building');
+  console.info('=================================');
   
   const basicTests = [
     { name: 'Simple ASCII', data: ['Hello, World!'] },
@@ -34,16 +34,16 @@ async function demonstrateArrayBufferSinkFeatures() {
     const result = sink.end();
     const text = new TextDecoder().decode(result);
     
-    console.log(`   ${name}:`);
-    console.log(`   Input: ${JSON.stringify(data)}`);
-    console.log(`   Output: "${text}"`);
-    console.log(`   Length: ${result.byteLength} bytes`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Input: ${JSON.stringify(data)}`);
+    console.info(`   Output: "${text}"`);
+    console.info(`   Length: ${result.byteLength} bytes`);
+    console.info('');
   });
 
   // Demo 2: Unicode and Emoji Support
-  console.log('✅ Demo 2: Unicode and Emoji Support');
-  console.log('===================================');
+  console.info('✅ Demo 2: Unicode and Emoji Support');
+  console.info('===================================');
   
   const unicodeTests = [
     {
@@ -74,16 +74,16 @@ async function demonstrateArrayBufferSinkFeatures() {
     const result = sink.end();
     const text = new TextDecoder().decode(result);
     
-    console.log(`   ${name}:`);
-    console.log(`   Input: ${JSON.stringify(data)}`);
-    console.log(`   Output: "${text}"`);
-    console.log(`   Bytes: ${result.byteLength} (UTF-8 encoded)`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Input: ${JSON.stringify(data)}`);
+    console.info(`   Output: "${text}"`);
+    console.info(`   Bytes: ${result.byteLength} (UTF-8 encoded)`);
+    console.info('');
   });
 
   // Demo 3: Binary Data Handling
-  console.log('✅ Demo 3: Binary Data Handling');
-  console.log('===============================');
+  console.info('✅ Demo 3: Binary Data Handling');
+  console.info('===============================');
   
   const binaryTests = [
     {
@@ -137,16 +137,16 @@ async function demonstrateArrayBufferSinkFeatures() {
         .join(' ');
     }
     
-    console.log(`   ${name}:`);
-    console.log(`   Data: ${data.length} chunk(s)`);
-    console.log(`   Output: ${display}`);
-    console.log(`   Bytes: ${result.byteLength}`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Data: ${data.length} chunk(s)`);
+    console.info(`   Output: ${display}`);
+    console.info(`   Bytes: ${result.byteLength}`);
+    console.info('');
   });
 
   // Demo 4: Rope-style Building
-  console.log('✅ Demo 4: Rope-style Building');
-  console.log('===============================');
+  console.info('✅ Demo 4: Rope-style Building');
+  console.info('===============================');
   
   const ropeTests = [
     {
@@ -179,16 +179,16 @@ async function demonstrateArrayBufferSinkFeatures() {
     const result = sink.end();
     const text = new TextDecoder().decode(result);
     
-    console.log(`   ${name}:`);
-    console.log(`   Chunks: ${data.length}`);
-    console.log(`   Output: "${text.replace(/\n/g, '\\n')}"`);
-    console.log(`   Bytes: ${result.byteLength}`);
-    console.log('');
+    console.info(`   ${name}:`);
+    console.info(`   Chunks: ${data.length}`);
+    console.info(`   Output: "${text.replace(/\n/g, '\\n')}"`);
+    console.info(`   Bytes: ${result.byteLength}`);
+    console.info('');
   });
 
   // Demo 5: Performance Comparison
-  console.log('✅ Demo 5: Performance Comparison');
-  console.log('=================================');
+  console.info('✅ Demo 5: Performance Comparison');
+  console.info('=================================');
   
   const performanceData = 'abcdefghijklmnopqrstuvwxyz'.repeat(1000); // 26KB
   const chunks = [];
@@ -210,19 +210,19 @@ async function demonstrateArrayBufferSinkFeatures() {
   const concatEnd = performance.now();
   const concatTime = concatEnd - concatStart;
 
-  console.log(`   Data: ${performanceData.length} characters in ${chunks.length} chunks`);
-  console.log(`   ArrayBufferSink: ${sinkTime.toFixed(2)}ms`);
-  console.log(`   String Concat: ${concatTime.toFixed(2)}ms`);
-  console.log(`   Performance Ratio: ${(concatTime / sinkTime).toFixed(2)}x`);
-  console.log(`   Results Match: ${sinkResult.byteLength === new TextEncoder().encode(concatResult).byteLength}`);
-  console.log('');
+  console.info(`   Data: ${performanceData.length} characters in ${chunks.length} chunks`);
+  console.info(`   ArrayBufferSink: ${sinkTime.toFixed(2)}ms`);
+  console.info(`   String Concat: ${concatTime.toFixed(2)}ms`);
+  console.info(`   Performance Ratio: ${(concatTime / sinkTime).toFixed(2)}x`);
+  console.info(`   Results Match: ${sinkResult.byteLength === new TextEncoder().encode(concatResult).byteLength}`);
+  console.info('');
 
   // Demo 6: Real-World Use Cases
-  console.log('✅ Demo 6: Real-World Use Cases');
-  console.log('===============================');
+  console.info('✅ Demo 6: Real-World Use Cases');
+  console.info('===============================');
   
   // HTTP Response Building
-  console.log('   HTTP Response Building:');
+  console.info('   HTTP Response Building:');
   const httpSink = new ArrayBufferSink();
   httpSink.write('HTTP/1.1 200 OK\r\n');
   httpSink.write('Content-Type: application/json\r\n');
@@ -230,12 +230,12 @@ async function demonstrateArrayBufferSinkFeatures() {
   httpSink.write('\r\n');
   httpSink.write('{"message": "hello"}');
   const httpResponse = httpSink.end();
-  console.log(`   Response: ${new TextDecoder().decode(httpResponse).replace(/\r\n/g, '\\r\\n')}`);
-  console.log(`   Bytes: ${httpResponse.byteLength}`);
-  console.log('');
+  console.info(`   Response: ${new TextDecoder().decode(httpResponse).replace(/\r\n/g, '\\r\\n')}`);
+  console.info(`   Bytes: ${httpResponse.byteLength}`);
+  console.info('');
 
   // JSON Building
-  console.log('   JSON Building:');
+  console.info('   JSON Building:');
   const jsonSink = new ArrayBufferSink();
   jsonSink.write('{');
   jsonSink.write('"name": "John",');
@@ -243,25 +243,25 @@ async function demonstrateArrayBufferSinkFeatures() {
   jsonSink.write('"city": "New York"');
   jsonSink.write('}');
   const jsonData = jsonSink.end();
-  console.log(`   JSON: ${new TextDecoder().decode(jsonData)}`);
-  console.log(`   Bytes: ${jsonData.byteLength}`);
-  console.log('');
+  console.info(`   JSON: ${new TextDecoder().decode(jsonData)}`);
+  console.info(`   Bytes: ${jsonData.byteLength}`);
+  console.info('');
 
   // CSV Building
-  console.log('   CSV Building:');
+  console.info('   CSV Building:');
   const csvSink = new ArrayBufferSink();
   csvSink.write('Name,Age,City\n');
   csvSink.write('John,30,New York\n');
   csvSink.write('Jane,25,Los Angeles\n');
   csvSink.write('Bob,35,Chicago');
   const csvData = csvSink.end();
-  console.log(`   CSV: ${new TextDecoder().decode(csvData).replace(/\n/g, '\\n')}`);
-  console.log(`   Bytes: ${csvData.byteLength}`);
-  console.log('');
+  console.info(`   CSV: ${new TextDecoder().decode(csvData).replace(/\n/g, '\\n')}`);
+  console.info(`   Bytes: ${csvData.byteLength}`);
+  console.info('');
 
   // Demo 7: Large Data Handling
-  console.log('✅ Demo 7: Large Data Handling');
-  console.log('===============================');
+  console.info('✅ Demo 7: Large Data Handling');
+  console.info('===============================');
   
   const largeDataSizes = ['1KB', '10KB', '100KB', '1MB'];
   
@@ -281,13 +281,13 @@ async function demonstrateArrayBufferSinkFeatures() {
     const result = sink.end();
     const endTime = performance.now();
     
-    console.log(`   ${size}: ${(endTime - startTime).toFixed(2)}ms, ${result.byteLength} bytes`);
+    console.info(`   ${size}: ${(endTime - startTime).toFixed(2)}ms, ${result.byteLength} bytes`);
   }
-  console.log('');
+  console.info('');
 
   // Demo 8: Error Handling and Edge Cases
-  console.log('✅ Demo 8: Error Handling and Edge Cases');
-  console.log('===========================================');
+  console.info('✅ Demo 8: Error Handling and Edge Cases');
+  console.info('===========================================');
   
   const edgeCases = [
     { name: 'Empty Sink', data: [] },
@@ -303,16 +303,16 @@ async function demonstrateArrayBufferSinkFeatures() {
       data.forEach(chunk => sink.write(chunk));
       const result = sink.end();
       
-      console.log(`   ${name}: ✅ Success (${result.byteLength} bytes)`);
+      console.info(`   ${name}: ✅ Success (${result.byteLength} bytes)`);
     } catch (error) {
-      console.log(`   ${name}: ❌ Error - ${error.message}`);
+      console.info(`   ${name}: ❌ Error - ${error.message}`);
     }
   });
-  console.log('');
+  console.info('');
 
   // Summary
-  console.log('🎊 ArrayBufferSink Feature Summary');
-  console.log('===================================');
+  console.info('🎊 ArrayBufferSink Feature Summary');
+  console.info('===================================');
   
   const allTests = [
     ...basicTests,
@@ -338,30 +338,30 @@ async function demonstrateArrayBufferSinkFeatures() {
     }
   });
 
-  console.log(`📊 Total Feature Tests: ${totalTests}`);
-  console.log(`✅ Successful: ${successfulTests}`);
-  console.log(`📈 Success Rate: ${((successfulTests / totalTests) * 100).toFixed(1)}%`);
+  console.info(`📊 Total Feature Tests: ${totalTests}`);
+  console.info(`✅ Successful: ${successfulTests}`);
+  console.info(`📈 Success Rate: ${((successfulTests / totalTests) * 100).toFixed(1)}%`);
 
-  console.log('\n🚀 Key Features Demonstrated:');
-  console.log('• Efficient buffer building with single allocation');
-  console.log('• Multiple data type support (strings, Uint8Arrays)');
-  console.log('• Complete Unicode and emoji support');
-  console.log('• Memory-efficient rope-style building');
-  console.log('• High-performance binary data handling');
-  console.log('• Real-world use case patterns');
+  console.info('\n🚀 Key Features Demonstrated:');
+  console.info('• Efficient buffer building with single allocation');
+  console.info('• Multiple data type support (strings, Uint8Arrays)');
+  console.info('• Complete Unicode and emoji support');
+  console.info('• Memory-efficient rope-style building');
+  console.info('• High-performance binary data handling');
+  console.info('• Real-world use case patterns');
 
-  console.log('\n🌟 Production-Ready Capabilities:');
-  console.log('• HTTP response building');
-  console.log('• File content processing');
-  console.log('• Protocol message construction');
-  console.log('• Data pipeline operations');
-  console.log('• Large data handling');
+  console.info('\n🌟 Production-Ready Capabilities:');
+  console.info('• HTTP response building');
+  console.info('• File content processing');
+  console.info('• Protocol message construction');
+  console.info('• Data pipeline operations');
+  console.info('• Large data handling');
 
-  console.log('\n✨ Demo Complete!');
-  console.log('================');
-  console.log('Bun.ArrayBufferSink provides high-performance');
-  console.log('buffer building with excellent Unicode support!');
-  console.log('Ideal for server applications and data processing! 🧪');
+  console.info('\n✨ Demo Complete!');
+  console.info('================');
+  console.info('Bun.ArrayBufferSink provides high-performance');
+  console.info('buffer building with excellent Unicode support!');
+  console.info('Ideal for server applications and data processing! 🧪');
 }
 
 // Run the demonstration

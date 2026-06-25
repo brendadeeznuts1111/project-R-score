@@ -102,7 +102,7 @@ class SecurityTestRunner {
   }
 
   async runAllTests(): Promise<SecurityTestResult[]> {
-    console.log('🛡️  Running URL Pattern Security Tests...\n');
+    console.info('🛡️  Running URL Pattern Security Tests...\n');
 
     // Run the actual test file
     try {
@@ -172,8 +172,8 @@ class SecurityTestRunner {
         this.results.push(...federationTests);
       }
 
-      console.log('✅ Security tests completed successfully!');
-      console.log(`📊 Results: ${this.results.filter(r => r.status === 'PASSED').length}/${this.results.length} tests passed`);
+      console.info('✅ Security tests completed successfully!');
+      console.info(`📊 Results: ${this.results.filter(r => r.status === 'PASSED').length}/${this.results.length} tests passed`);
 
     } catch (error) {
       console.error('❌ Security tests failed:', error);
@@ -485,6 +485,6 @@ if (import.meta.main) {
   const runner = new SecurityTestRunner();
   await runner.runAllTests();
 
-  console.log('\n📊 Security Test Summary:');
-  console.log(JSON.stringify(runner.exportForDashboard(), null, 2));
+  console.info('\n📊 Security Test Summary:');
+  console.info(JSON.stringify(runner.exportForDashboard(), null, 2));
 }

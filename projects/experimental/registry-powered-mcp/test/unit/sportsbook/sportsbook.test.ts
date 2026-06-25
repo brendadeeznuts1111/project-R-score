@@ -478,7 +478,7 @@ describe('Performance', () => {
     const elapsedMs = performance.now() - startTime;
     const updatesPerSecond = (iterations / elapsedMs) * 1000;
 
-    console.log(`Risk engine: ${updatesPerSecond.toFixed(0)} updates/sec`);
+    console.info(`Risk engine: ${updatesPerSecond.toFixed(0)} updates/sec`);
 
     // Should meet performance target
     expect(updatesPerSecond).toBeGreaterThan(SPORTSBOOK_PERFORMANCE_TARGETS.ODDS_UPDATES_PER_SEC);
@@ -502,7 +502,7 @@ describe('Performance', () => {
     const elapsedMs = performance.now() - startTime;
     const avgMs = elapsedMs / iterations;
 
-    console.log(`Arbitrage detection: ${avgMs.toFixed(4)}ms avg`);
+    console.info(`Arbitrage detection: ${avgMs.toFixed(4)}ms avg`);
 
     expect(avgMs).toBeLessThan(SPORTSBOOK_PERFORMANCE_TARGETS.ARBITRAGE_DETECTION_MS);
   });

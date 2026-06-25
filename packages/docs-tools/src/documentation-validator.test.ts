@@ -83,5 +83,4 @@ describe('documentation-validator integration', () => {
     expect(Array.isArray(fallbackResult.errors)).toBe(true);
     expect(typeof fallbackHeal.totalFixes).toBe('number');
   });
-
 });

@@ -36,16 +36,16 @@ const COMMON_RSC_PATHS = [
  * Test 1: Parse your captured RSC request
  */
 function testCapturedRequest() {
-  console.log('🔍 Testing Captured RSC Request');
-  console.log('=====================================');
+  console.info('🔍 Testing Captured RSC Request');
+  console.info('=====================================');
   
   const parsed = parseCapturedRSCRequest(CAPTURED_RSC_STATE);
   
-  console.log('📊 Parsed Request Data:');
-  console.log(`  Pathname: ${parsed.pathname}`);
-  console.log(`  Router State:`, JSON.stringify(parsed.routerState, null, 2));
-  console.log(`  Metadata:`, parsed.metadata);
-  console.log(`  Compression Ratio: ${(1 / parsed.metadata.compressionRatio).toFixed(2)}x`);
+  console.info('📊 Parsed Request Data:');
+  console.info(`  Pathname: ${parsed.pathname}`);
+  console.info(`  Router State:`, JSON.stringify(parsed.routerState, null, 2));
+  console.info(`  Metadata:`, parsed.metadata);
+  console.info(`  Compression Ratio: ${(1 / parsed.metadata.compressionRatio).toFixed(2)}x`);
   
   return parsed;
 }
@@ -54,8 +54,8 @@ function testCapturedRequest() {
  * Test 2: Single RSC component fetch
  */
 async function testSingleRSC() {
-  console.log('\n🚀 Testing Single RSC Component Fetch');
-  console.log('=======================================');
+  console.info('\n🚀 Testing Single RSC Component Fetch');
+  console.info('=======================================');
   
   const mux = new RSCMultiplexer();
   
@@ -67,11 +67,11 @@ async function testSingleRSC() {
       prefetch: false
     });
     
-    console.log('✅ Single RSC Response:');
-    console.log(`  Status: ${response.status}`);
-    console.log(`  Cache Key: ${response.cacheKey}`);
-    console.log(`  Latency: ${response.latency?.toFixed(2)}ms`);
-    console.log(`  Headers:`, Object.keys(response.headers));
+    console.info('✅ Single RSC Response:');
+    console.info(`  Status: ${response.status}`);
+    console.info(`  Cache Key: ${response.cacheKey}`);
+    console.info(`  Latency: ${response.latency?.toFixed(2)}ms`);
+    console.info(`  Headers:`, Object.keys(response.headers));
     
   } catch (error) {
     console.error('❌ Single RSC failed:', error);
@@ -84,8 +84,8 @@ async function testSingleRSC() {
  * Test 3: RSC batch prefetch (the main optimization)
  */
 async function testRSCBatch() {
-  console.log('\n📦 Testing RSC Batch Prefetch');
-  console.log('===============================');
+  console.info('\n📦 Testing RSC Batch Prefetch');
+  console.info('===============================');
   
   const mux = new RSCMultiplexer();
   
@@ -100,14 +100,14 @@ async function testRSCBatch() {
     
     const responses = await mux.prefetchRSCBatch(batchRequests);
     
-    console.log('📊 Batch Results:');
+    console.info('📊 Batch Results:');
     responses.forEach((response, index) => {
       const status = 'error' in response ? '❌' : '✅';
-      console.log(`  ${status} ${response.pathname}: ${response.latency?.toFixed(2)}ms`);
+      console.info(`  ${status} ${response.pathname}: ${response.latency?.toFixed(2)}ms`);
     });
     
     const stats = mux.getStats();
-    console.log(`🔗 Connection Stats:`, stats);
+    console.info(`🔗 Connection Stats:`, stats);
     
   } catch (error) {
     console.error('❌ RSC batch failed:', error);
@@ -120,28 +120,28 @@ async function testRSCBatch() {
  * Test 4: Performance comparison (HTTP/1.1 vs HTTP/2)
  */
 async function testPerformanceComparison() {
-  console.log('\n🧪 Performance Comparison Test');
-  console.log('==============================');
+  console.info('\n🧪 Performance Comparison Test');
+  console.info('==============================');
   
   const mux = new RSCMultiplexer();
   
   try {
     const results = await mux.performanceTest(COMMON_RSC_PATHS);
     
-    console.log('\n📈 R-Score Impact Analysis:');
-    console.log('============================');
+    console.info('\n📈 R-Score Impact Analysis:');
+    console.info('============================');
     
     const baselineP = 0.833; // HTTP/1.1 baseline
     const optimizedP = results.p_ratio;
     const improvement = optimizedP - baselineP;
     
-    console.log(`P_ratio Improvement: ${baselineP.toFixed(3)} → ${optimizedP.toFixed(3)} (+${improvement.toFixed(3)})`);
-    console.log(`Latency Improvement: ${results.speedup.toFixed(2)}x faster`);
-    console.log(`Network Efficiency: ${((1 - 1/results.speedup) * 100).toFixed(1)}% reduction`);
+    console.info(`P_ratio Improvement: ${baselineP.toFixed(3)} → ${optimizedP.toFixed(3)} (+${improvement.toFixed(3)})`);
+    console.info(`Latency Improvement: ${results.speedup.toFixed(2)}x faster`);
+    console.info(`Network Efficiency: ${((1 - 1/results.speedup) * 100).toFixed(1)}% reduction`);
     
     // Calculate overall R-Score impact
     const rScoreImpact = improvement * 0.35; // P_ratio weight in R-Score
-    console.log(`Overall R-Score Impact: +${rScoreImpact.toFixed(3)}`);
+    console.info(`Overall R-Score Impact: +${rScoreImpact.toFixed(3)}`);
     
     return results;
     
@@ -156,15 +156,15 @@ async function testPerformanceComparison() {
  * Test 5: Convenience function test
  */
 async function testConvenienceFunction() {
-  console.log('\n⚡ Testing Convenience Function');
-  console.log('================================');
+  console.info('\n⚡ Testing Convenience Function');
+  console.info('================================');
   
   try {
     const responses = await fetchRSCBatch(COMMON_RSC_PATHS.slice(0, 3));
     
-    console.log('✅ Convenience Function Results:');
+    console.info('✅ Convenience Function Results:');
     responses.forEach(response => {
-      console.log(`  ${response.pathname}: ${response.status} (${response.latency?.toFixed(2)}ms)`);
+      console.info(`  ${response.pathname}: ${response.status} (${response.latency?.toFixed(2)}ms)`);
     });
     
   } catch (error) {
@@ -176,8 +176,8 @@ async function testConvenienceFunction() {
  * Main test runner
  */
 async function main() {
-  console.log('🎯 RSC HTTP/2 Multiplexing Test Suite');
-  console.log('=====================================\n');
+  console.info('🎯 RSC HTTP/2 Multiplexing Test Suite');
+  console.info('=====================================\n');
   
   // Test 1: Parse captured request
   const parsed = testCapturedRequest();
@@ -194,21 +194,21 @@ async function main() {
   // Test 5: Convenience function
   await testConvenienceFunction();
   
-  console.log('\n🎉 RSC Multiplexing Test Complete!');
-  console.log('==================================');
+  console.info('\n🎉 RSC Multiplexing Test Complete!');
+  console.info('==================================');
   
   if (perfResults) {
-    console.log(`🚀 Achieved P_ratio: ${perfResults.p_ratio.toFixed(3)} (Target: 1.150)`);
-    console.log(`⚡ Speed improvement: ${perfResults.speedup.toFixed(2)}x faster`);
-    console.log(`📊 Network efficiency: ${((1 - 1/perfResults.speedup) * 100).toFixed(1)}% reduction`);
+    console.info(`🚀 Achieved P_ratio: ${perfResults.p_ratio.toFixed(3)} (Target: 1.150)`);
+    console.info(`⚡ Speed improvement: ${perfResults.speedup.toFixed(2)}x faster`);
+    console.info(`📊 Network efficiency: ${((1 - 1/perfResults.speedup) * 100).toFixed(1)}% reduction`);
   }
   
-  console.log('\n💡 Integration Benefits:');
-  console.log('  ✅ Perfect for Next.js RSC prefetch patterns');
-  console.log('  ✅ Single TCP connection for multiple components');
-  console.log('  ✅ Automatic router state tree handling');
-  console.log('  ✅ Built-in performance monitoring');
-  console.log('  ✅ Fallback to HTTP/1.1 when needed');
+  console.info('\n💡 Integration Benefits:');
+  console.info('  ✅ Perfect for Next.js RSC prefetch patterns');
+  console.info('  ✅ Single TCP connection for multiple components');
+  console.info('  ✅ Automatic router state tree handling');
+  console.info('  ✅ Built-in performance monitoring');
+  console.info('  ✅ Fallback to HTTP/1.1 when needed');
 }
 
 // Run the test suite

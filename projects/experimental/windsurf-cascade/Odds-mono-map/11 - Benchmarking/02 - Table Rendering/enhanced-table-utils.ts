@@ -261,9 +261,9 @@ export function createSummaryTable(stats: { [key: string]: any }): void {
 // =============================================================================
 
 async function demonstrateWidthManagement(): Promise<void> {
-    console.log(chalk.bold.magenta('🎯 Enhanced Table Utilities with Bun.stringWidth()'));
-    console.log(chalk.gray('Odds Protocol Vault - Width Management Solutions'));
-    console.log(chalk.gray('='.repeat(80)));
+    console.info(chalk.bold.magenta('🎯 Enhanced Table Utilities with Bun.stringWidth()'));
+    console.info(chalk.gray('Odds Protocol Vault - Width Management Solutions'));
+    console.info(chalk.gray('='.repeat(80)));
 
     // Sample data with problematic widths
     const sampleFiles = [
@@ -301,16 +301,16 @@ async function demonstrateWidthManagement(): Promise<void> {
         { operation: 'Template Processing', duration: 5.7, status: 'success', efficiency: 146 }
     ];
 
-    console.log(chalk.bold.cyan('\n📁 Vault Files (Width Managed):'));
+    console.info(chalk.bold.cyan('\n📁 Vault Files (Width Managed):'));
     formatVaultFileTable(sampleFiles, { maxNameWidth: 20, maxPathWidth: 25 });
 
-    console.log(chalk.bold.cyan('\n⚠️  Validation Issues (Width Managed):'));
+    console.info(chalk.bold.cyan('\n⚠️  Validation Issues (Width Managed):'));
     formatValidationIssues(sampleIssues, { maxMessageWidth: 35 });
 
-    console.log(chalk.bold.cyan('\n🚀 Performance Metrics (Width Managed):'));
+    console.info(chalk.bold.cyan('\n🚀 Performance Metrics (Width Managed):'));
     formatPerformanceMetrics(sampleMetrics);
 
-    console.log(chalk.bold.cyan('\n📊 Summary Statistics:'));
+    console.info(chalk.bold.cyan('\n📊 Summary Statistics:'));
     createSummaryTable({
         'Total Files': 42,
         'Total Size': '156.3 KB',
@@ -318,10 +318,10 @@ async function demonstrateWidthManagement(): Promise<void> {
         'Warnings': 2
     });
 
-    console.log(chalk.bold.cyan('\n📱 Responsive Table (Adapts to Terminal):'));
+    console.info(chalk.bold.cyan('\n📱 Responsive Table (Adapts to Terminal):'));
     createResponsiveTable(sampleFiles, ['name', 'size', 'modified'], 10);
 
-    console.log(chalk.bold.green('\n🎉 Enhanced Table Utilities Complete!'));
+    console.info(chalk.bold.green('\n🎉 Enhanced Table Utilities Complete!'));
 }
 
 // Run demonstration if called directly

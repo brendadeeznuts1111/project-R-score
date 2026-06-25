@@ -45,8 +45,8 @@ class R2EnhancedCLI {
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
-    console.log(styled('🚀 R2 Enhanced CLI', 'accent'));
-    console.log(styled('==================\n', 'accent'));
+    console.info(styled('🚀 R2 Enhanced CLI', 'accent'));
+    console.info(styled('==================\n', 'accent'));
 
     await r2EventSystem.initialize();
     await r2LifecycleManager.initialize();
@@ -59,7 +59,7 @@ class R2EnhancedCLI {
     await r2WebhookManager.initialize();
 
     this.initialized = true;
-    console.log(styled('✅ All systems initialized\n', 'success'));
+    console.info(styled('✅ All systems initialized\n', 'success'));
   }
 
   async run(args: string[]): Promise<void> {
@@ -110,19 +110,19 @@ class R2EnhancedCLI {
   }
 
   // Event System Commands
-  private async handleEvents(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleEvents(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         const stats = r2EventSystem.getStats();
-        console.log(styled('\n📊 Event System Status', 'accent'));
-        console.log(styled(`  Total Events: ${stats.totalEvents}`, 'muted'));
-        console.log(styled(`  Active Connections: ${stats.activeConnections}`, 'muted'));
+        console.info(styled('\n📊 Event System Status', 'accent'));
+        console.info(styled(`  Total Events: ${stats.totalEvents}`, 'muted'));
+        console.info(styled(`  Active Connections: ${stats.activeConnections}`, 'muted'));
         break;
 
       case 'watch':
-        console.log(styled('\n👀 Watching events (Press Ctrl+C to stop)...', 'info'));
+        console.info(styled('\n👀 Watching events (Press Ctrl+C to stop)...', 'info'));
         const unsubscribe = r2EventSystem.onAll(event => {
-          console.log(
+          console.info(
             styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
           );
         });
@@ -134,27 +134,27 @@ class R2EnhancedCLI {
       case 'history':
         const limit = parseInt(options.limit) || 20;
         const history = r2EventSystem.getEventHistory({ limit });
-        console.log(styled(`\n📜 Last ${limit} Events:`, 'accent'));
+        console.info(styled(`\n📜 Last ${limit} Events:`, 'accent'));
         for (const event of history) {
-          console.log(
+          console.info(
             styled(`  [${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
           );
         }
         break;
 
       default:
-        console.log(styled('\n📢 Event System Commands:', 'accent'));
-        console.log(styled('  status  - Show event system status', 'muted'));
-        console.log(styled('  watch   - Watch events in real-time', 'muted'));
-        console.log(styled('  history - Show event history', 'muted'));
+        console.info(styled('\n📢 Event System Commands:', 'accent'));
+        console.info(styled('  status  - Show event system status', 'muted'));
+        console.info(styled('  watch   - Watch events in real-time', 'muted'));
+        console.info(styled('  history - Show event history', 'muted'));
     }
   }
 
   // Batch Operations Commands
-  private async handleBatch(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleBatch(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'upload':
-        console.log(styled('\n📦 Batch Upload', 'accent'));
+        console.info(styled('\n📦 Batch Upload', 'accent'));
         // Demo batch upload
         const items = [
           { key: 'test/batch1.json', data: { test: 1 } },
@@ -166,15 +166,15 @@ class R2EnhancedCLI {
           items,
           { concurrency: parseInt(options.concurrency) || 5 }
         );
-        console.log(styled(`  Job ID: ${job.id}`, 'success'));
+        console.info(styled(`  Job ID: ${job.id}`, 'success'));
         break;
 
       case 'status':
         const activeJobs = r2BatchOperations.getActiveJobs();
-        console.log(styled('\n📦 Batch Operations Status', 'accent'));
-        console.log(styled(`  Active Jobs: ${activeJobs.length}`, 'muted'));
+        console.info(styled('\n📦 Batch Operations Status', 'accent'));
+        console.info(styled(`  Active Jobs: ${activeJobs.length}`, 'muted'));
         for (const job of activeJobs) {
-          console.log(
+          console.info(
             styled(
               `    ${job.id}: ${job.progress.completed}/${job.progress.total} (${job.progress.percentComplete.toFixed(1)}%)`,
               'muted'
@@ -184,28 +184,28 @@ class R2EnhancedCLI {
         break;
 
       default:
-        console.log(styled('\n📦 Batch Commands:', 'accent'));
-        console.log(styled('  upload <bucket> --files <paths>  - Upload files in batch', 'muted'));
-        console.log(
+        console.info(styled('\n📦 Batch Commands:', 'accent'));
+        console.info(styled('  upload <bucket> --files <paths>  - Upload files in batch', 'muted'));
+        console.info(
           styled('  delete <bucket> --keys <keys>    - Delete objects in batch', 'muted')
         );
-        console.log(styled('  status                           - Show batch job status', 'muted'));
+        console.info(styled('  status                           - Show batch job status', 'muted'));
     }
   }
 
   // Lifecycle Management Commands
-  private async handleLifecycle(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleLifecycle(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2LifecycleManager.displayStatus();
         break;
 
       case 'scan':
-        console.log(styled('\n🔍 Running lifecycle scan...', 'info'));
+        console.info(styled('\n🔍 Running lifecycle scan...', 'info'));
         const report = await r2LifecycleManager.performLifecycleScan();
-        console.log(styled(`  Deleted: ${report.objectsDeleted}`, 'muted'));
-        console.log(styled(`  Transitioned: ${report.objectsTransitioned}`, 'muted'));
-        console.log(
+        console.info(styled(`  Deleted: ${report.objectsDeleted}`, 'muted'));
+        console.info(styled(`  Transitioned: ${report.objectsTransitioned}`, 'muted'));
+        console.info(
           styled(
             `  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`,
             'muted'
@@ -215,10 +215,10 @@ class R2EnhancedCLI {
 
       case 'rules':
         const rules = r2LifecycleManager.getRules();
-        console.log(styled('\n📋 Lifecycle Rules:', 'accent'));
+        console.info(styled('\n📋 Lifecycle Rules:', 'accent'));
         for (const rule of rules) {
           const status = rule.enabled ? '✅' : '❌';
-          console.log(styled(`  ${status} ${rule.name} (${rule.id})`, 'muted'));
+          console.info(styled(`  ${status} ${rule.name} (${rule.id})`, 'muted'));
         }
         break;
 
@@ -231,9 +231,9 @@ class R2EnhancedCLI {
             prefix: options.prefix,
             ttl: options.ttl ? { deleteAfterDays: parseInt(options.ttl) } : undefined,
           });
-          console.log(styled(`\n✅ Added rule: ${options.name}`, 'success'));
+          console.info(styled(`\n✅ Added rule: ${options.name}`, 'success'));
         } else {
-          console.log(
+          console.info(
             styled(
               '\n❌ Usage: lifecycle add-rule --name <name> --prefix <prefix> [--ttl <days>]',
               'error'
@@ -243,72 +243,72 @@ class R2EnhancedCLI {
         break;
 
       default:
-        console.log(styled('\n⏰ Lifecycle Commands:', 'accent'));
-        console.log(styled('  status    - Show lifecycle status', 'muted'));
-        console.log(styled('  scan      - Run lifecycle scan', 'muted'));
-        console.log(styled('  rules     - List lifecycle rules', 'muted'));
-        console.log(styled('  add-rule  - Add a lifecycle rule', 'muted'));
+        console.info(styled('\n⏰ Lifecycle Commands:', 'accent'));
+        console.info(styled('  status    - Show lifecycle status', 'muted'));
+        console.info(styled('  scan      - Run lifecycle scan', 'muted'));
+        console.info(styled('  rules     - List lifecycle rules', 'muted'));
+        console.info(styled('  add-rule  - Add a lifecycle rule', 'muted'));
     }
   }
 
   // Search Commands
-  private async handleSearch(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSearch(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'query':
         const query = options._[0] || options.q;
         if (!query) {
-          console.log(styled('\n❌ Usage: search query <query>', 'error'));
+          console.info(styled('\n❌ Usage: search query <query>', 'error'));
           return;
         }
 
-        console.log(styled(`\n🔍 Searching for: "${query}"`, 'accent'));
+        console.info(styled(`\n🔍 Searching for: "${query}"`, 'accent'));
         const results = r2SearchEngine.search({
           q: query,
           limit: parseInt(options.limit) || 20,
           filters: options.bucket ? { bucket: options.bucket } : undefined,
         });
 
-        console.log(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
+        console.info(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
         for (const result of results.results) {
-          console.log(
+          console.info(
             styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted')
           );
           if (result.highlights.length > 0) {
-            console.log(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
+            console.info(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
           }
         }
         break;
 
       case 'stats':
         const stats = r2SearchEngine.getStats();
-        console.log(styled('\n📊 Search Index Stats', 'accent'));
-        console.log(styled(`  Documents: ${stats.totalDocuments}`, 'muted'));
-        console.log(styled(`  Terms: ${stats.totalTerms}`, 'muted'));
-        console.log(styled(`  Avg Doc Size: ${stats.avgDocSize} bytes`, 'muted'));
+        console.info(styled('\n📊 Search Index Stats', 'accent'));
+        console.info(styled(`  Documents: ${stats.totalDocuments}`, 'muted'));
+        console.info(styled(`  Terms: ${stats.totalTerms}`, 'muted'));
+        console.info(styled(`  Avg Doc Size: ${stats.avgDocSize} bytes`, 'muted'));
         break;
 
       case 'index':
         if (options.bucket && options.key) {
-          console.log(styled(`\n📝 Indexing: ${options.bucket}/${options.key}`, 'info'));
+          console.info(styled(`\n📝 Indexing: ${options.bucket}/${options.key}`, 'info'));
           // In production, would fetch and index the object
-          console.log(styled('  ✅ Indexed successfully', 'success'));
+          console.info(styled('  ✅ Indexed successfully', 'success'));
         } else {
-          console.log(styled('\n❌ Usage: search index --bucket <bucket> --key <key>', 'error'));
+          console.info(styled('\n❌ Usage: search index --bucket <bucket> --key <key>', 'error'));
         }
         break;
 
       default:
-        console.log(styled('\n🔍 Search Commands:', 'accent'));
-        console.log(styled('  query <query> [--bucket <bucket>]  - Search R2 data', 'muted'));
-        console.log(
+        console.info(styled('\n🔍 Search Commands:', 'accent'));
+        console.info(styled('  query <query> [--bucket <bucket>]  - Search R2 data', 'muted'));
+        console.info(
           styled('  stats                              - Show index statistics', 'muted')
         );
-        console.log(styled('  index --bucket <b> --key <k>       - Index an object', 'muted'));
+        console.info(styled('  index --bucket <b> --key <k>       - Index an object', 'muted'));
     }
   }
 
   // Sync Commands
-  private async handleSync(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSync(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2SyncService.displayStatus();
@@ -316,9 +316,9 @@ class R2EnhancedCLI {
 
       case 'list':
         const jobs = r2SyncService.getAllJobs();
-        console.log(styled('\n📋 Sync Jobs:', 'accent'));
+        console.info(styled('\n📋 Sync Jobs:', 'accent'));
         for (const job of jobs) {
-          console.log(styled(`  ${job.name} (${job.id}) - ${job.status}`, 'muted'));
+          console.info(styled(`  ${job.name} (${job.id}) - ${job.status}`, 'muted'));
         }
         break;
 
@@ -334,9 +334,9 @@ class R2EnhancedCLI {
               conflictStrategy: (options.strategy || 'source-wins') as ConflictStrategy,
             },
           });
-          console.log(styled(`\n✅ Created sync job: ${job.id}`, 'success'));
+          console.info(styled(`\n✅ Created sync job: ${job.id}`, 'success'));
         } else {
-          console.log(
+          console.info(
             styled(
               '\n❌ Usage: sync create --name <name> --source <bucket> --target <bucket>',
               'error'
@@ -347,32 +347,32 @@ class R2EnhancedCLI {
 
       case 'run':
         if (options.jobId) {
-          console.log(styled(`\n🚀 Running sync: ${options.jobId}`, 'info'));
+          console.info(styled(`\n🚀 Running sync: ${options.jobId}`, 'info'));
           const result = await r2SyncService.executeJob(options.jobId);
-          console.log(
+          console.info(
             styled(
               `  Status: ${result.status}`,
               result.status === 'success' ? 'success' : 'warning'
             )
           );
-          console.log(styled(`  Objects: ${result.objects.length}`, 'muted'));
-          console.log(styled(`  Conflicts: ${result.conflicts.length}`, 'muted'));
+          console.info(styled(`  Objects: ${result.objects.length}`, 'muted'));
+          console.info(styled(`  Conflicts: ${result.conflicts.length}`, 'muted'));
         } else {
-          console.log(styled('\n❌ Usage: sync run --jobId <id>', 'error'));
+          console.info(styled('\n❌ Usage: sync run --jobId <id>', 'error'));
         }
         break;
 
       default:
-        console.log(styled('\n🔄 Sync Commands:', 'accent'));
-        console.log(styled('  status                    - Show sync status', 'muted'));
-        console.log(styled('  list                      - List sync jobs', 'muted'));
-        console.log(styled('  create --name <n> --source <s> --target <t>', 'muted'));
-        console.log(styled('  run --jobId <id>          - Execute a sync job', 'muted'));
+        console.info(styled('\n🔄 Sync Commands:', 'accent'));
+        console.info(styled('  status                    - Show sync status', 'muted'));
+        console.info(styled('  list                      - List sync jobs', 'muted'));
+        console.info(styled('  create --name <n> --source <s> --target <t>', 'muted'));
+        console.info(styled('  run --jobId <id>          - Execute a sync job', 'muted'));
     }
   }
 
   // Backup Commands
-  private async handleBackup(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleBackup(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2BackupManager.displayStatus();
@@ -380,9 +380,9 @@ class R2EnhancedCLI {
 
       case 'list':
         const snapshots = r2BackupManager.listSnapshots(options.jobId);
-        console.log(styled('\n💾 Snapshots:', 'accent'));
+        console.info(styled('\n💾 Snapshots:', 'accent'));
         for (const snap of snapshots.slice(0, 10)) {
-          console.log(
+          console.info(
             styled(
               `  📸 ${snap.id} (${snap.type}) - ${new Date(snap.timestamp).toLocaleString()}`,
               'muted'
@@ -406,9 +406,9 @@ class R2EnhancedCLI {
               verifyAfterBackup: options.verify === 'true',
             },
           });
-          console.log(styled(`\n✅ Created backup job: ${job.id}`, 'success'));
+          console.info(styled(`\n✅ Created backup job: ${job.id}`, 'success'));
         } else {
-          console.log(
+          console.info(
             styled(
               '\n❌ Usage: backup create --name <n> --source <bucket> --dest <bucket>',
               'error'
@@ -419,98 +419,98 @@ class R2EnhancedCLI {
 
       case 'run':
         if (options.jobId) {
-          console.log(styled(`\n🚀 Running backup: ${options.jobId}`, 'info'));
+          console.info(styled(`\n🚀 Running backup: ${options.jobId}`, 'info'));
           const snapshot = await r2BackupManager.executeBackup(
             options.jobId,
             options.full === 'true'
           );
-          console.log(styled(`  Snapshot: ${snapshot.id}`, 'success'));
-          console.log(styled(`  Objects: ${snapshot.manifest.objects.length}`, 'muted'));
-          console.log(styled(`  Size: ${(snapshot.size / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+          console.info(styled(`  Snapshot: ${snapshot.id}`, 'success'));
+          console.info(styled(`  Objects: ${snapshot.manifest.objects.length}`, 'muted'));
+          console.info(styled(`  Size: ${(snapshot.size / 1024 / 1024).toFixed(2)} MB`, 'muted'));
         } else {
-          console.log(styled('\n❌ Usage: backup run --jobId <id>', 'error'));
+          console.info(styled('\n❌ Usage: backup run --jobId <id>', 'error'));
         }
         break;
 
       case 'restore':
         if (options.snapshotId && options.target) {
-          console.log(styled(`\n🔄 Restoring: ${options.snapshotId} → ${options.target}`, 'info'));
+          console.info(styled(`\n🔄 Restoring: ${options.snapshotId} → ${options.target}`, 'info'));
           const job = await r2BackupManager.restoreBackup(options.snapshotId, {
             bucket: options.target,
           });
-          console.log(styled(`  Status: ${job.status}`, 'success'));
-          console.log(styled(`  Restored: ${job.progress.restoredObjects} objects`, 'muted'));
+          console.info(styled(`  Status: ${job.status}`, 'success'));
+          console.info(styled(`  Restored: ${job.progress.restoredObjects} objects`, 'muted'));
         } else {
-          console.log(
+          console.info(
             styled('\n❌ Usage: backup restore --snapshotId <id> --target <bucket>', 'error')
           );
         }
         break;
 
       default:
-        console.log(styled('\n💾 Backup Commands:', 'accent'));
-        console.log(styled('  status                          - Show backup status', 'muted'));
-        console.log(styled('  list [--jobId <id>]             - List snapshots', 'muted'));
-        console.log(styled('  create --name <n> --source <s> --dest <d>', 'muted'));
-        console.log(styled('  run --jobId <id> [--full]', 'muted'));
-        console.log(styled('  restore --snapshotId <id> --target <bucket>', 'muted'));
+        console.info(styled('\n💾 Backup Commands:', 'accent'));
+        console.info(styled('  status                          - Show backup status', 'muted'));
+        console.info(styled('  list [--jobId <id>]             - List snapshots', 'muted'));
+        console.info(styled('  create --name <n> --source <s> --dest <d>', 'muted'));
+        console.info(styled('  run --jobId <id> [--full]', 'muted'));
+        console.info(styled('  restore --snapshotId <id> --target <bucket>', 'muted'));
     }
   }
 
   // Analytics Commands
-  private async handleAnalytics(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleAnalytics(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'metrics':
         const metrics = r2Analytics.getMetrics();
-        console.log(styled('\n📊 R2 Metrics (24h)', 'accent'));
-        console.log(
+        console.info(styled('\n📊 R2 Metrics (24h)', 'accent'));
+        console.info(
           styled(
             `  Storage: ${(metrics.storage.totalSize / 1024 / 1024 / 1024).toFixed(2)} GB`,
             'muted'
           )
         );
-        console.log(styled(`  Objects: ${metrics.storage.objectCount.toLocaleString()}`, 'muted'));
-        console.log(
+        console.info(styled(`  Objects: ${metrics.storage.objectCount.toLocaleString()}`, 'muted'));
+        console.info(
           styled(
             `  Operations - Reads: ${metrics.operations.reads}, Writes: ${metrics.operations.writes}`,
             'muted'
           )
         );
-        console.log(
+        console.info(
           styled(
             `  Latency - P50: ${metrics.operations.latency.p50}ms, P95: ${metrics.operations.latency.p95}ms`,
             'muted'
           )
         );
-        console.log(
+        console.info(
           styled(`  Estimated Cost: $${metrics.costs.projectedMonthly.toFixed(2)}/month`, 'muted')
         );
         break;
 
       case 'patterns':
         const patterns = r2Analytics.analyzePatterns();
-        console.log(styled('\n📈 Usage Patterns', 'accent'));
+        console.info(styled('\n📈 Usage Patterns', 'accent'));
         for (const pattern of patterns) {
-          console.log(styled(`  Pattern: ${pattern.pattern}`, 'muted'));
-          console.log(styled(`    Frequency: ${pattern.frequency}`, 'muted'));
-          console.log(styled(`    Peak Hours: ${pattern.peakHours.join(', ')}`, 'muted'));
-          console.log(styled(`    Trend: ${pattern.accessTrend}`, 'muted'));
+          console.info(styled(`  Pattern: ${pattern.pattern}`, 'muted'));
+          console.info(styled(`    Frequency: ${pattern.frequency}`, 'muted'));
+          console.info(styled(`    Peak Hours: ${pattern.peakHours.join(', ')}`, 'muted'));
+          console.info(styled(`    Trend: ${pattern.accessTrend}`, 'muted'));
         }
         break;
 
       case 'recommendations':
         const recommendations = r2Analytics.getRecommendations();
-        console.log(styled('\n💡 Optimization Recommendations', 'accent'));
+        console.info(styled('\n💡 Optimization Recommendations', 'accent'));
         for (const rec of recommendations) {
-          console.log(
+          console.info(
             styled(
               `  [${rec.priority.toUpperCase()}] ${rec.title}`,
               rec.priority === 'high' ? 'error' : 'warning'
             )
           );
-          console.log(styled(`    ${rec.description}`, 'muted'));
+          console.info(styled(`    ${rec.description}`, 'muted'));
           if (rec.potentialSavings) {
-            console.log(
+            console.info(
               styled(`    Potential Savings: $${rec.potentialSavings.toFixed(2)}/month`, 'success')
             );
           }
@@ -519,21 +519,21 @@ class R2EnhancedCLI {
 
       case 'dashboard':
         const dashboards = r2Analytics['dashboards']; // Access private for demo
-        console.log(styled('\n📊 Dashboards:', 'accent'));
-        console.log(styled('  Use analytics metrics for real-time monitoring', 'muted'));
+        console.info(styled('\n📊 Dashboards:', 'accent'));
+        console.info(styled('  Use analytics metrics for real-time monitoring', 'muted'));
         break;
 
       default:
-        console.log(styled('\n📊 Analytics Commands:', 'accent'));
-        console.log(styled('  metrics         - Show R2 metrics', 'muted'));
-        console.log(styled('  patterns        - Analyze usage patterns', 'muted'));
-        console.log(styled('  recommendations - Get optimization recommendations', 'muted'));
-        console.log(styled('  dashboard       - List dashboards', 'muted'));
+        console.info(styled('\n📊 Analytics Commands:', 'accent'));
+        console.info(styled('  metrics         - Show R2 metrics', 'muted'));
+        console.info(styled('  patterns        - Analyze usage patterns', 'muted'));
+        console.info(styled('  recommendations - Get optimization recommendations', 'muted'));
+        console.info(styled('  dashboard       - List dashboards', 'muted'));
     }
   }
 
   // Security Commands
-  private async handleSecurity(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSecurity(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2SecurityManager.displayStatus();
@@ -541,13 +541,13 @@ class R2EnhancedCLI {
 
       case 'report':
         const report = r2SecurityManager.generateSecurityReport();
-        console.log(styled('\n🔐 Security Report', 'accent'));
-        console.log(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
-        console.log(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
-        console.log(
+        console.info(styled('\n🔐 Security Report', 'accent'));
+        console.info(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
+        console.info(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
+        console.info(
           styled(`  Active Keys: ${report.summary.activeKeys}/${report.summary.totalKeys}`, 'muted')
         );
-        console.log(
+        console.info(
           styled(
             `  Violations: ${report.summary.violations}`,
             report.summary.violations > 0 ? 'error' : 'success'
@@ -555,9 +555,9 @@ class R2EnhancedCLI {
         );
 
         if (report.findings.length > 0) {
-          console.log(styled('\n  Findings:', 'warning'));
+          console.info(styled('\n  Findings:', 'warning'));
           for (const finding of report.findings.slice(0, 5)) {
-            console.log(
+            console.info(
               styled(`    [${finding.severity.toUpperCase()}] ${finding.title}`, 'error')
             );
           }
@@ -566,11 +566,11 @@ class R2EnhancedCLI {
 
       case 'audit':
         const entries = r2SecurityManager.getAuditLog({ limit: parseInt(options.limit) || 10 });
-        console.log(styled('\n📝 Security Audit Log', 'accent'));
+        console.info(styled('\n📝 Security Audit Log', 'accent'));
         for (const entry of entries) {
           const icon = entry.result === 'success' ? '✅' : entry.result === 'denied' ? '❌' : '⚠️';
-          console.log(styled(`  ${icon} ${entry.action} by ${entry.principal}`, 'muted'));
-          console.log(
+          console.info(styled(`  ${icon} ${entry.action} by ${entry.principal}`, 'muted'));
+          console.info(
             styled(`     Resource: ${entry.resource} | Risk: ${entry.riskScore}`, 'muted')
           );
         }
@@ -582,10 +582,10 @@ class R2EnhancedCLI {
           const { key } = r2SecurityManager.createAccessKey(options.name, perms, {
             expiresInDays: parseInt(options.expires) || undefined,
           });
-          console.log(styled(`\n✅ Created access key: ${key.accessKeyId}`, 'success'));
-          console.log(styled('⚠️  Save the secret key - it will not be shown again!', 'warning'));
+          console.info(styled(`\n✅ Created access key: ${key.accessKeyId}`, 'success'));
+          console.info(styled('⚠️  Save the secret key - it will not be shown again!', 'warning'));
         } else {
-          console.log(
+          console.info(
             styled(
               '\n❌ Usage: security create-key --name <name> [--permissions <perms>] [--expires <days>]',
               'error'
@@ -595,18 +595,18 @@ class R2EnhancedCLI {
         break;
 
       default:
-        console.log(styled('\n🔐 Security Commands:', 'accent'));
-        console.log(styled('  status                          - Show security status', 'muted'));
-        console.log(
+        console.info(styled('\n🔐 Security Commands:', 'accent'));
+        console.info(styled('  status                          - Show security status', 'muted'));
+        console.info(
           styled('  report                          - Generate security report', 'muted')
         );
-        console.log(styled('  audit [--limit <n>]             - View audit log', 'muted'));
-        console.log(styled('  create-key --name <n> [...]     - Create access key', 'muted'));
+        console.info(styled('  audit [--limit <n>]             - View audit log', 'muted'));
+        console.info(styled('  create-key --name <n> [...]     - Create access key', 'muted'));
     }
   }
 
   // Pipeline Commands
-  private async handlePipeline(subcommand: string | undefined, options: any): Promise<void> {
+  private async handlePipeline(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2TransformPipeline.displayStatus();
@@ -614,10 +614,10 @@ class R2EnhancedCLI {
 
       case 'list':
         const pipelines = r2TransformPipeline.getAllPipelines();
-        console.log(styled('\n📋 Pipelines:', 'accent'));
+        console.info(styled('\n📋 Pipelines:', 'accent'));
         for (const pipeline of pipelines) {
           const statusIcon = pipeline.status === 'active' ? '✅' : '⏸️';
-          console.log(
+          console.info(
             styled(`  ${statusIcon} ${pipeline.name}: ${pipeline.steps.length} steps`, 'muted')
           );
         }
@@ -625,28 +625,28 @@ class R2EnhancedCLI {
 
       case 'run':
         if (options.id) {
-          console.log(styled(`\n🚀 Running pipeline: ${options.id}`, 'info'));
+          console.info(styled(`\n🚀 Running pipeline: ${options.id}`, 'info'));
           const run = await r2TransformPipeline.executePipeline(options.id);
-          console.log(
+          console.info(
             styled(`  Status: ${run.status}`, run.status === 'completed' ? 'success' : 'error')
           );
-          console.log(styled(`  Processed: ${run.outputObjects}/${run.inputObjects}`, 'muted'));
-          console.log(styled(`  Time: ${run.metrics.processingTime}ms`, 'muted'));
+          console.info(styled(`  Processed: ${run.outputObjects}/${run.inputObjects}`, 'muted'));
+          console.info(styled(`  Time: ${run.metrics.processingTime}ms`, 'muted'));
         } else {
-          console.log(styled('\n❌ Usage: pipeline run --id <pipeline-id>', 'error'));
+          console.info(styled('\n❌ Usage: pipeline run --id <pipeline-id>', 'error'));
         }
         break;
 
       default:
-        console.log(styled('\n🔄 Pipeline Commands:', 'accent'));
-        console.log(styled('  status          - Show pipeline status', 'muted'));
-        console.log(styled('  list            - List all pipelines', 'muted'));
-        console.log(styled('  run --id <id>   - Execute a pipeline', 'muted'));
+        console.info(styled('\n🔄 Pipeline Commands:', 'accent'));
+        console.info(styled('  status          - Show pipeline status', 'muted'));
+        console.info(styled('  list            - List all pipelines', 'muted'));
+        console.info(styled('  run --id <id>   - Execute a pipeline', 'muted'));
     }
   }
 
   // Webhook Commands
-  private async handleWebhook(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleWebhook(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2WebhookManager.displayStatus();
@@ -654,10 +654,10 @@ class R2EnhancedCLI {
 
       case 'list':
         const webhooks = r2WebhookManager.getAllWebhooks();
-        console.log(styled('\n🔗 Webhooks:', 'accent'));
+        console.info(styled('\n🔗 Webhooks:', 'accent'));
         for (const wh of webhooks) {
           const status = wh.status === 'active' ? '✅' : '⏸️';
-          console.log(
+          console.info(
             styled(
               `  ${status} ${wh.name}: ${wh.stats.successfulDeliveries}/${wh.stats.totalDeliveries} deliveries`,
               'muted'
@@ -680,9 +680,9 @@ class R2EnhancedCLI {
               initialDelay: 1000,
             },
           });
-          console.log(styled(`\n✅ Created webhook: ${wh.id}`, 'success'));
+          console.info(styled(`\n✅ Created webhook: ${wh.id}`, 'success'));
         } else {
-          console.log(
+          console.info(
             styled('\n❌ Usage: webhook create --name <n> --url <url> --events <e1,e2>', 'error')
           );
         }
@@ -691,31 +691,31 @@ class R2EnhancedCLI {
       case 'test':
         if (options.id) {
           const result = await r2WebhookManager.testWebhook(options.id);
-          console.log(styled(`\n🧪 Test Result:`, result.success ? 'success' : 'error'));
-          console.log(styled(`  Success: ${result.success}`, 'muted'));
-          if (result.statusCode) console.log(styled(`  Status: ${result.statusCode}`, 'muted'));
-          if (result.error) console.log(styled(`  Error: ${result.error}`, 'error'));
+          console.info(styled(`\n🧪 Test Result:`, result.success ? 'success' : 'error'));
+          console.info(styled(`  Success: ${result.success}`, 'muted'));
+          if (result.statusCode) console.info(styled(`  Status: ${result.statusCode}`, 'muted'));
+          if (result.error) console.info(styled(`  Error: ${result.error}`, 'error'));
         } else {
-          console.log(styled('\n❌ Usage: webhook test --id <webhook-id>', 'error'));
+          console.info(styled('\n❌ Usage: webhook test --id <webhook-id>', 'error'));
         }
         break;
 
       case 'templates':
         const templates = r2WebhookManager.getTemplates();
-        console.log(styled('\n📋 Integration Templates:', 'accent'));
+        console.info(styled('\n📋 Integration Templates:', 'accent'));
         for (const template of templates) {
-          console.log(styled(`  ${template.icon} ${template.name}`, 'muted'));
-          console.log(styled(`     ${template.description}`, 'muted'));
+          console.info(styled(`  ${template.icon} ${template.name}`, 'muted'));
+          console.info(styled(`     ${template.description}`, 'muted'));
         }
         break;
 
       default:
-        console.log(styled('\n🔗 Webhook Commands:', 'accent'));
-        console.log(styled('  status                            - Show webhook status', 'muted'));
-        console.log(styled('  list                              - List webhooks', 'muted'));
-        console.log(styled('  create --name <n> --url <u> --events <e>', 'muted'));
-        console.log(styled('  test --id <id>                    - Test webhook', 'muted'));
-        console.log(
+        console.info(styled('\n🔗 Webhook Commands:', 'accent'));
+        console.info(styled('  status                            - Show webhook status', 'muted'));
+        console.info(styled('  list                              - List webhooks', 'muted'));
+        console.info(styled('  create --name <n> --url <u> --events <e>', 'muted'));
+        console.info(styled('  test --id <id>                    - Test webhook', 'muted'));
+        console.info(
           styled('  templates                         - List integration templates', 'muted')
         );
     }
@@ -723,13 +723,13 @@ class R2EnhancedCLI {
 
   // Status Command
   private async handleStatus(): Promise<void> {
-    console.log(styled('\n🚀 R2 Enhanced System Status', 'accent'));
-    console.log(styled('============================\n', 'accent'));
+    console.info(styled('\n🚀 R2 Enhanced System Status', 'accent'));
+    console.info(styled('============================\n', 'accent'));
 
     // Event System
     const eventStats = r2EventSystem.getStats();
-    console.log(styled('📢 Event System:', 'info'));
-    console.log(
+    console.info(styled('📢 Event System:', 'info'));
+    console.info(
       styled(
         `  Events: ${eventStats.totalEvents} | Connections: ${eventStats.activeConnections}`,
         'muted'
@@ -738,13 +738,13 @@ class R2EnhancedCLI {
 
     // Batch Operations
     const activeBatches = r2BatchOperations.getActiveJobs().length;
-    console.log(styled('\n📦 Batch Operations:', 'info'));
-    console.log(styled(`  Active Jobs: ${activeBatches}`, 'muted'));
+    console.info(styled('\n📦 Batch Operations:', 'info'));
+    console.info(styled(`  Active Jobs: ${activeBatches}`, 'muted'));
 
     // Lifecycle
     const lifecycleMetrics = r2LifecycleManager.getMetrics();
-    console.log(styled('\n⏰ Lifecycle Manager:', 'info'));
-    console.log(
+    console.info(styled('\n⏰ Lifecycle Manager:', 'info'));
+    console.info(
       styled(
         `  Objects: ${lifecycleMetrics.totalObjects} | Expired: ${lifecycleMetrics.expiredObjects}`,
         'muted'
@@ -753,8 +753,8 @@ class R2EnhancedCLI {
 
     // Search
     const searchStats = r2SearchEngine.getStats();
-    console.log(styled('\n🔍 Search Engine:', 'info'));
-    console.log(
+    console.info(styled('\n🔍 Search Engine:', 'info'));
+    console.info(
       styled(
         `  Documents: ${searchStats.totalDocuments} | Terms: ${searchStats.totalTerms}`,
         'muted'
@@ -763,8 +763,8 @@ class R2EnhancedCLI {
 
     // Sync
     const syncStats = r2SyncService.getStats();
-    console.log(styled('\n🔄 Sync Service:', 'info'));
-    console.log(
+    console.info(styled('\n🔄 Sync Service:', 'info'));
+    console.info(
       styled(
         `  Jobs: ${syncStats.totalJobs} | Objects Synced: ${syncStats.totalObjectsSynced}`,
         'muted'
@@ -773,11 +773,11 @@ class R2EnhancedCLI {
 
     // Backup
     const backupStats = r2BackupManager.getStats();
-    console.log(styled('\n💾 Backup Manager:', 'info'));
-    console.log(
+    console.info(styled('\n💾 Backup Manager:', 'info'));
+    console.info(
       styled(`  Jobs: ${backupStats.totalJobs} | Snapshots: ${backupStats.totalSnapshots}`, 'muted')
     );
-    console.log(
+    console.info(
       styled(
         `  Data Protected: ${(backupStats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`,
         'muted'
@@ -786,58 +786,58 @@ class R2EnhancedCLI {
 
     // Analytics
     const analyticsStats = r2Analytics.getStats();
-    console.log(styled('\n📊 Analytics:', 'info'));
-    console.log(styled(`  Total Events: ${analyticsStats.totalDocuments}`, 'muted'));
+    console.info(styled('\n📊 Analytics:', 'info'));
+    console.info(styled(`  Total Events: ${analyticsStats.totalDocuments}`, 'muted'));
 
     // Security
-    console.log(styled('\n🔐 Security:', 'info'));
-    console.log(styled(`  Policies: ${r2SecurityManager['policies'].size}`, 'muted'));
+    console.info(styled('\n🔐 Security:', 'info'));
+    console.info(styled(`  Policies: ${r2SecurityManager['policies'].size}`, 'muted'));
 
     // Pipeline
     const pipelines = r2TransformPipeline.getAllPipelines();
-    console.log(styled('\n🔄 Pipelines:', 'info'));
-    console.log(styled(`  Total: ${pipelines.length}`, 'muted'));
+    console.info(styled('\n🔄 Pipelines:', 'info'));
+    console.info(styled(`  Total: ${pipelines.length}`, 'muted'));
 
     // Webhooks
     const webhooks = r2WebhookManager.getAllWebhooks();
-    console.log(styled('\n🔗 Webhooks:', 'info'));
-    console.log(styled(`  Total: ${webhooks.length}`, 'muted'));
+    console.info(styled('\n🔗 Webhooks:', 'info'));
+    console.info(styled(`  Total: ${webhooks.length}`, 'muted'));
 
-    console.log(styled('\n✅ All systems operational', 'success'));
+    console.info(styled('\n✅ All systems operational', 'success'));
   }
 
   // Help Command
   private showHelp(): void {
-    console.log(styled('\n🚀 R2 Enhanced CLI', 'accent'));
-    console.log(styled('==================', 'accent'));
-    console.log(styled('\nUnified command interface for R2 enhancements\n', 'muted'));
+    console.info(styled('\n🚀 R2 Enhanced CLI', 'accent'));
+    console.info(styled('==================', 'accent'));
+    console.info(styled('\nUnified command interface for R2 enhancements\n', 'muted'));
 
-    console.log(styled('Available Commands:', 'info'));
+    console.info(styled('Available Commands:', 'info'));
     for (const [cmd, desc] of Object.entries(COMMANDS)) {
-      console.log(styled(`  r2-cli ${cmd.padEnd(12)} ${desc}`, 'muted'));
+      console.info(styled(`  r2-cli ${cmd.padEnd(12)} ${desc}`, 'muted'));
     }
 
-    console.log(styled('\nExamples:', 'info'));
-    console.log(
+    console.info(styled('\nExamples:', 'info'));
+    console.info(
       styled('  r2-cli status                              # Show system status', 'muted')
     );
-    console.log(
+    console.info(
       styled('  r2-cli events watch                        # Watch events in real-time', 'muted')
     );
-    console.log(styled('  r2-cli search query "error handling"        # Search R2 data', 'muted'));
-    console.log(
+    console.info(styled('  r2-cli search query "error handling"        # Search R2 data', 'muted'));
+    console.info(
       styled('  r2-cli lifecycle scan                      # Run lifecycle scan', 'muted')
     );
-    console.log(styled('  r2-cli backup list                         # List backups', 'muted'));
-    console.log(styled('  r2-cli analytics metrics                   # View metrics', 'muted'));
-    console.log(styled('  r2-cli security report                     # Security audit', 'muted'));
-    console.log(styled('  r2-cli pipeline list                       # List pipelines', 'muted'));
-    console.log(styled('  r2-cli webhook create --name test --url ...', 'muted'));
+    console.info(styled('  r2-cli backup list                         # List backups', 'muted'));
+    console.info(styled('  r2-cli analytics metrics                   # View metrics', 'muted'));
+    console.info(styled('  r2-cli security report                     # Security audit', 'muted'));
+    console.info(styled('  r2-cli pipeline list                       # List pipelines', 'muted'));
+    console.info(styled('  r2-cli webhook create --name test --url ...', 'muted'));
   }
 
   // Parse command line options
-  private parseOptions(args: string[]): any {
-    const options: any = { _: [] };
+  private parseOptions(args: string[]): unknown {
+    const options: unknown = { _: [] };
 
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];

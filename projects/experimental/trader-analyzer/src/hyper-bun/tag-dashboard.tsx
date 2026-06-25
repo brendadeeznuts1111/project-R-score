@@ -578,11 +578,11 @@ export function createTagDashboard(port: number = 3000) {
 		},
 	});
 
-	console.log(`🚀 Tag Dashboard running at http://localhost:${server.port}`);
-	console.log(`📊 Dashboard: http://localhost:${server.port}/`);
-	console.log(`🔌 API: http://localhost:${server.port}/api/tags`);
-	console.log(`💚 Health: http://localhost:${server.port}/health`);
-	console.log(`\nPress Ctrl+C to stop\n`);
+	console.info(`🚀 Tag Dashboard running at http://localhost:${server.port}`);
+	console.info(`📊 Dashboard: http://localhost:${server.port}/`);
+	console.info(`🔌 API: http://localhost:${server.port}/api/tags`);
+	console.info(`💚 Health: http://localhost:${server.port}/health`);
+	console.info(`\nPress Ctrl+C to stop\n`);
 
 	return server;
 }
@@ -597,13 +597,13 @@ if (import.meta.main) {
 
 	// Graceful shutdown
 	process.on("SIGINT", () => {
-		console.log("\n\n👋 Shutting down dashboard...");
+		console.info("\n\n👋 Shutting down dashboard...");
 		server.stop();
 		process.exit(0);
 	});
 
 	process.on("SIGTERM", () => {
-		console.log("\n\n👋 Shutting down dashboard...");
+		console.info("\n\n👋 Shutting down dashboard...");
 		server.stop();
 		process.exit(0);
 	});

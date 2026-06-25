@@ -86,7 +86,7 @@ export class WorkerSystem {
 		const delay = Math.pow(2, attempt) * 100;
 		await Bun.sleep(delay);
 		
-		console.log(`Retrying task (attempt ${attempt + 1}/${maxRetries})`);
+		console.info(`Retrying task (attempt ${attempt + 1}/${maxRetries})`);
 		
 		return this.processTask(task);
 	}
@@ -104,7 +104,7 @@ export class WorkerSystem {
 	async broadcast(message: any) {
 		// This would require access to pool's workers
 		// Simplified version - in production would iterate through workers
-		console.log('Broadcasting message:', message);
+		console.info('Broadcasting message:', message);
 	}
 	
 	/**

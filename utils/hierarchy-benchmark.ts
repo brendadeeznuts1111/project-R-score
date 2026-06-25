@@ -233,8 +233,8 @@ function generateHierarchyMatrix(benchmarks: HierarchyBenchmark[]): string {
  * Run complete hierarchy benchmark suite
  */
 export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
-  console.log('\x1b[1;36m🏢 Hierarchy Benchmark Suite - Team Lead Report\x1b[0m');
-  console.log('\x1b[1;36m' + '='.repeat(60) + '\x1b[0m');
+  console.info('\x1b[1;36m🏢 Hierarchy Benchmark Suite - Team Lead Report\x1b[0m');
+  console.info('\x1b[1;36m' + '='.repeat(60) + '\x1b[0m');
   
   const benchmarks: HierarchyBenchmark[] = [];
   
@@ -247,7 +247,7 @@ export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
   };
   
   // Junior benchmark
-  console.log('\n\x1b[1;32m👤 Running Junior Benchmark...\x1b[0m');
+  console.info('\n\x1b[1;32m👤 Running Junior Benchmark...\x1b[0m');
   const juniorResult = await juniorProfile('../demo-junior.md');
   const juniorTableCols = (juniorResult.markdown.featureCounts as ExtendedFeatureCounts).tableCols || DEFAULT_COLS;
   benchmarks.push({
@@ -268,7 +268,7 @@ export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
   });
   
   // Senior benchmark
-  console.log('\n\x1b[1;35m🔧 Running Senior Benchmark...\x1b[0m');
+  console.info('\n\x1b[1;35m🔧 Running Senior Benchmark...\x1b[0m');
   const seniorResult = await seniorProfile(testDocuments.senior);
   const seniorTableCols = (seniorResult.markdown.featureCounts as ExtendedFeatureCounts).tableCols || DEFAULT_COLS;
   benchmarks.push({
@@ -289,7 +289,7 @@ export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
   });
   
   // Lead benchmark (using senior with enhanced config)
-  console.log('\n\x1b[1;33m👑 Running Lead Benchmark...\x1b[0m');
+  console.info('\n\x1b[1;33m👑 Running Lead Benchmark...\x1b[0m');
   const leadConfig = { ...DEFAULT_ENTERPRISE_CONFIG };
   leadConfig.performance.timeoutMs = 30000;
   const leadResult = await enterpriseProfile(testDocuments.lead, leadConfig);
@@ -312,7 +312,7 @@ export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
   });
   
   // Enterprise benchmark
-  console.log('\n\x1b[1;36m🏢 Running Enterprise Benchmark...\x1b[0m');
+  console.info('\n\x1b[1;36m🏢 Running Enterprise Benchmark...\x1b[0m');
   const enterpriseResult = await enterpriseProfile(testDocuments.enterprise);
   const enterpriseTableCols = (enterpriseResult.markdown.featureCounts as ExtendedFeatureCounts).tableCols || DEFAULT_COLS;
   benchmarks.push({
@@ -341,11 +341,11 @@ export async function runHierarchyBenchmark(): Promise<HierarchyBenchmark[]> {
 export async function generateHierarchyReport(): Promise<void> {
   const benchmarks = await runHierarchyBenchmark();
   
-  console.log('\n\x1b[1;36m📊 HIERARCHY BENCHMARK MATRIX\x1b[0m');
-  console.log('\x1b[1;36m' + '='.repeat(70) + '\x1b[0m');
+  console.info('\n\x1b[1;36m📊 HIERARCHY BENCHMARK MATRIX\x1b[0m');
+  console.info('\x1b[1;36m' + '='.repeat(70) + '\x1b[0m');
   
   // Performance summary table
-  console.log('\n\x1b[1;33m📈 Enhanced Performance Summary:\x1b[0m');
+  console.info('\n\x1b[1;33m📈 Enhanced Performance Summary:\x1b[0m');
   console.table({
     'Tier': benchmarks.map(b => b.tier.toUpperCase()),
     'Cols': benchmarks.map(b => b.cols),
@@ -360,32 +360,32 @@ export async function generateHierarchyReport(): Promise<void> {
   });
   
   // Hierarchy matrix
-  console.log('\n\x1b[1;33m📋 Hierarchy Benchmark Matrix:\x1b[0m');
-  console.log(generateHierarchyMatrix(benchmarks));
+  console.info('\n\x1b[1;33m📋 Hierarchy Benchmark Matrix:\x1b[0m');
+  console.info(generateHierarchyMatrix(benchmarks));
   
   // ASCII graph
-  console.log('\n\x1b[1;33m📊 Performance Graph:\x1b[0m');
-  console.log(generateASCIIGraph(benchmarks));
+  console.info('\n\x1b[1;33m📊 Performance Graph:\x1b[0m');
+  console.info(generateASCIIGraph(benchmarks));
   
   // Detailed analysis
-  console.log('\n\x1b[1;33m🔍 Enhanced Tier Analysis:\x1b[0m');
+  console.info('\n\x1b[1;33m🔍 Enhanced Tier Analysis:\x1b[0m');
   benchmarks.forEach(benchmark => {
     const tierColor = benchmark.tier === 'junior' ? '32' : 
                      benchmark.tier === 'senior' ? '35' : 
                      benchmark.tier === 'lead' ? '33' : '36';
     
-    console.log(`\n\x1b[1;${tierColor}m${benchmark.tier.toUpperCase()} TIER ANALYSIS:\x1b[0m`);
-    console.log(`  • Table Columns: ${benchmark.cols} cols`);
-    console.log(`  • Parse Time: ${benchmark.parseTime.toFixed(1)} ms`);
-    console.log(`  • Table Time: ${benchmark.tableTime.toFixed(1)} ms`);
-    console.log(`  • Features: ${benchmark.features}+ features`);
-    console.log(`  • Memory Usage: ${benchmark.memoryMB.toFixed(1)} MB`);
-    console.log(`  • JSON Export: ${benchmark.jsonExport}`);
-    console.log(`  • Throughput: ${Math.round(benchmark.throughput / 1000).toLocaleString()} chars/sec`);
-    console.log(`  • GFM Compliance: ${benchmark.gfmCompliance}%`);
-    console.log(`  • CommonMark: ${benchmark.commonmarkCompliance}%`);
-    console.log(`  • Security Level: ${'🔒'.repeat(benchmark.securityFeatures)}`);
-    console.log(`  • Runner: ${benchmark.runner}`);
+    console.info(`\n\x1b[1;${tierColor}m${benchmark.tier.toUpperCase()} TIER ANALYSIS:\x1b[0m`);
+    console.info(`  • Table Columns: ${benchmark.cols} cols`);
+    console.info(`  • Parse Time: ${benchmark.parseTime.toFixed(1)} ms`);
+    console.info(`  • Table Time: ${benchmark.tableTime.toFixed(1)} ms`);
+    console.info(`  • Features: ${benchmark.features}+ features`);
+    console.info(`  • Memory Usage: ${benchmark.memoryMB.toFixed(1)} MB`);
+    console.info(`  • JSON Export: ${benchmark.jsonExport}`);
+    console.info(`  • Throughput: ${Math.round(benchmark.throughput / 1000).toLocaleString()} chars/sec`);
+    console.info(`  • GFM Compliance: ${benchmark.gfmCompliance}%`);
+    console.info(`  • CommonMark: ${benchmark.commonmarkCompliance}%`);
+    console.info(`  • Security Level: ${'🔒'.repeat(benchmark.securityFeatures)}`);
+    console.info(`  • Runner: ${benchmark.runner}`);
   });
   
   // Export results
@@ -402,10 +402,10 @@ export async function generateHierarchyReport(): Promise<void> {
   
   const reportFile = `hierarchy-report-${Date.now()}.json`;
   await Bun.write(reportFile, JSON.stringify(reportData, null, 2));
-  console.log(`\n\x1b[1;32m📁 Hierarchy report exported: ${reportFile}\x1b[0m`);
+  console.info(`\n\x1b[1;32m📁 Hierarchy report exported: ${reportFile}\x1b[0m`);
   
-  console.log('\n\x1b[1;32m✅ Hierarchy benchmark suite complete!\x1b[0m');
-  console.log('\x1b[1;33m🎯 Status: LEAD-SPEC PRODUCTION - Ready for handover!\x1b[0m');
+  console.info('\n\x1b[1;32m✅ Hierarchy benchmark suite complete!\x1b[0m');
+  console.info('\x1b[1;33m🎯 Status: LEAD-SPEC PRODUCTION - Ready for handover!\x1b[0m');
 }
 
 /**

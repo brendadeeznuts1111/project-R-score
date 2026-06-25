@@ -309,16 +309,16 @@ const server = serve({
     }
 });
 
-console.log(`🚀 Odds Protocol Dashboard Started`);
-console.log(`📱 Dashboard: http://localhost:${PORT}`);
-console.log(`🏥 Health: http://localhost:${PORT}/health`);
-console.log(`🔗 WebSocket: ws://localhost:${PORT}`);
-console.log(`📚 Vault Integration: Active`);
-console.log(`⚡ Performance: 700k+ msg/sec`);
+console.info(`🚀 Odds Protocol Dashboard Started`);
+console.info(`📱 Dashboard: http://localhost:${PORT}`);
+console.info(`🏥 Health: http://localhost:${PORT}/health`);
+console.info(`🔗 WebSocket: ws://localhost:${PORT}`);
+console.info(`📚 Vault Integration: Active`);
+console.info(`⚡ Performance: 700k+ msg/sec`);
 
 // Keep the process running
 process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down dashboard...');
+    console.info('\n🛑 Shutting down dashboard...');
     server.stop();
     process.exit(0);
 });

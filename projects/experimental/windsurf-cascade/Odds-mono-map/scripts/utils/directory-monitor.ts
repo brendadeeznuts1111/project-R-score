@@ -85,9 +85,9 @@ class DirectoryMonitorSystem {
      */
     async startMonitoring(): Promise<void> {
         console.clear();
-        console.log(chalk.blue.bold('🔍 Comprehensive Directory Monitoring System'));
-        console.log(chalk.gray('Powered by Bun Utilities Mastery - Real-time Analytics & Error Tracking'));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold('🔍 Comprehensive Directory Monitoring System'));
+        console.info(chalk.gray('Powered by Bun Utilities Mastery - Real-time Analytics & Error Tracking'));
+        console.info(chalk.gray('═'.repeat(120)));
 
         this.isRunning = true;
         this.startTime = new Date();
@@ -200,16 +200,16 @@ class DirectoryMonitorSystem {
         const uptime = this.getUptime();
         const headerText = `🔍 Directory Monitoring System - Uptime: ${uptime}`;
 
-        console.log(chalk.blue.bold(headerText));
-        console.log(chalk.gray('═'.repeat(120)));
+        console.info(chalk.blue.bold(headerText));
+        console.info(chalk.gray('═'.repeat(120)));
     }
 
     /**
      * Display directory overview with progress bars
      */
     private displayDirectoryOverview(): void {
-        console.log(chalk.cyan.bold('\n📁 Directory Status Overview'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n📁 Directory Status Overview'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const directoryData = Array.from(this.directories.values()).map(dir => ({
             'Directory': dir.name,
@@ -221,7 +221,7 @@ class DirectoryMonitorSystem {
             'Health Bar': this.createHealthBar(dir.health)
         }));
 
-        console.log(Bun.inspect.table(directoryData, {}, {
+        console.info(Bun.inspect.table(directoryData, {}, {
             colors: true,
             maxStringLength: 25,
             compact: false
@@ -232,8 +232,8 @@ class DirectoryMonitorSystem {
      * Display error summary
      */
     private displayErrorSummary(): void {
-        console.log(chalk.cyan.bold('\n🚨 Error Summary'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n🚨 Error Summary'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const errorSummary = this.getErrorSummary();
 
@@ -264,7 +264,7 @@ class DirectoryMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(summaryData, {}, {
+        console.info(Bun.inspect.table(summaryData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -275,8 +275,8 @@ class DirectoryMonitorSystem {
      * Display system metrics
      */
     private displaySystemMetrics(): void {
-        console.log(chalk.cyan.bold('\n📊 System Metrics'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n📊 System Metrics'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const metricsData = [
             {
@@ -309,7 +309,7 @@ class DirectoryMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(metricsData, {}, {
+        console.info(Bun.inspect.table(metricsData, {}, {
             colors: true,
             maxStringLength: 18,
             compact: false
@@ -320,8 +320,8 @@ class DirectoryMonitorSystem {
      * Display recent errors
      */
     private displayRecentErrors(): void {
-        console.log(chalk.cyan.bold('\n📝 Recent Errors'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n📝 Recent Errors'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const recentErrors = this.errors.slice(-10).reverse().map(error => ({
             'Time': error.timestamp.toLocaleTimeString(),
@@ -333,13 +333,13 @@ class DirectoryMonitorSystem {
         }));
 
         if (recentErrors.length > 0) {
-            console.log(Bun.inspect.table(recentErrors, {}, {
+            console.info(Bun.inspect.table(recentErrors, {}, {
                 colors: true,
                 maxStringLength: 25,
                 compact: false
             }));
         } else {
-            console.log(chalk.green('🎉 No recent errors detected! All systems operating normally.'));
+            console.info(chalk.green('🎉 No recent errors detected! All systems operating normally.'));
         }
     }
 
@@ -347,8 +347,8 @@ class DirectoryMonitorSystem {
      * Display health analysis
      */
     private displayHealthAnalysis(): void {
-        console.log(chalk.cyan.bold('\n🏥 Health Analysis'));
-        console.log(chalk.gray('─'.repeat(120)));
+        console.info(chalk.cyan.bold('\n🏥 Health Analysis'));
+        console.info(chalk.gray('─'.repeat(120)));
 
         const healthData = this.getHealthAnalysis();
 
@@ -387,7 +387,7 @@ class DirectoryMonitorSystem {
             }
         ];
 
-        console.log(Bun.inspect.table(analysisData, {}, {
+        console.info(Bun.inspect.table(analysisData, {}, {
             colors: true,
             maxStringLength: 20,
             compact: false
@@ -398,9 +398,9 @@ class DirectoryMonitorSystem {
      * Display footer with controls
      */
     private displayFooter(): void {
-        console.log(chalk.gray('─'.repeat(120)));
-        console.log(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Reset | [L] View Logs'));
-        console.log(chalk.gray(`Last Scan: ${this.metrics.lastScan.toLocaleTimeString()} | Next Scan: 30s | Errors: ${this.errors.length}`));
+        console.info(chalk.gray('─'.repeat(120)));
+        console.info(chalk.blue('Controls: [Ctrl+C] Exit | [Space] Refresh | [R] Reset | [L] View Logs'));
+        console.info(chalk.gray(`Last Scan: ${this.metrics.lastScan.toLocaleTimeString()} | Next Scan: 30s | Errors: ${this.errors.length}`));
     }
 
     // =============================================================================
@@ -596,8 +596,8 @@ class DirectoryMonitorSystem {
             clearInterval(this.scanInterval);
         }
         this.isRunning = false;
-        console.log(chalk.yellow('\n👋 Directory Monitoring System shutting down...'));
-        console.log(chalk.green('✅ All monitoring services stopped gracefully'));
+        console.info(chalk.yellow('\n👋 Directory Monitoring System shutting down...'));
+        console.info(chalk.green('✅ All monitoring services stopped gracefully'));
         process.exit(0);
     }
 }
@@ -610,13 +610,13 @@ async function main(): Promise<void> {
     const args = process.argv.slice(2);
 
     if (args.includes('--help') || args.includes('-h')) {
-        console.log(chalk.blue.bold('🔍 Comprehensive Directory Monitoring System'));
-        console.log(chalk.gray('Usage: bun directory-monitor.ts [options]'));
-        console.log(chalk.gray('\nOptions:'));
-        console.log(chalk.gray('  --help, -h   Show this help message'));
-        console.log(chalk.gray('  --demo       Run demo mode (single scan)'));
-        console.log(chalk.gray('  --scan-only  Perform single scan and exit'));
-        console.log(chalk.gray('\nFeatures: Real-time monitoring, error tracking, health analysis'));
+        console.info(chalk.blue.bold('🔍 Comprehensive Directory Monitoring System'));
+        console.info(chalk.gray('Usage: bun directory-monitor.ts [options]'));
+        console.info(chalk.gray('\nOptions:'));
+        console.info(chalk.gray('  --help, -h   Show this help message'));
+        console.info(chalk.gray('  --demo       Run demo mode (single scan)'));
+        console.info(chalk.gray('  --scan-only  Perform single scan and exit'));
+        console.info(chalk.gray('\nFeatures: Real-time monitoring, error tracking, health analysis'));
         process.exit(0);
     }
 
@@ -630,7 +630,7 @@ async function main(): Promise<void> {
         } else if (args.includes('--scan-only')) {
             // Scan only mode
             await monitor.performFullScan();
-            console.log(chalk.green('✅ Directory scan completed'));
+            console.info(chalk.green('✅ Directory scan completed'));
         } else {
             // Full monitoring mode
             await monitor.startMonitoring();

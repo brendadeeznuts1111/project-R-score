@@ -43,7 +43,7 @@ export function getExitCodeDescription(code: ExitCode): string {
 export function exitWithCode(code: ExitCode, message?: string): never {
   if (message) {
     if (code === EXIT_CODES.SUCCESS) {
-      console.log(message);
+      console.info(message);
     } else {
       console.error(message);
     }

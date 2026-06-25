@@ -64,7 +64,7 @@ describe("pairing cli", () => {
       },
     ]);
 
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const log = vi.spyOn(console, 'info').mockImplementation(() => {});
     const program = new Command();
     program.name("test");
     registerPairingCli(program);
@@ -126,7 +126,7 @@ describe("pairing cli", () => {
       },
     ]);
 
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const log = vi.spyOn(console, 'info').mockImplementation(() => {});
     const program = new Command();
     program.name("test");
     registerPairingCli(program);
@@ -150,7 +150,7 @@ describe("pairing cli", () => {
       },
     });
 
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const log = vi.spyOn(console, 'info').mockImplementation(() => {});
     const program = new Command();
     program.name("test");
     registerPairingCli(program);

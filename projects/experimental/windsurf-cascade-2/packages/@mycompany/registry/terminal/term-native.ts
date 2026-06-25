@@ -392,7 +392,7 @@ process.stdout.on('resize', async () => {
 
 // Handle signals
 process.on('SIGINT', () => {
-  console.log('\n👋 Native terminal shutdown!');
+  console.info('\n👋 Native terminal shutdown!');
   process.exit(0);
 });
 
@@ -409,7 +409,7 @@ async function makeConfigAwareRequest(url: string, options: RequestInit = {}): P
   const response = await fetch(url, enhancedOptions);
   
   const duration = Bun.nanoseconds() - start;
-  console.log(`🌐 HTTP request: ${options.method || 'GET'} ${url} (${duration}ns with config headers)`);
+  console.info(`🌐 HTTP request: ${options.method || 'GET'} ${url} (${duration}ns with config headers)`);
   
   return response;
 }
@@ -518,7 +518,7 @@ async function start() {
     const response = await fetch('http://localhost:4873/_dashboard/api/config');
     if (response.ok) {
       registryRunning = true;
-      console.log(`📊 Registry already running on port 4873`);
+      console.info(`📊 Registry already running on port 4873`);
     }
   } catch (error) {
     // Registry not running, that's ok
@@ -543,27 +543,27 @@ async function start() {
       try {
         const response = await fetch('http://localhost:4873/_dashboard/api/config');
         if (response.ok) {
-          console.log(`📊 Registry started successfully`);
+          console.info(`📊 Registry started successfully`);
         } else {
-          console.log(`⚠️  Registry may not be responding correctly`);
+          console.info(`⚠️  Registry may not be responding correctly`);
         }
       } catch (error) {
-        console.log(`⚠️  Registry failed to start or respond`);
+        console.info(`⚠️  Registry failed to start or respond`);
       }
     } catch (error) {
-      console.log(`⚠️  Failed to spawn registry: ${error instanceof Error ? error.message : String(error)}`);
+      console.info(`⚠️  Failed to spawn registry: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   
   // Initial render
   await renderDashboard();
   
-  console.log(`\n🚀 Native Terminal Started`);
-  console.log(`⚡ Performance: 12ns spawn, 0ns stdin, 64B memory`);
-  console.log(`📊 Registry: http://localhost:4873`);
+  console.info(`\n🚀 Native Terminal Started`);
+  console.info(`⚡ Performance: 12ns spawn, 0ns stdin, 64B memory`);
+  console.info(`📊 Registry: http://localhost:4873`);
   
   // Keep the terminal alive by waiting for input
-  console.log(`\n💡 Terminal is now running. Press Ctrl+C to exit.\n`);
+  console.info(`\n💡 Terminal is now running. Press Ctrl+C to exit.\n`);
 }
 
 // Start the native terminal

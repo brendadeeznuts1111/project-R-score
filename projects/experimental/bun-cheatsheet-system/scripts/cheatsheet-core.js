@@ -103,21 +103,21 @@ class CheatsheetCore {
 
   displayResults(results) {
     if (results.length === 0) {
-      console.log('🔍 No results found');
+      console.info('🔍 No results found');
       return;
     }
     
-    console.log(`📚 Found ${results.length} results:`);
-    console.log('='.repeat(60));
+    console.info(`📚 Found ${results.length} results:`);
+    console.info('='.repeat(60));
     
     results.forEach((result, index) => {
-      console.log(`\n${index + 1}. [${result.category.toUpperCase()}] ${result.name}`);
-      console.log(`   Section: ${result.section}`);
+      console.info(`\n${index + 1}. [${result.category.toUpperCase()}] ${result.name}`);
+      console.info(`   Section: ${result.section}`);
       
       if (result.type === 'cli') {
-        console.log(`   $ ${result.command}`);
+        console.info(`   $ ${result.command}`);
       } else {
-        console.log(`   📝 ${result.code.substring(0, 100)}...`);
+        console.info(`   📝 ${result.code.substring(0, 100)}...`);
       }
     });
   }
@@ -137,32 +137,32 @@ if (import.meta.main) {
         const results = cheatsheet.search(query);
         cheatsheet.displayResults(results);
       } else {
-        console.log('Usage: bun run cheatsheet search <query>');
+        console.info('Usage: bun run cheatsheet search <query>');
       }
       break;
       
     case 'tip':
       const tip = cheatsheet.getRandomTip();
-      console.log('💡 Cheatsheet Tip of the Moment:');
-      console.log('='.repeat(50));
-      console.log(`📌 ${tip.name}`);
-      console.log('\n' + (tip.type === 'command' ? `$ ${tip.content}` : tip.content));
+      console.info('💡 Cheatsheet Tip of the Moment:');
+      console.info('='.repeat(50));
+      console.info(`📌 ${tip.name}`);
+      console.info('\n' + (tip.type === 'command' ? `$ ${tip.content}` : tip.content));
       break;
       
     case 'list':
-      console.log('📚 Available Cheatsheets:');
+      console.info('📚 Available Cheatsheets:');
       Object.keys(cheatsheet.cheatsheets).forEach(cat => {
-        console.log(`  • ${cat}`);
+        console.info(`  • ${cat}`);
       });
       break;
       
     default:
-      console.log('Bun Cheatsheet System');
-      console.log('=====================');
-      console.log('Commands:');
-      console.log('  search <query>   - Search cheatsheets');
-      console.log('  tip              - Get random tip');
-      console.log('  list             - List all cheatsheets');
+      console.info('Bun Cheatsheet System');
+      console.info('=====================');
+      console.info('Commands:');
+      console.info('  search <query>   - Search cheatsheets');
+      console.info('  tip              - Get random tip');
+      console.info('  list             - List all cheatsheets');
       break;
   }
 }

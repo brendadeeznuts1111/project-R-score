@@ -482,8 +482,8 @@ export class RegulatoryComplianceEngine {
     trade: ProposedTrade
   ): Promise<void> {
     // Simulate reporting to regulatory authority
-    console.log(`Reporting trade ${trade.marketId} to regulator`);
-    console.log(`Certificate ID: ${certificate.certificateId}`);
+    console.info(`Reporting trade ${trade.marketId} to regulator`);
+    console.info(`Certificate ID: ${certificate.certificateId}`);
 
     // In production, this would send encrypted data to regulator API
     await new Promise(resolve => setTimeout(resolve, 100)); // Simulate network call

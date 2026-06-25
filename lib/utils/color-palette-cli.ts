@@ -18,18 +18,18 @@ function printColorSwatch(hsl: { h: number; s: number; l: number }, label: strin
   const ansi = hslToAnsi(hsl);
   const css = formatHSL(hsl);
 
-  console.log(`  ${ansi}███${RESET} ${label.padEnd(20)} ${hex.padEnd(8)} ${css}`);
+  console.info(`  ${ansi}███${RESET} ${label.padEnd(20)} ${hex.padEnd(8)} ${css}`);
 }
 
 function printPalette(palette: ReturnType<typeof generatePalette>): void {
-  console.log('\n🎨 Generated Color Palette\n');
-  console.log('═'.repeat(80));
+  console.info('\n🎨 Generated Color Palette\n');
+  console.info('═'.repeat(80));
 
-  console.log('\n📌 Base Color:');
+  console.info('\n📌 Base Color:');
   printColorSwatch(palette.base, 'Primary');
 
   if (palette.palette.analogous.length > 0) {
-    console.log('\n🎯 Analogous Colors (±30°):');
+    console.info('\n🎯 Analogous Colors (±30°):');
     palette.palette.analogous.forEach((hex, i) => {
       try {
         const hslStr = Bun.color(hex, 'hsl');
@@ -37,31 +37,31 @@ function printPalette(palette: ReturnType<typeof generatePalette>): void {
           const hsl = parseHSL(hslStr);
           printColorSwatch(hsl, `Analogous ${i + 1}`);
         } else {
-          console.log(`  ${hex}`);
+          console.info(`  ${hex}`);
         }
       } catch {
-        console.log(`  ${hex}`);
+        console.info(`  ${hex}`);
       }
     });
   }
 
   if (palette.palette.complementary) {
-    console.log('\n🔄 Complementary Color (180°):');
+    console.info('\n🔄 Complementary Color (180°):');
     try {
       const hslStr = Bun.color(palette.palette.complementary, 'hsl');
       if (hslStr && typeof hslStr === 'string') {
         const hsl = parseHSL(hslStr);
         printColorSwatch(hsl, 'Complementary');
       } else {
-        console.log(`  ${palette.palette.complementary}`);
+        console.info(`  ${palette.palette.complementary}`);
       }
     } catch {
-      console.log(`  ${palette.palette.complementary}`);
+      console.info(`  ${palette.palette.complementary}`);
     }
   }
 
   if (palette.palette.triadic.length > 0) {
-    console.log('\n🔺 Triadic Colors (120° apart):');
+    console.info('\n🔺 Triadic Colors (120° apart):');
     palette.palette.triadic.forEach((hex, i) => {
       try {
         const hslStr = Bun.color(hex, 'hsl');
@@ -69,16 +69,16 @@ function printPalette(palette: ReturnType<typeof generatePalette>): void {
           const hsl = parseHSL(hslStr);
           printColorSwatch(hsl, `Triadic ${i + 1}`);
         } else {
-          console.log(`  ${hex}`);
+          console.info(`  ${hex}`);
         }
       } catch {
-        console.log(`  ${hex}`);
+        console.info(`  ${hex}`);
       }
     });
   }
 
   if (palette.palette.tints.length > 0) {
-    console.log('\n✨ Tints (Lighter):');
+    console.info('\n✨ Tints (Lighter):');
     palette.palette.tints.forEach((hex, i) => {
       try {
         const hslStr = Bun.color(hex, 'hsl');
@@ -86,16 +86,16 @@ function printPalette(palette: ReturnType<typeof generatePalette>): void {
           const hsl = parseHSL(hslStr);
           printColorSwatch(hsl, `Tint ${i + 1}`);
         } else {
-          console.log(`  ${hex}`);
+          console.info(`  ${hex}`);
         }
       } catch {
-        console.log(`  ${hex}`);
+        console.info(`  ${hex}`);
       }
     });
   }
 
   if (palette.palette.shades.length > 0) {
-    console.log('\n🌑 Shades (Darker):');
+    console.info('\n🌑 Shades (Darker):');
     palette.palette.shades.forEach((hex, i) => {
       try {
         const hslStr = Bun.color(hex, 'hsl');
@@ -103,39 +103,39 @@ function printPalette(palette: ReturnType<typeof generatePalette>): void {
           const hsl = parseHSL(hslStr);
           printColorSwatch(hsl, `Shade ${i + 1}`);
         } else {
-          console.log(`  ${hex}`);
+          console.info(`  ${hex}`);
         }
       } catch {
-        console.log(`  ${hex}`);
+        console.info(`  ${hex}`);
       }
     });
   }
 
-  console.log('\n♿ Accessibility:');
+  console.info('\n♿ Accessibility:');
   const contrast = checkContrast(palette.accessible.foreground, palette.accessible.background);
   const statusColor = contrast.wcagAAA ? 'success' : contrast.wcagAA ? 'warning' : 'error';
   const statusEmoji = contrast.wcagAAA ? '✅' : contrast.wcagAA ? '⚠️' : '❌';
 
-  console.log(`  ${statusEmoji} Contrast Ratio: ${contrast.ratio.toFixed(2)}:1`);
-  console.log(`  WCAG AA: ${contrast.wcagAA ? '✅' : '❌'} (≥4.5:1)`);
-  console.log(`  WCAG AAA: ${contrast.wcagAAA ? '✅' : '❌'} (≥7:1)`);
+  console.info(`  ${statusEmoji} Contrast Ratio: ${contrast.ratio.toFixed(2)}:1`);
+  console.info(`  WCAG AA: ${contrast.wcagAA ? '✅' : '❌'} (≥4.5:1)`);
+  console.info(`  WCAG AAA: ${contrast.wcagAAA ? '✅' : '❌'} (≥7:1)`);
 
-  console.log('\n  Accessible Foreground:');
+  console.info('\n  Accessible Foreground:');
   printColorSwatch(palette.accessible.foreground, 'Foreground');
   printColorSwatch(palette.accessible.background, 'Background');
 
-  console.log('\n' + '═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
 }
 
 function printSweetSpots(): void {
-  console.log('\n📊 HSL Sweet Spots (Maximum Visual Impact)\n');
-  console.log('═'.repeat(80));
+  console.info('\n📊 HSL Sweet Spots (Maximum Visual Impact)\n');
+  console.info('═'.repeat(80));
 
   Object.entries(HSL_SWEET_SPOTS).forEach(([name, ranges]) => {
-    console.log(`\n${name.toUpperCase()}:`);
-    console.log(`  Hue: ${ranges.h[0]}° - ${ranges.h[1]}°`);
-    console.log(`  Saturation: ${ranges.s[0]}% - ${ranges.s[1]}%`);
-    console.log(`  Lightness: ${ranges.l[0]}% - ${ranges.l[1]}%`);
+    console.info(`\n${name.toUpperCase()}:`);
+    console.info(`  Hue: ${ranges.h[0]}° - ${ranges.h[1]}°`);
+    console.info(`  Saturation: ${ranges.s[0]}% - ${ranges.s[1]}%`);
+    console.info(`  Lightness: ${ranges.l[0]}% - ${ranges.l[1]}%`);
 
     // Show example
     const exampleH = Math.floor((ranges.h[0] + ranges.h[1]) / 2);
@@ -145,7 +145,7 @@ function printSweetSpots(): void {
     printColorSwatch(exampleHSL, 'Example');
   });
 
-  console.log('\n' + '═'.repeat(80));
+  console.info('\n' + '═'.repeat(80));
 }
 
 function main(): void {
@@ -175,7 +175,7 @@ function main(): void {
     } else if (arg === '--no-shades') {
       shades = false;
     } else if (arg === '--help' || arg === '-h') {
-      console.log(`
+      console.info(`
 🎨 Color Palette Generator
 
 Usage:

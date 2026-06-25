@@ -53,9 +53,9 @@ interface AlertTableRow {
 // ═══════════════════════════════════════════════════════════════
 
 function printHeader(): void {
-	console.log("\n" + "=".repeat(60));
-	console.log("🚨 Covert Steam Alert Management Console");
-	console.log("=".repeat(60) + "\n");
+	console.info("\n" + "=".repeat(60));
+	console.info("🚨 Covert Steam Alert Management Console");
+	console.info("=".repeat(60) + "\n");
 }
 
 function printPrompt(): void {
@@ -63,7 +63,7 @@ function printPrompt(): void {
 }
 
 function printHelp(): void {
-	console.log(`
+	console.info(`
 Available Commands:
   send <event_id>              Send Covert Steam alert
     [--severity=<0-10>]        Impact severity score
@@ -101,11 +101,11 @@ function printError(message: string): void {
 }
 
 function printSuccess(message: string): void {
-	console.log(`✅ ${message}\n`);
+	console.info(`✅ ${message}\n`);
 }
 
 function printInfo(message: string): void {
-	console.log(`ℹ️  ${message}\n`);
+	console.info(`ℹ️  ${message}\n`);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -116,7 +116,7 @@ async function handleSend(args: string[]): Promise<void> {
 	const eventIdentifier = args[0];
 	if (!eventIdentifier) {
 		printError("Event identifier required");
-		console.log("Usage: send <event_id> [options]");
+		console.info("Usage: send <event_id> [options]");
 		return;
 	}
 
@@ -159,11 +159,11 @@ async function handleSend(args: string[]): Promise<void> {
 	};
 
 	try {
-		console.log(`📤 Sending alert: ${eventIdentifier}...`);
+		console.info(`📤 Sending alert: ${eventIdentifier}...`);
 
 		// Use inspectable wrapper for better console output
 		const inspectableAlert = makeInspectable(covertSteamAlert);
-		console.log(`\n${Bun.inspect(inspectableAlert)}\n`);
+		console.info(`\n${Bun.inspect(inspectableAlert)}\n`);
 
 		const result = await sendCovertSteamAlertToTelegram(
 			covertSteamAlert,
@@ -173,14 +173,14 @@ async function handleSend(args: string[]): Promise<void> {
 
 		if (result.ok) {
 			printSuccess(`Alert sent successfully!`);
-			console.log(`${Bun.inspect(inspectableResult)}`);
-			console.log(`   Topic: ${topicId ?? COVERT_STEAM_DEFAULT_TOPIC_ID}`);
-			console.log(
+			console.info(`${Bun.inspect(inspectableResult)}`);
+			console.info(`   Topic: ${topicId ?? COVERT_STEAM_DEFAULT_TOPIC_ID}`);
+			console.info(
 				`   Pinned: ${(pinMessage ?? (impactSeverityScore ?? 0) >= 9) ? "Yes" : "No"}\n`,
 			);
 		} else {
 			printError(`Failed to send: ${result.error}`);
-			console.log(`${Bun.inspect(inspectableResult)}\n`);
+			console.info(`${Bun.inspect(inspectableResult)}\n`);
 		}
 	} catch (error) {
 		printError((error as Error).message);
@@ -191,7 +191,7 @@ async function handleFormat(args: string[]): Promise<void> {
 	const eventIdentifier = args[0];
 	if (!eventIdentifier) {
 		printError("Event identifier required");
-		console.log("Usage: format <event_id> [options]");
+		console.info("Usage: format <event_id> [options]");
 		return;
 	}
 
@@ -227,23 +227,23 @@ async function handleFormat(args: string[]): Promise<void> {
 		const severityLevel = getCovertSteamSeverityLevel(impactSeverityScore ?? 0);
 		const severityEmoji = getCovertSteamSeverityEmoji(impactSeverityScore ?? 0);
 
-		console.log(`\n📋 Alert Preview\n`);
-		console.log(`${Bun.inspect(inspectableAlert)}\n`);
-		console.log("─".repeat(60));
-		console.log(formattedMessage);
-		console.log("─".repeat(60) + "\n");
+		console.info(`\n📋 Alert Preview\n`);
+		console.info(`${Bun.inspect(inspectableAlert)}\n`);
+		console.info("─".repeat(60));
+		console.info(formattedMessage);
+		console.info("─".repeat(60) + "\n");
 	} catch (error) {
 		printError((error as Error).message);
 	}
 }
 
 async function handleTopics(): Promise<void> {
-	console.log(`\n📋 Available Telegram Topics\n`);
+	console.info(`\n📋 Available Telegram Topics\n`);
 
 	try {
 		// Use Bun.inspect.table() for tabular display
 		await displayTopicsTable();
-		console.log(
+		console.info(
 			`\n💡 Use --topic=<id> in send command to route to specific topic\n`,
 		);
 	} catch (error) {
@@ -252,22 +252,22 @@ async function handleTopics(): Promise<void> {
 }
 
 async function handleCredentials(): Promise<void> {
-	console.log(`\n🔐 Testing Telegram Credentials...\n`);
+	console.info(`\n🔐 Testing Telegram Credentials...\n`);
 
 	try {
 		const credentials = await loadCovertSteamTelegramCredentials();
 
 		printSuccess("Credentials loaded successfully!");
-		console.log(
+		console.info(
 			`   Bot Token: ${credentials.botToken.substring(0, 10)}...${credentials.botToken.substring(credentials.botToken.length - 5)}`,
 		);
-		console.log(`   Chat ID: ${credentials.chatId}\n`);
-		console.log(`💡 Ready to send Covert Steam alerts\n`);
+		console.info(`   Chat ID: ${credentials.chatId}\n`);
+		console.info(`💡 Ready to send Covert Steam alerts\n`);
 	} catch (error) {
 		printError((error as Error).message);
-		console.log(`💡 Set credentials using:`);
-		console.log(`   bun secret set TELEGRAM_BOT_TOKEN 'your_token'`);
-		console.log(`   bun secret set TELEGRAM_CHAT_ID 'your_chat_id'\n`);
+		console.info(`💡 Set credentials using:`);
+		console.info(`   bun secret set TELEGRAM_BOT_TOKEN 'your_token'`);
+		console.info(`   bun secret set TELEGRAM_CHAT_ID 'your_chat_id'\n`);
 	}
 }
 
@@ -275,7 +275,7 @@ function handleSeverity(args: string[]): void {
 	const scoreStr = args[0];
 	if (!scoreStr) {
 		printError("Severity score required");
-		console.log("Usage: severity <0-10>");
+		console.info("Usage: severity <0-10>");
 		return;
 	}
 
@@ -290,7 +290,7 @@ function handleSeverity(args: string[]): void {
 		const severityEmoji = getCovertSteamSeverityEmoji(severityScore);
 		const willPin = severityScore >= 9;
 
-		console.log(`\n📊 Severity Analysis for Score: ${severityScore}\n`);
+		console.info(`\n📊 Severity Analysis for Score: ${severityScore}\n`);
 
 		// Use Bun.inspect.table() for threshold display
 		const thresholdTableData = [
@@ -324,7 +324,7 @@ function handleSeverity(args: string[]): void {
 			},
 		];
 
-		console.log(
+		console.info(
 			Bun.inspect.table(
 				thresholdTableData,
 				["Level", "Range", "Emoji", "Auto-Pin", "Current"],
@@ -334,10 +334,10 @@ function handleSeverity(args: string[]): void {
 			),
 		);
 
-		console.log(
+		console.info(
 			`\nCurrent Score: ${severityScore} → ${severityLevel} ${severityEmoji}`,
 		);
-		console.log(`Auto-Pin: ${willPin ? "Yes (CRITICAL threshold)" : "No"}\n`);
+		console.info(`Auto-Pin: ${willPin ? "Yes (CRITICAL threshold)" : "No"}\n`);
 	} catch (error) {
 		printError((error as Error).message);
 	}
@@ -377,17 +377,17 @@ async function handleListAlerts(args: string[]): Promise<void> {
 			},
 		];
 
-		console.log(`\n📋 Recent Covert Steam Alerts\n`);
+		console.info(`\n📋 Recent Covert Steam Alerts\n`);
 
 		if (exampleAlerts.length === 0) {
-			console.log("No alerts found.\n");
+			console.info("No alerts found.\n");
 			return;
 		}
 
 		// Use Bun.inspect.table() for tabular display
 		displayAlertsTable(exampleAlerts, { limit });
 
-		console.log(`\n💡 Use 'send' command to create new alerts\n`);
+		console.info(`\n💡 Use 'send' command to create new alerts\n`);
 	} catch (error) {
 		printError((error as Error).message);
 	}
@@ -412,12 +412,12 @@ async function handleStats(): Promise<void> {
 			},
 		};
 
-		console.log(`\n📊 Covert Steam Alert Statistics\n`);
+		console.info(`\n📊 Covert Steam Alert Statistics\n`);
 
 		// Use Bun.inspect.table() for stats display
 		displayAlertStatsTable(exampleStats);
 
-		console.log();
+		console.info();
 	} catch (error) {
 		printError((error as Error).message);
 	}
@@ -433,7 +433,7 @@ async function main(): Promise<void> {
 
 	// Handle Ctrl+C gracefully
 	process.on("SIGINT", () => {
-		console.log("\n\n👋 Goodbye!\n");
+		console.info("\n\n👋 Goodbye!\n");
 		process.exit(0);
 	});
 
@@ -493,12 +493,12 @@ async function main(): Promise<void> {
 			case "exit":
 			case "quit":
 			case "q":
-				console.log("\n👋 Goodbye!\n");
+				console.info("\n👋 Goodbye!\n");
 				process.exit(0);
 
 			default:
 				printError(`Unknown command: ${command}`);
-				console.log(`Type 'help' for available commands\n`);
+				console.info(`Type 'help' for available commands\n`);
 		}
 
 		printPrompt();

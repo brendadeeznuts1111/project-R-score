@@ -24,7 +24,7 @@ Paragraph with multiple [links](https://example1.com) and [more links](https://e
 
 \`\`\`javascript
 function hello() {
-  console.log("Hello, World!");
+  console.info("Hello, World!");
   return "success";
 }
 \`\`\`
@@ -159,7 +159,7 @@ This is paragraph ${i + 1} with **bold text** and *italic text*.
 
 \`\`\`javascript
 function test${i + 1}() {
-  console.log("Test ${i + 1}");
+  console.info("Test ${i + 1}");
   return ${i + 1};
 }
 \`\`\`
@@ -178,8 +178,8 @@ class VerificationSuite {
   private startTime: number = performance.now();
 
   constructor() {
-    console.log('🔍 Enhanced Bun Markdown React Components Verification Suite');
-    console.log('='.repeat(60));
+    console.info('🔍 Enhanced Bun Markdown React Components Verification Suite');
+    console.info('='.repeat(60));
   }
 
   // Test result helper
@@ -194,7 +194,7 @@ class VerificationSuite {
   private printResult(category: string, test: string, passed: boolean, details?: string) {
     const status = passed ? '✅' : '❌';
     const detailsStr = details ? ` - ${details}` : '';
-    console.log(`   ${status} ${test}${detailsStr}`);
+    console.info(`   ${status} ${test}${detailsStr}`);
   }
 
   // Calculate success rate
@@ -206,7 +206,7 @@ class VerificationSuite {
 
   // Test 1: Configuration Verification
   testConfiguration() {
-    console.log('\n📋 Test 1: Configuration Verification');
+    console.info('\n📋 Test 1: Configuration Verification');
     
     try {
       // API Status
@@ -237,13 +237,13 @@ class VerificationSuite {
 
   // Test 2: Component Props Verification
   testComponentProps() {
-    console.log('\n🧩 Test 2: Component Props Verification');
+    console.info('\n🧩 Test 2: Component Props Verification');
     
     const components = BUN_MARKDOWN_CONFIG.REACT_COMPONENTS;
 
     // Test void elements
     const voidElements = ['hr', 'img', 'br'];
-    console.log('   Void Elements (no children):');
+    console.info('   Void Elements (no children):');
     voidElements.forEach(element => {
       const component = components[element as keyof typeof components];
       const isVoid = component?.void === true;
@@ -252,7 +252,7 @@ class VerificationSuite {
     });
 
     // Test elements with optional props
-    console.log('\n   Elements with Optional Props:');
+    console.info('\n   Elements with Optional Props:');
     const elementsWithProps = [
       { name: 'h1', expectedProps: ['id?', 'children'] },
       { name: 'pre', expectedProps: ['language?', 'children'] },
@@ -273,7 +273,7 @@ class VerificationSuite {
 
   // Test 3: Basic Rendering Tests
   testBasicRendering() {
-    console.log('\n🎨 Test 3: Basic Rendering Tests');
+    console.info('\n🎨 Test 3: Basic Rendering Tests');
     
     try {
       // Test basic rendering
@@ -308,7 +308,7 @@ class VerificationSuite {
 
   // Test 4: Comprehensive Feature Test
   testComprehensiveFeatures() {
-    console.log('\n🌟 Test 4: Comprehensive Feature Test');
+    console.info('\n🌟 Test 4: Comprehensive Feature Test');
     
     try {
       // First test with Bun.markdown.render (string output) for verification
@@ -384,8 +384,8 @@ class VerificationSuite {
 
       // Verify features in render output (string-based)
       const outputStr = String(renderResult);
-      console.log('\n   📝 Sample Output (first 500 chars):');
-      console.log(`   ${outputStr.substring(0, 500)}...`);
+      console.info('\n   📝 Sample Output (first 500 chars):');
+      console.info(`   ${outputStr.substring(0, 500)}...`);
 
       const features = [
         { name: 'Headings', pattern: /<h[1-6]/ },
@@ -414,7 +414,7 @@ class VerificationSuite {
 
   // Test 5: Edge Cases & Inline Callbacks
   testEdgeCases() {
-    console.log('\n⚠️ Test 5: Edge Cases & Inline Callbacks');
+    console.info('\n⚠️ Test 5: Edge Cases & Inline Callbacks');
     
     try {
       // Test with Bun.markdown.render using inline callbacks
@@ -485,8 +485,8 @@ class VerificationSuite {
 
       // Test specific edge cases in render output
       const outputStr = String(renderResult);
-      console.log('\n   📝 Edge Cases Output (first 300 chars):');
-      console.log(`   ${outputStr.substring(0, 300)}...`);
+      console.info('\n   📝 Edge Cases Output (first 300 chars):');
+      console.info(`   ${outputStr.substring(0, 300)}...`);
 
       const edgeCases = [
         { name: 'Inline Strong', pattern: /<strong class="bold">/ },
@@ -515,7 +515,7 @@ class VerificationSuite {
 
   // Test 6: React Version Compatibility
   testReactCompatibility() {
-    console.log('\n⚛️ Test 6: React Version Compatibility');
+    console.info('\n⚛️ Test 6: React Version Compatibility');
     
     try {
       // React 19 (default)
@@ -543,7 +543,7 @@ class VerificationSuite {
 
   // Test 7: Performance Analysis
   testPerformance() {
-    console.log('\n⚡ Test 7: Performance Analysis');
+    console.info('\n⚡ Test 7: Performance Analysis');
     
     const iterations = [10, 50, 100, 500];
     const testContent = COMPREHENSIVE_TEST_CONTENT;
@@ -588,7 +588,7 @@ class VerificationSuite {
 
   // Test 8: Error Handling
   testErrorHandling() {
-    console.log('\n🛡️ Test 8: Error Handling');
+    console.info('\n🛡️ Test 8: Error Handling');
     
     // Test null/undefined content
     try {
@@ -627,7 +627,7 @@ class VerificationSuite {
 
   // Test 9: Advanced Parser Options & Callbacks
   testAdvancedOptions() {
-    console.log('\n🔧 Test 9: Advanced Parser Options & Callbacks');
+    console.info('\n🔧 Test 9: Advanced Parser Options & Callbacks');
     
     try {
       // Test 1: Autolinks Configuration
@@ -817,9 +817,9 @@ class VerificationSuite {
     }
   }
   generateReport() {
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 COMPREHENSIVE VERIFICATION REPORT');
-    console.log('='.repeat(60));
+    console.info('\n' + '='.repeat(60));
+    console.info('📊 COMPREHENSIVE VERIFICATION REPORT');
+    console.info('='.repeat(60));
 
     const categories = ['config', 'props', 'rendering', 'features', 'edge', 'react', 'performance', 'errors', 'advanced'];
     let totalTests = 0;
@@ -830,13 +830,13 @@ class VerificationSuite {
       const passed = tests.filter(t => t.passed).length;
       const successRate = this.calculateSuccessRate(category);
       
-      console.log(`\n📂 ${category.toUpperCase()}: ${passed}/${tests.length} (${successRate.toFixed(1)}%)`);
+      console.info(`\n📂 ${category.toUpperCase()}: ${passed}/${tests.length} (${successRate.toFixed(1)}%)`);
       
       tests.forEach(test => {
         const status = test.passed ? '✅' : '❌';
-        console.log(`   ${status} ${test.test}`);
+        console.info(`   ${status} ${test.test}`);
         if (test.details && !test.passed) {
-          console.log(`      Details: ${test.details}`);
+          console.info(`      Details: ${test.details}`);
         }
       });
       
@@ -847,32 +847,32 @@ class VerificationSuite {
     const overallSuccessRate = totalTests > 0 ? (totalPassed / totalTests) * 100 : 0;
     const totalTime = performance.now() - this.startTime;
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🎯 OVERALL RESULTS');
-    console.log('='.repeat(60));
-    console.log(`✅ Tests Passed: ${totalPassed}/${totalTests}`);
-    console.log(`📈 Success Rate: ${overallSuccessRate.toFixed(1)}%`);
-    console.log(`⏱️ Total Time: ${totalTime.toFixed(2)}ms`);
+    console.info('\n' + '='.repeat(60));
+    console.info('🎯 OVERALL RESULTS');
+    console.info('='.repeat(60));
+    console.info(`✅ Tests Passed: ${totalPassed}/${totalTests}`);
+    console.info(`📈 Success Rate: ${overallSuccessRate.toFixed(1)}%`);
+    console.info(`⏱️ Total Time: ${totalTime.toFixed(2)}ms`);
     
     if (overallSuccessRate >= 95) {
-      console.log('🎉 EXCELLENT: Implementation is production-ready!');
+      console.info('🎉 EXCELLENT: Implementation is production-ready!');
     } else if (overallSuccessRate >= 80) {
-      console.log('✅ GOOD: Implementation is mostly ready with minor issues');
+      console.info('✅ GOOD: Implementation is mostly ready with minor issues');
     } else {
-      console.log('⚠️ NEEDS WORK: Implementation has significant issues');
+      console.info('⚠️ NEEDS WORK: Implementation has significant issues');
     }
 
-    console.log('\n📋 IMPLEMENTATION STATUS:');
-    console.log('   ✅ Configuration: Complete and verified');
-    console.log('   ✅ Component Props: All 26 elements properly defined');
-    console.log('   ✅ Basic Rendering: Core functionality working');
-    console.log('   ✅ Feature Support: All markdown features handled');
-    console.log('   ✅ Edge Cases: Robust error handling');
-    console.log('   ✅ React Compatibility: v18 & v19 supported');
-    console.log('   ✅ Performance: Sub-millisecond rendering');
-    console.log('   ✅ Error Handling: Graceful failure recovery');
+    console.info('\n📋 IMPLEMENTATION STATUS:');
+    console.info('   ✅ Configuration: Complete and verified');
+    console.info('   ✅ Component Props: All 26 elements properly defined');
+    console.info('   ✅ Basic Rendering: Core functionality working');
+    console.info('   ✅ Feature Support: All markdown features handled');
+    console.info('   ✅ Edge Cases: Robust error handling');
+    console.info('   ✅ React Compatibility: v18 & v19 supported');
+    console.info('   ✅ Performance: Sub-millisecond rendering');
+    console.info('   ✅ Error Handling: Graceful failure recovery');
 
-    console.log('\n🚀 READY FOR PRODUCTION DEPLOYMENT!');
+    console.info('\n🚀 READY FOR PRODUCTION DEPLOYMENT!');
     
     return {
       totalTests,

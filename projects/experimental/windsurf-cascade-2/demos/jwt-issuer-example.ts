@@ -17,7 +17,7 @@ async function verifyToken(token: string) {
   const claims = jwt.verify(token, { issuer });
   
   const duration = Bun.nanoseconds() - start;
-  console.log(`JWT verification: ${duration}ns (issuer: ${issuer})`);
+  console.info(`JWT verification: ${duration}ns (issuer: ${issuer})`);
   
   return claims;
 }

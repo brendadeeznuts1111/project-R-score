@@ -11,7 +11,7 @@ export class RotationDescriptionDemo {
      * Example: Comprehensive rotation number descriptions
      */
     static demonstrateRotationDescriptions(): void {
-        console.log('🎯 Enhanced Rotation Number Descriptions\n');
+        console.info('🎯 Enhanced Rotation Number Descriptions\n');
 
         const examples = [
             {
@@ -76,7 +76,7 @@ export class RotationDescriptionDemo {
             }
         ];
 
-        console.log('📊 Rotation Number Description Examples:\n');
+        console.info('📊 Rotation Number Description Examples:\n');
 
         examples.forEach((example, index) => {
             const description = RotationNumberUtils.describeRotationNumber(
@@ -87,16 +87,16 @@ export class RotationDescriptionDemo {
             const sport = RotationNumberUtils.getSportFromRotation(example.rotation);
             const isValid = RotationNumberUtils.isValidRotationNumber(example.rotation);
 
-            console.log(`${index + 1}. ${example.description}:`);
-            console.log(`   Rotation: ${example.rotation}`);
-            console.log(`   Sport: ${sport || 'Unknown'}`);
-            console.log(`   Valid: ${isValid ? '✅' : '❌'}`);
-            console.log(`   Description: "${description}"`);
-            console.log('');
+            console.info(`${index + 1}. ${example.description}:`);
+            console.info(`   Rotation: ${example.rotation}`);
+            console.info(`   Sport: ${sport || 'Unknown'}`);
+            console.info(`   Valid: ${isValid ? '✅' : '❌'}`);
+            console.info(`   Description: "${description}"`);
+            console.info('');
         });
 
         // Demonstrate string parsing
-        console.log('🔍 String Format Examples:\n');
+        console.info('🔍 String Format Examples:\n');
 
         const stringExamples = [
             'ROT_NBA_815',
@@ -109,15 +109,15 @@ export class RotationDescriptionDemo {
 
         stringExamples.forEach(rotationString => {
             const parsed = RotationNumberUtils.parseRotationString(rotationString);
-            console.log(`"${rotationString}" ->`);
-            console.log(`   Sport: ${parsed.sport || 'None'}`);
-            console.log(`   Rotation ID: ${parsed.rotationId || 'None'}`);
-            console.log(`   Valid: ${parsed.isValid ? '✅' : '❌'}`);
-            console.log('');
+            console.info(`"${rotationString}" ->`);
+            console.info(`   Sport: ${parsed.sport || 'None'}`);
+            console.info(`   Rotation ID: ${parsed.rotationId || 'None'}`);
+            console.info(`   Valid: ${parsed.isValid ? '✅' : '❌'}`);
+            console.info('');
         });
 
         // Demonstrate string formatting
-        console.log('📝 String Formatting Examples:\n');
+        console.info('📝 String Formatting Examples:\n');
 
         const formatExamples = [
             { rotation: 2501, sport: 'NBA' as const },
@@ -128,9 +128,9 @@ export class RotationDescriptionDemo {
         formatExamples.forEach(({ rotation, sport }) => {
             try {
                 const formatted = RotationNumberUtils.formatRotationString(rotation, sport);
-                console.log(`${rotation} (${sport}) -> "${formatted}"`);
+                console.info(`${rotation} (${sport}) -> "${formatted}"`);
             } catch (error) {
-                console.log(`${rotation} (${sport}) -> Error: ${error}`);
+                console.info(`${rotation} (${sport}) -> Error: ${error}`);
             }
         });
     }
@@ -139,18 +139,18 @@ export class RotationDescriptionDemo {
      * Run the demonstration
      */
     static runDemo(): void {
-        console.log('🚀 Rotation Number Description Demo\n');
-        console.log('='.repeat(60));
+        console.info('🚀 Rotation Number Description Demo\n');
+        console.info('='.repeat(60));
 
         this.demonstrateRotationDescriptions();
 
-        console.log('\n✅ Demo completed!');
-        console.log('\n🎯 Key Features:');
-        console.log('   • Intelligent market type detection from rotation patterns');
-        console.log('   • Context-aware descriptions with team and line information');
-        console.log('   • Support for player props, game props, and live betting');
-        console.log('   • String parsing and formatting utilities');
-        console.log('   • Sport validation and range checking');
+        console.info('\n✅ Demo completed!');
+        console.info('\n🎯 Key Features:');
+        console.info('   • Intelligent market type detection from rotation patterns');
+        console.info('   • Context-aware descriptions with team and line information');
+        console.info('   • Support for player props, game props, and live betting');
+        console.info('   • String parsing and formatting utilities');
+        console.info('   • Sport validation and range checking');
     }
 }
 

@@ -79,7 +79,7 @@ function logInfo(domain: string, event: string, data: any): void {
   const config = getCurrentConfig();
   
   if (config.featureFlags & 0x00000004) { // DEBUG flag
-    console.log(`[PROXY] ${domain}: ${event}`, {
+    console.info(`[PROXY] ${domain}: ${event}`, {
       ...data,
       config_dump: getConfigDump(),
       timestamp: nanoseconds()
@@ -151,18 +151,18 @@ export function configFetch(url: string, init?: RequestInit): Promise<Response> 
 
 // Test proxy functionality
 export async function testProxyFunctionality(): Promise<void> {
-  console.log("🌐 Config-Aware Proxy Test");
-  console.log("=".repeat(40));
+  console.info("🌐 Config-Aware Proxy Test");
+  console.info("=".repeat(40));
   
   const config = getCurrentConfig();
-  console.log(`📊 Current config:`);
-  console.log(`   • Registry hash: 0x${config.registryHash.toString(16)}`);
-  console.log(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
-  console.log(`   • Proxy URL: ${getProxyUrl()}`);
-  console.log(`   • Config dump: ${getConfigDump()}`);
+  console.info(`📊 Current config:`);
+  console.info(`   • Registry hash: 0x${config.registryHash.toString(16)}`);
+  console.info(`   • Feature flags: 0x${config.featureFlags.toString(16)}`);
+  console.info(`   • Proxy URL: ${getProxyUrl()}`);
+  console.info(`   • Config dump: ${getConfigDump()}`);
   
   try {
-    console.log(`\n🔄 Testing proxy fetch...`);
+    console.info(`\n🔄 Testing proxy fetch...`);
     const start = nanoseconds();
     
     const response = await configFetch("https://registry.npmjs.org/bun", {
@@ -177,19 +177,19 @@ export async function testProxyFunctionality(): Promise<void> {
     
     if (response.ok) {
       const data = await response.json();
-      console.log(`✅ Proxy fetch successful`);
-      console.log(`   • Package: ${data.name}`);
-      console.log(`   • Version: ${data['dist-tags']?.latest}`);
-      console.log(`   • Duration: ${duration}ns`);
+      console.info(`✅ Proxy fetch successful`);
+      console.info(`   • Package: ${data.name}`);
+      console.info(`   • Version: ${data['dist-tags']?.latest}`);
+      console.info(`   • Duration: ${duration}ns`);
     } else {
-      console.log(`⚠️  Proxy fetch failed: ${response.status} ${response.statusText}`);
+      console.info(`⚠️  Proxy fetch failed: ${response.status} ${response.statusText}`);
     }
     
   } catch (error) {
-    console.log(`❌ Proxy fetch error:`, error instanceof Error ? error.message : String(error));
+    console.info(`❌ Proxy fetch error:`, error instanceof Error ? error.message : String(error));
   }
   
-  console.log(`\n🔍 Proxy header analysis:`);
+  console.info(`\n🔍 Proxy header analysis:`);
   const headers = {
     "X-Bun-Config-Dump": getConfigDump(),
     "X-Bun-Domain": "@domain1",
@@ -199,14 +199,14 @@ export async function testProxyFunctionality(): Promise<void> {
   };
   
   Object.entries(headers).forEach(([key, value]) => {
-    console.log(`   • ${key}: ${value}`);
+    console.info(`   • ${key}: ${value}`);
   });
 }
 
 // Performance benchmark
 export async function benchmarkProxy(): Promise<void> {
-  console.log("🌐 Proxy Performance Benchmark");
-  console.log("=".repeat(40));
+  console.info("🌐 Proxy Performance Benchmark");
+  console.info("=".repeat(40));
   
   const iterations = 10;
   const times: number[] = [];
@@ -229,24 +229,24 @@ export async function benchmarkProxy(): Promise<void> {
     const duration = nanoseconds() - start;
     times.push(duration);
     
-    console.log(`   • Iteration ${i + 1}: ${duration}ns`);
+    console.info(`   • Iteration ${i + 1}: ${duration}ns`);
   }
   
   const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
-  console.log(`\n📊 Results (${iterations} iterations):`);
-  console.log(`   • Average: ${Math.floor(avgTime)}ns`);
-  console.log(`   • Min: ${Math.floor(minTime)}ns`);
-  console.log(`   • Max: ${Math.floor(maxTime)}ns`);
-  console.log(`   • Target: ~12ns (header injection)`);
-  console.log(`   • Status: ${avgTime < 50000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
+  console.info(`\n📊 Results (${iterations} iterations):`);
+  console.info(`   • Average: ${Math.floor(avgTime)}ns`);
+  console.info(`   • Min: ${Math.floor(minTime)}ns`);
+  console.info(`   • Max: ${Math.floor(maxTime)}ns`);
+  console.info(`   • Target: ~12ns (header injection)`);
+  console.info(`   • Status: ${avgTime < 50000 ? '✅ ON TARGET' : '⚠️ SLOW'}`);
 }
 
 // Initialize proxy system
-console.log("🌐 Config-Aware Proxy System initialized");
-console.log(`📊 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
-console.log(`🔗 Proxy URL: ${getProxyUrl()}`);
-console.log(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
-console.log(`⚡ Header injection target: ~12ns`);
+console.info("🌐 Config-Aware Proxy System initialized");
+console.info(`📊 Registry hash: 0x${getCurrentConfig().registryHash.toString(16)}`);
+console.info(`🔗 Proxy URL: ${getProxyUrl()}`);
+console.info(`🔧 DEBUG mode: ${(getCurrentConfig().featureFlags & 0x00000004) ? 'ENABLED' : 'DISABLED'}`);
+console.info(`⚡ Header injection target: ~12ns`);

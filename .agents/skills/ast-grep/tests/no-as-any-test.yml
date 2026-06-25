@@ -1,0 +1,8 @@
+id: no-as-any
+valid:
+  - "const x: number = 1"
+  - "const y = value as string"
+  - "const z = value as unknown"
+invalid:
+  - "const x = foo as any"
+  - "const { sport } = args as any"

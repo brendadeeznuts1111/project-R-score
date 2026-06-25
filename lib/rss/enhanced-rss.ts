@@ -186,9 +186,9 @@ if (import.meta.main) {
     feed.addMetric(generateMockMetrics());
   }
 
-  console.log('📰 RSS Feed:');
-  console.log(feed.toRSS());
+  console.info('📰 RSS Feed:');
+  console.info(feed.toRSS());
 
-  console.log('\n📄 JSON Feed:');
-  console.log(feed.toJSONFeed());
+  console.info('\n📄 JSON Feed:');
+  console.info(feed.toJSONFeed());
 }

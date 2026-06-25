@@ -5,10 +5,10 @@
  * https://bun.com/docs/test#test-filtering
  */
 
-console.log("🔍 Bun Test Filtering Demo\n");
-console.log("=".repeat(70));
+console.info("🔍 Bun Test Filtering Demo\n");
+console.info("=".repeat(70));
 
-console.log("\n📋 CLI Filtering Options:\n");
+console.info("\n📋 CLI Filtering Options:\n");
 
 const cliExamples = `# Filter by test name pattern
 bun test --test-name-pattern="auth"
@@ -24,9 +24,9 @@ bun test --test-name-pattern="API" tests/api/
 # Skip tests with pattern
 bun test --test-name-pattern="^(?!.*skip).*"`;
 
-console.log(cliExamples);
+console.info(cliExamples);
 
-console.log("\n📁 Filter in Configuration:\n");
+console.info("\n📁 Filter in Configuration:\n");
 
 const configExample = `// bunfig.toml
 [test]
@@ -42,9 +42,9 @@ testNamePattern = "API"
   }
 }`;
 
-console.log(configExample);
+console.info(configExample);
 
-console.log("\n📝 Code-Level Filtering:\n");
+console.info("\n📝 Code-Level Filtering:\n");
 
 const codeExample = `import { test, describe } from "bun:test";
 
@@ -72,15 +72,15 @@ describe.only("new module", () => {
   test("test 2", () => {});  // Only this runs
 });`;
 
-console.log(codeExample);
+console.info(codeExample);
 
-console.log("\n✅ Key Points:");
-console.log("  • CLI: --test-name-pattern or -t for name filtering");
-console.log("  • Code: test.skip(), test.only(), test.todo()");
-console.log("  • describe.skip() / describe.only() for groups");
-console.log("  • File patterns work as positional arguments");
+console.info("\n✅ Key Points:");
+console.info("  • CLI: --test-name-pattern or -t for name filtering");
+console.info("  • Code: test.skip(), test.only(), test.todo()");
+console.info("  • describe.skip() / describe.only() for groups");
+console.info("  • File patterns work as positional arguments");
 
-console.log("\n🚀 Run examples:");
-console.log("  bun test -t \"auth\"");
-console.log("  bun test --test-name-pattern=\"API\"");
-console.log("  bun test tests/unit/*.test.ts");
+console.info("\n🚀 Run examples:");
+console.info("  bun test -t \"auth\"");
+console.info("  bun test --test-name-pattern=\"API\"");
+console.info("  bun test tests/unit/*.test.ts");

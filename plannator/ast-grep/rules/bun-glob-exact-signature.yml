@@ -1,0 +1,11 @@
+id: bun-glob-exact-signature
+language: TypeScript
+severity: error
+message: "Bun.Glob expects exactly one pattern string"
+note: "Signature is new Bun.Glob(pattern: string)"
+ignores:
+  - ".agents/**"
+rule:
+  any:
+    - pattern: new Bun.Glob()
+    - pattern: new Bun.Glob($A, $B)

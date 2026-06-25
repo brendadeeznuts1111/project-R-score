@@ -16,7 +16,7 @@
  * ```typescript
  * const buffer = new CircularBuffer<number>(100);
  * buffer.push(1, 2, 3);
- * console.log(buffer); // Beautiful formatted output
+ * console.info(buffer); // Beautiful formatted output
  * ```
  */
 
@@ -513,7 +513,7 @@ export class CircularBuffer<T> {
 	 * @example
 	 * ```typescript
 	 * for (const item of buffer) {
-	 *   console.log(item);
+	 *   console.info(item);
 	 * }
 	 * ```
 	 */

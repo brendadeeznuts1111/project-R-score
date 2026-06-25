@@ -34,18 +34,18 @@ const POOL_SIZE = (() => {
   
   // Bit 10: FAST_POOL (0x00000400) = 1000 connections
   if ((config.featureFlags & FEATURE_FLAGS.FAST_POOL) !== 0) {
-    console.log("[POOL] Using FAST_POOL: 1000 connections");
+    console.info("[POOL] Using FAST_POOL: 1000 connections");
     return 1000;
   }
   
   // Legacy config (Version 0) = 10 connections (backwards compatible)
   if (config.version === 0) {
-    console.log("[POOL] Using legacy config: 10 connections");
+    console.info("[POOL] Using legacy config: 10 connections");
     return 10;
   }
   
   // Modern config (Version 1) = 100 connections (default)
-  console.log("[POOL] Using modern config: 100 connections");
+  console.info("[POOL] Using modern config: 100 connections");
   return 100;
 })();
 
@@ -61,7 +61,7 @@ export function createConfigAgent(): Agent {
 
   // Monitor pool health (if DEBUG flag)
   if (config.features?.DEBUG) {
-    console.log(`[POOL] Agent created with pool size: ${POOL_SIZE}`);
+    console.info(`[POOL] Agent created with pool size: ${POOL_SIZE}`);
     
     const monitorInterval = setInterval(() => {
       try {
@@ -74,7 +74,7 @@ export function createConfigAgent(): Agent {
           uptime: process.uptime()
         };
         
-        console.log(`[POOL] Agent stats - Sockets: ${stats.sockets}, Free: ${stats.freeSockets}, Config: v${stats.configVersion}`);
+        console.info(`[POOL] Agent stats - Sockets: ${stats.sockets}, Free: ${stats.freeSockets}, Config: v${stats.configVersion}`);
       } catch (error) {
         console.error("[POOL] Stats monitoring error:", error);
       }

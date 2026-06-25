@@ -1,12 +1,7 @@
 // tools/wasm-inspector.test.ts — Tests for wasm-inspector
 
 import { test, expect, describe } from 'bun:test';
-import {
-  WASM_API,
-  getWasmClass,
-  getWasmMember,
-  getAllWasmUrls,
-} from '../lib/docs/wasm-reference';
+import { WASM_API, getWasmClass, getWasmMember, getAllWasmUrls } from '../lib/docs/wasm-reference';
 import type { WasmAPIEntry } from '../lib/docs/wasm-reference';
 import { DocumentationCategory, UrlType } from '../lib/docs/constants/enums';
 import { DOC_PATTERNS } from '../lib/docs/patterns';
@@ -196,8 +191,14 @@ describe('wasm-inspector CLI', () => {
     // Minimal valid .wasm binary (empty module: magic + version + no sections)
     // WAT: (module)
     const minimalWasm = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, // magic: \0asm
-      0x01, 0x00, 0x00, 0x00, // version: 1
+      0x00,
+      0x61,
+      0x73,
+      0x6d, // magic: \0asm
+      0x01,
+      0x00,
+      0x00,
+      0x00, // version: 1
     ]);
 
     const tmpPath = '/tmp/test-minimal.wasm';
@@ -221,11 +222,47 @@ describe('wasm-inspector CLI', () => {
     // A slightly richer wasm module with a function export
     // WAT equivalent: (module (func (export "add") (param i32 i32) (result i32) local.get 0 local.get 1 i32.add))
     const wasmWithExport = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, // header
-      0x01, 0x07, 0x01, 0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f, // type section: (i32, i32) -> i32
-      0x03, 0x02, 0x01, 0x00, // function section: 1 func, type 0
-      0x07, 0x07, 0x01, 0x03, 0x61, 0x64, 0x64, 0x00, 0x00, // export section: "add" -> func 0
-      0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0x20, 0x01, 0x6a, 0x0b, // code section
+      0x00,
+      0x61,
+      0x73,
+      0x6d,
+      0x01,
+      0x00,
+      0x00,
+      0x00, // header
+      0x01,
+      0x07,
+      0x01,
+      0x60,
+      0x02,
+      0x7f,
+      0x7f,
+      0x01,
+      0x7f, // type section: (i32, i32) -> i32
+      0x03,
+      0x02,
+      0x01,
+      0x00, // function section: 1 func, type 0
+      0x07,
+      0x07,
+      0x01,
+      0x03,
+      0x61,
+      0x64,
+      0x64,
+      0x00,
+      0x00, // export section: "add" -> func 0
+      0x0a,
+      0x09,
+      0x01,
+      0x07,
+      0x00,
+      0x20,
+      0x00,
+      0x20,
+      0x01,
+      0x6a,
+      0x0b, // code section
     ]);
 
     const tmpPath = '/tmp/test-add.wasm';

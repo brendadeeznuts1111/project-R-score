@@ -9,8 +9,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 
-console.log("📦 Bun v1.3.9: ESM Bytecode Compilation Demo\n");
-console.log("=" .repeat(70));
+console.info("📦 Bun v1.3.9: ESM Bytecode Compilation Demo\n");
+console.info("=" .repeat(70));
 
 const demoDir = join(tmpdir(), `bun-esm-bytecode-demo-${Date.now()}`);
 
@@ -41,7 +41,7 @@ async function loadConfig(): Promise<Config> {
 }
 
 function showHelp(): void {
-  console.log(\`
+  console.info(\`
 ESM CLI Demo (Bun v1.3.9+ Bytecode Compiled)
 
 Usage: cli [options] <command>
@@ -59,17 +59,17 @@ Options:
 
 function greet(name: string, verbose: boolean): void {
   if (verbose) {
-    console.log(\`[VERBOSE] Config loaded: \${config.name}@\${config.version}\`);
+    console.info(\`[VERBOSE] Config loaded: \${config.name}@\${config.version}\`);
   }
-  console.log(\`Hello, \${name}! 👋\`);
-  console.log(\`Running on Bun \${Bun.version}\`);
+  console.info(\`Hello, \${name}! 👋\`);
+  console.info(\`Running on Bun \${Bun.version}\`);
 }
 
 function showInfo(): void {
-  console.log("📊 Configuration Info:");
-  console.log(\`  Name:    \${config.name}\`);
-  console.log(\`  Version: \${config.version}\`);
-  console.log(\`  Defaults: \${JSON.stringify(config.defaults, null, 2)}\`);
+  console.info("📊 Configuration Info:");
+  console.info(\`  Name:    \${config.name}\`);
+  console.info(\`  Version: \${config.version}\`);
+  console.info(\`  Defaults: \${JSON.stringify(config.defaults, null, 2)}\`);
 }
 
 async function main(): Promise<void> {
@@ -97,7 +97,7 @@ async function main(): Promise<void> {
       showInfo();
       break;
     case "version":
-      console.log(config.version);
+      console.info(config.version);
       break;
     default:
       console.error(\`Unknown command: \${command}\`);
@@ -135,9 +135,9 @@ async function cleanup() {
 }
 
 async function buildESM() {
-  console.log("\n📦 Building ESM Bytecode Binary");
-  console.log("Command: bun build --compile --bytecode --format=esm ./cli.ts");
-  console.log("-".repeat(70));
+  console.info("\n📦 Building ESM Bytecode Binary");
+  console.info("Command: bun build --compile --bytecode --format=esm ./cli.ts");
+  console.info("-".repeat(70));
 
   const proc = Bun.spawn({
     cmd: ["bun", "build", "--compile", "--bytecode", "--format=esm", "./cli.ts", "--outfile", "./dist/cli-esm"],
@@ -151,9 +151,9 @@ async function buildESM() {
 }
 
 async function buildCJS() {
-  console.log("\n📦 Building CJS Bytecode Binary (for comparison)");
-  console.log("Command: bun build --compile --bytecode --format=cjs ./cli.ts");
-  console.log("-".repeat(70));
+  console.info("\n📦 Building CJS Bytecode Binary (for comparison)");
+  console.info("Command: bun build --compile --bytecode --format=cjs ./cli.ts");
+  console.info("-".repeat(70));
 
   const proc = Bun.spawn({
     cmd: ["bun", "build", "--compile", "--bytecode", "--format=cjs", "./cli.ts", "--outfile", "./dist/cli-cjs"],
@@ -169,8 +169,8 @@ async function buildCJS() {
 async function runBinary(binary: string, args: string[]) {
   const binaryPath = join(demoDir, "dist", binary);
   
-  console.log(`\n▶️ Running: ./dist/${binary} ${args.join(" ")}`);
-  console.log("-".repeat(70));
+  console.info(`\n▶️ Running: ./dist/${binary} ${args.join(" ")}`);
+  console.info("-".repeat(70));
 
   const proc = Bun.spawn({
     cmd: [binaryPath, ...args],
@@ -183,9 +183,9 @@ async function runBinary(binary: string, args: string[]) {
 }
 
 async function compareBinaries() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📊 Binary Comparison");
-  console.log("=".repeat(70));
+  console.info("\n" + "=".repeat(70));
+  console.info("📊 Binary Comparison");
+  console.info("=".repeat(70));
 
   const esmPath = join(demoDir, "dist", "cli-esm");
   const cjsPath = join(demoDir, "dist", "cli-cjs");
@@ -196,16 +196,16 @@ async function compareBinaries() {
   const esmExists = await esmFile.exists();
   const cjsExists = await cjsFile.exists();
 
-  console.log("\nBinary files:");
-  console.log(`  ESM: ${esmExists ? `${(await esmFile.size()).toLocaleString()} bytes` : "Not found"}`);
-  console.log(`  CJS: ${cjsExists ? `${(await cjsFile.size()).toLocaleString()} bytes` : "Not found"}`);
+  console.info("\nBinary files:");
+  console.info(`  ESM: ${esmExists ? `${(await esmFile.size()).toLocaleString()} bytes` : "Not found"}`);
+  console.info(`  CJS: ${cjsExists ? `${(await cjsFile.size()).toLocaleString()} bytes` : "Not found"}`);
 }
 
 function showBuildConfigurations() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🔧 Build Configuration Examples");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("🔧 Build Configuration Examples");
+  console.info("=".repeat(70));
+  console.info(`
 # ESM Bytecode (NEW in v1.3.9)
 bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/my-cli
 
@@ -226,10 +226,10 @@ bun build --compile --bytecode --format=esm --target=bun-windows-x64 ./cli.ts
 }
 
 function showPackageJsonExample() {
-  console.log("\n" + "=".repeat(70));
-  console.log("📦 Recommended package.json Setup");
-  console.log("=".repeat(70));
-  console.log(`
+  console.info("\n" + "=".repeat(70));
+  console.info("📦 Recommended package.json Setup");
+  console.info("=".repeat(70));
+  console.info(`
 {
   "name": "my-cli-tool",
   "version": "1.0.0",
@@ -251,8 +251,8 @@ function showPackageJsonExample() {
 // Main
 async function main() {
   try {
-    console.log(`Bun version: ${Bun.version}`);
-    console.log(`Platform: ${process.platform} ${process.arch}`);
+    console.info(`Bun version: ${Bun.version}`);
+    console.info(`Platform: ${process.platform} ${process.arch}`);
 
     await setup();
 
@@ -274,7 +274,7 @@ async function main() {
     showBuildConfigurations();
     showPackageJsonExample();
 
-    console.log("\n✅ ESM Bytecode demo complete!\n");
+    console.info("\n✅ ESM Bytecode demo complete!\n");
   } catch (error) {
     console.error("❌ Error:", error);
   } finally {

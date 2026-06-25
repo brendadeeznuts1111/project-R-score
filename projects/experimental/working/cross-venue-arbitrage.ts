@@ -171,7 +171,7 @@ export class CrossVenueArbitrageDetector {
   }
 
   async executeArbitrageOpportunity(opportunity: ArbitrageOpportunity): Promise<boolean> {
-    console.log(`Executing arbitrage for ${opportunity.marketId}`);
+    console.info(`Executing arbitrage for ${opportunity.marketId}`);
 
     // Parallel order placement across venues
     const orderPromises = Array.from(opportunity.venueAllocations.entries())
@@ -187,7 +187,7 @@ export class CrossVenueArbitrageDetector {
     );
 
     if (allSuccessful) {
-      console.log(`Arbitrage executed successfully for ${opportunity.marketId}`);
+      console.info(`Arbitrage executed successfully for ${opportunity.marketId}`);
       return true;
     } else {
       console.error(`Arbitrage execution failed for ${opportunity.marketId}`);

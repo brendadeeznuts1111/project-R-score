@@ -13,7 +13,7 @@ export class SyntheticPositionTrackerExamples {
      * Example 1: Basic position tracking workflow
      */
     static demonstrateBasicPositionTracking(): void {
-        console.log('📊 Basic Synthetic Position Tracking Workflow\n');
+        console.info('📊 Basic Synthetic Position Tracking Workflow\n');
 
         // Create position tracker
         const tracker = new SyntheticPositionTracker();
@@ -24,7 +24,7 @@ export class SyntheticPositionTrackerExamples {
         const arbitrage2 = factory.createConservativeExample();
         const arbitrage3 = factory.createAggressiveExample();
 
-        console.log('🎯 Adding synthetic arbitrage positions...\n');
+        console.info('🎯 Adding synthetic arbitrage positions...\n');
 
         // Add positions to tracker
         const position1 = tracker.addPosition(arbitrage1, {
@@ -45,22 +45,22 @@ export class SyntheticPositionTrackerExamples {
             assignedTo: 'trader-1'
         });
 
-        console.log(`✅ Added 3 positions to tracker:`);
-        console.log(`   Position 1: ${position1.id} - ${position1.metadata.notes}`);
-        console.log(`   Position 2: ${position2.id} - ${position2.metadata.notes}`);
-        console.log(`   Position 3: ${position3.id} - ${position3.metadata.notes}`);
+        console.info(`✅ Added 3 positions to tracker:`);
+        console.info(`   Position 1: ${position1.id} - ${position1.metadata.notes}`);
+        console.info(`   Position 2: ${position2.id} - ${position2.metadata.notes}`);
+        console.info(`   Position 3: ${position3.id} - ${position3.metadata.notes}`);
 
         // Get initial portfolio metrics
         const initialMetrics = tracker.getPortfolioMetrics();
-        console.log('\n📈 Initial Portfolio Metrics:');
-        console.log(`   Total Positions: ${initialMetrics.totalPositions}`);
-        console.log(`   Active Positions: ${initialMetrics.activePositions}`);
-        console.log(`   Total Exposure: $${initialMetrics.totalExposure.toLocaleString()}`);
-        console.log(`   Expected PnL: $${initialMetrics.totalExpectedPnL.toLocaleString()}`);
-        console.log(`   Portfolio VaR95: $${initialMetrics.portfolioVar95.toLocaleString()}`);
+        console.info('\n📈 Initial Portfolio Metrics:');
+        console.info(`   Total Positions: ${initialMetrics.totalPositions}`);
+        console.info(`   Active Positions: ${initialMetrics.activePositions}`);
+        console.info(`   Total Exposure: $${initialMetrics.totalExposure.toLocaleString()}`);
+        console.info(`   Expected PnL: $${initialMetrics.totalExpectedPnL.toLocaleString()}`);
+        console.info(`   Portfolio VaR95: $${initialMetrics.portfolioVar95.toLocaleString()}`);
 
         // Simulate leg execution
-        console.log('\n🔄 Simulating position execution...\n');
+        console.info('\n🔄 Simulating position execution...\n');
 
         // Execute first position
         tracker.updateLegExecution(position1.id, 0, {
@@ -77,33 +77,33 @@ export class SyntheticPositionTrackerExamples {
             commission: 8
         });
 
-        console.log(`✅ Position ${position1.id} fully executed`);
+        console.info(`✅ Position ${position1.id} fully executed`);
 
         // Get updated metrics
         const updatedMetrics = tracker.getPortfolioMetrics();
-        console.log('\n📊 Updated Portfolio Metrics:');
-        console.log(`   Active Positions: ${updatedMetrics.activePositions}`);
-        console.log(`   Total Exposure: $${updatedMetrics.totalExposure.toLocaleString()}`);
-        console.log(`   Expected PnL: $${updatedMetrics.totalExpectedPnL.toLocaleString()}`);
+        console.info('\n📊 Updated Portfolio Metrics:');
+        console.info(`   Active Positions: ${updatedMetrics.activePositions}`);
+        console.info(`   Total Exposure: $${updatedMetrics.totalExposure.toLocaleString()}`);
+        console.info(`   Expected PnL: $${updatedMetrics.totalExpectedPnL.toLocaleString()}`);
 
         // Close position with PnL
         const finalPosition = tracker.closePosition(position1.id, 'completed', 150);
-        console.log(`\n🏁 Position ${position1.id} closed with PnL: $${finalPosition.execution.realizedPnL?.toLocaleString()}`);
+        console.info(`\n🏁 Position ${position1.id} closed with PnL: $${finalPosition.execution.realizedPnL?.toLocaleString()}`);
 
         // Final metrics
         const finalMetrics = tracker.getPortfolioMetrics();
-        console.log('\n📊 Final Portfolio Metrics:');
-        console.log(`   Completed Positions: ${finalMetrics.completedPositions}`);
-        console.log(`   Realized PnL: $${finalMetrics.totalRealizedPnL.toLocaleString()}`);
-        console.log(`   Win Rate: ${(finalMetrics.winRate * 100).toFixed(1)}%`);
-        console.log(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(3)}`);
+        console.info('\n📊 Final Portfolio Metrics:');
+        console.info(`   Completed Positions: ${finalMetrics.completedPositions}`);
+        console.info(`   Realized PnL: $${finalMetrics.totalRealizedPnL.toLocaleString()}`);
+        console.info(`   Win Rate: ${(finalMetrics.winRate * 100).toFixed(1)}%`);
+        console.info(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(3)}`);
     }
 
     /**
      * Example 2: Risk management and alerts
      */
     static demonstrateRiskManagement(): void {
-        console.log('\n⚠️ Risk Management and Alert System\n');
+        console.info('\n⚠️ Risk Management and Alert System\n');
 
         // Create tracker with conservative limits
         const tracker = SyntheticPositionTrackerFactory.createConservativeTracker();
@@ -111,24 +111,24 @@ export class SyntheticPositionTrackerExamples {
         // Set up event listeners for risk alerts
         tracker.addEventListener('riskAlert', (data: any) => {
             const alert = data.alert;
-            console.log(`🚨 RISK ALERT [${alert.severity.toUpperCase()}]: ${alert.message}`);
-            console.log(`   Type: ${alert.type}`);
-            console.log(`   Threshold: $${alert.threshold.toLocaleString()}`);
-            console.log(`   Current: $${alert.currentValue.toLocaleString()}`);
+            console.info(`🚨 RISK ALERT [${alert.severity.toUpperCase()}]: ${alert.message}`);
+            console.info(`   Type: ${alert.type}`);
+            console.info(`   Threshold: $${alert.threshold.toLocaleString()}`);
+            console.info(`   Current: $${alert.currentValue.toLocaleString()}`);
         });
 
         tracker.addEventListener('positionAdded', (data: any) => {
-            console.log(`📝 Position Added: ${data.position.id}`);
+            console.info(`📝 Position Added: ${data.position.id}`);
         });
 
         tracker.addEventListener('positionClosed', (data: any) => {
-            console.log(`🏁 Position Closed: ${data.position.id} (${data.reason})`);
+            console.info(`🏁 Position Closed: ${data.position.id} (${data.reason})`);
         });
 
         // Generate positions to test risk limits
         const factory = new SyntheticArbitrageV1Factory();
 
-        console.log('🎯 Adding positions to test risk limits...\n');
+        console.info('🎯 Adding positions to test risk limits...\n');
 
         // Add positions until we hit risk limits
         let positionCount = 0;
@@ -143,7 +143,7 @@ export class SyntheticPositionTrackerExamples {
                     assignedTo: 'risk-tester'
                 });
 
-                console.log(`✅ Added position ${positionCount + 1}: ${position.id}`);
+                console.info(`✅ Added position ${positionCount + 1}: ${position.id}`);
                 positionCount++;
 
                 // Execute position to activate risk
@@ -154,43 +154,43 @@ export class SyntheticPositionTrackerExamples {
                 });
 
             } catch (error) {
-                console.log(`❌ Error adding position: ${error}`);
+                console.info(`❌ Error adding position: ${error}`);
                 break;
             }
         }
 
         // Check current risk status
         const metrics = tracker.getPortfolioMetrics();
-        console.log('\n📊 Current Portfolio Risk Status:');
-        console.log(`   Total Positions: ${metrics.totalPositions}`);
-        console.log(`   Portfolio Exposure: $${metrics.totalExposure.toLocaleString()}`);
-        console.log(`   Portfolio VaR95: $${metrics.portfolioVar95.toLocaleString()}`);
-        console.log(`   Portfolio VaR99: $${metrics.portfolioVar99.toLocaleString()}`);
+        console.info('\n📊 Current Portfolio Risk Status:');
+        console.info(`   Total Positions: ${metrics.totalPositions}`);
+        console.info(`   Portfolio Exposure: $${metrics.totalExposure.toLocaleString()}`);
+        console.info(`   Portfolio VaR95: $${metrics.portfolioVar95.toLocaleString()}`);
+        console.info(`   Portfolio VaR99: $${metrics.portfolioVar99.toLocaleString()}`);
 
         // Get risk alerts
         const alerts = tracker.getRiskAlerts();
-        console.log(`\n🚨 Active Risk Alerts: ${alerts.length}`);
+        console.info(`\n🚨 Active Risk Alerts: ${alerts.length}`);
 
         alerts.forEach((alert, index) => {
-            console.log(`   ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.message}`);
-            console.log(`      Current: $${alert.currentValue.toLocaleString()} / Limit: $${alert.threshold.toLocaleString()}`);
+            console.info(`   ${index + 1}. [${alert.severity.toUpperCase()}] ${alert.message}`);
+            console.info(`      Current: $${alert.currentValue.toLocaleString()} / Limit: $${alert.threshold.toLocaleString()}`);
         });
 
         // Acknowledge alerts
-        console.log('\n✅ Acknowledging risk alerts...');
+        console.info('\n✅ Acknowledging risk alerts...');
         alerts.forEach(alert => {
             tracker.acknowledgeAlert(alert.id);
         });
 
         const acknowledgedAlerts = tracker.getRiskAlerts({ acknowledged: true });
-        console.log(`   Acknowledged: ${acknowledgedAlerts.length} alerts`);
+        console.info(`   Acknowledged: ${acknowledgedAlerts.length} alerts`);
     }
 
     /**
      * Example 3: Portfolio analysis and reporting
      */
     static demonstratePortfolioAnalysis(): void {
-        console.log('\n📊 Portfolio Analysis and Reporting\n');
+        console.info('\n📊 Portfolio Analysis and Reporting\n');
 
         // Create tracker and add diverse positions
         const tracker = new SyntheticPositionTracker();
@@ -205,7 +205,7 @@ export class SyntheticPositionTrackerExamples {
             { arbitrage: factory.createConservativeExample(), sport: 'NFL', risk: 'low' }
         ];
 
-        console.log('🎯 Building diversified portfolio...\n');
+        console.info('🎯 Building diversified portfolio...\n');
 
         const addedPositions: SyntheticPosition[] = [];
 
@@ -232,60 +232,60 @@ export class SyntheticPositionTrackerExamples {
         const metrics = tracker.getPortfolioMetrics();
         const riskBreakdown = tracker.getPositionRiskBreakdown();
 
-        console.log('📈 Portfolio Performance Metrics:');
-        console.log(`   Total Positions: ${metrics.totalPositions}`);
-        console.log(`   Active Positions: ${metrics.activePositions}`);
-        console.log(`   Completed Positions: ${metrics.completedPositions}`);
-        console.log(`   Total Exposure: $${metrics.totalExposure.toLocaleString()}`);
-        console.log(`   Expected PnL: $${metrics.totalExpectedPnL.toLocaleString()}`);
-        console.log(`   Realized PnL: $${metrics.totalRealizedPnL.toLocaleString()}`);
-        console.log(`   Sharpe Ratio: ${metrics.sharpeRatio.toFixed(3)}`);
-        console.log(`   Win Rate: ${(metrics.winRate * 100).toFixed(1)}%`);
-        console.log(`   Risk-Adjusted Return: ${(metrics.riskAdjustedReturn * 100).toFixed(3)}%`);
+        console.info('📈 Portfolio Performance Metrics:');
+        console.info(`   Total Positions: ${metrics.totalPositions}`);
+        console.info(`   Active Positions: ${metrics.activePositions}`);
+        console.info(`   Completed Positions: ${metrics.completedPositions}`);
+        console.info(`   Total Exposure: $${metrics.totalExposure.toLocaleString()}`);
+        console.info(`   Expected PnL: $${metrics.totalExpectedPnL.toLocaleString()}`);
+        console.info(`   Realized PnL: $${metrics.totalRealizedPnL.toLocaleString()}`);
+        console.info(`   Sharpe Ratio: ${metrics.sharpeRatio.toFixed(3)}`);
+        console.info(`   Win Rate: ${(metrics.winRate * 100).toFixed(1)}%`);
+        console.info(`   Risk-Adjusted Return: ${(metrics.riskAdjustedReturn * 100).toFixed(3)}%`);
 
-        console.log('\n🎯 Risk Breakdown by Sport:');
+        console.info('\n🎯 Risk Breakdown by Sport:');
         Object.entries(riskBreakdown.bySport).forEach(([sport, data]) => {
-            console.log(`   ${sport}:`);
-            console.log(`     Positions: ${data.positions}`);
-            console.log(`     Exposure: $${data.exposure.toLocaleString()}`);
-            console.log(`     VaR95: $${data.var95.toLocaleString()}`);
+            console.info(`   ${sport}:`);
+            console.info(`     Positions: ${data.positions}`);
+            console.info(`     Exposure: $${data.exposure.toLocaleString()}`);
+            console.info(`     VaR95: $${data.var95.toLocaleString()}`);
         });
 
-        console.log('\n📊 Risk Breakdown by Status:');
+        console.info('\n📊 Risk Breakdown by Status:');
         Object.entries(riskBreakdown.byStatus).forEach(([status, data]) => {
-            console.log(`   ${status}:`);
-            console.log(`     Positions: ${data.positions}`);
-            console.log(`     Exposure: $${data.exposure.toLocaleString()}`);
+            console.info(`   ${status}:`);
+            console.info(`     Positions: ${data.positions}`);
+            console.info(`     Exposure: $${data.exposure.toLocaleString()}`);
         });
 
         // Position analysis
-        console.log('\n📋 Position Analysis:');
+        console.info('\n📋 Position Analysis:');
         const allPositions = tracker.getPositions();
 
         allPositions.forEach((position, index) => {
-            console.log(`   ${index + 1}. ${position.id}`);
-            console.log(`      Status: ${position.status}`);
-            console.log(`      Sport: ${position.arbitrage.markets[0].market.sport}`);
-            console.log(`      Expected Return: ${(position.arbitrage.expectedReturn * 100).toFixed(3)}%`);
-            console.log(`      Current Exposure: $${position.risk.currentExposure.toLocaleString()}`);
-            console.log(`      Assigned To: ${position.metadata.assignedTo}`);
-            console.log(`      Tags: ${position.metadata.tags?.join(', ')}`);
+            console.info(`   ${index + 1}. ${position.id}`);
+            console.info(`      Status: ${position.status}`);
+            console.info(`      Sport: ${position.arbitrage.markets[0].market.sport}`);
+            console.info(`      Expected Return: ${(position.arbitrage.expectedReturn * 100).toFixed(3)}%`);
+            console.info(`      Current Exposure: $${position.risk.currentExposure.toLocaleString()}`);
+            console.info(`      Assigned To: ${position.metadata.assignedTo}`);
+            console.info(`      Tags: ${position.metadata.tags?.join(', ')}`);
         });
 
         // Export portfolio data
         const exportData = tracker.exportPortfolioData();
-        console.log(`\n💾 Portfolio Export Summary:`);
-        console.log(`   Export Time: ${exportData.exportTime.toISOString()}`);
-        console.log(`   Positions Exported: ${exportData.positions.length}`);
-        console.log(`   Active Alerts: ${exportData.alerts.length}`);
-        console.log(`   Portfolio Value: $${exportData.metrics.totalExposure.toLocaleString()}`);
+        console.info(`\n💾 Portfolio Export Summary:`);
+        console.info(`   Export Time: ${exportData.exportTime.toISOString()}`);
+        console.info(`   Positions Exported: ${exportData.positions.length}`);
+        console.info(`   Active Alerts: ${exportData.alerts.length}`);
+        console.info(`   Portfolio Value: $${exportData.metrics.totalExposure.toLocaleString()}`);
     }
 
     /**
      * Example 4: Different tracker strategies comparison
      */
     static demonstrateTrackerStrategies(): void {
-        console.log('\n🎭 Tracker Strategy Comparison\n');
+        console.info('\n🎭 Tracker Strategy Comparison\n');
 
         // Create different tracker configurations
         const conservativeTracker = SyntheticPositionTrackerFactory.createConservativeTracker();
@@ -295,7 +295,7 @@ export class SyntheticPositionTrackerExamples {
         const factory = new SyntheticArbitrageV1Factory();
         const testArbitrages = Array(10).fill(null).map(() => factory.createNBAExample());
 
-        console.log('📊 Testing different tracker configurations...\n');
+        console.info('📊 Testing different tracker configurations...\n');
 
         const trackers = [
             { name: 'Conservative', tracker: conservativeTracker, color: '🟢' },
@@ -304,7 +304,7 @@ export class SyntheticPositionTrackerExamples {
         ];
 
         for (const { name, tracker, color } of trackers) {
-            console.log(`${color} ${name} Tracker:`);
+            console.info(`${color} ${name} Tracker:`);
 
             let positionsAdded = 0;
             let errors = 0;
@@ -333,29 +333,29 @@ export class SyntheticPositionTrackerExamples {
             const metrics = tracker.getPortfolioMetrics();
             const alerts = tracker.getRiskAlerts();
 
-            console.log(`   Positions Added: ${positionsAdded}/${testArbitrages.length}`);
-            console.log(`   Errors: ${errors}`);
-            console.log(`   Portfolio Exposure: $${metrics.totalExposure.toLocaleString()}`);
-            console.log(`   Portfolio VaR95: $${metrics.portfolioVar95.toLocaleString()}`);
-            console.log(`   Expected PnL: $${metrics.totalExpectedPnL.toLocaleString()}`);
-            console.log(`   Risk Alerts: ${alerts.length}`);
+            console.info(`   Positions Added: ${positionsAdded}/${testArbitrages.length}`);
+            console.info(`   Errors: ${errors}`);
+            console.info(`   Portfolio Exposure: $${metrics.totalExposure.toLocaleString()}`);
+            console.info(`   Portfolio VaR95: $${metrics.portfolioVar95.toLocaleString()}`);
+            console.info(`   Expected PnL: $${metrics.totalExpectedPnL.toLocaleString()}`);
+            console.info(`   Risk Alerts: ${alerts.length}`);
 
             if (alerts.length > 0) {
-                console.log(`   Alert Types: ${alerts.map(a => a.type).join(', ')}`);
+                console.info(`   Alert Types: ${alerts.map(a => a.type).join(', ')}`);
             }
-            console.log('');
+            console.info('');
         }
 
         // Strategy comparison summary
-        console.log('📈 Strategy Comparison Summary:');
-        console.log('Strategy'.padEnd(15) + ' | Positions | Exposure | VaR95 | Alerts');
-        console.log(''.padEnd(15) + ' | ' + '-'.repeat(10) + ' | ' + '-'.repeat(8) + ' | ' + '-'.repeat(5) + ' | ' + '-'.repeat(6));
+        console.info('📈 Strategy Comparison Summary:');
+        console.info('Strategy'.padEnd(15) + ' | Positions | Exposure | VaR95 | Alerts');
+        console.info(''.padEnd(15) + ' | ' + '-'.repeat(10) + ' | ' + '-'.repeat(8) + ' | ' + '-'.repeat(5) + ' | ' + '-'.repeat(6));
 
         trackers.forEach(({ name, tracker }) => {
             const metrics = tracker.getPortfolioMetrics();
             const alerts = tracker.getRiskAlerts();
 
-            console.log(
+            console.info(
                 name.padEnd(15) + ' | ' +
                 `${metrics.totalPositions}`.padEnd(10) + ' | ' +
                 `$${(metrics.totalExposure / 1000).toFixed(0)}k`.padEnd(8) + ' | ' +
@@ -369,29 +369,29 @@ export class SyntheticPositionTrackerExamples {
      * Example 5: Real-time position monitoring
      */
     static async demonstrateRealTimeMonitoring(): Promise<void> {
-        console.log('\n⚡ Real-Time Position Monitoring\n');
+        console.info('\n⚡ Real-Time Position Monitoring\n');
 
         const tracker = SyntheticPositionTrackerFactory.createHFTTracker();
         const factory = new SyntheticArbitrageV1Factory();
 
         // Set up real-time monitoring
         tracker.addEventListener('positionAdded', (data: any) => {
-            console.log(`📝 [${new Date().toLocaleTimeString()}] Position Added: ${data.position.id}`);
+            console.info(`📝 [${new Date().toLocaleTimeString()}] Position Added: ${data.position.id}`);
         });
 
         tracker.addEventListener('riskAlert', (data: any) => {
-            console.log(`🚨 [${new Date().toLocaleTimeString()}] Risk Alert: ${data.alert.message}`);
+            console.info(`🚨 [${new Date().toLocaleTimeString()}] Risk Alert: ${data.alert.message}`);
         });
 
         tracker.addEventListener('positionUpdated', (data: any) => {
-            console.log(`🔄 [${new Date().toLocaleTimeString()}] Position Updated: ${data.position.id}`);
+            console.info(`🔄 [${new Date().toLocaleTimeString()}] Position Updated: ${data.position.id}`);
         });
 
-        console.log('🔄 Starting real-time position simulation...\n');
+        console.info('🔄 Starting real-time position simulation...\n');
 
         // Simulate real-time position lifecycle
         for (let i = 0; i < 5; i++) {
-            console.log(`\n--- Cycle ${i + 1} ---`);
+            console.info(`\n--- Cycle ${i + 1} ---`);
 
             // Add new position
             const arbitrage = factory.createNBAExample();
@@ -431,52 +431,52 @@ export class SyntheticPositionTrackerExamples {
 
             // Show current metrics
             const metrics = tracker.getPortfolioMetrics();
-            console.log(`📊 Portfolio Status: ${metrics.activePositions} active, $${metrics.totalRealizedPnL.toFixed(0)} realized PnL`);
+            console.info(`📊 Portfolio Status: ${metrics.activePositions} active, $${metrics.totalRealizedPnL.toFixed(0)} realized PnL`);
         }
 
         // Final summary
         const finalMetrics = tracker.getPortfolioMetrics();
         const alerts = tracker.getRiskAlerts();
 
-        console.log('\n📊 Real-Time Simulation Summary:');
-        console.log(`   Total Positions Processed: ${finalMetrics.totalPositions}`);
-        console.log(`   Completed Positions: ${finalMetrics.completedPositions}`);
-        console.log(`   Total Realized PnL: $${finalMetrics.totalRealizedPnL.toLocaleString()}`);
-        console.log(`   Win Rate: ${(finalMetrics.winRate * 100).toFixed(1)}%`);
-        console.log(`   Average Holding Period: ${(finalMetrics.averageHoldingPeriod / 1000).toFixed(1)}s`);
-        console.log(`   Risk Alerts Generated: ${alerts.length}`);
-        console.log(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(3)}`);
+        console.info('\n📊 Real-Time Simulation Summary:');
+        console.info(`   Total Positions Processed: ${finalMetrics.totalPositions}`);
+        console.info(`   Completed Positions: ${finalMetrics.completedPositions}`);
+        console.info(`   Total Realized PnL: $${finalMetrics.totalRealizedPnL.toLocaleString()}`);
+        console.info(`   Win Rate: ${(finalMetrics.winRate * 100).toFixed(1)}%`);
+        console.info(`   Average Holding Period: ${(finalMetrics.averageHoldingPeriod / 1000).toFixed(1)}s`);
+        console.info(`   Risk Alerts Generated: ${alerts.length}`);
+        console.info(`   Sharpe Ratio: ${finalMetrics.sharpeRatio.toFixed(3)}`);
     }
 
     /**
      * Run all position tracker examples
      */
     static async runAllExamples(): Promise<void> {
-        console.log('🚀 Synthetic Position Tracker Examples\n');
-        console.log('='.repeat(80));
+        console.info('🚀 Synthetic Position Tracker Examples\n');
+        console.info('='.repeat(80));
 
         this.demonstrateBasicPositionTracking();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateRiskManagement();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstratePortfolioAnalysis();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         this.demonstrateTrackerStrategies();
-        console.log('='.repeat(80));
+        console.info('='.repeat(80));
 
         await this.demonstrateRealTimeMonitoring();
 
-        console.log('\n✅ All synthetic position tracker examples completed!');
-        console.log('\n🎯 Key Capabilities Demonstrated:');
-        console.log('   • Comprehensive position lifecycle management');
-        console.log('   • Real-time risk monitoring and alerting');
-        console.log('   • Portfolio analysis and performance metrics');
-        console.log('   • Multiple tracker strategies (Conservative, Aggressive, HFT)');
-        console.log('   • Event-driven architecture for real-time updates');
-        console.log('   • Institutional-grade risk management (VaR, exposure limits)');
+        console.info('\n✅ All synthetic position tracker examples completed!');
+        console.info('\n🎯 Key Capabilities Demonstrated:');
+        console.info('   • Comprehensive position lifecycle management');
+        console.info('   • Real-time risk monitoring and alerting');
+        console.info('   • Portfolio analysis and performance metrics');
+        console.info('   • Multiple tracker strategies (Conservative, Aggressive, HFT)');
+        console.info('   • Event-driven architecture for real-time updates');
+        console.info('   • Institutional-grade risk management (VaR, exposure limits)');
     }
 }
 

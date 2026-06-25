@@ -61,7 +61,7 @@ class Logger {
         switch (entry.level) {
             case 'debug':
             case 'info':
-                console.log(logMessage, entry.metadata ? JSON.stringify(entry.metadata, null, 2) : '');
+                console.info(logMessage, entry.metadata ? JSON.stringify(entry.metadata, null, 2) : '');
                 break;
             case 'warn':
                 console.warn(logMessage, entry.metadata ? JSON.stringify(entry.metadata, null, 2) : '');

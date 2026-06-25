@@ -20,16 +20,16 @@
  * @since 2025-11-18
  */
 
-console.log('🚀 Complete UDP Socket Documentation Implementation');
-console.log('====================================================');
+console.info('🚀 Complete UDP Socket Documentation Implementation');
+console.info('====================================================');
 
 // =============================================================================
 // 1. SEND DATAGRAMS - EXACT DOCUMENTATION SYNTAX
 // =============================================================================
 
 async function demonstrateSendDatagrams() {
-    console.log('\n📤 1. Send Datagrams - Exact Documentation Syntax:');
-    console.log('==================================================');
+    console.info('\n📤 1. Send Datagrams - Exact Documentation Syntax:');
+    console.info('==================================================');
 
     try {
         // Create a simple server to receive our test messages
@@ -37,26 +37,26 @@ async function demonstrateSendDatagrams() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Server received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Server received: "${message}" from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Test server listening on port ${server.port}`);
+        console.info(`🚀 Test server listening on port ${server.port}`);
 
         // Create client socket
         const client = await Bun.udpSocket({});
 
-        console.log('\n📤 Testing exact send() syntax from documentation:');
+        console.info('\n📤 Testing exact send() syntax from documentation:');
 
         // Exact syntax from: socket.send("Hello, world!", 41234, "127.0.0.1");
-        console.log('📋 Syntax: socket.send("Hello, world!", 41234, "127.0.0.1");');
+        console.info('📋 Syntax: socket.send("Hello, world!", 41234, "127.0.0.1");');
         client.send("Hello, world!", server.port, "127.0.0.1");
 
         await Bun.sleep(50);
 
         // Test with different data types
-        console.log('\n📋 Testing various data types:');
+        console.info('\n📋 Testing various data types:');
         client.send("String message", server.port, "127.0.0.1");
         client.send(Buffer.from("Buffer message"), server.port, "127.0.0.1");
         client.send(new Uint8Array([72, 101, 108, 108, 111]), server.port, "127.0.0.1"); // "Hello"
@@ -64,23 +64,23 @@ async function demonstrateSendDatagrams() {
         await Bun.sleep(100);
 
         // Demonstrate IP address requirement (no DNS resolution)
-        console.log('\n📋 IP Address Validation (no DNS resolution):');
-        console.log('✅ Valid IP addresses work:');
+        console.info('\n📋 IP Address Validation (no DNS resolution):');
+        console.info('✅ Valid IP addresses work:');
         client.send("To localhost", server.port, "127.0.0.1");
         client.send("To IPv6", server.port, "::1");
 
         await Bun.sleep(50);
 
-        console.log('⚠️ Note: send() does not perform DNS resolution for low-latency operations');
-        console.log('   • Must use valid IP addresses (127.0.0.1, ::1, etc.)');
-        console.log('   • Cannot use domain names (localhost, google.com, etc.)');
-        console.log('   • This ensures maximum performance for real-time applications');
+        console.info('⚠️ Note: send() does not perform DNS resolution for low-latency operations');
+        console.info('   • Must use valid IP addresses (127.0.0.1, ::1, etc.)');
+        console.info('   • Cannot use domain names (localhost, google.com, etc.)');
+        console.info('   • This ensures maximum performance for real-time applications');
 
         // Clean up
         client.close();
         server.close();
 
-        console.log('✅ Send datagrams demonstration completed');
+        console.info('✅ Send datagrams demonstration completed');
 
     } catch (error) {
         console.error(`❌ Send datagrams demo failed: ${error.message}`);
@@ -92,35 +92,35 @@ async function demonstrateSendDatagrams() {
 // =============================================================================
 
 async function demonstrateReceiveDatagrams() {
-    console.log('\n📥 2. Receive Datagrams - Exact Documentation Pattern:');
-    console.log('=====================================================');
+    console.info('\n📥 2. Receive Datagrams - Exact Documentation Pattern:');
+    console.info('=====================================================');
 
     try {
         // Exact server pattern from documentation
         const server = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
-                    console.log(`message from ${addr}:${port}:`);
-                    console.log(buf.toString());
+                    console.info(`message from ${addr}:${port}:`);
+                    console.info(buf.toString());
                 },
             },
         });
 
-        console.log(`🚀 Server created with exact documentation pattern`);
-        console.log(`📡 Server listening on port ${server.port}`);
+        console.info(`🚀 Server created with exact documentation pattern`);
+        console.info(`📡 Server listening on port ${server.port}`);
 
         // Exact client pattern from documentation
         const client = await Bun.udpSocket({});
 
-        console.log('\n📤 Testing exact client send from documentation:');
-        console.log('📋 Syntax: client.send("Hello!", server.port, "127.0.0.1");');
+        console.info('\n📤 Testing exact client send from documentation:');
+        console.info('📋 Syntax: client.send("Hello!", server.port, "127.0.0.1");');
 
         client.send("Hello!", server.port, "127.0.0.1");
 
         await Bun.sleep(50);
 
         // Test multiple messages
-        console.log('\n📤 Sending multiple test messages:');
+        console.info('\n📤 Sending multiple test messages:');
         client.send("Message 2", server.port, "127.0.0.1");
         client.send("Message 3", server.port, "127.0.0.1");
 
@@ -130,7 +130,7 @@ async function demonstrateReceiveDatagrams() {
         client.close();
         server.close();
 
-        console.log('✅ Receive datagrams demonstration completed');
+        console.info('✅ Receive datagrams demonstration completed');
 
     } catch (error) {
         console.error(`❌ Receive datagrams demo failed: ${error.message}`);
@@ -142,21 +142,21 @@ async function demonstrateReceiveDatagrams() {
 // =============================================================================
 
 async function demonstrateUDPConnections() {
-    console.log('\n🔗 3. UDP Connections - Exact Documentation Implementation:');
-    console.log('===========================================================');
+    console.info('\n🔗 3. UDP Connections - Exact Documentation Implementation:');
+    console.info('===========================================================');
 
     try {
         // Exact server pattern from documentation
         const server = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
-                    console.log(`message from ${addr}:${port}:`);
-                    console.log(buf.toString());
+                    console.info(`message from ${addr}:${port}:`);
+                    console.info(buf.toString());
                 },
             },
         });
 
-        console.log(`🚀 Server listening on port ${server.port}`);
+        console.info(`🚀 Server listening on port ${server.port}`);
 
         // Exact connected client pattern from documentation
         const client = await Bun.udpSocket({
@@ -166,15 +166,15 @@ async function demonstrateUDPConnections() {
             },
         });
 
-        console.log('\n🔗 Connected client created with exact documentation syntax:');
-        console.log('📋 Syntax: client.send("Hello"); (no port/address needed)');
+        console.info('\n🔗 Connected client created with exact documentation syntax:');
+        console.info('📋 Syntax: client.send("Hello"); (no port/address needed)');
 
         // Exact send syntax for connected socket
         client.send("Hello");
 
         await Bun.sleep(50);
 
-        console.log('\n📤 Testing connected socket benefits:');
+        console.info('\n📤 Testing connected socket benefits:');
         client.send("Connected message 1");
         client.send("Connected message 2");
         client.send("Connected message 3");
@@ -182,7 +182,7 @@ async function demonstrateUDPConnections() {
         await Bun.sleep(100);
 
         // Performance comparison
-        console.log('\n⚡ Performance benefits of connected sockets:');
+        console.info('\n⚡ Performance benefits of connected sockets:');
 
         // Unconnected socket performance
         const unconnectedClient = await Bun.udpSocket({});
@@ -200,22 +200,22 @@ async function demonstrateUDPConnections() {
         const connectedTime = performance.now() - startConnected;
 
         const improvement = ((unconnectedTime - connectedTime) / unconnectedTime * 100);
-        console.log(`📊 Unconnected 100 messages: ${unconnectedTime.toFixed(2)}ms`);
-        console.log(`📊 Connected 100 messages: ${connectedTime.toFixed(2)}ms`);
-        console.log(`📊 Performance improvement: ${improvement.toFixed(1)}%`);
+        console.info(`📊 Unconnected 100 messages: ${unconnectedTime.toFixed(2)}ms`);
+        console.info(`📊 Connected 100 messages: ${connectedTime.toFixed(2)}ms`);
+        console.info(`📊 Performance improvement: ${improvement.toFixed(1)}%`);
 
-        console.log('\n💡 Connection benefits:');
-        console.log('   • OS-level connection optimization');
-        console.log('   • No need to specify port/address for each send');
-        console.log('   • Restricts incoming packets to connected peer only');
-        console.log('   • Better performance for single-peer communication');
+        console.info('\n💡 Connection benefits:');
+        console.info('   • OS-level connection optimization');
+        console.info('   • No need to specify port/address for each send');
+        console.info('   • Restricts incoming packets to connected peer only');
+        console.info('   • Better performance for single-peer communication');
 
         // Clean up
         unconnectedClient.close();
         client.close();
         server.close();
 
-        console.log('✅ UDP connections demonstration completed');
+        console.info('✅ UDP connections demonstration completed');
 
     } catch (error) {
         console.error(`❌ UDP connections demo failed: ${error.message}`);
@@ -227,30 +227,30 @@ async function demonstrateUDPConnections() {
 // =============================================================================
 
 async function demonstrateSendMany() {
-    console.log('\n📦 4. sendMany() - Exact Documentation Implementation:');
-    console.log('======================================================');
+    console.info('\n📦 4. sendMany() - Exact Documentation Implementation:');
+    console.info('======================================================');
 
     try {
-        console.log('\n🔓 Unconnected socket sendMany() - exact documentation syntax:');
+        console.info('\n🔓 Unconnected socket sendMany() - exact documentation syntax:');
 
         // Exact unconnected socket pattern from documentation
         const socket = await Bun.udpSocket({});
 
         // Exact syntax from documentation:
         // socket.sendMany(["Hello", 41234, "127.0.0.1", "foo", 53, "1.1.1.1"]);
-        console.log('📋 Exact syntax: socket.sendMany(["Hello", 41234, "127.0.0.1", "foo", 53, "1.1.1.1"]);');
+        console.info('📋 Exact syntax: socket.sendMany(["Hello", 41234, "127.0.0.1", "foo", 53, "1.1.1.1"]);');
 
         // Create a server to actually receive some messages
         const server = await Bun.udpSocket({
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 Server received: "${message}" from ${addr}:${port}`);
+                    console.info(`📨 Server received: "${message}" from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Test server on port ${server.port}`);
+        console.info(`🚀 Test server on port ${server.port}`);
 
         // Exact documentation example (modified to use our server port)
         const exactDocExample = [
@@ -258,14 +258,14 @@ async function demonstrateSendMany() {
             "foo", server.port, "127.0.0.1"        // Second packet: data, port, address
         ];
 
-        console.log('📤 Executing exact documentation example:');
+        console.info('📤 Executing exact documentation example:');
         const packetsSent = socket.sendMany(exactDocExample);
-        console.log(`📊 sendMany() returned: ${packetsSent} array elements sent`);
-        console.log(`📊 This means ${packetsSent / 3} packets were sent`);
+        console.info(`📊 sendMany() returned: ${packetsSent} array elements sent`);
+        console.info(`📊 This means ${packetsSent / 3} packets were sent`);
 
         await Bun.sleep(100);
 
-        console.log('\n🔗 Connected socket sendMany() - exact documentation syntax:');
+        console.info('\n🔗 Connected socket sendMany() - exact documentation syntax:');
 
         // Exact connected socket pattern from documentation
         const connectedSocket = await Bun.udpSocket({
@@ -277,16 +277,16 @@ async function demonstrateSendMany() {
 
         // Exact syntax from documentation:
         // socket.sendMany(["foo", "bar", "baz"]);
-        console.log('📋 Exact syntax: socket.sendMany(["foo", "bar", "baz"]);');
+        console.info('📋 Exact syntax: socket.sendMany(["foo", "bar", "baz"]);');
 
         const connectedExample = ["foo", "bar", "baz"];
         const connectedSent = connectedSocket.sendMany(connectedExample);
-        console.log(`📊 Connected sendMany() returned: ${connectedSent} messages sent`);
+        console.info(`📊 Connected sendMany() returned: ${connectedSent} messages sent`);
 
         await Bun.sleep(100);
 
         // Demonstrate batch performance benefits
-        console.log('\n⚡ Batch performance benefits:');
+        console.info('\n⚡ Batch performance benefits:');
 
         const messageCount = 300; // 100 messages = 300 array elements
 
@@ -308,22 +308,22 @@ async function demonstrateSendMany() {
         const batchTime = performance.now() - startBatch;
 
         const batchImprovement = ((individualTime - batchTime) / individualTime * 100);
-        console.log(`📊 Individual 100 sends: ${individualTime.toFixed(2)}ms`);
-        console.log(`📊 Batch sendMany() 100: ${batchTime.toFixed(2)}ms`);
-        console.log(`📊 Batch performance improvement: ${batchImprovement.toFixed(1)}%`);
+        console.info(`📊 Individual 100 sends: ${individualTime.toFixed(2)}ms`);
+        console.info(`📊 Batch sendMany() 100: ${batchTime.toFixed(2)}ms`);
+        console.info(`📊 Batch performance improvement: ${batchImprovement.toFixed(1)}%`);
 
-        console.log('\n💡 sendMany() benefits:');
-        console.log('   • Avoids overhead of multiple system calls');
-        console.log('   • Perfect for high-volume packet transmission');
-        console.log('   • Returns number of packets successfully sent');
-        console.log('   • Only accepts valid IP addresses (no DNS resolution)');
+        console.info('\n💡 sendMany() benefits:');
+        console.info('   • Avoids overhead of multiple system calls');
+        console.info('   • Perfect for high-volume packet transmission');
+        console.info('   • Returns number of packets successfully sent');
+        console.info('   • Only accepts valid IP addresses (no DNS resolution)');
 
         // Clean up
         socket.close();
         connectedSocket.close();
         server.close();
 
-        console.log('✅ sendMany() demonstration completed');
+        console.info('✅ sendMany() demonstration completed');
 
     } catch (error) {
         console.error(`❌ sendMany() demo failed: ${error.message}`);
@@ -335,8 +335,8 @@ async function demonstrateSendMany() {
 // =============================================================================
 
 async function demonstrateComprehensiveTesting() {
-    console.log('\n🧪 5. Comprehensive Documentation Testing:');
-    console.log('==========================================');
+    console.info('\n🧪 5. Comprehensive Documentation Testing:');
+    console.info('==========================================');
 
     try {
         // Test all documentation patterns together
@@ -344,12 +344,12 @@ async function demonstrateComprehensiveTesting() {
             socket: {
                 data(socket, buf, port, addr) {
                     const message = buf.toString();
-                    console.log(`📨 ${message} from ${addr}:${port}`);
+                    console.info(`📨 ${message} from ${addr}:${port}`);
                 }
             }
         });
 
-        console.log(`🚀 Comprehensive test server on port ${server.port}`);
+        console.info(`🚀 Comprehensive test server on port ${server.port}`);
 
         // Pattern 1: Basic send
         const basicClient = await Bun.udpSocket({});
@@ -380,11 +380,11 @@ async function demonstrateComprehensiveTesting() {
 
         await Bun.sleep(200);
 
-        console.log('\n📊 All documentation patterns tested successfully:');
-        console.log('   ✅ Basic send() with port and address');
-        console.log('   ✅ Connected send() without port/address');
-        console.log('   ✅ Unconnected sendMany() with [data, port, address] pattern');
-        console.log('   ✅ Connected sendMany() with simple array pattern');
+        console.info('\n📊 All documentation patterns tested successfully:');
+        console.info('   ✅ Basic send() with port and address');
+        console.info('   ✅ Connected send() without port/address');
+        console.info('   ✅ Unconnected sendMany() with [data, port, address] pattern');
+        console.info('   ✅ Connected sendMany() with simple array pattern');
 
         // Clean up
         basicClient.close();
@@ -393,7 +393,7 @@ async function demonstrateComprehensiveTesting() {
         connectedBatchClient.close();
         server.close();
 
-        console.log('✅ Comprehensive testing completed');
+        console.info('✅ Comprehensive testing completed');
 
     } catch (error) {
         console.error(`❌ Comprehensive testing failed: ${error.message}`);
@@ -405,19 +405,19 @@ async function demonstrateComprehensiveTesting() {
 // =============================================================================
 
 async function main() {
-    console.log('🚀 Starting Complete UDP Socket Documentation Implementation');
-    console.log('============================================================');
-    console.log(`📋 Running on Bun ${Bun.version}`);
-    console.log(`🕐 Started at: ${new Date().toISOString()}`);
-    console.log('');
-    console.log('📚 This demo implements EVERY feature from official Bun UDP docs:');
-    console.log('   • Exact send() syntax: socket.send("Hello", 41234, "127.0.0.1")');
-    console.log('   • Exact receive() pattern with data callback');
-    console.log('   • Exact connection syntax for performance optimization');
-    console.log('   • Exact sendMany() syntax for batch operations');
-    console.log('   • IP address validation (no DNS resolution)');
-    console.log('   • Performance benefits demonstration');
-    console.log('');
+    console.info('🚀 Starting Complete UDP Socket Documentation Implementation');
+    console.info('============================================================');
+    console.info(`📋 Running on Bun ${Bun.version}`);
+    console.info(`🕐 Started at: ${new Date().toISOString()}`);
+    console.info('');
+    console.info('📚 This demo implements EVERY feature from official Bun UDP docs:');
+    console.info('   • Exact send() syntax: socket.send("Hello", 41234, "127.0.0.1")');
+    console.info('   • Exact receive() pattern with data callback');
+    console.info('   • Exact connection syntax for performance optimization');
+    console.info('   • Exact sendMany() syntax for batch operations');
+    console.info('   • IP address validation (no DNS resolution)');
+    console.info('   • Performance benefits demonstration');
+    console.info('');
 
     try {
         // Run all demonstrations in documentation order
@@ -427,26 +427,26 @@ async function main() {
         await demonstrateSendMany();
         await demonstrateComprehensiveTesting();
 
-        console.log('\n🎉 Complete UDP Socket Documentation Implementation Finished!');
-        console.log('================================================================');
-        console.log('✅ ALL documentation features implemented successfully');
-        console.log('📚 Summary of implemented features:');
-        console.log('   • Send datagrams with exact syntax ✅');
-        console.log('   • Receive datagrams with proper callbacks ✅');
-        console.log('   • UDP connections for performance ✅');
-        console.log('   • sendMany() batch operations ✅');
-        console.log('   • IP address validation ✅');
-        console.log('   • Performance optimization ✅');
-        console.log('');
-        console.log('🚀 This implementation is a complete reference for:');
-        console.log('   • Real-time gaming applications');
-        console.log('   • Voice chat systems');
-        console.log('   • IoT sensor networks');
-        console.log('   • High-frequency trading');
-        console.log('   • Log aggregation systems');
-        console.log('   • DNS query tools');
-        console.log('');
-        console.log('📖 Reference: https://bun.com/docs/runtime/networking/dns');
+        console.info('\n🎉 Complete UDP Socket Documentation Implementation Finished!');
+        console.info('================================================================');
+        console.info('✅ ALL documentation features implemented successfully');
+        console.info('📚 Summary of implemented features:');
+        console.info('   • Send datagrams with exact syntax ✅');
+        console.info('   • Receive datagrams with proper callbacks ✅');
+        console.info('   • UDP connections for performance ✅');
+        console.info('   • sendMany() batch operations ✅');
+        console.info('   • IP address validation ✅');
+        console.info('   • Performance optimization ✅');
+        console.info('');
+        console.info('🚀 This implementation is a complete reference for:');
+        console.info('   • Real-time gaming applications');
+        console.info('   • Voice chat systems');
+        console.info('   • IoT sensor networks');
+        console.info('   • High-frequency trading');
+        console.info('   • Log aggregation systems');
+        console.info('   • DNS query tools');
+        console.info('');
+        console.info('📖 Reference: https://bun.com/docs/runtime/networking/dns');
 
     } catch (error) {
         console.error(`❌ Implementation failed: ${error.message}`);

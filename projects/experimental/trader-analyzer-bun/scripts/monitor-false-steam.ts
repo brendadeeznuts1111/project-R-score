@@ -44,10 +44,10 @@ async function monitorFalseSteam(options: MonitorOptions) {
 	const alertThreshold = options.alertThreshold || 0.1;
 	const interval = options.interval || 60;
 
-	console.log(`🔍 Monitoring false steam rate for ${options.bookmaker}`);
-	console.log(`   Window: ${options.window || "1h"} (${hours.toFixed(2)} hours)`);
-	console.log(`   Alert Threshold: ${(alertThreshold * 100).toFixed(1)}%`);
-	console.log(`   Check Interval: ${interval}s\n`);
+	console.info(`🔍 Monitoring false steam rate for ${options.bookmaker}`);
+	console.info(`   Window: ${options.window || "1h"} (${hours.toFixed(2)} hours)`);
+	console.info(`   Alert Threshold: ${(alertThreshold * 100).toFixed(1)}%`);
+	console.info(`   Check Interval: ${interval}s\n`);
 
 	let checkCount = 0;
 
@@ -59,7 +59,7 @@ async function monitorFalseSteam(options: MonitorOptions) {
 
 		const status = rate > alertThreshold ? "🚨 ALERT" : rate > alertThreshold * 0.5 ? "⚠️  WARNING" : "✅ OK";
 
-		console.log(`[${timestamp}] ${status} | False Steam Rate: ${percentage.toFixed(2)}%`);
+		console.info(`[${timestamp}] ${status} | False Steam Rate: ${percentage.toFixed(2)}%`);
 
 		if (rate > alertThreshold) {
 			console.error(`\n🚨 ALERT: False steam rate (${percentage.toFixed(2)}%) exceeds threshold (${(alertThreshold * 100).toFixed(1)}%)`);
@@ -78,7 +78,7 @@ async function monitorFalseSteam(options: MonitorOptions) {
 
 	// Handle graceful shutdown
 	process.on("SIGINT", () => {
-		console.log(`\n\n📊 Summary: Checked ${checkCount} times`);
+		console.info(`\n\n📊 Summary: Checked ${checkCount} times`);
 		clearInterval(intervalId);
 		engine.close();
 		db.close();
@@ -116,7 +116,7 @@ for (let i = 0; i < args.length; i++) {
 			break;
 		case "--help":
 		case "-h":
-			console.log(`
+			console.info(`
 Usage: bun run scripts/monitor-false-steam.ts [options]
 
 Options:

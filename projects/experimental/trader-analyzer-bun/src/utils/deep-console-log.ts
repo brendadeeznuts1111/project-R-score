@@ -382,7 +382,7 @@ export function deepConsoleLog<T>(obj: T, options?: DeepConsoleLogOptions): void
 	const effectiveDepth = getEffectiveDepth(options);
 	const context = options?.context ?? defaultInspectContext;
 	const formatted = formatObject(obj, effectiveDepth, 0, context, undefined, options);
-	console.log(formatted);
+	console.info(formatted);
 }
 
 /**

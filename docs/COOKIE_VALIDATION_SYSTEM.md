@@ -235,7 +235,7 @@ console.log(report);
 
 ### Run Validation Demo
 ```bash
-bun run cookie-validation-demo
+bun run examples/cookie-validation-demo.ts
 ```
 
 ### Test Cases Covered

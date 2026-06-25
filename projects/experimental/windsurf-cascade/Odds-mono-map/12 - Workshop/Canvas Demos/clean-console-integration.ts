@@ -140,7 +140,7 @@ export class CleanConsole {
 
         switch (entry.level) {
             case ConsoleLevel.SUCCESS:
-                console.log(output);
+                console.info(output);
                 break;
             case ConsoleLevel.INFO:
                 console.info(output);
@@ -217,22 +217,22 @@ export class CleanConsole {
     section(title: string): void {
         const bright = this.getColorCode('bright');
         const reset = this.getColorCode('reset');
-        console.log(`\n${bright}${'='.repeat(60)}${reset}`);
-        console.log(`${bright}${title}${reset}`);
-        console.log(`${bright}${'='.repeat(60)}${reset}\n`);
+        console.info(`\n${bright}${'='.repeat(60)}${reset}`);
+        console.info(`${bright}${title}${reset}`);
+        console.info(`${bright}${'='.repeat(60)}${reset}\n`);
     }
 
     subsection(title: string): void {
         const bright = this.getColorCode('bright');
         const reset = this.getColorCode('reset');
-        console.log(`\n${bright}${title}${reset}`);
-        console.log(`${bright}${'-'.repeat(title.length)}${reset}`);
+        console.info(`\n${bright}${title}${reset}`);
+        console.info(`${bright}${'-'.repeat(title.length)}${reset}`);
     }
 
     separator(): void {
         const dim = this.getColorCode('dim');
         const reset = this.getColorCode('reset');
-        console.log(`${dim}${'-'.repeat(40)}${reset}`);
+        console.info(`${dim}${'-'.repeat(40)}${reset}`);
     }
 
     table(data: Record<string, any>, title?: string): void {
@@ -246,7 +246,7 @@ export class CleanConsole {
 
         Object.entries(data).forEach(([key, value]) => {
             const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-            console.log(`${bright}${formattedKey}:${reset} ${cyan}${value}${reset}`);
+            console.info(`${bright}${formattedKey}:${reset} ${cyan}${value}${reset}`);
         });
     }
 
@@ -259,7 +259,7 @@ export class CleanConsole {
         const reset = this.getColorCode('reset');
 
         items.forEach((item, index) => {
-            console.log(`${dim}${index + 1}.${reset} ${item}`);
+            console.info(`${dim}${index + 1}.${reset} ${item}`);
         });
     }
 

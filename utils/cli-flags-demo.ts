@@ -18,9 +18,9 @@ class CLIFlagsDemo {
 
   // 🚀 Demonstrate all CLI flags
   async demonstrateAllFlags(): Promise<void> {
-    console.log('🚀 Bun Test CLI Flags Integration Demo');
-    console.log('==========================================');
-    console.log('📋 Testing all available CLI flags...\n');
+    console.info('🚀 Bun Test CLI Flags Integration Demo');
+    console.info('==========================================');
+    console.info('📋 Testing all available CLI flags...\n');
 
     // Create test files for demonstration
     await this.createTestFiles();
@@ -49,7 +49,7 @@ class CLIFlagsDemo {
 
   // 📁 Create test files for demonstration
   private async createTestFiles(): Promise<void> {
-    console.log('📁 Creating test files...');
+    console.info('📁 Creating test files...');
 
     // Basic test file
     writeFileSync('tmp-basic.test.ts', `
@@ -111,12 +111,12 @@ test('should test class', () => {
 });
 `);
 
-    console.log('✅ Test files created\n');
+    console.info('✅ Test files created\n');
   }
 
   // 🧪 Test individual CLI flag
   private async testFlag(flag: string, description: string, args: string[] = []): Promise<void> {
-    console.log(`🧪 Testing ${flag}: ${description}`);
+    console.info(`🧪 Testing ${flag}: ${description}`);
 
     const startTime = performance.now();
     
@@ -171,12 +171,12 @@ test('should test class', () => {
 
         this.results.push(result);
         
-        console.log(`   Exit Code: ${code}`);
-        console.log(`   Time: ${executionTime.toFixed(2)}ms`);
+        console.info(`   Exit Code: ${code}`);
+        console.info(`   Time: ${executionTime.toFixed(2)}ms`);
         if (features.length > 0) {
-          console.log(`   Features: ${features.join(', ')}`);
+          console.info(`   Features: ${features.join(', ')}`);
         }
-        console.log('');
+        console.info('');
 
         resolve();
       });
@@ -193,11 +193,11 @@ test('should test class', () => {
 
   // 📊 Generate comprehensive report
   private generateReport(): void {
-    console.log('📊 CLI Flags Integration Report');
-    console.log('===============================');
+    console.info('📊 CLI Flags Integration Report');
+    console.info('===============================');
 
     // Summary table
-    console.log('\n📋 Flag Summary:');
+    console.info('\n📋 Flag Summary:');
     console.table(this.results.map(r => ({
       Flag: r.flag,
       Description: r.description,
@@ -207,55 +207,55 @@ test('should test class', () => {
     })));
 
     // Detailed analysis
-    console.log('\n🔍 Detailed Analysis:');
+    console.info('\n🔍 Detailed Analysis:');
     
     this.results.forEach(result => {
-      console.log(`\n${result.flag}:`);
-      console.log(`  Description: ${result.description}`);
-      console.log(`  Exit Code: ${result.exitCode}`);
-      console.log(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
+      console.info(`\n${result.flag}:`);
+      console.info(`  Description: ${result.description}`);
+      console.info(`  Exit Code: ${result.exitCode}`);
+      console.info(`  Execution Time: ${result.executionTime.toFixed(2)}ms`);
       
       if (result.features.length > 0) {
-        console.log(`  Detected Features:`);
+        console.info(`  Detected Features:`);
         result.features.forEach(feature => {
-          console.log(`    • ${feature}`);
+          console.info(`    • ${feature}`);
         });
       }
       
       // Show sample output
       if (result.output.length > 0) {
         const preview = result.output.split('\n').slice(0, 3).join('\n');
-        console.log(`  Output Preview:`);
-        console.log(`    ${preview.replace(/\n/g, '\n    ')}`);
+        console.info(`  Output Preview:`);
+        console.info(`    ${preview.replace(/\n/g, '\n    ')}`);
       }
     });
 
     // Performance analysis
-    console.log('\n⚡ Performance Analysis:');
+    console.info('\n⚡ Performance Analysis:');
     const avgTime = this.results.reduce((sum, r) => sum + r.executionTime, 0) / this.results.length;
     const fastest = this.results.reduce((min, r) => r.executionTime < min.executionTime ? r : min);
     const slowest = this.results.reduce((max, r) => r.executionTime > max.executionTime ? r : max);
     
-    console.log(`  Average Time: ${avgTime.toFixed(2)}ms`);
-    console.log(`  Fastest: ${fastest.flag} (${fastest.executionTime.toFixed(2)}ms)`);
-    console.log(`  Slowest: ${slowest.flag} (${slowest.executionTime.toFixed(2)}ms)`);
+    console.info(`  Average Time: ${avgTime.toFixed(2)}ms`);
+    console.info(`  Fastest: ${fastest.flag} (${fastest.executionTime.toFixed(2)}ms)`);
+    console.info(`  Slowest: ${slowest.flag} (${slowest.executionTime.toFixed(2)}ms)`);
 
     // Recommendations
-    console.log('\n💡 Recommendations:');
+    console.info('\n💡 Recommendations:');
     
     const coverageResult = this.results.find(r => r.flag === '--coverage');
     if (coverageResult && coverageResult.exitCode === 0) {
-      console.log('  ✅ Use --coverage for code quality analysis');
+      console.info('  ✅ Use --coverage for code quality analysis');
     }
     
     const bailResult = this.results.find(r => r.flag === '--bail');
     if (bailResult && bailResult.exitCode !== 0) {
-      console.log('  ✅ Use --bail for faster CI feedback');
+      console.info('  ✅ Use --bail for faster CI feedback');
     }
     
     const verboseResult = this.results.find(r => r.flag === '--verbose');
     if (verboseResult) {
-      console.log('  ✅ Use --verbose for detailed debugging');
+      console.info('  ✅ Use --verbose for detailed debugging');
     }
 
     // Save detailed report
@@ -336,12 +336,12 @@ test('should test class', () => {
     report += '*Generated by CLI Flags Integration Demo v2.8*';
 
     Bun.write('cli-flags-integration-report.md', report);
-    console.log('📄 Detailed report saved to: cli-flags-integration-report.md');
+    console.info('📄 Detailed report saved to: cli-flags-integration-report.md');
   }
 
   // 🧹 Cleanup test files
   async cleanup(): Promise<void> {
-    console.log('🧹 Cleaning up test files...');
+    console.info('🧹 Cleaning up test files...');
     
     const files = ['tmp-basic.test.ts', 'tmp-failing.test.ts', 'tmp-coverage.test.ts'];
     
@@ -351,7 +351,7 @@ test('should test class', () => {
       }
     }
     
-    console.log('✅ Cleanup complete');
+    console.info('✅ Cleanup complete');
   }
 }
 
@@ -360,16 +360,16 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('CLI Flags Integration Demo v2.8');
-    console.log('');
-    console.log('Demonstrates all Bun test CLI flags and their effects:');
-    console.log('• --watch, --coverage, --verbose, --bail');
-    console.log('• --run, --preload, --timeout');
-    console.log('• --test-name-pattern, --test-ignore-pattern');
-    console.log('• --config and more');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run cli-flags-demo.ts');
+    console.info('CLI Flags Integration Demo v2.8');
+    console.info('');
+    console.info('Demonstrates all Bun test CLI flags and their effects:');
+    console.info('• --watch, --coverage, --verbose, --bail');
+    console.info('• --run, --preload, --timeout');
+    console.info('• --test-name-pattern, --test-ignore-pattern');
+    console.info('• --config and more');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run cli-flags-demo.ts');
     return;
   }
 
@@ -378,7 +378,7 @@ async function main() {
   try {
     await demo.demonstrateAllFlags();
     await demo.cleanup();
-    console.log('\n✅ CLI flags integration demonstration complete!');
+    console.info('\n✅ CLI flags integration demonstration complete!');
   } catch (error: any) {
     console.error('❌ Demonstration failed:', error.message);
     await demo.cleanup();

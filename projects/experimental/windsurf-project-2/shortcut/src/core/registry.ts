@@ -489,7 +489,7 @@ export class ShortcutRegistry {
     const alternative = this.suggestAlternativeKey(shortcutId, key);
     if (alternative) {
       this.setOverride(shortcutId, alternative);
-      console.log(`Auto-resolved conflict: ${shortcutId} now uses ${alternative}`);
+      console.info(`Auto-resolved conflict: ${shortcutId} now uses ${alternative}`);
     }
   }
   

@@ -30,7 +30,7 @@ export class PhoneFilter extends Filter {
     const isClean = !this.sanitizePattern.test(input);
     const duration = (Bun.nanoseconds() - start) / 1e6;
     if (duration > 0.1) {
-      // console.log(`⚡ PhoneFilter.test() optimized in ${duration.toFixed(3)}ms`);
+      // console.info(`⚡ PhoneFilter.test() optimized in ${duration.toFixed(3)}ms`);
     }
     return isClean;
   }
@@ -107,7 +107,7 @@ export class PhoneFilter extends Filter {
 
     const duration = (Bun.nanoseconds() - start) / 1e6;
     if (duration > 3) {
-      console.log(`⚡ PhoneFilter: ${result.e164} optimized in ${duration.toFixed(2)}ms`);
+      console.info(`⚡ PhoneFilter: ${result.e164} optimized in ${duration.toFixed(2)}ms`);
     }
     
     return result;

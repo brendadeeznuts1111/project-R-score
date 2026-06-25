@@ -18,8 +18,8 @@
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 
-console.log(chalk.magenta.bold('🔍 Grepable Type Sections Demo'));
-console.log(chalk.magenta('='.repeat(40)));
+console.info(chalk.magenta.bold('🔍 Grepable Type Sections Demo'));
+console.info(chalk.magenta('='.repeat(40)));
 
 const sections = [
     'DOCUMENT_TYPES',
@@ -37,35 +37,35 @@ const sections = [
     'EXPORT_ALL_TYPES'
 ];
 
-console.log(chalk.blue.bold('\n📋 Available Grepable Sections:'));
+console.info(chalk.blue.bold('\n📋 Available Grepable Sections:'));
 sections.forEach((section, index) => {
-    console.log(chalk.white(`  ${index + 1}. [${section}]`));
+    console.info(chalk.white(`  ${index + 1}. [${section}]`));
 });
 
-console.log(chalk.blue.bold('\n🔧 Usage Examples:'));
-console.log(chalk.gray('  # Find all interfaces in CORE_VAULT_TYPES'));
-console.log(chalk.cyan('  grep -A 50 "\\[CORE_VAULT_TYPES\\]" src/types/tick-processor-types.ts | grep "export interface"'));
-console.log('');
-console.log(chalk.gray('  # Get all enums in DOCUMENT_TYPES'));
-console.log(chalk.cyan('  grep -A 20 "\\[DOCUMENT_TYPES\\]" src/types/tick-processor-types.ts | grep "export enum"'));
-console.log('');
-console.log(chalk.gray('  # Extract template system types'));
-console.log(chalk.cyan('  grep -A 200 "\\[TEMPLATE_SYSTEM_TYPES\\]" src/types/tick-processor-types.ts'));
+console.info(chalk.blue.bold('\n🔧 Usage Examples:'));
+console.info(chalk.gray('  # Find all interfaces in CORE_VAULT_TYPES'));
+console.info(chalk.cyan('  grep -A 50 "\\[CORE_VAULT_TYPES\\]" src/types/tick-processor-types.ts | grep "export interface"'));
+console.info('');
+console.info(chalk.gray('  # Get all enums in DOCUMENT_TYPES'));
+console.info(chalk.cyan('  grep -A 20 "\\[DOCUMENT_TYPES\\]" src/types/tick-processor-types.ts | grep "export enum"'));
+console.info('');
+console.info(chalk.gray('  # Extract template system types'));
+console.info(chalk.cyan('  grep -A 200 "\\[TEMPLATE_SYSTEM_TYPES\\]" src/types/tick-processor-types.ts'));
 
-console.log(chalk.green.bold('\n✅ Benefits:'));
-console.log(chalk.white('  • Easy navigation with grep or find'));
-console.log(chalk.white('  • Consistent section naming'));
-console.log(chalk.white('  • Tool-friendly structure'));
-console.log(chalk.white('  • Quick type location'));
+console.info(chalk.green.bold('\n✅ Benefits:'));
+console.info(chalk.white('  • Easy navigation with grep or find'));
+console.info(chalk.white('  • Consistent section naming'));
+console.info(chalk.white('  • Tool-friendly structure'));
+console.info(chalk.white('  • Quick type location'));
 
 // Demo: Show actual content from one section
-console.log(chalk.blue.bold('\n🎯 Demo: [DOCUMENT_TYPES] Section:'));
+console.info(chalk.blue.bold('\n🎯 Demo: [DOCUMENT_TYPES] Section:'));
 try {
     const result = execSync('grep -A 15 "\\[DOCUMENT_TYPES\\]" src/types/tick-processor-types.ts', {
         encoding: 'utf8',
         cwd: process.cwd()
     });
-    console.log(chalk.gray(result));
+    console.info(chalk.gray(result));
 } catch (error) {
-    console.log(chalk.red('Error fetching section content'));
+    console.info(chalk.red('Error fetching section content'));
 }

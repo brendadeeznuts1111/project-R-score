@@ -78,7 +78,7 @@ export async function examplePipelineUsage() {
 	const result = await orchestrator.process(rawData, source, user);
 
 	if (result.ok) {
-		console.log("Pipeline processing successful:", result.data);
+		console.info("Pipeline processing successful:", result.data);
 	} else {
 		console.error("Pipeline processing failed:", result.error);
 	}

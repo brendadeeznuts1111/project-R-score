@@ -124,7 +124,7 @@ export class RequestIdentifier {
     }
 
     const duration = performance.now() - startTime;
-    console.log(`[RequestIdentifier] Generated ${count} UUIDs in ${duration.toFixed(3)}ms`);
+    console.info(`[RequestIdentifier] Generated ${count} UUIDs in ${duration.toFixed(3)}ms`);
 
     return uuids;
   }
@@ -160,7 +160,7 @@ export class PTYEventSequencer {
     const insertIndex = this.findInsertPosition(events, event);
     events.splice(insertIndex, 0, event);
 
-    console.log(`[PTYSequencer] Added event ${event.id} to session ${sessionId} at position ${insertIndex}`);
+    console.info(`[PTYSequencer] Added event ${event.id} to session ${sessionId} at position ${insertIndex}`);
   }
 
   /**
@@ -181,7 +181,7 @@ export class PTYEventSequencer {
 
     // Events are already ordered, return first one
     const event = events.shift()!;
-    console.log(`[PTYSequencer] Processing event ${event.id} for session ${sessionId}`);
+    console.info(`[PTYSequencer] Processing event ${event.id} for session ${sessionId}`);
     return event;
   }
 

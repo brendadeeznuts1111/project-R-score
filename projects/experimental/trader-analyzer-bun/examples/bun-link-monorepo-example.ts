@@ -113,13 +113,13 @@ const APPS = [
  * Registers all packages with `bun link` and links them into apps
  */
 async function setupMonorepo() {
-	console.log("🚀 Setting up NEXUS Radiance Monorepo with bun link\n");
+	console.info("🚀 Setting up NEXUS Radiance Monorepo with bun link\n");
 
 	// Step 1: Register all packages
-	console.log("📦 Step 1: Registering packages with bun link...\n");
+	console.info("📦 Step 1: Registering packages with bun link...\n");
 	for (const pkg of PACKAGES) {
 		const pkgPath = MONOREPO_ROOT + pkg.path;
-		console.log(`  → Registering ${pkg.name}...`);
+		console.info(`  → Registering ${pkg.name}...`);
 
 		try {
 			// Check if package.json exists
@@ -127,26 +127,26 @@ async function setupMonorepo() {
 			const packageJsonFile = Bun.file(packageJsonPath);
 
 			if (!(await packageJsonFile.exists())) {
-				console.log(`    ⚠️  Creating package.json for ${pkg.name}`);
+				console.info(`    ⚠️  Creating package.json for ${pkg.name}`);
 				await createPackageJson(pkg.name, pkg.path);
 			}
 
 			// Register the package
 			const result = await $`cd ${pkgPath} && bun link`.quiet();
-			console.log(`    ✅ Registered ${pkg.name}`);
+			console.info(`    ✅ Registered ${pkg.name}`);
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
 			console.error(`    ❌ Failed to register ${pkg.name}: ${message}`);
 		}
 	}
 
-	console.log("\n");
+	console.info("\n");
 
 	// Step 2: Link packages into apps
-	console.log("🔗 Step 2: Linking packages into apps...\n");
+	console.info("🔗 Step 2: Linking packages into apps...\n");
 	for (const app of APPS) {
 		const appPath = MONOREPO_ROOT + app.path;
-		console.log(`  → Linking dependencies into ${app.name}...`);
+		console.info(`  → Linking dependencies into ${app.name}...`);
 
 		try {
 			// Ensure app directory exists
@@ -157,7 +157,7 @@ async function setupMonorepo() {
 			const packageJsonFile = Bun.file(packageJsonPath);
 
 			if (!(await packageJsonFile.exists())) {
-				console.log(`    ⚠️  Creating package.json for ${app.name}`);
+				console.info(`    ⚠️  Creating package.json for ${app.name}`);
 				await createAppPackageJson(app.name, app.dependencies);
 			}
 
@@ -165,7 +165,7 @@ async function setupMonorepo() {
 			for (const dep of app.dependencies) {
 				try {
 					const linkResult = await $`cd ${appPath} && bun link ${dep} --save`.quiet();
-					console.log(`    ✅ Linked ${dep} → ${app.name}`);
+					console.info(`    ✅ Linked ${dep} → ${app.name}`);
 				} catch (error: unknown) {
 					const message = error instanceof Error ? error.message : String(error);
 					console.error(`    ⚠️  ${dep} may already be linked: ${message}`);
@@ -177,11 +177,11 @@ async function setupMonorepo() {
 		}
 	}
 
-	console.log("\n✅ Monorepo setup complete!\n");
-	console.log("📝 Next steps:");
-	console.log("   1. Edit packages in packages/*/src/");
-	console.log("   2. Changes are instantly available in apps via symlinks");
-	console.log("   3. Run 'bun run examples/bun-link-monorepo-example.ts dev' for dev mode");
+	console.info("\n✅ Monorepo setup complete!\n");
+	console.info("📝 Next steps:");
+	console.info("   1. Edit packages in packages/*/src/");
+	console.info("   2. Changes are instantly available in apps via symlinks");
+	console.info("   3. Run 'bun run examples/bun-link-monorepo-example.ts dev' for dev mode");
 }
 
 /**
@@ -261,10 +261,10 @@ async function createAppPackageJson(name: string, dependencies: readonly string[
 
 ${imports}
 
-console.log("🚀 ${name} starting...");
-console.log("📦 Linked packages:");
+console.info("🚀 ${name} starting...");
+console.info("📦 Linked packages:");
 ${calls}
-console.log("✅ ${name} ready!");
+console.info("✅ ${name} ready!");
 `;
 	await Bun.write(appPath + "/src/index.ts", indexContent);
 }
@@ -274,13 +274,13 @@ console.log("✅ ${name} ready!");
  * Demonstrates instant hot-reload with symlinks
  */
 async function devMode() {
-	console.log("🔥 Zero-Latency Development Mode\n");
-	console.log("📝 Instructions:");
-	console.log("   Terminal 1: Edit packages/*/src/index.ts");
-	console.log("   Terminal 2: Run apps (changes appear instantly via symlinks)");
-	console.log("   Terminal 3: Watch for changes\n");
+	console.info("🔥 Zero-Latency Development Mode\n");
+	console.info("📝 Instructions:");
+	console.info("   Terminal 1: Edit packages/*/src/index.ts");
+	console.info("   Terminal 2: Run apps (changes appear instantly via symlinks)");
+	console.info("   Terminal 3: Watch for changes\n");
 
-	console.log("🔍 Checking linked packages...\n");
+	console.info("🔍 Checking linked packages...\n");
 
 	for (const app of APPS) {
 		const appPath = MONOREPO_ROOT + app.path;
@@ -295,9 +295,9 @@ async function devMode() {
 					.map(([name]) => name);
 
 				if (linkedDeps.length > 0) {
-					console.log(`  ✅ ${app.name}:`);
+					console.info(`  ✅ ${app.name}:`);
 					for (const dep of linkedDeps) {
-						console.log(`     → ${dep} (symlinked)`);
+						console.info(`     → ${dep} (symlinked)`);
 					}
 				}
 			}
@@ -306,11 +306,11 @@ async function devMode() {
 		}
 	}
 
-	console.log("\n💡 Development workflow:");
-	console.log("   1. Edit package code → Changes instantly visible");
-	console.log("   2. No rebuild needed → Pure symlink radiance");
-	console.log("   3. Hot reload works → Bun --watch detects changes");
-	console.log("   4. Zero latency → Changes propagate at symlink speed\n");
+	console.info("\n💡 Development workflow:");
+	console.info("   1. Edit package code → Changes instantly visible");
+	console.info("   2. No rebuild needed → Pure symlink radiance");
+	console.info("   3. Hot reload works → Bun --watch detects changes");
+	console.info("   4. Zero latency → Changes propagate at symlink speed\n");
 }
 
 /**
@@ -318,16 +318,16 @@ async function devMode() {
  * Shows how to ensure clean registry resolution
  */
 async function productionMode() {
-	console.log("🏭 Production Deployment Mode\n");
-	console.log("📝 To deploy without link: dependencies:\n");
-	console.log("   1. Use --no-link flag:");
-	console.log("      bun install --no-link\n");
-	console.log("   2. Or install from registry:");
-	console.log("      bun install --production\n");
-	console.log("   3. Or remove link: entries before install:");
-	console.log("      bun run examples/bun-link-monorepo-example.ts unlink");
-	console.log("      bun install\n");
-	console.log("✅ All link: dependencies will resolve from npm/tarballs\n");
+	console.info("🏭 Production Deployment Mode\n");
+	console.info("📝 To deploy without link: dependencies:\n");
+	console.info("   1. Use --no-link flag:");
+	console.info("      bun install --no-link\n");
+	console.info("   2. Or install from registry:");
+	console.info("      bun install --production\n");
+	console.info("   3. Or remove link: entries before install:");
+	console.info("      bun run examples/bun-link-monorepo-example.ts unlink");
+	console.info("      bun install\n");
+	console.info("✅ All link: dependencies will resolve from npm/tarballs\n");
 }
 
 /**
@@ -337,14 +337,14 @@ async function productionMode() {
  * Your code and package.json remain intact. You can always relink later.
  */
 async function unlinkAll() {
-	console.log("🔓 Unlinking all packages...\n");
-	console.log("✅ Safe: This only removes symlinks, no files are deleted.\n");
-	console.log("🔄 Reversible: Relink anytime with 'bun run examples/scripts/link-all.ts'\n");
+	console.info("🔓 Unlinking all packages...\n");
+	console.info("✅ Safe: This only removes symlinks, no files are deleted.\n");
+	console.info("🔄 Reversible: Relink anytime with 'bun run examples/scripts/link-all.ts'\n");
 
 	// Unlink from apps
 	for (const app of APPS) {
 		const appPath = MONOREPO_ROOT + app.path;
-		console.log(`  → Unlinking from ${app.name}...`);
+		console.info(`  → Unlinking from ${app.name}...`);
 
 		try {
 			const packageJsonPath = appPath + "/package.json";
@@ -359,7 +359,7 @@ async function unlinkAll() {
 				for (const dep of linkedDeps) {
 					try {
 						await $`cd ${appPath} && bun unlink ${dep}`.quiet();
-						console.log(`    ✅ Unlinked ${dep}`);
+						console.info(`    ✅ Unlinked ${dep}`);
 					} catch (error) {
 						// Ignore errors
 					}
@@ -371,42 +371,42 @@ async function unlinkAll() {
 	}
 
 	// Unregister packages
-	console.log("\n  → Unregistering packages...\n");
+	console.info("\n  → Unregistering packages...\n");
 	for (const pkg of PACKAGES) {
 		const pkgPath = MONOREPO_ROOT + pkg.path;
 		try {
 			await $`cd ${pkgPath} && bun unlink`.quiet();
-			console.log(`    ✅ Unregistered ${pkg.name}`);
+			console.info(`    ✅ Unregistered ${pkg.name}`);
 		} catch (error) {
 			// Ignore errors
 		}
 	}
 
-	console.log("\n✅ All packages unlinked\n");
-	console.log("💡 To relink for development:\n");
-	console.log("   bun run examples/scripts/link-all.ts\n");
+	console.info("\n✅ All packages unlinked\n");
+	console.info("💡 To relink for development:\n");
+	console.info("   bun run examples/scripts/link-all.ts\n");
 }
 
 /**
  * Show status of linked packages
  */
 async function status() {
-	console.log("📊 Monorepo Link Status\n");
+	console.info("📊 Monorepo Link Status\n");
 
-	console.log("📦 Packages:");
+	console.info("📦 Packages:");
 	for (const pkg of PACKAGES) {
 		const pkgPath = MONOREPO_ROOT + pkg.path;
 		const packageJsonPath = pkgPath + "/package.json";
 		const packageJsonFile = Bun.file(packageJsonPath);
 
 		if (await packageJsonFile.exists()) {
-			console.log(`  ✅ ${pkg.name} (${pkg.path})`);
+			console.info(`  ✅ ${pkg.name} (${pkg.path})`);
 		} else {
-			console.log(`  ⚠️  ${pkg.name} (not created)`);
+			console.info(`  ⚠️  ${pkg.name} (not created)`);
 		}
 	}
 
-	console.log("\n📱 Apps:");
+	console.info("\n📱 Apps:");
 	for (const app of APPS) {
 		const appPath = MONOREPO_ROOT + app.path;
 		const packageJsonPath = appPath + "/package.json";
@@ -419,19 +419,19 @@ async function status() {
 				.map(([name]) => name);
 
 			if (linkedDeps.length > 0) {
-				console.log(`  ✅ ${app.name}:`);
+				console.info(`  ✅ ${app.name}:`);
 				for (const dep of linkedDeps) {
-					console.log(`     → ${dep} (linked)`);
+					console.info(`     → ${dep} (linked)`);
 				}
 			} else {
-				console.log(`  ⚠️  ${app.name} (no linked dependencies)`);
+				console.info(`  ⚠️  ${app.name} (no linked dependencies)`);
 			}
 		} else {
-			console.log(`  ⚠️  ${app.name} (not created)`);
+			console.info(`  ⚠️  ${app.name} (not created)`);
 		}
 	}
 
-	console.log("");
+	console.info("");
 }
 
 // CLI interface
@@ -446,7 +446,7 @@ if (isInteractive) {
 		case "check-prereq":
 			try {
 				const bunVersion = Bun.version;
-				console.log(JSON.stringify({
+				console.info(JSON.stringify({
 					success: true,
 					bunVersion,
 					ready: true,
@@ -454,7 +454,7 @@ if (isInteractive) {
 				}));
 			} catch (error: unknown) {
 				const message = error instanceof Error ? error.message : String(error);
-				console.log(JSON.stringify({
+				console.info(JSON.stringify({
 					success: false,
 					error: message
 				}));
@@ -463,32 +463,32 @@ if (isInteractive) {
 		case "setup":
 			try {
 				await setupMonorepo();
-				console.log(JSON.stringify({ success: true, message: "Setup complete" }));
+				console.info(JSON.stringify({ success: true, message: "Setup complete" }));
 			} catch (error: unknown) {
 				const message = error instanceof Error ? error.message : String(error);
-				console.log(JSON.stringify({ success: false, error: message }));
+				console.info(JSON.stringify({ success: false, error: message }));
 			}
 			break;
 		case "status":
 			try {
 				await status();
-				console.log(JSON.stringify({ success: true, message: "Status check complete" }));
+				console.info(JSON.stringify({ success: true, message: "Status check complete" }));
 			} catch (error: unknown) {
 				const message = error instanceof Error ? error.message : String(error);
-				console.log(JSON.stringify({ success: false, error: message }));
+				console.info(JSON.stringify({ success: false, error: message }));
 			}
 			break;
 		case "unlink":
 			try {
 				await unlinkAll();
-				console.log(JSON.stringify({ success: true, message: "Unlink complete" }));
+				console.info(JSON.stringify({ success: true, message: "Unlink complete" }));
 			} catch (error: unknown) {
 				const message = error instanceof Error ? error.message : String(error);
-				console.log(JSON.stringify({ success: false, error: message }));
+				console.info(JSON.stringify({ success: false, error: message }));
 			}
 			break;
 		default:
-			console.log(JSON.stringify({ success: false, error: "Unknown action" }));
+			console.info(JSON.stringify({ success: false, error: "Unknown action" }));
 	}
 	process.exit(0);
 }
@@ -512,22 +512,22 @@ switch (command) {
 		break;
 	case "help":
 	default:
-		console.log("17.18.0.0.0.0.0 — NEXUS Radiance Monorepo with bun link\n");
-		console.log("Usage:");
-		console.log("  bun run examples/bun-link-monorepo-example.ts setup      # One-time setup");
-		console.log("  bun run examples/bun-link-monorepo-example.ts dev        # Development mode info");
-		console.log("  bun run examples/bun-link-monorepo-example.ts status      # Show link status");
-		console.log("  bun run examples/bun-link-monorepo-example.ts unlink     # Unlink all packages (safe)");
-		console.log("  bun run examples/bun-link-monorepo-example.ts production # Production deployment info");
-		console.log("\nInteractive Mode:");
-		console.log("  bun run examples/bun-link-monorepo-example.ts --interactive <action>");
-		console.log("  Actions: check-prereq, setup, status, unlink");
-		console.log("\nHelper Scripts:");
-		console.log("  bun run examples/scripts/link-all.ts    # Link all packages");
-		console.log("  bun run examples/scripts/unlink-all.ts # Unlink all packages");
-		console.log("\nDocumentation:");
-		console.log("  📚 docs/BUN-LINK.md - Complete bun link guide");
-		console.log("  🌐 examples/bun-link-monorepo-interactive.html - Interactive guide");
-		console.log("  📋 examples/COMMANDS.md - All commands reference");
+		console.info("17.18.0.0.0.0.0 — NEXUS Radiance Monorepo with bun link\n");
+		console.info("Usage:");
+		console.info("  bun run examples/bun-link-monorepo-example.ts setup      # One-time setup");
+		console.info("  bun run examples/bun-link-monorepo-example.ts dev        # Development mode info");
+		console.info("  bun run examples/bun-link-monorepo-example.ts status      # Show link status");
+		console.info("  bun run examples/bun-link-monorepo-example.ts unlink     # Unlink all packages (safe)");
+		console.info("  bun run examples/bun-link-monorepo-example.ts production # Production deployment info");
+		console.info("\nInteractive Mode:");
+		console.info("  bun run examples/bun-link-monorepo-example.ts --interactive <action>");
+		console.info("  Actions: check-prereq, setup, status, unlink");
+		console.info("\nHelper Scripts:");
+		console.info("  bun run examples/scripts/link-all.ts    # Link all packages");
+		console.info("  bun run examples/scripts/unlink-all.ts # Unlink all packages");
+		console.info("\nDocumentation:");
+		console.info("  📚 docs/BUN-LINK.md - Complete bun link guide");
+		console.info("  🌐 examples/bun-link-monorepo-interactive.html - Interactive guide");
+		console.info("  📋 examples/COMMANDS.md - All commands reference");
 		break;
 }

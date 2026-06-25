@@ -5,35 +5,35 @@
  * https://bun.com/docs/guides/process/argv
  */
 
-console.log("📋 Bun Command-Line Arguments Demo\n");
-console.log("=".repeat(70));
+console.info("📋 Bun Command-Line Arguments Demo\n");
+console.info("=".repeat(70));
 
 // Bun.argv contains the full command-line
-console.log("\n1️⃣ Bun.argv - Full argument array");
-console.log("-".repeat(70));
-console.log("Bun.argv:", Bun.argv);
-console.log("\nBreakdown:");
-console.log("  [0] Bun executable:", Bun.argv[0]);
-console.log("  [1] Script path:", Bun.argv[1]);
-console.log("  [2+] Arguments:", Bun.argv.slice(2));
+console.info("\n1️⃣ Bun.argv - Full argument array");
+console.info("-".repeat(70));
+console.info("Bun.argv:", Bun.argv);
+console.info("\nBreakdown:");
+console.info("  [0] Bun executable:", Bun.argv[0]);
+console.info("  [1] Script path:", Bun.argv[1]);
+console.info("  [2+] Arguments:", Bun.argv.slice(2));
 
 // Process-specific arguments
-console.log("\n2️⃣ process.argv (Node.js compatible)");
-console.log("-".repeat(70));
-console.log("process.argv:", process.argv);
+console.info("\n2️⃣ process.argv (Node.js compatible)");
+console.info("-".repeat(70));
+console.info("process.argv:", process.argv);
 
 // Parse arguments
-console.log("\n3️⃣ Parsing arguments");
-console.log("-".repeat(70));
+console.info("\n3️⃣ Parsing arguments");
+console.info("-".repeat(70));
 const args = Bun.argv.slice(2);
-console.log("Raw arguments:", args);
+console.info("Raw arguments:", args);
 
 // Parse flags
 const flags = args.filter(arg => arg.startsWith('--'));
 const values = args.filter(arg => !arg.startsWith('--'));
 
-console.log("Flags:", flags);
-console.log("Values:", values);
+console.info("Flags:", flags);
+console.info("Values:", values);
 
 // Parse key=value pairs
 const parsed: Record<string, string> = {};
@@ -44,12 +44,12 @@ for (const arg of args) {
   }
 }
 
-console.log("Parsed key=value pairs:", parsed);
+console.info("Parsed key=value pairs:", parsed);
 
 // Example usage patterns
-console.log("\n4️⃣ Common patterns");
-console.log("-".repeat(70));
-console.log(`// Get first argument
+console.info("\n4️⃣ Common patterns");
+console.info("-".repeat(70));
+console.info(`// Get first argument
 const name = Bun.argv[2] || "World";
 
 // Check for flags
@@ -71,8 +71,8 @@ const { values: parsedArgs } = Bun.parseArgs({
 `);
 
 // Demo parseArgs
-console.log("\n5️⃣ Using Bun.parseArgs()");
-console.log("-".repeat(70));
+console.info("\n5️⃣ Using Bun.parseArgs()");
+console.info("-".repeat(70));
 try {
   const { values, positionals } = Bun.parseArgs({
     args: args,
@@ -85,12 +85,12 @@ try {
     allowPositionals: true,
   });
   
-  console.log("Parsed values:", values);
-  console.log("Positional arguments:", positionals);
+  console.info("Parsed values:", values);
+  console.info("Positional arguments:", positionals);
 } catch (e) {
-  console.log("(parseArgs failed - likely unknown flags in demo)");
+  console.info("(parseArgs failed - likely unknown flags in demo)");
 }
 
-console.log("\n✅ argv demo complete!");
-console.log("\n💡 Try running with arguments:");
-console.log("   bun run argv-demo.ts --port=8080 --verbose hello world");
+console.info("\n✅ argv demo complete!");
+console.info("\n💡 Try running with arguments:");
+console.info("   bun run argv-demo.ts --port=8080 --verbose hello world");

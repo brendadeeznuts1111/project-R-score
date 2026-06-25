@@ -322,39 +322,39 @@ class CatalogValidator {
 // Main execution
 async function main() {
   try {
-    console.log('🔍 Validating Bun v1.3 Catalog Configuration...\n');
+    console.info('🔍 Validating Bun v1.3 Catalog Configuration...\n');
     
     const validator = new CatalogValidator();
     const result = validator.validate();
     
     if (result.valid) {
-      console.log('✅ Catalog validation passed!\n');
+      console.info('✅ Catalog validation passed!\n');
     } else {
-      console.log('❌ Catalog validation failed!\n');
+      console.info('❌ Catalog validation failed!\n');
     }
 
     // Print summary
-    console.log('📊 Summary:');
-    console.log(`   Total packages: ${result.summary.totalPackages}`);
-    console.log(`   Using catalog: ${result.summary.packagesUsingCatalog}`);
-    console.log(`   Catalog references: ${result.summary.catalogReferences}`);
-    console.log(`   Orphaned dependencies: ${result.summary.orphanedDependencies}`);
+    console.info('📊 Summary:');
+    console.info(`   Total packages: ${result.summary.totalPackages}`);
+    console.info(`   Using catalog: ${result.summary.packagesUsingCatalog}`);
+    console.info(`   Catalog references: ${result.summary.catalogReferences}`);
+    console.info(`   Orphaned dependencies: ${result.summary.orphanedDependencies}`);
 
     // Print errors
     if (result.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      result.errors.forEach(error => console.log(`   ${error}`));
+      console.info('\n❌ Errors:');
+      result.errors.forEach(error => console.info(`   ${error}`));
     }
 
     // Print warnings
     if (result.warnings.length > 0) {
-      console.log('\n⚠️ Warnings:');
-      result.warnings.forEach(warning => console.log(`   ${warning}`));
+      console.info('\n⚠️ Warnings:');
+      result.warnings.forEach(warning => console.info(`   ${warning}`));
     }
 
     // Generate detailed report
     const report = validator.generateReport();
-    console.log('\n📄 Detailed report generated');
+    console.info('\n📄 Detailed report generated');
     
     // Exit with appropriate code
     process.exit(result.valid ? 0 : 1);

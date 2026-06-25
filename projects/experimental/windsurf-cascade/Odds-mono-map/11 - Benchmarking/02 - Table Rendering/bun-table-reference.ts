@@ -7,36 +7,36 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Bun.inspect.table() Complete Function Reference'));
-console.log(chalk.gray('Odds Protocol Vault - Comprehensive Parameter Guide'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Bun.inspect.table() Complete Function Reference'));
+console.info(chalk.gray('Odds Protocol Vault - Comprehensive Parameter Guide'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // FUNCTION SIGNATURE
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📋 Function Signature:'));
-console.log(chalk.white('Bun.inspect.table(tabularData, properties?, options?)'));
+console.info(chalk.bold.cyan('\n📋 Function Signature:'));
+console.info(chalk.white('Bun.inspect.table(tabularData, properties?, options?)'));
 
-console.log(chalk.bold.yellow('\n📝 Parameters:'));
-console.log(chalk.gray('• tabularData: any[] | object     (Required)'));
-console.log(chalk.gray('• properties?: string[]           (Optional)'));
-console.log(chalk.gray('• options?: object                (Optional)'));
+console.info(chalk.bold.yellow('\n📝 Parameters:'));
+console.info(chalk.gray('• tabularData: any[] | object     (Required)'));
+console.info(chalk.gray('• properties?: string[]           (Optional)'));
+console.info(chalk.gray('• options?: object                (Optional)'));
 
 // =============================================================================
 // PARAMETER 1: tabularData (Required)
 // =============================================================================
 
-console.log(chalk.bold.blue('\n🔸 1. tabularData (Required)'));
-console.log(chalk.gray('Type: any[] | object'));
-console.log(chalk.gray('Description: The source data to display in table format'));
+console.info(chalk.bold.blue('\n🔸 1. tabularData (Required)'));
+console.info(chalk.gray('Type: any[] | object'));
+console.info(chalk.gray('Description: The source data to display in table format'));
 
-console.log(chalk.bold.cyan('\n✅ Best Practices:'));
-console.log(chalk.gray('• Use array of objects for multi-row tables'));
-console.log(chalk.gray('• Keep objects flat (no nested objects)'));
-console.log(chalk.gray('• Ensure consistent property names across objects'));
+console.info(chalk.bold.cyan('\n✅ Best Practices:'));
+console.info(chalk.gray('• Use array of objects for multi-row tables'));
+console.info(chalk.gray('• Keep objects flat (no nested objects)'));
+console.info(chalk.gray('• Ensure consistent property names across objects'));
 
-console.log(chalk.bold.yellow('\n📊 Example Data Structures:'));
+console.info(chalk.bold.yellow('\n📊 Example Data Structures:'));
 
 // Example 1: Array of Objects (Most Common)
 const vaultFiles = [
@@ -45,8 +45,8 @@ const vaultFiles = [
     { name: 'bun-utilities', size: 8192, type: 'typescript', modified: '2025-11-18' }
 ];
 
-console.log(chalk.green('\n// Array of Objects (Recommended):'));
-console.log(chalk.gray(JSON.stringify(vaultFiles, null, 2)));
+console.info(chalk.green('\n// Array of Objects (Recommended):'));
+console.info(chalk.gray(JSON.stringify(vaultFiles, null, 2)));
 
 // Example 2: Single Object
 const vaultSummary = {
@@ -56,8 +56,8 @@ const vaultSummary = {
     lastValidated: '2025-11-18'
 };
 
-console.log(chalk.green('\n// Single Object (Properties become rows):'));
-console.log(chalk.gray(JSON.stringify(vaultSummary, null, 2)));
+console.info(chalk.green('\n// Single Object (Properties become rows):'));
+console.info(chalk.gray(JSON.stringify(vaultSummary, null, 2)));
 
 // Example 3: Complex Vault Data
 const validationResults = [
@@ -85,80 +85,80 @@ const validationResults = [
     }
 ];
 
-console.log(chalk.green('\n// Complex Validation Data:'));
-console.log(chalk.gray(JSON.stringify(validationResults, null, 2)));
+console.info(chalk.green('\n// Complex Validation Data:'));
+console.info(chalk.gray(JSON.stringify(validationResults, null, 2)));
 
 // =============================================================================
 // PARAMETER 2: properties (Optional)
 // =============================================================================
 
-console.log(chalk.bold.blue('\n🔸 2. properties (Optional)'));
-console.log(chalk.gray('Type: string[]'));
-console.log(chalk.gray('Description: Array of property names for column selection and ordering'));
+console.info(chalk.bold.blue('\n🔸 2. properties (Optional)'));
+console.info(chalk.gray('Type: string[]'));
+console.info(chalk.gray('Description: Array of property names for column selection and ordering'));
 
-console.log(chalk.bold.cyan('\n✅ Benefits:'));
-console.log(chalk.gray('• Control column order'));
-console.log(chalk.gray('• Select specific columns only'));
-console.log(chalk.gray('• Prevent unwanted properties from appearing'));
-console.log(chalk.gray('• Ensure consistent table structure'));
+console.info(chalk.bold.cyan('\n✅ Benefits:'));
+console.info(chalk.gray('• Control column order'));
+console.info(chalk.gray('• Select specific columns only'));
+console.info(chalk.gray('• Prevent unwanted properties from appearing'));
+console.info(chalk.gray('• Ensure consistent table structure'));
 
-console.log(chalk.bold.yellow('\n📊 Properties Examples:'));
+console.info(chalk.bold.yellow('\n📊 Properties Examples:'));
 
-console.log(chalk.green('\n// Basic column selection:'));
+console.info(chalk.green('\n// Basic column selection:'));
 const basicProperties = ['name', 'size', 'type'];
-console.log(chalk.gray(`Bun.inspect.table(data, ${JSON.stringify(basicProperties)})`));
+console.info(chalk.gray(`Bun.inspect.table(data, ${JSON.stringify(basicProperties)})`));
 
-console.log(chalk.green('\n// Ordered columns with specific subset:'));
+console.info(chalk.green('\n// Ordered columns with specific subset:'));
 const orderedProperties = ['id', 'type', 'category', 'message', 'filePath'];
-console.log(chalk.gray(`Bun.inspect.table(validationData, ${JSON.stringify(orderedProperties)})`));
+console.info(chalk.gray(`Bun.inspect.table(validationData, ${JSON.stringify(orderedProperties)})`));
 
-console.log(chalk.green('\n// Vault-specific column ordering:'));
+console.info(chalk.green('\n// Vault-specific column ordering:'));
 const vaultProperties = ['name', 'path', 'size_kb', 'modified', 'tags', 'status'];
-console.log(chalk.gray(`Bun.inspect.table(vaultData, ${JSON.stringify(vaultProperties)})`));
+console.info(chalk.gray(`Bun.inspect.table(vaultData, ${JSON.stringify(vaultProperties)})`));
 
 // Demonstrate properties usage
-console.log(chalk.bold.magenta('\n🎯 Properties Demonstration:'));
-console.log(chalk.gray('All properties vs. Selected properties:'));
+console.info(chalk.bold.magenta('\n🎯 Properties Demonstration:'));
+console.info(chalk.gray('All properties vs. Selected properties:'));
 
-console.log(chalk.yellow('\n// All Properties (Default):'));
+console.info(chalk.yellow('\n// All Properties (Default):'));
 Bun.inspect.table(vaultFiles);
 
-console.log(chalk.yellow('\n// Selected Properties Only:'));
+console.info(chalk.yellow('\n// Selected Properties Only:'));
 Bun.inspect.table(vaultFiles, ['name', 'size', 'type']);
 
-console.log(chalk.yellow('\n// Reordered Properties:'));
+console.info(chalk.yellow('\n// Reordered Properties:'));
 Bun.inspect.table(vaultFiles, ['type', 'name', 'modified']);
 
 // =============================================================================
 // PARAMETER 3: options (Optional)
 // =============================================================================
 
-console.log(chalk.bold.blue('\n🔸 3. options (Optional)'));
-console.log(chalk.gray('Type: object'));
-console.log(chalk.gray('Description: Configuration object for display options'));
+console.info(chalk.bold.blue('\n🔸 3. options (Optional)'));
+console.info(chalk.gray('Type: object'));
+console.info(chalk.gray('Description: Configuration object for display options'));
 
-console.log(chalk.bold.cyan('\n🎛️ Available Options:'));
+console.info(chalk.bold.cyan('\n🎛️ Available Options:'));
 
-console.log(chalk.bold.yellow('\n• maxEntryWidth: number'));
-console.log(chalk.gray('  Purpose: Limits text width in columns'));
-console.log(chalk.gray('  Use Case: Long messages, file paths, descriptions'));
-console.log(chalk.gray('  Default: No limit'));
+console.info(chalk.bold.yellow('\n• maxEntryWidth: number'));
+console.info(chalk.gray('  Purpose: Limits text width in columns'));
+console.info(chalk.gray('  Use Case: Long messages, file paths, descriptions'));
+console.info(chalk.gray('  Default: No limit'));
 
-console.log(chalk.bold.yellow('\n• compact: boolean'));
-console.log(chalk.gray('  Purpose: Reduces horizontal padding between columns'));
-console.log(chalk.gray('  Use Case: Tables with many columns, limited console space'));
-console.log(chalk.gray('  Default: false'));
+console.info(chalk.bold.yellow('\n• compact: boolean'));
+console.info(chalk.gray('  Purpose: Reduces horizontal padding between columns'));
+console.info(chalk.gray('  Use Case: Tables with many columns, limited console space'));
+console.info(chalk.gray('  Default: false'));
 
-console.log(chalk.bold.yellow('\n• maxLines: number'));
-console.log(chalk.gray('  Purpose: Limits number of rows displayed'));
-console.log(chalk.gray('  Use Case: Large datasets, preventing console flooding'));
-console.log(chalk.gray('  Default: No limit'));
+console.info(chalk.bold.yellow('\n• maxLines: number'));
+console.info(chalk.gray('  Purpose: Limits number of rows displayed'));
+console.info(chalk.gray('  Use Case: Large datasets, preventing console flooding'));
+console.info(chalk.gray('  Default: No limit'));
 
 // =============================================================================
 // OPTIONS DEMONSTRATIONS
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Options Demonstrations:'));
+console.info(chalk.bold.magenta('\n🎯 Options Demonstrations:'));
 
 // Create sample data with long text
 const longTextData = [
@@ -176,14 +176,14 @@ const longTextData = [
     }
 ];
 
-console.log(chalk.bold.cyan('\n📏 maxEntryWidth Demo:'));
-console.log(chalk.gray('Without maxEntryWidth (layout breaks):'));
+console.info(chalk.bold.cyan('\n📏 maxEntryWidth Demo:'));
+console.info(chalk.gray('Without maxEntryWidth (layout breaks):'));
 Bun.inspect.table(longTextData);
 
-console.log(chalk.gray('\nWith maxEntryWidth: 40:'));
+console.info(chalk.gray('\nWith maxEntryWidth: 40:'));
 Bun.inspect.table(longTextData, ['id', 'message', 'file'], { maxEntryWidth: 40 });
 
-console.log(chalk.gray('\nWith maxEntryWidth: 20:'));
+console.info(chalk.gray('\nWith maxEntryWidth: 20:'));
 Bun.inspect.table(longTextData, ['id', 'message', 'file'], { maxEntryWidth: 20 });
 
 // Compact demo
@@ -193,11 +193,11 @@ const wideData = [
     { name: 'File3', size: '3.6KB', type: 'json', modified: '2025-11-16', author: 'Charlie', status: 'validated' }
 ];
 
-console.log(chalk.bold.cyan('\n📐 compact Demo:'));
-console.log(chalk.gray('Normal spacing:'));
+console.info(chalk.bold.cyan('\n📐 compact Demo:'));
+console.info(chalk.gray('Normal spacing:'));
 Bun.inspect.table(wideData);
 
-console.log(chalk.gray('\nCompact spacing:'));
+console.info(chalk.gray('\nCompact spacing:'));
 Bun.inspect.table(wideData, ['name', 'size', 'type', 'modified', 'author', 'status'], { compact: true });
 
 // maxLines demo
@@ -208,18 +208,18 @@ const largeDataset = Array.from({ length: 15 }, (_, i) => ({
     modified: '2025-11-18'
 }));
 
-console.log(chalk.bold.cyan('\n📊 maxLines Demo:'));
-console.log(chalk.gray(`Full dataset (${largeDataset.length} rows):`));
+console.info(chalk.bold.cyan('\n📊 maxLines Demo:'));
+console.info(chalk.gray(`Full dataset (${largeDataset.length} rows):`));
 Bun.inspect.table(largeDataset.slice(0, 3)); // Show first 3 to avoid flooding
 
-console.log(chalk.gray(`\nLimited to 5 rows with maxLines:`));
+console.info(chalk.gray(`\nLimited to 5 rows with maxLines:`));
 Bun.inspect.table(largeDataset, ['id', 'name', 'size', 'modified'], { maxLines: 5 });
 
 // =============================================================================
 // COMBINED OPTIONS DEMONSTRATION
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Combined Options Demo:'));
+console.info(chalk.bold.magenta('\n🎯 Combined Options Demo:'));
 
 const complexData = [
     {
@@ -242,7 +242,7 @@ const complexData = [
     }
 ];
 
-console.log(chalk.gray('All options combined:'));
+console.info(chalk.gray('All options combined:'));
 Bun.inspect.table(
     complexData,
     ['id', 'name', 'description', 'size', 'status'],
@@ -257,10 +257,10 @@ Bun.inspect.table(
 // VAULT-SPECIFIC EXAMPLES
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Vault-Specific Examples:'));
+console.info(chalk.bold.magenta('\n🎯 Vault-Specific Examples:'));
 
 // Validation Report
-console.log(chalk.bold.cyan('\n📋 Validation Report Example:'));
+console.info(chalk.bold.cyan('\n📋 Validation Report Example:'));
 const validationData = [
     {
         id: 'VAL001',
@@ -298,7 +298,7 @@ Bun.inspect.table(
 );
 
 // Performance Metrics
-console.log(chalk.bold.cyan('\n🚀 Performance Metrics Example:'));
+console.info(chalk.bold.cyan('\n🚀 Performance Metrics Example:'));
 const performanceData = [
     { operation: 'File Validation', duration: 2.3, status: 'success', efficiency: 107 },
     { operation: 'Template Processing', duration: 5.7, status: 'success', efficiency: 146 },
@@ -328,30 +328,30 @@ Bun.inspect.table(
 // QUICK REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Quick Reference Summary:'));
-console.log(chalk.gray('='.repeat(50)));
+console.info(chalk.bold.magenta('\n🎯 Quick Reference Summary:'));
+console.info(chalk.gray('='.repeat(50)));
 
-console.log(chalk.bold.cyan('\n📋 Function Signature:'));
-console.log(chalk.white('Bun.inspect.table(tabularData, properties?, options?)'));
+console.info(chalk.bold.cyan('\n📋 Function Signature:'));
+console.info(chalk.white('Bun.inspect.table(tabularData, properties?, options?)'));
 
-console.log(chalk.bold.cyan('\n🔧 Parameters:'));
-console.log(chalk.gray('• tabularData  : any[] | object  (Required)'));
-console.log(chalk.gray('• properties   : string[]        (Optional)'));
-console.log(chalk.gray('• options      : object          (Optional)'));
+console.info(chalk.bold.cyan('\n🔧 Parameters:'));
+console.info(chalk.gray('• tabularData  : any[] | object  (Required)'));
+console.info(chalk.gray('• properties   : string[]        (Optional)'));
+console.info(chalk.gray('• options      : object          (Optional)'));
 
-console.log(chalk.bold.cyan('\n⚙️ Options Object:'));
-console.log(chalk.gray('• maxEntryWidth : number  (Limit column width)'));
-console.log(chalk.gray('• compact       : boolean (Reduce padding)'));
-console.log(chalk.gray('• maxLines      : number  (Limit rows)'));
+console.info(chalk.bold.cyan('\n⚙️ Options Object:'));
+console.info(chalk.gray('• maxEntryWidth : number  (Limit column width)'));
+console.info(chalk.gray('• compact       : boolean (Reduce padding)'));
+console.info(chalk.gray('• maxLines      : number  (Limit rows)'));
 
-console.log(chalk.bold.cyan('\n✅ Best Practices:'));
-console.log(chalk.gray('1. Pre-process data before display'));
-console.log(chalk.gray('2. Use explicit properties array'));
-console.log(chalk.gray('3. Apply maxEntryWidth for text columns'));
-console.log(chalk.gray('4. Use compact for space optimization'));
-console.log(chalk.gray('5. Set maxLines for large datasets'));
-console.log(chalk.gray('6. Keep objects flat (no nesting)'));
+console.info(chalk.bold.cyan('\n✅ Best Practices:'));
+console.info(chalk.gray('1. Pre-process data before display'));
+console.info(chalk.gray('2. Use explicit properties array'));
+console.info(chalk.gray('3. Apply maxEntryWidth for text columns'));
+console.info(chalk.gray('4. Use compact for space optimization'));
+console.info(chalk.gray('5. Set maxLines for large datasets'));
+console.info(chalk.gray('6. Keep objects flat (no nesting)'));
 
-console.log(chalk.bold.green('\n🎉 Reference Complete!'));
+console.info(chalk.bold.green('\n🎉 Reference Complete!'));
 
 export { };

@@ -1,0 +1,33 @@
+{
+  "profiles": {
+    "ci": {
+      "description": "CI gate — warning+ autofix rules and empty-catch",
+      "rules": ["no-as-any", "no-double-cast", "empty-catch"],
+      "min_severity": "warning"
+    },
+    "autofix": {
+      "description": "Rules with bundled fix: field only",
+      "rules": ["no-as-any", "no-double-cast"]
+    },
+    "strict": {
+      "description": "All bundled rules at any severity",
+      "rules": null,
+      "min_severity": "hint"
+    },
+    "bun": {
+      "description": "Bun-native hygiene — node:fs hints + CI autofix rules",
+      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast", "empty-catch"],
+      "min_severity": "hint"
+    },
+    "bun-hygiene": {
+      "description": "Bun migration hints only — node:fs and child_process",
+      "rules": ["node-fs-in-bun", "prefer-bun-spawn"],
+      "min_severity": "hint"
+    },
+    "kimi-toolchain": {
+      "description": "Kimi-toolchain bun hygiene — type casts + Bun-native hints",
+      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast"],
+      "min_severity": "hint"
+    }
+  }
+}

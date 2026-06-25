@@ -9,7 +9,7 @@ export type RuntimeEnv = {
 export const defaultRuntime: RuntimeEnv = {
   log: (...args: Parameters<typeof console.log>) => {
     clearActiveProgressLine();
-    console.log(...args);
+    console.info(...args);
   },
   error: (...args: Parameters<typeof console.error>) => {
     clearActiveProgressLine();

@@ -68,7 +68,7 @@ class ObsidianValidator {
         // In production, this would use Bun.sqlite(dbPath)
         const mockDb = {
             run: (query: string, ...params: any[]) => {
-                console.log(`🗄️ SQL: ${query}`, params);
+                console.info(`🗄️ SQL: ${query}`, params);
             },
             query: (query: string) => ({
                 get: (...params: any[]) => ({ count: 21, avg_score: 65 }),
@@ -113,13 +113,13 @@ class ObsidianValidator {
         nodes: ObsidianNode[];
         graphMetrics: any;
     }> {
-        console.log('🔍 Starting Obsidian-native vault validation...');
+        console.info('🔍 Starting Obsidian-native vault validation...');
 
         const startTime = Date.now();
 
         // Step 1: Scan vault for markdown and canvas files
         const files = await this.scanVault();
-        console.log(`📁 Found ${files.length} files to validate`);
+        console.info(`📁 Found ${files.length} files to validate`);
 
         // Step 2: Parse each file into ObsidianNode
         const nodes: ObsidianNode[] = [];
@@ -349,7 +349,7 @@ class ObsidianValidator {
     }
 
     private async buildNeighborGraph(nodes: ObsidianNode[]): Promise<void> {
-        console.log('🔗 Building neighbor relationships...');
+        console.info('🔗 Building neighbor relationships...');
 
         nodes.forEach(node => {
             // Direct neighbors (wiki links)
@@ -507,12 +507,12 @@ class ObsidianValidator {
         };
 
         await Bun.write(filePath, JSON.stringify(graphData, null, 2));
-        console.log(`📊 Graph exported to: ${filePath}`);
+        console.info(`📊 Graph exported to: ${filePath}`);
     }
 
     async pushNotice(severity: 'info' | 'warning' | 'error', message: string): Promise<void> {
         // In real implementation, this would send to Obsidian via local API
-        console.log(`📢 [${severity.toUpperCase()}] ${message}`);
+        console.info(`📢 [${severity.toUpperCase()}] ${message}`);
     }
 }
 
@@ -529,34 +529,34 @@ async function main() {
         exportGraph: args.find(arg => arg.startsWith('--export-graph='))?.split('=')[1]
     };
 
-    console.log('🔍 Obsidian-Native Vault Validator');
-    console.log(`📁 Vault: ${options.vaultPath}`);
+    console.info('🔍 Obsidian-Native Vault Validator');
+    console.info(`📁 Vault: ${options.vaultPath}`);
 
     const validator = new ObsidianValidator(options);
     const results = await validator.validateVault(options);
 
-    console.log('\n📊 Validation Results:');
-    console.log('='.repeat(40));
-    console.log(`📁 Files processed: ${results.summary.totalFiles}`);
-    console.log(`❌ Errors: ${results.summary.totalErrors}`);
-    console.log(`⚠️ Warnings: ${results.summary.totalWarnings}`);
-    console.log(`💚 Average health: ${results.summary.averageHealth.toFixed(1)}%`);
-    console.log(`📈 Compliance rate: ${results.summary.complianceRate.toFixed(1)}%`);
-    console.log(`⏱️ Duration: ${results.summary.duration}ms`);
+    console.info('\n📊 Validation Results:');
+    console.info('='.repeat(40));
+    console.info(`📁 Files processed: ${results.summary.totalFiles}`);
+    console.info(`❌ Errors: ${results.summary.totalErrors}`);
+    console.info(`⚠️ Warnings: ${results.summary.totalWarnings}`);
+    console.info(`💚 Average health: ${results.summary.averageHealth.toFixed(1)}%`);
+    console.info(`📈 Compliance rate: ${results.summary.complianceRate.toFixed(1)}%`);
+    console.info(`⏱️ Duration: ${results.summary.duration}ms`);
 
-    console.log('\n🔗 Graph Metrics:');
-    console.log(`📊 Nodes: ${results.graphMetrics.totalNodes}`);
-    console.log(`🔗 Edges: ${results.graphMetrics.totalEdges}`);
-    console.log(`🏝️ Orphans: ${results.graphMetrics.orphanCount} (${results.graphMetrics.orphanRate.toFixed(1)}%)`);
-    console.log(`📊 Average degree: ${results.graphMetrics.averageDegree.toFixed(2)}`);
+    console.info('\n🔗 Graph Metrics:');
+    console.info(`📊 Nodes: ${results.graphMetrics.totalNodes}`);
+    console.info(`🔗 Edges: ${results.graphMetrics.totalEdges}`);
+    console.info(`🏝️ Orphans: ${results.graphMetrics.orphanCount} (${results.graphMetrics.orphanRate.toFixed(1)}%)`);
+    console.info(`📊 Average degree: ${results.graphMetrics.averageDegree.toFixed(2)}`);
 
     if (results.summary.totalErrors > 0) {
-        console.log('\n🚨 Critical Issues Found:');
+        console.info('\n🚨 Critical Issues Found:');
         results.nodes
             .filter(node => node.health.issues.length > 0)
             .forEach(node => {
-                console.log(`\n📄 ${node.path}:`);
-                node.health.issues.forEach(issue => console.log(`  ❌ ${issue}`));
+                console.info(`\n📄 ${node.path}:`);
+                node.health.issues.forEach(issue => console.info(`  ❌ ${issue}`));
             });
     }
 

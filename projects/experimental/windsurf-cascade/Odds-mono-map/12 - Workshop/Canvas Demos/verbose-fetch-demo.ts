@@ -19,32 +19,32 @@
  * @since 2025-11-18
  */
 
-console.log('🌐 BUN_CONFIG_VERBOSE_FETCH Demonstration');
-console.log('===========================================');
+console.info('🌐 BUN_CONFIG_VERBOSE_FETCH Demonstration');
+console.info('===========================================');
 
 // =============================================================================
 // VERBOSE FETCH MODES DEMONSTRATION
 // =============================================================================
 
-console.log('\n📋 Verbose Fetch Configuration:');
-console.log('================================');
+console.info('\n📋 Verbose Fetch Configuration:');
+console.info('================================');
 
 // Show current verbose fetch setting
 const currentMode = process.env.BUN_CONFIG_VERBOSE_FETCH;
-console.log(`Current BUN_CONFIG_VERBOSE_FETCH: ${currentMode || 'undefined (no verbose logging)'}`);
+console.info(`Current BUN_CONFIG_VERBOSE_FETCH: ${currentMode || 'undefined (no verbose logging)'}`);
 
-console.log('\n🎯 Available Modes:');
-console.log('• BUN_CONFIG_VERBOSE_FETCH=curl  - Full curl-style output');
-console.log('• BUN_CONFIG_VERBOSE_FETCH=1    - Basic logging without curl format');
-console.log('• undefined                    - No verbose logging');
+console.info('\n🎯 Available Modes:');
+console.info('• BUN_CONFIG_VERBOSE_FETCH=curl  - Full curl-style output');
+console.info('• BUN_CONFIG_VERBOSE_FETCH=1    - Basic logging without curl format');
+console.info('• undefined                    - No verbose logging');
 
 // =============================================================================
 // NETWORK REQUEST DEMONSTRATIONS
 // =============================================================================
 
 async function demonstrateVerboseFetch() {
-    console.log('\n🚀 Network Request Demonstrations:');
-    console.log('===================================');
+    console.info('\n🚀 Network Request Demonstrations:');
+    console.info('===================================');
 
     // Test URLs for different scenarios
     const testRequests = [
@@ -119,27 +119,27 @@ async function demonstrateVerboseFetch() {
 
     // Execute each test request
     for (const request of testRequests) {
-        console.log(`\n📡 ${request.name}:`);
-        console.log('─'.repeat(50));
+        console.info(`\n📡 ${request.name}:`);
+        console.info('─'.repeat(50));
 
         try {
             const startTime = performance.now();
 
-            console.log(`Making request to: ${request.url}`);
-            console.log(`Method: ${request.options.method || 'GET'}`);
+            console.info(`Making request to: ${request.url}`);
+            console.info(`Method: ${request.options.method || 'GET'}`);
 
             if (request.options.headers) {
-                console.log('Headers:');
+                console.info('Headers:');
                 Object.entries(request.options.headers).forEach(([key, value]) => {
-                    console.log(`  ${key}: ${value}`);
+                    console.info(`  ${key}: ${value}`);
                 });
             }
 
             if (request.options.body) {
-                console.log(`Body: ${request.options.body}`);
+                console.info(`Body: ${request.options.body}`);
             }
 
-            console.log('\n⬇️ Response:');
+            console.info('\n⬇️ Response:');
 
             // Make the request (verbose logging will show automatically)
             const response = await fetch(request.url, request.options);
@@ -147,38 +147,38 @@ async function demonstrateVerboseFetch() {
             const endTime = performance.now();
             const duration = endTime - startTime;
 
-            console.log(`\n✅ Request completed in ${duration.toFixed(2)}ms`);
-            console.log(`Status: ${response.status} ${response.statusText}`);
+            console.info(`\n✅ Request completed in ${duration.toFixed(2)}ms`);
+            console.info(`Status: ${response.status} ${response.statusText}`);
 
             // Show response headers
-            console.log('\n📋 Response Headers:');
+            console.info('\n📋 Response Headers:');
             response.headers.forEach((value, key) => {
-                console.log(`  ${key}: ${value}`);
+                console.info(`  ${key}: ${value}`);
             });
 
             // Try to get response body
             try {
                 const contentType = response.headers.get('content-type');
-                console.log(`\n📄 Content-Type: ${contentType}`);
+                console.info(`\n📄 Content-Type: ${contentType}`);
 
                 if (contentType?.includes('application/json')) {
                     const data = await response.json();
-                    console.log('📊 JSON Response (truncated):');
-                    console.log(JSON.stringify(data, null, 2).substring(0, 500) + '...');
+                    console.info('📊 JSON Response (truncated):');
+                    console.info(JSON.stringify(data, null, 2).substring(0, 500) + '...');
                 } else {
                     const text = await response.text();
-                    console.log(`📄 Response Body (${text.length} chars):`);
-                    console.log(text.substring(0, 200) + '...');
+                    console.info(`📄 Response Body (${text.length} chars):`);
+                    console.info(text.substring(0, 200) + '...');
                 }
             } catch (bodyError) {
-                console.log('⚠️ Could not read response body');
+                console.info('⚠️ Could not read response body');
             }
 
         } catch (error) {
             console.error(`❌ Request failed: ${error.message}`);
         }
 
-        console.log('\n' + '='.repeat(60));
+        console.info('\n' + '='.repeat(60));
     }
 }
 
@@ -187,14 +187,14 @@ async function demonstrateVerboseFetch() {
 // =============================================================================
 
 async function demonstrateNodeHttpVerbose() {
-    console.log('\n🔧 node:http with Verbose Fetch:');
-    console.log('=================================');
+    console.info('\n🔧 node:http with Verbose Fetch:');
+    console.info('=================================');
 
     try {
         // Import node:http for demonstration
         const { default: http } = await import('node:http');
 
-        console.log('Making request with node:http module...');
+        console.info('Making request with node:http module...');
 
         // Create a simple HTTP request
         const options = {
@@ -209,10 +209,10 @@ async function demonstrateNodeHttpVerbose() {
         };
 
         const req = http.request(options, (res) => {
-            console.log(`\n✅ node:http Response: ${res.statusCode} ${res.statusMessage}`);
-            console.log('📋 Response Headers:');
+            console.info(`\n✅ node:http Response: ${res.statusCode} ${res.statusMessage}`);
+            console.info('📋 Response Headers:');
             Object.entries(res.headers).forEach(([key, value]) => {
-                console.log(`  ${key}: ${value}`);
+                console.info(`  ${key}: ${value}`);
             });
 
             let data = '';
@@ -221,8 +221,8 @@ async function demonstrateNodeHttpVerbose() {
             });
 
             res.on('end', () => {
-                console.log(`\n📄 Response Body (${data.length} chars):`);
-                console.log(data.substring(0, 300) + '...');
+                console.info(`\n📄 Response Body (${data.length} chars):`);
+                console.info(data.substring(0, 300) + '...');
             });
         });
 
@@ -236,7 +236,7 @@ async function demonstrateNodeHttpVerbose() {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
     } catch (error) {
-        console.log('⚠️ node:http module not available or failed:', error.message);
+        console.info('⚠️ node:http module not available or failed:', error.message);
     }
 }
 
@@ -245,8 +245,8 @@ async function demonstrateNodeHttpVerbose() {
 // =============================================================================
 
 async function demonstratePerformanceAnalysis() {
-    console.log('\n📊 Performance Analysis with Verbose Fetch:');
-    console.log('============================================');
+    console.info('\n📊 Performance Analysis with Verbose Fetch:');
+    console.info('============================================');
 
     const testUrls = [
         'https://httpbin.org/delay/1',
@@ -254,11 +254,11 @@ async function demonstratePerformanceAnalysis() {
         'https://httpbin.org/status/200'
     ];
 
-    console.log('Testing request performance with verbose logging enabled...\n');
+    console.info('Testing request performance with verbose logging enabled...\n');
 
     for (let i = 0; i < testUrls.length; i++) {
         const url = testUrls[i];
-        console.log(`📡 Test ${i + 1}: ${url}`);
+        console.info(`📡 Test ${i + 1}: ${url}`);
 
         try {
             const startTime = performance.now();
@@ -273,18 +273,18 @@ async function demonstratePerformanceAnalysis() {
             const endTime = performance.now();
             const duration = endTime - startTime;
 
-            console.log(`⏱️ Request completed in ${duration.toFixed(2)}ms`);
-            console.log(`📊 Status: ${response.status} ${response.statusText}`);
+            console.info(`⏱️ Request completed in ${duration.toFixed(2)}ms`);
+            console.info(`📊 Status: ${response.status} ${response.statusText}`);
 
             // Calculate performance metrics
             const throughput = 1000 / duration; // requests per second
-            console.log(`📈 Throughput: ${throughput.toFixed(2)} requests/second`);
+            console.info(`📈 Throughput: ${throughput.toFixed(2)} requests/second`);
 
         } catch (error) {
             console.error(`❌ Performance test failed: ${error.message}`);
         }
 
-        console.log('');
+        console.info('');
     }
 }
 
@@ -293,8 +293,8 @@ async function demonstratePerformanceAnalysis() {
 // =============================================================================
 
 async function demonstrateErrorHandling() {
-    console.log('\n❌ Error Handling with Verbose Fetch:');
-    console.log('======================================');
+    console.info('\n❌ Error Handling with Verbose Fetch:');
+    console.info('======================================');
 
     const errorScenarios = [
         {
@@ -325,10 +325,10 @@ async function demonstrateErrorHandling() {
     ];
 
     for (const scenario of errorScenarios) {
-        console.log(`\n🧪 ${scenario.name}:`);
-        console.log(`URL: ${scenario.url}`);
-        console.log(`Expected: ${scenario.description}`);
-        console.log('─'.repeat(40));
+        console.info(`\n🧪 ${scenario.name}:`);
+        console.info(`URL: ${scenario.url}`);
+        console.info(`Expected: ${scenario.description}`);
+        console.info('─'.repeat(40));
 
         try {
             const startTime = performance.now();
@@ -349,22 +349,22 @@ async function demonstrateErrorHandling() {
             const endTime = performance.now();
             const duration = endTime - startTime;
 
-            console.log(`✅ Response received in ${duration.toFixed(2)}ms`);
-            console.log(`📊 Status: ${response.status} ${response.statusText}`);
+            console.info(`✅ Response received in ${duration.toFixed(2)}ms`);
+            console.info(`📊 Status: ${response.status} ${response.statusText}`);
 
             if (response.status >= 400) {
-                console.log('⚠️ This is an expected error response');
+                console.info('⚠️ This is an expected error response');
             }
 
         } catch (error) {
             if (error.name === 'AbortError') {
-                console.log('⏰ Request timed out (5 seconds)');
+                console.info('⏰ Request timed out (5 seconds)');
             } else {
-                console.log(`❌ Error: ${error.message}`);
+                console.info(`❌ Error: ${error.message}`);
             }
         }
 
-        console.log('');
+        console.info('');
     }
 }
 
@@ -373,15 +373,15 @@ async function demonstrateErrorHandling() {
 // =============================================================================
 
 async function main() {
-    console.log(`🔧 Running with BUN_CONFIG_VERBOSE_FETCH: ${process.env.BUN_CONFIG_VERBOSE_FETCH || 'undefined'}`);
-    console.log('📝 This demo shows how verbose fetch logging works in Bun');
-    console.log('');
+    console.info(`🔧 Running with BUN_CONFIG_VERBOSE_FETCH: ${process.env.BUN_CONFIG_VERBOSE_FETCH || 'undefined'}`);
+    console.info('📝 This demo shows how verbose fetch logging works in Bun');
+    console.info('');
 
-    console.log('💡 Tips for using this demo:');
-    console.log('• Run without env var to see normal fetch behavior');
-    console.log('• Run with BUN_CONFIG_VERBOSE_FETCH=1 for basic logging');
-    console.log('• Run with BUN_CONFIG_VERBOSE_FETCH=curl for curl-style output');
-    console.log('');
+    console.info('💡 Tips for using this demo:');
+    console.info('• Run without env var to see normal fetch behavior');
+    console.info('• Run with BUN_CONFIG_VERBOSE_FETCH=1 for basic logging');
+    console.info('• Run with BUN_CONFIG_VERBOSE_FETCH=curl for curl-style output');
+    console.info('');
 
     // Run all demonstrations
     await demonstrateVerboseFetch();
@@ -389,18 +389,18 @@ async function main() {
     await demonstratePerformanceAnalysis();
     await demonstrateErrorHandling();
 
-    console.log('\n🎉 Verbose Fetch Demonstration Complete!');
-    console.log('========================================');
-    console.log('📚 Summary of BUN_CONFIG_VERBOSE_FETCH:');
-    console.log('• curl mode: Shows full curl-style command output');
-    console.log('• 1 mode: Shows basic request/response logging');
-    console.log('• undefined: Normal fetch behavior (no verbose logging)');
-    console.log('');
-    console.log('🔍 Use verbose fetch for:');
-    console.log('• Debugging API requests and responses');
-    console.log('• Analyzing HTTP headers and timing');
-    console.log('• Troubleshooting network issues');
-    console.log('• Understanding request/response flow');
+    console.info('\n🎉 Verbose Fetch Demonstration Complete!');
+    console.info('========================================');
+    console.info('📚 Summary of BUN_CONFIG_VERBOSE_FETCH:');
+    console.info('• curl mode: Shows full curl-style command output');
+    console.info('• 1 mode: Shows basic request/response logging');
+    console.info('• undefined: Normal fetch behavior (no verbose logging)');
+    console.info('');
+    console.info('🔍 Use verbose fetch for:');
+    console.info('• Debugging API requests and responses');
+    console.info('• Analyzing HTTP headers and timing');
+    console.info('• Troubleshooting network issues');
+    console.info('• Understanding request/response flow');
 }
 
 // Run the demonstration

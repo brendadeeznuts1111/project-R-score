@@ -26,7 +26,7 @@
     {
       "id": "kimiremote",
       "name": "kimiremote",
-      "path": "kimiremote",
+      "path": "projects/active/kimiremote",
       "category": "featured",
       "size_bytes": 2113748992,
       "size_human": "2 GB",
@@ -40,7 +40,7 @@
     {
       "id": "peer",
       "name": "peer",
-      "path": "peer",
+      "path": "projects/active/peer",
       "category": "featured",
       "size_bytes": 513212416,
       "size_human": "489.4 MB",
@@ -54,7 +54,7 @@
     {
       "id": "barbershop",
       "name": "barbershop",
-      "path": "barbershop",
+      "path": "projects/active/barbershop",
       "category": "featured",
       "size_bytes": 264626176,
       "size_human": "252.4 MB",
@@ -82,7 +82,7 @@
     {
       "id": "factorywager",
       "name": "factorywager",
-      "path": "factorywager",
+      "path": "projects/active/factorywager",
       "category": "featured",
       "size_bytes": 115138560,
       "size_human": "109.8 MB",

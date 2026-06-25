@@ -50,7 +50,7 @@ export function configAwareFetch(url: string, init?: RequestInit): Promise<Respo
   // 5. Log proxy usage (if DEBUG flag)
   if (config.features?.DEBUG) {
     const duration = (typeof Bun !== 'undefined' && Bun.nanoseconds ? Bun.nanoseconds() : Date.now() * 1000000) - fetchStart;
-    console.log(`[PROXY] @domain1 fetch initiated: ${url} via ${proxyUrl} (${duration}ns)`);
+    console.info(`[PROXY] @domain1 fetch initiated: ${url} via ${proxyUrl} (${duration}ns)`);
   }
   
   return promise;

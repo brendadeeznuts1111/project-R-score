@@ -113,61 +113,61 @@ function generateBadge(coverage: CoverageData): string {
 }
 
 async function main() {
-  console.log("\n📊 Running comprehensive test coverage analysis\n");
+  console.info("\n📊 Running comprehensive test coverage analysis\n");
 
   try {
     // Run tests with coverage
-    console.log("Running tests with coverage...");
+    console.info("Running tests with coverage...");
     await $`bun test --coverage test/`;
 
     // Parse coverage data
     const coverage = parseCoverageData();
     if (!coverage) {
       console.error("❌ Could not parse coverage data");
-      console.log("Make sure coverage files are generated:");
-      console.log("  - coverage/coverage-summary.json");
-      console.log("  - coverage/lcov-report/index.html");
+      console.info("Make sure coverage files are generated:");
+      console.info("  - coverage/coverage-summary.json");
+      console.info("  - coverage/lcov-report/index.html");
       process.exit(1);
     }
 
-    console.log("\n📈 Coverage Results:");
-    console.log("=".repeat(50));
+    console.info("\n📈 Coverage Results:");
+    console.info("=".repeat(50));
 
     const report = generateCoverageReport(coverage);
 
     // Display results
-    report.summary.forEach(line => console.log(line));
+    report.summary.forEach(line => console.info(line));
 
-    console.log("\n" + "=".repeat(50));
+    console.info("\n" + "=".repeat(50));
 
     if (report.passed) {
-      console.log("🎉 ALL COVERAGE THRESHOLDS MET!");
-      console.log(`\nBadge URL: ${generateBadge(coverage)}`);
+      console.info("🎉 ALL COVERAGE THRESHOLDS MET!");
+      console.info(`\nBadge URL: ${generateBadge(coverage)}`);
     } else {
-      console.log("❌ COVERAGE THRESHOLDS NOT MET");
-      console.log("\nViolations:");
-      report.violations.forEach(violation => console.log(`  • ${violation}`));
+      console.info("❌ COVERAGE THRESHOLDS NOT MET");
+      console.info("\nViolations:");
+      report.violations.forEach(violation => console.info(`  • ${violation}`));
 
-      console.log("\n💡 Suggestions:");
-      console.log("  • Add tests for uncovered code paths");
-      console.log("  • Review test exclusions in uncovered files");
-      console.log("  • Consider adding integration tests for complex logic");
-      console.log("  • Use --coverage-reporter=lcov for detailed HTML reports");
+      console.info("\n💡 Suggestions:");
+      console.info("  • Add tests for uncovered code paths");
+      console.info("  • Review test exclusions in uncovered files");
+      console.info("  • Consider adding integration tests for complex logic");
+      console.info("  • Use --coverage-reporter=lcov for detailed HTML reports");
 
       process.exit(1);
     }
 
-    console.log("\n✅ Coverage analysis complete\n");
+    console.info("\n✅ Coverage analysis complete\n");
 
   } catch (error) {
     console.error("\n❌ Coverage analysis failed\n");
     console.error("Error:", error instanceof Error ? error.message : error);
 
-    console.log("\n🔧 Troubleshooting:");
-    console.log("  • Ensure all test files are discoverable");
-    console.log("  • Check for TypeScript compilation errors");
-    console.log("  • Verify test harness imports are correct");
-    console.log("  • Run 'bun test' manually to check for test failures");
+    console.info("\n🔧 Troubleshooting:");
+    console.info("  • Ensure all test files are discoverable");
+    console.info("  • Check for TypeScript compilation errors");
+    console.info("  • Verify test harness imports are correct");
+    console.info("  • Run 'bun test' manually to check for test failures");
 
     process.exit(1);
   }

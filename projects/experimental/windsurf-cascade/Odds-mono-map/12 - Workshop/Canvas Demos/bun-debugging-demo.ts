@@ -73,32 +73,32 @@ function parseCLIArgs(): CLIOptions {
 }
 
 function showHelp() {
-    console.log('🎯 Bun Debugging Demo - CLI Help');
-    console.log('================================');
-    console.log('');
-    console.log('USAGE:');
-    console.log('  bun run bun-debugging-demo.ts [OPTIONS]');
-    console.log('');
-    console.log('OPTIONS:');
-    console.log('  --console-depth <number>    Set console inspection depth (1-20)');
-    console.log('  --console-depth=<number>    Set console inspection depth (1-20)');
-    console.log('  --depth-demo                Run focused depth control demo');
-    console.log('  --inspect-demo              Run focused Bun --inspect flag demo');
-    console.log('  --help, -h                  Show this help message');
-    console.log('');
-    console.log('EXAMPLES:');
-    console.log('  bun run bun-debugging-demo.ts                    # Default depth (2)');
-    console.log('  bun run bun-debugging-demo.ts --console-depth 4 # Custom depth (4)');
-    console.log('  bun run bun-debugging-demo.ts --console-depth 8 # Deep inspection (8)');
-    console.log('  bun run bun-debugging-demo.ts --depth-demo      # Focused depth demo');
-    console.log('  bun run bun-debugging-demo.ts --inspect-demo    # Focused inspect demo');
-    console.log('');
-    console.log('DEPTH RECOMMENDATIONS:');
-    console.log('  • 2-3: Quick debugging and logging');
-    console.log('  • 4-6: API responses and data structures');
-    console.log('  • 6-8: Complex nested objects');
-    console.log('  • 10+: Thorough debugging of very deep structures');
-    console.log('');
+    console.info('🎯 Bun Debugging Demo - CLI Help');
+    console.info('================================');
+    console.info('');
+    console.info('USAGE:');
+    console.info('  bun run bun-debugging-demo.ts [OPTIONS]');
+    console.info('');
+    console.info('OPTIONS:');
+    console.info('  --console-depth <number>    Set console inspection depth (1-20)');
+    console.info('  --console-depth=<number>    Set console inspection depth (1-20)');
+    console.info('  --depth-demo                Run focused depth control demo');
+    console.info('  --inspect-demo              Run focused Bun --inspect flag demo');
+    console.info('  --help, -h                  Show this help message');
+    console.info('');
+    console.info('EXAMPLES:');
+    console.info('  bun run bun-debugging-demo.ts                    # Default depth (2)');
+    console.info('  bun run bun-debugging-demo.ts --console-depth 4 # Custom depth (4)');
+    console.info('  bun run bun-debugging-demo.ts --console-depth 8 # Deep inspection (8)');
+    console.info('  bun run bun-debugging-demo.ts --depth-demo      # Focused depth demo');
+    console.info('  bun run bun-debugging-demo.ts --inspect-demo    # Focused inspect demo');
+    console.info('');
+    console.info('DEPTH RECOMMENDATIONS:');
+    console.info('  • 2-3: Quick debugging and logging');
+    console.info('  • 4-6: API responses and data structures');
+    console.info('  • 6-8: Complex nested objects');
+    console.info('  • 10+: Thorough debugging of very deep structures');
+    console.info('');
 }
 
 // =============================================================================
@@ -106,10 +106,10 @@ function showHelp() {
 // =============================================================================
 
 function demonstrateDepthControlWithCLI(depth: number) {
-    console.log('\n🔍 CLI Depth Control Demonstration with Clean Tables');
-    console.log('='.repeat(60));
-    console.log(`📊 Using console depth: ${depth}`);
-    console.log('');
+    console.info('\n🔍 CLI Depth Control Demonstration with Clean Tables');
+    console.info('='.repeat(60));
+    console.info(`📊 Using console depth: ${depth}`);
+    console.info('');
 
     // Test objects with different nesting levels
     const testObjects = {
@@ -155,11 +155,11 @@ function demonstrateDepthControlWithCLI(depth: number) {
         };
     });
 
-    console.log('📊 Depth Control Analysis:');
-    console.log(Bun.inspect.table(depthAnalysis, { colors: true }));
+    console.info('📊 Depth Control Analysis:');
+    console.info(Bun.inspect.table(depthAnalysis, { colors: true }));
 
     // Performance comparison by depth
-    console.log('\n⚡ Performance Impact by Depth:');
+    console.info('\n⚡ Performance Impact by Depth:');
 
     const performanceTests = Object.entries(testObjects).map(([name, obj]) => {
         const start = performance.now();
@@ -174,7 +174,7 @@ function demonstrateDepthControlWithCLI(depth: number) {
         };
     });
 
-    console.log(Bun.inspect.table(performanceTests, { colors: true }));
+    console.info(Bun.inspect.table(performanceTests, { colors: true }));
 
     // Depth recommendations table
     const recommendations = [
@@ -185,8 +185,8 @@ function demonstrateDepthControlWithCLI(depth: number) {
         { depth: '9-10', use: 'Complete Inspection', performance: 'Very Slow', visibility: 'Complete', recommendation: 'Special cases' }
     ];
 
-    console.log('\n💡 Depth Recommendations Guide:');
-    console.log(Bun.inspect.table(recommendations, { colors: true }));
+    console.info('\n💡 Depth Recommendations Guide:');
+    console.info(Bun.inspect.table(recommendations, { colors: true }));
 
     // Current configuration summary
     const currentConfig = [
@@ -196,10 +196,10 @@ function demonstrateDepthControlWithCLI(depth: number) {
         { setting: 'Use Case Fit', value: depth <= 2 ? 'Production' : depth <= 4 ? 'Development' : depth <= 6 ? 'Analysis' : 'Debugging', status: '✅ Optimal' }
     ];
 
-    console.log('\n⚙️ Current Configuration Summary:');
-    console.log(Bun.inspect.table(currentConfig, { colors: true }));
+    console.info('\n⚙️ Current Configuration Summary:');
+    console.info(Bun.inspect.table(currentConfig, { colors: true }));
 
-    console.log(`\n✅ Depth control demonstration completed for depth ${depth}`);
+    console.info(`\n✅ Depth control demonstration completed for depth ${depth}`);
 }
 
 function getObjectDepth(obj: any, currentDepth = 0): number {
@@ -220,12 +220,12 @@ function getObjectDepth(obj: any, currentDepth = 0): number {
 // =============================================================================
 
 function demonstrateCLIEnhancedFeatures(depth: number) {
-    console.log('\n🚀 CLI-Enhanced Features');
-    console.log('========================');
+    console.info('\n🚀 CLI-Enhanced Features');
+    console.info('========================');
 
     // Import enhanced console inspection module
     import('./enhanced-console-inspection-module.js').then(({ EnhancedConsoleInspectionModule }) => {
-        console.log('✅ Enhanced Console Inspection Module loaded');
+        console.info('✅ Enhanced Console Inspection Module loaded');
 
         const enhancedConsole = new EnhancedConsoleInspectionModule({
             showColors: true,
@@ -235,13 +235,13 @@ function demonstrateCLIEnhancedFeatures(depth: number) {
             performanceMode: true
         });
 
-        console.log(`\n🎨 Enhanced Object Inspection (depth ${depth}):`);
+        console.info(`\n🎨 Enhanced Object Inspection (depth ${depth}):`);
         enhancedConsole.demonstrateObjectInspection();
 
-        console.log(`\n🎨 Enhanced Color Formats (depth ${depth}):`);
+        console.info(`\n🎨 Enhanced Color Formats (depth ${depth}):`);
         enhancedConsole.demonstrateColorFormats();
 
-        console.log(`\n📊 Performance Analysis with depth ${depth}:`);
+        console.info(`\n📊 Performance Analysis with depth ${depth}:`);
         const largeObject = createLargeNestedObject();
         const iterations = 1000;
 
@@ -252,10 +252,10 @@ function demonstrateCLIEnhancedFeatures(depth: number) {
         const duration = performance.now() - start;
         const opsPerSec = Math.round(iterations / duration * 1000);
 
-        console.log(`Performance with depth ${depth}: ${opsPerSec.toLocaleString()} ops/sec`);
+        console.info(`Performance with depth ${depth}: ${opsPerSec.toLocaleString()} ops/sec`);
 
         const cacheStats = enhancedConsole.getColorManager().getCacheStats();
-        console.log(`Cache entries: ${cacheStats.size}`);
+        console.info(`Cache entries: ${cacheStats.size}`);
 
     }).catch(error => {
         console.error('❌ Failed to load enhanced console inspection module:', error);
@@ -263,8 +263,8 @@ function demonstrateCLIEnhancedFeatures(depth: number) {
 }
 
 function showDepthRecommendations(depth: number) {
-    console.log('\n💡 Depth Recommendations');
-    console.log('========================');
+    console.info('\n💡 Depth Recommendations');
+    console.info('========================');
 
     const recommendations = {
         1: { use: 'Very shallow inspection', example: 'Simple key-value pairs' },
@@ -281,14 +281,14 @@ function showDepthRecommendations(depth: number) {
 
     const currentRec = recommendations[depth as keyof typeof recommendations] || recommendations[20];
 
-    console.log(`🎯 Current depth ${depth}: ${currentRec.use}`);
-    console.log(`📝 Best for: ${currentRec.example}`);
+    console.info(`🎯 Current depth ${depth}: ${currentRec.use}`);
+    console.info(`📝 Best for: ${currentRec.example}`);
 
-    console.log('\n📊 Depth Impact Analysis:');
-    console.log(`• Visibility: ${depth < 3 ? 'Limited' : depth < 6 ? 'Good' : depth < 10 ? 'Excellent' : 'Complete'}`);
-    console.log(`• Performance: ${depth < 4 ? 'Very Fast' : depth < 8 ? 'Fast' : depth < 12 ? 'Moderate' : 'Slower'}`);
-    console.log(`• Output Size: ${depth < 3 ? 'Small' : depth < 6 ? 'Medium' : depth < 10 ? 'Large' : 'Very Large'}`);
-    console.log(`• Use Case: ${depth < 3 ? 'Production Logging' : depth < 6 ? 'Development Debugging' : depth < 10 ? 'API Analysis' : 'Deep Troubleshooting'}`);
+    console.info('\n📊 Depth Impact Analysis:');
+    console.info(`• Visibility: ${depth < 3 ? 'Limited' : depth < 6 ? 'Good' : depth < 10 ? 'Excellent' : 'Complete'}`);
+    console.info(`• Performance: ${depth < 4 ? 'Very Fast' : depth < 8 ? 'Fast' : depth < 12 ? 'Moderate' : 'Slower'}`);
+    console.info(`• Output Size: ${depth < 3 ? 'Small' : depth < 6 ? 'Medium' : depth < 10 ? 'Large' : 'Very Large'}`);
+    console.info(`• Use Case: ${depth < 3 ? 'Production Logging' : depth < 6 ? 'Development Debugging' : depth < 10 ? 'API Analysis' : 'Deep Troubleshooting'}`);
 }
 
 // =============================================================================
@@ -299,12 +299,12 @@ function showDepthRecommendations(depth: number) {
  * Simple web server for debugging demonstrations
  */
 function createDebugServer() {
-    console.log('🌐 Creating debug server...');
+    console.info('🌐 Creating debug server...');
 
     const server = Bun.serve({
         port: 3000,
         fetch(req) {
-            console.log('📡 Request received:', req.method, req.url);
+            console.info('📡 Request received:', req.method, req.url);
 
             // Add some variables to inspect during debugging
             const url = new URL(req.url);
@@ -312,14 +312,14 @@ function createDebugServer() {
             const timestamp = new Date().toISOString();
             const userAgent = req.headers.get('user-agent') || 'Unknown';
 
-            console.log('🔍 Debug info:');
-            console.log('  Path:', path);
-            console.log('  Timestamp:', timestamp);
-            console.log('  User-Agent:', userAgent);
+            console.info('🔍 Debug info:');
+            console.info('  Path:', path);
+            console.info('  Timestamp:', timestamp);
+            console.info('  User-Agent:', userAgent);
 
             // This is a good place to set a breakpoint
             if (path === '/debug') {
-                console.log('🐛 Debug endpoint hit - breakpoint here!');
+                console.info('🐛 Debug endpoint hit - breakpoint here!');
                 return new Response(JSON.stringify({
                     message: 'Debug endpoint',
                     path,
@@ -332,7 +332,7 @@ function createDebugServer() {
             }
 
             if (path === '/error') {
-                console.log('❌ Error endpoint - will throw an error');
+                console.info('❌ Error endpoint - will throw an error');
                 throw new Error('Intentional error for debugging demonstration');
             }
 
@@ -344,11 +344,11 @@ function createDebugServer() {
         }
     });
 
-    console.log(`🚀 Server running on http://localhost:${server.port}`);
-    console.log('📝 Debug endpoints:');
-    console.log('  http://localhost:3000/ - Normal response');
-    console.log('  http://localhost:3000/debug - Debug endpoint');
-    console.log('  http://localhost:3000/error - Error endpoint');
+    console.info(`🚀 Server running on http://localhost:${server.port}`);
+    console.info('📝 Debug endpoints:');
+    console.info('  http://localhost:3000/ - Normal response');
+    console.info('  http://localhost:3000/debug - Debug endpoint');
+    console.info('  http://localhost:3000/error - Error endpoint');
 
     return server;
 }
@@ -363,7 +363,7 @@ class ComplexDebugServer {
     constructor(private port: number = 3001) { }
 
     start() {
-        console.log(`🔧 Starting complex debug server on port ${this.port}`);
+        console.info(`🔧 Starting complex debug server on port ${this.port}`);
 
         const server = Bun.serve({
             port: this.port,
@@ -376,11 +376,11 @@ class ComplexDebugServer {
             }
         });
 
-        console.log(`🌐 Complex server running on http://localhost:${server.port}`);
-        console.log('📝 Test endpoints:');
-        console.log('  http://localhost:3001/api/users - User API');
-        console.log('  http://localhost:3001/api/calculate - Calculation API');
-        console.log('  http://localhost:3001/ws - WebSocket endpoint');
+        console.info(`🌐 Complex server running on http://localhost:${server.port}`);
+        console.info('📝 Test endpoints:');
+        console.info('  http://localhost:3001/api/users - User API');
+        console.info('  http://localhost:3001/api/calculate - Calculation API');
+        console.info('  http://localhost:3001/ws - WebSocket endpoint');
 
         return server;
     }
@@ -389,7 +389,7 @@ class ComplexDebugServer {
         this.requestCount++;
         const requestId = this.requestCount;
 
-        console.log(`📡 Request #${requestId}:`, req.method, req.url);
+        console.info(`📡 Request #${requestId}:`, req.method, req.url);
 
         const url = new URL(req.url);
         const path = url.pathname;
@@ -412,7 +412,7 @@ class ComplexDebugServer {
     }
 
     private async handleUsersAPI(req: Request, requestId: number): Promise<Response> {
-        console.log(`👥 Processing users API request #${requestId}`);
+        console.info(`👥 Processing users API request #${requestId}`);
 
         // Simulate database query
         const users = await this.fetchUsers();
@@ -425,14 +425,14 @@ class ComplexDebugServer {
     }
 
     private async handleCalculateAPI(req: Request, requestId: number): Promise<Response> {
-        console.log(`🧮 Processing calculate API request #${requestId}`);
+        console.info(`🧮 Processing calculate API request #${requestId}`);
 
         const url = new URL(req.url);
         const a = parseFloat(url.searchParams.get('a') || '0');
         const b = parseFloat(url.searchParams.get('b') || '0');
         const operation = url.searchParams.get('op') || 'add';
 
-        console.log(`🔢 Calculation: ${a} ${operation} ${b}`);
+        console.info(`🔢 Calculation: ${a} ${operation} ${b}`);
 
         const result = this.performCalculation(a, b, operation);
 
@@ -448,7 +448,7 @@ class ComplexDebugServer {
     }
 
     private async fetchUsers(): Promise<Array<{ id: number; name: string; active: boolean }>> {
-        console.log('🗄️ Fetching users from database...');
+        console.info('🗄️ Fetching users from database...');
 
         // Simulate database delay
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -462,12 +462,12 @@ class ComplexDebugServer {
     }
 
     private filterActiveUsers(users: Array<{ id: number; name: string; active: boolean }>) {
-        console.log('🔍 Filtering active users...');
+        console.info('🔍 Filtering active users...');
         return users.filter(user => user.active);
     }
 
     private formatUserResponse(users: Array<{ id: number; name: string; active: boolean }>, requestId: number) {
-        console.log('📝 Formatting user response...');
+        console.info('📝 Formatting user response...');
         return {
             requestId,
             users: users.map(({ id, name }) => ({ id, name })),
@@ -477,7 +477,7 @@ class ComplexDebugServer {
     }
 
     private performCalculation(a: number, b: number, operation: string): number {
-        console.log(`🧮 Performing calculation: ${a} ${operation} ${b}`);
+        console.info(`🧮 Performing calculation: ${a} ${operation} ${b}`);
 
         switch (operation) {
             case 'add':
@@ -496,18 +496,18 @@ class ComplexDebugServer {
 
     // WebSocket handlers
     private handleWebSocket(ws: WebSocket, message: string | Buffer) {
-        console.log('📨 WebSocket message received:', message.toString());
+        console.info('📨 WebSocket message received:', message.toString());
         ws.send(`Echo: ${message}`);
     }
 
     private handleWebSocketOpen(ws: WebSocket) {
-        console.log('🔗 WebSocket connection opened');
+        console.info('🔗 WebSocket connection opened');
         this.connections.add(ws);
         ws.send('Welcome to WebSocket debug server!');
     }
 
     private handleWebSocketClose(ws: WebSocket) {
-        console.log('🔌 WebSocket connection closed');
+        console.info('🔌 WebSocket connection closed');
         this.connections.delete(ws);
     }
 
@@ -525,22 +525,22 @@ class ComplexDebugServer {
  * Demonstrate network request debugging with BUN_CONFIG_VERBOSE_FETCH
  */
 async function demonstrateNetworkDebugging() {
-    console.log('🌐 Network Request Debugging Demonstration');
-    console.log('='.repeat(50));
+    console.info('🌐 Network Request Debugging Demonstration');
+    console.info('='.repeat(50));
 
     // Enable verbose fetch logging
     process.env.BUN_CONFIG_VERBOSE_FETCH = 'curl';
 
-    console.log('📡 Making fetch requests with verbose logging...');
+    console.info('📡 Making fetch requests with verbose logging...');
 
     try {
         // Simple GET request
-        console.log('\n1️⃣ Simple GET request:');
+        console.info('\n1️⃣ Simple GET request:');
         const response1 = await fetch('https://httpbin.org/get');
-        console.log('Response status:', response1.status);
+        console.info('Response status:', response1.status);
 
         // POST request with JSON body
-        console.log('\n2️⃣ POST request with JSON:');
+        console.info('\n2️⃣ POST request with JSON:');
         const response2 = await fetch('https://httpbin.org/post', {
             method: 'POST',
             headers: {
@@ -553,10 +553,10 @@ async function demonstrateNetworkDebugging() {
                 debug: true
             })
         });
-        console.log('Response status:', response2.status);
+        console.info('Response status:', response2.status);
 
         // Request with custom headers
-        console.log('\n3️⃣ Request with custom headers:');
+        console.info('\n3️⃣ Request with custom headers:');
         const response3 = await fetch('https://httpbin.org/headers', {
             method: 'GET',
             headers: {
@@ -565,7 +565,7 @@ async function demonstrateNetworkDebugging() {
                 'Authorization': 'Bearer debug-token-123'
             }
         });
-        console.log('Response status:', response3.status);
+        console.info('Response status:', response3.status);
 
     } catch (error) {
         console.error('❌ Network error:', error);
@@ -574,7 +574,7 @@ async function demonstrateNetworkDebugging() {
     // Switch to non-curl verbose mode
     process.env.BUN_CONFIG_VERBOSE_FETCH = 'true';
 
-    console.log('\n📡 Switching to non-curl verbose mode...');
+    console.info('\n📡 Switching to non-curl verbose mode...');
 
     try {
         await fetch('https://httpbin.org/user-agent', {
@@ -589,15 +589,15 @@ async function demonstrateNetworkDebugging() {
 
     // Disable verbose logging
     process.env.BUN_CONFIG_VERBOSE_FETCH = 'false';
-    console.log('\n✅ Verbose logging disabled');
+    console.info('\n✅ Verbose logging disabled');
 }
 
 /**
  * Demonstrate Node.js HTTP debugging
  */
 async function demonstrateNodeHttpDebugging() {
-    console.log('\n🔧 Node.js HTTP Debugging Demonstration');
-    console.log('='.repeat(50));
+    console.info('\n🔧 Node.js HTTP Debugging Demonstration');
+    console.info('='.repeat(50));
 
     // Enable verbose fetch for node:http compatibility
     process.env.BUN_CONFIG_VERBOSE_FETCH = 'true';
@@ -606,7 +606,7 @@ async function demonstrateNodeHttpDebugging() {
         // Using Node.js http module (Bun compatible)
         const { default: http } = await import('node:http');
 
-        console.log('📡 Making request with node:http...');
+        console.info('📡 Making request with node:http...');
 
         const data = await new Promise<string>((resolve, reject) => {
             const req = http.request('http://httpbin.org/get', (res) => {
@@ -619,7 +619,7 @@ async function demonstrateNodeHttpDebugging() {
             req.end();
         });
 
-        console.log('Response received:', JSON.parse(data).url);
+        console.info('Response received:', JSON.parse(data).url);
 
     } catch (error) {
         console.error('❌ Node.js HTTP error:', error);
@@ -636,8 +636,8 @@ async function demonstrateNodeHttpDebugging() {
  * Demonstrate error handling and stack traces
  */
 function demonstrateStackTraces() {
-    console.log('\n📍 Stack Trace and Sourcemap Demonstration');
-    console.log('='.repeat(50));
+    console.info('\n📍 Stack Trace and Sourcemap Demonstration');
+    console.info('='.repeat(50));
 
     // Create nested function calls for stack trace
     function level1() {
@@ -657,19 +657,19 @@ function demonstrateStackTraces() {
     }
 
     try {
-        console.log('🔍 Generating stack trace...');
+        console.info('🔍 Generating stack trace...');
         level1();
     } catch (error) {
-        console.log('\n❌ Caught error with stack trace:');
+        console.info('\n❌ Caught error with stack trace:');
         console.error(error);
 
-        console.log('\n🔍 Using Bun.inspect for enhanced error display:');
-        console.log(Bun.inspect(error, { colors: true }));
+        console.info('\n🔍 Using Bun.inspect for enhanced error display:');
+        console.info(Bun.inspect(error, { colors: true }));
 
-        console.log('\n📊 Error properties:');
-        console.log('  message:', error.message);
-        console.log('  name:', error.name);
-        console.log('  stack length:', error.stack?.split('\n').length);
+        console.info('\n📊 Error properties:');
+        console.info('  message:', error.message);
+        console.info('  name:', error.name);
+        console.info('  stack length:', error.stack?.split('\n').length);
     }
 }
 
@@ -677,11 +677,11 @@ function demonstrateStackTraces() {
  * Demonstrate V8 Stack Trace API
  */
 function demonstrateV8StackTraceAPI() {
-    console.log('\n🔧 V8 Stack Trace API Demonstration');
-    console.log('='.repeat(50));
+    console.info('\n🔧 V8 Stack Trace API Demonstration');
+    console.info('='.repeat(50));
 
     // Custom stack trace preparation
-    console.log('1️⃣ Custom stack trace preparation:');
+    console.info('1️⃣ Custom stack trace preparation:');
 
     Error.prepareStackTrace = (err, stack) => {
         return stack.map((callSite: any) => {
@@ -699,8 +699,8 @@ function demonstrateV8StackTraceAPI() {
 
     function deepFunction3() {
         const error = new Error('Custom stack trace demo');
-        console.log('Custom stack trace:');
-        console.log(error.stack);
+        console.info('Custom stack trace:');
+        console.info(error.stack);
     }
 
     deepFunction1();
@@ -709,7 +709,7 @@ function demonstrateV8StackTraceAPI() {
     Error.prepareStackTrace = undefined;
 
     // Demonstrate Error.captureStackTrace
-    console.log('\n2️⃣ Error.captureStackTrace demonstration:');
+    console.info('\n2️⃣ Error.captureStackTrace demonstration:');
 
     function outerFunction() {
         innerFunction();
@@ -718,33 +718,33 @@ function demonstrateV8StackTraceAPI() {
     function innerFunction() {
         const error = new Error('Original error location');
 
-        console.log('Original stack trace:');
-        console.log(error.stack);
+        console.info('Original stack trace:');
+        console.info(error.stack);
 
-        console.log('\nAfter captureStackTrace:');
+        console.info('\nAfter captureStackTrace:');
         Error.captureStackTrace(error, outerFunction);
-        console.log(error.stack);
+        console.info(error.stack);
     }
 
     outerFunction();
 
     // Demonstrate CallSite methods
-    console.log('\n3️⃣ CallSite object methods:');
+    console.info('\n3️⃣ CallSite object methods:');
 
     Error.prepareStackTrace = (err, stack) => {
         const callSite = stack[0];
-        console.log('CallSite information:');
-        console.log('  getFileName():', callSite.getFileName());
-        console.log('  getLineNumber():', callSite.getLineNumber());
-        console.log('  getColumnNumber():', callSite.getColumnNumber());
-        console.log('  getFunctionName():', callSite.getFunctionName());
-        console.log('  getMethodName():', callSite.getMethodName());
-        console.log('  getTypeName():', callSite.getTypeName());
-        console.log('  isToplevel():', callSite.isToplevel());
-        console.log('  isEval():', callSite.isEval());
-        console.log('  isNative():', callSite.isNative());
-        console.log('  isConstructor():', callSite.isConstructor());
-        console.log('  isAsync():', callSite.isAsync());
+        console.info('CallSite information:');
+        console.info('  getFileName():', callSite.getFileName());
+        console.info('  getLineNumber():', callSite.getLineNumber());
+        console.info('  getColumnNumber():', callSite.getColumnNumber());
+        console.info('  getFunctionName():', callSite.getFunctionName());
+        console.info('  getMethodName():', callSite.getMethodName());
+        console.info('  getTypeName():', callSite.getTypeName());
+        console.info('  isToplevel():', callSite.isToplevel());
+        console.info('  isEval():', callSite.isEval());
+        console.info('  isNative():', callSite.isNative());
+        console.info('  isConstructor():', callSite.isConstructor());
+        console.info('  isAsync():', callSite.isAsync());
 
         return err.stack; // Return default stack trace
     };
@@ -771,44 +771,44 @@ function demonstrateV8StackTraceAPI() {
  * Demonstrate async/await debugging
  */
 async function demonstrateAsyncDebugging() {
-    console.log('\n⚡ Asynchronous Debugging Demonstration');
-    console.log('='.repeat(50));
+    console.info('\n⚡ Asynchronous Debugging Demonstration');
+    console.info('='.repeat(50));
 
     async function asyncOperation1(value: number): Promise<number> {
-        console.log('🔄 Starting asyncOperation1 with value:', value);
+        console.info('🔄 Starting asyncOperation1 with value:', value);
         await new Promise(resolve => setTimeout(resolve, 100));
         const result = value * 2;
-        console.log('✅ asyncOperation1 completed with result:', result);
+        console.info('✅ asyncOperation1 completed with result:', result);
         return result;
     }
 
     async function asyncOperation2(value: number): Promise<string> {
-        console.log('🔄 Starting asyncOperation2 with value:', value);
+        console.info('🔄 Starting asyncOperation2 with value:', value);
         await new Promise(resolve => setTimeout(resolve, 150));
         const result = `Result: ${value}`;
-        console.log('✅ asyncOperation2 completed with result:', result);
+        console.info('✅ asyncOperation2 completed with result:', result);
         return result;
     }
 
     async function asyncOperation3(value: string): Promise<{ processed: string; timestamp: string }> {
-        console.log('🔄 Starting asyncOperation3 with value:', value);
+        console.info('🔄 Starting asyncOperation3 with value:', value);
         await new Promise(resolve => setTimeout(resolve, 200));
         const result = {
             processed: value.toUpperCase(),
             timestamp: new Date().toISOString()
         };
-        console.log('✅ asyncOperation3 completed with result:', result);
+        console.info('✅ asyncOperation3 completed with result:', result);
         return result;
     }
 
     try {
-        console.log('🚀 Starting async operation chain...');
+        console.info('🚀 Starting async operation chain...');
 
         const result1 = await asyncOperation1(5);
         const result2 = await asyncOperation2(result1);
         const result3 = await asyncOperation3(result2);
 
-        console.log('🎉 Final result:', result3);
+        console.info('🎉 Final result:', result3);
 
     } catch (error) {
         console.error('❌ Async operation failed:', error);
@@ -819,30 +819,30 @@ async function demonstrateAsyncDebugging() {
  * Demonstrate Promise debugging
  */
 function demonstratePromiseDebugging() {
-    console.log('\n🔗 Promise Debugging Demonstration');
-    console.log('='.repeat(50));
+    console.info('\n🔗 Promise Debugging Demonstration');
+    console.info('='.repeat(50));
 
     function createPromises() {
         const promise1 = new Promise<string>((resolve, reject) => {
-            console.log('🔄 Creating promise1');
+            console.info('🔄 Creating promise1');
             setTimeout(() => {
-                console.log('✅ promise1 resolved');
+                console.info('✅ promise1 resolved');
                 resolve('Promise 1 result');
             }, 100);
         });
 
         const promise2 = new Promise<number>((resolve, reject) => {
-            console.log('🔄 Creating promise2');
+            console.info('🔄 Creating promise2');
             setTimeout(() => {
-                console.log('✅ promise2 resolved');
+                console.info('✅ promise2 resolved');
                 resolve(42);
             }, 150);
         });
 
         const promise3 = new Promise<boolean>((resolve, reject) => {
-            console.log('🔄 Creating promise3');
+            console.info('🔄 Creating promise3');
             setTimeout(() => {
-                console.log('❌ promise3 rejected');
+                console.info('❌ promise3 rejected');
                 reject(new Error('Promise 3 failed'));
             }, 200);
         });
@@ -855,7 +855,7 @@ function demonstratePromiseDebugging() {
     // Promise.all - will fail if any promise fails
     Promise.all([promise1, promise2])
         .then(results => {
-            console.log('✅ Promise.all succeeded:', results);
+            console.info('✅ Promise.all succeeded:', results);
         })
         .catch(error => {
             console.error('❌ Promise.all failed:', error);
@@ -864,12 +864,12 @@ function demonstratePromiseDebugging() {
     // Promise.allSettled - shows all results
     Promise.allSettled([promise1, promise2, promise3])
         .then(results => {
-            console.log('📊 Promise.allSettled results:');
+            console.info('📊 Promise.allSettled results:');
             results.forEach((result, index) => {
                 if (result.status === 'fulfilled') {
-                    console.log(`  Promise ${index + 1}:`, result.value);
+                    console.info(`  Promise ${index + 1}:`, result.value);
                 } else {
-                    console.log(`  Promise ${index + 1}:`, result.reason.message);
+                    console.info(`  Promise ${index + 1}:`, result.reason.message);
                 }
             });
         });
@@ -918,13 +918,13 @@ class DebugUtils {
 
     static debug(message: string, ...args: any[]) {
         if (this.shouldLog('debug')) {
-            console.log(this.formatMessage('debug', message), ...args);
+            console.info(this.formatMessage('debug', message), ...args);
         }
     }
 
     static info(message: string, ...args: any[]) {
         if (this.shouldLog('info')) {
-            console.log(this.formatMessage('info', message), ...args);
+            console.info(this.formatMessage('info', message), ...args);
         }
     }
 
@@ -949,13 +949,13 @@ class DebugUtils {
         const opts = { depth: 3, colors: this.showColors, showType: true, ...options };
         const timestamp = this.getTimestamp();
 
-        console.log(`${timestamp}🔍 [INSPECT] ${label}:`);
+        console.info(`${timestamp}🔍 [INSPECT] ${label}:`);
 
         if (opts.showType) {
-            console.log(`   Type: ${typeof obj} | Constructor: ${obj?.constructor?.name || 'Object'}`);
+            console.info(`   Type: ${typeof obj} | Constructor: ${obj?.constructor?.name || 'Object'}`);
         }
 
-        console.log(Bun.inspect(obj, {
+        console.info(Bun.inspect(obj, {
             depth: opts.depth,
             colors: opts.colors,
             compact: false,
@@ -965,7 +965,7 @@ class DebugUtils {
     }
 
     static trace(message: string) {
-        console.log(`${this.getTimestamp()}📍 [TRACE] ${message}`);
+        console.info(`${this.getTimestamp()}📍 [TRACE] ${message}`);
         console.trace();
     }
 
@@ -1008,14 +1008,14 @@ class DebugUtils {
         const opts = { showIndex: true, maxRows: 20, ...options };
 
         if (label) {
-            console.log(`${timestamp}📊 [TABLE] ${label}:`);
+            console.info(`${timestamp}📊 [TABLE] ${label}:`);
         }
 
         const limitedData = opts.maxRows ? data.slice(0, opts.maxRows) : data;
-        console.log(Bun.inspect.table(limitedData, { colors: this.showColors }));
+        console.info(Bun.inspect.table(limitedData, { colors: this.showColors }));
 
         if (data.length > opts.maxRows) {
-            console.log(`   ... and ${data.length - opts.maxRows} more rows`);
+            console.info(`   ... and ${data.length - opts.maxRows} more rows`);
         }
     }
 
@@ -1030,12 +1030,12 @@ class DebugUtils {
     }
 
     static divider(char: string = '─', length: number = 50) {
-        console.log(char.repeat(length));
+        console.info(char.repeat(length));
     }
 
     static section(title: string, icon: string = '📋') {
         this.divider();
-        console.log(`${icon} ${title}`);
+        console.info(`${icon} ${title}`);
         this.divider();
     }
 
@@ -1043,12 +1043,12 @@ class DebugUtils {
         this.section(title, '📋');
         Object.entries(data).forEach(([key, value]) => {
             if (Array.isArray(value)) {
-                console.log(`   • ${key}:`);
-                value.forEach(item => console.log(`     - ${item}`));
+                console.info(`   • ${key}:`);
+                value.forEach(item => console.info(`     - ${item}`));
             } else if (typeof value === 'object') {
-                console.log(`   • ${key}: ${JSON.stringify(value, null, 6)}`);
+                console.info(`   • ${key}: ${JSON.stringify(value, null, 6)}`);
             } else {
-                console.log(`   • ${key}: ${value}`);
+                console.info(`   • ${key}: ${value}`);
             }
         });
     }
@@ -1064,9 +1064,9 @@ class DebugUtils {
         const opsPerSec = Math.round(iterations / duration * 1000);
 
         this.info(`Performance results for ${operation}:`);
-        console.log(`   • Duration: ${duration.toFixed(2)}ms`);
-        console.log(`   • Operations/sec: ${opsPerSec.toLocaleString()}`);
-        console.log(`   • Average time: ${(duration / iterations).toFixed(4)}ms per operation`);
+        console.info(`   • Duration: ${duration.toFixed(2)}ms`);
+        console.info(`   • Operations/sec: ${opsPerSec.toLocaleString()}`);
+        console.info(`   • Average time: ${(duration / iterations).toFixed(4)}ms per operation`);
 
         return { duration, opsPerSec, avgTime: duration / iterations };
     }
@@ -1076,8 +1076,8 @@ class DebugUtils {
  * Demonstrate enhanced debug utilities with clean table outputs
  */
 function demonstrateDebugUtilities() {
-    console.log('\n🛠️ Enhanced Debug Utilities with Clean Table Outputs');
-    console.log('='.repeat(65));
+    console.info('\n🛠️ Enhanced Debug Utilities with Clean Table Outputs');
+    console.info('='.repeat(65));
 
     // Configure debug utilities
     DebugUtils.setLogLevel('debug');
@@ -1091,11 +1091,11 @@ function demonstrateDebugUtilities() {
         { setting: 'Colors', value: 'enabled', description: 'Use color-coded log levels' }
     ];
 
-    console.log('\n⚙️ Debug Utilities Configuration:');
-    console.log(Bun.inspect.table(configTable, { colors: true }));
+    console.info('\n⚙️ Debug Utilities Configuration:');
+    console.info(Bun.inspect.table(configTable, { colors: true }));
 
     // Log Level Examples Table
-    console.log('\n📝 Log Level Examples:');
+    console.info('\n📝 Log Level Examples:');
     DebugUtils.info('Demonstrating enhanced logging with timestamps and colors');
     DebugUtils.debug('This is a debug message with detailed information');
     DebugUtils.warn('This is a warning message that requires attention');
@@ -1148,11 +1148,11 @@ function demonstrateDebugUtilities() {
         }
     ];
 
-    console.log('\n🔍 Object Structure Analysis:');
-    console.log(Bun.inspect.table(objectAnalysis, { colors: true }));
+    console.info('\n🔍 Object Structure Analysis:');
+    console.info(Bun.inspect.table(objectAnalysis, { colors: true }));
 
     // Performance measurement with results table
-    console.log('\n⚡ Performance Measurement:');
+    console.info('\n⚡ Performance Measurement:');
 
     const calculationResult = DebugUtils.measure(() => {
         let sum = 0;
@@ -1182,11 +1182,11 @@ function demonstrateDebugUtilities() {
         { name: 'Gateway', status: 'active', requests: 1200000, errors: 67, uptime: '99.4%', health: '🟢' }
     ];
 
-    console.log('\n📊 Service Metrics Table:');
-    console.log(Bun.inspect.table(serviceData, { colors: true }));
+    console.info('\n📊 Service Metrics Table:');
+    console.info(Bun.inspect.table(serviceData, { colors: true }));
 
     // Performance testing with comparison table
-    console.log('\n🏁 Performance Testing:');
+    console.info('\n🏁 Performance Testing:');
 
     const testResults = [
         DebugUtils.performance('Object Inspection', 1000, () => {
@@ -1208,11 +1208,11 @@ function demonstrateDebugUtilities() {
         grade: result.opsPerSec > 10000 ? '🏆 A+' : result.opsPerSec > 5000 ? '✅ A' : result.opsPerSec > 1000 ? '⚠️ B' : '❌ C'
     }));
 
-    console.log('\n📈 Performance Comparison Table:');
-    console.log(Bun.inspect.table(performanceComparison, { colors: true }));
+    console.info('\n📈 Performance Comparison Table:');
+    console.info(Bun.inspect.table(performanceComparison, { colors: true }));
 
     // Feature demonstration table
-    console.log('\n🎯 Feature Demonstration:');
+    console.info('\n🎯 Feature Demonstration:');
 
     DebugUtils.group('Request Processing Flow', false);
     DebugUtils.info('Starting request processing');
@@ -1251,8 +1251,8 @@ function demonstrateDebugUtilities() {
         }
     ];
 
-    console.log('\n🚀 Debug Utilities Features:');
-    console.log(Bun.inspect.table(featureDemo, { colors: true }));
+    console.info('\n🚀 Debug Utilities Features:');
+    console.info(Bun.inspect.table(featureDemo, { colors: true }));
 
     // Best practices table
     const bestPractices = [
@@ -1283,8 +1283,8 @@ function demonstrateDebugUtilities() {
         }
     ];
 
-    console.log('\n💡 Best Practices Guide:');
-    console.log(Bun.inspect.table(bestPractices, { colors: true }));
+    console.info('\n💡 Best Practices Guide:');
+    console.info(Bun.inspect.table(bestPractices, { colors: true }));
 
     // Summary statistics table
     const summaryStats = [
@@ -1295,8 +1295,8 @@ function demonstrateDebugUtilities() {
         { metric: 'Memory Efficiency', value: 'Excellent', status: '🏆 Optimized' }
     ];
 
-    console.log('\n📋 Summary Statistics:');
-    console.log(Bun.inspect.table(summaryStats, { colors: true }));
+    console.info('\n📋 Summary Statistics:');
+    console.info(Bun.inspect.table(summaryStats, { colors: true }));
 
     DebugUtils.info('✅ Enhanced debug utilities with clean table outputs completed successfully!');
 }
@@ -1305,8 +1305,8 @@ function demonstrateDebugUtilities() {
  * Demonstrate Bun.inspect.custom for custom object serialization
  */
 function demonstrateBunInspectCustom() {
-    console.log('\n🎨 Bun.inspect.custom Demonstration');
-    console.log('====================================');
+    console.info('\n🎨 Bun.inspect.custom Demonstration');
+    console.info('====================================');
 
     // Custom class with inspect override
     class CanvasService {
@@ -1404,31 +1404,31 @@ function demonstrateBunInspectCustom() {
     ]);
     const database = new UserDatabase();
 
-    console.log('\n📋 Custom Service Inspection:');
-    console.log(service);
+    console.info('\n📋 Custom Service Inspection:');
+    console.info(service);
 
-    console.log('\n📋 Custom Response Inspection:');
-    console.log(response);
+    console.info('\n📋 Custom Response Inspection:');
+    console.info(response);
 
-    console.log('\n📋 Custom Metrics Inspection:');
-    console.log(metrics);
+    console.info('\n📋 Custom Metrics Inspection:');
+    console.info(metrics);
 
-    console.log('\n📋 Custom Database Inspection:');
-    console.log(database);
+    console.info('\n📋 Custom Database Inspection:');
+    console.info(database);
 
     // Show that Bun.inspect() also uses custom formatting
-    console.log('\n🔧 Bun.inspect() with custom formatting:');
-    console.log(Bun.inspect(service, { colors: true }));
-    console.log(Bun.inspect(response, { colors: true }));
-    console.log(Bun.inspect(metrics, { colors: true }));
+    console.info('\n🔧 Bun.inspect() with custom formatting:');
+    console.info(Bun.inspect(service, { colors: true }));
+    console.info(Bun.inspect(response, { colors: true }));
+    console.info(Bun.inspect(metrics, { colors: true }));
 }
 
 /**
  * Demonstrate Bun.inspect.table for tabular data formatting
  */
 function demonstrateBunInspectTable() {
-    console.log('\n📊 Bun.inspect.table Demonstration');
-    console.log('===================================');
+    console.info('\n📊 Bun.inspect.table Demonstration');
+    console.info('===================================');
 
     // Basic table example
     const services = [
@@ -1438,12 +1438,12 @@ function demonstrateBunInspectTable() {
         { name: 'Pipeline', status: 'deprecated', requests: 250000, errors: 89, uptime: '95.2%' }
     ];
 
-    console.log('\n📋 Basic Service Table:');
-    console.log(Bun.inspect.table(services, { colors: true }));
+    console.info('\n📋 Basic Service Table:');
+    console.info(Bun.inspect.table(services, { colors: true }));
 
     // Table with specific properties
-    console.log('\n📋 Table with Selected Properties:');
-    console.log(Bun.inspect.table(services, ['name', 'status', 'uptime'], { colors: true }));
+    console.info('\n📋 Table with Selected Properties:');
+    console.info(Bun.inspect.table(services, ['name', 'status', 'uptime'], { colors: true }));
 
     // Complex data table
     const apiMetrics = [
@@ -1473,8 +1473,8 @@ function demonstrateBunInspectTable() {
         }
     ];
 
-    console.log('\n📋 API Metrics Table:');
-    console.log(Bun.inspect.table(apiMetrics, { colors: true }));
+    console.info('\n📋 API Metrics Table:');
+    console.info(Bun.inspect.table(apiMetrics, { colors: true }));
 
     // Table with computed properties
     const systemResources = [
@@ -1501,8 +1501,8 @@ function demonstrateBunInspectTable() {
         }
     ];
 
-    console.log('\n📋 System Resources Table:');
-    console.log(Bun.inspect.table(systemResources, { colors: true }));
+    console.info('\n📋 System Resources Table:');
+    console.info(Bun.inspect.table(systemResources, { colors: true }));
 
     // Table with nested objects
     const userActivities = [
@@ -1520,11 +1520,11 @@ function demonstrateBunInspectTable() {
         }
     ];
 
-    console.log('\n📋 User Activities Table:');
-    console.log(Bun.inspect.table(userActivities, ['user', 'sessionDuration'], { colors: true }));
+    console.info('\n📋 User Activities Table:');
+    console.info(Bun.inspect.table(userActivities, ['user', 'sessionDuration'], { colors: true }));
 
     // Performance comparison table
-    console.log('\n📋 Performance Comparison:');
+    console.info('\n📋 Performance Comparison:');
     const performanceData = [
         { operation: 'Default console.log', opsPerSec: 35000, memoryUsage: 'low' },
         { operation: 'Bun.inspect depth 2', opsPerSec: 35000, memoryUsage: 'low' },
@@ -1533,87 +1533,87 @@ function demonstrateBunInspectTable() {
         { operation: 'Bun.inspect depth 8', opsPerSec: 10500, memoryUsage: 'high' }
     ];
 
-    console.log(Bun.inspect.table(performanceData, { colors: true }));
+    console.info(Bun.inspect.table(performanceData, { colors: true }));
 }
 
 /**
  * Demonstrate advanced Bun.inspect serialization features
  */
 function demonstrateBunInspectSerialization() {
-    console.log('\n🔧 Advanced Bun.inspect Serialization');
-    console.log('=======================================');
+    console.info('\n🔧 Advanced Bun.inspect Serialization');
+    console.info('=======================================');
 
     // Basic serialization examples
-    console.log('\n📋 Basic Serialization:');
+    console.info('\n📋 Basic Serialization:');
 
     const obj = { foo: "bar", nested: { deep: "value" } };
     const str = Bun.inspect(obj);
-    console.log('Original object:', obj);
-    console.log('Serialized string:', JSON.stringify(str));
-    console.log('Deserialized back:', str);
+    console.info('Original object:', obj);
+    console.info('Serialized string:', JSON.stringify(str));
+    console.info('Deserialized back:', str);
 
     // TypedArray serialization
-    console.log('\n📋 TypedArray Serialization:');
+    console.info('\n📋 TypedArray Serialization:');
 
     const uint8Array = new Uint8Array([1, 2, 3, 255, 128, 0]);
     const arrayStr = Bun.inspect(uint8Array);
-    console.log('Uint8Array:', uint8Array);
-    console.log('Serialized:', arrayStr);
+    console.info('Uint8Array:', uint8Array);
+    console.info('Serialized:', arrayStr);
 
     const float32Array = new Float32Array([3.14, 2.71, 1.41]);
     const floatStr = Bun.inspect(float32Array);
-    console.log('Float32Array:', float32Array);
-    console.log('Serialized:', floatStr);
+    console.info('Float32Array:', float32Array);
+    console.info('Serialized:', floatStr);
 
     // Function serialization
-    console.log('\n📋 Function Serialization:');
+    console.info('\n📋 Function Serialization:');
 
     const func = function (a, b) { return a + b; };
     const funcStr = Bun.inspect(func);
-    console.log('Function:', func);
-    console.log('Serialized:', funcStr);
+    console.info('Function:', func);
+    console.info('Serialized:', funcStr);
 
     const arrowFunc = (x) => x * 2;
     const arrowStr = Bun.inspect(arrowFunc);
-    console.log('Arrow Function:', arrowFunc);
-    console.log('Serialized:', arrowStr);
+    console.info('Arrow Function:', arrowFunc);
+    console.info('Serialized:', arrowStr);
 
     // Date serialization
-    console.log('\n📋 Date Serialization:');
+    console.info('\n📋 Date Serialization:');
 
     const now = new Date();
     const dateStr = Bun.inspect(now);
-    console.log('Date:', now);
-    console.log('Serialized:', dateStr);
+    console.info('Date:', now);
+    console.info('Serialized:', dateStr);
 
     // RegExp serialization
-    console.log('\n📋 RegExp Serialization:');
+    console.info('\n📋 RegExp Serialization:');
 
     const regex = /test\d+/gi;
     const regexStr = Bun.inspect(regex);
-    console.log('RegExp:', regex);
-    console.log('Serialized:', regexStr);
+    console.info('RegExp:', regex);
+    console.info('Serialized:', regexStr);
 
     // Error serialization
-    console.log('\n📋 Error Serialization:');
+    console.info('\n📋 Error Serialization:');
 
     const error = new Error('Test error message');
     error.stack = 'Error: Test error message\n    at test (test.js:1:1)';
     const errorStr = Bun.inspect(error);
-    console.log('Error:', error);
-    console.log('Serialized:', errorStr);
+    console.info('Error:', error);
+    console.info('Serialized:', errorStr);
 
     // Circular reference handling
-    console.log('\n📋 Circular Reference Handling:');
+    console.info('\n📋 Circular Reference Handling:');
 
     const circular: any = { name: 'parent' };
     circular.self = circular;
     const circularStr = Bun.inspect(circular);
-    console.log('Circular object:', circular);
-    console.log('Serialized:', circularStr);
+    console.info('Circular object:', circular);
+    console.info('Serialized:', circularStr);
 
     // Advanced serialization with options
-    console.log('\n� Advanced Serialization Options:');
+    console.info('\n� Advanced Serialization Options:');
 
     const complexObj = {
         services: Array.from({ length: 5 }, (_, i) => ({
@@ -1632,11 +1632,11 @@ function demonstrateBunInspectSerialization() {
         }
     };
 
-    console.log('\n� Compact serialization:');
-    console.log(Bun.inspect(complexObj, { compact: true, colors: false }));
+    console.info('\n� Compact serialization:');
+    console.info(Bun.inspect(complexObj, { compact: true, colors: false }));
 
-    console.log('\n🔧 Detailed serialization:');
-    console.log(Bun.inspect(complexObj, {
+    console.info('\n🔧 Detailed serialization:');
+    console.info(Bun.inspect(complexObj, {
         compact: false,
         colors: true,
         depth: 4,
@@ -1645,7 +1645,7 @@ function demonstrateBunInspectSerialization() {
     }));
 
     // Serialization comparison
-    console.log('\n📊 Serialization Performance:');
+    console.info('\n📊 Serialization Performance:');
 
     const iterations = 1000;
     const testObj = { data: Array.from({ length: 100 }, (_, i) => ({ id: i, value: `item-${i}` })) };
@@ -1657,8 +1657,8 @@ function demonstrateBunInspectSerialization() {
     const duration = performance.now() - start;
     const opsPerSec = Math.round(iterations / duration * 1000);
 
-    console.log(`Serialized ${iterations} objects in ${duration.toFixed(2)}ms`);
-    console.log(`Performance: ${opsPerSec.toLocaleString()} ops/sec`);
+    console.info(`Serialized ${iterations} objects in ${duration.toFixed(2)}ms`);
+    console.info(`Performance: ${opsPerSec.toLocaleString()} ops/sec`);
 }
 
 /**
@@ -1722,50 +1722,50 @@ function createLargeNestedObject() {
  * Demonstrate V8 heap snapshot functionality for memory leak detection
  */
 function demonstrateV8HeapSnapshots() {
-    console.log('\n🧠 V8 Heap Snapshot Demonstration');
-    console.log('=====================================');
+    console.info('\n🧠 V8 Heap Snapshot Demonstration');
+    console.info('=====================================');
 
     try {
         // Import v8 module
         import('node:v8').then(v8 => {
-            console.log('✅ V8 module loaded successfully');
+            console.info('✅ V8 module loaded successfully');
 
             // Create a heap snapshot with auto-generated name
-            console.log('\n📸 Creating heap snapshot...');
+            console.info('\n📸 Creating heap snapshot...');
             const snapshotPath = v8.writeHeapSnapshot();
-            console.log(`📁 Heap snapshot written to: ${snapshotPath}`);
+            console.info(`📁 Heap snapshot written to: ${snapshotPath}`);
 
             // Create a heap snapshot with custom name
             const customSnapshotPath = v8.writeHeapSnapshot('./debug-snapshots/bun-debugging-demo.heapsnapshot');
-            console.log(`📁 Custom heap snapshot written to: ${customSnapshotPath}`);
+            console.info(`📁 Custom heap snapshot written to: ${customSnapshotPath}`);
 
             // Demonstrate memory usage patterns
-            console.log('\n🔍 Memory Usage Analysis:');
+            console.info('\n🔍 Memory Usage Analysis:');
             demonstrateMemoryPatterns(v8);
 
             // Create snapshots at different memory states
-            console.log('\n📊 Creating memory state snapshots...');
+            console.info('\n📊 Creating memory state snapshots...');
             createMemoryStateSnapshots(v8);
 
-            console.log('\n💡 Heap Snapshot Analysis Instructions:');
-            console.log('=========================================');
-            console.log('1. Open Chrome DevTools (F12)');
-            console.log('2. Go to the "Memory" tab');
-            console.log('3. Click the "Load" button (folder icon)');
-            console.log('4. Select your .heapsnapshot file');
-            console.log('5. Analyze memory usage and detect leaks');
-            console.log('');
-            console.log('🎯 Available Snapshot Files:');
-            console.log(`   • ${snapshotPath}`);
-            console.log(`   • ${customSnapshotPath}`);
-            console.log('   • ./debug-snapshots/before-memory-test.heapsnapshot');
-            console.log('   • ./debug-snapshots/after-memory-test.heapsnapshot');
-            console.log('   • ./debug-snapshots/after-gc.heapsnapshot');
-            console.log('   • ./debug-snapshots/memory-leak-test.heapsnapshot');
+            console.info('\n💡 Heap Snapshot Analysis Instructions:');
+            console.info('=========================================');
+            console.info('1. Open Chrome DevTools (F12)');
+            console.info('2. Go to the "Memory" tab');
+            console.info('3. Click the "Load" button (folder icon)');
+            console.info('4. Select your .heapsnapshot file');
+            console.info('5. Analyze memory usage and detect leaks');
+            console.info('');
+            console.info('🎯 Available Snapshot Files:');
+            console.info(`   • ${snapshotPath}`);
+            console.info(`   • ${customSnapshotPath}`);
+            console.info('   • ./debug-snapshots/before-memory-test.heapsnapshot');
+            console.info('   • ./debug-snapshots/after-memory-test.heapsnapshot');
+            console.info('   • ./debug-snapshots/after-gc.heapsnapshot');
+            console.info('   • ./debug-snapshots/memory-leak-test.heapsnapshot');
 
         }).catch(error => {
             console.error('❌ Failed to load V8 module:', error);
-            console.log('💡 V8 heap snapshots require Node.js compatibility mode');
+            console.info('💡 V8 heap snapshots require Node.js compatibility mode');
         });
 
     } catch (error) {
@@ -1777,7 +1777,7 @@ function demonstrateV8HeapSnapshots() {
  * Demonstrate different memory usage patterns for testing
  */
 function demonstrateMemoryPatterns(v8: any) {
-    console.log('Creating memory patterns to analyze...');
+    console.info('Creating memory patterns to analyze...');
 
     // Create various object types to populate the heap
     const memoryPatterns = {
@@ -1819,13 +1819,13 @@ function demonstrateMemoryPatterns(v8: any) {
         circular: createCircularReferences(100)
     };
 
-    console.log(`✅ Created memory patterns:`);
-    console.log(`   • Arrays: ${memoryPatterns.arrays.length} objects`);
-    console.log(`   • Objects: ${memoryPatterns.objects.length} objects`);
-    console.log(`   • Strings: ${memoryPatterns.strings.length} strings`);
-    console.log(`   • Functions: ${memoryPatterns.functions.length} functions`);
-    console.log(`   • TypedArrays: 3 arrays with ${(10000 + 5000 + 7500) / 1000}k total elements`);
-    console.log(`   • Circular references: ${memoryPatterns.circular.length} objects`);
+    console.info(`✅ Created memory patterns:`);
+    console.info(`   • Arrays: ${memoryPatterns.arrays.length} objects`);
+    console.info(`   • Objects: ${memoryPatterns.objects.length} objects`);
+    console.info(`   • Strings: ${memoryPatterns.strings.length} strings`);
+    console.info(`   • Functions: ${memoryPatterns.functions.length} functions`);
+    console.info(`   • TypedArrays: 3 arrays with ${(10000 + 5000 + 7500) / 1000}k total elements`);
+    console.info(`   • Circular references: ${memoryPatterns.circular.length} objects`);
 
     return memoryPatterns;
 }
@@ -1874,53 +1874,53 @@ function createMemoryStateSnapshots(v8: any) {
     // Snapshot 1: Before memory test
     try {
         const beforePath = v8.writeHeapSnapshot('./debug-snapshots/before-memory-test.heapsnapshot');
-        console.log(`📸 Before test snapshot: ${beforePath}`);
+        console.info(`📸 Before test snapshot: ${beforePath}`);
     } catch (error) {
-        console.log('⚠️ Could not create before-test snapshot');
+        console.info('⚠️ Could not create before-test snapshot');
     }
 
     // Create memory pressure
-    console.log('🔥 Creating memory pressure...');
+    console.info('🔥 Creating memory pressure...');
     const memoryHog = createMemoryPressure();
 
     // Snapshot 2: After memory allocation
     try {
         const afterPath = v8.writeHeapSnapshot('./debug-snapshots/after-memory-test.heapsnapshot');
-        console.log(`📸 After allocation snapshot: ${afterPath}`);
+        console.info(`📸 After allocation snapshot: ${afterPath}`);
     } catch (error) {
-        console.log('⚠️ Could not create after-allocation snapshot');
+        console.info('⚠️ Could not create after-allocation snapshot');
     }
 
     // Force garbage collection if available
     try {
         if (global.gc) {
-            console.log('🗑️ Forcing garbage collection...');
+            console.info('🗑️ Forcing garbage collection...');
             global.gc();
 
             // Snapshot 3: After garbage collection
             const afterGCPath = v8.writeHeapSnapshot('./debug-snapshots/after-gc.heapsnapshot');
-            console.log(`📸 After GC snapshot: ${afterGCPath}`);
+            console.info(`📸 After GC snapshot: ${afterGCPath}`);
         } else {
-            console.log('⚠️ Garbage collection not available (run with --expose-gc)');
+            console.info('⚠️ Garbage collection not available (run with --expose-gc)');
         }
     } catch (error) {
-        console.log('⚠️ Could not force garbage collection');
+        console.info('⚠️ Could not force garbage collection');
     }
 
     // Create potential memory leak
-    console.log('💧 Creating potential memory leak...');
+    console.info('💧 Creating potential memory leak...');
     createMemoryLeak();
 
     // Snapshot 4: Memory leak test
     try {
         const leakPath = v8.writeHeapSnapshot('./debug-snapshots/memory-leak-test.heapsnapshot');
-        console.log(`📸 Memory leak test snapshot: ${leakPath}`);
+        console.info(`📸 Memory leak test snapshot: ${leakPath}`);
     } catch (error) {
-        console.log('⚠️ Could not create memory leak snapshot');
+        console.info('⚠️ Could not create memory leak snapshot');
     }
 
     // Clean up some references
-    console.log('🧹 Cleaning up references...');
+    console.info('🧹 Cleaning up references...');
     // Note: memoryHog and leaked objects remain for demonstration
 }
 
@@ -1947,7 +1947,7 @@ function createMemoryPressure(): any {
         ]
     };
 
-    console.log(`✅ Created memory pressure: ~${(350 * 1024) / 1024}KB of data`);
+    console.info(`✅ Created memory pressure: ~${(350 * 1024) / 1024}KB of data`);
     return data;
 }
 
@@ -1972,39 +1972,39 @@ function createMemoryLeak(): void {
         });
     }
 
-    console.log(`💧 Added ${leakData.length} objects to potential memory leak`);
+    console.info(`💧 Added ${leakData.length} objects to potential memory leak`);
 }
 
 /**
  * Demonstrate memory monitoring and analysis
  */
 function demonstrateMemoryMonitoring() {
-    console.log('\n📊 Memory Monitoring Demonstration');
-    console.log('===================================');
+    console.info('\n📊 Memory Monitoring Demonstration');
+    console.info('===================================');
 
     try {
         import('node:v8').then(v8 => {
             // Get heap statistics
             const heapStats = v8.getHeapStatistics();
-            console.log('📈 Current Heap Statistics:');
-            console.log(`   • Total Heap Size: ${(heapStats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`   • Used Heap Size: ${(heapStats.used_heap_size / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`   • Heap Size Limit: ${(heapStats.heap_size_limit / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`   • Total Physical Size: ${(heapStats.total_physical_size / 1024 / 1024).toFixed(2)} MB`);
-            console.log(`   • Total Available Size: ${(heapStats.total_available_size / 1024 / 1024).toFixed(2)} MB`);
+            console.info('📈 Current Heap Statistics:');
+            console.info(`   • Total Heap Size: ${(heapStats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`   • Used Heap Size: ${(heapStats.used_heap_size / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`   • Heap Size Limit: ${(heapStats.heap_size_limit / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`   • Total Physical Size: ${(heapStats.total_physical_size / 1024 / 1024).toFixed(2)} MB`);
+            console.info(`   • Total Available Size: ${(heapStats.total_available_size / 1024 / 1024).toFixed(2)} MB`);
 
             // Get heap space statistics
             const heapSpaceStats = v8.getHeapSpaceStatistics();
-            console.log('\n📊 Heap Space Statistics:');
+            console.info('\n📊 Heap Space Statistics:');
             heapSpaceStats.forEach((space: any, index: number) => {
-                console.log(`   ${index + 1}. ${space.space_name}:`);
-                console.log(`      Size: ${(space.space_size / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`      Used: ${(space.space_used_size / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`      Available: ${(space.space_available_size / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   ${index + 1}. ${space.space_name}:`);
+                console.info(`      Size: ${(space.space_size / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`      Used: ${(space.space_used_size / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`      Available: ${(space.space_available_size / 1024 / 1024).toFixed(2)} MB`);
             });
 
             // Monitor memory usage over time
-            console.log('\n⏱️ Memory Usage Over Time:');
+            console.info('\n⏱️ Memory Usage Over Time:');
             monitorMemoryUsage(v8, 5000); // Monitor for 5 seconds
 
         }).catch(error => {
@@ -2029,8 +2029,8 @@ function monitorMemoryUsage(v8: any, duration: number): void {
 
         if (elapsed >= duration) {
             clearInterval(monitor);
-            console.log('\n📈 Memory Usage Summary:');
-            console.log('==========================');
+            console.info('\n📈 Memory Usage Summary:');
+            console.info('==========================');
 
             if (measurements.length > 0) {
                 const initial = measurements[0];
@@ -2038,11 +2038,11 @@ function monitorMemoryUsage(v8: any, duration: number): void {
                 const peak = measurements.reduce((max, curr) =>
                     curr.used > max.used ? curr : max, measurements[0]);
 
-                console.log(`   • Initial Memory: ${(initial.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Final Memory: ${(final.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Peak Memory: ${(peak.used / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Memory Change: ${((final.used - initial.used) / 1024 / 1024).toFixed(2)} MB`);
-                console.log(`   • Measurements Taken: ${measurements.length}`);
+                console.info(`   • Initial Memory: ${(initial.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Final Memory: ${(final.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Peak Memory: ${(peak.used / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Memory Change: ${((final.used - initial.used) / 1024 / 1024).toFixed(2)} MB`);
+                console.info(`   • Measurements Taken: ${measurements.length}`);
             }
 
             return;
@@ -2058,7 +2058,7 @@ function monitorMemoryUsage(v8: any, duration: number): void {
 
         measurements.push(measurement);
 
-        console.log(`   ${elapsed / 1000}s: Used ${(stats.used_heap_size / 1024 / 1024).toFixed(2)} MB / Total ${(stats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
+        console.info(`   ${elapsed / 1000}s: Used ${(stats.used_heap_size / 1024 / 1024).toFixed(2)} MB / Total ${(stats.total_heap_size / 1024 / 1024).toFixed(2)} MB`);
     }, interval);
 }
 
@@ -2066,12 +2066,12 @@ function monitorMemoryUsage(v8: any, duration: number): void {
  * Demonstrate enhanced console inspection with clean table outputs
  */
 function demonstrateEnhancedConsoleInspection() {
-    console.log('\n🔍 Enhanced Console Inspection with Clean Table Outputs');
-    console.log('='.repeat(65));
+    console.info('\n🔍 Enhanced Console Inspection with Clean Table Outputs');
+    console.info('='.repeat(65));
 
     // Import the enhanced console inspection module
     import('./enhanced-console-inspection-module.js').then(({ EnhancedConsoleInspectionModule }) => {
-        console.log('✅ Enhanced Console Inspection Module loaded');
+        console.info('✅ Enhanced Console Inspection Module loaded');
 
         // Create enhanced console instance
         const enhancedConsole = new EnhancedConsoleInspectionModule({
@@ -2084,22 +2084,22 @@ function demonstrateEnhancedConsoleInspection() {
 
         // Table utility for clean outputs
         const createTable = (title: string, data: any[], columns: string[] = []) => {
-            console.log(`\n📊 ${title}:`);
+            console.info(`\n📊 ${title}:`);
             if (columns.length > 0) {
-                console.log(Bun.inspect.table(data, columns, { colors: true }));
+                console.info(Bun.inspect.table(data, columns, { colors: true }));
             } else {
-                console.log(Bun.inspect.table(data, { colors: true }));
+                console.info(Bun.inspect.table(data, { colors: true }));
             }
         };
 
         const createComparisonTable = (title: string, comparisons: Array<{ name: string, default: any, enhanced: any, improvement: string }>) => {
-            console.log(`\n🔄 ${title}:`);
-            console.log(Bun.inspect.table(comparisons, { colors: true }));
+            console.info(`\n🔄 ${title}:`);
+            console.info(Bun.inspect.table(comparisons, { colors: true }));
         };
 
         // Depth Control Analysis Table
-        console.log('\n🎯 Depth Control Analysis');
-        console.log('─'.repeat(30));
+        console.info('\n🎯 Depth Control Analysis');
+        console.info('─'.repeat(30));
 
         const depthTests = [
             {
@@ -2290,8 +2290,8 @@ function demonstrateEnhancedConsoleInspection() {
 
         createTable('Memory Usage Analysis', memoryAnalysis);
 
-        console.log(`\n📈 Memory Growth: ${memoryGrowth} MB`);
-        console.log(`🏆 Memory Efficiency: ${memoryGrowth === '0.00' ? 'Excellent' : parseFloat(memoryGrowth) < 1 ? 'Good' : 'Needs Optimization'}`);
+        console.info(`\n📈 Memory Growth: ${memoryGrowth} MB`);
+        console.info(`🏆 Memory Efficiency: ${memoryGrowth === '0.00' ? 'Excellent' : parseFloat(memoryGrowth) < 1 ? 'Good' : 'Needs Optimization'}`);
 
         // Best Practices Recommendations Table
         const recommendations = [
@@ -2410,11 +2410,11 @@ function demonstrateEnhancedConsoleInspection() {
 
         createTable('Final Performance Grades', finalGrades);
 
-        console.log('\n✅ Enhanced console inspection with clean table outputs completed successfully!');
+        console.info('\n✅ Enhanced console inspection with clean table outputs completed successfully!');
 
     }).catch(error => {
         console.error('❌ Failed to load enhanced console inspection module:', error);
-        console.log('💡 Make sure enhanced-console-inspection-module.ts is compiled and available');
+        console.info('💡 Make sure enhanced-console-inspection-module.ts is compiled and available');
     });
 }
 
@@ -2426,8 +2426,8 @@ function demonstrateEnhancedConsoleInspection() {
  * Demonstrate Bun's --inspect flag and debugging capabilities with clean tables
  */
 function demonstrateBunInspectFlag() {
-    console.log('\n🔍 Bun --inspect Flag and Debugging Capabilities');
-    console.log('='.repeat(60));
+    console.info('\n🔍 Bun --inspect Flag and Debugging Capabilities');
+    console.info('='.repeat(60));
 
     // Create a comprehensive debugging demonstration table
     const debuggingFeatures = [
@@ -2461,11 +2461,11 @@ function demonstrateBunInspectFlag() {
         }
     ];
 
-    console.log('\n📊 Bun Debugging Features:');
-    console.log(Bun.inspect.table(debuggingFeatures, { colors: true }));
+    console.info('\n📊 Bun Debugging Features:');
+    console.info(Bun.inspect.table(debuggingFeatures, { colors: true }));
 
     // Demonstrate debugging server setup
-    console.log('\n🚀 Debugging Server Demonstration:');
+    console.info('\n🚀 Debugging Server Demonstration:');
 
     const debugServer = Bun.serve({
         port: 3001,
@@ -2473,8 +2473,8 @@ function demonstrateBunInspectFlag() {
             const url = new URL(req.url);
 
             // Log request details for debugging
-            console.log(`🔍 [DEBUG] ${req.method} ${req.url}`);
-            console.log(`   Headers: ${Object.fromEntries(req.headers.entries())}`);
+            console.info(`🔍 [DEBUG] ${req.method} ${req.url}`);
+            console.info(`   Headers: ${Object.fromEntries(req.headers.entries())}`);
 
             if (url.pathname === '/debug-info') {
                 const debugInfo = {
@@ -2516,11 +2516,11 @@ function demonstrateBunInspectFlag() {
         },
     });
 
-    console.log(`✅ Debug server started on port ${debugServer.port}`);
-    console.log(`🔗 Test endpoints:`);
-    console.log(`   • http://localhost:${debugServer.port}/debug-info`);
-    console.log(`   • http://localhost:${debugServer.port}/error-test`);
-    console.log(`   • http://localhost:${debugServer.port}/`);
+    console.info(`✅ Debug server started on port ${debugServer.port}`);
+    console.info(`🔗 Test endpoints:`);
+    console.info(`   • http://localhost:${debugServer.port}/debug-info`);
+    console.info(`   • http://localhost:${debugServer.port}/error-test`);
+    console.info(`   • http://localhost:${debugServer.port}/`);
 
     // Debugging tips table
     const debuggingTips = [
@@ -2551,8 +2551,8 @@ function demonstrateBunInspectFlag() {
         }
     ];
 
-    console.log('\n💡 Debugging Tips and Shortcuts:');
-    console.log(Bun.inspect.table(debuggingTips, { colors: true }));
+    console.info('\n💡 Debugging Tips and Shortcuts:');
+    console.info(Bun.inspect.table(debuggingTips, { colors: true }));
 
     // Debugging commands summary
     const commandSummary = [
@@ -2578,12 +2578,12 @@ function demonstrateBunInspectFlag() {
         }
     ];
 
-    console.log('\n🔧 Debugging Commands Summary:');
-    console.log(Bun.inspect.table(commandSummary, { colors: true }));
+    console.info('\n🔧 Debugging Commands Summary:');
+    console.info(Bun.inspect.table(commandSummary, { colors: true }));
 
-    console.log(`\n✅ Bun --inspect flag demonstration completed!`);
-    console.log(`🚀 Debug server running at http://localhost:${debugServer.port}`);
-    console.log(`💡 Connect Chrome DevTools to debug this process`);
+    console.info(`\n✅ Bun --inspect flag demonstration completed!`);
+    console.info(`🚀 Debug server running at http://localhost:${debugServer.port}`);
+    console.info(`💡 Connect Chrome DevTools to debug this process`);
 
     return debugServer;
 }
@@ -2604,11 +2604,11 @@ async function runCompleteDebuggingDemo() {
         return;
     }
 
-    console.log('🎯 Complete Bun Debugging Demonstration');
-    console.log('='.repeat(60));
-    console.log(`🔧 Console inspection depth: ${options.consoleDepth}`);
-    console.log('Demonstrating all debugging capabilities in Bun');
-    console.log('='.repeat(60));
+    console.info('🎯 Complete Bun Debugging Demonstration');
+    console.info('='.repeat(60));
+    console.info(`🔧 Console inspection depth: ${options.consoleDepth}`);
+    console.info('Demonstrating all debugging capabilities in Bun');
+    console.info('='.repeat(60));
 
     // If only depth demo requested, run focused demo
     if (options.runDepthDemo) {
@@ -2651,29 +2651,29 @@ async function runCompleteDebuggingDemo() {
     showDepthRecommendations(options.consoleDepth);
     demonstrateCLIEnhancedFeatures(options.consoleDepth);
 
-    console.log('\n🌐 Starting debug servers...');
-    console.log('💡 Use these URLs to test debugging:');
-    console.log('   http://localhost:3000/debug - Debug endpoint');
-    console.log('   http://localhost:3000/error - Error endpoint');
-    console.log('   http://localhost:3001/api/users - User API');
-    console.log('   http://localhost:3001/api/calculate?a=10&b=5&op=add - Calculate API');
+    console.info('\n🌐 Starting debug servers...');
+    console.info('💡 Use these URLs to test debugging:');
+    console.info('   http://localhost:3000/debug - Debug endpoint');
+    console.info('   http://localhost:3000/error - Error endpoint');
+    console.info('   http://localhost:3001/api/users - User API');
+    console.info('   http://localhost:3001/api/calculate?a=10&b=5&op=add - Calculate API');
 
     // Start servers
     const server1 = createDebugServer();
     const server2 = new ComplexDebugServer().start();
 
-    console.log('\n🎉 Debugging demonstration completed!');
-    console.log('✅ All debugging features demonstrated');
-    console.log('🚀 Servers are running for interactive testing');
-    console.log('💡 Use --inspect flag to enable debugger');
-    console.log('🔧 Connect VS Code debugger for enhanced experience');
+    console.info('\n🎉 Debugging demonstration completed!');
+    console.info('✅ All debugging features demonstrated');
+    console.info('🚀 Servers are running for interactive testing');
+    console.info('💡 Use --inspect flag to enable debugger');
+    console.info('🔧 Connect VS Code debugger for enhanced experience');
 
     // Keep servers running
-    console.log('\n⏳ Servers running... Press Ctrl+C to stop');
+    console.info('\n⏳ Servers running... Press Ctrl+C to stop');
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-        console.log('\n🛑 Shutting down servers...');
+        console.info('\n🛑 Shutting down servers...');
         server1.stop();
         server2.stop();
         process.exit(0);

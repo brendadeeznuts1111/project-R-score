@@ -391,7 +391,7 @@ class UntrackedFileSorter {
      * Generate and save the report
      */
     public async generateReport(): Promise<UntrackedFileReport> {
-        console.log('🔍 Analyzing untracked files...');
+        console.info('🔍 Analyzing untracked files...');
 
         const untrackedFiles = this.getUntrackedFiles();
         const categories = this.categorizeFiles(untrackedFiles);
@@ -414,7 +414,7 @@ class UntrackedFileSorter {
         const reportPath = join(this.workingDir, 'untracked-files-report.md');
         writeFileSync(reportPath, this.formatReport(report));
 
-        console.log(`📋 Report saved to: ${reportPath}`);
+        console.info(`📋 Report saved to: ${reportPath}`);
         return report;
     }
 
@@ -496,38 +496,38 @@ class UntrackedFileSorter {
         const report = await this.generateReport();
 
         if (report.totalUntracked === 0) {
-            console.log('✅ No untracked files to process');
+            console.info('✅ No untracked files to process');
             return;
         }
 
         if (action === 'add-all') {
-            console.log('🚀 Adding all untracked files...');
+            console.info('🚀 Adding all untracked files...');
             execSync('git add .', { cwd: this.workingDir });
-            console.log('✅ All files added to git');
+            console.info('✅ All files added to git');
             return;
         }
 
         if (action === 'update-gitignore') {
-            console.log('📝 Updating .gitignore...');
+            console.info('📝 Updating .gitignore...');
             const ignoreCategories = report.categories.filter(cat => cat.action === 'ignore');
             const ignorePatterns = ignoreCategories.flatMap(cat => cat.files.map(f => f.path));
 
             if (ignorePatterns.length > 0) {
                 const gitignorePath = join(this.workingDir, '.gitignore');
                 execSync(`echo "${ignorePatterns.join('\\n')}" >> ${gitignorePath}`, { cwd: this.workingDir });
-                console.log(`✅ Added ${ignorePatterns.length} patterns to .gitignore`);
+                console.info(`✅ Added ${ignorePatterns.length} patterns to .gitignore`);
             }
             return;
         }
 
         // Add recommended files
-        console.log('➕ Adding recommended files...');
+        console.info('➕ Adding recommended files...');
         const addCategories = report.categories.filter(cat => cat.action === 'add');
         const addFiles = addCategories.flatMap(cat => cat.files.map(f => f.path));
 
         if (addFiles.length > 0) {
             execSync(`git add ${addFiles.join(' ')}`, { cwd: this.workingDir });
-            console.log(`✅ Added ${addFiles.length} files to git`);
+            console.info(`✅ Added ${addFiles.length} files to git`);
         }
     }
 }
@@ -539,13 +539,13 @@ async function main() {
     try {
         const report = await sorter.generateReport();
 
-        console.log('\n📈 Summary:');
-        console.log(`- Total untracked files: ${report.totalUntracked}`);
-        console.log(`- Total size: ${sorter.formatSize(report.totalSize)}`);
-        console.log(`- Categories: ${report.categories.filter(c => c.files.length > 0).length}`);
+        console.info('\n📈 Summary:');
+        console.info(`- Total untracked files: ${report.totalUntracked}`);
+        console.info(`- Total size: ${sorter.formatSize(report.totalSize)}`);
+        console.info(`- Categories: ${report.categories.filter(c => c.files.length > 0).length}`);
 
         if (report.totalUntracked > 0) {
-            console.log('\n🏆 Top Categories:');
+            console.info('\n🏆 Top Categories:');
             report.categories
                 .filter(cat => cat.files.length > 0)
                 .slice(0, 5)
@@ -556,19 +556,19 @@ async function main() {
                         review: '👁️',
                         remove: '🗑️'
                     }[cat.action];
-                    console.log(`${i + 1}. ${actionEmoji} ${cat.name}: ${cat.files.length} files`);
+                    console.info(`${i + 1}. ${actionEmoji} ${cat.name}: ${cat.files.length} files`);
                 });
 
-            console.log('\n💡 Recommendations:');
+            console.info('\n💡 Recommendations:');
             report.recommendations.slice(0, 3).forEach(rec => {
-                console.log(`  ${rec}`);
+                console.info(`  ${rec}`);
             });
 
-            console.log('\n📋 Full report saved to: untracked-files-report.md');
-            console.log('\n💻 To take action, run:');
-            console.log('  bun run sort-untracked-files --add-recommended');
-            console.log('  bun run sort-untracked-files --add-all');
-            console.log('  bun run sort-untracked-files --update-gitignore');
+            console.info('\n📋 Full report saved to: untracked-files-report.md');
+            console.info('\n💻 To take action, run:');
+            console.info('  bun run sort-untracked-files --add-recommended');
+            console.info('  bun run sort-untracked-files --add-all');
+            console.info('  bun run sort-untracked-files --update-gitignore');
         }
 
     } catch (error) {

@@ -93,8 +93,8 @@ const performanceMetrics = [
 ];
 
 function demonstrateBasicTable(): void {
-    console.log(chalk.bold.blue('\n📊 Basic Bun.inspect.table()'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.info(chalk.bold.blue('\n📊 Basic Bun.inspect.table()'));
+    console.info(chalk.gray('='.repeat(50)));
 
     // Simple table with basic data
     Bun.inspect.table([
@@ -105,8 +105,8 @@ function demonstrateBasicTable(): void {
 }
 
 function demonstrateVaultFilesTable(): void {
-    console.log(chalk.bold.cyan('\n📁 Vault Files Table (Pre-processed Data)'));
-    console.log(chalk.gray('='.repeat(60)));
+    console.info(chalk.bold.cyan('\n📁 Vault Files Table (Pre-processed Data)'));
+    console.info(chalk.gray('='.repeat(60)));
 
     // Pre-process data for optimal display
     const formattedFiles = vaultFiles.map(file => ({
@@ -126,8 +126,8 @@ function demonstrateVaultFilesTable(): void {
 }
 
 function demonstrateValidationIssuesTable(): void {
-    console.log(chalk.bold.red('\n⚠️ Validation Issues (with maxEntryWidth)'));
-    console.log(chalk.gray('='.repeat(70)));
+    console.info(chalk.bold.red('\n⚠️ Validation Issues (with maxEntryWidth)'));
+    console.info(chalk.gray('='.repeat(70)));
 
     // Pre-process with color coding
     const formattedIssues = validationIssues.map(issue => ({
@@ -149,8 +149,8 @@ function demonstrateValidationIssuesTable(): void {
 }
 
 function demonstratePerformanceTable(): void {
-    console.log(chalk.bold.green('\n🚀 Performance Metrics (Color-coded)'));
-    console.log(chalk.gray('='.repeat(55)));
+    console.info(chalk.bold.green('\n🚀 Performance Metrics (Color-coded)'));
+    console.info(chalk.gray('='.repeat(55)));
 
     // Pre-process with performance indicators
     const formattedMetrics = performanceMetrics.map(metric => ({
@@ -177,8 +177,8 @@ function demonstratePerformanceTable(): void {
 }
 
 function demonstrateCompactTable(): void {
-    console.log(chalk.bold.magenta('\n📋 Compact vs Full Comparison'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.info(chalk.bold.magenta('\n📋 Compact vs Full Comparison'));
+    console.info(chalk.gray('='.repeat(50)));
 
     const sampleData = [
         { name: 'Very Long File Name That Demonstrates Truncation', size: '15.2 KB', type: 'markdown' },
@@ -186,10 +186,10 @@ function demonstrateCompactTable(): void {
         { name: 'Medium Length File Name Here', size: '8.7 KB', type: 'markdown' }
     ];
 
-    console.log(chalk.yellow('\n🔸 FULL TABLE:'));
+    console.info(chalk.yellow('\n🔸 FULL TABLE:'));
     Bun.inspect.table(sampleData, ['name', 'size', 'type']);
 
-    console.log(chalk.yellow('\n🔸 COMPACT TABLE:'));
+    console.info(chalk.yellow('\n🔸 COMPACT TABLE:'));
     Bun.inspect.table(
         sampleData,
         ['name', 'size', 'type'],
@@ -198,8 +198,8 @@ function demonstrateCompactTable(): void {
 }
 
 function demonstrateMaxLinesTable(): void {
-    console.log(chalk.bold.blue('\n📊 Max Lines Limitation'));
-    console.log(chalk.gray('='.repeat(40)));
+    console.info(chalk.bold.blue('\n📊 Max Lines Limitation'));
+    console.info(chalk.gray('='.repeat(40)));
 
     const largeDataset = Array.from({ length: 10 }, (_, i) => ({
         file: `file-${i + 1}.md`,
@@ -207,7 +207,7 @@ function demonstrateMaxLinesTable(): void {
         modified: '2025-11-18'
     }));
 
-    console.log(chalk.gray(`Showing only 3 of ${largeDataset.length} files:`));
+    console.info(chalk.gray(`Showing only 3 of ${largeDataset.length} files:`));
     Bun.inspect.table(
         largeDataset,
         ['file', 'size', 'modified'],
@@ -216,8 +216,8 @@ function demonstrateMaxLinesTable(): void {
 }
 
 function demonstrateVaultSummary(): void {
-    console.log(chalk.bold.green('\n📈 Vault Summary Report'));
-    console.log(chalk.gray('='.repeat(45)));
+    console.info(chalk.bold.green('\n📈 Vault Summary Report'));
+    console.info(chalk.gray('='.repeat(45)));
 
     // Calculate summary statistics
     const totalFiles = vaultFiles.length;
@@ -261,9 +261,9 @@ function demonstrateVaultSummary(): void {
 }
 
 async function main(): Promise<void> {
-    console.log(chalk.bold.magenta('🎪 Advanced Bun.inspect.table() Demonstration'));
-    console.log(chalk.gray('Odds Protocol Vault - Enhanced Data Visualization'));
-    console.log(chalk.gray('='.repeat(70)));
+    console.info(chalk.bold.magenta('🎪 Advanced Bun.inspect.table() Demonstration'));
+    console.info(chalk.gray('Odds Protocol Vault - Enhanced Data Visualization'));
+    console.info(chalk.gray('='.repeat(70)));
 
     demonstrateBasicTable();
     demonstrateVaultFilesTable();
@@ -273,14 +273,14 @@ async function main(): Promise<void> {
     demonstrateMaxLinesTable();
     demonstrateVaultSummary();
 
-    console.log(chalk.bold.green('\n🎉 Advanced Demonstration Complete!'));
-    console.log(chalk.gray('\nKey Features Demonstrated:'));
-    console.log(chalk.gray('• Data pre-processing for optimal formatting'));
-    console.log(chalk.gray('• Color-coded status indicators'));
-    console.log(chalk.gray('• maxEntryWidth for text truncation'));
-    console.log(chalk.gray('• compact option for space optimization'));
-    console.log(chalk.gray('• maxLines for large dataset limiting'));
-    console.log(chalk.gray('• Real-world vault reporting'));
+    console.info(chalk.bold.green('\n🎉 Advanced Demonstration Complete!'));
+    console.info(chalk.gray('\nKey Features Demonstrated:'));
+    console.info(chalk.gray('• Data pre-processing for optimal formatting'));
+    console.info(chalk.gray('• Color-coded status indicators'));
+    console.info(chalk.gray('• maxEntryWidth for text truncation'));
+    console.info(chalk.gray('• compact option for space optimization'));
+    console.info(chalk.gray('• maxLines for large dataset limiting'));
+    console.info(chalk.gray('• Real-world vault reporting'));
 }
 
 if (import.meta.main) {

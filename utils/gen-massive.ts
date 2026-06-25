@@ -93,7 +93,7 @@ class MassiveDocumentGenerator {
     const templates = {
       typescript: [
         `function example${complexity}() {
-  console.log("TypeScript example ${complexity}");
+  console.info("TypeScript example ${complexity}");
   return ${Math.random() > 0.5 ? 'true' : 'false'};
 }`,
         `interface Example${complexity} {
@@ -126,7 +126,7 @@ const instance: Example${complexity} = {
 }`,
         `const array${complexity} = Array.from({ length: ${complexity} }, (_, i) => i + 1);
 const sum = array${complexity}.reduce((a, b) => a + b, 0);
-console.log("Sum:", sum);`,
+console.info("Sum:", sum);`,
         `const promise${complexity} = new Promise((resolve) => {
   setTimeout(() => resolve("Result ${complexity}"), ${complexity} * 100);
 });`
@@ -397,7 +397,7 @@ free -m | grep Mem`
 
   // Batch generation for testing
   async generateBatch(count: number, options: MassiveDocOptions = {}): Promise<GeneratedDocument[]> {
-    console.log(`🏭 Generating batch of ${count} documents...`);
+    console.info(`🏭 Generating batch of ${count} documents...`);
     
     const documents: GeneratedDocument[] = [];
     
@@ -414,11 +414,11 @@ free -m | grep Mem`
       documents.push(doc);
       
       if ((i + 1) % 10 === 0) {
-        console.log(`📄 Generated ${i + 1}/${count} documents...`);
+        console.info(`📄 Generated ${i + 1}/${count} documents...`);
       }
     }
     
-    console.log(`✅ Batch generation complete!`);
+    console.info(`✅ Batch generation complete!`);
     return documents;
   }
 }
@@ -428,27 +428,27 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Massive Document Generator v2.8');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run gen-massive.ts [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --cols <number>        Number of table columns (default: 20)');
-    console.log('  --tables <number>      Number of tables (default: 10)');
-    console.log('  --codeblocks <number>  Number of code blocks (default: 5)');
-    console.log('  --headings <number>    Number of headings (default: 15)');
-    console.log('  --size <preset>         Use preset: small|medium|large|massive|extreme');
-    console.log('  --output <file>        Output file (default: /tmp/mega.md)');
-    console.log('  --batch <count>        Generate multiple documents');
-    console.log('  --no-math              Disable math expressions');
-    console.log('  --no-tasks             Disable task lists');
-    console.log('  --no-wiki              Disable wiki links');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run gen-massive.ts --size massive');
-    console.log('  bun run gen-massive.ts --cols 100 --tables 50');
-    console.log('  bun run gen-massive.ts --batch 10 --size large');
+    console.info('Massive Document Generator v2.8');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run gen-massive.ts [options]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --cols <number>        Number of table columns (default: 20)');
+    console.info('  --tables <number>      Number of tables (default: 10)');
+    console.info('  --codeblocks <number>  Number of code blocks (default: 5)');
+    console.info('  --headings <number>    Number of headings (default: 15)');
+    console.info('  --size <preset>         Use preset: small|medium|large|massive|extreme');
+    console.info('  --output <file>        Output file (default: /tmp/mega.md)');
+    console.info('  --batch <count>        Generate multiple documents');
+    console.info('  --no-math              Disable math expressions');
+    console.info('  --no-tasks             Disable task lists');
+    console.info('  --no-wiki              Disable wiki links');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run gen-massive.ts --size massive');
+    console.info('  bun run gen-massive.ts --cols 100 --tables 50');
+    console.info('  bun run gen-massive.ts --batch 10 --size large');
     return;
   }
 
@@ -504,29 +504,29 @@ async function main() {
       };
       
       await Bun.write('batch-summary.json', JSON.stringify(summary, null, 2));
-      console.log(`💾 Batch summary saved to: batch-summary.json`);
+      console.info(`💾 Batch summary saved to: batch-summary.json`);
       
       // Save first document as sample
       await Bun.write(outputFile, documents[0].content);
-      console.log(`📄 Sample document saved to: ${outputFile}`);
+      console.info(`📄 Sample document saved to: ${outputFile}`);
       
     } else {
       // Single document generation
-      console.log('🏭 Generating massive document...');
+      console.info('🏭 Generating massive document...');
       const document = generator.generateDocument(options);
       
       await Bun.write(outputFile, document.content);
-      console.log(`✅ Document saved to: ${outputFile}`);
-      console.log(`📊 Size: ${document.metadata.size.toLocaleString()} characters`);
-      console.log(`🎯 Complexity: ${document.metadata.complexity.toUpperCase()}`);
+      console.info(`✅ Document saved to: ${outputFile}`);
+      console.info(`📊 Size: ${document.metadata.size.toLocaleString()} characters`);
+      console.info(`🎯 Complexity: ${document.metadata.complexity.toUpperCase()}`);
       
       // Save metadata
       const metadataFile = outputFile.replace(/\\.[^.]+$/, '-metadata.json');
       await Bun.write(metadataFile, JSON.stringify(document.metadata, null, 2));
-      console.log(`📋 Metadata saved to: ${metadataFile}`);
+      console.info(`📋 Metadata saved to: ${metadataFile}`);
     }
     
-    console.log('\\n🎉 Massive document generation complete!');
+    console.info('\\n🎉 Massive document generation complete!');
     
   } catch (error) {
     console.error('❌ Generation failed:', error.message);

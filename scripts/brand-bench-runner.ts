@@ -5,7 +5,11 @@ import { join, resolve } from 'node:path';
 import { cpus, totalmem, release } from 'node:os';
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 import { InstrumentedDomain } from './lib/instrumented-domain';
-import type { BrandBenchReport, DomainScenarioMetrics, MetricSummary } from './lib/brand-bench-types';
+import type {
+  BrandBenchReport,
+  DomainScenarioMetrics,
+  MetricSummary,
+} from './lib/brand-bench-types';
 import { createShutdown, type ShutdownState } from './lib/graceful-shutdown';
 
 let shutdown: ShutdownState | null = null;
@@ -58,14 +62,35 @@ function parseArgs(argv: string[]): RunnerOptions {
   const full360 = argv.includes('--full360');
   const seedArg = argv.find(a => a.startsWith('--seeds='))?.slice('--seeds='.length) || '';
   const seeds = seedArg
-    ? seedArg.split(',').map(v => Number(v.trim())).filter(v => Number.isFinite(v) && v >= 0 && v <= 359)
+    ? seedArg
+        .split(',')
+        .map(v => Number(v.trim()))
+        .filter(v => Number.isFinite(v) && v >= 0 && v <= 359)
     : defaultSeeds(full360);
 
-  const iterations = parseIntArg('iterations', argv.find(a => a.startsWith('--iterations='))?.split('=')[1], isCi ? 1500 : 20000);
-  const warmup = parseIntArg('warmup', argv.find(a => a.startsWith('--warmup='))?.split('=')[1], Math.max(100, Math.floor(iterations / 10)));
-  const sampleCount = parseIntArg('sample-count', argv.find(a => a.startsWith('--sample-count='))?.split('=')[1], 256);
-  const scenarioIterations = parseIntArg('scenario-iterations', argv.find(a => a.startsWith('--scenario-iterations='))?.split('=')[1], isCi ? 4 : 16);
-  const outputDir = resolve(argv.find(a => a.startsWith('--output-dir='))?.split('=')[1] || 'reports/brand-bench');
+  const iterations = parseIntArg(
+    'iterations',
+    argv.find(a => a.startsWith('--iterations='))?.split('=')[1],
+    isCi ? 1500 : 20000
+  );
+  const warmup = parseIntArg(
+    'warmup',
+    argv.find(a => a.startsWith('--warmup='))?.split('=')[1],
+    Math.max(100, Math.floor(iterations / 10))
+  );
+  const sampleCount = parseIntArg(
+    'sample-count',
+    argv.find(a => a.startsWith('--sample-count='))?.split('=')[1],
+    256
+  );
+  const scenarioIterations = parseIntArg(
+    'scenario-iterations',
+    argv.find(a => a.startsWith('--scenario-iterations='))?.split('=')[1],
+    isCi ? 4 : 16
+  );
+  const outputDir = resolve(
+    argv.find(a => a.startsWith('--output-dir='))?.split('=')[1] || 'reports/brand-bench'
+  );
   const runId = argv.find(a => a.startsWith('--run-id='))?.split('=')[1] || nowRunId();
   const quiet = argv.includes('--json-only') || argv.includes('--quiet');
   const profileFiles = (argv.find(a => a.startsWith('--profile-files='))?.split('=')[1] || '')
@@ -128,7 +153,9 @@ function metricFromSync(
 
   if (!options.quiet) {
     const tag = shutdown?.requested ? ' [interrupted]' : '';
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
+    console.info(
+      `${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`
+    );
   }
   return metric;
 }
@@ -142,7 +169,10 @@ async function metricFromAsync(
 ): Promise<MetricSummary> {
   for (let i = 0; i < warmup; i += 1) await fn(i);
 
-  const sampleEvery = Math.max(1, Math.floor(iterations / Math.max(8, Math.min(options.sampleCount, iterations))));
+  const sampleEvery = Math.max(
+    1,
+    Math.floor(iterations / Math.max(8, Math.min(options.sampleCount, iterations)))
+  );
   const samples: number[] = [];
 
   const startNs = Bun.nanoseconds();
@@ -176,7 +206,9 @@ async function metricFromAsync(
 
   if (!options.quiet) {
     const tag = shutdown?.requested ? ' [interrupted]' : '';
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
+    console.info(
+      `${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`
+    );
   }
   return metric;
 }
@@ -189,7 +221,11 @@ async function collectProfileFiles(options: RunnerOptions): Promise<string[]> {
   const names = await readdir(profileDir);
   for (const name of names) {
     if (!name.endsWith('.cpuprofile')) continue;
-    if (name.includes(options.runId) || name.startsWith('brand_seed_') || name.startsWith('brand_bench_')) {
+    if (
+      name.includes(options.runId) ||
+      name.startsWith('brand_seed_') ||
+      name.startsWith('brand_bench_')
+    ) {
       explicit.push(join(profileDir, name));
     }
   }
@@ -237,23 +273,27 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   const markdownBySeed = options.seeds.map(seed => `# Brand ${seed}\n\nSeed=${seed}\n`);
 
   const operations: Record<string, MetricSummary> = {
-    generatePalette: metricFromSync('brand.generatePalette', options, (i) => {
+    generatePalette: metricFromSync('brand.generatePalette', options, i => {
       const seed = options.seeds[i % options.seeds.length] || 210;
       generatePalette({ h: seed, s: 90, l: 60 });
     }),
-    bunColorHex: metricFromSync('brand.Bun.color(hex)', options, (i) => {
+    bunColorHex: metricFromSync('brand.Bun.color(hex)', options, i => {
       const seed = options.seeds[i % options.seeds.length] || 210;
       Bun.color(`hsl(${seed}, 90%, 60%)`, 'hex');
     }),
-    bunColorAnsi: metricFromSync('brand.Bun.color(ansi)', options, (i) => {
+    bunColorAnsi: metricFromSync('brand.Bun.color(ansi)', options, i => {
       const seed = options.seeds[i % options.seeds.length] || 210;
       Bun.color(`hsl(${seed}, 90%, 60%)`, 'ansi');
     }),
-    markdownRender: metricFromSync('brand.Bun.markdown.render', options, (i) => {
-      Bun.markdown.render(markdownBySeed[i % markdownBySeed.length] || markdownBySeed[0] || '# Brand');
+    markdownRender: metricFromSync('brand.Bun.markdown.render', options, i => {
+      Bun.markdown.render(
+        markdownBySeed[i % markdownBySeed.length] || markdownBySeed[0] || '# Brand'
+      );
     }),
-    markdownReact: metricFromSync('brand.Bun.markdown.react', options, (i) => {
-      Bun.markdown.react(markdownBySeed[i % markdownBySeed.length] || markdownBySeed[0] || '# Brand');
+    markdownReact: metricFromSync('brand.Bun.markdown.react', options, i => {
+      Bun.markdown.react(
+        markdownBySeed[i % markdownBySeed.length] || markdownBySeed[0] || '# Brand'
+      );
     }),
   };
 
@@ -264,11 +304,21 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
     ['low-mem-high-tension', 128, 0.9],
     ['high-mem-high-tension', 512, 0.9],
   ];
-  const scenarioKeys = ['lowMemLowTension', 'highMemLowTension', 'lowMemHighTension', 'highMemHighTension'];
+  const scenarioKeys = [
+    'lowMemLowTension',
+    'highMemLowTension',
+    'lowMemHighTension',
+    'highMemHighTension',
+  ];
   for (let s = 0; s < scenarios.length; s += 1) {
     if (shutdown?.requested) break;
     const [name, memory, tension] = scenarios[s]!;
-    domainInstrumentation[scenarioKeys[s]!] = await runDomainScenario(name, memory, tension, options);
+    domainInstrumentation[scenarioKeys[s]!] = await runDomainScenario(
+      name,
+      memory,
+      tension,
+      options
+    );
   }
 
   const violations: BrandBenchReport['violations'] = [];
@@ -310,14 +360,14 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   const report: BrandBenchReport = {
     runId: options.runId,
     createdAt: new Date().toISOString(),
-    runtime: "Bun",
+    runtime: 'Bun',
     bunVersion: Bun.version,
     bunRevision: Bun.revision,
-    gitCommit: Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim(),
+    gitCommit: Bun.spawnSync(['git', 'rev-parse', 'HEAD']).stdout.toString().trim(),
     platform: process.platform,
     arch: process.arch,
     osRelease: release(),
-    cpuModel: cpus()[0]?.model ?? "unknown",
+    cpuModel: cpus()[0]?.model ?? 'unknown',
     cpuCores: cpus().length,
     totalMemoryMB: Math.round(totalmem() / 1024 / 1024),
     seedSet: options.seeds,
@@ -340,18 +390,27 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
 
   if (!options.quiet) {
     // Print operations table
-    console.log('\n📊 Brand Bench Results:');
+    console.info('\n📊 Brand Bench Results:');
     const opsTable = Object.entries(operations).map(([name, metric]) => ({
       operation: name,
       'ops/sec': metric.opsPerSec.toFixed(0),
       p50: `${metric.p50Ms.toFixed(3)}ms`,
       p95: `${metric.p95Ms.toFixed(3)}ms`,
-      rating: metric.opsPerSec > 2_000_000 ? '🔥 Fast' : metric.opsPerSec > 1_000_000 ? '⚡ Good' : '✅ OK'
+      rating:
+        metric.opsPerSec > 2_000_000
+          ? '🔥 Fast'
+          : metric.opsPerSec > 1_000_000
+            ? '⚡ Good'
+            : '✅ OK',
     }));
-    console.log(Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], { colors: true }));
-    
-    console.log(`\nbrand-bench report: ${runPath}`);
-    console.log(`brand-bench latest: ${latestPath}`);
+    console.info(
+      Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], {
+        colors: true,
+      })
+    );
+
+    console.info(`\nbrand-bench report: ${runPath}`);
+    console.info(`brand-bench latest: ${latestPath}`);
   }
 
   return report;
@@ -363,7 +422,7 @@ if (import.meta.main) {
   const report = await runBrandBench(options);
   shutdown.dispose();
   if (options.quiet) {
-    console.log(JSON.stringify(report, null, 2));
+    console.info(JSON.stringify(report, null, 2));
   }
   process.exit(report.status === 'fail' ? 1 : 0);
 }

@@ -433,7 +433,7 @@ class PerformanceMonitor {
                   status >= 300 ? '\x1b[36m' : // cyan for 3xx
                   '\x1b[32m';                  // green for 2xx
 
-    console.log(
+    console.info(
       `${color}${method} ${path} ${status} - ${ms.toFixed(2)}ms\x1b[0m`
     );
   }
@@ -640,11 +640,11 @@ class DevToolsClass {
 
         const entry = `[${time.toFixed(2)}ms] ${message}`;
         logs.push(entry);
-        console.log(entry);
+        console.info(entry);
       },
 
       table(data: any[], properties?: string[]) {
-        console.log(DevToolsClass.inspectTable(data, properties, { colors: true }));
+        console.info(DevToolsClass.inspectTable(data, properties, { colors: true }));
       },
 
       time(label: string) {
@@ -652,7 +652,7 @@ class DevToolsClass {
         return {
           end() {
             const duration = Number(Bun.nanoseconds() - marker) / 1_000_000;
-            console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
+            console.info(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
             return duration;
           }
         };
@@ -683,7 +683,7 @@ class DevToolsClass {
     if (duration > maxMs) {
       console.warn(`⚠️  Performance warning: ${name} took ${duration.toFixed(2)}ms (max: ${maxMs}ms)`);
     } else {
-      console.log(`✅ ${name}: ${duration.toFixed(2)}ms`);
+      console.info(`✅ ${name}: ${duration.toFixed(2)}ms`);
     }
 
     return result;
@@ -694,10 +694,10 @@ class DevToolsClass {
  * Demo function showcasing all utilities
  */
 async function demo() {
-  console.log('🚀 Bun Inspection & Timing APIs Demo\n');
+  console.info('🚀 Bun Inspection & Timing APIs Demo\n');
 
   // 1. Basic object inspection
-  console.log('📊 Basic Object Inspection:');
+  console.info('📊 Basic Object Inspection:');
   const obj = {
     foo: "bar",
     nested: { array: [1, 2, 3] },
@@ -711,22 +711,22 @@ async function demo() {
     symbol: Symbol("test"),
     undefined: undefined,
     null: null,
-    function: () => console.log("test")
+    function: () => console.info("test")
   };
-  console.log(Bun.inspect(obj, { colors: true }));
-  console.log();
+  console.info(Bun.inspect(obj, { colors: true }));
+  console.info();
 
   // 2. Custom formatters
-  console.log('👤 Custom User Formatter:');
+  console.info('👤 Custom User Formatter:');
   const user = new User(1, 'alice@example.com', new Date('2023-01-01'), {
     plan: 'premium',
     visits: 150,
     tags: ['developer', 'opensource']
   });
-  console.log(user);
-  console.log();
+  console.info(user);
+  console.info();
 
-  console.log('🗄️  Query Result Formatter:');
+  console.info('🗄️  Query Result Formatter:');
   const result = new QueryResult(
     [
       { id: 1, name: 'Alice', age: 30 },
@@ -736,10 +736,10 @@ async function demo() {
     ],
     { queryTime: 45.67, rowCount: 4, cacheHit: true, fromCache: 'redis' }
   );
-  console.log(result);
-  console.log();
+  console.info(result);
+  console.info();
 
-  console.log('🔍 Binary Data Inspector:');
+  console.info('🔍 Binary Data Inspector:');
   const binary = new BinaryInspector(
     new Uint8Array([
       0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F,
@@ -747,11 +747,11 @@ async function demo() {
       0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
     ])
   );
-  console.log(binary);
-  console.log();
+  console.info(binary);
+  console.info();
 
   // 3. Advanced table formatting
-  console.log('📋 Advanced Table with Custom Formatting:');
+  console.info('📋 Advanced Table with Custom Formatting:');
   const users = [
     { id: 1, name: 'Alice', score: 95, active: true },
     { id: 2, name: 'Bob', score: 87, active: false },
@@ -759,16 +759,16 @@ async function demo() {
     { id: 4, name: 'Diana', score: 78, active: true }
   ];
 
-  console.log(AdvancedTable.format(users, ['name', 'score'], {
+  console.info(AdvancedTable.format(users, ['name', 'score'], {
     title: 'User Scores',
     border: 'rounded',
     sort: (a, b) => b.score - a.score,
     colors: true
   }));
-  console.log();
+  console.info();
 
   // 4. Benchmarking
-  console.log('⏱️  Performance Benchmarking:');
+  console.info('⏱️  Performance Benchmarking:');
   const bench = new Benchmark();
 
   // Sync benchmark
@@ -782,11 +782,11 @@ async function demo() {
     await fetch('https://api.github.com/users/oven-sh');
   });
 
-  console.log(bench.format());
-  console.log();
+  console.info(bench.format());
+  console.info();
 
   // 5. DevTools context
-  console.log('🔧 DevTools Debug Context:');
+  console.info('🔧 DevTools Debug Context:');
   const debug = DevTools.createDebugContext('DemoSession');
 
   debug.log('Starting demo operations');
@@ -803,10 +803,10 @@ async function demo() {
   timer.end();
   debug.log('Demo operations complete');
 
-  console.log('Session Summary:', DevToolsClass.inspect(debug.getSummary(), { colors: true }));
-  console.log();
+  console.info('Session Summary:', DevToolsClass.inspect(debug.getSummary(), { colors: true }));
+  console.info();
 
-  console.log('✨ Demo complete! These utilities provide production-ready solutions for debugging, profiling, and monitoring.');
+  console.info('✨ Demo complete! These utilities provide production-ready solutions for debugging, profiling, and monitoring.');
 }
 
 // Run demo if executed directly

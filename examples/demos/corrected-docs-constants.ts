@@ -59,11 +59,11 @@ const SYSTEM_TYPED_ARRAY_URLS = docs.getTypedArrayUrls();
 /**
  * Comparison of approaches
  */
-console.log('=== Manual Build vs Reference System ===');
-console.log('Manual BASE:', TYPED_ARRAY_URLS.BASE);
-console.log('System BASE:', SYSTEM_TYPED_ARRAY_URLS.base);
-console.log('Manual METHODS:', TYPED_ARRAY_URLS.METHODS);
-console.log('System METHODS:', SYSTEM_TYPED_ARRAY_URLS.methods);
+console.info('=== Manual Build vs Reference System ===');
+console.info('Manual BASE:', TYPED_ARRAY_URLS.BASE);
+console.info('System BASE:', SYSTEM_TYPED_ARRAY_URLS.base);
+console.info('Manual METHODS:', TYPED_ARRAY_URLS.METHODS);
+console.info('System METHODS:', SYSTEM_TYPED_ARRAY_URLS.methods);
 
 /**
  * Usage examples with corrected URLs
@@ -71,20 +71,20 @@ console.log('System METHODS:', SYSTEM_TYPED_ARRAY_URLS.methods);
 function demonstrateUsage() {
   // Your pattern with corrected URLs
   const comment = `For more information on typed array methods, see [Methods](${TYPED_ARRAY_URLS.METHODS}).`;
-  console.log(comment);
+  console.info(comment);
   
   // Using the reference system (recommended)
   const systemComment = `For performance considerations, see [Performance](${SYSTEM_TYPED_ARRAY_URLS.performance}).`;
-  console.log(systemComment);
+  console.info(systemComment);
 }
 
 // Test the URLs
-console.log('\n=== Generated URLs ===');
-console.log('BASE:', TYPED_ARRAY_URLS.BASE);
-console.log('METHODS:', TYPED_ARRAY_URLS.METHODS);
-console.log('CONVERSION:', TYPED_ARRAY_URLS.CONVERSION);
-console.log('PERFORMANCE:', TYPED_ARRAY_URLS.PERFORMANCE);
-console.log('FILE_READING.ARRAYBUFFER:', TYPED_ARRAY_URLS.FILE_READING.ARRAYBUFFER);
+console.info('\n=== Generated URLs ===');
+console.info('BASE:', TYPED_ARRAY_URLS.BASE);
+console.info('METHODS:', TYPED_ARRAY_URLS.METHODS);
+console.info('CONVERSION:', TYPED_ARRAY_URLS.CONVERSION);
+console.info('PERFORMANCE:', TYPED_ARRAY_URLS.PERFORMANCE);
+console.info('FILE_READING.ARRAYBUFFER:', TYPED_ARRAY_URLS.FILE_READING.ARRAYBUFFER);
 
 demonstrateUsage();
 

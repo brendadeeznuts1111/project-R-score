@@ -43,7 +43,7 @@ if (typeof document !== "undefined") {
 			const router = new BookmakerRouter();
 
 			// 9.1.1.6.1.1: Runtime verification
-			console.log("9.1.1.2.0.2: Mini App initialized", {
+			console.info("9.1.1.2.0.2: Mini App initialized", {
 				hasContext: !!(window as any).HYPERBUN_UI_CONTEXT,
 				apiBaseUrl: baseContext.apiBaseUrl,
 				telegramUserId: (window as any).HYPERBUN_UI_CONTEXT?.telegramUserId,

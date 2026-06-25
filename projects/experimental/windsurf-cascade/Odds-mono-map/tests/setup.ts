@@ -4,4 +4,4 @@
  */
 
 // Global test setup can go here
-console.log('🧪 Test setup initialized');
+console.info('🧪 Test setup initialized');

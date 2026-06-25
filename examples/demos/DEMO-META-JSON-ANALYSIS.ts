@@ -48,8 +48,8 @@ class MetaJSONAnalyzer {
   }
 
   analyzeBasicMetrics(meta: MetaJSON): AnalysisResult {
-    console.log('📊 Basic Metrics Analysis');
-    console.log('==========================');
+    console.info('📊 Basic Metrics Analysis');
+    console.info('==========================');
 
     const totalInputSize = Object.values(meta.inputs)
       .reduce((sum, input) => sum + input.bytes, 0);
@@ -86,21 +86,21 @@ class MetaJSONAnalyzer {
       efficiency
     };
 
-    console.log(`📁 Total Input Files: ${fileCount}`);
-    console.log(`📥 Total Input Size: ${this.formatBytes(totalInputSize)}`);
-    console.log(`📤 Total Output Size: ${this.formatBytes(totalOutputSize)}`);
-    console.log(`📈 Size Change: ${this.formatBytes(sizeChange)} (${this.formatPercentage(sizeChangePercentage)})`);
-    console.log(`📦 Largest File: ${largestFile.path} (${this.formatBytes(largestFile.size)})`);
-    console.log(`🔧 Bundler Overhead: ${this.formatBytes(overheadBytes)}`);
-    console.log(`⚡ Efficiency: ${this.formatPercentage(efficiency)} (content preservation)`);
-    console.log('');
+    console.info(`📁 Total Input Files: ${fileCount}`);
+    console.info(`📥 Total Input Size: ${this.formatBytes(totalInputSize)}`);
+    console.info(`📤 Total Output Size: ${this.formatBytes(totalOutputSize)}`);
+    console.info(`📈 Size Change: ${this.formatBytes(sizeChange)} (${this.formatPercentage(sizeChangePercentage)})`);
+    console.info(`📦 Largest File: ${largestFile.path} (${this.formatBytes(largestFile.size)})`);
+    console.info(`🔧 Bundler Overhead: ${this.formatBytes(overheadBytes)}`);
+    console.info(`⚡ Efficiency: ${this.formatPercentage(efficiency)} (content preservation)`);
+    console.info('');
 
     return result;
   }
 
   analyzeDependencies(meta: MetaJSON): void {
-    console.log('🔗 Dependency Analysis');
-    console.log('=======================');
+    console.info('🔗 Dependency Analysis');
+    console.info('=======================');
 
     const dependencyMap = new Map<string, string[]>();
     
@@ -117,25 +117,25 @@ class MetaJSONAnalyzer {
       totalImports += imports.length;
       if (imports.length > 0) {
         filesWithImports++;
-        console.log(`📄 ${path}`);
-        console.log(`   📥 Imports: ${imports.length}`);
+        console.info(`📄 ${path}`);
+        console.info(`   📥 Imports: ${imports.length}`);
         if (imports.length > 0) {
-          console.log(`   📋 Dependencies: ${imports.join(', ')}`);
+          console.info(`   📋 Dependencies: ${imports.join(', ')}`);
         }
       }
     }
 
-    console.log('');
-    console.log(`📊 Dependency Summary:`);
-    console.log(`   Files with imports: ${filesWithImports}/${Object.keys(meta.inputs).length}`);
-    console.log(`   Total imports: ${totalImports}`);
-    console.log(`   Average imports per file: ${filesWithImports > 0 ? (totalImports / filesWithImports).toFixed(1) : 0}`);
-    console.log('');
+    console.info('');
+    console.info(`📊 Dependency Summary:`);
+    console.info(`   Files with imports: ${filesWithImports}/${Object.keys(meta.inputs).length}`);
+    console.info(`   Total imports: ${totalImports}`);
+    console.info(`   Average imports per file: ${filesWithImports > 0 ? (totalImports / filesWithImports).toFixed(1) : 0}`);
+    console.info('');
   }
 
   analyzeFormats(meta: MetaJSON): void {
-    console.log('📋 Module Format Analysis');
-    console.log('========================');
+    console.info('📋 Module Format Analysis');
+    console.info('========================');
 
     const formatCounts = new Map<string, number>();
     const formatSizes = new Map<string, number>();
@@ -146,17 +146,17 @@ class MetaJSONAnalyzer {
       formatSizes.set(format, (formatSizes.get(format) || 0) + input.bytes);
     }
 
-    console.log('📊 Format Distribution:');
+    console.info('📊 Format Distribution:');
     for (const [format, count] of formatCounts) {
       const size = formatSizes.get(format) || 0;
-      console.log(`   ${format.toUpperCase()}: ${count} files (${this.formatBytes(size)})`);
+      console.info(`   ${format.toUpperCase()}: ${count} files (${this.formatBytes(size)})`);
     }
-    console.log('');
+    console.info('');
   }
 
   analyzeOptimizationOpportunities(meta: MetaJSON): void {
-    console.log('🚀 Optimization Opportunities');
-    console.log('============================');
+    console.info('🚀 Optimization Opportunities');
+    console.info('============================');
 
     const opportunities = [];
 
@@ -205,22 +205,22 @@ class MetaJSONAnalyzer {
     }
 
     if (opportunities.length === 0) {
-      console.log('✅ No optimization opportunities detected!');
+      console.info('✅ No optimization opportunities detected!');
     } else {
-      console.log(`🔍 Found ${opportunities.length} optimization opportunities:`);
+      console.info(`🔍 Found ${opportunities.length} optimization opportunities:`);
       opportunities.forEach((opp, index) => {
         const severityIcon = opp.severity === 'high' ? '🔴' : opp.severity === 'medium' ? '🟡' : '🟢';
-        console.log(`\n${index + 1}. ${severityIcon} ${opp.type}`);
-        console.log(`   📝 ${opp.description}`);
-        console.log(`   💡 ${opp.recommendation}`);
+        console.info(`\n${index + 1}. ${severityIcon} ${opp.type}`);
+        console.info(`   📝 ${opp.description}`);
+        console.info(`   💡 ${opp.recommendation}`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   generateDependencyGraph(meta: MetaJSON): void {
-    console.log('🕸️ Dependency Graph Data');
-    console.log('========================');
+    console.info('🕸️ Dependency Graph Data');
+    console.info('========================');
 
     const nodes = [];
     const edges = [];
@@ -257,22 +257,22 @@ class MetaJSONAnalyzer {
       }
     }
 
-    console.log(`📊 Graph Statistics:`);
-    console.log(`   Nodes: ${nodes.length} (${nodes.filter(n => n.type === 'input').length} inputs, ${nodes.filter(n => n.type === 'output').length} outputs)`);
-    console.log(`   Edges: ${edges.length}`);
+    console.info(`📊 Graph Statistics:`);
+    console.info(`   Nodes: ${nodes.length} (${nodes.filter(n => n.type === 'input').length} inputs, ${nodes.filter(n => n.type === 'output').length} outputs)`);
+    console.info(`   Edges: ${edges.length}`);
 
     if (edges.length > 0) {
-      console.log(`\n🔗 Dependencies:`);
+      console.info(`\n🔗 Dependencies:`);
       edges.forEach(edge => {
-        console.log(`   ${edge.from.split('/').pop()} → ${edge.to.split('/').pop()} (${edge.contribution})`);
+        console.info(`   ${edge.from.split('/').pop()} → ${edge.to.split('/').pop()} (${edge.contribution})`);
       });
     }
-    console.log('');
+    console.info('');
   }
 
   generateLLMAnalysis(meta: MetaJSON): void {
-    console.log('🤖 LLM-Friendly Analysis');
-    console.log('========================');
+    console.info('🤖 LLM-Friendly Analysis');
+    console.info('========================');
 
     const analysis = [];
 
@@ -328,8 +328,8 @@ class MetaJSONAnalyzer {
     }
 
     const llmOutput = analysis.join('\n');
-    console.log(llmOutput);
-    console.log('');
+    console.info(llmOutput);
+    console.info('');
 
     // Save to file
     const outputDir = join(process.cwd(), "meta-analysis-output");
@@ -338,13 +338,13 @@ class MetaJSONAnalyzer {
     }
     
     writeFileSync(join(outputDir, "llm-analysis.md"), llmOutput);
-    console.log(`💾 LLM analysis saved to: ${join(outputDir, "llm-analysis.md")}`);
-    console.log('');
+    console.info(`💾 LLM analysis saved to: ${join(outputDir, "llm-analysis.md")}`);
+    console.info('');
   }
 
   generatePerformanceReport(meta: MetaJSON): void {
-    console.log('📈 Performance Report');
-    console.log('=====================');
+    console.info('📈 Performance Report');
+    console.info('=====================');
 
     const metrics = {
       bundleComplexity: this.calculateComplexity(meta),
@@ -353,16 +353,16 @@ class MetaJSONAnalyzer {
       buildEfficiency: this.calculateBuildEfficiency(meta)
     };
 
-    console.log('📊 Performance Metrics:');
-    console.log(`   Bundle Complexity: ${metrics.bundleComplexity}/10`);
-    console.log(`   Modularity Score: ${metrics.modularityScore}/10`);
-    console.log(`   Optimization Score: ${metrics.optimizationScore}/10`);
-    console.log(`   Build Efficiency: ${metrics.buildEfficiency}/10`);
+    console.info('📊 Performance Metrics:');
+    console.info(`   Bundle Complexity: ${metrics.bundleComplexity}/10`);
+    console.info(`   Modularity Score: ${metrics.modularityScore}/10`);
+    console.info(`   Optimization Score: ${metrics.optimizationScore}/10`);
+    console.info(`   Build Efficiency: ${metrics.buildEfficiency}/10`);
 
     const overallScore = (metrics.bundleComplexity + metrics.modularityScore + 
                          metrics.optimizationScore + metrics.buildEfficiency) / 4;
 
-    console.log(`\n🏆 Overall Score: ${overallScore.toFixed(1)}/10`);
+    console.info(`\n🏆 Overall Score: ${overallScore.toFixed(1)}/10`);
 
     // Grade assignment
     let grade = 'A';
@@ -370,23 +370,23 @@ class MetaJSONAnalyzer {
     if (overallScore < 6) grade = 'C';
     if (overallScore < 4) grade = 'D';
 
-    console.log(`📋 Grade: ${grade}`);
-    console.log('');
+    console.info(`📋 Grade: ${grade}`);
+    console.info('');
 
     // Recommendations based on scores
     if (metrics.bundleComplexity < 6) {
-      console.log('💡 Recommendation: Consider simplifying bundle structure');
+      console.info('💡 Recommendation: Consider simplifying bundle structure');
     }
     if (metrics.modularityScore < 6) {
-      console.log('💡 Recommendation: Improve code modularity and separation of concerns');
+      console.info('💡 Recommendation: Improve code modularity and separation of concerns');
     }
     if (metrics.optimizationScore < 6) {
-      console.log('💡 Recommendation: Implement optimization techniques (tree-shaking, code splitting)');
+      console.info('💡 Recommendation: Implement optimization techniques (tree-shaking, code splitting)');
     }
     if (metrics.buildEfficiency < 6) {
-      console.log('💡 Recommendation: Review build configuration for better efficiency');
+      console.info('💡 Recommendation: Review build configuration for better efficiency');
     }
-    console.log('');
+    console.info('');
   }
 
   private calculateComplexity(meta: MetaJSON): number {
@@ -439,9 +439,9 @@ class MetaJSONAnalyzer {
   }
 
   performCompleteAnalysis(meta: MetaJSON): void {
-    console.log('🔍 Comprehensive Meta.json Analysis');
-    console.log('===================================');
-    console.log('');
+    console.info('🔍 Comprehensive Meta.json Analysis');
+    console.info('===================================');
+    console.info('');
 
     this.analyzeBasicMetrics(meta);
     this.analyzeDependencies(meta);
@@ -451,10 +451,10 @@ class MetaJSONAnalyzer {
     this.generateLLMAnalysis(meta);
     this.generatePerformanceReport(meta);
 
-    console.log('✨ Analysis Complete!');
-    console.log('==================');
-    console.log('All analysis components have been executed successfully.');
-    console.log('Check the output directory for generated reports.');
+    console.info('✨ Analysis Complete!');
+    console.info('==================');
+    console.info('All analysis components have been executed successfully.');
+    console.info('Check the output directory for generated reports.');
   }
 }
 
@@ -530,21 +530,21 @@ const complexSample: MetaJSON = {
 
 // Main execution
 async function main() {
-  console.log('🚀 Bun Meta.json Analysis Showcase');
-  console.log('===================================');
-  console.log('This tool demonstrates comprehensive analysis of Bun build metadata.');
-  console.log('');
+  console.info('🚀 Bun Meta.json Analysis Showcase');
+  console.info('===================================');
+  console.info('This tool demonstrates comprehensive analysis of Bun build metadata.');
+  console.info('');
 
   const analyzer = new MetaJSONAnalyzer();
 
-  console.log('📋 Analyzing Simple Sample (from the GitHub file):');
-  console.log('====================================================');
+  console.info('📋 Analyzing Simple Sample (from the GitHub file):');
+  console.info('====================================================');
   analyzer.performCompleteAnalysis(sampleMeta);
 
-  console.log('\n' + '='.repeat(60) + '\n');
+  console.info('\n' + '='.repeat(60) + '\n');
 
-  console.log('📋 Analyzing Complex Sample (demonstration):');
-  console.log('===========================================');
+  console.info('📋 Analyzing Complex Sample (demonstration):');
+  console.info('===========================================');
   analyzer.performCompleteAnalysis(complexSample);
 }
 

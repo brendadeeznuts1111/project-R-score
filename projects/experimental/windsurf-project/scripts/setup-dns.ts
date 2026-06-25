@@ -51,7 +51,7 @@ class DNSManager {
   }
 
   async createDNSRecord(record: DNSRecord): Promise<void> {
-    console.log(`🔧 Creating DNS record: ${record.name} (${record.type}) → ${record.content}`);
+    console.info(`🔧 Creating DNS record: ${record.name} (${record.type}) → ${record.content}`);
     
     const payload = {
       type: record.type,
@@ -66,11 +66,11 @@ class DNSManager {
       body: JSON.stringify(payload)
     });
 
-    console.log(`✅ Created: ${record.name} → ${record.content}`);
+    console.info(`✅ Created: ${record.name} → ${record.content}`);
   }
 
   async updateDNSRecord(recordId: string, record: DNSRecord): Promise<void> {
-    console.log(`🔄 Updating DNS record: ${record.name} → ${record.content}`);
+    console.info(`🔄 Updating DNS record: ${record.name} → ${record.content}`);
     
     const payload = {
       type: record.type,
@@ -85,22 +85,22 @@ class DNSManager {
       body: JSON.stringify(payload)
     });
 
-    console.log(`✅ Updated: ${record.name} → ${record.content}`);
+    console.info(`✅ Updated: ${record.name} → ${record.content}`);
   }
 
   async deleteDNSRecord(recordId: string, name: string): Promise<void> {
-    console.log(`🗑️  Deleting DNS record: ${name}`);
+    console.info(`🗑️  Deleting DNS record: ${name}`);
     
     await this.makeRequest(`/dns_records/${recordId}`, {
       method: 'DELETE'
     });
 
-    console.log(`✅ Deleted: ${name}`);
+    console.info(`✅ Deleted: ${name}`);
   }
 
   async setupProductionDNS(): Promise<void> {
-    console.log('🌐 Setting up Empire Pro Production DNS...');
-    console.log('═'.repeat(50));
+    console.info('🌐 Setting up Empire Pro Production DNS...');
+    console.info('═'.repeat(50));
 
     const requiredRecords: DNSRecord[] = [
       {
@@ -143,7 +143,7 @@ class DNSManager {
 
     try {
       // List existing records
-      console.log('\n📋 Checking existing DNS records...');
+      console.info('\n📋 Checking existing DNS records...');
       const existingRecords = await this.listDNSRecords();
       
       // Create or update records
@@ -156,15 +156,15 @@ class DNSManager {
           if (existing.content !== record.content) {
             await this.updateDNSRecord(existing.id, record);
           } else {
-            console.log(`✅ Already exists: ${record.name} → ${record.content}`);
+            console.info(`✅ Already exists: ${record.name} → ${record.content}`);
           }
         } else {
           await this.createDNSRecord(record);
         }
       }
 
-      console.log('\n🎉 DNS setup complete!');
-      console.log('📡 DNS records configured for Empire Pro Production');
+      console.info('\n🎉 DNS setup complete!');
+      console.info('📡 DNS records configured for Empire Pro Production');
       
     } catch (error) {
       console.error('❌ DNS setup failed:', error);
@@ -173,7 +173,7 @@ class DNSManager {
   }
 
   async validateDNS(): Promise<void> {
-    console.log('\n🔍 Validating DNS configuration...');
+    console.info('\n🔍 Validating DNS configuration...');
     
     const endpoints = [
       { name: 'API', url: 'https://api.apple' },
@@ -188,9 +188,9 @@ class DNSManager {
           signal: AbortSignal.timeout(5000)
         });
         
-        console.log(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
+        console.info(`✅ ${endpoint.name}: ${response.status} (ACTIVE)`);
       } catch (error) {
-        console.log(`⚠️  ${endpoint.name}: Pending DNS propagation`);
+        console.info(`⚠️  ${endpoint.name}: Pending DNS propagation`);
       }
     }
   }
@@ -211,9 +211,9 @@ async function main() {
       
       case 'list':
         const records = await dns.listDNSRecords();
-        console.log('📋 Current DNS Records:');
+        console.info('📋 Current DNS Records:');
         records.forEach((record: any) => {
-          console.log(`  ${record.type} ${record.name} → ${record.content}`);
+          console.info(`  ${record.type} ${record.name} → ${record.content}`);
         });
         break;
       
@@ -222,16 +222,16 @@ async function main() {
         break;
       
       default:
-        console.log('🌐 Empire Pro DNS Manager');
-        console.log('');
-        console.log('Usage:');
-        console.log('  bun run scripts/setup-dns.ts setup     # Setup production DNS');
-        console.log('  bun run scripts/setup-dns.ts list      # List current records');
-        console.log('  bun run scripts/setup-dns.ts validate  # Validate endpoints');
-        console.log('');
-        console.log('Required environment variables:');
-        console.log('  CF_API_TOKEN or CLOUDFLARE_API_TOKEN');
-        console.log('  CF_ZONE_ID or CLOUDFLARE_ZONE_ID');
+        console.info('🌐 Empire Pro DNS Manager');
+        console.info('');
+        console.info('Usage:');
+        console.info('  bun run scripts/setup-dns.ts setup     # Setup production DNS');
+        console.info('  bun run scripts/setup-dns.ts list      # List current records');
+        console.info('  bun run scripts/setup-dns.ts validate  # Validate endpoints');
+        console.info('');
+        console.info('Required environment variables:');
+        console.info('  CF_API_TOKEN or CLOUDFLARE_API_TOKEN');
+        console.info('  CF_ZONE_ID or CLOUDFLARE_ZONE_ID');
         break;
     }
   } catch (error) {

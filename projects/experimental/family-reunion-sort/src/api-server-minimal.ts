@@ -3,7 +3,7 @@
 import * as config from "./config/scope.config";
 import { CreateDisputeRequest, MerchantResponse, DisputeDecision } from "./types";
 
-console.log("Starting Bun.serve...");
+console.info("Starting Bun.serve...");
 const server = Bun.serve({
   port: 5681,
   async fetch(req) {
@@ -24,7 +24,7 @@ const server = Bun.serve({
   },
   websocket: {
     open: (ws) => {
-      console.log('WebSocket connection opened');
+      console.info('WebSocket connection opened');
     },
     message: (ws, message) => {
       ws.send(JSON.stringify({ type: 'echo', data: message.toString() }));
@@ -40,6 +40,6 @@ const server = Bun.serve({
   development: true,
 });
 
-console.log(`🚀 Venmo Dispute API Server running on http://localhost:${server.port}`);
+console.info(`🚀 Venmo Dispute API Server running on http://localhost:${server.port}`);
 
 export default server;

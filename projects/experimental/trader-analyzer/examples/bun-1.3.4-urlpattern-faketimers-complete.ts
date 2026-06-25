@@ -19,18 +19,18 @@
 // SECTION 1: URLPattern API - Complete Usage
 // ═══════════════════════════════════════════════════════════════
 
-console.log("═══════════════════════════════════════════════════════════════");
-console.log("  URLPattern API - Complete Usage Guide");
-console.log("═══════════════════════════════════════════════════════════════\n");
+console.info("═══════════════════════════════════════════════════════════════");
+console.info("  URLPattern API - Complete Usage Guide");
+console.info("═══════════════════════════════════════════════════════════════\n");
 
 // ---------------------------------------------
 // 1.1 Basic Pattern Creation
 // ---------------------------------------------
-console.log("1.1 Basic Pattern Creation\n");
+console.info("1.1 Basic Pattern Creation\n");
 
 // From pathname string
 const pattern1 = new URLPattern({ pathname: "/users/:id" });
-console.log("Pattern 1 (pathname):", pattern1.pathname);
+console.info("Pattern 1 (pathname):", pattern1.pathname);
 
 // From full object
 const pattern2 = new URLPattern({
@@ -40,7 +40,7 @@ const pattern2 = new URLPattern({
 	search: "*",
 	hash: "*",
 });
-console.log("Pattern 2 (full):", {
+console.info("Pattern 2 (full):", {
 	protocol: pattern2.protocol,
 	hostname: pattern2.hostname,
 	pathname: pattern2.pathname,
@@ -49,7 +49,7 @@ console.log("Pattern 2 (full):", {
 // ---------------------------------------------
 // 1.2 Pattern Components & Syntax
 // ---------------------------------------------
-console.log("\n1.2 Pattern Components & Syntax\n");
+console.info("\n1.2 Pattern Components & Syntax\n");
 
 const patterns = {
 	// Named segments
@@ -80,15 +80,15 @@ const testUrls = [
 	"https://example.com/api/v2/users",
 ];
 
-console.log("Pattern matching results:");
+console.info("Pattern matching results:");
 for (const [name, pattern] of Object.entries(patterns)) {
-	console.log(`\n  ${name}:`);
+	console.info(`\n  ${name}:`);
 	for (const url of testUrls) {
 		const matches = pattern.test(url);
 		if (matches) {
 			const result = pattern.exec(url);
-			console.log(`    ✓ ${url}`);
-			console.log(`      groups: ${JSON.stringify(result?.pathname.groups)}`);
+			console.info(`    ✓ ${url}`);
+			console.info(`      groups: ${JSON.stringify(result?.pathname.groups)}`);
 		}
 	}
 }
@@ -96,7 +96,7 @@ for (const [name, pattern] of Object.entries(patterns)) {
 // ---------------------------------------------
 // 1.3 Advanced Pattern Examples
 // ---------------------------------------------
-console.log("\n\n1.3 Advanced Pattern Examples\n");
+console.info("\n\n1.3 Advanced Pattern Examples\n");
 
 // API versioning pattern
 const apiPattern = new URLPattern({
@@ -119,32 +119,32 @@ const authPattern = new URLPattern({
 	search: "?code=:code&state=:state",
 });
 
-console.log("API Pattern test:");
+console.info("API Pattern test:");
 const apiMatch = apiPattern.exec("https://api.myapp.com/v2/users/123");
 if (apiMatch) {
-	console.log("  Matched:", apiMatch.pathname.groups);
+	console.info("  Matched:", apiMatch.pathname.groups);
 }
 
-console.log("\nTenant Pattern test:");
+console.info("\nTenant Pattern test:");
 const tenantMatch = tenantPattern.exec("https://acme.app.example.com/admin/settings/users");
 if (tenantMatch) {
-	console.log("  Hostname groups:", tenantMatch.hostname.groups);
-	console.log("  Pathname groups:", tenantMatch.pathname.groups);
+	console.info("  Hostname groups:", tenantMatch.hostname.groups);
+	console.info("  Pathname groups:", tenantMatch.pathname.groups);
 }
 
-console.log("\nAuth Pattern test:");
+console.info("\nAuth Pattern test:");
 const authMatch = authPattern.exec(
 	"https://auth.example.com/callback/github?code=abc123&state=xyz789"
 );
 if (authMatch) {
-	console.log("  Pathname groups:", authMatch.pathname.groups);
-	console.log("  Search groups:", authMatch.search.groups);
+	console.info("  Pathname groups:", authMatch.pathname.groups);
+	console.info("  Search groups:", authMatch.search.groups);
 }
 
 // ---------------------------------------------
 // 1.4 Router Implementation
 // ---------------------------------------------
-console.log("\n\n1.4 Router Implementation\n");
+console.info("\n\n1.4 Router Implementation\n");
 
 type RouteHandler<T = unknown> = (params: Record<string, string>, match: URLPatternResult) => T;
 
@@ -214,17 +214,17 @@ class URLPatternRouter {
 const router = new URLPatternRouter();
 
 router.get("/users/:id", (params) => {
-	console.log(`  GET /users/${params.id} - Fetching user`);
+	console.info(`  GET /users/${params.id} - Fetching user`);
 	return { id: params.id, name: `User ${params.id}` };
 });
 
 router.post("/api/:version/:resource", (params) => {
-	console.log(`  POST /api/${params.version}/${params.resource} - Creating resource`);
+	console.info(`  POST /api/${params.version}/${params.resource} - Creating resource`);
 	return { created: true, version: params.version, resource: params.resource };
 });
 
 router.get("/files/*", (params) => {
-	console.log(`  GET /files/* - Serving file`);
+	console.info(`  GET /files/* - Serving file`);
 	return { file: params["0"] };
 });
 
@@ -235,14 +235,14 @@ const testRequests = [
 	new Request("https://example.com/files/docs/report.pdf", { method: "GET" }),
 ];
 
-console.log("Router matching:");
+console.info("Router matching:");
 for (const request of testRequests) {
 	const route = router.match(request);
 	if (route) {
 		const result = route.handler(route.params, route.match);
-		console.log(`    Result: ${JSON.stringify(result)}`);
+		console.info(`    Result: ${JSON.stringify(result)}`);
 	} else {
-		console.log(`  No match for ${request.url}`);
+		console.info(`  No match for ${request.url}`);
 	}
 }
 
@@ -250,9 +250,9 @@ for (const request of testRequests) {
 // SECTION 2: Utility Functions for Testing
 // ═══════════════════════════════════════════════════════════════
 
-console.log("\n═══════════════════════════════════════════════════════════════");
-console.log("  Utility Functions (Debounce, Throttle, RateLimiter)");
-console.log("═══════════════════════════════════════════════════════════════\n");
+console.info("\n═══════════════════════════════════════════════════════════════");
+console.info("  Utility Functions (Debounce, Throttle, RateLimiter)");
+console.info("═══════════════════════════════════════════════════════════════\n");
 
 /**
  * Debounce function - delays execution until after wait period of inactivity
@@ -348,18 +348,18 @@ export class RateLimiter {
 	}
 }
 
-console.log("Utility functions exported:");
-console.log("  - debounce(fn, delay)");
-console.log("  - throttle(fn, delay)");
-console.log("  - RateLimiter(requestsPerWindow, windowMs)");
+console.info("Utility functions exported:");
+console.info("  - debounce(fn, delay)");
+console.info("  - throttle(fn, delay)");
+console.info("  - RateLimiter(requestsPerWindow, windowMs)");
 
 // ═══════════════════════════════════════════════════════════════
 // SECTION 3: Mock API with URLPattern + Timing
 // ═══════════════════════════════════════════════════════════════
 
-console.log("\n═══════════════════════════════════════════════════════════════");
-console.log("  Mock API with URLPattern + Delayed Responses");
-console.log("═══════════════════════════════════════════════════════════════\n");
+console.info("\n═══════════════════════════════════════════════════════════════");
+console.info("  Mock API with URLPattern + Delayed Responses");
+console.info("═══════════════════════════════════════════════════════════════\n");
 
 type EndpointHandler = (params: Record<string, string>) => unknown;
 
@@ -420,13 +420,13 @@ api.register(
 	25
 );
 
-console.log("Mock API endpoints registered:");
-console.log("  - GET /users/:id (50ms delay)");
-console.log("  - GET /posts/:slug (100ms delay)");
-console.log("  - GET /api/v:version/:resource (25ms delay)");
+console.info("Mock API endpoints registered:");
+console.info("  - GET /users/:id (50ms delay)");
+console.info("  - GET /posts/:slug (100ms delay)");
+console.info("  - GET /api/v:version/:resource (25ms delay)");
 
 // Test API calls
-console.log("\nMock API calls:");
+console.info("\nMock API calls:");
 const start = Bun.nanoseconds();
 
 const results = await Promise.all([
@@ -436,10 +436,10 @@ const results = await Promise.all([
 ]);
 
 const duration = (Bun.nanoseconds() - start) / 1_000_000;
-console.log(`  Completed in ${duration.toFixed(2)}ms`);
-console.log("  Results:");
+console.info(`  Completed in ${duration.toFixed(2)}ms`);
+console.info("  Results:");
 results.forEach((result, i) => {
-	console.log(`    ${i + 1}: ${JSON.stringify(result)}`);
+	console.info(`    ${i + 1}: ${JSON.stringify(result)}`);
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -448,8 +448,8 @@ results.forEach((result, i) => {
 
 export { MockAPI as MockAPIClass, URLPatternRouter };
 
-console.log("\n═══════════════════════════════════════════════════════════════");
-console.log("  Examples Complete!");
-console.log("═══════════════════════════════════════════════════════════════");
-console.log("\nSee test file for Fake Timer examples:");
-console.log("  bun test examples/bun-1.3.4-urlpattern-faketimers-complete.test.ts\n");
+console.info("\n═══════════════════════════════════════════════════════════════");
+console.info("  Examples Complete!");
+console.info("═══════════════════════════════════════════════════════════════");
+console.info("\nSee test file for Fake Timer examples:");
+console.info("  bun test examples/bun-1.3.4-urlpattern-faketimers-complete.test.ts\n");

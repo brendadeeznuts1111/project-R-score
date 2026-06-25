@@ -11,7 +11,7 @@ const ResourceAwareMCP = {
         input: any,
         fn: () => Promise<any>
     ) => {
-        console.log(`[ResourceAwareMCP] Executing with config: ${resourceConfig.name}`);
+        console.info(`[ResourceAwareMCP] Executing with config: ${resourceConfig.name}`);
         return await fn();
     },
 
@@ -23,13 +23,13 @@ const ResourceAwareMCP = {
 // Mock consciousness ledger
 const ConsciousLedger = {
     log: (entry: any) => {
-        console.log(`[ConsciousLedger] ${JSON.stringify(entry)}`);
+        console.info(`[ConsciousLedger] ${JSON.stringify(entry)}`);
     }
 };
 
 // Mock schema loading functions
 const loadSchema = async (schemaName: string) => {
-    console.log(`[Setup] Loading schema: ${schemaName}`);
+    console.info(`[Setup] Loading schema: ${schemaName}`);
     await new Promise(resolve => setTimeout(resolve, 100)); // Simulate loading time
     return { name: schemaName, loaded: true, timestamp: Date.now() };
 };
@@ -41,7 +41,7 @@ interface SuiteBudget {
 }
 
 export async function setup() {
-    console.log('🧠 Initializing Advanced Test Suite Setup...');
+    console.info('🧠 Initializing Advanced Test Suite Setup...');
 
     // Budget entire test suite: 10GB heap, 10min CPU
     const suiteBudget: SuiteBudget = {
@@ -50,14 +50,14 @@ export async function setup() {
         testCount: 50        // Expected test count
     };
 
-    console.log(`📊 Test suite starting with budget:`, suiteBudget);
+    console.info(`📊 Test suite starting with budget:`, suiteBudget);
 
     // Reset monitors for clean baseline
     ResourceMonitor.reset();
     TestDurationOracle.reset();
 
     // Pre-warm caches for known slow queries
-    console.log('🚀 Pre-warming caches...');
+    console.info('🚀 Pre-warming caches...');
     await ResourceAwareMCP.executeWithResources(
         {
             name: 'prewarm-cache',
@@ -70,11 +70,11 @@ export async function setup() {
 
             await Promise.all(schemas.map(async (schema) => {
                 const result = await loadSchema(schema);
-                console.log(`   ✅ Loaded schema: ${schema.name || 'unnamed'}`);
+                console.info(`   ✅ Loaded schema: ${schema.name || 'unnamed'}`);
                 return result;
             }));
 
-            console.log('   🎯 All schemas pre-warmed and cached');
+            console.info('   🎯 All schemas pre-warmed and cached');
         }
     );
 
@@ -96,10 +96,10 @@ export async function setup() {
         timestamp: Date.now()
     });
 
-    console.log('✅ Test suite setup complete - ready for advanced testing');
-    console.log(`   📈 Budget: ${suiteBudget.cpuMs / 1000}s CPU, ${suiteBudget.memoryMB}MB Memory`);
-    console.log(`   🧠 Consciousness monitoring: ENABLED`);
-    console.log(`   ⚡ Resource tracking: ACTIVE`);
+    console.info('✅ Test suite setup complete - ready for advanced testing');
+    console.info(`   📈 Budget: ${suiteBudget.cpuMs / 1000}s CPU, ${suiteBudget.memoryMB}MB Memory`);
+    console.info(`   🧠 Consciousness monitoring: ENABLED`);
+    console.info(`   ⚡ Resource tracking: ACTIVE`);
 
     return {
         suiteBudget,
@@ -109,7 +109,7 @@ export async function setup() {
 }
 
 export async function teardown(setupContext?: any) {
-    console.log('📊 Executing Advanced Test Suite Teardown...');
+    console.info('📊 Executing Advanced Test Suite Teardown...');
 
     const startTime = Date.now();
 
@@ -123,15 +123,15 @@ export async function teardown(setupContext?: any) {
     const slowTests = predictions.filter(p => p.suggestion === 'split' || p.suggestion === 'decreaseRuns');
     const efficientTests = predictions.filter(p => p.predictedDuration < 5000);
 
-    console.log('\n📈 Test Suite Performance Summary:');
-    console.log(`   ⏱️  Total duration: ${(suiteDuration / 1000).toFixed(2)}s`);
-    console.log(`   🧠 Resource pressure: ${(pressure * 100).toFixed(1)}%`);
-    console.log(`   🐌 Slow tests detected: ${slowTests.length}`);
-    console.log(`   ⚡ Efficient tests: ${efficientTests.length}/${predictions.length}`);
+    console.info('\n📈 Test Suite Performance Summary:');
+    console.info(`   ⏱️  Total duration: ${(suiteDuration / 1000).toFixed(2)}s`);
+    console.info(`   🧠 Resource pressure: ${(pressure * 100).toFixed(1)}%`);
+    console.info(`   🐌 Slow tests detected: ${slowTests.length}`);
+    console.info(`   ⚡ Efficient tests: ${efficientTests.length}/${predictions.length}`);
 
     if (finalMetrics) {
-        console.log(`   💾 Average memory usage: ${finalMetrics.heapGrowth.toFixed(2)}MB`);
-        console.log(`   🔄 Average CPU time: ${finalMetrics.cpuTime.toFixed(2)}ms`);
+        console.info(`   💾 Average memory usage: ${finalMetrics.heapGrowth.toFixed(2)}MB`);
+        console.info(`   🔄 Average CPU time: ${finalMetrics.cpuTime.toFixed(2)}ms`);
     }
 
     // Generate recommendations
@@ -150,8 +150,8 @@ export async function teardown(setupContext?: any) {
     }
 
     if (recommendations.length > 0) {
-        console.log('\n💡 Recommendations:');
-        recommendations.forEach(rec => console.log(`   ${rec}`));
+        console.info('\n💡 Recommendations:');
+        recommendations.forEach(rec => console.info(`   ${rec}`));
     }
 
     // Log comprehensive completion data to consciousness ledger
@@ -195,13 +195,13 @@ export async function teardown(setupContext?: any) {
     };
 
     // In real implementation, this would be sent to monitoring system
-    console.log('\n📤 Analytics exported for monitoring:');
-    console.log(JSON.stringify(analyticsData, null, 2));
+    console.info('\n📤 Analytics exported for monitoring:');
+    console.info(JSON.stringify(analyticsData, null, 2));
 
-    console.log('\n✅ Test suite teardown complete');
-    console.log('   🧠 Consciousness ledger updated');
-    console.log('   📊 Performance metrics recorded');
-    console.log('   🔄 Resource monitors reset');
+    console.info('\n✅ Test suite teardown complete');
+    console.info('   🧠 Consciousness ledger updated');
+    console.info('   📊 Performance metrics recorded');
+    console.info('   🔄 Resource monitors reset');
 
     return analyticsData;
 }

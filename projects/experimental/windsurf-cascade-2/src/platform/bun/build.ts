@@ -88,9 +88,9 @@ class BunBuildManager {
       throw new Error(`Build configuration '${configName}' not found`);
     }
 
-    console.log(`🔨 Building ${configName}...`);
-    console.log(`📁 Entry: ${config.entrypoint}`);
-    console.log(`📦 Output: ${config.outfile}`);
+    console.info(`🔨 Building ${configName}...`);
+    console.info(`📁 Entry: ${config.entrypoint}`);
+    console.info(`📦 Output: ${config.outfile}`);
 
     try {
       const buildOptions = {
@@ -116,12 +116,12 @@ class BunBuildManager {
 
       const result = await Bun.build(buildOptions);
 
-      console.log(`✅ Build completed successfully!`);
-      console.log(`📊 Output size: ${result.outputs.length} files`);
+      console.info(`✅ Build completed successfully!`);
+      console.info(`📊 Output size: ${result.outputs.length} files`);
       
       for (const output of result.outputs) {
         const stats = await Bun.file(output.path).stat();
-        console.log(`   📄 ${output.path} (${this.formatBytes(stats.size)})`);
+        console.info(`   📄 ${output.path} (${this.formatBytes(stats.size)})`);
       }
 
     } catch (error) {
@@ -134,12 +134,12 @@ class BunBuildManager {
    * Build all configurations
    */
   async buildAll(): Promise<void> {
-    console.log('🚀 Building all configurations...\n');
+    console.info('🚀 Building all configurations...\n');
 
     for (const [configName] of this.configs) {
       try {
         await this.build(configName);
-        console.log(''); // Add spacing between builds
+        console.info(''); // Add spacing between builds
       } catch (error) {
         console.error(`❌ Failed to build ${configName}:`, error);
       }
@@ -155,8 +155,8 @@ class BunBuildManager {
       throw new Error(`Build configuration '${configName}' not found`);
     }
 
-    console.log(`👀 Watching ${configName} for changes...`);
-    console.log(`📁 Entry: ${config.entrypoint}`);
+    console.info(`👀 Watching ${configName} for changes...`);
+    console.info(`📁 Entry: ${config.entrypoint}`);
 
     // Create a watcher for the entrypoint and its dependencies
     const watcher = Bun.watch([
@@ -172,12 +172,12 @@ class BunBuildManager {
     // Watch for changes
     for await (const event of watcher) {
       if (event.type === 'change' || event.type === 'create') {
-        console.log(`📝 File changed: ${event.path}`);
-        console.log('🔄 Rebuilding...');
+        console.info(`📝 File changed: ${event.path}`);
+        console.info('🔄 Rebuilding...');
         
         try {
           await this.build(configName);
-          console.log('✅ Rebuild completed!\n');
+          console.info('✅ Rebuild completed!\n');
         } catch (error) {
           console.error('❌ Rebuild failed:', error);
         }
@@ -194,7 +194,7 @@ class BunBuildManager {
       throw new Error(`Build configuration '${configName}' not found`);
     }
 
-    console.log(`🔍 Analyzing ${configName}...`);
+    console.info(`🔍 Analyzing ${configName}...`);
 
     try {
       // Build with analysis
@@ -206,19 +206,19 @@ class BunBuildManager {
         define: config.defineConstants
       });
 
-      console.log(`📊 Bundle Analysis:`);
-      console.log(`   Files: ${result.outputs.length}`);
+      console.info(`📊 Bundle Analysis:`);
+      console.info(`   Files: ${result.outputs.length}`);
       
       let totalSize = 0;
       for (const output of result.outputs) {
         const stats = await Bun.file(output.path).stat();
         const size = stats.size;
         totalSize += size;
-        console.log(`   📄 ${output.path}: ${this.formatBytes(size)}`);
+        console.info(`   📄 ${output.path}: ${this.formatBytes(size)}`);
       }
       
-      console.log(`   📦 Total: ${this.formatBytes(totalSize)}`);
-      console.log(`   🎯 Target: ${config.target}`);
+      console.info(`   📦 Total: ${this.formatBytes(totalSize)}`);
+      console.info(`   🎯 Target: ${config.target}`);
 
     } catch (error) {
       console.error(`❌ Analysis failed:`, error);
@@ -229,7 +229,7 @@ class BunBuildManager {
    * Create production-optimized build
    */
   async buildProduction(): Promise<void> {
-    console.log('🏭 Creating production build...\n');
+    console.info('🏭 Creating production build...\n');
 
     // Build main application
     await this.build('production');
@@ -240,14 +240,14 @@ class BunBuildManager {
     // Generate build report
     await this.generateBuildReport();
 
-    console.log('🎉 Production build completed!');
+    console.info('🎉 Production build completed!');
   }
 
   /**
    * Create additional assets for production
    */
   private async createAssets(): Promise<void> {
-    console.log('📦 Creating additional assets...');
+    console.info('📦 Creating additional assets...');
 
     // Create HTML file
     const html = `
@@ -280,7 +280,7 @@ class BunBuildManager {
 </html>`;
 
     await Bun.write('./dist/index.html', html);
-    console.log('✅ HTML asset created');
+    console.info('✅ HTML asset created');
 
     // Create manifest file
     const manifest = {
@@ -304,7 +304,7 @@ class BunBuildManager {
     };
 
     await Bun.write('./dist/manifest.json', JSON.stringify(manifest, null, 2));
-    console.log('✅ Manifest created');
+    console.info('✅ Manifest created');
   }
 
   /**
@@ -346,7 +346,7 @@ class BunBuildManager {
     report.totalSizeFormatted = this.formatBytes(report.totalSize);
 
     await Bun.write('./dist/build-report.json', JSON.stringify(report, null, 2));
-    console.log('📊 Build report generated');
+    console.info('📊 Build report generated');
   }
 
   /**
@@ -366,13 +366,13 @@ class BunBuildManager {
    * List available configurations
    */
   listConfigs(): void {
-    console.log('📋 Available build configurations:');
+    console.info('📋 Available build configurations:');
     for (const [name, config] of this.configs) {
-      console.log(`   ${name}:`);
-      console.log(`     Entry: ${config.entrypoint}`);
-      console.log(`     Output: ${config.outfile}`);
-      console.log(`     Target: ${config.target}`);
-      console.log(`     Minify: ${config.minify}`);
+      console.info(`   ${name}:`);
+      console.info(`     Entry: ${config.entrypoint}`);
+      console.info(`     Output: ${config.outfile}`);
+      console.info(`     Target: ${config.target}`);
+      console.info(`     Minify: ${config.minify}`);
     }
   }
 }
@@ -390,7 +390,7 @@ async function main(): Promise<void> {
       if (configName) {
         await buildManager.build(configName);
       } else {
-        console.log('Please specify a configuration: build <config>');
+        console.info('Please specify a configuration: build <config>');
         buildManager.listConfigs();
       }
       break;
@@ -407,7 +407,7 @@ async function main(): Promise<void> {
       if (configName) {
         await buildManager.analyze(configName);
       } else {
-        console.log('Please specify a configuration: analyze <config>');
+        console.info('Please specify a configuration: analyze <config>');
         buildManager.listConfigs();
       }
       break;
@@ -421,13 +421,13 @@ async function main(): Promise<void> {
       break;
     
     default:
-      console.log('Usage:');
-      console.log('  bun run build.ts build <config>     - Build specific configuration');
-      console.log('  bun run build.ts build-all         - Build all configurations');
-      console.log('  bun run build.ts watch [config]    - Watch for changes');
-      console.log('  bun run build.ts analyze <config>  - Analyze bundle size');
-      console.log('  bun run build.ts production        - Create production build');
-      console.log('  bun run build.ts list              - List configurations');
+      console.info('Usage:');
+      console.info('  bun run build.ts build <config>     - Build specific configuration');
+      console.info('  bun run build.ts build-all         - Build all configurations');
+      console.info('  bun run build.ts watch [config]    - Watch for changes');
+      console.info('  bun run build.ts analyze <config>  - Analyze bundle size');
+      console.info('  bun run build.ts production        - Create production build');
+      console.info('  bun run build.ts list              - List configurations');
       break;
   }
 }

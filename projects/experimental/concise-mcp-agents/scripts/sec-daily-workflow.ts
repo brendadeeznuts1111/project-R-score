@@ -46,24 +46,24 @@ class SecurityDailyWorkflow {
   ];
 
   async runMorningWorkflow(): Promise<void> {
-    console.log('🌅 RUNNING MORNING SECURITY WORKFLOW');
-    console.log('=====================================');
+    console.info('🌅 RUNNING MORNING SECURITY WORKFLOW');
+    console.info('=====================================');
 
     const results = [];
 
     for (const step of this.workflow) {
-      console.log(`\n🔄 ${step.name}: ${step.description}`);
+      console.info(`\n🔄 ${step.name}: ${step.description}`);
       try {
         await this.runCommand(step.command);
-        console.log(`✅ ${step.name}: PASSED`);
+        console.info(`✅ ${step.name}: PASSED`);
         results.push({ step: step.name, status: 'PASS' });
       } catch (error) {
         const status = step.critical ? 'FAIL' : 'WARN';
-        console.log(`${step.critical ? '❌' : '⚠️'}  ${step.name}: ${status} - ${error.message}`);
+        console.info(`${step.critical ? '❌' : '⚠️'}  ${step.name}: ${status} - ${error.message}`);
         results.push({ step: step.name, status, error: error.message });
 
         if (step.critical) {
-          console.log('🚨 Critical failure - stopping workflow');
+          console.info('🚨 Critical failure - stopping workflow');
           break;
         }
       }
@@ -73,8 +73,8 @@ class SecurityDailyWorkflow {
   }
 
   async runDeployWorkflow(): Promise<void> {
-    console.log('🚀 RUNNING DEPLOY SECURITY WORKFLOW');
-    console.log('===================================');
+    console.info('🚀 RUNNING DEPLOY SECURITY WORKFLOW');
+    console.info('===================================');
 
     const deploySteps = [
       'bun test',
@@ -84,35 +84,35 @@ class SecurityDailyWorkflow {
     ];
 
     for (const cmd of deploySteps) {
-      console.log(`🔄 ${cmd}`);
+      console.info(`🔄 ${cmd}`);
       try {
         await this.runCommand(cmd);
-        console.log(`✅ PASSED`);
+        console.info(`✅ PASSED`);
       } catch (error) {
-        console.log(`❌ FAILED: ${error.message}`);
+        console.info(`❌ FAILED: ${error.message}`);
         throw error;
       }
     }
 
-    console.log('🎉 Deploy security checks PASSED!');
+    console.info('🎉 Deploy security checks PASSED!');
   }
 
   async runMonitorWorkflow(): Promise<void> {
-    console.log('👁️  RUNNING MONITOR SECURITY WORKFLOW');
-    console.log('=====================================');
+    console.info('👁️  RUNNING MONITOR SECURITY WORKFLOW');
+    console.info('=====================================');
 
     // Continuous monitoring (simplified)
     setInterval(async () => {
       try {
         await this.runCommand('bun security:scan --quiet');
-        console.log(`✅ Security check passed at ${new Date().toLocaleTimeString()}`);
+        console.info(`✅ Security check passed at ${new Date().toLocaleTimeString()}`);
       } catch (error) {
         console.error(`❌ Security alert: ${error.message}`);
         // Could send alerts here
       }
     }, 30 * 60 * 1000); // Every 30 minutes
 
-    console.log('👁️  Security monitoring active...');
+    console.info('👁️  Security monitoring active...');
   }
 
   private async runCommand(cmd: string): Promise<void> {
@@ -145,22 +145,22 @@ class SecurityDailyWorkflow {
     const warnings = results.filter(r => r.status === 'WARN').length;
     const total = results.length;
 
-    console.log(`\n📊 MORNING WORKFLOW REPORT:`);
-    console.log(`   ✅ Passed: ${passed}/${total}`);
-    console.log(`   ❌ Failed: ${failed}/${total}`);
-    console.log(`   ⚠️  Warnings: ${warnings}/${total}`);
+    console.info(`\n📊 MORNING WORKFLOW REPORT:`);
+    console.info(`   ✅ Passed: ${passed}/${total}`);
+    console.info(`   ❌ Failed: ${failed}/${total}`);
+    console.info(`   ⚠️  Warnings: ${warnings}/${total}`);
 
     if (failed > 0) {
-      console.log(`\n🚨 FAILED STEPS:`);
+      console.info(`\n🚨 FAILED STEPS:`);
       results.filter(r => r.status === 'FAIL').forEach(result => {
-        console.log(`   ❌ ${result.step}: ${result.error}`);
+        console.info(`   ❌ ${result.step}: ${result.error}`);
       });
     }
 
     if (warnings > 0) {
-      console.log(`\n⚠️  WARNINGS:`);
+      console.info(`\n⚠️  WARNINGS:`);
       results.filter(r => r.status === 'WARN').forEach(result => {
-        console.log(`   ⚠️  ${result.step}: ${result.error}`);
+        console.info(`   ⚠️  ${result.step}: ${result.error}`);
       });
     }
   }
@@ -171,7 +171,7 @@ const args = process.argv.slice(2);
 const command = args[0];
 
 if (!command || command === '--help') {
-  console.log(`
+  console.info(`
 🌅 SYNDICATE DAILY SECURITY WORKFLOW v2.10
 
 USAGE:

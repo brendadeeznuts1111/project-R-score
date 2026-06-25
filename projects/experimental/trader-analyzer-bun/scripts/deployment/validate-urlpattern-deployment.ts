@@ -304,10 +304,10 @@ class URLPatternDeploymentValidator {
     // Detailed results
     this.results.forEach((result) => {
       const icon = result.passed ? "✅" : "❌"
-      console.log(`${icon} ${result.name}: ${result.message}`)
+      console.info(`${icon} ${result.name}: ${result.message}`)
 
       if (result.details && !result.passed) {
-        console.log(`   Details: ${JSON.stringify(result.details, null, 2)}`)
+        console.info(`   Details: ${JSON.stringify(result.details, null, 2)}`)
       }
     })
 

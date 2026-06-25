@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "description": "Bun.Transpiler bundle-threat scan profiles",
+  "profiles": {
+    "default": {
+      "description": "Full scan — imports, source patterns, transpiled output",
+      "min_severity": "info",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512
+    },
+    "ci": {
+      "description": "CI gate — error-level threats only",
+      "min_severity": "error",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512
+    },
+    "imports-only": {
+      "description": "Fast path — scanImports only, no transformSync",
+      "min_severity": "warn",
+      "transform_output": false,
+      "use_scan_imports": true,
+      "max_file_kb": 1024
+    },
+    "bundle-dist": {
+      "description": "Scan build output — includes dist/, skips minified",
+      "min_severity": "warn",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 2048,
+      "include_node_modules": false
+    },
+    "supply-chain-ci": {
+      "description": "Layer 4.5 CI — critical/high rules, integrity + threat-feed CVE correlation",
+      "min_severity": "error",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512,
+      "threat_feed": true,
+      "include_dev_dependencies": false,
+      "correlate_symbols": true
+    },
+    "supply-chain-network": {
+      "description": "Network surface audit — fetch/TCP/DNS/WebSocket + threat-feed",
+      "min_severity": "warn",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512,
+      "threat_feed": true,
+      "include_dev_dependencies": false,
+      "correlate_symbols": true,
+      "network_audit": true,
+      "network_dedupe": true,
+      "report_format": "markdown",
+      "markdown_colored": true
+    },
+    "supply-chain-network-dist": {
+      "description": "Dist/bundle network audit — large chunks, deduped heatmap, fetch/WebSocket focus",
+      "min_severity": "warn",
+      "transform_output": false,
+      "use_scan_imports": false,
+      "max_file_kb": 4096,
+      "threat_feed": false,
+      "include_dev_dependencies": false,
+      "correlate_symbols": false,
+      "network_audit": true,
+      "network_dedupe": true,
+      "endpoint_meta": true,
+      "report_format": "markdown",
+      "markdown_colored": true
+    },
+    "supply-chain-cross-linux-x64": {
+      "description": "Cross-target linux x64 — platform pins + policy pillars",
+      "min_severity": "warn",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512,
+      "threat_feed": true,
+      "include_dev_dependencies": false,
+      "correlate_symbols": true,
+      "remediation_plan": true,
+      "policy_constraints": true,
+      "platform_target": { "cpu": "x64", "os": "linux" },
+      "install_profile": "cross-linux-x64",
+      "report_format": "json",
+      "markdown_colored": true
+    },
+    "supply-chain-pillars": {
+      "description": "Three pillars — policy allow/block, threat-feed CVE, remediation plan (warn+)",
+      "min_severity": "warn",
+      "transform_output": true,
+      "use_scan_imports": false,
+      "max_file_kb": 512,
+      "threat_feed": true,
+      "include_dev_dependencies": false,
+      "correlate_symbols": true,
+      "remediation_plan": true,
+      "policy_constraints": true,
+      "report_format": "ansi",
+      "markdown_colored": true,
+      "network_audit": true
+    }
+  },
+  "package_profiles": {
+    "default": {
+      "description": "Package policy scan — warn+ with threat-feed and remediation hints",
+      "min_severity": "warn",
+      "threat_feed": true,
+      "remediation": true,
+      "include_dev_dependencies": false
+    },
+    "pillars": {
+      "description": "Three pillars — allow/block lists, CVE correlation, remediation plan",
+      "min_severity": "warn",
+      "threat_feed": true,
+      "remediation": true,
+      "include_dev_dependencies": false,
+      "report_format": "markdown",
+      "markdown_colored": true
+    },
+    "ci": {
+      "description": "CI gate — error-level policy violations only",
+      "min_severity": "error",
+      "threat_feed": true,
+      "remediation": false,
+      "include_dev_dependencies": false
+    }
+  }
+}

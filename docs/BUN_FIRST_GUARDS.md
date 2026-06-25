@@ -1,228 +1,180 @@
-# 🛡️ Bun-First Guards & Linting
+# Bun-First Guards & Linting
 
-## Overview
+Global Bun harness for root paths (`lib/`, `scripts/`, `packages/`, `server/`, `config/`, `tools/`). Project-specific rules live in [`eslint.project.config.ts`](../eslint.project.config.ts).
 
-This document describes the Bun-first compliance system that prevents Node.js
-API usage in favor of Bun-native APIs.
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Check files for Bun-first compliance
-bun run guard:bun-first lib/**/*.ts
+# Full harness gate (lint rollout + format + guard on strict inventory)
+bun run check:harness
 
-# Strict mode - check lib, tools, and cli
-bun run guard:bun-first:strict
+# Strict inventory lint (reads STRICT_INVENTORY from rollout.ts)
+bun run lint:bun-native
 
-# Run ESLint with Bun-first rules
-bun run lint
+# Files ready to promote to strict tier
+bun run harness:promote
 
-# Fix auto-fixable issues
-bun run lint:fix
+# Lightweight bun-native lint (no type-check OOM)
+bun run lint:bun-native:rollout
+
+# Browse one-liners and doc links
+bun run dx:catalog
+bun run dx:catalog tip
+bun run dx:catalog search spawn
+
+# Guard strict inventory files
+bun run guard:bun-first:harness
+
+# Grouped report — worst offenders, easy fixes, promotion candidates
+bun run harness:report
+bun run harness:report --easy-only
+bun run harness:report --promote
+bun run harness:report --json-out reports/harness/latest.json --md-out reports/harness/latest.md
+
+# Background (non-blocking)
+bun run harness:report --quiet --json-out reports/harness/latest.json --md-out reports/harness/latest.md &
 ```
 
-## 🛡️ Guard System
+## Config Map
 
-### 1. ESLint Rules (eslint.config.ts)
+| Layer | File | Purpose |
+|-------|------|---------|
+| DX catalog | [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) | One-liners, doc URLs, guard patterns |
+| Harness ESLint | [`eslint.harness.config.ts`](../eslint.harness.config.ts) | Global Bun-first rules (lightweight) |
+| Bun-native gate | [`eslint.bun-native.config.ts`](../eslint.bun-native.config.ts) | Alias of harness config |
+| Project overlay | [`eslint.project.config.ts`](../eslint.project.config.ts) | BUN_ naming, lib/ai overrides, Bun.color |
+| Root compose | [`eslint.config.ts`](../eslint.config.ts) | Harness + project + type-checked TS |
 
-**Restricted Imports (Error):**
+## Rollout (warn → error)
 
-- `fs` → Use `Bun.file()` / `Bun.write()`
-- `fs/promises` → Use `Bun.file()` / `Bun.write()`
-- `child_process` → Use `Bun.spawn()` / `Bun.spawnSync()`
-- `crypto` → Use `Bun.hash()` / `Bun.password`
-- `zlib` → Use `Bun.gzip()` / `Bun.deflate()`
-- `axios` → Use native `fetch()`
+- **Strict inventory** (`error`): files in [`config/eslint/harness/rollout.ts`](../config/eslint/harness/rollout.ts) `STRICT_INVENTORY`
+- **Rollout** (`warn`): all other root harness paths
+- Promote a file to strict when `bun run harness:promote` lists it (0 rollout warnings)
 
-### 2. Runtime Guard (lib/guards/bun-first-guard.ts)
+## Fix tiers (standard catches)
 
-**Features:**
+| Tier | Examples | Effort |
+|------|----------|--------|
+| **easy** | `env.read`, `cli.main`, `runtime.sleep`, `runtime.inspect` | Mechanical replace / wrap |
+| **medium** | `file.read`, `spawn.exec`, `http.fetch`, `test.bun` | Localized async/API swap |
+| **hard** | `http.serve`, `crypto.hash`, `file.stream` | Structural / security-sensitive |
 
-- Scans files for Node.js API usage
-- Detects import statements and API patterns
-- Provides specific Bun-native replacements
-- Returns exit code 1 on errors
+See tiers on each entry in [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts).
 
-**Usage:**
+## Grouped report (`harness:report`)
+
+When rollout lint shows hundreds of flat warnings, use the grouped report:
 
 ```bash
-# Check specific files
-bun run lib/guards/bun-first-guard.ts file1.ts file2.ts
-
-# Check directory
-bun run lib/guards/bun-first-guard.ts lib/**/*.ts
+bun run harness:report
 ```
 
-**Example Output:**
+Sections:
+
+1. **Summary** — error/warning/file counts
+2. **Worst offenders** — top files ranked by issue count with catalog breakdown
+3. **By directory** — `lib/`, `scripts/`, etc.
+4. **Standard catches (easy)** — sorted by count with `bun run dx:catalog <id>`
+5. **By catalog** — rule families with sample `file:line` locations
+6. **Promotion candidates** — files ready for `STRICT_INVENTORY`
+
+Artifacts (gitignored under `reports/`):
+
+```bash
+bun run harness:report --json-out reports/harness/latest.json --md-out reports/harness/latest.md
+```
+
+Example digest:
 
 ```text
-❌ tools/factorywager-cli.ts
-  🔴 Line 22: Node.js module "child_process" should not be used
-     💡 Use Bun.spawn() or Bun.spawnSync()
+Harness Report — 775 warnings, 0 errors, 118 files with issues
 
-✅ lib/docs/url-fixer-optimizer.ts - No violations
+Worst offenders
+    42  lib/ai/example.ts  (env.read×28, file.read×9)
 
-============================================================
-Total violations: 1 (1 errors, 0 warnings)
+Standard catches (easy)
+   200  env.read  Read environment variables
+         → const apiKey = Bun.env.API_KEY;
+         bun run dx:catalog env.read
 ```
 
-## 📋 Migration Patterns
+## ESLint Plugin Rules
+
+| Rule | Severity | Catalog ID |
+|------|----------|------------|
+| `bun/prefer-import-meta-main` | warn | `cli.main` |
+| `bun/prefer-bun-env` | warn | `env.read` |
+| `bun/prefer-bun-test` | warn | `test.bun` |
+| `bun/prefer-bun-sqlite` | warn | `sqlite.bun` |
+
+Every restricted-import message includes a one-liner and `https://bun.sh/docs/...` link from the catalog.
+
+## Guard System
+
+[`packages/guards/src/bun-first-guard.ts`](../packages/guards/src/bun-first-guard.ts) reads the same catalog as ESLint.
+
+```bash
+bun run packages/guards/src/bun-first-guard.ts scripts/dx-catalog-cli.ts
+```
+
+Example output:
+
+```text
+❌ tools/example.ts
+  🔴 Line 22: Node.js module "child_process" should not be used
+     💡 One-liner: const proc = Bun.spawn([...]);
+     📖 https://bun.sh/docs/api/spawn
+```
+
+## Migration Patterns
 
 ### File System (fs → Bun)
 
 ```typescript
-// ❌ BEFORE
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+// BEFORE
+import { readFileSync } from 'fs';
+const data = JSON.parse(readFileSync('config.json', 'utf8'));
 
-if (existsSync('config.json')) {
-  const data = JSON.parse(readFileSync('config.json', 'utf8'));
-  writeFileSync('output.json', JSON.stringify(data));
-}
-
-// ✅ AFTER
-const file = Bun.file('config.json');
-if (await file.exists()) {
-  const data = await file.json();
-  await Bun.write('output.json', JSON.stringify(data));
-}
+// AFTER
+const data = await Bun.file('config.json').json();
 ```
 
-### Child Process (child_process → Bun)
+Docs: https://bun.sh/docs/api/file-io
+
+### Child Process → Bun.spawn
 
 ```typescript
-// ❌ BEFORE
-import { spawn } from 'child_process';
-
-const proc = spawn('bun', ['script.ts'], { stdio: 'inherit' });
-proc.on('exit', code => process.exit(code ?? 0));
-
-// ✅ AFTER
-const proc = Bun.spawn(['bun', 'script.ts'], {
-  stdio: ['inherit', 'inherit', 'inherit'],
-});
+const proc = Bun.spawn(['bun', 'script.ts'], { stdio: ['inherit', 'inherit', 'inherit'] });
 const exitCode = await proc.exited;
-process.exit(exitCode);
 ```
 
-### Crypto (crypto → Bun)
+Docs: https://bun.sh/docs/api/spawn
+
+### Environment → Bun.env
 
 ```typescript
-// ❌ BEFORE
-import crypto from 'crypto';
-
-const hash = crypto.createHash('sha256').update(data).digest('hex');
-const hashedPassword = crypto
-  .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
-  .toString('hex');
-
-// ✅ AFTER
-const hash = await Bun.hash(data, 'sha256');
-const hashedPassword = await Bun.password.hash(password, {
-  algorithm: 'bcrypt',
-});
+const apiKey = Bun.env.API_KEY;
 ```
 
-### HTTP Client (axios → fetch)
+Docs: https://bun.sh/docs/runtime/env
 
-```typescript
-// ❌ BEFORE
-import axios from 'axios';
+## CI & Pre-commit
 
-const response = await axios.get('https://api.example.com');
-const data = response.data;
+Pre-commit (`.husky/pre-commit`):
 
-// ✅ AFTER
-const response = await fetch('https://api.example.com');
-const data = await response.json();
-```
+1. `repo-hygiene --staged`
+2. `scripts/pre-commit-harness.ts` — fast bun-native ESLint + Prettier on staged harness files
 
-## 🔧 Configuration
+CI (`ci:parallel`):
 
-### ESLint Configuration
+- Includes `check:harness` alongside build, test, and lint
 
-```typescript
-// eslint.config.ts
-{
-  rules: {
-    'no-restricted-imports': [
-      'error',
-      {
-        paths: [
-          { name: 'fs', message: 'Use Bun.file() or Bun.write()' },
-          { name: 'child_process', message: 'Use Bun.spawn()' },
-          { name: 'crypto', message: 'Use Bun.hash() or Bun.password' },
-          { name: 'axios', message: 'Use native fetch()' },
-        ],
-      },
-    ],
-  },
-}
-```
+Full type-checked ESLint remains on `bun run lint` (heavy; not in pre-commit).
 
-### Exemptions
-
-Some files are exempt from Bun-first rules:
-
-- `lib/validation/bun-first-compliance.ts` - The auditor itself
-- `lib/validation/bun-first-auditor.ts` - The auditor itself
-- `docs/BUN_MIGRATION_EXAMPLES.ts` - Examples file
-- Test files (`*.test.ts`, `*.spec.ts`)
-
-## 📊 Compliance Checking
-
-### Automated Checks
-
-Add to your CI/CD pipeline:
-
-```yaml
-# .github/workflows/ci.yml
-- name: Check Bun-first compliance
-  run: |
-    bun run guard:bun-first lib/**/*.ts
-    bun run lint
-```
-
-### Pre-commit Hook
-
-```bash
-#!/bin/bash
-# .husky/pre-commit
-
-# Check Bun-first compliance
-bun run guard:bun-first $(git diff --cached --name-only --diff-filter=ACM | grep '\.ts$')
-```
-
-## 🎯 Performance Benefits
-
-| Pattern             | Bun-Native        | Performance Gain |
-| ------------------- | ----------------- | ---------------- |
-| fs.readFileSync     | Bun.file().text() | 50% faster       |
-| fs.writeFileSync    | Bun.write()       | 40% faster       |
-| child_process.spawn | Bun.spawn()       | 2-3x faster      |
-| crypto.createHash   | Bun.hash()        | 30% faster       |
-| axios               | fetch()           | 20% faster       |
-
-## 📝 Files Updated
-
-### Fixed Files:
-
-1. **tools/factorywager-cli.ts**
-   - Removed: `import { spawn } from 'child_process'`
-   - Added: `Bun.spawn()` with async/await
-
-2. **lib/docs/url-fixer-optimizer.ts**
-   - Removed: `import { readFileSync, writeFileSync, existsSync } from 'fs'`
-   - Added: `Bun.file()`, `Bun.write()`, `file.exists()`
-
-### New Files:
-
-1. **lib/guards/bun-first-guard.ts** - Runtime guard
-2. **docs/BUN_FIRST_GUARDS.md** - This documentation
-
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Bun File I/O](https://bun.sh/docs/api/file-io)
 - [Bun Spawn](https://bun.sh/docs/api/spawn)
-- [Bun Password](https://bun.sh/docs/api/password)
-- [Bun Hash](https://bun.sh/docs/api/utils#bun-hash)
+- [Bun Test](https://bun.sh/docs/cli/test)
+- [import.meta.main](https://bun.sh/docs/runtime/modules#import-meta-main)
 - [QUICK_WINS_BUN_NATIVE.md](./QUICK_WINS_BUN_NATIVE.md)

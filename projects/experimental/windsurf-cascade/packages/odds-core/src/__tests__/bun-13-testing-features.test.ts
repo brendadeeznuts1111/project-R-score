@@ -345,7 +345,7 @@ describe.concurrent("Mixed Execution Patterns", () => {
     expect(executionOrder).toContain("sequential1");
     expect(executionOrder).toContain("sequential2");
     
-    console.log("Execution order:", executionOrder);
+    console.info("Execution order:", executionOrder);
   });
 });
 
@@ -380,7 +380,7 @@ describe.concurrent("Performance Testing", () => {
 
   test("validates concurrent performance", () => {
     const duration = Date.now() - startTime;
-    console.log(`Concurrent execution time: ${duration}ms`);
+    console.info(`Concurrent execution time: ${duration}ms`);
     
     // With 5 concurrent 50ms operations, total should be much less than 250ms
     expect(duration).toBeGreaterThan(50);

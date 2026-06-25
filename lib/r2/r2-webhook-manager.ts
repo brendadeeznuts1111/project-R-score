@@ -48,7 +48,7 @@ export interface WebhookDelivery {
   event: {
     type: string;
     timestamp: string;
-    data: any;
+    data: unknown;
   };
   status: 'pending' | 'success' | 'failed';
   attempts: Array<{
@@ -80,7 +80,7 @@ export class R2WebhookManager {
    * Initialize webhook manager
    */
   async initialize(): Promise<void> {
-    console.log(styled('🔗 Initializing R2 Webhook Manager', 'accent'));
+    console.info(styled('🔗 Initializing R2 Webhook Manager', 'accent'));
 
     // Load integration templates
     this.loadTemplates();
@@ -91,7 +91,7 @@ export class R2WebhookManager {
     // Start delivery processor
     this.startDeliveryProcessor();
 
-    console.log(styled('✅ Webhook manager initialized', 'success'));
+    console.info(styled('✅ Webhook manager initialized', 'success'));
   }
 
   /**
@@ -214,7 +214,7 @@ export class R2WebhookManager {
   /**
    * Route event to matching webhooks
    */
-  private routeEvent(event: any): void {
+  private routeEvent(event: unknown): void {
     for (const webhook of this.webhooks.values()) {
       if (webhook.status !== 'active') continue;
 
@@ -250,7 +250,7 @@ export class R2WebhookManager {
     };
 
     this.webhooks.set(webhook.id, webhook);
-    console.log(styled(`🔗 Created webhook: ${webhook.name} (${webhook.id})`, 'success'));
+    console.info(styled(`🔗 Created webhook: ${webhook.name} (${webhook.id})`, 'success'));
     return webhook;
   }
 
@@ -280,7 +280,7 @@ export class R2WebhookManager {
   /**
    * Create delivery
    */
-  private createDelivery(webhookId: string, event: any): WebhookDelivery {
+  private createDelivery(webhookId: string, event: unknown): WebhookDelivery {
     const delivery: WebhookDelivery = {
       id: `del-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       webhookId,
@@ -401,7 +401,7 @@ export class R2WebhookManager {
   /**
    * Build webhook payload
    */
-  private buildPayload(delivery: WebhookDelivery): any {
+  private buildPayload(delivery: WebhookDelivery): unknown {
     return {
       event: delivery.event.type,
       timestamp: delivery.event.timestamp,
@@ -416,7 +416,7 @@ export class R2WebhookManager {
   /**
    * Generate HMAC signature
    */
-  private generateSignature(payload: any, secret: string): string {
+  private generateSignature(payload: unknown, secret: string): string {
     const data = JSON.stringify(payload);
     // In production, use proper HMAC
     return `sha256=${Bun.hash(data + secret).toString(16)}`;
@@ -425,7 +425,7 @@ export class R2WebhookManager {
   /**
    * Verify webhook signature
    */
-  verifySignature(payload: any, signature: string, secret: string): boolean {
+  verifySignature(payload: unknown, signature: string, secret: string): boolean {
     const expected = this.generateSignature(payload, secret);
     return signature === expected;
   }
@@ -533,10 +533,10 @@ export class R2WebhookManager {
    * Display webhook status
    */
   displayStatus(): void {
-    console.log(styled('\n🔗 R2 Webhook Manager Status', 'accent'));
-    console.log(styled('============================', 'accent'));
+    console.info(styled('\n🔗 R2 Webhook Manager Status', 'accent'));
+    console.info(styled('============================', 'accent'));
 
-    console.log(styled('\n📡 Webhooks:', 'info'));
+    console.info(styled('\n📡 Webhooks:', 'info'));
     for (const webhook of this.webhooks.values()) {
       const statusIcon =
         webhook.status === 'active' ? '✅' : webhook.status === 'paused' ? '⏸️' : '❌';
@@ -545,27 +545,27 @@ export class R2WebhookManager {
           ? ((webhook.stats.successfulDeliveries / webhook.stats.totalDeliveries) * 100).toFixed(1)
           : 'N/A';
 
-      console.log(styled(`  ${statusIcon} ${webhook.name}`, 'muted'));
-      console.log(styled(`     URL: ${webhook.url.slice(0, 50)}...`, 'muted'));
-      console.log(styled(`     Events: ${webhook.events.join(', ')}`, 'muted'));
-      console.log(
+      console.info(styled(`  ${statusIcon} ${webhook.name}`, 'muted'));
+      console.info(styled(`     URL: ${webhook.url.slice(0, 50)}...`, 'muted'));
+      console.info(styled(`     Events: ${webhook.events.join(', ')}`, 'muted'));
+      console.info(
         styled(`     Deliveries: ${webhook.stats.totalDeliveries} (${success}% success)`, 'muted')
       );
     }
 
-    console.log(styled('\n📋 Integration Templates:', 'info'));
+    console.info(styled('\n📋 Integration Templates:', 'info'));
     for (const [key, template] of this.templates) {
-      console.log(styled(`  ${template.icon} ${template.name} (${key})`, 'muted'));
-      console.log(styled(`     ${template.description}`, 'muted'));
+      console.info(styled(`  ${template.icon} ${template.name} (${key})`, 'muted'));
+      console.info(styled(`     ${template.description}`, 'muted'));
     }
 
-    console.log(styled('\n📨 Recent Deliveries:', 'info'));
+    console.info(styled('\n📨 Recent Deliveries:', 'info'));
     const recent = this.getDeliveries(undefined, 5);
     for (const delivery of recent) {
       const webhook = this.webhooks.get(delivery.webhookId);
       const icon =
         delivery.status === 'success' ? '✅' : delivery.status === 'pending' ? '⏳' : '❌';
-      console.log(
+      console.info(
         styled(`  ${icon} ${webhook?.name || delivery.webhookId}: ${delivery.event.type}`, 'muted')
       );
     }
@@ -580,8 +580,8 @@ if (import.meta.main) {
   const webhooks = r2WebhookManager;
   await webhooks.initialize();
 
-  console.log(styled('\n🔗 R2 Webhook Manager Demo', 'accent'));
-  console.log(styled('==========================', 'accent'));
+  console.info(styled('\n🔗 R2 Webhook Manager Demo', 'accent'));
+  console.info(styled('==========================', 'accent'));
 
   // Create a test webhook
   const webhook = webhooks.createWebhook({
@@ -596,14 +596,14 @@ if (import.meta.main) {
     },
   });
 
-  console.log(styled(`\n✅ Created webhook: ${webhook.name}`, 'success'));
+  console.info(styled(`\n✅ Created webhook: ${webhook.name}`, 'success'));
 
   // Test the webhook
-  console.log(styled('\n🧪 Testing webhook...', 'info'));
+  console.info(styled('\n🧪 Testing webhook...', 'info'));
   const result = await webhooks.testWebhook(webhook.id);
-  console.log(styled(`  Success: ${result.success}`, result.success ? 'success' : 'error'));
+  console.info(styled(`  Success: ${result.success}`, result.success ? 'success' : 'error'));
   if (result.statusCode) {
-    console.log(styled(`  Status: ${result.statusCode}`, 'muted'));
+    console.info(styled(`  Status: ${result.statusCode}`, 'muted'));
   }
 
   // Display status

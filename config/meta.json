@@ -14,7 +14,7 @@
   "categories": {
     "projects": {
       "automation": "Automation frameworks and scripts",
-      "dashboards": "Enterprise dashboard interfaces", 
+      "dashboards": "Enterprise dashboard interfaces",
       "analysis": "Security and performance analysis tools",
       "apps": "Application projects",
       "enterprise": "Enterprise-grade solutions",
@@ -45,8 +45,8 @@
   ],
   "scripts": {
     "development": ["dev", "start", "test", "build"],
-    "tools": ["dashboard:ansi", "url:validate", "lint", "format", "type-check"],
-    "mcp": ["mcp:bun", "mcp:security"],
+    "tools": ["url:validate", "lint", "format", "type-check"],
+    "mcp": ["mcp:bun"],
     "validation": ["standards:check", "ci:validate"]
   },
   "releases": {

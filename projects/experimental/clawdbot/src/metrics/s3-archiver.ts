@@ -94,7 +94,7 @@ export class S3MetricsArchiver {
       },
     });
 
-    console.log(`[metrics] Archived to S3: s3://${this.bucket}/${s3Key} (checksum: ${checksum})`);
+    console.info(`[metrics] Archived to S3: s3://${this.bucket}/${s3Key} (checksum: ${checksum})`);
     return { key: s3Key, checksum, size: archive.length };
   }
 
@@ -116,7 +116,7 @@ export class S3MetricsArchiver {
     const checksum = integrityChecker.generateChecksumFromBytes(archive);
 
     await Bun.write(outputPath, archive);
-    console.log(`[metrics] Retrieved from S3: ${outputPath} (checksum: ${checksum})`);
+    console.info(`[metrics] Retrieved from S3: ${outputPath} (checksum: ${checksum})`);
 
     return { verified: true, checksum };
   }
@@ -145,7 +145,7 @@ export class S3MetricsArchiver {
       })
       .delete();
 
-    console.log(`[metrics] Deleted from S3: s3://${this.bucket}/${s3Key}`);
+    console.info(`[metrics] Deleted from S3: s3://${this.bucket}/${s3Key}`);
   }
 
   /**
@@ -203,7 +203,7 @@ export class S3MetricsArchiver {
     }
 
     if (uploaded > 0) {
-      console.log(`[metrics] Synced ${uploaded} archives to S3`);
+      console.info(`[metrics] Synced ${uploaded} archives to S3`);
     }
     return uploaded;
   }
@@ -231,7 +231,7 @@ export class S3MetricsArchiver {
     }
 
     if (deleted > 0) {
-      console.log(`[metrics] Pruned ${deleted} old archives from S3`);
+      console.info(`[metrics] Pruned ${deleted} old archives from S3`);
     }
     return deleted;
   }

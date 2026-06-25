@@ -63,7 +63,7 @@ export class PTYTestRunner {
     const startTime = performance.now();
     const results: TestCaseResult[] = [];
 
-    console.log(`\nRunning ${testCases.length} tests for skill: ${skillId}\n`);
+    console.info(`\nRunning ${testCases.length} tests for skill: ${skillId}\n`);
 
     for (const testCase of testCases) {
       const testStart = performance.now();
@@ -79,7 +79,7 @@ export class PTYTestRunner {
           output,
         });
 
-        console.log(`  \x1b[32m✓\x1b[0m ${testCase.name}`);
+        console.info(`  \x1b[32m✓\x1b[0m ${testCase.name}`);
       } catch (error: any) {
         results.push({
           name: testCase.name,
@@ -89,18 +89,18 @@ export class PTYTestRunner {
           output: error.output,
         });
 
-        console.log(`  \x1b[31m✗\x1b[0m ${testCase.name}`);
-        console.log(`    Error: ${error.message}`);
+        console.info(`  \x1b[31m✗\x1b[0m ${testCase.name}`);
+        console.info(`    Error: ${error.message}`);
       }
     }
 
     const summary = this.calculateSummary(results, performance.now() - startTime);
 
-    console.log(`\n${"─".repeat(60)}`);
-    console.log(
+    console.info(`\n${"─".repeat(60)}`);
+    console.info(
       `Tests: ${summary.passed}/${summary.total} passed (${((summary.passed / summary.total) * 100).toFixed(0)}%)`
     );
-    console.log(`Duration: ${(summary.duration / 1000).toFixed(2)}s`);
+    console.info(`Duration: ${(summary.duration / 1000).toFixed(2)}s`);
 
     return {
       skillId,

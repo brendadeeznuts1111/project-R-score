@@ -75,7 +75,7 @@ async function uploadSessionProfile(
     throw new Error(`R2 upload failed: ${res.status} ${res.statusText}`);
   }
   
-  console.log(`✅ Uploaded: ${path} (${res.status}) | Size: ${(JSON.stringify(fullProfile).length/1024).toFixed(1)}KB | Window: ${windowId || 'none'}`);
+  console.info(`✅ Uploaded: ${path} (${res.status}) | Size: ${(JSON.stringify(fullProfile).length/1024).toFixed(1)}KB | Window: ${windowId || 'none'}`);
   return path;
 }
 
@@ -121,7 +121,7 @@ class BunSecretsManagerV37 {
     this.secrets.set('R2_SECRET', SECRET);
     this.secrets.set('WIKI_ENCRYPTION_KEY', WIKI_ENCRYPTION_KEY);
     
-    console.log('🔐 Bun.secrets v3.7 initialized with R2 Native support');
+    console.info('🔐 Bun.secrets v3.7 initialized with R2 Native support');
   }
 
   /**
@@ -165,7 +165,7 @@ class BunSecretsManagerV37 {
     // Upload to R2 Native
     const path = await uploadSessionProfile(sessionId, type, profile, member, windowId, scope);
     
-    console.log(`🌐 Session profile created: ${sessionId} | Type: ${type} | Member: ${member} | Path: ${path}`);
+    console.info(`🌐 Session profile created: ${sessionId} | Type: ${type} | Member: ${member} | Path: ${path}`);
     
     return path;
   }
@@ -207,7 +207,7 @@ class BunSecretsManagerV37 {
     }
     
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} old sessions`);
+      console.info(`🧹 Cleaned up ${cleaned} old sessions`);
     }
   }
 
@@ -316,10 +316,10 @@ class WikiServerV37 {
       }
     });
 
-    console.log(`🌐 Wiki Server v3.7 with R2 Native started on port ${port}`);
-    console.log(`📊 Dashboard: http://localhost:${port}`);
-    console.log(`🚀 R2 Native: ${R2_URL}`);
-    console.log(`🔐 Secrets: Loaded`);
+    console.info(`🌐 Wiki Server v3.7 with R2 Native started on port ${port}`);
+    console.info(`📊 Dashboard: http://localhost:${port}`);
+    console.info(`🚀 R2 Native: ${R2_URL}`);
+    console.info(`🔐 Secrets: Loaded`);
 
     // Cleanup old sessions every hour
     setInterval(() => {

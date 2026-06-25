@@ -17,9 +17,9 @@ async function buildProduction() {
 	const entrypoint = process.argv[2] || "./src/index.ts";
 	const outfile = process.argv[3] || "./dist/graph-engine-prod";
 
-	console.log("🔨 Building production binary with Bun v1.51 (Zig 0.15.2)...");
-	console.log(`   Entrypoint: ${entrypoint}`);
-	console.log(`   Output: ${outfile}`);
+	console.info("🔨 Building production binary with Bun v1.51 (Zig 0.15.2)...");
+	console.info(`   Entrypoint: ${entrypoint}`);
+	console.info(`   Output: ${outfile}`);
 
 	try {
 		// Build configuration for deterministic production binary
@@ -40,7 +40,7 @@ async function buildProduction() {
 		});
 
 		// Compile to standalone binary
-		console.log("\n📦 Compiling to standalone binary...");
+		console.info("\n📦 Compiling to standalone binary...");
 		
 		const compileProcess = Bun.spawn([
 			"bun",
@@ -60,14 +60,14 @@ async function buildProduction() {
 		const exitCode = await compileProcess.exited;
 		
 		if (exitCode === 0) {
-			console.log(`\n✅ Production binary built successfully!`);
-			console.log(`   File: ${outfile}`);
-			console.log(`   Size: ~77MB (was 85MB with Zig 0.14.x)`);
-			console.log(`   Savings: 0.8MB smaller, faster cold starts`);
-			console.log(`\n💡 Deployment:`);
-			console.log(`   - Edge: Fly.io, Cloudflare Workers`);
-			console.log(`   - Bandwidth savings: $50-150/month`);
-			console.log(`   - Lower RAM usage: Zig's better memory management`);
+			console.info(`\n✅ Production binary built successfully!`);
+			console.info(`   File: ${outfile}`);
+			console.info(`   Size: ~77MB (was 85MB with Zig 0.14.x)`);
+			console.info(`   Savings: 0.8MB smaller, faster cold starts`);
+			console.info(`\n💡 Deployment:`);
+			console.info(`   - Edge: Fly.io, Cloudflare Workers`);
+			console.info(`   - Bandwidth savings: $50-150/month`);
+			console.info(`   - Lower RAM usage: Zig's better memory management`);
 		} else {
 			console.error(`\n❌ Build failed with exit code ${exitCode}`);
 			process.exit(exitCode);

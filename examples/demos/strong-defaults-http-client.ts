@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Strong Defaults HTTP Client - Enhanced defaults that work properly out of the box
 
-console.log('🛡️ Strong Defaults HTTP Client - Better defaults for production\n');
+console.info('🛡️ Strong Defaults HTTP Client - Better defaults for production\n');
 
 import '../lib/http'; // Ensure lib/http is included
 
@@ -108,12 +108,12 @@ export class StrongDefaultsHttpClient {
       ...this.config.defaultHeaders
     };
 
-    console.log('🔧 Strong Defaults Configured:');
-    console.log(`   Aggressive Caching: ${this.config.aggressiveCaching}`);
-    console.log(`   Default Cache Max-Age: ${this.config.defaultCacheMaxAge}ms`);
-    console.log(`   Security Headers: ${this.config.securityHeaders}`);
-    console.log(`   Strict Validation: ${this.config.strictValidation}`);
-    console.log(`   Keep-Alive: ${this.config.keepAlive}`);
+    console.info('🔧 Strong Defaults Configured:');
+    console.info(`   Aggressive Caching: ${this.config.aggressiveCaching}`);
+    console.info(`   Default Cache Max-Age: ${this.config.defaultCacheMaxAge}ms`);
+    console.info(`   Security Headers: ${this.config.securityHeaders}`);
+    console.info(`   Strict Validation: ${this.config.strictValidation}`);
+    console.info(`   Keep-Alive: ${this.config.keepAlive}`);
   }
 
   // Enhanced cache key with more context
@@ -352,7 +352,7 @@ export class StrongDefaultsHttpClient {
     
     // Don't cache if explicitly forbidden
     if (cacheHeaders.cacheControl?.includes('no-store')) {
-      console.log(`🚫 Not caching (no-store): ${url}`);
+      console.info(`🚫 Not caching (no-store): ${url}`);
       return;
     }
 
@@ -388,16 +388,16 @@ export class StrongDefaultsHttpClient {
     if (this.cache.size >= maxSize) {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
-      console.log(`🗑️ Evicted cache entry: ${oldestKey}`);
+      console.info(`🗑️ Evicted cache entry: ${oldestKey}`);
     }
 
     this.cache.set(key, entry);
-    console.log(`💾 Strong cached: ${url}`);
-    console.log(`   Content-Type: ${cacheHeaders.contentType}`);
-    console.log(`   Content-Length: ${cacheHeaders.contentLength} bytes`);
-    console.log(`   ETag: ${cacheHeaders.etag || 'none'}`);
-    console.log(`   Cache-Control: ${cacheHeaders.cacheControl || 'none'}`);
-    console.log(`   Server: ${cacheHeaders.server || 'unknown'}`);
+    console.info(`💾 Strong cached: ${url}`);
+    console.info(`   Content-Type: ${cacheHeaders.contentType}`);
+    console.info(`   Content-Length: ${cacheHeaders.contentLength} bytes`);
+    console.info(`   ETag: ${cacheHeaders.etag || 'none'}`);
+    console.info(`   Cache-Control: ${cacheHeaders.cacheControl || 'none'}`);
+    console.info(`   Server: ${cacheHeaders.server || 'unknown'}`);
   }
 
   // Enhanced conditional request
@@ -421,9 +421,9 @@ export class StrongDefaultsHttpClient {
       headers.set('If-Range', entry.metadata.etag);
     }
 
-    console.log(`🔍 Strong conditional request: ${url}`);
-    console.log(`   If-None-Match: ${entry.metadata.etag || 'none'}`);
-    console.log(`   If-Modified-Since: ${entry.metadata.lastModified || 'none'}`);
+    console.info(`🔍 Strong conditional request: ${url}`);
+    console.info(`   If-None-Match: ${entry.metadata.etag || 'none'}`);
+    console.info(`   If-Modified-Since: ${entry.metadata.lastModified || 'none'}`);
 
     return fetch(url, { ...options, headers });
   }
@@ -438,14 +438,14 @@ export class StrongDefaultsHttpClient {
     
     // Log validation results
     if (Object.keys(corrections).length > 0) {
-      console.log(`🔧 Header corrections for ${method} ${url}:`);
+      console.info(`🔧 Header corrections for ${method} ${url}:`);
       Object.entries(corrections).forEach(([key, value]) => {
-        console.log(`   ${key}: ${value}`);
+        console.info(`   ${key}: ${value}`);
       });
     }
     
     if (warnings.length > 0) {
-      warnings.forEach(warning => console.log(`⚠️ Warning: ${warning}`));
+      warnings.forEach(warning => console.info(`⚠️ Warning: ${warning}`));
     }
     
     if (errors.length > 0 && this.config.strictValidation) {
@@ -460,13 +460,13 @@ export class StrongDefaultsHttpClient {
       const cachedEntry = this.cache.get(cacheKey);
       
       if (cachedEntry) {
-        console.log(`📦 Strong cache found: ${url}`);
+        console.info(`📦 Strong cache found: ${url}`);
         
         if (this.isStrongCacheValid(cachedEntry)) {
           cachedEntry.hits++;
           const responseTime = Date.now() - startTime;
           
-          console.log(`✅ Strong cache HIT: ${url} (${cachedEntry.hits} hits, ${responseTime}ms)`);
+          console.info(`✅ Strong cache HIT: ${url} (${cachedEntry.hits} hits, ${responseTime}ms)`);
           
           return {
             data: cachedEntry.data,
@@ -492,7 +492,7 @@ export class StrongDefaultsHttpClient {
         
         // Try revalidation
         if (cachedEntry.metadata.etag || cachedEntry.metadata.lastModified) {
-          console.log(`🔄 Attempting strong revalidation: ${url}`);
+          console.info(`🔄 Attempting strong revalidation: ${url}`);
           
           try {
             const conditionalResponse = await this.makeStrongConditionalRequest(url, finalOptions, cachedEntry);
@@ -504,7 +504,7 @@ export class StrongDefaultsHttpClient {
               cachedEntry.lastValidated = Date.now();
               const responseTime = Date.now() - startTime;
               
-              console.log(`✅ Strong cache REVALIDATED: ${url} (304, ${responseTime}ms)`);
+              console.info(`✅ Strong cache REVALIDATED: ${url} (304, ${responseTime}ms)`);
               
               return {
                 data: cachedEntry.data,
@@ -534,7 +534,7 @@ export class StrongDefaultsHttpClient {
             
             this.storeStrongCache(url, method, conditionalResponse, freshData, headers, responseTime);
             
-            console.log(`🆕 Fresh data fetched: ${url} (${responseTime}ms)`);
+            console.info(`🆕 Fresh data fetched: ${url} (${responseTime}ms)`);
             
             const cacheHeaders = this.extractStrongCacheHeaders(conditionalResponse);
             return {
@@ -558,7 +558,7 @@ export class StrongDefaultsHttpClient {
               connection: cacheHeaders.connection
             };
           } catch (error) {
-            console.log(`⚠️ Revalidation failed, serving stale: ${url}`, error);
+            console.info(`⚠️ Revalidation failed, serving stale: ${url}`, error);
             
             cachedEntry.hits++;
             const responseTime = Date.now() - startTime;
@@ -589,7 +589,7 @@ export class StrongDefaultsHttpClient {
     }
 
     // Network request
-    console.log(`🌐 Network request: ${url}`);
+    console.info(`🌐 Network request: ${url}`);
     const response = await fetch(url, finalOptions);
     const responseTime = Date.now() - startTime;
     
@@ -601,9 +601,9 @@ export class StrongDefaultsHttpClient {
     this.storeStrongCache(url, method, response, data, headers, responseTime);
 
     const cacheHeaders = this.extractStrongCacheHeaders(response);
-    console.log(`✅ Network success: ${url} (${responseTime}ms, ${cacheHeaders.contentLength} bytes)`);
-    console.log(`   Content-Type: ${cacheHeaders.contentType}`);
-    console.log(`   Server: ${cacheHeaders.server || 'unknown'}`);
+    console.info(`✅ Network success: ${url} (${responseTime}ms, ${cacheHeaders.contentLength} bytes)`);
+    console.info(`   Content-Type: ${cacheHeaders.contentType}`);
+    console.info(`   Server: ${cacheHeaders.server || 'unknown'}`);
 
     return {
       data,
@@ -698,13 +698,13 @@ export class StrongDefaultsHttpClient {
 
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Strong cache cleared');
+    console.info('🗑️ Strong cache cleared');
   }
 }
 
 // Demo the strong defaults
 async function demonstrateStrongDefaults() {
-  console.log('🧪 Strong Defaults HTTP Client Demo\n');
+  console.info('🧪 Strong Defaults HTTP Client Demo\n');
 
   const client = new StrongDefaultsHttpClient({
     aggressiveCaching: true,
@@ -730,66 +730,66 @@ async function demonstrateStrongDefaults() {
   ];
 
   for (const test of tests) {
-    console.log(`\n📡 Testing: ${test.name}`);
-    console.log(`   URL: ${test.url}`);
+    console.info(`\n📡 Testing: ${test.name}`);
+    console.info(`   URL: ${test.url}`);
 
     // First request - shows strong defaults in action
-    console.log('\n1️⃣ First request (strong defaults):');
+    console.info('\n1️⃣ First request (strong defaults):');
     const result1 = await client.get(test.url);
-    console.log(`   Status: ${result1.status}`);
-    console.log(`   Content-Type: ${result1.contentType}`);
-    console.log(`   Content-Length: ${result1.contentLength}`);
-    console.log(`   Server: ${result1.server || 'unknown'}`);
-    console.log(`   Connection: ${result1.connection || 'unknown'}`);
-    console.log(`   From Cache: ${result1.fromCache}`);
-    console.log(`   Response Time: ${result1.responseTime}ms`);
+    console.info(`   Status: ${result1.status}`);
+    console.info(`   Content-Type: ${result1.contentType}`);
+    console.info(`   Content-Length: ${result1.contentLength}`);
+    console.info(`   Server: ${result1.server || 'unknown'}`);
+    console.info(`   Connection: ${result1.connection || 'unknown'}`);
+    console.info(`   From Cache: ${result1.fromCache}`);
+    console.info(`   Response Time: ${result1.responseTime}ms`);
 
     // Second request - should hit cache
-    console.log('\n2️⃣ Second request (cache test):');
+    console.info('\n2️⃣ Second request (cache test):');
     const result2 = await client.get(test.url);
-    console.log(`   Status: ${result2.status}`);
-    console.log(`   From Cache: ${result2.fromCache}`);
-    console.log(`   Cached: ${result2.cached}`);
-    console.log(`   Revalidated: ${result2.revalidated}`);
-    console.log(`   Response Time: ${result2.responseTime}ms`);
+    console.info(`   Status: ${result2.status}`);
+    console.info(`   From Cache: ${result2.fromCache}`);
+    console.info(`   Cached: ${result2.cached}`);
+    console.info(`   Revalidated: ${result2.revalidated}`);
+    console.info(`   Response Time: ${result2.responseTime}ms`);
 
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   // Show enhanced cache statistics
-  console.log('\n📊 Strong Cache Statistics:');
+  console.info('\n📊 Strong Cache Statistics:');
   const stats = client.getStrongCacheStats();
-  console.log(`   Cache Size: ${stats.size}/${stats.maxSize}`);
-  console.log(`   Total Hits: ${stats.totalHits}`);
-  console.log(`   Total Validations: ${stats.totalValidations}`);
-  console.log(`   Total Size: ${stats.totalSize} bytes`);
-  console.log(`   Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%`);
-  console.log(`   Average Response Time: ${stats.averageResponseTime.toFixed(1)}ms`);
+  console.info(`   Cache Size: ${stats.size}/${stats.maxSize}`);
+  console.info(`   Total Hits: ${stats.totalHits}`);
+  console.info(`   Total Validations: ${stats.totalValidations}`);
+  console.info(`   Total Size: ${stats.totalSize} bytes`);
+  console.info(`   Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%`);
+  console.info(`   Average Response Time: ${stats.averageResponseTime.toFixed(1)}ms`);
 
   stats.entries.forEach((entry, index) => {
-    console.log(`\n   ${index + 1}. ${entry.url}`);
-    console.log(`      Content-Type: ${entry.contentType}`);
-    console.log(`      Server: ${entry.server || 'unknown'}`);
-    console.log(`      Size: ${entry.size} bytes`);
-    console.log(`      Hits: ${entry.hits}`);
-    console.log(`      Validations: ${entry.validations}`);
-    console.log(`      Age: ${Math.round(entry.age / 1000)}s`);
-    console.log(`      Valid: ${entry.isValid ? '✅' : '❌'}`);
+    console.info(`\n   ${index + 1}. ${entry.url}`);
+    console.info(`      Content-Type: ${entry.contentType}`);
+    console.info(`      Server: ${entry.server || 'unknown'}`);
+    console.info(`      Size: ${entry.size} bytes`);
+    console.info(`      Hits: ${entry.hits}`);
+    console.info(`      Validations: ${entry.validations}`);
+    console.info(`      Age: ${Math.round(entry.age / 1000)}s`);
+    console.info(`      Valid: ${entry.isValid ? '✅' : '❌'}`);
   });
 
-  console.log('\n🎯 Strong Defaults Features:');
-  console.log('   ✅ Enhanced default headers (User-Agent, Accept, Accept-Encoding, etc.)');
-  console.log('   ✅ Auto-detection of Content-Type for POST requests');
-  console.log('   ✅ Automatic Content-Length calculation');
-  console.log('   ✅ Aggressive caching with longer TTL');
-  console.log('   ✅ Security headers by default');
-  console.log('   ✅ Strict validation with helpful corrections');
-  console.log('   ✅ Enhanced metadata tracking');
-  console.log('   ✅ Better cache statistics');
-  console.log('   ✅ Connection pooling support');
-  console.log('   ✅ Comprehensive logging');
+  console.info('\n🎯 Strong Defaults Features:');
+  console.info('   ✅ Enhanced default headers (User-Agent, Accept, Accept-Encoding, etc.)');
+  console.info('   ✅ Auto-detection of Content-Type for POST requests');
+  console.info('   ✅ Automatic Content-Length calculation');
+  console.info('   ✅ Aggressive caching with longer TTL');
+  console.info('   ✅ Security headers by default');
+  console.info('   ✅ Strict validation with helpful corrections');
+  console.info('   ✅ Enhanced metadata tracking');
+  console.info('   ✅ Better cache statistics');
+  console.info('   ✅ Connection pooling support');
+  console.info('   ✅ Comprehensive logging');
 
-  console.log('\n🚀 Strong Defaults HTTP Client Complete!');
+  console.info('\n🚀 Strong Defaults HTTP Client Complete!');
 }
 
 // Export for use

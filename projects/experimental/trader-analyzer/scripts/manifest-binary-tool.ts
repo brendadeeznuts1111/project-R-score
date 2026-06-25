@@ -103,7 +103,7 @@ async function parseArgs(): Promise<BinaryOperation> {
 }
 
 function printHelp() {
-	console.log(`
+	console.info(`
 Binary Manifest Tool
 ===================
 
@@ -135,7 +135,7 @@ Examples:
 }
 
 async function encodeManifest(inputPath: string, outputPath?: string) {
-	console.log(`🔧 Encoding: ${inputPath}`);
+	console.info(`🔧 Encoding: ${inputPath}`);
 
 	const content = await Bun.file(inputPath).text();
 	const manifest = Bun.YAML.parse(content);
@@ -143,19 +143,19 @@ async function encodeManifest(inputPath: string, outputPath?: string) {
 	const binary = BinaryManifestCodec.encode(manifest);
 	const digest = ManifestDigest.computeHash(binary);
 
-	console.log(`✅ Encoded to ${binary.byteLength} bytes`);
-	console.log(`📊 SHA-256: ${digest.substring(0, 32)}...`);
+	console.info(`✅ Encoded to ${binary.byteLength} bytes`);
+	console.info(`📊 SHA-256: ${digest.substring(0, 32)}...`);
 
 	if (outputPath) {
 		await Bun.write(outputPath, binary);
-		console.log(`💾 Saved to: ${outputPath}`);
+		console.info(`💾 Saved to: ${outputPath}`);
 	}
 
 	return { binary, digest };
 }
 
 async function decodeManifest(inputPath: string, outputPath?: string) {
-	console.log(`🔧 Decoding: ${inputPath}`);
+	console.info(`🔧 Decoding: ${inputPath}`);
 
 	const binary = new Uint8Array(await Bun.file(inputPath).arrayBuffer());
 	const manifest = BinaryManifestCodec.decode(binary);
@@ -163,19 +163,19 @@ async function decodeManifest(inputPath: string, outputPath?: string) {
 	const yaml = Bun.YAML.stringify(manifest);
 	const digest = ManifestDigest.computeHash(binary);
 
-	console.log(`✅ Decoded ${binary.byteLength} bytes to YAML`);
-	console.log(`📊 SHA-256: ${digest.substring(0, 32)}...`);
+	console.info(`✅ Decoded ${binary.byteLength} bytes to YAML`);
+	console.info(`📊 SHA-256: ${digest.substring(0, 32)}...`);
 
 	if (outputPath) {
 		await Bun.write(outputPath, yaml);
-		console.log(`💾 Saved to: ${outputPath}`);
+		console.info(`💾 Saved to: ${outputPath}`);
 	}
 
 	return { manifest, yaml, digest };
 }
 
 async function verifyManifest(inputPath: string, referencePath: string) {
-	console.log(`🔍 Verifying: ${inputPath} against ${referencePath}`);
+	console.info(`🔍 Verifying: ${inputPath} against ${referencePath}`);
 
 	const inputContent = new Uint8Array(await Bun.file(inputPath).arrayBuffer());
 	const refContent = new Uint8Array(await Bun.file(referencePath).arrayBuffer());
@@ -215,43 +215,43 @@ async function verifyManifest(inputPath: string, referencePath: string) {
 		refHash = ManifestDigest.computeStructuralHash(refManifest);
 	}
 
-	console.log(`📊 Input hash:  ${inputHash}`);
-	console.log(`📊 Reference:   ${refHash}`);
+	console.info(`📊 Input hash:  ${inputHash}`);
+	console.info(`📊 Reference:   ${refHash}`);
 
 	if (inputHash === refHash) {
-		console.log("✅ Manifest integrity verified");
+		console.info("✅ Manifest integrity verified");
 		return true;
 	} else {
-		console.log("❌ Manifest integrity check failed");
+		console.info("❌ Manifest integrity check failed");
 
 		// Show differences in size
 		const inputSize = inputContent.byteLength;
 		const refSize = refContent.byteLength;
-		console.log(`   Input size: ${inputSize} bytes`);
-		console.log(`   Ref size:   ${refSize} bytes`);
-		console.log(`   Difference: ${Math.abs(inputSize - refSize)} bytes`);
+		console.info(`   Input size: ${inputSize} bytes`);
+		console.info(`   Ref size:   ${refSize} bytes`);
+		console.info(`   Difference: ${Math.abs(inputSize - refSize)} bytes`);
 
 		return false;
 	}
 }
 
 async function createDiff(currentPath: string, previousPath: string) {
-	console.log(`🔍 Creating diff: ${currentPath} vs ${previousPath}`);
+	console.info(`🔍 Creating diff: ${currentPath} vs ${previousPath}`);
 
 	const current = new Uint8Array(await Bun.file(currentPath).arrayBuffer());
 	const previous = new Uint8Array(await Bun.file(previousPath).arrayBuffer());
 
 	const diff = BinaryManifestCodec.createDiff(current, previous);
 
-	console.log(`📊 Diff operation: ${diff.operation}`);
-	console.log(`📊 Patch size: ${diff.patch.byteLength} bytes`);
-	console.log(`📊 Original size: ${current.byteLength} bytes`);
-	console.log(
+	console.info(`📊 Diff operation: ${diff.operation}`);
+	console.info(`📊 Patch size: ${diff.patch.byteLength} bytes`);
+	console.info(`📊 Original size: ${current.byteLength} bytes`);
+	console.info(
 		`📊 Compression: ${((diff.patch.byteLength / current.byteLength) * 100).toFixed(1)}%`,
 	);
 
 	if (diff.operation === "identical") {
-		console.log("✅ Manifests are identical");
+		console.info("✅ Manifests are identical");
 	}
 
 	return diff;

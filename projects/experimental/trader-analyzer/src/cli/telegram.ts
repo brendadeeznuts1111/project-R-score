@@ -176,9 +176,9 @@ async function cmdSend(
 		process.exit(1);
 	}
 
-	console.log(`📤 Sending message...`);
-	if (threadId) console.log(`   Topic: ${threadId}`);
-	if (pin) console.log(`   Pin: Yes`);
+	console.info(`📤 Sending message...`);
+	if (threadId) console.info(`   Topic: ${threadId}`);
+	if (pin) console.info(`   Pin: Yes`);
 
 	try {
 		let result;
@@ -214,9 +214,9 @@ async function cmdSend(
 		await logger.log(logEntry);
 
 		if (result.ok) {
-			console.log("✅ Message sent successfully!");
-			if (messageId) console.log(`   Message ID: ${messageId}`);
-			if (pin) console.log(`   Pinned: Yes`);
+			console.info("✅ Message sent successfully!");
+			if (messageId) console.info(`   Message ID: ${messageId}`);
+			if (pin) console.info(`   Pinned: Yes`);
 		} else {
 			console.error("❌ Failed to send message:");
 			console.error(`   ${logEntry.error}`);
@@ -243,22 +243,22 @@ async function cmdListTopics(
 	api: TelegramBotApi,
 	chatId: string,
 ): Promise<void> {
-	console.log(`📋 Fetching forum topics...\n`);
+	console.info(`📋 Fetching forum topics...\n`);
 
 	try {
 		const result = await api.getForumTopics(chatId);
 
 		if (result.ok && result.result?.topics) {
 			const topics = result.result.topics;
-			console.log(`✅ Found ${topics.length} topics:\n`);
+			console.info(`✅ Found ${topics.length} topics:\n`);
 
 			for (const topic of topics) {
 				const icon = topic.icon_custom_emoji_id ? "🎯" : "📌";
-				console.log(`  ${icon} #${topic.message_thread_id} - ${topic.name}`);
+				console.info(`  ${icon} #${topic.message_thread_id} - ${topic.name}`);
 			}
 
-			console.log(`\n💡 Usage:`);
-			console.log(`   telegram send "Message" --topic <thread_id>`);
+			console.info(`\n💡 Usage:`);
+			console.info(`   telegram send "Message" --topic <thread_id>`);
 		} else {
 			console.warn("⚠️  Could not fetch topics via API");
 			console.warn(`   ${result.description || "Unknown error"}`);
@@ -278,7 +278,7 @@ async function cmdDiscoverTopics(
 	chatId: string,
 	maxThreadId = 20,
 ): Promise<void> {
-	console.log(`🔍 Discovering valid topics (testing 1-${maxThreadId})...\n`);
+	console.info(`🔍 Discovering valid topics (testing 1-${maxThreadId})...\n`);
 
 	const validTopics: number[] = [];
 
@@ -293,7 +293,7 @@ async function cmdDiscoverTopics(
 			);
 
 			if (result.ok) {
-				console.log("✅");
+				console.info("✅");
 				validTopics.push(threadId);
 
 				// Log discovery
@@ -318,19 +318,19 @@ async function cmdDiscoverTopics(
 					}
 				}
 			} else {
-				console.log("❌");
+				console.info("❌");
 			}
 		} catch {
-			console.log("❌");
+			console.info("❌");
 		}
 
 		// Rate limiting
 		await new Promise((resolve) => setTimeout(resolve, 200));
 	}
 
-	console.log(`\n✅ Found ${validTopics.length} valid topics:`);
+	console.info(`\n✅ Found ${validTopics.length} valid topics:`);
 	for (const topicId of validTopics) {
-		console.log(`   • Topic ${topicId}`);
+		console.info(`   • Topic ${topicId}`);
 	}
 }
 
@@ -348,14 +348,14 @@ async function cmdHistory(
 
 	if (threadId) {
 		history = await logger.getThreadHistory(parseInt(threadId, 10), limit);
-		console.log(`📜 Message history for topic ${threadId}:\n`);
+		console.info(`📜 Message history for topic ${threadId}:\n`);
 	} else {
 		history = await logger.getHistory(limit);
-		console.log(`📜 Recent message history:\n`);
+		console.info(`📜 Recent message history:\n`);
 	}
 
 	if (history.length === 0) {
-		console.log("   No messages found.");
+		console.info("   No messages found.");
 		return;
 	}
 
@@ -365,14 +365,14 @@ async function cmdHistory(
 		const topic = log.threadId ? ` [Topic ${log.threadId}]` : "";
 		const pinned = log.pinned ? " 📌" : "";
 
-		console.log(`${status} ${time}${topic}${pinned}`);
-		console.log(
+		console.info(`${status} ${time}${topic}${pinned}`);
+		console.info(
 			`   ${log.message.substring(0, 80)}${log.message.length > 80 ? "..." : ""}`,
 		);
 		if (log.error) {
-			console.log(`   Error: ${log.error}`);
+			console.info(`   Error: ${log.error}`);
 		}
-		console.log("");
+		console.info("");
 	}
 }
 
@@ -394,7 +394,7 @@ async function cmdCreateTopic(
 		process.exit(1);
 	}
 
-	console.log(`📝 Creating topic: ${name}...`);
+	console.info(`📝 Creating topic: ${name}...`);
 
 	try {
 		const result = await api.createForumTopic(
@@ -405,9 +405,9 @@ async function cmdCreateTopic(
 		);
 
 		if (result.ok && result.result) {
-			console.log(`✅ Topic created successfully!`);
-			console.log(`   Thread ID: ${result.result.message_thread_id}`);
-			console.log(`   Name: ${name}`);
+			console.info(`✅ Topic created successfully!`);
+			console.info(`   Thread ID: ${result.result.message_thread_id}`);
+			console.info(`   Name: ${name}`);
 
 			await logger.log({
 				timestamp: new Date().toISOString(),
@@ -446,13 +446,13 @@ async function cmdEditTopic(
 		process.exit(1);
 	}
 
-	console.log(`✏️  Editing topic ${threadId}...`);
+	console.info(`✏️  Editing topic ${threadId}...`);
 
 	try {
 		const result = await api.editForumTopic(chatId, threadId, name, emoji);
 
 		if (result.ok) {
-			console.log(`✅ Topic updated successfully!`);
+			console.info(`✅ Topic updated successfully!`);
 
 			await logger.log({
 				timestamp: new Date().toISOString(),
@@ -479,13 +479,13 @@ async function cmdCloseTopic(
 	chatId: string,
 	threadId: number,
 ): Promise<void> {
-	console.log(`🔒 Closing topic ${threadId}...`);
+	console.info(`🔒 Closing topic ${threadId}...`);
 
 	try {
 		const result = await api.closeForumTopic(chatId, threadId);
 
 		if (result.ok) {
-			console.log(`✅ Topic closed successfully!`);
+			console.info(`✅ Topic closed successfully!`);
 
 			await logger.log({
 				timestamp: new Date().toISOString(),
@@ -512,13 +512,13 @@ async function cmdReopenTopic(
 	chatId: string,
 	threadId: number,
 ): Promise<void> {
-	console.log(`🔓 Reopening topic ${threadId}...`);
+	console.info(`🔓 Reopening topic ${threadId}...`);
 
 	try {
 		const result = await api.reopenForumTopic(chatId, threadId);
 
 		if (result.ok) {
-			console.log(`✅ Topic reopened successfully!`);
+			console.info(`✅ Topic reopened successfully!`);
 
 			await logger.log({
 				timestamp: new Date().toISOString(),
@@ -545,13 +545,13 @@ async function cmdDeleteTopic(
 	chatId: string,
 	threadId: number,
 ): Promise<void> {
-	console.log(`🗑️  Deleting topic ${threadId}...`);
+	console.info(`🗑️  Deleting topic ${threadId}...`);
 
 	try {
 		const result = await api.deleteForumTopic(chatId, threadId);
 
 		if (result.ok) {
-			console.log(`✅ Topic deleted successfully!`);
+			console.info(`✅ Topic deleted successfully!`);
 
 			await logger.log({
 				timestamp: new Date().toISOString(),
@@ -662,7 +662,7 @@ async function cmdCovertSteamSend(args: string[]): Promise<void> {
 		pinMessage,
 	};
 
-	console.log(`📤 Sending Covert Steam alert: ${eventIdentifier}...\n`);
+	console.info(`📤 Sending Covert Steam alert: ${eventIdentifier}...\n`);
 
 	try {
 		const result = await sendCovertSteamAlertToTelegram(
@@ -671,10 +671,10 @@ async function cmdCovertSteamSend(args: string[]): Promise<void> {
 		);
 
 		if (result.ok) {
-			console.log(`✅ Alert sent successfully!`);
-			console.log(`   Message ID: ${result.messageId}`);
-			console.log(`   Topic: ${topicId ?? COVERT_STEAM_DEFAULT_TOPIC_ID}`);
-			console.log(
+			console.info(`✅ Alert sent successfully!`);
+			console.info(`   Message ID: ${result.messageId}`);
+			console.info(`   Topic: ${topicId ?? COVERT_STEAM_DEFAULT_TOPIC_ID}`);
+			console.info(
 				`   Pinned: ${(pinMessage ?? (impactSeverityScore ?? 0) >= 9) ? "Yes" : "No"}`,
 			);
 		} else {
@@ -729,13 +729,13 @@ async function cmdCovertSteamFormat(args: string[]): Promise<void> {
 		const severityLevel = getCovertSteamSeverityLevel(impactSeverityScore ?? 0);
 		const severityEmoji = getCovertSteamSeverityEmoji(impactSeverityScore ?? 0);
 
-		console.log(`📋 Covert Steam Alert Preview\n`);
-		console.log(`Severity: ${severityLevel} ${severityEmoji}`);
-		console.log(`Event: ${eventIdentifier}`);
-		console.log(`Timestamp: ${new Date(detectionTimestamp).toISOString()}\n`);
-		console.log(`${"=".repeat(60)}`);
-		console.log(formattedMessage);
-		console.log(`${"=".repeat(60)}`);
+		console.info(`📋 Covert Steam Alert Preview\n`);
+		console.info(`Severity: ${severityLevel} ${severityEmoji}`);
+		console.info(`Event: ${eventIdentifier}`);
+		console.info(`Timestamp: ${new Date(detectionTimestamp).toISOString()}\n`);
+		console.info(`${"=".repeat(60)}`);
+		console.info(formattedMessage);
+		console.info(`${"=".repeat(60)}`);
 	} catch (error) {
 		console.error(`❌ Error formatting alert: ${(error as Error).message}`);
 		process.exit(1);
@@ -743,22 +743,22 @@ async function cmdCovertSteamFormat(args: string[]): Promise<void> {
 }
 
 async function cmdCovertSteamListTopics(): Promise<void> {
-	console.log(`📋 Available Telegram Topics for Covert Steam Alerts\n`);
+	console.info(`📋 Available Telegram Topics for Covert Steam Alerts\n`);
 
 	try {
 		const topicMappings = getAllMappings();
-		console.log(
+		console.info(
 			`Default Topic: Live Alerts (Topic ID: ${COVERT_STEAM_DEFAULT_TOPIC_ID})\n`,
 		);
-		console.log(`Available Topics:`);
+		console.info(`Available Topics:`);
 
 		for (const [name, threadId] of Object.entries(topicMappings)) {
 			const topicName =
 				TOPIC_NAMES[threadId as keyof typeof TOPIC_NAMES] || name;
-			console.log(`  • ${topicName} (Thread ID: ${threadId})`);
+			console.info(`  • ${topicName} (Thread ID: ${threadId})`);
 		}
 
-		console.log(
+		console.info(
 			`\n💡 Use --topic=<id> in send command to route to specific topic`,
 		);
 	} catch (error) {
@@ -768,7 +768,7 @@ async function cmdCovertSteamListTopics(): Promise<void> {
 }
 
 async function cmdCovertSteamTestCredentials(): Promise<void> {
-	console.log(`🔐 Testing Telegram Credentials...\n`);
+	console.info(`🔐 Testing Telegram Credentials...\n`);
 
 	try {
 		const { loadCovertSteamTelegramCredentials } = await import(
@@ -776,12 +776,12 @@ async function cmdCovertSteamTestCredentials(): Promise<void> {
 		);
 		const credentials = await loadCovertSteamTelegramCredentials();
 
-		console.log(`✅ Credentials loaded successfully!`);
-		console.log(
+		console.info(`✅ Credentials loaded successfully!`);
+		console.info(
 			`   Bot Token: ${credentials.botToken.substring(0, 10)}...${credentials.botToken.substring(credentials.botToken.length - 5)}`,
 		);
-		console.log(`   Chat ID: ${credentials.chatId}`);
-		console.log(`\n💡 Ready to send Covert Steam alerts`);
+		console.info(`   Chat ID: ${credentials.chatId}`);
+		console.info(`\n💡 Ready to send Covert Steam alerts`);
 	} catch (error) {
 		console.error(`❌ Failed to load credentials: ${(error as Error).message}`);
 		console.error(`\n💡 Set credentials using:`);
@@ -804,14 +804,14 @@ async function cmdCovertSteamSeverityInfo(
 		const severityEmoji = getCovertSteamSeverityEmoji(severityScore);
 		const willPin = severityScore >= 9;
 
-		console.log(`📊 Severity Analysis for Score: ${severityScore}\n`);
-		console.log(`Level: ${severityLevel} ${severityEmoji}`);
-		console.log(`Auto-Pin: ${willPin ? "Yes (CRITICAL threshold)" : "No"}\n`);
-		console.log(`Severity Thresholds:`);
-		console.log(`  • CRITICAL: >= 9 (auto-pinned)`);
-		console.log(`  • HIGH: >= 7 and < 9`);
-		console.log(`  • MEDIUM: >= 5 and < 7`);
-		console.log(`  • LOW: < 5`);
+		console.info(`📊 Severity Analysis for Score: ${severityScore}\n`);
+		console.info(`Level: ${severityLevel} ${severityEmoji}`);
+		console.info(`Auto-Pin: ${willPin ? "Yes (CRITICAL threshold)" : "No"}\n`);
+		console.info(`Severity Thresholds:`);
+		console.info(`  • CRITICAL: >= 9 (auto-pinned)`);
+		console.info(`  • HIGH: >= 7 and < 9`);
+		console.info(`  • MEDIUM: >= 5 and < 7`);
+		console.info(`  • LOW: < 5`);
 	} catch (error) {
 		console.error(`❌ Error analyzing severity: ${(error as Error).message}`);
 		process.exit(1);
@@ -819,7 +819,7 @@ async function cmdCovertSteamSeverityInfo(
 }
 
 function showHelp(): void {
-	console.log(`
+	console.info(`
 📱 Telegram Group Management CLI
 
 USAGE:

@@ -1,0 +1,16 @@
+id: no-double-cast
+snapshots:
+  const x = value as unknown as string:
+    fixed: const x = value
+    labels:
+    - source: value as unknown as string
+      style: primary
+      start: 10
+      end: 36
+  return data as unknown as MyType:
+    fixed: return data
+    labels:
+    - source: data as unknown as MyType
+      style: primary
+      start: 7
+      end: 32

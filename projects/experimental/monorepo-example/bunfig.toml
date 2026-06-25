@@ -1,6 +1,5 @@
 [install]
-# Strict dependency isolation — prevents phantom dependencies in workspaces
-linker = "isolated"
+# Install defaults inherited from ~/.bunfig.toml
 # Exact versions for reproducible builds across stuff-a/b/c
 exact = true
 # Don't save if we're just checking (CI optimization)
@@ -12,8 +11,7 @@ registry = "https://registry.factory-wager.com"
 "@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 
 [install.cache]
-# Standard location, but explicit for Docker/CI clarity
-dir = "~/.bun/install/cache"
+# dir: monorepo root bunfig.toml — use BUN_INSTALL_CACHE_DIR in CI
 # Only disable for debugging cache issues
 disable = false
 # Keep false to use cached versions (faster CI)

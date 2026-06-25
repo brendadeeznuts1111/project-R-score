@@ -94,7 +94,7 @@ export class AdvancedResearchOrchestrator {
 	 * Runs all detection and analysis components
 	 */
 	async analyzeEvent(eventId: string): Promise<ResearchReport> {
-		console.log(`🔬 Starting comprehensive analysis for event ${eventId}...`);
+		console.info(`🔬 Starting comprehensive analysis for event ${eventId}...`);
 
 		const report: ResearchReport = {
 			eventId,
@@ -189,7 +189,7 @@ export class AdvancedResearchOrchestrator {
 			console.error(`Error analyzing event ${eventId}:`, error);
 		}
 
-		console.log(`✅ Analysis complete for event ${eventId}`);
+		console.info(`✅ Analysis complete for event ${eventId}`);
 		return report;
 	}
 

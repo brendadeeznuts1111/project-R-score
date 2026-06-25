@@ -1,0 +1,23 @@
+{
+  "name": "@fire22/grid-ui",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Fire22 Package Review Grid with Bun JSX + CSS bundling",
+  "scripts": {
+    "dev": "bun --jsx-runtime=automatic --jsx-import-source=bun --serve public/index.html",
+    "build": "bun build dev.tsx --outdir dist --jsx-runtime=automatic --jsx-import-source=bun --target=browser",
+    "build:ssr": "bun build dev.tsx --outdir dist --jsx-runtime=automatic --jsx-import-source=bun --target=node"
+  },
+  "devDependencies": {
+    "@fire22/shared-styles": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "dev.tsx"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/@fire22/grid-ui"
+  }
+}

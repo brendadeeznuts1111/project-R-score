@@ -183,35 +183,35 @@ function bench(name: string, fn: () => void, iterations = 10000): BenchResult {
 }
 
 function runBenchmarks() {
-  console.log("\n🏃 Running Performance Benchmarks...\n");
-  console.log("═".repeat(70));
+  console.info("\n🏃 Running Performance Benchmarks...\n");
+  console.info("═".repeat(70));
 
   const results: { before: BenchResult; after: BenchResult; improvement: string }[] = [];
 
   // Benchmark 1: Path Parsing
-  console.log("\n📁 Path Parsing (split/slice/join vs lastIndexOf/substring)");
+  console.info("\n📁 Path Parsing (split/slice/join vs lastIndexOf/substring)");
   const pathBefore = bench("BEFORE", () => pathParsing_BEFORE(SAMPLE_PATHS));
   const pathAfter = bench("AFTER ", () => pathParsing_AFTER(SAMPLE_PATHS));
   const pathImprove = ((pathBefore.avgMs - pathAfter.avgMs) / pathBefore.avgMs * 100).toFixed(1);
   results.push({ before: pathBefore, after: pathAfter, improvement: `${pathImprove}%` });
 
   // Benchmark 2: Exec Flags Split
-  console.log("\n🔧 Exec Flags Split (split+map+filter vs regex split)");
+  console.info("\n🔧 Exec Flags Split (split+map+filter vs regex split)");
   const flagsBefore = bench("BEFORE", () => SAMPLE_METAS.forEach(m => splitExecFlags_BEFORE(m)));
   const flagsAfter = bench("AFTER ", () => SAMPLE_METAS.forEach(m => splitExecFlags_AFTER(m)));
   const flagsImprove = ((flagsBefore.avgMs - flagsAfter.avgMs) / flagsBefore.avgMs * 100).toFixed(1);
   results.push({ before: flagsBefore, after: flagsAfter, improvement: `${flagsImprove}%` });
 
   // Benchmark 3: Redaction (the big one)
-  console.log("\n🔐 Redaction (recompile patterns vs cached patterns)");
+  console.info("\n🔐 Redaction (recompile patterns vs cached patterns)");
   const redactBefore = bench("BEFORE", () => redactText_BEFORE(SENSITIVE_TEXTS), 1000);
   const redactAfter = bench("AFTER ", () => redactText_AFTER(SENSITIVE_TEXTS), 1000);
   const redactImprove = ((redactBefore.avgMs - redactAfter.avgMs) / redactBefore.avgMs * 100).toFixed(1);
   results.push({ before: redactBefore, after: redactAfter, improvement: `${redactImprove}%` });
 
   // Summary Table
-  console.log("\n" + "═".repeat(70));
-  console.log("\n📊 RESULTS SUMMARY\n");
+  console.info("\n" + "═".repeat(70));
+  console.info("\n📊 RESULTS SUMMARY\n");
 
   const tableData = results.map((r, i) => ({
     "#": i + 1,
@@ -222,15 +222,15 @@ function runBenchmarks() {
     "Speedup": `${(r.before.avgMs / r.after.avgMs).toFixed(2)}x`,
   }));
 
-  console.log(Bun.inspect.table(tableData, { colors: true }));
+  console.info(Bun.inspect.table(tableData, { colors: true }));
 
   // Overall summary
   const totalBefore = results.reduce((sum, r) => sum + r.before.avgMs, 0);
   const totalAfter = results.reduce((sum, r) => sum + r.after.avgMs, 0);
   const overallImprove = ((totalBefore - totalAfter) / totalBefore * 100).toFixed(1);
 
-  console.log(`\n✨ Overall improvement: ${overallImprove}% faster`);
-  console.log(`   Combined avg time: ${totalBefore.toFixed(4)}ms → ${totalAfter.toFixed(4)}ms\n`);
+  console.info(`\n✨ Overall improvement: ${overallImprove}% faster`);
+  console.info(`   Combined avg time: ${totalBefore.toFixed(4)}ms → ${totalAfter.toFixed(4)}ms\n`);
 
   return { results, overall: { before: totalBefore, after: totalAfter, improvement: overallImprove } };
 }

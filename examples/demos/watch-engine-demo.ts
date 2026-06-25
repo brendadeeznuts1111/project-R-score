@@ -66,22 +66,22 @@ const DEMO_SCENARIOS = [
  * Run a single watch scenario
  */
 async function runScenario(scenario: typeof DEMO_SCENARIOS[0]): Promise<string> {
-  console.log(`\n🎬 Starting scenario: ${scenario.name}`);
-  console.log(`📋 Pattern: ${scenario.pattern} → Script: ${scenario.script}`);
+  console.info(`\n🎬 Starting scenario: ${scenario.name}`);
+  console.info(`📋 Pattern: ${scenario.pattern} → Script: ${scenario.script}`);
   
   const sessionId = await createWatchSession(scenario.pattern, scenario.script, scenario.options);
   
   if (sessionId) {
-    console.log(`✅ Scenario started: ${sessionId}`);
+    console.info(`✅ Scenario started: ${sessionId}`);
     
     // Simulate some file changes to demonstrate adaptive debounce
     setTimeout(() => {
-      console.log(`🔄 Simulating file changes for ${scenario.pattern}...`);
+      console.info(`🔄 Simulating file changes for ${scenario.pattern}...`);
       // In a real scenario, actual file changes would trigger the watcher
     }, 2000);
     
   } else {
-    console.log(`❌ Failed to start scenario: ${scenario.name}`);
+    console.info(`❌ Failed to start scenario: ${scenario.name}`);
   }
   
   return sessionId;
@@ -91,8 +91,8 @@ async function runScenario(scenario: typeof DEMO_SCENARIOS[0]): Promise<string> 
  * Demonstrate concurrent watch sessions
  */
 async function runConcurrentDemo(): Promise<void> {
-  console.log('\n🚀 Starting Concurrent Watch Sessions Demo');
-  console.log('================================================');
+  console.info('\n🚀 Starting Concurrent Watch Sessions Demo');
+  console.info('================================================');
   
   // Start WebSocket dashboard
   startWebSocketDashboard(3001);
@@ -102,27 +102,27 @@ async function runConcurrentDemo(): Promise<void> {
     DEMO_SCENARIOS.map(scenario => runScenario(scenario))
   );
   
-  console.log('\n📊 All scenarios started. Dashboard available at http://localhost:3001');
-  console.log('⏱️ Running for 30 seconds to demonstrate features...');
+  console.info('\n📊 All scenarios started. Dashboard available at http://localhost:3001');
+  console.info('⏱️ Running for 30 seconds to demonstrate features...');
   
   // Let scenarios run for demonstration
   await new Promise(resolve => setTimeout(resolve, 30000));
   
   // Stop all sessions
-  console.log('\n🛑 Stopping all watch sessions...');
+  console.info('\n🛑 Stopping all watch sessions...');
   sessionIds.forEach(sessionId => {
     if (sessionId) stopWatchSession(sessionId);
   });
   
-  console.log('✅ Concurrent demo completed');
+  console.info('✅ Concurrent demo completed');
 }
 
 /**
  * Demonstrate adaptive debounce behavior
  */
 async function demonstrateAdaptiveDebounce(): Promise<void> {
-  console.log('\n⚡ Adaptive Debounce Demonstration');
-  console.log('=====================================');
+  console.info('\n⚡ Adaptive Debounce Demonstration');
+  console.info('=====================================');
   
   const sessionId = await createWatchSession('test-*', 'dev', {
     debounceMs: 100,
@@ -130,20 +130,20 @@ async function demonstrateAdaptiveDebounce(): Promise<void> {
   });
   
   if (!sessionId) {
-    console.log('❌ Failed to start adaptive debounce demo');
+    console.info('❌ Failed to start adaptive debounce demo');
     return;
   }
   
-  console.log('📈 Simulating rapid file changes...');
-  console.log('   Notice how the debounce adapts to burst patterns');
+  console.info('📈 Simulating rapid file changes...');
+  console.info('   Notice how the debounce adapts to burst patterns');
   
   // Simulate rapid changes (would normally be file system events)
   for (let i = 0; i < 10; i++) {
-    console.log(`   Simulated change ${i + 1}/10`);
+    console.info(`   Simulated change ${i + 1}/10`);
     await new Promise(resolve => setTimeout(resolve, 50));
   }
   
-  console.log('   ✅ Adaptive debounce handled burst efficiently');
+  console.info('   ✅ Adaptive debounce handled burst efficiently');
   
   await new Promise(resolve => setTimeout(resolve, 2000));
   stopWatchSession(sessionId);
@@ -153,12 +153,12 @@ async function demonstrateAdaptiveDebounce(): Promise<void> {
  * Demonstrate memory optimization
  */
 async function demonstrateMemoryOptimization(): Promise<void> {
-  console.log('\n💾 Memory Optimization Demonstration');
-  console.log('===================================');
+  console.info('\n💾 Memory Optimization Demonstration');
+  console.info('===================================');
   
   // Get initial memory
   const initialMem = process.memoryUsage();
-  console.log('📊 Initial memory:', {
+  console.info('📊 Initial memory:', {
     rss: Math.round(initialMem.rss / 1024 / 1024) + 'MB',
     heapUsed: Math.round(initialMem.heapUsed / 1024 / 1024) + 'MB'
   });
@@ -171,7 +171,7 @@ async function demonstrateMemoryOptimization(): Promise<void> {
   });
   
   if (!sessionId) {
-    console.log('❌ Failed to start memory optimization demo');
+    console.info('❌ Failed to start memory optimization demo');
     return;
   }
   
@@ -179,7 +179,7 @@ async function demonstrateMemoryOptimization(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 3000));
   
   const smolMem = process.memoryUsage();
-  console.log('📊 Memory with --smol:', {
+  console.info('📊 Memory with --smol:', {
     rss: Math.round(smolMem.rss / 1024 / 1024) + 'MB',
     heapUsed: Math.round(smolMem.heapUsed / 1024 / 1024) + 'MB'
   });
@@ -189,7 +189,7 @@ async function demonstrateMemoryOptimization(): Promise<void> {
     heapUsed: smolMem.heapUsed - initialMem.heapUsed
   };
   
-  console.log('📈 Memory impact:', {
+  console.info('📈 Memory impact:', {
     rss: Math.round(memoryDiff.rss / 1024 / 1024) + 'MB',
     heapUsed: Math.round(memoryDiff.heapUsed / 1024 / 1024) + 'MB'
   });
@@ -201,8 +201,8 @@ async function demonstrateMemoryOptimization(): Promise<void> {
  * Performance benchmark
  */
 async function runPerformanceBenchmark(): Promise<void> {
-  console.log('\n🏁 Performance Benchmark');
-  console.log('========================');
+  console.info('\n🏁 Performance Benchmark');
+  console.info('========================');
   
   const scenarios = [
     { packages: 1, name: 'Single Package' },
@@ -211,7 +211,7 @@ async function runPerformanceBenchmark(): Promise<void> {
   ];
   
   for (const scenario of scenarios) {
-    console.log(`\n📊 Testing ${scenario.name}...`);
+    console.info(`\n📊 Testing ${scenario.name}...`);
     
     const startTime = performance.now();
     
@@ -224,7 +224,7 @@ async function runPerformanceBenchmark(): Promise<void> {
     const setupTime = performance.now() - startTime;
     
     if (sessionId) {
-      console.log(`   ⚡ Setup time: ${setupTime.toFixed(0)}ms`);
+      console.info(`   ⚡ Setup time: ${setupTime.toFixed(0)}ms`);
       
       // Simulate some activity
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -233,23 +233,23 @@ async function runPerformanceBenchmark(): Promise<void> {
     }
   }
   
-  console.log('\n📈 Benchmark completed');
+  console.info('\n📈 Benchmark completed');
 }
 
 /**
  * Main demo runner
  */
 async function main(): Promise<void> {
-  console.log('🎯 Enhanced Watch Engine v3.14 Demo Suite');
-  console.log('==========================================');
-  console.log('Featuring:');
-  console.log('  ⚡ Adaptive debounce with burst detection');
-  console.log('  🏥 Health checks with automatic recovery');
-  console.log('  🌐 Real-time WebSocket dashboard');
-  console.log('  💾 Memory optimization (--smol mode)');
-  console.log('  🔥 Hot reload capabilities');
-  console.log('  🔍 Deep console inspection');
-  console.log('  📊 Performance monitoring');
+  console.info('🎯 Enhanced Watch Engine v3.14 Demo Suite');
+  console.info('==========================================');
+  console.info('Featuring:');
+  console.info('  ⚡ Adaptive debounce with burst detection');
+  console.info('  🏥 Health checks with automatic recovery');
+  console.info('  🌐 Real-time WebSocket dashboard');
+  console.info('  💾 Memory optimization (--smol mode)');
+  console.info('  🔥 Hot reload capabilities');
+  console.info('  🔍 Deep console inspection');
+  console.info('  📊 Performance monitoring');
   
   const demo = process.argv[2] || 'all';
   
@@ -272,19 +272,19 @@ async function main(): Promise<void> {
       
     case 'all':
     default:
-      console.log('\n🚀 Running complete demo suite...');
+      console.info('\n🚀 Running complete demo suite...');
       
       await demonstrateAdaptiveDebounce();
       await demonstrateMemoryOptimization();
       await runPerformanceBenchmark();
       await runConcurrentDemo();
       
-      console.log('\n🎉 All demos completed successfully!');
-      console.log('📁 Check the dashboard at http://localhost:3001 for live monitoring');
+      console.info('\n🎉 All demos completed successfully!');
+      console.info('📁 Check the dashboard at http://localhost:3001 for live monitoring');
       break;
   }
   
-  console.log('\n✨ Enhanced Watch Engine v3.14 - Production Ready! 🚀');
+  console.info('\n✨ Enhanced Watch Engine v3.14 - Production Ready! 🚀');
 }
 
 // Run demo if this file is executed directly

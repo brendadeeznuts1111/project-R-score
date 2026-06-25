@@ -310,22 +310,22 @@ async function main() {
     case 'list':
       const category = process.argv[3];
       const tools = await registry.getToolsByCategory(category);
-      console.log(`\n🚀 MCP TOOLS – BUN-POWERED *Scripts/CLI. Zero npm. EXE portable.*\n`);
-      console.log(registry.formatTable(tools));
-      console.log(`\n📊 Total: ${tools.length} tools`);
+      console.info(`\n🚀 MCP TOOLS – BUN-POWERED *Scripts/CLI. Zero npm. EXE portable.*\n`);
+      console.info(registry.formatTable(tools));
+      console.info(`\n📊 Total: ${tools.length} tools`);
       break;
 
     case 'validate':
       const validation = await registry.validateTools();
-      console.log(`📊 MCP Tools Validation:`);
-      console.log(`   📁 Available: ${validation.available}`);
-      console.log(`   ⚙️  Executable: ${validation.executable}`);
+      console.info(`📊 MCP Tools Validation:`);
+      console.info(`   📁 Available: ${validation.available}`);
+      console.info(`   ⚙️  Executable: ${validation.executable}`);
 
       if (validation.issues.length > 0) {
-        console.log('\n❌ Issues:');
-        validation.issues.forEach(issue => console.log(`   ${issue}`));
+        console.info('\n❌ Issues:');
+        validation.issues.forEach(issue => console.info(`   ${issue}`));
       } else {
-        console.log('✅ All tools valid!');
+        console.info('✅ All tools valid!');
       }
       break;
 
@@ -338,14 +338,14 @@ async function main() {
         tool.cli.toLowerCase().includes(pattern.toLowerCase())
       );
 
-      console.log(`🔍 MCP Tools matching "${pattern}":`);
+      console.info(`🔍 MCP Tools matching "${pattern}":`);
       matches.forEach(tool => {
-        console.log(`   ${tool.name}: ${tool.cli} - ${tool.purpose}`);
+        console.info(`   ${tool.name}: ${tool.cli} - ${tool.purpose}`);
       });
       break;
 
     default:
-      console.log(`🚀 MCP Tools Registry
+      console.info(`🚀 MCP Tools Registry
 
 USAGE:
   bun mcp:list [category]    # List all tools (filter by category)

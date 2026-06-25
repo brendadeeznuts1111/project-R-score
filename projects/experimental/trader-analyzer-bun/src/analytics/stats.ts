@@ -23,9 +23,9 @@ import type {
  *
  * @example
  * const stats = calculateStats(trades, orders);
- * console.log(`Win Rate: ${stats.winRate.toFixed(1)}%`);
- * console.log(`Profit Factor: ${stats.profitFactor.toFixed(2)}`);
- * console.log(`Total PnL: ${stats.totalPnl.toFixed(4)}`);
+ * console.info(`Win Rate: ${stats.winRate.toFixed(1)}%`);
+ * console.info(`Profit Factor: ${stats.profitFactor.toFixed(2)}`);
+ * console.info(`Total PnL: ${stats.totalPnl.toFixed(4)}`);
  */
 export function calculateStats(
 	trades: Trade[],
@@ -274,7 +274,7 @@ function calculateMonthlyPnl(trades: Trade[], pnls: number[]): MonthlyPnl[] {
  * @example
  * const sessions = calculatePositionSessions(trades);
  * sessions.forEach(s => {
- *   console.log(`${s.side} ${s.symbol}: ${s.realizedPnl.toFixed(4)}`);
+ *   console.info(`${s.side} ${s.symbol}: ${s.realizedPnl.toFixed(4)}`);
  * });
  */
 export function calculatePositionSessions(trades: Trade[]): PositionSession[] {
@@ -362,7 +362,7 @@ export function calculatePositionSessions(trades: Trade[]): PositionSession[] {
  *
  * @example
  * const curve = calculateEquityCurve(trades);
- * curve.forEach(p => console.log(`${new Date(p.time * 1000)}: ${p.balance}`));
+ * curve.forEach(p => console.info(`${new Date(p.time * 1000)}: ${p.balance}`));
  */
 export function calculateEquityCurve(
 	trades: Trade[],

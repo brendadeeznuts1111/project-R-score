@@ -345,7 +345,7 @@ function generateMermaidTree(node: TreeNode, parentId = "root"): string {
  * Test isolated installs properties
  */
 async function testIsolatedInstalls() {
-	console.log(`${COLORS.bold}${COLORS.info.ansi}Testing Isolated Installs Properties${COLORS.reset}\n`);
+	console.info(`${COLORS.bold}${COLORS.info.ansi}Testing Isolated Installs Properties${COLORS.reset}\n`);
 	
 	const tests = [
 		{
@@ -399,21 +399,21 @@ async function testIsolatedInstalls() {
 		try {
 			const result = await test.test();
 			const status = result.pass ? `${COLORS.success.ansi}✅${COLORS.reset}` : `${COLORS.warning.ansi}⚠️${COLORS.reset}`;
-			console.log(`${status} ${test.name}: ${result.message}`);
+			console.info(`${status} ${test.name}: ${result.message}`);
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
-			console.log(`${COLORS.error.ansi}❌${COLORS.reset} ${test.name}: ${message}`);
+			console.info(`${COLORS.error.ansi}❌${COLORS.reset} ${test.name}: ${message}`);
 		}
 	}
 	
-	console.log("");
+	console.info("");
 }
 
 /**
  * Display color scheme
  */
 function displayColorScheme() {
-	console.log(`${COLORS.bold}Color Scheme (Hex → ANSI)${COLORS.reset}\n`);
+	console.info(`${COLORS.bold}Color Scheme (Hex → ANSI)${COLORS.reset}\n`);
 	
 	const colorTypes = [
 		{ name: "Store", color: COLORS.store },
@@ -424,10 +424,10 @@ function displayColorScheme() {
 	];
 	
 	for (const { name, color } of colorTypes) {
-		console.log(`${color.ansi}${name.padEnd(12)}${COLORS.reset} Hex: ${color.hex} ANSI: ${color.ansi}sample${COLORS.reset}`);
+		console.info(`${color.ansi}${name.padEnd(12)}${COLORS.reset} Hex: ${color.hex} ANSI: ${color.ansi}sample${COLORS.reset}`);
 	}
 	
-	console.log("");
+	console.info("");
 }
 
 /**
@@ -657,50 +657,50 @@ if (isInteractive) {
 				const property = process.argv[5];
 				const json = process.argv.includes("--json");
 				const info = await getPackageInfo(arg, property, json);
-				console.log(JSON.stringify(info));
+				console.info(JSON.stringify(info));
 			} else {
-				console.log(JSON.stringify({ error: "Package name required" }));
+				console.info(JSON.stringify({ error: "Package name required" }));
 			}
 			break;
 		case "pkg-get":
 			if (arg) {
 				const result = await getPackageProperty(arg);
-				console.log(JSON.stringify(result));
+				console.info(JSON.stringify(result));
 			} else {
 				const result = await getPackageProperty("");
-				console.log(JSON.stringify(result));
+				console.info(JSON.stringify(result));
 			}
 			break;
 		case "pkg-set":
 			if (arg && process.argv[5]) {
 				const result = await setPackageProperty(arg, process.argv[5]);
-				console.log(JSON.stringify(result));
+				console.info(JSON.stringify(result));
 			} else {
-				console.log(JSON.stringify({ error: "Property and value required" }));
+				console.info(JSON.stringify({ error: "Property and value required" }));
 			}
 			break;
 		case "pkg-delete":
 			if (arg) {
 				const result = await deletePackageProperty(arg);
-				console.log(JSON.stringify(result));
+				console.info(JSON.stringify(result));
 			} else {
-				console.log(JSON.stringify({ error: "Property required" }));
+				console.info(JSON.stringify({ error: "Property required" }));
 			}
 			break;
 		case "pkg-fix":
 			const result = await fixPackageJson();
-			console.log(JSON.stringify(result));
+			console.info(JSON.stringify(result));
 			break;
 		case "pm":
 			if (arg && process.argv[5]) {
 				const pmArgs = process.argv.slice(5);
 				const pmResult = await runBunPmCommand(arg, pmArgs);
-				console.log(JSON.stringify(pmResult));
+				console.info(JSON.stringify(pmResult));
 			} else if (arg) {
 				const pmResult = await runBunPmCommand(arg);
-				console.log(JSON.stringify(pmResult));
+				console.info(JSON.stringify(pmResult));
 			} else {
-				console.log(JSON.stringify({ error: "Command required" }));
+				console.info(JSON.stringify({ error: "Command required" }));
 			}
 			break;
 		case "patch":
@@ -709,19 +709,19 @@ if (isInteractive) {
 				const patchesDirIndex = process.argv.indexOf("--patches-dir");
 				const patchesDir = patchesDirIndex !== -1 && patchesDirIndex + 1 < process.argv.length ? process.argv[patchesDirIndex + 1] : undefined;
 				const patchResult = await runPatch(arg, commit, patchesDir);
-				console.log(JSON.stringify(patchResult));
+				console.info(JSON.stringify(patchResult));
 			} else {
-				console.log(JSON.stringify({ error: "Package name required" }));
+				console.info(JSON.stringify({ error: "Package name required" }));
 			}
 			break;
 		case "tree":
-			console.log(JSON.stringify({ tree: generateIsolatedTree() }));
+			console.info(JSON.stringify({ tree: generateIsolatedTree() }));
 			break;
 		case "mermaid":
-			console.log(JSON.stringify({ mermaid: generateMermaidTree(generateIsolatedTree()) }));
+			console.info(JSON.stringify({ mermaid: generateMermaidTree(generateIsolatedTree()) }));
 			break;
 		default:
-			console.log(JSON.stringify({ error: "Unknown action" }));
+			console.info(JSON.stringify({ error: "Unknown action" }));
 	}
 	process.exit(0);
 }
@@ -729,24 +729,24 @@ if (isInteractive) {
 switch (command) {
 	case "tree":
 	case "ansi":
-		console.log(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs Tree Structure${COLORS.reset}\n`);
-		console.log(renderAnsiTree(generateIsolatedTree()));
+		console.info(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs Tree Structure${COLORS.reset}\n`);
+		console.info(renderAnsiTree(generateIsolatedTree()));
 		break;
 		
 	case "hoisted":
-		console.log(`${COLORS.bold}${COLORS.secondary.ansi}Hoisted Installs Tree Structure${COLORS.reset}\n`);
-		console.log(renderAnsiTree(generateHoistedTree()));
+		console.info(`${COLORS.bold}${COLORS.secondary.ansi}Hoisted Installs Tree Structure${COLORS.reset}\n`);
+		console.info(renderAnsiTree(generateHoistedTree()));
 		break;
 		
 	case "compare":
-		console.log(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs${COLORS.reset}\n`);
-		console.log(renderAnsiTree(generateIsolatedTree()));
-		console.log(`\n${COLORS.bold}${COLORS.secondary.ansi}Hoisted Installs${COLORS.reset}\n`);
-		console.log(renderAnsiTree(generateHoistedTree()));
+		console.info(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs${COLORS.reset}\n`);
+		console.info(renderAnsiTree(generateIsolatedTree()));
+		console.info(`\n${COLORS.bold}${COLORS.secondary.ansi}Hoisted Installs${COLORS.reset}\n`);
+		console.info(renderAnsiTree(generateHoistedTree()));
 		break;
 		
 	case "mermaid":
-		console.log(generateMermaidTree(generateIsolatedTree()));
+		console.info(generateMermaidTree(generateIsolatedTree()));
 		break;
 		
 	case "test":
@@ -758,36 +758,36 @@ switch (command) {
 		break;
 		
 	case "all":
-		console.log(`${COLORS.bold}${COLORS.primary.ansi}Complete Isolated Installs Visualization${COLORS.reset}\n`);
+		console.info(`${COLORS.bold}${COLORS.primary.ansi}Complete Isolated Installs Visualization${COLORS.reset}\n`);
 		displayColorScheme();
-		console.log(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs Tree${COLORS.reset}\n`);
-		console.log(renderAnsiTree(generateIsolatedTree()));
-		console.log(`\n${COLORS.bold}${COLORS.secondary.ansi}Mermaid Diagram${COLORS.reset}\n`);
-		console.log(generateMermaidTree(generateIsolatedTree()));
-		console.log(`\n${COLORS.bold}${COLORS.info.ansi}Tests${COLORS.reset}\n`);
+		console.info(`${COLORS.bold}${COLORS.primary.ansi}Isolated Installs Tree${COLORS.reset}\n`);
+		console.info(renderAnsiTree(generateIsolatedTree()));
+		console.info(`\n${COLORS.bold}${COLORS.secondary.ansi}Mermaid Diagram${COLORS.reset}\n`);
+		console.info(generateMermaidTree(generateIsolatedTree()));
+		console.info(`\n${COLORS.bold}${COLORS.info.ansi}Tests${COLORS.reset}\n`);
 		await testIsolatedInstalls();
 		break;
 		
 	case "help":
 	default:
-		console.log(`${COLORS.bold}${COLORS.primary.ansi}Bun Isolated Installs Visualizer${COLORS.reset}\n`);
-		console.log("Usage:");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts tree      # ANSI tree (isolated)");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts hoisted     # ANSI tree (hoisted)");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts compare    # Compare both");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts mermaid    # Mermaid diagram");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts test       # Test properties");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts colors     # Show color scheme");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts all        # Show everything");
-		console.log("\nInteractive Mode:");
-		console.log("  bun run examples/bun-isolated-installs-visualizer.ts --interactive <action> [args...]");
-		console.log("  Actions: info, pkg-get, pkg-set, pkg-delete, pkg-fix, pm, patch, tree, mermaid");
-		console.log("\nDocumentation:");
-		console.log("  📚 docs/BUN-ISOLATED-INSTALLS.md - Complete isolated installs guide");
-		console.log("  📚 docs/BUN-PM.md - All bun pm commands");
-		console.log("  📚 docs/BUN-PATCH.md - Package patching guide");
-		console.log("  🌐 examples/bun-isolated-installs-interactive.html - Interactive visualizer");
-		console.log("  📋 examples/COMMANDS.md - All commands reference");
+		console.info(`${COLORS.bold}${COLORS.primary.ansi}Bun Isolated Installs Visualizer${COLORS.reset}\n`);
+		console.info("Usage:");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts tree      # ANSI tree (isolated)");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts hoisted     # ANSI tree (hoisted)");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts compare    # Compare both");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts mermaid    # Mermaid diagram");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts test       # Test properties");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts colors     # Show color scheme");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts all        # Show everything");
+		console.info("\nInteractive Mode:");
+		console.info("  bun run examples/bun-isolated-installs-visualizer.ts --interactive <action> [args...]");
+		console.info("  Actions: info, pkg-get, pkg-set, pkg-delete, pkg-fix, pm, patch, tree, mermaid");
+		console.info("\nDocumentation:");
+		console.info("  📚 docs/BUN-ISOLATED-INSTALLS.md - Complete isolated installs guide");
+		console.info("  📚 docs/BUN-PM.md - All bun pm commands");
+		console.info("  📚 docs/BUN-PATCH.md - Package patching guide");
+		console.info("  🌐 examples/bun-isolated-installs-interactive.html - Interactive visualizer");
+		console.info("  📋 examples/COMMANDS.md - All commands reference");
 		break;
 }
 

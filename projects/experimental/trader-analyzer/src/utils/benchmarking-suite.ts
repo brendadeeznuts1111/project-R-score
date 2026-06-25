@@ -126,7 +126,7 @@ export async function compareOperations(
 
 	results.sort((a, b) => parseFloat(a.avgPerOp) - parseFloat(b.avgPerOp));
 
-	console.log(
+	console.info(
 		Bun.inspect.table(results, {
 			title: 'Operation Performance Comparison',
 			colors: true,

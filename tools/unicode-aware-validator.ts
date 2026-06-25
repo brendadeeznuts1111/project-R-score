@@ -11,64 +11,70 @@ const options = {
   ascii: args.includes('--ascii-only'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
-  console.log(`${colors.cyan}🔍 Unicode-Aware URL Validator${colors.reset}`);
-  console.log('');
-  console.log('Usage: bun unicode-aware-validator.ts [options]');
-  console.log('');
-  console.log('Options:');
-  console.log('  -v, --verbose         Verbose output with detailed information');
-  console.log('  -q, --quiet           Quiet mode with minimal output');
-  console.log('  --unicode             Enable Unicode character support');
-  console.log('  --strict              Strict Unicode validation');
-  console.log('  --ascii-only          Allow ASCII characters only');
-  console.log('  --json                Output results in JSON format');
-  console.log('  --no-color            Disable colored output');
-  console.log('  -h, --help            Show this help message');
-  console.log('');
-  console.log('Examples:');
-  console.log('  bun unicode-aware-validator.ts --unicode');
-  console.log('  bun unicode-aware-validator.ts --strict --verbose');
-  console.log('  bun unicode-aware-validator.ts --ascii-only');
+  console.info(`${colors.cyan}🔍 Unicode-Aware URL Validator${colors.reset}`);
+  console.info('');
+  console.info('Usage: bun unicode-aware-validator.ts [options]');
+  console.info('');
+  console.info('Options:');
+  console.info('  -v, --verbose         Verbose output with detailed information');
+  console.info('  -q, --quiet           Quiet mode with minimal output');
+  console.info('  --unicode             Enable Unicode character support');
+  console.info('  --strict              Strict Unicode validation');
+  console.info('  --ascii-only          Allow ASCII characters only');
+  console.info('  --json                Output results in JSON format');
+  console.info('  --no-color            Disable colored output');
+  console.info('  -h, --help            Show this help message');
+  console.info('');
+  console.info('Examples:');
+  console.info('  bun unicode-aware-validator.ts --unicode');
+  console.info('  bun unicode-aware-validator.ts --strict --verbose');
+  console.info('  bun unicode-aware-validator.ts --ascii-only');
   process.exit(0);
 }
 
 // Logging utilities
 const log = {
-  info: (msg: string) => !options.quiet && console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.log(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.log(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.log(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.log(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.log(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.log(JSON.stringify(data, null, 2))
+  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -79,8 +85,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -89,7 +95,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -134,19 +140,19 @@ function getUnicodeInfo(str: string): {
         const code = char.charCodeAt(0);
         let range = 'Unknown';
 
-        if (code >= 0x00C0 && code <= 0x00FF) range = 'Latin-1 Supplement';
-        else if (code >= 0x0100 && code <= 0x017F) range = 'Latin Extended-A';
-        else if (code >= 0x0400 && code <= 0x04FF) range = 'Cyrillic';
-        else if (code >= 0x0590 && code <= 0x05FF) range = 'Hebrew';
-        else if (code >= 0x0600 && code <= 0x06FF) range = 'Arabic';
-        else if (code >= 0x4E00 && code <= 0x9FFF) range = 'CJK Unified Ideographs';
-        else if (code >= 0x3040 && code <= 0x309F) range = 'Hiragana';
-        else if (code >= 0x30A0 && code <= 0x30FF) range = 'Katakana';
-        else if (code >= 0x1F600 && code <= 0x1F64F) range = 'Emoticons';
-        else if (code >= 0x1F300 && code <= 0x1F5FF) range = 'Misc Symbols';
-        else if (code >= 0x1F680 && code <= 0x1F6FF) range = 'Transport and Map';
-        else if (code >= 0x2600 && code <= 0x26FF) range = 'Misc Symbols';
-        else if (code >= 0x2700 && code <= 0x27BF) range = 'Dingbats';
+        if (code >= 0x00c0 && code <= 0x00ff) range = 'Latin-1 Supplement';
+        else if (code >= 0x0100 && code <= 0x017f) range = 'Latin Extended-A';
+        else if (code >= 0x0400 && code <= 0x04ff) range = 'Cyrillic';
+        else if (code >= 0x0590 && code <= 0x05ff) range = 'Hebrew';
+        else if (code >= 0x0600 && code <= 0x06ff) range = 'Arabic';
+        else if (code >= 0x4e00 && code <= 0x9fff) range = 'CJK Unified Ideographs';
+        else if (code >= 0x3040 && code <= 0x309f) range = 'Hiragana';
+        else if (code >= 0x30a0 && code <= 0x30ff) range = 'Katakana';
+        else if (code >= 0x1f600 && code <= 0x1f64f) range = 'Emoticons';
+        else if (code >= 0x1f300 && code <= 0x1f5ff) range = 'Misc Symbols';
+        else if (code >= 0x1f680 && code <= 0x1f6ff) range = 'Transport and Map';
+        else if (code >= 0x2600 && code <= 0x26ff) range = 'Misc Symbols';
+        else if (code >= 0x2700 && code <= 0x27bf) range = 'Dingbats';
 
         if (!unicodeRanges.includes(range)) {
           unicodeRanges.push(range);
@@ -162,7 +168,7 @@ function getUnicodeInfo(str: string): {
     unicodeRanges,
     byteLength: new TextEncoder().encode(str).length,
     charLength: str.length,
-    encoded: encodeURIComponent(str)
+    encoded: encodeURIComponent(str),
   };
 }
 
@@ -218,7 +224,7 @@ function validateURLUnicode(url: string): {
         subpathUnicodeInfos.push({
           subpath,
           index,
-          ...subpathUnicodeInfo
+          ...subpathUnicodeInfo,
         });
 
         // Length validation
@@ -240,11 +246,15 @@ function validateURLUnicode(url: string): {
             if (options.strict) {
               // Strict mode: only allow certain Unicode ranges
               const allowedRanges = ['Latin-1 Supplement', 'Latin Extended-A'];
-              const hasInvalidRange = subpathUnicodeInfo.unicodeRanges.some(range => !allowedRanges.includes(range));
+              const hasInvalidRange = subpathUnicodeInfo.unicodeRanges.some(
+                range => !allowedRanges.includes(range)
+              );
 
               if (hasInvalidRange) {
                 subpathValid = false;
-                errors.push(`Unicode range not allowed in subpath: ${subpathUnicodeInfo.unicodeRanges.join(', ')}`);
+                errors.push(
+                  `Unicode range not allowed in subpath: ${subpathUnicodeInfo.unicodeRanges.join(', ')}`
+                );
               }
             }
 
@@ -297,11 +307,15 @@ function validateURLUnicode(url: string): {
           if (options.strict) {
             // Strict mode: only allow certain Unicode ranges
             const allowedRanges = ['Latin-1 Supplement', 'Latin Extended-A'];
-            const hasInvalidRange = fragmentUnicodeInfo.unicodeRanges.some(range => !allowedRanges.includes(range));
+            const hasInvalidRange = fragmentUnicodeInfo.unicodeRanges.some(
+              range => !allowedRanges.includes(range)
+            );
 
             if (hasInvalidRange) {
               fragmentValid = false;
-              errors.push(`Unicode range not allowed in fragment: ${fragmentUnicodeInfo.unicodeRanges.join(', ')}`);
+              errors.push(
+                `Unicode range not allowed in fragment: ${fragmentUnicodeInfo.unicodeRanges.join(', ')}`
+              );
             }
           }
 
@@ -328,7 +342,7 @@ function validateURLUnicode(url: string): {
       unicodeInfo: {
         overall: overallUnicodeInfo,
         subpaths: subpathUnicodeInfos,
-        fragment: fragmentUnicodeInfo
+        fragment: fragmentUnicodeInfo,
       },
       protocol: parsed.protocol,
       hostname: parsed.hostname,
@@ -336,9 +350,8 @@ function validateURLUnicode(url: string): {
       subpaths,
       fragment: hasFragment ? parsed.hash.slice(1) : undefined,
       errors,
-      warnings
+      warnings,
     };
-
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
@@ -351,25 +364,25 @@ function validateURLUnicode(url: string): {
       unicodeInfo: {
         overall: getUnicodeInfo(url),
         subpaths: [],
-        fragment: undefined
+        fragment: undefined,
       },
       protocol: '',
       hostname: '',
       pathname: '',
       subpaths: [],
       errors: [error.message],
-      warnings
+      warnings,
     };
   }
 }
 
 // Main validation function
 async function runUnicodeValidation() {
-  console.log(`${colors.cyan}🔍 Unicode-Aware URL Validator${colors.reset}`);
+  console.info(`${colors.cyan}🔍 Unicode-Aware URL Validator${colors.reset}`);
 
   const mode = options.asciiOnly ? 'ASCII-Only' : options.unicode ? 'Unicode-Enabled' : 'Standard';
   const strictness = options.strict ? ' (Strict)' : '';
-  console.log(`${colors.gray}Mode: ${mode}${strictness}${colors.reset}\n`);
+  console.info(`${colors.gray}Mode: ${mode}${strictness}${colors.reset}\n`);
 
   const startTime = Date.now();
 
@@ -413,7 +426,7 @@ async function runUnicodeValidation() {
       '/docs/api/utils#résumé',
       '/docs/api/utils#Москва',
       '/docs/api/utils#العربية',
-      '/docs/api/utils#🔥💧🌍'
+      '/docs/api/utils#🔥💧🌍',
     ];
 
     unicodeTestURLs.forEach((url, index) => {
@@ -438,7 +451,7 @@ async function runUnicodeValidation() {
       ranges: new Set<string>(),
       chars: new Set<string>(),
       subpathsWithUnicode: 0,
-      fragmentsWithUnicode: 0
+      fragmentsWithUnicode: 0,
     };
 
     allURLs.forEach(url => {
@@ -456,7 +469,9 @@ async function runUnicodeValidation() {
         urlsWithUnicode++;
 
         // Track Unicode ranges and characters
-        validation.unicodeInfo.overall.unicodeRanges.forEach(range => unicodeSummary.ranges.add(range));
+        validation.unicodeInfo.overall.unicodeRanges.forEach(range =>
+          unicodeSummary.ranges.add(range)
+        );
         validation.unicodeInfo.overall.unicodeChars.forEach(char => unicodeSummary.chars.add(char));
       } else {
         asciiOnlyURLs++;
@@ -474,14 +489,16 @@ async function runUnicodeValidation() {
       }
     });
 
-    recordTest('unicode-aware-validation', invalidURLs === 0,
+    recordTest(
+      'unicode-aware-validation',
+      invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
       {
         validURLs,
         invalidURLs,
         totalURLs: allURLs.length,
         urlsWithUnicode,
-        asciiOnlyURLs
+        asciiOnlyURLs,
       }
     );
 
@@ -527,22 +544,26 @@ async function runUnicodeValidation() {
 
       unicodeTestURLs.forEach((url, index) => {
         const validation = validationResults[url];
-        console.log(`\n${colors.cyan}${index + 1}. ${url}${colors.reset}`);
-        console.log(`   Valid: ${validation.isValid ? '✅' : '❌'}`);
-        console.log(`   Has Unicode: ${validation.unicodeInfo.overall.hasUnicode}`);
+        console.info(`\n${colors.cyan}${index + 1}. ${url}${colors.reset}`);
+        console.info(`   Valid: ${validation.isValid ? '✅' : '❌'}`);
+        console.info(`   Has Unicode: ${validation.unicodeInfo.overall.hasUnicode}`);
 
         if (validation.unicodeInfo.overall.hasUnicode) {
-          console.log(`   Unicode Ranges: ${validation.unicodeInfo.overall.unicodeRanges.join(', ')}`);
-          console.log(`   Unicode Chars: [${validation.unicodeInfo.overall.unicodeChars.join(', ')}]`);
-          console.log(`   Encoded: ${validation.unicodeInfo.overall.encoded}`);
+          console.info(
+            `   Unicode Ranges: ${validation.unicodeInfo.overall.unicodeRanges.join(', ')}`
+          );
+          console.info(
+            `   Unicode Chars: [${validation.unicodeInfo.overall.unicodeChars.join(', ')}]`
+          );
+          console.info(`   Encoded: ${validation.unicodeInfo.overall.encoded}`);
         }
 
         if (validation.errors.length > 0) {
-          console.log(`   Errors: ${validation.errors.join(', ')}`);
+          console.info(`   Errors: ${validation.errors.join(', ')}`);
         }
 
         if (validation.warnings.length > 0) {
-          console.log(`   Warnings: ${validation.warnings.join(', ')}`);
+          console.info(`   Warnings: ${validation.warnings.join(', ')}`);
         }
       });
     }
@@ -556,12 +577,12 @@ async function runUnicodeValidation() {
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
 
-    console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
-    console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
-    console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
-    console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
-    console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
-    console.log(`${colors.magenta}Mode:${colors.reset} ${mode}${strictness}`);
+    console.info(`${colors.white}Total Tests:${colors.reset} ${total}`);
+    console.info(`${colors.green}Passed:${colors.reset} ${passed}`);
+    console.info(`${colors.red}Failed:${colors.reset} ${failed}`);
+    console.info(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
+    console.info(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
+    console.info(`${colors.magenta}Mode:${colors.reset} ${mode}${strictness}`);
 
     // Output JSON if requested
     if (options.json) {
@@ -573,22 +594,23 @@ async function runUnicodeValidation() {
           ranges: Array.from(unicodeSummary.ranges),
           chars: Array.from(unicodeSummary.chars),
           subpathsWithUnicode: unicodeSummary.subpathsWithUnicode,
-          fragmentsWithUnicode: unicodeSummary.fragmentsWithUnicode
+          fragmentsWithUnicode: unicodeSummary.fragmentsWithUnicode,
         },
         mode: options.asciiOnly ? 'ascii-only' : options.unicode ? 'unicode-enabled' : 'standard',
-        strict: options.strict
+        strict: options.strict,
       });
     }
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.log(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
+      console.info(
+        `\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`
+      );
       process.exit(1);
     } else {
-      console.log(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
+      console.info(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {
@@ -599,12 +621,12 @@ async function runUnicodeValidation() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

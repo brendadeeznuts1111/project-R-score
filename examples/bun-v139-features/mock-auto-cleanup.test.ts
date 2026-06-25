@@ -7,7 +7,7 @@
 
 import { describe, test, expect, spyOn, mock, beforeEach, afterEach } from "bun:test";
 
-console.log("🧪 Bun v1.3.9: Test Mock Auto-Cleanup Demo\n");
+console.info("🧪 Bun v1.3.9: Test Mock Auto-Cleanup Demo\n");
 
 // Example service for demonstration
 class UserService {
@@ -27,7 +27,7 @@ class UserService {
 
 class Logger {
   static log(message: string): void {
-    console.log(`[LOG] ${message}`);
+    console.info(`[LOG] ${message}`);
   }
 
   static error(message: string): void {
@@ -201,7 +201,7 @@ describe("Bun v1.3.9 Mock Auto-Cleanup Patterns", () => {
     test("Logger methods spied and restored", () => {
       const originalLog = console.log;
       
-      using logSpy = spyOn(console, "log");
+      using logSpy = spyOn(console, 'info');
       using errorSpy = spyOn(console, "error");
       
       Logger.log("test message");
@@ -261,7 +261,7 @@ describe("Bun v1.3.9 Mock Auto-Cleanup Patterns", () => {
 // ============================================================================
 // Summary Output
 // ============================================================================
-console.log(`
+console.info(`
 ${"=".repeat(70)}
 📝 MIGRATION GUIDE: Manual → Auto-Cleanup
 ${"=".repeat(70)}

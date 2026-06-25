@@ -36,7 +36,7 @@ class StreamProcessor {
   }
 
   public async start(): Promise<void> {
-    console.log('Starting Stream Processor...');
+    console.info('Starting Stream Processor...');
 
     try {
       // Start WebSocket server
@@ -48,7 +48,7 @@ class StreamProcessor {
       // Start processing loops
       this.startProcessingLoops();
 
-      console.log('Stream Processor started successfully');
+      console.info('Stream Processor started successfully');
     } catch (error) {
       console.error('Failed to start Stream Processor:', error);
       throw error;
@@ -96,7 +96,7 @@ class StreamProcessor {
           await this.handleUnsubscription(message.data);
           break;
         default:
-          console.log(`Unknown message type: ${message.type}`);
+          console.info(`Unknown message type: ${message.type}`);
       }
     } catch (error) {
       console.error('Error handling WebSocket message:', error);
@@ -173,7 +173,7 @@ class StreamProcessor {
 
   private async handleSubscription(subscriptionData: any): Promise<void> {
     // Handle subscription logic
-    console.log('Subscription received:', subscriptionData);
+    console.info('Subscription received:', subscriptionData);
 
     this.wsServer.broadcast({
       type: 'subscription-confirmed',
@@ -185,7 +185,7 @@ class StreamProcessor {
 
   private async handleUnsubscription(unsubscriptionData: any): Promise<void> {
     // Handle unsubscription logic
-    console.log('Unsubscription received:', unsubscriptionData);
+    console.info('Unsubscription received:', unsubscriptionData);
 
     this.wsServer.broadcast({
       type: 'unsubscription-confirmed',
@@ -218,11 +218,11 @@ class StreamProcessor {
   }
 
   public async stop(): Promise<void> {
-    console.log('Stopping Stream Processor...');
+    console.info('Stopping Stream Processor...');
 
     this.wsServer.stop();
 
-    console.log('Stream Processor stopped');
+    console.info('Stream Processor stopped');
   }
 }
 
@@ -231,13 +231,13 @@ const processor = new StreamProcessor();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('Received SIGINT, shutting down gracefully...');
+  console.info('Received SIGINT, shutting down gracefully...');
   await processor.stop();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('Received SIGTERM, shutting down gracefully...');
+  console.info('Received SIGTERM, shutting down gracefully...');
   await processor.stop();
   process.exit(0);
 });

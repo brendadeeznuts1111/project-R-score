@@ -64,7 +64,7 @@ export async function initializeDisputeSystem(config: {
     pass: string;
   };
 }) {
-  console.log("🚀 Initializing Venmo QR Code Dispute Handling System...");
+  console.info("🚀 Initializing Venmo QR Code Dispute Handling System...");
   
   // Initialize database
   const db = new DisputeDatabase(config.databasePath);
@@ -75,14 +75,14 @@ export async function initializeDisputeSystem(config: {
   const analytics = new DisputeAnalyticsDashboard();
   const qrGenerator = new DisputePreventionQRGenerator();
   
-  console.log("✅ Dispute system initialized successfully!");
-  console.log("📊 Available services:");
-  console.log("   - Dispute Management");
-  console.log("   - Fraud Detection");
-  console.log("   - Analytics Dashboard");
-  console.log("   - QR Code Prevention");
-  console.log("   - Email Notifications");
-  console.log("   - Venmo Integration");
+  console.info("✅ Dispute system initialized successfully!");
+  console.info("📊 Available services:");
+  console.info("   - Dispute Management");
+  console.info("   - Fraud Detection");
+  console.info("   - Analytics Dashboard");
+  console.info("   - QR Code Prevention");
+  console.info("   - Email Notifications");
+  console.info("   - Venmo Integration");
   
   return {
     db,

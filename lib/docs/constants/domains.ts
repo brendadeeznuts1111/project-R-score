@@ -385,7 +385,6 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
     COMMUNITY_FEED: 'https://bun.com/community/rss.xml',
   },
-
 } as const;
 
 // Type-safe access to base URLs

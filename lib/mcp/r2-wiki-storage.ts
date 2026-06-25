@@ -88,7 +88,10 @@ export class R2WikiStorage {
   private config: WikiStorageConfig;
   private backupTimer?: NodeJS.Timeout;
   private compressionWorker?: Subprocess;
-  private pendingRequests = new Map<string, { resolve: (v: string) => void; reject: (e: Error) => void }>();
+  private pendingRequests = new Map<
+    string,
+    { resolve: (v: string) => void; reject: (e: Error) => void }
+  >();
   private requestCounter = 0;
   private encryptionKey?: string;
 
@@ -102,7 +105,7 @@ export class R2WikiStorage {
       maxVersions: 50,
       compressionEnabled: true,
       encryptionEnabled: false,
-      ...config
+      ...config,
     };
 
     if (this.config.encryptionEnabled) {
@@ -133,7 +136,7 @@ export class R2WikiStorage {
 
     // Get existing document or create new one
     let document = await this.getDocument(id);
-    
+
     if (!document) {
       document = {
         id,
@@ -147,9 +150,9 @@ export class R2WikiStorage {
           author: metadata.author,
           createdAt: now,
           updatedAt: now,
-          version: 1
+          version: 1,
         },
-        versions: []
+        versions: [],
       };
     } else {
       // Check if content has changed
@@ -171,15 +174,18 @@ export class R2WikiStorage {
       author: metadata.author,
       changeDescription,
       size: content.length,
-      checksum
+      checksum,
     };
 
     document.versions.push(version);
 
     // Limit versions if maxVersions is set
     if (this.config.maxVersions > 0 && document.versions.length > this.config.maxVersions) {
-      const excessVersions = document.versions.splice(0, document.versions.length - this.config.maxVersions);
-      
+      const excessVersions = document.versions.splice(
+        0,
+        document.versions.length - this.config.maxVersions
+      );
+
       // Clean up old versions from storage
       for (const oldVersion of excessVersions) {
         await this.deleteVersionFromStorage(id, oldVersion.version);
@@ -188,7 +194,7 @@ export class R2WikiStorage {
 
     // Store document and versions
     await this.storeDocumentInStorage(document);
-    
+
     // Store individual version
     await this.storeVersionInStorage(id, version);
 
@@ -202,11 +208,11 @@ export class R2WikiStorage {
     try {
       const key = this.getDocumentKey(id);
       const stored = await r2MCPIntegration.get(key);
-      
+
       if (!stored) return null;
 
       let document: WikiDocument = JSON.parse(stored);
-      
+
       // If specific version requested, load that version content
       if (version && version !== document.metadata.version) {
         const versionData = await this.getVersion(id, version);
@@ -225,11 +231,14 @@ export class R2WikiStorage {
   /**
    * Get a specific version of a document
    */
-  public async getVersion(documentId: string, version: number): Promise<WikiDocumentVersion | null> {
+  public async getVersion(
+    documentId: string,
+    version: number
+  ): Promise<WikiDocumentVersion | null> {
     try {
       const key = this.getVersionKey(documentId, version);
       const stored = await r2MCPIntegration.get(key);
-      
+
       if (!stored) return null;
 
       return JSON.parse(stored);
@@ -242,23 +251,25 @@ export class R2WikiStorage {
   /**
    * List all documents with optional filtering
    */
-  public async listDocuments(options: {
-    templateName?: string;
-    category?: string;
-    tags?: string[];
-    author?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<WikiDocument[]> {
+  public async listDocuments(
+    options: {
+      templateName?: string;
+      category?: string;
+      tags?: string[];
+      author?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<WikiDocument[]> {
     try {
       const prefix = this.getDocumentPrefix();
       const objects = await r2MCPIntegration.list(prefix);
-      
+
       let documents: WikiDocument[] = [];
-      
+
       for (const object of objects) {
         if (object.key.endsWith('/version')) continue; // Skip version files
-        
+
         const stored = await r2MCPIntegration.get(object.key);
         if (stored) {
           const document: WikiDocument = JSON.parse(stored);
@@ -270,30 +281,31 @@ export class R2WikiStorage {
       if (options.templateName) {
         documents = documents.filter(doc => doc.templateName === options.templateName);
       }
-      
+
       if (options.category) {
         documents = documents.filter(doc => doc.metadata.category === options.category);
       }
-      
+
       if (options.tags && options.tags.length > 0) {
-        documents = documents.filter(doc => 
+        documents = documents.filter(doc =>
           options.tags!.some(tag => doc.metadata.tags?.includes(tag))
         );
       }
-      
+
       if (options.author) {
         documents = documents.filter(doc => doc.metadata.author === options.author);
       }
 
       // Sort by updated date
-      documents.sort((a, b) => 
-        new Date(b.metadata.updatedAt).getTime() - new Date(a.metadata.updatedAt).getTime()
+      documents.sort(
+        (a, b) =>
+          new Date(b.metadata.updatedAt).getTime() - new Date(a.metadata.updatedAt).getTime()
       );
 
       // Apply pagination
       const offset = options.offset || 0;
       const limit = options.limit || documents.length;
-      
+
       return documents.slice(offset, offset + limit);
     } catch (error) {
       console.error('Failed to list documents:', error);
@@ -364,7 +376,7 @@ export class R2WikiStorage {
         size: content.length,
         checksum: this.calculateChecksum(content),
         compressed,
-        encrypted
+        encrypted,
       };
 
       // Store backup
@@ -373,7 +385,7 @@ export class R2WikiStorage {
       // Update document with backup reference
       if (!document.backups) document.backups = [];
       document.backups.push(backup);
-      
+
       // Limit backups (keep last 10)
       if (document.backups.length > 10) {
         const oldBackups = document.backups.splice(0, document.backups.length - 10);
@@ -418,7 +430,7 @@ export class R2WikiStorage {
         content,
         {
           updatedAt: new Date().toISOString(),
-          author: 'System Restore'
+          author: 'System Restore',
         },
         `Restored from backup ${backupId}`
       );
@@ -444,12 +456,12 @@ export class R2WikiStorage {
         totalVersions += document.versions.length;
         totalBackups += document.backups?.length || 0;
         storageUsed += document.content.length;
-        
+
         // Add version sizes
         for (const version of document.versions) {
           storageUsed += version.size;
         }
-        
+
         // Add backup sizes
         if (document.backups) {
           for (const backup of document.backups) {
@@ -463,7 +475,7 @@ export class R2WikiStorage {
         totalVersions,
         totalBackups,
         storageUsed,
-        averageDocumentSize: documents.length > 0 ? storageUsed / documents.length : 0
+        averageDocumentSize: documents.length > 0 ? storageUsed / documents.length : 0,
       };
     } catch (error) {
       console.error('Failed to get storage stats:', error);
@@ -472,7 +484,7 @@ export class R2WikiStorage {
         totalVersions: 0,
         totalBackups: 0,
         storageUsed: 0,
-        averageDocumentSize: 0
+        averageDocumentSize: 0,
       };
     }
   }
@@ -495,13 +507,13 @@ export class R2WikiStorage {
    */
   private async performScheduledBackup(): Promise<void> {
     const documents = await this.listDocuments();
-    
+
     for (const document of documents) {
       // Only backup documents updated since last backup
       const lastBackup = document.backups?.[document.backups.length - 1];
       const lastBackupTime = lastBackup ? new Date(lastBackup.createdAt).getTime() : 0;
       const documentUpdateTime = new Date(document.metadata.updatedAt).getTime();
-      
+
       if (documentUpdateTime > lastBackupTime) {
         await this.createBackup(document.id);
       }
@@ -562,8 +574,14 @@ export class R2WikiStorage {
       }, IPC_TIMEOUT_MS);
 
       this.pendingRequests.set(id, {
-        resolve: (v: string) => { clearTimeout(timer); resolve(v); },
-        reject: (e: Error) => { clearTimeout(timer); reject(e); },
+        resolve: (v: string) => {
+          clearTimeout(timer);
+          resolve(v);
+        },
+        reject: (e: Error) => {
+          clearTimeout(timer);
+          reject(e);
+        },
       });
 
       this.compressionWorker!.send({ id, action, data } satisfies CompressionIPCRequest);
@@ -652,7 +670,10 @@ export class R2WikiStorage {
     await r2MCPIntegration.set(key, JSON.stringify(document));
   }
 
-  private async storeVersionInStorage(documentId: string, version: WikiDocumentVersion): Promise<void> {
+  private async storeVersionInStorage(
+    documentId: string,
+    version: WikiDocumentVersion
+  ): Promise<void> {
     const key = this.getVersionKey(documentId, version.version);
     await r2MCPIntegration.set(key, JSON.stringify(version));
   }
@@ -676,7 +697,7 @@ export class R2WikiStorage {
     try {
       const key = this.getBackupKey(backupId);
       const stored = await r2MCPIntegration.get(key);
-      
+
       if (!stored) return null;
       return JSON.parse(stored);
     } catch (error) {

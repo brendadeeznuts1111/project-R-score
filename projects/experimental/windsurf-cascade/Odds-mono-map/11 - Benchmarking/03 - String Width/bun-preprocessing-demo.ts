@@ -7,15 +7,15 @@
 
 import chalk from 'chalk';
 
-console.log(chalk.bold.magenta('🎯 Bun.stringWidth() Pre-processing Utilities'));
-console.log(chalk.gray('Odds Protocol Vault - Smart Data Preparation'));
-console.log(chalk.gray('='.repeat(80)));
+console.info(chalk.bold.magenta('🎯 Bun.stringWidth() Pre-processing Utilities'));
+console.info(chalk.gray('Odds Protocol Vault - Smart Data Preparation'));
+console.info(chalk.gray('='.repeat(80)));
 
 // =============================================================================
 // PRE-TRUNCATION UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n✂️  1. Pre-truncation for Table Preparation'));
+console.info(chalk.bold.cyan('\n✂️  1. Pre-truncation for Table Preparation'));
 
 /**
  * Smart snippet creation with visual width awareness
@@ -76,22 +76,22 @@ const sampleContents = [
     'Medium length content that fits within limits but demonstrates the logic'
 ];
 
-console.log(chalk.gray('Creating visual snippets for table preparation:'));
+console.info(chalk.gray('Creating visual snippets for table preparation:'));
 sampleContents.forEach((content, index) => {
     const snippet = createVisualSnippet(content, 40);
     const smartSnippet = createSmartSnippet(content, 40);
 
-    console.log(chalk.yellow(`\nContent ${index + 1}:`));
-    console.log(chalk.gray(`Original: ${content}`));
-    console.log(chalk.cyan(`Visual:   ${snippet} (${Bun.stringWidth(snippet)} chars)`));
-    console.log(chalk.blue(`Smart:    ${smartSnippet} (${Bun.stringWidth(smartSnippet)} chars)`));
+    console.info(chalk.yellow(`\nContent ${index + 1}:`));
+    console.info(chalk.gray(`Original: ${content}`));
+    console.info(chalk.cyan(`Visual:   ${snippet} (${Bun.stringWidth(snippet)} chars)`));
+    console.info(chalk.blue(`Smart:    ${smartSnippet} (${Bun.stringWidth(smartSnippet)} chars)`));
 });
 
 // =============================================================================
 // CONDITIONAL FORMATTING UTILITIES
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🎨 2. Conditional Formatting Based on Visual Width'));
+console.info(chalk.bold.cyan('\n🎨 2. Conditional Formatting Based on Visual Width'));
 
 /**
  * Apply conditional styling based on visual width
@@ -147,18 +147,18 @@ const sampleFileNames = [
     'extremely-long-filename-that-definitely-causes-problems-in-table-layouts-and-needs-attention.md'
 ];
 
-console.log(chalk.gray('Conditional formatting based on filename length:'));
+console.info(chalk.gray('Conditional formatting based on filename length:'));
 sampleFileNames.forEach(filename => {
     const styled = applyConditionalWidthStyling(filename, { short: 15, medium: 30, long: 50 });
     const width = Bun.stringWidth(filename);
-    console.log(`${styled} ${chalk.gray(`(${width} chars)`)}`);
+    console.info(`${styled} ${chalk.gray(`(${width} chars)`)}`);
 });
 
 // =============================================================================
 // VAULT-SPECIFIC PRE-PROCESSING
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n📁 3. Vault-Specific Pre-processing Examples'));
+console.info(chalk.bold.cyan('\n📁 3. Vault-Specific Pre-processing Examples'));
 
 // Sample vault data with problematic fields
 const rawVaultData = [
@@ -216,37 +216,37 @@ export function preprocessVaultData(data: any[], options: {
  * Generate vault data quality report
  */
 export function generateVaultQualityReport(data: any[]): void {
-    console.log(chalk.bold.blue('\n📊 Vault Data Quality Report:'));
+    console.info(chalk.bold.blue('\n📊 Vault Data Quality Report:'));
 
     // Check filename lengths
     const nameWarnings = generateWidthWarnings(data, 'name', { warning: 25, error: 40 });
     if (nameWarnings.length > 0) {
-        console.log(chalk.yellow('\n⚠️  Filename Length Warnings:'));
-        nameWarnings.forEach(warning => console.log(chalk.gray(`   ${warning}`)));
+        console.info(chalk.yellow('\n⚠️  Filename Length Warnings:'));
+        nameWarnings.forEach(warning => console.info(chalk.gray(`   ${warning}`)));
     }
 
     // Check content lengths
     const contentWarnings = generateWidthWarnings(data, 'content', { warning: 60, error: 100 });
     if (contentWarnings.length > 0) {
-        console.log(chalk.yellow('\n⚠️  Content Length Warnings:'));
-        contentWarnings.forEach(warning => console.log(chalk.gray(`   ${warning}`)));
+        console.info(chalk.yellow('\n⚠️  Content Length Warnings:'));
+        contentWarnings.forEach(warning => console.info(chalk.gray(`   ${warning}`)));
     }
 
     // Summary statistics
     const avgNameLength = data.reduce((sum, item) => sum + Bun.stringWidth(item.name), 0) / data.length;
     const avgContentLength = data.reduce((sum, item) => sum + Bun.stringWidth(item.content || ''), 0) / data.length;
 
-    console.log(chalk.green('\n📈 Summary Statistics:'));
-    console.log(chalk.gray(`   Average filename length: ${avgNameLength.toFixed(1)} chars`));
-    console.log(chalk.gray(`   Average content length: ${avgContentLength.toFixed(1)} chars`));
-    console.log(chalk.gray(`   Total files processed: ${data.length}`));
+    console.info(chalk.green('\n📈 Summary Statistics:'));
+    console.info(chalk.gray(`   Average filename length: ${avgNameLength.toFixed(1)} chars`));
+    console.info(chalk.gray(`   Average content length: ${avgContentLength.toFixed(1)} chars`));
+    console.info(chalk.gray(`   Total files processed: ${data.length}`));
 }
 
 // Demonstrate vault pre-processing
-console.log(chalk.gray('Original vault data (problematic widths):'));
+console.info(chalk.gray('Original vault data (problematic widths):'));
 Bun.inspect.table(rawVaultData, ['name', 'path', 'content', 'status']);
 
-console.log(chalk.gray('\nPre-processed vault data (optimal widths):'));
+console.info(chalk.gray('\nPre-processed vault data (optimal widths):'));
 const processedData = preprocessVaultData(rawVaultData);
 Bun.inspect.table(processedData, ['name', 'path', 'content', 'status']);
 
@@ -257,7 +257,7 @@ generateVaultQualityReport(rawVaultData);
 // ADVANCED PRE-PROCESSING SCENARIOS
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔧 4. Advanced Pre-processing Scenarios'));
+console.info(chalk.bold.cyan('\n🔧 4. Advanced Pre-processing Scenarios'));
 
 /**
  * Dynamic width allocation based on content analysis
@@ -336,14 +336,14 @@ export function createContextAwareSnippet(text: string, maxWidth: number, contex
 }
 
 // Demonstrate advanced scenarios
-console.log(chalk.gray('Dynamic width allocation:'));
+console.info(chalk.gray('Dynamic width allocation:'));
 const dynamicWidths = calculateDynamicWidths(rawVaultData, 80);
-console.log(chalk.cyan('Calculated column widths:'));
+console.info(chalk.cyan('Calculated column widths:'));
 Object.entries(dynamicWidths).forEach(([col, width]) => {
-    console.log(chalk.gray(`   ${col}: ${width} chars`));
+    console.info(chalk.gray(`   ${col}: ${width} chars`));
 });
 
-console.log(chalk.gray('\nContext-aware truncation:'));
+console.info(chalk.gray('\nContext-aware truncation:'));
 const advancedExamples = [
     { text: 'very-long-filename-with-extension.md', context: 'filename' as const },
     { text: '01 - Daily Notes/02 - Journals/2025-11-18.md', context: 'path' as const },
@@ -352,14 +352,14 @@ const advancedExamples = [
 
 advancedExamples.forEach(example => {
     const snippet = createContextAwareSnippet(example.text, 25, example.context);
-    console.log(chalk.cyan(`${example.context}: ${snippet}`));
+    console.info(chalk.cyan(`${example.context}: ${snippet}`));
 });
 
 // =============================================================================
 // INTEGRATION WITH Bun.inspect.table()
 // =============================================================================
 
-console.log(chalk.bold.cyan('\n🔗 5. Integration with Bun.inspect.table()'));
+console.info(chalk.bold.cyan('\n🔗 5. Integration with Bun.inspect.table()'));
 
 /**
  * Complete pipeline: pre-process → display
@@ -399,7 +399,7 @@ export function displayOptimizedTable(data: any[], columns: string[], options: {
 }
 
 // Demonstrate complete integration
-console.log(chalk.gray('Complete pre-processing pipeline:'));
+console.info(chalk.gray('Complete pre-processing pipeline:'));
 displayOptimizedTable(rawVaultData, ['name', 'path', 'content', 'status'], {
     totalWidth: 80,
     truncateContent: true
@@ -409,32 +409,32 @@ displayOptimizedTable(rawVaultData, ['name', 'path', 'content', 'status'], {
 // QUICK REFERENCE
 // =============================================================================
 
-console.log(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
-console.log(chalk.gray('='.repeat(50)));
+console.info(chalk.bold.magenta('\n🎯 Quick Reference Summary'));
+console.info(chalk.gray('='.repeat(50)));
 
-console.log(chalk.bold.cyan('\n✂️  Pre-truncation Functions:'));
-console.log(chalk.gray('createVisualSnippet(text, maxWidth)           // Basic visual truncation'));
-console.log(chalk.gray('createSmartSnippet(text, maxWidth)            // Word-boundary aware'));
-console.log(chalk.gray('createContextAwareSnippet(text, maxWidth, context)  // Context-specific'));
+console.info(chalk.bold.cyan('\n✂️  Pre-truncation Functions:'));
+console.info(chalk.gray('createVisualSnippet(text, maxWidth)           // Basic visual truncation'));
+console.info(chalk.gray('createSmartSnippet(text, maxWidth)            // Word-boundary aware'));
+console.info(chalk.gray('createContextAwareSnippet(text, maxWidth, context)  // Context-specific'));
 
-console.log(chalk.bold.cyan('\n🎨 Conditional Formatting:'));
-console.log(chalk.gray('applyConditionalWidthStyling(text, thresholds)  // Style by length'));
-console.log(chalk.gray('generateWidthWarnings(data, field, thresholds)  // Create warnings'));
+console.info(chalk.bold.cyan('\n🎨 Conditional Formatting:'));
+console.info(chalk.gray('applyConditionalWidthStyling(text, thresholds)  // Style by length'));
+console.info(chalk.gray('generateWidthWarnings(data, field, thresholds)  // Create warnings'));
 
-console.log(chalk.bold.cyan('\n📁 Vault Pre-processing:'));
-console.log(chalk.gray('preprocessVaultData(data, options)             // Format vault data'));
-console.log(chalk.gray('generateVaultQualityReport(data)               // Quality analysis'));
+console.info(chalk.bold.cyan('\n📁 Vault Pre-processing:'));
+console.info(chalk.gray('preprocessVaultData(data, options)             // Format vault data'));
+console.info(chalk.gray('generateVaultQualityReport(data)               // Quality analysis'));
 
-console.log(chalk.bold.cyan('\n🔧 Advanced Features:'));
-console.log(chalk.gray('calculateDynamicWidths(data, totalWidth)       // Auto-width calculation'));
-console.log(chalk.gray('displayOptimizedTable(data, columns, options)  // Complete pipeline'));
+console.info(chalk.bold.cyan('\n🔧 Advanced Features:'));
+console.info(chalk.gray('calculateDynamicWidths(data, totalWidth)       // Auto-width calculation'));
+console.info(chalk.gray('displayOptimizedTable(data, columns, options)  // Complete pipeline'));
 
-console.log(chalk.bold.cyan('\n✅ Benefits:'));
-console.log(chalk.gray('• Smart pre-truncation before table display'));
-console.log(chalk.gray('• Conditional formatting based on visual width'));
-console.log(chalk.gray('• Context-aware truncation strategies'));
-console.log(chalk.gray('• Quality analysis and warnings'));
-console.log(chalk.gray('• Dynamic width allocation'));
-console.log(chalk.gray('• Complete integration pipeline'));
+console.info(chalk.bold.cyan('\n✅ Benefits:'));
+console.info(chalk.gray('• Smart pre-truncation before table display'));
+console.info(chalk.gray('• Conditional formatting based on visual width'));
+console.info(chalk.gray('• Context-aware truncation strategies'));
+console.info(chalk.gray('• Quality analysis and warnings'));
+console.info(chalk.gray('• Dynamic width allocation'));
+console.info(chalk.gray('• Complete integration pipeline'));
 
-console.log(chalk.bold.green('\n🎉 Pre-processing Utilities Complete!'));
+console.info(chalk.bold.green('\n🎉 Pre-processing Utilities Complete!'));

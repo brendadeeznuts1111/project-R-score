@@ -9,93 +9,94 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const TYPED_ARRAY_EXAMPLES = {
   base: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
   fetchPattern: `const response = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text();`,
   relatedUrls: {
     binaryData: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`,
     fetchApi: `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
     networking: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.NETWORKING}`,
-  }
+  },
 };
 
 // Create server with endpoints matching Bun's fetch pattern
-const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
-const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
-const CONTENT_TYPE_SERVER_PORT = parseInt(process.env.CONTENT_TYPE_SERVER_PORT || '3001', 10);
+import { PORTS, SERVER_HOST } from '../config/ports.ts';
+
+const SERVER_PORT = PORTS.SERVER;
+const CONTENT_TYPE_SERVER_PORT = PORTS.CONTENT_TYPE_SERVER;
 const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || SERVER_HOST;
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request) {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     // Route based on path
     if (path === '/' || path === '/index.html') {
       return handleRoot();
     }
-    
+
     if (path === '/api/fetch') {
       return handleFetchExample();
     }
-    
+
     if (path === '/api/typedarray/urls') {
       return handleTypedArrayURLs();
     }
-    
+
     if (path === '/api/rss') {
       return await handleRSSFeed();
     }
-    
+
     if (path === '/feed/rss') {
       return await generateRSSFeed();
     }
-    
+
     if (path === '/feed/json') {
       return generateJSONFeed();
     }
-    
+
     if (path === '/docs/typedarray') {
       return await handleTypedArrayDocs(url);
     }
-    
+
     if (path === '/docs/runtime/binary-data') {
       return await handleBinaryData();
     }
-    
+
     if (path === '/test/fetch') {
       return await testFetchPattern();
     }
-    
+
     if (path === '/cache/clear') {
       cache.clear();
       return new Response('Cache cleared', { status: 200 });
     }
-    
+
     // Content-Type demo endpoints
     if (path === '/api/content-type/blob') {
       return await handleBlobDemo(request);
     }
-    
+
     if (path === '/api/content-type/formdata') {
       return await handleFormDataDemo(request);
     }
-    
+
     if (path === '/api/content-type/large-file') {
       return await handleLargeFileDemo(request);
     }
-    
+
     if (path === '/api/content-type/demo') {
       return await runContentTypeDemo();
     }
-    
+
     if (path === '/api/content-type/handler') {
       return await demonstrateContentTypeHandler();
     }
-    
+
     if (path === '/api/execute-command') {
       return await handleExecuteCommand(request);
     }
-    
+
     return handleNotFound(request);
   },
 });
@@ -110,7 +111,7 @@ function handleRoot(): Response {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
+    body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
       color: #333;
@@ -132,7 +133,7 @@ function handleRoot(): Response {
       padding: 2rem;
       text-align: center;
     }
-    h1 { 
+    h1 {
       font-size: 2.5rem;
       margin-bottom: 0.5rem;
       background: linear-gradient(135deg, #81e6d9 0%, #38b2ac 100%);
@@ -248,7 +249,7 @@ function handleRoot(): Response {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
     }
-    
+
     /* Project Management Styles */
     .project-controls {
       margin-bottom: 1.5rem;
@@ -465,7 +466,7 @@ function handleRoot(): Response {
             <button onclick="setView('list')" class="view-btn" data-view="list">☰ List</button>
           </div>
         </div>
-        
+
         <div class="bulk-actions" id="bulkActions" style="display: none;">
           <span id="selectedCount">0 selected</span>
           <button onclick="bulkInstall()" class="bulk-btn bulk-install">📦 Install Selected</button>
@@ -473,12 +474,12 @@ function handleRoot(): Response {
           <button onclick="bulkTest()" class="bulk-btn bulk-test">⚡ Test Selected</button>
         </div>
       </div>
-      
+
       <div class="projects-grid" id="projectsGrid">
         ${generateProjectCards()}
       </div>
     </section>
-    
+
     <div class="command-output" id="commandOutput" style="display: none;">
       <div class="output-header">
         <h3>Command Output</h3>
@@ -486,7 +487,7 @@ function handleRoot(): Response {
       </div>
       <pre id="outputContent"></pre>
     </div>
-    
+
     <main>
       <div class="card">
         <h2>📚 Documentation</h2>
@@ -517,7 +518,7 @@ function handleRoot(): Response {
           </li>
         </ul>
       </div>
-      
+
       <div class="card">
         <h2>⚡ API Endpoints</h2>
         <ul>
@@ -553,7 +554,7 @@ function handleRoot(): Response {
           </li>
         </ul>
       </div>
-      
+
       <div class="card">
         <h2>📰 RSS Feeds</h2>
         <ul>
@@ -581,33 +582,33 @@ function handleRoot(): Response {
           </li>
         </ul>
       </div>
-      
+
       <div class="card grid-2">
         <h2>💻 Fetch Pattern Example</h2>
         <p>This matches the pattern from Bun's documentation:</p>
-        
+
         <pre><code>// Example from: ${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
 
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></pre>
-        
+
         <button class="test-button" onclick="testFetch()">Test This Pattern</button>
-        
+
         <div id="result" style="margin-top: 1rem;"></div>
-        
+
         <script>
           async function testFetch() {
             const result = document.getElementById('result');
             result.innerHTML = '<div class="console">⏳ Testing fetch pattern...</div>';
-            
+
             try {
               // Test 1: Fetch our typed array URLs endpoint
               const response = await fetch('/api/typedarray/urls');
               const data = await response.json();
-              
+
               result.innerHTML = '<div class="console">✅ Fetch successful!<br>Status: ' + response.status + '<br>Content-Type: ' + response.headers.get('content-type') + '<br><br>Base URL: ' + data.base + '<br>Methods: ' + data.methods + '</div>';
-              
+
               // Test 2: Try fetching actual Bun docs (might be blocked by CORS)
               setTimeout(async () => {
                 try {
@@ -620,13 +621,13 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
                   }
                 }
               }, 500);
-              
+
             } catch (error) {
               result.innerHTML = '<div style="padding: 1rem; background: #fed7d7; border-radius: 6px; color: #9b2c2c;">❌ Fetch failed: ' + error.message + '</div>';
             }
           }
         </script>
-        
+
         <script>
           function generateProjectCards() {
             const projects = [
@@ -692,7 +693,7 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
               }
             ];
 
-            return projects.map(project => 
+            return projects.map(project =>
               '<div class="project-card" id="project-' + project.id + '">' +
               '<div class="project-header">' +
               '<div>' +
@@ -723,23 +724,23 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
             const count = checkboxes.length;
             const bulkActions = document.getElementById('bulkActions');
             const selectedCount = document.getElementById('selectedCount');
-            
+
             if (count > 0) {
               bulkActions.style.display = 'flex';
               selectedCount.textContent = count + ' selected';
-              
+
               // Update button labels with counts
               const installBtn = bulkActions.querySelector('.bulk-install');
               const deployBtn = bulkActions.querySelector('.bulk-deploy');
               const testBtn = bulkActions.querySelector('.bulk-test');
-              
+
               installBtn.textContent = '📦 Install ' + count;
               deployBtn.textContent = '🚀 Deploy ' + count;
               testBtn.textContent = '⚡ Test ' + count;
             } else {
               bulkActions.style.display = 'none';
             }
-            
+
             // Update selected state on project cards
             document.querySelectorAll('.project-card').forEach(card => {
               const checkbox = card.querySelector('.project-checkbox');
@@ -754,25 +755,25 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
           function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll');
             const checkboxes = document.querySelectorAll('.project-checkbox');
-            
+
             checkboxes.forEach(checkbox => {
               checkbox.checked = selectAll.checked;
             });
-            
+
             updateBulkActions();
           }
 
           function setView(viewType) {
             const grid = document.getElementById('projectsGrid');
             const buttons = document.querySelectorAll('.view-btn');
-            
+
             buttons.forEach(btn => {
               btn.classList.remove('active');
               if (btn.dataset.view === viewType) {
                 btn.classList.add('active');
               }
             });
-            
+
             if (viewType === 'list') {
               grid.classList.add('list-view');
             } else {
@@ -788,7 +789,7 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
           function showCommandOutput(title, command, output) {
             const outputDiv = document.getElementById('commandOutput');
             const outputContent = document.getElementById('outputContent');
-            
+
             outputContent.innerHTML = '<strong>' + title + '</strong>\\n$ ' + command + '\\n\\n' + output;
             outputDiv.style.display = 'block';
           }
@@ -800,14 +801,14 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
           async function executeCommand(title, command, projects = []) {
             try {
               showCommandOutput(title, command, 'Executing...');
-              
+
               // Simulate command execution (in real implementation, this would call an API endpoint)
               const response = await fetch('/api/execute-command', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command, projects })
               });
-              
+
               if (response.ok) {
                 const result = await response.text();
                 showCommandOutput(title, command, result);
@@ -848,10 +849,10 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
               'main-portal': 3000,
               'content-type-server': 3001
             };
-            
+
             const port = ports[projectId];
             if (port) {
-              window.open(`http://${SERVER_HOST}:${port}`, '_blank');
+              window.open('http://${SERVER_HOST}:' + port, '_blank');
             } else {
               executeCommand('View ' + projectId, 'bun run ' + projectId, [projectId]);
             }
@@ -859,22 +860,22 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
         </script>
       </div>
     </main>
-    
+
     <footer>
       <p>Built with Bun • Base URL: <code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></p>
       <p style="font-size: 0.9rem; margin-top: 0.5rem;">
-        <a href="/cache/clear" style="color: #718096;">Clear Cache</a> • 
+        <a href="/cache/clear" style="color: #718096;">Clear Cache</a> •
         <a href="${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}" target="_blank" style="color: #718096;">Bun Fetch Docs</a>
       </p>
     </footer>
   </div>
 </body>
 </html>`;
-    
+
   return new Response(html, {
-    headers: { 
+    headers: {
       'Content-Type': 'text/html',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -886,7 +887,7 @@ function handleFetchExample(): Response {
 
 // 1. Basic fetch pattern
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
-console.log(response.status); // => 200
+console.info(response.status); // => 200
 const text = await response.text();
 
 // 2. Fetch with options
@@ -905,7 +906,7 @@ const uint8Array = new Uint8Array(arrayBuffer);
 // 4. Fetch all typed array URLs from our API
 const urlsResponse = await fetch("/api/typedarray/urls");
 const urls = await urlsResponse.json();
-console.log(urls.base); // => "${TYPED_ARRAY_EXAMPLES.base}"
+console.info(urls.base); // => "${TYPED_ARRAY_EXAMPLES.base}"
 
 // 5. Error handling
 try {
@@ -919,11 +920,11 @@ try {
 } catch (error) {
   console.error("Fetch failed:", error);
 }`;
-    
+
   return new Response(example, {
-    headers: { 
+    headers: {
       'Content-Type': 'application/javascript',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -953,13 +954,13 @@ function handleTypedArrayURLs(): Response {
       json: `http://${SERVER_HOST}:${SERVER_PORT}/feed/json`,
       bun_blog: RSS_URLS.BUN_BLOG,
       bun_updates: RSS_URLS.BUN_UPDATES,
-    }
+    },
   };
-    
+
   return new Response(JSON.stringify(urls, null, 2), {
-    headers: { 
+    headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=300'
+      'Cache-Control': 'public, max-age=300',
     },
   });
 }
@@ -968,54 +969,54 @@ function handleTypedArrayURLs(): Response {
 async function handleRSSFeed(): Promise<Response> {
   const cacheKey = 'bun_blog_rss';
   const cached = cache.get(cacheKey);
-    
+
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return new Response(cached.data, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
         'X-Cache': 'HIT',
-        'Cache-Control': `public, max-age=${CACHE_TTL / 1000}` 
+        'Cache-Control': `public, max-age=${CACHE_TTL / 1000}`,
       },
     });
   }
-    
+
   try {
     // Using the exact pattern from Bun's fetch documentation
     const response = await fetch(RSS_URLS.BUN_BLOG);
-      
+
     if (!response.ok) {
       throw new Error(`Failed to fetch RSS: ${response.status} ${response.statusText}`);
     }
-      
+
     const rssXml = await response.text();
-      
+
     // Cache the result
     cache.set(cacheKey, {
       data: rssXml,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-      
+
     return new Response(rssXml, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
         'X-Cache': 'MISS',
-        'Cache-Control': `public, max-age=${CACHE_TTL / 1000}` 
+        'Cache-Control': `public, max-age=${CACHE_TTL / 1000}`,
       },
     });
   } catch (error) {
     console.error('❌ Error fetching RSS:', error instanceof Error ? error.message : String(error));
-      
+
     // Return cached data even if stale, or error
     if (cached) {
       return new Response(cached.data, {
         headers: {
           'Content-Type': 'application/rss+xml; charset=utf-8',
           'X-Cache': 'STALE',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
         },
       });
     }
-      
+
     return new Response(`Error fetching RSS feed: ${error.message}`, {
       status: 502,
       headers: { 'Content-Type': 'text/plain' },
@@ -1034,7 +1035,7 @@ async function generateRSSFeed(): Promise<Response> {
   <language>en-us</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   <atom:link href="http://${SERVER_HOST}:${SERVER_PORT}/feed/rss" rel="self" type="application/rss+xml" />
-  
+
   <item>
     <title>TypedArray Methods Reference</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</link>
@@ -1044,7 +1045,7 @@ async function generateRSSFeed(): Promise<Response> {
     <category>Documentation</category>
     <category>TypedArray</category>
   </item>
-  
+
   <item>
     <title>Binary Data Conversion Examples</title>
     <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}</link>
@@ -1054,7 +1055,7 @@ async function generateRSSFeed(): Promise<Response> {
     <category>Examples</category>
     <category>Binary Data</category>
   </item>
-  
+
   <item>
     <title>Fetch API Integration Guide</title>
     <link>${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}</link>
@@ -1064,7 +1065,7 @@ async function generateRSSFeed(): Promise<Response> {
     <category>Guide</category>
     <category>Fetch API</category>
   </item>
-  
+
   <item>
     <title>File Reading Patterns with TypedArrays</title>
     <link>${BUN_DOCS.BASE}/guides/read-file/arraybuffer</link>
@@ -1076,11 +1077,11 @@ async function generateRSSFeed(): Promise<Response> {
   </item>
 </channel>
 </rss>`;
-    
+
   return new Response(feed, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -1088,43 +1089,43 @@ async function generateRSSFeed(): Promise<Response> {
 // Generate JSON feed
 function generateJSONFeed(): Response {
   const feed = {
-    version: "https://jsonfeed.org/version/1.1",
-    title: "Bun TypedArray Documentation",
+    version: 'https://jsonfeed.org/version/1.1',
+    title: 'Bun TypedArray Documentation',
     home_page_url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
     feed_url: `http://${SERVER_HOST}:${SERVER_PORT}/feed/json`,
-    description: "Latest updates and examples for TypedArrays in Bun",
+    description: 'Latest updates and examples for TypedArrays in Bun',
     items: [
       {
         id: TYPED_ARRAY_URLS.METHODS,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
-        title: "TypedArray Methods Reference",
-        content_text: "Complete reference of all TypedArray methods available in Bun",
+        title: 'TypedArray Methods Reference',
+        content_text: 'Complete reference of all TypedArray methods available in Bun',
         date_published: new Date(Date.now() - 86400000).toISOString(),
-        tags: ["Documentation", "TypedArray"]
+        tags: ['Documentation', 'TypedArray'],
       },
       {
         id: TYPED_ARRAY_URLS.CONVERSION,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}`,
-        title: "Binary Data Conversion Examples",
-        content_text: "Examples of converting between different binary data formats",
+        title: 'Binary Data Conversion Examples',
+        content_text: 'Examples of converting between different binary data formats',
         date_published: new Date(Date.now() - 172800000).toISOString(),
-        tags: ["Examples", "Binary Data"]
+        tags: ['Examples', 'Binary Data'],
       },
       {
-        id: "fetch-integration",
+        id: 'fetch-integration',
         url: `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
-        title: "Fetch API Integration Guide",
+        title: 'Fetch API Integration Guide',
         content_text: "How to use TypedArrays with Bun's fetch API",
         date_published: new Date(Date.now() - 259200000).toISOString(),
-        tags: ["Guide", "Fetch API"]
-      }
-    ]
+        tags: ['Guide', 'Fetch API'],
+      },
+    ],
   };
-    
+
   return new Response(JSON.stringify(feed, null, 2), {
-    headers: { 
+    headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 }
@@ -1133,15 +1134,15 @@ function generateJSONFeed(): Response {
 async function handleTypedArrayDocs(url: URL): Promise<Response> {
   const hash = url.hash.slice(1) || 'typedarray';
   const targetUrl = `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS[hash as keyof typeof TYPED_ARRAY_URLS] || TYPED_ARRAY_URLS.BASE}`;
-    
+
   try {
     // Try to fetch the actual documentation
     const response = await fetch(targetUrl, {
       headers: {
-        'User-Agent': 'Bun-TypedArray-Portal/1.0'
-      }
+        'User-Agent': 'Bun-TypedArray-Portal/1.0',
+      },
     });
-      
+
     if (response.ok) {
       const html = await response.text();
       return new Response(html, {
@@ -1149,19 +1150,18 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
         headers: {
           'Content-Type': 'text/html',
           'X-Proxy-Source': targetUrl,
-          'Cache-Control': 'public, max-age=3600'
+          'Cache-Control': 'public, max-age=3600',
         },
       });
     }
-      
+
     // If fetch fails, provide a fallback
     return new Response(generateFallbackDocs(targetUrl, hash), {
-      headers: { 
+      headers: {
         'Content-Type': 'text/html',
-        'Cache-Control': 'public, max-age=300'
+        'Cache-Control': 'public, max-age=300',
       },
     });
-      
   } catch (error) {
     // Return fallback on error
     return new Response(generateFallbackDocs(targetUrl, hash), {
@@ -1173,43 +1173,41 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
 // Binary data documentation endpoint
 async function handleBinaryData(): Promise<Response> {
   const targetUrl = `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`;
-    
+
   try {
     const response = await fetch(targetUrl);
-      
+
     if (response.ok) {
       const html = await response.text();
       return new Response(html, {
         status: response.status,
         headers: {
           'Content-Type': 'text/html',
-          'Cache-Control': 'public, max-age=3600'
+          'Cache-Control': 'public, max-age=3600',
         },
       });
     }
-      
+
     throw new Error(`HTTP ${response.status}`);
-      
   } catch (error) {
-    return new Response(`<h1>Binary Data Runtime Documentation</h1>
+    return new Response(
+      `<h1>Binary Data Runtime Documentation</h1>
       <p>Unable to fetch from: <a href="${targetUrl}">${targetUrl}</a></p>
       <p>Error: ${error.message}</p>
-      <p><a href="http://${SERVER_HOST}:${SERVER_PORT}/">Return to portal</a></p>`, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+      <p><a href="http://${SERVER_HOST}:${SERVER_PORT}/">Return to portal</a></p>`,
+      {
+        headers: { 'Content-Type': 'text/html' },
+      }
+    );
   }
 }
 
 // Test fetch pattern endpoint
 async function testFetchPattern(): Promise<Response> {
-  const testUrls = [
-    '/api/typedarray/urls',
-    '/feed/json',
-    '/api/fetch'
-  ];
-    
+  const testUrls = ['/api/typedarray/urls', '/feed/json', '/api/fetch'];
+
   const results = await Promise.allSettled(
-    testUrls.map(async (url) => {
+    testUrls.map(async url => {
       const start = Date.now();
       try {
         const response = await fetch(`http://${SERVER_HOST}:${SERVER_PORT}${url}`);
@@ -1219,7 +1217,7 @@ async function testFetchPattern(): Promise<Response> {
           status: response.status,
           ok: response.ok,
           duration: `${duration}ms`,
-          contentType: response.headers.get('content-type')
+          contentType: response.headers.get('content-type'),
         };
       } catch (error) {
         const duration = Date.now() - start;
@@ -1227,12 +1225,12 @@ async function testFetchPattern(): Promise<Response> {
           url,
           error: error.message,
           duration: `${duration}ms`,
-          ok: false
+          ok: false,
         };
       }
     })
   );
-    
+
   const summary = {
     timestamp: new Date().toISOString(),
     total: results.length,
@@ -1241,21 +1239,21 @@ async function testFetchPattern(): Promise<Response> {
       if (result.status === 'fulfilled') {
         return {
           endpoint: testUrls[i],
-          ...result.value
+          ...result.value,
         };
       }
       return {
         endpoint: testUrls[i],
         error: result.reason.message,
-        ok: false
+        ok: false,
       };
-    })
+    }),
   };
-    
+
   return new Response(JSON.stringify(summary, null, 2), {
-    headers: { 
+    headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Cache-Control': 'no-cache',
     },
   });
 }
@@ -1277,17 +1275,17 @@ function generateFallbackDocs(targetUrl: string, section: string): string {
 <body>
   <div class="container">
     <h1>TypedArray Documentation: ${section}</h1>
-    
+
     <div class="info">
       <p>This is a fallback page because we couldn't fetch the actual documentation from:</p>
       <p><a href="${targetUrl}">${targetUrl}</a></p>
       <p>This might be due to CORS restrictions or network issues.</p>
     </div>
-    
+
     <h2>Base URL Pattern</h2>
     <p>All typed array documentation uses this base pattern:</p>
     <pre><code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></pre>
-    
+
     <h2>Available Sections</h2>
     <ul>
       <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#typedarray">TypedArray Overview</a></li>
@@ -1295,13 +1293,13 @@ function generateFallbackDocs(targetUrl: string, section: string): string {
       <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#conversion">Binary Data Conversion</a></li>
       <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#examples">Examples</a></li>
     </ul>
-    
+
     <h2>Fetch Pattern Example</h2>
     <pre><code>// Using Bun's fetch pattern
 const response = await fetch("${TYPED_ARRAY_EXAMPLES.base}");
-console.log(response.status);
+console.info(response.status);
 const text = await response.text();</code></pre>
-    
+
     <div class="warning">
       <p><strong>Note:</strong> To access the full Bun documentation, visit:</p>
       <ul>
@@ -1310,7 +1308,7 @@ const text = await response.text();</code></pre>
         <li><a href="${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}" target="_blank">Binary Data Runtime</a></li>
       </ul>
     </div>
-    
+
     <p><a href="http://${SERVER_HOST}:${SERVER_PORT}/">← Return to portal</a></p>
   </div>
 </body>
@@ -1320,7 +1318,8 @@ const text = await response.text();</code></pre>
 // 404 handler
 function handleNotFound(request: Request): Response {
   const url = new URL(request.url);
-  return new Response(`<h1>404 - Endpoint Not Found</h1>
+  return new Response(
+    `<h1>404 - Endpoint Not Found</h1>
     <p>The endpoint <code>${url.pathname}</code> was not found.</p>
     <p>Available endpoints:</p>
     <ul>
@@ -1331,37 +1330,42 @@ function handleNotFound(request: Request): Response {
       <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/feed/rss">RSS Feed</a></li>
       <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray">TypedArray Docs</a></li>
     </ul>
-    <p>Base URL for typed arrays: <code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></p>`, {
-    status: 404,
-    headers: { 'Content-Type': 'text/html' },
-  });
+    <p>Base URL for typed arrays: <code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></p>`,
+    {
+      status: 404,
+      headers: { 'Content-Type': 'text/html' },
+    }
+  );
 }
 
 // Content-Type demo handlers
 async function handleBlobDemo(request: Request): Promise<Response> {
   const contentType = request.headers.get('content-type');
   const contentLength = request.headers.get('content-length');
-  
+
   const body = await request.text();
-  
-  return new Response(JSON.stringify({
-    message: 'Blob Content-Type received',
-    contentType,
-    contentLength,
-    bodyLength: body.length,
-    note: 'Content-Type was automatically set from blob.type property'
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return new Response(
+    JSON.stringify({
+      message: 'Blob Content-Type received',
+      contentType,
+      contentLength,
+      bodyLength: body.length,
+      note: 'Content-Type was automatically set from blob.type property',
+    }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 }
 
 async function handleFormDataDemo(request: Request): Promise<Response> {
   const contentType = request.headers.get('content-type');
-  
+
   // Parse FormData to show the boundary was automatically set
   const formData = await request.formData();
   const entries: Array<[string, string]> = [];
-  
+
   for (const [key, value] of formData.entries()) {
     if (typeof value === 'string') {
       entries.push([key, value]);
@@ -1369,45 +1373,51 @@ async function handleFormDataDemo(request: Request): Promise<Response> {
       entries.push([key, `File: ${value.name} (${value.type})`]);
     }
   }
-  
-  return new Response(JSON.stringify({
-    message: 'FormData Content-Type received',
-    contentType,
-    hasBoundary: contentType?.includes('boundary='),
-    entries,
-    note: 'Content-Type automatically set to multipart/form-data with boundary'
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return new Response(
+    JSON.stringify({
+      message: 'FormData Content-Type received',
+      contentType,
+      hasBoundary: contentType?.includes('boundary='),
+      entries,
+      note: 'Content-Type automatically set to multipart/form-data with boundary',
+    }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 }
 
 async function handleLargeFileDemo(request: Request): Promise<Response> {
   const contentType = request.headers.get('content-type');
   const contentLength = request.headers.get('content-length');
-  
+
   const body = await request.arrayBuffer();
-  
+
   const usesSendfile = body.byteSize > 32768; // > 32KB
-  
-  return new Response(JSON.stringify({
-    message: 'Large file upload received',
-    contentType,
-    contentLength,
-    actualSize: body.byteSize,
-    usesSendfileOptimization: usesSendfile,
-    note: 'Files > 32KB use sendfile optimization for HTTP requests'
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return new Response(
+    JSON.stringify({
+      message: 'Large file upload received',
+      contentType,
+      contentLength,
+      actualSize: body.byteSize,
+      usesSendfileOptimization: usesSendfile,
+      note: 'Files > 32KB use sendfile optimization for HTTP requests',
+    }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 }
 
 async function runContentTypeDemo(): Promise<Response> {
   const { ContentTypeDemo } = await import('../services/demos/content-type-demo.ts');
   const demo = new ContentTypeDemo();
-  
+
   // Run demo in background
   demo.runAllDemos().catch(console.error);
-  
+
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -1418,7 +1428,7 @@ async function runContentTypeDemo(): Promise<Response> {
   <main class="container">
     <h1>📦 Content-Type & Implementation Details Demo</h1>
     <p>Running comprehensive Content-Type and implementation demos... Check the server console for detailed output.</p>
-    
+
     <section>
       <h2>Content-Type Handling Features</h2>
       <ul>
@@ -1428,7 +1438,7 @@ async function runContentTypeDemo(): Promise<Response> {
         <li>✅ <strong>ContentTypeHandler utility</strong> - Smart Content-Type detection</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Implementation Details</h2>
       <ul>
@@ -1438,7 +1448,7 @@ async function runContentTypeDemo(): Promise<Response> {
         <li>✅ <strong>Keep-alive control</strong> - Can be disabled with Connection: close</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Test Endpoints</h2>
       <ul>
@@ -1448,7 +1458,7 @@ async function runContentTypeDemo(): Promise<Response> {
         <li><a href="/api/content-type/large-file" target="_blank">POST /api/content-type/large-file</a> - Test sendfile optimization</li>
       </ul>
     </section>
-    
+
     <section>
       <h2>Code Examples</h2>
       <h3>ContentTypeHandler Utility</h3>
@@ -1459,17 +1469,17 @@ const contentType = ContentTypeHandler.getContentType(data);
 
 // Create requests with proper Content-Type
 const request = ContentTypeHandler.createRequest(
-  `http://${SERVER_HOST}:${SERVER_PORT}/api`,
+  'http://${SERVER_HOST}:${SERVER_PORT}/api',
   { message: 'Hello' }
 );</code></pre>
-      
+
       <h3>Blob Content-Type</h3>
       <pre><code>const blob = new Blob(['Hello'], { type: 'text/plain' });
 await fetch('/api/content-type/blob', {
   method: 'POST',
   body: blob // Content-Type automatically set to 'text/plain'
 });</code></pre>
-      
+
       <h3>FormData Content-Type</h3>
       <pre><code>const formData = new FormData();
 formData.append('message', 'Hello');
@@ -1477,7 +1487,7 @@ await fetch('/api/content-type/formdata', {
   method: 'POST',
   body: formData // Content-Type automatically set to multipart/form-data
 });</code></pre>
-      
+
       <h3>Connection Pooling</h3>
       <pre><code>// Default: connection pooling enabled
 await fetch(url); // Reuses connections
@@ -1487,21 +1497,21 @@ await fetch(url, {
   headers: { 'Connection': 'close' }
 });</code></pre>
     </section>
-    
+
     <button onclick="location.reload()">Run Demo Again</button>
     <button onclick="location.href='/'">Back to Portal</button>
   </main>
 </body>
 </html>`;
-    
+
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { 'Content-Type': 'text/html' },
   });
 }
 
 async function demonstrateContentTypeHandler(): Promise<Response> {
   const { CONTENT_TYPES, ContentTypeHandler } = await import('../config/content-types.ts');
-  
+
   // Test different data types
   const testData = [
     { name: 'String JSON', data: '{"key": "value"}' },
@@ -1512,101 +1522,118 @@ async function demonstrateContentTypeHandler(): Promise<Response> {
     { name: 'Blob (text)', data: new Blob(['Hello'], { type: 'text/plain' }) },
     { name: 'Blob (binary)', data: new Blob([1, 2, 3], { type: 'application/octet-stream' }) },
   ];
-  
+
   const results = testData.map(({ name, data }) => ({
     name,
     contentType: ContentTypeHandler.getContentType(data),
-    note: name.includes('Blob') ? 'Uses blob.type property' : 
-          name.includes('FormData') ? 'Sets multipart boundary' :
-          name.includes('Array') ? 'Binary data type' : 'Auto-detected'
+    note: name.includes('Blob')
+      ? 'Uses blob.type property'
+      : name.includes('FormData')
+        ? 'Sets multipart boundary'
+        : name.includes('Array')
+          ? 'Binary data type'
+          : 'Auto-detected',
   }));
-  
+
   // Demonstrate request creation
   const sampleRequest = ContentTypeHandler.createRequest(
     `http://${SERVER_HOST}:${SERVER_PORT}/api/content-type/blob`,
     { message: 'Hello from ContentTypeHandler' }
   );
-  
-  return new Response(JSON.stringify({
-    message: 'ContentTypeHandler Utility Demo',
-    contentTypes: CONTENT_TYPES,
-    detectionResults: results,
-    sampleRequest: {
-      url: sampleRequest.url,
-      method: sampleRequest.method,
-      contentType: sampleRequest.headers.get('content-type'),
-      hasBody: !!sampleRequest.body
-    },
-    usage: {
-      import: "import { ContentTypeHandler } from '../config/content-types.ts';",
-      detection: 'ContentTypeHandler.getContentType(data)',
-      requestCreation: 'ContentTypeHandler.createRequest(url, data)'
+
+  return new Response(
+    JSON.stringify(
+      {
+        message: 'ContentTypeHandler Utility Demo',
+        contentTypes: CONTENT_TYPES,
+        detectionResults: results,
+        sampleRequest: {
+          url: sampleRequest.url,
+          method: sampleRequest.method,
+          contentType: sampleRequest.headers.get('content-type'),
+          hasBody: !!sampleRequest.body,
+        },
+        usage: {
+          import: "import { ContentTypeHandler } from '../config/content-types.ts';",
+          detection: 'ContentTypeHandler.getContentType(data)',
+          requestCreation: 'ContentTypeHandler.createRequest(url, data)',
+        },
+      },
+      null,
+      2
+    ),
+    {
+      headers: { 'Content-Type': 'application/json' },
     }
-  }, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+  );
 }
 
 async function handleExecuteCommand(request: Request): Promise<Response> {
   try {
     const { command, projects } = await request.json();
-    
+
     // Simulate command execution with realistic output
     let output = '';
     const timestamp = new Date().toISOString();
-    
+
     switch (command) {
       case 'bun install':
-        output = `Installing dependencies for ${projects.length > 0 ? projects.join(', ') : 'all projects'}...\n\n` +
-                  `✅ Dependencies installed successfully\n` +
-                  `✅ node_modules updated\n` +
-                  `✅ Lockfile updated\n` +
-                  `⏱️  Completed in 2.3s`;
+        output =
+          `Installing dependencies for ${projects.length > 0 ? projects.join(', ') : 'all projects'}...\n\n` +
+          `✅ Dependencies installed successfully\n` +
+          `✅ node_modules updated\n` +
+          `✅ Lockfile updated\n` +
+          `⏱️  Completed in 2.3s`;
         break;
-        
+
       case 'bun run start':
-        output = `Starting ${projects.length > 0 ? projects.join(', ') : 'services'}...\n\n` +
-                  `🚀 Main Portal: http://${SERVER_HOST}:${SERVER_PORT} (running)\n` +
-                  `📨 Content-Type Server: http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT} (running)\n` +
-                  `⚡ Services ready\n` +
-                  `⏱️  Started in 1.2s`;
+        output =
+          `Starting ${projects.length > 0 ? projects.join(', ') : 'services'}...\n\n` +
+          `🚀 Main Portal: http://${SERVER_HOST}:${SERVER_PORT} (running)\n` +
+          `📨 Content-Type Server: http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT} (running)\n` +
+          `⚡ Services ready\n` +
+          `⏱️  Started in 1.2s`;
         break;
-        
+
       case 'bun run test:all':
-        output = `Running comprehensive test suite...\n\n` +
-                  `🧪 UI Quality Tests: 6/6 PASS\n` +
-                  `🧪 Content-Type Tests: 6/6 PASS\n` +
-                  `🧪 Accessibility Tests: 3 PASS, 2 PARTIAL\n` +
-                  `📊 Overall: 15 PASS, 2 PARTIAL, 0 FAIL\n` +
-                  `⏱️  Completed in 8.7s`;
+        output =
+          `Running comprehensive test suite...\n\n` +
+          `🧪 UI Quality Tests: 6/6 PASS\n` +
+          `🧪 Content-Type Tests: 6/6 PASS\n` +
+          `🧪 Accessibility Tests: 3 PASS, 2 PARTIAL\n` +
+          `📊 Overall: 15 PASS, 2 PARTIAL, 0 FAIL\n` +
+          `⏱️  Completed in 8.7s`;
         break;
-        
+
       case 'bun run build':
-        output = `Building ${projects.length > 0 ? projects.join(', ') : 'project'}...\n\n` +
-                  `📦 Building optimized bundle\n` +
-                  `✅ Build completed\n` +
-                  `📊 Size: 12.3KB (gzipped: 4.1KB)\n` +
-                  `⏱️  Built in 3.1s`;
+        output =
+          `Building ${projects.length > 0 ? projects.join(', ') : 'project'}...\n\n` +
+          `📦 Building optimized bundle\n` +
+          `✅ Build completed\n` +
+          `📊 Size: 12.3KB (gzipped: 4.1KB)\n` +
+          `⏱️  Built in 3.1s`;
         break;
-        
+
       default:
-        output = `Executing: ${command}\n\n` +
-                  `✅ Command completed successfully\n` +
-                  `⏱️  Completed in 1.5s`;
+        output =
+          `Executing: ${command}\n\n` +
+          `✅ Command completed successfully\n` +
+          `⏱️  Completed in 1.5s`;
     }
-    
+
     return new Response(`${output}\n\n[${timestamp}]`, {
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
-    
   } catch (error) {
     return new Response(`Error executing command: ${error.message}`, {
       status: 500,
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
   }
 }
 
-console.log(`🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
-console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`📰 RSS Feed: http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`);
+console.info(
+  `🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`
+);
+console.info(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
+console.info(`📰 RSS Feed: http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`);

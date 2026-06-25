@@ -8,7 +8,7 @@ const phases = [
 ] as const;
 
 for (const phase of phases) {
-  console.log(`\n Phase: ${phase.name} (depth=${phase.depth})`);
+  console.info(`\n Phase: ${phase.name} (depth=${phase.depth})`);
   const proc = Bun.spawn(['bun', 'run', ...Bun.argv.slice(2)], {
     env: { ...process.env, BUN_CONSOLE_DEPTH: phase.depth.toString() },
     stdout: 'inherit',

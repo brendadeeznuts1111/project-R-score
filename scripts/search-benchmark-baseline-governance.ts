@@ -25,7 +25,7 @@ type ValidationResult = {
 };
 
 function usage(): void {
-  console.log(`
+  console.info(`
 Search Benchmark Baseline Governance
 
 USAGE:
@@ -73,7 +73,9 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
 
   if (!('previousSnapshotId' in baseline)) {
     errors.push('previousSnapshotId field is required (string or null)');
-  } else if (!(baseline.previousSnapshotId === null || hasNonEmptyString(baseline.previousSnapshotId))) {
+  } else if (
+    !(baseline.previousSnapshotId === null || hasNonEmptyString(baseline.previousSnapshotId))
+  ) {
     errors.push('previousSnapshotId must be string or null');
   }
 
@@ -99,8 +101,8 @@ async function main(): Promise<void> {
 
   const entries = await readdir(root);
   const baselineFiles = entries
-    .filter((name) => /^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name))
-    .map((name) => resolve(root, name))
+    .filter(name => /^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name))
+    .map(name => resolve(root, name))
     .sort();
 
   if (baselineFiles.length === 0) {
@@ -114,9 +116,9 @@ async function main(): Promise<void> {
     results.push(validateBaseline(path, parsed));
   }
 
-  const failed = results.filter((r) => !r.ok);
+  const failed = results.filter(r => !r.ok);
   if (asJson) {
-    console.log(
+    console.info(
       JSON.stringify(
         {
           ok: failed.length === 0,
@@ -131,11 +133,11 @@ async function main(): Promise<void> {
   } else {
     for (const result of results) {
       if (result.ok) {
-        console.log(`[search:bench:baseline:verify] ok ${result.path}`);
+        console.info(`[search:bench:baseline:verify] ok ${result.path}`);
       } else {
-        console.log(`[search:bench:baseline:verify] fail ${result.path}`);
+        console.info(`[search:bench:baseline:verify] fail ${result.path}`);
         for (const error of result.errors) {
-          console.log(`  - ${error}`);
+          console.info(`  - ${error}`);
         }
       }
     }

@@ -67,7 +67,7 @@ export async function publishTelegramAlertToRSS(
 			}),
 		).lastInsertRowId;
 
-	console.log(`✅ Alert published to RSS with ID: ${rowId}`);
+	console.info(`✅ Alert published to RSS with ID: ${rowId}`);
 
 	// Notify Telegram topic
 	try {
@@ -90,7 +90,7 @@ export async function publishTelegramAlertToRSS(
 				Authorization: `Bearer ${process.env.REGISTRY_API_TOKEN || ''}`,
 			},
 		});
-		console.log('✅ RSS cache refreshed');
+		console.info('✅ RSS cache refreshed');
 	} catch (error) {
 		console.warn('Failed to refresh RSS cache:', error);
 	}

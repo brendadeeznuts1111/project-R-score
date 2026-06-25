@@ -168,7 +168,7 @@ export class BlackSwanAlertSystem {
 
     // Integration with Component #24 (Versioning) for audit logging
     // In production, this would create a quantum audit entry
-    console.log(`🔐 Quantum Audit: Black Swan Alert ${alert.alertId}`);
+    console.info(`🔐 Quantum Audit: Black Swan Alert ${alert.alertId}`);
   }
 
   getRecentAlerts(marketId: string, timeWindowMinutes: number): BlackSwanAlert[] {

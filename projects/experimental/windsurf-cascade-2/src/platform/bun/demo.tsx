@@ -59,20 +59,20 @@ class FileManager {
   async writeFile(path: string, content: string): Promise<void> {
     await BunGlobal.write(path, content);
     this.files.set(path, content);
-    console.log(`✅ Written file: ${path}`);
+    console.info(`✅ Written file: ${path}`);
   }
 
   async readFile(path: string): Promise<string> {
     const file = BunGlobal.file(path);
     const content = await file.text();
-    console.log(`📖 Read file: ${path}`);
+    console.info(`📖 Read file: ${path}`);
     return content;
   }
 
   async deleteFile(path: string): Promise<void> {
     await BunGlobal.file(path).delete();
     this.files.delete(path);
-    console.log(`🗑️ Deleted file: ${path}`);
+    console.info(`🗑️ Deleted file: ${path}`);
   }
 }
 
@@ -94,13 +94,13 @@ class DatabaseManager {
         enabled BOOLEAN DEFAULT 1
       )
     `);
-    console.log('🗄️ Database tables initialized');
+    console.info('🗄️ Database tables initialized');
   }
 
   addFeature(name: string, description: string): void {
     const stmt = this.db.prepare('INSERT INTO features (name, description) VALUES (?, ?)');
     stmt.run(name, description);
-    console.log(`➕ Added feature: ${name}`);
+    console.info(`➕ Added feature: ${name}`);
   }
 
   getFeatures(): any[] {
@@ -110,7 +110,7 @@ class DatabaseManager {
 
   close(): void {
     this.db.close();
-    console.log('🔒 Database connection closed');
+    console.info('🔒 Database connection closed');
   }
 }
 
@@ -149,7 +149,7 @@ class DemoServer {
       }
     });
 
-    console.log(`🌐 Demo server running on http://localhost:${this.port}`);
+    console.info(`🌐 Demo server running on http://localhost:${this.port}`);
   }
 
   private generateDemoPage(): string {
@@ -184,7 +184,7 @@ class DemoServer {
           // Fetch live data from our API
           fetch('/api/features')
             .then(response => response.json())
-            .then(data => console.log('Live features:', data));
+            .then(data => console.info('Live features:', data));
         </script>
       </body>
       </html>
@@ -194,28 +194,28 @@ class DemoServer {
   stop(): void {
     if (this.server) {
       this.server.stop();
-      console.log('🛑 Demo server stopped');
+      console.info('🛑 Demo server stopped');
     }
   }
 }
 
 // Main demonstration function
 async function runDemo(): Promise<void> {
-  console.log('🎯 Starting Bun Integration Demo...\n');
+  console.info('🎯 Starting Bun Integration Demo...\n');
 
   // 1. Load configuration
   try {
     const config = await bunIntegration.loadConfig('./bun-integration.config.toml');
-    console.log('📋 Configuration loaded:', config);
+    console.info('📋 Configuration loaded:', config);
   } catch (error) {
-    console.log('⚠️ Config file not found, using defaults');
+    console.info('⚠️ Config file not found, using defaults');
   }
 
   // 2. File operations
   const fileManager = new FileManager();
   await fileManager.writeFile('./demo-output.txt', 'Hello from Bun!');
   const content = await fileManager.readFile('./demo-output.txt');
-  console.log('📄 File content:', content);
+  console.info('📄 File content:', content);
 
   // 3. Database operations
   const db = new DatabaseManager();
@@ -224,7 +224,7 @@ async function runDemo(): Promise<void> {
   db.addFeature('Fast Bundler', '10-100x faster than Webpack');
   
   const features = db.getFeatures();
-  console.log('🗄️ Database features:', features);
+  console.info('🗄️ Database features:', features);
   db.close();
 
   // 4. Create and render JSX component
@@ -237,7 +237,7 @@ async function runDemo(): Promise<void> {
     'HTTP server with WebSocket support'
   ];
 
-  console.log('🎨 JSX Component created:', demoFeatures);
+  console.info('🎨 JSX Component created:', demoFeatures);
 
   // 5. Start demo server
   const server = new DemoServer();
@@ -253,22 +253,22 @@ async function runDemo(): Promise<void> {
       target: 'browser'
     });
   } catch (error) {
-    console.log('⚠️ Bundle creation skipped in demo mode');
+    console.info('⚠️ Bundle creation skipped in demo mode');
   }
 
   // 7. Show runtime info
   const runtimeInfo = bunIntegration.getRuntimeInfo();
-  console.log('\n📊 Runtime Information:');
-  console.log(`Version: ${runtimeInfo.version}`);
-  console.log(`Platform: ${runtimeInfo.platform}`);
-  console.log(`Architecture: ${runtimeInfo.arch}`);
-  console.log('Features:', runtimeInfo.features.join(', '));
+  console.info('\n📊 Runtime Information:');
+  console.info(`Version: ${runtimeInfo.version}`);
+  console.info(`Platform: ${runtimeInfo.platform}`);
+  console.info(`Architecture: ${runtimeInfo.arch}`);
+  console.info('Features:', runtimeInfo.features.join(', '));
 
   // Cleanup
   setTimeout(() => {
     server.stop();
     fileManager.deleteFile('./demo-output.txt');
-    console.log('\n✅ Demo completed successfully!');
+    console.info('\n✅ Demo completed successfully!');
   }, 5000);
 }
 

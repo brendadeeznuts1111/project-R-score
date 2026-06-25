@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 // tools/track-imports-plugin.ts — Bun plugin for recording module imports
 
-import { plugin } from "bun";
+import { plugin } from 'bun';
 
 plugin({
-  name: "track imports",
+  name: 'track imports',
   setup(build) {
     const transpiler = new Bun.Transpiler();
 
@@ -33,7 +33,7 @@ plugin({
       // Emit JSON containing the stats of each import
       return {
         contents: `export default ${JSON.stringify(trackedImports)}`,
-        loader: "json",
+        loader: 'json',
       };
     });
   },

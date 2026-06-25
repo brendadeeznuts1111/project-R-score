@@ -42,8 +42,8 @@ export class MarketDataIngestor {
    * Stream market ticks for all games
    */
   async *streamMarketTicks(games: MarketFeed[]): AsyncGenerator<TickBatch> {
-    console.log(`[INGEST] Session ${this.sessionId.slice(0, 8)} started`);
-    console.log(`[INGEST] Source: ${this.config.source}, Games: ${games.length}`);
+    console.info(`[INGEST] Session ${this.sessionId.slice(0, 8)} started`);
+    console.info(`[INGEST] Source: ${this.config.source}, Games: ${games.length}`);
 
     for (const game of games) {
       const ticks = await this.fetchTicks(game);

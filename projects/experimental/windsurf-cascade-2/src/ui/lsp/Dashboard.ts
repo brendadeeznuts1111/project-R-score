@@ -33,7 +33,7 @@ export class Dashboard {
 
       this.setupContainer();
       this.isInitialized = true;
-      console.log(`Dashboard '${this.config.title}' initialized successfully`);
+      console.info(`Dashboard '${this.config.title}' initialized successfully`);
     } catch (error) {
       console.error('Failed to initialize dashboard:', error);
       throw error;

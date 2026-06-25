@@ -21,10 +21,10 @@
  * //
  * // Snippet:
  * ```typescript
- * console.log('Original HTML:', html);
- * console.log('Transformation Code:', code);
+ * console.info('Original HTML:', html);
+ * console.info('Transformation Code:', code);
  * const result = rewriter.transform(html);
- * console.log('Result:', result);
+ * console.info('Result:', result);
  * ```
  * 
  * @see {@link https://bun.com/docs/runtime/html-rewriter Bun HTMLRewriter Documentation}
@@ -43,23 +43,23 @@ if (!HTMLRewriter) {
   process.exit(1);
 }
 
-console.log('\n' + '═'.repeat(70));
-console.log('  HTMLRewriter Code Comparison Demo');
-console.log('═'.repeat(70) + '\n');
+console.info('\n' + '═'.repeat(70));
+console.info('  HTMLRewriter Code Comparison Demo');
+console.info('═'.repeat(70) + '\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.3.0.0.0.0.4.0 EXAMPLE 1: Attribute Manipulation
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Example 1: Attribute Manipulation');
-console.log('-'.repeat(70));
+console.info('📋 Example 1: Attribute Manipulation');
+console.info('-'.repeat(70));
 
 const html1 = '<div class="old">Content</div>';
 
-console.log('📝 Original HTML:');
-console.log(html1);
-console.log('\n🔧 Transformation Code:');
-console.log(`const rewriter = new HTMLRewriter()
+console.info('📝 Original HTML:');
+console.info(html1);
+console.info('\n🔧 Transformation Code:');
+console.info(`const rewriter = new HTMLRewriter()
   .on('div', {
     element(el) {
       el.setAttribute('class', 'new');
@@ -77,23 +77,23 @@ const rewriter1 = new HTMLRewriter()
   });
 
 const result1 = rewriter1.transform(html1);
-console.log('\n✅ Result:');
-console.log(result1);
-console.log('\n');
+console.info('\n✅ Result:');
+console.info(result1);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.3.0.0.0.0.4.1 EXAMPLE 2: Content Injection
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Example 2: Content Injection');
-console.log('-'.repeat(70));
+console.info('📋 Example 2: Content Injection');
+console.info('-'.repeat(70));
 
 const html2 = '<body><p>Hello</p></body>';
 
-console.log('📝 Original HTML:');
-console.log(html2);
-console.log('\n🔧 Transformation Code:');
-console.log(`const rewriter = new HTMLRewriter()
+console.info('📝 Original HTML:');
+console.info(html2);
+console.info('\n🔧 Transformation Code:');
+console.info(`const rewriter = new HTMLRewriter()
   .on('body', {
     element(el) {
       el.prepend('<header>Banner</header>', { html: true });
@@ -122,23 +122,23 @@ const rewriter2 = new HTMLRewriter()
   });
 
 const result2 = rewriter2.transform(html2);
-console.log('\n✅ Result:');
-console.log(result2);
-console.log('\n');
+console.info('\n✅ Result:');
+console.info(result2);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.3.0.0.0.0.4.2 EXAMPLE 3: Text Replacement
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Example 3: Text Node Replacement');
-console.log('-'.repeat(70));
+console.info('📋 Example 3: Text Node Replacement');
+console.info('-'.repeat(70));
 
 const html3 = '<p>This is the original text</p>';
 
-console.log('📝 Original HTML:');
-console.log(html3);
-console.log('\n🔧 Transformation Code:');
-console.log(`const rewriter = new HTMLRewriter()
+console.info('📝 Original HTML:');
+console.info(html3);
+console.info('\n🔧 Transformation Code:');
+console.info(`const rewriter = new HTMLRewriter()
   .on('p', {
     text(text) {
       text.replace(text.text.replace('original', 'enhanced'));
@@ -153,23 +153,23 @@ const rewriter3 = new HTMLRewriter()
   });
 
 const result3 = rewriter3.transform(html3);
-console.log('\n✅ Result:');
-console.log(result3);
-console.log('\n');
+console.info('\n✅ Result:');
+console.info(result3);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.3.0.0.0.0.4.3 EXAMPLE 4: Element Removal
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Example 4: Element Removal');
-console.log('-'.repeat(70));
+console.info('📋 Example 4: Element Removal');
+console.info('-'.repeat(70));
 
 const html4 = '<div><p>Keep this</p><script>Remove this</script><p>Keep this too</p></div>';
 
-console.log('📝 Original HTML:');
-console.log(html4);
-console.log('\n🔧 Transformation Code:');
-console.log(`const rewriter = new HTMLRewriter()
+console.info('📝 Original HTML:');
+console.info(html4);
+console.info('\n🔧 Transformation Code:');
+console.info(`const rewriter = new HTMLRewriter()
   .on('script', {
     element(el) {
       el.remove(); // Remove element and contents
@@ -184,16 +184,16 @@ const rewriter4 = new HTMLRewriter()
   });
 
 const result4 = rewriter4.transform(html4);
-console.log('\n✅ Result:');
-console.log(result4);
-console.log('\n');
+console.info('\n✅ Result:');
+console.info(result4);
+console.info('\n');
 
 // ═══════════════════════════════════════════════════════════════
 // 6.1.3.0.0.0.0.4.4 EXAMPLE 5: Complete Workflow
 // ═══════════════════════════════════════════════════════════════
 
-console.log('📋 Example 5: Complete Workflow');
-console.log('-'.repeat(70));
+console.info('📋 Example 5: Complete Workflow');
+console.info('-'.repeat(70));
 
 const html5 = `<!DOCTYPE html>
 <html>
@@ -207,10 +207,10 @@ const html5 = `<!DOCTYPE html>
 </body>
 </html>`;
 
-console.log('📝 Original HTML:');
-console.log(html5);
-console.log('\n🔧 Transformation Code:');
-console.log(`const rewriter = new HTMLRewriter()
+console.info('📝 Original HTML:');
+console.info(html5);
+console.info('\n🔧 Transformation Code:');
+console.info(`const rewriter = new HTMLRewriter()
   .on('title', { element(el) { el.setInnerContent('Enhanced Page'); } })
   .on('h1', { element(el) { el.setAttribute('class', 'title'); } })
   .on('p.intro', { 
@@ -218,7 +218,7 @@ console.log(`const rewriter = new HTMLRewriter()
     text(text) { text.replace('✨ ' + text.text); }
   })
   .onDocument({ 
-    end(end) { end.append('<script>console.log("Enhanced!");</script>', { html: true }); }
+    end(end) { end.append('<script>console.info("Enhanced!");</script>', { html: true }); }
   });`);
 
 const rewriter5 = new HTMLRewriter()
@@ -242,21 +242,21 @@ const rewriter5 = new HTMLRewriter()
   })
   .onDocument({
     end(end) {
-      end.append('<script>console.log("Enhanced!");</script>', { html: true });
+      end.append('<script>console.info("Enhanced!");</script>', { html: true });
     },
   });
 
 const result5 = rewriter5.transform(html5);
-console.log('\n✅ Result:');
-console.log(result5);
-console.log('\n');
+console.info('\n✅ Result:');
+console.info(result5);
+console.info('\n');
 
-console.log('═'.repeat(70));
-console.log('  Comparison Complete!');
-console.log('═'.repeat(70));
-console.log('\n💡 Key Takeaways:');
-console.log('  • HTMLRewriter transforms HTML on-the-fly');
-console.log('  • Multiple handlers can be chained');
-console.log('  • Element, text, and comment handlers work together');
-console.log('  • Document-level handlers for global changes');
-console.log('  • All transformations are streaming (memory efficient)\n');
+console.info('═'.repeat(70));
+console.info('  Comparison Complete!');
+console.info('═'.repeat(70));
+console.info('\n💡 Key Takeaways:');
+console.info('  • HTMLRewriter transforms HTML on-the-fly');
+console.info('  • Multiple handlers can be chained');
+console.info('  • Element, text, and comment handlers work together');
+console.info('  • Document-level handlers for global changes');
+console.info('  • All transformations are streaming (memory efficient)\n');

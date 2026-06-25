@@ -51,7 +51,7 @@ const clients = new Set<WebSocket>();
 
 wss.on('connection', (ws) => {
   clients.add(ws);
-  console.log('Dashboard client connected');
+  console.info('Dashboard client connected');
   
   // Send current config immediately
   ws.send(JSON.stringify({
@@ -61,7 +61,7 @@ wss.on('connection', (ws) => {
   
   ws.on('close', () => {
     clients.delete(ws);
-    console.log('Dashboard client disconnected');
+    console.info('Dashboard client disconnected');
   });
   
   ws.on('message', (message) => {
@@ -575,15 +575,15 @@ const server = Bun.serve({
 });
 
 // Start performance monitoring
-console.log(`🚀 Enhanced Bun Registry Server started on port ${PORT}`);
-console.log(`📡 WebSocket server started on port ${WS_PORT}`);
-console.log(`🌐 Dashboard available at: http://localhost:${PORT}/dashboard`);
-console.log(`📊 Enhanced dashboard: http://localhost:${PORT}/`);
-console.log(`🔧 Original dashboard: http://localhost:${PORT}/original`);
+console.info(`🚀 Enhanced Bun Registry Server started on port ${PORT}`);
+console.info(`📡 WebSocket server started on port ${WS_PORT}`);
+console.info(`🌐 Dashboard available at: http://localhost:${PORT}/dashboard`);
+console.info(`📊 Enhanced dashboard: http://localhost:${PORT}/`);
+console.info(`🔧 Original dashboard: http://localhost:${PORT}/original`);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.info('\n🛑 Shutting down gracefully...');
   
   // Close WebSocket server
   wss.close();
@@ -597,6 +597,6 @@ process.on('SIGINT', () => {
   // Stop HTTP server
   server.stop();
   
-  console.log('✅ Server stopped');
+  console.info('✅ Server stopped');
   process.exit(0);
 });

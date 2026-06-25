@@ -63,7 +63,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlagConfig[] = [
  * Register all default feature flags
  */
 async function registerFeatureFlags(): Promise<void> {
-	console.log("🚩 Registering feature flags...");
+	console.info("🚩 Registering feature flags...");
 
 	const manager = new FeatureFlagManager();
 
@@ -77,23 +77,23 @@ async function registerFeatureFlags(): Promise<void> {
 			const exists = existingFlags.some(f => f.id === flag.id);
 
 			if (exists) {
-				console.log(`⏭️  Skipping existing flag: ${flag.id}`);
+				console.info(`⏭️  Skipping existing flag: ${flag.id}`);
 				skipped++;
 				continue;
 			}
 
 			manager.registerFlag(flag);
-			console.log(`✅ Registered flag: ${flag.id} - ${flag.name}`);
+			console.info(`✅ Registered flag: ${flag.id} - ${flag.name}`);
 			registered++;
 		} catch (error) {
 			console.error(`❌ Failed to register flag ${flag.id}:`, error);
 		}
 	}
 
-	console.log(`\n📊 Feature flag registration complete!`);
-	console.log(`Registered: ${registered}`);
-	console.log(`Skipped: ${skipped}`);
-	console.log(`Total: ${registered + skipped}`);
+	console.info(`\n📊 Feature flag registration complete!`);
+	console.info(`Registered: ${registered}`);
+	console.info(`Skipped: ${skipped}`);
+	console.info(`Total: ${registered + skipped}`);
 
 	manager.close();
 }

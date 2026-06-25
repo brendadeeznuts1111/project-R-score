@@ -30,9 +30,9 @@ class R2DeploymentVerifier {
   }
 
   async verifyDeployment(): Promise<VerificationResult> {
-    console.log('🔍 Verifying Global Trading System deployment...');
-    console.log(`📦 Bucket: ${this.bucketName}`);
-    console.log('');
+    console.info('🔍 Verifying Global Trading System deployment...');
+    console.info(`📦 Bucket: ${this.bucketName}`);
+    console.info('');
 
     const result: VerificationResult = {
       success: true,
@@ -47,7 +47,7 @@ class R2DeploymentVerifier {
       const allFiles = await this.listAllFiles();
       result.totalFiles = allFiles.length;
 
-      console.log(`📁 Found ${allFiles.length} files in R2 bucket`);
+      console.info(`📁 Found ${allFiles.length} files in R2 bucket`);
 
       // Verify core packages
       await this.verifyCorePackages(allFiles, result);
@@ -95,7 +95,7 @@ class R2DeploymentVerifier {
   }
 
   private async verifyCorePackages(allFiles: string[], result: VerificationResult): Promise<void> {
-    console.log('🔧 Verifying core packages...');
+    console.info('🔧 Verifying core packages...');
 
     const coreFiles = [
       'packages/core/index.js',
@@ -108,22 +108,22 @@ class R2DeploymentVerifier {
         const isAccessible = await this.checkFileAccessibility(file);
         if (isAccessible) {
           result.verifiedFiles.push(file);
-          console.log(`  ✅ ${file}`);
+          console.info(`  ✅ ${file}`);
         } else {
           result.missingFiles.push(file);
           result.errors.push(`Core package file ${file} is not accessible`);
-          console.log(`  ❌ ${file} (not accessible)`);
+          console.info(`  ❌ ${file} (not accessible)`);
         }
       } else {
         result.missingFiles.push(file);
         result.errors.push(`Core package file ${file} is missing`);
-        console.log(`  ❌ ${file} (missing)`);
+        console.info(`  ❌ ${file} (missing)`);
       }
     }
   }
 
   private async verifyIntegrationPackages(allFiles: string[], result: VerificationResult): Promise<void> {
-    console.log('🔗 Verifying integration packages...');
+    console.info('🔗 Verifying integration packages...');
 
     const integrationFiles = [
       'packages/integrations/polymarket-client.js',
@@ -135,22 +135,22 @@ class R2DeploymentVerifier {
         const isAccessible = await this.checkFileAccessibility(file);
         if (isAccessible) {
           result.verifiedFiles.push(file);
-          console.log(`  ✅ ${file}`);
+          console.info(`  ✅ ${file}`);
         } else {
           result.missingFiles.push(file);
           result.errors.push(`Integration package file ${file} is not accessible`);
-          console.log(`  ❌ ${file} (not accessible)`);
+          console.info(`  ❌ ${file} (not accessible)`);
         }
       } else {
         result.missingFiles.push(file);
         result.errors.push(`Integration package file ${file} is missing`);
-        console.log(`  ❌ ${file} (missing)`);
+        console.info(`  ❌ ${file} (missing)`);
       }
     }
   }
 
   private async verifyPlatformPackages(allFiles: string[], result: VerificationResult): Promise<void> {
-    console.log('🌍 Verifying platform packages...');
+    console.info('🌍 Verifying platform packages...');
 
     const platformFiles = [
       'packages/multi-region/region-processor.js',
@@ -163,22 +163,22 @@ class R2DeploymentVerifier {
         const isAccessible = await this.checkFileAccessibility(file);
         if (isAccessible) {
           result.verifiedFiles.push(file);
-          console.log(`  ✅ ${file}`);
+          console.info(`  ✅ ${file}`);
         } else {
           result.missingFiles.push(file);
           result.errors.push(`Platform package file ${file} is not accessible`);
-          console.log(`  ❌ ${file} (not accessible)`);
+          console.info(`  ❌ ${file} (not accessible)`);
         }
       } else {
         result.missingFiles.push(file);
         result.errors.push(`Platform package file ${file} is missing`);
-        console.log(`  ❌ ${file} (missing)`);
+        console.info(`  ❌ ${file} (missing)`);
       }
     }
   }
 
   private async verifyDashboard(allFiles: string[], result: VerificationResult): Promise<void> {
-    console.log('📱 Verifying dashboard...');
+    console.info('📱 Verifying dashboard...');
 
     const dashboardFiles = [
       'dashboard/trading-dashboard-enhanced.html'
@@ -189,22 +189,22 @@ class R2DeploymentVerifier {
         const isAccessible = await this.checkFileAccessibility(file);
         if (isAccessible) {
           result.verifiedFiles.push(file);
-          console.log(`  ✅ ${file}`);
+          console.info(`  ✅ ${file}`);
         } else {
           result.missingFiles.push(file);
           result.errors.push(`Dashboard file ${file} is not accessible`);
-          console.log(`  ❌ ${file} (not accessible)`);
+          console.info(`  ❌ ${file} (not accessible)`);
         }
       } else {
         result.missingFiles.push(file);
         result.errors.push(`Dashboard file ${file} is missing`);
-        console.log(`  ❌ ${file} (missing)`);
+        console.info(`  ❌ ${file} (missing)`);
       }
     }
   }
 
   private async verifyManifest(allFiles: string[], result: VerificationResult): Promise<void> {
-    console.log('📋 Verifying manifest...');
+    console.info('📋 Verifying manifest...');
 
     const manifestFiles = [
       'manifest.json',
@@ -216,16 +216,16 @@ class R2DeploymentVerifier {
         const isAccessible = await this.checkFileAccessibility(file);
         if (isAccessible) {
           result.verifiedFiles.push(file);
-          console.log(`  ✅ ${file}`);
+          console.info(`  ✅ ${file}`);
         } else {
           result.missingFiles.push(file);
           result.errors.push(`Manifest file ${file} is not accessible`);
-          console.log(`  ❌ ${file} (not accessible)`);
+          console.info(`  ❌ ${file} (not accessible)`);
         }
       } else {
         result.missingFiles.push(file);
         result.errors.push(`Manifest file ${file} is missing`);
-        console.log(`  ❌ ${file} (missing)`);
+        console.info(`  ❌ ${file} (missing)`);
       }
     }
   }
@@ -245,7 +245,7 @@ class R2DeploymentVerifier {
   }
 
   private async verifyFileAccessibility(result: VerificationResult): Promise<void> {
-    console.log('🌐 Checking file accessibility...');
+    console.info('🌐 Checking file accessibility...');
 
     // Test a few key files to ensure they're publicly accessible
     const testFiles = [
@@ -265,55 +265,55 @@ class R2DeploymentVerifier {
           const content = await response.Body?.transformToString();
           
           if (content && content.length > 0) {
-            console.log(`  ✅ ${file} is accessible (${content.length} bytes)`);
+            console.info(`  ✅ ${file} is accessible (${content.length} bytes)`);
           } else {
             result.errors.push(`File ${file} is empty`);
-            console.log(`  ⚠️  ${file} is empty`);
+            console.info(`  ⚠️  ${file} is empty`);
           }
         } catch (error) {
           result.errors.push(`File ${file} is not accessible: ${error}`);
-          console.log(`  ❌ ${file} is not accessible`);
+          console.info(`  ❌ ${file} is not accessible`);
         }
       }
     }
   }
 
   private printResults(result: VerificationResult): void {
-    console.log('');
-    console.log('📊 Verification Results:');
-    console.log(`   Total files: ${result.totalFiles}`);
-    console.log(`   Verified: ${result.verifiedFiles.length}`);
-    console.log(`   Missing: ${result.missingFiles.length}`);
-    console.log(`   Errors: ${result.errors.length}`);
+    console.info('');
+    console.info('📊 Verification Results:');
+    console.info(`   Total files: ${result.totalFiles}`);
+    console.info(`   Verified: ${result.verifiedFiles.length}`);
+    console.info(`   Missing: ${result.missingFiles.length}`);
+    console.info(`   Errors: ${result.errors.length}`);
 
     if (result.success && result.missingFiles.length === 0 && result.errors.length === 0) {
-      console.log('');
-      console.log('🎉 Deployment verification PASSED!');
-      console.log('✅ Global Trading System is ready for production use');
-      console.log('🌍 All packages are accessible via Cloudflare CDN');
-      console.log('⚡ 13-byte configuration system operational');
+      console.info('');
+      console.info('🎉 Deployment verification PASSED!');
+      console.info('✅ Global Trading System is ready for production use');
+      console.info('🌍 All packages are accessible via Cloudflare CDN');
+      console.info('⚡ 13-byte configuration system operational');
     } else {
-      console.log('');
-      console.log('❌ Deployment verification FAILED!');
+      console.info('');
+      console.info('❌ Deployment verification FAILED!');
       
       if (result.missingFiles.length > 0) {
-        console.log('');
-        console.log('Missing files:');
-        result.missingFiles.forEach(file => console.log(`   • ${file}`));
+        console.info('');
+        console.info('Missing files:');
+        result.missingFiles.forEach(file => console.info(`   • ${file}`));
       }
       
       if (result.errors.length > 0) {
-        console.log('');
-        console.log('Errors:');
-        result.errors.forEach(error => console.log(`   • ${error}`));
+        console.info('');
+        console.info('Errors:');
+        result.errors.forEach(error => console.info(`   • ${error}`));
       }
     }
 
-    console.log('');
-    console.log('🌐 Access URLs:');
-    console.log(`   • Dashboard: https://${this.bucketName}.r2.cloudflarestorage.com/dashboard/trading-dashboard-enhanced.html`);
-    console.log(`   • Manifest: https://${this.bucketName}.r2.cloudflarestorage.com/manifest.json`);
-    console.log(`   • Package Index: https://${this.bucketName}.r2.cloudflarestorage.com/package.json`);
+    console.info('');
+    console.info('🌐 Access URLs:');
+    console.info(`   • Dashboard: https://${this.bucketName}.r2.cloudflarestorage.com/dashboard/trading-dashboard-enhanced.html`);
+    console.info(`   • Manifest: https://${this.bucketName}.r2.cloudflarestorage.com/manifest.json`);
+    console.info(`   • Package Index: https://${this.bucketName}.r2.cloudflarestorage.com/package.json`);
   }
 }
 

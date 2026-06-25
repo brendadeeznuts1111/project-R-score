@@ -10,50 +10,50 @@ import type { ApiDocEntry, ApiCategory } from '../types/bun-apis';
  * Example 1: Accessing specific API documentation
  */
 function demonstrateApiAccess() {
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('📚 Bun Native APIs Documentation Access Examples');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('📚 Bun Native APIs Documentation Access Examples');
+  console.info('═══════════════════════════════════════════════════════\n');
 
   // Type-safe access to URLPattern documentation
   const urlPatternDoc: ApiDocEntry = BUN_NATIVE_APIS.ROUTING.URL_PATTERN;
-  console.log(`API: ${urlPatternDoc.api}`);
-  console.log(`Optimization: ${urlPatternDoc.optimization}`);
-  console.log(`Performance: ${urlPatternDoc.performance}`);
-  console.log(`Use Case: ${urlPatternDoc.use_case}`);
-  console.log(`Security: ${urlPatternDoc.security}`);
-  console.log(`Docs: ${urlPatternDoc.documentation}`);
-  console.log(`Location: ${urlPatternDoc.code_location}\n`);
+  console.info(`API: ${urlPatternDoc.api}`);
+  console.info(`Optimization: ${urlPatternDoc.optimization}`);
+  console.info(`Performance: ${urlPatternDoc.performance}`);
+  console.info(`Use Case: ${urlPatternDoc.use_case}`);
+  console.info(`Security: ${urlPatternDoc.security}`);
+  console.info(`Docs: ${urlPatternDoc.documentation}`);
+  console.info(`Location: ${urlPatternDoc.code_location}\n`);
 
   // Access Map documentation
   const mapDoc: ApiDocEntry = BUN_NATIVE_APIS.DATA_STRUCTURES.MAP;
-  console.log(`API: ${mapDoc.api}`);
-  console.log(`Optimization: ${mapDoc.optimization}`);
-  console.log(`Performance: ${mapDoc.performance} (${mapDoc.performance.includes('33x') ? '33x faster!' : 'optimized'})`);
-  console.log();
+  console.info(`API: ${mapDoc.api}`);
+  console.info(`Optimization: ${mapDoc.optimization}`);
+  console.info(`Performance: ${mapDoc.performance} (${mapDoc.performance.includes('33x') ? '33x faster!' : 'optimized'})`);
+  console.info();
 
   // Access Bun.serve documentation
   const serveDoc: ApiDocEntry = BUN_NATIVE_APIS.HTTP_NETWORKING.BUN_SERVE;
-  console.log(`API: ${serveDoc.api}`);
-  console.log(`Optimization: ${serveDoc.optimization}`);
-  console.log(`Performance Impact: ${serveDoc.performance}`);
-  console.log();
+  console.info(`API: ${serveDoc.api}`);
+  console.info(`Optimization: ${serveDoc.optimization}`);
+  console.info(`Performance Impact: ${serveDoc.performance}`);
+  console.info();
 }
 
 /**
  * Example 2: Iterating through all APIs in a category
  */
 function demonstrateCategoryIteration() {
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('🔍 Routing APIs Performance Summary');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('🔍 Routing APIs Performance Summary');
+  console.info('═══════════════════════════════════════════════════════\n');
 
   const routingApis = BUN_NATIVE_APIS.ROUTING;
 
   for (const [apiName, apiDoc] of Object.entries(routingApis)) {
-    console.log(`${apiName}:`);
-    console.log(`  ⚡ ${apiDoc.optimization}`);
-    console.log(`  📊 ${apiDoc.performance}`);
-    console.log();
+    console.info(`${apiName}:`);
+    console.info(`  ⚡ ${apiDoc.optimization}`);
+    console.info(`  📊 ${apiDoc.performance}`);
+    console.info();
   }
 }
 
@@ -61,9 +61,9 @@ function demonstrateCategoryIteration() {
  * Example 3: Performance comparison table
  */
 function demonstratePerformanceComparison() {
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('📊 Performance Optimization Summary');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('📊 Performance Optimization Summary');
+  console.info('═══════════════════════════════════════════════════════\n');
 
   const performanceData = [
     {
@@ -106,9 +106,9 @@ function demonstratePerformanceComparison() {
  * Example 4: Security features audit
  */
 function demonstrateSecurityAudit() {
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('🔒 Security Features Audit');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('🔒 Security Features Audit');
+  console.info('═══════════════════════════════════════════════════════\n');
 
   const securityApis = [
     BUN_NATIVE_APIS.ROUTING.URL_PATTERN,
@@ -118,10 +118,10 @@ function demonstrateSecurityAudit() {
   ];
 
   securityApis.forEach(api => {
-    console.log(`✅ ${api.api}`);
-    console.log(`   Security: ${api.security}`);
-    console.log(`   Implementation: ${api.implementation}`);
-    console.log();
+    console.info(`✅ ${api.api}`);
+    console.info(`   Security: ${api.security}`);
+    console.info(`   Implementation: ${api.implementation}`);
+    console.info();
   });
 }
 
@@ -151,9 +151,9 @@ function generateApiMarkdown(category: ApiCategory): string {
  * Example 6: Validate API documentation completeness
  */
 function validateApiDocumentation(): boolean {
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('✓ Validating API Documentation Completeness');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('✓ Validating API Documentation Completeness');
+  console.info('═══════════════════════════════════════════════════════\n');
 
   let isComplete = true;
   const requiredFields: (keyof ApiDocEntry)[] = [
@@ -171,7 +171,7 @@ function validateApiDocumentation(): boolean {
     for (const [apiName, apiDoc] of Object.entries(categoryApis)) {
       for (const field of requiredFields) {
         if (!apiDoc[field] || apiDoc[field].trim() === '') {
-          console.log(`❌ ${categoryName}.${apiName}.${field} is missing or empty`);
+          console.info(`❌ ${categoryName}.${apiName}.${field} is missing or empty`);
           isComplete = false;
         }
       }
@@ -179,7 +179,7 @@ function validateApiDocumentation(): boolean {
   }
 
   if (isComplete) {
-    console.log('✅ All API documentation is complete!\n');
+    console.info('✅ All API documentation is complete!\n');
   }
 
   return isComplete;
@@ -194,10 +194,10 @@ export function runExamples() {
   demonstratePerformanceComparison();
   demonstrateSecurityAudit();
 
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('📝 Generated Markdown Documentation (Routing APIs)');
-  console.log('═══════════════════════════════════════════════════════\n');
-  console.log(generateApiMarkdown('ROUTING'));
+  console.info('═══════════════════════════════════════════════════════');
+  console.info('📝 Generated Markdown Documentation (Routing APIs)');
+  console.info('═══════════════════════════════════════════════════════\n');
+  console.info(generateApiMarkdown('ROUTING'));
 
   validateApiDocumentation();
 }

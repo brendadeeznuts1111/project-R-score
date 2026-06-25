@@ -32,16 +32,16 @@ export class HyperMatrixBrowser {
   async render(): Promise<void> {
     const rows = HyperMatrixBrowser.getRows();
     
-    console.log('\n📋 EMPIRE PRO PATTERN MATRIX (Click to navigate)\n' + '═'.repeat(80));
+    console.info('\n📋 EMPIRE PRO PATTERN MATRIX (Click to navigate)\n' + '═'.repeat(80));
     
     // Headers
-    console.log('Section    │ Name               │ Perf      │ ROI   │ Navigate');
-    console.log('─'.repeat(80));
+    console.info('Section    │ Name               │ Perf      │ ROI   │ Navigate');
+    console.info('─'.repeat(80));
 
     // Hyperlinked rows (§Pattern:128.7)
     rows.forEach(row => {
       const url = `https://dashboards.factory-wager.com/pattern/${row.section}`;
-      console.log(HyperlinkFormatter.create({
+      console.info(HyperlinkFormatter.create({
         url,
         text: `${row.section.padEnd(10)} │ ${row.name.padEnd(18)} │ ${row.perf.padEnd(9)} │ ${row.roi.padEnd(5)} │ View`,
         id: `matrix:${row.section}` 
@@ -49,9 +49,9 @@ export class HyperMatrixBrowser {
     });
 
     // Quick filters
-    console.log('\n🔍 QUICK FILTERS:');
-    console.log(HyperlinkFormatter.queryFilter('success=true', 'https://r2.dev/query'));
-    console.log(HyperlinkFormatter.queryFilter('perf<1ms', 'https://r2.dev/query'));
-    console.log(HyperlinkFormatter.queryFilter('roi>100x', 'https://r2.dev/query'));
+    console.info('\n🔍 QUICK FILTERS:');
+    console.info(HyperlinkFormatter.queryFilter('success=true', 'https://r2.dev/query'));
+    console.info(HyperlinkFormatter.queryFilter('perf<1ms', 'https://r2.dev/query'));
+    console.info(HyperlinkFormatter.queryFilter('roi>100x', 'https://r2.dev/query'));
   }
 }

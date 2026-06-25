@@ -89,7 +89,7 @@ describe("WebSocket Lifecycle Integration", () => {
       expect(result.durationMs).toBeLessThan(100); // Connection should be fast
 
       result.value.close();
-      console.log(`WebSocket connect: ${formatTime(result.durationMs)}`);
+      console.info(`WebSocket connect: ${formatTime(result.durationMs)}`);
     });
 
     test("receives connected message immediately", async () => {
@@ -156,7 +156,7 @@ describe("WebSocket Lifecycle Integration", () => {
       ws.close();
 
       expect(stats.p99).toBeLessThan(50); // Roundtrip under 50ms
-      console.log(formatStats(stats, "Ping-pong roundtrip"));
+      console.info(formatStats(stats, "Ping-pong roundtrip"));
     });
 
     test("echo messages maintain low latency", async () => {
@@ -186,7 +186,7 @@ describe("WebSocket Lifecycle Integration", () => {
       ws.close();
 
       expect(stats.p99).toBeLessThan(50);
-      console.log(formatStats(stats, "Echo roundtrip"));
+      console.info(formatStats(stats, "Echo roundtrip"));
     });
 
     test("handles rapid message bursts", async () => {
@@ -220,7 +220,7 @@ describe("WebSocket Lifecycle Integration", () => {
       expect(result.value).toBe(100);
       expect(result.durationMs).toBeLessThan(500); // 100 messages in under 500ms
 
-      console.log(`100 message burst: ${formatTime(result.durationMs)}`);
+      console.info(`100 message burst: ${formatTime(result.durationMs)}`);
     });
   });
 
@@ -286,7 +286,7 @@ describe("WebSocket Lifecycle Integration", () => {
       expect(result.value).toBe(10 * 1024);
       expect(result.durationMs).toBeLessThan(100); // Large payload should still be fast
 
-      console.log(`10KB payload roundtrip: ${formatTime(result.durationMs)}`);
+      console.info(`10KB payload roundtrip: ${formatTime(result.durationMs)}`);
     });
 
     test("invalid JSON returns error", async () => {
@@ -339,7 +339,7 @@ describe("WebSocket Lifecycle Integration", () => {
       expect(result.value.allOpen).toBe(true);
       expect(result.durationMs).toBeLessThan(500);
 
-      console.log(`10 concurrent connections: ${formatTime(result.durationMs)}`);
+      console.info(`10 concurrent connections: ${formatTime(result.durationMs)}`);
     });
 
     test("all connections can send messages independently", async () => {
@@ -411,7 +411,7 @@ describe("WebSocket Lifecycle Integration", () => {
       // Connection should be closing or already closed
       expect([WebSocket.CLOSING, WebSocket.CLOSED]).toContain(ws.readyState);
 
-      console.log(`100 sequential messages: ${formatTime(timer.durationMs)}`);
+      console.info(`100 sequential messages: ${formatTime(timer.durationMs)}`);
     });
   });
 });

@@ -23,7 +23,7 @@
     "db:migrate": "bun src/database/migrate.ts",
     "generate": "bun src/scripts/generate-shortcuts.ts",
     "toml:demo": "bun src/examples/toml-demo.ts",
-    "toml:validate": "bun src/examples/toml-validation.ts",
+    "toml:validate": "bun src/cli/toml-cli.ts validate",
     "toml:app": "bun src/examples/toml-app.ts",
     "loaders:demo": "bun src/examples/bun-loaders-demo.ts",
     "unicode:demo": "bun src/examples/unicode-demo.ts",
@@ -34,7 +34,6 @@
     "toml:build": "bun run build.sh",
     "toml:dev": "bun src/cli/toml-cli.ts",
     "toml:edit": "bun src/cli/toml-cli.ts edit",
-    "toml:validate": "bun src/cli/toml-cli.ts validate",
     "toml:optimize": "bun src/cli/toml-cli.ts optimize",
     "toml:audit": "bun src/cli/toml-cli.ts audit",
     "toml:interactive": "bun src/cli/toml-cli.ts interactive",
@@ -42,22 +41,22 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^25.0.10",
-    "typescript": "^5.0.0"
+    "@types/node": "25.0.10",
+    "typescript": "5.0.0"
   },
   "dependencies": {
-    "@biomejs/biome": "^1.6.0",
-    "@radix-ui/react-separator": "^1.1.8",
-    "@radix-ui/react-tabs": "^1.1.13",
-    "@types/react": "^19.2.9",
-    "@types/react-dom": "^19.2.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "tailwind-merge": "^3.4.0"
+    "@biomejs/biome": "1.6.0",
+    "@radix-ui/react-separator": "1.1.8",
+    "@radix-ui/react-tabs": "1.1.13",
+    "@types/react": "19.2.9",
+    "@types/react-dom": "19.2.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwind-merge": "3.4.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "5.0.0"
   }
 }

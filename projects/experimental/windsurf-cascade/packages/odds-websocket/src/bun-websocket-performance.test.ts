@@ -157,11 +157,11 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
         const duration = endTime - startTime;
         const messagesPerSecond = Math.round((messagesReceived / duration) * 1000);
 
-        console.log(`📊 Performance Results:`);
-        console.log(`   Messages sent: ${TEST_CONFIG.messageCount}`);
-        console.log(`   Messages received: ${messagesReceived}`);
-        console.log(`   Duration: ${duration.toFixed(2)}ms`);
-        console.log(`   Messages/sec: ${messagesPerSecond}`);
+        console.info(`📊 Performance Results:`);
+        console.info(`   Messages sent: ${TEST_CONFIG.messageCount}`);
+        console.info(`   Messages received: ${messagesReceived}`);
+        console.info(`   Duration: ${duration.toFixed(2)}ms`);
+        console.info(`   Messages/sec: ${messagesPerSecond}`);
 
         expect(messagesPerSecond).toBeGreaterThan(1000); // At least 1k msg/sec
         expect(messagesReceived).toBeGreaterThan(TEST_CONFIG.messageCount * 0.9); // 90% delivery rate
@@ -207,7 +207,7 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
 
         // Wait for all clients to connect
         await Promise.all(clientPromises);
-        console.log(`🔗 Connected ${TEST_CONFIG.concurrentClients} concurrent clients`);
+        console.info(`🔗 Connected ${TEST_CONFIG.concurrentClients} concurrent clients`);
 
         // Broadcast messages to test concurrency
         for (let i = 0; i < 1000; i++) {
@@ -235,11 +235,11 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
         const duration = endTime - startTime;
         const messagesPerSecond = Math.round((totalMessagesReceived / duration) * 1000);
 
-        console.log(`📊 Concurrency Results:`);
-        console.log(`   Concurrent clients: ${TEST_CONFIG.concurrentClients}`);
-        console.log(`   Total messages received: ${totalMessagesReceived}`);
-        console.log(`   Duration: ${duration.toFixed(2)}ms`);
-        console.log(`   Messages/sec: ${messagesPerSecond}`);
+        console.info(`📊 Concurrency Results:`);
+        console.info(`   Concurrent clients: ${TEST_CONFIG.concurrentClients}`);
+        console.info(`   Total messages received: ${totalMessagesReceived}`);
+        console.info(`   Duration: ${duration.toFixed(2)}ms`);
+        console.info(`   Messages/sec: ${messagesPerSecond}`);
 
         expect(totalMessagesReceived).toBeGreaterThan(TEST_CONFIG.concurrentClients * 500); // Each client should get multiple messages
         expect(messagesPerSecond).toBeGreaterThan(500); // Maintain good throughput under load
@@ -287,10 +287,10 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
 
         const compressionRatio = compressedSize / (largeMessage.data.largeData.length + largeMessage.data.metadata.extra.length);
 
-        console.log(`📊 Compression Results:`);
-        console.log(`   Original size: ${largeMessage.data.largeData.length + largeMessage.data.metadata.extra.length} bytes`);
-        console.log(`   Compressed size: ${compressedSize} bytes`);
-        console.log(`   Compression ratio: ${(compressionRatio * 100).toFixed(1)}%`);
+        console.info(`📊 Compression Results:`);
+        console.info(`   Original size: ${largeMessage.data.largeData.length + largeMessage.data.metadata.extra.length} bytes`);
+        console.info(`   Compressed size: ${compressedSize} bytes`);
+        console.info(`   Compression ratio: ${(compressionRatio * 100).toFixed(1)}%`);
 
         expect(compressionRatio).toBeLessThan(0.5); // At least 50% compression
         expect(messageCount).toBe(1);
@@ -346,10 +346,10 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
         await Promise.all(sendPromises);
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for processing
 
-        console.log(`📊 Backpressure Results:`);
-        console.log(`   Messages sent: ${messagesSent}`);
-        console.log(`   Backpressure detected: ${backpressureDetected}`);
-        console.log(`   Messages dropped: ${messagesDropped}`);
+        console.info(`📊 Backpressure Results:`);
+        console.info(`   Messages sent: ${messagesSent}`);
+        console.info(`   Backpressure detected: ${backpressureDetected}`);
+        console.info(`   Messages dropped: ${messagesDropped}`);
 
         expect(messagesSent).toBe(1000);
         // Backpressure handling is working if we detect it or handle gracefully
@@ -369,13 +369,13 @@ describe("🚀 Bun WebSocket Performance Tests", () => {
         expect(typeof metrics.pendingWebSockets).toBe("number");
         expect(typeof metrics.memoryUsage).toBe("object");
 
-        console.log(`📊 Server Metrics:`, metrics);
+        console.info(`📊 Server Metrics:`, metrics);
     });
 });
 
 // Performance benchmark for 700k+ msg/sec target
 test("🎯 700k+ msg/sec Benchmark", async () => {
-    console.log(`🚀 Starting 700k+ msg/sec benchmark...`);
+    console.info(`🚀 Starting 700k+ msg/sec benchmark...`);
 
     const server = new BunWebSocketOptimized({
         port: 3003,
@@ -414,7 +414,7 @@ test("🎯 700k+ msg/sec Benchmark", async () => {
         });
     }
 
-    console.log(`🔗 ${benchmarkClients} benchmark clients connected`);
+    console.info(`🔗 ${benchmarkClients} benchmark clients connected`);
 
     // Rapid message broadcasting
     const broadcastInterval = setInterval(() => {
@@ -435,12 +435,12 @@ test("🎯 700k+ msg/sec Benchmark", async () => {
     const duration = endTime - startTime;
     const messagesPerSecond = Math.round((totalMessages / duration) * 1000);
 
-    console.log(`🎯 BENCHMARK RESULTS:`);
-    console.log(`   Target: 700,000 msg/sec`);
-    console.log(`   Achieved: ${messagesPerSecond.toLocaleString()} msg/sec`);
-    console.log(`   Total messages: ${totalMessages.toLocaleString()}`);
-    console.log(`   Duration: ${duration.toFixed(2)}ms`);
-    console.log(`   Efficiency: ${((messagesPerSecond / 700000) * 100).toFixed(1)}%`);
+    console.info(`🎯 BENCHMARK RESULTS:`);
+    console.info(`   Target: 700,000 msg/sec`);
+    console.info(`   Achieved: ${messagesPerSecond.toLocaleString()} msg/sec`);
+    console.info(`   Total messages: ${totalMessages.toLocaleString()}`);
+    console.info(`   Duration: ${duration.toFixed(2)}ms`);
+    console.info(`   Efficiency: ${((messagesPerSecond / 700000) * 100).toFixed(1)}%`);
 
     // Clean up
     clients.forEach(client => client.close());
@@ -495,7 +495,7 @@ test("🕐 Deterministic timestamp behavior with time mocking", () => {
     expect(deterministicOdds.gameId).toContain(expectedTimestamp.toString());
     expect(deterministicArbitrage.id).toContain(expectedTimestamp.toString());
 
-    console.log(`✅ Time mocking verified: All timestamps = ${expectedTimestamp} (${new Date(expectedTimestamp).toISOString()})`);
+    console.info(`✅ Time mocking verified: All timestamps = ${expectedTimestamp} (${new Date(expectedTimestamp).toISOString()})`);
 });
 
 test("🌍 Timezone handling in WebSocket messages", () => {
@@ -523,7 +523,7 @@ test("🌍 Timezone handling in WebSocket messages", () => {
     const nyTime = new Date();
     expect(nyTime.getTimezoneOffset()).toBe(300); // EST (UTC-5 in winter for our mocked date)
 
-    console.log(`✅ Timezone handling verified: UTC offset = ${nyTime.getTimezoneOffset()} minutes`);
+    console.info(`✅ Timezone handling verified: UTC offset = ${nyTime.getTimezoneOffset()} minutes`);
 
     // Reset timezone
     process.env.TZ = "UTC";

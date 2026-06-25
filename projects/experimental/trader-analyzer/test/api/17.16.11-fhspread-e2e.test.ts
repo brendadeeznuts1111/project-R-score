@@ -184,7 +184,7 @@ describe('fhSPREAD Deviation E2E', () => {
 		// Handle potential errors
 		if (res.status !== 200) {
 			const errorText = await res.text();
-			console.log('Error response:', errorText);
+			console.info('Error response:', errorText);
 			// If correlation engine not available, skip this test
 			if (res.status === 503) {
 				return; // Skip test if engine not available

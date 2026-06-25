@@ -39,7 +39,7 @@ function gen(domain: string, scope: string, type: string, priority: string, id: 
 }
 
 async function syncUsers(): Promise<void> {
-  console.log('🔄 Starting users sync from Sports Widgets API...');
+  console.info('🔄 Starting users sync from Sports Widgets API...');
 
   // Ensure directories exist
   await Bun.mkdir(DATA_DIR, { recursive: true });
@@ -53,11 +53,11 @@ async function syncUsers(): Promise<void> {
 
     if (!cookie) {
       console.error('❌ Missing DATAPIPE_COOKIE environment variable');
-      console.log('💡 Set your cookie: export DATAPIPE_COOKIE="your_cookie_here"');
+      console.info('💡 Set your cookie: export DATAPIPE_COOKIE="your_cookie_here"');
       process.exit(1);
     }
 
-    console.log('🌐 Fetching users from Sports Widgets API...');
+    console.info('🌐 Fetching users from Sports Widgets API...');
 
     // Make API request
     const response = await fetch(apiUrl, {
@@ -79,7 +79,7 @@ async function syncUsers(): Promise<void> {
     }
 
     const data = await response.json();
-    console.log('📦 API Response received');
+    console.info('📦 API Response received');
 
     // Parse users from response (adapt based on actual API structure)
     let users: SportsUser[] = [];
@@ -92,10 +92,10 @@ async function syncUsers(): Promise<void> {
       users = data;
     } else {
       console.warn('⚠️  Unexpected API response structure, using empty array');
-      console.log('🔍 Response sample:', JSON.stringify(data, null, 2).slice(0, 500) + '...');
+      console.info('🔍 Response sample:', JSON.stringify(data, null, 2).slice(0, 500) + '...');
     }
 
-    console.log(`👥 Found ${users.length} users in API response`);
+    console.info(`👥 Found ${users.length} users in API response`);
 
     // Transform to GOV format
     const govUsers: GOVUser[] = users.map((user, index) => {
@@ -114,14 +114,14 @@ async function syncUsers(): Promise<void> {
       };
     });
 
-    console.log(`🔄 Processing ${govUsers.length} users for GOV integration...`);
+    console.info(`🔄 Processing ${govUsers.length} users for GOV integration...`);
 
     // Save to YAML
     const yamlData = { users: govUsers, syncedAt: new Date().toISOString() };
     const yamlContent = YAML.stringify(yamlData);
     await Bun.write(join(DATA_DIR, 'users.yaml'), yamlContent);
 
-    console.log(`💾 Saved ${govUsers.length} users to data/users.yaml`);
+    console.info(`💾 Saved ${govUsers.length} users to data/users.yaml`);
 
     // Auto-create GOV rules for each user
     let newRulesCount = 0;
@@ -130,25 +130,25 @@ async function syncUsers(): Promise<void> {
       if (ruleCreated) newRulesCount++;
     }
 
-    console.log(`✅ Created ${newRulesCount} new GOV rules in gov/users/`);
-    console.log(`🎉 Users sync complete! ${govUsers.length} users, ${newRulesCount} rules`);
+    console.info(`✅ Created ${newRulesCount} new GOV rules in gov/users/`);
+    console.info(`🎉 Users sync complete! ${govUsers.length} users, ${newRulesCount} rules`);
 
     // Summary
     const roles = [...new Set(govUsers.map(u => u.role))];
     const totalLimits = govUsers.reduce((sum, u) => sum + u.betLimit, 0);
 
-    console.log('\n📊 Sync Summary:');
-    console.log(`   👥 Total Users: ${govUsers.length}`);
-    console.log(`   🏷️  Roles: ${roles.join(', ')}`);
-    console.log(`   💰 Total Bet Limits: $${totalLimits.toLocaleString()}`);
-    console.log(`   📋 Rules Created: ${newRulesCount}`);
+    console.info('\n📊 Sync Summary:');
+    console.info(`   👥 Total Users: ${govUsers.length}`);
+    console.info(`   🏷️  Roles: ${roles.join(', ')}`);
+    console.info(`   💰 Total Bet Limits: $${totalLimits.toLocaleString()}`);
+    console.info(`   📋 Rules Created: ${newRulesCount}`);
 
   } catch (error) {
     console.error('❌ Users sync failed:', error.message);
 
     // Try to load existing users as fallback
     if (existsSync(join(DATA_DIR, 'users.yaml'))) {
-      console.log('📁 Using cached users data');
+      console.info('📁 Using cached users data');
     } else {
       throw error;
     }
@@ -161,7 +161,7 @@ async function createUserRule(user: GOVUser): Promise<boolean> {
 
   // Check if rule already exists
   if (existsSync(ruleFile)) {
-    console.log(`⏭️  Rule ${ruleId} already exists, skipping`);
+    console.info(`⏭️  Rule ${ruleId} already exists, skipping`);
     return false;
   }
 
@@ -197,7 +197,7 @@ Automated via datapipe monitoring + GOV rule engine
 `;
 
   await Bun.write(ruleFile, ruleContent);
-  console.log(`📝 Created rule: ${ruleId} for ${user.name}`);
+  console.info(`📝 Created rule: ${ruleId} for ${user.name}`);
   return true;
 }
 
@@ -211,13 +211,13 @@ switch (cmd) {
     break;
 
   case 'test':
-    console.log('🧪 Testing users sync (dry run)...');
-    console.log('💡 Set DATAPIPE_COOKIE to test real API');
-    console.log('📁 Would create data/users.yaml and gov/users/*.md');
+    console.info('🧪 Testing users sync (dry run)...');
+    console.info('💡 Set DATAPIPE_COOKIE to test real API');
+    console.info('📁 Would create data/users.yaml and gov/users/*.md');
     break;
 
   default:
-    console.log('Users Sync Commands:');
-    console.log('  sync  - Sync users from Sports Widgets API');
-    console.log('  test  - Dry run test (no API calls)');
+    console.info('Users Sync Commands:');
+    console.info('  sync  - Sync users from Sports Widgets API');
+    console.info('  test  - Dry run test (no API calls)');
 }

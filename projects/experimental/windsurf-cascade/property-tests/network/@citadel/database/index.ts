@@ -11,7 +11,7 @@ export async function query<T = any>(
     sql: string,
     params?: any[]
 ): Promise<QueryResult<T>> {
-    console.log(`[Mock] Database query: ${sql.substring(0, 50)}...`);
+    console.info(`[Mock] Database query: ${sql.substring(0, 50)}...`);
 
     if (sql.includes('SELECT') && sql.includes('odds')) {
         return {
@@ -67,10 +67,10 @@ export async function query<T = any>(
 export async function transaction<T = any>(
     callback: (client: any) => Promise<T>
 ): Promise<T> {
-    console.log('[Mock] Database transaction started');
+    console.info('[Mock] Database transaction started');
     const mockClient = {
         query: async (sql: string, params?: any[]) => {
-            console.log(`[Mock] Transaction query: ${sql.substring(0, 50)}...`);
+            console.info(`[Mock] Transaction query: ${sql.substring(0, 50)}...`);
 
             if (sql.includes('SELECT') && sql.includes('odds')) {
                 return {
@@ -101,6 +101,6 @@ export async function transaction<T = any>(
     };
 
     const result = await callback(mockClient);
-    console.log('[Mock] Database transaction completed');
+    console.info('[Mock] Database transaction completed');
     return result;
 }

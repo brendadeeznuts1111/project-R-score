@@ -10,7 +10,7 @@ const csvPath = join(import.meta.dir, "..", "bitmex_executions.csv");
 const csvContent = readFileSync(csvPath, "utf-8");
 const records = parse(csvContent, { columns: true, skip_empty_lines: true, relax_quotes: true });
 
-console.log(`✅ Loaded ${records.length.toLocaleString()} records`);
+console.info(`✅ Loaded ${records.length.toLocaleString()} records`);
 
 // Prepare data for inserts
 const insertData = records.map((r: Record<string, string>) => ({
@@ -49,7 +49,7 @@ await dbBunSQL`
 `;
 await dbBunSQL`CREATE INDEX idx_symbol ON executions(symbol)`;
 
-console.log("✅ Databases initialized");
+console.info("✅ Databases initialized");
 
 // ============ INSERT BENCHMARKS ============
 
@@ -79,7 +79,7 @@ const txClassic = dbClassic.transaction((rows: typeof insertData) => {
 txClassic(insertData);
 
 await dbBunSQL`INSERT INTO executions ${dbBunSQL(insertData)}`;
-console.log("✅ Data inserted for query benchmarks");
+console.info("✅ Data inserted for query benchmarks");
 
 // ============ QUERY BENCHMARKS ============
 
@@ -133,4 +133,4 @@ for (const path of [dbPath1, dbPath2]) {
   if (existsSync(path + "-wal")) unlinkSync(path + "-wal");
   if (existsSync(path + "-shm")) unlinkSync(path + "-shm");
 }
-console.log("✅ Cleaned up");
+console.info("✅ Cleaned up");

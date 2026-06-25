@@ -65,14 +65,14 @@
     "bun.yaml"
   ],
   "dependencies": {
-    "yaml": "^2.8.2"
+    "yaml": "2.8.2"
   },
   "devDependencies": {
-    "@types/node": "^20.19.30",
-    "typescript": "^5.9.3",
-    "eslint": "^8.57.1",
-    "prettier": "^3.8.1",
-    "concurrently": "^8.2.2"
+    "@types/node": "20.19.30",
+    "typescript": "5.9.3",
+    "eslint": "8.57.1",
+    "prettier": "3.8.1",
+    "concurrently": "8.2.2"
   },
   "bun": {
     "allowJS": true,

@@ -1,0 +1,257 @@
+{
+  "version": 2,
+  "docs": "https://bun.com/docs/pm/cli/install",
+  "git_docs": "https://bun.com/docs/pm/cli/add#git-github-and-tarball-dependencies",
+  "linker_docs": "https://bun.com/docs/pm/isolated-installs",
+  "security_docs": "https://bun.com/docs/pm/security-scanner-api",
+  "lockfile_blog": "https://bun.com/blog/bun-lock-text",
+  "non_npm_sources": [
+    {
+      "id": "git-https",
+      "prefix": "git+https://",
+      "example": "git+https://github.com/iamkun/dayjs.git",
+      "pattern_id": "install-git-https"
+    },
+    {
+      "id": "git-ssh",
+      "prefix": "git+ssh://",
+      "example": "git+ssh://github.com/lodash/lodash.git#4.17.21",
+      "pattern_id": "install-git-ssh"
+    },
+    {
+      "id": "git-scp",
+      "prefix": "git@github.com:",
+      "example": "git@github.com:moment/moment.git",
+      "pattern_id": "install-git-scp"
+    },
+    {
+      "id": "github",
+      "prefix": "github:",
+      "example": "github:colinhacks/zod",
+      "pattern_id": "install-github"
+    },
+    {
+      "id": "tarball",
+      "prefix": "https://",
+      "suffix": ".tgz",
+      "example": "https://registry.npmjs.org/react/-/react-18.2.0.tgz",
+      "pattern_id": "install-tarball"
+    },
+    {
+      "id": "npm-alias",
+      "prefix": "npm:",
+      "example": "npm:@types/bun",
+      "pattern_id": "install-npm-alias"
+    },
+    {
+      "id": "pnpm-catalog",
+      "prefix": "catalog:",
+      "example": "catalog:build",
+      "pattern_id": "install-pnpm-catalog"
+    }
+  ],
+  "platform": {
+    "description": "Lockfile stores normalized cpu/os; optional deps skipped at runtime per target",
+    "lockfile_note": "bun.lock unchanged across platforms — installed packages may differ",
+    "cpu_values": ["arm64", "x64", "ia32", "ppc64", "s390x"],
+    "os_values": ["linux", "darwin", "win32", "freebsd", "openbsd", "sunos", "aix"],
+    "cli_example": "bun install --cpu=x64 --os=linux"
+  },
+  "peer_dependencies": {
+    "description": "Yarn-like peer handling — bun install auto-installs peers",
+    "optional_meta": "peerDependenciesMeta optional:true picks existing dep when possible"
+  },
+  "lockfile": {
+    "current": "bun.lock",
+    "legacy_binary": "bun.lockb",
+    "upgrade_command": "bun install --save-text-lockfile --frozen-lockfile --lockfile-only",
+    "upgrade_note": "Then delete bun.lockb after text lockfile generated",
+    "yarn_compat": "--yarn writes yarn.lock v1",
+    "flags": {
+      "frozen": "--frozen-lockfile",
+      "text": "--save-text-lockfile",
+      "only": "--lockfile-only",
+      "no_save": "--no-save"
+    }
+  },
+  "cache": {
+    "path": "~/.bun/install/cache/${name}@${version}",
+    "note": "Build/pre-release semver tags hashed in cache path",
+    "clear_commands": ["bun pm cache rm", "rm -rf ~/.bun/install/cache"],
+    "registry_metadata": {
+      "path_pattern": "~/.bun/install/cache/*.npm",
+      "filename": "${hash(packageName)}.npm",
+      "format": "binary (faster than JSON)",
+      "cache_control_note": "Ignores Age header — metadata may be ~5min stale"
+    }
+  },
+  "backends": [
+    {
+      "id": "hardlink",
+      "default_on": "linux",
+      "description": "Fastest on Linux (default)",
+      "cli": "bun install --backend hardlink"
+    },
+    {
+      "id": "clonefile",
+      "default_on": "macos",
+      "description": "Fastest on macOS (default); macOS only",
+      "cli": "bun install --backend clonefile"
+    },
+    {
+      "id": "clonefile_each_dir",
+      "default_on": null,
+      "description": "Per-file clone per directory; macOS only, slower than clonefile",
+      "cli": "bun install --backend clonefile_each_dir"
+    },
+    {
+      "id": "copyfile",
+      "default_on": "fallback",
+      "description": "Slowest fallback (fcopyfile/copy_file_range)",
+      "cli": "bun install --backend copyfile"
+    },
+    {
+      "id": "symlink",
+      "default_on": "file_deps",
+      "description": "file: deps; Node needs --preserve-symlinks unless each dep has node_modules",
+      "cli": "bun install --backend symlink",
+      "runtime_note": "bun --preserve-symlinks ./app.js"
+    }
+  ],
+  "pnpm_migration": {
+    "trigger": "pnpm-lock.yaml present and bun.lock absent",
+    "opt_out": false,
+    "requirements": [
+      "pnpm lockfile v7+",
+      "workspace packages must have name in package.json",
+      "catalog entries referenced must exist in catalogs definition"
+    ],
+    "migrates": [
+      "pnpm-lock.yaml → bun.lock",
+      "pnpm-workspace.yaml → package.json workspaces (packages, catalog, catalogs)",
+      "catalog: protocol deps preserved",
+      "pnpm.overrides → overrides",
+      "pnpm.patchedDependencies → patchedDependencies"
+    ],
+    "cleanup": "Remove pnpm-lock.yaml and pnpm-workspace.yaml after successful migration"
+  },
+  "linker_strategies": [
+    {
+      "id": "hoisted",
+      "description": "Traditional npm/Yarn — flattened shared node_modules",
+      "cli": "bun install --linker hoisted",
+      "default_when": "Single-package projects; pre-v1.3.2 lockfiles (configVersion 0)"
+    },
+    {
+      "id": "isolated",
+      "description": "pnpm-like strict isolation — store in node_modules/.bun/ with symlinks",
+      "cli": "bun install --linker isolated",
+      "default_when": "New workspaces/monorepos (configVersion 1); v1.3.13+ faster peer-heavy installs"
+    }
+  ],
+  "default_linker": {
+    "new_workspace": "isolated",
+    "new_single_package": "hoisted",
+    "existing_pre_v1_3_2": "hoisted",
+    "lockfile_field": "configVersion"
+  },
+  "minimum_release_age": {
+    "description": "Block npm versions published within N seconds (supply-chain age gate)",
+    "cli_example": "bun add @types/bun --minimum-release-age 259200",
+    "bunfig_key": "minimumReleaseAge",
+    "bunfig_excludes": "minimumReleaseAgeExcludes",
+    "seconds_per_day": 86400,
+    "example_days": 3,
+    "notes": [
+      "Only affects new resolution; bun.lock entries unchanged",
+      "Transitive deps filtered when resolving",
+      "Stability check skips rapid bugfix clusters near the age gate",
+      "Exact pin package@1.1.1 respects age gate but bypasses stability check"
+    ]
+  },
+  "cli_flags": {
+    "config": { "flag": "--config", "type": "string", "description": "Path to bunfig.toml" },
+    "cwd": { "flag": "--cwd", "type": "string", "description": "Set working directory" },
+    "production": { "flag": "--production", "type": "boolean", "description": "Skip devDependencies" },
+    "no_save": { "flag": "--no-save", "type": "boolean", "description": "Don't update package.json or save lockfile" },
+    "save": { "flag": "--save", "type": "boolean", "default": true, "description": "Save to package.json" },
+    "omit": { "flag": "--omit", "type": "string", "description": "Exclude dev, optional, or peer" },
+    "only_missing": { "flag": "--only-missing", "type": "boolean", "description": "Add deps only if not already in package.json" },
+    "dev": { "flag": "--dev", "type": "boolean", "description": "Add to devDependencies" },
+    "optional": { "flag": "--optional", "type": "boolean", "description": "Add to optionalDependencies" },
+    "peer": { "flag": "--peer", "type": "boolean", "description": "Add to peerDependencies" },
+    "exact": { "flag": "--exact", "type": "boolean", "description": "Pin exact version instead of ^range" },
+    "yarn": { "flag": "--yarn", "type": "boolean", "description": "Write yarn.lock v1" },
+    "frozen_lockfile": { "flag": "--frozen-lockfile", "type": "boolean", "description": "Disallow lockfile changes" },
+    "save_text_lockfile": { "flag": "--save-text-lockfile", "type": "boolean", "description": "Text bun.lock" },
+    "lockfile_only": { "flag": "--lockfile-only", "type": "boolean", "description": "Generate lockfile only" },
+    "ca": { "flag": "--ca", "type": "string", "description": "Certificate Authority signing certificate" },
+    "cafile": { "flag": "--cafile", "type": "string", "description": "Path to CA certificate file" },
+    "registry": { "flag": "--registry", "type": "string", "description": "Override registry (.npmrc, bunfig, env)" },
+    "dry_run": { "flag": "--dry-run", "type": "boolean", "description": "Resolve without installing" },
+    "force": { "flag": "--force", "type": "boolean", "description": "Latest versions + reinstall all" },
+    "global": { "flag": "--global", "type": "boolean", "description": "Install globally" },
+    "backend": { "flag": "--backend", "type": "string", "default": "clonefile", "description": "hardlink|clonefile|clonefile_each_dir|copyfile|symlink" },
+    "cpu": { "flag": "--cpu", "type": "string", "description": "Target CPU for optional deps (arm64|x64|ia32|ppc64|s390x)" },
+    "os": { "flag": "--os", "type": "string", "description": "Target OS for optional deps (linux|darwin|win32|...)" },
+    "filter": {
+      "flag": "--filter",
+      "alias": "-F",
+      "type": "string",
+      "description": "Workspace filter — name glob or ./path glob; ! negation",
+      "docs": "https://bun.com/docs/pm/filter",
+      "runtime_docs": "https://bun.com/docs/runtime#filtering"
+    },
+    "analyze": { "flag": "--analyze", "type": "boolean", "description": "Install deps of passed files recursively" },
+    "cache_dir": { "flag": "--cache-dir", "type": "string", "description": "Custom cache directory" },
+    "no_cache": { "flag": "--no-cache", "type": "boolean", "description": "Ignore manifest cache" },
+    "silent": { "flag": "--silent", "type": "boolean", "description": "Suppress output" },
+    "verbose": { "flag": "--verbose", "type": "boolean", "description": "Verbose logging" },
+    "no_progress": { "flag": "--no-progress", "type": "boolean", "description": "Disable progress bar" },
+    "no_summary": { "flag": "--no-summary", "type": "boolean", "description": "Skip install summary" },
+    "no_verify": { "flag": "--no-verify", "type": "boolean", "description": "Skip integrity verification" },
+    "trust": { "flag": "--trust", "type": "boolean", "description": "Add to trustedDependencies" },
+    "concurrent_scripts": { "flag": "--concurrent-scripts", "type": "number", "default": 5, "description": "Max concurrent lifecycle scripts" },
+    "network_concurrency": { "flag": "--network-concurrency", "type": "number", "default": 48, "description": "Max concurrent network requests" },
+    "ignore_scripts": { "flag": "--ignore-scripts", "type": "boolean", "description": "Skip root lifecycle scripts" },
+    "minimum_release_age": { "flag": "--minimum-release-age", "type": "number", "description": "Age gate seconds" }
+  },
+  "bunfig": {
+    "search_paths": [
+      "$XDG_CONFIG_HOME/.bunfig.toml",
+      "$HOME/.bunfig.toml",
+      "./bunfig.toml"
+    ],
+    "install_keys": [
+      "optional",
+      "dev",
+      "peer",
+      "production",
+      "saveTextLockfile",
+      "frozenLockfile",
+      "dryRun",
+      "concurrentScripts",
+      "linker",
+      "minimumReleaseAge",
+      "minimumReleaseAgeExcludes"
+    ],
+    "defaults": {
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "production": false,
+      "linker": "hoisted",
+      "concurrentScripts": "cpu*2"
+    }
+  },
+  "env_vars": [
+    { "name": "BUN_CONFIG_REGISTRY", "description": "npm registry URL" },
+    { "name": "BUN_CONFIG_TOKEN", "description": "Auth token" },
+    { "name": "BUN_CONFIG_YARN_LOCKFILE", "description": "Save Yarn v1 yarn.lock" },
+    { "name": "BUN_CONFIG_LINK_NATIVE_BINS", "description": "Platform-specific bin linking" },
+    { "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE", "description": "Skip saving lockfile" },
+    { "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE", "description": "Skip loading lockfile" },
+    { "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES", "description": "Skip installing packages" },
+    { "name": "BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL", "description": "Disable streaming tarball extract (v1.3.13)" }
+  ]
+}

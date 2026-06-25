@@ -49,7 +49,7 @@ function parseArgs(): CLIOptions {
 // ============================================================================
 
 async function validateCLI(): Promise<void> {
-  console.log('\n🛠️  VALIDATING CLI TOOLS...');
+  console.info('\n🛠️  VALIDATING CLI TOOLS...');
 
   const tools = ['bun', 'overseer-cli'];
   const results = [];
@@ -59,21 +59,21 @@ async function validateCLI(): Promise<void> {
     results.push({ tool, ...result });
 
     if (result.isValid) {
-      console.log(`   ✅ ${tool}: Valid`);
+      console.info(`   ✅ ${tool}: Valid`);
     } else {
-      console.log(`   ❌ ${tool}: Invalid`);
-      result.errors.forEach(error => console.log(`      Error: ${error}`));
-      result.fixes.forEach(fix => console.log(`      Fix: ${fix}`));
+      console.info(`   ❌ ${tool}: Invalid`);
+      result.errors.forEach(error => console.info(`      Error: ${error}`));
+      result.fixes.forEach(fix => console.info(`      Fix: ${fix}`));
     }
 
     if (result.warnings.length > 0) {
-      result.warnings.forEach(warning => console.log(`      ⚠️  ${warning}`));
+      result.warnings.forEach(warning => console.info(`      ⚠️  ${warning}`));
     }
   }
 }
 
 async function validateURLs(): Promise<void> {
-  console.log('\n🌐 VALIDATING URLs...');
+  console.info('\n🌐 VALIDATING URLs...');
 
   const urls = ['bun-official-docs', 'github-api'];
   const results = [];
@@ -84,21 +84,21 @@ async function validateURLs(): Promise<void> {
 
     if (result.isValid) {
       const time = result.responseTime ? ` (${result.responseTime.toFixed(0)}ms)` : '';
-      console.log(`   ✅ ${url}: Valid${time}`);
+      console.info(`   ✅ ${url}: Valid${time}`);
     } else {
-      console.log(`   ❌ ${url}: Invalid`);
-      result.errors.forEach(error => console.log(`      Error: ${error}`));
-      result.fixes.forEach(fix => console.log(`      Fix: ${fix}`));
+      console.info(`   ❌ ${url}: Invalid`);
+      result.errors.forEach(error => console.info(`      Error: ${error}`));
+      result.fixes.forEach(fix => console.info(`      Fix: ${fix}`));
     }
 
     if (result.warnings.length > 0) {
-      result.warnings.forEach(warning => console.log(`      ⚠️  ${warning}`));
+      result.warnings.forEach(warning => console.info(`      ⚠️  ${warning}`));
     }
   }
 }
 
 function validateConstants(): void {
-  console.log('\n📊 VALIDATING CONSTANTS...');
+  console.info('\n📊 VALIDATING CONSTANTS...');
 
   const constants = [
     'default-timeout',
@@ -114,26 +114,26 @@ function validateConstants(): void {
     results.push({ constant, ...result });
 
     if (result.isValid) {
-      console.log(`   ✅ ${constant}: Valid`);
+      console.info(`   ✅ ${constant}: Valid`);
     } else {
-      console.log(`   ❌ ${constant}: Invalid`);
-      result.errors.forEach(error => console.log(`      Error: ${error}`));
-      result.fixes.forEach(fix => console.log(`      Fix: ${fix}`));
+      console.info(`   ❌ ${constant}: Invalid`);
+      result.errors.forEach(error => console.info(`      Error: ${error}`));
+      result.fixes.forEach(fix => console.info(`      Fix: ${fix}`));
     }
 
     if (result.warnings.length > 0) {
-      result.warnings.forEach(warning => console.log(`      ⚠️  ${warning}`));
+      result.warnings.forEach(warning => console.info(`      ⚠️  ${warning}`));
     }
   }
 }
 
 async function validateDocumentation(): Promise<void> {
-  console.log('\n📚 VALIDATING DOCUMENTATION...');
+  console.info('\n📚 VALIDATING DOCUMENTATION...');
 
   try {
     await DocumentationValidator.generateDocumentationReport();
   } catch (error) {
-    console.log(`   ❌ Documentation validation failed: ${error}`);
+    console.info(`   ❌ Documentation validation failed: ${error}`);
   }
 }
 
@@ -142,7 +142,7 @@ async function validateDocumentation(): Promise<void> {
 // ============================================================================
 
 function showHelp(): void {
-  console.log(`
+  console.info(`
 🔍 Platform Validation CLI Tool
 
 USAGE:
@@ -199,8 +199,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log('🔍 PLATFORM VALIDATION TOOL');
-  console.log('='.repeat(50));
+  console.info('🔍 PLATFORM VALIDATION TOOL');
+  console.info('='.repeat(50));
 
   try {
     // Run validation based on options
@@ -230,7 +230,7 @@ async function main(): Promise<void> {
       await ValidationReporter.printReport();
     }
 
-    console.log('\n✅ Validation completed!');
+    console.info('\n✅ Validation completed!');
   } catch (error) {
     console.error('\n❌ Validation failed:', error);
 

@@ -47,19 +47,19 @@ import { getEnvironmentData } from "worker_threads";
 
 // Check if we're in a worker thread
 if (!Bun.isMainThread) {
-  console.log("Worker: I'm in a worker thread");
+  console.info("Worker: I'm in a worker thread");
   
   // Get shared environment data
   const config = getEnvironmentData("config");
   const sharedData = getEnvironmentData("sharedData");
   
-  console.log("Worker: Received config:", Bun.inspect(config, { colors: true }));
-  console.log("Worker: Received shared data:", Bun.inspect(sharedData, { colors: true }));
+  console.info("Worker: Received config:", Bun.inspect(config, { colors: true }));
+  console.info("Worker: Received shared data:", Bun.inspect(sharedData, { colors: true }));
   
   // Process data
   self.onmessage = (event) => {
     const { files, workerId } = event.data;
-    console.log(\`Worker \${workerId}: Processing \${files.length} files\`);
+    console.info(\`Worker \${workerId}: Processing \${files.length} files\`);
     
     const results = files.map((file: string) => {
       // Simulate file processing
@@ -84,11 +84,11 @@ if (!Bun.isMainThread) {
 // ============================================================================
 
 if (Bun.isMainThread) {
-  console.log("Main: I'm the main thread");
+  console.info("Main: I'm the main thread");
   
   // Listen for worker creation events
   process.on("worker", (worker: any) => {
-    console.log(`Main: New worker created: threadId=${worker.threadId}`);
+    console.info(`Main: New worker created: threadId=${worker.threadId}`);
   });
   
   // Set environment data to share with workers
@@ -108,9 +108,9 @@ if (Bun.isMainThread) {
   setEnvironmentData("config", config);
   setEnvironmentData("sharedData", sharedData);
   
-  console.log("Main: Set environment data:");
-  console.log("  Config:", Bun.inspect(config, { colors: true }));
-  console.log("  Shared Data:", Bun.inspect(sharedData, { colors: true }));
+  console.info("Main: Set environment data:");
+  console.info("  Config:", Bun.inspect(config, { colors: true }));
+  console.info("  Shared Data:", Bun.inspect(sharedData, { colors: true }));
   
   // Create workers for parallel processing
   async function processFilesInParallel(files: string[], numWorkers = 2) {
@@ -164,26 +164,26 @@ if (Bun.isMainThread) {
     "src/utils/fetch-wrapper.ts",
   ];
   
-  console.log(`\nMain: Processing ${files.length} files with 2 workers...\n`);
+  console.info(`\nMain: Processing ${files.length} files with 2 workers...\n`);
   
   const startTime = Bun.nanoseconds();
   const results = await processFilesInParallel(files, 2);
   const duration = (Bun.nanoseconds() - startTime) / 1_000_000;
   
-  console.log(`\nMain: Processing complete in ${duration.toFixed(2)}ms`);
-  console.log("Main: Results:", Bun.inspect(results, { colors: true, depth: 3 }));
+  console.info(`\nMain: Processing complete in ${duration.toFixed(2)}ms`);
+  console.info("Main: Results:", Bun.inspect(results, { colors: true, depth: 3 }));
   
   // Verify environment data was shared correctly
-  console.log("\nMain: Verifying environment data sharing...");
+  console.info("\nMain: Verifying environment data sharing...");
   for (const result of results) {
     if (result.results && result.results.length > 0) {
       const firstResult = result.results[0];
       if (firstResult.config) {
-        console.log(`  Worker ${result.workerId}: Successfully received config:`, 
+        console.info(`  Worker ${result.workerId}: Successfully received config:`, 
           Bun.inspect(firstResult.config, { colors: true }));
       }
     }
   }
   
-  console.log("\n✅ Worker thread demo complete!");
+  console.info("\n✅ Worker thread demo complete!");
 }

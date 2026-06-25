@@ -9,35 +9,35 @@ import { WorkerEventBus } from '../../src/workers/event-bus';
 const WORKER_SCRIPT = new URL('../../src/workers/examples/event-worker.ts', import.meta.url).href;
 
 async function main() {
-	console.log('🚀 Event Bus Demo\n');
+	console.info('🚀 Event Bus Demo\n');
 
 	const eventBus = new WorkerEventBus(WORKER_SCRIPT);
 
 	// Subscribe to events
 	eventBus.on('progress', (percent: number) => {
-		console.log(`📊 Progress: ${percent}%`);
+		console.info(`📊 Progress: ${percent}%`);
 	});
 
 	eventBus.on('completed', (result: any) => {
-		console.log('✅ Task completed:', result);
+		console.info('✅ Task completed:', result);
 	});
 
 	// Example 1: Send event
-	console.log('📡 Example 1: Sending Event');
+	console.info('📡 Example 1: Sending Event');
 	eventBus.post('startProcessing', { file: 'data.csv' });
 	
 	// Wait for completion
 	await Bun.sleep(2000);
-	console.log();
+	console.info();
 
 	// Example 2: Request-response pattern
-	console.log('📡 Example 2: Request-Response');
+	console.info('📡 Example 2: Request-Response');
 	const result = await eventBus.request('calculate', { numbers: [1, 2, 3, 4, 5] });
-	console.log('Calculation result:', result);
-	console.log();
+	console.info('Calculation result:', result);
+	console.info();
 
 	eventBus.terminate();
-	console.log('✅ Demo complete');
+	console.info('✅ Demo complete');
 }
 
 main().catch(console.error);

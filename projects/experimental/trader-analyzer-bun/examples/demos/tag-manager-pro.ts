@@ -868,7 +868,7 @@ async function main() {
   const args = Bun.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`
+    console.info(`
 ${colors.bold('Tag Manager Pro')} ${colors.blue('(Advanced)')}
 
 ${colors.bold('Commands:')}
@@ -937,7 +937,7 @@ ${colors.bold('Table Formatting Examples:')}
         const useJson = args.includes('--json');
         
         if (!useJson) {
-          console.log(`\n${colors.cyan('Scanning files...')}\n`);
+          console.info(`\n${colors.cyan('Scanning files...')}\n`);
         }
         
         const results = await manager.scanFiles(pattern);
@@ -956,86 +956,86 @@ ${colors.bold('Table Formatting Examples:')}
             cache: tagCache ? tagCache.getStats() : null,
             results,
           }, null, 2);
-          console.log(output);
+          console.info(output);
         } else {
-          console.log(`\n${colors.bold('📊 Scan Results:')}\n`);
-          console.log(`  Files scanned: ${results.length}`);
-          console.log(`  Valid tags: ${results.filter(r => r.valid).length}`);
-          console.log(`  Invalid tags: ${results.filter(r => !r.valid).length}`);
+          console.info(`\n${colors.bold('📊 Scan Results:')}\n`);
+          console.info(`  Files scanned: ${results.length}`);
+          console.info(`  Valid tags: ${results.filter(r => r.valid).length}`);
+          console.info(`  Invalid tags: ${results.filter(r => !r.valid).length}`);
           
           if (CONFIG.includeExecutionContext) {
-            console.log(`  Execution context:`, Bun.inspect(context, { colors: CONFIG.tableColors }));
+            console.info(`  Execution context:`, Bun.inspect(context, { colors: CONFIG.tableColors }));
           }
           
           if (tagCache) {
-            console.log(`  Cache stats:`, Bun.inspect(tagCache, { colors: CONFIG.tableColors }));
+            console.info(`  Cache stats:`, Bun.inspect(tagCache, { colors: CONFIG.tableColors }));
           }
           
-          console.log(`\n${colors.bold('Tags:')}\n`);
+          console.info(`\n${colors.bold('Tags:')}\n`);
           if (useTable) {
-            console.log(manager.formatResultsAsTable(results));
+            console.info(manager.formatResultsAsTable(results));
           } else {
-            console.log(manager.formatResults(results));
+            console.info(manager.formatResults(results));
           }
         }
         break;
       }
       
       case 'table-demo': {
-        console.log(`\n${colors.bold('📋 Table Formatting Demos')}\n`);
-        console.log('-'.repeat(70));
+        console.info(`\n${colors.bold('📋 Table Formatting Demos')}\n`);
+        console.info('-'.repeat(70));
         
         // Demo 1: Basic table
-        console.log(`\n${colors.cyan('Demo 1: Basic Table')}\n`);
+        console.info(`\n${colors.cyan('Demo 1: Basic Table')}\n`);
         const demoResults1 = [
           { file: 'src/utils/bun.ts', line: 10, valid: true, parsed: { domain: 'hyper-bun', scope: 'utils', type: 'feat', meta: { priority: 'high' }, class: 'bun-utils', ref: '#REF:Bun.utils' } as MetadataTag },
           { file: 'src/hyper-bun/scheduler.ts', line: 25, valid: true, parsed: { domain: 'hyper-bun', scope: 'scheduler', type: 'refactor', meta: { priority: 'high', status: 'production' }, class: 'scheduler', ref: '#REF:scheduler.ts' } as MetadataTag },
           { file: 'src/utils/fetch-wrapper.ts', line: 5, valid: false, parsed: undefined },
         ];
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         
         // Demo 2: Custom properties
-        console.log(`\n${colors.cyan('Demo 2: Custom Properties (File, Valid, Domain, Priority)')}\n`);
+        console.info(`\n${colors.cyan('Demo 2: Custom Properties (File, Valid, Domain, Priority)')}\n`);
         const originalProps = CONFIG.tableProperties;
         CONFIG.tableProperties = ['File', 'Valid', 'Domain', 'Priority'];
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         CONFIG.tableProperties = originalProps;
         
         // Demo 3: No colors (CI-friendly)
-        console.log(`\n${colors.cyan('Demo 3: No Colors (CI-friendly)')}\n`);
+        console.info(`\n${colors.cyan('Demo 3: No Colors (CI-friendly)')}\n`);
         const originalColors = CONFIG.tableColors;
         CONFIG.tableColors = false;
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         CONFIG.tableColors = originalColors;
         
         // Demo 4: Wide columns
-        console.log(`\n${colors.cyan('Demo 4: Wide Columns (maxWidth=50)')}\n`);
+        console.info(`\n${colors.cyan('Demo 4: Wide Columns (maxWidth=50)')}\n`);
         const originalWidth = CONFIG.tableMaxWidth;
         CONFIG.tableMaxWidth = 50;
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         CONFIG.tableMaxWidth = originalWidth;
         
         // Demo 5: No truncation
-        console.log(`\n${colors.cyan('Demo 5: No Truncation (show full values)')}\n`);
+        console.info(`\n${colors.cyan('Demo 5: No Truncation (show full values)')}\n`);
         const originalTruncate = CONFIG.tableTruncate;
         CONFIG.tableTruncate = false;
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         CONFIG.tableTruncate = originalTruncate;
         
         // Demo 6: Combined configuration
-        console.log(`\n${colors.cyan('Demo 6: Combined Configuration (Production-ready)')}\n`);
+        console.info(`\n${colors.cyan('Demo 6: Combined Configuration (Production-ready)')}\n`);
         CONFIG.tableColors = true;
         CONFIG.tableMaxWidth = 50;
         CONFIG.tableProperties = ['File', 'Domain', 'Type', 'Priority', 'Status'];
         CONFIG.tableDepth = 1;
-        console.log(manager.formatResultsAsTable(demoResults1));
+        console.info(manager.formatResultsAsTable(demoResults1));
         
         // Reset
         CONFIG.tableProperties = originalProps;
         CONFIG.tableMaxWidth = originalWidth;
         CONFIG.tableTruncate = originalTruncate;
         
-        console.log(`\n${colors.green('✅ Table demos complete!')}\n`);
+        console.info(`\n${colors.green('✅ Table demos complete!')}\n`);
         break;
       }
       
@@ -1047,12 +1047,12 @@ ${colors.bold('Table Formatting Examples:')}
         
         const validation = TagParser.validate(tag);
         if (validation.valid) {
-          console.log(`${colors.green('✅ Valid tag')}`);
+          console.info(`${colors.green('✅ Valid tag')}`);
           const parsed = TagParser.parse(tag);
-          console.log(Bun.inspect(parsed, { colors: true }));
+          console.info(Bun.inspect(parsed, { colors: true }));
         } else {
-          console.log(`${colors.red('❌ Invalid tag')}`);
-          validation.errors.forEach(err => console.log(`  ${colors.red('-')} ${err}`));
+          console.info(`${colors.red('❌ Invalid tag')}`);
+          validation.errors.forEach(err => console.info(`  ${colors.red('-')} ${err}`));
           process.exit(1);
         }
         break;
@@ -1068,8 +1068,8 @@ ${colors.bold('Table Formatting Examples:')}
         
         if (!tagMatch) {
           // No tag found - this is fine for non-tagged commits
-          console.log(`${colors.gray('No tag found in commit message')}`);
-          console.log(`${colors.gray('  This is normal for standard commits without tags')}`);
+          console.info(`${colors.gray('No tag found in commit message')}`);
+          console.info(`${colors.gray('  This is normal for standard commits without tags')}`);
           process.exit(0);
         }
         
@@ -1084,31 +1084,31 @@ ${colors.bold('Table Formatting Examples:')}
         const needsBunTracking = type !== 'docs' && scope !== 'docs' && scope !== 'config';
         
         if (hasBunFunc) {
-          console.log(`${colors.green('✅ Bun function tracking found in META')}`);
+          console.info(`${colors.green('✅ Bun function tracking found in META')}`);
           // Match bun-function=value or bun-functions=value1,value2,value3
           const bunFuncMatch = metaStr.match(/bun-function(?:s)?=([^,}]+(?:,[^,}]+)*)/);
           if (bunFuncMatch) {
             const functions = bunFuncMatch[1].split(',').map(f => f.trim());
-            console.log(`${colors.cyan('  Functions:')} ${functions.join(', ')}`);
-            console.log(`${colors.gray('  Count:')} ${functions.length} function${functions.length !== 1 ? 's' : ''}`);
+            console.info(`${colors.cyan('  Functions:')} ${functions.join(', ')}`);
+            console.info(`${colors.gray('  Count:')} ${functions.length} function${functions.length !== 1 ? 's' : ''}`);
           }
           process.exit(0);
         } else if (isBunRelated && needsBunTracking) {
           // Bun-related commit but missing bun-function tracking
-          console.log(`${colors.yellow('⚠️  Warning: Bun-related commit but no bun-function in META')}`);
-          console.log(`${colors.gray('  Commit:')} ${firstLine.substring(0, 80)}${firstLine.length > 80 ? '...' : ''}`);
-          console.log(`${colors.gray('  Domain:')} ${domain}`);
-          console.log(`${colors.gray('  Type:')} ${type}`);
-          console.log(`${colors.gray('  Suggestion: Add bun-function=<api> or bun-functions=<api1,api2> to META')}`);
-          console.log(`${colors.gray('  Example: [META:priority=high,bun-function=spawn]')}`);
-          console.log(`${colors.gray('  Note: This is advisory only - commit will proceed')}`);
+          console.info(`${colors.yellow('⚠️  Warning: Bun-related commit but no bun-function in META')}`);
+          console.info(`${colors.gray('  Commit:')} ${firstLine.substring(0, 80)}${firstLine.length > 80 ? '...' : ''}`);
+          console.info(`${colors.gray('  Domain:')} ${domain}`);
+          console.info(`${colors.gray('  Type:')} ${type}`);
+          console.info(`${colors.gray('  Suggestion: Add bun-function=<api> or bun-functions=<api1,api2> to META')}`);
+          console.info(`${colors.gray('  Example: [META:priority=high,bun-function=spawn]')}`);
+          console.info(`${colors.gray('  Note: This is advisory only - commit will proceed')}`);
           process.exit(0); // Non-blocking - advisory only
         } else {
-          console.log(`${colors.gray('No Bun function tracking needed')}`);
+          console.info(`${colors.gray('No Bun function tracking needed')}`);
           if (type === 'docs' || scope === 'docs') {
-            console.log(`${colors.gray('  Reason: Documentation commit (docs/config changes don\'t need Bun tracking)')}`);
+            console.info(`${colors.gray('  Reason: Documentation commit (docs/config changes don\'t need Bun tracking)')}`);
           } else {
-            console.log(`${colors.gray('  Reason: Commit is not Bun-related')}`);
+            console.info(`${colors.gray('  Reason: Commit is not Bun-related')}`);
           }
           process.exit(0);
         }
@@ -1135,22 +1135,22 @@ ${colors.bold('Table Formatting Examples:')}
             Utilization: stats.errors > 0 ? colors.red('⚠️') : colors.green('✓'),
           }];
           
-          console.log(Bun.inspect.table(statsTable, { 
+          console.info(Bun.inspect.table(statsTable, { 
             colors: CONFIG.tableColors,
             depth: CONFIG.tableDepth,
           }));
         } else {
-          console.log('Cache is disabled');
+          console.info('Cache is disabled');
         }
         break;
       }
       
       case 'config': {
-        console.log(Bun.inspect(CONFIG, { colors: true }));
-        console.log(`\n${colors.bold('Console Configuration:')}`);
-        console.log(`  Depth: Set via --console-depth flag or bunfig.toml [console] depth`);
-        console.log(`  Default: 2 levels`);
-        console.log(`  Current: Using default (check with --console-depth flag)`);
+        console.info(Bun.inspect(CONFIG, { colors: true }));
+        console.info(`\n${colors.bold('Console Configuration:')}`);
+        console.info(`  Depth: Set via --console-depth flag or bunfig.toml [console] depth`);
+        console.info(`  Default: 2 levels`);
+        console.info(`  Current: Using default (check with --console-depth flag)`);
         break;
       }
       

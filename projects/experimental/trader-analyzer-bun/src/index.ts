@@ -47,7 +47,7 @@ class DashboardWebSocketServer {
       await this.broadcastSystemStats();
     }, 5000);
 
-    console.log(`Dashboard WebSocket Server started on port ${this.port}`);
+    console.info(`Dashboard WebSocket Server started on port ${this.port}`);
   }
 
   stop(): void {
@@ -75,12 +75,12 @@ class DashboardWebSocketServer {
       timestamp: Date.now(),
     }));
 
-    console.log(`Dashboard client connected: ${client.id}`);
+    console.info(`Dashboard client connected: ${client.id}`);
   }
 
   removeClient(clientId: string): void {
     this.clients.delete(clientId);
-    console.log(`Dashboard client disconnected: ${clientId}`);
+    console.info(`Dashboard client disconnected: ${clientId}`);
   }
 
   broadcast(message: any): void {
@@ -343,7 +343,7 @@ const startTime = timing.now();
 
 // Migrate plaintext credentials to Bun.secrets on first run
 migrateCredentials().then(({ migrated, message }) => {
-  if (migrated) console.log(colors.green(`[security] ${message}`));
+  if (migrated) console.info(colors.green(`[security] ${message}`));
 }).catch(() => {});
 
 // ============ HMR-Aware Server Startup ============
@@ -375,7 +375,7 @@ if (import.meta.hot?.data.server) {
 if (import.meta.hot) {
   // Cleanup before module replacement
   import.meta.hot.dispose(() => {
-    console.log(colors.yellow('[HMR] Disposing module...'));
+    console.info(colors.yellow('[HMR] Disposing module...'));
   });
 
   // Accept updates - this marks the module as hot-replaceable
@@ -383,11 +383,11 @@ if (import.meta.hot) {
 
   // Listen for HMR events
   import.meta.hot.on('bun:beforeUpdate', () => {
-    console.log(colors.cyan('[HMR] Update detected, reloading...'));
+    console.info(colors.cyan('[HMR] Update detected, reloading...'));
   });
 
   import.meta.hot.on('bun:afterUpdate', () => {
-    console.log(colors.green('[HMR] Update complete!'));
+    console.info(colors.green('[HMR] Update complete!'));
   });
 
   import.meta.hot.on('bun:error', () => {
@@ -430,7 +430,7 @@ ${colors.magenta('HMR')}        Enabled (use bun --hot)
 ${colors.gray(`Startup: ${((timing.now() - startTime) / 1_000_000).toFixed(2)}ms`)}
 `;
 
-console.log(box(banner.trim(), isHMR ? `NEXUS HMR #${hmrData.reloadCount}` : 'NEXUS v1.0.0'));
+console.info(box(banner.trim(), isHMR ? `NEXUS HMR #${hmrData.reloadCount}` : 'NEXUS v1.0.0'));
 
 // Export for Bun.serve compatibility
 export default {

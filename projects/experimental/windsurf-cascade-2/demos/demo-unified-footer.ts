@@ -271,50 +271,50 @@ const createDemoHTML = (): string => {
 
 // Main demonstration function
 async function runDemo(): Promise<void> {
-    console.log('🦶 Starting Unified Footer System Demo...');
+    console.info('🦶 Starting Unified Footer System Demo...');
     
     try {
         // Create demo HTML file
         const demoHTML = createDemoHTML();
         await Bun.write('./unified-footer-demo.html', demoHTML);
         
-        console.log('✅ Demo HTML created: unified-footer-demo.html');
-        console.log('');
-        console.log('🎯 Demo Features:');
-        console.log('   • Automatic footer creation for all H1 and H2 elements');
-        console.log('   • Dashboard-specific styling enhancements');
-        console.log('   • Real-time metrics updates');
-        console.log('   • Interactive controls for testing');
-        console.log('   • Dynamic header addition demonstration');
-        console.log('   • Theme switching and animations');
-        console.log('');
-        console.log('🌐 To run the demo:');
-        console.log('   1. Open unified-footer-demo.html in your browser');
-        console.log('   2. Interact with the controls to see footer behavior');
-        console.log('   3. Try adding dynamic headers to see automatic footer creation');
-        console.log('');
-        console.log('🔧 Integration Options:');
-        console.log('   • Import: import { unifiedFooter } from "./src/ui/unified-footer.js"');
-        console.log('   • Initialize: unifiedFooter.initialize(config)');
-        console.log('   • Update: unifiedFooter.updateConfig(updates)');
-        console.log('   • Metrics: unifiedFooter.updateMetrics(metrics)');
-        console.log('');
-        console.log('🎨 Footer Features:');
-        console.log('   • Real-time metrics display');
-        console.log('   • Quick action buttons');
-        console.log('   • Timestamp and system info');
-        console.log('   • Dashboard-specific enhancements');
-        console.log('   • Responsive design');
-        console.log('   • Multiple themes and animations');
-        console.log('');
-        console.log('📊 Configuration Options:');
-        console.log('   • showTimestamp: boolean');
-        console.log('   • showSystemInfo: boolean');
-        console.log('   • showQuickActions: boolean');
-        console.log('   • showMetrics: boolean');
-        console.log('   • theme: "light" | "dark" | "auto"');
-        console.log('   • position: "bottom" | "fixed" | "sticky"');
-        console.log('   • animation: "none" | "slide" | "fade" | "bounce"');
+        console.info('✅ Demo HTML created: unified-footer-demo.html');
+        console.info('');
+        console.info('🎯 Demo Features:');
+        console.info('   • Automatic footer creation for all H1 and H2 elements');
+        console.info('   • Dashboard-specific styling enhancements');
+        console.info('   • Real-time metrics updates');
+        console.info('   • Interactive controls for testing');
+        console.info('   • Dynamic header addition demonstration');
+        console.info('   • Theme switching and animations');
+        console.info('');
+        console.info('🌐 To run the demo:');
+        console.info('   1. Open unified-footer-demo.html in your browser');
+        console.info('   2. Interact with the controls to see footer behavior');
+        console.info('   3. Try adding dynamic headers to see automatic footer creation');
+        console.info('');
+        console.info('🔧 Integration Options:');
+        console.info('   • Import: import { unifiedFooter } from "./src/ui/unified-footer.js"');
+        console.info('   • Initialize: unifiedFooter.initialize(config)');
+        console.info('   • Update: unifiedFooter.updateConfig(updates)');
+        console.info('   • Metrics: unifiedFooter.updateMetrics(metrics)');
+        console.info('');
+        console.info('🎨 Footer Features:');
+        console.info('   • Real-time metrics display');
+        console.info('   • Quick action buttons');
+        console.info('   • Timestamp and system info');
+        console.info('   • Dashboard-specific enhancements');
+        console.info('   • Responsive design');
+        console.info('   • Multiple themes and animations');
+        console.info('');
+        console.info('📊 Configuration Options:');
+        console.info('   • showTimestamp: boolean');
+        console.info('   • showSystemInfo: boolean');
+        console.info('   • showQuickActions: boolean');
+        console.info('   • showMetrics: boolean');
+        console.info('   • theme: "light" | "dark" | "auto"');
+        console.info('   • position: "bottom" | "fixed" | "sticky"');
+        console.info('   • animation: "none" | "slide" | "fade" | "bounce"');
         
     } catch (error) {
         console.error('❌ Demo creation failed:', error);

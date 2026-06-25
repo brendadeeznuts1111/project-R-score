@@ -150,7 +150,7 @@ export class ConsoleJSONFormatter {
     if (this.originalLog) {
       this.originalLog('[AUDIT]', JSON.stringify(entry));
     } else {
-      console.log('[AUDIT]', JSON.stringify(entry));
+      console.info('[AUDIT]', JSON.stringify(entry));
     }
   }
 

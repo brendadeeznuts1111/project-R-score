@@ -109,7 +109,9 @@ async function waitForLocalCallback(params: {
     timeout = setTimeout(() => {
       try {
         server.close();
-      } catch {}
+      } catch {
+    console.error('Unhandled error:', error);
+  }
       reject(new Error("OAuth callback timeout"));
     }, params.timeoutMs);
   });

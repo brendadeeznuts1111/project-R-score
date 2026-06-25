@@ -66,22 +66,22 @@ class TestProcessIntegration {
       platform: process.platform
     };
 
-    console.log('🔍 Environment Detection:');
-    console.log(`  CI Environment: ${env.ci ? '✅' : '❌'}`);
-    console.log(`  GitHub Actions: ${env.githubActions ? '✅' : '❌'}`);
-    console.log(`  Node Environment: ${env.nodeEnv}`);
-    console.log(`  Bun Version: ${env.bunVersion}`);
-    console.log(`  Platform: ${env.platform}`);
+    console.info('🔍 Environment Detection:');
+    console.info(`  CI Environment: ${env.ci ? '✅' : '❌'}`);
+    console.info(`  GitHub Actions: ${env.githubActions ? '✅' : '❌'}`);
+    console.info(`  Node Environment: ${env.nodeEnv}`);
+    console.info(`  Bun Version: ${env.bunVersion}`);
+    console.info(`  Platform: ${env.platform}`);
 
     // GitHub Actions specific setup
     if (env.githubActions) {
-      console.log('🎯 GitHub Actions detected - enabling annotations');
+      console.info('🎯 GitHub Actions detected - enabling annotations');
       this.setupGitHubActionsAnnotations();
     }
 
     // CI optimizations
     if (env.ci) {
-      console.log('🏭 CI Environment detected - enabling optimizations');
+      console.info('🏭 CI Environment detected - enabling optimizations');
       this.applyCIOptimizations();
     }
 
@@ -125,18 +125,18 @@ class TestProcessIntegration {
   setupSignalHandling(): void {
     if (!this.config.signalHandling) return;
 
-    console.log('⚡ Setting up signal handlers...');
+    console.info('⚡ Setting up signal handlers...');
 
     // Graceful shutdown on SIGTERM
     const sigtermHandler = () => {
-      console.log('\n🛑 SIGTERM received - gracefully stopping tests...');
+      console.info('\n🛑 SIGTERM received - gracefully stopping tests...');
       this.cleanup();
       process.exit(143); // 128 + 15 (SIGTERM)
     };
 
     // Immediate shutdown on SIGKILL (can't be caught, but we can prepare)
     const sigintHandler = () => {
-      console.log('\n⚡ SIGINT received - stopping test execution...');
+      console.info('\n⚡ SIGINT received - stopping test execution...');
       this.cleanup();
       process.exit(130); // 128 + 2 (SIGINT)
     };
@@ -155,7 +155,7 @@ class TestProcessIntegration {
 
   // 🧹 Cleanup Resources
   private cleanup(): void {
-    console.log('🧹 Cleaning up test resources...');
+    console.info('🧹 Cleaning up test resources...');
     
     // Clear signal handlers
     this.signalHandlers.forEach((handler, signal) => {
@@ -174,7 +174,7 @@ class TestProcessIntegration {
     const startMemory = process.memoryUsage();
     const startTime = performance.now();
 
-    console.log(`📊 Running memory-optimized test: ${testFile}`);
+    console.info(`📊 Running memory-optimized test: ${testFile}`);
 
     try {
       // Use --smol flag for reduced memory footprint
@@ -201,9 +201,9 @@ class TestProcessIntegration {
         memoryUsage: Math.max(0, memoryDelta)
       };
 
-      console.log(`  ✅ Completed: ${testResult.passed} passed, ${testResult.failed} failed, ${testResult.errors} errors`);
-      console.log(`  📈 Memory delta: ${(testResult.memoryUsage / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`  ⏱️  Duration: ${testResult.duration.toFixed(2)}ms`);
+      console.info(`  ✅ Completed: ${testResult.passed} passed, ${testResult.failed} failed, ${testResult.errors} errors`);
+      console.info(`  📈 Memory delta: ${(testResult.memoryUsage / 1024 / 1024).toFixed(2)}MB`);
+      console.info(`  ⏱️  Duration: ${testResult.duration.toFixed(2)}ms`);
 
       return testResult;
 
@@ -224,7 +224,7 @@ class TestProcessIntegration {
 
   // 🚀 Single Process Test Execution
   async runSingleProcessTests(testFiles: string[]): Promise<TestResult[]> {
-    console.log(`🚀 Running ${testFiles.length} tests in single process mode...`);
+    console.info(`🚀 Running ${testFiles.length} tests in single process mode...`);
     
     const results: TestResult[] = [];
     const startTime = performance.now();
@@ -235,20 +235,20 @@ class TestProcessIntegration {
 
       // Early exit on critical errors
       if (result.exitCode > 1) {
-        console.log(`🚨 Critical error in ${testFile}, stopping execution...`);
+        console.info(`🚨 Critical error in ${testFile}, stopping execution...`);
         break;
       }
     }
 
     const totalDuration = performance.now() - startTime;
-    console.log(`\n✅ Single process execution completed in ${totalDuration.toFixed(2)}ms`);
+    console.info(`\n✅ Single process execution completed in ${totalDuration.toFixed(2)}ms`);
 
     return results;
   }
 
   // 📈 Performance Monitoring
   async monitorPerformance(testFile: string): Promise<void> {
-    console.log(`📈 Monitoring performance for: ${testFile}`);
+    console.info(`📈 Monitoring performance for: ${testFile}`);
 
     const samples: Array<{ timestamp: number; memory: number }> = [];
     const interval = setInterval(() => {
@@ -268,18 +268,18 @@ class TestProcessIntegration {
         const avgMemory = samples.reduce((sum, s) => sum + s.memory, 0) / samples.length;
         const memoryGrowth = samples[samples.length - 1].memory - samples[0].memory;
 
-        console.log(`📊 Performance Metrics:`);
-        console.log(`  Peak Memory: ${(peakMemory / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`  Average Memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`  Memory Growth: ${(memoryGrowth / 1024 / 1024).toFixed(2)}MB`);
-        console.log(`  Sample Count: ${samples.length}`);
+        console.info(`📊 Performance Metrics:`);
+        console.info(`  Peak Memory: ${(peakMemory / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`  Average Memory: ${(avgMemory / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`  Memory Growth: ${(memoryGrowth / 1024 / 1024).toFixed(2)}MB`);
+        console.info(`  Sample Count: ${samples.length}`);
       }
     }
   }
 
   // 🎯 Exit Code Analysis
   analyzeExitCodes(results: TestResult[]): void {
-    console.log('\n🎯 Exit Code Analysis:');
+    console.info('\n🎯 Exit Code Analysis:');
     
     const exitCodeStats = new Map<number, number>();
     results.forEach(result => {
@@ -299,7 +299,7 @@ class TestProcessIntegration {
           description = `${code} unhandled errors`;
           break;
       }
-      console.log(`  Exit Code ${code}: ${count} files (${description})`);
+      console.info(`  Exit Code ${code}: ${count} files (${description})`);
     });
   }
 
@@ -395,8 +395,8 @@ class TestProcessIntegration {
 
   // 🚀 Main Execution
   async runTestSuite(testPatterns: string[] = ['**/*.test.ts']): Promise<void> {
-    console.log('🚀 Bun Test Process Integration v2.8');
-    console.log('=' .repeat(60));
+    console.info('🚀 Bun Test Process Integration v2.8');
+    console.info('=' .repeat(60));
 
     // Environment Detection
     const environment = this.detectEnvironment();
@@ -405,7 +405,7 @@ class TestProcessIntegration {
     this.setupSignalHandling();
 
     // Find test files
-    console.log('\n🔍 Discovering test files...');
+    console.info('\n🔍 Discovering test files...');
     const testFiles: string[] = [];
     
     for (const pattern of testPatterns) {
@@ -413,15 +413,15 @@ class TestProcessIntegration {
       testFiles.push(...files);
     }
 
-    console.log(`Found ${testFiles.length} test files`);
+    console.info(`Found ${testFiles.length} test files`);
 
     if (testFiles.length === 0) {
-      console.log('⚠️ No test files found');
+      console.info('⚠️ No test files found');
       return;
     }
 
     // Run Tests
-    console.log('\n🧪 Running test suite...');
+    console.info('\n🧪 Running test suite...');
     const startTime = performance.now();
 
     let results: TestResult[];
@@ -430,7 +430,7 @@ class TestProcessIntegration {
       results = await this.runSingleProcessTests(testFiles);
     } else {
       // Parallel execution (not implemented in this example)
-      console.log('🔄 Parallel execution mode not implemented');
+      console.info('🔄 Parallel execution mode not implemented');
       results = await this.runSingleProcessTests(testFiles);
     }
 
@@ -446,26 +446,26 @@ class TestProcessIntegration {
     // Save Report
     const reportFile = 'test-integration-report.md';
     await Bun.write(reportFile, markdownReport);
-    console.log(`\n📄 Report saved to: ${reportFile}`);
+    console.info(`\n📄 Report saved to: ${reportFile}`);
 
     // Save JSON data
     const jsonFile = 'test-integration-results.json';
     await Bun.write(jsonFile, JSON.stringify(suite, null, 2));
-    console.log(`📊 JSON data saved to: ${jsonFile}`);
+    console.info(`📊 JSON data saved to: ${jsonFile}`);
 
     // Final Summary
-    console.log('\n' + '=' .repeat(60));
-    console.log('✅ Test Integration Complete!');
-    console.log(`📊 Success Rate: ${suite.summary.successRate.toFixed(1)}%`);
-    console.log(`⏱️  Total Duration: ${totalDuration.toFixed(2)}ms`);
-    console.log(`🧠 Peak Memory: ${(suite.summary.peakMemory / 1024 / 1024).toFixed(2)}MB`);
+    console.info('\n' + '=' .repeat(60));
+    console.info('✅ Test Integration Complete!');
+    console.info(`📊 Success Rate: ${suite.summary.successRate.toFixed(1)}%`);
+    console.info(`⏱️  Total Duration: ${totalDuration.toFixed(2)}ms`);
+    console.info(`🧠 Peak Memory: ${(suite.summary.peakMemory / 1024 / 1024).toFixed(2)}MB`);
 
     // Exit with appropriate code
     const exitCode = suite.summary.totalErrors > 0 ? Math.min(suite.summary.totalErrors, 127) : 
                     suite.summary.totalFailed > 0 ? 1 : 0;
     
     if (exitCode !== 0) {
-      console.log(`🚨 Exiting with code ${exitCode}`);
+      console.info(`🚨 Exiting with code ${exitCode}`);
       process.exit(exitCode);
     }
   }
@@ -476,22 +476,22 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Bun Test Process Integration v2.8');
-    console.log('');
-    console.log('Usage:');
-    console.log('  bun run test-integration.ts [options] [patterns...]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --single-process    Run tests in single process mode (default)');
-    console.log('  --memory-optimized  Enable memory optimizations');
-    console.log('  --no-signal-handling  Disable signal handling');
-    console.log('  --no-env-detection   Disable environment detection');
-    console.log('  --monitor <file>     Monitor performance for specific test');
-    console.log('');
-    console.log('Examples:');
-    console.log('  bun run test-integration.ts');
-    console.log('  bun run test-integration.ts --memory-optimized **/*.test.ts');
-    console.log('  bun run test-integration.ts --monitor src/core.test.ts');
+    console.info('Bun Test Process Integration v2.8');
+    console.info('');
+    console.info('Usage:');
+    console.info('  bun run test-integration.ts [options] [patterns...]');
+    console.info('');
+    console.info('Options:');
+    console.info('  --single-process    Run tests in single process mode (default)');
+    console.info('  --memory-optimized  Enable memory optimizations');
+    console.info('  --no-signal-handling  Disable signal handling');
+    console.info('  --no-env-detection   Disable environment detection');
+    console.info('  --monitor <file>     Monitor performance for specific test');
+    console.info('');
+    console.info('Examples:');
+    console.info('  bun run test-integration.ts');
+    console.info('  bun run test-integration.ts --memory-optimized **/*.test.ts');
+    console.info('  bun run test-integration.ts --monitor src/core.test.ts');
     return;
   }
 

@@ -5,7 +5,7 @@ if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
 } else {
-  console.log('ℹ️  Script was imported, not executed directly');
+  console.info('ℹ️  Script was imported, not executed directly');
 }
 
 import { SpawnOptimizer, EnvironmentOptimizer } from '../performance/optimizer';
@@ -19,8 +19,8 @@ import { OptimizedSpawn } from '../performance/optimized-spawn-test';
 
 class SecurityTests {
   static async testCommandInjection(): Promise<void> {
-    console.log('🔒 TESTING COMMAND INJECTION PROTECTION');
-    console.log('='.repeat(50));
+    console.info('🔒 TESTING COMMAND INJECTION PROTECTION');
+    console.info('='.repeat(50));
 
     const dangerousCommands = [
       { cmd: 'rm', args: ['-rf', '/'], desc: 'rm -rf /' },
@@ -34,20 +34,20 @@ class SecurityTests {
     for (const test of dangerousCommands) {
       try {
         await SpawnOptimizer.optimizedSpawn(test.cmd, test.args);
-        console.log(`❌ FAILED: ${test.desc} - should have been blocked`);
+        console.info(`❌ FAILED: ${test.desc} - should have been blocked`);
       } catch (error) {
         if (error.error.includes('Security error')) {
-          console.log(`✅ PASSED: ${test.desc} - correctly blocked`);
+          console.info(`✅ PASSED: ${test.desc} - correctly blocked`);
         } else {
-          console.log(`⚠️  PARTIAL: ${test.desc} - blocked but wrong error: ${error.error}`);
+          console.info(`⚠️  PARTIAL: ${test.desc} - blocked but wrong error: ${error.error}`);
         }
       }
     }
   }
 
   static async testInputValidation(): Promise<void> {
-    console.log('\n🛡️ TESTING INPUT VALIDATION');
-    console.log('='.repeat(50));
+    console.info('\n🛡️ TESTING INPUT VALIDATION');
+    console.info('='.repeat(50));
 
     const invalidInputs = [
       { cmd: null, args: [], desc: 'null command' },
@@ -61,20 +61,20 @@ class SecurityTests {
     for (const test of invalidInputs) {
       try {
         await SpawnOptimizer.optimizedSpawn(test.cmd as any, test.args as any);
-        console.log(`❌ FAILED: ${test.desc} - should have been blocked`);
+        console.info(`❌ FAILED: ${test.desc} - should have been blocked`);
       } catch (error) {
         if (error.error.includes('Invalid')) {
-          console.log(`✅ PASSED: ${test.desc} - correctly blocked`);
+          console.info(`✅ PASSED: ${test.desc} - correctly blocked`);
         } else {
-          console.log(`⚠️  PARTIAL: ${test.desc} - blocked but wrong error: ${error.error}`);
+          console.info(`⚠️  PARTIAL: ${test.desc} - blocked but wrong error: ${error.error}`);
         }
       }
     }
   }
 
   static async testCacheKeyCollision(): Promise<void> {
-    console.log('\n🔑 TESTING CACHE KEY COLLISION PREVENTION');
-    console.log('='.repeat(50));
+    console.info('\n🔑 TESTING CACHE KEY COLLISION PREVENTION');
+    console.info('='.repeat(50));
 
     const testCases = [
       { cmd: 'echo', args: ['hello:world'], desc: 'hello:world' },
@@ -88,14 +88,14 @@ class SecurityTests {
         const result = await OptimizedSpawn.cachedSpawn(test.cmd, test.args);
         results.push(`${test.desc}: ${result.stdout}`);
       } catch (error) {
-        console.log(`❌ FAILED: ${test.desc} - ${error.error}`);
+        console.info(`❌ FAILED: ${test.desc} - ${error.error}`);
       }
     }
 
     if (results.length === 2 && results[0] !== results[1]) {
-      console.log('✅ PASSED: Cache keys are unique, no collision detected');
+      console.info('✅ PASSED: Cache keys are unique, no collision detected');
     } else {
-      console.log('❌ FAILED: Cache collision detected or test failed');
+      console.info('❌ FAILED: Cache collision detected or test failed');
     }
   }
 }
@@ -106,8 +106,8 @@ class SecurityTests {
 
 class StabilityTests {
   static async testMetricsRaceCondition(): Promise<void> {
-    console.log('\n🏁 TESTING METRICS RACE CONDITION FIX');
-    console.log('='.repeat(50));
+    console.info('\n🏁 TESTING METRICS RACE CONDITION FIX');
+    console.info('='.repeat(50));
 
     const server = new OptimizedServer(3003);
     await Bun.sleep(100);
@@ -119,44 +119,44 @@ class StabilityTests {
       await Promise.all(promises);
       const metrics = server.getInfo().metrics;
 
-      console.log(`Total requests: ${metrics.totalRequests}`);
-      console.log(`Average response time: ${metrics.averageResponseTime.toFixed(2)}ms`);
-      console.log(`Cache hit rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
-      console.log('✅ PASSED: No race condition detected in metrics');
+      console.info(`Total requests: ${metrics.totalRequests}`);
+      console.info(`Average response time: ${metrics.averageResponseTime.toFixed(2)}ms`);
+      console.info(`Cache hit rate: ${(metrics.cacheHitRate * 100).toFixed(1)}%`);
+      console.info('✅ PASSED: No race condition detected in metrics');
     } catch (error) {
-      console.log(`❌ FAILED: Race condition test failed: ${error.message}`);
+      console.info(`❌ FAILED: Race condition test failed: ${error.message}`);
     } finally {
       server.stop();
     }
   }
 
   static async testEnvironmentCacheMemoryLeak(): Promise<void> {
-    console.log('\n💾 TESTING ENVIRONMENT CACHE MEMORY LEAK FIX');
-    console.log('='.repeat(50));
+    console.info('\n💾 TESTING ENVIRONMENT CACHE MEMORY LEAK FIX');
+    console.info('='.repeat(50));
 
-    const initialSize = (EnvironmentOptimizer as any).ENV_CACHE?.size || 0;
+    const initialSize = (EnvironmentOptimizer as Record<string, unknown>).ENV_CACHE?.size || 0;
 
     // Access environment variables multiple times
     for (let i = 0; i < 100; i++) {
       EnvironmentOptimizer.getOptimizedEnv('PATH');
     }
 
-    const finalSize = (EnvironmentOptimizer as any).ENV_CACHE?.size || 0;
+    const finalSize = (EnvironmentOptimizer as Record<string, unknown>).ENV_CACHE?.size || 0;
 
     if (finalSize === initialSize + 1) {
-      console.log('✅ PASSED: No memory leak in environment cache');
+      console.info('✅ PASSED: No memory leak in environment cache');
     } else {
-      console.log(`❌ FAILED: Cache size grew from ${initialSize} to ${finalSize}`);
+      console.info(`❌ FAILED: Cache size grew from ${initialSize} to ${finalSize}`);
     }
 
     // Test cleanup
     const cleaned = EnvironmentOptimizer.cleanupExpiredCache();
-    console.log(`Cache cleanup removed ${cleaned} expired entries`);
+    console.info(`Cache cleanup removed ${cleaned} expired entries`);
   }
 
   static async testNullSafety(): Promise<void> {
-    console.log('\n⚠️ TESTING NULL SAFETY');
-    console.log('='.repeat(50));
+    console.info('\n⚠️ TESTING NULL SAFETY');
+    console.info('='.repeat(50));
 
     const server = new OptimizedServer(3004);
     await Bun.sleep(100);
@@ -167,10 +167,10 @@ class StabilityTests {
 
       // This should not crash even with empty cache
       const info = server.getInfo();
-      console.log(`Cache size: ${info.cacheSize}`);
-      console.log('✅ PASSED: Null safety checks working');
+      console.info(`Cache size: ${info.cacheSize}`);
+      console.info('✅ PASSED: Null safety checks working');
     } catch (error) {
-      console.log(`❌ FAILED: Null safety test failed: ${error.message}`);
+      console.info(`❌ FAILED: Null safety test failed: ${error.message}`);
     } finally {
       server.stop();
     }
@@ -183,8 +183,8 @@ class StabilityTests {
 
 class ErrorHandlingTests {
   static async testSecureErrorMessages(): Promise<void> {
-    console.log('\n🔐 TESTING SECURE ERROR MESSAGES');
-    console.log('='.repeat(50));
+    console.info('\n🔐 TESTING SECURE ERROR MESSAGES');
+    console.info('='.repeat(50));
 
     const server = new OptimizedServer(3005);
     await Bun.sleep(100);
@@ -196,13 +196,13 @@ class ErrorHandlingTests {
       const text = await response.text();
 
       if (text.includes('Internal Server Error') && !text.includes('message')) {
-        console.log('✅ PASSED: Error message does not expose internal details');
+        console.info('✅ PASSED: Error message does not expose internal details');
       } else {
-        console.log('❌ FAILED: Error message may expose internal details');
-        console.log(`Response: ${text}`);
+        console.info('❌ FAILED: Error message may expose internal details');
+        console.info(`Response: ${text}`);
       }
     } catch (error) {
-      console.log(`❌ FAILED: Error handling test failed: ${error.message}`);
+      console.info(`❌ FAILED: Error handling test failed: ${error.message}`);
     } finally {
       server.stop();
     }
@@ -215,9 +215,9 @@ class ErrorHandlingTests {
 
 class TestRunner {
   static async runAllTests(): Promise<void> {
-    console.log('🧪 SECURITY AND STABILITY TEST SUITE');
-    console.log('='.repeat(60));
-    console.log('Validating all critical fixes...\n');
+    console.info('🧪 SECURITY AND STABILITY TEST SUITE');
+    console.info('='.repeat(60));
+    console.info('Validating all critical fixes...\n');
 
     try {
       // Security tests
@@ -233,17 +233,17 @@ class TestRunner {
       // Error handling tests
       await ErrorHandlingTests.testSecureErrorMessages();
 
-      console.log('\n✅ ALL SECURITY AND STABILITY TESTS COMPLETED!');
-      console.log('\n🎯 Critical Issues Status:');
-      console.log('   ✅ Race conditions: RESOLVED');
-      console.log('   ✅ Memory leaks: RESOLVED');
-      console.log('   ✅ Cache collisions: RESOLVED');
-      console.log('   ✅ Command injection: BLOCKED');
-      console.log('   ✅ Information disclosure: PREVENTED');
-      console.log('   ✅ Input validation: IMPLEMENTED');
-      console.log('   ✅ Null safety: ENSURED');
+      console.info('\n✅ ALL SECURITY AND STABILITY TESTS COMPLETED!');
+      console.info('\n🎯 Critical Issues Status:');
+      console.info('   ✅ Race conditions: RESOLVED');
+      console.info('   ✅ Memory leaks: RESOLVED');
+      console.info('   ✅ Cache collisions: RESOLVED');
+      console.info('   ✅ Command injection: BLOCKED');
+      console.info('   ✅ Information disclosure: PREVENTED');
+      console.info('   ✅ Input validation: IMPLEMENTED');
+      console.info('   ✅ Null safety: ENSURED');
 
-      console.log('\n🚀 System is now PRODUCTION READY!');
+      console.info('\n🚀 System is now PRODUCTION READY!');
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

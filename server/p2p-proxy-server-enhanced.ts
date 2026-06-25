@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * P2P Proxy Server v2 - Enhanced Production Version
- * 
+ *
  * Complete unified P2P gateway with:
  * - Bun-native CryptoHasher (no node:crypto)
  * - Bun secrets API integration
@@ -11,6 +11,7 @@
  */
 
 import Redis from 'ioredis';
+import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
 // Brand Configuration
@@ -28,12 +29,12 @@ const BRAND_CONFIG = {
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+const redis = new Redis(REDIS_URL, {
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
 // P2P Proxy Class
@@ -50,23 +51,23 @@ class P2PProxy {
   ): Promise<boolean> {
     // Get secret from environment (Bun secrets API compatible)
     const secret = Bun.env[`${provider.toUpperCase()}_WEBHOOK_SECRET`];
-    
+
     if (!secret) {
-      console.log(`⚠️  ${provider} secret not set - accepting (dev mode)`);
+      console.info(`⚠️  ${provider} secret not set - accepting (dev mode)`);
       return true;
     }
-    
+
     // Use Bun's native CryptoHasher
     const hasher = new Bun.CryptoHasher('sha256', secret);
     hasher.update(body);
     const expectedSig = hasher.digest('hex');
-    
+
     const headerName = {
       paypal: 'paypal-transmission-sig',
       venmo: 'x-venmo-signature',
-      cashapp: 'square-signature'
+      cashapp: 'square-signature',
     }[provider];
-    
+
     const receivedSig = headers.get(headerName)?.replace('v1=', '');
     return expectedSig === receivedSig;
   }
@@ -89,22 +90,22 @@ class P2PProxy {
   ): Promise<{ bonus: number; tier: string }> {
     const habitsKey = `habits:${stealthId}`;
     const habitsData = await redis.hgetall(habitsKey);
-    
+
     let tier = habitsData?.tier || 'new';
     let bonusRate = 0.05; // Default 5%
-    
+
     // Dynamic bonus based on habits
-    if (tier === 'whale') bonusRate = 0.20;
+    if (tier === 'whale') bonusRate = 0.2;
     else if (tier === 'high-volume') bonusRate = 0.15;
-    else if (tier === 'active') bonusRate = 0.10;
-    
+    else if (tier === 'active') bonusRate = 0.1;
+
     // First-time user bonus
     const txnCount = parseInt(habitsData?.txnCount || '0');
     if (txnCount === 0) bonusRate += 0.05; // Extra 5% for first time
-    
+
     return {
       bonus: Math.round(amount * bonusRate * 100) / 100,
-      tier
+      tier,
     };
   }
 
@@ -124,38 +125,38 @@ class P2PProxy {
   }> {
     // Extract payment details per provider
     let userId: string, amount: number, paymentId: string;
-    
+
     switch (provider) {
       case 'paypal':
-        userId = payload.resource?.payer?.payer_info?.email ?? 
-                payload.resource?.sender_email ?? 'unknown';
+        userId =
+          payload.resource?.payer?.payer_info?.email ?? payload.resource?.sender_email ?? 'unknown';
         amount = parseFloat(payload.resource?.amount?.total || 0);
         paymentId = payload.resource?.id ?? `pp_${Date.now()}`;
         break;
-        
+
       case 'venmo':
         userId = payload.data?.actor?.username ?? 'unknown';
-        amount = typeof payload.data?.amount === 'string' 
-          ? parseFloat(payload.data.amount) 
-          : Number(payload.data?.amount || 0);
+        amount =
+          typeof payload.data?.amount === 'string'
+            ? parseFloat(payload.data.amount)
+            : Number(payload.data?.amount || 0);
         paymentId = payload.data?.id ?? `vm_${Date.now()}`;
         break;
-        
+
       case 'cashapp':
-        userId = payload.data?.buyer_email_address ?? 
-                payload.data?.customer_id ?? 'cashapp_user';
+        userId = payload.data?.buyer_email_address ?? payload.data?.customer_id ?? 'cashapp_user';
         amount = parseFloat(payload.data?.amount_money?.amount || 0) / 100;
         paymentId = payload.data?.payment_id ?? `ca_${Date.now()}`;
         break;
     }
-    
+
     if (!userId || amount <= 0) {
       throw new Error('Invalid payment data');
     }
-    
+
     // Generate stealth ID
     const stealthId = this.generateStealthUserId(userId, provider);
-    
+
     // Record payment
     const txnKey = `p2p:${stealthId}:${Date.now()}`;
     await redis.hmset(txnKey, {
@@ -165,71 +166,77 @@ class P2PProxy {
       stealthId,
       amount: amount.toString(),
       timestamp: new Date().toISOString(),
-      status: 'received'
+      status: 'received',
     });
-    
+
     // Calculate bonus
     const { bonus, tier } = await this.calculateDynamicBonus(stealthId, amount);
     const totalCredit = amount + bonus;
-    
+
     // Update balance
     const balanceKey = `balance:${stealthId}`;
     await redis.incrbyfloat(balanceKey, totalCredit);
-    
+
     // Update habits
     const habitsKey = `habits:${stealthId}`;
     await redis.hincrby(habitsKey, 'txnCount', 1);
     await redis.hset(habitsKey, 'lastTxn', Date.now().toString());
     await redis.hincrbyfloat(habitsKey, 'totalSpent', amount);
-    
+
     // Update tier based on new count
-    const newCount = parseInt(await redis.hget(habitsKey, 'txnCount') || '1');
-    const totalSpent = parseFloat(await redis.hget(habitsKey, 'totalSpent') || '0');
+    const newCount = parseInt((await redis.hget(habitsKey, 'txnCount')) || '1');
+    const totalSpent = parseFloat((await redis.hget(habitsKey, 'totalSpent')) || '0');
     const avgTxn = totalSpent / newCount;
-    
+
     let newTier = 'casual';
     if (newCount > 100 && avgTxn > 100) newTier = 'whale';
     else if (newCount > 50) newTier = 'high-volume';
     else if (newCount > 20 && avgTxn > 20) newTier = 'active';
-    
+
     await redis.hset(habitsKey, 'tier', newTier);
-    
+
     // Publish events
-    await redis.publish('p2p:payment', JSON.stringify({
-      stealthId,
-      provider,
-      amount,
-      bonus,
-      totalCredit,
-      tier: newTier,
-      timestamp: Date.now(),
-      paymentId
-    }));
-    
-    await redis.publish('PERSONALIZED_DEPOSIT', JSON.stringify({
-      userId: stealthId,
-      amount,
-      bonus,
-      totalDeposit: totalCredit,
-      tier: newTier,
-      source: 'p2p_proxy',
-      provider,
-      timestamp: new Date().toISOString(),
-    }));
-    
+    await redis.publish(
+      'p2p:payment',
+      JSON.stringify({
+        stealthId,
+        provider,
+        amount,
+        bonus,
+        totalCredit,
+        tier: newTier,
+        timestamp: Date.now(),
+        paymentId,
+      })
+    );
+
+    await redis.publish(
+      'PERSONALIZED_DEPOSIT',
+      JSON.stringify({
+        userId: stealthId,
+        amount,
+        bonus,
+        totalDeposit: totalCredit,
+        tier: newTier,
+        source: 'p2p_proxy',
+        provider,
+        timestamp: new Date().toISOString(),
+      })
+    );
+
     // Store receipt
     await this.storeReceipt(stealthId, amount, bonus);
-    
+
     return {
       success: true,
       amount,
       credited: totalCredit,
       stealthId,
       bonus,
-      tier: newTier
+      tier: newTier,
     };
   }
-  
+
   private static async storeReceipt(
     stealthId: string,
     amount: number,
@@ -242,15 +249,18 @@ class P2PProxy {
       bonus: bonus.toString(),
       total: (amount + bonus).toString(),
       timestamp: new Date().toISOString(),
-      brand: BRAND_CONFIG.brandName
+      brand: BRAND_CONFIG.brandName,
     });
-    
-    await redis.publish('receipt:created', JSON.stringify({
-      receiptId,
-      stealthId,
-      amount,
-      bonus
-    }));
+
+    await redis.publish(
+      'receipt:created',
+      JSON.stringify({
+        receiptId,
+        stealthId,
+        amount,
+        bonus,
+      })
+    );
   }
 }
 
@@ -262,7 +272,7 @@ function generatePaymentPage(amount: number, description: string): string {
   const cashappUrl = `https://cash.app/${BRAND_CONFIG.cashTag.replace('$', '')}/${amount}`;
   const venmoUrl = `https://venmo.com/${BRAND_CONFIG.venmoHandle.replace('@', '')}?txn=pay&amount=${amount}`;
   const paypalUrl = `https://${BRAND_CONFIG.paypalLink}/${amount}`;
-  
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,7 +281,7 @@ function generatePaymentPage(amount: number, description: string): string {
   <title>Pay ${BRAND_CONFIG.brandName}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
+    body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -365,9 +375,9 @@ function generatePaymentPage(amount: number, description: string): string {
     <div class="logo">${BRAND_CONFIG.brandName.charAt(0)}</div>
     <h1>${BRAND_CONFIG.brandName}</h1>
     <p class="desc">${description}</p>
-    
+
     <div class="amount">$${amount}</div>
-    
+
     <div class="options">
       <a href="${cashappUrl}" class="option" target="_blank">
         <div class="option-icon cashapp">$</div>
@@ -377,7 +387,7 @@ function generatePaymentPage(amount: number, description: string): string {
         </div>
         →
       </a>
-      
+
       <a href="${venmoUrl}" class="option" target="_blank">
         <div class="option-icon venmo">V</div>
         <div class="option-text">
@@ -386,7 +396,7 @@ function generatePaymentPage(amount: number, description: string): string {
         </div>
         →
       </a>
-      
+
       <a href="${paypalUrl}" class="option" target="_blank">
         <div class="option-icon paypal">P</div>
         <div class="option-text">
@@ -396,16 +406,16 @@ function generatePaymentPage(amount: number, description: string): string {
         →
       </a>
     </div>
-    
+
     <button class="share-btn" onclick="sharePayment()">
       📱 Share Payment Link
     </button>
-    
+
     <div class="footer">
       Secured by P2P Proxy • Funds go directly to merchant
     </div>
   </div>
-  
+
   <script>
     function sharePayment() {
       if (navigator.share) {
@@ -432,127 +442,146 @@ const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
 
 const server = Bun.serve({
   port: PORT,
-  hostname: '0.0.0.0',
-  
+  hostname: process.env.SERVER_HOST || 'localhost',
+
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
-    const headers = req.headers;
-    
+
+    const origin = req.headers.get('Origin') || '';
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const corsOrigin =
+      allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins.length > 0
+          ? 'null'
+          : '*';
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      Vary: 'Origin',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check
     if (url.pathname === '/health') {
-      return new Response(JSON.stringify({
-        status: 'ok',
-        version: 'p2p-proxy-v2-enhanced',
-        brand: BRAND_CONFIG.brandName,
-        handles: BRAND_CONFIG,
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          version: 'p2p-proxy-v2-enhanced',
+          brand: BRAND_CONFIG.brandName,
+          handles: BRAND_CONFIG,
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Unified webhook
     if (url.pathname === '/webhook/proxy' && req.method === 'POST') {
       try {
         let provider: 'paypal' | 'venmo' | 'cashapp' | null = null;
-        
+
         // Auto-detect provider
-        if (headers.get('user-agent')?.includes('PayPal') || headers.get('paypal-transmission-sig')) {
+        if (
+          headers.get('user-agent')?.includes('PayPal') ||
+          headers.get('paypal-transmission-sig')
+        ) {
           provider = 'paypal';
         } else if (headers.get('x-venmo-signature')) {
           provider = 'venmo';
         } else if (headers.get('square-signature')) {
           provider = 'cashapp';
         }
-        
+
         if (!provider) {
-          return new Response(
-            JSON.stringify({ error: 'Unknown provider' }),
-            { status: 400, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Unknown provider' }), {
+            status: 400,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Verify signature
         const isValid = await P2PProxy.verifyProviderSignature(body, headers, provider);
         if (!isValid) {
-          return new Response(
-            JSON.stringify({ error: 'Invalid signature' }),
-            { status: 401, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Invalid signature' }), {
+            status: 401,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Process payment
         const payload = JSON.parse(body);
         const result = await P2PProxy.handleWebhook(provider, payload);
-        
-        console.log(`✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier})`);
-        
+
+        console.info(
+          `✅ ${provider.toUpperCase()}: $${result.amount} → $${result.credited} (${result.tier})`
+        );
+
         return new Response(JSON.stringify({ success: true, ...result }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
-        
       } catch (error: any) {
         console.error('Webhook error:', error);
-        return new Response(
-          JSON.stringify({ error: error.message }),
-          { status: 500, headers: corsHeaders }
-        );
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: corsHeaders,
+        });
       }
     }
-    
+
     // Payment page
     if ((url.pathname === '/pay' || url.pathname === '/qr') && req.method === 'GET') {
       const amount = Number(url.searchParams.get('amount')) || 20;
       const description = url.searchParams.get('desc') || 'Service';
-      
+
       return new Response(generatePaymentPage(amount, description), {
         headers: { 'Content-Type': 'text/html' },
       });
     }
-    
+
     // Customer dashboard API
     if (url.pathname === '/api/balance' && req.method === 'GET') {
       const stealthId = url.searchParams.get('id');
       if (!stealthId) {
         return new Response('ID required', { status: 400, headers: corsHeaders });
       }
-      
+
       const [balance, habits] = await Promise.all([
         redis.get(`balance:${stealthId}`),
         redis.hgetall(`habits:${stealthId}`),
       ]);
-      
-      return new Response(JSON.stringify({
-        stealthId,
-        balance: parseFloat(balance || '0'),
-        habits,
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+      return new Response(
+        JSON.stringify({
+          stealthId,
+          balance: parseFloat(balance || '0'),
+          habits,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Root
-    return new Response(`<!DOCTYPE html>
+    return new Response(
+      `<!DOCTYPE html>
 <html>
 <head>
   <title>${BRAND_CONFIG.brandName} P2P Proxy</title>
   <style>
     body { font-family: system-ui; padding: 40px; text-align: center; }
     .brand { color: ${BRAND_CONFIG.color}; }
-    a { display: inline-block; margin: 10px; padding: 15px 30px; 
-        background: ${BRAND_CONFIG.color}; color: white; 
+    a { display: inline-block; margin: 10px; padding: 15px 30px;
+        background: ${BRAND_CONFIG.color}; color: white;
         text-decoration: none; border-radius: 8px; }
     code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
   </style>
@@ -568,26 +597,28 @@ const server = Bun.serve({
   <br>
   <p>Webhook: <code>POST /webhook/proxy</code></p>
 </body>
-</html>`, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+</html>`,
+      {
+        headers: { 'Content-Type': 'text/html' },
+      }
+    );
   },
 });
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy v2 (Enhanced)           ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Features:                                                 ║');
-console.log('║    • Bun-native CryptoHasher (no node:crypto)              ║');
-console.log('║    • Auto-detect provider from headers                     ║');
-console.log('║    • Dynamic bonuses (first-time + tier)                   ║');
-console.log('║    • Stealth hashed user IDs                               ║');
-console.log('║    • Receipt generation                                    ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
+console.info('');
+console.info('╔════════════════════════════════════════════════════════════╗');
+console.info(`║  💈 ${BRAND_CONFIG.brandName} P2P Proxy v2 (Enhanced)           ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info(`║  URL:     http://localhost:${PORT}                        ║`);
+console.info(`║  Pay:     http://localhost:${PORT}/pay?amount=25          ║`);
+console.info('╠════════════════════════════════════════════════════════════╣');
+console.info('║  Features:                                                 ║');
+console.info('║    • Bun-native CryptoHasher (no node:crypto)              ║');
+console.info('║    • Auto-detect provider from headers                     ║');
+console.info('║    • Dynamic bonuses (first-time + tier)                   ║');
+console.info('║    • Stealth hashed user IDs                               ║');
+console.info('║    • Receipt generation                                    ║');
+console.info('╚════════════════════════════════════════════════════════════╝');
+console.info('');
 
 export default server;

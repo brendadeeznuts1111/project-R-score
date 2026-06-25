@@ -21,7 +21,7 @@ self.onmessage = async (event: MessageEvent) => {
 				});
 				break;
 			default:
-				console.log(`Unknown event: ${event}`);
+				console.info(`Unknown event: ${event}`);
 		}
 	}
 };

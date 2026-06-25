@@ -41,7 +41,7 @@ export class DuoPlusSDK {
     task.metadata.embedUrl = embedUrl;
     task.metadata.disposition = 'inline';
     
-    console.log(`🖼️  Embedding Inline Screenshot: ${embedUrl}`);
+    console.info(`🖼️  Embedding Inline Screenshot: ${embedUrl}`);
     
     // Push to dashboard #3 (Phone ID required)
     if (task.phoneID) {
@@ -53,7 +53,7 @@ export class DuoPlusSDK {
 
   // Enhanced RPA task creation with URLPattern metadata
   async createRPATaskWithPattern(task: RPATask & { r2Path?: string }): Promise<RPATaskResult> {
-    console.log(`🤖 **DuoPlus RPA with URLPattern Metadata**`);
+    console.info(`🤖 **DuoPlus RPA with URLPattern Metadata**`);
     
     if (task.r2Path) {
       const classified = classifyPath(task.r2Path);
@@ -65,7 +65,7 @@ export class DuoPlusSDK {
           r2Path: task.r2Path,
           classifiedAt: Date.now()
         };
-        console.log(`📊 Pattern classified: ${classified.pattern}`);
+        console.info(`📊 Pattern classified: ${classified.pattern}`);
       }
     }
 
@@ -76,7 +76,7 @@ export class DuoPlusSDK {
       metadata: task.metadata
     };
 
-    console.log(`✅ RPA Task Created: ${result.id}`);
+    console.info(`✅ RPA Task Created: ${result.id}`);
     return result;
   }
 
@@ -85,7 +85,7 @@ export class DuoPlusSDK {
   }
 
   async getTaskStatus(taskId: string): Promise<RPATaskResult | null> {
-    console.log(`🔍 Checking task: ${taskId}`);
+    console.info(`🔍 Checking task: ${taskId}`);
     return {
       id: taskId,
       status: 'completed',
@@ -94,7 +94,7 @@ export class DuoPlusSDK {
   }
 
   async listTasksByPattern(pattern: string): Promise<RPATaskResult[]> {
-    console.log(`📋 Listing tasks for pattern: ${pattern}`);
+    console.info(`📋 Listing tasks for pattern: ${pattern}`);
     return [
       {
         id: `rpa-${pattern}-1`,
@@ -106,7 +106,7 @@ export class DuoPlusSDK {
   }
 
   async bulkCreateTasks(paths: string[], taskType: string): Promise<RPATaskResult[]> {
-    console.log(`🚀 **Bulk RPA Task Creation: ${paths.length} paths**`);
+    console.info(`🚀 **Bulk RPA Task Creation: ${paths.length} paths**`);
     const tasks = await Promise.all(
       paths.map(path => 
         this.createRPATaskWithPattern({
@@ -123,30 +123,30 @@ export class DuoPlusSDK {
    * High-performance results export using Bun-native I/O
    */
   async exportResults(results: RPATaskResult[], filePath: string) {
-    console.log(`💾 Exporting ${results.length} results to ${filePath}`);
+    console.info(`💾 Exporting ${results.length} results to ${filePath}`);
     await bunIO.write(filePath, JSON.stringify(results, null, 2));
-    console.log(`✅ Results exported successfully`);
+    console.info(`✅ Results exported successfully`);
   }
 
   /**
    * Pushes media or content to a pool of virtual phones
    */
   async batchPushToPhones(urls: string[], pools: string[]): Promise<{ pushed: number; failed: number }> {
-    console.log(`📱 **DuoPlus Phone Push Orchestration**`);
-    console.log(`🚀 Pushing ${urls.length} resources to phone pools: ${Array.from(new Set(pools)).join(', ')}`);
+    console.info(`📱 **DuoPlus Phone Push Orchestration**`);
+    console.info(`🚀 Pushing ${urls.length} resources to phone pools: ${Array.from(new Set(pools)).join(', ')}`);
     
     const result = {
       pushed: urls.length,
       failed: 0
     };
 
-    console.log(`✅ Push Complete: ${result.pushed} items delivered to device pool.`);
+    console.info(`✅ Push Complete: ${result.pushed} items delivered to device pool.`);
     return result;
   }
 }
 
 async function demonstrateDuoPlusIntegration() {
-  console.log(`🤖 **DuoPlus + Native S3 Inline Integration Demo** 🤖`);
+  console.info(`🤖 **DuoPlus + Native S3 Inline Integration Demo** 🤖`);
   const sdk = new DuoPlusSDK('https://api.duoplus.com', 'demo-api-key');
   
   // Test Embed Workflow
@@ -155,9 +155,9 @@ async function demonstrateDuoPlusIntegration() {
     'screenshots/reg-phone123.png'
   );
   
-  console.log(`\n🎉 **DuoPlus Integration Complete!**`);
-  console.log(`🖼️ Inline Embed URL: ${regTask.metadata?.embedUrl}`);
-  console.log(`📝 Metadata Preview: ${JSON.stringify(regTask.metadata, null, 2)}`);
+  console.info(`\n🎉 **DuoPlus Integration Complete!**`);
+  console.info(`🖼️ Inline Embed URL: ${regTask.metadata?.embedUrl}`);
+  console.info(`📝 Metadata Preview: ${JSON.stringify(regTask.metadata, null, 2)}`);
 }
 
 if (import.meta.main) {

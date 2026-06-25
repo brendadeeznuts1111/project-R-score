@@ -51,7 +51,9 @@ export class EnhancedDocsCacheManager {
     // Create directory if it doesn't exist
     try {
       Bun.$`mkdir -p ${baseDir}`.quiet();
-    } catch {}
+    } catch {
+      console.error('Unhandled error:', error);
+    }
 
     return baseDir;
   }
@@ -273,7 +275,7 @@ export class EnhancedDocsCacheManager {
     }
 
     if (cleaned > 0) {
-      console.log(`🧹 Cache maintenance: cleaned ${cleaned} expired entries`);
+      console.info(`🧹 Cache maintenance: cleaned ${cleaned} expired entries`);
       await this.saveCache();
     }
   }
@@ -311,7 +313,7 @@ export class EnhancedDocsCacheManager {
   }
 
   async preload(urls: string[]): Promise<void> {
-    console.log(`🔄 Preloading ${urls.length} URLs...`);
+    console.info(`🔄 Preloading ${urls.length} URLs...`);
 
     for (const url of urls) {
       try {
@@ -322,7 +324,7 @@ export class EnhancedDocsCacheManager {
       }
     }
 
-    console.log('✅ Preload complete');
+    console.info('✅ Preload complete');
   }
 
   getStats() {

@@ -9,76 +9,76 @@ import { CPUProfilingRegistry, CPUProfiling } from "../src/utils/cpu-profiling-r
 const registry = new CPUProfilingRegistry();
 
 async function main() {
-	console.log("📊 CPU Profiling Regression Report\n");
-	console.log("=" .repeat(60));
+	console.info("📊 CPU Profiling Regression Report\n");
+	console.info("=" .repeat(60));
 	
 	const status = await registry.getRegressionStatus();
 	
-	console.log("\n📋 Status:");
-	console.log(`   Has Baseline: ${status.hasBaseline ? "✅ Yes" : "❌ No"}`);
-	console.log(`   Has Profiles: ${status.hasProfiles ? "✅ Yes" : "❌ No"}`);
+	console.info("\n📋 Status:");
+	console.info(`   Has Baseline: ${status.hasBaseline ? "✅ Yes" : "❌ No"}`);
+	console.info(`   Has Profiles: ${status.hasProfiles ? "✅ Yes" : "❌ No"}`);
 	
 	if (!status.hasBaseline) {
-		console.log("\n⚠️  No baseline set. Run 'bun run cpu-prof:baseline' first.");
-		console.log("   Or use: bunx cpu-prof:baseline");
+		console.info("\n⚠️  No baseline set. Run 'bun run cpu-prof:baseline' first.");
+		console.info("   Or use: bunx cpu-prof:baseline");
 		return;
 	}
 	
 	if (!status.hasProfiles) {
-		console.log("\n⚠️  No profiles found. Run 'bun run cpu-prof:test' first.");
-		console.log("   Or use: bunx cpu-prof:test");
+		console.info("\n⚠️  No profiles found. Run 'bun run cpu-prof:test' first.");
+		console.info("   Or use: bunx cpu-prof:test");
 		return;
 	}
 	
-	console.log("\n📈 Latest Profile:");
+	console.info("\n📈 Latest Profile:");
 	if (status.latestProfile) {
-		console.log(`   Version: ${status.latestProfile.version}`);
-		console.log(`   Created: ${status.latestProfile.createdAt}`);
-		console.log(`   Git Hash: ${status.latestProfile.gitHash}`);
-		console.log(`   Metrics:`);
-		console.log(`     - Total Time: ${status.latestProfile.metrics.totalTime}ms`);
-		console.log(`     - Function Calls: ${status.latestProfile.metrics.functionCalls}`);
+		console.info(`   Version: ${status.latestProfile.version}`);
+		console.info(`   Created: ${status.latestProfile.createdAt}`);
+		console.info(`   Git Hash: ${status.latestProfile.gitHash}`);
+		console.info(`   Metrics:`);
+		console.info(`     - Total Time: ${status.latestProfile.metrics.totalTime}ms`);
+		console.info(`     - Function Calls: ${status.latestProfile.metrics.functionCalls}`);
 	}
 	
-	console.log("\n🎯 Baseline:");
+	console.info("\n🎯 Baseline:");
 	if (status.baseline) {
-		console.log(`   Version: ${status.baseline.version}`);
-		console.log(`   Created: ${status.baseline.createdAt}`);
-		console.log(`   Git Hash: ${status.baseline.gitHash}`);
-		console.log(`   Metrics:`);
-		console.log(`     - Total Time: ${status.baseline.metrics.totalTime}ms`);
-		console.log(`     - Function Calls: ${status.baseline.metrics.functionCalls}`);
+		console.info(`   Version: ${status.baseline.version}`);
+		console.info(`   Created: ${status.baseline.createdAt}`);
+		console.info(`   Git Hash: ${status.baseline.gitHash}`);
+		console.info(`   Metrics:`);
+		console.info(`     - Total Time: ${status.baseline.metrics.totalTime}ms`);
+		console.info(`     - Function Calls: ${status.baseline.metrics.functionCalls}`);
 	}
 	
 	if (status.regression) {
-		console.log("\n🔍 Regression Analysis:");
-		console.log(`   Severity: ${status.regression.severity}`);
-		console.log(`   ${status.regression.message}`);
-		console.log(`\n   Metrics Comparison:`);
-		console.log(`     - Execution Time: ${status.regression.metrics.executionTimeDeltaPercent.toFixed(2)}%`);
-		console.log(`     - Function Calls: ${status.regression.metrics.functionCallsDeltaPercent.toFixed(2)}%`);
+		console.info("\n🔍 Regression Analysis:");
+		console.info(`   Severity: ${status.regression.severity}`);
+		console.info(`   ${status.regression.message}`);
+		console.info(`\n   Metrics Comparison:`);
+		console.info(`     - Execution Time: ${status.regression.metrics.executionTimeDeltaPercent.toFixed(2)}%`);
+		console.info(`     - Function Calls: ${status.regression.metrics.functionCallsDeltaPercent.toFixed(2)}%`);
 		
 		if (status.regression.hotFunctionShifts && status.regression.hotFunctionShifts.length > 0) {
-			console.log(`\n   Hot Function Shifts:`);
+			console.info(`\n   Hot Function Shifts:`);
 			status.regression.hotFunctionShifts.forEach((shift) => {
 				const icon = shift.timeDeltaPercent > 0 ? "📈" : "📉";
-				console.log(`     ${icon} ${shift.name}: ${shift.timeDeltaPercent.toFixed(2)}%`);
+				console.info(`     ${icon} ${shift.name}: ${shift.timeDeltaPercent.toFixed(2)}%`);
 			});
 		}
 		
 		if (status.regression.severity === CPUProfiling.RegressionSeverity.CRITICAL) {
-			console.log("\n❌ CRITICAL REGRESSION DETECTED!");
-			console.log("   Build should fail in CI/CD.");
+			console.info("\n❌ CRITICAL REGRESSION DETECTED!");
+			console.info("   Build should fail in CI/CD.");
 			process.exit(1);
 		} else if (status.regression.severity === CPUProfiling.RegressionSeverity.WARNING) {
-			console.log("\n⚠️  WARNING: Performance degradation detected.");
-			console.log("   Review recommended.");
+			console.info("\n⚠️  WARNING: Performance degradation detected.");
+			console.info("   Review recommended.");
 		} else if (status.regression.severity === CPUProfiling.RegressionSeverity.IMPROVEMENT) {
-			console.log("\n✅ IMPROVEMENT: Performance improved!");
+			console.info("\n✅ IMPROVEMENT: Performance improved!");
 		}
 	}
 	
-	console.log("\n" + "=".repeat(60));
+	console.info("\n" + "=".repeat(60));
 }
 
 if (import.meta.main) {

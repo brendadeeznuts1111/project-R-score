@@ -1,6 +1,7 @@
 // lib/registry/package-docs.ts — Package documentation fetcher with R2 caching
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { npmRegistryUrl } from './env';
 import { R2StorageAdapter } from './r2-storage';
 
 export interface PackageDoc {
@@ -65,7 +66,7 @@ export class PackageDocumentationFetcher {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.r2Storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_DOCS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'npm-registry',
       prefix: this.cachePrefix,
     });
   }
@@ -88,7 +89,7 @@ export class PackageDocumentationFetcher {
     if (!options.forceRefresh) {
       const cached = await this.getCachedDocs(cacheKey);
       if (cached) {
-        console.log(styled(`📦 Cache hit: ${cacheKey}`, 'success'));
+        console.info(styled(`📦 Cache hit: ${cacheKey}`, 'success'));
         return { ...cached, source: 'r2-cache' };
       }
     }
@@ -117,12 +118,12 @@ export class PackageDocumentationFetcher {
    * Fetch from npm registry
    */
   private async fetchFromNpm(packageName: string, version?: string): Promise<PackageDoc | null> {
-    const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
+    const registryUrl = npmRegistryUrl();
     const url = version
       ? `${registryUrl}/${packageName}/${version}`
       : `${registryUrl}/${packageName}`;
 
-    console.log(styled(`🌐 Fetching: ${url}`, 'info'));
+    console.info(styled(`🌐 Fetching: ${url}`, 'info'));
 
     const response = await fetch(url, {
       headers: {
@@ -223,7 +224,7 @@ export class PackageDocumentationFetcher {
       // Store in R2
       // await this.r2Storage.putJSON(`${key}.json`, cacheEntry);
 
-      console.log(styled(`💾 Cached: ${key}`, 'muted'));
+      console.info(styled(`💾 Cached: ${key}`, 'muted'));
     } catch (error) {
       console.warn(styled(`⚠️ Failed to cache: ${error.message}`, 'warning'));
     }
@@ -243,7 +244,7 @@ export class PackageDocumentationFetcher {
       keywords?: string[];
     }>
   > {
-    const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
+    const registryUrl = npmRegistryUrl();
 
     try {
       const response = await fetch(
@@ -445,8 +446,8 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log(styled('📚 Package Documentation Fetcher', 'accent'));
-  console.log(styled('=================================', 'accent'));
+  console.info(styled('📚 Package Documentation Fetcher', 'accent'));
+  console.info(styled('=================================', 'accent'));
 
   switch (command) {
     case 'fetch': {
@@ -460,11 +461,11 @@ if (import.meta.main) {
 
       const doc = await fetcher.fetchDocs(packageName, version);
       if (doc) {
-        console.log(styled(`\n📦 ${doc.name}@${doc.version}`, 'info'));
-        console.log(styled(`Description: ${doc.metadata.description}`, 'muted'));
-        console.log(styled(`Source: ${doc.source}`, 'muted'));
-        console.log(styled(`\nREADME (${doc.readme.length} chars):`, 'info'));
-        console.log(doc.readme.slice(0, 500) + '...');
+        console.info(styled(`\n📦 ${doc.name}@${doc.version}`, 'info'));
+        console.info(styled(`Description: ${doc.metadata.description}`, 'muted'));
+        console.info(styled(`Source: ${doc.source}`, 'muted'));
+        console.info(styled(`\nREADME (${doc.readme.length} chars):`, 'info'));
+        console.info(doc.readme.slice(0, 500) + '...');
       } else {
         console.error(styled('Package not found', 'error'));
       }
@@ -479,11 +480,11 @@ if (import.meta.main) {
       }
 
       const results = await fetcher.searchPackages(query, 10);
-      console.log(styled(`\n🔍 Search results for "${query}":`, 'info'));
+      console.info(styled(`\n🔍 Search results for "${query}":`, 'info'));
 
       for (const pkg of results) {
-        console.log(styled(`\n  📦 ${pkg.name}@${pkg.version}`, 'success'));
-        console.log(styled(`     ${pkg.description || 'No description'}`, 'muted'));
+        console.info(styled(`\n  📦 ${pkg.name}@${pkg.version}`, 'success'));
+        console.info(styled(`     ${pkg.description || 'No description'}`, 'muted'));
       }
       break;
     }
@@ -492,19 +493,19 @@ if (import.meta.main) {
       const projectPath = args[1] || '.';
       const packages = await fetcher.getLocalPackages(projectPath);
 
-      console.log(styled(`\n📦 Installed packages (${packages.length}):`, 'info'));
+      console.info(styled(`\n📦 Installed packages (${packages.length}):`, 'info'));
 
       for (const pkg of packages) {
         const devBadge = pkg.isDev ? styled(' [dev]', 'warning') : '';
-        console.log(styled(`  • ${pkg.name}@${pkg.version}${devBadge}`, 'muted'));
+        console.info(styled(`  • ${pkg.name}@${pkg.version}${devBadge}`, 'muted'));
       }
       break;
     }
 
     default:
-      console.log(styled('\nCommands:', 'info'));
-      console.log(styled('  fetch <package> [version]  Fetch package docs', 'muted'));
-      console.log(styled('  search <query>             Search packages', 'muted'));
-      console.log(styled('  local [path]               List local packages', 'muted'));
+      console.info(styled('\nCommands:', 'info'));
+      console.info(styled('  fetch <package> [version]  Fetch package docs', 'muted'));
+      console.info(styled('  search <query>             Search packages', 'muted'));
+      console.info(styled('  local [path]               List local packages', 'muted'));
   }
 }
