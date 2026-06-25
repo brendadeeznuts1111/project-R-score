@@ -8,6 +8,7 @@ import {
   renderTerminalReport,
   serializeReport,
 } from '../config/eslint/harness/report.ts';
+import { collectBunCacheMetrics } from './lib/bun-cache-metrics.ts';
 
 const repoRoot = import.meta.dir + '/..';
 
@@ -66,12 +67,25 @@ function parseArgs(args: string[]): {
   };
 }
 
+async function buildCombinedHarnessJson(repoRoot: string): Promise<string> {
+  const report = await buildHarnessReport(repoRoot);
+  const installCache = await collectBunCacheMetrics();
+  return JSON.stringify(
+    {
+      harness: JSON.parse(serializeReport(report)),
+      installCache,
+    },
+    null,
+    2
+  );
+}
+
 async function main(): Promise<void> {
   const opts = parseArgs(Bun.argv.slice(2));
   const report = await buildHarnessReport(repoRoot);
 
   if (opts.jsonOut) {
-    await Bun.write(`${repoRoot}/${opts.jsonOut}`, serializeReport(report));
+    await Bun.write(`${repoRoot}/${opts.jsonOut}`, await buildCombinedHarnessJson(repoRoot));
     if (!opts.quiet) console.info(`Wrote ${opts.jsonOut}`);
   }
 
@@ -81,7 +95,7 @@ async function main(): Promise<void> {
   }
 
   if (opts.json) {
-    console.info(serializeReport(report));
+    console.info(await buildCombinedHarnessJson(repoRoot));
     return;
   }
 
@@ -110,6 +124,11 @@ async function main(): Promise<void> {
 
   if (!opts.quiet || (!opts.jsonOut && !opts.mdOut)) {
     console.info(renderTerminalReport(report, opts.top));
+    const cache = await collectBunCacheMetrics();
+    console.info('');
+    console.info(
+      `Install cache — ${cache.sizeHuman ?? 'unknown'} @ ${cache.cacheDir ?? 'unset'} (${cache.linksEntries} global-store links)`
+    );
   }
 }
 

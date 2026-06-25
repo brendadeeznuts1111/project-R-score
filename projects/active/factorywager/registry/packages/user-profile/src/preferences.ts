@@ -174,15 +174,7 @@ export async function saveProgress(
  * Get progress history for user
  */
 export async function getProgressHistory(userId: string, limit: number = 50): Promise<ProgressEntry[]> {
-  // Access internal db property - we know it exists on UserProfileEngine
-  const db = (engine as unknown as { db: { prepare: (query: string) => { all: (...args: unknown[]) => unknown[] } } }).db;
-  const stmt = db.prepare('SELECT milestone, metadata, score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT ?');
-  const rows = stmt.all(userId, limit) as Array<{
-    milestone: string;
-    metadata: string;
-    score: number;
-    timestamp: number;
-  }>;
+  const rows = await engine.listProgressHistory(userId, limit);
 
   return rows.map(row => ({
     milestone: row.milestone,

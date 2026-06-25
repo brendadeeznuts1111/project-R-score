@@ -4,8 +4,6 @@
 [install]
 exact = true
 registry = "https://registry.factory-wager.com"
-# Use isolated linker to prevent phantom dependencies
-linker = "isolated"
 # Auto-install peer dependencies
 auto = true
 # Production mode (skip devDependencies)

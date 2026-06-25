@@ -12,11 +12,12 @@ import {
   type NetworkBaselineDelta,
 } from "./network-baseline.ts";
 import type { BundleScanReport } from "./types.ts";
+import { createInflightState, runInflight, waitUntilAborted } from "./native-loop.ts";
+import type { NetworkLoopReason } from "./network-types.ts";
 import { runWatchLoop } from "./watch.ts";
 
 export type { NetworkAuditResult } from "./network-audit-result.ts";
-
-export type NetworkLoopReason = "initial" | "watch" | "probe";
+export type { NetworkLoopReason } from "./network-types.ts";
 
 export type NetworkLoopTick = {
   reason: NetworkLoopReason;
@@ -138,6 +139,7 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
   const watchInterval = opts.watchIntervalMs ?? 750;
   const watchEnabled = opts.watch === true;
   const healthUrl = opts.healthUrl;
+  const fullSlot = createInflightState();
 
   let probeTimer: ReturnType<typeof setInterval> | null = null;
   let lastHealthOverall: HealthReport["overall"] | undefined;
@@ -150,10 +152,12 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
   signal?.addEventListener("abort", cleanup, { once: true });
 
   const emitFull = async (reason: NetworkLoopReason, detail?: string) => {
-    const report = await runFullAudit(opts);
-    const tick = buildTick(opts, reason, report, detail);
-    lastHealthOverall = tick.health?.overall;
-    await opts.onTick(tick);
+    await runInflight(async () => {
+      const report = await runFullAudit(opts);
+      const tick = buildTick(opts, reason, report, detail);
+      lastHealthOverall = tick.health?.overall;
+      await opts.onTick(tick);
+    }, fullSlot);
   };
 
   const emitProbe = async () => {
@@ -206,17 +210,15 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
     });
   } else {
     await emitFull("initial");
-    await new Promise<void>((resolvePromise) => {
-      if (signal?.aborted) {
-        cleanup();
-        resolvePromise();
-        return;
+    const keepAlive = healthUrl || signal;
+    if (keepAlive) {
+      const waitSignal = signal ?? new AbortController().signal;
+      try {
+        await waitUntilAborted(waitSignal);
+      } catch {
+        // AbortError from Bun.sleep — expected on SIGINT
       }
-      signal?.addEventListener("abort", () => {
-        cleanup();
-        resolvePromise();
-      }, { once: true });
-    });
+    }
   }
 
   cleanup();

@@ -32,7 +32,7 @@ jobs:
           bun-version: latest
 
       - name: Install
-        run: bun scripts/with-bun-cache-env.ts install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts ci
 
       - name: Dependency Guard
         run: bun run security:guard:deps

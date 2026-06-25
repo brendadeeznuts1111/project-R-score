@@ -23,6 +23,11 @@
       "description": "Bun migration hints only — node:fs and child_process",
       "rules": ["node-fs-in-bun", "prefer-bun-spawn"],
       "min_severity": "hint"
+    },
+    "kimi-toolchain": {
+      "description": "Kimi-toolchain bun hygiene — type casts + Bun-native hints",
+      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast"],
+      "min_severity": "hint"
     }
   }
 }

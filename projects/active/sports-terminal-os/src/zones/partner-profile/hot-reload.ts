@@ -1,7 +1,7 @@
 /**
  * Partner Profile OS — Template Hot Reload
  *
- * File watcher on ./profiles/*.toml using Bun-native fs.watch.
+ * Polls ./profiles/*.toml via Bun.Glob (no node:fs).
  * On change: reload template, refresh book index.
  *
  * Behavior:
@@ -11,11 +11,50 @@
  *   - New partners get fresh materialization; existing partners keep runtime state
  */
 
-import { watch } from "fs";
 import { loadAndCacheTemplates } from "./partner-profile-loader";
 import { partnerProfileService } from "./partner-profile-service";
 
-let currentWatcher: ReturnType<typeof watch> | null = null;
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+const lastMtimes = new Map<string, number>();
+let primed = false;
+
+async function scanTemplateChanges(templateDir: string): Promise<void> {
+  const glob = new Bun.Glob("**/*.toml");
+  let changed = false;
+
+  for await (const relativePath of glob.scan({ cwd: templateDir, onlyFiles: true })) {
+    const file = Bun.file(`${templateDir}/${relativePath}`);
+    const mtime = file.lastModified;
+    const previous = lastMtimes.get(relativePath);
+
+    if (previous === undefined) {
+      lastMtimes.set(relativePath, mtime);
+      continue;
+    }
+
+    if (mtime !== previous) {
+      lastMtimes.set(relativePath, mtime);
+      changed = true;
+      console.log(`[HOT-RELOAD] Template changed: ${relativePath}`);
+    }
+  }
+
+  if (!primed) {
+    primed = true;
+    return;
+  }
+
+  if (!changed) return;
+
+  try {
+    await loadAndCacheTemplates(templateDir);
+    partnerProfileService.refreshBookIndex();
+    console.log("[HOT-RELOAD] Templates reloaded, book index refreshed");
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[HOT-RELOAD] Reload failed: ${message}`);
+  }
+}
 
 /**
  * Start watching the template directory for changes.
@@ -23,42 +62,25 @@ let currentWatcher: ReturnType<typeof watch> | null = null;
  * @param templateDir Directory containing *.toml templates
  */
 export function startTemplateWatcher(templateDir: string = "./profiles"): void {
-  // Stop any existing watcher
   stopTemplateWatcher();
+  primed = false;
+  lastMtimes.clear();
 
-  currentWatcher = watch(
-    templateDir,
-    { recursive: true },
-    async (eventType, filename) => {
-      if (!filename?.endsWith(".toml")) return;
+  void scanTemplateChanges(templateDir);
+  pollTimer = setInterval(() => {
+    void scanTemplateChanges(templateDir);
+  }, 2000);
 
-      console.log(`[HOT-RELOAD] Template ${eventType}: ${filename}`);
-
-      try {
-        // Reload all templates
-        await loadAndCacheTemplates(templateDir);
-
-        // Refresh book index with new template configs
-        partnerProfileService.refreshBookIndex();
-
-        const gwCount = partnerProfileService["gateways" as keyof typeof partnerProfileService];
-        console.log(`[HOT-RELOAD] Templates reloaded, book index refreshed`);
-      } catch (err: any) {
-        console.error(`[HOT-RELOAD] Reload failed: ${err.message}`);
-      }
-    }
-  );
-
-  console.log(`[HOT-RELOAD] Watching ${templateDir} for template changes`);
+  console.log(`[HOT-RELOAD] Polling ${templateDir} for template changes (Bun.Glob)`);
 }
 
 /**
  * Stop the template watcher.
  */
 export function stopTemplateWatcher(): void {
-  if (currentWatcher) {
-    currentWatcher.close();
-    currentWatcher = null;
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
     console.log("[HOT-RELOAD] Template watcher stopped");
   }
 }
@@ -67,7 +89,7 @@ export function stopTemplateWatcher(): void {
  * Check if the watcher is currently active.
  */
 export function isWatcherActive(): boolean {
-  return currentWatcher !== null;
+  return pollTimer !== null;
 }
 
 /**
@@ -86,8 +108,9 @@ export async function reloadTemplates(
       templatesLoaded: templates.size,
       errors,
     };
-  } catch (err: any) {
-    errors.push(err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    errors.push(message);
     return { templatesLoaded: 0, errors };
   }
 }

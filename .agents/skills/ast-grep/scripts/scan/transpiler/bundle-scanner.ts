@@ -160,7 +160,7 @@ async function scanFilesParallel(
     return { files: [], findings: [], files_scanned: 0 };
   }
 
-  const workerUrl = new URL("../../workers/transpiler-file.worker.ts", import.meta.url);
+  const workerUrl = import.meta.resolve("../../workers/transpiler-file.worker.ts");
   const size = Math.max(1, Math.min(workers, paths.length));
   const results: TargetScanResult["files"] = new Array(paths.length);
   let cursor = 0;
@@ -175,7 +175,7 @@ async function scanFilesParallel(
   };
 
   async function workerLoop(): Promise<void> {
-    const worker = new Worker(workerUrl);
+    const worker = new Worker(workerUrl, { type: "module" });
     try {
       while (true) {
         const index = cursor++;
@@ -225,7 +225,7 @@ export async function scanTarget(options: {
   const { repo, target, rules, profile, manifest, workers, parallel, threatFeed, skillRoot } = options;
   const rel = target.path ?? ".";
   const id = target.id ?? rel;
-  const started = performance.now();
+  const started = Bun.nanoseconds();
   const full = resolve(repo, rel);
 
   if (!(await pathExists(full))) {
@@ -249,6 +249,7 @@ export async function scanTarget(options: {
 
   const ctx: ScanContext = { threatFeed, resolvedDeps };
   const paths = await collectScanFiles(repo, rel, profile);
+  if (paths.length > 32) Bun.gc(true);
   const scanned = parallel && workers > 1
     ? await scanFilesParallel(repo, paths, rules, profile, manifest, workers, ctx)
     : await scanFilesSequential(repo, paths, rules, profile, manifest, ctx);
@@ -276,7 +277,7 @@ export async function scanTarget(options: {
     files_scanned: scanned.files_scanned,
     findings,
     files: scanned.files,
-    scan_ms: Math.round(performance.now() - started),
+    scan_ms: Math.round(Number(Bun.nanoseconds() - started) / 1_000_000),
   };
 }
 

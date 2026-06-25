@@ -296,11 +296,14 @@ export class ProfileBenchmark {
     if (!this.operations.includes('xgboost_personalize')) return null;
 
     const profile = await this.profileEngine.getProfile('@ashschaeffer1', true);
-    if (!profile || typeof (profile as any).personalizationScore !== 'number') {
+    const personalizationScore = profile && 'personalizationScore' in profile
+      ? (profile as { personalizationScore?: number }).personalizationScore
+      : undefined;
+    if (typeof personalizationScore !== 'number') {
       return null;
     }
 
-    const score = (profile as any).personalizationScore;
+    const score = personalizationScore;
     const target = xgboostConfig.target_latency_ms || this.targets.xgboost_prediction || 0.001;
 
     return this.runBenchmark(

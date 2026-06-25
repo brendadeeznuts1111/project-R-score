@@ -77,6 +77,17 @@ bun run ast-grep:scan   # scan project-owned TypeScript
 
 Requires [ast-grep 0.44+](https://ast-grep.github.io/) (`npm install -g @ast-grep/cli@0.44.0`).
 
+## Monorepo gate map
+
+Plannator is registered in the shared manifest at `.agents/skills/ast-grep/gate-map.json`.
+From the monorepo root (`Projects/`):
+
+```bash
+bun run gate-map:validate              # print project tree
+bun run gate-report:monorepo:agents    # run agents zone (includes plannator)
+bun run gate-report:monorepo           # run all registered projects
+```
+
 ## Gate report (visual dashboard)
 
 Run all quality gates and generate a self-contained HTML dashboard plus JSON sidecar:

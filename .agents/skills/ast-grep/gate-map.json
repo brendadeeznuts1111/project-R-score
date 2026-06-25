@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "description": "Monorepo quality gate registry — links repo-map zones to runnable gate pipelines per project",
+  "zones": {
+    "agents": "Agent skills, orchestration, and ast-grep tooling",
+    "sports-terminal": "Sports Terminal OS and related workspaces",
+    "packages": "Root workspace packages",
+    "root": "Monorepo-wide hygiene and ast-grep skill gates",
+    "toolchain": "Kimi-toolchain — Bun-native CLI, check pipeline, effect-gates, governance"
+  },
+  "projects": [
+    {
+      "id": "plannator",
+      "zone": "agents",
+      "name": "Plannator Extra Skills",
+      "path": "plannator",
+      "enabled": true,
+      "description": "Pinned Plannotator skills, Bun-native ast-grep rules, and local gate-report prototype",
+      "gates": [
+        {
+          "id": "typecheck",
+          "label": "Typecheck",
+          "description": "TypeScript --noEmit",
+          "cmd": ["bun", "run", "typecheck"]
+        },
+        {
+          "id": "ast-grep-test",
+          "label": "ast-grep rules",
+          "description": "15 Bun-native rule snapshot tests",
+          "cmd": ["bun", "run", "ast-grep:test"]
+        },
+        {
+          "id": "ast-grep-scan",
+          "label": "ast-grep scan",
+          "description": "Structural scan of project-owned TypeScript",
+          "cmd": ["bun", "run", "ast-grep:scan"]
+        },
+        {
+          "id": "test",
+          "label": "Bun tests",
+          "description": "Skills, references, bun-native, Effect boundary, gate-report tests",
+          "cmd": ["bun", "run", "test"]
+        },
+        {
+          "id": "verify-hashes",
+          "label": "Skill hashes",
+          "description": "SHA256 verification against skills-lock.json",
+          "cmd": ["./scripts/verify-hashes.sh"]
+        }
+      ]
+    },
+    {
+      "id": "ast-grep-skill",
+      "zone": "agents",
+      "name": "ast-grep skill bundle",
+      "path": ".agents/skills/ast-grep",
+      "enabled": true,
+      "description": "Monorepo ast-grep rules, semver policy, and supply-chain gates",
+      "gates": [
+        {
+          "id": "doctor",
+          "label": "ast-grep doctor",
+          "description": "CLI and skill pin health",
+          "cmd": ["bun", "scripts/bun-cli.ts", "doctor"],
+          "cwd": "."
+        },
+        {
+          "id": "rules",
+          "label": "ast-grep rule tests",
+          "description": "Skill rule snapshot tests via helper",
+          "cmd": ["python3", "scripts/ast_grep_helper.py", "-q", "test"],
+          "cwd": "."
+        },
+        {
+          "id": "semver",
+          "label": "semver policy",
+          "description": "Semver policy test profile",
+          "cmd": [
+            "python3",
+            "scripts/ast_grep_helper.py",
+            "-q",
+            "bun",
+            "test-ci",
+            "--profile",
+            "semver",
+            "--skip-preflight"
+          ],
+          "cwd": "."
+        }
+      ]
+    },
+    {
+      "id": "root-hygiene",
+      "zone": "root",
+      "name": "Monorepo hygiene",
+      "path": ".",
+      "enabled": true,
+      "description": "Repo hygiene and harness lint (full scan, not staged-only)",
+      "gates": [
+        {
+          "id": "hygiene",
+          "label": "Repo hygiene",
+          "description": "Full repo hygiene check (optional — informational on large monorepo)",
+          "cmd": ["bun", "scripts/repo-hygiene.ts"],
+          "cwd": ".",
+          "optional": true
+        },
+        {
+          "id": "harness",
+          "label": "Harness lint",
+          "description": "ESLint harness on project sources (optional — use pre-commit for staged)",
+          "cmd": ["bun", "scripts/pre-commit-harness.ts"],
+          "cwd": ".",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "sports-terminal-os",
+      "zone": "sports-terminal",
+      "name": "Sports Terminal OS",
+      "path": "projects/active/sports-terminal-os",
+      "enabled": true,
+      "description": "Bun.serve trading terminal workspace",
+      "gates": [
+        {
+          "id": "typecheck",
+          "label": "Typecheck",
+          "description": "TypeScript --noEmit",
+          "cmd": ["bun", "run", "typecheck"]
+        },
+        {
+          "id": "test",
+          "label": "Bun tests",
+          "description": "Project test suite",
+          "cmd": ["bun", "run", "test"]
+        }
+      ]
+    },
+    {
+      "id": "packages-guards",
+      "zone": "packages",
+      "name": "@factorywager/guards",
+      "path": "packages/guards",
+      "enabled": true,
+      "description": "Shared guards package — smoke import gate until test script exists",
+      "gates": [
+        {
+          "id": "smoke-import",
+          "label": "Smoke import",
+          "description": "Package entry module resolves",
+          "cmd": ["bun", "-e", "await import('./src/index.ts'); console.log('ok')"]
+        }
+      ]
+    },
+    {
+      "id": "kimi-toolchain",
+      "zone": "toolchain",
+      "name": "Kimi Toolchain",
+      "path": "../kimi-toolchain",
+      "pathEnv": "KIMI_TOOLCHAIN_ROOT",
+      "external": true,
+      "enabled": true,
+      "description": "Separate repo — delegates to kimi-toolchain check pipeline (do not duplicate gates here)",
+      "gates": [
+        {
+          "id": "check-fast",
+          "label": "check:fast",
+          "description": "Kimi-toolchain fast gate pipeline with JSON step summary",
+          "cmd": ["bun", "run", "check:fast", "--", "--json-summary"],
+          "kimiCheckJson": true
+        },
+        {
+          "id": "effect-gates",
+          "label": "effect-gates",
+          "description": "Effect-TS structural gates (kimi-doctor)",
+          "cmd": ["bun", "run", "doctor", "--", "--effect-gates"],
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

@@ -275,7 +275,7 @@ export const alertRoutes: AlertRoute[] = [
   { method: "GET", pattern: /^\/api\/alerts$/, handler: handleListAlerts, auth: "required" },
   { method: "POST", pattern: /^\/api\/alerts$/, handler: handleCreateAlert, auth: "admin" },
   { method: "GET", pattern: /^\/api\/alerts\/stats\/summary$/, handler: handleAlertSummary, auth: "required" },
-  { method: "GET", pattern: /^\/api\/alerts\/stream$/, handler: handleAlertStream as any, auth: "required" },
+  { method: "GET", pattern: /^\/api\/alerts\/stream$/, handler: (req, _auth) => handleAlertStream(req), auth: "required" },
   { method: "GET", pattern: /^\/api\/alerts\/[^/]+$/, handler: handleGetAlert, auth: "required" },
   { method: "POST", pattern: /^\/api\/alerts\/[^/]+\/acknowledge$/, handler: handleAcknowledgeAlert, auth: "required" },
   { method: "POST", pattern: /^\/api\/alerts\/[^/]+\/resolve$/, handler: handleResolveAlert, auth: "required" },

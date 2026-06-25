@@ -27,6 +27,10 @@ const logger = createLogger("ActionQueue");
 const MAX_ATTEMPTS = 5;
 const RETRY_BACKOFF_MS = 60_000; // 1 minute base
 
+function isDispatchOptions(value: Record<string, unknown>): value is DispatchOptions {
+  return typeof value.eventType === "string" && typeof value.payload === "object" && value.payload !== null;
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -435,8 +439,8 @@ async function executeAction(item: ActionQueueItem): Promise<void> {
       // Delegate to webhook dispatcher (Zone 8)
       logger.debug(`Webhook dispatch action #${item.id} — delegating to webhook service`);
       const { dispatchWebhook } = await import("../services/webhook-dispatcher").catch(() => ({ dispatchWebhook: null }));
-      if (dispatchWebhook) {
-        await dispatchWebhook(payload as unknown as DispatchOptions);
+      if (dispatchWebhook && isDispatchOptions(payload)) {
+        await dispatchWebhook(payload);
       }
       break;
     }

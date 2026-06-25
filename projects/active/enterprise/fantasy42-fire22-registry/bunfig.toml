@@ -73,8 +73,6 @@ dryRun = false                  # Perform actual installations
 # Lockfile and workspace configuration
 saveTextLockfile = true         # Human-readable lockfiles for collaboration
 linkWorkspacePackages = true    # Enable monorepo workspace linking
-linker = "isolated"             # Strict dependency isolation for security
-
 # Auto-install behavior
 auto = "auto"                   # Smart auto-install for development
 

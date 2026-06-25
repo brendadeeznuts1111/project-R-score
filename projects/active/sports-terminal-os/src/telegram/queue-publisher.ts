@@ -334,8 +334,8 @@ export async function getPendingCount(
 ): Promise<number> {
   try {
     const redis = getRedis();
-    const info = await redis.xpending(stream, group);
-    return info ? (info as any)[0] : 0; // [total, ...]
+    const info = await redis.xpending(stream, group) as [number, string, string, [string, string][]] | null;
+    return info?.[0] ?? 0;
   } catch {
     return -1;
   }

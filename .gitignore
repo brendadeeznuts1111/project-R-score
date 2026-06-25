@@ -1,5 +1,8 @@
 # FactoryWager Enterprise Platform - .gitignore
 
+# Machine layout — separate clone symlinked under dev root (see ~/.config/shell/machine-paths.sh)
+/kimi-toolchain
+
 # Dependencies
 node_modules/
 bun.lockb

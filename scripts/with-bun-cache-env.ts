@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Run bun install with documented PM env defaults:
+ * Run bun ci / bun install with documented PM env defaults (prefer `ci` in GHA):
  * - https://bun.sh/docs/pm/global-cache (BUN_INSTALL_CACHE_DIR)
  * - https://bun.sh/docs/pm/global-store (BUN_INSTALL_GLOBAL_STORE + isolated linker)
  *

@@ -30,10 +30,16 @@ import { AppleIDIntegration } from '../apple-id.ts';
 import { AgentBehaviorScorer } from '../agent-behavior-scoring.ts';
 import { logger } from '../../../user-profile/src/index.ts';
 
+type ConfigRecord = Record<string, unknown>;
+
+function asConfigRecord(value: unknown): ConfigRecord {
+  return typeof value === 'object' && value !== null ? (value as ConfigRecord) : {};
+}
+
 export interface DashboardConfigs {
-  dashboard: any;
-  quickWins: any;
-  benchmarks: any;
+  dashboard: ConfigRecord;
+  quickWins: ConfigRecord;
+  benchmarks: ConfigRecord;
 }
 
 export interface DashboardSystems {
@@ -83,9 +89,9 @@ export async function initializeSystems(
   const { dashboard: dashboardConfig } = configs;
 
   // DuoPlus Cloud Phone (optional)
-  const duoplusConfig = (dashboardConfig as any).duoplus;
-  const duoplusBaseUrl = process.env.DUOPLUS_API_URL || duoplusConfig?.api_base_url || '';
-  const duoplusApiKey = process.env.DUOPLUS_API_KEY || duoplusConfig?.api_key;
+  const duoplusConfig = asConfigRecord(dashboardConfig.duoplus);
+  const duoplusBaseUrl = process.env.DUOPLUS_API_URL || String(duoplusConfig.api_base_url ?? '');
+  const duoplusApiKey = process.env.DUOPLUS_API_KEY || (typeof duoplusConfig.api_key === 'string' ? duoplusConfig.api_key : undefined);
   const duoplusEnabled = Boolean(duoplusBaseUrl) && (duoplusConfig?.enabled !== false);
   const duoplusRealtime = duoplusEnabled && (duoplusConfig?.realtime_enabled !== false);
   const duoplusPollingSec = Math.max(
@@ -229,8 +235,8 @@ export async function initializeSystems(
 /**
  * Get quick wins from config
  */
-export function getQuickWins(quickWinsConfig: any): QuickWin[] {
-  const quickWins = (quickWinsConfig as any).quickwins || [];
+export function getQuickWins(quickWinsConfig: ConfigRecord): QuickWin[] {
+  const quickWins = Array.isArray(quickWinsConfig.quickwins) ? quickWinsConfig.quickwins : [];
   return quickWins.map((win: any) => ({
     id: win.id,
     title: win.title,

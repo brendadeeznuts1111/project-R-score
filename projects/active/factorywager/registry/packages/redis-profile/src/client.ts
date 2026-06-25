@@ -53,7 +53,10 @@ export class RedisProfileClient {
     try {
       // Use Bun's native Redis client if available
       // Type assertion needed because Bun.RedisClient may not be in types yet
-      const BunRedis = typeof Bun !== 'undefined' ? (Bun as unknown as { RedisClient?: new (config: { url: string }) => BunRedisClient }).RedisClient : undefined;
+      type BunRedisRuntime = typeof Bun & {
+        RedisClient?: new (config: { url: string }) => BunRedisClient;
+      };
+      const BunRedis = typeof Bun !== 'undefined' ? (Bun as BunRedisRuntime).RedisClient : undefined;
       if (BunRedis) {
         assertSafeNativeRedisRuntime();
         this.client = new BunRedis({ url });

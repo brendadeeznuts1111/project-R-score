@@ -214,8 +214,10 @@ if (import.meta.hot) {
 
 // Startup logging
 const port = serverConfig.server?.port || 3008;
-const quickWinsSummary = (quickWinsConfig as any).summary;
-const benchmarksList = (benchmarksConfig as any).benchmarks || [];
+const quickWinsSummary = typeof quickWinsConfig.summary === 'object' && quickWinsConfig.summary !== null
+  ? quickWinsConfig.summary
+  : undefined;
+const benchmarksList = Array.isArray(benchmarksConfig.benchmarks) ? benchmarksConfig.benchmarks : [];
 const useIsolation = process.env.BENCHMARK_ISOLATION !== 'false' &&
   (serverConfig.features?.isolated_benchmarks !== false);
 

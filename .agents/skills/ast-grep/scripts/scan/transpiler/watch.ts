@@ -89,12 +89,13 @@ export async function runWatchLoop(options: WatchOptions): Promise<void> {
   const handle = setInterval(() => void tick(), interval);
   options.signal?.addEventListener("abort", () => clearInterval(handle), { once: true });
 
-  await new Promise<void>((resolvePromise) => {
-    if (options.signal?.aborted) {
-      clearInterval(handle);
-      resolvePromise();
-      return;
+  if (options.signal) {
+    try {
+      const { waitUntilAborted } = await import("./native-loop.ts");
+      await waitUntilAborted(options.signal);
+    } catch {
+      // aborted
     }
-    options.signal?.addEventListener("abort", () => resolvePromise(), { once: true });
-  });
+  }
+  clearInterval(handle);
 }

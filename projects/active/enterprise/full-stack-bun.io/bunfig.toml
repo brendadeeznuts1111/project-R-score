@@ -36,9 +36,6 @@ hoistPattern = [
   "@eslint/*"
 ]
 
-# Isolated linker for monorepo stability
-linker = "isolated"
-
 [install.registry]
 # Enterprise registry configuration with scoped authentication
 # Scoped tokens for different package scopes

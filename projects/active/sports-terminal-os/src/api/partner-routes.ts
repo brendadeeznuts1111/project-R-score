@@ -506,9 +506,10 @@ function handleGetGateLog(url: URL, partnerId: string): Response {
        WHERE partner_id = ? GROUP BY action`
     ).all(partnerId) as Array<{ action: string; count: number }>;
 
-    const byAction = { allow: 0, block: 0, adjust: 0, defer: 0 };
+    type GateActionKey = "allow" | "block" | "adjust" | "defer";
+    const byAction: Record<GateActionKey, number> = { allow: 0, block: 0, adjust: 0, defer: 0 };
     for (const r of rows) {
-      if (r.action in byAction) (byAction as any)[r.action] = r.count;
+      if (r.action in byAction) byAction[r.action as GateActionKey] = r.count;
     }
 
     const entries = db.query(
@@ -570,9 +571,10 @@ function handleGetGateResults(url: URL): Response {
       `SELECT action, COUNT(*) as count FROM partner_gate_log WHERE created_at >= ? GROUP BY action`
     ).all(cutoff) as Array<{ action: string; count: number }>;
 
-    const byAction = { allow: 0, block: 0, adjust: 0, defer: 0 };
+    type GateActionKey = "allow" | "block" | "adjust" | "defer";
+    const byAction: Record<GateActionKey, number> = { allow: 0, block: 0, adjust: 0, defer: 0 };
     for (const r of actionRows) {
-      if (r.action in byAction) (byAction as any)[r.action] = r.count;
+      if (r.action in byAction) byAction[r.action as GateActionKey] = r.count;
     }
 
     return json({ entries, total: entries.length, byAction });

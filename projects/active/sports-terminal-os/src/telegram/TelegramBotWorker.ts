@@ -185,7 +185,9 @@ export class TelegramBotWorker {
 
         if (!results) continue; // Timeout, loop again
 
-        for (const [stream, entries] of results as any) {
+        type StreamEntry = [id: string, fields: string[]];
+        type StreamBatch = [stream: string, entries: StreamEntry[]];
+        for (const [stream, entries] of results as StreamBatch[]) {
           for (const [id, fields] of entries) {
             // Extract payload from field pairs [key, value, key, value, ...]
             let payload: string | null = null;

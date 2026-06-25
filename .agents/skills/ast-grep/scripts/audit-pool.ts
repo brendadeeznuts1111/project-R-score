@@ -112,13 +112,13 @@ async function runPool(
 ): Promise<AuditScanResult[]> {
   if (jobs.length === 0) return [];
 
-  const workerUrl = new URL("./workers/audit-target.worker.ts", import.meta.url);
+  const workerUrl = import.meta.resolve("./workers/audit-target.worker.ts");
   const size = Math.max(1, Math.min(workers, jobs.length));
   const results: AuditScanResult[] = new Array(jobs.length);
   let cursor = 0;
 
   async function workerLoop(): Promise<void> {
-    const worker = new Worker(workerUrl);
+    const worker = new Worker(workerUrl, { type: "module" });
     try {
       while (true) {
         const index = cursor++;

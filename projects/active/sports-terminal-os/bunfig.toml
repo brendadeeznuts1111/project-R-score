@@ -11,12 +11,6 @@
 # 8 levels covers all Zone 10 pipeline payloads without [Object] truncation.
 depth = 8
 
-# ─── Install ─────────────────────────────────────────────────────────
-[install]
-# Global virtual store — identical packages shared across projects
-# via symlink. Zero extra disk, ~115ms warm installs.
-globalStore = true
-
 # ─── Zone 10: Odds Drift Hygiene WebSocket ───────────────────────────
 #
 # These values are defaults — override via environment variables:

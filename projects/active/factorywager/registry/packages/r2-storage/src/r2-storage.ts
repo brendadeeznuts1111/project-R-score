@@ -112,6 +112,33 @@ export class R2StorageAdapter {
     }
   }
 
+  /** Store arbitrary JSON at a raw object key (version history, metadata, etc.). */
+  async putJson(key: string, data: unknown): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: this.getAuthHeader(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to store object: ${response.status} ${response.statusText}`);
+    }
+  }
+
+  /** Read arbitrary JSON from a raw object key. */
+  async getJson<T>(key: string): Promise<T | null> {
+    const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+      headers: { Authorization: this.getAuthHeader() },
+    });
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      throw new Error(`Failed to read object: ${response.status} ${response.statusText}`);
+    }
+    return (await response.json()) as T;
+  }
+
   /**
    * Retrieve package manifest from R2
    */

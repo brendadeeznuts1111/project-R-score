@@ -1,9 +1,8 @@
 import { ColorMatcher } from "./color-matcher.ts";
+import { ColorHex } from "./network-types.ts";
 import { colorize, supportsColor } from "./terminal-color.ts";
 import type { HealthReport } from "./endpoint-catalog.ts";
 import type { NetworkBaselineDelta } from "./network-baseline.ts";
-
-const RESET = "\x1b[0m";
 
 /** Domain-scoped palette for live loop dashboard lines */
 export const LOOP_DOMAIN_COLORS = {
@@ -24,7 +23,19 @@ export const LOOP_DOMAIN_COLORS = {
   rate: "#fb7185",
   grade_a: "#22c55e",
   grade_f: "#ef4444",
-} as const;
+} as const satisfies Record<string, string>;
+
+/** HUD / WebView hex from compile-time enum */
+export const LOOP_HUD_HEX = {
+  loop: ColorHex.Loop,
+  network: ColorHex.Network,
+  endpoints: ColorHex.Endpoints,
+  health: ColorHex.Health,
+  degraded: ColorHex.Degraded,
+  unreachable: ColorHex.Unreachable,
+  perf: ColorHex.Perf,
+  delta: ColorHex.Delta,
+} as const satisfies Record<string, ColorHex>;
 
 export type LoopColorOptions = {
   enabled?: boolean;

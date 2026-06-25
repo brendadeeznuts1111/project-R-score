@@ -18,12 +18,13 @@ import {
   type GateResult,
   type SignalContext,
   type LifecycleState,
+  TierSchema,
   PartnerProfileSchema,
   PartnerRuntimeStateSchema,
 } from "./partner-profile-schema";
 import { PartnerGateway } from "./partner-gateway";
 import { materializeProfile, transitionProfile } from "./partner-profile-materializer";
-import { loadAndCacheTemplates, getTemplate } from "./partner-profile-loader";
+import { getTemplate, listTemplateIds, loadAndCacheTemplates } from "./partner-profile-loader";
 
 export class PartnerProfileService {
   /** In-memory gateway cache: partnerId -> PartnerGateway */
@@ -70,7 +71,7 @@ export class PartnerProfileService {
 
     const template = getTemplate(templateId);
     if (!template) {
-      const available = Array.from((getTemplate as any).templates?.keys?.() ?? []);
+      const available = listTemplateIds();
       throw new Error(
         `Template '${templateId}' not found. Available templates must be loaded first.`
       );
@@ -278,7 +279,8 @@ export class PartnerProfileService {
   isSOREligible(partnerId: string, tier: string): boolean {
     const gateway = this.gateways.get(partnerId);
     if (!gateway) return false;
-    return gateway.profile.sor.eligible_tiers.includes(tier as any);
+    const parsed = TierSchema.safeParse(tier);
+    return parsed.success && gateway.profile.sor.eligible_tiers.includes(parsed.data);
   }
 
   isBookAllowed(partnerId: string, book: string): boolean {

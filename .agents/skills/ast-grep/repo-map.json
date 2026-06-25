@@ -4,7 +4,8 @@
     "sports-terminal": "Sports Terminal OS — Bun.serve proxy terminal, partner zones, Telegram, related workspaces",
     "kimi": "Kimi plugin stack — odds scripts, MCP, shared",
     "packages": "Root workspace packages — guards, versioning, business libs",
-    "agents": "Agent skills, orchestration, and ast-grep tooling"
+    "agents": "Agent skills, orchestration, and ast-grep tooling",
+    "toolchain": "Kimi-toolchain — Bun-native CLI, doctor, governance (external repo)"
   },
   "navigation": {
     "sports-terminal": [
@@ -35,6 +36,10 @@
       "packages-package",
       "packages-docs-tools",
       "packages-shared"
+    ],
+    "toolchain": [
+      "kimi-toolchain-src",
+      "kimi-toolchain-scripts"
     ],
     "agents": [
       "agents-ast-grep",
@@ -422,6 +427,34 @@
       "view": "digest",
       "tags": ["skill", "maintenance", "codex"],
       "description": "Codex skill maintenance and validation"
+    },
+    {
+      "id": "kimi-toolchain-src",
+      "zone": "toolchain",
+      "name": "Kimi-toolchain src",
+      "path": "../kimi-toolchain/src",
+      "pathEnv": "KIMI_TOOLCHAIN_ROOT",
+      "pathSuffix": "src",
+      "view": "names",
+      "items": "exports",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["toolchain", "bun", "doctor", "governance"],
+      "anchors": ["Bun.spawn", "runCliExit", "kimi-doctor"],
+      "description": "Bun-native developer tooling — doctor, governance, MCP"
+    },
+    {
+      "id": "kimi-toolchain-scripts",
+      "zone": "toolchain",
+      "name": "Kimi-toolchain scripts",
+      "path": "../kimi-toolchain/scripts",
+      "pathEnv": "KIMI_TOOLCHAIN_ROOT",
+      "pathSuffix": "scripts",
+      "view": "names",
+      "globs": ["!**/*.test.ts"],
+      "bun_rules": true,
+      "tags": ["toolchain", "scripts", "bun"],
+      "description": "Gate runners, hygiene scans, audit scripts"
     }
   ]
 }

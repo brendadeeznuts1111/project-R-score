@@ -451,12 +451,17 @@ export function handleProfileMetricsRoute(req: Request): Promise<Response | null
       const profileHistory = db.prepare(query).all(...params);
       
       // Convert database rows to ProfileResult format
-      const profileResults: ProfileResult[] = profileHistory.map((row: any) => ({
+      const profileCategories = ['core', 'xgboost', 'redis_hll', 'r2_snapshot', 'propagation', 'gnn', 'features'] as const;
+      type ProfileCategory = ProfileResult['category'];
+      const toProfileCategory = (value: unknown): ProfileCategory =>
+        profileCategories.includes(value as ProfileCategory) ? (value as ProfileCategory) : 'core';
+
+      const profileResults: ProfileResult[] = profileHistory.map((row: Record<string, unknown>) => ({
         operation: row.operation as ProfileOperation,
-        time: row.time,
-        target: row.target,
+        time: Number(row.time),
+        target: Number(row.target),
         status: row.status as 'pass' | 'fail' | 'warning',
-        category: (row.category || 'core') as any,
+        category: toProfileCategory(row.category),
         metadata: row.metadata ? JSON.parse(row.metadata) : undefined,
         cpuTimeMs: row.cpu_time_ms,
         memoryDeltaBytes: row.memory_delta_bytes,

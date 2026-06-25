@@ -127,7 +127,7 @@ export class PartnerGateway {
     metaBase.typeAllowed = true;
 
     // 4. Tier eligibility
-    if (!s.eligible_tiers.includes(signal.tier as any)) {
+    if (!s.eligible_tiers.includes(signal.tier)) {
       return this.logAndReturn({
         allowed: false,
         action: "block",

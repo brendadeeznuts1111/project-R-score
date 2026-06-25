@@ -284,6 +284,7 @@
     "fsevents",
     "node-llama-cpp",
     "protobufjs",
-    "rollup"
+    "rollup",
+    "sharp"
   ]
 }

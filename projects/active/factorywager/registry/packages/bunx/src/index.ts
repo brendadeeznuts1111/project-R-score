@@ -14,7 +14,7 @@ import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { RegistrySecretsManager } from '@factorywager/secrets';
 
 // Use bun.semver if available
-const semver = (Bun as any).semver || {
+const semver = Bun.semver ?? {
   satisfies: () => true,
   valid: (v: string) => v,
   maxSatisfying: (versions: string[], range: string) => versions[0],

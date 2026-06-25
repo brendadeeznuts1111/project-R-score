@@ -40,6 +40,7 @@ function sampleReport(overrides: Partial<Report> = {}): Report {
     generatedAt: "2026-06-24T12:00:00.000Z",
     bunVersion: "1.4.0",
     astGrepVersion: "0.44.0",
+    mode: "live",
     overall: "pass",
     totalDurationMs: 1500,
     gates: [
@@ -131,6 +132,19 @@ describe("gate-report builders", () => {
     );
     expect(html).toContain("1 gate(s) failed");
     expect(html).toContain('class="gate-card fail"');
+  });
+
+  test("buildHtml labels fixture reports as demo", () => {
+    const html = buildHtml(
+      sampleReport({
+        mode: "fixture-fail",
+        overall: "fail",
+        gates: [sampleGate({ id: "ast-grep-scan", status: "fail", exitCode: 1 })],
+      })
+    );
+    expect(html).toContain("Demo report");
+    expect(html).toContain("not a real run");
+    expect(html).not.toContain("<title>Plannator Gate Report — FAIL</title>");
   });
 
   test("buildPipelineSvg renders one node per gate", () => {

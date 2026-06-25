@@ -114,6 +114,10 @@ export interface MarketDataContext {
   vig?: number;
 }
 
+function marketContextToRecord(context: MarketDataContext): Record<string, unknown> {
+  return { ...context };
+}
+
 // ---------------------------------------------------------------------------
 // Logger
 // ---------------------------------------------------------------------------
@@ -585,7 +589,7 @@ export function executeRule(ruleId: string, context: MarketDataContext, executio
     id: execId,
     ruleId,
     executionType,
-    inputData: context as unknown as Record<string, unknown>,
+    inputData: marketContextToRecord(context),
     result,
     pnl,
     notes: `Conditions: [${result.conditionsMet.join(", ")}]`,
@@ -737,7 +741,7 @@ export function backtestRule(ruleId: string, options?: {
           executedAt: row.timestamp,
           matched: true,
           pnl,
-          marketData: context as unknown as Record<string, unknown>,
+          marketData: marketContextToRecord(context),
         });
       }
     }

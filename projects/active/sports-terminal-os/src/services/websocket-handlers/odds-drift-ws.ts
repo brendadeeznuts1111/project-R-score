@@ -86,6 +86,7 @@ interface OddsDriftMessage {
   provider: "odds_drift";
   data: DriftAlertData | Record<string, unknown>;
   timestamp: number;
+  _seq?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -777,7 +778,7 @@ export function broadcastOddsDrift(data: DriftAlertData): void {
   oddsDriftBroadcastFn(message);
 
   // Log for metrics
-  (message as any)._seq = seq;
+  message._seq = seq;
 }
 
 // ---------------------------------------------------------------------------

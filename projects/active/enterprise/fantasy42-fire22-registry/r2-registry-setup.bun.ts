@@ -9,7 +9,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { BunR2Client } from './enterprise/packages/dashboard-worker/src/utils/bun-r2-client.ts';
+import { BunR2Client } from './dashboard-worker/src/utils/bun-r2-client.ts';
 
 // R2 Registry Configuration
 interface R2RegistryConfig {

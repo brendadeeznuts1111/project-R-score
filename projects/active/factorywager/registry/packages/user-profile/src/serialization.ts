@@ -15,11 +15,11 @@ export function serializeBigInt<T>(obj: T): T {
   }
 
   if (typeof obj === 'bigint') {
-    return obj.toString() as unknown as T;
+    return obj.toString() as T;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => serializeBigInt(item)) as unknown as T;
+    return obj.map((item) => serializeBigInt(item)) as T;
   }
 
   if (typeof obj === 'object') {

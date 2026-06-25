@@ -11,24 +11,69 @@ import {
   globalStoreLinksDir,
   resolveBunInstallCacheDir,
 } from './lib/bun-install-env.ts';
+import {
+  formatPolicySource,
+  isAbsoluteCachePath,
+  readMachineBunfig,
+  readProjectBunfig,
+  resolveEffectiveInstallPolicy,
+} from './lib/machine-bunfig.ts';
 
 const ROOT = join(import.meta.dir, '..');
 const strict = process.argv.includes('--strict');
 
 type Check = { ok: boolean; label: string; detail?: string };
 
+function envInstallPolicyOk(env: ReturnType<typeof applyBunInstallEnv>): boolean {
+  const cache = env.BUN_INSTALL_CACHE_DIR ?? '';
+  const absolute = cache.length > 0 && !cache.startsWith('~/') && cache !== '~';
+  return absolute && env.BUN_INSTALL_GLOBAL_STORE === '1';
+}
+
 async function checkBunfig(): Promise<Check> {
-  const text = await Bun.file(join(ROOT, 'bunfig.toml')).text();
-  const isolated = /linker\s*=\s*["']isolated["']/.test(text);
-  const globalStore = /globalStore\s*=\s*true/.test(text);
-  if (!isolated || !globalStore) {
+  const [project, machine] = await Promise.all([
+    readProjectBunfig(ROOT),
+    readMachineBunfig(),
+  ]);
+  const policy = resolveEffectiveInstallPolicy(project, machine);
+  const env = applyBunInstallEnv();
+
+  const linkerOk = policy.linker === 'isolated';
+  const storeOk = policy.globalStore === true;
+  const policyOk = linkerOk && storeOk;
+  const envPolicyOk = envInstallPolicyOk(env);
+  const envFallback = !machine.bunfigPath && envPolicyOk;
+  const ok = policyOk || envFallback;
+
+  const parts: string[] = [];
+  parts.push(
+    `linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`
+  );
+  parts.push(
+    `globalStore=${String(policy.globalStore)} (${formatPolicySource('globalStore', policy)})`
+  );
+  if (policy.cacheDir) {
+    parts.push(
+      `cache=${isAbsoluteCachePath(policy.cacheDir) ? policy.cacheDir : policy.cacheDir + ' (non-absolute)'}`
+    );
+  }
+  if (envFallback) {
+    parts.push('policy via BUN_INSTALL_CACHE_DIR + BUN_INSTALL_GLOBAL_STORE env');
+  }
+
+  if (!machine.bunfigPath && !envPolicyOk) {
     return {
       ok: false,
-      label: 'bunfig.toml',
-      detail: `linker=isolated: ${isolated}, globalStore=true: ${globalStore}`,
+      label: 'install policy',
+      detail: 'missing ~/.bunfig.toml machine defaults',
     };
   }
-  return { ok: true, label: 'bunfig.toml', detail: 'isolated linker + globalStore enabled' };
+
+  return {
+    ok,
+    label: 'install policy',
+    detail: parts.join('; '),
+  };
 }
 
 function checkEnvDefaults(): Check {

@@ -72,11 +72,6 @@
   },
   "git.ignoreLimitWarning": true,
   "terminal.integrated.defaultProfile.osx": "zsh",
-  "terminal.integrated.env.osx": {
-    "BUN_INSTALL": "${env:HOME}/.bun",
-    "BUN_INSTALL_CACHE_DIR": "${env:HOME}/.bun/install/cache",
-    "BUN_INSTALL_GLOBAL_STORE": "1"
-  },
   "bun.runtime": "bun",
   "bun.test.enabled": true
 }

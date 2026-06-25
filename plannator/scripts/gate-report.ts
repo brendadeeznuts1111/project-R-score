@@ -97,6 +97,7 @@ async function main(): Promise<number> {
       generatedAt: new Date().toISOString(),
       bunVersion,
       astGrepVersion,
+      mode: "live",
       overall: gates.every((g) => g.status === "pass") ? "pass" : "fail",
       totalDurationMs: Math.round((Bun.nanoseconds() - start) / 1_000_000),
       gates,

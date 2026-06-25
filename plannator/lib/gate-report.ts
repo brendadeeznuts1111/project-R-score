@@ -39,10 +39,13 @@ export type AstGrepRule = {
   message: string;
 };
 
+export type ReportMode = "live" | "fixture-pass" | "fixture-fail";
+
 export type Report = {
   generatedAt: string;
   bunVersion: string;
   astGrepVersion: string;
+  mode: ReportMode;
   overall: GateStatus;
   totalDurationMs: number;
   gates: GateResult[];
@@ -387,25 +390,26 @@ export async function buildFixtureReport(
       exitCode: failThis ? 1 : 0,
       durationMs: 80 + index * 40,
       stdout: failThis
-        ? 'error[bun-serve-exact-signature]: Bun.serve expects an options object\nwarning[no-node-fs]: Prefer Bun.file'
+        ? "error[bun-serve-exact-signature]: Bun.serve expects an options object\nwarning[no-node-fs]: Prefer Bun.file"
         : gate.id === "ast-grep-test"
           ? "test result: ok. 15 passed; 0 failed"
           : gate.id === "test"
             ? "43 pass\n0 fail"
             : "",
       stderr: "",
-      metrics: parseMetrics(
-        gate.id,
-        gate.id === "ast-grep-test" ? "15 passed; 0 failed" : "",
-        ""
-      ),
+      metrics: {},
     };
   });
+
+  for (const gate of gates) {
+    gate.metrics = parseMetrics(gate.id, gate.stdout, gate.stderr);
+  }
 
   return {
     generatedAt: new Date().toISOString(),
     bunVersion: await toolVersion(["bun", "--version"]),
     astGrepVersion: await toolVersion(["ast-grep", "--version"], "fixture"),
+    mode: mode === "pass" ? "fixture-pass" : "fixture-fail",
     overall: mode === "pass" ? "pass" : "fail",
     totalDurationMs: gates.reduce((sum, g) => sum + g.durationMs, 0),
     gates,
@@ -439,8 +443,21 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
   const tests = report.gates.find((g) => g.id === "test")?.metrics.tests ?? "—";
   const rulesGatePassed =
     report.gates.find((g) => g.id === "ast-grep-test")?.status === "pass";
-  const overallLabel = report.overall === "pass" ? "All gates passed" : `${failed} gate(s) failed`;
+  const isFixture = report.mode !== "live";
+  const overallLabel = isFixture
+    ? report.overall === "pass"
+      ? "Fixture demo — all gates passed (not a real run)"
+      : `Fixture demo — ${failed} gate(s) failed (not a real run)`
+    : report.overall === "pass"
+      ? "All gates passed"
+      : `${failed} gate(s) failed`;
   const overallClass = report.overall === "pass" ? "pass" : "fail";
+  const demoBanner = isFixture
+    ? `<div class="demo-banner" role="note">
+        <strong>Demo report</strong> — generated with <code>--fixture</code>; gates were not executed.
+        Open <code>reports/gate-report.html</code> for the live run.
+      </div>`
+    : "";
 
   const gateCards = report.gates
     .map((gate) => {
@@ -481,7 +498,7 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plannator Gate Report — ${report.overall === "pass" ? "PASS" : "FAIL"}</title>
+  <title>Plannator Gate Report — ${isFixture ? "DEMO" : report.overall === "pass" ? "PASS" : "FAIL"}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -539,6 +556,22 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
     }
     .hero.pass { border-color: color-mix(in oklch, var(--success) 40%, var(--border)); }
     .hero.fail { border-color: color-mix(in oklch, var(--destructive) 40%, var(--border)); }
+    .demo-banner {
+      margin-bottom: 24px;
+      padding: 14px 16px;
+      border: 1.5px solid color-mix(in oklch, var(--warning) 50%, var(--border));
+      border-radius: var(--radius);
+      background: color-mix(in oklch, var(--warning) 10%, var(--card));
+      font-size: 0.88rem;
+      color: var(--foreground);
+    }
+    .demo-banner code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
     .hero-status { font-size: 1.1rem; font-weight: 600; }
     .hero-status.pass { color: var(--success); }
     .hero-status.fail { color: var(--destructive); }
@@ -748,7 +781,9 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
 <body>
   <div class="container">
     <span class="eyebrow">Quality gates · Plannator</span>
-    <h1>Gate Report</h1>
+    <h1>Gate Report${isFixture ? " <span class=\"eyebrow\">(demo)</span>" : ""}</h1>
+
+    ${demoBanner}
 
     <div class="hero ${overallClass}">
       <div class="hero-status ${overallClass}">${escapeHtml(overallLabel)}</div>

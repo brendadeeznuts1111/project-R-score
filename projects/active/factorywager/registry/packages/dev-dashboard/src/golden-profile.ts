@@ -22,6 +22,13 @@ export interface GoldenProfile {
       trustLevel: string;
       flags: { id: string; reason: string; timestamp: number }[];
     };
+    appleID?: {
+      appleId: string;
+      token: string;
+      linkedAt: number;
+      devices: unknown[];
+      services: unknown;
+    };
   };
   metadata: {
     totalSpent: number;

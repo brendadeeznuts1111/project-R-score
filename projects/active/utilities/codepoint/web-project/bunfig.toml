@@ -17,9 +17,7 @@ registry = "https://registry.npmjs.org/"
 # scopes = { "@your-org" = "https://registry.your-org.com" }
 
 # Isolated installs (recommended for better dependency management)
-# Similar to pnpm's strict dependency isolation
-# Options: "isolated" (recommended), "hoisted" (npm/yarn style)
-linker = "isolated"
+# Machine default linker inherited from ~/.bunfig.toml
 
 # Isolated installs specific configuration
 [install.isolated]
@@ -112,10 +110,8 @@ sourcemap = true
 # Environment-specific configurations
 [install.development]
 registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
-linker = "isolated"
 cache = true
 
 [install.production]
 registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
-linker = "isolated"
 cache = false

@@ -466,6 +466,17 @@ export class UserProfileEngine {
   /**
    * Save progress milestone (v10.1)
    */
+  async listProgressHistory(
+    userId: string,
+    limit: number = 50
+  ): Promise<Array<{ milestone: string; metadata: string; score: number; timestamp: number }>> {
+    return this.db
+      .query(
+        'SELECT milestone, metadata, score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT ?'
+      )
+      .all(userId, limit) as Array<{ milestone: string; metadata: string; score: number; timestamp: number }>;
+  }
+
   async saveProgress(userId: string, entry: {
     milestone: string;
     metadata?: Record<string, unknown>;

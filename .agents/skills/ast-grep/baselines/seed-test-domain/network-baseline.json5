@@ -2,7 +2,7 @@
 {
   "schemaVersion": 1,
   "domain": "seed-test-domain",
-  "capturedAt": "2026-06-23T09:33:14.693Z",
+  "capturedAt": "2026-06-23T21:36:59.515Z",
   "scanPath": "projects/active/sports-terminal-os/dist/frontend",
   "network": {
     "unique_total": 20,

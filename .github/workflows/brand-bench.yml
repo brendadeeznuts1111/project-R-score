@@ -22,7 +22,7 @@ jobs:
           bun-version: 1.3.10
 
       - name: Install
-        run: bun scripts/with-bun-cache-env.ts install --frozen-lockfile
+        run: bun scripts/with-bun-cache-env.ts ci
 
       - name: Prepare Artifact Directories
         run: mkdir -p reports/brand-bench reports/brand-bench/profiles

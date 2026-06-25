@@ -1,0 +1,71 @@
+name: Bun Cache Lifecycle
+
+on:
+  schedule:
+    # Weekly metrics + optional self-hosted prune window (Sunday 04:00 UTC)
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      prune:
+        description: 'Run bun pm cache rm when over threshold (self-hosted only)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  cache-metrics:
+    runs-on: ubuntu-latest
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Warm cache
+        run: bun scripts/with-bun-cache-env.ts ci
+
+      - name: Cache lifecycle dry-run (metrics)
+        run: bun scripts/bun-cache-lifecycle.ts --dry-run --json | tee cache-lifecycle.json
+
+      - name: Upload cache metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bun-cache-metrics
+          path: cache-lifecycle.json
+          retention-days: 30
+
+  cache-prune-self-hosted:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.prune == 'true'
+    runs-on: self-hosted
+    env:
+      BUN_INSTALL_GLOBAL_STORE: "1"
+      CI_SELF_HOSTED: "1"
+      BUN_CACHE_PRUNE: "1"
+      BUN_CACHE_PRUNE_MAX_MB: "2048"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Prune stale install cache when over threshold
+        run: bun scripts/bun-cache-lifecycle.ts --prune --json | tee cache-prune.json
+
+      - name: Upload prune report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bun-cache-prune-report
+          path: cache-prune.json
+          retention-days: 14

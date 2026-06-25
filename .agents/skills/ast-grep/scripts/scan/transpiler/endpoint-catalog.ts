@@ -1,5 +1,5 @@
-import { readFile, stat } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { stat } from "node:fs/promises";
+import { join, resolve } from "node:path";
 
 export const ENDPOINT_DOCS = "https://swagger.io/specification/";
 
@@ -102,7 +102,7 @@ export function parseOpenApiDoc(doc: Record<string, unknown>, source: string): E
 
 export async function loadOpenApiCatalog(openapiPath: string): Promise<EndpointCatalog> {
   const abs = resolve(openapiPath);
-  const raw = JSON.parse(await readFile(abs, "utf8")) as Record<string, unknown>;
+  const raw = (await Bun.file(abs).json()) as Record<string, unknown>;
   return parseOpenApiDoc(raw, abs);
 }
 
@@ -132,46 +132,50 @@ export const DEFAULT_HEALTH_PATHS = [
   "/api/health/detailed",
 ] as const;
 
+async function probeOne(url: string, timeoutMs: number): Promise<HealthProbe> {
+  const started = Bun.nanoseconds();
+  try {
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: { accept: "application/json" },
+    });
+    const latency_ms = Math.round(Number(Bun.nanoseconds() - started) / 1_000_000);
+    let body: Record<string, unknown> | undefined;
+    try {
+      body = (await res.json()) as Record<string, unknown>;
+    } catch {
+      body = undefined;
+    }
+    return { url, ok: res.ok, status: res.status, latency_ms, body };
+  } catch (e) {
+    return {
+      url,
+      ok: false,
+      status: 0,
+      latency_ms: Math.round(Number(Bun.nanoseconds() - started) / 1_000_000),
+      error: String(e),
+    };
+  }
+}
+
 export async function probeHealth(
   baseUrl: string,
   paths: readonly string[] = DEFAULT_HEALTH_PATHS,
   timeoutMs = 5000,
 ): Promise<HealthReport> {
   const base = baseUrl.replace(/\/$/, "");
-  const probes: HealthProbe[] = [];
-  let anyOk = false;
-  let anyReachable = false;
-
-  for (const path of paths) {
-    const url = `${base}${path}`;
-    const started = performance.now();
-    try {
-      const ac = new AbortController();
-      const timer = setTimeout(() => ac.abort(), timeoutMs);
-      const res = await fetch(url, { signal: ac.signal, headers: { accept: "application/json" } });
-      clearTimeout(timer);
-      const latency_ms = Math.round(performance.now() - started);
-      let body: Record<string, unknown> | undefined;
-      try {
-        body = await res.json() as Record<string, unknown>;
-      } catch {
-        body = undefined;
+  const tasks = paths.map((path) => probeOne(`${base}${path}`, timeoutMs));
+  const probes = await Promise.all(
+    tasks.map(async (task) => {
+      if (Bun.peek.status(task) === "fulfilled") {
+        return Bun.peek(task) as HealthProbe;
       }
-      const ok = res.ok;
-      if (res.status < 500) anyReachable = true;
-      if (ok) anyOk = true;
-      probes.push({ url, ok, status: res.status, latency_ms, body });
-    } catch (e) {
-      probes.push({
-        url,
-        ok: false,
-        status: 0,
-        latency_ms: Math.round(performance.now() - started),
-        error: String(e),
-      });
-    }
-  }
+      return await task;
+    }),
+  );
 
+  const anyReachable = probes.some((p) => p.status > 0 && p.status < 500);
+  const anyOk = probes.some((p) => p.ok);
   const overall: HealthReport["overall"] = !anyReachable
     ? "unreachable"
     : anyOk

@@ -31,6 +31,8 @@ export * from "./snapshot-bench-loop.ts";
 export * from "./close-loop.ts";
 export * from "./effect/index.ts";
 export * from "./loop-color.ts";
+export * from "./native-loop.ts";
+export * from "./network-types.ts";
 export * from "./health-secrets.ts";
 export * from "./network-baseline.ts";
 export * from "./herdr-tab.ts";

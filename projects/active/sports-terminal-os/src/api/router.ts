@@ -13,7 +13,7 @@
 
 import { authenticate, authenticateOptional, handleCorsPreflight, getCorsHeaders, requireAdmin } from "@auth/middleware";
 import { createLogger } from "@utils/logger";
-import { TerminalError, NotFoundError } from "@utils/errors";
+import { TerminalError, NotFoundError, RateLimitError } from "@utils/errors";
 import type { AuthContext } from "@utils/types";
 import {
   handleBasicHealth,
@@ -753,9 +753,7 @@ export async function handleRequest(req: Request): Promise<Response> {
     const durationMs = timer();
 
     // If it's a rate limit error, include its headers
-    const rateLimitHeaders = err instanceof TerminalError && err.code === "RATE_LIMITED"
-      ? (err as any).getHeaders?.() || {}
-      : {};
+    const rateLimitHeaders = err instanceof RateLimitError ? err.getHeaders() : {};
 
     return handleError(err, requestId, { ...corsHeaders, ...rateLimitHeaders }, durationMs, method, pathname);
   }

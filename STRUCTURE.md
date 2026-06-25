@@ -20,7 +20,10 @@ Projects/
 ├── data/                    # Exports, health checks, search results
 ├── database/                # SQLite telemetry, sessions, unified DBs
 ├── docs/                    # Documentation tree (bun-analysis, wiki, error-handling)
+│   ├── UNIFIED.md           # Bun install policy: machine + workspace matrix, audit tooling
+│   ├── AGENTS.md            # AI agent guide (full)
 │   └── packages/            # Auto-generated REGISTRY.md (395 packages)
+├── AGENTS.md                # Agent entrypoint → docs/AGENTS.md + docs/UNIFIED.md
 ├── examples/                # Runnable demos & Bun feature showcases
 │   ├── demos/               # One-off demos
 │   └── bun-v139-features/   # Bun 1.3.9 experiments
@@ -67,7 +70,8 @@ Projects/
 - **Looking for demos?** Start in `examples/`. Most live in `examples/demos/`.
 - **Scripts & automation?** `scripts/` is the central nervous system.
 - **Deep Bun internals / experiments?** `scratch/bun-v1.3.9-examples/`.
-- **Documentation?** `docs/` (huge) + per-project READMEs.
+- **Documentation?** `docs/` (huge) + per-project READMEs. **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md).
+- **Bunfig audit?** `bun run audit:bunfig` or `scripts/audit-bunfig.sh`.
 - **Static web UI?** `public/` (dashboards, badges, registry viewer).
 - **Project registry data + viewer** → `public/registry/`
 

@@ -664,7 +664,8 @@ function startServer(): void {
       if (pathname === "/ws") {
         const upgraded = server.upgrade(req, { data: { authToken: null } });
         if (upgraded) {
-          return undefined as unknown as Response; // Upgrade handled
+          // WebSocket upgrade — Bun.serve omits a Response body when upgrade succeeds
+          return undefined!;
         }
         return Response.json({ error: "WebSocket upgrade failed" }, { status: 400 });
       }
@@ -679,7 +680,7 @@ function startServer(): void {
         const team = decodeURIComponent(pathname.split("/").pop()!);
         const entry = pipelineWorker?.getThumbnail(team);
         if (!entry) return new Response("Not found", { status: 404 });
-        return new Response(entry.bytes as unknown as BodyInit, {
+        return new Response(entry.bytes, {
           headers: {
             "Content-Type": "image/jpeg",
             "Cache-Control": "public, max-age=60",

@@ -28,7 +28,22 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 - `scripts/lib/bun-install-env.ts` — shared `BUN_INSTALL_CACHE_DIR` + `BUN_INSTALL_GLOBAL_STORE` resolution
 - `scripts/verify-install-cache.ts` — `bun run install:verify` checks cache, `links/`, lockfile, tilde drift
 - Pre-commit blocks staged `./~` cache paths; CI installs via `with-bun-cache-env.ts`
-- VS Code terminal env sets absolute cache path + global store
+- VS Code terminal env: `BUN_INSTALL` + `BUN_INSTALL_GLOBAL_STORE` only (no `BUN_INSTALL_CACHE_DIR`)
+
+## Phase 4.7 (Jun 2026) — CI cache lifecycle
+
+- `scripts/bun-cache-lifecycle.ts` + `scripts/lib/bun-cache-metrics.ts` — safe dry-run metrics (Bun 1.4 `pm cache rm --dry-run` still deletes)
+- `repo-hygiene` runs `install:cache:lifecycle` after `install:verify:strict`
+- `.github/workflows/cache-lifecycle.yml` — weekly metrics artifact; self-hosted prune via `workflow_dispatch`
+- `harness:report --json` embeds `installCache` size + global-store link counts
+
+## Phase 4.6 (Jun 2026) — Machine-level install defaults
+
+- `~/.bunfig.toml` owns `linker`, `globalStore`, absolute `cache.dir` for all repos on the Mac
+- Workspace `bunfig.toml` files stripped of redundant machine keys (~21 files); 4 intentional overrides retained
+- `scripts/audit-bunfig.sh` + `bun run audit:bunfig` — workspace redundancy scan
+- `kimi-toolchain` `bunfig-policy` gate warns on root `bunfig.toml` duplicating `~/.bunfig.toml`
+- Canonical doc: [`docs/UNIFIED.md`](docs/UNIFIED.md) · agent entry: [`AGENTS.md`](AGENTS.md)
 
 ## Phase 4.1b (Jun 2026) — Root polish
 
@@ -38,8 +53,8 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 - Moved `registry.config.json5`, `ci.bunfig.toml`, `bunfig-registry.toml` → `config/` (root symlinks for legacy lookups)
 - Fixed `scripts/sitemap-refresh.ts` to reference `public/dashboards/` paths
 - `repo-hygiene` flags unexpected root dirs/files and auto-evicts `./~` Bun cache drift
-- Override via `BUN_INSTALL_CACHE_DIR="$HOME/.bun/install/cache"` when nested bunfigs break `~` expansion;
-  `postinstall` + `scripts/evict-root-tilde-cache.ts` is a safety net only
+- Prefer absolute `[install.cache].dir` in `~/.bunfig.toml`; avoid `BUN_INSTALL_CACHE_DIR` in shell/IDE env
+- `postinstall` + `scripts/evict-root-tilde-cache.ts` remains a safety net for `./~` drift
 
 ## Phase 4.2 (committed)
 

@@ -2,9 +2,6 @@
 # Uses isolated installs for strict dependency isolation
 
 [install]
-# Use isolated install strategy (prevents phantom dependencies)
-linker = "isolated"
-
 # Performance optimizations
 registry = "https://registry.npmjs.org/"
 cache = true

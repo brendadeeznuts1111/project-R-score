@@ -13,7 +13,7 @@ import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 
 // Use bun.semver if available (Bun 1.2+)
-const semver = (Bun as any).semver || {
+const semver = Bun.semver ?? {
   parse: (v: string) => ({ version: v, major: 0, minor: 0, patch: 0 }),
   compare: (a: string, b: string) => a.localeCompare(b),
   satisfies: () => true,
@@ -425,29 +425,14 @@ export class VersionManager {
   /**
    * Private helpers
    */
-  private async putToR2(key: string, data: any): Promise<void> {
-    // Implementation using R2StorageAdapter
+  private async putToR2(key: string, data: unknown): Promise<void> {
     const fullKey = `${this.versionPrefix}${key}`;
-    await fetch(`${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': (this.storage as any).getAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+    await this.storage.putJson(fullKey, data);
   }
 
-  private async getFromR2(key: string): Promise<any> {
+  private async getFromR2<T>(key: string): Promise<T | null> {
     const fullKey = `${this.versionPrefix}${key}`;
-    const response = await fetch(`${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`, {
-      headers: {
-        'Authorization': (this.storage as any).getAuthHeader(),
-      },
-    });
-    
-    if (!response.ok) return null;
-    return await response.json();
+    return this.storage.getJson<T>(fullKey);
   }
 
   private async listVersionKeys(packageName: string): Promise<string[]> {

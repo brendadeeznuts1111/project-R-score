@@ -3,7 +3,7 @@
  * No real Apple APIs; simulated responses for dashboard integration.
  */
 
-import type { GoldenProfileSystem } from './golden-profile.ts';
+import type { GoldenProfile, GoldenProfileSystem } from './golden-profile.ts';
 
 export interface AppleDevice {
   id: string;
@@ -65,8 +65,8 @@ export class AppleIDIntegration {
     const services = await this.fetchAppleServices(token);
 
     const profile = this.goldenProfile?.getOrCreateProfile(agentId, cookieHeader);
-    if (profile && !(profile as any).components.appleID) {
-      (profile as any).components.appleID = {
+    if (profile && !profile.components.appleID) {
+      profile.components.appleID = {
         appleId: maskAppleId(appleId),
         token,
         linkedAt: Date.now(),
@@ -162,7 +162,7 @@ export class AppleIDIntegration {
 
   getAppleStatus(agentId: string, cookieHeader: string | null): { linked: boolean; devices?: AppleDevice[]; services?: AppleServices } | null {
     const profile = this.goldenProfile?.getProfile(agentId, cookieHeader);
-    const apple = (profile as any)?.components?.appleID;
+    const apple = profile?.components.appleID;
     if (!apple) return { linked: false };
     return {
       linked: true,

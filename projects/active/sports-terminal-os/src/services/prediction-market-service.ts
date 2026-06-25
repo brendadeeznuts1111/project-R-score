@@ -697,13 +697,13 @@ export function recordPriceHistory(): void {
   for (const row of markets) {
     try {
       insert.run({
-        marketId: row.market_id,
-        provider: row.provider,
-        yesPrice: row.outcome_yes_price,
-        noPrice: row.outcome_no_price,
-        volume: row.volume,
+        marketId: String(row.market_id),
+        provider: String(row.provider),
+        yesPrice: Number(row.outcome_yes_price),
+        noPrice: Number(row.outcome_no_price),
+        volume: Number(row.volume),
         timestamp: now,
-      } as any);
+      });
       count++;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error";

@@ -341,12 +341,39 @@ import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 - Git template in `.git-template/`
 - No automated CI/CD visible
 
+## Bun install policy (machine + workspace)
+
+**Canonical reference:** [`docs/UNIFIED.md`](./UNIFIED.md)
+
+| Layer | Location | Owns |
+| --- | --- | --- |
+| Machine | `~/.bunfig.toml` | `linker = "isolated"`, `globalStore = true`, absolute `[install.cache].dir` |
+| Monorepo root | `bunfig.toml` | `exact`, `frozenLockfile`, `minimumReleaseAge`, `@factorywager` scopes, `[test]` defaults |
+| Workspace | `<project>/bunfig.toml` | Project-only overrides — **never** duplicate machine keys |
+
+**Do not** set `BUN_INSTALL_CACHE_DIR` in shell or VS Code terminal env; use `~/.bunfig.toml` instead (`kimi-doctor --gate bunfig-policy` treats it as a risky override).
+
+**`./~` drift:** Unexpanded `~` in project `bunfig.toml` or env creates literal `./~` cache dirs. Use absolute paths at machine level; CI uses `scripts/with-bun-cache-env.ts`.
+
+### Verification tooling
+
+| Command | Purpose |
+| --- | --- |
+| `bun run install:verify` | Cache, global store, tilde drift, lockfile layout |
+| `bun run audit:bunfig` | Workspace `bunfig.toml` redundancy scan |
+| `bash scripts/audit-bunfig.sh --doctor` | `kimi-doctor --gate bunfig-policy` when available |
+| `kimi-doctor --gate bunfig-policy` | Hardened policy + root redundancy vs `~/.bunfig.toml` |
+| `bun run install:pm:health` | `bun pm` cache + hash + trust + bin checks (JSON) |
+| `bun run audit:bunfig` | Bunfig redundancy + `bun pm pkg get` + `bun pm untrusted` |
+
+See [`docs/UNIFIED.md`](./UNIFIED.md) for the full install matrix, `bun pm` command matrix, intentional overrides, and CI notes.
+
 ## Common Tasks
 
 ### Adding a New Sub-Project
 1. Create directory: `mkdir new-project`
 2. Add `package.json` with name, version, scripts
-3. Add `bunfig.toml` for Bun-specific config
+3. Add `bunfig.toml` for project-specific config only (see [`docs/UNIFIED.md`](./UNIFIED.md) template)
 4. Create entrypoint (e.g., `index.ts`)
 5. Run `bun install` in the directory
 
