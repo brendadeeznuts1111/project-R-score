@@ -1,0 +1,82 @@
+name: Audit refs
+
+on:
+  pull_request:
+    paths: &audit-paths
+      - 'refs.json'
+      - 'refs.schema.json'
+      - 'REFS.md'
+      - 'spec.html'
+      - 'README.md'
+      - 'OUTLINE.md'
+      - 'scripts/**'
+      - 'package.json'
+  push:
+    branches: [main]
+    paths: *audit-paths
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Audit mode
+        type: choice
+        default: strict
+        options:
+          - strict
+          - fix
+          - offline
+
+jobs:
+  changes:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - refs.json
+              - refs.schema.json
+              - REFS.md
+              - spec.html
+              - README.md
+              - OUTLINE.md
+
+  audit:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run audit:refs --strict --report=both
+
+  audit-offline:
+    needs: changes
+    if: github.event_name != 'workflow_dispatch' && needs.changes.outputs.docs == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run audit:refs --no-network --strict
+
+  audit-manual:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Strict audit
+        if: inputs.mode == 'strict'
+        run: bun run audit:refs --strict --report=both
+      - name: Fix audit
+        if: inputs.mode == 'fix'
+        run: bun run audit:refs --fix --report=both
+      - name: Offline audit
+        if: inputs.mode == 'offline'
+        run: bun run audit:refs --no-network --strict --report=both

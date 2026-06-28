@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bet-turnin-sheet.local/refs.schema.json",
+  "title": "Reference Registry",
+  "type": "object",
+  "required": ["meta", "refs", "groups", "pairings", "crossRefMatrix"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "lastAudit", "generatedBy", "totalRefs"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "lastAudit": { "type": ["string", "null"] },
+        "generatedBy": { "type": "string" },
+        "totalRefs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "prefix"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "prefix": { "type": "string" }
+        }
+      }
+    },
+    "refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/refEntry" }
+    },
+    "pairings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/pairing" }
+    },
+    "crossRefMatrix": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/crossRefEntry" }
+    }
+  },
+  "$defs": {
+    "refId": {
+      "type": "string",
+      "pattern": "^(B0[1-8]|E0[1-5]|T0[1-5]|S0[1-5]|SPEC-0[1-9]|DOC-0[1-4])$"
+    },
+    "refEntry": {
+      "type": "object",
+      "required": [
+        "id",
+        "prefix",
+        "topic",
+        "url",
+        "anchor",
+        "group",
+        "projectUse",
+        "kind",
+        "tags",
+        "deprecated",
+        "replacedBy",
+        "lastChecked",
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/refId" },
+        "prefix": { "type": "string" },
+        "topic": { "type": "string" },
+        "url": { "type": "string" },
+        "urlLabel": { "type": "string" },
+        "anchor": { "type": "string" },
+        "group": { "type": "string" },
+        "projectUse": { "type": "string" },
+        "kind": { "enum": ["external", "internal"] },
+        "sidebarLabel": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "deprecated": { "type": "boolean" },
+        "replacedBy": {
+          "oneOf": [{ "$ref": "#/$defs/refId" }, { "type": "null" }]
+        },
+        "lastChecked": { "type": ["string", "null"] },
+        "status": { "type": "string" }
+      },
+      "if": { "properties": { "deprecated": { "const": true } } },
+      "then": {
+        "properties": {
+          "replacedBy": { "$ref": "#/$defs/refId" }
+        }
+      }
+    },
+    "pairing": {
+      "type": "object",
+      "required": ["id", "useCase", "description", "refs"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "useCase": { "type": "string" },
+        "description": { "type": "string", "minLength": 1 },
+        "refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" },
+          "minItems": 1
+        }
+      }
+    },
+    "crossRefEntry": {
+      "type": "object",
+      "required": ["spec", "externalRefs", "outlinePhase"],
+      "additionalProperties": false,
+      "properties": {
+        "spec": { "type": "string", "pattern": "^SPEC-0[1-9]$" },
+        "externalRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" },
+          "minItems": 1
+        },
+        "outlinePhase": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

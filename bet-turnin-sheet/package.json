@@ -1,0 +1,16 @@
+{
+  "name": "bet-turnin-sheet",
+  "private": true,
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "scripts": {
+    "audit:refs": "bun run scripts/audit-refs.ts",
+    "audit:refs:fix": "bun run scripts/audit-refs.ts --fix",
+    "audit:refs:strict": "bun run scripts/audit-refs.ts --strict",
+    "audit:refs:offline": "bun run scripts/audit-refs.ts --no-network",
+    "audit:refs:no-cache": "bun run scripts/audit-refs.ts --no-cache",
+    "audit:refs:links": "bun run scripts/audit-refs.ts --links-only",
+    "validate:refs-schema": "bun run scripts/audit-refs.ts --schema-only"
+  }
+}
