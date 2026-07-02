@@ -322,6 +322,9 @@ herdr-worktrees/
 scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx
+
+# Standalone nested git repos (own remotes)
+/Proton-workspace/
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/
