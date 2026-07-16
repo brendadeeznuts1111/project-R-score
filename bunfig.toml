@@ -2,6 +2,14 @@
 # Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge)
 # Enterprise reference profile (not auto-loaded): ./.bunfig.toml
 
+[console]
+# Deep inspect for doctor gates and nested log fields (default 2 truncates too early)
+depth = 6
+
+[debug]
+# Pin editor in bunfig (matches Bun.openInEditor SSOT — bunfig > $VISUAL > $EDITOR).
+editor = "cursor"
+
 [install]
 exact = true
 # Dev override — machine ~/.bunfig.toml sets frozenLockfile = true

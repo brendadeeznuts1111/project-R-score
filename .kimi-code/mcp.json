@@ -1,0 +1,14 @@
+{
+  "mcpServers": {},
+  "profiles": {
+    "safe": {
+      "description": "Disable shell execution; keep read-only tools",
+      "disabledServers": ["unified-shell"]
+    },
+    "full": {
+      "description": "Enable all registered servers",
+      "enabledServers": ["*"]
+    }
+  },
+  "_comment": "Project MCP servers override ~/.kimi-code/mcp.json entries with the same name. See UNIFIED.md."
+}

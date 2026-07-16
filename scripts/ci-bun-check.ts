@@ -49,7 +49,9 @@ try {
   // Fall back to Bun.revision-only checks.
 }
 
-const isCanary = [version, revision, cliVersion, cliRevision]
+// Only inspect semantic version strings; revision hashes may contain arbitrary
+// substrings (e.g. "canary" in a commit message) and must not trigger false positives.
+const isCanary = [version, cliVersion]
   .filter(Boolean)
   .some(value => value.toLowerCase().includes('canary'));
 const allowCanary = Bun.env.ALLOW_CANARY_BUN_CI === '1' || Bun.env.ALLOW_CANARY_BUN_CI === 'true';
