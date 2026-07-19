@@ -89,16 +89,22 @@ export function termWidth(): number {
 export type InspectOptions = {
   depth?: number;
   colors?: boolean;
-  compact?: boolean | number;
+  /** Single-line output. NOTE: the official BunInspectOptions surface is
+   *  exactly {colors, depth, sorted, compact} — boolean compact only.
+   *  https://bun.com/reference/bun/BunInspectOptions */
+  compact?: boolean;
   /** Sort object keys alphabetically, recursively — deterministic output
    *  for snapshots/diffs. https://bun.com/reference/bun/BunInspectOptions */
   sorted?: boolean;
-  getters?: boolean | 'get' | 'set';
 };
 
 /**
  * Bun.inspect with the project depth + TTY-aware colors applied.
+ * Only official BunInspectOptions fields are exposed — runtime-verified
+ * on Bun 1.4.0: `getters`, `maxArrayLength`, and `maxStringLength` are
+ * silently ignored by Bun.inspect, so they are deliberately absent.
  * @see https://bun.com/docs/runtime/utils#bun-inspect
+ * @see https://bun.com/reference/bun/BunInspectOptions
  */
 export function inspect(value: unknown, options: InspectOptions = {}): string {
   return Bun.inspect(value, {
@@ -106,7 +112,6 @@ export function inspect(value: unknown, options: InspectOptions = {}): string {
     colors: options.colors ?? shouldColor(),
     compact: options.compact,
     sorted: options.sorted,
-    getters: options.getters,
   });
 }
 
@@ -160,12 +165,15 @@ export const inspectCustom = Bun.inspect.custom;
 const ANSI_RESET = '\x1b[0m';
 
 /**
- * Colorize text via Bun.color (hex/rgb/named → ANSI-256). Respects shouldColor().
- * @see https://bun.com/docs/runtime/color — Bun.color input/output formats
+ * Colorize text via Bun.color. Uses the "ansi" output format, which
+ * auto-detects the terminal's color depth (ansi-16m / ansi-256 / ansi-16)
+ * from the environment and returns "" when stdout supports no color —
+ * the docs-recommended form. ansi-256 kept as a belt-and-braces fallback.
+ * @see https://bun.com/docs/runtime/color — "ansi" auto-detection
  */
 export function colorize(text: string, color: string): string {
   if (!shouldColor()) return text;
-  const code = Bun.color(color, 'ansi-256') || Bun.color(color, 'ansi-16m') || '';
+  const code = Bun.color(color, 'ansi') || Bun.color(color, 'ansi-256') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
 
@@ -197,6 +205,21 @@ export function padEndWidth(text: string, width: number, fill = ' '): string {
  */
 export function truncateWidth(text: string, width: number): string {
   return Bun.stringWidth(text) <= width ? text : Bun.sliceAnsi(text, 0, width);
+}
+
+/**
+ * Wrap text to a column width, ANSI- and grapheme-safe: Bun.wrapAnsi
+ * closes and re-opens styles per row so every line renders standalone —
+ * doing this by hand is error-prone, so always prefer it over manual
+ * slicing for multi-line layout. Defaults match Bun (word boundaries, trim).
+ * @see https://bun.com/docs/runtime/utils#bun-wrapansi
+ */
+export function wrapText(
+  text: string,
+  columns: number,
+  options: { hard?: boolean; wordWrap?: boolean; trim?: boolean; ambiguousIsNarrow?: boolean } = {}
+): string {
+  return Bun.wrapAnsi(text, columns, options);
 }
 
 /**

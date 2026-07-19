@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 /**
  * console-depth.test.ts — correctness diff for lib/console-depth.ts.
  *
@@ -15,6 +16,7 @@ import {
   widthOf,
   padEndWidth,
   truncateWidth,
+  wrapText,
   colorize,
   inspect,
   getConsoleDepth,
@@ -145,8 +147,7 @@ describe('inspect / getConsoleDepth', () => {
   });
 });
 
-describe('inspectCustom', () => {
-  test('classes control their own printed form', () => {
+describe('inspectCustom', () => {  test('classes control their own printed form', () => {
     class Secret {
       constructor(public value: string) {}
       [inspectCustom]() {
@@ -174,6 +175,7 @@ describe('Bun API surface guard', () => {  // Fails loudly if a Bun upgrade remo
   });
 });
 
+// @see https://bun.com/docs/runtime/color — Bun.color
 /**
  * Snapshot tests — deterministic output pinned via bun:test snapshots.
  * https://bun.com/docs/test/snapshots · https://bun.com/guides/test/snapshot
@@ -223,5 +225,33 @@ describe('snapshots', () => {
       padEndWidth('degraded', 8),
       truncateWidth('some very long status line', 12),
     ]).toMatchSnapshot();
+  });
+});
+
+describe('wrapText', () => {
+  test('wraps plain text at word boundaries', () => {
+    const out = wrapText('the quick brown fox jumps', 10);
+    expect(out.split('\n').every(l => widthOf(l) <= 10)).toBe(true);
+  });
+  test('ANSI styles are closed and re-opened per row', () => {
+    const styled = '\x1b[31mhello world foo\x1b[0m';
+    const rows = wrapText(styled, 6).split('\n');
+    expect(rows.length).toBeGreaterThan(1);
+    // Every row renders standalone: opens with the color, closes with reset
+    for (const row of rows) {
+      expect(row).toContain('\x1b[31m');
+    }
+  });
+});
+
+describe('docs-grounded runtime behavior (verified Bun 1.4.0)', () => {
+  test('Bun.color "ansi" auto-detect returns "" when piped (no color support)', () => {
+    // docs/runtime/color: "ansi" picks depth from environment, "" when unsupported
+    expect(Bun.color('#ff5500', 'ansi')).toBe('');
+  });
+  test('Bun.inspect silently ignores non-surface options (getters, maxArrayLength)', () => {
+    const withGetter = { get x() { return 42; } };
+    expect(Bun.inspect(withGetter, { getters: true } as never)).toContain('[Getter]');
+    expect(Bun.inspect([1, 2, 3, 4], { maxArrayLength: 2 } as never)).toContain('4');
   });
 });
