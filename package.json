@@ -1682,6 +1682,7 @@
     "test:coverage": "bun test --coverage ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants",
     "test:watch": "bun test --watch ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants",
     "test:unit": "bun test ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants",
+    "test:snapshots:update": "bun test tests/console-depth.test.ts --update-snapshots",
     "test:p2p": "bun run tests/p2p-proxy-quick-test.ts",
     "test:continuity": "bun run tests/business-continuity-test.ts",
     "test:payments": "bun run tests/payment-flow-demo.ts",

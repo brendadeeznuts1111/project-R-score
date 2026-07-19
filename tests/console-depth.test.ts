@@ -176,7 +176,11 @@ describe('Bun API surface guard', () => {  // Fails loudly if a Bun upgrade remo
 
 /**
  * Snapshot tests — deterministic output pinned via bun:test snapshots.
- * https://bun.com/docs/test#snapshot-testing · https://bun.com/guides/test/snapshot
+ * https://bun.com/docs/test/snapshots · https://bun.com/guides/test/snapshot
+ *
+ * If a Bun upgrade intentionally changes formatting, regenerate with:
+ *   bun test tests/console-depth.test.ts --update-snapshots
+ * (scoped to this file — do NOT run --update-snapshots repo-wide)
  */
 describe('snapshots', () => {
   const fixture = {

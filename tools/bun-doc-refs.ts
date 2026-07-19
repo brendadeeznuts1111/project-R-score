@@ -45,6 +45,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
   BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
   'bun:test snapshots': 'https://bun.com/docs/test#snapshot-testing',
+  'snapshots reference': 'https://bun.com/docs/test/snapshots',
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
   // Dedicated topic pages
   'Bun.color': 'https://bun.com/docs/runtime/color',
