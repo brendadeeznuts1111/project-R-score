@@ -10,6 +10,9 @@
  *   - Bun.color: https://bun.com/docs/runtime/color
  *   - Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
  *   - TTY primitives (isTTY, columns): https://nodejs.org/api/tty.html
+ *   - Type definitions (pinned commit):
+ *     https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
+ *     (tracking branch: https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * Native layers (for plain console.log):
  *   --console-depth=N flag  >  bunfig.toml [console] depth (= 6 in this repo)

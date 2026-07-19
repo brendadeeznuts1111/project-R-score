@@ -153,6 +153,7 @@ describe('inspectCustom', () => {
 
 describe('Bun API surface guard', () => {
   // Fails loudly if a Bun upgrade removes/renames an API this module relies on.
+  // API declarations: https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
   test('referenced Bun APIs exist', () => {
     for (const name of ['stringWidth', 'sliceAnsi', 'stripANSI', 'wrapAnsi', 'color', 'inspect']) {
       expect(typeof (Bun as Record<string, unknown>)[name]).toBe('function');
