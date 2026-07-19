@@ -57,7 +57,6 @@
       "description": "Script to debug",
       "options": [
         "scripts/dx-mcp.ts",
-        "scripts/mcp-bridge.ts",
         "tools/bun-docs-mcp.ts",
         "scripts/build.ts"
       ]

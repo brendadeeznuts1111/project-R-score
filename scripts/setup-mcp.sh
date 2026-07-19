@@ -95,13 +95,10 @@ setup_claude_desktop() {
     "bun-docs": {
       "command": "bun",
       "args": [
-        "run",
-        "$PROJECT_PATH/scripts/mcp-bridge.ts"
+        "$PROJECT_PATH/tools/bun-docs-mcp.ts"
       ],
       "env": {
-        "FW_COLORS_ENABLED": "true",
-        "R2_AUDIT_BUCKET": "scanner-cookies",
-        "NODE_ENV": "production"
+        "BUN_DOCS_ROOT": "$PROJECT_PATH"
       }
     }
   }
@@ -117,9 +114,7 @@ create_cli_scripts() {
     print_step "Creating CLI scripts..."
 
     # Make scripts executable
-    chmod +x scripts/fw-docs.ts
     chmod +x scripts/interactive-docs.ts
-    chmod +x scripts/mcp-bridge.ts
     chmod +x lib/mcp/bun-mcp-server.ts
 
     print_success "CLI scripts made executable"
@@ -184,8 +179,6 @@ add_package_scripts() {
 
     # Add MCP scripts to package.json
     npm pkg set scripts.mcp:bun="bun run lib/mcp/bun-mcp-server.ts"
-    npm pkg set scripts.mcp:bridge="bun run scripts/mcp-bridge.ts"
-    npm pkg set scripts.fw-docs="bun run scripts/fw-docs.ts"
     npm pkg set scripts.interactive-docs="bun run scripts/interactive-docs.ts"
 
     print_success "MCP scripts added to package.json"
@@ -204,24 +197,6 @@ create_usage_docs() {
 The setup script has configured Claude Desktop to use FactoryWager's MCP servers. Restart Claude Desktop to enable the integration.
 
 ### 2. CLI Tools
-
-#### fw-docs - Interactive Documentation Search
-```bash
-# Search Bun documentation
-bun run fw-docs search "Bun.secrets.get"
-
-# Explain code snippets
-bun run fw-docs explain "await Bun.file('test.txt')"
-
-# Validate code
-bun run fw-docs validate ./script.ts
-
-# Learn new APIs
-bun run fw-docs learn --topic "Bun SQLite"
-
-# Generate FactoryWager examples
-bun run fw-docs generate --api "Bun.serve" --context scanner
-```
 
 #### interactive-docs - Advanced Diagnosis & Learning
 ```bash
@@ -333,8 +308,7 @@ verify_setup() {
     local required_files=(
         "lib/mcp/bun-mcp-client.ts"
         "lib/mcp/bun-mcp-server.ts"
-        "scripts/mcp-bridge.ts"
-        "scripts/fw-docs.ts"
+        "tools/bun-docs-mcp.ts"
         "scripts/interactive-docs.ts"
     )
 
@@ -348,7 +322,7 @@ verify_setup() {
     done
 
     # Test CLI help
-    if bun run scripts/fw-docs.ts help > /dev/null 2>&1; then
+    if bun run scripts/interactive-docs.ts --help > /dev/null 2>&1; then
         print_success "CLI tools are working"
     else
         print_warning "CLI tools may need manual testing"
@@ -391,13 +365,13 @@ main() {
     echo ""
     echo "📋 Next steps:"
     echo "1. Restart Claude Desktop"
-    echo "2. Test with: bun run fw-docs search 'Bun.file'"
-    echo "3. Read MCP_USAGE.md for detailed instructions"
+    echo "2. Test with: bun run interactive-docs --help"
+    echo "3. Read docs/ENV_CONFIG_MIGRATION.md for configuration details"
     echo ""
     echo "🔗 Configuration files:"
     echo "- Claude Desktop: ~/.config/claude/mcp.json"
     echo "- Environment: .env"
-    echo "- Usage guide: MCP_USAGE.md"
+    echo "- Usage guide: MCP_USAGE.md (generated above)"
     echo ""
     echo -e "${PURPLE}Enjoy your enhanced Bun documentation experience! 🚀${NC}"
 }

@@ -207,8 +207,7 @@ async function collectDashboardData() {
 
   // MCP Servers
   const mcpServers = [
-    { name: '📚 Bun MCP Server', script: 'lib/mcp/bun-mcp-server.ts' },
-    { name: '🌉 MCP Bridge', script: 'scripts/mcp-bridge.ts' }
+    { name: '📚 Bun MCP Server', script: 'lib/mcp/bun-mcp-server.ts' }
   ];
 
   for (const server of mcpServers) {

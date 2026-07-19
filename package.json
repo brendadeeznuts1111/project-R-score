@@ -128,8 +128,7 @@
       "performance": {
         "description": "Performance benchmarking profile",
         "scripts": [
-          "benchmark",
-          "profile:barbershop"
+          "benchmark"
         ],
         "metrics": [
           "cpu",
@@ -302,8 +301,6 @@
         "description": "Performance and benchmarking commands",
         "commands": {
           "Run Benchmarks": "bun run benchmark",
-          "Profile (Full)": "bun run profile:barbershop run",
-          "Profile (Quick)": "bun run profile:barbershop quick",
           "Memory Profile": "bun run profile:memory",
           "CPU Profile": "bun run profile:cpu",
           "Bundle Analyze": "bun run bundle:size",
@@ -705,7 +702,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 1e4,
+      "max_concurrent_requests": 10000,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -735,7 +732,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1e6,
+      "max_keys": 1000000,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -776,7 +773,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 1e4,
+      "max_api_calls_per_hour": 10000,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1613,7 +1610,6 @@
     "dev:projects": "bun run --filter './projects/*' dev",
     "validate:workspaces": "bun scripts/validate-workspaces.ts",
     "check:workspaces": "bun scripts/validate-workspaces.ts",
-    "bun-docs": "bun run projects/experimental/bun-docs/generate.ts",
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
     "start:payments": "bun run server/payment-webhook-server.ts",
@@ -1634,8 +1630,6 @@
     "playground:runtime:check": "bun run scripts/playground-runtime-check.ts",
     "playground:smoke": "bun run scripts/playground-smoke.ts",
     "start:business-registry": "bun run dashboard/business-registry.ts",
-    "start:profile-dash": "bun run dashboard/profile/app.ts",
-    "start:profile-dash:live": "bun run dashboard/profile/app-integrated.ts",
     "dashboard": "bun run dashboard/mcp-overview.ts status",
     "dashboard:preflight": "bun run scripts/dashboard-preflight.ts",
     "dashboard:preflight:local": "ALLOW_CANARY_BUN=true bun run scripts/dashboard-preflight.ts",
@@ -1787,7 +1781,6 @@
     "dataview": "bun run scripts/dataview-cli.ts",
     "dataview:test": "bun run scripts/dataview-tests.ts",
     "security-tests": "bun run lib/security/security-test-suite.ts",
-    "profile:barbershop": "bun run projects/active/barbershop/src/profile/profile-cli.ts",
     "hygiene": "bun scripts/repo-hygiene.ts",
     "hygiene:staged": "bun scripts/repo-hygiene.ts --staged",
     "check:claude": "bun scripts/claude-health.ts",
@@ -1872,7 +1865,6 @@
     "deploy:staging": "bash scripts/shell/deploy-staging.sh",
     "deploy:production": "bash scripts/deployment/deploy-production.sh deploy",
     "mcp:bun": "bun run lib/mcp/bun-mcp-server.ts",
-    "mcp:bridge": "bun run scripts/mcp-bridge.ts",
     "setup:mcp": "bash scripts/setup-mcp.sh",
     "mcp-monitor": "bun run scripts/mcp-monitor.ts",
     "demo:r2": "bun run scripts/demo-r2-mcp.ts",
@@ -1958,15 +1950,15 @@
     "test:brand:240": "bun run test:brand -- --seed=240",
     "test:brand:all": "bun run --parallel test:brand:0 test:brand:120 test:brand:240",
     "fetch:docs": "bun run examples/fetch-example.js",
-    "fetch:advanced": "bun run services/advanced-fetch-service.ts",
-    "content-type": "bun run services/content-type-demo.ts",
-    "verbose": "bun run services/verbose-fetch-demo.ts",
+    "fetch:advanced": "bun run services/core/advanced-fetch-service.ts",
+    "content-type": "bun run services/demos/content-type-demo.ts",
+    "verbose": "bun run services/demos/verbose-fetch-demo.ts",
     "urls": "bun run examples/api-demo.ts urls",
     "demo": "bun run examples/api-demo.ts advanced",
-    "mybundocs11:create": "bun run cli/mybundocs11.ts create",
-    "mybundocs11:launch": "bun run cli/mybundocs11.ts launch",
-    "mybundocs11:open": "bun run cli/mybundocs11.ts open",
-    "mybundocs11:info": "bun run cli/mybundocs11.ts info",
+    "mybundocs11:create": "bun run tools/cli/mybundocs11.ts create",
+    "mybundocs11:launch": "bun run tools/cli/mybundocs11.ts launch",
+    "mybundocs11:open": "bun run tools/cli/mybundocs11.ts open",
+    "mybundocs11:info": "bun run tools/cli/mybundocs11.ts info",
     "semver:demo": "bun run examples/bun-semver-demo.ts",
     "bunx": "bun run lib/registry/bunx-integration.ts",
     "bunx:run": "bun run lib/registry/bunx-integration.ts run",
@@ -2006,8 +1998,6 @@
     "test:protocol:parallel:compare": "bun run scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --max-failures=0 --max-p95-ms=120 --baseline-json=reports/protocol-parallel.baseline.json --max-p95-regression-ms=20 --max-failure-regression=0 --json-out=reports/protocol-parallel.compare.json",
     "test:protocol:parallel:promote-baseline": "bun run scripts/protocol-baseline-promote.ts",
     "test:protocol:parallel:promote-baseline:dryrun": "bun run test:protocol:parallel:compare",
-    "dashboard:project-status": "bun run scripts/dashboard-project-status.ts",
-    "deploy:global": "bun run scripts/deploy-global.ts",
     "validate:performance": "bun run analysis:performance-impact",
     "validate:security": "bun run security:posture:report",
     "validate:integration": "bun run test:dashboard:endpoints",
@@ -2026,15 +2016,11 @@
     "@modelcontextprotocol/sdk": "1.29.0",
     "@pinecone-database/pinecone": "7.2.0",
     "@xenova/transformers": "2.17.2",
-    "axios": "1.16.1",
     "beautiful-mermaid": "1.1.3",
     "ioredis": "5.10.1",
     "plaid": "42.2.0",
     "ws": "8.20.1",
     "yaml": "2.9.0"
-  },
-  "overrides": {
-    "axios": "1.16.1"
   },
   "devDependencies": {
     "@types/bun": "1.3.14",

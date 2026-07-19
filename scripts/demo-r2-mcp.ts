@@ -342,9 +342,9 @@ try {
     });
 
     console.info(styled('📚 For detailed instructions, see:', 'accent'));
-    console.info(styled('   - R2_MCP_INTEGRATION.md', 'info'));
-    console.info(styled('   - MCP_INTEGRATION.md', 'info'));
-    console.info(styled('   - MCP_USAGE.md (generated after setup)', 'info'));
+    console.info(styled('   - docs/archives/R2_MCP_INTEGRATION.md', 'info'));
+    console.info(styled('   - docs/archives/MCP_INTEGRATION.md', 'info'));
+    console.info(styled('   - docs/archives/MCP_USAGE.md', 'info'));
     console.info('');
   }
 

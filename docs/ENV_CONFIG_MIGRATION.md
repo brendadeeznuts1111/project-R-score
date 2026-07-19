@@ -40,7 +40,7 @@ MCP servers are configured in `.cursor/mcp.json` and `.mcp.json` at the project 
 1. **Use workspace-relative paths** with `${workspaceFolder}` substitution
 2. **Use environment variable substitution** (if your MCP client supports it):
    ```json
-   "args": ["${BUN_PLATFORM_HOME}/scripts/mcp-bridge.ts"]
+   "args": ["${BUN_PLATFORM_HOME}/tools/bun-docs-mcp.ts"]
    ```
 3. **Create a wrapper script** that resolves paths before launching MCP servers
 4. **Manual edit** per installation (documented in setup instructions)
