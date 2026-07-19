@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/guides/process/spawn-stdout — reading stdout
 // lib/core/bun-spawn-utils.ts — Bun-specific spawn utilities with error handling
 
 import {

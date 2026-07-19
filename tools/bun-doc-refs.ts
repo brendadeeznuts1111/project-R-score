@@ -95,7 +95,11 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
+  'Bun.spawn': 'https://bun.com/docs/runtime/child-process',
   'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
+  'spawn terminal options': 'https://bun.com/docs/runtime/child-process#terminal-options',
+  'spawn stdout guide': 'https://bun.com/docs/guides/process/spawn-stdout',
+  'CI failures from terminal': 'https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal',
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,
