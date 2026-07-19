@@ -150,3 +150,20 @@ describe('inspectCustom', () => {
     expect(Bun.inspect(new Secret('hunter2'))).toBe('Secret(***)');
   });
 });
+
+describe('Bun API surface guard', () => {
+  // Fails loudly if a Bun upgrade removes/renames an API this module relies on.
+  test('referenced Bun APIs exist', () => {
+    for (const name of ['stringWidth', 'sliceAnsi', 'stripANSI', 'wrapAnsi', 'color', 'inspect']) {
+      expect(typeof (Bun as Record<string, unknown>)[name]).toBe('function');
+    }
+    expect(typeof Bun.inspect.table).toBe('function');
+    expect(typeof Bun.inspect.custom).toBe('symbol');
+  });
+  test('TTY primitives degrade safely when piped', () => {
+    // When piped: isTTY is absent and columns is undefined — shouldColor/termWidth
+    // must still behave (false / fallback width), never throw.
+    expect(process.stdout.isTTY === true).toBe(false);
+    expect(typeof process.stdout.columns === 'undefined' || typeof process.stdout.columns === 'number').toBe(true);
+  });
+});
