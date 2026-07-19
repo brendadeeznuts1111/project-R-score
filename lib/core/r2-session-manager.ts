@@ -1,5 +1,6 @@
 // lib/core/r2-session-manager.ts — R2 Session management with error handling
 
+import { type SessionId, type TerminalId, asSessionId, asTerminalId } from '../types/branded.ts';
 import {
   recordError,
   createSystemError,
@@ -17,7 +18,7 @@ import {
  * Session member information
  */
 export interface SessionMember {
-  id: string;
+  id: string; // brand-ok — opaque member identity passthrough (TODO(brand-rollout): evaluate UserId)
   name?: string;
   role?: string;
 }
@@ -26,8 +27,8 @@ export interface SessionMember {
  * Spawn profile returned from terminal
  */
 export interface SpawnProfile {
-  sessionId: string;
-  terminalId: string;
+  sessionId: SessionId;
+  terminalId: TerminalId;
   pid: number;
   status: 'running' | 'exited' | 'error';
   startTime: number;
@@ -54,7 +55,7 @@ export interface SessionSpawnConfig {
   /** Markdown file path */
   mdFile: string;
   /** Session ID */
-  sessionId: string;
+  sessionId: SessionId;
   /** Member information */
   member: SessionMember;
   /** Retry configuration */
@@ -224,7 +225,7 @@ export class R2SessionManager {
           // In real implementation: return await spawnTerminal(config.command);
           const profile: SpawnProfile = {
             sessionId: config.sessionId,
-            terminalId: `term-${Date.now()}`,
+            terminalId: asTerminalId(`term-${Date.now()}`),
             pid: Math.floor(Math.random() * 10000) + 1000,
             status: 'running',
             startTime: Date.now(),
@@ -309,14 +310,14 @@ export class R2SessionManager {
   static async quickSpawn(
     command: string[],
     mdFile: string,
-    sessionId: string,
+    sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
     member: SessionMember
   ): Promise<SessionSpawnResult> {
     const manager = new R2SessionManager();
     return manager.spawnSession({
       command,
       mdFile,
-      sessionId,
+      sessionId: asSessionId(sessionId), // boundary: brand at entry
       member,
     });
   }

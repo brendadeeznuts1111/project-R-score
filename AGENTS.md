@@ -32,6 +32,14 @@ Rules:
 - Only trust options verified against the runtime (see `lib/console-depth.ts` header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
 - Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) index → `tools/bun-docs-index.json` (317 pages, verified anchors) → `tools/bun-doc-refs.ts` map. Regenerate + verify: `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`.
 
+## Branded ID types
+
+All new code must use branded string types for IDs (never bare `id: string` fields). Foundation: `lib/types/branded.ts` (`Brand`, domain brands, `asXId()` boundary constructors). Pattern: brand at system boundaries, pass branded values inside, `unbrand()` at serialization edges. Exemplar: `lib/core/r2-session-manager.ts`.
+
+- Detect violations: `bun tools/branded-id-check.ts [paths]` (report) · `--strict` (fail) · `--staged`
+- Suppress intentional passthroughs with `// brand-ok`
+- TODO(brand-rollout): 278 pre-existing declarations tracked in `lib/types/branded.ts` header — migrate by density (security → core → mcp → registry). New code has zero excuse.
+
 ## Console depth (output verbosity)
 
 Object-inspection depth is controlled project-wide via `lib/console-depth.ts` (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work. Refs: [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils#bun-stringwidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [bun-types (pinned)](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) · correctness suite `tests/console-depth.test.ts` · bench `tools/benchmarks/console-depth-perf.ts`.
