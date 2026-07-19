@@ -1,7 +1,0 @@
-{
-  "templateFolderPath": "02 - SYSTEM/Templates",
-  "templateFormat": "YYYY-MM-DD",
-  "triggerOnFileCreation": false,
-  "hourFormat": "24",
-  "minuteFormat": "00"
-}

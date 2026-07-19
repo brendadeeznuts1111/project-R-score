@@ -1,8 +1,0 @@
-{
-  "appName": "FileExistenceDemo",
-  "version": "1.0.0",
-  "features": [
-    "existence-checking",
-    "file-io"
-  ]
-}

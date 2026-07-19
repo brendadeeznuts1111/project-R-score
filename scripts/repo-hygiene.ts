@@ -170,7 +170,7 @@ async function findStrayFiles(): Promise<Violation[]> {
 
 async function checkStagedSecrets(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only'], {
+  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'], {
     cwd: ROOT,
     stdout: 'pipe',
   });
@@ -188,7 +188,7 @@ async function checkStagedSecrets(): Promise<Violation[]> {
 
 async function checkStagedStray(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only'], {
+  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'], {
     cwd: ROOT,
     stdout: 'pipe',
   });
