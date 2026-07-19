@@ -60,8 +60,8 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Color & TTY conventions (replaces chalk / ansi-styles) ─────────────
   'Bun.color': 'https://bun.com/docs/runtime/color',
-  'process.stdout.isTTY': 'https://bun.com/docs/runtime/nodejs-apis#nodetty',
-  'process.stdout.columns': 'https://bun.com/docs/runtime/nodejs-apis#nodetty',
+  'process.stdout.isTTY': 'https://bun.com/docs/runtime/nodejs-compat#nodetty',
+  'process.stdout.columns': 'https://bun.com/docs/runtime/nodejs-compat#nodetty',
   NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
   FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
 
@@ -190,6 +190,101 @@ async function validate(paths: string[]): Promise<number> {
   return bad;
 }
 
+/** Lazy-load the generated docs index (tools/bun-docs-index.json). */
+async function docsIndex(): Promise<{
+  entries: Array<{ title: string; url: string; desc: string; domain: string; anchors: string[] }>;
+}> {
+  const path = new URL('./bun-docs-index.json', import.meta.url).pathname;
+  return Bun.file(path).json();
+}
+
+/** Mintlify-style slug, mirrors bun-docs-index-gen.ts. */
+function slugify(heading: string): string {
+  return heading
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .toLowerCase()
+    .replace(/[()`'":]/g, '')
+    .replace(/\./g, '-')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Map any API name or topic to its canonical Bun docs page + anchor using
+ * the generated index. Matches: exact anchor, title substring, then desc.
+ */
+async function suggest(query: string): Promise<void> {
+  if (!query) {
+    console.error('usage: bun tools/bun-doc-refs.ts suggest <api-or-topic>');
+    process.exit(1);
+  }
+  const { entries } = await docsIndex();
+  const q = query.toLowerCase();
+  const anchorGuess = slugify(query);
+
+  // 1. exact anchor match on a page
+  for (const e of entries) {
+    if (e.anchors.includes(anchorGuess)) {
+      const url = e.url.replace(/\.md$/, '');
+      console.info(`${query} → ${url}#${anchorGuess}`);
+      console.info(`  (${e.title} — ${e.desc})`);
+      return;
+    }
+  }
+  // 2. title match (substring, ranked by earliest occurrence)
+  const titleHits = entries
+    .filter(e => e.title.toLowerCase().includes(q))
+    .sort((a, b) => a.title.toLowerCase().indexOf(q) - b.title.toLowerCase().indexOf(q))
+    .slice(0, 5);
+  // 3. last segment of a dotted/camel query (e.g. "Bun.secrets" → "secrets")
+  //    matched against page title or URL path
+  const lastSeg = (query.includes('.') ? query.split('.').pop()! : query)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .toLowerCase();
+  const segHits = entries.filter(
+    e =>
+      e.title.toLowerCase() === lastSeg ||
+      e.url.toLowerCase().includes('/' + lastSeg.replace(/ /g, '-')) ||
+      e.title.toLowerCase().split(' ').includes(lastSeg)
+  );
+  const hits = titleHits.length > 0 ? titleHits : segHits.slice(0, 5);
+  if (hits.length > 0) {
+    console.info(`closest pages for "${query}":`);
+    for (const e of hits) {
+      console.info(`  ${e.url.replace(/\.md$/, '')} — ${e.title}`);
+      if (e.anchors.length > 0) console.info(`    anchors: ${e.anchors.slice(0, 6).join(', ')}${e.anchors.length > 6 ? '…' : ''}`);
+    }
+    return;
+  }
+  console.info(`❌ no docs page found for "${query}" — browse https://bun.com/docs/llms.txt`);
+  process.exit(1);
+}
+
+/** Verify every CANONICAL_REFS anchor against the generated docs index. */
+async function audit(): Promise<number> {
+  const { entries } = await docsIndex();
+  let bad = 0;
+  for (const [api, url] of Object.entries(CANONICAL_REFS)) {
+    if (!url.startsWith('https://bun.com/docs') || url.endsWith('llms.txt') || url.endsWith('.md'))
+      continue;
+    const [base, anchor] = url.split('#');
+    if (!anchor) continue;
+    const entry = entries.find(e => e.url.replace(/\.md$/, '') === base);
+    if (!entry) {
+      console.info(`❌ ${api}: page not in index: ${base}`);
+      bad++;
+      continue;
+    }
+    if (!entry.anchors.includes(anchor)) {
+      console.info(`❌ ${api}: anchor missing from page: #${anchor}`);
+      console.info(`   available: ${entry.anchors.slice(0, 8).join(', ')}…`);
+      bad++;
+    }
+  }
+  console.info(bad === 0 ? '✅ all anchored refs verified against index' : `❌ ${bad} bad refs`);
+  return bad;
+}
+
 const [, , cmd = 'list', ...rest] = Bun.argv;
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
 switch (cmd) {
@@ -199,6 +294,12 @@ switch (cmd) {
   case 'list':
     listRefs();
     break;
+  case 'suggest':
+    await suggest(rest.join(' '));
+    break;
+  case 'audit':
+    process.exit((await audit()) > 0 ? 1 : 0);
+    break;
   case 'check':
     process.exit((await check(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
@@ -206,6 +307,6 @@ switch (cmd) {
     process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
   default:
-    console.error(`unknown command: ${cmd} (url|list|check|validate)`);
+    console.error(`unknown command: ${cmd} (url|list|suggest|check|validate)`);
     process.exit(1);
 }
