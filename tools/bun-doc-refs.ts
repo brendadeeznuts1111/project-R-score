@@ -437,7 +437,9 @@ async function integrity(): Promise<number> {
   row('canonical map anchors', mapBad === 0 ? 'all valid' : `${mapBad} bad`, mapBad === 0);
   row('repo links', linkBad === 0 ? 'all valid' : `${linkBad} dead`, linkBad === 0);
   const failed = (taxHit === taxTotal ? 0 : 1) + (mapBad > 0 ? 1 : 0) + (linkBad > 0 ? 1 : 0);
-  console.info(failed === 0 ? '\n🟢 integrity: PASS' : `\n🔴 integrity: ${failed} layer(s) failing`);
+  console.info(
+    failed === 0 ? '\n🟢 integrity: PASS' : `\n🔴 integrity: ${failed} layer(s) failing`
+  );
   return failed;
 }
 
@@ -472,6 +474,42 @@ async function exportHierarchical(): Promise<void> {
   console.info(`✅ ${out} — ${idx.entries.length} pages, ${bySection.size} sections`);
 }
 
+/**
+ * Start an in-process Bun.cron scheduler for the integrity gate.
+ * https://bun.com/docs/runtime/cron — in-process overload: Bun.cron(pattern, handler)
+ * Schedule is UTC, no-overlap guaranteed, job reschedules after errors.
+ */
+async function schedule(pattern: string, once: boolean): Promise<void> {
+  const LOG = 'reports/doc-integrity.jsonl';
+  const run = async () => {
+    const started = new Date().toISOString();
+    const failures = await integrity();
+    // JSONL append via read-modify-write (Bun.write has no append mode)
+    const prev = (await Bun.file(LOG).exists()) ? await Bun.file(LOG).text() : '';
+    await Bun.write(
+      LOG,
+      prev + JSON.stringify({ ts: started, failures, ok: failures === 0 }) + '\n'
+    );
+    console.info(`🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`} — logged to ${LOG}`);
+  };
+
+  if (once) {
+    await run();
+    return;
+  }
+
+  const job = Bun.cron(pattern, run);
+  console.info(`⏰ integrity scheduler started — pattern "${pattern}" (UTC), log: ${LOG}`);
+  console.info('   in-process job: dies with this process, state shared, no overlap');
+  process.on('SIGINT', () => {
+    job.stop();
+    console.info('\n👋 scheduler stopped');
+    process.exit(0);
+  });
+  await run(); // immediate first run so there's feedback now
+  await new Promise(() => {}); // keep alive; the cron job drives from here
+}
+
 const [, , cmd = 'list', ...rest] = Bun.argv;
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
 switch (cmd) {
@@ -493,6 +531,13 @@ switch (cmd) {
   case 'integrity':
     process.exit((await integrity()) > 0 ? 1 : 0);
     break;
+  case 'schedule': {
+    // bun tools/bun-doc-refs.ts schedule [--pattern "0 6 * * *"] [--once]
+    const pIdx = rest.indexOf('--pattern');
+    const pattern = pIdx !== -1 ? rest[pIdx + 1] : '0 6 * * *';
+    await schedule(pattern, rest.includes('--once'));
+    break;
+  }
   case 'export':
     await exportHierarchical();
     break;

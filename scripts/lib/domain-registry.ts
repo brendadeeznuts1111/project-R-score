@@ -60,7 +60,9 @@ function isPlaceholderSecret(value: string | null): boolean {
 }
 
 export function normalizeDomain(domain: string): string {
-  return String(domain || '').trim().toLowerCase();
+  return String(domain || '')
+    .trim()
+    .toLowerCase();
 }
 
 export function domainNamespace(domain: string): string {
@@ -84,7 +86,7 @@ export async function loadDomainRegistry(inputPath?: string): Promise<DomainRegi
     const parsed = JSON.parse(await readFile(path, 'utf8')) as DomainRegistryDocument;
     const rows = Array.isArray(parsed?.domains) ? parsed.domains : [];
     const entries = rows
-      .map((row) => ({
+      .map(row => ({
         domain: normalizeDomain(String(row?.domain || '')),
         zone: normalizeText(row?.zone),
         bucket: normalizeText(row?.bucket),
@@ -93,7 +95,7 @@ export async function loadDomainRegistry(inputPath?: string): Promise<DomainRegi
         requiredHeader: normalizeText(row?.requiredHeader)?.toLowerCase() || null,
         tokenEnvVar: normalizeText(row?.tokenEnvVar),
       }))
-      .filter((row) => Boolean(row.domain));
+      .filter(row => Boolean(row.domain));
     return {
       path,
       version: normalizeText(parsed?.version),
@@ -112,7 +114,7 @@ export async function loadDomainRegistry(inputPath?: string): Promise<DomainRegi
 function findEntry(entries: DomainRegistryEntry[], domain: string): DomainRegistryEntry | null {
   const normalized = normalizeDomain(domain);
   if (!normalized) return null;
-  return entries.find((entry) => normalizeDomain(entry.domain) === normalized) || null;
+  return entries.find(entry => normalizeDomain(entry.domain) === normalized) || null;
 }
 
 export async function resolveDomainRegistry(
@@ -130,15 +132,16 @@ export async function resolveDomainRegistry(
   const data = await loadDomainRegistry(fallback.path);
   const entry = findEntry(data.entries, normalized);
 
-  const prefix = normalizeText(fallback.prefix)
-    || normalizeText(entry?.prefix)
-    || `domains/${namespace}/cloudflare`;
+  const prefix =
+    normalizeText(fallback.prefix) ||
+    normalizeText(entry?.prefix) ||
+    `domains/${namespace}/cloudflare`;
   const tokenEnvVar = normalizeText(entry?.tokenEnvVar);
   const tokenRaw = tokenEnvVar ? normalizeText(Bun.env[tokenEnvVar]) : null;
   const sharedTokenRaw = normalizeText(Bun.env.FACTORY_WAGER_TOKEN);
   const domainTokenPresent = tokenEnvVar ? !isPlaceholderSecret(tokenRaw) : false;
   const sharedTokenPresent = !isPlaceholderSecret(sharedTokenRaw);
-  const tokenPresent = tokenEnvVar ? (domainTokenPresent || sharedTokenPresent) : null;
+  const tokenPresent = tokenEnvVar ? domainTokenPresent || sharedTokenPresent : null;
   const tokenSource: ResolvedDomainRegistry['tokenSource'] = !tokenEnvVar
     ? 'none'
     : domainTokenPresent
@@ -155,9 +158,9 @@ export async function resolveDomainRegistry(
     endpoint: normalizeText(fallback.endpoint) || normalizeText(entry?.endpoint),
     prefix: String(prefix).replace(/^\/+|\/+$/g, ''),
     requiredHeader:
-      normalizeText(entry?.requiredHeader)?.toLowerCase()
-      || normalizeText(Bun.env.FACTORY_WAGER_REQUIRED_HEADER)?.toLowerCase()
-      || null,
+      normalizeText(entry?.requiredHeader)?.toLowerCase() ||
+      normalizeText(Bun.env.FACTORY_WAGER_REQUIRED_HEADER)?.toLowerCase() ||
+      null,
     tokenEnvVar,
     tokenPresent,
     tokenSource,

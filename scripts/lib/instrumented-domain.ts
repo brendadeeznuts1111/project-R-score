@@ -3,7 +3,14 @@ import { performance } from 'node:perf_hooks';
 
 export type DomainConfig = Record<string, unknown>;
 
-export type DomainResource = 'DOM' | 'CSS' | 'BASE_JS' | 'CHARTS' | 'ANIMATION' | 'A11Y_AUDIT' | 'THEME_PRESETS';
+export type DomainResource =
+  | 'DOM'
+  | 'CSS'
+  | 'BASE_JS'
+  | 'CHARTS'
+  | 'ANIMATION'
+  | 'A11Y_AUDIT'
+  | 'THEME_PRESETS';
 
 export type DomainResources = {
   core: DomainResource[];
@@ -53,8 +60,7 @@ export class InstrumentedDomain extends Domain {
     };
 
     const estimatedMemory =
-      JSON.stringify(snapshot).length * 2 +
-      Object.keys(this.config).length * 8;
+      JSON.stringify(snapshot).length * 2 + Object.keys(this.config).length * 8;
 
     snapshot.generationTime = Number((performance.now() - start).toFixed(4));
     snapshot.memoryFootprint = estimatedMemory;
@@ -63,12 +69,10 @@ export class InstrumentedDomain extends Domain {
 
   async loadResources(): Promise<DomainResources> {
     const core = await this.time('core', () => this.loadCoreResources());
-    const enhanced = this.memory >= 256
-      ? await this.time('enhanced', () => this.loadEnhancedResources())
-      : [];
-    const optional = this.tension >= 0.8
-      ? await this.time('optional', () => this.loadOptionalResources())
-      : [];
+    const enhanced =
+      this.memory >= 256 ? await this.time('enhanced', () => this.loadEnhancedResources()) : [];
+    const optional =
+      this.tension >= 0.8 ? await this.time('optional', () => this.loadOptionalResources()) : [];
 
     return { core, enhanced, optional };
   }

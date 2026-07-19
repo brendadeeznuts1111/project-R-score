@@ -159,7 +159,9 @@ function loadConfig(): Required<DomainBrandingConfig> {
 }
 
 export function resolveDomainBranding(domainOrHost: string): DomainBrandingResolution {
-  const normalizedInput = String(domainOrHost || '').trim().toLowerCase();
+  const normalizedInput = String(domainOrHost || '')
+    .trim()
+    .toLowerCase();
   const cached = RESOLUTION_CACHE.get(normalizedInput);
   if (cached) {
     return cached;
@@ -197,7 +199,8 @@ export function resolveDomainBranding(domainOrHost: string): DomainBrandingResol
     lightness,
     palette: {
       primary: generated.palette.primary,
-      secondary: Bun.color(secondary, 'hex') || generated.palette.analogous[0] || generated.palette.primary,
+      secondary:
+        Bun.color(secondary, 'hex') || generated.palette.analogous[0] || generated.palette.primary,
       accent: Bun.color(accent, 'hex') || generated.palette.complementary,
     },
     contrast: {

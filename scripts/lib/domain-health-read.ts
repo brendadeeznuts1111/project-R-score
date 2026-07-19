@@ -62,10 +62,13 @@ function clamp01(value: number): number {
 }
 
 function parseLevel(value: unknown): DomainHealthLevel {
-  const text = String(value || '').trim().toLowerCase();
+  const text = String(value || '')
+    .trim()
+    .toLowerCase();
   if (text === 'healthy' || text === 'ok' || text === 'pass') return 'healthy';
   if (text === 'degraded' || text === 'warning' || text === 'warn') return 'degraded';
-  if (text === 'critical' || text === 'unhealthy' || text === 'fail' || text === 'error') return 'critical';
+  if (text === 'critical' || text === 'unhealthy' || text === 'fail' || text === 'error')
+    return 'critical';
   return 'unknown';
 }
 
@@ -84,7 +87,8 @@ function toLevelFromRatio(ratio: number): DomainHealthLevel {
 
 function resolveR2Config(): R2Config | null {
   const accountId = Bun.env.R2_ACCOUNT_ID || '';
-  const endpoint = Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
+  const endpoint =
+    Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
   const bucket = Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
   const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
   const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
@@ -113,21 +117,27 @@ function pullStrictP95(snapshot: any): number | undefined {
   return Number.isFinite(value) ? value : undefined;
 }
 
-function strictPenaltyStatus(strictP95Ms: number | undefined, threshold: number | undefined): DomainHealthLevel {
+function strictPenaltyStatus(
+  strictP95Ms: number | undefined,
+  threshold: number | undefined
+): DomainHealthLevel {
   if (!Number.isFinite(strictP95Ms) || !Number.isFinite(threshold)) return 'unknown';
   return strictP95Ms <= threshold ? 'healthy' : 'critical';
 }
 
-async function loadLocalHealth(input: Required<Pick<DomainHealthLoadInput, 'domain' | 'strictP95'>> & {
-  healthReportPath: string;
-  latestSnapshotPath: string;
-}): Promise<DomainHealthSummary> {
+async function loadLocalHealth(
+  input: Required<Pick<DomainHealthLoadInput, 'domain' | 'strictP95'>> & {
+    healthReportPath: string;
+    latestSnapshotPath: string;
+  }
+): Promise<DomainHealthSummary> {
   const notes: string[] = [];
   const report = await readJsonFile(input.healthReportPath);
   const latest = await readJsonFile(input.latestSnapshotPath);
 
-  const checkedAt =
-    String(report?.timestamp || report?.status?.lastCheck || latest?.createdAt || new Date().toISOString());
+  const checkedAt = String(
+    report?.timestamp || report?.status?.lastCheck || latest?.createdAt || new Date().toISOString()
+  );
 
   const details = Array.isArray(report?.details) ? report.details : [];
   const domainRows = details.filter((row: any) => {
@@ -135,16 +145,21 @@ async function loadLocalHealth(input: Required<Pick<DomainHealthLoadInput, 'doma
     return host.includes(input.domain.toLowerCase());
   });
 
-  const domainHealthy = domainRows.filter((row: any) => parseLevel(row?.status) === 'healthy').length;
+  const domainHealthy = domainRows.filter(
+    (row: any) => parseLevel(row?.status) === 'healthy'
+  ).length;
   const dnsRatio = domainRows.length > 0 ? domainHealthy / domainRows.length : NaN;
   const dnsStatus = Number.isFinite(dnsRatio) ? toLevelFromRatio(dnsRatio) : 'unknown';
 
-  const overallStatus = parseLevel(report?.status?.overall || report?.summary?.overall || 'unknown');
+  const overallStatus = parseLevel(
+    report?.status?.overall || report?.summary?.overall || 'unknown'
+  );
   const overallResolved = overallStatus === 'unknown' ? dnsStatus : overallStatus;
 
-  const storageStatus = existsSync(input.healthReportPath) && existsSync(input.latestSnapshotPath)
-    ? 'healthy'
-    : 'degraded';
+  const storageStatus =
+    existsSync(input.healthReportPath) && existsSync(input.latestSnapshotPath)
+      ? 'healthy'
+      : 'degraded';
 
   const cookieStatus = 'unknown';
   notes.push('cookie telemetry unavailable in local health-report fallback');
@@ -196,7 +211,9 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
   }
 }
 
-async function loadR2Health(input: Required<Pick<DomainHealthLoadInput, 'domain' | 'strictP95' | 'timeoutMs' | 'r2Prefix'>>): Promise<DomainHealthSummary> {
+async function loadR2Health(
+  input: Required<Pick<DomainHealthLoadInput, 'domain' | 'strictP95' | 'timeoutMs' | 'r2Prefix'>>
+): Promise<DomainHealthSummary> {
   const notes: string[] = [];
   const cfg = resolveR2Config();
   if (!cfg) {
@@ -277,7 +294,7 @@ async function loadR2Health(input: Required<Pick<DomainHealthLoadInput, 'domain'
     score = clamp01(score);
 
     const status: DomainHealthLevel =
-      (!secure || !httpOnly)
+      !secure || !httpOnly
         ? 'critical'
         : score >= 0.85
           ? 'healthy'
@@ -287,7 +304,8 @@ async function loadR2Health(input: Required<Pick<DomainHealthLoadInput, 'domain'
 
     const telemetryNotes: string[] = ['cookie_telemetry_ctx_state_payload_used'];
     if (!active) telemetryNotes.push('cookie_state_inactive');
-    if (!(Number.isFinite(cookieCount) && cookieCount > 0)) telemetryNotes.push('cookie_payload_empty');
+    if (!(Number.isFinite(cookieCount) && cookieCount > 0))
+      telemetryNotes.push('cookie_payload_empty');
 
     return { status, score, notes: telemetryNotes };
   };
@@ -355,15 +373,17 @@ async function loadR2Health(input: Required<Pick<DomainHealthLoadInput, 'domain'
       dns: { status: 'unknown', score: scoreFromLevel('unknown') },
       storage: { status: 'critical', score: scoreFromLevel('critical') },
       cookie: { status: 'unknown', score: scoreFromLevel('unknown') },
-      notes: [
-        `r2_read_failed:${error instanceof Error ? error.message : String(error)}`,
-      ],
+      notes: [`r2_read_failed:${error instanceof Error ? error.message : String(error)}`],
     };
   }
 }
 
-export async function loadDomainHealthSummary(input: DomainHealthLoadInput = {}): Promise<DomainHealthSummary> {
-  const domain = (input.domain || Bun.env.SEARCH_BENCH_DOMAIN || 'factory-wager.com').trim().toLowerCase();
+export async function loadDomainHealthSummary(
+  input: DomainHealthLoadInput = {}
+): Promise<DomainHealthSummary> {
+  const domain = (input.domain || Bun.env.SEARCH_BENCH_DOMAIN || 'factory-wager.com')
+    .trim()
+    .toLowerCase();
   const source = input.source || 'local';
   const strictP95 = Number.isFinite(input.strictP95) ? Number(input.strictP95) : undefined;
   const timeoutMs = Number.isFinite(input.timeoutMs) ? Number(input.timeoutMs) : 2200;
@@ -371,10 +391,15 @@ export async function loadDomainHealthSummary(input: DomainHealthLoadInput = {})
     input.localHealthReportPath || Bun.env.DOMAIN_HEALTH_REPORT_PATH || 'reports/health-report.json'
   );
   const localLatestSnapshotPath = resolve(
-    input.localLatestSnapshotPath || Bun.env.DOMAIN_HEALTH_LATEST_SNAPSHOT_PATH || 'reports/search-benchmark/latest.json'
+    input.localLatestSnapshotPath ||
+      Bun.env.DOMAIN_HEALTH_LATEST_SNAPSHOT_PATH ||
+      'reports/search-benchmark/latest.json'
   );
-  const r2Prefix =
-    (input.r2Prefix || Bun.env.DOMAIN_HEALTH_R2_PREFIX || `domains/${domain}`).replace(/^\/+|\/+$/g, '');
+  const r2Prefix = (
+    input.r2Prefix ||
+    Bun.env.DOMAIN_HEALTH_R2_PREFIX ||
+    `domains/${domain}`
+  ).replace(/^\/+|\/+$/g, '');
 
   if (source === 'r2') {
     return loadR2Health({ domain, strictP95, timeoutMs, r2Prefix });
@@ -394,10 +419,18 @@ export function evaluateReadiness(
 ): ReadinessResult {
   const reasons: string[] = [];
 
-  const criticalSignals = [summary.overall.status, summary.dns.status, summary.storage.status, summary.cookie.status]
-    .filter((s) => s === 'critical').length;
-  const degradedSignals = [summary.overall.status, summary.dns.status, summary.storage.status, summary.cookie.status]
-    .filter((s) => s === 'degraded' || s === 'unknown').length;
+  const criticalSignals = [
+    summary.overall.status,
+    summary.dns.status,
+    summary.storage.status,
+    summary.cookie.status,
+  ].filter(s => s === 'critical').length;
+  const degradedSignals = [
+    summary.overall.status,
+    summary.dns.status,
+    summary.storage.status,
+    summary.cookie.status,
+  ].filter(s => s === 'degraded' || s === 'unknown').length;
 
   let status: 'healthy' | 'degraded' | 'critical' = 'healthy';
   if (criticalSignals > 0) {
@@ -407,7 +440,11 @@ export function evaluateReadiness(
   }
 
   const strictP95Ms = Number(summary.latency?.strictP95Ms);
-  if (Number.isFinite(strictP95Threshold) && Number.isFinite(strictP95Ms) && strictP95Ms > strictP95Threshold) {
+  if (
+    Number.isFinite(strictP95Threshold) &&
+    Number.isFinite(strictP95Ms) &&
+    strictP95Ms > strictP95Threshold
+  ) {
     status = 'critical';
     reasons.push(`strict_p95_exceeded:${strictP95Ms}>${strictP95Threshold}`);
   }

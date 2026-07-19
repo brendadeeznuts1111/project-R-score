@@ -47,8 +47,7 @@ export async function readBunfigInstall(
     const install = parsed.install ?? null;
     const home = resolveHome();
     const rawDir = install?.cache?.dir ?? null;
-    const cacheDir =
-      rawDir && home ? expandTilde(rawDir, home) : rawDir ? rawDir : null;
+    const cacheDir = rawDir && home ? expandTilde(rawDir, home) : rawDir ? rawDir : null;
     return { install, cacheDir };
   } catch {
     return { install: null, cacheDir: null };
@@ -85,10 +84,8 @@ export function resolveEffectiveInstallPolicy(
   project: MachineBunfigSnapshot,
   machine: MachineBunfigSnapshot
 ): EffectiveInstallPolicy {
-  const linker =
-    project.install?.linker ?? machine.install?.linker ?? null;
-  const globalStore =
-    project.install?.globalStore ?? machine.install?.globalStore ?? null;
+  const linker = project.install?.linker ?? machine.install?.linker ?? null;
+  const globalStore = project.install?.globalStore ?? machine.install?.globalStore ?? null;
   const cacheDir = project.cacheDir ?? machine.cacheDir ?? null;
 
   return {
@@ -96,22 +93,20 @@ export function resolveEffectiveInstallPolicy(
     globalStore,
     cacheDir,
     source: {
-      linker: project.install?.linker != null
-        ? 'project'
-        : machine.install?.linker != null
-          ? 'machine'
-          : 'unset',
+      linker:
+        project.install?.linker != null
+          ? 'project'
+          : machine.install?.linker != null
+            ? 'machine'
+            : 'unset',
       globalStore:
         project.install?.globalStore != null
           ? 'project'
           : machine.install?.globalStore != null
             ? 'machine'
             : 'unset',
-      cacheDir: project.cacheDir != null
-        ? 'project'
-        : machine.cacheDir != null
-          ? 'machine'
-          : 'unset',
+      cacheDir:
+        project.cacheDir != null ? 'project' : machine.cacheDir != null ? 'machine' : 'unset',
     },
   };
 }

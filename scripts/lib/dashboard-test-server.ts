@@ -1,8 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { createServer } from "node:net";
-import { applyDashboardEnv, resolveDashboardEnvConfig } from "./dashboard-env";
+import { createServer } from 'node:net';
+import { applyDashboardEnv, resolveDashboardEnvConfig } from './dashboard-env';
 
-const SERVER_CMD = ["bun", "run", "scratch/bun-v1.3.9-examples/playground-web/server.ts"];
+const SERVER_CMD = ['bun', 'run', 'scratch/bun-v1.3.9-examples/playground-web/server.ts'];
 
 export type DashboardTestConfig = {
   host: string;
@@ -19,7 +19,11 @@ export function applyDashboardTestEnv(config: DashboardTestConfig): void {
   applyDashboardEnv(config);
 }
 
-function parsePortRange(value: string, fallbackStart: number, fallbackEnd: number): { start: number; end: number } {
+function parsePortRange(
+  value: string,
+  fallbackStart: number,
+  fallbackEnd: number
+): { start: number; end: number } {
   const match = value.trim().match(/^(\d+)-(\d+)$/);
   if (!match) return { start: fallbackStart, end: fallbackEnd };
   const start = Number.parseInt(match[1], 10);
@@ -31,10 +35,10 @@ function parsePortRange(value: string, fallbackStart: number, fallbackEnd: numbe
 }
 
 async function isPortAvailable(port: number): Promise<boolean> {
-  return await new Promise((resolve) => {
+  return await new Promise(resolve => {
     const probe = createServer();
-    probe.once("error", () => resolve(false));
-    probe.once("listening", () => probe.close(() => resolve(true)));
+    probe.once('error', () => resolve(false));
+    probe.once('listening', () => probe.close(() => resolve(true)));
     probe.listen(port);
   });
 }
@@ -53,17 +57,20 @@ async function findFallbackPort(fromPort: number): Promise<number | null> {
 function detectPortOwner(port: number): { ownerPid: number | null; ownerCommand: string | null } {
   try {
     const result = Bun.spawnSync({
-      cmd: ["lsof", "-nP", `-iTCP:${port}`, "-sTCP:LISTEN"],
-      stdout: "pipe",
-      stderr: "pipe",
+      cmd: ['lsof', '-nP', `-iTCP:${port}`, '-sTCP:LISTEN'],
+      stdout: 'pipe',
+      stderr: 'pipe',
     });
     const text = result.stdout.toString().trim();
-    const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    const lines = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean);
     if (lines.length < 2) return { ownerPid: null, ownerCommand: null };
     const parts = lines[1].split(/\s+/);
     return {
       ownerCommand: parts[0] || null,
-      ownerPid: Number.parseInt(parts[1] || "", 10) || null,
+      ownerPid: Number.parseInt(parts[1] || '', 10) || null,
     };
   } catch {
     return { ownerPid: null, ownerCommand: null };
@@ -73,7 +80,7 @@ function detectPortOwner(port: number): { ownerPid: number | null; ownerCommand:
 export async function withDashboardServer<T>(
   host: string,
   port: number,
-  run: () => Promise<T>,
+  run: () => Promise<T>
 ): Promise<T> {
   const allowFallback = resolveDashboardEnvConfig(port).allowFallback;
   let activePort = port;
@@ -110,19 +117,20 @@ export async function withDashboardServer<T>(
         }
         if (!allowFallback) {
           const owner = detectPortOwner(activePort);
-          const ownerDetail = owner.ownerPid || owner.ownerCommand
-            ? `pid=${owner.ownerPid ?? "unknown"} cmd=${owner.ownerCommand ?? "unknown"}`
-            : "unknown owner";
+          const ownerDetail =
+            owner.ownerPid || owner.ownerCommand
+              ? `pid=${owner.ownerPid ?? 'unknown'} cmd=${owner.ownerCommand ?? 'unknown'}`
+              : 'unknown owner';
           throw new Error(
             `dashboard test port ${activePort} is busy (${ownerDetail}). ` +
-              "Set DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true or choose DASHBOARD_TEST_PORT."
+              'Set DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true or choose DASHBOARD_TEST_PORT.'
           );
         }
         const fallbackPort = await findFallbackPort(activePort);
         if (fallbackPort == null) {
           throw new Error(
             `dashboard test port ${activePort} is busy and no fallback port found. ` +
-              "Adjust DASHBOARD_TEST_PORT_RANGE."
+              'Adjust DASHBOARD_TEST_PORT_RANGE.'
           );
         }
         activePort = fallbackPort;
@@ -133,16 +141,16 @@ export async function withDashboardServer<T>(
 
       serverProc = Bun.spawn({
         cmd: SERVER_CMD,
-        stdout: "inherit",
-        stderr: "inherit",
-        stdin: "ignore",
+        stdout: 'inherit',
+        stderr: 'inherit',
+        stdin: 'ignore',
         env: {
           ...process.env,
           DASHBOARD_HOST: host,
           DASHBOARD_PORT: String(activePort),
           PLAYGROUND_PORT: String(activePort),
           PORT: String(activePort),
-          PLAYGROUND_ALLOW_PORT_FALLBACK: "false",
+          PLAYGROUND_ALLOW_PORT_FALLBACK: 'false',
         },
       });
       startedHere = true;

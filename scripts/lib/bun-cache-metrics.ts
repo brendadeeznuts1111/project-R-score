@@ -44,11 +44,7 @@ function countLinksEntries(linksDir: string): number {
     { stdout: 'pipe' }
   );
   if (found.exitCode !== 0 || !found.stdout) return 0;
-  return new TextDecoder()
-    .decode(found.stdout)
-    .trim()
-    .split('\n')
-    .filter(Boolean).length;
+  return new TextDecoder().decode(found.stdout).trim().split('\n').filter(Boolean).length;
 }
 
 /** Collect Bun install cache + global store metrics (no destructive operations). */
@@ -73,13 +69,14 @@ export async function collectBunCacheMetrics(): Promise<BunCacheMetrics> {
   let bunPmCachePath: string | null = null;
   const pmCache = Bun.spawnSync(['bun', 'pm', 'cache'], { stdout: 'pipe', stderr: 'pipe' });
   if (pmCache.exitCode === 0 && pmCache.stdout) {
-    bunPmCachePath = new TextDecoder()
-      .decode(pmCache.stdout)
-      .trim()
-      .split('\n')
-      .filter(line => line && !line.startsWith('['))
-      .pop()
-      ?.trim() ?? null;
+    bunPmCachePath =
+      new TextDecoder()
+        .decode(pmCache.stdout)
+        .trim()
+        .split('\n')
+        .filter(line => line && !line.startsWith('['))
+        .pop()
+        ?.trim() ?? null;
   }
 
   return {
@@ -112,7 +109,10 @@ export function resolvePruneMaxBytes(): number {
   return Number.isFinite(mb) && mb > 0 ? mb * 1024 * 1024 : 2048 * 1024 * 1024;
 }
 
-export function shouldPruneCache(metrics: BunCacheMetrics, maxBytes: number): {
+export function shouldPruneCache(
+  metrics: BunCacheMetrics,
+  maxBytes: number
+): {
   wouldPrune: boolean;
   reason: string;
 } {
