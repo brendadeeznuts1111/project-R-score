@@ -1,4 +1,5 @@
-// lib/mcp/stdio-jsonrpc.ts — Bun-native MCP stdio transport (Content-Length + NDJSON fallback)
+// lib/mcp/stdio-jsonrpc.ts — Bun-native MCP stdio transport (framing-agnostic: mirrors the
+// client's framing — Content-Length headers (Cursor) or bare NDJSON lines (kimi-code))
 
 export type JsonRpcMessage = {
   jsonrpc: '2.0';
@@ -13,6 +14,16 @@ export type ToolCallResult = {
   content: ToolTextContent[];
   isError?: boolean;
 };
+
+type ClientFraming = 'content-length' | 'ndjson';
+
+/** Framing detected from the client's input; responses mirror it. Default: Content-Length. */
+let clientFraming: ClientFraming = 'content-length';
+
+/** Current negotiated framing (env `DX_MCP_NDJSON=1` forces ndjson). */
+export function stdioFraming(): ClientFraming {
+  return Bun.env.DX_MCP_NDJSON === '1' ? 'ndjson' : clientFraming;
+}
 
 export function toolJson(data: unknown, pretty = true): ToolCallResult {
   return {
@@ -79,6 +90,7 @@ export async function* readJsonRpcStream(
           if (buffer.length < bodyEnd) break;
           const body = buffer.slice(bodyStart, bodyEnd);
           buffer = buffer.slice(bodyEnd);
+          clientFraming = 'content-length';
           yield JSON.parse(body) as JsonRpcMessage;
           continue;
         }
@@ -89,6 +101,7 @@ export async function* readJsonRpcStream(
       const line = buffer.slice(0, nl).trim();
       buffer = buffer.slice(nl + 1);
       if (!line || !line.startsWith('{')) continue;
+      clientFraming = 'ndjson';
       yield JSON.parse(line) as JsonRpcMessage;
     }
   }
@@ -96,7 +109,7 @@ export async function* readJsonRpcStream(
 
 export function writeJsonRpc(msg: object): void {
   const json = JSON.stringify(msg);
-  if (Bun.env.DX_MCP_NDJSON === '1') {
+  if (stdioFraming() === 'ndjson') {
     Bun.stdout.write(json + '\n');
     return;
   }
