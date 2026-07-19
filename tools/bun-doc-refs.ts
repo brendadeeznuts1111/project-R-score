@@ -226,11 +226,20 @@ async function validate(paths: string[]): Promise<number> {
   const urls = new Set<string>();
   for (const file of await tsFiles(paths)) {
     const text = await Bun.file(file).text();
-    for (const m of text.matchAll(urlRe)) {
-      // Skip template-literal stems: `https://.../tree/${var}` is not a real URL
-      const after = text.slice(m.index! + m[0].length, m.index! + m[0].length + 2);
-      if (after === '${') continue;
-      urls.add(m[0].replace(/[).,;*]+$/, ''));
+    // Skip intentional placeholder URLs: lines/blocks marked @planned are
+    // cataloged future links, not live references (e.g. domains.ts catalog)
+    const lines = text.split('\n');
+    let plannedBlock = false;
+    for (const line of lines) {
+      if (line.includes('@planned')) plannedBlock = true;
+      else if (line.trim().startsWith('};') || line.trim().startsWith('];')) plannedBlock = false;
+      if (plannedBlock) continue;
+      for (const m of line.matchAll(urlRe)) {
+        // Skip template-literal stems: `https://.../tree/${var}` is not a real URL
+        const after = line.slice(m.index! + m[0].length, m.index! + m[0].length + 2);
+        if (after === '${') continue;
+        urls.add(m[0].replace(/[).,;*]+$/, ''));
+      }
     }
   }
   let bad = 0;
@@ -486,9 +495,12 @@ const REPO_ROOT = new URL('..', import.meta.url).pathname;
  * Regenerate the docs index after a PASS. Returns { ok, pages, anchors }
  * parsed from the generator's stdout, or { ok: false } on any failure.
  */
-async function regenIndex(): Promise<
-  { ok: boolean; pages?: number; anchors?: number; error?: string }
-> {
+async function regenIndex(): Promise<{
+  ok: boolean;
+  pages?: number;
+  anchors?: number;
+  error?: string;
+}> {
   try {
     const proc = Bun.spawn(['bun', 'tools/bun-docs-index-gen.ts'], {
       cwd: REPO_ROOT,

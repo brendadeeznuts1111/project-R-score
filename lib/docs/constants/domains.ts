@@ -172,9 +172,9 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     // Package directories
     PACKAGES: {
       BUN_TYPES: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-      BUN_TEST: 'https://github.com/oven-sh/bun/tree/main/packages/bun-test',
-      BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages/bun-ffi',
-      BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages/bun-pm',
+      BUN_TEST: 'https://github.com/oven-sh/bun/tree/main/packages',
+      BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages',
+      BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages',
     },
 
     // Specific commits (with commit hash pattern)
@@ -261,7 +261,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.RSS_FEEDS]: {
     BASE: 'https://bun.sh',
     MAIN_FEED: 'https://bun.sh/rss.xml',
-    BLOG_FEED: 'https://bun.com/blog/rss.xml',
+    BLOG_FEED: 'https://bun.com/rss.xml',
   },
 
   // Legacy providers (deprecated - kept for backward compatibility)
@@ -319,32 +319,32 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_REFERENCE]: {
     BASE: Bun.env.BUN_REFERENCE_URL || 'https://bun.com',
     REFERENCE: 'https://bun.com/reference',
-    API_REFERENCE: 'https://bun.com/reference/api',
-    CLI_REFERENCE: 'https://bun.com/reference/cli',
-    CONFIG_REFERENCE: 'https://bun.com/reference/config',
-    ENVIRONMENT_REFERENCE: 'https://bun.com/reference/environment',
-    PACKAGES_REFERENCE: 'https://bun.com/reference/packages',
-    TEMPLATES_REFERENCE: 'https://bun.com/reference/templates',
-    TUTORIALS: 'https://bun.com/reference/tutorials',
-    COOKBOOK: 'https://bun.com/reference/cookbook',
-    CHEATSHEET: 'https://bun.com/reference/cheatsheet',
-    GLOSSARY: 'https://bun.com/reference/glossary',
+    API_REFERENCE: 'https://bun.com/reference',
+    CLI_REFERENCE: 'https://bun.com/reference',
+    CONFIG_REFERENCE: 'https://bun.com/reference',
+    ENVIRONMENT_REFERENCE: 'https://bun.com/reference',
+    PACKAGES_REFERENCE: 'https://bun.com/reference',
+    TEMPLATES_REFERENCE: 'https://bun.com/reference',
+    TUTORIALS: 'https://bun.com/reference',
+    COOKBOOK: 'https://bun.com/reference',
+    CHEATSHEET: 'https://bun.com/reference',
+    GLOSSARY: 'https://bun.com/reference',
   },
 
   [DocumentationProvider.BUN_GUIDES]: {
     BASE: Bun.env.BUN_GUIDES_URL || 'https://bun.com',
     GUIDES: 'https://bun.com/guides',
-    GETTING_STARTED: 'https://bun.com/guides/getting-started',
-    TUTORIALS: 'https://bun.com/guides/tutorials',
-    HOW_TO: 'https://bun.com/guides/how-to',
-    BEST_PRACTICES: 'https://bun.com/guides/best-practices',
-    MIGRATION: 'https://bun.com/guides/migration',
-    TROUBLESHOOTING: 'https://bun.com/guides/troubleshooting',
-    FAQ: 'https://bun.com/guides/faq',
-    COMMUNITY: 'https://bun.com/guides/community',
-    STEP_BY_STEP: 'https://bun.com/guides/step-by-step',
-    VIDEO_TUTORIALS: 'https://bun.com/guides/video-tutorials',
-    INTERACTIVE: 'https://bun.com/guides/interactive',
+    GETTING_STARTED: 'https://bun.com/docs/quickstart',
+    TUTORIALS: 'https://bun.com/guides',
+    HOW_TO: 'https://bun.com/guides',
+    BEST_PRACTICES: 'https://bun.com/guides',
+    MIGRATION: 'https://bun.com/guides',
+    TROUBLESHOOTING: 'https://bun.com/guides',
+    FAQ: 'https://bun.com/guides',
+    COMMUNITY: 'https://bun.com/discord',
+    STEP_BY_STEP: 'https://bun.com/guides',
+    VIDEO_TUTORIALS: 'https://bun.com/guides',
+    INTERACTIVE: 'https://bun.com/guides',
   },
 
   // @planned — bun.com/tutorials/* URLs do not exist yet
@@ -370,19 +370,19 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_RSS]: {
     BASE: 'https://bun.com',
     MAIN_RSS: 'https://bun.com/rss.xml',
-    BLOG_RSS: 'https://bun.com/blog/rss.xml',
-    RELEASES_RSS: 'https://bun.com/releases/rss.xml',
+    BLOG_RSS: 'https://bun.com/rss.xml',
+    RELEASES_RSS: 'https://bun.com/rss.xml',
     SECURITY_RSS: 'https://bun.com/security/rss.xml',
     COMMUNITY_RSS: 'https://bun.com/community/rss.xml',
-    GUIDES_RSS: 'https://bun.com/guides/rss.xml',
+    GUIDES_RSS: 'https://bun.com/rss.xml',
   },
 
   [DocumentationProvider.BUN_FEEDS]: {
     BASE: 'https://bun.com',
     MAIN_FEED: 'https://bun.com/rss.xml',
     TECHNICAL_FEED: 'https://bun.sh/rss.xml',
-    BLOG_FEED: 'https://bun.com/blog/rss.xml',
-    RELEASES_FEED: 'https://bun.com/releases/rss.xml',
+    BLOG_FEED: 'https://bun.com/rss.xml',
+    RELEASES_FEED: 'https://bun.com/rss.xml',
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
     COMMUNITY_FEED: 'https://bun.com/community/rss.xml',
   },
@@ -499,7 +499,7 @@ export const QUICK_REFERENCE_URLS = {
   // Typed array documentation across all domains
   TYPED_ARRAY: {
     TECHNICAL: 'https://bun.sh/docs/runtime/binary-data#typedarray', // Technical docs
-    REFERENCE: 'https://bun.com/reference/api/binary-data#typedarray', // Interactive reference
+    REFERENCE: 'https://bun.com/reference/binary-data#typedarray', // Interactive reference
     GUIDE: 'https://bun.com/guides/working-with-binary-data', // User guide
     EXAMPLE: 'https://bun.com/examples/typedarray-usage', // Code examples
     GITHUB: 'https://github.com/oven-sh/bun/tree/main/src/js/builtins/builtins-array.cc', // Source code
@@ -508,7 +508,7 @@ export const QUICK_REFERENCE_URLS = {
   // Fetch API documentation
   FETCH_API: {
     TECHNICAL: 'https://bun.sh/docs/runtime/networking/fetch', // Technical docs
-    REFERENCE: 'https://bun.com/reference/api/fetch', // Interactive reference
+    REFERENCE: 'https://bun.com/reference/fetch', // Interactive reference
     GUIDE: 'https://bun.com/guides/making-http-requests', // User guide
     EXAMPLE: 'https://bun.com/examples/fetch-usage', // Code examples
     TUTORIAL: 'https://bun.com/tutorials/http-requests', // Interactive tutorial
@@ -518,8 +518,8 @@ export const QUICK_REFERENCE_URLS = {
   RSS_FEEDS: {
     MAIN: 'https://bun.com/rss.xml', // Main bun.com RSS
     TECHNICAL: 'https://bun.sh/rss.xml', // Technical bun.sh RSS
-    BLOG: 'https://bun.com/blog/rss.xml', // Blog RSS
-    RELEASES: 'https://bun.com/releases/rss.xml', // Release announcements
+    BLOG: 'https://bun.com/rss.xml', // Blog RSS
+    RELEASES: 'https://bun.com/rss.xml', // Release announcements
     SECURITY: 'https://bun.com/security/rss.xml', // Security updates
     COMMUNITY: 'https://bun.com/community/rss.xml', // Community updates
   },
@@ -527,7 +527,7 @@ export const QUICK_REFERENCE_URLS = {
   // Getting started across domains
   GETTING_STARTED: {
     QUICKSTART: 'https://bun.sh/docs/quickstart', // Technical quickstart
-    GUIDE: 'https://bun.com/guides/getting-started', // User-friendly guide
+    GUIDE: 'https://bun.com/docs/quickstart', // User-friendly guide
     TUTORIAL: 'https://bun.com/tutorials/beginner', // Interactive tutorial
     EXAMPLE: 'https://bun.com/examples/hello-world', // First example
     VIDEO: 'https://bun.com/tutorials/video/getting-started', // Video tutorial
@@ -536,25 +536,25 @@ export const QUICK_REFERENCE_URLS = {
   // API reference comparison
   API_REFERENCE: {
     TECHNICAL: 'https://bun.sh/docs/api', // Technical API docs
-    INTERACTIVE: 'https://bun.com/reference/api', // Interactive reference
-    CHEATSHEET: 'https://bun.com/reference/cheatsheet', // Quick reference
-    COOKBOOK: 'https://bun.com/reference/cookbook', // Recipe-style examples
-    GLOSSARY: 'https://bun.com/reference/glossary', // Terminology
+    INTERACTIVE: 'https://bun.com/reference', // Interactive reference
+    CHEATSHEET: 'https://bun.com/reference', // Quick reference
+    COOKBOOK: 'https://bun.com/reference', // Recipe-style examples
+    GLOSSARY: 'https://bun.com/reference', // Terminology
   },
 
   // CLI documentation
   CLI_REFERENCE: {
     TECHNICAL: 'https://bun.sh/docs/cli', // Technical CLI docs
-    REFERENCE: 'https://bun.com/reference/cli', // Interactive CLI reference
+    REFERENCE: 'https://bun.com/reference', // Interactive CLI reference
     GUIDE: 'https://bun.com/guides/cli-usage', // CLI usage guide
     EXAMPLES: 'https://bun.com/examples/cli-scripts', // CLI script examples
-    CHEATSHEET: 'https://bun.com/reference/cli#cheatsheet', // CLI cheatsheet
+    CHEATSHEET: 'https://bun.com/reference#cheatsheet', // CLI cheatsheet
   },
 
   // Installation guides
   INSTALLATION: {
     TECHNICAL: 'https://bun.sh/docs/installation', // Technical installation
-    GUIDE: 'https://bun.com/guides/getting-started#installation', // User-friendly installation
+    GUIDE: 'https://bun.com/docs/quickstart#installation', // User-friendly installation
     PLATFORM_SPECIFIC: {
       WINDOWS: 'https://bun.sh/docs/installation/windows',
       MACOS: 'https://bun.sh/docs/installation/macos',
