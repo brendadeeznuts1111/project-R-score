@@ -4,9 +4,19 @@ import { EventEmitter } from 'events';
 import { logger } from '../core/structured-logger';
 import { auditLogger } from './secret-audit-logger';
 import { createHash, timingSafeEqual } from 'crypto';
+import {
+  type SessionId,
+  type IdentityId,
+  type ChallengeId,
+  type PolicyId,
+  asSessionId,
+  asIdentityId,
+  asChallengeId,
+  asPolicyId,
+} from '../types/branded.ts';
 
 export interface Identity {
-  id: string;
+  id: IdentityId;
   type: 'user' | 'service' | 'device' | 'api_key';
   attributes: Record<string, any>;
   credentials: {
@@ -20,8 +30,8 @@ export interface Identity {
 }
 
 export interface SecurityContext {
-  identityId: string;
-  sessionId: string;
+  identityId: IdentityId;
+  sessionId: SessionId;
   ipAddress: string;
   userAgent?: string;
   timestamp: number;
@@ -34,7 +44,7 @@ export interface SecurityContext {
 }
 
 export interface AccessPolicy {
-  id: string;
+  id: PolicyId;
   name: string;
   description: string;
   resources: string[];
@@ -56,11 +66,11 @@ export interface AccessPolicy {
 }
 
 export interface SecurityEvent {
-  id: string;
+  id: string; // brand-ok — opaque event id passthrough (TODO(brand-rollout): evaluate EventId)
   type: 'authentication' | 'authorization' | 'access' | 'violation' | 'anomaly';
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: number;
-  identityId: string;
+  identityId: IdentityId;
   context: SecurityContext;
   resource?: string;
   action?: string;
@@ -75,12 +85,12 @@ export interface SecurityEvent {
 
 export class ZeroTrustManager extends EventEmitter {
   private static instance: ZeroTrustManager;
-  private identities: Map<string, Identity> = new Map();
-  private sessions: Map<string, SecurityContext> = new Map();
-  private policies: Map<string, AccessPolicy> = new Map();
+  private identities: Map<IdentityId, Identity> = new Map();
+  private sessions: Map<SessionId, SecurityContext> = new Map();
+  private policies: Map<PolicyId, AccessPolicy> = new Map();
   private events: SecurityEvent[] = [];
   private riskFactors: Map<string, number> = new Map();
-  private mfaChallenges: Map<string, { code: string; expires: number }> = new Map();
+  private mfaChallenges: Map<ChallengeId, { code: string; expires: number }> = new Map();
 
   private constructor() {
     super();
@@ -98,7 +108,7 @@ export class ZeroTrustManager extends EventEmitter {
   /**
    * Register a new identity
    */
-  async registerIdentity(identity: Omit<Identity, 'trustScore' | 'lastVerified'>): Promise<string> {
+  async registerIdentity(identity: Omit<Identity, 'trustScore' | 'lastVerified'>): Promise<IdentityId> {
     const fullIdentity: Identity = {
       ...identity,
       trustScore: 50, // Start with neutral trust
@@ -135,24 +145,25 @@ export class ZeroTrustManager extends EventEmitter {
    * Authenticate identity with continuous verification
    */
   async authenticate(
-    identityId: string,
+    identityId: string, // brand-ok — boundary accepts plain string; branded internally via asIdentityId
     credentials: any,
     context: SecurityContext
   ): Promise<{
     success: boolean;
-    sessionId?: string;
+    sessionId?: SessionId;
     trustScore: number;
     requiresMFA?: boolean;
     reason?: string;
   }> {
-    const identity = this.identities.get(identityId);
+    const id = asIdentityId(identityId); // boundary: brand at entry
+    const identity = this.identities.get(id);
     if (!identity) {
       await this.logSecurityEvent({
         id: this.generateEventId(),
         type: 'authentication',
         severity: 'medium',
         timestamp: Date.now(),
-        identityId,
+        identityId: id,
         context,
         result: 'failure',
         reason: 'Identity not found',
@@ -163,13 +174,13 @@ export class ZeroTrustManager extends EventEmitter {
     // Verify credentials
     const credentialValid = await this.verifyCredentials(identity, credentials);
     if (!credentialValid) {
-      await this.updateTrustScore(identityId, -20);
+      await this.updateTrustScore(id, -20);
       await this.logSecurityEvent({
         id: this.generateEventId(),
         type: 'authentication',
         severity: 'high',
         timestamp: Date.now(),
-        identityId,
+        identityId: id,
         context,
         result: 'failure',
         reason: 'Invalid credentials',
@@ -178,10 +189,10 @@ export class ZeroTrustManager extends EventEmitter {
     }
 
     // Calculate risk score
-    const riskScore = await this.calculateRiskScore(identityId, context);
+    const riskScore = await this.calculateRiskScore(id, context);
 
     // Check if MFA is required
-    const requiresMFA = await this.checkMFARequirement(identityId, context, riskScore);
+    const requiresMFA = await this.checkMFARequirement(id, context, riskScore);
 
     if (requiresMFA) {
       return {
@@ -196,21 +207,21 @@ export class ZeroTrustManager extends EventEmitter {
     const sessionId = this.generateSessionId();
     this.sessions.set(sessionId, {
       ...context,
-      identityId,
+      identityId: id,
       sessionId,
       timestamp: Date.now(),
       riskScore,
     });
 
     // Update trust score based on successful authentication
-    await this.updateTrustScore(identityId, 5);
+    await this.updateTrustScore(id, 5);
 
     await this.logSecurityEvent({
       id: this.generateEventId(),
       type: 'authentication',
       severity: 'low',
       timestamp: Date.now(),
-      identityId,
+      identityId: id,
       context,
       result: 'success',
       reason: 'Authentication successful',
@@ -219,7 +230,7 @@ export class ZeroTrustManager extends EventEmitter {
     logger.info(
       'Authentication successful',
       {
-        identityId,
+        identityId: id,
         sessionId,
         trustScore: identity.trustScore,
         riskScore,
@@ -238,16 +249,17 @@ export class ZeroTrustManager extends EventEmitter {
    * Verify access authorization
    */
   async authorize(
-    sessionId: string,
+    sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
     resource: string,
     action: string
   ): Promise<{
     allowed: boolean;
     reason?: string;
-    policyId?: string;
+    policyId?: PolicyId;
     riskScore: number;
   }> {
-    const session = this.sessions.get(sessionId);
+    const sid = asSessionId(sessionId); // boundary: brand at entry
+    const session = this.sessions.get(sid);
     if (!session) {
       return { allowed: false, reason: 'Invalid session', riskScore: 100 };
     }
@@ -260,7 +272,7 @@ export class ZeroTrustManager extends EventEmitter {
     // Re-verify session (continuous authentication)
     const sessionValid = await this.verifySession(session);
     if (!sessionValid) {
-      this.sessions.delete(sessionId);
+      this.sessions.delete(sid);
       return { allowed: false, reason: 'Session expired or invalid', riskScore: 100 };
     }
 
@@ -300,13 +312,15 @@ export class ZeroTrustManager extends EventEmitter {
    * Challenge with MFA
    */
   async challengeMFA(
-    identityId: string,
-    sessionId: string
+    identityId: string, // brand-ok — boundary accepts plain string; branded internally via asIdentityId
+    sessionId: string // brand-ok — boundary accepts plain string; branded internally via asSessionId
   ): Promise<{
-    challengeId: string;
+    challengeId: ChallengeId;
     methods: string[];
     expires: number;
   }> {
+    const id = asIdentityId(identityId); // boundary: brand at entry
+    const sid = asSessionId(sessionId); // boundary: brand at entry
     const challengeId = this.generateChallengeId();
     const code = this.generateMFACode();
     const expires = Date.now() + 300000; // 5 minutes
@@ -318,8 +332,8 @@ export class ZeroTrustManager extends EventEmitter {
       type: 'authentication',
       severity: 'medium',
       timestamp: Date.now(),
-      identityId,
-      context: this.sessions.get(sessionId) || this.createMockContext(),
+      identityId: id,
+      context: this.sessions.get(sid) || this.createMockContext(),
       result: 'success',
       reason: 'MFA challenge issued',
     });
@@ -335,25 +349,26 @@ export class ZeroTrustManager extends EventEmitter {
    * Verify MFA response
    */
   async verifyMFA(
-    challengeId: string,
+    challengeId: string, // brand-ok — boundary accepts plain string; branded internally via asChallengeId
     response: string
   ): Promise<{
     success: boolean;
-    sessionId?: string;
+    sessionId?: SessionId;
     reason?: string;
   }> {
-    const challenge = this.mfaChallenges.get(challengeId);
+    const cid = asChallengeId(challengeId); // boundary: brand at entry
+    const challenge = this.mfaChallenges.get(cid);
     if (!challenge) {
       return { success: false, reason: 'Challenge not found or expired' };
     }
 
     if (Date.now() > challenge.expires) {
-      this.mfaChallenges.delete(challengeId);
+      this.mfaChallenges.delete(cid);
       return { success: false, reason: 'Challenge expired' };
     }
 
     const isValid = response === challenge.code; // Simplified verification
-    this.mfaChallenges.delete(challengeId);
+    this.mfaChallenges.delete(cid);
 
     if (isValid) {
       // In a real implementation, create session here
@@ -425,8 +440,8 @@ export class ZeroTrustManager extends EventEmitter {
    */
   private initializeDefaultPolicies(): void {
     // Admin access policy
-    this.policies.set('policy-admin', {
-      id: 'policy-admin',
+    this.policies.set(asPolicyId('policy-admin'), {
+      id: asPolicyId('policy-admin'),
       name: 'Admin Access',
       description: 'Full administrative access',
       resources: ['*'],
@@ -442,8 +457,8 @@ export class ZeroTrustManager extends EventEmitter {
     });
 
     // User access policy
-    this.policies.set('policy-user', {
-      id: 'policy-user',
+    this.policies.set(asPolicyId('policy-user'), {
+      id: asPolicyId('policy-user'),
       name: 'User Access',
       description: 'Standard user access',
       resources: ['user-data', 'profile'],
@@ -458,8 +473,8 @@ export class ZeroTrustManager extends EventEmitter {
     });
 
     // High-risk operations policy
-    this.policies.set('policy-sensitive', {
-      id: 'policy-sensitive',
+    this.policies.set(asPolicyId('policy-sensitive'), {
+      id: asPolicyId('policy-sensitive'),
       name: 'Sensitive Operations',
       description: 'Access to sensitive operations',
       resources: ['secrets', 'keys', 'audit-logs'],
@@ -490,7 +505,7 @@ export class ZeroTrustManager extends EventEmitter {
    */
   private async performContinuousVerification(): Promise<void> {
     const now = Date.now();
-    const expiredSessions: string[] = [];
+    const expiredSessions: SessionId[] = [];
 
     for (const [sessionId, session] of this.sessions) {
       // Check session age (max 1 hour)
@@ -616,7 +631,7 @@ export class ZeroTrustManager extends EventEmitter {
   /**
    * Calculate risk score
    */
-  private async calculateRiskScore(identityId: string, context: SecurityContext): Promise<number> {
+  private async calculateRiskScore(identityId: IdentityId, context: SecurityContext): Promise<number> {
     let riskScore = 0;
 
     // Base risk from context
@@ -657,7 +672,7 @@ export class ZeroTrustManager extends EventEmitter {
    * Check if MFA is required
    */
   private async checkMFARequirement(
-    identityId: string,
+    identityId: IdentityId,
     context: SecurityContext,
     riskScore: number
   ): Promise<boolean> {
@@ -684,7 +699,7 @@ export class ZeroTrustManager extends EventEmitter {
     context: SecurityContext,
     resource: string,
     action: string
-  ): Promise<{ allowed: boolean; reason?: string; policyId?: string }> {
+  ): Promise<{ allowed: boolean; reason?: string; policyId?: PolicyId }> {
     // Sort policies by priority (highest first)
     const sortedPolicies = Array.from(this.policies.values())
       .filter(p => p.enabled)
@@ -797,7 +812,7 @@ export class ZeroTrustManager extends EventEmitter {
   /**
    * Update trust score
    */
-  private async updateTrustScore(identityId: string, delta: number): Promise<void> {
+  private async updateTrustScore(identityId: IdentityId, delta: number): Promise<void> {
     const identity = this.identities.get(identityId);
     if (!identity) return;
 
@@ -847,8 +862,8 @@ export class ZeroTrustManager extends EventEmitter {
    */
   private createMockContext(): SecurityContext {
     return {
-      identityId: 'unknown',
-      sessionId: 'unknown',
+      identityId: asIdentityId('unknown'),
+      sessionId: asSessionId('unknown'),
       ipAddress: '127.0.0.1',
       timestamp: Date.now(),
       riskScore: 50,
@@ -862,12 +877,12 @@ export class ZeroTrustManager extends EventEmitter {
     return `evt-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
-  private generateSessionId(): string {
-    return `sess-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  private generateSessionId(): SessionId {
+    return asSessionId(`sess-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`);
   }
 
-  private generateChallengeId(): string {
-    return `chal-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  private generateChallengeId(): ChallengeId {
+    return asChallengeId(`chal-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`);
   }
 
   private generateMFACode(): string {

@@ -16,13 +16,18 @@
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 278 declarations at introduction):
- *   1. lib/security (95)     — userId, tokenId, sessionId
- *   2. lib/core (53)         — sessionId, requestId, snapshotId
- *   3. lib/mcp (47)          — id, requestId, documentId
- *   4. lib/registry (32)     — accountId, identityId, zone_id
+ * `bun tools/branded-id-check.ts` — 254 declarations remaining, baseline 274):
+ *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
+ *         lib/security/master-token.ts (TokenId)
+ *   IN FLIGHT: lib/security/zero-trust-manager.ts (SessionId, IdentityId,
+ *              ChallengeId, PolicyId)
+ *   1. lib/security (34)     — userId, tokenId, sessionId
+ *   2. lib/mcp (33)          — id, requestId, documentId
+ *   3. lib/core (31)         — sessionId, requestId, snapshotId
+ *   4. lib/registry (20)     — accountId, identityId, zone_id
  *   5. lib/docs + lib/utils  — remainder
- * Exemplar: lib/core/r2-session-manager.ts (SessionId).
+ * Pre-commit enforces zero NEW violations (added lines only) — the
+ * baseline only shrinks from here.
  */
 
 declare const brand: unique symbol;
@@ -54,6 +59,10 @@ export type TokenId = BrandedString<'TokenId'>;
 export type DocumentId = BrandedString<'DocumentId'>;
 export type ZoneId = BrandedString<'ZoneId'>;
 
+// ── Security / zero-trust ────────────────────────────────────────────────
+export type ChallengeId = BrandedString<'ChallengeId'>;
+export type PolicyId = BrandedString<'PolicyId'>;
+
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
@@ -74,3 +83,5 @@ export const asAccessKeyId = (v: string): AccessKeyId => makeId(v, 'AccessKeyId'
 export const asTokenId = (v: string): TokenId => makeId(v, 'TokenId');
 export const asDocumentId = (v: string): DocumentId => makeId(v, 'DocumentId');
 export const asZoneId = (v: string): ZoneId => makeId(v, 'ZoneId');
+export const asChallengeId = (v: string): ChallengeId => makeId(v, 'ChallengeId');
+export const asPolicyId = (v: string): PolicyId => makeId(v, 'PolicyId');

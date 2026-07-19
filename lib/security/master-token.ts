@@ -1,10 +1,12 @@
 // lib/security/master-token.ts — Master token management system
+// @see https://bun.com/docs/guides/process/argv — Bun.argv (CLI interface)
 
 import { createHmac, createHash, randomBytes } from 'node:crypto';
 import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
+import { type TokenId, asTokenId } from '../types/branded.ts';
 
 export interface MasterTokenConfig {
-  tokenId: string;
+  tokenId: TokenId;
   secret: string;
   expiresAt: Date;
   permissions: string[];
@@ -13,7 +15,7 @@ export interface MasterTokenConfig {
 
 export interface TokenValidation {
   valid: boolean;
-  tokenId?: string;
+  tokenId?: TokenId;
   permissions?: string[];
   expiresAt?: Date;
   reason?: string;
@@ -21,7 +23,7 @@ export interface TokenValidation {
 
 export interface AuditLog {
   timestamp: string;
-  tokenId: string;
+  tokenId: TokenId;
   action: 'create' | 'validate' | 'revoke' | 'rotate';
   success: boolean;
   ip?: string;
@@ -264,8 +266,8 @@ export class MasterTokenManager {
 
   // Private methods
 
-  private generateTokenId(): string {
-    return `mt_${Date.now()}_${randomBytes(8).toString('hex')}`;
+  private generateTokenId(): TokenId {
+    return asTokenId(`mt_${Date.now()}_${randomBytes(8).toString('hex')}`);
   }
 
   private generateSecret(): string {
@@ -280,7 +282,7 @@ export class MasterTokenManager {
 
   private decodeToken(
     token: string
-  ): { tokenId: string; secret: string; timestamp: number } | null {
+  ): { tokenId: TokenId; secret: string; timestamp: number } | null {
     try {
       const decoded = Buffer.from(token, 'base64').toString();
       const [payload, signature] = decoded.split('.');
@@ -308,7 +310,7 @@ export class MasterTokenManager {
         return null;
       }
 
-      return { tokenId, secret, timestamp };
+      return { tokenId: asTokenId(tokenId), secret, timestamp };
     } catch {
       return null;
     }
@@ -321,7 +323,7 @@ export class MasterTokenManager {
 
   private async logAudit(
     action: AuditLog['action'],
-    tokenId: string,
+    tokenId: string, // brand-ok — boundary accepts plain string ('unknown' sentinel, CLI input); branded into AuditLog via asTokenId
     success: boolean,
     ip?: string,
     userAgent?: string,
@@ -329,7 +331,7 @@ export class MasterTokenManager {
   ): Promise<void> {
     const logEntry: AuditLog = {
       timestamp: new Date().toISOString(),
-      tokenId,
+      tokenId: asTokenId(tokenId),
       action,
       success,
       ip,

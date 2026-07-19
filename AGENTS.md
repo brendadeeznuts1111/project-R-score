@@ -25,6 +25,8 @@ bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # → page + verified anchors
 bun tools/bun-doc-refs.ts url "Bun.stringWidth"   # → canonical URL
 ```
 
+Commands: `url` `list` `suggest` (index lookup) · `check`/`annotate` (find/insert `@see` refs) · `audit` (map anchors vs index) · `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity` (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) · `status` · `schedule` (Bun.cron daemon; `--once` for single runs) · `export` (hierarchical llms-full.txt)
+
 Rules:
 
 - When you use a `Bun.*` API in code, add `// @see <canonical-url>` from the `url`/`suggest` output to the file header (or run `bun tools/bun-doc-refs.ts annotate --write <files>` to do it automatically).
@@ -34,12 +36,13 @@ Rules:
 
 ## Branded ID types
 
-All new code must use branded string types for IDs (never bare `id: string` fields). Foundation: `lib/types/branded.ts` (`Brand`, domain brands, `asXId()` boundary constructors). Pattern: brand at system boundaries, pass branded values inside, `unbrand()` at serialization edges. Exemplar: `lib/core/r2-session-manager.ts`.
+All new code must use branded string types for IDs (never bare `id: string` fields). Foundation: `lib/types/branded.ts` (`Brand`, 15 domain brands, `asXId()` boundary constructors). Pattern: brand at system boundaries, pass branded values inside, `unbrand()` at serialization edges.
 
-- Detect violations: `bun tools/branded-id-check.ts [paths]` (report) · `--strict` (fail) · `--staged`
+- Detect violations: `bun tools/branded-id-check.ts [paths]` (report) · `--strict` (fail) · `--staged` (added lines only)
 - **Pre-commit enforced** (harness "Branded IDs" step): `--staged --strict` judges **only added lines** — new violations block the commit; editing legacy files with existing violations elsewhere does not
 - Suppress intentional passthroughs with `// brand-ok`
-- TODO(brand-rollout): 278 pre-existing declarations tracked in `lib/types/branded.ts` header — migrate by density (security → core → mcp → registry). New code has zero excuse.
+- Migrated exemplars: `lib/core/r2-session-manager.ts` (SessionId/TerminalId), `lib/security/master-token.ts` (TokenId)
+- TODO(brand-rollout): **254 pre-existing declarations remain** (baseline 274; tracked in `lib/types/branded.ts` header) — migrate by density: `lib/security` 34, `lib/mcp` 33, `lib/core` 31, `lib/registry` 20. In flight: `lib/security/zero-trust-manager.ts`. New code has zero excuse.
 
 ## Console depth (output verbosity)
 
