@@ -6,7 +6,7 @@
  *     https://bun.com/docs/api/console
  *   - CLI flag reference: https://bun.com/docs/runtime
  *   - Bun.inspect / Bun.inspect.table / Bun.inspect.custom / Bun.stringWidth /
- *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/api/utils
+ *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/runtime/utils
  *
  * Native layers (for plain console.log):
  *   --console-depth=N flag  >  bunfig.toml [console] depth (= 6 in this repo)
@@ -97,7 +97,43 @@ export function logTable(
   columns?: string[],
   options: { colors?: boolean } = {}
 ): void {
-  console.info(Bun.inspect.table(data as object[], columns, { colors: options.colors ?? shouldColor() }));
+  console.info(
+    Bun.inspect.table(data as object[], columns, { colors: options.colors ?? shouldColor() })
+  );
+}
+
+/** Re-export of Bun.inspect.custom — implement `[inspectCustom]()` on classes
+ *  to control how Bun.inspect/console.log print them. */
+export const inspectCustom = Bun.inspect.custom;
+
+const ANSI_RESET = '\x1b[0m';
+
+/** Colorize text via Bun.color (hex/rgb/named → ANSI-256). Respects shouldColor(). */
+export function colorize(text: string, color: string): string {
+  if (!shouldColor()) return text;
+  const code = Bun.color(color, 'ansi-256') || Bun.color(color, 'ansi-16m') || '';
+  return code ? `${code}${text}${ANSI_RESET}` : text;
+}
+
+/** Visual width of a string (ANSI-aware, emoji = 2). Thin alias of Bun.stringWidth.
+ *  Options mirror the Bun API: countAnsiEscapeCodes (default false),
+ *  ambiguousIsNarrow (default true) — https://bun.com/docs/runtime/utils#bun-stringwidth */
+export function widthOf(
+  text: string,
+  options: { countAnsiEscapeCodes?: boolean; ambiguousIsNarrow?: boolean } = {}
+): number {
+  return Bun.stringWidth(text, options);
+}
+
+/** Pad a string on the right to a visual column width (ANSI/emoji safe). */
+export function padEndWidth(text: string, width: number, fill = ' '): string {
+  const missing = width - Bun.stringWidth(text);
+  return missing > 0 ? text + fill.repeat(missing) : text;
+}
+
+/** Truncate to a visual column width without breaking ANSI codes or graphemes. */
+export function truncateWidth(text: string, width: number): string {
+  return Bun.stringWidth(text) <= width ? text : Bun.sliceAnsi(text, 0, width);
 }
 
 /** CLI args to forward the effective depth to a child `bun` process. */
