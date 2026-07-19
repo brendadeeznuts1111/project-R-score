@@ -1,0 +1,67 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`snapshots inspect() default formatting is stable 1`] = `
+"{
+  zebra: 1,
+  alpha: {
+    delta: 2,
+    bravo: [ 1, 2, 3 ],
+  },
+  mango: {
+    ripe: true,
+    count: 42,
+  },
+}"
+`;
+
+exports[`snapshots logSorted ordering is stable 1`] = `
+"{
+  alpha: {
+    bravo: [
+      1,
+      2,
+      3
+    ],
+    delta: 2,
+  },
+  mango: {
+    count: 42,
+    ripe: true,
+  },
+  zebra: 1,
+}"
+`;
+
+exports[`snapshots compact formatting is stable 1`] = `"{ zebra: 1, alpha: { delta: 2, bravo: [ 1, 2, 3 ] }, mango: { ripe: true, count: 42 } }"`;
+
+exports[`snapshots depth truncation is stable 1`] = `
+"{
+  zebra: 1,
+  alpha: {
+    delta: 2,
+    bravo: [ 1, 2, 3 ],
+  },
+  mango: {
+    ripe: true,
+    count: 42,
+  },
+}"
+`;
+
+exports[`snapshots logTable output is stable 1`] = `
+"┌───┬──────────┬────────┬───────┐
+│   │ tool     │ status │ tools │
+├───┼──────────┼────────┼───────┤
+│ 0 │ bun-docs │ ok     │ 4     │
+│ 1 │ dx       │ ok     │ 12    │
+└───┴──────────┴────────┴───────┘
+"
+`;
+
+exports[`snapshots padEndWidth / truncateWidth edges are stable 1`] = `
+[
+  "ok🔥    ",
+  "degraded",
+  "some very lo",
+]
+`;

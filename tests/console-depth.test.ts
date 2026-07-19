@@ -157,8 +157,7 @@ describe('inspectCustom', () => {
   });
 });
 
-describe('Bun API surface guard', () => {
-  // Fails loudly if a Bun upgrade removes/renames an API this module relies on.
+describe('Bun API surface guard', () => {  // Fails loudly if a Bun upgrade removes/renames an API this module relies on.
   // API declarations: https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
   test('referenced Bun APIs exist', () => {
     for (const name of ['stringWidth', 'sliceAnsi', 'stripANSI', 'wrapAnsi', 'color', 'inspect']) {
@@ -172,5 +171,53 @@ describe('Bun API surface guard', () => {
     // must still behave (false / fallback width), never throw.
     expect(process.stdout.isTTY === true).toBe(false);
     expect(typeof process.stdout.columns === 'undefined' || typeof process.stdout.columns === 'number').toBe(true);
+  });
+});
+
+/**
+ * Snapshot tests — deterministic output pinned via bun:test snapshots.
+ * https://bun.com/docs/test#snapshot-testing · https://bun.com/guides/test/snapshot
+ */
+describe('snapshots', () => {
+  const fixture = {
+    zebra: 1,
+    alpha: { delta: 2, bravo: [1, 2, 3] },
+    mango: { ripe: true, count: 42 },
+  };
+
+  test('inspect() default formatting is stable', () => {
+    expect(inspect(fixture, { colors: false })).toMatchSnapshot();
+  });
+
+  test('logSorted ordering is stable', () => {
+    expect(inspect(fixture, { colors: false, sorted: true })).toMatchSnapshot();
+  });
+
+  test('compact formatting is stable', () => {
+    expect(inspect(fixture, { colors: false, compact: true })).toMatchSnapshot();
+  });
+
+  test('depth truncation is stable', () => {
+    expect(inspect(fixture, { colors: false, depth: 1 })).toMatchSnapshot();
+  });
+
+  test('logTable output is stable', () => {
+    const table = Bun.inspect.table(
+      [
+        { tool: 'bun-docs', status: 'ok', tools: 4 },
+        { tool: 'dx', status: 'ok', tools: 12 },
+      ],
+      ['tool', 'status', 'tools'],
+      { colors: false }
+    );
+    expect(table).toMatchSnapshot();
+  });
+
+  test('padEndWidth / truncateWidth edges are stable', () => {
+    expect([
+      padEndWidth('ok🔥', 8),
+      padEndWidth('degraded', 8),
+      truncateWidth('some very long status line', 12),
+    ]).toMatchSnapshot();
   });
 });
