@@ -52,6 +52,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   console: 'https://bun.com/docs/runtime/console',
   '--console-depth': 'https://bun.com/docs/runtime/console',
   'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
+  'bun build --compile': 'https://bun.com/docs/bundler/executables',
+  'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
   // Node compatibility / TTY
   'process.stdout.isTTY': 'https://nodejs.org/api/tty.html',
   'process.stdout.columns': 'https://nodejs.org/api/tty.html',

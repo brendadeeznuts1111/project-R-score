@@ -328,3 +328,5 @@ artifacts/*.docx
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/
+# Compiled single-file executables (bun build --compile)
+tools/bin/bun-doc-refs

@@ -1684,6 +1684,7 @@
     "_disabled:test:unit": "bun test ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants",
     "test:snapshots:update": "bun test tests/console-depth.test.ts --update-snapshots",
     "test:scoped": "bun test tests/console-depth.test.ts",
+    "compile:doc-refs": "bun build tools/bun-doc-refs.ts --compile --outfile tools/bin/bun-doc-refs",
     "test:p2p": "bun run tests/p2p-proxy-quick-test.ts",
     "test:continuity": "bun run tests/business-continuity-test.ts",
     "test:payments": "bun run tests/payment-flow-demo.ts",
