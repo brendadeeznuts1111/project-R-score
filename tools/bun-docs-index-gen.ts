@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 /**
  * bun-docs-index-gen.ts — generate tools/bun-docs-index.json.
  *
@@ -131,12 +132,25 @@ async function main(): Promise<void> {
     }
   }
 
+  // Pin runtime version at ingest time (integrity/status dashboards consume this)
+  let upstreamBunVersion: string | null = null;
+  try {
+    const pkg = (await (await fetch('https://bun.com/package.json')).json()) as {
+      version?: string;
+    };
+    upstreamBunVersion = pkg.version ?? null;
+  } catch {
+    upstreamBunVersion = null;
+  }
+
   await Bun.write(
     OUT,
     JSON.stringify(
       {
         generated: new Date().toISOString(),
         source: LLMS_URL,
+        bunVersion: Bun.version,
+        upstreamBunVersion,
         taxonomy: tax ? 'tools/bun-docs-taxonomy.json' : null,
         taxonomyTagged: tagged,
         pages: entries.length,

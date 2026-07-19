@@ -11,8 +11,13 @@
  *   bun tools/bun-doc-refs.ts list               # print the whole reference map
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
+ *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
+ *   bun tools/bun-doc-refs.ts integrity --fix  # auto-heal taxonomy aliases, then re-check
+ *   bun tools/bun-doc-refs.ts status             # operator dashboard (last run · index · Bun)
+ *   bun tools/bun-doc-refs.ts schedule --once    # one integrity pass + JSONL log
  *
  * Adding a new API reference? Add it to CANONICAL_REFS below — one place only.
+ * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
 
 // Canonical doc map — the reference thesis for this repo's terminal layer:
@@ -111,6 +116,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
 
   // ── General utilities ──────────────────────────────────────────────────
+  // @see pinned for tools that log runtime version in integrity/status
   'Bun.version': 'https://bun.com/docs/runtime/utils#bun-version',
   'Bun.randomUUIDv7': 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
   'Bun.Glob': 'https://bun.com/docs/runtime/glob',
@@ -288,6 +294,9 @@ async function validate(paths: string[]): Promise<number> {
 
 /** Lazy-load the generated docs index (tools/bun-docs-index.json). */
 async function docsIndex(): Promise<{
+  generated?: string;
+  source?: string;
+  bunVersion?: string;
   entries: Array<{
     title: string;
     url: string;
@@ -432,16 +441,202 @@ async function deepcheck(paths: string[]): Promise<number> {
   return bad;
 }
 
+const TAXONOMY_PATH = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
+const LLMS_URL = 'https://bun.com/docs/llms.txt';
+const INTEGRITY_LOG = 'reports/doc-integrity.jsonl';
+
+type TaxonomyFile = {
+  _comment?: string;
+  aliases?: Record<string, string>;
+  sections?: Record<string, string[]>;
+};
+
+/** Levenshtein distance for small title strings (taxonomy auto-fix). */
+function levenshtein(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array<number>(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i]![0] = i;
+  for (let j = 0; j <= n; j++) dp[0]![j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i]![j] = Math.min(dp[i - 1]![j]! + 1, dp[i]![j - 1]! + 1, dp[i - 1]![j - 1]! + cost);
+    }
+  }
+  return dp[m]![n]!;
+}
+
+/**
+ * Best fuzzy match of a sidebar title against live/index titles.
+ * Prefers exact, then containment, then edit-distance similarity ≥ minScore.
+ */
+function bestFuzzyMatch(
+  needle: string,
+  haystack: readonly string[],
+  minScore = 0.72
+): { match: string; score: number } | null {
+  const n = needle.toLowerCase().trim();
+  if (!n) return null;
+  let best: string | null = null;
+  let bestScore = 0;
+  for (const h of haystack) {
+    const hl = h.toLowerCase().trim();
+    if (!hl) continue;
+    if (hl === n) return { match: hl, score: 1 };
+    let score = 0;
+    if (hl.includes(n) || n.includes(hl)) {
+      score = Math.min(n.length, hl.length) / Math.max(n.length, hl.length);
+    }
+    const edit = 1 - levenshtein(n, hl) / Math.max(n.length, hl.length, 1);
+    score = Math.max(score, edit);
+    // Prefer shorter titles when scores tie (Utils vs Utilities Utils Extra)
+    if (score > bestScore || (score === bestScore && best && hl.length < best.length)) {
+      bestScore = score;
+      best = hl;
+    }
+  }
+  return best && bestScore >= minScore ? { match: best, score: bestScore } : null;
+}
+
+/** Titles from local index (fast) and optional live llms.txt refresh. */
+async function collectLiveTitles(useNetwork: boolean): Promise<string[]> {
+  const idx = await docsIndex();
+  const titles = new Set(idx.entries.map(e => e.title));
+  if (useNetwork) {
+    try {
+      const text = await (await fetch(LLMS_URL)).text();
+      for (const line of text.split('\n')) {
+        const m = line.match(/^- \[(.+?)\]\(/);
+        if (m?.[1]) titles.add(m[1]);
+      }
+    } catch (e) {
+      console.info(`⚠️  live llms.txt fetch failed: ${e} — using local index only`);
+    }
+  }
+  return [...titles];
+}
+
+/**
+ * Auto-heal taxonomy alias drift: sidebar titles that no longer match llms/index
+ * titles get aliases when a high-confidence fuzzy match exists.
+ * Writes tools/bun-docs-taxonomy.json in place.
+ */
+async function fixTaxonomyAliases(opts?: {
+  live?: boolean;
+  dryRun?: boolean;
+  minScore?: number;
+}): Promise<{ fixed: Array<{ from: string; to: string; score: number }>; unresolved: string[] }> {
+  const taxPath = TAXONOMY_PATH;
+  const tax = (await Bun.file(taxPath).json()) as TaxonomyFile;
+  if (!tax.sections) {
+    console.info('❌ no taxonomy sections — cannot --fix');
+    return { fixed: [], unresolved: [] };
+  }
+
+  const liveTitles = await collectLiveTitles(opts?.live !== false);
+  const titleSet = new Set(liveTitles.map(t => t.toLowerCase()));
+  const aliases: Record<string, string> = {};
+  for (const [k, v] of Object.entries(tax.aliases ?? {})) {
+    if (k.startsWith('_')) continue;
+    if (typeof v === 'string') aliases[k] = v;
+  }
+
+  const fixed: Array<{ from: string; to: string; score: number }> = [];
+  const unresolved: string[] = [];
+
+  for (const pages of Object.values(tax.sections)) {
+    for (const page of pages) {
+      const key = page.toLowerCase();
+      if (titleSet.has(key)) continue;
+      if (aliases[key] !== undefined && titleSet.has(String(aliases[key]).toLowerCase())) continue;
+
+      const hit = bestFuzzyMatch(page, liveTitles, opts?.minScore ?? 0.72);
+      if (!hit) {
+        unresolved.push(page);
+        continue;
+      }
+      // Don't alias to itself if case differs only — store lowercase key → lowercase title
+      if (hit.match === key) {
+        // Title case drift only — still counts as covered once index has exact key
+        continue;
+      }
+      aliases[key] = hit.match;
+      fixed.push({ from: page, to: hit.match, score: hit.score });
+      console.info(`🔧 alias: "${page}" → "${hit.match}" (score ${(hit.score * 100).toFixed(0)}%)`);
+    }
+  }
+
+  if (fixed.length === 0) {
+    console.info(
+      unresolved.length === 0
+        ? '✅ taxonomy aliases already cover all sidebar pages'
+        : `⚠️  no high-confidence fixes; unresolved: ${unresolved.join(', ')}`
+    );
+    return { fixed, unresolved };
+  }
+
+  if (opts?.dryRun) {
+    console.info(`📝 dry-run: would write ${fixed.length} alias(es) to ${taxPath}`);
+    return { fixed, unresolved };
+  }
+
+  const next: TaxonomyFile = {
+    ...tax,
+    aliases: {
+      _comment:
+        'Sidebar titles that differ from llms.txt page titles (lowercase). Auto-healed by: bun tools/bun-doc-refs.ts integrity --fix',
+      ...aliases,
+    },
+  };
+  await Bun.write(taxPath, JSON.stringify(next, null, 2) + '\n');
+  console.info(`✅ wrote ${fixed.length} alias(es) → tools/bun-docs-taxonomy.json`);
+  return { fixed, unresolved };
+}
+
+type IntegrityStats = {
+  taxHit: number;
+  taxTotal: number;
+  pages: number;
+  anchors: number;
+  tagged: number;
+  mapBad: number;
+  linkBad: number;
+  failed: number;
+  bunVersion: string;
+};
+
 /**
  * Unified integrity report for the whole reference stack:
  * taxonomy coverage → index anchors → canonical map anchors → repo links.
  * Exit 1 if any layer fails — CI-callable proof of the doc stack.
+ *
+ * Flags (via integrity CLI):
+ *   --fix       auto-heal taxonomy aliases from live/index titles, then re-check
+ *   --fix-dry   report alias fixes without writing taxonomy
+ *   --no-live    --fix uses local index only (no llms.txt fetch)
  */
-async function integrity(): Promise<number> {
+async function integrity(opts?: {
+  fix?: boolean;
+  fixDry?: boolean;
+  live?: boolean;
+}): Promise<number> {
+  if (opts?.fix || opts?.fixDry) {
+    console.info(
+      opts.fixDry
+        ? '\n🩹 integrity --fix-dry (taxonomy alias heal, no write)'
+        : '\n🩹 integrity --fix (taxonomy alias auto-heal)'
+    );
+    await fixTaxonomyAliases({
+      live: opts.live !== false,
+      dryRun: opts.fixDry === true,
+    });
+  }
+
   const idx = await docsIndex();
-  const tax = await Bun.file(new URL('./bun-docs-taxonomy.json', import.meta.url).pathname)
+  const tax = (await Bun.file(TAXONOMY_PATH)
     .json()
-    .catch(() => null);
+    .catch(() => null)) as TaxonomyFile | null;
 
   // Layer 1: taxonomy coverage (sidebar pages present in index, alias-aware)
   let taxTotal = 0;
@@ -453,7 +648,12 @@ async function integrity(): Promise<number> {
       for (const p of pages) {
         taxTotal++;
         const key = p.toLowerCase();
-        if (titles.has(key) || (aliases[key] !== undefined && titles.has(aliases[key]))) taxHit++;
+        if (
+          titles.has(key) ||
+          (aliases[key] !== undefined && titles.has(String(aliases[key]).toLowerCase()))
+        ) {
+          taxHit++;
+        }
       }
     }
   }
@@ -477,11 +677,84 @@ async function integrity(): Promise<number> {
   row('taxonomy-tagged entries', `${tagged}`, tagged > 0);
   row('canonical map anchors', mapBad === 0 ? 'all valid' : `${mapBad} bad`, mapBad === 0);
   row('repo links', linkBad === 0 ? 'all valid' : `${linkBad} dead`, linkBad === 0);
+  row('runtime Bun.version', Bun.version, true);
   const failed = (taxHit === taxTotal ? 0 : 1) + (mapBad > 0 ? 1 : 0) + (linkBad > 0 ? 1 : 0);
   console.info(
     failed === 0 ? '\n🟢 integrity: PASS' : `\n🔴 integrity: ${failed} layer(s) failing`
   );
+  // Attach stats for schedule logging / status (module-level last run)
+  lastIntegrityStats = {
+    taxHit,
+    taxTotal,
+    pages,
+    anchors,
+    tagged,
+    mapBad,
+    linkBad,
+    failed,
+    bunVersion: Bun.version,
+  };
   return failed;
+}
+
+let lastIntegrityStats: IntegrityStats | null = null;
+
+/**
+ * Operator dashboard: last integrity JSONL + index snapshot + next weekly cron hint.
+ */
+async function status(): Promise<void> {
+  const LOG = INTEGRITY_LOG;
+  let last: {
+    ts?: string;
+    failures?: number;
+    ok?: boolean;
+    regen?: unknown;
+    bunVersion?: string;
+  } | null = null;
+  if (await Bun.file(LOG).exists()) {
+    const lines = (await Bun.file(LOG).text()).trim().split('\n').filter(Boolean);
+    const raw = lines.at(-1);
+    if (raw) {
+      try {
+        last = JSON.parse(raw) as typeof last;
+      } catch {
+        last = null;
+      }
+    }
+  }
+
+  const idx = await docsIndex().catch(() => null);
+  const generated =
+    idx && 'generated' in idx ? String((idx as { generated?: string }).generated ?? '') : '';
+  const pages = idx?.entries.length ?? 0;
+  const anchors = idx?.entries.reduce((n, e) => n + e.anchors.length, 0) ?? 0;
+
+  const ageDays =
+    last?.ts != null
+      ? (Date.now() - Date.parse(last.ts)) / (24 * 60 * 60 * 1000)
+      : Number.POSITIVE_INFINITY;
+  const stale = ageDays > 7;
+  const ok = last?.ok === true && !stale;
+
+  const line = (icon: string, label: string, value: string) =>
+    console.info(`${icon} ${label.padEnd(18)} ${value}`);
+
+  console.info('\n📊 Bun docs stack — status\n');
+  line(
+    ok ? '🟢' : stale ? '🟡' : '🔴',
+    'Integrity',
+    last
+      ? `${last.ok ? 'PASS' : 'FAIL'} (last: ${last.ts ?? '?'}${stale ? ' · STALE >7d' : ''})`
+      : 'no runs yet — bun tools/bun-doc-refs.ts schedule --once'
+  );
+  line('📚', 'Docs indexed', pages > 0 ? `${pages} pages · ${anchors} anchors` : 'missing index');
+  line('📌', 'Index generated', generated || 'unknown');
+  line('🐇', 'Bun.version', Bun.version);
+  if (last?.bunVersion) line('🐇', 'Last run Bun', last.bunVersion);
+  line('⏰', 'Weekly cron', '0 6 * * * UTC (schedule command; in-process)');
+  line('🩹', 'Self-heal', 'bun tools/bun-doc-refs.ts integrity --fix');
+  console.info('');
+  if (stale) process.exitCode = 1;
 }
 
 /**
@@ -558,20 +831,38 @@ async function regenIndex(): Promise<{
 }
 
 async function schedule(pattern: string, once: boolean): Promise<void> {
-  const LOG = 'reports/doc-integrity.jsonl';
+  const LOG = INTEGRITY_LOG;
   const run = async () => {
     const started = new Date().toISOString();
-    const failures = await integrity();
+    // Attempt auto-heal on FAIL paths only when DOC_INTEGRITY_AUTOFIX=1
+    // @see https://bun.com/docs/runtime/utils#bun-version
+    const autoFix = Bun.env.DOC_INTEGRITY_AUTOFIX === '1';
+    let failures = await integrity();
+    if (failures > 0 && autoFix) {
+      console.info('🩹 DOC_INTEGRITY_AUTOFIX=1 — retrying with --fix');
+      failures = await integrity({ fix: true, live: true });
+    }
     // Ingest-on-success: PASS regenerates the docs index; FAIL skips regen.
     const regen = failures === 0 ? await regenIndex() : ({ skipped: true } as const);
     // JSONL append via read-modify-write (Bun.write has no append mode)
     const prev = (await Bun.file(LOG).exists()) ? await Bun.file(LOG).text() : '';
     await Bun.write(
       LOG,
-      prev + JSON.stringify({ ts: started, failures, ok: failures === 0, regen }) + '\n'
+      prev +
+        JSON.stringify({
+          ts: started,
+          failures,
+          ok: failures === 0,
+          bunVersion: Bun.version,
+          stats: lastIntegrityStats,
+          regen,
+          autoFix,
+        }) +
+        '\n'
     );
     console.info(
       `🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`}` +
+        ` · bun ${Bun.version}` +
         (failures === 0
           ? regen.ok
             ? ` — regen OK (${regen.pages} pages, ${regen.anchors} anchors)`
@@ -616,8 +907,16 @@ switch (cmd) {
   case 'deepcheck':
     process.exit((await deepcheck(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
-  case 'integrity':
-    process.exit((await integrity()) > 0 ? 1 : 0);
+  case 'integrity': {
+    // bun tools/bun-doc-refs.ts integrity [--fix|--fix-dry] [--no-live]
+    const fix = rest.includes('--fix');
+    const fixDry = rest.includes('--fix-dry');
+    const live = !rest.includes('--no-live');
+    process.exit((await integrity({ fix, fixDry, live })) > 0 ? 1 : 0);
+    break;
+  }
+  case 'status':
+    await status();
     break;
   case 'schedule': {
     // bun tools/bun-doc-refs.ts schedule [--pattern "0 6 * * *"] [--once]
@@ -644,7 +943,10 @@ switch (cmd) {
     break;
   default:
     console.error(
-      `unknown command: ${cmd} (url|list|suggest|audit|deepcheck|integrity|export|annotate|check|validate)`
+      `unknown command: ${cmd}\n` +
+        `commands: url|list|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
+        `integrity flags: --fix · --fix-dry · --no-live\n` +
+        `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`
     );
     process.exit(1);
 }
