@@ -95,7 +95,22 @@ async function main(): Promise<void> {
     { cwd: repoRoot, stdout: 'inherit', stderr: 'inherit' }
   );
   if ((await docRefs.exited) !== 0) {
-    console.error('❌ Missing canonical Bun doc refs — run: bun tools/bun-doc-refs.ts annotate --write <files>');
+    console.error(
+      '❌ Missing canonical Bun doc refs — run: bun tools/bun-doc-refs.ts annotate --write <files>'
+    );
+    process.exit(1);
+  }
+
+  // Branded-ID gate: only ADDED lines are judged, so legacy violations
+  // elsewhere in a touched file never block; new violations always do.
+  console.info('🏷️  Branded IDs...');
+  const brandCheck = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--staged', '--strict'], {
+    cwd: repoRoot,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await brandCheck.exited) !== 0) {
+    console.error('❌ New unbranded ID declarations — use lib/types/branded.ts brands or // brand-ok');
     process.exit(1);
   }
 

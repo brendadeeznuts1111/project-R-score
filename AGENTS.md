@@ -37,6 +37,7 @@ Rules:
 All new code must use branded string types for IDs (never bare `id: string` fields). Foundation: `lib/types/branded.ts` (`Brand`, domain brands, `asXId()` boundary constructors). Pattern: brand at system boundaries, pass branded values inside, `unbrand()` at serialization edges. Exemplar: `lib/core/r2-session-manager.ts`.
 
 - Detect violations: `bun tools/branded-id-check.ts [paths]` (report) · `--strict` (fail) · `--staged`
+- **Pre-commit enforced** (harness "Branded IDs" step): `--staged --strict` judges **only added lines** — new violations block the commit; editing legacy files with existing violations elsewhere does not
 - Suppress intentional passthroughs with `// brand-ok`
 - TODO(brand-rollout): 278 pre-existing declarations tracked in `lib/types/branded.ts` header — migrate by density (security → core → mcp → registry). New code has zero excuse.
 

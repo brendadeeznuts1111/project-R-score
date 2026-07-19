@@ -12,7 +12,11 @@
  * Usage:
  *   bun tools/branded-id-check.ts [paths...]   # report (exit 0)
  *   bun tools/branded-id-check.ts --strict     # exit 1 on violations
- *   bun tools/branded-id-check.ts --staged     # scan staged files only
+ *   bun tools/branded-id-check.ts --staged     # scan ADDED lines of staged
+ *                                              #   diff only (new violations
+ *                                              #   in changed lines; legacy
+ *                                              #   violations elsewhere in
+ *                                              #   the file never block)
  *
  * Suppression: end a declaration line with `// brand-ok` to skip it
  * (for IDs that are genuinely opaque passthroughs).
@@ -23,17 +27,43 @@ const ID_DECL = /^\s*(?:readonly\s+)?[a-zA-Z_]*(?:id|Id|ID)[a-zA-Z_]*\??:\s*stri
 const SKIP_FILE = /lib\/types\/branded\.ts$/;
 const SKIP_LINE = /brand-ok/;
 
-async function collectFiles(args: string[]): Promise<string[]> {
-  if (args.includes('--staged')) {
-    const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'], {
-      stdout: 'pipe',
-    });
-    const out = await new Response(proc.stdout).text();
-    return out
-      .split('\n')
-      .map(f => f.trim())
-      .filter(f => f.endsWith('.ts'));
+type Violation = { file: string; line: number; text: string };
+
+/** Violations in added lines of the staged diff (hunk-aware). */
+async function stagedViolations(): Promise<Violation[]> {
+  const proc = Bun.spawn(
+    ['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'],
+    { stdout: 'pipe' }
+  );
+  const diff = await new Response(proc.stdout).text();
+  const violations: Violation[] = [];
+  let file = '';
+  let newLine = 0;
+  for (const raw of diff.split('\n')) {
+    if (raw.startsWith('+++ b/')) {
+      file = raw.slice(6);
+      continue;
+    }
+    const hunk = raw.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+    if (hunk) {
+      newLine = Number(hunk[1]) - 1;
+      continue;
+    }
+    if (raw.startsWith('+') && !raw.startsWith('+++')) {
+      newLine++;
+      const line = raw.slice(1);
+      if (!SKIP_FILE.test(file) && !SKIP_LINE.test(line) && ID_DECL.test(line)) {
+        violations.push({ file, line: newLine, text: line.trim() });
+      }
+      continue;
+    }
+    if (raw.startsWith('-')) continue; // deleted line: not counted
+    if (raw.startsWith(' ') || raw.startsWith('\\')) newLine++; // context (U0: rare)
   }
+  return violations;
+}
+
+async function collectFiles(args: string[]): Promise<string[]> {
   const paths = args.filter(a => !a.startsWith('--'));
   const roots = paths.length > 0 ? paths : ['lib'];
   const files: string[] = [];
@@ -54,6 +84,24 @@ async function collectFiles(args: string[]): Promise<string[]> {
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2);
   const strict = args.includes('--strict');
+
+  // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
+  // violations elsewhere in a touched file never block the commit.
+  if (args.includes('--staged')) {
+    const violations = await stagedViolations();
+    if (violations.length === 0) {
+      console.info('✅ no new unbranded ID declarations in staged changes');
+      return;
+    }
+    for (const v of violations) console.info(`  ${v.file}:${v.line}: ${v.text}`);
+    console.info(
+      `\n❌ ${violations.length} new unbranded ID declaration(s) in staged changes\n` +
+        '   → use brands from lib/types/branded.ts, or suppress with // brand-ok'
+    );
+    if (strict) process.exit(1);
+    return;
+  }
+
   const files = await collectFiles(args);
 
   const perDir = new Map<string, number>();
