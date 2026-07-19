@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach, spyOn } from "bun:test";
 import {
   type WorkerType,
   EnterpriseWorkerFactory,
-} from "../../workers/enterprise-factory";
+} from "../../../workers/enterprise-factory";
 
 let factory: EnterpriseWorkerFactory;
 

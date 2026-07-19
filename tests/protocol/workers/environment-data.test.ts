@@ -1,6 +1,6 @@
 import { test, expect, afterAll } from "bun:test";
 import { setEnvironmentData, getEnvironmentData } from "worker_threads";
-import { ProWorkerFactory } from "../../workers/factory-pro";
+import { ProWorkerFactory } from "../../../workers/factory-pro";
 
 afterAll(() => {
   ProWorkerFactory._reset();

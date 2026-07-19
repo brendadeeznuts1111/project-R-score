@@ -211,7 +211,9 @@ async function annotate(paths: string[], write: boolean): Promise<number> {
 
 /** HTTP-validate every bun.com/github/no-color doc link found in the files. */
 async function validate(paths: string[]): Promise<number> {
-  const urlRe = /https:\/\/(?:bun\.com|github\.com\/oven-sh|no-color\.org|nodejs\.org)\S*/g;
+  // Character class stops at markup/quotes and template-literal `${` so
+  // doc text like </link>, trailing ', and `...${var}` stems never pollute
+  const urlRe = /https:\/\/(?:bun\.com|github\.com\/oven-sh|no-color\.org|nodejs\.org)[a-zA-Z0-9\-._~:/?#@!&*+,;=%[\]]*/g;
   const urls = new Set<string>();
   for (const file of await tsFiles(paths)) {
     const text = await Bun.file(file).text();
@@ -242,7 +244,8 @@ function slugify(heading: string): string {
   return heading
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
     .toLowerCase()
-    .replace(/[()`'":]/g, '')
+    .replace(/\(/g, '-')
+    .replace(/[)`'":]/g, '')
     .replace(/\./g, '-')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -302,8 +305,7 @@ async function suggest(query: string): Promise<void> {
   process.exit(1);
 }
 
-/** Verify every CANONICAL_REFS anchor against the generated docs index. */
-async function audit(): Promise<number> {
+/** Verify every CANONICAL_REFS anchor against the generated docs index. */async function audit(): Promise<number> {
   const { entries } = await docsIndex();
   let bad = 0;
   for (const [api, url] of Object.entries(CANONICAL_REFS)) {
@@ -327,6 +329,45 @@ async function audit(): Promise<number> {
   return bad;
 }
 
+/**
+ * Deep anchor check: every bun.com/docs#anchor link in the given files is
+ * verified against the generated docs index (bun-docs-index.json), resolving
+ * directory index pages (/docs/test → test/index.md). Catches dead anchors
+ * that plain HTTP validation cannot (200 page, missing fragment).
+ */
+async function deepcheck(paths: string[]): Promise<number> {
+  const { entries } = await docsIndex();
+  const linkRe = /https:\/\/bun\.com\/docs\/([a-z0-9\-/]+)#([a-z0-9-]+)/g;
+  const findEntry = (path: string) =>
+    entries.find(e => e.url === `https://bun.com/docs/${path}.md`) ??
+    entries.find(e => e.url === `https://bun.com/docs/${path}/index.md`);
+  let checked = 0;
+  let bad = 0;
+  for (const file of await tsFiles(paths)) {
+    const text = await Bun.file(file).text();
+    for (const m of text.matchAll(linkRe)) {
+      checked++;
+      const [, path, anchor] = m;
+      const entry = findEntry(path);
+      if (!entry) {
+        console.info(`❌ ${file}: page not indexed: ${path}#${anchor}`);
+        bad++;
+        continue;
+      }
+      if (!entry.anchors.includes(anchor)) {
+        console.info(`❌ ${file}: dead anchor ${path}#${anchor}`);
+        bad++;
+      }
+    }
+  }
+  console.info(
+    bad === 0
+      ? `✅ ${checked} anchored bun.com links verified against index`
+      : `❌ ${bad}/${checked} dead anchors`
+  );
+  return bad;
+}
+
 const [, , cmd = 'list', ...rest] = Bun.argv;
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
 switch (cmd) {
@@ -342,6 +383,9 @@ switch (cmd) {
   case 'audit':
     process.exit((await audit()) > 0 ? 1 : 0);
     break;
+  case 'deepcheck':
+    process.exit((await deepcheck(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
+    break;
   case 'annotate': {
     const targets = rest.filter(a => a !== '--write');
     const write = rest.includes('--write');
@@ -356,6 +400,6 @@ switch (cmd) {
     process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
   default:
-    console.error(`unknown command: ${cmd} (url|list|suggest|check|validate)`);
+    console.error(`unknown command: ${cmd} (url|list|suggest|audit|deepcheck|annotate|check|validate)`);
     process.exit(1);
 }

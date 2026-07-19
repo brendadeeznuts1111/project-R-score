@@ -12,7 +12,7 @@ import {
   setGlobalWorkerConfig,
   getGlobalWorkerConfig,
   _resetRegistry,
-} from "../workers/factory";
+} from "../../workers/factory";
 
 beforeEach(() => {
   _resetRegistry();

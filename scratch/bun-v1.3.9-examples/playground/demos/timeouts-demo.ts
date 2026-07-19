@@ -3,7 +3,7 @@
  * Demo: Bun Test Timeouts
  * 
  * Per-test timeout configuration for bun:test
- * https://bun.com/docs/test/runtime-behavior#timeouts
+ * https://bun.com/docs/test/runtime-behavior#test-timeouts
  */
 
 console.info("⏱️  Bun Test Timeouts Demo\n");

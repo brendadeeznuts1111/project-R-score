@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { MulticastAddressSelector } from "../lib/udp/multicast-selector";
+import { MulticastAddressSelector } from "../../lib/udp/multicast-selector";
 
 describe("MulticastAddressSelector (IPv4)", () => {
   const selector = new MulticastAddressSelector();

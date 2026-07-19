@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, spyOn } from "bun:test";
-import { ProtocolCircuitBreaker } from "../src/protocol-circuit-breaker";
-import { ProtocolOrchestrator, type Protocol } from "../src/protocol-matrix";
+import { ProtocolCircuitBreaker } from "../../src/protocol-circuit-breaker";
+import { ProtocolOrchestrator, type Protocol } from "../../src/protocol-matrix";
 
 // ─── Standalone Circuit Breaker ────────────────────────────────────
 describe("ProtocolCircuitBreaker standalone", () => {

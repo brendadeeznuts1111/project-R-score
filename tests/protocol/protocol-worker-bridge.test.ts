@@ -1,6 +1,6 @@
 import { describe, test, expect, afterEach, spyOn, beforeEach } from "bun:test";
-import { ProtocolWorkerBridge } from "../src/protocol-worker-bridge";
-import { ProtocolOrchestrator } from "../src/protocol-matrix";
+import { ProtocolWorkerBridge } from "../../src/protocol-worker-bridge";
+import { ProtocolOrchestrator } from "../../src/protocol-matrix";
 
 type Listener = (event: any) => void;
 

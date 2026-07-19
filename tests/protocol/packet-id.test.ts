@@ -10,7 +10,7 @@ import {
   computeCRC,
   appendCRC,
   verifyAndStripCRC,
-} from "../lib/udp/packet-id";
+} from "../../lib/udp/packet-id";
 
 describe("packet-id header codec", () => {
   test("encodes and decodes v3 packet header", () => {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { RuntimeEnv } from "../lib/env/runtime";
+import { RuntimeEnv } from "../../lib/env/runtime";
 
 const ENV_KEYS = [
   "DASHBOARD_HOST",

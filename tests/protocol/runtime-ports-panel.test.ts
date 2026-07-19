@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { RuntimePortsPanel } from "../dashboard/components/RuntimePorts";
+import { RuntimePortsPanel } from "../../dashboard/components/RuntimePorts";
 
 describe("RuntimePortsPanel", () => {
   test("scan() returns runtime ports payload from provided base", async () => {

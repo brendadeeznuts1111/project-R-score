@@ -3,7 +3,7 @@ import {
   type Protocol,
   PROTOCOL_MATRIX,
   ProtocolOrchestrator,
-} from "../src/protocol-matrix";
+} from "../../src/protocol-matrix";
 
 beforeEach(() => {
   ProtocolOrchestrator.reset();

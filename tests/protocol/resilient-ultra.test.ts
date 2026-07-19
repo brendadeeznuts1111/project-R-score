@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { UltraResilientFetch } from "../src/fetch/resilient-ultra";
+import { UltraResilientFetch } from "../../src/fetch/resilient-ultra";
 
 const servers: Array<{ stop: () => void }> = [];
 

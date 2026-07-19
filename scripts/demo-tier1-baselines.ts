@@ -95,7 +95,7 @@ export const TIER1_SOURCES: Record<string, Tier1Source> = {
     id: 'bun_docs_test_cli',
     provider: 'bun-docs',
     title: 'Bun docs: test CLI usage',
-    url: 'https://bun.com/docs/test#cli-usage',
+    url: 'https://bun.com/docs/test#run-tests',
   },
   mdn_keep_alive: {
     id: 'mdn_keep_alive',

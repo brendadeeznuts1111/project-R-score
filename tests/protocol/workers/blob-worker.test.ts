@@ -1,5 +1,5 @@
 import { test, expect, afterAll } from "bun:test";
-import { ProWorkerFactory } from "../../workers/factory-pro";
+import { ProWorkerFactory } from "../../../workers/factory-pro";
 
 afterAll(() => {
   ProWorkerFactory._reset();

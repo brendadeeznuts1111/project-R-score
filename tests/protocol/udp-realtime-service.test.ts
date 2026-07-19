@@ -1,8 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { describe, test, expect, beforeEach, afterEach, spyOn, type Mock } from "bun:test";
-import { UDPRealtimeService } from "../lib/udp/udp-realtime-service";
-import type { UDPSendPacket } from "../lib/udp/udp-types";
-import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE, CRC_SIZE, FLAG_CRC32, FLAG_HEARTBEAT, appendCRC } from "../lib/udp/packet-id";
+import { UDPRealtimeService } from "../../lib/udp/udp-realtime-service";
+import type { UDPSendPacket } from "../../lib/udp/udp-types";
+import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE, CRC_SIZE, FLAG_CRC32, FLAG_HEARTBEAT, appendCRC } from "../../lib/udp/packet-id";
 
 // ---------------------------------------------------------------------------
 // FakeUDPSocket — mirrors the subset of Bun.udp.Socket / ConnectedSocket
