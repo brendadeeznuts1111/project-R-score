@@ -247,7 +247,14 @@ async function validate(paths: string[]): Promise<number> {
 
 /** Lazy-load the generated docs index (tools/bun-docs-index.json). */
 async function docsIndex(): Promise<{
-  entries: Array<{ title: string; url: string; desc: string; domain: string; anchors: string[] }>;
+  entries: Array<{
+    title: string;
+    url: string;
+    desc: string;
+    domain: string;
+    anchors: string[];
+    officialSection?: string;
+  }>;
 }> {
   const path = new URL('./bun-docs-index.json', import.meta.url).pathname;
   return Bun.file(path).json();
@@ -307,7 +314,7 @@ async function suggest(query: string): Promise<void> {
   if (hits.length > 0) {
     console.info(`closest pages for "${query}":`);
     for (const e of hits) {
-      console.info(`  ${e.url.replace(/\.md$/, '')} — ${e.title}`);
+      console.info(`  ${e.url.replace(/\.md$/, '')} — ${e.title}${e.officialSection ? `  [${e.officialSection}]` : ''}`);
       if (e.anchors.length > 0)
         console.info(
           `    anchors: ${e.anchors.slice(0, 6).join(', ')}${e.anchors.length > 6 ? '…' : ''}`

@@ -15,6 +15,7 @@
 
 const LLMS_URL = 'https://bun.com/docs/llms.txt';
 const OUT = new URL('./bun-docs-index.json', import.meta.url).pathname;
+const TAXONOMY = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
 const CONCURRENCY = 8;
 
 type Entry = {
@@ -103,12 +104,34 @@ async function main(): Promise<void> {
   );
 
   const totalAnchors = entries.reduce((n, e) => n + e.anchors.length, 0);
+
+  // Enrich with the official sidebar taxonomy (bun-docs-taxonomy.json)
+  const tax = await Bun.file(TAXONOMY)
+    .json()
+    .catch(() => null);
+  let tagged = 0;
+  if (tax?.sections) {
+    const titleToSection = new Map<string, string>();
+    for (const [section, pages] of Object.entries(tax.sections as Record<string, string[]>)) {
+      for (const p of pages) titleToSection.set(p.toLowerCase(), section);
+    }
+    for (const e of entries) {
+      const s = titleToSection.get(e.title.toLowerCase());
+      if (s) {
+        (e as Entry & { officialSection?: string }).officialSection = s;
+        tagged++;
+      }
+    }
+  }
+
   await Bun.write(
     OUT,
     JSON.stringify(
       {
         generated: new Date().toISOString(),
         source: LLMS_URL,
+        taxonomy: tax ? 'tools/bun-docs-taxonomy.json' : null,
+        taxonomyTagged: tagged,
         pages: entries.length,
         anchors: totalAnchors,
         entries,
@@ -118,7 +141,7 @@ async function main(): Promise<void> {
     ) + '\n'
   );
   console.info(
-    `✅ ${entries.length} pages, ${totalAnchors} anchors (${failed} fetch failures) → ${OUT}`
+    `✅ ${entries.length} pages, ${totalAnchors} anchors (${failed} fetch failures), ${tagged} taxonomy-tagged → ${OUT}`
   );
 }
 

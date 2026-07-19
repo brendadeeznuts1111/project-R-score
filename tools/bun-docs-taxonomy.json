@@ -1,0 +1,68 @@
+{
+  "_comment": "Official bun.com docs sidebar taxonomy (as pasted 2026-07-19). Maps section -> page titles. Used to enrich bun-docs-index.json entries with official section grouping.",
+  "sections": {
+    "Get Started": [
+      "Welcome to Bun",
+      "Installation",
+      "Quickstart",
+      "TypeScript",
+      "TypeScript 6 and 7",
+      "bun init",
+      "bun create"
+    ],
+    "Core Runtime": [
+      "Bun Runtime",
+      "Watch Mode",
+      "Debugging",
+      "REPL",
+      "bunfig.toml"
+    ],
+    "File & Module System": [
+      "File Types",
+      "Module Resolution",
+      "JSX",
+      "Auto-install",
+      "Plugins",
+      "File System Router"
+    ],
+    "HTTP server": ["Server", "Routing", "Cookies", "TLS", "Error Handling", "Metrics"],
+    "Networking": ["Fetch", "WebSockets", "TCP", "UDP", "DNS"],
+    "Data & Storage": [
+      "Cookies",
+      "File I/O",
+      "Streams",
+      "Binary Data",
+      "Archive",
+      "SQL",
+      "SQLite",
+      "S3",
+      "Redis"
+    ],
+    "Concurrency": ["Workers"],
+    "Process & System": ["Environment Variables", "Shell", "Spawn", "WebView", "Cron"],
+    "Interop & Tooling": [
+      "Node-API",
+      "FFI",
+      "C Compiler",
+      "Transpiler",
+      "Utilities",
+      "CSRF Protection",
+      "Secrets",
+      "Console",
+      "TOML",
+      "YAML",
+      "Markdown",
+      "JSON5",
+      "JSONL",
+      "HTMLRewriter",
+      "Image",
+      "Hashing",
+      "Glob",
+      "Semver",
+      "Color",
+      "Utils"
+    ],
+    "Standards & Compatibility": ["Globals", "Bun APIs", "Web APIs", "Node.js Compatibility"],
+    "Contributing": ["Roadmap", "Benchmarking", "Contributing", "Building Windows", "Bindgen", "License"]
+  }
+}

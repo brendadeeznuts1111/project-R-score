@@ -457,7 +457,8 @@
         "creating-a-native-plugin-in-rust",
         "onbeforeparse",
         "onend"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -2130,7 +2131,8 @@
         "browsers",
         "node-js",
         "design-goals"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -2149,7 +2151,8 @@
         "musl-binaries",
         "cpu-requirements",
         "uninstall"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -2674,7 +2677,8 @@
         "markdown-output",
         "options",
         "heap-profiling"
-      ]
+      ],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2694,7 +2698,8 @@
         "integer-attributes",
         "callbacks",
         "classes"
-      ]
+      ],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2714,7 +2719,8 @@
         "failed-to-write-output-bun-debug-exe-permission-denied",
         "cross-compiling-from-linux",
         "lto"
-      ]
+      ],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2743,7 +2749,8 @@
         "macos-library-not-found-for-lsystem",
         "cannot-find-libatomic-a",
         "using-bun-debug"
-      ]
+      ],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2756,7 +2763,8 @@
         "linked-libraries",
         "polyfills",
         "additional-credits"
-      ]
+      ],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2764,7 +2772,8 @@
       "url": "https://bun.com/docs/project/roadmap.md",
       "desc": "Bun's roadmap and long-term plans",
       "domain": "project/roadmap",
-      "anchors": []
+      "anchors": [],
+      "officialSection": "Contributing"
     },
     {
       "section": "Docs",
@@ -2775,7 +2784,8 @@
       "anchors": [
         "overview",
         "run-a-script"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -2802,7 +2812,8 @@
         "extract-and-process-npm-package",
         "create-archive-from-directory",
         "reference"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -2818,7 +2829,8 @@
         "benefits",
         "limitations",
         "faq"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -2852,7 +2864,8 @@
         "from-blob",
         "from-readablestream",
         "to-uint8array"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -2860,7 +2873,8 @@
       "url": "https://bun.com/docs/runtime/bun-apis.md",
       "desc": "Overview of Bun's native APIs available on the Bun global object and built-in modules",
       "domain": "runtime/bun-apis",
-      "anchors": []
+      "anchors": [],
+      "officialSection": "Standards & Compatibility"
     },
     {
       "section": "Docs",
@@ -2939,7 +2953,8 @@
         "run-silent-suppress-reporting-the-command-being-run",
         "run-elide-lines-truncate-filtered-output",
         "run-noorphans-dont-leave-orphan-processes-behind"
-      ]
+      ],
+      "officialSection": "Core Runtime"
     },
     {
       "section": "Docs",
@@ -2958,7 +2973,8 @@
         "source",
         "flags-string-string",
         "define-record-string-string"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -2985,7 +3001,8 @@
         "blocking-api-bun-spawnsync",
         "benchmarks",
         "reference"
-      ]
+      ],
+      "officialSection": "Process & System"
     },
     {
       "section": "Docs",
@@ -3006,7 +3023,8 @@
         "rgba-array",
         "format-colors-as-hex-strings",
         "bundle-time-client-side-color-formatting"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3017,7 +3035,8 @@
       "anchors": [
         "object-inspection-depth",
         "reading-from-stdin"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3051,7 +3070,8 @@
         "cookie-parse-cookiestring-string-cookie",
         "cookie-from-name-string-value-string-options-cookieinit-cookie",
         "types"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -3087,7 +3107,8 @@
         "trigger-limit",
         "windows-containers",
         "bun-cron-remove"
-      ]
+      ],
+      "officialSection": "Process & System"
     },
     {
       "section": "Docs",
@@ -3101,7 +3122,8 @@
         "using-with-bun-serve",
         "default-secret",
         "typescript"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3124,7 +3146,8 @@
         "syntax-highlighted-source-code-preview",
         "v8-stack-traces",
         "v8-stack-trace-api"
-      ]
+      ],
+      "officialSection": "Core Runtime"
     },
     {
       "section": "Docs",
@@ -3145,7 +3168,8 @@
         "runtime-transpiler-caching",
         "disable-the-runtime-transpiler-cache",
         "what-does-it-cache"
-      ]
+      ],
+      "officialSection": "Process & System"
     },
     {
       "section": "Docs",
@@ -3173,7 +3197,8 @@
         "pointer-alignment",
         "passing-a-pointer",
         "reading-pointers"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3192,7 +3217,8 @@
         "creating-directories-mkdir",
         "benchmarks",
         "reference"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -3203,7 +3229,8 @@
       "anchors": [
         "next-js-style",
         "reference"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -3229,7 +3256,8 @@
         "css",
         "sh-loader",
         "file"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -3248,7 +3276,8 @@
         "negates-the-result-at-the-start-of-a-pattern",
         "escapes-any-of-the-special-characters-above",
         "node-js-fs-glob-compatibility"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3256,7 +3285,8 @@
       "url": "https://bun.com/docs/runtime/globals.md",
       "desc": "Use Bun's global objects",
       "domain": "runtime/globals",
-      "anchors": []
+      "anchors": [],
+      "officialSection": "Standards & Compatibility"
     },
     {
       "section": "Docs",
@@ -3272,7 +3302,8 @@
         "bun-hash",
         "bun-cryptohasher",
         "hmac-in-bun-cryptohasher"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3292,7 +3323,8 @@
         "response-handling",
         "error-handling",
         "see-also"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3304,7 +3336,8 @@
         "reading-cookies",
         "setting-cookies",
         "deleting-cookies"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -3314,7 +3347,8 @@
       "domain": "runtime/http",
       "anchors": [
         "error-callback"
-      ]
+      ],
+      "officialSection": "HTTP server"
     },
     {
       "section": "Docs",
@@ -3325,7 +3359,8 @@
       "anchors": [
         "server-pendingrequests-and-server-pendingwebsockets",
         "server-subscribercount-topic"
-      ]
+      ],
+      "officialSection": "HTTP server"
     },
     {
       "section": "Docs",
@@ -3344,7 +3379,8 @@
         "file-responses-vs-static-responses",
         "streaming-files",
         "fetch-request-handler"
-      ]
+      ],
+      "officialSection": "HTTP server"
     },
     {
       "section": "Docs",
@@ -3377,7 +3413,8 @@
         "benchmarks",
         "practical-example-rest-api",
         "reference"
-      ]
+      ],
+      "officialSection": "HTTP server"
     },
     {
       "section": "Docs",
@@ -3390,7 +3427,8 @@
         "ca-certificates",
         "diffie-hellman",
         "server-name-indication-sni"
-      ]
+      ],
+      "officialSection": "HTTP server"
     },
     {
       "section": "Docs",
@@ -3409,7 +3447,8 @@
         "timeouts-and-limits",
         "connect-to-a-websocket-server",
         "reference"
-      ]
+      ],
+      "officialSection": "Networking"
     },
     {
       "section": "Docs",
@@ -3429,7 +3468,8 @@
         "bun-serve-integration",
         "clipboard",
         "platform-backends"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3457,7 +3497,8 @@
         "networking-security",
         "global-configuration-context",
         "examples"
-      ]
+      ],
+      "officialSection": "Core Runtime"
     },
     {
       "section": "Docs",
@@ -3482,7 +3523,8 @@
         "hot-reloading-with-json5",
         "bundler-integration",
         "dynamic-imports"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3500,7 +3542,8 @@
         "error-recovery",
         "supported-value-types",
         "performance-notes"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3517,7 +3560,8 @@
         "jsx-pragma",
         "logging",
         "prop-punning"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -3548,7 +3592,8 @@
         "component-overrides",
         "available-overrides",
         "react-18-and-older"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3568,7 +3613,8 @@
         "custom-conditions",
         "path-re-mapping",
         "import-meta"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -3583,7 +3629,8 @@
         "dns-getcachestats",
         "configuring-dns-cache-ttl",
         "why-is-30-seconds-the-default"
-      ]
+      ],
+      "officialSection": "Networking"
     },
     {
       "section": "Docs",
@@ -3623,7 +3670,8 @@
         "simultaneous-connection-limit",
         "response-buffering",
         "implementation-details"
-      ]
+      ],
+      "officialSection": "Networking"
     },
     {
       "section": "Docs",
@@ -3636,7 +3684,8 @@
         "create-a-connection-bun-connect",
         "hot-reloading",
         "buffering"
-      ]
+      ],
+      "officialSection": "Networking"
     },
     {
       "section": "Docs",
@@ -3653,7 +3702,8 @@
         "handle-backpressure",
         "socket-options",
         "multicast"
-      ]
+      ],
+      "officialSection": "Networking"
     },
     {
       "section": "Docs",
@@ -3661,7 +3711,8 @@
       "url": "https://bun.com/docs/runtime/node-api.md",
       "desc": "Use Bun's Node-API module to build native add-ons to Node.js",
       "domain": "runtime/node-api",
-      "anchors": []
+      "anchors": [],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3785,7 +3836,8 @@
         "writablestream",
         "writablestreamdefaultcontroller",
         "writablestreamdefaultwriter"
-      ]
+      ],
+      "officialSection": "Standards & Compatibility"
     },
     {
       "section": "Docs",
@@ -3806,7 +3858,8 @@
         "native-plugins",
         "creating-a-native-plugin-in-rust",
         "onbeforeparse"
-      ]
+      ],
+      "officialSection": "File & Module System"
     },
     {
       "section": "Docs",
@@ -3842,7 +3895,8 @@
         "session-storage",
         "implementation-notes",
         "limitations-and-future-plans"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -3860,7 +3914,8 @@
         "keybindings",
         "history",
         "non-interactive-mode"
-      ]
+      ],
+      "officialSection": "Core Runtime"
     },
     {
       "section": "Docs",
@@ -3909,7 +3964,8 @@
         "s3client-delete-static",
         "s3-protocol",
         "utf-8-utf-16-and-bom-byte-order-mark"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -3937,7 +3993,8 @@
         "comparison-with-environment-variables",
         "best-practices",
         "typescript"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3948,7 +4005,8 @@
       "anchors": [
         "bun-semver-satisfies-version-string-range-string-boolean",
         "bun-semver-order-versiona-string-versionb-string-0-1-1"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -3987,7 +4045,8 @@
         "security-considerations",
         "argument-injection",
         "credits"
-      ]
+      ],
+      "officialSection": "Process & System"
     },
     {
       "section": "Docs",
@@ -4068,7 +4127,8 @@
         "frequently-asked-questions",
         "why-not-just-use-an-existing-library",
         "credits"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -4106,7 +4166,8 @@
         "filecontrol-cmd-number-value-any",
         "reference",
         "datatypes"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -4120,7 +4181,8 @@
         "async-generator-streams",
         "bun-arraybuffersink",
         "reference"
-      ]
+      ],
+      "officialSection": "Data & Storage"
     },
     {
       "section": "Docs",
@@ -4140,7 +4202,8 @@
         "reference",
         "cli-flags",
         "environment-variables"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -4155,7 +4218,8 @@
         "output-files",
         "help",
         "examples"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -4178,7 +4242,8 @@
         "hot-reloading-with-toml",
         "bundler-integration",
         "dynamic-imports"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -4192,7 +4257,8 @@
         "scan",
         "scanimports",
         "reference"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -4233,7 +4299,8 @@
         "options",
         "serialize-deserialize-in-bunjsc",
         "estimateshallowmemoryusageof-in-bunjsc"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -4245,7 +4312,8 @@
         "watch-mode",
         "hot-mode",
         "http-servers"
-      ]
+      ],
+      "officialSection": "Core Runtime"
     },
     {
       "section": "Docs",
@@ -4253,7 +4321,8 @@
       "url": "https://bun.com/docs/runtime/web-apis.md",
       "desc": "Web-standard APIs supported by Bun for server-side JavaScript",
       "domain": "runtime/web-apis",
-      "anchors": []
+      "anchors": [],
+      "officialSection": "Standards & Compatibility"
     },
     {
       "section": "Docs",
@@ -4307,7 +4376,8 @@
         "scrollto-options",
         "screenshot-options",
         "static-methods"
-      ]
+      ],
+      "officialSection": "Process & System"
     },
     {
       "section": "Docs",
@@ -4334,7 +4404,8 @@
         "environment-data",
         "worker-events",
         "bun-ismainthread"
-      ]
+      ],
+      "officialSection": "Concurrency"
     },
     {
       "section": "Docs",
@@ -4362,7 +4433,8 @@
         "database-configuration",
         "bundler-integration",
         "dynamic-imports"
-      ]
+      ],
+      "officialSection": "Interop & Tooling"
     },
     {
       "section": "Docs",
@@ -4763,7 +4835,8 @@
       "anchors": [
         "suggested-compileroptions",
         "typescript-6-and-7"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Docs",
@@ -4776,7 +4849,8 @@
         "add-types-bun-to-your-tsconfig",
         "full-recommended-tsconfig-json",
         "does-this-apply-to-typescript-7"
-      ]
+      ],
+      "officialSection": "Get Started"
     },
     {
       "section": "Optional",
@@ -4794,5 +4868,7 @@
       "domain": "/blog",
       "anchors": []
     }
-  ]
+  ],
+  "taxonomy": "tools/bun-docs-taxonomy.json",
+  "taxonomyTagged": 74
 }
