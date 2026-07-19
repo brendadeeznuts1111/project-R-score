@@ -230,6 +230,72 @@ export class R2MCPIntegration {
   }
 
   /**
+   * Search diagnoses by issue/category text (mirrors searchAudits over the diagnoses index)
+   */
+  async searchDiagnoses(query: string, limit: number = 10): Promise<DiagnosisEntry[]> {
+    try {
+      this.ensureInitialized();
+
+      const cacheKey = `diagnoses:search:${query}:${limit}`;
+
+      // Try cache first
+      const cached = await globalCache.get<DiagnosisEntry[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      // Get index with caching
+      const indexKey = 'mcp/indexes/diagnoses.json';
+      const indexData = await globalCache.getOrSet(indexKey, () => this.getJSON(indexKey), {
+        ttl: 300000,
+        tags: ['diagnoses', 'index'],
+      });
+
+      if (!indexData || !indexData.entries) {
+        return [];
+      }
+
+      // Find similar entries
+      const queryLower = query.toLowerCase();
+      const similar = indexData.entries
+        .filter(
+          (entry: any) =>
+            entry.issue?.toLowerCase().includes(queryLower) ||
+            entry.category?.toLowerCase().includes(queryLower)
+        )
+        .slice(0, limit);
+
+      // Fetch full entries concurrently with proper error handling
+      const results = await safeConcurrent(
+        similar.map(
+          (entry: any) => () =>
+            this.getJSON(entry.key).catch(error => {
+              handleError(error, `fetchDiagnosis-${entry.key}`, ErrorSeverity.MEDIUM);
+              return null;
+            })
+        ),
+        { failFast: false }
+      );
+
+      // Filter successful results
+      const fullEntries = results
+        .filter(result => result.success && result.data)
+        .map(result => result.data);
+
+      // Cache results
+      await globalCache.set(cacheKey, fullEntries, {
+        ttl: 60000,
+        tags: ['diagnoses', 'search'],
+      });
+
+      return fullEntries;
+    } catch (error) {
+      handleError(error, 'R2MCPIntegration.searchDiagnoses', ErrorSeverity.MEDIUM);
+      return [];
+    }
+  }
+
+  /**
    * Store metrics with proper error handling
    */
   async storeMetrics(metrics: MetricsEntry): Promise<string> {

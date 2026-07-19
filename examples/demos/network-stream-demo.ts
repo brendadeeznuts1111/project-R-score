@@ -5,7 +5,7 @@
  * Demonstrates the revolutionary fetch() → Bun.spawn streaming capability
  */
 
-import { FetchAndRipStreamer, DOCUMENTATION_URLS, NetworkDocumentationSearcher } from '../lib/docs/fetch-and-rip';
+import { FetchAndRipStreamer, DOCUMENTATION_URLS, NetworkDocumentationSearcher } from '../../lib/docs/fetch-and-rip';
 
 /**
  * Demo 1: Basic Network-to-Process Streaming

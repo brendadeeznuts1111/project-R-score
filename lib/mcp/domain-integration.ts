@@ -1,6 +1,6 @@
 // lib/mcp/domain-integration.ts — Domain and subdomain integration with R2 MCP
 
-import { r2MCPIntegration } from './r2-integration';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 
 export interface DomainConfig {
@@ -318,15 +318,14 @@ export class DomainIntegration {
    */
   async getDomainRecommendations(subdomain?: string): Promise<any[]> {
     try {
-      const context = subdomain ? this.getSubdomainMCPContext(subdomain) : 'domain-management';
-      const similar = await this.r2.searchSimilarErrors('DomainError', context, 5);
+      const similar = await this.r2.searchDiagnoses('DomainError', 5);
 
-      return similar.map(audit => ({
-        subdomain: audit.context,
-        issue: audit.errorMessage,
-        resolution: audit.resolution,
-        confidence: audit.severity === 'critical' ? 95 : 80,
-        mrr_impact: this.calculateMRRImpact(subdomain || 'api', { name: audit.errorType }),
+      return similar.map(diag => ({
+        subdomain: diag.category,
+        issue: diag.issue,
+        resolution: diag.recommendations[0] ?? '',
+        confidence: diag.severity === 'critical' ? 95 : 80,
+        mrr_impact: this.calculateMRRImpact(subdomain || 'api', { name: diag.category }),
       }));
     } catch (error) {
       console.warn(styled(`⚠️ Failed to get domain recommendations: ${error.message}`, 'warning'));

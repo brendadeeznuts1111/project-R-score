@@ -8,8 +8,8 @@ import {
   getGitHubBunTypesCommitURL,
   exampleCommit,
   getAllCriticalURLs
-} from '../lib/docs/documentation-index';
-import { DocumentationProvider, DocumentationCategory } from '../lib/docs/constants/domains.ts';
+} from '../../lib/docs/documentation-index';
+import { DocumentationProvider, DocumentationCategory } from '../../lib/docs/constants/domains.ts';
 
 /**
  * 🚀 Prefetch Optimizations

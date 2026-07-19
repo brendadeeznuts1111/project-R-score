@@ -8,7 +8,7 @@
  *   bun-filter-cli --filter '!test-*' deploy
  */
 
-import { runFilterCLI } from '../lib/filter-runner';
+import { runFilterCLI } from '../../lib/filter-runner';
 
 // Run the CLI
 runFilterCLI().catch(error => {

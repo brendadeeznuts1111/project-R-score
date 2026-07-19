@@ -113,7 +113,7 @@ async function checkConstantsLoading() {
       name: 'CLI Constants Import',
       test: async () => {
         try {
-          const cliConstants = await import('./lib/documentation/constants/cli.ts');
+          const cliConstants = await import('../lib/docs/constants/cli.ts');
           const categories = Object.values(cliConstants.CLICategory);
           const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
           const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
@@ -145,7 +145,7 @@ async function checkConstantsLoading() {
       name: 'Utils Constants Import',
       test: async () => {
         try {
-          const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+          const utilsConstants = await import('../lib/docs/constants/utils.ts');
           const categories = Object.values(utilsConstants.UtilsCategory);
           const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
           const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
@@ -177,8 +177,8 @@ async function checkConstantsLoading() {
       name: 'Constants Data Integrity',
       test: async () => {
         try {
-          const cliConstants = await import('./lib/documentation/constants/cli.ts');
-          const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+          const cliConstants = await import('../lib/docs/constants/cli.ts');
+          const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
           // Check CLI constants structure
           const cliCategories = Object.values(cliConstants.CLICategory);
@@ -245,7 +245,7 @@ async function checkImportFunctionality() {
       name: 'Documentation Module Import',
       test: async () => {
         try {
-          const docs = await import('./lib/documentation');
+          const docs = await import('../lib/docs');
           recordTest(
             'documentation-module-import',
             true,
@@ -318,8 +318,8 @@ async function checkURLValidation() {
       name: 'URL Structure Validation',
       test: async () => {
         try {
-          const cliConstants = await import('./lib/documentation/constants/cli.ts');
-          const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+          const cliConstants = await import('../lib/docs/constants/cli.ts');
+          const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
           let validURLs = 0;
           let invalidURLs = 0;

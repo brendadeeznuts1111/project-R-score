@@ -7,7 +7,7 @@
  * adaptive debounce, health checks, and real-time dashboard.
  */
 
-import { runWatchCLI } from '../lib/watch-engine-v3.14';
+import { runWatchCLI } from '../../lib/watch-engine-v3.14';
 
 // Run the enhanced watch CLI
 runWatchCLI().catch(error => {

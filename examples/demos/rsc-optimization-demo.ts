@@ -6,7 +6,7 @@
  * with HTTP/2 multiplexing and intelligent fallback.
  */
 
-import { SmartRSCHandler, fetchRSC, fetchRSCBatch } from '../lib/http/rsc-handler';
+import { SmartRSCHandler, fetchRSC, fetchRSCBatch } from '../../lib/http/rsc-handler';
 
 /**
  * 🚀 Prefetch Optimizations

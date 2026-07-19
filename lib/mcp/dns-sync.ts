@@ -1,6 +1,6 @@
 // lib/mcp/dns-sync.ts — DNS synchronization with Cloudflare and R2 MCP
 
-import { r2MCPIntegration } from './r2-integration';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { cloudflareDomainManager } from './cloudflare-domain-manager';
 import { styled, FW_COLORS } from '../theme/colors';
 

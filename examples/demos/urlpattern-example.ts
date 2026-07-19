@@ -12,7 +12,7 @@ const docsPattern = new URLPattern({
 });
 
 // ✅ EVEN BETTER: Use our established patterns
-import { URL_PATTERNS, docs, validateDocUrl, buildDocsUrl } from '../lib/docs/reference.ts';
+import { URL_PATTERNS, docs, validateDocUrl, buildDocsUrl } from '../../lib/docs/reference.ts';
 
 /**
  * 🚀 Prefetch Optimizations

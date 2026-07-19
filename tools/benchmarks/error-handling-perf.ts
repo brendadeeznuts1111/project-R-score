@@ -1,9 +1,9 @@
 // benchmarks/error-handling-perf.ts — Error handling performance benchmarks
 
-import { ErrorMetricsCollector } from '../lib/core/error-metrics';
-import { OptimizedErrorMetricsCollector } from '../lib/core/error-metrics-perf';
-import { CircuitBreaker } from '../lib/core/circuit-breaker';
-import { crc32, benchmark as crc32Benchmark } from '../lib/core/crc32';
+import { ErrorMetricsCollector } from '../../lib/core/error-metrics';
+import { OptimizedErrorMetricsCollector } from '../../lib/core/error-metrics-perf';
+import { CircuitBreaker } from '../../lib/core/circuit-breaker';
+import { crc32, benchmark as crc32Benchmark } from '../../lib/core/crc32';
 
 console.info('🚀 Error Handling Performance Benchmarks\n');
 console.info('Bun v' + Bun.version + '\n');

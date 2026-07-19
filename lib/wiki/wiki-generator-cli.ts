@@ -17,7 +17,7 @@ import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/const
 import { DOC_PATTERNS } from '../docs/patterns';
 
 // Step 3: CLI reference data
-import { r2MCPIntegration } from '../mcp/r2-integration';
+import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 
 import type { CLICategory } from '../docs/constants/cli';
 

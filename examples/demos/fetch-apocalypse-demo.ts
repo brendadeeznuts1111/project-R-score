@@ -11,7 +11,7 @@ import {
   BodyParser,
   FetchBenchmark,
   getFetchMetrics,
-} from '../src/fetch/enhanced-fetch';
+} from '../../src/fetch/enhanced-fetch';
 
 // Demo 1: Custom Headers Fortress - FactoryWager Style
 async function demonstrateCustomHeaders() {

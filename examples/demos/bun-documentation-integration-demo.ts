@@ -10,7 +10,7 @@ import {
   BunDocumentationIntegration,
   BunWikiIntegration,
   PackageManager
-} from '../lib';
+} from '../../lib';
 
 // Configuration
 const config = {

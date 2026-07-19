@@ -12,7 +12,7 @@
  * - Deep console inspection
  */
 
-import { createWatchSession, startWebSocketDashboard, stopWatchSession } from '../lib/watch-engine-v3.14';
+import { createWatchSession, startWebSocketDashboard, stopWatchSession } from '../../lib/watch-engine-v3.14';
 
 // Demo configurations
 const DEMO_SCENARIOS = [

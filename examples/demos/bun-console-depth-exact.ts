@@ -6,7 +6,7 @@
  * Mirrors the official Bun documentation example with wiki template data
  */
 
-import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp.ts';
+import { MCPWikiGenerator } from '../../lib/mcp/wiki-generator-mcp.ts';
 
 // Create nested wiki template data exactly like the Bun docs example
 const nestedWikiTemplate = {

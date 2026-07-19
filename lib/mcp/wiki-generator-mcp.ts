@@ -1,7 +1,7 @@
 // lib/mcp/wiki-generator-mcp.ts — Wiki generator integration for the MCP ecosystem
 
 import { WikiURLGenerator } from '../wiki/wiki-generator';
-import { r2MCPIntegration } from './r2-integration';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { masterTokenManager } from '../security/master-token';
 import { DocumentationProvider } from '../docs/constants/enums';
 import { styled, FW_COLORS } from '../theme/colors';
@@ -1620,7 +1620,7 @@ export class MCPWikiGenerator {
 
         result.r2Stored = {
           key: r2Key,
-          url: await r2MCPIntegration.getSignedURL(r2Key, 3600),
+          url: await r2MCPIntegration.generateSignedURL(r2Key, 3600),
         };
 
         console.info(styled('📦 Wiki content stored in R2', 'success'));
@@ -2881,9 +2881,8 @@ export class MCPWikiGenerator {
   > {
     try {
       // Search for wiki generation entries in R2
-      const wikiEntries = await r2MCPIntegration.searchSimilarErrors(
+      const wikiEntries = await r2MCPIntegration.searchDiagnoses(
         'WikiGeneration',
-        'wiki-generation',
         limit
       );
 

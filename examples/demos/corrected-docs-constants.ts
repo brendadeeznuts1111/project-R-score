@@ -41,7 +41,7 @@ const TYPED_ARRAY_URLS = {
 } as const;
 
 // ✅ ALTERNATIVE: Use our established reference system
-import { docs, buildDocsUrl } from '../lib/docs/reference.ts';
+import { docs, buildDocsUrl } from '../../lib/docs/reference.ts';
 
 /**
  * 🚀 Prefetch Optimizations

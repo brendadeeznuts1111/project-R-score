@@ -1,7 +1,7 @@
 // lib/security/master-token.ts — Master token management system
 
 import { createHmac, createHash, randomBytes } from 'node:crypto';
-import { r2MCPIntegration } from '../mcp/r2-integration';
+import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 
 export interface MasterTokenConfig {
   tokenId: string;

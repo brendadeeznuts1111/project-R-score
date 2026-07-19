@@ -12,8 +12,8 @@ import {
   URLFragmentUtils, 
   FactoryWagerURLUtils,
   EnhancedURL 
-} from '../lib/core/url-handler.ts';
-import { R2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
+} from '../../lib/core/url-handler.ts';
+import { R2MCPIntegration } from '../../lib/mcp/r2-integration-fixed.ts';
 
 /**
  * Example 1: Basic URL Fragment Operations

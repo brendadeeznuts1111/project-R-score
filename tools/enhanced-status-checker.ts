@@ -183,7 +183,7 @@ async function checkConstantsLoading() {
   // Test CLI Constants
   log.info('Testing CLI Constants Import...');
   try {
-    const cliConstants = await import('./lib/documentation/constants/cli.ts');
+    const cliConstants = await import('../lib/docs/constants/cli.ts');
     const categories = Object.values(cliConstants.CLICategory);
     const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
     const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
@@ -208,7 +208,7 @@ async function checkConstantsLoading() {
   // Test Utils Constants
   log.info('Testing Utils Constants Import...');
   try {
-    const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+    const utilsConstants = await import('../lib/docs/constants/utils.ts');
     const categories = Object.values(utilsConstants.UtilsCategory);
     const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
     const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
@@ -237,8 +237,8 @@ async function checkConstantsLoading() {
   // Test Constants Data Integrity
   log.info('Testing Constants Data Integrity...');
   try {
-    const cliConstants = await import('./lib/documentation/constants/cli.ts');
-    const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+    const cliConstants = await import('../lib/docs/constants/cli.ts');
+    const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
     // Count URLs and fragments
     let cliURLCount = 0;
@@ -306,8 +306,8 @@ async function checkURLValidation() {
   // Test URL Structure Validation
   log.info('Testing URL Structure Validation...');
   try {
-    const cliConstants = await import('./lib/documentation/constants/cli.ts');
-    const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+    const cliConstants = await import('../lib/docs/constants/cli.ts');
+    const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
     let validURLs = 0;
     let invalidURLs = 0;
@@ -416,8 +416,8 @@ async function checkURLValidation() {
   if (options.fragments || options.verbose) {
     log.info('Analyzing URL Fragments...');
     try {
-      const cliConstants = await import('./lib/documentation/constants/cli.ts');
-      const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+      const cliConstants = await import('../lib/docs/constants/cli.ts');
+      const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
       const fragmentAnalysis = {
         totalURLs: 0,

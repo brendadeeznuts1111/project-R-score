@@ -116,8 +116,8 @@ class FailureAnalyzer {
     // Run endpoint validator to get current failures
     try {
       const { validateEndpointHierarchy } = await import('./endpoint-aware-validator.ts');
-      const cliConstants = await import('./lib/documentation/constants/cli.ts');
-      const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+      const cliConstants = await import('../lib/docs/constants/cli.ts');
+      const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
       // Collect endpoints
       const endpoints: any[] = [];

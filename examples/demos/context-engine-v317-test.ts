@@ -6,7 +6,7 @@
  * Demonstrates the core functionality without complex build requirements
  */
 
-import { loadGlobalConfig } from '../lib/context-engine-v3.17';
+import { loadGlobalConfig } from '../../lib/context-engine-v3.17';
 
 // Color utilities
 const c = {

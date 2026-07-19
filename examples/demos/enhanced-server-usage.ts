@@ -1,6 +1,6 @@
 // examples/enhanced-server-usage.ts
-import { createEnhancedServer } from '../src/server/enhanced-server';
-import { ProtocolOptimizer } from '../src/server/protocol-optimizer';
+import { createEnhancedServer } from '../../src/server/enhanced-server';
+import { ProtocolOptimizer } from '../../src/server/protocol-optimizer';
 
 // Example 1: Basic server with enhanced monitoring
 const server = createEnhancedServer({

@@ -1,8 +1,8 @@
 // examples/enhanced-server-demo.ts
 // Complete demonstration of Enhanced Bun.serve() with protocol detection and monitoring
 
-import { createEnhancedServer, createQuickServer } from '../src/server/enhanced-server';
-import { ProtocolOptimizer } from '../src/server/protocol-optimizer';
+import { createEnhancedServer, createQuickServer } from '../../src/server/enhanced-server';
+import { ProtocolOptimizer } from '../../src/server/protocol-optimizer';
 import type { Bun } from 'bun';
 
 // Demo 1: Basic enhanced server with all features

@@ -6,9 +6,9 @@
  * Showcasing the latest enhancements to the documentation system
  */
 
-import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced'
-import { InteractiveDocsExplorer } from '../lib/docs/interactive-docs'
-import { EnhancedDocsCacheManager } from '../lib/docs/cache-manager'
+import { EnhancedDocsFetcher } from '../../lib/docs/index-fetcher-enhanced'
+import { InteractiveDocsExplorer } from '../../lib/docs/interactive-docs'
+import { EnhancedDocsCacheManager } from '../../lib/docs/cache-manager'
 
 async function demo() {
   console.info('🚀 Enhanced Bun Documentation System v2.0')

@@ -14,7 +14,6 @@ import { styled, log, FW_COLORS } from '../lib/theme/colors';
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { Utils } from '../lib/utils/index';
-import { FACTORYWAGER_CONFIG } from '../lib/config/index';
 
 // Simulate diagnostic data
 function generateDiagnosticReport(): string {

@@ -3,7 +3,7 @@
  * Demonstrates high-performance streaming search with Bun.spawn Web Standard APIs
  */
 
-import { ZenStreamSearcher, EnhancedDocsFetcher } from '../lib/docs/stream-search';
+import { ZenStreamSearcher, EnhancedDocsFetcher } from '../../lib/docs/stream-search';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 

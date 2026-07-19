@@ -5,7 +5,7 @@
  * with real-world scenarios, performance testing, and advanced patterns.
  */
 
-import { runFilteredScript, discoverWorkspacePackages } from '../lib/filter-runner';
+import { runFilteredScript, discoverWorkspacePackages } from '../../lib/filter-runner';
 import { performance } from 'perf_hooks';
 
 // Color utilities

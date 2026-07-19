@@ -12,9 +12,9 @@ import {
   generateStatusMatrix,
   type SeverityLevel,
   type ContextType,
-} from '../lib/utils/enhanced-status-matrix.ts';
-import { colorize, type ColorStatus } from '../lib/utils/color-system.ts';
-import { styled, FW_COLORS } from '../lib/theme/colors.ts';
+} from '../../lib/utils/enhanced-status-matrix.ts';
+import { colorize, type ColorStatus } from '../../lib/utils/color-system.ts';
+import { styled, FW_COLORS } from '../../lib/theme/colors.ts';
 
 /** Pad string to target visual width (left-aligned) */
 function swPad(str: string, width: number, char = ' '): string {
@@ -341,7 +341,7 @@ async function main(): Promise<void> {
     }
 
     case 'matrix': {
-      const { displayStatusMatrix } = await import('../lib/utils/enhanced-status-matrix.ts');
+      const { displayStatusMatrix } = await import('../../lib/utils/enhanced-status-matrix.ts');
       displayStatusMatrix(context);
       break;
     }

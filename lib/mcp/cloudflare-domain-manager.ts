@@ -1,6 +1,6 @@
 // lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 
-import { r2MCPIntegration } from './r2-integration';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
 

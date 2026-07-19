@@ -2,8 +2,8 @@
 // tools/signed-url-worker.ts — Worker for generating signed R2 URLs
 
 import { getSignedR2URL } from '../lib/r2/signed-url';
-import { handleError, ErrorHandler } from '.../lib/utils/error-handler';
-import { validateKey, validateURL } from '.../lib/utils/input-validator';
+import { handleError, ErrorHandler } from '../lib/utils/error-handler';
+import { validateKey, validateURL } from '../lib/utils/input-validator';
 
 /**
  * 🚀 Prefetch Optimizations

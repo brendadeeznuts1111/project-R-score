@@ -7,8 +7,8 @@
  * with official resolution order and all flags
  */
 
-import { executeBunCLI, parseOfficialFlags, getAllSessions, clearSessions } from '../lib/bun-cli-native-v3.15';
-import { startWatchFilterCLI, listWatchSessions, getWatchSessionStats } from '../lib/enhanced-watch-filter-v3.15';
+import { executeBunCLI, parseOfficialFlags, getAllSessions, clearSessions } from '../../lib/bun-cli-native-v3.15';
+import { startWatchFilterCLI, listWatchSessions, getWatchSessionStats } from '../../lib/enhanced-watch-filter-v3.15';
 
 // Color utilities
 const c = {

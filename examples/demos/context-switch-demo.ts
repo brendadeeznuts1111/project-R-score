@@ -7,8 +7,8 @@
  * including CWD/Environment, Configuration, JSONC parsing, Context Caching, and Spawn patterns
  */
 
-import { executeBunCLI, parseOfficialFlags, getAllSessions, clearSessions } from '../lib/bun-cli-native-v3.15';
-import { executeWithContext } from '../lib/context-run-server';
+import { executeBunCLI, parseOfficialFlags, getAllSessions, clearSessions } from '../../lib/bun-cli-native-v3.15';
+import { executeWithContext } from '../../lib/context-run-server';
 
 // Color utilities
 const c = {

@@ -14,7 +14,7 @@ import {
   restartWatchSession,
   stopWatchSession,
   getWatchSessionStats
-} from '../lib/filter-watch-logger';
+} from '../../lib/filter-watch-logger';
 
 // Demo configuration
 const DEMO_PATTERNS = ['app-*', 'lib-*', 'test-*'];

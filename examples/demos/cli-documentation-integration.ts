@@ -10,10 +10,10 @@ import {
   CLIDocumentationHandler, 
   CLIExampleGenerator, 
   CLIDocumentationSearch 
-} from '../lib/core/cli-documentation-handler.ts';
-import { CLICategory, CLI_COMMAND_EXAMPLES } from '../lib/docs/constants/cli.ts';
-import { cliDocumentationMCPServer } from '../lib/mcp/cli-documentation-mcp.ts';
-import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
+} from '../../lib/core/cli-documentation-handler.ts';
+import { CLICategory, CLI_COMMAND_EXAMPLES } from '../../lib/docs/constants/cli.ts';
+import { cliDocumentationMCPServer } from '../../lib/mcp/cli-documentation-mcp.ts';
+import { URLHandler, URLFragmentUtils } from '../../lib/core/url-handler.ts';
 
 /**
  * Example 1: Basic CLI Documentation URL Generation

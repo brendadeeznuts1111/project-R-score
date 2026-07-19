@@ -10,24 +10,24 @@
 import { 
   DocumentationURLHandler,
   type DocumentationURLConfig 
-} from '../lib/core/documentation-url-handler.ts';
+} from '../../lib/core/documentation-url-handler.ts';
 import { 
   docs, 
   buildDocsUrl, 
   buildInteractiveDocsUrl, 
   buildExampleDocsUrl,
   DocReferenceResolver 
-} from '../lib/docs/reference.ts';
+} from '../../lib/docs/reference.ts';
 import { 
   UtilityFactory,
   UtilsCategory,
   UTILITIES 
-} from '../lib/docs/constants/utils.ts';
+} from '../../lib/docs/constants/utils.ts';
 import { 
   CLIDocumentationHandler,
   CLICategory 
-} from '../lib/core/cli-documentation-handler.ts';
-import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
+} from '../../lib/core/cli-documentation-handler.ts';
+import { URLHandler, URLFragmentUtils } from '../../lib/core/url-handler.ts';
 
 /**
  * Example 1: Basic Documentation URL Generation with Fragments

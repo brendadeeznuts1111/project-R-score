@@ -293,8 +293,8 @@ async function runComprehensiveValidation() {
 
   try {
     // Load constants
-    const cliConstants = await import('./lib/documentation/constants/cli.ts');
-    const utilsConstants = await import('./lib/documentation/constants/utils.ts');
+    const cliConstants = await import('../lib/docs/constants/cli.ts');
+    const utilsConstants = await import('../lib/docs/constants/utils.ts');
 
     // Collect all URLs
     const allURLs: string[] = [];

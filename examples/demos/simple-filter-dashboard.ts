@@ -7,7 +7,7 @@
  * with real-time WebSocket streaming of results.
  */
 
-import { runFilteredScript, discoverWorkspacePackages } from '../lib/filter-runner';
+import { runFilteredScript, discoverWorkspacePackages } from '../../lib/filter-runner';
 
 // Simple HTTP server with filter support
 const server = (globalThis as any).Bun?.serve({

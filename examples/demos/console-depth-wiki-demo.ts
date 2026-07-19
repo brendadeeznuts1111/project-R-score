@@ -6,7 +6,7 @@
  * Demonstrates --console-depth with wiki template data
  */
 
-import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp.ts';
+import { MCPWikiGenerator } from '../../lib/mcp/wiki-generator-mcp.ts';
 
 const templates = MCPWikiGenerator.getWikiTemplates();
 

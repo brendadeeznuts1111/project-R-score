@@ -6,7 +6,7 @@
  * Testing the exact functionality from your provided code snippet
  */
 
-import { loadGlobalConfig, contextBuildWithMetafile, juniorProfileWithMetafile } from '../lib/context-engine-v3.17';
+import { loadGlobalConfig, contextBuildWithMetafile, juniorProfileWithMetafile } from '../../lib/context-engine-v3.17';
 
 // Color utilities
 const c = {

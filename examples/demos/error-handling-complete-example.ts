@@ -30,7 +30,7 @@ import {
   
   // Utilities
   safeAsync,
-} from '../lib/core';
+} from '../../lib/core';
 
 // ============================================================================
 // 1. Initialize Global Error Handling

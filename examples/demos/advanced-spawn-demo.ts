@@ -5,7 +5,7 @@
  * Demonstrates IPC, Terminal (PTY), and multi-process documentation search capabilities
  */
 
-import { IPCDocumentationOrchestrator, TerminalDocumentationExplorer } from '../lib/docs/ipc-stream-search';
+import { IPCDocumentationOrchestrator, TerminalDocumentationExplorer } from '../../lib/docs/ipc-stream-search';
 
 /**
  * Demo 1: Multi-Worker Parallel Documentation Search
@@ -141,7 +141,7 @@ async function demoPerformanceComparison() {
   console.info('\n⚡ Demo 4: Performance Comparison - Single vs Multi-Process');
   console.info('=' .repeat(60));
 
-  const { ZenStreamSearcher } = await import('../lib/docs/stream-search');
+  const { ZenStreamSearcher } = await import('../../lib/docs/stream-search');
   
   // Single process search
   console.info('🔍 Single process search...');
