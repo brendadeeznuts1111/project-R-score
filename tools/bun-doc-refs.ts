@@ -65,8 +65,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
   FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
 
-  // ── Environment & configuration ────────────────────────────────────────
-  'Bun.env': 'https://bun.com/docs/runtime/environment-variables',
+  // ── Environment & configuration ────────────────────────────────────────  'Bun.env': 'https://bun.com/docs/runtime/environment-variables',
   '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
@@ -96,6 +95,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
+  'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,

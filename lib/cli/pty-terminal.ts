@@ -1,4 +1,10 @@
 // lib/cli/pty-terminal.ts — PTY terminal support for interactive applications
+//
+// Thin convenience layer over Bun's NATIVE Terminal API (not a hand-rolled
+// PTY). For simple spawn-with-PTY needs, prefer Bun.spawn's `terminal`
+// option directly — this wrapper only earns its keep for reusable/shared
+// terminal instances and the BunTerminalInstance typing surface.
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support
 
 /**
  * Check if PTY is supported on current platform
