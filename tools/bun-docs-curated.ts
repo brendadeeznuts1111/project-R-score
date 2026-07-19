@@ -76,7 +76,13 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/terminal',
     description: 'PTY terminal for spawned processes (Windows ConPTY in 1.3.14)',
   },
-  { term: 'Bun.cron', path: 'runtime/cron', description: 'In-process cron scheduling' },
+  {
+    term: 'Bun.cron',
+    path: 'runtime/cron',
+    // Prefer deep links: #bun-cron-schedule-handler-—-in-process · #no-overlap-guarantee
+    // (bare #cron is not a section id on the page)
+    description: 'In-process cron scheduling (UTC; no-overlap after handler settles)',
+  },
   { term: 'Bun.WebView', path: 'runtime/webview', description: 'Headless browser automation' },
   { term: 'Bun.markdown', path: 'runtime/markdown', description: 'Native Markdown rendering' },
   {

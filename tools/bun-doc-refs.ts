@@ -485,7 +485,11 @@ async function exportHierarchical(): Promise<void> {
 
 /**
  * Start an in-process Bun.cron scheduler for the integrity gate.
- * https://bun.com/docs/runtime/cron — in-process overload: Bun.cron(pattern, handler)
+ * Form: Bun.cron(schedule, handler) → CronJob
+ *   https://bun.sh/docs/runtime/cron#bun-cron-schedule-handler-—-in-process
+ * No-overlap (next fire after handler settles):
+ *   https://bun.sh/docs/runtime/cron#no-overlap-guarantee
+ * In-process schedules are UTC; bare #cron is not a section id.
  * Schedule is UTC, no-overlap guaranteed, job reschedules after errors.
  */
 /** Repo root (parent of tools/), used as cwd for the regen subprocess. */
