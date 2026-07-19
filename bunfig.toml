@@ -4,6 +4,7 @@
 
 [console]
 # Deep inspect for doctor gates and nested log fields (default 2 truncates too early)
+# Docs: https://bun.com/docs/runtime/console (precedence: --console-depth flag > this > default 2)
 depth = 6
 
 [debug]

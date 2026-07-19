@@ -2,8 +2,9 @@
 
 /**
  * 🎯 Exact Bun --console-depth Documentation Demo
- * 
- * Mirrors the official Bun documentation example with wiki template data
+ *
+ * Mirrors the official Bun documentation example with wiki template data.
+ * Docs: https://bun.com/docs/runtime/console
  */
 
 import { MCPWikiGenerator } from '../../lib/mcp/wiki-generator-mcp.ts';
