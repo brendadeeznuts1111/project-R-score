@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // lib/core/bun-spawn-utils.ts — Bun-specific spawn utilities with error handling
 
 import {
@@ -38,18 +40,6 @@ export interface SafeSpawnOptions {
   serviceName?: string;
   /** Maximum stdout size in bytes (for memory safety) */
   maxOutputSize?: number;
-}
-
-/**
- * ANSI width result
- */
-export interface AnsiWidthResult {
-  /** Visual width (accounts for ANSI codes) */
-  width: number;
-  /** Raw string length */
-  length: number;
-  /** Has ANSI codes */
-  hasAnsi: boolean;
 }
 
 // ============================================================================
@@ -355,114 +345,6 @@ export async function streamSpawn(
   }
 }
 
-// ============================================================================
-// ANSI Width Utilities
-// ============================================================================
-
-/**
- * Calculate ANSI-aware string width
- *
- * @example
- * ```typescript
- * const result = ansiStringWidth('\x1b[31mred\x1b[0m');
- * console.info(result.width); // 3 (not 9)
- * console.info(result.length); // 9
- * ```
- */
-export function ansiStringWidth(str: string): AnsiWidthResult {
-  try {
-    // Use Bun's built-in stringWidth if available
-    const width = (Bun as Record<string, unknown>).stringWidth?.(str) ?? str.length;
-
-    // Check for ANSI codes
-    const ansiPattern = /\x1b\[[0-9;]*m/g;
-    const hasAnsi = ansiPattern.test(str);
-
-    return {
-      width,
-      length: str.length,
-      hasAnsi,
-    };
-  } catch (error) {
-    recordError(error instanceof Error ? error : new Error(String(error)), {
-      service: 'ansi-utils',
-      operation: 'string_width',
-      input: str,
-    });
-
-    // Fallback: strip ANSI and return length
-    const stripped = str.replace(/\x1b\[[0-9;]*m/g, '');
-    return {
-      width: stripped.length,
-      length: str.length,
-      hasAnsi: str.length !== stripped.length,
-    };
-  }
-}
-
-/**
- * Strip ANSI codes from string
- */
-export function stripAnsi(str: string): string {
-  return str.replace(/\x1b\[[0-9;]*m/g, '');
-}
-
-/**
- * Truncate string to visual width (ANSI-aware)
- *
- * @example
- * ```typescript
- * truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
- * // '\x1b[31mhello\x1b[0m' (preserves color)
- * ```
- */
-export function truncateAnsi(str: string, maxWidth: number): string {
-  const { width } = ansiStringWidth(str);
-
-  if (width <= maxWidth) {
-    return str;
-  }
-
-  // Simple truncation (preserves ANSI at start)
-  let result = '';
-  let currentWidth = 0;
-  let inAnsi = false;
-
-  for (const char of str) {
-    if (char === '\x1b') {
-      inAnsi = true;
-      result += char;
-      continue;
-    }
-
-    if (inAnsi) {
-      result += char;
-      if (char === 'm') {
-        inAnsi = false;
-      }
-      continue;
-    }
-
-    if (currentWidth >= maxWidth) {
-      break;
-    }
-
-    result += char;
-    currentWidth++;
-  }
-
-  // Reset ANSI if we were in a color
-  if (!inAnsi && str.includes('\x1b[')) {
-    result += '\x1b[0m';
-  }
-
-  return result;
-}
-
-// ============================================================================
-// Convenience Exports
-// ============================================================================
-
 /**
  * Check if running in a TTY
  */
@@ -489,18 +371,16 @@ if (import.meta.main) {
   validateBinaryExists('bun');
   validateBinaryExists('nonexistent-binary-12345');
 
-  // Test ANSI width
+  // Test ANSI width (Bun native: stringWidth)
   console.info('\n2. ANSI Width:');
   const colored = '\x1b[31mred\x1b[0m';
-  const widthResult = ansiStringWidth(colored);
   console.info(`  String: "${colored}"`);
-  console.info(`  Visual width: ${widthResult.width}`);
-  console.info(`  Raw length: ${widthResult.length}`);
-  console.info(`  Has ANSI: ${widthResult.hasAnsi}`);
+  console.info(`  Visual width: ${Bun.stringWidth(colored)}`);
+  console.info(`  Raw length: ${colored.length}`);
 
-  // Test truncation
+  // Test truncation (Bun native: sliceAnsi)
   console.info('\n3. ANSI Truncation:');
-  const truncated = truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
+  const truncated = Bun.sliceAnsi('\x1b[31mhello world\x1b[0m', 0, 5);
   console.info(`  Truncated: "${truncated}"`);
 
   // Test safe spawn

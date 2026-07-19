@@ -15,7 +15,6 @@ export * from './core/core-types';
 
 // Theme and styling
 export * from './theme/colors';
-export * from './cli/terminal-color-256';
 
 // Documentation
 export * from './docs';

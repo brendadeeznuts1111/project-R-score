@@ -10,7 +10,6 @@
 
 import { VersionedSecretManager } from '../lib/security/versioned-secrets';
 import { SecurityUtils } from '../lib/security';
-import { BunColor } from '../lib/constants/color-constants';
 
 const args = process.argv.slice(2);
 const command = args[0];

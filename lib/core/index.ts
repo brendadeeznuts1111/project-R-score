@@ -144,7 +144,6 @@ export {
   // Types
   type SpawnResult,
   type SafeSpawnOptions,
-  type AnsiWidthResult,
 
   // Binary validation
   validateBinaryExists,
@@ -153,11 +152,6 @@ export {
   // Safe spawn
   safeSpawn,
   streamSpawn,
-
-  // ANSI utilities
-  ansiStringWidth,
-  stripAnsi,
-  truncateAnsi,
 
   // TTY utilities
   isTTY,
