@@ -5,6 +5,14 @@ import { Tier1380EnterpriseAuth } from './enterprise-auth';
 
 import { styled, log } from '../theme/colors';
 import appSecretManager from './app-secrets';
+import {
+  type DeploymentId,
+  type SnapshotId,
+  type UserId,
+  asDeploymentId,
+  asSnapshotId,
+  asUserId,
+} from '../types/branded.ts';
 
 interface DeploymentCredentials {
   username: string;
@@ -13,7 +21,7 @@ interface DeploymentCredentials {
 
 interface DeploymentResult {
   success: boolean;
-  deploymentId?: string;
+  deploymentId?: DeploymentId;
   timestamp: string;
   metadata?: Record<string, any>;
 }
@@ -21,7 +29,7 @@ interface DeploymentResult {
 interface DeploymentError extends Error {
   code?: string;
   score?: number;
-  userId?: string;
+  userId?: UserId;
 }
 
 export class Tier1380SecureDeployment {
@@ -29,9 +37,11 @@ export class Tier1380SecureDeployment {
    * Deploy with enterprise password authentication
    */
   static async deployWithPasswordAuth(
-    snapshotId: string,
+    snapshotId: string, // brand-ok — boundary accepts plain string; branded internally via asSnapshotId
     credentials: DeploymentCredentials
   ): Promise<DeploymentResult> {
+    const sid = asSnapshotId(snapshotId); // boundary: brand at entry
+
     // 1. Authenticate with enterprise password security
     const auth = await Tier1380EnterpriseAuth.authenticate(
       credentials.password,
@@ -51,27 +61,27 @@ export class Tier1380SecureDeployment {
     }
 
     // 2. Check deployment permissions
-    const hasPermission = await this.checkDeploymentPermission(credentials.username, snapshotId);
+    const hasPermission = await this.checkDeploymentPermission(credentials.username, sid);
 
     if (!hasPermission) {
       throw new DeploymentError('Insufficient permissions', {
         code: 'PERMISSION_DENIED',
-        userId: credentials.username,
+        userId: asUserId(credentials.username),
       }) as DeploymentError;
     }
 
     // 3. Retrieve deployment secrets from Windows Credential Manager
-    const deploymentSecrets = await this.getDeploymentSecrets(snapshotId);
+    const deploymentSecrets = await this.getDeploymentSecrets(sid);
 
     // 4. Execute deployment with authenticated context
     const deploymentId = this.generateDeploymentId();
 
     try {
       // Mock deployment execution
-      console.info(`🚀 Deploying snapshot ${snapshotId} for user ${credentials.username}`);
+      console.info(`🚀 Deploying snapshot ${sid} for user ${credentials.username}`);
 
       // In production, would execute actual deployment
-      const deploymentResult = await this.executeDeployment(snapshotId, {
+      const deploymentResult = await this.executeDeployment(sid, {
         authenticatedBy: credentials.username,
         passwordScore: auth.score,
         secrets: deploymentSecrets ? JSON.parse(deploymentSecrets) : {},
@@ -91,7 +101,7 @@ export class Tier1380SecureDeployment {
     } catch (error) {
       throw new DeploymentError(`Deployment failed: ${error.message}`, {
         code: 'DEPLOYMENT_ERROR',
-        userId: credentials.username,
+        userId: asUserId(credentials.username),
       }) as DeploymentError;
     }
   }
@@ -101,7 +111,7 @@ export class Tier1380SecureDeployment {
    */
   private static async checkDeploymentPermission(
     username: string,
-    snapshotId: string
+    snapshotId: SnapshotId
   ): Promise<boolean> {
     // In production, would check against permissions database
     const permissions = await Tier1380EnterpriseAuth.getUserPermissions(username);
@@ -113,9 +123,9 @@ export class Tier1380SecureDeployment {
   /**
    * Check if user owns the snapshot
    */
-  private static async ownsSnapshot(username: string, snapshotId: string): Promise<boolean> {
+  private static async ownsSnapshot(username: string, snapshotId: SnapshotId): Promise<boolean> {
     // In production, would check snapshot ownership in database
-    const ownerMap: Record<string, string> = {
+    const ownerMap: Record<string, string[]> = {
       admin: ['snapshot-001', 'snapshot-002', 'snapshot-003'],
       developer: ['snapshot-004', 'snapshot-005'],
       user1: ['snapshot-006'],
@@ -127,7 +137,7 @@ export class Tier1380SecureDeployment {
   /**
    * Retrieve deployment secrets from secure storage
    */
-  private static async getDeploymentSecrets(snapshotId: string): Promise<string | null> {
+  private static async getDeploymentSecrets(snapshotId: SnapshotId): Promise<string | null> {
     const key = `TIER1380_DEPLOYMENT_${snapshotId}`;
     return await appSecretManager.getSecret(key);
   }
@@ -135,15 +145,15 @@ export class Tier1380SecureDeployment {
   /**
    * Generate unique deployment ID
    */
-  private static generateDeploymentId(): string {
-    return `deploy-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`;
+  private static generateDeploymentId(): DeploymentId {
+    return asDeploymentId(`deploy-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`);
   }
 
   /**
    * Execute the actual deployment
    */
   private static async executeDeployment(
-    snapshotId: string,
+    snapshotId: SnapshotId,
     context: {
       authenticatedBy: string;
       passwordScore: number;
@@ -220,7 +230,7 @@ export class Tier1380SecureDeployment {
   /**
    * Validate snapshot integrity
    */
-  private static async validateSnapshot(snapshotId: string): Promise<void> {
+  private static async validateSnapshot(snapshotId: SnapshotId): Promise<void> {
     // Simulate snapshot validation
     await Bun.sleep(500);
 
@@ -235,7 +245,7 @@ export class Tier1380SecureDeployment {
   /**
    * Check dependencies
    */
-  private static async checkDependencies(snapshotId: string): Promise<void> {
+  private static async checkDependencies(snapshotId: SnapshotId): Promise<void> {
     // Simulate dependency checking
     await Bun.sleep(300);
 
@@ -250,7 +260,7 @@ export class Tier1380SecureDeployment {
   /**
    * Build application
    */
-  private static async buildApplication(snapshotId: string): Promise<{ size: string }> {
+  private static async buildApplication(snapshotId: SnapshotId): Promise<{ size: string }> {
     // Simulate build process
     await Bun.sleep(2000);
 
@@ -269,7 +279,9 @@ export class Tier1380SecureDeployment {
   /**
    * Run tests
    */
-  private static async runTests(snapshotId: string): Promise<{ passed: number; failed: number }> {
+  private static async runTests(
+    snapshotId: SnapshotId
+  ): Promise<{ passed: number; failed: number }> {
     // Simulate test execution
     await Bun.sleep(1500);
 
@@ -290,7 +302,7 @@ export class Tier1380SecureDeployment {
    * Deploy to production
    */
   private static async deployToProduction(
-    snapshotId: string,
+    snapshotId: SnapshotId,
     context: any
   ): Promise<{ url: string }> {
     // Simulate deployment
@@ -311,7 +323,7 @@ export class Tier1380SecureDeployment {
   /**
    * Update load balancer
    */
-  private static async updateLoadBalancer(snapshotId: string, deployResult: any): Promise<void> {
+  private static async updateLoadBalancer(snapshotId: SnapshotId, deployResult: any): Promise<void> {
     // Simulate load balancer update
     await Bun.sleep(500);
 
@@ -327,7 +339,7 @@ export class Tier1380SecureDeployment {
    * Run health checks
    */
   private static async runHealthChecks(
-    snapshotId: string
+    snapshotId: SnapshotId
   ): Promise<{ status: string; memoryUsage: string }> {
     // Simulate health checks
     await Bun.sleep(500);
@@ -350,7 +362,7 @@ export class Tier1380SecureDeployment {
    */
   static async batchDeploy(
     deployments: Array<{
-      snapshotId: string;
+      snapshotId: string; // brand-ok — boundary accepts plain string; branded inside deployWithPasswordAuth
       credentials: DeploymentCredentials;
     }>
   ): Promise<Array<DeploymentResult>> {
@@ -409,7 +421,7 @@ export class Tier1380SecureDeployment {
     failedDeployments: number;
     averageDeploymentTime: number;
     recentDeployments: Array<{
-      deploymentId: string;
+      deploymentId: DeploymentId;
       username: string;
       status: string;
       timestamp: string;
@@ -419,21 +431,21 @@ export class Tier1380SecureDeployment {
     // In production, would query database for deployment metrics
     const mockDeployments = [
       {
-        deploymentId: 'deploy-123456789',
+        deploymentId: asDeploymentId('deploy-123456789'),
         username: 'admin',
         status: 'success',
         timestamp: new Date().toISOString(),
         score: 85,
       },
       {
-        deploymentId: 'deploy-123456790',
+        deploymentId: asDeploymentId('deploy-123456790'),
         username: 'developer',
         status: 'success',
         timestamp: new Date(Date.now() - 3600000).toISOString(),
         score: 92,
       },
       {
-        deploymentId: 'deploy-123456891',
+        deploymentId: asDeploymentId('deploy-123456891'),
         username: 'user1',
         status: 'failed',
         timestamp: new Date(Date.now() - 7200000).toISOString(),

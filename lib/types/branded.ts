@@ -16,12 +16,13 @@
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 254 declarations remaining, baseline 274):
+ * `bun tools/branded-id-check.ts` — 245 declarations remaining, baseline 274):
  *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
  *         lib/security/master-token.ts (TokenId)
- *   IN FLIGHT: lib/security/zero-trust-manager.ts (SessionId, IdentityId,
+ *         lib/security/zero-trust-manager.ts (SessionId, IdentityId,
  *              ChallengeId, PolicyId)
- *   1. lib/security (34)     — userId, tokenId, sessionId
+ *         lib/security/secure-deployment.ts (DeploymentId, SnapshotId, UserId)
+ *   1. lib/security (25)     — userId, tokenId, sessionId
  *   2. lib/mcp (33)          — id, requestId, documentId
  *   3. lib/core (31)         — sessionId, requestId, snapshotId
  *   4. lib/registry (20)     — accountId, identityId, zone_id
@@ -63,6 +64,9 @@ export type ZoneId = BrandedString<'ZoneId'>;
 export type ChallengeId = BrandedString<'ChallengeId'>;
 export type PolicyId = BrandedString<'PolicyId'>;
 
+// ── Deployment ───────────────────────────────────────────────────────────
+export type DeploymentId = BrandedString<'DeploymentId'>;
+
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
@@ -85,3 +89,4 @@ export const asDocumentId = (v: string): DocumentId => makeId(v, 'DocumentId');
 export const asZoneId = (v: string): ZoneId => makeId(v, 'ZoneId');
 export const asChallengeId = (v: string): ChallengeId => makeId(v, 'ChallengeId');
 export const asPolicyId = (v: string): PolicyId => makeId(v, 'PolicyId');
+export const asDeploymentId = (v: string): DeploymentId => makeId(v, 'DeploymentId');
