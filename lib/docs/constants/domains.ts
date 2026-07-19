@@ -554,7 +554,7 @@ export const QUICK_REFERENCE_URLS = {
   // Installation guides
   INSTALLATION: {
     TECHNICAL: 'https://bun.sh/docs/installation', // Technical installation
-    GUIDE: 'https://bun.com/docs/quickstart#installation', // User-friendly installation
+    GUIDE: 'https://bun.com/docs/installation', // User-friendly installation
     PLATFORM_SPECIFIC: {
       WINDOWS: 'https://bun.sh/docs/installation/windows',
       MACOS: 'https://bun.sh/docs/installation/macos',
