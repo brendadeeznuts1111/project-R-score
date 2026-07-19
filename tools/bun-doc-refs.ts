@@ -43,6 +43,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
   // Generated API reference pages
   'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
+  BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
   // Dedicated topic pages
   'Bun.color': 'https://bun.com/docs/runtime/color',
   console: 'https://bun.com/docs/runtime/console',
@@ -78,7 +79,9 @@ function listRefs(): void {
 async function tsFiles(paths: string[]): Promise<string[]> {
   const out: string[] = [];
   for (const p of paths) {
-    const info = await Bun.file(p).stat().catch(() => null);
+    const info = await Bun.file(p)
+      .stat()
+      .catch(() => null);
     if (info?.isDirectory()) {
       const glob = new Bun.Glob('**/*.ts');
       for await (const f of glob.scan({ cwd: p, absolute: true })) out.push(f);
@@ -108,7 +111,9 @@ async function check(paths: string[]): Promise<number> {
       const url = CANONICAL_REFS[api];
       const [base, anchor] = url.split('#');
       const referenced =
-        text.includes(url) || text.includes(base) || (anchor !== undefined && text.includes('#' + anchor));
+        text.includes(url) ||
+        text.includes(base) ||
+        (anchor !== undefined && text.includes('#' + anchor));
       if (!referenced) {
         console.info(`  ${file}: uses ${api} without a doc ref`);
         console.info(`    add: @see ${url}`);

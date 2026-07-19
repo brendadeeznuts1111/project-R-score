@@ -138,6 +138,11 @@ describe('inspect / getConsoleDepth', () => {
     const out = inspect({ a: { b: 1 } }, { compact: true });
     expect(out).not.toContain('\n');
   });
+  test('sorted mode orders keys alphabetically, recursively', () => {
+    const out = inspect({ zebra: 1, alpha: { delta: 2, bravo: 3 } }, { sorted: true });
+    expect(out.indexOf('alpha')).toBeLessThan(out.indexOf('zebra'));
+    expect(out.indexOf('bravo')).toBeLessThan(out.indexOf('delta'));
+  });
 });
 
 describe('inspectCustom', () => {

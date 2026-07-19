@@ -82,6 +82,8 @@ export type InspectOptions = {
   depth?: number;
   colors?: boolean;
   compact?: boolean | number;
+  /** Sort object keys alphabetically, recursively — deterministic output
+   *  for snapshots/diffs. https://bun.com/reference/bun/BunInspectOptions */
   sorted?: boolean;
   getters?: boolean | 'get' | 'set';
 };
@@ -115,6 +117,15 @@ export function logDepth(value: unknown, options: InspectOptions = {}): void {
  */
 export function logCompact(value: unknown, options: InspectOptions = {}): void {
   console.info(inspect(value, { compact: true, ...options }));
+}
+
+/**
+ * Deterministic log with keys sorted alphabetically (recursive) — stable
+ * output for snapshots, diffs, and golden-file comparisons.
+ * @see https://bun.com/reference/bun/BunInspectOptions — `sorted`
+ */
+export function logSorted(value: unknown, options: InspectOptions = {}): void {
+  console.info(inspect(value, { sorted: true, ...options }));
 }
 
 /**
