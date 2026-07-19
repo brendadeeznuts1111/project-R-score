@@ -15,51 +15,73 @@
  * Adding a new API reference? Add it to CANONICAL_REFS below — one place only.
  */
 
-// Canonical doc map. Sources:
-//   https://bun.com/docs/runtime — runtime & CLI flags
-//   https://bun.com/docs/runtime/utils — Bun.* utility APIs (anchored)
-//   https://bun.com/reference/bun/<name> — generated API reference
-//   https://github.com/oven-sh/bun/tree/main/packages/bun-types — type declarations
+// Canonical doc map — the reference thesis for this repo's terminal layer:
+//
+//   Bun ships native, SIMD-accelerated replacements for the terminal npm
+//   stack (string-width, wrap-ansi, strip-ansi, slice-ansi, ansi-styles,
+//   cli-table). lib/console-depth.ts is the thin project layer over them.
+//   Every reference below is (a) verified reachable, (b) as specific as the
+//   official docs allow (anchor > topic page > generated reference), and
+//   (c) checked by `bun tools/bun-doc-refs.ts validate`.
+//
+// Source tiers, in order of preference:
+//   1. https://bun.com/docs/runtime/... — curated guides & CLI flags
+//   2. https://bun.com/reference/bun/<name> — generated API reference
+//   3. https://github.com/oven-sh/bun/tree/main/packages/bun-types — types
+//   4. External conventions (no-color.org, nodejs.org) where Bun defers
 export const BUN_TYPES_PINNED =
   'https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types';
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 
 export const CANONICAL_REFS: Record<string, string> = {
-  // Utilities (runtime/utils anchors)
+  // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
+  //    slice-ansi) ────────────────────────────────────────────────────────
   'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',
+  'Bun.stripANSI': 'https://bun.com/docs/runtime/utils#bun-stripansi',
+  'Bun.wrapAnsi': 'https://bun.com/docs/runtime/utils#bun-wrapansi',
+  'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
+
+  // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
   'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
   'Bun.inspect.table': 'https://bun.com/docs/runtime/utils#bun-inspect',
   'Bun.inspect.custom': 'https://bun.com/docs/runtime/utils#bun-inspect',
-  'Bun.stripANSI': 'https://bun.com/docs/runtime/utils#bun-stripansi',
-  'Bun.wrapAnsi': 'https://bun.com/docs/runtime/utils#bun-wrapansi',
+  BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
+  console: 'https://bun.com/docs/runtime/console',
+  '--console-depth': 'https://bun.com/docs/runtime/console',
+
+  // ── Color & TTY conventions (replaces chalk / ansi-styles) ─────────────
+  'Bun.color': 'https://bun.com/docs/runtime/color',
+  'process.stdout.isTTY': 'https://nodejs.org/api/tty.html',
+  'process.stdout.columns': 'https://nodejs.org/api/tty.html',
+  NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
+  FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
+
+  // ── Environment & configuration ────────────────────────────────────────
+  'Bun.env': 'https://bun.com/docs/runtime/environment-variables',
+  '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
+  BUN_RUNTIME_TRANSPILER_CACHE_PATH: 'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
+  'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
+
+  // ── Testing & snapshots ────────────────────────────────────────────────
+  'bun:test': 'https://bun.com/docs/cli/test',
+  'bun:test snapshots': 'https://bun.com/docs/test/snapshots',
+  'snapshot guide': 'https://bun.com/guides/test/snapshot',
+
+  // ── Bundler / executables ──────────────────────────────────────────────
+  'bun build --compile': 'https://bun.com/docs/bundler/executables',
+  'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
+
+  // ── General utilities ──────────────────────────────────────────────────
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
   'Bun.nanoseconds': 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   'Bun.sleep': 'https://bun.com/docs/runtime/utils#bun-sleep',
   'Bun.deepEquals': 'https://bun.com/docs/runtime/utils#bun-deepequals',
   'Bun.escapeHTML': 'https://bun.com/docs/runtime/utils#bun-escapehtml',
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
-  'Bun.env': 'https://bun.com/docs/runtime/utils#bun-env',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
-  // Generated API reference pages
-  'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
-  BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
-  'bun:test snapshots': 'https://bun.com/docs/test#snapshot-testing',
-  'snapshots reference': 'https://bun.com/docs/test/snapshots',
-  'snapshot guide': 'https://bun.com/guides/test/snapshot',
-  // Dedicated topic pages
-  'Bun.color': 'https://bun.com/docs/runtime/color',
-  console: 'https://bun.com/docs/runtime/console',
-  '--console-depth': 'https://bun.com/docs/runtime/console',
-  'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
-  'bun build --compile': 'https://bun.com/docs/bundler/executables',
-  'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
-  // Node compatibility / TTY
-  'process.stdout.isTTY': 'https://nodejs.org/api/tty.html',
-  'process.stdout.columns': 'https://nodejs.org/api/tty.html',
-  NO_COLOR: 'https://no-color.org',
-  FORCE_COLOR: 'https://nodejs.org/api/cli.html#force_color1',
-  // Type declarations
+
+  // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,
 };
 

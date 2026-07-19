@@ -8,6 +8,7 @@
  *   - Bun.inspect / Bun.inspect.table / Bun.inspect.custom / Bun.stringWidth /
  *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/runtime/utils
  *   - Bun.color: https://bun.com/docs/runtime/color
+ *   - Bun.env / .env files: https://bun.com/docs/runtime/environment-variables
  *   - Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
  *   - TTY primitives (isTTY, columns): https://nodejs.org/api/tty.html
  *   - Type definitions (pinned commit):
@@ -28,6 +29,13 @@
  *   2. `--console-depth=N` in process args
  *   3. `BUN_CONSOLE_DEPTH` env (set it in the project root .env)
  *   4. DEFAULT_DEPTH (4)
+ *
+ * .env note: Bun auto-loads .env with precedence .env < .env.{NODE_ENV}
+ * < .env.local — a local override of BUN_CONSOLE_DEPTH wins silently.
+ * NO_COLOR / FORCE_COLOR are official Bun env vars (documented on the
+ * environment-variables page); Bun's precedence is FORCE_COLOR > NO_COLOR,
+ * matching shouldColor() below.
+ * https://bun.com/docs/runtime/environment-variables
  *
  * For class-level customization of printed output, implement
  * `[Bun.inspect.custom]()` on the class (see utils docs above).
