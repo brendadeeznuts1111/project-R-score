@@ -1,14 +1,15 @@
 // lib/security/secret-audit-logger.ts — Audit logging for secret operations
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
+import { type UserId, type SessionId } from '../types/branded.ts';
 
 interface AuditEvent {
   timestamp: string;
   operation: 'read' | 'write' | 'delete' | 'rotate' | 'access_attempt';
   secretName: string;
   service: string;
-  userId?: string;
-  sessionId?: string;
+  userId?: UserId;
+  sessionId?: SessionId;
   ipAddress?: string;
   userAgent?: string;
   success: boolean;
@@ -18,8 +19,8 @@ interface AuditEvent {
 }
 
 interface SecurityContext {
-  userId?: string;
-  sessionId?: string;
+  userId?: UserId;
+  sessionId?: SessionId;
   ipAddress?: string;
   userAgent?: string;
 }

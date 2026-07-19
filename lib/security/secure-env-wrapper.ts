@@ -6,6 +6,7 @@ import {
   Schemas as ValidationSchemas,
 } from '../utils/simple-validation';
 import { auditLogger } from './secret-audit-logger';
+import { type UserId, type SessionId } from '../types/branded.ts';
 
 export interface EnvVarConfig<T = string> {
   name: string;
@@ -17,8 +18,8 @@ export interface EnvVarConfig<T = string> {
 }
 
 export interface SecurityContext {
-  userId?: string;
-  sessionId?: string;
+  userId?: UserId;
+  sessionId?: SessionId;
   ipAddress?: string;
   userAgent?: string;
 }

@@ -4,6 +4,7 @@
 
 import { VersionGraph } from './version-graph';
 import { getSecret, setSecret } from './bun-secrets-adapter';
+import { type VersionId, asVersionId } from '../types/branded.ts';
 
 export type VersionMetadata = {
   author?: string;
@@ -13,7 +14,7 @@ export type VersionMetadata = {
 };
 
 export type VersionNode = {
-  id: string;
+  id: VersionId;
   version: string;
   timestamp: string;
   author?: string;
@@ -83,7 +84,7 @@ export class VersionedSecretManager {
     });
 
     const node: VersionNode = {
-      id: `v${Date.now()}`,
+      id: asVersionId(`v${Date.now()}`),
       version: newVersion,
       timestamp: new Date().toISOString(),
       author: metadata.author,
@@ -160,7 +161,7 @@ export class VersionedSecretManager {
       });
 
       const node: VersionNode = {
-        id: `rb${Date.now()}`,
+        id: asVersionId(`rb${Date.now()}`),
         version: targetVersion,
         timestamp: new Date().toISOString(),
         author: 'rollback',

@@ -16,16 +16,15 @@
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 245 declarations remaining, baseline 274):
+ * `bun tools/branded-id-check.ts` — 220 declarations remaining, baseline 274):
  *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
- *         lib/security/master-token.ts (TokenId)
- *         lib/security/zero-trust-manager.ts (SessionId, IdentityId,
- *              ChallengeId, PolicyId)
- *         lib/security/secure-deployment.ts (DeploymentId, SnapshotId, UserId)
- *   1. lib/security (25)     — userId, tokenId, sessionId
- *   2. lib/mcp (33)          — id, requestId, documentId
- *   3. lib/core (31)         — sessionId, requestId, snapshotId
- *   4. lib/registry (20)     — accountId, identityId, zone_id
+ *         lib/security — ALL 14 files clean (UserId, SessionId, TokenId,
+ *              AccountId, AccessKeyId, IdentityId, ChallengeId, PolicyId,
+ *              DeploymentId, SnapshotId, VersionId, AuditId)
+ *   1. lib/mcp (33)          — id, requestId, documentId
+ *   2. lib/core (31)         — sessionId, requestId, snapshotId
+ *   3. lib/registry (20)     — accountId, identityId, zone_id
+ *   4. lib/r2 (40)           — sessionId, key ids
  *   5. lib/docs + lib/utils  — remainder
  * Pre-commit enforces zero NEW violations (added lines only) — the
  * baseline only shrinks from here.
@@ -67,6 +66,10 @@ export type PolicyId = BrandedString<'PolicyId'>;
 // ── Deployment ───────────────────────────────────────────────────────────
 export type DeploymentId = BrandedString<'DeploymentId'>;
 
+// ── Secrets / audit ──────────────────────────────────────────────────────
+export type VersionId = BrandedString<'VersionId'>;
+export type AuditId = BrandedString<'AuditId'>;
+
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
@@ -90,3 +93,5 @@ export const asZoneId = (v: string): ZoneId => makeId(v, 'ZoneId');
 export const asChallengeId = (v: string): ChallengeId => makeId(v, 'ChallengeId');
 export const asPolicyId = (v: string): PolicyId => makeId(v, 'PolicyId');
 export const asDeploymentId = (v: string): DeploymentId => makeId(v, 'DeploymentId');
+export const asVersionId = (v: string): VersionId => makeId(v, 'VersionId');
+export const asAuditId = (v: string): AuditId => makeId(v, 'AuditId');

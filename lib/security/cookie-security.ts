@@ -15,6 +15,7 @@
  */
 
 import { CryptoHasher } from 'bun';
+import { type UserId, asUserId } from '../types/branded.ts';
 
 // Type declarations for Bun APIs - augment existing Bun interface
 interface BunServer {
@@ -394,7 +395,7 @@ export class ABTestingVariant {
   static validateVariantCookie(cookie: Cookie): {
     valid: boolean;
     variant?: 'A' | 'B';
-    userId?: string;
+    userId?: UserId;
   } {
     try {
       const data = JSON.parse(cookie.value);
@@ -418,7 +419,7 @@ export class ABTestingVariant {
       return {
         valid: true,
         variant: data.variant,
-        userId: data.userId,
+        userId: data.userId ? asUserId(data.userId) : undefined,
       };
     } catch {
       return { valid: false };

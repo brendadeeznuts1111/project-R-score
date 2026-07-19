@@ -6,6 +6,7 @@
 import { FW_COLORS, styled } from '../theme/colors';
 import { DocsUrlBuilder } from '../docs/url-builder';
 import { getSecret as getManagedSecret } from './bun-secrets-adapter';
+import { type AuditId, asAuditId } from '../types/branded.ts';
 // Security level configurations with FactoryWager standards
 export const SECURITY_LEVELS = {
   CRITICAL: {
@@ -54,7 +55,7 @@ interface CacheEntry {
 
 // Audit trail entry
 interface AuditEntry {
-  id: string;
+  id: AuditId;
   secretHash: string;
   action: 'GET' | 'ROTATE' | 'INVALIDATE' | 'CACHE_HIT';
   level: SecurityLevel;
@@ -343,10 +344,10 @@ export class SecretManager {
     return Bun.hash.sha256(key).toString('hex');
   }
 
-  private generateAuditId(key: string, action: string): string {
+  private generateAuditId(key: string, action: string): AuditId {
     const timestamp = Date.now();
     const hash = Bun.hash.crc32(`${key}-${action}-${timestamp}`).toString(16);
-    return `secret-${timestamp}-${hash}`;
+    return asAuditId(`secret-${timestamp}-${hash}`);
   }
 
   private async queueAuditEntry(entry: AuditEntry): Promise<void> {

@@ -1,9 +1,10 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { getSecret } from './bun-secrets-adapter';
+import { type AccountId, type AccessKeyId, asAccountId, asAccessKeyId } from '../types/branded.ts';
 
 export interface ResolvedR2Config {
-  accountId: string;
-  accessKeyId: string;
+  accountId: AccountId;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   endpoint?: string;
   bucketName: string;
@@ -59,7 +60,9 @@ export async function resolveR2InfraConfig(
   );
   const bucketFallback = options.bucketFallback || 'npm-registry';
 
+  // brand-ok — raw secret values; '' is the "unresolved" sentinel (callers check falsy), branded at the return boundary
   const accountId = await resolveSecretField('R2_ACCOUNT_ID', ['R2_ACCOUNT_ID'], services);
+  // brand-ok — raw secret value; branded at the return boundary
   const accessKeyId = await resolveSecretField('R2_ACCESS_KEY_ID', ['R2_ACCESS_KEY_ID'], services);
   const secretAccessKey = await resolveSecretField(
     'R2_SECRET_ACCESS_KEY',
@@ -81,8 +84,10 @@ export async function resolveR2InfraConfig(
   );
 
   return {
-    accountId,
-    accessKeyId,
+    // brand-ok — '' sentinel preserved when R2_ACCOUNT_ID is unresolved (diagnostics report "missing")
+    accountId: accountId ? asAccountId(accountId) : ('' as AccountId),
+    // brand-ok — '' sentinel preserved when R2_ACCESS_KEY_ID is unresolved
+    accessKeyId: accessKeyId ? asAccessKeyId(accessKeyId) : ('' as AccessKeyId),
     secretAccessKey,
     endpoint: endpoint || (options.endpointOptional ? undefined : endpoint),
     bucketName,

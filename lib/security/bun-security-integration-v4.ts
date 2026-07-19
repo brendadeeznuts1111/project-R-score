@@ -25,6 +25,7 @@ const bunRuntime = globalThis.Bun as BunRuntime | undefined;
 // import { Cookie, CookieMap } from 'bun:cookies'; // Not available in this version
 import { createCipheriv, createDecipheriv, createHmac, randomBytes, pbkdf2Sync } from 'node:crypto';
 import { Database } from 'bun:sqlite';
+import { asSessionId } from '../types/branded.ts';
 
 // Mock Cookie class for demo
 class Cookie {
@@ -314,15 +315,16 @@ export class BunSecurityEngine {
   static CSRFProtection = class {
     // 🔑 GENERATE CSRF TOKEN WITH ZST COMPRESSION
     static generateCSRFToken(
-      sessionId: string,
+      sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
       secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
     ): { token: string; cookie: Cookie; compressed?: boolean } {
+      const sid = asSessionId(sessionId); // boundary: brand at entry
       const timestamp = Date.now();
       const nonce = randomBytes(16).toString('hex');
 
       // Create token data
       const tokenData = {
-        sessionId,
+        sessionId: sid,
         timestamp,
         nonce,
         expires: timestamp + 3600 * 1000, // 1 hour
@@ -368,9 +370,10 @@ export class BunSecurityEngine {
     // 🔍 VALIDATE CSRF TOKEN
     static validateCSRFToken(
       token: string,
-      sessionId: string,
+      sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
       secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
     ): { valid: boolean; reason?: string; metadata?: any } {
+      const sid = asSessionId(sessionId); // boundary: brand at entry
       try {
         let tokenData: any;
 
@@ -394,7 +397,7 @@ export class BunSecurityEngine {
         }
 
         // Verify session match
-        if (tokenData.sessionId !== sessionId) {
+        if (tokenData.sessionId !== sid) {
           return { valid: false, reason: 'Session mismatch' };
         }
 

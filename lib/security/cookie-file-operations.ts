@@ -12,13 +12,14 @@
 import { open } from 'node:fs/promises';
 import { Cookie, CookieInspector, LeadSpecProfile } from './cookie-security';
 import { JuniorRunnerCookieProfiler } from './junior-runner';
+import { type SessionId, type UserId, asSessionId } from '../types/branded.ts';
 
 // 📁 COOKIE FILE OPERATIONS
 export interface CookieLogEntry {
   timestamp: string;
   level: 'info' | 'warn' | 'error' | 'debug';
-  sessionId?: string;
-  userId?: string;
+  sessionId?: SessionId;
+  userId?: UserId;
   cookieName: string;
   action: 'parse' | 'validate' | 'create' | 'delete' | 'inspect';
   result: 'success' | 'failure';
@@ -83,7 +84,7 @@ export class CookieFileLogger {
   /**
    * Parse cookie and log the operation
    */
-  async logParse(header: string, sessionId?: string): Promise<Cookie | null> {
+  async logParse(header: string, sessionId?: SessionId): Promise<Cookie | null> {
     const startTime = performance.now();
 
     try {
@@ -124,7 +125,7 @@ export class CookieFileLogger {
   /**
    * Validate cookie and log the operation
    */
-  async logValidation(cookie: Cookie, sessionId?: string): Promise<boolean> {
+  async logValidation(cookie: Cookie, sessionId?: SessionId): Promise<boolean> {
     const startTime = performance.now();
 
     try {
@@ -492,7 +493,7 @@ export class CookieBatchProcessor {
    */
   async processCookieHeaders(
     filePath: string,
-    sessionId?: string
+    sessionId?: SessionId
   ): Promise<{
     processed: number;
     successful: number;
@@ -593,7 +594,7 @@ export async function demonstrateFileHandleReadLines() {
   // Create some sample log entries
   await logger.log({
     level: 'info',
-    sessionId: 'demo-session-123',
+    sessionId: asSessionId('demo-session-123'),
     cookieName: 'session',
     action: 'parse',
     result: 'success',
@@ -604,7 +605,7 @@ export async function demonstrateFileHandleReadLines() {
 
   await logger.log({
     level: 'warn',
-    sessionId: 'demo-session-123',
+    sessionId: asSessionId('demo-session-123'),
     cookieName: 'analytics',
     action: 'validate',
     result: 'failure',

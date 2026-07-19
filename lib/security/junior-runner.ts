@@ -13,12 +13,13 @@ import {
   CSRFProtection,
   JuniorRunnerCookieIntegration,
 } from './cookie-security';
+import { type SessionId, type UserId, asSessionId, asUserId } from '../types/branded.ts';
 
 // 📊 LEAD SPEC PROFILE INTERFACE
 export interface LeadSpecProfile {
   timestamp: string;
-  sessionId?: string;
-  userId?: string;
+  sessionId?: SessionId;
+  userId?: UserId;
   path: string;
   method: string;
   userAgent?: string;
@@ -37,7 +38,7 @@ export interface LeadSpecProfile {
   abTesting?: {
     variant?: 'A' | 'B';
     valid: boolean;
-    userId?: string;
+    userId?: UserId;
   };
   performance: {
     parseTime: number;
@@ -115,7 +116,9 @@ export class JuniorRunnerCookieProfiler {
         ? {
             variant: cookieProfile.abVariant.variant,
             valid: cookieProfile.abVariant.valid,
-            userId: cookieProfile.abVariant.userId,
+            userId: cookieProfile.abVariant.userId
+              ? asUserId(cookieProfile.abVariant.userId)
+              : undefined,
           }
         : undefined,
       performance: {
@@ -148,7 +151,7 @@ export class JuniorRunnerCookieProfiler {
   /**
    * Extract session ID from request
    */
-  private static extractSessionId(req: Request): string | undefined {
+  private static extractSessionId(req: Request): SessionId | undefined {
     const cookieHeader = req.headers.get('cookie');
     if (!cookieHeader) return undefined;
 
@@ -158,7 +161,7 @@ export class JuniorRunnerCookieProfiler {
 
       if (sessionCookie) {
         const cookie = Cookie.parse(sessionCookie);
-        return cookie.value;
+        return cookie.value ? asSessionId(cookie.value) : undefined;
       }
     } catch {
       // Invalid cookie format
@@ -170,7 +173,7 @@ export class JuniorRunnerCookieProfiler {
   /**
    * Extract user ID from request
    */
-  private static extractUserId(req: Request): string | undefined {
+  private static extractUserId(req: Request): UserId | undefined {
     const cookieHeader = req.headers.get('cookie');
     if (!cookieHeader) return undefined;
 
@@ -180,7 +183,7 @@ export class JuniorRunnerCookieProfiler {
 
       if (userCookie) {
         const cookie = Cookie.parse(userCookie);
-        return cookie.value;
+        return cookie.value ? asUserId(cookie.value) : undefined;
       }
     } catch {
       // Invalid cookie format

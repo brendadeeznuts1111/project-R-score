@@ -323,7 +323,10 @@ export class Tier1380SecureDeployment {
   /**
    * Update load balancer
    */
-  private static async updateLoadBalancer(snapshotId: SnapshotId, deployResult: any): Promise<void> {
+  private static async updateLoadBalancer(
+    snapshotId: SnapshotId,
+    deployResult: any
+  ): Promise<void> {
     // Simulate load balancer update
     await Bun.sleep(500);
 

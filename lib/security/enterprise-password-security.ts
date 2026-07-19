@@ -6,6 +6,7 @@
 import { styled, log } from '../theme/colors';
 
 import { Utils } from '../utils/index';
+import { type UserId, asUserId } from '../types/branded.ts';
 import appSecretManager from './app-secrets';
 
 interface PasswordPolicy {
@@ -57,7 +58,7 @@ export class Tier1380PasswordSecurity {
     password: string,
     options: {
       algorithm?: 'argon2id' | 'bcrypt';
-      userId?: string;
+      userId?: UserId;
       policy?: Partial<PasswordPolicy>;
     } = {}
   ): Promise<PasswordHash> {
@@ -113,15 +114,16 @@ export class Tier1380PasswordSecurity {
    */
   static async verifyPassword(
     password: string,
-    userId: string
+    userId: string // brand-ok — boundary accepts plain string; branded internally via asUserId
   ): Promise<{
     valid: boolean;
     needsRehash?: boolean;
     score?: number;
     warnings?: string[];
   }> {
+    const uid = asUserId(userId);
     // 1. Retrieve hash from secure storage
-    const storedHash = await this.retrievePasswordHash(userId);
+    const storedHash = await this.retrievePasswordHash(uid);
     if (!storedHash) {
       return { valid: false, warnings: ['No password hash found'] };
     }
@@ -392,12 +394,13 @@ export class Tier1380PasswordSecurity {
    * Password change with history validation
    */
   static async changePassword(
-    userId: string,
+    userId: string, // brand-ok — boundary accepts plain string; branded internally via asUserId
     currentPassword: string,
     newPassword: string
   ): Promise<{ success: boolean; message: string; score: number }> {
+    const uid = asUserId(userId);
     // 1. Verify current password
-    const verification = await this.verifyPassword(currentPassword, userId);
+    const verification = await this.verifyPassword(currentPassword, uid);
     if (!verification.valid) {
       return {
         success: false,
@@ -407,7 +410,7 @@ export class Tier1380PasswordSecurity {
     }
 
     // 2. Check if new password is in history
-    if (await this.isPasswordInHistory(newPassword, userId)) {
+    if (await this.isPasswordInHistory(newPassword, uid)) {
       return {
         success: false,
         message: 'Password has been used recently. Please choose a new password.',
@@ -417,7 +420,7 @@ export class Tier1380PasswordSecurity {
 
     // 3. Hash and store new password
     try {
-      const newHash = await this.hashPassword(newPassword, { userId });
+      const newHash = await this.hashPassword(newPassword, { userId: uid });
       const score = this.calculatePasswordScore(newPassword);
 
       return {

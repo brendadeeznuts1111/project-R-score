@@ -3,6 +3,7 @@
 
 import { Tier1380PasswordSecurity } from './enterprise-password-security';
 
+import { type UserId, asUserId } from '../types/branded.ts';
 import { styled, log } from '../theme/colors';
 import { Utils } from '../utils/index';
 import appSecretManager from './app-secrets';
@@ -26,7 +27,7 @@ interface AuthenticationResult {
 
 interface SessionToken {
   token: string;
-  userId: string;
+  userId: UserId;
   expiresAt: Date;
   permissions: string[];
   metadata: Record<string, any>;
@@ -35,14 +36,14 @@ interface SessionToken {
 interface AuthenticationError extends Error {
   code?: string;
   score?: number;
-  userId?: string;
+  userId?: UserId;
 }
 
 export class Tier1380EnterpriseAuth {
   private static rateLimitStore = new Map<string, { attempts: number; lastAttempt: Date }>();
   private static auditLog: Array<{
     timestamp: Date;
-    userId: string;
+    userId: UserId;
     action: string;
     success: boolean;
     ipAddress: string;
@@ -150,7 +151,7 @@ export class Tier1380EnterpriseAuth {
 
     const session: SessionToken = {
       token,
-      userId: username,
+      userId: asUserId(username),
       expiresAt,
       permissions,
       metadata: {
@@ -255,7 +256,7 @@ export class Tier1380EnterpriseAuth {
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date(),
-      userId: username,
+      userId: asUserId(username),
       action: 'AUTH_FAILED',
       success: false,
       ipAddress: context.ipAddress,
@@ -277,7 +278,7 @@ export class Tier1380EnterpriseAuth {
   private static async auditLogin(username: string, metadata: Record<string, any>): Promise<void> {
     const logEntry = {
       timestamp: new Date(),
-      userId: username,
+      userId: asUserId(username),
       action: 'AUTH_SUCCESS',
       success: true,
       ipAddress: metadata.ipAddress,
@@ -295,7 +296,7 @@ export class Tier1380EnterpriseAuth {
    */
   private static async rehashPassword(username: string, password: string): Promise<void> {
     try {
-      await Tier1380PasswordSecurity.hashPassword(password, { userId: username });
+      await Tier1380PasswordSecurity.hashPassword(password, { userId: asUserId(username) });
       console.info(`🔄 Rehashed password for ${username}`);
     } catch (error) {
       console.error(`Failed to rehash password for ${username}:`, error);
@@ -468,7 +469,7 @@ export class AuthenticationError extends Error {
     message: string,
     public code?: string,
     public score?: number,
-    public userId?: string
+    public userId?: UserId
   ) {
     super(message);
     this.name = 'AuthenticationError';
