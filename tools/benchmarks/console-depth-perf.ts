@@ -4,13 +4,16 @@
 // (SIMD, native) and Bun.sliceAnsi vs the naive JS approaches they replace.
 // Scaled cases mirror Bun's official stringWidth benchmark so numbers diff
 // directly: https://bun.com/docs/runtime/utils#bun-stringwidth
+// Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
+// Bun.nanoseconds: https://bun.com/docs/runtime/utils#bun-nanoseconds
 
 console.info('🚀 Console Depth Performance Benchmarks\n');
 console.info('Bun v' + Bun.version + '\n');
 
 const ITERATIONS = 100_000;
 const ascii = 'hello world this is a typical log line with some text';
-const ansiLine = '\x1b[31merror\x1b[0m: request \x1b[1mfailed\x1b[0m for \x1b[36muser@example.com\x1b[0m';
+const ansiLine =
+  '\x1b[31merror\x1b[0m: request \x1b[1mfailed\x1b[0m for \x1b[36muser@example.com\x1b[0m';
 const unicodeLine = 'status: ✅ deployed 한국어 世界 😀🔥 to prod';
 
 // Size-scaled inputs matching Bun's published benchmark sizes
@@ -28,7 +31,9 @@ function bench(name: string, fn: () => void, iterations = ITERATIONS): number {
   const ns = Bun.nanoseconds() - start;
   const nsPerIter = ns / iterations;
   const display =
-    nsPerIter < 1_000 ? `${nsPerIter.toFixed(1)} ns/iter` : `${(nsPerIter / 1_000).toFixed(2)} µs/iter`;
+    nsPerIter < 1_000
+      ? `${nsPerIter.toFixed(1)} ns/iter`
+      : `${(nsPerIter / 1_000).toFixed(2)} µs/iter`;
   console.info(`  ${name.padEnd(48)} ${display.padStart(12)}`);
   return nsPerIter;
 }
@@ -51,8 +56,9 @@ for (let i = 0; i < SCALES.length; i++) {
   bench(`${SCALES[i].toLocaleString()} chars ascii`, () => void Bun.stringWidth(scaledAscii[i]));
 }
 for (let i = 0; i < SCALES.length; i++) {
-  bench(`${SCALES[i].toLocaleString()} chars ansi+emoji`, () =>
-    void Bun.stringWidth(scaledAnsiEmoji[i])
+  bench(
+    `${SCALES[i].toLocaleString()} chars ansi+emoji`,
+    () => void Bun.stringWidth(scaledAnsiEmoji[i])
   );
 }
 

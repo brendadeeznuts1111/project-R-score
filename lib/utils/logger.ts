@@ -1,4 +1,7 @@
 // lib/utils/logger.ts — Structured logging utility
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+
+import { shouldColor } from '../console-depth.ts';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -61,7 +64,7 @@ export class Logger {
       includeTimestamp: Bun.env.NODE_ENV !== 'test',
       includeModule: true,
       jsonOutput: process.env.JSON_LOGS === 'true',
-      colors: process.env.NO_COLORS !== 'true' && Bun.env.NODE_ENV !== 'production',
+      colors: process.env.NO_COLORS !== 'true' && shouldColor(),
       maxLogSize: 10000,
     };
   }

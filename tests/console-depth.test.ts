@@ -5,6 +5,7 @@
  * (https://github.com/sindresorhus/string-width/blob/main/test.js) — the same
  * suite Bun.stringWidth is validated against
  * (https://bun.com/docs/runtime/utils#bun-stringwidth).
+ * Bun.inspect.custom: https://bun.com/docs/runtime/utils#bun-inspect
  * Running them through widthOf() diffs our helper + this Bun runtime against
  * the reference expectations in one shot.
  */

@@ -19,9 +19,9 @@ console.info(templates);
 console.info('');
 
 console.info('💡 Try different depths:');
-console.info('   bun --console-depth 1 examples/console-depth-wiki-demo.ts');
-console.info('   bun --console-depth 3 examples/console-depth-wiki-demo.ts');
-console.info('   bun --console-depth 5 examples/console-depth-wiki-demo.ts');
+console.info('   bun --console-depth 1 examples/demos/console-depth-wiki-demo.ts');
+console.info('   bun --console-depth 3 examples/demos/console-depth-wiki-demo.ts');
+console.info('   bun --console-depth 5 examples/demos/console-depth-wiki-demo.ts');
 console.info('');
 
 // Show a deeply nested object

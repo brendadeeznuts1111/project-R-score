@@ -5,9 +5,13 @@
  *
  * Tier-1380 optimization complete with adaptive debounce, health checks,
  * and real-time dashboard for Bun --watch + --filter integration.
+ *
+ * @see https://bun.com/docs/runtime/utils — Bun.inspect, Bun.env, Bun.stringWidth
+ * @see https://bun.com/docs/runtime/console — --console-depth flag
  */
 
 import { Glob, stringWidth } from 'bun';
+import { getConsoleDepth } from './console-depth.ts';
 
 // Type assertions for Bun APIs
 const BunAPI = globalThis as any;
@@ -765,10 +769,10 @@ export async function runWatchCLI(): Promise<void> {
       args.find(
         a => !a.startsWith('-') && !['--filter', '--watch', '--hot', '--smol'].includes(a)
       ) || 'dev',
-    consoleDepth: (() => {
-      const idx = args.findIndex(a => a === '--console-depth');
-      return idx !== -1 ? parseInt(args[idx + 1]) || 2 : undefined;
-    })(),
+    // SSOT (lib/console-depth.ts): parses --console-depth, then
+    // BUN_CONSOLE_DEPTH env, then default. Replaces inline flag parsing.
+    // https://bun.com/docs/runtime/console
+    consoleDepth: getConsoleDepth(),
   };
 
   if (flags.watch || flags.hot) {

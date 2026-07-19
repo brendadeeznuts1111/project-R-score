@@ -1,5 +1,7 @@
 // lib/theme/colors.ts — FactoryWager color theme with severity-based diagnostics
 
+import { shouldColor } from '../console-depth.ts';
+
 // ============================================================================
 // FACTORYWAGER COLOR PALETTE
 // ============================================================================
@@ -36,29 +38,30 @@ export type FactoryWagerColor = keyof typeof FW_COLORS;
 // ============================================================================
 
 /**
- * Apply FactoryWager color styling to text
+ * Apply FactoryWager color styling to text.
+ *
+ * Uses ansi-256 via Bun.color — note Bun.color(hex, 'ansi') returns '' for
+ * hex/rgb inputs (named colors only), which previously made this emit no
+ * color at all. Plain text when piped (shouldColor TTY gate).
+ * @see https://bun.com/docs/runtime/color — Bun.color input/output formats
+ * @see https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
  */
 export function styled(
   text: string,
   color: FactoryWagerColor,
   background?: FactoryWagerColor
 ): string {
-  const fgColor = FW_COLORS[color];
-  const bgColor = background ? FW_COLORS[background] : undefined;
+  if (!shouldColor()) return text;
 
-  // Use Bun.color for ANSI output (fallback to plain text if not available)
-  try {
-    const fg = Bun.color(fgColor, 'ansi') || '';
-    const bg = bgColor ? Bun.color(bgColor, 'ansi') || '' : '';
-    const reset = Bun.color('reset', 'ansi') || '';
+  const fg = Bun.color(FW_COLORS[color], 'ansi-256') || '';
+  // Bun.color emits foreground (38;5;n) codes — remap to background (48;5;n)
+  const bgCode = background ? Bun.color(FW_COLORS[background], 'ansi-256') || '' : '';
+  const bg = bgCode.replace('38;5;', '48;5;');
 
-    if (bgColor) {
-      return fg + text + bg + reset;
-    }
-    return fg + text + reset;
-  } catch {
-    return text;
+  if (background) {
+    return fg + bg + text + '\x1b[0m';
   }
+  return fg + text + '\x1b[0m';
 }
 
 /**
