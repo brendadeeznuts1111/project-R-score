@@ -28,7 +28,12 @@
 //   1. https://bun.com/docs/runtime/... — curated guides & CLI flags
 //   2. https://bun.com/reference/bun/<name> — generated API reference
 //   3. https://github.com/oven-sh/bun/tree/main/packages/bun-types — types
-//   4. External conventions (no-color.org, nodejs.org) where Bun defers
+//
+// Everything in CANONICAL_REFS resolves to Bun docs or Bun's own repo.
+// Sole intentional exception elsewhere: tests/console-depth.test.ts cites
+// github.com/sindresorhus/string-width — the reference vector suite
+// Bun.stringWidth is validated against; Bun has no equivalent canonical
+// vectors of its own.
 //
 // Agent-consumable docs: append `.md` to any bun.com/docs page for raw
 // markdown (e.g. .../environment-variables.md). Full index:
@@ -55,8 +60,8 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Color & TTY conventions (replaces chalk / ansi-styles) ─────────────
   'Bun.color': 'https://bun.com/docs/runtime/color',
-  'process.stdout.isTTY': 'https://nodejs.org/api/tty.html',
-  'process.stdout.columns': 'https://nodejs.org/api/tty.html',
+  'process.stdout.isTTY': 'https://bun.com/docs/runtime/nodejs-apis#nodetty',
+  'process.stdout.columns': 'https://bun.com/docs/runtime/nodejs-apis#nodetty',
   NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
   FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
 

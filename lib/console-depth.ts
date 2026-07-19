@@ -10,7 +10,7 @@
  *   - Bun.color: https://bun.com/docs/runtime/color
  *   - Bun.env / .env files: https://bun.com/docs/runtime/environment-variables
  *   - Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
- *   - TTY primitives (isTTY, columns): https://nodejs.org/api/tty.html
+ *   - TTY primitives (isTTY, columns): https://bun.com/docs/runtime/nodejs-apis#nodetty
  *   - Type definitions (pinned commit):
  *     https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types
  *     (tracking branch: https://github.com/oven-sh/bun/tree/main/packages/bun-types)
@@ -67,10 +67,10 @@ export function getConsoleDepth(): number {
 
 /**
  * TTY-aware color decision, honoring the standard FORCE_COLOR / NO_COLOR
- * env conventions. Never emit ANSI when piped unless explicitly forced.
- * @see https://no-color.org — NO_COLOR convention
- * @see https://nodejs.org/api/cli.html#force_color1 — FORCE_COLOR levels
- * @see https://nodejs.org/api/tty.html — process.stdout.isTTY
+ * env conventions (Bun documents both as official env vars, precedence
+ * FORCE_COLOR > NO_COLOR). Never emit ANSI when piped unless forced.
+ * @see https://bun.com/docs/runtime/environment-variables#configuring-bun — NO_COLOR / FORCE_COLOR
+ * @see https://bun.com/docs/runtime/nodejs-apis#nodetty — process.stdout.isTTY
  */
 export function shouldColor(): boolean {
   if (Bun.env.FORCE_COLOR && Bun.env.FORCE_COLOR !== '0') return true;
@@ -80,7 +80,7 @@ export function shouldColor(): boolean {
 
 /**
  * Terminal width in columns (fallback 80).
- * @see https://nodejs.org/api/tty.html — tty.WriteStream.columns
+ * @see https://bun.com/docs/runtime/nodejs-apis#nodetty — tty.WriteStream.columns
  */
 export function termWidth(): number {
   return process.stdout.columns ?? 80;
