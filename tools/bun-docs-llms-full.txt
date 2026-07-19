@@ -1,0 +1,592 @@
+# Bun Documentation — hierarchical index
+# Generated from tools/bun-docs-index.json (317 pages)
+
+
+## /blog
+- [Blog](https://bun.com/blog)
+
+## /reference
+- [Reference](https://bun.com/reference)
+
+## Concurrency
+- [Workers](https://bun.com/docs/runtime/workers): Use Bun's Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread
+  anchors: #creating-a-worker, #from-the-main-thread, #worker-thread, #preload-load-modules-before-the-worker-starts, #blob-urls, #open, #messages-with-postmessage, #performance-optimizations, #terminating-a-worker, #process-exit, #close, #managing-lifetime, #worker-unref, #worker-ref, #memory-usage-with-smol, #environment-data, #worker-events, #bun-ismainthread
+
+## Contributing
+- [Benchmarking](https://bun.com/docs/project/benchmarking): How to benchmark Bun
+  anchors: #measuring-time, #benchmarking-tools, #measuring-memory-usage, #javascript-heap-stats, #native-heap-stats, #cpu-profiling, #markdown-output, #options, #heap-profiling
+- [Bindgen](https://bun.com/docs/project/bindgen): Bindgen for Bun
+  anchors: #creating-js-functions-in-rust, #strings, #function-variants, #t-dictionary, #enumerations, #implnamespace, #t-oneof, #attributes, #integer-attributes, #callbacks, #classes
+- [Building Windows](https://bun.com/docs/project/building-windows): Building Bun on Windows
+  anchors: #prerequisites, #enable-scripts, #system-dependencies, #building, #extra-paths, #tests, #troubleshooting, #rc-file-fails-to-build, #failed-to-write-output-bun-debug-exe-permission-denied, #cross-compiling-from-linux, #lto
+- [Contributing](https://bun.com/docs/project/contributing): Contributing to Bun
+  anchors: #using-nix-alternative, #install-dependencies-manual, #optional-install-ccache, #install-llvm, #building-bun, #vscode, #running-debug-builds, #code-generation-scripts, #modifying-esm-modules, #release-build, #download-release-build-from-pull-requests, #viewing-ci-failures-from-the-terminal, #addresssanitizer, #building-webkit-locally-debug-mode-of-jsc, #troubleshooting, #span-file-not-found-on-ubuntu, #libarchive, #macos-library-not-found-for-lsystem, #cannot-find-libatomic-a, #using-bun-debug
+- [License](https://bun.com/docs/project/license): License for Bun
+  anchors: #javascriptcore, #linked-libraries, #polyfills, #additional-credits
+- [Roadmap](https://bun.com/docs/project/roadmap): Bun's roadmap and long-term plans
+
+## Core Runtime
+- [bunfig.toml](https://bun.com/docs/runtime/bunfig): Configure Bun's behavior using its configuration file bunfig.toml
+  anchors: #global-vs-local, #runtime, #preload, #jsx, #smol, #loglevel, #define, #loader, #telemetry, #env, #console, #console-depth, #serve, #serve-port, #test-runner, #test-root, #test-preload, #test-pathignorepatterns, #test-smol, #test-coverage, #test-coveragethreshold, #test-coverageskiptestfiles, #test-coverageignoresourcemaps, #test-coveragepathignorepatterns, #test-coveragereporter, #test-coveragedir, #test-randomize, #test-seed, #test-reruneach, #test-retry, #test-concurrenttestglob, #test-onlyfailures, #test-reporter, #test-reporter-dots, #test-reporter-junit, #package-manager, #install-optional, #install-dev, #install-peer, #install-production, #install-exact, #install-ignorescripts, #install-concurrentscripts, #install-savetextlockfile, #install-auto, #install-prefer, #install-frozenlockfile, #install-dryrun, #install-globaldir, #install-globalbindir, #install-registry, #install-linkworkspacepackages, #install-scopes, #install-ca-and-install-cafile, #install-cache, #install-lockfile, #install-linker, #install-globalstore, #install-publichoistpattern, #install-hoistpattern, #install-loglevel, #install-security-scanner, #install-minimumreleaseage, #install-minimumreleaseageexcludes, #bun-run, #run-shell-use-the-system-shell-or-buns-shell, #run-bun-auto-alias-node-to-bun, #run-silent-suppress-reporting-the-command-being-run, #run-elide-lines-truncate-filtered-output, #run-noorphans-dont-leave-orphan-processes-behind
+- [Debugging](https://bun.com/docs/runtime/debugger): Debug your Bun code with an interactive debugger using WebKit Inspector Protocol
+  anchors: #debugging-javascript-and-typescript, #inspect, #inspect-brk, #inspect-wait, #setting-a-port-or-url-for-the-debugger, #debuggers, #debug-bun-sh, #visual-studio-code-debugger, #debugging-network-requests, #print-fetch-nodehttp-requests-as-curl-commands, #stacktraces-sourcemaps, #syntax-highlighted-source-code-preview, #v8-stack-traces, #v8-stack-trace-api
+- [Bun Runtime](https://bun.com/docs/runtime/index): Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun's fast runtime.
+  anchors: #run-a-file, #watch, #run-a-package-json-script, #bun, #filtering, #bun-run-to-pipe-code-from-stdin, #bun-run-console-depth, #bun-run-smol, #resolution-order, #general-execution-options, #workspace-management, #runtime-process-control, #development-workflow, #debugging, #dependency-module-resolution, #transpilation-language-features, #networking-security, #global-configuration-context, #examples
+- [REPL](https://bun.com/docs/runtime/repl): An interactive JavaScript and TypeScript REPL with syntax highlighting, history, and tab completion
+  anchors: #features, #special-variables, #top-level-await, #importing-modules, #multi-line-input, #repl-commands, #keybindings, #history, #non-interactive-mode
+- [Watch Mode](https://bun.com/docs/runtime/watch-mode): Automatic reloading in Bun with --watch and --hot modes
+  anchors: #watch-mode, #hot-mode, #http-servers
+
+## Data & Storage
+- [Archive](https://bun.com/docs/runtime/archive): Create and extract tar archives with Bun's fast native implementation
+  anchors: #quickstart, #creating-archives, #writing-archives-to-disk, #getting-archive-bytes, #extracting-archives, #from-existing-archive-data, #extracting-to-disk, #filtering-extracted-files, #reading-archive-contents, #get-all-files, #error-handling, #filtering-with-glob-patterns, #compression, #examples, #bundle-project-files, #extract-and-process-npm-package, #create-archive-from-directory, #reference
+- [Binary Data](https://bun.com/docs/runtime/binary-data): Working with binary data in JavaScript
+  anchors: #arraybuffer-and-views, #dataview, #typedarray, #uint8array, #buffer, #blob, #bunfile, #file, #streams, #conversion, #from-arraybuffer, #to-typedarray, #to-dataview, #to-buffer, #to-string, #to-number, #to-blob, #to-readablestream, #from-typedarray, #to-arraybuffer, #from-dataview, #from-buffer, #from-blob, #from-readablestream, #to-uint8array
+- [Cookies](https://bun.com/docs/runtime/cookies): Use Bun's native APIs for working with HTTP cookies
+  anchors: #cookiemap-class, #in-http-servers, #methods, #get-name-string-string-null, #has-name-string-boolean, #set-name-string-value-string-void, #set-options-cookieinit-void, #set-cookie-cookie-void, #delete-name-string-void, #delete-options-cookiestoredeleteoptions-void, #tojson-record-string-string, #tosetcookieheaders-string, #iteration, #properties, #size-number, #cookie-class, #constructors, #isexpired-boolean, #serialize-string, #tostring-string, #tojson-cookieinit, #static-methods, #cookie-parse-cookiestring-string-cookie, #cookie-from-name-string-value-string-options-cookieinit-cookie, #types
+- [File I/O](https://bun.com/docs/runtime/file-io): Bun provides a set of optimized APIs for reading and writing files.
+  anchors: #reading-files-bun-file, #deleting-files-file-delete, #writing-files-bun-write, #incremental-writing-with-filesink, #directories, #reading-directories-readdir, #reading-directories-recursively, #creating-directories-mkdir, #benchmarks, #reference
+- [Cookies](https://bun.com/docs/runtime/http/cookies): Work with cookies in HTTP requests and responses using Bun's built-in Cookie API.
+  anchors: #reading-cookies, #setting-cookies, #deleting-cookies
+- [Redis](https://bun.com/docs/runtime/redis): Use Bun's native Redis client with a Promise-based API
+  anchors: #getting-started, #connection-lifecycle, #basic-operations, #string-operations, #numeric-operations, #hash-operations, #set-operations, #pub-sub, #basic-usage, #publishing, #subscriptions, #advanced-usage, #command-execution-and-pipelining, #raw-commands, #connection-events, #connection-status-and-monitoring, #type-conversion, #connection-options, #reconnection-behavior, #supported-url-formats, #error-handling, #example-use-cases, #caching, #rate-limiting, #session-storage, #implementation-notes, #limitations-and-future-plans
+- [S3](https://bun.com/docs/runtime/s3): Bun provides fast, native bindings for interacting with S3-compatible object storage services.
+  anchors: #buns-s3-api-is-fast, #basic-usage, #bun-s3client-bun-s3, #working-with-s3-files, #reading-files-from-s3, #memory-optimization, #writing-uploading-files-to-s3, #working-with-large-files-streams, #presigning-urls, #setting-acls, #expiring-urls, #method, #new-response-s3file, #support-for-s3-compatible-services, #using-buns-s3client-with-aws-s3, #using-buns-s3client-with-google-cloud-storage, #using-buns-s3client-with-cloudflare-r2, #using-buns-s3client-with-digitalocean-spaces, #using-buns-s3client-with-minio, #using-buns-s3client-with-supabase, #using-buns-s3client-with-s3-virtual-hosted-style-endpoints, #credentials, #s3client-objects, #s3client-prototype-write, #s3client-prototype-delete, #s3client-prototype-exists, #s3file, #partial-reads-with-slice, #deleting-files-from-s3, #error-codes, #s3client-static-methods, #s3client-write-static, #s3client-presign-static, #s3client-list-static, #s3client-exists-static, #s3client-size-static, #s3client-stat-static, #s3client-delete-static, #s3-protocol, #utf-8-utf-16-and-bom-byte-order-mark
+- [SQL](https://bun.com/docs/runtime/sql): Bun provides native bindings for working with SQL databases through a unified Promise-based API that supports PostgreSQL, MySQL, and SQLite.
+  anchors: #features, #database-support, #postgresql, #mysql, #sqlite, #inserting-data, #bulk-insert, #picking-columns-to-insert, #query-results, #sql-values-format, #sql-raw-format, #sql-fragments, #dynamic-table-names, #conditional-queries, #dynamic-columns-in-updates, #dynamic-values-and-where-in, #sql-array-helper, #sql-simple, #queries-in-files, #unsafe-queries, #execute-and-cancelling-queries, #database-environment-variables, #automatic-database-detection, #mysql-auto-detection, #sqlite-auto-detection, #postgresql-auto-detection, #mysql-environment-variables, #postgresql-environment-variables, #sqlite-environment-variables, #runtime-preconnection, #connection-options, #mysql-options, #postgresql-options, #sqlite-options, #dynamic-passwords, #sqlite-specific-features, #query-execution, #sqlite-pragmas, #data-type-differences, #transactions, #basic-transactions, #savepoints, #distributed-transactions, #authentication, #ssl-modes-overview, #using-with-connection-strings, #connection-pooling, #reserved-connections, #prepared-statements, #error-handling, #error-classes, #sqlite-specific-errors, #numbers-and-bigint, #bigint-instead-of-strings, #roadmap, #database-specific-features, #authentication-methods, #prepared-statements-performance, #multiple-result-sets, #character-sets-collations, #connection-attributes, #type-handling, #differences-from-postgresql, #mysql-specific-features, #postgresql-specific-features, #common-patterns-best-practices, #working-with-mysql-result-sets, #mysql-error-handling, #performance-tips-for-mysql, #frequently-asked-questions, #why-not-just-use-an-existing-library, #credits
+- [SQLite](https://bun.com/docs/runtime/sqlite): Bun natively implements a high-performance SQLite3 driver.
+  anchors: #database, #strict-mode, #load-via-es-module-import, #close-throwonerror-boolean-false, #using-statement, #serialize, #query, #wal-mode, #wal-sidecar-file-cleanup, #statements, #binding-values, #strict-true-lets-you-bind-values-without-prefixes, #all, #get, #run, #as-class-map-query-results-to-a-class, #iterate-iterator, #values, #finalize, #tostring, #parameters, #integers, #safeintegers-true, #safeintegers-false-default, #transactions, #loadextension, #filecontrol-cmd-number-value-any, #reference, #datatypes
+- [Streams](https://bun.com/docs/runtime/streams): Use Bun's streams API to work with binary data without loading it all into memory at once
+  anchors: #direct-readablestream, #handling-backpressure, #async-generator-streams, #bun-arraybuffersink, #reference
+
+## File & Module System
+- [Plugins](https://bun.com/docs/bundler/plugins): Universal plugin API for extending Bun's runtime and bundler
+  anchors: #lifecycle-hooks, #reference, #usage, #plugin-lifecycle, #namespaces, #onstart, #onresolve, #onload, #defer, #native-plugins, #creating-a-native-plugin-in-rust, #onbeforeparse, #onend
+- [Auto-install](https://bun.com/docs/runtime/auto-install): Bun's automatic package installation feature for standalone script execution
+  anchors: #version-resolution, #cache-behavior, #installation, #version-specifiers, #benefits, #limitations, #faq
+- [File System Router](https://bun.com/docs/runtime/file-system-router): Bun provides a fast API for resolving routes against file-system paths
+  anchors: #next-js-style, #reference
+- [File Types](https://bun.com/docs/runtime/file-types): File types and loaders supported by Bun's bundler and runtime
+  anchors: #built-in-loaders, #js, #jsx, #ts, #tsx, #json, #jsonc, #toml, #yaml, #json5, #text, #napi, #sqlite, #html, #css, #sh-loader, #file
+- [JSX](https://bun.com/docs/runtime/jsx): Built-in JSX and TSX support in Bun with configurable transpilation options
+  anchors: #configuration, #jsx, #jsxfactory, #jsxfragmentfactory, #jsximportsource, #jsx-pragma, #logging, #prop-punning
+- [Module Resolution](https://bun.com/docs/runtime/module-resolution): How Bun resolves modules and handles imports in JavaScript and TypeScript
+  anchors: #syntax, #module-systems, #using-require, #using-import, #using-import-and-require-together, #top-level-await, #importing-packages, #node-path, #custom-conditions, #path-re-mapping, #import-meta
+- [Plugins](https://bun.com/docs/runtime/plugins): Universal plugin API for extending Bun's runtime and bundler
+  anchors: #lifecycle-hooks, #reference, #usage, #plugin-lifecycle, #namespaces, #onstart, #onresolve, #onload, #defer, #native-plugins, #creating-a-native-plugin-in-rust, #onbeforeparse
+
+## Get Started
+- [Welcome to Bun](https://bun.com/docs/index): Bun is an all-in-one toolkit for developing modern JavaScript/TypeScript applications.
+  anchors: #get-started, #whats-inside, #what-is-bun, #what-is-a-runtime, #browsers, #node-js, #design-goals
+- [Installation](https://bun.com/docs/installation): Install Bun with npm, Homebrew, Docker, or the official script.
+  anchors: #overview, #installation, #upgrading, #canary-builds, #installing-older-versions, #direct-downloads, #latest-version-downloads, #musl-binaries, #cpu-requirements, #uninstall
+- [Quickstart](https://bun.com/docs/quickstart): Build your first app with Bun
+  anchors: #overview, #run-a-script
+- [bun create](https://bun.com/docs/runtime/templating/create): Create a new Bun project from a React component, a `create-<template>` npm package, a GitHub repo, or a local template
+  anchors: #from-a-react-component, #how-this-works, #using-tailwindcss-with-bun, #using-shadcn-ui-with-bun, #from-npm, #from-github, #from-a-local-template, #setup-logic, #reference, #cli-flags, #environment-variables
+- [bun init](https://bun.com/docs/runtime/templating/init): Scaffold an empty Bun project with the interactive `bun init` command
+  anchors: #cli-usage, #initialization-options, #project-templates, #output-files, #help, #examples
+- [TypeScript](https://bun.com/docs/typescript): Using TypeScript with Bun, including type definitions and compiler options
+  anchors: #suggested-compileroptions, #typescript-6-and-7
+- [TypeScript 6 and 7](https://bun.com/docs/typescript-6): How to configure Bun's type definitions for TypeScript 6.0 and 7.0, which no longer auto-discover @types packages. Fix 'Cannot find name Bun' and other missing type errors after upgrading TypeScript.
+  anchors: #what-changed, #add-types-bun-to-your-tsconfig, #full-recommended-tsconfig-json, #does-this-apply-to-typescript-7
+
+## HTTP server
+- [Error Handling](https://bun.com/docs/runtime/http/error-handling): Learn how to handle errors in Bun's development server
+  anchors: #error-callback
+- [Metrics](https://bun.com/docs/runtime/http/metrics): Monitor server activity with built-in metrics
+  anchors: #server-pendingrequests-and-server-pendingwebsockets, #server-subscribercount-topic
+- [Routing](https://bun.com/docs/runtime/http/routing): Define routes in `Bun.serve` using static paths, parameters, and wildcards
+  anchors: #basic-setup, #asynchronous-routes, #async-await, #promise, #route-precedence, #type-safe-route-parameters, #static-responses, #file-responses-vs-static-responses, #streaming-files, #fetch-request-handler
+- [Server](https://bun.com/docs/runtime/http/server): Use `Bun.serve` to start a high-performance HTTP server in Bun
+  anchors: #basic-setup, #html-imports, #configuration, #changing-the-port-and-hostname, #configuring-a-default-port, #unix-domain-sockets, #abstract-namespace-sockets, #http-3-quic, #idletimeout, #export-default-syntax, #hot-route-reloading, #server-lifecycle-methods, #server-stop, #server-ref-and-server-unref, #server-reload, #per-request-controls, #server-timeout-request-seconds, #server-requestip-request, #server-metrics, #server-pendingrequests-and-server-pendingwebsockets, #server-subscribercount-topic, #benchmarks, #practical-example-rest-api, #reference
+- [TLS](https://bun.com/docs/runtime/http/tls): Enable TLS in Bun.serve
+  anchors: #passphrase, #ca-certificates, #diffie-hellman, #server-name-indication-sni
+
+## Interop & Tooling
+- [C Compiler](https://bun.com/docs/runtime/c-compiler): Compile and run C from JavaScript with low overhead
+  anchors: #usage-cc-in-bunffi, #primitive-types, #strings-objects-and-non-primitive-types, #returning-a-c-string-to-javascript, #cc-reference, #library-string, #symbols, #source, #flags-string-string, #define-record-string-string
+- [Color](https://bun.com/docs/runtime/color): Format colors as CSS, ANSI, numbers, hex strings, and more
+  anchors: #flexible-input, #format-colors-as-css, #format-colors-as-ansi-for-terminals, #24-bit-ansi-colors-ansi-16m, #256-ansi-colors-ansi-256, #16-ansi-colors-ansi-16, #format-colors-as-numbers, #get-the-red-green-blue-and-alpha-channels, #rgba-object, #rgba-array, #format-colors-as-hex-strings, #bundle-time-client-side-color-formatting
+- [Console](https://bun.com/docs/runtime/console): The console object in Bun
+  anchors: #object-inspection-depth, #reading-from-stdin
+- [CSRF Protection](https://bun.com/docs/runtime/csrf): Generate and verify CSRF tokens with Bun's built-in API
+  anchors: #bun-csrf-generate, #bun-csrf-verify, #using-with-bun-serve, #default-secret, #typescript
+- [FFI](https://bun.com/docs/runtime/ffi): Use Bun's FFI module to efficiently call native libraries from JavaScript
+  anchors: #dlopen-usage-bunffi, #performance, #usage, #zig, #rust, #c, #ffi-types, #strings, #function-pointers, #callbacks, #experimental-thread-safe-callbacks, #pointers, #memory-management, #from-javascript, #from-c-rust-zig-etc, #memory-safety, #pointer-alignment, #passing-a-pointer, #reading-pointers
+- [Glob](https://bun.com/docs/runtime/glob): Use Bun's fast native implementation of file globbing
+  anchors: #quickstart, #supported-glob-patterns, #match-any-single-character, #matches-zero-or-more-characters-except-for-path-separators-or, #match-any-number-of-characters-including, #ab-matches-one-of-the-characters-contained-in-the-brackets-as-well-as-character-ranges, #a-b-c-match-any-of-the-given-patterns, #negates-the-result-at-the-start-of-a-pattern, #escapes-any-of-the-special-characters-above, #node-js-fs-glob-compatibility
+- [Hashing](https://bun.com/docs/runtime/hashing): Utility functions for hashing and verifying passwords with various cryptographically secure algorithms
+  anchors: #bun-password, #salt, #bcrypt-modular-crypt-format, #argon2-phc-format, #bun-hash, #bun-cryptohasher, #hmac-in-bun-cryptohasher
+- [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter): Use Bun's HTMLRewriter to transform HTML documents with CSS selectors
+  anchors: #usage, #input-types, #element-handlers, #css-selector-support, #element-operations, #text-operations, #comment-operations, #document-handlers, #response-handling, #error-handling, #see-also
+- [Image](https://bun.com/docs/runtime/image): Decode, transform, and encode images with a fast native pipeline
+  anchors: #input, #metadata, #resize, #rotate-flip, #modulate, #output-formats, #terminals, #placeholders, #bun-serve-integration, #clipboard, #platform-backends
+- [JSON5](https://bun.com/docs/runtime/json5): Use Bun's built-in support for JSON5 files through both runtime APIs and bundler integration
+  anchors: #conformance, #runtime-api, #bun-json5-parse, #supported-json5-features, #error-handling, #bun-json5-stringify, #pretty-printing, #special-values, #module-import, #es-modules, #default-import, #named-imports, #commonjs, #hot-reloading-with-json5, #bundler-integration, #dynamic-imports
+- [JSONL](https://bun.com/docs/runtime/jsonl): Parse newline-delimited JSON (JSONL) with Bun's built-in streaming parser
+  anchors: #bun-jsonl-parse, #error-handling, #bun-jsonl-parsechunk, #return-value, #streaming-example, #byte-offsets-with-uint8array, #error-recovery, #supported-value-types, #performance-notes
+- [Markdown](https://bun.com/docs/runtime/markdown): Parse and render Markdown with Bun's built-in Markdown API, supporting GFM extensions and custom rendering callbacks
+  anchors: #bun-markdown-html, #options, #autolinks, #heading-ids, #bun-markdown-render, #callback-signature, #block-callbacks, #list-item-meta, #inline-callbacks, #examples, #custom-html-with-classes, #stripping-all-formatting, #omitting-elements, #ansi-terminal-output, #nested-list-numbering, #code-block-syntax-highlighting, #parser-options, #bun-markdown-react, #server-side-rendering, #component-overrides, #available-overrides, #react-18-and-older
+- [Node-API](https://bun.com/docs/runtime/node-api): Use Bun's Node-API module to build native add-ons to Node.js
+- [Secrets](https://bun.com/docs/runtime/secrets): Use Bun's Secrets API to store and retrieve sensitive credentials securely
+  anchors: #overview, #api, #bun-secrets-get-options, #bun-secrets-set-options, #bun-secrets-delete-options, #examples, #storing-cli-tool-credentials, #migrating-from-plaintext-config-files, #error-handling, #updating-credentials, #platform-behavior, #macos-keychain, #linux-libsecret, #windows-credential-manager, #security-considerations, #limitations, #comparison-with-environment-variables, #best-practices, #typescript
+- [Semver](https://bun.com/docs/runtime/semver): Use Bun's semantic versioning API
+  anchors: #bun-semver-satisfies-version-string-range-string-boolean, #bun-semver-order-versiona-string-versionb-string-0-1-1
+- [TOML](https://bun.com/docs/runtime/toml): Use Bun's built-in support for TOML files through both runtime APIs and bundler integration
+  anchors: #runtime-api, #bun-toml-parse, #supported-toml-features, #error-handling, #bun-toml-stringify, #module-import, #es-modules, #default-import, #named-imports, #import-attributes, #commonjs, #hot-reloading-with-toml, #bundler-integration, #dynamic-imports
+- [Transpiler](https://bun.com/docs/runtime/transpiler): Use Bun's transpiler to transpile JavaScript and TypeScript code
+  anchors: #transformsync, #transform, #scan, #scanimports, #reference
+- [Utils](https://bun.com/docs/runtime/utils): Use Bun's utility functions to work with the runtime
+  anchors: #bun-version, #bun-revision, #bun-env, #bun-main, #bun-sleep, #bun-sleepsync, #bun-which, #bun-randomuuidv7, #bun-peek, #bun-openineditor, #bun-deepequals, #bun-escapehtml, #bun-stringwidth, #bun-fileurltopath, #bun-pathtofileurl, #bun-gzipsync, #bun-gunzipsync, #bun-deflatesync, #bun-inflatesync, #bun-zstdcompress-bun-zstdcompresssync, #bun-zstddecompress-bun-zstddecompresssync, #bun-inspect, #bun-inspect-custom, #bun-inspect-table-tabulardata-properties-options, #bun-nanoseconds, #bun-readablestreamto, #bun-resolvesync, #bun-stripansi, #bun-wrapansi, #options, #serialize-deserialize-in-bunjsc, #estimateshallowmemoryusageof-in-bunjsc
+- [YAML](https://bun.com/docs/runtime/yaml): Use Bun's built-in support for YAML files through both runtime APIs and bundler integration
+  anchors: #conformance, #runtime-api, #bun-yaml-parse, #multi-document-yaml, #supported-yaml-features, #error-handling, #module-import, #es-modules, #default-import, #named-imports, #commonjs, #hot-reloading-with-yaml, #configuration-hot-reloading, #configuration-management, #environment-based-configuration, #feature-flags-configuration, #database-configuration, #bundler-integration, #dynamic-imports
+
+## Networking
+- [WebSockets](https://bun.com/docs/runtime/http/websockets): Server-side WebSockets in Bun
+  anchors: #start-a-websocket-server, #sending-messages, #headers, #contextual-data, #pub-sub, #compression, #backpressure, #timeouts-and-limits, #connect-to-a-websocket-server, #reference
+- [DNS](https://bun.com/docs/runtime/networking/dns): Use Bun's DNS module to resolve DNS records
+  anchors: #dns-caching-in-bun, #when-should-i-prefetch-a-dns-entry, #dns-prefetch, #dns-getcachestats, #configuring-dns-cache-ttl, #why-is-30-seconds-the-default
+- [Fetch](https://bun.com/docs/runtime/networking/fetch): Send HTTP requests with Bun's fetch API
+  anchors: #sending-an-http-request, #sending-a-post-request, #proxying-requests, #custom-headers, #response-bodies, #streaming-response-bodies, #streaming-request-bodies, #fetching-a-url-with-a-timeout, #canceling-a-request, #unix-domain-sockets, #tls, #custom-tls-validation, #disable-tls-validation, #request-options, #protocol-support, #s3-urls-s3, #file-urls-file, #data-urls-data, #blob-urls-blob, #error-handling, #content-type-handling, #debugging, #performance, #dns-prefetching, #dns-caching, #preconnect-to-a-host, #preconnect-at-startup, #connection-pooling-http-keep-alive, #simultaneous-connection-limit, #response-buffering, #implementation-details
+- [TCP](https://bun.com/docs/runtime/networking/tcp): Use Bun's native TCP API to implement performance-sensitive systems like database clients, game servers, or anything that needs to communicate over TCP (instead of HTTP)
+  anchors: #start-a-server-bun-listen, #create-a-connection-bun-connect, #hot-reloading, #buffering
+- [UDP](https://bun.com/docs/runtime/networking/udp): Use Bun's UDP API to implement services with advanced real-time requirements, such as voice chat.
+  anchors: #bind-a-udp-socket-bun-udpsocket, #send-a-datagram, #receive-datagrams, #connections, #send-many-packets-at-once-using-sendmany, #handle-backpressure, #socket-options, #multicast
+
+## Process & System
+- [Spawn](https://bun.com/docs/runtime/child-process): Spawn child processes with `Bun.spawn` or `Bun.spawnSync`
+  anchors: #spawn-a-process-bun-spawn, #input-stream, #output-streams, #exit-handling, #resource-usage, #using-abortsignal, #using-timeout-and-killsignal, #using-maxbuffer, #inter-process-communication-ipc, #ipc-between-bun-node-js, #terminal-pty-support, #terminal-options, #terminal-methods, #reusable-terminal, #platform-differences, #blocking-api-bun-spawnsync, #benchmarks, #reference
+- [Cron](https://bun.com/docs/runtime/cron): Schedule and parse cron jobs with Bun
+  anchors: #quickstart, #bun-cron-parse, #parameters, #returns, #chaining-calls, #cron-expression-syntax, #special-characters, #named-values, #predefined-nicknames, #time-zone, #day-of-month-and-day-of-week-interaction, #bun-cron-schedule-handler-in-process, #no-overlap-guarantee, #error-handling, #bun-hot, #the-cronjob-handle, #fake-timers, #bun-cron-path-schedule-title-os-level, #the-scheduled-handler, #how-it-works-per-platform, #linux, #macos, #windows, #user-context, #trigger-limit, #windows-containers, #bun-cron-remove
+- [Environment Variables](https://bun.com/docs/runtime/environment-variables): Read and configure environment variables in Bun, including automatic .env file support
+  anchors: #setting-environment-variables, #manually-specifying-env-files, #disabling-automatic-env-loading, #quotation-marks, #expansion, #dotenv, #reading-environment-variables, #typescript, #configuring-bun, #runtime-transpiler-caching, #disable-the-runtime-transpiler-cache, #what-does-it-cache
+- [Shell](https://bun.com/docs/runtime/shell): Use Bun's shell scripting API to run shell commands from JavaScript
+  anchors: #features, #getting-started, #error-handling, #redirection, #example-redirect-output-to-javascript-objects, #example-redirect-input-from-javascript-objects, #example-redirect-stdin-file, #example-redirect-stdout-file, #example-redirect-stderr-file, #example-redirect-stderr-stdout, #example-redirect-stdout-stderr, #piping, #command-substitution, #environment-variables, #changing-the-environment-variables, #changing-the-working-directory, #reading-output, #reading-output-as-json, #reading-output-line-by-line, #reading-output-as-a-blob, #builtin-commands, #utilities, #braces-brace-expansion, #escape-escape-strings, #sh-file-loader, #implementation-notes, #security-in-the-bun-shell, #security-considerations, #argument-injection, #credits
+- [WebView](https://bun.com/docs/runtime/webview): Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else
+  anchors: #creating-a-view, #automatic-cleanup-with-using, #persistent-storage, #backends, #how-the-webkit-backend-works, #how-the-chrome-backend-works, #finding-the-chrome-executable, #launch-flags, #subprocess-output, #navigation, #history, #navigation-callbacks, #evaluating-javascript, #screenshots, #image-format, #return-type, #shared-memory-for-terminal-graphics, #input-simulation, #clicking, #clicking-by-selector, #typing-text, #pressing-keys, #scrolling, #resizing, #console-capture, #mirror-to-buns-console, #custom-handler, #sending-commands, #subscribing-to-events, #lifecycle, #closing-a-view, #killing-all-browsers, #event-loop-behavior, #subprocess-death, #concurrency-model, #reference, #new-bun-webview-options, #backend-object-form, #instance-properties, #instance-methods, #click-options, #press-options, #scrollto-options, #screenshot-options, #static-methods
+
+## Standards & Compatibility
+- [Bun APIs](https://bun.com/docs/runtime/bun-apis): Overview of Bun's native APIs available on the Bun global object and built-in modules
+- [Globals](https://bun.com/docs/runtime/globals): Use Bun's global objects
+- [Node.js Compatibility](https://bun.com/docs/runtime/nodejs-compat): Bun's compatibility status with Node.js APIs, modules, and globals
+  anchors: #built-in-node-js-modules, #nodeassert, #nodebuffer, #nodeconsole, #nodedgram, #nodediagnostics-channel, #nodedns, #nodeevents, #nodefs, #nodehttp, #nodehttps, #nodeos, #nodepath, #nodepunycode, #nodequerystring, #nodereadline, #nodestream, #nodestring-decoder, #nodetimers, #nodetty, #nodeurl, #nodezlib, #nodeasync-hooks, #nodechild-process, #nodecluster, #nodecrypto, #nodedomain, #nodehttp2, #nodemodule, #nodenet, #nodeperf-hooks, #nodeprocess, #nodesys, #nodetls, #nodeutil, #nodev8, #nodevm, #nodewasi, #nodeworker-threads, #nodeinspector, #noderepl, #nodesqlite, #nodetest, #nodetrace-events, #node-js-globals, #abortcontroller, #abortsignal, #blob, #buffer, #bytelengthqueuingstrategy, #dirname, #filename, #atob, #atomics, #broadcastchannel, #btoa, #clearimmediate, #clearinterval, #cleartimeout, #compressionstream, #console, #countqueuingstrategy, #crypto, #subtlecrypto-crypto, #cryptokey, #customevent, #decompressionstream, #event, #eventtarget, #exports, #fetch, #formdata, #global, #globalthis, #headers, #messagechannel, #messageevent, #messageport, #module, #performanceentry, #performancemark, #performancemeasure, #performanceobserver, #performanceobserverentrylist, #performanceresourcetiming, #performance, #process, #queuemicrotask, #readablebytestreamcontroller, #readablestream, #readablestreambyobreader, #readablestreambyobrequest, #readablestreamdefaultcontroller, #readablestreamdefaultreader, #require, #response, #request, #setimmediate, #setinterval, #settimeout, #structuredclone, #subtlecrypto, #domexception, #textdecoder, #textdecoderstream, #textencoder, #textencoderstream, #transformstream, #transformstreamdefaultcontroller, #url, #urlsearchparams, #webassembly, #writablestream, #writablestreamdefaultcontroller, #writablestreamdefaultwriter
+- [Web APIs](https://bun.com/docs/runtime/web-apis): Web-standard APIs supported by Bun for server-side JavaScript
+
+## bundler/bytecode
+- [Bytecode Caching](https://bun.com/docs/bundler/bytecode): Speed up JavaScript execution with bytecode caching in Bun's bundler
+  anchors: #usage, #basic-usage-commonjs, #with-standalone-executables, #esm-bytecode, #combining-with-other-optimizations, #performance-impact, #when-to-use-bytecode, #great-for, #cli-tools, #build-tools-and-task-runners, #standalone-executables, #skip-it-for, #limitations, #version-compatibility, #source-code-still-required, #bytecode-is-not-obfuscation, #production-deployment, #docker, #ci-cd, #debugging, #verify-bytecode-is-being-used, #common-issues, #what-is-bytecode, #why-lazy-parsing-makes-this-even-better, #the-bytecode-format, #inside-a-jsc-file, #what-bytecode-does-not-contain, #the-tradeoff-file-size, #why-is-bytecode-so-much-larger, #mitigation-strategies, #versioning-and-portability, #cross-architecture-portability, #cross-version-portability, #unlinked-vs-linked-bytecode, #unlinked-bytecode-whats-cached, #linked-bytecode-runtime-execution
+
+## bundler/css
+- [CSS](https://bun.com/docs/bundler/css): Bun's bundler has built-in support for CSS with modern features
+  anchors: #transpiling, #browser-compatibility, #syntax-lowering, #nesting, #color-mix, #relative-colors, #lab-colors, #color-function, #hwb-colors, #color-notation, #light-dark-color-function, #logical-properties, #dir-selector, #lang-selector, #is-selector, #not-selector, #math-functions, #media-query-ranges, #shorthands, #double-position-gradients, #system-ui-font, #css-modules, #getting-started, #composition, #composing-from-a-separate-css-module-file
+
+## bundler/esbuild
+- [esbuild](https://bun.com/docs/bundler/esbuild): Migration guide from esbuild to Bun's bundler
+  anchors: #performance, #cli-api, #javascript-api, #plugin-api, #onresolve, #onload
+
+## bundler/executables
+- [Single-file executable](https://bun.com/docs/bundler/executables): Generate standalone executables from TypeScript or JavaScript files with Bun
+  anchors: #cross-compile-to-other-platforms, #supported-targets, #build-time-constants, #deploying-to-production, #bytecode-compilation, #what-do-these-flags-do, #embedding-runtime-arguments, #runtime-arguments-via-bun-options, #automatic-config-loading, #enabling-config-loading-at-runtime, #disabling-config-loading-at-runtime, #act-as-the-bun-cli, #full-stack-executables, #worker, #sqlite, #embed-assets-files, #how-it-works, #reading-embedded-files-with-bun-file, #reading-embedded-files-with-node-js-fs, #practical-examples, #embedding-a-json-config-file, #serving-static-assets-in-an-http-server, #embedding-templates, #embedding-binary-files, #embed-sqlite-databases, #embed-n-api-addons, #embed-directories, #detecting-standalone-mode-at-runtime, #listing-embedded-files, #content-hash, #minification, #windows-specific-flags, #code-signing-on-macos, #code-splitting, #using-plugins, #unsupported-cli-arguments, #api-reference, #complete-example
+
+## bundler/fullstack
+- [Fullstack dev server](https://bun.com/docs/bundler/fullstack): Build fullstack applications with Bun's integrated dev server that bundles frontend assets and handles API routes
+  anchors: #html-routes, #html-imports-as-routes, #html-processing-example, #react-integration, #development-mode, #development-mode-features, #advanced-development-configuration, #development-vs-production, #production-mode, #ahead-of-time-bundling-recommended, #runtime-bundling, #api-routes, #http-method-handlers, #dynamic-routes, #request-handling, #plugins, #tailwindcss-plugin, #custom-plugins, #inline-environment-variables, #how-it-works, #processing-pipeline, #complete-example, #best-practices, #project-structure, #environment-based-configuration, #error-handling, #api-response-helpers, #type-safety, #deployment, #production-build, #docker-deployment, #environment-variables, #migration-from-other-frameworks, #from-express-webpack, #from-next-js-api-routes, #limitations-and-future-plans, #current-limitations, #planned-features
+
+## bundler/hot-reloading
+- [Hot reloading](https://bun.com/docs/bundler/hot-reloading): Hot Module Replacement (HMR) for Bun's development server
+  anchors: #import-meta-hot-api-reference, #api-methods, #import-meta-hot-accept, #with-callback, #accepting-other-modules, #with-multiple-dependencies, #import-meta-hot-data, #import-meta-hot-dispose, #import-meta-hot-prune, #import-meta-hot-on-and-off, #built-in-events
+
+## bundler/html-static
+- [HTML & static sites](https://bun.com/docs/bundler/html-static): Build static sites, landing pages, and web applications with Bun's bundler
+  anchors: #single-page-apps-spa, #multi-page-apps-mpa, #glob-patterns, #path-normalization, #javascript-typescript-and-jsx, #es-modules-commonjs, #css, #referencing-local-assets-in-css, #importing-css-in-javascript, #plugins, #tailwind-css, #inline-environment-variables, #dev-server-runtime, #build-for-production, #example, #echo-console-logs-from-browser-to-terminal, #edit-files-in-the-browser, #keyboard-shortcuts, #watch-mode, #plugin-api, #what-gets-processed, #how-this-works, #standalone-html, #adding-a-backend-to-your-frontend
+
+## bundler/index
+- [Bundler](https://bun.com/docs/bundler/index): Bun's fast native bundler for JavaScript, TypeScript, JSX, and more
+  anchors: #at-a-glance, #why-bundle, #basic-example, #watch-mode, #content-types, #assets, #plugins, #api, #entrypoints, #files, #bundle-entirely-from-memory, #override-files-on-disk, #mix-disk-and-virtual-files, #outdir, #target, #format, #format-esm-es-module, #format-cjs-commonjs, #format-iife-iife, #jsx, #splitting, #env, #env-inline, #env-public-prefix, #env-disable, #sourcemap, #minify, #external, #packages, #naming, #root, #publicpath, #define, #loader, #banner, #footer, #drop, #features, #optimizeimports, #metafile, #markdown-metafile, #metafile-option-formats, #outputs, #bytecode, #executables, #logs-and-errors, #reference, #cli-usage, #general-configuration, #output-file-handling, #file-naming, #bundling-options, #minification-optimization, #development-features, #standalone-executables, #windows-executable-details, #experimental-app-building
+
+## bundler/loaders
+- [Loaders](https://bun.com/docs/bundler/loaders): Built-in loaders for the Bun bundler and runtime
+  anchors: #built-in-loaders, #js, #jsx, #ts, #tsx, #json, #jsonc, #toml, #yaml, #text, #napi, #sqlite, #html, #css, #sh, #file
+
+## bundler/macros
+- [Macros](https://bun.com/docs/bundler/macros): Run JavaScript functions at bundle-time with Bun macros
+  anchors: #when-to-use-macros, #import-attributes, #security-considerations, #export-condition-macro, #execution, #dead-code-elimination, #serializability, #arguments, #examples, #embed-latest-git-commit-hash, #make-fetch-requests-at-bundle-time
+
+## bundler/minifier
+- [Minifier](https://bun.com/docs/bundler/minifier): Reduce bundle sizes with Bun's JavaScript and TypeScript minifier
+  anchors: #cli-usage, #enable-all-minification, #production-mode, #granular-control, #javascript-api, #minification-modes, #whitespace-minification-minify-whitespace, #syntax-minification-minify-syntax, #identifier-minification-minify-identifiers, #all-transformations, #boolean-literal-shortening, #boolean-algebra-optimizations, #undefined-shortening, #undefined-equality-optimization, #infinity-shortening, #typeof-optimizations, #number-formatting, #arithmetic-constant-folding, #bitwise-constant-folding, #string-concatenation, #string-indexing, #template-literal-folding, #template-literal-to-string-conversion, #string-quote-optimization, #array-spread-inlining, #array-indexing, #property-access-optimization, #comparison-folding, #logical-operation-folding, #nullish-coalescing-folding, #comma-expression-simplification, #ternary-conditional-folding, #unary-expression-folding, #double-negation-removal, #if-statement-optimization, #dead-code-elimination, #unreachable-branch-removal, #empty-block-removal, #single-statement-block-unwrapping, #typescript-enum-inlining, #pure-annotation-support, #identifier-renaming, #whitespace-removal, #semicolon-optimization, #operator-spacing-removal, #comment-removal, #object-and-array-formatting, #control-flow-formatting, #function-formatting, #parentheses-minimization, #template-literal-value-folding, #string-length-constant-folding, #constructor-call-simplification, #single-property-object-inlining, #string-charcodeat-constant-folding, #void-0-equality-to-null-equality, #negation-operator-optimization, #import-meta-property-inlining, #variable-declaration-merging, #expression-statement-merging, #return-statement-merging, #throw-statement-merging, #typescript-enum-cross-module-inlining, #computed-property-enum-inlining, #arrow-function-body-shortening, #object-property-shorthand, #drop-debugger-statements, #drop-console-calls, #drop-custom-function-calls, #keep-names, #combined-example, #when-to-use-minification
+
+## bundler/standalone-html
+- [Standalone HTML](https://bun.com/docs/bundler/standalone-html): Bundle a single-page app into a single self-contained .html file with no external dependencies
+  anchors: #one-file-upload-anywhere, #truly-one-file, #quick-start, #everything-gets-inlined, #what-gets-inlined, #using-with-react, #using-with-tailwind-css, #how-it-works, #minification, #javascript-api, #multiple-html-files, #environment-variables, #limitations
+
+## feedback
+- [Feedback](https://bun.com/docs/feedback): Share feedback, bug reports, and feature requests
+  anchors: #reporting-issues, #use-bun-feedback
+
+## guides/binary
+- [Convert an ArrayBuffer to an array of numbers](https://bun.com/docs/guides/binary/arraybuffer-to-array)
+- [Convert an ArrayBuffer to a Blob](https://bun.com/docs/guides/binary/arraybuffer-to-blob)
+- [Convert an ArrayBuffer to a Buffer](https://bun.com/docs/guides/binary/arraybuffer-to-buffer)
+- [Convert an ArrayBuffer to a string](https://bun.com/docs/guides/binary/arraybuffer-to-string)
+- [Convert an ArrayBuffer to a Uint8Array](https://bun.com/docs/guides/binary/arraybuffer-to-typedarray)
+- [Convert a Blob to an ArrayBuffer](https://bun.com/docs/guides/binary/blob-to-arraybuffer)
+- [Convert a Blob to a DataView](https://bun.com/docs/guides/binary/blob-to-dataview)
+- [Convert a Blob to a ReadableStream](https://bun.com/docs/guides/binary/blob-to-stream)
+- [Convert a Blob to a string](https://bun.com/docs/guides/binary/blob-to-string)
+- [Convert a Blob to a Uint8Array](https://bun.com/docs/guides/binary/blob-to-typedarray)
+- [Convert a Buffer to an ArrayBuffer](https://bun.com/docs/guides/binary/buffer-to-arraybuffer)
+- [Convert a Buffer to a blob](https://bun.com/docs/guides/binary/buffer-to-blob)
+- [Convert a Buffer to a ReadableStream](https://bun.com/docs/guides/binary/buffer-to-readablestream)
+- [Convert a Buffer to a string](https://bun.com/docs/guides/binary/buffer-to-string)
+- [Convert a Buffer to a Uint8Array](https://bun.com/docs/guides/binary/buffer-to-typedarray)
+- [Convert a DataView to a string](https://bun.com/docs/guides/binary/dataview-to-string)
+- [Convert a Uint8Array to an ArrayBuffer](https://bun.com/docs/guides/binary/typedarray-to-arraybuffer)
+- [Convert a Uint8Array to a Blob](https://bun.com/docs/guides/binary/typedarray-to-blob)
+- [Convert a Uint8Array to a Buffer](https://bun.com/docs/guides/binary/typedarray-to-buffer)
+- [Convert a Uint8Array to a DataView](https://bun.com/docs/guides/binary/typedarray-to-dataview)
+- [Convert a Uint8Array to a ReadableStream](https://bun.com/docs/guides/binary/typedarray-to-readablestream)
+- [Convert a Uint8Array to a string](https://bun.com/docs/guides/binary/typedarray-to-string)
+
+## guides/deployment
+- [Deploy a Bun application on AWS Lambda](https://bun.com/docs/guides/deployment/aws-lambda)
+- [Deploy a Bun application on DigitalOcean](https://bun.com/docs/guides/deployment/digital-ocean)
+- [Deploy a Bun application on Google Cloud Run](https://bun.com/docs/guides/deployment/google-cloud-run)
+- [Deploy a Bun application on Railway](https://bun.com/docs/guides/deployment/railway): Deploy a Bun application to Railway from the CLI or dashboard, with optional PostgreSQL setup and automatic SSL
+  anchors: #method-1-deploy-via-cli, #method-2-deploy-via-dashboard, #configuration-optional
+- [Deploy a Bun application on Render](https://bun.com/docs/guides/deployment/render)
+- [Deploy a Bun application on Vercel](https://bun.com/docs/guides/deployment/vercel)
+
+## guides/ecosystem
+- [Build an app with Astro and Bun](https://bun.com/docs/guides/ecosystem/astro)
+- [Create a Discord bot](https://bun.com/docs/guides/ecosystem/discordjs)
+- [Containerize a Bun application with Docker](https://bun.com/docs/guides/ecosystem/docker)
+- [Use Drizzle ORM with Bun](https://bun.com/docs/guides/ecosystem/drizzle)
+- [Build an HTTP server using Elysia and Bun](https://bun.com/docs/guides/ecosystem/elysia)
+- [Build an HTTP server using Express and Bun](https://bun.com/docs/guides/ecosystem/express)
+- [Use Gel with Bun](https://bun.com/docs/guides/ecosystem/gel)
+- [Build an HTTP server using Hono and Bun](https://bun.com/docs/guides/ecosystem/hono)
+- [Read and write data to MongoDB using Mongoose and Bun](https://bun.com/docs/guides/ecosystem/mongoose)
+- [Use Neon Postgres through Drizzle ORM](https://bun.com/docs/guides/ecosystem/neon-drizzle)
+- [Use Neon's Serverless Postgres with Bun](https://bun.com/docs/guides/ecosystem/neon-serverless-postgres)
+- [Build an app with Next.js and Bun](https://bun.com/docs/guides/ecosystem/nextjs)
+  anchors: #hosting, #templates
+- [Build an app with Nuxt and Bun](https://bun.com/docs/guides/ecosystem/nuxt)
+- [Run Bun as a daemon with PM2](https://bun.com/docs/guides/ecosystem/pm2)
+  anchors: #with-interpreter, #with-a-configuration-file
+- [Use Prisma with Bun](https://bun.com/docs/guides/ecosystem/prisma)
+- [Use Prisma Postgres with Bun](https://bun.com/docs/guides/ecosystem/prisma-postgres)
+- [Build an app with Qwik and Bun](https://bun.com/docs/guides/ecosystem/qwik)
+- [Build a React app with Bun](https://bun.com/docs/guides/ecosystem/react)
+  anchors: #hot-reloading, #full-stack-app, #static-site
+- [Build an app with Remix and Bun](https://bun.com/docs/guides/ecosystem/remix)
+- [Add Sentry to a Bun app](https://bun.com/docs/guides/ecosystem/sentry)
+- [Build an app with SolidStart and Bun](https://bun.com/docs/guides/ecosystem/solidstart)
+- [Server-side render (SSR) a React component](https://bun.com/docs/guides/ecosystem/ssr-react)
+- [Build an HTTP server using StricJS and Bun](https://bun.com/docs/guides/ecosystem/stric)
+- [Build an app with SvelteKit and Bun](https://bun.com/docs/guides/ecosystem/sveltekit)
+- [Run Bun as a daemon with systemd](https://bun.com/docs/guides/ecosystem/systemd)
+- [Use TanStack Start with Bun](https://bun.com/docs/guides/ecosystem/tanstack-start)
+  anchors: #hosting, #templates
+- [Bun Redis with Upstash](https://bun.com/docs/guides/ecosystem/upstash)
+- [Build a frontend using Vite and Bun](https://bun.com/docs/guides/ecosystem/vite)
+
+## guides/html-rewriter
+- [Extract links from a webpage using HTMLRewriter](https://bun.com/docs/guides/html-rewriter/extract-links)
+  anchors: #extract-links-from-a-webpage, #convert-relative-urls-to-absolute
+- [Extract social share images and Open Graph tags](https://bun.com/docs/guides/html-rewriter/extract-social-meta)
+  anchors: #extract-social-share-images-and-open-graph-tags
+
+## guides/http
+- [Start a cluster of HTTP servers](https://bun.com/docs/guides/http/cluster): Run multiple HTTP servers concurrently with the "reusePort" option to share the same port across multiple processes
+- [Send an HTTP request using fetch](https://bun.com/docs/guides/http/fetch)
+- [fetch with unix domain sockets in Bun](https://bun.com/docs/guides/http/fetch-unix)
+- [Upload files via HTTP using FormData](https://bun.com/docs/guides/http/file-uploads)
+- [Hot reload an HTTP server](https://bun.com/docs/guides/http/hot)
+- [Proxy HTTP requests using fetch()](https://bun.com/docs/guides/http/proxy)
+  anchors: #custom-proxy-headers, #environment-variables
+- [Common HTTP server usage](https://bun.com/docs/guides/http/server)
+- [Write a simple HTTP server](https://bun.com/docs/guides/http/simple)
+- [Server-Sent Events (SSE) with Bun](https://bun.com/docs/guides/http/sse)
+  anchors: #using-an-async-generator, #using-a-readablestream
+- [Stream a file as an HTTP Response](https://bun.com/docs/guides/http/stream-file)
+- [Streaming HTTP Server with Async Iterators](https://bun.com/docs/guides/http/stream-iterator)
+- [Streaming HTTP Server with Node.js Streams](https://bun.com/docs/guides/http/stream-node-streams-in-bun)
+- [Configure TLS on an HTTP server](https://bun.com/docs/guides/http/tls)
+
+## guides/index
+- [Guides](https://bun.com/docs/guides/index): Code samples and walkthroughs for common tasks with Bun
+
+## guides/install
+- [Add a dependency](https://bun.com/docs/guides/install/add)
+- [Add a development dependency](https://bun.com/docs/guides/install/add-dev)
+- [Add a Git dependency](https://bun.com/docs/guides/install/add-git)
+- [Add an optional dependency](https://bun.com/docs/guides/install/add-optional)
+- [Add a peer dependency](https://bun.com/docs/guides/install/add-peer)
+- [Add a tarball dependency](https://bun.com/docs/guides/install/add-tarball)
+- [Using bun install with an Azure Artifacts npm registry](https://bun.com/docs/guides/install/azure-artifacts)
+  anchors: #configure-with-bunfig-toml, #configure-with-environment-variables, #dont-base64-encode-the-password
+- [Install dependencies with Bun in GitHub Actions](https://bun.com/docs/guides/install/cicd)
+- [Override the default npm registry for bun install](https://bun.com/docs/guides/install/custom-registry)
+- [Migrate from npm install to bun install](https://bun.com/docs/guides/install/from-npm-install-to-bun-install)
+  anchors: #run-package-json-scripts-faster, #workspaces-yes, #filter-scripts-by-workspace-name, #update-dependencies, #view-outdated-dependencies, #list-installed-packages, #create-a-package-tarball, #shebang, #global-installs
+- [Configure git to diff Bun's lockb lockfile](https://bun.com/docs/guides/install/git-diff-bun-lockfile)
+  anchors: #how-this-works
+- [Using bun install with Artifactory](https://bun.com/docs/guides/install/jfrog-artifactory)
+  anchors: #configure-with-bunfig-toml, #configure-with-npm-config-registry
+- [Install a package under a different name](https://bun.com/docs/guides/install/npm-alias)
+- [Configure a private registry for an organization scope with bun install](https://bun.com/docs/guides/install/registry-scope)
+- [Add a trusted dependency](https://bun.com/docs/guides/install/trusted)
+- [Configuring a monorepo using workspaces](https://bun.com/docs/guides/install/workspaces)
+- [Generate a yarn-compatible lockfile](https://bun.com/docs/guides/install/yarnlock)
+
+## guides/process
+- [Parse command-line arguments](https://bun.com/docs/guides/process/argv)
+- [Listen for CTRL+C](https://bun.com/docs/guides/process/ctrl-c)
+- [Spawn a child process and communicate using IPC](https://bun.com/docs/guides/process/ipc)
+- [Get the process uptime in nanoseconds](https://bun.com/docs/guides/process/nanoseconds)
+- [Listen to OS signals](https://bun.com/docs/guides/process/os-signals)
+- [Spawn a child process](https://bun.com/docs/guides/process/spawn)
+- [Read stderr from a child process](https://bun.com/docs/guides/process/spawn-stderr)
+- [Read stdout from a child process](https://bun.com/docs/guides/process/spawn-stdout)
+- [Read from stdin](https://bun.com/docs/guides/process/stdin)
+
+## guides/read-file
+- [Read a file to an ArrayBuffer](https://bun.com/docs/guides/read-file/arraybuffer)
+- [Read a file to a Buffer](https://bun.com/docs/guides/read-file/buffer)
+- [Check if a file exists](https://bun.com/docs/guides/read-file/exists)
+- [Read a JSON file](https://bun.com/docs/guides/read-file/json)
+- [Get the MIME type of a file](https://bun.com/docs/guides/read-file/mime)
+- [Read a file as a ReadableStream](https://bun.com/docs/guides/read-file/stream)
+- [Read a file as a string](https://bun.com/docs/guides/read-file/string)
+- [Read a file to a Uint8Array](https://bun.com/docs/guides/read-file/uint8array)
+- [Watch a directory for changes](https://bun.com/docs/guides/read-file/watch)
+
+## guides/runtime
+- [Build-time constants with --define](https://bun.com/docs/guides/runtime/build-time-constants)
+  anchors: #why-use-build-time-constants, #basic-usage, #with-bun-build, #with-bun-build-compile, #javascript-api, #common-use-cases, #version-information, #feature-flags, #configuration, #advanced-patterns, #environment-specific-builds, #using-shell-commands-for-dynamic-values, #build-automation-script, #important-considerations, #value-format, #property-keys, #typescript-declarations, #cross-platform-compatibility, #related
+- [Install and run Bun in GitHub Actions](https://bun.com/docs/guides/runtime/cicd)
+- [Codesign a single-file JavaScript executable on macOS](https://bun.com/docs/guides/runtime/codesign-macos-executable): Fix the "can't be opened because it is from an unidentified developer" Gatekeeper warning when running your JavaScript executable.
+- [Define and replace static globals & constants](https://bun.com/docs/guides/runtime/define-constant)
+  anchors: #what-types-of-values-are-supported, #replace-global-identifiers, #replace-values-with-json, #replace-values-with-other-properties, #how-is-this-different-than-setting-a-variable, #how-is-this-different-than-find-and-replace-or-string-replacement
+- [Delete directories](https://bun.com/docs/guides/runtime/delete-directory)
+- [Delete files](https://bun.com/docs/guides/runtime/delete-file)
+- [Inspect memory usage using V8 heap snapshots](https://bun.com/docs/guides/runtime/heap-snapshot)
+  anchors: #inspect-memory-in-chrome-devtools
+- [Import a HTML file as text](https://bun.com/docs/guides/runtime/import-html)
+- [Import a JSON file](https://bun.com/docs/guides/runtime/import-json)
+- [Import a JSON5 file](https://bun.com/docs/guides/runtime/import-json5)
+- [Import a TOML file](https://bun.com/docs/guides/runtime/import-toml)
+- [Import a YAML file](https://bun.com/docs/guides/runtime/import-yaml)
+  anchors: #typescript-support
+- [Read environment variables](https://bun.com/docs/guides/runtime/read-env)
+- [Set environment variables](https://bun.com/docs/guides/runtime/set-env)
+- [Run a Shell Command](https://bun.com/docs/guides/runtime/shell)
+- [Set a time zone in Bun](https://bun.com/docs/guides/runtime/timezone)
+- [Re-map import paths](https://bun.com/docs/guides/runtime/tsconfig-paths)
+- [Install TypeScript declarations for Bun](https://bun.com/docs/guides/runtime/typescript)
+- [Debugging Bun with the VS Code extension](https://bun.com/docs/guides/runtime/vscode-debugger)
+- [Debugging Bun with the web debugger](https://bun.com/docs/guides/runtime/web-debugger)
+
+## guides/streams
+- [Convert a Node.js Readable to an ArrayBuffer](https://bun.com/docs/guides/streams/node-readable-to-arraybuffer)
+- [Convert a Node.js Readable to a Blob](https://bun.com/docs/guides/streams/node-readable-to-blob)
+- [Convert a Node.js Readable to JSON](https://bun.com/docs/guides/streams/node-readable-to-json)
+- [Convert a Node.js Readable to a string](https://bun.com/docs/guides/streams/node-readable-to-string)
+- [Convert a Node.js Readable to an Uint8Array](https://bun.com/docs/guides/streams/node-readable-to-uint8array)
+- [Convert a ReadableStream to an array of chunks](https://bun.com/docs/guides/streams/to-array)
+- [Convert a ReadableStream to an ArrayBuffer](https://bun.com/docs/guides/streams/to-arraybuffer)
+- [Convert a ReadableStream to a Blob](https://bun.com/docs/guides/streams/to-blob)
+- [Convert a ReadableStream to a Buffer](https://bun.com/docs/guides/streams/to-buffer)
+- [Convert a ReadableStream to JSON](https://bun.com/docs/guides/streams/to-json)
+- [Convert a ReadableStream to a string](https://bun.com/docs/guides/streams/to-string)
+- [Convert a ReadableStream to a Uint8Array](https://bun.com/docs/guides/streams/to-typedarray)
+
+## guides/test
+- [Bail early with the Bun test runner](https://bun.com/docs/guides/test/bail)
+- [Selectively run tests concurrently with glob patterns](https://bun.com/docs/guides/test/concurrent-test-glob): Set a glob pattern to decide which tests from which files run in parallel
+  anchors: #project-structure, #configuration, #test-files, #unit-test-sequential, #integration-test-concurrent, #running-tests, #benefits, #migration-strategy, #tips, #multiple-patterns
+- [Generate code coverage reports with the Bun test runner](https://bun.com/docs/guides/test/coverage)
+- [Set a code coverage threshold with the Bun test runner](https://bun.com/docs/guides/test/coverage-threshold)
+- [Write browser DOM tests with Bun and happy-dom](https://bun.com/docs/guides/test/happy-dom)
+- [Migrate from Jest to Bun's test runner](https://bun.com/docs/guides/test/migrate-from-jest)
+- [Set the system time in Bun's test runner](https://bun.com/docs/guides/test/mock-clock)
+- [Mock functions in `bun test`](https://bun.com/docs/guides/test/mock-functions)
+- [Re-run tests multiple times with the Bun test runner](https://bun.com/docs/guides/test/rerun-each)
+- [Run your tests with the Bun test runner](https://bun.com/docs/guides/test/run-tests)
+- [Skip tests with the Bun test runner](https://bun.com/docs/guides/test/skip-tests)
+- [Use snapshot testing in `bun test`](https://bun.com/docs/guides/test/snapshot)
+- [Spy on methods in `bun test`](https://bun.com/docs/guides/test/spy-on)
+- [import, require, and test Svelte components with bun test](https://bun.com/docs/guides/test/svelte-test)
+- [Using Testing Library with Bun](https://bun.com/docs/guides/test/testing-library)
+- [Set a per-test timeout with the Bun test runner](https://bun.com/docs/guides/test/timeout)
+- [Mark a test as a "todo" with the Bun test runner](https://bun.com/docs/guides/test/todo-tests)
+- [Update snapshots in `bun test`](https://bun.com/docs/guides/test/update-snapshots)
+- [Run tests in watch mode with Bun](https://bun.com/docs/guides/test/watch-mode)
+
+## guides/util
+- [Encode and decode base64 data](https://bun.com/docs/guides/util/base64)
+- [Check if two objects are deeply equal](https://bun.com/docs/guides/util/deep-equals)
+- [Compress and decompress data with DEFLATE](https://bun.com/docs/guides/util/deflate)
+- [Detect when code is executed with Bun](https://bun.com/docs/guides/util/detect-bun)
+- [Check if the current file is the entrypoint](https://bun.com/docs/guides/util/entrypoint)
+- [Escape an HTML string](https://bun.com/docs/guides/util/escape-html)
+- [Convert a file URL to an absolute path](https://bun.com/docs/guides/util/file-url-to-path)
+- [Compress and decompress data with gzip](https://bun.com/docs/guides/util/gzip)
+- [Hash a password](https://bun.com/docs/guides/util/hash-a-password)
+- [Get the directory of the current file](https://bun.com/docs/guides/util/import-meta-dir)
+- [Get the file name of the current file](https://bun.com/docs/guides/util/import-meta-file)
+- [Get the absolute path of the current file](https://bun.com/docs/guides/util/import-meta-path)
+- [Generate a UUID](https://bun.com/docs/guides/util/javascript-uuid)
+- [Get the absolute path to the current entrypoint](https://bun.com/docs/guides/util/main)
+- [Convert an absolute path to a file URL](https://bun.com/docs/guides/util/path-to-file-url)
+- [Sleep for a fixed number of milliseconds](https://bun.com/docs/guides/util/sleep)
+- [Upgrade Bun to the latest version](https://bun.com/docs/guides/util/upgrade)
+  anchors: #verify-the-upgrade, #upgrade-to-canary-builds, #switch-back-to-stable, #install-a-specific-version, #package-manager-users, #see-also
+- [Get the current Bun version](https://bun.com/docs/guides/util/version)
+- [Get the path to an executable bin file](https://bun.com/docs/guides/util/which-path-to-executable-bin)
+
+## guides/websocket
+- [Enable compression for WebSocket messages](https://bun.com/docs/guides/websocket/compression)
+- [Set per-socket contextual data on a WebSocket](https://bun.com/docs/guides/websocket/context)
+- [Build a publish-subscribe WebSocket server](https://bun.com/docs/guides/websocket/pubsub)
+- [Build a simple WebSocket server](https://bun.com/docs/guides/websocket/simple)
+
+## guides/write-file
+- [Append content to a file](https://bun.com/docs/guides/write-file/append)
+- [Write a string to a file](https://bun.com/docs/guides/write-file/basic)
+- [Write a Blob to a file](https://bun.com/docs/guides/write-file/blob)
+- [Write a file to stdout](https://bun.com/docs/guides/write-file/cat)
+- [Copy a file to another location](https://bun.com/docs/guides/write-file/file-cp)
+- [Write a file incrementally](https://bun.com/docs/guides/write-file/filesink)
+- [Write a Response to a file](https://bun.com/docs/guides/write-file/response)
+- [Write to stdout](https://bun.com/docs/guides/write-file/stdout)
+- [Write a ReadableStream to a file](https://bun.com/docs/guides/write-file/stream)
+- [Delete a file](https://bun.com/docs/guides/write-file/unlink)
+
+## pm/bunx
+- [bunx](https://bun.com/docs/pm/bunx): Run packages from npm
+  anchors: #arguments-and-flags, #shebangs, #package-flag, #usage, #flags, #examples
+
+## pm/catalogs
+- [Catalogs](https://bun.com/docs/pm/catalogs): Share common dependency versions across multiple packages in a monorepo
+  anchors: #overview, #how-to-use-catalogs, #directory-structure-example, #1-define-catalogs-in-root-package-json, #2-reference-catalog-versions-in-workspace-packages, #3-run-bun-install, #catalog-vs-catalogs, #benefits-of-using-catalogs, #real-world-example, #updating-versions, #lockfile-integration, #limitations-and-edge-cases, #publishing
+
+## pm/cli
+- [bun add](https://bun.com/docs/pm/cli/add): Add packages to your project with Bun's fast package manager
+  anchors: #dev, #optional, #peer, #exact, #global, #trusted-dependencies, #git-dependencies, #tarball-dependencies, #cli-usage, #dependency-management, #project-files-lockfiles, #installation-control, #network-registry, #performance-resource, #caching, #output-logging, #global-configuration-context, #help
+- [bun audit](https://bun.com/docs/pm/cli/audit): Check your installed packages for known security vulnerabilities
+  anchors: #filtering-options, #json, #exit-code
+- [bun info](https://bun.com/docs/pm/cli/info): Display package metadata from the npm registry
+  anchors: #usage, #viewing-specific-versions, #viewing-specific-properties, #json-output, #alias, #examples
+- [bun install](https://bun.com/docs/pm/cli/install): Install packages with Bun's fast package manager
+  anchors: #basic-usage, #logging, #lifecycle-scripts, #workspaces, #installing-dependencies-for-specific-packages, #overrides-and-resolutions, #global-packages, #production-mode, #omitting-dependencies, #dry-run, #non-npm-dependencies, #installation-strategies, #hoisted-installs, #isolated-installs, #default-strategy, #minimum-release-age, #configuration, #configuring-bun-install-with-bunfig-toml, #configuring-with-environment-variables, #ci-cd, #platform-specific-dependencies, #cpu-and-os-flags, #peer-dependencies, #lockfile, #cache, #platform-specific-backends, #npm-registry-metadata, #pnpm-migration, #lockfile-migration, #workspace-configuration, #catalog-dependencies, #configuration-migration, #requirements, #cli-usage, #general-configuration, #dependency-scope-management, #dependency-type-versioning, #lockfile-control, #network-registry-settings, #installation-process-control, #caching-options, #output-logging, #security-integrity, #concurrency-performance, #lifecycle-script-management, #help-information
+- [bun link](https://bun.com/docs/pm/cli/link): Link local packages for development
+  anchors: #unlinking, #installation-scope, #dependency-management, #project-files-lockfiles, #installation-control, #network-registry, #performance-resource, #caching, #output-logging, #platform-targeting, #global-configuration-context, #help
+- [bun outdated](https://bun.com/docs/pm/cli/outdated): Check for outdated dependencies
+  anchors: #version-information, #dependency-filters, #workspace-filters, #catalog-dependencies, #cli-usage, #general-options, #output-logging, #dependency-scope-target, #lockfile-package-json, #network-registry, #caching, #execution-behavior
+- [bun patch](https://bun.com/docs/pm/cli/patch): Persistently patch node_modules packages in a git-friendly way
+  anchors: #step-1-prepare-the-package-for-patching, #step-2-test-your-changes-locally, #step-3-commit-your-changes, #patch-generation, #dependency-management, #project-files-lockfiles, #installation-control, #network-registry, #performance-resource, #caching, #output-logging, #platform-targeting, #global-configuration-context, #help
+- [bun pm](https://bun.com/docs/pm/cli/pm): Package manager utilities
+  anchors: #pack, #examples, #options, #output-modes, #bin, #ls, #whoami, #hash, #cache, #migrate, #untrusted, #trust, #default-trusted, #version, #pkg
+- [bun publish](https://bun.com/docs/pm/cli/publish): Use `bun publish` to publish a package to the npm registry
+  anchors: #access, #tag, #dry-run, #tolerate-republish, #gzip-level, #auth-type, #otp, #cli-usage, #publishing-options, #registry-configuration, #custom-registry, #ssl-certificates, #dependency-management, #script-control, #file-management, #performance, #output-control
+- [bun remove](https://bun.com/docs/pm/cli/remove): Remove dependencies from your project
+  anchors: #basic-usage, #cli-usage, #general-information, #configuration, #package-json-interaction, #lockfile-behavior, #dependency-filtering, #network-registry, #execution-control-validation, #output-logging, #caching, #script-execution, #scope-path, #advanced-performance
+- [bun update](https://bun.com/docs/pm/cli/update): Update dependencies to latest versions
+  anchors: #interactive, #interactive-interface, #keyboard-controls, #visual-indicators, #package-grouping, #recursive, #latest, #cli-usage, #update-strategy, #dependency-scope, #project-file-management, #network-registry, #caching, #output-logging, #script-execution, #installation-controls, #general-environment
+- [bun why](https://bun.com/docs/pm/cli/why): Explain why a package is installed
+  anchors: #usage, #arguments, #options, #examples, #understanding-the-output
+
+## pm/filter
+- [bun --filter](https://bun.com/docs/pm/filter): Select packages by pattern in a monorepo using the --filter flag
+  anchors: #matching, #package-name-filter-pattern, #package-path-filter-glob, #bun-install-and-bun-outdated, #running-scripts-with-filter, #running-scripts-in-workspaces, #parallel-and-sequential-mode, #dependency-order
+
+## pm/global-cache
+- [Global cache](https://bun.com/docs/pm/global-cache): How Bun stores and manages packages in its global cache
+  anchors: #minimizing-re-downloads, #fast-copying, #saving-disk-space
+
+## pm/global-store
+- [Global virtual store](https://bun.com/docs/pm/global-store): Install packages once. Every project links to the same copy.
+  anchors: #enabling, #why-its-fast, #benchmarks, #disk, #real-world-cold-warm, #directory-structure, #what-stays-project-local, #peer-dependencies, #tradeoffs, #phantom-dependency-fallback, #node-modules-is-mostly-symlinks, #disk-usage, #concurrency, #related-documentation
+
+## pm/isolated-installs
+- [Isolated installs](https://bun.com/docs/pm/isolated-installs): Strict dependency isolation similar to pnpm's approach
+  anchors: #what-are-isolated-installs, #key-benefits, #using-isolated-installs, #command-line, #configuration-file, #default-behavior, #how-isolated-installs-work, #directory-structure, #resolution-algorithm, #workspace-handling, #comparison-with-hoisted-installs, #advanced-features, #peer-dependency-handling, #global-virtual-store, #backend-strategies, #debugging-isolated-installs, #troubleshooting, #compatibility-issues, #performance-considerations, #migration-guide, #from-npm-yarn, #from-pnpm, #when-to-use-isolated-installs, #related-documentation
+
+## pm/lifecycle
+- [Lifecycle scripts](https://bun.com/docs/pm/lifecycle): How Bun handles package lifecycle scripts securely
+  anchors: #postinstall, #trusteddependencies, #behavior-of-the-trusteddependencies-field, #ignore-scripts
+
+## pm/lockfile
+- [Lockfile](https://bun.com/docs/pm/lockfile): Bun's lockfile format and configuration
+  anchors: #should-it-be-committed-to-git, #generate-a-lockfile-without-installing, #can-i-opt-out, #text-based-lockfile, #automatic-lockfile-migration
+
+## pm/npmrc
+- [.npmrc support](https://bun.com/docs/pm/npmrc)
+  anchors: #supported-options, #set-the-default-registry, #set-the-registry-for-a-specific-scope, #configure-options-for-a-specific-registry, #link-workspace-packages-control-workspace-package-installation, #save-exact-save-exact-versions, #ignore-scripts-skip-lifecycle-scripts, #dry-run-preview-changes-without-installing, #cache-configure-cache-directory, #ca-and-cafile-configure-ca-certificates, #omit-and-include-control-dependency-types, #install-strategy-and-node-linker-installation-strategy, #public-hoist-pattern-and-hoist-pattern-control-hoisting
+
+## pm/overrides
+- [Overrides and resolutions](https://bun.com/docs/pm/overrides): Control metadependency versions with npm overrides and Yarn resolutions
+  anchors: #overrides, #resolutions
+
+## pm/scopes-registries
+- [Scopes and registries](https://bun.com/docs/pm/scopes-registries): Configure private registries and scoped packages
+  anchors: #npmrc
+
+## pm/security-scanner-api
+- [Security Scanner API](https://bun.com/docs/pm/security-scanner-api)
+  anchors: #quick-start, #how-it-works, #security-levels, #using-pre-built-scanners, #installing-a-scanner, #configuring-the-scanner, #enterprise-configuration, #authoring-your-own-scanner, #related
+
+## pm/workspaces
+- [Workspaces](https://bun.com/docs/pm/workspaces): Develop complex monorepos with multiple independent packages
+  anchors: #share-versions-with-catalogs
+
+## test/code-coverage
+- [Code coverage](https://bun.com/docs/test/code-coverage): Use Bun's built-in code coverage reporting to track test coverage and find untested code
+  anchors: #enabling-coverage, #enable-by-default, #coverage-thresholds, #simple-threshold, #detailed-thresholds, #coverage-reporters, #available-reporters, #lcov-coverage-reporter, #using-lcov-with-github-actions, #excluding-files-from-coverage, #skip-test-files, #ignore-specific-paths-and-patterns, #common-use-cases, #sourcemaps, #coverage-defaults, #advanced-configuration, #custom-coverage-directory, #multiple-reporters, #coverage-with-specific-test-patterns, #ci-cd-integration, #github-actions-example, #gitlab-ci-example, #interpreting-coverage-reports, #text-output-explanation, #what-to-aim-for, #best-practices, #focus-on-quality-not-just-quantity, #test-edge-cases, #use-coverage-to-find-missing-tests, #combine-with-other-quality-metrics, #troubleshooting, #coverage-not-showing-for-some-files, #false-coverage-reports, #performance-issues-with-large-codebases
+
+## test/configuration
+- [Test configuration](https://bun.com/docs/test/configuration): Configure bun test behavior with bunfig.toml and command-line options
+  anchors: #configuration-file, #test-discovery, #root, #examples, #preload-scripts, #common-preload-use-cases, #path-ignore-patterns, #common-use-cases, #reporters, #junit-reporter, #multiple-reporters, #memory-usage, #smol-mode, #test-execution, #concurrenttestglob, #randomize, #seed, #retry, #reruneach, #coverage-options, #basic-coverage-settings, #skip-test-files-from-coverage, #coverage-thresholds, #threshold-examples, #coverage-path-ignore-patterns, #common-ignore-patterns, #sourcemap-handling, #install-settings-inheritance, #environment-variables, #complete-configuration-example, #cli-override-behavior
+
+## test/dates-times
+- [Dates and times](https://bun.com/docs/test/dates-times): Learn how to manipulate time and dates in your Bun tests using setSystemTime and Jest compatibility functions
+  anchors: #setsystemtime, #reset-the-system-time, #get-mocked-time-with-jest-now, #set-the-time-zone
+
+## test/discovery
+- [Finding tests](https://bun.com/docs/test/discovery): Learn how Bun's test runner discovers and filters test files in your project
+  anchors: #default-discovery-logic, #exclusions, #customizing-test-discovery, #position-arguments-as-filters, #specifying-exact-file-paths, #filter-by-test-name, #changing-the-root-directory, #execution-order
+
+## test/dom
+- [DOM testing](https://bun.com/docs/test/dom): Learn how to test DOM elements and components using Bun with happy-dom and React Testing Library
+  anchors: #happy-dom, #typescript-support, #react-testing-library, #advanced-dom-testing, #custom-elements, #event-testing, #configuration-tips, #global-setup, #troubleshooting, #common-issues, #performance-considerations
+
+## test/index
+- [Test runner](https://bun.com/docs/test/index): Bun's fast, built-in, Jest-compatible test runner with TypeScript support, lifecycle hooks, mocking, and watch mode
+  anchors: #run-tests, #ci-cd-integration, #github-actions, #how-to-install-bun-in-a-github-actions-workflow, #junit-xml-reports-gitlab-etc, #timeouts, #concurrent-test-execution, #concurrent-flag, #max-concurrency-flag, #test-concurrent, #test-serial, #retry-failed-tests, #rerun-tests, #randomize-test-execution-order, #reproducible-random-order-with-seed, #bail-out-with-bail, #watch-mode, #lifecycle-hooks, #mocks, #snapshot-testing, #ui-dom-testing, #performance, #ai-agent-integration, #environment-variables, #behavior, #execution-control, #test-filtering, #reporting, #coverage, #snapshots, #examples
+
+## test/lifecycle
+- [Lifecycle hooks](https://bun.com/docs/test/lifecycle): Learn how to use beforeAll, beforeEach, afterEach, and afterAll lifecycle hooks in Bun tests
+  anchors: #per-test-setup-and-teardown, #per-scope-setup-and-teardown, #scoped-to-a-describe-block, #scoped-to-a-test-file, #ontestfinished, #global-setup-and-teardown, #practical-examples, #database-setup, #api-server-setup, #mock-setup, #async-lifecycle-hooks, #nested-hooks, #error-handling, #best-practices, #keep-hooks-simple, #use-appropriate-scope, #clean-up-resources
+
+## test/mocks
+- [Mocks](https://bun.com/docs/test/mocks): Learn how to create and use mock functions, spies, and module mocks in Bun tests
+  anchors: #basic-function-mocks, #jest-compatibility, #mock-function-properties, #available-properties-and-methods, #practical-examples, #basic-mock-usage, #dynamic-mock-implementations, #async-mocks, #spies-with-spyon, #advanced-spy-usage, #module-mocks-with-mock-module, #overriding-already-imported-modules, #hoisting-preloading, #module-mock-best-practices, #when-to-use-preload, #practical-module-mock-examples, #mocking-external-dependencies, #global-mock-functions, #clear-all-mocks, #reset-all-mocks, #restore-all-mocks, #vitest-compatibility, #implementation-details, #cache-interaction, #lazy-evaluation, #path-resolution, #import-timing-effects, #live-bindings, #advanced-patterns, #factory-functions, #conditional-mocking, #mock-cleanup-patterns, #best-practices, #keep-mocks-simple, #use-type-safe-mocks, #test-mock-behavior, #notes, #auto-mocking, #esm-vs-commonjs
+
+## test/reporters
+- [Test Reporters](https://bun.com/docs/test/reporters)
+  anchors: #built-in-reporters, #default-console-reporter, #dots-reporter, #junit-xml-reporter, #using-the-junit-reporter, #configuring-via-bunfig-toml, #environment-variables-in-junit-reports, #current-limitations, #github-actions-reporter, #custom-reporters, #inspector-protocol-for-testing, #key-events
+
+## test/runtime-behavior
+- [Runtime behavior](https://bun.com/docs/test/runtime-behavior): Learn about Bun test's runtime integration, environment variables, timeouts, and error handling
+  anchors: #environment-variables, #node-env, #tz-timezone, #test-timeouts, #global-timeout, #per-test-timeout, #infinite-timeout, #error-handling, #unhandled-errors, #promise-rejections, #custom-error-handling, #cli-flags-integration, #memory-usage, #debugging, #module-loading, #installation-related-flags, #watch-and-hot-reloading, #watch-mode, #hot-reloading, #global-variables, #process-integration, #exit-codes, #signal-handling, #environment-detection, #performance-considerations, #single-process, #memory-management, #test-isolation
+
+## test/snapshots
+- [Snapshots](https://bun.com/docs/test/snapshots): Learn how to use snapshot testing in Bun to save and compare output between test runs
+  anchors: #basic-snapshots, #snapshot-files, #updating-snapshots, #inline-snapshots, #using-inline-snapshots, #error-snapshots, #advanced-snapshot-usage, #complex-objects, #array-snapshots, #function-output-snapshots, #react-component-snapshots, #property-matchers, #best-practices, #keep-snapshots-small, #use-descriptive-test-names, #group-related-snapshots, #handle-dynamic-data, #managing-snapshots, #reviewing-snapshot-changes, #organizing-large-snapshot-files, #troubleshooting, #snapshot-failures, #platform-differences
+
+## test/writing-tests
+- [Writing tests](https://bun.com/docs/test/writing-tests): Write tests with Bun's Jest-compatible API, including async tests, timeouts, and test modifiers
+  anchors: #basic-usage, #grouping-tests, #async-tests, #timeouts, #retries-and-repeats, #test-retry, #test-repeats, #zombie-process-killer, #test-modifiers, #test-skip, #test-todo, #test-only, #test-if, #test-skipif, #test-todoif, #test-failing, #conditional-tests-for-describe-blocks, #parametrized-tests, #test-each-and-describe-each, #argument-passing, #format-specifiers, #examples, #assertion-counting, #expect-hasassertions, #expect-assertions-count, #type-testing, #expecttypeof, #matchers, #basic-matchers, #string-and-array-matchers, #object-matchers, #number-matchers, #function-and-class-matchers, #promise-matchers, #mock-function-matchers, #snapshot-matchers, #utility-matchers, #not-yet-implemented, #best-practices, #use-descriptive-test-names, #group-related-tests, #use-appropriate-matchers, #test-error-conditions, #use-setup-and-teardown

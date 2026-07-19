@@ -314,7 +314,9 @@ async function suggest(query: string): Promise<void> {
   if (hits.length > 0) {
     console.info(`closest pages for "${query}":`);
     for (const e of hits) {
-      console.info(`  ${e.url.replace(/\.md$/, '')} — ${e.title}${e.officialSection ? `  [${e.officialSection}]` : ''}`);
+      console.info(
+        `  ${e.url.replace(/\.md$/, '')} — ${e.title}${e.officialSection ? `  [${e.officialSection}]` : ''}`
+      );
       if (e.anchors.length > 0)
         console.info(
           `    anchors: ${e.anchors.slice(0, 6).join(', ')}${e.anchors.length > 6 ? '…' : ''}`
@@ -389,6 +391,87 @@ async function deepcheck(paths: string[]): Promise<number> {
   return bad;
 }
 
+/**
+ * Unified integrity report for the whole reference stack:
+ * taxonomy coverage → index anchors → canonical map anchors → repo links.
+ * Exit 1 if any layer fails — CI-callable proof of the doc stack.
+ */
+async function integrity(): Promise<number> {
+  const idx = await docsIndex();
+  const tax = await Bun.file(new URL('./bun-docs-taxonomy.json', import.meta.url).pathname)
+    .json()
+    .catch(() => null);
+
+  // Layer 1: taxonomy coverage (sidebar pages present in index, alias-aware)
+  let taxTotal = 0;
+  let taxHit = 0;
+  if (tax?.sections) {
+    const titles = new Set(idx.entries.map(e => e.title.toLowerCase()));
+    const aliases = (tax.aliases ?? {}) as Record<string, string>;
+    for (const pages of Object.values(tax.sections as Record<string, string[]>)) {
+      for (const p of pages) {
+        taxTotal++;
+        const key = p.toLowerCase();
+        if (titles.has(key) || (aliases[key] !== undefined && titles.has(aliases[key]))) taxHit++;
+      }
+    }
+  }
+
+  // Layer 2: index stats
+  const pages = idx.entries.length;
+  const anchors = idx.entries.reduce((n, e) => n + e.anchors.length, 0);
+  const tagged = idx.entries.filter(e => e.officialSection).length;
+
+  // Layer 3: canonical map anchors vs index
+  const mapBad = await audit();
+
+  // Layer 4: repo links vs index
+  const linkBad = await deepcheck(['lib', 'tools', 'scripts', 'tests']);
+
+  const row = (label: string, value: string, ok: boolean) =>
+    console.info(`  ${ok ? '✅' : '❌'} ${label.padEnd(38)} ${value}`);
+  console.info('\n📋 Doc-stack integrity');
+  row('taxonomy coverage', `${taxHit}/${taxTotal} sidebar pages in index`, taxHit === taxTotal);
+  row('index pages / anchors', `${pages} / ${anchors}`, pages > 0 && anchors > 0);
+  row('taxonomy-tagged entries', `${tagged}`, tagged > 0);
+  row('canonical map anchors', mapBad === 0 ? 'all valid' : `${mapBad} bad`, mapBad === 0);
+  row('repo links', linkBad === 0 ? 'all valid' : `${linkBad} dead`, linkBad === 0);
+  const failed = (taxHit === taxTotal ? 0 : 1) + (mapBad > 0 ? 1 : 0) + (linkBad > 0 ? 1 : 0);
+  console.info(failed === 0 ? '\n🟢 integrity: PASS' : `\n🔴 integrity: ${failed} layer(s) failing`);
+  return failed;
+}
+
+/**
+ * Export a hierarchical llms-full.txt: every docs entry prefixed with its
+ * official taxonomy path, giving RAG consumers location context.
+ */
+async function exportHierarchical(): Promise<void> {
+  const idx = await docsIndex();
+  const lines: string[] = [
+    '# Bun Documentation — hierarchical index',
+    `# Generated from tools/bun-docs-index.json (${idx.entries.length} pages)`,
+    '',
+  ];
+  const bySection = new Map<string, typeof idx.entries>();
+  for (const e of idx.entries) {
+    const s = e.officialSection ?? e.domain;
+    bySection.set(s, [...(bySection.get(s) ?? []), e]);
+  }
+  for (const [section, entries] of [...bySection.entries()].sort()) {
+    lines.push(`\n## ${section}`);
+    for (const e of entries) {
+      const url = e.url.replace(/\.md$/, '');
+      lines.push(`- [${e.title}](${url})${e.desc ? `: ${e.desc}` : ''}`);
+      if (e.anchors.length > 0) {
+        lines.push(`  anchors: ${e.anchors.map(a => `#${a}`).join(', ')}`);
+      }
+    }
+  }
+  const out = 'tools/bun-docs-llms-full.txt';
+  await Bun.write(out, lines.join('\n') + '\n');
+  console.info(`✅ ${out} — ${idx.entries.length} pages, ${bySection.size} sections`);
+}
+
 const [, , cmd = 'list', ...rest] = Bun.argv;
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
 switch (cmd) {
@@ -407,6 +490,12 @@ switch (cmd) {
   case 'deepcheck':
     process.exit((await deepcheck(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
+  case 'integrity':
+    process.exit((await integrity()) > 0 ? 1 : 0);
+    break;
+  case 'export':
+    await exportHierarchical();
+    break;
   case 'annotate': {
     const targets = rest.filter(a => a !== '--write');
     const write = rest.includes('--write');
@@ -422,7 +511,7 @@ switch (cmd) {
     break;
   default:
     console.error(
-      `unknown command: ${cmd} (url|list|suggest|audit|deepcheck|annotate|check|validate)`
+      `unknown command: ${cmd} (url|list|suggest|audit|deepcheck|integrity|export|annotate|check|validate)`
     );
     process.exit(1);
 }

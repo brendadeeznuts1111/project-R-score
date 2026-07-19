@@ -1,5 +1,9 @@
 {
   "_comment": "Official bun.com docs sidebar taxonomy (as pasted 2026-07-19). Maps section -> page titles. Used to enrich bun-docs-index.json entries with official section grouping.",
+  "aliases": {
+    "_comment": "Sidebar titles that differ from llms.txt page titles (lowercase).",
+    "utilities": "utils"
+  },
   "sections": {
     "Get Started": [
       "Welcome to Bun",

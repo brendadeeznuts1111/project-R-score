@@ -111,9 +111,14 @@ async function main(): Promise<void> {
     .catch(() => null);
   let tagged = 0;
   if (tax?.sections) {
+    const aliases = (tax.aliases ?? {}) as Record<string, string>;
     const titleToSection = new Map<string, string>();
     for (const [section, pages] of Object.entries(tax.sections as Record<string, string[]>)) {
-      for (const p of pages) titleToSection.set(p.toLowerCase(), section);
+      for (const p of pages) {
+        const key = p.toLowerCase();
+        titleToSection.set(key, section);
+        if (aliases[key]) titleToSection.set(aliases[key], section);
+      }
     }
     for (const e of entries) {
       const s = titleToSection.get(e.title.toLowerCase());
