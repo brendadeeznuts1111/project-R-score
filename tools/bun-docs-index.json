@@ -1,6 +1,8 @@
 {
-  "generated": "2026-07-19T20:31:48.259Z",
+  "generated": "2026-07-19T21:18:36.963Z",
   "source": "https://bun.com/docs/llms.txt",
+  "taxonomy": "tools/bun-docs-taxonomy.json",
+  "taxonomyTagged": 74,
   "pages": 317,
   "anchors": 2116,
   "entries": [
@@ -4868,7 +4870,5 @@
       "domain": "/blog",
       "anchors": []
     }
-  ],
-  "taxonomy": "tools/bun-docs-taxonomy.json",
-  "taxonomyTagged": 74
+  ]
 }

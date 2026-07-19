@@ -479,18 +479,58 @@ async function exportHierarchical(): Promise<void> {
  * https://bun.com/docs/runtime/cron — in-process overload: Bun.cron(pattern, handler)
  * Schedule is UTC, no-overlap guaranteed, job reschedules after errors.
  */
+/** Repo root (parent of tools/), used as cwd for the regen subprocess. */
+const REPO_ROOT = new URL('..', import.meta.url).pathname;
+
+/**
+ * Regenerate the docs index after a PASS. Returns { ok, pages, anchors }
+ * parsed from the generator's stdout, or { ok: false } on any failure.
+ */
+async function regenIndex(): Promise<
+  { ok: boolean; pages?: number; anchors?: number; error?: string }
+> {
+  try {
+    const proc = Bun.spawn(['bun', 'tools/bun-docs-index-gen.ts'], {
+      cwd: REPO_ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [stdout, stderr, exitCode] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    if (exitCode !== 0) return { ok: false, error: stderr.trim() || `exit ${exitCode}` };
+    // Final line: "✅ <pages> pages, <anchors> anchors (… fetch failures), …"
+    const m = stdout.match(/(\d+) pages, (\d+) anchors/);
+    return m ? { ok: true, pages: +m[1], anchors: +m[2] } : { ok: false, error: 'unparsed output' };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
 async function schedule(pattern: string, once: boolean): Promise<void> {
   const LOG = 'reports/doc-integrity.jsonl';
   const run = async () => {
     const started = new Date().toISOString();
     const failures = await integrity();
+    // Ingest-on-success: PASS regenerates the docs index; FAIL skips regen.
+    const regen = failures === 0 ? await regenIndex() : ({ skipped: true } as const);
     // JSONL append via read-modify-write (Bun.write has no append mode)
     const prev = (await Bun.file(LOG).exists()) ? await Bun.file(LOG).text() : '';
     await Bun.write(
       LOG,
-      prev + JSON.stringify({ ts: started, failures, ok: failures === 0 }) + '\n'
+      prev + JSON.stringify({ ts: started, failures, ok: failures === 0, regen }) + '\n'
     );
-    console.info(`🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`} — logged to ${LOG}`);
+    console.info(
+      `🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`}` +
+        (failures === 0
+          ? regen.ok
+            ? ` — regen OK (${regen.pages} pages, ${regen.anchors} anchors)`
+            : ` — regen FAILED: ${regen.error}`
+          : ' — regen skipped') +
+        ` — logged to ${LOG}`
+    );
   };
 
   if (once) {
