@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * Advanced Bun.file API Showcase - File Descriptors & URLs
  * Demonstrating Bun.file with file descriptors, URLs, and import.meta.url

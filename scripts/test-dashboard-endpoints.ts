@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 import {
   applyDashboardTestEnv,
   getDashboardTestConfig,

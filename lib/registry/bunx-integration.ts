@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/bunx-integration.ts — bunx integration for executing registry packages
 

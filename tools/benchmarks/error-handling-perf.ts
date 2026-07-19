@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // benchmarks/error-handling-perf.ts — Error handling performance benchmarks
 
 import { ErrorMetricsCollector } from '../../lib/core/error-metrics';

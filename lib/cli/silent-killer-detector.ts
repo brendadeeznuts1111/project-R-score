@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/cli/silent-killer-detector.ts — Silent killer pattern detection and fix for async operations
 

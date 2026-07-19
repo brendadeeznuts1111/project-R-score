@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/r2/r2-webhook-manager.ts — R2 webhook and external integration manager
 

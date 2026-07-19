@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
 

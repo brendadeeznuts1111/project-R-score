@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // lib/security/index.ts — Security module index
 
 // Core security components

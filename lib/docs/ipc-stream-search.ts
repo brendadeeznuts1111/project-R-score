@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * IPC-Powered Documentation Search System
  * Demonstrates Bun's advanced IPC and Terminal capabilities for documentation processing

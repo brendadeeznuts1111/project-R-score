@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/security/secrets-v5.ts — Security standards configuration

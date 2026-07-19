@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/guides/http/fetch — Bun.fetch
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/http/port-management-system.ts — Port management and connection pooling system

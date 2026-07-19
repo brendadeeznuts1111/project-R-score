@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/docs/cache-manager.ts — Documentation cache management
 import { createHash } from 'node:crypto';

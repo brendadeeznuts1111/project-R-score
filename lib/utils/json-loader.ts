@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/utils/json-loader.ts — Safe JSON file loading with defaults
 
 import { StatusOutput } from './output-helpers';

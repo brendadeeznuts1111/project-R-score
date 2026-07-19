@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * Grouped harness report — worst offenders, catalog groups, easy-fix standard catches.
  */

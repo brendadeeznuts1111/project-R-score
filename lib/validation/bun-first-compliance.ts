@@ -1,3 +1,9 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/guides/http/fetch — Bun.fetch
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/validation/bun-first-compliance.ts — Bun-first policy and compliance enforcement
 
 import { write } from 'bun';

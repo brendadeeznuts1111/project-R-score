@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/bundler — Bun.build
 import { resolve as resolvePath } from "node:path";
 
 export type BundleAnalysis = {

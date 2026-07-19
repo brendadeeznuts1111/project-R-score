@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 /**
  * Wiki v3.19 - Live Dashboard with HMR Preview
  *

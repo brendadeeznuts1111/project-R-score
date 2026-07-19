@@ -50,6 +50,30 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.wrapAnsi': 'https://bun.com/docs/runtime/utils#bun-wrapansi',
   'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
 
+  // ── File I/O & storage (top repo usage: Bun.file ×266, Bun.write ×153) ──
+  'Bun.file': 'https://bun.com/docs/runtime/file-io',
+  'Bun.write': 'https://bun.com/docs/runtime/file-io',
+  'bun:sqlite': 'https://bun.com/docs/runtime/sqlite',
+  'Bun.gzipSync': 'https://bun.com/docs/runtime/utils#bun-gzipsync',
+
+  // ── HTTP & networking ───────────────────────────────────────────────────
+  'Bun.serve': 'https://bun.com/docs/runtime/http/server',
+  'Bun.fetch': 'https://bun.com/docs/guides/http/fetch',
+  'Bun.Cookie': 'https://bun.com/docs/runtime/cookies',
+
+  // ── Process & spawn ─────────────────────────────────────────────────────
+  'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
+  'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
+  'Bun.build': 'https://bun.com/docs/bundler',
+
+  // ── Data formats & hashing ──────────────────────────────────────────────
+  'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
+  'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
+  'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
+  'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
+  'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
+  'Bun.secrets': 'https://bun.com/docs/runtime/secrets',
+
   // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
   'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
   'Bun.inspect.table': 'https://bun.com/docs/runtime/utils#bun-inspect',
@@ -87,6 +111,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
 
   // ── General utilities ──────────────────────────────────────────────────
+  'Bun.version': 'https://bun.com/docs/runtime/utils#bun-version',
+  'Bun.randomUUIDv7': 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
+  'Bun.Glob': 'https://bun.com/docs/runtime/glob',
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
   'Bun.nanoseconds': 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   'Bun.sleep': 'https://bun.com/docs/runtime/utils#bun-sleep',
@@ -99,7 +126,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'spawn terminal options': 'https://bun.com/docs/runtime/child-process#terminal-options',
   'spawn stdout guide': 'https://bun.com/docs/guides/process/spawn-stdout',
-  'CI failures from terminal': 'https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal',
+  'CI failures from terminal':
+    'https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal',
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,

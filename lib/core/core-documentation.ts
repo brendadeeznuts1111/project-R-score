@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/core/core-documentation.ts — Documentation constants and URL management
 
 import { validateOrThrow, StringValidators } from './core-validation';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // lib/cli/pty-terminal.ts — PTY terminal support for interactive applications
 //
 // Thin convenience layer over Bun's NATIVE Terminal API (not a hand-rolled

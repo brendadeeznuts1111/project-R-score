@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/config-loader.ts — Registry configuration loader for JSON, JSON5, and JSONL
 

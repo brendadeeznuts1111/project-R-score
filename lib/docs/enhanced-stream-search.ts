@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Ultra-Zen Documentation Streaming System - Enhanced v2.0
  * High-performance streaming search using Bun.spawn Web Standard APIs

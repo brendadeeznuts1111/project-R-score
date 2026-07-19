@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/performance/response-buffering-tests.ts — Response buffering and DNS optimization tests
 
 // Entry guard check

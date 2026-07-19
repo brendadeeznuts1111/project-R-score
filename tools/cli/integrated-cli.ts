@@ -1,5 +1,9 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /**
  * 🚀 Integrated Bun Documentation CLI

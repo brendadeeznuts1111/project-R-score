@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/cli/terminal-tui.ts — Terminal TUI widgets for visual deployment feedback

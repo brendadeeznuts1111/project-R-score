@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // tools/scanner-integration.ts — Scanner with documentation integration
 
 import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/r2/r2-security-manager.ts — R2 security and access control manager
 
 import { styled, FW_COLORS } from '../theme/colors';

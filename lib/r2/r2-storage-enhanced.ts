@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 // lib/r2/r2-storage-enhanced.ts — Enhanced R2 storage with package integration
 
 import { RSS_URLS } from '../../config/urls';

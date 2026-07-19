@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * @fileoverview Release workflow script
  * @module scripts/release

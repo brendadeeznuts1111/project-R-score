@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/docs/scraper.ts — Documentation link extraction
 

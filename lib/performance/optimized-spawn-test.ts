@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/performance/optimized-spawn-test.ts — Optimized spawn performance test
 
 // Entry guard check

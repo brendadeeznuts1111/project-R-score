@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 // lib/utils/s3-content-encoding.ts — S3 content encoding support
 
 import { S3Client, S3File } from 'bun';

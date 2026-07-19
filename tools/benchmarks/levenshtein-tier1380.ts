@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // levenshtein-tier1380.ts — Pure, optimized Levenshtein similarity engine
 import { Database } from 'bun:sqlite';

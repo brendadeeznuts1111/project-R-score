@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // lib/docs/url-pattern-analyzer.ts — URL pattern analysis and fix system
 
 // Safe entry guard - NO SILENT KILLER!

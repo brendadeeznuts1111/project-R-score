@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/comprehensive-implementation-audit.ts — Comprehensive implementation audit
 

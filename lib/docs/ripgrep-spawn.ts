@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * High-Performance Ripgrep Searcher using Bun.spawn
  * Zero-copy, SIMD-optimized process management with streaming JSON parsing

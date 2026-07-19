@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 

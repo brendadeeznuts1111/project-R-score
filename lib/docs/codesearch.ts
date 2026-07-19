@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Unified CodeSearch Module
  * High-performance code search with ripgrep, caching, and streaming

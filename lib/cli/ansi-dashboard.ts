@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // lib/cli/ansi-dashboard.ts — ANSI dashboard for metrics visualization
 
 import { CONTENT_TYPES } from '../../config/content-types';

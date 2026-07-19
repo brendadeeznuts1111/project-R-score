@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * Workspace Validator (Dependency-free version)
  *

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // tools/har-analysis.ts — HAR performance analysis with documentation-aware categorization
 //
 // Usage (standalone):

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds

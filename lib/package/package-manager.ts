@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/package/package-manager.ts — Package management with Bun API analysis and R2 integration
 

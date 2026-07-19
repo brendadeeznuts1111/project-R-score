@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 /**
  * DataView Profile Serializer for Connection Pooling v3.20
  *

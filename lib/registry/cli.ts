@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/cli.ts — CLI for managing the private npm registry

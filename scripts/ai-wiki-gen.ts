@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * Wiki v3.19 - AI Wiki Generator
  *

@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/security/enterprise-password-security.ts — Enterprise password security with Bun.password
 
 import { styled, log } from '../theme/colors';

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // tools/import-meta-url-demo.ts — Demo of import.meta.url and Bun.file self-reference
 
 // Bun.file(new URL(import.meta.url)) — reference to the current file

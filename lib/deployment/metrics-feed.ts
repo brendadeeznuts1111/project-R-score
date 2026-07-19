@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 /** RSS / JSON metrics feed for R-Score validation runs. */
 import { type Serve } from 'bun';
 

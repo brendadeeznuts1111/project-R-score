@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Virtual Documentation Link System
  * Demonstrates advanced Bun.file virtual file management

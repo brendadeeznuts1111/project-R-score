@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // tools/factorywager-cpu-profile.ts — CPU profiling with color-coded markdown output
 
 import { styled, log, colorizeMarkdown } from '../lib/theme/colors';

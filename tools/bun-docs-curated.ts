@@ -1,3 +1,11 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
+// @see https://bun.com/docs/bundler — Bun.build
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
 
 export type CuratedEntry = {

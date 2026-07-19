@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/core/atomic-file-operations.ts — Atomic file operations with proper locking
 
 import { ConcurrencyManagers } from './safe-concurrency';

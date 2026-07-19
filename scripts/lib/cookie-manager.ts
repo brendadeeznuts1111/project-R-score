@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
 export const DASHBOARD_COOKIE_NAME = 'bfw_state';
 
 export type SecurityLevel = 'high' | 'medium' | 'low';

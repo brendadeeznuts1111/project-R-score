@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/core/crc32.test.ts — Tests for hardware-accelerated CRC32 utilities
 
 import { describe, test, expect, beforeAll } from 'bun:test';

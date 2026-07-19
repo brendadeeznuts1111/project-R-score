@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // dx-mcp.test.ts — MCP protocol smoke test suite
 
 import { describe, it, expect, beforeAll, afterAll } from 'bun:test';

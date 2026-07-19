@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/docs/index-fetcher-enhanced.ts — Enhanced documentation index fetcher
 
 import { EnhancedDocsCacheManager } from './cache-manager';

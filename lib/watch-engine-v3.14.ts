@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /**
  * Enhanced Watch Engine v3.14 - Production-Hardened, Zero-Dependency

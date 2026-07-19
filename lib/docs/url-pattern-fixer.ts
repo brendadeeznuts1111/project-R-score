@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // lib/docs/url-pattern-fixer.ts — URL pattern analysis and fixes
 
 import { write } from 'bun';

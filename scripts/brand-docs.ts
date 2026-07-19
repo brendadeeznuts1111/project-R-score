@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 function parseSeed(args: string[]): number {
   const found = args.find(a => a.startsWith('--seed='));
   const seed = found ? Number(found.slice('--seed='.length)) : 210;

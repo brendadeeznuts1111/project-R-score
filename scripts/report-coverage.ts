@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 import { parseArg, expandGlobs, parseLcovFiles } from './coverage-utils';
 
 const args = process.argv.slice(2);

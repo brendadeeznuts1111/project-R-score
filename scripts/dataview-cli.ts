@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * DataView-Enhanced CLI for Connection Pooling v3.20
  *

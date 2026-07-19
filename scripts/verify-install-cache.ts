@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Verify Bun install cache + global virtual store alignment.
  * https://bun.sh/docs/pm/global-cache

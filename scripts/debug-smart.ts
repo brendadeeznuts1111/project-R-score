@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // Simplified progressive debug for immediate use
 
 const phases = [

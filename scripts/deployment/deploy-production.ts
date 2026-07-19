@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 import { getSecretsRuntimeInfo } from '../../lib/security/bun-secrets-adapter';
 import { resolveR2InfraConfig } from '../../lib/security/infra-secrets';
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // tools/registry-color-filter.ts — Filter registry color channel entries by risk level
 
 import { parseArgs } from 'node:util';

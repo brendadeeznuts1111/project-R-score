@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * Final Documentation CLI - The Ultimate "Bun Zen" Architecture
  * Implements File Descriptor telemetry and ESM URL portability

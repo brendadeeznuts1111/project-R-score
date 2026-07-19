@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/core/crc32.ts — Hardware-accelerated CRC32 utilities using Bun.hash.crc32
 
 /**

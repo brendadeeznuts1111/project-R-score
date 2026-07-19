@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Bun System Info & Project Analysis Script
  *

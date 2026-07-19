@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 /**
  * Comprehensive Security Test Suite
  *

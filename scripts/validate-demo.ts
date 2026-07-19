@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

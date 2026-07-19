@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 /**
  * Cookie.parse/from v3.25 - CookieInspector/CSRF Factory-Wager Fusion!
  *

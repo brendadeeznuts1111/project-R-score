@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // lib/rss/enhanced-rss.ts — Enhanced metrics feed generator
 
 import { CONTENT_TYPES } from '../../config/content-types';

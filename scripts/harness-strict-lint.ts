@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Run bun-native strict lint on STRICT_INVENTORY files from rollout config.
  */

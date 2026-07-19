@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 type Row = {
   id: 'markdown-simd' | 'react-markdown-cache' | 'abort-signal-optimize';
   iterations: number;

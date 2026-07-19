@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // lib/performance/bun-implementation-details.ts — Bun implementation details analysis and updates
 
 // Entry guard check

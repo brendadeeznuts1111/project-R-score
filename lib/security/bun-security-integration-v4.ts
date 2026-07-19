@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 /**
  * Bun Security v4.0 - Complete Security Integration
  *

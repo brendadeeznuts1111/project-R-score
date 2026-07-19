@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Smart Search (Optimized Phase 2)
  * Hybrid code search with streaming, concurrent processing, and intelligent caching

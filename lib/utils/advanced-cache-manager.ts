@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // lib/utils/advanced-cache-manager.ts - Advanced caching strategies with LRU, TTL, and distributed cache
 
 import { EventEmitter } from 'events';

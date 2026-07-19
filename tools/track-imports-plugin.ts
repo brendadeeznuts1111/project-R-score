@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // tools/track-imports-plugin.ts — Bun plugin for recording module imports
 
 import { plugin } from 'bun';

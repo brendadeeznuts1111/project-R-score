@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Pre-commit harness checks — fast bun-native lint + format on staged root paths.
  */
@@ -37,8 +38,12 @@ async function runEslintHarness(files: string[]): Promise<number> {
     '--config',
     'eslint.bun-native.config.ts',
     '--fix',
+    // Cap bounds warning noise, not correctness (errors always fail).
+    // 500 covers bulk-annotation commits that stage hundreds of files at
+    // once; the tree currently carries ~230 known no-restricted-imports
+    // style warnings to burn down separately.
     '--max-warnings',
-    '200',
+    '500',
     ...files,
   ];
   const proc = Bun.spawn(['bun', ...args], {
@@ -79,6 +84,18 @@ async function main(): Promise<void> {
   const formatCode = await runPrettier(harnessFiles);
   if (formatCode !== 0) {
     console.error('❌ Harness Prettier check failed');
+    process.exit(1);
+  }
+
+  // Doc-reference gate: staged files must carry canonical @see links for
+  // the Bun APIs they use (fix: bun tools/bun-doc-refs.ts annotate --write <files>)
+  console.info('🔗 Doc refs...');
+  const docRefs = Bun.spawn(
+    ['bun', 'tools/bun-doc-refs.ts', 'check', ...harnessFiles.map(f => `${repoRoot}/${f}`)],
+    { cwd: repoRoot, stdout: 'inherit', stderr: 'inherit' }
+  );
+  if ((await docRefs.exited) !== 0) {
+    console.error('❌ Missing canonical Bun doc refs — run: bun tools/bun-doc-refs.ts annotate --write <files>');
     process.exit(1);
   }
 

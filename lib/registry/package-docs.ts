@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/package-docs.ts — Package documentation fetcher with R2 caching
 

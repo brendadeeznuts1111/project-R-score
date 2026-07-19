@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // tools/wasm-inspector.test.ts — Tests for wasm-inspector
 
 import { test, expect, describe } from 'bun:test';

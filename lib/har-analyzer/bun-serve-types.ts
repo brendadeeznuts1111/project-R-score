@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // lib/har-analyzer/bun-serve-types.ts — Protocol-aware HAR capture types for Bun.serve()
 
 type HARServer = ReturnType<typeof Bun.serve>;

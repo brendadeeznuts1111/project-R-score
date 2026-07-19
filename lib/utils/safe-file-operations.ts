@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/utils/safe-file-operations.ts — Safe file operations with error handling
 

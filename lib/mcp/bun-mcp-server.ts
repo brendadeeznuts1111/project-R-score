@@ -1,3 +1,9 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/guides/http/fetch — Bun.fetch
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // lib/mcp/bun-mcp-server.ts — Core MCP server for Bun documentation access
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

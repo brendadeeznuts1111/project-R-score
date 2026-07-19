@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // tools/validate-docs.ts — Validation CLI for documentation health
 //
 // Usage:

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * P2P Proxy Setup Script
  * One-time setup for secrets, webhooks, and configuration

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // lib/ab-testing/ab-testing.bench.ts — AB Testing Performance Benchmark
 // Run: bun lib/ab-testing/ab-testing.bench.ts

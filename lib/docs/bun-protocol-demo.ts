@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * Bun File Protocol Demonstration
  * Shows the power of Bun's built-in file serving

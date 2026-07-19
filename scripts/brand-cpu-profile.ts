@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { createShutdown } from './lib/graceful-shutdown';

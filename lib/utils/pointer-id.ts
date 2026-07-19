@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/utils/pointer-id.ts — Deterministic pointer ID generation
 
 /**

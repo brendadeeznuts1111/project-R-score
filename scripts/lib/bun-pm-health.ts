@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { join } from 'path';
 import { collectBunCacheMetrics, type BunCacheMetrics } from './bun-cache-metrics.ts';
 

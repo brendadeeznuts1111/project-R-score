@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import {

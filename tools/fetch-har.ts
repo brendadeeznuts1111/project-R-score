@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // tools/fetch-har.ts — Fetch a URL and its subresources, output a HAR file
 //

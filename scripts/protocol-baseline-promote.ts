@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 

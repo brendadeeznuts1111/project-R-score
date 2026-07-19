@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 /**
  * 🎬 FactoryWager MCP R2 Integration Demo
  *

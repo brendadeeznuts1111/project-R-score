@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/http/rsc-multiplexer.ts — RSC HTTP/2 multiplexer for prefetch optimization
 
 import { BunHTTP2Multiplexer } from './http2-multiplexer';

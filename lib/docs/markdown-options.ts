@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // lib/docs/markdown-options.ts — Bun.markdown.html() options
 
 export interface HTMLOptions {

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * 🔒 FactoryWager Security Audit v5.1
  *

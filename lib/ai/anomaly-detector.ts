@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // lib/ai/anomaly-detector.ts — Anomaly detection system
 
 import { EventEmitter } from 'events';

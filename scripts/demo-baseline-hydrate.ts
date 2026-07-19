@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildBaselineForDemo } from './demo-tier1-baselines';

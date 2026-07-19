@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * bun-docs-index-gen.ts — generate tools/bun-docs-index.json.
  *

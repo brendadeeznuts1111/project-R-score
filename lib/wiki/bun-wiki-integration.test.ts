@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 import { test, expect, describe } from 'bun:test';
 
 import { CacheManager } from '../core/cache-manager.ts';

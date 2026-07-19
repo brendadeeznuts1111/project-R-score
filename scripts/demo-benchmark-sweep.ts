@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

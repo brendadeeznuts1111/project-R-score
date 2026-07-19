@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 import { test, expect, describe } from 'bun:test';
 import { R2Storage } from './r2-storage-enhanced.ts';
 import { crc32 } from '../core/crc32.ts';

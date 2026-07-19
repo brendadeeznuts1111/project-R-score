@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 // lib/r2/r2-transform-pipeline.ts — R2 data transformation pipeline
 
 import { styled, FW_COLORS } from '../theme/colors';

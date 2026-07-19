@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * Official Bun.file API Showcase - Complete Type-Safe Operations
  * Demonstrating all official Bun.file methods with proper TypeScript typing

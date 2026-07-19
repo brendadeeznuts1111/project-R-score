@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Promotes staging → main: runs tests, creates PR, merges, and cycles branches.
  * Usage: bun run promote [--no-test]

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * Unified Shell Bridge for Kimi Shell + OpenClaw + Profile Terminal

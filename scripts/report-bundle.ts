@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 import { buildBundleAnalysis, parseArg } from './lib/bundle-analysis';
 
 const DEFAULT_ENTRY = 'scratch/bun-v1.3.9-examples/playground-web/server.ts';

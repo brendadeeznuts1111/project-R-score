@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Bun Filter Runner - Tier-1380 Implementation
  *

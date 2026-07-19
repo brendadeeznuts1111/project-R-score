@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/http/hardened-fetch.ts — Hardened fetch with TLS certificate pinning
 
 import { type Socket, connect } from 'bun';

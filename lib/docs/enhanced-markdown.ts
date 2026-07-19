@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // lib/docs/enhanced-markdown.ts — Enhanced Markdown rendering with sanitization
 
 export interface MarkdownOptions {

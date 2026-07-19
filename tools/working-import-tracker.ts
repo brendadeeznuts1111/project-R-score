@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // tools/working-import-tracker.ts — Bun plugin for import tracking with logging
 
 import { plugin } from 'bun';

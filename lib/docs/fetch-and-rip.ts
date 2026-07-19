@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Fetch and Rip - Network-to-Process Streaming
  * Demonstrates direct streaming from fetch() to Bun.spawn without intermediate files

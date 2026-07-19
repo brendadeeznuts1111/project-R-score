@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 type Step = {
   id: string;
   command: string[];

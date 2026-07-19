@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { createServer } from 'node:net';
 import { applyDashboardEnv, resolveDashboardEnvConfig } from './dashboard-env';
