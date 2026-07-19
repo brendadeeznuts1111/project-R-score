@@ -59,7 +59,13 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── Environment & configuration ────────────────────────────────────────
   'Bun.env': 'https://bun.com/docs/runtime/environment-variables',
   '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
-  BUN_RUNTIME_TRANSPILER_CACHE_PATH: 'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
+  'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  BUN_CONFIG_VERBOSE_FETCH: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  BUN_CONFIG_MAX_HTTP_REQUESTS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  DO_NOT_TRACK: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  BUN_RUNTIME_TRANSPILER_CACHE_PATH:
+    'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
   'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
 
   // ── Testing & snapshots ────────────────────────────────────────────────
