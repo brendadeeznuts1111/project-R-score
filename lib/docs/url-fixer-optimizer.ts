@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/url-fixer-optimizer.ts — URL fixer and performance optimizer
 
 // Entry guard check

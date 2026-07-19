@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { checkContrast, generatePalette, parseHSL } from '../../lib/utils/advanced-hsl-colors';

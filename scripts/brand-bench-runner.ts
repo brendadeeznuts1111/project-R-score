@@ -1,4 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';

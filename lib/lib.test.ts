@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * 🧪 lib/ Test Suite - Comprehensive Unit Tests
  *

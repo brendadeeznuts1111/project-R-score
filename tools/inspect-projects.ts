@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/inspect-projects.ts — Project matrix inspection using Bun.inspect
 
 console.clear();

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/performance/optimized-server.ts — Optimized server with port management and connection pooling
 
 // Entry guard check

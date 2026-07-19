@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/performance/memory-pool.ts — Shared memory pool for zero-copy operations
 
 import {

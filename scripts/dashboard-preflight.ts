@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseBooleanEnv, resolveDashboardEnvConfig } from './lib/dashboard-env';

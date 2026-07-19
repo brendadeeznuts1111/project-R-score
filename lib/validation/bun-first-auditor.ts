@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/bun-first-auditor.ts — Bun-first policy and compliance auditor
 
 if (import.meta.main) {

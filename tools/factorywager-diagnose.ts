@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/color — Bun.color
 // tools/factorywager-diagnose.ts — Diagnostics tool with color-coded output
 
 import { styled, log, FW_COLORS } from '../lib/theme/colors';

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 function parseSemver(version: string): { major: number; minor: number; patch: number } | null {
   const match = version.trim().match(/^(\d+)\.(\d+)\.(\d+)/);
   if (!match) return null;

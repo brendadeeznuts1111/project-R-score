@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { afterEach, describe, expect, test } from 'bun:test';
 import { resolveR2BridgeConfig } from '../scripts/lib/r2-bridge';
 import { ProfileSessionUploader, resolveUploaderConfig } from '../lib/profile/session-uploader';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 import { describe, expect, test } from 'bun:test';
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';

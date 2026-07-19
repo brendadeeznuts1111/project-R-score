@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/performance/benchmark-recovery.ts — Run benchmarks with timeout, stuck detection, and auto-recovery
 // Usage: bun lib/performance/benchmark-recovery.ts run lib/ai/ai.bench.ts
 //        bun lib/performance/benchmark-recovery.ts detect ai.bench

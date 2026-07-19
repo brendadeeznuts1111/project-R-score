@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // lib/core/bun-spawn-utils.ts — Bun-specific spawn utilities with error handling
 
 import {

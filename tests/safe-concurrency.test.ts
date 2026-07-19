@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { describe, test, expect } from 'bun:test';
 import { Mutex, Semaphore, OperationQueue, ConcurrencyManagers, safeConcurrent } from '../lib/core/safe-concurrency';
 

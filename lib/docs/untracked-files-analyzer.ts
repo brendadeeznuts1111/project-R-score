@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/untracked-files-analyzer.ts — Untracked files analysis
 
 // Entry guard check

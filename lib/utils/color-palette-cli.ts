@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/color-palette-cli.ts — Color palette generator CLI
 
 import {

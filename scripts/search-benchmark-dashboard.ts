@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 /**
  * Search Benchmark Dashboard v2.0
  * Real-time performance monitoring with extensive visualization capabilities

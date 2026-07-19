@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // lib/ai/bunMarkdownExamples.ts — Markdown constants usage examples
 
 import React, { useMemo, useState, useEffect } from 'react';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/security/enterprise-auth.ts — Enterprise authentication system
 
 import { Tier1380PasswordSecurity } from './enterprise-password-security';

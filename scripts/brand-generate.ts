@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 
 type OutputFormat = 'json' | 'css';

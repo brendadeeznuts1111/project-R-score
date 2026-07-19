@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // lib/ai/ai-snapshot.test.ts — Snapshot tests for lib/ai/ Bun-native API outputs
 import { YAML } from 'bun';
 import { heapStats } from 'bun:jsc';

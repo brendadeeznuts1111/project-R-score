@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/server.ts — Web server with cookie/session handling and fetch proxy
 
 import { validateHost } from '../lib/utils/env-validator';

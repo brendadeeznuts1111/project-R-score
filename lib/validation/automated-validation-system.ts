@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/automated-validation-system.ts — Automated validation for CI/CD and repo health
 
 // Entry guard check

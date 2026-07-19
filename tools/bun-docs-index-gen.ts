@@ -115,7 +115,9 @@ async function main(): Promise<void> {
       2
     ) + '\n'
   );
-  console.info(`✅ ${entries.length} pages, ${totalAnchors} anchors (${failed} fetch failures) → ${OUT}`);
+  console.info(
+    `✅ ${entries.length} pages, ${totalAnchors} anchors (${failed} fetch failures) → ${OUT}`
+  );
 }
 
 await main();

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * 🎯 FactoryWager Wiki Matrix - Pipe-Friendly Version
  *

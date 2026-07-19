@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/advanced-hsl-colors.ts — Advanced HSL color theory utilities
 
 // ═══════════════════════════════════════════════════════════════

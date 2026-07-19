@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/core/logging-monitoring.ts — Logging and monitoring system
 
 // ============================================================================

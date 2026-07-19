@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/mcp/bun-server.ts — MCP server for Bun documentation search via HTTP transport
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

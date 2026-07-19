@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 export type SecretRef = {
   service: string;
   name: string;

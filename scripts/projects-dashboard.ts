@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // projects-dashboard.ts — Bun-native project dashboard for projects/active/
 // Run: bun run scripts/projects-dashboard.ts [--cards] [--readme] [--watch N] [--sort ...] [--timing]
 

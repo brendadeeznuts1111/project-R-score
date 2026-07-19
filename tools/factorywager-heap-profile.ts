@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/color — Bun.color
 // tools/factorywager-heap-profile.ts — Heap profiling with visual metadata tagging
 
 import { styled, log, FW_COLORS, generateVisualMetadata } from '../lib/theme/colors';

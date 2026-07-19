@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/bunx-integration.ts — bunx integration for executing registry packages
 
 import { styled } from '../theme/colors';

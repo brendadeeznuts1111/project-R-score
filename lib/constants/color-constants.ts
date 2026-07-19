@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/constants/color-constants.ts — Bun.color documentation constants and output formats
 
 // ============================================================================

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/r2/r2-batch-operations.ts — R2 batch operations for bulk data processing
 
 import { styled, FW_COLORS } from '../theme/colors';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/core/circuit-breaker.ts — Circuit breaker pattern for resilient external calls
 
 import { createNetworkError, createSystemError, EnterpriseErrorCode } from './core-errors';

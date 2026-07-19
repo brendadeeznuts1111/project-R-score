@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/cli/terminal-color-256.ts — RGB to 256-color palette conversion for terminal compatibility
 
 /**

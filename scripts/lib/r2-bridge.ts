@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { S3Client, semver } from 'bun';
 
 export type R2BridgeConfig = {

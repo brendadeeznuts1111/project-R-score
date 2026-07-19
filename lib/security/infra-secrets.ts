@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { getSecret } from './bun-secrets-adapter';
 
 export interface ResolvedR2Config {

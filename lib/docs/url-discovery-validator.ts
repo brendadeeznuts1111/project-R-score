@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/url-discovery-validator.ts — Compatibility shim
 import { runURLDiscoveryValidator } from '../../packages/docs-tools/src/url-discovery-validator';
 

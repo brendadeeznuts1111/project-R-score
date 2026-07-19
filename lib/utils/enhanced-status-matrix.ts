@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/enhanced-status-matrix.ts — Enhanced status matrix with advanced HSL integration
 
 import {

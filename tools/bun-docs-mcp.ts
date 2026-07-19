@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // tools/bun-docs-mcp.ts — MCP server for local bun-types MDX docs (zero npm deps)
 
 import { getCuratedEntry, searchCuratedEntries } from './bun-docs-curated.ts';

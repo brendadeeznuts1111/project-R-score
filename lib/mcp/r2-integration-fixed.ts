@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/mcp/r2-integration-fixed.ts — R2 integration with race condition fixes
 
 import { styled } from '../theme/colors';

@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // templates/deep-benchmark.ts — Template for benchmarks with deep inspection
 // Run: bun templates/deep-benchmark.ts
 // Pipe: bun templates/deep-benchmark.ts | jq .summary

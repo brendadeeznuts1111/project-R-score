@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // lib/projects-scan.ts — Bun-native project inventory helpers (Glob, Bun.file, Bun.spawn)
 
 export type GitStatus = 'none' | 'clean' | 'dirty';

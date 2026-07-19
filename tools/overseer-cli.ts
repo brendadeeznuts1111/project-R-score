@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/overseer-cli.ts — Root project manager for Bun platform projects
 
 import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';

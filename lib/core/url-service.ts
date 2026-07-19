@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/core/url-service.ts — Standardized URL service
 
 import { URLNormalizer } from '../docs/constants/utils';

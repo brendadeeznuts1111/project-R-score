@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { resolve4, resolveCname, resolveNs, Resolver } from 'node:dns/promises';
 
 type Options = {

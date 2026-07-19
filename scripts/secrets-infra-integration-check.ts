@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { resolveR2InfraConfig, resolveProfileSecretsService } from '../lib/security/infra-secrets';
 import { resolveUploaderConfigAsync } from '../lib/profile/session-uploader';
 

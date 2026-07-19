@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/core/fw-types.ts — FactoryWager project-specific type definitions
 
 // FactoryWager specific types

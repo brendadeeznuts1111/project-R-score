@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // lib/ai/ai-operations-manager.ts — AI operations manager for platform automation
 
 import { EventEmitter } from 'events';

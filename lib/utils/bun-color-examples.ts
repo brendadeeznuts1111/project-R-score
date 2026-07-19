@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/bun-color-examples.ts — Bun.color() API examples
 
 import { hslToHex, hslToAnsi, parseHSL, formatHSL, generatePalette } from './advanced-hsl-colors';

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { join } from 'node:path';
 import { RuntimeEnv } from '../lib/env/runtime';
 

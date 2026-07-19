@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/docs/constants/domains.ts — Documentation domain management
 
 export enum DocumentationDomain {

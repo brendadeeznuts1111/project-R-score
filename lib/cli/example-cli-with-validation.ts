@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/cli/example-cli-with-validation.ts — Example CLI tool with self-validation integration
 
 // Entry guard check

@@ -1,4 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 /**
  * Validate Pointers — Check URLs and local file paths in project
  *

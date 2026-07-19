@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/security/stability-test.ts — Security and stability test suite
 
 // Entry guard check

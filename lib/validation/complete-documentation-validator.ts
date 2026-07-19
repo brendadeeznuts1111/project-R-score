@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/complete-documentation-validator.ts — Complete documentation system validator
 
 // Entry guard check

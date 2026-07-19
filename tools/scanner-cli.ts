@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/scanner-cli.ts — Tier-1380 production CLI for FactoryWager
 
 import { readFileSync } from 'fs';

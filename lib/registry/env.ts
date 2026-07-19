@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /** Bun.env accessors shared across registry modules. */
 
 export function registryHost(): string {

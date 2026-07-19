@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // lib/docs/apis/bun-quick-usage.ts — Bun quick usage patterns
 
 export const QuickUsagePatterns = {

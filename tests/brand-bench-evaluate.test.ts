@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 import { describe, expect, test } from 'bun:test';
 import { evaluateBrandBench } from '../scripts/brand-bench-evaluate';
 import type { BrandBenchReport } from '../scripts/lib/brand-bench-types';

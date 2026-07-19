@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /**
  * Payment Flow Demo & Test Script
  * 

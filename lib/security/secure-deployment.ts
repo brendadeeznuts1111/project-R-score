@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/security/secure-deployment.ts — Secure deployment with password authentication
 
 import { Tier1380EnterpriseAuth } from './enterprise-auth';

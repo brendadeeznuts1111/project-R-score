@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // lib/ai/ai.bench.ts — Performance benchmarks for lib/ai/ Bun-native APIs
 // Run: bun lib/ai/ai.bench.ts
 // Tip: MIMALLOC_SHOW_STATS=1 bun lib/ai/ai.bench.ts for allocator stats

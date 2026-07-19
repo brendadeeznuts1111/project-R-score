@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/server.ts — Private npm registry server with R2 storage backend
 
 import { styled } from '../theme/colors';

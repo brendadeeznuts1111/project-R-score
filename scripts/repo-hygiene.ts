@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 /**
  * Repo hygiene check — catches stray generated files before they get committed.
  *
@@ -188,7 +190,9 @@ async function checkStagedSecrets(): Promise<Violation[]> {
 
 async function checkStagedStray(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'], {
+  // diff-filter=A: only NEW files. A tracked file being edited is not stray
+  // output; the rule exists to stop new demo/report/temp files from landing.
+  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=A'], {
     cwd: ROOT,
     stdout: 'pipe',
   });

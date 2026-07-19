@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
 // tools/cookie-scanner.ts — Cookie scanner and R2 storage compressor
 
 const args = process.argv.slice(2);

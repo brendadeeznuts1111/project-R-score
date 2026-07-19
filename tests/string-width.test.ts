@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 import { describe, test, expect } from 'bun:test';
 import { StringUtils } from '../lib/utils/index';
 

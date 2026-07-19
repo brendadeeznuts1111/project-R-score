@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/cli/terminal-tui.ts — Terminal TUI widgets for visual deployment feedback
 
 /** Pad string to target visual width (left-aligned) */

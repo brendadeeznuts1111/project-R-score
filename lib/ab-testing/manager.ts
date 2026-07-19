@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/ab-testing/manager.ts — A/B test manager with cookie-based variant assignment
 
 import type { CookieInit } from 'bun';

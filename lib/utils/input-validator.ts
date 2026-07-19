@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/utils/input-validator.ts — Input validation for API endpoints
 
 export interface ValidationRule {

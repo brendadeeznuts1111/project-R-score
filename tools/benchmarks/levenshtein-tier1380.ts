@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // levenshtein-tier1380.ts — Pure, optimized Levenshtein similarity engine
 import { Database } from 'bun:sqlite';
 

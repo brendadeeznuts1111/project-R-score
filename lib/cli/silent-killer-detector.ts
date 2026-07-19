@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/cli/silent-killer-detector.ts — Silent killer pattern detection and fix for async operations
 
 console.info('🚨 SILENT KILLER DETECTION AND FIX');

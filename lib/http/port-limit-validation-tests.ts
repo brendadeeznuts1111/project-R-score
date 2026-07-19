@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/http/port-limit-validation-tests.ts — Tests for port and connection limit validation
 
 // Entry guard check

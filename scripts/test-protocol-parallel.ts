@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 type GroupName = 'network' | 'storage' | 'memory' | 'ipc';
 type ProtocolName = 'http' | 'https' | 's3' | 'file' | 'data' | 'blob' | 'unix';
 

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // lib/utils/index.ts — Central utility functions
 
 // TODO: FACTORYWAGER_CONFIG source module missing — re-enable when config is restored

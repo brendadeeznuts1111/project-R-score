@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // tools/wasm-inspector.bench.ts — WASM Inspector Performance Benchmark
 // Run: bun tools/wasm-inspector.bench.ts
 

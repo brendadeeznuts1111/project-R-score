@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 /**
  * 🎯 FactoryWager Wiki Template Matrix CLI
  *

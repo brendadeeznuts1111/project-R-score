@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/advanced-hsl-system.ts — Advanced HSL color theory and perceptual utilities
 
 import { color } from 'bun';

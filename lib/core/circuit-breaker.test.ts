@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/core/circuit-breaker.test.ts — Tests for circuit breaker
 
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';

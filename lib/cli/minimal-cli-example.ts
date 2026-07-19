@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/cli/minimal-cli-example.ts — Minimal CLI tool with validation integration
 
 // Entry guard check

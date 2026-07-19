@@ -137,9 +137,11 @@ async function tsFiles(paths: string[]): Promise<string[]> {
   return out;
 }
 
-/** Find Bun.* usages whose file has no matching @see / doc link. */
-async function check(paths: string[]): Promise<number> {
-  let missing = 0;
+type MissingRef = { file: string; api: string; url: string };
+
+/** Detect Bun.* usages lacking a canonical doc ref (code lines only). */
+async function findMissing(paths: string[]): Promise<MissingRef[]> {
+  const missing: MissingRef[] = [];
   for (const file of await tsFiles(paths)) {
     const text = await Bun.file(file).text();
     // Only count usage in actual code lines (comments/doc headers are
@@ -159,15 +161,52 @@ async function check(paths: string[]): Promise<number> {
         text.includes(url) ||
         text.includes(base) ||
         (anchor !== undefined && text.includes('#' + anchor));
-      if (!referenced) {
-        console.info(`  ${file}: uses ${api} without a doc ref`);
-        console.info(`    add: @see ${url}`);
-        missing++;
-      }
+      if (!referenced) missing.push({ file, api, url });
     }
   }
-  if (missing === 0) console.info('✅ all Bun API usages have canonical doc refs');
   return missing;
+}
+
+/** Find Bun.* usages whose file has no matching @see / doc link. */
+async function check(paths: string[]): Promise<number> {
+  const missing = await findMissing(paths);
+  for (const m of missing) {
+    console.info(`  ${m.file}: uses ${m.api} without a doc ref`);
+    console.info(`    add: @see ${m.url}`);
+  }
+  if (missing.length === 0) console.info('✅ all Bun API usages have canonical doc refs');
+  return missing.length;
+}
+
+/**
+ * Insert `// @see <url> — <api>` header lines into files missing refs.
+ * Idempotent (driven by findMissing). Default is dry-run; pass --write.
+ */
+async function annotate(paths: string[], write: boolean): Promise<number> {
+  const missing = await findMissing(paths);
+  const byFile = new Map<string, MissingRef[]>();
+  for (const m of missing) byFile.set(m.file, [...(byFile.get(m.file) ?? []), m]);
+  for (const [file, refs] of byFile) {
+    const text = await Bun.file(file).text();
+    const lines = text.split('\n');
+    // Insertion point: after shebang and leading blank lines
+    let at = 0;
+    if (lines[0]?.startsWith('#!')) at = 1;
+    while (at < lines.length && lines[at].trim() === '') at++;
+    const header = refs.map(r => `// @see ${r.url} — ${r.api}`);
+    if (write) {
+      lines.splice(at, 0, ...header);
+      await Bun.write(file, lines.join('\n'));
+    }
+    console.info(`${write ? '📝' : '🔍'} ${file}`);
+    for (const r of refs) console.info(`   ${r.api} → ${r.url}`);
+  }
+  console.info(
+    write
+      ? `✅ annotated ${byFile.size} files (${missing.length} refs)`
+      : `🔍 dry-run: ${byFile.size} files would be annotated (${missing.length} refs) — pass --write`
+  );
+  return byFile.size;
 }
 
 /** HTTP-validate every bun.com/github/no-color doc link found in the files. */
@@ -252,7 +291,10 @@ async function suggest(query: string): Promise<void> {
     console.info(`closest pages for "${query}":`);
     for (const e of hits) {
       console.info(`  ${e.url.replace(/\.md$/, '')} — ${e.title}`);
-      if (e.anchors.length > 0) console.info(`    anchors: ${e.anchors.slice(0, 6).join(', ')}${e.anchors.length > 6 ? '…' : ''}`);
+      if (e.anchors.length > 0)
+        console.info(
+          `    anchors: ${e.anchors.slice(0, 6).join(', ')}${e.anchors.length > 6 ? '…' : ''}`
+        );
     }
     return;
   }
@@ -300,6 +342,13 @@ switch (cmd) {
   case 'audit':
     process.exit((await audit()) > 0 ? 1 : 0);
     break;
+  case 'annotate': {
+    const targets = rest.filter(a => a !== '--write');
+    const write = rest.includes('--write');
+    const files = await annotate(targets.length ? targets : defaultPaths, write);
+    process.exit(!write && files > 0 ? 1 : 0);
+    break;
+  }
   case 'check':
     process.exit((await check(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;

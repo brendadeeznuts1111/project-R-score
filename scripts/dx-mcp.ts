@@ -1,4 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // dx-mcp.ts — Developer Experience MCP server for project dashboard
 // Wave 9 primitives: Bun.file, Bun.nanoseconds, Bun.markdown.ansi, Bun.deepEquals, Bun.escapeHTML
 // Zero npm deps. Exposes project listing, info, README, health checks.

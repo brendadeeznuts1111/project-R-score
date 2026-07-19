@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { resolve4, resolveCname } from 'node:dns/promises';
 import { createDomainContext } from './lib/domain-context';
 import { resolveR2BridgeConfig, uploadCompressedStateToR2, uploadJsonToR2 } from './lib/r2-bridge';

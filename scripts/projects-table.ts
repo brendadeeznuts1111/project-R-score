@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 // projects-table.ts — Inventory all project directories with Bun.inspect.table
 // Run: bun run scripts/projects-table.ts [--sort name|files|changed] [--deep]
 

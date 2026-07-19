@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 /**
  * FACTORYWAGER RIPGREP v4.0 - Rules Engine
  *

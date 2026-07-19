@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/comprehensive-implementation-audit.ts — Comprehensive implementation audit
 
 // Entry guard check

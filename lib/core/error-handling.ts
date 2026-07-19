@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/core/error-handling.ts — Error handling with typed errors and recovery strategies
 
 import { styled } from '../theme/colors';

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 /**
  * Monorepo gate report — runs gate-map projects and builds aggregated HTML/JSON.
  */

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/performance/optimizer.ts — Performance optimization for spawn, env, and server bottlenecks
 
 // ============================================================================

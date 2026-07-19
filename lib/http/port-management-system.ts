@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/http/port-management-system.ts — Port management and connection pooling system
 
 // Entry guard check

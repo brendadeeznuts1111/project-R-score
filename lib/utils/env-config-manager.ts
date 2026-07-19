@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/utils/env-config-manager.ts — Environment configuration manager
 
 import { logger } from './logger';

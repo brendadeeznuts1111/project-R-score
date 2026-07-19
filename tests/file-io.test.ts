@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // file-io.test.ts — Comprehensive Tests for Bun.file, Bun.write, and Related APIs
 // Merged from bun-file-io-bench.ts and bun-file-io.test.ts
 import { test, expect, describe, beforeAll, afterAll } from "bun:test";

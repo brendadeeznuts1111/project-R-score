@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/version-manager.ts — Package version manager with semver integration
 
 import { styled, FW_COLORS } from '../theme/colors';

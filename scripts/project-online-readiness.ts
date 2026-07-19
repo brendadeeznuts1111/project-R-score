@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { evaluateReadiness, loadDomainHealthSummary } from './lib/domain-health-read';
 
 type Options = {

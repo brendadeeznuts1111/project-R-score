@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
 
 import { join } from 'node:path';

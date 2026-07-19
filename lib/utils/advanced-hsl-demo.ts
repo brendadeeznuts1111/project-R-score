@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/advanced-hsl-demo.ts — Advanced HSL color theory demo
 
 import {

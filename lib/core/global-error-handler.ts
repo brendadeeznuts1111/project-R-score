@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/core/global-error-handler.ts — Global error handling for uncaught exceptions
 
 import {

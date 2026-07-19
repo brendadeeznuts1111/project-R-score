@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/rss/rss-manager.ts — RSS feed integration with caching and storage
 
 import type { PackageInfo } from '../package/package-manager';

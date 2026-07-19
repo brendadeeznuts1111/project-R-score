@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/constants/utils.ts — URL normalization utilities
 
 export enum UtilsCategory {

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/rss-aggregator.ts — RSS aggregator for package updates and feeds
 
 import { styled, FW_COLORS } from '../theme/colors';

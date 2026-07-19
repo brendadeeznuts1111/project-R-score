@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { test, expect, describe } from 'bun:test';
 import { PackageManager } from './package-manager.ts';
 

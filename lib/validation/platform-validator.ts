@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/validation/platform-validator.ts — Platform validation CLI for tools, URLs, and constants
 
 // Entry guard check

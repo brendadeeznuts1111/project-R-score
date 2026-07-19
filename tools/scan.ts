@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
 // tools/scan.ts — Tier-1380 CLI v2.1
 
 type PosIndex = 0 | 1 | 2 | 3 | 4;

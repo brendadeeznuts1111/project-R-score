@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/color — Bun.color
 // lib/utils/color-contrast-cli.ts — Color contrast checker CLI for WCAG accessibility
 
 import {

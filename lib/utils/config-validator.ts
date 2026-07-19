@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/utils/config-validator.ts — Configuration validation utilities
 
 import { logger } from './logger';

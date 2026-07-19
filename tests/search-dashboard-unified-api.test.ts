@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { afterEach, describe, expect, test } from 'bun:test';
 
 const children: ReturnType<typeof Bun.spawn>[] = [];

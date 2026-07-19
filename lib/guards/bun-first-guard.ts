@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // lib/guards/bun-first-guard.ts — Runtime guard enforcing Bun-native API usage
 
 // Violation tracking

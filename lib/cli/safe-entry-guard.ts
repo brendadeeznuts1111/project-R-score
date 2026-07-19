@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/cli/safe-entry-guard.ts — Safe entry guard utility for async operations
 
 /**

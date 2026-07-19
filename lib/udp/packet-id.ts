@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 import type { MulticastScope } from './multicast-selector';
 
 export interface PacketHeader {

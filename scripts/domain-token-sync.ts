@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 

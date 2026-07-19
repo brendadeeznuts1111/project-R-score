@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/debug-entry.ts — Debug tool for entry guard mechanism
 
 console.info('=== Debug Entry Guard ===');

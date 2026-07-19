@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/security/versioned-secrets.ts — Versioned secret management
 
 import { VersionGraph } from './version-graph';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/config-loader.ts — Registry configuration loader for JSON, JSON5, and JSONL
 
 import { styled } from '../theme/colors';

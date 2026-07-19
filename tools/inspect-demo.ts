@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // tools/inspect-demo.ts — Demo of Bun.inspect tabular data visualization
 
 console.info('╔═══════════════════════════════════════════════════════════════╗');
