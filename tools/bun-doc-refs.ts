@@ -29,6 +29,10 @@
 //   2. https://bun.com/reference/bun/<name> — generated API reference
 //   3. https://github.com/oven-sh/bun/tree/main/packages/bun-types — types
 //   4. External conventions (no-color.org, nodejs.org) where Bun defers
+//
+// Agent-consumable docs: append `.md` to any bun.com/docs page for raw
+// markdown (e.g. .../environment-variables.md). Full index:
+//   https://bun.com/docs/llms.txt
 export const BUN_TYPES_PINNED =
   'https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types';
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
@@ -62,7 +66,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_CONFIG_VERBOSE_FETCH: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
-  BUN_CONFIG_MAX_HTTP_REQUESTS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  BUN_CONFIG_MAX_HTTP_REQUESTS:
+    'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   DO_NOT_TRACK: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_RUNTIME_TRANSPILER_CACHE_PATH:
     'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
@@ -89,6 +94,8 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,
+  'llms.txt index': 'https://bun.com/docs/llms.txt',
+  'markdown docs': 'https://bun.com/docs/runtime/environment-variables.md',
 };
 
 const APIS = Object.keys(CANONICAL_REFS).filter(k => k.startsWith('Bun.'));
