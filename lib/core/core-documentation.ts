@@ -509,7 +509,7 @@ export const FRAGMENT_METADATA: Record<
     relatedFragments: ['blob', 'commit', 'branch'],
     examples: [
       'https://github.com/oven-sh/bun/tree/main',
-      'https://github.com/oven-sh/bun/tree/v1.3.8/packages/bun-types',
+      'https://github.com/oven-sh/bun/tree/bun-v1.3.8/packages/bun-types',
     ],
     seeAlso: ['blob', 'commit'],
   },
@@ -562,7 +562,7 @@ export const FRAGMENT_METADATA: Record<
   release: {
     description: 'GitHub release - versioned distribution with assets',
     relatedFragments: ['tag', 'download', 'changelog'],
-    examples: ['https://github.com/oven-sh/bun/releases/tag/v1.3.8'],
+    examples: ['https://github.com/oven-sh/bun/releases/tag/bun-v1.3.8'],
     seeAlso: ['tag', 'download'],
   },
 
@@ -1968,33 +1968,33 @@ export class EnterpriseDocumentationURLBuilder {
     const topicMappings = {
       typedarray: {
         technical: 'https://bun.sh/docs/cli/runtime/binary-data#typedarray',
-        reference: 'https://bun.com/reference/api/binary-data#typedarray',
-        guide: 'https://bun.com/guides/working-with-binary-data',
+        reference: 'https://bun.com/docs/runtime/binary-data',
+        guide: 'https://bun.com/docs/runtime/binary-data',
       },
       fetch: {
         technical: 'https://bun.sh/docs/cli/runtime/networking/fetch',
-        reference: 'https://bun.com/reference/api/fetch',
-        guide: 'https://bun.com/guides/making-http-requests',
+        reference: 'https://bun.com/docs/guides/http/fetch',
+        guide: 'https://bun.com/docs/guides/http/fetch',
       },
       rss: {
         main: 'https://bun.com/rss.xml',
         technical: 'https://bun.sh/rss.xml',
-        blog: 'https://bun.com/blog/rss.xml',
-        releases: 'https://bun.com/releases/rss.xml',
+        blog: 'https://bun.com/rss.xml',
+        releases: 'https://bun.com/rss.xml',
       },
       'getting-started': {
         quickstart: 'https://bun.sh/docs/cli/quickstart',
-        guide: 'https://bun.com/guides/getting-started',
-        tutorial: 'https://bun.com/guides/tutorials/beginner',
+        guide: 'https://bun.com/docs/quickstart',
+        tutorial: 'https://bun.com/docs/quickstart',
       },
       api: {
         overview: 'https://bun.sh/docs/cli/api',
         portal: 'https://bun.com/reference',
-        interactive: 'https://bun.com/reference/api',
+        interactive: 'https://bun.com/reference',
       },
       'node:zlib': {
         reference: 'https://bun.com/reference#node:zlib',
-        compatibility: 'https://bun.com/reference/node-compatibility#node:zlib',
+        compatibility: 'https://bun.com/docs/runtime/nodejs-compat#nodezlib',
         github: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
       },
     };
@@ -2527,19 +2527,19 @@ export function getAllCriticalURLs(): Record<string, any> {
     // Primary documentation portals
     referencePortal: {
       main: 'https://bun.com/reference',
-      api: 'https://bun.com/reference/api',
-      cli: 'https://bun.com/reference/cli',
+      api: 'https://bun.com/reference',
+      cli: 'https://bun.com/reference',
       textFragments: docsURL.getCommonTextFragmentURLs(),
     },
 
     guidesPortal: {
       main: 'https://bun.com/guides',
-      gettingStarted: 'https://bun.com/guides/getting-started',
+      gettingStarted: 'https://bun.com/docs/quickstart',
     },
 
     rssFeeds: {
       main: 'https://bun.com/rss.xml',
-      blog: 'https://bun.com/blog/rss.xml',
+      blog: 'https://bun.com/rss.xml',
       technical: 'https://bun.sh/rss.xml',
     },
 

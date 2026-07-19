@@ -117,7 +117,7 @@ export class BunDocumentationIntegration {
             },
             {
               title: 'Code Splitting',
-              url: 'https://bun.com/docs/bundler/code-splitting',
+              url: 'https://bun.com/docs/bundler',
               path: '/docs/bundler/code-splitting.md',
               category: 'Bundler',
               description: 'Advanced code splitting strategies',
@@ -226,7 +226,7 @@ console.info(users);`,
             },
             {
               title: 'Workspaces',
-              url: 'https://bun.com/docs/runtime/workspaces',
+              url: 'https://bun.com/docs/pm/workspaces',
               path: '/docs/package-manager/workspaces.md',
               category: 'Package Manager',
               description: 'Monorepo workspace management',

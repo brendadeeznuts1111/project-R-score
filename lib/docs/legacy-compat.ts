@@ -36,11 +36,11 @@ export const TYPED_ARRAY_URLS = {
 export const RSS_URLS = {
   MAIN: 'https://bun.com/rss.xml',
   TECHNICAL: 'https://bun.sh/rss.xml',
-  BLOG: 'https://bun.com/blog/rss.xml',
-  RELEASES: 'https://bun.com/releases/rss.xml',
-  SECURITY: 'https://bun.com/security/rss.xml',
-  COMMUNITY: 'https://bun.com/community/rss.xml',
-  GUIDES: 'https://bun.com/guides/rss.xml',
+  BLOG: 'https://bun.com/rss.xml',
+  RELEASES: 'https://bun.com/rss.xml',
+  SECURITY: 'https://bun.com/rss.xml',
+  COMMUNITY: 'https://bun.com/rss.xml',
+  GUIDES: 'https://bun.com/rss.xml',
 };
 
 export const FETCH_API_URLS = {
@@ -95,9 +95,9 @@ export const GITHUB_URLS = {
   DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
   WIKI: 'https://github.com/oven-sh/bun/wiki',
   BUN_TYPES: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-  BUN_TEST: 'https://github.com/oven-sh/bun/tree/main/packages/bun-test',
-  BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages/bun-ffi',
-  BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages/bun-pm',
+  BUN_TEST: 'https://github.com/oven-sh/bun/tree/main/packages',
+  BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages',
+  BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages',
 };
 
 // Legacy migration helpers

@@ -101,6 +101,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun-types': BUN_TYPES_PINNED,
   'llms.txt index': 'https://bun.com/docs/llms.txt',
   'markdown docs': 'https://bun.com/docs/runtime/environment-variables.md',
+  // Operational endpoints (verified live; bun.com has no subdomains —
+  // everything is path-based under the apex + www)
+  'rss feed': 'https://bun.com/rss.xml',
+  discord: 'https://bun.com/discord',
+  issues: 'https://bun.com/issues',
+  'install script': 'https://bun.com/install.sh',
+  download: 'https://bun.com/download',
+  'security policy': 'https://github.com/oven-sh/bun/security/policy',
 };
 
 const APIS = Object.keys(CANONICAL_REFS).filter(k => k.startsWith('Bun.'));
@@ -213,11 +221,17 @@ async function annotate(paths: string[], write: boolean): Promise<number> {
 async function validate(paths: string[]): Promise<number> {
   // Character class stops at markup/quotes and template-literal `${` so
   // doc text like </link>, trailing ', and `...${var}` stems never pollute
-  const urlRe = /https:\/\/(?:bun\.com|github\.com\/oven-sh|no-color\.org|nodejs\.org)[a-zA-Z0-9\-._~:/?#@!&*+,;=%[\]]*/g;
+  const urlRe =
+    /https:\/\/(?:bun\.com|github\.com\/oven-sh|no-color\.org|nodejs\.org)[a-zA-Z0-9\-._~:/?#@!&*+,;=%[\]]*/g;
   const urls = new Set<string>();
   for (const file of await tsFiles(paths)) {
     const text = await Bun.file(file).text();
-    for (const m of text.matchAll(urlRe)) urls.add(m[0].replace(/[).,;*]+$/, ''));
+    for (const m of text.matchAll(urlRe)) {
+      // Skip template-literal stems: `https://.../tree/${var}` is not a real URL
+      const after = text.slice(m.index! + m[0].length, m.index! + m[0].length + 2);
+      if (after === '${') continue;
+      urls.add(m[0].replace(/[).,;*]+$/, ''));
+    }
   }
   let bad = 0;
   for (const url of urls) {
@@ -305,7 +319,7 @@ async function suggest(query: string): Promise<void> {
   process.exit(1);
 }
 
-/** Verify every CANONICAL_REFS anchor against the generated docs index. */async function audit(): Promise<number> {
+/** Verify every CANONICAL_REFS anchor against the generated docs index. */ async function audit(): Promise<number> {
   const { entries } = await docsIndex();
   let bad = 0;
   for (const [api, url] of Object.entries(CANONICAL_REFS)) {
@@ -400,6 +414,8 @@ switch (cmd) {
     process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
     break;
   default:
-    console.error(`unknown command: ${cmd} (url|list|suggest|audit|deepcheck|annotate|check|validate)`);
+    console.error(
+      `unknown command: ${cmd} (url|list|suggest|audit|deepcheck|annotate|check|validate)`
+    );
     process.exit(1);
 }

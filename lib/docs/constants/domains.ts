@@ -227,7 +227,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     BASE: 'https://nodejs.org',
     DOCS: 'https://nodejs.org/docs',
     API: 'https://nodejs.org/api',
-    GUIDES: 'https://nodejs.org/en/docs/guides',
+    GUIDES: 'https://nodejs.org/en/learn',
   },
 
   [DocumentationProvider.WEB_STANDARDS]: {

@@ -250,16 +250,16 @@ export function getAllCriticalURLs(): Record<string, any> {
     // Primary documentation portals
     referencePortal: {
       main: 'https://bun.com/reference',
-      api: 'https://bun.com/reference/api',
-      cli: 'https://bun.com/reference/cli',
+      api: 'https://bun.com/reference',
+      cli: 'https://bun.com/reference',
       textFragments: builder.getCommonTextFragmentURLs(),
     },
 
     guidesPortal: {
       main: 'https://bun.com/guides',
-      gettingStarted: 'https://bun.com/guides/getting-started',
-      tutorials: 'https://bun.com/guides/tutorials',
-      troubleshooting: 'https://bun.com/guides/troubleshooting',
+      gettingStarted: 'https://bun.com/docs/quickstart',
+      tutorials: 'https://bun.com/guides',
+      troubleshooting: 'https://bun.com/guides',
     },
 
     // Technical documentation (bun.sh)
@@ -275,10 +275,10 @@ export function getAllCriticalURLs(): Record<string, any> {
     rssFeeds: {
       main: 'https://bun.com/rss.xml', // Main bun.com RSS
       technical: 'https://bun.sh/rss.xml', // Technical bun.sh RSS
-      blog: 'https://bun.com/blog/rss.xml', // Blog RSS
-      releases: 'https://bun.com/releases/rss.xml', // Release announcements
-      security: 'https://bun.com/security/rss.xml', // Security updates
-      community: 'https://bun.com/community/rss.xml', // Community updates
+      blog: 'https://bun.com/rss.xml', // Blog RSS
+      releases: 'https://bun.com/rss.xml', // Release announcements
+      security: 'https://bun.com/rss.xml', // Security updates
+      community: 'https://bun.com/rss.xml', // Community updates
     },
 
     // GitHub resources
