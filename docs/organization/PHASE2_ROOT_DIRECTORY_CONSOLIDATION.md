@@ -3,7 +3,7 @@
 ## Overview
 Continued organization of the `/Users/nolarose/Projects` root (FactoryWager Enterprise Platform + Bun tooling monorepo) by moving ~21 stray top-level project, experiment, legacy, output, and prototype directories into the `projects/` hierarchy.
 
-This phase builds directly on Phase 1 (see [ROOT_CLEANUP_SUMMARY.md](/Users/nolarose/Projects/ROOT_CLEANUP_SUMMARY.md)), which successfully relocated 175+ loose files. Phase 2 addresses the remaining directory-level clutter while strictly protecting active core platform work (`barbershop/`, `scratch/`, `src/`, `lib/`, `packages/`, `docs/`, `scripts/`, etc.).
+This phase builds directly on Phase 1 (see [ROOT_CLEANUP_SUMMARY.md](./ROOT_CLEANUP_SUMMARY.md)), which successfully relocated 175+ loose files. Phase 2 addresses the remaining directory-level clutter while strictly protecting active core platform work (`barbershop/`, `scratch/`, `src/`, `lib/`, `packages/`, `docs/`, `scripts/`, etc.).
 
 **Strategy:** Hybrid (safe-first) — all moved items had zero or minimal cross-references from core platform code. Large untracked/legacy trees were relocated via disk move + forced git add to preserve visibility without losing the files.
 

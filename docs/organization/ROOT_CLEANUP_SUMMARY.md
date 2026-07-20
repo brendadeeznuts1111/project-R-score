@@ -1,13 +1,15 @@
 # Root Directory Cleanup Summary
 
-Phases 1–5 and 4.1–4.3 history moved to [`docs/archives/root-cleanup-history.md`](docs/archives/root-cleanup-history.md).
+Phases 1–5 and 4.1–4.3 history also live in [`root-cleanup-history.md`](../archives/root-cleanup-history.md).
+
+> Moved from monorepo root (2026-07). Prefer [`STRUCTURE.md`](../../STRUCTURE.md) for the live workspace map.
 
 ## Current state (May 2026)
 
 - Root holds configs, entrypoints, and organized top-level dirs only
 - Partner Profile skill: `.agents/skills/partner-profile-os/SKILL.md`
 - Sports Terminal docs: `docs/sports-terminal/`
-- Workspace map: [`STRUCTURE.md`](STRUCTURE.md)
+- Workspace map: [`STRUCTURE.md`](../../STRUCTURE.md)
 
 ## Phase 4.1 (Jun 2026)
 
@@ -43,7 +45,8 @@ Canonicalize docs, tighten gitignore, project dashboards, evict `.vscode` markdo
 - Workspace `bunfig.toml` files stripped of redundant machine keys (~21 files); 4 intentional overrides retained
 - `scripts/audit-bunfig.sh` + `bun run audit:bunfig` — workspace redundancy scan
 - `kimi-toolchain` `bunfig-policy` gate warns on root `bunfig.toml` duplicating `~/.bunfig.toml`
-- Canonical doc: [`docs/UNIFIED.md`](docs/UNIFIED.md) · agent entry: [`AGENTS.md`](AGENTS.md)
+- Canonical doc: [`docs/UNIFIED.md`](../UNIFIED.md) · agent entry: [`AGENTS.md`](../../AGENTS.md)
+
 
 ## Phase 4.1b (Jun 2026) — Root polish
 
@@ -69,4 +72,4 @@ Context bloat reduction, barrel trim, dead code purge (−16k lines).
 `lib/projects-scan.ts` uses Bun.Glob, Bun.file, Bun.spawnSync — no node:fs/path in project inventory chain.
 ESLint Bun-native gate: `bun run lint:bun-native` (see `eslint.bun-native.config.ts`).
 
-See [`STRUCTURE.md`](STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).
+See [`STRUCTURE.md`](../../STRUCTURE.md) Future Candidates for deferred work (bet-ticker/cascade-mover root moves).

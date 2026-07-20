@@ -63,7 +63,7 @@ See `scripts/fix-*.ts` for detail, or `scripts/fix-console-log.ts` for the bulk 
 
 ## Project Policies
 - Import boundaries and allowed package roots: `docs/IMPORT_BOUNDARIES.md`
-- Root organization: see `STRUCTURE.md` and `ROOT_CLEANUP_SUMMARY.md`
+- Root organization: see `STRUCTURE.md` (history: `docs/organization/ROOT_CLEANUP_SUMMARY.md`)
 - Workspace hygiene: `bun run validate:workspaces` (validates all packages are covered by root workspaces; `check:workspaces` is the deprecated alias)
 - **Code conventions** (enforced by eslint):
   - **No `console.log`** — use `console.info`, `console.warn`, or `console.error`
