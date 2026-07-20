@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
 import { shouldColor } from '../console-depth.ts';
+import { type RequestId, type UserId } from '../types/branded.ts';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -11,8 +12,8 @@ export interface LogEntry {
   message: string;
   module?: string;
   function?: string;
-  requestId?: string;
-  userId?: string;
+  requestId?: RequestId;
+  userId?: UserId;
   metadata?: Record<string, any>;
 }
 
@@ -146,8 +147,8 @@ export class Logger {
     context?: {
       module?: string;
       function?: string;
-      requestId?: string;
-      userId?: string;
+      requestId?: RequestId;
+      userId?: UserId;
       metadata?: Record<string, any>;
     }
   ): LogEntry {
@@ -175,8 +176,8 @@ export class Logger {
     context?: {
       module?: string;
       function?: string;
-      requestId?: string;
-      userId?: string;
+      requestId?: RequestId;
+      userId?: UserId;
       metadata?: Record<string, any>;
     }
   ): void {
@@ -194,8 +195,8 @@ export class Logger {
     context?: {
       module?: string;
       function?: string;
-      requestId?: string;
-      userId?: string;
+      requestId?: RequestId;
+      userId?: UserId;
       metadata?: Record<string, any>;
     }
   ): void {
@@ -213,8 +214,8 @@ export class Logger {
     context?: {
       module?: string;
       function?: string;
-      requestId?: string;
-      userId?: string;
+      requestId?: RequestId;
+      userId?: UserId;
       metadata?: Record<string, any>;
     }
   ): void {
@@ -232,8 +233,8 @@ export class Logger {
     context?: {
       module?: string;
       function?: string;
-      requestId?: string;
-      userId?: string;
+      requestId?: RequestId;
+      userId?: UserId;
       metadata?: Record<string, any>;
       error?: Error | unknown;
     }

@@ -1,13 +1,14 @@
 // lib/utils/error-handler.ts — Centralized error handling utilities
 
 import { logger } from './logger';
+import { type RequestId, type UserId } from '../types/branded.ts';
 
 export interface ErrorContext {
   module?: string;
   function?: string;
   operation?: string;
-  userId?: string;
-  requestId?: string;
+  userId?: UserId;
+  requestId?: RequestId;
   [key: string]: any;
 }
 
@@ -100,7 +101,7 @@ export class ErrorHandler {
       message: string;
       code?: string;
       timestamp: string;
-      requestId?: string;
+      requestId?: RequestId;
     };
     status: number;
   } {

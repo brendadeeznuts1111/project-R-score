@@ -16,21 +16,25 @@
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 207 declarations remaining, baseline 274):
+ * `bun tools/branded-id-check.ts` — 191 declarations remaining, baseline 274):
  *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
  *         lib/security — ALL 14 files clean (UserId, SessionId, TokenId,
  *              AccountId, AccessKeyId, IdentityId, ChallengeId, PolicyId,
  *              DeploymentId, SnapshotId, VersionId, AuditId)
- *   1. lib/mcp (33)          — id, requestId, documentId
- *   2. lib/core (31)         — sessionId, requestId, snapshotId
- *   3. lib/registry (20)     — accountId, identityId, zone_id
+ *         lib/utils — ALL clean (RequestId/UserId telemetry spine in
+ *              logger.ts + error-handler.ts, AuditId in s3-content-encoding)
+ *   1. lib/mcp (31)          — id, requestId, documentId
+ *   2. lib/core (28)         — sessionId, requestId, snapshotId
+ *   3. lib/registry (18)     — accountId, identityId, zone_id
  *   4. lib/r2 (40)           — sessionId, key ids
- *   5. lib/docs + lib/utils  — remainder
+ *   5. lib/docs + remainder  — entity primary keys (suppress) + singletons
  * Pre-commit enforces zero NEW violations (added lines only) — the
  * baseline only shrinks from here.
  */
 
 declare const brand: unique symbol;
+
+import { BrandValidationError } from '../core/core-errors.ts';
 
 /** Nominal brand wrapper: string at runtime, distinct type at compile time. */
 export type Brand<T, B> = T & { readonly [brand]: B };
@@ -73,7 +77,7 @@ export type AuditId = BrandedString<'AuditId'>;
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
-    throw new Error(`${kind} must be a non-empty string`);
+    throw new BrandValidationError(kind, value);
   }
   return value as BrandedString<B>;
 }

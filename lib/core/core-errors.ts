@@ -707,6 +707,24 @@ export class ValidationError extends BaseEnterpriseError {
 }
 
 /**
+ * Branded-ID validation failure — thrown by the `asXId()` boundary
+ * constructors in lib/types/branded.ts when a value is empty or not a
+ * string. `brand` names the ID domain (e.g. 'SessionId'); `value` is the
+ * rejected input (always empty or non-string at the throw site, so no
+ * credential material can leak through it).
+ */
+export class BrandValidationError extends ValidationError {
+  public readonly brand: string;
+
+  constructor(brand: string, value: unknown) {
+    super(EnterpriseErrorCode.VALIDATION_INPUT_INVALID, `${brand} must be a non-empty string`, brand, value, {
+      brand,
+    });
+    this.brand = brand;
+  }
+}
+
+/**
  * Network-related errors
  */
 export class NetworkError extends BaseEnterpriseError {

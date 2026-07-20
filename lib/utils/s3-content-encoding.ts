@@ -2,6 +2,7 @@
 // lib/utils/s3-content-encoding.ts — S3 content encoding support
 
 import { S3Client, S3File } from 'bun';
+import { type AuditId } from '../types/branded.ts';
 
 interface S3UploadOptions {
   contentType?: string;
@@ -124,7 +125,7 @@ export async function uploadTier1380(
   data: Buffer | string,
   options: S3UploadOptions & {
     tier1380?: {
-      auditId?: string;
+      auditId?: AuditId;
       checksum?: string;
     };
   } = {}
