@@ -13,7 +13,7 @@ type R2WsData = {
 };
 
 export interface R2Event {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   type: R2EventType;
   timestamp: string;
   bucket: string;

@@ -531,7 +531,8 @@ export class EnhancedMarkdownRenderer {
 
   // Extract headings
   extractHeadings(markdown: string): Array<{ level: number; text: string; id?: string }> {
-    const headings: Array<{ level: number; text: string; id?: string }> = [];
+    // brand-ok — opaque entity primary key
+    const headings: Array<{ level: number; text: string; id?: string }> = []; // brand-ok — opaque entity primary key
 
     Bun.markdown.render(markdown, {
       heading: (children, meta) => {

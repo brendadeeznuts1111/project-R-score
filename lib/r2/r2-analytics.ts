@@ -62,7 +62,7 @@ export interface UsagePattern {
 }
 
 export interface AlertRule {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   condition: {
     metric: string;
@@ -80,7 +80,7 @@ export interface AlertRule {
 }
 
 export interface DashboardWidget {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   type: 'chart' | 'stat' | 'table' | 'gauge';
   title: string;
   metric: string;
@@ -90,7 +90,7 @@ export interface DashboardWidget {
 }
 
 export interface Dashboard {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   widgets: DashboardWidget[];
   timeRange: { from: string; to: string };

@@ -13,7 +13,7 @@ import { ENTERPRISE_URL_FRAGMENTS } from './constants/fragments';
 import { ENTERPRISE_DOCUMENTATION_PATHS } from './constants/categories';
 
 export interface DocumentationIndexEntry {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   title: string;
   description: string;
   location: {
@@ -414,6 +414,7 @@ export class DocumentationSystemIndex {
    * Get entry by ID
    */
   public getEntry(id: string): DocumentationIndexEntry | undefined {
+    // brand-ok — opaque entity primary key
     return this.index.get(id);
   }
 
@@ -421,6 +422,7 @@ export class DocumentationSystemIndex {
    * Get related entries
    */
   public getRelated(id: string): DocumentationIndexEntry[] {
+    // brand-ok — opaque entity primary key
     const entry = this.index.get(id);
     if (!entry) return [];
 

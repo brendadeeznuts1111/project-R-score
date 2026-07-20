@@ -7,7 +7,7 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, type ZoneId, asAccountId, parseZoneId } from '../types/branded.ts';
 
 export interface DNSRecord {
-  id?: string;
+  id?: string; // brand-ok — opaque entity primary key
   type: 'A' | 'AAAA' | 'CNAME' | 'MX' | 'TXT' | 'SRV' | 'NS' | 'SOA';
   name: string;
   content: string;

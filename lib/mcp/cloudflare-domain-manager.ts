@@ -8,7 +8,7 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, type ZoneId, asAccountId, parseZoneId } from '../types/branded.ts';
 
 export interface CloudflareZone {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   status: string;
   paused: boolean;
@@ -28,7 +28,7 @@ export interface CloudflareZone {
   };
   permissions: string[];
   plan: {
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     name: string;
     price: number;
     currency: string;
@@ -43,7 +43,7 @@ export interface CloudflareZone {
 }
 
 export interface DNSRecord {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   zone_id: ZoneId;
   zone_name: string;
   name: string;

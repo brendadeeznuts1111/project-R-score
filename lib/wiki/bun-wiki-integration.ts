@@ -36,7 +36,7 @@ const logInfo = (context: string, message: string): void => {
 
 // Wiki integration types
 export interface WikiPage {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   title: string;
   content: string;
   category: string;
@@ -339,6 +339,7 @@ export class BunWikiIntegration {
    * Get wiki page by ID
    */
   async getWikiPage(id: string): Promise<WikiPage | null> {
+    // brand-ok — opaque entity primary key
     return (await this.wikiCache.get<WikiPage>(id)) ?? null;
   }
 

@@ -33,7 +33,7 @@ Source is one replaceable realization of durable contracts. See [Stop Treating C
 
 ## Domain strings (harness) — mandatory
 
-**Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` — pre-commit `--staged --strict` has no baseline.
+**Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` / `id: string` — pre-commit `--staged --strict` has no baseline. Bare `id: string` / `_id: string` DTO primary keys must be explicitly suppressed with `// brand-ok`; the detector no longer auto-suppresses opaque primary keys.
 
 **Also:** no `decodeUnknownSync` outside the boundary; no `unknown` function params outside the boundary (`harness/no-decode-unknown-outside-boundary`, `harness/no-unknown-function-param`).
 

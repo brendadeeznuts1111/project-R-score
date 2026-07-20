@@ -16,7 +16,7 @@ export interface CookieConfig {
 }
 
 export interface VariantConfig {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   weight: number;
   features: string[];
@@ -24,7 +24,7 @@ export interface VariantConfig {
 }
 
 export interface ExperimentConfig {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   variants: VariantConfig[];
   trafficAllocation: number;

@@ -26,7 +26,7 @@ interface GlobalConfig {
 }
 
 interface LeadSpecProfile {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   entrypoint: string;
   buildTime: number;

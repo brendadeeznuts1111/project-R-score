@@ -75,6 +75,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
   }
 
   unregisterShutdownHandler(id: string): boolean {
+    // brand-ok — opaque entity primary key
     return this.shutdownHandlers.delete(id);
   }
 

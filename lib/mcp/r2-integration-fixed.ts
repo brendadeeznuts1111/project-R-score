@@ -28,7 +28,7 @@ export interface R2Config {
 }
 
 export interface DiagnosisEntry {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   timestamp: string;
   issue: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -53,7 +53,7 @@ export interface AuditEntry {
 }
 
 export interface MetricsEntry {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   timestamp: string;
   metrics: Record<string, number>;
   category: string;

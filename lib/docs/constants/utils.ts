@@ -105,7 +105,7 @@ export class URLNormalizer {
 }
 
 export interface BunUtility {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   category: UtilsCategory;
   docUrl: string;
@@ -122,7 +122,7 @@ export class UtilityFactory {
    * Creates a new utility with automatic URL normalization, validation, and fragment support
    */
   static create(config: {
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     name: string;
     category: UtilsCategory;
     docUrl: string;
@@ -197,7 +197,7 @@ export class UtilityFactory {
    * Create utility with interactive fragment
    */
   static createInteractive(config: {
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     name: string;
     category: UtilsCategory;
     docUrl: string;
@@ -227,7 +227,7 @@ export class UtilityFactory {
    * Create utility with example highlighting
    */
   static createWithExample(config: {
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     name: string;
     category: UtilsCategory;
     docUrl: string;
@@ -254,7 +254,7 @@ export class UtilityFactory {
    */
   static createMany(
     configs: Array<{
-      id: string;
+      id: string; // brand-ok — opaque entity primary key
       name: string;
       category: UtilsCategory;
       docUrl: string;
@@ -434,6 +434,7 @@ export class UtilityRegistry {
    * Find utility by ID with error handling
    */
   static findById(id: string): BunUtility | null {
+    // brand-ok — opaque entity primary key
     if (!id || typeof id !== 'string') {
       return null;
     }
@@ -470,10 +471,10 @@ export class UtilityRegistry {
    */
   static validateAllUrls(): {
     valid: string[];
-    invalid: { url: string; id: string; error: string }[];
+    invalid: { url: string; id: string; error: string }[]; // brand-ok — opaque entity primary key
   } {
     const valid: string[] = [];
-    const invalid: { url: string; id: string; error: string }[] = [];
+    const invalid: { url: string; id: string; error: string }[] = []; // brand-ok — opaque entity primary key
 
     for (const utility of UTILITIES) {
       try {

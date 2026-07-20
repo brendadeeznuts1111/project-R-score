@@ -20,7 +20,7 @@ interface ContextRunOptions {
 }
 
 interface ContextSession {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   command: string;
   args: string[];
   options: ContextRunOptions;

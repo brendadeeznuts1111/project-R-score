@@ -46,7 +46,8 @@ bun tools/brand-catalog.ts identity --json # machine-readable
 Institutional record: `lib/types/brand-manifest.json`  
 Agent map: `lib/types/branded/README.md`  
 Stable import: `lib/types/branded.ts`  
-Standards: `.custom-instructions.md` (domain strings)
+Agent entry: `AGENTS.md` (branded IDs are mandatory)  
+Standards: `.custom-instructions.md` · `docs/DEVELOPMENT-STANDARDS.md` (domain strings)
 
 ## Apply
 
@@ -58,6 +59,22 @@ Standards: `.custom-instructions.md` (domain strings)
 | Missing credentials | **never** `'' as AccountId` |
 
 Mint authority (from catalog): `system-internal` · `user-input` · `wire-input`.
+
+## Mandatory check before commit
+
+Run this on your diff **before** committing. Pre-commit runs the same command with **no baseline**, so any new bare-string domain ID blocks the commit.
+
+```bash
+bun tools/branded-id-check.ts --staged --strict
+```
+
+If it fails, either brand the field/parameter or explicitly suppress an opaque primary key:
+
+```ts
+id: string; // brand-ok — opaque entity primary key
+```
+
+Bare `id: string` / `_id: string` is no longer silently auto-suppressed — every opaque primary key must carry an explicit `// brand-ok` decision.
 
 ## Verify
 

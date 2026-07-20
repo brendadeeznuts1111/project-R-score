@@ -17,7 +17,7 @@ export interface WorkerPoolConfig {
 }
 
 export interface WikiGenerationTask {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   template: WikiTemplate;
   request: WikiGenerationRequest;
   priority: 'low' | 'medium' | 'high' | 'critical';

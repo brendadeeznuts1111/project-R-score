@@ -65,7 +65,7 @@ export interface SearchPolicies {
 }
 
 export interface CanonicalFamily {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   hash: string;
   astSignature: string;
   files: string[];

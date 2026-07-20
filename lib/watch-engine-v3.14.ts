@@ -39,7 +39,7 @@ const inspect = BunAPI.Bun?.inspect || ((obj: any) => JSON.stringify(obj, null, 
 
 // Enhanced interfaces
 interface WatchSession {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   pattern: string;
   script: string;
   packages: PackageRef[];

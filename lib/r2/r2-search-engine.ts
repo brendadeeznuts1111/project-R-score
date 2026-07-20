@@ -4,7 +4,7 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 
 export interface SearchDocument {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   key: string;
   bucket: string;
   content: string;

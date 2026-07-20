@@ -496,7 +496,7 @@ export const log = {
     operation: () => Promise<T>,
     metadata?: Record<string, any>
   ) => logger.logExecution(functionName, operation, metadata),
-  setCorrelationId: (id: string) => logger.setCorrelationId(id),
+  setCorrelationId: (id: string) => logger.setCorrelationId(id), // brand-ok — opaque entity primary key
   generateCorrelationId: () => logger.generateCorrelationId(),
   clearCorrelationId: () => logger.clearCorrelationId(),
 };

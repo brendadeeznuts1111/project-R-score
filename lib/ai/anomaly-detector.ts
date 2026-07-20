@@ -7,7 +7,7 @@ import { logger } from '../core/structured-logger';
 import { auditLogger } from '../security/secret-audit-logger';
 
 export interface Anomaly {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   type: 'security' | 'performance' | 'operational' | 'behavioral';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
@@ -52,7 +52,7 @@ export interface BaselineProfile {
 }
 
 export interface DetectionRule {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   type: Anomaly['type'];
   conditions: {

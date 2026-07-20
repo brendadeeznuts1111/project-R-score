@@ -69,7 +69,7 @@ export interface BunCLIFlags {
 }
 
 export interface CLISession {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   flags: BunCLIFlags;
   command: string;
   args: string[];

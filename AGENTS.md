@@ -26,13 +26,14 @@ Do not append an unrequested caveat, counterargument, or moralizing endcap to a 
 
 ## Branded IDs are mandatory (agents)
 
-**Do not declare domain IDs as bare `string`.** This is enforced by pre-commit (`--staged --strict` has **no** baseline — new code always fails).
+**Do not declare domain IDs as bare `string`.** This is enforced by pre-commit (`--staged --strict` has **no** baseline — new code always fails). Bare `id: string` / `_id: string` is also flagged; suppress only with an explicit `// brand-ok` decision — the detector no longer auto-suppresses opaque primary keys.
 
 | Wrong | Right |
 |-------|--------|
 | `sessionId: string` | `sessionId: SessionId` + `asSessionId` / `trySessionId` / `parseSessionId` |
 | `userId?: string` | `userId?: UserId` |
 | `function f(accountId: string)` | `function f(accountId: AccountId)` |
+| `id: string` (opaque DTO PK) | `id: string; // brand-ok — opaque entity primary key` |
 | `'' as AccountId` | never — use `try*` or throw |
 
 ```bash
@@ -41,7 +42,7 @@ bun run check:brands                   # repo-wide (baseline may grandfather leg
 bun tools/branded-id-check.ts --staged --strict   # what pre-commit runs on your diff
 ```
 
-Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
+Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Manifest: [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
 
 ### Wire boundary (AST / ESLint)
 

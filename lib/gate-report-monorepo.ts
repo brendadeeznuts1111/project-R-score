@@ -66,7 +66,7 @@ export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, 'reports', 'monorepo-history
 export type ProjectGateResult = GateResult & { optional?: boolean };
 
 export type ProjectReport = {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   zone: string;
   name: string;
   path: string;

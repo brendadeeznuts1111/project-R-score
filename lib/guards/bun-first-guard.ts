@@ -224,6 +224,7 @@ export function guardBunFirst(): void {
 
   if (originalRequire) {
     (globalThis as any).require = function (id: string) {
+      // brand-ok — require module id (opaque Node interop string)
       if (BUN_FIRST_VIOLATIONS[id]) {
         const violation = BUN_FIRST_VIOLATIONS[id];
         const message = `🛡️ BUN-FIRST GUARD: "${id}" is blocked. Use ${violation.replacement} instead.`;

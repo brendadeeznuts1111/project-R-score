@@ -23,8 +23,8 @@
  *   bun tools/branded-id-check.ts --write-baseline  # refresh grandfather list
  *
  * Suppression: end a declaration line with `// brand-ok` to skip it
- * (for IDs that are genuinely opaque passthroughs). Prefer --smart
- * auto-suppression of bare `id`/`_id` DTOs over polluting call sites.
+ * (for IDs that are genuinely opaque passthroughs). Bare `id`/`_id` DTOs
+ * MUST be explicitly suppressed — the detector no longer auto-suppresses them.
  * Brand foundation: lib/types/branded.ts · institutional record: brand-manifest.json
  * Baseline: tools/branded-id-baseline.json (legacy mid-line only; staged ignores it)
  */
@@ -168,6 +168,16 @@ function isCommentOrDocLine(line: string): boolean {
     t.startsWith('*/') ||
     t.startsWith('·') // box-drawing in usage banners
   );
+}
+
+/** Prettier may move a trailing `// brand-ok` to its own line after a long signature. */
+function nextLineIsBrandOk(lines: string[], index: number): boolean {
+  for (let i = index + 1; i < lines.length && i <= index + 2; i++) {
+    const t = lines[i]!.trim();
+    if (t === '') continue;
+    return /^\/\/\s*brand-ok\b/.test(t);
+  }
+  return false;
 }
 
 /** All ID-shaped `…: string` bindings on a line (params + properties). */
@@ -394,25 +404,10 @@ function classifyHit(
   }
 
   if (role === 'opaque-pk') {
-    if (structural === 'function-param' && highTrust) {
-      suppressed = false;
-      reason = 'bare id as function param in high-trust path';
-    } else if (structural === 'ingress-type-property' && highTrust) {
-      suppressed = false;
-      reason = 'bare id on *Request/*Context in high-trust path';
-    } else if (structural === 'dto-property' || structural === 'unknown') {
-      suppressed = true;
-      reason = 'opaque primary key on DTO/property (auto-suppressed)';
-    } else if (structural === 'object-literal' && !highTrust) {
-      suppressed = true;
-      reason = 'opaque primary key in object literal outside high-trust path';
-    } else if (!highTrust) {
-      suppressed = true;
-      reason = 'opaque primary key outside high-trust path (auto-suppressed)';
-    } else {
-      suppressed = false;
-      reason = 'bare id in high-trust path — review';
-    }
+    // No silent auto-suppression. Every bare `id`/`_id` must be branded or
+    // explicitly suppressed with `// brand-ok` (SKIP_LINE handles that).
+    suppressed = false;
+    reason = 'opaque primary key — must brand or explicitly suppress with // brand-ok';
   } else if (role === 'auth-credential') {
     suppressed = false;
     reason = 'auth/credential ID — always flag';
@@ -458,10 +453,26 @@ async function stagedViolations(): Promise<Violation[]> {
     stdout: 'pipe',
   });
   const diff = await new Response(proc.stdout).text();
+  const diffLines = diff.split('\n');
   const violations: Violation[] = [];
   let file = '';
   let newLine = 0;
-  for (const raw of diff.split('\n')) {
+
+  /** Prettier may wrap a trailing `// brand-ok` to the next added line; honor it. */
+  function addedLineHasBrandOkNext(index: number): boolean {
+    for (let j = index + 1; j < diffLines.length; j++) {
+      const peek = diffLines[j]!;
+      if (peek.startsWith('+') && /^\+\s*\/\/\s*brand-ok\b/.test(peek)) return true;
+      if (peek.startsWith('+') || peek.startsWith('-')) return false;
+      if (peek.startsWith(' ') || peek.startsWith('\\')) continue;
+      if (peek.trim() === '') continue;
+      return false;
+    }
+    return false;
+  }
+
+  for (let idx = 0; idx < diffLines.length; idx++) {
+    const raw = diffLines[idx]!;
     if (raw.startsWith('+++ b/')) {
       file = raw.slice(6);
       continue;
@@ -477,6 +488,7 @@ async function stagedViolations(): Promise<Violation[]> {
       if (SKIP_FILE.test(file) || SKIP_LINE.test(line)) {
         continue;
       }
+      if (addedLineHasBrandOkNext(idx)) continue;
       const fields = extractFields(line);
       if (fields.length === 0) continue;
       // Single-line structural hint (staged has no full file context)
@@ -530,6 +542,9 @@ async function scanAll(files: string[]): Promise<Hit[]> {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]!;
       if (SKIP_LINE.test(line)) continue;
+      // Prettier sometimes wraps a trailing `// brand-ok` to the next line
+      // when the signature exceeds printWidth; honor that suppression.
+      if (nextLineIsBrandOk(lines, i)) continue;
       const fields = extractFields(line);
       if (fields.length === 0) continue;
       const structural = classifyStructure(lines, i);
@@ -615,8 +630,11 @@ async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
     const sup = suppressed.filter(h => h.role === role);
     if (all.length === 0) continue;
     const tag = `[${role}]`.padEnd(18);
-    if (role === 'opaque-pk' && act.length === 0) {
-      console.info(`${tag} ${String(sup.length).padStart(3)} — auto-suppressed`);
+    // Opaque-pk is no longer auto-suppressed; all instances are actionable.
+    if (role === 'opaque-pk' && act.length === 0 && sup.length > 0) {
+      console.info(
+        `${tag} ${String(sup.length).padStart(3)} — suppressed by // brand-ok or baseline`
+      );
       continue;
     }
     // Directory rollup for actionable
@@ -756,7 +774,7 @@ async function main(): Promise<void> {
   }
   console.info(
     '   → brands + constructors: lib/types/branded.ts; suppress with // brand-ok\n' +
-      '   → note: total includes opaque DTO primary keys that --smart auto-suppresses;\n' +
+      '   → note: bare `id`/`_id` are NEVER auto-suppressed; every opaque primary key must be branded or // brand-ok\n' +
       '     the ACTIONABLE count is the one that matters: bun tools/branded-id-check.ts --smart'
   );
 

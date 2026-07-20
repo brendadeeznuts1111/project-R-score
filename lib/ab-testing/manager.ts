@@ -10,7 +10,7 @@ export class ABTestManager {
   private _tests = new Map<
     string,
     {
-      id: string;
+      id: string; // brand-ok — opaque entity primary key
       variants: string[];
       weights: number[]; // must sum to 100
       cookieName: string;
@@ -26,7 +26,7 @@ export class ABTestManager {
   }
 
   registerTest(config: {
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     variants: string[];
     weights?: number[]; // defaults to equal distribution
     cookieName?: string;
