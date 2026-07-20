@@ -8,6 +8,7 @@
  *
  * Usage:
  *   bun tools/bun-doc-refs.ts url <ApiName>      # print canonical URL for a Bun API
+ *   bun tools/bun-doc-refs.ts token <token>      # resolve CLI flag / env var / config key
  *   bun tools/bun-doc-refs.ts list               # print the whole reference map
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
@@ -385,6 +386,73 @@ async function docsIndex(): Promise<{
 }
 
 import { slugify } from '../lib/text';
+
+type TokenCatalog = {
+  page: string;
+  pageTitle: string;
+  cliFlags: Record<string, string>;
+  envVars: Record<string, string>;
+  bunfigKeys: Record<string, string>;
+  packageJsonKeys: Record<string, string>;
+};
+
+/** Load every `tools/*-tokens.json` catalog (CLI flags, env vars, config keys). */
+async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
+  const root = new URL('..', import.meta.url).pathname;
+  const glob = new Bun.Glob('tools/*-tokens.json');
+  const files: string[] = [];
+  for await (const f of glob.scan({ cwd: root, absolute: true })) files.push(f);
+  const catalogs: TokenCatalog[] = [];
+  for (const f of files.sort()) {
+    try {
+      catalogs.push((await Bun.file(f).json()) as TokenCatalog);
+    } catch {
+      // ignore malformed token catalogs
+    }
+  }
+  return catalogs;
+}
+
+/**
+ * Resolve a real CLI/config token to its canonical doc URL.
+ * Tokens live in `tools/*-tokens.json`, separate from heading anchors.
+ */
+async function tokenLookup(query: string): Promise<void> {
+  if (!query) {
+    console.error('usage: bun tools/bun-doc-refs.ts token <token>');
+    process.exit(1);
+  }
+  const catalogs = await loadTokenCatalogs();
+  const q = query.trim();
+  const normalized = q.replace(/^-+/, ''); // allow `--filter` or `filter`
+
+  for (const cat of catalogs) {
+    const hits: Array<[kind: string, url: string]> = [];
+    if (cat.cliFlags[q] || cat.cliFlags[`--${normalized}`]) {
+      hits.push(['CLI flag', cat.cliFlags[q] ?? cat.cliFlags[`--${normalized}`]!]);
+    }
+    if (cat.envVars[q]) hits.push(['env var', cat.envVars[q]!]);
+    if (cat.bunfigKeys[q]) hits.push(['bunfig.toml key', cat.bunfigKeys[q]!]);
+    if (cat.packageJsonKeys[q]) hits.push(['package.json key', cat.packageJsonKeys[q]!]);
+    if (hits.length > 0) {
+      console.info(`${q} → ${cat.pageTitle}`);
+      for (const [kind, url] of hits) {
+        console.info(`  [${kind}] ${url}`);
+      }
+      return;
+    }
+  }
+
+  console.error(`❌ no token catalog entry for "${q}"`);
+  console.error('   known tokens:');
+  for (const cat of catalogs) {
+    for (const k of Object.keys(cat.cliFlags)) console.error(`     ${k}`);
+    for (const k of Object.keys(cat.envVars)) console.error(`     ${k}`);
+    for (const k of Object.keys(cat.bunfigKeys)) console.error(`     ${k}`);
+    for (const k of Object.keys(cat.packageJsonKeys)) console.error(`     ${k}`);
+  }
+  process.exit(1);
+}
 
 /**
  * Map any API name or topic to its canonical Bun docs page + anchor using
@@ -966,6 +1034,9 @@ switch (cmd) {
   case 'url':
     printUrl(rest[0] ?? '');
     break;
+  case 'token':
+    await tokenLookup(rest.join(' '));
+    break;
   case 'list':
     listRefs();
     break;
@@ -1015,7 +1086,7 @@ switch (cmd) {
   default:
     console.error(
       `unknown command: ${cmd}\n` +
-        `commands: url|list|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
+        `commands: url|token|list|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
         `integrity flags: --fix · --fix-dry · --no-live\n` +
         `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`
     );
