@@ -2,48 +2,23 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // tools/feature-flag-manager.ts — Feature flag and deployment manager
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const options = {
-  verbose: args.includes('-v') || args.includes('--verbose'),
-  quiet: args.includes('-q') || args.includes('--quiet'),
-  enable: args.includes('--enable'),
-  disable: args.includes('--disable'),
-  status: args.includes('--status'),
-  canary: args.includes('--canary'),
-  rollback: args.includes('--rollback'),
-  abTest: args.includes('--ab-test'),
-  monitor: args.includes('--monitor'),
-  deploy: args.includes('--deploy'),
-  json: args.includes('--json'),
-  noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help'),
-};
+import {
+  createCliLogger,
+  getCliColors,
+  parseBaseCliArgs,
+} from '../lib/shared/tools/cli-helpers.ts';
 
-// Color utilities
-const colors = options.noColor
-  ? {
-      reset: '',
-      red: '',
-      green: '',
-      yellow: '',
-      blue: '',
-      magenta: '',
-      cyan: '',
-      white: '',
-      gray: '',
-    }
-  : {
-      reset: '\x1b[0m',
-      red: '\x1b[31m',
-      green: '\x1b[32m',
-      yellow: '\x1b[33m',
-      blue: '\x1b[34m',
-      magenta: '\x1b[35m',
-      cyan: '\x1b[36m',
-      white: '\x1b[37m',
-      gray: '\x1b[90m',
-    };
+const options = parseBaseCliArgs(process.argv.slice(2), {
+  enable: '--enable',
+  disable: '--disable',
+  status: '--status',
+  canary: '--canary',
+  rollback: '--rollback',
+  abTest: '--ab-test',
+  monitor: '--monitor',
+  deploy: '--deploy',
+});
+const colors = getCliColors(options.noColor);
 
 // Show help
 if (options.help) {
@@ -80,20 +55,7 @@ if (options.help) {
   process.exit(0);
 }
 
-// Logging utilities
-const log = {
-  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) =>
-    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) =>
-    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) =>
-    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) =>
-    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
-};
+const log = createCliLogger(options);
 
 // Feature flag configuration
 interface FeatureFlag {

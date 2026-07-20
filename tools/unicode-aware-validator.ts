@@ -1,43 +1,19 @@
 #!/usr/bin/env bun
 // tools/unicode-aware-validator.ts — Unicode-aware URL validator
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const options = {
-  verbose: args.includes('-v') || args.includes('--verbose'),
-  quiet: args.includes('-q') || args.includes('--quiet'),
-  unicode: args.includes('--unicode'),
-  strict: args.includes('--strict'),
-  ascii: args.includes('--ascii-only'),
-  json: args.includes('--json'),
-  noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help'),
-};
+import {
+  createCliLogger,
+  createTestResults,
+  getCliColors,
+  parseBaseCliArgs,
+} from '../lib/shared/tools/cli-helpers.ts';
 
-// Color utilities
-const colors = options.noColor
-  ? {
-      reset: '',
-      red: '',
-      green: '',
-      yellow: '',
-      blue: '',
-      magenta: '',
-      cyan: '',
-      white: '',
-      gray: '',
-    }
-  : {
-      reset: '\x1b[0m',
-      red: '\x1b[31m',
-      green: '\x1b[32m',
-      yellow: '\x1b[33m',
-      blue: '\x1b[34m',
-      magenta: '\x1b[35m',
-      cyan: '\x1b[36m',
-      white: '\x1b[37m',
-      gray: '\x1b[90m',
-    };
+const options = parseBaseCliArgs(process.argv.slice(2), {
+  unicode: '--unicode',
+  strict: '--strict',
+  ascii: '--ascii-only',
+});
+const colors = getCliColors(options.noColor);
 
 // Show help
 if (options.help) {
@@ -62,51 +38,8 @@ if (options.help) {
   process.exit(0);
 }
 
-// Logging utilities
-const log = {
-  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) =>
-    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) =>
-    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) =>
-    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) =>
-    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
-};
-
-// Test results storage
-const testResults = {
-  timestamp: new Date().toISOString(),
-  tests: {} as Record<string, any>,
-  summary: {
-    total: 0,
-    passed: 0,
-    failed: 0,
-    warnings: 0,
-  },
-};
-
-// Helper to record test results
-const recordTest = (name: string, passed: boolean, message: string, details?: any) => {
-  testResults.tests[name] = {
-    passed,
-    message,
-    details,
-    timestamp: new Date().toISOString(),
-  };
-
-  testResults.summary.total++;
-  if (passed) {
-    testResults.summary.passed++;
-  } else {
-    testResults.summary.failed++;
-  }
-
-  return passed;
-};
+const log = createCliLogger(options);
+const { testResults, recordTest } = createTestResults();
 
 // Unicode-aware validation functions
 function isASCII(str: string): boolean {

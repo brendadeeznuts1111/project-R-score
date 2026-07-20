@@ -1,7 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/index#watch-mode — --watch
 // tools/documentation-status-checker.ts — CLI for checking documentation status
 
 import { Command } from 'commander';
+import {
+  createCliLogger,
+  createTestResults,
+  getCliColors,
+} from '../lib/shared/tools/cli-helpers.ts';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -32,77 +38,9 @@ program
   .parse();
 
 const options = program.opts();
-
-// Color utilities
-const colors = options.noColor
-  ? {
-      reset: '',
-      red: '',
-      green: '',
-      yellow: '',
-      blue: '',
-      magenta: '',
-      cyan: '',
-      white: '',
-      gray: '',
-    }
-  : {
-      reset: '\x1b[0m',
-      red: '\x1b[31m',
-      green: '\x1b[32m',
-      yellow: '\x1b[33m',
-      blue: '\x1b[34m',
-      magenta: '\x1b[35m',
-      cyan: '\x1b[36m',
-      white: '\x1b[37m',
-      gray: '\x1b[90m',
-    };
-
-// Logging utilities
-const log = {
-  info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) =>
-    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) =>
-    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
-  error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) =>
-    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) =>
-    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
-};
-
-// Test results storage
-const testResults = {
-  timestamp: new Date().toISOString(),
-  tests: {} as Record<string, any>,
-  summary: {
-    total: 0,
-    passed: 0,
-    failed: 0,
-    warnings: 0,
-  },
-};
-
-// Helper to record test results
-const recordTest = (name: string, passed: boolean, message: string, details?: any) => {
-  testResults.tests[name] = {
-    passed,
-    message,
-    details,
-    timestamp: new Date().toISOString(),
-  };
-
-  testResults.summary.total++;
-  if (passed) {
-    testResults.summary.passed++;
-  } else {
-    testResults.summary.failed++;
-  }
-
-  return passed;
-};
+const colors = getCliColors(options.noColor);
+const log = createCliLogger(options);
+const { testResults, recordTest } = createTestResults();
 
 // 1. Check Constants Loading
 async function checkConstantsLoading() {
