@@ -369,10 +369,7 @@ jobs:
     };
 
     try {
-      await Bun.write(
-        'config/monitoring-dashboard.json',
-        JSON.stringify(dashboard, null, 2)
-      );
+      await Bun.write('config/monitoring-dashboard.json', JSON.stringify(dashboard, null, 2));
       console.info('   ✅ Monitoring dashboard config created: config/monitoring-dashboard.json');
     } catch (error) {
       console.info(`   ❌ Failed to create monitoring dashboard: ${error}`);

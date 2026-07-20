@@ -17,13 +17,15 @@ export type PlaygroundPortPolicy = {
 export function parseBooleanEnv(value: string | undefined, fallback: boolean): boolean {
   if (value == null) return fallback;
   const normalized = value.trim().toLowerCase();
-  if (normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on") return true;
-  if (normalized === "0" || normalized === "false" || normalized === "no" || normalized === "off") return false;
+  if (normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on')
+    return true;
+  if (normalized === '0' || normalized === 'false' || normalized === 'no' || normalized === 'off')
+    return false;
   return fallback;
 }
 
 export function resolveDashboardHost(): string {
-  return Bun.env.PLAYGROUND_HOST || Bun.env.DASHBOARD_HOST || Bun.env.SERVER_HOST || "127.0.0.1";
+  return Bun.env.PLAYGROUND_HOST || Bun.env.DASHBOARD_HOST || Bun.env.SERVER_HOST || '127.0.0.1';
 }
 
 export function resolveDashboardPort(fallback = 3401): number {
@@ -50,7 +52,7 @@ export function resolveDashboardEnvConfig(portFallback = 3401): DashboardEnvConf
   };
 }
 
-export function applyDashboardEnv(config: Pick<DashboardEnvConfig, "host" | "port">): void {
+export function applyDashboardEnv(config: Pick<DashboardEnvConfig, 'host' | 'port'>): void {
   Bun.env.DASHBOARD_HOST = config.host;
   Bun.env.DASHBOARD_TEST_PORT = String(config.port);
   Bun.env.DASHBOARD_PORT = String(config.port);
@@ -66,7 +68,7 @@ export function resolvePlaygroundPortPolicy(portFallback = 3011): PlaygroundPort
     requestedPort,
     portRange:
       Bun.env.PLAYGROUND_PORT_RANGE ||
-      (allowFallback ? "3011-3031" : `${requestedPort}-${requestedPort}`),
+      (allowFallback ? '3011-3031' : `${requestedPort}-${requestedPort}`),
     allowFallback,
   };
 }
