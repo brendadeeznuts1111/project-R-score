@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/yaml — YAML
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds

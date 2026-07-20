@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, readText } from './fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env

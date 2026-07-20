@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // packages/business/src/habits-classifier.ts — Bun-native Redis habits store
 

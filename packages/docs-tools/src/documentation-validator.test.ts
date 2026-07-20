@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/cli/test — bun:test
 import { afterEach, describe, expect, test } from 'bun:test';
 
 import DocumentationValidator from './documentation-validator';

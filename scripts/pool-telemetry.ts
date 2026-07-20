@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**

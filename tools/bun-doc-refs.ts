@@ -65,15 +65,36 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.serve': 'https://bun.com/docs/runtime/http/server',
   'Bun.fetch': 'https://bun.com/docs/guides/http/fetch',
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies',
+  CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
+  // WebSocket upgrade on Bun.serve (ServerWebSocket type + handlers)
+  ServerWebSocket: 'https://bun.com/docs/runtime/http/websockets',
+  'Bun.dns': 'https://bun.com/docs/runtime/networking/dns',
+  dns: 'https://bun.com/docs/runtime/networking/dns',
 
   // ── Process & spawn ─────────────────────────────────────────────────────
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'Bun.build': 'https://bun.com/docs/bundler',
+  // In-process scheduler (returns CronJob with stop/ref/unref)
+  'Bun.cron': 'https://bun.com/docs/runtime/cron',
+
+  // ── Security (native CSRF; pair with Bun.Cookie session ids) ────────────
+  'Bun.CSRF': 'https://bun.com/docs/runtime/csrf',
+
+  // ── Data stores (Redis / S3 / SQL) ──────────────────────────────────────
+  // Prefer RedisClient from 'bun' (not ioredis). Streams via client.send().
+  RedisClient: 'https://bun.com/docs/runtime/redis',
+  redis: 'https://bun.com/docs/runtime/redis',
+  S3Client: 'https://bun.com/docs/runtime/s3',
+  'Bun.s3': 'https://bun.com/docs/runtime/s3',
+  'Bun.sql': 'https://bun.com/docs/runtime/sql',
+  'bun:sql': 'https://bun.com/docs/runtime/sql',
 
   // ── Data formats & hashing ──────────────────────────────────────────────
   'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
+  'Bun.YAML': 'https://bun.com/docs/runtime/yaml',
+  YAML: 'https://bun.com/docs/runtime/yaml',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
   'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
@@ -94,7 +115,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
   FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
 
-  // ── Environment & configuration ────────────────────────────────────────  'Bun.env': 'https://bun.com/docs/runtime/environment-variables',
+  // ── Environment & configuration ────────────────────────────────────────
+  // Runtime property (utils#bun-env) + env-file loading guide
+  'Bun.env': 'https://bun.com/docs/runtime/utils#bun-env',
   '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
@@ -149,16 +172,53 @@ export const CANONICAL_REFS: Record<string, string> = {
   'security policy': 'https://github.com/oven-sh/bun/security/policy',
 };
 
-const APIS = Object.keys(CANONICAL_REFS).filter(k => k.startsWith('Bun.'));
+/**
+ * Keys scanned by check/annotate: Bun.* properties, bun:* modules, and
+ * PascalCase identifiers imported from the `bun` package
+ * (RedisClient, S3Client, CookieMap, YAML, …).
+ *
+ * Excluded from scan (still in CANONICAL_REFS for url/list):
+ *   - meta labels (llms.txt, rss feed, …)
+ *   - ultra-common globals (console) — every file would need a @see
+ *   - ambiguous short tokens (dns, redis) — use RedisClient / Bun.dns instead
+ */
+function isCodeApiKey(k: string): boolean {
+  if (k === 'console' || k === 'dns' || k === 'redis') return false;
+  if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
+  // PascalCase Bun package exports / types
+  if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;
+  return false;
+}
+
+const APIS = Object.keys(CANONICAL_REFS).filter(isCodeApiKey);
 
 function printUrl(api: string): void {
-  const url = CANONICAL_REFS[api];
+  const url = CANONICAL_REFS[api] ?? CANONICAL_REFS[resolveApiAlias(api)];
   if (!url) {
     console.error(`❌ no canonical ref for "${api}". Known APIs:`);
     for (const k of Object.keys(CANONICAL_REFS)) console.error(`   ${k}`);
     process.exit(1);
   }
   console.info(`${api} → ${url}`);
+}
+
+/** Accept common aliases (Bun.redis → RedisClient, bun.cron → Bun.cron). */
+function resolveApiAlias(api: string): string {
+  const aliases: Record<string, string> = {
+    'Bun.redis': 'RedisClient',
+    BunRedis: 'RedisClient',
+    'bun.redis': 'RedisClient',
+    'bun.cron': 'Bun.cron',
+    CronJob: 'Bun.cron',
+    'Bun.CookieMap': 'CookieMap',
+    'bun.s3': 'S3Client',
+    'Bun.S3Client': 'S3Client',
+    'Bun.csrf': 'Bun.CSRF',
+    CSRF: 'Bun.CSRF',
+    'bun.env': 'Bun.env',
+    'process.env': 'Bun.env',
+  };
+  return aliases[api] ?? api;
 }
 
 function listRefs(): void {
@@ -185,7 +245,21 @@ async function tsFiles(paths: string[]): Promise<string[]> {
 
 type MissingRef = { file: string; api: string; url: string };
 
-/** Detect Bun.* usages lacking a canonical doc ref (code lines only). */
+/** True when `api` appears as a code identifier (not a substring of a longer name). */
+function codeUsesApi(code: string, api: string): boolean {
+  // Boundary-aware for all keys so:
+  //   bun:sql  ≠ bun:sqlite
+  //   Bun.env  ≠ Bun.environment (future)
+  //   redis    ≠ ioredis
+  //   dns      ≠ kindness / dns-prefetch strings still match "dns" token — keep
+  //              short tokens out of isCodeApiKey instead.
+  const escaped = api.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Allow trailing `.` for Bun.inspect.table when scanning Bun.inspect (optional);
+  // refuse alphanumeric / `:` continuation so bun:sql stops before bun:sqlite's `ite`.
+  return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_:])`).test(code);
+}
+
+/** Detect Bun API usages lacking a canonical doc ref (code lines only). */
 async function findMissing(paths: string[]): Promise<MissingRef[]> {
   const missing: MissingRef[] = [];
   for (const file of await tsFiles(paths)) {
@@ -200,7 +274,7 @@ async function findMissing(paths: string[]): Promise<MissingRef[]> {
       })
       .join('\n');
     for (const api of APIS) {
-      if (!code.includes(api)) continue;
+      if (!codeUsesApi(code, api)) continue;
       const url = CANONICAL_REFS[api];
       const [base, anchor] = url.split('#');
       const referenced =
@@ -330,6 +404,13 @@ async function suggest(query: string): Promise<void> {
   if (!query) {
     console.error('usage: bun tools/bun-doc-refs.ts suggest <api-or-topic>');
     process.exit(1);
+  }
+  // Prefer the institutional CANONICAL_REFS map (exact + aliases) before index search
+  const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
+  if (mapped) {
+    console.info(`${query} → ${mapped}`);
+    console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
+    return;
   }
   const { entries } = await docsIndex();
   const q = query.toLowerCase();

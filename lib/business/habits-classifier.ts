@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/redis — Bun RedisClient
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 // lib/business/habits-classifier.ts — Habits classification with Bun-native Redis

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // packages/docs-tools/src/url-discovery-validator.ts — URL validation for untracked files
 
 // ============================================================================

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/yaml — YAML
 // lib/docs/interactive-docs.ts — Interactive documentation explorer
 
 import { EnhancedDocsFetcher, BunApiIndex } from './index-fetcher-enhanced';

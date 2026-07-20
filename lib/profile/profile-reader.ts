@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/s3 — S3Client
 /**
  * Profile Reader — R2 read layer
  *

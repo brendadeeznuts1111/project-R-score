@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek

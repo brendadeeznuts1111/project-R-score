@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 // lib/security/secure-env-wrapper.ts — Secure environment variable management
 

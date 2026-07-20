@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/utils/logger.ts — Structured logging utility
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 

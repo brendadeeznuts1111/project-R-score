@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/yaml — YAML
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // packages/rip/src/index.ts — Core code analysis and transmutation engine

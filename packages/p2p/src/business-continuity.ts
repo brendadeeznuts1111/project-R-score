@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // lib/p2p/business-continuity.ts — Business continuity for P2P proxy migrations

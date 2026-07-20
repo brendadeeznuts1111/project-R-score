@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * Self-Referential Documentation Scanner
  * Location-aware template and resource management system

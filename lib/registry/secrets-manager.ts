@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/secrets-manager.ts — Registry secrets manager with secure credential storage
 

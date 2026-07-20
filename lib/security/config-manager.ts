@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/security/config-manager.ts — Security configuration manager
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env

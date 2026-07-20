@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/performance/optimized-spawn-test.ts — Optimized spawn performance test
 

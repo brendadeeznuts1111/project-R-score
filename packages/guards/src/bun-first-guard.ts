@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // packages/guards/src/bun-first-guard.ts — Runtime guard enforcing Bun-native API usage
 
 import {

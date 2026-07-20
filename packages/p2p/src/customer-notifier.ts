@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // lib/p2p/customer-notifier.ts — Customer notification system for business changes
 

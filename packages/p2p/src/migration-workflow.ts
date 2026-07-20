@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // @see https://bun.com/docs/runtime/file-io — Bun.write (creates parent path segments)
 // packages/p2p/src/migration-workflow.ts — Step-by-step business change migration workflow

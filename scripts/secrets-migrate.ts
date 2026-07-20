@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Copy well-known secrets from Bun.env into Bun.secrets (OS credential store).
  *

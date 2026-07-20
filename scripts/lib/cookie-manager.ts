@@ -57,7 +57,9 @@ export type BatchParseResult = {
 };
 
 function normalizeDomain(domain: string): string {
-  return String(domain || '').trim().toLowerCase();
+  return String(domain || '')
+    .trim()
+    .toLowerCase();
 }
 
 function toCookieValue(state: DashboardState): string {
@@ -65,7 +67,9 @@ function toCookieValue(state: DashboardState): string {
 }
 
 function fromCookieValue(value: string): DashboardState | null {
-  const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const normalized = String(value || '')
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
   const padLen = (4 - (normalized.length % 4)) % 4;
   const padded = normalized + '='.repeat(padLen);
   try {
@@ -118,7 +122,9 @@ export const CookieParser = {
   parseSecureCookie<T>(cookieValue: string, opts?: { compressed?: boolean }): T | null {
     try {
       const bytes = fromBase64Url(cookieValue);
-      const raw = opts?.compressed ? new TextDecoder().decode(Bun.gunzipSync(bytes)) : Buffer.from(bytes).toString('utf8');
+      const raw = opts?.compressed
+        ? new TextDecoder().decode(Bun.gunzipSync(bytes))
+        : Buffer.from(bytes).toString('utf8');
       return JSON.parse(raw) as T;
     } catch {
       return null;
@@ -259,18 +265,14 @@ export const cookieFactory = {
 
 export const StateManager = {
   serialize(state: DashboardState, reqUrl: URL): string {
-    const cookie = new Bun.Cookie(
-      DASHBOARD_COOKIE_NAME,
-      toCookieValue(state),
-      {
-        httpOnly: true,
-        secure: reqUrl.protocol === 'https:',
-        sameSite: 'lax',
-        path: '/',
-        domain: cookieDomainForHost(reqUrl.hostname),
-        maxAge: 60 * 60 * 24,
-      }
-    );
+    const cookie = new Bun.Cookie(DASHBOARD_COOKIE_NAME, toCookieValue(state), {
+      httpOnly: true,
+      secure: reqUrl.protocol === 'https:',
+      sameSite: 'lax',
+      path: '/',
+      domain: cookieDomainForHost(reqUrl.hostname),
+      maxAge: 60 * 60 * 24,
+    });
     return cookie.toString();
   },
 

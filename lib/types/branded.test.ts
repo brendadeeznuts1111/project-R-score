@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/cli/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import { BrandValidationError } from '../core/core-errors.ts';
 import {

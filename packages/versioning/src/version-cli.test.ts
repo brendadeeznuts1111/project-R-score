@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/cli/test — bun:test
 import { describe, expect, test } from 'bun:test';
 
 import { parseArgsFrom } from './version-cli';

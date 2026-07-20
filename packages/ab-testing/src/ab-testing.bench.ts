@@ -1,3 +1,10 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — CookieMap
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // lib/ab-testing/ab-testing.bench.ts — AB Testing Performance Benchmark
 // Run: bun lib/ab-testing/ab-testing.bench.ts
 

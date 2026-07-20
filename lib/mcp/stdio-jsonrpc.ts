@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/mcp/stdio-jsonrpc.ts — Bun-native MCP stdio transport (framing-agnostic: mirrors the
 // client's framing — Content-Length headers (Cursor) or bare NDJSON lines (kimi-code))

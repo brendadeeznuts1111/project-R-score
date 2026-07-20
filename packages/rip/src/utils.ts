@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 // lib/rip/utils.ts — Common utilities for code analysis and validation
 
 import { spawn } from 'bun';

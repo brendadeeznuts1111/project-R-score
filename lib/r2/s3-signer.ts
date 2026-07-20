@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/r2/s3-signer.ts — Lightweight AWS SigV4 signer using crypto.subtle (Bun-native)
 
 import { type AccessKeyId, asAccessKeyId } from '../types/branded.ts';

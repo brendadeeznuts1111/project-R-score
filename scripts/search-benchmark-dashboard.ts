@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/s3 — S3Client
 import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve

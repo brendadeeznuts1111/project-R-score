@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/cli/chrome-integration.ts — Chrome app integration with docs fetcher
 

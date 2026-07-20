@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/validation/cli-self-validation.ts — CLI tool self-validation with automatic error handling
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env

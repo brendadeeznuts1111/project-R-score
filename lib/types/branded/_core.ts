@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Brand core — nominal typing primitives + constructor tiers.
  *

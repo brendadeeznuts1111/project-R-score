@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/security/versioned-secrets.ts — Versioned secret management

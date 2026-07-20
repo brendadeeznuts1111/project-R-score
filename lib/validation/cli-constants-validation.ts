@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/validation/cli-constants-validation.ts — Validation and auto-fixing for CLI tools and constants
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env

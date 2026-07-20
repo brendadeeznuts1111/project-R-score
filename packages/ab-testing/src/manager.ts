@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — CookieMap
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/ab-testing/manager.ts — A/B test manager with cookie-based variant assignment
 
 import type { CookieInit } from 'bun';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/cli/test — bun:test
 /**
  * Bun Documentation Integration System
  *

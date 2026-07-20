@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * One-shot env sweep: process.env → Bun.env under lib/.
  * Preserves quoted catalog tokens ('process.env' / "process.env").

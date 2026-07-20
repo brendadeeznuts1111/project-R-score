@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/mcp/dns-sync.ts — DNS synchronization with Cloudflare and R2 MCP
 
 import { r2MCPIntegration } from './r2-integration-fixed.ts';

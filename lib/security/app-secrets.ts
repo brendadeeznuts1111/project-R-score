@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /**
  * App secrets — Bun.secrets facade (replaces legacy tier1380 secret manager).

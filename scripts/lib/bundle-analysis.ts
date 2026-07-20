@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/bundler — Bun.build
-import { resolve as resolvePath } from "node:path";
+import { resolve as resolvePath } from 'node:path';
 
 export type BundleAnalysis = {
   generatedAt: string;
@@ -19,12 +19,12 @@ export type BundleAnalysis = {
   externalDependencies: string[];
 };
 
-export function parseArg(name: string, fallback = ""): string {
+export function parseArg(name: string, fallback = ''): string {
   const prefix = `--${name}=`;
-  const exact = Bun.argv.find((arg) => arg.startsWith(prefix));
+  const exact = Bun.argv.find(arg => arg.startsWith(prefix));
   if (exact) return exact.slice(prefix.length).trim();
-  const idx = Bun.argv.findIndex((arg) => arg === `--${name}`);
-  if (idx >= 0) return String(Bun.argv[idx + 1] || "").trim();
+  const idx = Bun.argv.findIndex(arg => arg === `--${name}`);
+  if (idx >= 0) return String(Bun.argv[idx + 1] || '').trim();
   return fallback;
 }
 
@@ -37,8 +37,8 @@ export async function buildBundleAnalysis(entryArg: string): Promise<BundleAnaly
 
   const result = await Bun.build({
     entrypoints: [entrypoint],
-    target: "bun",
-    format: "esm",
+    target: 'bun',
+    format: 'esm',
     splitting: false,
     metafile: true,
     write: false,
@@ -46,13 +46,16 @@ export async function buildBundleAnalysis(entryArg: string): Promise<BundleAnaly
   });
 
   if (!result.metafile) {
-    throw new Error("Bun.build returned no metafile");
+    throw new Error('Bun.build returned no metafile');
   }
 
   const inputEntries = Object.entries(result.metafile.inputs || {});
   const outputEntries = Object.entries(result.metafile.outputs || {});
   const inputBytes = inputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
-  const outputBytes = outputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
+  const outputBytes = outputEntries.reduce(
+    (sum, [, meta]: any) => sum + Number(meta?.bytes || 0),
+    0
+  );
   const ratio = inputBytes > 0 ? Number((outputBytes / inputBytes).toFixed(4)) : 0;
   const externalDependencies = new Set<string>();
 
@@ -65,7 +68,7 @@ export async function buildBundleAnalysis(entryArg: string): Promise<BundleAnaly
 
   return {
     generatedAt: new Date().toISOString(),
-    source: "Bun.build({ metafile: true })",
+    source: 'Bun.build({ metafile: true })',
     entrypoint,
     summary: {
       inputCount: inputEntries.length,

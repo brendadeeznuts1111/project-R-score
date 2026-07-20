@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { resolveDashboardEnvConfig } from '../../scripts/lib/dashboard-env';
 

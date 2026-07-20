@@ -126,7 +126,9 @@ export function auditPmTrust(cwd = ROOT): PmTrustAudit {
   const untrustedLines = body
     .split('\n')
     .map(l => l.trim())
-    .filter(l => l && !l.startsWith('Found 0') && !l.startsWith('This means') && !l.startsWith('For more'));
+    .filter(
+      l => l && !l.startsWith('Found 0') && !l.startsWith('This means') && !l.startsWith('For more')
+    );
 
   const countMatch = untrusted.stdout.match(/Found (\d+) untrusted/i);
   const untrustedCount = countMatch ? Number.parseInt(countMatch[1]!, 10) : untrustedLines.length;

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/rip/cli.ts — CLI interface for code analysis and transmutation
 
 import { createRipgrepEngine, type PurgeParams } from './index';

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/validation/cli-validation-integration.ts — Minimal CLI validation integration helper
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env

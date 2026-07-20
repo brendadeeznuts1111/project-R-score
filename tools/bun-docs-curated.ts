@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/sqlite — bun:sqlite
+// @see https://bun.com/docs/runtime/cron — Bun.cron
+// @see https://bun.com/docs/runtime/s3 — Bun.s3
+// @see https://bun.com/docs/cli/test — bun:test
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal

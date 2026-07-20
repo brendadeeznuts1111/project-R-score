@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/core/url-handler.ts — URL parsing, validation, and fragment handling
 // 🔒 BUN FIX: URLSearchParams.prototype.size is now configurable: true (Web IDL spec compliance)
 // @see BUN-SECURITY-FIXES-INTEGRATION.md
