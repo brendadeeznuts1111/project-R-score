@@ -1,56 +1,37 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file
-// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write; dirs via node:fs
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
-// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/nodejs-compat#node-fs — node:fs under Bun
 /**
- * Shared Bun-native FS helpers for scripts (prefer over node:fs).
+ * Thin helpers around Bun’s documented file I/O.
  *
- * Usage:
- *   import { fileExists, readText, readJson, writeText, ensureDir, resolvePath } from './lib/fs-bun';
+ * From https://bun.com/docs/runtime/file-io:
+ * - Prefer `Bun.file` / `Bun.write` for file read/write.
+ * - Paths: use the `path` module (`Bun.write` destination notes).
+ * - Directories (`mkdir` / `readdir`): use Bun’s `node:fs` implementation
+ *   (not yet available on `Bun.file`).
+ *
+ * Do not invent shell `mkdir -p` or hand-rolled path resolvers here.
  */
 
-/** Absolute-ish resolve relative to cwd (or an absolute first segment). */
+import { dirname, resolve } from 'path';
+import { mkdir } from 'node:fs/promises';
+
+/** `path.resolve` — same module Bun’s file-io docs recommend for path manipulation. */
 export function resolvePath(...parts: string[]): string {
-  if (parts.length === 0) return process.cwd();
-  let out = parts[0]!;
-  if (!out.startsWith('/') && !/^[A-Za-z]:[\\/]/.test(out)) {
-    out = `${process.cwd()}/${out}`;
-  }
-  for (let i = 1; i < parts.length; i++) {
-    const seg = parts[i]!;
-    if (seg.startsWith('/') || /^[A-Za-z]:[\\/]/.test(seg)) {
-      out = seg;
-      continue;
-    }
-    out = `${out.replace(/\/+$/, '')}/${seg.replace(/^\/+/, '')}`;
-  }
-  // collapse . and ..
-  const segs = out.split('/');
-  const stack: string[] = [];
-  for (const s of segs) {
-    if (s === '' || s === '.') {
-      if (s === '' && stack.length === 0) stack.push('');
-      continue;
-    }
-    if (s === '..') {
-      if (stack.length > 1) stack.pop();
-      continue;
-    }
-    stack.push(s);
-  }
-  const joined = stack.join('/') || '/';
-  return joined.startsWith('/') ? joined : `/${joined}`;
+  return resolve(...parts);
 }
 
+/** `Bun.file(path).exists()` — https://bun.com/docs/guides/read-file/exists */
 export async function fileExists(path: string): Promise<boolean> {
   return Bun.file(path).exists();
 }
 
-/** Sync existence check via Bun.peek (for CLI flags / early exits). */
+/** Sync exists via `Bun.peek` on the same promise (CLI early exits). */
 export function fileExistsSync(path: string): boolean {
   return Bun.peek(Bun.file(path).exists()) === true;
 }
 
+/** `await Bun.file(path).text()` */
 export async function readText(path: string): Promise<string> {
   return Bun.file(path).text();
 }
@@ -59,6 +40,7 @@ export function readTextSync(path: string): string {
   return Bun.peek(Bun.file(path).text()) as string;
 }
 
+/** `await Bun.file(path).json()` */
 export async function readJson<T = unknown>(path: string): Promise<T> {
   return (await Bun.file(path).json()) as T;
 }
@@ -67,6 +49,7 @@ export function readJsonSync<T = unknown>(path: string): T {
   return Bun.peek(Bun.file(path).json()) as T;
 }
 
+/** `await Bun.write(path, data)` */
 export async function writeText(
   path: string,
   content: string | ArrayBuffer | Uint8Array
@@ -74,15 +57,19 @@ export async function writeText(
   return Bun.write(path, content);
 }
 
-export function ensureDir(dir: string): void {
-  Bun.spawnSync(['mkdir', '-p', dir], { stdout: 'ignore', stderr: 'ignore' });
+/**
+ * Recursive mkdir — Bun file-io docs:
+ * `import { mkdir } from "node:fs/promises"; await mkdir(dir, { recursive: true })`
+ */
+export async function ensureDir(dir: string): Promise<void> {
+  await mkdir(dir, { recursive: true });
 }
 
+/** Write a file after ensuring its parent directory exists. */
 export async function writeTextEnsureDir(
   path: string,
   content: string | ArrayBuffer | Uint8Array
 ): Promise<number> {
-  const slash = path.lastIndexOf('/');
-  if (slash > 0) ensureDir(path.slice(0, slash));
+  await ensureDir(dirname(path));
   return Bun.write(path, content);
 }
