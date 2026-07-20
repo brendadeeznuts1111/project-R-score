@@ -638,7 +638,8 @@ async function main(): Promise<void> {
   }
   console.info(
     '   → brands + constructors: lib/types/branded.ts; suppress with // brand-ok\n' +
-      '   → smart triage (no brand-ok): bun tools/branded-id-check.ts --smart'
+      '   → note: total includes opaque DTO primary keys that --smart auto-suppresses;\n' +
+      '     the ACTIONABLE count is the one that matters: bun tools/branded-id-check.ts --smart'
   );
 
   if (strict && total > 0) process.exit(1);

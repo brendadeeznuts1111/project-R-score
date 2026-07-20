@@ -178,8 +178,8 @@ export class ErrorMetricsCollector {
     context?: {
       service?: string;
       endpoint?: string;
-      userId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via asUserId
-      requestId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via asRequestId
+      userId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via tryUserId
+      requestId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via tryRequestId
     }
   ): void {
     const metric: ErrorMetric = {
