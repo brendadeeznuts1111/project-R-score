@@ -3,11 +3,7 @@
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
-import {
-  type AccountId,
-  type ZoneId,
-  asAccountId,
-} from '../types/branded.ts';
+import { type AccountId, type ZoneId, asAccountId, parseZoneId } from '../types/branded.ts';
 
 export interface CloudflareZone {
   id: string;
@@ -64,6 +60,36 @@ export interface DNSRecord {
   modified_on: string;
 }
 
+/**
+ * Brand Cloudflare API / wire DNS records at ingress.
+ * Why: ZoneId on the type alone does nothing if JSON lands as plain string.
+ */
+export function brandDnsRecordFromWire(raw: Record<string, unknown>): DNSRecord {
+  const meta = (raw['meta'] && typeof raw['meta'] === 'object' ? raw['meta'] : {}) as Record<
+    string,
+    unknown
+  >;
+  return {
+    id: String(raw['id'] ?? ''),
+    zone_id: parseZoneId(raw['zone_id']),
+    zone_name: String(raw['zone_name'] ?? ''),
+    name: String(raw['name'] ?? ''),
+    type: String(raw['type'] ?? ''),
+    content: String(raw['content'] ?? ''),
+    proxiable: Boolean(raw['proxiable']),
+    proxied: Boolean(raw['proxied']),
+    ttl: Number(raw['ttl'] ?? 0),
+    locked: Boolean(raw['locked']),
+    meta: {
+      auto_added: Boolean(meta['auto_added']),
+      managed_by_apps: Boolean(meta['managed_by_apps']),
+      managed_by_argo_tunnel: Boolean(meta['managed_by_argo_tunnel']),
+    },
+    created_on: String(raw['created_on'] ?? ''),
+    modified_on: String(raw['modified_on'] ?? ''),
+  };
+}
+
 export interface SubdomainConfig {
   subdomain: string;
   full_domain: string;
@@ -112,16 +138,17 @@ export class CloudflareDomainManager {
   private initialized: boolean = false;
 
   constructor() {
-    // Secure credential loading from environment variables
-    const accountRaw = process.env.CLOUDFLARE_ACCOUNT_ID || '';
-    this.apiToken = process.env.CLOUDFLARE_API_TOKEN || '';
+    // Fail closed: never inject demo tokens into the environment.
+    const accountRaw = Bun.env.CLOUDFLARE_ACCOUNT_ID;
+    const token = Bun.env.CLOUDFLARE_API_TOKEN;
 
-    if (!accountRaw || !this.apiToken) {
+    if (!accountRaw || !token) {
       throw new Error(
-        'Missing required Cloudflare credentials. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN environment variables.'
+        'Missing required Cloudflare credentials. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN (never hardcode tokens in source).'
       );
     }
     this.accountId = asAccountId(accountRaw);
+    this.apiToken = token;
 
     this.r2 = r2MCPIntegration;
     this.knownSubdomains = this.loadKnownSubdomains();
@@ -758,24 +785,31 @@ export class CloudflareDomainManager {
   }
 }
 
-// Export singleton instance - create with environment check
-export const cloudflareDomainManager = (() => {
-  // For demo/testing purposes, set environment variables if not present
-  if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
-    process.env.CLOUDFLARE_ACCOUNT_ID = '7a470541a704caaf91e71efccc78fd36';
+/**
+ * Lazy singleton — import must not throw when credentials are absent.
+ * First property access constructs (and then fails closed if env missing).
+ */
+let _cloudflareDomainManager: CloudflareDomainManager | undefined;
+export function getCloudflareDomainManager(): CloudflareDomainManager {
+  if (!_cloudflareDomainManager) {
+    _cloudflareDomainManager = new CloudflareDomainManager();
   }
+  return _cloudflareDomainManager;
+}
 
-  if (!process.env.CLOUDFLARE_API_TOKEN) {
-    process.env.CLOUDFLARE_API_TOKEN = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
+export const cloudflareDomainManager: CloudflareDomainManager = new Proxy(
+  {} as CloudflareDomainManager,
+  {
+    get(_target, prop, _receiver) {
+      const inst = getCloudflareDomainManager();
+      const value = Reflect.get(inst, prop, inst);
+      return typeof value === 'function' ? value.bind(inst) : value;
+    },
   }
-
-  return new CloudflareDomainManager();
-})();
+);
 
 // CLI interface
 if (import.meta.main) {
-  console.info(styled('⚠️ Using demo Cloudflare credentials (for testing only)', 'warning'));
-
   await cloudflareDomainManager.initialize();
   await cloudflareDomainManager.displayStatus();
 

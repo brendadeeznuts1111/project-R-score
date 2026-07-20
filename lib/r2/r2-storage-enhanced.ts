@@ -5,12 +5,8 @@ import { RSS_URLS } from '../../config/urls';
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { crc32 } from '../core/crc32';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
-import {
-  type AccessKeyId,
-  type AccountId,
-  asAccessKeyId,
-  asAccountId,
-} from '../types/branded.ts';
+import { requireR2Credentials } from '../security/r2-credentials.ts';
+import { type AccessKeyId, type AccountId } from '../types/branded.ts';
 
 const R2_CB_CONFIG = { failureThreshold: 5, resetTimeoutMs: 30000, callTimeoutMs: 10000 };
 
@@ -34,10 +30,17 @@ export class R2Storage {
   private buckets: Map<string, BucketStats>;
 
   constructor(config: R2StorageConfig) {
+    // Hard boundary: require non-empty brands (throws BrandValidationError / Error).
+    const required = requireR2Credentials({
+      accountId: config.accountId,
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    });
     this.config = {
       ...config,
-      accountId: asAccountId(String(config.accountId)),
-      accessKeyId: asAccessKeyId(String(config.accessKeyId)),
+      accountId: required.accountId,
+      accessKeyId: required.accessKeyId,
+      secretAccessKey: required.secretAccessKey,
     };
     this.endpoint = `https://${this.config.accountId}.r2.cloudflarestorage.com`;
     this.buckets = new Map();

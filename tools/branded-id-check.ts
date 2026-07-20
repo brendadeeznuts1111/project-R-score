@@ -315,6 +315,25 @@ function classifyHit(
   let suppressed = false;
   let reason = '';
 
+  // Dual-typed boundary input ports: `accountId?: string | AccountId`.
+  // Why suppress: raw env/config until try*/normalize — not a forgotten brand.
+  if (
+    /:\s*string\s*\|\s*[A-Za-z][A-Za-z0-9_]*Id\b/.test(text) ||
+    /:\s*[A-Za-z][A-Za-z0-9_]*Id\s*\|\s*string\b/.test(text)
+  ) {
+    return {
+      file: relPath(file),
+      line: lineNo,
+      text: text.trim(),
+      field,
+      role,
+      structural,
+      suppressed: true,
+      brandHint,
+      reason: 'dual string|Brand input port (normalize with try*/as*)',
+    };
+  }
+
   if (role === 'opaque-pk') {
     if (structural === 'function-param' && highTrust) {
       suppressed = false;
@@ -392,9 +411,17 @@ async function stagedViolations(): Promise<Violation[]> {
       newLine++;
       const line = raw.slice(1);
       if (!SKIP_FILE.test(file) && !SKIP_LINE.test(line) && ID_DECL.test(line)) {
-        // Smart staged: only block actionable hits
+        // Smart staged: only block actionable hits (mirror --smart suppressions)
         const field = extractField(line);
-        if (field && isOpaquePrimaryKey(field) && !HIGH_TRUST_PATH.test(file)) {
+        if (!field) continue;
+        // Dual string|Brand input ports are intentional soft boundaries
+        if (
+          /:\s*string\s*\|\s*[A-Za-z][A-Za-z0-9_]*Id\b/.test(line) ||
+          /:\s*[A-Za-z][A-Za-z0-9_]*Id\s*\|\s*string\b/.test(line)
+        ) {
+          continue;
+        }
+        if (isOpaquePrimaryKey(field) && !HIGH_TRUST_PATH.test(file)) {
           continue;
         }
         violations.push({ file, line: newLine, text: line.trim() });

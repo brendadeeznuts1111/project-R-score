@@ -3,7 +3,7 @@
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { cloudflareDomainManager } from './cloudflare-domain-manager';
 import { styled, FW_COLORS } from '../theme/colors';
-import { type AccountId, type ZoneId, asAccountId } from '../types/branded.ts';
+import { type AccountId, type ZoneId, asAccountId, parseZoneId } from '../types/branded.ts';
 
 export interface DNSRecord {
   id?: string;
@@ -51,10 +51,24 @@ export class DNSSynchronization {
   private zoneName: string;
 
   constructor() {
-    this.accountId = asAccountId('7a470541a704caaf91e71efccc78fd36');
-    this.apiToken = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
+    const accountRaw = Bun.env.CLOUDFLARE_ACCOUNT_ID;
+    const token = Bun.env.CLOUDFLARE_API_TOKEN;
+    if (!accountRaw || !token) {
+      throw new Error(
+        'DNSSynchronization requires CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN (no hardcoded secrets).'
+      );
+    }
+    this.accountId = asAccountId(accountRaw);
+    this.apiToken = token;
     this.r2 = r2MCPIntegration;
-    this.zoneName = 'factory-wager.com';
+    this.zoneName = Bun.env.CLOUDFLARE_ZONE_NAME || 'factory-wager.com';
+  }
+
+  /**
+   * Brand a zone id from API/wire JSON (fail closed).
+   */
+  brandZoneId(raw: unknown): ZoneId {
+    return parseZoneId(raw);
   }
 
   /**
@@ -481,12 +495,24 @@ export class DNSSynchronization {
   }
 }
 
-// Export singleton instance
-export const dnsSynchronization = new DNSSynchronization();
+/** Lazy singleton — import without CLOUDFLARE_* must not throw until use. */
+let _dnsSynchronization: DNSSynchronization | undefined;
+export function getDnsSynchronization(): DNSSynchronization {
+  if (!_dnsSynchronization) _dnsSynchronization = new DNSSynchronization();
+  return _dnsSynchronization;
+}
+
+export const dnsSynchronization: DNSSynchronization = new Proxy({} as DNSSynchronization, {
+  get(_t, prop) {
+    const inst = getDnsSynchronization();
+    const value = Reflect.get(inst, prop, inst);
+    return typeof value === 'function' ? value.bind(inst) : value;
+  },
+});
 
 // CLI interface
 if (import.meta.main) {
-  const dns = dnsSynchronization;
+  const dns = getDnsSynchronization();
 
   await dns.initialize();
   await dns.displayStatus();

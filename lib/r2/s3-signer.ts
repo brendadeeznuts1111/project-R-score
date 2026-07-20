@@ -117,10 +117,11 @@ export async function signS3Request(
  * Load R2 credentials from environment variables
  */
 export function getR2Credentials(): S3Credentials & { endpoint: string; bucket: string } {
-  const accessKeyIdRaw = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  const endpoint = process.env.R2_ENDPOINT;
-  const bucket = process.env.R2_BUCKET_NAME;
+  // Hard boundary: missing env must throw — never brand empty.
+  const accessKeyIdRaw = Bun.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY;
+  const endpoint = Bun.env.R2_ENDPOINT;
+  const bucket = Bun.env.R2_BUCKET_NAME;
 
   if (!accessKeyIdRaw || !secretAccessKey || !endpoint || !bucket) {
     throw new Error(

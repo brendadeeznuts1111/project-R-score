@@ -2,11 +2,11 @@
 // lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
 import { styled, FW_COLORS } from '../theme/colors';
-import { type AccountId, asAccountId } from '../types/branded.ts';
+import { type AccountId, type UserId, asUserId, tryAccountId } from '../types/branded.ts';
 import { syncUserId } from './env';
 
 export interface UserPreferences {
-  userId: string;
+  userId: UserId;
   theme: 'light' | 'dark' | 'system';
   fontSize: number;
   readingWidth: 'narrow' | 'medium' | 'wide';
@@ -17,13 +17,13 @@ export interface UserPreferences {
 }
 
 export interface ReadingProgress {
-  userId: string;
+  userId: UserId;
   packageName: string;
   version: string;
   scrollPosition: number;
   lastReadSection?: string;
   bookmarks: Array<{
-    id: string;
+    id: string; // brand-ok — opaque entity primary key
     title: string;
     position: number;
     createdAt: string;
@@ -32,8 +32,8 @@ export interface ReadingProgress {
 }
 
 export interface DocSet {
-  id: string;
-  userId: string;
+  id: string; // brand-ok — opaque entity primary key
+  userId: UserId;
   name: string;
   description?: string;
   packages: string[];
@@ -49,25 +49,32 @@ export interface SyncData {
   docSets: DocSet[];
   cachedPackages: string[];
   lastSyncedAt: string;
-  deviceId: string;
+  deviceId: string; // brand-ok — single-use domain id
 }
 
 export class DocumentationSync {
   private r2Bucket: string;
   private baseUrl: string;
   private deviceId: string;
+  /** Secret material for Basic auth — not a branded domain ID. */
+  private accessKeyMaterial: string;
+  private secretKeyMaterial: string;
 
   constructor(
-    private userId: string,
+    private userId: UserId,
     config?: {
       bucketName?: string;
       accountId?: AccountId | string;
     }
   ) {
     this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
-    const raw = config?.accountId || Bun.env.R2_ACCOUNT_ID || '';
-    const accountId = raw ? asAccountId(String(raw)) : ('' as AccountId);
-    this.baseUrl = `https://${accountId}.r2.cloudflarestorage.com`;
+    const accountId = tryAccountId(
+      config?.accountId != null ? String(config.accountId) : Bun.env.R2_ACCOUNT_ID
+    );
+    this.baseUrl = accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '';
+    // Secrets stay plain strings (HMAC/password material), not AccessKeyId domain brands.
+    this.accessKeyMaterial = Bun.env.R2_ACCESS_KEY_ID || '';
+    this.secretKeyMaterial = Bun.env.R2_SECRET_ACCESS_KEY || '';
     this.deviceId = this.getDeviceId();
   }
 
@@ -83,9 +90,7 @@ export class DocumentationSync {
    * Get auth header for R2 requests
    */
   private getAuthHeader(): string {
-    const accessKey = Bun.env.R2_ACCESS_KEY_ID || '';
-    const secretKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
-    return `Basic ${btoa(`${accessKey}:${secretKey}`)}`;
+    return `Basic ${btoa(`${this.accessKeyMaterial}:${this.secretKeyMaterial}`)}`;
   }
 
   /**
@@ -389,7 +394,7 @@ export class DocumentationSync {
 
 // CLI interface
 if (import.meta.main) {
-  const userId = syncUserId();
+  const userId = asUserId(syncUserId());
   const sync = new DocumentationSync(userId);
   const args = process.argv.slice(2);
   const command = args[0];

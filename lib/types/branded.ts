@@ -23,12 +23,17 @@
  *
  * TODO(brand-rollout) by detector role (not directory):
  *   DONE: lib/security (all) · r2-session-manager · utils telemetry spine
- *   DONE Phase 1: [auth-credential] AccessKeyId · AccountId · ZoneId (0 remaining)
- *   Phase 2: [named-domain]     SessionId · RequestId · UserId · … (~59)
- *   Phase 3: [new-brand]        OperationId · ResourceId · ProjectId · … (~33)
+ *   DONE Phase 1: [auth-credential] AccessKeyId · AccountId · ZoneId (declarations)
+ *   DONE Phase 1.5: empty never branded · asZoneId on wire · no hardcoded CF tokens
+ *   Phase 2: [named-domain]     SessionId · RequestId · UserId · …
+ *   Phase 3: [new-brand]        OperationId · ResourceId · ProjectId · …
  *   Phase 4: --smart --strict in CI once actionable → 0
  * Pre-commit enforces zero NEW violations (added lines only); staged mode
  * also skips opaque PKs outside high-trust paths.
+ *
+ * Empty-brand policy (why): `makeId` rejects `''`. Forging `'' as AccountId`
+ * makes missing credentials look valid to the type system. Unresolved IDs
+ * must be `undefined` (use try*) or throw at a hard boundary (use as* / parse*).
  */
 
 declare const brand: unique symbol;
@@ -108,6 +113,53 @@ export const asPolicyId = (v: string): PolicyId => makeId(v, 'PolicyId');
 export const asDeploymentId = (v: string): DeploymentId => makeId(v, 'DeploymentId');
 export const asVersionId = (v: string): VersionId => makeId(v, 'VersionId');
 export const asAuditId = (v: string): AuditId => makeId(v, 'AuditId');
+
+// ── Soft boundary: missing → undefined (never brand empty) ───────────────
+
+/**
+ * Brand only non-empty strings. Returns undefined when missing/blank.
+ * Prefer this at soft config merge; use as* when the ID is required.
+ */
+export function tryBrandId<B extends string>(
+  value: string | undefined | null,
+  brandFn: (v: string) => BrandedString<B>
+): BrandedString<B> | undefined {
+  if (value == null) return undefined;
+  const s = String(value).trim();
+  if (!s) return undefined;
+  return brandFn(s);
+}
+
+export const tryAccountId = (v: string | undefined | null): AccountId | undefined =>
+  tryBrandId(v, asAccountId);
+export const tryAccessKeyId = (v: string | undefined | null): AccessKeyId | undefined =>
+  tryBrandId(v, asAccessKeyId);
+export const tryZoneId = (v: string | undefined | null): ZoneId | undefined =>
+  tryBrandId(v, asZoneId);
+
+/**
+ * Wire/API ingress for zone IDs — fail closed (throw), never silent empty brand.
+ */
+export function parseZoneId(value: unknown): ZoneId {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('ZoneId', value);
+  }
+  return asZoneId(value.trim());
+}
+
+export function parseAccountId(value: unknown): AccountId {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('AccountId', value);
+  }
+  return asAccountId(value.trim());
+}
+
+export function parseAccessKeyId(value: unknown): AccessKeyId {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('AccessKeyId', value);
+  }
+  return asAccessKeyId(value.trim());
+}
 export const asOperationId = (v: string): OperationId => makeId(v, 'OperationId');
 export const asResourceId = (v: string): ResourceId => makeId(v, 'ResourceId');
 export const asProjectId = (v: string): ProjectId => makeId(v, 'ProjectId');

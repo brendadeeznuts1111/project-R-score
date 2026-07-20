@@ -1,10 +1,20 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { getSecret } from './bun-secrets-adapter';
-import { type AccountId, type AccessKeyId, asAccountId, asAccessKeyId } from '../types/branded.ts';
+import {
+  type AccessKeyId,
+  type AccountId,
+  tryAccessKeyId,
+  tryAccountId,
+} from '../types/branded.ts';
+import { normalizeR2Credentials, type NormalizedR2Credentials } from './r2-credentials.ts';
 
+/**
+ * Resolved R2 config. Account/access key are optional when secrets are
+ * unresolved — never `'' as AccountId` (empty is not a brand).
+ */
 export interface ResolvedR2Config {
-  accountId: AccountId;
-  accessKeyId: AccessKeyId;
+  accountId?: AccountId;
+  accessKeyId?: AccessKeyId;
   secretAccessKey: string;
   endpoint?: string;
   bucketName: string;
@@ -60,10 +70,14 @@ export async function resolveR2InfraConfig(
   );
   const bucketFallback = options.bucketFallback || 'npm-registry';
 
-  // brand-ok — raw secret values; '' is the "unresolved" sentinel (callers check falsy), branded at the return boundary
-  const accountId = await resolveSecretField('R2_ACCOUNT_ID', ['R2_ACCOUNT_ID'], services);
-  // brand-ok — raw secret value; branded at the return boundary
-  const accessKeyId = await resolveSecretField('R2_ACCESS_KEY_ID', ['R2_ACCESS_KEY_ID'], services);
+  // brand-ok — raw secret strings until try* at return (empty stays undefined)
+  const accountIdRaw = await resolveSecretField('R2_ACCOUNT_ID', ['R2_ACCOUNT_ID'], services);
+  // brand-ok — raw secret string until try* at return
+  const accessKeyIdRaw = await resolveSecretField(
+    'R2_ACCESS_KEY_ID',
+    ['R2_ACCESS_KEY_ID'],
+    services
+  );
   const secretAccessKey = await resolveSecretField(
     'R2_SECRET_ACCESS_KEY',
     ['R2_SECRET_ACCESS_KEY'],
@@ -76,21 +90,30 @@ export async function resolveR2InfraConfig(
     bucketFallback
   );
 
-  const endpoint = await resolveSecretField(
+  const accountId = tryAccountId(accountIdRaw);
+  const accessKeyId = tryAccessKeyId(accessKeyIdRaw);
+
+  const endpointRaw = await resolveSecretField(
     'R2_ENDPOINT',
     ['R2_ENDPOINT'],
     services,
     accountId ? `https://${accountId}.r2.cloudflarestorage.com` : ''
   );
 
-  return {
-    // brand-ok — '' sentinel preserved when R2_ACCOUNT_ID is unresolved (diagnostics report "missing")
-    accountId: accountId ? asAccountId(accountId) : ('' as AccountId),
-    // brand-ok — '' sentinel preserved when R2_ACCESS_KEY_ID is unresolved
-    accessKeyId: accessKeyId ? asAccessKeyId(accessKeyId) : ('' as AccessKeyId),
+  const normalized: NormalizedR2Credentials = normalizeR2Credentials({
+    accountId,
+    accessKeyId,
     secretAccessKey,
-    endpoint: endpoint || (options.endpointOptional ? undefined : endpoint),
+    endpoint: endpointRaw || undefined,
     bucketName,
+  });
+
+  return {
+    accountId: normalized.accountId,
+    accessKeyId: normalized.accessKeyId,
+    secretAccessKey: normalized.secretAccessKey,
+    endpoint: normalized.endpoint || (options.endpointOptional ? undefined : normalized.endpoint),
+    bucketName: normalized.bucketName || bucketFallback,
   };
 }
 

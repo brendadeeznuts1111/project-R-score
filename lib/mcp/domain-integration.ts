@@ -3,6 +3,7 @@
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, asAccountId } from '../types/branded.ts';
+// asAccountId used only after env is present (fail closed — no hardcoded account).
 
 export interface DomainConfig {
   primary: {
@@ -72,6 +73,13 @@ export class DomainIntegration {
   }
 
   private loadDomainConfig(): DomainConfig {
+    const accountRaw = Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID;
+    if (!accountRaw) {
+      throw new Error(
+        'DomainIntegration requires CLOUDFLARE_ACCOUNT_ID or R2_ACCOUNT_ID (no hardcoded account id).'
+      );
+    }
+    const accountId = asAccountId(accountRaw);
     return {
       primary: {
         domain: 'factory-wager.com',
@@ -95,10 +103,9 @@ export class DomainIntegration {
         monitoring: 'realtime',
       },
       cloudflare: {
-        account_id: asAccountId('7a470541a704caaf91e71efccc78fd36'),
-        dashboard_url:
-          'https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com',
-        r2_bucket: 'scanner-cookies',
+        account_id: accountId,
+        dashboard_url: `https://dash.cloudflare.com/${accountId}/factory-wager.com`,
+        r2_bucket: Bun.env.R2_BUCKET_NAME || 'scanner-cookies',
       },
     };
   }
@@ -419,12 +426,24 @@ export class DomainIntegration {
   }
 }
 
-// Export singleton instance
-export const domainIntegration = new DomainIntegration();
+/** Lazy singleton — import without account env must not throw until use. */
+let _domainIntegration: DomainIntegration | undefined;
+export function getDomainIntegration(): DomainIntegration {
+  if (!_domainIntegration) _domainIntegration = new DomainIntegration();
+  return _domainIntegration;
+}
+
+export const domainIntegration: DomainIntegration = new Proxy({} as DomainIntegration, {
+  get(_t, prop) {
+    const inst = getDomainIntegration();
+    const value = Reflect.get(inst, prop, inst);
+    return typeof value === 'function' ? value.bind(inst) : value;
+  },
+});
 
 // CLI interface
 if (import.meta.main) {
-  const domain = domainIntegration;
+  const domain = getDomainIntegration();
 
   await domain.initialize();
   await domain.displayStatus();

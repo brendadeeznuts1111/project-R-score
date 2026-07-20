@@ -14,16 +14,13 @@ import { validateR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
 import { safeConcurrent } from '../core/concurrent-operations';
 import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler';
-import {
-  type AccessKeyId,
-  type AccountId,
-  asAccessKeyId,
-  asAccountId,
-} from '../types/branded.ts';
+import { r2CredentialsFromEnv } from '../security/r2-credentials.ts';
+import { type AccessKeyId, type AccountId } from '../types/branded.ts';
 
 export interface R2Config {
-  accountId: AccountId;
-  accessKeyId: AccessKeyId;
+  /** Present when configured; undefined when unresolved (never empty brand). */
+  accountId?: AccountId;
+  accessKeyId?: AccessKeyId;
   secretAccessKey: string;
   bucketName: string;
   endpoint?: string;
@@ -71,36 +68,20 @@ export class R2MCPIntegration {
   private initialized = false;
 
   constructor(config?: Partial<R2Config>) {
-    const resolvedAccessKey = process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || '';
-    const resolvedSecretKey =
-      process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || '';
-    const resolvedBucketName =
-      process.env.R2_BUCKET_NAME ||
-      process.env.S3_BUCKET_NAME ||
-      process.env.AWS_BUCKET_NAME ||
-      'scanner-cookies';
-    const resolvedEndpoint = process.env.R2_ENDPOINT || process.env.S3_ENDPOINT;
-    const resolvedAccount =
-      process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36';
-
+    // Single normalize: env + overrides. No hardcoded account fallback, no empty brands.
+    const fromEnv = r2CredentialsFromEnv({
+      accountId: config?.accountId,
+      accessKeyId: config?.accessKeyId,
+      secretAccessKey: config?.secretAccessKey,
+      endpoint: config?.endpoint,
+      bucketName: config?.bucketName,
+    });
     this.config = {
-      accountId: asAccountId(resolvedAccount),
-      accessKeyId: resolvedAccessKey
-        ? asAccessKeyId(resolvedAccessKey)
-        : ('' as AccessKeyId),
-      secretAccessKey: resolvedSecretKey,
-      // Accept S3-compatible env aliases while retaining R2-first naming.
-      bucketName: resolvedBucketName,
-      endpoint: resolvedEndpoint,
-      ...config,
-    };
-    // Re-brand if partial config overwrote with raw strings
-    this.config = {
-      ...this.config,
-      accountId: asAccountId(String(this.config.accountId)),
-      accessKeyId: this.config.accessKeyId
-        ? asAccessKeyId(String(this.config.accessKeyId))
-        : ('' as AccessKeyId),
+      accountId: fromEnv.accountId,
+      accessKeyId: fromEnv.accessKeyId,
+      secretAccessKey: fromEnv.secretAccessKey,
+      bucketName: fromEnv.bucketName || config?.bucketName || 'scanner-cookies',
+      endpoint: fromEnv.endpoint ?? config?.endpoint,
     };
   }
 
