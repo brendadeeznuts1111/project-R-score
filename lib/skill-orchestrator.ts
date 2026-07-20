@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText } from '../scripts/lib/fs-bun';
 /**
  * SkillOrchestrator - Bridges Kimi Skills with Dynamic Domain APIs
  *
@@ -12,8 +14,8 @@
  */
 
 import { join } from 'path';
-import { readFile } from 'fs/promises';
-import { existsSync } from 'fs';
+
+
 import { type StepId, asStepId } from './types/branded.ts';
 
 // Domain interface (simplified for integration)
@@ -241,14 +243,14 @@ export class SkillOrchestrator {
     ];
 
     for (const path of paths) {
-      if (existsSync(path)) {
+      if (fileExistsSync(path)) {
         const stats = await import('fs').then(fs => fs.statSync(path));
 
         if (cached && cached.mtime === stats.mtime.getTime()) {
           return cached.content;
         }
 
-        const content = await readFile(path, 'utf-8');
+        const content = await readText(path);
         this.skillCache.set(skillName, { content, mtime: stats.mtime.getTime() });
         return content;
       }

@@ -12,11 +12,12 @@
  *   bun run scripts/bun-native-discover.ts
  *   bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools
  *   bun run scripts/bun-native-discover.ts --json
- *   bun run scripts/bun-native-discover.ts --apply --roots=scripts
- *   bun run scripts/bun-native-discover.ts --apply --dry-run --roots=scripts
+ *   bun run scripts/bun-native-discover.ts --apply --roots=lib
+ *   bun run scripts/bun-native-discover.ts --apply --dry-run --roots=lib
  *
- * --apply only rewrites high-confidence call sites (see SAFE transforms below).
- * Complex readdir/stream/crypto/spawn debt is reported, not auto-fixed.
+ * --apply only rewrites high-confidence call sites (see SAFE transforms below)
+ * for every root passed in --roots=. Complex readdir/stream/crypto/spawn debt
+ * is reported, not auto-fixed.
  *
  * @see https://bun.com/docs/runtime/file-io
  * @see https://bun.com/docs/runtime/glob
@@ -217,7 +218,34 @@ function scanFile(abs: string, text: string): Hit[] {
   return hits;
 }
 
-/** Safe mechanical transforms for --apply (scripts only by default). */
+/**
+ * Line-aware rewrite: skip doc samples, GH Action template bodies, and
+ * member calls (fs.existsSync). Only free-standing import usage is rewritten.
+ */
+function mapCodeLines(source: string, map: (line: string) => string): string {
+  return source
+    .split('\n')
+    .map(line => {
+      const t = line.trim();
+      // Catalog / docs / embedded Node (github-script) — leave alone
+      if (
+        /\bexampleCode\b|\bexample\s*:/.test(line) ||
+        /script:\s*\|/.test(line) ||
+        /require\(\s*['"]fs['"]\s*\)/.test(line) ||
+        /from\s+['"]bun['"]/.test(line)
+      ) {
+        return line;
+      }
+      // Inside a multi-line template sample for Bun APIs (heuristic)
+      if (/^\s*(const content = await readFile|await writeFile|if \(fs\.|JSON\.parse\(fs\.)/.test(line)) {
+        return line;
+      }
+      return map(line);
+    })
+    .join('\n');
+}
+
+/** Safe mechanical transforms for --apply. */
 function applySafeTransforms(source: string, fileRel: string): { text: string; changes: string[] } {
   let text = source;
   const changes: string[] = [];
@@ -233,51 +261,63 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
   }
 
   // existsSync(x) → fileExistsSync(x)
-  if (/\bexistsSync\s*\(/.test(text)) {
-    text = text.replace(/\bexistsSync\s*\(/g, 'fileExistsSync(');
-    changes.push('existsSync→fileExistsSync');
+  // Skip member access (fs.existsSync / require('fs').existsSync) — those stay Node.
+  {
+    const before = text;
+    text = mapCodeLines(text, line =>
+      line.replace(/(?<![\w.])existsSync\s*\(/g, 'fileExistsSync(')
+    );
+    if (text !== before) changes.push('existsSync→fileExistsSync');
   }
 
   // JSON.parse(readFileSync(X, 'utf8')) → readJsonSync(X)
-  if (/JSON\.parse\s*\(\s*readFileSync\s*\(/.test(text)) {
-    text = text.replace(
-      /JSON\.parse\s*\(\s*readFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)\s*\)/g,
-      'readJsonSync($1)'
-    );
-    changes.push('JSON.parse(readFileSync)→readJsonSync');
-  }
-
-  // readFileSync(X, 'utf8') → readTextSync(X)
-  if (/\breadFileSync\s*\(/.test(text)) {
-    text = text.replace(
-      /\breadFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
-      'readTextSync($1)'
-    );
-    // bare readFileSync(x) without encoding
-    text = text.replace(/\breadFileSync\s*\(\s*([^,)]+?)\s*\)/g, 'readTextSync($1)');
-    changes.push('readFileSync→readTextSync');
-  }
-
-  // await readFile(X, 'utf8') → await readText(X)
-  if (/\breadFile\s*\(/.test(text)) {
+  {
     const before = text;
-    text = text.replace(
-      /await\s+readFile\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
-      'await readText($1)'
+    text = mapCodeLines(text, line =>
+      line.replace(
+        /JSON\.parse\s*\(\s*(?<![\w.])readFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)\s*\)/g,
+        'readJsonSync($1)'
+      )
+    );
+    if (text !== before) changes.push('JSON.parse(readFileSync)→readJsonSync');
+  }
+
+  // readFileSync(X, 'utf8') → readTextSync(X) — bare import usage only
+  {
+    const before = text;
+    text = mapCodeLines(text, line =>
+      line
+        .replace(
+          /(?<![\w.])readFileSync\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
+          'readTextSync($1)'
+        )
+        .replace(/(?<![\w.])readFileSync\s*\(\s*([^,)]+?)\s*\)/g, 'readTextSync($1)')
+    );
+    if (text !== before) changes.push('readFileSync→readTextSync');
+  }
+
+  // await readFile(X, 'utf8') → await readText(X) — bare import usage only
+  {
+    const before = text;
+    text = mapCodeLines(text, line =>
+      line.replace(
+        /await\s+readFile\s*\(\s*([^,)]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
+        'await readText($1)'
+      )
     );
     if (text !== before) changes.push('await readFile→readText');
   }
 
   // await writeFile(path, data[, encoding]) → await writeText(path, data)
-  if (/\bwriteFile\s*\(/.test(text) && !/export async function writeFile/.test(text)) {
+  if (!/export async function writeFile/.test(text)) {
     const before = text;
-    text = text.replace(
-      /await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
-      'await writeText($1, $2)'
-    );
-    text = text.replace(
-      /await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)/g,
-      'await writeText($1, $2)'
+    text = mapCodeLines(text, line =>
+      line
+        .replace(
+          /await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
+          'await writeText($1, $2)'
+        )
+        .replace(/await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)/g, 'await writeText($1, $2)')
     );
     if (text !== before) changes.push('await writeFile→writeText');
   }
@@ -466,7 +506,9 @@ for (const root of ROOTS) {
       safeApplyEligible: safeKinds.length > 0,
     };
 
-    if (APPLY && report.safeApplyEligible && root === 'scripts') {
+    // --apply rewrites any listed --roots= (not scripts-only). Outside scripts/,
+    // helpers import from scripts/lib/fs-bun via relative path.
+    if (APPLY && report.safeApplyEligible) {
       const { text: next, changes } = applySafeTransforms(text, fileRel);
       if (changes.length > 0 && next !== text) {
         report.applied = !DRY;
@@ -533,7 +575,9 @@ if (AS_JSON) {
     }
   }
   console.info('');
-  console.info('Safe apply: bun run scripts/bun-native-discover.ts --apply --roots=scripts');
+  console.info(
+    'Safe apply: bun run scripts/bun-native-discover.ts --apply --roots=lib  (or scripts,packages,tools)'
+  );
   console.info('Docs: https://bun.com/docs/runtime/file-io · scripts/lib/fs-bun.ts');
 }
 

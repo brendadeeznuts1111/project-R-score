@@ -289,6 +289,7 @@ jobs:
         script: |
           const fs = require('fs');
           try {
+            // Node fs — this is a GitHub Actions github-script body, not Bun runtime
             if (fs.existsSync('validation-report.json')) {
               const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
               const comment = \`

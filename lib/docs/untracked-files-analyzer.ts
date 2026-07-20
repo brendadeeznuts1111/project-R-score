@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readTextSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/untracked-files-analyzer.ts — Untracked files analysis
 
@@ -6,8 +8,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { readFileSync, existsSync, statSync } from 'fs';
-
+import { statSync } from 'fs';
 import { join } from 'path';
 
 // ============================================================================
@@ -420,8 +421,8 @@ class UntrackedFilesAnalyzer {
       // Check if they're already in gitignore
       const gitignorePath = '.gitignore';
       let gitignoreContent = '';
-      if (existsSync(gitignorePath)) {
-        gitignoreContent = readFileSync(gitignorePath, 'utf-8');
+      if (fileExistsSync(gitignorePath)) {
+        gitignoreContent = readTextSync(gitignorePath);
       }
 
       const missingFromGitignore = ignoreFiles.filter(

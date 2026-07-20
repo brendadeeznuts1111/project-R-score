@@ -1,3 +1,4 @@
+import { fileExistsSync, readTextSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/guides/http/fetch — Bun.fetch
@@ -13,7 +14,6 @@ if (import.meta.main) {
   console.info('ℹ️  Script was imported, not executed directly');
 }
 
-import { readFileSync, existsSync } from 'fs';
 
 // ============================================================================
 // VALIDATION CONSTANTS
@@ -198,9 +198,9 @@ class PortManager {
     let config = { ...this.getDefaultConfig() };
 
     for (const configFile of configFiles) {
-      if (existsSync(configFile)) {
+      if (fileExistsSync(configFile)) {
         try {
-          const content = readFileSync(configFile, 'utf-8');
+          const content = readTextSync(configFile);
           const parsed = JSON.parse(content);
 
           // Extract port configuration

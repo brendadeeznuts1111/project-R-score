@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readTextSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/url-fixer-optimizer.ts — URL fixer and performance optimizer
 
@@ -6,9 +8,13 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 import { join } from 'path';
+
+/** Sync write via Bun.peek(Bun.write) — replaces node:fs writeFileSync. */
+function writeTextSyncLocal(path: string, data: string): number {
+  return Bun.peek(Bun.write(path, data)) as number;
+}
 
 // ============================================================================
 // URL FIXER AND OPTIMIZER
@@ -51,11 +57,11 @@ class URLFixerOptimizer {
 
     for (const filePath of filesToCheck) {
       try {
-        if (!existsSync(filePath)) {
+        if (!fileExistsSync(filePath)) {
           continue;
         }
 
-        let content = readFileSync(filePath, 'utf-8');
+        let content = readTextSync(filePath);
         let fileModified = false;
 
         // Replace broken URLs with safe regex escaping
@@ -83,7 +89,7 @@ class URLFixerOptimizer {
         }
 
         if (fileModified) {
-          writeFileSync(filePath, content);
+          writeTextSyncLocal(filePath, content);
           filesFixed++;
         }
       } catch (error) {
@@ -107,11 +113,11 @@ class URLFixerOptimizer {
     const changes: string[] = [];
 
     try {
-      if (!existsSync(constantsFile)) {
+      if (!fileExistsSync(constantsFile)) {
         return { updated: false, changes: ['Constants file not found'] };
       }
 
-      const content = readFileSync(constantsFile, 'utf-8');
+      const content = readTextSync(constantsFile);
       let modifiedContent = content;
       let updated = false;
 
@@ -126,7 +132,7 @@ class URLFixerOptimizer {
       }
 
       if (updated) {
-        writeFileSync(constantsFile, modifiedContent);
+        writeTextSyncLocal(constantsFile, modifiedContent);
         console.info('   ✅ Documentation constants updated');
       }
 
@@ -166,7 +172,7 @@ class URLFixerOptimizer {
 
     const configPath = 'config/url-performance-monitoring.json';
     try {
-      writeFileSync(configPath, JSON.stringify(monitoringConfig, null, 2));
+      writeTextSyncLocal(configPath, JSON.stringify(monitoringConfig, null, 2));
       console.info(`   ✅ Performance monitoring config created: ${configPath}`);
     } catch (error) {
       console.info(`   ❌ Failed to create monitoring config: ${error}`);
@@ -244,7 +250,7 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
 `;
 
     try {
-      writeFileSync(reportPath, reportContent);
+      writeTextSyncLocal(reportPath, reportContent);
       console.info(`   ✅ Optimization report created: ${reportPath}`);
     } catch (error) {
       console.info(`   ❌ Failed to create report: ${error}`);

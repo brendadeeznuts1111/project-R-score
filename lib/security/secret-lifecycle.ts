@@ -1,7 +1,9 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from '../../scripts/lib/fs-bun';
 // lib/security/secret-lifecycle.ts — Secret lifecycle and rotation management
 
 import { env } from 'bun';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { VersionedSecretManager } from './versioned-secrets';
 
@@ -87,7 +89,7 @@ export class SecretLifecycleManager {
     if (this.registry.size) return;
     const path = env.SECRET_REGISTRY_PATH ?? 'config/secret-registry.json';
     try {
-      const raw = await readFile(path, 'utf8');
+      const raw = await readText(path);
       const data = JSON.parse(raw) as Array<{ key: string; expiresAt?: string }>;
       data.forEach(entry => this.registry.set(entry.key, { expiresAt: entry.expiresAt }));
     } catch {
@@ -151,7 +153,7 @@ export class SecretLifecycleManager {
 
   private async writeLocalReport(path: string, contents: string) {
     await mkdir(dirname(path), { recursive: true });
-    await writeFile(path, contents, 'utf8');
+    await writeText(path, contents);
   }
 
   private generateExpirationHtml(report: any) {

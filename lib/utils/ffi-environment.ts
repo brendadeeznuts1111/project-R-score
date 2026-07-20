@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync } from '../../scripts/lib/fs-bun';
 // lib/utils/ffi-environment.ts — FFI environment variable support
 
 /**
@@ -82,8 +84,7 @@ export function verifyFFIEnvironment(): { valid: boolean; issues: string[] } {
   if (process.platform === 'linux' && !env.LIBRARY_PATH) {
     // Check if we're on a non-FHS system
     try {
-      const fs = require('fs');
-      if (!fs.existsSync('/usr/include/stdio.h')) {
+      if (!fileExistsSync('/usr/include/stdio.h')) {
         issues.push('Non-FHS system detected but LIBRARY_PATH not set');
         issues.push('NixOS/Guix require C_INCLUDE_PATH and LIBRARY_PATH');
       }

@@ -1,8 +1,9 @@
+import { fileExistsSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { Database } from 'bun:sqlite';
-import { existsSync, mkdirSync, statSync } from 'node:fs';
+import { mkdirSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import ts from 'typescript';
 
@@ -79,7 +80,7 @@ interface DiscoverResult {
 
 function ensureParentDir(filePath: string): void {
   const parent = dirname(filePath);
-  if (!existsSync(parent)) {
+  if (!fileExistsSync(parent)) {
     mkdirSync(parent, { recursive: true });
   }
 }
@@ -561,7 +562,7 @@ export function searchCallersBySymbol(
   } = {}
 ): SymbolSearchHit[] {
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!existsSync(dbPath)) {
+  if (!fileExistsSync(dbPath)) {
     return [];
   }
 
@@ -701,7 +702,7 @@ export function searchCalleesBySymbol(
   } = {}
 ): SymbolSearchHit[] {
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!existsSync(dbPath)) {
+  if (!fileExistsSync(dbPath)) {
     return [];
   }
 
@@ -857,7 +858,7 @@ export function searchSymbolIndex(
   }
 
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!existsSync(dbPath)) {
+  if (!fileExistsSync(dbPath)) {
     return [];
   }
 

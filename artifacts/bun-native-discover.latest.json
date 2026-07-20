@@ -1,0 +1,2192 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-20T03:40:39.916Z",
+    "roots": [
+      "lib"
+    ],
+    "apply": true,
+    "dryRun": false,
+    "filesWithHits": 62,
+    "totalHits": 191,
+    "byKind": {
+      "process.env": 123,
+      "node-fs-import": 15,
+      "existsSync": 13,
+      "writeFile-async": 11,
+      "mkdir": 8,
+      "writeFileSync": 7,
+      "readFile-async": 6,
+      "readFileSync": 5,
+      "child_process": 2,
+      "readdir": 1
+    },
+    "appliedFiles": [
+      {
+        "file": "lib/skill-orchestrator.ts",
+        "note": "existsSync→fileExistsSync, await readFile→readText, clean-fs-imports, import-fs-bun:{fileExistsSync,readText}, @see-file-io"
+      },
+      {
+        "file": "lib/validation/automated-validation-system.ts",
+        "note": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+      },
+      {
+        "file": "lib/http/port-management-system.ts",
+        "note": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}"
+      },
+      {
+        "file": "lib/docs/smart-symbol-index.ts",
+        "note": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}"
+      },
+      {
+        "file": "lib/docs/canonical-family.ts",
+        "note": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}"
+      },
+      {
+        "file": "lib/docs/url-fixer-optimizer.ts",
+        "note": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+      },
+      {
+        "file": "lib/docs/untracked-files-analyzer.ts",
+        "note": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+      },
+      {
+        "file": "lib/docs/ripgrep-spawn.ts",
+        "note": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}, @see-file-io"
+      },
+      {
+        "file": "lib/docs/constants/utils.ts",
+        "note": "await readFile→readText, await writeFile→writeText, clean-fs-imports, import-fs-bun:{fileExists,readText,writeText}, @see-file-io"
+      },
+      {
+        "file": "lib/utils/ffi-environment.ts",
+        "note": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}, @see-file-io"
+      },
+      {
+        "file": "lib/security/secret-lifecycle.ts",
+        "note": "await readFile→readText, await writeFile→writeText, clean-fs-imports, import-fs-bun:{readText,writeText}, @see-file-io"
+      },
+      {
+        "file": "lib/core/core-documentation.ts",
+        "note": "await readFile→readText, clean-fs-imports, import-fs-bun:{readText}"
+      }
+    ]
+  },
+  "files": [
+    {
+      "file": "lib/filter-runner.ts",
+      "hits": [
+        {
+          "file": "lib/filter-runner.ts",
+          "line": 390,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: { ...process.env, FORCE_COLOR: '1' },",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/filter-runner.ts",
+          "line": 425,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "if (!process.env.FILTER_SILENT) {",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/enhanced-watch-filter-v3.15.ts",
+      "hits": [
+        {
+          "file": "lib/enhanced-watch-filter-v3.15.ts",
+          "line": 116,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "healthCheckUrl: process.env.HEALTH_CHECK_URL,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/enhanced-watch-filter-v3.15.ts",
+          "line": 178,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "healthCheckUrl: process.env.HEALTH_CHECK_URL,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/bun-cli-native-v3.15.ts",
+      "hits": [
+        {
+          "file": "lib/bun-cli-native-v3.15.ts",
+          "line": 335,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const env = { ...process.env };",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/bun-cli-native-v3.15.ts",
+          "line": 407,
+          "kind": "child_process",
+          "severity": "error",
+          "snippet": "`require('child_process').execSync('${cmd} ${args.join(' ')}', {stdio: 'inherit'})`,",
+          "fix": "Bun.spawn / Bun.spawnSync",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/watch-engine-v3.14.ts",
+      "hits": [
+        {
+          "file": "lib/watch-engine-v3.14.ts",
+          "line": 791,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "healthCheckUrl: process.env.HEALTH_CHECK_URL,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/context-engine-v3.17.ts",
+      "hits": [
+        {
+          "file": "lib/context-engine-v3.17.ts",
+          "line": 14,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFileSync } from 'fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/context-engine-v3.17.ts",
+          "line": 15,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { mkdir } from 'fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/context-engine-v3.17.ts",
+          "line": 292,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "await mkdir(dir, { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/skill-orchestrator.ts",
+      "hits": [
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 15,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFile } from 'fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 16,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { existsSync } from 'fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 239,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "join(process.env.HOME || '~', '.config', 'agents', 'skills', skillName, 'SKILL.md'),",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 240,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "join(process.env.HOME || '~', '.kimi', 'skills', skillName, 'SKILL.md'),",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 244,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (existsSync(path)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 251,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "const content = await readFile(path, 'utf-8');",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/skill-orchestrator.ts",
+          "line": 641,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "if (process.env.NODE_ENV !== 'test') {",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, await readFile→readText, clean-fs-imports, import-fs-bun:{fileExistsSync,readText}, @see-file-io"
+    },
+    {
+      "file": "lib/r2/r2-event-system.ts",
+      "hits": [
+        {
+          "file": "lib/r2/r2-event-system.ts",
+          "line": 94,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/r2/r2-client.ts",
+      "hits": [
+        {
+          "file": "lib/r2/r2-client.ts",
+          "line": 18,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "return process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/r2/r2-client.ts",
+          "line": 41,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "await fs.promises.mkdir(path.dirname(localFile), { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/r2/r2-client.ts",
+          "line": 44,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await fs.promises.writeFile(localFile, JSON.stringify(data, null, 2));",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/r2/r2-client.ts",
+          "line": 88,
+          "kind": "readdir",
+          "severity": "info",
+          "snippet": "const files = await fs.promises.readdir(localDir, { recursive: true });",
+          "fix": "Prefer Bun.Glob for file discovery; readdir from node:fs for raw dirs (Bun docs)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/r2/r2-client.ts",
+          "line": 136,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "const data = await fs.promises.readFile(localFile, 'utf-8');",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applyNote": "no safe rewrite"
+    },
+    {
+      "file": "lib/validation/cli-constants-validation.ts",
+      "hits": [
+        {
+          "file": "lib/validation/cli-constants-validation.ts",
+          "line": 191,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "PATH: process.env.PATH || '',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-constants-validation.ts",
+          "line": 192,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "HOME: process.env.HOME || '',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-constants-validation.ts",
+          "line": 678,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "CLIToolValidator.validateTool('bun', [], process.env),",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-constants-validation.ts",
+          "line": 679,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "CLIToolValidator.validateTool('overseer-cli', [], process.env),",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-constants-validation.ts",
+          "line": 813,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const cliResult = await CLIToolValidator.autoFix('bun', [], process.env);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/validation/platform-validator.ts",
+      "hits": [
+        {
+          "file": "lib/validation/platform-validator.ts",
+          "line": 59,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const result = await CLIToolValidator.validateTool(tool, [], process.env);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/validation/cli-validation-integration.ts",
+      "hits": [
+        {
+          "file": "lib/validation/cli-validation-integration.ts",
+          "line": 78,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const missing = requiredVars.filter(varName => !process.env[varName]);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-validation-integration.ts",
+          "line": 95,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "if (!process.env[key]) {",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-validation-integration.ts",
+          "line": 96,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env[key] = value;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/validation/automated-validation-system.ts",
+      "hits": [
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 292,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (fs.existsSync('validation-report.json')) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 293,
+          "kind": "readFileSync",
+          "severity": "error",
+          "snippet": "const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));",
+          "fix": "Bun.file(path).text() / .json() or readTextSync/readJsonSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 319,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "require('fs').mkdirSync('.github/workflows', { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 320,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "require('fs').writeFileSync('.github/workflows/automated-validation.yml', workflow);",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 370,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "require('fs').mkdirSync('config', { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 371,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "require('fs').writeFileSync(",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/automated-validation-system.ts",
+          "line": 396,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "require('fs').writeFileSync('validation-report.json', JSON.stringify(result, null, 2));",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+    },
+    {
+      "file": "lib/validation/cli-self-validation.ts",
+      "hits": [
+        {
+          "file": "lib/validation/cli-self-validation.ts",
+          "line": 47,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "config.env || process.env",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/cli-self-validation.ts",
+          "line": 59,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "config.env || process.env",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/validation/comprehensive-implementation-audit.ts",
+      "hits": [
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 398,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const originalMaxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 399,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const originalMaxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 402,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = '256';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 403,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = '8';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 410,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 412,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "delete process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 416,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/validation/comprehensive-implementation-audit.ts",
+          "line": 418,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "delete process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/performance/optimizer.ts",
+      "hits": [
+        {
+          "file": "lib/performance/optimizer.ts",
+          "line": 257,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const value = process.env[key];",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/performance/optimizer.ts",
+          "line": 325,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env[testVar];",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/performance/memory-pool.ts",
+      "hits": [
+        {
+          "file": "lib/performance/memory-pool.ts",
+          "line": 170,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "async writeFile(filePath: string, ptr: number, size: number): Promise<void> {",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/performance/optimized-spawn-test.ts",
+      "hits": [
+        {
+          "file": "lib/performance/optimized-spawn-test.ts",
+          "line": 14,
+          "kind": "child_process",
+          "severity": "error",
+          "snippet": "import { spawn, execSync } from 'child_process';",
+          "fix": "Bun.spawn / Bun.spawnSync",
+          "safeApply": false
+        },
+        {
+          "file": "lib/performance/optimized-spawn-test.ts",
+          "line": 297,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const env = { ...process.env, TEST_VAR: 'test_value' };",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/performance/benchmark-recovery.ts",
+      "hits": [
+        {
+          "file": "lib/performance/benchmark-recovery.ts",
+          "line": 344,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: { ...process.env, BUN_CONSOLE_DEPTH: phase.depth.toString() },",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/performance/benchmark-recovery.ts",
+          "line": 375,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const env = process.env.BUN_ENV ?? process.env.NODE_ENV ?? 'development';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/dataview-cookie-manager.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/dataview-cookie-manager.ts",
+          "line": 43,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secret: string = process.env.COOKIE_SECRET || 'default-secret'",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/dataview-cookie-manager.ts",
+          "line": 184,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const sessionCookie = `session=${sessionData.sessionId}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; M",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/dataview-cookie-manager.ts",
+          "line": 185,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const themeCookie = `theme=${sessionData.theme}; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 *",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/dataview-cookie-manager.ts",
+          "line": 186,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const visitsCookie = `visits=${sessionData.visits}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Ag",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/bun-cookie-inspector-v3.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/bun-cookie-inspector-v3.ts",
+          "line": 421,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/bun-cookies-complete-v2.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/bun-cookies-complete-v2.ts",
+          "line": 122,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "constructor(secret: string = process.env.COOKIE_SECRET || '') {",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/bun-cookies-complete-v2.ts",
+          "line": 170,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/bun-cookies-complete-v2.ts",
+          "line": 451,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "constructor(headers: Record<string, string>, secret: string = process.env.COOKIE_SECRET || '') {",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/enhanced-cookie-dataview-integration.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/enhanced-cookie-dataview-integration.ts",
+          "line": 55,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "cookieSecret: string = process.env.COOKIE_SECRET || 'default-secret'",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/enhanced-cookie-dataview-integration.ts",
+          "line": 145,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/enhanced-cookie-dataview-integration.ts",
+          "line": 236,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/telemetry/enhanced-cookie-dataview-integration.ts",
+          "line": 255,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/cookie-validator.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/cookie-validator.ts",
+          "line": 494,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const isProduction = process.env.NODE_ENV === 'production';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/telemetry/bun-cookie-pro-tips.ts",
+      "hits": [
+        {
+          "file": "lib/telemetry/bun-cookie-pro-tips.ts",
+          "line": 464,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'test' ? false : true,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/http/port-management-system.ts",
+      "hits": [
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 16,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFileSync, existsSync } from 'fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 169,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const DEFAULT_PORT = parseInt(process.env.DEFAULT_PORT || '3000', 10);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 201,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (existsSync(configFile)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 203,
+          "kind": "readFileSync",
+          "severity": "error",
+          "snippet": "const content = readFileSync(configFile, 'utf-8');",
+          "fix": "Bun.file(path).text() / .json() or readTextSync/readJsonSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 710,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "let maxRequests = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512');",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 711,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "let maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 950,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "maxRequests: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 951,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "maxPerHost: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 981,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512'",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 984,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 1151,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "`   BUN_CONFIG_MAX_HTTP_REQUESTS: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-management-system.ts",
+          "line": 1154,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "`   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}"
+    },
+    {
+      "file": "lib/http/port-limit-validation-tests.ts",
+      "hits": [
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 353,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const originalMaxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 354,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const originalMaxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 393,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "Object.assign(process.env, testCase.env);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 400,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const maxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 401,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const maxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 458,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/http/port-limit-validation-tests.ts",
+          "line": 459,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/profile/profile-watcher.ts",
+      "hits": [
+        {
+          "file": "lib/profile/profile-watcher.ts",
+          "line": 12,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { unlink } from 'node:fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/env/runtime.ts",
+      "hits": [
+        {
+          "file": "lib/env/runtime.ts",
+          "line": 17,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const allowFallbackRaw = String(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK || '')",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/env/runtime.ts",
+          "line": 37,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const configuredOrigins = String(process.env.PLAYGROUND_RUNTIME_ORIGINS || '')",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/env/runtime.ts",
+          "line": 45,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.PLAYGROUND_RUNTIME_STALE_MS || '15000',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/env/runtime.ts",
+          "line": 48,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const wsBroadcastMsRaw = Number.parseInt(process.env.PLAYGROUND_WS_BROADCAST_MS || '1000', 10);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/env/runtime.ts",
+          "line": 50,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "String(process.env.PLAYGROUND_PORT_RANGE || '').trim() ||",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/cli/pty-terminal.ts",
+      "hits": [
+        {
+          "file": "lib/cli/pty-terminal.ts",
+          "line": 255,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const shell = process.env.SHELL || '/bin/bash';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/cli/chrome-app-manager.ts",
+      "hits": [
+        {
+          "file": "lib/cli/chrome-app-manager.ts",
+          "line": 72,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const desktopDir = `${process.env.HOME}/.local/share/applications`;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/cli/chrome-app-manager.ts",
+          "line": 100,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const tempFile = `${process.env.TEMP || '/tmp'}/create-shortcut.vbs`;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/cli/chrome-integration.ts",
+      "hits": [
+        {
+          "file": "lib/cli/chrome-integration.ts",
+          "line": 70,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const desktopDir = `${process.env.HOME}/.local/share/applications`;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/ipc-stream-search.ts",
+      "hits": [
+        {
+          "file": "lib/docs/ipc-stream-search.ts",
+          "line": 335,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "...process.env,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/ipc-stream-search.ts",
+          "line": 355,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "...process.env,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/smart-symbol-index.ts",
+      "hits": [
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 5,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { existsSync, mkdirSync, statSync } from 'node:fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 82,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(parent)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 83,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "mkdirSync(parent, { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 564,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(dbPath)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 704,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(dbPath)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/smart-symbol-index.ts",
+          "line": 860,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(dbPath)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}"
+    },
+    {
+      "file": "lib/docs/canonical-family.ts",
+      "hits": [
+        {
+          "file": "lib/docs/canonical-family.ts",
+          "line": 3,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { existsSync } from 'node:fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/canonical-family.ts",
+          "line": 295,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(path)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}"
+    },
+    {
+      "file": "lib/docs/index-fetcher-enhanced.ts",
+      "hits": [
+        {
+          "file": "lib/docs/index-fetcher-enhanced.ts",
+          "line": 29,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "cacheDir: `${process.env.HOME}/.cache/bun-docs/requests`,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/url-fixer-optimizer.ts",
+      "hits": [
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 9,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFileSync, writeFileSync, existsSync } from 'fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 54,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(filePath)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 58,
+          "kind": "readFileSync",
+          "severity": "error",
+          "snippet": "let content = readFileSync(filePath, 'utf-8');",
+          "fix": "Bun.file(path).text() / .json() or readTextSync/readJsonSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 86,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "writeFileSync(filePath, content);",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 110,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!existsSync(constantsFile)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 114,
+          "kind": "readFileSync",
+          "severity": "error",
+          "snippet": "const content = readFileSync(constantsFile, 'utf-8');",
+          "fix": "Bun.file(path).text() / .json() or readTextSync/readJsonSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 129,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "writeFileSync(constantsFile, modifiedContent);",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 169,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "writeFileSync(configPath, JSON.stringify(monitoringConfig, null, 2));",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/url-fixer-optimizer.ts",
+          "line": 247,
+          "kind": "writeFileSync",
+          "severity": "error",
+          "snippet": "writeFileSync(reportPath, reportContent);",
+          "fix": "await Bun.write(path, data) or writeText/writeJson from scripts/lib/fs-bun",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+    },
+    {
+      "file": "lib/docs/enhanced-stream-search.ts",
+      "hits": [
+        {
+          "file": "lib/docs/enhanced-stream-search.ts",
+          "line": 140,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "...process.env,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/cache-manager.ts",
+      "hits": [
+        {
+          "file": "lib/docs/cache-manager.ts",
+          "line": 51,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const home = process.env.HOME || process.env.USERPROFILE;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/untracked-files-analyzer.ts",
+      "hits": [
+        {
+          "file": "lib/docs/untracked-files-analyzer.ts",
+          "line": 9,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFileSync, existsSync, statSync } from 'fs';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/untracked-files-analyzer.ts",
+          "line": 423,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (existsSync(gitignorePath)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/untracked-files-analyzer.ts",
+          "line": 424,
+          "kind": "readFileSync",
+          "severity": "error",
+          "snippet": "gitignoreContent = readFileSync(gitignorePath, 'utf-8');",
+          "fix": "Bun.file(path).text() / .json() or readTextSync/readJsonSync from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, readFileSync→readTextSync, clean-fs-imports, import-fs-bun:{fileExistsSync,readTextSync}, @see-file-io"
+    },
+    {
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "hits": [
+        {
+          "file": "lib/docs/ripgrep-spawn.ts",
+          "line": 168,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "this.cacheDir = options.cacheDir || `${process.env.HOME}/.cache/bun-docs/requests`;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/ripgrep-spawn.ts",
+          "line": 179,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!fs.existsSync(this.cacheDir)) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/ripgrep-spawn.ts",
+          "line": 180,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "fs.mkdirSync(this.cacheDir, { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/ripgrep-spawn.ts",
+          "line": 244,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: process.env,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/ripgrep-spawn.ts",
+          "line": 282,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: process.env,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}, @see-file-io"
+    },
+    {
+      "file": "lib/docs/bun-file-api-demo.ts",
+      "hits": [
+        {
+          "file": "lib/docs/bun-file-api-demo.ts",
+          "line": 7,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { writeFile } from 'fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/bun-file-api-demo.ts",
+          "line": 74,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile(",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/bun-file-api-demo.ts",
+          "line": 89,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile('demo-data.json', JSON.stringify(jsonData, null, 2));",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/bun-file-api-demo.ts",
+          "line": 95,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile('demo-binary.bin', binaryData);",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/docs/constants/utils.ts",
+      "hits": [
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 299,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "const content = await readFile('package.json', 'utf-8');",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 309,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile('output.txt', 'Hello, Bun!');",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 629,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "const content = await readFile('package.json', 'utf-8');`,",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 632,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile('output.txt', 'Hello, Bun!');`,",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 726,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: { ...process.env, WORKER_ID: \"1\" },",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 744,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "console.info(\"HOME:\", process.env.HOME);",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 745,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.MY_APP_MODE = \"production\";",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 746,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "console.info(\"Mode:\", process.env.MY_APP_MODE); // production`,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/docs/constants/utils.ts",
+          "line": 768,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const apiKey = process.env.API_KEY; // loaded from .env.local",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "await readFile→readText, await writeFile→writeText, clean-fs-imports, import-fs-bun:{fileExists,readText,writeText}, @see-file-io"
+    },
+    {
+      "file": "lib/mcp/bun-server.ts",
+      "hits": [
+        {
+          "file": "lib/mcp/bun-server.ts",
+          "line": 272,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "codeExample: 'const apiKey = process.env.API_KEY || Bun.env.API_KEY;',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/mcp/bun-server.ts",
+          "line": 401,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "validateHost(process.env.MCP_SERVER_HOST) ||",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/mcp/bun-server.ts",
+          "line": 402,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "validateHost(process.env.SERVER_HOST) ||",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/mcp/cloudflare-domain-manager.ts",
+      "hits": [
+        {
+          "file": "lib/mcp/cloudflare-domain-manager.ts",
+          "line": 295,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "health_check_url: `http://database.factory-wager.com:${process.env.DATABASE_PORT || '5432'}/health`,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/mcp/cloudflare-domain-manager.ts",
+          "line": 337,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "health_check_url: `http://redis.factory-wager.com:${process.env.REDIS_PORT || '6379'}/health`,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/utils/safe-file-operations.ts",
+      "hits": [
+        {
+          "file": "lib/utils/safe-file-operations.ts",
+          "line": 14,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "} from 'fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/safe-file-operations.ts",
+          "line": 153,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "static async writeFile(",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/safe-file-operations.ts",
+          "line": 198,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile(filePath, content, opts.encoding);",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/safe-file-operations.ts",
+          "line": 387,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "await mkdir(dirPath, { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/safe-file-operations.ts",
+          "line": 406,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "SafeFileOperations.writeFile(filePath, content, options);",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/utils/config-validator.ts",
+      "hits": [
+        {
+          "file": "lib/utils/config-validator.ts",
+          "line": 76,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const envValue = process.env[envVar] || Bun.env[envVar];",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/config-validator.ts",
+          "line": 313,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "default: process.env.SERVER_HOST || process.env.HOST || 'localhost',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "hits": [
+        {
+          "file": "lib/utils/logger.ts",
+          "line": 64,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "level: (process.env.LOG_LEVEL as LogLevel) || 'info',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/logger.ts",
+          "line": 67,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "jsonOutput: process.env.JSON_LOGS === 'true',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/logger.ts",
+          "line": 68,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "colors: process.env.NO_COLORS !== 'true' && shouldColor(),",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/utils/ffi-environment.ts",
+      "hits": [
+        {
+          "file": "lib/utils/ffi-environment.ts",
+          "line": 65,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const env = process.env as FFIEnvConfig;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/ffi-environment.ts",
+          "line": 80,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const env = process.env;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/utils/ffi-environment.ts",
+          "line": 86,
+          "kind": "existsSync",
+          "severity": "error",
+          "snippet": "if (!fs.existsSync('/usr/include/stdio.h')) {",
+          "fix": "await Bun.file(path).exists() or fileExistsSync from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "existsSync→fileExistsSync, clean-fs-imports, import-fs-bun:{fileExistsSync}, @see-file-io"
+    },
+    {
+      "file": "lib/utils/input-validator.ts",
+      "hits": [
+        {
+          "file": "lib/utils/input-validator.ts",
+          "line": 149,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/business/habits-classifier.ts",
+      "hits": [
+        {
+          "file": "lib/business/habits-classifier.ts",
+          "line": 32,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379');",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/bun-security-integration-v4.ts",
+      "hits": [
+        {
+          "file": "lib/security/bun-security-integration-v4.ts",
+          "line": 439,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const currentSecrets = process.env;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/secure-bun-run.ts",
+      "hits": [
+        {
+          "file": "lib/security/secure-bun-run.ts",
+          "line": 62,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "env: env ? { ...process.env, ...env } : undefined,",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/cookie-security.ts",
+      "hits": [
+        {
+          "file": "lib/security/cookie-security.ts",
+          "line": 159,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "secure: process.env.NODE_ENV === 'production',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/cookie-security.ts",
+          "line": 330,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/cookie-security.ts",
+          "line": 368,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "private static readonly VARIANT_SECRET = process.env.VARIANT_SECRET || 'default-variant-secret';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/cookie-file-operations.ts",
+      "hits": [
+        {
+          "file": "lib/security/cookie-file-operations.ts",
+          "line": 12,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { open } from 'node:fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/config-manager.ts",
+      "hits": [
+        {
+          "file": "lib/security/config-manager.ts",
+          "line": 7,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/config-manager.ts",
+          "line": 255,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "environment: process.env.NODE_ENV || 'unknown',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/secret-lifecycle.ts",
+      "hits": [
+        {
+          "file": "lib/security/secret-lifecycle.ts",
+          "line": 4,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "import { readFile, writeFile, mkdir } from 'node:fs/promises';",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secret-lifecycle.ts",
+          "line": 90,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "const raw = await readFile(path, 'utf8');",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        },
+        {
+          "file": "lib/security/secret-lifecycle.ts",
+          "line": 153,
+          "kind": "mkdir",
+          "severity": "info",
+          "snippet": "await mkdir(dirname(path), { recursive: true });",
+          "fix": "Bun.write creates parent path segments for nested files; pure dir create → node:fs mkdir per Bun file-io docs",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secret-lifecycle.ts",
+          "line": 154,
+          "kind": "writeFile-async",
+          "severity": "warn",
+          "snippet": "await writeFile(path, contents, 'utf8');",
+          "fix": "await Bun.write(path, data) — only if not node:fs writeFile left intentionally",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "await readFile→readText, await writeFile→writeText, clean-fs-imports, import-fs-bun:{readText,writeText}, @see-file-io"
+    },
+    {
+      "file": "lib/security/secure-env-wrapper.ts",
+      "hits": [
+        {
+          "file": "lib/security/secure-env-wrapper.ts",
+          "line": 85,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const rawValue = process.env[name];",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secure-env-wrapper.ts",
+          "line": 112,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "return process.env[name] !== undefined;",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secure-env-wrapper.ts",
+          "line": 147,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const rawValue = process.env[name];",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secure-env-wrapper.ts",
+          "line": 225,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "name => process.env[name] !== undefined",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/security/secure-env-wrapper.ts",
+          "line": 228,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": ".filter(([name, config]) => config.required && process.env[name] === undefined)",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/security/master-token.ts",
+      "hits": [
+        {
+          "file": "lib/security/master-token.ts",
+          "line": 321,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "return process.env.MASTER_TOKEN_HMAC_KEY || 'factorywager-mcp-default-key-change-in-production';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/core/url-service.ts",
+      "hits": [
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 20,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "apiBaseUrl: process.env.API_BASE_URL || 'http://example.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 21,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "wikiBaseUrl: process.env.WIKI_BASE_URL || 'https://wiki.company.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 22,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "monitoringUrl: process.env.MONITORING_URL || 'http://example.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 23,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "abTestingUrl: process.env.AB_TESTING_URL || 'http://example.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 24,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "contentServiceUrl: process.env.CONTENT_SERVICE_URL || 'http://example.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/url-service.ts",
+          "line": 25,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "verboseServiceUrl: process.env.VERBOSE_SERVICE_URL || 'http://example.com',",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/core/core-documentation.ts",
+      "hits": [
+        {
+          "file": "lib/core/core-documentation.ts",
+          "line": 506,
+          "kind": "node-fs-import",
+          "severity": "error",
+          "snippet": "examples: ['import fs from \"node:fs\"', 'import path from \"node:path\"'],",
+          "fix": "Prefer Bun.file / Bun.write (file-io). Dirs: readdir/mkdir via node:fs only when listing (Bun docs).",
+          "safeApply": false
+        },
+        {
+          "file": "lib/core/core-documentation.ts",
+          "line": 2453,
+          "kind": "readFile-async",
+          "severity": "error",
+          "snippet": "example: \"await readFile('file.txt', 'utf-8')\",",
+          "fix": "await Bun.file(path).text() or readText from scripts/lib/fs-bun",
+          "safeApply": true
+        }
+      ],
+      "safeApplyEligible": true,
+      "applied": true,
+      "applyNote": "await readFile→readText, clean-fs-imports, import-fs-bun:{readText}"
+    },
+    {
+      "file": "lib/core/url-handler.ts",
+      "hits": [
+        {
+          "file": "lib/core/url-handler.ts",
+          "line": 341,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    },
+    {
+      "file": "lib/pooling/dataview-telemetry-pool.ts",
+      "hits": [
+        {
+          "file": "lib/pooling/dataview-telemetry-pool.ts",
+          "line": 37,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const dvDbPath = process.env.DV_DB_PATH || './telemetry_dv.db';",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        },
+        {
+          "file": "lib/pooling/dataview-telemetry-pool.ts",
+          "line": 88,
+          "kind": "process.env",
+          "severity": "info",
+          "snippet": "const dvPoolSize = parseInt(process.env.DV_POOL_SIZE || '10');",
+          "fix": "Bun.env (when not Node-compat testing)",
+          "safeApply": false
+        }
+      ],
+      "safeApplyEligible": false
+    }
+  ]
+}
