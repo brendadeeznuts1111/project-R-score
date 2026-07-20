@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -5,6 +6,7 @@
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
 // Release lists use tools/release-index.json; general blog RSS stays live (full feed).
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { join } from 'node:path';
 
 export const BUN_DOCS_BASE = 'https://bun.com/docs';
@@ -121,7 +123,7 @@ async function readPkgVersion(docsRoot: string): Promise<string> {
 }
 
 export async function collectDocRootCandidates(workspaceRoot: string): Promise<DocRootCandidate[]> {
-  const explicit = process.env.BUN_TYPES_DOCS?.trim();
+  const explicit = Bun.env.BUN_TYPES_DOCS?.trim();
   if (explicit) {
     const root = normalizeDocsRoot(explicit);
     return [{ root, version: await readPkgVersion(root) }];

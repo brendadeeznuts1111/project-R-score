@@ -5,7 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 import { CryptoHasher } from 'bun';
-import { timingSafeEqual } from 'node:crypto';
+
 import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 import { type TokenId, asTokenId } from '../types/branded.ts';
 
@@ -308,7 +308,7 @@ export class MasterTokenManager {
       const expectedSignature = hmacSha256Hex(this.getHmacKey(), payload);
       const a = Buffer.from(signature, 'utf8');
       const b = Buffer.from(expectedSignature, 'utf8');
-      if (a.byteLength !== b.byteLength || !timingSafeEqual(a, b)) {
+      if (a.byteLength !== b.byteLength || !crypto.timingSafeEqual(a, b)) {
         return null;
       }
 

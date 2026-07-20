@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 // tools/signed-url-worker.ts — Worker for generating signed R2 URLs
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { getSignedR2URL } from '../lib/r2/signed-url';
 import { handleError, ErrorHandler } from '../lib/utils/error-handler';
 import { validateKey, validateURL } from '../lib/utils/input-validator';
@@ -19,7 +21,7 @@ import { validateKey, validateURL } from '../lib/utils/input-validator';
 export default {
   async fetch(request: Request, env: { R2_BUCKET: R2_BUCKET }): Promise<Response> {
     const url = new URL(request.url);
-    const requestId = crypto.randomUUID().slice(0, 8);
+    const requestId = Bun.randomUUIDv7().slice(0, 8);
 
     // Route: /signed - Generate signed URL for any key
     if (url.pathname === '/signed' && request.method === 'GET') {
@@ -119,7 +121,7 @@ export default {
           expiresInSeconds: 3600,
           customMetadata: {
             requestedBy: request.headers.get('CF-URL') || 'unknown',
-            requestId: crypto.randomUUID().slice(0, 8),
+            requestId: Bun.randomUUIDv7().slice(0, 8),
             userAgent: request.headers.get('user-agent') || 'unknown',
             variant: 'production-live',
             context: 'tier1380-signed-urls',
@@ -189,7 +191,7 @@ export default {
       const health = {
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development',
+        environment: Bun.env.NODE_ENV || 'development',
         r2Bucket: env.R2_BUCKET || 'not-configured',
         signedUrlsSupported: true,
         secureStorageEnabled: true,

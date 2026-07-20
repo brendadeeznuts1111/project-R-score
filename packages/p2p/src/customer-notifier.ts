@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // lib/p2p/customer-notifier.ts — Customer notification system for business changes
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { RedisClient } from 'bun';
 
 const redis = new RedisClient(Bun.env.REDIS_URL ?? 'redis://localhost:6379');
@@ -28,7 +29,7 @@ export class CustomerNotifier {
     await redis.lpush(
       `notifications:${stealthId}`,
       JSON.stringify({
-        id: crypto.randomUUID(),
+        id: Bun.randomUUIDv7(),
         type: 'payment_to_old_address',
         title: 'Business Name Updated',
         message: `You sent $${amount} to ${oldAlias}. This business is now ${newAlias}.`,
@@ -195,7 +196,7 @@ export class CustomerNotifier {
     await redis.lpush(
       `notifications:${stealthId}`,
       JSON.stringify({
-        id: crypto.randomUUID(),
+        id: Bun.randomUUIDv7(),
         ...notification,
         timestamp: new Date().toISOString(),
         read: false,

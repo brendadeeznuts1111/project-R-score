@@ -8,6 +8,7 @@
  * Binary data management, metrics, and stream processing
  */
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { DataViewTelemetryPool } from '../lib/pooling/dataview-telemetry-pool';
 import { DataViewStreamProcessor } from '../lib/pooling/dataview-stream-processor';
 import { LeadSpecProfile } from './pool-telemetry';
@@ -48,7 +49,7 @@ function generateTestProfiles(
         },
       },
       metadata: {
-        sessionId: crypto.randomUUID(),
+        sessionId: Bun.randomUUIDv7(),
         member: `batch-user-${Math.floor(i / 10)}`,
         timestamp: Date.now() + i,
         document: `batch-doc-${i}`,
@@ -174,7 +175,7 @@ async function handleDataViewInsert(pool: DataViewTelemetryPool, profileJson?: s
         },
       };
 
-  const sessionId = crypto.randomUUID();
+  const sessionId = Bun.randomUUIDv7();
   const member = subCommand || 'cli-user';
   const document = 'cli-doc';
 
@@ -240,7 +241,7 @@ async function handleDataViewBatch(pool: DataViewTelemetryPool, count: number) {
         },
       },
       metadata: {
-        sessionId: crypto.randomUUID(),
+        sessionId: Bun.randomUUIDv7(),
         member: `batch-user-${Math.floor(i / 10)}`,
         timestamp: Date.now() + i,
         document: `batch-doc-${i}`,

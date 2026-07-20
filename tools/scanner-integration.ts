@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // tools/scanner-integration.ts — Scanner with documentation integration
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced';
 
 export class ScannerWithDocs {
@@ -34,7 +36,7 @@ export class ScannerWithDocs {
 
     // Create scanner cookies
     this.cookies.set('projectId', projectId);
-    this.cookies.set('sessionId', crypto.randomUUID());
+    this.cookies.set('sessionId', Bun.randomUUIDv7());
     this.cookies.set('bunVersion', version);
     this.cookies.set('timestamp', Date.now().toString());
 

@@ -11,7 +11,7 @@
  */
 
 import { aiWikiSection, generateAIWiki } from './ai-wiki-gen';
-import { readFileSync, writeFileSync } from 'fs';
+
 import { join } from 'path';
 
 // Multi-lang JSONC i18n structure

@@ -13,8 +13,6 @@ if (import.meta.main) {
 
 import { performance } from 'perf_hooks';
 
-import { spawn, execSync } from 'child_process';
-
 // ============================================================================
 // OPTIMIZED SPAWN IMPLEMENTATIONS
 // ============================================================================
@@ -118,45 +116,9 @@ class OptimizedSpawn {
   static async fastSpawn(
     command: string,
     args: string[] = [],
-    timeout: number = 5000
+    _timeout: number = 5000
   ): Promise<SpawnResult> {
-    const startTime = performance.now();
-
-    return new Promise((resolve, reject) => {
-      const proc = spawn(command, args, {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        timeout,
-      });
-
-      let stdout = '';
-      let stderr = '';
-
-      proc.stdout?.on('data', data => {
-        stdout += data.toString();
-      });
-
-      proc.stderr?.on('data', data => {
-        stderr += data.toString();
-      });
-
-      proc.on('close', code => {
-        const executionTime = performance.now() - startTime;
-        resolve({
-          stdout: stdout.trim(),
-          stderr: stderr.trim(),
-          exitCode: code || 0,
-          executionTime,
-        });
-      });
-
-      proc.on('error', error => {
-        const executionTime = performance.now() - startTime;
-        reject({
-          error: error.message,
-          executionTime,
-        });
-      });
-    });
+    return this.bunSpawn(command, args);
   }
 
   /**
@@ -200,7 +162,9 @@ class SpawnPerformanceTest {
         name: 'Standard execSync',
         fn: () => {
           const start = performance.now();
-          const result = execSync('echo "test"', { encoding: 'utf8' }).trim();
+          const result = new TextDecoder()
+            .decode(Bun.spawnSync(['sh', '-c', 'echo "test"']).stdout)
+            .trim();
           return { stdout: result, executionTime: performance.now() - start };
         },
       },
@@ -347,7 +311,7 @@ class SpawnPerformanceTest {
       const totalTime = performance.now() - startTime;
       const avgTime = results.reduce((sum, r) => sum + r.executionTime, 0) / results.length;
 
-      console.info(`Concurrent spawn (${concurrency} operations):`);
+      console.info(`Concurrent Bun.spawn(${concurrency} operations):`);
       console.info(`   Total time: ${totalTime.toFixed(2)}ms`);
       console.info(`   Average per operation: ${avgTime.toFixed(2)}ms`);
       console.info(`   Throughput: ${(concurrency / (totalTime / 1000)).toFixed(0)} ops/sec`);

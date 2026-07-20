@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/server.ts — Web server with cookie/session handling and fetch proxy
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { validateHost } from '../lib/utils/env-validator';
 // TODO: fetch-proxy module not found in tools/services/
 // import { fetchProxy, type ProxyRequest } from './services/fetch-proxy';
@@ -49,7 +50,7 @@ function simpleHmac(key: string, data: string): string {
 
 // Get session secret from environment or generate a warning
 function getSessionSecret(): string {
-  const secret = process.env.SESSION_SECRET || Bun.env.SESSION_SECRET;
+  const secret = Bun.env.SESSION_SECRET || Bun.env.SESSION_SECRET;
   if (!secret) {
     console.warn('⚠️ WARNING: No SESSION_SECRET found in environment. Using insecure default!');
     console.warn('Set SESSION_SECRET environment variable for production use.');
@@ -103,7 +104,7 @@ const patterns = {
 };
 
 // Main server
-const port = process.env.PORT || 3000;
+const port = Bun.env.PORT || 3000;
 
 console.info(`
 ╔═══════════════════════════════════════════════════════════╗
@@ -468,7 +469,7 @@ Bun.serve({
   },
 });
 
-const SERVER_HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
+const SERVER_HOST = validateHost(Bun.env.SERVER_HOST) || 'localhost';
 console.info(`Server listening on http://${SERVER_HOST}:${port}`);
 console.info(`Project context: ${Bun.main}`);
 console.info(`Available endpoints:`);

@@ -6,8 +6,6 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // lib/security/index.ts — Security module index (Bun primitives at call sites)
 
-import { timingSafeEqual } from 'node:crypto';
-
 // Core security components
 export * from './versioned-secrets';
 export * from './version-graph';
@@ -125,7 +123,7 @@ export class SecurityUtils {
     const a = Buffer.from(this.hashSecret(secret1), 'hex');
     const b = Buffer.from(this.hashSecret(secret2), 'hex');
     if (a.byteLength !== b.byteLength) return false;
-    return timingSafeEqual(a, b);
+    return crypto.timingSafeEqual(a, b);
   }
 }
 

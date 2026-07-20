@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // tools/secret-version-cli.ts — CLI for versioned secret management
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { VersionedSecretManager } from '../lib/security/versioned-secrets';
 
 /**
@@ -60,7 +61,7 @@ async function showHelp() {
 async function handleSet(key: string, value: string, description?: string) {
   try {
     const result = await versionedManager.set(key, value, {
-      author: process.env.USER || 'cli',
+      author: Bun.env.USER || 'cli',
       description: description || 'Set via CLI',
       level: 'STANDARD',
       tags: { source: 'cli' },

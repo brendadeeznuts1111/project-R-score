@@ -1,8 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // tools/bun-docs-mcp.ts — MCP server for local bun-types MDX docs (zero npm deps)
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { getCuratedEntry, searchCuratedEntries } from './bun-docs-curated.ts';
 import {
   DEFAULTS,
@@ -299,7 +303,7 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
 }
 
 async function main() {
-  const workspaceRoot = process.env.BUN_DOCS_ROOT || process.cwd();
+  const workspaceRoot = Bun.env.BUN_DOCS_ROOT || process.cwd();
   const built = await buildDocIndex(workspaceRoot);
   docs = built.docs;
   slugMap = buildSlugMap(docs);

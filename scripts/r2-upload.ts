@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { resolve4, resolveCname } from 'node:dns/promises';
 import { createDomainContext } from './lib/domain-context';
 import { resolveR2BridgeConfig, uploadCompressedStateToR2, uploadJsonToR2 } from './lib/r2-bridge';
@@ -58,7 +60,7 @@ function parseArgs(argv: string[]): Options {
     source: 'r2-upload.ts',
     timeoutMs: Number.parseInt(Bun.env.DOMAIN_HEALTH_DNS_TIMEOUT_MS || '1000', 10) || 1000,
     apply: false,
-    sessionId: crypto.randomUUID(),
+    sessionId: Bun.randomUUIDv7(),
     writeSessionState: false,
   };
 
