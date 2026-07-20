@@ -155,7 +155,8 @@ reports/
 data/
 output/
 download/
-archive/
+# Root frozen dump only — do not match projects/archive/ (tracked tier bucket)
+/archive/
 
 # Generated and temporary content
 *.scratch.*
