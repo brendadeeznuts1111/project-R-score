@@ -12,7 +12,7 @@ support.
 
 Bun now supports the `--package` (or `-p`) flag with `bunx` to run binaries from
 packages where the binary name differs from the package name. This brings `bunx`
-functionality in line with `npx` and `yarn dlx`.
+functionality in line with `bun x` and `yarn dlx`.
 
 ### Basic Syntax
 

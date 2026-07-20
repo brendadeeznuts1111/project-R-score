@@ -332,7 +332,7 @@ npm run migrate
 npm run migrate:rollback
 
 # Create new migration
-npx knex migrate:make create_new_table
+bun x knex migrate:make create_new_table
 ```
 
 ### Migration Files
@@ -354,7 +354,7 @@ Migration files are located in `src/database/migrations/` and follow the naming 
 npm run seed
 
 # Run specific seed file
-npx knex seed:run --specific=001_tenants.js
+bun x knex seed:run --specific=001_tenants.js
 ```
 
 ### Seed Data

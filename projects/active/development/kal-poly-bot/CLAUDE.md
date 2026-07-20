@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use `bun` instead of `node`, `npm`, `yarn`, or `pnpm`
 - Use `bun test` instead of `jest` or `vitest`
 - Use `bun build` instead of `webpack` or `esbuild`
-- Use `bunx` instead of `npx`
+- Use `bun x` instead of `npx`
 - Bun automatically loads `.env` files
 
 **Rust is used for the arbitrage bot** (`poly-kalshi-arb/`)

@@ -63,7 +63,7 @@ either:
 npm run stylelint
 
 # Check specific file
-npx stylelint path/to/file.css
+bun x stylelint path/to/file.css
 ```
 
 ### Auto-fix issues
@@ -73,7 +73,7 @@ npx stylelint path/to/file.css
 npm run stylelint:fix
 
 # Auto-fix specific file
-npx stylelint path/to/file.css --fix
+bun x stylelint path/to/file.css --fix
 ```
 
 ### CI/CD Integration
@@ -116,7 +116,7 @@ Properties are ordered logically:
 Use the included test file to validate your Stylelint setup:
 
 ```bash
-npx stylelint test-style.css
+bun x stylelint test-style.css
 ```
 
 This should pass without any errors or warnings.
@@ -148,7 +148,7 @@ This should pass without any errors or warnings.
 To validate your `.stylelintrc` file:
 
 ```bash
-npx stylelint --print-config .stylelintrc
+bun x stylelint --print-config .stylelintrc
 ```
 
 ## Integration with Editors

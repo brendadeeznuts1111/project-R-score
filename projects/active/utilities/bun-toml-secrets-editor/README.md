@@ -1817,7 +1817,7 @@ After installation, users can access the binary:
 
 ```bash
 # Via npm/bun bin
-npx bun-toml-secrets-editor validate config/secrets.toml
+bun x bun-toml-secrets-editor validate config/secrets.toml
 
 # Or directly (after postinstall)
 ./node_modules/bun-toml-secrets-editor/dist/secrets-guard validate config/secrets.toml

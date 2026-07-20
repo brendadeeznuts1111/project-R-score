@@ -506,7 +506,7 @@ Geelark/
 | Issue | Solution |
 |-------|----------|
 | ESLint not working | `npm install && code --reload-extension` |
-| Pre-commit not blocking | `chmod +x .husky/pre-commit && npx husky install` |
+| Pre-commit not blocking | `chmod +x .husky/pre-commit && bun x husky install` |
 | Want to bypass hook | `git commit --no-verify` (document why) |
 | Need to fix many files | `npm run lint:fix` |
 | Confused about rules | Read "Five Key Rules" section above |

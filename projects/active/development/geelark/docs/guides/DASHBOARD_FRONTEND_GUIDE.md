@@ -590,7 +590,7 @@ The dashboard uses **Tailwind CSS** for styling:
 npm install -D tailwindcss postcss autoprefixer
 
 # Initialize Tailwind
-npx tailwindcss init -p
+bun x tailwindcss init -p
 ```
 
 **Configuration**: `tailwind.config.js`

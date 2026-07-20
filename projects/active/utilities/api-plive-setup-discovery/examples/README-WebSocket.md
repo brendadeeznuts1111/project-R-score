@@ -32,10 +32,10 @@ The server will automatically start the WebSocket server alongside the HTTP API.
 
 ```bash
 # Run automated tests
-npx ts-node examples/websocket-demo.ts
+bun x ts-node examples/websocket-demo.ts
 
 # Run interactive demo
-npx ts-node examples/websocket-demo.ts --interactive
+bun x ts-node examples/websocket-demo.ts --interactive
 ```
 
 ## 📁 File Structure
@@ -166,7 +166,7 @@ client.authenticate(jwtToken);
 Run comprehensive tests covering all WebSocket functionality:
 
 ```bash
-npx ts-node examples/websocket-testing.ts
+bun x ts-node examples/websocket-testing.ts
 ```
 
 **Test Coverage:**
@@ -184,7 +184,7 @@ npx ts-node examples/websocket-testing.ts
 Use the interactive demo for manual testing:
 
 ```bash
-npx ts-node examples/websocket-demo.ts --interactive
+bun x ts-node examples/websocket-demo.ts --interactive
 ```
 
 **Available Commands:**

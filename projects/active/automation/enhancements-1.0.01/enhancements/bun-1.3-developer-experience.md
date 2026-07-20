@@ -58,7 +58,7 @@
     -   **Benefit:** Run Bun binary itself instead of embedded app (`bun build --compile`).
     -   **DX Impact:** Easier debugging/inspection of compiled apps. Access to Bun's commands within built app.
 -   **Run Binaries by Package Name (`bunx --package`):**
-    -   **Benefit:** Execute binaries where name ≠ package name (`npx`/`yarn dlx` parity).
+    -   **Benefit:** Execute binaries where name ≠ package name (`bun x`/`yarn dlx` parity).
     -   **DX Impact:** Simplified execution of complex/scoped package binaries. E.g., `bunx -p=@typescript-eslint/parser eslint`.
 
 ---

@@ -126,7 +126,7 @@ if (import.meta.path !== Bun.main) {
 **Original Problem Report:**
 ```typescript
 const runner = async (endpoint: string) => { 
-  await $`npx get-graphql-schema ${endpoint}`;
+  await $`bun x get-graphql-schema ${endpoint}`;
   console.log('a')  // ← This never printed
   try { 
     await $`pnpm relay`; 

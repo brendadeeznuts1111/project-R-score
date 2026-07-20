@@ -76,7 +76,7 @@ await element.screenshot({ path: 'shortcut-matrix.png' });
 bun run capture-screenshots
 
 # Or manually with Playwright
-npx playwright screenshot http://localhost:3000 dashboard.png
+bun x playwright screenshot http://localhost:3000 dashboard.png
 ```
 
 ## Current Screenshots

@@ -317,7 +317,7 @@ WORKSPACE FLAGS
   bun add --trust <package>            # Add and trust in one step
 
 ===============================================================================
-                              BUNX (npx equivalent)
+                              BUNX (bun x equivalent)
 ===============================================================================
 
   bunx <package>                       # Auto-install and run

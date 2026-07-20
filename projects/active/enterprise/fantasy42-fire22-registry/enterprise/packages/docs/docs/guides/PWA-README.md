@@ -207,7 +207,7 @@ navigator.serviceWorker.register('sw.js', {
 python -m http.server 8000
 
 # Or with Node.js
-npx serve . -p 8000
+bun x serve . -p 8000
 
 # Test PWA features
 # 1. Open in browser
@@ -262,7 +262,7 @@ if ('serviceWorker' in navigator) {
 
 ```bash
 # Generate PWA assets for app stores
-npx pwa-asset-generator ./analytics/icons/icon.svg ./analytics/icons/ \
+bun x pwa-asset-generator ./analytics/icons/icon.svg ./analytics/icons/ \
   --background "#0d1117" \
   --padding "20%" \
   --scrape

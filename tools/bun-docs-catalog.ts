@@ -1254,7 +1254,9 @@ async function main(): Promise<void> {
     console.info(`\n${entries.length} entries`);
     if (search) console.info(`(filter --search=${search})`);
     if (!compact && !wide && !notes) {
-      console.info('(tips: --wide VER/RELEASE/BLOG · --notes description/changeNote · --compact legacy)');
+      console.info(
+        '(tips: --wide VER/RELEASE/BLOG · --notes description/changeNote · --compact legacy)'
+      );
     }
     return;
   }

@@ -90,5 +90,5 @@ Path security:
 ## Enforcement Tools
 
 - `./lint-docs.sh` - Run full quality check
-- `npx markdownlint --fix` - Auto-fix formatting issues
+- `bun x markdownlint --fix` - Auto-fix formatting issues
 - Vale - Prose quality and banned phrase detection

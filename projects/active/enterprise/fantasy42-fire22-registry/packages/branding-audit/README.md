@@ -90,8 +90,8 @@ bunx fire22-brand-audit report html
 # Show brand colors
 bunx fire22-brand-audit colors
 
-# Using npx (alternative)
-# npx fire22-brand-audit audit
+# Using bun x (alternative)
+# bun x fire22-brand-audit audit
 ```
 
 ### Programmatic Usage

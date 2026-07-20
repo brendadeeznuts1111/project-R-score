@@ -247,7 +247,7 @@ const theme = createBrandingTheme({ brandColors: { ... } });
 
    ```bash
    # Audit your codebase
-   npx fire22-brand-audit audit
+   bun x fire22-brand-audit audit
 
    # Fix identified issues
    # Update components to use new design tokens
@@ -474,7 +474,7 @@ npm update @fire22/core@2.1.0
 npm install @fire22/branding-audit @fire22/error-handling
 
 # Run migration script
-npx fire22 migrate --from=2.0.x --to=2.1.0
+bun x fire22 migrate --from=2.0.x --to=2.1.0
 ```
 
 ### Docker Installation

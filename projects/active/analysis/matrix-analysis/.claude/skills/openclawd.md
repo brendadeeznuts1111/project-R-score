@@ -669,7 +669,7 @@ function runAudit(): void {
 - **NETWORK / Firewall** — iptables Rule, Property: Ingress, Command: `ufw status | grep 18789`, Expected: "ALLOW", Latency: <1ms, Score: 10/10, Priority: P0, Auto-Fix: ufw allow
 - **NETWORK / SSL Cert** — TLS/1.3 Handshake, Property: Validity, Command: `openssl s_client -connect :443 < /dev/null`, Expected: "verify ok", Latency: 45ms, Score: 10/10, Priority: P1, Auto-Fix: certbot-ren
 - **DATABASE / Connection** — TCP/5432 Socket, Property: Readiness, Command: `pg_isready -h localhost -p 5432`, Expected: "accepting", Latency: 2ms, Score: 15/15, Priority: P0, Auto-Fix: db-restart
-- **DATABASE / Migration** — SQL Schema, Property: Sync, Command: `npx prisma migrate status`, Expected: "up-to-date", Latency: 120ms, Score: 15/15, Priority: P1, Auto-Fix: db-migrate
+- **DATABASE / Migration** — SQL Schema, Property: Sync, Command: `bun x prisma migrate status`, Expected: "up-to-date", Latency: 120ms, Score: 15/15, Priority: P1, Auto-Fix: db-migrate
 - **DATABASE / Deadlocks** — SQL Lock, Property: Contention, Command: `psql -c "SELECT count(*) FROM pg_locks"`, Expected: < 10, Latency: 5ms, Score: 10/10, Priority: P2, Auto-Fix: pg_terminate
 - **TOPOLOGY / Redis-Mesh** — TCP/6379 Ping, Property: Liveness, Command: `redis-cli ping`, Expected: "PONG", Latency: 1ms, Score: 10/10, Priority: P1, Auto-Fix: redis-up
 - **TOPOLOGY / S3-Storage** — HTTPS REST, Property: Access, Command: `aws s3 ls s3://bot-assets/ --limit 1`, Expected: "List: 0", Latency: 88ms, Score: 10/10, Priority: P2, Auto-Fix: aws-auth
@@ -750,7 +750,7 @@ declare -A REPAIRS=(
   ["ufw-allow"]="sudo ufw allow 18789/tcp"
   ["certbot-ren"]="sudo certbot renew --quiet"
   ["db-restart"]="sudo systemctl restart postgresql"
-  ["db-migrate"]="cd ~/clawd && npx prisma migrate deploy"
+  ["db-migrate"]="cd ~/clawd && bun x prisma migrate deploy"
   ["pg_terminate"]="psql -c \"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle in transaction'\""
   ["redis-up"]="sudo systemctl restart redis"
   ["aws-auth"]="aws sso login --profile default"
@@ -762,7 +762,7 @@ check_dns()      { dig +short api.telegram.org | grep -q '.'; }
 check_firewall() { ufw status 2>/dev/null | grep -q "18789.*ALLOW"; }
 check_ssl()      { echo | openssl s_client -connect localhost:443 2>/dev/null | grep -q "Verify return code: 0"; }
 check_db()       { pg_isready -h localhost -p 5432 -q; }
-check_migration(){ cd ~/clawd && npx prisma migrate status 2>/dev/null | grep -q "up to date"; }
+check_migration(){ cd ~/clawd && bun x prisma migrate status 2>/dev/null | grep -q "up to date"; }
 check_deadlocks(){ [[ $(psql -tAc "SELECT count(*) FROM pg_locks WHERE NOT granted" 2>/dev/null || echo 999) -lt 10 ]]; }
 check_redis()    { redis-cli ping 2>/dev/null | grep -q "PONG"; }
 check_s3()       { aws s3 ls s3://bot-assets/ --max-items 1 &>/dev/null; }

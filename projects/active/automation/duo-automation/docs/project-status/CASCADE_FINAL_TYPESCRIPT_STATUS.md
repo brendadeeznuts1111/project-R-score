@@ -51,7 +51,7 @@ bun x tsc --project tsconfig.cascade.json --noEmit
 
 ### **🎯 Key Technical Achievements:**
 
-1. **Bun-Only Compliance**: Used `bun x tsc` exclusively (no npx/Node.js violations)
+1. **Bun-Only Compliance**: Used `bun x tsc` exclusively (no bun x/Node.js violations)
 2. **Null Safety**: Implemented comprehensive null checks and coalescing
 3. **Type Safety**: Achieved 100% TypeScript compliance with strict mode
 4. **Mock Architecture**: Complete Bun-native simulation for development

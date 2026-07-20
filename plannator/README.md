@@ -5,7 +5,7 @@ Local mirror of the optional agent skills from [`backnotprop/plannotator`](https
 These skills are **not installed by default** with Plannotator. Upstream, you add them with:
 
 ```bash
-npx skills add backnotprop/plannotator/apps/skills/extra
+bun x skills add backnotprop/plannotator/apps/skills/extra
 ```
 
 This repo pins them locally under `.agents/skills/` and includes lightweight content tests.
@@ -75,7 +75,7 @@ bun run ast-grep:test   # run rule snapshot tests
 bun run ast-grep:scan   # scan project-owned TypeScript
 ```
 
-Requires [ast-grep 0.44+](https://ast-grep.github.io/) (`npm install -g @ast-grep/cli@0.44.0`).
+Requires [ast-grep 0.44+](https://ast-grep.github.io/) (`bun install -g @ast-grep/cli@0.44.0`).
 
 ## Monorepo gate map
 

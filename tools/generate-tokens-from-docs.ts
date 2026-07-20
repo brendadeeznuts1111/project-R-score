@@ -564,7 +564,8 @@ async function main(): Promise<void> {
   const args = parseArgs();
   const { sections, version, releaseUrl, commitHash, versionPinned } = args;
   // Resolve the best blog URL with patch → minor → major fallback.
-  const blogUrl = (await resolveBlogUrl(version)) ?? `https://bun.com/blog/bun-v${normalizeBunVersion(version)}`;
+  const blogUrl =
+    (await resolveBlogUrl(version)) ?? `https://bun.com/blog/bun-v${normalizeBunVersion(version)}`;
   // @see https://bun.com/docs/runtime/http/fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];

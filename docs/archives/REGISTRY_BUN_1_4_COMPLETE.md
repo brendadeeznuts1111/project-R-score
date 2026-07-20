@@ -479,7 +479,7 @@ bun run version:graph @factorywager/utils ascii
 |---------|--------|-----------|-------------|
 | Version parsing | Manual regex | bun.semver | Native, 10x faster |
 | Secret storage | File-based | bun.secrets | OS-native encryption |
-| Package execution | npm npx | bun x | 30x faster |
+| Package execution | npm bun x | bun x | 30x faster |
 | Graph generation | N/A | Visual ASCII/Mermaid | New feature |
 | Version comparison | semver npm | bun.semver | Native integration |
 

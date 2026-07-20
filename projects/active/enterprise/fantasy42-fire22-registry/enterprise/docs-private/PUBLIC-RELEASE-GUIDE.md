@@ -188,7 +188,7 @@ cat BUNX-BENCHMARK-RESULTS.md
 ### **bunx vs npx Comparison**
 
 - **bunx**: 51ms average startup
-- **npx**: 500-2000ms average startup
+- **bun x**: 500-2000ms average startup
 - **Performance Gain**: **100x+ faster** for local packages
 
 ---
@@ -301,7 +301,7 @@ bunx --bun --package @fire22-registry/fraud-prevention scan-logs
 
 ### **🚀 Developer Experience**
 
-- ✅ **bunx integration** (100x faster than npx)
+- ✅ **bunx integration** (100x faster than bun x)
 - ✅ **Comprehensive documentation**
 - ✅ **CI/CD automation** ready
 - ✅ **Multi-environment** support

@@ -388,7 +388,7 @@ ci:
 
 ### Command Not Found
 ```bash
-# Use npx/bunx instead of global install
+# Use bun x/bunx instead of global install
 bunx dev-hq --help
 ```
 

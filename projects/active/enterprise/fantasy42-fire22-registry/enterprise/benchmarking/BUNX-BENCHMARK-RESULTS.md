@@ -276,7 +276,7 @@ bunx --bun --package @fire22-registry/fraud-prevention scan-logs
 1. **Publish registry packages** to demonstrate complete performance
 2. **Create example packages** with realistic functionality
 3. **Test caching benefits** with registry packages
-4. **Compare npx vs bunx** with identical packages
+4. **Compare bun x vs npx** with identical packages
 5. **Document enterprise workflows** with real performance data
 
 ---

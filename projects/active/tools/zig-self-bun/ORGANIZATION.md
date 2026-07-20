@@ -207,8 +207,8 @@ import { getConfig } from "@/config";
 
 ```bash
 # Use npm binaries
-npx bun-config-cli status
-npx bun-config feature enable DEBUG
+bun x bun-config-cli status
+bun x bun-config feature enable DEBUG
 
 # Or direct execution
 ./bin/compiled/bun-config-cli metrics

@@ -2,7 +2,7 @@
 
 ## What is `bunx`?
 
-`bunx` is Bun's equivalent of `npx` or `yarn dlx` - it auto-installs and runs packages from npm. It's roughly **100x faster** than `npx` for locally installed packages.
+`bunx` / `bun x` is Bun's equivalent of `npx` or `yarn dlx` — it auto-installs and runs packages from the registry. It's roughly **100x faster** than `npx` for locally installed packages.
 
 ## 🎯 Examples with Our CRC32 Project
 

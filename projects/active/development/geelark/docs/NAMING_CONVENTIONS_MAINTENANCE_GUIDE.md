@@ -131,7 +131,7 @@ npm run lint
 npm run lint:fix
 
 # Check specific file
-npx eslint src/constants/index.ts
+bun x eslint src/constants/index.ts
 ```
 
 **Configuration**:
@@ -268,8 +268,8 @@ npm install --save-dev eslint @typescript-eslint/eslint-plugin @typescript-eslin
 ### Step 2: Setup Husky (if not already setup)
 
 ```bash
-npx husky install
-npx husky add .husky/pre-commit "npm run check:naming"
+bun x husky install
+bun x husky add .husky/pre-commit "bun run check:naming"
 ```
 
 ### Step 3: Configure ESLint
@@ -300,7 +300,7 @@ npm run type-check
 ### Issue 1: "camelCase constants keep slipping through"
 
 **Solution**: 
-- Ensure pre-commit hook is installed: `npx husky install`
+- Ensure pre-commit hook is installed: `bun x husky install`
 - Check hook is executable: `chmod +x .husky/pre-commit`
 - Run ESLint on save in VS Code
 
@@ -530,7 +530,7 @@ The pre-commit hook is automatically integrated with Git. No additional setup ne
 | Problem | Solution |
 |---------|----------|
 | ESLint not working | `npm install` && restart VS Code |
-| Pre-commit hook not running | `npx husky install` && check permissions |
+| Pre-commit hook not running | `bun x husky install` && check permissions |
 | Too many false positives | Review `.eslintrc.json` overrides |
 | Need to bypass for emergency | `git commit --no-verify` (document why) |
 | Forgot the rules | Re-read "The Five Key Rules" section |

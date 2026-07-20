@@ -43,7 +43,7 @@
 | **Verbose** | `--verbose` | boolean | NO | Enable verbose output | `bunx --verbose prisma` | N/A |
 | **Silent** | `--silent` | boolean | NO | Suppress installation output | `bunx --silent tsc` | Cleaner logs |
 
-**Key Performance Note:** `bunx` is approximately **100x faster** than `npx` for locally installed packages due to Bun's fast startup times.
+**Key Performance Note:** `bunx` is approximately **100x faster** than `bun x` for locally installed packages due to Bun's fast startup times.
 
 ---
 
