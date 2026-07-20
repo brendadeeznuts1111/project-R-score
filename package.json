@@ -1616,6 +1616,8 @@
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
+    "harness:violations": "bun tools/harness-violations.ts",
+    "harness:violations:open": "bun tools/harness-violations.ts --open=1",
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
     "start:payments": "bun run server/payment-webhook-server.ts",

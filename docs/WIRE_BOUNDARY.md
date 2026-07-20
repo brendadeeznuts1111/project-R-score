@@ -97,6 +97,11 @@ Regex SSOT: `BOUNDARY_FN_NAME_RE` in the same file.
 bun run lint:harness
 bunx eslint --config eslint.harness.config.ts path/to/file.ts
 bun tools/branded-id-check.ts --staged --strict
+
+# Organize easy violations (path:line) + open in editor (bunfig [debug].editor)
+bun tools/harness-violations.ts --path lib/r2 --rule unknown
+bun tools/harness-violations.ts --open=3
+bun run harness:violations
 ```
 
 ### Suppressions (rare)
