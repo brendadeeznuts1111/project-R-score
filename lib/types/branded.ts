@@ -73,6 +73,16 @@ export type DeploymentId = BrandedString<'DeploymentId'>;
 export type VersionId = BrandedString<'VersionId'>;
 export type AuditId = BrandedString<'AuditId'>;
 
+// ── Operations / resources ───────────────────────────────────────────────
+export type OperationId = BrandedString<'OperationId'>;
+export type ResourceId = BrandedString<'ResourceId'>;
+export type ProjectId = BrandedString<'ProjectId'>;
+export type PipelineId = BrandedString<'PipelineId'>;
+export type JobId = BrandedString<'JobId'>;
+export type StepId = BrandedString<'StepId'>;
+export type WebhookId = BrandedString<'WebhookId'>;
+export type FeedId = BrandedString<'FeedId'>;
+
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
@@ -98,3 +108,11 @@ export const asPolicyId = (v: string): PolicyId => makeId(v, 'PolicyId');
 export const asDeploymentId = (v: string): DeploymentId => makeId(v, 'DeploymentId');
 export const asVersionId = (v: string): VersionId => makeId(v, 'VersionId');
 export const asAuditId = (v: string): AuditId => makeId(v, 'AuditId');
+export const asOperationId = (v: string): OperationId => makeId(v, 'OperationId');
+export const asResourceId = (v: string): ResourceId => makeId(v, 'ResourceId');
+export const asProjectId = (v: string): ProjectId => makeId(v, 'ProjectId');
+export const asPipelineId = (v: string): PipelineId => makeId(v, 'PipelineId');
+export const asJobId = (v: string): JobId => makeId(v, 'JobId');
+export const asStepId = (v: string): StepId => makeId(v, 'StepId');
+export const asWebhookId = (v: string): WebhookId => makeId(v, 'WebhookId');
+export const asFeedId = (v: string): FeedId => makeId(v, 'FeedId');
