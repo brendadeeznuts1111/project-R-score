@@ -18,6 +18,13 @@ import {
   parseVersionFlag,
   normalizeBunVersion,
   applyChangelogOverlay,
+  listCells,
+  shortType,
+  shortStability,
+  shortSection,
+  shortUrl,
+  buildListColumns,
+  formatListTable,
   type DocCatalogEntry,
 } from '../tools/bun-docs-catalog.ts';
 import {
@@ -177,5 +184,92 @@ describe('bun-docs-changelog overlay', () => {
     expect(e.fixedIn).toBe('1.3.12');
     expect(e.changeNote).toBeTruthy();
     expect(e.blogUrl).toBe('https://bun.com/blog/bun-v1.3.12#bugfixes');
+  });
+});
+
+describe('catalog list table cells', () => {
+  test('short labels compress type stability section', () => {
+    expect(shortType('cli-flag')).toBe('flag');
+    expect(shortType('config')).toBe('cfg');
+    expect(shortStability('experimental')).toBe('exp');
+    expect(shortStability('stable')).toBe('ok');
+    expect(shortSection('bundler')).toBe('bundle');
+    expect(shortSection('reference')).toBe('ref');
+  });
+
+  test('shortUrl strips docs and release prefixes', () => {
+    expect(shortUrl('https://bun.com/docs/runtime/terminal#x')).toBe('runtime/terminal#x');
+    expect(shortUrl('https://github.com/oven-sh/bun/releases/tag/bun-v1.3.5')).toBe('tag/bun-v1.3.5');
+    expect(shortUrl('https://bun.com/blog/bun-v1.3.5#pty')).toBe('blog/bun-v1.3.5#pty');
+  });
+
+  test('listCells fills PIN and release/blog defaults when missing', () => {
+    const e: DocCatalogEntry = {
+      name: 'Bun.spawn',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/child-process',
+      allPages: ['https://bun.com/docs/runtime/child-process'],
+      section: 'runtime',
+    };
+    const cells = listCells(e, { bunVersion: '1.4.0' });
+    expect(cells.pin).toBe('1.4.0');
+    expect(cells.ship).toBe('—');
+    expect(cells.fix).toBe('—');
+    expect(cells.ver).toBe('1.4.0');
+    expect(cells.release).toBe('tag/bun-v1.4.0');
+    expect(cells.blog).toBe('blog/bun-v1.4.0');
+    expect(cells.doc).toBe('runtime/child-process');
+    expect(cells.stab).toBe('ok');
+  });
+
+  test('listCells prefers ship version for VER over pin', () => {
+    const e: DocCatalogEntry = {
+      name: 'Bun.Terminal',
+      type: 'api',
+      stability: 'stable',
+      releasedIn: '1.3.5',
+      fixedIn: undefined,
+      changedIn: '1.3.14',
+      verifiedOn: '1.4.0',
+      canonicalPage: 'https://bun.com/docs/runtime/terminal',
+      allPages: ['https://bun.com/docs/runtime/terminal'],
+      section: 'runtime',
+      releaseUrl: 'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.5',
+      blogUrl: 'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
+    };
+    const cells = listCells(e, { bunVersion: '1.4.0' });
+    expect(cells.ship).toBe('1.3.5');
+    expect(cells.chg).toBe('1.3.14');
+    expect(cells.pin).toBe('1.4.0');
+    expect(cells.ver).toBe('1.3.5');
+    expect(cells.blog).toContain('blog/bun-v1.3.5');
+  });
+
+  test('buildListColumns default includes SHIP FIX CHG PIN', () => {
+    const keys = buildListColumns({}).map(c => c.key);
+    expect(keys).toContain('ship');
+    expect(keys).toContain('fix');
+    expect(keys).toContain('chg');
+    expect(keys).toContain('pin');
+    expect(keys).toContain('doc');
+  });
+
+  test('formatListTable renders header and a row', () => {
+    const e: DocCatalogEntry = {
+      name: 'Bun.Terminal',
+      type: 'api',
+      stability: 'stable',
+      releasedIn: '1.3.5',
+      verifiedOn: '1.4.0',
+      canonicalPage: 'https://bun.com/docs/runtime/terminal',
+      allPages: ['https://bun.com/docs/runtime/terminal'],
+      section: 'runtime',
+    };
+    const lines = formatListTable([e], { bunVersion: '1.4.0' }, buildListColumns({}));
+    expect(lines[0]).toContain('NAME');
+    expect(lines[0]).toContain('SHIP');
+    expect(lines[2]).toContain('Bun.Terminal');
+    expect(lines[2]).toContain('1.3.5');
   });
 });

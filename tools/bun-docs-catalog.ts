@@ -27,12 +27,13 @@
  *
  * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0]
  * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
- *                 [--search=WebView] [--verbose] [--json]
+ *                 [--search=WebView] [--wide] [--notes] [--compact] [--verbose] [--json]
  * Lookup:  bun tools/bun-docs-catalog.ts get Bun.WebView
  * Verify:  bun tools/bun-docs-catalog.ts verify   # catalog bunVersion vs runtime
  *
  * List header: # catalog bunVersion=…  # release …  # blog https://bun.com/blog/bun-v…
- * Columns: name · type · stability · releasedIn · lastUpdated · doc URL (page#anchor)
+ * Default columns: NAME · SEC · TYPE · STAB · SHIP · FIX · PIN · DOC
+ * Wide (+): CHG · UPDATED · REL (tag) · BLOG (short) · NOTE (with --notes)
  *
  * Consumed by tools/bun-doc-refs.ts (`catalog` / enriched `suggest`).
  */
@@ -44,23 +45,6 @@ import { changelogIndex } from './bun-docs-changelog.ts';
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
-
-/** OSC 8 terminal hyperlink. In terminals without support the visible text is still shown. */
-function terminalLink(url: string, text: string): string {
-  return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
-}
-
-/** Display width of a string, ignoring ANSI / OSC escape sequences. */
-function visibleWidth(text: string): number {
-  // @see https://bun.com/docs/runtime/utils#bun-stringwidth
-  return Bun.stringWidth(text, { countAnsiEscapeCodes: false });
-}
-
-/** Right-pad to a visible width (like String.prototype.padEnd but ANSI-aware). */
-function displayPadEnd(text: string, width: number): string {
-  const w = visibleWidth(text);
-  return w < width ? `${text}${' '.repeat(width - w)}` : text;
-}
 
 export type DocRefType = 'api' | 'cli-flag' | 'config' | 'concept';
 export type DocStability = 'stable' | 'experimental' | 'deprecated';
@@ -115,6 +99,251 @@ export type DocCatalogEntry = {
   section: DocSection;
   aliases?: string[];
 };
+
+/** OSC 8 terminal hyperlink. In terminals without support the visible text is still shown. */
+function terminalLink(url: string, text: string): string {
+  return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
+}
+
+/** Display width of a string, ignoring ANSI / OSC escape sequences. */
+function visibleWidth(text: string): number {
+  // @see https://bun.com/docs/runtime/utils#bun-stringwidth
+  return Bun.stringWidth(text, { countAnsiEscapeCodes: false });
+}
+
+/** Right-pad to a visible width (like String.prototype.padEnd but ANSI-aware). */
+function displayPadEnd(text: string, width: number): string {
+  const w = visibleWidth(text);
+  return w < width ? `${text}${' '.repeat(width - w)}` : text;
+}
+
+/** Truncate to visible width with ellipsis when needed. */
+function displayTruncate(text: string, width: number): string {
+  if (width <= 0) return '';
+  if (visibleWidth(text) <= width) return text;
+  if (width <= 1) return '…';
+  let out = '';
+  for (const ch of text) {
+    if (visibleWidth(out + ch) > width - 1) break;
+    out += ch;
+  }
+  return `${out}…`;
+}
+
+function displayCell(text: string, width: number, align: 'left' | 'right' = 'left'): string {
+  const t = displayTruncate(text, width);
+  if (align === 'right') {
+    const w = visibleWidth(t);
+    return w < width ? `${' '.repeat(width - w)}${t}` : t;
+  }
+  return displayPadEnd(t, width);
+}
+
+/** Stable short labels for table density. */
+export function shortType(type: DocRefType): string {
+  switch (type) {
+    case 'cli-flag':
+      return 'flag';
+    case 'config':
+      return 'cfg';
+    case 'concept':
+      return 'concept';
+    case 'api':
+    default:
+      return 'api';
+  }
+}
+
+export function shortStability(stability: DocStability): string {
+  switch (stability) {
+    case 'experimental':
+      return 'exp';
+    case 'deprecated':
+      return 'dep';
+    case 'stable':
+    default:
+      return 'ok';
+  }
+}
+
+export function shortSection(section: DocSection): string {
+  switch (section) {
+    case 'runtime':
+      return 'runtime';
+    case 'bundler':
+      return 'bundle';
+    case 'test':
+      return 'test';
+    case 'guides':
+      return 'guide';
+    case 'pm':
+      return 'pm';
+    case 'reference':
+      return 'ref';
+    case 'other':
+    default:
+      return 'other';
+  }
+}
+
+/** Compress docs/blog/github URLs for table display. */
+export function shortUrl(url: string): string {
+  return url
+    .replace(/^https:\/\/bun\.com\/docs\//, '')
+    .replace(/^https:\/\/bun\.com\/blog\//, 'blog/')
+    .replace(/^https:\/\/bun\.com\//, '')
+    .replace(/^https:\/\/github\.com\/oven-sh\/bun\/releases\/tag\//, 'tag/')
+    .replace(/^https:\/\/github\.com\/oven-sh\/bun\/commit\//, 'commit/')
+    .replace(/^https:\/\/github\.com\/oven-sh\/bun\//, 'gh/');
+}
+
+/**
+ * Effective display cells with strong defaults when fields are missing.
+ * PIN always falls back to catalog bunVersion; SHIP uses releasedIn only;
+ * VER is the best version for release/blog links (ship → fix → change → pin).
+ */
+export function listCells(
+  e: DocCatalogEntry,
+  meta: { bunVersion: string }
+): {
+  name: string;
+  section: string;
+  type: string;
+  stab: string;
+  ship: string;
+  fix: string;
+  chg: string;
+  pin: string;
+  ver: string;
+  updated: string;
+  doc: string;
+  release: string;
+  blog: string;
+  note: string;
+} {
+  const pin = e.verifiedOn ?? meta.bunVersion;
+  const ship = e.releasedIn ?? '—';
+  const fix = e.fixedIn ?? '—';
+  const chg = e.changedIn ?? '—';
+  const ver = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? pin;
+  const docs = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
+  const release = e.releaseUrl ?? releaseUrlFor(ver);
+  const blog = e.blogUrl ?? blogUrlFor(ver);
+  return {
+    name: e.name,
+    section: shortSection(e.section),
+    type: shortType(e.type),
+    stab: shortStability(e.stability),
+    ship,
+    fix,
+    chg,
+    pin,
+    ver,
+    updated: e.lastUpdated?.slice(0, 10) ?? '—',
+    doc: shortUrl(docs),
+    release: shortUrl(release),
+    blog: shortUrl(blog),
+    note: e.changeNote ?? '',
+  };
+}
+
+type ListCol = {
+  key: keyof ReturnType<typeof listCells>;
+  header: string;
+  width: number;
+  align?: 'left' | 'right';
+};
+
+/** Default table: dense but informative (stronger defaults: PIN always filled). */
+const LIST_COLS_DEFAULT: ListCol[] = [
+  { key: 'name', header: 'NAME', width: 26 },
+  { key: 'section', header: 'SEC', width: 7 },
+  { key: 'type', header: 'TYPE', width: 7 },
+  { key: 'stab', header: 'STAB', width: 4 },
+  { key: 'ship', header: 'SHIP', width: 7 },
+  { key: 'fix', header: 'FIX', width: 7 },
+  { key: 'chg', header: 'CHG', width: 7 },
+  { key: 'pin', header: 'PIN', width: 7 },
+  { key: 'updated', header: 'UPDATED', width: 10 },
+  { key: 'doc', header: 'DOC', width: 36 },
+];
+
+/** Extra columns for --wide (release/blog link short forms). */
+const LIST_COLS_WIDE: ListCol[] = [
+  { key: 'ver', header: 'VER', width: 7 },
+  { key: 'release', header: 'RELEASE', width: 16 },
+  { key: 'blog', header: 'BLOG', width: 32 },
+];
+
+const LIST_COL_NOTE: ListCol = { key: 'note', header: 'NOTE', width: 36 };
+
+/** Legacy thin table (--compact). */
+const LIST_COLS_COMPACT: ListCol[] = [
+  { key: 'name', header: 'NAME', width: 32 },
+  { key: 'type', header: 'TYPE', width: 10 },
+  { key: 'stab', header: 'STAB', width: 12 },
+  { key: 'ship', header: 'REL', width: 8 },
+  { key: 'updated', header: 'UPDATED', width: 12 },
+  { key: 'doc', header: 'DOC', width: 48 },
+];
+
+export function buildListColumns(opts: {
+  compact?: boolean;
+  wide?: boolean;
+  notes?: boolean;
+  showVersion?: boolean;
+  showRelease?: boolean;
+}): ListCol[] {
+  if (opts.compact) {
+    const cols = [...LIST_COLS_COMPACT];
+    if (opts.showVersion) cols.splice(4, 0, { key: 'pin', header: 'VERIFIED', width: 10 });
+    if (opts.showRelease) cols.splice(cols.length - 1, 0, { key: 'release', header: 'RELEASE', width: 22 });
+    return cols;
+  }
+  const cols = [...LIST_COLS_DEFAULT];
+  if (opts.wide || opts.showVersion || opts.showRelease) {
+    // Insert wide cols before DOC
+    const doc = cols.pop()!;
+    cols.push(...LIST_COLS_WIDE);
+    if (opts.notes) cols.push(LIST_COL_NOTE);
+    cols.push(doc);
+    return cols;
+  }
+  if (opts.notes) {
+    const doc = cols.pop()!;
+    cols.push(LIST_COL_NOTE, doc);
+  }
+  return cols;
+}
+
+export function formatListTable(
+  entries: DocCatalogEntry[],
+  meta: { bunVersion: string },
+  cols: ListCol[],
+  opts?: { links?: boolean }
+): string[] {
+  const lines: string[] = [];
+  lines.push(cols.map(c => displayCell(c.header, c.width, c.align)).join(' '));
+  lines.push(cols.map(c => '─'.repeat(c.width)).join(' '));
+  for (const e of entries) {
+    const cells = listCells(e, meta);
+    const row = cols.map(c => {
+      let val = cells[c.key] || '—';
+      if (c.key === 'doc' && opts?.links) {
+        const full = e.docsUrl ?? e.canonicalPage;
+        val = terminalLink(full, cells.doc || full);
+      } else if (c.key === 'release' && opts?.links && cells.release) {
+        val = terminalLink(e.releaseUrl ?? releaseUrlFor(cells.ver), cells.release);
+      } else if (c.key === 'blog' && opts?.links && cells.blog) {
+        val = terminalLink(e.blogUrl ?? blogUrlFor(cells.ver), cells.blog);
+      }
+      if (!val) val = '—';
+      return displayCell(val, c.width, c.align);
+    });
+    lines.push(row.join(' '));
+  }
+  return lines;
+}
 
 /** Normalize bun-v1.3.12 / v1.3.12 / 1.3.12 → 1.3.12 */
 export function normalizeBunVersion(version: string): string {
@@ -867,6 +1096,10 @@ async function main(): Promise<void> {
     let search: string | undefined;
     const json = rest.includes('--json');
     const verbose = rest.includes('--verbose') || rest.includes('-v');
+    const wide = rest.includes('--wide') || rest.includes('-w');
+    const notes = rest.includes('--notes');
+    const compact = rest.includes('--compact');
+    // --version / --release remain as aliases that expand to wide columns
     let showVersion = false;
     let showRelease = false;
     let links = false;
@@ -899,7 +1132,10 @@ async function main(): Promise<void> {
           e.aliases?.some(a => a.toLowerCase().includes(q)) ||
           e.description?.toLowerCase().includes(q) ||
           e.canonicalPage.toLowerCase().includes(q) ||
-          e.anchor?.toLowerCase().includes(q)
+          e.anchor?.toLowerCase().includes(q) ||
+          e.changeNote?.toLowerCase().includes(q) ||
+          e.releasedIn?.includes(q) ||
+          e.fixedIn?.includes(q)
       );
     }
     if (json) {
@@ -913,7 +1149,7 @@ async function main(): Promise<void> {
             docsRoot: meta.docsRoot,
             versionPinned: meta.versionPinned,
             count: entries.length,
-            entries,
+            entries: entries.map(e => ({ ...e, ...listCells(e, meta) })),
           },
           null,
           2
@@ -931,27 +1167,21 @@ async function main(): Promise<void> {
       if (search) console.info(`(filter --search=${search})`);
       return;
     }
-    const verHeader = showVersion ? `${'VERIFIED'.padEnd(10)} ` : '';
-    const relHeader = showRelease ? `${'RELEASE'.padEnd(55)} ` : '';
-    console.info(
-      `${'NAME'.padEnd(32)} ${'TYPE'.padEnd(10)} ${'STAB'.padEnd(12)} ${'REL'.padEnd(8)} ${'UPDATED'.padEnd(12)} ${verHeader}${relHeader}DOC (page#anchor)`
-    );
-    console.info(
-      `${'─'.repeat(32)} ${'─'.repeat(10)} ${'─'.repeat(12)} ${'─'.repeat(8)} ${'─'.repeat(12)} ${showVersion ? '─'.repeat(11) : ''}${showRelease ? '─'.repeat(56) : ''}${'─'.repeat(48)}`
-    );
-    for (const e of entries) {
-      const url = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
-      const displayUrl = links ? terminalLink(url, url) : url;
-      const rel = (e.releasedIn ?? '—').padEnd(8);
-      const upd = (e.lastUpdated?.slice(0, 10) ?? '—').padEnd(12);
-      const ver = showVersion ? `${(e.verifiedOn ?? '—').padEnd(10)} ` : '';
-      const release = showRelease ? `${(e.releaseUrl ?? '—').padEnd(55)} ` : '';
-      console.info(
-        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${ver}${release}${displayPadEnd(displayUrl, 48)}`
-      );
+    const cols = buildListColumns({
+      compact,
+      wide,
+      notes,
+      showVersion,
+      showRelease,
+    });
+    for (const line of formatListTable(entries, meta, cols, { links })) {
+      console.info(line);
     }
     console.info(`\n${entries.length} entries`);
     if (search) console.info(`(filter --search=${search})`);
+    if (!compact && !wide && !notes) {
+      console.info('(tips: --wide VER/RELEASE/BLOG · --notes changeNote · --compact legacy)');
+    }
     return;
   }
   if (cmd === 'get') {
@@ -986,11 +1216,15 @@ async function main(): Promise<void> {
   console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify [args]');
   console.error('  build [--version=1.4.0]   # default Bun.version; pins catalog + releaseUrl');
   console.error('  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config');
-  console.error('       --search=WebView   # substring match on name/alias/desc/url/anchor');
-  console.error('       --version          # show verifiedOn column');
-  console.error('       --release          # show releaseUrl column');
-  console.error('       --verbose / -v     # full entry cards with docsUrl + releaseUrl');
-  console.error('       --json');
+  console.error('       --search=WebView   # name/alias/desc/url/anchor/note/version');
+  console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');
+  console.error('       --wide / -w        # + CHG UPDATED VER RELEASE BLOG');
+  console.error('       --notes            # + NOTE (changeNote)');
+  console.error('       --version/--release  # aliases that expand wide columns');
+  console.error('       --compact          # legacy thin table');
+  console.error('       --links            # OSC-8 hyperlinks on DOC/RELEASE/BLOG');
+  console.error('       --verbose / -v     # full entry cards');
+  console.error('       --json             # entries + computed list cells');
   console.error('  get <name>              # entry + catalog version header');
   console.error('  verify [--version=…]    # catalog bunVersion vs runtime (or flag)');
   process.exit(1);
