@@ -1,8 +1,13 @@
-// lib/p2p/migration-workflow.ts — Step-by-step business change migration workflow
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// packages/p2p/src/migration-workflow.ts — Step-by-step business change migration workflow
 
 import { BusinessContinuity } from './business-continuity';
 import Redis from 'ioredis';
-import { mkdir } from 'node:fs/promises';
+
+function ensureDir(dir: string): void {
+  Bun.spawnSync(['mkdir', '-p', dir], { stdout: 'ignore', stderr: 'ignore' });
+}
 
 const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
   retryStrategy: times => Math.min(times * 50, 2000),
@@ -88,11 +93,7 @@ export async function executeBusinessMigration(
 
   // Save report
   const reportsDir = 'migrations';
-  try {
-    await mkdir(reportsDir, { recursive: true });
-  } catch {
-    // Directory might already exist
-  }
+  ensureDir(reportsDir);
 
   const reportName = `migration-${oldAlias}-${newAlias}-${Date.now()}.json`;
   await Bun.write(`${reportsDir}/${reportName}`, JSON.stringify(report, null, 2));
@@ -236,11 +237,7 @@ export async function handlePaymentAccountLoss(
     ],
   };
 
-  try {
-    await mkdir('emergency', { recursive: true });
-  } catch {
-    // Directory might already exist
-  }
+  ensureDir('emergency');
 
   await Bun.write(
     `emergency/${alias}-${provider}-${Date.now()}.json`,

@@ -1,6 +1,7 @@
-// lib/rip/index.ts — Core code analysis and transmutation engine
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// packages/rip/src/index.ts — Core code analysis and transmutation engine
 
-import { readFileSync } from 'node:fs';
 
 // ============================================================================
 // CORE TYPES & INTERFACES
@@ -63,10 +64,12 @@ export class RipgrepEngine {
    */
   private loadConfig(configPath: string): RipgrepConfig {
     try {
-      const configText = readFileSync(configPath, 'utf8');
+      const file = Bun.file(configPath);
+      if (!file.size) throw new Error('empty or missing');
+      const configText = Bun.peek(file.text()) as string;
       // Simple YAML parsing for now - in production, use proper YAML parser
       return this.parseConfig(configText);
-    } catch (error) {
+    } catch {
       console.warn(`⚠️  Could not load config from ${configPath}, using defaults`);
       return this.getDefaultConfig();
     }

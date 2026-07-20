@@ -348,6 +348,14 @@ test-binary-*
 # Root-level accidental CLI names (nested product binaries live under ignored trees)
 /cascade-mover
 /mega-liner
+# Bun compile scratch + common drop-in binaries
+**/.*.bun-build
+*.bun-build
+**/bin/compiled/
+**/hyperbun-core
+**/test-embedded
+**/train-anomaly
+**/*.dmg
 
 # Agent-context bloat (regenerable / local only; reports/ already ignored above)
 docs/*.zip

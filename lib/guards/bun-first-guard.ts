@@ -7,7 +7,11 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
-// lib/guards/bun-first-guard.ts — Runtime guard enforcing Bun-native API usage
+// lib/guards/bun-first-guard.ts — Legacy static-map guard + CLI
+//
+// Prefer catalog-driven SSOT: packages/guards (config/bun-dx-catalog.ts).
+// New call sites should import from @factorywager/guards / packages/guards.
+
 
 // Violation tracking
 const violations: Array<{

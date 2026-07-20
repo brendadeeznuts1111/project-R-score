@@ -7,13 +7,13 @@
  *   bun run packages:list --filter=core|active|experimental|archive|scratch
  *   bun run packages:list --include-scaffolds   # show {{name}} / template noise
  *   bun run packages:list --paths               # add directory column
+ *
+ * @see https://bun.com/docs/runtime/glob — Bun.Glob
+ * @see https://bun.com/docs/runtime/file-io — Bun.file
  */
 
-import { readdir, readFile, stat } from 'node:fs/promises';
-import path from 'node:path';
-
 const ROOT = process.cwd();
-const EXCLUDE = new Set([
+const SKIP_SEGMENTS = new Set([
   'node_modules',
   '.npm-cache',
   '.git',
@@ -26,6 +26,17 @@ const EXCLUDE = new Set([
 const FILTER = process.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
 const INCLUDE_SCAFFOLDS = process.argv.includes('--include-scaffolds');
 const SHOW_PATHS = process.argv.includes('--paths');
+
+const PKG_GLOB = new Bun.Glob('**/package.json');
+
+function shouldSkipRel(rel: string): boolean {
+  return rel.split('/').some(seg => seg.startsWith('.') || SKIP_SEGMENTS.has(seg));
+}
+
+function dirOfPackageJson(rel: string): string {
+  const i = rel.lastIndexOf('/');
+  return i === -1 ? '.' : rel.slice(0, i);
+}
 
 function triage(rel: string): string {
   if (rel.startsWith('archive') || rel.includes('/archive/')) return 'archive';
@@ -75,56 +86,26 @@ function isScaffoldNoise(name: string, dir: string): boolean {
     /(^|\/)scaffold(\/|$)/.test(norm)
   )
     return true;
-  // Geelark / codepoint create scaffolds
   if (norm.includes('/create/template') || norm.includes('/@systems-dashboard/template'))
     return true;
   return false;
 }
 
-async function* walkFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    if (entry === '.git' || entry === 'node_modules') continue;
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE.has(entry) || entry.startsWith('.')) continue;
-      yield* walkFiles(full);
-    } else if (entry === 'package.json') {
-      yield full;
-    }
-  }
-}
-
 const rows: Array<[string, string, string, string, string]> = [];
 let skippedScaffolds = 0;
 
-for await (const file of walkFiles(ROOT)) {
-  let content: string;
-  try {
-    content = await readFile(file, 'utf-8');
-  } catch {
-    continue;
-  }
+for (const rel of PKG_GLOB.scanSync({ cwd: ROOT, onlyFiles: true, dot: false })) {
+  if (shouldSkipRel(rel)) continue;
+  const full = `${ROOT}/${rel}`;
   let data: Record<string, unknown>;
   try {
-    data = JSON.parse(content);
+    data = (await Bun.file(full).json()) as Record<string, unknown>;
   } catch {
     continue;
   }
   const name = data.name as string;
   if (!name) continue;
-  const dir = path.relative(ROOT, path.dirname(file));
+  const dir = dirOfPackageJson(rel);
   if (!INCLUDE_SCAFFOLDS && isScaffoldNoise(name, dir)) {
     skippedScaffolds++;
     continue;
@@ -133,7 +114,7 @@ for await (const file of walkFiles(ROOT)) {
   const priv = data.private ? '🔒' : '';
   const pub = (data.publishConfig as Record<string, unknown>) || {};
   const reg = registryLabel((pub.registry as string) || '');
-  const tag = triage(path.relative(ROOT, path.dirname(file)));
+  const tag = triage(dir);
   if (FILTER && tag !== FILTER) continue;
   rows.push([tag, `${name}${priv}`, ver, reg, dir]);
 }

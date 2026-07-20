@@ -1,6 +1,6 @@
-// lib/versioning/version-cli.ts — CLI for version management and rollbacks
-
-import { readFileSync } from 'node:fs';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// packages/versioning/src/version-cli.ts — CLI for version management and rollbacks
 
 import VersionTracker from './version-tracking';
 
@@ -557,11 +557,12 @@ class VersionCLI {
   // UTILITY METHODS
   // ============================================================================
 
-  private loadConfig(configPath: string): any {
+  private loadConfig(configPath: string): Record<string, unknown> {
     try {
-      const configData = readFileSync(configPath, 'utf8');
-      return JSON.parse(configData);
-    } catch (error) {
+      const file = Bun.file(configPath);
+      if (!file.size) return {};
+      return Bun.peek(file.json()) as Record<string, unknown>;
+    } catch {
       console.warn(`Warning: Could not load config from ${configPath}, using defaults`);
       return {};
     }
