@@ -1,5 +1,7 @@
 // lib/core/core-types.ts — Core type definitions
 
+import { type OperationId } from '../types/branded.ts';
+
 // ============================================================================
 // CORE ENUMERATIONS
 // ============================================================================
@@ -90,7 +92,7 @@ export enum CryptoAlgorithm {
  * Base interface for all enterprise operations
  */
 export interface EnterpriseOperation {
-  readonly operationId: string;
+  readonly operationId: OperationId;
   readonly timestamp: number;
   readonly status: OperationStatus;
   readonly metadata?: Record<string, unknown>;

@@ -14,7 +14,7 @@ export class ABTestingManager {
   }
 
   registerTest(
-    testId: string,
+    testId: string, // brand-ok — single-use domain id
     variants: string[],
     options?: { weights?: number[]; cookieName?: string; expiryDays?: number }
   ): void {

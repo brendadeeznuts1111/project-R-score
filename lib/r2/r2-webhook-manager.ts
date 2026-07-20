@@ -3,6 +3,7 @@
 // lib/r2/r2-webhook-manager.ts — R2 webhook and external integration manager
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { type WebhookId, asWebhookId } from '../types/branded.ts';
 import { r2EventSystem } from './r2-event-system';
 
 export type WebhookEvent =
@@ -18,7 +19,7 @@ export type WebhookEvent =
   | '*';
 
 export interface Webhook {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   url: string;
   events: WebhookEvent[];
@@ -45,8 +46,8 @@ export interface Webhook {
 }
 
 export interface WebhookDelivery {
-  id: string;
-  webhookId: string;
+  id: string; // brand-ok — opaque entity primary key
+  webhookId: WebhookId;
   event: {
     type: string;
     timestamp: string;
@@ -232,7 +233,7 @@ export class R2WebhookManager {
       }
 
       // Create delivery
-      this.createDelivery(webhook.id, event);
+      this.createDelivery(asWebhookId(webhook.id), event);
     }
   }
 
@@ -282,7 +283,7 @@ export class R2WebhookManager {
   /**
    * Create delivery
    */
-  private createDelivery(webhookId: string, event: unknown): WebhookDelivery {
+  private createDelivery(webhookId: WebhookId, event: unknown): WebhookDelivery {
     const delivery: WebhookDelivery = {
       id: `del-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       webhookId,
@@ -436,7 +437,7 @@ export class R2WebhookManager {
    * Test webhook
    */
   async testWebhook(
-    webhookId: string
+    webhookId: WebhookId
   ): Promise<{ success: boolean; statusCode?: number; error?: string }> {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook) throw new Error(`Webhook not found: ${webhookId}`);
@@ -602,7 +603,7 @@ if (import.meta.main) {
 
   // Test the webhook
   console.info(styled('\n🧪 Testing webhook...', 'info'));
-  const result = await webhooks.testWebhook(webhook.id);
+  const result = await webhooks.testWebhook(asWebhookId(webhook.id));
   console.info(styled(`  Success: ${result.success}`, result.success ? 'success' : 'error'));
   if (result.statusCode) {
     console.info(styled(`  Status: ${result.statusCode}`, 'muted'));

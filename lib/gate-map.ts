@@ -7,11 +7,13 @@
 
 import { join } from 'node:path';
 
+import { type ProjectId, asProjectId } from './types/branded.ts';
+
 export const REPO_ROOT = import.meta.dir.replace(/\/lib$/, '');
 export const DEFAULT_GATE_MAP_PATH = join(REPO_ROOT, '.agents/skills/ast-grep/gate-map.json');
 
 export type GateMapGate = {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   label: string;
   description: string;
   cmd: string[];
@@ -22,7 +24,7 @@ export type GateMapGate = {
 };
 
 export type GateMapProject = {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   zone: string;
   name: string;
   path: string;
@@ -45,7 +47,7 @@ export type GateMap = {
 
 export type GateMapValidationIssue = {
   level: 'error' | 'warning';
-  projectId?: string;
+  projectId?: ProjectId;
   message: string;
 };
 
@@ -58,7 +60,7 @@ export type GateMapValidation = {
 export type ProjectFilter = {
   all?: boolean;
   zone?: string;
-  projectId?: string;
+  projectId?: ProjectId;
   changedOnly?: boolean;
 };
 
@@ -97,7 +99,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
     if (ids.has(project.id)) {
       issues.push({
         level: 'error',
-        projectId: project.id,
+        projectId: asProjectId(project.id),
         message: `Duplicate project id: ${project.id}`,
       });
     }
@@ -106,7 +108,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
     if (!map.zones[project.zone]) {
       issues.push({
         level: 'warning',
-        projectId: project.id,
+        projectId: asProjectId(project.id),
         message: `Zone "${project.zone}" not documented in gate-map.zones`,
       });
     }
@@ -119,7 +121,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
       if (!hasOtherMarker && project.path !== '.') {
         issues.push({
           level: 'error',
-          projectId: project.id,
+          projectId: asProjectId(project.id),
           message: `Missing package.json at ${absPath}`,
         });
       }
@@ -128,7 +130,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
       if (!resolved.startsWith(root) && !project.pathEnv) {
         issues.push({
           level: 'warning',
-          projectId: project.id,
+          projectId: asProjectId(project.id),
           message: `External project resolved outside monorepo: ${resolved}`,
         });
       }
@@ -137,7 +139,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
     if (project.gates.length === 0) {
       issues.push({
         level: 'warning',
-        projectId: project.id,
+        projectId: asProjectId(project.id),
         message: 'No gates defined',
       });
     }
@@ -147,7 +149,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
       if (gateIds.has(gate.id)) {
         issues.push({
           level: 'error',
-          projectId: project.id,
+          projectId: asProjectId(project.id),
           message: `Duplicate gate id: ${gate.id}`,
         });
       }
@@ -155,7 +157,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
       if (gate.cmd.length === 0) {
         issues.push({
           level: 'error',
-          projectId: project.id,
+          projectId: asProjectId(project.id),
           message: `Gate ${gate.id} has empty cmd`,
         });
       }

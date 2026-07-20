@@ -4,7 +4,7 @@
 import { GlobalErrorHandler, type GlobalErrorConfig } from './global-error-handler';
 
 interface ShutdownHandler {
-  id: string;
+  id: string; // brand-ok — single-use domain id (locally generated handler key, no matching brand)
   name: string;
   handler: () => Promise<void>;
 }

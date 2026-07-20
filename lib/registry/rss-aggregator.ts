@@ -4,9 +4,10 @@
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
+import { type FeedId, asFeedId } from '../types/branded.ts';
 
 export interface RSSFeed {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   url: string;
   type: 'bun' | 'package' | 'github' | 'custom';
@@ -16,8 +17,8 @@ export interface RSSFeed {
 }
 
 export interface RSSItem {
-  id: string;
-  feedId: string;
+  id: string; // brand-ok — opaque entity primary key
+  feedId: FeedId;
   title: string;
   description?: string;
   content?: string;
@@ -166,13 +167,13 @@ export class RSSAggregator {
     }
 
     const xml = await response.text();
-    return this.parseRSS(xml, feed.id);
+    return this.parseRSS(xml, asFeedId(feed.id));
   }
 
   /**
    * Parse RSS/Atom XML
    */
-  private parseRSS(xml: string, feedId: string): RSSItem[] {
+  private parseRSS(xml: string, feedId: FeedId): RSSItem[] {
     const items: RSSItem[] = [];
 
     // Try RSS format
@@ -201,7 +202,7 @@ export class RSSAggregator {
   /**
    * Parse RSS item
    */
-  private parseRSSItem(xml: string, feedId: string): RSSItem | null {
+  private parseRSSItem(xml: string, feedId: FeedId): RSSItem | null {
     const title = xml.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/)?.[1]?.trim();
     const link = xml.match(/<link>(.*?)<\/link>/)?.[1];
     const description = xml.match(
@@ -230,7 +231,7 @@ export class RSSAggregator {
   /**
    * Parse Atom entry
    */
-  private parseAtomItem(xml: string, feedId: string): RSSItem | null {
+  private parseAtomItem(xml: string, feedId: FeedId): RSSItem | null {
     const title = xml.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/)?.[1]?.trim();
     const link = xml.match(/<link[^>]*href="([^"]*)"/)?.[1];
     const content = xml.match(/<content[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/content>/)?.[1];
@@ -277,7 +278,7 @@ export class RSSAggregator {
    */
   getItems(
     options: {
-      feedId?: string;
+      feedId?: FeedId;
       category?: string;
       unreadOnly?: boolean;
       starredOnly?: boolean;

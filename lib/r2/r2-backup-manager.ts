@@ -1,5 +1,6 @@
 // lib/r2/r2-backup-manager.ts — R2 backup and restore manager
 
+import { type JobId, type SnapshotId, asJobId, asSnapshotId } from '../types/branded.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 import { r2BatchOperations } from './r2-batch-operations';
@@ -8,7 +9,7 @@ export type BackupType = 'full' | 'incremental' | 'differential';
 export type BackupStatus = 'pending' | 'running' | 'completed' | 'failed' | 'verifying';
 
 export interface BackupJob {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   type: BackupType;
   status: BackupStatus;
@@ -74,8 +75,8 @@ export interface BackupStats {
 }
 
 export interface BackupSnapshot {
-  id: string;
-  jobId: string;
+  id: string; // brand-ok — opaque entity primary key
+  jobId: JobId;
   timestamp: string;
   type: BackupType;
   manifest: BackupManifest;
@@ -99,8 +100,8 @@ export interface BackupManifest {
 }
 
 export interface RestoreJob {
-  id: string;
-  snapshotId: string;
+  id: string; // brand-ok — opaque entity primary key
+  snapshotId: SnapshotId;
   target: BackupSource;
   options: RestoreOptions;
   status: BackupStatus;
@@ -242,7 +243,7 @@ export class R2BackupManager {
       // Create snapshot
       const snapshot: BackupSnapshot = {
         id: `snapshot-${Date.now()}`,
-        jobId,
+        jobId: asJobId(jobId),
         timestamp: new Date().toISOString(),
         type: backupType,
         manifest,
@@ -308,7 +309,7 @@ export class R2BackupManager {
    * Restore from backup
    */
   async restoreBackup(
-    snapshotId: string,
+    snapshotId: string, // brand-ok — boundary accepts plain string; branded internally via asSnapshotId
     target: BackupSource,
     options: RestoreOptions = {}
   ): Promise<RestoreJob> {
@@ -317,7 +318,7 @@ export class R2BackupManager {
 
     const job: RestoreJob = {
       id: `restore-${Date.now()}`,
-      snapshotId,
+      snapshotId: asSnapshotId(snapshotId),
       target,
       options,
       status: 'running',

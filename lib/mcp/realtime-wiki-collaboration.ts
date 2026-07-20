@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 import { WebSocket, WebSocketServer } from 'ws';
 import { WikiTemplate, WikiGenerationResult } from './wiki-generator-mcp';
 import { AdvancedCacheManager } from '../utils/advanced-cache-manager';
+import { type DocumentId, type UserId, asUserId } from '../types/branded.ts';
 
 export interface CollaborationConfig {
   port: number;
@@ -18,7 +19,7 @@ export interface CollaborationConfig {
 }
 
 export interface User {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   email?: string;
   avatar?: string;
@@ -31,7 +32,7 @@ export interface User {
 }
 
 export interface CursorPosition {
-  documentId: string;
+  documentId: DocumentId;
   line: number;
   column: number;
   selection?: {
@@ -46,15 +47,15 @@ export interface DocumentOperation {
   content?: string;
   length?: number;
   attributes?: Record<string, any>;
-  userId: string;
+  userId: UserId;
   timestamp: number;
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
 }
 
 export interface Comment {
-  id: string;
-  documentId: string;
-  userId: string;
+  id: string; // brand-ok — opaque entity primary key
+  documentId: DocumentId;
+  userId: UserId;
   content: string;
   position: {
     line: number;
@@ -72,7 +73,7 @@ export interface Comment {
 }
 
 export interface DocumentState {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   content: string;
   version: number;
   lastModified: number;
@@ -84,8 +85,8 @@ export interface DocumentState {
 }
 
 export interface PresenceUpdate {
-  userId: string;
-  documentId: string;
+  userId: UserId;
+  documentId: DocumentId;
   cursor?: CursorPosition;
   selection?: CursorPosition['selection'];
   status: User['status'];
@@ -103,8 +104,8 @@ export interface CollaborationEvent {
     | 'section-locked'
     | 'section-unlocked'
     | 'presence-update';
-  userId: string;
-  documentId?: string;
+  userId: UserId;
+  documentId?: DocumentId;
   data: any;
   timestamp: number;
 }
@@ -280,7 +281,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       this.broadcastEvent(
         {
           type: 'user-joined',
-          userId: user.id,
+          userId: asUserId(user.id),
           data: {
             name: user.name,
             avatar: user.avatar,
@@ -377,11 +378,11 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         data.documentId,
         {
           type: 'cursor-update',
-          userId: user.id,
+          userId: asUserId(user.id),
           data,
           timestamp: Date.now(),
         },
-        user.id
+        asUserId(user.id)
       );
     }
 
@@ -427,7 +428,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       data.documentId,
       {
         type: 'document-changed',
-        userId: user.id,
+        userId: asUserId(user.id),
         data: {
           operation: resolvedOperation,
           version: document.version,
@@ -435,7 +436,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         },
         timestamp: Date.now(),
       },
-      user.id
+      asUserId(user.id)
     );
 
     this.emit('document-changed', user, data.documentId, resolvedOperation);
@@ -448,7 +449,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     const comment: Comment = {
       id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       documentId: data.documentId!,
-      userId: user.id,
+      userId: asUserId(user.id),
       content: data.content!,
       position: data.position!,
       createdAt: Date.now(),
@@ -466,7 +467,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       // Broadcast comment addition
       this.broadcastToDocument(data.documentId!, {
         type: 'comment-added',
-        userId: user.id,
+        userId: asUserId(user.id),
         data: comment,
         timestamp: Date.now(),
       });
@@ -480,7 +481,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private async handleCommentResolve(
     user: User,
-    data: { commentId: string; documentId: string }
+    data: { commentId: string; documentId: DocumentId }
   ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
@@ -495,7 +496,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       // Broadcast comment resolution
       this.broadcastToDocument(data.documentId, {
         type: 'comment-resolved',
-        userId: user.id,
+        userId: asUserId(user.id),
         data: { commentId: data.commentId },
         timestamp: Date.now(),
       });
@@ -509,7 +510,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private async handleSectionLock(
     user: User,
-    data: { documentId: string; section: string }
+    data: { documentId: DocumentId; section: string }
   ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
@@ -538,7 +539,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     // Broadcast lock
     this.broadcastToDocument(data.documentId, {
       type: 'section-locked',
-      userId: user.id,
+      userId: asUserId(user.id),
       data: { section: data.section },
       timestamp: Date.now(),
     });
@@ -551,7 +552,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private async handleSectionUnlock(
     user: User,
-    data: { documentId: string; section: string }
+    data: { documentId: DocumentId; section: string }
   ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
@@ -566,7 +567,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     // Broadcast unlock
     this.broadcastToDocument(data.documentId, {
       type: 'section-unlocked',
-      userId: user.id,
+      userId: asUserId(user.id),
       data: { section: data.section },
       timestamp: Date.now(),
     });
@@ -585,7 +586,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     // Broadcast presence update
     this.broadcastEvent({
       type: 'presence-update',
-      userId: user.id,
+      userId: asUserId(user.id),
       data: {
         status: user.status,
         documentId: data.documentId,
@@ -640,9 +641,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    * Broadcast event to users in a specific document
    */
   private broadcastToDocument(
-    documentId: string,
+    documentId: DocumentId,
     event: CollaborationEvent,
-    excludeUserId?: string
+    excludeUserId?: UserId
   ): void {
     const message = JSON.stringify(event);
 
@@ -742,7 +743,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     // Broadcast user left event
     this.broadcastEvent({
       type: 'user-left',
-      userId,
+      userId: asUserId(userId),
       data: {
         name: user.name,
       },

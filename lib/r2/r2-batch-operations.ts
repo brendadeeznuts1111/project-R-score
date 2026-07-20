@@ -3,9 +3,10 @@
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
+import { type OperationId, asOperationId } from '../types/branded.ts';
 
 export interface BatchOperation {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   type: 'upload' | 'download' | 'delete' | 'copy' | 'move';
   key: string;
   data?: unknown;
@@ -25,7 +26,7 @@ export interface BatchConfig {
 }
 
 export interface BatchResult {
-  operationId: string;
+  operationId: OperationId;
   success: boolean;
   key: string;
   size?: number;
@@ -36,7 +37,7 @@ export interface BatchResult {
 }
 
 export interface BatchProgress {
-  batchId: string;
+  batchId: string; // brand-ok — single-use domain id
   total: number;
   completed: number;
   failed: number;
@@ -48,7 +49,7 @@ export interface BatchProgress {
 }
 
 export interface BatchJob {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   operations: BatchOperation[];
   results: BatchResult[];
@@ -284,7 +285,7 @@ export class R2BatchOperations {
           })
           .catch(error => {
             job.results.push({
-              operationId: operation.id,
+              operationId: asOperationId(operation.id),
               success: false,
               key: operation.key,
               error: error.message,
@@ -351,7 +352,7 @@ export class R2BatchOperations {
         retries++;
         if (retries > config.retryAttempts!) {
           return {
-            operationId: operation.id,
+            operationId: asOperationId(operation.id),
             success: false,
             key: operation.key,
             error: error.message,
@@ -364,7 +365,7 @@ export class R2BatchOperations {
     }
 
     return {
-      operationId: operation.id,
+      operationId: asOperationId(operation.id),
       success: false,
       key: operation.key,
       error: 'Max retries exceeded',
@@ -393,7 +394,7 @@ export class R2BatchOperations {
     });
 
     return {
-      operationId: operation.id,
+      operationId: asOperationId(operation.id),
       success: true,
       key: operation.key,
       size,
@@ -415,7 +416,7 @@ export class R2BatchOperations {
     });
 
     return {
-      operationId: operation.id,
+      operationId: asOperationId(operation.id),
       success: true,
       key: operation.key,
       size,
@@ -433,7 +434,7 @@ export class R2BatchOperations {
     });
 
     return {
-      operationId: operation.id,
+      operationId: asOperationId(operation.id),
       success: true,
       key: operation.key,
       duration: 0,
@@ -445,7 +446,7 @@ export class R2BatchOperations {
     const { destBucket, destKey } = operation.options || {};
 
     return {
-      operationId: operation.id,
+      operationId: asOperationId(operation.id),
       success: true,
       key: operation.key,
       duration: 0,

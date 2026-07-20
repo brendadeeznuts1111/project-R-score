@@ -8,10 +8,11 @@
  */
 
 import { uploadToR2 } from './r2/r2-client';
+import { type SessionId, asSessionId } from './types/branded.ts';
 
 // Watch session interface
 interface WatchFilterSession {
-  id: string;
+  id: SessionId;
   pattern: string;
   packages: string[];
   startTime: number;
@@ -48,7 +49,7 @@ class FilterWatchLogger {
    * Start tracking a new watch session
    */
   startSession(pattern: string, packages: string[]): WatchFilterSession {
-    const sessionId = `watch-${pattern}-${Date.now()}`;
+    const sessionId = asSessionId(`watch-${pattern}-${Date.now()}`);
     const session: WatchFilterSession = {
       id: sessionId,
       pattern,
@@ -104,7 +105,7 @@ class FilterWatchLogger {
    * Record a change in the watched packages
    */
   recordChange(
-    sessionId: string,
+    sessionId: SessionId,
     type: WatchChange['type'],
     packageName: string,
     details?: Record<string, any>
@@ -140,7 +141,7 @@ class FilterWatchLogger {
   /**
    * Update package list for a session
    */
-  updatePackages(sessionId: string, newPackages: string[]): void {
+  updatePackages(sessionId: SessionId, newPackages: string[]): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -168,7 +169,7 @@ class FilterWatchLogger {
   /**
    * Restart a session (e.g., after pattern change)
    */
-  restartSession(sessionId: string, newPattern?: string): void {
+  restartSession(sessionId: SessionId, newPattern?: string): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -190,7 +191,7 @@ class FilterWatchLogger {
   /**
    * Pause a session
    */
-  pauseSession(sessionId: string): void {
+  pauseSession(sessionId: SessionId): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -205,7 +206,7 @@ class FilterWatchLogger {
   /**
    * Resume a session
    */
-  resumeSession(sessionId: string): void {
+  resumeSession(sessionId: SessionId): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -220,7 +221,7 @@ class FilterWatchLogger {
   /**
    * Stop and log a session
    */
-  async stopSession(sessionId: string): Promise<void> {
+  async stopSession(sessionId: SessionId): Promise<void> {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -368,7 +369,7 @@ export function startWatchSession(pattern: string, packages: string[]): WatchFil
 }
 
 export function recordWatchChange(
-  sessionId: string,
+  sessionId: SessionId,
   type: WatchChange['type'],
   packageName: string,
   details?: Record<string, any>
@@ -376,15 +377,15 @@ export function recordWatchChange(
   watchLogger.recordChange(sessionId, type, packageName, details);
 }
 
-export function updateWatchPackages(sessionId: string, packages: string[]): void {
+export function updateWatchPackages(sessionId: SessionId, packages: string[]): void {
   watchLogger.updatePackages(sessionId, packages);
 }
 
-export function restartWatchSession(sessionId: string, newPattern?: string): void {
+export function restartWatchSession(sessionId: SessionId, newPattern?: string): void {
   watchLogger.restartSession(sessionId, newPattern);
 }
 
-export function stopWatchSession(sessionId: string): Promise<void> {
+export function stopWatchSession(sessionId: SessionId): Promise<void> {
   return watchLogger.stopSession(sessionId);
 }
 

@@ -3,6 +3,7 @@
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
+import { type PipelineId, asPipelineId } from '../types/branded.ts';
 
 export type TransformOperation =
   | 'compress'
@@ -17,14 +18,14 @@ export type TransformOperation =
   | 'enrich';
 
 export interface TransformStep {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   operation: TransformOperation;
   config: Record<string, any>;
   condition?: string; // Optional condition for conditional execution
 }
 
 export interface Pipeline {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   description: string;
   source: {
@@ -54,8 +55,8 @@ export interface Pipeline {
 }
 
 export interface PipelineRun {
-  id: string;
-  pipelineId: string;
+  id: string; // brand-ok — opaque entity primary key
+  pipelineId: PipelineId;
   status: 'running' | 'completed' | 'failed';
   startedAt: string;
   completedAt?: string;
@@ -222,7 +223,7 @@ export class R2TransformPipeline {
    * Execute a pipeline
    */
   async executePipeline(
-    pipelineId: string,
+    pipelineId: PipelineId,
     options?: { objects?: string[] }
   ): Promise<PipelineRun> {
     const pipeline = this.pipelines.get(pipelineId);
@@ -690,7 +691,7 @@ if (import.meta.main) {
   const pipelines = pipeline.getAllPipelines();
   if (pipelines.length > 0) {
     console.info(styled(`\n🚀 Executing pipeline: ${pipelines[0].name}`, 'info'));
-    const run = await pipeline.executePipeline(pipelines[0].id);
+    const run = await pipeline.executePipeline(asPipelineId(pipelines[0].id));
     console.info(styled(`\n✅ Run completed:`, 'success'));
     console.info(styled(`  Input: ${run.inputObjects} objects`, 'muted'));
     console.info(styled(`  Output: ${run.outputObjects} objects`, 'muted'));

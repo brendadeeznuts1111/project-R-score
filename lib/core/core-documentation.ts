@@ -1364,7 +1364,7 @@ export class EnterpriseDocumentationURLBuilder {
    * Build GitHub Gist URL
    */
   public buildGitHubGistURL(
-    gistId: string,
+    gistId: string, // brand-ok — single-use domain id
     revision?: string,
     action?: 'edit' | 'raw' | 'download'
   ): string {

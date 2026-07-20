@@ -3,6 +3,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/cli/terminal-tui.ts — Terminal TUI widgets for visual deployment feedback
 
+import { type SnapshotId, asSnapshotId } from '../types/branded.ts';
+
 /** Pad string to target visual width (left-aligned) */
 function swPad(str: string, width: number, char = ' '): string {
   const diff = width - Bun.stringWidth(str);
@@ -205,7 +207,7 @@ export class DeploymentUI {
     duration?: number;
   }[] = [];
 
-  constructor(private snapshotId: string) {
+  constructor(private snapshotId: SnapshotId) {
     this.phases = [
       { name: 'Backup Creation', status: 'pending' },
       { name: 'R2 Upload', status: 'pending' },
@@ -282,10 +284,10 @@ export class DeploymentUI {
  * Smart deploy with automatic UI detection
  */
 export async function smartDeploy<T>(
-  snapshotId: string,
+  snapshotId: string, // brand-ok — public API input; branded at entry
   deployFn: (ui: DeploymentUI) => Promise<T>
 ): Promise<T> {
-  const ui = new DeploymentUI(snapshotId);
+  const ui = new DeploymentUI(asSnapshotId(snapshotId));
 
   if (isTerminalUISupported()) {
     console.info(`🚀 Tier-1380 Deployment with TUI (macOS)`);
@@ -344,7 +346,7 @@ if (import.meta.main) {
   ]);
 
   // Demo deployment UI
-  const deployUI = new DeploymentUI('demo-snapshot');
+  const deployUI = new DeploymentUI(asSnapshotId('demo-snapshot'));
 
   deployUI.startPhase('Backup Creation');
   await Bun.sleep(800);

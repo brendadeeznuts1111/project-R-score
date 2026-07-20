@@ -1,6 +1,7 @@
 // lib/docs/services/analytics.ts — Documentation access analytics
 
 import { DocumentationProvider, DocumentationCategory } from '../constants/domains';
+import { type SessionId, asSessionId } from '../../types/branded.ts';
 
 export interface AccessEvent {
   timestamp: Date;
@@ -9,7 +10,7 @@ export interface AccessEvent {
   category?: DocumentationCategory;
   userType?: 'developers' | 'beginners' | 'educators' | 'all_users';
   source?: 'direct' | 'search' | 'link' | 'bookmark';
-  sessionId?: string;
+  sessionId?: SessionId;
   userAgent?: string;
   referrer?: string;
   duration?: number; // Time spent on page in milliseconds
@@ -74,7 +75,7 @@ export class DocumentationAnalytics {
       category: sanitizedEvent.category,
       userType: sanitizedEvent.userType || 'all_users',
       source: sanitizedEvent.source || 'direct',
-      sessionId: sanitizedEvent.sessionId,
+      sessionId: sanitizedEvent.sessionId ? asSessionId(sanitizedEvent.sessionId) : undefined,
       userAgent: sanitizedEvent.userAgent,
       referrer: sanitizedEvent.referrer,
       duration: sanitizedEvent.duration,

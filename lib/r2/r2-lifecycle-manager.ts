@@ -7,7 +7,7 @@ import { r2BatchOperations } from './r2-batch-operations';
 export type StorageClass = 'hot' | 'warm' | 'cold' | 'archive' | 'deep-archive';
 
 export interface LifecycleRule {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   enabled: boolean;
   prefix?: string;
@@ -51,7 +51,7 @@ export interface ObjectLifecycleState {
   size: number;
   ttl?: {
     expiresAt: string;
-    ruleId: string;
+    ruleId: string; // brand-ok — single-use domain id
   };
   transitions: Array<{
     toClass: StorageClass;

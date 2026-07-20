@@ -73,7 +73,9 @@ export class ProfileReader {
   /**
    * Read and parse a session's manifest.json from R2.
    */
-  async getManifest(sessionId: string /* brand-ok — boundary accepts plain string */): Promise<SessionManifest> {
+  async getManifest(
+    sessionId: string /* brand-ok — boundary accepts plain string */
+  ): Promise<SessionManifest> {
     const key = `${this.prefix}/sessions/${sessionId}/manifest.json`;
     const raw = await S3Client.read(key, this.s3Opts);
     return JSON.parse(new TextDecoder().decode(raw));

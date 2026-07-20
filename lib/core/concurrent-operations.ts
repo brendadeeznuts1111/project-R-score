@@ -1,6 +1,7 @@
 // lib/core/concurrent-operations.ts — Safe concurrent operations manager
 
 import { handleError, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
+import { type OperationId, asOperationId } from '../types/branded.ts';
 
 /**
  * Operation result interface
@@ -9,7 +10,7 @@ export interface OperationResult<T = any> {
   success: boolean;
   data?: T;
   error?: string;
-  operationId: string;
+  operationId: OperationId;
   duration: number;
 }
 
@@ -28,7 +29,7 @@ export interface BatchConfig {
  * Transaction operation
  */
 export interface TransactionOperation<T = any> {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   execute: () => Promise<T>;
   rollback?: (data: T) => Promise<void>;
   dependencies?: string[];
@@ -68,7 +69,7 @@ export class ConcurrentOperationsManager {
     let shouldStop = false;
 
     const runOperationAtIndex = async (index: number): Promise<void> => {
-      const operationId = `op-${index}`;
+      const operationId = asOperationId(`op-${index}`);
       const startTime = Date.now();
 
       try {
@@ -151,7 +152,7 @@ export class ConcurrentOperationsManager {
             results.push({
               success: false,
               error: `Dependency failed for operation ${op.id}`,
-              operationId: op.id,
+              operationId: asOperationId(op.id),
               duration: 0,
             });
           }
@@ -172,7 +173,7 @@ export class ConcurrentOperationsManager {
 
         if (result.success) {
           completed.add(operation.id);
-          results.push({ ...result, operationId: operation.id });
+          results.push({ ...result, operationId: asOperationId(operation.id) });
         } else {
           failed.add(operation.id);
 
@@ -185,7 +186,7 @@ export class ConcurrentOperationsManager {
             }
           }
 
-          results.push({ ...result, operationId: operation.id });
+          results.push({ ...result, operationId: asOperationId(operation.id) });
         }
       }
     }
@@ -216,7 +217,7 @@ export class ConcurrentOperationsManager {
    */
   private async executeOperation<T>(
     operation: () => Promise<T>,
-    operationId: string,
+    operationId: OperationId,
     config: BatchConfig
   ): Promise<T> {
     // Check if operation is already running
@@ -247,7 +248,7 @@ export class ConcurrentOperationsManager {
   private async runOperationWithTimeout<T>(
     operation: () => Promise<T>,
     timeout: number,
-    operationId: string
+    operationId: OperationId
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {

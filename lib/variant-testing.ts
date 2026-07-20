@@ -4,9 +4,10 @@
  */
 
 import { CookieManager, VariantConfig, ExperimentConfig } from './cookie-manager';
+import { type SessionId, type UserId, asSessionId, asUserId } from './types/branded.ts';
 
 export interface FeatureFlag {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   description: string;
   enabled: boolean;
@@ -15,7 +16,7 @@ export interface FeatureFlag {
 }
 
 export interface TestConfig {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   description: string;
   variants: VariantConfig[];
@@ -30,10 +31,10 @@ export interface TestConfig {
 }
 
 export interface VariantAnalytics {
-  variantId: string;
-  experimentId: string;
-  userId: string;
-  sessionId: string;
+  variantId: string; // brand-ok — single-use domain id
+  experimentId: string; // brand-ok — single-use domain id
+  userId: UserId;
+  sessionId: SessionId;
   timestamp: string;
   events: Array<{
     type: 'impression' | 'click' | 'conversion' | 'custom';
@@ -305,8 +306,8 @@ export class VariantTesting {
     const analyticsEvent: VariantAnalytics = {
       variantId: currentVariant?.id || 'control',
       experimentId: currentVariant ? 'ui_variant_2024' : 'none',
-      userId: this.getUserId(),
-      sessionId: sessionId || 'unknown',
+      userId: asUserId(this.getUserId()),
+      sessionId: asSessionId(sessionId || 'unknown'),
       timestamp: new Date().toISOString(),
       events: [
         {

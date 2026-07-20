@@ -1,6 +1,7 @@
 // lib/business/habits-classifier.ts — Habits classification engine with Redis integration
 
 import Redis from 'ioredis';
+import { type UserId } from '../types/branded.ts';
 import {
   classifyHabits as classifyHabitsPure,
   calculateBonus as calculateBonusPure,
@@ -34,7 +35,7 @@ const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379');
  * Store habits in Redis with TTL
  */
 export async function storeHabits(
-  userId: string,
+  userId: UserId,
   habits: HabitsData,
   ttlSeconds = 86400
 ): Promise<void> {

@@ -2,6 +2,7 @@
 
 import { BaseEnterpriseError, EnterpriseErrorCode } from './core-errors';
 import { SecurityRiskLevel } from './core-types';
+import { type UserId, type RequestId, asUserId, asRequestId } from '../types/branded.ts';
 
 /**
  * Alert severity levels
@@ -55,8 +56,8 @@ export interface ErrorMetric {
   context?: Record<string, any>;
   service?: string;
   endpoint?: string;
-  userId?: string;
-  requestId?: string;
+  userId?: UserId;
+  requestId?: RequestId;
 }
 
 /**
@@ -95,7 +96,7 @@ export interface MetricsExport {
  * Alert instance
  */
 interface Alert {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   timestamp: number;
   severity: AlertSeverity;
   title: string;
@@ -177,8 +178,8 @@ export class ErrorMetricsCollector {
     context?: {
       service?: string;
       endpoint?: string;
-      userId?: string;
-      requestId?: string;
+      userId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via asUserId
+      requestId?: string; // brand-ok — public API input accepts plain string; branded into ErrorMetric via asRequestId
     }
   ): void {
     const metric: ErrorMetric = {
@@ -188,6 +189,8 @@ export class ErrorMetricsCollector {
       message: error.message,
       context: this.extractContext(error),
       ...context,
+      userId: context?.userId ? asUserId(context.userId) : undefined,
+      requestId: context?.requestId ? asRequestId(context.requestId) : undefined,
     };
 
     this.metrics.push(metric);

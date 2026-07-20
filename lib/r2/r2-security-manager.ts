@@ -8,7 +8,7 @@ import { r2EventSystem } from './r2-event-system';
 export type Permission = 'r2:Read' | 'r2:Write' | 'r2:Delete' | 'r2:List' | 'r2:Admin';
 
 export interface AccessPolicy {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   effect: 'allow' | 'deny';
   principal: string; // user, role, or *
@@ -25,7 +25,7 @@ export interface AccessPolicy {
 }
 
 export interface Role {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   description: string;
   permissions: Permission[];
@@ -37,7 +37,7 @@ export interface Role {
 }
 
 export interface AccessKey {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   accessKeyId: AccessKeyId;
   secretAccessKeyHash: string;
@@ -53,7 +53,7 @@ export interface AccessKey {
 }
 
 export interface EncryptionKey {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   algorithm: 'AES-256' | 'AES-256-GCM' | 'ChaCha20-Poly1305';
   keyData: Uint8Array;
@@ -64,7 +64,7 @@ export interface EncryptionKey {
 }
 
 export interface SecurityAuditEntry {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   timestamp: string;
   action: string;
   principal: string;
@@ -391,7 +391,7 @@ export class R2SecurityManager {
    */
   async encrypt(
     data: Uint8Array,
-    keyId: string
+    keyId: string // brand-ok — single-use domain id
   ): Promise<{
     ciphertext: Uint8Array;
     iv: Uint8Array;

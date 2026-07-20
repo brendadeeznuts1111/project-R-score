@@ -1,6 +1,7 @@
 // lib/core/structured-logger.ts — Structured logging with correlation tracking
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
+import { type CorrelationId, type UserId, type SessionId, asCorrelationId } from '../types/branded.ts';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -8,9 +9,9 @@ interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  correlationId?: string;
-  userId?: string;
-  sessionId?: string;
+  correlationId?: CorrelationId;
+  userId?: UserId;
+  sessionId?: SessionId;
   service?: string;
   module?: string;
   function?: string;
@@ -41,7 +42,7 @@ interface LoggerConfig {
 
 class StructuredLogger {
   private config: LoggerConfig;
-  private currentCorrelationId?: string;
+  private currentCorrelationId?: CorrelationId;
   private logLevels: Record<LogLevel, number> = {
     debug: 0,
     info: 1,
@@ -68,13 +69,14 @@ class StructuredLogger {
    * Set correlation ID for request tracking
    */
   setCorrelationId(correlationId: string): void {
-    this.currentCorrelationId = correlationId;
+    // brand-ok — public API input accepts plain string; branded at entry
+    this.currentCorrelationId = asCorrelationId(correlationId);
   }
 
   /**
    * Get current correlation ID
    */
-  getCorrelationId(): string | undefined {
+  getCorrelationId(): CorrelationId | undefined {
     return this.currentCorrelationId;
   }
 
@@ -296,7 +298,7 @@ class StructuredLogger {
       level?: LogLevel;
       startDate?: Date;
       endDate?: Date;
-      correlationId?: string;
+      correlationId?: CorrelationId;
       service?: string;
       tags?: string[];
       limit?: number;

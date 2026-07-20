@@ -14,12 +14,13 @@ import {
   CLISession,
 } from '../lib/bun-cli-native-v3.15';
 import { createWatchSession, startWebSocketDashboard } from '../lib/watch-engine-v3.14';
+import { type SessionId, asSessionId } from './types/branded.ts';
 
 // Enhanced watch-filter session with CLI integration
 interface WatchFilterSession {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   cliSession: CLISession;
-  watchSessionId?: string;
+  watchSessionId?: SessionId;
   pattern: string;
   script: string;
   startTime: number;
@@ -53,7 +54,7 @@ const c = {
  * Enhanced watch-filter with official CLI integration
  */
 export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilterSession> {
-  const sessionId = crypto.randomUUID();
+  const sessionId = asSessionId(crypto.randomUUID());
   const { flags, command, args } = parseOfficialFlags(rawArgs);
 
   // Ensure watch mode is enabled
@@ -106,7 +107,7 @@ export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilte
 
   try {
     // Start enhanced watch session
-    watchSession.watchSessionId = await createWatchSession(pattern, script, {
+    watchSession.watchSessionId = asSessionId(await createWatchSession(pattern, script, {
       debounceMs: 100,
       clearScreen: !flags.noClear,
       parallel: flags.parallel ?? true,
@@ -115,7 +116,7 @@ export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilte
       hotReload: flags.hot ?? false,
       smolMode: flags.smol ?? false,
       consoleDepth: 2,
-    });
+    }));
 
     watchSession.status = 'watching';
 
@@ -143,7 +144,7 @@ export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilte
  * Update watch filter pattern dynamically
  */
 export async function updateWatchFilter(
-  sessionId: string,
+  sessionId: SessionId,
   newPattern: string,
   newFlags?: Partial<BunCLIFlags>
 ): Promise<void> {
@@ -166,7 +167,7 @@ export async function updateWatchFilter(
 
   // Start new watch session with updated pattern
   try {
-    session.watchSessionId = await createWatchSession(newPattern, session.script, {
+    session.watchSessionId = asSessionId(await createWatchSession(newPattern, session.script, {
       debounceMs: 100,
       clearScreen: true,
       parallel: newFlags?.parallel ?? true,
@@ -174,7 +175,7 @@ export async function updateWatchFilter(
       healthCheckUrl: process.env.HEALTH_CHECK_URL,
       hotReload: newFlags?.hot ?? false,
       smolMode: newFlags?.smol ?? false,
-    });
+    }));
 
     session.restartCount++;
     session.status = 'watching';
@@ -254,7 +255,7 @@ export async function stopWatchSession(sessionId: string): Promise<void> {
  * Add event to watch session
  */
 function addWatchEvent(
-  sessionId: string,
+  sessionId: SessionId,
   type: WatchEvent['type'],
   details: Record<string, any>
 ): void {

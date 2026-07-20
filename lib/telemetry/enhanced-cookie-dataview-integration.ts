@@ -123,7 +123,9 @@ export class UnifiedCookieDataViewManager {
     const url = new URL(request.url);
 
     // Get or create session
-    let sessionId = asSessionId(cookies.getSecure('session')?.value?.sessionId || crypto.randomUUID());
+    let sessionId = asSessionId(
+      cookies.getSecure('session')?.value?.sessionId || crypto.randomUUID()
+    );
     let isNewSession = !cookies.get('session');
 
     if (isNewSession) {

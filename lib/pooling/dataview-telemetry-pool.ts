@@ -107,7 +107,12 @@ export class DataViewTelemetryPool extends TelemetryPool {
     try {
       const profileId = crypto.randomUUID();
       const brandedSessionId = asSessionId(sessionId);
-      const metadata: ProfileMetadata = { sessionId: brandedSessionId, member, timestamp: Date.now(), document };
+      const metadata: ProfileMetadata = {
+        sessionId: brandedSessionId,
+        member,
+        timestamp: Date.now(),
+        document,
+      };
 
       // Serialize using DataView
       const binaryData = this.serializer.serialize(profile, metadata);

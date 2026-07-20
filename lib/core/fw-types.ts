@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/core/fw-types.ts — FactoryWager project-specific type definitions
 
+import { type SessionId, asSessionId } from '../types/branded.ts';
+
 // FactoryWager specific types
 export type Severity = 'success' | 'warning' | 'error' | 'muted';
 export type ProfileType = 'cpu' | 'heap' | 'sampling' | 'diagnostic' | 'custom';
@@ -89,7 +91,7 @@ export function profileTimestamp(date = new Date()): string {
 
 /** Canonical R2 key for a profile file */
 export function profileR2Key(
-  sessionId: string,
+  sessionId: SessionId,
   type: ProfileType,
   filename: string,
   prefix = 'profiles'
@@ -98,13 +100,13 @@ export function profileR2Key(
 }
 
 /** Canonical R2 key for a session manifest */
-export function manifestR2Key(sessionId: string, prefix = 'profiles'): string {
+export function manifestR2Key(sessionId: SessionId, prefix = 'profiles'): string {
   return `${prefix}/sessions/${sessionId}/manifest.json`;
 }
 
 /** Generate a canonical session ID */
-export function generateSessionId(): string {
-  return (
+export function generateSessionId(): SessionId {
+  return asSessionId(
     Bun.env.TERMINAL_SESSION_ID ||
     Bun.env.TERM_SESSION_ID ||
     `pty-${process.pid}-${profileTimestamp()}`

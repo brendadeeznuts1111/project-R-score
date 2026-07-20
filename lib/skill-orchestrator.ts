@@ -14,10 +14,11 @@
 import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
+import { type StepId, asStepId } from './types/branded.ts';
 
 // Domain interface (simplified for integration)
 interface Domain {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   type: string;
   checkHealth?: () => Promise<HealthStatus>;
   optimize?: () => Promise<void>;
@@ -42,7 +43,7 @@ interface DiagnosisResult {
 }
 
 interface FlowNode {
-  id: string;
+  id: StepId;
   type: 'start' | 'end' | 'action' | 'decision';
   text: string;
   next?: string[];
@@ -286,7 +287,7 @@ export class SkillOrchestrator {
   private async executeWithRetry<T>(
     fn: () => Promise<T>,
     policy: ResiliencePolicy,
-    stepId: string
+    stepId: StepId
   ): Promise<{ result: T; attempts: number }> {
     let lastError: Error | undefined;
 
@@ -340,7 +341,7 @@ export class SkillOrchestrator {
   private async executeWithTimeout<T>(
     fn: () => Promise<T>,
     timeoutMs: number,
-    stepId: string
+    stepId: StepId
   ): Promise<T> {
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => {
@@ -562,7 +563,7 @@ export class SkillOrchestrator {
       const nodeMatch = line.match(/(\w+)\s*\[(.+?)\]/);
       if (nodeMatch) {
         nodes.push({
-          id: nodeMatch[1],
+          id: asStepId(nodeMatch[1]),
           type: 'action',
           text: nodeMatch[2],
         });
@@ -571,7 +572,7 @@ export class SkillOrchestrator {
       const decisionMatch = line.match(/(\w+)\s*\{(.+?)\}/);
       if (decisionMatch) {
         nodes.push({
-          id: decisionMatch[1],
+          id: asStepId(decisionMatch[1]),
           type: 'decision',
           text: decisionMatch[2],
         });

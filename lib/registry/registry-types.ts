@@ -44,7 +44,7 @@ export interface PackageVersion {
     registry?: string;
     access?: 'public' | 'restricted';
   };
-  _id: string;
+  _id: string; // brand-ok — wire-format document key (registry record)
   _nodeVersion?: string;
   _npmVersion?: string;
   _npmUser?: {
@@ -87,7 +87,7 @@ export interface PackageManifest {
   };
   maintainers?: Array<{ name: string; email: string }>;
   contributors?: Array<{ name: string; email?: string; url?: string }>;
-  _id: string;
+  _id: string; // brand-ok — wire-format document key (registry record)
   _rev?: string;
   _attachments?: Record<
     string,
@@ -192,7 +192,7 @@ export interface RegistryConfig {
 }
 
 export interface PublishRequest {
-  _id: string;
+  _id: string; // brand-ok — wire-format document key (registry record)
   name: string;
   version: string;
   description?: string;

@@ -1,7 +1,7 @@
 // lib/r2/r2-sync-service.ts — R2 multi-bucket sync service
 
 import { styled, FW_COLORS } from '../theme/colors';
-import type { AccessKeyId, AccountId } from '../types/branded.ts';
+import { type AccessKeyId, type AccountId, type JobId, asJobId } from '../types/branded.ts';
 import { r2EventSystem } from './r2-event-system';
 import { r2BatchOperations } from './r2-batch-operations';
 
@@ -15,7 +15,7 @@ export type ConflictStrategy =
 export type SyncMode = 'realtime' | 'scheduled' | 'manual';
 
 export interface SyncJob {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   name: string;
   status: 'pending' | 'running' | 'completed' | 'failed' | 'paused';
   direction: SyncDirection;
@@ -73,7 +73,7 @@ export interface SyncStats {
 }
 
 export interface SyncResult {
-  jobId: string;
+  jobId: JobId;
   timestamp: string;
   status: 'success' | 'partial' | 'failed';
   objects: Array<{
@@ -177,7 +177,7 @@ export class R2SyncService {
   /**
    * Execute a sync job
    */
-  async executeJob(jobId: string): Promise<SyncResult> {
+  async executeJob(jobId: string /* brand-ok — public entrypoint accepts plain string */): Promise<SyncResult> {
     const job = this.jobs.get(jobId);
     if (!job) throw new Error(`Job not found: ${jobId}`);
     if (this.activeSyncs.has(jobId)) throw new Error(`Job already running: ${jobId}`);
@@ -190,7 +190,7 @@ export class R2SyncService {
     const startTime = Date.now();
 
     const result: SyncResult = {
-      jobId,
+      jobId: asJobId(jobId),
       timestamp: new Date().toISOString(),
       status: 'success',
       objects: [],
