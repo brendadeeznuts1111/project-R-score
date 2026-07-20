@@ -23,6 +23,10 @@
 import { S3Client } from 'bun';
 import { resolve, basename, join } from 'node:path';
 import {
+  type AccessKeyId,
+  asAccessKeyId,
+} from '../types/branded.ts';
+import {
   type ProfileType,
   profileTimestamp,
   profileR2Key,
@@ -66,7 +70,7 @@ export interface ProfileUploaderConfig {
   /** Explicit endpoint. If omitted, S3Client reads S3_ENDPOINT / AWS_ENDPOINT from env/bun.secrets. */
   endpoint?: string;
   /** Explicit access key. If omitted, S3Client reads S3_ACCESS_KEY_ID / AWS_ACCESS_KEY_ID from env/bun.secrets. */
-  accessKeyId?: string;
+  accessKeyId?: AccessKeyId;
   /** Explicit secret. If omitted, S3Client reads S3_SECRET_ACCESS_KEY / AWS_SECRET_ACCESS_KEY from env/bun.secrets. */
   secretAccessKey?: string;
   /** S3 Requester Pays support: set true for requester-pays buckets. */
@@ -133,6 +137,7 @@ function resolveTerminalIdentity(): TerminalIdentity {
  */
 export function resolveUploaderConfig(): ProfileUploaderConfig {
   const accountId = Bun.env.R2_ACCOUNT_ID;
+  const accessKeyRaw = Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined;
 
   return {
     bucket: Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.S3_BUCKET || undefined,
@@ -140,7 +145,7 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
       Bun.env.R2_ENDPOINT ||
       Bun.env.S3_ENDPOINT ||
       (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
-    accessKeyId: Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined,
+    accessKeyId: accessKeyRaw ? asAccessKeyId(accessKeyRaw) : undefined,
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
     requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',

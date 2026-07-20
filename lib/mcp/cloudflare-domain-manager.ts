@@ -3,6 +3,11 @@
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
+import {
+  type AccountId,
+  type ZoneId,
+  asAccountId,
+} from '../types/branded.ts';
 
 export interface CloudflareZone {
   id: string;
@@ -41,7 +46,7 @@ export interface CloudflareZone {
 
 export interface DNSRecord {
   id: string;
-  zone_id: string;
+  zone_id: ZoneId;
   zone_name: string;
   name: string;
   type: string;
@@ -76,7 +81,7 @@ export interface SubdomainConfig {
 
 export interface CloudflareMetrics {
   timestamp: string;
-  account_id: string;
+  account_id: AccountId;
   zones: Array<{
     name: string;
     status: string;
@@ -100,7 +105,7 @@ export interface CloudflareMetrics {
 }
 
 export class CloudflareDomainManager {
-  private accountId: string;
+  private accountId: AccountId;
   private apiToken: string;
   private r2: typeof r2MCPIntegration;
   private knownSubdomains: Map<string, SubdomainConfig>;
@@ -108,14 +113,15 @@ export class CloudflareDomainManager {
 
   constructor() {
     // Secure credential loading from environment variables
-    this.accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+    const accountRaw = process.env.CLOUDFLARE_ACCOUNT_ID || '';
     this.apiToken = process.env.CLOUDFLARE_API_TOKEN || '';
 
-    if (!this.accountId || !this.apiToken) {
+    if (!accountRaw || !this.apiToken) {
       throw new Error(
         'Missing required Cloudflare credentials. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN environment variables.'
       );
     }
+    this.accountId = asAccountId(accountRaw);
 
     this.r2 = r2MCPIntegration;
     this.knownSubdomains = this.loadKnownSubdomains();

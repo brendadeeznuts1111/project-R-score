@@ -3,6 +3,7 @@
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { cloudflareDomainManager } from './cloudflare-domain-manager';
 import { styled, FW_COLORS } from '../theme/colors';
+import { type AccountId, type ZoneId, asAccountId } from '../types/branded.ts';
 
 export interface DNSRecord {
   id?: string;
@@ -23,7 +24,7 @@ export interface DNSRecord {
 }
 
 export interface DNSZone {
-  zone_id: string;
+  zone_id: ZoneId;
   zone_name: string;
   name_servers: string[];
   verification_status: string;
@@ -44,13 +45,13 @@ export interface DNSHealthStatus {
 }
 
 export class DNSSynchronization {
-  private accountId: string;
+  private accountId: AccountId;
   private apiToken: string;
   private r2: typeof r2MCPIntegration;
   private zoneName: string;
 
   constructor() {
-    this.accountId = '7a470541a704caaf91e71efccc78fd36';
+    this.accountId = asAccountId('7a470541a704caaf91e71efccc78fd36');
     this.apiToken = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
     this.r2 = r2MCPIntegration;
     this.zoneName = 'factory-wager.com';

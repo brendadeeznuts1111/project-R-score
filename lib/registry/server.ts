@@ -6,6 +6,7 @@ import { styled } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
 import { RegistryAuth, AuthConfigs } from './auth';
 import { resolveR2InfraConfig, resolveRegistrySecret } from '../security/infra-secrets';
+import type { AccessKeyId, AccountId } from '../types/branded.ts';
 import { registryHost } from './env';
 import type { PackageManifest, PackageVersion, PublishRequest } from './registry-types';
 
@@ -17,8 +18,8 @@ export interface ServerOptions {
   port?: number;
   hostname?: string;
   storage?: {
-    accountId?: string;
-    accessKeyId?: string;
+    accountId?: AccountId;
+    accessKeyId?: AccessKeyId;
     secretAccessKey?: string;
     bucketName?: string;
   };

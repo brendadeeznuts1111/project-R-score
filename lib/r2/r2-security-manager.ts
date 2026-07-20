@@ -2,6 +2,7 @@
 // lib/r2/r2-security-manager.ts — R2 security and access control manager
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { type AccessKeyId, asAccessKeyId } from '../types/branded.ts';
 import { r2EventSystem } from './r2-event-system';
 
 export type Permission = 'r2:Read' | 'r2:Write' | 'r2:Delete' | 'r2:List' | 'r2:Admin';
@@ -38,7 +39,7 @@ export interface Role {
 export interface AccessKey {
   id: string;
   name: string;
-  accessKeyId: string;
+  accessKeyId: AccessKeyId;
   secretAccessKeyHash: string;
   status: 'active' | 'inactive' | 'expired';
   createdAt: string;
@@ -274,7 +275,9 @@ export class R2SecurityManager {
     permissions: Permission[],
     options?: { expiresInDays?: number; rateLimit?: { rps: number; burst: number } }
   ): { key: AccessKey; secret: string } {
-    const accessKeyId = `R2AK${crypto.randomUUID().replace(/-/g, '').toUpperCase().slice(0, 16)}`;
+    const accessKeyId = asAccessKeyId(
+      `R2AK${crypto.randomUUID().replace(/-/g, '').toUpperCase().slice(0, 16)}`
+    );
     const secretAccessKey = crypto.randomUUID().replace(/-/g, '');
 
     const key: AccessKey = {

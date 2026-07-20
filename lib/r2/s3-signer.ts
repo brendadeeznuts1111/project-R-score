@@ -1,7 +1,9 @@
 // lib/r2/s3-signer.ts — Lightweight AWS SigV4 signer using crypto.subtle (Bun-native)
 
+import { type AccessKeyId, asAccessKeyId } from '../types/branded.ts';
+
 interface S3Credentials {
-  accessKeyId: string;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   region?: string;
   service?: string;
@@ -115,16 +117,23 @@ export async function signS3Request(
  * Load R2 credentials from environment variables
  */
 export function getR2Credentials(): S3Credentials & { endpoint: string; bucket: string } {
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const accessKeyIdRaw = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
   const endpoint = process.env.R2_ENDPOINT;
   const bucket = process.env.R2_BUCKET_NAME;
 
-  if (!accessKeyId || !secretAccessKey || !endpoint || !bucket) {
+  if (!accessKeyIdRaw || !secretAccessKey || !endpoint || !bucket) {
     throw new Error(
       'Missing R2 credentials. Set R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT, R2_BUCKET_NAME'
     );
   }
 
-  return { accessKeyId, secretAccessKey, endpoint, bucket, region: 'auto', service: 's3' };
+  return {
+    accessKeyId: asAccessKeyId(accessKeyIdRaw),
+    secretAccessKey,
+    endpoint,
+    bucket,
+    region: 'auto',
+    service: 's3',
+  };
 }

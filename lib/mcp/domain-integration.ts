@@ -2,6 +2,7 @@
 
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
+import { type AccountId, asAccountId } from '../types/branded.ts';
 
 export interface DomainConfig {
   primary: {
@@ -26,7 +27,7 @@ export interface DomainConfig {
     monitoring: 'realtime' | 'periodic' | 'basic';
   };
   cloudflare: {
-    account_id: string;
+    account_id: AccountId;
     dashboard_url: string;
     r2_bucket: string;
   };
@@ -94,7 +95,7 @@ export class DomainIntegration {
         monitoring: 'realtime',
       },
       cloudflare: {
-        account_id: '7a470541a704caaf91e71efccc78fd36',
+        account_id: asAccountId('7a470541a704caaf91e71efccc78fd36'),
         dashboard_url:
           'https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com',
         r2_bucket: 'scanner-cookies',

@@ -9,6 +9,7 @@ import { PackageManager } from './package/package-manager';
 import { R2Storage } from './r2/r2-storage-enhanced';
 import { RSSManager } from './rss/rss-manager';
 import { docsURLBuilder, EnhancedDocumentationURLValidator } from './docs/documentation-index';
+import type { AccessKeyId, AccountId } from './types/branded.ts';
 
 // Types for Bun documentation integration
 export interface BunDocumentationIndex {
@@ -55,8 +56,8 @@ export interface BunMetricsExample {
  * Main Bun Documentation Integration Class
  */
 export interface R2StorageConfig {
-  accountId: string;
-  accessKeyId: string;
+  accountId: AccountId;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   defaultBucket: string;
   endpoint?: string;

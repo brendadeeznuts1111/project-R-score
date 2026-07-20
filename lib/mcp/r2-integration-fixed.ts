@@ -14,10 +14,16 @@ import { validateR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
 import { safeConcurrent } from '../core/concurrent-operations';
 import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler';
+import {
+  type AccessKeyId,
+  type AccountId,
+  asAccessKeyId,
+  asAccountId,
+} from '../types/branded.ts';
 
 export interface R2Config {
-  accountId: string;
-  accessKeyId: string;
+  accountId: AccountId;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   bucketName: string;
   endpoint?: string;
@@ -74,15 +80,27 @@ export class R2MCPIntegration {
       process.env.AWS_BUCKET_NAME ||
       'scanner-cookies';
     const resolvedEndpoint = process.env.R2_ENDPOINT || process.env.S3_ENDPOINT;
+    const resolvedAccount =
+      process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36';
 
     this.config = {
-      accountId: process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36',
-      accessKeyId: resolvedAccessKey,
+      accountId: asAccountId(resolvedAccount),
+      accessKeyId: resolvedAccessKey
+        ? asAccessKeyId(resolvedAccessKey)
+        : ('' as AccessKeyId),
       secretAccessKey: resolvedSecretKey,
       // Accept S3-compatible env aliases while retaining R2-first naming.
       bucketName: resolvedBucketName,
       endpoint: resolvedEndpoint,
       ...config,
+    };
+    // Re-brand if partial config overwrote with raw strings
+    this.config = {
+      ...this.config,
+      accountId: asAccountId(String(this.config.accountId)),
+      accessKeyId: this.config.accessKeyId
+        ? asAccessKeyId(String(this.config.accessKeyId))
+        : ('' as AccessKeyId),
     };
   }
 

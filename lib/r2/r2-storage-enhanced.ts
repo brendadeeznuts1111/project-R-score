@@ -5,12 +5,18 @@ import { RSS_URLS } from '../../config/urls';
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { crc32 } from '../core/crc32';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
+import {
+  type AccessKeyId,
+  type AccountId,
+  asAccessKeyId,
+  asAccountId,
+} from '../types/branded.ts';
 
 const R2_CB_CONFIG = { failureThreshold: 5, resetTimeoutMs: 30000, callTimeoutMs: 10000 };
 
 export interface R2StorageConfig {
-  accountId: string;
-  accessKeyId: string;
+  accountId: AccountId;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   defaultBucket: string;
   encryptionKey?: string;
@@ -28,8 +34,12 @@ export class R2Storage {
   private buckets: Map<string, BucketStats>;
 
   constructor(config: R2StorageConfig) {
-    this.config = config;
-    this.endpoint = `https://${config.accountId}.r2.cloudflarestorage.com`;
+    this.config = {
+      ...config,
+      accountId: asAccountId(String(config.accountId)),
+      accessKeyId: asAccessKeyId(String(config.accessKeyId)),
+    };
+    this.endpoint = `https://${this.config.accountId}.r2.cloudflarestorage.com`;
     this.buckets = new Map();
   }
 

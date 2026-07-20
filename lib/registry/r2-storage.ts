@@ -3,6 +3,12 @@
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { resolveR2InfraConfig } from '../security/infra-secrets';
+import {
+  type AccessKeyId,
+  type AccountId,
+  asAccessKeyId,
+  asAccountId,
+} from '../types/branded.ts';
 import type {
   PackageManifest,
   PackageVersion,
@@ -10,9 +16,19 @@ import type {
   PackageStats,
 } from './registry-types';
 
+function brandAccountId(value: string | AccountId | undefined): AccountId {
+  const raw = value == null ? '' : String(value);
+  return raw ? asAccountId(raw) : ('' as AccountId);
+}
+
+function brandAccessKeyId(value: string | AccessKeyId | undefined): AccessKeyId {
+  const raw = value == null ? '' : String(value);
+  return raw ? asAccessKeyId(raw) : ('' as AccessKeyId);
+}
+
 export interface R2StorageConfig {
-  accountId: string;
-  accessKeyId: string;
+  accountId: AccountId;
+  accessKeyId: AccessKeyId;
   secretAccessKey: string;
   bucketName: string;
   endpoint?: string;
@@ -35,8 +51,8 @@ export class R2StorageAdapter {
 
   constructor(config: Partial<R2StorageConfig> = {}) {
     this.config = {
-      accountId: config.accountId ?? Bun.env.R2_ACCOUNT_ID ?? '',
-      accessKeyId: config.accessKeyId ?? Bun.env.R2_ACCESS_KEY_ID ?? '',
+      accountId: brandAccountId(config.accountId ?? Bun.env.R2_ACCOUNT_ID),
+      accessKeyId: brandAccessKeyId(config.accessKeyId ?? Bun.env.R2_ACCESS_KEY_ID),
       secretAccessKey: config.secretAccessKey ?? Bun.env.R2_SECRET_ACCESS_KEY ?? '',
       bucketName: config.bucketName ?? Bun.env.R2_REGISTRY_BUCKET ?? 'npm-registry',
       endpoint: config.endpoint ?? Bun.env.R2_ENDPOINT,
@@ -66,8 +82,8 @@ export class R2StorageAdapter {
 
     return new R2StorageAdapter({
       ...config,
-      accountId: config.accountId ?? infra.accountId,
-      accessKeyId: config.accessKeyId ?? infra.accessKeyId,
+      accountId: brandAccountId(config.accountId ?? infra.accountId),
+      accessKeyId: brandAccessKeyId(config.accessKeyId ?? infra.accessKeyId),
       secretAccessKey: config.secretAccessKey ?? infra.secretAccessKey,
       bucketName: config.bucketName ?? infra.bucketName,
       endpoint: config.endpoint ?? infra.endpoint,

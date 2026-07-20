@@ -2,6 +2,7 @@
 // lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { type AccountId, asAccountId } from '../types/branded.ts';
 import { syncUserId } from './env';
 
 export interface UserPreferences {
@@ -60,11 +61,12 @@ export class DocumentationSync {
     private userId: string,
     config?: {
       bucketName?: string;
-      accountId?: string;
+      accountId?: AccountId | string;
     }
   ) {
     this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
-    const accountId = config?.accountId || Bun.env.R2_ACCOUNT_ID || '';
+    const raw = config?.accountId || Bun.env.R2_ACCOUNT_ID || '';
+    const accountId = raw ? asAccountId(String(raw)) : ('' as AccountId);
     this.baseUrl = `https://${accountId}.r2.cloudflarestorage.com`;
     this.deviceId = this.getDeviceId();
   }

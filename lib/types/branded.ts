@@ -23,7 +23,7 @@
  *
  * TODO(brand-rollout) by detector role (not directory):
  *   DONE: lib/security (all) · r2-session-manager · utils telemetry spine
- *   Phase 1: [auth-credential]  AccessKeyId · AccountId · ZoneId (~20)
+ *   DONE Phase 1: [auth-credential] AccessKeyId · AccountId · ZoneId (0 remaining)
  *   Phase 2: [named-domain]     SessionId · RequestId · UserId · … (~59)
  *   Phase 3: [new-brand]        OperationId · ResourceId · ProjectId · … (~33)
  *   Phase 4: --smart --strict in CI once actionable → 0

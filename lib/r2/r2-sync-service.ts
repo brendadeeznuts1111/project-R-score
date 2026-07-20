@@ -1,6 +1,7 @@
 // lib/r2/r2-sync-service.ts — R2 multi-bucket sync service
 
 import { styled, FW_COLORS } from '../theme/colors';
+import type { AccessKeyId, AccountId } from '../types/branded.ts';
 import { r2EventSystem } from './r2-event-system';
 import { r2BatchOperations } from './r2-batch-operations';
 
@@ -34,8 +35,8 @@ export interface SyncEndpoint {
   prefix?: string;
   region?: string;
   credentials?: {
-    accountId?: string;
-    accessKeyId?: string;
+    accountId?: AccountId;
+    accessKeyId?: AccessKeyId;
     secretAccessKey?: string;
   };
 }
