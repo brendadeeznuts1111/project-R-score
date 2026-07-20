@@ -18,6 +18,7 @@ export * from './security.ts';
 export * from './deployment.ts';
 export * from './audit.ts';
 export * from './operations.ts';
+export * from './proton.ts';
 
 import type { BrandSpec } from './_core.ts';
 import { SESSION_BRAND_SPECS } from './session.ts';
@@ -27,11 +28,13 @@ import { SECURITY_BRAND_SPECS } from './security.ts';
 import { DEPLOYMENT_BRAND_SPECS } from './deployment.ts';
 import { AUDIT_BRAND_SPECS } from './audit.ts';
 import { OPERATIONS_BRAND_SPECS } from './operations.ts';
+import { PROTON_BRAND_SPECS } from './proton.ts';
 
 import type { SessionId, TerminalId, RequestId, CorrelationId, SnapshotId } from './session.ts';
 import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './identity.ts';
 import type { DocumentId, ZoneId, DocTokenId } from './documents.ts';
 import type { ChallengeId, PolicyId } from './security.ts';
+import type { VaultId, ItemId } from './proton.ts';
 import type { DeploymentId } from './deployment.ts';
 import type { VersionId, AuditId } from './audit.ts';
 import type {
@@ -57,6 +60,7 @@ export const BRAND_CATALOG: readonly BrandSpec[] = [
   ...DEPLOYMENT_BRAND_SPECS,
   ...AUDIT_BRAND_SPECS,
   ...OPERATIONS_BRAND_SPECS,
+  ...PROTON_BRAND_SPECS,
 ] as const;
 
 /** Union of every branded ID — telemetry/serialization edges that accept any ID. */
@@ -76,6 +80,8 @@ export type AnyId =
   | DocTokenId
   | ChallengeId
   | PolicyId
+  | VaultId
+  | ItemId
   | DeploymentId
   | VersionId
   | AuditId
