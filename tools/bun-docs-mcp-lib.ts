@@ -585,7 +585,7 @@ export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
  */
 export async function fetchReleaseNotes(limit = 5): Promise<ReleaseNote[]> {
   try {
-    const { loadReleaseIndex } = await import('./bun-docs-release-index.ts');
+    const { loadReleaseIndex } = await import('./bun-docs-releases.ts');
     const { file } = await loadReleaseIndex({ refresh: false });
     const items: ReleaseNote[] = [...file.entries]
       .sort((a, b) => (a.pubDate < b.pubDate ? 1 : a.pubDate > b.pubDate ? -1 : 0))

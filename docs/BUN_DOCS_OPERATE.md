@@ -43,8 +43,8 @@ Power list flags (`-w` / `-n` / `-c` / `-l`) remain on `bun-docs-catalog.ts list
 | `bun tools/bun-doc-refs.ts schedule --once` | One integrity pass + append `reports/doc-integrity.jsonl` |
 | `bun tools/bun-doc-refs.ts schedule` | In-process `Bun.cron` weekly (`0 6 * * *` UTC default) |
 | `bun tools/bun-docs-index-gen.ts` | Rebuild index from live `llms.txt` (+ `bunVersion` pin) |
-| `bun tools/bun-docs-release-index.ts` | **Phase 0** — fetch `https://bun.com/rss.xml` → `tools/release-index.json` (version → blog URL) |
-| `bun tools/bun-docs-release-scrape.ts` | **Phase 2b** — scrape release posts → `tools/bun-docs-release-overlay.json` (SHIP/FIX/CHG) |
+| `bun tools/bun-docs-releases.ts index` | **Phase 0** — fetch `https://bun.com/rss.xml` → `tools/release-index.json` (version → blog URL) |
+| `bun tools/bun-docs-releases.ts scrape` | **Phase 2b** — scrape release posts → `tools/bun-docs-release-overlay.json` (SHIP/FIX/CHG) |
 | `bun tools/bun-docs-catalog.ts build [--version=X]` | Structured catalog; pin `bunVersion` + `releaseUrl`; **BLOG** from RSS; **NOTE** from HTML + MD fallback |
 | `bun tools/bun-docs-catalog.ts build --skip-notes` | Catalog build without live NOTE fetches |
 | `bun tools/bun-docs-catalog.ts export --compact` | TSV for agents: name · type · ship · fix · chg · pin · blog · doc · note |
@@ -156,10 +156,10 @@ Version pin links (docs pages stay unversioned on bun.com):
 
 | Phase | Focus | Status |
 |-------|--------|--------|
-| **0** RSS release index | `bun-docs-release-index.ts` → `release-index.json` | **Shipped** |
+| **0** RSS release index | `bun tools/bun-docs-releases.ts index` → `release-index.json` | **Shipped** |
 | **1** NOTE + BLOG enrichment | Doc HTML notes + RSS-validated blog URLs in catalog build | **Shipped** |
 | **2** Operate & observe | `--fix`, version pin, `status` health | **Shipped** (this doc + integrity flags) |
-| **2b** SHIP/FIX/CHG from blog sections | `bun-docs-release-scrape.ts` → overlay merge in catalog build | **Shipped** |
+| **2b** SHIP/FIX/CHG from blog sections | `bun tools/bun-docs-releases.ts scrape` → overlay merge in catalog build | **Shipped** |
 | **Northstar** TokenRef schema | `lib/docs/token-ref.ts` + locus/examples/history metrics | **Shipped** |
 | **3** Expand | RRF hybrid search, multi-stack sources, IDE | Planned |
 | **4** Governance | richer migrations for cache DBs, dashboards | Ongoing (JSONL + status for now) |

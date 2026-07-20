@@ -487,7 +487,7 @@ async function resolveBlogUrl(version: string): Promise<string | undefined> {
   const v = normalizeBunVersion(version);
   if (blogUrlCache.has(v)) return blogUrlCache.get(v);
 
-  const { loadReleaseIndex, lookupBlogUrl } = await import('./bun-docs-release-index.ts');
+  const { loadReleaseIndex, lookupBlogUrl } = await import('./bun-docs-releases.ts');
   const { map } = await loadReleaseIndex({ refresh: false });
   const resolved = lookupBlogUrl(v, map);
   blogUrlCache.set(v, resolved);
@@ -541,7 +541,7 @@ async function main(): Promise<void> {
   // present in the RSS release index; otherwise fall back to the generic
   // releases page so generated JSON never contains a 404 release URL.
   const normVersion = normalizeBunVersion(version);
-  const { loadReleaseIndex } = await import('./bun-docs-release-index.ts');
+  const { loadReleaseIndex } = await import('./bun-docs-releases.ts');
   const { map: releaseMap } = await loadReleaseIndex({ refresh: false });
   const releaseUrl = releaseMap.has(normVersion)
     ? `https://github.com/oven-sh/bun/releases/tag/bun-v${normVersion}`

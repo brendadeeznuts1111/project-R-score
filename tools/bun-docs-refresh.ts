@@ -33,13 +33,13 @@ async function main(): Promise<void> {
   const forceScrape = Bun.argv.includes('--force-scrape');
 
   const steps: Step[] = [
-    { name: 'Phase 0: RSS release-index', cmd: ['bun', 'tools/bun-docs-release-index.ts'] },
+    { name: 'Phase 0: RSS release-index', cmd: ['bun', 'tools/bun-docs-releases.ts', 'index'] },
   ];
 
   if (!skipScrape) {
     steps.push({
       name: 'Phase 2b: release scrape',
-      cmd: ['bun', 'tools/bun-docs-release-scrape.ts', ...(forceScrape ? ['--force'] : [])],
+      cmd: ['bun', 'tools/bun-docs-releases.ts', 'scrape', ...(forceScrape ? ['--force'] : [])],
     });
   }
 

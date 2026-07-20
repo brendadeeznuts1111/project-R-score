@@ -30,7 +30,7 @@ import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
  * Missing descriptions can be filled from live doc HTML (Phase 1 NOTE).
  *
  * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0] [--force] [--skip-notes]
- * Prefetch: bun tools/bun-docs-release-index.ts
+ * Prefetch: bun tools/bun-docs-releases.ts index
  * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
  *                 [-s runtime] [-t api] [-q WebView] [-w] [-n] [-c] [-l] [-v] [-j]
  * Lookup:  bun tools/bun-docs-catalog.ts get Bun.WebView
@@ -50,14 +50,12 @@ import {
   cleanBunVersion,
   loadReleaseIndex,
   lookupBlogUrl,
-  type ReleaseEntry,
-} from './bun-docs-release-index.ts';
-import {
   RELEASE_OVERLAY_PATH,
   releaseOverlayIndex,
+  type ReleaseEntry,
   type ReleaseOverlayEntry,
   type ReleaseOverlayFile,
-} from './bun-docs-release-scrape.ts';
+} from './bun-docs-releases.ts';
 import {
   buildPageAnchorIndex,
   classifyLocusStatus,

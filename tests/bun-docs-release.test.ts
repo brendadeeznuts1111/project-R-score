@@ -8,13 +8,6 @@ import {
   lookupBlogUrl,
   isReleasePost,
   normalizeReleaseVersion,
-} from '../tools/bun-docs-release-index.ts';
-import {
-  extractNoteFromHtml,
-  extractNoteFromMarkdown,
-  normalizeNote,
-} from '../tools/bun-docs-page-notes.ts';
-import {
   classifySectionHeading,
   parseBlogSections,
   extractTokenCandidates,
@@ -25,7 +18,12 @@ import {
   releaseOverlayIndex,
   loadExistingOverlayMap,
   type ReleaseOverlayFile,
-} from '../tools/bun-docs-release-scrape.ts';
+} from '../tools/bun-docs-releases.ts';
+import {
+  extractNoteFromHtml,
+  extractNoteFromMarkdown,
+  normalizeNote,
+} from '../tools/bun-docs-page-notes.ts';
 
 const SAMPLE_RSS = `<?xml version="1.0"?><rss><channel>
 <item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>g1</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate></item>
