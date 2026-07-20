@@ -340,7 +340,9 @@ export class MasterTokenManager {
       Bun.env.NODE_ENV === 'test';
 
     if (!allowInsecure) {
-      throw new Error('MASTER_TOKEN_HMAC_KEY is required (Bun.env; use secrets:migrate for keychain)');
+      throw new Error(
+        'MASTER_TOKEN_HMAC_KEY is required (Bun.env; use secrets:migrate for keychain)'
+      );
     }
 
     return 'factorywager-mcp-dev-only-key';
