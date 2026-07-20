@@ -75,9 +75,7 @@ async function runCommand(command: Command) {
   const scriptPath = join(import.meta.dir, config.script);
 
   try {
-    const cmd = config.script.endsWith('.sh')
-      ? ['bash', scriptPath]
-      : ['bun', scriptPath];
+    const cmd = config.script.endsWith('.sh') ? ['bash', scriptPath] : ['bun', scriptPath];
     const proc = Bun.spawn({
       cmd,
       stdout: 'inherit',
