@@ -166,7 +166,7 @@ interface PoolStats {
 
 class PortManager {
   private static getDefaultConfig(): PortConfig {
-    const DEFAULT_PORT = parseInt(process.env.DEFAULT_PORT || '3000', 10);
+    const DEFAULT_PORT = parseInt(Bun.env.DEFAULT_PORT || '3000', 10);
     return {
       project: 'default',
       port: DEFAULT_PORT,
@@ -709,8 +709,8 @@ class OptimizedFetch {
    */
   static initialize(options: Partial<typeof this.DEFAULT_LIMITS> = {}): void {
     // Use Bun's native environment variables or defaults
-    let maxRequests = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512');
-    let maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
+    let maxRequests = parseInt(Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512');
+    let maxConnectionsPerHost = parseInt(Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
 
     // Validate environment variables
     const requestsValidation = ValidationUtils.validateConnectionLimit(
@@ -949,8 +949,8 @@ class OptimizedFetch {
       connectionPool: this.getStats(),
       dnsOptimization: DNSOptimizer.getDNSCacheStats(),
       configuration: {
-        maxRequests: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512',
-        maxPerHost: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6',
+        maxRequests: Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512',
+        maxPerHost: Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6',
       },
     };
   }
@@ -980,10 +980,10 @@ class ProjectServer {
 
     // Use Bun's environment variables with project-specific fallbacks
     const maxRequests = parseInt(
-      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512'
+      Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512'
     );
     const maxConnectionsPerHost = parseInt(
-      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'
+      Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'
     );
 
     this.config = {
@@ -1150,10 +1150,10 @@ async function demonstratePortManagement(): Promise<void> {
   // Show Bun's environment variables
   console.info('🌍 Bun Environment Variables:');
   console.info(
-    `   BUN_CONFIG_MAX_HTTP_REQUESTS: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`
+    `   BUN_CONFIG_MAX_HTTP_REQUESTS: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`
   );
   console.info(
-    `   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`
+    `   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`
   );
   console.info('');
 

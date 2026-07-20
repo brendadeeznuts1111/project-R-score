@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Simple R2 Client for Filter Watch Logger
@@ -15,7 +16,7 @@ interface R2UploadOptions {
 }
 
 function isLocalMode(): boolean {
-  return process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME;
+  return Bun.env.NODE_ENV === 'development' || !Bun.env.R2_BUCKET_NAME;
 }
 
 /**

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Bun Cookie Pro-Tips & Integration Master Guide
@@ -461,7 +462,7 @@ export class CookieMonitor {
 export class ProductionCookieTestSuite {
   static createTestCookie(name: string, overrides: Partial<any> = {}): Cookie {
     const defaults = {
-      secure: process.env.NODE_ENV === 'test' ? false : true,
+      secure: Bun.env.NODE_ENV === 'test' ? false : true,
       httpOnly: false,
       sameSite: 'lax',
       path: '/test',

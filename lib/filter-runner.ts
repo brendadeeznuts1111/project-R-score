@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * Bun Filter Runner - Tier-1380 Implementation
  *
@@ -387,7 +388,7 @@ async function runPackageScript(
       cwd: pkg.path,
       stdout: 'pipe',
       stderr: 'pipe',
-      env: { ...process.env, FORCE_COLOR: '1' },
+      env: { ...Bun.env, FORCE_COLOR: '1' },
     });
 
     let exitCode: number;
@@ -422,7 +423,7 @@ async function runPackageScript(
     const durationMs = performance.now() - startMs;
 
     // Stream output with package prefix
-    if (!process.env.FILTER_SILENT) {
+    if (!Bun.env.FILTER_SILENT) {
       const prefix = c.cyan(`[${pkg.name}]`);
       if (stdout) {
         stdout.split('\n').forEach(line => {

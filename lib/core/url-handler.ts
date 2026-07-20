@@ -2,6 +2,7 @@
 // 🔒 BUN FIX: URLSearchParams.prototype.size is now configurable: true (Web IDL spec compliance)
 // @see BUN-SECURITY-FIXES-INTEGRATION.md
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { handleError, ValidationError } from './error-handling';
 import { Validator } from './validation';
 
@@ -338,7 +339,7 @@ export class URLHandler {
    * Build URL from components
    */
   static build(components: Partial<URLComponents>): string {
-    const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
+    const DEFAULT_HOST = Bun.env.SERVER_HOST || Bun.env.HOST || 'localhost';
     const url = new URL(`http://${DEFAULT_HOST}`);
 
     if (components.protocol) {

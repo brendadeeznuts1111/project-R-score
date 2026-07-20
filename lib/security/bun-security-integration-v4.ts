@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * Bun Security v4.0 - Complete Security Integration
  *
@@ -436,7 +437,7 @@ export class BunSecurityEngine {
       const newSecrets: Record<string, string> = {};
 
       // Get current secrets from environment
-      const currentSecrets = process.env;
+      const currentSecrets = Bun.env;
 
       // Rotate each secret that needs rotation
       for (const [key, value] of Object.entries(currentSecrets)) {

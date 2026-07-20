@@ -1,5 +1,6 @@
 // lib/core/core-errors.ts — Standardized error handling system
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-types';
 import type { ResourceId } from '../types/branded.ts';
 
@@ -70,7 +71,7 @@ export enum EnterpriseErrorCode {
    *
    * @example
    * ```typescript
-   * const apiKey = process.env.API_KEY;
+   * const apiKey = Bun.env.API_KEY;
    * if (!apiKey) {
    *   throw createSystemError(
    *     EnterpriseErrorCode.SYSTEM_CONFIGURATION_INVALID,

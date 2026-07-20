@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/cli/chrome-app-manager.ts — Chrome app configuration and management
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 export interface ChromeAppConfig {
   appName: string;
   appUrl: string;
@@ -69,7 +70,7 @@ StartupNotify=true
 StartupWMClass=${this.config.appName}
         `;
 
-        const desktopDir = `${process.env.HOME}/.local/share/applications`;
+        const desktopDir = `${Bun.env.HOME}/.local/share/applications`;
         await Bun.$`mkdir -p ${desktopDir}`;
         const desktopFile = `${desktopDir}/${this.config.appName.toLowerCase()}.desktop`;
         await Bun.write(desktopFile, desktopEntry);
@@ -97,7 +98,7 @@ oShortcut.Description = "${this.config.appName} - Bun Documentation"
 oShortcut.Save
         `;
 
-        const tempFile = `${process.env.TEMP || '/tmp'}/create-shortcut.vbs`;
+        const tempFile = `${Bun.env.TEMP || '/tmp'}/create-shortcut.vbs`;
         await Bun.write(tempFile, vbsScript);
         await Bun.$`cscript //nologo ${tempFile}`;
         await Bun.$`rm ${tempFile}`;

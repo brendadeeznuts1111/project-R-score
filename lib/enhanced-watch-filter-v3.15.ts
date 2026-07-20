@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Enhanced Watch Filter Integration v3.15 - Official CLI Native
@@ -113,7 +114,7 @@ export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilte
         clearScreen: !flags.noClear,
         parallel: flags.parallel ?? true,
         maxRestarts: 10,
-        healthCheckUrl: process.env.HEALTH_CHECK_URL,
+        healthCheckUrl: Bun.env.HEALTH_CHECK_URL,
         hotReload: flags.hot ?? false,
         smolMode: flags.smol ?? false,
         consoleDepth: 2,
@@ -175,7 +176,7 @@ export async function updateWatchFilter(
         clearScreen: true,
         parallel: newFlags?.parallel ?? true,
         maxRestarts: 10,
-        healthCheckUrl: process.env.HEALTH_CHECK_URL,
+        healthCheckUrl: Bun.env.HEALTH_CHECK_URL,
         hotReload: newFlags?.hot ?? false,
         smolMode: newFlags?.smol ?? false,
       })

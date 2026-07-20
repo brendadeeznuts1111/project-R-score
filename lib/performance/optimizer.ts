@@ -8,6 +8,7 @@
 // SPAWN OPTIMIZATION
 // ============================================================================
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 class SpawnOptimizer {
   /**
    * Security: Validate input to prevent command injection
@@ -254,7 +255,7 @@ class EnvironmentOptimizer {
       return cached.value;
     }
 
-    const value = process.env[key];
+    const value = Bun.env[key];
     if (value !== undefined) {
       this.ENV_CACHE.set(key, { value, timestamp: Date.now() });
     }
@@ -322,7 +323,7 @@ class EnvironmentOptimizer {
     // Test standard access
     const standardStart = performance.now();
     for (let i = 0; i < iterations; i++) {
-      process.env[testVar];
+      Bun.env[testVar];
     }
     const standardTime = performance.now() - standardStart;
 

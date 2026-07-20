@@ -2,6 +2,7 @@
 // lib/http/port-limit-validation-tests.ts — Tests for port and connection limit validation
 
 // Entry guard check
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
@@ -350,8 +351,8 @@ class ConnectionLimitTests {
     console.info('='.repeat(50));
 
     // Store original environment
-    const originalMaxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
-    const originalMaxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
+    const originalMaxRequests = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
+    const originalMaxPerHost = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
 
     const testCases = [
       {
@@ -390,15 +391,15 @@ class ConnectionLimitTests {
       console.info(`\nTesting: ${testCase.desc}`);
 
       // Set test environment
-      Object.assign(process.env, testCase.env);
+      Object.assign(Bun.env, testCase.env);
 
       try {
         // Test OptimizedFetch initialization
         OptimizedFetch.initialize();
 
         // Check if initialization succeeded (it shouldn't throw with invalid values)
-        const maxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
-        const maxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
+        const maxRequests = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
+        const maxPerHost = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
 
         let validationPassed = true;
         const errors: string[] = [];
@@ -455,8 +456,8 @@ class ConnectionLimitTests {
     }
 
     // Restore original environment
-    process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;
-    process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;
+    Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;
+    Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;
   }
 }
 

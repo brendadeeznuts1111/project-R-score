@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // lib/utils/ffi-environment.ts — FFI environment variable support
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * FFI Build Configuration
  *
@@ -65,7 +66,7 @@ export function buildFFIBindings(config: {
     }
   >;
 }): void {
-  const env = process.env as FFIEnvConfig;
+  const env = Bun.env as FFIEnvConfig;
 
   console.info('🔧 FFI Build Environment:');
   console.info(`   C_INCLUDE_PATH: ${env.C_INCLUDE_PATH || '(system default)'}`);
@@ -80,7 +81,7 @@ export function buildFFIBindings(config: {
  */
 export function verifyFFIEnvironment(): { valid: boolean; issues: string[] } {
   const issues: string[] = [];
-  const env = process.env;
+  const env = Bun.env;
 
   if (process.platform === 'linux' && !env.LIBRARY_PATH) {
     // Check if we're on a non-FHS system

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Cookie Property Validator v3.24 - RFC 6265 Compliance
@@ -491,7 +492,7 @@ export class CookieValidator {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = Bun.env.NODE_ENV === 'production';
     const hasSecurePrefix =
       name && this.RFC_6265_RESERVED_PREFIXES.some(prefix => name.startsWith(prefix));
 

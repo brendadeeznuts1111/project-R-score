@@ -176,7 +176,7 @@ export class Cookie {
     // Apply security defaults for factory-wager fusion
     const secureDefaults: CookieOptions = {
       path: '/',
-      secure: process.env.NODE_ENV === 'production',
+      secure: Bun.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'strict',
       ...options,
@@ -386,7 +386,7 @@ export class CSRFProtection {
 
 // 🎲 A/B TESTING VARIANTS - Tamper-proof
 export class ABTestingVariant {
-  private static readonly VARIANT_SECRET = process.env.VARIANT_SECRET || 'default-variant-secret';
+  private static readonly VARIANT_SECRET = Bun.env.VARIANT_SECRET || 'default-variant-secret';
 
   /**
    * Create tamper-proof A/B variant cookie

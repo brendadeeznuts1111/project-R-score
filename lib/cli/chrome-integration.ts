@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/cli/chrome-integration.ts — Chrome app integration with docs fetcher
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { EnhancedDocsFetcher } from '../docs/index-fetcher-enhanced';
 
 export interface ChromeAppConfig {
@@ -67,7 +68,7 @@ export class ChromeAppManager {
           Categories=Development;
         `;
 
-        const desktopDir = `${process.env.HOME}/.local/share/applications`;
+        const desktopDir = `${Bun.env.HOME}/.local/share/applications`;
         await Bun.$`mkdir -p ${desktopDir}`;
         const desktopFile = `${desktopDir}/bun-docs.desktop`;
         await Bun.write(desktopFile, desktopEntry);

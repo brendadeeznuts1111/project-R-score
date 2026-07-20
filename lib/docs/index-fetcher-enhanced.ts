@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/docs/index-fetcher-enhanced.ts — Enhanced documentation index fetcher
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { EnhancedDocsCacheManager } from './cache-manager';
 import { RipgrepSearcher, RipgrepMatch } from './ripgrep-spawn';
 
@@ -26,7 +27,7 @@ export class EnhancedDocsFetcher {
     this.cache = new EnhancedDocsCacheManager(config);
     this.fallbackData = this.loadFallbackIndex();
     this.ripgrepSearcher = new RipgrepSearcher({
-      cacheDir: `${process.env.HOME}/.cache/bun-docs/requests`,
+      cacheDir: `${Bun.env.HOME}/.cache/bun-docs/requests`,
       maxConcurrency: 5,
     });
   }

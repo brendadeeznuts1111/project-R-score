@@ -9,6 +9,7 @@
 //        bun lib/performance/benchmark-recovery.ts tail 50 lib/ai/ai.bench.ts
 //        bun lib/performance/benchmark-recovery.ts recover lib/ai/ai.bench.ts
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { heapStats } from 'bun:jsc';
 
 // ---------------------------------------------------------------------------
@@ -341,7 +342,7 @@ export class ProgressiveDisclosureCLI {
       );
       const proc = Bun.spawn([cmd, ...args], {
         cwd: opts.cwd ?? process.cwd(),
-        env: { ...process.env, BUN_CONSOLE_DEPTH: phase.depth.toString() },
+        env: { ...Bun.env, BUN_CONSOLE_DEPTH: phase.depth.toString() },
         stdout: 'inherit',
         stderr: 'inherit',
       });
@@ -372,7 +373,7 @@ const ENV_DEPTH: Record<string, { default: number; onError: number; onStuck: num
 };
 
 function envDepths() {
-  const env = process.env.BUN_ENV ?? process.env.NODE_ENV ?? 'development';
+  const env = Bun.env.BUN_ENV ?? Bun.env.NODE_ENV ?? 'development';
   return ENV_DEPTH[env] ?? ENV_DEPTH.development;
 }
 

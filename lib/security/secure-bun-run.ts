@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/security/secure-bun-run.ts — Secure Bun.spawn wrapper with command validation and timeout
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 export interface SecureRunResult {
   stdout: string;
   stderr: string;
@@ -59,7 +60,7 @@ export async function secureBunRun(
 
   const proc = Bun.spawn(['bun', script, ...args], {
     cwd,
-    env: env ? { ...process.env, ...env } : undefined,
+    env: env ? { ...Bun.env, ...env } : undefined,
     stdout: 'pipe',
     stderr: 'pipe',
   });

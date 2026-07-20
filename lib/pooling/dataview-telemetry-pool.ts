@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * DataView-Enhanced Telemetry Pool for Connection Pooling v3.20
@@ -34,7 +35,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
     this.metrics = new DataViewPoolMetrics();
 
     // Initialize separate database for binary data
-    const dvDbPath = process.env.DV_DB_PATH || './telemetry_dv.db';
+    const dvDbPath = Bun.env.DV_DB_PATH || './telemetry_dv.db';
     const absoluteDbPath = require('path').resolve(dvDbPath);
     this.dvDb = new Database(absoluteDbPath);
     this.initDataViewSchema();
@@ -85,7 +86,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   }
 
   private populateDataViewPool(dbPath: string): void {
-    const dvPoolSize = parseInt(process.env.DV_POOL_SIZE || '10');
+    const dvPoolSize = parseInt(Bun.env.DV_POOL_SIZE || '10');
     console.info(`🏊 Populating DataView pool with ${dvPoolSize} connections...`);
 
     for (let i = 0; i < dvPoolSize; i++) {

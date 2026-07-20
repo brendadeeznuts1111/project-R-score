@@ -1,5 +1,6 @@
 // lib/validation/cli-constants-validation.ts — Validation and auto-fixing for CLI tools and constants
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
 import { createValidationError, EnterpriseErrorCode, createSystemError } from '../core/core-errors';
@@ -188,8 +189,8 @@ export class CLIToolValidator {
       NODE_ENV: 'development',
       BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER: '1',
       BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS: '1',
-      PATH: process.env.PATH || '',
-      HOME: process.env.HOME || '',
+      PATH: Bun.env.PATH || '',
+      HOME: Bun.env.HOME || '',
     };
     return defaults[envVar] || '';
   }
@@ -675,8 +676,8 @@ export class ValidationReporter {
 
     // Validate CLI tools
     const cliResults = await Promise.all([
-      CLIToolValidator.validateTool('bun', [], process.env),
-      CLIToolValidator.validateTool('overseer-cli', [], process.env),
+      CLIToolValidator.validateTool('bun', [], Bun.env),
+      CLIToolValidator.validateTool('overseer-cli', [], Bun.env),
     ]);
 
     const cliErrors = cliResults.flatMap(r => r.errors);
@@ -810,7 +811,7 @@ export class AutoHealer {
 
     // Auto-fix CLI tools
     try {
-      const cliResult = await CLIToolValidator.autoFix('bun', [], process.env);
+      const cliResult = await CLIToolValidator.autoFix('bun', [], Bun.env);
       cliFixes.push(...cliResult.appliedFixes);
     } catch (error) {
       cliFixes.push(`CLI auto-fix failed: ${error}`);

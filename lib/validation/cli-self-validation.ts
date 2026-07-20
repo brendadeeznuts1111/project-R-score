@@ -1,5 +1,6 @@
 // lib/validation/cli-self-validation.ts — CLI tool self-validation with automatic error handling
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import {
   CLIToolValidator,
   URLValidator,
@@ -44,7 +45,7 @@ export class CLISelfValidator {
     const toolValidation = await CLIToolValidator.validateTool(
       config.toolName,
       config.args || [],
-      config.env || process.env
+      config.env || Bun.env
     );
 
     if (!toolValidation.isValid) {
@@ -56,7 +57,7 @@ export class CLISelfValidator {
         const healResult = await CLIToolValidator.autoFix(
           config.toolName,
           config.args || [],
-          config.env || process.env
+          config.env || Bun.env
         );
 
         if (healResult.success) {

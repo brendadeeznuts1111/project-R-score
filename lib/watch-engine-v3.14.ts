@@ -788,7 +788,7 @@ export async function runWatchCLI(): Promise<void> {
       clearScreen: true,
       parallel: true,
       maxRestarts: 10,
-      healthCheckUrl: process.env.HEALTH_CHECK_URL,
+      healthCheckUrl: Bun.env.HEALTH_CHECK_URL,
       hotReload: flags.hot,
       smolMode: flags.smol,
       consoleDepth: flags.consoleDepth,

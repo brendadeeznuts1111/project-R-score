@@ -2,6 +2,7 @@
 // lib/validation/platform-validator.ts — Platform validation CLI for tools, URLs, and constants
 
 // Entry guard check
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
@@ -56,7 +57,7 @@ async function validateCLI(): Promise<void> {
   const results = [];
 
   for (const tool of tools) {
-    const result = await CLIToolValidator.validateTool(tool, [], process.env);
+    const result = await CLIToolValidator.validateTool(tool, [], Bun.env);
     results.push({ tool, ...result });
 
     if (result.isValid) {

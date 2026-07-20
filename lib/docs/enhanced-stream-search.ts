@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * Ultra-Zen Documentation Streaming System - Enhanced v2.0
  * High-performance streaming search using Bun.spawn Web Standard APIs
@@ -137,7 +138,7 @@ export class EnhancedZenStreamSearcher {
         signal: options.signal || this.abortController.signal,
         // Enhanced process configuration
         env: {
-          ...process.env,
+          ...Bun.env,
           RIPGREP_CONFIG_PATH: options.cachePath,
         },
         // Resource limits based on priority

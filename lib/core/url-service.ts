@@ -17,12 +17,12 @@ export interface UrlConfig {
 }
 
 export const DEFAULT_URL_CONFIG: UrlConfig = {
-  apiBaseUrl: process.env.API_BASE_URL || 'http://example.com',
-  wikiBaseUrl: process.env.WIKI_BASE_URL || 'https://wiki.company.com',
-  monitoringUrl: process.env.MONITORING_URL || 'http://example.com',
-  abTestingUrl: process.env.AB_TESTING_URL || 'http://example.com',
-  contentServiceUrl: process.env.CONTENT_SERVICE_URL || 'http://example.com',
-  verboseServiceUrl: process.env.VERBOSE_SERVICE_URL || 'http://example.com',
+  apiBaseUrl: Bun.env.API_BASE_URL || 'http://example.com',
+  wikiBaseUrl: Bun.env.WIKI_BASE_URL || 'https://wiki.company.com',
+  monitoringUrl: Bun.env.MONITORING_URL || 'http://example.com',
+  abTestingUrl: Bun.env.AB_TESTING_URL || 'http://example.com',
+  contentServiceUrl: Bun.env.CONTENT_SERVICE_URL || 'http://example.com',
+  verboseServiceUrl: Bun.env.VERBOSE_SERVICE_URL || 'http://example.com',
 };
 
 // ============================================================================

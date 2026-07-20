@@ -5,6 +5,7 @@
 // lib/validation/comprehensive-implementation-audit.ts — Comprehensive implementation audit
 
 // Entry guard check
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
@@ -395,27 +396,27 @@ class EnvironmentVariablesAudit {
 
     // Check if OptimizedFetch reads environment variables
     try {
-      const originalMaxRequests = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
-      const originalMaxPerHost = process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
+      const originalMaxRequests = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
+      const originalMaxPerHost = Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
 
       // Set test values
-      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = '256';
-      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = '8';
+      Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS = '256';
+      Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = '8';
 
       // Initialize OptimizedFetch
       OptimizedFetch.initialize();
 
       // Restore original values
       if (originalMaxRequests) {
-        process.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;
+        Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS = originalMaxRequests;
       } else {
-        delete process.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
+        delete Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS;
       }
 
       if (originalMaxPerHost) {
-        process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;
+        Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST = originalMaxPerHost;
       } else {
-        delete process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
+        delete Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST;
       }
 
       ImplementationAudit.addResult(

@@ -2,6 +2,7 @@
 // lib/performance/optimized-spawn-test.ts — Optimized spawn performance test
 
 // Entry guard check
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 if (import.meta.main) {
   // Only run when executed directly
   main().catch(console.error);
@@ -294,7 +295,7 @@ class SpawnPerformanceTest {
     console.info('🌍 SPAWN WITH ENVIRONMENT VARIABLES PERFORMANCE');
     console.info('='.repeat(40));
 
-    const env = { ...process.env, TEST_VAR: 'test_value' };
+    const env = { ...Bun.env, TEST_VAR: 'test_value' };
     const times: number[] = [];
 
     for (let i = 0; i < this.ITERATIONS; i++) {

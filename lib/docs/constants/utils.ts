@@ -723,7 +723,7 @@ const output = await new Response(proc.stdout).text();
 console.info(output);`,
 
     FORK: `const proc = Bun.spawn(["bun", "worker.ts"], {
-  env: { ...process.env, WORKER_ID: "1" },
+  env: { ...Bun.env, WORKER_ID: "1" },
   stdout: "pipe",
 });
 console.info("Worker PID:", proc.pid);`,
@@ -741,9 +741,9 @@ console.info("Parent PID:", process.ppid);`,
 });`,
 
     ENV_VARS: `// Bun auto-loads .env — no dotenv needed
-console.info("HOME:", process.env.HOME);
-process.env.MY_APP_MODE = "production";
-console.info("Mode:", process.env.MY_APP_MODE); // production`,
+console.info("HOME:", Bun.env.HOME);
+Bun.env.MY_APP_MODE = "production";
+console.info("Mode:", Bun.env.MY_APP_MODE); // production`,
 
     BUNFIG_GLOBAL: `// bunfig.toml — global (~/.bunfig.toml) vs local (project/bunfig.toml)
 // [install]
@@ -765,7 +765,7 @@ console.info("Mode:", process.env.MY_APP_MODE); // production`,
 // lockfile.save = true`,
 
     SECRETS: `// Bun auto-loads .env.local — secrets never leak to child processes
-const apiKey = process.env.API_KEY; // loaded from .env.local
+const apiKey = Bun.env.API_KEY; // loaded from .env.local
 console.info(typeof apiKey); // "string"
 // Bun.spawn inherits env but .env.local values are excluded by default`,
 

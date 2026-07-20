@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Enhanced Cookie + DataView Integration v3.24
@@ -52,7 +53,7 @@ export class UnifiedCookieDataViewManager {
 
   constructor(
     dbPath: string = './unified-telemetry.db',
-    cookieSecret: string = process.env.COOKIE_SECRET || 'default-secret'
+    cookieSecret: string = Bun.env.COOKIE_SECRET || 'default-secret'
   ) {
     this.db = new Database(dbPath);
     this.dataViewSerializer = new DataViewProfileSerializer();
@@ -142,7 +143,7 @@ export class UnifiedCookieDataViewManager {
           signed: true,
           encrypted: true,
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: Bun.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: 60 * 60 * 24 * 7,
         }
@@ -233,7 +234,7 @@ export class UnifiedCookieDataViewManager {
       {
         signed: true,
         httpOnly: false, // Allow JavaScript access for analytics
-        secure: process.env.NODE_ENV === 'production',
+        secure: Bun.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60, // 1 hour
       }
@@ -252,7 +253,7 @@ export class UnifiedCookieDataViewManager {
         signed: true,
         encrypted: true,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: Bun.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 60 * 60 * 24 * 7,
       }

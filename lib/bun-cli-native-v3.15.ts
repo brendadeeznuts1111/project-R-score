@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -332,7 +333,7 @@ function buildCommand(base: string[], flags: BunCLIFlags): string[] {
 }
 
 function buildEnv(flags: BunCLIFlags): Record<string, string> {
-  const env = { ...process.env };
+  const env = { ...Bun.env };
   if (flags.shell) env.BUN_CONFIG_SHELL = flags.shell;
   if (flags.port) env.BUN_CONFIG_PORT = String(flags.port);
   env.FORCE_COLOR = '1';

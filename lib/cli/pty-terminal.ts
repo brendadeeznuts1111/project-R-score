@@ -7,6 +7,7 @@
 // terminal instances and the BunTerminalInstance typing surface.
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * Check if PTY is supported on current platform
  * Note: Windows is not yet supported
@@ -252,7 +253,7 @@ export async function runShellSession(
 
   const cols = options.cols ?? 80;
   const rows = options.rows ?? 24;
-  const shell = process.env.SHELL || '/bin/bash';
+  const shell = Bun.env.SHELL || '/bin/bash';
 
   const commandsQueue = [...commands];
 

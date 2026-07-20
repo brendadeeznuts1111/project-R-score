@@ -1,10 +1,11 @@
 // lib/security/config-manager.ts — Security configuration manager
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { feature } from 'bun:bundle';
 
 // Build-time security constants (cannot be bypassed at runtime)
 const IS_PRODUCTION_BUILD =
-  process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
+  Bun.env.NODE_ENV === 'production' && Bun.env.NODE_ENV !== undefined;
 let PRODUCTION_SECURITY_ENABLED = IS_PRODUCTION_BUILD;
 try {
   if (feature('PRODUCTION_SECURITY')) {
@@ -252,7 +253,7 @@ export class SecurityConfigManager {
       config: this.getConfig(),
       validation: this.validateConfig(),
       securityLevel: this.getSecurityLevel(),
-      environment: process.env.NODE_ENV || 'unknown',
+      environment: Bun.env.NODE_ENV || 'unknown',
       timestamp: new Date().toISOString(),
     };
   }

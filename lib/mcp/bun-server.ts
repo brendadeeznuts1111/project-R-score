@@ -269,7 +269,7 @@ export class BunMCPServer {
         title: 'Environment Variables',
         description: 'Load and use environment variables with Bun.env',
         url: 'https://bun.sh/docs/runtime/env',
-        codeExample: 'const apiKey = process.env.API_KEY || Bun.env.API_KEY;',
+        codeExample: 'const apiKey = Bun.env.API_KEY;',
       },
       {
         title: 'Package Manager',
@@ -398,8 +398,8 @@ export class BunMCPServer {
     });
 
     const MCP_SERVER_HOST =
-      validateHost(process.env.MCP_SERVER_HOST) ||
-      validateHost(process.env.SERVER_HOST) ||
+      validateHost(Bun.env.MCP_SERVER_HOST) ||
+      validateHost(Bun.env.SERVER_HOST) ||
       'localhost';
     console.info(`🌐 Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
     console.info(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);

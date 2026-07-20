@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Bun Cookie Inspector v3.0 - Complete Property Analysis
@@ -418,7 +419,7 @@ class CookieBuilder {
   private options: CookieOptions = {
     path: '/',
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: Bun.env.NODE_ENV === 'production',
     sameSite: 'lax' as const,
   };
 

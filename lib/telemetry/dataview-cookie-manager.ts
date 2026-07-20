@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * DataView + CookieMap Integration v3.24
@@ -40,7 +41,7 @@ export class DataViewCookieManager {
 
   constructor(
     dbPath: string = './sessions.db',
-    secret: string = process.env.COOKIE_SECRET || 'default-secret'
+    secret: string = Bun.env.COOKIE_SECRET || 'default-secret'
   ) {
     this.db = new Database(dbPath);
     this.serializer = new DataViewProfileSerializer();
@@ -181,9 +182,9 @@ export class DataViewCookieManager {
     const headers = new Headers(response.headers);
 
     // Manually create Set-Cookie headers
-    const sessionCookie = `session=${sessionData.sessionId}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 7}; Path=/`;
-    const themeCookie = `theme=${sessionData.theme}; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 30}; Path=/`;
-    const visitsCookie = `visits=${sessionData.visits}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 365}; Path=/`;
+    const sessionCookie = `session=${sessionData.sessionId}; HttpOnly; ${Bun.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 7}; Path=/`;
+    const themeCookie = `theme=${sessionData.theme}; ${Bun.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 30}; Path=/`;
+    const visitsCookie = `visits=${sessionData.visits}; HttpOnly; ${Bun.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=lax; Max-Age=${60 * 60 * 24 * 365}; Path=/`;
 
     headers.append('Set-Cookie', sessionCookie);
     headers.append('Set-Cookie', themeCookie);

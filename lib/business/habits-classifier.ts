@@ -1,5 +1,6 @@
 // lib/business/habits-classifier.ts — Habits classification engine with Redis integration
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import Redis from 'ioredis';
 import { type UserId } from '../types/branded.ts';
 import {
@@ -29,7 +30,7 @@ export const calculateBonus = calculateBonusPure;
 export const getRecommendation = getRecommendationPure;
 export const applyVipRiskOverride = applyVipRiskOverridePure;
 
-const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379');
+const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379');
 
 /**
  * Store habits in Redis with TTL

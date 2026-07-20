@@ -146,7 +146,7 @@ export class SecureInputValidator implements InputValidator {
 
       // Prevent localhost in production
       if (Bun.env.NODE_ENV === 'production') {
-        const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
+        const DEFAULT_HOST = Bun.env.SERVER_HOST || Bun.env.HOST || 'localhost';
         const localhostPatterns = [
           'localhost',
           '127.0.0.1',

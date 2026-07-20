@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * High-Performance Ripgrep Searcher using Bun.spawn
  * Zero-copy, SIMD-optimized process management with streaming JSON parsing
@@ -168,7 +169,7 @@ export class RipgrepSearcher {
       maxCacheSize?: number;
     } = {}
   ) {
-    this.cacheDir = options.cacheDir || `${process.env.HOME}/.cache/bun-docs/requests`;
+    this.cacheDir = options.cacheDir || `${Bun.env.HOME}/.cache/bun-docs/requests`;
     this.maxConcurrency = options.maxConcurrency || 5;
     this.cacheTTL = options.cacheTTL || 5 * 60 * 1000; // 5 minutes
     this.requestCache = new LRUCache(options.maxCacheSize || 100);
@@ -245,7 +246,7 @@ export class RipgrepSearcher {
     const proc = Bun.spawn(args, {
       stdout: 'pipe',
       stderr: 'ignore',
-      env: process.env,
+      env: Bun.env,
     });
 
     try {
@@ -283,7 +284,7 @@ export class RipgrepSearcher {
     const proc = Bun.spawn(args, {
       stdout: 'pipe',
       stderr: 'ignore',
-      env: process.env,
+      env: Bun.env,
     });
 
     let count = 0;

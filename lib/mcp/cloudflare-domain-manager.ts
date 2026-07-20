@@ -1,5 +1,6 @@
 // lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
@@ -292,7 +293,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Database Services',
         dependencies: [],
-        health_check_url: `http://database.factory-wager.com:${process.env.DATABASE_PORT || '5432'}/health`,
+        health_check_url: `http://database.factory-wager.com:${Bun.env.DATABASE_PORT || '5432'}/health`,
         ssl_required: false,
         enterprise_tier: true,
       },
@@ -334,7 +335,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Cache Services',
         dependencies: [],
-        health_check_url: `http://redis.factory-wager.com:${process.env.REDIS_PORT || '6379'}/health`,
+        health_check_url: `http://redis.factory-wager.com:${Bun.env.REDIS_PORT || '6379'}/health`,
         ssl_required: false,
         enterprise_tier: true,
       },

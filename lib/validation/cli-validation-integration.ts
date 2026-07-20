@@ -1,5 +1,6 @@
 // lib/validation/cli-validation-integration.ts — Minimal CLI validation integration helper
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { quickValidate, validateAndReport } from './cli-self-validation';
 
 // ============================================================================
@@ -75,7 +76,7 @@ export async function validateWithFallback(
  * Validate required environment variables
  */
 export function validateEnvironment(requiredVars: string[]): void {
-  const missing = requiredVars.filter(varName => !process.env[varName]);
+  const missing = requiredVars.filter(varName => !Bun.env[varName]);
 
   if (missing.length > 0) {
     console.error('❌ Missing required environment variables:');
@@ -92,8 +93,8 @@ export function setDefaults(defaults: Record<string, string>): void {
   let setCount = 0;
 
   for (const [key, value] of Object.entries(defaults)) {
-    if (!process.env[key]) {
-      process.env[key] = value;
+    if (!Bun.env[key]) {
+      Bun.env[key] = value;
       console.info(`🔧 Set default environment variable: ${key}=${value}`);
       setCount++;
     }

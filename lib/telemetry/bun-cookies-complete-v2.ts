@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
  * Bun Cookies Complete v2.0 - Enterprise Cookie Management
@@ -119,7 +120,7 @@ export class SecureCookieManager {
   private signingKey: Buffer;
   private analytics: Map<string, CookieAnalytics> = new Map();
 
-  constructor(secret: string = process.env.COOKIE_SECRET || '') {
+  constructor(secret: string = Bun.env.COOKIE_SECRET || '') {
     this.secret = secret;
     // Derive separate keys for signing and encryption
     const signingHmac = createHmac('sha256', secret);
@@ -167,7 +168,7 @@ export class SecureCookieManager {
     let finalValue = sanitized.value;
     let cookieOptions: SecureCookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: Bun.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       ...options,
@@ -448,7 +449,7 @@ export class AnalyticsCookieMap extends CookieMap {
   private accessLog: Array<{ name: string; timestamp: Date; action: 'get' | 'set' | 'delete' }> =
     [];
 
-  constructor(headers: Record<string, string>, secret: string = process.env.COOKIE_SECRET || '') {
+  constructor(headers: Record<string, string>, secret: string = Bun.env.COOKIE_SECRET || '') {
     super(headers);
     this.secureManager = new SecureCookieManager(secret);
   }

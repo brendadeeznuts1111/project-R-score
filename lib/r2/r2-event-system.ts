@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // lib/r2/r2-event-system.ts — R2 event system with real-time notifications
 
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { styled, FW_COLORS } from '../theme/colors';
 
 export interface R2Event {
@@ -91,7 +92,7 @@ export class R2EventSystem {
 
     this.isRunning = true;
     const EVENT_SYSTEM_HOST =
-      process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';
+      Bun.env.EVENT_SYSTEM_HOST || Bun.env.SERVER_HOST || 'localhost';
     console.info(
       styled(
         `✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`,

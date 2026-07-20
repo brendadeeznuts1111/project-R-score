@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/docs/cache-manager.ts — Documentation cache management
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { createHash } from 'node:crypto';
 
 export interface CacheConfig {
@@ -48,7 +49,7 @@ export class EnhancedDocsCacheManager {
   }
 
   private getCacheDir(): string {
-    const home = process.env.HOME || process.env.USERPROFILE;
+    const home = Bun.env.HOME || Bun.env.USERPROFILE;
     const baseDir = home ? `${home}/.cache/bun-docs` : '/tmp/bun-docs';
 
     // Create directory if it doesn't exist

@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * IPC-Powered Documentation Search System
  * Demonstrates Bun's advanced IPC and Terminal capabilities for documentation processing
@@ -332,7 +333,7 @@ class TerminalDocumentationExplorer {
     this.process = Bun.spawn(['fzf', '--ansi', '--multi', '--height', '20'], {
       terminal: this.terminal,
       env: {
-        ...process.env,
+        ...Bun.env,
         FZF_DEFAULT_COMMAND: "rg --color=always --line-number '' /Users/nolarose/Projects/.cache",
       },
     });
@@ -352,7 +353,7 @@ class TerminalDocumentationExplorer {
     this.process = Bun.spawn(['bash'], {
       terminal: this.terminal,
       env: {
-        ...process.env,
+        ...Bun.env,
         PS1: '\\[\\e[32m\\]docs>\\[\\e[0m\\] ',
       },
     });

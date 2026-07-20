@@ -73,7 +73,7 @@ export class ConfigValidator {
         // Check if required
         if (rule.required && (value === undefined || value === null)) {
           // Try to get from environment
-          const envValue = process.env[envVar] || Bun.env[envVar];
+          const envValue = Bun.env[envVar];
           if (envValue !== undefined) {
             validatedConfig[key] = envValue;
             logger.debug(`Using environment variable for ${key}`, {
@@ -310,7 +310,7 @@ export const COMMON_SCHEMAS = {
     host: {
       type: 'string' as const,
       required: false,
-      default: process.env.SERVER_HOST || process.env.HOST || 'localhost',
+      default: Bun.env.SERVER_HOST || Bun.env.HOST || 'localhost',
       description: 'Server host',
       envVar: 'HOST',
     },
