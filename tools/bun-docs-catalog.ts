@@ -288,7 +288,7 @@ export function listCells(
     doc: shortUrl(docs),
     release: shortUrl(release),
     blog: shortUrl(blog),
-    note: e.changeNote ?? '',
+    note: e.changeNote || e.description || '',
   };
 }
 
@@ -1254,7 +1254,7 @@ async function main(): Promise<void> {
     console.info(`\n${entries.length} entries`);
     if (search) console.info(`(filter --search=${search})`);
     if (!compact && !wide && !notes) {
-      console.info('(tips: --wide VER/RELEASE/BLOG · --notes changeNote · --compact legacy)');
+      console.info('(tips: --wide VER/RELEASE/BLOG · --notes description/changeNote · --compact legacy)');
     }
     return;
   }
@@ -1293,7 +1293,7 @@ async function main(): Promise<void> {
   console.error('       --search=WebView   # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');
   console.error('       --wide / -w        # + CHG UPDATED VER RELEASE BLOG');
-  console.error('       --notes            # + NOTE (changeNote)');
+  console.error('       --notes            # + NOTE (changeNote, falling back to description)');
   console.error('       --version/--release  # aliases that expand wide columns');
   console.error('       --compact          # legacy thin table');
   console.error('       --links            # OSC-8 hyperlinks on DOC/RELEASE/BLOG');
