@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+import { ensureDir, readText, writeText, resolvePath } from './lib/fs-bun';
 import type { BrandBenchPinnedBaseline, BrandBenchReport } from './lib/brand-bench-types';
 import { createShutdown } from './lib/graceful-shutdown';
 
@@ -11,10 +12,10 @@ type Options = {
 };
 
 function parseArgs(argv: string[]): Options {
-  const fromPath = resolve(
+  const fromPath = resolvePath(
     argv.find(a => a.startsWith('--from='))?.split('=')[1] || 'reports/brand-bench/latest.json'
   );
-  const outPath = resolve(
+  const outPath = resolvePath(
     argv.find(a => a.startsWith('--out='))?.split('=')[1] ||
       'reports/brand-bench/pinned-baseline.json'
   );
@@ -29,15 +30,15 @@ function parseArgs(argv: string[]): Options {
 
 async function readExisting(path: string): Promise<BrandBenchPinnedBaseline | null> {
   try {
-    return JSON.parse(await readFile(path, 'utf8')) as BrandBenchPinnedBaseline;
+    return JSON.parse(await readText(path)) as BrandBenchPinnedBaseline;
   } catch {
     return null;
   }
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
-  const report = JSON.parse(await readFile(options.fromPath, 'utf8')) as BrandBenchReport;
+  const options = parseArgs(Bun.argv.slice(2));
+  const report = JSON.parse(await readText(options.fromPath)) as BrandBenchReport;
   const existing = await readExisting(options.outPath);
 
   const next: BrandBenchPinnedBaseline = {
@@ -49,8 +50,9 @@ async function main(): Promise<void> {
     report,
   };
 
-  await mkdir(dirname(options.outPath), { recursive: true });
-  await writeFile(options.outPath, JSON.stringify(next, null, 2));
+  const slash = options.outPath.lastIndexOf('/');
+  if (slash > 0) ensureDir(options.outPath.slice(0, slash));
+  await writeText(options.outPath, JSON.stringify(next, null, 2));
   console.info(JSON.stringify(next, null, 2));
 }
 

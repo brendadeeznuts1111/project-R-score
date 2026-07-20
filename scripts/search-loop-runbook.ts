@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
-import { existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.write
+import { fileExists, readText, writeText, resolvePath } from './lib/fs-bun';
 
 type LoopStatus = {
   latestSnapshotId?: string | null;
@@ -19,13 +19,13 @@ type LoopStatus = {
 };
 
 async function main(): Promise<void> {
-  const statusPath = resolve('reports/search-loop-status-latest.json');
-  const outPath = resolve('reports/search-loop-runbook-latest.md');
+  const statusPath = resolvePath('reports/search-loop-status-latest.json');
+  const outPath = resolvePath('reports/search-loop-runbook-latest.md');
 
   let status: LoopStatus | null = null;
-  if (existsSync(statusPath)) {
+  if (await fileExists(statusPath)) {
     try {
-      status = JSON.parse(await readFile(statusPath, 'utf8')) as LoopStatus;
+      status = JSON.parse(await readText(statusPath)) as LoopStatus;
     } catch {
       status = null;
     }
@@ -102,7 +102,7 @@ async function main(): Promise<void> {
   lines.push(`- overlapMode: \`${status?.coverage?.overlapMode || 'n/a'}\``);
   lines.push('');
 
-  await writeFile(outPath, `${lines.join('\n')}\n`);
+  await writeText(outPath, `${lines.join('\n')}\n`);
   console.info(`[search:loop:runbook] wrote ${outPath}`);
 }
 

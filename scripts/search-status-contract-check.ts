@@ -1,8 +1,7 @@
 #!/usr/bin/env bun
 
-import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExists, readJson, readText, resolvePath } from './lib/fs-bun';
 import { normalizeWarningCode } from './lib/search-status-contract';
 
 type ContractInput = {
@@ -34,18 +33,13 @@ function parseFirstRssGuid(xml: string): string | null {
   return null;
 }
 
-async function readJson(path: string): Promise<any> {
-  const text = await readFile(path, 'utf8');
-  return JSON.parse(text);
-}
-
 export async function runSearchStatusContract(input: ContractInput): Promise<ContractResult> {
   const checks: ContractResult['checks'] = [];
-  const latestPath = resolve(input.latestJsonPath);
-  const loopPath = resolve(input.loopStatusPath);
-  const rssPath = resolve(input.rssPath);
+  const latestPath = resolvePath(input.latestJsonPath);
+  const loopPath = resolvePath(input.loopStatusPath);
+  const rssPath = resolvePath(input.rssPath);
 
-  if (!existsSync(latestPath)) {
+  if (!(await fileExists(latestPath))) {
     checks.push({
       id: 'latest_exists',
       ok: false,
@@ -55,12 +49,12 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
   } else {
     checks.push({ id: 'latest_exists', ok: true, detail: latestPath, status: 'ok' });
   }
-  if (!existsSync(loopPath)) {
+  if (!(await fileExists(loopPath))) {
     checks.push({ id: 'loop_exists', ok: false, detail: `missing ${loopPath}`, status: 'fail' });
   } else {
     checks.push({ id: 'loop_exists', ok: true, detail: loopPath, status: 'ok' });
   }
-  if (!existsSync(rssPath)) {
+  if (!(await fileExists(rssPath))) {
     checks.push({ id: 'rss_exists', ok: false, detail: `missing ${rssPath}`, status: 'fail' });
   } else {
     checks.push({ id: 'rss_exists', ok: true, detail: rssPath, status: 'ok' });
@@ -73,9 +67,9 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
     };
   }
 
-  const latest = await readJson(latestPath);
-  const loop = await readJson(loopPath);
-  const rssXml = await readFile(rssPath, 'utf8');
+  const latest = await readJson<Record<string, any>>(latestPath);
+  const loop = await readJson<Record<string, any>>(loopPath);
+  const rssXml = await readText(rssPath);
 
   const latestId = latest?.id ? String(latest.id) : null;
   const loopStatusSnapshotId = loop?.latestSnapshotId ? String(loop.latestSnapshotId) : null;
@@ -157,7 +151,7 @@ function parseArgs(argv: string[]): ContractInput {
 }
 
 if (import.meta.main) {
-  const input = parseArgs(process.argv.slice(2));
+  const input = parseArgs(Bun.argv.slice(2));
   const result = await runSearchStatusContract(input);
   console.info(JSON.stringify(result, null, 2));
   process.exit(result.ok ? 0 : 1);

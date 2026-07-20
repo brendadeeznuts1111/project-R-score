@@ -3,11 +3,11 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExistsSync, resolvePath } from './lib/fs-bun';
 import { parseBooleanEnv, resolveDashboardEnvConfig } from './lib/dashboard-env';
 
-const ROOT = resolve(import.meta.dir, '..');
+const ROOT = resolvePath(import.meta.dir, '..');
 const DASHBOARD_ENV = resolveDashboardEnvConfig(3456);
 const REQUESTED_PORT = DASHBOARD_ENV.port;
 const MIN_BUN = [1, 3, 9] as const;
@@ -255,11 +255,11 @@ async function main() {
     'dashboard/navigation-hub.html',
   ];
   for (const relativePath of requiredFiles) {
-    const absolute = resolve(ROOT, relativePath);
+    const absolute = resolvePath(ROOT, relativePath);
     addCheck(
       `required-file:${relativePath}`,
-      existsSync(absolute) ? 'PASS' : 'FAIL',
-      existsSync(absolute) ? 'found' : 'missing'
+      fileExistsSync(absolute) ? 'PASS' : 'FAIL',
+      fileExistsSync(absolute) ? 'found' : 'missing'
     );
   }
 

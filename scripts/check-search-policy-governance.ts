@@ -2,9 +2,8 @@
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExists, readText, resolvePath } from './lib/fs-bun';
 
 type PolicyShape = {
   policyVersion?: string;
@@ -76,11 +75,11 @@ async function main(): Promise<void> {
   const errors: string[] = [];
 
   if (policyChanged) {
-    const path = resolve(policyPath);
-    if (!existsSync(path)) {
+    const path = resolvePath(policyPath);
+    if (!(await fileExists(path))) {
       errors.push(`missing ${policyPath}`);
     } else {
-      const raw = JSON.parse(await readFile(path, 'utf8')) as PolicyShape;
+      const raw = JSON.parse(await readText(path)) as PolicyShape;
       if (!raw.policyVersion || !String(raw.policyVersion).trim()) {
         errors.push('policyVersion is required in .search/policies.json');
       }
@@ -88,8 +87,8 @@ async function main(): Promise<void> {
       if (Object.keys(rationale).length === 0) {
         errors.push('policyChangeRationale is required and must include at least one key');
       }
-      if (existsSync(resolve(changelogPath))) {
-        const log = await readFile(resolve(changelogPath), 'utf8');
+      if (await fileExists(resolvePath(changelogPath))) {
+        const log = await readText(resolvePath(changelogPath));
         if (raw.policyVersion && !log.includes(String(raw.policyVersion))) {
           errors.push(
             `.search/POLICY_CHANGELOG.md must include policyVersion ${raw.policyVersion}`

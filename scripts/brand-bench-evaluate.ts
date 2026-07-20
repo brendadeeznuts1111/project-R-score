@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { readText, resolvePath } from './lib/fs-bun';
 import type {
   BrandBenchEvaluation,
   BrandBenchPinnedBaseline,
@@ -42,14 +42,14 @@ function parseArgs(argv: string[]): EvaluateOptions {
   return {
     strict: argv.includes('--strict'),
     json: argv.includes('--json'),
-    currentPath: resolve(
+    currentPath: resolvePath(
       argv.find(a => a.startsWith('--current='))?.split('=')[1] || 'reports/brand-bench/latest.json'
     ),
-    baselinePath: resolve(
+    baselinePath: resolvePath(
       argv.find(a => a.startsWith('--baseline='))?.split('=')[1] ||
         'reports/brand-bench/pinned-baseline.json'
     ),
-    governancePath: resolve(
+    governancePath: resolvePath(
       argv.find(a => a.startsWith('--governance='))?.split('=')[1] ||
         'reports/brand-bench/governance.json'
     ),
@@ -214,7 +214,7 @@ async function main(): Promise<void> {
   let current: BrandBenchReport;
   let baselinePinned: BrandBenchPinnedBaseline;
   try {
-    governance = JSON.parse(await readFile(options.governancePath, 'utf8')) as BenchGovernance;
+    governance = JSON.parse(await readText(options.governancePath)) as BenchGovernance;
   } catch {
     governance = {};
   }
@@ -227,7 +227,7 @@ async function main(): Promise<void> {
     : 5;
 
   try {
-    current = JSON.parse(await readFile(options.currentPath, 'utf8')) as BrandBenchReport;
+    current = JSON.parse(await readText(options.currentPath)) as BrandBenchReport;
   } catch (error) {
     throw new Error(
       `Unable to read current report at ${options.currentPath}: ${error instanceof Error ? error.message : String(error)}`
@@ -235,9 +235,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    baselinePinned = JSON.parse(
-      await readFile(options.baselinePath, 'utf8')
-    ) as BrandBenchPinnedBaseline;
+    baselinePinned = JSON.parse(await readText(options.baselinePath)) as BrandBenchPinnedBaseline;
   } catch {
     const result: BrandBenchEvaluation = {
       ok: true,

@@ -148,13 +148,13 @@ async function renderDashboard() {
   else projects.sort((a, b) => a.name.localeCompare(b.name));
 
   if (flags.json) {
-    console.log(JSON.stringify(projects, null, 2));
+    console.info(JSON.stringify(projects, null, 2));
     return;
   }
 
   // Header
   const header = `${C.bold}${C.cyan}Projects/Active Dashboard${C.reset}  —  ${projects.length} projects  ${C.muted}bun ${Bun.version}${C.reset}`;
-  console.log(`\n${header}\n${'─'.repeat(Bun.stringWidth(Bun.stripANSI(header)))}\n`);
+  console.info(`\n${header}\n${'─'.repeat(Bun.stringWidth(Bun.stripANSI(header)))}\n`);
 
   if (flags.cards) {
     const termWidth = process.stdout.columns || 100;
@@ -165,24 +165,24 @@ async function renderDashboard() {
       const git = fmtGit(p.gitStatus);
       const age = daysAgo(p.lastChanged);
 
-      console.log(`┌─ ${C.bold}${p.name}  ${vis}${C.reset} ${C.muted}v${p.version}${C.reset}`);
+      console.info(`┌─ ${C.bold}${p.name}  ${vis}${C.reset} ${C.muted}v${p.version}${C.reset}`);
 
       if (p.description !== '—') {
         const plain = Bun.stripANSI(p.description);
         if (Bun.stringWidth(plain) <= descWidth) {
-          console.log(`│  ${C.dim}${p.description}${C.reset}`);
+          console.info(`│  ${C.dim}${p.description}${C.reset}`);
         } else {
           for (const line of wrapDesc(p.description, descWidth)) {
-            console.log(`│  ${C.dim}${line}${C.reset}`);
+            console.info(`│  ${C.dim}${line}${C.reset}`);
           }
         }
       }
 
       const dirtyNote = p.gitStatus === 'dirty' ? ` ${C.muted}(uncommitted)${C.reset}` : '';
-      console.log(
+      console.info(
         `│  ${git} git${dirtyNote}  ${iconBool(p.hasReadme)} readme  ${iconBool(p.hasLicense)} license  ${p.license}`
       );
-      console.log(
+      console.info(
         `│  ${p.fileCount.toLocaleString()} files  ${p.sizeKb.toLocaleString()} KB  updated ${age}`
       );
 
@@ -196,17 +196,17 @@ async function renderDashboard() {
             columns: termWidth - 4,
           });
           for (const line of rendered.split('\n')) {
-            console.log(`│  ${line}`);
+            console.info(`│  ${line}`);
           }
         } else {
-          console.log(`│  ${C.muted}(README.md unreadable)${C.reset}`);
+          console.info(`│  ${C.muted}(README.md unreadable)${C.reset}`);
         }
       }
 
-      console.log(`${'─'.repeat(Math.min(termWidth - 2, 72))}\n`);
+      console.info(`${'─'.repeat(Math.min(termWidth - 2, 72))}\n`);
     }
   } else {
-    console.log(
+    console.info(
       Bun.inspect.table(
         projects.map(p => ({
           Project: p.name,
@@ -234,7 +234,7 @@ async function renderDashboard() {
   if (watchSec > 0) {
     footer += `  ${C.muted}⟳ ${watchSec}s${C.reset}`;
   }
-  console.log(footer + '\n');
+  console.info(footer + '\n');
 }
 
 // ── Run ────────────────────────────────────────────────────────

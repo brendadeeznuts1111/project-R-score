@@ -2,9 +2,8 @@
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExists, readText, resolvePath } from './lib/fs-bun';
 
 type SnapshotMeta = {
   id?: string;
@@ -59,9 +58,9 @@ export function parseArgs(argv: string[]): Options {
 }
 
 async function readLatestSnapshot(path: string): Promise<SnapshotMeta | null> {
-  if (!existsSync(path)) return null;
+  if (!(await fileExists(path))) return null;
   try {
-    const raw = await readFile(path, 'utf8');
+    const raw = await readText(path);
     return JSON.parse(raw) as SnapshotMeta;
   } catch {
     return null;
@@ -104,13 +103,13 @@ async function run(cmd: string[]): Promise<void> {
 }
 
 export async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const forceSnapshot = options.forceSnapshot || options.mode === 'full';
 
   await run(['bun', 'run', 'search:bench:test']);
   await run(['bun', 'run', 'search:coverage:loc:wide']);
 
-  const latestPath = resolve('reports/search-benchmark/latest.json');
+  const latestPath = resolvePath('reports/search-benchmark/latest.json');
   const snapshot = await readLatestSnapshot(latestPath);
   const freshness = shouldReuseSnapshot(snapshot, Date.now(), options.maxSnapshotAgeMinutes);
 

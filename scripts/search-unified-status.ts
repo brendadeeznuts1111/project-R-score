@@ -1,9 +1,8 @@
 #!/usr/bin/env bun
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExists, readText, resolvePath } from './lib/fs-bun';
 import { buildDomainRegistryStatus } from './domain-registry-status';
 import { runSearchStatusContract } from './search-status-contract-check';
 import {
@@ -87,10 +86,10 @@ function parseArgs(argv: string[]): Options {
 }
 
 async function readJsonIfExists(path: string): Promise<any | null> {
-  const resolvedPath = resolve(path);
-  if (!existsSync(resolvedPath)) return null;
+  const resolvedPath = resolvePath(path);
+  if (!(await fileExists(resolvedPath))) return null;
   try {
-    const text = await readFile(resolvedPath, 'utf8');
+    const text = await readText(resolvedPath);
     return JSON.parse(text);
   } catch {
     return null;
@@ -239,7 +238,7 @@ function printText(status: UnifiedStatusSnapshot): void {
 }
 
 if (import.meta.main) {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const unified = await buildUnifiedStatus(options);
   if (options.json) {
     console.info(JSON.stringify(unified, null, 2));
