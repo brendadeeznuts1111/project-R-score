@@ -165,7 +165,12 @@ export function createTestResults(): {
     },
   };
 
-  const recordTest = (name: string, passed: boolean, message: string, details?: unknown): boolean => {
+  const recordTest = (
+    name: string,
+    passed: boolean,
+    message: string,
+    details?: unknown
+  ): boolean => {
     testResults.tests[name] = {
       passed,
       message,

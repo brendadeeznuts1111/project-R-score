@@ -1,42 +1,53 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
-/**
- * Entry Guard Utility
- * Prevents shared CLI tools from being imported accidentally.
- * Only allows direct execution via `bun <script>.ts`
- */
+// lib/shared/tools/entry-guard.ts — Safe entry guard for CLI tools
+//
+// Prevents shared CLI tools from being imported accidentally without killing
+// async operations. Prefer `runIfMain` for async scripts.
 
 /**
- * Check if the current module is being run directly (not imported)
+ * Check if the current module is being run directly (not imported).
  * @returns true if this file is the main entrypoint (Bun.main)
  */
 export function isDirectExecution(): boolean {
-  return import.meta.path === Bun.main;
+  return import.meta.main;
 }
 
 /**
  * Ensure this module is being run directly.
- * If imported from another script, exits immediately without running.
- * Call this at the very top of CLI tools before any other code.
+ * If imported from another script, returns early so async operations are not
+ * torn down.
  */
 export function ensureDirectExecution(): void {
-  if (import.meta.path !== Bun.main) {
-    process.exit(0);
+  if (!import.meta.main) {
+    console.info('ℹ️  Script was imported, not executed directly');
+    return;
   }
 }
 
 /**
- * Alternative: Ensure direct execution with custom exit code
- * @param exitCode - Exit code when imported (default: 0)
+ * Main execution wrapper.
+ * Runs `mainFunction` only when the module is executed directly and safely
+ * handles async errors.
  */
-export function ensureDirectExecutionWithCode(exitCode: number = 0): void {
-  if (import.meta.path !== Bun.main) {
-    process.exit(exitCode);
+export function runIfMain(mainFunction: () => void | Promise<void>): void {
+  if (import.meta.main) {
+    if (mainFunction.constructor.name === 'AsyncFunction') {
+      mainFunction().catch(console.error);
+    } else {
+      try {
+        mainFunction();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  } else {
+    console.info('ℹ️  Script was imported, not executed directly');
   }
 }
 
 /**
- * Get the main entrypoint path
+ * Get the main entrypoint path.
  * @returns The absolute path of the entry script (Bun.main)
  */
 export function getMainPath(): string {
@@ -44,7 +55,7 @@ export function getMainPath(): string {
 }
 
 /**
- * Get whether this module is the main module
- * Alias for isDirectExecution()
+ * Get whether this module is the main module.
+ * Alias for isDirectExecution().
  */
 export const isMain = isDirectExecution;

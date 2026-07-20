@@ -33,10 +33,7 @@
  * Docs pages stay unversioned. commitHash is Bun.revision when building against the runtime.
  */
 
-import {
-  BUN_GITHUB_RELEASES_URL,
-  LLMS_URL,
-} from '../lib/shared/tools/bun-urls.ts';
+import { BUN_GITHUB_RELEASES_URL, LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
 
 const SUPPLEMENT_OUT = new URL('./bun-docs-token-supplement.json', import.meta.url).pathname;
 
