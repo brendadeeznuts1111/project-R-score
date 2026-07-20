@@ -60,56 +60,63 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.sliceAnsi': 'https://bun.com/reference/bun/sliceAnsi',
 
   // ── File I/O & storage (top repo usage: Bun.file ×266, Bun.write ×153) ──
-  'Bun.file': 'https://bun.com/docs/runtime/file-io',
-  'Bun.write': 'https://bun.com/docs/runtime/file-io',
-  'bun:sqlite': 'https://bun.com/docs/runtime/sqlite',
+  'Bun.file': 'https://bun.com/docs/runtime/file-io#reading-files-bun-file',
+  'Bun.write': 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+  'bun:sqlite': 'https://bun.com/docs/runtime/sqlite#load-via-es-module-import',
+  'Bun.Archive': 'https://bun.com/docs/runtime/archive#quickstart',
   'Bun.gzipSync': 'https://bun.com/docs/runtime/utils#bun-gzipsync',
 
   // ── HTTP & networking ───────────────────────────────────────────────────
-  'Bun.serve': 'https://bun.com/docs/runtime/http/server',
+  'Bun.serve': 'https://bun.com/docs/runtime/http/server#basic-setup',
   'Bun.fetch': 'https://bun.com/docs/guides/http/fetch',
-  'Bun.Cookie': 'https://bun.com/docs/runtime/cookies',
+  'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
+  'Bun.connect':
+    'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
   // WebSocket upgrade on Bun.serve (ServerWebSocket type + handlers)
-  ServerWebSocket: 'https://bun.com/docs/runtime/http/websockets',
-  'Bun.dns': 'https://bun.com/docs/runtime/networking/dns',
-  dns: 'https://bun.com/docs/runtime/networking/dns',
+  ServerWebSocket: 'https://bun.com/docs/runtime/http/websockets#start-a-websocket-server',
+  'Bun.dns': 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
+  dns: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
 
   // ── Process & spawn ─────────────────────────────────────────────────────
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
-  'Bun.build': 'https://bun.com/docs/bundler',
+  'Bun.build': 'https://bun.com/docs/bundler/index#basic-example',
   // In-process scheduler (returns CronJob with stop/ref/unref)
-  'Bun.cron': 'https://bun.com/docs/runtime/cron',
+  'Bun.cron': 'https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process',
+  // Shell template tag ($`…`)
+  'Bun.$': 'https://bun.com/docs/runtime/shell#getting-started',
 
   // Headless browser automation (WebKit on macOS; CDP/Chrome elsewhere)
   'Bun.WebView': 'https://bun.com/docs/runtime/webview',
   WebView: 'https://bun.com/docs/runtime/webview',
 
   // UDP (ICMP errors + truncation flags)
-  'Bun.udpSocket': 'https://bun.com/docs/runtime/networking/udp',
-  udpSocket: 'https://bun.com/docs/runtime/networking/udp',
+  'Bun.udpSocket':
+    'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
+  udpSocket: 'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
 
   // ── Security (native CSRF; pair with Bun.Cookie session ids) ────────────
-  'Bun.CSRF': 'https://bun.com/docs/runtime/csrf',
+  'Bun.CSRF': 'https://bun.com/docs/runtime/csrf#bun-csrf-generate',
 
-  // ── Data stores (Redis / S3 / SQL) ──────────────────────────────────────
+  // ── Data stores (Redis / S3 / SQL / FFI) ──────────────────────────────────
   // Prefer RedisClient from 'bun' (not ioredis). Streams via client.send().
-  RedisClient: 'https://bun.com/docs/runtime/redis',
-  redis: 'https://bun.com/docs/runtime/redis',
-  S3Client: 'https://bun.com/docs/runtime/s3',
-  'Bun.s3': 'https://bun.com/docs/runtime/s3',
-  'Bun.sql': 'https://bun.com/docs/runtime/sql',
-  'bun:sql': 'https://bun.com/docs/runtime/sql',
+  RedisClient: 'https://bun.com/docs/runtime/redis#getting-started',
+  redis: 'https://bun.com/docs/runtime/redis#getting-started',
+  S3Client: 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
+  'Bun.s3': 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
+  'Bun.sql': 'https://bun.com/docs/runtime/sql#features',
+  'bun:sql': 'https://bun.com/docs/runtime/sql#features',
+  'bun:ffi': 'https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi',
 
   // ── Data formats & hashing ──────────────────────────────────────────────
   'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
-  // Markdown page (html + ansi + render + react) — prefer page root for suggest
-  'Bun.markdown': 'https://bun.com/docs/runtime/markdown',
+  // Markdown page (html + ansi + render + react)
+  'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
-  'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown',
-  'Bun.YAML': 'https://bun.com/docs/runtime/yaml',
-  YAML: 'https://bun.com/docs/runtime/yaml',
+  'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+  'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
+  YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
   'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
@@ -121,10 +128,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.inspect.custom': 'https://bun.com/docs/runtime/utils#bun-inspect',
   BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
   console: 'https://bun.com/docs/runtime/console',
-  '--console-depth': 'https://bun.com/docs/runtime/console',
+  '--console-depth': 'https://bun.com/docs/runtime/console#object-inspection-depth',
 
   // ── Color & TTY conventions (replaces chalk / ansi-styles) ─────────────
-  'Bun.color': 'https://bun.com/docs/runtime/color',
+  'Bun.color': 'https://bun.com/docs/runtime/color#flexible-input',
   'process.stdout.isTTY': 'https://bun.com/docs/runtime/nodejs-compat#nodetty',
   'process.stdout.columns': 'https://bun.com/docs/runtime/nodejs-compat#nodetty',
   NO_COLOR: 'https://bun.com/docs/runtime/environment-variables',
@@ -145,8 +152,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
 
   // ── Testing & snapshots ────────────────────────────────────────────────
-  'bun:test': 'https://bun.com/docs/cli/test',
-  'bun:test snapshots': 'https://bun.com/docs/test/snapshots',
+  'bun:test': 'https://bun.com/docs/test/index#run-tests',
+  'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
 
   // ── Bundler / executables ──────────────────────────────────────────────
@@ -157,7 +164,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   // @see pinned for tools that log runtime version in integrity/status
   'Bun.version': 'https://bun.com/docs/runtime/utils#bun-version',
   'Bun.randomUUIDv7': 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
-  'Bun.Glob': 'https://bun.com/docs/runtime/glob',
+  'Bun.Glob': 'https://bun.com/docs/runtime/glob#quickstart',
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
   'Bun.nanoseconds': 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   'Bun.sleep': 'https://bun.com/docs/runtime/utils#bun-sleep',
@@ -166,7 +173,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
-  'Bun.spawn': 'https://bun.com/docs/runtime/child-process',
+  'Bun.spawn': 'https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn',
   'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'spawn terminal options': 'https://bun.com/docs/runtime/child-process#terminal-options',
   'spawn stdout guide': 'https://bun.com/docs/guides/process/spawn-stdout',

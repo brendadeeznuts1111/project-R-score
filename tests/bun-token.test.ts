@@ -3,6 +3,7 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  announcementUrlFromEvents,
   buildVersionEvents,
   sinceFromEvents,
   toBunTokenKind,
@@ -75,6 +76,62 @@ describe('buildVersionEvents', () => {
   });
 });
 
+describe('announcementUrlFromEvents', () => {
+  test('prefers earliest since event evidenceUrl over catalog blogUrl fallback', () => {
+    const events = buildVersionEvents({
+      hits: [
+        {
+          version: '1.2.0',
+          url: 'https://bun.com/blog/bun-v1.2.0',
+          section: 'Bun.cron',
+          kind: 'ship',
+        },
+        {
+          version: '1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          section: 'Bugfixes',
+          kind: 'fix',
+        },
+      ],
+    });
+    expect(
+      announcementUrlFromEvents(events, 'https://bun.com/blog/bun-v1.3.14')
+    ).toBe('https://bun.com/blog/bun-v1.2.0');
+  });
+
+  test('falls back to catalog blogUrl when no since evidence', () => {
+    const events = buildVersionEvents({
+      hits: [
+        {
+          version: '1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          section: 'Bugfixes',
+          kind: 'fix',
+        },
+      ],
+    });
+    expect(
+      announcementUrlFromEvents(events, 'https://bun.com/blog/bun-v1.3.14')
+    ).toBe('https://bun.com/blog/bun-v1.3.14');
+  });
+
+  test('prefers ship-hit blog over older scalar since with docs evidenceUrl', () => {
+    const events = buildVersionEvents({
+      hits: [
+        {
+          version: '1.2.0',
+          url: 'https://bun.com/blog/bun-v1.2.0',
+          section: 'Bun.cron',
+          kind: 'ship',
+        },
+      ],
+      introduced: '1.0.0',
+      evidenceUrl: 'https://github.com/oven-sh/bun/releases/tag/bun-v1.0.0',
+    });
+    expect(announcementUrlFromEvents(events, null)).toBe('https://bun.com/blog/bun-v1.2.0');
+  });
+});
+
 describe('catalogEntryToBunToken', () => {
   test('maps through TokenRef to BunToken export shape', () => {
     const entry = {
@@ -130,6 +187,41 @@ describe('catalogEntryToBunToken', () => {
     });
     expect(token.related).toContain('Bun.serve');
     expect(token.meta?.buildPin).toBe('1.4.0');
+  });
+
+  test('announcementUrl uses earliest since hit, not latest catalog blogUrl', () => {
+    const token = catalogEntryToBunToken(
+      {
+        name: 'Bun.cron',
+        type: 'api',
+        stability: 'stable',
+        description: 'In-process cron scheduler',
+        releasedIn: '1.2.0',
+        canonicalPage: 'https://bun.com/docs/runtime/cron',
+        anchor: 'bun-cron',
+        blogUrl: 'https://bun.com/blog/bun-v1.3.14',
+        allPages: ['https://bun.com/docs/runtime/cron'],
+        section: 'runtime',
+      },
+      {
+        hits: [
+          {
+            version: '1.2.0',
+            url: 'https://bun.com/blog/bun-v1.2.0',
+            section: 'Bun.cron',
+            kind: 'ship',
+          },
+          {
+            version: '1.3.14',
+            url: 'https://bun.com/blog/bun-v1.3.14',
+            section: 'Bugfixes',
+            kind: 'fix',
+          },
+        ],
+      }
+    );
+    expect(token.announcementUrl).toBe('https://bun.com/blog/bun-v1.2.0');
+    expect(token.since).toBe('1.2.0');
   });
 
   test('unresolved locus yields null anchor', () => {

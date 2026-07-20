@@ -247,7 +247,7 @@ function extractPageDescription(markdown: string, pageTitle: string): string {
 }
 
 /** Parse one docs page's Markdown into raw catalog entries. */
-function parsePage(markdown: string, pageTitle: string, pageUrl: string): CatalogEntry[] {
+export function parsePage(markdown: string, pageTitle: string, pageUrl: string): CatalogEntry[] {
   const lines = markdown.split('\n');
   let currentAnchor = '';
   let currentSection = pageTitle;
@@ -306,7 +306,7 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
     const raw = lines[i]!;
     const line = raw.replace(/\r$/, '');
 
-    const fence = line.match(/^```(.+)$/);
+    const fence = line.match(/^```(.*)$/);
     if (fence) {
       if (inCode) {
         flushCode();

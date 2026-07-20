@@ -198,7 +198,9 @@ describe('catalog list table cells', () => {
   });
 
   test('shortUrl strips docs and release prefixes', () => {
-    expect(shortUrl('https://bun.com/docs/runtime/terminal#x')).toBe('runtime/terminal#x');
+    expect(shortUrl('https://bun.com/docs/runtime/child-process#terminal-pty-support')).toBe(
+      'runtime/child-process#terminal-pty-support',
+    );
     expect(shortUrl('https://github.com/oven-sh/bun/releases/tag/bun-v1.3.5')).toBe('tag/bun-v1.3.5');
     expect(shortUrl('https://bun.com/blog/bun-v1.3.5#pty')).toBe('blog/bun-v1.3.5#pty');
   });

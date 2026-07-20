@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-// @see https://bun.com/docs/runtime/utils#bun-spawn — Bun.spawn
 /**
  * bun-docs-refresh.ts — canonical docs stack refresh loop.
  *

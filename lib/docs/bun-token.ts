@@ -169,3 +169,21 @@ export function sinceFromEvents(events: BunVersionEvent[]): string | null {
     compareLooseSemver(e.version, earliest.version) < 0 ? e : earliest
   ).version;
 }
+
+/** Prefer earliest "since" event with a /blog/ evidence URL; else catalog blogUrl. */
+export function announcementUrlFromEvents(
+  events: BunVersionEvent[],
+  fallback?: string | null
+): string | null {
+  const blogSince = events.filter(
+    e => e.type === 'since' && e.evidenceUrl?.includes('/blog/')
+  );
+  if (blogSince.length > 0) {
+    const earliest = blogSince.reduce((a, b) =>
+      compareLooseSemver(a.version, b.version) < 0 ? a : b
+    );
+    return earliest.evidenceUrl ?? null;
+  }
+  if (fallback?.includes('/blog/')) return fallback;
+  return fallback ?? null;
+}

@@ -17,7 +17,12 @@ import type {
 } from './token-ref.ts';
 import { locusUrl } from './token-ref.ts';
 import type { BunToken, VersionHitLike } from './bun-token.ts';
-import { buildVersionEvents, sinceFromEvents, toBunTokenKind } from './bun-token.ts';
+import {
+  announcementUrlFromEvents,
+  buildVersionEvents,
+  sinceFromEvents,
+  toBunTokenKind,
+} from './bun-token.ts';
 
 /** Minimal catalog row shape (avoids tools import cycle). */
 export type CatalogEntryLike = {
@@ -126,12 +131,13 @@ export function tokenRefToBunToken(
   const aliases = ref.relations.filter(r => r.kind === 'alias').map(r => r.target);
   const relatedAll = [...new Set([...related, ...aliases])];
 
-  const announcementUrl =
+  const fallbackAnnouncement =
     opts?.announcementUrl !== undefined
       ? opts.announcementUrl
       : ref.history.evidenceUrl?.includes('/blog/')
         ? ref.history.evidenceUrl
         : null;
+  const announcementUrl = announcementUrlFromEvents(versionEvents, fallbackAnnouncement);
 
   const token: BunToken = {
     name: ref.name,
