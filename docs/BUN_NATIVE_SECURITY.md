@@ -12,6 +12,9 @@ Use Bun APIs and types from `bun` / `Bun` directly.
 | Password | `Bun.password.hash` / `verify` | https://bun.com/docs/runtime/hashing#bun-password |
 | UUID | `Bun.randomUUIDv7()` | https://bun.com/docs/runtime/utils#bun-randomuuidv7 |
 | Env | `Bun.env` | https://bun.com/docs/runtime/environment-variables |
+| Redis | `import { RedisClient, redis } from "bun"` | https://bun.com/docs/runtime/redis |
+| WebSocket server | `Bun.serve({ fetch, websocket })` + `server.upgrade` | https://bun.com/docs/runtime/http/websockets |
+| AES-GCM | Web Crypto `crypto.subtle` (no Bun.aes) | Web Crypto |
 
 ```ts
 import { Cookie, CookieMap } from "bun";

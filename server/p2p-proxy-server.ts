@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * P2P Proxy Server - Unified Payment Bridge
  *
@@ -13,7 +16,7 @@
  * Client App (P2P) → Your Personal Account → Webhook → Bun Proxy → Credit + Bonus
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import crypto from 'node:crypto';
 import {
   getHabits,
@@ -50,13 +53,10 @@ const WEBHOOK_SECRETS = {
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('error', err => console.error('Redis error:', err.message));
-redis.on('connect', () => console.info('✅ Redis connected'));
+redis.onclose = err => console.error('Redis error:', err.message);
+redis.onconnect = () => console.info('✅ Redis connected');
 
 // ============================================================================
 // Crypto Helpers
@@ -457,7 +457,7 @@ const server = Bun.serve({
           status: 'ok',
           version: 'p2p-proxy-1.0',
           handles: PROXY_HANDLES,
-          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          redis: redis.connected ? 'connected' : 'disconnected',
           timestamp: new Date().toISOString(),
         }),
         {

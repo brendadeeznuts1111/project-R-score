@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * P2P Proxy Server v3 - With Business Continuity
  *
@@ -9,7 +12,7 @@
  * - Admin dashboard
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import { BusinessContinuity } from '@factorywager/p2p';
 import { CustomerNotifier } from '@factorywager/p2p';
 import { executeBusinessMigration, handlePaymentAccountLoss } from '@factorywager/p2p';
@@ -19,12 +22,9 @@ import { REDIS_URL } from '../config/ports.ts';
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('connect', () => console.info('✅ Redis connected'));
+redis.onconnect = () => console.info('✅ Redis connected');
 
 // ============================================================================
 // Business-Aware P2P Proxy
@@ -238,16 +238,20 @@ class BusinessAwareProxy {
 
     // 5. Record payment
     const txnKey = `p2p:${stealthId}:${Date.now()}`;
-    await redis.hmset(txnKey, {
-      id: paymentId,
-      provider,
-      stealthId,
-      businessAlias: actualAlias,
-      amount: amount.toString(),
-      bonus: bonus.toString(),
-      timestamp: new Date().toISOString(),
-      status: 'received',
-    });
+    await redis.hmset(txnKey, [
+      'id',
+      paymentId,
+      'businessAlias',
+      actualAlias,
+      'amount',
+      amount.toString(),
+      'bonus',
+      bonus.toString(),
+      'timestamp',
+      new Date().toISOString(),
+      'status',
+      'received',
+    ]);
 
     // 6. Update balance and habits
     await redis.incrbyfloat(`balance:${stealthId}`, totalCredit);
@@ -545,7 +549,7 @@ const server = Bun.serve({
         JSON.stringify({
           status: 'ok',
           version: 'p2p-proxy-v3-continuity',
-          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          redis: redis.connected ? 'connected' : 'disconnected',
           timestamp: new Date().toISOString(),
         }),
         {

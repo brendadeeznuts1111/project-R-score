@@ -1,13 +1,11 @@
+// @see https://bun.com/docs/runtime/redis — RedisClient
 // @see https://bun.com/docs/runtime/file-io — Bun.write (creates parent path segments)
 // packages/p2p/src/migration-workflow.ts — Step-by-step business change migration workflow
 
 import { BusinessContinuity } from './business-continuity';
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(Bun.env.REDIS_URL ?? 'redis://localhost:6379');
 
 export interface MigrationOptions {
   reason: 'rename' | 'relocation' | 'rebrand' | 'closure';
@@ -130,7 +128,8 @@ async function generateNewQRCodes(alias: string): Promise<void> {
         url: `http://localhost:3002/pay?alias=${alias}&amount=${amount}`,
       };
 
-      await redis.set(`qr:${alias}:${amount}`, JSON.stringify(qrCode), 'EX', 365 * 24 * 60 * 60); // 1 year
+      await redis.set(`qr:${alias}:${amount}`, JSON.stringify(qrCode));
+      await redis.expire(`qr:${alias}:${amount}`, 365 * 24 * 60 * 60); // 1 year
     }
 
     console.info(`📸 Generated ${amounts.length} new QR codes for ${alias}`);

@@ -1,11 +1,10 @@
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/redis — RedisClient
 // lib/p2p/business-continuity.ts — Business continuity for P2P proxy migrations
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(Bun.env.REDIS_URL ?? 'redis://localhost:6379');
 
 export interface BrandingConfig {
   logoUrl?: string; // URL to logo image

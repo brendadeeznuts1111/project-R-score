@@ -1,44 +1,42 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * Real-Time P2P Dashboard
  * WebSocket-based live payment monitoring
  */
 
-import Redis from 'ioredis';
-import { serve } from 'bun';
+// @see https://bun.com/docs/runtime/http/websockets — Bun.serve WebSocket
+import { RedisClient, serve } from 'bun';
 
-const PORT = Number(process.env.DASHBOARD_PORT ?? 3003);
-const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
+const PORT = Number(Bun.env.DASHBOARD_PORT ?? 3003);
+const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
 
-// Redis subscriber
-const redisSub = new Redis(REDIS_URL);
+// Pub/Sub takes over the connection — dedicated subscriber client (Bun redis docs)
+const redisSub = new RedisClient(REDIS_URL);
+await redisSub.connect();
 
-// Connected WebSocket clients
-const clients = new Set<any>();
+// Connected browser WebSocket clients (Bun.serve upgrades)
+const clients = new Set<ServerWebSocket<unknown>>();
 
-// Subscribe to payment events
-redisSub.subscribe('p2p:payment', 'PERSONALIZED_DEPOSIT', 'receipt:created', (err) => {
-  if (err) {
-    console.error('Redis subscription error:', err);
-  } else {
-    console.info('✅ Subscribed to payment channels');
+function broadcast(channel: string, message: string): void {
+  let data: Record<string, unknown>;
+  try {
+    data = JSON.parse(message) as Record<string, unknown>;
+  } catch {
+    data = { raw: message };
   }
-});
+  const payload = JSON.stringify({ type: channel, timestamp: Date.now(), ...data });
+  for (const ws of clients) {
+    if (ws.readyState === 1) ws.send(payload);
+  }
+}
 
-// Forward events to all clients
-redisSub.on('message', (channel, message) => {
-  const data = JSON.parse(message);
-  
-  clients.forEach((ws) => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: channel,
-        timestamp: Date.now(),
-        ...data,
-      }));
-    }
+for (const channel of ['p2p:payment', 'PERSONALIZED_DEPOSIT', 'receipt:created'] as const) {
+  await redisSub.subscribe(channel, (message, ch) => {
+    broadcast(ch, message);
   });
-});
+}
+console.info('✅ Subscribed to payment channels (Bun Redis pub/sub)');
 
 // HTML Dashboard
 const dashboardHTML = `<!DOCTYPE html>

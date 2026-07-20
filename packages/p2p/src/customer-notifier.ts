@@ -1,11 +1,9 @@
+// @see https://bun.com/docs/runtime/redis — RedisClient
 // lib/p2p/customer-notifier.ts — Customer notification system for business changes
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 
-const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(Bun.env.REDIS_URL ?? 'redis://localhost:6379');
 
 export interface NotificationPreferences {
   email?: string;

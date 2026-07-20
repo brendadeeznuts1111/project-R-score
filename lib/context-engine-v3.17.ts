@@ -11,9 +11,8 @@
  * JSONC tsconfig parsing, virtual file support, and dashboard integration
  */
 
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { executeBunCLI, parseOfficialFlags, BunCLIFlags } from './bun-cli-native-v3.15';
-import { readFileSync } from 'fs';
-import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { executeWithContext } from './context-run-server';
 
@@ -290,7 +289,7 @@ export async function exportMetafile(
 ): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const dir = outputDir.replace(/\/+$/g, '') || '.';
-  await mkdir(dir, { recursive: true });
+  // Bun.write creates intermediate path segments for nested file paths
 
   switch (format) {
     case 'json':

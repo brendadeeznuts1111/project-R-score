@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * P2P Proxy Server - Bun-Native Version
  *
@@ -6,10 +12,10 @@
  * - Bun.CryptoHasher for HMAC signatures
  * - Bun.secrets for OS-level secret storage
  * - Bun.hash for stealth user IDs
- * - Bun.redis (when stable) or ioredis
+ * - Bun RedisClient
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import { PORTS, REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
@@ -30,12 +36,9 @@ const BRAND_CONFIG = {
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('connect', () => console.info('✅ Redis connected'));
+redis.onconnect = () => console.info('✅ Redis connected');
 
 // ============================================================================
 // Secret Management with Bun.secrets
@@ -203,14 +206,16 @@ class P2PProxy {
 
     // Record transaction
     const txnKey = `p2p:${stealthId}:${Date.now()}`;
-    await redis.hmset(txnKey, {
-      id: paymentId,
-      provider,
-      stealthId,
-      amount: amount.toString(),
-      timestamp: new Date().toISOString(),
-      status: 'received',
-    });
+    await redis.hmset(txnKey, [
+      'id',
+      paymentId,
+      'amount',
+      amount.toString(),
+      'timestamp',
+      new Date().toISOString(),
+      'status',
+      'received',
+    ]);
 
     // Calculate bonus
     const { bonus, tier, bonusRate } = await this.calculateBonus(stealthId, amount);
@@ -262,15 +267,20 @@ class P2PProxy {
 
     // Store receipt
     const receiptId = `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    await redis.hmset(`receipt:${receiptId}`, {
-      stealthId,
-      amount: amount.toString(),
-      bonus: bonus.toString(),
-      total: totalCredit.toString(),
-      tier: newTier,
-      timestamp: new Date().toISOString(),
-      brand: BRAND_CONFIG.brandName,
-    });
+    await redis.hmset(`receipt:${receiptId}`, [
+      'amount',
+      amount.toString(),
+      'bonus',
+      bonus.toString(),
+      'total',
+      totalCredit.toString(),
+      'tier',
+      newTier,
+      'timestamp',
+      new Date().toISOString(),
+      'brand',
+      BRAND_CONFIG.brandName,
+    ]);
 
     return {
       success: true,
@@ -501,7 +511,7 @@ const server = Bun.serve({
             hash: true,
           },
           brand: BRAND_CONFIG,
-          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          redis: redis.connected ? 'connected' : 'disconnected',
           timestamp: new Date().toISOString(),
         }),
         {

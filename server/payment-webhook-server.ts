@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * Payment Webhook Server
  *
@@ -33,7 +35,7 @@
  * - Bun-Optimized: Native HTTP, zero deps bloat
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import crypto from 'node:crypto';
 import { Pinecone } from '@pinecone-database/pinecone';
 
@@ -97,13 +99,10 @@ function jsonResponse(body: unknown, init?: ResponseInit): Response {
 // Redis & Pinecone Setup
 // ============================================================================
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('error', err => console.error('Redis error:', err.message));
-redis.on('connect', () => vlog('✅ Redis connected'));
+redis.onclose = err => console.error('Redis error:', err.message);
+redis.onconnect = () => vlog('✅ Redis connected');
 
 const pc = PINECONE_API_KEY ? new Pinecone({ apiKey: PINECONE_API_KEY }) : null;
 const index = pc ? pc.index(PINECONE_INDEX) : null;
@@ -395,7 +394,7 @@ const server = Bun.serve({
         {
           status: 'ok',
           pinecone: pc ? 'connected' : 'disabled',
-          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          redis: redis.connected ? 'connected' : 'disconnected',
           timestamp: new Date().toISOString(),
         },
         {

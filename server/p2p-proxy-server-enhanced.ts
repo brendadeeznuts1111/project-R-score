@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * P2P Proxy Server v2 - Enhanced Production Version
  *
@@ -10,7 +14,7 @@
  * - Class-based architecture
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import { REDIS_URL } from '../config/ports.ts';
 
 // ============================================================================
@@ -29,12 +33,9 @@ const BRAND_CONFIG = {
 // Redis Setup
 // ============================================================================
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('connect', () => console.info('✅ Redis connected'));
+redis.onconnect = () => console.info('✅ Redis connected');
 
 // ============================================================================
 // P2P Proxy Class
@@ -475,7 +476,7 @@ const server = Bun.serve({
           version: 'p2p-proxy-v2-enhanced',
           brand: BRAND_CONFIG.brandName,
           handles: BRAND_CONFIG,
-          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          redis: redis.connected ? 'connected' : 'disconnected',
           timestamp: new Date().toISOString(),
         }),
         {

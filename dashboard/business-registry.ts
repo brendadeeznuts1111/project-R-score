@@ -1,21 +1,20 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * Business Registry Dashboard
  * Visual card-based display of all registered businesses
  */
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import { BusinessContinuity } from '@fw/p2p';
+import { PORTS } from '../config/ports.ts';
 
 const PORT = Number(Bun.env.REGISTRY_PORT ?? 3004);
 const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
 
-const redis = new Redis(REDIS_URL, {
-  retryStrategy: times => Math.min(times * 50, 2000),
-  maxRetriesPerRequest: 3,
-});
+const redis = new RedisClient(REDIS_URL);
 
-redis.on('connect', () => console.info('✅ Redis connected for registry'));
+redis.onconnect = () => console.info('✅ Redis connected for registry');
 
 // ============================================================================
 // HTML Template
@@ -439,7 +438,6 @@ function generateRegistryHTML(businesses: any[]): string {
                 const logoUrl = branding.logoUrl;
                 const logoText = branding.logoText || business.name.charAt(0);
                 const isActive = business.current === 'true';
-                import { PORTS } from '../config/ports.ts';
                 const proxyUrl = Bun.env.PROXY_URL || `http://localhost:${PORTS.P2P_PROXY}`;
 
                 // Render specialty section based on business type

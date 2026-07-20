@@ -1,6 +1,7 @@
-// lib/business/habits-classifier.ts — Habits classification engine with Redis integration
+// @see https://bun.com/docs/runtime/redis — RedisClient
+// packages/business/src/habits-classifier.ts — Bun-native Redis habits store
 
-import Redis from 'ioredis';
+import { RedisClient } from 'bun';
 import {
   classifyHabits as classifyHabitsPure,
   calculateBonus as calculateBonusPure,
@@ -11,7 +12,6 @@ import {
   type Transaction,
 } from './habits-pure';
 
-// Re-export pure functions and types
 export {
   classifyHabitsPure,
   calculateBonusPure,
@@ -22,27 +22,27 @@ export {
   type Transaction,
 };
 
-// For backward compatibility, also export as default names
 export const classifyHabits = classifyHabitsPure;
 export const calculateBonus = calculateBonusPure;
 export const getRecommendation = getRecommendationPure;
 export const applyVipRiskOverride = applyVipRiskOverridePure;
 
-const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379');
+let redis: RedisClient | null = null;
+function getRedis(): RedisClient {
+  if (!redis) redis = new RedisClient(Bun.env.REDIS_URL);
+  return redis;
+}
 
-/**
- * Store habits in Redis with TTL
- */
 export async function storeHabits(
   userId: string,
   habits: HabitsData,
   ttlSeconds = 86400
 ): Promise<void> {
+  const client = getRedis();
   const key = `habits:${userId}`;
-  await redis.set(key, JSON.stringify(habits), 'EX', ttlSeconds);
-
-  // Publish classification event
-  await redis.publish(
+  await client.set(key, JSON.stringify(habits));
+  await client.expire(key, ttlSeconds);
+  await client.publish(
     'HABITS_CLASSIFIED',
     JSON.stringify({
       userId,
@@ -52,51 +52,39 @@ export async function storeHabits(
   );
 }
 
-/**
- * Get stored habits for user
- */
 export async function getHabits(userId: string): Promise<HabitsData | null> {
-  const key = `habits:${userId}`;
-  const data = await redis.get(key);
+  const data = await getRedis().get(`habits:${userId}`);
   if (!data) return null;
-  return JSON.parse(data);
+  return JSON.parse(data) as HabitsData;
 }
 
-/**
- * Delete habits for user (e.g., on data deletion request)
- */
 export async function deleteHabits(userId: string): Promise<void> {
-  const key = `habits:${userId}`;
-  await redis.del(key);
+  await getRedis().del(`habits:${userId}`);
 }
 
-/**
- * List all habit keys (for admin/debugging)
- */
 export async function listAllHabits(): Promise<string[]> {
+  const client = getRedis();
   const keys: string[] = [];
   let cursor = '0';
-
   do {
-    const result = await redis.scan(cursor, 'MATCH', 'habits:*', 'COUNT', 100);
-    cursor = result[0];
-    keys.push(...result[1]);
+    const result = (await client.send('SCAN', [cursor, 'MATCH', 'habits:*', 'COUNT', '100'])) as [
+      string,
+      string[],
+    ];
+    cursor = String(result[0]);
+    keys.push(...(result[1] ?? []));
   } while (cursor !== '0');
-
   return keys;
 }
 
-// CLI test
 if (import.meta.main) {
   console.info('🧪 Testing Habits Classifier...\n');
-
   const testCases = [
     { txns: Array(5).fill({ amount: 15 }), expected: 'casual' },
     { txns: Array(30).fill({ amount: 35 }), expected: 'active' },
     { txns: Array(75).fill({ amount: 80 }), expected: 'high-volume' },
     { txns: Array(150).fill({ amount: 200 }), expected: 'whale' },
   ];
-
   for (const test of testCases) {
     const habits = classifyHabits(test.txns);
     const bonus = calculateBonus(100, habits);

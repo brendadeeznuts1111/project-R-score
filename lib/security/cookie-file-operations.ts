@@ -9,7 +9,6 @@
  * cookie logging, audit trail processing, and batch analysis.
  */
 
-import { open } from 'node:fs/promises';
 import { Cookie, CookieInspector } from './cookie-security';
 import { JuniorRunnerCookieProfiler } from './junior-runner';
 import { type SessionId, type UserId, asSessionId } from '../types/branded.ts';
@@ -67,14 +66,20 @@ export class CookieFileLogger {
     const logLine = JSON.stringify(logEntry) + '\n';
 
     try {
-      const file = await open(this.logPath, 'a');
-      try {
-        await file.write(logLine);
-      } finally {
-        await file.close();
-      }
+      // Bun.file writer for append (file-io)
+      const writer = Bun.file(this.logPath).writer();
+      writer.write(logLine);
+      await writer.end();
     } catch (error) {
-      console.error('Failed to write to cookie log:', error);
+      // First write: create file via Bun.write
+      try {
+        const prev = (await Bun.file(this.logPath).exists())
+          ? await Bun.file(this.logPath).text()
+          : '';
+        await Bun.write(this.logPath, prev + logLine);
+      } catch (e2) {
+        console.error('Failed to write to cookie log:', e2);
+      }
     }
 
     // Rotate log if too large

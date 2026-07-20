@@ -1,9 +1,16 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/http/websockets — Bun.serve WebSocket
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 // lib/r2/r2-event-system.ts — R2 event system with real-time notifications
 
-// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { styled, FW_COLORS } from '../theme/colors';
+
+type R2WsData = {
+  clientId: string; // brand-ok — opaque websocket client id (UUID wire)
+  connectedAt: string;
+  subscriptions?: string[];
+};
 
 export interface R2Event {
   id: string;
@@ -61,8 +68,8 @@ export class R2EventSystem {
   private globalHandlers: Set<EventHandler> = new Set();
   private eventHistory: R2Event[] = [];
   private maxHistorySize: number = 10000;
-  private wsClients: Set<WebSocket> = new Set();
-  private wsServer?: WebSocket;
+  private wsClients = new Set<ServerWebSocket<R2WsData>>();
+  private httpServer?: ReturnType<typeof Bun.serve>;
   private config: WebSocketConfig;
   private isRunning: boolean = false;
   private eventCounter: number = 0;
@@ -106,33 +113,38 @@ export class R2EventSystem {
    */
   private async startWebSocketServer(): Promise<void> {
     try {
-      const server = Bun.serve({
+      const path = this.config.path!;
+      const maxConnections = this.config.maxConnections!;
+      const self = this;
+
+      this.httpServer = Bun.serve({
         port: this.config.port,
         fetch(req, server) {
           const url = new URL(req.url);
-          if (url.pathname === this.config.path) {
+          if (url.pathname === path) {
             const upgraded = server.upgrade(req, {
               data: {
                 clientId: Bun.randomUUIDv7(),
                 connectedAt: new Date().toISOString(),
-              },
+                subscriptions: [] as string[],
+              } satisfies R2WsData,
             });
             if (upgraded) return undefined;
+            return new Response('Upgrade failed', { status: 400 });
           }
           return new Response('R2 Event System', { status: 200 });
         },
         websocket: {
-          open: ws => {
-            if (this.wsClients.size >= this.config.maxConnections!) {
+          data: {} as R2WsData,
+          open(ws) {
+            if (self.wsClients.size >= maxConnections) {
               ws.close(1008, 'Maximum connections reached');
               return;
             }
-            this.wsClients.add(ws);
+            self.wsClients.add(ws);
             console.info(
-              styled(`🔌 WebSocket client connected (${this.wsClients.size} total)`, 'info')
+              styled(`🔌 WebSocket client connected (${self.wsClients.size} total)`, 'info')
             );
-
-            // Send welcome message
             ws.send(
               JSON.stringify({
                 type: 'connection:established',
@@ -141,30 +153,37 @@ export class R2EventSystem {
               })
             );
           },
-          close: ws => {
-            this.wsClients.delete(ws);
+          close(ws) {
+            self.wsClients.delete(ws);
             console.info(
-              styled(`🔌 WebSocket client disconnected (${this.wsClients.size} remaining)`, 'muted')
+              styled(`🔌 WebSocket client disconnected (${self.wsClients.size} remaining)`, 'muted')
             );
           },
-          message: (ws, message) => {
-            this.handleWebSocketMessage(ws, message);
+          message(ws, message) {
+            self.handleWebSocketMessage(ws, message);
           },
         },
       });
 
       console.info(styled(`🌐 WebSocket server started on port ${this.config.port}`, 'success'));
     } catch (error) {
-      console.error(styled(`❌ Failed to start WebSocket server: ${error.message}`, 'error'));
+      console.error(
+        styled(`❌ Failed to start WebSocket server: ${(error as Error).message}`, 'error')
+      );
     }
   }
 
   /**
    * Handle incoming WebSocket messages
    */
-  private handleWebSocketMessage(ws: WebSocket, message: string | Buffer): void {
+  private handleWebSocketMessage(
+    ws: ServerWebSocket<R2WsData>,
+    message: string | Buffer | ArrayBuffer
+  ): void {
     try {
-      const data = JSON.parse(message.toString());
+      const data = JSON.parse(
+        typeof message === 'string' ? message : new TextDecoder().decode(message as ArrayBuffer)
+      );
 
       switch (data.action) {
         case 'subscribe':
