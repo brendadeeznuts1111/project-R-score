@@ -5,7 +5,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { loadDomainRegistry, resolveDomainRegistry } from './lib/domain-registry';
 
@@ -216,11 +215,9 @@ async function ensureRegistryFile(registryPath: string, fix: boolean): Promise<D
   if (fileExistsSync(templatePath)) {
     return { id: 'registry_file_exists', ok: true, detail: `already available at ${templatePath}` };
   }
-  await mkdir(resolve('.search'), { recursive: true });
-  await writeText(
+  await Bun.write(
     path,
-    JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n',
-    'utf8'
+    JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n'
   );
   return { id: 'registry_file_exists', ok: true, detail: `created ${path}` };
 }

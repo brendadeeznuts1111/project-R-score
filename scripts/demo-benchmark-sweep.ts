@@ -3,7 +3,6 @@ import { readJsonSync } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 type DemoContract = {
@@ -190,7 +189,6 @@ async function main() {
     summary.regressionFailures = gate.failures;
   }
 
-  mkdirSync(REPORTS_DIR, { recursive: true });
   const snapshot = {
     generatedAt: new Date().toISOString(),
     cwd: ROOT,

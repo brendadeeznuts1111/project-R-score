@@ -27,8 +27,8 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { createHmac } from 'node:crypto';
-import { sha256Hex } from './lib/hash';
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import { sha256Hex, hmacSha256 } from './lib/hash';
 import { S3Client } from 'bun';
 import { resolve4, resolveCname, resolveNs, Resolver } from 'node:dns/promises';
 import {
@@ -6481,10 +6481,6 @@ async function fetchR2Json(r2Base: string, name: string): Promise<Response> {
 
 function hashSha256Hex(data: string): string {
   return sha256Hex(data);
-}
-
-function hmacSha256(key: Buffer | string, data: string): Buffer {
-  return createHmac('sha256', key).update(data).digest();
 }
 
 function encodeKey(key: string): string {

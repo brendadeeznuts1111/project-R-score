@@ -6,7 +6,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { mkdir } from 'node:fs/promises';
 
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
@@ -815,7 +814,6 @@ export async function main(): Promise<void> {
   );
 
   const snapshotDir = resolve(outDir, id);
-  await mkdir(snapshotDir, { recursive: true });
 
   const snapshotData = {
     id,

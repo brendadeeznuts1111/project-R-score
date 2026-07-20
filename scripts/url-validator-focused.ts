@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 import { readTextSync } from './lib/fs-bun';
 /**
  * 🔗 Focused URL Validator Script
@@ -8,7 +9,6 @@ import { readTextSync } from './lib/fs-bun';
  * Scans only project source files for URL validation
  */
 
-import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 interface UrlValidationResult {
@@ -52,13 +52,8 @@ class FocusedUrlValidator {
     const urls: Array<{ url: string; file: string; line: number }> = [];
 
     for (const dir of this.sourceDirectories) {
-      try {
-        statSync(dir);
-        const dirUrls = await this.extractUrlsFromDirectory(dir);
-        urls.push(...dirUrls);
-      } catch {
-        // Directory doesn't exist, skip it
-      }
+      const dirUrls = await this.extractUrlsFromDirectory(dir);
+      urls.push(...dirUrls);
     }
 
     console.info(`Found ${urls.length} URLs in source files\n`);
@@ -69,29 +64,17 @@ class FocusedUrlValidator {
     dir: string
   ): Promise<Array<{ url: string; file: string; line: number }>> {
     const urls: Array<{ url: string; file: string; line: number }> = [];
-
-    function scanDirectory(currentDir: string): void {
-      const entries = readdirSync(currentDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(currentDir, entry.name);
-
-        if (entry.isDirectory()) {
-          scanDirectory(fullPath);
-        } else {
-          const ext = entry.name.substring(entry.name.lastIndexOf('.'));
-          if (this.fileExtensions.includes(ext)) {
-            const fileUrls = this.extractUrlsFromFile(fullPath);
-            urls.push(...fileUrls);
-          }
-        }
+    const pattern = `**/*.{${this.fileExtensions.map(ext => ext.replace(/^\./, '')).join(',')}}`;
+    const glob = new Bun.Glob(pattern);
+    try {
+      for (const relativePath of glob.scanSync({ cwd: dir, onlyFiles: true, dot: false })) {
+        const fullPath = join(dir, relativePath);
+        const fileUrls = this.extractUrlsFromFile(fullPath);
+        urls.push(...fileUrls);
       }
+    } catch {
+      // Directory doesn't exist or isn't readable; skip it
     }
-
-    const self = this;
-    scanDirectory = scanDirectory.bind(self);
-    scanDirectory(dir);
-
     return urls;
   }
 

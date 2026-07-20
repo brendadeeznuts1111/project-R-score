@@ -16,3 +16,13 @@ export function sha1Hex(data: Bun.BlobOrStringOrBuffer): string {
   hasher.update(data);
   return hasher.digest('hex');
 }
+
+/** HMAC-SHA256 digest as a Buffer. */
+export function hmacSha256(
+  key: Bun.BlobOrStringOrBuffer,
+  data: Bun.BlobOrStringOrBuffer
+): Buffer {
+  const hasher = new Bun.CryptoHasher('sha256', key);
+  hasher.update(data);
+  return hasher.digest('buffer');
+}

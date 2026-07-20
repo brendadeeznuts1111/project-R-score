@@ -59,6 +59,7 @@ async function main(): Promise<void> {
   console.info(`   R2 Store: ${R2_BUCKET_URL}`);
   console.info(`   Output:   ${PACKS_DIR}\n`);
 
+  // sync-ok: directory-only creation; bun pm pack --destination creates the dir when writing tarballs
   await mkdir(PACKS_DIR, { recursive: true });
 
   const glob = new Glob('*/package.json');

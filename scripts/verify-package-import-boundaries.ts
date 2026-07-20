@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 import { readTextSync } from './lib/fs-bun';
-import { readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 
 type PackageBoundaryRule = {
@@ -44,17 +44,20 @@ function isCodeFile(path: string): boolean {
   return /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/.test(path);
 }
 
-function walk(dir: string, out: string[]): void {
-  for (const entry of readdirSync(dir)) {
-    if (entry === 'node_modules' || entry === 'dist' || entry === 'build') continue;
-    const abs = join(dir, entry);
-    const st = statSync(abs);
-    if (st.isDirectory()) {
-      walk(abs, out);
-    } else if (st.isFile() && isCodeFile(abs)) {
-      out.push(abs);
-    }
+function collectCodeFiles(dir: string): string[] {
+  const pattern = '**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}';
+  const glob = new Bun.Glob(pattern);
+  const files: string[] = [];
+  for (const relativePath of glob.scanSync({ cwd: dir, onlyFiles: true, dot: false })) {
+    if (
+      relativePath.includes('/node_modules/') ||
+      relativePath.includes('/dist/') ||
+      relativePath.includes('/build/')
+    )
+      continue;
+    files.push(join(dir, relativePath));
   }
+  return files;
 }
 
 function resolveImport(fromFile: string, specifier: string): string {
@@ -80,8 +83,7 @@ function isUnder(relPath: string, allowedRoot: string): boolean {
 
 function checkRule(rule: PackageBoundaryRule): Violation[] {
   const sourceAbs = resolve(ROOT, rule.sourceDir);
-  const files: string[] = [];
-  walk(sourceAbs, files);
+  const files = collectCodeFiles(sourceAbs);
 
   const violations: Violation[] = [];
   for (const file of files) {

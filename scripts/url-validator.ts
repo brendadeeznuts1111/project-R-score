@@ -8,7 +8,7 @@ import { readTextSync } from './lib/fs-bun';
  * Checks for hardcoded URLs, validates formats, and ensures standards compliance
  */
 
-import { readdirSync, statSync } from 'fs';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 import { join } from 'path';
 import { URLNormalizer } from '../lib/docs/constants/utils.ts';
 import { urlService } from '../lib/core/url-service.ts';
@@ -95,26 +95,12 @@ class UrlValidator {
     const excludeDirectories = this.excludeDirectories;
     const fileExtensions = this.fileExtensions;
 
-    function scanDirectory(currentDir: string): void {
-      const entries = readdirSync(currentDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(currentDir, entry.name);
-
-        if (entry.isDirectory()) {
-          if (!excludeDirectories.includes(entry.name)) {
-            scanDirectory(fullPath);
-          }
-        } else {
-          const ext = entry.name.substring(entry.name.lastIndexOf('.'));
-          if (fileExtensions.includes(ext)) {
-            files.push(fullPath);
-          }
-        }
-      }
+    const pattern = `**/*.{${fileExtensions.map(ext => ext.replace(/^\./, '')).join(',')}}`;
+    const glob = new Bun.Glob(pattern);
+    for (const relativePath of glob.scanSync({ cwd: dir, onlyFiles: true, dot: false })) {
+      if (excludeDirectories.some(excluded => relativePath.includes(`/${excluded}/`))) continue;
+      files.push(join(dir, relativePath));
     }
-
-    scanDirectory(dir);
     return files;
   }
 

@@ -3,7 +3,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 type PromoteOptions = {
@@ -46,7 +45,6 @@ async function promoteBaseline(options: PromoteOptions): Promise<void> {
   const baselineExists = await baselineFile.exists();
   if (baselineExists) {
     const archiveDir = join(dirname(options.baselinePath), 'archive');
-    await mkdir(archiveDir, { recursive: true });
     const ts = new Date().toISOString().replace(/[:.]/g, '-');
     const archivePath = join(archiveDir, `protocol-parallel.baseline.${ts}.json`);
     await Bun.write(archivePath, baselineFile);

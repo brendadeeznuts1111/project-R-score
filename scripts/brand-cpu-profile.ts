@@ -49,6 +49,7 @@ function parseArgs(argv: string[]): Options {
 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
+  // sync-ok: directory-only creation for bun --cpu-prof-dir; no paired writeFile to fold into Bun.write
   await mkdir(options.profilesDir, { recursive: true });
 
   const profileName =

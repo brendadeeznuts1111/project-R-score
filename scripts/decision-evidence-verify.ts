@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { readText } from './lib/fs-bun';
 import { sha256Hex } from './lib/hash';
 

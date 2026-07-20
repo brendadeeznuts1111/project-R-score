@@ -11,12 +11,19 @@ All commands run via `bun run <name>` from the project root:
 ### Install
 | Command | Description |
 |---------|-------------|
-| `bun run install:all` | install |
-| `bun run install:factorywager` | install --filter './projects/active/factorywager/registry/packages/*' |
-| `bun run install:kimiremote` | install --filter './projects/active/kimiremote/packages/*' |
-| `bun run install:packages` | install --filter './packages/*' |
-| `bun run install:projects` | install --filter './projects/*' |
-| `bun run install:projects:except:experimental` | install --filter './projects/*' --filter '!./projects/experimental/*' |
+| `bun run install:all` | scripts/with-bun-cache-env.ts install |
+| `bun run install:cache:lifecycle` | scripts/bun-cache-lifecycle.ts --dry-run |
+| `bun run install:cache:metrics` | scripts/bun-cache-lifecycle.ts --json |
+| `bun run install:cache:prune` | scripts/bun-cache-lifecycle.ts --prune |
+| `bun run install:factorywager` | scripts/with-bun-cache-env.ts install --filter './projects/active/factorywager/registry/packages/*' |
+| `bun run install:kimiremote` | scripts/with-bun-cache-env.ts install --filter './projects/active/kimiremote/packages/*' |
+| `bun run install:machine:health` | scripts/machine-bun-health.ts |
+| `bun run install:packages` | scripts/with-bun-cache-env.ts install --filter './packages/*' |
+| `bun run install:pm:health` | scripts/bun-cache-lifecycle.ts --dry-run --json |
+| `bun run install:projects` | scripts/with-bun-cache-env.ts install --filter './projects/*' |
+| `bun run install:projects:except:experimental` | scripts/with-bun-cache-env.ts install --filter './projects/*' --filter '!./projects/experimental/*' |
+| `bun run install:verify` | scripts/verify-install-cache.ts |
+| `bun run install:verify:strict` | scripts/verify-install-cache.ts --strict |
 
 ### Build
 | Command | Description |
@@ -28,32 +35,14 @@ All commands run via `bun run <name>` from the project root:
 ### Test
 | Command | Description |
 |---------|-------------|
-| `bun run test:accessibility` | tests/test-accessibility.ts |
 | `bun run test:affected` | --filter '...' test |
-| `bun run test:agent` | AGENT=1 bun test ./tests ./lib ./utils ./cli ./projects/active/barbershop ./packages/bun-markdown-constants |
-| `bun run test:all` | --parallel test:ui-quality test:accessibility test:content-types |
 | `bun run test:barbershop` | test projects/active/barbershop/tests/*.ts |
-| `bun run test:brand` | test ./tests/brand-seed.test.ts |
-| `bun run test:brand:0` | test:brand -- --seed=0 |
-| `bun run test:brand:120` | test:brand -- --seed=120 |
-| `bun run test:brand:240` | test:brand -- --seed=240 |
-| `bun run test:brand:all` | --parallel test:brand:0 test:brand:120 test:brand:240 |
-| `bun run test:brands` | test tests/brand-seed.test.ts |
-| `bun run test:ci` | test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test.xml ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
-| `bun run test:ci:root` | mkdir -p ./reports/junit && bun test --timeout=10000 --max-concurrency=20 --bail=1 --reporter=junit --reporter-outfile=./reports/junit/bun-test-root.xml tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
-| `bun run test:ci:root:dots` | test --timeout=10000 --max-concurrency=20 --bail=1 --dots tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
-| `bun run test:ci:root:random` | test --timeout=10000 --max-concurrency=20 --bail=1 --randomize --seed=1337 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
-| `bun run test:ci:root:rerun` | test --timeout=10000 --max-concurrency=20 --bail=1 --rerun-each=2 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts |
-| `bun run test:concurrent:safe` | AGENT=1 bun test --concurrent --max-concurrency=4 --timeout=10000 --bail=1 ./tests ./lib ./utils ./cli ./barbershop ./packages/bun-markdown-constants |
-| `bun run test:content-types` | tests/test-content-types.ts |
 | `bun run test:continuity` | tests/business-continuity-test.ts |
-| `bun run test:coverage` | test --coverage ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
 | `bun run test:dashboard:endpoints` | scripts/test-dashboard-endpoints.ts |
 | `bun run test:dashboard:mini` | scripts/test-dashboard-mini.ts |
 | `bun run test:dashboard:suite` | scripts/test-dashboard-suite.ts |
 | `bun run test:dashboard:websocket` | scripts/test-dashboard-websocket.ts |
 | `bun run test:endpoints` | scripts/test-endpoints-local.ts |
-| `bun run test:habits` | tests/habits-test.ts |
 | `bun run test:integration` | tests/payment-dashboard-integration.ts |
 | `bun run test:p2p` | tests/p2p-proxy-quick-test.ts |
 | `bun run test:payments` | tests/payment-flow-demo.ts |
@@ -73,11 +62,9 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:protocol:parallel:promote-baseline:dryrun` | test:protocol:parallel:compare |
 | `bun run test:protocol:s3` | scripts/dashboard-protocol-check.ts --protocol=s3 |
 | `bun run test:protocol:unix` | scripts/dashboard-protocol-check.ts --protocol=unix |
-| `bun run test:r2` | test tests/r2-integration.test.ts |
-| `bun run test:scoped:bail` | test --bail=10 |
-| `bun run test:ui-quality` | tests/test-ui-quality.ts |
-| `bun run test:unit` | test ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
-| `bun run test:watch` | test --watch ./tests ./lib ./utils ./projects/active/barbershop ./packages/bun-markdown-constants |
+| `bun run test:scoped` | test tests/console-depth.test.ts |
+| `bun run test:scoped:bail` | test tests/console-depth.test.ts --bail=10 |
+| `bun run test:snapshots:update` | test tests/console-depth.test.ts --update-snapshots |
 | `bun run test:workspaces` | --filter '*' test |
 
 ### Lint
@@ -156,21 +143,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run cheatsheet:dashboard` | cheatsheet:integrated dashboard |
-| `bun run cheatsheet:hub` | scripts/cheatsheet-all.js |
-| `bun run cheatsheet:integrated` | scripts/cheatsheet-integrated-v2.js |
-| `bun run cheatsheet:interactive` | scripts/cheatsheet-interactive.js interactive |
-| `bun run cheatsheet:manager` | scripts/cheatsheet-manager.js |
-| `bun run cheatsheet:search` | scripts/cheatsheet.js search |
-
-### RSS
-| Command | Description |
-|---------|-------------|
-| `bun run rss:add` | lib/registry/rss-aggregator.ts add |
-| `bun run rss:feeds` | lib/registry/rss-aggregator.ts feeds |
-| `bun run rss:fetch` | lib/registry/rss-aggregator.ts fetch |
-| `bun run rss:html` | lib/registry/rss-aggregator.ts html |
-| `bun run rss:list` | lib/registry/rss-aggregator.ts list |
-| `bun run rss:monitor` | scripts/cheatsheet-rss-monitor-v2.js monitor |
 
 ### Search
 | Command | Description |
@@ -182,7 +154,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run search:bench:gate` | scripts/search-benchmark-pin.ts compare --strict --bootstrap-missing-baseline |
 | `bun run search:bench:pin` | scripts/search-benchmark-pin.ts pin |
 | `bun run search:bench:snapshot:core:wide:local` | scripts/search-benchmark-snapshot.ts --path ./lib,./packages/docs-tools/src --limit 40 --query-pack core_delivery_wide --overlap remove --concurrency 2 --no-upload |
-| `bun run search:bench:test` | test tests/search-benchmark-core.test.ts tests/search-benchmark-snapshot-core.test.ts tests/search-benchmark-pin.test.ts tests/search-benchmark-baseline-governance.test.ts tests/search-benchmark-thresholds.test.ts tests/search-policy-thresholds.test.ts |
 | `bun run search:code` | scripts/codesearch-cli.ts |
 | `bun run search:contract:check` | scripts/search-status-contract-check.ts |
 | `bun run search:coverage:loc` | scripts/search-coverage-loc.ts |
@@ -226,18 +197,12 @@ All commands run via `bun run <name>` from the project root:
 | `bun run dataview` | scripts/dataview-cli.ts |
 | `bun run dataview:test` | scripts/dataview-tests.ts |
 
-### Barbershop Profile
-| Command | Description |
-|---------|-------------|
-| `bun run profile:barbershop` | Barbershop sampling profiler (pass subcommand: run, quick, status, …) |
-
 ### Documentation
 | Command | Description |
 |---------|-------------|
 | `bun run docs:analyze` | tools/cli/integrated-cli.ts analyze |
 | `bun run docs:build` | docs:sync:integrated |
 | `bun run docs:cache` | tools/cli/docs-cli.ts cache |
-| `bun run docs:cheatsheet` | scripts/cheatsheet-interactive.js markdown |
 | `bun run docs:demo` | examples/bun-docs-demo.ts |
 | `bun run docs:domain:graph` | docs/domain-renderer.ts full |
 | `bun run docs:fetch` | lib/registry/package-docs.ts |
@@ -258,6 +223,15 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run markdown` | Render markdown (pass file + format: ansi, html, links, headings, plain) |
 | `bun run markdown:options` | Bun markdown parser option demos (pass demo|compare|gfm|extended) |
+
+### RSS
+| Command | Description |
+|---------|-------------|
+| `bun run rss:add` | lib/registry/rss-aggregator.ts add |
+| `bun run rss:feeds` | lib/registry/rss-aggregator.ts feeds |
+| `bun run rss:fetch` | lib/registry/rss-aggregator.ts fetch |
+| `bun run rss:html` | lib/registry/rss-aggregator.ts html |
+| `bun run rss:list` | lib/registry/rss-aggregator.ts list |
 
 ---
 

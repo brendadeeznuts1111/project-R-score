@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * Auto-generate docs/CLI.md from package.json scripts.
  *
  * Usage: bun run scripts/generate-cli-docs.ts
  */
 
-import { writeFile } from 'node:fs/promises';
 import pkg from '../package.json' assert { type: 'json' };
 
 const scripts = pkg.scripts as Record<string, string>;
@@ -171,5 +171,5 @@ lines.push('- **Full manifest**: `docs/packages/REGISTRY.md`');
 lines.push('- **Package scope**: `@factorywager/*` (core), `@fire22/*` (fantasy42)');
 lines.push('');
 
-await writeFile('docs/CLI.md', lines.join('\n'));
+await Bun.write('docs/CLI.md', lines.join('\n'));
 console.info('Wrote docs/CLI.md');

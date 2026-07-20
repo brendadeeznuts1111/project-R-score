@@ -5,7 +5,6 @@ import { fileExistsSync, readJson, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 type Severity = 'ok' | 'warn' | 'fail';
@@ -622,8 +621,7 @@ export async function pin(
     throw new Error('Snapshot missing id; cannot pin baseline');
   }
 
-  await mkdir(dirname(outPath), { recursive: true });
-  await writeText(outPath, `${JSON.stringify(baseline, null, 2)}\n`, 'utf8');
+  await Bun.write(outPath, `${JSON.stringify(baseline, null, 2)}\n`);
 
   console.info(`[search:bench:pin] baseline saved: ${outPath}`);
   console.info(
@@ -765,8 +763,7 @@ async function compareResolved(
       pinnedBy: defaultPinnedBy(),
       previousSnapshotId: null,
     };
-    await mkdir(dirname(bootstrapPath), { recursive: true });
-    await writeText(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`, 'utf8');
+    await Bun.write(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`);
     baselinePath = bootstrapPath;
     console.warn(
       `[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`

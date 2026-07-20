@@ -2,7 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
-import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 type Options = {
@@ -150,11 +149,9 @@ async function ensureEnv(path: string, fix: boolean): Promise<Check> {
       detail: `missing keys in ${abs}: ${missing.map(([k]) => k).join(', ')}`,
     };
   }
-  const dir = resolve(abs, '..');
-  if (!fileExistsSync(dir)) await mkdir(dir, { recursive: true });
   const append = missing.map(([k, v]) => `${k}=${v}`).join('\n');
   const next = `${raw}${raw && !raw.endsWith('\n') ? '\n' : ''}\n# Registry stack defaults (doctor --fix)\n${append}\n`;
-  await writeText(abs, next);
+  await Bun.write(abs, next);
   return { id: 'registry_env', ok: true, detail: `added ${missing.length} keys to ${abs}` };
 }
 

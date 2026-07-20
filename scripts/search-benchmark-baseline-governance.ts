@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 import { fileExistsSync, readText } from './lib/fs-bun';
 
-import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 type PinnedBaseline = {
@@ -100,11 +100,13 @@ async function main(): Promise<void> {
     throw new Error('.search directory not found');
   }
 
-  const entries = await readdir(root);
-  const baselineFiles = entries
-    .filter(name => /^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name))
-    .map(name => resolve(root, name))
-    .sort();
+  const glob = new Bun.Glob('search-benchmark-pinned-baseline*.json');
+  const baselineFiles: string[] = [];
+  for await (const name of glob.scan({ cwd: root, onlyFiles: true, dot: false })) {
+    if (!/^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name)) continue;
+    baselineFiles.push(resolve(root, name));
+  }
+  baselineFiles.sort();
 
   if (baselineFiles.length === 0) {
     throw new Error('No search benchmark pinned baseline files found under .search/');
