@@ -10,7 +10,7 @@
  */
 
 import { open } from 'node:fs/promises';
-import { Cookie, CookieInspector, LeadSpecProfile } from './cookie-security';
+import { Cookie, CookieInspector } from './cookie-security';
 import { JuniorRunnerCookieProfiler } from './junior-runner';
 import { type SessionId, type UserId, asSessionId } from '../types/branded.ts';
 
