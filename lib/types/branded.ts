@@ -16,7 +16,7 @@
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
  * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 220 declarations remaining, baseline 274):
+ * `bun tools/branded-id-check.ts` — 207 declarations remaining, baseline 274):
  *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
  *         lib/security — ALL 14 files clean (UserId, SessionId, TokenId,
  *              AccountId, AccessKeyId, IdentityId, ChallengeId, PolicyId,

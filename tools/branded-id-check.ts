@@ -23,7 +23,11 @@
  * Brand foundation: lib/types/branded.ts
  */
 
-const ID_DECL = /^\s*(?:readonly\s+)?[a-zA-Z_]*(?:id|Id|ID)[a-zA-Z_]*\??:\s*string\b/;
+// Matches ID-shaped names only: exact `id`, names ending in `Id`/`ID`
+// (sessionId, RequestId), names ending in `_id` (account_id, `_id` itself).
+// Does NOT match words merely containing "id" (valid, forbidden, guid,
+// validationErrors, cidr_whitelist, correlationIdHeader).
+const ID_DECL = /^\s*(?:readonly\s+)?(?:id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/;
 const SKIP_FILE = /lib\/types\/branded\.ts$/;
 const SKIP_LINE = /brand-ok/;
 
@@ -31,10 +35,9 @@ type Violation = { file: string; line: number; text: string };
 
 /** Violations in added lines of the staged diff (hunk-aware). */
 async function stagedViolations(): Promise<Violation[]> {
-  const proc = Bun.spawn(
-    ['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'],
-    { stdout: 'pipe' }
-  );
+  const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'], {
+    stdout: 'pipe',
+  });
   const diff = await new Response(proc.stdout).text();
   const violations: Violation[] = [];
   let file = '';
