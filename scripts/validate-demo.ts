@@ -1,12 +1,10 @@
 #!/usr/bin/env bun
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { readJson, resolvePath } from './lib/fs-bun';
 
-const ROOT = process.cwd();
-const CONTRACT_PATH = join(
-  ROOT,
+const CONTRACT_PATH = resolvePath(
   'scratch',
   'bun-v1.3.9-examples',
   'playground-web',
@@ -15,7 +13,7 @@ const CONTRACT_PATH = join(
 
 function parseId(): string {
   const eq = Bun.argv.find(arg => arg.startsWith('--id='));
-  if (eq) return eq.split('=')[1];
+  if (eq) return eq.split('=')[1]!;
   const idx = Bun.argv.findIndex(arg => arg === '--id');
   if (idx >= 0) return String(Bun.argv[idx + 1] || '');
   return '';
@@ -42,9 +40,9 @@ async function main() {
     process.exit(1);
   }
 
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as {
+  const contract = await readJson<{
     modules: Record<string, { testCommand: string; benchCommand: string }>;
-  };
+  }>(CONTRACT_PATH);
   const module = contract.modules[id];
   if (!module) {
     console.error(`[validate:demo] unknown demo id '${id}'`);
@@ -66,4 +64,6 @@ async function main() {
   console.info(`[validate:demo][pass] id=${id}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

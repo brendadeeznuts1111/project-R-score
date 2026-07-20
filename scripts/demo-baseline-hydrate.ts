@@ -1,8 +1,7 @@
 #!/usr/bin/env bun
 
-// @see https://bun.com/docs/runtime/file-io — Bun.write
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readJsonSync, writeJson, resolvePath } from './lib/fs-bun';
 import { buildBaselineForDemo } from './demo-tier1-baselines';
 
 type DemoModuleContract = {
@@ -26,17 +25,15 @@ type DemoModuleContractFile = {
   modules: Record<string, DemoModuleContract>;
 };
 
-const ROOT = process.cwd();
-const CONTRACT_PATH = join(
-  ROOT,
+const CONTRACT_PATH = resolvePath(
   'scratch',
   'bun-v1.3.9-examples',
   'playground-web',
   'demo-module-contract.json'
 );
 
-function main() {
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as DemoModuleContractFile;
+async function main() {
+  const contract = readJsonSync<DemoModuleContractFile>(CONTRACT_PATH);
   let updated = 0;
   for (const id of Object.keys(contract.modules || {})) {
     const baseline = buildBaselineForDemo(id);
@@ -49,8 +46,11 @@ function main() {
     updated++;
   }
   contract.generatedAt = new Date().toISOString();
-  Bun.write(CONTRACT_PATH, `${JSON.stringify(contract, null, 2)}\n`);
+  await writeJson(CONTRACT_PATH, contract);
   console.info(`[demo-baseline-hydrate] updated benchmarkBaseline for ${updated} demos`);
 }
 
-main();
+if (import.meta.main) {
+  await main();
+}
+

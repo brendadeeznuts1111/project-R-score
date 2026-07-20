@@ -1,28 +1,23 @@
 // scripts/verify-ts-check-config.ts
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+import { fileExistsSync, readJsonSync, resolvePath } from './lib/fs-bun';
 
 type TsRef = { path: string };
 type TsConfig = {
   references?: TsRef[];
 };
 
-const ROOT = process.cwd();
-
-function readJsonFile<T>(path: string): T {
-  const absPath = join(ROOT, path);
-  const raw = readFileSync(absPath, 'utf8');
-  return JSON.parse(raw) as T;
-}
-
 function fail(message: string): never {
   console.error(`❌ ${message}`);
   process.exit(1);
 }
 
+function readJsonFile<T>(path: string): T {
+  return readJsonSync<T>(resolvePath(path));
+}
+
 function assertExists(path: string): void {
-  const absPath = join(ROOT, path);
-  if (!existsSync(absPath)) {
+  if (!fileExistsSync(resolvePath(path))) {
     fail(`Missing required file: ${path}`);
   }
 }
@@ -87,4 +82,6 @@ function main(): void {
   console.info('✅ TypeScript check configuration looks consistent.');
 }
 
-main();
+if (import.meta.main) {
+  main();
+}

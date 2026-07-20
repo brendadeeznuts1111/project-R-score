@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { readJson, resolvePath, scanFilesSync } from './lib/fs-bun';
 /**
  * List packages in the monorepo with name, version, registry, and triage status.
  *
@@ -12,7 +14,7 @@
  * @see https://bun.com/docs/runtime/file-io — Bun.file
  */
 
-const ROOT = process.cwd();
+const ROOT = resolvePath();
 const SKIP_SEGMENTS = new Set([
   'node_modules',
   '.npm-cache',
@@ -26,8 +28,6 @@ const SKIP_SEGMENTS = new Set([
 const FILTER = process.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
 const INCLUDE_SCAFFOLDS = process.argv.includes('--include-scaffolds');
 const SHOW_PATHS = process.argv.includes('--paths');
-
-const PKG_GLOB = new Bun.Glob('**/package.json');
 
 function shouldSkipRel(rel: string): boolean {
   return rel.split('/').some(seg => seg.startsWith('.') || SKIP_SEGMENTS.has(seg));
@@ -94,12 +94,12 @@ function isScaffoldNoise(name: string, dir: string): boolean {
 const rows: Array<[string, string, string, string, string]> = [];
 let skippedScaffolds = 0;
 
-for (const rel of PKG_GLOB.scanSync({ cwd: ROOT, onlyFiles: true, dot: false })) {
+for (const rel of scanFilesSync('**/package.json', { cwd: ROOT })) {
   if (shouldSkipRel(rel)) continue;
-  const full = `${ROOT}/${rel}`;
+  const full = resolvePath(ROOT, rel);
   let data: Record<string, unknown>;
   try {
-    data = (await Bun.file(full).json()) as Record<string, unknown>;
+    data = await readJson<Record<string, unknown>>(full);
   } catch {
     continue;
   }
