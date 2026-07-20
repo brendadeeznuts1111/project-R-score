@@ -6,10 +6,12 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/bundler — Bun.build
-// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
+// @see https://bun.com/docs/runtime/markdown — Bun.markdown
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/webview — Bun.WebView
+// @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
 
 export type CuratedEntry = {
@@ -94,9 +96,40 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     // Prefer deep links: #bun-cron-schedule-handler-—-in-process · #no-overlap-guarantee
     // (bare #cron is not a section id on the page)
     description: 'In-process cron scheduling (UTC; no-overlap after handler settles)',
+    minVersion: '1.3.14',
   },
-  { term: 'Bun.WebView', path: 'runtime/webview', description: 'Headless browser automation' },
-  { term: 'Bun.markdown', path: 'runtime/markdown', description: 'Native Markdown rendering' },
+  {
+    term: 'Bun.WebView',
+    path: 'runtime/webview',
+    description: 'Headless browser automation',
+    minVersion: '1.4.0',
+    stability: 'experimental',
+  },
+  {
+    term: 'Bun.markdown',
+    path: 'runtime/markdown',
+    description: 'Native Markdown rendering (html/ansi/render/react)',
+    minVersion: '1.3.0',
+  },
+  {
+    term: 'Bun.markdown.ansi',
+    path: 'runtime/markdown',
+    description: 'Markdown → ANSI for the terminal',
+    minVersion: '1.4.0',
+  },
+  {
+    term: 'Bun.udpSocket',
+    path: 'runtime/networking/udp',
+    description: 'UDP sockets with ICMP/truncation handling',
+    minVersion: '1.0.0',
+  },
+  {
+    term: 'Bun.secrets',
+    path: 'runtime/secrets',
+    description: 'OS keychain-backed secrets API',
+    minVersion: '1.3.0',
+    stability: 'experimental',
+  },
   {
     term: 'noOrphans',
     path: 'runtime/bunfig',

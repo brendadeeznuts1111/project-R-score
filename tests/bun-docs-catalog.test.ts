@@ -10,6 +10,7 @@ import {
   pickCanonicalPage,
   sectionFromUrl,
   inferType,
+  compareSemver,
 } from '../tools/bun-docs-catalog.ts';
 
 describe('bun-docs-catalog helpers', () => {
@@ -57,5 +58,11 @@ describe('bun-docs-catalog helpers', () => {
     expect(inferType('--console-depth', 'https://bun.com/docs/runtime/console')).toBe('cli-flag');
     expect(inferType('bunfig.toml', 'https://bun.com/docs/runtime/bunfig')).toBe('config');
     expect(inferType('Code coverage', 'https://bun.com/docs/test/code-coverage')).toBe('concept');
+  });
+
+  test('compareSemver orders release versions', () => {
+    expect(compareSemver('1.3.14', '1.4.0')).toBeLessThan(0);
+    expect(compareSemver('1.4.0', '1.3.14')).toBeGreaterThan(0);
+    expect(compareSemver('1.4.0', '1.4.0')).toBe(0);
   });
 });

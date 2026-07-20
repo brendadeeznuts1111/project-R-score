@@ -8,6 +8,9 @@
  * Each entry:
  *   name, type (api | cli-flag | config | concept),
  *   description?, stability (stable | experimental | deprecated),
+ *   releasedIn? (Bun version when the feature shipped),
+ *   lastUpdated? (ISO date docs/index last refreshed for this entry),
+ *   verifiedOn? (Bun.version at catalog build),
  *   canonicalPage, anchor?, allPages
  *
  * Coverage phases: Runtime · Bundler · Test Runner · Guides (later expansion).
@@ -37,6 +40,20 @@ export type DocCatalogEntry = {
   type: DocRefType;
   description?: string;
   stability: DocStability;
+  /**
+   * Bun version in which the feature was released / first documented in curated
+   * data (semver string, e.g. "1.3.14"). Omitted when unknown.
+   */
+  releasedIn?: string;
+  /**
+   * When documentation for this entry was last refreshed in our index
+   * (ISO-8601 from bun-docs-index.json `generated`).
+   */
+  lastUpdated?: string;
+  /**
+   * Local Bun.version when the catalog was built (verification pin).
+   */
+  verifiedOn?: string;
   /** Page URL without .md and without fragment */
   canonicalPage: string;
   /** Fragment id without # */
@@ -177,6 +194,9 @@ function mergeEntry(
     type?: DocRefType;
     description?: string;
     stability?: DocStability;
+    releasedIn?: string;
+    lastUpdated?: string;
+    verifiedOn?: string;
     page: string;
     anchor?: string;
     section?: DocSection;
@@ -194,6 +214,9 @@ function mergeEntry(
       type: partial.type ?? inferType(partial.name, page),
       description: partial.description,
       stability: partial.stability ?? 'stable',
+      releasedIn: partial.releasedIn,
+      lastUpdated: partial.lastUpdated,
+      verifiedOn: partial.verifiedOn,
       canonicalPage,
       anchor: partial.anchor,
       allPages,
@@ -225,6 +248,19 @@ function mergeEntry(
   if (partial.stability && partial.stability !== 'stable') {
     existing.stability = partial.stability;
   }
+  // releasedIn: keep earliest known release when both set
+  if (partial.releasedIn) {
+    if (!existing.releasedIn || compareSemver(partial.releasedIn, existing.releasedIn) < 0) {
+      existing.releasedIn = partial.releasedIn;
+    }
+  }
+  // lastUpdated: keep latest ISO timestamp
+  if (partial.lastUpdated) {
+    if (!existing.lastUpdated || partial.lastUpdated > existing.lastUpdated) {
+      existing.lastUpdated = partial.lastUpdated;
+    }
+  }
+  if (partial.verifiedOn) existing.verifiedOn = partial.verifiedOn;
   // type: prefer api over concept
   if (partial.type === 'api' && existing.type === 'concept') existing.type = 'api';
   if (partial.type === 'cli-flag' || partial.type === 'config') existing.type = partial.type;
@@ -243,6 +279,23 @@ function mergeEntry(
   existing.section = partial.section ?? existing.section;
 }
 
+/** Compare loose semver strings; negative if a < b. */
+export function compareSemver(a: string, b: string): number {
+  const pa = a
+    .replace(/^v/, '')
+    .split('.')
+    .map(n => parseInt(n, 10) || 0);
+  const pb = b
+    .replace(/^v/, '')
+    .split('.')
+    .map(n => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) {
+    const d = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (d !== 0) return d;
+  }
+  return 0;
+}
+
 export async function loadIndex(): Promise<IndexFile> {
   return (await Bun.file(INDEX_PATH).json()) as IndexFile;
 }
@@ -250,15 +303,13 @@ export async function loadIndex(): Promise<IndexFile> {
 export async function buildCatalog(): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
   const map = new Map<string, DocCatalogEntry>();
+  const docsLastUpdated = index.generated;
+  const verifiedOn = Bun.version;
 
   // 1) Index pages for covered sections → concept rows (page-level)
   for (const e of index.entries) {
     const page = pageBase(e.url.replace(/\.md$/, ''));
     const section = sectionFromUrl(page);
-    if (!COVERED_SECTIONS.includes(section) && section !== 'reference' && section !== 'pm') {
-      // still include reference + pm for completeness; skip pure "Docs" noise later
-    }
-    // Phase coverage: runtime, bundler, test primarily; guides included as concept
     if (!['runtime', 'bundler', 'test', 'guides', 'reference', 'pm'].includes(section)) continue;
 
     mergeEntry(map, {
@@ -268,6 +319,8 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
       page,
       section: section === 'reference' ? 'reference' : section,
       stability: inferStability(e.title, e.desc),
+      lastUpdated: docsLastUpdated,
+      verifiedOn,
     });
   }
 
@@ -277,7 +330,6 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
     if (!url.startsWith('https://bun.com/') && !url.startsWith('https://github.com/oven-sh/bun')) {
       continue;
     }
-    // skip meta labels
     if (
       [
         'llms.txt index',
@@ -300,10 +352,12 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
       anchor,
       section: sectionFromUrl(page),
       stability: inferStability(name, ''),
+      lastUpdated: docsLastUpdated,
+      verifiedOn,
     });
   }
 
-  // 3) Curated hot-path enrichment (description + stability + related pages)
+  // 3) Curated hot-path enrichment (description + stability + releasedIn + related)
   for (const c of CURATED_ENTRIES) {
     const page = `https://bun.com/docs/${c.path}`;
     mergeEntry(map, {
@@ -311,6 +365,9 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
       type: inferType(c.term, page),
       description: c.description,
       stability: inferStability(c.term, c.description, c),
+      releasedIn: c.minVersion,
+      lastUpdated: docsLastUpdated,
+      verifiedOn,
       page,
       section: sectionFromUrl(page),
     });
@@ -319,6 +376,8 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
         mergeEntry(map, {
           name: c.term,
           page: `https://bun.com/docs/${rel}`,
+          lastUpdated: docsLastUpdated,
+          verifiedOn,
         });
       }
     }
@@ -331,6 +390,8 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
       type: DocRefType;
       stability: DocStability;
       description?: string;
+      releasedIn?: string;
+      lastUpdated?: string;
       canonicalPage: string;
       anchor?: string;
       allPages: string[];
@@ -342,14 +403,21 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
         type: e.type,
         description: e.description,
         stability: e.stability,
+        releasedIn: e.releasedIn,
+        lastUpdated: e.lastUpdated ?? docsLastUpdated,
+        verifiedOn,
         page: e.canonicalPage,
         anchor: e.anchor,
         section: e.section,
       });
-      // Merge alternate pages so canonical selection stays informed.
       for (const alt of e.allPages ?? []) {
         if (alt === e.canonicalPage) continue;
-        mergeEntry(map, { name: e.name, page: alt });
+        mergeEntry(map, {
+          name: e.name,
+          page: alt,
+          lastUpdated: docsLastUpdated,
+          verifiedOn,
+        });
       }
     }
   } catch {
@@ -372,10 +440,12 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
     return a.name.localeCompare(b.name);
   });
 
-  // Re-pick canonical + put canonical first in allPages
+  // Re-pick canonical + put canonical first in allPages; pin version fields
   for (const e of entries) {
     e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
     e.allPages = [e.canonicalPage, ...e.allPages.filter(p => p !== e.canonicalPage)];
+    e.lastUpdated ??= docsLastUpdated;
+    e.verifiedOn = verifiedOn;
   }
 
   return entries;
@@ -395,6 +465,9 @@ export async function writeCatalog(entries: DocCatalogEntry[]): Promise<void> {
       type: 'api | cli-flag | config | concept',
       description: 'string?',
       stability: 'stable | experimental | deprecated',
+      releasedIn: 'string? — Bun semver when feature shipped (curated)',
+      lastUpdated: 'string? — ISO when docs index last refreshed',
+      verifiedOn: 'string? — Bun.version at catalog build',
       canonicalPage: 'string',
       anchor: 'string?',
       allPages: 'string[]',
@@ -403,6 +476,7 @@ export async function writeCatalog(entries: DocCatalogEntry[]): Promise<void> {
     },
     coveredSections: COVERED_SECTIONS,
     count: entries.length,
+    withReleasedIn: entries.filter(e => e.releasedIn).length,
     byType: countBy(entries, e => e.type),
     bySection: countBy(entries, e => e.section),
     byStability: countBy(entries, e => e.stability),
@@ -445,6 +519,9 @@ function printEntry(e: DocCatalogEntry): void {
   console.info(`${e.name}`);
   console.info(`  type: ${e.type}  stability: ${e.stability}  section: ${e.section}`);
   if (e.description) console.info(`  ${e.description}`);
+  console.info(
+    `  releasedIn: ${e.releasedIn ?? 'unknown'}  lastUpdated: ${e.lastUpdated ?? 'unknown'}  verifiedOn: ${e.verifiedOn ?? 'unknown'}`
+  );
   console.info(`  canonical: ${url}`);
   if (e.allPages.length > 1) {
     console.info(`  allPages (${e.allPages.length}):`);
@@ -483,8 +560,10 @@ async function main(): Promise<void> {
     }
     for (const e of entries) {
       const url = e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage;
+      const rel = (e.releasedIn ?? '—').padEnd(8);
+      const upd = (e.lastUpdated?.slice(0, 10) ?? '—').padEnd(12);
       console.info(
-        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${e.section.padEnd(10)} ${url}`
+        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${e.section.padEnd(10)} rel=${rel} upd=${upd} ${url}`
       );
     }
     console.info(`\n${entries.length} entries`);

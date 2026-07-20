@@ -512,7 +512,7 @@ async function tokenLookup(query: string): Promise<void> {
         if (entry.description) console.info(`  ${entry.description}`);
         if (entry.allPages.length > 1) {
           console.info(
-            `  [also on] ${entry.allPages.slice(1, 6).join(', ')}${entry.allPages.length > 6 ? '...' : ''}`,
+            `  [also on] ${entry.allPages.slice(1, 6).join(', ')}${entry.allPages.length > 6 ? '...' : ''}`
           );
         }
         return;
@@ -552,6 +552,9 @@ async function suggest(query: string): Promise<void> {
       if (cat) {
         console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
         if (cat.description) console.info(`  ${cat.description}`);
+        console.info(
+          `  releasedIn: ${cat.releasedIn ?? 'unknown'}  lastUpdated: ${cat.lastUpdated ?? 'unknown'}  verifiedOn: ${cat.verifiedOn ?? 'unknown'}`
+        );
         if (cat.allPages.length > 1) {
           console.info(
             `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`

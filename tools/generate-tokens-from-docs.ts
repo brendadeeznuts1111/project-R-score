@@ -18,7 +18,10 @@
  * docs URL with anchor. Duplicates across pages are merged with the most
  * authoritative page winning (reference > runtime > bundler > test > guides > pm).
  *
- * Run: bun tools/generate-tokens-from-docs.ts
+ * Run:
+ *   bun tools/generate-tokens-from-docs.ts
+ *   bun tools/generate-tokens-from-docs.ts --section=runtime
+ *   bun tools/generate-tokens-from-docs.ts --section=runtime,bundler,test,pm
  * Outputs:
  *   - tools/bun-docs-token-supplement.json  (typed token entries for bun-docs-catalog.ts)
  *   - tools/bun-pm-tokens.json              (legacy nested format, kept for compatibility)
@@ -112,7 +115,7 @@ function looksLikeCliContext(line: string): boolean {
 /** Extract API names, CLI flags, env vars, and package.json keys from a line. */
 function extractInlineTokens(
   line: string,
-  includeCliFlags: boolean,
+  includeCliFlags: boolean
 ): Array<{ name: string; type: TokenType; usage?: string }> {
   const found: Array<{ name: string; type: TokenType; usage?: string }> = [];
   const seen = new Set<string>();
@@ -235,7 +238,9 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
         const includeCli = isShellBlock(codeAnnotation);
         for (const t of extractInlineTokens(line, includeCli)) {
           if (t.type === 'cli-flag' || t.type === 'env-var') {
-            entries.push(makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle));
+            entries.push(
+              makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle)
+            );
           }
         }
       }
@@ -267,7 +272,9 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
 
       // Prose-based tokens and usage from heading text itself
       for (const t of extractInlineTokens(headingText, true)) {
-        entries.push(makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle));
+        entries.push(
+          makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle)
+        );
       }
       continue;
     }
@@ -281,7 +288,9 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
 
     const includeCli = looksLikeCliContext(line);
     for (const t of extractInlineTokens(line, includeCli)) {
-      entries.push(makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle));
+      entries.push(
+        makeEntry(t, baseUrl, currentAnchor, currentStability, currentDescription, pageTitle)
+      );
     }
   }
   flushCode();
@@ -295,7 +304,7 @@ function makeEntry(
   anchor: string,
   stability: Stability,
   description: string,
-  source: string,
+  source: string
 ): CatalogEntry {
   return {
     name: t.name,
@@ -338,7 +347,11 @@ function mergeEntries(entries: CatalogEntry[]): CatalogEntry[] {
   return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function withConcurrency<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+async function withConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
   const results: R[] = new Array(items.length);
   let index = 0;
 
@@ -389,7 +402,25 @@ function buildLegacyCatalog(entries: CatalogEntry[]): Record<string, LegacyPageC
   return Object.fromEntries(pages.entries());
 }
 
+function parseSections(): string[] {
+  const sections = new Set<string>();
+  for (const arg of Bun.argv.slice(2)) {
+    if (arg.startsWith('--section=')) {
+      for (const s of arg.slice(10).split(',')) {
+        const section = s.trim();
+        if (!DOMAINS.includes(section)) {
+          console.error(`❌ unknown section "${section}". allowed: ${DOMAINS.join(', ')}`);
+          process.exit(1);
+        }
+        sections.add(section);
+      }
+    }
+  }
+  return sections.size > 0 ? [...sections] : DOMAINS;
+}
+
 async function main(): Promise<void> {
+  const sections = parseSections();
   // @see https://bun.com/docs/runtime/http/fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
@@ -400,28 +431,27 @@ async function main(): Promise<void> {
     const url = m[2];
     if (SKIP_TITLES.has(title)) continue;
     const pathname = new URL(url).pathname;
-    const domain = pathname.replace(/^\/docs\//, '').replace(/\.md$/, '').split('/')[0];
-    if (!DOMAINS.includes(domain)) continue;
+    const domain = pathname
+      .replace(/^\/docs\//, '')
+      .replace(/\.md$/, '')
+      .split('/')[0];
+    if (!sections.includes(domain)) continue;
     pages.push({ title, url });
   }
 
-  console.info(`🔍 Scanning ${pages.length} docs pages for tokens...`);
-  const pageResults = await withConcurrency(
-    pages,
-    8,
-    async ({ title, url }) => {
-      try {
-        // @see https://bun.com/docs/runtime/http/fetch
-        const markdown = await fetch(url).then(r => r.text());
-        const entries = parsePage(markdown, title, url);
-        console.info(`  ${title}: ${entries.length} raw entries`);
-        return entries;
-      } catch (e) {
-        console.error(`  ❌ ${title}: ${e}`);
-        return [];
-      }
-    },
-  );
+  console.info(`🔍 Scanning ${pages.length} ${sections.join('+')} docs pages for tokens...`);
+  const pageResults = await withConcurrency(pages, 8, async ({ title, url }) => {
+    try {
+      // @see https://bun.com/docs/runtime/http/fetch
+      const markdown = await fetch(url).then(r => r.text());
+      const entries = parsePage(markdown, title, url);
+      console.info(`  ${title}: ${entries.length} raw entries`);
+      return entries;
+    } catch (e) {
+      console.error(`  ❌ ${title}: ${e}`);
+      return [];
+    }
+  });
 
   const allEntries = pageResults.flat();
   const merged = mergeEntries(allEntries);
@@ -440,8 +470,8 @@ async function main(): Promise<void> {
         ...legacy,
       },
       null,
-      2,
-    ) + '\n',
+      2
+    ) + '\n'
   );
   console.info(`✅ wrote legacy catalog → ${LEGACY_OUT} (${Object.keys(legacy).length} pages)`);
 }
