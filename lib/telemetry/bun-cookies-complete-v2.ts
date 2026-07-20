@@ -20,16 +20,16 @@ function hmacSha256Hex(key: string | Buffer | Uint8Array, data: string): string 
 
 /** AES-256-GCM via Web Crypto (no node:crypto). Returns iv:ciphertext:tag (base64). */
 async function aesGcmEncrypt(key: Buffer, plaintext: string): Promise<string> {
-  const cryptoKey = await crypto.subtle.importKey(
-    'raw',
-    key,
-    { name: 'AES-GCM' },
-    false,
-    ['encrypt']
-  );
+  const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, [
+    'encrypt',
+  ]);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encrypted = new Uint8Array(
-    await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, new TextEncoder().encode(plaintext))
+    await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      new TextEncoder().encode(plaintext)
+    )
   );
   // WebCrypto appends 16-byte auth tag to ciphertext
   const ct = encrypted.slice(0, encrypted.length - 16);
@@ -47,13 +47,9 @@ async function aesGcmDecrypt(key: Buffer, packed: string): Promise<string | null
     const combined = new Uint8Array(ct.length + tag.length);
     combined.set(ct, 0);
     combined.set(tag, ct.length);
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      key,
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-    );
+    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, [
+      'decrypt',
+    ]);
     const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, combined);
     return new TextDecoder().decode(plain);
   } catch {

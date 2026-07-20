@@ -91,13 +91,10 @@ export async function listAllHabits(): Promise<string[]> {
 
   do {
     // SCAN via raw command (RESP) when dedicated helper shape differs
-    const result = (await client.send('SCAN', [
-      cursor,
-      'MATCH',
-      'habits:*',
-      'COUNT',
-      '100',
-    ])) as [string, string[]];
+    const result = (await client.send('SCAN', [cursor, 'MATCH', 'habits:*', 'COUNT', '100'])) as [
+      string,
+      string[],
+    ];
     cursor = String(result[0]);
     const batch = result[1] ?? [];
     keys.push(...batch);

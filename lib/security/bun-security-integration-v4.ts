@@ -381,11 +381,7 @@ export class BunSecurityEngine {
       const iv = randomBytes(12);
       const key = await deriveAesKey(secret, salt);
       const encrypted = new Uint8Array(
-        await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv },
-          key,
-          new TextEncoder().encode(data)
-        )
+        await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(data))
       );
       const ct = encrypted.slice(0, encrypted.length - 16);
       const tag = encrypted.slice(encrypted.length - 16);
