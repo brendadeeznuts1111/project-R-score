@@ -20,16 +20,10 @@ import {
   CANONICAL_TOOLS,
 } from './docs/repo-docs';
 import { DOC_PATTERNS, DocumentationUtils } from './docs';
-import {
-  createBunHealthEndpoint,
-  createHealthEndpoint,
-} from './http/health-endpoint';
+import { createBunHealthEndpoint, createHealthEndpoint } from './http/health-endpoint';
 import { BunDocumentationIntegration } from './bun-documentation-integration';
 import { PackageManager } from './package/package-manager';
-import {
-  ProfileSessionUploader,
-  resolveUploaderConfig,
-} from './profile';
+import { ProfileSessionUploader, resolveUploaderConfig } from './profile';
 import { R2Storage } from './r2/r2-storage-enhanced';
 import { RSSManager } from './rss/rss-manager';
 import { VersionedSecretManager, SecurityUtils } from './security';
@@ -125,8 +119,7 @@ export {
 export const LIB_INFO = {
   name: 'FactoryWager',
   version: '5.1',
-  description:
-    'Shared FactoryWager monorepo harness — brands, security, docs, scan, console-depth',
+  description: 'Shared FactoryWager monorepo harness — brands, security, docs, scan, console-depth',
   author: 'FactoryWager Team',
   license: 'MIT',
   remotes: CANONICAL_REMOTES,
