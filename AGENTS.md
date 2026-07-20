@@ -6,6 +6,10 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Full agent guide:** [`docs/AGENTS.md`](docs/AGENTS.md)
 
+## Communication precision
+
+Do not append an unrequested caveat, counterargument, or moralizing endcap to a sharp claim merely to demonstrate balance. If a boundary condition changes the truth of the claim, put it in the mechanism or scope the claim correctly. If it does not, cut it. Accuracy belongs in the argument; model self-protection does not.
+
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 
 ## Machine Bun policy (summary)

@@ -177,7 +177,9 @@ export class R2SyncService {
   /**
    * Execute a sync job
    */
-  async executeJob(jobId: string /* brand-ok — public entrypoint accepts plain string */): Promise<SyncResult> {
+  async executeJob(
+    jobId: string /* brand-ok — public entrypoint accepts plain string */
+  ): Promise<SyncResult> {
     const job = this.jobs.get(jobId);
     if (!job) throw new Error(`Job not found: ${jobId}`);
     if (this.activeSyncs.has(jobId)) throw new Error(`Job already running: ${jobId}`);

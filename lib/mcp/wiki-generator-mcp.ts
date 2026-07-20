@@ -2876,7 +2876,7 @@ export class MCPWikiGenerator {
    */
   static async getWikiHistory(limit: number = 10): Promise<
     Array<{
-      id: string;
+      id: string; // brand-ok — opaque entity primary key
       timestamp: string;
       workspace: string;
       format: string;
@@ -2885,10 +2885,7 @@ export class MCPWikiGenerator {
   > {
     try {
       // Search for wiki generation entries in R2
-      const wikiEntries = await r2MCPIntegration.searchDiagnoses(
-        'WikiGeneration',
-        limit
-      );
+      const wikiEntries = await r2MCPIntegration.searchDiagnoses('WikiGeneration', limit);
 
       return wikiEntries.map(entry => ({
         id: entry.id,

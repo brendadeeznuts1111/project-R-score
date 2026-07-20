@@ -10,6 +10,7 @@ import {
   R2DataError,
   ErrorSeverity,
 } from '../core/error-handling';
+import { type UserId } from '../types/branded.ts';
 import { validateR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
 import { safeConcurrent } from '../core/concurrent-operations';
@@ -39,10 +40,10 @@ export interface DiagnosisEntry {
 }
 
 export interface AuditEntry {
-  id: string;
+  id: string; // brand-ok — opaque entity primary key
   timestamp: string;
   action: string;
-  userId?: string;
+  userId?: UserId;
   resource: string;
   details: Record<string, any>;
   ip?: string;

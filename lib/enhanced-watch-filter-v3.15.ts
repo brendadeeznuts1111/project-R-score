@@ -107,16 +107,18 @@ export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilte
 
   try {
     // Start enhanced watch session
-    watchSession.watchSessionId = asSessionId(await createWatchSession(pattern, script, {
-      debounceMs: 100,
-      clearScreen: !flags.noClear,
-      parallel: flags.parallel ?? true,
-      maxRestarts: 10,
-      healthCheckUrl: process.env.HEALTH_CHECK_URL,
-      hotReload: flags.hot ?? false,
-      smolMode: flags.smol ?? false,
-      consoleDepth: 2,
-    }));
+    watchSession.watchSessionId = asSessionId(
+      await createWatchSession(pattern, script, {
+        debounceMs: 100,
+        clearScreen: !flags.noClear,
+        parallel: flags.parallel ?? true,
+        maxRestarts: 10,
+        healthCheckUrl: process.env.HEALTH_CHECK_URL,
+        hotReload: flags.hot ?? false,
+        smolMode: flags.smol ?? false,
+        consoleDepth: 2,
+      })
+    );
 
     watchSession.status = 'watching';
 
@@ -167,15 +169,17 @@ export async function updateWatchFilter(
 
   // Start new watch session with updated pattern
   try {
-    session.watchSessionId = asSessionId(await createWatchSession(newPattern, session.script, {
-      debounceMs: 100,
-      clearScreen: true,
-      parallel: newFlags?.parallel ?? true,
-      maxRestarts: 10,
-      healthCheckUrl: process.env.HEALTH_CHECK_URL,
-      hotReload: newFlags?.hot ?? false,
-      smolMode: newFlags?.smol ?? false,
-    }));
+    session.watchSessionId = asSessionId(
+      await createWatchSession(newPattern, session.script, {
+        debounceMs: 100,
+        clearScreen: true,
+        parallel: newFlags?.parallel ?? true,
+        maxRestarts: 10,
+        healthCheckUrl: process.env.HEALTH_CHECK_URL,
+        hotReload: newFlags?.hot ?? false,
+        smolMode: newFlags?.smol ?? false,
+      })
+    );
 
     session.restartCount++;
     session.status = 'watching';

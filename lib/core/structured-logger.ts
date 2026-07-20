@@ -1,7 +1,12 @@
 // lib/core/structured-logger.ts — Structured logging with correlation tracking
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
-import { type CorrelationId, type UserId, type SessionId, asCorrelationId } from '../types/branded.ts';
+import {
+  type CorrelationId,
+  type UserId,
+  type SessionId,
+  asCorrelationId,
+} from '../types/branded.ts';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 

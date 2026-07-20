@@ -31,7 +31,7 @@ export interface CloudflareZone {
     price: number;
     currency: string;
     frequency: string;
-    legacy_id: string;
+    legacy_id: string; // brand-ok — wire-format field (Cloudflare API payload)
     is_subscribed: boolean;
     can_subscribe: boolean;
   };

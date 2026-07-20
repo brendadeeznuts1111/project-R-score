@@ -29,10 +29,12 @@
  *                   + d204d69b (core/mcp/r2/registry/remainder — 69 hits)
  *   DONE Phase 3: [new-brand] brands added 828553d7 (26 total);
  *                   instances branded d204d69b; singletons brand-ok
- *   Phase 4: --smart --strict in CI once actionable → 0
- *     (6 hits remain in parallel-session files: core-errors ×3 resourceId,
- *      mcp r2-integration-fixed userId, cloudflare-domain-manager legacy_id,
- *      wiki-generator-mcp bare id)
+ *   DONE Phase 4: actionable → 0 (core-errors resourceId ×3 → ResourceId,
+ *                   r2-integration-fixed userId → UserId, cloudflare legacy_id
+ *                   and wiki-generator bare id suppressed wire-format/opaque)
+ * ROLLOUT COMPLETE — `bun tools/branded-id-check.ts --smart` reports 0
+ * actionable; pre-commit blocks new violations on added lines. The detector
+ * is now the permanent gate (`--smart --strict` for CI).
  * Pre-commit enforces zero NEW violations (added lines only); staged mode
  * also skips opaque PKs outside high-trust paths.
  *

@@ -1,6 +1,7 @@
 // lib/core/core-errors.ts — Standardized error handling system
 
 import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-types';
+import type { ResourceId } from '../types/branded.ts';
 
 // ============================================================================
 // ERROR CODES
@@ -717,9 +718,15 @@ export class BrandValidationError extends ValidationError {
   public readonly brand: string;
 
   constructor(brand: string, value: unknown) {
-    super(EnterpriseErrorCode.VALIDATION_INPUT_INVALID, `${brand} must be a non-empty string`, brand, value, {
+    super(
+      EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
+      `${brand} must be a non-empty string`,
       brand,
-    });
+      value,
+      {
+        brand,
+      }
+    );
     this.brand = brand;
   }
 }
@@ -761,13 +768,13 @@ export class SecurityError extends BaseEnterpriseError {
  */
 export class ResourceError extends BaseEnterpriseError {
   public readonly resourceType?: string;
-  public readonly resourceId?: string;
+  public readonly resourceId?: ResourceId;
 
   constructor(
     code: EnterpriseErrorCode,
     message: string,
     resourceType?: string,
-    resourceId?: string,
+    resourceId?: ResourceId,
     context?: Record<string, unknown>
   ) {
     super(code, message, SecurityRiskLevel.MEDIUM, context);
@@ -857,7 +864,7 @@ export class EnterpriseErrorFactory {
     code: EnterpriseErrorCode,
     message: string,
     resourceType?: string,
-    resourceId?: string,
+    resourceId?: ResourceId,
     context?: Record<string, unknown>
   ): ResourceError {
     return new ResourceError(code, message, resourceType, resourceId, context);
@@ -1045,7 +1052,7 @@ export const createResourceError = (
   code: EnterpriseErrorCode,
   message: string,
   resourceType?: string,
-  resourceId?: string,
+  resourceId?: ResourceId,
   context?: Record<string, unknown>
 ): ResourceError => {
   return EnterpriseErrorFactory.createResourceError(

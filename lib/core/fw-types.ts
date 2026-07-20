@@ -108,7 +108,7 @@ export function manifestR2Key(sessionId: SessionId, prefix = 'profiles'): string
 export function generateSessionId(): SessionId {
   return asSessionId(
     Bun.env.TERMINAL_SESSION_ID ||
-    Bun.env.TERM_SESSION_ID ||
-    `pty-${process.pid}-${profileTimestamp()}`
+      Bun.env.TERM_SESSION_ID ||
+      `pty-${process.pid}-${profileTimestamp()}`
   );
 }
