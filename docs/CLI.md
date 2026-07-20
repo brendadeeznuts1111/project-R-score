@@ -193,13 +193,14 @@ All commands run via `bun run <name>` from the project root:
 
 ### Documentation — Bun token/catalog (SSOT: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md))
 
-**Northstar:** every token is a [`TokenRef`](../lib/docs/token-ref.ts) knowledge unit (identity · locus · examples · history).
+**Northstar:** [`BunToken`](../lib/docs/bun-token.ts) export · [`TokenRef`](../lib/docs/token-ref.ts) interior.
 
 | Intent | Command |
 |--------|---------|
 | Refresh evidence | `bun run docs:refresh` |
-| Resolve a token | `bun tools/bun-doc-refs.ts suggest <token>` |
-| Agent TSV export | `bun run docs:catalog:export` |
+| Resolve a BunToken | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Agent BunToken JSON | `bun tools/bun-docs-catalog.ts export` |
+| Thin TSV | `bun run docs:catalog:export` |
 | Health / tier-A metrics | `bun tools/bun-doc-refs.ts status` |
 
 | Command | Description |

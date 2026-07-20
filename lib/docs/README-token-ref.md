@@ -1,18 +1,40 @@
-# TokenRef — Bun documentation knowledge unit
+# TokenRef / BunToken — Bun documentation knowledge unit
 
-Every Bun token is a **self-contained knowledge unit** (`TokenRef`):
+## Two layers
 
-| Facet | Type |
+| Layer | Role |
 |-------|------|
-| Identity | `DocTokenId` (branded) + `TokenKind` |
-| Doc locus | `Locus` — page + canonical heading fragment |
-| Examples | `TokenExample[]` — lang-tagged fenced blocks |
-| History | `VersionEvidence` — introduced / changed / fixed / stabilized |
-| Graph | `Relation[]` — alias / related / seeAlso |
+| **TokenRef** ([`token-ref.ts`](./token-ref.ts)) | Interior harness — branded `DocTokenId`, provenance, `allPages`, fine `TokenKind` |
+| **BunToken** ([`bun-token.ts`](./bun-token.ts)) | **Agent export contract** — timeline-aware, no scrape nicknames |
 
-**Schema:** [`token-ref.ts`](./token-ref.ts) · JSON Schema [`token-ref.schema.json`](./token-ref.schema.json)  
-**Adapter:** [`token-ref-adapter.ts`](./token-ref-adapter.ts) ← catalog JSON  
-**Locus resolution:** [`locus-resolve.ts`](./locus-resolve.ts)  
-**Operate loop:** [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)
+```text
+DocCatalogEntry → TokenRef (internal) → BunToken (suggest / export / JSON Schema)
+```
 
-Operate adapters (RSS, scrape, supplement, catalog build) produce catalog JSON; agents import `TokenRef` after `catalogEntryToTokenRef`.
+## BunToken (public)
+
+| Field | Meaning |
+|-------|---------|
+| `name` | e.g. `Bun.cron` |
+| `kind` | `API` · `CLI` · `Config` · `Env` · `PackageJson` · `Concept` · `Other` |
+| `description` | Human note (was NOTE) |
+| `stability` | stable · experimental · deprecated |
+| `docsLocus` | `{ page, anchor }` — verified heading or `anchor: null` |
+| `since` | Earliest attested version |
+| `announcementUrl` | RSS-validated release blog URL |
+| `versionEvents[]` | Full timeline (`since` / `fixed` / `changed` / `stabilized`) |
+| `examples[]` | `{ lang, code }` |
+| `related` | Graph neighbors |
+| `meta` | `buildPin` · `sourceCommit` · `lastVerified` |
+
+**Schemas:** [`bun-token.schema.json`](./bun-token.schema.json) · [`token-ref.schema.json`](./token-ref.schema.json)  
+**Adapters:** [`token-ref-adapter.ts`](./token-ref-adapter.ts)  
+**Locus:** [`locus-resolve.ts`](./locus-resolve.ts)  
+**Operate:** [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)
+
+```bash
+bun tools/bun-doc-refs.ts suggest Bun.cron          # BunToken-shaped output
+bun tools/bun-docs-catalog.ts export                # BunToken JSON
+bun tools/bun-docs-catalog.ts export --jsonl        # BunToken JSONL
+bun run docs:catalog:export                         # thin TSV (--compact)
+```

@@ -1455,6 +1455,37 @@ export async function getCatalogEntry(name: string): Promise<DocCatalogEntry | n
   );
 }
 
+/** Agent export: DocCatalogEntry → TokenRef → BunToken (with overlay timeline). */
+export async function getBunToken(
+  name: string
+): Promise<import('../lib/docs/bun-token.ts').BunToken | null> {
+  const entry = await getCatalogEntry(name);
+  if (!entry) return null;
+  const { catalogEntryToBunToken } = await import('../lib/docs/token-ref-adapter.ts');
+  const overlay = await loadReleaseOverlay();
+  const hits = overlay.get(normalizeName(entry.name))?.hits;
+  const meta = await loadCatalogFile();
+  return catalogEntryToBunToken(entry, {
+    hits,
+    catalogGenerated: meta.generated,
+    catalogCommitHash: meta.commitHash,
+  });
+}
+
+/** Export all catalog entries as BunToken[] (overlay hits when present). */
+export async function exportBunTokens(): Promise<import('../lib/docs/bun-token.ts').BunToken[]> {
+  const { catalogEntryToBunToken } = await import('../lib/docs/token-ref-adapter.ts');
+  const meta = await loadCatalogFile();
+  const overlay = await loadReleaseOverlay();
+  return meta.entries.map(e =>
+    catalogEntryToBunToken(e, {
+      hits: overlay.get(normalizeName(e.name))?.hits,
+      catalogGenerated: meta.generated,
+      catalogCommitHash: meta.commitHash,
+    })
+  );
+}
+
 // ── CLI ───────────────────────────────────────────────────────────────────
 
 function printCatalogHeader(meta: CatalogFileMeta, runtime = Bun.version): void {
@@ -1591,9 +1622,38 @@ async function main(): Promise<void> {
     return;
   }
   if (cmd === 'export') {
+    // Downstream closed early (e.g. `| head -1`) — exit cleanly; Bun 1.3.14+
+    // also fixed FileSink leak on EPIPE, but the signal itself is expected.
+    process.stdout.on('error', (err: NodeJS.ErrnoException) => {
+      if (err.code === 'EPIPE') process.exit(0);
+    });
     const meta = await loadCatalogFile();
     const compact = rest.includes('--compact') || rest.includes('-c');
     const jsonl = rest.includes('--jsonl');
+    // Default JSON / JSONL: BunToken export contract. --compact keeps thin TSV.
+    if (!compact) {
+      const tokens = await exportBunTokens();
+      if (jsonl) {
+        for (const t of tokens) {
+          process.stdout.write(`${JSON.stringify(t)}\n`);
+        }
+        return;
+      }
+      process.stdout.write(
+        `${JSON.stringify(
+          {
+            schema: 'lib/docs/bun-token.schema.json',
+            bunVersion: meta.bunVersion,
+            generated: meta.generated,
+            count: tokens.length,
+            tokens,
+          },
+          null,
+          2
+        )}\n`
+      );
+      return;
+    }
     const rows = meta.entries.map(e => compactCatalogRow(e, meta));
     if (jsonl) {
       for (const row of rows) {
@@ -1601,20 +1661,12 @@ async function main(): Promise<void> {
       }
       return;
     }
-    if (compact) {
+    process.stdout.write('name\ttype\tship\tfix\tchg\tpin\tblog\tdoc\tlocus\texampleLang\tnote\n');
+    for (const row of rows) {
       process.stdout.write(
-        'name\ttype\tship\tfix\tchg\tpin\tblog\tdoc\tlocus\texampleLang\tnote\n'
+        `${row.name}\t${row.type}\t${row.ship}\t${row.fix}\t${row.chg}\t${row.pin}\t${row.blog}\t${row.doc}\t${row.locus}\t${row.exampleLang}\t${row.note}\n`
       );
-      for (const row of rows) {
-        process.stdout.write(
-          `${row.name}\t${row.type}\t${row.ship}\t${row.fix}\t${row.chg}\t${row.pin}\t${row.blog}\t${row.doc}\t${row.locus}\t${row.exampleLang}\t${row.note}\n`
-        );
-      }
-      return;
     }
-    process.stdout.write(
-      `${JSON.stringify({ bunVersion: meta.bunVersion, count: rows.length, rows }, null, 2)}\n`
-    );
     return;
   }
   if (cmd === 'list') {
@@ -1748,7 +1800,8 @@ async function main(): Promise<void> {
   console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify|export [args]');
   console.error('  build [--version=1.4.0] [--force] [--skip-notes] [--no-refresh-rss]');
   console.error('       # default Bun.version; BLOG from RSS release-index; NOTE from doc HTML');
-  console.error('  export [--compact] [--jsonl]  # agent-friendly catalog rows');
+  console.error('  export [--jsonl]             # BunToken JSON (default) / JSONL');
+  console.error('  export --compact [--jsonl]   # thin TSV / compact JSONL (legacy)');
   console.error('  list -s runtime|bundler|test|guides -t ' + DocRefTypeArray.join('|'));
   console.error('       -q WebView         # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');

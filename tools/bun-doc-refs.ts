@@ -535,58 +535,44 @@ async function tokenLookup(query: string): Promise<void> {
  * Map any API name or topic to its canonical Bun docs page + anchor using
  * the generated index. Matches: exact anchor, title substring, then desc.
  */
-function printCatalogSuggest(
+function printBunTokenSuggest(
   query: string,
-  cat: {
-    type: string;
-    stability: string;
-    section: string;
-    description?: string;
-    releasedIn?: string;
-    fixedIn?: string;
-    changedIn?: string;
-    docsUrl?: string;
-    canonicalPage: string;
-    anchor?: string;
-    locusUnresolved?: boolean;
-    blogUrl?: string;
-    releaseUrl?: string;
-    allPages: string[];
-    examples?: Array<{ lang: string; body: string }>;
-    related?: string[];
-  },
+  token: import('../lib/docs/bun-token.ts').BunToken,
   source: string
 ): void {
-  const docs = cat.docsUrl ?? cat.canonicalPage;
-  console.info(`${query} → ${docs}`);
-  console.info(`  (${source})`);
-  console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
-  if (cat.description) console.info(`  ${cat.description}`);
-  if (cat.anchor && !cat.locusUnresolved) {
-    console.info(`  locus: #${cat.anchor}`);
-  } else if (cat.locusUnresolved) {
-    console.info(`  locus: (page-only — fragment unresolved)`);
+  const locus =
+    token.docsLocus.anchor != null
+      ? `${token.docsLocus.page}#${token.docsLocus.anchor}`
+      : token.docsLocus.page;
+  console.info(`${query} → ${locus}`);
+  console.info(`  (${source} — BunToken)`);
+  console.info(`  kind: ${token.kind}  stability: ${token.stability}`);
+  if (token.description) console.info(`  ${token.description}`);
+  if (token.docsLocus.anchor == null) {
+    console.info(`  docsLocus: page-only (anchor unresolved)`);
   }
-  const ex = cat.examples?.[0];
+  const ex = token.examples[0];
   if (ex) {
-    const preview = ex.body.split('\n')[0]!.slice(0, 72);
-    console.info(`  example[${ex.lang}]: ${preview}${ex.body.length > 72 ? '…' : ''}`);
+    const preview = ex.code.split('\n')[0]!.slice(0, 72);
+    console.info(`  example[${ex.lang}]: ${preview}${ex.code.length > 72 ? '…' : ''}`);
   }
-  console.info(
-    `  releasedIn: ${cat.releasedIn ?? 'unknown'}  fixedIn: ${cat.fixedIn ?? '—'}  changedIn: ${cat.changedIn ?? '—'}`
-  );
-  if (cat.blogUrl) console.info(`  blogUrl: ${cat.blogUrl}`);
-  if (cat.releaseUrl) console.info(`  releaseUrl: ${cat.releaseUrl}`);
-  if (cat.related?.length) {
+  console.info(`  since: ${token.since ?? 'unknown'}`);
+  if (token.versionEvents.length > 0) {
+    const summary = token.versionEvents
+      .slice(0, 6)
+      .map(e => `${e.type}@${e.version}`)
+      .join(' · ');
     console.info(
-      `  related: ${cat.related.slice(0, 5).join(', ')}${cat.related.length > 5 ? '…' : ''}`
+      `  versionEvents: ${summary}${token.versionEvents.length > 6 ? '…' : ''} (${token.versionEvents.length})`
     );
   }
-  if (cat.allPages.length > 1) {
+  if (token.announcementUrl) console.info(`  announcementUrl: ${token.announcementUrl}`);
+  if (token.related?.length) {
     console.info(
-      `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`
+      `  related: ${token.related.slice(0, 5).join(', ')}${token.related.length > 5 ? '…' : ''}`
     );
   }
+  if (token.meta?.buildPin) console.info(`  meta.buildPin: ${token.meta.buildPin}`);
 }
 
 async function suggest(query: string): Promise<void> {
@@ -595,18 +581,22 @@ async function suggest(query: string): Promise<void> {
     process.exit(1);
   }
 
-  // 1) Catalog SSOT (SHIP/FIX/BLOG/NOTE) — covers tokens outside CANONICAL_REFS
+  // 1) BunToken export (catalog → TokenRef → BunToken)
   try {
-    const { getCatalogEntry } = await import('./bun-docs-catalog.ts');
-    const cat = await getCatalogEntry(query);
-    if (cat) {
+    const { getBunToken } = await import('./bun-docs-catalog.ts');
+    const token = await getBunToken(query);
+    if (token) {
       const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
       const source = mapped
         ? 'catalog + canonical map — tools/bun-docs-catalog.json'
         : 'catalog — tools/bun-docs-catalog.json';
-      printCatalogSuggest(query, cat, source);
-      if (mapped && mapped !== (cat.docsUrl ?? cat.canonicalPage)) {
-        console.info(`  canonical map: ${mapped}`);
+      printBunTokenSuggest(query, token, source);
+      if (mapped) {
+        const locus =
+          token.docsLocus.anchor != null
+            ? `${token.docsLocus.page}#${token.docsLocus.anchor}`
+            : token.docsLocus.page;
+        if (mapped !== locus) console.info(`  canonical map: ${mapped}`);
       }
       return;
     }

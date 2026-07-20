@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/bun-token.json",
+  "title": "BunToken",
+  "description": "Agent-facing Bun documentation token (export contract). Interior harness is TokenRef.",
+  "type": "object",
+  "required": [
+    "name",
+    "kind",
+    "description",
+    "stability",
+    "docsLocus",
+    "since",
+    "announcementUrl",
+    "versionEvents",
+    "examples"
+  ],
+  "properties": {
+    "name": { "type": "string", "description": "e.g. Bun.cron, --filter, install.linker" },
+    "kind": {
+      "type": "string",
+      "enum": ["API", "CLI", "Config", "Env", "PackageJson", "Concept", "Other"]
+    },
+    "description": { "type": "string" },
+    "stability": { "type": "string", "enum": ["stable", "experimental", "deprecated"] },
+    "docsLocus": {
+      "type": "object",
+      "required": ["page", "anchor"],
+      "properties": {
+        "page": { "type": "string", "format": "uri" },
+        "anchor": { "type": ["string", "null"] }
+      }
+    },
+    "since": { "type": ["string", "null"] },
+    "announcementUrl": { "type": ["string", "null"], "format": "uri" },
+    "versionEvents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "type"],
+        "properties": {
+          "version": { "type": "string" },
+          "type": { "type": "string", "enum": ["since", "fixed", "changed", "stabilized"] },
+          "note": { "type": "string" },
+          "evidenceUrl": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lang", "code"],
+        "properties": {
+          "lang": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "related": { "type": "array", "items": { "type": "string" } },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "lastVerified": { "type": "string", "format": "date-time" },
+        "sourceCommit": { "type": "string" },
+        "buildPin": { "type": "string" }
+      }
+    }
+  }
+}

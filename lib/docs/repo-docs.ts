@@ -33,8 +33,9 @@ export const CANONICAL_REPO_DOCS = {
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
   /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
   bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
-  /** TokenRef northstar schema (knowledge unit) */
+  /** TokenRef interior + BunToken export (knowledge unit) */
   tokenRef: 'lib/docs/token-ref.ts',
+  bunToken: 'lib/docs/bun-token.ts',
   /** Root cleanup / organization history */
   organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
   /** Projects triage + agent scope */
@@ -72,6 +73,8 @@ export const CANONICAL_TOOLS = {
   releaseIndexJson: 'tools/release-index.json',
   tokenRef: 'lib/docs/token-ref.ts',
   tokenRefSchema: 'lib/docs/token-ref.schema.json',
+  bunToken: 'lib/docs/bun-token.ts',
+  bunTokenSchema: 'lib/docs/bun-token.schema.json',
   brandCatalog: 'tools/brand-catalog.ts',
   brandManifestCli: 'tools/brand-manifest.ts',
   brandedIdsSkill: '.agents/skills/branded-ids/',
@@ -102,7 +105,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
-  tokenRef: 'TokenRef knowledge-unit schema (northstar)',
+  tokenRef: 'TokenRef interior knowledge-unit schema',
+  bunToken: 'BunToken agent export contract (northstar)',
   organizationHistory: 'Root organization history',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',

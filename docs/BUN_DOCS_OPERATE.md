@@ -6,15 +6,23 @@
 
 Continuity layer for the docs intelligence pipeline: **integrity → self-heal → regen → log → status**.
 
-Every Bun token is a **TokenRef knowledge unit** (stable identity, verified doc locus, lang-tagged examples, attested release history). Catalog JSON is the operate artifact; [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts) is the institutional schema (TypeScript + JSON Schema).
+Every Bun token is a knowledge unit with two layers:
+
+| Layer | Module | Audience |
+|-------|--------|----------|
+| **TokenRef** | [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts) | Interior harness (brands, provenance) |
+| **BunToken** | [`lib/docs/bun-token.ts`](../lib/docs/bun-token.ts) | **Agent export** — `suggest` / `export` / JSON Schema |
+
+Flow: `DocCatalogEntry → TokenRef → BunToken`. Overlay hits populate `versionEvents[]` (full timeline).
 
 ### One mental model
 
 | Intent | Command |
 |--------|---------|
 | Refresh all evidence | `bun run docs:refresh` |
-| Resolve a knowledge unit | `bun tools/bun-doc-refs.ts suggest <token>` · `bun tools/bun-docs-catalog.ts get <token>` |
-| Agent pack (TSV) | `bun run docs:catalog:export` |
+| Resolve a BunToken | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Agent pack (BunToken JSON) | `bun tools/bun-docs-catalog.ts export` · `--jsonl` |
+| Thin TSV | `bun run docs:catalog:export` (`--compact`) |
 | Health + tier-A scoreboard | `bun tools/bun-doc-refs.ts status` |
 
 Power list flags (`-w` / `-n` / `-c` / `-l`) remain on `bun-docs-catalog.ts list`; they are terminal conveniences, not the northstar vocabulary.
