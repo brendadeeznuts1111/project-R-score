@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -55,7 +56,7 @@ const c = {
  * Enhanced watch-filter with official CLI integration
  */
 export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilterSession> {
-  const sessionId = asSessionId(crypto.randomUUID());
+  const sessionId = asSessionId(Bun.randomUUIDv7());
   const { flags, command, args } = parseOfficialFlags(rawArgs);
 
   // Ensure watch mode is enabled

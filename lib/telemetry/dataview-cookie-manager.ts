@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -91,7 +92,7 @@ export class DataViewCookieManager {
     let isNewSession = !sessionId;
 
     if (!sessionId) {
-      sessionId = crypto.randomUUID();
+      sessionId = Bun.randomUUIDv7();
       console.info(`🆔 Creating new session: ${sessionId}`);
     } else {
       console.info(`🔄 Existing session: ${sessionId}`);

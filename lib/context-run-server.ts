@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 /**
  * Context Run Server - Enhanced CLI Execution with Context
@@ -53,7 +54,7 @@ async function executeWithContext(
   commandParts: string[],
   options: ContextRunOptions = {}
 ): Promise<ContextSession> {
-  const sessionId = crypto.randomUUID();
+  const sessionId = Bun.randomUUIDv7();
   const cacheKey = JSON.stringify({ commandParts, options });
 
   // Check cache first

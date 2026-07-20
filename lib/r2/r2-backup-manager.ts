@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // lib/r2/r2-backup-manager.ts — R2 backup and restore manager
 
 import { type JobId, type SnapshotId, asJobId, asSnapshotId } from '../types/branded.ts';
@@ -159,7 +160,7 @@ export class R2BackupManager {
   createJob(config: Omit<BackupJob, 'id' | 'status' | 'stats' | 'createdAt'>): BackupJob {
     const job: BackupJob = {
       ...config,
-      id: `backup-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `backup-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       status: 'pending',
       stats: {
         totalObjects: 0,

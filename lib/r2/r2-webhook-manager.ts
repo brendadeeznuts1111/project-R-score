@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/r2/r2-webhook-manager.ts — R2 webhook and external integration manager
@@ -243,7 +244,7 @@ export class R2WebhookManager {
   createWebhook(config: Omit<Webhook, 'id' | 'createdAt' | 'stats'>): Webhook {
     const webhook: Webhook = {
       ...config,
-      id: `wh-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `wh-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       createdAt: new Date().toISOString(),
       stats: {
         totalDeliveries: 0,
@@ -285,7 +286,7 @@ export class R2WebhookManager {
    */
   private createDelivery(webhookId: WebhookId, event: unknown): WebhookDelivery {
     const delivery: WebhookDelivery = {
-      id: `del-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `del-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       webhookId,
       event: {
         type: event.type,

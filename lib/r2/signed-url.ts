@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // lib/r2/signed-url.ts — R2 signed URL generation
 
 import type { R2Bucket } from 'bun';
@@ -104,7 +105,7 @@ export default {
         expiresInSeconds: 1800, // 30 minutes for most use cases
         customMetadata: {
           requestedBy: request.headers.get('CF-Connecting-IP') || 'unknown',
-          requestId: crypto.randomUUID().slice(0, 8),
+          requestId: Bun.randomUUIDv7().slice(0, 8),
           userAgent: request.headers.get('user-agent') || 'unknown',
         },
         contentDisposition: `attachment; filename="${key.split('/').pop()}"`,

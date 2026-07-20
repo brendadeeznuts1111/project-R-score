@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
@@ -83,7 +84,7 @@ export class DocumentationSync {
    */
   private getDeviceId(): string {
     // In a real app, store this in localStorage or similar
-    return crypto.randomUUID();
+    return Bun.randomUUIDv7();
   }
 
   /**
@@ -219,7 +220,7 @@ export class DocumentationSync {
    */
   async createDocSet(name: string, packages: string[], description?: string): Promise<DocSet> {
     const docSet: DocSet = {
-      id: crypto.randomUUID(),
+      id: Bun.randomUUIDv7(),
       userId: this.userId,
       name,
       description,

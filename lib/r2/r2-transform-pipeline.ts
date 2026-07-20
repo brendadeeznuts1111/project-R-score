@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 // lib/r2/r2-transform-pipeline.ts — R2 data transformation pipeline
 
@@ -209,7 +210,7 @@ export class R2TransformPipeline {
   createPipeline(config: Omit<Pipeline, 'id' | 'createdAt' | 'status'>): Pipeline {
     const pipeline: Pipeline = {
       ...config,
-      id: `pipeline-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `pipeline-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       status: 'active',
       createdAt: new Date().toISOString(),
     };
@@ -230,7 +231,7 @@ export class R2TransformPipeline {
     if (!pipeline) throw new Error(`Pipeline not found: ${pipelineId}`);
     if (pipeline.status === 'paused') throw new Error(`Pipeline is paused: ${pipelineId}`);
 
-    const runId = `run-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
+    const runId = `run-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`;
     const run: PipelineRun = {
       id: runId,
       pipelineId,

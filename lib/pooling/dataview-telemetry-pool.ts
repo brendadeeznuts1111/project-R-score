@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -106,7 +107,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
     const db = this.dvPool.pop() || this.dvDb;
 
     try {
-      const profileId = crypto.randomUUID();
+      const profileId = Bun.randomUUIDv7();
       const brandedSessionId = asSessionId(sessionId);
       const metadata: ProfileMetadata = {
         sessionId: brandedSessionId,
@@ -245,7 +246,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
         for (const { profile, metadata } of profiles) {
           const serialized = this.serializer.serialize(profile, metadata);
           const profileData = {
-            id: metadata.sessionId || crypto.randomUUID(),
+            id: metadata.sessionId || Bun.randomUUIDv7(),
             binary_data: serialized,
             session_hash: this.hashCode(metadata.sessionId || ''),
             member_id: this.hashCode(metadata.member || ''),

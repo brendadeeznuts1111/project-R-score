@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
@@ -234,7 +235,7 @@ async function juniorProfileWithContext(
 
   // Simulate junior runner analysis
   const profile: LeadSpecProfile = {
-    id: crypto.randomUUID(),
+    id: Bun.randomUUIDv7(),
     name: `Junior Profile - ${mdFile}`,
     entrypoint: 'junior-runner.ts',
     buildTime: 0,

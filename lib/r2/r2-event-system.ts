@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // lib/r2/r2-event-system.ts — R2 event system with real-time notifications
 
@@ -112,7 +113,7 @@ export class R2EventSystem {
           if (url.pathname === this.config.path) {
             const upgraded = server.upgrade(req, {
               data: {
-                clientId: crypto.randomUUID(),
+                clientId: Bun.randomUUIDv7(),
                 connectedAt: new Date().toISOString(),
               },
             });

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // lib/r2/r2-analytics.ts — R2 analytics and metrics dashboard
 
 import { styled, FW_COLORS } from '../theme/colors';
@@ -411,7 +412,7 @@ export class R2Analytics {
   createAlert(rule: Omit<AlertRule, 'id'>): AlertRule {
     const alert: AlertRule = {
       ...rule,
-      id: `alert-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `alert-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
     };
 
     this.alerts.set(alert.id, alert);

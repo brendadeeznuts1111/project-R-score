@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
@@ -161,7 +162,7 @@ export async function createWatchSession(
   script: string,
   opts: WatchOptions = {}
 ): Promise<string> {
-  const sessionId = crypto.randomUUID();
+  const sessionId = Bun.randomUUIDv7();
   const packages = await discoverWorkspacePackages();
   const glob = new Glob(pattern);
   const matched = packages.filter(p => glob.match(p.name));

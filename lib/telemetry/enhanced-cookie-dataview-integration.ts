@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -125,7 +126,7 @@ export class UnifiedCookieDataViewManager {
 
     // Get or create session
     let sessionId = asSessionId(
-      cookies.getSecure('session')?.value?.sessionId || crypto.randomUUID()
+      cookies.getSecure('session')?.value?.sessionId || Bun.randomUUIDv7()
     );
     let isNewSession = !cookies.get('session');
 

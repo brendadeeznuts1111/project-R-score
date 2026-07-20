@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/server.ts — Private npm registry server with R2 storage backend
@@ -60,7 +61,7 @@ export class NPMRegistryServer {
         break;
       case 'jwt':
         this.auth = new RegistryAuth(
-          AuthConfigs.jwt(this.options.authSecret || crypto.randomUUID())
+          AuthConfigs.jwt(this.options.authSecret || Bun.randomUUIDv7())
         );
         break;
       case 'token':

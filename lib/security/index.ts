@@ -1,11 +1,48 @@
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
+// @see https://bun.com/docs/runtime/csrf — Bun.CSRF
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // lib/security/index.ts — Security module index
+
+import { randomBytes, randomHex } from './crypto-native';
 
 // Core security components
 export * from './versioned-secrets';
 export * from './version-graph';
 export * from './secret-lifecycle';
+
+// Bun-native security SSOT
+export {
+  Cookie,
+  CookieMap,
+  SecureCookie,
+  cookieMapFromHeader,
+  cookieMapFromRequest,
+  applyCookieMap,
+  type CookieOptions,
+} from './cookies-native';
+export {
+  getAppSecret,
+  setAppSecret,
+  deleteAppSecret,
+  requireAppSecret,
+  secretsRuntime,
+  SecretNames,
+  SECRETS_SERVICE,
+} from './secrets-manager';
+export {
+  sha256Hex,
+  hmacSha256Hex,
+  hmacSha256Base64Url,
+  randomBytes,
+  randomHex,
+  randomId,
+  hashPassword,
+  verifyPassword,
+  timingSafeEqualBytes,
+  timingSafeEqualHex,
+} from './crypto-native';
 
 // Security hardening utilities
 export { safeString, safeHexColor, safeServiceName, type SafeResult } from './safe-validators';
@@ -16,35 +53,36 @@ export { writeAuditLog, type AuditEntry } from './audit-writer';
 // Security utilities
 export class SecurityUtils {
   /**
-   * Generate secure random string using Bun.random.hex for better performance
+   * Generate secure random hex string (length = hex characters)
    */
   static generateSecret(length: number = 32): string {
-    return Bun.random.hex(length);
+    return randomHex(Math.max(1, Math.ceil(length / 2))).slice(0, length);
   }
 
   /**
    * Generate API key with prefix using secure random generation
    */
   static generateApiKey(prefix: string = 'sk'): string {
-    return `${prefix}_${Bun.random.hex(24)}`;
+    return `${prefix}_${randomHex(24)}`;
   }
 
   /**
    * Generate JWT secret using secure random generation
    */
   static generateJWTSecret(): string {
-    return Bun.random.hex(64);
+    return randomHex(64);
   }
 
   /**
-   * Generate secure password
+   * Generate secure password (crypto.getRandomValues)
    */
   static generatePassword(length: number = 16): string {
     const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+    const bytes = randomBytes(length);
     let password = '';
     for (let i = 0; i < length; i++) {
-      password += chars[Math.floor(Math.random() * chars.length)];
+      password += chars[bytes[i]! % chars.length];
     }
     return password;
   }

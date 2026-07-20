@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -70,7 +71,7 @@ export class ProductionCookieManager {
       this.metrics.recordError(error);
       return {
         cookies: new Map(),
-        session: { isGuest: true, id: crypto.randomUUID() },
+        session: { isGuest: true, id: Bun.randomUUIDv7() },
         responseCookies: [],
         alerts: [
           {
@@ -104,7 +105,7 @@ export class ProductionCookieManager {
       }
     }
 
-    return { isGuest: true, id: asSessionId(crypto.randomUUID()), needsRefresh: false };
+    return { isGuest: true, id: asSessionId(Bun.randomUUIDv7()), needsRefresh: false };
   }
 
   // 🍪 LAYERED COOKIE ARCHITECTURE

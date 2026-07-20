@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -97,7 +98,7 @@ export async function executeBunCLI(
   rawArgs: string[],
   opts: { captureOutput?: boolean } = {}
 ): Promise<CLISession> {
-  const sessionId = crypto.randomUUID();
+  const sessionId = Bun.randomUUIDv7();
   const { flags, command, args } = parseOfficialFlags(rawArgs);
 
   const session: CLISession = {

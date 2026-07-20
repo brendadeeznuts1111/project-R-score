@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/security/secure-deployment.ts — Secure deployment with password authentication
 
@@ -88,7 +89,7 @@ export class Tier1380SecureDeployment {
         metadata: {
           timestamp: new Date().toISOString(),
           authAlgorithm: 'argon2id',
-          sessionId: crypto.randomUUID(),
+          sessionId: Bun.randomUUIDv7(),
         },
       });
 
@@ -146,7 +147,7 @@ export class Tier1380SecureDeployment {
    * Generate unique deployment ID
    */
   private static generateDeploymentId(): DeploymentId {
-    return asDeploymentId(`deploy-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`);
+    return asDeploymentId(`deploy-${Date.now()}-${Bun.randomUUIDv7().substring(0, 8)}`);
   }
 
   /**

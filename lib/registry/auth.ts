@@ -1,14 +1,20 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // lib/registry/auth.ts — Registry authentication middleware
 
 import { styled, FW_COLORS } from '../theme/colors';
+import { hmacSha256Base64Url } from '../security/crypto-native.ts';
+import { getAppSecretFromEnv, SecretNames } from '../security/secrets-manager.ts';
 import { registryHost } from './env';
 import type { RegistryUser, AuthToken } from './registry-types';
 
 function requireJwtSecret(configured?: string): string {
   if (configured?.trim()) return configured.trim();
-  const env = Bun.env.REGISTRY_JWT_SECRET?.trim();
+  const env =
+    getAppSecretFromEnv(SecretNames.REGISTRY_JWT_SECRET) ||
+    getAppSecretFromEnv(SecretNames.JWT_SECRET);
   if (env) return env;
 
   const allowInsecure =
@@ -19,16 +25,10 @@ function requireJwtSecret(configured?: string): string {
 
   if (!allowInsecure) {
     throw new Error(
-      'jwtSecret / REGISTRY_JWT_SECRET is required (or ALLOW_INSECURE_DEFAULTS=1 for local only)'
+      'jwtSecret / REGISTRY_JWT_SECRET / JWT_SECRET is required (Bun.secrets or env)'
     );
   }
   return 'default-secret-dev-only';
-}
-
-function hmacSha256Base64Url(key: string, payload: string): string {
-  const hasher = new Bun.CryptoHasher('sha256', key);
-  hasher.update(payload);
-  return Buffer.from(hasher.digest()).toString('base64url');
 }
 
 function b64urlJson(value: unknown): string {
@@ -263,7 +263,7 @@ export class RegistryAuth {
    * Create auth token for user
    */
   createToken(username: string, readonly: boolean = false, expiresIn?: number): string {
-    const token = crypto.randomUUID().replace(/-/g, '');
+    const token = Bun.randomUUIDv7().replace(/-/g, '');
     const tokenData: AuthToken = {
       token,
       user: username,
@@ -321,7 +321,7 @@ export const AuthConfigs = {
   // Basic auth with single admin user
   basic(adminPassword: string): AuthConfig {
     const users = new Map<string, RegistryUser>();
-    const salt = crypto.randomUUID().slice(0, 8);
+    const salt = Bun.randomUUIDv7().slice(0, 8);
     users.set('admin', {
       name: 'admin',
       email: 'admin@factory-wager.com',

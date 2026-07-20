@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // lib/r2/r2-security-manager.ts — R2 security and access control manager
 
@@ -243,7 +244,7 @@ export class R2SecurityManager {
     const now = new Date().toISOString();
     const newPolicy: AccessPolicy = {
       ...policy,
-      id: `policy-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `policy-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       createdAt: now,
       updatedAt: now,
     };
@@ -259,7 +260,7 @@ export class R2SecurityManager {
   createRole(role: Omit<Role, 'id'>): Role {
     const newRole: Role = {
       ...role,
-      id: `role-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `role-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
     };
 
     this.roles.set(newRole.id, newRole);
@@ -276,9 +277,9 @@ export class R2SecurityManager {
     options?: { expiresInDays?: number; rateLimit?: { rps: number; burst: number } }
   ): { key: AccessKey; secret: string } {
     const accessKeyId = asAccessKeyId(
-      `R2AK${crypto.randomUUID().replace(/-/g, '').toUpperCase().slice(0, 16)}`
+      `R2AK${Bun.randomUUIDv7().replace(/-/g, '').toUpperCase().slice(0, 16)}`
     );
-    const secretAccessKey = crypto.randomUUID().replace(/-/g, '');
+    const secretAccessKey = Bun.randomUUIDv7().replace(/-/g, '');
 
     const key: AccessKey = {
       id: `key-${Date.now()}`,
@@ -371,7 +372,7 @@ export class R2SecurityManager {
     const keyData = crypto.getRandomValues(new Uint8Array(32));
 
     const key: EncryptionKey = {
-      id: `ek-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `ek-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       name,
       algorithm,
       keyData,
@@ -440,7 +441,7 @@ export class R2SecurityManager {
     details: Record<string, any> = {}
   ): void {
     const entry: SecurityAuditEntry = {
-      id: `audit-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `audit-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       timestamp: new Date().toISOString(),
       action,
       principal,

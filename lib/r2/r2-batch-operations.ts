@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/r2/r2-batch-operations.ts — R2 batch operations for bulk data processing
 
@@ -182,7 +183,7 @@ export class R2BatchOperations {
     operations: BatchOperation[],
     config: BatchConfig
   ): Promise<BatchJob> {
-    const batchId = `batch-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
+    const batchId = `batch-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`;
 
     const job: BatchJob = {
       id: batchId,
@@ -398,7 +399,7 @@ export class R2BatchOperations {
       success: true,
       key: operation.key,
       size,
-      etag: `"${crypto.randomUUID().slice(0, 16)}"`,
+      etag: `"${Bun.randomUUIDv7().slice(0, 16)}"`,
       duration: 0,
       retries: 0,
     };

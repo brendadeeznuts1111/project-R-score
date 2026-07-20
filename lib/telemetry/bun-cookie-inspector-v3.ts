@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
 /**
@@ -1014,7 +1015,7 @@ export class SecureCookiePro {
   static createUnbreakableSession(userId: string): Cookie {
     return new Cookie(
       '__Host-session', // Prefix protects against domain spoofing
-      crypto.randomUUID(),
+      Bun.randomUUIDv7(),
       {
         // ✅ MUST HAVE for sessions
         secure: true, // HTTPS only
@@ -1060,7 +1061,7 @@ export class SecureCookiePro {
 
   // 🔒 Create CSRF Protection Cookie
   static createCSRFToken(): Cookie {
-    return new Cookie('__Host-csrf', crypto.randomUUID(), {
+    return new Cookie('__Host-csrf', Bun.randomUUIDv7(), {
       secure: true,
       httpOnly: false, // JavaScript needs to read this
       sameSite: 'strict',

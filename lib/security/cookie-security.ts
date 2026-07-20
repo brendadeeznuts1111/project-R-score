@@ -1,237 +1,43 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie, Bun.CookieMap
+// @see https://bun.com/docs/runtime/csrf — Bun.CSRF
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 /**
- * Cookie.parse/from v3.25 - CookieInspector/CSRF Factory-Wager Fusion!
+ * Cookie + CSRF Factory-Wager fusion — Bun-native Cookie / CSRF.
  *
- * Complete cookie security system with:
- * - Cookie.parse() for raw header parsing
- * - Cookie.from() for secure factory creation
+ * - Cookie.parse / Cookie.from / new Cookie → Bun.Cookie
+ * - CookieMap for request jars
+ * - CSRFProtection → Bun.CSRF (session-bound)
  * - CookieInspector for validation and security auditing
- * - CSRFProtection for token generation and validation
  * - A/B testing variants with tamper-proof signatures
- * - JuniorRunner integration with --cookie-inspect flag
- * - 112K ops/s performance benchmarking
  */
 
 import { CryptoHasher } from 'bun';
 import { type UserId, tryUserId } from '../types/branded.ts';
+import {
+  Cookie as SecureCookie,
+  type CookieOptions,
+  cookieMapFromHeader,
+  CookieMap,
+} from './cookies-native.ts';
+import { getAppSecretFromEnv, requireAppSecret, SecretNames } from './secrets-manager.ts';
 
-function requireCsrfSecret(): string {
-  const key = Bun.env.CSRF_SECRET?.trim();
-  if (key) return key;
+export type { CookieOptions };
+export { CookieMap, cookieMapFromHeader };
 
-  const allowInsecure =
-    Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
-    Bun.env.BUN_ENV === 'development' ||
-    Bun.env.NODE_ENV === 'development' ||
-    Bun.env.NODE_ENV === 'test';
+/** Bun.Cookie with secure `from()` defaults (see cookies-native). */
+export class Cookie extends SecureCookie {}
 
-  if (!allowInsecure) {
-    throw new Error(
-      'CSRF_SECRET is required (set env or ALLOW_INSECURE_DEFAULTS=1 for local only)'
-    );
-  }
-  return 'default-csrf-secret-dev-only';
-}
-
-// Type declarations for Bun APIs - augment existing Bun interface
-interface BunServer {
-  stop(): void;
-  port: number;
-}
-
-interface BunServeOptions {
-  port?: number;
-  fetch: (req: Request) => Response | Promise<Response>;
-}
-
-// Augment the existing Bun module instead of redeclaring it
-declare module 'bun' {
-  interface Bun {
-    serve: (options: BunServeOptions) => BunServer;
-  }
-}
-
-// 🍪 COOKIE INTERFACES
-export interface CookieOptions {
-  domain?: string;
-  path?: string;
-  expires?: Date | number;
-  secure?: boolean;
-  httpOnly?: boolean;
-  sameSite?: 'strict' | 'lax' | 'none';
-  partitioned?: boolean;
-  maxAge?: number;
-}
-
-export interface Cookie {
-  name: string;
-  value: string;
-  domain?: string;
-  path?: string;
-  expires?: Date;
-  secure?: boolean;
-  httpOnly?: boolean;
-  sameSite?: 'strict' | 'lax' | 'none';
-  partitioned?: boolean;
-  maxAge?: number;
-
-  // Methods
-  serialize(): string;
-  toJSON(): Record<string, any>;
-}
-
-// 🎯 COOKIE STATIC METHODS - v3.25
-export class Cookie {
-  constructor(name: string, value: string, options: CookieOptions = {}) {
-    this.name = name;
-    this.value = value;
-    Object.assign(this, options);
-  }
-
-  /**
-   * Parse raw cookie header string into Cookie object
-   * Performance: 0.08ms - 112K ops/s
-   */
-  static parse(header: string): Cookie {
-    if (!header || typeof header !== 'string') {
-      throw new Error('Cookie header must be a non-empty string');
-    }
-
-    // Remove any surrounding whitespace
-    header = header.trim();
-
-    // Split into name=value pairs
-    const pairs = header.split(';').map(pair => pair.trim());
-    const [nameValue, ...attributes] = pairs;
-
-    if (!nameValue || !nameValue.includes('=')) {
-      throw new Error('Invalid cookie format: missing name=value pair');
-    }
-
-    const [name, value] = nameValue.split('=').map(s => s.trim());
-
-    if (!name) {
-      throw new Error('Cookie name cannot be empty');
-    }
-
-    const cookie = new Cookie(decodeURIComponent(name), decodeURIComponent(value));
-
-    // Parse attributes
-    for (const attr of attributes) {
-      if (!attr.includes('=')) {
-        // Boolean attributes
-        switch (attr.toLowerCase()) {
-          case 'secure':
-            cookie.secure = true;
-            break;
-          case 'httponly':
-            cookie.httpOnly = true;
-            break;
-          case 'partitioned':
-            cookie.partitioned = true;
-            break;
-        }
-      } else {
-        const [attrName, attrValue] = attr.split('=').map(s => s.trim());
-        switch (attrName.toLowerCase()) {
-          case 'domain':
-            cookie.domain = attrValue;
-            break;
-          case 'path':
-            cookie.path = attrValue;
-            break;
-          case 'expires':
-            cookie.expires = new Date(attrValue);
-            break;
-          case 'max-age':
-            cookie.maxAge = parseInt(attrValue, 10);
-            break;
-          case 'samesite':
-            cookie.sameSite = attrValue.toLowerCase() as 'strict' | 'lax' | 'none';
-            break;
-        }
-      }
-    }
-
-    return cookie;
-  }
-
-  /**
-   * Create cookie with factory pattern and security defaults
-   * Performance: 0.05ms - 115K ops/s
-   */
-  static from(name: string, value: string, options: CookieOptions = {}): Cookie {
-    if (!name || typeof name !== 'string') {
-      throw new Error('Cookie name must be a non-empty string');
-    }
-
-    if (typeof value !== 'string') {
-      value = String(value);
-    }
-
-    // Apply security defaults for factory-wager fusion
-    const secureDefaults: CookieOptions = {
-      path: '/',
-      secure: Bun.env.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'strict',
-      ...options,
-    };
-
-    return new Cookie(name, value, secureDefaults);
-  }
-
-  /**
-   * Serialize cookie to Set-Cookie header format
-   */
-  serialize(): string {
-    const parts = [`${encodeURIComponent(this.name)}=${encodeURIComponent(this.value)}`];
-
-    if (this.domain) parts.push(`Domain=${this.domain}`);
-    if (this.path) parts.push(`Path=${this.path}`);
-    if (this.expires) parts.push(`Expires=${this.expires.toUTCString()}`);
-    if (this.maxAge) parts.push(`Max-Age=${this.maxAge}`);
-    if (this.secure) parts.push('Secure');
-    if (this.httpOnly) parts.push('HttpOnly');
-    if (this.sameSite) parts.push(`SameSite=${this.sameSite}`);
-    if (this.partitioned) parts.push('Partitioned');
-
-    return parts.join('; ');
-  }
-
-  /**
-   * Convert cookie to JSON representation
-   */
-  toJSON(): Record<string, any> {
-    return {
-      name: this.name,
-      value: this.value,
-      domain: this.domain,
-      path: this.path,
-      expires: this.expires?.toISOString(),
-      secure: this.secure,
-      httpOnly: this.httpOnly,
-      sameSite: this.sameSite,
-      partitioned: this.partitioned,
-      maxAge: this.maxAge,
-    };
-  }
-
-  // Instance properties
-  name: string;
-  value: string;
-  domain?: string;
-  path?: string;
-  expires?: Date;
-  secure?: boolean;
-  httpOnly?: boolean;
-  sameSite?: 'strict' | 'lax' | 'none';
-  partitioned?: boolean;
-  maxAge?: number;
+async function requireCsrfSecret(): Promise<string> {
+  return requireAppSecret(SecretNames.CSRF_SECRET, {
+    envKeys: [SecretNames.CSRF_SECRET],
+    insecureDevFallback: 'default-csrf-secret-dev-only',
+  });
 }
 
 // 🔍 COOKIE INSPECTOR - Security Validation
@@ -344,49 +150,82 @@ export class CookieInspector {
   }
 }
 
-// 🛡️ CSRF PROTECTION - Token Management
+// 🛡️ CSRF PROTECTION — Bun.CSRF (session-bound HMAC tokens)
+// Always pass sessionId to generate + verify (prevents cross-session replay).
 export class CSRFProtection {
-  private static get CSRF_SECRET(): string {
-    return requireCsrfSecret();
-  }
-
   /**
-   * Generate CSRF token for session
+   * Generate CSRF token bound to sessionId (Bun.CSRF).
+   * @param sessionId requester session or user id — required for safe use
+   * @param expiresInMs token lifetime (default 24h per Bun)
    */
-  static async generateToken(sessionId: string): Promise<string> {
-    const hasher = new CryptoHasher('sha256', this.CSRF_SECRET);
-    hasher.update(sessionId + Date.now() + Math.random().toString(36));
-    return hasher.digest('hex').slice(0, 32);
+  static async generateToken(sessionId: string, expiresInMs: number = 86_400_000): Promise<string> {
+    if (!sessionId?.trim()) {
+      throw new Error('CSRFProtection.generateToken requires a non-empty sessionId');
+    }
+    const secret = await requireCsrfSecret();
+    return Bun.CSRF.generate(secret, {
+      sessionId,
+      expiresIn: expiresInMs,
+      encoding: 'base64url',
+      algorithm: 'sha256',
+    });
   }
 
   /**
-   * Validate CSRF token against session
+   * Verify CSRF token for the same sessionId used at generate time.
+   * @deprecated Prefer verify(token, sessionId) — equality check is not CSRF-safe alone.
    */
   static validateToken(cookieToken: string, sessionToken: string): boolean {
-    return cookieToken === sessionToken;
+    // Double-submit legacy: both sides must match (not HMAC). Prefer verify().
+    return cookieToken === sessionToken && cookieToken.length > 0;
   }
 
   /**
-   * Generate double-submit CSRF token pattern
+   * Verify Bun.CSRF token bound to sessionId.
+   */
+  static async verify(
+    token: string,
+    sessionId: string, // brand-ok — must match generateToken session binding (wire id)
+    options: { maxAge?: number } = {}
+  ): Promise<boolean> {
+    if (!token?.trim() || !sessionId?.trim()) return false;
+    const secret = await requireCsrfSecret();
+    return Bun.CSRF.verify(token, {
+      secret,
+      sessionId,
+      maxAge: options.maxAge ?? 86_400_000,
+      encoding: 'base64url',
+      algorithm: 'sha256',
+    });
+  }
+
+  /**
+   * Double-submit pattern: one token for cookie + form (same session-bound CSRF token).
    */
   static async generateDoubleSubmitToken(sessionId: string): Promise<{
     cookieToken: string;
     formToken: string;
   }> {
-    const timestamp = Date.now();
-    const hasher = new CryptoHasher('sha256', this.CSRF_SECRET);
-
-    const cookieToken = await this.generateToken(sessionId);
-    hasher.update(sessionId + timestamp + 'cookie');
-    const formToken = hasher.digest('hex').slice(0, 32);
-
-    return { cookieToken, formToken };
+    const token = await this.generateToken(sessionId);
+    return { cookieToken: token, formToken: token };
   }
 }
 
 // 🎲 A/B TESTING VARIANTS - Tamper-proof
 export class ABTestingVariant {
-  private static readonly VARIANT_SECRET = Bun.env.VARIANT_SECRET || 'default-variant-secret';
+  private static get VARIANT_SECRET(): string {
+    const key = getAppSecretFromEnv(SecretNames.VARIANT_SECRET) || Bun.env.VARIANT_SECRET?.trim();
+    if (key) return key;
+    if (
+      Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+      Bun.env.NODE_ENV === 'development' ||
+      Bun.env.NODE_ENV === 'test' ||
+      Bun.env.BUN_ENV === 'development'
+    ) {
+      return 'default-variant-secret-dev-only';
+    }
+    throw new Error('VARIANT_SECRET is required (env or Bun.secrets)');
+  }
 
   /**
    * Create tamper-proof A/B variant cookie
@@ -666,7 +505,7 @@ export function createCookieAwareServer(port: number = 3000) {
       const variantCookie = ABTestingVariant.createVariantCookie(variant, userId);
 
       // Generate CSRF token
-      const sessionId = sessionCookie?.value || crypto.randomUUID();
+      const sessionId = sessionCookie?.value || Bun.randomUUIDv7();
       const csrfToken = await CSRFProtection.generateToken(sessionId);
       const csrfCookie = Cookie.from('csrf', csrfToken, {
         httpOnly: false,

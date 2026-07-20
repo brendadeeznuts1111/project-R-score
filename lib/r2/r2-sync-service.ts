@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // lib/r2/r2-sync-service.ts — R2 multi-bucket sync service
 
 import { styled, FW_COLORS } from '../theme/colors';
@@ -140,7 +141,7 @@ export class R2SyncService {
   createJob(config: Omit<SyncJob, 'id' | 'status' | 'stats' | 'createdAt'>): SyncJob {
     const job: SyncJob = {
       ...config,
-      id: `sync-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+      id: `sync-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       status: 'pending',
       stats: {
         totalRuns: 0,

@@ -2,21 +2,12 @@
 // @see https://bun.com/docs/guides/process/argv — Bun.argv (CLI interface)
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 
 import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 import { type TokenId, asTokenId } from '../types/branded.ts';
-
-function randomHex(bytes: number): string {
-  const buf = new Uint8Array(bytes);
-  crypto.getRandomValues(buf);
-  return Buffer.from(buf).toString('hex');
-}
-
-function hmacSha256Hex(key: string, payload: string): string {
-  const hasher = new Bun.CryptoHasher('sha256', key);
-  hasher.update(payload);
-  return hasher.digest('hex');
-}
+import { hmacSha256Hex, randomHex, timingSafeEqualHex } from './crypto-native.ts';
+import { getAppSecretFromEnv, SecretNames } from './secrets-manager.ts';
 
 export interface MasterTokenConfig {
   tokenId: TokenId;
@@ -305,7 +296,7 @@ export class MasterTokenManager {
       }
 
       const expectedSignature = hmacSha256Hex(this.getHmacKey(), payload);
-      if (signature !== expectedSignature) {
+      if (!timingSafeEqualHex(signature, expectedSignature)) {
         return null;
       }
 
@@ -327,7 +318,9 @@ export class MasterTokenManager {
   }
 
   private getHmacKey(): string {
-    const key = Bun.env.MASTER_TOKEN_HMAC_KEY?.trim();
+    // Prefer Bun.secrets-backed env (secrets:migrate copies OS store → still readable via envKeys);
+    // sync path uses env / prior Bun.secrets.get if process already hydrated env.
+    const key = getAppSecretFromEnv(SecretNames.MASTER_TOKEN_HMAC_KEY);
     if (key) return key;
 
     const allowInsecure =
@@ -338,11 +331,10 @@ export class MasterTokenManager {
 
     if (!allowInsecure) {
       throw new Error(
-        'MASTER_TOKEN_HMAC_KEY is required (set env or ALLOW_INSECURE_DEFAULTS=1 for local only)'
+        'MASTER_TOKEN_HMAC_KEY is required (Bun.secrets / env; ALLOW_INSECURE_DEFAULTS=1 for local only)'
       );
     }
 
-    // Dev/test only — never use in production
     return 'factorywager-mcp-dev-only-key';
   }
 

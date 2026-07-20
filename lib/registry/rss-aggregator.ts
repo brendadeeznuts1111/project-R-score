@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/registry/rss-aggregator.ts — RSS aggregator for package updates and feeds
@@ -87,7 +88,7 @@ export class RSSAggregator {
   addFeed(feed: Omit<RSSFeed, 'id'>): RSSFeed {
     const newFeed: RSSFeed = {
       ...feed,
-      id: crypto.randomUUID(),
+      id: Bun.randomUUIDv7(),
     };
     this.feeds.push(newFeed);
     return newFeed;
@@ -215,7 +216,7 @@ export class RSSAggregator {
     if (!title || !link) return null;
 
     return {
-      id: crypto.randomUUID(),
+      id: Bun.randomUUIDv7(),
       feedId,
       title: this.decodeEntities(title),
       description: description ? this.decodeEntities(description) : undefined,
@@ -244,7 +245,7 @@ export class RSSAggregator {
     if (!title || !link) return null;
 
     return {
-      id: crypto.randomUUID(),
+      id: Bun.randomUUIDv7(),
       feedId,
       title: this.decodeEntities(title),
       description: summary ? this.decodeEntities(summary) : undefined,
