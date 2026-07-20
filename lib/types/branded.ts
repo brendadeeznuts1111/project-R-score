@@ -95,6 +95,34 @@ export type StepId = BrandedString<'StepId'>;
 export type WebhookId = BrandedString<'WebhookId'>;
 export type FeedId = BrandedString<'FeedId'>;
 
+/** Union of every branded ID — for telemetry/serialization edges that accept any ID. */
+export type AnyId =
+  | SessionId
+  | TerminalId
+  | RequestId
+  | CorrelationId
+  | SnapshotId
+  | UserId
+  | AccountId
+  | IdentityId
+  | AccessKeyId
+  | TokenId
+  | DocumentId
+  | ZoneId
+  | ChallengeId
+  | PolicyId
+  | DeploymentId
+  | VersionId
+  | AuditId
+  | OperationId
+  | ResourceId
+  | ProjectId
+  | PipelineId
+  | JobId
+  | StepId
+  | WebhookId
+  | FeedId;
+
 // ── Boundary constructors (validate + brand in one step) ─────────────────
 function makeId<B extends string>(value: string, kind: B): BrandedString<B> {
   if (typeof value !== 'string' || value.length === 0) {
@@ -143,30 +171,40 @@ export const tryAccessKeyId = (v: string | undefined | null): AccessKeyId | unde
   tryBrandId(v, asAccessKeyId);
 export const tryZoneId = (v: string | undefined | null): ZoneId | undefined =>
   tryBrandId(v, asZoneId);
+export const trySessionId = (v: string | undefined | null): SessionId | undefined =>
+  tryBrandId(v, asSessionId);
+export const tryUserId = (v: string | undefined | null): UserId | undefined =>
+  tryBrandId(v, asUserId);
+export const tryRequestId = (v: string | undefined | null): RequestId | undefined =>
+  tryBrandId(v, asRequestId);
+export const tryCorrelationId = (v: string | undefined | null): CorrelationId | undefined =>
+  tryBrandId(v, asCorrelationId);
+export const tryDocumentId = (v: string | undefined | null): DocumentId | undefined =>
+  tryBrandId(v, asDocumentId);
 
 /**
- * Wire/API ingress for zone IDs — fail closed (throw), never silent empty brand.
+ * Wire/API ingress — fail closed (throw BrandValidationError), never a
+ * silent empty brand. Takes `unknown`, trims, validates, brands.
  */
-export function parseZoneId(value: unknown): ZoneId {
+export function parseBrandId<B extends string>(
+  value: unknown,
+  kind: B,
+  brandFn: (v: string) => BrandedString<B>
+): BrandedString<B> {
   if (typeof value !== 'string' || value.trim() === '') {
-    throw new BrandValidationError('ZoneId', value);
+    throw new BrandValidationError(kind, value);
   }
-  return asZoneId(value.trim());
+  return brandFn(value.trim());
 }
 
-export function parseAccountId(value: unknown): AccountId {
-  if (typeof value !== 'string' || value.trim() === '') {
-    throw new BrandValidationError('AccountId', value);
-  }
-  return asAccountId(value.trim());
-}
-
-export function parseAccessKeyId(value: unknown): AccessKeyId {
-  if (typeof value !== 'string' || value.trim() === '') {
-    throw new BrandValidationError('AccessKeyId', value);
-  }
-  return asAccessKeyId(value.trim());
-}
+export const parseZoneId = (value: unknown): ZoneId => parseBrandId(value, 'ZoneId', asZoneId);
+export const parseAccountId = (value: unknown): AccountId =>
+  parseBrandId(value, 'AccountId', asAccountId);
+export const parseAccessKeyId = (value: unknown): AccessKeyId =>
+  parseBrandId(value, 'AccessKeyId', asAccessKeyId);
+export const parseSessionId = (value: unknown): SessionId =>
+  parseBrandId(value, 'SessionId', asSessionId);
+export const parseUserId = (value: unknown): UserId => parseBrandId(value, 'UserId', asUserId);
 export const asOperationId = (v: string): OperationId => makeId(v, 'OperationId');
 export const asResourceId = (v: string): ResourceId => makeId(v, 'ResourceId');
 export const asProjectId = (v: string): ProjectId => makeId(v, 'ProjectId');

@@ -569,7 +569,7 @@ function printSmartReport(hits: Hit[], asJson: boolean): void {
 
   console.info(
     `\n  brands: lib/types/branded.ts\n` +
-      `  next: Phase 1 auth-credential → Phase 2 named-domain → Phase 3 new brands\n` +
+      `  rollout: COMPLETE — actionable must stay 0 (gate: bun run check:brands)\n` +
       `  strict (actionable only): bun tools/branded-id-check.ts --smart --strict\n`
   );
 }
