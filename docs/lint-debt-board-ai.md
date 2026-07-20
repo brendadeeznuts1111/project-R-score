@@ -15,7 +15,6 @@ Scope for this board: `lib/ai/**` and four rules only:
 - [x] `lib/ai/bunMarkdownConstants.tsx` (2)
 - [x] `lib/ai/ai-snapshot.test.ts` (4)
 - [x] `lib/ai/ai.bench.ts` (5)
-- [x] `lib/ai/bunMarkdownExamples.ts` (5)
 
 ## Medium (6-12 violations per file)
 - [ ] None currently in this four-rule slice.

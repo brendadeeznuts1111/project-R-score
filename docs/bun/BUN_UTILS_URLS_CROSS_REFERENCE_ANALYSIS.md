@@ -248,8 +248,7 @@ lib/
 ```text
 examples/
 ├── comprehensive-usage.ts          # 16K lines of examples
-├── cli-validation-integration.ts   # Integration helpers
-└── example-cli-with-validation.ts  # Practical examples
+└── cli-validation-integration.ts   # Integration helpers
 ```
 
 ---

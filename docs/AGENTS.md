@@ -62,7 +62,6 @@ This is a **Bun-based monorepo-lite platform** demonstrating project isolation u
 │   ├── scan.ts                   # Tier-1380 scan CLI
 │   ├── secret-helper.ts          # Versioned secret helpers
 │   ├── cookie-scanner.ts         # Cookie scanner CLI
-│   ├── inspect-projects.ts       # Bun.inspect demo with tabular output
 │   ├── inspect-demo.ts           # General Bun.inspect demonstrations
 │   └── ... (other .ts tools)
 │
@@ -149,8 +148,6 @@ bun utils/terminal-tool.ts
 # Profile a workload
 bun scripts/profiler.ts --run
 
-# Inspect projects table
-bun tools/inspect-projects.ts
 ```
 
 ### Running Sub-Projects

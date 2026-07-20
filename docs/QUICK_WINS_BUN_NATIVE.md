@@ -15,7 +15,6 @@ This document identifies code patterns that should be migrated to Bun-native API
 
 | File | Current Pattern | Bun-Native Replacement |
 |------|----------------|----------------------|
-| `tools/factorywager-cli.ts` | `import { spawn } from 'child_process'` | `Bun.spawn()` |
 | `lib/performance/optimized-spawn-test.ts` | `import { spawn, execSync } from 'child_process'` | `Bun.spawn()` or `Bun.spawnSync()` |
 | `lib/validation/bun-first-auditor.ts` | `const { spawn } = require('child_process')` | `Bun.spawn()` |
 | `lib/validation/bun-first-compliance.ts` | `const { spawn } = require('child_process')` | `Bun.spawn()` |
@@ -127,8 +126,6 @@ These files are already using Bun-native APIs:
 - `lib/r2/bun-secrets-cli.ts`
 
 ✅ **Bun.write()**
-- `lib/performance/bun-write-tests.ts`
-- `lib/performance/response-buffering-tests.ts`
 
 ✅ **fetch() (Bun-native)**
 - Used in 122 files across lib/
@@ -145,7 +142,7 @@ Uses [`Bun.inspect.table()`](https://bun.com/docs/runtime/utils#bun-inspect-tabl
 
 | Priority | Pattern | Files | Replacement | Performance Gain | Path |
 |----------|---------|-------|-------------|------------------|------|
-| 🔴 CRITICAL | child_process.spawn() | 27 | Bun.spawn() | 2-3x faster | tools/factorywager-cli.ts |
+| 🔴 CRITICAL | child_process.spawn() | 27 | Bun.spawn() | 2-3x faster | lib/performance/optimized-spawn-test.ts |
 | 🔴 CRITICAL | fs.readFileSync() | 5 | Bun.file().text() | 50% faster | lib/docs/url-fixer-optimizer.ts |
 | 🔴 CRITICAL | fs.writeFileSync() | 5 | Bun.write() | 40% faster | lib/docs/url-fixer-optimizer.ts |
 | 🔴 CRITICAL | crypto.createHash() | 3 | Bun.hash() | 30% faster | lib/security/master-token.ts |
@@ -173,7 +170,7 @@ grep -r "from 'crypto'\|require('crypto')" --include="*.ts" lib/
 
 ## 🎯 Priority Order for Migration
 
-1. **child_process → Bun.spawn** (tools/factorywager-cli.ts first)
+1. **child_process → Bun.spawn**
 2. **fs.readFile → Bun.file** (lib/utils/safe-file-operations.ts first - used by many)
 3. **fs.writeFile → Bun.write** (lib/utils/safe-file-operations.ts first)
 4. **crypto → Bun.hash/bun:crypto** (security files)
@@ -182,8 +179,7 @@ grep -r "from 'crypto'\|require('crypto')" --include="*.ts" lib/
 ## 📁 Files Ready for Migration
 
 ### Immediate (Copy-paste ready examples available):
-1. `tools/factorywager-cli.ts` - Simple spawn calls
-2. `lib/utils/safe-file-operations.ts` - Central file operations module
+1. `lib/utils/safe-file-operations.ts` - Central file operations module
 3. `lib/docs/url-fixer-optimizer.ts` - Read/write operations
 
 ### Requires Analysis:

@@ -64,7 +64,6 @@ Files:
 | `lib/core/bun-spawn-utils.ts` | 481 | Bun-specific utilities |
 | `lib/core/core-errors.ts` | ~500 | Documented error codes |
 | `lib/core/index.ts` | ~200 | Unified exports |
-| `lib/core/r2-session-manager.ts` | 345 | R2 session management |
 
 ### Test Files (3 files, ~1,500 lines)
 

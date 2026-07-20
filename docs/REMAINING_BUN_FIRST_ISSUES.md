@@ -76,7 +76,6 @@ bun run lint
 - [ ] lib/security/enterprise-auth.ts
 - [ ] lib/security/master-token.ts
 - [ ] lib/security/secret-lifecycle.ts
-- [ ] lib/security/test-integration.ts
 - [ ] lib/security/zero-trust-manager.ts
 - [ ] lib/utils/ffi-environment.ts
 - [ ] lib/utils/input-validation-lib.ts

@@ -239,7 +239,6 @@ dump.rdb
 metrics/
 plugins/
 wrangler.toml
-lib/ab-testing/bench-results.json
 
 # Clawdbot - temporarily ignored
 clawdbot/

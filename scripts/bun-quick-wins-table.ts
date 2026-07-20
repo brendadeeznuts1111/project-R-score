@@ -29,7 +29,7 @@ const quickWins: QuickWin[] = [
     files: '27',
     replacement: 'Bun.spawn()',
     gain: '2-3x faster',
-    path: 'tools/factorywager-cli.ts',
+    path: 'lib/performance/optimized-spawn-test.ts',
   },
   {
     priority: '🔴 CRITICAL',

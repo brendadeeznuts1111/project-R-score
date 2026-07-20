@@ -50,7 +50,7 @@ Many files hardcode `/Users/nolarose/Projects` or `/Users/ashley/PROJECTS`. This
 - **`/Users/nolarose/Projects`** (current user):  
   `DIRECTORY_STRUCTURE.md`, `docs/AGENTS.md`, `docs/QUICK_TEST.md`, `lib/port-management-system.ts`, `projects/dashboards/secrets-dashboard/*`, `.husky/*.sh`, `.validate-pointers-baseline.json`, `BUN_CONSTANTS_VERSION.json`, `projects/analysis/scanner/scan.ts`, etc.
 - **`/Users/ashley/PROJECTS`** (example user in docs):  
-  `docs/BUN_MAIN_GUIDE.md`, `tools/inspect-demo.ts`, `tools/inspect-projects.ts`, `docs/guides/BUN_WHICH_GUIDE.md`, `docs/BUN_INSPECT_GUIDE.md`.
+  `docs/BUN_MAIN_GUIDE.md`, `tools/inspect-demo.ts`, `docs/guides/BUN_WHICH_GUIDE.md`, `docs/BUN_INSPECT_GUIDE.md`.
 
 **Recommendation:** Prefer env (e.g. `BUN_PLATFORM_HOME`) or `Bun.main` / repo-relative paths. Docs already call this out (e.g. “never hardcode `/Users/nolarose/Projects`” in AGENTS.md); the audit shows where to replace.
 

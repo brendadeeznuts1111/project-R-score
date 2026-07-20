@@ -69,32 +69,6 @@ flowchart TD
 | "Entangle" | `domain.entangleWith([...])` |
 | "Optimize" | `domain.optimize()` |
 
-## Usage
-
-```typescript
-import { SkillOrchestrator } from './lib/skill-orchestrator';
-
-// Initialize
-const orchestrator = new SkillOrchestrator();
-
-// Load guidance skill
-const quantumOps = await orchestrator.loadSkill('quantum-domain-ops');
-const info = orchestrator.parseFrontmatter(quantumOps);
-console.log(info.description);
-
-// Execute flow skill
-const myDomain = getDomain('WR-001-Q'); // QuantumDomain
-const results = await orchestrator.executeFlowSkill(
-  'self-healing-domain',
-  myDomain
-);
-
-// Results include each step's execution
-for (const result of results) {
-  console.log(`${result.step}: ${JSON.stringify(result.result)}`);
-}
-```
-
 ## Skill Discovery (kimi-cli standard)
 
 Priority order (first found wins):
@@ -106,7 +80,6 @@ Priority order (first found wins):
 
 | File | Purpose |
 |------|---------|
-| `lib/skill-orchestrator.ts` | Core orchestrator implementation |
 | `.agents/skills/domain-orchestrator/SKILL.md` | Orchestration flow skill |
 | `.agents/skills/quantum-domain-ops/SKILL.md` | Quantum domain procedures |
 | `.agents/skills/self-healing-domain/SKILL.md` | Healing workflow skill |

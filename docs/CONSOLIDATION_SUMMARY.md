@@ -108,7 +108,6 @@
 - `debug-entry.ts` - Entry guard debug utility
 - `import-meta-url-demo.ts` - import.meta.url demo
 - `inspect-demo.ts` - Bun.inspect table formatting demo
-- `tools/inspect-projects.ts` - Project matrix inspection demo
 - `server.ts` - Web server with cookie/session handling
 
 **Registry/Color Tools (3 files):**

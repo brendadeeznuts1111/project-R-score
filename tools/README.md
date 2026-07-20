@@ -30,37 +30,12 @@ chmod +x tools/factorywager-*.ts tools/factorywager-*.sh
 
 ### Usage
 
-#### 1. Unified CLI Interface
-```bash
-# Run CPU profiling
-bun tools/factorywager-cli.ts cpu
-
-# Run heap profiling
-bun tools/factorywager-cli.ts heap
-
-# Run system diagnostics
-bun tools/factorywager-cli.ts diagnose
-
-# Start real-time profiling
-bun tools/factorywager-cli.ts realtime
-
-# Run dual profiling
-bun tools/factorywager-cli.ts dual
-```
-
-#### 2. Individual Tools
 ```bash
 # CPU profiling with color-coded markdown
 bun tools/factorywager-cpu-profile.ts
 
 # Heap profiling with R2 metadata
 bun tools/factorywager-heap-profile.ts
-
-# Complete diagnostics
-bun tools/factorywager-diagnose.ts
-
-# Real-time profiling with animations
-bun tools/factorywager-realtime.ts
 
 # Dual profiling (shell script)
 ./tools/factorywager-profile.sh
@@ -79,11 +54,6 @@ bun tools/factorywager-realtime.ts
 - **Compressed storage**: ZSTD compression for efficient storage
 - **Rich metadata**: Visual tags, severity, color information
 - **Signed URLs**: Temporary access links for sharing
-
-### Real-time Monitoring
-- **Animated progress bars**: Color-coded performance indicators
-- **Live updates**: Real-time metric visualization
-- **Interactive controls**: Clean shutdown with Ctrl+C
 
 ---
 
@@ -108,14 +78,6 @@ bun tools/factorywager-realtime.ts
    🔗 URL: https://r2.scanner-cookies.com/profiles/heap-1738701234567.md.zst
    🎨 Visual tag: factorywager-success
    📊 Metadata: #22c55e
-```
-
-### Real-time Output
-```text
-CPU: ████████████ 85%
-Memory: ██████ 60%
-  🕐 14:32:45
-Network: ████ 40%
 ```
 
 ---
@@ -149,11 +111,8 @@ export const PERFORMANCE_THRESHOLDS = {
 
 ```text
 tools/
-├── factorywager-cli.ts          # Unified CLI interface
 ├── factorywager-cpu-profile.ts  # CPU profiling
 ├── factorywager-heap-profile.ts # Heap profiling
-├── factorywager-diagnose.ts     # System diagnostics
-├── factorywager-realtime.ts     # Real-time monitoring
 └── factorywager-profile.sh      # Dual profiling script
 ```
 
@@ -163,26 +122,26 @@ tools/
 
 ### Development
 ```bash
-# Quick performance check
-bun tools/factorywager-cli.ts diagnose
+# Quick CPU performance check
+bun tools/factorywager-cpu-profile.ts
 
-# Monitor during development
-bun tools/factorywager-cli.ts realtime
+# Memory usage snapshot
+bun tools/factorywager-heap-profile.ts
 ```
 
 ### Production
 ```bash
-# Full system analysis
-bun tools/factorywager-cli.ts dual
+# Full dual profiling analysis
+./tools/factorywager-profile.sh
 
-# Store profiles with metadata
-bun tools/factorywager-cli.ts heap
+# Store heap profiles with metadata
+bun tools/factorywager-heap-profile.ts
 ```
 
 ### CI/CD
 ```bash
-# Automated profiling in pipelines
-bun tools/factorywager-cli.ts cpu > profile-report.md
+# Automated CPU profiling in pipelines
+bun tools/factorywager-cpu-profile.ts > profile-report.md
 ```
 
 ---
@@ -234,7 +193,7 @@ const metadata = generateVisualMetadata('success');
 ### Debug Mode
 ```bash
 export FACTORYWAGER_DEBUG=true
-bun tools/factorywager-cli.ts diagnose
+bun tools/factorywager-cpu-profile.ts
 ```
 
 ---

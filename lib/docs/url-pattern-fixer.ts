@@ -102,8 +102,6 @@ async function scanLibDirectory() {
       'optimized-server.ts',
       'port-management-system.ts',
       'bun-implementation-details.ts',
-      'response-buffering-tests.ts',
-      'bun-write-tests.ts',
       'url-fixer-optimizer.ts',
       'url-discovery-validator.ts',
       'docs-reference.ts',

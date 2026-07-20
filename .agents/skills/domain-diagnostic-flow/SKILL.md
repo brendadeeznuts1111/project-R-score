@@ -83,23 +83,6 @@ flowchart TD
 | Execute Treatment | 2 | 10s | Compensate |
 | Rebuild Domain | 0 | 60s | Halt |
 
-## Usage
-
-```typescript
-import { SkillOrchestrator } from './lib/skill-orchestrator';
-
-const orchestrator = new SkillOrchestrator();
-const results = await orchestrator.executeFlowSkill(
-  'domain-diagnostic-flow',
-  targetDomain
-);
-
-// Check results
-for (const step of results) {
-  console.log(`${step.status}: ${step.attempts} attempts, ${step.durationMs}ms`);
-}
-```
-
 ## Agent tooling
 
 | Tool | Use when |

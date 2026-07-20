@@ -29,7 +29,6 @@
 ├── Port Management: 66 matches (lib/port-management-system.ts)
 ├── Core Validation: 56 matches (lib/core-validation.ts)
 ├── Documentation Validator: 42 matches (lib/complete-documentation-validator.ts)
-├── Port Limit Tests: 41 matches (lib/port-limit-validation-tests.ts)
 └── ... 54 additional files with error handling
 ```
 

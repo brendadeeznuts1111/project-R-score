@@ -18,8 +18,6 @@ async function scanAndFixCodebase() {
     './lib/optimized-server.ts',
     './lib/port-management-system.ts',
     './lib/bun-implementation-details.ts',
-    './lib/response-buffering-tests.ts',
-    './lib/bun-write-tests.ts',
     './lib/security-stability-test.ts',
     './lib/optimized-spawn-test.ts',
   ];

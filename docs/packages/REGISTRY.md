@@ -139,7 +139,6 @@ _Generated: 2026-05-18_
 | f402-openapi-contract 🔒 | 0.1.0 | npm | active |  |
 | factory-wager-registry 🔒 | 0.0.0 | npm | active |  |
 | factory-wager-registry-worker | 1.0.0 | npm | active |  |
-| factorywager-cli | 2.0.0 | factory-wager | active |  |
 | factorywager-edge | 2.0.0 | npm | active |  |
 | fantasy402-ingestion 🔒 | 0.1.0 | npm | active |  |
 | fantasy42-fire22-registry | 5.1.0 | factory-wager | active |  |
@@ -380,7 +379,6 @@ _Generated: 2026-05-18_
 | rss-feed-optimization | 1.0.0 | factory-wager | experimental |  |
 | rss-feed-optimization-template | 1.0.0 | npm | experimental |  |
 | rss-starter | 1.0.0 | npm | experimental |  |
-| scanner-cli | 2.3.0 | npm | experimental |  |
 | sports | 0.1.0 | npm | experimental |  |
 | stream-processor | 1.0.0 | npm | experimental |  |
 | stuff-a | 1.0.0 | npm | experimental |  |
