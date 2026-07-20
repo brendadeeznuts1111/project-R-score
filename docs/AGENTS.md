@@ -17,6 +17,7 @@ Extended agent guide for the FactoryWager monorepo. **Start at root** [`AGENTS.m
 | Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
 | Bun install / bunfig / CI cache | [UNIFIED.md](./UNIFIED.md) |
 | Wire boundary (parse once, full map) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
+| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) |
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
 | Path SSOT in code | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |

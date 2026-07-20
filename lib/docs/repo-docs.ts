@@ -29,6 +29,8 @@ export const CANONICAL_REPO_DOCS = {
   importBoundaries: 'docs/IMPORT_BOUNDARIES.md',
   /** Wire / parse-once boundary (unknown → domain) */
   wireBoundary: 'docs/WIRE_BOUNDARY.md',
+  /** Newer Bun runtime APIs (WebView, markdown.ansi, cron, UDP) */
+  bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
   /** Root cleanup / organization history */
   organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
   /** Projects triage + agent scope */
@@ -86,6 +88,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   unified: 'Bun install policy (machine + workspace)',
   importBoundaries: 'Import / package boundaries',
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
+  bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   organizationHistory: 'Root organization history',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',

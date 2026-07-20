@@ -27,6 +27,7 @@ const DOC_MAP_SSOT = new Set([
   'docs/README.md',
   'docs/UNIFIED.md',
   'docs/WIRE_BOUNDARY.md',
+  'docs/BUN_NATIVE_CAPABILITIES.md',
   'docs/DEVELOPMENT-STANDARDS.md',
   'docs/IMPORT_BOUNDARIES.md',
   'lib/README.md',

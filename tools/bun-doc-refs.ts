@@ -79,6 +79,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   // In-process scheduler (returns CronJob with stop/ref/unref)
   'Bun.cron': 'https://bun.com/docs/runtime/cron',
 
+  // Headless browser automation (WebKit on macOS; CDP/Chrome elsewhere)
+  'Bun.WebView': 'https://bun.com/docs/runtime/webview',
+  WebView: 'https://bun.com/docs/runtime/webview',
+
+  // UDP (ICMP errors + truncation flags)
+  'Bun.udpSocket': 'https://bun.com/docs/runtime/networking/udp',
+  udpSocket: 'https://bun.com/docs/runtime/networking/udp',
+
   // ── Security (native CSRF; pair with Bun.Cookie session ids) ────────────
   'Bun.CSRF': 'https://bun.com/docs/runtime/csrf',
 
@@ -93,7 +101,10 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Data formats & hashing ──────────────────────────────────────────────
   'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
-  'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
+  // Markdown page (html + ansi + render + react) — prefer page root for suggest
+  'Bun.markdown': 'https://bun.com/docs/runtime/markdown',
+  'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
+  'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown',
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml',
   YAML: 'https://bun.com/docs/runtime/yaml',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',

@@ -19,8 +19,9 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
+| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | WebView, markdown.ansi, cron, UDP |
 
-These are **different** concerns: install ≠ wire types ≠ package imports.
+These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes.
 
 ## Lib harness maps
 
@@ -45,7 +46,7 @@ bun run lint:harness                              # eslint harness config
 bun run docs:map:check                            # SSOT path + root MD links
 ```
 
-**Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
+**Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,BUN_NATIVE_CAPABILITIES,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
 
 ## External thesis
 
