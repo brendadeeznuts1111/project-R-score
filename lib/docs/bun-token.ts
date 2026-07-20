@@ -175,9 +175,7 @@ export function announcementUrlFromEvents(
   events: BunVersionEvent[],
   fallback?: string | null
 ): string | null {
-  const blogSince = events.filter(
-    e => e.type === 'since' && e.evidenceUrl?.includes('/blog/')
-  );
+  const blogSince = events.filter(e => e.type === 'since' && e.evidenceUrl?.includes('/blog/'));
   if (blogSince.length > 0) {
     const earliest = blogSince.reduce((a, b) =>
       compareLooseSemver(a.version, b.version) < 0 ? a : b

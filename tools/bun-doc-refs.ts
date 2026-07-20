@@ -71,8 +71,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.fetch': 'https://bun.com/docs/guides/http/fetch',
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
-  'Bun.connect':
-    'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
+  'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
   // WebSocket upgrade on Bun.serve (ServerWebSocket type + handlers)
   ServerWebSocket: 'https://bun.com/docs/runtime/http/websockets#start-a-websocket-server',
   'Bun.dns': 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
@@ -92,8 +91,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   WebView: 'https://bun.com/docs/runtime/webview',
 
   // UDP (ICMP errors + truncation flags)
-  'Bun.udpSocket':
-    'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
+  'Bun.udpSocket': 'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
   udpSocket: 'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
 
   // ── Security (native CSRF; pair with Bun.Cookie session ids) ────────────
