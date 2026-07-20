@@ -16,9 +16,11 @@
  *        bun scripts/repo-hygiene.ts --staged  # only check staged files (pre-commit)
  */
 
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
+// @see https://bun.com/docs/runtime/file-io — Bun.file
 import { Glob } from 'bun';
 import { join } from 'path';
-import { readdir } from 'node:fs/promises';
+import { isDirectorySync, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
 
 const ROOT = join(import.meta.dir, '..');
@@ -114,24 +116,21 @@ function isGitignored(relPath: string): boolean {
 
 async function findRootClutter(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const rootEntries = await readdir(ROOT, { withFileTypes: true });
+  // Glob onlyFiles:false includes directories (bun-types GlobScanOptions)
+  const rootEntries = listEntriesSync(ROOT, { dot: true });
 
-  for (const entry of rootEntries) {
-    if (entry.isDirectory()) {
-      if (FORBIDDEN_ROOT_DIRS.has(entry.name)) {
-        violations.push({ file: entry.name + '/', rule: 'forbidden-root-dir' });
-      } else if (
-        !entry.name.startsWith('.') &&
-        !ALLOWED_ROOT_DIRS.has(entry.name) &&
-        !isGitignored(entry.name)
-      ) {
-        violations.push({ file: entry.name + '/', rule: 'unexpected-root-dir' });
+  for (const name of rootEntries) {
+    if (isDirectorySync(join(ROOT, name))) {
+      if (FORBIDDEN_ROOT_DIRS.has(name)) {
+        violations.push({ file: name + '/', rule: 'forbidden-root-dir' });
+      } else if (!name.startsWith('.') && !ALLOWED_ROOT_DIRS.has(name) && !isGitignored(name)) {
+        violations.push({ file: name + '/', rule: 'unexpected-root-dir' });
       }
       continue;
     }
 
-    if (FORBIDDEN_ROOT_FILES.has(entry.name)) {
-      violations.push({ file: entry.name, rule: 'forbidden-root-file' });
+    if (FORBIDDEN_ROOT_FILES.has(name)) {
+      violations.push({ file: name, rule: 'forbidden-root-file' });
     }
   }
 
@@ -142,10 +141,8 @@ async function findStrayFiles(): Promise<Violation[]> {
   const violations: Violation[] = [];
 
   // Root-level filename scan (captures patterns beyond json/md/log extensions)
-  const rootEntries = await readdir(ROOT, { withFileTypes: true });
-  for (const entry of rootEntries) {
-    if (!entry.isFile()) continue;
-    const file = entry.name;
+  for (const file of listEntriesSync(ROOT, { dot: true })) {
+    if (isDirectorySync(join(ROOT, file))) continue;
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(file)) {
         violations.push({ file, rule: 'stray-output-root' });

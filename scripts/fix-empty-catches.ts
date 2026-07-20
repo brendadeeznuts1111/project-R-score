@@ -1,53 +1,28 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText, writeText } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * Scan for empty catch blocks and add basic error logging.
  *
  * Usage: bun run scripts/fix-empty-catches.ts
  *
- * Replaces `} catch {
-    console.error('Unhandled error:', error);
-  }` and `} catch (e) {
-    console.error('Unhandled error:', e);
-  }` with `} catch { console.error(...) }`
- * and `} catch(e) { console.error(e) }` respectively.
- *
  * WARNING: This is a mechanical fix. Some empty catches are intentional
  * (e.g., cleanup in finally blocks). Review after running.
  */
 
-import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { readText, writeText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
-const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', 'coverage']);
 
 const DRY_RUN = process.argv.includes('--dry-run');
 
-async function* walkFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE_DIRS.has(entry) || entry.startsWith('.')) continue;
-      yield* walkFiles(full);
-    } else {
-      const ext = path.extname(entry);
-      if (EXTENSIONS.has(ext) && !entry.endsWith('.d.ts')) yield full;
-    }
+function* walkFiles(): Generator<string> {
+  for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx,mjs,cjs}', { cwd: ROOT })) {
+    if (rel.endsWith('.d.ts')) continue;
+    if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p) || p.startsWith('.'))) continue;
+    yield path.join(ROOT, rel);
   }
 }
 
@@ -68,7 +43,7 @@ async function main() {
   let totalFixed = 0;
   let filesChanged = 0;
 
-  for await (const file of walkFiles(ROOT)) {
+  for (const file of walkFiles()) {
     const content = await readText(file);
     const matches = content.match(EMPTY_CATCH_RE);
     if (!matches) continue;
@@ -95,4 +70,6 @@ async function main() {
   }
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

@@ -1,6 +1,13 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, writeText } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
+import {
+  fileExistsSync,
+  writeText,
+  listFilesSync,
+  dirExistsSync,
+  ensureDir,
+} from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -10,7 +17,6 @@ import { fileExistsSync, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 
-import { mkdir, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { cpus, totalmem, release } from 'node:os';
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
@@ -226,11 +232,10 @@ async function metricFromAsync(
 async function collectProfileFiles(options: RunnerOptions): Promise<string[]> {
   const profileDir = join(options.outputDir, 'profiles');
   const explicit = [...options.profileFiles];
-  if (!fileExistsSync(profileDir)) return explicit;
+  // Directories: use Glob probe (Bun.file(dir).exists() is unreliable for dirs)
+  if (!dirExistsSync(profileDir) && !fileExistsSync(profileDir)) return explicit;
 
-  const names = await readdir(profileDir);
-  for (const name of names) {
-    if (!name.endsWith('.cpuprofile')) continue;
+  for (const name of listFilesSync('*.cpuprofile', { cwd: profileDir })) {
     if (
       name.includes(options.runId) ||
       name.startsWith('brand_seed_') ||
@@ -390,8 +395,8 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
     violations,
   };
 
-  await mkdir(options.outputDir, { recursive: true });
-  await mkdir(join(options.outputDir, 'profiles'), { recursive: true });
+  // Bun.write createPath creates parents; ensure profiles/ for later cpuprofiles
+  await ensureDir(join(options.outputDir, 'profiles'));
   const runPath = join(options.outputDir, `${options.runId}.json`);
   const latestPath = join(options.outputDir, 'latest.json');
 

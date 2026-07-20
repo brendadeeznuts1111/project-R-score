@@ -1,8 +1,7 @@
 #!/usr/bin/env bun
 
-// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/file-io — Bun.write (createPath defaults true)
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
-import { mkdirSync } from 'fs';
 
 // Build script that follows Bun's native patterns
 async function build() {
@@ -62,8 +61,7 @@ async function build() {
     },
   };
 
-  // Create public directory if it doesn't exist
-  mkdirSync('public', { recursive: true });
+  // Bun.write createPath:true creates public/ if missing (bun-types)
   await Bun.write('public/manifest.json', JSON.stringify(manifest, null, 2));
   console.info('  ✅ Generated public/manifest.json');
 
@@ -111,8 +109,6 @@ console.info("Testing Bun TypedArray documentation fetch...");
 fetchTypedArrayDocs().catch(console.error);
 `;
 
-  // Create examples directory if it doesn't exist
-  mkdirSync('examples', { recursive: true });
   await Bun.write('examples/fetch-example.js', exampleScript);
   console.info('  ✅ Generated examples/fetch-example.js');
 

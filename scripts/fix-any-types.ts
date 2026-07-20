@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * Bulk fix: list any-type usages that should be replaced with unknown or proper types.
  *
@@ -10,12 +10,11 @@ import { readText } from './lib/fs-bun';
  * and reports them. Manual review is needed for each case.
  */
 
-import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { readText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
-const EXTENSIONS = new Set(['.ts', '.tsx']);
 
 const patterns = [
   { re: /:\s*any\b/g, label: ': any' },
@@ -23,34 +22,17 @@ const patterns = [
   { re: /as\s+any\[\]\b/g, label: 'as any[]' },
 ];
 
-async function* walkFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE_DIRS.has(entry)) continue;
-      yield* walkFiles(full);
-    } else {
-      const ext = path.extname(entry);
-      if (EXTENSIONS.has(ext)) yield full;
-    }
+/** Walk TS sources via Bun.Glob (onlyFiles default true per bun-types). */
+function* walkFiles(): Generator<string> {
+  for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
+    if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
+    yield path.join(ROOT, rel);
   }
 }
 
 const results: Array<{ file: string; line: number; text: string; pattern: string }> = [];
 
-for await (const file of walkFiles(ROOT)) {
+for (const file of walkFiles()) {
   const content = await readText(file);
   const lines = content.split('\n');
 

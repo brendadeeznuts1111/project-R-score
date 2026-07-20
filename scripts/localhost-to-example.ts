@@ -1,34 +1,35 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readTextSync } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * 🔧 Replace example.com URLs with example.com
  *
  * Changes all example.com URLs to use example.com for better portability
  */
 
-import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
+import {
+  readTextSync,
+  writeText,
+  listFilesSync,
+  dirExistsSync,
+} from './lib/fs-bun';
 
 class LocalhostToExampleConverter {
   private readonly sourceDirectories = ['lib', 'services', 'scripts', 'docs', 'tools'];
-  private readonly fileExtensions = ['.ts', '.js', '.md', '.json'];
+  private readonly fileGlob = '**/*.{ts,js,md,json}';
 
-  convertAll(): void {
+  async convertAll(): Promise<void> {
     console.info('🔄 Converting example.com URLs to example.com...\n');
 
     let totalFiles = 0;
     let totalReplacements = 0;
 
     for (const dir of this.sourceDirectories) {
-      try {
-        statSync(dir);
-        const { fileCount, replacements } = this.convertDirectory(dir);
-        totalFiles += fileCount;
-        totalReplacements += replacements;
-      } catch {
-        // Directory doesn't exist, skip it
-      }
+      if (!dirExistsSync(dir)) continue;
+      const { fileCount, replacements } = await this.convertDirectory(dir);
+      totalFiles += fileCount;
+      totalReplacements += replacements;
     }
 
     console.info(`\n🎯 Conversion Summary:`);
@@ -46,67 +47,47 @@ class LocalhostToExampleConverter {
     }
   }
 
-  private convertDirectory(dir: string): { fileCount: number; replacements: number } {
+  private async convertDirectory(
+    dir: string
+  ): Promise<{ fileCount: number; replacements: number }> {
     let fileCount = 0;
     let replacements = 0;
 
-    function scanDirectory(currentDir: string): void {
-      const entries = readdirSync(currentDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(currentDir, entry.name);
-
-        if (entry.isDirectory()) {
-          scanDirectory(fullPath);
-        } else {
-          const ext = entry.name.substring(entry.name.lastIndexOf('.'));
-          if (this.fileExtensions.includes(ext)) {
-            const fileReplacements = this.convertFile(fullPath);
-            if (fileReplacements > 0) {
-              console.info(`  ✅ ${fullPath}: ${fileReplacements} replacements`);
-              replacements += fileReplacements;
-            }
-            fileCount++;
-          }
-        }
+    for (const rel of listFilesSync(this.fileGlob, { cwd: dir })) {
+      const fullPath = join(dir, rel);
+      const fileReplacements = await this.convertFile(fullPath);
+      if (fileReplacements > 0) {
+        console.info(`  ✅ ${fullPath}: ${fileReplacements} replacements`);
+        replacements += fileReplacements;
       }
+      fileCount++;
     }
-
-    const self = this;
-    scanDirectory = scanDirectory.bind(self);
-    scanDirectory(dir);
 
     return { fileCount, replacements };
   }
 
-  private convertFile(filePath: string): number {
+  private async convertFile(filePath: string): Promise<number> {
     try {
       let content = readTextSync(filePath);
       const originalContent = content;
 
-      // Replace various example.com patterns
       const replacements = [
-        // HTTP example.com with different ports
         {
           pattern: /http:\/\/example.com:[0-9]+/g,
           replacement: 'http://example.com',
         },
-        // HTTPS example.com with different ports
         {
           pattern: /https:\/\/example.com:[0-9]+/g,
           replacement: 'https://example.com',
         },
-        // Plain example.com (shouldn't exist but just in case)
         {
           pattern: /\blocalhost\b/g,
           replacement: 'example.com',
         },
-        // 127.0.0.1 with ports
         {
           pattern: /http:\/\/127\.0\.0\.1:[0-9]+/g,
           replacement: 'http://example.com',
         },
-        // HTTPS 127.0.0.1 with ports
         {
           pattern: /https:\/\/127\.0\.0\.1:[0-9]+/g,
           replacement: 'https://example.com',
@@ -123,22 +104,19 @@ class LocalhostToExampleConverter {
         }
       }
 
-      // Only write file if changes were made
       if (content !== originalContent) {
-        writeFileSync(filePath, content);
+        // Bun.write is async; createPath defaults true (bun-types)
+        await writeText(filePath, content);
       }
 
       return totalReplacements;
     } catch (error) {
-      console.warn(`⚠️  Could not process ${filePath}: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️  Could not process ${filePath}: ${message}`);
       return 0;
     }
   }
 }
-
-// ============================================================================
-// CLI INTERFACE
-// ============================================================================
 
 async function main(): Promise<void> {
   const command = process.argv[2];
@@ -146,9 +124,10 @@ async function main(): Promise<void> {
 
   switch (command) {
     case 'convert':
+    case undefined:
     case '':
       console.info('🔄 Localhost to Example.com Converter\n');
-      converter.convertAll();
+      await converter.convertAll();
       break;
 
     case 'help':
@@ -158,27 +137,12 @@ async function main(): Promise<void> {
 🔄 Localhost to Example.com Converter
 
 USAGE:
-  bun run scripts/example.com-to-example.ts [command]
+  bun run scripts/localhost-to-example.ts [command]
 
 COMMANDS:
   convert     Convert all example.com URLs to example.com (default)
   help        Show this help message
-
-WHAT IT DOES:
-  • Replaces http://example.com with http://example.com
-  • Replaces https://example.com with https://example.com
-  • Replaces 127.0.0.1:3000 with example.com
-  • Works with .ts, .js, .md, .json files
-  • Preserves port numbers in comments when needed
-
-EXAMPLES:
-  bun run scripts/example.com-to-example.ts
-  bun run scripts/example.com-to-example.ts convert
-
-NOTE:
-  This makes URLs more portable and removes example.com dependencies
-  from documentation and example code.
-      `);
+`);
       break;
 
     default:

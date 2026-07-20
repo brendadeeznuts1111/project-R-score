@@ -154,3 +154,57 @@ export function listFilesSync(
 ): string[] {
   return [...scanFilesSync(pattern, options)];
 }
+
+/**
+ * Probe whether `path` is a readable directory via Glob.scanSync.
+ * (Bun.file(path).exists() is for files — directories often report exists=false.)
+ * @see https://bun.com/docs/runtime/glob — GlobScanOptions / scanSync
+ */
+export function isDirectorySync(path: string): boolean {
+  try {
+    // Throws ENOENT (missing) or ENOTDIR (regular file)
+    new Bun.Glob('*').scanSync({ cwd: path, onlyFiles: false }).next();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Alias: directory exists and is readable. */
+export function dirExistsSync(path: string): boolean {
+  return isDirectorySync(path);
+}
+
+/**
+ * Direct children of a directory (files + dirs), relative names.
+ * Uses `onlyFiles: false` so directories are included.
+ * @see https://bun.com/docs/runtime/glob — GlobScanOptions.onlyFiles
+ */
+export function listEntriesSync(
+  dir: string,
+  options: { dot?: boolean } = {}
+): string[] {
+  try {
+    return [
+      ...new Bun.Glob('*').scanSync({
+        cwd: dir,
+        onlyFiles: false,
+        dot: options.dot ?? false,
+      }),
+    ];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Ensure a directory exists by writing a zero-byte marker via Bun.write
+ * (createPath defaults true — creates intermediate segments).
+ * Prefer writing the real payload when possible; this is for empty dirs only.
+ * @see https://bun.com/docs/runtime/file-io — Bun.write createPath
+ */
+export async function ensureDir(path: string): Promise<void> {
+  if (isDirectorySync(path)) return;
+  const marker = `${path.replace(/\/$/, '')}/.bun-keep`;
+  await Bun.write(marker, '');
+}

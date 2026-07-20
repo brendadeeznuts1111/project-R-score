@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText } from './lib/fs-bun';
+import { readText, listFilesSync } from './lib/fs-bun';
 /**
  * Bulk fix: replace non-null assertions (!) with safe access patterns.
  *
@@ -11,42 +12,23 @@ import { readText } from './lib/fs-bun';
  * safe fallback patterns where feasible.
  */
 
-import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
 const EXTENSIONS = new Set(['.ts', '.tsx']);
 
-async function* walkFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE_DIRS.has(entry)) continue;
-      yield* walkFiles(full);
-    } else {
-      const ext = path.extname(entry);
-      if (EXTENSIONS.has(ext)) yield full;
-    }
+function* walkFiles(): Generator<string> {
+  for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
+    if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
+    yield path.join(ROOT, rel);
   }
 }
 
 let total = 0;
 let filesWithAssertions = 0;
 
-for await (const file of walkFiles(ROOT)) {
+for (const file of walkFiles()) {
   const content = await readText(file);
   const lines = content.split('\n');
   let fileCount = 0;

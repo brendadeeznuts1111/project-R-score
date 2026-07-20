@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readTextSync } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * 🚀 Prefetch Optimization for Examples
  *
@@ -8,8 +8,8 @@ import { readTextSync } from './lib/fs-bun';
  * to all example code and documentation
  */
 
-import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
+import { readTextSync, writeText, listFilesSync, dirExistsSync } from './lib/fs-bun';
 
 interface PrefetchOptimization {
   type: 'dns-prefetch' | 'preconnect' | 'prefetch' | 'preload' | 'modulepreload';
@@ -20,7 +20,7 @@ interface PrefetchOptimization {
 
 class ExamplePrefetchOptimizer {
   private readonly sourceDirectories = ['lib', 'services', 'docs', 'examples', 'tools'];
-  private readonly fileExtensions = ['.ts', '.js', '.md', '.html'];
+  private readonly fileGlob = '**/*.{ts,js,md,html}';
 
   // Common external resources that should be prefetched
   private readonly prefetchResources: PrefetchOptimization[] = [
@@ -51,21 +51,17 @@ class ExamplePrefetchOptimizer {
     { type: 'dns-prefetch', url: 'https://developer.mozilla.org' },
   ];
 
-  optimizeAll(): void {
+  async optimizeAll(): Promise<void> {
     console.info('🚀 Optimizing examples with prefetch hints...\n');
 
     let totalFiles = 0;
     let totalOptimizations = 0;
 
     for (const dir of this.sourceDirectories) {
-      try {
-        statSync(dir);
-        const { fileCount, optimizations } = this.optimizeDirectory(dir);
-        totalFiles += fileCount;
-        totalOptimizations += optimizations;
-      } catch {
-        // Directory doesn't exist, skip it
-      }
+      if (!dirExistsSync(dir)) continue;
+      const { fileCount, optimizations } = await this.optimizeDirectory(dir);
+      totalFiles += fileCount;
+      totalOptimizations += optimizations;
     }
 
     console.info(`\n🎯 Optimization Summary:`);
@@ -84,40 +80,27 @@ class ExamplePrefetchOptimizer {
     }
   }
 
-  private optimizeDirectory(dir: string): { fileCount: number; optimizations: number } {
+  private async optimizeDirectory(
+    dir: string
+  ): Promise<{ fileCount: number; optimizations: number }> {
     let fileCount = 0;
     let optimizations = 0;
 
-    function scanDirectory(currentDir: string): void {
-      const entries = readdirSync(currentDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(currentDir, entry.name);
-
-        if (entry.isDirectory()) {
-          scanDirectory(fullPath);
-        } else {
-          const ext = entry.name.substring(entry.name.lastIndexOf('.'));
-          if (this.fileExtensions.includes(ext)) {
-            const fileOptimizations = this.optimizeFile(fullPath, ext);
-            if (fileOptimizations > 0) {
-              console.info(`  ✅ ${fullPath}: ${fileOptimizations} optimizations`);
-              optimizations += fileOptimizations;
-            }
-            fileCount++;
-          }
-        }
+    for (const rel of listFilesSync(this.fileGlob, { cwd: dir })) {
+      const fullPath = join(dir, rel);
+      const ext = rel.includes('.') ? `.${rel.split('.').pop()}` : '';
+      const fileOptimizations = await this.optimizeFile(fullPath, ext);
+      if (fileOptimizations > 0) {
+        console.info(`  ✅ ${fullPath}: ${fileOptimizations} optimizations`);
+        optimizations += fileOptimizations;
       }
+      fileCount++;
     }
-
-    const self = this;
-    scanDirectory = scanDirectory.bind(self);
-    scanDirectory(dir);
 
     return { fileCount, optimizations };
   }
 
-  private optimizeFile(filePath: string, extension: string): number {
+  private async optimizeFile(filePath: string, extension: string): Promise<number> {
     try {
       let content = readTextSync(filePath);
       const originalContent = content;
@@ -135,15 +118,16 @@ class ExamplePrefetchOptimizer {
           break;
       }
 
-      // Only write file if changes were made
+      // Only write file if changes were made (Bun.write is async — Promise<number>)
       if (content !== originalContent) {
-        writeFileSync(filePath, content);
+        await writeText(filePath, content);
         return this.countOptimizations(originalContent, content);
       }
 
       return 0;
     } catch (error) {
-      console.warn(`⚠️  Could not process ${filePath}: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️  Could not process ${filePath}: ${message}`);
       return 0;
     }
   }
@@ -340,9 +324,10 @@ async function main(): Promise<void> {
 
   switch (command) {
     case 'optimize':
+    case undefined:
     case '':
       console.info('🚀 Example Prefetch Optimizer\n');
-      optimizer.optimizeAll();
+      await optimizer.optimizeAll();
       break;
 
     case 'help':

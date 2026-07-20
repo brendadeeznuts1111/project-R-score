@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText, writeText } from './lib/fs-bun';
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * Bulk fix: replace console.log with console.info across TypeScript files.
  *
@@ -11,43 +11,23 @@ import { readText, writeText } from './lib/fs-bun';
  * console.group, and console.groupEnd are permitted.
  */
 
-import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { readText, writeText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
-const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
-
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache']);
 
-async function* walkTsFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE_DIRS.has(entry)) continue;
-      yield* walkTsFiles(full);
-    } else {
-      const ext = path.extname(entry);
-      if (EXTENSIONS.has(ext)) yield full;
-    }
+function* walkTsFiles(): Generator<string> {
+  for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx}', { cwd: ROOT })) {
+    if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
+    yield path.join(ROOT, rel);
   }
 }
 
 let replaced = 0;
 let filesChanged = 0;
 
-for await (const file of walkTsFiles(ROOT)) {
+for (const file of walkTsFiles()) {
   const content = await readText(file);
 
   // Replace non-template-literal console.log calls

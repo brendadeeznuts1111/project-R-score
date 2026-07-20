@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText, writeText } from './lib/fs-bun';
+import { readText, writeText, listFilesSync } from './lib/fs-bun';
 /**
  * Pin all dependency versions to exact versions across the monorepo.
  *
@@ -21,7 +22,6 @@ import { readText, writeText } from './lib/fs-bun';
  *   - URL-based versions
  */
 
-import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -74,28 +74,10 @@ function pinVersion(version: string): string {
   return version;
 }
 
-async function* walkFiles(dir: string): AsyncGenerator<string> {
-  let entries: string[];
-  try {
-    entries = await readdir(dir);
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry);
-    if (entry === '.git' || entry === 'node_modules' || entry === '.npm-cache') continue;
-    let s;
-    try {
-      s = await stat(full);
-    } catch {
-      continue;
-    }
-    if (s.isDirectory()) {
-      if (EXCLUDE_DIRS.has(entry) || (entry.startsWith('.') && entry !== '.')) continue;
-      yield* walkFiles(full);
-    } else if (entry === 'package.json') {
-      yield full;
-    }
+function* walkFiles(): Generator<string> {
+  for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
+    if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
+    yield path.join(ROOT, rel);
   }
 }
 
@@ -104,7 +86,7 @@ const DEP_FIELDS = ['dependencies', 'devDependencies', 'peerDependencies', 'opti
 let totalPinned = 0;
 let filesChanged = 0;
 
-for await (const file of walkFiles(ROOT)) {
+for (const file of walkFiles()) {
   let content: string;
   let pkg: Record<string, unknown>;
   try {
@@ -172,7 +154,7 @@ for await (const file of walkFiles(ROOT)) {
 // Count total in dry-run mode
 if (DRY_RUN) {
   let dryCount = 0;
-  for await (const file of walkFiles(ROOT)) {
+  for (const file of walkFiles()) {
     let content: string;
     try {
       content = await readText(file);
