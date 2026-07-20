@@ -982,9 +982,7 @@ class ProjectServer {
     const maxRequests = parseInt(
       Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512'
     );
-    const maxConnectionsPerHost = parseInt(
-      Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'
-    );
+    const maxConnectionsPerHost = parseInt(Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
 
     this.config = {
       ...config,

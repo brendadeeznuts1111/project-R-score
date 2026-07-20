@@ -398,9 +398,7 @@ export class BunMCPServer {
     });
 
     const MCP_SERVER_HOST =
-      validateHost(Bun.env.MCP_SERVER_HOST) ||
-      validateHost(Bun.env.SERVER_HOST) ||
-      'localhost';
+      validateHost(Bun.env.MCP_SERVER_HOST) || validateHost(Bun.env.SERVER_HOST) || 'localhost';
     console.info(`🌐 Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
     console.info(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }

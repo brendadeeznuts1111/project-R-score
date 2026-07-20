@@ -91,8 +91,7 @@ export class R2EventSystem {
     this.startHeartbeat();
 
     this.isRunning = true;
-    const EVENT_SYSTEM_HOST =
-      Bun.env.EVENT_SYSTEM_HOST || Bun.env.SERVER_HOST || 'localhost';
+    const EVENT_SYSTEM_HOST = Bun.env.EVENT_SYSTEM_HOST || Bun.env.SERVER_HOST || 'localhost';
     console.info(
       styled(
         `✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`,
