@@ -1974,7 +1974,11 @@
     "docs:orchestration:graph": "bun run docs/orchestration-graph.ts flow",
     "docs:domain:graph": "bun run docs/domain-renderer.ts full",
     "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
-    "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types"
+    "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types",
+    "discover:bun-native": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --write-report",
+    "discover:bun-native:json": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --json",
+    "discover:bun-native:apply": "bun run scripts/bun-native-discover.ts --apply --roots=scripts --write-report",
+    "discover:bun-native:apply:dry": "bun run scripts/bun-native-discover.ts --apply --dry-run --roots=scripts"
   },
   "dependencies": {
     "@factorywager/ab-testing": "workspace:*",

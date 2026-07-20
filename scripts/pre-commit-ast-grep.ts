@@ -33,7 +33,7 @@ type Gate = {
 };
 
 function printHelp(): void {
-  console.log(`pre-commit-ast-grep — ast-grep rule tests, semver policy, supply-chain packages
+  console.info(`pre-commit-ast-grep — ast-grep rule tests, semver policy, supply-chain packages
 
 Usage:
   bun scripts/pre-commit-ast-grep.ts [mode]

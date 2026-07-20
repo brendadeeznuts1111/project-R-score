@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
+import { readJsonSync } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 type DemoContract = {
@@ -62,7 +63,7 @@ function parseMaxRegressionPct(): number {
 
 function readJsonSafe<T>(path: string): T | null {
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as T;
+    return readJsonSync(path) as T;
   } catch {
     return null;
   }
@@ -96,7 +97,7 @@ async function runShell(
 }
 
 async function main() {
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as DemoContractFile;
+  const contract = readJsonSync(CONTRACT_PATH) as DemoContractFile;
   const filter = parseFilter();
   const limit = parseLimit();
   const compareLast = parseCompareLast();

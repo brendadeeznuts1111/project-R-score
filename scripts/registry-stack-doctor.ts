@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
-import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+
+import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 type Options = {
@@ -109,12 +111,12 @@ function canonicalNpmrcBlock(): string {
 
 async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> {
   const abs = resolve(path);
-  if (!existsSync(abs)) {
+  if (!fileExistsSync(abs)) {
     if (!fix) return { id: 'registry_config_exists', ok: false, detail: `missing ${abs}` };
-    await writeFile(abs, canonicalRegistryConfigText(), 'utf8');
+    await writeText(abs, canonicalRegistryConfigText());
     return { id: 'registry_config_exists', ok: true, detail: `created ${abs}` };
   }
-  const text = await readFile(abs, 'utf8');
+  const text = await readText(abs);
   const hasCanonicalUrl =
     text.includes(`url: "${CANONICAL_REGISTRY_URL}"`) ||
     text.includes(`"url": "${CANONICAL_REGISTRY_URL}"`);
@@ -127,7 +129,7 @@ async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> 
   if (!fix) {
     return { id: 'registry_config_canonical', ok: false, detail: `non-canonical values in ${abs}` };
   }
-  await writeFile(abs, canonicalRegistryConfigText(), 'utf8');
+  await writeText(abs, canonicalRegistryConfigText());
   return { id: 'registry_config_canonical', ok: true, detail: `rewrote ${abs}` };
 }
 
@@ -138,7 +140,7 @@ async function ensureEnv(path: string, fix: boolean): Promise<Check> {
     ['R2_REGISTRY_BUCKET', DEFAULT_R2_BUCKET],
     ['REGISTRY_CDN_URL', CDN_REGISTRY_URL],
   ];
-  const raw = existsSync(abs) ? await readFile(abs, 'utf8') : '';
+  const raw = fileExistsSync(abs) ? await readText(abs) : '';
   const missing = required.filter(([k]) => !new RegExp(`^${k}=`, 'm').test(raw));
   if (missing.length === 0)
     return { id: 'registry_env', ok: true, detail: `${abs} has required keys` };
@@ -150,17 +152,17 @@ async function ensureEnv(path: string, fix: boolean): Promise<Check> {
     };
   }
   const dir = resolve(abs, '..');
-  if (!existsSync(dir)) await mkdir(dir, { recursive: true });
+  if (!fileExistsSync(dir)) await mkdir(dir, { recursive: true });
   const append = missing.map(([k, v]) => `${k}=${v}`).join('\n');
   const next = `${raw}${raw && !raw.endsWith('\n') ? '\n' : ''}\n# Registry stack defaults (doctor --fix)\n${append}\n`;
-  await writeFile(abs, next, 'utf8');
+  await writeText(abs, next);
   return { id: 'registry_env', ok: true, detail: `added ${missing.length} keys to ${abs}` };
 }
 
 async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
   const abs = resolve(path);
   const block = canonicalNpmrcBlock();
-  const raw = existsSync(abs) ? await readFile(abs, 'utf8') : '';
+  const raw = fileExistsSync(abs) ? await readText(abs) : '';
   const hasScopeA = raw.includes(`@factory-wager:registry=${CANONICAL_REGISTRY_URL}/`);
   const hasScopeB = raw.includes(`@factorywager:registry=${CANONICAL_REGISTRY_URL}/`);
   const hasAuth = raw.includes(`//registry.factory-wager.com/:_authToken=\${FACTORY_WAGER_TOKEN}`);
@@ -175,13 +177,13 @@ async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
     };
   }
   const next = `${raw}${raw && !raw.endsWith('\n') ? '\n' : ''}\n# Canonical FactoryWager registry\n${block}`;
-  await writeFile(abs, next, 'utf8');
+  await writeText(abs, next);
   return { id: 'npmrc_canonical', ok: true, detail: `updated ${abs}` };
 }
 
 async function checkPackagePublishConfig(): Promise<Check> {
   const pkgPath = resolve('package.json');
-  const pkg = JSON.parse(await readFile(pkgPath, 'utf8')) as any;
+  const pkg = JSON.parse(await readText(pkgPath)) as any;
   const registry = String(pkg?.publishConfig?.registry || '');
   const ok = registry === `${CANONICAL_REGISTRY_URL}/` || registry === CANONICAL_REGISTRY_URL;
   return {

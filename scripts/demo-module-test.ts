@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readJsonSync, readTextSync } from './lib/fs-bun';
 
-import { readFileSync } from 'node:fs';
+
 import { join } from 'node:path';
 import { validateTier1SourcesForDemo } from './demo-tier1-baselines';
 
@@ -37,14 +39,14 @@ function main() {
     process.exit(1);
   }
 
-  const serverSource = readFileSync(SERVER_PATH, 'utf8');
+  const serverSource = readTextSync(SERVER_PATH);
   const demoIds = collectDemoIds(serverSource);
   if (!demoIds.includes(id)) {
     console.error(`[demo-test] unknown demo id '${id}'`);
     process.exit(1);
   }
 
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as {
+  const contract = readJsonSync(CONTRACT_PATH) as {
     modules: Record<
       string,
       {

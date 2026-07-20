@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from './lib/fs-bun';
 /**
  * Scan for empty catch blocks and add basic error logging.
  *
@@ -15,7 +17,7 @@
  * (e.g., cleanup in finally blocks). Review after running.
  */
 
-import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -67,7 +69,7 @@ async function main() {
   let filesChanged = 0;
 
   for await (const file of walkFiles(ROOT)) {
-    const content = await readFile(file, 'utf-8');
+    const content = await readText(file);
     const matches = content.match(EMPTY_CATCH_RE);
     if (!matches) continue;
 
@@ -79,7 +81,7 @@ async function main() {
     }
 
     const newContent = content.replace(EMPTY_CATCH_RE, replacement);
-    await writeFile(file, newContent, 'utf-8');
+    await writeText(file, newContent);
     totalFixed += matches.length;
     filesChanged++;
     console.info(`Fixed ${file}: ${matches.length} empty catch(es)`);

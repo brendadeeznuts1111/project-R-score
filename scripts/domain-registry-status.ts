@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+
+import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { loadDomainRegistry, resolveDomainRegistry } from './lib/domain-registry';
 
@@ -81,9 +83,9 @@ function parseArgs(argv: string[]): Options {
 
 async function readJsonIfExists(path: string): Promise<any | null> {
   const resolvedPath = resolve(path);
-  if (!existsSync(resolvedPath)) return null;
+  if (!fileExistsSync(resolvedPath)) return null;
   try {
-    return JSON.parse(await readFile(resolvedPath, 'utf8'));
+    return JSON.parse(await readText(resolvedPath));
   } catch {
     return null;
   }
@@ -203,20 +205,18 @@ type DoctorResult = {
 
 async function ensureRegistryFile(registryPath: string, fix: boolean): Promise<DoctorCheck> {
   const path = resolve(registryPath);
-  if (existsSync(path)) {
+  if (fileExistsSync(path)) {
     return { id: 'registry_file_exists', ok: true, detail: path };
   }
   if (!fix) {
     return { id: 'registry_file_exists', ok: false, detail: `missing ${path}` };
   }
   const templatePath = resolve('.search/domain-registry.json');
-  if (existsSync(templatePath)) {
+  if (fileExistsSync(templatePath)) {
     return { id: 'registry_file_exists', ok: true, detail: `already available at ${templatePath}` };
   }
   await mkdir(resolve('.search'), { recursive: true });
-  await writeFile(
-    path,
-    JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n',
+  await writeText(path, JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n',
     'utf8'
   );
   return { id: 'registry_file_exists', ok: true, detail: `created ${path}` };
@@ -250,8 +250,8 @@ async function ensureEnvScaffold(
     defaults.push([name, 'replace_me']);
   }
 
-  const exists = existsSync(envPath);
-  const current = exists ? await readFile(envPath, 'utf8') : '';
+  const exists = fileExistsSync(envPath);
+  const current = exists ? await readText(envPath) : '';
   const keys = parseEnvKeys(current);
   const missing = defaults.filter(([key]) => !keys.has(key));
   if (missing.length === 0) {
@@ -268,7 +268,7 @@ async function ensureEnvScaffold(
   const header = '\n# Search Domain Registry defaults (doctor --fix)\n';
   const lines = missing.map(([key, value]) => `${key}=${value}`).join('\n') + '\n';
   const next = `${current}${current.endsWith('\n') || current.length === 0 ? '' : '\n'}${header}${lines}`;
-  await writeFile(envPath, next, 'utf8');
+  await writeText(envPath, next);
   return { id: 'env_scaffold', ok: true, detail: `added ${missing.length} keys to ${envPath}` };
 }
 

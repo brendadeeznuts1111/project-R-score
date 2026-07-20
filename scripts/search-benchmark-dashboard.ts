@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -23,8 +24,8 @@
  * @license MIT
  */
 
-import { readFile } from 'node:fs/promises';
-import { existsSync, statSync } from 'node:fs';
+
+import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
 import { S3Client } from 'bun';
@@ -258,7 +259,7 @@ async function proxyFetch(input: string | URL, init: RequestInit = {}): Promise<
 }
 
 async function readLocalJson(path: string): Promise<Response> {
-  if (!existsSync(path)) {
+  if (!fileExistsSync(path)) {
     return jsonResponse(
       {
         error: 'not_found',
@@ -268,7 +269,7 @@ async function readLocalJson(path: string): Promise<Response> {
       { status: 404, source: 'local' }
     );
   }
-  const raw = await readFile(path, 'utf8');
+  const raw = await readText(path);
   return new Response(raw, {
     headers: {
       'content-type': 'application/json; charset=utf-8',
@@ -6754,7 +6755,7 @@ async function main(): Promise<void> {
     if (wanted) {
       return resolve(dir, wanted, 'publish-manifest.json');
     }
-    if (!existsSync(indexJson)) {
+    if (!fileExistsSync(indexJson)) {
       return null;
     }
     try {
@@ -6768,7 +6769,7 @@ async function main(): Promise<void> {
 
   const resolveLatestSnapshotId = async (source: 'local' | 'r2'): Promise<string | null> => {
     if (source === 'local') {
-      if (!existsSync(indexJson)) return null;
+      if (!fileExistsSync(indexJson)) return null;
       try {
         const idx = (await Bun.file(indexJson).json()) as { snapshots?: Array<{ id?: string }> };
         return idx.snapshots?.[0]?.id || null;
@@ -6868,7 +6869,7 @@ async function main(): Promise<void> {
       }
     }
 
-    if (!existsSync(latestJson)) {
+    if (!fileExistsSync(latestJson)) {
       return { ok: false, error: 'latest_json_missing' };
     }
     try {
@@ -6886,7 +6887,7 @@ async function main(): Promise<void> {
       path: string,
       category: InventoryItem['category'] = 'snapshot'
     ): InventoryItem => {
-      if (!existsSync(path)) {
+      if (!fileExistsSync(path)) {
         return { name, exists: false, size: null, lastModified: null, category };
       }
       const st = statSync(path);
@@ -7185,7 +7186,7 @@ async function main(): Promise<void> {
     const mtimes = new Map<string, number>();
     const readMtime = (file: string): number => {
       try {
-        return existsSync(file) ? statSync(file).mtimeMs : 0;
+        return fileExistsSync(file) ? statSync(file).mtimeMs : 0;
       } catch {
         return 0;
       }
@@ -8364,7 +8365,7 @@ async function main(): Promise<void> {
             );
           }
         }
-        if (!existsSync(latestJson)) {
+        if (!fileExistsSync(latestJson)) {
           return jsonResponse(
             {
               error: 'not_found',
@@ -8427,7 +8428,7 @@ async function main(): Promise<void> {
           return r2Snapshot;
         }
         const localSnapshotPath = resolve(dir, id, 'snapshot.json');
-        if (optional && !existsSync(localSnapshotPath)) {
+        if (optional && !fileExistsSync(localSnapshotPath)) {
           return jsonResponse(
             {
               missing: true,
@@ -8703,7 +8704,7 @@ async function main(): Promise<void> {
             { status: 400, source: 'r2' }
           );
         }
-        if (!existsSync(rssXml)) {
+        if (!fileExistsSync(rssXml)) {
           return jsonResponse(
             { error: 'rss_not_found', message: `RSS feed not found: ${rssXml}`, path: rssXml },
             { status: 404, source: 'local' }
@@ -8730,7 +8731,7 @@ async function main(): Promise<void> {
             { status: 400, source: 'local' }
           );
         }
-        if (!existsSync(loopStatusJson)) {
+        if (!fileExistsSync(loopStatusJson)) {
           return jsonResponse(
             {
               error: 'not_found',
@@ -8740,11 +8741,11 @@ async function main(): Promise<void> {
             { status: 404, source: 'local' }
           );
         }
-        const raw = JSON.parse(await readFile(loopStatusJson, 'utf8')) as any;
+        const raw = JSON.parse(await readText(loopStatusJson)) as any;
         let latestId: string | null = null;
-        if (existsSync(latestJson)) {
+        if (fileExistsSync(latestJson)) {
           try {
-            const latest = JSON.parse(await readFile(latestJson, 'utf8')) as any;
+            const latest = JSON.parse(await readText(latestJson)) as any;
             latestId = latest?.id || null;
           } catch {
             latestId = null;

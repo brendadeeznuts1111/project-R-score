@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from './lib/fs-bun';
 /**
  * Bulk fix: convert `export default function Name` to `export function Name`
  * and `export default Name` to `export const Name = ...` where possible.
@@ -14,7 +16,7 @@
  * (e.g., Next.js pages, dynamic imports).
  */
 
-import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.argv[2] || process.cwd();
@@ -60,7 +62,7 @@ let totalFixed = 0;
 let filesChanged = 0;
 
 for await (const file of walkFiles(ROOT)) {
-  const content = await readFile(file, 'utf-8');
+  const content = await readText(file);
   let newContent = content;
   let changed = false;
 
@@ -94,7 +96,7 @@ for await (const file of walkFiles(ROOT)) {
     continue;
   }
 
-  await writeFile(file, newContent, 'utf-8');
+  await writeText(file, newContent);
   const funcs = (content.match(PATTERN_FUNC) || []).length;
   const classes = (content.match(PATTERN_CLASS) || []).length;
   const consts = (content.match(PATTERN_CONST) || []).length;

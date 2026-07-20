@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
+
+
 import { resolve } from 'node:path';
 
 type SitemapPage = {
@@ -99,8 +101,8 @@ async function detectDomain(): Promise<string> {
   if (envDomain) return envDomain;
 
   const cnamePath = resolve('CNAME');
-  if (existsSync(cnamePath)) {
-    const cname = String(await readFile(cnamePath, 'utf8'))
+  if (fileExistsSync(cnamePath)) {
+    const cname = String(await readText(cnamePath))
       .trim()
       .toLowerCase();
     if (cname) return cname;
@@ -125,7 +127,7 @@ async function buildSitemapPagesXml(domain: string): Promise<string> {
   const rows = await Promise.all(
     PAGES.map(async page => {
       const local = resolve(page.localFile);
-      const lastmod = existsSync(local) ? await gitLastmod(local) : new Date().toISOString();
+      const lastmod = fileExistsSync(local) ? await gitLastmod(local) : new Date().toISOString();
       const loc = `https://${domain}${page.path}`;
       return [
         '  <url>',
@@ -164,10 +166,10 @@ async function buildSitemapIndexXml(domain: string): Promise<string> {
 async function main(): Promise<void> {
   const domain = await detectDomain();
   const pagesXml = await buildSitemapPagesXml(domain);
-  await writeFile(SITEMAP_PAGES_PATH, pagesXml, 'utf8');
+  await writeText(SITEMAP_PAGES_PATH, pagesXml);
 
   const indexXml = await buildSitemapIndexXml(domain);
-  await writeFile(SITEMAP_INDEX_PATH, indexXml, 'utf8');
+  await writeText(SITEMAP_INDEX_PATH, indexXml);
 
   console.info(`[sitemap-refresh] domain=${domain}`);
   console.info(`[sitemap-refresh] wrote ${SITEMAP_PAGES_PATH}`);

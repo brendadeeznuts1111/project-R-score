@@ -1,6 +1,8 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText } from './fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+
+
 import { resolve } from 'node:path';
 
 export type DomainRegistryEntry = {
@@ -78,12 +80,12 @@ export function resolveDomainRegistryPath(inputPath?: string): string {
 
 export async function loadDomainRegistry(inputPath?: string): Promise<DomainRegistryData> {
   const path = resolveDomainRegistryPath(inputPath);
-  if (!existsSync(path)) {
+  if (!fileExistsSync(path)) {
     return { path, version: null, entries: [], error: 'registry_not_found' };
   }
 
   try {
-    const parsed = JSON.parse(await readFile(path, 'utf8')) as DomainRegistryDocument;
+    const parsed = JSON.parse(await readText(path)) as DomainRegistryDocument;
     const rows = Array.isArray(parsed?.domains) ? parsed.domains : [];
     const entries = rows
       .map(row => ({

@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText } from './lib/fs-bun';
 
-import { existsSync } from 'node:fs';
-import { readdir, readFile } from 'node:fs/promises';
+
+import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 type PinnedBaseline = {
@@ -95,7 +97,7 @@ async function main(): Promise<void> {
 
   const asJson = args.includes('--json');
   const root = resolve('.search');
-  if (!existsSync(root)) {
+  if (!fileExistsSync(root)) {
     throw new Error('.search directory not found');
   }
 
@@ -111,7 +113,7 @@ async function main(): Promise<void> {
 
   const results: ValidationResult[] = [];
   for (const path of baselineFiles) {
-    const raw = await readFile(path, 'utf8');
+    const raw = await readText(path);
     const parsed = JSON.parse(raw) as PinnedBaseline;
     results.push(validateBaseline(path, parsed));
   }

@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readJsonSync } from './lib/fs-bun';
 
-import { readFileSync } from 'node:fs';
+
 import { join } from 'node:path';
 
 export type Tier1Provider = 'bun-blog' | 'bun-release' | 'bun-docs' | 'mdn' | 'linux-kernel';
@@ -112,12 +114,12 @@ export const TIER1_SOURCES: Record<string, Tier1Source> = {
 };
 
 function getAllDemoIds(): string[] {
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as DemoContractFile;
+  const contract = readJsonSync(CONTRACT_PATH) as DemoContractFile;
   return Object.keys(contract.modules || {});
 }
 
 function loadContractBaselines(): Record<string, ContractBenchmarkBaseline | undefined> {
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as DemoContractFile;
+  const contract = readJsonSync(CONTRACT_PATH) as DemoContractFile;
   const out: Record<string, ContractBenchmarkBaseline | undefined> = {};
   for (const [id, module] of Object.entries(contract.modules || {})) {
     out[id] = module?.benchmarkBaseline;

@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readTextSync } from './lib/fs-bun';
 /**
  * 🔧 Replace example.com URLs with example.com
  *
  * Changes all example.com URLs to use example.com for better portability
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 class LocalhostToExampleConverter {
@@ -79,7 +81,7 @@ class LocalhostToExampleConverter {
 
   private convertFile(filePath: string): number {
     try {
-      let content = readFileSync(filePath, 'utf8');
+      let content = readTextSync(filePath);
       const originalContent = content;
 
       // Replace various example.com patterns

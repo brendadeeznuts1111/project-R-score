@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readTextSync } from './lib/fs-bun';
 /**
  * 🚀 Prefetch Optimization for Examples
  *
@@ -6,7 +8,7 @@
  * to all example code and documentation
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 interface PrefetchOptimization {
@@ -117,7 +119,7 @@ class ExamplePrefetchOptimizer {
 
   private optimizeFile(filePath: string, extension: string): number {
     try {
-      let content = readFileSync(filePath, 'utf8');
+      let content = readTextSync(filePath);
       const originalContent = content;
 
       switch (extension) {

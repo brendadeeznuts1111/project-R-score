@@ -17,7 +17,7 @@ import {
 } from '../lib/gate-map.ts';
 
 function printUsage(): void {
-  console.log('Usage: bun run gate-map:validate [--zone <name>] [--project <id>] [--json]');
+  console.info('Usage: bun run gate-map:validate [--zone <name>] [--project <id>] [--json]');
 }
 
 async function main(): Promise<number> {
@@ -47,31 +47,31 @@ async function main(): Promise<number> {
   );
 
   if (asJson) {
-    console.log(
+    console.info(
       JSON.stringify({ validation, projects, changedPathCount: changed.length }, null, 2)
     );
     return validation.ok ? 0 : 1;
   }
 
-  console.log(formatGateMapTree(map, projects));
-  console.log('');
+  console.info(formatGateMapTree(map, projects));
+  console.info('');
 
   if (validation.issues.length > 0) {
-    console.log('Validation:');
+    console.info('Validation:');
     for (const issue of validation.issues) {
       const prefix = issue.level === 'error' ? 'ERROR' : 'WARN';
       const pid = issue.projectId ? `[${issue.projectId}] ` : '';
-      console.log(`  ${prefix} ${pid}${issue.message}`);
+      console.info(`  ${prefix} ${pid}${issue.message}`);
     }
-    console.log('');
+    console.info('');
   }
 
   if (args.includes('--changed')) {
-    console.log(`Changed paths: ${changed.length} (matched ${projects.length} project(s))`);
-    console.log('');
+    console.info(`Changed paths: ${changed.length} (matched ${projects.length} project(s))`);
+    console.info('');
   }
 
-  console.log(validation.ok ? '✅ gate-map valid' : '❌ gate-map has errors');
+  console.info(validation.ok ? '✅ gate-map valid' : '❌ gate-map has errors');
   return validation.ok ? 0 : 1;
 }
 

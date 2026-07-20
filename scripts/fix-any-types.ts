@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText } from './lib/fs-bun';
 /**
  * Bulk fix: list any-type usages that should be replaced with unknown or proper types.
  *
@@ -8,7 +10,7 @@
  * and reports them. Manual review is needed for each case.
  */
 
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -49,7 +51,7 @@ async function* walkFiles(dir: string): AsyncGenerator<string> {
 const results: Array<{ file: string; line: number; text: string; pattern: string }> = [];
 
 for await (const file of walkFiles(ROOT)) {
-  const content = await readFile(file, 'utf-8');
+  const content = await readText(file);
   const lines = content.split('\n');
 
   for (const { re, label } of patterns) {

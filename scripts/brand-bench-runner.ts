@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -7,8 +9,8 @@
 // @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
-import { existsSync } from 'node:fs';
-import { mkdir, readdir, writeFile } from 'node:fs/promises';
+
+import { mkdir, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { cpus, totalmem, release } from 'node:os';
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
@@ -224,7 +226,7 @@ async function metricFromAsync(
 async function collectProfileFiles(options: RunnerOptions): Promise<string[]> {
   const profileDir = join(options.outputDir, 'profiles');
   const explicit = [...options.profileFiles];
-  if (!existsSync(profileDir)) return explicit;
+  if (!fileExistsSync(profileDir)) return explicit;
 
   const names = await readdir(profileDir);
   for (const name of names) {
@@ -393,8 +395,8 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   const runPath = join(options.outputDir, `${options.runId}.json`);
   const latestPath = join(options.outputDir, 'latest.json');
 
-  await writeFile(runPath, JSON.stringify(report, null, 2));
-  await writeFile(latestPath, JSON.stringify(report, null, 2));
+  await writeText(runPath, JSON.stringify(report, null, 2));
+  await writeText(latestPath, JSON.stringify(report, null, 2));
 
   if (!options.quiet) {
     // Print operations table

@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
 import inspector from 'node:inspector/promises';
@@ -574,11 +576,11 @@ export function renderSummaryMarkdown(
 }
 
 async function readIndex(indexPath: string): Promise<SnapshotIndex> {
-  if (!existsSync(indexPath)) {
+  if (!fileExistsSync(indexPath)) {
     return { updatedAt: new Date().toISOString(), snapshots: [] };
   }
   try {
-    const raw = await readFile(indexPath, 'utf8');
+    const raw = await readText(indexPath);
     const parsed = JSON.parse(raw) as SnapshotIndex;
     if (!Array.isArray(parsed.snapshots)) {
       return { updatedAt: new Date().toISOString(), snapshots: [] };
@@ -688,9 +690,9 @@ export async function main(): Promise<void> {
   if (previousSnapshotId) {
     baselineSnapshotId = previousSnapshotId;
     const previousPath = resolve(outDir, previousSnapshotId, 'snapshot.json');
-    if (existsSync(previousPath)) {
+    if (fileExistsSync(previousPath)) {
       try {
-        previousPayload = JSON.parse(await readFile(previousPath, 'utf8')) as BenchmarkPayload;
+        previousPayload = JSON.parse(await readText(previousPath)) as BenchmarkPayload;
       } catch {
         previousPayload = null;
         baselineSnapshotId = null;
@@ -710,7 +712,7 @@ export async function main(): Promise<void> {
       const result = await runBenchmark(options);
       const { profile } = await session.post('Profiler.stop');
       await session.post('Profiler.disable');
-      await writeFile(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
+      await writeText(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
       console.info(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
       return result;
     } finally {
@@ -719,9 +721,9 @@ export async function main(): Promise<void> {
   })();
   const coveragePath = resolve('reports/search-coverage-loc-latest.json');
   const coverage = await (async () => {
-    if (!existsSync(coveragePath)) return null;
+    if (!fileExistsSync(coveragePath)) return null;
     try {
-      const raw = JSON.parse(await readFile(coveragePath, 'utf8')) as {
+      const raw = JSON.parse(await readText(coveragePath)) as {
         roots?: string[];
         overlap?: string;
         totals?: {
@@ -851,10 +853,10 @@ export async function main(): Promise<void> {
   };
 
   const snapshotJsonText = JSON.stringify(snapshotData, null, 2);
-  await writeFile(snapshotJsonPath, snapshotJsonText);
-  await writeFile(summaryMdPath, summaryMd);
-  await writeFile(latestJsonPath, snapshotJsonText);
-  await writeFile(latestMdPath, summaryMd);
+  await writeText(snapshotJsonPath, snapshotJsonText);
+  await writeText(summaryMdPath, summaryMd);
+  await writeText(latestJsonPath, snapshotJsonText);
+  await writeText(latestMdPath, summaryMd);
 
   const index = existingIndex;
   const top = payload.rankedProfiles[0];
@@ -872,11 +874,11 @@ export async function main(): Promise<void> {
     updatedAt: createdAt,
     snapshots,
   };
-  await writeFile(indexPath, JSON.stringify(nextIndex, null, 2));
+  await writeText(indexPath, JSON.stringify(nextIndex, null, 2));
   const localRssText = buildRssFeed(nextIndex, {
     prefix: options.prefix.replace(/^\/+|\/+$/g, ''),
   });
-  await writeFile(rssPath, localRssText);
+  await writeText(rssPath, localRssText);
 
   console.info(`[search-bench:snapshot] wrote ${snapshotJsonPath}`);
   console.info(`[search-bench:snapshot] wrote ${summaryMdPath}`);
@@ -885,7 +887,7 @@ export async function main(): Promise<void> {
   console.info(`[search-bench:snapshot] wrote ${rssPath}`);
 
   if (!options.upload) {
-    await writeFile(manifestPath, JSON.stringify(baseManifest, null, 2));
+    await writeText(manifestPath, JSON.stringify(baseManifest, null, 2));
     console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
     console.info('[search-bench:snapshot] upload disabled (--no-upload)');
     return;
@@ -893,16 +895,13 @@ export async function main(): Promise<void> {
 
   const r2 = resolveR2Config(options);
   if (!r2) {
-    await writeFile(
-      manifestPath,
-      JSON.stringify(
+    await writeText(manifestPath, JSON.stringify(
         {
           ...baseManifest,
           mode: 'upload-skipped-missing-r2-config',
         },
         null,
-        2
-      )
+        2)
     );
     console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
     console.info('[search-bench:snapshot] R2 config missing; skipped upload');
@@ -1026,7 +1025,7 @@ export async function main(): Promise<void> {
     options.uploadRetries
   );
   pushStat(indexKey, indexStat);
-  await writeFile(rssPath, rssText);
+  await writeText(rssPath, rssText);
   const rssStat = await uploadWithRetry(
     () => uploadText(r2, rssKey, rssText, 'application/rss+xml'),
     options.uploadRetries
@@ -1060,7 +1059,7 @@ export async function main(): Promise<void> {
     );
     pushStat(rssGzKey, rssGzStat);
   }
-  await writeFile(indexPath, JSON.stringify(indexWithR2, null, 2));
+  await writeText(indexPath, JSON.stringify(indexWithR2, null, 2));
 
   const manifest = {
     id,
@@ -1081,7 +1080,7 @@ export async function main(): Promise<void> {
     rssKey,
     mode: 'uploaded',
   };
-  await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+  await writeText(manifestPath, JSON.stringify(manifest, null, 2));
   console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
 
   const manifestText = JSON.stringify(manifest, null, 2);

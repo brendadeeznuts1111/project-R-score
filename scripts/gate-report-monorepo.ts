@@ -30,15 +30,15 @@ import {
 import { toolVersion } from '../plannator/lib/gate-report.ts';
 
 function printUsage(): void {
-  console.log('Usage: bun run gate-report:monorepo [options]');
-  console.log('  --all                 Run all enabled projects (default)');
-  console.log('  --zone <name>         Filter by zone');
-  console.log('  --project <id>        Run one project');
-  console.log('  --changed             Only projects with git changes vs HEAD');
-  console.log('  --fail-fast           Stop after first failing project');
-  console.log('  --open                Open HTML in browser');
-  console.log('  --output <path>       HTML output path');
-  console.log('  --json <path>         JSON output path');
+  console.info('Usage: bun run gate-report:monorepo [options]');
+  console.info('  --all                 Run all enabled projects (default)');
+  console.info('  --zone <name>         Filter by zone');
+  console.info('  --project <id>        Run one project');
+  console.info('  --changed             Only projects with git changes vs HEAD');
+  console.info('  --fail-fast           Stop after first failing project');
+  console.info('  --open                Open HTML in browser');
+  console.info('  --output <path>       HTML output path');
+  console.info('  --json <path>         JSON output path');
 }
 
 async function main(): Promise<number> {
@@ -98,7 +98,7 @@ async function main(): Promise<number> {
   );
 
   if (projects.length === 0) {
-    console.log('No projects matched filter.');
+    console.info('No projects matched filter.');
     return 0;
   }
 
@@ -108,15 +108,15 @@ async function main(): Promise<number> {
     toolVersion(['ast-grep', '--version'], 'not installed'),
   ]);
 
-  console.log(`Running ${projects.length} project(s) from gate-map …`);
+  console.info(`Running ${projects.length} project(s) from gate-map …`);
   const results = [];
   for (const project of projects) {
     process.stdout.write(`  [${project.zone}] ${project.id} … `);
     const result = await runProject(project);
     results.push(result);
-    console.log(result.status === 'pass' ? 'PASS' : 'FAIL');
+    console.info(result.status === 'pass' ? 'PASS' : 'FAIL');
     if (result.status === 'fail' && failFast) {
-      console.log('Stopping early (--fail-fast)');
+      console.info('Stopping early (--fail-fast)');
       break;
     }
   }
@@ -134,8 +134,8 @@ async function main(): Promise<number> {
 
   await Bun.write(htmlPath, buildMonorepoHtml(report));
   await Bun.write(jsonPath, buildMonorepoJson(report));
-  console.log(`\nHTML: ${htmlPath}`);
-  console.log(`JSON: ${jsonPath}`);
+  console.info(`\nHTML: ${htmlPath}`);
+  console.info(`JSON: ${jsonPath}`);
 
   const summaryPath = Bun.env.GITHUB_STEP_SUMMARY;
   if (summaryPath) {

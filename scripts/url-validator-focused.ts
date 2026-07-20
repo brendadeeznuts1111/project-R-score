@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readTextSync } from './lib/fs-bun';
 /**
  * 🔗 Focused URL Validator Script
  *
  * Scans only project source files for URL validation
  */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 interface UrlValidationResult {
@@ -98,7 +100,7 @@ class FocusedUrlValidator {
     const urls: Array<{ url: string; file: string; line: number }> = [];
 
     try {
-      const content = readFileSync(filePath, 'utf8');
+      const content = readTextSync(filePath);
       const lines = content.split('\n');
 
       // More precise URL regex that avoids template literals with env vars

@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText } from './fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+
+
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
 
@@ -101,9 +103,9 @@ function resolveR2Config(): R2Config | null {
 }
 
 async function readJsonFile(path: string): Promise<any | null> {
-  if (!existsSync(path)) return null;
+  if (!fileExistsSync(path)) return null;
   try {
-    const raw = await readFile(path, 'utf8');
+    const raw = await readText(path);
     return JSON.parse(raw);
   } catch {
     return null;
@@ -157,7 +159,7 @@ async function loadLocalHealth(
   const overallResolved = overallStatus === 'unknown' ? dnsStatus : overallStatus;
 
   const storageStatus =
-    existsSync(input.healthReportPath) && existsSync(input.latestSnapshotPath)
+    fileExistsSync(input.healthReportPath) && fileExistsSync(input.latestSnapshotPath)
       ? 'healthy'
       : 'degraded';
 

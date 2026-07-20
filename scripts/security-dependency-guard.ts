@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
-import { readFile } from 'node:fs/promises';
+
 import { resolve } from 'node:path';
 
 type PackageJson = {
@@ -81,7 +83,7 @@ export function scanBlockedImportsWithGrep(): string {
 
 export async function main(): Promise<void> {
   const pkgPath = resolve('package.json');
-  const raw = JSON.parse(await readFile(pkgPath, 'utf8')) as PackageJson;
+  const raw = JSON.parse(await readText(pkgPath)) as PackageJson;
   const blockedDeps = listBlockedDeps(raw);
   const importHits = rgAvailable() ? scanBlockedImportsWithRipgrep() : scanBlockedImportsWithGrep();
 

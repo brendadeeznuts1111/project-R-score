@@ -1,4 +1,6 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readTextSync } from './lib/fs-bun';
+import { readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 
 type PackageBoundaryRule = {
@@ -83,7 +85,7 @@ function checkRule(rule: PackageBoundaryRule): Violation[] {
 
   const violations: Violation[] = [];
   for (const file of files) {
-    const content = readFileSync(file, 'utf8');
+    const content = readTextSync(file);
     let m: RegExpExecArray | null;
     while ((m = IMPORT_PATTERN.exec(content)) !== null) {
       const specifier = m[1] ?? m[2];

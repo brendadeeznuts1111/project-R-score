@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText } from './lib/fs-bun';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+
 import { join, resolve } from 'node:path';
 import type {
   DecisionEvidence,
@@ -68,7 +70,7 @@ function parseDate(value: string): number {
 
 async function verifyOne(root: string, evidencePath: string): Promise<DecisionVerificationResult> {
   const fullPath = resolve(root, evidencePath);
-  const evidence = JSON.parse(await readFile(fullPath, 'utf8')) as DecisionEvidence;
+  const evidence = JSON.parse(await readText(fullPath)) as DecisionEvidence;
   const digestComputed = digestEvidence(evidence);
   const digestExpected = evidence.evidence_digest || '';
   const hasT1 = hasTier(evidence.sources, 'T1');
@@ -127,7 +129,7 @@ export async function verifyDecisionEvidence(options: VerifyOptions): Promise<{
   results: DecisionVerificationResult[];
 }> {
   const indexPath = join(options.root, 'index.json');
-  const index = JSON.parse(await readFile(indexPath, 'utf8')) as DecisionIndex;
+  const index = JSON.parse(await readText(indexPath)) as DecisionIndex;
   const entries = Array.isArray(index.decisions) ? index.decisions : [];
   const filtered = options.decisionId
     ? entries.filter(entry => entry.decision_id === options.decisionId)

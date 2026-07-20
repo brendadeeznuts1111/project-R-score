@@ -66,9 +66,9 @@ if (sortKey === 'files') {
 }
 
 if (flags.json) {
-  console.log(JSON.stringify(rows, null, 2));
+  console.info(JSON.stringify(rows, null, 2));
 } else {
-  console.log(
+  console.info(
     Bun.inspect.table(
       rows.map(r => ({
         Project: r.name,

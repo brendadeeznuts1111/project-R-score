@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
+import { fileExistsSync } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { existsSync } from 'node:fs';
+
 import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dir, '..');
@@ -46,7 +47,7 @@ function looksHighConfidenceSecret(value: string): boolean {
 }
 
 function parseEnvFile(filePath: string, tracked: boolean) {
-  if (!existsSync(filePath)) return;
+  if (!fileExistsSync(filePath)) return;
   const rel = filePath.replace(ROOT + '/', '');
   const lines = Bun.file(filePath).text();
   return lines.then(content => {

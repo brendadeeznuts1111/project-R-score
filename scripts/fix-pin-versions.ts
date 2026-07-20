@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from './lib/fs-bun';
 /**
  * Pin all dependency versions to exact versions across the monorepo.
  *
@@ -19,7 +21,7 @@
  *   - URL-based versions
  */
 
-import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -106,7 +108,7 @@ for await (const file of walkFiles(ROOT)) {
   let content: string;
   let pkg: Record<string, unknown>;
   try {
-    content = await readFile(file, 'utf-8');
+    content = await readText(file);
     pkg = JSON.parse(content);
   } catch {
     continue;
@@ -163,7 +165,7 @@ for await (const file of walkFiles(ROOT)) {
     continue;
   }
 
-  await writeFile(file, JSON.stringify(pkg, null, 2) + '\n', 'utf-8');
+  await writeText(file, JSON.stringify(pkg, null, 2) + '\n', 'utf-8');
   filesChanged++;
 }
 
@@ -173,7 +175,7 @@ if (DRY_RUN) {
   for await (const file of walkFiles(ROOT)) {
     let content: string;
     try {
-      content = await readFile(file, 'utf-8');
+      content = await readText(file);
     } catch {
       continue;
     }

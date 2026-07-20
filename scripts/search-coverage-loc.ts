@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
+import { readText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+
 import { resolve } from 'node:path';
 
 type Options = {
@@ -101,7 +102,7 @@ async function fileStats(files: string[]): Promise<FileStat[]> {
   const out: FileStat[] = [];
   for (const path of files) {
     try {
-      const content = await readFile(path, 'utf8');
+      const content = await readText(path);
       out.push({
         path,
         lines: countLines(content),

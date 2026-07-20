@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readJsonSync, readTextSync } from './lib/fs-bun';
 
-import { readFileSync } from 'node:fs';
+
 import { join } from 'node:path';
 import {
   validateTier1CoverageAcrossDemos,
@@ -64,8 +66,8 @@ function fail(messages: string[]): never {
 }
 
 function main() {
-  const serverSource = readFileSync(SERVER_PATH, 'utf8');
-  const contractFile = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as DemoContractFile;
+  const serverSource = readTextSync(SERVER_PATH);
+  const contractFile = readJsonSync(CONTRACT_PATH) as DemoContractFile;
   const demoIds = collectDemoIds(serverSource);
   const contractIds = Object.keys(contractFile.modules || {});
 

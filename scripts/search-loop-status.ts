@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
-import { existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
+
+
 import { resolve } from 'node:path';
 import {
   LOOP_FRESHNESS_WINDOW_MINUTES,
@@ -98,9 +100,9 @@ function reliability(profile: ReturnType<typeof profileByName>): number | null {
 }
 
 async function readJsonFile<T>(path: string): Promise<T | null> {
-  if (!existsSync(path)) return null;
+  if (!fileExistsSync(path)) return null;
   try {
-    const raw = await readFile(path, 'utf8');
+    const raw = await readText(path);
     return JSON.parse(raw) as T;
   } catch {
     return null;
@@ -355,8 +357,8 @@ async function main(): Promise<void> {
     loopClosedReason,
   };
 
-  await writeFile(outJson, `${JSON.stringify(output, null, 2)}\n`);
-  await writeFile(outMd, buildMarkdown(output));
+  await writeText(outJson, `${JSON.stringify(output, null, 2)}\n`);
+  await writeText(outMd, buildMarkdown(output));
   console.info(`[search:loop:status] wrote ${outJson}`);
   console.info(`[search:loop:status] wrote ${outMd}`);
 }

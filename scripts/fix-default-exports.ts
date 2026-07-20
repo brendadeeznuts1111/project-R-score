@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText } from './lib/fs-bun';
 /**
  * Bulk fix: identify default exports that should be named exports.
  *
@@ -9,7 +11,7 @@
  * since the correct name depends on context.
  */
 
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -50,7 +52,7 @@ console.info('Files with default exports:');
 console.info('='.repeat(60));
 
 for await (const file of walkFiles(ROOT)) {
-  const content = await readFile(file, 'utf-8');
+  const content = await readText(file);
   let match;
 
   if ((match = content.match(defaultExportRE))) {

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from './lib/fs-bun';
 /**
  * Bulk fix: replace `as any` with `as unknown` or proper type assertions.
  *
@@ -13,7 +15,7 @@
  * - `(Bun as any).method` -> `(Bun as Record<string, unknown>).method`
  */
 
-import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.argv[2] || process.cwd();
@@ -79,7 +81,7 @@ let filesChanged = 0;
 for await (const file of walkFiles(ROOT)) {
   let content: string;
   try {
-    content = await readFile(file, 'utf-8');
+    content = await readText(file);
   } catch {
     continue;
   }
@@ -107,7 +109,7 @@ for await (const file of walkFiles(ROOT)) {
     continue;
   }
 
-  await writeFile(file, newContent, 'utf-8');
+  await writeText(file, newContent);
   totalFixed += count;
   filesChanged++;
 }

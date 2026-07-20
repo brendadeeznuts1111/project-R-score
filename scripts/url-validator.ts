@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { readTextSync } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * 🔗 URL Validator Script
@@ -7,7 +8,7 @@
  * Checks for hardcoded URLs, validates formats, and ensures standards compliance
  */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import { URLNormalizer } from '../lib/docs/constants/utils.ts';
 import { urlService } from '../lib/core/url-service.ts';
@@ -126,7 +127,7 @@ class UrlValidator {
     const urls: Array<{ url: string; file: string; line: number }> = [];
 
     try {
-      const content = readFileSync(filePath, 'utf8');
+      const content = readTextSync(filePath);
       const lines = content.split('\n');
 
       const urlRegex = /https?:\/\/[^\s"')\]}]+/g;

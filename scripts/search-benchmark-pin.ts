@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readJson, readText, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+
+import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 type Severity = 'ok' | 'warn' | 'fail';
@@ -241,7 +243,7 @@ export function toBaseline(
 }
 
 export async function readJson<T>(path: string): Promise<T> {
-  const raw = await readFile(path, 'utf8');
+  const raw = await readText(path);
   return JSON.parse(raw) as T;
 }
 
@@ -492,7 +494,7 @@ export function resolveBaselinePath(
 ): string {
   if (explicitBaselinePath) return resolve(explicitBaselinePath);
   const packPath = buildPackBaselinePath(defaultPath, currentQueryPack);
-  if (packPath !== defaultPath && existsSync(packPath)) {
+  if (packPath !== defaultPath && fileExistsSync(packPath)) {
     return packPath;
   }
   return defaultPath;
@@ -597,12 +599,12 @@ export async function pin(
   rationale: string,
   pinnedBy: string
 ): Promise<void> {
-  if (!existsSync(fromPath)) {
+  if (!fileExistsSync(fromPath)) {
     throw new Error(`Snapshot not found: ${fromPath}`);
   }
   const snapshot = await readJson<Snapshot>(fromPath);
   let previousSnapshotId: string | null = null;
-  if (existsSync(outPath)) {
+  if (fileExistsSync(outPath)) {
     try {
       const existing = await readJson<PinnedBaseline>(outPath);
       previousSnapshotId = existing?.snapshot?.id ? String(existing.snapshot.id) : null;
@@ -620,7 +622,7 @@ export async function pin(
   }
 
   await mkdir(dirname(outPath), { recursive: true });
-  await writeFile(outPath, `${JSON.stringify(baseline, null, 2)}\n`, 'utf8');
+  await writeText(outPath, `${JSON.stringify(baseline, null, 2)}\n`, 'utf8');
 
   console.info(`[search:bench:pin] baseline saved: ${outPath}`);
   console.info(
@@ -641,7 +643,7 @@ export async function comparePayload(
   strict = false,
   bootstrapMissingBaseline = false
 ): Promise<CompareResultPayload> {
-  if (!existsSync(fromPath)) {
+  if (!fileExistsSync(fromPath)) {
     throw new Error(`Current snapshot not found: ${fromPath}`);
   }
 
@@ -693,7 +695,7 @@ async function collectTrendSamples(
   }
   const root = resolve('reports/search-benchmark');
   const indexPath = resolve(root, 'index.json');
-  if (!existsSync(indexPath)) {
+  if (!fileExistsSync(indexPath)) {
     return [];
   }
 
@@ -717,10 +719,10 @@ async function collectTrendSamples(
     const id = String(entry.id || '').trim();
     if (!id) continue;
     const fallbackPath = resolve(root, id, 'snapshot.json');
-    const snapshotPath = existsSync(String(entry.localJson || ''))
+    const snapshotPath = fileExistsSync(String(entry.localJson || ''))
       ? resolve(String(entry.localJson))
       : fallbackPath;
-    if (!existsSync(snapshotPath)) continue;
+    if (!fileExistsSync(snapshotPath)) continue;
     try {
       const snap = await readJson<Snapshot>(snapshotPath);
       const strict = findStrictProfile(snap);
@@ -749,7 +751,7 @@ async function compareResolved(
   bootstrapMissingBaseline: boolean
 ): Promise<CompareResultPayload> {
   let baselinePath = resolveBaselinePath(baselinePathInput, outPath, current.snapshot.queryPack);
-  if (!existsSync(baselinePath)) {
+  if (!fileExistsSync(baselinePath)) {
     if (!bootstrapMissingBaseline) {
       throw new Error(`Pinned baseline not found: ${baselinePath}`);
     }
@@ -763,7 +765,7 @@ async function compareResolved(
       previousSnapshotId: null,
     };
     await mkdir(dirname(bootstrapPath), { recursive: true });
-    await writeFile(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`, 'utf8');
+    await writeText(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`, 'utf8');
     baselinePath = bootstrapPath;
     console.warn(
       `[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`

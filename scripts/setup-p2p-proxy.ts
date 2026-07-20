@@ -5,7 +5,7 @@
  * One-time setup for secrets, webhooks, and configuration
  */
 
-import { writeFile } from 'fs/promises';
+import { writeText } from './lib/fs-bun';
 
 const BRAND_NAME = process.env.PROXY_BRAND_NAME || 'HaircutPro';
 
@@ -44,7 +44,7 @@ NGROK_AUTH_TOKEN=your_ngrok_token_here
     await Bun.file('.env').text();
     console.info('ℹ️  .env already exists');
   } catch {
-    await writeFile('.env', envTemplate);
+    await writeText('.env', envTemplate);
     console.info('✅ Created .env template');
   }
 
@@ -57,7 +57,7 @@ tunnels:
     domain: ${BRAND_NAME.toLowerCase()}.ngrok.app
 `;
 
-  await writeFile('ngrok.yml', ngrokConfig);
+  await writeText('ngrok.yml', ngrokConfig);
   console.info('✅ Created ngrok.yml');
 
   // 3. Create setup instructions
@@ -166,7 +166,7 @@ Client → QR/Link → Branded Page → P2P Payment → Your Account
 - Logs: \`bun run server/p2p-proxy-server-enhanced.ts 2>&1 | tee proxy.log\`
 `;
 
-  await writeFile('SETUP_P2P_PROXY.md', instructions);
+  await writeText('SETUP_P2P_PROXY.md', instructions);
   console.info('✅ Created SETUP_P2P_PROXY.md');
 
   // 4. Create a simple test script
@@ -217,7 +217,7 @@ async function testProxy() {
 testProxy().catch(console.error);
 `;
 
-  await writeFile('tests/p2p-proxy-quick-test.ts', testScript);
+  await writeText('tests/p2p-proxy-quick-test.ts', testScript);
   console.info('✅ Created tests/p2p-proxy-quick-test.ts');
 
   console.info('\n╔════════════════════════════════════════════════════════════╗');

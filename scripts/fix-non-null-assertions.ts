@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText } from './lib/fs-bun';
 /**
  * Bulk fix: replace non-null assertions (!) with safe access patterns.
  *
@@ -8,7 +10,7 @@
  * safe fallback patterns where feasible.
  */
 
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -44,7 +46,7 @@ let total = 0;
 let filesWithAssertions = 0;
 
 for await (const file of walkFiles(ROOT)) {
-  const content = await readFile(file, 'utf-8');
+  const content = await readText(file);
   const lines = content.split('\n');
   let fileCount = 0;
 

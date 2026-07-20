@@ -1,5 +1,7 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { fileExistsSync, readJsonSync } from './fs-bun';
 // @see https://bun.com/docs/runtime/color — Bun.color
-import { existsSync, readFileSync } from 'node:fs';
+
 import { resolve } from 'node:path';
 import { checkContrast, generatePalette, parseHSL } from '../../lib/utils/advanced-hsl-colors';
 
@@ -134,13 +136,13 @@ function loadConfig(): Required<DomainBrandingConfig> {
   if (cachedConfig) return cachedConfig;
 
   const path = resolve(process.cwd(), 'config', 'domain-branding.json');
-  if (!existsSync(path)) {
+  if (!fileExistsSync(path)) {
     cachedConfig = DEFAULT_CONFIG;
     return cachedConfig;
   }
 
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as DomainBrandingConfig;
+    const parsed = readJsonSync(path) as DomainBrandingConfig;
     const fallback = DEFAULT_CONFIG.default;
     const normalized: Required<DomainBrandingConfig> = {
       default: {

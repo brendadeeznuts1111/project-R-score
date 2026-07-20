@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { readText, writeText } from './lib/fs-bun';
 /**
  * Bulk fix: replace console.log with console.info across TypeScript files.
  *
@@ -9,7 +11,7 @@
  * console.group, and console.groupEnd are permitted.
  */
 
-import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOT = process.cwd();
@@ -46,7 +48,7 @@ let replaced = 0;
 let filesChanged = 0;
 
 for await (const file of walkTsFiles(ROOT)) {
-  const content = await readFile(file, 'utf-8');
+  const content = await readText(file);
 
   // Replace non-template-literal console.log calls
   // Skip lines that are already console.info/error/warn/table/group/groupEnd
@@ -54,7 +56,7 @@ for await (const file of walkTsFiles(ROOT)) {
   const newContent = content.replace(/(?<![.\w])console\.log\(/g, 'console.info(');
 
   if (newContent !== content) {
-    await writeFile(file, newContent, 'utf-8');
+    await writeText(file, newContent);
     const count =
       (newContent.match(/console\.info\(/g) || []).length -
       (content.match(/console\.info\(/g) || []).length;
