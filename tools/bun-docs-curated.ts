@@ -10,6 +10,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/utils — Bun.inspect, Bun.inspect.custom, Bun.inspect.table
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
@@ -162,6 +163,24 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   { term: 'Bun.redis', path: 'runtime/redis', description: 'Redis/Valkey client' },
   { term: 'ffi', path: 'runtime/ffi', description: 'Call native libraries from JavaScript' },
+  {
+    term: 'Bun.inspect',
+    path: 'runtime/utils',
+    description: 'Serialize a value to a string using Bun\'s console formatter (depth/colors/sorted)',
+    related: ['runtime/console'],
+  },
+  {
+    term: 'Bun.inspect.custom',
+    path: 'runtime/utils',
+    description: 'Well-known symbol for custom Bun.inspect serialization',
+    related: ['runtime/utils'],
+  },
+  {
+    term: 'Bun.inspect.table',
+    path: 'runtime/utils',
+    description: 'Format tabular data into an ASCII table string (like console.table but returns a string)',
+    related: ['runtime/utils'],
+  },
 ];
 
 const byTerm = new Map<string, CuratedEntry>();

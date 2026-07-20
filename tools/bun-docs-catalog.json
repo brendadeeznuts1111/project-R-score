@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-20T15:30:31.561Z",
+  "generated": "2026-07-20T15:33:27.203Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
   "blogUrl": "https://bun.com/blog/bun-v1.4.0",
@@ -1040,7 +1040,7 @@
     {
       "name": "Bun.build",
       "type": "api",
-      "description": "Bun implements the Node.js module resolution algorithm, so you can import packages from `node_modules` with a bare specifier.",
+      "description": "Bundler and compile-to-binary",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -1539,7 +1539,7 @@
     {
       "name": "Bun.inspect",
       "type": "api",
-      "description": "Bun prints a small source-code preview when an unhandled exception or rejection occurs.",
+      "description": "Serialize a value to a string using Bun's console formatter (depth/colors/sorted)",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -1547,6 +1547,7 @@
       "anchor": "bun-inspect",
       "allPages": [
         "https://bun.com/docs/runtime/utils",
+        "https://bun.com/docs/runtime/console",
         "https://bun.com/docs/runtime/debugger"
       ],
       "section": "runtime",
@@ -1557,7 +1558,7 @@
     {
       "name": "Bun.inspect.custom",
       "type": "api",
-      "description": "Serializes an object to a `string` exactly as it would be printed by `console.log`.",
+      "description": "Well-known symbol for custom Bun.inspect serialization",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -1574,6 +1575,7 @@
     {
       "name": "Bun.inspect.table",
       "type": "api",
+      "description": "Format tabular data into an ASCII table string (like console.table but returns a string)",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -2100,7 +2102,7 @@
     {
       "name": "Bun.s3",
       "type": "api",
-      "description": "<Frame caption=\"Left: Bun v1.1.44. Right: Node.js v23.6.0\">",
+      "description": "S3-compatible object storage client",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -2149,7 +2151,7 @@
     {
       "name": "Bun.secrets",
       "type": "api",
-      "description": "Unlike environment variables, `Bun.secrets`:",
+      "description": "OS keychain-backed secrets API",
       "stability": "experimental",
       "releasedIn": "1.3.0",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
@@ -2367,7 +2369,7 @@
     {
       "name": "Bun.sql",
       "type": "api",
-      "description": "MySQL support is built into `Bun.SQL`, with the same tagged template literal interface, and is compatible with MySQL 5.7+ and MySQL 8.0+:",
+      "description": "Postgres and MySQL client with connection pooling",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -2488,7 +2490,7 @@
     {
       "name": "Bun.Terminal",
       "type": "api",
-      "description": "The `Terminal` object returned by `proc.terminal` has the following methods:",
+      "description": "PTY terminal for spawned processes (Windows ConPTY in 1.3.14)",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -3099,7 +3101,7 @@
     {
       "name": "FFI",
       "type": "concept",
-      "description": "Use Bun's FFI module to efficiently call native libraries from JavaScript",
+      "description": "Call native libraries from JavaScript",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -3247,7 +3249,7 @@
     {
       "name": "HTMLRewriter",
       "type": "api",
-      "description": "Use Bun's HTMLRewriter to transform HTML documents with CSS selectors",
+      "description": "Streaming HTML transformation",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -11373,7 +11375,7 @@
     {
       "name": "bun publish",
       "type": "concept",
-      "description": "Use `bun publish` to publish a package to the npm registry",
+      "description": "Publish packages to npm registry",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
@@ -12057,7 +12059,7 @@
     {
       "name": "Workspaces",
       "type": "config",
-      "description": "Develop complex monorepos with multiple independent packages",
+      "description": "Monorepo workspace support",
       "stability": "stable",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",

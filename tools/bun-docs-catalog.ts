@@ -542,6 +542,13 @@ export async function buildCatalog(opts?: {
     // supplement is optional until generator has been run
   }
 
+  // Curated descriptions are authoritative: override any index/auto/supplement text.
+  for (const c of CURATED_ENTRIES) {
+    if (!c.description) continue;
+    const entry = map.get(normalizeName(c.term));
+    if (entry) entry.description = c.description;
+  }
+
   // 5) Inject changelog-only tokens missing from docs merge (e.g. process.env fixes)
   const clIndex = changelogIndex();
   for (const [key, cl] of clIndex) {
