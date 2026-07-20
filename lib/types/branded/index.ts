@@ -43,6 +43,9 @@ import type {
   StepId,
   WebhookId,
   FeedId,
+  RunId,
+  DecisionId,
+  LoopId,
 } from './operations.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
@@ -82,4 +85,7 @@ export type AnyId =
   | JobId
   | StepId
   | WebhookId
-  | FeedId;
+  | FeedId
+  | RunId
+  | DecisionId
+  | LoopId;

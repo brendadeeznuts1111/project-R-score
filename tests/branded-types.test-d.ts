@@ -45,17 +45,20 @@ import {
   asAuditId,
   asChallengeId,
   asCorrelationId,
+  asDecisionId,
   asDeploymentId,
   asDocumentId,
   asFeedId,
   asIdentityId,
   asJobId,
+  asLoopId,
   asOperationId,
   asPipelineId,
   asPolicyId,
   asProjectId,
   asRequestId,
   asResourceId,
+  asRunId,
   asSessionId,
   asSnapshotId,
   asStepId,
@@ -165,6 +168,9 @@ const anyJob: AnyId = asJobId('j');
 const anyStep: AnyId = asStepId('st');
 const anyWebhook: AnyId = asWebhookId('wh');
 const anyFeed: AnyId = asFeedId('f');
+const anyRun: AnyId = asRunId('run');
+const anyDecision: AnyId = asDecisionId('dec');
+const anyLoop: AnyId = asLoopId('loop');
 
 // @ts-expect-error — a plain string is not any branded ID
 const plainAsAny: AnyId = 'plain';

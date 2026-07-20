@@ -16,6 +16,9 @@ export type JobId = BrandedString<'JobId'>;
 export type StepId = BrandedString<'StepId'>;
 export type WebhookId = BrandedString<'WebhookId'>;
 export type FeedId = BrandedString<'FeedId'>;
+export type RunId = BrandedString<'RunId'>;
+export type DecisionId = BrandedString<'DecisionId'>;
+export type LoopId = BrandedString<'LoopId'>;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -25,6 +28,9 @@ const job = defineBrandConstructors('JobId');
 const step = defineBrandConstructors('StepId');
 const webhook = defineBrandConstructors('WebhookId');
 const feed = defineBrandConstructors('FeedId');
+const run = defineBrandConstructors('RunId');
+const decision = defineBrandConstructors('DecisionId');
+const loop = defineBrandConstructors('LoopId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -57,6 +63,18 @@ export const parseWebhookId = webhook.parse;
 export const asFeedId = feed.as;
 export const tryFeedId = feed.try;
 export const parseFeedId = feed.parse;
+
+export const asRunId = run.as;
+export const tryRunId = run.try;
+export const parseRunId = run.parse;
+
+export const asDecisionId = decision.as;
+export const tryDecisionId = decision.try;
+export const parseDecisionId = decision.parse;
+
+export const asLoopId = loop.as;
+export const tryLoopId = loop.try;
+export const parseLoopId = loop.parse;
 
 export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
   {
@@ -114,5 +132,26 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'RSS / event feed identity',
+  },
+  {
+    name: 'RunId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Benchmark / search-loop run identity',
+  },
+  {
+    name: 'DecisionId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Decision evidence record identity',
+  },
+  {
+    name: 'LoopId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Search / maintenance loop identity',
   },
 ] as const;

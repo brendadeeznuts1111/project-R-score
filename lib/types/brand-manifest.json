@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-20T01:12:36.676Z",
+  "generatedAt": "2026-07-20T01:35:59.953Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 25,
+  "brandCount": 28,
   "domains": [
     "audit",
     "deployment",
@@ -363,6 +363,46 @@
         "wire-input"
       ],
       "description": "RSS / event feed identity"
+    },
+    {
+      "name": "RunId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Benchmark / search-loop run identity"
+    },
+    {
+      "name": "DecisionId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Decision evidence record identity"
+    },
+    {
+      "name": "LoopId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Search / maintenance loop identity"
     }
   ],
   "constructorTiers": {
