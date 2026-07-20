@@ -110,7 +110,23 @@ async function main(): Promise<void> {
     stderr: 'inherit',
   });
   if ((await brandCheck.exited) !== 0) {
-    console.error('❌ New unbranded ID declarations — use lib/types/branded.ts brands or // brand-ok');
+    console.error(
+      '❌ New unbranded ID declarations — use lib/types/branded.ts brands or // brand-ok'
+    );
+    process.exit(1);
+  }
+
+  // Repo-wide smart gate: the brand rollout is complete (actionable = 0),
+  // so any actionable hit anywhere in lib/ now fails the commit — this is
+  // the standing local CI gate. Manual run: bun run check:brands
+  console.info('🏷️  Branded IDs (repo-wide smart gate)...');
+  const brandSmart = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--strict'], {
+    cwd: repoRoot,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await brandSmart.exited) !== 0) {
+    console.error('❌ Actionable unbranded IDs in repo — see: bun run check:brands');
     process.exit(1);
   }
 
