@@ -22,9 +22,13 @@
  *   bun tools/generate-tokens-from-docs.ts
  *   bun tools/generate-tokens-from-docs.ts --section=runtime
  *   bun tools/generate-tokens-from-docs.ts --section=runtime,bundler,test,pm
+ *   bun tools/generate-tokens-from-docs.ts --version=1.4.0
  * Outputs:
- *   - tools/bun-docs-token-supplement.json  (typed token entries for bun-docs-catalog.ts)
+ *   - tools/bun-docs-token-supplement.json  ({ bunVersion, releaseUrl, blogUrl, entries[] })
  *   - tools/bun-pm-tokens.json              (legacy nested format, kept for compatibility)
+ *
+ * Version pin: default Bun.version. releaseUrl = GitHub tag; blogUrl = bun.com/blog/bun-vX.Y.Z.
+ * Docs pages stay unversioned. commitHash is Bun.revision when building against the runtime.
  */
 
 const LLMS_URL = 'https://bun.com/docs/llms.txt';
@@ -78,7 +82,12 @@ function pageScore(type: TokenType, name: string, pageUrl: string): number {
   let score = 0;
 
   // Domain preference by token type.
-  if (type === 'cli-flag' || type === 'env-var' || type === 'bunfig-key' || type === 'package-json-key') {
+  if (
+    type === 'cli-flag' ||
+    type === 'env-var' ||
+    type === 'bunfig-key' ||
+    type === 'package-json-key'
+  ) {
     if (path.includes('/docs/pm/')) score += 200;
     if (path.includes('/docs/runtime/bunfig')) score += 50;
   } else if (type === 'api') {
@@ -96,7 +105,11 @@ function pageScore(type: TokenType, name: string, pageUrl: string): number {
   // Token name or base appears in the path = more specific.
   const slug = slugify(name);
   if (slug && path.includes(slug)) score += 30;
-  const base = name.replace(/^Bun\./, '').replace(/^bun:/, '').replace(/^--/, '').toLowerCase();
+  const base = name
+    .replace(/^Bun\./, '')
+    .replace(/^bun:/, '')
+    .replace(/^--/, '')
+    .toLowerCase();
   if (base && base !== slug && path.includes(base)) score += 20;
 
   return score;
@@ -424,9 +437,25 @@ function buildLegacyCatalog(entries: CatalogEntry[]): Record<string, LegacyPageC
   return Object.fromEntries(pages.entries());
 }
 
-function parseSections(): string[] {
+type GeneratorArgs = {
+  sections: string[];
+  version: string;
+  releaseUrl: string;
+  blogUrl: string;
+  commitHash?: string;
+  versionPinned: boolean;
+};
+
+function normalizeBunVersion(version: string): string {
+  return version.trim().replace(/^bun-v/i, '').replace(/^v/i, '');
+}
+
+function parseArgs(): GeneratorArgs {
+  const argv = Bun.argv.slice(2);
   const sections = new Set<string>();
-  for (const arg of Bun.argv.slice(2)) {
+  let version: string | undefined;
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
     if (arg.startsWith('--section=')) {
       for (const s of arg.slice(10).split(',')) {
         const section = s.trim();
@@ -436,13 +465,34 @@ function parseSections(): string[] {
         }
         sections.add(section);
       }
+    } else if (arg.startsWith('--version=')) {
+      version = normalizeBunVersion(arg.slice(10));
+    } else if (arg === '--version' && argv[i + 1]) {
+      version = normalizeBunVersion(argv[++i]!);
     }
   }
-  return sections.size > 0 ? [...sections] : DOMAINS;
+  // @see https://bun.com/docs/runtime/utils#bun-version
+  const bunVersion = version ?? Bun.version;
+  const versionPinned = bunVersion !== Bun.version;
+  const releaseUrl = `https://github.com/oven-sh/bun/releases/tag/bun-v${bunVersion}`;
+  const blogUrl = `https://bun.com/blog/bun-v${bunVersion}`;
+  // Runtime revision only when pin matches the binary we are running
+  const rev = (Bun as { revision?: string }).revision;
+  const commitHash =
+    !versionPinned && rev ? rev.slice(0, 12) : undefined;
+  return {
+    sections: sections.size > 0 ? [...sections] : DOMAINS,
+    version: bunVersion,
+    releaseUrl,
+    blogUrl,
+    commitHash,
+    versionPinned,
+  };
 }
 
 async function main(): Promise<void> {
-  const sections = parseSections();
+  const args = parseArgs();
+  const { sections, version, releaseUrl, blogUrl, commitHash, versionPinned } = args;
   // @see https://bun.com/docs/runtime/http/fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
@@ -461,7 +511,10 @@ async function main(): Promise<void> {
     pages.push({ title, url });
   }
 
-  console.info(`🔍 Scanning ${pages.length} ${sections.join('+')} docs pages for tokens...`);
+  console.info(
+    `🔍 Scanning ${pages.length} ${sections.join('+')} docs pages for tokens` +
+      ` (bunVersion=${version}${versionPinned ? ' pinned' : ''})...`
+  );
   const pageResults = await withConcurrency(pages, 8, async ({ title, url }) => {
     try {
       // @see https://bun.com/docs/runtime/http/fetch
@@ -478,9 +531,29 @@ async function main(): Promise<void> {
   const allEntries = pageResults.flat();
   const merged = mergeEntries(allEntries);
 
-  const supplement = merged.map(toSupplementEntry);
-  await Bun.write(SUPPLEMENT_OUT, JSON.stringify(supplement, null, 2) + '\n');
-  console.info(`\n✅ wrote token supplement → ${SUPPLEMENT_OUT} (${supplement.length} tokens)`);
+  const generated = new Date().toISOString();
+  const entries = merged.map(e =>
+    toSupplementEntry(e, { bunVersion: version, releaseUrl, blogUrl, commitHash, generated })
+  );
+  const payload = {
+    generated,
+    bunVersion: version,
+    releaseUrl,
+    blogUrl,
+    ...(commitHash ? { commitHash } : {}),
+    docsRoot: 'https://bun.com/docs',
+    versionPinned,
+    note: 'docsUrl is unversioned latest; releaseUrl/blogUrl pin versioned release notes',
+    count: entries.length,
+    entries,
+  };
+  await Bun.write(SUPPLEMENT_OUT, JSON.stringify(payload, null, 2) + '\n');
+  console.info(
+    `\n✅ wrote token supplement → ${SUPPLEMENT_OUT} (${entries.length} tokens, Bun ${version})`
+  );
+  console.info(`   release ${releaseUrl}`);
+  console.info(`   blog ${blogUrl}`);
+  if (commitHash) console.info(`   commit ${commitHash}`);
 
   const legacy = buildLegacyCatalog(merged);
   await Bun.write(
@@ -489,6 +562,10 @@ async function main(): Promise<void> {
       {
         _comment:
           'Legacy nested format (kept for compatibility). Prefer tools/bun-docs-catalog.json (built by bun-docs-catalog.ts).',
+        bunVersion: version,
+        releaseUrl,
+        blogUrl,
+        ...(commitHash ? { commitHash } : {}),
         ...legacy,
       },
       null,
@@ -504,6 +581,12 @@ type SupplementEntry = {
   type: 'api' | 'cli-flag' | 'config' | 'concept';
   stability: 'stable' | 'experimental' | 'deprecated';
   description?: string;
+  verifiedOn?: string;
+  lastUpdated?: string;
+  releaseUrl?: string;
+  blogUrl?: string;
+  docsUrl?: string;
+  commitHash?: string;
   canonicalPage: string;
   anchor?: string;
   allPages: string[];
@@ -521,7 +604,21 @@ function sectionFromUrl(pageUrl: string): SupplementEntry['section'] {
   return 'other';
 }
 
-function toSupplementEntry(e: CatalogEntry): SupplementEntry {
+function docsUrlFor(page: string, anchor?: string): string {
+  const base = page.replace(/\.md$/i, '');
+  return anchor ? `${base}#${anchor}` : base;
+}
+
+function toSupplementEntry(
+  e: CatalogEntry,
+  pin: {
+    bunVersion: string;
+    releaseUrl: string;
+    blogUrl: string;
+    commitHash?: string;
+    generated: string;
+  }
+): SupplementEntry {
   let type: SupplementEntry['type'];
   switch (e.type) {
     case 'api':
@@ -541,13 +638,20 @@ function toSupplementEntry(e: CatalogEntry): SupplementEntry {
   }
   const canonical = e.canonicalPage;
   const allPages = [canonical, ...e.allPages.filter(p => p !== canonical)];
+  const anchor = e.anchor || undefined;
   return {
     name: e.name,
     type,
     stability: e.stability,
     description: e.description,
+    verifiedOn: pin.bunVersion,
+    lastUpdated: pin.generated,
+    releaseUrl: pin.releaseUrl,
+    blogUrl: pin.blogUrl,
+    docsUrl: docsUrlFor(canonical, anchor),
+    ...(pin.commitHash ? { commitHash: pin.commitHash } : {}),
     canonicalPage: canonical,
-    anchor: e.anchor || undefined,
+    anchor,
     allPages,
     section: sectionFromUrl(canonical),
   };

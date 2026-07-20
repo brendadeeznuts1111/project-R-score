@@ -10,18 +10,25 @@
  *   description?, stability (stable | experimental | deprecated),
  *   releasedIn? (Bun version when the feature shipped),
  *   lastUpdated? (ISO date docs/index last refreshed for this entry),
- *   verifiedOn? (Bun.version at catalog build),
+ *   verifiedOn? (catalog pin Bun version at build),
+ *   releaseUrl? (GitHub release for releasedIn or verifiedOn),
+ *   blogUrl? (https://bun.com/blog/bun-vX.Y.Z — narrative release notes),
+ *   docsUrl? (unversioned bun.com page + optional #anchor),
  *   canonicalPage, anchor?, allPages
  *
- * Coverage phases: Runtime · Bundler · Test Runner · Guides (later expansion).
- * Dedup by normalized name; canonical page prefers /reference/ then domain docs
- * over /guides/.
+ * Catalog file also carries top-level bunVersion + releaseUrl + blogUrl + docsRoot
+ * (+ commitHash when built against the runtime binary).
+ * Bun docs are not versioned on bun.com (/docs/vX.Y.Z/ does not exist);
+ * the pin is Bun.version (or --version=…) + GitHub release + blog post.
  *
- * Build:  bun tools/bun-docs-catalog.ts build
- * List:   bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api] [--search=WebView] [--json]
- * Lookup: bun tools/bun-docs-catalog.ts get Bun.WebView
+ * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0]
+ * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
+ *                 [--search=WebView] [--verbose] [--json]
+ * Lookup:  bun tools/bun-docs-catalog.ts get Bun.WebView
+ * Verify:  bun tools/bun-docs-catalog.ts verify   # catalog bunVersion vs runtime
  *
- * List columns: name · type · stability · releasedIn · lastUpdated · doc URL (page#anchor)
+ * List header: # catalog bunVersion=…  # release …  # blog https://bun.com/blog/bun-v…
+ * Columns: name · type · stability · releasedIn · lastUpdated · doc URL (page#anchor)
  *
  * Consumed by tools/bun-doc-refs.ts (`catalog` / enriched `suggest`).
  */
@@ -54,8 +61,18 @@ export type DocCatalogEntry = {
   lastUpdated?: string;
   /**
    * Local Bun.version when the catalog was built (verification pin).
+   * Prefer catalog-level `bunVersion` for the pin; this mirrors it on entries.
    */
   verifiedOn?: string;
+  /**
+   * GitHub release for `releasedIn` if known, else for `verifiedOn`.
+   * Docs themselves remain unversioned on bun.com (`docsUrl`).
+   */
+  releaseUrl?: string;
+  /** Narrative release notes on bun.com/blog (version embedded in path). */
+  blogUrl?: string;
+  /** Full docs link (canonicalPage + optional #anchor) — latest unversioned docs. */
+  docsUrl?: string;
   /** Page URL without .md and without fragment */
   canonicalPage: string;
   /** Fragment id without # */
@@ -65,6 +82,58 @@ export type DocCatalogEntry = {
   /** Primary product area */
   section: DocSection;
   aliases?: string[];
+};
+
+/** Normalize bun-v1.3.12 / v1.3.12 / 1.3.12 → 1.3.12 */
+export function normalizeBunVersion(version: string): string {
+  return version.trim().replace(/^bun-v/i, '').replace(/^v/i, '');
+}
+
+/** GitHub release page for a Bun semver (docs are unversioned on bun.com). */
+export function releaseUrlFor(version: string): string {
+  const v = normalizeBunVersion(version);
+  return `https://github.com/oven-sh/bun/releases/tag/bun-v${v}`;
+}
+
+/** Official blog post for a release (version is in the path). */
+export function blogUrlFor(version: string): string {
+  const v = normalizeBunVersion(version);
+  return `https://bun.com/blog/bun-v${v}`;
+}
+
+export function docsUrlFor(page: string, anchor?: string): string {
+  return anchor ? `${pageBase(page)}#${anchor}` : pageBase(page);
+}
+
+/** Parse --version=1.4.0 or --version 1.4.0 from argv; default Bun.version. */
+export function parseVersionFlag(argv: string[] = Bun.argv.slice(2)): string {
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]!;
+    if (a.startsWith('--version=')) return normalizeBunVersion(a.slice(10));
+    if (a === '--version' && argv[i + 1]) return normalizeBunVersion(argv[i + 1]!);
+  }
+  return Bun.version;
+}
+
+/** Short commit from runtime when pin matches Bun.version; undefined when cross-pinned. */
+export function runtimeCommitHash(forVersion: string): string | undefined {
+  if (normalizeBunVersion(forVersion) !== Bun.version) return undefined;
+  const rev = (Bun as { revision?: string }).revision;
+  return rev ? rev.slice(0, 12) : undefined;
+}
+
+export type CatalogFileMeta = {
+  generated: string;
+  bunVersion: string;
+  releaseUrl: string;
+  blogUrl: string;
+  /** Runtime git revision when catalog was built against this binary (optional) */
+  commitHash?: string;
+  /** Unversioned docs root — Bun does not ship /docs/vX.Y.Z/ trees today */
+  docsRoot: string;
+  /** true if bunVersion was pinned via --version rather than runtime default */
+  versionPinned: boolean;
+  entries: DocCatalogEntry[];
 };
 
 type IndexEntry = {
@@ -302,11 +371,14 @@ export async function loadIndex(): Promise<IndexFile> {
   return (await Bun.file(INDEX_PATH).json()) as IndexFile;
 }
 
-export async function buildCatalog(): Promise<DocCatalogEntry[]> {
+export async function buildCatalog(opts?: {
+  bunVersion?: string;
+  versionPinned?: boolean;
+}): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
   const map = new Map<string, DocCatalogEntry>();
   const docsLastUpdated = index.generated;
-  const verifiedOn = Bun.version;
+  const verifiedOn = opts?.bunVersion ?? Bun.version;
 
   // 1) Index pages for covered sections → concept rows (page-level)
   for (const e of index.entries) {
@@ -386,8 +458,9 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
   }
 
   // 4) Generated token supplement (CLI flags, env vars, config keys, APIs, concepts)
+  // Accepts either a bare entry array or { bunVersion?, entries: [...] }.
   try {
-    const supplement = (await Bun.file(TOKEN_SUPPLEMENT_PATH).json()) as Array<{
+    type SuppRow = {
       name: string;
       type: DocRefType;
       stability: DocStability;
@@ -398,7 +471,15 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
       anchor?: string;
       allPages: string[];
       section: DocSection;
-    }>;
+    };
+    const raw = (await Bun.file(TOKEN_SUPPLEMENT_PATH).json()) as
+      | SuppRow[]
+      | { bunVersion?: string; entries?: SuppRow[] };
+    const supplement: SuppRow[] = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw.entries)
+        ? raw.entries
+        : [];
     for (const e of supplement) {
       mergeEntry(map, {
         name: e.name,
@@ -448,19 +529,38 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
     e.allPages = [e.canonicalPage, ...e.allPages.filter(p => p !== e.canonicalPage)];
     e.lastUpdated ??= docsLastUpdated;
     e.verifiedOn = verifiedOn;
+    e.docsUrl = docsUrlFor(e.canonicalPage, e.anchor);
+    // Prefer release notes for the feature ship version; else catalog pin
+    const forRelease = e.releasedIn ?? verifiedOn;
+    e.releaseUrl = releaseUrlFor(forRelease);
+    e.blogUrl = blogUrlFor(forRelease);
   }
 
   return entries;
 }
 
-export async function writeCatalog(entries: DocCatalogEntry[]): Promise<void> {
+export async function writeCatalog(
+  entries: DocCatalogEntry[],
+  opts?: { bunVersion?: string; versionPinned?: boolean; commitHash?: string }
+): Promise<void> {
+  const bunVersion = normalizeBunVersion(opts?.bunVersion ?? Bun.version);
+  const releaseUrl = releaseUrlFor(bunVersion);
+  const blogUrl = blogUrlFor(bunVersion);
+  const commitHash = opts?.commitHash ?? runtimeCommitHash(bunVersion);
   const payload = {
     generated: new Date().toISOString(),
-    bunVersion: Bun.version,
+    bunVersion,
+    releaseUrl,
+    blogUrl,
+    ...(commitHash ? { commitHash } : {}),
+    docsRoot: 'https://bun.com/docs',
+    versionPinned: opts?.versionPinned ?? false,
+    note: 'docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes (GitHub + bun.com/blog)',
     source: {
       index: 'tools/bun-docs-index.json',
       canonicalRefs: 'tools/bun-doc-refs.ts#CANONICAL_REFS',
       curated: 'tools/bun-docs-curated.ts',
+      tokenSupplement: 'tools/bun-docs-token-supplement.json',
     },
     schema: {
       name: 'string',
@@ -469,7 +569,10 @@ export async function writeCatalog(entries: DocCatalogEntry[]): Promise<void> {
       stability: 'stable | experimental | deprecated',
       releasedIn: 'string? — Bun semver when feature shipped (curated)',
       lastUpdated: 'string? — ISO when docs index last refreshed',
-      verifiedOn: 'string? — Bun.version at catalog build',
+      verifiedOn: 'string? — catalog pin Bun version',
+      releaseUrl: 'string? — GitHub release for releasedIn or verifiedOn',
+      blogUrl: 'string? — bun.com/blog/bun-vX.Y.Z narrative notes',
+      docsUrl: 'string? — unversioned bun.com docs page (+ anchor)',
       canonicalPage: 'string',
       anchor: 'string?',
       allPages: 'string[]',
@@ -496,12 +599,34 @@ function countBy<T>(items: T[], key: (t: T) => string): Record<string, number> {
   return o;
 }
 
-export async function loadCatalog(): Promise<DocCatalogEntry[]> {
+export async function loadCatalogFile(): Promise<CatalogFileMeta> {
   if (!(await Bun.file(OUT_PATH).exists())) {
-    return buildCatalog();
+    const bunVersion = parseVersionFlag();
+    const entries = await buildCatalog({ bunVersion });
+    await writeCatalog(entries, {
+      bunVersion,
+      versionPinned: bunVersion !== Bun.version,
+    });
   }
-  const j = (await Bun.file(OUT_PATH).json()) as { entries?: DocCatalogEntry[] };
-  return Array.isArray(j.entries) ? j.entries : buildCatalog();
+  const j = (await Bun.file(OUT_PATH).json()) as Partial<CatalogFileMeta> & {
+    entries?: DocCatalogEntry[];
+  };
+  const entries = Array.isArray(j.entries) ? j.entries : await buildCatalog();
+  const bunVersion = normalizeBunVersion(j.bunVersion ?? Bun.version);
+  return {
+    generated: j.generated ?? new Date().toISOString(),
+    bunVersion,
+    releaseUrl: j.releaseUrl ?? releaseUrlFor(bunVersion),
+    blogUrl: j.blogUrl ?? blogUrlFor(bunVersion),
+    commitHash: j.commitHash,
+    docsRoot: j.docsRoot ?? 'https://bun.com/docs',
+    versionPinned: j.versionPinned ?? false,
+    entries,
+  };
+}
+
+export async function loadCatalog(): Promise<DocCatalogEntry[]> {
+  return (await loadCatalogFile()).entries;
 }
 
 export async function getCatalogEntry(name: string): Promise<DocCatalogEntry | null> {
@@ -516,16 +641,32 @@ export async function getCatalogEntry(name: string): Promise<DocCatalogEntry | n
 
 // ── CLI ───────────────────────────────────────────────────────────────────
 
-function printEntry(e: DocCatalogEntry): void {
-  const url = e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage;
+function printCatalogHeader(meta: CatalogFileMeta, runtime = Bun.version): void {
+  const pin = meta.versionPinned ? ' (pinned via --version)' : '';
+  console.info(`# catalog bunVersion=${meta.bunVersion}${pin}`);
+  console.info(`# release ${meta.releaseUrl}`);
+  console.info(`# blog ${meta.blogUrl}`);
+  if (meta.commitHash) console.info(`# commit ${meta.commitHash}`);
+  console.info(`# docsRoot ${meta.docsRoot}  (unversioned latest)`);
+  if (meta.bunVersion !== runtime) {
+    console.info(`# warn: runtime Bun.version=${runtime} ≠ catalog pin ${meta.bunVersion}`);
+  }
+  console.info(`# generated ${meta.generated}`);
+  console.info('');
+}
+
+function printEntry(e: DocCatalogEntry, verbose = true): void {
+  const url = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
   console.info(`${e.name}`);
   console.info(`  type: ${e.type}  stability: ${e.stability}  section: ${e.section}`);
   if (e.description) console.info(`  ${e.description}`);
   console.info(
     `  releasedIn: ${e.releasedIn ?? 'unknown'}  lastUpdated: ${e.lastUpdated ?? 'unknown'}  verifiedOn: ${e.verifiedOn ?? 'unknown'}`
   );
-  console.info(`  canonical: ${url}`);
-  if (e.allPages.length > 1) {
+  console.info(`  docsUrl: ${url}`);
+  if (e.releaseUrl) console.info(`  releaseUrl: ${e.releaseUrl}`);
+  if (e.blogUrl) console.info(`  blogUrl: ${e.blogUrl}`);
+  if (verbose && e.allPages.length > 1) {
     console.info(`  allPages (${e.allPages.length}):`);
     for (const p of e.allPages) {
       const mark = p === e.canonicalPage ? '★' : ' ';
@@ -535,13 +676,73 @@ function printEntry(e: DocCatalogEntry): void {
   if (e.aliases?.length) console.info(`  aliases: ${e.aliases.join(', ')}`);
 }
 
+/** Exit 0 if catalog pin matches expected version (default: runtime Bun.version). */
+export async function verifyCatalog(
+  expectedVersion: string = Bun.version
+): Promise<{ ok: boolean; messages: string[] }> {
+  const meta = await loadCatalogFile();
+  const messages: string[] = [];
+  let ok = true;
+
+  if (meta.bunVersion !== expectedVersion) {
+    ok = false;
+    messages.push(
+      `catalog bunVersion=${meta.bunVersion} ≠ expected ${expectedVersion} (rebuild: bun tools/bun-docs-catalog.ts build)`
+    );
+  } else {
+    messages.push(`ok bunVersion=${meta.bunVersion}`);
+  }
+
+  const expectedRelease = releaseUrlFor(expectedVersion);
+  if (meta.releaseUrl !== expectedRelease) {
+    ok = false;
+    messages.push(`catalog releaseUrl mismatch: ${meta.releaseUrl} (expected ${expectedRelease})`);
+  } else {
+    messages.push(`ok releaseUrl=${meta.releaseUrl}`);
+  }
+
+  const expectedBlog = blogUrlFor(expectedVersion);
+  if (meta.blogUrl !== expectedBlog) {
+    ok = false;
+    messages.push(`catalog blogUrl mismatch: ${meta.blogUrl} (expected ${expectedBlog})`);
+  } else {
+    messages.push(`ok blogUrl=${meta.blogUrl}`);
+  }
+
+  const mismatched = meta.entries.filter(e => e.verifiedOn && e.verifiedOn !== meta.bunVersion);
+  if (mismatched.length > 0) {
+    ok = false;
+    messages.push(
+      `${mismatched.length} entries have verifiedOn ≠ catalog bunVersion (e.g. ${mismatched[0]!.name}=${mismatched[0]!.verifiedOn})`
+    );
+  } else {
+    messages.push(`ok verifiedOn on ${meta.entries.length} entries`);
+  }
+
+  const missingUrls = meta.entries.filter(e => !e.docsUrl || !e.releaseUrl).length;
+  if (missingUrls > 0) {
+    // Soft warning — rebuild stamps these; do not fail older catalogs hard if pin matches
+    messages.push(`warn: ${missingUrls} entries missing docsUrl/releaseUrl (rebuild to stamp)`);
+  }
+
+  return { ok, messages };
+}
+
 async function main(): Promise<void> {
   const [, , cmd = 'build', ...rest] = Bun.argv;
   if (cmd === 'build') {
-    const entries = await buildCatalog();
-    await writeCatalog(entries);
+    const bunVersion = parseVersionFlag(rest);
+    const versionPinned = bunVersion !== Bun.version;
+    const commitHash = runtimeCommitHash(bunVersion);
+    const entries = await buildCatalog({ bunVersion, versionPinned });
+    await writeCatalog(entries, { bunVersion, versionPinned, commitHash });
     console.info(
       `✅ catalog ${entries.length} entries → tools/bun-docs-catalog.json` +
+        `  bunVersion=${bunVersion}` +
+        (versionPinned ? ' (pinned)' : '') +
+        `  release=${releaseUrlFor(bunVersion)}` +
+        `  blog=${blogUrlFor(bunVersion)}` +
+        (commitHash ? `  commit=${commitHash}` : '') +
         `  (api=${entries.filter(e => e.type === 'api').length}` +
         ` concept=${entries.filter(e => e.type === 'concept').length}` +
         ` flag=${entries.filter(e => e.type === 'cli-flag').length}` +
@@ -550,11 +751,15 @@ async function main(): Promise<void> {
     return;
   }
   if (cmd === 'list') {
-    let entries = await loadCatalog();
+    const meta = await loadCatalogFile();
+    let entries = meta.entries;
     let section: DocSection | undefined;
     let type: DocRefType | undefined;
     let search: string | undefined;
     const json = rest.includes('--json');
+    const verbose = rest.includes('--verbose') || rest.includes('-v');
+    let showVersion = false;
+    let showRelease = false;
     for (let i = 0; i < rest.length; i++) {
       const a = rest[i]!;
       if (a.startsWith('--section=')) section = a.slice(10) as DocSection;
@@ -566,6 +771,10 @@ async function main(): Promise<void> {
       } else if (a.startsWith('--search=')) search = a.slice(9);
       else if (a === '--search' && rest[i + 1]) {
         search = rest[++i];
+      } else if (a === '--version') {
+        showVersion = true;
+      } else if (a === '--release') {
+        showRelease = true;
       }
     }
     if (section) entries = entries.filter(e => e.section === section);
@@ -582,20 +791,50 @@ async function main(): Promise<void> {
       );
     }
     if (json) {
-      process.stdout.write(`${JSON.stringify(entries, null, 2)}\n`);
+      process.stdout.write(
+        `${JSON.stringify(
+          {
+            bunVersion: meta.bunVersion,
+            releaseUrl: meta.releaseUrl,
+            blogUrl: meta.blogUrl,
+            commitHash: meta.commitHash,
+            docsRoot: meta.docsRoot,
+            versionPinned: meta.versionPinned,
+            count: entries.length,
+            entries,
+          },
+          null,
+          2
+        )}\n`
+      );
       return;
     }
-    // Header
+    printCatalogHeader(meta);
+    if (verbose) {
+      for (const e of entries) {
+        printEntry(e, true);
+        console.info('');
+      }
+      console.info(`${entries.length} entries`);
+      if (search) console.info(`(filter --search=${search})`);
+      return;
+    }
+    const verHeader = showVersion ? `${'VERIFIED'.padEnd(10)} ` : '';
+    const relHeader = showRelease ? `${'RELEASE'.padEnd(55)} ` : '';
     console.info(
-      `${'NAME'.padEnd(32)} ${'TYPE'.padEnd(10)} ${'STAB'.padEnd(12)} ${'REL'.padEnd(8)} ${'UPDATED'.padEnd(12)} DOC (page#anchor)`
+      `${'NAME'.padEnd(32)} ${'TYPE'.padEnd(10)} ${'STAB'.padEnd(12)} ${'REL'.padEnd(8)} ${'UPDATED'.padEnd(12)} ${verHeader}${relHeader}DOC (page#anchor)`
     );
-    console.info(`${'─'.repeat(32)} ${'─'.repeat(10)} ${'─'.repeat(12)} ${'─'.repeat(8)} ${'─'.repeat(12)} ${'─'.repeat(48)}`);
+    console.info(
+      `${'─'.repeat(32)} ${'─'.repeat(10)} ${'─'.repeat(12)} ${'─'.repeat(8)} ${'─'.repeat(12)} ${showVersion ? '─'.repeat(11) : ''}${showRelease ? '─'.repeat(56) : ''}${'─'.repeat(48)}`
+    );
     for (const e of entries) {
-      const url = e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage;
+      const url = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
       const rel = (e.releasedIn ?? '—').padEnd(8);
       const upd = (e.lastUpdated?.slice(0, 10) ?? '—').padEnd(12);
+      const ver = showVersion ? `${(e.verifiedOn ?? '—').padEnd(10)} ` : '';
+      const release = showRelease ? `${(e.releaseUrl ?? '—').padEnd(55)} ` : '';
       console.info(
-        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${url}`
+        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${ver}${release}${url}`
       );
     }
     console.info(`\n${entries.length} entries`);
@@ -603,21 +842,44 @@ async function main(): Promise<void> {
     return;
   }
   if (cmd === 'get') {
+    const meta = await loadCatalogFile();
     const name = rest.filter(a => !a.startsWith('--')).join(' ');
-    const e = await getCatalogEntry(name);
+    const n = normalizeName(name);
+    const e =
+      meta.entries.find(x => normalizeName(x.name) === n) ??
+      meta.entries.find(x => x.aliases?.some(a => normalizeName(a) === n)) ??
+      null;
     if (!e) {
       console.error(`❌ not in catalog: ${name} (run: bun tools/bun-docs-catalog.ts build)`);
       process.exit(1);
     }
-    printEntry(e);
+    printCatalogHeader(meta);
+    printEntry(e, true);
     return;
   }
-  console.error('usage: bun tools/bun-docs-catalog.ts build|list|get [name]');
-  console.error(
-    '  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config'
-  );
+  if (cmd === 'verify') {
+    const expected = parseVersionFlag(rest);
+    const { ok, messages } = await verifyCatalog(expected);
+    for (const m of messages) {
+      console.info(ok || m.startsWith('ok') || m.startsWith('warn') ? `  ${m}` : `  ❌ ${m}`);
+    }
+    if (ok) {
+      console.info(`✅ catalog pin matches ${expected}`);
+      return;
+    }
+    console.error(`❌ catalog verify failed (expected Bun ${expected})`);
+    process.exit(1);
+  }
+  console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify [args]');
+  console.error('  build [--version=1.4.0]   # default Bun.version; pins catalog + releaseUrl');
+  console.error('  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config');
   console.error('       --search=WebView   # substring match on name/alias/desc/url/anchor');
+  console.error('       --version          # show verifiedOn column');
+  console.error('       --release          # show releaseUrl column');
+  console.error('       --verbose / -v     # full entry cards with docsUrl + releaseUrl');
   console.error('       --json');
+  console.error('  get <name>              # entry + catalog version header');
+  console.error('  verify [--version=…]    # catalog bunVersion vs runtime (or flag)');
   process.exit(1);
 }
 

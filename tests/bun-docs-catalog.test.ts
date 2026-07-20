@@ -1,5 +1,5 @@
 /**
- * Catalog helpers: dedup scoring + canonical page preference.
+ * Catalog helpers: dedup scoring + canonical page preference + version pin URLs.
  */
 import { describe, expect, test } from 'bun:test';
 import {
@@ -11,6 +11,11 @@ import {
   sectionFromUrl,
   inferType,
   compareSemver,
+  releaseUrlFor,
+  blogUrlFor,
+  docsUrlFor,
+  parseVersionFlag,
+  normalizeBunVersion,
 } from '../tools/bun-docs-catalog.ts';
 
 describe('bun-docs-catalog helpers', () => {
@@ -64,5 +69,44 @@ describe('bun-docs-catalog helpers', () => {
     expect(compareSemver('1.3.14', '1.4.0')).toBeLessThan(0);
     expect(compareSemver('1.4.0', '1.3.14')).toBeGreaterThan(0);
     expect(compareSemver('1.4.0', '1.4.0')).toBe(0);
+  });
+
+  test('normalizeBunVersion strips bun-v / v prefixes', () => {
+    expect(normalizeBunVersion('bun-v1.3.12')).toBe('1.3.12');
+    expect(normalizeBunVersion('v1.3.12')).toBe('1.3.12');
+    expect(normalizeBunVersion('1.3.12')).toBe('1.3.12');
+  });
+
+  test('releaseUrlFor builds GitHub tag URLs', () => {
+    expect(releaseUrlFor('1.3.14')).toBe(
+      'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14'
+    );
+    expect(releaseUrlFor('v1.4.0')).toBe(
+      'https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0'
+    );
+    expect(releaseUrlFor('bun-v1.4.0')).toBe(
+      'https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0'
+    );
+  });
+
+  test('blogUrlFor builds bun.com/blog release post URLs', () => {
+    expect(blogUrlFor('1.3.12')).toBe('https://bun.com/blog/bun-v1.3.12');
+    expect(blogUrlFor('bun-v1.3.12')).toBe('https://bun.com/blog/bun-v1.3.12');
+  });
+
+  test('docsUrlFor joins page + optional anchor (unversioned)', () => {
+    expect(docsUrlFor('https://bun.com/docs/runtime/http/server.md')).toBe(
+      'https://bun.com/docs/runtime/http/server'
+    );
+    expect(docsUrlFor('https://bun.com/docs/runtime/utils', 'bun-version')).toBe(
+      'https://bun.com/docs/runtime/utils#bun-version'
+    );
+  });
+
+  test('parseVersionFlag reads --version= and --version N', () => {
+    expect(parseVersionFlag(['list', '--version=1.3.14'])).toBe('1.3.14');
+    expect(parseVersionFlag(['build', '--version', 'v1.4.0'])).toBe('1.4.0');
+    expect(parseVersionFlag(['build', '--version=bun-v1.3.12'])).toBe('1.3.12');
+    expect(parseVersionFlag(['list'])).toBe(Bun.version);
   });
 });

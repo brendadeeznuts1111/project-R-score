@@ -20,7 +20,11 @@ Continuity layer for the docs intelligence pipeline: **integrity → self-heal �
 | `bun tools/bun-doc-refs.ts schedule --once` | One integrity pass + append `reports/doc-integrity.jsonl` |
 | `bun tools/bun-doc-refs.ts schedule` | In-process `Bun.cron` weekly (`0 6 * * *` UTC default) |
 | `bun tools/bun-docs-index-gen.ts` | Rebuild index from live `llms.txt` (+ `bunVersion` pin) |
-| `bun tools/bun-docs-catalog.ts build` | Structured catalog: name/type/stability/canonicalPage/allPages |
+| `bun tools/bun-docs-catalog.ts build [--version=X]` | Structured catalog; pin `bunVersion` + `releaseUrl` + `blogUrl` (+ runtime `commitHash`) |
+| `bun tools/bun-docs-catalog.ts list --section=runtime --type=api` | List slice (header shows version / release / blog) |
+| `bun tools/bun-docs-catalog.ts get Bun.WebView` | One entry with docsUrl + releaseUrl + blogUrl |
+| `bun tools/bun-docs-catalog.ts verify` | Fail if catalog `bunVersion` ≠ runtime (or `--version=`) |
+| `bun tools/generate-tokens-from-docs.ts [--version=X]` | Token supplement with the same version pin |
 | `bun tools/bun-doc-refs.ts catalog --build` | Same via bun-doc-refs |
 | `bun tools/bun-doc-refs.ts catalog --section=runtime --type=api` | List catalog slice |
 | `bun tools/bun-doc-refs.ts catalog get Bun.WebView` | One catalog entry |
@@ -53,6 +57,18 @@ Does **not** invent new sidebar sections or rewrite CANONICAL_REFS.
 |----------|----------|
 | `reports/doc-integrity.jsonl` | `{ ts, failures, ok, bunVersion, stats, regen, autoFix }` |
 | `tools/bun-docs-index.json` | `generated`, `source`, `bunVersion`, `upstreamBunVersion`, entries |
+| `tools/bun-docs-catalog.json` | `bunVersion`, `releaseUrl`, `blogUrl`, optional `commitHash`, entries with `docsUrl` |
+| `tools/bun-docs-token-supplement.json` | Same pin fields + `entries[]` (generator output) |
+
+Version pin links (docs pages stay unversioned on bun.com):
+
+| Field | Example |
+|-------|---------|
+| `bunVersion` | `1.3.12` (from `Bun.version` or `--version=`) |
+| `releaseUrl` | `https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12` |
+| `blogUrl` | `https://bun.com/blog/bun-v1.3.12` |
+| `commitHash` | short `Bun.revision` when pin matches the running binary |
+| `docsUrl` | `https://bun.com/docs/runtime/...` (latest, not `/docs/v1.3.12/`) |
 
 `status` marks integrity **STALE** if last JSONL run is older than **7 days** (process/cron death signal).
 
