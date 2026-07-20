@@ -15,7 +15,7 @@
  *   lastUpdated? (ISO date docs/index last refreshed for this entry),
  *   verifiedOn? (catalog pin Bun version at build),
  *   releaseUrl? (GitHub release for releasedIn or verifiedOn),
- *   blogUrl? (https://bun.com/blog/bun-vX.Y.Z — narrative release notes),
+ *   blogUrl? (RSS-validated https://bun.com/blog/bun-vX.Y.Z — narrative release notes),
  *   docsUrl? (unversioned bun.com page + optional #anchor),
  *   canonicalPage, anchor?, allPages
  *
@@ -23,11 +23,14 @@
  * (+ commitHash when built against the runtime binary).
  * Bun docs are not versioned on bun.com (/docs/vX.Y.Z/ does not exist);
  * the pin is Bun.version (or --version=…) + GitHub release + blog post.
+ * Blog URLs come from tools/release-index.json (RSS Phase 0), not URL guessing.
  * Token upgrade notes come from tools/bun-docs-changelog.ts (curated, not scraped).
+ * Missing descriptions can be filled from live doc HTML (Phase 1 NOTE).
  *
- * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0]
+ * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0] [--force] [--skip-notes]
+ * Prefetch: bun tools/bun-docs-release-index.ts
  * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
- *                 [--search=WebView] [--wide] [--notes] [--compact] [--verbose] [--json]
+ *                 [-s runtime] [-t api] [-q WebView] [-w] [-n] [-c] [-l] [-v] [-j]
  * Lookup:  bun tools/bun-docs-catalog.ts get Bun.WebView
  * Verify:  bun tools/bun-docs-catalog.ts verify   # catalog bunVersion vs runtime
  *
@@ -40,6 +43,13 @@
 import { resolve } from 'node:path';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
+import { fetchPageNotes } from './bun-docs-page-notes.ts';
+import {
+  cleanBunVersion,
+  loadReleaseIndex,
+  lookupBlogUrl,
+  type ReleaseEntry,
+} from './bun-docs-release-index.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
@@ -273,7 +283,8 @@ export function listCells(
   const ver = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? pin;
   const docs = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
   const release = e.releaseUrl ?? releaseUrlFor(ver);
-  const blog = e.blogUrl ?? blogUrlFor(ver);
+  // BLOG is RSS-validated at build time — do not invent URLs in the table.
+  const blog = e.blogUrl ?? '';
   return {
     name: e.name,
     section: shortSection(e.section),
@@ -380,8 +391,8 @@ export function formatListTable(
         val = terminalLink(full, cells.doc || full);
       } else if (c.key === 'release' && opts?.links && cells.release) {
         val = terminalLink(e.releaseUrl ?? releaseUrlFor(cells.ver), cells.release);
-      } else if (c.key === 'blog' && opts?.links && cells.blog) {
-        val = terminalLink(e.blogUrl ?? blogUrlFor(cells.ver), cells.blog);
+      } else if (c.key === 'blog' && opts?.links && e.blogUrl && cells.blog) {
+        val = terminalLink(e.blogUrl, cells.blog);
       }
       if (!val) val = '—';
       return displayCell(val, c.width, c.align);
@@ -405,10 +416,56 @@ export function releaseUrlFor(version: string): string {
   return `https://github.com/oven-sh/bun/releases/tag/bun-v${v}`;
 }
 
-/** Official blog post for a release (version is in the path). */
+/**
+ * Construct a blog URL path for a version (not RSS-validated).
+ * Prefer `resolveBlogUrl` / release-index lookups for catalog stamps.
+ */
 export function blogUrlFor(version: string): string {
-  const v = normalizeBunVersion(version);
+  const v = cleanBunVersion(version);
   return `https://bun.com/blog/bun-v${v}`;
+}
+
+/**
+ * Resolve a blog URL from the RSS release map.
+ * Exact version (pre-release stripped) → minor X.Y.0. Never walks to a major.
+ * Preserves a `#fragment` from `existing` when the base is found.
+ */
+export function resolveBlogUrl(
+  version: string,
+  releaseMap: Map<string, ReleaseEntry>,
+  existing?: string
+): string | undefined {
+  const base = lookupBlogUrl(version, releaseMap);
+  if (!base) return undefined;
+  const hash = existing?.includes('#') ? existing.slice(existing.indexOf('#')) : '';
+  return base + hash;
+}
+
+/** Stamp entry.blogUrl from RSS; keep overlay #anchor when base validates. */
+export function stampEntryBlogUrl(
+  e: DocCatalogEntry,
+  releaseMap: Map<string, ReleaseEntry>,
+  fallbackVersion: string
+): void {
+  const existing = e.blogUrl;
+  const hash = existing?.includes('#') ? existing.slice(existing.indexOf('#')) : '';
+  const fromPath = existing?.match(/\/bun-v([\d.]+)/i)?.[1];
+  const candidates = [
+    fromPath,
+    e.releasedIn,
+    e.fixedIn,
+    e.changedIn,
+    fallbackVersion,
+  ].filter((v): v is string => Boolean(v));
+
+  for (const v of candidates) {
+    const base = lookupBlogUrl(v, releaseMap);
+    if (base) {
+      e.blogUrl = base + hash;
+      return;
+    }
+  }
+  delete e.blogUrl;
 }
 
 export function docsUrlFor(page: string, anchor?: string): string {
@@ -711,11 +768,21 @@ export async function loadIndex(): Promise<IndexFile> {
 export async function buildCatalog(opts?: {
   bunVersion?: string;
   versionPinned?: boolean;
+  /** Re-fetch RSS + overwrite NOTE even when description exists */
+  force?: boolean;
+  /** Skip live HTML NOTE enrichment */
+  skipNotes?: boolean;
+  /** Force refresh of release-index.json from RSS (default: refresh if missing) */
+  refreshRss?: boolean;
 }): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
   const map = new Map<string, DocCatalogEntry>();
   const docsLastUpdated = index.generated;
   const verifiedOn = opts?.bunVersion ?? Bun.version;
+  const { map: releaseMap } = await loadReleaseIndex({
+    refresh: opts?.refreshRss ?? true,
+    force: opts?.force,
+  });
 
   // 1) Index pages for covered sections → concept rows (page-level)
   for (const e of index.entries) {
@@ -891,6 +958,25 @@ export async function buildCatalog(opts?: {
     applyChangelogOverlay(e, clIndex);
   }
 
+  // 7) Phase 1 NOTE — fill empty descriptions from live doc HTML (cached).
+  // Never overwrite an existing description (curated/index/supplement win).
+  // --force only revalidates the HTTP/note cache for pages still missing NOTE.
+  if (!opts?.skipNotes) {
+    const needUrls = [
+      ...new Set(
+        entries.filter(e => !e.description).map(e => e.canonicalPage).filter(Boolean)
+      ),
+    ];
+    if (needUrls.length > 0) {
+      const notes = await fetchPageNotes(needUrls, { force: opts?.force });
+      for (const e of entries) {
+        if (e.description) continue;
+        const note = notes.get(e.canonicalPage.replace(/\.md$/, ''));
+        if (note) e.description = note;
+      }
+    }
+  }
+
   // Re-pick canonical + put canonical first in allPages; pin version fields
   for (const e of entries) {
     e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
@@ -901,10 +987,8 @@ export async function buildCatalog(opts?: {
     // Prefer release notes for feature ship version; else latest fix; else catalog pin
     const forRelease = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? verifiedOn;
     e.releaseUrl = releaseUrlFor(forRelease);
-    // Blog: overlay may add #anchor for a specific notes section
-    if (!e.blogUrl || !e.blogUrl.includes('#')) {
-      e.blogUrl = blogUrlFor(forRelease);
-    }
+    // Blog: RSS-validated only (Phase 0). Overlay #anchors preserved when base exists.
+    stampEntryBlogUrl(e, releaseMap, forRelease);
   }
 
   return entries;
@@ -930,6 +1014,7 @@ export function applyChangelogOverlay(e: DocCatalogEntry, index = changelogIndex
     e.commitUrl = cl.commitUrl;
   }
   if (cl.blogVersion) {
+    // Provisional URL + optional section anchor; buildCatalog re-validates via RSS.
     const base = blogUrlFor(cl.blogVersion);
     e.blogUrl = cl.blogAnchor ? `${base}#${cl.blogAnchor}` : base;
   }
@@ -937,11 +1022,18 @@ export function applyChangelogOverlay(e: DocCatalogEntry, index = changelogIndex
 
 export async function writeCatalog(
   entries: DocCatalogEntry[],
-  opts?: { bunVersion?: string; versionPinned?: boolean; commitHash?: string }
+  opts?: {
+    bunVersion?: string;
+    versionPinned?: boolean;
+    commitHash?: string;
+    releaseMap?: Map<string, ReleaseEntry>;
+  }
 ): Promise<void> {
   const bunVersion = normalizeBunVersion(opts?.bunVersion ?? Bun.version);
   const releaseUrl = releaseUrlFor(bunVersion);
-  const blogUrl = blogUrlFor(bunVersion);
+  const releaseMap =
+    opts?.releaseMap ?? (await loadReleaseIndex({ refresh: false })).map;
+  const blogUrl = lookupBlogUrl(bunVersion, releaseMap) ?? '';
   const commitHash = opts?.commitHash ?? runtimeCommitHash(bunVersion);
   const payload = {
     generated: new Date().toISOString(),
@@ -951,12 +1043,13 @@ export async function writeCatalog(
     ...(commitHash ? { commitHash } : {}),
     docsRoot: 'https://bun.com/docs',
     versionPinned: opts?.versionPinned ?? false,
-    note: 'docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes; fixedIn/changeNote from tools/bun-docs-changelog.ts',
+    note: 'docsUrl = unversioned latest docs; blogUrl from tools/release-index.json (RSS); releaseUrl = GitHub tag; fixedIn/changeNote from tools/bun-docs-changelog.ts',
     source: {
       index: 'tools/bun-docs-index.json',
       canonicalRefs: 'tools/bun-doc-refs.ts#CANONICAL_REFS',
       curated: 'tools/bun-docs-curated.ts',
       changelog: 'tools/bun-docs-changelog.ts',
+      releaseIndex: 'tools/release-index.json',
       tokenSupplement: 'tools/bun-docs-token-supplement.json',
     },
     schema: {
@@ -973,7 +1066,7 @@ export async function writeCatalog(
       lastUpdated: 'string? — ISO when docs index last refreshed',
       verifiedOn: 'string? — catalog pin Bun version',
       releaseUrl: 'string? — GitHub release for releasedIn or verifiedOn',
-      blogUrl: 'string? — bun.com/blog/bun-vX.Y.Z narrative notes',
+      blogUrl: 'string? — RSS-validated bun.com/blog/bun-vX.Y.Z (+ optional #anchor)',
       docsUrl: 'string? — unversioned bun.com docs page (+ anchor)',
       canonicalPage: 'string',
       anchor: 'string?',
@@ -986,6 +1079,8 @@ export async function writeCatalog(
     withReleasedIn: entries.filter(e => e.releasedIn).length,
     withFixedIn: entries.filter(e => e.fixedIn).length,
     withChangeNote: entries.filter(e => e.changeNote).length,
+    withBlogUrl: entries.filter(e => e.blogUrl).length,
+    withDescription: entries.filter(e => e.description).length,
     byType: countBy(entries, e => e.type),
     bySection: countBy(entries, e => e.section),
     byStability: countBy(entries, e => e.stability),
@@ -1021,7 +1116,7 @@ export async function loadCatalogFile(): Promise<CatalogFileMeta> {
     generated: j.generated ?? new Date().toISOString(),
     bunVersion,
     releaseUrl: j.releaseUrl ?? releaseUrlFor(bunVersion),
-    blogUrl: j.blogUrl ?? blogUrlFor(bunVersion),
+    blogUrl: j.blogUrl ?? '',
     commitHash: j.commitHash,
     docsRoot: j.docsRoot ?? 'https://bun.com/docs',
     versionPinned: j.versionPinned ?? false,
@@ -1049,7 +1144,7 @@ function printCatalogHeader(meta: CatalogFileMeta, runtime = Bun.version): void 
   const pin = meta.versionPinned ? ' (pinned via --version)' : '';
   console.info(`# catalog bunVersion=${meta.bunVersion}${pin}`);
   console.info(`# release ${meta.releaseUrl}`);
-  console.info(`# blog ${meta.blogUrl}`);
+  console.info(`# blog ${meta.blogUrl || '(none in RSS release-index)'}`);
   if (meta.commitHash) console.info(`# commit ${meta.commitHash}`);
   console.info(`# docsRoot ${meta.docsRoot}  (unversioned latest)`);
   if (meta.bunVersion !== runtime) {
@@ -1112,12 +1207,15 @@ export async function verifyCatalog(
     messages.push(`ok releaseUrl=${meta.releaseUrl}`);
   }
 
-  const expectedBlog = blogUrlFor(expectedVersion);
-  if (meta.blogUrl !== expectedBlog) {
+  const { map: releaseMap } = await loadReleaseIndex({ refresh: false });
+  const expectedBlog = lookupBlogUrl(expectedVersion, releaseMap) ?? '';
+  if ((meta.blogUrl ?? '') !== expectedBlog) {
     ok = false;
-    messages.push(`catalog blogUrl mismatch: ${meta.blogUrl} (expected ${expectedBlog})`);
+    messages.push(
+      `catalog blogUrl mismatch: ${meta.blogUrl || '(empty)'} (expected ${expectedBlog || '(empty — not in RSS)'})`
+    );
   } else {
-    messages.push(`ok blogUrl=${meta.blogUrl}`);
+    messages.push(`ok blogUrl=${meta.blogUrl || '(empty — not in RSS)'}`);
   }
 
   const mismatched = meta.entries.filter(e => e.verifiedOn && e.verifiedOn !== meta.bunVersion);
@@ -1145,15 +1243,30 @@ async function main(): Promise<void> {
     const bunVersion = parseVersionFlag(rest);
     const versionPinned = bunVersion !== Bun.version;
     const commitHash = runtimeCommitHash(bunVersion);
-    const entries = await buildCatalog({ bunVersion, versionPinned });
-    await writeCatalog(entries, { bunVersion, versionPinned, commitHash });
+    const force = rest.includes('--force');
+    const skipNotes = rest.includes('--skip-notes');
+    const refreshRss = !rest.includes('--no-refresh-rss');
+    const { map: releaseMap } = await loadReleaseIndex({ refresh: refreshRss, force });
+    const entries = await buildCatalog({
+      bunVersion,
+      versionPinned,
+      force,
+      skipNotes,
+      refreshRss,
+    });
+    await writeCatalog(entries, { bunVersion, versionPinned, commitHash, releaseMap });
     const typeCounts = countBy(entries, e => e.type);
+    const topBlog = lookupBlogUrl(bunVersion, releaseMap) ?? '(none in RSS)';
+    const withBlog = entries.filter(e => e.blogUrl).length;
+    const withDesc = entries.filter(e => e.description).length;
     console.info(
       `✅ catalog ${entries.length} entries → tools/bun-docs-catalog.json` +
         `  bunVersion=${bunVersion}` +
         (versionPinned ? ' (pinned)' : '') +
         `  release=${releaseUrlFor(bunVersion)}` +
-        `  blog=${blogUrlFor(bunVersion)}` +
+        `  blog=${topBlog}` +
+        `  blogUrls=${withBlog}/${entries.length}` +
+        `  notes=${withDesc}/${entries.length}` +
         (commitHash ? `  commit=${commitHash}` : '') +
         `  (${Object.entries(typeCounts)
           .sort(([a], [b]) => a.localeCompare(b))
@@ -1168,32 +1281,33 @@ async function main(): Promise<void> {
     let section: DocSection | undefined;
     let type: DocRefType | undefined;
     let search: string | undefined;
-    const json = rest.includes('--json');
+    const json = rest.includes('--json') || rest.includes('-j');
     const verbose = rest.includes('--verbose') || rest.includes('-v');
     const wide = rest.includes('--wide') || rest.includes('-w');
-    const notes = rest.includes('--notes');
-    const compact = rest.includes('--compact');
+    const notes = rest.includes('--notes') || rest.includes('-n');
+    const compact = rest.includes('--compact') || rest.includes('-c');
     // --version / --release remain as aliases that expand to wide columns
     let showVersion = false;
     let showRelease = false;
-    let links = false;
+    let links = rest.includes('--links') || rest.includes('-l');
     for (let i = 0; i < rest.length; i++) {
       const a = rest[i]!;
-      if (a.startsWith('--section=')) section = a.slice(10) as DocSection;
-      else if (a === '--section' && rest[i + 1]) {
+      if (a.startsWith('--section=') || a.startsWith('-s=')) {
+        section = a.slice(a.indexOf('=') + 1) as DocSection;
+      } else if ((a === '--section' || a === '-s') && rest[i + 1]) {
         section = rest[++i] as DocSection;
-      } else if (a.startsWith('--type=')) type = a.slice(7) as DocRefType;
-      else if (a === '--type' && rest[i + 1]) {
+      } else if (a.startsWith('--type=') || a.startsWith('-t=')) {
+        type = a.slice(a.indexOf('=') + 1) as DocRefType;
+      } else if ((a === '--type' || a === '-t') && rest[i + 1]) {
         type = rest[++i] as DocRefType;
-      } else if (a.startsWith('--search=')) search = a.slice(9);
-      else if (a === '--search' && rest[i + 1]) {
+      } else if (a.startsWith('--search=') || a.startsWith('-q=')) {
+        search = a.slice(a.indexOf('=') + 1);
+      } else if ((a === '--search' || a === '-q') && rest[i + 1]) {
         search = rest[++i];
       } else if (a === '--version') {
         showVersion = true;
       } else if (a === '--release') {
         showRelease = true;
-      } else if (a === '--links') {
-        links = true;
       }
     }
     if (section) entries = entries.filter(e => e.section === section);
@@ -1290,17 +1404,18 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify [args]');
-  console.error('  build [--version=1.4.0]   # default Bun.version; pins catalog + releaseUrl');
-  console.error('  list --section=runtime|bundler|test|guides --type=' + DocRefTypeArray.join('|'));
-  console.error('       --search=WebView   # name/alias/desc/url/anchor/note/version');
+  console.error('  build [--version=1.4.0] [--force] [--skip-notes] [--no-refresh-rss]');
+  console.error('       # default Bun.version; BLOG from RSS release-index; NOTE from doc HTML');
+  console.error('  list -s runtime|bundler|test|guides -t ' + DocRefTypeArray.join('|'));
+  console.error('       -q WebView         # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');
-  console.error('       --wide / -w        # + CHG UPDATED VER RELEASE BLOG');
-  console.error('       --notes            # + NOTE (changeNote, falling back to description)');
+  console.error('       -w / --wide        # + CHG UPDATED VER RELEASE BLOG');
+  console.error('       -n / --notes       # + NOTE (changeNote, falling back to description)');
   console.error('       --version/--release  # aliases that expand wide columns');
-  console.error('       --compact          # legacy thin table');
-  console.error('       --links            # OSC-8 hyperlinks on DOC/RELEASE/BLOG');
-  console.error('       --verbose / -v     # full entry cards');
-  console.error('       --json             # entries + computed list cells');
+  console.error('       -c / --compact     # legacy thin table');
+  console.error('       -l / --links       # OSC-8 hyperlinks on DOC/RELEASE/BLOG');
+  console.error('       -v / --verbose     # full entry cards');
+  console.error('       -j / --json        # entries + computed list cells');
   console.error('  get <name>              # entry + catalog version header');
   console.error('  verify [--version=…]    # catalog bunVersion vs runtime (or flag)');
   process.exit(1);
