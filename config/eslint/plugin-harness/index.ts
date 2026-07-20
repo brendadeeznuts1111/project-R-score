@@ -1,10 +1,23 @@
 /**
  * eslint-plugin-harness — FactoryWager harness / boundary rules.
+ *
+ * Policy SSOT (human): docs/WIRE_BOUNDARY.md
+ * Policy SSOT (code):  ./boundary.ts → BOUNDARY_POLICY
  */
 import type { ESLint, Linter } from 'eslint';
 import {
+  BOUNDARY_POLICY,
   noDecodeUnknownOutsideBoundary,
   noUnknownFunctionParamOutsideBoundary,
+} from './boundary.ts';
+
+export {
+  BOUNDARY_POLICY,
+  BOUNDARY_PATH_RE,
+  BOUNDARY_FN_NAME_RE,
+  DECODE_CALLEE_NAMES,
+  isBoundaryFilename,
+  isBoundaryFunctionName,
 } from './boundary.ts';
 
 const plugin: ESLint.Plugin = {
@@ -22,20 +35,24 @@ export default plugin;
 
 /** Decode at edge only — error everywhere (safe; rare call sites). */
 export const harnessBoundaryDecodeRules: Linter.RulesRecord = {
-  'harness/no-decode-unknown-outside-boundary': 'error',
+  [BOUNDARY_POLICY.eslintRules.decode]: 'error',
 };
 
 /**
  * `unknown` as fun arg only at boundary.
  * Warn on full harness (rollout); agents must not introduce new ones without
  * boundary placement or eslint-disable with justification.
+ * @see docs/WIRE_BOUNDARY.md
  */
 export const harnessBoundaryUnknownParamRules: Linter.RulesRecord = {
-  'harness/no-unknown-function-param': 'warn',
+  [BOUNDARY_POLICY.eslintRules.unknownParam]: 'warn',
 };
 
 /** Strict tier: both rules error. */
 export const harnessBoundaryStrictRules: Linter.RulesRecord = {
-  'harness/no-decode-unknown-outside-boundary': 'error',
-  'harness/no-unknown-function-param': 'error',
+  [BOUNDARY_POLICY.eslintRules.decode]: 'error',
+  [BOUNDARY_POLICY.eslintRules.unknownParam]: 'error',
 };
+
+/** Globs where unknown-param is error (keep aligned with eslint.harness.config.ts). */
+export const HARNESS_BOUNDARY_STRICT_FILE_GLOBS = BOUNDARY_POLICY.unknownParamErrorGlobs;

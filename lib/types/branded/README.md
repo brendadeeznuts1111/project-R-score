@@ -3,9 +3,10 @@
 **Canonical import:** `lib/types/branded.ts` (re-exports everything).  
 **Institutional record:** `lib/types/brand-manifest.json` (generated; do not hand-edit).  
 **Standards:** [`.custom-instructions.md`](../../../.custom-instructions.md) (domain strings / harness).  
+**Wire boundary:** [`docs/WIRE_BOUNDARY.md`](../../../docs/WIRE_BOUNDARY.md) (where `unknown` / `parse*` live).  
 **Thesis:** [harness engineering — domain types](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) (parse at boundary; brands replace bare `string` for domain values).
 
-Domain-valued text (session, account, zone, credential keys, …) must not travel as unbranded `string` inside the harness after the wire/CLI/env boundary.
+Domain-valued text (session, account, zone, credential keys, …) must not travel as unbranded `string` inside the harness after the wire/CLI/env boundary. The brand forge (`lib/types/branded/**`) **is** a wire boundary path for ESLint.
 
 ## Agent mandate (enforced)
 

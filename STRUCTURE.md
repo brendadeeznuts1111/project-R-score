@@ -15,6 +15,7 @@ High-level map of the FactoryWager Enterprise Platform monorepo (`factorywager-e
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
+| Wire boundary | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Root layout (current)
@@ -86,6 +87,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **Demos:** [`examples/`](examples/) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 - **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
+- **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · ESLint `BOUNDARY_POLICY`
 - **Project inventory:** [`lib/projects-scan.ts`](lib/projects-scan.ts) · `bun run packages:list`
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all`
 - **Console depth:** [`lib/console-depth.ts`](lib/console-depth.ts)

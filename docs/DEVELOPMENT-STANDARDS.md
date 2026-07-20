@@ -2,6 +2,7 @@
 
 > Full standards: [`.custom-instructions.md`](../.custom-instructions.md)  
 > Agents / install / brands: [`AGENTS.md`](../AGENTS.md) · Layout: [`STRUCTURE.md`](../STRUCTURE.md) · Install: [`UNIFIED.md`](./UNIFIED.md)  
+> Wire boundary: [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md)  
 > Harness thesis: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)
 
 ---
@@ -35,7 +36,7 @@ Source is one replaceable realization of durable contracts. See [Stop Treating C
 
 **Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` / `id: string` — pre-commit `--staged --strict` has no baseline. Bare `id: string` / `_id: string` DTO primary keys must be explicitly suppressed with `// brand-ok`; the detector no longer auto-suppresses opaque primary keys.
 
-**Also:** no `decodeUnknownSync` outside the boundary; no `unknown` function params outside the boundary (`harness/no-decode-unknown-outside-boundary`, `harness/no-unknown-function-param`).
+**Also:** no `decodeUnknownSync` outside the boundary; no `unknown` function params outside the boundary — full map [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) (`harness/no-decode-unknown-outside-boundary`, `harness/no-unknown-function-param`).
 
 | Boundary | Constructor |
 |----------|-------------|
@@ -151,10 +152,12 @@ Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert. M
 | [`STRUCTURE.md`](../STRUCTURE.md) | Workspace map |
 | [`README.md`](../README.md) | Human hub |
 | [`IMPORT_BOUNDARIES.md`](./IMPORT_BOUNDARIES.md) | Package import rules |
+| [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) | Wire / parse-once boundary |
 | [`UNIFIED.md`](./UNIFIED.md) | Bun install policy |
 | [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) | Path SSOT (`CANONICAL_REPO_DOCS`) |
 | [`lib/types/branded/README.md`](../lib/types/branded/README.md) | Branded IDs |
 | [`lib/console-depth.ts`](../lib/console-depth.ts) | Inspect depth |
+| [`config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts) | Boundary ESLint (`BOUNDARY_POLICY`) |
 | [harness-engineering](https://github.com/lopopolo/harness-engineering) | External thesis corpus |
 
 *Keep this file in sync with `.custom-instructions.md` and `CANONICAL_REPO_DOCS` when conventions change.*

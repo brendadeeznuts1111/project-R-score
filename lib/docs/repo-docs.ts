@@ -25,8 +25,10 @@ export const CANONICAL_REPO_DOCS = {
   standardsQuick: 'docs/DEVELOPMENT-STANDARDS.md',
   /** Machine + workspace Bun install policy */
   unified: 'docs/UNIFIED.md',
-  /** Import / package boundary rules */
+  /** Import / package boundary rules (package graph — not wire types) */
   importBoundaries: 'docs/IMPORT_BOUNDARIES.md',
+  /** Wire / parse-once boundary (unknown → domain) */
+  wireBoundary: 'docs/WIRE_BOUNDARY.md',
   /** Root cleanup / organization history */
   organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
   /** Projects triage + agent scope */
@@ -44,6 +46,10 @@ export const CANONICAL_HARNESS = {
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',
   standardsIntegration: 'lib/validation/standards-integration.ts',
+  /** AST rules: decodeUnknown* + unknown params */
+  boundaryEslint: 'config/eslint/plugin-harness/boundary.ts',
+  boundaryEslintPlugin: 'config/eslint/plugin-harness/index.ts',
+  eslintHarnessConfig: 'eslint.harness.config.ts',
   ports: 'config/ports.ts',
   r2Env: 'config/r2-env.ts',
 } as const;
@@ -75,6 +81,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   standardsQuick: 'Coding standards (quick)',
   unified: 'Bun install policy (machine + workspace)',
   importBoundaries: 'Import / package boundaries',
+  wireBoundary: 'Wire boundary (parse once / unknown → domain)',
   organizationHistory: 'Root organization history',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',
@@ -108,7 +115,8 @@ export const CANONICAL_EXTERNAL = {
     /** Prefer "artifact" over "codebase" in agent/docs prose */
     replaceCodebaseWithArtifact: 'https://x.com/_lopopolo/status/2076878736507736390',
     codeIsNotTheArtifact: 'https://hyperbo.la/w/code-is-not-the-artifact/',
-    /** ESLint boundary rules live in config/eslint/plugin-harness/boundary.ts */
-    boundaryEslint: 'config/eslint/plugin-harness/boundary.ts',
+    parseDontValidate: 'https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/',
+    hyperbolaCase:
+      'https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/hyperbola.md',
   },
 } as const;

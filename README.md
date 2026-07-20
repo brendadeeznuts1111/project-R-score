@@ -12,6 +12,7 @@
 | Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · quick: [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
+| Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
@@ -85,6 +86,7 @@ Implementations: [`scripts/fix-*.ts`](scripts/) (e.g. [`scripts/fix-console-log.
 ## Project Policies
 
 - **Standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
+- **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) (parse once; no interior `unknown` / `decodeUnknown*`)
 - **Import boundaries:** [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
 - **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · history: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md)
 - **Workspace hygiene:** `bun run validate:workspaces` (`check:workspaces` is the deprecated alias)

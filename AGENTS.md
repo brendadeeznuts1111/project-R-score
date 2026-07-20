@@ -15,8 +15,10 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
+| Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
+| Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Communication precision
 
@@ -44,14 +46,20 @@ bun tools/branded-id-check.ts --staged --strict   # what pre-commit runs on your
 
 Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Manifest: [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
 
-### Wire boundary (AST / ESLint)
+### Wire boundary (parse once)
 
-Do **not** call `decodeUnknownSync` / `decodeUnknown*` outside the boundary. Do **not** type function parameters as `unknown` outside the boundary (except `parse*` / `decode*` / `is*` / type-guard owners).
+**Full map:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) — what is edge vs interior, path/name allowlists, suppressions.
 
-- Rules: `harness/no-decode-unknown-outside-boundary` (error), `harness/no-unknown-function-param` (warn → error on types/security/core)
-- Code: [`config/eslint/plugin-harness/boundary.ts`](config/eslint/plugin-harness/boundary.ts)
-- Config: [`eslint.harness.config.ts`](eslint.harness.config.ts) (also via `eslint.bun-native.config.ts` pre-commit)
-- Reference: [harness-engineering](https://github.com/lopopolo/harness-engineering) — *walk the AST with eslint, ban decodeUnknownSync except at the boundary; ban unknown as a fun arg*
+| Interior (default) | Boundary only |
+|--------------------|---------------|
+| Domain types / brands | `unknown` fun args |
+| No re-decode | `decodeUnknownSync` / `decodeUnknown*` |
+| Trusted `SessionId`, structs | `parse*` / `is*` / type guards |
+
+- ESLint: `harness/no-decode-unknown-outside-boundary` (**error**), `harness/no-unknown-function-param` (**warn** harness · **error** types/security/core)
+- Code: [`config/eslint/plugin-harness/boundary.ts`](config/eslint/plugin-harness/boundary.ts) (`BOUNDARY_POLICY`)
+- Config: [`eslint.harness.config.ts`](eslint.harness.config.ts)
+- Thesis: [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) · [parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
 
 ## Operating rules
 
@@ -59,9 +67,10 @@ Do **not** call `decodeUnknownSync` / `decodeUnknown*` outside the boundary. Do 
 - **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
 - **Task routing:**
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
+  - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
-  - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts))
+  - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
 
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 

@@ -3,29 +3,88 @@
  * - Ban decodeUnknownSync (and kin) outside the wire boundary
  * - Ban `unknown` as a function parameter outside the boundary
  *
+ * Human SSOT (keep in lockstep with exported policy below):
+ *   docs/WIRE_BOUNDARY.md
+ *
  * @see https://github.com/lopopolo/harness-engineering
- * @see https://x.com/_lopopolo (Jul 12 — walk AST with eslint)
+ * @see https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md
+ * @see https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
  */
 import type { Rule } from 'eslint';
 import type { TSESTree } from '@typescript-eslint/types';
 
+/**
+ * Policy constants — documented in docs/WIRE_BOUNDARY.md.
+ * Export so tests and docs generators can assert the same allowlists.
+ */
+export const BOUNDARY_POLICY = {
+  /** Human doc (repo-relative). */
+  doc: 'docs/WIRE_BOUNDARY.md',
+  /** Path fragments that own wire/unknown ingress. */
+  pathGlobs: [
+    'lib/types/branded/**',
+    '**/boundary/**',
+    '**/wire/**',
+    '**/ingress/**',
+    '**/adapters/in/**',
+    '**/*boundary*.ts',
+    '**/*wire*.ts',
+    '**/*ingress*.ts',
+    'lib/security/r2-credentials.ts',
+  ],
+  /** Function name prefixes / patterns that *are* the parse edge. */
+  functionNameHints: [
+    'parse*',
+    'decode*',
+    'assert*',
+    'is*',
+    'from*',
+    'read*',
+    'load*',
+    'normalize*',
+    'coerce*',
+    '*FromUnknown',
+    '*FromWire',
+    '*FromJson',
+    '*FromEnv',
+    'parseBrandId',
+    'tryBrandId',
+    'makeId',
+  ],
+  /** Decode APIs banned outside the boundary. */
+  decodeCallees: [
+    'decodeUnknownSync',
+    'decodeUnknown',
+    'decodeUnknownEither',
+    'decodeUnknownOption',
+    'decodeUnknownResult',
+    'decodeUnknownExit',
+  ],
+  /** Paths where unknown-param rule is error (not just warn). */
+  unknownParamErrorGlobs: [
+    'lib/types/**/*.ts',
+    'lib/security/**/*.ts',
+    'lib/core/**/*.ts',
+    '**/boundary/**/*.ts',
+    '**/wire/**/*.ts',
+    '**/ingress/**/*.ts',
+  ],
+  eslintRules: {
+    decode: 'harness/no-decode-unknown-outside-boundary',
+    unknownParam: 'harness/no-unknown-function-param',
+  },
+} as const;
+
 /** Path fragments that own wire/unknown ingress. */
-const BOUNDARY_PATH_RE =
+export const BOUNDARY_PATH_RE =
   /(?:^|\/)(?:lib\/types\/branded|boundary|wire|ingress|adapters?\/in)(?:\/|$)|(?:^|\/)[^/]*(?:boundary|wire|ingress)[^/]*\.(?:ts|tsx)$|r2-credentials\.ts$/;
 
 /** Function/method names that *are* the boundary (parse once, then trust). */
-const BOUNDARY_FN_NAME_RE =
+export const BOUNDARY_FN_NAME_RE =
   /^(?:parse|decode|assert|is|from|read|load|normalize|coerce)[A-Z_]|From(?:Unknown|Wire|Json|Env)$|^(?:parseBrandId|tryBrandId|makeId)$/;
 
 /** Decode APIs that must not appear outside the boundary. */
-const DECODE_CALLEE_NAMES = new Set([
-  'decodeUnknownSync',
-  'decodeUnknown',
-  'decodeUnknownEither',
-  'decodeUnknownOption',
-  'decodeUnknownResult',
-  'decodeUnknownExit',
-]);
+export const DECODE_CALLEE_NAMES = new Set<string>(BOUNDARY_POLICY.decodeCallees);
 
 export function isBoundaryFilename(filename: string): boolean {
   const f = filename.replace(/\\/g, '/');

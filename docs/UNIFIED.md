@@ -238,6 +238,7 @@ All root `~/projects/.github/workflows/` install steps use `bun scripts/with-bun
 - [`STRUCTURE.md`](../STRUCTURE.md) — monorepo layout
 - [`AGENTS.md`](../AGENTS.md) — agent entry · [`docs/AGENTS.md`](./AGENTS.md) — full guide
 - [`.custom-instructions.md`](../.custom-instructions.md) — coding standards
+- [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) — wire / parse-once boundary
 - [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) — path SSOT (`CANONICAL_REPO_DOCS`)
 - [Bun global store](https://bun.sh/docs/pm/global-store)
 - [Bun bunfig.toml](https://bun.sh/docs/runtime/bunfig)

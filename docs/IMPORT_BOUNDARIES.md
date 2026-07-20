@@ -1,11 +1,13 @@
 # Import Boundaries
 
-This repository enforces package import boundaries with:
+This repository enforces **package import** boundaries with:
 
 - `bun run imports:verify`
 - `scripts/verify-package-import-boundaries.ts`
 
 The goal is to keep package type-check scope predictable and avoid accidental coupling to unrelated modules.
+
+**Not the same as the wire/type boundary.** For parse-once / `unknown` / `decodeUnknown*` rules, see [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md).
 
 ## Allowed Roots
 
