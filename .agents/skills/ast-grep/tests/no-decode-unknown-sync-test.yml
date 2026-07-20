@@ -1,0 +1,8 @@
+id: no-decode-unknown-sync
+valid:
+  - "parseSessionId(raw)"
+  - "const n = Number(u)"
+invalid:
+  - "decodeUnknownSync(schema)(input)"
+  - "Schema.decodeUnknownSync(Person)(raw)"
+  - "const x = decodeUnknown(schema)(u)"

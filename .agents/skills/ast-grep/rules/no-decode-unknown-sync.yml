@@ -1,0 +1,18 @@
+# Ban Effect/Schema decodeUnknownSync call sites outside intentional boundaries.
+# ESLint harness/no-decode-unknown-outside-boundary is the primary gate;
+# this rule backs pre-commit ast-grep visibility.
+id: no-decode-unknown-sync
+language: TypeScript
+severity: error
+message: >-
+  decodeUnknownSync belongs only at the wire boundary (parse once).
+  Move decoding to lib/types/branded, **/boundary/**, **/wire/**, or a parse*/decode* owner.
+  See harness-engineering + config/eslint/plugin-harness/boundary.ts.
+rule:
+  any:
+    - pattern: decodeUnknownSync($$$ARGS)
+    - pattern: $X.decodeUnknownSync($$$ARGS)
+    - pattern: decodeUnknown($$$ARGS)
+    - pattern: $X.decodeUnknown($$$ARGS)
+# Path allowlist for boundary owners is enforced by ESLint
+# (harness/no-decode-unknown-outside-boundary), not this pattern rule.

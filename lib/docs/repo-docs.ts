@@ -108,5 +108,7 @@ export const CANONICAL_EXTERNAL = {
     /** Prefer "artifact" over "codebase" in agent/docs prose */
     replaceCodebaseWithArtifact: 'https://x.com/_lopopolo/status/2076878736507736390',
     codeIsNotTheArtifact: 'https://hyperbo.la/w/code-is-not-the-artifact/',
+    /** ESLint boundary rules live in config/eslint/plugin-harness/boundary.ts */
+    boundaryEslint: 'config/eslint/plugin-harness/boundary.ts',
   },
 } as const;

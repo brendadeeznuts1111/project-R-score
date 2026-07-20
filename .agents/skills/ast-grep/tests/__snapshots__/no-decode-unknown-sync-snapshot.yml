@@ -1,0 +1,20 @@
+id: no-decode-unknown-sync
+snapshots:
+  Schema.decodeUnknownSync(Person)(raw):
+    labels:
+    - source: Schema.decodeUnknownSync(Person)
+      style: primary
+      start: 0
+      end: 32
+  const x = decodeUnknown(schema)(u):
+    labels:
+    - source: decodeUnknown(schema)
+      style: primary
+      start: 10
+      end: 31
+  decodeUnknownSync(schema)(input):
+    labels:
+    - source: decodeUnknownSync(schema)
+      style: primary
+      start: 0
+      end: 25

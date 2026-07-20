@@ -35,6 +35,8 @@ Source is one replaceable realization of durable contracts. See [Stop Treating C
 
 **Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` — pre-commit `--staged --strict` has no baseline.
 
+**Also:** no `decodeUnknownSync` outside the boundary; no `unknown` function params outside the boundary (`harness/no-decode-unknown-outside-boundary`, `harness/no-unknown-function-param`).
+
 | Boundary | Constructor |
 |----------|-------------|
 | Wire / JSON / env | `parseXId(unknown)` |

@@ -43,6 +43,15 @@ bun tools/branded-id-check.ts --staged --strict   # what pre-commit runs on your
 
 Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
 
+### Wire boundary (AST / ESLint)
+
+Do **not** call `decodeUnknownSync` / `decodeUnknown*` outside the boundary. Do **not** type function parameters as `unknown` outside the boundary (except `parse*` / `decode*` / `is*` / type-guard owners).
+
+- Rules: `harness/no-decode-unknown-outside-boundary` (error), `harness/no-unknown-function-param` (warn → error on types/security/core)
+- Code: [`config/eslint/plugin-harness/boundary.ts`](config/eslint/plugin-harness/boundary.ts)
+- Config: [`eslint.harness.config.ts`](eslint.harness.config.ts) (also via `eslint.bun-native.config.ts` pre-commit)
+- Reference: [harness-engineering](https://github.com/lopopolo/harness-engineering) — *walk the AST with eslint, ban decodeUnknownSync except at the boundary; ban unknown as a fun arg*
+
 ## Operating rules
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
