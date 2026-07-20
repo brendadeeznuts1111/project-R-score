@@ -14,7 +14,7 @@ Do not append an unrequested caveat, counterargument, or moralizing endcap to a 
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
 - **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
-- **Task routing:** brand work → `lib/types/branded/README.md` + `lib/types/branded.ts` facade + `bun run check:brands` · Bun API use → `bun tools/bun-doc-refs.ts suggest "<api>"` · testing → `test/testing.md` (if present) or the nearest `*.test.ts` exemplar.
+- **Task routing:** brand work → `lib/types/branded/README.md` + `lib/types/branded.ts` facade + `bun run check:brands` · Bun API use → `bun tools/bun-doc-refs.ts suggest "<api>"` · coding standards → `.custom-instructions.md` · testing → nearest `*.test.ts` / `tests/*.test.ts` exemplar.
 
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 

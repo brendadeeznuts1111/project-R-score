@@ -4,7 +4,7 @@
  * The heart of all projects - centralized constants, types, utilities, theming, documentation, and security
  *
  * 📋 Development Standards: Locked in at `.custom-instructions.md`
- * 📖 Quick Reference: See `DEVELOPMENT-STANDARDS.md`
+ * 📖 Quick Reference: See `docs/DEVELOPMENT-STANDARDS.md`
  *
  * @version 5.1
  * @author FactoryWager Team
@@ -167,6 +167,6 @@ export const FW = {
   // Development Standards Reference
   standards: {
     complete: '.custom-instructions.md',
-    quick: 'DEVELOPMENT-STANDARDS.md',
+    quick: 'docs/DEVELOPMENT-STANDARDS.md',
   },
 } as const;

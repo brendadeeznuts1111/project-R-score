@@ -8,8 +8,8 @@ import { read, write } from 'bun';
 
 export class StandardsIntegration {
   private readonly standardsPath = '.custom-instructions.md';
-  private readonly quickReferencePath = 'DEVELOPMENT-STANDARDS.md';
-  private readonly implementationPath = 'STANDARDS-IMPLEMENTATION.md';
+  private readonly quickReferencePath = 'docs/DEVELOPMENT-STANDARDS.md';
+  private readonly implementationPath = 'docs/archives/STANDARDS-IMPLEMENTATION.md';
 
   // ============================================================================
   // CODE REVIEW INTEGRATION

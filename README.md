@@ -31,8 +31,9 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run packages:list` | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`) |
 | `bun run packages:outdated` | Check outdated root deps (fast — workspace-isolated) |
 | `bun run validate:workspaces` | Validate workspace coverage |
-| `bun run lint:core` | ESLint on packages/, server/, config/, tools/ |
-| `bun run format:core` | Prettier on core directories |
+| `bun run lint` | ESLint on `lib/` |
+| `bun run lint:harness` | Harness ESLint config (lib, scripts, packages, server, config, tools) |
+| `bun run format:core` | Prettier harness format (`format:harness`) |
 | `bun run fix:console-log` | Bulk replace console.log → console.info |
 | `bun run fix:scan-any-types` | Scan for `any` types |
 | `bun run dev` | Start platform server |
@@ -62,8 +63,9 @@ See `scripts/fix-*.ts` for detail, or `scripts/fix-console-log.ts` for the bulk 
 <!-- markdownlint-enable MD013 -->
 
 ## Project Policies
-- Import boundaries and allowed package roots: `docs/IMPORT_BOUNDARIES.md`
-- Root organization: see `STRUCTURE.md` (history: `docs/organization/ROOT_CLEANUP_SUMMARY.md`)
+- Coding standards (full): [`.custom-instructions.md`](.custom-instructions.md) · quick: [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
+- Import boundaries and allowed package roots: [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
+- Root organization: [`STRUCTURE.md`](STRUCTURE.md) (history: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md))
 - Workspace hygiene: `bun run validate:workspaces` (validates all packages are covered by root workspaces; `check:workspaces` is the deprecated alias)
 - **Code conventions** (enforced by eslint):
   - **No `console.log`** — use `console.info`, `console.warn`, or `console.error`

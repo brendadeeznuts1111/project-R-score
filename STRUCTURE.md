@@ -12,6 +12,7 @@ Projects/
 ├── .claude/                 # Claude commands / agents
 ├── .github/                 # Workflows, templates
 ├── AGENTS.md                # Agent entrypoint → docs/AGENTS.md + docs/UNIFIED.md
+├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
 ├── archive/                 # Frozen local experiments (gitignored entire tree)
 ├── artifacts/               # Releases + local reports (reports/ largely ignored)
 ├── assets/                  # Logos, charts
@@ -68,6 +69,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **CLI:** `tools/cli/`, `tools/bin/`
 - **Demos:** `examples/` (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
+- **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
 - **Project inventory:** [`lib/projects-scan.ts`](lib/projects-scan.ts) · `bun run packages:list`
 - **Agent triage:** [`projects/README.md`](projects/README.md)
 
