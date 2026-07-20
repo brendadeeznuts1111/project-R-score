@@ -21,6 +21,7 @@ Flow: `DocCatalogEntry → TokenRef → BunToken`. Overlay hits populate `versio
 |--------|---------|
 | Refresh all evidence | `bun run docs:refresh` |
 | Resolve a BunToken | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Poor anchors (bounded) | `bun tools/bun-doc-refs.ts locus --depth=20` · `--json` · `--type=api` |
 | Agent pack (BunToken JSON) | `bun tools/bun-docs-catalog.ts export` · `--jsonl` |
 | Thin TSV | `bun run docs:catalog:export` (`--compact`) |
 | Health + tier-A scoreboard | `bun tools/bun-doc-refs.ts status` |
@@ -57,6 +58,7 @@ Power list flags (`-w` / `-n` / `-c` / `-l`) remain on `bun-docs-catalog.ts list
 | `bun run docs:catalog:build` / `docs:catalog` | Build / list catalog |
 | `bun run docs:catalog:export` | npm alias for compact TSV export |
 | `bun tools/bun-doc-refs.ts suggest Bun.Image` | **Catalog-first** lookup (NOTE/SHIP/FIX/BLOG/DOC) |
+| `bun tools/bun-doc-refs.ts locus --depth=N` | Poor loci audit (unresolved / coincidence); suggestions for CANONICAL_REFS batches |
 | `bun tools/bun-doc-refs.ts status` | Integrity + **tier-A** coverage dashboard |
 | `bun tools/bun-doc-refs.ts catalog --build` | Same via bun-doc-refs |
 | `bun tools/bun-doc-refs.ts catalog --section=runtime --type=api` | List catalog slice |

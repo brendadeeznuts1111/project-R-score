@@ -68,27 +68,33 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── HTTP & networking ───────────────────────────────────────────────────
   'Bun.serve': 'https://bun.com/docs/runtime/http/server#basic-setup',
-  'Bun.fetch': 'https://bun.com/docs/guides/http/fetch',
+  'Bun.fetch': 'https://bun.com/docs/runtime/nodejs-compat#fetch',
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
   // WebSocket upgrade on Bun.serve (ServerWebSocket type + handlers)
   ServerWebSocket: 'https://bun.com/docs/runtime/http/websockets#start-a-websocket-server',
   'Bun.dns': 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
+  'Bun.dns.prefetch': 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
+  'Bun.dns.getCacheStats': 'https://bun.com/docs/runtime/networking/dns#dns-getcachestats',
+  'Bun.dns.lookup': 'https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun',
   dns: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
+  'Bun.listen': 'https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen',
+  'Bun.ArrayBufferSink': 'https://bun.com/docs/runtime/streams#bun-arraybuffersink',
 
   // ── Process & spawn ─────────────────────────────────────────────────────
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'Bun.build': 'https://bun.com/docs/bundler/index#basic-example',
+  'Bun.plugin': 'https://bun.com/docs/runtime/plugins#usage',
   // In-process scheduler (returns CronJob with stop/ref/unref)
   'Bun.cron': 'https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process',
   // Shell template tag ($`…`)
   'Bun.$': 'https://bun.com/docs/runtime/shell#getting-started',
 
   // Headless browser automation (WebKit on macOS; CDP/Chrome elsewhere)
-  'Bun.WebView': 'https://bun.com/docs/runtime/webview',
-  WebView: 'https://bun.com/docs/runtime/webview',
+  'Bun.WebView': 'https://bun.com/docs/runtime/webview#new-bun-webview-options',
+  WebView: 'https://bun.com/docs/runtime/webview#new-bun-webview-options',
 
   // UDP (ICMP errors + truncation flags)
   'Bun.udpSocket': 'https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket',
@@ -96,10 +102,13 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Security (native CSRF; pair with Bun.Cookie session ids) ────────────
   'Bun.CSRF': 'https://bun.com/docs/runtime/csrf#bun-csrf-generate',
+  'Bun.CSRF.generate': 'https://bun.com/docs/runtime/csrf#bun-csrf-generate',
+  'Bun.CSRF.verify': 'https://bun.com/docs/runtime/csrf#bun-csrf-verify',
 
   // ── Data stores (Redis / S3 / SQL / FFI) ──────────────────────────────────
   // Prefer RedisClient from 'bun' (not ioredis). Streams via client.send().
   RedisClient: 'https://bun.com/docs/runtime/redis#getting-started',
+  'Bun.redis': 'https://bun.com/docs/runtime/redis#getting-started',
   redis: 'https://bun.com/docs/runtime/redis#getting-started',
   S3Client: 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
   'Bun.s3': 'https://bun.com/docs/runtime/s3#bun-s3client-bun-s3',
@@ -116,9 +125,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
+  'Bun.sha': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
   'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
-  'Bun.secrets': 'https://bun.com/docs/runtime/secrets',
+  'Bun.secrets': 'https://bun.com/docs/runtime/secrets#bun-secrets-get-options',
+  'Bun.semver':
+    'https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean',
+  'Bun.Image': 'https://bun.com/docs/runtime/image#input',
+  'Bun.CookieMap': 'https://bun.com/docs/runtime/cookies#cookiemap-class',
 
   // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
   'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
@@ -161,22 +175,55 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── General utilities ──────────────────────────────────────────────────
   // @see pinned for tools that log runtime version in integrity/status
   'Bun.version': 'https://bun.com/docs/runtime/utils#bun-version',
+  'Bun.revision': 'https://bun.com/docs/runtime/utils#bun-revision',
   'Bun.randomUUIDv7': 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
   'Bun.Glob': 'https://bun.com/docs/runtime/glob#quickstart',
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
   'Bun.nanoseconds': 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   'Bun.sleep': 'https://bun.com/docs/runtime/utils#bun-sleep',
+  'Bun.sleepSync': 'https://bun.com/docs/runtime/utils#bun-sleepsync',
   'Bun.deepEquals': 'https://bun.com/docs/runtime/utils#bun-deepequals',
   'Bun.escapeHTML': 'https://bun.com/docs/runtime/utils#bun-escapehtml',
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
+  'Bun.fileURLToPath': 'https://bun.com/docs/runtime/utils#bun-fileurltopath',
+  'Bun.pathToFileURL': 'https://bun.com/docs/runtime/utils#bun-pathtofileurl',
+  'Bun.deflateSync': 'https://bun.com/docs/runtime/utils#bun-deflatesync',
+  'Bun.gunzipSync': 'https://bun.com/docs/runtime/utils#bun-gunzipsync',
+  'Bun.inflateSync': 'https://bun.com/docs/runtime/utils#bun-inflatesync',
+  'Bun.zstdCompress': 'https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync',
+  'Bun.zstdCompressSync':
+    'https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync',
+  'Bun.zstdDecompress':
+    'https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync',
+  'Bun.zstdDecompressSync':
+    'https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync',
+  'Bun.readableStreamTo': 'https://bun.com/docs/runtime/utils#bun-readablestreamto',
+  'Bun.stdin': 'https://bun.com/docs/runtime/console#reading-from-stdin',
   'Bun.spawn': 'https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn',
   'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'spawn terminal options': 'https://bun.com/docs/runtime/child-process#terminal-options',
   'spawn stdout guide': 'https://bun.com/docs/guides/process/spawn-stdout',
   'CI failures from terminal':
     'https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal',
+
+  // ── Package manager CLI / config (depth-controlled locus batch) ─────────
+  '--filter': 'https://bun.com/docs/pm/filter#package-name-filter-pattern',
+  '--watch': 'https://bun.com/docs/bundler/index#watch-mode',
+  '--linker': 'https://bun.com/docs/runtime/bunfig#install-linker',
+  '--dry-run': 'https://bun.com/docs/pm/cli/install#dry-run',
+  '--dev': 'https://bun.com/docs/pm/cli/add#dev',
+  '--latest': 'https://bun.com/docs/pm/cli/update#latest',
+  '--test-only': 'https://bun.com/docs/test/writing-tests#test-only',
+  '--silent':
+    'https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run',
+  trustedDependencies: 'https://bun.com/docs/pm/lifecycle#trusteddependencies',
+  globalStore: 'https://bun.com/docs/runtime/bunfig#install-globalstore',
+  env: 'https://bun.com/docs/runtime/bunfig#env',
+  'run.shell': 'https://bun.com/docs/runtime/bunfig#run-shell-use-the-system-shell-or-buns-shell',
+  'run.noOrphans':
+    'https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind',
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_PINNED,
@@ -223,17 +270,19 @@ function printUrl(api: string): void {
 }
 
 /** Accept common aliases (Bun.redis → RedisClient, bun.cron → Bun.cron). */
-function resolveApiAlias(api: string): string {
+export function resolveApiAlias(api: string): string {
   const aliases: Record<string, string> = {
     'Bun.redis': 'RedisClient',
     BunRedis: 'RedisClient',
     'bun.redis': 'RedisClient',
+    'Bun.RedisClient': 'RedisClient',
     'bun.cron': 'Bun.cron',
     CronJob: 'Bun.cron',
     'Bun.CookieMap': 'CookieMap',
     'bun.s3': 'S3Client',
     'Bun.S3Client': 'S3Client',
     'Bun.csrf': 'Bun.CSRF',
+    'Bun.CSRF.generate': 'Bun.CSRF',
     CSRF: 'Bun.CSRF',
     'bun.env': 'Bun.env',
     'process.env': 'Bun.env',
@@ -1234,6 +1283,115 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
 
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
 
+function parseLocusDepth(args: string[], fallback = 20): number {
+  const eq = args.find(a => a.startsWith('--depth='));
+  if (eq) {
+    const n = Number.parseInt(eq.slice('--depth='.length), 10);
+    return Number.isFinite(n) && n >= 0 ? n : fallback;
+  }
+  const idx = args.indexOf('--depth');
+  if (idx !== -1) {
+    const n = Number.parseInt(args[idx + 1] ?? '', 10);
+    return Number.isFinite(n) && n >= 0 ? n : fallback;
+  }
+  return fallback;
+}
+
+/**
+ * Audit poor loci (unresolved / coincidence) with a hard `--depth=N` budget.
+ * Suggests index anchors so agents can extend CANONICAL_REFS in controlled batches.
+ */
+async function locusAudit(args: string[]): Promise<number> {
+  const { buildPageAnchorIndex, isPoorLocus, suggestAnchorsForToken } = await import(
+    '../lib/docs/locus-resolve.ts'
+  );
+  const { loadCatalog, NOTE_COVERAGE_TYPES } = await import('./bun-docs-catalog.ts');
+  const depth = parseLocusDepth(args, 20);
+  const asJson = args.includes('--json');
+  const typeEq = args.find(a => a.startsWith('--type='));
+  const typeFilter = typeEq?.slice('--type='.length);
+
+  const entries = await loadCatalog();
+  const index = await docsIndex();
+  const pageAnchors = buildPageAnchorIndex(index.entries);
+
+  type Row = {
+    name: string;
+    type: string;
+    reason: string;
+    page: string;
+    anchor?: string;
+    suggestion?: string;
+    score?: number;
+    inCanonicalRefs: boolean;
+  };
+
+  const poor: Row[] = [];
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    if (typeFilter && e.type !== typeFilter) continue;
+    const { poor: isPoor, reason } = isPoorLocus(
+      e.canonicalPage,
+      e.anchor,
+      e.locusUnresolved,
+      pageAnchors
+    );
+    if (!isPoor || !reason) continue;
+    const suggestions = suggestAnchorsForToken(e.name, pageAnchors, {
+      pages: e.allPages,
+      limit: 3,
+    });
+    // Also search whole index when page-local suggestions are weak
+    const global =
+      !suggestions[0] || (suggestions[0].score ?? 0) < 80
+        ? suggestAnchorsForToken(e.name, pageAnchors, { limit: 3 })
+        : suggestions;
+    const best = global[0] ?? suggestions[0];
+    const refKey = resolveApiAlias(e.name);
+    poor.push({
+      name: e.name,
+      type: e.type,
+      reason,
+      page: e.canonicalPage.replace('https://bun.com/docs/', ''),
+      anchor: e.anchor,
+      suggestion: best?.url.replace('https://bun.com/docs/', ''),
+      score: best?.score,
+      inCanonicalRefs: Boolean(CANONICAL_REFS[e.name] ?? CANONICAL_REFS[refKey]),
+    });
+  }
+
+  // Prioritize: coincidence (wrong page+anchor) > unresolved with strong suggestion > rest
+  poor.sort((a, b) => {
+    const rank = (r: Row) =>
+      (r.reason === 'coincidence' ? 300 : 0) +
+      (r.score ?? 0) +
+      (r.inCanonicalRefs ? 20 : 0) -
+      (r.page.includes('bun-apis') ? -10 : 0);
+    return rank(b) - rank(a) || a.name.localeCompare(b.name);
+  });
+
+  const total = poor.length;
+  const slice = poor.slice(0, depth);
+  if (asJson) {
+    console.info(JSON.stringify({ depth, total, shown: slice.length, entries: slice }, null, 2));
+  } else {
+    console.info(`Poor loci: ${total} total · showing depth=${depth}`);
+    console.info(`${'name'.padEnd(32)} ${'reason'.padEnd(12)} ${'page'.padEnd(28)} → suggestion`);
+    for (const r of slice) {
+      const sug =
+        r.suggestion != null
+          ? `${r.suggestion}${r.score != null ? ` (score ${r.score})` : ''}${r.inCanonicalRefs ? ' [has-ref]' : ''}`
+          : '(none)';
+      console.info(`${r.name.padEnd(32)} ${r.reason.padEnd(12)} ${r.page.padEnd(28)} → ${sug}`);
+    }
+    if (total > depth) {
+      console.info(`… ${total - depth} more (raise --depth)`);
+    }
+    console.info(`\nExtend CANONICAL_REFS for high-score rows, then: bun run docs:catalog:build`);
+  }
+  return total;
+}
+
 async function mainCli(): Promise<void> {
   const [, , cmd = 'list', ...rest] = Bun.argv;
   switch (cmd) {
@@ -1277,6 +1435,9 @@ async function mainCli(): Promise<void> {
     case 'suggest':
       await suggest(rest.join(' '));
       break;
+    case 'locus':
+      await locusAudit(rest);
+      break;
     case 'audit':
       process.exit((await audit()) > 0 ? 1 : 0);
       break;
@@ -1318,8 +1479,9 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
+          `commands: url|token|list|catalog|suggest|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
+          `locus: --depth=N · --json · --type=api  (poor anchors; extend CANONICAL_REFS in batches)\n` +
           `operate: bun run docs:refresh · docs/BUN_DOCS_OPERATE.md\n` +
           `integrity flags: --fix · --fix-dry · --no-live\n` +
           `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`

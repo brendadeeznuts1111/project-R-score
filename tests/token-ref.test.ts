@@ -36,6 +36,45 @@ describe('locus-resolve', () => {
     expect(locus.unresolved).toBe(true);
     expect(locus.fragment).toBeUndefined();
   });
+
+  test('verifies CANONICAL_REFS fragment against canonical page, not scrape page', () => {
+    const dump = 'https://bun.com/docs/runtime/bun-apis';
+    const tcp = 'https://bun.com/docs/runtime/networking/tcp';
+    const anchors = buildPageAnchorIndex([
+      { url: `${dump}.md`, anchors: [] },
+      { url: `${tcp}.md`, anchors: ['create-a-connection-bun-connect'] },
+    ]);
+    const refs = {
+      'Bun.connect': `${tcp}#create-a-connection-bun-connect`,
+    };
+    const { locus, provenance } = resolveVerifiedLocus(
+      { name: 'Bun.connect', canonicalPage: dump },
+      refs,
+      anchors,
+      '2026-07-20T00:00:00.000Z'
+    );
+    expect(locus.page).toBe(tcp);
+    expect(locus.fragment).toBe('create-a-connection-bun-connect');
+    expect(locus.unresolved).toBe(false);
+    expect(provenance.confidence).toBe(1);
+  });
+
+  test('resolveName alias hits CANONICAL_REFS', () => {
+    const page = 'https://bun.com/docs/runtime/redis';
+    const anchors = buildPageAnchorIndex([
+      { url: `${page}.md`, anchors: ['getting-started'] },
+    ]);
+    const refs = { RedisClient: `${page}#getting-started` };
+    const { locus } = resolveVerifiedLocus(
+      { name: 'Bun.redis', canonicalPage: 'https://bun.com/docs/runtime/bun-apis' },
+      refs,
+      anchors,
+      '2026-07-20T00:00:00.000Z',
+      { resolveName: n => (n === 'Bun.redis' ? 'RedisClient' : n) }
+    );
+    expect(locus.page).toBe(page);
+    expect(locus.fragment).toBe('getting-started');
+  });
 });
 
 describe('token-ref adapter', () => {

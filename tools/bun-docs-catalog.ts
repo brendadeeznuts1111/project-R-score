@@ -572,6 +572,8 @@ export function scoreCanonicalPage(url: string, nameHint?: string): number {
   if (u.includes('/docs/pm/')) s += 40;
   if (u.includes('/docs/guides/')) s -= 30;
   if (u.includes('/docs/project/')) s -= 10;
+  // Dump listing — never prefer over dedicated API pages
+  if (u.includes('/runtime/bun-apis')) s -= 80;
   if (nameHint) {
     const seg = nameHint
       .replace(/^Bun\./, '')
@@ -787,7 +789,8 @@ export function applyVerifiedLocusToEntries(
   entries: DocCatalogEntry[],
   canonicalRefs: Record<string, string>,
   pageAnchors: ReturnType<typeof buildPageAnchorIndex>,
-  observedAt: string
+  observedAt: string,
+  resolveName?: (name: string) => string
 ): void {
   for (const e of entries) {
     if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
@@ -795,10 +798,18 @@ export function applyVerifiedLocusToEntries(
       { name: e.name, canonicalPage: e.canonicalPage, anchor: e.anchor },
       canonicalRefs,
       pageAnchors,
-      observedAt
+      observedAt,
+      resolveName ? { resolveName } : undefined
     );
+    // Pin page from verified locus — do not leave scrape/dump pages (bun-apis) in place.
+    e.canonicalPage = locus.page;
     e.anchor = locus.fragment;
     e.locusUnresolved = locus.unresolved ?? !locus.fragment;
+    if (!e.allPages.includes(locus.page)) {
+      e.allPages = [locus.page, ...e.allPages];
+    } else {
+      e.allPages = [locus.page, ...e.allPages.filter(p => p !== locus.page)];
+    }
   }
 }
 
@@ -1051,12 +1062,21 @@ export async function buildCatalog(opts?: {
   }
 
   const pageAnchors = buildPageAnchorIndex(index.entries);
-  applyVerifiedLocusToEntries(entries, CANONICAL_REFS, pageAnchors, new Date().toISOString());
+  const { resolveApiAlias } = await import('./bun-doc-refs.ts');
+  applyVerifiedLocusToEntries(
+    entries,
+    CANONICAL_REFS,
+    pageAnchors,
+    new Date().toISOString(),
+    resolveApiAlias
+  );
   seedPageRelations(entries);
 
-  // Re-pick canonical + put canonical first in allPages; pin version fields
+  // Re-pick canonical only when locus is still unresolved; verified pages stay pinned.
   for (const e of entries) {
-    e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
+    if (e.locusUnresolved || !e.anchor) {
+      e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
+    }
     e.allPages = [e.canonicalPage, ...e.allPages.filter(p => p !== e.canonicalPage)];
     e.lastUpdated ??= docsLastUpdated;
     e.verifiedOn = verifiedOn;
