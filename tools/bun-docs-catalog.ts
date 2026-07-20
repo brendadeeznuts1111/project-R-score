@@ -18,8 +18,10 @@
  * over /guides/.
  *
  * Build:  bun tools/bun-docs-catalog.ts build
- * List:   bun tools/bun-docs-catalog.ts list [--section runtime] [--type api] [--json]
+ * List:   bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api] [--search=WebView] [--json]
  * Lookup: bun tools/bun-docs-catalog.ts get Bun.WebView
+ *
+ * List columns: name · type · stability · releasedIn · lastUpdated · doc URL (page#anchor)
  *
  * Consumed by tools/bun-doc-refs.ts (`catalog` / enriched `suggest`).
  */
@@ -549,28 +551,59 @@ async function main(): Promise<void> {
   }
   if (cmd === 'list') {
     let entries = await loadCatalog();
-    const section = rest.find(a => a.startsWith('--section='))?.slice(10) as DocSection | undefined;
-    const type = rest.find(a => a.startsWith('--type='))?.slice(7) as DocRefType | undefined;
+    let section: DocSection | undefined;
+    let type: DocRefType | undefined;
+    let search: string | undefined;
     const json = rest.includes('--json');
+    for (let i = 0; i < rest.length; i++) {
+      const a = rest[i]!;
+      if (a.startsWith('--section=')) section = a.slice(10) as DocSection;
+      else if (a === '--section' && rest[i + 1]) {
+        section = rest[++i] as DocSection;
+      } else if (a.startsWith('--type=')) type = a.slice(7) as DocRefType;
+      else if (a === '--type' && rest[i + 1]) {
+        type = rest[++i] as DocRefType;
+      } else if (a.startsWith('--search=')) search = a.slice(9);
+      else if (a === '--search' && rest[i + 1]) {
+        search = rest[++i];
+      }
+    }
     if (section) entries = entries.filter(e => e.section === section);
     if (type) entries = entries.filter(e => e.type === type);
+    if (search) {
+      const q = search.toLowerCase();
+      entries = entries.filter(
+        e =>
+          e.name.toLowerCase().includes(q) ||
+          e.aliases?.some(a => a.toLowerCase().includes(q)) ||
+          e.description?.toLowerCase().includes(q) ||
+          e.canonicalPage.toLowerCase().includes(q) ||
+          e.anchor?.toLowerCase().includes(q)
+      );
+    }
     if (json) {
       process.stdout.write(`${JSON.stringify(entries, null, 2)}\n`);
       return;
     }
+    // Header
+    console.info(
+      `${'NAME'.padEnd(32)} ${'TYPE'.padEnd(10)} ${'STAB'.padEnd(12)} ${'REL'.padEnd(8)} ${'UPDATED'.padEnd(12)} DOC (page#anchor)`
+    );
+    console.info(`${'─'.repeat(32)} ${'─'.repeat(10)} ${'─'.repeat(12)} ${'─'.repeat(8)} ${'─'.repeat(12)} ${'─'.repeat(48)}`);
     for (const e of entries) {
       const url = e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage;
       const rel = (e.releasedIn ?? '—').padEnd(8);
       const upd = (e.lastUpdated?.slice(0, 10) ?? '—').padEnd(12);
       console.info(
-        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${e.section.padEnd(10)} rel=${rel} upd=${upd} ${url}`
+        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${url}`
       );
     }
     console.info(`\n${entries.length} entries`);
+    if (search) console.info(`(filter --search=${search})`);
     return;
   }
   if (cmd === 'get') {
-    const name = rest.join(' ');
+    const name = rest.filter(a => !a.startsWith('--')).join(' ');
     const e = await getCatalogEntry(name);
     if (!e) {
       console.error(`❌ not in catalog: ${name} (run: bun tools/bun-docs-catalog.ts build)`);
@@ -581,8 +614,10 @@ async function main(): Promise<void> {
   }
   console.error('usage: bun tools/bun-docs-catalog.ts build|list|get [name]');
   console.error(
-    '  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config --json'
+    '  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config'
   );
+  console.error('       --search=WebView   # substring match on name/alias/desc/url/anchor');
+  console.error('       --json');
   process.exit(1);
 }
 
