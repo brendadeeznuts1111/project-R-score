@@ -1,8 +1,12 @@
 #!/usr/bin/env bun
 /**
- * List all packages in the monorepo with their name, version, registry, and triage status.
+ * List packages in the monorepo with name, version, registry, and triage status.
  *
- * Usage: bun run packages:list [--filter core|active|experimental|archive|scratch]
+ * Usage:
+ *   bun run packages:list
+ *   bun run packages:list --filter=core|active|experimental|archive|scratch
+ *   bun run packages:list --include-scaffolds   # show {{name}} / template noise
+ *   bun run packages:list --paths               # add directory column
  */
 
 import { readdir, readFile, stat } from 'node:fs/promises';
@@ -20,6 +24,8 @@ const EXCLUDE = new Set([
   '.wrangler',
 ]);
 const FILTER = process.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
+const INCLUDE_SCAFFOLDS = process.argv.includes('--include-scaffolds');
+const SHOW_PATHS = process.argv.includes('--paths');
 
 function triage(rel: string): string {
   if (rel.startsWith('archive') || rel.includes('/archive/')) return 'archive';
@@ -36,7 +42,8 @@ function triage(rel: string): string {
     return 'core';
   if (
     rel.startsWith('projects/active/factorywager/') ||
-    rel.startsWith('projects/active/kimiremote/')
+    rel.startsWith('projects/active/kimiremote/') ||
+    rel.startsWith('projects/active/sports-terminal-os')
   )
     return 'core';
   return 'active';
@@ -53,6 +60,25 @@ function registryLabel(reg: string): string {
   if (reg.includes('registry.devhq.com')) return 'devhq';
   if (reg.includes('registry.npmjs.org')) return 'npmjs';
   return reg;
+}
+
+/** Scaffold / demo package.json noise — hide by default. */
+function isScaffoldNoise(name: string, dir: string): boolean {
+  if (name.includes('{{') || name.includes('}}')) return true;
+  if (name === '__test__' || name === 'test' || name === 'name') return true;
+  const norm = dir.replace(/\\/g, '/');
+  if (
+    /\/templates?\//.test(`/${norm}/`) ||
+    /(^|\/)templates?(\/|$)/.test(norm) ||
+    /(^|\/)__test__(\/|$)/.test(norm) ||
+    /(^|\/)fixtures?(\/|$)/.test(norm) ||
+    /(^|\/)scaffold(\/|$)/.test(norm)
+  )
+    return true;
+  // Geelark / codepoint create scaffolds
+  if (norm.includes('/create/template') || norm.includes('/@systems-dashboard/template'))
+    return true;
+  return false;
 }
 
 async function* walkFiles(dir: string): AsyncGenerator<string> {
@@ -81,6 +107,7 @@ async function* walkFiles(dir: string): AsyncGenerator<string> {
 }
 
 const rows: Array<[string, string, string, string, string]> = [];
+let skippedScaffolds = 0;
 
 for await (const file of walkFiles(ROOT)) {
   let content: string;
@@ -97,12 +124,16 @@ for await (const file of walkFiles(ROOT)) {
   }
   const name = data.name as string;
   if (!name) continue;
+  const dir = path.relative(ROOT, path.dirname(file));
+  if (!INCLUDE_SCAFFOLDS && isScaffoldNoise(name, dir)) {
+    skippedScaffolds++;
+    continue;
+  }
   const ver = (data.version as string) || '--';
   const priv = data.private ? '🔒' : '';
   const pub = (data.publishConfig as Record<string, unknown>) || {};
   const reg = registryLabel((pub.registry as string) || '');
   const tag = triage(path.relative(ROOT, path.dirname(file)));
-  const dir = path.relative(ROOT, path.dirname(file));
   if (FILTER && tag !== FILTER) continue;
   rows.push([tag, `${name}${priv}`, ver, reg, dir]);
 }
@@ -111,13 +142,32 @@ rows.sort((a, b) => `${a[0]}${a[1]}`.localeCompare(`${b[0]}${b[1]}`));
 
 console.info('Package Registry:');
 console.info('='.repeat(80));
-console.info(
-  `| ${'Package'.padEnd(45)} | ${'Version'.padEnd(12)} | ${'Registry'.padEnd(15)} | ${'Triage'.padEnd(12)} |`
-);
-console.info(`|${'-'.repeat(47)}|${'-'.repeat(14)}|${'-'.repeat(17)}|${'-'.repeat(14)}|`);
-for (const [tag, name, ver, reg] of rows) {
+if (SHOW_PATHS) {
   console.info(
-    `| ${name.padEnd(45)} | ${ver.padEnd(12)} | ${reg.padEnd(15)} | ${tag.padEnd(12)} |`
+    `| ${'Package'.padEnd(40)} | ${'Version'.padEnd(10)} | ${'Registry'.padEnd(12)} | ${'Triage'.padEnd(10)} | Directory`
   );
+  console.info(
+    `|${'-'.repeat(42)}|${'-'.repeat(12)}|${'-'.repeat(14)}|${'-'.repeat(12)}|${'-'.repeat(20)}`
+  );
+  for (const [tag, name, ver, reg, dir] of rows) {
+    console.info(
+      `| ${name.padEnd(40)} | ${ver.padEnd(10)} | ${reg.padEnd(12)} | ${tag.padEnd(10)} | ${dir}`
+    );
+  }
+} else {
+  console.info(
+    `| ${'Package'.padEnd(45)} | ${'Version'.padEnd(12)} | ${'Registry'.padEnd(15)} | ${'Triage'.padEnd(12)} |`
+  );
+  console.info(`|${'-'.repeat(47)}|${'-'.repeat(14)}|${'-'.repeat(17)}|${'-'.repeat(14)}|`);
+  for (const [tag, name, ver, reg] of rows) {
+    console.info(
+      `| ${name.padEnd(45)} | ${ver.padEnd(12)} | ${reg.padEnd(15)} | ${tag.padEnd(12)} |`
+    );
+  }
 }
 console.info(`\nTotal: ${rows.length} packages`);
+if (skippedScaffolds > 0) {
+  console.info(
+    `Skipped scaffolds: ${skippedScaffolds} (pass --include-scaffolds to show)`
+  );
+}

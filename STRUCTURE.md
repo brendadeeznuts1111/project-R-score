@@ -24,8 +24,10 @@ Projects/
 ├── packages/                # @factorywager/* internal packages (8)
 ├── plannator/               # Local Plannotator extra skills mirror (thin)
 ├── projects/
-│   ├── README.md            # Triage rules + active map
-│   └── active/              # Only populated tier (see projects/README.md)
+│   ├── README.md            # Triage rules + active map + agent scope
+│   ├── experimental/        # Tier bucket (+ README); demos not bulk-moved yet
+│   ├── archive/             # Tier bucket (+ README); empty until first freeze
+│   └── active/              # Populated apps (see projects/README.md)
 │       ├── analysis|apps|automation|dashboards|development|enterprise|games|tools|utilities/
 │       ├── factorywager/    # registry (+ workspace packages)
 │       ├── sports-terminal-os/  # root workspace member
@@ -57,7 +59,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 | `herdr-worktrees/` | Empty worktree parking |
 | Root `test-binary-*`, `**/sports-terminal-{before,after}` | Bun `--compile` dumps — delete if reappear |
 
-`projects/experimental/` and `projects/archive/` are **documented tiers**, not present until first `git mv`.
+`projects/experimental/` and `projects/archive/` exist as **tier buckets** (README only until first `git mv`).
 
 ## Key navigation
 
@@ -84,7 +86,7 @@ From `package.json` `workspaces.packages`:
 - **Phase 1–4 (Feb–May 2026):** Root cleanup, workspace isolation, `@factorywager/*` rename, package registry, antipattern remediations. Historical paths `data/`, `database/`, root `factorywager/`, root `kimiremote/` were **moved or removed** — do not resurrect in maps.
 - **Phase 4.4:** Shared [`lib/projects-scan.ts`](lib/projects-scan.ts).
 - **Jun 2026:** bet-ticker + cascade under `projects/active/enterprise/` (gitignored nested repos).
-- **Jul 2026:** Context-bloat pass — compile dumps removed; root nested products gitignored; STRUCTURE/projects README aligned to disk; skill `node_modules` / utility `dist` cleaned.
+- **Jul 2026:** Context-bloat pass — compile dumps removed; root nested products gitignored; STRUCTURE/projects README aligned to disk; skill `node_modules` / utility `dist` cleaned; experimental/archive tier buckets; `packages:list` scaffold filter; local runtime DBs/build-artifacts pruned.
 
 ## Future candidates
 

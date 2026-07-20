@@ -28,7 +28,7 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 
 | Command | Description |
 |---------|-------------|
-| `bun run packages:list` | List all 395+ packages with version, registry, triage |
+| `bun run packages:list` | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`) |
 | `bun run packages:outdated` | Check outdated root deps (fast — workspace-isolated) |
 | `bun run validate:workspaces` | Validate workspace coverage |
 | `bun run lint:core` | ESLint on packages/, server/, config/, tools/ |

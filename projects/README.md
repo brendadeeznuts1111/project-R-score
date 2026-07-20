@@ -8,7 +8,7 @@ Each project under `projects/` is classified into one of three tiers:
 | `experimental/` | Prototypes, proofs-of-concept, sandbox | May promote to active, archive, or delete |
 | `archive/` | Frozen research, no longer actively worked on | Read-only, kept for reference |
 
-**On disk today:** only `active/` is populated. Create `experimental/` / `archive/` when promoting or freezing; do not invent tiers without `git mv`.
+**On disk today:** `active/` holds projects; `experimental/` and `archive/` exist as tier buckets with READMEs (candidates listed there — no bulk `git mv` yet).
 
 ## Rules
 
@@ -43,7 +43,7 @@ Each project under `projects/` is classified into one of three tiers:
 | `active/f402-openapi/` | OpenAPI / workers | Own tree, gitignored |
 | `active/playwriter-skill/` | Playwright skill package | Thin skill |
 
-See `bun run packages:list --filter=active` for package names (filter out `{{name}}` / template scaffolds when using for inventory).
+See `bun run packages:list --filter=active` for package names. Scaffold/`{{name}}` packages are **hidden by default**; use `--include-scaffolds` or `--paths` when debugging inventory.
 
 ## Agent scope (what not to load)
 
@@ -53,3 +53,10 @@ See `bun run packages:list --filter=active` for package names (filter out `{{nam
 | **Local runtime only** | `*.db`, `dist/`, `node_modules/`, compile dumps, `data/` |
 | **Not this monorepo** | Root-parked: `Proton-workspace/`, `plannotator-upstream/`, `toc-ops*`, `bet-turnin-sheet/`, `bradley-terry/` (gitignored) |
 | **Spine** | `lib/`, `packages/`, `config/`, `tools/`, `scripts/` (targeted), skills markdown under `.agents/skills/` |
+
+## Tier buckets
+
+| Path | Role |
+|------|------|
+| [`experimental/README.md`](experimental/README.md) | Demo / prototype candidates still under `active/` until moved |
+| [`archive/README.md`](archive/README.md) | Frozen former `projects/active/*` apps (empty until first freeze) |
