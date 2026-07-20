@@ -26,6 +26,7 @@ import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
+const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
 
 export type DocRefType = 'api' | 'cli-flag' | 'config' | 'concept';
 export type DocStability = 'stable' | 'experimental' | 'deprecated';
@@ -321,6 +322,38 @@ export async function buildCatalog(): Promise<DocCatalogEntry[]> {
         });
       }
     }
+  }
+
+  // 4) Generated token supplement (CLI flags, env vars, config keys, APIs, concepts)
+  try {
+    const supplement = (await Bun.file(TOKEN_SUPPLEMENT_PATH).json()) as Array<{
+      name: string;
+      type: DocRefType;
+      stability: DocStability;
+      description?: string;
+      canonicalPage: string;
+      anchor?: string;
+      allPages: string[];
+      section: DocSection;
+    }>;
+    for (const e of supplement) {
+      mergeEntry(map, {
+        name: e.name,
+        type: e.type,
+        description: e.description,
+        stability: e.stability,
+        page: e.canonicalPage,
+        anchor: e.anchor,
+        section: e.section,
+      });
+      // Merge alternate pages so canonical selection stays informed.
+      for (const alt of e.allPages ?? []) {
+        if (alt === e.canonicalPage) continue;
+        mergeEntry(map, { name: e.name, page: alt });
+      }
+    }
+  } catch {
+    // supplement is optional until generator has been run
   }
 
   // Final sort: section then name

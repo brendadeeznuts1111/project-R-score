@@ -442,10 +442,36 @@ async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
   return catalogs;
 }
 
+type CatalogEntry = {
+  name: string;
+  type: 'api' | 'cli-flag' | 'config' | 'concept';
+  stability: 'stable' | 'experimental' | 'deprecated';
+  description?: string;
+  canonicalPage: string;
+  anchor?: string;
+  allPages: string[];
+};
+
+function isCatalog(value: unknown): value is { entries: CatalogEntry[] } {
+  const v = value as Record<string, unknown> | undefined;
+  return !!v && Array.isArray(v.entries);
+}
+
+/** Load the generated docs catalog (tools/bun-docs-catalog.json), if present. */
+async function loadDocsCatalog(): Promise<CatalogEntry[] | null> {
+  const path = new URL('./bun-docs-catalog.json', import.meta.url).pathname;
+  try {
+    const parsed = (await Bun.file(path).json()) as unknown;
+    return isCatalog(parsed) ? parsed.entries : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Resolve a real CLI/config token to its canonical doc URL.
- * Tokens live in `tools/*-tokens.json` (flat or generated nested maps),
- * separate from heading anchors.
+ * Tokens live in `tools/*-tokens.json` (flat or generated nested maps) and in
+ * `tools/bun-docs-catalog.json` (typed unified catalog).
  */
 async function tokenLookup(query: string): Promise<void> {
   if (!query) {
@@ -453,9 +479,11 @@ async function tokenLookup(query: string): Promise<void> {
     process.exit(1);
   }
   const catalogs = await loadTokenCatalogs();
+  const docsCatalog = await loadDocsCatalog();
   const q = query.trim();
   const normalized = q.replace(/^-+/, ''); // allow `--filter` or `filter`
 
+  // 1. Authoritative manual catalogs first.
   for (const cat of catalogs) {
     const hits: Array<[kind: string, url: string]> = [];
     if (cat.cliFlags[q] || cat.cliFlags[`--${normalized}`]) {
@@ -473,8 +501,27 @@ async function tokenLookup(query: string): Promise<void> {
     }
   }
 
+  // 2. Generated docs catalog (APIs, CLI flags, env vars/config keys, concepts).
+  if (docsCatalog) {
+    for (const entry of docsCatalog) {
+      if (entry.name === q || (entry.type === 'cli-flag' && entry.name === `--${normalized}`)) {
+        const url = entry.anchor ? `${entry.canonicalPage}#${entry.anchor}` : entry.canonicalPage;
+        console.info(`${entry.name}`);
+        console.info(`  [${entry.type}] ${url}`);
+        if (entry.stability !== 'stable') console.info(`  [stability] ${entry.stability}`);
+        if (entry.description) console.info(`  ${entry.description}`);
+        if (entry.allPages.length > 1) {
+          console.info(
+            `  [also on] ${entry.allPages.slice(1, 6).join(', ')}${entry.allPages.length > 6 ? '...' : ''}`,
+          );
+        }
+        return;
+      }
+    }
+  }
+
   console.error(`❌ no token catalog entry for "${q}"`);
-  console.error('   known tokens:');
+  console.error('   known CLI/config tokens:');
   for (const cat of catalogs) {
     for (const k of Object.keys(cat.cliFlags)) console.error(`     ${k}`);
     for (const k of Object.keys(cat.envVars)) console.error(`     ${k}`);

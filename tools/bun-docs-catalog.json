@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-20T15:08:57.228Z",
+  "generated": "2026-07-20T15:13:27.838Z",
   "bunVersion": "1.4.0",
   "source": {
     "index": "tools/bun-docs-index.json",
@@ -23,34 +23,499 @@
     "test",
     "guides"
   ],
-  "count": 390,
+  "count": 730,
   "byType": {
-    "cli-flag": 5,
-    "concept": 318,
-    "api": 63,
-    "config": 4
+    "cli-flag": 199,
+    "concept": 317,
+    "config": 84,
+    "api": 130
   },
   "bySection": {
-    "runtime": 135,
-    "bundler": 15,
-    "test": 15,
+    "runtime": 278,
+    "bundler": 107,
+    "test": 47,
     "guides": 193,
-    "pm": 27,
+    "pm": 100,
     "reference": 2,
     "other": 3
   },
   "byStability": {
-    "stable": 386,
+    "stable": 726,
     "experimental": 4
   },
   "entries": [
     {
+      "name": "--bun",
+      "type": "cli-flag",
+      "description": "An array of package names that are exempt from the `minimumReleaseAge` check.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-minimumreleaseageexcludes",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/bunx",
+        "https://bun.com/docs/runtime/index"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--conditions",
+      "type": "cli-flag",
+      "description": "Bun implements the Node.js module resolution algorithm, so you can import packages from `node_modules` with a bare specifier.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/module-resolution",
+      "anchor": "importing-packages",
+      "allPages": [
+        "https://bun.com/docs/runtime/module-resolution",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "--console-depth",
       "type": "cli-flag",
+      "description": "The `telemetry` field enables or disables analytics.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/console",
+      "anchor": "telemetry",
       "allPages": [
-        "https://bun.com/docs/runtime/console"
+        "https://bun.com/docs/runtime/console",
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/runtime/index"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--dry-run",
+      "type": "cli-flag",
+      "description": "Whether `bun install` actually installs dependencies.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-dryrun",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/pm",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--env-file",
+      "type": "cli-flag",
+      "description": "The `--env-file` flag overrides which `.env` files Bun loads. It works both when running a file with `bun` and when running `package.json` scripts.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "manually-specifying-env-files",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--fetch-preconnect",
+      "type": "cli-flag",
+      "description": "`fetch.preconnect` starts the DNS lookup, TCP socket connection, and TLS handshake for a host before you're ready to send a request to it.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/fetch",
+      "anchor": "preconnect-to-a-host",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/fetch"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--filter",
+      "type": "cli-flag",
+      "description": "<Note>",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "run-a-package-json-script",
+      "allPages": [
+        "https://bun.com/docs/pm/filter",
+        "https://bun.com/docs/runtime/index",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/workspaces"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--force",
+      "type": "cli-flag",
+      "description": "[`shadcn/ui`](https://ui.shadcn.com/) is a component library tool for building web applications.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "using-shadcn-ui-with-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--global",
+      "type": "cli-flag",
+      "description": "Whether `bun install` actually installs dependencies.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-dryrun",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/add",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--help",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "anchor": "cli-usage",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init",
+        "https://bun.com/docs/pm/cli/add",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--hot",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "anchor": "bun-hot",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron",
+        "https://bun.com/docs/runtime/json5",
+        "https://bun.com/docs/runtime/sql",
+        "https://bun.com/docs/runtime/toml",
+        "https://bun.com/docs/runtime/watch-mode",
+        "https://bun.com/docs/runtime/yaml",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--inspect",
+      "type": "cli-flag",
+      "description": "bun --inspect server.ts",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/debugger",
+      "anchor": "debugging-javascript-and-typescript",
+      "allPages": [
+        "https://bun.com/docs/runtime/debugger",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--minimal",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "anchor": "cli-usage",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--no-clear-screen",
+      "type": "cli-flag",
+      "description": "Watch mode works with `bun test` and when running TypeScript, JSX, and JavaScript files.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/watch-mode",
+      "anchor": "watch-mode",
+      "allPages": [
+        "https://bun.com/docs/runtime/watch-mode"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--no-env-file",
+      "type": "cli-flag",
+      "description": "The `--env-file` flag overrides which `.env` files Bun loads. It works both when running a file with `bun` and when running `package.json` scripts.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "manually-specifying-env-files",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--no-git",
+      "type": "cli-flag",
+      "description": "[`shadcn/ui`](https://ui.shadcn.com/) is a component library tool for building web applications.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "using-shadcn-ui-with-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--no-install",
+      "type": "cli-flag",
+      "description": "| Name                                      | Description                                                                                                                             |",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--only-missing",
+      "type": "cli-flag",
+      "description": "`bun create ./MyComponent.tsx` turns an existing React component into a complete dev environment with hot reload and production builds in one command.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "from-a-react-component",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--outdir",
+      "type": "cli-flag",
+      "description": "When you bundle with Bun, imported JSON5 files are parsed at build time and included as JavaScript modules:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/json5",
+      "anchor": "bundler-integration",
+      "allPages": [
+        "https://bun.com/docs/runtime/json5",
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/fullstack",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/standalone-html",
+        "https://bun.com/docs/runtime/toml",
+        "https://bun.com/docs/runtime/yaml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--port",
+      "type": "cli-flag",
+      "description": "To configure which port and hostname the server listens on, set `port` and `hostname` in the options object.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/server",
+      "anchor": "changing-the-port-and-hostname",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--preserve",
+      "type": "cli-flag",
+      "description": "Watch mode works with `bun test` and when running TypeScript, JSX, and JavaScript files.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/watch-mode",
+      "anchor": "watch-mode",
+      "allPages": [
+        "https://bun.com/docs/runtime/watch-mode"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--print",
+      "type": "cli-flag",
+      "description": "Bun automatically *expands* environment variables, so you can reference previously-defined variables.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "expansion",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--production",
+      "type": "cli-flag",
+      "description": "Whether `bun install` runs in \"production mode\".",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-production",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/bundler/fullstack",
+        "https://bun.com/docs/bundler/minifier",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--react",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "anchor": "cli-usage",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--retry",
+      "type": "cli-flag",
+      "description": "Re-run each test file a specified number of times.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-reruneach",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--seed",
+      "type": "cli-flag",
+      "description": "Run tests in random order.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-randomize",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--silent",
+      "type": "cli-flag",
+      "description": "When `true`, `bun run` and `bun` don't print the command being run.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "run-silent-suppress-reporting-the-command-being-run",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--smol",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/index",
+      "anchor": "bun-run-smol",
+      "allPages": [
+        "https://bun.com/docs/runtime/index",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--sql-preconnect",
+      "type": "cli-flag",
+      "description": "Bun can preconnect to PostgreSQL at startup, before your application code runs, so the first query doesn't pay the connection latency.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "anchor": "runtime-preconnection",
+      "allPages": [
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--target",
+      "type": "cli-flag",
+      "description": "The `html` loader processes HTML files and bundles any referenced assets.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-types",
+      "anchor": "html",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-types",
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/fullstack",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/loaders",
+        "https://bun.com/docs/bundler/standalone-html",
+        "https://bun.com/docs/runtime/module-resolution"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--test",
+      "type": "cli-flag",
+      "description": "🟡 Partially implemented.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "node-test-https-nodejs-org-api-test-html",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--test-only",
+      "type": "cli-flag",
+      "description": "🟡 Partially implemented.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "node-test-https-nodejs-org-api-test-html",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--watch",
+      "type": "cli-flag",
+      "description": "Use `bun run` to execute a source file.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/watch-mode",
+      "anchor": "run-a-file",
+      "allPages": [
+        "https://bun.com/docs/runtime/watch-mode",
+        "https://bun.com/docs/runtime/index",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "--yes",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "anchor": "cli-usage",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init"
       ],
       "section": "runtime"
     },
@@ -143,11 +608,59 @@
       "section": "runtime"
     },
     {
+      "name": "BUN_AGENT_RULE_DISABLED",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CHROME_PATH",
+      "type": "config",
+      "description": "`Bun.WebView` supports two rendering engines. The default depends on your platform:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/webview",
+      "anchor": "backends",
+      "allPages": [
+        "https://bun.com/docs/runtime/webview"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
+      "type": "config",
+      "description": "Web browsers expose [`<link rel=\"dns-prefetch\">`](https://developer.mozilla.org/en-US/docs/Web/Performance/dns-prefetch) to resolve a hostname before it's needed. In Bun, `dns.prefetch` does the same ",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/dns",
+      "anchor": "when-should-i-prefetch-a-dns-entry",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/dns"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "BUN_CONFIG_MAX_HTTP_REQUESTS",
-      "type": "cli-flag",
+      "type": "config",
+      "description": "In TypeScript, all properties of `process.env` are typed as `string | undefined`.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
-      "anchor": "configuring-bun",
+      "anchor": "typescript",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables",
+        "https://bun.com/docs/runtime/networking/fetch"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD",
+      "type": "config",
+      "description": "In TypeScript, all properties of `process.env` are typed as `string | undefined`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "typescript",
       "allPages": [
         "https://bun.com/docs/runtime/environment-variables"
       ],
@@ -155,34 +668,113 @@
     },
     {
       "name": "BUN_CONFIG_VERBOSE_FETCH",
-      "type": "cli-flag",
+      "type": "config",
+      "description": "Set the `BUN_CONFIG_VERBOSE_FETCH` environment variable to log network requests made with `fetch()` or `node:http`.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
       "anchor": "configuring-bun",
       "allPages": [
-        "https://bun.com/docs/runtime/environment-variables"
+        "https://bun.com/docs/runtime/environment-variables",
+        "https://bun.com/docs/runtime/debugger"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CREATE_DIR",
+      "type": "config",
+      "description": "[`shadcn/ui`](https://ui.shadcn.com/) is a component library tool for building web applications.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "using-shadcn-ui-with-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_INSTALL_BIN",
+      "type": "config",
+      "description": "The directory where Bun links the binaries of globally installed packages.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-globalbindir",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_LOADER_JSX",
+      "type": "config",
+      "description": "The `onLoad` callback receives a `defer` function, which returns a `Promise` that resolves once all *other* modules have been loaded.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/plugins",
+      "anchor": "defer",
+      "allPages": [
+        "https://bun.com/docs/runtime/plugins",
+        "https://bun.com/docs/bundler/plugins"
       ],
       "section": "runtime"
     },
     {
       "name": "BUN_OPTIONS",
-      "type": "cli-flag",
+      "type": "config",
+      "description": "In TypeScript, all properties of `process.env` are typed as `string | undefined`.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
-      "anchor": "configuring-bun",
+      "anchor": "typescript",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables",
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_PORT",
+      "type": "config",
+      "description": "The default port for `Bun.serve` to listen on. Default `3000`. Can also be set with the `BUN_PORT` or `PORT` environment variables, or the `--port` flag.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "serve-port",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
+      "type": "config",
+      "description": "In TypeScript, all properties of `process.env` are typed as `string | undefined`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "typescript",
       "allPages": [
         "https://bun.com/docs/runtime/environment-variables"
       ],
       "section": "runtime"
     },
     {
-      "name": "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
-      "type": "cli-flag",
+      "name": "bun:ffi",
+      "type": "api",
       "stability": "stable",
-      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
-      "anchor": "what-does-it-cache",
+      "canonicalPage": "https://bun.com/docs/runtime/ffi",
       "allPages": [
-        "https://bun.com/docs/runtime/environment-variables"
+        "https://bun.com/docs/runtime/ffi",
+        "https://bun.com/docs/runtime/c-compiler"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun:jsc",
+      "type": "api",
+      "description": "🟡 `writeHeapSnapshot` and `getHeapSnapshot` are implemented.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "node-v8-https-nodejs-org-api-v8-html",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat",
+        "https://bun.com/docs/runtime/utils"
       ],
       "section": "runtime"
     },
@@ -202,8 +794,38 @@
       "description": "Built-in SQLite driver (v3.53.0 in 1.3.14)",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/sqlite",
+      "anchor": "sqlite",
       "allPages": [
-        "https://bun.com/docs/runtime/sqlite"
+        "https://bun.com/docs/runtime/sqlite",
+        "https://bun.com/docs/runtime/file-types",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/loaders",
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun:test",
+      "type": "api",
+      "description": "🟡 Partially implemented.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/cli/test",
+      "anchor": "node-test-https-nodejs-org-api-test-html",
+      "allPages": [
+        "https://bun.com/docs/cli/test",
+        "https://bun.com/docs/runtime/nodejs-compat",
+        "https://bun.com/docs/runtime/utils",
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/dates-times",
+        "https://bun.com/docs/test/dom",
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/lifecycle",
+        "https://bun.com/docs/test/mocks",
+        "https://bun.com/docs/test/runtime-behavior",
+        "https://bun.com/docs/test/snapshots",
+        "https://bun.com/docs/test/writing-tests"
       ],
       "section": "runtime"
     },
@@ -219,12 +841,78 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.Archive",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/archive",
+      "allPages": [
+        "https://bun.com/docs/runtime/archive"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.ArrayBufferSink",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/streams",
+      "anchor": "bun-arraybuffersink",
+      "allPages": [
+        "https://bun.com/docs/runtime/streams"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.ArrayBufferView",
+      "type": "api",
+      "description": "type ArchiveInput =",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/archive",
+      "anchor": "create-archive-from-directory",
+      "allPages": [
+        "https://bun.com/docs/runtime/archive"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.build",
+      "type": "api",
+      "description": "Bun implements the Node.js module resolution algorithm, so you can import packages from `node_modules` with a bare specifier.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler",
+      "anchor": "importing-packages",
+      "allPages": [
+        "https://bun.com/docs/bundler",
+        "https://bun.com/docs/runtime/module-resolution",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/fullstack",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/minifier",
+        "https://bun.com/docs/bundler/plugins",
+        "https://bun.com/docs/bundler/standalone-html",
+        "https://bun.com/docs/runtime/plugins"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.color",
       "type": "api",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/color",
       "allPages": [
         "https://bun.com/docs/runtime/color"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.connect",
+      "type": "api",
+      "description": "Bun caches DNS lookups, which makes repeated connections to the same hosts faster.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/dns",
+      "anchor": "dns-caching-in-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/dns",
+        "https://bun.com/docs/runtime/networking/tcp"
       ],
       "section": "runtime"
     },
@@ -239,11 +927,71 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.Cookie.from",
+      "type": "api",
+      "description": "Parses a cookie string into a `Cookie` instance.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cookies",
+      "anchor": "cookie-parse-cookiestring-string-cookie",
+      "allPages": [
+        "https://bun.com/docs/runtime/cookies"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CookieMap",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cookies",
+      "allPages": [
+        "https://bun.com/docs/runtime/cookies",
+        "https://bun.com/docs/runtime/http/websockets"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.cron",
       "type": "api",
       "description": "In-process cron scheduling (UTC; no-overlap after handler settles)",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "anchor": "bun-cron-schedule-handler-in-process",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.cron.parse",
+      "type": "api",
+      "description": "**Run a callback on a schedule in the current process:**",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "anchor": "quickstart",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.cron.remove",
+      "type": "api",
+      "description": "<Warning>",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "anchor": "trigger-limit",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CronController",
+      "type": "api",
+      "description": "| Parameter  | Type     | Description                                                |",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "anchor": "parameters",
       "allPages": [
         "https://bun.com/docs/runtime/cron"
       ],
@@ -252,9 +1000,10 @@
     {
       "name": "Bun.CryptoHasher",
       "type": "api",
+      "description": "In the following [Modular Crypt Format](https://passlib.readthedocs.io/en/stable/modular_crypt_format.html) hash (used by `bcrypt`):",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/hashing",
-      "anchor": "bun-cryptohasher",
+      "anchor": "bcrypt-modular-crypt-format",
       "allPages": [
         "https://bun.com/docs/runtime/hashing"
       ],
@@ -262,6 +1011,26 @@
     },
     {
       "name": "Bun.CSRF",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/csrf",
+      "allPages": [
+        "https://bun.com/docs/runtime/csrf"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CSRF.generate",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/csrf",
+      "allPages": [
+        "https://bun.com/docs/runtime/csrf"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CSRF.verify",
       "type": "api",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/csrf",
@@ -282,6 +1051,17 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.deflateSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-deflatesync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.dns",
       "type": "api",
       "stability": "stable",
@@ -294,10 +1074,12 @@
     {
       "name": "Bun.env",
       "type": "api",
+      "description": "Bun automatically *expands* environment variables, so you can reference previously-defined variables.",
       "stability": "stable",
-      "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-env",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "expansion",
       "allPages": [
+        "https://bun.com/docs/runtime/environment-variables",
         "https://bun.com/docs/runtime/utils"
       ],
       "section": "runtime"
@@ -316,11 +1098,59 @@
     {
       "name": "Bun.file",
       "type": "api",
-      "description": "Lazy file I/O API",
+      "description": "**Create an archive from files:**",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "anchor": "quickstart",
       "allPages": [
-        "https://bun.com/docs/runtime/file-io"
+        "https://bun.com/docs/runtime/file-io",
+        "https://bun.com/docs/runtime/archive",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/plugins",
+        "https://bun.com/docs/runtime/binary-data",
+        "https://bun.com/docs/runtime/child-process",
+        "https://bun.com/docs/runtime/http/routing",
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime/http/tls",
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/networking/tcp",
+        "https://bun.com/docs/runtime/s3",
+        "https://bun.com/docs/runtime/shell"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.FileSystemRouter",
+      "type": "api",
+      "description": "The `FileSystemRouter` class resolves routes against a `pages` directory.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-system-router",
+      "anchor": "next-js-style",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-system-router"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.fileURLToPath",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-fileurltopath",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.gc",
+      "type": "api",
+      "description": "<ParamField path=\"--bun\" type=\"boolean\">",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/index",
+      "anchor": "runtime-process-control",
+      "allPages": [
+        "https://bun.com/docs/runtime/index"
       ],
       "section": "runtime"
     },
@@ -331,6 +1161,18 @@
       "canonicalPage": "https://bun.com/docs/runtime/glob",
       "allPages": [
         "https://bun.com/docs/runtime/glob"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.gunzipSync",
+      "type": "api",
+      "description": "Compresses a `Uint8Array` using zlib's GZIP algorithm.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-gzipsync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
       ],
       "section": "runtime"
     },
@@ -348,9 +1190,10 @@
     {
       "name": "Bun.hash",
       "type": "api",
+      "description": "In the following [Modular Crypt Format](https://passlib.readthedocs.io/en/stable/modular_crypt_format.html) hash (used by `bcrypt`):",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/hashing",
-      "anchor": "bun-hash",
+      "anchor": "bcrypt-modular-crypt-format",
       "allPages": [
         "https://bun.com/docs/runtime/hashing"
       ],
@@ -370,19 +1213,34 @@
       "section": "runtime"
     },
     {
-      "name": "Bun.inspect",
+      "name": "Bun.inflateSync",
       "type": "api",
+      "description": "Compresses a `Uint8Array` using zlib's DEFLATE algorithm.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-inspect",
+      "anchor": "bun-deflatesync",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
       "section": "runtime"
     },
     {
+      "name": "Bun.inspect",
+      "type": "api",
+      "description": "Bun prints a small source-code preview when an unhandled exception or rejection occurs.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-inspect",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils",
+        "https://bun.com/docs/runtime/debugger"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.inspect.custom",
       "type": "api",
+      "description": "Serializes an object to a `string` exactly as it would be printed by `console.log`.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
       "anchor": "bun-inspect",
@@ -396,9 +1254,72 @@
       "type": "api",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-inspect",
+      "anchor": "bun-inspect-table-tabulardata-properties-options",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.isMainThread",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/workers",
+      "anchor": "bun-ismainthread",
+      "allPages": [
+        "https://bun.com/docs/runtime/workers"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.JSON5.parse",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/json5",
+      "allPages": [
+        "https://bun.com/docs/runtime/json5"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.JSON5.stringify",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/json5",
+      "allPages": [
+        "https://bun.com/docs/runtime/json5"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.JSONL.parse",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/jsonl",
+      "allPages": [
+        "https://bun.com/docs/runtime/jsonl"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.JSONL.parseChunk",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/jsonl",
+      "anchor": "bun-jsonl-parsechunk",
+      "allPages": [
+        "https://bun.com/docs/runtime/jsonl"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.listen",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/tcp",
+      "anchor": "start-a-server-bun-listen",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/tcp"
       ],
       "section": "runtime"
     },
@@ -446,11 +1367,44 @@
       "section": "runtime"
     },
     {
-      "name": "Bun.nanoseconds",
+      "name": "Bun.markdown.react",
       "type": "api",
       "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.markdown.render",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.nanoseconds",
+      "type": "api",
+      "description": "Format tabular data into a string.",
+      "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-nanoseconds",
+      "anchor": "bun-inspect-table-tabulardata-properties-options",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.openInEditor",
+      "type": "api",
+      "description": "`Bun.peek(prom: Promise)`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-peek",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -469,6 +1423,54 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.password.hash",
+      "type": "api",
+      "description": "`Bun.password` is a collection of utility functions for hashing and verifying passwords with various cryptographically secure algorithms.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-password",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.password.hashSync",
+      "type": "api",
+      "description": "`Bun.password` is a collection of utility functions for hashing and verifying passwords with various cryptographically secure algorithms.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-password",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.password.verifySync",
+      "type": "api",
+      "description": "`Bun.password` is a collection of utility functions for hashing and verifying passwords with various cryptographically secure algorithms.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-password",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.pathToFileURL",
+      "type": "api",
+      "description": "Converts a `file://` URL to an absolute path.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-fileurltopath",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.peek",
       "type": "api",
       "stability": "stable",
@@ -480,6 +1482,30 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.plugin",
+      "type": "api",
+      "description": "🟡 Missing `syncBuiltinESMExports`, `Module#load()`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "node-module-https-nodejs-org-api-module-html",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.postgres",
+      "type": "api",
+      "description": "<AccordionGroup>",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "anchor": "frequently-asked-questions",
+      "allPages": [
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.randomUUIDv7",
       "type": "api",
       "stability": "stable",
@@ -487,6 +1513,65 @@
       "anchor": "bun-randomuuidv7",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.readableStreamTo",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.readableStreamToArray",
+      "type": "api",
+      "description": "// with Bun function",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/binary-data",
+      "anchor": "to-number",
+      "allPages": [
+        "https://bun.com/docs/runtime/binary-data"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.readableStreamToArrayBuffer",
+      "type": "api",
+      "description": "// with Response",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/binary-data",
+      "anchor": "to-typedarray",
+      "allPages": [
+        "https://bun.com/docs/runtime/binary-data"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.readableStreamToBytes",
+      "type": "api",
+      "description": "// with Response",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/binary-data",
+      "anchor": "to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/runtime/binary-data"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.readableStreamToText",
+      "type": "api",
+      "description": "// with Response",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/binary-data",
+      "anchor": "to-buffer",
+      "allPages": [
+        "https://bun.com/docs/runtime/binary-data"
       ],
       "section": "runtime"
     },
@@ -504,9 +1589,22 @@
     {
       "name": "Bun.resolveSync",
       "type": "api",
+      "description": "Bun implements a set of convenience functions for asynchronously consuming the body of a `ReadableStream` and converting it to various binary formats.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-resolvesync",
+      "anchor": "bun-readablestreamto",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.revision",
+      "type": "api",
+      "description": "A `string` containing the version of the `bun` CLI that is currently running.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-version",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -515,9 +1613,32 @@
     {
       "name": "Bun.s3",
       "type": "api",
-      "description": "S3-compatible object storage client",
+      "description": "<Frame caption=\"Left: Bun v1.1.44. Right: Node.js v23.6.0\">",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/s3",
+      "anchor": "bun-s-s3-api-is-fast",
+      "allPages": [
+        "https://bun.com/docs/runtime/s3"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.s3.file",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/image",
+      "allPages": [
+        "https://bun.com/docs/runtime/image"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.S3Client",
+      "type": "api",
+      "description": "<Frame caption=\"Left: Bun v1.1.44. Right: Node.js v23.6.0\">",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/s3",
+      "anchor": "bun-s-s3-api-is-fast",
       "allPages": [
         "https://bun.com/docs/runtime/s3"
       ],
@@ -526,8 +1647,31 @@
     {
       "name": "Bun.secrets",
       "type": "api",
-      "description": "OS keychain-backed secrets API",
+      "description": "Unlike environment variables, `Bun.secrets`:",
       "stability": "experimental",
+      "canonicalPage": "https://bun.com/docs/runtime/secrets",
+      "anchor": "comparison-with-environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/secrets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.secrets.delete",
+      "type": "api",
+      "description": "Store or update a credential.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/secrets",
+      "anchor": "bun-secrets-set-options",
+      "allPages": [
+        "https://bun.com/docs/runtime/secrets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.secrets.get",
+      "type": "api",
+      "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/secrets",
       "allPages": [
         "https://bun.com/docs/runtime/secrets"
@@ -535,24 +1679,90 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.secrets.set",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/secrets",
+      "anchor": "bun-secrets-set-options",
+      "allPages": [
+        "https://bun.com/docs/runtime/secrets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.semver",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/semver",
+      "allPages": [
+        "https://bun.com/docs/runtime/semver"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.semver.satisfies",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/semver",
+      "anchor": "bun-semver-satisfies-version-string-range-string-boolean",
+      "allPages": [
+        "https://bun.com/docs/runtime/semver"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.serve",
       "type": "api",
-      "description": "HTTP server with routes, TLS, WebSockets, HTTP/3",
+      "description": "The `[serve]` section configures `Bun.serve` and `bun run` when serving HTTP.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/http/server",
+      "anchor": "serve",
       "allPages": [
         "https://bun.com/docs/runtime/http/server",
         "https://bun.com/docs/runtime/http/websockets",
-        "https://bun.com/docs/runtime/http/tls"
+        "https://bun.com/docs/runtime/http/tls",
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/fullstack",
+        "https://bun.com/docs/bundler/hot-reloading",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/loaders",
+        "https://bun.com/docs/runtime/cookies",
+        "https://bun.com/docs/runtime/csrf",
+        "https://bun.com/docs/runtime/file-types",
+        "https://bun.com/docs/runtime/http/cookies",
+        "https://bun.com/docs/runtime/http/error-handling",
+        "https://bun.com/docs/runtime/http/metrics",
+        "https://bun.com/docs/runtime/http/routing",
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/index",
+        "https://bun.com/docs/runtime/templating/create",
+        "https://bun.com/docs/runtime/toml",
+        "https://bun.com/docs/runtime/watch-mode"
       ],
       "section": "runtime"
     },
     {
       "name": "Bun.sleep",
       "type": "api",
+      "description": "A rough overview of the types (see Bun's `bun.d.ts` for the full type definitions):",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
       "anchor": "bun-sleep",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils",
+        "https://bun.com/docs/runtime/plugins",
+        "https://bun.com/docs/bundler/plugins"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.sleepSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-sleepsync",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -594,9 +1804,10 @@
     {
       "name": "Bun.sql",
       "type": "api",
-      "description": "Postgres and MySQL client with connection pooling",
+      "description": "MySQL support is built into `Bun.SQL`, with the same tagged template literal interface, and is compatible with MySQL 5.7+ and MySQL 8.0+:",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "anchor": "mysql",
       "allPages": [
         "https://bun.com/docs/runtime/sql"
       ],
@@ -606,11 +1817,48 @@
       ]
     },
     {
+      "name": "Bun.stderr",
+      "type": "api",
+      "description": "`Bun.file(path): BunFile`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "anchor": "reading-files-bun-file",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.stdin",
+      "type": "api",
+      "description": "`Bun.file(path): BunFile`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "anchor": "reading-files-bun-file",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.stdout",
+      "type": "api",
+      "description": "`Bun.file(path): BunFile`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "anchor": "reading-files-bun-file",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.stringWidth",
       "type": "api",
+      "description": "Recursively checks if two objects are equivalent.",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-stringwidth",
+      "anchor": "bun-deepequals",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -628,9 +1876,21 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.Subprocess",
+      "type": "api",
+      "description": "Provide a command as an array of strings.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "anchor": "spawn-a-process-bun-spawn",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.Terminal",
       "type": "api",
-      "description": "PTY terminal for spawned processes (Windows ConPTY in 1.3.14)",
+      "description": "The `Terminal` object returned by `proc.terminal` has the following methods:",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/terminal",
       "anchor": "terminal-pty-support",
@@ -652,13 +1912,37 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.TOML.parse",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/toml",
+      "allPages": [
+        "https://bun.com/docs/runtime/toml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.TOML.stringify",
+      "type": "api",
+      "description": "`Bun.TOML.parse()` throws a `SyntaxError` if the TOML is invalid:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/toml",
+      "anchor": "error-handling",
+      "allPages": [
+        "https://bun.com/docs/runtime/toml"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.Transpiler",
       "type": "api",
       "description": "JS/TS/JSX transpiler API",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/transpiler",
       "allPages": [
-        "https://bun.com/docs/runtime/transpiler"
+        "https://bun.com/docs/runtime/transpiler",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/plugins"
       ],
       "section": "runtime"
     },
@@ -667,6 +1951,7 @@
       "type": "api",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/networking/udp",
+      "anchor": "bind-a-udp-socket-bun-udpsocket",
       "allPages": [
         "https://bun.com/docs/runtime/networking/udp"
       ],
@@ -695,11 +1980,24 @@
       "section": "runtime"
     },
     {
+      "name": "Bun.WebView.closeAll",
+      "type": "api",
+      "description": "Bun.WebView.closeAll();",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/webview",
+      "anchor": "closing-a-view",
+      "allPages": [
+        "https://bun.com/docs/runtime/webview"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Bun.which",
       "type": "api",
+      "description": "`Bun.sleepSync(ms: number)`",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-which",
+      "anchor": "bun-sleepsync",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -708,9 +2006,10 @@
     {
       "name": "Bun.wrapAnsi",
       "type": "api",
+      "description": "<Note>\\~6-57x faster `strip-ansi` alternative</Note>",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/utils",
-      "anchor": "bun-wrapansi",
+      "anchor": "bun-stripansi",
       "allPages": [
         "https://bun.com/docs/runtime/utils"
       ],
@@ -719,10 +2018,15 @@
     {
       "name": "Bun.write",
       "type": "api",
+      "description": "**Create an archive from files:**",
       "stability": "stable",
       "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "anchor": "quickstart",
       "allPages": [
-        "https://bun.com/docs/runtime/file-io"
+        "https://bun.com/docs/runtime/file-io",
+        "https://bun.com/docs/runtime/archive",
+        "https://bun.com/docs/runtime/ffi",
+        "https://bun.com/docs/runtime/webview"
       ],
       "section": "runtime"
     },
@@ -733,6 +2037,62 @@
       "canonicalPage": "https://bun.com/docs/runtime/yaml",
       "allPages": [
         "https://bun.com/docs/runtime/yaml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.YAML.parse",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/yaml",
+      "allPages": [
+        "https://bun.com/docs/runtime/yaml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.zstdCompress",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-zstdcompress-bun-zstdcompresssync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.zstdCompressSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-zstdcompress-bun-zstdcompresssync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.zstdDecompress",
+      "type": "api",
+      "description": "Compresses a `Uint8Array` using the Zstandard algorithm.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-zstdcompress-bun-zstdcompresssync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.zstdDecompressSync",
+      "type": "api",
+      "description": "Compresses a `Uint8Array` using the Zstandard algorithm.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-zstdcompress-bun-zstdcompresssync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
       ],
       "section": "runtime"
     },
@@ -872,6 +2232,42 @@
       "anchor": "configuring-bun",
       "allPages": [
         "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "editor",
+      "type": "config",
+      "description": "`Bun.peek(prom: Promise)`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-peek",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "env",
+      "type": "config",
+      "description": "The `--env-file` flag overrides which `.env` files Bun loads. It works both when running a file with `bun` and when running `package.json` scripts.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "manually-specifying-env-files",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "env.file",
+      "type": "config",
+      "description": "The `telemetry` field enables or disables analytics.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "telemetry",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
       ],
       "section": "runtime"
     },
@@ -1048,6 +2444,221 @@
       "section": "runtime"
     },
     {
+      "name": "install.ca",
+      "type": "config",
+      "description": "To configure a CA certificate, set `install.ca` to the certificate string or `install.cafile` to the path of a certificate file.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-ca-and-install-cafile",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.cafile",
+      "type": "config",
+      "description": "To configure a CA certificate, set `install.ca` to the certificate string or `install.cafile` to the path of a certificate file.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-ca-and-install-cafile",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.dev",
+      "type": "config",
+      "description": "Whether to install development dependencies.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-dev",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.dryRun",
+      "type": "config",
+      "description": "Whether `bun install` actually installs dependencies.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-dryrun",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/npmrc"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.globalBinDir",
+      "type": "config",
+      "description": "The directory where Bun links the binaries of globally installed packages.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-globalbindir",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.ignoreScripts",
+      "type": "config",
+      "description": "Whether to skip lifecycle scripts during install.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-ignorescripts",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.linker",
+      "type": "config",
+      "description": "Configure the linker strategy: how `bun install` lays out dependencies in `node_modules`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-linker",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.linkWorkspacePackages",
+      "type": "config",
+      "description": "Whether to link workspace packages from the monorepo root to their respective `node_modules` directories.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-linkworkspacepackages",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.lockfile.save",
+      "type": "config",
+      "description": "Whether to generate a lockfile on `bun install`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-lockfile",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.logLevel",
+      "type": "config",
+      "description": "Set the log level for `bun install`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-loglevel",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.minimumReleaseAge",
+      "type": "config",
+      "description": "An array of package names that are exempt from the `minimumReleaseAge` check.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-minimumreleaseageexcludes",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.minimumReleaseAgeExcludes",
+      "type": "config",
+      "description": "An array of package names that are exempt from the `minimumReleaseAge` check.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-minimumreleaseageexcludes",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.prefer",
+      "type": "config",
+      "description": "Configure how Bun resolves package versions against the npm registry when running scripts.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-prefer",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.production",
+      "type": "config",
+      "description": "Whether `bun install` runs in \"production mode\".",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-production",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.publicHoistPattern",
+      "type": "config",
+      "description": "When using the `\"isolated\"` linker, packages matching these glob patterns are hoisted to the root `node_modules` directory so they can be resolved by any package in the project.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-publichoistpattern",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.saveTextLockfile",
+      "type": "config",
+      "description": "If `false`, `bun install` generates a binary `bun.lockb` instead of a text-based `bun.lock` file when no lockfile is present.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-savetextlockfile",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "install.security.scanner",
+      "type": "config",
+      "description": "Set the log level for `bun install`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-loglevel",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/security-scanner-api"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "JSON5",
       "type": "concept",
       "description": "Use Bun's built-in support for JSON5 files through both runtime APIs and bundler integration",
@@ -1167,6 +2778,28 @@
       "section": "runtime"
     },
     {
+      "name": "overrides",
+      "type": "config",
+      "description": "The `telemetry` field enables or disables analytics.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/overrides",
+      "anchor": "telemetry",
+      "allPages": [
+        "https://bun.com/docs/pm/overrides",
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/bundler/loaders",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/runtime/environment-variables",
+        "https://bun.com/docs/runtime/index",
+        "https://bun.com/docs/runtime/markdown",
+        "https://bun.com/docs/runtime/networking/fetch",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/mocks",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Plugins",
       "type": "concept",
       "description": "Universal plugin API for extending Bun's runtime and bundler",
@@ -1175,6 +2808,18 @@
       "allPages": [
         "https://bun.com/docs/bundler/plugins",
         "https://bun.com/docs/runtime/plugins"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "preload",
+      "type": "config",
+      "description": "An array of scripts/plugins to execute before running a file or script.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "preload",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
       ],
       "section": "runtime"
     },
@@ -1258,6 +2903,30 @@
       "section": "runtime"
     },
     {
+      "name": "run.shell",
+      "type": "config",
+      "description": "An array of package names that are exempt from the `minimumReleaseAge` check.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-minimumreleaseageexcludes",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "run.silent",
+      "type": "config",
+      "description": "When `true`, `bun run` and `bun` don't print the command being run.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "run-silent-suppress-reporting-the-command-being-run",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "S3",
       "type": "concept",
       "description": "Bun provides fast, native bindings for interacting with S3-compatible object storage services.",
@@ -1301,6 +2970,30 @@
       "section": "runtime"
     },
     {
+      "name": "serve.port",
+      "type": "config",
+      "description": "The default port for `Bun.serve` to listen on. Default `3000`. Can also be set with the `BUN_PORT` or `PORT` environment variables, or the `--port` flag.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "serve-port",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "serve.static.plugins",
+      "type": "config",
+      "description": "`bun create ./MyComponent.tsx` turns an existing React component into a complete dev environment with hot reload and production builds in one command.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "anchor": "from-a-react-component",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "Server",
       "type": "concept",
       "description": "Use `Bun.serve` to start a high-performance HTTP server in Bun",
@@ -1329,6 +3022,18 @@
       "canonicalPage": "https://bun.com/docs/runtime/shell",
       "allPages": [
         "https://bun.com/docs/runtime/shell"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "smol",
+      "type": "config",
+      "description": "Enable `smol` mode.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "smol",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
       ],
       "section": "runtime"
     },
@@ -1399,6 +3104,150 @@
       "section": "runtime"
     },
     {
+      "name": "telemetry",
+      "type": "config",
+      "description": "The `telemetry` field enables or disables analytics.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "telemetry",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.concurrentTestGlob",
+      "type": "config",
+      "description": "Test files matching this glob pattern run all of their tests concurrently, as if you passed the `--concurrent` flag.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-concurrenttestglob",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.coverage",
+      "type": "config",
+      "description": "Enables coverage reporting.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-coverage",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.coverageIgnoreSourcemaps",
+      "type": "config",
+      "description": "Whether to report coverage against transpiled output instead of remapping line numbers through sourcemaps back to the original source.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-coverageignoresourcemaps",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.coverageReporter",
+      "type": "config",
+      "description": "By default, coverage reports are printed to the console.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-coveragereporter",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.coverageThreshold",
+      "type": "config",
+      "description": "Enables coverage reporting.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-coverage",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.pathIgnorePatterns",
+      "type": "config",
+      "description": "Exclude files and directories from test discovery using glob patterns.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-pathignorepatterns",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.randomize",
+      "type": "config",
+      "description": "Run tests in random order.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-randomize",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.reporter.dots",
+      "type": "config",
+      "description": "Enable the dots reporter, which prints one dot per test.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-reporter-dots",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.rerunEach",
+      "type": "config",
+      "description": "Re-run each test file a specified number of times.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-reruneach",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "test.root",
+      "type": "config",
+      "description": "The root directory to run tests from.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "test-root",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "runtime"
+    },
+    {
       "name": "TLS",
       "type": "concept",
       "description": "Enable TLS in Bun.serve",
@@ -1428,6 +3277,24 @@
       "canonicalPage": "https://bun.com/docs/runtime/transpiler",
       "allPages": [
         "https://bun.com/docs/runtime/transpiler"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "trustedDependencies",
+      "type": "config",
+      "description": "Whether to skip lifecycle scripts during install.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "anchor": "install-ignorescripts",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/cli/add",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/pm",
+        "https://bun.com/docs/pm/cli/remove",
+        "https://bun.com/docs/pm/cli/update",
+        "https://bun.com/docs/pm/lifecycle"
       ],
       "section": "runtime"
     },
@@ -1530,6 +3397,29 @@
       "section": "runtime"
     },
     {
+      "name": "Workspaces",
+      "type": "config",
+      "description": "Configure the linker strategy: how `bun install` lays out dependencies in `node_modules`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/workspaces",
+      "anchor": "install-linker",
+      "allPages": [
+        "https://bun.com/docs/pm/workspaces",
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/pm/catalogs",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/update",
+        "https://bun.com/docs/pm/filter",
+        "https://bun.com/docs/pm/isolated-installs",
+        "https://bun.com/docs/runtime/index"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "workspaces"
+      ]
+    },
+    {
       "name": "YAML",
       "type": "api",
       "description": "Use Bun's built-in support for YAML files through both runtime APIs and bundler integration",
@@ -1539,6 +3429,979 @@
         "https://bun.com/docs/runtime/yaml"
       ],
       "section": "runtime"
+    },
+    {
+      "name": "--allow-overwrite",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--analyze",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--asset-names",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--asset-naming",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--banner",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--bundle",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--bytecode",
+      "type": "cli-flag",
+      "description": "Enable bytecode caching with the `--bytecode` flag.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "basic-usage-commonjs",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--certfile",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--charset",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--chunk-names",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--chunk-naming",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--color",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--compile",
+      "type": "cli-flag",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "with-standalone-executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/standalone-html"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--compile-autoload-package-json",
+      "type": "cli-flag",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "runtime-arguments-via-bun-options",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--compile-autoload-tsconfig",
+      "type": "cli-flag",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "runtime-arguments-via-bun-options",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--console",
+      "type": "cli-flag",
+      "description": "Given this source file:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/html-static",
+      "anchor": "example",
+      "allPages": [
+        "https://bun.com/docs/bundler/html-static"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--cpu-prof",
+      "type": "cli-flag",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "runtime-arguments-via-bun-options",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--cpu-prof-md",
+      "type": "cli-flag",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "runtime-arguments-via-bun-options",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--define",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--dev",
+      "type": "cli-flag",
+      "description": "To use TailwindCSS, install the `bun-plugin-tailwind` plugin:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/html-static",
+      "anchor": "tailwind-css",
+      "allPages": [
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/standalone-html",
+        "https://bun.com/docs/pm/cli/add"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--drop",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--entry-names",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--entry-naming",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--env",
+      "type": "cli-flag",
+      "description": "When building static HTML for production, use the `env` option to inline environment variables:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/html-static",
+      "anchor": "build-for-production",
+      "allPages": [
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/standalone-html"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--external",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--feature",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--footer",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--format",
+      "type": "cli-flag",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "with-standalone-executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--frozen-lockfile",
+      "type": "cli-flag",
+      "description": "Bytecode is **not portable across Bun versions**.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "version-compatibility",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish",
+        "https://bun.com/docs/pm/lockfile",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--global-name",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--heap-prof-md",
+      "type": "cli-flag",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "runtime-arguments-via-bun-options",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--ignore-annotations",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--ignore-dce-annotations",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--inject",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-dev",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-factory",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-fragment",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-import-source",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-runtime",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--jsx-side-effects",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--keep-names",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--keyfile",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--legal-comments",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--loader",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--log-level",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--log-limit",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--log-override",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--main-fields",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--mangle-cache",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--mangle-props",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--mangle-quoted",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--metafile",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--minify",
+      "type": "cli-flag",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "with-standalone-executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/html-static",
+        "https://bun.com/docs/bundler/minifier",
+        "https://bun.com/docs/bundler/standalone-html"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--minify-identifiers",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--minify-syntax",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--minify-whitespace",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--no-bundle",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--no-compile-autoload-bunfig",
+      "type": "cli-flag",
+      "description": "To disable `.env` or `bunfig.toml` loading for deterministic execution:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "disabling-config-loading-at-runtime",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--no-compile-autoload-dotenv",
+      "type": "cli-flag",
+      "description": "To disable `.env` or `bunfig.toml` loading for deterministic execution:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "disabling-config-loading-at-runtime",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--out-extension",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--outbase",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--outfile",
+      "type": "cli-flag",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "with-standalone-executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--packages",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--platform",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--preserve-symlinks",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--public-path",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--pure",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--reserve-props",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--resolve-extensions",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--root",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--serve",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--servedir",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--source-root",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--sourcefile",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--sourcemap",
+      "type": "cli-flag",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "anchor": "with-standalone-executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode",
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--sources-content",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--splitting",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/bundler/executables",
+        "https://bun.com/docs/bundler/standalone-html"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--supported",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--tree-shaking",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--tsconfig",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--tsconfig-override",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--verify",
+      "type": "cli-flag",
+      "description": "`Bun.embeddedFiles` exposes all embedded files as `Blob` objects:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "listing-embedded-files",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "--version",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "anchor": "cli-api",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
     },
     {
       "name": "bun build --compile",
@@ -1551,13 +4414,98 @@
       "section": "bundler"
     },
     {
-      "name": "Bun.build",
-      "type": "api",
-      "description": "Bundler and compile-to-binary",
+      "name": "BUN_BE_BUN",
+      "type": "config",
+      "description": "<Note>New in Bun v1.2.16</Note>",
       "stability": "stable",
-      "canonicalPage": "https://bun.com/docs/bundler",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "act-as-the-bun-cli",
       "allPages": [
-        "https://bun.com/docs/bundler"
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "bun:error",
+      "type": "api",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/hot-reloading",
+      "anchor": "built-in-events",
+      "allPages": [
+        "https://bun.com/docs/bundler/hot-reloading"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "bun:invalidate",
+      "type": "api",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/hot-reloading",
+      "anchor": "built-in-events",
+      "allPages": [
+        "https://bun.com/docs/bundler/hot-reloading"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "bun:ws",
+      "type": "api",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/hot-reloading",
+      "anchor": "built-in-events",
+      "allPages": [
+        "https://bun.com/docs/bundler/hot-reloading"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bun.Build.CompileTarget",
+      "type": "api",
+      "description": "`Bun.embeddedFiles` exposes all embedded files as `Blob` objects:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "listing-embedded-files",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bun.embeddedFiles",
+      "type": "api",
+      "description": "`Bun.embeddedFiles` exposes all embedded files as `Blob` objects:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "listing-embedded-files",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bun.embeddedFiles.length",
+      "type": "api",
+      "description": "To embed a directory with `bun build --compile`, include file patterns in your build:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "embed-directories",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bun.isStandaloneExecutable",
+      "type": "api",
+      "description": "To embed a directory with `bun build --compile`, include file patterns in your build:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "embed-directories",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
       ],
       "section": "bundler"
     },
@@ -1683,6 +4631,18 @@
       "section": "bundler"
     },
     {
+      "name": "serve.static.env",
+      "type": "config",
+      "description": "To inline environment variables when using `bun ./index.html`, configure the `env` option in your `bunfig.toml`:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/html-static",
+      "anchor": "dev-server-runtime",
+      "allPages": [
+        "https://bun.com/docs/bundler/html-static"
+      ],
+      "section": "bundler"
+    },
+    {
       "name": "Single-file executable",
       "type": "concept",
       "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
@@ -1705,6 +4665,261 @@
       "section": "bundler"
     },
     {
+      "name": "--bail",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "bail-out-with-bail",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--concurrent",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "concurrent-flag",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--coverage",
+      "type": "cli-flag",
+      "description": "`bun:test` can report which lines of code your tests cover.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "anchor": "enabling-coverage",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--coverage-dir",
+      "type": "cli-flag",
+      "description": "Bun supports the following lifecycle hooks:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "lifecycle-hooks",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--coverage-reporter",
+      "type": "cli-flag",
+      "description": "The lcov reporter writes an `lcov.info` file to the coverage directory.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "anchor": "lcov-coverage-reporter",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--dots",
+      "type": "cli-flag",
+      "description": "Bun supports the following lifecycle hooks:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "lifecycle-hooks",
+      "allPages": [
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/reporters"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--inspect-brk",
+      "type": "cli-flag",
+      "description": "# Attaches the debugger to the test runner process",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/runtime-behavior",
+      "anchor": "memory-usage",
+      "allPages": [
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--max-concurrency",
+      "type": "cli-flag",
+      "description": "Use the `--concurrent` flag to run all tests concurrently within their respective files:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "concurrent-flag",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--only",
+      "type": "cli-flag",
+      "description": "To run a particular test or suite of tests, use `test.only()` or `describe.only()`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/writing-tests",
+      "anchor": "test-only",
+      "allPages": [
+        "https://bun.com/docs/test/writing-tests"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--path-ignore-patterns",
+      "type": "cli-flag",
+      "description": "[test]",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "examples",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--prefer-offline",
+      "type": "cli-flag",
+      "description": "# Affect any network requests or auto-installs during test execution",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/runtime-behavior",
+      "anchor": "module-loading",
+      "allPages": [
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--preload",
+      "type": "cli-flag",
+      "description": "[test]",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "examples",
+      "allPages": [
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/lifecycle",
+        "https://bun.com/docs/test/mocks",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--randomize",
+      "type": "cli-flag",
+      "description": "Use the `--randomize` flag to run tests in a random order.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "randomize-test-execution-order",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--reporter",
+      "type": "cli-flag",
+      "description": "Configure the JUnit reporter output file path directly in the config file:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/reporters",
+      "anchor": "junit-reporter",
+      "allPages": [
+        "https://bun.com/docs/test/reporters",
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--reporter-outfile",
+      "type": "cli-flag",
+      "description": "Configure the JUnit reporter output file path directly in the config file:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "junit-reporter",
+      "allPages": [
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/reporters"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--rerun-each",
+      "type": "cli-flag",
+      "description": "Use the `--retry` flag to automatically retry failed tests up to a given number of times.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "retry-failed-tests",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--test-name-pattern",
+      "type": "cli-flag",
+      "description": "# Run coverage only on specific test files",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "anchor": "multiple-reporters",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/discovery",
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--timeout",
+      "type": "cli-flag",
+      "description": "To write a JUnit XML report, pass `--reporter=junit` together with `--reporter-outfile`.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "junit-xml-reports-gitlab-etc",
+      "allPages": [
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--todo",
+      "type": "cli-flag",
+      "description": "Bun supports the following lifecycle hooks:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "lifecycle-hooks",
+      "allPages": [
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/writing-tests"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "--update-snapshots",
+      "type": "cli-flag",
+      "description": "Bun supports the following lifecycle hooks:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "lifecycle-hooks",
+      "allPages": [
+        "https://bun.com/docs/test/index",
+        "https://bun.com/docs/test/snapshots"
+      ],
+      "section": "test"
+    },
+    {
       "name": "bun test",
       "type": "concept",
       "description": "Built-in test runner (bun:test)",
@@ -1712,16 +4927,6 @@
       "canonicalPage": "https://bun.com/docs/test",
       "allPages": [
         "https://bun.com/docs/test"
-      ],
-      "section": "test"
-    },
-    {
-      "name": "bun:test",
-      "type": "api",
-      "stability": "stable",
-      "canonicalPage": "https://bun.com/docs/cli/test",
-      "allPages": [
-        "https://bun.com/docs/cli/test"
       ],
       "section": "test"
     },
@@ -1776,6 +4981,31 @@
       "canonicalPage": "https://bun.com/docs/test/discovery",
       "allPages": [
         "https://bun.com/docs/test/discovery"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "install.exact",
+      "type": "config",
+      "description": "`bun test` inherits network and installation configuration (such as `registry`, `cafile`, `prefer`, and `exact`) from the `[install]` section of `bunfig.toml`. This matters if your tests reach a priva",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "install-settings-inheritance",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "install.registry",
+      "type": "config",
+      "description": "`bun test` inherits network and installation configuration (such as `registry`, `cafile`, `prefer`, and `exact`) from the `[install]` section of `bunfig.toml`. This matters if your tests reach a priva",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "install-settings-inheritance",
+      "allPages": [
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/pm/scopes-registries"
       ],
       "section": "test"
     },
@@ -1852,6 +5082,141 @@
       "canonicalPage": "https://bun.com/docs/test/index",
       "allPages": [
         "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.coverageDir",
+      "type": "config",
+      "description": "An example showing the available test configuration options:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "complete-configuration-example",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.coveragePathIgnorePatterns",
+      "type": "config",
+      "description": "`coveragePathIgnorePatterns` excludes specific files or file patterns from coverage reports:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "anchor": "ignore-specific-paths-and-patterns",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.coverageSkipTestFiles",
+      "type": "config",
+      "description": "`bun:test` can report which lines of code your tests cover.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "anchor": "enabling-coverage",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage",
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.functions",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "threshold-examples",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.lines",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "threshold-examples",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.preload",
+      "type": "config",
+      "description": "An example showing the available test configuration options:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "complete-configuration-example",
+      "allPages": [
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/dom",
+        "https://bun.com/docs/test/lifecycle",
+        "https://bun.com/docs/test/mocks"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.reporter.junit",
+      "type": "config",
+      "description": "Configure the JUnit reporter output file path directly in the config file:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "junit-reporter",
+      "allPages": [
+        "https://bun.com/docs/test/configuration",
+        "https://bun.com/docs/test/reporters"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.retry",
+      "type": "config",
+      "description": "Use the `--retry` flag to automatically retry failed tests up to a given number of times.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "retry-failed-tests",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.seed",
+      "type": "config",
+      "description": "Specify a seed for reproducible random test order.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "seed",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.smol",
+      "type": "config",
+      "description": "Enable the `--smol` memory-saving mode specifically for the test runner:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "smol-mode",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "test.statements",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "anchor": "threshold-examples",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
       ],
       "section": "test"
     },
@@ -3802,6 +7167,800 @@
       "section": "guides"
     },
     {
+      "name": "--access",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--all",
+      "type": "cli-flag",
+      "description": "To create a tarball of the current workspace:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "pack",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--audit-level",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--auth-type",
+      "type": "cli-flag",
+      "description": "Exit with code 0 instead of 1 if the package version already exists.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "anchor": "tolerate-republish",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--backend",
+      "type": "cli-flag",
+      "description": "For performance, `bun install` uses different system calls to install dependencies depending on the platform.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-cache",
+      "anchor": "platform-specific-backends",
+      "allPages": [
+        "https://bun.com/docs/pm/global-cache",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--ca",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--cache-dir",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--cafile",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--commit",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/patch",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--concurrent-scripts",
+      "type": "cli-flag",
+      "description": "To modify logging verbosity:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "logging",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--config",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--cpu",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "cpu-and-os-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--cwd",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--depth",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/why",
+      "anchor": "usage",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/why"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--destination",
+      "type": "cli-flag",
+      "description": "To create a tarball of the current workspace:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "pack",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--exact",
+      "type": "cli-flag",
+      "description": "To add a package as a peer dependency (`\"peerDependencies\"`):",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/add",
+      "anchor": "peer",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/add"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--filename",
+      "type": "cli-flag",
+      "description": "To create a tarball of the current workspace:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "pack",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--foo",
+      "type": "cli-flag",
+      "description": "To pass additional command-line flags and arguments through to the executable, place them after the executable name.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/bunx",
+      "anchor": "arguments-and-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/bunx"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--gzip-level",
+      "type": "cli-flag",
+      "description": "To create a tarball of the current workspace:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "pack",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--if-present",
+      "type": "cli-flag",
+      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--ignore",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--ignore-scripts",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lifecycle",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/lifecycle",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/pm",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--interactive",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/update",
+      "anchor": "interactive",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/update"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--json",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "anchor": "json",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit",
+        "https://bun.com/docs/pm/cli/info",
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--latest",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit",
+        "https://bun.com/docs/pm/cli/update"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--linker",
+      "type": "cli-flag",
+      "description": "The traditional npm/Yarn approach that flattens dependencies into a shared `node_modules` directory:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "anchor": "hoisted-installs",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/isolated-installs"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--lockfile-only",
+      "type": "cli-flag",
+      "description": "You can override the target platform for package selection:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lockfile",
+      "anchor": "cpu-and-os-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/lockfile",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--message",
+      "type": "cli-flag",
+      "description": "To display current package version and help:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "version",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--minimum-release-age",
+      "type": "cli-flag",
+      "description": "To protect against supply chain attacks where malicious packages are quickly published, you can configure a minimum age requirement for npm packages.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "minimum-release-age",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--network-concurrency",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-cache",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-exit-on-error",
+      "type": "cli-flag",
+      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-git-tag-version",
+      "type": "cli-flag",
+      "description": "To display current package version and help:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "version",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-progress",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-save",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lockfile",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/lockfile",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-summary",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--no-verify",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--omit",
+      "type": "cli-flag",
+      "description": "Bun supports npm's `\"overrides\"` and Yarn's `\"resolutions\"` in `package.json`. Both specify a version range for *metadependencies*, the dependencies of your dependencies. See [overrides and resolution",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "overrides-and-resolutions",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--optional",
+      "type": "cli-flag",
+      "description": "<Note>**Alias** — `--development`, `-d`, `-D`</Note>",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/add",
+      "anchor": "dev",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/add"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--os",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "cpu-and-os-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--otp",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "anchor": "otp",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--package",
+      "type": "cli-flag",
+      "description": "To pass additional command-line flags and arguments through to the executable, place them after the executable name.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/bunx",
+      "anchor": "arguments-and-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/bunx"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--parallel",
+      "type": "cli-flag",
+      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--patches-dir",
+      "type": "cli-flag",
+      "description": "Use `bun patch <pkg>` to prepare the package for patching:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/patch",
+      "anchor": "step-1-prepare-the-package-for-patching",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--peer",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/add",
+      "anchor": "peer",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/add"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--preid",
+      "type": "cli-flag",
+      "description": "To display current package version and help:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "version",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--prod",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--quiet",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--recursive",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/update",
+      "anchor": "recursive",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/update"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--registry",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--save",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--save-text-lockfile",
+      "type": "cli-flag",
+      "description": "You can override the target platform for package selection:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lockfile",
+      "anchor": "cpu-and-os-flags",
+      "allPages": [
+        "https://bun.com/docs/pm/lockfile",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--sequential",
+      "type": "cli-flag",
+      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--tag",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--tolerate-republish",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "anchor": "tolerate-republish",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--top",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/why",
+      "anchor": "usage",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/why"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--trust",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--trusted",
+      "type": "cli-flag",
+      "description": "To create a tarball of the current workspace:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "anchor": "pack",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--verbose",
+      "type": "cli-flag",
+      "description": "To modify logging verbosity:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/isolated-installs",
+      "anchor": "logging",
+      "allPages": [
+        "https://bun.com/docs/pm/isolated-installs",
+        "https://bun.com/docs/pm/cli/install",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--workspaces",
+      "type": "cli-flag",
+      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/workspaces",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/workspaces",
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "--yarn",
+      "type": "cli-flag",
+      "description": "Use `bun unlink` in the root directory to unregister a local package.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lockfile",
+      "anchor": "unlinking",
+      "allPages": [
+        "https://bun.com/docs/pm/lockfile",
+        "https://bun.com/docs/pm/cli/link",
+        "https://bun.com/docs/pm/cli/outdated",
+        "https://bun.com/docs/pm/cli/patch",
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
       "name": ".npmrc support",
       "type": "concept",
       "stability": "stable",
@@ -3955,6 +8114,52 @@
       "section": "pm"
     },
     {
+      "name": "BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS",
+      "type": "config",
+      "description": "To modify logging verbosity:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "logging",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER",
+      "type": "config",
+      "description": "To modify logging verbosity:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "logging",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "BUN_INSTALL_CACHE_DIR",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-cache",
+      "allPages": [
+        "https://bun.com/docs/pm/global-cache"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "BUN_INSTALL_GLOBAL_STORE",
+      "type": "config",
+      "description": "The global virtual store is **off by default**.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "anchor": "enabling",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "pm"
+    },
+    {
       "name": "bunx",
       "type": "concept",
       "description": "Run packages from npm",
@@ -4006,6 +8211,90 @@
       "canonicalPage": "https://bun.com/docs/pm/global-store",
       "allPages": [
         "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.cache.dir",
+      "type": "config",
+      "description": "Prevents running lifecycle scripts during installation:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/npmrc",
+      "anchor": "ignore-scripts-skip-lifecycle-scripts",
+      "allPages": [
+        "https://bun.com/docs/pm/npmrc"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.cache.disable",
+      "type": "config",
+      "description": "Prevents running lifecycle scripts during installation:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/npmrc",
+      "anchor": "ignore-scripts-skip-lifecycle-scripts",
+      "allPages": [
+        "https://bun.com/docs/pm/npmrc"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.concurrentScripts",
+      "type": "config",
+      "description": "On `bun install`, `bun remove`, and `bun add`, Bun looks for `bunfig.toml` in:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "configuring-bun-install-with-bunfig-toml",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.frozenLockfile",
+      "type": "config",
+      "description": "On `bun install`, `bun remove`, and `bun add`, Bun looks for `bunfig.toml` in:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "configuring-bun-install-with-bunfig-toml",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.globalStore",
+      "type": "config",
+      "description": "The global virtual store is **off by default**.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "anchor": "enabling",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.optional",
+      "type": "config",
+      "description": "On `bun install`, `bun remove`, and `bun add`, Bun looks for `bunfig.toml` in:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "configuring-bun-install-with-bunfig-toml",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "install.peer",
+      "type": "config",
+      "description": "On `bun install`, `bun remove`, and `bun add`, Bun looks for `bunfig.toml` in:",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "anchor": "configuring-bun-install-with-bunfig-toml",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
       ],
       "section": "pm"
     },
@@ -4065,6 +8354,28 @@
       "section": "pm"
     },
     {
+      "name": "patchedDependencies",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/patch",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "resolutions",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/overrides",
+      "anchor": "overrides-and-resolutions",
+      "allPages": [
+        "https://bun.com/docs/pm/overrides",
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
       "name": "Scopes and registries",
       "type": "concept",
       "description": "Configure private registries and scoped packages",
@@ -4084,20 +8395,6 @@
         "https://bun.com/docs/pm/security-scanner-api"
       ],
       "section": "pm"
-    },
-    {
-      "name": "Workspaces",
-      "type": "concept",
-      "description": "Develop complex monorepos with multiple independent packages",
-      "stability": "stable",
-      "canonicalPage": "https://bun.com/docs/pm/workspaces",
-      "allPages": [
-        "https://bun.com/docs/pm/workspaces"
-      ],
-      "section": "pm",
-      "aliases": [
-        "workspaces"
-      ]
     },
     {
       "name": "Bun.sliceAnsi",
