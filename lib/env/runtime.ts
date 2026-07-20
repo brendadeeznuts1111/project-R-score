@@ -42,10 +42,7 @@ export class RuntimeEnv {
     const runtimeOrigins = Array.from(
       new Set(configuredOrigins.length > 0 ? configuredOrigins : defaultOrigins)
     );
-    const runtimeStaleMsRaw = Number.parseInt(
-      Bun.env.PLAYGROUND_RUNTIME_STALE_MS || '15000',
-      10
-    );
+    const runtimeStaleMsRaw = Number.parseInt(Bun.env.PLAYGROUND_RUNTIME_STALE_MS || '15000', 10);
     const wsBroadcastMsRaw = Number.parseInt(Bun.env.PLAYGROUND_WS_BROADCAST_MS || '1000', 10);
     const portRange =
       String(Bun.env.PLAYGROUND_PORT_RANGE || '').trim() ||
