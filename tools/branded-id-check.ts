@@ -24,7 +24,7 @@
  * Suppression: end a declaration line with `// brand-ok` to skip it
  * (for IDs that are genuinely opaque passthroughs). Prefer --smart
  * auto-suppression of bare `id`/`_id` DTOs over polluting call sites.
- * Brand foundation: lib/types/branded.ts
+ * Brand foundation: lib/types/branded.ts · institutional record: brand-manifest.json
  */
 
 // Matches ID-shaped names only: exact `id`, names ending in `Id`/`ID`
@@ -32,7 +32,7 @@
 // Does NOT match words merely containing "id" (valid, forbidden, guid,
 // validationErrors, cidr_whitelist, correlationIdHeader).
 const ID_DECL = /^\s*(?:readonly\s+)?(id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/;
-const SKIP_FILE = /lib\/types\/branded\.ts$/;
+const SKIP_FILE = /lib\/types\/branded(\.ts|\/)|lib\/types\/brand-manifest\.json$/;
 const SKIP_LINE = /brand-ok/;
 
 /** High-trust boundary layers — bare `id` still flags here. */
@@ -43,95 +43,84 @@ const HIGH_TRUST_PATH =
 const INGRESS_TYPE_NAME =
   /(?:Request|Context|Input|Args|Params|Options|Config|Command|Handler|Envelope)$/;
 
-/** Auth / credential field names (existing brands in branded.ts). */
-const AUTH_CREDENTIAL_FIELDS = new Set([
-  'accessKeyId',
-  'AccessKeyId',
-  'accountId',
-  'AccountId',
-  'account_id',
-  'zone_id',
-  'zoneId',
-  'ZoneId',
-  'tokenId',
-  'TokenId',
-  'identityId',
-  'IdentityId',
-  'identity_id',
-]);
-
-/** Named domain IDs with existing brands. */
-const NAMED_DOMAIN_FIELDS = new Set([
-  'sessionId',
-  'SessionId',
-  'session_id',
-  'requestId',
-  'RequestId',
-  'request_id',
-  'documentId',
-  'DocumentId',
-  'document_id',
-  'snapshotId',
-  'SnapshotId',
-  'snapshot_id',
-  'correlationId',
-  'CorrelationId',
-  'correlation_id',
-  'userId',
-  'UserId',
-  'user_id',
-  'terminalId',
-  'TerminalId',
-  'terminal_id',
-  'challengeId',
-  'ChallengeId',
-  'challenge_id',
-  'policyId',
-  'PolicyId',
-  'policy_id',
-  'deploymentId',
-  'DeploymentId',
-  'deployment_id',
-  'versionId',
-  'VersionId',
-  'version_id',
-  'auditId',
-  'AuditId',
-  'audit_id',
-]);
-
 /**
- * New-brand candidates (not yet in branded.ts, or rare).
- * Detector tags these for Phase 3; do not auto-suppress.
+ * Domains whose brands are credential/zone material (highest risk if plain string).
+ * Drawn from brand-manifest.json domain tags when present.
  */
-const NEW_BRAND_FIELDS = new Set([
-  'operationId',
-  'OperationId',
-  'operation_id',
-  'resourceId',
-  'ResourceId',
-  'resource_id',
-  'projectId',
-  'ProjectId',
-  'project_id',
-  'pipelineId',
-  'PipelineId',
-  'pipeline_id',
-  'jobId',
-  'JobId',
-  'job_id',
-  'stepId',
-  'StepId',
-  'step_id',
-  'webhookId',
-  'WebhookId',
-  'webhook_id',
-  'feedId',
-  'FeedId',
-  'feed_id',
-]);
+const AUTH_DOMAINS = new Set(['identity', 'documents']);
+
+/** Wire-only third-party fields — not our domain brands (auto new-brand → suppress-ish). */
+const WIRE_OPAQUE_FIELDS = new Set(['legacy_id', 'legacyId']);
 
 type Role = 'auth-credential' | 'named-domain' | 'new-brand' | 'opaque-pk' | 'ambiguous';
+
+type ManifestBrand = {
+  name: string;
+  domain: string;
+  tiers: string[];
+  mint: string[];
+  description: string;
+};
+
+type ManifestFile = {
+  brandCount: number;
+  brands: ManifestBrand[];
+};
+
+/** Pascal brand name → field aliases (sessionId, SessionId, session_id). */
+function fieldAliasesForBrand(brandName: string): string[] {
+  // SessionId → sessionId, SessionId, session_id
+  const base = brandName.endsWith('Id') ? brandName.slice(0, -2) : brandName;
+  const camel = base.charAt(0).toLowerCase() + base.slice(1) + 'Id';
+  const snake =
+    base
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .toLowerCase() + '_id';
+  return [...new Set([brandName, camel, snake])];
+}
+
+type FieldMaps = {
+  auth: Set<string>;
+  named: Set<string>;
+  /** brand name by field alias */
+  brandByField: Map<string, string>;
+  loadedFromManifest: boolean;
+};
+
+async function loadFieldMapsFromManifest(): Promise<FieldMaps> {
+  const path = new URL('../lib/types/brand-manifest.json', import.meta.url).pathname;
+  const auth = new Set<string>();
+  const named = new Set<string>();
+  const brandByField = new Map<string, string>();
+
+  try {
+    const raw = await Bun.file(path).text();
+    const manifest = JSON.parse(raw) as ManifestFile;
+    for (const b of manifest.brands ?? []) {
+      const aliases = fieldAliasesForBrand(b.name);
+      // ZoneId is documents domain but auth-credential risk (CF wire)
+      const isAuth =
+        AUTH_DOMAINS.has(b.domain) &&
+        /AccountId|AccessKeyId|ZoneId|TokenId|IdentityId/.test(b.name);
+      for (const a of aliases) {
+        brandByField.set(a, b.name);
+        if (isAuth) auth.add(a);
+        else named.add(a);
+      }
+    }
+    return { auth, named, brandByField, loadedFromManifest: true };
+  } catch {
+    // Fallback if manifest missing — empty sets; unknown *Id still new-brand
+    return { auth, named, brandByField, loadedFromManifest: false };
+  }
+}
+
+let FIELD_MAPS: FieldMaps | null = null;
+
+async function fieldMaps(): Promise<FieldMaps> {
+  if (!FIELD_MAPS) FIELD_MAPS = await loadFieldMapsFromManifest();
+  return FIELD_MAPS;
+}
 
 type StructuralKind =
   | 'function-param'
@@ -168,18 +157,20 @@ function isOpaquePrimaryKey(field: string): boolean {
   return field === 'id' || field === '_id' || field === 'ID';
 }
 
-function fieldRole(field: string): Role {
+function fieldRole(field: string, maps: FieldMaps): Role {
   if (isOpaquePrimaryKey(field)) return 'opaque-pk';
-  if (AUTH_CREDENTIAL_FIELDS.has(field)) return 'auth-credential';
-  if (NAMED_DOMAIN_FIELDS.has(field)) return 'named-domain';
-  if (NEW_BRAND_FIELDS.has(field)) return 'new-brand';
-  // Unknown *Id / *_id shape — treat as new-brand candidate
+  if (WIRE_OPAQUE_FIELDS.has(field)) return 'opaque-pk';
+  if (maps.auth.has(field)) return 'auth-credential';
+  if (maps.named.has(field)) return 'named-domain';
+  // Unknown *Id / *_id shape — candidate for a new brand not yet in manifest
   if (/Id$|ID$|_id$/.test(field)) return 'new-brand';
   return 'ambiguous';
 }
 
-function brandHintFor(field: string, role: Role): string | null {
+function brandHintFor(field: string, role: Role, maps: FieldMaps): string | null {
   if (role === 'opaque-pk') return null;
+  const fromManifest = maps.brandByField.get(field);
+  if (fromManifest) return fromManifest;
   // Normalize snake / camel to Pascal brand name
   const camel = field.includes('_')
     ? field
@@ -307,10 +298,11 @@ function classifyHit(
   lineNo: number,
   text: string,
   field: string,
-  structural: StructuralKind
+  structural: StructuralKind,
+  maps: FieldMaps
 ): Hit {
-  const role = fieldRole(field);
-  const brandHint = brandHintFor(field, role);
+  const role = fieldRole(field, maps);
+  const brandHint = brandHintFor(field, role, maps);
   const highTrust = HIGH_TRUST_PATH.test(relPath(file));
   let suppressed = false;
   let reason = '';
@@ -453,6 +445,7 @@ async function collectFiles(args: string[]): Promise<string[]> {
 }
 
 async function scanAll(files: string[]): Promise<Hit[]> {
+  const maps = await fieldMaps();
   const hits: Hit[] = [];
   for (const file of files) {
     if (SKIP_FILE.test(file)) continue;
@@ -465,13 +458,14 @@ async function scanAll(files: string[]): Promise<Hit[]> {
       const field = extractField(line);
       if (!field) continue;
       const structural = classifyStructure(lines, i);
-      hits.push(classifyHit(file, i + 1, line, field, structural));
+      hits.push(classifyHit(file, i + 1, line, field, structural, maps));
     }
   }
   return hits;
 }
 
-function printSmartReport(hits: Hit[], asJson: boolean): void {
+async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
+  const maps = await fieldMaps();
   const actionable = hits.filter(h => !h.suppressed);
   const suppressed = hits.filter(h => h.suppressed);
 
@@ -482,6 +476,7 @@ function printSmartReport(hits: Hit[], asJson: boolean): void {
           total: hits.length,
           actionable: actionable.length,
           autoSuppressed: suppressed.length,
+          manifestLoaded: maps.loadedFromManifest,
           byRole: Object.fromEntries(
             (
               ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'] as Role[]
@@ -505,7 +500,8 @@ function printSmartReport(hits: Hit[], asJson: boolean): void {
   }
 
   console.info(
-    `\n🧠 branded-id-check --smart\n` +
+    `\n🧠 branded-id-check --smart` +
+      `${maps.loadedFromManifest ? ' (manifest-driven)' : ' (manifest missing — weak field maps)'}\n` +
       `${hits.length} total hits → ${actionable.length} actionable ` +
       `(${suppressed.length} auto-suppressed as opaque / DTO primary keys)\n`
   );
@@ -543,7 +539,7 @@ function printSmartReport(hits: Hit[], asJson: boolean): void {
   if (newBrandFields.size > 0) {
     console.info(`\n  new-brand field breakdown:`);
     for (const [f, n] of [...newBrandFields.entries()].sort((a, b) => b[1] - a[1])) {
-      const hint = brandHintFor(f, 'new-brand');
+      const hint = brandHintFor(f, 'new-brand', maps);
       console.info(`    ${String(n).padStart(3)}  ${f}${hint ? ` → ${hint}` : ''}`);
     }
   }
@@ -568,7 +564,8 @@ function printSmartReport(hits: Hit[], asJson: boolean): void {
   }
 
   console.info(
-    `\n  brands: lib/types/branded.ts\n` +
+    `\n  brands: lib/types/branded.ts · manifest: lib/types/brand-manifest.json\n` +
+      `  catalog: bun tools/brand-catalog.ts [domain|brand]\n` +
       `  rollout: COMPLETE — actionable must stay 0 (gate: bun run check:brands)\n` +
       `  strict (actionable only): bun tools/branded-id-check.ts --smart --strict\n`
   );
@@ -602,7 +599,7 @@ async function main(): Promise<void> {
 
   if (smart) {
     const hits = await scanAll(files);
-    printSmartReport(hits, asJson);
+    await printSmartReport(hits, asJson);
     const actionable = hits.filter(h => !h.suppressed).length;
     if (strict && actionable > 0) process.exit(1);
     return;

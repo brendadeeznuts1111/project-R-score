@@ -101,6 +101,18 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Brand institutional record must match BRAND_CATALOG (detector reads it).
+  console.info('🏷️  Brand manifest...');
+  const brandManifest = Bun.spawn(['bun', 'tools/brand-manifest.ts', '--check'], {
+    cwd: repoRoot,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await brandManifest.exited) !== 0) {
+    console.error('❌ Stale brand-manifest.json — run: bun tools/brand-manifest.ts');
+    process.exit(1);
+  }
+
   // Branded-ID gate: only ADDED lines are judged, so legacy violations
   // elsewhere in a touched file never block; new violations always do.
   console.info('🏷️  Branded IDs...');

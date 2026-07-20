@@ -59,10 +59,13 @@ Each domain module repeats the same pattern: `type` + `as*` + `try*` + `parse*` 
 Mint authority is documented per brand in the manifest (`system-internal` · `user-input` · `wire-input`). Optional audit: `BRAND_PROVENANCE=1`.
 
 ```bash
-bun tools/branded-id-check.ts --smart --strict   # actionable unbranded IDs
+bun tools/brand-catalog.ts                       # JIT brand discovery (domain|BrandName)
+bun tools/branded-id-check.ts --smart --strict   # actionable unbranded IDs (manifest-driven)
 bun tools/brand-manifest.ts                      # regenerate institutional record
-bun tools/brand-manifest.ts --check              # fail if manifest stale
+bun tools/brand-manifest.ts --check              # fail if manifest stale (pre-commit)
 ```
+
+Skill: `.agents/skills/branded-ids/`
 
 - Pre-commit: `--staged --strict` on added lines + optional smart baseline
 - Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`

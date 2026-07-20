@@ -1,0 +1,3 @@
+display_name: Branded IDs
+short_description: Discover and apply FactoryWager branded string ID types
+default_prompt: "Use brand-catalog to pick the right brand and as*/try*/parse* tier, then apply brands at boundaries without empty forges."

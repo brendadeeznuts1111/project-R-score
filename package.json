@@ -1610,6 +1610,7 @@
     "dev:projects": "bun run --filter './projects/*' dev",
     "validate:workspaces": "bun scripts/validate-workspaces.ts",
     "check:workspaces": "bun scripts/validate-workspaces.ts",
+    "brand:catalog": "bun tools/brand-catalog.ts",
     "brand:manifest": "bun tools/brand-manifest.ts",
     "brand:manifest:check": "bun tools/brand-manifest.ts --check",
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
