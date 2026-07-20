@@ -15,21 +15,20 @@
  * (same family as Bun's own `declare const` type tags — bun-types:
  * https://github.com/oven-sh/bun/tree/main/packages/bun-types)
  *
- * TODO(brand-rollout): migration order by violation density (detector:
- * `bun tools/branded-id-check.ts` — 191 declarations remaining, baseline 274):
- *   DONE: lib/core/r2-session-manager.ts (SessionId, TerminalId)
- *         lib/security — ALL 14 files clean (UserId, SessionId, TokenId,
- *              AccountId, AccessKeyId, IdentityId, ChallengeId, PolicyId,
- *              DeploymentId, SnapshotId, VersionId, AuditId)
- *         lib/utils — ALL clean (RequestId/UserId telemetry spine in
- *              logger.ts + error-handler.ts, AuditId in s3-content-encoding)
- *   1. lib/mcp (31)          — id, requestId, documentId
- *   2. lib/core (28)         — sessionId, requestId, snapshotId
- *   3. lib/registry (18)     — accountId, identityId, zone_id
- *   4. lib/r2 (40)           — sessionId, key ids
- *   5. lib/docs + remainder  — entity primary keys (suppress) + singletons
- * Pre-commit enforces zero NEW violations (added lines only) — the
- * baseline only shrinks from here.
+ * Detector (smart triage — no `// brand-ok` sweeps):
+ *   bun tools/branded-id-check.ts --smart
+ *   → role clusters: auth-credential · named-domain · new-brand · opaque-pk
+ *   → auto-suppresses bare `id`/`_id` DTO properties (~76 of ~191)
+ *   → actionable set is the migration queue (not directory order)
+ *
+ * TODO(brand-rollout) by detector role (not directory):
+ *   DONE: lib/security (all) · r2-session-manager · utils telemetry spine
+ *   Phase 1: [auth-credential]  AccessKeyId · AccountId · ZoneId (~20)
+ *   Phase 2: [named-domain]     SessionId · RequestId · UserId · … (~59)
+ *   Phase 3: [new-brand]        OperationId · ResourceId · ProjectId · … (~33)
+ *   Phase 4: --smart --strict in CI once actionable → 0
+ * Pre-commit enforces zero NEW violations (added lines only); staged mode
+ * also skips opaque PKs outside high-trust paths.
  */
 
 declare const brand: unique symbol;

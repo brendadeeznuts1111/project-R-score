@@ -10,8 +10,11 @@
  * lib/types/branded.ts (see its header for the migration plan).
  *
  * Usage:
- *   bun tools/branded-id-check.ts [paths...]   # report (exit 0)
- *   bun tools/branded-id-check.ts --strict     # exit 1 on violations
+ *   bun tools/branded-id-check.ts [paths...]   # report by directory (exit 0)
+ *   bun tools/branded-id-check.ts --smart      # role + structure clusters
+ *   bun tools/branded-id-check.ts --smart --json
+ *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
+ *                                              #   (with --smart: ignores opaque-pk)
  *   bun tools/branded-id-check.ts --staged     # scan ADDED lines of staged
  *                                              #   diff only (new violations
  *                                              #   in changed lines; legacy
@@ -19,7 +22,8 @@
  *                                              #   the file never block)
  *
  * Suppression: end a declaration line with `// brand-ok` to skip it
- * (for IDs that are genuinely opaque passthroughs).
+ * (for IDs that are genuinely opaque passthroughs). Prefer --smart
+ * auto-suppression of bare `id`/`_id` DTOs over polluting call sites.
  * Brand foundation: lib/types/branded.ts
  */
 
@@ -27,11 +31,343 @@
 // (sessionId, RequestId), names ending in `_id` (account_id, `_id` itself).
 // Does NOT match words merely containing "id" (valid, forbidden, guid,
 // validationErrors, cidr_whitelist, correlationIdHeader).
-const ID_DECL = /^\s*(?:readonly\s+)?(?:id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/;
+const ID_DECL = /^\s*(?:readonly\s+)?(id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/;
 const SKIP_FILE = /lib\/types\/branded\.ts$/;
 const SKIP_LINE = /brand-ok/;
 
+/** High-trust boundary layers — bare `id` still flags here. */
+const HIGH_TRUST_PATH =
+  /(?:^|\/)(lib\/security|lib\/core|lib\/mcp|lib\/registry|lib\/auth)(?:\/|$)/;
+
+/** Type / interface names that behave as domain ingress even as properties. */
+const INGRESS_TYPE_NAME =
+  /(?:Request|Context|Input|Args|Params|Options|Config|Command|Handler|Envelope)$/;
+
+/** Auth / credential field names (existing brands in branded.ts). */
+const AUTH_CREDENTIAL_FIELDS = new Set([
+  'accessKeyId',
+  'AccessKeyId',
+  'accountId',
+  'AccountId',
+  'account_id',
+  'zone_id',
+  'zoneId',
+  'ZoneId',
+  'tokenId',
+  'TokenId',
+  'identityId',
+  'IdentityId',
+  'identity_id',
+]);
+
+/** Named domain IDs with existing brands. */
+const NAMED_DOMAIN_FIELDS = new Set([
+  'sessionId',
+  'SessionId',
+  'session_id',
+  'requestId',
+  'RequestId',
+  'request_id',
+  'documentId',
+  'DocumentId',
+  'document_id',
+  'snapshotId',
+  'SnapshotId',
+  'snapshot_id',
+  'correlationId',
+  'CorrelationId',
+  'correlation_id',
+  'userId',
+  'UserId',
+  'user_id',
+  'terminalId',
+  'TerminalId',
+  'terminal_id',
+  'challengeId',
+  'ChallengeId',
+  'challenge_id',
+  'policyId',
+  'PolicyId',
+  'policy_id',
+  'deploymentId',
+  'DeploymentId',
+  'deployment_id',
+  'versionId',
+  'VersionId',
+  'version_id',
+  'auditId',
+  'AuditId',
+  'audit_id',
+]);
+
+/**
+ * New-brand candidates (not yet in branded.ts, or rare).
+ * Detector tags these for Phase 3; do not auto-suppress.
+ */
+const NEW_BRAND_FIELDS = new Set([
+  'operationId',
+  'OperationId',
+  'operation_id',
+  'resourceId',
+  'ResourceId',
+  'resource_id',
+  'projectId',
+  'ProjectId',
+  'project_id',
+  'pipelineId',
+  'PipelineId',
+  'pipeline_id',
+  'jobId',
+  'JobId',
+  'job_id',
+  'stepId',
+  'StepId',
+  'step_id',
+  'webhookId',
+  'WebhookId',
+  'webhook_id',
+  'feedId',
+  'FeedId',
+  'feed_id',
+]);
+
+type Role = 'auth-credential' | 'named-domain' | 'new-brand' | 'opaque-pk' | 'ambiguous';
+
+type StructuralKind =
+  | 'function-param'
+  | 'ingress-type-property'
+  | 'dto-property'
+  | 'object-literal'
+  | 'unknown';
+
+type Hit = {
+  file: string;
+  line: number;
+  text: string;
+  field: string;
+  role: Role;
+  structural: StructuralKind;
+  /** True when detector auto-suppresses (not an actionable domain ingress). */
+  suppressed: boolean;
+  brandHint: string | null;
+  reason: string;
+};
+
 type Violation = { file: string; line: number; text: string };
+
+function relPath(file: string): string {
+  return file.replace(/^.*?(?=lib\/|scripts\/|tools\/|tests\/|dashboard\/)/, '') || file;
+}
+
+function extractField(line: string): string | null {
+  const m = line.match(ID_DECL);
+  return m?.[1] ?? null;
+}
+
+function isOpaquePrimaryKey(field: string): boolean {
+  return field === 'id' || field === '_id' || field === 'ID';
+}
+
+function fieldRole(field: string): Role {
+  if (isOpaquePrimaryKey(field)) return 'opaque-pk';
+  if (AUTH_CREDENTIAL_FIELDS.has(field)) return 'auth-credential';
+  if (NAMED_DOMAIN_FIELDS.has(field)) return 'named-domain';
+  if (NEW_BRAND_FIELDS.has(field)) return 'new-brand';
+  // Unknown *Id / *_id shape — treat as new-brand candidate
+  if (/Id$|ID$|_id$/.test(field)) return 'new-brand';
+  return 'ambiguous';
+}
+
+function brandHintFor(field: string, role: Role): string | null {
+  if (role === 'opaque-pk') return null;
+  // Normalize snake / camel to Pascal brand name
+  const camel = field.includes('_')
+    ? field
+        .split('_')
+        .filter(Boolean)
+        .map((p, i) => (i === 0 ? p : p.charAt(0).toUpperCase() + p.slice(1)))
+        .join('')
+    : field;
+  const pascal = camel.charAt(0).toUpperCase() + camel.slice(1);
+  // Ensure Id suffix
+  if (/Id$/i.test(pascal)) return pascal.replace(/ID$/, 'Id');
+  return `${pascal}Id`;
+}
+
+/**
+ * Walk upward from a hit line to classify structural context.
+ * Lightweight (no full AST) — good enough for migration triage.
+ */
+function classifyStructure(lines: string[], hitIndex: number): StructuralKind {
+  const hit = lines[hitIndex] ?? '';
+  // Function / method parameter: field appears mid-signature before `) {` / `):`
+  // e.g. `export function foo(sessionId: string, …)` or `  sessionId: string,`
+  const trimmed = hit.trim();
+  const looksLikeParam =
+    /,\s*$/.test(trimmed) ||
+    /\)\s*[:{]/.test(trimmed) ||
+    (/\(\s*$/.test(trimmed) === false &&
+      /^\s*(?:readonly\s+)?(?:id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/.test(hit) &&
+      /,\s*$|\)\s*(?::|\{|=>)/.test(hit));
+
+  // Scan upward for type/interface/class/function openers
+  let depthBrace = 0;
+  let depthParen = 0;
+  let nearestType: { kind: 'interface' | 'type' | 'class'; name: string } | null = null;
+  let nearestFn = false;
+  let nearestObjectLiteral = false;
+
+  for (let i = hitIndex; i >= Math.max(0, hitIndex - 80); i--) {
+    const ln = lines[i] ?? '';
+    // Rough paren/brace balance walking upward (inverted)
+    for (let c = ln.length - 1; c >= 0; c--) {
+      const ch = ln[c];
+      if (ch === ')') depthParen++;
+      else if (ch === '(') depthParen--;
+      else if (ch === '}') depthBrace++;
+      else if (ch === '{') depthBrace--;
+    }
+
+    const iface = ln.match(/^\s*(?:export\s+)?(?:interface|type)\s+([A-Za-z0-9_]+)/);
+    if (iface && depthBrace <= 0) {
+      nearestType = {
+        kind: ln.includes('interface') ? 'interface' : 'type',
+        name: iface[1]!,
+      };
+      break;
+    }
+    const cls = ln.match(/^\s*(?:export\s+)?class\s+([A-Za-z0-9_]+)/);
+    if (cls && depthBrace <= 0) {
+      nearestType = { kind: 'class', name: cls[1]! };
+      break;
+    }
+    if (
+      /^\s*(?:export\s+)?(?:async\s+)?function\s/.test(ln) ||
+      /^\s*(?:export\s+)?(?:const|let)\s+\w+\s*=\s*(?:async\s*)?\(/.test(ln) ||
+      /^\s*(?:public|private|protected|readonly|async)?\s*\w+\s*\(/.test(ln)
+    ) {
+      // Only if we are still inside parens of that function
+      if (depthParen > 0 || looksLikeParam) {
+        nearestFn = true;
+        break;
+      }
+    }
+    // Object literal assignment: `const x = {` or `return {`
+    if (
+      /(?:=\s*\{|\breturn\s*\{|\(\s*\{)\s*$/.test(ln.trim()) ||
+      /(?:=\s*\{|\breturn\s*\{)/.test(ln)
+    ) {
+      if (depthBrace >= 0 && !nearestType) {
+        nearestObjectLiteral = true;
+        // keep scanning for stronger type/fn signals
+      }
+    }
+  }
+
+  // Same-line function signature: `function f(sessionId: string)`
+  if (
+    /function\s+\w+\s*\(/.test(hit) ||
+    /=\s*(?:async\s*)?\([^)]*(?:id|[A-Za-z]+Id|_id)\??:\s*string/.test(hit)
+  ) {
+    return 'function-param';
+  }
+
+  // Multi-line param: previous non-empty lines open a `(` without closing
+  if (looksLikeParam || nearestFn) {
+    // Prefer function-param when we see trailing comma / close paren
+    if (/,\s*$|\)\s*(?::|\{|=>)/.test(trimmed) || nearestFn) {
+      // But if clearly inside a type body, prefer type property
+      if (nearestType && depthBrace < 0) {
+        // still inside type braces from type open
+      } else if (nearestFn || /,\s*$|\)\s*(?::|\{|=>)/.test(trimmed)) {
+        // Check we're not inside interface (properties also use trailing commas)
+        if (nearestType && !nearestFn) {
+          // fall through to type handling
+        } else {
+          return 'function-param';
+        }
+      }
+    }
+  }
+
+  if (nearestType) {
+    if (INGRESS_TYPE_NAME.test(nearestType.name)) {
+      return 'ingress-type-property';
+    }
+    return 'dto-property';
+  }
+
+  if (nearestObjectLiteral) return 'object-literal';
+  if (looksLikeParam) return 'function-param';
+  return 'unknown';
+}
+
+function classifyHit(
+  file: string,
+  lineNo: number,
+  text: string,
+  field: string,
+  structural: StructuralKind
+): Hit {
+  const role = fieldRole(field);
+  const brandHint = brandHintFor(field, role);
+  const highTrust = HIGH_TRUST_PATH.test(relPath(file));
+  let suppressed = false;
+  let reason = '';
+
+  if (role === 'opaque-pk') {
+    if (structural === 'function-param' && highTrust) {
+      suppressed = false;
+      reason = 'bare id as function param in high-trust path';
+    } else if (structural === 'ingress-type-property' && highTrust) {
+      suppressed = false;
+      reason = 'bare id on *Request/*Context in high-trust path';
+    } else if (structural === 'dto-property' || structural === 'unknown') {
+      suppressed = true;
+      reason = 'opaque primary key on DTO/property (auto-suppressed)';
+    } else if (structural === 'object-literal' && !highTrust) {
+      suppressed = true;
+      reason = 'opaque primary key in object literal outside high-trust path';
+    } else if (!highTrust) {
+      suppressed = true;
+      reason = 'opaque primary key outside high-trust path (auto-suppressed)';
+    } else {
+      suppressed = false;
+      reason = 'bare id in high-trust path — review';
+    }
+  } else if (role === 'auth-credential') {
+    suppressed = false;
+    reason = 'auth/credential ID — always flag';
+  } else if (role === 'named-domain' || role === 'new-brand') {
+    if (structural === 'dto-property' && role === 'named-domain') {
+      // Wire/DTO properties: still flag named domain IDs (they should brand
+      // when they are domain fields), but note DTO context for reviewers.
+      suppressed = false;
+      reason = 'named domain ID on DTO property (prefer brand type on the field)';
+    } else if (structural === 'function-param' || structural === 'ingress-type-property') {
+      suppressed = false;
+      reason = 'domain ingress (function param or *Request/*Context field)';
+    } else {
+      suppressed = false;
+      reason = role === 'new-brand' ? 'new-brand candidate field' : 'named domain ID occurrence';
+    }
+  } else {
+    suppressed = false;
+    reason = 'ambiguous ID shape';
+  }
+
+  return {
+    file: relPath(file),
+    line: lineNo,
+    text: text.trim(),
+    field,
+    role,
+    structural,
+    suppressed,
+    brandHint,
+    reason,
+  };
+}
 
 /** Violations in added lines of the staged diff (hunk-aware). */
 async function stagedViolations(): Promise<Violation[]> {
@@ -56,6 +392,11 @@ async function stagedViolations(): Promise<Violation[]> {
       newLine++;
       const line = raw.slice(1);
       if (!SKIP_FILE.test(file) && !SKIP_LINE.test(line) && ID_DECL.test(line)) {
+        // Smart staged: only block actionable hits
+        const field = extractField(line);
+        if (field && isOpaquePrimaryKey(field) && !HIGH_TRUST_PATH.test(file)) {
+          continue;
+        }
         violations.push({ file, line: newLine, text: line.trim() });
       }
       continue;
@@ -84,9 +425,133 @@ async function collectFiles(args: string[]): Promise<string[]> {
   return files;
 }
 
+async function scanAll(files: string[]): Promise<Hit[]> {
+  const hits: Hit[] = [];
+  for (const file of files) {
+    if (SKIP_FILE.test(file)) continue;
+    const text = await Bun.file(file).text();
+    const lines = text.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]!;
+      if (SKIP_LINE.test(line)) continue;
+      if (!ID_DECL.test(line)) continue;
+      const field = extractField(line);
+      if (!field) continue;
+      const structural = classifyStructure(lines, i);
+      hits.push(classifyHit(file, i + 1, line, field, structural));
+    }
+  }
+  return hits;
+}
+
+function printSmartReport(hits: Hit[], asJson: boolean): void {
+  const actionable = hits.filter(h => !h.suppressed);
+  const suppressed = hits.filter(h => h.suppressed);
+
+  if (asJson) {
+    process.stdout.write(
+      `${JSON.stringify(
+        {
+          total: hits.length,
+          actionable: actionable.length,
+          autoSuppressed: suppressed.length,
+          byRole: Object.fromEntries(
+            (
+              ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'] as Role[]
+            ).map(role => [
+              role,
+              {
+                total: hits.filter(h => h.role === role).length,
+                actionable: actionable.filter(h => h.role === role).length,
+                suppressed: suppressed.filter(h => h.role === role).length,
+              },
+            ])
+          ),
+          hits: actionable,
+          suppressedSample: suppressed.slice(0, 20),
+        },
+        null,
+        2
+      )}\n`
+    );
+    return;
+  }
+
+  console.info(
+    `\n🧠 branded-id-check --smart\n` +
+      `${hits.length} total hits → ${actionable.length} actionable ` +
+      `(${suppressed.length} auto-suppressed as opaque / DTO primary keys)\n`
+  );
+
+  const roles: Role[] = ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'];
+  for (const role of roles) {
+    const all = hits.filter(h => h.role === role);
+    const act = actionable.filter(h => h.role === role);
+    const sup = suppressed.filter(h => h.role === role);
+    if (all.length === 0) continue;
+    const tag = `[${role}]`.padEnd(18);
+    if (role === 'opaque-pk' && act.length === 0) {
+      console.info(`${tag} ${String(sup.length).padStart(3)} — auto-suppressed`);
+      continue;
+    }
+    // Directory rollup for actionable
+    const byDir = new Map<string, number>();
+    for (const h of act) {
+      const dir = h.file.split('/').slice(0, 2).join('/');
+      byDir.set(dir, (byDir.get(dir) ?? 0) + 1);
+    }
+    const dirs = [...byDir.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([d, n]) => `${d}(${n})`)
+      .join(', ');
+    const extra = sup.length > 0 && act.length > 0 ? ` · ${sup.length} suppressed` : '';
+    console.info(`${tag} ${String(act.length).padStart(3)} → ${dirs || '(none)'}${extra}`);
+  }
+
+  // New-brand field frequency
+  const newBrandFields = new Map<string, number>();
+  for (const h of actionable.filter(h => h.role === 'new-brand')) {
+    newBrandFields.set(h.field, (newBrandFields.get(h.field) ?? 0) + 1);
+  }
+  if (newBrandFields.size > 0) {
+    console.info(`\n  new-brand field breakdown:`);
+    for (const [f, n] of [...newBrandFields.entries()].sort((a, b) => b[1] - a[1])) {
+      const hint = brandHintFor(f, 'new-brand');
+      console.info(`    ${String(n).padStart(3)}  ${f}${hint ? ` → ${hint}` : ''}`);
+    }
+  }
+
+  // Auth + named actionable detail (top 40)
+  const priority = actionable
+    .filter(h => h.role === 'auth-credential' || h.role === 'named-domain')
+    .slice(0, 40);
+  if (priority.length > 0) {
+    console.info(`\n  top actionable (auth + named-domain):`);
+    for (const h of priority) {
+      console.info(
+        `    ${h.file}:${h.line}  ${h.field}  [${h.structural}]` +
+          (h.brandHint ? ` → ${h.brandHint}` : '')
+      );
+    }
+    if (
+      actionable.filter(h => h.role === 'auth-credential' || h.role === 'named-domain').length > 40
+    ) {
+      console.info(`    …`);
+    }
+  }
+
+  console.info(
+    `\n  brands: lib/types/branded.ts\n` +
+      `  next: Phase 1 auth-credential → Phase 2 named-domain → Phase 3 new brands\n` +
+      `  strict (actionable only): bun tools/branded-id-check.ts --smart --strict\n`
+  );
+}
+
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2);
   const strict = args.includes('--strict');
+  const smart = args.includes('--smart');
+  const asJson = args.includes('--json');
 
   // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
   // violations elsewhere in a touched file never block the commit.
@@ -99,7 +564,8 @@ async function main(): Promise<void> {
     for (const v of violations) console.info(`  ${v.file}:${v.line}: ${v.text}`);
     console.info(
       `\n❌ ${violations.length} new unbranded ID declaration(s) in staged changes\n` +
-        '   → use brands from lib/types/branded.ts, or suppress with // brand-ok'
+        '   → use brands from lib/types/branded.ts, or suppress with // brand-ok\n' +
+        '   → triage: bun tools/branded-id-check.ts --smart'
     );
     if (strict) process.exit(1);
     return;
@@ -107,6 +573,15 @@ async function main(): Promise<void> {
 
   const files = await collectFiles(args);
 
+  if (smart) {
+    const hits = await scanAll(files);
+    printSmartReport(hits, asJson);
+    const actionable = hits.filter(h => !h.suppressed).length;
+    if (strict && actionable > 0) process.exit(1);
+    return;
+  }
+
+  // Legacy directory rollup
   const perDir = new Map<string, number>();
   let total = 0;
   for (const file of files) {
@@ -115,7 +590,7 @@ async function main(): Promise<void> {
     const lines = text.split('\n');
     let fileCount = 0;
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      const line = lines[i]!;
       if (SKIP_LINE.test(line)) continue;
       if (ID_DECL.test(line)) {
         fileCount++;
@@ -123,14 +598,13 @@ async function main(): Promise<void> {
       }
     }
     if (fileCount > 0) {
-      const rel = file.replace(/^.*?(?=lib\/|scripts\/|tools\/|tests\/|dashboard\/)/, '');
+      const rel = relPath(file);
       const dir = rel.split('/').slice(0, 2).join('/');
       perDir.set(dir, (perDir.get(dir) ?? 0) + fileCount);
       if (strict || files.length <= 20) {
-        // detailed output for small scans
         for (let i = 0; i < lines.length; i++) {
-          if (!SKIP_LINE.test(lines[i]) && ID_DECL.test(lines[i])) {
-            console.info(`  ${file}:${i + 1}: ${lines[i].trim()}`);
+          if (!SKIP_LINE.test(lines[i]!) && ID_DECL.test(lines[i]!)) {
+            console.info(`  ${file}:${i + 1}: ${lines[i]!.trim()}`);
           }
         }
       }
@@ -141,9 +615,14 @@ async function main(): Promise<void> {
   for (const [dir, n] of [...perDir.entries()].sort((a, b) => b[1] - a[1])) {
     console.info(`   ${String(n).padStart(4)}  ${dir}`);
   }
-  console.info('   → brands + constructors: lib/types/branded.ts; suppress with // brand-ok');
+  console.info(
+    '   → brands + constructors: lib/types/branded.ts; suppress with // brand-ok\n' +
+      '   → smart triage (no brand-ok): bun tools/branded-id-check.ts --smart'
+  );
 
   if (strict && total > 0) process.exit(1);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
