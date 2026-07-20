@@ -1,20 +1,16 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-// @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // lib/registry/auth.ts — Registry authentication middleware
 
+import { CryptoHasher } from 'bun';
 import { styled, FW_COLORS } from '../theme/colors';
-import { hmacSha256Base64Url } from '../security/crypto-native.ts';
-import { getAppSecretFromEnv, SecretNames } from '../security/secrets-manager.ts';
 import { registryHost } from './env';
 import type { RegistryUser, AuthToken } from './registry-types';
 
 function requireJwtSecret(configured?: string): string {
   if (configured?.trim()) return configured.trim();
-  const env =
-    getAppSecretFromEnv(SecretNames.REGISTRY_JWT_SECRET) ||
-    getAppSecretFromEnv(SecretNames.JWT_SECRET);
+  const env = Bun.env.REGISTRY_JWT_SECRET?.trim() || Bun.env.JWT_SECRET?.trim();
   if (env) return env;
 
   const allowInsecure =
@@ -24,15 +20,19 @@ function requireJwtSecret(configured?: string): string {
     Bun.env.NODE_ENV === 'test';
 
   if (!allowInsecure) {
-    throw new Error(
-      'jwtSecret / REGISTRY_JWT_SECRET / JWT_SECRET is required (Bun.secrets or env)'
-    );
+    throw new Error('jwtSecret / REGISTRY_JWT_SECRET / JWT_SECRET is required (Bun.env)');
   }
   return 'default-secret-dev-only';
 }
 
 function b64urlJson(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString('base64url');
+}
+
+function hmacSha256Base64Url(key: string, payload: string): string {
+  return Buffer.from(new CryptoHasher('sha256', key).update(payload).digest()).toString(
+    'base64url'
+  );
 }
 
 export type AuthType = 'none' | 'basic' | 'token' | 'jwt';

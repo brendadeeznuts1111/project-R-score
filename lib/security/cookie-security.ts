@@ -1,43 +1,36 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
-
-// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/cookies — Bun.Cookie, Bun.CookieMap
 // @see https://bun.com/docs/runtime/csrf — Bun.CSRF
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 /**
- * Cookie + CSRF Factory-Wager fusion — Bun-native Cookie / CSRF.
- *
- * - Cookie.parse / Cookie.from / new Cookie → Bun.Cookie
- * - CookieMap for request jars
- * - CSRFProtection → Bun.CSRF (session-bound)
- * - CookieInspector for validation and security auditing
- * - A/B testing variants with tamper-proof signatures
+ * Cookie inspector / A/B helpers on top of Bun primitives (no wrapper types).
+ * Prefer at call sites: Bun.Cookie, Bun.CookieMap, Bun.CSRF, req.cookies on Bun.serve.
  */
 
-import { CryptoHasher } from 'bun';
+import { Cookie, CookieMap, CryptoHasher } from 'bun';
 import { type UserId, tryUserId } from '../types/branded.ts';
-import {
-  Cookie as SecureCookie,
-  type CookieOptions,
-  cookieMapFromHeader,
-  CookieMap,
-} from './cookies-native.ts';
-import { getAppSecretFromEnv, requireAppSecret, SecretNames } from './secrets-manager.ts';
 
-export type { CookieOptions };
-export { CookieMap, cookieMapFromHeader };
+/** Re-export Bun cookie types — use these, not local subclasses. */
+export { Cookie, CookieMap };
+export type CookieInit = ConstructorParameters<typeof Cookie>[2];
 
-/** Bun.Cookie with secure `from()` defaults (see cookies-native). */
-export class Cookie extends SecureCookie {}
-
-async function requireCsrfSecret(): Promise<string> {
-  return requireAppSecret(SecretNames.CSRF_SECRET, {
-    envKeys: [SecretNames.CSRF_SECRET],
-    insecureDevFallback: 'default-csrf-secret-dev-only',
-  });
+/** CSRF signing secret: Bun.env (hydrate from Bun.secrets via secrets:migrate). */
+function csrfSecret(): string {
+  const key = Bun.env.CSRF_SECRET?.trim();
+  if (key) return key;
+  if (
+    Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+    Bun.env.NODE_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'test' ||
+    Bun.env.BUN_ENV === 'development'
+  ) {
+    return 'default-csrf-secret-dev-only';
+  }
+  throw new Error('CSRF_SECRET is required (Bun.env or Bun.secrets)');
 }
 
 // 🔍 COOKIE INSPECTOR - Security Validation
@@ -150,74 +143,35 @@ export class CookieInspector {
   }
 }
 
-// 🛡️ CSRF PROTECTION — Bun.CSRF (session-bound HMAC tokens)
-// Always pass sessionId to generate + verify (prevents cross-session replay).
-export class CSRFProtection {
-  /**
-   * Generate CSRF token bound to sessionId (Bun.CSRF).
-   * @param sessionId requester session or user id — required for safe use
-   * @param expiresInMs token lifetime (default 24h per Bun)
-   */
-  static async generateToken(
-    sessionId: string, // brand-ok — CSRF binds opaque session/user wire id
-    expiresInMs: number = 86_400_000
-  ): Promise<string> {
-    if (!sessionId?.trim()) {
-      throw new Error('CSRFProtection.generateToken requires a non-empty sessionId');
-    }
-    const secret = await requireCsrfSecret();
-    return Bun.CSRF.generate(secret, {
+/**
+ * Thin aliases over Bun.CSRF (sync). Prefer calling Bun.CSRF.* at new call sites.
+ * @see https://bun.com/docs/runtime/csrf
+ */
+export const CSRFProtection = {
+  /** @param sessionId brand-ok — opaque session/user wire id bound into the token */
+  generateToken(sessionId: string, expiresInMs?: number): string {
+    if (!sessionId?.trim()) throw new Error('sessionId required for Bun.CSRF.generate');
+    return Bun.CSRF.generate(csrfSecret(), {
       sessionId,
-      expiresIn: expiresInMs,
-      encoding: 'base64url',
-      algorithm: 'sha256',
+      ...(expiresInMs !== undefined ? { expiresIn: expiresInMs } : {}),
     });
-  }
+  },
 
-  /**
-   * Verify CSRF token for the same sessionId used at generate time.
-   * @deprecated Prefer verify(token, sessionId) — equality check is not CSRF-safe alone.
-   */
-  static validateToken(cookieToken: string, sessionToken: string): boolean {
-    // Double-submit legacy: both sides must match (not HMAC). Prefer verify().
-    return cookieToken === sessionToken && cookieToken.length > 0;
-  }
-
-  /**
-   * Verify Bun.CSRF token bound to sessionId.
-   */
-  static async verify(
-    token: string,
-    sessionId: string, // brand-ok — must match generateToken session binding (wire id)
-    options: { maxAge?: number } = {}
-  ): Promise<boolean> {
+  /** @param sessionId brand-ok — must match generate */
+  verify(token: string, sessionId: string, maxAge?: number): boolean {
     if (!token?.trim() || !sessionId?.trim()) return false;
-    const secret = await requireCsrfSecret();
     return Bun.CSRF.verify(token, {
-      secret,
+      secret: csrfSecret(),
       sessionId,
-      maxAge: options.maxAge ?? 86_400_000,
-      encoding: 'base64url',
-      algorithm: 'sha256',
+      ...(maxAge !== undefined ? { maxAge } : {}),
     });
-  }
+  },
+} as const;
 
-  /**
-   * Double-submit pattern: one token for cookie + form (same session-bound CSRF token).
-   */
-  static async generateDoubleSubmitToken(sessionId: string): Promise<{
-    cookieToken: string;
-    formToken: string;
-  }> {
-    const token = await this.generateToken(sessionId);
-    return { cookieToken: token, formToken: token };
-  }
-}
-
-// 🎲 A/B TESTING VARIANTS - Tamper-proof
+// 🎲 A/B TESTING VARIANTS - Tamper-proof (Bun.CryptoHasher + Bun.Cookie)
 export class ABTestingVariant {
   private static get VARIANT_SECRET(): string {
-    const key = getAppSecretFromEnv(SecretNames.VARIANT_SECRET) || Bun.env.VARIANT_SECRET?.trim();
+    const key = Bun.env.VARIANT_SECRET?.trim();
     if (key) return key;
     if (
       Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
@@ -227,7 +181,7 @@ export class ABTestingVariant {
     ) {
       return 'default-variant-secret-dev-only';
     }
-    throw new Error('VARIANT_SECRET is required (env or Bun.secrets)');
+    throw new Error('VARIANT_SECRET is required (Bun.env)');
   }
 
   /**
@@ -311,44 +265,33 @@ export class JuniorRunnerCookieIntegration {
   /**
    * Profile cookies for JuniorRunner with --cookie-inspect flag
    */
-  static async profileCookies(req: Request): Promise<{
+  static profileCookies(req: Request): {
     cookies: Cookie[];
     validation: ReturnType<typeof CookieInspector.analyzeBatch>;
     csrfToken?: string;
     abVariant?: ReturnType<typeof ABTestingVariant.validateVariantCookie>;
-  }> {
-    const cookieHeader = req.headers.get('cookie');
+  } {
+    // Prefer req.cookies on Bun.serve routes; CookieMap is the request jar primitive.
+    const jar =
+      'cookies' in req && req.cookies instanceof CookieMap
+        ? req.cookies
+        : new CookieMap(req.headers.get('cookie') ?? '');
+
     const cookies: Cookie[] = [];
-
-    if (cookieHeader) {
-      // Parse all cookies from header
-      const cookiePairs = cookieHeader.split(';').map(c => c.trim());
-
-      for (const pair of cookiePairs) {
-        try {
-          const cookie = Cookie.parse(pair);
-          cookies.push(cookie);
-        } catch {
-          // Skip invalid cookies
-        }
-      }
+    for (const [name, value] of jar) {
+      cookies.push(new Cookie(name, value));
     }
 
-    // Validate all cookies
     const validation = CookieInspector.analyzeBatch(cookies);
 
-    // Extract session ID for CSRF token generation
-    const sessionCookie = cookies.find(c => c.name.includes('session'));
-    let csrfToken;
-    if (sessionCookie) {
-      csrfToken = await CSRFProtection.generateToken(sessionCookie.value);
-    }
+    const sessionId =
+      jar.get('session') ?? jar.get('session_id') ?? jar.get('__Host-session') ?? null;
+    const csrfToken = sessionId ? CSRFProtection.generateToken(sessionId) : undefined;
 
-    // Validate A/B variant if present
-    const variantCookie = cookies.find(c => c.name === 'ab_variant');
+    const variantRaw = jar.get('ab_variant');
     let abVariant;
-    if (variantCookie) {
-      abVariant = ABTestingVariant.validateVariantCookie(variantCookie);
+    if (variantRaw != null) {
+      abVariant = ABTestingVariant.validateVariantCookie(new Cookie('ab_variant', variantRaw));
     }
 
     return {
@@ -362,7 +305,7 @@ export class JuniorRunnerCookieIntegration {
   /**
    * Generate R2 telemetry data for cookies
    */
-  static generateR2Telemetry(profile: Awaited<ReturnType<typeof this.profileCookies>>): {
+  static generateR2Telemetry(profile: ReturnType<typeof this.profileCookies>): {
     timestamp: string;
     cookieCount: number;
     securityScore: number;

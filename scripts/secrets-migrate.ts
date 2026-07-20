@@ -11,30 +11,28 @@
  * @see https://bun.com/docs/runtime/environment-variables — Bun.env
  */
 
-import {
-  SECRETS_SERVICE,
-  SecretNames,
-  getAppSecret,
-  setAppSecret,
-  secretsRuntime,
-} from '../lib/security/secrets-manager';
-
 const DRY = Bun.argv.includes('--dry-run');
+const SERVICE = Bun.env.FW_SECRETS_SERVICE?.trim() || 'com.factorywager.app';
 
-const KEYS = Object.values(SecretNames);
+const KEYS = [
+  'MASTER_TOKEN_HMAC_KEY',
+  'CSRF_SECRET',
+  'COOKIE_SECRET',
+  'JWT_SECRET',
+  'REGISTRY_JWT_SECRET',
+  'VARIANT_SECRET',
+] as const;
 
 async function main(): Promise<void> {
-  const info = secretsRuntime();
+  const available = typeof Bun.secrets?.get === 'function';
   console.info('Bun.secrets migrate');
-  console.info(
-    `  platform: ${info.platform}  backend: ${info.backend}  available: ${info.available}`
-  );
-  console.info(`  service:  ${SECRETS_SERVICE}`);
-  console.info(`  mode:     ${DRY ? 'dry-run' : 'write'}`);
+  console.info(`  service: ${SERVICE}`);
+  console.info(`  available: ${available}`);
+  console.info(`  mode: ${DRY ? 'dry-run' : 'write'}`);
   console.info('');
 
-  if (!info.available && !DRY) {
-    console.error('Bun.secrets is unavailable on this runtime — aborting');
+  if (!available && !DRY) {
+    console.error('Bun.secrets is unavailable — aborting');
     process.exit(1);
   }
 
@@ -45,29 +43,35 @@ async function main(): Promise<void> {
   for (const name of KEYS) {
     const fromEnv = Bun.env[name]?.trim();
     if (!fromEnv) {
-      console.info(`  · ${name}: no env value — skip`);
+      console.info(`  · ${name}: no Bun.env value — skip`);
       missing++;
       continue;
     }
 
-    const existing = info.available ? await getAppSecret(name, { envKeys: [] }) : null;
-    // getAppSecret with empty envKeys still may read env via adapter default —
-    // check OS only by attempting set when env present.
-    if (existing && existing === fromEnv) {
-      console.info(`  = ${name}: already in store`);
+    let existing: string | null = null;
+    if (available) {
+      try {
+        existing = await Bun.secrets.get({ service: SERVICE, name });
+      } catch {
+        existing = null;
+      }
+    }
+
+    if (existing === fromEnv) {
+      console.info(`  = ${name}: already in Bun.secrets`);
       skipped++;
       continue;
     }
 
     if (DRY) {
-      console.info(`  → ${name}: would migrate (${fromEnv.length} chars)`);
+      console.info(`  → ${name}: would set (${fromEnv.length} chars)`);
       migrated++;
       continue;
     }
 
     try {
-      await setAppSecret(name, fromEnv);
-      console.info(`  ✓ ${name}: stored in Bun.secrets`);
+      await Bun.secrets.set({ service: SERVICE, name, value: fromEnv });
+      console.info(`  ✓ ${name}: Bun.secrets.set`);
       migrated++;
     } catch (e) {
       console.error(`  ✗ ${name}: ${(e as Error).message}`);

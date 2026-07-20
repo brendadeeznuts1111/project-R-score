@@ -2,12 +2,22 @@
 // @see https://bun.com/docs/guides/process/argv — Bun.argv (CLI interface)
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-// @see https://bun.com/docs/runtime/secrets — Bun.secrets
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
+import { CryptoHasher } from 'bun';
+import { timingSafeEqual } from 'node:crypto';
 import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 import { type TokenId, asTokenId } from '../types/branded.ts';
-import { hmacSha256Hex, randomHex, timingSafeEqualHex } from './crypto-native.ts';
-import { getAppSecretFromEnv, SecretNames } from './secrets-manager.ts';
+
+function hmacSha256Hex(key: string, payload: string): string {
+  return new CryptoHasher('sha256', key).update(payload).digest('hex');
+}
+
+function randomHex(byteLen: number): string {
+  const buf = new Uint8Array(byteLen);
+  crypto.getRandomValues(buf);
+  return Buffer.from(buf).toString('hex');
+}
 
 export interface MasterTokenConfig {
   tokenId: TokenId;
@@ -296,7 +306,9 @@ export class MasterTokenManager {
       }
 
       const expectedSignature = hmacSha256Hex(this.getHmacKey(), payload);
-      if (!timingSafeEqualHex(signature, expectedSignature)) {
+      const a = Buffer.from(signature, 'utf8');
+      const b = Buffer.from(expectedSignature, 'utf8');
+      if (a.byteLength !== b.byteLength || !timingSafeEqual(a, b)) {
         return null;
       }
 
@@ -318,9 +330,7 @@ export class MasterTokenManager {
   }
 
   private getHmacKey(): string {
-    // Prefer Bun.secrets-backed env (secrets:migrate copies OS store → still readable via envKeys);
-    // sync path uses env / prior Bun.secrets.get if process already hydrated env.
-    const key = getAppSecretFromEnv(SecretNames.MASTER_TOKEN_HMAC_KEY);
+    const key = Bun.env.MASTER_TOKEN_HMAC_KEY?.trim();
     if (key) return key;
 
     const allowInsecure =
@@ -330,9 +340,7 @@ export class MasterTokenManager {
       Bun.env.NODE_ENV === 'test';
 
     if (!allowInsecure) {
-      throw new Error(
-        'MASTER_TOKEN_HMAC_KEY is required (Bun.secrets / env; ALLOW_INSECURE_DEFAULTS=1 for local only)'
-      );
+      throw new Error('MASTER_TOKEN_HMAC_KEY is required (Bun.env; use secrets:migrate for keychain)');
     }
 
     return 'factorywager-mcp-dev-only-key';

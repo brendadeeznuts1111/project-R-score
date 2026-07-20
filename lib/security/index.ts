@@ -1,48 +1,23 @@
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
-// @see https://bun.com/docs/runtime/cookies — Bun.Cookie
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie, Bun.CookieMap
 // @see https://bun.com/docs/runtime/csrf — Bun.CSRF
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
-// lib/security/index.ts — Security module index
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// lib/security/index.ts — Security module index (Bun primitives at call sites)
 
-import { randomBytes, randomHex } from './crypto-native';
+import { timingSafeEqual } from 'node:crypto';
 
 // Core security components
 export * from './versioned-secrets';
 export * from './version-graph';
 export * from './secret-lifecycle';
+import { VersionedSecretManager } from './versioned-secrets';
+import { VersionGraph } from './version-graph';
+import { SecretLifecycleManager } from './secret-lifecycle';
 
-// Bun-native security SSOT
-export {
-  Cookie,
-  CookieMap,
-  SecureCookie,
-  cookieMapFromHeader,
-  cookieMapFromRequest,
-  applyCookieMap,
-  type CookieOptions,
-} from './cookies-native';
-export {
-  getAppSecret,
-  setAppSecret,
-  deleteAppSecret,
-  requireAppSecret,
-  secretsRuntime,
-  SecretNames,
-  SECRETS_SERVICE,
-} from './secrets-manager';
-export {
-  sha256Hex,
-  hmacSha256Hex,
-  hmacSha256Base64Url,
-  randomBytes,
-  randomHex,
-  randomId,
-  hashPassword,
-  verifyPassword,
-  timingSafeEqualBytes,
-  timingSafeEqualHex,
-} from './crypto-native';
+// Bun types re-exported for convenience (same as `import { Cookie, CookieMap } from "bun"`)
+export { Cookie, CookieMap } from 'bun';
 
 // Security hardening utilities
 export { safeString, safeHexColor, safeServiceName, type SafeResult } from './safe-validators';
@@ -50,36 +25,31 @@ export { secureBunRun, type SecureRunResult } from './secure-bun-run';
 export { WikiSecretTransaction } from './wiki-secret-transaction';
 export { writeAuditLog, type AuditEntry } from './audit-writer';
 
-// Security utilities
+// Security utilities — direct Bun.password / crypto.getRandomValues / Bun.hash
 export class SecurityUtils {
-  /**
-   * Generate secure random hex string (length = hex characters)
-   */
   static generateSecret(length: number = 32): string {
-    return randomHex(Math.max(1, Math.ceil(length / 2))).slice(0, length);
+    const bytes = new Uint8Array(Math.max(1, Math.ceil(length / 2)));
+    crypto.getRandomValues(bytes);
+    return Buffer.from(bytes).toString('hex').slice(0, length);
   }
 
-  /**
-   * Generate API key with prefix using secure random generation
-   */
   static generateApiKey(prefix: string = 'sk'): string {
-    return `${prefix}_${randomHex(24)}`;
+    const bytes = new Uint8Array(24);
+    crypto.getRandomValues(bytes);
+    return `${prefix}_${Buffer.from(bytes).toString('hex')}`;
   }
 
-  /**
-   * Generate JWT secret using secure random generation
-   */
   static generateJWTSecret(): string {
-    return randomHex(64);
+    const bytes = new Uint8Array(64);
+    crypto.getRandomValues(bytes);
+    return Buffer.from(bytes).toString('hex');
   }
 
-  /**
-   * Generate secure password (crypto.getRandomValues)
-   */
   static generatePassword(length: number = 16): string {
     const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-    const bytes = randomBytes(length);
+    const bytes = new Uint8Array(length);
+    crypto.getRandomValues(bytes);
     let password = '';
     for (let i = 0; i < length; i++) {
       password += chars[bytes[i]! % chars.length];
@@ -87,83 +57,28 @@ export class SecurityUtils {
     return password;
   }
 
-  /**
-   * Hash password using Bun.password (argon2id by default with secure defaults)
-   */
   static async hashPassword(
     password: string,
-    options?: {
-      algorithm?: 'argon2id' | 'argon2i' | 'argon2d' | 'bcrypt';
-      memoryCost?: number;
-      timeCost?: number;
-      cost?: number;
-    }
+    options?: Parameters<typeof Bun.password.hash>[1]
   ): Promise<string> {
-    // Secure defaults for enterprise-grade password hashing
-    const secureOptions = {
-      algorithm: 'argon2id' as const,
-      memoryCost: 65536, // 64MB - OWASP recommendation
-      timeCost: 3, // 3 iterations - OWASP recommendation
-      ...options,
-    };
-
-    // Override bcrypt cost if using bcrypt
-    if (secureOptions.algorithm === 'bcrypt') {
-      secureOptions.cost = secureOptions.cost || 12; // OWASP recommends 12+
-      delete secureOptions.memoryCost;
-      delete secureOptions.timeCost;
-    }
-
-    return await Bun.password.hash(password, secureOptions);
+    return Bun.password.hash(password, options);
   }
 
-  /**
-   * Hash password synchronously
-   */
   static hashPasswordSync(
     password: string,
-    options?: {
-      algorithm?: 'argon2id' | 'argon2i' | 'argon2d' | 'bcrypt';
-      memoryCost?: number;
-      timeCost?: number;
-      cost?: number;
-    }
+    options?: Parameters<typeof Bun.password.hashSync>[1]
   ): string {
-    // Secure defaults for enterprise-grade password hashing
-    const secureOptions = {
-      algorithm: 'argon2id' as const,
-      memoryCost: 65536, // 64MB - OWASP recommendation
-      timeCost: 3, // 3 iterations - OWASP recommendation
-      ...options,
-    };
-
-    // Override bcrypt cost if using bcrypt
-    if (secureOptions.algorithm === 'bcrypt') {
-      secureOptions.cost = secureOptions.cost || 12; // OWASP recommends 12+
-      delete secureOptions.memoryCost;
-      delete secureOptions.timeCost;
-    }
-
-    return Bun.password.hashSync(password, secureOptions);
+    return Bun.password.hashSync(password, options);
   }
 
-  /**
-   * Verify password against hash
-   */
   static async verifyPassword(password: string, hash: string): Promise<boolean> {
-    return await Bun.password.verify(password, hash);
+    return Bun.password.verify(password, hash);
   }
 
-  /**
-   * Verify password synchronously
-   */
   static verifyPasswordSync(password: string, hash: string): boolean {
     return Bun.password.verifySync(password, hash);
   }
 
-  /**
-   * Validate secret strength
-   */
   static validateStrength(secret: string): {
     score: number;
     issues: string[];
@@ -178,54 +93,42 @@ export class SecurityUtils {
       recommendations.push('Use at least 16 characters');
       score -= 30;
     }
-
     if (!/[A-Z]/.test(secret)) {
       issues.push('Missing uppercase letters');
       recommendations.push('Include uppercase letters');
       score -= 20;
     }
-
     if (!/[a-z]/.test(secret)) {
       issues.push('Missing lowercase letters');
       recommendations.push('Include lowercase letters');
       score -= 20;
     }
-
     if (!/[0-9]/.test(secret)) {
       issues.push('Missing numbers');
       recommendations.push('Include numbers');
       score -= 15;
     }
-
     if (!/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(secret)) {
       issues.push('Missing special characters');
       recommendations.push('Include special characters');
       score -= 15;
     }
 
-    return {
-      score: Math.max(0, score),
-      issues,
-      recommendations,
-    };
+    return { score: Math.max(0, score), issues, recommendations };
   }
 
-  /**
-   * Hash secret for comparison
-   */
   static hashSecret(secret: string): string {
-    return Bun.hash.sha256(secret).toString('hex');
+    return new Bun.CryptoHasher('sha256').update(secret).digest('hex');
   }
 
-  /**
-   * Compare secrets securely
-   */
   static compareSecret(secret1: string, secret2: string): boolean {
-    return this.hashSecret(secret1) === this.hashSecret(secret2);
+    const a = Buffer.from(this.hashSecret(secret1), 'hex');
+    const b = Buffer.from(this.hashSecret(secret2), 'hex');
+    if (a.byteLength !== b.byteLength) return false;
+    return timingSafeEqual(a, b);
   }
 }
 
-// Export commonly used items
 export { VersionedSecretManager, VersionGraph, SecretLifecycleManager };
 export type { VersionMetadata, VersionNode, RollbackOptions, LifecycleRule };
 
