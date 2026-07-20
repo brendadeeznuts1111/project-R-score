@@ -158,7 +158,10 @@ export class CSRFProtection {
    * @param sessionId requester session or user id — required for safe use
    * @param expiresInMs token lifetime (default 24h per Bun)
    */
-  static async generateToken(sessionId: string, expiresInMs: number = 86_400_000): Promise<string> {
+  static async generateToken(
+    sessionId: string, // brand-ok — CSRF binds opaque session/user wire id
+    expiresInMs: number = 86_400_000
+  ): Promise<string> {
     if (!sessionId?.trim()) {
       throw new Error('CSRFProtection.generateToken requires a non-empty sessionId');
     }
