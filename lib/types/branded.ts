@@ -25,9 +25,14 @@
  *   DONE: lib/security (all) · r2-session-manager · utils telemetry spine
  *   DONE Phase 1: [auth-credential] AccessKeyId · AccountId · ZoneId (declarations)
  *   DONE Phase 1.5: empty never branded · asZoneId on wire · no hardcoded CF tokens
- *   Phase 2: [named-domain]     SessionId · RequestId · UserId · …
- *   Phase 3: [new-brand]        OperationId · ResourceId · ProjectId · …
+ *   DONE Phase 2: [named-domain] 5c9cf6dc (telemetry/ai/profile/pooling)
+ *                   + d204d69b (core/mcp/r2/registry/remainder — 69 hits)
+ *   DONE Phase 3: [new-brand] brands added 828553d7 (26 total);
+ *                   instances branded d204d69b; singletons brand-ok
  *   Phase 4: --smart --strict in CI once actionable → 0
+ *     (6 hits remain in parallel-session files: core-errors ×3 resourceId,
+ *      mcp r2-integration-fixed userId, cloudflare-domain-manager legacy_id,
+ *      wiki-generator-mcp bare id)
  * Pre-commit enforces zero NEW violations (added lines only); staged mode
  * also skips opaque PKs outside high-trust paths.
  *
