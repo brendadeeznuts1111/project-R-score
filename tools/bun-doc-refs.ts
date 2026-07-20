@@ -396,7 +396,14 @@ type TokenCatalog = {
   packageJsonKeys: Record<string, string>;
 };
 
-/** Load every `tools/*-tokens.json` catalog (CLI flags, env vars, config keys). */
+/** Detect whether a parsed JSON object is a flat TokenCatalog or a nested map. */
+function isTokenCatalog(value: unknown): value is TokenCatalog {
+  const v = value as Record<string, unknown> | undefined;
+  return !!v && typeof v.page === 'string' && typeof v.cliFlags === 'object';
+}
+
+/** Load every `tools/*-tokens.json` catalog (CLI flags, env vars, config keys).
+ * Supports both flat catalogs and generated nested maps keyed by page title. */
 async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
   const root = new URL('..', import.meta.url).pathname;
   const glob = new Bun.Glob('tools/*-tokens.json');
@@ -405,7 +412,15 @@ async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
   const catalogs: TokenCatalog[] = [];
   for (const f of files.sort()) {
     try {
-      catalogs.push((await Bun.file(f).json()) as TokenCatalog);
+      const parsed = (await Bun.file(f).json()) as unknown;
+      if (isTokenCatalog(parsed)) {
+        catalogs.push(parsed);
+      } else if (parsed && typeof parsed === 'object') {
+        // Generated nested format: { "bun install": TokenCatalog, ... }
+        for (const entry of Object.values(parsed)) {
+          if (isTokenCatalog(entry)) catalogs.push(entry);
+        }
+      }
     } catch {
       // ignore malformed token catalogs
     }
@@ -415,7 +430,8 @@ async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
 
 /**
  * Resolve a real CLI/config token to its canonical doc URL.
- * Tokens live in `tools/*-tokens.json`, separate from heading anchors.
+ * Tokens live in `tools/*-tokens.json` (flat or generated nested maps),
+ * separate from heading anchors.
  */
 async function tokenLookup(query: string): Promise<void> {
   if (!query) {
