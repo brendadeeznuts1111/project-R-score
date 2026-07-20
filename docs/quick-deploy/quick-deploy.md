@@ -26,15 +26,6 @@ For each R2 bucket:
 2. Enable static website hosting
 3. Set index document: `index.html`
 
-## Verification
-
-After deployment, run:
-```bash
-./tools/cli/fw-cli health check
-```
-
-All domains should show ✅ Healthy status!
-
 ## Current Status
 - ✅ DNS: 39 domains configured
 - ✅ Content: Landing pages created

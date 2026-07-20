@@ -59,29 +59,6 @@ Professional status badges for FactoryWager infrastructure monitoring and visual
 <img src="badges/perf-uptime.svg" alt="Uptime">
 ```
 
-### CLI Commands
-```bash
-# Generate all badges
-./cli/fw-cli badges
-
-# Generate specific category
-./cli/fw-cli badges generate infrastructure
-./cli/fw-cli badges generate services
-./cli/fw-cli badges generate performance
-./cli/fw-cli badges generate security
-./cli/fw-cli badges generate deployment
-
-# List all available badges
-./cli/fw-cli badges list
-
-# Show badge viewer
-./cli/fw-cli badges show
-./cli/fw-cli badges show infrastructure
-
-# Update badges
-./cli/fw-cli badges update
-```
-
 ## 🎯 Badge Colors
 
 - 🟢 **Green** (#22c55e) - Success, operational, healthy
@@ -124,32 +101,6 @@ badges/
 ├── deploy-environment.svg      # Environment
 ├── deploy-region.svg           # Region
 └── deploy-last-deploy.svg      # Last deploy
-```
-
-## 🔄 Auto-generation
-
-Badges are automatically generated with current status information:
-
-```bash
-# Generate all badges with latest data
-node cli/status-badges.cjs all
-
-# Or use the CLI wrapper
-./cli/fw-cli badges generate all
-```
-
-### Scheduled Updates
-
-For automated badge updates, add to your CI/CD pipeline:
-
-```yaml
-# GitHub Actions example
-- name: Update Status Badges
-  run: |
-    ./cli/fw-cli badges generate all
-    git add badges/
-    git commit -m "Update status badges"
-    git push
 ```
 
 ## 🌐 Badge Viewer
@@ -205,32 +156,7 @@ badges.forEach(badge => {
 });
 ```
 
-## 🛠️ Customization
-
-### Modify Badge Colors
-Edit `cli/status-badges.cjs` to customize colors:
-
-```javascript
-const colors = {
-  success: '#22c55e',    // Green
-  warning: '#f59e0b',    // Yellow  
-  error: '#ef4444',      // Red
-  info: '#3b82f6',       // Blue
-  critical: '#dc2626',   // Dark Red
-  unknown: '#6b7280'     // Gray
-};
-```
-
-### Add Custom Badges
-1. Add badge definition in the generator
-2. Update the help system
-3. Regenerate badges
-
-```javascript
-// Example: Add custom badge
-const customBadge = this.generateBadge('success', 'Custom', 'Status', '#22c55e');
-fs.writeFileSync(path.join(this.outputDir, 'custom.svg'), customBadge);
-```
+> **Note:** These badges are static assets in `public/badges/`. The legacy generator that produced them has been removed.
 
 ## 📱 Mobile Support
 
@@ -239,37 +165,6 @@ All badges are optimized for mobile viewing:
 - Responsive sizing
 - High-DPI display support
 - Touch-friendly dimensions
-
-## 🔧 Troubleshooting
-
-### Badge Not Updating
-```bash
-# Clear badge cache and regenerate
-rm -rf badges/
-./cli/fw-cli badges generate all
-```
-
-### Missing Badge Files
-```bash
-# List available badges
-./cli/fw-cli badges list
-
-# Regenerate missing badges
-./cli/fw-cli badges generate all
-```
-
-### Permission Issues
-```bash
-# Ensure executable permissions
-chmod +x cli/status-badges.cjs
-chmod +x cli/fw-cli
-```
-
-## 📞 Support
-
-- **Documentation**: `./cli/README.md`
-- **CLI Help**: `./cli/fw-cli help`
-- **Badge Help**: `./cli/fw-cli badges --help`
 
 ---
 

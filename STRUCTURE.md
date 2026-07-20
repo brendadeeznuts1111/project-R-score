@@ -95,4 +95,4 @@ From `package.json` `workspaces.packages`:
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
 
-Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.
+Maintained by the platform team. Run `bun run dashboard` for live views, or use the active CLIs in `tools/cli/` (integrated-cli.ts, docs-cli.ts, endpoint-status.ts).
