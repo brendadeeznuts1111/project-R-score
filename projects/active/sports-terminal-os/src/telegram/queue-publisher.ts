@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/redis — RedisClient
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * Redis Streams Publisher — Telegram Hub
  *
@@ -12,9 +15,11 @@
  *
  * Design: All publish functions are non-blocking. Errors are caught and
  * logged internally — they NEVER throw back to the caller.
+ *
+ * Streams use RedisClient.send() (Bun has no dedicated X* helpers).
  */
 
-import Redis from "ioredis";
+import { RedisClient } from "bun";
 import { z } from "zod";
 import { createLogger } from "@utils/logger";
 
@@ -24,47 +29,47 @@ const logger = createLogger("QueuePublisher");
 // Redis connection factory (per-worker isolation)
 // ---------------------------------------------------------------------------
 
-let redisInstance: Redis | null = null;
+let redisInstance: RedisClient | null = null;
 
-export function getRedis(): Redis {
+const COMMAND_TIMEOUT_MS = parseInt(Bun.env.REDIS_COMMAND_TIMEOUT_MS || "5000", 10);
+
+export function getRedis(): RedisClient {
   if (!redisInstance) {
-    redisInstance = new Redis(
-      process.env.REDIS_URL || "redis://localhost:6379",
-      {
-        maxRetriesPerRequest: parseInt(
-          process.env.REDIS_MAX_RETRIES || "3",
-          10
-        ),
-        retryStrategy: (times) =>
-          Math.min(
-            times *
-              parseInt(process.env.REDIS_RETRY_DELAY_MS || "1000", 10),
-            10000
-          ),
-        enableReadyCheck: true,
-        showFriendlyErrorStack:
-          process.env.NODE_ENV === "development",
-      }
-    );
-
-    redisInstance.on("error", (err) => {
-      logger.error(`Redis connection error: ${err.message}`);
+    redisInstance = new RedisClient(Bun.env.REDIS_URL || "redis://localhost:6379", {
+      connectionTimeout: COMMAND_TIMEOUT_MS,
+      autoReconnect: true,
+      maxRetries: parseInt(Bun.env.REDIS_MAX_RETRIES || "3", 10),
     });
 
-    redisInstance.on("connect", () => {
+    redisInstance.onclose = (err) => {
+      if (err) logger.error(`Redis connection closed: ${err.message}`);
+    };
+
+    redisInstance.onconnect = () => {
       logger.info("Redis connected");
-    });
-
-    redisInstance.on("reconnecting", () => {
-      logger.warn("Redis reconnecting...");
-    });
+    };
   }
   return redisInstance;
 }
 
+/** send with wall-clock timeout so publishers never hang callers forever */
+async function sendWithTimeout(
+  redis: RedisClient,
+  command: string,
+  args: string[],
+  timeoutMs = COMMAND_TIMEOUT_MS
+): Promise<unknown> {
+  return await Promise.race([
+    redis.send(command, args),
+    Bun.sleep(timeoutMs).then(() => {
+      throw new Error(`Redis ${command} timed out after ${timeoutMs}ms`);
+    }),
+  ]);
+}
+
 export async function closeRedis(): Promise<void> {
   if (redisInstance) {
-    await redisInstance.quit();
+    redisInstance.close();
     redisInstance = null;
   }
 }
@@ -157,16 +162,16 @@ export async function publishEvent(
       return null;
     }
 
-    // Use MAXLEN ~ 10000 to auto-truncate old entries
-    const messageId = await redis.xadd(
+    // MAXLEN ~ 10000 auto-truncates old entries
+    const messageId = (await sendWithTimeout(redis, "XADD", [
       stream,
       "MAXLEN",
       "~",
       "10000",
       "*",
       "data",
-      JSON.stringify(enriched)
-    );
+      JSON.stringify(enriched),
+    ])) as string;
 
     logger.debug(`Published to ${stream}: ${messageId}`);
     return messageId;
@@ -180,7 +185,7 @@ export async function publishEvent(
 }
 
 /**
- * Publish multiple events in a pipeline (batch).
+ * Publish multiple events (sequential XADD).
  * Non-blocking — errors caught and logged, nulls returned for failed items.
  */
 export async function publishEvents(
@@ -189,39 +194,42 @@ export async function publishEvents(
 ): Promise<(string | null)[]> {
   try {
     const redis = getRedis();
-    const pipeline = redis.pipeline();
+    const results: (string | null)[] = [];
 
     for (const event of events) {
       const enriched = {
         ...event,
-        timestamp: (event as { timestamp?: string }).timestamp || new Date().toISOString(),
+        timestamp:
+          (event as { timestamp?: string }).timestamp ||
+          new Date().toISOString(),
       };
 
-      // Skip invalid events in batch
       const validation = validateEvent(enriched);
       if (!validation.valid) {
         logger.warn(
           `Skipping invalid event in batch: ${validation.errors.join(", ")}`
         );
+        results.push(null);
         continue;
       }
 
-      pipeline.xadd(
-        stream,
-        "MAXLEN",
-        "~",
-        "10000",
-        "*",
-        "data",
-        JSON.stringify(enriched)
-      );
+      try {
+        const messageId = (await sendWithTimeout(redis, "XADD", [
+          stream,
+          "MAXLEN",
+          "~",
+          "10000",
+          "*",
+          "data",
+          JSON.stringify(enriched),
+        ])) as string;
+        results.push(messageId);
+      } catch {
+        results.push(null);
+      }
     }
 
-    const results = await pipeline.exec();
-    return (
-      results?.map((r) => (r[1] as string) || null) ??
-      events.map(() => null)
-    );
+    return results;
   } catch (err) {
     logger.error(
       `Batch publish failed for ${stream}: ${err instanceof Error ? err.message : String(err)}`
@@ -244,7 +252,13 @@ export async function ensureConsumerGroup(
 ): Promise<void> {
   const redis = getRedis();
   try {
-    await redis.xgroup("CREATE", stream, group, "$", "MKSTREAM");
+    await sendWithTimeout(redis, "XGROUP", [
+      "CREATE",
+      stream,
+      group,
+      "$",
+      "MKSTREAM",
+    ]);
     logger.info(`Created consumer group ${group} for stream ${stream}`);
   } catch (err: any) {
     if (err.message?.includes("BUSYGROUP")) {
@@ -271,28 +285,28 @@ export async function claimStaleEntries(
   const redis = getRedis();
 
   try {
-    // Get pending entries idle longer than minIdleMs
-    const pending = await redis.xpending(
+    // XPENDING stream group IDLE minIdle start end count
+    const pending = (await sendWithTimeout(redis, "XPENDING", [
       stream,
       group,
       "IDLE",
-      minIdleMs,
+      String(minIdleMs),
       "-",
       "+",
-      100
-    );
+      "100",
+    ])) as Array<[string, string, number, number]> | null;
+
     if (!pending || pending.length === 0) return 0;
 
-    const ids = pending.map((p: any) => p[0]); // entry IDs
+    const ids = pending.map((p) => String(p[0]));
 
-    // Claim them for this consumer
-    const claimed = await redis.xclaim(
+    const claimed = (await sendWithTimeout(redis, "XCLAIM", [
       stream,
       group,
       consumer,
-      minIdleMs,
-      ...ids
-    );
+      String(minIdleMs),
+      ...ids,
+    ])) as unknown[] | null;
 
     const count = claimed?.length || 0;
     if (count > 0) {
@@ -300,9 +314,7 @@ export async function claimStaleEntries(
     }
     return count;
   } catch (err: any) {
-    logger.error(
-      `Stale claim failed for ${stream}: ${err.message}`
-    );
+    logger.error(`Stale claim failed for ${stream}: ${err.message}`);
     return 0;
   }
 }
@@ -314,12 +326,10 @@ export async function claimStaleEntries(
 /**
  * Get queue depth (stream length) for monitoring.
  */
-export async function getStreamLength(
-  stream: string
-): Promise<number> {
+export async function getStreamLength(stream: string): Promise<number> {
   try {
     const redis = getRedis();
-    return await redis.xlen(stream);
+    return Number(await sendWithTimeout(redis, "XLEN", [stream]));
   } catch {
     return -1;
   }
@@ -334,7 +344,9 @@ export async function getPendingCount(
 ): Promise<number> {
   try {
     const redis = getRedis();
-    const info = await redis.xpending(stream, group) as [number, string, string, [string, string][]] | null;
+    const info = (await sendWithTimeout(redis, "XPENDING", [stream, group])) as
+      | [number, string, string, [string, string][]]
+      | null;
     return info?.[0] ?? 0;
   } catch {
     return -1;

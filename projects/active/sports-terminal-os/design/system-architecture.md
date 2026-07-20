@@ -153,7 +153,7 @@ dispatchToTelegram(group, alertPayload)
 | **Build Tool** | Vite | 5.x | Frontend bundling + dev server |
 | **Database** | `bun:sqlite` | Built-in | Primary data store (44 tables) |
 | **Message Queue** | Redis Streams | 7.x+ | Telegram event routing |
-| **Redis Client** | ioredis | ^5.x | Production-stable Redis client |
+| **Redis Client** | Bun `RedisClient` | runtime | Native Redis client + `send` for streams |
 | **Validation** | Zod | ^3.23.x | Runtime schema validation (Partner Profile OS) |
 | **JWT** | jose | ^5.x | HS256 signing/verification |
 | **Metrics** | prom-client | ^15.x | Prometheus-compatible metrics |
@@ -187,7 +187,7 @@ The Partner Profile OS uses **zero non-Bun dependencies** except Zod:
 | Zone 8 | Built-in `fetch` | Webhook dispatch |
 | All backend | `bun:sqlite` | Database access |
 | Partner Profile | `zod` | Schema validation |
-| Telegram Hub | `ioredis` | Redis Streams |
+| Telegram Hub | `RedisClient` | Redis Streams |
 | Frontend | `react@19`, `vite` | SPA framework |
 
 ---
@@ -509,7 +509,7 @@ interface GateResult {
 | Scenario | Behavior |
 |---|---|
 | `publishEvent()` fails | Caught internally, logged to `stderr`, returns `null` — **never throws to caller** |
-| Redis connection lost | Auto-retry with exponential backoff (via ioredis) |
+| Redis connection lost | Reconnect on next command (`RedisClient` lifecycle) |
 | Bot worker crashes | PM2/systemd auto-restart; stale entries reclaimed by other workers |
 | Topic resolution fails | Logged to `telegram_dispatch_log` with `status='failed'` |
 | Rate limit hit (429) | SendMessageClient auto-retry with backoff |
@@ -1013,7 +1013,7 @@ src/
     action-queue.ts                 # Background job queue
     escape.ts                       # HTML escaping for Telegram
   queue/
-    redis.ts                        # ioredis connection factory
+    queue-publisher.ts              # RedisClient connection factory + streams
     publisher.ts                    # publishEvent(), publishEvents()
     consumer.ts                     # ensureConsumerGroup(), claimStaleEntries()
     validate.ts                     # Event schema validation

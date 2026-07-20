@@ -117,7 +117,7 @@ Sports Terminal OS is a full-featured trading platform built on Bun, React 19, a
 - **Runtime**: Bun 1.0+ with `bun:sqlite`
 - **Backend**: TypeScript, Bun.serve (single port: HTTP + WebSocket + SSE)
 - **Frontend**: React 19 + Vite SPA
-- **Queue**: Redis Streams (ioredis) for Telegram events
+- **Queue**: Redis Streams (`RedisClient` / `send` for X*) for Telegram events
 - **Upstream**: Buckeye (fantasy402.com:443)
 
 ### 6-Stage Data Pipeline

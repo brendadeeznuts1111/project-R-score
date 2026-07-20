@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/cron — Bun.cron
 // lib/r2/r2-lifecycle-manager.ts — R2 data lifecycle manager for TTL, archival, and cleanup
 
 import { styled, FW_COLORS } from '../theme/colors';
@@ -86,7 +87,7 @@ export class R2LifecycleManager {
   private objectStates: Map<string, ObjectLifecycleState> = new Map();
   private isRunning: boolean = false;
   private scanInterval: number = 3600000; // 1 hour default
-  private intervalId?: Timer;
+  private cronJob?: { stop: () => void };
 
   constructor() {
     this.loadDefaultRules();
@@ -269,28 +270,51 @@ export class R2LifecycleManager {
   }
 
   /**
-   * Start background scanning for lifecycle actions
+   * Start background scanning for lifecycle actions (hourly via Bun.cron).
+   * Sub-minute intervals are not supported — scanInterval defaults to 1h.
    */
   private startBackgroundScan(): void {
     if (this.isRunning) return;
 
     this.isRunning = true;
-    this.intervalId = setInterval(() => {
-      this.performLifecycleScan();
-    }, this.scanInterval);
+    // Map ms interval to minute-granularity cron (min 1 minute)
+    const minutes = Math.max(1, Math.round(this.scanInterval / 60000));
+    const schedule =
+      minutes >= 60 && minutes % 60 === 0
+        ? `0 */${minutes / 60} * * *`
+        : minutes === 60
+          ? '0 * * * *'
+          : `*/${minutes} * * * *`;
 
-    console.info(
-      styled(`🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`, 'info')
-    );
+    if (typeof Bun.cron === 'function') {
+      const job = Bun.cron(schedule, () => {
+        this.performLifecycleScan().catch(console.error);
+      });
+      job.unref?.();
+      this.cronJob = job;
+      console.info(styled(`🔄 Background scan started (cron: ${schedule})`, 'info'));
+    } else {
+      // Fallback when Bun.cron unavailable
+      const timer = setInterval(() => {
+        this.performLifecycleScan().catch(console.error);
+      }, this.scanInterval);
+      this.cronJob = { stop: () => clearInterval(timer) };
+      console.info(
+        styled(
+          `🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`,
+          'info'
+        )
+      );
+    }
   }
 
   /**
    * Stop background scanning
    */
   stopBackgroundScan(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
+    if (this.cronJob) {
+      this.cronJob.stop();
+      this.cronJob = undefined;
     }
     this.isRunning = false;
     console.info(styled('🛑 Background scan stopped', 'warning'));

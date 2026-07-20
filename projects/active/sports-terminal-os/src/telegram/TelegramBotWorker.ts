@@ -1,8 +1,11 @@
+// @see https://bun.com/docs/runtime/redis — RedisClient
+// @see https://bun.com/docs/runtime/sqlite — bun:sqlite
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * TelegramBotWorker — Bot Worker Class
  *
  * Production-grade bot worker that:
- *   - Consumes events from Redis Streams via XREADGROUP
+ *   - Consumes events from Redis Streams via XREADGROUP (RedisClient.send)
  *   - Resolves topics via TopicManager (3-tier fallback)
  *   - Formats messages as HTML with severity emojis (🔴🟠🟡🟢)
  *   - Sends via SendMessageClient with rate limiting, dedup, retries
@@ -15,7 +18,7 @@
  * Failed events are logged to telegram_dispatch_log for audit.
  */
 
-import Redis from "ioredis";
+import { RedisClient } from "bun";
 import { Database } from "bun:sqlite";
 import { SendMessageClient, escapeHtml } from "./SendMessageClient";
 import { TopicManager, type TopicResolution } from "./TopicManager";
@@ -68,7 +71,7 @@ const SEVERITY_EMOJI: Record<string, string> = {
 
 export class TelegramBotWorker {
   private db: Database;
-  private redis: Redis;
+  private redis: RedisClient;
   private client: SendMessageClient;
   private topicManager: TopicManager;
   private running = false;
@@ -83,9 +86,11 @@ export class TelegramBotWorker {
     this.db.exec("PRAGMA journal_mode = WAL");
     this.db.exec("PRAGMA foreign_keys = ON");
 
-    this.redis = new Redis(config.redisUrl, {
-      maxRetriesPerRequest: 3,
-      retryStrategy: (t) => Math.min(t * 1000, 10000),
+    this.redis = new RedisClient(config.redisUrl, {
+      connectionTimeout: 5_000,
+      enableOfflineQueue: true, // allow XREADGROUP block across reconnects
+      autoReconnect: true,
+      maxRetries: 3,
     });
 
     this.client = new SendMessageClient(config.token, {
@@ -170,24 +175,23 @@ export class TelegramBotWorker {
     // Track last successful read time for health checks
     while (this.running) {
       try {
-        const results = await this.redis.xreadgroup(
+        // XREADGROUP via raw send — Bun RedisClient has no dedicated stream helpers
+        const results = (await this.redis.send("XREADGROUP", [
           "GROUP",
           this.config.botId,
           this.config.botId, // consumer name = botId
           "COUNT",
-          batchSize,
+          String(batchSize),
           "BLOCK",
-          blockMs,
+          String(blockMs),
           "STREAMS",
           ...streamKeys,
-          ...streamKeys.map(() => ">") // '>' = only new entries
-        );
+          ...streamKeys.map(() => ">"), // '>' = only new entries
+        ])) as [string, [string, string[]][]][] | null;
 
         if (!results) continue; // Timeout, loop again
 
-        type StreamEntry = [id: string, fields: string[]];
-        type StreamBatch = [stream: string, entries: StreamEntry[]];
-        for (const [stream, entries] of results as StreamBatch[]) {
+        for (const [stream, entries] of results) {
           for (const [id, fields] of entries) {
             // Extract payload from field pairs [key, value, key, value, ...]
             let payload: string | null = null;
@@ -200,11 +204,11 @@ export class TelegramBotWorker {
 
             if (!payload) {
               logger.warn(`Empty payload in ${String(stream)}:${String(id)}`);
-              await this.redis.xack(
+              await this.redis.send("XACK", [
                 String(stream),
                 this.config.botId,
-                String(id)
-              );
+                String(id),
+              ]);
               continue;
             }
 
@@ -212,12 +216,14 @@ export class TelegramBotWorker {
             try {
               event = JSON.parse(payload);
             } catch {
-              logger.error(`Invalid JSON payload in ${String(stream)}:${String(id)}`);
-              await this.redis.xack(
+              logger.error(
+                `Invalid JSON payload in ${String(stream)}:${String(id)}`
+              );
+              await this.redis.send("XACK", [
                 String(stream),
                 this.config.botId,
-                String(id)
-              );
+                String(id),
+              ]);
               continue;
             }
 
@@ -234,11 +240,11 @@ export class TelegramBotWorker {
             }
 
             // Acknowledge regardless of handle success to avoid infinite retry
-            await this.redis.xack(
+            await this.redis.send("XACK", [
               String(stream),
               this.config.botId,
-              String(id)
-            );
+              String(id),
+            ]);
           }
         }
       } catch (err: any) {

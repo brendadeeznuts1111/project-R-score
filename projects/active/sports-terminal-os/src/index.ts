@@ -249,11 +249,10 @@ async function gracefulShutdown(signal?: string): Promise<void> {
   // Close database connection
   closeDb();
 
-  // Disconnect Redis if connected
+  // Disconnect Redis if connected (shared publisher client)
   try {
-    const { default: Redis } = await import("ioredis");
-    const redis = new Redis(env.REDIS_URL || "redis://localhost:6379");
-    await redis.disconnect();
+    const { closeRedis } = await import("./telegram/queue-publisher");
+    await closeRedis();
     logger.info("Redis disconnected");
   } catch {
     // Redis may not be configured

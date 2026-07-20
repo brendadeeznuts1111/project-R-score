@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/cron — Bun.cron
 // lib/r2/r2-backup-manager.ts — R2 backup and restore manager
 
 import { type JobId, type SnapshotId, asJobId, asSnapshotId } from '../types/branded.ts';
@@ -129,11 +130,14 @@ export interface RestoreProgress {
   estimatedTimeRemaining: number;
 }
 
+/** Unified stop handle for setInterval or Bun.cron jobs. */
+type ScheduleHandle = { stop: () => void };
+
 export class R2BackupManager {
   private jobs: Map<string, BackupJob> = new Map();
   private snapshots: Map<string, BackupSnapshot> = new Map();
   private activeBackups: Set<string> = new Set();
-  private timers: Map<string, Timer> = new Map();
+  private timers: Map<string, ScheduleHandle> = new Map();
 
   /**
    * Initialize backup manager
@@ -539,14 +543,53 @@ export class R2BackupManager {
   private scheduleJob(job: BackupJob): void {
     if (!job.schedule) return;
 
-    if (job.schedule.type === 'interval' && job.schedule.interval) {
-      const timer = setInterval(() => {
-        if (job.status !== 'running') {
-          this.executeBackup(job.id).catch(console.error);
-        }
-      }, job.schedule.interval * 1000);
+    // Clear any existing handle first
+    this.unscheduleJob(job.id);
 
-      this.timers.set(job.id, timer);
+    const run = () => {
+      if (job.status !== 'running') {
+        this.executeBackup(job.id).catch(console.error);
+      }
+    };
+
+    if (job.schedule.type === 'cron' && job.schedule.cron) {
+      if (typeof Bun.cron === 'function') {
+        const cronJob = Bun.cron(job.schedule.cron, run);
+        cronJob.unref?.();
+        this.timers.set(job.id, cronJob);
+      } else {
+        console.warn(
+          styled(`Bun.cron unavailable — cannot schedule cron job ${job.id}`, 'warning')
+        );
+      }
+      return;
+    }
+
+    if (job.schedule.type === 'interval' && job.schedule.interval) {
+      const seconds = job.schedule.interval;
+      // Minute+ intervals prefer Bun.cron when expressible
+      if (seconds >= 60 && seconds % 60 === 0 && typeof Bun.cron === 'function') {
+        const minutes = seconds / 60;
+        const expr =
+          minutes >= 60 && minutes % 60 === 0
+            ? `0 */${minutes / 60} * * *`
+            : `*/${minutes} * * * *`;
+        const cronJob = Bun.cron(expr, run);
+        cronJob.unref?.();
+        this.timers.set(job.id, cronJob);
+        return;
+      }
+
+      const timer = setInterval(run, seconds * 1000);
+      this.timers.set(job.id, { stop: () => clearInterval(timer) });
+    }
+  }
+
+  private unscheduleJob(jobId: string): void {
+    const handle = this.timers.get(jobId);
+    if (handle) {
+      handle.stop();
+      this.timers.delete(jobId);
     }
   }
 

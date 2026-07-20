@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/cron — Bun.cron
 // lib/r2/r2-sync-service.ts — R2 multi-bucket sync service
 
 import { styled, FW_COLORS } from '../theme/colors';
@@ -109,9 +110,12 @@ export interface SyncConflict {
   detectedAt: string;
 }
 
+/** Unified stop handle for setInterval or Bun.cron jobs. */
+type ScheduleHandle = { stop: () => void };
+
 export class R2SyncService {
   private jobs: Map<string, SyncJob> = new Map();
-  private timers: Map<string, Timer> = new Map();
+  private timers: Map<string, ScheduleHandle> = new Map();
   private activeSyncs: Set<string> = new Set();
   private syncHistory: SyncResult[] = [];
   private maxHistorySize: number = 1000;
@@ -399,19 +403,57 @@ export class R2SyncService {
   }
 
   /**
-   * Schedule a job for execution
+   * Schedule a job for execution (Bun.cron for cron expressions / minute+ intervals)
    */
   private scheduleJob(job: SyncJob): void {
     if (!job.schedule) return;
 
-    if (job.schedule.type === 'interval' && job.schedule.interval) {
-      const timer = setInterval(() => {
-        if (job.status !== 'paused') {
-          this.executeJob(job.id).catch(console.error);
-        }
-      }, job.schedule.interval * 1000);
+    this.unscheduleJob(job.id);
 
-      this.timers.set(job.id, timer);
+    const run = () => {
+      if (job.status !== 'paused') {
+        this.executeJob(job.id).catch(console.error);
+      }
+    };
+
+    if (job.schedule.type === 'cron' && job.schedule.cron) {
+      if (typeof Bun.cron === 'function') {
+        const cronJob = Bun.cron(job.schedule.cron, run);
+        cronJob.unref?.();
+        this.timers.set(job.id, cronJob);
+      } else {
+        console.warn(
+          styled(`Bun.cron unavailable — cannot schedule cron job ${job.id}`, 'warning')
+        );
+      }
+      return;
+    }
+
+    if (job.schedule.type === 'interval' && job.schedule.interval) {
+      const seconds = job.schedule.interval;
+      if (seconds >= 60 && seconds % 60 === 0 && typeof Bun.cron === 'function') {
+        const minutes = seconds / 60;
+        const expr =
+          minutes >= 60 && minutes % 60 === 0
+            ? `0 */${minutes / 60} * * *`
+            : `*/${minutes} * * * *`;
+        const cronJob = Bun.cron(expr, run);
+        cronJob.unref?.();
+        this.timers.set(job.id, cronJob);
+        return;
+      }
+
+      const timer = setInterval(run, seconds * 1000);
+      this.timers.set(job.id, { stop: () => clearInterval(timer) });
+    }
+    // event-driven schedules do not use timers
+  }
+
+  private unscheduleJob(jobId: string): void {
+    const handle = this.timers.get(jobId);
+    if (handle) {
+      handle.stop();
+      this.timers.delete(jobId);
     }
   }
 
@@ -424,6 +466,9 @@ export class R2SyncService {
     if (job.schedule.type === 'interval' && job.schedule.interval) {
       const nextRun = new Date(Date.now() + job.schedule.interval * 1000);
       job.nextRun = nextRun.toISOString();
+    } else if (job.schedule.type === 'cron' && job.schedule.cron) {
+      // Next-fire wall clock not computed here; Bun.cron owns the schedule
+      job.nextRun = undefined;
     }
   }
 
@@ -435,13 +480,7 @@ export class R2SyncService {
     if (!job || job.status === 'running') return false;
 
     job.status = 'paused';
-
-    // Clear timer
-    const timer = this.timers.get(jobId);
-    if (timer) {
-      clearInterval(timer);
-      this.timers.delete(jobId);
-    }
+    this.unscheduleJob(jobId);
 
     return true;
   }
@@ -469,12 +508,7 @@ export class R2SyncService {
     const job = this.jobs.get(jobId);
     if (!job || job.status === 'running') return false;
 
-    // Clear timer
-    const timer = this.timers.get(jobId);
-    if (timer) {
-      clearInterval(timer);
-      this.timers.delete(jobId);
-    }
+    this.unscheduleJob(jobId);
 
     return this.jobs.delete(jobId);
   }

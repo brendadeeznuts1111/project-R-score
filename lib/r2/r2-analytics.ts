@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/cron — Bun.cron
 // lib/r2/r2-analytics.ts — R2 analytics and metrics dashboard
 
 import { styled, FW_COLORS } from '../theme/colors';
@@ -102,7 +103,7 @@ export class R2Analytics {
   private dashboards: Map<string, Dashboard> = new Map();
   private retentionDays: number = 90;
   private isCollecting: boolean = false;
-  private collectionInterval?: Timer;
+  private collectionJob?: { stop: () => void };
 
   /**
    * Initialize analytics system
@@ -166,15 +167,22 @@ export class R2Analytics {
   }
 
   /**
-   * Start metrics collection
+   * Start metrics collection (every minute via Bun.cron)
    */
   private startCollection(): void {
     if (this.isCollecting) return;
 
     this.isCollecting = true;
-    this.collectionInterval = setInterval(() => {
-      this.collectSystemMetrics();
-    }, 60000); // Every minute
+    if (typeof Bun.cron === 'function') {
+      const job = Bun.cron('*/1 * * * *', () => {
+        this.collectSystemMetrics();
+      });
+      job.unref?.();
+      this.collectionJob = job;
+    } else {
+      const timer = setInterval(() => this.collectSystemMetrics(), 60000);
+      this.collectionJob = { stop: () => clearInterval(timer) };
+    }
 
     console.info(styled('📈 Metrics collection started', 'info'));
   }
