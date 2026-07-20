@@ -175,7 +175,7 @@ export class SecurityTestSuite {
     // Test 1: Secret encryption
     await this.runTest(`${testGroup} - Encryption`, async () => {
       const data = 'Sensitive test data';
-      const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(data);
+      const encrypted = await BunSecurityEngine.SecretManager.encryptWithRotation(data);
 
       if (!encrypted.encrypted || !encrypted.keyVersion) {
         throw new SecurityError('Encryption failed or missing metadata');
@@ -187,8 +187,10 @@ export class SecurityTestSuite {
     // Test 2: Secret decryption
     await this.runTest(`${testGroup} - Decryption`, async () => {
       const data = 'Sensitive test data';
-      const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(data);
-      const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(encrypted.encrypted);
+      const encrypted = await BunSecurityEngine.SecretManager.encryptWithRotation(data);
+      const decrypted = await BunSecurityEngine.SecretManager.decryptWithRotation(
+        encrypted.encrypted
+      );
 
       if (decrypted.decrypted !== data) {
         throw new SecurityError('Decryption failed - data mismatch');
@@ -205,8 +207,10 @@ export class SecurityTestSuite {
     // Test large data encryption
     await this.runTest(`${testGroup} - Large Data`, async () => {
       const largeData = 'x'.repeat(10000); // 10KB
-      const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(largeData);
-      const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(encrypted.encrypted);
+      const encrypted = await BunSecurityEngine.SecretManager.encryptWithRotation(largeData);
+      const decrypted = await BunSecurityEngine.SecretManager.decryptWithRotation(
+        encrypted.encrypted
+      );
 
       if (decrypted.decrypted !== largeData) {
         throw new SecurityError('Large data encryption/decryption failed');

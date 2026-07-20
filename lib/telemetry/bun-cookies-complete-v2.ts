@@ -8,7 +8,6 @@
  */
 
 import { Cookie, CookieMap, CryptoHasher } from 'bun';
-import { createCipheriv, createDecipheriv } from 'node:crypto';
 import {
   CookieValidator,
   ValidationResult,
@@ -19,10 +18,47 @@ function hmacSha256Hex(key: string | Buffer | Uint8Array, data: string): string 
   return new CryptoHasher('sha256', key).update(data).digest('hex');
 }
 
-function randomBytes(n: number): Buffer {
-  const buf = new Uint8Array(n);
-  crypto.getRandomValues(buf);
-  return Buffer.from(buf);
+/** AES-256-GCM via Web Crypto (no node:crypto). Returns iv:ciphertext:tag (base64). */
+async function aesGcmEncrypt(key: Buffer, plaintext: string): Promise<string> {
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    key,
+    { name: 'AES-GCM' },
+    false,
+    ['encrypt']
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = new Uint8Array(
+    await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, new TextEncoder().encode(plaintext))
+  );
+  // WebCrypto appends 16-byte auth tag to ciphertext
+  const ct = encrypted.slice(0, encrypted.length - 16);
+  const tag = encrypted.slice(encrypted.length - 16);
+  return `${Buffer.from(iv).toString('base64')}:${Buffer.from(ct).toString('base64')}:${Buffer.from(tag).toString('base64')}`;
+}
+
+async function aesGcmDecrypt(key: Buffer, packed: string): Promise<string | null> {
+  try {
+    const [ivB64, ctB64, tagB64] = packed.split(':');
+    if (!ivB64 || !ctB64 || !tagB64) return null;
+    const iv = Buffer.from(ivB64, 'base64');
+    const ct = Buffer.from(ctB64, 'base64');
+    const tag = Buffer.from(tagB64, 'base64');
+    const combined = new Uint8Array(ct.length + tag.length);
+    combined.set(ct, 0);
+    combined.set(tag, ct.length);
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      key,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
+    );
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, combined);
+    return new TextDecoder().decode(plain);
+  } catch {
+    return null;
+  }
 }
 
 // 🎯 ENHANCED TYPES & INTERFACES
@@ -85,11 +121,11 @@ export class SecureCookieManager {
   }
 
   // 🍪 CREATE SECURE COOKIE
-  createSecureCookie(
+  async createSecureCookie(
     name: string,
     value: string | object,
     options: SecureCookieOptions = {}
-  ): { cookie: Cookie; validation: ValidationResult } {
+  ): Promise<{ cookie: Cookie; validation: ValidationResult }> {
     // Validate cookie properties first
     const validationOptions: ValidationOptions = {
       name,
@@ -135,15 +171,10 @@ export class SecureCookieManager {
       finalValue = `${finalValue}.${signature}`;
     }
 
-    // ENCRYPT COOKIE (AES-256-GCM)
+    // ENCRYPT COOKIE (AES-256-GCM via Web Crypto)
     if (options.encrypted) {
-      const iv = randomBytes(16);
-      const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, iv);
-      let encrypted = cipher.update(finalValue, 'utf8', 'base64');
-      encrypted += cipher.final('base64');
-      const authTag = cipher.getAuthTag().toString('base64');
-      finalValue = `${iv.toString('base64')}:${encrypted}:${authTag}`;
-      cookieOptions.httpOnly = true; // Force httpOnly for encrypted cookies
+      finalValue = await aesGcmEncrypt(this.encryptionKey, finalValue);
+      cookieOptions.httpOnly = true;
     }
 
     // TRACK ANALYTICS
@@ -155,30 +186,22 @@ export class SecureCookieManager {
   }
 
   // 🔍 VERIFY & DECRYPT COOKIE
-  verifyCookie(cookie: Cookie): {
+  async verifyCookie(cookie: Cookie): Promise<{
     valid: boolean;
     value: string | object;
     decoded?: unknown;
-  } {
+  }> {
     const rawValue = cookie.value;
     let finalValue = rawValue;
 
     // TRACK ACCESS
     this.recordCookieAccess(cookie.name);
 
-    // DECRYPT IF ENCRYPTED
+    // DECRYPT IF ENCRYPTED (iv:ct:tag base64)
     if (rawValue.includes(':') && rawValue.split(':').length === 3) {
-      try {
-        const [ivBase64, encrypted, authTag] = rawValue.split(':');
-        const iv = Buffer.from(ivBase64, 'base64');
-        const decipher = createDecipheriv('aes-256-gcm', this.encryptionKey, iv);
-        decipher.setAuthTag(Buffer.from(authTag, 'base64'));
-        let decrypted = decipher.update(encrypted, 'base64', 'utf8');
-        decrypted += decipher.final('utf8');
-        finalValue = decrypted;
-      } catch (error) {
-        return { valid: false, value: rawValue };
-      }
+      const decrypted = await aesGcmDecrypt(this.encryptionKey, rawValue);
+      if (decrypted == null) return { valid: false, value: rawValue };
+      finalValue = decrypted;
     }
 
     // VERIFY SIGNATURE
@@ -412,13 +435,13 @@ export class AnalyticsCookieMap extends CookieMap {
   }
 
   // 🍪 SET SECURE COOKIE
-  setSecure(
+  async setSecure(
     name: string,
     value: string | object,
     options: SecureCookieOptions = {}
-  ): { validation: ValidationResult; success: boolean } {
+  ): Promise<{ validation: ValidationResult; success: boolean }> {
     try {
-      const result = this.secureManager.createSecureCookie(name, value, options);
+      const result = await this.secureManager.createSecureCookie(name, value, options);
       this.set(name, result.cookie.value, result.cookie);
       this.logAccess(name, 'set');
       return { validation: result.validation, success: true };
@@ -444,7 +467,7 @@ export class AnalyticsCookieMap extends CookieMap {
   }
 
   // 🔍 GET & VERIFY SECURE COOKIE
-  getSecure(name: string): { valid: boolean; value: unknown } {
+  async getSecure(name: string): Promise<{ valid: boolean; value: unknown }> {
     const rawValue = this.get(name);
     if (!rawValue) return { valid: false, value: null };
 

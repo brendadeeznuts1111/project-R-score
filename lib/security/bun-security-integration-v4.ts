@@ -10,7 +10,6 @@
  */
 
 import { Cookie, CookieMap, CryptoHasher } from 'bun';
-import { createCipheriv, createDecipheriv, pbkdf2Sync } from 'node:crypto';
 import { Database } from 'bun:sqlite';
 import { asSessionId } from '../types/branded.ts';
 
@@ -20,14 +19,27 @@ function randomHex(bytes: number): string {
   return Buffer.from(buf).toString('hex');
 }
 
-function randomBytes(n: number): Buffer {
+function randomBytes(n: number): Uint8Array {
   const buf = new Uint8Array(n);
   crypto.getRandomValues(buf);
-  return Buffer.from(buf);
+  return buf;
 }
 
-function hmacSha256Hex(key: string, data: string): string {
-  return new CryptoHasher('sha256', key).update(data).digest('hex');
+async function deriveAesKey(secret: string, salt: Uint8Array): Promise<CryptoKey> {
+  const base = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100_000, hash: 'SHA-256' },
+    base,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
 }
 
 function csrfSecret(): string {
@@ -358,33 +370,32 @@ export class BunSecurityEngine {
       return { rotated, newSecrets };
     }
 
-    // 🔐 ENCRYPT WITH ROTATING SECRETS
-    static encryptWithRotation(
+    // 🔐 ENCRYPT — Web Crypto AES-256-GCM + PBKDF2 (no node:crypto)
+    static async encryptWithRotation(
       data: string,
       secretName: string = 'ENCRYPTION_SECRET'
-    ): { encrypted: string; keyVersion: number; metadata: any } {
-      // Get current secret (use consistent secret for demo)
+    ): Promise<{ encrypted: string; keyVersion: number; metadata: any }> {
       const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
       const keyVersion = this.getKeyVersion(secretName);
-
-      // Derive encryption key from secret
       const salt = randomBytes(16);
-      const key = pbkdf2Sync(secret, salt, 100000, 32, 'sha256');
-      const iv = randomBytes(16);
+      const iv = randomBytes(12);
+      const key = await deriveAesKey(secret, salt);
+      const encrypted = new Uint8Array(
+        await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv },
+          key,
+          new TextEncoder().encode(data)
+        )
+      );
+      const ct = encrypted.slice(0, encrypted.length - 16);
+      const tag = encrypted.slice(encrypted.length - 16);
 
-      // Encrypt
-      const cipher = createCipheriv('aes-256-gcm', key, iv);
-      let encrypted = cipher.update(data, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      const authTag = cipher.getAuthTag();
-
-      // Package with metadata
       const result = JSON.stringify({
         v: keyVersion,
-        s: salt.toString('hex'),
-        i: iv.toString('hex'),
-        d: encrypted,
-        t: authTag.toString('hex'),
+        s: Buffer.from(salt).toString('hex'),
+        i: Buffer.from(iv).toString('hex'),
+        d: Buffer.from(ct).toString('hex'),
+        t: Buffer.from(tag).toString('hex'),
       });
 
       return {
@@ -398,31 +409,25 @@ export class BunSecurityEngine {
       };
     }
 
-    // 🔓 DECRYPT WITH VERSION AWARENESS
-    static decryptWithRotation(
+    // 🔓 DECRYPT — Web Crypto AES-256-GCM + PBKDF2
+    static async decryptWithRotation(
       encryptedData: string,
       secretName: string = 'ENCRYPTION_SECRET'
-    ): { decrypted: string; keyVersion: number } {
+    ): Promise<{ decrypted: string; keyVersion: number }> {
       try {
         const packageData = JSON.parse(Buffer.from(encryptedData, 'base64').toString());
-
-        // Get secret for this version (use same secret as encryption)
         const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
-
-        // Derive key
         const salt = Buffer.from(packageData.s, 'hex');
-        const key = pbkdf2Sync(secret, salt, 100000, 32, 'sha256');
         const iv = Buffer.from(packageData.i, 'hex');
-        const authTag = Buffer.from(packageData.t, 'hex');
-
-        // Decrypt
-        const decipher = createDecipheriv('aes-256-gcm', key, iv);
-        decipher.setAuthTag(authTag);
-        let decrypted = decipher.update(packageData.d, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-
+        const ct = Buffer.from(packageData.d, 'hex');
+        const tag = Buffer.from(packageData.t, 'hex');
+        const combined = new Uint8Array(ct.length + tag.length);
+        combined.set(ct, 0);
+        combined.set(tag, ct.length);
+        const key = await deriveAesKey(secret, salt);
+        const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, combined);
         return {
-          decrypted,
+          decrypted: new TextDecoder().decode(plain),
           keyVersion: packageData.v,
         };
       } catch (error) {
@@ -648,11 +653,11 @@ export async function demonstrateSecurityIntegration() {
   const secretName = 'API_SECRET';
   const data = 'Sensitive API Data';
 
-  const encrypted = BunSecurityEngine.SecretManager.encryptWithRotation(data, secretName);
+  const encrypted = await BunSecurityEngine.SecretManager.encryptWithRotation(data, secretName);
   console.info(`Encrypted data: ${encrypted.encrypted.substring(0, 30)}...`);
   console.info(`Key version: ${encrypted.keyVersion}`);
 
-  const decrypted = BunSecurityEngine.SecretManager.decryptWithRotation(
+  const decrypted = await BunSecurityEngine.SecretManager.decryptWithRotation(
     encrypted.encrypted,
     secretName
   );

@@ -1,10 +1,21 @@
-// lib/mcp/realtime-wiki-collaboration.ts - Real-time collaboration features with WebSocket support
+// @see https://bun.com/docs/runtime/http/websockets — Bun.serve WebSocket / ServerWebSocket
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// lib/mcp/realtime-wiki-collaboration.ts — Real-time collaboration via Bun-native WebSockets
 
 import { EventEmitter } from 'events';
-import { WebSocket, WebSocketServer } from 'ws';
 import { WikiTemplate, WikiGenerationResult } from './wiki-generator-mcp';
 import { AdvancedCacheManager } from '../utils/advanced-cache-manager';
 import { type DocumentId, type UserId, asUserId } from '../types/branded.ts';
+
+/** Per-socket context attached in server.upgrade({ data }) */
+type CollabSocketData = {
+  user?: User;
+  token?: string | null;
+};
+
+type CollabWS = ServerWebSocket<CollabSocketData>;
+
+const WS_OPEN = 1; // WebSocket.OPEN
 
 export interface CollaborationConfig {
   port: number;
@@ -115,13 +126,13 @@ export interface CollaborationEvent {
  */
 export class RealtimeWikiCollaboration extends EventEmitter {
   private config: CollaborationConfig;
-  private wsServer?: WebSocketServer;
+  private server?: ReturnType<typeof Bun.serve>;
   private users = new Map<string, User>();
   private documents = new Map<string, DocumentState>();
-  private connections = new Map<WebSocket, string>(); // WebSocket -> userId
-  private userConnections = new Map<string, WebSocket[]>(); // userId -> WebSocket[]
+  private connections = new Map<CollabWS, string>(); // socket -> userId
+  private userConnections = new Map<string, CollabWS[]>(); // userId -> sockets
   private cache: AdvancedCacheManager;
-  private heartbeatTimer?: NodeJS.Timeout;
+  private heartbeatTimer?: ReturnType<typeof setInterval>;
   private operationHistory = new Map<string, DocumentOperation[]>();
   private conflictResolver: ConflictResolver;
 
@@ -152,22 +163,54 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   }
 
   /**
-   * Start the collaboration server
+   * Start the collaboration server (Bun.serve + websocket upgrade)
    */
   public async start(): Promise<void> {
     try {
-      this.wsServer = new WebSocketServer({
+      const self = this;
+      this.server = Bun.serve({
         port: this.config.port,
-        maxPayload: 1024 * 1024, // 1MB max payload
-      });
-
-      this.wsServer.on('connection', (ws, request) => {
-        this.handleConnection(ws, request);
-      });
-
-      this.wsServer.on('error', error => {
-        console.error('WebSocket server error:', error);
-        this.emit('error', error);
+        fetch(req, server) {
+          if (self.connections.size >= self.config.maxConnections) {
+            return new Response('Server overloaded', { status: 503 });
+          }
+          const token = self.extractAuthToken(req);
+          const upgraded = server.upgrade(req, {
+            data: { token } satisfies CollabSocketData,
+          });
+          if (!upgraded) {
+            return new Response('WebSocket upgrade failed', { status: 400 });
+          }
+          // Successful upgrade: no Response body (Bun protocol)
+          return undefined as unknown as Response;
+        },
+        websocket: {
+          maxPayloadLength: 1024 * 1024,
+          idleTimeout: 120,
+          data: {} as CollabSocketData,
+          open(ws) {
+            void self.onSocketOpen(ws as CollabWS);
+          },
+          message(ws, message) {
+            const user = (ws as CollabWS).data.user;
+            if (!user) return;
+            const buf =
+              typeof message === 'string'
+                ? Buffer.from(message)
+                : Buffer.from(message as ArrayBuffer);
+            void self.handleMessage(ws as CollabWS, user, buf);
+          },
+          close(ws, code, reason) {
+            const user = (ws as CollabWS).data.user;
+            if (user) {
+              self.handleDisconnection(ws as CollabWS, user, code, Buffer.from(reason ?? ''));
+            }
+          },
+          error(ws, error) {
+            const user = (ws as CollabWS).data.user;
+            console.error(`WebSocket error for user ${user?.id ?? 'unknown'}:`, error);
+          },
+        },
       });
 
       this.startHeartbeat();
@@ -190,12 +233,6 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         this.heartbeatTimer = undefined;
       }
 
-      if (this.wsServer) {
-        this.wsServer.close();
-        this.wsServer = undefined;
-      }
-
-      // Close all connections
       for (const [ws, userId] of this.connections.entries()) {
         ws.close();
         this.handleUserDisconnect(userId);
@@ -203,6 +240,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
       this.connections.clear();
       this.userConnections.clear();
+
+      this.server?.stop(true);
+      this.server = undefined;
 
       await this.cache.destroy();
 
@@ -215,19 +255,12 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   }
 
   /**
-   * Handle new WebSocket connection
+   * After upgrade: authenticate and register socket (Bun websocket.open)
    */
-  private async handleConnection(ws: WebSocket, request: Request): Promise<void> {
+  private async onSocketOpen(ws: CollabWS): Promise<void> {
     try {
-      // Check connection limit
-      if (this.connections.size >= this.config.maxConnections) {
-        ws.close(1013, 'Server overloaded');
-        return;
-      }
-
-      // Extract authentication token from query params or headers
-      const token = this.extractAuthToken(request);
       let user: User | null = null;
+      const token = ws.data.token ?? null;
 
       if (this.config.enableAuthentication) {
         user = await this.authenticateUser(token);
@@ -236,7 +269,6 @@ export class RealtimeWikiCollaboration extends EventEmitter {
           return;
         }
       } else {
-        // Create anonymous user for development
         user = {
           id: `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name: 'Anonymous User',
@@ -248,7 +280,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         };
       }
 
-      // Register connection
+      ws.data.user = user;
       this.connections.set(ws, user.id);
 
       if (!this.userConnections.has(user.id)) {
@@ -256,28 +288,12 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       }
       this.userConnections.get(user.id)!.push(ws);
 
-      // Update user status
       user.lastSeen = Date.now();
       user.status = 'online';
       this.users.set(user.id, user);
 
-      // Set up WebSocket event handlers
-      ws.on('message', data => {
-        this.handleMessage(ws, user!, data);
-      });
-
-      ws.on('close', (code, reason) => {
-        this.handleDisconnection(ws, user!, code, reason);
-      });
-
-      ws.on('error', error => {
-        console.error(`WebSocket error for user ${user.id}:`, error);
-      });
-
-      // Send initial state to user
       await this.sendInitialState(ws, user);
 
-      // Broadcast user joined event
       this.broadcastEvent(
         {
           type: 'user-joined',
@@ -302,7 +318,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Handle WebSocket messages
    */
-  private async handleMessage(ws: WebSocket, user: User, data: Buffer): Promise<void> {
+  private async handleMessage(ws: CollabWS, user: User, data: Buffer): Promise<void> {
     try {
       const message = JSON.parse(data.toString());
 
@@ -631,7 +647,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     const message = JSON.stringify(event);
 
     for (const [ws, userId] of this.connections.entries()) {
-      if (userId !== excludeUserId && ws.readyState === WebSocket.OPEN) {
+      if (userId !== excludeUserId && ws.readyState === WS_OPEN) {
         ws.send(message);
       }
     }
@@ -650,7 +666,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     for (const [ws, userId] of this.connections.entries()) {
       if (
         userId !== excludeUserId &&
-        ws.readyState === WebSocket.OPEN &&
+        ws.readyState === WS_OPEN &&
         this.isUserInDocument(userId, documentId)
       ) {
         ws.send(message);
@@ -666,7 +682,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     if (connections) {
       const messageStr = JSON.stringify(message);
       connections.forEach(ws => {
-        if (ws.readyState === WebSocket.OPEN) {
+        if (ws.readyState === WS_OPEN) {
           ws.send(messageStr);
         }
       });
@@ -676,7 +692,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Send initial state to newly connected user
    */
-  private async sendInitialState(ws: WebSocket, user: User): Promise<void> {
+  private async sendInitialState(ws: CollabWS, user: User): Promise<void> {
     const state = {
       user,
       activeUsers: Array.from(this.users.values()),
@@ -701,7 +717,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Handle user disconnection
    */
-  private handleDisconnection(ws: WebSocket, user: User, code: number, reason: Buffer): void {
+  private handleDisconnection(ws: CollabWS, user: User, code: number, reason: Buffer): void {
     // Remove connection
     this.connections.delete(ws);
 
@@ -817,13 +833,13 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
         // Check if user connection is stale
         if (user && now - user.lastSeen > this.config.heartbeatInterval * 2) {
-          ws.terminate();
+          ws.close(1000, 'stale');
           this.handleUserDisconnect(userId);
           continue;
         }
 
         // Send ping
-        if (ws.readyState === WebSocket.OPEN) {
+        if (ws.readyState === WS_OPEN) {
           ws.send(
             JSON.stringify({
               type: 'ping',
