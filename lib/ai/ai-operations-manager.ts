@@ -11,9 +11,10 @@ import { YAML } from 'bun';
 import { Mutex } from '../core/safe-concurrency';
 import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';
+import { type CorrelationId, asCorrelationId } from '../types/branded.ts';
 
 export interface AICommand {
-  id: string;
+  id: string; // brand-ok — opaque generated DTO id (single-use domain id)
   type: 'optimize' | 'analyze' | 'predict' | 'automate';
   input: string;
   parameters?: Record<string, any>;
@@ -22,7 +23,7 @@ export interface AICommand {
 }
 
 export interface AIInsight {
-  id: string;
+  id: string; // brand-ok — opaque generated DTO id (single-use domain id)
   type: 'performance' | 'security' | 'resource' | 'cost' | 'availability' | 'scalability';
   title: string;
   description: string;
@@ -31,13 +32,13 @@ export interface AIInsight {
   recommendations: string[];
   data?: Record<string, any>;
   timestamp: number;
-  correlationId?: string;
+  correlationId?: CorrelationId;
   tags?: string[];
   severity?: 'info' | 'warning' | 'error' | 'critical';
 }
 
 export interface OptimizationResult {
-  commandId: string;
+  commandId: string; // brand-ok — single-use domain id (CommandId is not a declared brand)
   success: boolean;
   improvements: Array<{
     metric: string;
@@ -53,7 +54,7 @@ export interface OptimizationResult {
     memory: number;
     network: number;
   };
-  correlationId?: string;
+  correlationId?: CorrelationId;
   metrics?: {
     accuracy: number;
     precision: number;
@@ -965,7 +966,7 @@ export class AIOperationsManager extends EventEmitter {
     minConfidence?: number;
     severity?: AIInsight['severity'];
     tags?: string[];
-    correlationId?: string;
+    correlationId?: CorrelationId;
     timeRange?: { start: number; end: number };
   }): AIInsight[] {
     // Generate secure cache key based on filter
@@ -1228,7 +1229,7 @@ export class AIOperationsManager extends EventEmitter {
     performance: { responseTime: number; throughput: number; errorRate: number };
     confidence: number;
     model?: string;
-    correlationId?: string;
+    correlationId?: CorrelationId;
   }> {
     const correlationId = this.generateCorrelationId();
     const cacheKey = this.generateSecureCacheKey('predict', { timeframe, correlationId });
@@ -1506,8 +1507,8 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Generate correlation ID for tracing
    */
-  private generateCorrelationId(): string {
-    return `corr-${Bun.randomUUIDv7()}`;
+  private generateCorrelationId(): CorrelationId {
+    return asCorrelationId(`corr-${Bun.randomUUIDv7()}`);
   }
 
   /**
@@ -1839,13 +1840,13 @@ export class AIOperationsManager extends EventEmitter {
    */
   private getFallbackPrediction(
     _timeframe: 'hour' | 'day' | 'week',
-    correlationId: string
+    correlationId: CorrelationId
   ): {
     resource: { cpu: number; memory: number; storage: number };
     performance: { responseTime: number; throughput: number; errorRate: number };
     confidence: number;
     model: string;
-    correlationId: string;
+    correlationId: CorrelationId;
   } {
     const currentMetrics = this.getCurrentMetrics();
 

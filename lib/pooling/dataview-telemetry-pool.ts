@@ -11,9 +11,10 @@ import { Database } from 'bun:sqlite';
 import { TelemetryPool, LeadSpecProfile } from '../../scripts/pool-telemetry';
 import { DataViewProfileSerializer } from './dataview-serializer';
 import { DataViewPoolMetrics } from './dataview-metrics';
+import { type SessionId, asSessionId } from '../types/branded.ts';
 
 interface ProfileMetadata {
-  sessionId: string;
+  sessionId: SessionId;
   member?: string;
   timestamp?: number;
   document?: string;
@@ -95,7 +96,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
   }
 
   async insertDataViewProfile(
-    sessionId: string,
+    sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
     profile: LeadSpecProfile,
     member: string = 'anonymous',
     document: string = 'unknown'
@@ -105,13 +106,14 @@ export class DataViewTelemetryPool extends TelemetryPool {
 
     try {
       const profileId = crypto.randomUUID();
-      const metadata: ProfileMetadata = { sessionId, member, timestamp: Date.now(), document };
+      const brandedSessionId = asSessionId(sessionId);
+      const metadata: ProfileMetadata = { sessionId: brandedSessionId, member, timestamp: Date.now(), document };
 
       // Serialize using DataView
       const binaryData = this.serializer.serialize(profile, metadata);
 
       // Extract metadata for indexing
-      const sessionHash = this.hashCode(sessionId);
+      const sessionHash = this.hashCode(brandedSessionId);
       const memberId = this.hashCode(member);
       const checksum = this.calculateDataChecksum(binaryData);
 
@@ -164,7 +166,7 @@ export class DataViewTelemetryPool extends TelemetryPool {
 
       const stmt = db.prepare(query);
       const results = stmt.all(...params) as Array<{
-        id: string;
+        id: string; // brand-ok — single-use domain id (dv_profiles row key)
         binary_data: Uint8Array;
         session_hash: number;
         member_id: number;

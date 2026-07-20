@@ -9,9 +9,10 @@
  */
 
 import { LeadSpecProfile } from '../../scripts/pool-telemetry';
+import { type SessionId, asSessionId } from '../types/branded.ts';
 
 interface ProfileMetadata {
-  sessionId: string;
+  sessionId: SessionId;
   member?: string;
   timestamp?: number;
   document?: string;
@@ -183,7 +184,7 @@ export class DataViewProfileSerializer {
     return {
       profile,
       metadata: {
-        sessionId: this.reverseHash(sessionIdHash),
+        sessionId: asSessionId(this.reverseHash(sessionIdHash)),
         member: this.reverseMemberId(memberId),
         timestamp,
         document: this.reverseDocumentId(documentId),

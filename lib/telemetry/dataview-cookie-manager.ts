@@ -10,10 +10,11 @@
 import { Database } from 'bun:sqlite';
 import { CookieMap } from 'bun';
 import { DataViewProfileSerializer } from '../pooling/dataview-serializer';
+import { type SessionId, type UserId, asSessionId } from '../types/branded.ts';
 
 interface SessionMetadata {
-  sessionId: string;
-  userId?: string;
+  sessionId: SessionId;
+  userId?: UserId;
   theme: 'light' | 'dark';
   visits: number;
   lastSeen: number;
@@ -108,7 +109,7 @@ export class DataViewCookieManager {
       sessionData.lastSeen = Date.now();
     } else {
       sessionData = {
-        sessionId,
+        sessionId: asSessionId(sessionId),
         theme: 'light',
         visits: 1,
         lastSeen: Date.now(),
@@ -199,12 +200,13 @@ export class DataViewCookieManager {
    * Record session events with binary data
    */
   async recordSessionEvent(
-    sessionId: string,
+    sessionId: string, // brand-ok — public boundary accepts plain string; branded internally via asSessionId
     eventType: string,
     eventData: unknown
   ): Promise<void> {
+    const brandedSessionId = asSessionId(sessionId);
     const eventBuffer = this.serializer.serialize(eventData, {
-      sessionId,
+      sessionId: brandedSessionId,
       timestamp: Date.now(),
       document: `event-${eventType}`,
     });
@@ -214,7 +216,7 @@ export class DataViewCookieManager {
       INSERT INTO session_events (session_id, event_type, event_data, timestamp)
       VALUES (?, ?, ?, ?)
     `,
-      [sessionId, eventType, new Uint8Array(eventBuffer), Date.now()]
+      [brandedSessionId, eventType, new Uint8Array(eventBuffer), Date.now()]
     );
   }
 

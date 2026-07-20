@@ -11,11 +11,12 @@
 
 import { S3Client } from 'bun';
 import type { SessionManifest, ProfileUploaderConfig } from './session-uploader';
+import { type SessionId, asSessionId } from '../types/branded.ts';
 
 // ==================== Types ====================
 
 export interface SessionSummary {
-  sessionId: string;
+  sessionId: SessionId;
   manifestKey: string;
 }
 
@@ -61,7 +62,7 @@ export class ProfileReader {
 
     return entries.map(entry => {
       // entry.prefix is e.g. "profiles/sessions/abc123/"
-      const sessionId = entry.prefix.replace(prefix, '').replace(/\/$/, '');
+      const sessionId = asSessionId(entry.prefix.replace(prefix, '').replace(/\/$/, ''));
       return {
         sessionId,
         manifestKey: `${prefix}${sessionId}/manifest.json`,
@@ -72,7 +73,7 @@ export class ProfileReader {
   /**
    * Read and parse a session's manifest.json from R2.
    */
-  async getManifest(sessionId: string): Promise<SessionManifest> {
+  async getManifest(sessionId: string /* brand-ok — boundary accepts plain string */): Promise<SessionManifest> {
     const key = `${this.prefix}/sessions/${sessionId}/manifest.json`;
     const raw = await S3Client.read(key, this.s3Opts);
     return JSON.parse(new TextDecoder().decode(raw));
@@ -82,7 +83,11 @@ export class ProfileReader {
    * Read a raw profile markdown file from R2.
    * @param type  "cpu" or "heap"
    */
-  async getProfile(sessionId: string, type: string, filename: string): Promise<string> {
+  async getProfile(
+    sessionId: string, // brand-ok — boundary accepts plain string
+    type: string,
+    filename: string
+  ): Promise<string> {
     const key = `${this.prefix}/sessions/${sessionId}/${type}/${filename}`;
     const raw = await S3Client.read(key, this.s3Opts);
     return new TextDecoder().decode(raw);

@@ -9,6 +9,7 @@
 
 import { Cookie } from './bun-cookies-complete-v2';
 import { CookieInspector, SecureCookiePro } from './bun-cookie-inspector-v3';
+import { type SessionId, asSessionId } from '../types/branded.ts';
 
 // 🚀 PRODUCTION-GRADE COOKIE MANAGER
 export class ProductionCookieManager {
@@ -102,7 +103,7 @@ export class ProductionCookieManager {
       }
     }
 
-    return { isGuest: true, id: crypto.randomUUID(), needsRefresh: false };
+    return { isGuest: true, id: asSessionId(crypto.randomUUID()), needsRefresh: false };
   }
 
   // 🍪 LAYERED COOKIE ARCHITECTURE
@@ -288,7 +289,7 @@ export class ProductionCookieManager {
       const decrypted = this.decrypt(token);
       return {
         isGuest: false,
-        id: decrypted,
+        id: asSessionId(decrypted),
         needsRefresh: this.shouldRefreshSession(token),
       };
     } catch {
@@ -556,14 +557,14 @@ export const PERFORMANCE_BENCHMARKS = {
 // Type definitions
 export interface SessionData {
   isGuest: boolean;
-  id: string;
+  id: SessionId;
   needsRefresh?: boolean;
 }
 
 export interface User {
-  id: string;
+  id: string; // brand-ok — external interop: callers construct User with plain string ids
   preferences: UserPreferences;
-  analyticsId: string;
+  analyticsId: string; // brand-ok — single-use domain id
 }
 
 export interface UserPreferences {

@@ -22,10 +22,7 @@
 
 import { S3Client } from 'bun';
 import { resolve, basename, join } from 'node:path';
-import {
-  type AccessKeyId,
-  asAccessKeyId,
-} from '../types/branded.ts';
+import { type AccessKeyId, type SessionId, asAccessKeyId, asSessionId } from '../types/branded.ts';
 import {
   type ProfileType,
   profileTimestamp,
@@ -38,7 +35,7 @@ import { resolveR2InfraConfig } from '../security/infra-secrets';
 // ==================== Types ====================
 
 export interface TerminalIdentity {
-  sessionId: string;
+  sessionId: SessionId;
   pid: number;
   hostname: string;
   user: string;
@@ -57,7 +54,7 @@ export interface ProfileEntry {
 }
 
 export interface SessionManifest {
-  sessionId: string;
+  sessionId: SessionId;
   terminal: TerminalIdentity;
   profiles: ProfileEntry[];
   createdAt: string;
@@ -115,7 +112,7 @@ function parseProfileFilename(
  * Falls back to env vars (TERMINAL_SESSION_ID) and process metadata.
  */
 function resolveTerminalIdentity(): TerminalIdentity {
-  const sessionId = generateSessionId();
+  const sessionId = asSessionId(generateSessionId());
 
   return {
     sessionId,

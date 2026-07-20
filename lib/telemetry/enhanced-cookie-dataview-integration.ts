@@ -17,10 +17,11 @@ import {
   CookieMetrics,
   SecureCookieOptions,
 } from './bun-cookies-complete-v2';
+import { type SessionId, type UserId, asSessionId } from '../types/branded.ts';
 
 interface UnifiedSessionMetrics {
-  sessionId: string;
-  userId?: string;
+  sessionId: SessionId;
+  userId?: UserId;
   cookieMetrics: CookieMetrics;
   dataViewMetrics: {
     serializationTime: number;
@@ -122,7 +123,7 @@ export class UnifiedCookieDataViewManager {
     const url = new URL(request.url);
 
     // Get or create session
-    let sessionId = cookies.getSecure('session')?.value?.sessionId || crypto.randomUUID();
+    let sessionId = asSessionId(cookies.getSecure('session')?.value?.sessionId || crypto.randomUUID());
     let isNewSession = !cookies.get('session');
 
     if (isNewSession) {
@@ -382,7 +383,7 @@ export class UnifiedCookieDataViewManager {
   }
 
   // Private helper methods
-  private async createSessionMetrics(sessionId: string): Promise<UnifiedSessionMetrics> {
+  private async createSessionMetrics(sessionId: SessionId): Promise<UnifiedSessionMetrics> {
     return {
       sessionId,
       cookieMetrics: {
@@ -442,7 +443,7 @@ export class UnifiedCookieDataViewManager {
   }
 
   private async persistSessionMetrics(
-    sessionId: string,
+    sessionId: SessionId,
     metrics: UnifiedSessionMetrics
   ): Promise<void> {
     const cookieDataView = CookieSerializationEngine.metricsToDataView(metrics.cookieMetrics);
