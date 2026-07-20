@@ -47,7 +47,8 @@ Institutional record: `lib/types/brand-manifest.json`
 Agent map: `lib/types/branded/README.md`  
 Stable import: `lib/types/branded.ts`  
 Agent entry: `AGENTS.md` (branded IDs are mandatory)  
-Standards: `.custom-instructions.md` · `docs/DEVELOPMENT-STANDARDS.md` (domain strings)
+Standards: `.custom-instructions.md` · `docs/DEVELOPMENT-STANDARDS.md` (domain strings)  
+Wire boundary: `docs/WIRE_BOUNDARY.md` (`parse*` is the edge; brands travel after it)
 
 ## Apply
 
