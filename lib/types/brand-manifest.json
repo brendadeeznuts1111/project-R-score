@@ -1,0 +1,375 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-20T01:12:36.676Z",
+  "source": "lib/types/branded/ BRAND_CATALOG",
+  "brandCount": 25,
+  "domains": [
+    "audit",
+    "deployment",
+    "documents",
+    "identity",
+    "operations",
+    "security",
+    "session"
+  ],
+  "brands": [
+    {
+      "name": "SessionId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Interactive terminal / agent session identity"
+    },
+    {
+      "name": "TerminalId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "PTY / terminal instance identity"
+    },
+    {
+      "name": "RequestId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "HTTP or RPC request correlation handle"
+    },
+    {
+      "name": "CorrelationId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Cross-service distributed trace correlation"
+    },
+    {
+      "name": "SnapshotId",
+      "domain": "session",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Point-in-time state snapshot identity"
+    },
+    {
+      "name": "UserId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Human or agent principal identity"
+    },
+    {
+      "name": "AccountId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "user-input"
+      ],
+      "description": "Cloud account (e.g. Cloudflare/R2 account) — env/wire only, never empty forge"
+    },
+    {
+      "name": "IdentityId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Zero-trust / federated identity record"
+    },
+    {
+      "name": "AccessKeyId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "S3/R2 access key id (not the secret material)"
+    },
+    {
+      "name": "TokenId",
+      "domain": "identity",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Opaque token handle (not the token secret)"
+    },
+    {
+      "name": "DocumentId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Wiki / collab document identity"
+    },
+    {
+      "name": "ZoneId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "DNS / Cloudflare zone — mint from wire via parseZoneId"
+    },
+    {
+      "name": "ChallengeId",
+      "domain": "security",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Auth challenge / proof-of-possession handle"
+    },
+    {
+      "name": "PolicyId",
+      "domain": "security",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Access policy identity"
+    },
+    {
+      "name": "DeploymentId",
+      "domain": "deployment",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Release / deployment instance identity"
+    },
+    {
+      "name": "VersionId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Secret or config version identity"
+    },
+    {
+      "name": "AuditId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Audit log entry identity"
+    },
+    {
+      "name": "OperationId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Batch or async operation handle"
+    },
+    {
+      "name": "ResourceId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Generic resource pointer (errors, ACL subjects)"
+    },
+    {
+      "name": "ProjectId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Project / workspace identity"
+    },
+    {
+      "name": "PipelineId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Transform or CI pipeline identity"
+    },
+    {
+      "name": "JobId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Scheduled or queued job identity"
+    },
+    {
+      "name": "StepId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Pipeline step identity"
+    },
+    {
+      "name": "WebhookId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Webhook registration identity"
+    },
+    {
+      "name": "FeedId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "RSS / event feed identity"
+    }
+  ],
+  "constructorTiers": {
+    "as": "Hard mint from string; throws BrandValidationError if empty",
+    "try": "Soft mint; blank/missing → undefined (never forge empty brand)",
+    "parse": "Wire/unknown ingress; fail-closed throw"
+  },
+  "emptyPolicy": "Missing IDs are undefined or throw — never empty-string brands",
+  "provenance": "Set BRAND_PROVENANCE=1 to log brand.mint events at as/parse"
+}

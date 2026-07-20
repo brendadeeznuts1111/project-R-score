@@ -38,15 +38,29 @@ Rules:
 - Only trust options verified against the runtime (see `lib/console-depth.ts` header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
 - Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) index → `tools/bun-docs-index.json` (317 pages, verified anchors) → `tools/bun-doc-refs.ts` map. Regenerate + verify: `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`.
 
-## Branded ID types
+## Branded ID types (harness)
 
-All new code must use branded string types for IDs (never bare `id: string` fields). Foundation: `lib/types/branded.ts` (`Brand`, 15 domain brands, `asXId()` boundary constructors). Pattern: brand at system boundaries, pass branded values inside, `unbrand()` at serialization edges.
+**Stable import:** `lib/types/branded.ts` · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** `lib/types/brand-manifest.json` · **Agent map:** `lib/types/branded/README.md`
 
-- Detect violations: `bun tools/branded-id-check.ts [paths]` (report) · `--strict` (fail) · `--staged` (added lines only)
-- **Pre-commit enforced** (harness "Branded IDs" step): `--staged --strict` judges **only added lines** — new violations block the commit; editing legacy files with existing violations elsewhere does not
-- Suppress intentional passthroughs with `// brand-ok`
-- Migrated exemplars: `lib/core/r2-session-manager.ts` (SessionId/TerminalId), `lib/security/master-token.ts` (TokenId)
-- TODO(brand-rollout): **254 pre-existing declarations remain** (baseline 274; tracked in `lib/types/branded.ts` header) — migrate by density: `lib/security` 34, `lib/mcp` 33, `lib/core` 31, `lib/registry` 20. In flight: `lib/security/zero-trust-manager.ts`. New code has zero excuse.
+Each domain module repeats the same pattern: `type` + `as*` + `try*` + `parse*` + `*_BRAND_SPECS`. Agents learn the invariant from structure.
+
+| Tier | Use |
+|------|-----|
+| `asXId` | Required string → brand or throw |
+| `tryXId` | Optional → brand or `undefined` (never empty forge) |
+| `parseXId` | Wire `unknown` → brand or throw |
+
+Mint authority is documented per brand in the manifest (`system-internal` · `user-input` · `wire-input`). Optional audit: `BRAND_PROVENANCE=1`.
+
+```bash
+bun tools/branded-id-check.ts --smart --strict   # actionable unbranded IDs
+bun tools/brand-manifest.ts                      # regenerate institutional record
+bun tools/brand-manifest.ts --check              # fail if manifest stale
+```
+
+- Pre-commit: `--staged --strict` on added lines + optional smart baseline
+- Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`
+- Credential normalize: `lib/security/r2-credentials.ts` (soft try* merge)
 
 ## Console depth (output verbosity)
 
