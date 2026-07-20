@@ -115,4 +115,4 @@ bun run lint:fix
 - [Bun Spawn](https://bun.sh/docs/api/spawn)
 - [Bun Hash](https://bun.sh/docs/api/utils#bun-hash)
 - [Bun Password](https://bun.sh/docs/api/password)
-- [Migration Examples](../BUN_MIGRATION_EXAMPLES.ts)
+- [Migration Examples](./BUN_MIGRATION_EXAMPLES.ts)

@@ -1,10 +1,10 @@
 export const SecurityPosture = {
   summary: {
-    reviewed: 12,
-    pending: 2,
+    reviewed: 1,
+    pending: 1,
     criticalIssues: 0,
-    highIssues: 1,
-    mediumIssues: 3,
+    highIssues: 0,
+    mediumIssues: 1,
   },
 
   components: {
@@ -16,15 +16,6 @@ export const SecurityPosture = {
         { severity: "low", issue: "Header validation", status: "fixed" },
       ],
       compliance: ["OWASP Top 10", "PCI DSS", "GDPR"],
-    },
-
-    "protocols/resilience-chain.ts": {
-      reviewDate: "2026-01-20",
-      reviewer: "@security-team",
-      findings: [
-        { severity: "high", issue: "Path traversal potential", status: "fixed" },
-      ],
-      compliance: ["SOC 2", "ISO 27001"],
     },
 
     "ws-gateway.ts": {

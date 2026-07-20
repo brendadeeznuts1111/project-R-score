@@ -581,7 +581,7 @@ investment in the future of web development.**
 
 - [Bun Documentation 🌐](https://bun.sh/docs)
 - [Bun API Reference 🌐](https://bun.sh/docs/api)
-- [Migration Guide](./BUN_FIRST_MIGRATION_GUIDE.md)
+- [Migration Guide](../guides/BUN_FIRST_MIGRATION_GUIDE.md)
 
 ### Tools:
 

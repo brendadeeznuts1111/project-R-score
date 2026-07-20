@@ -30,7 +30,6 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run build:affected` | --filter '...' build |
 | `bun run build:all` | --filter '*' build |
-| `bun run build:protocol-handlers` | build protocols/resilience-chain.ts --target bun --outfile /tmp/protocol-resilience-chain.build.js |
 
 ### Test
 | Command | Description |
@@ -138,11 +137,6 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run packages:list` | scripts/packages-list.ts |
 | `bun run packages:outdated` | outdated --filter=factorywager-enterprise |
-
-### Cheatsheet
-| Command | Description |
-|---------|-------------|
-| `bun run cheatsheet:dashboard` | cheatsheet:integrated dashboard |
 
 ### Search
 | Command | Description |

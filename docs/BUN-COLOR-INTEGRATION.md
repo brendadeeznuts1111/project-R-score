@@ -249,5 +249,5 @@ All utilities integrate seamlessly with Bun.color()'s flexible input/output form
 
 **See Also:**
 - [Bun.color() Official Docs](https://bun.sh/docs/api/color)
-- [Advanced HSL Utilities](./lib/utils/README-advanced-hsl.md)
-- [Examples](./lib/utils/bun-color-examples.ts)
+- [Advanced HSL Utilities](../lib/utils/README-advanced-hsl.md)
+- [Examples](../lib/utils/bun-color-examples.ts)

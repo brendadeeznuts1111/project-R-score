@@ -1,5 +1,10 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * 🏗️ Unified Base Server for Bun Documentation System
  *
@@ -32,8 +37,7 @@ import { EnhancedDocsFetcher, BunApiIndex } from '../lib/docs/index-fetcher-enha
 import { ChromeAppManager } from '../lib/cli/chrome-integration';
 
 // Import RSS integration service
-// TODO: rss-integration module does not exist — re-enable once created or relocated
-// import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration';
+import { RSSIntegrationService } from '../services/rss-integration.ts';
 
 // Import advanced cache management
 import { CacheFactory, CacheMiddleware } from '../lib/performance/cache-management.ts';

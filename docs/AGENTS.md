@@ -496,11 +496,11 @@ The following environment variables are used by Kimi Shell integration:
 ## Resources
 
 - [Bun Documentation 🌐](https://bun.sh/docs)
-- [BUN_MAIN_GUIDE.md](./docs/BUN_MAIN_GUIDE.md) - Comprehensive Bun.main patterns
+- [BUN_MAIN_GUIDE.md](./BUN_MAIN_GUIDE.md) - Comprehensive Bun.main patterns
 - [BUN_SPAWN_GUIDE.md](./guides/BUN_SPAWN_GUIDE.md) - Complete Bun.spawn reference
 - [BUN_WHICH_GUIDE.md](./guides/BUN_WHICH_GUIDE.md) - Advanced binary resolution
-- [BUN_ESCAPEHTML_GUIDE.md](./docs/BUN_ESCAPEHTML_GUIDE.md) - XSS prevention with Bun.escapeHTML()
-- [BUN_MARKDOWN_HTML_GUIDE.md](./docs/BUN_MARKDOWN_HTML_GUIDE.md) - Bun.markdown.html() options reference
+- [BUN_ESCAPEHTML_GUIDE.md](./BUN_ESCAPEHTML_GUIDE.md) - XSS prevention with Bun.escapeHTML()
+- [BUN_MARKDOWN_HTML_GUIDE.md](./BUN_MARKDOWN_HTML_GUIDE.md) - Bun.markdown.html() options reference
 - [README.md](./README.md) - Project overview and quick start
 
 ---

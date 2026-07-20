@@ -83,14 +83,12 @@ Development guides, tutorials, and best practices.
 3. [Guides](./guides/) - Learn patterns
 
 ### **For Developers**
-1. [Markdown API Complete Guide](./markdown-api/BUN-MARKDOWN-COMPLETE-GUIDE.md)
+1. [Markdown API Complete Guide](./BUN_MARKDOWN_COMPLETE_GUIDE.md)
 2. [Test Documentation](./tests/) - Test cases
 3. [Project Docs](./project-docs/) - Specifications
 
 ### **For Security & Production**
 1. [Security Fixes Summary](./markdown-api/SECURITY_FIXES_SUMMARY.md)
-2. [Implementation Guide](../IMPLEMENTATION_GUIDE.md)
-3. [Security Implementation](../SECURITY_IMPLEMENTATION_GUIDE.md)
 
 ---
 

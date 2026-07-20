@@ -9,7 +9,7 @@ This directory contains comprehensive documentation for the Bun Markdown API imp
 ## 🎯 **Quick Start**
 
 ### **For New Users**
-- [**Complete Guide**](./BUN-MARKDOWN-COMPLETE-GUIDE.md) - Full API reference with examples
+- [**Complete Guide**](../BUN_MARKDOWN_COMPLETE_GUIDE.md) - Full API reference with examples
 - [**Final Findings**](./BUN-MARKDOWN-FINAL-FINDINGS.md) - Key implementation insights
 - [**React Components**](./REACT-COMPONENTS-GUIDE.md) - React integration guide
 
@@ -25,7 +25,7 @@ This directory contains comprehensive documentation for the Bun Markdown API imp
 ### **🔰 Core Documentation**
 | Document | Purpose | Audience |
 |----------|---------|----------|
-| [Complete Guide](./BUN-MARKDOWN-COMPLETE-GUIDE.md) | Full API reference with all methods | All Developers |
+| [Complete Guide](../BUN_MARKDOWN_COMPLETE_GUIDE.md) | Full API reference with all methods | All Developers |
 | [Final Findings](./BUN-MARKDOWN-FINAL-FINDINGS.md) | Implementation insights & best practices | All Developers |
 | [API Analysis](./bun-markdown-api-analysis.md) | Technical analysis & patterns | Advanced Users |
 
@@ -76,7 +76,7 @@ This directory contains comprehensive documentation for the Bun Markdown API imp
 ## 📖 **Reading Order**
 
 ### **For New Implementation**
-1. [Complete Guide](./BUN-MARKDOWN-COMPLETE-GUIDE.md) - Start here
+1. [Complete Guide](../BUN_MARKDOWN_COMPLETE_GUIDE.md) - Start here
 2. [React Components Guide](./REACT-COMPONENTS-GUIDE.md) - If using React
 3. [Security Fixes](./SECURITY_FIXES_SUMMARY.md) - Before production
 
@@ -87,7 +87,7 @@ This directory contains comprehensive documentation for the Bun Markdown API imp
 
 ### **For Troubleshooting**
 1. [Final Findings](./BUN-MARKDOWN-FINAL-FINDINGS.md) - Common issues
-2. [Complete Guide](./BUN-MARKDOWN-COMPLETE-GUIDE.md) - Reference
+2. [Complete Guide](../BUN_MARKDOWN_COMPLETE_GUIDE.md) - Reference
 3. [React Components Summary](./REACT-COMPONENTS-SUMMARY.md) - Quick fixes
 
 ---

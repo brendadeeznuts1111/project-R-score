@@ -7,7 +7,7 @@ This phase builds directly on Phase 1 (see [ROOT_CLEANUP_SUMMARY.md](./ROOT_CLEA
 
 **Strategy:** Hybrid (safe-first) — all moved items had zero or minimal cross-references from core platform code. Large untracked/legacy trees were relocated via disk move + forced git add to preserve visibility without losing the files.
 
-**Vision Alignment:** Implements the structure documented in [docs/DIRECTORY_STRUCTURE.md](/Users/nolarose/Projects/docs/DIRECTORY_STRUCTURE.md) and [projects/README.md](/Users/nolarose/Projects/projects/README.md): "All project implementations organized by category" under `projects/`.
+**Vision Alignment:** Implements the structure documented in [docs/DIRECTORY_STRUCTURE.md](../DIRECTORY_STRUCTURE.md) and [projects/README.md](../../projects/README.md): "All project implementations organized by category" under `projects/`.
 
 ## Directories Moved (Batch 1 — 21 items, zero-risk to active development)
 
@@ -71,8 +71,8 @@ This phase builds directly on Phase 1 (see [ROOT_CLEANUP_SUMMARY.md](./ROOT_CLEA
 - **History preservation:** Full for all previously tracked files (via `git mv`); new visibility for previously untracked legacy (via forced add)
 
 ## Updated Documentation
-- [docs/DIRECTORY_STRUCTURE.md](/Users/nolarose/Projects/docs/DIRECTORY_STRUCTURE.md) — Added `archive/` to categories and ASCII tree
-- [projects/README.md](/Users/nolarose/Projects/projects/README.md) — Added new items under `experimental/`, `tools/`, and full `archive/` section with descriptions
+- [docs/DIRECTORY_STRUCTURE.md](../DIRECTORY_STRUCTURE.md) — Added `archive/` to categories and ASCII tree
+- [projects/README.md](../../projects/README.md) — Added new items under `experimental/`, `tools/`, and full `archive/` section with descriptions
 - This file (`docs/organization/PHASE2_ROOT_DIRECTORY_CONSOLIDATION.md`) — Authoritative Phase 2 record
 
 ## Verification Checklist

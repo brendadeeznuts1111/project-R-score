@@ -122,9 +122,9 @@ docs/visual/
 
 ### Markdown Usage
 ```markdown
-![version](docs/visual/badges/version.svg)
-![tier-1380](docs/visual/badges/tier_1380.svg)
-![constants](docs/visual/badges/constants.svg)
+![version](./visual/badges/version.svg)
+![tier-1380](./visual/badges/tier_1380.svg)
+![constants](./visual/badges/constants.svg)
 ```
 
 ### HTML Usage
@@ -135,7 +135,7 @@ docs/visual/
 ```
 
 ### All Badges Combined
-![version](badges/version.svg) ![tier-1380](badges/tier_1380.svg) ![constants](badges/constants.svg) ![schema](badges/schema.svg) ![mcp](badges/mcp.svg) ![col-89](badges/col_89.svg) ![audit](badges/audit.svg) ![projects](badges/projects.svg)
+![version](./visual/badges/version.svg) ![tier-1380](./visual/badges/tier_1380.svg) ![constants](./visual/badges/constants.svg) ![schema](./visual/badges/schema.svg) ![mcp](./visual/badges/mcp.svg) ![col-89](./visual/badges/col_89.svg) ![audit](./visual/badges/audit.svg) ![projects](./visual/badges/projects.svg)
 
 ## 🔧 Customization
 

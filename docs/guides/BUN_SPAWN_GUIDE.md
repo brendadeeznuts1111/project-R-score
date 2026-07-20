@@ -12,7 +12,7 @@ Comprehensive reference for using `Bun.spawn()` and `Bun.spawnSync()` in Bun run
 
 ### Spawn a child process
 
-Use [`Bun.spawn()`](/runtime/child-process) to spawn a child process.
+Use [`Bun.spawn()`](https://bun.sh/docs/runtime/child-process) to spawn a child process.
 
 ```ts
 const proc = Bun.spawn(["echo", "hello"]);
@@ -48,7 +48,7 @@ output; // => "hello\n"
 
 ***
 
-See [Docs > API > Child processes](/runtime/child-process) for complete documentation.
+See [Docs > API > Child processes](https://bun.sh/docs/runtime/child-process) for complete documentation.
 
 ---
 
@@ -819,7 +819,7 @@ interface ResourceUsage {
 ## Related Resources
 
 - [Bun Docs: Child Processes](https://bun.sh/docs/runtime/child-process)
-- [Bun.main Guide](./BUN_MAIN_GUIDE.md) - For entrypoint-based resolution
+- [Bun.main Guide](../BUN_MAIN_GUIDE.md) - For entrypoint-based resolution
 - Node.js: [`child_process.spawn()`](https://nodejs.org/api/child_process.html)
 
 ---

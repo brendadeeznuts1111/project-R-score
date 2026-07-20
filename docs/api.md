@@ -46,11 +46,6 @@
 - [URL Configuration](../config/urls.ts)
 - [Server Configuration](../server/server-enhanced.ts)
 
-### Test Suites
-- [UI Quality Tests](../tests/test-ui-quality.ts)
-- [Content-Type Tests](../tests/test-content-types.ts)
-- [Accessibility Tests](../tests/test-accessibility.ts)
-
 ## API Examples
 
 ```bash
@@ -65,13 +60,6 @@ curl -X POST http://example.com/api/content-type/blob \
 # Run comprehensive tests
 bun run test:all
 ```
-
-## Related Resources
-
-See also:
-- [Performance Metrics](../metrics/performance.md)
-- [Deployment Guide](../docs/deployment.md)
-- [Troubleshooting](../docs/troubleshooting.md)
 
 ---
 
