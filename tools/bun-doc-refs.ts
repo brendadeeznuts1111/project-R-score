@@ -10,6 +10,8 @@
  *   bun tools/bun-doc-refs.ts url <ApiName>      # print canonical URL for a Bun API
  *   bun tools/bun-doc-refs.ts token <token>      # resolve CLI flag / env var / config key
  *   bun tools/bun-doc-refs.ts list               # print the whole reference map
+ *   bun tools/bun-doc-refs.ts catalog            # structured catalog (type/stability/pages)
+ *   bun tools/bun-doc-refs.ts catalog --build    # rebuild tools/bun-docs-catalog.json
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
@@ -18,6 +20,7 @@
  *   bun tools/bun-doc-refs.ts schedule --once    # one integrity pass + JSONL log
  *
  * Adding a new API reference? Add it to CANONICAL_REFS below — one place only.
+ * Structured catalog (type · stability · allPages): tools/bun-docs-catalog.ts
  * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
 
@@ -495,6 +498,22 @@ async function suggest(query: string): Promise<void> {
   if (mapped) {
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
+    // Enrich from structured catalog when available
+    try {
+      const { getCatalogEntry } = await import('./bun-docs-catalog.ts');
+      const cat = await getCatalogEntry(query);
+      if (cat) {
+        console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
+        if (cat.description) console.info(`  ${cat.description}`);
+        if (cat.allPages.length > 1) {
+          console.info(
+            `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`
+          );
+        }
+      }
+    } catch {
+      /* catalog optional */
+    }
     return;
   }
   const { entries } = await docsIndex();
@@ -1055,67 +1074,101 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
   await new Promise(() => {}); // keep alive; the cron job drives from here
 }
 
-const [, , cmd = 'list', ...rest] = Bun.argv;
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];
-switch (cmd) {
-  case 'url':
-    printUrl(rest[0] ?? '');
-    break;
-  case 'token':
-    await tokenLookup(rest.join(' '));
-    break;
-  case 'list':
-    listRefs();
-    break;
-  case 'suggest':
-    await suggest(rest.join(' '));
-    break;
-  case 'audit':
-    process.exit((await audit()) > 0 ? 1 : 0);
-    break;
-  case 'deepcheck':
-    process.exit((await deepcheck(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
-    break;
-  case 'integrity': {
-    // bun tools/bun-doc-refs.ts integrity [--fix|--fix-dry] [--no-live]
-    const fix = rest.includes('--fix');
-    const fixDry = rest.includes('--fix-dry');
-    const live = !rest.includes('--no-live');
-    process.exit((await integrity({ fix, fixDry, live })) > 0 ? 1 : 0);
-    break;
+
+async function mainCli(): Promise<void> {
+  const [, , cmd = 'list', ...rest] = Bun.argv;
+  switch (cmd) {
+    case 'url':
+      printUrl(rest[0] ?? '');
+      break;
+    case 'token':
+      await tokenLookup(rest.join(' '));
+      break;
+    case 'list':
+      listRefs();
+      break;
+    case 'catalog': {
+      // bun tools/bun-doc-refs.ts catalog [--build] [--section=runtime] [--type=api] [--json] [get Name]
+      if (rest.includes('--build') || rest[0] === 'build') {
+        const { buildCatalog, writeCatalog } = await import('./bun-docs-catalog.ts');
+        const entries = await buildCatalog();
+        await writeCatalog(entries);
+        console.info(`✅ catalog ${entries.length} → tools/bun-docs-catalog.json`);
+        break;
+      }
+      const getIdx = rest.indexOf('get');
+      if (getIdx !== -1) {
+        const name = rest.slice(getIdx + 1).join(' ');
+        const proc = Bun.spawn(['bun', 'tools/bun-docs-catalog.ts', 'get', name], {
+          cwd: import.meta.dir + '/..',
+          stdout: 'inherit',
+          stderr: 'inherit',
+        });
+        process.exit((await proc.exited) === 0 ? 0 : 1);
+      }
+      const args = ['bun', 'tools/bun-docs-catalog.ts', 'list', ...rest.filter(a => a !== 'list')];
+      const proc = Bun.spawn(args, {
+        cwd: import.meta.dir + '/..',
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
+      process.exit((await proc.exited) === 0 ? 0 : 1);
+      break;
+    }
+    case 'suggest':
+      await suggest(rest.join(' '));
+      break;
+    case 'audit':
+      process.exit((await audit()) > 0 ? 1 : 0);
+      break;
+    case 'deepcheck':
+      process.exit((await deepcheck(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
+      break;
+    case 'integrity': {
+      const fix = rest.includes('--fix');
+      const fixDry = rest.includes('--fix-dry');
+      const live = !rest.includes('--no-live');
+      process.exit((await integrity({ fix, fixDry, live })) > 0 ? 1 : 0);
+      break;
+    }
+    case 'status':
+      await status();
+      break;
+    case 'schedule': {
+      const pIdx = rest.indexOf('--pattern');
+      const pattern = pIdx !== -1 ? rest[pIdx + 1] : '0 6 * * *';
+      await schedule(pattern, rest.includes('--once'));
+      break;
+    }
+    case 'export':
+      await exportHierarchical();
+      break;
+    case 'annotate': {
+      const targets = rest.filter(a => a !== '--write');
+      const write = rest.includes('--write');
+      const files = await annotate(targets.length ? targets : defaultPaths, write);
+      process.exit(!write && files > 0 ? 1 : 0);
+      break;
+    }
+    case 'check':
+      process.exit((await check(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
+      break;
+    case 'validate':
+      process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
+      break;
+    default:
+      console.error(
+        `unknown command: ${cmd}\n` +
+          `commands: url|token|list|catalog|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
+          `catalog: --build · list --section=runtime|bundler|test|guides --type=api|… · get <Name>\n` +
+          `integrity flags: --fix · --fix-dry · --no-live\n` +
+          `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`
+      );
+      process.exit(1);
   }
-  case 'status':
-    await status();
-    break;
-  case 'schedule': {
-    // bun tools/bun-doc-refs.ts schedule [--pattern "0 6 * * *"] [--once]
-    const pIdx = rest.indexOf('--pattern');
-    const pattern = pIdx !== -1 ? rest[pIdx + 1] : '0 6 * * *';
-    await schedule(pattern, rest.includes('--once'));
-    break;
-  }
-  case 'export':
-    await exportHierarchical();
-    break;
-  case 'annotate': {
-    const targets = rest.filter(a => a !== '--write');
-    const write = rest.includes('--write');
-    const files = await annotate(targets.length ? targets : defaultPaths, write);
-    process.exit(!write && files > 0 ? 1 : 0);
-    break;
-  }
-  case 'check':
-    process.exit((await check(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
-    break;
-  case 'validate':
-    process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
-    break;
-  default:
-    console.error(
-      `unknown command: ${cmd}\n` +
-        `commands: url|token|list|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
-        `integrity flags: --fix · --fix-dry · --no-live\n` +
-        `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`
-    );
-    process.exit(1);
+}
+
+if (import.meta.main) {
+  await mainCli();
 }

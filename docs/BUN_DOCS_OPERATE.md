@@ -20,6 +20,10 @@ Continuity layer for the docs intelligence pipeline: **integrity → self-heal �
 | `bun tools/bun-doc-refs.ts schedule --once` | One integrity pass + append `reports/doc-integrity.jsonl` |
 | `bun tools/bun-doc-refs.ts schedule` | In-process `Bun.cron` weekly (`0 6 * * *` UTC default) |
 | `bun tools/bun-docs-index-gen.ts` | Rebuild index from live `llms.txt` (+ `bunVersion` pin) |
+| `bun tools/bun-docs-catalog.ts build` | Structured catalog: name/type/stability/canonicalPage/allPages |
+| `bun tools/bun-doc-refs.ts catalog --build` | Same via bun-doc-refs |
+| `bun tools/bun-doc-refs.ts catalog --section=runtime --type=api` | List catalog slice |
+| `bun tools/bun-doc-refs.ts catalog get Bun.WebView` | One catalog entry |
 
 Env: **`DOC_INTEGRITY_AUTOFIX=1`** — schedule path auto-runs `--fix` when integrity fails.
 

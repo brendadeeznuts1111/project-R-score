@@ -1,0 +1,4154 @@
+{
+  "generated": "2026-07-20T15:08:57.228Z",
+  "bunVersion": "1.4.0",
+  "source": {
+    "index": "tools/bun-docs-index.json",
+    "canonicalRefs": "tools/bun-doc-refs.ts#CANONICAL_REFS",
+    "curated": "tools/bun-docs-curated.ts"
+  },
+  "schema": {
+    "name": "string",
+    "type": "api | cli-flag | config | concept",
+    "description": "string?",
+    "stability": "stable | experimental | deprecated",
+    "canonicalPage": "string",
+    "anchor": "string?",
+    "allPages": "string[]",
+    "section": "runtime | bundler | test | guides | pm | reference | other",
+    "aliases": "string[]?"
+  },
+  "coveredSections": [
+    "runtime",
+    "bundler",
+    "test",
+    "guides"
+  ],
+  "count": 390,
+  "byType": {
+    "cli-flag": 5,
+    "concept": 318,
+    "api": 63,
+    "config": 4
+  },
+  "bySection": {
+    "runtime": 135,
+    "bundler": 15,
+    "test": 15,
+    "guides": 193,
+    "pm": 27,
+    "reference": 2,
+    "other": 3
+  },
+  "byStability": {
+    "stable": 386,
+    "experimental": 4
+  },
+  "entries": [
+    {
+      "name": "--console-depth",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/console",
+      "allPages": [
+        "https://bun.com/docs/runtime/console"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": ".env files",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "setting-environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Archive",
+      "type": "concept",
+      "description": "Create and extract tar archives with Bun's fast native implementation",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/archive",
+      "allPages": [
+        "https://bun.com/docs/runtime/archive"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Auto-install",
+      "type": "concept",
+      "description": "Bun's automatic package installation feature for standalone script execution",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/auto-install",
+      "allPages": [
+        "https://bun.com/docs/runtime/auto-install"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Binary Data",
+      "type": "concept",
+      "description": "Working with binary data in JavaScript",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/binary-data",
+      "allPages": [
+        "https://bun.com/docs/runtime/binary-data"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun APIs",
+      "type": "concept",
+      "description": "Overview of Bun's native APIs available on the Bun global object and built-in modules",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "allPages": [
+        "https://bun.com/docs/runtime/bun-apis"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun create",
+      "type": "concept",
+      "description": "Create a new Bun project from a React component, a `create-<template>` npm package, a GitHub repo, or a local template",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/create",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/create"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun init",
+      "type": "concept",
+      "description": "Scaffold an empty Bun project with the interactive `bun init` command",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/templating/init",
+      "allPages": [
+        "https://bun.com/docs/runtime/templating/init"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun Runtime",
+      "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun's fast runtime.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/index",
+      "allPages": [
+        "https://bun.com/docs/runtime/index"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CONFIG_MAX_HTTP_REQUESTS",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "configuring-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_CONFIG_VERBOSE_FETCH",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "configuring-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_OPTIONS",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "configuring-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
+      "type": "cli-flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "what-does-it-cache",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun:sql",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "allPages": [
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun:sqlite",
+      "type": "api",
+      "description": "Built-in SQLite driver (v3.53.0 in 1.3.14)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sqlite",
+      "allPages": [
+        "https://bun.com/docs/runtime/sqlite"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.$",
+      "type": "api",
+      "description": "Shell template tag for running commands",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/shell",
+      "allPages": [
+        "https://bun.com/docs/runtime/shell"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.color",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/color",
+      "allPages": [
+        "https://bun.com/docs/runtime/color"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.Cookie",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cookies",
+      "allPages": [
+        "https://bun.com/docs/runtime/cookies"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.cron",
+      "type": "api",
+      "description": "In-process cron scheduling (UTC; no-overlap after handler settles)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CryptoHasher",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-cryptohasher",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.CSRF",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/csrf",
+      "allPages": [
+        "https://bun.com/docs/runtime/csrf"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.deepEquals",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-deepequals",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.dns",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/dns",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/dns"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.env",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-env",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.escapeHTML",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-escapehtml",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.file",
+      "type": "api",
+      "description": "Lazy file I/O API",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.Glob",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/glob",
+      "allPages": [
+        "https://bun.com/docs/runtime/glob"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.gzipSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-gzipsync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.hash",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-hash",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.Image",
+      "type": "api",
+      "description": "Built-in image decode/resize/encode pipeline",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/image",
+      "allPages": [
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/file-io",
+        "https://bun.com/docs/runtime/s3"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.inspect",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-inspect",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.inspect.custom",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-inspect",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.inspect.table",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-inspect",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.main",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-main",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.markdown",
+      "type": "api",
+      "description": "Native Markdown rendering",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.markdown.ansi",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.markdown.html",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "anchor": "bun-markdown-html",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.nanoseconds",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-nanoseconds",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.password",
+      "type": "api",
+      "description": "Argon2/bcrypt password hashing",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "anchor": "bun-password",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.peek",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-peek",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.randomUUIDv7",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-randomuuidv7",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.redis",
+      "type": "api",
+      "description": "Redis/Valkey client",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/redis",
+      "allPages": [
+        "https://bun.com/docs/runtime/redis"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.resolveSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-resolvesync",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.s3",
+      "type": "api",
+      "description": "S3-compatible object storage client",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/s3",
+      "allPages": [
+        "https://bun.com/docs/runtime/s3"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.secrets",
+      "type": "api",
+      "description": "OS keychain-backed secrets API",
+      "stability": "experimental",
+      "canonicalPage": "https://bun.com/docs/runtime/secrets",
+      "allPages": [
+        "https://bun.com/docs/runtime/secrets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.serve",
+      "type": "api",
+      "description": "HTTP server with routes, TLS, WebSockets, HTTP/3",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/server",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime/http/websockets",
+        "https://bun.com/docs/runtime/http/tls"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.sleep",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-sleep",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.spawn",
+      "type": "api",
+      "description": "Spawn subprocesses with pipes and terminals",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.spawn terminal (PTY)",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "anchor": "terminal-pty-support",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.spawnSync",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "anchor": "blocking-api-bun-spawnsync",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.sql",
+      "type": "api",
+      "description": "Postgres and MySQL client with connection pooling",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "allPages": [
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "Bun.SQL"
+      ]
+    },
+    {
+      "name": "Bun.stringWidth",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-stringwidth",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.stripANSI",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-stripansi",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.Terminal",
+      "type": "api",
+      "description": "PTY terminal for spawned processes (Windows ConPTY in 1.3.14)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/terminal",
+      "anchor": "terminal-pty-support",
+      "allPages": [
+        "https://bun.com/docs/runtime/terminal",
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.TOML",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/toml",
+      "anchor": "bun-toml-parse",
+      "allPages": [
+        "https://bun.com/docs/runtime/toml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.Transpiler",
+      "type": "api",
+      "description": "JS/TS/JSX transpiler API",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/transpiler",
+      "allPages": [
+        "https://bun.com/docs/runtime/transpiler"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.udpSocket",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/udp",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/udp"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.version",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-version",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.WebView",
+      "type": "api",
+      "description": "Headless browser automation",
+      "stability": "experimental",
+      "canonicalPage": "https://bun.com/docs/runtime/webview",
+      "allPages": [
+        "https://bun.com/docs/runtime/webview"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.which",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-which",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.wrapAnsi",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-wrapansi",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.write",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Bun.YAML",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/yaml",
+      "allPages": [
+        "https://bun.com/docs/runtime/yaml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bunfig.toml",
+      "type": "config",
+      "description": "Configure Bun's behavior using its configuration file bunfig.toml",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "C Compiler",
+      "type": "concept",
+      "description": "Compile and run C from JavaScript with low overhead",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/c-compiler",
+      "allPages": [
+        "https://bun.com/docs/runtime/c-compiler"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Color",
+      "type": "concept",
+      "description": "Format colors as CSS, ANSI, numbers, hex strings, and more",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/color",
+      "allPages": [
+        "https://bun.com/docs/runtime/color"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "configuring Bun",
+      "type": "config",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "configuring-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Console",
+      "type": "concept",
+      "description": "The console object in Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/console",
+      "allPages": [
+        "https://bun.com/docs/runtime/console"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "console"
+      ]
+    },
+    {
+      "name": "CookieMap",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cookies",
+      "anchor": "cookiemap-class",
+      "allPages": [
+        "https://bun.com/docs/runtime/cookies"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Cookies",
+      "type": "concept",
+      "description": "Work with cookies in HTTP requests and responses using Bun's built-in Cookie API.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cookies",
+      "allPages": [
+        "https://bun.com/docs/runtime/cookies",
+        "https://bun.com/docs/runtime/http/cookies"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Cron",
+      "type": "concept",
+      "description": "Schedule and parse cron jobs with Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/cron",
+      "allPages": [
+        "https://bun.com/docs/runtime/cron"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "CSRF Protection",
+      "type": "concept",
+      "description": "Generate and verify CSRF tokens with Bun's built-in API",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/csrf",
+      "allPages": [
+        "https://bun.com/docs/runtime/csrf"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Debugging",
+      "type": "concept",
+      "description": "Debug your Bun code with an interactive debugger using WebKit Inspector Protocol",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/debugger",
+      "allPages": [
+        "https://bun.com/docs/runtime/debugger"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "DNS",
+      "type": "concept",
+      "description": "Use Bun's DNS module to resolve DNS records",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/dns",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/dns"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "dns"
+      ]
+    },
+    {
+      "name": "DO_NOT_TRACK",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "anchor": "configuring-bun",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Environment Variables",
+      "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Error Handling",
+      "type": "concept",
+      "description": "Learn how to handle errors in Bun's development server",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/error-handling",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/error-handling"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Fetch",
+      "type": "concept",
+      "description": "fetch() client with HTTP/2 and HTTP/3 options",
+      "stability": "experimental",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/fetch",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/fetch",
+        "https://bun.com/docs/runtime/network/fetch",
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "fetch"
+      ]
+    },
+    {
+      "name": "FFI",
+      "type": "concept",
+      "description": "Use Bun's FFI module to efficiently call native libraries from JavaScript",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/ffi",
+      "allPages": [
+        "https://bun.com/docs/runtime/ffi"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "File I/O",
+      "type": "concept",
+      "description": "Bun provides a set of optimized APIs for reading and writing files.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "File System Router",
+      "type": "concept",
+      "description": "Bun provides a fast API for resolving routes against file-system paths",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-system-router",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-system-router"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "File Types",
+      "type": "concept",
+      "description": "File types and loaders supported by Bun's bundler and runtime",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-types",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-types"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "FORCE_COLOR",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "fs.watch",
+      "type": "concept",
+      "description": "File watcher (rewritten backend in 1.3.14)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/file-io",
+      "allPages": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Glob",
+      "type": "concept",
+      "description": "Use Bun's fast native implementation of file globbing",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/glob",
+      "allPages": [
+        "https://bun.com/docs/runtime/glob"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Globals",
+      "type": "concept",
+      "description": "Use Bun's global objects",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/globals",
+      "allPages": [
+        "https://bun.com/docs/runtime/globals"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Hashing",
+      "type": "concept",
+      "description": "Utility functions for hashing and verifying passwords with various cryptographically secure algorithms",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/hashing",
+      "allPages": [
+        "https://bun.com/docs/runtime/hashing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "HTMLRewriter",
+      "type": "api",
+      "description": "Use Bun's HTMLRewriter to transform HTML documents with CSS selectors",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/html-rewriter",
+      "allPages": [
+        "https://bun.com/docs/runtime/html-rewriter"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "http3",
+      "type": "concept",
+      "description": "Experimental HTTP/3 (QUIC) in Bun.serve",
+      "stability": "experimental",
+      "canonicalPage": "https://bun.com/docs/runtime/http/server",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Image",
+      "type": "concept",
+      "description": "Decode, transform, and encode images with a fast native pipeline",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/image",
+      "allPages": [
+        "https://bun.com/docs/runtime/image"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "JSON5",
+      "type": "concept",
+      "description": "Use Bun's built-in support for JSON5 files through both runtime APIs and bundler integration",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/json5",
+      "allPages": [
+        "https://bun.com/docs/runtime/json5"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "JSONL",
+      "type": "concept",
+      "description": "Parse newline-delimited JSON (JSONL) with Bun's built-in streaming parser",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/jsonl",
+      "allPages": [
+        "https://bun.com/docs/runtime/jsonl"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "JSX",
+      "type": "concept",
+      "description": "Built-in JSX and TSX support in Bun with configurable transpilation options",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/jsx",
+      "allPages": [
+        "https://bun.com/docs/runtime/jsx"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Markdown",
+      "type": "concept",
+      "description": "Parse and render Markdown with Bun's built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/markdown",
+      "allPages": [
+        "https://bun.com/docs/runtime/markdown"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "markdown docs",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Metrics",
+      "type": "concept",
+      "description": "Monitor server activity with built-in metrics",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/metrics",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/metrics"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Module Resolution",
+      "type": "concept",
+      "description": "How Bun resolves modules and handles imports in JavaScript and TypeScript",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/module-resolution",
+      "allPages": [
+        "https://bun.com/docs/runtime/module-resolution"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "NO_COLOR",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/environment-variables",
+      "allPages": [
+        "https://bun.com/docs/runtime/environment-variables"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Node-API",
+      "type": "concept",
+      "description": "Use Bun's Node-API module to build native add-ons to Node.js",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/node-api",
+      "allPages": [
+        "https://bun.com/docs/runtime/node-api"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Node.js Compatibility",
+      "type": "concept",
+      "description": "Bun's compatibility status with Node.js APIs, modules, and globals",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "noOrphans",
+      "type": "concept",
+      "description": "Exit when parent dies (--no-orphans)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
+      "allPages": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Plugins",
+      "type": "concept",
+      "description": "Universal plugin API for extending Bun's runtime and bundler",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/plugins",
+      "allPages": [
+        "https://bun.com/docs/bundler/plugins",
+        "https://bun.com/docs/runtime/plugins"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "process.execve",
+      "type": "concept",
+      "description": "Replace process image in-place",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/node-api",
+      "allPages": [
+        "https://bun.com/docs/runtime/node-api"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "process.stdout.columns",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "nodetty",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "process.stdout.isTTY",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
+      "anchor": "nodetty",
+      "allPages": [
+        "https://bun.com/docs/runtime/nodejs-compat"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Redis",
+      "type": "concept",
+      "description": "Use Bun's native Redis client with a Promise-based API",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/redis",
+      "allPages": [
+        "https://bun.com/docs/runtime/redis"
+      ],
+      "section": "runtime",
+      "aliases": [
+        "redis"
+      ]
+    },
+    {
+      "name": "RedisClient",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/redis",
+      "allPages": [
+        "https://bun.com/docs/runtime/redis"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "REPL",
+      "type": "concept",
+      "description": "An interactive JavaScript and TypeScript REPL with syntax highlighting, history, and tab completion",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/repl",
+      "allPages": [
+        "https://bun.com/docs/runtime/repl"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Routing",
+      "type": "concept",
+      "description": "Define routes in `Bun.serve` using static paths, parameters, and wildcards",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/routing",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/routing"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "S3",
+      "type": "concept",
+      "description": "Bun provides fast, native bindings for interacting with S3-compatible object storage services.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/s3",
+      "allPages": [
+        "https://bun.com/docs/runtime/s3"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "S3Client",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/s3",
+      "allPages": [
+        "https://bun.com/docs/runtime/s3"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Secrets",
+      "type": "concept",
+      "description": "Use Bun's Secrets API to store and retrieve sensitive credentials securely",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/secrets",
+      "allPages": [
+        "https://bun.com/docs/runtime/secrets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Semver",
+      "type": "concept",
+      "description": "Use Bun's semantic versioning API",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/semver",
+      "allPages": [
+        "https://bun.com/docs/runtime/semver"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Server",
+      "type": "concept",
+      "description": "Use `Bun.serve` to start a high-performance HTTP server in Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/server",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "ServerWebSocket",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/websockets",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/websockets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Shell",
+      "type": "concept",
+      "description": "Use Bun's shell scripting API to run shell commands from JavaScript",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/shell",
+      "allPages": [
+        "https://bun.com/docs/runtime/shell"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Spawn",
+      "type": "concept",
+      "description": "Spawn child processes with `Bun.spawn` or `Bun.spawnSync`",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "spawn terminal options",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/child-process",
+      "anchor": "terminal-options",
+      "allPages": [
+        "https://bun.com/docs/runtime/child-process"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "SQL",
+      "type": "concept",
+      "description": "Bun provides native bindings for working with SQL databases through a unified Promise-based API that supports PostgreSQL, MySQL, and SQLite.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sql",
+      "allPages": [
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "SQLite",
+      "type": "concept",
+      "description": "Bun natively implements a high-performance SQLite3 driver.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/sqlite",
+      "allPages": [
+        "https://bun.com/docs/runtime/sqlite"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Streams",
+      "type": "concept",
+      "description": "Use Bun's streams API to work with binary data without loading it all into memory at once",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/streams",
+      "allPages": [
+        "https://bun.com/docs/runtime/streams"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "TCP",
+      "type": "concept",
+      "description": "Use Bun's native TCP API to implement performance-sensitive systems like database clients, game servers, or anything that needs to communicate over TCP (instead of HTTP)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/tcp",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/tcp"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "TLS",
+      "type": "concept",
+      "description": "Enable TLS in Bun.serve",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/tls",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/tls"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "TOML",
+      "type": "concept",
+      "description": "Use Bun's built-in support for TOML files through both runtime APIs and bundler integration",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/toml",
+      "allPages": [
+        "https://bun.com/docs/runtime/toml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Transpiler",
+      "type": "concept",
+      "description": "Use Bun's transpiler to transpile JavaScript and TypeScript code",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/transpiler",
+      "allPages": [
+        "https://bun.com/docs/runtime/transpiler"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "UDP",
+      "type": "concept",
+      "description": "Use Bun's UDP API to implement services with advanced real-time requirements, such as voice chat.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/udp",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/udp"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "udpSocket",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/udp",
+      "allPages": [
+        "https://bun.com/docs/runtime/networking/udp"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Utils",
+      "type": "concept",
+      "description": "Use Bun's utility functions to work with the runtime",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "allPages": [
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Watch Mode",
+      "type": "concept",
+      "description": "Automatic reloading in Bun with --watch and --hot modes",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/watch-mode",
+      "allPages": [
+        "https://bun.com/docs/runtime/watch-mode"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Web APIs",
+      "type": "concept",
+      "description": "Web-standard APIs supported by Bun for server-side JavaScript",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/web-apis",
+      "allPages": [
+        "https://bun.com/docs/runtime/web-apis"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "WebSocket",
+      "type": "api",
+      "description": "WebSocket server and client",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/websockets",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/websockets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "WebSockets",
+      "type": "concept",
+      "description": "Server-side WebSockets in Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/http/websockets",
+      "allPages": [
+        "https://bun.com/docs/runtime/http/websockets"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "WebView",
+      "type": "api",
+      "description": "Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/webview",
+      "allPages": [
+        "https://bun.com/docs/runtime/webview"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "Workers",
+      "type": "concept",
+      "description": "Use Bun's Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/workers",
+      "allPages": [
+        "https://bun.com/docs/runtime/workers"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "YAML",
+      "type": "api",
+      "description": "Use Bun's built-in support for YAML files through both runtime APIs and bundler integration",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/runtime/yaml",
+      "allPages": [
+        "https://bun.com/docs/runtime/yaml"
+      ],
+      "section": "runtime"
+    },
+    {
+      "name": "bun build --compile",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bun.build",
+      "type": "api",
+      "description": "Bundler and compile-to-binary",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler",
+      "allPages": [
+        "https://bun.com/docs/bundler"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bundler",
+      "type": "concept",
+      "description": "Bun's fast native bundler for JavaScript, TypeScript, JSX, and more",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/index",
+      "allPages": [
+        "https://bun.com/docs/bundler/index"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Bytecode Caching",
+      "type": "concept",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun's bundler",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/bytecode",
+      "allPages": [
+        "https://bun.com/docs/bundler/bytecode"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "compile targets",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "anchor": "supported-targets",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "CSS",
+      "type": "concept",
+      "description": "Bun's bundler has built-in support for CSS with modern features",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/css",
+      "allPages": [
+        "https://bun.com/docs/bundler/css"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "esbuild",
+      "type": "concept",
+      "description": "Migration guide from esbuild to Bun's bundler",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/esbuild",
+      "allPages": [
+        "https://bun.com/docs/bundler/esbuild"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Fullstack dev server",
+      "type": "concept",
+      "description": "Build fullstack applications with Bun's integrated dev server that bundles frontend assets and handles API routes",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/fullstack",
+      "allPages": [
+        "https://bun.com/docs/bundler/fullstack"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Hot reloading",
+      "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun's development server",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/hot-reloading",
+      "allPages": [
+        "https://bun.com/docs/bundler/hot-reloading"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "HTML & static sites",
+      "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun's bundler",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/html-static",
+      "allPages": [
+        "https://bun.com/docs/bundler/html-static"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Loaders",
+      "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/loaders",
+      "allPages": [
+        "https://bun.com/docs/bundler/loaders"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Macros",
+      "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/macros",
+      "allPages": [
+        "https://bun.com/docs/bundler/macros"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Minifier",
+      "type": "concept",
+      "description": "Reduce bundle sizes with Bun's JavaScript and TypeScript minifier",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/minifier",
+      "allPages": [
+        "https://bun.com/docs/bundler/minifier"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Single-file executable",
+      "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/executables",
+      "allPages": [
+        "https://bun.com/docs/bundler/executables"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "Standalone HTML",
+      "type": "concept",
+      "description": "Bundle a single-page app into a single self-contained .html file with no external dependencies",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/bundler/standalone-html",
+      "allPages": [
+        "https://bun.com/docs/bundler/standalone-html"
+      ],
+      "section": "bundler"
+    },
+    {
+      "name": "bun test",
+      "type": "concept",
+      "description": "Built-in test runner (bun:test)",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test",
+      "allPages": [
+        "https://bun.com/docs/test"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "bun:test",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/cli/test",
+      "allPages": [
+        "https://bun.com/docs/cli/test"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "bun:test snapshots",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/snapshots",
+      "allPages": [
+        "https://bun.com/docs/test/snapshots"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Code coverage",
+      "type": "concept",
+      "description": "Use Bun's built-in code coverage reporting to track test coverage and find untested code",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/code-coverage",
+      "allPages": [
+        "https://bun.com/docs/test/code-coverage"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Dates and times",
+      "type": "concept",
+      "description": "Learn how to manipulate time and dates in your Bun tests using setSystemTime and Jest compatibility functions",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/dates-times",
+      "allPages": [
+        "https://bun.com/docs/test/dates-times"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "DOM testing",
+      "type": "concept",
+      "description": "Learn how to test DOM elements and components using Bun with happy-dom and React Testing Library",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/dom",
+      "allPages": [
+        "https://bun.com/docs/test/dom"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Finding tests",
+      "type": "concept",
+      "description": "Learn how Bun's test runner discovers and filters test files in your project",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/discovery",
+      "allPages": [
+        "https://bun.com/docs/test/discovery"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Lifecycle hooks",
+      "type": "concept",
+      "description": "Learn how to use beforeAll, beforeEach, afterEach, and afterAll lifecycle hooks in Bun tests",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/lifecycle",
+      "allPages": [
+        "https://bun.com/docs/test/lifecycle"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Mocks",
+      "type": "concept",
+      "description": "Learn how to create and use mock functions, spies, and module mocks in Bun tests",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/mocks",
+      "allPages": [
+        "https://bun.com/docs/test/mocks"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Runtime behavior",
+      "type": "concept",
+      "description": "Learn about Bun test's runtime integration, environment variables, timeouts, and error handling",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/runtime-behavior",
+      "allPages": [
+        "https://bun.com/docs/test/runtime-behavior"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Snapshots",
+      "type": "concept",
+      "description": "Learn how to use snapshot testing in Bun to save and compare output between test runs",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/snapshots",
+      "allPages": [
+        "https://bun.com/docs/test/snapshots"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Test configuration",
+      "type": "concept",
+      "description": "Configure bun test behavior with bunfig.toml and command-line options",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/configuration",
+      "allPages": [
+        "https://bun.com/docs/test/configuration"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Test Reporters",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/reporters",
+      "allPages": [
+        "https://bun.com/docs/test/reporters"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Test runner",
+      "type": "concept",
+      "description": "Bun's fast, built-in, Jest-compatible test runner with TypeScript support, lifecycle hooks, mocking, and watch mode",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "allPages": [
+        "https://bun.com/docs/test/index"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Writing tests",
+      "type": "concept",
+      "description": "Write tests with Bun's Jest-compatible API, including async tests, timeouts, and test modifiers",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/test/writing-tests",
+      "allPages": [
+        "https://bun.com/docs/test/writing-tests"
+      ],
+      "section": "test"
+    },
+    {
+      "name": "Add a dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add a development dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add-dev",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add-dev"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add a Git dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add-git",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add-git"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add a peer dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add-peer",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add-peer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add a tarball dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add-tarball",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add-tarball"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add a trusted dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/trusted",
+      "allPages": [
+        "https://bun.com/docs/guides/install/trusted"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add an optional dependency",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/add-optional",
+      "allPages": [
+        "https://bun.com/docs/guides/install/add-optional"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Add Sentry to a Bun app",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/sentry",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/sentry"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Append content to a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/append",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/append"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Bail early with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/bail",
+      "allPages": [
+        "https://bun.com/docs/guides/test/bail"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build a frontend using Vite and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/vite",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/vite"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build a publish-subscribe WebSocket server",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/websocket/pubsub",
+      "allPages": [
+        "https://bun.com/docs/guides/websocket/pubsub"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build a React app with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/react",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/react"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build a simple WebSocket server",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/websocket/simple",
+      "allPages": [
+        "https://bun.com/docs/guides/websocket/simple"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with Astro and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/astro",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/astro"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with Next.js and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/nextjs",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/nextjs"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with Nuxt and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/nuxt",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/nuxt"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with Qwik and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/qwik",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/qwik"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with Remix and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/remix",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/remix"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with SolidStart and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/solidstart",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/solidstart"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an app with SvelteKit and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/sveltekit",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/sveltekit"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an HTTP server using Elysia and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/elysia",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/elysia"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an HTTP server using Express and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/express",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/express"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an HTTP server using Hono and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/hono",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/hono"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build an HTTP server using StricJS and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/stric",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/stric"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Build-time constants with --define",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/build-time-constants",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/build-time-constants"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Bun Redis with Upstash",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/upstash",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/upstash"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Bun.fetch",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/fetch",
+      "allPages": [
+        "https://bun.com/docs/guides/http/fetch"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Check if a file exists",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/exists",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/exists"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Check if the current file is the entrypoint",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/entrypoint",
+      "allPages": [
+        "https://bun.com/docs/guides/util/entrypoint"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Check if two objects are deeply equal",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/deep-equals",
+      "allPages": [
+        "https://bun.com/docs/guides/util/deep-equals"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Codesign a single-file JavaScript executable on macOS",
+      "type": "concept",
+      "description": "Fix the \"can't be opened because it is from an unidentified developer\" Gatekeeper warning when running your JavaScript executable.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/codesign-macos-executable",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/codesign-macos-executable"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Common HTTP server usage",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/server",
+      "allPages": [
+        "https://bun.com/docs/guides/http/server"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Compress and decompress data with DEFLATE",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/deflate",
+      "allPages": [
+        "https://bun.com/docs/guides/util/deflate"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Compress and decompress data with gzip",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/gzip",
+      "allPages": [
+        "https://bun.com/docs/guides/util/gzip"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Configure a private registry for an organization scope with bun install",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/registry-scope",
+      "allPages": [
+        "https://bun.com/docs/guides/install/registry-scope"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Configure git to diff Bun's lockb lockfile",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/git-diff-bun-lockfile",
+      "allPages": [
+        "https://bun.com/docs/guides/install/git-diff-bun-lockfile"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Configure TLS on an HTTP server",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/tls",
+      "allPages": [
+        "https://bun.com/docs/guides/http/tls"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Configuring a monorepo using workspaces",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/workspaces",
+      "allPages": [
+        "https://bun.com/docs/guides/install/workspaces"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Containerize a Bun application with Docker",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/docker",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/docker"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Blob to a DataView",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/blob-to-dataview",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/blob-to-dataview"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Blob to a ReadableStream",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/blob-to-stream",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/blob-to-stream"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Blob to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/blob-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/blob-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Blob to a Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/blob-to-typedarray",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/blob-to-typedarray"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Blob to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/blob-to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/blob-to-arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Buffer to a blob",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/buffer-to-blob",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/buffer-to-blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Buffer to a ReadableStream",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/buffer-to-readablestream",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/buffer-to-readablestream"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Buffer to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/buffer-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/buffer-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Buffer to a Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/buffer-to-typedarray",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/buffer-to-typedarray"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Buffer to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/buffer-to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/buffer-to-arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a DataView to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/dataview-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/dataview-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a file URL to an absolute path",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/file-url-to-path",
+      "allPages": [
+        "https://bun.com/docs/guides/util/file-url-to-path"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Node.js Readable to a Blob",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/node-readable-to-blob",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/node-readable-to-blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Node.js Readable to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/node-readable-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/node-readable-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Node.js Readable to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/node-readable-to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/node-readable-to-arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Node.js Readable to an Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/node-readable-to-uint8array",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/node-readable-to-uint8array"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Node.js Readable to JSON",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/node-readable-to-json",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/node-readable-to-json"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to a Blob",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-blob",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to a Buffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-buffer",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-buffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to a Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-typedarray",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-typedarray"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to an array of chunks",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-array",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-array"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a ReadableStream to JSON",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/streams/to-json",
+      "allPages": [
+        "https://bun.com/docs/guides/streams/to-json"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to a Blob",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-blob",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to a Buffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-buffer",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-buffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to a DataView",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-dataview",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-dataview"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to a ReadableStream",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-readablestream",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-readablestream"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert a Uint8Array to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/typedarray-to-arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/typedarray-to-arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an absolute path to a file URL",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/path-to-file-url",
+      "allPages": [
+        "https://bun.com/docs/guides/util/path-to-file-url"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an ArrayBuffer to a Blob",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/arraybuffer-to-blob",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/arraybuffer-to-blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an ArrayBuffer to a Buffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/arraybuffer-to-buffer",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/arraybuffer-to-buffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an ArrayBuffer to a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/arraybuffer-to-string",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/arraybuffer-to-string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an ArrayBuffer to a Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/arraybuffer-to-typedarray",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/arraybuffer-to-typedarray"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Convert an ArrayBuffer to an array of numbers",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/binary/arraybuffer-to-array",
+      "allPages": [
+        "https://bun.com/docs/guides/binary/arraybuffer-to-array"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Copy a file to another location",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/file-cp",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/file-cp"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Create a Discord bot",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/discordjs",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/discordjs"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Debugging Bun with the VS Code extension",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/vscode-debugger",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/vscode-debugger"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Debugging Bun with the web debugger",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/web-debugger",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/web-debugger"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Define and replace static globals & constants",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/define-constant",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/define-constant"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Delete a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/unlink",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/unlink"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Delete directories",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/delete-directory",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/delete-directory"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Delete files",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/delete-file",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/delete-file"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on AWS Lambda",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/aws-lambda",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/aws-lambda"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on DigitalOcean",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/digital-ocean",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/digital-ocean"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on Google Cloud Run",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/google-cloud-run",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/google-cloud-run"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on Railway",
+      "type": "concept",
+      "description": "Deploy a Bun application to Railway from the CLI or dashboard, with optional PostgreSQL setup and automatic SSL",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/railway",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/railway"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on Render",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/render",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/render"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Deploy a Bun application on Vercel",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/deployment/vercel",
+      "allPages": [
+        "https://bun.com/docs/guides/deployment/vercel"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Detect when code is executed with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/detect-bun",
+      "allPages": [
+        "https://bun.com/docs/guides/util/detect-bun"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Enable compression for WebSocket messages",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/websocket/compression",
+      "allPages": [
+        "https://bun.com/docs/guides/websocket/compression"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Encode and decode base64 data",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/base64",
+      "allPages": [
+        "https://bun.com/docs/guides/util/base64"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Escape an HTML string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/escape-html",
+      "allPages": [
+        "https://bun.com/docs/guides/util/escape-html"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Extract links from a webpage using HTMLRewriter",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/html-rewriter/extract-links",
+      "allPages": [
+        "https://bun.com/docs/guides/html-rewriter/extract-links"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Extract social share images and Open Graph tags",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/html-rewriter/extract-social-meta",
+      "allPages": [
+        "https://bun.com/docs/guides/html-rewriter/extract-social-meta"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "fetch with unix domain sockets in Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/fetch-unix",
+      "allPages": [
+        "https://bun.com/docs/guides/http/fetch-unix"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Generate a UUID",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/javascript-uuid",
+      "allPages": [
+        "https://bun.com/docs/guides/util/javascript-uuid"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Generate a yarn-compatible lockfile",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/yarnlock",
+      "allPages": [
+        "https://bun.com/docs/guides/install/yarnlock"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Generate code coverage reports with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/coverage",
+      "allPages": [
+        "https://bun.com/docs/guides/test/coverage"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the absolute path of the current file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/import-meta-path",
+      "allPages": [
+        "https://bun.com/docs/guides/util/import-meta-path"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the absolute path to the current entrypoint",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/main",
+      "allPages": [
+        "https://bun.com/docs/guides/util/main"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the current Bun version",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/version",
+      "allPages": [
+        "https://bun.com/docs/guides/util/version"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the directory of the current file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/import-meta-dir",
+      "allPages": [
+        "https://bun.com/docs/guides/util/import-meta-dir"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the file name of the current file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/import-meta-file",
+      "allPages": [
+        "https://bun.com/docs/guides/util/import-meta-file"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the MIME type of a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/mime",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/mime"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the path to an executable bin file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/which-path-to-executable-bin",
+      "allPages": [
+        "https://bun.com/docs/guides/util/which-path-to-executable-bin"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Get the process uptime in nanoseconds",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/nanoseconds",
+      "allPages": [
+        "https://bun.com/docs/guides/process/nanoseconds"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Guides",
+      "type": "concept",
+      "description": "Code samples and walkthroughs for common tasks with Bun",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/index",
+      "allPages": [
+        "https://bun.com/docs/guides/index"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Hash a password",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/hash-a-password",
+      "allPages": [
+        "https://bun.com/docs/guides/util/hash-a-password"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Hot reload an HTTP server",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/hot",
+      "allPages": [
+        "https://bun.com/docs/guides/http/hot"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Import a HTML file as text",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/import-html",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/import-html"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Import a JSON file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/import-json",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/import-json"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Import a JSON5 file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/import-json5",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/import-json5"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Import a TOML file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/import-toml",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/import-toml"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Import a YAML file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/import-yaml",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/import-yaml"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "import, require, and test Svelte components with bun test",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/svelte-test",
+      "allPages": [
+        "https://bun.com/docs/guides/test/svelte-test"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Inspect memory usage using V8 heap snapshots",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/heap-snapshot",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/heap-snapshot"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Install a package under a different name",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/npm-alias",
+      "allPages": [
+        "https://bun.com/docs/guides/install/npm-alias"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Install and run Bun in GitHub Actions",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/cicd",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/cicd"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Install dependencies with Bun in GitHub Actions",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/cicd",
+      "allPages": [
+        "https://bun.com/docs/guides/install/cicd"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Install TypeScript declarations for Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/typescript",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/typescript"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Listen for CTRL+C",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/ctrl-c",
+      "allPages": [
+        "https://bun.com/docs/guides/process/ctrl-c"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Listen to OS signals",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/os-signals",
+      "allPages": [
+        "https://bun.com/docs/guides/process/os-signals"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Mark a test as a \"todo\" with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/todo-tests",
+      "allPages": [
+        "https://bun.com/docs/guides/test/todo-tests"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Migrate from Jest to Bun's test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/migrate-from-jest",
+      "allPages": [
+        "https://bun.com/docs/guides/test/migrate-from-jest"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Migrate from npm install to bun install",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/from-npm-install-to-bun-install",
+      "allPages": [
+        "https://bun.com/docs/guides/install/from-npm-install-to-bun-install"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Mock functions in `bun test`",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/mock-functions",
+      "allPages": [
+        "https://bun.com/docs/guides/test/mock-functions"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Override the default npm registry for bun install",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/custom-registry",
+      "allPages": [
+        "https://bun.com/docs/guides/install/custom-registry"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Parse command-line arguments",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/argv",
+      "allPages": [
+        "https://bun.com/docs/guides/process/argv"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Proxy HTTP requests using fetch()",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/proxy",
+      "allPages": [
+        "https://bun.com/docs/guides/http/proxy"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Re-map import paths",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/tsconfig-paths",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/tsconfig-paths"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Re-run tests multiple times with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/rerun-each",
+      "allPages": [
+        "https://bun.com/docs/guides/test/rerun-each"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a file as a ReadableStream",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/stream",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/stream"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a file as a string",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/string",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/string"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a file to a Buffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/buffer",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/buffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a file to a Uint8Array",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/uint8array",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/uint8array"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a file to an ArrayBuffer",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/arraybuffer",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/arraybuffer"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read a JSON file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/json",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/json"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read and write data to MongoDB using Mongoose and Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/mongoose",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/mongoose"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read environment variables",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/read-env",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/read-env"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read from stdin",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/stdin",
+      "allPages": [
+        "https://bun.com/docs/guides/process/stdin"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read stderr from a child process",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/spawn-stderr",
+      "allPages": [
+        "https://bun.com/docs/guides/process/spawn-stderr"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Read stdout from a child process",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/spawn-stdout",
+      "allPages": [
+        "https://bun.com/docs/guides/process/spawn-stdout"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Run a Shell Command",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/shell",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/shell"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Run Bun as a daemon with PM2",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/pm2",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/pm2"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Run Bun as a daemon with systemd",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/systemd",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/systemd"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Run tests in watch mode with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/watch-mode",
+      "allPages": [
+        "https://bun.com/docs/guides/test/watch-mode"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Run your tests with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/run-tests",
+      "allPages": [
+        "https://bun.com/docs/guides/test/run-tests"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Selectively run tests concurrently with glob patterns",
+      "type": "concept",
+      "description": "Set a glob pattern to decide which tests from which files run in parallel",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/concurrent-test-glob",
+      "allPages": [
+        "https://bun.com/docs/guides/test/concurrent-test-glob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Send an HTTP request using fetch",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/fetch",
+      "allPages": [
+        "https://bun.com/docs/guides/http/fetch"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Server-Sent Events (SSE) with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/sse",
+      "allPages": [
+        "https://bun.com/docs/guides/http/sse"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Server-side render (SSR) a React component",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/ssr-react",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/ssr-react"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set a code coverage threshold with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/coverage-threshold",
+      "allPages": [
+        "https://bun.com/docs/guides/test/coverage-threshold"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set a per-test timeout with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/timeout",
+      "allPages": [
+        "https://bun.com/docs/guides/test/timeout"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set a time zone in Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/timezone",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/timezone"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set environment variables",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/runtime/set-env",
+      "allPages": [
+        "https://bun.com/docs/guides/runtime/set-env"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set per-socket contextual data on a WebSocket",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/websocket/context",
+      "allPages": [
+        "https://bun.com/docs/guides/websocket/context"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Set the system time in Bun's test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/mock-clock",
+      "allPages": [
+        "https://bun.com/docs/guides/test/mock-clock"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Skip tests with the Bun test runner",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/skip-tests",
+      "allPages": [
+        "https://bun.com/docs/guides/test/skip-tests"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Sleep for a fixed number of milliseconds",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/sleep",
+      "allPages": [
+        "https://bun.com/docs/guides/util/sleep"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Spawn a child process",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/spawn",
+      "allPages": [
+        "https://bun.com/docs/guides/process/spawn"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Spawn a child process and communicate using IPC",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/ipc",
+      "allPages": [
+        "https://bun.com/docs/guides/process/ipc"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "spawn stdout guide",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/process/spawn-stdout",
+      "allPages": [
+        "https://bun.com/docs/guides/process/spawn-stdout"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Spy on methods in `bun test`",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/spy-on",
+      "allPages": [
+        "https://bun.com/docs/guides/test/spy-on"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Start a cluster of HTTP servers",
+      "type": "concept",
+      "description": "Run multiple HTTP servers concurrently with the \"reusePort\" option to share the same port across multiple processes",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/cluster",
+      "allPages": [
+        "https://bun.com/docs/guides/http/cluster"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Stream a file as an HTTP Response",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/stream-file",
+      "allPages": [
+        "https://bun.com/docs/guides/http/stream-file"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Streaming HTTP Server with Async Iterators",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/stream-iterator",
+      "allPages": [
+        "https://bun.com/docs/guides/http/stream-iterator"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Streaming HTTP Server with Node.js Streams",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/stream-node-streams-in-bun",
+      "allPages": [
+        "https://bun.com/docs/guides/http/stream-node-streams-in-bun"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Update snapshots in `bun test`",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/update-snapshots",
+      "allPages": [
+        "https://bun.com/docs/guides/test/update-snapshots"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Upgrade Bun to the latest version",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/util/upgrade",
+      "allPages": [
+        "https://bun.com/docs/guides/util/upgrade"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Upload files via HTTP using FormData",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/file-uploads",
+      "allPages": [
+        "https://bun.com/docs/guides/http/file-uploads"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Drizzle ORM with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/drizzle",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/drizzle"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Gel with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/gel",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/gel"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Neon Postgres through Drizzle ORM",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/neon-drizzle",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/neon-drizzle"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Neon's Serverless Postgres with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/neon-serverless-postgres",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/neon-serverless-postgres"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Prisma Postgres with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/prisma-postgres",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/prisma-postgres"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use Prisma with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/prisma",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/prisma"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use snapshot testing in `bun test`",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/snapshot",
+      "allPages": [
+        "https://bun.com/docs/guides/test/snapshot"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Use TanStack Start with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/ecosystem/tanstack-start",
+      "allPages": [
+        "https://bun.com/docs/guides/ecosystem/tanstack-start"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Using bun install with an Azure Artifacts npm registry",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/azure-artifacts",
+      "allPages": [
+        "https://bun.com/docs/guides/install/azure-artifacts"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Using bun install with Artifactory",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/install/jfrog-artifactory",
+      "allPages": [
+        "https://bun.com/docs/guides/install/jfrog-artifactory"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Using Testing Library with Bun",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/testing-library",
+      "allPages": [
+        "https://bun.com/docs/guides/test/testing-library"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Watch a directory for changes",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/read-file/watch",
+      "allPages": [
+        "https://bun.com/docs/guides/read-file/watch"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a Blob to a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/blob",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/blob"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a file incrementally",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/filesink",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/filesink"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a file to stdout",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/cat",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/cat"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a ReadableStream to a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/stream",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/stream"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a Response to a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/response",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/response"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a simple HTTP server",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/http/simple",
+      "allPages": [
+        "https://bun.com/docs/guides/http/simple"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write a string to a file",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/basic",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/basic"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write browser DOM tests with Bun and happy-dom",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/test/happy-dom",
+      "allPages": [
+        "https://bun.com/docs/guides/test/happy-dom"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": "Write to stdout",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/guides/write-file/stdout",
+      "allPages": [
+        "https://bun.com/docs/guides/write-file/stdout"
+      ],
+      "section": "guides"
+    },
+    {
+      "name": ".npmrc support",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/npmrc",
+      "allPages": [
+        "https://bun.com/docs/pm/npmrc"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun --filter",
+      "type": "concept",
+      "description": "Select packages by pattern in a monorepo using the --filter flag",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun add",
+      "type": "concept",
+      "description": "Add packages to your project with Bun's fast package manager",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/add",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/add"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun audit",
+      "type": "concept",
+      "description": "Check your installed packages for known security vulnerabilities",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/audit",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/audit"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun info",
+      "type": "concept",
+      "description": "Display package metadata from the npm registry",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/info",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/info"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun install",
+      "type": "concept",
+      "description": "Package manager install with hoisted/isolated linkers",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/install",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun link",
+      "type": "concept",
+      "description": "Link local packages for development",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/link",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/link"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun outdated",
+      "type": "concept",
+      "description": "Check for outdated dependencies",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/outdated",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/outdated"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun patch",
+      "type": "concept",
+      "description": "Persistently patch node_modules packages in a git-friendly way",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/patch",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/patch"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun pm",
+      "type": "concept",
+      "description": "Package manager utilities",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/pm",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/pm"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun publish",
+      "type": "concept",
+      "description": "Use `bun publish` to publish a package to the npm registry",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/publish",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun remove",
+      "type": "concept",
+      "description": "Remove dependencies from your project",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/remove",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/remove"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun update",
+      "type": "concept",
+      "description": "Update dependencies to latest versions",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/update",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/update"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bun why",
+      "type": "concept",
+      "description": "Explain why a package is installed",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/cli/why",
+      "allPages": [
+        "https://bun.com/docs/pm/cli/why"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "bunx",
+      "type": "concept",
+      "description": "Run packages from npm",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/bunx",
+      "allPages": [
+        "https://bun.com/docs/pm/bunx"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Catalogs",
+      "type": "concept",
+      "description": "Share common dependency versions across multiple packages in a monorepo",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/catalogs",
+      "allPages": [
+        "https://bun.com/docs/pm/catalogs"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Global cache",
+      "type": "concept",
+      "description": "How Bun stores and manages packages in its global cache",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-cache",
+      "allPages": [
+        "https://bun.com/docs/pm/global-cache"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Global virtual store",
+      "type": "concept",
+      "description": "Install packages once. Every project links to the same copy.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "globalStore",
+      "type": "config",
+      "description": "Shared global virtual store for isolated installs",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/global-store",
+      "allPages": [
+        "https://bun.com/docs/pm/global-store"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Installation",
+      "type": "concept",
+      "description": "Install Bun with npm, Homebrew, Docker, or the official script.",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/installation",
+      "allPages": [
+        "https://bun.com/docs/installation"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Isolated installs",
+      "type": "concept",
+      "description": "Strict dependency isolation similar to pnpm's approach",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/isolated-installs",
+      "allPages": [
+        "https://bun.com/docs/pm/isolated-installs"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Lifecycle scripts",
+      "type": "concept",
+      "description": "How Bun handles package lifecycle scripts securely",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lifecycle",
+      "allPages": [
+        "https://bun.com/docs/pm/lifecycle"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Lockfile",
+      "type": "concept",
+      "description": "Bun's lockfile format and configuration",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/lockfile",
+      "allPages": [
+        "https://bun.com/docs/pm/lockfile"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Overrides and resolutions",
+      "type": "concept",
+      "description": "Control metadependency versions with npm overrides and Yarn resolutions",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/overrides",
+      "allPages": [
+        "https://bun.com/docs/pm/overrides"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Scopes and registries",
+      "type": "concept",
+      "description": "Configure private registries and scoped packages",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/scopes-registries",
+      "allPages": [
+        "https://bun.com/docs/pm/scopes-registries"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Security Scanner API",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/security-scanner-api",
+      "allPages": [
+        "https://bun.com/docs/pm/security-scanner-api"
+      ],
+      "section": "pm"
+    },
+    {
+      "name": "Workspaces",
+      "type": "concept",
+      "description": "Develop complex monorepos with multiple independent packages",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/pm/workspaces",
+      "allPages": [
+        "https://bun.com/docs/pm/workspaces"
+      ],
+      "section": "pm",
+      "aliases": [
+        "workspaces"
+      ]
+    },
+    {
+      "name": "Bun.sliceAnsi",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/reference/bun/sliceAnsi",
+      "allPages": [
+        "https://bun.com/reference/bun/sliceAnsi"
+      ],
+      "section": "reference"
+    },
+    {
+      "name": "BunInspectOptions",
+      "type": "api",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/reference/bun/BunInspectOptions",
+      "allPages": [
+        "https://bun.com/reference/bun/BunInspectOptions"
+      ],
+      "section": "reference"
+    },
+    {
+      "name": "bun-types",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types",
+      "allPages": [
+        "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types"
+      ],
+      "section": "other"
+    },
+    {
+      "name": "CI failures from terminal",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/docs/project/contributing",
+      "anchor": "viewing-ci-failures-from-the-terminal",
+      "allPages": [
+        "https://bun.com/docs/project/contributing"
+      ],
+      "section": "other"
+    },
+    {
+      "name": "snapshot guide",
+      "type": "concept",
+      "stability": "stable",
+      "canonicalPage": "https://bun.com/guides/test/snapshot",
+      "allPages": [
+        "https://bun.com/guides/test/snapshot"
+      ],
+      "section": "other"
+    }
+  ]
+}

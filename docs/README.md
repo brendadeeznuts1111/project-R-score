@@ -44,6 +44,8 @@ bun tools/harness-violations.ts --open=3          # Bun.openInEditor
 bun run install:verify                            # install / tilde cache
 bun run lint:harness                              # eslint harness config
 bun run docs:map:check                            # SSOT path + root MD links
+bun run docs:catalog:build                        # structured Bun doc catalog
+bun tools/bun-doc-refs.ts catalog get Bun.WebView
 ```
 
 **Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,BUN_NATIVE_CAPABILITIES,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
