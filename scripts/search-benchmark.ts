@@ -8,7 +8,6 @@ import { fileExistsSync, readText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 
-
 import { resolve } from 'node:path';
 
 type Profile = {

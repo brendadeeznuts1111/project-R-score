@@ -5,7 +5,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-
 import { resolve } from 'node:path';
 
 type SitemapPage = {

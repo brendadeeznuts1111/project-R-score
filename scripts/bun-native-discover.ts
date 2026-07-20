@@ -23,13 +23,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-peek
  */
 
-import {
-  listFilesSync,
-  readText,
-  resolvePath,
-  writeJson,
-  writeText,
-} from './lib/fs-bun';
+import { listFilesSync, readText, resolvePath, writeJson, writeText } from './lib/fs-bun';
 
 // ── CLI ──────────────────────────────────────────────────────────────
 const argv = Bun.argv.slice(2);
@@ -289,13 +283,7 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
   }
 
   // Clean node:fs named imports — drop symbols we replaced
-  const fsGone = new Set([
-    'existsSync',
-    'readFileSync',
-    'writeFileSync',
-    'readFile',
-    'writeFile',
-  ]);
+  const fsGone = new Set(['existsSync', 'readFileSync', 'writeFileSync', 'readFile', 'writeFile']);
   text = text.replace(
     /^import\s*\{([^}]+)\}\s*from\s*['"]((?:node:)?fs(?:\/promises)?)['"]\s*;?\s*$/gm,
     (full, body: string, mod: string) => {
@@ -324,9 +312,10 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
   }
 
   // Drop empty leftover blank-only import removals handled above
-  const stillNeedsFs = /\b(readdir|readdirSync|mkdir|mkdirSync|stat|statSync|createReadStream|createWriteStream|writeFileSync|writeFile|appendFile|rm|unlink|open|readFile|readFileSync|existsSync)\b/.test(
-    text
-  );
+  const stillNeedsFs =
+    /\b(readdir|readdirSync|mkdir|mkdirSync|stat|statSync|createReadStream|createWriteStream|writeFileSync|writeFile|appendFile|rm|unlink|open|readFile|readFileSync|existsSync)\b/.test(
+      text
+    );
 
   if (!stillNeedsFs) {
     const stripped = text
@@ -343,11 +332,17 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
   if (/\bfileExistsSync\s*\(/.test(text)) needs.add('fileExistsSync');
   if (/\breadTextSync\s*\(/.test(text)) needs.add('readTextSync');
   if (/\breadJsonSync\s*\(/.test(text)) needs.add('readJsonSync');
-  if (/\breadText\s*\(/.test(text) && !/\breadTextSync/.test(text.match(/\breadText\b/g)?.join('') || '')) {
+  if (
+    /\breadText\s*\(/.test(text) &&
+    !/\breadTextSync/.test(text.match(/\breadText\b/g)?.join('') || '')
+  ) {
     // readText used
   }
   if (/\bawait\s+readText\s*\(/.test(text) || /[^a-zA-Z]readText\s*\(/.test(text)) {
-    if (/\breadText\s*\(/.test(text) && !/\breadTextSync\s*\(/.test(text.replace(/readTextSync/g, ''))) {
+    if (
+      /\breadText\s*\(/.test(text) &&
+      !/\breadTextSync\s*\(/.test(text.replace(/readTextSync/g, ''))
+    ) {
       needs.add('readText');
     }
   }
@@ -375,7 +370,10 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
     return re.test(text);
   });
 
-  if (usedNeeds.length > 0 && !/from\s+['"]\.\/lib\/fs-bun['"]|from\s+['"]\.\.\/lib\/fs-bun['"]/.test(text)) {
+  if (
+    usedNeeds.length > 0 &&
+    !/from\s+['"]\.\/lib\/fs-bun['"]|from\s+['"]\.\.\/lib\/fs-bun['"]/.test(text)
+  ) {
     // Relative import from scripts/*
     const depth = fileRel.split('/').length - 1; // scripts/foo.ts → 1
     let imp: string;

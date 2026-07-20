@@ -2,7 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync, readTextSync } from './lib/fs-bun';
 
-
 import { join } from 'node:path';
 import {
   validateTier1CoverageAcrossDemos,

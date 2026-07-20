@@ -4,7 +4,6 @@ import { fileExistsSync, readText } from './fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
 

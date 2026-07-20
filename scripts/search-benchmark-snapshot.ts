@@ -895,13 +895,16 @@ export async function main(): Promise<void> {
 
   const r2 = resolveR2Config(options);
   if (!r2) {
-    await writeText(manifestPath, JSON.stringify(
+    await writeText(
+      manifestPath,
+      JSON.stringify(
         {
           ...baseManifest,
           mode: 'upload-skipped-missing-r2-config',
         },
         null,
-        2)
+        2
+      )
     );
     console.info(`[search-bench:snapshot] wrote ${manifestPath}`);
     console.info('[search-bench:snapshot] R2 config missing; skipped upload');

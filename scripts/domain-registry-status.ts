@@ -216,7 +216,9 @@ async function ensureRegistryFile(registryPath: string, fix: boolean): Promise<D
     return { id: 'registry_file_exists', ok: true, detail: `already available at ${templatePath}` };
   }
   await mkdir(resolve('.search'), { recursive: true });
-  await writeText(path, JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n',
+  await writeText(
+    path,
+    JSON.stringify({ version: '2026.02.08.1', domains: [] }, null, 2) + '\n',
     'utf8'
   );
   return { id: 'registry_file_exists', ok: true, detail: `created ${path}` };

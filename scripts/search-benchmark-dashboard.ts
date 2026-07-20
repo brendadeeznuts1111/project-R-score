@@ -24,7 +24,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
  * @license MIT
  */
 
-
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';

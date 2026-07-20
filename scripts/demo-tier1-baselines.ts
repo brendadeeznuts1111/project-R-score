@@ -2,7 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync } from './lib/fs-bun';
 
-
 import { join } from 'node:path';
 
 export type Tier1Provider = 'bun-blog' | 'bun-release' | 'bun-docs' | 'mdn' | 'linux-kernel';
