@@ -1,8 +1,39 @@
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 // lib/registry/auth.ts — Registry authentication middleware
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { registryHost } from './env';
 import type { RegistryUser, AuthToken } from './registry-types';
+
+function requireJwtSecret(configured?: string): string {
+  if (configured?.trim()) return configured.trim();
+  const env = Bun.env.REGISTRY_JWT_SECRET?.trim();
+  if (env) return env;
+
+  const allowInsecure =
+    Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+    Bun.env.BUN_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'test';
+
+  if (!allowInsecure) {
+    throw new Error(
+      'jwtSecret / REGISTRY_JWT_SECRET is required (or ALLOW_INSECURE_DEFAULTS=1 for local only)'
+    );
+  }
+  return 'default-secret-dev-only';
+}
+
+function hmacSha256Base64Url(key: string, payload: string): string {
+  const hasher = new Bun.CryptoHasher('sha256', key);
+  hasher.update(payload);
+  return Buffer.from(hasher.digest()).toString('base64url');
+}
+
+function b64urlJson(value: unknown): string {
+  return Buffer.from(JSON.stringify(value)).toString('base64url');
+}
 
 export type AuthType = 'none' | 'basic' | 'token' | 'jwt';
 
@@ -145,15 +176,19 @@ export class RegistryAuth {
    */
   private validateJwt(token: string): AuthContext {
     try {
-      // Simple JWT validation (use a proper library like jose in production)
       const [headerB64, payloadB64, signature] = token.split('.');
       if (!headerB64 || !payloadB64 || !signature) {
         return { readonly: true, authenticated: false };
       }
 
-      const payload = JSON.parse(atob(payloadB64));
+      const secret = requireJwtSecret(this.config.jwtSecret);
+      const expected = hmacSha256Base64Url(secret, `${headerB64}.${payloadB64}`);
+      if (signature !== expected) {
+        return { readonly: true, authenticated: false };
+      }
 
-      // Check expiration
+      const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+
       if (payload.exp && payload.exp < Date.now() / 1000) {
         return { readonly: true, authenticated: false };
       }
@@ -256,7 +291,7 @@ export class RegistryAuth {
    * Create JWT token
    */
   createJwt(username: string, readonly: boolean = false): string {
-    const secret = this.config.jwtSecret || 'default-secret-change-in-production';
+    const secret = requireJwtSecret(this.config.jwtSecret);
     const expiry = this.config.tokenExpiry || 86400; // 24 hours
 
     const header = { alg: 'HS256', typ: 'JWT' };
@@ -267,13 +302,12 @@ export class RegistryAuth {
       exp: Math.floor(Date.now() / 1000) + expiry,
     };
 
-    const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, '');
-    const payloadB64 = btoa(JSON.stringify(payload)).replace(/=/g, '');
+    const headerB64 = b64urlJson(header);
+    const payloadB64 = b64urlJson(payload);
+    const signingInput = `${headerB64}.${payloadB64}`;
+    const signatureB64 = hmacSha256Base64Url(secret, signingInput);
 
-    // In production, use proper HMAC-SHA256 signing
-    const signature = btoa(`${headerB64}.${payloadB64}.${secret}`).replace(/=/g, '');
-
-    return `${headerB64}.${payloadB64}.${signature}`;
+    return `${signingInput}.${signatureB64}`;
   }
 }
 

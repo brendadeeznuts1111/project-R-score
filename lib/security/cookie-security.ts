@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * Cookie.parse/from v3.25 - CookieInspector/CSRF Factory-Wager Fusion!
  *
@@ -16,6 +18,24 @@
 
 import { CryptoHasher } from 'bun';
 import { type UserId, tryUserId } from '../types/branded.ts';
+
+function requireCsrfSecret(): string {
+  const key = Bun.env.CSRF_SECRET?.trim();
+  if (key) return key;
+
+  const allowInsecure =
+    Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+    Bun.env.BUN_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'test';
+
+  if (!allowInsecure) {
+    throw new Error(
+      'CSRF_SECRET is required (set env or ALLOW_INSECURE_DEFAULTS=1 for local only)'
+    );
+  }
+  return 'default-csrf-secret-dev-only';
+}
 
 // Type declarations for Bun APIs - augment existing Bun interface
 interface BunServer {
@@ -326,8 +346,9 @@ export class CookieInspector {
 
 // 🛡️ CSRF PROTECTION - Token Management
 export class CSRFProtection {
-  private static readonly CSRF_SECRET =
-    process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';
+  private static get CSRF_SECRET(): string {
+    return requireCsrfSecret();
+  }
 
   /**
    * Generate CSRF token for session

@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
  * SkillOrchestrator - Bridges Kimi Skills with Dynamic Domain APIs
  *
@@ -237,8 +238,8 @@ export class SkillOrchestrator {
 
     const paths = [
       join(process.cwd(), '.agents', 'skills', skillName, 'SKILL.md'),
-      join(process.env.HOME || '~', '.config', 'agents', 'skills', skillName, 'SKILL.md'),
-      join(process.env.HOME || '~', '.kimi', 'skills', skillName, 'SKILL.md'),
+      join(Bun.env.HOME || '~', '.config', 'agents', 'skills', skillName, 'SKILL.md'),
+      join(Bun.env.HOME || '~', '.kimi', 'skills', skillName, 'SKILL.md'),
     ];
 
     for (const path of paths) {
@@ -639,7 +640,7 @@ const DomainPerformanceMonitor = {
       type,
       ...(typeof data === 'object' ? data : { value: data }),
     };
-    if (process.env.NODE_ENV !== 'test') {
+    if (Bun.env.NODE_ENV !== 'test') {
       console.info(`[perf:${type}]`, JSON.stringify(entry));
     }
   },

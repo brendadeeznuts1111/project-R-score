@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 // lib/security/secure-env-wrapper.ts — Secure environment variable management
 
 import {
@@ -82,7 +83,7 @@ class SecureEnvManager {
     schema?: ValidationSchema<T>,
     context?: SecurityContext
   ): T {
-    const rawValue = process.env[name];
+    const rawValue = Bun.env[name];
 
     if (rawValue === undefined) {
       return defaultValue;
@@ -109,7 +110,7 @@ class SecureEnvManager {
    * Check if environment variable exists
    */
   has(name: string): boolean {
-    return process.env[name] !== undefined;
+    return Bun.env[name] !== undefined;
   }
 
   /**
@@ -144,7 +145,7 @@ class SecureEnvManager {
       throw new Error(`Environment variable '${name}' is not registered`);
     }
 
-    const rawValue = process.env[name];
+    const rawValue = Bun.env[name];
 
     if (rawValue === undefined) {
       if (config.required && config.defaultValue === undefined) {
@@ -222,10 +223,10 @@ class SecureEnvManager {
     const required = Array.from(this.schemas.values()).filter(config => config.required).length;
     const sensitive = Array.from(this.schemas.values()).filter(config => config.sensitive).length;
     const configured = Array.from(this.schemas.keys()).filter(
-      name => process.env[name] !== undefined
+      name => Bun.env[name] !== undefined
     ).length;
     const missing = Array.from(this.schemas.entries())
-      .filter(([name, config]) => config.required && process.env[name] === undefined)
+      .filter(([name, config]) => config.required && Bun.env[name] === undefined)
       .map(([name]) => name);
 
     return {

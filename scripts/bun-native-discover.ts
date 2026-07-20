@@ -12,12 +12,13 @@
  *   bun run scripts/bun-native-discover.ts
  *   bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools
  *   bun run scripts/bun-native-discover.ts --json
- *   bun run scripts/bun-native-discover.ts --apply --roots=lib
- *   bun run scripts/bun-native-discover.ts --apply --dry-run --roots=lib
+ *   bun run scripts/bun-native-discover.ts --apply --roots=scripts
+ *   bun run scripts/bun-native-discover.ts --apply --dry-run --roots=scripts
  *
- * --apply only rewrites high-confidence call sites (see SAFE transforms below)
- * for every root passed in --roots=. Complex readdir/stream/crypto/spawn debt
- * is reported, not auto-fixed.
+ * --apply rewrites high-confidence call sites (see SAFE transforms) for
+ * scripts/ only (→ scripts/lib/fs-bun). For lib/packages/tools, report only —
+ * rewrite call sites to Bun.file / Bun.write + // @see from bun-doc-refs.
+ * Complex readdir/stream/crypto/spawn debt is never auto-fixed.
  *
  * @see https://bun.com/docs/runtime/file-io
  * @see https://bun.com/docs/runtime/glob
@@ -513,18 +514,25 @@ for (const root of ROOTS) {
       safeApplyEligible: safeKinds.length > 0,
     };
 
-    // --apply rewrites any listed --roots= (not scripts-only). Outside scripts/,
-    // helpers import from scripts/lib/fs-bun via relative path.
+    // --apply: scripts/ may use scripts/lib/fs-bun helpers.
+    // lib|packages|tools must use Bun.file / Bun.write at the call site
+    // (canonical chain: bun-doc-refs → // @see → Bun.*). Never inject
+    // scripts/lib/fs-bun into non-scripts roots.
     if (APPLY && report.safeApplyEligible) {
-      const { text: next, changes } = applySafeTransforms(text, fileRel);
-      if (changes.length > 0 && next !== text) {
-        report.applied = !DRY;
-        report.applyNote = changes.join(', ');
-        if (!DRY) {
-          await writeText(abs, next);
-        }
+      if (root !== 'scripts') {
+        report.applyNote =
+          'skip-apply: use Bun.file/Bun.write + bun-doc-refs @see (not scripts/lib/fs-bun)';
       } else {
-        report.applyNote = changes.length ? changes.join(', ') : 'no safe rewrite';
+        const { text: next, changes } = applySafeTransforms(text, fileRel);
+        if (changes.length > 0 && next !== text) {
+          report.applied = !DRY;
+          report.applyNote = changes.join(', ');
+          if (!DRY) {
+            await writeText(abs, next);
+          }
+        } else {
+          report.applyNote = changes.length ? changes.join(', ') : 'no safe rewrite';
+        }
       }
     }
 
@@ -583,7 +591,10 @@ if (AS_JSON) {
   }
   console.info('');
   console.info(
-    'Safe apply: bun run scripts/bun-native-discover.ts --apply --roots=lib  (or scripts,packages,tools)'
+    'Safe apply (scripts only): bun run scripts/bun-native-discover.ts --apply --roots=scripts'
+  );
+  console.info(
+    'lib/: use Bun.file/Bun.write + bun tools/bun-doc-refs.ts suggest "Bun.file" — not fs-bun'
   );
   console.info('Docs: https://bun.com/docs/runtime/file-io · scripts/lib/fs-bun.ts');
 }

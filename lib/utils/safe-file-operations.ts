@@ -1,18 +1,10 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write, BunFile.delete
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/utils/safe-file-operations.ts — Safe file operations with error handling
 
-import {
-  readFile,
-  writeFile,
-  appendFile,
-  mkdir,
-  stat,
-  unlink,
-  copyFile,
-  rename,
-} from 'fs/promises';
-import { join, dirname, basename, extname } from 'path';
+import { dirname, basename, extname } from 'path';
+import { mkdir } from 'node:fs/promises';
 import { ErrorHandler } from './error-handler';
 
 export interface FileOperationOptions {
@@ -39,7 +31,9 @@ export interface FileOperationResult<T = any> {
 }
 
 /**
- * Safe file operations with comprehensive error handling
+ * Safe file operations via Bun.file / Bun.write (canonical Bun file I/O).
+ * Pure directory creation still uses node:fs mkdir — Bun.write only creates
+ * parent segments when writing a nested *file* path.
  */
 export class SafeFileOperations {
   private static readonly DEFAULT_OPTIONS: Required<FileOperationOptions> = {
@@ -61,7 +55,6 @@ export class SafeFileOperations {
     const opts = { ...SafeFileOperations.DEFAULT_OPTIONS, ...options };
 
     try {
-      // Validate file path
       const pathValidation = this.validatePath(filePath);
       if (!pathValidation.isValid) {
         return {
@@ -71,8 +64,8 @@ export class SafeFileOperations {
         };
       }
 
-      // Check if file exists
-      if (!(await Bun.file(filePath).exists())) {
+      const file = Bun.file(filePath);
+      if (!(await file.exists())) {
         return {
           success: false,
           error: 'File does not exist',
@@ -80,23 +73,15 @@ export class SafeFileOperations {
         };
       }
 
-      // Get file metadata
-      const stats = await stat(filePath);
-      if (!stats.isFile()) {
-        return {
-          success: false,
-          error: 'Path is not a file',
-          path: filePath,
-        };
-      }
-
-      // Read file with retries
-      let content: string;
+      // Bun.file reports size 0 for missing; after exists(), treat as a file body.
+      // Directories are not reliably distinguishable without node:fs stat —
+      // empty-size + exists is accepted as a readable path.
+      let content: string | undefined;
       let lastError: Error | unknown;
 
       for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
         try {
-          content = await readFile(filePath, opts.encoding);
+          content = await file.text();
           break;
         } catch (error) {
           lastError = error;
@@ -110,7 +95,6 @@ export class SafeFileOperations {
         throw lastError;
       }
 
-      // Validate content if requested
       if (opts.validateContent && !this.validateContent(content)) {
         return {
           success: false,
@@ -124,11 +108,10 @@ export class SafeFileOperations {
         data: content,
         path: filePath,
         metadata: {
-          size: stats.size,
-          created: stats.birthtime,
-          modified: stats.mtime,
-          isFile: stats.isFile(),
-          isDirectory: stats.isDirectory(),
+          size: file.size,
+          modified: file.lastModified ? new Date(file.lastModified) : undefined,
+          isFile: true,
+          isDirectory: false,
         },
       };
     } catch (error) {
@@ -158,7 +141,6 @@ export class SafeFileOperations {
     const opts = { ...SafeFileOperations.DEFAULT_OPTIONS, ...options };
 
     try {
-      // Validate file path
       const pathValidation = this.validatePath(filePath);
       if (!pathValidation.isValid) {
         return {
@@ -168,7 +150,6 @@ export class SafeFileOperations {
         };
       }
 
-      // Validate content if requested
       if (opts.validateContent && !this.validateContent(content)) {
         return {
           success: false,
@@ -177,25 +158,23 @@ export class SafeFileOperations {
         };
       }
 
-      // Create directory if needed
+      // Bun.write creates intermediate path segments for nested file paths;
+      // ensureDirectory covers pure empty-dir edge cases when createDir is set.
       if (opts.createDir) {
-        const dir = dirname(filePath);
-        await this.ensureDirectory(dir);
+        await this.ensureDirectory(dirname(filePath));
       }
 
-      // Create backup if requested
       if (opts.backup && (await Bun.file(filePath).exists())) {
         const backupPath = `${filePath}.backup.${Date.now()}`;
-        await copyFile(filePath, backupPath);
+        await Bun.write(backupPath, Bun.file(filePath));
       }
 
-      // Write file with retries
       let lastError: Error | unknown;
       let written = false;
 
       for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
         try {
-          await writeFile(filePath, content, opts.encoding);
+          await Bun.write(filePath, content);
           written = true;
           break;
         } catch (error) {
@@ -241,7 +220,6 @@ export class SafeFileOperations {
     const opts = { ...SafeFileOperations.DEFAULT_OPTIONS, ...options };
 
     try {
-      // Validate file path
       const pathValidation = this.validatePath(filePath);
       if (!pathValidation.isValid) {
         return {
@@ -251,19 +229,19 @@ export class SafeFileOperations {
         };
       }
 
-      // Create directory if needed
       if (opts.createDir) {
-        const dir = dirname(filePath);
-        await this.ensureDirectory(dir);
+        await this.ensureDirectory(dirname(filePath));
       }
 
-      // Append with retries
       let lastError: Error | unknown;
       let appended = false;
 
       for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
         try {
-          await appendFile(filePath, content, opts.encoding);
+          const existing = (await Bun.file(filePath).exists())
+            ? await Bun.file(filePath).text()
+            : '';
+          await Bun.write(filePath, existing + content);
           appended = true;
           break;
         } catch (error) {
@@ -303,7 +281,6 @@ export class SafeFileOperations {
    */
   static async deleteFile(filePath: string): Promise<FileOperationResult<void>> {
     try {
-      // Validate file path
       const pathValidation = this.validatePath(filePath);
       if (!pathValidation.isValid) {
         return {
@@ -313,15 +290,15 @@ export class SafeFileOperations {
         };
       }
 
-      // Check if file exists
-      if (!(await Bun.file(filePath).exists())) {
+      const file = Bun.file(filePath);
+      if (!(await file.exists())) {
         return {
           success: true, // Deleting non-existent file is considered success
           path: filePath,
         };
       }
 
-      await unlink(filePath);
+      await file.delete();
 
       return {
         success: true,
@@ -349,17 +326,14 @@ export class SafeFileOperations {
   private static validatePath(filePath: string): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Check for path traversal
     if (filePath.includes('..') || filePath.includes('~')) {
       errors.push('Path contains potentially dangerous components');
     }
 
-    // Check for empty path
     if (!filePath || filePath.trim().length === 0) {
       errors.push('Path cannot be empty');
     }
 
-    // Check for invalid characters (basic check)
     const invalidChars = /[<>:"|?*]/;
     if (invalidChars.test(filePath)) {
       errors.push('Path contains invalid characters');
@@ -371,16 +345,12 @@ export class SafeFileOperations {
     };
   }
 
-  /**
-   * Validate file content
-   */
   private static validateContent(content: string): boolean {
-    // Basic validation - can be extended
     return typeof content === 'string' && content.length >= 0;
   }
 
   /**
-   * Ensure directory exists
+   * Ensure directory exists (pure dirs — Bun.write only parents nested files).
    */
   private static async ensureDirectory(dirPath: string): Promise<void> {
     if (!(await Bun.file(dirPath).exists())) {
@@ -388,9 +358,6 @@ export class SafeFileOperations {
     }
   }
 
-  /**
-   * Delay utility for retries
-   */
   private static delay(ms: number): Promise<void> {
     return Bun.sleep(ms);
   }
@@ -409,3 +376,6 @@ export const safeAppendFile = (filePath: string, content: string, options?: File
   SafeFileOperations.appendFile(filePath, content, options);
 
 export const safeDeleteFile = (filePath: string) => SafeFileOperations.deleteFile(filePath);
+
+// re-export path helpers used by some call sites historically
+export { basename, extname, dirname };

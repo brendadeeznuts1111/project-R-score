@@ -1,9 +1,22 @@
 // lib/security/master-token.ts — Master token management system
 // @see https://bun.com/docs/guides/process/argv — Bun.argv (CLI interface)
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 
-import { createHmac, createHash, randomBytes } from 'node:crypto';
 import { r2MCPIntegration } from '../mcp/r2-integration-fixed.ts';
 import { type TokenId, asTokenId } from '../types/branded.ts';
+
+function randomHex(bytes: number): string {
+  const buf = new Uint8Array(bytes);
+  crypto.getRandomValues(buf);
+  return Buffer.from(buf).toString('hex');
+}
+
+function hmacSha256Hex(key: string, payload: string): string {
+  const hasher = new Bun.CryptoHasher('sha256', key);
+  hasher.update(payload);
+  return hasher.digest('hex');
+}
 
 export interface MasterTokenConfig {
   tokenId: TokenId;
@@ -267,16 +280,16 @@ export class MasterTokenManager {
   // Private methods
 
   private generateTokenId(): TokenId {
-    return asTokenId(`mt_${Date.now()}_${randomBytes(8).toString('hex')}`);
+    return asTokenId(`mt_${Date.now()}_${randomHex(8)}`);
   }
 
   private generateSecret(): string {
-    return randomBytes(32).toString('hex');
+    return randomHex(32);
   }
 
   private encodeToken(tokenId: string, secret: string): string {
     const payload = `${tokenId}:${secret}:${Date.now()}`;
-    const signature = createHmac('sha256', this.getHmacKey()).update(payload).digest('hex');
+    const signature = hmacSha256Hex(this.getHmacKey(), payload);
     return Buffer.from(`${payload}.${signature}`).toString('base64');
   }
 
@@ -291,10 +304,7 @@ export class MasterTokenManager {
         return null;
       }
 
-      // Verify signature
-      const expectedSignature = createHmac('sha256', this.getHmacKey())
-        .update(payload)
-        .digest('hex');
+      const expectedSignature = hmacSha256Hex(this.getHmacKey(), payload);
       if (signature !== expectedSignature) {
         return null;
       }
@@ -317,8 +327,23 @@ export class MasterTokenManager {
   }
 
   private getHmacKey(): string {
-    // Use environment variable or generate a persistent key
-    return process.env.MASTER_TOKEN_HMAC_KEY || 'factorywager-mcp-default-key-change-in-production';
+    const key = Bun.env.MASTER_TOKEN_HMAC_KEY?.trim();
+    if (key) return key;
+
+    const allowInsecure =
+      Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+      Bun.env.BUN_ENV === 'development' ||
+      Bun.env.NODE_ENV === 'development' ||
+      Bun.env.NODE_ENV === 'test';
+
+    if (!allowInsecure) {
+      throw new Error(
+        'MASTER_TOKEN_HMAC_KEY is required (set env or ALLOW_INSECURE_DEFAULTS=1 for local only)'
+      );
+    }
+
+    // Dev/test only — never use in production
+    return 'factorywager-mcp-dev-only-key';
   }
 
   private async logAudit(
