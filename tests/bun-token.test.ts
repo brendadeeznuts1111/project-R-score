@@ -58,19 +58,19 @@ describe('buildVersionEvents', () => {
       introduced: '1.0.0',
       changed: '1.1.0',
       changeNote: 'API tweak',
-      evidenceUrl: 'https://bun.com/blog/bun-v1.0.0',
+      evidenceUrl: 'https://bun.com/blog/bun-v1.0',
     });
     expect(events).toEqual([
       {
         version: '1.0.0',
         type: 'since',
-        evidenceUrl: 'https://bun.com/blog/bun-v1.0.0',
+        evidenceUrl: 'https://bun.com/blog/bun-v1.0',
       },
       {
         version: '1.1.0',
         type: 'changed',
         note: 'API tweak',
-        evidenceUrl: 'https://bun.com/blog/bun-v1.0.0',
+        evidenceUrl: 'https://bun.com/blog/bun-v1.0',
       },
     ]);
   });

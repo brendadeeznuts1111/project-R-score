@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
-// @see https://bun.com/docs/runtime/http/fetch — fetch
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 /**
  * bun-docs-page-notes.ts — Phase 1 NOTE helpers: extract descriptions from doc HTML.
  *

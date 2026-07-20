@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
-// @see https://bun.com/docs/runtime/http/fetch — fetch
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 /**
  * bun-docs-release-scrape.ts — Phase 2b: release blog posts → SHIP/FIX/CHG overlay.
  *

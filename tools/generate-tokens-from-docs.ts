@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
-// @see https://bun.com/docs/runtime/http/fetch — fetch
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 /**
  * generate-tokens-from-docs.ts — token **supplement** for the catalog (not the SSOT).
  *
@@ -535,7 +535,7 @@ async function main(): Promise<void> {
   const { sections, version, releaseUrl, commitHash, versionPinned } = args;
   // Resolve the best blog URL with patch → minor → major fallback.
   const blogUrl = (await resolveBlogUrl(version)) ?? '';
-  // @see https://bun.com/docs/runtime/http/fetch
+  // @see https://bun.com/docs/runtime/nodejs-compat#fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
   for (const line of llms.split('\n')) {
@@ -559,7 +559,7 @@ async function main(): Promise<void> {
   );
   const pageResults = await withConcurrency(pages, 8, async ({ title, url }) => {
     try {
-      // @see https://bun.com/docs/runtime/http/fetch
+      // @see https://bun.com/docs/runtime/nodejs-compat#fetch
       const markdown = await fetch(url).then(r => r.text());
       const entries = parsePage(markdown, title, url);
       console.info(`  ${title}: ${entries.length} raw entries`);

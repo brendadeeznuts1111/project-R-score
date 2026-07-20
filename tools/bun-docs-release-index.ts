@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
-// @see https://bun.com/docs/runtime/http/fetch — fetch
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 /**
  * bun-docs-release-index.ts — Phase 0: RSS → version → blog URL map.
  *

@@ -122,7 +122,7 @@ async function main(): Promise<void> {
   // Pin runtime version at ingest time (integrity/status dashboards consume this)
   let upstreamBunVersion: string | null = null;
   try {
-    const pkg = (await (await fetch('https://bun.com/package.json')).json()) as {
+    const pkg = (await (await fetch('https://raw.githubusercontent.com/oven-sh/bun/main/package.json')).json()) as {
       version?: string;
     };
     upstreamBunVersion = pkg.version ?? null;

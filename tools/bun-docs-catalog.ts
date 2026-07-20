@@ -15,7 +15,7 @@
  *   lastUpdated? (ISO date docs/index last refreshed for this entry),
  *   verifiedOn? (catalog pin Bun version at build),
  *   releaseUrl? (GitHub release for releasedIn or verifiedOn),
- *   blogUrl? (RSS-validated https://bun.com/blog/bun-vX.Y.Z — narrative release notes),
+ *   blogUrl? (RSS-validated bun.com/blog/bun-vX.Y.Z — narrative release notes),
  *   docsUrl? (unversioned bun.com page + optional #anchor),
  *   canonicalPage, anchor?, allPages
  *
@@ -34,7 +34,7 @@
  * Lookup:  bun tools/bun-docs-catalog.ts get Bun.WebView
  * Verify:  bun tools/bun-docs-catalog.ts verify   # catalog bunVersion vs runtime
  *
- * List header: # catalog bunVersion=…  # release …  # blog https://bun.com/blog/bun-v…
+ * List header: # catalog bunVersion=…  # release …  # blog bun.com/blog/bun-v…
  * Default columns: NAME · SEC · TYPE · STAB · SHIP · FIX · PIN · DOC
  * Wide (+): CHG · UPDATED · REL (tag) · BLOG (short) · NOTE (with --notes)
  *

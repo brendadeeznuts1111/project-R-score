@@ -33,7 +33,7 @@ const assets = githubRelease.assets; // Download URLs, sizes, platforms
 ```
 
 ### **3. Blog Posts** 🥉 **(Feature Extraction)**
-**URL**: `https://bun.com/blog/bun-v{version}`
+**URL**: `bun.com/blog/bun-v{version}`
 **Why Third**: 📚 **Detailed** - Code examples and performance metrics
 **Check Frequency**: Every 20 minutes
 **Success Rate**: ✅ High - Official blog with detailed content

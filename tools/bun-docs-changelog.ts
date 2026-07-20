@@ -9,7 +9,7 @@
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
-// @see https://bun.com/docs/runtime/network/fetch — fetch
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 // @see https://bun.com/docs/runtime/file-io — fs.watch
 // @see https://bun.com/docs/runtime/bunfig — noOrphans / --no-orphans
 // @see https://bun.com/docs/runtime/node-api — process.execve
@@ -47,7 +47,7 @@ export type ChangelogEvent = {
   note: string;
   /** Optional git SHA (full or short) when known from release notes / PR */
   commit?: string;
-  /** Optional fragment on https://bun.com/blog/bun-v{version} */
+  /** Optional fragment on bun.com/blog/bun-v{version} */
   blogAnchor?: string;
   /** Alternate names that should receive the same stamp */
   aliases?: string[];

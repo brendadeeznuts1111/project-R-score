@@ -49,7 +49,7 @@ describe('bun-docs-catalog helpers', () => {
 
   test('scoreCanonicalPage prefers /reference/ over /guides/', () => {
     const ref = scoreCanonicalPage('https://bun.com/reference/bun/sliceAnsi', 'Bun.sliceAnsi');
-    const guide = scoreCanonicalPage('https://bun.com/docs/guides/util/slice-ansi', 'Bun.sliceAnsi');
+    const guide = scoreCanonicalPage('https://bun.com/docs/guides/http/fetch', 'Bun.sliceAnsi');
     const runtime = scoreCanonicalPage('https://bun.com/docs/runtime/utils', 'Bun.sliceAnsi');
     expect(ref).toBeGreaterThan(guide);
     expect(ref).toBeGreaterThan(runtime);
@@ -58,7 +58,7 @@ describe('bun-docs-catalog helpers', () => {
   test('pickCanonicalPage chooses reference first', () => {
     const picked = pickCanonicalPage(
       [
-        'https://bun.com/docs/guides/util/foo',
+        'https://bun.com/docs/guides/http/fetch',
         'https://bun.com/docs/runtime/utils',
         'https://bun.com/reference/bun/sliceAnsi',
       ],
@@ -97,11 +97,11 @@ describe('bun-docs-catalog helpers', () => {
     expect(releaseUrlFor('1.3.14')).toBe(
       'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14'
     );
-    expect(releaseUrlFor('v1.4.0')).toBe(
-      'https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0'
+    expect(releaseUrlFor('v1.3.14')).toBe(
+      'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14'
     );
-    expect(releaseUrlFor('bun-v1.4.0')).toBe(
-      'https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0'
+    expect(releaseUrlFor('bun-v1.3.14')).toBe(
+      'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14'
     );
   });
 
@@ -234,8 +234,8 @@ describe('catalog list table cells', () => {
       fixedIn: undefined,
       changedIn: '1.3.14',
       verifiedOn: '1.4.0',
-      canonicalPage: 'https://bun.com/docs/runtime/terminal',
-      allPages: ['https://bun.com/docs/runtime/terminal'],
+      canonicalPage: 'https://bun.com/docs/runtime/child-process',
+      allPages: ['https://bun.com/docs/runtime/child-process'],
       section: 'runtime',
       releaseUrl: 'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.5',
       blogUrl: 'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
@@ -264,8 +264,8 @@ describe('catalog list table cells', () => {
       stability: 'stable',
       releasedIn: '1.3.5',
       verifiedOn: '1.4.0',
-      canonicalPage: 'https://bun.com/docs/runtime/terminal',
-      allPages: ['https://bun.com/docs/runtime/terminal'],
+      canonicalPage: 'https://bun.com/docs/runtime/child-process',
+      allPages: ['https://bun.com/docs/runtime/child-process'],
       section: 'runtime',
     };
     const lines = formatListTable([e], { bunVersion: '1.4.0' }, buildListColumns({}));

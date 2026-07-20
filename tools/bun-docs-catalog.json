@@ -1,7 +1,7 @@
 {
   "generated": "2026-07-20T17:36:10.763Z",
   "bunVersion": "1.4.0",
-  "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+  "releaseUrl": "https://github.com/oven-sh/bun/releases",
   "blogUrl": "",
   "commitHash": "a227ad991b62",
   "docsRoot": "https://bun.com/docs",
@@ -203,7 +203,7 @@
         "bun:ffi"
       ],
       "docsUrl": "https://bun.com/docs/runtime/ffi#rust",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--cron-period",
@@ -245,7 +245,7 @@
         "Bun.cron.parse"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cron#linux",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--cron-title",
@@ -287,7 +287,7 @@
         "Bun.cron.parse"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cron#linux",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--db-preconnect",
@@ -311,7 +311,7 @@
         "Bun.sql"
       ],
       "docsUrl": "https://bun.com/docs/runtime/sql#roadmap",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-background-networking",
@@ -343,7 +343,7 @@
         "--disable-ipc-flooding-protection"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-background-timer-throttling",
@@ -375,7 +375,7 @@
         "--disable-ipc-flooding-protection"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-backgrounding-occluded-windows",
@@ -407,7 +407,7 @@
         "--disable-ipc-flooding-protection"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-extensions",
@@ -439,7 +439,7 @@
         "--disable-ipc-flooding-protection"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-gpu",
@@ -471,7 +471,7 @@
         "--disable-ipc-flooding-protection"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-ipc-flooding-protection",
@@ -503,7 +503,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--disable-renderer-backgrounding",
@@ -535,7 +535,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--env-file",
@@ -595,7 +595,7 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--force",
@@ -666,7 +666,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--hot",
@@ -782,7 +782,7 @@
         "--inspect-brk"
       ],
       "docsUrl": "https://bun.com/docs/runtime/debugger#inspect-wait",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--no-clear-screen",
@@ -855,7 +855,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--no-env-file",
@@ -926,7 +926,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--no-install",
@@ -1017,7 +1017,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--only-missing",
@@ -1039,7 +1039,7 @@
         "BUN_CREATE_DIR"
       ],
       "docsUrl": "https://bun.com/docs/runtime/templating/create#how-this-works",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--outdir",
@@ -1191,7 +1191,7 @@
         "--no-clear-screen"
       ],
       "docsUrl": "https://bun.com/docs/runtime/watch-mode#watch-mode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--print",
@@ -1320,7 +1320,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#how-the-chrome-backend-works",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--rerun-each",
@@ -1469,7 +1469,7 @@
         "Bun.cron.parse"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cron#linux",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--smol",
@@ -1585,7 +1585,7 @@
         "Bun.fetch"
       ],
       "docsUrl": "https://bun.com/docs/runtime/nodejs-compat",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--test-only",
@@ -1608,7 +1608,7 @@
         "--todo"
       ],
       "docsUrl": "https://bun.com/docs/test/writing-tests#test-only",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--user-data-dir",
@@ -1640,7 +1640,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#launch-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--watch",
@@ -1685,7 +1685,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/environment-variables#setting-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Archive",
@@ -1700,7 +1700,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/archive",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Auto-install",
@@ -1715,7 +1715,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/auto-install",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Binary Data",
@@ -1730,7 +1730,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/binary-data",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun APIs",
@@ -1745,7 +1745,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun create",
@@ -1760,7 +1760,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/templating/create",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun init",
@@ -1775,7 +1775,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/templating/init",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun Runtime",
@@ -1790,7 +1790,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/index",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_AGENT_RULE_DISABLED",
@@ -1851,7 +1851,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#finding-the-chrome-executable",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
@@ -1882,7 +1882,7 @@
         "Bun.dns.prefetch"
       ],
       "docsUrl": "https://bun.com/docs/runtime/networking/dns#configuring-dns-cache-ttl",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_MAX_HTTP_REQUESTS",
@@ -1908,7 +1908,7 @@
         "BUN_CONFIG_VERBOSE_FETCH"
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables#configuring-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD",
@@ -1999,7 +1999,7 @@
         "--only-missing"
       ],
       "docsUrl": "https://bun.com/docs/runtime/templating/create#from-a-local-template",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_FEATURE_FLAG_NO_ORPHANS",
@@ -2030,7 +2030,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_INSTALL_BIN",
@@ -2062,7 +2062,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_INSTALL_GLOBAL_DIR",
@@ -2094,7 +2094,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globaldir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_LOADER_JSX",
@@ -2192,7 +2192,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#serve-port",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
@@ -2403,7 +2403,7 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/shell#getting-started",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.allocUnsafe",
@@ -2434,7 +2434,7 @@
         "Bun.mmap"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.Archive",
@@ -2480,7 +2480,7 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.build",
@@ -2575,7 +2575,7 @@
         "Bun.mmap"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.connect",
@@ -2726,7 +2726,7 @@
         "Bun.cron"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cron#bun-cron-parse",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.cron.remove",
@@ -2758,7 +2758,7 @@
         "Bun.cron"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cron#bun-cron-remove",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.CryptoHasher",
@@ -2955,7 +2955,7 @@
         "Bun.mmap"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.deflateSync",
@@ -2988,7 +2988,7 @@
         "Bun.generateHeapSnapshot"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-deflatesync",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.dns",
@@ -3045,7 +3045,7 @@
         "Bun.dns.prefetch"
       ],
       "docsUrl": "https://bun.com/docs/runtime/networking/dns#dns-getcachestats",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.dns.lookup",
@@ -3077,7 +3077,7 @@
         "Bun.dns.prefetch"
       ],
       "docsUrl": "https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.dns.prefetch",
@@ -3109,7 +3109,7 @@
         "Bun.dns.lookup"
       ],
       "docsUrl": "https://bun.com/docs/runtime/networking/dns#dns-prefetch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.env",
@@ -3213,7 +3213,7 @@
         "bun:jsc"
       ],
       "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#fetch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.file",
@@ -3378,7 +3378,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.Glob",
@@ -3441,7 +3441,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.gzipSync",
@@ -3474,7 +3474,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-gzipsync",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.hash",
@@ -3583,7 +3583,7 @@
         "Bun.mmap"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.inflateSync",
@@ -3616,7 +3616,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-inflatesync",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.inspect",
@@ -3938,7 +3938,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-main",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.markdown",
@@ -4110,7 +4110,7 @@
         "Bun.indexOfLine"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bun-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.nanoseconds",
@@ -4143,7 +4143,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.openInEditor",
@@ -4185,7 +4185,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-openineditor",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.password",
@@ -4390,7 +4390,7 @@
         "Bun.sql"
       ],
       "docsUrl": "https://bun.com/docs/runtime/sql#frequently-asked-questions",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.randomUUIDv7",
@@ -4458,7 +4458,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.readableStreamToArray",
@@ -4492,7 +4492,7 @@
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.readableStreamToBlob",
@@ -4526,7 +4526,7 @@
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.readableStreamToBytes",
@@ -4560,7 +4560,7 @@
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.readableStreamToFormData",
@@ -4594,7 +4594,7 @@
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.readableStreamToJSON",
@@ -4628,7 +4628,7 @@
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.redis",
@@ -4691,7 +4691,7 @@
         "RedisClient"
       ],
       "docsUrl": "https://bun.com/docs/runtime/redis#getting-started",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.resolveSync",
@@ -4829,7 +4829,7 @@
         "Bun.Image"
       ],
       "docsUrl": "https://bun.com/docs/runtime/image#input",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.S3Client",
@@ -4911,7 +4911,7 @@
         "Bun.secrets.set"
       ],
       "docsUrl": "https://bun.com/docs/runtime/secrets#bun-secrets-delete-options",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.secrets.get",
@@ -4934,7 +4934,7 @@
         "Bun.secrets.set"
       ],
       "docsUrl": "https://bun.com/docs/runtime/secrets#bun-secrets-get-options",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.secrets.set",
@@ -4957,7 +4957,7 @@
         "Bun.secrets.get"
       ],
       "docsUrl": "https://bun.com/docs/runtime/secrets#bun-secrets-set-options",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.semver",
@@ -5004,7 +5004,7 @@
         "Bun.semver.satisfies"
       ],
       "docsUrl": "https://bun.com/docs/runtime/semver#bun-semver-order-versiona-string-versionb-string-0-1-1",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.semver.satisfies",
@@ -5026,7 +5026,7 @@
         "Bun.semver.order"
       ],
       "docsUrl": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.serve",
@@ -5101,7 +5101,7 @@
         "Bun.password.hash"
       ],
       "docsUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.sleep",
@@ -5521,7 +5521,7 @@
         "Bun.Terminal"
       ],
       "docsUrl": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.Terminal",
@@ -5535,7 +5535,6 @@
       "anchor": "terminal-pty-support",
       "allPages": [
         "https://bun.com/docs/runtime/child-process",
-        "https://bun.com/docs/runtime/terminal",
         "https://bun.com/docs/runtime"
       ],
       "section": "runtime",
@@ -5573,7 +5572,7 @@
         "Bun.TOML.stringify"
       ],
       "docsUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.TOML.parse",
@@ -5634,7 +5633,7 @@
         "Bun.TOML.parse"
       ],
       "docsUrl": "https://bun.com/docs/runtime/toml#bun-toml-stringify",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.Transpiler",
@@ -5700,7 +5699,7 @@
         "Bun.Transpiler"
       ],
       "docsUrl": "https://bun.com/docs/runtime/transpiler#transform",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.udpSocket",
@@ -6023,7 +6022,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.zstdDecompress",
@@ -6108,7 +6107,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "C Compiler",
@@ -6123,7 +6122,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/c-compiler",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Color",
@@ -6138,7 +6137,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/color",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "configuring Bun",
@@ -6162,7 +6161,7 @@
         "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD"
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables#configuring-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Console",
@@ -6180,7 +6179,7 @@
         "console"
       ],
       "docsUrl": "https://bun.com/docs/runtime/console",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "console.depth",
@@ -6212,7 +6211,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#console-depth",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "CookieMap",
@@ -6233,7 +6232,7 @@
         "Bun.CookieMap"
       ],
       "docsUrl": "https://bun.com/docs/runtime/cookies#cookiemap-class",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Cookies",
@@ -6249,7 +6248,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/cookies",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Cron",
@@ -6264,7 +6263,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/cron",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "CSRF Protection",
@@ -6279,7 +6278,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/csrf",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Debugging",
@@ -6294,7 +6293,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/debugger",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "DNS",
@@ -6313,7 +6312,7 @@
         "dns"
       ],
       "docsUrl": "https://bun.com/docs/runtime/networking/dns#dns-prefetch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "DO_NOT_TRACK",
@@ -6337,7 +6336,7 @@
         "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD"
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables#configuring-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "editor",
@@ -6379,7 +6378,7 @@
         "Bun.fileURLToPath"
       ],
       "docsUrl": "https://bun.com/docs/runtime/utils#bun-openineditor",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "env",
@@ -6408,7 +6407,7 @@
         }
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables#env",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "env.file",
@@ -6445,7 +6444,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#env",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Environment Variables",
@@ -6460,7 +6459,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Error Handling",
@@ -6475,7 +6474,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/error-handling",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "feature",
@@ -6503,11 +6502,9 @@
       "releasedIn": "1.3.14",
       "lastUpdated": "2026-07-20T16:44:45.092Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/networking/fetch",
+      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat#fetch",
       "allPages": [
-        "https://bun.com/docs/runtime/networking/fetch",
-        "https://bun.com/docs/runtime/network/fetch",
-        "https://bun.com/docs/runtime/http/server"
+        "https://bun.com/docs/runtime/nodejs-compat#fetch"
       ],
       "section": "runtime",
       "aliases": [
@@ -6515,7 +6512,7 @@
       ],
       "changeNote": "HTTP/2 and HTTP/3 options on fetch() client",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
-      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#fetch",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
@@ -6534,7 +6531,7 @@
         "ffi"
       ],
       "docsUrl": "https://bun.com/docs/runtime/ffi",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "File I/O",
@@ -6549,7 +6546,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/file-io",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "File System Router",
@@ -6564,7 +6561,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/file-system-router",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "File Types",
@@ -6579,7 +6576,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/file-types",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "FORCE_COLOR",
@@ -6602,7 +6599,7 @@
         "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD"
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "fs.watch",
@@ -6635,7 +6632,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/glob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Globals",
@@ -6650,7 +6647,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/globals",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Hashing",
@@ -6665,7 +6662,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/hashing",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "HTMLRewriter",
@@ -6682,7 +6679,7 @@
       "locusUnresolved": false,
       "locusStatus": "page",
       "docsUrl": "https://bun.com/docs/runtime/html-rewriter",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "http3",
@@ -6716,7 +6713,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/image",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.auto",
@@ -6748,7 +6745,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-auto",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.ca",
@@ -6780,7 +6777,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.cache.disableManifest",
@@ -6812,7 +6809,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-cache",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.cafile",
@@ -6844,7 +6841,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.globalBinDir",
@@ -6876,7 +6873,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.globalDir",
@@ -6908,7 +6905,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globaldir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.hoistPattern",
@@ -6940,7 +6937,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-hoistpattern",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.lockfile.print",
@@ -6977,7 +6974,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-lockfile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.lockfile.save",
@@ -7014,7 +7011,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-lockfile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.logLevel",
@@ -7046,7 +7043,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-loglevel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.prefer",
@@ -7079,7 +7076,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-prefer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.publicHoistPattern",
@@ -7111,7 +7108,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-publichoistpattern",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "JSON5",
@@ -7126,7 +7123,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/json5",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "JSONL",
@@ -7141,7 +7138,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/jsonl",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "JSX",
@@ -7168,7 +7165,7 @@
         }
       ],
       "docsUrl": "https://bun.com/docs/runtime/jsx#jsx",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "jsxFactory",
@@ -7200,7 +7197,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "jsxFragment",
@@ -7232,7 +7229,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "jsxImportSource",
@@ -7264,7 +7261,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "logLevel",
@@ -7296,7 +7293,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#loglevel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Markdown",
@@ -7311,7 +7308,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/markdown",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "markdown docs",
@@ -7325,7 +7322,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Metrics",
@@ -7340,7 +7337,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/metrics",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Module Resolution",
@@ -7355,7 +7352,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/module-resolution",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "NO_COLOR",
@@ -7378,7 +7375,7 @@
         "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD"
       ],
       "docsUrl": "https://bun.com/docs/runtime/environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Node-API",
@@ -7393,7 +7390,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/node-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Node.js Compatibility",
@@ -7408,7 +7405,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/nodejs-compat",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "noOrphans",
@@ -7442,7 +7439,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/bundler/plugins",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "preload",
@@ -7474,7 +7471,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#preload",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "process.env",
@@ -7525,7 +7522,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#nodetty",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "process.stdout.isTTY",
@@ -7540,7 +7537,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#nodetty",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Redis",
@@ -7559,7 +7556,7 @@
         "redis"
       ],
       "docsUrl": "https://bun.com/docs/runtime/redis#getting-started",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "RedisClient",
@@ -7580,7 +7577,7 @@
         "Bun.RedisClient"
       ],
       "docsUrl": "https://bun.com/docs/runtime/redis#getting-started",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "REPL",
@@ -7595,7 +7592,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/repl",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Routing",
@@ -7610,7 +7607,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/routing",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "run.bun",
@@ -7652,7 +7649,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-bun-auto-alias-node-to-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "run.noOrphans",
@@ -7675,7 +7672,7 @@
         }
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-noorphans-don-t-leave-orphan-processes-behind",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "run.shell",
@@ -7703,7 +7700,7 @@
         }
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-shell-use-the-system-shell-or-bun-s-shell",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "run.silent",
@@ -7745,7 +7742,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "S3",
@@ -7760,7 +7757,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/s3",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "S3Client",
@@ -7781,7 +7778,7 @@
         "Bun.S3Client"
       ],
       "docsUrl": "https://bun.com/docs/runtime/s3#bun-s3client-bun-s3",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Secrets",
@@ -7796,7 +7793,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/secrets",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Semver",
@@ -7811,7 +7808,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/semver",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "serve.port",
@@ -7843,7 +7840,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#serve-port",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "serve.static.plugins",
@@ -7878,7 +7875,7 @@
         "--production"
       ],
       "docsUrl": "https://bun.com/docs/bundler/fullstack",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Server",
@@ -7893,7 +7890,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/server",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "ServerWebSocket",
@@ -7913,7 +7910,7 @@
         "WebSocket"
       ],
       "docsUrl": "https://bun.com/docs/runtime/http/websockets#start-a-websocket-server",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Shell",
@@ -7928,7 +7925,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/shell",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "smol",
@@ -7960,7 +7957,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#smol",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Spawn",
@@ -7975,7 +7972,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/child-process",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "spawn terminal options",
@@ -7990,7 +7987,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/child-process#terminal-options",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "SQL",
@@ -8005,7 +8002,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/sql",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "SQLite",
@@ -8020,7 +8017,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/sqlite",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Streams",
@@ -8035,7 +8032,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/streams",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "TCP",
@@ -8050,7 +8047,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/networking/tcp",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "telemetry",
@@ -8082,7 +8079,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#telemetry",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.concurrentTestGlob",
@@ -8115,7 +8112,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-concurrenttestglob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coverage",
@@ -8149,7 +8146,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverage",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coverageDir",
@@ -8183,7 +8180,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragedir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coverageIgnoreSourcemaps",
@@ -8217,7 +8214,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverageignoresourcemaps",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coveragePathIgnorePatterns",
@@ -8287,7 +8284,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragereporter",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coverageSkipTestFiles",
@@ -8321,7 +8318,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverageskiptestfiles",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.coverageThreshold",
@@ -8360,7 +8357,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragethreshold",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.onlyFailures",
@@ -8392,7 +8389,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-onlyfailures",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.pathIgnorePatterns",
@@ -8498,7 +8495,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-randomize",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.reporter.dots",
@@ -8530,7 +8527,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reporter-dots",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.reporter.junit",
@@ -8564,7 +8561,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reporter-junit",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.rerunEach",
@@ -8597,7 +8594,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reruneach",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.retry",
@@ -8631,7 +8628,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-retry",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.root",
@@ -8665,7 +8662,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-root",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.seed",
@@ -8698,7 +8695,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-seed",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.smol",
@@ -8731,7 +8728,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-smol",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "TLS",
@@ -8746,7 +8743,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/tls",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "TOML",
@@ -8761,7 +8758,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/toml",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Transpiler",
@@ -8776,7 +8773,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/transpiler",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "UDP",
@@ -8791,7 +8788,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/networking/udp",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "udpSocket",
@@ -8806,7 +8803,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Utils",
@@ -8821,7 +8818,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/utils",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Watch Mode",
@@ -8836,7 +8833,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/watch-mode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Web APIs",
@@ -8851,7 +8848,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/web-apis",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "WebSocket",
@@ -8871,7 +8868,7 @@
         "ServerWebSocket"
       ],
       "docsUrl": "https://bun.com/docs/runtime/http/websockets",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "WebSockets",
@@ -8886,7 +8883,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/http/websockets",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "WebView",
@@ -8911,7 +8908,7 @@
         "--disable-gpu"
       ],
       "docsUrl": "https://bun.com/docs/runtime/webview#new-bun-webview-options",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Workers",
@@ -8926,7 +8923,7 @@
       ],
       "section": "runtime",
       "docsUrl": "https://bun.com/docs/runtime/workers",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "YAML",
@@ -8948,7 +8945,7 @@
         "Bun.YAML.parse"
       ],
       "docsUrl": "https://bun.com/docs/runtime/yaml#bun-yaml-parse",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--asset-naming",
@@ -8973,7 +8970,7 @@
         "--cpu-prof"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#content-hash",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--bundle",
@@ -8997,7 +8994,7 @@
         "--no-bundle"
       ],
       "docsUrl": "https://bun.com/docs/bundler/esbuild",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--bytecode",
@@ -9176,7 +9173,7 @@
         "--cpu-prof"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--console",
@@ -9317,7 +9314,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--define",
@@ -9396,7 +9393,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--env",
@@ -9556,7 +9553,7 @@
         "--no-bundle"
       ],
       "docsUrl": "https://bun.com/docs/bundler/esbuild#cli-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--keep-names",
@@ -9699,7 +9696,7 @@
         "--minify-whitespace"
       ],
       "docsUrl": "https://bun.com/docs/bundler/minifier#granular-control",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--minify-syntax",
@@ -9762,7 +9759,7 @@
         "--minify-syntax"
       ],
       "docsUrl": "https://bun.com/docs/bundler/minifier#granular-control",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--no-bundle",
@@ -9929,7 +9926,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--sourcefile",
@@ -9961,7 +9958,7 @@
         "--loader"
       ],
       "docsUrl": "https://bun.com/docs/bundler/esbuild#cli-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--sourcemap",
@@ -10064,7 +10061,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--verify",
@@ -10106,7 +10103,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--version",
@@ -10166,7 +10163,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#windows-specific-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--windows-icon",
@@ -10191,7 +10188,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#windows-specific-flags",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun build --compile",
@@ -10205,7 +10202,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/executables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_BE_BUN",
@@ -10331,7 +10328,7 @@
         "bun:ws"
       ],
       "docsUrl": "https://bun.com/docs/bundler/hot-reloading#built-in-events",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun:ws",
@@ -10431,7 +10428,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.isStandaloneExecutable",
@@ -10463,7 +10460,7 @@
         "--compile-exec-argv"
       ],
       "docsUrl": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bundler",
@@ -10478,7 +10475,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/index",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bytecode Caching",
@@ -10493,7 +10490,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/bytecode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "compile targets",
@@ -10508,7 +10505,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/executables#supported-targets",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "CSS",
@@ -10523,7 +10520,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/css",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "esbuild",
@@ -10538,7 +10535,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/esbuild",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Fullstack dev server",
@@ -10553,7 +10550,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/fullstack",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Hot reloading",
@@ -10568,7 +10565,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/hot-reloading",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "HTML & static sites",
@@ -10583,7 +10580,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/html-static",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Loaders",
@@ -10598,7 +10595,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/loaders",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Macros",
@@ -10613,7 +10610,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/macros",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Minifier",
@@ -10628,7 +10625,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/minifier",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "serve.static.env",
@@ -10658,7 +10655,7 @@
         "--production"
       ],
       "docsUrl": "https://bun.com/docs/bundler/fullstack#inline-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Single-file executable",
@@ -10673,7 +10670,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/executables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Standalone HTML",
@@ -10688,7 +10685,7 @@
       ],
       "section": "bundler",
       "docsUrl": "https://bun.com/docs/bundler/standalone-html",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--bail",
@@ -11242,7 +11239,7 @@
         "--update-snapshots"
       ],
       "docsUrl": "https://bun.com/docs/test/index#run-tests",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun:test snapshots",
@@ -11259,7 +11256,7 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/test/snapshots#basic-snapshots",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Code coverage",
@@ -11274,7 +11271,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/code-coverage",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Dates and times",
@@ -11289,7 +11286,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/dates-times",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "DOM testing",
@@ -11304,7 +11301,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/dom",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Finding tests",
@@ -11319,7 +11316,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/discovery",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Lifecycle hooks",
@@ -11334,7 +11331,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/lifecycle",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Mocks",
@@ -11349,7 +11346,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/mocks",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Runtime behavior",
@@ -11364,7 +11361,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/runtime-behavior",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Snapshots",
@@ -11379,7 +11376,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/snapshots",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Test configuration",
@@ -11394,7 +11391,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/configuration",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Test Reporters",
@@ -11408,7 +11405,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/reporters",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Test runner",
@@ -11423,7 +11420,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/index",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.functions",
@@ -11454,7 +11451,7 @@
         "test.statements"
       ],
       "docsUrl": "https://bun.com/docs/test/configuration#threshold-examples",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.lines",
@@ -11485,7 +11482,7 @@
         "test.statements"
       ],
       "docsUrl": "https://bun.com/docs/test/configuration#threshold-examples",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "test.statements",
@@ -11516,7 +11513,7 @@
         "test.lines"
       ],
       "docsUrl": "https://bun.com/docs/test/configuration#threshold-examples",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Writing tests",
@@ -11531,7 +11528,7 @@
       ],
       "section": "test",
       "docsUrl": "https://bun.com/docs/test/writing-tests",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a dependency",
@@ -11545,7 +11542,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a development dependency",
@@ -11559,7 +11556,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add-dev",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a Git dependency",
@@ -11573,7 +11570,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add-git",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a peer dependency",
@@ -11587,7 +11584,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add-peer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a tarball dependency",
@@ -11601,7 +11598,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add-tarball",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add a trusted dependency",
@@ -11615,7 +11612,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/trusted",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add an optional dependency",
@@ -11629,7 +11626,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/add-optional",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Add Sentry to a Bun app",
@@ -11643,7 +11640,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/sentry",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Append content to a file",
@@ -11657,7 +11654,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/append",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bail early with the Bun test runner",
@@ -11671,7 +11668,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/bail",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build a frontend using Vite and Bun",
@@ -11685,7 +11682,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/vite",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build a publish-subscribe WebSocket server",
@@ -11699,7 +11696,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/websocket/pubsub",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build a React app with Bun",
@@ -11713,7 +11710,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/react",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build a simple WebSocket server",
@@ -11727,7 +11724,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/websocket/simple",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with Astro and Bun",
@@ -11741,7 +11738,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/astro",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with Next.js and Bun",
@@ -11755,7 +11752,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/nextjs",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with Nuxt and Bun",
@@ -11769,7 +11766,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/nuxt",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with Qwik and Bun",
@@ -11783,7 +11780,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/qwik",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with Remix and Bun",
@@ -11797,7 +11794,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/remix",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with SolidStart and Bun",
@@ -11811,7 +11808,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/solidstart",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an app with SvelteKit and Bun",
@@ -11825,7 +11822,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/sveltekit",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an HTTP server using Elysia and Bun",
@@ -11839,7 +11836,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/elysia",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an HTTP server using Express and Bun",
@@ -11853,7 +11850,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/express",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an HTTP server using Hono and Bun",
@@ -11867,7 +11864,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/hono",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build an HTTP server using StricJS and Bun",
@@ -11881,7 +11878,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/stric",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Build-time constants with --define",
@@ -11895,7 +11892,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/build-time-constants",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun Redis with Upstash",
@@ -11909,7 +11906,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/upstash",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Check if a file exists",
@@ -11923,7 +11920,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/exists",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Check if the current file is the entrypoint",
@@ -11937,7 +11934,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/entrypoint",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Check if two objects are deeply equal",
@@ -11951,7 +11948,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/deep-equals",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Codesign a single-file JavaScript executable on macOS",
@@ -11966,7 +11963,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/codesign-macos-executable",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Common HTTP server usage",
@@ -11980,7 +11977,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/server",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Compress and decompress data with DEFLATE",
@@ -11994,7 +11991,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/deflate",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Compress and decompress data with gzip",
@@ -12008,7 +12005,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/gzip",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Configure a private registry for an organization scope with bun install",
@@ -12022,7 +12019,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/registry-scope",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Configure git to diff Bun's lockb lockfile",
@@ -12036,7 +12033,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/git-diff-bun-lockfile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Configure TLS on an HTTP server",
@@ -12050,7 +12047,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/tls",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Configuring a monorepo using workspaces",
@@ -12064,7 +12061,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/workspaces",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Containerize a Bun application with Docker",
@@ -12078,7 +12075,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/docker",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Blob to a DataView",
@@ -12092,7 +12089,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/blob-to-dataview",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Blob to a ReadableStream",
@@ -12106,7 +12103,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/blob-to-stream",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Blob to a string",
@@ -12120,7 +12117,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/blob-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Blob to a Uint8Array",
@@ -12134,7 +12131,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/blob-to-typedarray",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Blob to an ArrayBuffer",
@@ -12148,7 +12145,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/blob-to-arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Buffer to a blob",
@@ -12162,7 +12159,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/buffer-to-blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Buffer to a ReadableStream",
@@ -12176,7 +12173,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/buffer-to-readablestream",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Buffer to a string",
@@ -12190,7 +12187,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/buffer-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Buffer to a Uint8Array",
@@ -12204,7 +12201,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/buffer-to-typedarray",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Buffer to an ArrayBuffer",
@@ -12218,7 +12215,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/buffer-to-arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a DataView to a string",
@@ -12232,7 +12229,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/dataview-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a file URL to an absolute path",
@@ -12246,7 +12243,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/file-url-to-path",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Node.js Readable to a Blob",
@@ -12260,7 +12257,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/node-readable-to-blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Node.js Readable to a string",
@@ -12274,7 +12271,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/node-readable-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Node.js Readable to an ArrayBuffer",
@@ -12288,7 +12285,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/node-readable-to-arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Node.js Readable to an Uint8Array",
@@ -12302,7 +12299,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/node-readable-to-uint8array",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Node.js Readable to JSON",
@@ -12316,7 +12313,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/node-readable-to-json",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to a Blob",
@@ -12330,7 +12327,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to a Buffer",
@@ -12344,7 +12341,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-buffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to a string",
@@ -12358,7 +12355,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to a Uint8Array",
@@ -12372,7 +12369,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-typedarray",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to an array of chunks",
@@ -12386,7 +12383,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-array",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to an ArrayBuffer",
@@ -12400,7 +12397,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a ReadableStream to JSON",
@@ -12414,7 +12411,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/streams/to-json",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to a Blob",
@@ -12428,7 +12425,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to a Buffer",
@@ -12442,7 +12439,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-buffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to a DataView",
@@ -12456,7 +12453,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-dataview",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to a ReadableStream",
@@ -12470,7 +12467,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-readablestream",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to a string",
@@ -12484,7 +12481,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert a Uint8Array to an ArrayBuffer",
@@ -12498,7 +12495,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/typedarray-to-arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an absolute path to a file URL",
@@ -12512,7 +12509,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/path-to-file-url",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an ArrayBuffer to a Blob",
@@ -12526,7 +12523,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/arraybuffer-to-blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an ArrayBuffer to a Buffer",
@@ -12540,7 +12537,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/arraybuffer-to-buffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an ArrayBuffer to a string",
@@ -12554,7 +12551,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/arraybuffer-to-string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an ArrayBuffer to a Uint8Array",
@@ -12568,7 +12565,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/arraybuffer-to-typedarray",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Convert an ArrayBuffer to an array of numbers",
@@ -12582,7 +12579,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/binary/arraybuffer-to-array",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Copy a file to another location",
@@ -12596,7 +12593,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/file-cp",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Create a Discord bot",
@@ -12610,7 +12607,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/discordjs",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Debugging Bun with the VS Code extension",
@@ -12624,7 +12621,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/vscode-debugger",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Debugging Bun with the web debugger",
@@ -12638,7 +12635,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/web-debugger",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Define and replace static globals & constants",
@@ -12652,7 +12649,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/define-constant",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Delete a file",
@@ -12666,7 +12663,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/unlink",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Delete directories",
@@ -12680,7 +12677,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/delete-directory",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Delete files",
@@ -12694,7 +12691,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/delete-file",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on AWS Lambda",
@@ -12708,7 +12705,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/aws-lambda",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on DigitalOcean",
@@ -12722,7 +12719,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/digital-ocean",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on Google Cloud Run",
@@ -12736,7 +12733,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/google-cloud-run",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on Railway",
@@ -12751,7 +12748,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/railway",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on Render",
@@ -12765,7 +12762,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/render",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Deploy a Bun application on Vercel",
@@ -12779,7 +12776,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/deployment/vercel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Detect when code is executed with Bun",
@@ -12793,7 +12790,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/detect-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Enable compression for WebSocket messages",
@@ -12807,7 +12804,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/websocket/compression",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Encode and decode base64 data",
@@ -12821,7 +12818,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/base64",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Escape an HTML string",
@@ -12835,7 +12832,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/escape-html",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Extract links from a webpage using HTMLRewriter",
@@ -12849,7 +12846,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/html-rewriter/extract-links",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Extract social share images and Open Graph tags",
@@ -12863,7 +12860,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/html-rewriter/extract-social-meta",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "fetch with unix domain sockets in Bun",
@@ -12877,7 +12874,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/fetch-unix",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Generate a UUID",
@@ -12891,7 +12888,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/javascript-uuid",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Generate a yarn-compatible lockfile",
@@ -12905,7 +12902,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/yarnlock",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Generate code coverage reports with the Bun test runner",
@@ -12919,7 +12916,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/coverage",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the absolute path of the current file",
@@ -12933,7 +12930,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/import-meta-path",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the absolute path to the current entrypoint",
@@ -12947,7 +12944,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/main",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the current Bun version",
@@ -12961,7 +12958,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/version",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the directory of the current file",
@@ -12975,7 +12972,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/import-meta-dir",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the file name of the current file",
@@ -12989,7 +12986,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/import-meta-file",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the MIME type of a file",
@@ -13003,7 +13000,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/mime",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the path to an executable bin file",
@@ -13017,7 +13014,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/which-path-to-executable-bin",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Get the process uptime in nanoseconds",
@@ -13031,7 +13028,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/nanoseconds",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Guides",
@@ -13046,7 +13043,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/index",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Hash a password",
@@ -13060,7 +13057,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/hash-a-password",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Hot reload an HTTP server",
@@ -13074,7 +13071,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/hot",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Import a HTML file as text",
@@ -13088,7 +13085,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/import-html",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Import a JSON file",
@@ -13102,7 +13099,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/import-json",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Import a JSON5 file",
@@ -13116,7 +13113,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/import-json5",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Import a TOML file",
@@ -13130,7 +13127,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/import-toml",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Import a YAML file",
@@ -13144,7 +13141,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/import-yaml",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "import, require, and test Svelte components with bun test",
@@ -13158,7 +13155,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/svelte-test",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Inspect memory usage using V8 heap snapshots",
@@ -13172,7 +13169,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/heap-snapshot",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Install a package under a different name",
@@ -13186,7 +13183,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/npm-alias",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Install and run Bun in GitHub Actions",
@@ -13200,7 +13197,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/cicd",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Install dependencies with Bun in GitHub Actions",
@@ -13214,7 +13211,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/cicd",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Install TypeScript declarations for Bun",
@@ -13228,7 +13225,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/typescript",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Listen for CTRL+C",
@@ -13242,7 +13239,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/ctrl-c",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Listen to OS signals",
@@ -13256,7 +13253,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/os-signals",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Mark a test as a \"todo\" with the Bun test runner",
@@ -13270,7 +13267,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/todo-tests",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Migrate from Jest to Bun's test runner",
@@ -13284,7 +13281,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/migrate-from-jest",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Migrate from npm install to bun install",
@@ -13298,7 +13295,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/from-npm-install-to-bun-install",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Mock functions in `bun test`",
@@ -13312,7 +13309,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/mock-functions",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Override the default npm registry for bun install",
@@ -13326,7 +13323,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/custom-registry",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Parse command-line arguments",
@@ -13340,7 +13337,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/argv",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Proxy HTTP requests using fetch()",
@@ -13354,7 +13351,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/proxy",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Re-map import paths",
@@ -13368,7 +13365,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/tsconfig-paths",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Re-run tests multiple times with the Bun test runner",
@@ -13382,7 +13379,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/rerun-each",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a file as a ReadableStream",
@@ -13396,7 +13393,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/stream",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a file as a string",
@@ -13410,7 +13407,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/string",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a file to a Buffer",
@@ -13424,7 +13421,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/buffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a file to a Uint8Array",
@@ -13438,7 +13435,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/uint8array",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a file to an ArrayBuffer",
@@ -13452,7 +13449,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/arraybuffer",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read a JSON file",
@@ -13466,7 +13463,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/json",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read and write data to MongoDB using Mongoose and Bun",
@@ -13480,7 +13477,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/mongoose",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read environment variables",
@@ -13494,7 +13491,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/read-env",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read from stdin",
@@ -13508,7 +13505,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/stdin",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read stderr from a child process",
@@ -13522,7 +13519,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/spawn-stderr",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Read stdout from a child process",
@@ -13536,7 +13533,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/spawn-stdout",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Run a Shell Command",
@@ -13550,7 +13547,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/shell",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Run Bun as a daemon with PM2",
@@ -13564,7 +13561,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/pm2",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Run Bun as a daemon with systemd",
@@ -13578,7 +13575,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/systemd",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Run tests in watch mode with Bun",
@@ -13592,7 +13589,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/watch-mode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Run your tests with the Bun test runner",
@@ -13606,7 +13603,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/run-tests",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Selectively run tests concurrently with glob patterns",
@@ -13621,7 +13618,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/concurrent-test-glob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Send an HTTP request using fetch",
@@ -13635,7 +13632,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/fetch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Server-Sent Events (SSE) with Bun",
@@ -13649,7 +13646,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/sse",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Server-side render (SSR) a React component",
@@ -13663,7 +13660,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/ssr-react",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set a code coverage threshold with the Bun test runner",
@@ -13677,7 +13674,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/coverage-threshold",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set a per-test timeout with the Bun test runner",
@@ -13691,7 +13688,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/timeout",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set a time zone in Bun",
@@ -13705,7 +13702,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/timezone",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set environment variables",
@@ -13719,7 +13716,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/runtime/set-env",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set per-socket contextual data on a WebSocket",
@@ -13733,7 +13730,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/websocket/context",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Set the system time in Bun's test runner",
@@ -13747,7 +13744,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/mock-clock",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Skip tests with the Bun test runner",
@@ -13761,7 +13758,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/skip-tests",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Sleep for a fixed number of milliseconds",
@@ -13775,7 +13772,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/sleep",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Spawn a child process",
@@ -13789,7 +13786,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/spawn",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Spawn a child process and communicate using IPC",
@@ -13803,7 +13800,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/ipc",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "spawn stdout guide",
@@ -13817,7 +13814,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/process/spawn-stdout",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Spy on methods in `bun test`",
@@ -13831,7 +13828,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/spy-on",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Start a cluster of HTTP servers",
@@ -13846,7 +13843,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/cluster",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Stream a file as an HTTP Response",
@@ -13860,7 +13857,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/stream-file",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Streaming HTTP Server with Async Iterators",
@@ -13874,7 +13871,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/stream-iterator",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Streaming HTTP Server with Node.js Streams",
@@ -13888,7 +13885,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/stream-node-streams-in-bun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Update snapshots in `bun test`",
@@ -13902,7 +13899,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/update-snapshots",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Upgrade Bun to the latest version",
@@ -13916,7 +13913,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/util/upgrade",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Upload files via HTTP using FormData",
@@ -13930,7 +13927,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/file-uploads",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Drizzle ORM with Bun",
@@ -13944,7 +13941,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/drizzle",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Gel with Bun",
@@ -13958,7 +13955,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/gel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Neon Postgres through Drizzle ORM",
@@ -13972,7 +13969,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/neon-drizzle",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Neon's Serverless Postgres with Bun",
@@ -13986,7 +13983,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/neon-serverless-postgres",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Prisma Postgres with Bun",
@@ -14000,7 +13997,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/prisma-postgres",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use Prisma with Bun",
@@ -14014,7 +14011,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/prisma",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use snapshot testing in `bun test`",
@@ -14028,7 +14025,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/snapshot",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Use TanStack Start with Bun",
@@ -14042,7 +14039,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/ecosystem/tanstack-start",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Using bun install with an Azure Artifacts npm registry",
@@ -14056,7 +14053,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/azure-artifacts",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Using bun install with Artifactory",
@@ -14070,7 +14067,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/install/jfrog-artifactory",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Using Testing Library with Bun",
@@ -14084,7 +14081,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/testing-library",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Watch a directory for changes",
@@ -14098,7 +14095,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/read-file/watch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a Blob to a file",
@@ -14112,7 +14109,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/blob",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a file incrementally",
@@ -14126,7 +14123,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/filesink",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a file to stdout",
@@ -14140,7 +14137,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/cat",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a ReadableStream to a file",
@@ -14154,7 +14151,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/stream",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a Response to a file",
@@ -14168,7 +14165,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/response",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a simple HTTP server",
@@ -14182,7 +14179,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/http/simple",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write a string to a file",
@@ -14196,7 +14193,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/basic",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write browser DOM tests with Bun and happy-dom",
@@ -14210,7 +14207,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/test/happy-dom",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Write to stdout",
@@ -14224,7 +14221,7 @@
       ],
       "section": "guides",
       "docsUrl": "https://bun.com/docs/guides/write-file/stdout",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--access",
@@ -14261,7 +14258,7 @@
         "--otp"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#access",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--all",
@@ -14377,7 +14374,7 @@
         "--otp"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#auth-type",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--backend",
@@ -14398,7 +14395,7 @@
         "BUN_INSTALL_CACHE_DIR"
       ],
       "docsUrl": "https://bun.com/docs/pm/global-cache",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--bun",
@@ -14673,7 +14670,7 @@
         "--trusted"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/pm#examples",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--dev",
@@ -14950,7 +14947,7 @@
         "--otp"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#gzip-level",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--help",
@@ -15274,7 +15271,7 @@
         "--os"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#minimum-release-age",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--no-exit-on-error",
@@ -15337,7 +15334,7 @@
         "--yarn"
       ],
       "docsUrl": "https://bun.com/docs/pm/lockfile#can-i-opt-out",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--omit",
@@ -15403,7 +15400,7 @@
         "--peer"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/add#optional",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--os",
@@ -15469,7 +15466,7 @@
         "--gzip-level"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#otp",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--package",
@@ -15571,7 +15568,7 @@
         "--commit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/patch#step-3-commit-your-changes",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--peer",
@@ -16005,7 +16002,7 @@
         "--gzip-level"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#tag",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--tolerate-republish",
@@ -16037,7 +16034,7 @@
         "--gzip-level"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/publish#tolerate-republish",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--top",
@@ -16138,7 +16135,7 @@
         "--quiet"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/pm#ls",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "--verbose",
@@ -16246,7 +16243,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/npmrc",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun --filter",
@@ -16261,7 +16258,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/filter",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun add",
@@ -16276,7 +16273,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/add",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun audit",
@@ -16291,7 +16288,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/audit",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun info",
@@ -16306,7 +16303,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/info",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun install",
@@ -16321,7 +16318,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/install",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun link",
@@ -16336,7 +16333,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/link",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun outdated",
@@ -16351,7 +16348,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/outdated",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun patch",
@@ -16366,7 +16363,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/patch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun pm",
@@ -16381,7 +16378,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/pm",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun publish",
@@ -16396,7 +16393,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/publish",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun remove",
@@ -16411,7 +16408,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/remove",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun update",
@@ -16426,7 +16423,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/update",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun why",
@@ -16441,7 +16438,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/why",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_REGISTRY",
@@ -16466,7 +16463,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
@@ -16491,7 +16488,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
@@ -16516,7 +16513,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
@@ -16541,7 +16538,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_TOKEN",
@@ -16566,7 +16563,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_CONFIG_YARN_LOCKFILE",
@@ -16591,7 +16588,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS",
@@ -16633,7 +16630,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#lifecycle-scripts",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER",
@@ -16675,7 +16672,7 @@
         "--omit"
       ],
       "docsUrl": "https://bun.com/docs/pm/cli/install#lifecycle-scripts",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_INSTALL_CACHE_DIR",
@@ -16695,7 +16692,7 @@
         "--backend"
       ],
       "docsUrl": "https://bun.com/docs/pm/global-cache",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "BUN_INSTALL_GLOBAL_STORE",
@@ -16749,7 +16746,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/bunx",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Catalogs",
@@ -16764,7 +16761,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/catalogs",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Global cache",
@@ -16779,7 +16776,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/global-cache",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Global virtual store",
@@ -16794,7 +16791,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/global-store",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "globalStore",
@@ -16889,7 +16886,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.concurrentScripts",
@@ -16957,7 +16954,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-dev",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.dryRun",
@@ -16991,7 +16988,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-dryrun",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.exact",
@@ -17025,7 +17022,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-exact",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.frozenLockfile",
@@ -17058,7 +17055,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-frozenlockfile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.globalStore",
@@ -17136,7 +17133,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ignorescripts",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.linker",
@@ -17171,7 +17168,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-linker",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.linkWorkspacePackages",
@@ -17204,7 +17201,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-linkworkspacepackages",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.minimumReleaseAge",
@@ -17242,7 +17239,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseage",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.minimumReleaseAgeExcludes",
@@ -17280,7 +17277,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.optional",
@@ -17313,7 +17310,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-optional",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.peer",
@@ -17381,7 +17378,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-production",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.registry",
@@ -17489,7 +17486,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "install.security.scanner",
@@ -17522,7 +17519,7 @@
         "--rerun-each"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-security-scanner",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Installation",
@@ -17537,7 +17534,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/installation",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Isolated installs",
@@ -17552,7 +17549,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/isolated-installs",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Lifecycle scripts",
@@ -17567,7 +17564,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/lifecycle",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Lockfile",
@@ -17582,7 +17579,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/lockfile",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "overrides",
@@ -17643,7 +17640,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/overrides",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "patchedDependencies",
@@ -17719,7 +17716,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/scopes-registries",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Security Scanner API",
@@ -17733,7 +17730,7 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/security-scanner-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "trustedDependencies",
@@ -17819,7 +17816,7 @@
         }
       ],
       "docsUrl": "https://bun.com/docs/pm/workspaces",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun.sliceAnsi",
@@ -17853,7 +17850,7 @@
       "locusUnresolved": false,
       "locusStatus": "reference",
       "docsUrl": "https://bun.com/reference/bun/BunInspectOptions",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "bun-types",
@@ -17867,7 +17864,7 @@
       ],
       "section": "other",
       "docsUrl": "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "CI failures from terminal",
@@ -17882,7 +17879,7 @@
       ],
       "section": "other",
       "docsUrl": "https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "snapshot guide",
@@ -17896,7 +17893,7 @@
       ],
       "section": "other",
       "docsUrl": "https://bun.com/guides/test/snapshot",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     }
   ]
 }
