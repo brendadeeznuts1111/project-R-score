@@ -35,7 +35,9 @@ Projects/
 ├── config/                  # ports.ts, r2-env, registry, ci bunfig
 ├── dashboard/               # Dashboard servers & UIs
 ├── docs/                    # Documentation (UNIFIED.md, AGENTS.md, guides)
-│   ├── DEVELOPMENT-STANDARDS.md
+│   ├── README.md            # Docs index (SSOT navigation)
+│   ├── AGENTS.md            # Full agent guide (root AGENTS.md is thin entry)
+│   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
 │   ├── organization/        # Root cleanup history
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)

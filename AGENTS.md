@@ -9,7 +9,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Role | Doc |
 |------|-----|
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
-| Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) |
+| Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
+| Docs index | [`docs/README.md`](docs/README.md) |
 | Human hub | [`README.md`](README.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
@@ -69,6 +70,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
+  - Doc map integrity → `bun tools/doc-map-check.ts`
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
 

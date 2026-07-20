@@ -7,12 +7,21 @@ Shared harness for the FactoryWager monorepo. Barrel: [`index.ts`](./index.ts) (
 | Role | Path |
 |------|------|
 | Path SSOT (this library) | [`docs/repo-docs.ts`](./docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
+| Docs index | [`../docs/README.md`](../docs/README.md) |
 | Coding standards | [`.custom-instructions.md`](../.custom-instructions.md) |
-| Agents | [`AGENTS.md`](../AGENTS.md) |
+| Agents | [`AGENTS.md`](../AGENTS.md) · full: [`../docs/AGENTS.md`](../docs/AGENTS.md) |
 | Workspace map | [`STRUCTURE.md`](../STRUCTURE.md) |
+| Bun install | [`../docs/UNIFIED.md`](../docs/UNIFIED.md) |
+| Wire boundary | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md) |
 | Brands | [`types/branded/README.md`](./types/branded/README.md) |
 | Console depth | [`console-depth.ts`](./console-depth.ts) |
 | Standards automation | [`validation/standards-integration.ts`](./validation/standards-integration.ts) |
+| Boundary ESLint | [`../config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts) |
+
+```bash
+bun tools/doc-map-check.ts                 # SSOT paths + root/docs links
+bun tools/harness-violations.ts --path lib/types --rule unknown
+```
 
 ```typescript
 import { CANONICAL_REPO_DOCS, LIB_INFO, FW } from "./lib";

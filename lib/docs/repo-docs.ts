@@ -64,6 +64,10 @@ export const CANONICAL_TOOLS = {
   brandedTypeProof: 'tests/branded-types.test-d.ts',
   consoleDepthTest: 'tests/console-depth.test.ts',
   consoleDepthBench: 'tools/benchmarks/console-depth-perf.ts',
+  harnessViolations: 'tools/harness-violations.ts',
+  docMapCheck: 'tools/doc-map-check.ts',
+  wireBoundaryTest: 'tests/wire-boundary-policy.test.ts',
+  docsIndex: 'docs/README.md',
 } as const;
 
 export type CanonicalRepoDocKey = keyof typeof CANONICAL_REPO_DOCS;

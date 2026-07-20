@@ -1,168 +1,60 @@
-# Documentation Directory
+# Documentation index
 
-This directory contains all organized documentation for the Bun platform project.
+Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Project-specific trees under `projects/active/` keep their own docs — not listed here.
 
-## 📁 Directory Structure
+## Start here
 
+| Role | Path |
+|------|------|
+| Human hub | [`../README.md`](../README.md) |
+| Agent entry | [`../AGENTS.md`](../AGENTS.md) |
+| Agent full guide | [AGENTS.md](./AGENTS.md) |
+| Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
+| Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
+
+## Boundaries and install
+
+| Role | Path | Anchors |
+|------|------|---------|
+| Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
+| Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
+| Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
+
+These are **different** concerns: install ≠ wire types ≠ package imports.
+
+## Lib harness maps
+
+| Role | Path |
+|------|------|
+| Path SSOT (`CANONICAL_*`) | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |
+| Lib overview | [`../lib/README.md`](../lib/README.md) |
+| Branded IDs | [`../lib/types/branded/README.md`](../lib/types/branded/README.md) |
+| Console depth | [`../lib/console-depth.ts`](../lib/console-depth.ts) |
+| Boundary ESLint | [`../config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts) |
+
+## Tools (docs / harness)
+
+```bash
+bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # Bun API canonical URLs
+bun tools/brand-catalog.ts SessionId              # brand discovery
+bun tools/branded-id-check.ts --staged --strict   # brand gate (diff)
+bun tools/harness-violations.ts --path lib --rule unknown
+bun tools/harness-violations.ts --open=3          # Bun.openInEditor
+bun run install:verify                            # install / tilde cache
+bun run lint:harness                              # eslint harness config
+bun tools/doc-map-check.ts                        # SSOT path + root MD links
 ```
-docs/
-├── markdown-api/          # Bun Markdown API documentation
-├── project-docs/          # Project-specific documentation
-├── demos/                 # Demo and example files
-├── tests/                 # Test documentation and examples
-├── archives/              # Historical reports and audits
-└── guides/                # Development guides and tutorials
-```
 
-## 📚 Documentation Categories
+## External thesis
 
-### 🔰 **Bun Markdown API** (`/markdown-api/`)
-Comprehensive documentation for the Bun Markdown API implementation.
+- [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)
+- [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md)
+- [Bun docs llms.txt](https://bun.com/docs/llms.txt)
 
-**Key Files:**
-- `README.md` - Documentation index and quick start
-- `BUN-MARKDOWN-COMPLETE-GUIDE.md` - Full API reference
-- `SECURITY_FIXES_SUMMARY.md` - Latest security improvements
-- `REACT-COMPONENTS-GUIDE.md` - React integration guide
+## Not SSOT
 
-**Status:** ✅ Production Ready (95.5% test coverage)
+- `docs/archives/` — historical reports  
+- One-off analysis / council / generated reports under `docs/` unless linked above  
+- Nested product docs under `projects/active/**`
 
----
-
-### 📋 **Project Documentation** (`/project-docs/`)
-Project-specific documentation and specifications.
-
-**Key Files:**
-- `README-LEAD-SPEC.md` - Lead specification document
-
----
-
-### 🎮 **Demos** (`/demos/`)
-Demo files and examples showcasing different features.
-
-**Key Files:**
-- `demo-junior.md` - Junior-level demo
-- `demo-senior.md` - Senior-level demo  
-- `demo-enterprise.md` - Enterprise-level demo
-
----
-
-### 🧪 **Tests** (`/tests/`)
-Test documentation and test case examples.
-
-**Key Files:**
-- `test-bun-official-features.md` - Official Bun features test
-- `test-codeblocks.md` - Code block testing
-- `test-full-gfm.md` - Full GitHub Flavored Markdown test
-- `test-multi-table.md` - Multi-table testing
-
----
-
-### 📦 **Archives** (`/archives/`)
-Historical reports, audits, and deprecated documentation.
-
-**Key Files:**
-- `DUPLICATE_AUDIT_REPORT.md` - Duplicate content audit
-
----
-
-### 📖 **Guides** (`/guides/`)
-Development guides, tutorials, and best practices.
-
-**Key Files:**
-- `FAILURE_HANDLING_GUIDE.md` - Error handling patterns
-- `DRY_RUN_GUIDE.md` - Dry run execution guide
-
----
-
-## 🎯 **Quick Navigation**
-
-### **For New Users**
-1. [Bun Markdown API](./markdown-api/README.md) - Start here
-2. [Demos](./demos/) - See examples
-3. [Guides](./guides/) - Learn patterns
-
-### **For Developers**
-1. [Markdown API Complete Guide](./BUN_MARKDOWN_COMPLETE_GUIDE.md)
-2. [Test Documentation](./tests/) - Test cases
-3. [Project Docs](./project-docs/) - Specifications
-
-### **For Security & Production**
-1. [Security Fixes Summary](./markdown-api/SECURITY_FIXES_SUMMARY.md)
-
----
-
-## 📊 **Documentation Status**
-
-| Category | Files | Status | Last Updated |
-|----------|-------|--------|--------------|
-| **Markdown API** | 7 | ✅ Production Ready | 2026-02-06 |
-| **Project Docs** | 1 | ✅ Current | 2026-02-06 |
-| **Demos** | 3 | ✅ Current | 2026-02-06 |
-| **Tests** | 4 | ✅ Current | 2026-02-06 |
-| **Archives** | 1 | ✅ Archived | 2026-02-06 |
-| **Guides** | 2 | ✅ Current | 2026-02-06 |
-
----
-
-## 🔧 **Related Files**
-
-### **Root Documentation**
-- `README.md` - Main project README
-- `CONTRIBUTING.md` - Contribution guidelines
-- `CHANGELOG.md` - Project changelog
-- `CLAUDE.md` - AI agent instructions
-- `IMPLEMENTATION_GUIDE.md` - Implementation guide
-- `SECURITY_IMPLEMENTATION_GUIDE.md` - Security implementation
-
-### **Implementation Files**
-- `/utils/` - Utility implementations
-- `/lib/` - Library implementations
-- `/tools/` - Development tools
-
----
-
-## 🏷️ **Documentation Standards**
-
-### **File Organization**
-- ✅ All Markdown files organized by category
-- ✅ Clear directory structure
-- ✅ Comprehensive indexing
-- ✅ No scattered documentation
-
-### **Content Standards**
-- ✅ Clear headings and structure
-- ✅ Code examples and snippets
-- ✅ Status indicators
-- ✅ Last updated timestamps
-
-### **Maintenance**
-- ✅ Regular updates and reviews
-- ✅ Archive old content
-- ✅ Keep current documentation relevant
-- ✅ Cross-reference related content
-
----
-
-## 📞 **Getting Help**
-
-### **Documentation Issues**
-- Check the relevant category index
-- Look for related files in the same directory
-- Check root documentation for general information
-
-### **Implementation Questions**
-- Refer to implementation files in `/utils/`, `/lib/`, `/tools/`
-- Check test files for usage examples
-- Review demo files for practical examples
-
-### **Security Concerns**
-- Review `SECURITY_FIXES_SUMMARY.md` for latest updates
-- Check `SECURITY_IMPLEMENTATION_GUIDE.md` for patterns
-- Refer to implementation files for current security measures
-
----
-
-**Last Updated**: 2026-02-06  
-**Total Files Organized**: 18 Markdown files  
-**Status**: ✅ Fully Organized
+When adding a platform policy doc, update this index, root `AGENTS.md` canonical table, and `lib/docs/repo-docs.ts` (`CANONICAL_REPO_DOCS`).
