@@ -2,11 +2,35 @@
 
 Canonical reference for FactoryWager monorepo **install configuration**: machine-level defaults, workspace overrides, `./~` drift prevention, and verification tooling.
 
-This document is **about Bun package install / bunfig / cache / CI** — not TypeScript wire boundaries. For parse-once / branded IDs, see [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md).
+This document is **about Bun package install / bunfig / cache / CI** — not TypeScript wire boundaries. For parse-once / branded IDs, see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 
-**Precedence:** CLI flags (`--config`, `--linker`, …) > `BUN_CONFIG_*` env > shallow-merged bunfig (`~/.bunfig.toml` + `./bunfig.toml`; **project wins** on conflict)
+| | |
+| --- | --- |
+| **Precedence** | CLI flags (`--config`, `--linker`, …) → `BUN_CONFIG_*` env → shallow-merged bunfig (`~/.bunfig.toml` + `./bunfig.toml`; **project wins** on conflict) |
+| **Last verified** | 2026-07-20 against machine `~/.bunfig.toml`, root `bunfig.toml`, `~/.config/shell/`, root `package.json` scripts, `.github/workflows/` |
 
-**Last verified against disk:** 2026-07-20 (machine `~/.bunfig.toml`, root `bunfig.toml`, shell `~/.config/shell/`, root `package.json` scripts, `.github/workflows/`).
+## Table of contents
+
+Anchors below match GitHub / CommonMark auto-slugs from the section headings (re-check if you rename a heading).
+
+1. [Install matrix](#install-matrix)
+   - [Legitimate workspace overrides](#legitimate-workspace-overrides)
+2. [Machine layer](#machine-layer)
+   - [Machine bunfig shape](#machine-bunfig-shape)
+   - [Root monorepo bunfig](#root-monorepo-bunfig)
+   - [Shell layout](#shell-layout)
+   - [Shell aliases](#shell-aliases)
+3. [Tilde cache drift](#tilde-cache-drift)
+4. [Workspace bunfig template](#workspace-bunfig-template)
+5. [Tooling registry](#tooling-registry)
+   - [Precise audit grep](#precise-audit-grep)
+6. [bun pm command matrix](#bun-pm-command-matrix)
+7. [IDE and VS Code](#ide-and-vs-code)
+8. [CI notes](#ci-notes)
+   - [Frozen lockfile install wrapper](#frozen-lockfile-install-wrapper)
+9. [Related docs](#related-docs)
+   - [Install and monorepo ops](#install-and-monorepo-ops)
+   - [Other monorepo policies](#other-monorepo-policies)
 
 ---
 
@@ -24,9 +48,9 @@ This document is **about Bun package install / bunfig / cache / CI** — not Typ
 | `[install.scopes."@scope"]` | Not set (npm default registry only) | Keep (e.g. `@factorywager`) | Private registry tokens are project-specific |
 | `[test]` / `[run]` / `[build]` / `[console]` / `[debug]` | Not set | Keep | Runtime / test behavior is project-specific |
 
-### Legitimate workspace overrides (do not strip without review)
+### Legitimate workspace overrides
 
-Verified present on disk as of last verification:
+Do not strip without review. Verified present on disk as of last verification:
 
 | Project | Override | Why |
 | --- | --- | --- |
@@ -42,15 +66,15 @@ Historical note: `projects/experimental/windsurf-cascade-2` previously used `dir
 
 | Layer | File | Role |
 | --- | --- | --- |
-| **Config SSOT** | `~/.bunfig.toml` | `linker`, `globalStore`, `frozenLockfile`, `minimumReleaseAge`, absolute `cache.dir`, `globalDir`, `globalBinDir` |
-| **Env** | `~/.config/shell/bun.sh` | `BUN_INSTALL`, `NO_PROXY`; **unsets** `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` if set by IDE parents; `bun_verify()` |
-| **PATH** | `~/.config/shell/path.sh` | `$BUN_INSTALL/bin` first |
-| **Interactive** | `~/.config/shell/interactive.zsh` | Completions; machine health via aliases |
-| **Aliases** | `~/.config/shell/aliases.sh` | Audit, PM, `bverify`, `bci`, `bmachine` / `health` |
-| **Policy helper** | `~/.config/shell/machine-bun.ts` | Machine bunfig policy helper (shell-side) |
-| **Repo health** | `bun run install:machine:health` → `scripts/machine-bun-health.ts` | What `bmachine` / `health` invoke from monorepo root |
+| Config SSOT | `~/.bunfig.toml` | `linker`, `globalStore`, `frozenLockfile`, `minimumReleaseAge`, absolute `cache.dir`, `globalDir`, `globalBinDir` |
+| Env | `~/.config/shell/bun.sh` | `BUN_INSTALL`, `NO_PROXY`; **unsets** `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` if set by IDE parents; `bun_verify()` |
+| PATH | `~/.config/shell/path.sh` | `$BUN_INSTALL/bin` first |
+| Interactive | `~/.config/shell/interactive.zsh` | Completions; machine health via aliases |
+| Aliases | `~/.config/shell/aliases.sh` | Audit, PM, `bverify`, `bci`, `bmachine` / `health` |
+| Policy helper | `~/.config/shell/machine-bun.ts` | Machine bunfig policy helper (shell-side) |
+| Repo health | `bun run install:machine:health` → `scripts/machine-bun-health.ts` | What `bmachine` / `health` invoke from monorepo root |
 
-### `~/.bunfig.toml` (machine SSOT — shape)
+### Machine bunfig shape
 
 Match the live file on this Mac (paths under your `$HOME`). Illustrative:
 
@@ -77,11 +101,11 @@ url = "https://registry.npmjs.org"
 # Optional local-only keys (e.g. [secrets]) may also appear — not install-matrix critical
 ```
 
-Doc: [Configuring bun install with bunfig.toml](https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml)
+Upstream: [Configuring bun install with bunfig.toml](https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml).
 
-### Root monorepo `bunfig.toml` (project layer)
+### Root monorepo bunfig
 
-Install keys that **belong** at root (not duplicated machine linker/globalStore/cache.dir):
+Install keys that **belong** at root (not duplicated machine `linker` / `globalStore` / `cache.dir`):
 
 - `frozenLockfile = false` — local dev can update lockfile
 - `exact = true`
@@ -90,18 +114,22 @@ Install keys that **belong** at root (not duplicated machine linker/globalStore/
 
 Do **not** re-set `linker`, `globalStore`, or absolute `cache.dir` here unless intentionally overriding machine SSOT (fails `bunfig-policy` / audit when redundant).
 
-### Shell (`~/.config/shell/`)
+### Shell layout
 
-- `bun.sh`: `BUN_INSTALL`, `NO_PROXY`, `bun_verify()` — **not** PATH ownership, **not** `BUN_INSTALL_GLOBAL_STORE`
-- `path.sh`: PATH with `$BUN_INSTALL/bin` ahead of Homebrew
-- `interactive.zsh`: completions; health aliases defined in `aliases.sh`
-- Commented `BUN_CONFIG_*` in `bun.sh` for emergency override only (higher priority than bunfig)
+| File | Owns |
+| --- | --- |
+| `bun.sh` | `BUN_INSTALL`, `NO_PROXY`, `bun_verify()` — **not** PATH, **not** `BUN_INSTALL_GLOBAL_STORE` |
+| `path.sh` | PATH with `$BUN_INSTALL/bin` ahead of Homebrew |
+| `interactive.zsh` | Completions; health aliases defined in `aliases.sh` |
+| `bun.sh` (commented) | `BUN_CONFIG_*` for emergency override only (higher priority than bunfig) |
 
-**Never** set `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE`, or `BUN_RUNTIME_TRANSPILER_CACHE_PATH` in interactive shell or IDE terminal env for day-to-day work — fails `bunfig-policy` / `bun_verify`. **CI** may set absolute `BUN_INSTALL_CACHE_DIR` via `with-bun-cache-env.ts` (see below).
+**Never** set `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE`, or `BUN_RUNTIME_TRANSPILER_CACHE_PATH` in interactive shell or IDE terminal env for day-to-day work — fails `bunfig-policy` / `bun_verify`. **CI** may set absolute `BUN_INSTALL_CACHE_DIR` via `with-bun-cache-env.ts` (see [CI notes](#ci-notes)).
 
-### Shell aliases (install-related)
+### Shell aliases
 
-| Alias | Actual command (this Mac) |
+Install-related aliases on this Mac:
+
+| Alias | Actual command |
 | --- | --- |
 | `ba` | `bun run audit:all` |
 | `bhealth` / `bverify` | `bun_verify` (shell function in `bun.sh`) |
@@ -116,7 +144,9 @@ Other audit/dev aliases (`bac`, `baf`, `br`, `bt`, …) live in `aliases.sh` —
 
 ---
 
-## The `./~` drift bug
+## Tilde cache drift
+
+Formerly titled “the `./~` drift bug” — same issue, stable heading for anchors.
 
 **Symptom:** Literal directory `./~` appears under repo roots or nested workspaces.
 
@@ -132,11 +162,12 @@ Other audit/dev aliases (`bac`, `baf`, `br`, `bt`, …) live in `aliases.sh` —
 
 ---
 
-## Workspace `bunfig.toml` template
+## Workspace bunfig template
 
 ```toml
 # <project>/bunfig.toml
-# Install defaults (linker, globalStore, cache.dir, minimumReleaseAge) inherited from ~/.bunfig.toml
+# Install defaults (linker, globalStore, cache.dir, minimumReleaseAge)
+# inherited from ~/.bunfig.toml
 # Machine frozenLockfile=true — set false here for active local dev if needed
 
 [install]
@@ -156,21 +187,21 @@ frozenLockfile = false
 
 | Tool | Command | Purpose |
 | --- | --- | --- |
-| **audit-bunfig** | `bun run audit:bunfig` | Scan workspace `bunfig.toml` for redundant install key assignments |
-| **audit-bunfig (strict)** | `bun run audit:bunfig:strict` | Exit 1 if `linker` / `globalStore` / `dir` assignments found (includes intentional overrides — review first) |
-| **audit-bunfig (doctor)** | `bash scripts/audit-bunfig.sh --doctor` | Delegate to `kimi-doctor --gate bunfig-policy` when on PATH |
-| **install:verify** | `bun run install:verify` | Cache dir, global store `links/`, lockfile, tilde drift, layout |
-| **install:verify (strict)** | `bun run install:verify:strict` | Same checks, non-zero exit on failure |
-| **with-bun-cache-env** | `bun scripts/with-bun-cache-env.ts ci` | CI-safe env wrapper + frozen lockfile install |
-| **bun-install-env** | `scripts/lib/bun-install-env.ts` | Shared `applyBunInstallEnv()`, tilde scan helpers |
-| **bun_verify** | `bverify` / `bhealth` | Interactive runtime + machine policy checks (`~/.config/shell/bun.sh`) |
-| **install:machine:health** | `bun run install:machine:health` · aliases `bmachine` / `health` | Repo script `scripts/machine-bun-health.ts` |
-| **kimi-doctor bunfig-policy** | `kimi-doctor --gate bunfig-policy` | Root bunfig redundancy vs `~/.bunfig.toml` |
-| **install:cache:lifecycle** | `bun run install:cache:lifecycle` | CI-safe cache metrics dry-run (no destructive `pm cache rm`) |
-| **install:cache:prune** | `BUN_CACHE_PRUNE=1 bun run install:cache:prune` | Self-hosted prune when over `BUN_CACHE_PRUNE_MAX_MB` (default 2048) |
-| **harness:report --json** | `bun run harness:report --json` | Harness report; may embed install-cache metrics |
+| audit-bunfig | `bun run audit:bunfig` | Scan workspace `bunfig.toml` for redundant install key assignments |
+| audit-bunfig (strict) | `bun run audit:bunfig:strict` | Exit 1 if `linker` / `globalStore` / `dir` assignments found (includes intentional overrides — review first) |
+| audit-bunfig (doctor) | `bash scripts/audit-bunfig.sh --doctor` | Delegate to `kimi-doctor --gate bunfig-policy` when on PATH |
+| install:verify | `bun run install:verify` | Cache dir, global store `links/`, lockfile, tilde drift, layout |
+| install:verify (strict) | `bun run install:verify:strict` | Same checks, non-zero exit on failure |
+| with-bun-cache-env | `bun scripts/with-bun-cache-env.ts ci` | CI-safe env wrapper + frozen lockfile install |
+| bun-install-env | `scripts/lib/bun-install-env.ts` | Shared `applyBunInstallEnv()`, tilde scan helpers |
+| bun_verify | `bverify` / `bhealth` | Interactive runtime + machine policy checks (`~/.config/shell/bun.sh`) |
+| install:machine:health | `bun run install:machine:health` · aliases `bmachine` / `health` | Repo script `scripts/machine-bun-health.ts` |
+| kimi-doctor bunfig-policy | `kimi-doctor --gate bunfig-policy` | Root bunfig redundancy vs `~/.bunfig.toml` |
+| install:cache:lifecycle | `bun run install:cache:lifecycle` | CI-safe cache metrics dry-run (no destructive `pm cache rm`) |
+| install:cache:prune | `BUN_CACHE_PRUNE=1 bun run install:cache:prune` | Self-hosted prune when over `BUN_CACHE_PRUNE_MAX_MB` (default 2048) |
+| harness:report --json | `bun run harness:report --json` | Harness report; may embed install-cache metrics |
 
-### Precise audit grep (preferred over broad patterns)
+### Precise audit grep
 
 Broad greps match **comments**. Prefer assignment matching:
 
@@ -183,7 +214,7 @@ Or run `./scripts/audit-bunfig.sh`.
 
 ---
 
-## `bun pm` command matrix (active tracks)
+## bun pm command matrix
 
 | Command | Active track | Notes |
 | --- | --- | --- |
@@ -201,7 +232,7 @@ Or run `./scripts/audit-bunfig.sh`.
 
 ---
 
-## IDE / VS Code
+## IDE and VS Code
 
 `~/Projects/.vscode/settings.json` and `~/.vscode/settings.json` — do **not** inject `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE`, or terminal `PATH` overrides for install policy. Cache and global store come from `~/.bunfig.toml` only.
 
@@ -235,17 +266,19 @@ Additional workflows (e.g. `ci-smoke.yml`, `issue-automation.yml`) may exist wit
 
 ## Related docs
 
-### Install / monorepo ops
+### Install and monorepo ops
 
-- [`STRUCTURE.md`](../STRUCTURE.md) — monorepo layout
-- [`AGENTS.md`](../AGENTS.md) — agent entry (machine Bun summary) · [`docs/AGENTS.md`](./AGENTS.md) — full guide
-- [`organization/ROOT_CLEANUP_SUMMARY.md`](./organization/ROOT_CLEANUP_SUMMARY.md) — root organization history
+- [STRUCTURE.md](../STRUCTURE.md) — monorepo layout
+- [AGENTS.md](../AGENTS.md) — agent entry (machine Bun summary) · [docs/AGENTS.md](./AGENTS.md) — full guide
+- [organization/ROOT_CLEANUP_SUMMARY.md](./organization/ROOT_CLEANUP_SUMMARY.md) — root organization history
 - [Bun global store](https://bun.com/docs/pm/global-store)
 - [Bun bunfig.toml](https://bun.com/docs/runtime/bunfig)
 - [bun install CLI](https://bun.com/docs/pm/cli/install)
 
-### Other monorepo policies (not install SSOT)
+### Other monorepo policies
 
-- [`.custom-instructions.md`](../.custom-instructions.md) — coding standards
-- [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) — wire / parse-once types (unknown → domain)
-- [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) — path SSOT (`CANONICAL_REPO_DOCS`)
+Not install SSOT — linked for navigation only:
+
+- [.custom-instructions.md](../.custom-instructions.md) — coding standards
+- [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) — wire / parse-once types (`unknown` → domain)
+- [lib/docs/repo-docs.ts](../lib/docs/repo-docs.ts) — path SSOT (`CANONICAL_REPO_DOCS`)
