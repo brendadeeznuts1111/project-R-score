@@ -80,12 +80,8 @@ export class SecureCookieManager {
   constructor(secret: string = Bun.env.COOKIE_SECRET || '') {
     this.secret = secret;
     // Derive separate keys for signing and encryption
-    this.signingKey = Buffer.from(
-      new CryptoHasher('sha256', secret).update('sign').digest()
-    );
-    this.encryptionKey = Buffer.from(
-      new CryptoHasher('sha256', secret).update('encrypt').digest()
-    );
+    this.signingKey = Buffer.from(new CryptoHasher('sha256', secret).update('sign').digest());
+    this.encryptionKey = Buffer.from(new CryptoHasher('sha256', secret).update('encrypt').digest());
   }
 
   // 🍪 CREATE SECURE COOKIE

@@ -578,9 +578,7 @@ export class ZeroTrustManager extends EventEmitter {
         case 'password':
           if (!credentials.password) return false;
           // Use timing-safe comparison to prevent timing attacks
-          const inputHash = new CryptoHasher('sha256')
-            .update(credentials.password)
-            .digest('hex');
+          const inputHash = new CryptoHasher('sha256').update(credentials.password).digest('hex');
           return timingSafeEqual(
             Buffer.from(inputHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')
