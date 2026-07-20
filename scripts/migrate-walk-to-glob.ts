@@ -50,7 +50,10 @@ for (const file of FILES) {
   if (!t.includes('runtime/glob')) {
     if (t.startsWith('#!')) {
       const nl = t.indexOf('\n');
-      t = t.slice(0, nl + 1) + '// @see https://bun.com/docs/runtime/glob — Bun.Glob\n' + t.slice(nl + 1);
+      t =
+        t.slice(0, nl + 1) +
+        '// @see https://bun.com/docs/runtime/glob — Bun.Glob\n' +
+        t.slice(nl + 1);
     } else {
       t = '// @see https://bun.com/docs/runtime/glob — Bun.Glob\n' + t;
     }

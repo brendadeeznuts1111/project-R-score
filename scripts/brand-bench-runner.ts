@@ -1,13 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import {
-  fileExistsSync,
-  writeText,
-  listFilesSync,
-  dirExistsSync,
-  ensureDir,
-} from './lib/fs-bun';
+import { fileExistsSync, writeText, listFilesSync, dirExistsSync, ensureDir } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
