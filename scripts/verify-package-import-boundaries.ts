@@ -35,11 +35,6 @@ const RULES: PackageBoundaryRule[] = [
     sourceDir: 'packages/package/src',
     allowedRoots: ['packages/package/src', 'lib/docs'],
   },
-  {
-    name: 'proton-pass',
-    sourceDir: 'packages/proton-pass/src',
-    allowedRoots: ['packages/proton-pass/src', 'lib/types'],
-  },
 ];
 
 const IMPORT_PATTERN =

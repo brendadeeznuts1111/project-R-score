@@ -1,4 +1,4 @@
-import { type ItemId, type VaultId } from '../../../lib/types/branded.ts';
+import type { ItemId, VaultId } from './brands.ts';
 import { runJson, runRaw } from './client.ts';
 import { ProtonVault, ProtonVaultSchema } from './types.ts';
 

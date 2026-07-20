@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { parseArgs } from 'node:util';
-import { asItemId, asVaultId } from '../../../lib/types/branded.ts';
+import { asItemId, asVaultId } from './brands.ts';
 import {
   applyTemplate,
   createItem,

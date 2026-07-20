@@ -3,7 +3,7 @@
 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { type ItemId, type VaultId } from '../../../lib/types/branded.ts';
+import type { ItemId, VaultId } from './brands.ts';
 import { runJson, runRaw } from './client.ts';
 import { type ProtonItem, ProtonItemSchema } from './types.ts';
 

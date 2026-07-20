@@ -5,7 +5,7 @@ Bun-native Proton Pass automation library. Wraps the host `pass-cli` binary and 
 ## Install
 
 ```bash
-bun add @factorywager/proton-pass
+bun add @toc-ops/proton-pass
 ```
 
 Requires the Proton Pass CLI (`pass-cli`) to be installed and available on `$PATH`, or set `PROTON_PASS_CLI_PATH`.
@@ -20,7 +20,7 @@ PROTON_PASS_CLI_PATH=/usr/local/bin/pass-cli # optional
 ## Programmatic API
 
 ```typescript
-import { listVaults, createVault, listItems, applyTemplate } from '@factorywager/proton-pass';
+import { listVaults, createVault, listItems, applyTemplate } from '@toc-ops/proton-pass';
 
 const vaults = await listVaults();
 const vault = await createVault('new-vault');

@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
-import type { VaultId } from '../../../lib/types/branded.ts';
+import type { VaultId } from './brands.ts';
 import { createItem, listItems, updateItem } from './items.ts';
 import { type VaultTemplate, VaultTemplateSchema } from './types.ts';
 

@@ -1,15 +1,14 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-20T23:12:25.776Z",
+  "generatedAt": "2026-07-20T23:34:32.886Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 31,
+  "brandCount": 29,
   "domains": [
     "audit",
     "deployment",
     "documents",
     "identity",
     "operations",
-    "proton",
     "security",
     "session"
   ],
@@ -418,34 +417,6 @@
         "system-internal"
       ],
       "description": "Search / maintenance loop identity"
-    },
-    {
-      "name": "VaultId",
-      "domain": "proton",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "user-input"
-      ],
-      "description": "Proton Pass vault identifier"
-    },
-    {
-      "name": "ItemId",
-      "domain": "proton",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "user-input"
-      ],
-      "description": "Proton Pass vault item identifier"
     }
   ],
   "constructorTiers": {

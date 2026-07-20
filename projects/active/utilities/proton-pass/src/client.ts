@@ -27,7 +27,7 @@ async function runCli(args: string[], input?: string): Promise<string> {
     stderr: 'pipe',
   });
 
-  if (input) {
+  if (input && proc.stdin) {
     proc.stdin.write(input);
     proc.stdin.end();
   }

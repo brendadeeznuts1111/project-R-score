@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { asItemId, asVaultId } from '../../../lib/types/branded.ts';
-import type { ItemId, VaultId } from '../../../lib/types/branded.ts';
+import { asItemId, asVaultId } from './brands.ts';
+import type { ItemId, VaultId } from './brands.ts';
 
 export type { ItemId, VaultId };
 

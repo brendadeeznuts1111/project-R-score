@@ -13,7 +13,6 @@
     { "path": "./packages/guards" },
     { "path": "./packages/package" },
     { "path": "./packages/p2p" },
-    { "path": "./packages/proton-pass" },
     { "path": "./packages/rip" },
     { "path": "./packages/versioning" }
   ]
