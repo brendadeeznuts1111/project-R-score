@@ -3,6 +3,8 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // R2 Benchmark script for scanner-cookies bucket
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 export {}; // Make this a module
 
 // Type declarations for global access
@@ -24,7 +26,7 @@ const bucketName = 'scanner-cookies';
 // export R2_ACCESS_KEY_ID="your_access_key"
 // export R2_SECRET_ACCESS_KEY="your_secret_key"
 
-if (!globalThis.process.env.R2_ACCESS_KEY_ID || !globalThis.process.env.R2_SECRET_ACCESS_KEY) {
+if (!Bun.env.R2_ACCESS_KEY_ID || !Bun.env.R2_SECRET_ACCESS_KEY) {
   console.info('❌ Missing R2 credentials');
   console.info('Please set:');
   console.info("export R2_ACCESS_KEY_ID='your_access_key'");
@@ -38,7 +40,7 @@ if (!globalThis.process.env.R2_ACCESS_KEY_ID || !globalThis.process.env.R2_SECRE
 
 const keys = [];
 for (let i = 0; i < 10; i++) {
-  keys.push(`bench-${crypto.randomUUID().slice(0, 8)}`);
+  keys.push(`bench-${Bun.randomUUIDv7().slice(0, 8)}`);
 }
 
 const start = performance.now();
@@ -46,7 +48,7 @@ const start = performance.now();
 await Promise.all(
   keys.map(async k => {
     const endpoint = `https://${accountId}.r2.cloudflarestorage.com`;
-    const url = `s3://${bucketName}/${k}?endpoint=${endpoint}&accessKeyId=${globalThis.process.env.R2_ACCESS_KEY_ID}&secretAccessKey=${globalThis.process.env.R2_SECRET_ACCESS_KEY}`;
+    const url = `s3://${bucketName}/${k}?endpoint=${endpoint}&accessKeyId=${Bun.env.R2_ACCESS_KEY_ID}&secretAccessKey=${Bun.env.R2_SECRET_ACCESS_KEY}`;
 
     await globalThis.Bun.write(url, new Uint8Array(260));
     return globalThis.Bun.file(url).arrayBuffer();

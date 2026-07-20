@@ -2,7 +2,7 @@
 // lib/security/zero-trust-manager.ts — Zero-trust security manager
 
 import { EventEmitter } from 'events';
-import { timingSafeEqual } from 'node:crypto';
+
 import { CryptoHasher } from 'bun';
 import { logger } from '../core/structured-logger';
 import { auditLogger } from './secret-audit-logger';
@@ -579,7 +579,7 @@ export class ZeroTrustManager extends EventEmitter {
           if (!credentials.password) return false;
           // Use timing-safe comparison to prevent timing attacks
           const inputHash = new CryptoHasher('sha256').update(credentials.password).digest('hex');
-          return timingSafeEqual(
+          return crypto.timingSafeEqual(
             Buffer.from(inputHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')
           );
@@ -610,7 +610,7 @@ export class ZeroTrustManager extends EventEmitter {
           const biometricHash = new CryptoHasher('sha256')
             .update(credentials.biometricData)
             .digest('hex');
-          return timingSafeEqual(
+          return crypto.timingSafeEqual(
             Buffer.from(biometricHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')
           );

@@ -133,7 +133,7 @@ export class EnhancedZenStreamSearcher {
 
     try {
       // Enhanced process management with priority and resource limits
-      await using proc = (Bun as Record<string, unknown>).spawn(args, {
+      await using proc = Bun.spawn(args, {
         stdout: 'pipe',
         stderr: 'pipe',
         signal: options.signal || this.abortController.signal,
@@ -380,7 +380,7 @@ export class EnhancedZenStreamSearcher {
 
     args.push(query, cachePath);
 
-    const proc = (Bun as Record<string, unknown>).spawn(args, {
+    const proc = Bun.spawn(args, {
       terminal: {
         cols: (process.stdout as any).columns || 80,
         rows: (process.stdout as any).rows || 24,
@@ -424,14 +424,11 @@ export class EnhancedZenStreamSearcher {
       }
 
       // Stream directly to ripgrep without intermediate storage
-      await using proc = (Bun as Record<string, unknown>).spawn(
-        ['rg', '--json', '--line-number', query],
-        {
-          stdin: response.body, // Direct streaming from Response
-          stdout: 'pipe',
-          stderr: 'pipe',
-        }
-      );
+      await using proc = Bun.spawn(['rg', '--json', '--line-number', query], {
+        stdin: response.body, // Direct streaming from Response
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
 
       const stream = proc.stdout;
       if (!(stream instanceof ReadableStream)) {

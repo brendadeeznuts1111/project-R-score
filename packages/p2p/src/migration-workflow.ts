@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write (creates parent path segments)
 // packages/p2p/src/migration-workflow.ts — Step-by-step business change migration workflow
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { BusinessContinuity } from './business-continuity';
 import { RedisClient } from 'bun';
 
@@ -72,7 +73,7 @@ export async function executeBusinessMigration(
 
   // Step 5: Create migration report
   const report: MigrationReport = {
-    migrationId: crypto.randomUUID(),
+    migrationId: Bun.randomUUIDv7(),
     timestamp: new Date().toISOString(),
     oldAlias,
     newAlias,

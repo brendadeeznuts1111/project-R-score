@@ -14,6 +14,7 @@
  */
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { Database } from 'bun:sqlite';
 import { juniorProfile } from '../utils/junior-runner';
 import { join } from 'path';
@@ -122,7 +123,7 @@ class TelemetryPool {
     const db = this.pool.pop() || new Database(DB_PATH); // Pool pop!
 
     try {
-      const profileId = crypto.randomUUID();
+      const profileId = Bun.randomUUIDv7();
       const timestamp = Date.now();
 
       // Use synchronous run method (Bun SQLite is fast enough)
@@ -200,7 +201,7 @@ class TelemetryPool {
         connections.push(db);
 
         for (const { sessionId, profile, member = 'anonymous', document = 'unknown' } of batch) {
-          const profileId = crypto.randomUUID();
+          const profileId = Bun.randomUUIDv7();
           const timestamp = Date.now();
 
           // Use synchronous run method
@@ -421,7 +422,7 @@ if (import.meta.main) {
                 complexity: ['lead', 'senior', 'expert'][Math.floor(Math.random() * 3)],
                 tableCols: Math.floor(Math.random() * 50),
                 memory: Math.random() * 100,
-                cryptoSeal: crypto.randomUUID(),
+                cryptoSeal: Bun.randomUUIDv7(),
                 gfmScore: Math.random() * 100,
                 features: { headings: 5, tables: 2, code: 3 },
               } as LeadSpecProfile,

@@ -4,8 +4,6 @@
  * Demonstrating all official Bun.file methods with proper TypeScript typing
  */
 
-import { writeFile } from 'fs/promises';
-
 // Official Bun interfaces for type safety
 interface BunFile {
   readonly name: string;
@@ -71,7 +69,7 @@ export class BunFileAPIDemo {
     console.info('\n📝 Creating test files...');
 
     // Create a text file
-    await writeFile(
+    await Bun.write(
       'demo-text.txt',
       'Hello, Bun.file() API!\nThis is a test file for text operations.'
     );
@@ -86,13 +84,13 @@ export class BunFileAPIDemo {
         author: 'Enhanced Zen Dashboard',
       },
     };
-    await writeFile('demo-data.json', JSON.stringify(jsonData, null, 2));
+    await Bun.write('demo-data.json', JSON.stringify(jsonData, null, 2));
 
     // Create a binary file
     const binaryData = new Uint8Array([
       0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64,
     ]);
-    await writeFile('demo-binary.bin', binaryData);
+    await Bun.write('demo-binary.bin', binaryData);
 
     console.info('   ✅ Test files created: demo-text.txt, demo-data.json, demo-binary.bin');
   }

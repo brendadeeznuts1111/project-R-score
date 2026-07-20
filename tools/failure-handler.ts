@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // tools/failure-handler.ts — Failure handler and fix manager for validation issues
 
 // Parse command line arguments
@@ -479,7 +482,7 @@ class AutoFixer {
 
           const filesExist = fix.filesToModify.every(file => {
             const filePath = path.join(process.cwd(), file);
-            return fs.existsSync(filePath);
+            return Bun.peek(Bun.file(filePath).exists()) === true;
           });
 
           if (filesExist) {

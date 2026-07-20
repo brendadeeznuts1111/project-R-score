@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // tools/overseer-cli.ts — Root project manager for Bun platform projects
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
 ensureDirectExecution();
 
@@ -36,7 +37,7 @@ function runInProject(projectName: string, cmd: string[]) {
   // Resolve binary with project-specific PATH
   const binPath = which(cmd[0], {
     cwd: projectHome,
-    PATH: `${projectHome}/node_modules/.bin:${process.env.PATH || ''}`,
+    PATH: `${projectHome}/node_modules/.bin:${Bun.env.PATH || ''}`,
   });
 
   if (!binPath) {
@@ -49,7 +50,7 @@ function runInProject(projectName: string, cmd: string[]) {
     cwd: projectHome,
     stdio: 'inherit',
     env: {
-      ...process.env,
+      ...Bun.env,
       PROJECT_HOME: projectHome,
       BUN_PLATFORM_HOME: Bun.cwd,
     },

@@ -5,6 +5,7 @@
 
 // ReadableStream and Response are built into Bun's global scope - no import needed
 
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 export interface StreamSearchOptions {
   query: string;
   cachePath: string;
@@ -82,7 +83,7 @@ export class ZenStreamSearcher {
 
     try {
       // Using AsyncDisposable pattern (TS 5.2+) for automatic cleanup
-      await using proc = (Bun as Record<string, unknown>).spawn(args, {
+      await using proc = Bun.spawn(args, {
         stdout: 'pipe',
         stderr: 'pipe',
         signal: options.signal || this.abortController.signal,
@@ -185,19 +186,16 @@ export class ZenStreamSearcher {
    * Advanced PTY search for interactive terminal applications
    */
   async ptySearch(query: string, cachePath: string): Promise<void> {
-    const proc = (Bun as Record<string, unknown>).spawn(
-      ['rg', '--color=always', '--line-number', query, cachePath],
-      {
-        terminal: {
-          cols: (process.stdout as any).columns || 80,
-          rows: (process.stdout as any).rows || 24,
-          data(terminal: any, data: Uint8Array) {
-            // Process raw ANSI data from ripgrep
-            (Bun as Record<string, unknown>).write(Bun.stdout, data);
-          },
+    const proc = Bun.spawn(['rg', '--color=always', '--line-number', query, cachePath], {
+      terminal: {
+        cols: (process.stdout as any).columns || 80,
+        rows: (process.stdout as any).rows || 24,
+        data(terminal: any, data: Uint8Array) {
+          // Process raw ANSI data from ripgrep
+          (Bun as Record<string, unknown>).write(Bun.stdout, data);
         },
-      }
-    );
+      },
+    });
 
     await proc.exited;
     console.info('✅ PTY search complete');
@@ -210,13 +208,7 @@ export class ZenStreamSearcher {
     query: string,
     cachePath: string
   ): Promise<{ stats: SearchStats; resources: ResourceMetrics }> {
-    const result = (Bun as Record<string, unknown>).spawnSync([
-      'rg',
-      '--json',
-      '--line-number',
-      query,
-      cachePath,
-    ]);
+    const result = Bun.spawnSync(['rg', '--json', '--line-number', query, cachePath]);
 
     // Extract resource usage metrics
     const resources: ResourceMetrics = result.resourceUsage;
@@ -301,14 +293,11 @@ export class ZenStreamSearcher {
     }
 
     // Use the Response directly as stdin for ripgrep
-    await using proc = (Bun as Record<string, unknown>).spawn(
-      ['rg', '--json', '--line-number', query],
-      {
-        stdin: response.body, // Response is a ReadableStream, perfect for stdin
-        stdout: 'pipe',
-        stderr: 'pipe',
-      }
-    );
+    await using proc = Bun.spawn(['rg', '--json', '--line-number', query], {
+      stdin: response.body, // Response is a ReadableStream, perfect for stdin
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
 
     const decoder = new TextDecoder();
     const stream = proc.stdout;

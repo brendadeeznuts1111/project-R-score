@@ -29,14 +29,11 @@ export class FetchAndRipStreamer {
 
       // Stream directly to ripgrep - this is the magic!
       const startTime = performance.now();
-      const proc = (Bun as Record<string, unknown>).spawn(
-        ['rg', '--line-number', '--color=always', query],
-        {
-          stdin: response.body, // Response body is a ReadableStream!
-          stdout: 'pipe',
-          stderr: 'pipe',
-        }
-      );
+      const proc = Bun.spawn(['rg', '--line-number', '--color=always', query], {
+        stdin: response.body, // Response body is a ReadableStream!
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
 
       // Get the results as text
       const result = await proc.stdout.text();
@@ -82,13 +79,10 @@ export class FetchAndRipStreamer {
         }
 
         // Stream directly to ripgrep
-        const proc = (Bun as Record<string, unknown>).spawn(
-          ['rg', '--line-number', '--heading', query],
-          {
-            stdin: response.body,
-            stdout: 'pipe',
-          }
-        );
+        const proc = Bun.spawn(['rg', '--line-number', '--heading', query], {
+          stdin: response.body,
+          stdout: 'pipe',
+        });
 
         const result = await proc.stdout.text();
         if (result.trim()) {
@@ -111,7 +105,7 @@ export class FetchAndRipStreamer {
     console.info(`🧠 Processing search results from: ${url}`);
 
     const response = await fetch(url);
-    const proc = (Bun as Record<string, unknown>).spawn(['rg', '--json', query], {
+    const proc = Bun.spawn(['rg', '--json', query], {
       stdin: response.body,
       stdout: 'pipe',
     });
@@ -229,7 +223,7 @@ export class NetworkDocumentationSearcher extends ZenStreamSearcher {
 async function basicExample() {
   const docUrl = 'https://bun.sh/docs/llms.txt';
 
-  const proc = (Bun as Record<string, unknown>).spawn(['rg', 'Bun.spawn'], {
+  const proc = Bun.spawn(['rg', 'Bun.spawn'], {
     stdin: await fetch(docUrl), // Direct streaming from network to rg
     stdout: 'pipe',
   });

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 /**
  * Profile Watcher — local file auto-uploader
  *
@@ -9,7 +10,7 @@
  */
 
 import { resolve } from 'node:path';
-import { unlink } from 'node:fs/promises';
+
 import {
   ProfileSessionUploader,
   type ProfileUploaderConfig,
@@ -112,7 +113,7 @@ export class ProfileWatcher {
         if (this.config.deleteAfterUpload) {
           for (const entry of entries) {
             try {
-              await unlink(entry.localPath);
+              await Bun.file(entry.localPath).delete();
             } catch {
               // File may already be gone — not an error
             }

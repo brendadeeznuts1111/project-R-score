@@ -6,6 +6,7 @@
 // Usage:
 //   bun fetch-har.ts <url> [output.har] [--verbose] [--no-prefetch] [--dns-ttl <seconds>]
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { dns } from 'bun';
 
 const args = process.argv.slice(2);
@@ -46,7 +47,7 @@ if (!flags.url) {
 // Set DNS cache TTL via BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS
 // Must be set before any fetches happen
 if (flags.dnsTtl > 0) {
-  process.env.BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS = String(flags.dnsTtl);
+  Bun.env.BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS = String(flags.dnsTtl);
 }
 
 if (!flags.outFile) {

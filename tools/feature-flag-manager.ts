@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // tools/feature-flag-manager.ts — Feature flag and deployment manager
 
 // Parse command line arguments
@@ -305,7 +306,7 @@ class FeatureFlagManager {
         flags: Array.from(this.flags.entries()).map(([id, flag]) => ({ id, ...flag })),
       };
 
-      await fs.writeFile(this.configPath, JSON.stringify(flagData, null, 2));
+      await Bun.write(this.configPath, JSON.stringify(flagData, null, 2));
       log.verbose(`Saved feature flags to ${this.configPath}`);
       return true;
     } catch (error) {

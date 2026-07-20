@@ -140,17 +140,14 @@ class IPCDocumentationOrchestrator {
    */
   spawnWorker(workerId: string): boolean {
     try {
-      const worker = (Bun as Record<string, unknown>).spawn(
-        ['bun', '--import', './lib/docs/ipc-stream-search.ts'],
-        {
-          ipc: (message: IPCMessage, subprocess) => {
-            this.handleWorkerMessage(workerId, message, subprocess);
-          },
-          serialization: 'json', // Use JSON for compatibility
-          stdout: 'inherit',
-          stderr: 'inherit',
-        }
-      );
+      const worker = Bun.spawn(['bun', '--import', './lib/docs/ipc-stream-search.ts'], {
+        ipc: (message: IPCMessage, subprocess) => {
+          this.handleWorkerMessage(workerId, message, subprocess);
+        },
+        serialization: 'json', // Use JSON for compatibility
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
 
       this.workers.set(workerId, worker);
       console.info(`🚀 Spawned worker: ${workerId}`);
