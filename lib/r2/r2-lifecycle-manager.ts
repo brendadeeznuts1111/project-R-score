@@ -300,10 +300,7 @@ export class R2LifecycleManager {
       }, this.scanInterval);
       this.cronJob = { stop: () => clearInterval(timer) };
       console.info(
-        styled(
-          `🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`,
-          'info'
-        )
+        styled(`🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`, 'info')
       );
     }
   }
