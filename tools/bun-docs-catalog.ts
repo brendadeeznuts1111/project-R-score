@@ -3,6 +3,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
+import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
+
 /**
  * bun-docs-catalog.ts — structured Bun doc catalog entries.
  *
@@ -1166,7 +1168,10 @@ export async function buildCatalog(opts?: {
     e.docsUrl = docsUrlFor(e.canonicalPage, e.anchor);
     // Prefer release notes for feature ship version; else latest fix; else catalog pin
     const forRelease = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? verifiedOn;
-    e.releaseUrl = releaseUrlFor(forRelease);
+    const releaseVersion = normalizeBunVersion(forRelease);
+    e.releaseUrl = releaseMap.has(releaseVersion)
+      ? releaseUrlFor(forRelease)
+      : BUN_GITHUB_RELEASES_URL;
     // Blog: RSS-validated only (Phase 0). Overlay #anchors preserved when base exists.
     stampEntryBlogUrl(e, releaseMap, forRelease);
   }
@@ -1453,8 +1458,10 @@ export async function writeCatalog(
   }
 ): Promise<void> {
   const bunVersion = normalizeBunVersion(opts?.bunVersion ?? Bun.version);
-  const releaseUrl = releaseUrlFor(bunVersion);
   const releaseMap = opts?.releaseMap ?? (await loadReleaseIndex({ refresh: false })).map;
+  const releaseUrl = releaseMap.has(bunVersion)
+    ? releaseUrlFor(bunVersion)
+    : BUN_GITHUB_RELEASES_URL;
   const blogUrl = lookupBlogUrl(bunVersion, releaseMap) ?? '';
   const commitHash = opts?.commitHash ?? runtimeCommitHash(bunVersion);
   const payload = {
@@ -1654,7 +1661,10 @@ export async function verifyCatalog(
     messages.push(`ok bunVersion=${meta.bunVersion}`);
   }
 
-  const expectedRelease = releaseUrlFor(expectedVersion);
+  const { map: releaseMap } = await loadReleaseIndex({ refresh: false });
+  const expectedRelease = releaseMap.has(normalizeBunVersion(expectedVersion))
+    ? releaseUrlFor(expectedVersion)
+    : BUN_GITHUB_RELEASES_URL;
   if (meta.releaseUrl !== expectedRelease) {
     ok = false;
     messages.push(`catalog releaseUrl mismatch: ${meta.releaseUrl} (expected ${expectedRelease})`);
@@ -1662,7 +1672,6 @@ export async function verifyCatalog(
     messages.push(`ok releaseUrl=${meta.releaseUrl}`);
   }
 
-  const { map: releaseMap } = await loadReleaseIndex({ refresh: false });
   const expectedBlog = lookupBlogUrl(expectedVersion, releaseMap) ?? '';
   if ((meta.blogUrl ?? '') !== expectedBlog) {
     ok = false;

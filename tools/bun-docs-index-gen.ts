@@ -16,7 +16,8 @@
  *       https://bun.com/docs/guides/html-rewriter/extract-links#convert-relative-urls-to-absolute
  */
 
-const LLMS_URL = 'https://bun.com/docs/llms.txt';
+import { LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
+
 const OUT = new URL('./bun-docs-index.json', import.meta.url).pathname;
 const TAXONOMY = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
 const CONCURRENCY = 8;

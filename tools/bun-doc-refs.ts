@@ -777,8 +777,9 @@ async function deepcheck(paths: string[]): Promise<number> {
   return bad;
 }
 
+import { LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
+
 const TAXONOMY_PATH = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
-const LLMS_URL = 'https://bun.com/docs/llms.txt';
 const INTEGRITY_LOG = 'reports/doc-integrity.jsonl';
 
 type TaxonomyFile = {

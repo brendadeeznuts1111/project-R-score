@@ -33,7 +33,11 @@
  * Docs pages stay unversioned. commitHash is Bun.revision when building against the runtime.
  */
 
-const LLMS_URL = 'https://bun.com/docs/llms.txt';
+import {
+  BUN_GITHUB_RELEASES_URL,
+  LLMS_URL,
+} from '../lib/shared/tools/bun-urls.ts';
+
 const SUPPLEMENT_OUT = new URL('./bun-docs-token-supplement.json', import.meta.url).pathname;
 
 const DOMAINS = ['runtime', 'bundler', 'test', 'pm'];
@@ -532,9 +536,19 @@ function parseArgs(): GeneratorArgs {
 
 async function main(): Promise<void> {
   const args = parseArgs();
-  const { sections, version, releaseUrl, commitHash, versionPinned } = args;
+  const { sections, version, commitHash, versionPinned } = args;
   // Resolve the best blog URL with patch → minor → major fallback.
   const blogUrl = (await resolveBlogUrl(version)) ?? '';
+
+  // Only emit a versioned GitHub release tag when that release is actually
+  // present in the RSS release index; otherwise fall back to the generic
+  // releases page so generated JSON never contains a 404 release URL.
+  const normVersion = normalizeBunVersion(version);
+  const { loadReleaseIndex } = await import('./bun-docs-release-index.ts');
+  const { map: releaseMap } = await loadReleaseIndex({ refresh: false });
+  const releaseUrl = releaseMap.has(normVersion)
+    ? `https://github.com/oven-sh/bun/releases/tag/bun-v${normVersion}`
+    : BUN_GITHUB_RELEASES_URL;
   // @see https://bun.com/docs/runtime/nodejs-compat#fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
