@@ -167,7 +167,5 @@ if (SHOW_PATHS) {
 }
 console.info(`\nTotal: ${rows.length} packages`);
 if (skippedScaffolds > 0) {
-  console.info(
-    `Skipped scaffolds: ${skippedScaffolds} (pass --include-scaffolds to show)`
-  );
+  console.info(`Skipped scaffolds: ${skippedScaffolds} (pass --include-scaffolds to show)`);
 }

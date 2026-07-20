@@ -157,6 +157,8 @@ output/
 download/
 # Root frozen dump only — do not match projects/archive/ (tracked tier bucket)
 /archive/
+# Nested historical dumps inside active projects (keep local; tier is projects/archive/)
+projects/active/**/archive/
 
 # Generated and temporary content
 *.scratch.*
