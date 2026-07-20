@@ -7,6 +7,16 @@
 
 Domain-valued text (session, account, zone, credential keys, …) must not travel as unbranded `string` inside the harness after the wire/CLI/env boundary.
 
+## Agent mandate (enforced)
+
+| Gate | Behavior |
+|------|----------|
+| `branded-id-check --staged --strict` | **Blocks** new bare-string domain IDs on added lines (properties **and** function params). No baseline. |
+| `branded-id-check --smart --strict` | Repo-wide actionable count must stay 0 (legacy mid-line may be in `tools/branded-id-baseline.json`). |
+| `check:brands:types` | Nominal proof brands are distinct. |
+
+**Do not** add `sessionId: string` / `userId: string` / `function f(accountId: string)`. **Do** use `SessionId` / `UserId` / `AccountId` + `as*` / `try*` / `parse*`.
+
 ## Just-in-time context
 
 | Need | Load |

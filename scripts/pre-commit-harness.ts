@@ -123,14 +123,17 @@ async function main(): Promise<void> {
   });
   if ((await brandCheck.exited) !== 0) {
     console.error(
-      '❌ New unbranded ID declarations — use lib/types/branded.ts brands or // brand-ok'
+      '❌ New unbranded domain ID (bare string) — agents MUST use lib/types/branded.ts\n' +
+        '   as*/try*/parse* (SessionId, UserId, …). Opaque only: // brand-ok\n' +
+        '   catalog: bun tools/brand-catalog.ts [BrandName]'
     );
     process.exit(1);
   }
 
-  // Repo-wide smart gate: the brand rollout is complete (actionable = 0),
-  // so any actionable hit anywhere in lib/ now fails the commit — this is
-  // the standing local CI gate. Manual run: bun run check:brands
+  // Repo-wide smart gate: actionable unbranded IDs must stay 0.
+  // Mid-line function params are detected; legacy hits live in
+  // tools/branded-id-baseline.json (staged never uses baseline).
+  // Manual: bun run check:brands
   console.info('🏷️  Branded IDs (repo-wide smart gate)...');
   const brandSmart = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--strict'], {
     cwd: repoRoot,
@@ -138,7 +141,9 @@ async function main(): Promise<void> {
     stderr: 'inherit',
   });
   if ((await brandSmart.exited) !== 0) {
-    console.error('❌ Actionable unbranded IDs in repo — see: bun run check:brands');
+    console.error(
+      '❌ Actionable unbranded IDs in repo — brand them or // brand-ok; see: bun run check:brands'
+    );
     process.exit(1);
   }
 

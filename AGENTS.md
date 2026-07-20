@@ -24,12 +24,31 @@ Do not append an unrequested caveat, counterargument, or moralizing endcap to a 
 
 **Terminology (harness):** prefer **artifact** over **codebase** for what is maintained, delivered, or proven; use **repository** / **source tree** for the git tree. Domain-valued strings use **brands**, not bare `string`, after the boundary — see [`.custom-instructions.md`](.custom-instructions.md) and [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
 
+## Branded IDs are mandatory (agents)
+
+**Do not declare domain IDs as bare `string`.** This is enforced by pre-commit (`--staged --strict` has **no** baseline — new code always fails).
+
+| Wrong | Right |
+|-------|--------|
+| `sessionId: string` | `sessionId: SessionId` + `asSessionId` / `trySessionId` / `parseSessionId` |
+| `userId?: string` | `userId?: UserId` |
+| `function f(accountId: string)` | `function f(accountId: AccountId)` |
+| `'' as AccountId` | never — use `try*` or throw |
+
+```bash
+bun tools/brand-catalog.ts SessionId   # which constructor + mint authority
+bun run check:brands                   # repo-wide (baseline may grandfather legacy only)
+bun tools/branded-id-check.ts --staged --strict   # what pre-commit runs on your diff
+```
+
+Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
+
 ## Operating rules
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
 - **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
 - **Task routing:**
-  - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands`
+  - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts))
@@ -64,6 +83,8 @@ Rules:
 
 ## Branded ID types (harness)
 
+**Mandatory for agents.** Domain `*Id` values are never bare `string` after the boundary (see section above).
+
 **Stable import:** [`lib/types/branded.ts`](lib/types/branded.ts) · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json) · **Agent map:** [`lib/types/branded/README.md`](lib/types/branded/README.md)
 
 Each domain module repeats the same pattern: `type` + `as*` + `try*` + `parse*` + `*_BRAND_SPECS`. Agents learn the invariant from structure.
@@ -78,16 +99,17 @@ Mint authority is documented per brand in the manifest (`system-internal` · `us
 
 ```bash
 bun tools/brand-catalog.ts                       # JIT brand discovery (domain|BrandName)
-bun run check:brands                             # actionable unbranded IDs (manifest-driven)
+bun run check:brands                             # actionable unbranded IDs (manifest-driven + baseline)
 bun run check:brands:types                       # tsc proof: SessionId ≠ UserId
 bun run check:brands:all                         # manifest + smart + types
 bun tools/brand-manifest.ts                      # regenerate institutional record
 bun tools/brand-manifest.ts --check              # fail if manifest stale (pre-commit)
+bun tools/branded-id-check.ts --write-baseline   # only when expanding detector (owners)
 ```
 
 Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/) · Type proof: [`tests/branded-types.test-d.ts`](tests/branded-types.test-d.ts)
 
-- Pre-commit: `--staged --strict` on added lines + optional smart baseline
+- Pre-commit: `--staged --strict` on **added** lines (**no** baseline — mid-line params included) + repo-wide `--smart --strict`
 - Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`
 - Credential normalize: [`lib/security/r2-credentials.ts`](lib/security/r2-credentials.ts) (soft try* merge)
 

@@ -5,9 +5,13 @@
 /**
  * branded-id-check.ts — detector for unbranded ID declarations.
  *
- * Flags TypeScript property declarations shaped like `id: string` /
- * `userId?: string` that should use branded ID types from
- * lib/types/branded.ts (see its header for the migration plan).
+ * Flags TypeScript declarations shaped like `id: string` / `userId?: string`
+ * **including mid-line function parameters** (`function f(sessionId: string)`)
+ * that must use branded ID types from lib/types/branded.ts.
+ *
+ * Agents: domain *Id types MUST be brands after the wire boundary.
+ * Pre-commit runs `--staged --strict` (no baseline) + `--smart --strict`
+ * (baseline may grandfather pre-ratchet mid-line hits only).
  *
  * Usage:
  *   bun tools/branded-id-check.ts [paths...]   # report by directory (exit 0)
@@ -15,25 +19,29 @@
  *   bun tools/branded-id-check.ts --smart --json
  *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
  *                                              #   (with --smart: ignores opaque-pk)
- *   bun tools/branded-id-check.ts --staged     # scan ADDED lines of staged
- *                                              #   diff only (new violations
- *                                              #   in changed lines; legacy
- *                                              #   violations elsewhere in
- *                                              #   the file never block)
+ *   bun tools/branded-id-check.ts --staged     # ADDED lines only (agents)
+ *   bun tools/branded-id-check.ts --write-baseline  # refresh grandfather list
  *
  * Suppression: end a declaration line with `// brand-ok` to skip it
  * (for IDs that are genuinely opaque passthroughs). Prefer --smart
  * auto-suppression of bare `id`/`_id` DTOs over polluting call sites.
  * Brand foundation: lib/types/branded.ts · institutional record: brand-manifest.json
+ * Baseline: tools/branded-id-baseline.json (legacy mid-line only; staged ignores it)
  */
 
-// Matches ID-shaped names only: exact `id`, names ending in `Id`/`ID`
-// (sessionId, RequestId), names ending in `_id` (account_id, `_id` itself).
-// Does NOT match words merely containing "id" (valid, forbidden, guid,
-// validationErrors, cidr_whitelist, correlationIdHeader).
-const ID_DECL = /^\s*(?:readonly\s+)?(id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)\??:\s*string\b/;
-const SKIP_FILE = /lib\/types\/branded(\.ts|\/)|lib\/types\/brand-manifest\.json$/;
+// ID-shaped field names: exact `id`, *Id/*ID, *_id. Not guid/valid/correlationIdHeader.
+const ID_FIELD_NAME = String.raw`(id|[a-zA-Z]+(?:Id|ID)|[a-zA-Z_]*_id)`;
+/** Line-leading property / param-alone lines (historical pattern). */
+const ID_DECL = new RegExp(String.raw`^\s*(?:readonly\s+)?${ID_FIELD_NAME}\??:\s*string\b`);
+/**
+ * Anywhere on the line — catches `function f(sessionId: string)`, nested types,
+ * and multi-param signatures. Negative lookbehind avoids `fooSessionId` false starts.
+ */
+const ID_DECL_ANYWHERE = new RegExp(String.raw`(?<![\w$.])${ID_FIELD_NAME}\??:\s*string\b`, 'g');
+const SKIP_FILE =
+  /lib\/types\/branded(\.ts|\/)|lib\/types\/brand-manifest\.json$|branded-id-baseline\.json$/;
 const SKIP_LINE = /brand-ok/;
+const BASELINE_URL = new URL('./branded-id-baseline.json', import.meta.url);
 
 /** High-trust boundary layers — bare `id` still flags here. */
 const HIGH_TRUST_PATH =
@@ -146,8 +154,70 @@ function relPath(file: string): string {
 }
 
 function extractField(line: string): string | null {
-  const m = line.match(ID_DECL);
-  return m?.[1] ?? null;
+  const fields = extractFields(line);
+  return fields[0] ?? null;
+}
+
+/** Doc/comment lines — example prose like `sessionId: string` is not a declaration. */
+function isCommentOrDocLine(line: string): boolean {
+  const t = line.trim();
+  return (
+    t.startsWith('//') ||
+    t.startsWith('*') ||
+    t.startsWith('/*') ||
+    t.startsWith('*/') ||
+    t.startsWith('·') // box-drawing in usage banners
+  );
+}
+
+/** All ID-shaped `…: string` bindings on a line (params + properties). */
+function extractFields(line: string): string[] {
+  if (isCommentOrDocLine(line)) return [];
+  // Strip trailing line comments so `foo: string // note` still matches code,
+  // but `"sessionId: string"` in a pure string literal on RHS is rare enough.
+  const out: string[] = [];
+  ID_DECL_ANYWHERE.lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = ID_DECL_ANYWHERE.exec(line)) !== null) {
+    if (m[1]) out.push(m[1]);
+  }
+  return out;
+}
+
+type BaselineFile = {
+  version: 1;
+  generatedAt: string;
+  note: string;
+  /** Keys: file \\t field \\t trimmed line text */
+  keys: string[];
+};
+
+function baselineKey(file: string, field: string, text: string): string {
+  return `${file}\t${field}\t${text.trim()}`;
+}
+
+async function loadBaselineKeys(): Promise<Set<string>> {
+  try {
+    const raw = await Bun.file(BASELINE_URL).text();
+    const data = JSON.parse(raw) as BaselineFile;
+    return new Set(data.keys ?? []);
+  } catch {
+    return new Set();
+  }
+}
+
+function applyBaseline(hits: Hit[], baseline: Set<string>): Hit[] {
+  if (baseline.size === 0) return hits;
+  return hits.map(h => {
+    if (h.suppressed) return h;
+    const key = baselineKey(h.file, h.field, h.text);
+    if (!baseline.has(key)) return h;
+    return {
+      ...h,
+      suppressed: true,
+      reason: 'legacy baseline (grandfathered; new code must brand — staged ignores baseline)',
+    };
+  });
 }
 
 function isOpaquePrimaryKey(field: string): boolean {
@@ -377,8 +447,13 @@ function classifyHit(
   };
 }
 
-/** Violations in added lines of the staged diff (hunk-aware). */
+/**
+ * Violations in added lines of the staged diff (hunk-aware).
+ * **No baseline** — agents cannot introduce new bare-string domain IDs.
+ * Catches mid-line function params (`sessionId: string`) as well as properties.
+ */
 async function stagedViolations(): Promise<Violation[]> {
+  const maps = await fieldMaps();
   const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'], {
     stdout: 'pipe',
   });
@@ -399,21 +474,25 @@ async function stagedViolations(): Promise<Violation[]> {
     if (raw.startsWith('+') && !raw.startsWith('+++')) {
       newLine++;
       const line = raw.slice(1);
-      if (!SKIP_FILE.test(file) && !SKIP_LINE.test(line) && ID_DECL.test(line)) {
-        // Smart staged: only block actionable hits (mirror --smart suppressions)
-        const field = extractField(line);
-        if (!field) continue;
-        // Dual string|Brand input ports are intentional soft boundaries
-        if (
-          /:\s*string\s*\|\s*[A-Za-z][A-Za-z0-9_]*Id\b/.test(line) ||
-          /:\s*[A-Za-z][A-Za-z0-9_]*Id\s*\|\s*string\b/.test(line)
-        ) {
-          continue;
-        }
-        if (isOpaquePrimaryKey(field) && !HIGH_TRUST_PATH.test(file)) {
-          continue;
-        }
-        violations.push({ file, line: newLine, text: line.trim() });
+      if (SKIP_FILE.test(file) || SKIP_LINE.test(line)) {
+        continue;
+      }
+      const fields = extractFields(line);
+      if (fields.length === 0) continue;
+      // Single-line structural hint (staged has no full file context)
+      const structural: StructuralKind = /function\s|\(.*\)\s*[:{]|,\s*$|\)\s*(?::|\{|=>)/.test(
+        line.trim()
+      )
+        ? 'function-param'
+        : 'unknown';
+      for (const field of fields) {
+        const hit = classifyHit(file, newLine, line, field, structural, maps);
+        if (hit.suppressed) continue;
+        violations.push({
+          file,
+          line: newLine,
+          text: `${line.trim()}  ← ${field}${hit.brandHint ? ` → use ${hit.brandHint}` : ''}`,
+        });
       }
       continue;
     }
@@ -451,14 +530,37 @@ async function scanAll(files: string[]): Promise<Hit[]> {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]!;
       if (SKIP_LINE.test(line)) continue;
-      if (!ID_DECL.test(line)) continue;
-      const field = extractField(line);
-      if (!field) continue;
+      const fields = extractFields(line);
+      if (fields.length === 0) continue;
       const structural = classifyStructure(lines, i);
-      hits.push(classifyHit(file, i + 1, line, field, structural, maps));
+      for (const field of fields) {
+        hits.push(classifyHit(file, i + 1, line, field, structural, maps));
+      }
     }
   }
   return hits;
+}
+
+async function writeBaselineFile(files: string[]): Promise<void> {
+  const hits = await scanAll(files);
+  // Grandfather only hits that would fail --smart --strict today (actionable).
+  const actionable = hits.filter(h => !h.suppressed);
+  const keys = [...new Set(actionable.map(h => baselineKey(h.file, h.field, h.text)))].sort();
+  const payload: BaselineFile = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    note:
+      'Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. ' +
+      'Staged commits never use this baseline — new bare-string domain IDs always fail. ' +
+      'Remove entries as you migrate to brands (as*/try*/parse*). ' +
+      'Regenerate: bun tools/branded-id-check.ts --write-baseline',
+    keys,
+  };
+  await Bun.write(BASELINE_URL, `${JSON.stringify(payload, null, 2)}\n`);
+  console.info(
+    `✅ wrote ${keys.length} baseline keys → tools/branded-id-baseline.json\n` +
+      `   (staged gate still blocks any NEW bare-string domain ID)`
+  );
 }
 
 async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
@@ -496,11 +598,14 @@ async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
     return;
   }
 
+  const legacy = suppressed.filter(h => h.reason.startsWith('legacy baseline')).length;
   console.info(
     `\n🧠 branded-id-check --smart` +
       `${maps.loadedFromManifest ? ' (manifest-driven)' : ' (manifest missing — weak field maps)'}\n` +
       `${hits.length} total hits → ${actionable.length} actionable ` +
-      `(${suppressed.length} auto-suppressed as opaque / DTO primary keys)\n`
+      `(${suppressed.length} suppressed` +
+      `${legacy > 0 ? `, ${legacy} legacy-baseline` : ''})\n` +
+      `  AGENTS: new domain *Id fields MUST use brands (as*/try*/parse*) — staged gate has no baseline.\n`
   );
 
   const roles: Role[] = ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'];
@@ -563,7 +668,8 @@ async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
   console.info(
     `\n  brands: lib/types/branded.ts · manifest: lib/types/brand-manifest.json\n` +
       `  catalog: bun tools/brand-catalog.ts [domain|brand]\n` +
-      `  rollout: COMPLETE — actionable must stay 0 (gate: bun run check:brands)\n` +
+      `  baseline: tools/branded-id-baseline.json (legacy only; staged ignores)\n` +
+      `  gate: bun run check:brands  ·  agents: MUST brand domain *Id (no bare string)\n` +
       `  strict (actionable only): bun tools/branded-id-check.ts --smart --strict\n`
   );
 }
@@ -573,9 +679,11 @@ async function main(): Promise<void> {
   const strict = args.includes('--strict');
   const smart = args.includes('--smart');
   const asJson = args.includes('--json');
+  const writeBaseline = args.includes('--write-baseline');
 
   // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
   // violations elsewhere in a touched file never block the commit.
+  // Baseline does NOT apply — agents cannot add new bare-string domain IDs.
   if (args.includes('--staged')) {
     const violations = await stagedViolations();
     if (violations.length === 0) {
@@ -585,7 +693,9 @@ async function main(): Promise<void> {
     for (const v of violations) console.info(`  ${v.file}:${v.line}: ${v.text}`);
     console.info(
       `\n❌ ${violations.length} new unbranded ID declaration(s) in staged changes\n` +
-        '   → use brands from lib/types/branded.ts, or suppress with // brand-ok\n' +
+        '   → REQUIRED: use brands from lib/types/branded.ts (as*/try*/parse*)\n' +
+        '   → catalog: bun tools/brand-catalog.ts [SessionId|UserId|…]\n' +
+        '   → intentional opaque only: end line with // brand-ok\n' +
         '   → triage: bun tools/branded-id-check.ts --smart'
     );
     if (strict) process.exit(1);
@@ -594,15 +704,21 @@ async function main(): Promise<void> {
 
   const files = await collectFiles(args);
 
+  if (writeBaseline) {
+    await writeBaselineFile(files);
+    return;
+  }
+
   if (smart) {
-    const hits = await scanAll(files);
+    const baseline = await loadBaselineKeys();
+    const hits = applyBaseline(await scanAll(files), baseline);
     await printSmartReport(hits, asJson);
     const actionable = hits.filter(h => !h.suppressed).length;
     if (strict && actionable > 0) process.exit(1);
     return;
   }
 
-  // Legacy directory rollup
+  // Legacy directory rollup (mid-line + line-leading)
   const perDir = new Map<string, number>();
   let total = 0;
   for (const file of files) {
@@ -613,9 +729,10 @@ async function main(): Promise<void> {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]!;
       if (SKIP_LINE.test(line)) continue;
-      if (ID_DECL.test(line)) {
-        fileCount++;
-        total++;
+      const n = extractFields(line).length;
+      if (n > 0) {
+        fileCount += n;
+        total += n;
       }
     }
     if (fileCount > 0) {
@@ -624,8 +741,9 @@ async function main(): Promise<void> {
       perDir.set(dir, (perDir.get(dir) ?? 0) + fileCount);
       if (strict || files.length <= 20) {
         for (let i = 0; i < lines.length; i++) {
-          if (!SKIP_LINE.test(lines[i]!) && ID_DECL.test(lines[i]!)) {
-            console.info(`  ${file}:${i + 1}: ${lines[i]!.trim()}`);
+          if (SKIP_LINE.test(lines[i]!)) continue;
+          for (const field of extractFields(lines[i]!)) {
+            console.info(`  ${file}:${i + 1}: ${field} ← ${lines[i]!.trim()}`);
           }
         }
       }

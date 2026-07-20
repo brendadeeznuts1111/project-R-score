@@ -31,9 +31,9 @@ Source is one replaceable realization of durable contracts. See [Stop Treating C
 
 ---
 
-## Domain strings (harness)
+## Domain strings (harness) — mandatory
 
-**Parse once at the boundary; internal APIs use brands, not bare `string`.**
+**Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` — pre-commit `--staged --strict` has no baseline.
 
 | Boundary | Constructor |
 |----------|-------------|
@@ -43,6 +43,7 @@ Source is one replaceable realization of durable contracts. See [Stop Treating C
 
 ```bash
 bun tools/brand-catalog.ts
+bun run check:brands:staged   # your diff (hook equivalent)
 bun run check:brands
 bun run check:brands:all
 ```
