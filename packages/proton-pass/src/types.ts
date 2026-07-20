@@ -4,13 +4,7 @@ import type { ItemId, VaultId } from '../../../lib/types/branded.ts';
 
 export type { ItemId, VaultId };
 
-export const ProtonItemTypeSchema = z.enum([
-  'login',
-  'password',
-  'note',
-  'creditCard',
-  'alias',
-]);
+export const ProtonItemTypeSchema = z.enum(['login', 'password', 'note', 'creditCard', 'alias']);
 
 export type ProtonItemType = z.infer<typeof ProtonItemTypeSchema>;
 

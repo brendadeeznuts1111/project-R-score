@@ -17,8 +17,14 @@ export async function getItem(itemId: ItemId): Promise<ProtonItem> {
   return ProtonItemSchema.parse(raw);
 }
 
-export async function createItem(vaultId: VaultId, template: Partial<ProtonItem>): Promise<ProtonItem> {
-  const tempFile = join(tmpdir(), `proton-pass-item-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
+export async function createItem(
+  vaultId: VaultId,
+  template: Partial<ProtonItem>
+): Promise<ProtonItem> {
+  const tempFile = join(
+    tmpdir(),
+    `proton-pass-item-${Date.now()}-${Math.random().toString(36).slice(2)}.json`
+  );
   await Bun.write(tempFile, JSON.stringify(template));
   try {
     const raw = await runJson<unknown>([
@@ -31,11 +37,16 @@ export async function createItem(vaultId: VaultId, template: Partial<ProtonItem>
     ]);
     return ProtonItemSchema.parse(raw);
   } finally {
-    await Bun.file(tempFile).delete().catch(() => {});
+    await Bun.file(tempFile)
+      .delete()
+      .catch(() => {});
   }
 }
 
-export async function updateItem(itemId: ItemId, fields: Record<string, unknown>): Promise<ProtonItem> {
+export async function updateItem(
+  itemId: ItemId,
+  fields: Record<string, unknown>
+): Promise<ProtonItem> {
   const setArgs: string[] = [];
   for (const [key, value] of Object.entries(fields)) {
     setArgs.push('--set', `${key}=${JSON.stringify(value)}`);

@@ -16,7 +16,10 @@ export async function shareVault(vaultId: VaultId, email: string): Promise<void>
   await runRaw(['vault', 'share', '--share-id', vaultId, '--email', email]);
 }
 
-export async function copyVault(_sourceVaultId: VaultId, _targetName: string): Promise<ProtonVault> {
+export async function copyVault(
+  _sourceVaultId: VaultId,
+  _targetName: string
+): Promise<ProtonVault> {
   // Proton Pass CLI does not expose a direct vault clone primitive.
   // Implement via export/import or item-level clone once the upstream
   // command surface is known.

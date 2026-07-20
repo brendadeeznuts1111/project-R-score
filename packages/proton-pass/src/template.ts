@@ -8,15 +8,12 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export function applyPlaceholders(
-  value: unknown,
-  replacements: Record<string, string>,
-): unknown {
+export function applyPlaceholders(value: unknown, replacements: Record<string, string>): unknown {
   if (typeof value === 'string') {
     return Object.entries(replacements).reduce(
       (acc, [key, replacement]) =>
         acc.replace(new RegExp(`{${escapeRegExp(key)}}`, 'g'), replacement),
-      value,
+      value
     );
   }
 
@@ -38,7 +35,7 @@ export function applyPlaceholders(
 export async function applyTemplate(
   vaultId: VaultId,
   template: VaultTemplate,
-  replacements: Record<string, string>,
+  replacements: Record<string, string>
 ): Promise<{ itemsCreated: number; itemsUpdated: number }> {
   const existingItems = await listItems(vaultId);
   const existingByTitle = new Map(existingItems.map(item => [item.title, item]));

@@ -6,7 +6,7 @@ import { getCliPath, getPat } from './env.ts';
 export class ProtonPassCliError extends Error {
   constructor(
     public readonly exitCode: number,
-    message: string,
+    message: string
   ) {
     super(message);
   }
@@ -37,7 +37,10 @@ async function runCli(args: string[], input?: string): Promise<string> {
   const stderr = await new Response(proc.stderr).text();
 
   if (exit !== 0) {
-    throw new ProtonPassCliError(exit, `pass-cli failed (code ${exit}): ${stderr || stdout}`.trim());
+    throw new ProtonPassCliError(
+      exit,
+      `pass-cli failed (code ${exit}): ${stderr || stdout}`.trim()
+    );
   }
 
   return stdout.trim();
