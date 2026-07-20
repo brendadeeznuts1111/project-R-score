@@ -553,7 +553,8 @@ export function inferType(name: string, url: string): DocRefType {
   // CLI flags / options
   if (name.startsWith('--')) {
     // Options take a value; flags are boolean-ish. Heuristic: presence of well-known value-taking names.
-    const valueFlags = /^(?:--config|--cwd|--outdir|--target|--sourcemap|--backend|--cpu|--os|--env|--port|--host|--splitting|--format|--jsx|--tsconfig|--mainfields|--conditions|--publicpath|--assetnaming|--entrynaming|--chunknaming|--sourcemap)$/i;
+    const valueFlags =
+      /^(?:--config|--cwd|--outdir|--target|--sourcemap|--backend|--cpu|--os|--env|--port|--host|--splitting|--format|--jsx|--tsconfig|--mainfields|--conditions|--publicpath|--assetnaming|--entrynaming|--chunknaming|--sourcemap)$/i;
     return valueFlags.test(name) ? 'cli-option' : 'cli-flag';
   }
   // Top-level bun subcommands

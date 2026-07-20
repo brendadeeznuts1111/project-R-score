@@ -213,6 +213,34 @@ function extractBunfigKeys(block: string, annotation: string): string[] {
   return keys;
 }
 
+/**
+ * Extract a short page-level description from the Markdown body.
+ * Uses the first non-empty paragraph after the main `# ` heading, skipping
+ * taglines and metadata lines. Falls back to empty string if none found.
+ */
+function extractPageDescription(markdown: string, pageTitle: string): string {
+  const lines = markdown.split('\n');
+  let foundH1 = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    if (!foundH1) {
+      if (/^#\s+/.test(line)) foundH1 = true;
+      continue;
+    }
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    // Skip metadata / tagline / admonition lines
+    if (/^(> |\[!|\*\*Note|\*\*Warning|Tagline:|Metadata:)/i.test(trimmed)) continue;
+    // Skip if it's just a repeat of the page title
+    if (stripBackticks(trimmed).toLowerCase() === stripBackticks(pageTitle).toLowerCase()) continue;
+    // Skip headings and code fences
+    if (/^#{1,6}\s+/.test(trimmed)) continue;
+    if (/^```/.test(trimmed)) continue;
+    return firstSentence(trimmed);
+  }
+  return '';
+}
+
 /** Parse one docs page's Markdown into raw catalog entries. */
 function parsePage(markdown: string, pageTitle: string, pageUrl: string): CatalogEntry[] {
   const lines = markdown.split('\n');
@@ -226,6 +254,7 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
   let codeBuffer: string[] = [];
 
   const baseUrl = canonicalUrl(pageUrl);
+  const pageDescription = extractPageDescription(markdown, pageTitle);
 
   const flushCode = () => {
     if (!inCode || codeBuffer.length === 0) return;
@@ -329,6 +358,13 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
     }
   }
   flushCode();
+
+  // Fall back to the page-level lead paragraph when a token lacks a section-specific sentence.
+  if (pageDescription) {
+    for (const e of entries) {
+      if (!e.description) e.description = pageDescription;
+    }
+  }
 
   return entries;
 }
@@ -453,6 +489,40 @@ function normalizeBunVersion(version: string): string {
     .replace(/^v/i, '');
 }
 
+const blogUrlCache = new Map<string, string | undefined>();
+
+/**
+ * Resolve the best release blog URL for a version, falling back from patch
+ * to minor to major release posts. Returns undefined if none exists.
+ */
+async function resolveBlogUrl(version: string): Promise<string | undefined> {
+  const v = normalizeBunVersion(version);
+  if (blogUrlCache.has(v)) return blogUrlCache.get(v);
+
+  const [major, minor, patch] = v.split('.').map(n => parseInt(n, 10) || 0);
+  const candidates = [
+    `https://bun.com/blog/bun-v${major}.${minor}.${patch}`,
+    `https://bun.com/blog/bun-v${major}.${minor}.0`,
+    `https://bun.com/blog/bun-v${major}.0.0`,
+  ];
+
+  let resolved: string | undefined;
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
+      if (res.ok) {
+        resolved = url;
+        break;
+      }
+    } catch {
+      // Network error or timeout — try next candidate without retry; caller can re-run later.
+    }
+  }
+
+  blogUrlCache.set(v, resolved);
+  return resolved;
+}
+
 function parseArgs(): GeneratorArgs {
   const argv = Bun.argv.slice(2);
   const sections = new Set<string>();
@@ -478,7 +548,6 @@ function parseArgs(): GeneratorArgs {
   const bunVersion = version ?? Bun.version;
   const versionPinned = bunVersion !== Bun.version;
   const releaseUrl = `https://github.com/oven-sh/bun/releases/tag/bun-v${bunVersion}`;
-  const blogUrl = `https://bun.com/blog/bun-v${bunVersion}`;
   // Runtime revision only when pin matches the binary we are running
   const rev = (Bun as { revision?: string }).revision;
   const commitHash = !versionPinned && rev ? rev.slice(0, 12) : undefined;
@@ -486,7 +555,6 @@ function parseArgs(): GeneratorArgs {
     sections: sections.size > 0 ? [...sections] : DOMAINS,
     version: bunVersion,
     releaseUrl,
-    blogUrl,
     commitHash,
     versionPinned,
   };
@@ -494,7 +562,9 @@ function parseArgs(): GeneratorArgs {
 
 async function main(): Promise<void> {
   const args = parseArgs();
-  const { sections, version, releaseUrl, blogUrl, commitHash, versionPinned } = args;
+  const { sections, version, releaseUrl, commitHash, versionPinned } = args;
+  // Resolve the best blog URL with patch → minor → major fallback.
+  const blogUrl = (await resolveBlogUrl(version)) ?? `https://bun.com/blog/bun-v${normalizeBunVersion(version)}`;
   // @see https://bun.com/docs/runtime/http/fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
