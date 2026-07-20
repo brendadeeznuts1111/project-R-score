@@ -98,7 +98,7 @@
     {
       "id": "kal-poly-bot",
       "name": "kal-poly-bot",
-      "path": "projects/development/kal-poly-bot",
+      "path": "projects/active/development/kal-poly-bot",
       "category": "development",
       "size_bytes": 7672987648,
       "size_human": "7.1 GB",
@@ -154,7 +154,7 @@
     {
       "id": "bun-toml-secrets-editor",
       "name": "bun-toml-secrets-editor",
-      "path": "projects/utilities/bun-toml-secrets-editor",
+      "path": "projects/active/utilities/bun-toml-secrets-editor",
       "category": "utilities",
       "size_bytes": 2521145344,
       "size_human": "2.3 GB",
@@ -168,7 +168,7 @@
     {
       "id": "shortcut-registry",
       "name": "shortcut-registry",
-      "path": "projects/utilities/shortcut-registry",
+      "path": "projects/active/utilities/shortcut-registry",
       "category": "utilities",
       "size_bytes": 2260271104,
       "size_human": "2.1 GB",
@@ -182,7 +182,7 @@
     {
       "id": "tan-bun",
       "name": "tan-bun",
-      "path": "projects/utilities/tan-bun",
+      "path": "projects/active/utilities/tan-bun",
       "category": "utilities",
       "size_bytes": 1932197888,
       "size_human": "1.8 GB",
@@ -196,7 +196,7 @@
     {
       "id": "toml-cli",
       "name": "toml-cli",
-      "path": "projects/utilities/toml-cli",
+      "path": "projects/active/utilities/toml-cli",
       "category": "utilities",
       "size_bytes": 1629216768,
       "size_human": "1.5 GB",
@@ -224,7 +224,7 @@
     {
       "id": "fantasy42-fire22-registry",
       "name": "fantasy42-fire22-registry",
-      "path": "projects/enterprise/fantasy42-fire22-registry",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry",
       "category": "enterprise",
       "size_bytes": 1353154560,
       "size_human": "1.3 GB",
@@ -238,7 +238,7 @@
     {
       "id": "full-stack-bun-io",
       "name": "full-stack-bun.io",
-      "path": "projects/enterprise/full-stack-bun.io",
+      "path": "projects/active/enterprise/full-stack-bun.io",
       "category": "enterprise",
       "size_bytes": 1243258880,
       "size_human": "1.2 GB",
@@ -252,7 +252,7 @@
     {
       "id": "matrix-analysis",
       "name": "matrix-analysis",
-      "path": "projects/analysis/matrix-analysis",
+      "path": "projects/active/analysis/matrix-analysis",
       "category": "analysis",
       "size_bytes": 988741632,
       "size_human": "942.9 MB",
@@ -266,7 +266,7 @@
     {
       "id": "geelark",
       "name": "geelark",
-      "path": "projects/development/geelark",
+      "path": "projects/active/development/geelark",
       "category": "development",
       "size_bytes": 897900544,
       "size_human": "856.3 MB",
@@ -280,7 +280,7 @@
     {
       "id": "duoplus-app-factory",
       "name": "duoplus-app-factory",
-      "path": "projects/automation/duoplus-app-factory",
+      "path": "projects/active/automation/duoplus-app-factory",
       "category": "automation",
       "size_bytes": 797941760,
       "size_human": "761 MB",
@@ -322,7 +322,7 @@
     {
       "id": "bun-file-analyzer",
       "name": "bun-file-analyzer",
-      "path": "projects/utilities/bun-file-analyzer",
+      "path": "projects/active/utilities/bun-file-analyzer",
       "category": "utilities",
       "size_bytes": 590651392,
       "size_human": "563.3 MB",
@@ -350,7 +350,7 @@
     {
       "id": "duo-automation",
       "name": "duo-automation",
-      "path": "projects/automation/duo-automation",
+      "path": "projects/active/automation/duo-automation",
       "category": "automation",
       "size_bytes": 545767424,
       "size_human": "520.5 MB",
@@ -364,7 +364,7 @@
     {
       "id": "enterprise-dashboard",
       "name": "enterprise-dashboard",
-      "path": "projects/dashboards/enterprise-dashboard",
+      "path": "projects/active/dashboards/enterprise-dashboard",
       "category": "dashboards",
       "size_bytes": 545587200,
       "size_human": "520.3 MB",
@@ -378,7 +378,7 @@
     {
       "id": "foxy-proxy",
       "name": "foxy-proxy",
-      "path": "projects/enterprise/foxy-proxy",
+      "path": "projects/active/enterprise/foxy-proxy",
       "category": "enterprise",
       "size_bytes": 538296320,
       "size_human": "513.4 MB",
@@ -392,7 +392,7 @@
     {
       "id": "zig-self-bun",
       "name": "zig-self-bun",
-      "path": "projects/tools/zig-self-bun",
+      "path": "projects/active/tools/zig-self-bun",
       "category": "tools",
       "size_bytes": 507248640,
       "size_human": "483.8 MB",
@@ -406,7 +406,7 @@
     {
       "id": "codepoint",
       "name": "codepoint",
-      "path": "projects/utilities/codepoint",
+      "path": "projects/active/utilities/codepoint",
       "category": "utilities",
       "size_bytes": 477782016,
       "size_human": "455.6 MB",
@@ -518,7 +518,7 @@
     {
       "id": "2048",
       "name": "2048",
-      "path": "projects/games/2048",
+      "path": "projects/active/games/2048",
       "category": "games",
       "size_bytes": 232366080,
       "size_human": "221.6 MB",
@@ -532,7 +532,7 @@
     {
       "id": "api-plive-setup-discovery",
       "name": "api-plive-setup-discovery",
-      "path": "projects/utilities/api-plive-setup-discovery",
+      "path": "projects/active/utilities/api-plive-setup-discovery",
       "category": "utilities",
       "size_bytes": 223895552,
       "size_human": "213.5 MB",
@@ -574,7 +574,7 @@
     {
       "id": "scanner",
       "name": "scanner",
-      "path": "projects/analysis/scanner",
+      "path": "projects/active/analysis/scanner",
       "category": "analysis",
       "size_bytes": 185155584,
       "size_human": "176.6 MB",
@@ -588,7 +588,7 @@
     {
       "id": "rust-bun-plugin",
       "name": "rust-bun-plugin",
-      "path": "projects/tools/rust-bun-plugin",
+      "path": "projects/active/tools/rust-bun-plugin",
       "category": "tools",
       "size_bytes": 184090624,
       "size_human": "175.6 MB",
@@ -616,7 +616,7 @@
     {
       "id": "quantum-terminal-dashboard",
       "name": "quantum-terminal-dashboard",
-      "path": "projects/dashboards/quantum-terminal-dashboard",
+      "path": "projects/active/dashboards/quantum-terminal-dashboard",
       "category": "dashboards",
       "size_bytes": 120250368,
       "size_human": "114.7 MB",
@@ -644,7 +644,7 @@
     {
       "id": "keyboard-shortcuts-lite",
       "name": "keyboard-shortcuts-lite",
-      "path": "projects/utilities/keyboard-shortcuts-lite",
+      "path": "projects/active/utilities/keyboard-shortcuts-lite",
       "category": "utilities",
       "size_bytes": 60784640,
       "size_human": "58 MB",
@@ -686,7 +686,7 @@
     {
       "id": "grok-security",
       "name": "grok-security",
-      "path": "projects/analysis/grok-security",
+      "path": "projects/active/analysis/grok-security",
       "category": "analysis",
       "size_bytes": 31195136,
       "size_human": "29.8 MB",
@@ -700,7 +700,7 @@
     {
       "id": "testing",
       "name": "testing",
-      "path": "projects/utilities/testing",
+      "path": "projects/active/utilities/testing",
       "category": "utilities",
       "size_bytes": 16662528,
       "size_human": "15.9 MB",
@@ -798,7 +798,7 @@
     {
       "id": "enhancements-1-0-01",
       "name": "enhancements-1.0.01",
-      "path": "projects/automation/enhancements-1.0.01",
+      "path": "projects/active/automation/enhancements-1.0.01",
       "category": "automation",
       "size_bytes": 303104,
       "size_human": "296 KB",
@@ -812,7 +812,7 @@
     {
       "id": "secrets-dashboard",
       "name": "secrets-dashboard",
-      "path": "projects/dashboards/secrets-dashboard",
+      "path": "projects/active/dashboards/secrets-dashboard",
       "category": "dashboards",
       "size_bytes": 245760,
       "size_human": "240 KB",
@@ -924,7 +924,7 @@
     {
       "id": "edge-worker",
       "name": "edge-worker",
-      "path": "projects/apps/edge-worker",
+      "path": "projects/active/apps/edge-worker",
       "category": "apps",
       "size_bytes": 49152,
       "size_human": "48 KB",
@@ -938,7 +938,7 @@
     {
       "id": "cli-dashboard",
       "name": "cli-dashboard",
-      "path": "projects/apps/cli-dashboard",
+      "path": "projects/active/apps/cli-dashboard",
       "category": "apps",
       "size_bytes": 49152,
       "size_human": "48 KB",
@@ -966,7 +966,7 @@
     {
       "id": "native-addon-tool",
       "name": "native-addon-tool",
-      "path": "projects/tools/native-addon-tool",
+      "path": "projects/active/tools/native-addon-tool",
       "category": "tools",
       "size_bytes": 40960,
       "size_human": "40 KB",
@@ -980,7 +980,7 @@
     {
       "id": "my-bun-app",
       "name": "my-bun-app",
-      "path": "projects/apps/my-bun-app",
+      "path": "projects/active/apps/my-bun-app",
       "category": "apps",
       "size_bytes": 40960,
       "size_human": "40 KB",

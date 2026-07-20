@@ -186,7 +186,7 @@ _Generated: 2026-05-18_
 | web-project 🔒 | -- | npm | active |  |
 | windsurf-project-config | 2.4.0 | npm | active |  |
 | workspace-demo | 1.0.0 | npm | active |  |
-| @factory-wager/cli | 0.1.0 | https://factory-wager.com/registry | archive |  |
+| @factory-wager/cli | 0.1.0 |  | archive |  |
 | @factorywager/bunx-archive | 1.0.0 | npm | archive |  |
 | @factorywager/r2-storage-archive | 1.0.0 | npm | archive |  |
 | @factorywager/registry-archive | 1.0.0 | npm | archive |  |
