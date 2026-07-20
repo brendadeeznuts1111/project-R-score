@@ -1,0 +1,433 @@
+/**
+ * Bun DX catalog — single source for lint messages, guards, and cheatsheets.
+ * Each entry links an anti-pattern to an elite one-liner and official docs.
+ */
+
+export type BunDxSeverity = 'error' | 'warn';
+export type FixTier = 'easy' | 'medium' | 'hard';
+
+export type BunDxEntry = {
+  id: string;
+  summary: string;
+  bad?: string;
+  good: string;
+  docs: string;
+  severity: BunDxSeverity;
+  fixTier?: FixTier;
+  eslintRule?: string;
+  eslintRules?: string[];
+  modules?: string[];
+  patterns?: RegExp[];
+};
+
+export const BUN_DX_CATALOG: BunDxEntry[] = [
+  {
+    id: 'file.read',
+    summary: 'Read file contents',
+    bad: 'readFileSync(path, "utf8")',
+    good: 'const text = await Bun.file(path).text();',
+    docs: 'https://bun.sh/docs/api/file-io#reading-files',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+    modules: ['fs', 'node:fs', 'node:fs/promises'],
+    patterns: [/fs\.readFileSync|readFileSync\s*\(/],
+  },
+  {
+    id: 'file.write',
+    summary: 'Write file contents',
+    bad: 'writeFileSync(path, data)',
+    good: 'await Bun.write(path, data);',
+    docs: 'https://bun.sh/docs/api/file-io#writing-files',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+    modules: ['fs', 'node:fs', 'node:fs/promises'],
+    patterns: [/fs\.writeFileSync|writeFileSync\s*\(/],
+  },
+  {
+    id: 'file.exists',
+    summary: 'Check file existence',
+    bad: 'existsSync(path)',
+    good: 'if (await Bun.file(path).exists()) { ... }',
+    docs: 'https://bun.sh/docs/api/file-io#bun-file',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-syntax'],
+    patterns: [/fs\.existsSync|existsSync\s*\(/],
+  },
+  {
+    id: 'file.json',
+    summary: 'Read JSON file',
+    bad: 'JSON.parse(readFileSync(path, "utf8"))',
+    good: 'const data = await Bun.file(path).json();',
+    docs: 'https://bun.sh/docs/api/file-io#reading-files',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+  },
+  {
+    id: 'file.stream',
+    summary: 'Stream large files',
+    bad: 'createReadStream(path)',
+    good: 'for await (const chunk of Bun.file(path).stream()) { ... }',
+    docs: 'https://bun.sh/docs/api/file-io#reading-files',
+    severity: 'error',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-syntax'],
+    patterns: [/fs\.createReadStream|createReadStream\s*\(/],
+  },
+  {
+    id: 'file.glob',
+    summary: 'Glob file patterns',
+    bad: 'readdirSync + filter',
+    good: 'for (const path of new Bun.Glob("**/*.ts").scanSync(".")) { ... }',
+    docs: 'https://bun.sh/docs/api/glob',
+    severity: 'error',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+    modules: ['fs', 'node:fs'],
+  },
+  {
+    id: 'spawn.exec',
+    summary: 'Run subprocess',
+    bad: 'spawn("bun", ["script.ts"])',
+    good: 'const proc = Bun.spawn(["bun", "script.ts"], { stdio: ["inherit", "inherit", "inherit"] });',
+    docs: 'https://bun.sh/docs/api/spawn',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+    modules: ['child_process', 'node:child_process'],
+    patterns: [/(?<!Bun\.)spawn\s*\(|child_process\.spawn/],
+  },
+  {
+    id: 'spawn.sync',
+    summary: 'Run subprocess synchronously',
+    bad: 'execSync("bun --version")',
+    good: 'const result = Bun.spawnSync(["bun", "--version"], { stdout: "pipe" });',
+    docs: 'https://bun.sh/docs/api/spawn#spawn-sync',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports', 'no-restricted-syntax'],
+    modules: ['child_process', 'node:child_process'],
+    patterns: [/(?<!Bun\.)execSync\s*\(|child_process\.execSync/],
+  },
+  {
+    id: 'spawn.exec-async',
+    summary: 'Run shell command async',
+    bad: 'exec("npm install", callback)',
+    good: 'const proc = Bun.spawn(["npm", "install"], { cwd: "./project" }); await proc.exited;',
+    docs: 'https://bun.sh/docs/api/spawn',
+    severity: 'error',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-syntax'],
+    patterns: [/child_process\.exec\s*\(/, /(?<![.\w])exec\s*\(\s*['"`]/],
+  },
+  {
+    id: 'crypto.hash',
+    summary: 'Hash data',
+    bad: 'crypto.createHash("sha256").update(data).digest("hex")',
+    good: 'const hash = Bun.hash(data);',
+    docs: 'https://bun.sh/docs/api/utils#bun-hash',
+    severity: 'warn',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-imports'],
+    modules: ['crypto', 'node:crypto'],
+    patterns: [/createHash\s*\(|crypto\.createHash/],
+  },
+  {
+    id: 'crypto.password',
+    summary: 'Hash passwords',
+    bad: 'crypto.pbkdf2Sync(password, salt, ...)',
+    good: 'const hashed = await Bun.password.hash(password, { algorithm: "bcrypt" });',
+    docs: 'https://bun.sh/docs/api/password',
+    severity: 'warn',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-imports'],
+    modules: ['crypto', 'node:crypto'],
+    patterns: [/pbkdf2|crypto\.pbkdf2/],
+  },
+  {
+    id: 'http.serve',
+    summary: 'HTTP server',
+    bad: 'http.createServer((req, res) => ...)',
+    good: 'Bun.serve({ port: 3000, fetch(req) { return new Response("OK"); } });',
+    docs: 'https://bun.sh/docs/api/http',
+    severity: 'warn',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-imports'],
+    modules: ['http', 'https', 'node:http', 'node:https'],
+    patterns: [/http\.createServer|createServer\s*\(/],
+  },
+  {
+    id: 'http.fetch',
+    summary: 'HTTP client',
+    bad: 'axios.get(url)',
+    good: 'const data = await fetch(url).then(r => r.json());',
+    docs: 'https://bun.sh/docs/api/fetch',
+    severity: 'warn',
+    fixTier: 'medium',
+    eslintRules: ['no-restricted-imports'],
+    modules: ['axios'],
+  },
+  {
+    id: 'zlib.compress',
+    summary: 'Compression',
+    bad: 'zlib.gzipSync(data)',
+    good: 'const compressed = Bun.gzipSync(data);',
+    docs: 'https://bun.sh/docs/api/utils#bun-gzip',
+    severity: 'warn',
+    fixTier: 'hard',
+    eslintRules: ['no-restricted-imports'],
+    modules: ['zlib', 'node:zlib'],
+  },
+  {
+    id: 'env.read',
+    summary: 'Read environment variables',
+    bad: 'process.env.API_KEY',
+    good: 'const apiKey = Bun.env.API_KEY;',
+    docs: 'https://bun.sh/docs/runtime/env',
+    severity: 'warn',
+    fixTier: 'easy',
+    eslintRule: 'bun/prefer-bun-env',
+    eslintRules: ['bun/prefer-bun-env'],
+    patterns: [/process\.env\./],
+  },
+  {
+    id: 'cli.main',
+    summary: 'CLI entrypoint guard',
+    bad: 'main(); // runs on import',
+    good: 'if (import.meta.main) { await main(); }',
+    docs: 'https://bun.sh/docs/runtime/modules#import-meta-main',
+    severity: 'warn',
+    fixTier: 'easy',
+    eslintRule: 'bun/prefer-import-meta-main',
+    eslintRules: ['bun/prefer-import-meta-main'],
+  },
+  {
+    id: 'test.bun',
+    summary: 'Test runner',
+    bad: 'import { test } from "node:test"',
+    good: 'import { test, expect } from "bun:test";',
+    docs: 'https://bun.sh/docs/cli/test',
+    severity: 'warn',
+    fixTier: 'medium',
+    eslintRule: 'bun/prefer-bun-test',
+    eslintRules: ['bun/prefer-bun-test', 'no-restricted-imports'],
+    modules: ['node:test', 'jest'],
+  },
+  {
+    id: 'sqlite.bun',
+    summary: 'SQLite database',
+    bad: 'import Database from "better-sqlite3"',
+    good: 'import { Database } from "bun:sqlite";',
+    docs: 'https://bun.sh/docs/api/sqlite',
+    severity: 'warn',
+    fixTier: 'medium',
+    eslintRule: 'bun/prefer-bun-sqlite',
+    eslintRules: ['bun/prefer-bun-sqlite', 'no-restricted-imports'],
+    modules: ['better-sqlite3'],
+  },
+  {
+    id: 'runtime.sleep',
+    summary: 'Async delay',
+    bad: 'await new Promise(r => setTimeout(r, 1000))',
+    good: 'await Bun.sleep(1000);',
+    docs: 'https://bun.sh/docs/api/utils#bun-sleep',
+    severity: 'warn',
+    fixTier: 'easy',
+    patterns: [/new\s+Promise.*setTimeout|setTimeout.*Promise/],
+  },
+  {
+    id: 'runtime.deep-equals',
+    summary: 'Deep equality check',
+    bad: 'JSON.stringify(a) === JSON.stringify(b)',
+    good: 'Bun.deepEquals(a, b)',
+    docs: 'https://bun.sh/docs/api/utils#bun-deepequals',
+    severity: 'warn',
+    fixTier: 'medium',
+    patterns: [/JSON\.stringify.*===.*JSON\.stringify/],
+  },
+  {
+    id: 'runtime.gc',
+    summary: 'GC control during hot paths',
+    bad: 'rely on implicit GC pauses',
+    good: 'Bun.gc(false); /* work */ Bun.gc(true);',
+    docs: 'https://bun.sh/docs/api/garbage-collector',
+    severity: 'warn',
+    fixTier: 'hard',
+  },
+  {
+    id: 'runtime.yaml',
+    summary: 'Parse YAML config',
+    bad: 'yaml.parse(await readFile(...))',
+    good: 'const config = Bun.YAML.parse(await Bun.file("config.yaml").text());',
+    docs: 'https://bun.sh/docs/api/yaml',
+    severity: 'warn',
+    fixTier: 'medium',
+  },
+  {
+    id: 'runtime.semver',
+    summary: 'Semver checks',
+    bad: 'semver.satisfies(version, range)',
+    good: 'Bun.semver.satisfies(version, range)',
+    docs: 'https://bun.sh/docs/api/semver',
+    severity: 'warn',
+    fixTier: 'medium',
+  },
+  {
+    id: 'runtime.which',
+    summary: 'Find binary in PATH',
+    bad: 'which.sync("tsc")',
+    good: 'const tscPath = Bun.which("tsc");',
+    docs: 'https://bun.sh/docs/api/utils#bun-which',
+    severity: 'warn',
+    fixTier: 'medium',
+  },
+  {
+    id: 'runtime.inspect',
+    summary: 'Debug logging',
+    bad: 'console.log(JSON.stringify(obj, null, 2))',
+    good: 'console.log(Bun.inspect(obj, { depth: 2 }));',
+    docs: 'https://bun.sh/docs/api/utils#bun-inspect',
+    severity: 'warn',
+    fixTier: 'easy',
+  },
+];
+
+const catalogById = new Map(BUN_DX_CATALOG.map(entry => [entry.id, entry]));
+
+const ruleToCatalogIds = new Map<string, string[]>();
+for (const entry of BUN_DX_CATALOG) {
+  const rules = entry.eslintRules ?? (entry.eslintRule ? [entry.eslintRule] : []);
+  for (const rule of rules) {
+    const list = ruleToCatalogIds.get(rule) ?? [];
+    list.push(entry.id);
+    ruleToCatalogIds.set(rule, list);
+  }
+}
+
+const MODULE_IMPORT_RE =
+  /(?:Avoid|Use|Prefer)[^\n]*?["']((?:node:)?(?:fs(?:\/promises)?|child_process|crypto|zlib|axios|http|https|node:test|better-sqlite3))["']|import[^\n]*["']((?:node:)?(?:fs(?:\/promises)?|child_process|crypto|zlib|axios|http|https|node:test|better-sqlite3))["']/i;
+
+export function getBunDxEntry(id: string): BunDxEntry | undefined {
+  return catalogById.get(id);
+}
+
+export function formatBunMessage(id: string, prefix?: string): string {
+  const entry = catalogById.get(id);
+  if (!entry) return prefix ?? `See Bun docs: https://bun.sh/docs`;
+
+  const lines = [prefix ?? entry.summary, `One-liner: ${entry.good}`, `Docs: ${entry.docs}`];
+  return lines.join('\n');
+}
+
+export function getCatalogByModule(moduleName: string): BunDxEntry | undefined {
+  return BUN_DX_CATALOG.find(entry => entry.modules?.includes(moduleName));
+}
+
+export function getCatalogByPattern(line: string): BunDxEntry | undefined {
+  return BUN_DX_CATALOG.find(entry => entry.patterns?.some(pattern => pattern.test(line)));
+}
+
+export function mapRuleToCatalog(ruleId: string, message: string): string | undefined {
+  if (ruleId === 'no-restricted-imports' || ruleId === 'no-restricted-syntax') {
+    const modMatch = message.match(MODULE_IMPORT_RE);
+    if (modMatch) {
+      const mod = modMatch[1] ?? modMatch[2];
+      if (mod) {
+        const byMod = getCatalogByModule(mod);
+        if (byMod) return byMod.id;
+      }
+    }
+    if (/Bun\.file|readFileSync|writeFileSync|existsSync|readdirSync/.test(message)) {
+      if (/writeFileSync|Bun\.write/.test(message)) return 'file.write';
+      if (/existsSync/.test(message)) return 'file.exists';
+      return 'file.read';
+    }
+    if (/execSync|spawnSync|child_process|Bun\.spawn/.test(message)) {
+      if (/execSync|spawnSync/.test(message)) return 'spawn.sync';
+      return 'spawn.exec';
+    }
+    if (/createServer/.test(message)) return 'http.serve';
+  }
+
+  const direct = BUN_DX_CATALOG.find(entry => {
+    const rules = entry.eslintRules ?? (entry.eslintRule ? [entry.eslintRule] : []);
+    return rules.includes(ruleId);
+  });
+  if (direct) return direct.id;
+
+  const candidates = ruleToCatalogIds.get(ruleId);
+  if (candidates?.length === 1) return candidates[0];
+
+  const byPattern = getCatalogByPattern(message);
+  if (byPattern) return byPattern.id;
+
+  return undefined;
+}
+
+export function getStandardCatches(tier?: FixTier): BunDxEntry[] {
+  return BUN_DX_CATALOG.filter(entry => !tier || entry.fixTier === tier);
+}
+
+export function getGuardModuleViolations(): Record<
+  string,
+  { replacement: string; severity: BunDxSeverity; catalogId: string }
+> {
+  const result: Record<
+    string,
+    { replacement: string; severity: BunDxSeverity; catalogId: string }
+  > = {};
+
+  for (const entry of BUN_DX_CATALOG) {
+    if (!entry.modules) continue;
+    for (const mod of entry.modules) {
+      if (!result[mod]) {
+        result[mod] = {
+          replacement: entry.good,
+          severity: entry.severity,
+          catalogId: entry.id,
+        };
+      }
+    }
+  }
+
+  return result;
+}
+
+export function getGuardApiPatterns(): Array<{
+  pattern: RegExp;
+  message: string;
+  replacement: string;
+  severity: BunDxSeverity;
+  catalogId: string;
+  docs: string;
+}> {
+  return BUN_DX_CATALOG.flatMap(entry => {
+    if (!entry.patterns?.length) return [];
+    return entry.patterns.map(pattern => ({
+      pattern,
+      message: `${entry.summary} detected`,
+      replacement: entry.good,
+      severity: entry.severity,
+      catalogId: entry.id,
+      docs: entry.docs,
+    }));
+  });
+}
+
+export function searchCatalog(query: string): BunDxEntry[] {
+  const q = query.toLowerCase();
+  return BUN_DX_CATALOG.filter(
+    entry =>
+      entry.id.includes(q) ||
+      entry.summary.toLowerCase().includes(q) ||
+      entry.good.toLowerCase().includes(q) ||
+      entry.modules?.some(m => m.includes(q))
+  );
+}
+
+export function randomCatalogEntry(): BunDxEntry {
+  return BUN_DX_CATALOG[Math.floor(Math.random() * BUN_DX_CATALOG.length)]!;
+}
