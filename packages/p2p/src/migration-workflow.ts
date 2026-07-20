@@ -1,7 +1,6 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.write; dirs via node:fs
+// @see https://bun.com/docs/runtime/file-io — Bun.write (creates parent path segments)
 // packages/p2p/src/migration-workflow.ts — Step-by-step business change migration workflow
 
-import { mkdir } from 'node:fs/promises';
 import { BusinessContinuity } from './business-continuity';
 import Redis from 'ioredis';
 
@@ -88,11 +87,8 @@ export async function executeBusinessMigration(
   };
 
   // Save report
-  const reportsDir = 'migrations';
-  await mkdir(reportsDir, { recursive: true });
-
   const reportName = `migration-${oldAlias}-${newAlias}-${Date.now()}.json`;
-  await Bun.write(`${reportsDir}/${reportName}`, JSON.stringify(report, null, 2));
+  await Bun.write(`migrations/${reportName}`, JSON.stringify(report, null, 2));
 
   // Step 6: Update any external systems
   await updateExternalServices(oldAlias, newAlias);
@@ -232,8 +228,6 @@ export async function handlePaymentAccountLoss(
       'Monitor for fraudulent activity',
     ],
   };
-
-  await mkdir('emergency', { recursive: true });
 
   await Bun.write(
     `emergency/${alias}-${provider}-${Date.now()}.json`,

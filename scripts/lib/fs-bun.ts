@@ -1,32 +1,32 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write; dirs via node:fs
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
-// @see https://bun.com/docs/runtime/nodejs-compat#node-fs — node:fs under Bun
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 /**
- * Thin helpers around Bun’s documented file I/O.
+ * Thin wrappers around Bun’s documented file I/O only.
  *
- * From https://bun.com/docs/runtime/file-io:
- * - Prefer `Bun.file` / `Bun.write` for file read/write.
- * - Paths: use the `path` module (`Bun.write` destination notes).
- * - Directories (`mkdir` / `readdir`): use Bun’s `node:fs` implementation
- *   (not yet available on `Bun.file`).
+ * Source of truth: https://bun.com/docs/runtime/file-io
+ * - Read/write files with `Bun.file` / `Bun.write` (not node:fs for file bodies).
+ * - Path strings: Bun docs say use the `path` module with `Bun.write` destinations.
+ * - `Bun.write` creates intermediate directories when writing a nested path
+ *   (verified on this runtime; no shell `mkdir` / no hand-rolled resolvers).
  *
- * Do not invent shell `mkdir -p` or hand-rolled path resolvers here.
+ * For pure directory listing when needed, Bun documents `readdir` from
+ * `node:fs/promises` — keep that at call sites, not as a fake Bun API here.
  */
 
-import { dirname, resolve } from 'path';
-import { mkdir } from 'node:fs/promises';
+import { resolve } from 'path';
 
-/** `path.resolve` — same module Bun’s file-io docs recommend for path manipulation. */
+/** `path.resolve` — path manipulation as noted under Bun.write destinations. */
 export function resolvePath(...parts: string[]): string {
   return resolve(...parts);
 }
 
-/** `Bun.file(path).exists()` — https://bun.com/docs/guides/read-file/exists */
+/** `await Bun.file(path).exists()` */
 export async function fileExists(path: string): Promise<boolean> {
   return Bun.file(path).exists();
 }
 
-/** Sync exists via `Bun.peek` on the same promise (CLI early exits). */
+/** Sync exists: `Bun.peek(Bun.file(path).exists())` */
 export function fileExistsSync(path: string): boolean {
   return Bun.peek(Bun.file(path).exists()) === true;
 }
@@ -49,7 +49,7 @@ export function readJsonSync<T = unknown>(path: string): T {
   return Bun.peek(Bun.file(path).json()) as T;
 }
 
-/** `await Bun.write(path, data)` */
+/** `await Bun.write(path, data)` — creates parent path segments as needed. */
 export async function writeText(
   path: string,
   content: string | ArrayBuffer | Uint8Array
@@ -58,18 +58,17 @@ export async function writeText(
 }
 
 /**
- * Recursive mkdir — Bun file-io docs:
- * `import { mkdir } from "node:fs/promises"; await mkdir(dir, { recursive: true })`
+ * @deprecated Prefer `writeText` / `Bun.write` (parents are created for you).
+ * Kept so call sites that only “ensure dir before write” can drop the mkdir step.
  */
-export async function ensureDir(dir: string): Promise<void> {
-  await mkdir(dir, { recursive: true });
+export async function ensureDir(_dir: string): Promise<void> {
+  /* no-op: Bun.write creates intermediate directories */
 }
 
-/** Write a file after ensuring its parent directory exists. */
+/** Same as `writeText` — name kept for call-site clarity. */
 export async function writeTextEnsureDir(
   path: string,
   content: string | ArrayBuffer | Uint8Array
 ): Promise<number> {
-  await ensureDir(dirname(path));
   return Bun.write(path, content);
 }

@@ -1,8 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
-import { dirname } from 'path';
-import { ensureDir, readText, writeText, resolvePath } from './lib/fs-bun';
+import { readText, writeText, resolvePath } from './lib/fs-bun';
 import type { BrandBenchPinnedBaseline, BrandBenchReport } from './lib/brand-bench-types';
 import { createShutdown } from './lib/graceful-shutdown';
 
@@ -51,7 +50,6 @@ async function main(): Promise<void> {
     report,
   };
 
-  await ensureDir(dirname(options.outPath));
   await writeText(options.outPath, JSON.stringify(next, null, 2));
   console.info(JSON.stringify(next, null, 2));
 }
