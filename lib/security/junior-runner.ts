@@ -13,7 +13,7 @@ import {
   CSRFProtection,
   JuniorRunnerCookieIntegration,
 } from './cookie-security';
-import { type SessionId, type UserId, asSessionId, asUserId } from '../types/branded.ts';
+import { type SessionId, type UserId, trySessionId, tryUserId } from '../types/branded.ts';
 
 // 📊 LEAD SPEC PROFILE INTERFACE
 export interface LeadSpecProfile {
@@ -116,9 +116,7 @@ export class JuniorRunnerCookieProfiler {
         ? {
             variant: cookieProfile.abVariant.variant,
             valid: cookieProfile.abVariant.valid,
-            userId: cookieProfile.abVariant.userId
-              ? asUserId(cookieProfile.abVariant.userId)
-              : undefined,
+            userId: tryUserId(cookieProfile.abVariant.userId),
           }
         : undefined,
       performance: {
@@ -161,7 +159,7 @@ export class JuniorRunnerCookieProfiler {
 
       if (sessionCookie) {
         const cookie = Cookie.parse(sessionCookie);
-        return cookie.value ? asSessionId(cookie.value) : undefined;
+        return trySessionId(cookie.value);
       }
     } catch {
       // Invalid cookie format
@@ -183,7 +181,7 @@ export class JuniorRunnerCookieProfiler {
 
       if (userCookie) {
         const cookie = Cookie.parse(userCookie);
-        return cookie.value ? asUserId(cookie.value) : undefined;
+        return tryUserId(cookie.value);
       }
     } catch {
       // Invalid cookie format

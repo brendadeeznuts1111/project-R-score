@@ -1,7 +1,7 @@
 // lib/docs/services/analytics.ts — Documentation access analytics
 
 import { DocumentationProvider, DocumentationCategory } from '../constants/domains';
-import { type SessionId, asSessionId } from '../../types/branded.ts';
+import { type SessionId, trySessionId } from '../../types/branded.ts';
 
 export interface AccessEvent {
   timestamp: Date;
@@ -75,7 +75,7 @@ export class DocumentationAnalytics {
       category: sanitizedEvent.category,
       userType: sanitizedEvent.userType || 'all_users',
       source: sanitizedEvent.source || 'direct',
-      sessionId: sanitizedEvent.sessionId ? asSessionId(sanitizedEvent.sessionId) : undefined,
+      sessionId: trySessionId(sanitizedEvent.sessionId),
       userAgent: sanitizedEvent.userAgent,
       referrer: sanitizedEvent.referrer,
       duration: sanitizedEvent.duration,

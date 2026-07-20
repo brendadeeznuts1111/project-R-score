@@ -2,7 +2,7 @@
 
 import { BaseEnterpriseError, EnterpriseErrorCode } from './core-errors';
 import { SecurityRiskLevel } from './core-types';
-import { type UserId, type RequestId, asUserId, asRequestId } from '../types/branded.ts';
+import { type UserId, type RequestId, tryUserId, tryRequestId } from '../types/branded.ts';
 
 /**
  * Alert severity levels
@@ -189,8 +189,8 @@ export class ErrorMetricsCollector {
       message: error.message,
       context: this.extractContext(error),
       ...context,
-      userId: context?.userId ? asUserId(context.userId) : undefined,
-      requestId: context?.requestId ? asRequestId(context.requestId) : undefined,
+      userId: tryUserId(context?.userId),
+      requestId: tryRequestId(context?.requestId),
     };
 
     this.metrics.push(metric);

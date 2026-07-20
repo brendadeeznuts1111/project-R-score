@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // lib/core/logging-monitoring.ts — Logging and monitoring system
 
-import { type RequestId, type UserId, asRequestId, asUserId } from '../types/branded.ts';
+import { type RequestId, type UserId, tryRequestId, tryUserId } from '../types/branded.ts';
 
 // ============================================================================
 // LOGGING INTERFACES
@@ -109,15 +109,15 @@ export class Logger {
   // ============================================================================
 
   debug(message: string, context?: Record<string, any>, requestId?: string): void {
-    this.log(LogLevel.DEBUG, message, context, requestId ? asRequestId(requestId) : undefined);
+    this.log(LogLevel.DEBUG, message, context, tryRequestId(requestId));
   }
 
   info(message: string, context?: Record<string, any>, requestId?: string): void {
-    this.log(LogLevel.INFO, message, context, requestId ? asRequestId(requestId) : undefined);
+    this.log(LogLevel.INFO, message, context, tryRequestId(requestId));
   }
 
   warn(message: string, context?: Record<string, any>, requestId?: string): void {
-    this.log(LogLevel.WARN, message, context, requestId ? asRequestId(requestId) : undefined);
+    this.log(LogLevel.WARN, message, context, tryRequestId(requestId));
   }
 
   error(message: string, error?: Error, context?: Record<string, any>, requestId?: string): void {
@@ -131,7 +131,7 @@ export class Logger {
       };
     }
 
-    this.log(LogLevel.ERROR, message, logContext, requestId ? asRequestId(requestId) : undefined);
+    this.log(LogLevel.ERROR, message, logContext, tryRequestId(requestId));
   }
 
   fatal(message: string, error?: Error, context?: Record<string, any>, requestId?: string): void {
@@ -139,7 +139,7 @@ export class Logger {
       LogLevel.FATAL,
       message,
       { ...context, error: error?.message },
-      requestId ? asRequestId(requestId) : undefined
+      tryRequestId(requestId)
     );
   }
 
@@ -160,8 +160,8 @@ export class Logger {
   ): void {
     const level = statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
     const message = `${method} ${url} ${statusCode} - ${duration}ms`;
-    const rid = requestId ? asRequestId(requestId) : undefined; // boundary: brand at entry
-    const uid = userId ? asUserId(userId) : undefined; // boundary: brand at entry
+    const rid = tryRequestId(requestId); // boundary: brand at entry
+    const uid = tryUserId(userId); // boundary: brand at entry
 
     this.log(
       level,
@@ -210,7 +210,7 @@ export class Logger {
         success,
         type: 'database',
       },
-      requestId ? asRequestId(requestId) : undefined
+      tryRequestId(requestId)
     );
   }
 
@@ -228,7 +228,7 @@ export class Logger {
         key,
         type: 'cache',
       },
-      requestId ? asRequestId(requestId) : undefined
+      tryRequestId(requestId)
     );
 
     // Update metrics
@@ -267,10 +267,10 @@ export class Logger {
         event,
         severity,
         details,
-        userId: userId ? asUserId(userId) : undefined,
+        userId: tryUserId(userId),
         type: 'security',
       },
-      requestId ? asRequestId(requestId) : undefined
+      tryRequestId(requestId)
     );
   }
 

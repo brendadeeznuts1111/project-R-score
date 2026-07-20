@@ -22,7 +22,7 @@
 
 import { S3Client } from 'bun';
 import { resolve, basename, join } from 'node:path';
-import { type AccessKeyId, type SessionId, asAccessKeyId, asSessionId } from '../types/branded.ts';
+import { type AccessKeyId, type SessionId, asSessionId, tryAccessKeyId } from '../types/branded.ts';
 import {
   type ProfileType,
   profileTimestamp,
@@ -142,7 +142,7 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
       Bun.env.R2_ENDPOINT ||
       Bun.env.S3_ENDPOINT ||
       (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
-    accessKeyId: accessKeyRaw ? asAccessKeyId(accessKeyRaw) : undefined,
+    accessKeyId: tryAccessKeyId(accessKeyRaw),
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
     requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',
