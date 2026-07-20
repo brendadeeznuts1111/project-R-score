@@ -198,3 +198,106 @@ export function isPoorLocus(
   }
   return { poor: false, reason: null };
 }
+
+/**
+ * Agent-facing locus STATUS (richer than resolved/unresolved).
+ *
+ * | status       | meaning |
+ * |--------------|---------|
+ * | fragment     | verified page + #heading |
+ * | page         | right docs page; no dedicated heading (OK) |
+ * | inherited    | child should use parent section (family) |
+ * | dump         | stuck on zero-anchor dump (e.g. bun-apis) |
+ * | reference    | bun.com/reference — outside docs index |
+ * | coincidence  | fragment does not exist on that page |
+ * | unresolved   | no usable page/fragment story yet |
+ */
+export type LocusStatus =
+  | 'fragment'
+  | 'page'
+  | 'inherited'
+  | 'dump'
+  | 'reference'
+  | 'coincidence'
+  | 'unresolved';
+
+export function isDumpDocPage(page: string, pageAnchors: PageAnchorIndex): boolean {
+  const p = page.replace(/\.md$/, '').split('#')[0]!;
+  if (/\/runtime\/bun-apis\/?$/.test(p) || p.endsWith('/runtime/bun-apis')) return true;
+  const set = pageAnchors.get(p);
+  return set !== undefined && set.size === 0;
+}
+
+export function classifyLocusStatus(input: {
+  name: string;
+  canonicalPage: string;
+  anchor?: string;
+  locusUnresolved?: boolean;
+  pageAnchors: PageAnchorIndex;
+  /** Longest parent token that already has a verified fragment (family inheritance). */
+  parentFragment?: { name: string; page: string; fragment: string };
+}): LocusStatus {
+  const page = input.canonicalPage.replace(/\.md$/, '').split('#')[0]!;
+  const isRef =
+    page.includes('bun.com/reference') ||
+    /\/reference\//.test(page) ||
+    page.startsWith('https://bun.com/reference');
+
+  if (input.anchor && !input.locusUnresolved) {
+    const set = input.pageAnchors.get(page);
+    if (set && !set.has(input.anchor)) return 'coincidence';
+    if (!set && isRef) return 'reference';
+    if (!set) return 'coincidence';
+    return 'fragment';
+  }
+
+  if (input.parentFragment) return 'inherited';
+  if (isRef) return 'reference';
+  if (isDumpDocPage(page, input.pageAnchors)) return 'dump';
+
+  const set = input.pageAnchors.get(page);
+  if (set && set.size > 0) return 'page';
+
+  return 'unresolved';
+}
+
+/** Find longest catalog parent with a verified fragment (e.g. Bun.readableStreamTo*). */
+export function findParentWithFragment(
+  name: string,
+  byName: Map<
+    string,
+    { name: string; canonicalPage: string; anchor?: string; locusUnresolved?: boolean }
+  >
+): { name: string; page: string; fragment: string } | undefined {
+  const candidates: string[] = [];
+
+  // Dotted peel: Bun.CSRF.generate → Bun.CSRF → Bun
+  let dotted = name;
+  while (dotted.includes('.')) {
+    dotted = dotted.slice(0, dotted.lastIndexOf('.'));
+    if (dotted.length >= 3) candidates.push(dotted);
+  }
+
+  // CamelCase peel: Bun.readableStreamToBytes → Bun.readableStreamTo → …
+  // Guard: some titles match [a-z][A-Z] mid-string but have no trailing Capital peel
+  // (e.g. "…Files.length") — break when the replace is a no-op.
+  let camel = name;
+  while (/[a-z0-9][A-Z]/.test(camel)) {
+    const next = camel.replace(/[A-Z][a-z0-9]*$/, '');
+    if (next === camel || next.length < 5 || next === 'Bun') break;
+    camel = next;
+    candidates.push(camel);
+  }
+
+  for (const c of [...new Set(candidates)].sort((a, b) => b.length - a.length)) {
+    const p = byName.get(c);
+    if (p?.anchor && !p.locusUnresolved) {
+      return {
+        name: p.name,
+        page: p.canonicalPage.replace(/\.md$/, '').split('#')[0]!,
+        fragment: p.anchor,
+      };
+    }
+  }
+  return undefined;
+}

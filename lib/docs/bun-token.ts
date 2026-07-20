@@ -40,8 +40,20 @@ export type BunToken = {
   docsLocus: {
     /** Full unversioned bun.com/docs page URL. */
     page: string;
-    /** Canonical heading fragment, or null if unresolved. */
+    /** Canonical heading fragment, or null when page-level / dump. */
     anchor: string | null;
+    /**
+     * Rich STATUS: fragment | page | inherited | dump | reference | coincidence | unresolved
+     * Colors for agents/UI: Bun.color(hsl, "hex") — see tools/_gen-locus-canvas.ts
+     */
+    status?:
+      | 'fragment'
+      | 'page'
+      | 'inherited'
+      | 'dump'
+      | 'reference'
+      | 'coincidence'
+      | 'unresolved';
   };
   /** First attested Bun version (earliest "since" event). */
   since: string | null;

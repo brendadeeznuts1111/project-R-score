@@ -165,6 +165,7 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Testing & snapshots ────────────────────────────────────────────────
   'bun:test': 'https://bun.com/docs/test/index#run-tests',
+  'bun test': 'https://bun.com/docs/test/index#run-tests',
   'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
 
@@ -1298,98 +1299,234 @@ function parseLocusDepth(args: string[], fallback = 20): number {
 }
 
 /**
- * Audit poor loci (unresolved / coincidence) with a hard `--depth=N` budget.
- * Suggests index anchors so agents can extend CANONICAL_REFS in controlled batches.
+ * Locus table: TOKEN · TYPE · STATUS · PAGE · FRAGMENT · SUGGESTION · SCORE · HAS_REF
+ *
+ * STATUS: fragment | page | inherited | dump | reference | coincidence | unresolved
+ *
+ * Default: non-ok statuses only (bounded by `--depth=N`).
+ * `--all`: include fragment/page rows (still depth-capped after sort).
+ * `--tsv` / `--json`: machine-readable.
  */
 async function locusAudit(args: string[]): Promise<number> {
-  const { buildPageAnchorIndex, isPoorLocus, suggestAnchorsForToken } = await import(
-    '../lib/docs/locus-resolve.ts'
-  );
-  const { loadCatalog, NOTE_COVERAGE_TYPES } = await import('./bun-docs-catalog.ts');
+  // Read catalog JSON directly — do not import bun-docs-catalog.ts here.
+  // That module dynamically imports this file; awaiting it from import.meta.main deadlocks.
+  const {
+    buildPageAnchorIndex,
+    classifyLocusStatus,
+    findParentWithFragment,
+    suggestAnchorsForToken,
+  } = await import('../lib/docs/locus-resolve.ts');
+  type LocusStatus = import('../lib/docs/locus-resolve.ts').LocusStatus;
   const depth = parseLocusDepth(args, 20);
   const asJson = args.includes('--json');
+  const asTsv = args.includes('--tsv');
+  const showAll = args.includes('--all');
   const typeEq = args.find(a => a.startsWith('--type='));
   const typeFilter = typeEq?.slice('--type='.length);
 
-  const entries = await loadCatalog();
+  const NOTE_COVERAGE_TYPES = new Set([
+    'api',
+    'cli-flag',
+    'config-key',
+    'env-var',
+    'package-json-key',
+    'cli-command',
+    'cli-option',
+  ]);
+  const catalogPath = new URL('./bun-docs-catalog.json', import.meta.url).pathname;
+  const catalogFile = (await Bun.file(catalogPath).json()) as {
+    entries: Array<{
+      name: string;
+      type: string;
+      canonicalPage: string;
+      anchor?: string;
+      locusUnresolved?: boolean;
+      allPages?: string[];
+    }>;
+  };
+  const entries = catalogFile.entries;
   const index = await docsIndex();
   const pageAnchors = buildPageAnchorIndex(index.entries);
+  const byName = new Map(entries.map(e => [e.name, e]));
 
   type Row = {
-    name: string;
+    token: string;
     type: string;
-    reason: string;
+    status: LocusStatus;
     page: string;
-    anchor?: string;
-    suggestion?: string;
-    score?: number;
-    inCanonicalRefs: boolean;
+    fragment: string;
+    inheritFrom: string;
+    suggestion: string;
+    score: string;
+    hasRef: string;
   };
 
-  const poor: Row[] = [];
+  const shortPage = (url: string) =>
+    url.replace(/^https:\/\/bun\.com\/docs\//, '').replace(/^https:\/\/bun\.com\//, '');
+
+  const okStatus = (s: LocusStatus) =>
+    s === 'fragment' || s === 'page' || s === 'inherited' || s === 'reference';
+
+  const rows: Row[] = [];
   for (const e of entries) {
-    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    if (!NOTE_COVERAGE_TYPES.has(e.type)) continue;
     if (typeFilter && e.type !== typeFilter) continue;
-    const { poor: isPoor, reason } = isPoorLocus(
-      e.canonicalPage,
-      e.anchor,
-      e.locusUnresolved,
-      pageAnchors
-    );
-    if (!isPoor || !reason) continue;
-    const suggestions = suggestAnchorsForToken(e.name, pageAnchors, {
-      pages: e.allPages,
-      limit: 3,
-    });
-    // Also search whole index when page-local suggestions are weak
-    const global =
-      !suggestions[0] || (suggestions[0].score ?? 0) < 80
-        ? suggestAnchorsForToken(e.name, pageAnchors, { limit: 3 })
-        : suggestions;
-    const best = global[0] ?? suggestions[0];
-    const refKey = resolveApiAlias(e.name);
-    poor.push({
+
+    const parentFragment = findParentWithFragment(e.name, byName);
+    const status = classifyLocusStatus({
       name: e.name,
-      type: e.type,
-      reason,
-      page: e.canonicalPage.replace('https://bun.com/docs/', ''),
+      canonicalPage: e.canonicalPage,
       anchor: e.anchor,
-      suggestion: best?.url.replace('https://bun.com/docs/', ''),
-      score: best?.score,
-      inCanonicalRefs: Boolean(CANONICAL_REFS[e.name] ?? CANONICAL_REFS[refKey]),
+      locusUnresolved: e.locusUnresolved,
+      pageAnchors,
+      parentFragment,
+    });
+    if (!showAll && okStatus(status)) continue;
+
+    let suggestion = '';
+    let score = '';
+    if (!okStatus(status) && status !== 'inherited') {
+      const local = suggestAnchorsForToken(e.name, pageAnchors, {
+        pages: e.allPages,
+        limit: 1,
+      });
+      const best =
+        !local[0] || (local[0].score ?? 0) < 80
+          ? (suggestAnchorsForToken(e.name, pageAnchors, { limit: 1 })[0] ?? local[0])
+          : local[0];
+      if (best) {
+        suggestion = shortPage(best.url);
+        score = String(best.score);
+      }
+    } else if (status === 'inherited' && parentFragment) {
+      suggestion = `${shortPage(parentFragment.page)}#${parentFragment.fragment}`;
+      score = 'inherit';
+    }
+
+    const refKey = resolveApiAlias(e.name);
+    rows.push({
+      token: e.name,
+      type: e.type,
+      status,
+      page: shortPage(e.canonicalPage),
+      fragment: e.anchor ?? '',
+      inheritFrom: parentFragment?.name ?? '',
+      suggestion,
+      score,
+      hasRef: CANONICAL_REFS[e.name] || CANONICAL_REFS[refKey] ? 'yes' : 'no',
     });
   }
 
-  // Prioritize: coincidence (wrong page+anchor) > unresolved with strong suggestion > rest
-  poor.sort((a, b) => {
-    const rank = (r: Row) =>
-      (r.reason === 'coincidence' ? 300 : 0) +
-      (r.score ?? 0) +
-      (r.inCanonicalRefs ? 20 : 0) -
-      (r.page.includes('bun-apis') ? -10 : 0);
-    return rank(b) - rank(a) || a.name.localeCompare(b.name);
-  });
+  const statusRank: Record<LocusStatus, number> = {
+    coincidence: 500,
+    dump: 400,
+    unresolved: 300,
+    inherited: 250,
+    reference: 200,
+    page: 50,
+    fragment: 0,
+  };
 
-  const total = poor.length;
-  const slice = poor.slice(0, depth);
+  rows.sort(
+    (a, b) =>
+      statusRank[b.status] - statusRank[a.status] ||
+      (Number.parseInt(b.score, 10) || 0) - (Number.parseInt(a.score, 10) || 0) ||
+      a.token.localeCompare(b.token)
+  );
+
+  const byStatus = (s: LocusStatus) => rows.filter(r => r.status === s).length;
+  const needsWork = rows.filter(r => !okStatus(r.status)).length;
+  const total = rows.length;
+  const slice = rows.slice(0, depth === 0 ? 0 : depth);
+
+  const headers = [
+    'TOKEN',
+    'TYPE',
+    'STATUS',
+    'PAGE',
+    'FRAGMENT',
+    'SUGGESTION',
+    'SCORE',
+    'HAS_REF',
+  ] as const;
+  const widths = [28, 14, 12, 28, 36, 44, 7, 7];
+
   if (asJson) {
-    console.info(JSON.stringify({ depth, total, shown: slice.length, entries: slice }, null, 2));
-  } else {
-    console.info(`Poor loci: ${total} total · showing depth=${depth}`);
-    console.info(`${'name'.padEnd(32)} ${'reason'.padEnd(12)} ${'page'.padEnd(28)} → suggestion`);
+    console.info(
+      JSON.stringify(
+        {
+          depth,
+          showAll,
+          total,
+          needsWork,
+          byStatus: {
+            fragment: byStatus('fragment'),
+            page: byStatus('page'),
+            inherited: byStatus('inherited'),
+            dump: byStatus('dump'),
+            reference: byStatus('reference'),
+            coincidence: byStatus('coincidence'),
+            unresolved: byStatus('unresolved'),
+          },
+          shown: slice.length,
+          entries: slice,
+        },
+        null,
+        2
+      )
+    );
+  } else if (asTsv) {
+    console.info([...headers, 'INHERIT_FROM'].join('\t'));
     for (const r of slice) {
-      const sug =
-        r.suggestion != null
-          ? `${r.suggestion}${r.score != null ? ` (score ${r.score})` : ''}${r.inCanonicalRefs ? ' [has-ref]' : ''}`
-          : '(none)';
-      console.info(`${r.name.padEnd(32)} ${r.reason.padEnd(12)} ${r.page.padEnd(28)} → ${sug}`);
+      console.info(
+        [
+          r.token,
+          r.type,
+          r.status,
+          r.page,
+          r.fragment,
+          r.suggestion,
+          r.score,
+          r.hasRef,
+          r.inheritFrom,
+        ].join('\t')
+      );
+    }
+  } else {
+    const pad = (s: string, w: number) => (s.length > w ? `${s.slice(0, w - 1)}…` : s.padEnd(w));
+    console.info(
+      showAll
+        ? `Locus table: ${total} rows · needs-work=${needsWork} · depth=${depth}`
+        : `Locus table (needs-work): ${needsWork} · depth=${depth}`
+    );
+    console.info(
+      `status counts: dump=${byStatus('dump')} inherited=${byStatus('inherited')} page=${byStatus('page')} reference=${byStatus('reference')} unresolved=${byStatus('unresolved')} coincidence=${byStatus('coincidence')} fragment=${byStatus('fragment')}`
+    );
+    console.info(headers.map((h, i) => pad(h, widths[i]!)).join(' '));
+    console.info(widths.map(w => '─'.repeat(w)).join(' '));
+    for (const r of slice) {
+      console.info(
+        [
+          pad(r.token, widths[0]!),
+          pad(r.type, widths[1]!),
+          pad(r.status, widths[2]!),
+          pad(r.page, widths[3]!),
+          pad(r.fragment || '—', widths[4]!),
+          pad(r.suggestion || '—', widths[5]!),
+          pad(r.score || '—', widths[6]!),
+          pad(r.hasRef, widths[7]!),
+        ].join(' ')
+      );
     }
     if (total > depth) {
       console.info(`… ${total - depth} more (raise --depth)`);
     }
-    console.info(`\nExtend CANONICAL_REFS for high-score rows, then: bun run docs:catalog:build`);
+    console.info(
+      `\nSTATUS: fragment=verified # · page=right page no heading · inherited=use parent · dump=bun-apis · reference=outside index`
+    );
+    console.info(`Flags: --depth=N · --all · --tsv · --json · --type=api`);
   }
-  return total;
+  return needsWork;
 }
 
 async function mainCli(): Promise<void> {
@@ -1481,7 +1618,7 @@ async function mainCli(): Promise<void> {
         `unknown command: ${cmd}\n` +
           `commands: url|token|list|catalog|suggest|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
-          `locus: --depth=N · --json · --type=api  (poor anchors; extend CANONICAL_REFS in batches)\n` +
+          `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +
           `operate: bun run docs:refresh · docs/BUN_DOCS_OPERATE.md\n` +
           `integrity flags: --fix · --fix-dry · --no-live\n` +
           `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`

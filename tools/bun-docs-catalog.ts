@@ -56,16 +56,23 @@ import {
   type ReleaseOverlayEntry,
   type ReleaseOverlayFile,
 } from './bun-docs-release-scrape.ts';
-import { buildPageAnchorIndex, resolveVerifiedLocus } from '../lib/docs/locus-resolve.ts';
+import {
+  buildPageAnchorIndex,
+  classifyLocusStatus,
+  findParentWithFragment,
+  resolveVerifiedLocus,
+  type LocusStatus,
+} from '../lib/docs/locus-resolve.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
 
-/** Typed token categories where NOTE coverage is tracked closely. */
+/** Typed token categories where NOTE / LOC / STATUS coverage is tracked closely. */
 export const NOTE_COVERAGE_TYPES: DocRefType[] = [
   'api',
+  'cli-command',
   'cli-flag',
   'config-key',
   'env-var',
@@ -145,6 +152,11 @@ export type DocCatalogEntry = {
   anchor?: string;
   /** True when no verified canonical heading fragment was resolved. */
   locusUnresolved?: boolean;
+  /**
+   * Rich locus STATUS (not binary resolved/unresolved).
+   * fragment | page | inherited | dump | reference | coincidence | unresolved
+   */
+  locusStatus?: LocusStatus;
   /** Language-tagged usage examples from official docs. */
   examples?: Array<{ lang: string; body: string; fragment?: string }>;
   /** Related token names for cross-reference walks. */
@@ -298,6 +310,10 @@ export function listCells(
   release: string;
   blog: string;
   note: string;
+  locus: string;
+  status: string;
+  page: string;
+  fragment: string;
 } {
   const pin = e.verifiedOn ?? meta.bunVersion;
   const ship = e.releasedIn ?? '—';
@@ -308,6 +324,18 @@ export function listCells(
   const release = e.releaseUrl ?? releaseUrlFor(ver);
   // BLOG is RSS-validated at build time — do not invent URLs in the table.
   const blog = e.blogUrl ?? '';
+  const page = shortUrl(e.canonicalPage.replace(/\.md$/i, '').split('#')[0]!);
+  const fragment = e.anchor ? `#${e.anchor}` : '—';
+  const locus = e.anchor && !e.locusUnresolved ? 'resolved' : 'unresolved';
+  const status =
+    e.locusStatus ??
+    (e.anchor && !e.locusUnresolved
+      ? 'fragment'
+      : page.includes('bun-apis')
+        ? 'dump'
+        : page.includes('reference/')
+          ? 'reference'
+          : 'page');
   return {
     name: e.name,
     section: shortSection(e.section),
@@ -323,6 +351,10 @@ export function listCells(
     release: shortUrl(release),
     blog: shortUrl(blog),
     note: e.changeNote || e.description || '',
+    locus,
+    status,
+    page,
+    fragment,
   };
 }
 
@@ -366,13 +398,25 @@ const LIST_COLS_COMPACT: ListCol[] = [
   { key: 'doc', header: 'DOC', width: 48 },
 ];
 
+/** Locus-focused table: token separated from status / page / fragment. */
+const LIST_COLS_LOCUS: ListCol[] = [
+  { key: 'name', header: 'TOKEN', width: 28 },
+  { key: 'type', header: 'TYPE', width: 8 },
+  { key: 'status', header: 'STATUS', width: 11 },
+  { key: 'page', header: 'PAGE', width: 32 },
+  { key: 'fragment', header: 'FRAGMENT', width: 40 },
+  { key: 'ship', header: 'SHIP', width: 7 },
+];
+
 export function buildListColumns(opts: {
   compact?: boolean;
   wide?: boolean;
   notes?: boolean;
+  locus?: boolean;
   showVersion?: boolean;
   showRelease?: boolean;
 }): ListCol[] {
+  if (opts.locus) return [...LIST_COLS_LOCUS];
   if (opts.compact) {
     const cols = [...LIST_COLS_COMPACT];
     if (opts.showVersion) cols.splice(4, 0, { key: 'pin', header: 'VERIFIED', width: 10 });
@@ -811,6 +855,45 @@ export function applyVerifiedLocusToEntries(
       e.allPages = [locus.page, ...e.allPages.filter(p => p !== locus.page)];
     }
   }
+
+  // Family inheritance: only when child still has no fragment (e.g. readableStreamTo*)
+  const byName = new Map(entries.map(e => [e.name, e]));
+  const inheritedNames = new Set<string>();
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    if (e.anchor && !e.locusUnresolved) continue;
+    const parent = findParentWithFragment(e.name, byName);
+    if (!parent) continue;
+    e.canonicalPage = parent.page;
+    e.anchor = parent.fragment;
+    e.locusUnresolved = false;
+    e.allPages = [parent.page, ...e.allPages.filter(p => p !== parent.page)];
+    const rel = new Set(e.related ?? []);
+    rel.add(parent.name);
+    e.related = [...rel];
+    inheritedNames.add(e.name);
+  }
+
+  // Stamp rich STATUS after inheritance
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    if (inheritedNames.has(e.name)) {
+      e.locusStatus = 'inherited';
+      e.locusUnresolved = false;
+      continue;
+    }
+    e.locusStatus = classifyLocusStatus({
+      name: e.name,
+      canonicalPage: e.canonicalPage,
+      anchor: e.anchor,
+      locusUnresolved: e.locusUnresolved,
+      pageAnchors,
+    });
+    // Page-level / reference count as located for LOC metric
+    if (e.locusStatus === 'page' || e.locusStatus === 'reference') {
+      e.locusUnresolved = false;
+    }
+  }
 }
 
 /** Compare loose semver strings; negative if a < b. */
@@ -1166,7 +1249,11 @@ export function tierACoverageSummary(
   const total = slice.length;
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
   const withHistory = slice.filter(e => !!(e.releasedIn || e.fixedIn || e.changedIn)).length;
-  const withLocus = slice.filter(e => e.anchor && !e.locusUnresolved).length;
+  const withLocus = slice.filter(e => {
+    const s = e.locusStatus;
+    if (s === 'fragment' || s === 'page' || s === 'inherited' || s === 'reference') return true;
+    return !!(e.anchor && !e.locusUnresolved);
+  }).length;
   const withExamples = slice.filter(e => (e.examples?.length ?? 0) > 0).length;
   return {
     total,
@@ -1700,6 +1787,7 @@ async function main(): Promise<void> {
     const wide = rest.includes('--wide') || rest.includes('-w');
     const notes = rest.includes('--notes') || rest.includes('-n');
     const compact = rest.includes('--compact') || rest.includes('-c');
+    const locus = rest.includes('--locus') || rest.includes('-L');
     // --version / --release remain as aliases that expand to wide columns
     let showVersion = false;
     let showRelease = false;
@@ -1773,6 +1861,7 @@ async function main(): Promise<void> {
       compact,
       wide,
       notes,
+      locus,
       showVersion,
       showRelease,
     });
@@ -1781,9 +1870,9 @@ async function main(): Promise<void> {
     }
     console.info(`\n${entries.length} entries`);
     if (search) console.info(`(filter --search=${search})`);
-    if (!compact && !wide && !notes) {
+    if (!compact && !wide && !notes && !locus) {
       console.info(
-        '(tips: --wide VER/RELEASE/BLOG · --notes description/changeNote · --compact legacy)'
+        '(tips: --locus TOKEN/PAGE/FRAGMENT · --wide VER/RELEASE/BLOG · --notes · --compact)'
       );
     }
     return;
@@ -1825,6 +1914,7 @@ async function main(): Promise<void> {
   console.error('  list -s runtime|bundler|test|guides -t ' + DocRefTypeArray.join('|'));
   console.error('       -q WebView         # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');
+  console.error('       -L / --locus       # TOKEN TYPE STATUS PAGE FRAGMENT SHIP');
   console.error('       -w / --wide        # + CHG UPDATED VER RELEASE BLOG');
   console.error('       -n / --notes       # + NOTE (changeNote, falling back to description)');
   console.error('       --version/--release  # aliases that expand wide columns');
