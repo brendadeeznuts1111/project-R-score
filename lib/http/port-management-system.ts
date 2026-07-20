@@ -1,5 +1,6 @@
-import { fileExistsSync, readTextSync } from '../../scripts/lib/fs-bun';
-// @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek (sync config load)
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/guides/http/fetch — Bun.fetch
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
@@ -197,9 +198,11 @@ class PortManager {
     let config = { ...this.getDefaultConfig() };
 
     for (const configFile of configFiles) {
-      if (fileExistsSync(configFile)) {
+      const file = Bun.file(configFile);
+      // Sync API surface: peek the async Bun.file promises (same pattern as lib/projects-scan)
+      if (Bun.peek(file.exists()) === true) {
         try {
-          const content = readTextSync(configFile);
+          const content = Bun.peek(file.text()) as string;
           const parsed = JSON.parse(content);
 
           // Extract port configuration

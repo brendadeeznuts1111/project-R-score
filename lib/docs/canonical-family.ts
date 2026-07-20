@@ -1,5 +1,5 @@
-import { fileExistsSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 import { createHash } from 'node:crypto';
 
 import { resolve } from 'node:path';
@@ -293,11 +293,12 @@ export async function loadSearchPolicies(rootDir: string = '.'): Promise<SearchP
   const candidates = [resolve(rootDir, '.search/policies.json'), resolve('.search/policies.json')];
 
   for (const path of candidates) {
-    if (!fileExistsSync(path)) {
+    const file = Bun.file(path);
+    if (!(await file.exists())) {
       continue;
     }
     try {
-      const content = await Bun.file(path).text();
+      const content = await file.text();
       const parsed = JSON.parse(content) as Partial<SearchPolicies>;
       return mergePolicies(parsed);
     } catch {

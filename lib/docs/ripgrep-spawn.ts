@@ -1,5 +1,6 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync } from '../../scripts/lib/fs-bun';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
@@ -177,8 +178,8 @@ export class RipgrepSearcher {
   }
 
   private ensureCacheDir(): void {
-    if (!fileExistsSync(this.cacheDir)) {
-      // mkdir remains node:fs — Bun.write only creates parents for file paths
+    // Pure directory create — Bun.write only creates parents for nested *files*
+    if (Bun.peek(Bun.file(this.cacheDir).exists()) !== true) {
       const fs = require('fs');
       fs.mkdirSync(this.cacheDir, { recursive: true });
     }

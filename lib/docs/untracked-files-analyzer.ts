@@ -1,5 +1,5 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readTextSync } from '../../scripts/lib/fs-bun';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/untracked-files-analyzer.ts — Untracked files analysis
 
@@ -8,7 +8,6 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { statSync } from 'fs';
 import { join } from 'path';
 
 // ============================================================================
@@ -178,7 +177,7 @@ class UntrackedFilesAnalyzer {
   /**
    * Analyze a single file
    */
-  static analyzeFile(filePath: string): FileAnalysis {
+  static async analyzeFile(filePath: string): Promise<FileAnalysis> {
     // Validate path to prevent traversal attacks
     if (filePath.includes('..') || filePath.startsWith('/') || filePath.includes('\\')) {
       return {
@@ -192,34 +191,20 @@ class UntrackedFilesAnalyzer {
     }
 
     const fullPath = join(process.cwd(), filePath);
+    const bunFile = Bun.file(fullPath);
 
-    // Check if file exists and get stats safely
-    let stats;
-    try {
-      stats = statSync(fullPath);
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        return {
-          path: filePath,
-          size: 0,
-          type: 'temp',
-          priority: 'low',
-          recommendation: 'ignore',
-          reason: 'File does not exist',
-        };
-      }
-      // Other errors (permissions, etc.)
+    if (!(await bunFile.exists())) {
       return {
         path: filePath,
         size: 0,
         type: 'temp',
         priority: 'low',
-        recommendation: 'review',
-        reason: `File access error: ${error.message}`,
+        recommendation: 'ignore',
+        reason: 'File does not exist',
       };
     }
 
-    const isDirectory = stats.isDirectory();
+    const size = bunFile.size;
 
     // Determine file type and priority
     for (const { pattern, type, priority, reason } of this.IMPORTANT_PATTERNS) {
@@ -230,13 +215,11 @@ class UntrackedFilesAnalyzer {
           recommendation = 'ignore';
         } else if (type === 'config' && filePath.includes('.env')) {
           recommendation = 'ignore'; // Never track actual .env files
-        } else if (isDirectory) {
-          recommendation = 'review'; // Directories need review
         }
 
         return {
           path: filePath,
-          size: stats.size,
+          size,
           type,
           priority,
           recommendation,
@@ -250,8 +233,8 @@ class UntrackedFilesAnalyzer {
       if (filePath.startsWith(dir)) {
         return {
           path: filePath,
-          size: stats.size,
-          type: isDirectory ? 'code' : 'code',
+          size,
+          type: 'code',
           priority: 'high',
           recommendation: 'track',
           reason: `File in important directory: ${dir}`,
@@ -264,7 +247,7 @@ class UntrackedFilesAnalyzer {
       if (filePath.includes(dir)) {
         return {
           path: filePath,
-          size: stats.size,
+          size,
           type: 'binary',
           priority: 'low',
           recommendation: 'ignore',
@@ -276,8 +259,8 @@ class UntrackedFilesAnalyzer {
     // Default analysis
     return {
       path: filePath,
-      size: stats.size,
-      type: isDirectory ? 'data' : 'data',
+      size,
+      type: 'data',
       priority: 'medium',
       recommendation: 'review',
       reason: 'Unknown file type - needs manual review',
@@ -306,7 +289,7 @@ class UntrackedFilesAnalyzer {
     const byRecommendation: Record<string, number> = {};
 
     for (const filePath of untrackedFiles) {
-      const analysis = this.analyzeFile(filePath);
+      const analysis = await this.analyzeFile(filePath);
       analyses.push(analysis);
 
       // Update counters
@@ -421,8 +404,9 @@ class UntrackedFilesAnalyzer {
       // Check if they're already in gitignore
       const gitignorePath = '.gitignore';
       let gitignoreContent = '';
-      if (fileExistsSync(gitignorePath)) {
-        gitignoreContent = readTextSync(gitignorePath);
+      const gitignore = Bun.file(gitignorePath);
+      if (await gitignore.exists()) {
+        gitignoreContent = await gitignore.text();
       }
 
       const missingFromGitignore = ignoreFiles.filter(

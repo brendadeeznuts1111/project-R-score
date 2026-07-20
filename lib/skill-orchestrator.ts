@@ -1,5 +1,5 @@
-// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readText } from '../scripts/lib/fs-bun';
+// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 /**
  * SkillOrchestrator - Bridges Kimi Skills with Dynamic Domain APIs
  *
@@ -242,17 +242,17 @@ export class SkillOrchestrator {
     ];
 
     for (const path of paths) {
-      if (fileExistsSync(path)) {
-        const stats = await import('fs').then(fs => fs.statSync(path));
+      const file = Bun.file(path);
+      if (!(await file.exists())) continue;
 
-        if (cached && cached.mtime === stats.mtime.getTime()) {
-          return cached.content;
-        }
-
-        const content = await readText(path);
-        this.skillCache.set(skillName, { content, mtime: stats.mtime.getTime() });
-        return content;
+      const mtime = file.lastModified;
+      if (cached && cached.mtime === mtime) {
+        return cached.content;
       }
+
+      const content = await file.text();
+      this.skillCache.set(skillName, { content, mtime });
+      return content;
     }
 
     throw new Error(`Skill "${skillName}" not found in any discovery path`);

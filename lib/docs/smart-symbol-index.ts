@@ -1,5 +1,6 @@
-import { fileExistsSync } from '../../scripts/lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { Database } from 'bun:sqlite';
@@ -80,7 +81,7 @@ interface DiscoverResult {
 
 function ensureParentDir(filePath: string): void {
   const parent = dirname(filePath);
-  if (!fileExistsSync(parent)) {
+  if (Bun.peek(Bun.file(parent).exists()) !== true) {
     mkdirSync(parent, { recursive: true });
   }
 }
@@ -562,7 +563,7 @@ export function searchCallersBySymbol(
   } = {}
 ): SymbolSearchHit[] {
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!fileExistsSync(dbPath)) {
+  if (Bun.peek(Bun.file(dbPath).exists()) !== true) {
     return [];
   }
 
@@ -702,7 +703,7 @@ export function searchCalleesBySymbol(
   } = {}
 ): SymbolSearchHit[] {
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!fileExistsSync(dbPath)) {
+  if (Bun.peek(Bun.file(dbPath).exists()) !== true) {
     return [];
   }
 
@@ -858,7 +859,7 @@ export function searchSymbolIndex(
   }
 
   const dbPath = resolveSymbolIndexPath(options.dbPath);
-  if (!fileExistsSync(dbPath)) {
+  if (Bun.peek(Bun.file(dbPath).exists()) !== true) {
     return [];
   }
 
