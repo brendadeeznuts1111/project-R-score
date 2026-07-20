@@ -89,7 +89,11 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.Terminal',
     path: 'runtime/terminal',
-    description: 'PTY terminal for spawned processes (Windows ConPTY in 1.3.14)',
+    // Shipped 1.3.5 (POSIX PTY); Windows ConPTY later (1.3.14 notes)
+    // https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
+    description: 'PTY terminal for spawned processes (new Bun.Terminal + spawn terminal)',
+    minVersion: '1.3.5',
+    related: ['runtime/child-process'],
   },
   {
     term: 'Bun.cron',
@@ -166,7 +170,8 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.inspect',
     path: 'runtime/utils',
-    description: 'Serialize a value to a string using Bun\'s console formatter (depth/colors/sorted)',
+    description:
+      "Serialize a value to a string using Bun's console formatter (depth/colors/sorted)",
     related: ['runtime/console'],
   },
   {
@@ -178,7 +183,8 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.inspect.table',
     path: 'runtime/utils',
-    description: 'Format tabular data into an ASCII table string (like console.table but returns a string)',
+    description:
+      'Format tabular data into an ASCII table string (like console.table but returns a string)',
     related: ['runtime/utils'],
   },
 ];

@@ -139,6 +139,15 @@ describe('bun-docs-changelog overlay', () => {
     expect(cl.events.some(e => e.kind === 'feature')).toBe(true);
   });
 
+  test('changelogFor Bun.Terminal releasedIn 1.3.5 with PTY blog anchor', () => {
+    // https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
+    const cl = changelogFor('Bun.Terminal');
+    expect(cl.releasedIn).toBe('1.3.5');
+    expect(cl.changedIn).toBe('1.3.14'); // Windows ConPTY follow-up
+    expect(cl.blogVersion).toBe('1.3.5');
+    expect(cl.blogAnchor).toBe('bun-terminal-api-for-pseudo-terminal-pty-support');
+  });
+
   test('alias --no-orphans maps to noOrphans feature', () => {
     const cl = changelogFor('--no-orphans');
     expect(cl.releasedIn).toBe('1.3.14');

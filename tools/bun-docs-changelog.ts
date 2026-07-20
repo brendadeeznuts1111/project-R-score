@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/s3 — Bun.s3
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 // @see https://bun.com/docs/runtime/markdown — Bun.markdown / Bun.markdown.ansi
@@ -127,6 +128,37 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     version: '1.0.0',
     note: 'UDP sockets with ICMP/truncation handling',
   },
+  // https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support
+  {
+    name: 'Bun.Terminal',
+    kind: 'feature',
+    version: '1.3.5',
+    note: 'Built-in PTY API (new Bun.Terminal + Bun.spawn terminal option); POSIX only at ship',
+    blogAnchor: 'bun-terminal-api-for-pseudo-terminal-pty-support',
+    aliases: ['Terminal', 'Bun.spawn terminal (PTY)'],
+  },
+  {
+    name: 'feature',
+    kind: 'feature',
+    version: '1.3.5',
+    note: 'Compile-time feature flags via import { feature } from "bun:bundle"',
+    blogAnchor: 'compile-time-feature-flags-for-dead-code-elimination',
+    aliases: ['bun:bundle', 'feature()'],
+  },
+  {
+    name: 'Bun.stringWidth',
+    kind: 'change',
+    version: '1.3.5',
+    note: 'Improved terminal display width (Unicode, ANSI, emoji graphemes)',
+    blogAnchor: 'improved-bun-stringwidth-accuracy',
+  },
+  {
+    name: 'Bun.s3',
+    kind: 'change',
+    version: '1.3.5',
+    note: 'contentDisposition option for S3 uploads',
+    blogAnchor: 'content-disposition-support-for-s3-uploads',
+  },
 
   // ── Notable fixes (upgrade impact) ───────────────────────────────────────
   {
@@ -148,7 +180,7 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     name: 'Bun.Terminal',
     kind: 'change',
     version: '1.3.14',
-    note: 'Windows ConPTY support for spawned PTYs',
+    note: 'Windows ConPTY support for spawned PTYs (feature shipped 1.3.5 POSIX-only)',
   },
   {
     name: 'bun:sqlite',
@@ -239,13 +271,22 @@ export function changelogFor(name: string, events = allChangelogEvents()): Token
   let blogVersion: string | undefined;
   let blogAnchor: string | undefined;
 
+  // Notes prefer latest upgrade impact (fix > change > feature).
+  // Blog deep-links prefer the ship post (feature with anchor), then fix, then change.
   const notePriority: Record<ChangelogKind, number> = {
     fix: 3,
     change: 2,
     deprecate: 2,
     feature: 1,
   };
+  const blogPriority: Record<ChangelogKind, number> = {
+    feature: 3,
+    fix: 2,
+    change: 1,
+    deprecate: 1,
+  };
   let bestNotePri = -1;
+  let bestBlogPri = -1;
 
   for (const e of hits) {
     if (e.kind === 'feature') {
@@ -269,16 +310,23 @@ export function changelogFor(name: string, events = allChangelogEvents()): Token
       bestNotePri = pri;
       changeNote = e.note;
       changeCommit = e.commit;
-      blogVersion = e.version;
-      blogAnchor = e.blogAnchor;
     } else if (pri === bestNotePri && e.commit && !changeCommit) {
       changeCommit = e.commit;
     }
 
-    if (e.blogAnchor && !blogAnchor) {
-      blogVersion = e.version;
-      blogAnchor = e.blogAnchor;
+    if (e.blogAnchor) {
+      const bPri = blogPriority[e.kind];
+      if (bPri > bestBlogPri) {
+        bestBlogPri = bPri;
+        blogVersion = e.version;
+        blogAnchor = e.blogAnchor;
+      }
     }
+  }
+
+  // Fall back: blog post for releasedIn / fixedIn without a section anchor
+  if (!blogVersion) {
+    blogVersion = releasedIn ?? fixedIn ?? changedIn;
   }
 
   return {
