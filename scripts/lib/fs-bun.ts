@@ -180,10 +180,7 @@ export function dirExistsSync(path: string): boolean {
  * Uses `onlyFiles: false` so directories are included.
  * @see https://bun.com/docs/runtime/glob — GlobScanOptions.onlyFiles
  */
-export function listEntriesSync(
-  dir: string,
-  options: { dot?: boolean } = {}
-): string[] {
+export function listEntriesSync(dir: string, options: { dot?: boolean } = {}): string[] {
   try {
     return [
       ...new Bun.Glob('*').scanSync({

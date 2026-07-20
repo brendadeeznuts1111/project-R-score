@@ -8,12 +8,7 @@
  */
 
 import { join } from 'path';
-import {
-  readTextSync,
-  writeText,
-  listFilesSync,
-  dirExistsSync,
-} from './lib/fs-bun';
+import { readTextSync, writeText, listFilesSync, dirExistsSync } from './lib/fs-bun';
 
 class LocalhostToExampleConverter {
   private readonly sourceDirectories = ['lib', 'services', 'scripts', 'docs', 'tools'];
