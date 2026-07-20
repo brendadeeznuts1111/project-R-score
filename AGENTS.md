@@ -65,12 +65,12 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 ## Operating rules
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
-- **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
+- **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-map when SSOT docs staged, doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
 - **Task routing:**
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
-  - Doc map integrity → `bun tools/doc-map-check.ts`
+  - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
 

@@ -17,6 +17,38 @@ function isHarnessPath(file: string): boolean {
   return prefixes.some(prefix => normalized.startsWith(prefix));
 }
 
+/** Platform doc SSOT — when staged, run tools/doc-map-check.ts */
+const DOC_MAP_SSOT = new Set([
+  'AGENTS.md',
+  'README.md',
+  'STRUCTURE.md',
+  '.custom-instructions.md',
+  'docs/AGENTS.md',
+  'docs/README.md',
+  'docs/UNIFIED.md',
+  'docs/WIRE_BOUNDARY.md',
+  'docs/DEVELOPMENT-STANDARDS.md',
+  'docs/IMPORT_BOUNDARIES.md',
+  'lib/README.md',
+  'lib/types/branded/README.md',
+  'lib/docs/repo-docs.ts',
+  'tools/doc-map-check.ts',
+]);
+
+function isDocMapPath(file: string): boolean {
+  const normalized = file.replace(/^\.\//, '');
+  return DOC_MAP_SSOT.has(normalized);
+}
+
+async function runDocMapCheck(): Promise<number> {
+  const proc = Bun.spawn(['bun', 'tools/doc-map-check.ts'], {
+    cwd: repoRoot,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  return proc.exited;
+}
+
 async function getStagedFiles(): Promise<string[]> {
   const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'], {
     cwd: repoRoot,
@@ -67,9 +99,28 @@ async function runPrettier(files: string[]): Promise<number> {
 async function main(): Promise<void> {
   const staged = await getStagedFiles();
   const harnessFiles = staged.filter(isHarnessPath);
+  const docMapFiles = staged.filter(isDocMapPath);
+
+  // Platform doc SSOT: when root/docs maps or repo-docs.ts change, re-verify links.
+  if (docMapFiles.length > 0) {
+    console.info(`🗺️  Doc map check (${docMapFiles.length} SSOT path(s) staged)...`);
+    const code = await runDocMapCheck();
+    if (code !== 0) {
+      console.error(
+        '❌ Doc map check failed — fix broken links / CANONICAL_* paths\n' +
+          '   bun tools/doc-map-check.ts\n' +
+          '   bun tools/doc-map-check.ts --open'
+      );
+      process.exit(1);
+    }
+  }
 
   if (harnessFiles.length === 0) {
-    console.info('✅ No staged harness TypeScript files');
+    if (docMapFiles.length > 0) {
+      console.info('✅ Harness pre-commit checks passed (doc map only)');
+    } else {
+      console.info('✅ No staged harness TypeScript or doc-map SSOT files');
+    }
     return;
   }
 
