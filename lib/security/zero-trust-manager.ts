@@ -108,7 +108,9 @@ export class ZeroTrustManager extends EventEmitter {
   /**
    * Register a new identity
    */
-  async registerIdentity(identity: Omit<Identity, 'trustScore' | 'lastVerified'>): Promise<IdentityId> {
+  async registerIdentity(
+    identity: Omit<Identity, 'trustScore' | 'lastVerified'>
+  ): Promise<IdentityId> {
     const fullIdentity: Identity = {
       ...identity,
       trustScore: 50, // Start with neutral trust
@@ -631,7 +633,10 @@ export class ZeroTrustManager extends EventEmitter {
   /**
    * Calculate risk score
    */
-  private async calculateRiskScore(identityId: IdentityId, context: SecurityContext): Promise<number> {
+  private async calculateRiskScore(
+    identityId: IdentityId,
+    context: SecurityContext
+  ): Promise<number> {
     let riskScore = 0;
 
     // Base risk from context
@@ -842,7 +847,7 @@ export class ZeroTrustManager extends EventEmitter {
       event.result === 'success',
       {
         userId: event.identityId,
-        sessionId: event.sessionId,
+        sessionId: event.context.sessionId,
         ipAddress: event.context.ipAddress,
       }
     );
