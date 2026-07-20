@@ -43,18 +43,34 @@
 import { resolve } from 'node:path';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
-import { fetchPageNotes } from './bun-docs-page-notes.ts';
+import { fetchPageNotes, extractNoteFromMarkdown } from './bun-docs-page-notes.ts';
 import {
   cleanBunVersion,
   loadReleaseIndex,
   lookupBlogUrl,
   type ReleaseEntry,
 } from './bun-docs-release-index.ts';
+import {
+  RELEASE_OVERLAY_PATH,
+  releaseOverlayIndex,
+  type ReleaseOverlayEntry,
+  type ReleaseOverlayFile,
+} from './bun-docs-release-scrape.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
+
+/** Typed token categories where NOTE coverage is tracked closely. */
+export const NOTE_COVERAGE_TYPES: DocRefType[] = [
+  'api',
+  'cli-flag',
+  'config-key',
+  'env-var',
+  'package-json-key',
+  'cli-option',
+];
 
 export const DocRefTypeArray = [
   'api',
@@ -450,13 +466,9 @@ export function stampEntryBlogUrl(
   const existing = e.blogUrl;
   const hash = existing?.includes('#') ? existing.slice(existing.indexOf('#')) : '';
   const fromPath = existing?.match(/\/bun-v([\d.]+)/i)?.[1];
-  const candidates = [
-    fromPath,
-    e.releasedIn,
-    e.fixedIn,
-    e.changedIn,
-    fallbackVersion,
-  ].filter((v): v is string => Boolean(v));
+  const candidates = [fromPath, e.releasedIn, e.fixedIn, e.changedIn, fallbackVersion].filter(
+    (v): v is string => Boolean(v)
+  );
 
   for (const v of candidates) {
     const base = lookupBlogUrl(v, releaseMap);
@@ -958,13 +970,22 @@ export async function buildCatalog(opts?: {
     applyChangelogOverlay(e, clIndex);
   }
 
+  // 6b) Release-post scrape overlay (fills SHIP/FIX/CHG; curated wins on conflicts)
+  const releaseOverlay = await loadReleaseOverlay();
+  if (releaseOverlay.size > 0) {
+    for (const e of entries) {
+      applyReleaseOverlay(e, releaseOverlay);
+    }
+  }
+
   // 7) Phase 1 NOTE — fill empty descriptions from live doc HTML (cached).
-  // Never overwrite an existing description (curated/index/supplement win).
-  // --force only revalidates the HTTP/note cache for pages still missing NOTE.
   if (!opts?.skipNotes) {
     const needUrls = [
       ...new Set(
-        entries.filter(e => !e.description).map(e => e.canonicalPage).filter(Boolean)
+        entries
+          .filter(e => !e.description)
+          .map(e => e.canonicalPage)
+          .filter(Boolean)
       ),
     ];
     if (needUrls.length > 0) {
@@ -975,6 +996,7 @@ export async function buildCatalog(opts?: {
         if (note) e.description = note;
       }
     }
+    await fillNotesFromMarkdown(entries, { force: opts?.force });
   }
 
   // Re-pick canonical + put canonical first in allPages; pin version fields
@@ -992,6 +1014,233 @@ export async function buildCatalog(opts?: {
   }
 
   return entries;
+}
+
+/** Merge scraped release-post overlay (curated changelog wins on notes/SHAs). */
+export function applyReleaseOverlay(
+  e: DocCatalogEntry,
+  overlay: Map<string, ReleaseOverlayEntry>
+): void {
+  const o =
+    overlay.get(normalizeName(e.name)) ??
+    e.aliases?.map(a => overlay.get(normalizeName(a))).find(Boolean);
+  if (!o) return;
+
+  if (o.releasedIn) {
+    if (!e.releasedIn || compareSemver(o.releasedIn, e.releasedIn) < 0) {
+      e.releasedIn = o.releasedIn;
+    }
+  }
+  if (o.fixedIn) {
+    if (!e.fixedIn || compareSemver(o.fixedIn, e.fixedIn) > 0) {
+      e.fixedIn = o.fixedIn;
+    }
+  }
+  if (o.changedIn) {
+    if (!e.changedIn || compareSemver(o.changedIn, e.changedIn) > 0) {
+      e.changedIn = o.changedIn;
+    }
+  }
+  if (o.changeNote && !e.changeNote) {
+    e.changeNote = o.changeNote;
+  }
+}
+
+export async function loadReleaseOverlay(): Promise<Map<string, ReleaseOverlayEntry>> {
+  if (!(await Bun.file(RELEASE_OVERLAY_PATH).exists())) return new Map();
+  try {
+    const file = (await Bun.file(RELEASE_OVERLAY_PATH).json()) as ReleaseOverlayFile;
+    return releaseOverlayIndex(file);
+  } catch {
+    return new Map();
+  }
+}
+
+export type CoverageReport = {
+  total: number;
+  note: { count: number; pct: number };
+  blog: { count: number; pct: number };
+  ship: { count: number; pct: number };
+  fix: { count: number; pct: number };
+  byType: Record<
+    string,
+    { total: number; note: number; notePct: number; ship: number; shipPct: number }
+  >;
+  warnings: string[];
+};
+
+/** Tier A = agent lookup tokens (api, flags, config, env, pkg keys). */
+export type TierACoverage = {
+  total: number;
+  note: { count: number; pct: number };
+  ship: { count: number; pct: number };
+  blog: { count: number; pct: number };
+  fix: { count: number; pct: number };
+  bunVersion?: string;
+  generated?: string;
+};
+
+export function tierACoverageSummary(
+  entries: DocCatalogEntry[],
+  meta?: { bunVersion?: string; generated?: string }
+): TierACoverage {
+  const slice = entries.filter(e => NOTE_COVERAGE_TYPES.includes(e.type));
+  const total = slice.length;
+  const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+  return {
+    total,
+    note: {
+      count: slice.filter(e => e.description).length,
+      pct: pct(slice.filter(e => e.description).length),
+    },
+    ship: {
+      count: slice.filter(e => e.releasedIn).length,
+      pct: pct(slice.filter(e => e.releasedIn).length),
+    },
+    blog: {
+      count: slice.filter(e => e.blogUrl).length,
+      pct: pct(slice.filter(e => e.blogUrl).length),
+    },
+    fix: {
+      count: slice.filter(e => e.fixedIn).length,
+      pct: pct(slice.filter(e => e.fixedIn).length),
+    },
+    ...(meta?.bunVersion ? { bunVersion: meta.bunVersion } : {}),
+    ...(meta?.generated ? { generated: meta.generated } : {}),
+  };
+}
+
+export async function loadTierACoverageFromDisk(): Promise<TierACoverage | null> {
+  if (!(await Bun.file(OUT_PATH).exists())) return null;
+  try {
+    const j = (await Bun.file(OUT_PATH).json()) as {
+      bunVersion?: string;
+      generated?: string;
+      entries?: DocCatalogEntry[];
+    };
+    if (!Array.isArray(j.entries)) return null;
+    return tierACoverageSummary(j.entries, {
+      bunVersion: j.bunVersion,
+      generated: j.generated,
+    });
+  } catch {
+    return null;
+  }
+}
+
+export function catalogCoverageReport(entries: DocCatalogEntry[]): CoverageReport {
+  const warnings: string[] = [];
+  const withDesc = entries.filter(e => e.description).length;
+  const withBlog = entries.filter(e => e.blogUrl).length;
+  const withShip = entries.filter(e => e.releasedIn).length;
+  const withFix = entries.filter(e => e.fixedIn).length;
+  const byType: CoverageReport['byType'] = {};
+
+  for (const type of NOTE_COVERAGE_TYPES) {
+    const slice = entries.filter(e => e.type === type);
+    if (slice.length === 0) continue;
+    const note = slice.filter(e => e.description).length;
+    const ship = slice.filter(e => e.releasedIn).length;
+    const notePct = Math.round((note / slice.length) * 100);
+    byType[type] = {
+      total: slice.length,
+      note,
+      notePct,
+      ship,
+      shipPct: Math.round((ship / slice.length) * 100),
+    };
+    if (notePct < 95) {
+      warnings.push(`${type} NOTE ${notePct}% (${note}/${slice.length}) below 95% target`);
+    }
+  }
+
+  return {
+    total: entries.length,
+    note: { count: withDesc, pct: Math.round((withDesc / entries.length) * 100) },
+    blog: { count: withBlog, pct: Math.round((withBlog / entries.length) * 100) },
+    ship: { count: withShip, pct: Math.round((withShip / entries.length) * 100) },
+    fix: { count: withFix, pct: Math.round((withFix / entries.length) * 100) },
+    byType,
+    warnings,
+  };
+}
+
+function printCoverageReport(report: CoverageReport, entries?: DocCatalogEntry[]): void {
+  console.info(
+    `   coverage NOTE=${report.note.count}/${report.total} (${report.note.pct}%)` +
+      ` BLOG=${report.blog.count}/${report.total} (${report.blog.pct}%)` +
+      ` SHIP=${report.ship.count}/${report.total} (${report.ship.pct}%)` +
+      ` FIX=${report.fix.count}/${report.total} (${report.fix.pct}%)`
+  );
+  if (entries?.length) {
+    const tier = tierACoverageSummary(entries);
+    console.info(
+      `   tier-A (${tier.total}): NOTE ${tier.note.pct}% SHIP ${tier.ship.pct}% BLOG ${tier.blog.pct}% FIX ${tier.fix.pct}%`
+    );
+  }
+  for (const [type, s] of Object.entries(report.byType)) {
+    console.info(`   ${type}: NOTE ${s.notePct}% (${s.note}/${s.total}) SHIP ${s.shipPct}%`);
+  }
+  for (const w of report.warnings) console.warn(`   warn: ${w}`);
+}
+
+async function fillNotesFromMarkdown(
+  entries: DocCatalogEntry[],
+  opts?: { force?: boolean }
+): Promise<void> {
+  const need = entries.filter(
+    e => (opts?.force || !e.description) && NOTE_COVERAGE_TYPES.includes(e.type)
+  );
+  if (need.length === 0) return;
+
+  const urls = [...new Set(need.map(e => e.canonicalPage.replace(/\.md$/, '')))];
+  let i = 0;
+  const concurrency = 8;
+  const notes = new Map<string, string>();
+
+  async function worker(): Promise<void> {
+    while (i < urls.length) {
+      const url = urls[i++]!;
+      const mdUrl = `${url}.md`;
+      try {
+        const res = await fetch(mdUrl);
+        if (!res.ok) continue;
+        const md = await res.text();
+        const note = extractNoteFromMarkdown(md);
+        if (note) notes.set(url, note);
+      } catch {
+        /* skip */
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, urls.length) }, () => worker()));
+
+  for (const e of need) {
+    if (!opts?.force && e.description) continue;
+    const note = notes.get(e.canonicalPage.replace(/\.md$/, ''));
+    if (note) e.description = note;
+  }
+}
+
+export function compactCatalogRow(
+  e: DocCatalogEntry,
+  meta: { bunVersion: string },
+  maxNote = 160
+): Record<string, string> {
+  const cells = listCells(e, meta);
+  const note = cells.note.length > maxNote ? `${cells.note.slice(0, maxNote - 1)}…` : cells.note;
+  return {
+    name: e.name,
+    type: e.type,
+    ship: e.releasedIn ?? '',
+    fix: e.fixedIn ?? '',
+    chg: e.changedIn ?? '',
+    pin: e.verifiedOn ?? meta.bunVersion,
+    blog: e.blogUrl ?? '',
+    doc: e.docsUrl ?? e.canonicalPage,
+    note,
+  };
 }
 
 /** Apply curated changelog stamps onto a catalog entry (mutates). */
@@ -1031,8 +1280,7 @@ export async function writeCatalog(
 ): Promise<void> {
   const bunVersion = normalizeBunVersion(opts?.bunVersion ?? Bun.version);
   const releaseUrl = releaseUrlFor(bunVersion);
-  const releaseMap =
-    opts?.releaseMap ?? (await loadReleaseIndex({ refresh: false })).map;
+  const releaseMap = opts?.releaseMap ?? (await loadReleaseIndex({ refresh: false })).map;
   const blogUrl = lookupBlogUrl(bunVersion, releaseMap) ?? '';
   const commitHash = opts?.commitHash ?? runtimeCommitHash(bunVersion);
   const payload = {
@@ -1050,6 +1298,7 @@ export async function writeCatalog(
       curated: 'tools/bun-docs-curated.ts',
       changelog: 'tools/bun-docs-changelog.ts',
       releaseIndex: 'tools/release-index.json',
+      releaseOverlay: 'tools/bun-docs-release-overlay.json',
       tokenSupplement: 'tools/bun-docs-token-supplement.json',
     },
     schema: {
@@ -1081,6 +1330,7 @@ export async function writeCatalog(
     withChangeNote: entries.filter(e => e.changeNote).length,
     withBlogUrl: entries.filter(e => e.blogUrl).length,
     withDescription: entries.filter(e => e.description).length,
+    withReleasedInCount: entries.filter(e => e.releasedIn).length,
     byType: countBy(entries, e => e.type),
     bySection: countBy(entries, e => e.section),
     byStability: countBy(entries, e => e.stability),
@@ -1257,21 +1507,44 @@ async function main(): Promise<void> {
     await writeCatalog(entries, { bunVersion, versionPinned, commitHash, releaseMap });
     const typeCounts = countBy(entries, e => e.type);
     const topBlog = lookupBlogUrl(bunVersion, releaseMap) ?? '(none in RSS)';
-    const withBlog = entries.filter(e => e.blogUrl).length;
-    const withDesc = entries.filter(e => e.description).length;
+    const coverage = catalogCoverageReport(entries);
     console.info(
       `✅ catalog ${entries.length} entries → tools/bun-docs-catalog.json` +
         `  bunVersion=${bunVersion}` +
         (versionPinned ? ' (pinned)' : '') +
         `  release=${releaseUrlFor(bunVersion)}` +
         `  blog=${topBlog}` +
-        `  blogUrls=${withBlog}/${entries.length}` +
-        `  notes=${withDesc}/${entries.length}` +
         (commitHash ? `  commit=${commitHash}` : '') +
         `  (${Object.entries(typeCounts)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([k, v]) => `${k}=${v}`)
           .join(' ')})`
+    );
+    printCoverageReport(coverage, entries);
+    return;
+  }
+  if (cmd === 'export') {
+    const meta = await loadCatalogFile();
+    const compact = rest.includes('--compact') || rest.includes('-c');
+    const jsonl = rest.includes('--jsonl');
+    const rows = meta.entries.map(e => compactCatalogRow(e, meta));
+    if (jsonl) {
+      for (const row of rows) {
+        process.stdout.write(`${JSON.stringify(row)}\n`);
+      }
+      return;
+    }
+    if (compact) {
+      process.stdout.write('name\ttype\tship\tfix\tchg\tpin\tblog\tdoc\tnote\n');
+      for (const row of rows) {
+        process.stdout.write(
+          `${row.name}\t${row.type}\t${row.ship}\t${row.fix}\t${row.chg}\t${row.pin}\t${row.blog}\t${row.doc}\t${row.note}\n`
+        );
+      }
+      return;
+    }
+    process.stdout.write(
+      `${JSON.stringify({ bunVersion: meta.bunVersion, count: rows.length, rows }, null, 2)}\n`
     );
     return;
   }
@@ -1403,9 +1676,10 @@ async function main(): Promise<void> {
     console.error(`❌ catalog verify failed (expected Bun ${expected})`);
     process.exit(1);
   }
-  console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify [args]');
+  console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify|export [args]');
   console.error('  build [--version=1.4.0] [--force] [--skip-notes] [--no-refresh-rss]');
   console.error('       # default Bun.version; BLOG from RSS release-index; NOTE from doc HTML');
+  console.error('  export [--compact] [--jsonl]  # agent-friendly catalog rows');
   console.error('  list -s runtime|bundler|test|guides -t ' + DocRefTypeArray.join('|'));
   console.error('       -q WebView         # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');

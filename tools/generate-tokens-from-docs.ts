@@ -491,34 +491,14 @@ function normalizeBunVersion(version: string): string {
 
 const blogUrlCache = new Map<string, string | undefined>();
 
-/**
- * Resolve the best release blog URL for a version, falling back from patch
- * to minor to major release posts. Returns undefined if none exists.
- */
+/** RSS-validated blog URL; empty when not in release-index (no synthetic URLs). */
 async function resolveBlogUrl(version: string): Promise<string | undefined> {
   const v = normalizeBunVersion(version);
   if (blogUrlCache.has(v)) return blogUrlCache.get(v);
 
-  const [major, minor, patch] = v.split('.').map(n => parseInt(n, 10) || 0);
-  const candidates = [
-    `https://bun.com/blog/bun-v${major}.${minor}.${patch}`,
-    `https://bun.com/blog/bun-v${major}.${minor}.0`,
-    `https://bun.com/blog/bun-v${major}.0.0`,
-  ];
-
-  let resolved: string | undefined;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
-      if (res.ok) {
-        resolved = url;
-        break;
-      }
-    } catch {
-      // Network error or timeout — try next candidate without retry; caller can re-run later.
-    }
-  }
-
+  const { loadReleaseIndex, lookupBlogUrl } = await import('./bun-docs-release-index.ts');
+  const { map } = await loadReleaseIndex({ refresh: false });
+  const resolved = lookupBlogUrl(v, map);
   blogUrlCache.set(v, resolved);
   return resolved;
 }
@@ -564,8 +544,7 @@ async function main(): Promise<void> {
   const args = parseArgs();
   const { sections, version, releaseUrl, commitHash, versionPinned } = args;
   // Resolve the best blog URL with patch → minor → major fallback.
-  const blogUrl =
-    (await resolveBlogUrl(version)) ?? `https://bun.com/blog/bun-v${normalizeBunVersion(version)}`;
+  const blogUrl = (await resolveBlogUrl(version)) ?? '';
   // @see https://bun.com/docs/runtime/http/fetch
   const llms = await (await fetch(LLMS_URL)).text();
   const pages: { title: string; url: string }[] = [];
@@ -612,7 +591,7 @@ async function main(): Promise<void> {
     generated,
     bunVersion: version,
     releaseUrl,
-    blogUrl,
+    ...(blogUrl ? { blogUrl } : {}),
     ...(commitHash ? { commitHash } : {}),
     docsRoot: 'https://bun.com/docs',
     versionPinned,
@@ -625,7 +604,7 @@ async function main(): Promise<void> {
     `\n✅ wrote token supplement → ${SUPPLEMENT_OUT} (${entries.length} tokens, Bun ${version})`
   );
   console.info(`   release ${releaseUrl}`);
-  console.info(`   blog ${blogUrl}`);
+  console.info(`   blog ${blogUrl || '(none in RSS)'}`);
   if (commitHash) console.info(`   commit ${commitHash}`);
 
   const legacy = buildLegacyCatalog(merged);
@@ -637,7 +616,7 @@ async function main(): Promise<void> {
           'Legacy nested format (kept for compatibility). Prefer tools/bun-docs-catalog.json (built by bun-docs-catalog.ts).',
         bunVersion: version,
         releaseUrl,
-        blogUrl,
+        ...(blogUrl ? { blogUrl } : {}),
         ...(commitHash ? { commitHash } : {}),
         ...legacy,
       },
@@ -702,7 +681,7 @@ function toSupplementEntry(
   pin: {
     bunVersion: string;
     releaseUrl: string;
-    blogUrl: string;
+    blogUrl?: string;
     commitHash?: string;
     generated: string;
   }
@@ -739,7 +718,7 @@ function toSupplementEntry(
     verifiedOn: pin.bunVersion,
     lastUpdated: pin.generated,
     releaseUrl: pin.releaseUrl,
-    blogUrl: pin.blogUrl,
+    ...(pin.blogUrl ? { blogUrl: pin.blogUrl } : {}),
     docsUrl: docsUrlFor(canonical, anchor),
     ...(pin.commitHash ? { commitHash: pin.commitHash } : {}),
     canonicalPage: canonical,

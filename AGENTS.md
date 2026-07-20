@@ -90,18 +90,22 @@ Machine SSOT is `~/.bunfig.toml` (`linker = "isolated"`, `globalStore = true`, `
 Before using an **unfamiliar Bun API**, resolve its canonical doc instead of guessing the signature:
 
 ```bash
-bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # → page + verified anchors
+bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # → catalog DOC + SHIP/FIX/BLOG/NOTE when known
 bun tools/bun-doc-refs.ts url "Bun.stringWidth"   # → canonical URL
+bun tools/bun-docs-catalog.ts get Bun.WebView     # full catalog entry
+bun run docs:catalog:export                       # compact TSV for agents
 ```
 
-Commands: `url` `list` `suggest` (index lookup) · `check`/`annotate` (find/insert `@see` refs) · `audit` (map anchors vs index) · `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity` (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) · `status` · `schedule` (Bun.cron daemon; `--once` for single runs) · `export` (hierarchical llms-full.txt)
+Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catalog` · `check`/`annotate` (find/insert `@see` refs) · `audit` (map anchors vs index) · `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity` (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) · `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for single runs) · `export` (hierarchical llms-full.txt)
+
+Operate loop (RSS → scrape → catalog → integrity): [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
 
 Rules:
 
 - When you use a `Bun.*` API in code, add `// @see <canonical-url>` from the `url`/`suggest` output to the file header (or run `bun tools/bun-doc-refs.ts annotate --write <files>` to do it automatically).
 - The pre-commit harness **blocks commits** whose staged files use Bun APIs without canonical refs — run the annotator and re-stage.
 - Only trust options verified against the runtime (see [`lib/console-depth.ts`](lib/console-depth.ts) header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
-- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) index → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) (317 pages, verified anchors) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) map. Regenerate + verify: `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`.
+- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) → [`tools/bun-docs-catalog.json`](tools/bun-docs-catalog.json) (NOTE/SHIP/FIX/BLOG) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) `CANONICAL_REFS`. Refresh: `bun run docs:refresh` (or `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`).
 
 ## Branded ID types (harness)
 

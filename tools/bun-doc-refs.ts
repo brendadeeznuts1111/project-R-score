@@ -535,42 +535,79 @@ async function tokenLookup(query: string): Promise<void> {
  * Map any API name or topic to its canonical Bun docs page + anchor using
  * the generated index. Matches: exact anchor, title substring, then desc.
  */
+function printCatalogSuggest(
+  query: string,
+  cat: {
+    type: string;
+    stability: string;
+    section: string;
+    description?: string;
+    releasedIn?: string;
+    fixedIn?: string;
+    changedIn?: string;
+    docsUrl?: string;
+    canonicalPage: string;
+    blogUrl?: string;
+    releaseUrl?: string;
+    allPages: string[];
+  },
+  source: string
+): void {
+  const docs = cat.docsUrl ?? cat.canonicalPage;
+  console.info(`${query} → ${docs}`);
+  console.info(`  (${source})`);
+  console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
+  if (cat.description) console.info(`  ${cat.description}`);
+  console.info(
+    `  releasedIn: ${cat.releasedIn ?? 'unknown'}  fixedIn: ${cat.fixedIn ?? '—'}  changedIn: ${cat.changedIn ?? '—'}`
+  );
+  if (cat.blogUrl) console.info(`  blogUrl: ${cat.blogUrl}`);
+  if (cat.releaseUrl) console.info(`  releaseUrl: ${cat.releaseUrl}`);
+  if (cat.allPages.length > 1) {
+    console.info(
+      `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`
+    );
+  }
+}
+
 async function suggest(query: string): Promise<void> {
   if (!query) {
     console.error('usage: bun tools/bun-doc-refs.ts suggest <api-or-topic>');
     process.exit(1);
   }
-  // Prefer the institutional CANONICAL_REFS map (exact + aliases) before index search
+
+  // 1) Catalog SSOT (SHIP/FIX/BLOG/NOTE) — covers tokens outside CANONICAL_REFS
+  try {
+    const { getCatalogEntry } = await import('./bun-docs-catalog.ts');
+    const cat = await getCatalogEntry(query);
+    if (cat) {
+      const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
+      const source = mapped
+        ? 'catalog + canonical map — tools/bun-docs-catalog.json'
+        : 'catalog — tools/bun-docs-catalog.json';
+      printCatalogSuggest(query, cat, source);
+      if (mapped && mapped !== (cat.docsUrl ?? cat.canonicalPage)) {
+        console.info(`  canonical map: ${mapped}`);
+      }
+      return;
+    }
+  } catch {
+    /* catalog optional */
+  }
+
+  // 2) Institutional CANONICAL_REFS when catalog misses
   const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
   if (mapped) {
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
-    // Enrich from structured catalog when available
-    try {
-      const { getCatalogEntry } = await import('./bun-docs-catalog.ts');
-      const cat = await getCatalogEntry(query);
-      if (cat) {
-        console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
-        if (cat.description) console.info(`  ${cat.description}`);
-        console.info(
-          `  releasedIn: ${cat.releasedIn ?? 'unknown'}  lastUpdated: ${cat.lastUpdated ?? 'unknown'}  verifiedOn: ${cat.verifiedOn ?? 'unknown'}`
-        );
-        if (cat.allPages.length > 1) {
-          console.info(
-            `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`
-          );
-        }
-      }
-    } catch {
-      /* catalog optional */
-    }
     return;
   }
+
   const { entries } = await docsIndex();
   const q = query.toLowerCase();
   const anchorGuess = slugify(query);
 
-  // 1. exact anchor match on a page
+  // 3. exact anchor match on a page
   for (const e of entries) {
     if (e.anchors.includes(anchorGuess)) {
       const url = e.url.replace(/\.md$/, '');
@@ -945,6 +982,12 @@ async function status(): Promise<void> {
     ok?: boolean;
     regen?: unknown;
     bunVersion?: string;
+    tierA?: {
+      total: number;
+      note: { pct: number };
+      ship: { pct: number };
+      blog: { pct: number };
+    };
   } | null = null;
   if (await Bun.file(LOG).exists()) {
     const lines = (await Bun.file(LOG).text()).trim().split('\n').filter(Boolean);
@@ -986,6 +1029,37 @@ async function status(): Promise<void> {
   line('📌', 'Index generated', generated || 'unknown');
   line('🐇', 'Bun.version', Bun.version);
   if (last?.bunVersion) line('🐇', 'Last run Bun', last.bunVersion);
+
+  try {
+    const { loadTierACoverageFromDisk } = await import('./bun-docs-catalog.ts');
+    const tier = await loadTierACoverageFromDisk();
+    if (tier) {
+      line(
+        '🎯',
+        'Catalog tier-A',
+        `NOTE ${tier.note.pct}% · SHIP ${tier.ship.pct}% · BLOG ${tier.blog.pct}% · FIX ${tier.fix.pct}% (${tier.total} tokens)`
+      );
+      if (tier.bunVersion)
+        line(
+          '📦',
+          'Catalog pin',
+          `${tier.bunVersion}${tier.generated ? ` · ${tier.generated.slice(0, 10)}` : ''}`
+        );
+    } else {
+      line('🎯', 'Catalog tier-A', 'no catalog — bun run docs:catalog:build');
+    }
+  } catch {
+    line('🎯', 'Catalog tier-A', 'unavailable');
+  }
+
+  if (last?.tierA) {
+    line(
+      '📈',
+      'Last log tier-A',
+      `NOTE ${last.tierA.note.pct}% · SHIP ${last.tierA.ship.pct}% · BLOG ${last.tierA.blog.pct}%`
+    );
+  }
+
   line('⏰', 'Weekly cron', '0 6 * * * UTC (schedule command; in-process)');
   line('🩹', 'Self-heal', 'bun tools/bun-doc-refs.ts integrity --fix');
   console.info('');
@@ -1079,6 +1153,15 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
     }
     // Ingest-on-success: PASS regenerates the docs index; FAIL skips regen.
     const regen = failures === 0 ? await regenIndex() : ({ skipped: true } as const);
+    let tierA: Awaited<
+      ReturnType<(typeof import('./bun-docs-catalog.ts'))['loadTierACoverageFromDisk']>
+    > = null;
+    try {
+      const { loadTierACoverageFromDisk } = await import('./bun-docs-catalog.ts');
+      tierA = await loadTierACoverageFromDisk();
+    } catch {
+      tierA = null;
+    }
     // JSONL append via read-modify-write (Bun.write has no append mode)
     const prev = (await Bun.file(LOG).exists()) ? await Bun.file(LOG).text() : '';
     await Bun.write(
@@ -1092,6 +1175,17 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
           stats: lastIntegrityStats,
           regen,
           autoFix,
+          ...(tierA
+            ? {
+                tierA: {
+                  total: tierA.total,
+                  note: { pct: tierA.note.pct },
+                  ship: { pct: tierA.ship.pct },
+                  blog: { pct: tierA.blog.pct },
+                  fix: { pct: tierA.fix.pct },
+                },
+              }
+            : {}),
         }) +
         '\n'
     );
@@ -1211,7 +1305,8 @@ async function mainCli(): Promise<void> {
       console.error(
         `unknown command: ${cmd}\n` +
           `commands: url|token|list|catalog|suggest|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
-          `catalog: --build · list --section=runtime|bundler|test|guides --type=api|… · get <Name>\n` +
+          `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
+          `operate: bun run docs:refresh · docs/BUN_DOCS_OPERATE.md\n` +
           `integrity flags: --fix · --fix-dry · --no-live\n` +
           `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`
       );

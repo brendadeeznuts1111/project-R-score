@@ -114,6 +114,32 @@ export function formatIndexMeta(meta: IndexMeta | null): string {
   );
 }
 
+export function formatCatalogEntry(entry: {
+  name: string;
+  type: string;
+  stability: string;
+  section: string;
+  description?: string;
+  releasedIn?: string;
+  fixedIn?: string;
+  changedIn?: string;
+  docsUrl?: string;
+  blogUrl?: string;
+  releaseUrl?: string;
+}): string {
+  const lines = [
+    `**${entry.name}** (${entry.type}, ${entry.stability}, ${entry.section})`,
+    entry.description ?? '',
+    entry.docsUrl ? `docs: ${entry.docsUrl}` : '',
+    entry.releasedIn ? `ship: ${entry.releasedIn}` : '',
+    entry.fixedIn ? `fix: ${entry.fixedIn}` : '',
+    entry.changedIn ? `chg: ${entry.changedIn}` : '',
+    entry.blogUrl ? `blog: ${entry.blogUrl}` : '',
+    entry.releaseUrl ? `release: ${entry.releaseUrl}` : '',
+  ].filter(Boolean);
+  return lines.join('\n');
+}
+
 export function formatCuratedEntry(entry: Record<string, unknown>): string {
   const { term, path, description, url, minVersion, stability, related } = entry as {
     term: string;

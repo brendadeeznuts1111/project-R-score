@@ -8,6 +8,7 @@ import {
   DEFAULTS,
   formatBlogPost,
   formatCategories,
+  formatCatalogEntry,
   formatCuratedEntry,
   formatDocPage,
   formatIndexMeta,
@@ -102,7 +103,8 @@ const TOOLS = [
   },
   {
     name: 'get_bun_doc_entry',
-    description: 'Curated API lookup (Bun.Image, Bun.serve, http3, globalStore, …) → slug + url.',
+    description:
+      'Catalog-first token lookup (Bun.Image, --filter, install.linker, …) → NOTE/SHIP/FIX/BLOG/DOC; falls back to curated hot-path.',
     inputSchema: {
       type: 'object' as const,
       properties: { term: { type: 'string' } },
@@ -214,6 +216,13 @@ async function handleToolsCall(
 
     case 'get_bun_doc_entry': {
       const term = String(args.term ?? '');
+      try {
+        const { getCatalogEntry } = await import('./bun-docs-catalog.ts');
+        const cat = await getCatalogEntry(term);
+        if (cat) return ok(id, toolText(formatCatalogEntry(cat)));
+      } catch {
+        /* catalog optional */
+      }
       const entry = getCuratedEntry(term) ?? searchCuratedEntries(term, 1)[0];
       if (!entry) return ok(id, toolText(`No entry for "${term}".`, true));
       return ok(id, toolText(formatCuratedEntry(entry as unknown as Record<string, unknown>)));

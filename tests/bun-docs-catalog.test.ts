@@ -77,7 +77,7 @@ describe('bun-docs-catalog helpers', () => {
   test('inferType classifies api flag config concept', () => {
     expect(inferType('Bun.cron', 'https://bun.com/docs/runtime/cron')).toBe('api');
     expect(inferType('--console-depth', 'https://bun.com/docs/runtime/console')).toBe('cli-flag');
-    expect(inferType('bunfig.toml', 'https://bun.com/docs/runtime/bunfig')).toBe('config');
+    expect(inferType('bunfig.toml', 'https://bun.com/docs/runtime/bunfig')).toBe('config-key');
     expect(inferType('Code coverage', 'https://bun.com/docs/test/code-coverage')).toBe('concept');
   });
 
@@ -190,7 +190,7 @@ describe('bun-docs-changelog overlay', () => {
 describe('catalog list table cells', () => {
   test('short labels compress type stability section', () => {
     expect(shortType('cli-flag')).toBe('flag');
-    expect(shortType('config')).toBe('cfg');
+    expect(shortType('config-key')).toBe('cfg');
     expect(shortStability('experimental')).toBe('exp');
     expect(shortStability('stable')).toBe('ok');
     expect(shortSection('bundler')).toBe('bundle');
@@ -218,7 +218,7 @@ describe('catalog list table cells', () => {
     expect(cells.fix).toBe('—');
     expect(cells.ver).toBe('1.4.0');
     expect(cells.release).toBe('tag/bun-v1.4.0');
-    expect(cells.blog).toBe('blog/bun-v1.4.0');
+    expect(cells.blog).toBe('');
     expect(cells.doc).toBe('runtime/child-process');
     expect(cells.stab).toBe('ok');
   });
