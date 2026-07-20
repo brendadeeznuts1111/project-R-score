@@ -72,12 +72,34 @@ function canonicalUrl(pageUrl: string): string {
   return pageUrl.replace(/\.md$/, '');
 }
 
-function canonicalPriority(pageUrl: string): number {
-  const path = new URL(pageUrl).pathname;
-  for (let i = 0; i < DOMAIN_PRIORITY.length; i++) {
-    if (path.includes(`/docs/${DOMAIN_PRIORITY[i]}/`)) return DOMAIN_PRIORITY.length - i;
+/** Score how authoritative a page is for a given token. Higher = better canonical. */
+function pageScore(type: TokenType, name: string, pageUrl: string): number {
+  const path = new URL(pageUrl).pathname.toLowerCase();
+  let score = 0;
+
+  // Domain preference by token type.
+  if (type === 'cli-flag' || type === 'env-var' || type === 'bunfig-key' || type === 'package-json-key') {
+    if (path.includes('/docs/pm/')) score += 200;
+    if (path.includes('/docs/runtime/bunfig')) score += 50;
+  } else if (type === 'api') {
+    if (path.includes('/reference/')) score += 200;
+    if (path.includes('/docs/runtime/')) score += 100;
+  } else if (type === 'concept') {
+    if (path.includes('/docs/guides/')) score += 100;
   }
-  return 0;
+
+  // General domain priority fallback.
+  for (let i = 0; i < DOMAIN_PRIORITY.length; i++) {
+    if (path.includes(`/docs/${DOMAIN_PRIORITY[i]}/`)) score += DOMAIN_PRIORITY.length - i;
+  }
+
+  // Token name or base appears in the path = more specific.
+  const slug = slugify(name);
+  if (slug && path.includes(slug)) score += 30;
+  const base = name.replace(/^Bun\./, '').replace(/^bun:/, '').replace(/^--/, '').toLowerCase();
+  if (base && base !== slug && path.includes(base)) score += 20;
+
+  return score;
 }
 
 function detectStability(heading: string, proseLine?: string): Stability {
@@ -331,10 +353,10 @@ function mergeEntries(entries: CatalogEntry[]): CatalogEntry[] {
       continue;
     }
 
-    const existingPriority = canonicalPriority(existing.canonicalPage);
-    const newPriority = canonicalPriority(e.canonicalPage);
+    const existingScore = pageScore(e.type, e.name, existing.canonicalPage);
+    const newScore = pageScore(e.type, e.name, e.canonicalPage);
 
-    if (newPriority > existingPriority) {
+    if (newScore > existingScore) {
       e.allPages = [existing.canonicalPage, ...existing.allPages];
       map.set(key, e);
     } else {

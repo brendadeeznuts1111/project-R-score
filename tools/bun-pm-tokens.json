@@ -84,7 +84,6 @@
       "--outbase": "https://bun.com/docs/bundler/esbuild#cli-api",
       "--packages": "https://bun.com/docs/bundler/esbuild#cli-api",
       "--platform": "https://bun.com/docs/bundler/esbuild#cli-api",
-      "--preserve-symlinks": "https://bun.com/docs/bundler/esbuild#cli-api",
       "--public-path": "https://bun.com/docs/bundler/esbuild#cli-api",
       "--pure": "https://bun.com/docs/bundler/esbuild#cli-api",
       "--reserve-props": "https://bun.com/docs/bundler/esbuild#cli-api",
@@ -127,12 +126,17 @@
       "--backend": "https://bun.com/docs/pm/cli/install#platform-specific-backends",
       "--concurrent-scripts": "https://bun.com/docs/pm/cli/install#logging",
       "--cpu": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "--dry-run": "https://bun.com/docs/pm/cli/install#dry-run",
+      "--frozen-lockfile": "https://bun.com/docs/pm/cli/install#overrides-and-resolutions",
       "--linker": "https://bun.com/docs/pm/cli/install#hoisted-installs",
       "--lockfile-only": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
       "--minimum-release-age": "https://bun.com/docs/pm/cli/install#minimum-release-age",
       "--omit": "https://bun.com/docs/pm/cli/install#overrides-and-resolutions",
       "--os": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "--preserve-symlinks": "https://bun.com/docs/pm/cli/install#platform-specific-backends",
+      "--production": "https://bun.com/docs/pm/cli/install#overrides-and-resolutions",
       "--save-text-lockfile": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "--silent": "https://bun.com/docs/pm/cli/install#logging",
       "--verbose": "https://bun.com/docs/pm/cli/install#logging"
     },
     "envVars": {
@@ -141,9 +145,16 @@
     },
     "bunfigKeys": {
       "install.concurrentScripts": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.dev": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.dryRun": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
       "install.frozenLockfile": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.linker": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.minimumReleaseAge": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.minimumReleaseAgeExcludes": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
       "install.optional": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
-      "install.peer": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml"
+      "install.peer": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.production": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml",
+      "install.saveTextLockfile": "https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml"
     },
     "packageJsonKeys": {
       "resolutions": "https://bun.com/docs/pm/cli/install#overrides-and-resolutions"
@@ -170,64 +181,17 @@
     },
     "packageJsonKeys": {}
   },
-  "bunfig.toml": {
-    "page": "https://bun.com/docs/runtime/bunfig.md",
-    "pageTitle": "bunfig.toml",
+  "bunx": {
+    "page": "https://bun.com/docs/pm/bunx.md",
+    "pageTitle": "bunx",
     "cliFlags": {
-      "--bun": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
-      "--console-depth": "https://bun.com/docs/runtime/bunfig#telemetry",
-      "--dry-run": "https://bun.com/docs/runtime/bunfig#install-dryrun",
-      "--global": "https://bun.com/docs/runtime/bunfig#install-dryrun",
-      "--production": "https://bun.com/docs/runtime/bunfig#install-production",
-      "--retry": "https://bun.com/docs/runtime/bunfig#test-reruneach",
-      "--seed": "https://bun.com/docs/runtime/bunfig#test-randomize",
-      "--silent": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run"
+      "--bun": "https://bun.com/docs/pm/bunx#arguments-and-flags",
+      "--foo": "https://bun.com/docs/pm/bunx#arguments-and-flags",
+      "--package": "https://bun.com/docs/pm/bunx#arguments-and-flags"
     },
-    "envVars": {
-      "BUN_INSTALL_BIN": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
-      "BUN_PORT": "https://bun.com/docs/runtime/bunfig#serve-port"
-    },
-    "bunfigKeys": {
-      "env.file": "https://bun.com/docs/runtime/bunfig#telemetry",
-      "install.ca": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
-      "install.cafile": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
-      "install.dev": "https://bun.com/docs/runtime/bunfig#install-dev",
-      "install.dryRun": "https://bun.com/docs/runtime/bunfig#install-dryrun",
-      "install.globalBinDir": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
-      "install.ignoreScripts": "https://bun.com/docs/runtime/bunfig#install-ignorescripts",
-      "install.linker": "https://bun.com/docs/runtime/bunfig#install-linker",
-      "install.linkWorkspacePackages": "https://bun.com/docs/runtime/bunfig#install-linkworkspacepackages",
-      "install.lockfile.save": "https://bun.com/docs/runtime/bunfig#install-lockfile",
-      "install.logLevel": "https://bun.com/docs/runtime/bunfig#install-loglevel",
-      "install.minimumReleaseAge": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
-      "install.minimumReleaseAgeExcludes": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
-      "install.prefer": "https://bun.com/docs/runtime/bunfig#install-prefer",
-      "install.production": "https://bun.com/docs/runtime/bunfig#install-production",
-      "install.publicHoistPattern": "https://bun.com/docs/runtime/bunfig#install-publichoistpattern",
-      "install.saveTextLockfile": "https://bun.com/docs/runtime/bunfig#install-savetextlockfile",
-      "install.security.scanner": "https://bun.com/docs/runtime/bunfig#install-loglevel",
-      "preload": "https://bun.com/docs/runtime/bunfig#preload",
-      "run.shell": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
-      "run.silent": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
-      "serve.port": "https://bun.com/docs/runtime/bunfig#serve-port",
-      "smol": "https://bun.com/docs/runtime/bunfig#smol",
-      "telemetry": "https://bun.com/docs/runtime/bunfig#telemetry",
-      "test.concurrentTestGlob": "https://bun.com/docs/runtime/bunfig#test-concurrenttestglob",
-      "test.coverage": "https://bun.com/docs/runtime/bunfig#test-coverage",
-      "test.coverageIgnoreSourcemaps": "https://bun.com/docs/runtime/bunfig#test-coverageignoresourcemaps",
-      "test.coverageReporter": "https://bun.com/docs/runtime/bunfig#test-coveragereporter",
-      "test.coverageThreshold": "https://bun.com/docs/runtime/bunfig#test-coverage",
-      "test.pathIgnorePatterns": "https://bun.com/docs/runtime/bunfig#test-pathignorepatterns",
-      "test.randomize": "https://bun.com/docs/runtime/bunfig#test-randomize",
-      "test.reporter.dots": "https://bun.com/docs/runtime/bunfig#test-reporter-dots",
-      "test.rerunEach": "https://bun.com/docs/runtime/bunfig#test-reruneach",
-      "test.root": "https://bun.com/docs/runtime/bunfig#test-root"
-    },
-    "packageJsonKeys": {
-      "overrides": "https://bun.com/docs/runtime/bunfig#telemetry",
-      "trustedDependencies": "https://bun.com/docs/runtime/bunfig#install-ignorescripts",
-      "workspaces": "https://bun.com/docs/runtime/bunfig#install-linker"
-    }
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {}
   },
   "Bytecode Caching": {
     "page": "https://bun.com/docs/bundler/bytecode.md",
@@ -236,7 +200,6 @@
       "--bytecode": "https://bun.com/docs/bundler/bytecode#basic-usage-commonjs",
       "--compile": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
       "--format": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
-      "--frozen-lockfile": "https://bun.com/docs/bundler/bytecode#version-compatibility",
       "--minify": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
       "--outfile": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
       "--sourcemap": "https://bun.com/docs/bundler/bytecode#with-standalone-executables"
@@ -254,6 +217,7 @@
       "--cafile": "https://bun.com/docs/pm/cli/link#unlinking",
       "--config": "https://bun.com/docs/pm/cli/link#unlinking",
       "--cwd": "https://bun.com/docs/pm/cli/link#unlinking",
+      "--force": "https://bun.com/docs/pm/cli/link#unlinking",
       "--ignore-scripts": "https://bun.com/docs/pm/cli/link#unlinking",
       "--network-concurrency": "https://bun.com/docs/pm/cli/link#unlinking",
       "--no-cache": "https://bun.com/docs/pm/cli/link#unlinking",
@@ -318,12 +282,53 @@
     "pageTitle": "HTML & static sites",
     "cliFlags": {
       "--console": "https://bun.com/docs/bundler/html-static#example",
-      "--dev": "https://bun.com/docs/bundler/html-static#tailwind-css",
       "--env": "https://bun.com/docs/bundler/html-static#build-for-production"
     },
     "envVars": {},
     "bunfigKeys": {
       "serve.static.env": "https://bun.com/docs/bundler/html-static#dev-server-runtime"
+    },
+    "packageJsonKeys": {}
+  },
+  "bunfig.toml": {
+    "page": "https://bun.com/docs/runtime/bunfig.md",
+    "pageTitle": "bunfig.toml",
+    "cliFlags": {
+      "--console-depth": "https://bun.com/docs/runtime/bunfig#telemetry",
+      "--retry": "https://bun.com/docs/runtime/bunfig#test-reruneach",
+      "--seed": "https://bun.com/docs/runtime/bunfig#test-randomize"
+    },
+    "envVars": {
+      "BUN_INSTALL_BIN": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
+      "BUN_PORT": "https://bun.com/docs/runtime/bunfig#serve-port"
+    },
+    "bunfigKeys": {
+      "env.file": "https://bun.com/docs/runtime/bunfig#telemetry",
+      "install.ca": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
+      "install.cafile": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
+      "install.globalBinDir": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
+      "install.ignoreScripts": "https://bun.com/docs/runtime/bunfig#install-ignorescripts",
+      "install.linkWorkspacePackages": "https://bun.com/docs/runtime/bunfig#install-linkworkspacepackages",
+      "install.lockfile.save": "https://bun.com/docs/runtime/bunfig#install-lockfile",
+      "install.logLevel": "https://bun.com/docs/runtime/bunfig#install-loglevel",
+      "install.prefer": "https://bun.com/docs/runtime/bunfig#install-prefer",
+      "install.publicHoistPattern": "https://bun.com/docs/runtime/bunfig#install-publichoistpattern",
+      "preload": "https://bun.com/docs/runtime/bunfig#preload",
+      "run.shell": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
+      "run.silent": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
+      "serve.port": "https://bun.com/docs/runtime/bunfig#serve-port",
+      "smol": "https://bun.com/docs/runtime/bunfig#smol",
+      "telemetry": "https://bun.com/docs/runtime/bunfig#telemetry",
+      "test.concurrentTestGlob": "https://bun.com/docs/runtime/bunfig#test-concurrenttestglob",
+      "test.coverage": "https://bun.com/docs/runtime/bunfig#test-coverage",
+      "test.coverageIgnoreSourcemaps": "https://bun.com/docs/runtime/bunfig#test-coverageignoresourcemaps",
+      "test.coverageReporter": "https://bun.com/docs/runtime/bunfig#test-coveragereporter",
+      "test.coverageThreshold": "https://bun.com/docs/runtime/bunfig#test-coverage",
+      "test.pathIgnorePatterns": "https://bun.com/docs/runtime/bunfig#test-pathignorepatterns",
+      "test.randomize": "https://bun.com/docs/runtime/bunfig#test-randomize",
+      "test.reporter.dots": "https://bun.com/docs/runtime/bunfig#test-reporter-dots",
+      "test.rerunEach": "https://bun.com/docs/runtime/bunfig#test-reruneach",
+      "test.root": "https://bun.com/docs/runtime/bunfig#test-root"
     },
     "packageJsonKeys": {}
   },
@@ -353,6 +358,23 @@
     "bunfigKeys": {},
     "packageJsonKeys": {}
   },
+  "bun add": {
+    "page": "https://bun.com/docs/pm/cli/add.md",
+    "pageTitle": "bun add",
+    "cliFlags": {
+      "--dev": "https://bun.com/docs/pm/cli/add#dev",
+      "--exact": "https://bun.com/docs/pm/cli/add#peer",
+      "--global": "https://bun.com/docs/pm/cli/add#global",
+      "--help": "https://bun.com/docs/pm/cli/add#peer",
+      "--optional": "https://bun.com/docs/pm/cli/add#dev",
+      "--peer": "https://bun.com/docs/pm/cli/add#peer"
+    },
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {
+      "trustedDependencies": "https://bun.com/docs/pm/cli/add#trusted-dependencies"
+    }
+  },
   "Environment Variables": {
     "page": "https://bun.com/docs/runtime/environment-variables.md",
     "pageTitle": "Environment Variables",
@@ -372,18 +394,6 @@
     },
     "packageJsonKeys": {}
   },
-  "bun add": {
-    "page": "https://bun.com/docs/pm/cli/add.md",
-    "pageTitle": "bun add",
-    "cliFlags": {
-      "--exact": "https://bun.com/docs/pm/cli/add#peer",
-      "--optional": "https://bun.com/docs/pm/cli/add#dev",
-      "--peer": "https://bun.com/docs/pm/cli/add#peer"
-    },
-    "envVars": {},
-    "bunfigKeys": {},
-    "packageJsonKeys": {}
-  },
   "Fetch": {
     "page": "https://bun.com/docs/runtime/networking/fetch.md",
     "pageTitle": "Fetch",
@@ -394,58 +404,17 @@
     "bunfigKeys": {},
     "packageJsonKeys": {}
   },
-  "Bun Runtime": {
-    "page": "https://bun.com/docs/runtime/index.md",
-    "pageTitle": "Bun Runtime",
+  "bun --filter": {
+    "page": "https://bun.com/docs/pm/filter.md",
+    "pageTitle": "bun --filter",
     "cliFlags": {
-      "--filter": "https://bun.com/docs/runtime/index#run-a-package-json-script",
-      "--smol": "https://bun.com/docs/runtime/index#bun-run-smol",
-      "--watch": "https://bun.com/docs/runtime/index#run-a-file"
+      "--filter": "https://bun.com/docs/pm/filter",
+      "--if-present": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
+      "--no-exit-on-error": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
+      "--parallel": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
+      "--sequential": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode"
     },
     "envVars": {},
-    "bunfigKeys": {},
-    "packageJsonKeys": {}
-  },
-  "bunx": {
-    "page": "https://bun.com/docs/pm/bunx.md",
-    "pageTitle": "bunx",
-    "cliFlags": {
-      "--foo": "https://bun.com/docs/pm/bunx#arguments-and-flags",
-      "--package": "https://bun.com/docs/pm/bunx#arguments-and-flags"
-    },
-    "envVars": {},
-    "bunfigKeys": {},
-    "packageJsonKeys": {}
-  },
-  "bun create": {
-    "page": "https://bun.com/docs/runtime/templating/create.md",
-    "pageTitle": "bun create",
-    "cliFlags": {
-      "--force": "https://bun.com/docs/runtime/templating/create#using-shadcn-ui-with-bun",
-      "--no-git": "https://bun.com/docs/runtime/templating/create#using-shadcn-ui-with-bun",
-      "--no-install": "https://bun.com/docs/runtime/templating/create#environment-variables",
-      "--only-missing": "https://bun.com/docs/runtime/templating/create#from-a-react-component"
-    },
-    "envVars": {
-      "BUN_CREATE_DIR": "https://bun.com/docs/runtime/templating/create#using-shadcn-ui-with-bun"
-    },
-    "bunfigKeys": {
-      "serve.static.plugins": "https://bun.com/docs/runtime/templating/create#from-a-react-component"
-    },
-    "packageJsonKeys": {}
-  },
-  "bun init": {
-    "page": "https://bun.com/docs/runtime/templating/init.md",
-    "pageTitle": "bun init",
-    "cliFlags": {
-      "--help": "https://bun.com/docs/runtime/templating/init#cli-usage",
-      "--minimal": "https://bun.com/docs/runtime/templating/init#cli-usage",
-      "--react": "https://bun.com/docs/runtime/templating/init#cli-usage",
-      "--yes": "https://bun.com/docs/runtime/templating/init#cli-usage"
-    },
-    "envVars": {
-      "BUN_AGENT_RULE_DISABLED": "https://bun.com/docs/runtime/templating/init"
-    },
     "bunfigKeys": {},
     "packageJsonKeys": {}
   },
@@ -454,20 +423,6 @@
     "pageTitle": "Cron",
     "cliFlags": {
       "--hot": "https://bun.com/docs/runtime/cron#bun-hot"
-    },
-    "envVars": {},
-    "bunfigKeys": {},
-    "packageJsonKeys": {}
-  },
-  "bun --filter": {
-    "page": "https://bun.com/docs/pm/filter.md",
-    "pageTitle": "bun --filter",
-    "cliFlags": {
-      "--if-present": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
-      "--no-exit-on-error": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
-      "--parallel": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
-      "--sequential": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
-      "--workspaces": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode"
     },
     "envVars": {},
     "bunfigKeys": {},
@@ -507,15 +462,46 @@
     "bunfigKeys": {},
     "packageJsonKeys": {}
   },
+  "bun init": {
+    "page": "https://bun.com/docs/runtime/templating/init.md",
+    "pageTitle": "bun init",
+    "cliFlags": {
+      "--minimal": "https://bun.com/docs/runtime/templating/init#cli-usage",
+      "--react": "https://bun.com/docs/runtime/templating/init#cli-usage",
+      "--yes": "https://bun.com/docs/runtime/templating/init#cli-usage"
+    },
+    "envVars": {
+      "BUN_AGENT_RULE_DISABLED": "https://bun.com/docs/runtime/templating/init"
+    },
+    "bunfigKeys": {},
+    "packageJsonKeys": {}
+  },
   "Watch Mode": {
     "page": "https://bun.com/docs/runtime/watch-mode.md",
     "pageTitle": "Watch Mode",
     "cliFlags": {
       "--no-clear-screen": "https://bun.com/docs/runtime/watch-mode#watch-mode",
-      "--preserve": "https://bun.com/docs/runtime/watch-mode#watch-mode"
+      "--preserve": "https://bun.com/docs/runtime/watch-mode#watch-mode",
+      "--watch": "https://bun.com/docs/runtime/watch-mode"
     },
     "envVars": {},
     "bunfigKeys": {},
+    "packageJsonKeys": {}
+  },
+  "bun create": {
+    "page": "https://bun.com/docs/runtime/templating/create.md",
+    "pageTitle": "bun create",
+    "cliFlags": {
+      "--no-git": "https://bun.com/docs/runtime/templating/create#using-shadcn-ui-with-bun",
+      "--no-install": "https://bun.com/docs/runtime/templating/create#environment-variables",
+      "--only-missing": "https://bun.com/docs/runtime/templating/create#from-a-react-component"
+    },
+    "envVars": {
+      "BUN_CREATE_DIR": "https://bun.com/docs/runtime/templating/create#using-shadcn-ui-with-bun"
+    },
+    "bunfigKeys": {
+      "serve.static.plugins": "https://bun.com/docs/runtime/templating/create#from-a-react-component"
+    },
     "packageJsonKeys": {}
   },
   "Writing tests": {
@@ -544,13 +530,11 @@
     "cliFlags": {
       "--path-ignore-patterns": "https://bun.com/docs/test/configuration#examples",
       "--preload": "https://bun.com/docs/test/configuration#examples",
-      "--reporter": "https://bun.com/docs/test/configuration#junit-reporter",
       "--reporter-outfile": "https://bun.com/docs/test/configuration#junit-reporter"
     },
     "envVars": {},
     "bunfigKeys": {
       "install.exact": "https://bun.com/docs/test/configuration#install-settings-inheritance",
-      "install.registry": "https://bun.com/docs/test/configuration#install-settings-inheritance",
       "test.coverageDir": "https://bun.com/docs/test/configuration#complete-configuration-example",
       "test.functions": "https://bun.com/docs/test/configuration#threshold-examples",
       "test.lines": "https://bun.com/docs/test/configuration#threshold-examples",
@@ -567,6 +551,26 @@
     "pageTitle": "Server",
     "cliFlags": {
       "--port": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
+    },
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {}
+  },
+  "Test Reporters": {
+    "page": "https://bun.com/docs/test/reporters.md",
+    "pageTitle": "Test Reporters",
+    "cliFlags": {
+      "--reporter": "https://bun.com/docs/test/reporters#dots-reporter"
+    },
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {}
+  },
+  "Bun Runtime": {
+    "page": "https://bun.com/docs/runtime/index.md",
+    "pageTitle": "Bun Runtime",
+    "cliFlags": {
+      "--smol": "https://bun.com/docs/runtime/index#bun-run-smol"
     },
     "envVars": {},
     "bunfigKeys": {},
@@ -602,6 +606,18 @@
     "envVars": {},
     "bunfigKeys": {},
     "packageJsonKeys": {}
+  },
+  "Workspaces": {
+    "page": "https://bun.com/docs/pm/workspaces.md",
+    "pageTitle": "Workspaces",
+    "cliFlags": {
+      "--workspaces": "https://bun.com/docs/pm/workspaces"
+    },
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {
+      "workspaces": "https://bun.com/docs/pm/workspaces"
+    }
   },
   "WebView": {
     "page": "https://bun.com/docs/runtime/webview.md",
@@ -675,5 +691,35 @@
       "install.cache.disable": "https://bun.com/docs/pm/npmrc#ignore-scripts-skip-lifecycle-scripts"
     },
     "packageJsonKeys": {}
+  },
+  "Scopes and registries": {
+    "page": "https://bun.com/docs/pm/scopes-registries.md",
+    "pageTitle": "Scopes and registries",
+    "cliFlags": {},
+    "envVars": {},
+    "bunfigKeys": {
+      "install.registry": "https://bun.com/docs/pm/scopes-registries#"
+    },
+    "packageJsonKeys": {}
+  },
+  "Security Scanner API": {
+    "page": "https://bun.com/docs/pm/security-scanner-api.md",
+    "pageTitle": "Security Scanner API",
+    "cliFlags": {},
+    "envVars": {},
+    "bunfigKeys": {
+      "install.security.scanner": "https://bun.com/docs/pm/security-scanner-api#quick-start"
+    },
+    "packageJsonKeys": {}
+  },
+  "Overrides and resolutions": {
+    "page": "https://bun.com/docs/pm/overrides.md",
+    "pageTitle": "Overrides and resolutions",
+    "cliFlags": {},
+    "envVars": {},
+    "bunfigKeys": {},
+    "packageJsonKeys": {
+      "overrides": "https://bun.com/docs/pm/overrides"
+    }
   }
 }
