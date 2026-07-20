@@ -27,7 +27,8 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { createHmac, createHash } from 'node:crypto';
+import { createHmac } from 'node:crypto';
+import { sha256Hex } from './lib/hash';
 import { S3Client } from 'bun';
 import { resolve4, resolveCname, resolveNs, Resolver } from 'node:dns/promises';
 import {
@@ -6479,7 +6480,7 @@ async function fetchR2Json(r2Base: string, name: string): Promise<Response> {
 }
 
 function hashSha256Hex(data: string): string {
-  return createHash('sha256').update(data).digest('hex');
+  return sha256Hex(data);
 }
 
 function hmacSha256(key: Buffer | string, data: string): Buffer {

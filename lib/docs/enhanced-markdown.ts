@@ -158,17 +158,9 @@ class HTMLSanitizer {
     }
   }
 
+  // @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
   static escapeHtml(text: string): string {
-    const htmlEscapes: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;',
-      '/': '&#x2F;',
-    };
-
-    return text.replace(/[&<>"'/]/g, match => htmlEscapes[match]);
+    return Bun.escapeHTML(text);
   }
 }
 

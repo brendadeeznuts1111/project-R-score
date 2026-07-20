@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { join } from 'path';
+import { formatBytes } from './format';
 import {
   applyBunInstallEnv,
   globalStoreLinksDir,
@@ -31,13 +32,6 @@ function parseDuBytes(cacheDir: string): { bytes: number; human: string } | null
   if (!Number.isFinite(kb)) return null;
   const bytes = kb * 1024;
   return { bytes, human: formatBytes(bytes) };
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes}B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}K`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)}M`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)}G`;
 }
 
 function countLinksEntries(linksDir: string): number {

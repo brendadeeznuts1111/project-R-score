@@ -18,6 +18,7 @@
 
 import { WASM_API, getAllWasmUrls } from '../lib/docs/wasm-reference';
 import type { WasmAPIEntry, WasmAPIMember } from '../lib/docs/wasm-reference';
+import { formatBytes } from '../scripts/lib/format';
 
 // ─── CLI argument parsing ────────────────────────────────────────────
 
@@ -97,12 +98,6 @@ async function inspectWasm(path: string): Promise<InspectResult> {
   const memories = exports.filter(e => e.kind === 'memory').length;
 
   return { file: path, size: bytes.byteLength, exports, imports, tables, memories };
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function printInspect(result: InspectResult): void {

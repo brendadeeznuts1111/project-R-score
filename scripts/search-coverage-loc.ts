@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 import { readText } from './lib/fs-bun';
+import { sha1Hex } from './lib/hash';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { createHash } from 'node:crypto';
 
 import { resolve } from 'node:path';
 
@@ -107,7 +107,7 @@ async function fileStats(files: string[]): Promise<FileStat[]> {
         path,
         lines: countLines(content),
         bytes: Buffer.byteLength(content),
-        hash: createHash('sha1').update(content).digest('hex'),
+        hash: sha1Hex(content),
       });
     } catch {
       // ignore unreadable files

@@ -104,12 +104,9 @@ export function gatesForRun(includeGrounding: boolean): GateDefinition[] {
   return includeGrounding ? [...GATES, GROUNDING_GATE] : GATES;
 }
 
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 export function escapeHtml(text: string): string {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return Bun.escapeHTML(text);
 }
 
 export function formatDuration(ms: number): string {

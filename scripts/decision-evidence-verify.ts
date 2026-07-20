@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readText } from './lib/fs-bun';
-import { createHash } from 'node:crypto';
+import { sha256Hex } from './lib/hash';
 
 import { join, resolve } from 'node:path';
 import type {
@@ -44,7 +44,7 @@ function stableSort(value: JsonLike): JsonLike {
 function digestEvidence(evidence: DecisionEvidence): string {
   const payload = { ...evidence, evidence_digest: '' };
   const normalized = JSON.stringify(stableSort(payload as unknown as JsonLike));
-  const hash = createHash('sha256').update(normalized).digest('hex');
+  const hash = sha256Hex(normalized);
   return `sha256:${hash}`;
 }
 

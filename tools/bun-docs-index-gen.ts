@@ -30,20 +30,7 @@ type Entry = {
   anchors: string[];
 };
 
-/** Mintlify/GitHub-style heading slug, verified against bun.com anchors:
- *  `Bun.stringWidth()` → bun-stringwidth (dots→hyphens, trailing paren stripped)
- *  `Bun.inspect.table(tabularData, ...)` → bun-inspect-table-tabulardata-properties-options
- *  [`node:tty`](url) → nodetty (link text only, colons dropped) */
-function slugify(heading: string): string {
-  return heading
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .toLowerCase()
-    .replace(/\(/g, '-')
-    .replace(/[)`'":]/g, '')
-    .replace(/\./g, '-')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+import { slugify } from '../lib/text';
 
 function extractAnchors(markdown: string): string[] {
   const anchors: string[] = [];

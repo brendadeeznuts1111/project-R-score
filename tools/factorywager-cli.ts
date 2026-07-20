@@ -13,7 +13,7 @@ import { styled, log } from '../lib/theme/colors';
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { spawn } from 'child_process';
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { join } from 'path';
 
 const COMMANDS = {
@@ -75,36 +75,22 @@ async function runCommand(command: Command) {
   const scriptPath = join(import.meta.dir, config.script);
 
   try {
-    if (config.script.endsWith('.sh')) {
-      // Run shell script
-      const proc = spawn('bash', [scriptPath], {
-        stdio: 'inherit',
-        cwd: import.meta.dir,
-      });
+    const cmd = config.script.endsWith('.sh')
+      ? ['bash', scriptPath]
+      : ['bun', scriptPath];
+    const proc = Bun.spawn({
+      cmd,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      cwd: import.meta.dir,
+    });
 
-      proc.on('exit', code => {
-        if (code === 0) {
-          console.info(styled('\n✅ Command completed successfully', 'success'));
-        } else {
-          console.info(styled('\n❌ Command failed', 'error'));
-          process.exit(code || 1);
-        }
-      });
+    const code = await proc.exited;
+    if (code === 0) {
+      console.info(styled('\n✅ Command completed successfully', 'success'));
     } else {
-      // Run TypeScript file
-      const proc = spawn('bun', [scriptPath], {
-        stdio: 'inherit',
-        cwd: import.meta.dir,
-      });
-
-      proc.on('exit', code => {
-        if (code === 0) {
-          console.info(styled('\n✅ Command completed successfully', 'success'));
-        } else {
-          console.info(styled('\n❌ Command failed', 'error'));
-          process.exit(code || 1);
-        }
-      });
+      console.info(styled('\n❌ Command failed', 'error'));
+      process.exit(code || 1);
     }
   } catch (error) {
     console.info(styled('❌ Error running command', 'error'));

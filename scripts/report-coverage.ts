@@ -57,6 +57,7 @@ console.info(
 );
 process.exit(status === 'PASS' ? 0 : 1);
 
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 function escape(s: string) {
-  return s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  return Bun.escapeHTML(s);
 }

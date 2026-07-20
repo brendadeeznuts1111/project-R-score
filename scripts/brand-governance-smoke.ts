@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { spawnSync } from 'node:child_process';
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 import { createShutdown } from './lib/graceful-shutdown';
 
 type CmdResult = {
@@ -11,16 +11,18 @@ type CmdResult = {
 };
 
 function run(cmd: string[]): CmdResult {
-  const run = spawnSync(cmd[0] || 'bun', cmd.slice(1), {
+  const run = Bun.spawnSync({
+    cmd: [cmd[0] || 'bun', ...cmd.slice(1)],
     cwd: process.cwd(),
-    encoding: 'utf8',
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   return {
     cmd,
-    exitCode: run.status,
-    ok: (run.status ?? 1) === 0,
-    output: run.stdout || '',
-    error: run.stderr || '',
+    exitCode: run.exitCode,
+    ok: (run.exitCode ?? 1) === 0,
+    output: run.stdout?.toString() || '',
+    error: run.stderr?.toString() || '',
   };
 }
 

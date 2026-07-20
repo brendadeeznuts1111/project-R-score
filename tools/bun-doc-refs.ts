@@ -384,17 +384,7 @@ async function docsIndex(): Promise<{
   return Bun.file(path).json();
 }
 
-/** Mintlify-style slug, mirrors bun-docs-index-gen.ts. */
-function slugify(heading: string): string {
-  return heading
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .toLowerCase()
-    .replace(/\(/g, '-')
-    .replace(/[)`'":]/g, '')
-    .replace(/\./g, '-')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+import { slugify } from '../lib/text';
 
 /**
  * Map any API name or topic to its canonical Bun docs page + anchor using

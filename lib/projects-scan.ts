@@ -8,6 +8,9 @@
 
 export type GitStatus = 'none' | 'clean' | 'dirty';
 
+import { fileExists, fileExistsSync } from '../scripts/lib/fs-bun';
+export { fileExists, fileExistsSync };
+
 export interface WalkStats {
   fileCount: number;
   sizeKb: number;
@@ -66,14 +69,6 @@ export function isDirectory(path: string): boolean {
   } catch {
     return false;
   }
-}
-
-export async function fileExists(path: string): Promise<boolean> {
-  return Bun.file(path).exists();
-}
-
-export function fileExistsSync(path: string): boolean {
-  return Bun.peek(Bun.file(path).exists()) === true;
 }
 
 export function walkStats(dir: string): WalkStats {
