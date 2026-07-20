@@ -447,7 +447,10 @@ type GeneratorArgs = {
 };
 
 function normalizeBunVersion(version: string): string {
-  return version.trim().replace(/^bun-v/i, '').replace(/^v/i, '');
+  return version
+    .trim()
+    .replace(/^bun-v/i, '')
+    .replace(/^v/i, '');
 }
 
 function parseArgs(): GeneratorArgs {
@@ -478,8 +481,7 @@ function parseArgs(): GeneratorArgs {
   const blogUrl = `https://bun.com/blog/bun-v${bunVersion}`;
   // Runtime revision only when pin matches the binary we are running
   const rev = (Bun as { revision?: string }).revision;
-  const commitHash =
-    !versionPinned && rev ? rev.slice(0, 12) : undefined;
+  const commitHash = !versionPinned && rev ? rev.slice(0, 12) : undefined;
   return {
     sections: sections.size > 0 ? [...sections] : DOMAINS,
     version: bunVersion,

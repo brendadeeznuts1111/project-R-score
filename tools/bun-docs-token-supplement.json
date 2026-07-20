@@ -7,7 +7,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--all",
@@ -19,7 +22,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--allow-overwrite",
@@ -30,7 +36,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--analyze",
@@ -41,7 +50,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--asset-names",
@@ -52,7 +64,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--asset-naming",
@@ -63,7 +78,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--audit-level",
@@ -73,7 +91,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/audit"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--auth-type",
@@ -85,7 +106,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--backend",
@@ -102,7 +126,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/global-cache"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--bail",
@@ -113,7 +140,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--banner",
@@ -124,7 +154,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--bun",
@@ -138,7 +171,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/runtime/index"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--bundle",
@@ -148,7 +184,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--bytecode",
@@ -160,7 +199,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/bytecode"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--ca",
@@ -175,7 +217,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cache-dir",
@@ -189,7 +234,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cafile",
@@ -204,7 +252,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--certfile",
@@ -215,7 +266,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--charset",
@@ -226,7 +280,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--chunk-names",
@@ -237,7 +294,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--chunk-naming",
@@ -248,7 +308,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--color",
@@ -259,7 +322,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--commit",
@@ -269,7 +335,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--compile",
@@ -284,7 +353,10 @@
       "https://bun.com/docs/bundler/html-static",
       "https://bun.com/docs/bundler/standalone-html"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--compile-autoload-package-json",
@@ -296,7 +368,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--compile-autoload-tsconfig",
@@ -308,7 +383,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--concurrent",
@@ -319,7 +397,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--concurrent-scripts",
@@ -335,7 +416,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--conditions",
@@ -348,7 +432,10 @@
       "https://bun.com/docs/runtime/module-resolution",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--config",
@@ -362,7 +449,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--console",
@@ -374,7 +464,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/html-static"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--console-depth",
@@ -388,7 +481,10 @@
       "https://bun.com/docs/runtime/console",
       "https://bun.com/docs/runtime/index"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--coverage",
@@ -402,7 +498,10 @@
       "https://bun.com/docs/test/configuration",
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--coverage-dir",
@@ -414,7 +513,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--coverage-reporter",
@@ -427,7 +529,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cpu",
@@ -440,7 +545,10 @@
       "https://bun.com/docs/pm/cli/link",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cpu-prof",
@@ -452,7 +560,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cpu-prof-md",
@@ -464,7 +575,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--cwd",
@@ -478,7 +592,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--define",
@@ -490,7 +607,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--depth",
@@ -501,7 +621,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/why"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--destination",
@@ -513,7 +636,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--dev",
@@ -526,7 +652,10 @@
       "https://bun.com/docs/bundler/html-static",
       "https://bun.com/docs/bundler/standalone-html"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--dots",
@@ -539,7 +668,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/reporters"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--drop",
@@ -550,7 +682,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--dry-run",
@@ -568,7 +703,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--entry-names",
@@ -579,7 +717,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--entry-naming",
@@ -590,7 +731,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--env",
@@ -603,7 +747,10 @@
       "https://bun.com/docs/bundler/html-static",
       "https://bun.com/docs/bundler/standalone-html"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--env-file",
@@ -616,7 +763,10 @@
       "https://bun.com/docs/runtime/environment-variables",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--exact",
@@ -628,7 +778,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/add"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--external",
@@ -639,7 +792,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--feature",
@@ -650,7 +806,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--fetch-preconnect",
@@ -662,7 +821,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/networking/fetch"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--filename",
@@ -674,7 +836,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--filter",
@@ -688,7 +853,10 @@
       "https://bun.com/docs/pm/workspaces",
       "https://bun.com/docs/runtime/index"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--foo",
@@ -700,7 +868,10 @@
     "allPages": [
       "https://bun.com/docs/pm/bunx"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--footer",
@@ -711,7 +882,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--force",
@@ -727,7 +901,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--format",
@@ -740,7 +917,10 @@
       "https://bun.com/docs/bundler/bytecode",
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--frozen-lockfile",
@@ -759,7 +939,10 @@
       "https://bun.com/docs/pm/lockfile",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--global",
@@ -775,7 +958,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--global-name",
@@ -786,7 +972,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--gzip-level",
@@ -799,7 +988,10 @@
       "https://bun.com/docs/pm/cli/pm",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--heap-prof-md",
@@ -811,7 +1003,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--help",
@@ -827,7 +1022,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/runtime/templating/init"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--hot",
@@ -844,7 +1042,10 @@
       "https://bun.com/docs/runtime/yaml",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--if-present",
@@ -856,7 +1057,10 @@
     "allPages": [
       "https://bun.com/docs/pm/filter"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--ignore",
@@ -866,7 +1070,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/audit"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--ignore-annotations",
@@ -877,7 +1084,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--ignore-dce-annotations",
@@ -888,7 +1098,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--ignore-scripts",
@@ -905,7 +1118,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/lifecycle"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--inject",
@@ -916,7 +1132,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--inspect",
@@ -929,7 +1148,10 @@
       "https://bun.com/docs/runtime/debugger",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--inspect-brk",
@@ -941,7 +1163,10 @@
     "allPages": [
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--interactive",
@@ -952,7 +1177,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/update"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--json",
@@ -965,7 +1193,10 @@
       "https://bun.com/docs/pm/cli/info",
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx",
@@ -976,7 +1207,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-dev",
@@ -987,7 +1221,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-factory",
@@ -998,7 +1235,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-fragment",
@@ -1009,7 +1249,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-import-source",
@@ -1020,7 +1263,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-runtime",
@@ -1031,7 +1277,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--jsx-side-effects",
@@ -1042,7 +1291,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--keep-names",
@@ -1054,7 +1306,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/bundler/minifier"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--keyfile",
@@ -1065,7 +1320,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--latest",
@@ -1076,7 +1334,10 @@
       "https://bun.com/docs/pm/cli/audit",
       "https://bun.com/docs/pm/cli/update"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--legal-comments",
@@ -1087,7 +1348,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--linker",
@@ -1103,7 +1367,10 @@
       "https://bun.com/docs/pm/global-store",
       "https://bun.com/docs/pm/isolated-installs"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--loader",
@@ -1115,7 +1382,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--lockfile-only",
@@ -1131,7 +1401,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/lockfile"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--log-level",
@@ -1142,7 +1415,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--log-limit",
@@ -1153,7 +1429,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--log-override",
@@ -1164,7 +1443,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--main-fields",
@@ -1175,7 +1457,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--mangle-cache",
@@ -1186,7 +1471,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--mangle-props",
@@ -1197,7 +1485,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--mangle-quoted",
@@ -1208,7 +1499,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--max-concurrency",
@@ -1220,7 +1514,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--message",
@@ -1232,7 +1529,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--metafile",
@@ -1243,7 +1543,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minify",
@@ -1259,7 +1562,10 @@
       "https://bun.com/docs/bundler/minifier",
       "https://bun.com/docs/bundler/standalone-html"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minify-identifiers",
@@ -1271,7 +1577,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/bundler/minifier"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minify-syntax",
@@ -1283,7 +1592,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/bundler/minifier"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minify-whitespace",
@@ -1295,7 +1607,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/bundler/minifier"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minimal",
@@ -1306,7 +1621,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/init"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--minimum-release-age",
@@ -1318,7 +1636,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--network-concurrency",
@@ -1333,7 +1654,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-bundle",
@@ -1344,7 +1668,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-cache",
@@ -1358,7 +1685,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-clear-screen",
@@ -1370,7 +1700,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/watch-mode"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-compile-autoload-bunfig",
@@ -1382,7 +1715,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-compile-autoload-dotenv",
@@ -1394,7 +1730,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-env-file",
@@ -1406,7 +1745,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-exit-on-error",
@@ -1418,7 +1760,10 @@
     "allPages": [
       "https://bun.com/docs/pm/filter"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-git",
@@ -1430,7 +1775,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-git-tag-version",
@@ -1442,7 +1790,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-install",
@@ -1454,7 +1805,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-progress",
@@ -1469,7 +1823,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-save",
@@ -1485,7 +1842,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/lockfile"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-summary",
@@ -1500,7 +1860,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--no-verify",
@@ -1514,7 +1877,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--omit",
@@ -1530,7 +1896,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--only",
@@ -1542,7 +1911,10 @@
     "allPages": [
       "https://bun.com/docs/test/writing-tests"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--only-missing",
@@ -1554,7 +1926,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--optional",
@@ -1566,7 +1941,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/add"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--os",
@@ -1579,7 +1957,10 @@
       "https://bun.com/docs/pm/cli/link",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--otp",
@@ -1590,7 +1971,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--out-extension",
@@ -1601,7 +1985,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--outbase",
@@ -1612,7 +1999,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--outdir",
@@ -1631,7 +2021,10 @@
       "https://bun.com/docs/runtime/toml",
       "https://bun.com/docs/runtime/yaml"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--outfile",
@@ -1646,7 +2039,10 @@
       "https://bun.com/docs/bundler/executables",
       "https://bun.com/docs/bundler/minifier"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--package",
@@ -1658,7 +2054,10 @@
     "allPages": [
       "https://bun.com/docs/pm/bunx"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--packages",
@@ -1669,7 +2068,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--parallel",
@@ -1681,7 +2083,10 @@
     "allPages": [
       "https://bun.com/docs/pm/filter"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--patches-dir",
@@ -1693,7 +2098,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--path-ignore-patterns",
@@ -1705,7 +2113,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--peer",
@@ -1716,7 +2127,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/add"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--platform",
@@ -1727,7 +2141,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--port",
@@ -1739,7 +2156,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/http/server"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--prefer-offline",
@@ -1751,7 +2171,10 @@
     "allPages": [
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--preid",
@@ -1763,7 +2186,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--preload",
@@ -1779,7 +2205,10 @@
       "https://bun.com/docs/test/mocks",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--preserve",
@@ -1791,7 +2220,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/watch-mode"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--preserve-symlinks",
@@ -1804,7 +2236,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--print",
@@ -1816,7 +2251,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--prod",
@@ -1826,7 +2264,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/audit"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--production",
@@ -1845,7 +2286,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--public-path",
@@ -1856,7 +2300,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--pure",
@@ -1867,7 +2314,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--quiet",
@@ -1881,7 +2331,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--randomize",
@@ -1893,7 +2346,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--react",
@@ -1904,7 +2360,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/init"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--recursive",
@@ -1915,7 +2374,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/update"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--registry",
@@ -1930,7 +2392,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--reporter",
@@ -1944,7 +2409,10 @@
       "https://bun.com/docs/test/configuration",
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--reporter-outfile",
@@ -1958,7 +2426,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/reporters"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--rerun-each",
@@ -1970,7 +2441,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--reserve-props",
@@ -1981,7 +2455,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--resolve-extensions",
@@ -1992,7 +2469,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--retry",
@@ -2006,7 +2486,10 @@
       "https://bun.com/docs/test/configuration",
       "https://bun.com/docs/test/index"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--root",
@@ -2017,7 +2500,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--save",
@@ -2029,7 +2515,10 @@
       "https://bun.com/docs/pm/cli/outdated",
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--save-text-lockfile",
@@ -2045,7 +2534,10 @@
       "https://bun.com/docs/pm/cli/patch",
       "https://bun.com/docs/pm/lockfile"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--seed",
@@ -2058,7 +2550,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/index"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--sequential",
@@ -2070,7 +2565,10 @@
     "allPages": [
       "https://bun.com/docs/pm/filter"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--serve",
@@ -2081,7 +2579,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--servedir",
@@ -2092,7 +2593,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--silent",
@@ -2109,7 +2613,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--smol",
@@ -2123,7 +2630,10 @@
       "https://bun.com/docs/test/configuration",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--source-root",
@@ -2134,7 +2644,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--sourcefile",
@@ -2145,7 +2658,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--sourcemap",
@@ -2158,7 +2674,10 @@
       "https://bun.com/docs/bundler/bytecode",
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--sources-content",
@@ -2169,7 +2688,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--splitting",
@@ -2182,7 +2704,10 @@
       "https://bun.com/docs/bundler/executables",
       "https://bun.com/docs/bundler/standalone-html"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--sql-preconnect",
@@ -2194,7 +2719,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/sql"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--supported",
@@ -2205,7 +2733,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--tag",
@@ -2215,7 +2746,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--target",
@@ -2234,7 +2768,10 @@
       "https://bun.com/docs/bundler/standalone-html",
       "https://bun.com/docs/runtime/module-resolution"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--test",
@@ -2246,7 +2783,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/nodejs-compat"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--test-name-pattern",
@@ -2260,7 +2800,10 @@
       "https://bun.com/docs/test/discovery",
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--test-only",
@@ -2272,7 +2815,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/nodejs-compat"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--timeout",
@@ -2285,7 +2831,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--todo",
@@ -2298,7 +2847,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/writing-tests"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--tolerate-republish",
@@ -2309,7 +2861,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/publish"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--top",
@@ -2320,7 +2875,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/why"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--tree-shaking",
@@ -2331,7 +2889,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--trust",
@@ -2347,7 +2908,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/global-store"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--trusted",
@@ -2359,7 +2923,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/pm"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--tsconfig",
@@ -2370,7 +2937,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--tsconfig-override",
@@ -2382,7 +2952,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--update-snapshots",
@@ -2395,7 +2968,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/snapshots"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--verbose",
@@ -2412,7 +2988,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/isolated-installs"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--verify",
@@ -2424,7 +3003,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--version",
@@ -2435,7 +3017,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/esbuild"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--watch",
@@ -2450,7 +3035,10 @@
       "https://bun.com/docs/test/index",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--workspaces",
@@ -2461,7 +3049,10 @@
       "https://bun.com/docs/pm/workspaces",
       "https://bun.com/docs/pm/filter"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--yarn",
@@ -2477,7 +3068,10 @@
       "https://bun.com/docs/pm/cli/publish",
       "https://bun.com/docs/pm/lockfile"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "--yes",
@@ -2488,7 +3082,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/init"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_AGENT_RULE_DISABLED",
@@ -2498,7 +3095,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/init"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_BE_BUN",
@@ -2510,7 +3110,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CHROME_PATH",
@@ -2522,7 +3125,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/webview"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
@@ -2534,7 +3140,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/networking/dns"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CONFIG_MAX_HTTP_REQUESTS",
@@ -2547,7 +3156,10 @@
       "https://bun.com/docs/runtime/environment-variables",
       "https://bun.com/docs/runtime/networking/fetch"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD",
@@ -2559,7 +3171,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CONFIG_VERBOSE_FETCH",
@@ -2572,7 +3187,10 @@
       "https://bun.com/docs/runtime/debugger",
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_CREATE_DIR",
@@ -2584,7 +3202,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS",
@@ -2596,7 +3217,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER",
@@ -2608,7 +3232,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_INSTALL_BIN",
@@ -2620,7 +3247,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_INSTALL_CACHE_DIR",
@@ -2630,7 +3260,10 @@
     "allPages": [
       "https://bun.com/docs/pm/global-cache"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_INSTALL_GLOBAL_STORE",
@@ -2642,7 +3275,10 @@
     "allPages": [
       "https://bun.com/docs/pm/global-store"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_LOADER_JSX",
@@ -2655,7 +3291,10 @@
       "https://bun.com/docs/runtime/plugins",
       "https://bun.com/docs/bundler/plugins"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_OPTIONS",
@@ -2668,7 +3307,10 @@
       "https://bun.com/docs/runtime/environment-variables",
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_PORT",
@@ -2681,7 +3323,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/runtime/http/server"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
@@ -2693,7 +3338,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:error",
@@ -2705,7 +3353,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/hot-reloading"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:ffi",
@@ -2716,7 +3367,10 @@
       "https://bun.com/docs/runtime/ffi",
       "https://bun.com/docs/runtime/c-compiler"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:invalidate",
@@ -2728,7 +3382,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/hot-reloading"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:jsc",
@@ -2741,7 +3398,10 @@
       "https://bun.com/docs/runtime/nodejs-compat",
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:sqlite",
@@ -2756,7 +3416,10 @@
       "https://bun.com/docs/runtime/http/server",
       "https://bun.com/docs/runtime/nodejs-compat"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:test",
@@ -2779,7 +3442,10 @@
       "https://bun.com/docs/test/snapshots",
       "https://bun.com/docs/test/writing-tests"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "bun:ws",
@@ -2791,7 +3457,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/hot-reloading"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Archive",
@@ -2801,7 +3470,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/archive"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.ArrayBufferSink",
@@ -2812,7 +3484,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/streams"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.ArrayBufferView",
@@ -2824,7 +3499,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/archive"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.build",
@@ -2843,7 +3521,10 @@
       "https://bun.com/docs/bundler/standalone-html",
       "https://bun.com/docs/runtime/plugins"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Build.CompileTarget",
@@ -2855,7 +3536,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.color",
@@ -2865,7 +3549,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/color"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.connect",
@@ -2878,7 +3565,10 @@
       "https://bun.com/docs/runtime/networking/dns",
       "https://bun.com/docs/runtime/networking/tcp"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Cookie",
@@ -2888,7 +3578,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cookies"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Cookie.from",
@@ -2900,7 +3593,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cookies"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CookieMap",
@@ -2911,7 +3607,10 @@
       "https://bun.com/docs/runtime/cookies",
       "https://bun.com/docs/runtime/http/websockets"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.cron",
@@ -2922,7 +3621,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cron"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.cron.parse",
@@ -2934,7 +3636,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cron"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.cron.remove",
@@ -2946,7 +3651,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cron"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CronController",
@@ -2958,7 +3666,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/cron"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CryptoHasher",
@@ -2970,7 +3681,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CSRF",
@@ -2980,7 +3694,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/csrf"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CSRF.generate",
@@ -2990,7 +3707,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/csrf"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.CSRF.verify",
@@ -3000,7 +3720,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/csrf"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.deepEquals",
@@ -3011,7 +3734,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.deflateSync",
@@ -3022,7 +3748,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.embeddedFiles",
@@ -3034,7 +3763,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.embeddedFiles.length",
@@ -3046,7 +3778,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.env",
@@ -3059,7 +3794,10 @@
       "https://bun.com/docs/runtime/environment-variables",
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.file",
@@ -3081,7 +3819,10 @@
       "https://bun.com/docs/runtime/s3",
       "https://bun.com/docs/runtime/shell"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.FileSystemRouter",
@@ -3093,7 +3834,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/file-system-router"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.fileURLToPath",
@@ -3104,7 +3848,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.gc",
@@ -3116,7 +3863,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/index"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.gunzipSync",
@@ -3128,7 +3878,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.gzipSync",
@@ -3139,7 +3892,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.hash",
@@ -3151,7 +3907,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Image",
@@ -3161,7 +3920,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/image"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.inflateSync",
@@ -3173,7 +3935,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.inspect",
@@ -3186,7 +3951,10 @@
       "https://bun.com/docs/runtime/debugger",
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.inspect.custom",
@@ -3198,7 +3966,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.inspect.table",
@@ -3209,7 +3980,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.isMainThread",
@@ -3220,7 +3994,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/workers"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.isStandaloneExecutable",
@@ -3232,7 +4009,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/executables"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.JSON5.parse",
@@ -3242,7 +4022,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/json5"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.JSON5.stringify",
@@ -3252,7 +4035,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/json5"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.JSONL.parse",
@@ -3262,7 +4048,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/jsonl"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.JSONL.parseChunk",
@@ -3273,7 +4062,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/jsonl"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.listen",
@@ -3284,7 +4076,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/networking/tcp"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.main",
@@ -3295,7 +4090,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.markdown.html",
@@ -3305,7 +4103,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/markdown"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.markdown.react",
@@ -3315,7 +4116,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/markdown"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.markdown.render",
@@ -3325,7 +4129,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/markdown"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.nanoseconds",
@@ -3337,7 +4144,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.openInEditor",
@@ -3349,7 +4159,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.password",
@@ -3360,7 +4173,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.password.hash",
@@ -3372,7 +4188,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.password.hashSync",
@@ -3384,7 +4203,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.password.verifySync",
@@ -3396,7 +4218,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/hashing"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.pathToFileURL",
@@ -3408,7 +4233,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.peek",
@@ -3419,7 +4247,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.plugin",
@@ -3431,7 +4262,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/nodejs-compat"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.postgres",
@@ -3443,7 +4277,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/sql"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.randomUUIDv7",
@@ -3454,7 +4291,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.readableStreamTo",
@@ -3465,7 +4305,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.readableStreamToArray",
@@ -3477,7 +4320,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/binary-data"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.readableStreamToArrayBuffer",
@@ -3489,7 +4335,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/binary-data"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.readableStreamToBytes",
@@ -3501,7 +4350,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/binary-data"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.readableStreamToText",
@@ -3513,7 +4365,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/binary-data"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.resolveSync",
@@ -3525,7 +4380,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.revision",
@@ -3537,7 +4395,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.s3",
@@ -3549,7 +4410,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/s3"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.s3.file",
@@ -3559,7 +4423,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/image"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.S3Client",
@@ -3571,7 +4438,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/s3"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.secrets",
@@ -3583,7 +4453,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/secrets"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.secrets.delete",
@@ -3595,7 +4468,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/secrets"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.secrets.get",
@@ -3605,7 +4481,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/secrets"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.secrets.set",
@@ -3616,7 +4495,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/secrets"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.semver",
@@ -3626,7 +4508,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/semver"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.semver.satisfies",
@@ -3637,7 +4522,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/semver"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.serve",
@@ -3668,7 +4556,10 @@
       "https://bun.com/docs/runtime/toml",
       "https://bun.com/docs/runtime/watch-mode"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.sleep",
@@ -3682,7 +4573,10 @@
       "https://bun.com/docs/bundler/plugins",
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.sleepSync",
@@ -3693,7 +4587,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.spawn",
@@ -3703,7 +4600,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/child-process"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.spawnSync",
@@ -3713,7 +4613,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/child-process"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.sql",
@@ -3725,7 +4628,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/sql"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.SQL",
@@ -3737,7 +4643,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/sql"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.stderr",
@@ -3749,7 +4658,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/file-io"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.stdin",
@@ -3761,7 +4673,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/file-io"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.stdout",
@@ -3773,7 +4688,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/file-io"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.stringWidth",
@@ -3785,7 +4703,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.stripANSI",
@@ -3796,7 +4717,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Subprocess",
@@ -3808,7 +4732,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/child-process"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Terminal",
@@ -3820,7 +4747,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/child-process"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.TOML.parse",
@@ -3830,7 +4760,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/toml"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.TOML.stringify",
@@ -3842,7 +4775,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/toml"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.Transpiler",
@@ -3854,7 +4790,10 @@
       "https://bun.com/docs/bundler/esbuild",
       "https://bun.com/docs/bundler/plugins"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.udpSocket",
@@ -3865,7 +4804,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/networking/udp"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.version",
@@ -3876,7 +4818,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.WebView",
@@ -3886,7 +4831,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/webview"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.WebView.closeAll",
@@ -3898,7 +4846,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/webview"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.which",
@@ -3910,7 +4861,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.wrapAnsi",
@@ -3922,7 +4876,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.write",
@@ -3937,7 +4894,10 @@
       "https://bun.com/docs/runtime/file-io",
       "https://bun.com/docs/runtime/webview"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.YAML.parse",
@@ -3947,7 +4907,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/yaml"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.zstdCompress",
@@ -3958,7 +4921,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.zstdCompressSync",
@@ -3969,7 +4935,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.zstdDecompress",
@@ -3981,7 +4950,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "Bun.zstdDecompressSync",
@@ -3993,7 +4965,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "editor",
@@ -4005,7 +4980,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/utils"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "env",
@@ -4017,7 +4995,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/environment-variables"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "env.file",
@@ -4029,7 +5010,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.ca",
@@ -4041,7 +5025,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.cache.dir",
@@ -4053,7 +5040,10 @@
     "allPages": [
       "https://bun.com/docs/pm/npmrc"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.cache.disable",
@@ -4065,7 +5055,10 @@
     "allPages": [
       "https://bun.com/docs/pm/npmrc"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.cafile",
@@ -4077,7 +5070,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.concurrentScripts",
@@ -4089,7 +5085,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.dev",
@@ -4102,7 +5101,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.dryRun",
@@ -4116,7 +5118,10 @@
       "https://bun.com/docs/pm/npmrc",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.exact",
@@ -4128,7 +5133,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.frozenLockfile",
@@ -4140,7 +5148,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.globalBinDir",
@@ -4152,7 +5163,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.globalStore",
@@ -4164,7 +5178,10 @@
     "allPages": [
       "https://bun.com/docs/pm/global-store"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.ignoreScripts",
@@ -4176,7 +5193,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.linker",
@@ -4190,7 +5210,10 @@
       "https://bun.com/docs/pm/global-store",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.linkWorkspacePackages",
@@ -4202,7 +5225,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.lockfile.save",
@@ -4214,7 +5240,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.logLevel",
@@ -4226,7 +5255,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.minimumReleaseAge",
@@ -4239,7 +5271,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.minimumReleaseAgeExcludes",
@@ -4252,7 +5287,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.optional",
@@ -4264,7 +5302,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.peer",
@@ -4276,7 +5317,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/install"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.prefer",
@@ -4289,7 +5333,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.production",
@@ -4302,7 +5349,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.publicHoistPattern",
@@ -4314,7 +5364,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.registry",
@@ -4325,7 +5378,10 @@
       "https://bun.com/docs/pm/scopes-registries",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.saveTextLockfile",
@@ -4338,7 +5394,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "install.security.scanner",
@@ -4351,7 +5410,10 @@
       "https://bun.com/docs/pm/security-scanner-api",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "overrides",
@@ -4371,7 +5433,10 @@
       "https://bun.com/docs/test/mocks",
       "https://bun.com/docs/test/runtime-behavior"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "patchedDependencies",
@@ -4381,7 +5446,10 @@
     "allPages": [
       "https://bun.com/docs/pm/cli/patch"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "preload",
@@ -4393,7 +5461,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "resolutions",
@@ -4405,7 +5476,10 @@
       "https://bun.com/docs/pm/cli/install",
       "https://bun.com/docs/pm/overrides"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "run.shell",
@@ -4417,7 +5491,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "run.silent",
@@ -4429,7 +5506,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "serve.port",
@@ -4441,7 +5521,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "serve.static.env",
@@ -4453,7 +5536,10 @@
     "allPages": [
       "https://bun.com/docs/bundler/html-static"
     ],
-    "section": "bundler"
+    "section": "bundler",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "serve.static.plugins",
@@ -4465,7 +5551,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/templating/create"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "smol",
@@ -4477,7 +5566,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "telemetry",
@@ -4489,7 +5581,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.concurrentTestGlob",
@@ -4502,7 +5597,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverage",
@@ -4515,7 +5613,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverageDir",
@@ -4527,7 +5628,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverageIgnoreSourcemaps",
@@ -4541,7 +5645,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coveragePathIgnorePatterns",
@@ -4554,7 +5661,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverageReporter",
@@ -4568,7 +5678,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverageSkipTestFiles",
@@ -4581,7 +5694,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.coverageThreshold",
@@ -4595,7 +5711,10 @@
       "https://bun.com/docs/test/code-coverage",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.functions",
@@ -4606,7 +5725,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.lines",
@@ -4617,7 +5739,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.pathIgnorePatterns",
@@ -4630,7 +5755,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.preload",
@@ -4645,7 +5773,10 @@
       "https://bun.com/docs/test/lifecycle",
       "https://bun.com/docs/test/mocks"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.randomize",
@@ -4658,7 +5789,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.reporter.dots",
@@ -4670,7 +5804,10 @@
     "allPages": [
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.reporter.junit",
@@ -4683,7 +5820,10 @@
       "https://bun.com/docs/test/configuration",
       "https://bun.com/docs/test/reporters"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.rerunEach",
@@ -4696,7 +5836,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.retry",
@@ -4708,7 +5851,10 @@
     "allPages": [
       "https://bun.com/docs/test/index"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.root",
@@ -4721,7 +5867,10 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "runtime"
+    "section": "runtime",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.seed",
@@ -4733,7 +5882,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.smol",
@@ -4745,7 +5897,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "test.statements",
@@ -4756,7 +5911,10 @@
     "allPages": [
       "https://bun.com/docs/test/configuration"
     ],
-    "section": "test"
+    "section": "test",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "trustedDependencies",
@@ -4774,7 +5932,10 @@
       "https://bun.com/docs/pm/lifecycle",
       "https://bun.com/docs/runtime/bunfig"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   },
   {
     "name": "workspaces",
@@ -4792,6 +5953,9 @@
       "https://bun.com/docs/runtime/bunfig",
       "https://bun.com/docs/runtime/index"
     ],
-    "section": "pm"
+    "section": "pm",
+    "bunVersion": "1.4.0",
+    "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "commitHash": "a227ad991"
   }
 ]

@@ -86,7 +86,10 @@ export type DocCatalogEntry = {
 
 /** Normalize bun-v1.3.12 / v1.3.12 / 1.3.12 → 1.3.12 */
 export function normalizeBunVersion(version: string): string {
-  return version.trim().replace(/^bun-v/i, '').replace(/^v/i, '');
+  return version
+    .trim()
+    .replace(/^bun-v/i, '')
+    .replace(/^v/i, '');
 }
 
 /** GitHub release page for a Bun semver (docs are unversioned on bun.com). */
