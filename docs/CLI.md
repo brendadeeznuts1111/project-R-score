@@ -192,6 +192,16 @@ All commands run via `bun run <name>` from the project root:
 | `bun run dataview:test` | scripts/dataview-tests.ts |
 
 ### Documentation — Bun token/catalog (SSOT: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md))
+
+**Northstar:** every token is a [`TokenRef`](../lib/docs/token-ref.ts) knowledge unit (identity · locus · examples · history).
+
+| Intent | Command |
+|--------|---------|
+| Refresh evidence | `bun run docs:refresh` |
+| Resolve a token | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Agent TSV export | `bun run docs:catalog:export` |
+| Health / tier-A metrics | `bun tools/bun-doc-refs.ts status` |
+
 | Command | Description |
 |---------|-------------|
 | `bun run docs:refresh` | RSS → scrape → catalog build → integrity log |

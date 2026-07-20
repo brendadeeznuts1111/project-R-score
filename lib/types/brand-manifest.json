@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-20T01:35:59.953Z",
+  "generatedAt": "2026-07-20T16:29:04.743Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 28,
+  "brandCount": 29,
   "domains": [
     "audit",
     "deployment",
@@ -181,6 +181,20 @@
         "wire-input"
       ],
       "description": "DNS / Cloudflare zone — mint from wire via parseZoneId"
+    },
+    {
+      "name": "DocTokenId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Bun documentation token identity (catalog / TokenRef northstar)"
     },
     {
       "name": "ChallengeId",

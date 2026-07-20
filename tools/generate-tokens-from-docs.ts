@@ -55,7 +55,20 @@ type CatalogEntry = {
   url: string;
   allPages: string[];
   source: string;
+  examples?: Array<{ lang: string; body: string; fragment?: string }>;
 };
+
+const EXAMPLE_LANGS = new Set([
+  'ts',
+  'tsx',
+  'js',
+  'javascript',
+  'bash',
+  'sh',
+  'shell',
+  'toml',
+  'json',
+]);
 
 function slugify(text: string): string {
   return text
@@ -244,14 +257,33 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
   let inCode: string | null = null;
   let codeAnnotation = '';
   let codeBuffer: string[] = [];
+  const sectionExamples: Array<{ anchor: string; lang: string; body: string }> = [];
 
   const baseUrl = canonicalUrl(pageUrl);
   const pageDescription = extractPageDescription(markdown, pageTitle);
+
+  const attachExamples = () => {
+    if (sectionExamples.length === 0) return;
+    const typed = new Set(['api', 'cli-flag', 'env-var', 'bunfig-key', 'package-json-key']);
+    for (const e of entries) {
+      if (!typed.has(e.type)) continue;
+      const matches = sectionExamples.filter(x => x.anchor === e.anchor);
+      if (matches.length === 0) continue;
+      e.examples = [
+        ...(e.examples ?? []),
+        ...matches.map(m => ({ lang: m.lang, body: m.body, fragment: m.anchor })),
+      ].slice(0, 3);
+    }
+  };
 
   const flushCode = () => {
     if (!inCode || codeBuffer.length === 0) return;
     const block = codeBuffer.join('\n');
     codeBuffer = [];
+
+    if (EXAMPLE_LANGS.has(inCode) && block.trim().length > 8) {
+      sectionExamples.push({ anchor: currentAnchor, lang: inCode, body: block.trim() });
+    }
 
     if (inCode === 'toml') {
       for (const key of extractBunfigKeys(block, codeAnnotation)) {
@@ -350,6 +382,7 @@ function parsePage(markdown: string, pageTitle: string, pageUrl: string): Catalo
     }
   }
   flushCode();
+  attachExamples();
 
   // Fall back to the page-level lead paragraph when a token lacks a section-specific sentence.
   if (pageDescription) {
@@ -663,6 +696,7 @@ function toSupplementEntry(
     anchor,
     allPages,
     section: sectionFromUrl(canonical),
+    ...(e.examples?.length ? { examples: e.examples } : {}),
   };
 }
 

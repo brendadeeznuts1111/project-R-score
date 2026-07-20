@@ -19,8 +19,12 @@ import {
   parseBlogSections,
   extractTokenCandidates,
   matchCatalogToken,
+  matchCatalogTokenWithAliases,
   extractPathAliasMatches,
   configKeyPatterns,
+  releaseOverlayIndex,
+  loadExistingOverlayMap,
+  type ReleaseOverlayFile,
 } from '../tools/bun-docs-release-scrape.ts';
 
 const SAMPLE_RSS = `<?xml version="1.0"?><rss><channel>
@@ -120,5 +124,29 @@ describe('bun-docs-release-scrape', () => {
       { name: 'trustedDependencies', type: 'package-json-key' },
     ]);
     expect(hits).toContain('trustedDependencies');
+  });
+
+  test('releaseOverlayIndex preserves prior entries for merge', () => {
+    const prior: ReleaseOverlayFile = {
+      generated: '2026-01-01T00:00:00.000Z',
+      postsProcessed: 160,
+      tokenCount: 1,
+      unmatchedLogged: 0,
+      entries: [{ name: 'Bun.Image', hits: [], releasedIn: '1.3.14' }],
+    };
+    const map = releaseOverlayIndex(prior);
+    expect(map.size).toBe(1);
+    expect(map.get('bun.image')?.releasedIn).toBe('1.3.14');
+  });
+
+  test('matchCatalogTokenWithAliases resolves scrape alias map', () => {
+    const index = new Map([['--preload', '--preload']]);
+    const aliases = { '--require': '--preload' };
+    expect(matchCatalogTokenWithAliases('--require', index, aliases)).toBe('--preload');
+  });
+
+  test('loadExistingOverlayMap returns empty when force', async () => {
+    const map = await loadExistingOverlayMap(true);
+    expect(map.size).toBe(0);
   });
 });

@@ -22,6 +22,8 @@ import {
   type ReleaseIndexFile,
 } from './bun-docs-release-index.ts';
 
+const SCRAPE_ALIASES_PATH = resolve(import.meta.dir, 'bun-docs-scrape-aliases.json');
+
 const CATALOG_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const REVIEW_LOG = resolve(import.meta.dir, '..', 'reports', 'release-scrape-review.jsonl');
 
@@ -251,6 +253,33 @@ export function matchCatalogToken(candidate: string, index: TokenIndex): string 
   return undefined;
 }
 
+let scrapeAliasCache: Record<string, string> | null = null;
+
+export async function loadScrapeAliases(): Promise<Record<string, string>> {
+  if (scrapeAliasCache) return scrapeAliasCache;
+  try {
+    const raw = (await Bun.file(SCRAPE_ALIASES_PATH).json()) as {
+      aliases?: Record<string, string>;
+    };
+    scrapeAliasCache = raw.aliases ?? {};
+  } catch {
+    scrapeAliasCache = {};
+  }
+  return scrapeAliasCache;
+}
+
+export function matchCatalogTokenWithAliases(
+  candidate: string,
+  index: TokenIndex,
+  aliases: Record<string, string>
+): string | undefined {
+  const direct = matchCatalogToken(candidate, index);
+  if (direct) return direct;
+  const mapped = aliases[candidate] ?? aliases[candidate.trim()];
+  if (mapped) return matchCatalogToken(mapped, index) ?? mapped;
+  return undefined;
+}
+
 function looksTokenLike(candidate: string): boolean {
   return (
     /^Bun\.[A-Za-z]/.test(candidate) ||
@@ -394,13 +423,14 @@ export async function scrapeReleaseOverlay(opts?: {
     a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0
   );
   const tokenIndex = await buildTokenIndex();
+  const scrapeAliases = await loadScrapeAliases();
   const catalogRows = await loadCatalogRows();
   const pathRows = catalogRows.filter(
     e => e.type === 'config-key' || e.type === 'package-json-key'
   );
   const state = opts?.force ? { processedGuids: [] } : await readState();
   const processed = new Set(state.processedGuids);
-  const overlay = new Map<string, ReleaseOverlayEntry>();
+  const overlay = await loadExistingOverlayMap(opts?.force);
   const reviewRows: Array<{ version: string; url: string; section: string; candidate: string }> =
     [];
 
@@ -424,7 +454,8 @@ export async function scrapeReleaseOverlay(opts?: {
         if (seen.has(c)) continue;
         seen.add(c);
         const name =
-          matchCatalogToken(c, tokenIndex) ?? (pathRows.some(r => r.name === c) ? c : undefined);
+          matchCatalogTokenWithAliases(c, tokenIndex, scrapeAliases) ??
+          (pathRows.some(r => r.name === c) ? c : undefined);
         if (!name) {
           if (looksTokenLike(c)) {
             reviewRows.push({
@@ -463,6 +494,20 @@ export async function scrapeReleaseOverlay(opts?: {
 
 export function releaseOverlayIndex(file: ReleaseOverlayFile): Map<string, ReleaseOverlayEntry> {
   return new Map(file.entries.map(e => [normalizeTokenKey(e.name), e]));
+}
+
+/** Load prior overlay for merge-on-incremental (empty when --force rebuild). */
+export async function loadExistingOverlayMap(
+  force?: boolean
+): Promise<Map<string, ReleaseOverlayEntry>> {
+  if (force) return new Map();
+  if (!(await Bun.file(RELEASE_OVERLAY_PATH).exists())) return new Map();
+  try {
+    const file = (await Bun.file(RELEASE_OVERLAY_PATH).json()) as ReleaseOverlayFile;
+    return releaseOverlayIndex(file);
+  } catch {
+    return new Map();
+  }
 }
 
 async function main(): Promise<void> {

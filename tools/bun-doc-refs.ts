@@ -547,9 +547,13 @@ function printCatalogSuggest(
     changedIn?: string;
     docsUrl?: string;
     canonicalPage: string;
+    anchor?: string;
+    locusUnresolved?: boolean;
     blogUrl?: string;
     releaseUrl?: string;
     allPages: string[];
+    examples?: Array<{ lang: string; body: string }>;
+    related?: string[];
   },
   source: string
 ): void {
@@ -558,11 +562,26 @@ function printCatalogSuggest(
   console.info(`  (${source})`);
   console.info(`  type: ${cat.type}  stability: ${cat.stability}  section: ${cat.section}`);
   if (cat.description) console.info(`  ${cat.description}`);
+  if (cat.anchor && !cat.locusUnresolved) {
+    console.info(`  locus: #${cat.anchor}`);
+  } else if (cat.locusUnresolved) {
+    console.info(`  locus: (page-only — fragment unresolved)`);
+  }
+  const ex = cat.examples?.[0];
+  if (ex) {
+    const preview = ex.body.split('\n')[0]!.slice(0, 72);
+    console.info(`  example[${ex.lang}]: ${preview}${ex.body.length > 72 ? '…' : ''}`);
+  }
   console.info(
     `  releasedIn: ${cat.releasedIn ?? 'unknown'}  fixedIn: ${cat.fixedIn ?? '—'}  changedIn: ${cat.changedIn ?? '—'}`
   );
   if (cat.blogUrl) console.info(`  blogUrl: ${cat.blogUrl}`);
   if (cat.releaseUrl) console.info(`  releaseUrl: ${cat.releaseUrl}`);
+  if (cat.related?.length) {
+    console.info(
+      `  related: ${cat.related.slice(0, 5).join(', ')}${cat.related.length > 5 ? '…' : ''}`
+    );
+  }
   if (cat.allPages.length > 1) {
     console.info(
       `  allPages: ${cat.allPages.slice(0, 5).join(' · ')}${cat.allPages.length > 5 ? '…' : ''}`
@@ -1037,7 +1056,7 @@ async function status(): Promise<void> {
       line(
         '🎯',
         'Catalog tier-A',
-        `NOTE ${tier.note.pct}% · SHIP ${tier.ship.pct}% · BLOG ${tier.blog.pct}% · FIX ${tier.fix.pct}% (${tier.total} tokens)`
+        `NOTE ${tier.note.pct}% · SHIP ${tier.ship.pct}% · BLOG ${tier.blog.pct}% · FIX ${tier.fix.pct}% · LOC ${tier.locus.pct}% · EX ${tier.examples.pct}% · HIST ${tier.history.pct}% (${tier.total} tokens)`
       );
       if (tier.bunVersion)
         line(

@@ -56,6 +56,7 @@ import {
   type ReleaseOverlayEntry,
   type ReleaseOverlayFile,
 } from './bun-docs-release-scrape.ts';
+import { buildPageAnchorIndex, resolveVerifiedLocus } from '../lib/docs/locus-resolve.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
@@ -142,6 +143,12 @@ export type DocCatalogEntry = {
   canonicalPage: string;
   /** Fragment id without # */
   anchor?: string;
+  /** True when no verified canonical heading fragment was resolved. */
+  locusUnresolved?: boolean;
+  /** Language-tagged usage examples from official docs. */
+  examples?: Array<{ lang: string; body: string; fragment?: string }>;
+  /** Related token names for cross-reference walks. */
+  related?: string[];
   /** All known pages (no fragments), deduped, canonical first */
   allPages: string[];
   /** Primary product area */
@@ -756,6 +763,45 @@ function mergeEntry(
   existing.section = partial.section ?? existing.section;
 }
 
+/** Seed related edges from tier-A tokens sharing the same canonical page. */
+export function seedPageRelations(entries: DocCatalogEntry[]): void {
+  const byPage = new Map<string, DocCatalogEntry[]>();
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    const list = byPage.get(e.canonicalPage) ?? [];
+    list.push(e);
+    byPage.set(e.canonicalPage, list);
+  }
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    const peers = (byPage.get(e.canonicalPage) ?? []).filter(p => p.name !== e.name).slice(0, 5);
+    if (peers.length === 0) continue;
+    const rel = new Set(e.related ?? []);
+    for (const p of peers) rel.add(p.name);
+    e.related = [...rel];
+  }
+}
+
+/** Apply verified locus resolution for tier-A tokens. */
+export function applyVerifiedLocusToEntries(
+  entries: DocCatalogEntry[],
+  canonicalRefs: Record<string, string>,
+  pageAnchors: ReturnType<typeof buildPageAnchorIndex>,
+  observedAt: string
+): void {
+  for (const e of entries) {
+    if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
+    const { locus } = resolveVerifiedLocus(
+      { name: e.name, canonicalPage: e.canonicalPage, anchor: e.anchor },
+      canonicalRefs,
+      pageAnchors,
+      observedAt
+    );
+    e.anchor = locus.fragment;
+    e.locusUnresolved = locus.unresolved ?? !locus.fragment;
+  }
+}
+
 /** Compare loose semver strings; negative if a < b. */
 export function compareSemver(a: string, b: string): number {
   const pa = a
@@ -887,6 +933,7 @@ export async function buildCatalog(opts?: {
       anchor?: string;
       allPages: string[];
       section: DocSection;
+      examples?: Array<{ lang: string; body: string; fragment?: string }>;
     };
     const raw = (await Bun.file(TOKEN_SUPPLEMENT_PATH).json()) as
       | SuppRow[]
@@ -909,6 +956,10 @@ export async function buildCatalog(opts?: {
         anchor: e.anchor,
         section: e.section,
       });
+      const merged = map.get(normalizeName(e.name));
+      if (merged && e.examples?.length) {
+        merged.examples = [...(merged.examples ?? []), ...e.examples].slice(0, 3);
+      }
       for (const alt of e.allPages ?? []) {
         if (alt === e.canonicalPage) continue;
         mergeEntry(map, {
@@ -999,6 +1050,10 @@ export async function buildCatalog(opts?: {
     await fillNotesFromMarkdown(entries, { force: opts?.force });
   }
 
+  const pageAnchors = buildPageAnchorIndex(index.entries);
+  applyVerifiedLocusToEntries(entries, CANONICAL_REFS, pageAnchors, new Date().toISOString());
+  seedPageRelations(entries);
+
   // Re-pick canonical + put canonical first in allPages; pin version fields
   for (const e of entries) {
     e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
@@ -1076,6 +1131,9 @@ export type TierACoverage = {
   ship: { count: number; pct: number };
   blog: { count: number; pct: number };
   fix: { count: number; pct: number };
+  locus: { count: number; pct: number };
+  examples: { count: number; pct: number };
+  history: { count: number; pct: number };
   bunVersion?: string;
   generated?: string;
 };
@@ -1087,6 +1145,9 @@ export function tierACoverageSummary(
   const slice = entries.filter(e => NOTE_COVERAGE_TYPES.includes(e.type));
   const total = slice.length;
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+  const withHistory = slice.filter(e => !!(e.releasedIn || e.fixedIn || e.changedIn)).length;
+  const withLocus = slice.filter(e => e.anchor && !e.locusUnresolved).length;
+  const withExamples = slice.filter(e => (e.examples?.length ?? 0) > 0).length;
   return {
     total,
     note: {
@@ -1105,6 +1166,9 @@ export function tierACoverageSummary(
       count: slice.filter(e => e.fixedIn).length,
       pct: pct(slice.filter(e => e.fixedIn).length),
     },
+    locus: { count: withLocus, pct: pct(withLocus) },
+    examples: { count: withExamples, pct: pct(withExamples) },
+    history: { count: withHistory, pct: pct(withHistory) },
     ...(meta?.bunVersion ? { bunVersion: meta.bunVersion } : {}),
     ...(meta?.generated ? { generated: meta.generated } : {}),
   };
@@ -1175,7 +1239,7 @@ function printCoverageReport(report: CoverageReport, entries?: DocCatalogEntry[]
   if (entries?.length) {
     const tier = tierACoverageSummary(entries);
     console.info(
-      `   tier-A (${tier.total}): NOTE ${tier.note.pct}% SHIP ${tier.ship.pct}% BLOG ${tier.blog.pct}% FIX ${tier.fix.pct}%`
+      `   tier-A (${tier.total}): NOTE ${tier.note.pct}% SHIP ${tier.ship.pct}% BLOG ${tier.blog.pct}% FIX ${tier.fix.pct}% LOC ${tier.locus.pct}% EX ${tier.examples.pct}% HIST ${tier.history.pct}%`
     );
   }
   for (const [type, s] of Object.entries(report.byType)) {
@@ -1230,6 +1294,7 @@ export function compactCatalogRow(
 ): Record<string, string> {
   const cells = listCells(e, meta);
   const note = cells.note.length > maxNote ? `${cells.note.slice(0, maxNote - 1)}…` : cells.note;
+  const example = e.examples?.[0];
   return {
     name: e.name,
     type: e.type,
@@ -1239,6 +1304,8 @@ export function compactCatalogRow(
     pin: e.verifiedOn ?? meta.bunVersion,
     blog: e.blogUrl ?? '',
     doc: e.docsUrl ?? e.canonicalPage,
+    locus: e.anchor && !e.locusUnresolved ? `#${e.anchor}` : '',
+    exampleLang: example?.lang ?? '',
     note,
   };
 }
@@ -1535,10 +1602,12 @@ async function main(): Promise<void> {
       return;
     }
     if (compact) {
-      process.stdout.write('name\ttype\tship\tfix\tchg\tpin\tblog\tdoc\tnote\n');
+      process.stdout.write(
+        'name\ttype\tship\tfix\tchg\tpin\tblog\tdoc\tlocus\texampleLang\tnote\n'
+      );
       for (const row of rows) {
         process.stdout.write(
-          `${row.name}\t${row.type}\t${row.ship}\t${row.fix}\t${row.chg}\t${row.pin}\t${row.blog}\t${row.doc}\t${row.note}\n`
+          `${row.name}\t${row.type}\t${row.ship}\t${row.fix}\t${row.chg}\t${row.pin}\t${row.blog}\t${row.doc}\t${row.locus}\t${row.exampleLang}\t${row.note}\n`
         );
       }
       return;

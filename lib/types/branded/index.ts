@@ -30,7 +30,7 @@ import { OPERATIONS_BRAND_SPECS } from './operations.ts';
 
 import type { SessionId, TerminalId, RequestId, CorrelationId, SnapshotId } from './session.ts';
 import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './identity.ts';
-import type { DocumentId, ZoneId } from './documents.ts';
+import type { DocumentId, ZoneId, DocTokenId } from './documents.ts';
 import type { ChallengeId, PolicyId } from './security.ts';
 import type { DeploymentId } from './deployment.ts';
 import type { VersionId, AuditId } from './audit.ts';
@@ -73,6 +73,7 @@ export type AnyId =
   | TokenId
   | DocumentId
   | ZoneId
+  | DocTokenId
   | ChallengeId
   | PolicyId
   | DeploymentId

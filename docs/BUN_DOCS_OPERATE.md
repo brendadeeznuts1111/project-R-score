@@ -1,10 +1,23 @@
 # Bun docs stack — operate & observe
 
 **Status**: Live  
-**Code**: [`tools/bun-doc-refs.ts`](../tools/bun-doc-refs.ts) · catalog [`tools/bun-docs-catalog.ts`](../tools/bun-docs-catalog.ts) · taxonomy [`tools/bun-docs-taxonomy.json`](../tools/bun-docs-taxonomy.json) · index [`tools/bun-docs-index.json`](../tools/bun-docs-index.json)  
+**Code**: [`tools/bun-doc-refs.ts`](../tools/bun-doc-refs.ts) · catalog [`tools/bun-docs-catalog.ts`](../tools/bun-docs-catalog.ts) · **northstar** [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts)  
 **Related**: [`BUN_DOCS_SYSTEM.md`](BUN_DOCS_SYSTEM.md) (legacy browser docs CLI — not this loop) · agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references
 
 Continuity layer for the docs intelligence pipeline: **integrity → self-heal → regen → log → status**.
+
+Every Bun token is a **TokenRef knowledge unit** (stable identity, verified doc locus, lang-tagged examples, attested release history). Catalog JSON is the operate artifact; [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts) is the institutional schema (TypeScript + JSON Schema).
+
+### One mental model
+
+| Intent | Command |
+|--------|---------|
+| Refresh all evidence | `bun run docs:refresh` |
+| Resolve a knowledge unit | `bun tools/bun-doc-refs.ts suggest <token>` · `bun tools/bun-docs-catalog.ts get <token>` |
+| Agent pack (TSV) | `bun run docs:catalog:export` |
+| Health + tier-A scoreboard | `bun tools/bun-doc-refs.ts status` |
+
+Power list flags (`-w` / `-n` / `-c` / `-l`) remain on `bun-docs-catalog.ts list`; they are terminal conveniences, not the northstar vocabulary.
 
 ---
 
@@ -93,7 +106,7 @@ bun tools/bun-doc-refs.ts integrity [--fix]
 bun tools/bun-doc-refs.ts schedule --once
 ```
 
-`bun tools/bun-doc-refs.ts status` shows **tier-A** catalog coverage (NOTE/SHIP/BLOG/FIX %) from the on-disk catalog.
+`bun tools/bun-doc-refs.ts status` shows **tier-A** coverage: NOTE · SHIP · BLOG · FIX · **LOC** (verified fragment) · **EX** (lang-tagged example) · **HIST** (attested timeline).
 
 ## Coverage targets
 
@@ -101,9 +114,12 @@ bun tools/bun-doc-refs.ts schedule --once
 |-------|--------|
 | DOC (`docsUrl`) | 100% of catalog entries |
 | PIN (`verifiedOn`) | 100% (catalog pin) |
-| NOTE (`description`) | ≥95% for `api`, `cli-flag`, `config-key`, `env-var`, `package-json-key` |
-| BLOG | Set only when RSS `release-index` has a matching version (never synthetic) |
-| SHIP (`releasedIn`) | From release-post scrape + curated overlay |
+| NOTE (`description`) | ≥95% for tier-A types |
+| LOC (`anchor`, verified) | ≥90% for tier-A types |
+| EX (`examples[]`) | Growing — lang-tagged fences from docs |
+| BLOG | RSS-validated only (never synthetic) |
+| SHIP (`releasedIn`) | Full release history via scrape + curated |
+| HIST | introduced and/or fix/change with evidence URL |
 
 Catalog build prints NOTE/BLOG/SHIP percentages and warns when typed NOTE coverage drops below 95%.
 
@@ -133,6 +149,7 @@ Version pin links (docs pages stay unversioned on bun.com):
 | **1** NOTE + BLOG enrichment | Doc HTML notes + RSS-validated blog URLs in catalog build | **Shipped** |
 | **2** Operate & observe | `--fix`, version pin, `status` health | **Shipped** (this doc + integrity flags) |
 | **2b** SHIP/FIX/CHG from blog sections | `bun-docs-release-scrape.ts` → overlay merge in catalog build | **Shipped** |
+| **Northstar** TokenRef schema | `lib/docs/token-ref.ts` + locus/examples/history metrics | **Shipped** |
 | **3** Expand | RRF hybrid search, multi-stack sources, IDE | Planned |
 | **4** Governance | richer migrations for cache DBs, dashboards | Ongoing (JSONL + status for now) |
 

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/token-ref.json",
+  "title": "TokenRef",
+  "description": "Self-contained Bun documentation token knowledge unit",
+  "type": "object",
+  "required": ["id", "name", "kind", "stability", "locus", "examples", "history", "relations", "allPages", "section"],
+  "properties": {
+    "id": { "type": "string", "description": "Branded DocTokenId wire form" },
+    "name": { "type": "string" },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "api",
+        "cli-command",
+        "cli-flag",
+        "cli-option",
+        "config-key",
+        "package-json-key",
+        "env-var",
+        "concept",
+        "guide",
+        "blog",
+        "reference",
+        "error",
+        "tutorial",
+        "spec",
+        "other"
+      ]
+    },
+    "stability": { "type": "string", "enum": ["stable", "experimental", "deprecated"] },
+    "note": { "type": "string" },
+    "locus": {
+      "type": "object",
+      "required": ["page"],
+      "properties": {
+        "page": { "type": "string", "format": "uri" },
+        "fragment": { "type": "string" },
+        "unresolved": { "type": "boolean" }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lang", "body"],
+        "properties": {
+          "lang": { "type": "string" },
+          "body": { "type": "string" },
+          "fragment": { "type": "string" }
+        }
+      }
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "introduced": { "type": "string" },
+        "changed": { "type": "string" },
+        "fixed": { "type": "string" },
+        "stabilized": { "type": "string" },
+        "changeNote": { "type": "string" },
+        "commit": { "type": "string" },
+        "evidenceUrl": { "type": "string", "format": "uri" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "target"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["alias", "related", "seeAlso"] },
+          "target": { "type": "string" }
+        }
+      }
+    },
+    "allPages": { "type": "array", "items": { "type": "string", "format": "uri" } },
+    "section": { "type": "string" },
+    "buildPin": { "type": "string" },
+    "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "required": ["source", "confidence", "observedAt"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["canonical-refs", "docs-index", "catalog-scrape", "release-scrape", "curated", "supplement", "manual"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "observedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

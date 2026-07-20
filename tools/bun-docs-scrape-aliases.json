@@ -1,0 +1,13 @@
+{
+  "_comment": "High-value scrape candidate → canonical catalog token. Extend from reports/release-scrape-review.jsonl.",
+  "aliases": {
+    "--require": "--preload",
+    "BUN_INSTALL": "BUN_INSTALL",
+    "Bun.js": "Bun.serve",
+    "Bun.OnigurumaRegExp": "Bun.Regexp",
+    "Bun.RIPEMD160": "Bun.CryptoHasher",
+    "bun test": "bun:test",
+    "bun install": "bun install",
+    "bun run": "bun run"
+  }
+}
