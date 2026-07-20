@@ -171,18 +171,16 @@ const plainAsAny: AnyId = 'plain';
 
 // ─── 7. unbrand() ───────────────────────────────────────────────────────────
 //
-// NOTE (measured behavior, not the idealized one): unbrand is declared as
-//   unbrand<T>(value: Brand<T, unknown>): T
-// and `Brand<T, unknown>` = `T & { [brand]: unknown }`. A branded string
-// satisfies that with T = the WHOLE branded type, so inference preserves the
-// brand — unbrand(asUserId('x')) types as UserId, not string. The runtime
-// cast strips nothing anyway (zero-cost); the type-level strip is a no-op
-// with this signature. These assertions pin the actual behavior.
+// unbrand<B>(value: BrandedString<B>): string — strips the brand at the type
+// level (fixed in _core.ts after type tests exposed that Brand<T, unknown>
+// inference preserved it).
 
-const unbranded: string = unbrand(asUserId('u-4')); // branded → string is assignable
-const unbrandPreservesBrand: UserId = unbrand(asUserId('u-5')); // T infers as UserId
+const unbranded: string = unbrand(asUserId('u-4')); // branded → string ✓
 
-// @ts-expect-error — unbrand returns the UserId brand, not a SessionId
+// @ts-expect-error — brand is stripped: result is no longer a UserId
+const unbrandStripsBrand: UserId = unbrand(asUserId('u-5'));
+
+// @ts-expect-error — and certainly not a different brand
 const unbrandedNotSession: SessionId = unbrand(asUserId('u-6'));
 
 // Reference remaining fixtures so the file stays tidy under noUnusedLocals.
@@ -197,5 +195,4 @@ export const brandedTypeAssertions = [
   tryReturnsUndefined,
   parseReturnsZone,
   unbranded,
-  unbrandPreservesBrand,
 ] as const;

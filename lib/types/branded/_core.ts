@@ -38,9 +38,13 @@ export type BrandSpec = {
   description: string;
 };
 
-/** Strip the brand (serialization boundaries: JSON, URLs, R2 keys). */
-export function unbrand<T>(value: Brand<T, unknown>): T {
-  return value as T;
+/**
+ * Strip the brand (serialization boundaries: JSON, URLs, R2 keys).
+ * Signature pinned to BrandedString so the brand is stripped at the TYPE
+ * level — `unbrand(asUserId('x'))` is a plain `string`, not a `UserId`.
+ */
+export function unbrand<B>(value: BrandedString<B>): string {
+  return value as string;
 }
 
 function provenanceEnabled(): boolean {
