@@ -237,7 +237,11 @@ function mapCodeLines(source: string, map: (line: string) => string): string {
         return line;
       }
       // Inside a multi-line template sample for Bun APIs (heuristic)
-      if (/^\s*(const content = await readFile|await writeFile|if \(fs\.|JSON\.parse\(fs\.)/.test(line)) {
+      if (
+        /^\s*(const content = await readFile|await writeFile|if \(fs\.|JSON\.parse\(fs\.)/.test(
+          line
+        )
+      ) {
         return line;
       }
       return map(line);
@@ -317,7 +321,10 @@ function applySafeTransforms(source: string, fileRel: string): { text: string; c
           /await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*['"]utf-?8['"]\s*\)/g,
           'await writeText($1, $2)'
         )
-        .replace(/await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)/g, 'await writeText($1, $2)')
+        .replace(
+          /await\s+writeFile\s*\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)/g,
+          'await writeText($1, $2)'
+        )
     );
     if (text !== before) changes.push('await writeFile→writeText');
   }

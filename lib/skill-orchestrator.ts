@@ -15,7 +15,6 @@ import { fileExistsSync, readText } from '../scripts/lib/fs-bun';
 
 import { join } from 'path';
 
-
 import { type StepId, asStepId } from './types/branded.ts';
 
 // Domain interface (simplified for integration)

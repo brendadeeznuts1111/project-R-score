@@ -14,7 +14,6 @@ if (import.meta.main) {
   console.info('ℹ️  Script was imported, not executed directly');
 }
 
-
 // ============================================================================
 // VALIDATION CONSTANTS
 // ============================================================================

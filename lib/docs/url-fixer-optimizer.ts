@@ -8,7 +8,6 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-
 import { join } from 'path';
 
 /** Sync write via Bun.peek(Bun.write) — replaces node:fs writeFileSync. */
