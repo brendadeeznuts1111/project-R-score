@@ -1,5 +1,7 @@
 # Bun Documentation System
 
+> **Legacy / browser docs CLI.** For Bun **token catalog** operate (RSS release index → scrape → catalog → integrity), use **[`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md)** and `bun run docs:refresh`. Do not use this doc as the SSOT for NOTE/SHIP/BLOG/token mapping. Paths below may be stale (`tools/cli/docs-cli.ts` is the current CLI).
+
 A comprehensive system that integrates Bun documentation index with local caching, Chrome web apps, and scanner functionality.
 
 ## 🚀 Features

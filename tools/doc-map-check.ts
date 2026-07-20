@@ -33,6 +33,7 @@ const ROOT_MD = [
   'docs/UNIFIED.md',
   'docs/WIRE_BOUNDARY.md',
   'docs/BUN_NATIVE_CAPABILITIES.md',
+  'docs/BUN_DOCS_OPERATE.md',
   'docs/DEVELOPMENT-STANDARDS.md',
   'docs/IMPORT_BOUNDARIES.md',
   'lib/README.md',

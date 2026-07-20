@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
+// Blog/release lists prefer tools/release-index.json (docs:release-index); see docs/BUN_DOCS_OPERATE.md
 
 import { join } from 'node:path';
 
@@ -564,9 +565,33 @@ export function parseRssItems(xml: string, limit = 50): ReleaseNote[] {
 const RSS_CACHE_MS = 300_000;
 let rssCache: { at: number; items: ReleaseNote[] } | null = null;
 
+/**
+ * Prefer tools/release-index.json (shared with catalog Phase 0).
+ * Fall back to a live RSS fetch if the index is missing.
+ */
 export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
   const now = Date.now();
   if (rssCache && now - rssCache.at < RSS_CACHE_MS) return rssCache.items.slice(0, limit);
+
+  try {
+    const { loadReleaseIndex } = await import('./bun-docs-release-index.ts');
+    const { file } = await loadReleaseIndex({ refresh: false });
+    // Newest first for MCP list UIs
+    const items: ReleaseNote[] = [...file.entries]
+      .sort((a, b) => (a.pubDate < b.pubDate ? 1 : a.pubDate > b.pubDate ? -1 : 0))
+      .map(e => ({
+        title: e.title,
+        link: e.url,
+        date: e.pubDate,
+        summary: `Bun v${e.version}`,
+      }));
+    if (items.length > 0) {
+      rssCache = { at: now, items };
+      return items.slice(0, limit);
+    }
+  } catch {
+    /* fall through to live RSS */
+  }
 
   const res = await fetch(BUN_CHANGELOG_RSS, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`);

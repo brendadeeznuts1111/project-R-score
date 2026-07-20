@@ -5,7 +5,7 @@ Grounded map of **newer Bun runtime APIs** available on this machine’s toolcha
 | | |
 | --- | --- |
 | **Verified runtime** | Bun **1.4.0** (`bun --version`) — `typeof Bun.WebView/cron/udpSocket === "function"`; `Bun.markdown` keys: `html`, `ansi`, `render`, `react` |
-| **Canonical refs** | `tools/bun-doc-refs.ts` `CANONICAL_REFS` — use `bun tools/bun-doc-refs.ts suggest "…"` before coding |
+| **Canonical refs** | `tools/bun-doc-refs.ts` `CANONICAL_REFS` + catalog — use `bun tools/bun-doc-refs.ts suggest "…"` (catalog-first) before coding · operate: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md) |
 | **Not SSOT for product desk** | Partner desk UI, Telegram alerts, balance-sheet product flows — map only if a concrete package owns them |
 
 ---
@@ -163,7 +163,8 @@ const job = Bun.cron("*/10 * * * *", async () => {
 | Markdown | https://bun.com/docs/runtime/markdown |
 | Cron | https://bun.com/docs/runtime/cron |
 | UDP | https://bun.com/docs/runtime/networking/udp |
-| bun-doc-refs | `bun tools/bun-doc-refs.ts suggest "Bun.WebView"` |
+| bun-doc-refs | `bun tools/bun-doc-refs.ts suggest "Bun.WebView"` (catalog-first) |
+| docs:refresh | `bun run docs:refresh` — RSS → scrape → catalog → integrity ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)) |
 | Wire boundary | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Install policy | [UNIFIED.md](./UNIFIED.md) |
 | Docs index | [README.md](./README.md) |

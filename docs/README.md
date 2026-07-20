@@ -20,8 +20,9 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
 | Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | WebView, markdown.ansi, cron, UDP |
+| Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) | `bun run docs:refresh` |
 
-These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes.
+These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes ≠ token/catalog operate.
 
 ## Lib harness maps
 
@@ -52,7 +53,7 @@ bun tools/bun-doc-refs.ts suggest Bun.Image       # catalog-first lookup
 # Operate SSOT: docs/BUN_DOCS_OPERATE.md
 ```
 
-**Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,BUN_NATIVE_CAPABILITIES,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
+**Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,BUN_NATIVE_CAPABILITIES,BUN_DOCS_OPERATE,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
 
 ## External thesis
 

@@ -31,6 +31,8 @@ export const CANONICAL_REPO_DOCS = {
   wireBoundary: 'docs/WIRE_BOUNDARY.md',
   /** Newer Bun runtime APIs (WebView, markdown.ansi, cron, UDP) */
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
+  /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
+  bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
   /** Root cleanup / organization history */
   organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
   /** Projects triage + agent scope */
@@ -60,6 +62,12 @@ export const CANONICAL_HARNESS = {
 export const CANONICAL_TOOLS = {
   bunDocRefs: 'tools/bun-doc-refs.ts',
   bunDocsIndex: 'tools/bun-docs-index.json',
+  bunDocsCatalog: 'tools/bun-docs-catalog.ts',
+  bunDocsCatalogJson: 'tools/bun-docs-catalog.json',
+  bunDocsReleaseIndex: 'tools/bun-docs-release-index.ts',
+  bunDocsReleaseScrape: 'tools/bun-docs-release-scrape.ts',
+  bunDocsRefresh: 'tools/bun-docs-refresh.ts',
+  releaseIndexJson: 'tools/release-index.json',
   brandCatalog: 'tools/brand-catalog.ts',
   brandManifestCli: 'tools/brand-manifest.ts',
   brandedIdsSkill: '.agents/skills/branded-ids/',
@@ -89,6 +97,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   importBoundaries: 'Import / package boundaries',
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
+  bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
   organizationHistory: 'Root organization history',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',

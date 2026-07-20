@@ -3,7 +3,11 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/http/fetch — fetch
 /**
- * generate-tokens-from-docs.ts — extract a typed, unified catalog from Bun docs.
+ * generate-tokens-from-docs.ts — token **supplement** for the catalog (not the SSOT).
+ *
+ * Prefer `bun run docs:refresh` / `tools/bun-docs-catalog.ts` for the unified catalog
+ * (NOTE/SHIP/FIX/BLOG). This script only rebuilds the bulk extract that catalog merge
+ * consumes as one input layer. Operate: docs/BUN_DOCS_OPERATE.md
  *
  * Reads bun.com/docs/llms.txt, fetches each relevant page's Markdown source (.md),
  * and extracts:
@@ -18,22 +22,19 @@
  * docs URL with anchor. Duplicates across pages are merged with the most
  * authoritative page winning (reference > runtime > bundler > test > guides > pm).
  *
- * Run:
+ * Run (when docs change — optional; not part of default docs:refresh):
  *   bun tools/generate-tokens-from-docs.ts
  *   bun tools/generate-tokens-from-docs.ts --section=runtime
- *   bun tools/generate-tokens-from-docs.ts --section=runtime,bundler,test,pm
  *   bun tools/generate-tokens-from-docs.ts --version=1.4.0
- * Outputs:
- *   - tools/bun-docs-token-supplement.json  ({ bunVersion, releaseUrl, blogUrl, entries[] })
- *   - tools/bun-pm-tokens.json              (legacy nested format, kept for compatibility)
+ * Output:
+ *   - tools/bun-docs-token-supplement.json  (merged by bun-docs-catalog.ts build)
  *
- * Version pin: default Bun.version. releaseUrl = GitHub tag; blogUrl = bun.com/blog/bun-vX.Y.Z.
+ * blogUrl comes from tools/release-index.json (RSS) when present — never synthetic.
  * Docs pages stay unversioned. commitHash is Bun.revision when building against the runtime.
  */
 
 const LLMS_URL = 'https://bun.com/docs/llms.txt';
 const SUPPLEMENT_OUT = new URL('./bun-docs-token-supplement.json', import.meta.url).pathname;
-const LEGACY_OUT = new URL('./bun-pm-tokens.json', import.meta.url).pathname;
 
 const DOMAINS = ['runtime', 'bundler', 'test', 'pm'];
 const SKIP_TITLES = new Set(['Package Manager', 'Runtime', 'Bundler', 'Test Runner']);
@@ -54,15 +55,6 @@ type CatalogEntry = {
   url: string;
   allPages: string[];
   source: string;
-};
-
-type LegacyPageCatalog = {
-  page: string;
-  pageTitle: string;
-  cliFlags: Record<string, string>;
-  envVars: Record<string, string>;
-  bunfigKeys: Record<string, string>;
-  packageJsonKeys: Record<string, string>;
 };
 
 function slugify(text: string): string {
@@ -438,41 +430,6 @@ async function withConcurrency<T, R>(
   return results;
 }
 
-function buildLegacyCatalog(entries: CatalogEntry[]): Record<string, LegacyPageCatalog> {
-  const pages = new Map<string, LegacyPageCatalog>();
-  for (const e of entries) {
-    if (!['cli-flag', 'env-var', 'bunfig-key', 'package-json-key'].includes(e.type)) continue;
-    const pageUrl = `${e.canonicalPage}.md`;
-    if (!pages.has(e.source)) {
-      pages.set(e.source, {
-        page: pageUrl,
-        pageTitle: e.source,
-        cliFlags: {},
-        envVars: {},
-        bunfigKeys: {},
-        packageJsonKeys: {},
-      });
-    }
-    const page = pages.get(e.source)!;
-    const url = e.url;
-    switch (e.type) {
-      case 'cli-flag':
-        page.cliFlags[e.name] = url;
-        break;
-      case 'env-var':
-        page.envVars[e.name] = url;
-        break;
-      case 'bunfig-key':
-        page.bunfigKeys[e.name] = url;
-        break;
-      case 'package-json-key':
-        page.packageJsonKeys[e.name] = url;
-        break;
-    }
-  }
-  return Object.fromEntries(pages.entries());
-}
-
 type GeneratorArgs = {
   sections: string[];
   version: string;
@@ -606,25 +563,6 @@ async function main(): Promise<void> {
   console.info(`   release ${releaseUrl}`);
   console.info(`   blog ${blogUrl || '(none in RSS)'}`);
   if (commitHash) console.info(`   commit ${commitHash}`);
-
-  const legacy = buildLegacyCatalog(merged);
-  await Bun.write(
-    LEGACY_OUT,
-    JSON.stringify(
-      {
-        _comment:
-          'Legacy nested format (kept for compatibility). Prefer tools/bun-docs-catalog.json (built by bun-docs-catalog.ts).',
-        bunVersion: version,
-        releaseUrl,
-        ...(blogUrl ? { blogUrl } : {}),
-        ...(commitHash ? { commitHash } : {}),
-        ...legacy,
-      },
-      null,
-      2
-    ) + '\n'
-  );
-  console.info(`✅ wrote legacy catalog → ${LEGACY_OUT} (${Object.keys(legacy).length} pages)`);
 }
 
 /** Map internal token kinds to the shared DocCatalogEntry schema used by bun-docs-catalog.ts. */

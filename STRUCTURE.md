@@ -13,6 +13,7 @@ High-level map of the FactoryWager Enterprise Platform monorepo (`factorywager-e
 | AI agents | [`AGENTS.md`](AGENTS.md) → [`docs/AGENTS.md`](docs/AGENTS.md) |
 | Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
 | Wire boundary | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
@@ -38,6 +39,7 @@ Projects/
 │   ├── README.md            # Docs index (SSOT navigation)
 │   ├── AGENTS.md            # Full agent guide (root AGENTS.md is thin entry)
 │   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
+│   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
 │   ├── organization/        # Root cleanup history
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)

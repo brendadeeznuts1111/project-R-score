@@ -2,7 +2,7 @@
 
 **Status**: Live  
 **Code**: [`tools/bun-doc-refs.ts`](../tools/bun-doc-refs.ts) · catalog [`tools/bun-docs-catalog.ts`](../tools/bun-docs-catalog.ts) · taxonomy [`tools/bun-docs-taxonomy.json`](../tools/bun-docs-taxonomy.json) · index [`tools/bun-docs-index.json`](../tools/bun-docs-index.json)  
-**Related**: [`BUN_DOCS_SYSTEM.md`](BUN_DOCS_SYSTEM.md) · agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references
+**Related**: [`BUN_DOCS_SYSTEM.md`](BUN_DOCS_SYSTEM.md) (legacy browser docs CLI — not this loop) · agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references
 
 Continuity layer for the docs intelligence pipeline: **integrity → self-heal → regen → log → status**.
 
@@ -29,7 +29,7 @@ Continuity layer for the docs intelligence pipeline: **integrity → self-heal �
 | `bun tools/bun-docs-catalog.ts list --section=runtime --type=api` | List slice (header shows version / release / blog) |
 | `bun tools/bun-docs-catalog.ts get Bun.WebView` | One entry with docsUrl + releaseUrl + blogUrl |
 | `bun tools/bun-docs-catalog.ts verify` | Fail if catalog `bunVersion` ≠ runtime (or `--version=`) |
-| `bun tools/generate-tokens-from-docs.ts [--version=X]` | Token supplement with the same version pin |
+| `bun tools/generate-tokens-from-docs.ts [--version=X]` | Optional: rebuild token **supplement** only (not in `docs:refresh`; catalog merge consumes it) |
 | `bun run docs:release-index` | npm alias for Phase 0 RSS refresh |
 | `bun run docs:release-scrape` | npm alias for Phase 2b scrape (incremental via guid state) |
 | `bun run docs:refresh` | Full loop: release-index → scrape → catalog build → integrity log |

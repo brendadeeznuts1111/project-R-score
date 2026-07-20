@@ -191,12 +191,23 @@ All commands run via `bun run <name>` from the project root:
 | `bun run dataview` | scripts/dataview-cli.ts |
 | `bun run dataview:test` | scripts/dataview-tests.ts |
 
-### Documentation
+### Documentation — Bun token/catalog (SSOT: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md))
+| Command | Description |
+|---------|-------------|
+| `bun run docs:refresh` | RSS → scrape → catalog build → integrity log |
+| `bun run docs:release-index` | Phase 0: `https://bun.com/rss.xml` → `tools/release-index.json` |
+| `bun run docs:release-scrape` | Phase 2b: release posts → SHIP/FIX/CHG overlay |
+| `bun run docs:catalog:build` | Build `tools/bun-docs-catalog.json` |
+| `bun run docs:catalog` | List catalog |
+| `bun run docs:catalog:export` | Compact TSV for agents |
+| `bun run docs:map:check` | Platform doc SSOT path + link check |
+
+### Documentation — other (not the token catalog)
 | Command | Description |
 |---------|-------------|
 | `bun run docs:analyze` | tools/cli/integrated-cli.ts analyze |
 | `bun run docs:build` | docs:sync:integrated |
-| `bun run docs:cache` | tools/cli/docs-cli.ts cache |
+| `bun run docs:cache` | tools/cli/docs-cli.ts cache (legacy browser docs CLI) |
 | `bun run docs:demo` | examples/bun-docs-demo.ts |
 | `bun run docs:domain:graph` | docs/domain-renderer.ts full |
 | `bun run docs:fetch` | lib/registry/package-docs.ts |
@@ -206,7 +217,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run docs:open` | tools/cli/docs-cli.ts open |
 | `bun run docs:orchestration:graph` | docs/orchestration-graph.ts flow |
 | `bun run docs:publish` | tools/cli/integrated-cli.ts publish |
-| `bun run docs:rss` | lib/registry/rss-aggregator.ts |
+| `bun run docs:rss` | lib/registry/rss-aggregator.ts (**registry feeds** — not Bun release-index) |
 | `bun run docs:search` | tools/cli/docs-cli.ts search |
 | `bun run docs:serve` | docs:open |
 | `bun run docs:sync` | lib/registry/docs-sync.ts |
@@ -218,7 +229,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run markdown` | Render markdown (pass file + format: ansi, html, links, headings, plain) |
 | `bun run markdown:options` | Bun markdown parser option demos (pass demo|compare|gfm|extended) |
 
-### RSS
+### RSS (registry package feeds — not Bun blog release-index)
 | Command | Description |
 |---------|-------------|
 | `bun run rss:add` | lib/registry/rss-aggregator.ts add |
@@ -226,6 +237,8 @@ All commands run via `bun run <name>` from the project root:
 | `bun run rss:fetch` | lib/registry/rss-aggregator.ts fetch |
 | `bun run rss:html` | lib/registry/rss-aggregator.ts html |
 | `bun run rss:list` | lib/registry/rss-aggregator.ts list |
+
+For Bun **release blog** RSS → `bun run docs:release-index` ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)).
 
 ---
 
