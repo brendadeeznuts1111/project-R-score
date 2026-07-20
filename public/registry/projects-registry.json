@@ -278,20 +278,6 @@
       "primary_language": "TypeScript / Bun"
     },
     {
-      "id": "claudian",
-      "name": "claudian",
-      "path": "projects/analysis/claudian",
-      "category": "analysis",
-      "size_bytes": 885497856,
-      "size_human": "844.5 MB",
-      "last_modified": "2026-02-11T00:01:44.493Z",
-      "has_package_json": true,
-      "has_readme": true,
-      "description": "![Preview](Preview.png)",
-      "tags": [],
-      "primary_language": "TypeScript / Bun"
-    },
-    {
       "id": "duoplus-app-factory",
       "name": "duoplus-app-factory",
       "path": "projects/automation/duoplus-app-factory",

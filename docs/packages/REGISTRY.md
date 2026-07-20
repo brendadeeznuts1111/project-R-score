@@ -115,7 +115,6 @@ _Generated: 2026-05-18_
 | bun-v1.3.9-playground | 1.0.0 | npm | active |  |
 | bun-v1.3.9-practical-examples | 1.0.0 | npm | active |  |
 | catalog-demo | 1.0.0 | npm | active |  |
-| claudian | 1.3.42 | factory-wager | active |  |
 | cli-dashboard 🔒 | 1.0.0 | factory-wager | active |  |
 | codepoint | 0.1.0 | factory-wager | active |  |
 | codepoint-link-analytics-dashboard 🔒 | 0.0.1 | npm | active |  |

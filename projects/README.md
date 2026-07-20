@@ -28,7 +28,7 @@ Each project under `projects/` is classified into one of three tiers:
 
 | Path | Contents | Notes |
 |------|----------|--------|
-| `active/analysis/` | claudian, grok-security, matrix-analysis, scanner | |
+| `active/analysis/` | grok-security, matrix-analysis, scanner | |
 | `active/apps/` | cli-dashboard, edge-worker, my-bun-app | Small demos |
 | `active/automation/` | duo-automation, duoplus-app-factory, enhancements-1.0.01 | |
 | `active/dashboards/` | enterprise-dashboard, quantum-terminal-dashboard, secrets-dashboard | |
