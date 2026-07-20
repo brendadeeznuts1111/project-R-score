@@ -33,12 +33,6 @@ interface SessionToken {
   metadata: Record<string, any>;
 }
 
-interface AuthenticationError extends Error {
-  code?: string;
-  score?: number;
-  userId?: UserId;
-}
-
 export class Tier1380EnterpriseAuth {
   private static rateLimitStore = new Map<string, { attempts: number; lastAttempt: Date }>();
   private static auditLog: Array<{

@@ -562,7 +562,7 @@ export class Tier1380PasswordAudit {
 }
 
 // Helper method to retrieve password hash (implementation from appSecretManager)
-namespace Tier1380PasswordSecurity {
+export namespace Tier1380PasswordSecurity {
   export async function retrievePasswordHash(userId: string): Promise<PasswordHash | null> {
     const key = `TIER1380_PASSWORD_${userId}`;
     const hashData = await appSecretManager.getSecret(key);
