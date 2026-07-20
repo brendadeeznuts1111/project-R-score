@@ -39,8 +39,7 @@ Successfully organized all Markdown documentation from scattered locations into 
 │   ├── DUPLICATE_AUDIT_REPORT.md
 │   └── [other archived reports...]
 └── guides/                     # Development guides (existing)
-    ├── FAILURE_HANDLING_GUIDE.md
-    └── DRY_RUN_GUIDE.md
+    └── README.md
 ```
 
 ---

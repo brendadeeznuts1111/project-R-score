@@ -233,7 +233,6 @@ const result = Bun.spawnSync(...);
 - `utils/version-bump.ts` (lines 114, 128, 210)
 - `utils/doc-urls-config.ts` (line 263)
 - `utils/bun-native-url-builder.ts` (line 341)
-- `tools/unicode-aware-validator.ts` (line 357)
 - `tools/tier1380-headers-citadel.ts` (line 224)
 - `tools/tier1380-enhanced-citadel.ts` (lines 218, 331, 495)
 - `tools/tier1380-config-manager.ts` (lines 79, 226, 372)
