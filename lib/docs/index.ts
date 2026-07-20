@@ -10,6 +10,7 @@ export {
   CANONICAL_TOOLS,
   CANONICAL_DOC_ROLES,
   CANONICAL_REMOTES,
+  CANONICAL_EXTERNAL,
   type CanonicalRepoDocKey,
   type CanonicalHarnessKey,
 } from './repo-docs';

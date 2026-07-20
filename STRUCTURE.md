@@ -15,6 +15,7 @@ High-level map of the FactoryWager Enterprise Platform monorepo (`factorywager-e
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
+| Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Root layout (current)
 

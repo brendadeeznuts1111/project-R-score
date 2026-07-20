@@ -22,6 +22,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 Do not append an unrequested caveat, counterargument, or moralizing endcap to a sharp claim merely to demonstrate balance. If a boundary condition changes the truth of the claim, put it in the mechanism or scope the claim correctly. If it does not, cut it. Accuracy belongs in the argument; model self-protection does not.
 
+**Terminology (harness):** prefer **artifact** over **codebase** for what is maintained, delivered, or proven; use **repository** / **source tree** for the git tree. Domain-valued strings use **brands**, not bare `string`, after the boundary — see [`.custom-instructions.md`](.custom-instructions.md) and [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
+
 ## Operating rules
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).

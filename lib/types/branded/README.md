@@ -1,7 +1,11 @@
 # Branded IDs — agent routing
 
 **Canonical import:** `lib/types/branded.ts` (re-exports everything).  
-**Institutional record:** `lib/types/brand-manifest.json` (generated; do not hand-edit).
+**Institutional record:** `lib/types/brand-manifest.json` (generated; do not hand-edit).  
+**Standards:** [`.custom-instructions.md`](../../../.custom-instructions.md) (domain strings / harness).  
+**Thesis:** [harness engineering — domain types](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) (parse at boundary; brands replace bare `string` for domain values).
+
+Domain-valued text (session, account, zone, credential keys, …) must not travel as unbranded `string` inside the harness after the wire/CLI/env boundary.
 
 ## Just-in-time context
 

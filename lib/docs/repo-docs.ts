@@ -91,3 +91,23 @@ export const CANONICAL_REMOTES = {
     url: 'https://github.com/brendadeeznuts1111/cascade-mover-v3',
   },
 } as const;
+
+/**
+ * External thesis / practice references (not repo paths).
+ * Primary: https://github.com/lopopolo/harness-engineering
+ */
+export const CANONICAL_EXTERNAL = {
+  harnessEngineering: {
+    name: 'harness-engineering',
+    url: 'https://github.com/lopopolo/harness-engineering',
+    domainModeling:
+      'https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md',
+    durableSystems:
+      'https://github.com/lopopolo/harness-engineering/blob/trunk/docs/durable-systems/README.md',
+    proof:
+      'https://github.com/lopopolo/harness-engineering/blob/trunk/docs/proof/README.md',
+    /** Prefer "artifact" over "codebase" in agent/docs prose */
+    replaceCodebaseWithArtifact: 'https://x.com/_lopopolo/status/2076878736507736390',
+    codeIsNotTheArtifact: 'https://hyperbo.la/w/code-is-not-the-artifact/',
+  },
+} as const;

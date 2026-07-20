@@ -1,7 +1,20 @@
 # Development Standards — Quick Reference
 
 > Full standards: [`.custom-instructions.md`](../.custom-instructions.md)  
-> Agents / install / brands: [`AGENTS.md`](../AGENTS.md) · Layout: [`STRUCTURE.md`](../STRUCTURE.md) · Install: [`UNIFIED.md`](./UNIFIED.md)
+> Agents / install / brands: [`AGENTS.md`](../AGENTS.md) · Layout: [`STRUCTURE.md`](../STRUCTURE.md) · Install: [`UNIFIED.md`](./UNIFIED.md)  
+> Harness thesis: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)
+
+---
+
+## Terminology
+
+| Prefer | Avoid |
+|--------|--------|
+| **artifact** (delivered / maintained / proven thing) | “codebase” |
+| **repository** / **source tree** (location) | “codebase” |
+| **brand** / domain type | bare `string` for domain IDs |
+
+Source is one replaceable realization of durable contracts. See [Stop Treating Code as the Artifact](https://hyperbo.la/w/code-is-not-the-artifact/).
 
 ---
 
@@ -14,6 +27,27 @@
 | Package manager | Bun (`install:all` / `install:verify`) |
 | Tests | Bun test |
 | Lint / format | ESLint + Prettier |
+| Domain IDs | Branded strings (`lib/types/branded.ts`) |
+
+---
+
+## Domain strings (harness)
+
+**Parse once at the boundary; internal APIs use brands, not bare `string`.**
+
+| Boundary | Constructor |
+|----------|-------------|
+| Wire / JSON / env | `parseXId(unknown)` |
+| Optional config | `tryXId(...)` → `undefined` if blank |
+| Trusted internal | `asXId(string)` |
+
+```bash
+bun tools/brand-catalog.ts
+bun run check:brands
+bun run check:brands:all
+```
+
+Map: [`lib/types/branded/README.md`](../lib/types/branded/README.md). Bare `string` is OK for non-domain text only.
 
 ---
 
@@ -23,6 +57,7 @@
 |-------|-----|
 | `console.log` | `console.info` / `warn` / `error` |
 | `any` / `as any` | `unknown` + guards |
+| bare `string` domain IDs | brands (`SessionId`, …) |
 | `export default` | Named exports |
 | `value!` | `?.` / defaults |
 | Empty `catch` | Handle or rethrow |
@@ -79,7 +114,7 @@ describe("utility", () => {
 });
 ```
 
-Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert.
+Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert. Match proof to the claim; promote the same artifact CI validated.
 
 ---
 
@@ -99,7 +134,8 @@ Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert.
 - [ ] No new TypeScript errors on touched surface
 - [ ] ESLint / harness gates clean on staged paths
 - [ ] Bun API usages have `// @see` refs when required
-- [ ] Branded IDs used where domain IDs apply
+- [ ] Domain IDs are branded (no new bare-string ID ports)
+- [ ] Prose uses **artifact** / **repository**, not **codebase**, for agent-facing docs
 
 ---
 
@@ -116,5 +152,6 @@ Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert.
 | [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) | Path SSOT (`CANONICAL_REPO_DOCS`) |
 | [`lib/types/branded/README.md`](../lib/types/branded/README.md) | Branded IDs |
 | [`lib/console-depth.ts`](../lib/console-depth.ts) | Inspect depth |
+| [harness-engineering](https://github.com/lopopolo/harness-engineering) | External thesis corpus |
 
 *Keep this file in sync with `.custom-instructions.md` and `CANONICAL_REPO_DOCS` when conventions change.*

@@ -14,6 +14,7 @@
  */
 
 import {
+  CANONICAL_EXTERNAL,
   CANONICAL_HARNESS,
   CANONICAL_REMOTES,
   CANONICAL_REPO_DOCS,
@@ -45,6 +46,7 @@ export {
   CANONICAL_TOOLS,
   CANONICAL_DOC_ROLES,
   CANONICAL_REMOTES,
+  CANONICAL_EXTERNAL,
 } from './docs/repo-docs';
 
 // Security — AuditEntry and VersionMetadata conflicts: use specific imports when needed
@@ -126,6 +128,7 @@ export const LIB_INFO = {
   docs: CANONICAL_REPO_DOCS,
   harness: CANONICAL_HARNESS,
   tools: CANONICAL_TOOLS,
+  external: CANONICAL_EXTERNAL,
   /** @deprecated use `docs.standards` */
   developmentStandards: CANONICAL_REPO_DOCS.standards,
   /** @deprecated use `docs.standardsQuick` */
@@ -198,4 +201,5 @@ export const FW = {
   standards: CANONICAL_REPO_DOCS,
   harness: CANONICAL_HARNESS,
   tools: CANONICAL_TOOLS,
+  external: CANONICAL_EXTERNAL,
 } as const;
