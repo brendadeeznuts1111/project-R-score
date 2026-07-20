@@ -1,19 +1,29 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie, Bun.CookieMap
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 
 /**
- * Bun Cookies Complete v2.0 - Enterprise Cookie Management
- *
- * Comprehensive cookie system with security, analytics, and performance optimization
- * Compatible with Bun runtime and integrated with DataView telemetry
+ * Cookie management on Bun.Cookie + Bun.CryptoHasher (AES-GCM still node:crypto).
  */
 
-import { createHmac, createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { Cookie, CookieMap, CryptoHasher } from 'bun';
+import { createCipheriv, createDecipheriv } from 'node:crypto';
 import {
   CookieValidator,
   ValidationResult,
   SecureCookieOptions as ValidationOptions,
 } from './cookie-validator';
+
+function hmacSha256Hex(key: string | Buffer | Uint8Array, data: string): string {
+  return new CryptoHasher('sha256', key).update(data).digest('hex');
+}
+
+function randomBytes(n: number): Buffer {
+  const buf = new Uint8Array(n);
+  crypto.getRandomValues(buf);
+  return Buffer.from(buf);
+}
 
 // 🎯 ENHANCED TYPES & INTERFACES
 export interface SecureCookieOptions {
@@ -52,65 +62,12 @@ export interface CookieAnalytics {
   size: number;
 }
 
-// Simple Cookie class for Bun compatibility
-export class Cookie {
-  name: string;
-  value: string;
-  domain?: string;
-  expires?: Date;
-  httpOnly?: boolean;
-  maxAge?: number;
-  path?: string;
-  sameSite?: 'strict' | 'lax' | 'none';
-  secure?: boolean;
-  partitioned?: boolean;
+/** Bun.Cookie / Bun.CookieMap — prefer `import { Cookie, CookieMap } from "bun"`. */
+export { Cookie, CookieMap };
 
-  constructor(name: string, value: string, options: SecureCookieOptions = {}) {
-    this.name = name;
-    this.value = value;
-    this.domain = options.domain;
-    this.expires = options.expires;
-    this.httpOnly = options.httpOnly;
-    this.maxAge = options.maxAge;
-    this.path = options.path;
-    this.sameSite = options.sameSite;
-    this.secure = options.secure;
-    this.partitioned = options.partitioned;
-  }
-}
-
-// Simple CookieMap implementation
-export class CookieMap {
-  private cookies: Map<string, string> = new Map();
-
-  constructor(headers: Record<string, string>) {
-    // Parse cookie header
-    const cookieHeader = headers['cookie'] || headers.Cookie || '';
-    if (cookieHeader) {
-      cookieHeader.split(';').forEach(cookie => {
-        const [name, value] = cookie.trim().split('=');
-        if (name && value) {
-          this.cookies.set(name, value);
-        }
-      });
-    }
-  }
-
-  get(name: string): string | undefined {
-    return this.cookies.get(name);
-  }
-
-  set(name: string, value: string, options?: SecureCookieOptions): void {
-    this.cookies.set(name, value);
-  }
-
-  delete(name: string): void {
-    this.cookies.delete(name);
-  }
-
-  names(): IterableIterator<string> {
-    return this.cookies.keys();
-  }
+/** Build a Bun.CookieMap from a headers record (Cookie header only). */
+export function cookieMapFromHeaders(headers: Record<string, string>): CookieMap {
+  return new CookieMap(headers['cookie'] || headers.Cookie || '');
 }
 
 // 🛡️ SECURE COOKIE MANAGER
@@ -123,11 +80,12 @@ export class SecureCookieManager {
   constructor(secret: string = Bun.env.COOKIE_SECRET || '') {
     this.secret = secret;
     // Derive separate keys for signing and encryption
-    const signingHmac = createHmac('sha256', secret);
-    this.signingKey = Buffer.from(signingHmac.update('sign').digest());
-
-    const encryptionHmac = createHmac('sha256', secret);
-    this.encryptionKey = Buffer.from(encryptionHmac.update('encrypt').digest());
+    this.signingKey = Buffer.from(
+      new CryptoHasher('sha256', secret).update('sign').digest()
+    );
+    this.encryptionKey = Buffer.from(
+      new CryptoHasher('sha256', secret).update('encrypt').digest()
+    );
   }
 
   // 🍪 CREATE SECURE COOKIE
@@ -177,9 +135,7 @@ export class SecureCookieManager {
 
     // SIGN COOKIE
     if (options.signed) {
-      const signature = createHmac('sha256', this.signingKey)
-        .update(`${sanitized.name}=${finalValue}`)
-        .digest('hex');
+      const signature = hmacSha256Hex(this.signingKey, `${sanitized.name}=${finalValue}`);
       finalValue = `${finalValue}.${signature}`;
     }
 
@@ -234,9 +190,7 @@ export class SecureCookieManager {
       const parts = finalValue.split('.');
       if (parts.length === 2) {
         const [value, signature] = parts;
-        const expectedSig = createHmac('sha256', this.signingKey)
-          .update(`${cookie.name}=${value}`)
-          .digest('hex');
+        const expectedSig = hmacSha256Hex(this.signingKey, `${cookie.name}=${value}`);
 
         if (signature === expectedSig) {
           // Try to parse as JSON, fallback to string

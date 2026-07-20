@@ -1,9 +1,11 @@
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // lib/security/zero-trust-manager.ts — Zero-trust security manager
 
 import { EventEmitter } from 'events';
+import { timingSafeEqual } from 'node:crypto';
+import { CryptoHasher } from 'bun';
 import { logger } from '../core/structured-logger';
 import { auditLogger } from './secret-audit-logger';
-import { createHash, timingSafeEqual } from 'crypto';
 import {
   type SessionId,
   type IdentityId,
@@ -576,7 +578,9 @@ export class ZeroTrustManager extends EventEmitter {
         case 'password':
           if (!credentials.password) return false;
           // Use timing-safe comparison to prevent timing attacks
-          const inputHash = createHash('sha256').update(credentials.password).digest('hex');
+          const inputHash = new CryptoHasher('sha256')
+            .update(credentials.password)
+            .digest('hex');
           return timingSafeEqual(
             Buffer.from(inputHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')
@@ -605,7 +609,7 @@ export class ZeroTrustManager extends EventEmitter {
           if (!credentials.biometricData) return false;
           // NOTE: In production, use WebAuthn/FIDO2 for proper biometric verification.
           // Use timing-safe comparison to prevent timing attacks (matches password case above)
-          const biometricHash = createHash('sha256')
+          const biometricHash = new CryptoHasher('sha256')
             .update(credentials.biometricData)
             .digest('hex');
           return timingSafeEqual(

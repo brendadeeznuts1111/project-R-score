@@ -1,61 +1,46 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/cookies — Bun.Cookie, Bun.CookieMap
+// @see https://bun.com/docs/runtime/csrf — Bun.CSRF
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 /**
- * Bun Security v4.0 - Complete Security Integration
- *
- * Enterprise-grade security suite with Bun native features
+ * Bun Security v4.0 — uses Bun.Cookie / CookieMap / CSRF / password / CryptoHasher.
+ * AES-GCM still via node:crypto (no Bun.aes primitive).
  */
 
-type BunRuntime = typeof Bun & {
-  password: {
-    hash(password: string, options?: any): Promise<string>;
-    verify(password: string, hash: string): Promise<boolean>;
-  };
-  env: Record<string, string | undefined>;
-  compress?: {
-    zstd?: {
-      encode(data: string | Uint8Array): Uint8Array;
-      decode(data: Uint8Array): Uint8Array;
-    };
-  };
-};
-
-const bunRuntime = globalThis.Bun as BunRuntime | undefined;
-
-// import { Cookie, CookieMap } from 'bun:cookies'; // Not available in this version
-import { createCipheriv, createDecipheriv, createHmac, randomBytes, pbkdf2Sync } from 'node:crypto';
+import { Cookie, CookieMap, CryptoHasher } from 'bun';
+import { createCipheriv, createDecipheriv, pbkdf2Sync } from 'node:crypto';
 import { Database } from 'bun:sqlite';
 import { asSessionId } from '../types/branded.ts';
 
-// Mock Cookie class for demo
-class Cookie {
-  constructor(
-    public name: string,
-    public value: string,
-    public options: any = {}
-  ) {}
-
-  // Security properties expected by tests
-  public httpOnly: boolean = this.options.httpOnly || false;
-  public secure: boolean = this.options.secure || false;
-  public sameSite: 'strict' | 'lax' | 'none' = this.options.sameSite || 'strict';
-  public maxAge?: number = this.options.maxAge;
-  public path?: string = this.options.path;
-
-  toString(): string {
-    return `${this.name}=${this.value}`;
-  }
+function randomHex(bytes: number): string {
+  const buf = new Uint8Array(bytes);
+  crypto.getRandomValues(buf);
+  return Buffer.from(buf).toString('hex');
 }
 
-// Mock CookieMap for demo
-class CookieMap {
-  constructor(private headers: Headers) {}
+function randomBytes(n: number): Buffer {
+  const buf = new Uint8Array(n);
+  crypto.getRandomValues(buf);
+  return Buffer.from(buf);
+}
 
-  get(name: string): string | undefined {
-    // Simplified cookie parsing
-    return undefined;
+function hmacSha256Hex(key: string, data: string): string {
+  return new CryptoHasher('sha256', key).update(data).digest('hex');
+}
+
+function csrfSecret(): string {
+  const s = Bun.env.CSRF_SECRET?.trim();
+  if (s) return s;
+  if (
+    Bun.env.ALLOW_INSECURE_DEFAULTS === '1' ||
+    Bun.env.NODE_ENV === 'development' ||
+    Bun.env.NODE_ENV === 'test'
+  ) {
+    return 'default-secret';
   }
+  throw new Error('CSRF_SECRET required');
 }
 
 // 🎯 SECURITY TYPES & CONFIG
@@ -149,18 +134,14 @@ export class BunSecurityEngine {
       const cost = options?.cost || 10;
 
       try {
-        if (!bunRuntime?.password) {
-          throw new SecurityError('Bun.password is not available in this runtime');
-        }
-        // Use Bun.password for secure hashing
-        const hash = await bunRuntime.password.hash(password, {
+        const hash = await Bun.password.hash(password, {
           algorithm,
           memoryCost: 65536, // 64MB for argon2
           timeCost: cost,
         });
 
         // Generate and store salt separately
-        const salt = randomBytes(32).toString('hex');
+        const salt = randomHex(32);
 
         // Store metadata for password rotation
         const metadata = {
@@ -182,12 +163,7 @@ export class BunSecurityEngine {
       storedHash: string,
       options?: { breachCheck?: boolean }
     ): Promise<{ valid: boolean; needsUpgrade?: boolean; breached?: boolean }> {
-      if (!bunRuntime?.password) {
-        throw new SecurityError('Bun.password is not available in this runtime');
-      }
-
-      // Verify against stored hash
-      const isValid = await bunRuntime.password.verify(password, storedHash);
+      const isValid = await Bun.password.verify(password, storedHash);
 
       if (!isValid) {
         return { valid: false };
@@ -234,7 +210,10 @@ export class BunSecurityEngine {
       // 3. Check if full hash exists in response
 
       // Simplified simulation
-      const hash = createHmac('sha1', 'breach-check').update(password).digest('hex').toUpperCase();
+      const hash = new CryptoHasher('sha1', 'breach-check')
+        .update(password)
+        .digest('hex')
+        .toUpperCase();
 
       // Simulated API call
       try {
@@ -312,117 +291,39 @@ export class BunSecurityEngine {
     }
   };
 
-  // 🛡️ CSRF PROTECTION WITH ZST COMPRESSION
+  // 🛡️ CSRF — Bun.CSRF (session-bound). Prefer Bun.CSRF at new call sites.
   static CSRFProtection = class {
-    // 🔑 GENERATE CSRF TOKEN WITH ZST COMPRESSION
     static generateCSRFToken(
-      sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
-      secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
+      sessionId: string, // brand-ok — wire session id
+      secret: string = csrfSecret()
     ): { token: string; cookie: Cookie; compressed?: boolean } {
-      const sid = asSessionId(sessionId); // boundary: brand at entry
-      const timestamp = Date.now();
-      const nonce = randomBytes(16).toString('hex');
-
-      // Create token data
-      const tokenData = {
+      const sid = asSessionId(sessionId);
+      const token = Bun.CSRF.generate(secret, {
         sessionId: sid,
-        timestamp,
-        nonce,
-        expires: timestamp + 3600 * 1000, // 1 hour
-      };
-
-      // Sign token
-      const signature = createHmac('sha256', secret)
-        .update(JSON.stringify(tokenData))
-        .digest('hex');
-
-      const rawToken = JSON.stringify({ ...tokenData, signature });
-
-      // Try ZST compression (if available)
-      let finalToken = rawToken;
-      let compressed = false;
-
-      try {
-        // @ts-ignore - ZST compression might be available
-        if (bunRuntime?.compress?.zstd) {
-          const compressedToken = bunRuntime.compress.zstd.encode(rawToken);
-          if (compressedToken.length < rawToken.length) {
-            finalToken = compressedToken.toString('base64');
-            compressed = true;
-          }
-        }
-      } catch {
-        // Fallback to base64 encoding
-        finalToken = Buffer.from(rawToken).toString('base64');
-      }
-
-      // Create secure cookie
-      const cookie = new Cookie('csrf_token', finalToken, {
+        expiresIn: 3600 * 1000,
+      });
+      const cookie = new Cookie('csrf_token', token, {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
         maxAge: 3600,
         path: '/',
       });
-
-      return { token: finalToken, cookie, compressed };
+      return { token, cookie, compressed: false };
     }
 
-    // 🔍 VALIDATE CSRF TOKEN
     static validateCSRFToken(
       token: string,
-      sessionId: string, // brand-ok — boundary accepts plain string; branded internally via asSessionId
-      secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
+      sessionId: string, // brand-ok — wire session id
+      secret: string = csrfSecret()
     ): { valid: boolean; reason?: string; metadata?: any } {
-      const sid = asSessionId(sessionId); // boundary: brand at entry
-      try {
-        let tokenData: any;
-
-        // Try to decompress (check if it's ZST compressed)
-        try {
-          // @ts-ignore
-          if (bunRuntime?.compress?.zstd) {
-            const decompressed = bunRuntime.compress.zstd.decode(Buffer.from(token, 'base64'));
-            tokenData = JSON.parse(decompressed.toString());
-          } else {
-            tokenData = JSON.parse(Buffer.from(token, 'base64').toString());
-          }
-        } catch {
-          // Try parsing as uncompressed
-          tokenData = JSON.parse(Buffer.from(token, 'base64').toString());
-        }
-
-        // Check expiration
-        if (Date.now() > tokenData.expires) {
-          return { valid: false, reason: 'Token expired' };
-        }
-
-        // Verify session match
-        if (tokenData.sessionId !== sid) {
-          return { valid: false, reason: 'Session mismatch' };
-        }
-
-        // Verify signature
-        const { signature, ...dataToVerify } = tokenData;
-        const expectedSignature = createHmac('sha256', secret)
-          .update(JSON.stringify(dataToVerify))
-          .digest('hex');
-
-        if (signature !== expectedSignature) {
-          return { valid: false, reason: 'Invalid signature' };
-        }
-
-        return {
-          valid: true,
-          metadata: {
-            sessionId: tokenData.sessionId,
-            issuedAt: new Date(tokenData.timestamp),
-            expiresAt: new Date(tokenData.expires),
-          },
-        };
-      } catch (error) {
-        return { valid: false, reason: 'Token malformed' };
-      }
+      const sid = asSessionId(sessionId);
+      const valid = Bun.CSRF.verify(token, { secret, sessionId: sid, maxAge: 3600 * 1000 });
+      if (!valid) return { valid: false, reason: 'Invalid or expired CSRF token' };
+      return {
+        valid: true,
+        metadata: { sessionId: sid },
+      };
     }
   };
 
@@ -443,7 +344,7 @@ export class BunSecurityEngine {
       for (const [key, value] of Object.entries(currentSecrets)) {
         if (key.startsWith('SECRET_') && value) {
           // Generate new secret
-          const newSecret = randomBytes(32).toString('hex');
+          const newSecret = randomHex(32);
 
           // Update environment (in real app, update your secrets manager)
           newSecrets[key] = newSecret;
@@ -463,7 +364,7 @@ export class BunSecurityEngine {
       secretName: string = 'ENCRYPTION_SECRET'
     ): { encrypted: string; keyVersion: number; metadata: any } {
       // Get current secret (use consistent secret for demo)
-      const secret = bunRuntime?.env[secretName] || 'demo-secret-key-32-chars-long';
+      const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
       const keyVersion = this.getKeyVersion(secretName);
 
       // Derive encryption key from secret
@@ -506,7 +407,7 @@ export class BunSecurityEngine {
         const packageData = JSON.parse(Buffer.from(encryptedData, 'base64').toString());
 
         // Get secret for this version (use same secret as encryption)
-        const secret = bunRuntime?.env[secretName] || 'demo-secret-key-32-chars-long';
+        const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
 
         // Derive key
         const salt = Buffer.from(packageData.s, 'hex');
@@ -661,7 +562,7 @@ export function createSecurityMiddleware(config?: Partial<SecurityConfig>) {
     };
     responseCookies: Cookie[];
   }> => {
-    const cookies = new CookieMap(request.headers);
+    const cookies = new CookieMap(request.headers.get('cookie') ?? '');
     const responseCookies: Cookie[] = [];
 
     // 🔐 SESSION VALIDATION

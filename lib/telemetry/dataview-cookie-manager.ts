@@ -79,12 +79,8 @@ export class DataViewCookieManager {
    * Track or create a session with enhanced DataView serialization
    */
   async trackSession(request: Request): Promise<SessionMetadata> {
-    // Convert Headers to plain object for CookieMap
-    const headersObj: Record<string, string> = {};
-    request.headers.forEach((value, key) => {
-      headersObj[key] = value;
-    });
-    const cookies = new CookieMap(headersObj);
+    // CookieMap parses the Cookie request header (Bun.CookieMap)
+    const cookies = new CookieMap(request.headers.get('cookie') ?? '');
     const url = new URL(request.url);
 
     // Get or create session ID

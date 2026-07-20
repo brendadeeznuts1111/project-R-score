@@ -3,7 +3,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/docs/cache-manager.ts — Documentation cache management
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-import { createHash } from 'node:crypto';
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import { CryptoHasher } from 'bun';
 
 export interface CacheConfig {
   ttl: number; // milliseconds
@@ -217,7 +218,7 @@ export class EnhancedDocsCacheManager {
   }
 
   private calculateChecksum(data: any): string {
-    return createHash('sha256').update(JSON.stringify(data)).digest('hex').slice(0, 16);
+    return new CryptoHasher('sha256').update(JSON.stringify(data)).digest('hex').slice(0, 16);
   }
 
   private async evictEntries(newEntrySize: number): Promise<void> {

@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
-import { createHash } from 'node:crypto';
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import { CryptoHasher } from 'bun';
 
 import { resolve } from 'node:path';
 import ts from 'typescript';
@@ -342,7 +343,7 @@ function isExcludedByPolicy(path: string, policies: SearchPolicies): boolean {
 }
 
 function contentHash(text: string): string {
-  return createHash('sha1').update(text).digest('hex');
+  return new CryptoHasher('sha1').update(text).digest('hex');
 }
 
 function scriptKindForFile(filePath: string): ts.ScriptKind {
@@ -402,7 +403,7 @@ function astSignature(code: string, filePath: string): string {
   }
 
   const compact = topLevel.sort().join('|');
-  return createHash('sha1').update(compact).digest('hex');
+  return new CryptoHasher('sha1').update(compact).digest('hex');
 }
 
 function pickCanonical(files: string[], policies: SearchPolicies): string {
