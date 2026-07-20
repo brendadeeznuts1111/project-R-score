@@ -2,7 +2,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // packages/rip/src/index.ts — Core code analysis and transmutation engine
 
-
 // ============================================================================
 // CORE TYPES & INTERFACES
 // ============================================================================

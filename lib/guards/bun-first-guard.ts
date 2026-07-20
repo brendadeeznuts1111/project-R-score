@@ -12,7 +12,6 @@
 // Prefer catalog-driven SSOT: packages/guards (config/bun-dx-catalog.ts).
 // New call sites should import from @factorywager/guards / packages/guards.
 
-
 // Violation tracking
 const violations: Array<{
   module: string;
