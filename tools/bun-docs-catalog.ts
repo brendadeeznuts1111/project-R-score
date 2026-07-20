@@ -46,7 +46,30 @@ const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
 
-export type DocRefType = 'api' | 'cli-flag' | 'config' | 'concept';
+export const DocRefTypeArray = [
+  'api',
+  'cli-command',
+  'cli-flag',
+  'cli-option',
+  'config-key',
+  'package-json-key',
+  'env-var',
+  'concept',
+  'guide',
+  'blog',
+  'reference',
+  'error',
+  'tutorial',
+  'spec',
+  'other',
+] as const;
+
+export type DocRefType = (typeof DocRefTypeArray)[number];
+
+export function isDocRefType(value: string): value is DocRefType {
+  return DocRefTypeArray.includes(value as DocRefType);
+}
+
 export type DocStability = 'stable' | 'experimental' | 'deprecated';
 export type DocSection = 'runtime' | 'bundler' | 'test' | 'guides' | 'pm' | 'reference' | 'other';
 
@@ -142,12 +165,34 @@ function displayCell(text: string, width: number, align: 'left' | 'right' = 'lef
 /** Stable short labels for table density. */
 export function shortType(type: DocRefType): string {
   switch (type) {
+    case 'cli-command':
+      return 'cmd';
     case 'cli-flag':
       return 'flag';
-    case 'config':
+    case 'cli-option':
+      return 'opt';
+    case 'config-key':
       return 'cfg';
+    case 'package-json-key':
+      return 'pkg';
+    case 'env-var':
+      return 'env';
     case 'concept':
       return 'concept';
+    case 'guide':
+      return 'guide';
+    case 'blog':
+      return 'blog';
+    case 'reference':
+      return 'ref';
+    case 'error':
+      return 'err';
+    case 'tutorial':
+      return 'tut';
+    case 'spec':
+      return 'spec';
+    case 'other':
+      return 'other';
     case 'api':
     default:
       return 'api';
@@ -297,7 +342,8 @@ export function buildListColumns(opts: {
   if (opts.compact) {
     const cols = [...LIST_COLS_COMPACT];
     if (opts.showVersion) cols.splice(4, 0, { key: 'pin', header: 'VERIFIED', width: 10 });
-    if (opts.showRelease) cols.splice(cols.length - 1, 0, { key: 'release', header: 'RELEASE', width: 22 });
+    if (opts.showRelease)
+      cols.splice(cols.length - 1, 0, { key: 'release', header: 'RELEASE', width: 22 });
     return cols;
   }
   const cols = [...LIST_COLS_DEFAULT];
@@ -482,15 +528,19 @@ export function sectionFromUrl(url: string): DocSection {
   return 'other';
 }
 
+const PACKAGE_JSON_KEYS = new Set([
+  'workspaces',
+  'trustedDependencies',
+  'overrides',
+  'resolutions',
+  'peerDependencies',
+  'optionalDependencies',
+  'devDependencies',
+  'dependencies',
+]);
+
 export function inferType(name: string, url: string): DocRefType {
-  if (name.startsWith('--') || name.startsWith('BUN_') || /flag/i.test(name)) return 'cli-flag';
-  if (
-    name.includes('bunfig') ||
-    name === 'globalStore' ||
-    name === 'linker' ||
-    /config|bunfig|toml/i.test(name)
-  )
-    return 'config';
+  // Bun APIs and built-in modules first (avoids misclassifying Bun.TOML as a config key)
   if (
     name.startsWith('Bun.') ||
     name.startsWith('bun:') ||
@@ -498,6 +548,28 @@ export function inferType(name: string, url: string): DocRefType {
     url.includes('/reference/')
   )
     return 'api';
+  // Bun environment variables (BUN_* and runtime-config env keys)
+  if (name.startsWith('BUN_') || /^[A-Z][A-Z0-9_]*$/.test(name)) return 'env-var';
+  // CLI flags / options
+  if (name.startsWith('--')) {
+    // Options take a value; flags are boolean-ish. Heuristic: presence of well-known value-taking names.
+    const valueFlags = /^(?:--config|--cwd|--outdir|--target|--sourcemap|--backend|--cpu|--os|--env|--port|--host|--splitting|--format|--jsx|--tsconfig|--mainfields|--conditions|--publicpath|--assetnaming|--entrynaming|--chunknaming|--sourcemap)$/i;
+    return valueFlags.test(name) ? 'cli-option' : 'cli-flag';
+  }
+  // Top-level bun subcommands
+  if (/^bun [a-z][a-z0-9-]*$/.test(name)) return 'cli-command';
+  // package.json reserved keys
+  if (PACKAGE_JSON_KEYS.has(name)) return 'package-json-key';
+  // bunfig.toml / configuration keys
+  if (
+    name.includes('bunfig') ||
+    name === 'globalStore' ||
+    name === 'linker' ||
+    /config|bunfig|toml/i.test(name)
+  )
+    return 'config-key';
+  // Narrative guides
+  if (url.includes('/docs/guides/')) return 'guide';
   return 'concept';
 }
 
@@ -1074,6 +1146,7 @@ async function main(): Promise<void> {
     const commitHash = runtimeCommitHash(bunVersion);
     const entries = await buildCatalog({ bunVersion, versionPinned });
     await writeCatalog(entries, { bunVersion, versionPinned, commitHash });
+    const typeCounts = countBy(entries, e => e.type);
     console.info(
       `✅ catalog ${entries.length} entries → tools/bun-docs-catalog.json` +
         `  bunVersion=${bunVersion}` +
@@ -1081,10 +1154,10 @@ async function main(): Promise<void> {
         `  release=${releaseUrlFor(bunVersion)}` +
         `  blog=${blogUrlFor(bunVersion)}` +
         (commitHash ? `  commit=${commitHash}` : '') +
-        `  (api=${entries.filter(e => e.type === 'api').length}` +
-        ` concept=${entries.filter(e => e.type === 'concept').length}` +
-        ` flag=${entries.filter(e => e.type === 'cli-flag').length}` +
-        ` config=${entries.filter(e => e.type === 'config').length})`
+        `  (${Object.entries(typeCounts)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' ')})`
     );
     return;
   }
@@ -1215,7 +1288,7 @@ async function main(): Promise<void> {
   }
   console.error('usage: bun tools/bun-docs-catalog.ts build|list|get|verify [args]');
   console.error('  build [--version=1.4.0]   # default Bun.version; pins catalog + releaseUrl');
-  console.error('  list --section=runtime|bundler|test|guides --type=api|concept|cli-flag|config');
+  console.error('  list --section=runtime|bundler|test|guides --type=' + DocRefTypeArray.join('|'));
   console.error('       --search=WebView   # name/alias/desc/url/anchor/note/version');
   console.error('       default columns: NAME SEC TYPE STAB SHIP FIX PIN DOC');
   console.error('       --wide / -w        # + CHG UPDATED VER RELEASE BLOG');

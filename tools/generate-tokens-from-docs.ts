@@ -580,7 +580,22 @@ async function main(): Promise<void> {
 /** Map internal token kinds to the shared DocCatalogEntry schema used by bun-docs-catalog.ts. */
 type SupplementEntry = {
   name: string;
-  type: 'api' | 'cli-flag' | 'config' | 'concept';
+  type:
+    | 'api'
+    | 'cli-command'
+    | 'cli-flag'
+    | 'cli-option'
+    | 'config-key'
+    | 'package-json-key'
+    | 'env-var'
+    | 'concept'
+    | 'guide'
+    | 'blog'
+    | 'reference'
+    | 'error'
+    | 'tutorial'
+    | 'spec'
+    | 'other';
   stability: 'stable' | 'experimental' | 'deprecated';
   description?: string;
   verifiedOn?: string;
@@ -630,9 +645,13 @@ function toSupplementEntry(
       type = 'cli-flag';
       break;
     case 'env-var':
+      type = 'env-var';
+      break;
     case 'bunfig-key':
+      type = 'config-key';
+      break;
     case 'package-json-key':
-      type = 'config';
+      type = 'package-json-key';
       break;
     case 'concept':
     default:
