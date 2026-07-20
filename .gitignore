@@ -323,10 +323,29 @@ scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx
 
-# Standalone nested git repos (own remotes)
+# Standalone nested git repos (own remotes) — not monorepo spine
+# (plannotator-upstream/ already listed under "Vendored upstream clones")
 /Proton-workspace/
+/bet-turnin-sheet/
+/bradley-terry/
+/toc-ops/
+/toc-ops-repo/
+/toc-ops-repo-wt-brand-ship/
+/toc-ops-worktrees/
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/
+
 # Compiled single-file executables (bun build --compile)
 tools/bin/bun-doc-refs
+# Bun --compile compare dumps (no extension; pairs from size/perf checks)
+test-binary-*
+**/sports-terminal-before
+**/sports-terminal-after
+# Root-level accidental CLI names (nested product binaries live under ignored trees)
+/cascade-mover
+/mega-liner
+
+# Agent-context bloat (regenerable / local only; reports/ already ignored above)
+docs/*.zip
+.agents/skills/**/node_modules/

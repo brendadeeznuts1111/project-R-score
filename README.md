@@ -13,15 +13,16 @@ bun run packages:list    # Browse all packages with version/registry/triage
 ## Architecture
 
 ```
-packages/        @factorywager/* — 8 internal packages consumed by root workspace
-projects/active/factorywager/    @factorywager/registry — registry platform
-projects/active/kimiremote/        Sports terminal proxy (separate workspace)
-lib/             shared — shared utility code
-projects/
-  active/        Actively developed (analysis, automation, dashboards, enterprise, etc.)
-  experimental/  Prototypes and sandboxes
-  archive/       Frozen, read-only
+packages/                        @factorywager/* — 8 internal packages (root workspace)
+lib/                             Shared harness (brands, security, scan, console-depth)
+projects/active/factorywager/    Registry platform (+ workspace packages)
+projects/active/sports-terminal-os/  Sports Terminal OS (root workspace member)
+projects/active/kimiremote/      Sports proxy — own repo (gitignored here)
+projects/active/enterprise/      Nested products (cascade/bet-ticker own repos, gitignored)
+projects/active/*                Independent apps by category — see projects/README.md
 ```
+
+Triage tiers `experimental/` / `archive/` are documented under `projects/`; only `active/` is populated today. Full map: [`STRUCTURE.md`](STRUCTURE.md). Agent scope (what not to load): [`projects/README.md`](projects/README.md).
 
 ## Key Commands
 
