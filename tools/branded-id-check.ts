@@ -72,10 +72,7 @@ function fieldAliasesForBrand(brandName: string): string[] {
   // SessionId → sessionId, SessionId, session_id
   const base = brandName.endsWith('Id') ? brandName.slice(0, -2) : brandName;
   const camel = base.charAt(0).toLowerCase() + base.slice(1) + 'Id';
-  const snake =
-    base
-      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-      .toLowerCase() + '_id';
+  const snake = base.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase() + '_id';
   return [...new Set([brandName, camel, snake])];
 }
 

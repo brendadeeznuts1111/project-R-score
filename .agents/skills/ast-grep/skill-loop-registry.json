@@ -1,26 +1,46 @@
 {
   "version": 2,
-  "description": "Per-skill loop capabilities — test, bench, network, snapshot, rate phases",
-  "defaultPhases": ["test", "bench", "rate"],
+  "description": "Per-skill loop capabilities \u2014 test, bench, network, snapshot, rate phases",
+  "defaultPhases": [
+    "test",
+    "bench",
+    "rate"
+  ],
   "presets": {
     "quick": {
       "description": "Matrix doctor+rate across all registry skills",
       "matrix": true,
-      "phases": ["doctor", "rate"],
+      "phases": [
+        "doctor",
+        "rate"
+      ],
       "parallel": true
     },
     "standard": {
       "description": "ast-grep test+bench+rate (skip snapshot preflight)",
       "skill": "ast-grep",
-      "phases": ["test", "bench", "rate"],
+      "phases": [
+        "test",
+        "bench",
+        "rate"
+      ],
       "skipPreflight": true
     },
     "full": {
       "description": "Matrix quick scan + ast-grep deep loop + baseline capture",
       "matrix": true,
-      "matrixPhases": ["doctor", "rate"],
+      "matrixPhases": [
+        "doctor",
+        "rate"
+      ],
       "skill": "ast-grep",
-      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
+      "phases": [
+        "doctor",
+        "test",
+        "bench",
+        "snapshot",
+        "rate"
+      ],
       "skipPreflight": true,
       "baselineWrite": true,
       "parallel": true
@@ -28,18 +48,28 @@
     "ci": {
       "description": "ast-grep CI gate with snapshot preflight",
       "skill": "ast-grep",
-      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
+      "phases": [
+        "doctor",
+        "test",
+        "bench",
+        "snapshot",
+        "rate"
+      ],
       "failOnRating": 70,
       "skipPreflight": false
     },
     "precommit": {
       "description": "Husky-aligned gates: doctor + precommit + rate across registry",
       "matrix": true,
-      "matrixPhases": ["doctor", "precommit", "rate"],
+      "matrixPhases": [
+        "doctor",
+        "precommit",
+        "rate"
+      ],
       "parallel": true
     },
     "close-loop": {
-      "description": "Closed loop: ground-truth → bench-snapshot ×3 → baseline diff/write",
+      "description": "Closed loop: ground-truth \u2192 bench-snapshot \u00d73 \u2192 baseline diff/write",
       "skill": "ast-grep",
       "closeLoop": {
         "domain": "sports-terminal-os",
@@ -53,7 +83,7 @@
       "failOnRating": 70
     },
     "snapshot-bench": {
-      "description": "bench-snapshot ×3: validateSnapshotFull + live network + ground-truth gate",
+      "description": "bench-snapshot \u00d73: validateSnapshotFull + live network + ground-truth gate",
       "skill": "ast-grep",
       "benchSnapshot": {
         "domain": "sports-terminal-os",
@@ -70,18 +100,37 @@
       "path": ".agents/skills/ast-grep",
       "zone": "agents",
       "phases": {
-        "test": { "enabled": true, "profile": "ci" },
-        "bench": { "enabled": true, "profile": "unit", "iterations": 3, "targetMs": 8000 },
+        "test": {
+          "enabled": true,
+          "profile": "ci"
+        },
+        "bench": {
+          "enabled": true,
+          "profile": "unit",
+          "iterations": 3,
+          "targetMs": 8000
+        },
         "network": {
           "enabled": true,
           "profile": "supply-chain-network-dist",
           "scanPath": "projects/active/sports-terminal-os/dist/frontend",
           "domain": "sports-terminal-os"
         },
-        "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
-        "rate": { "enabled": true, "minRating": 70 },
-        "doctor": { "enabled": true },
-        "precommit": { "enabled": true, "script": "precommit" }
+        "snapshot": {
+          "enabled": true,
+          "domain": "sports-terminal-os"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 70
+        },
+        "doctor": {
+          "enabled": true
+        },
+        "precommit": {
+          "enabled": true,
+          "script": "precommit"
+        }
       }
     },
     "sports-terminal-os": {
@@ -89,99 +138,192 @@
       "zone": "agents",
       "workspace": "projects/active/sports-terminal-os",
       "phases": {
-        "test": { "enabled": false },
+        "test": {
+          "enabled": false
+        },
         "network": {
           "enabled": true,
           "profile": "supply-chain-network-dist",
           "scanPath": "projects/active/sports-terminal-os/dist/frontend",
           "domain": "sports-terminal-os"
         },
-        "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
-        "rate": { "enabled": true, "minRating": 60 },
-        "doctor": { "enabled": true },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "snapshot": {
+          "enabled": true,
+          "domain": "sports-terminal-os"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 60
+        },
+        "doctor": {
+          "enabled": true
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "partner-profile-os": {
       "path": ".agents/skills/partner-profile-os",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "cascade-mover-v3": {
       "path": ".agents/skills/cascade-mover-v3",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "domain-orchestrator": {
       "path": ".agents/skills/domain-orchestrator",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "domain-diagnostic-flow": {
       "path": ".agents/skills/domain-diagnostic-flow",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "self-healing-domain": {
       "path": ".agents/skills/self-healing-domain",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "quantum-domain-ops": {
       "path": ".agents/skills/quantum-domain-ops",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "bun-v139-playground": {
       "path": ".agents/skills/bun-v139-playground",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
     },
     "source-command-commit": {
       "path": ".agents/skills/source-command-commit",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "run bun run precommit:ast-grep from repo root before commit" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "run bun run precommit:ast-grep from repo root before commit"
+        }
       }
     },
     "project-r-skill-maintenance": {
       "path": ".agents/skills/project-r-skill-maintenance",
       "zone": "agents",
       "phases": {
-        "doctor": { "enabled": true },
-        "rate": { "enabled": true, "minRating": 50 },
-        "precommit": { "enabled": false, "note": "delegates to ast-grep staged gate" }
+        "doctor": {
+          "enabled": true
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
       }
+    },
+    "branded-ids": {
+      "path": ".agents/skills/branded-ids",
+      "phases": [
+        "doctor",
+        "rate"
+      ],
+      "description": "Branded ID catalog and boundary constructors"
     }
   }
 }

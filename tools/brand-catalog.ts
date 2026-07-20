@@ -71,10 +71,14 @@ function printBrand(m: Manifest, name: string, asJson: boolean): void {
   }
   console.info(`\n🏷️  ${b.name}  [${b.domain}]\n`);
   console.info(`  ${b.description}`);
-  console.info(`  tiers: as${b.name.replace(/Id$/, '')}Id · try* · parse*  (${b.tiers.join(', ')})`);
+  console.info(
+    `  tiers: as${b.name.replace(/Id$/, '')}Id · try* · parse*  (${b.tiers.join(', ')})`
+  );
   console.info(`  mint authority: ${b.mint.join(', ')}`);
   console.info(`  constructors: as${b.name} / try${b.name} / parse${b.name}`);
-  console.info(`  module: lib/types/branded/${b.domain === 'documents' ? 'documents' : b.domain}.ts\n`);
+  console.info(
+    `  module: lib/types/branded/${b.domain === 'documents' ? 'documents' : b.domain}.ts\n`
+  );
 }
 
 function printIndex(m: Manifest, asJson: boolean): void {

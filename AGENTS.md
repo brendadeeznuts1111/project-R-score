@@ -60,12 +60,14 @@ Mint authority is documented per brand in the manifest (`system-internal` · `us
 
 ```bash
 bun tools/brand-catalog.ts                       # JIT brand discovery (domain|BrandName)
-bun tools/branded-id-check.ts --smart --strict   # actionable unbranded IDs (manifest-driven)
+bun run check:brands                             # actionable unbranded IDs (manifest-driven)
+bun run check:brands:types                       # tsc proof: SessionId ≠ UserId
+bun run check:brands:all                         # manifest + smart + types
 bun tools/brand-manifest.ts                      # regenerate institutional record
 bun tools/brand-manifest.ts --check              # fail if manifest stale (pre-commit)
 ```
 
-Skill: `.agents/skills/branded-ids/`
+Skill: `.agents/skills/branded-ids/` · Type proof: `tests/branded-types.test-d.ts`
 
 - Pre-commit: `--staged --strict` on added lines + optional smart baseline
 - Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`

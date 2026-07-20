@@ -40,8 +40,11 @@ Missing is **not** a brand. Do not write `'' as AccountId`. Use `tryAccountId` o
 ## Operable commands
 
 ```bash
+bun tools/brand-catalog.ts [domain|BrandName]  # JIT discovery
 bun tools/branded-id-check.ts --smart          # cluster inventory
-bun tools/branded-id-check.ts --smart --strict # CI gate
+bun run check:brands                           # smart --strict
+bun run check:brands:types                     # nominal type proof (tsc)
+bun run check:brands:all                       # manifest + smart + types
 bun tools/brand-manifest.ts                    # regenerate manifest
 bun tools/brand-manifest.ts --check            # fail if stale
 ```

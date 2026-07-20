@@ -2,7 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2",
   "packageManager": "bun@1.3.14",
-  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -2010,7 +2010,9 @@
     "validate:integration": "bun run test:dashboard:endpoints",
     "validate:smoke": "bun run test:dashboard:mini",
     "docs:orchestration:graph": "bun run docs/orchestration-graph.ts flow",
-    "docs:domain:graph": "bun run docs/domain-renderer.ts full"
+    "docs:domain:graph": "bun run docs/domain-renderer.ts full",
+    "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
+    "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types"
   },
   "dependencies": {
     "@factorywager/ab-testing": "workspace:*",

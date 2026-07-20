@@ -142,6 +142,18 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Type-level proof: brands are nominally distinct (tsc --noEmit on test-d file).
+  console.info('🏷️  Branded IDs (type-level)...');
+  const brandTypes = Bun.spawn(['bun', 'run', 'check:brands:types'], {
+    cwd: repoRoot,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await brandTypes.exited) !== 0) {
+    console.error('❌ Branded type assertions failed — see tests/branded-types.test-d.ts');
+    process.exit(1);
+  }
+
   console.info('✅ Harness pre-commit checks passed');
   void HARNESS_PATHS;
   void HARNESS_FORMAT_GLOBS;
