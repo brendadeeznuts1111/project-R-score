@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 /**
  * bun-docs-catalog.ts — structured Bun doc catalog entries.
@@ -9,6 +10,8 @@
  *   name, type (api | cli-flag | config | concept),
  *   description?, stability (stable | experimental | deprecated),
  *   releasedIn? (Bun version when the feature shipped),
+ *   fixedIn? / changedIn? (from curated changelog overlay),
+ *   changeNote? / changeCommit? / commitUrl? (overlay),
  *   lastUpdated? (ISO date docs/index last refreshed for this entry),
  *   verifiedOn? (catalog pin Bun version at build),
  *   releaseUrl? (GitHub release for releasedIn or verifiedOn),
@@ -20,6 +23,7 @@
  * (+ commitHash when built against the runtime binary).
  * Bun docs are not versioned on bun.com (/docs/vX.Y.Z/ does not exist);
  * the pin is Bun.version (or --version=…) + GitHub release + blog post.
+ * Token upgrade notes come from tools/bun-docs-changelog.ts (curated, not scraped).
  *
  * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0]
  * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
@@ -34,11 +38,29 @@
  */
 import { resolve } from 'node:path';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
+import { changelogIndex } from './bun-docs-changelog.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
 const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
 const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
+
+/** OSC 8 terminal hyperlink. In terminals without support the visible text is still shown. */
+function terminalLink(url: string, text: string): string {
+  return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
+}
+
+/** Display width of a string, ignoring ANSI / OSC escape sequences. */
+function visibleWidth(text: string): number {
+  // @see https://bun.com/docs/runtime/utils#bun-stringwidth
+  return Bun.stringWidth(text, { countAnsiEscapeCodes: false });
+}
+
+/** Right-pad to a visible width (like String.prototype.padEnd but ANSI-aware). */
+function displayPadEnd(text: string, width: number): string {
+  const w = visibleWidth(text);
+  return w < width ? `${text}${' '.repeat(width - w)}` : text;
+}
 
 export type DocRefType = 'api' | 'cli-flag' | 'config' | 'concept';
 export type DocStability = 'stable' | 'experimental' | 'deprecated';
@@ -54,6 +76,16 @@ export type DocCatalogEntry = {
    * data (semver string, e.g. "1.3.14"). Omitted when unknown.
    */
   releasedIn?: string;
+  /** Latest curated fix version for this token (changelog overlay). */
+  fixedIn?: string;
+  /** Latest curated change/deprecate version (changelog overlay). */
+  changedIn?: string;
+  /** Best human note from the changelog overlay (fix > change > feature). */
+  changeNote?: string;
+  /** Optional git SHA for the overlaid change (when known). */
+  changeCommit?: string;
+  /** https://github.com/oven-sh/bun/commit/{changeCommit} */
+  commitUrl?: string;
   /**
    * When documentation for this entry was last refreshed in our index
    * (ISO-8601 from bun-docs-index.json `generated`).
@@ -510,6 +542,25 @@ export async function buildCatalog(opts?: {
     // supplement is optional until generator has been run
   }
 
+  // 5) Inject changelog-only tokens missing from docs merge (e.g. process.env fixes)
+  const clIndex = changelogIndex();
+  for (const [key, cl] of clIndex) {
+    if (cl.events.length === 0) continue;
+    if (map.has(key)) continue;
+    const primary = cl.events[0]!;
+    const page = 'https://bun.com/docs/runtime';
+    mergeEntry(map, {
+      name: primary.name,
+      type: inferType(primary.name, page),
+      description: cl.changeNote ?? primary.note,
+      page,
+      section: 'runtime',
+      stability: 'stable',
+      lastUpdated: docsLastUpdated,
+      verifiedOn,
+    });
+  }
+
   // Final sort: section then name
   const sectionOrder: DocSection[] = [
     'runtime',
@@ -526,6 +577,11 @@ export async function buildCatalog(opts?: {
     return a.name.localeCompare(b.name);
   });
 
+  // 6) Curated changelog overlay (token → releasedIn/fixedIn/commit/note)
+  for (const e of entries) {
+    applyChangelogOverlay(e, clIndex);
+  }
+
   // Re-pick canonical + put canonical first in allPages; pin version fields
   for (const e of entries) {
     e.canonicalPage = pickCanonicalPage(e.allPages, e.name);
@@ -533,13 +589,41 @@ export async function buildCatalog(opts?: {
     e.lastUpdated ??= docsLastUpdated;
     e.verifiedOn = verifiedOn;
     e.docsUrl = docsUrlFor(e.canonicalPage, e.anchor);
-    // Prefer release notes for the feature ship version; else catalog pin
-    const forRelease = e.releasedIn ?? verifiedOn;
+    // Prefer release notes for feature ship version; else latest fix; else catalog pin
+    const forRelease = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? verifiedOn;
     e.releaseUrl = releaseUrlFor(forRelease);
-    e.blogUrl = blogUrlFor(forRelease);
+    // Blog: overlay may add #anchor for a specific notes section
+    if (!e.blogUrl || !e.blogUrl.includes('#')) {
+      e.blogUrl = blogUrlFor(forRelease);
+    }
   }
 
   return entries;
+}
+
+/** Apply curated changelog stamps onto a catalog entry (mutates). */
+export function applyChangelogOverlay(e: DocCatalogEntry, index = changelogIndex()): void {
+  const cl =
+    index.get(normalizeName(e.name)) ??
+    e.aliases?.map(a => index.get(normalizeName(a))).find(Boolean);
+  if (!cl || cl.events.length === 0) return;
+
+  if (cl.releasedIn) {
+    if (!e.releasedIn || compareSemver(cl.releasedIn, e.releasedIn) < 0) {
+      e.releasedIn = cl.releasedIn;
+    }
+  }
+  if (cl.fixedIn) e.fixedIn = cl.fixedIn;
+  if (cl.changedIn) e.changedIn = cl.changedIn;
+  if (cl.changeNote) e.changeNote = cl.changeNote;
+  if (cl.changeCommit) {
+    e.changeCommit = cl.changeCommit;
+    e.commitUrl = cl.commitUrl;
+  }
+  if (cl.blogVersion) {
+    const base = blogUrlFor(cl.blogVersion);
+    e.blogUrl = cl.blogAnchor ? `${base}#${cl.blogAnchor}` : base;
+  }
 }
 
 export async function writeCatalog(
@@ -558,11 +642,12 @@ export async function writeCatalog(
     ...(commitHash ? { commitHash } : {}),
     docsRoot: 'https://bun.com/docs',
     versionPinned: opts?.versionPinned ?? false,
-    note: 'docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes (GitHub + bun.com/blog)',
+    note: 'docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes; fixedIn/changeNote from tools/bun-docs-changelog.ts',
     source: {
       index: 'tools/bun-docs-index.json',
       canonicalRefs: 'tools/bun-doc-refs.ts#CANONICAL_REFS',
       curated: 'tools/bun-docs-curated.ts',
+      changelog: 'tools/bun-docs-changelog.ts',
       tokenSupplement: 'tools/bun-docs-token-supplement.json',
     },
     schema: {
@@ -571,6 +656,11 @@ export async function writeCatalog(
       description: 'string?',
       stability: 'stable | experimental | deprecated',
       releasedIn: 'string? — Bun semver when feature shipped (curated)',
+      fixedIn: 'string? — latest curated fix version',
+      changedIn: 'string? — latest curated change/deprecate version',
+      changeNote: 'string? — overlay note (fix > change > feature)',
+      changeCommit: 'string? — optional git SHA from overlay',
+      commitUrl: 'string? — github.com/oven-sh/bun/commit/…',
       lastUpdated: 'string? — ISO when docs index last refreshed',
       verifiedOn: 'string? — catalog pin Bun version',
       releaseUrl: 'string? — GitHub release for releasedIn or verifiedOn',
@@ -585,6 +675,8 @@ export async function writeCatalog(
     coveredSections: COVERED_SECTIONS,
     count: entries.length,
     withReleasedIn: entries.filter(e => e.releasedIn).length,
+    withFixedIn: entries.filter(e => e.fixedIn).length,
+    withChangeNote: entries.filter(e => e.changeNote).length,
     byType: countBy(entries, e => e.type),
     bySection: countBy(entries, e => e.section),
     byStability: countBy(entries, e => e.stability),
@@ -664,8 +756,15 @@ function printEntry(e: DocCatalogEntry, verbose = true): void {
   console.info(`  type: ${e.type}  stability: ${e.stability}  section: ${e.section}`);
   if (e.description) console.info(`  ${e.description}`);
   console.info(
-    `  releasedIn: ${e.releasedIn ?? 'unknown'}  lastUpdated: ${e.lastUpdated ?? 'unknown'}  verifiedOn: ${e.verifiedOn ?? 'unknown'}`
+    `  releasedIn: ${e.releasedIn ?? 'unknown'}` +
+      (e.fixedIn ? `  fixedIn: ${e.fixedIn}` : '') +
+      (e.changedIn ? `  changedIn: ${e.changedIn}` : '') +
+      `  lastUpdated: ${e.lastUpdated ?? 'unknown'}  verifiedOn: ${e.verifiedOn ?? 'unknown'}`
   );
+  if (e.changeNote) console.info(`  changeNote: ${e.changeNote}`);
+  if (e.changeCommit) {
+    console.info(`  changeCommit: ${e.changeCommit}${e.commitUrl ? `  (${e.commitUrl})` : ''}`);
+  }
   console.info(`  docsUrl: ${url}`);
   if (e.releaseUrl) console.info(`  releaseUrl: ${e.releaseUrl}`);
   if (e.blogUrl) console.info(`  blogUrl: ${e.blogUrl}`);
@@ -763,6 +862,7 @@ async function main(): Promise<void> {
     const verbose = rest.includes('--verbose') || rest.includes('-v');
     let showVersion = false;
     let showRelease = false;
+    let links = false;
     for (let i = 0; i < rest.length; i++) {
       const a = rest[i]!;
       if (a.startsWith('--section=')) section = a.slice(10) as DocSection;
@@ -778,6 +878,8 @@ async function main(): Promise<void> {
         showVersion = true;
       } else if (a === '--release') {
         showRelease = true;
+      } else if (a === '--links') {
+        links = true;
       }
     }
     if (section) entries = entries.filter(e => e.section === section);
@@ -832,12 +934,13 @@ async function main(): Promise<void> {
     );
     for (const e of entries) {
       const url = e.docsUrl ?? (e.anchor ? `${e.canonicalPage}#${e.anchor}` : e.canonicalPage);
+      const displayUrl = links ? terminalLink(url, url) : url;
       const rel = (e.releasedIn ?? '—').padEnd(8);
       const upd = (e.lastUpdated?.slice(0, 10) ?? '—').padEnd(12);
       const ver = showVersion ? `${(e.verifiedOn ?? '—').padEnd(10)} ` : '';
       const release = showRelease ? `${(e.releaseUrl ?? '—').padEnd(55)} ` : '';
       console.info(
-        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${ver}${release}${url}`
+        `${e.name.padEnd(32)} ${e.type.padEnd(10)} ${e.stability.padEnd(12)} ${rel} ${upd} ${ver}${release}${displayPadEnd(displayUrl, 48)}`
       );
     }
     console.info(`\n${entries.length} entries`);

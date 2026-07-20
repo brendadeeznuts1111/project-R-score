@@ -59,6 +59,7 @@ Does **not** invent new sidebar sections or rewrite CANONICAL_REFS.
 | `tools/bun-docs-index.json` | `generated`, `source`, `bunVersion`, `upstreamBunVersion`, entries |
 | `tools/bun-docs-catalog.json` | `bunVersion`, `releaseUrl`, `blogUrl`, optional `commitHash`, entries with `docsUrl` |
 | `tools/bun-docs-token-supplement.json` | Same pin fields + `entries[]` (generator output) |
+| `tools/bun-docs-changelog.ts` | Curated token overlay: feature/fix/change → `releasedIn` / `fixedIn` / `changeNote` / optional SHA |
 
 Version pin links (docs pages stay unversioned on bun.com):
 
@@ -66,9 +67,12 @@ Version pin links (docs pages stay unversioned on bun.com):
 |-------|---------|
 | `bunVersion` | `1.3.12` (from `Bun.version` or `--version=`) |
 | `releaseUrl` | `https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12` |
-| `blogUrl` | `https://bun.com/blog/bun-v1.3.12` |
+| `blogUrl` | `https://bun.com/blog/bun-v1.3.12` (entries may add `#bugfixes`) |
 | `commitHash` | short `Bun.revision` when pin matches the running binary |
 | `docsUrl` | `https://bun.com/docs/runtime/...` (latest, not `/docs/v1.3.12/`) |
+| `fixedIn` / `changeNote` | From changelog overlay, e.g. `process.env` → `1.3.12` + note |
+
+**Changelog overlay (not a scraper):** add a row to `CHANGELOG_EVENTS` in `tools/bun-docs-changelog.ts` when a token has upgrade impact. Prefer a real git SHA when known; leave `commit` blank rather than inventing one. Curated `minVersion` values auto-seed feature events.
 
 `status` marks integrity **STALE** if last JSONL run is older than **7 days** (process/cron death signal).
 

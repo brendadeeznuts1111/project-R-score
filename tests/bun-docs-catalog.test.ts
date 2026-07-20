@@ -1,5 +1,6 @@
 /**
  * Catalog helpers: dedup scoring + canonical page preference + version pin URLs.
+ * Changelog overlay: token → releasedIn / fixedIn / changeNote.
  */
 import { describe, expect, test } from 'bun:test';
 import {
@@ -16,7 +17,15 @@ import {
   docsUrlFor,
   parseVersionFlag,
   normalizeBunVersion,
+  applyChangelogOverlay,
+  type DocCatalogEntry,
 } from '../tools/bun-docs-catalog.ts';
+import {
+  changelogFor,
+  changelogKey,
+  commitUrlFor,
+  allChangelogEvents,
+} from '../tools/bun-docs-changelog.ts';
 
 describe('bun-docs-catalog helpers', () => {
   test('normalizeName collapses bun. prefix case', () => {
@@ -108,5 +117,56 @@ describe('bun-docs-catalog helpers', () => {
     expect(parseVersionFlag(['build', '--version', 'v1.4.0'])).toBe('1.4.0');
     expect(parseVersionFlag(['build', '--version=bun-v1.3.12'])).toBe('1.3.12');
     expect(parseVersionFlag(['list'])).toBe(Bun.version);
+  });
+});
+
+describe('bun-docs-changelog overlay', () => {
+  test('changelogKey normalizes Bun. prefix case', () => {
+    expect(changelogKey('Bun.WebView')).toBe(changelogKey('bun.webview'));
+  });
+
+  test('changelogFor process.env surfaces fixedIn + blog anchor', () => {
+    const cl = changelogFor('process.env');
+    expect(cl.fixedIn).toBe('1.3.12');
+    expect(cl.changeNote).toMatch(/process\.env/i);
+    expect(cl.blogVersion).toBe('1.3.12');
+    expect(cl.blogAnchor).toBe('bugfixes');
+  });
+
+  test('changelogFor Bun.WebView has releasedIn 1.4.0', () => {
+    const cl = changelogFor('Bun.WebView');
+    expect(cl.releasedIn).toBe('1.4.0');
+    expect(cl.events.some(e => e.kind === 'feature')).toBe(true);
+  });
+
+  test('alias --no-orphans maps to noOrphans feature', () => {
+    const cl = changelogFor('--no-orphans');
+    expect(cl.releasedIn).toBe('1.3.14');
+  });
+
+  test('commitUrlFor builds github commit links', () => {
+    expect(commitUrlFor('a227ad991b62')).toBe(
+      'https://github.com/oven-sh/bun/commit/a227ad991b62'
+    );
+  });
+
+  test('allChangelogEvents includes curated minVersion features', () => {
+    const names = allChangelogEvents().map(e => changelogKey(e.name));
+    expect(names).toContain(changelogKey('Bun.cron'));
+  });
+
+  test('applyChangelogOverlay stamps entry fields', () => {
+    const e: DocCatalogEntry = {
+      name: 'process.env',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime',
+      allPages: ['https://bun.com/docs/runtime'],
+      section: 'runtime',
+    };
+    applyChangelogOverlay(e);
+    expect(e.fixedIn).toBe('1.3.12');
+    expect(e.changeNote).toBeTruthy();
+    expect(e.blogUrl).toBe('https://bun.com/blog/bun-v1.3.12#bugfixes');
   });
 });

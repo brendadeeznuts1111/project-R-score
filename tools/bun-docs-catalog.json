@@ -1,16 +1,17 @@
 {
-  "generated": "2026-07-20T15:26:13.033Z",
+  "generated": "2026-07-20T15:30:31.561Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
   "blogUrl": "https://bun.com/blog/bun-v1.4.0",
   "commitHash": "a227ad991b62",
   "docsRoot": "https://bun.com/docs",
   "versionPinned": false,
-  "note": "docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes (GitHub + bun.com/blog)",
+  "note": "docsUrl = unversioned latest docs; releaseUrl/blogUrl pin versioned release notes; fixedIn/changeNote from tools/bun-docs-changelog.ts",
   "source": {
     "index": "tools/bun-docs-index.json",
     "canonicalRefs": "tools/bun-doc-refs.ts#CANONICAL_REFS",
     "curated": "tools/bun-docs-curated.ts",
+    "changelog": "tools/bun-docs-changelog.ts",
     "tokenSupplement": "tools/bun-docs-token-supplement.json"
   },
   "schema": {
@@ -19,6 +20,11 @@
     "description": "string?",
     "stability": "stable | experimental | deprecated",
     "releasedIn": "string? — Bun semver when feature shipped (curated)",
+    "fixedIn": "string? — latest curated fix version",
+    "changedIn": "string? — latest curated change/deprecate version",
+    "changeNote": "string? — overlay note (fix > change > feature)",
+    "changeCommit": "string? — optional git SHA from overlay",
+    "commitUrl": "string? — github.com/oven-sh/bun/commit/…",
     "lastUpdated": "string? — ISO when docs index last refreshed",
     "verifiedOn": "string? — catalog pin Bun version",
     "releaseUrl": "string? — GitHub release for releasedIn or verifiedOn",
@@ -36,16 +42,18 @@
     "test",
     "guides"
   ],
-  "count": 730,
+  "count": 731,
   "withReleasedIn": 12,
+  "withFixedIn": 1,
+  "withChangeNote": 16,
   "byType": {
     "cli-flag": 199,
-    "concept": 317,
+    "concept": 318,
     "config": 84,
     "api": 130
   },
   "bySection": {
-    "runtime": 259,
+    "runtime": 260,
     "bundler": 104,
     "test": 46,
     "guides": 193,
@@ -54,7 +62,7 @@
     "other": 3
   },
   "byStability": {
-    "stable": 726,
+    "stable": 727,
     "experimental": 4
   },
   "entries": [
@@ -930,9 +938,11 @@
         "https://bun.com/docs/runtime/nodejs-compat"
       ],
       "section": "runtime",
+      "changedIn": "1.3.14",
+      "changeNote": "SQLite engine bumped (v3.53.0 in 1.3.14 notes)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/sqlite",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "bun:test",
@@ -1147,9 +1157,10 @@
         "https://bun.com/docs/runtime/cron"
       ],
       "section": "runtime",
+      "changeNote": "In-process cron scheduling (UTC, no-overlap)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Bun.cron.parse",
@@ -1503,9 +1514,10 @@
         "https://bun.com/docs/runtime/s3"
       ],
       "section": "runtime",
+      "changeNote": "Built-in image decode/resize/encode pipeline",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/image",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Bun.inflateSync",
@@ -1697,9 +1709,10 @@
         "https://bun.com/docs/runtime/markdown"
       ],
       "section": "runtime",
+      "changeNote": "Native Markdown rendering (html/ansi/render/react)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.0",
       "docsUrl": "https://bun.com/docs/runtime/markdown",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.0"
     },
     {
       "name": "Bun.markdown.ansi",
@@ -1714,9 +1727,10 @@
         "https://bun.com/docs/runtime/markdown"
       ],
       "section": "runtime",
+      "changeNote": "Markdown → ANSI terminal rendering",
+      "blogUrl": "https://bun.com/blog/bun-v1.4.0",
       "docsUrl": "https://bun.com/docs/runtime/markdown",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
       "name": "Bun.markdown.html",
@@ -2146,9 +2160,10 @@
         "https://bun.com/docs/runtime/secrets"
       ],
       "section": "runtime",
+      "changeNote": "OS keychain-backed secrets API",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.0",
       "docsUrl": "https://bun.com/docs/runtime/secrets#comparison-with-environment-variables",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.0"
     },
     {
       "name": "Bun.secrets.delete",
@@ -2484,9 +2499,11 @@
         "https://bun.com/docs/runtime/child-process"
       ],
       "section": "runtime",
+      "changedIn": "1.3.14",
+      "changeNote": "Windows ConPTY support for spawned PTYs",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/terminal#terminal-pty-support",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Bun.TOML",
@@ -2568,9 +2585,10 @@
         "https://bun.com/docs/runtime/networking/udp"
       ],
       "section": "runtime",
+      "changeNote": "UDP sockets with ICMP/truncation handling",
+      "blogUrl": "https://bun.com/blog/bun-v1.0.0",
       "docsUrl": "https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.0.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.0"
     },
     {
       "name": "Bun.version",
@@ -2601,9 +2619,10 @@
         "https://bun.com/docs/runtime/webview"
       ],
       "section": "runtime",
+      "changeNote": "Headless browser automation via native WebView",
+      "blogUrl": "https://bun.com/blog/bun-v1.4.0#webview",
       "docsUrl": "https://bun.com/docs/runtime/webview",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
       "name": "Bun.WebView.closeAll",
@@ -3072,9 +3091,10 @@
       "aliases": [
         "fetch"
       ],
+      "changeNote": "HTTP/2 and HTTP/3 options on fetch() client",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "FFI",
@@ -3170,9 +3190,11 @@
         "https://bun.com/docs/runtime/file-io"
       ],
       "section": "runtime",
+      "changedIn": "1.3.14",
+      "changeNote": "File watcher rewritten backend",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14#bugfixes",
       "docsUrl": "https://bun.com/docs/runtime/file-io",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
-      "blogUrl": "https://bun.com/blog/bun-v1.4.0"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Glob",
@@ -3248,12 +3270,14 @@
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/runtime/http/server",
       "allPages": [
-        "https://bun.com/docs/runtime/http/server"
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime"
       ],
       "section": "runtime",
+      "changeNote": "Experimental HTTP/3 (QUIC) in Bun.serve",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/http/server",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Image",
@@ -3586,19 +3610,21 @@
     {
       "name": "noOrphans",
       "type": "concept",
-      "description": "Exit when parent dies (--no-orphans)",
+      "description": "Exit when parent dies (--no-orphans / bunfig)",
       "stability": "stable",
       "releasedIn": "1.3.14",
       "lastUpdated": "2026-07-20T14:44:52.102Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/runtime/bunfig",
       "allPages": [
-        "https://bun.com/docs/runtime/bunfig"
+        "https://bun.com/docs/runtime/bunfig",
+        "https://bun.com/docs/runtime"
       ],
       "section": "runtime",
+      "changeNote": "Exit when parent dies (--no-orphans / bunfig)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "Plugins",
@@ -3635,6 +3661,24 @@
       "blogUrl": "https://bun.com/blog/bun-v1.4.0"
     },
     {
+      "name": "process.env",
+      "type": "concept",
+      "description": "Fixed process.env empty when cwd is unreadable",
+      "stability": "stable",
+      "lastUpdated": "2026-07-20T14:44:52.102Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/docs/runtime",
+      "allPages": [
+        "https://bun.com/docs/runtime"
+      ],
+      "section": "runtime",
+      "fixedIn": "1.3.12",
+      "changeNote": "Fixed process.env empty when cwd is unreadable",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.12#bugfixes",
+      "docsUrl": "https://bun.com/docs/runtime",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12"
+    },
+    {
       "name": "process.execve",
       "type": "concept",
       "description": "Replace process image in-place",
@@ -3647,9 +3691,10 @@
         "https://bun.com/docs/runtime/node-api"
       ],
       "section": "runtime",
+      "changeNote": "Replace process image in-place (posix execve)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/runtime/node-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "process.stdout.columns",
@@ -11532,9 +11577,10 @@
         "https://bun.com/docs/pm/global-store"
       ],
       "section": "pm",
+      "changeNote": "Shared global virtual store for isolated installs",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "docsUrl": "https://bun.com/docs/pm/global-store",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.14"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {
       "name": "install.cache.dir",
