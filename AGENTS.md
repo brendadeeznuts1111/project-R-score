@@ -4,7 +4,19 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → [cascade-mover-v3](https://github.com/brendadeeznuts1111/cascade-mover-v3) (separate project — do not use as default push target).
 
-**Full agent guide:** [`docs/AGENTS.md`](docs/AGENTS.md)
+## Canonical docs
+
+| Role | Doc |
+|------|-----|
+| This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
+| Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) |
+| Human hub | [`README.md`](README.md) |
+| Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
+| Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
+| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
+| Projects triage | [`projects/README.md`](projects/README.md) |
+| Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
 
 ## Communication precision
 
@@ -14,7 +26,11 @@ Do not append an unrequested caveat, counterargument, or moralizing endcap to a 
 
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
 - **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
-- **Task routing:** brand work → `lib/types/branded/README.md` + `lib/types/branded.ts` facade + `bun run check:brands` · Bun API use → `bun tools/bun-doc-refs.ts suggest "<api>"` · coding standards → `.custom-instructions.md` · testing → nearest `*.test.ts` / `tests/*.test.ts` exemplar.
+- **Task routing:**
+  - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands`
+  - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
+  - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
+  - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts))
 
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 
@@ -41,12 +57,12 @@ Rules:
 
 - When you use a `Bun.*` API in code, add `// @see <canonical-url>` from the `url`/`suggest` output to the file header (or run `bun tools/bun-doc-refs.ts annotate --write <files>` to do it automatically).
 - The pre-commit harness **blocks commits** whose staged files use Bun APIs without canonical refs — run the annotator and re-stage.
-- Only trust options verified against the runtime (see `lib/console-depth.ts` header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
-- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) index → `tools/bun-docs-index.json` (317 pages, verified anchors) → `tools/bun-doc-refs.ts` map. Regenerate + verify: `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`.
+- Only trust options verified against the runtime (see [`lib/console-depth.ts`](lib/console-depth.ts) header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
+- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) index → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) (317 pages, verified anchors) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) map. Regenerate + verify: `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`.
 
 ## Branded ID types (harness)
 
-**Stable import:** `lib/types/branded.ts` · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** `lib/types/brand-manifest.json` · **Agent map:** `lib/types/branded/README.md`
+**Stable import:** [`lib/types/branded.ts`](lib/types/branded.ts) · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json) · **Agent map:** [`lib/types/branded/README.md`](lib/types/branded/README.md)
 
 Each domain module repeats the same pattern: `type` + `as*` + `try*` + `parse*` + `*_BRAND_SPECS`. Agents learn the invariant from structure.
 
@@ -67,12 +83,12 @@ bun tools/brand-manifest.ts                      # regenerate institutional reco
 bun tools/brand-manifest.ts --check              # fail if manifest stale (pre-commit)
 ```
 
-Skill: `.agents/skills/branded-ids/` · Type proof: `tests/branded-types.test-d.ts`
+Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/) · Type proof: [`tests/branded-types.test-d.ts`](tests/branded-types.test-d.ts)
 
 - Pre-commit: `--staged --strict` on added lines + optional smart baseline
 - Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`
-- Credential normalize: `lib/security/r2-credentials.ts` (soft try* merge)
+- Credential normalize: [`lib/security/r2-credentials.ts`](lib/security/r2-credentials.ts) (soft try* merge)
 
 ## Console depth (output verbosity)
 
-Object-inspection depth is controlled project-wide via `lib/console-depth.ts` (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work. Refs: [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils#bun-stringwidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [bun-types (pinned)](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) · correctness suite `tests/console-depth.test.ts` · bench `tools/benchmarks/console-depth-perf.ts`.
+Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work. Refs: [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils#bun-stringwidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [bun-types (pinned)](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) · correctness suite [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · bench [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts).

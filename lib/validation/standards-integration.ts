@@ -1,15 +1,18 @@
 // lib/validation/standards-integration.ts — Automated enforcement of development standards
+// Path SSOT: lib/docs/repo-docs.ts (CANONICAL_REPO_DOCS)
 
 import { read, write } from 'bun';
+
+import { CANONICAL_REPO_DOCS } from '../docs/repo-docs';
 
 // ============================================================================
 // STANDARDS INTEGRATION CORE
 // ============================================================================
 
 export class StandardsIntegration {
-  private readonly standardsPath = '.custom-instructions.md';
-  private readonly quickReferencePath = 'docs/DEVELOPMENT-STANDARDS.md';
-  private readonly implementationPath = 'docs/archives/STANDARDS-IMPLEMENTATION.md';
+  private readonly standardsPath = CANONICAL_REPO_DOCS.standards;
+  private readonly quickReferencePath = CANONICAL_REPO_DOCS.standardsQuick;
+  private readonly implementationPath = CANONICAL_REPO_DOCS.standardsImplementation;
 
   // ============================================================================
   // CODE REVIEW INTEGRATION

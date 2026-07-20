@@ -1,14 +1,41 @@
 /**
- * 🏭 FactoryWager Library Index
+ * FactoryWager Library Index
  *
- * The heart of all projects - centralized constants, types, utilities, theming, documentation, and security
+ * Shared harness: constants, types, utilities, theming, docs, security.
  *
- * 📋 Development Standards: Locked in at `.custom-instructions.md`
- * 📖 Quick Reference: See `docs/DEVELOPMENT-STANDARDS.md`
+ * Canonical monorepo docs (repo-relative):
+ *   - Standards: `.custom-instructions.md` · quick: `docs/DEVELOPMENT-STANDARDS.md`
+ *   - Agents: `AGENTS.md` · full: `docs/AGENTS.md` · install: `docs/UNIFIED.md`
+ *   - Map: `STRUCTURE.md` · hub: `README.md`
+ *   - Paths SSOT: `lib/docs/repo-docs.ts` (`CANONICAL_REPO_DOCS`)
  *
  * @version 5.1
  * @author FactoryWager Team
  */
+
+import {
+  CANONICAL_HARNESS,
+  CANONICAL_REMOTES,
+  CANONICAL_REPO_DOCS,
+  CANONICAL_TOOLS,
+} from './docs/repo-docs';
+import { DOC_PATTERNS, DocumentationUtils } from './docs';
+import {
+  createBunHealthEndpoint,
+  createHealthEndpoint,
+} from './http/health-endpoint';
+import { BunDocumentationIntegration } from './bun-documentation-integration';
+import { PackageManager } from './package/package-manager';
+import {
+  ProfileSessionUploader,
+  resolveUploaderConfig,
+} from './profile';
+import { R2Storage } from './r2/r2-storage-enhanced';
+import { RSSManager } from './rss/rss-manager';
+import { VersionedSecretManager, SecurityUtils } from './security';
+import { FW_COLORS, log, styled } from './theme/colors';
+import { Utils } from './utils';
+import { BunWikiIntegration } from './wiki/bun-wiki-integration';
 
 // Core infrastructure
 export * from './core/core-types';
@@ -18,22 +45,25 @@ export * from './theme/colors';
 
 // Documentation
 export * from './docs';
+export {
+  CANONICAL_REPO_DOCS,
+  CANONICAL_HARNESS,
+  CANONICAL_TOOLS,
+  CANONICAL_DOC_ROLES,
+  CANONICAL_REMOTES,
+} from './docs/repo-docs';
 
-// Security (NEW v5.1) - Note: AuditEntry and VersionMetadata conflicts will be resolved by specific imports
+// Security — AuditEntry and VersionMetadata conflicts: use specific imports when needed
 export { VersionedSecretManager, SecurityUtils } from './security';
 export type { VersionMetadata as SecurityVersionMetadata } from './security';
 export type { AuditEntry as SecurityAuditEntry } from './security';
 
-// Version tracking system
-
 // Constants and configuration
 export * from './constants';
-// export * from './config'; // Commented out - config module has import issues
 export * from './utils';
 
 // Re-export commonly used items
 export { styled, log, FW_COLORS } from './theme/colors';
-// export { FACTORYWAGER_CONFIG, PERFORMANCE_THRESHOLDS } from './config'; // Commented out - config module has import issues
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
 
@@ -50,7 +80,7 @@ export {
   type FeedSubscription,
 } from './rss/rss-manager';
 
-// NEW: Bun Documentation Integration
+// Bun Documentation Integration
 export {
   BunDocumentationIntegration,
   type BunDocumentationIndex,
@@ -60,7 +90,7 @@ export {
   type BunMetricsExample,
 } from './bun-documentation-integration';
 
-// NEW: Wiki Integration
+// Wiki Integration
 export {
   BunWikiIntegration,
   type WikiPage,
@@ -90,17 +120,23 @@ export {
 } from './profile';
 
 /**
- * FactoryWager Library Info
+ * FactoryWager Library Info — paths are repo-relative (see CANONICAL_REPO_DOCS).
  */
 export const LIB_INFO = {
   name: 'FactoryWager',
   version: '5.1',
   description:
-    'The heart of FactoryWager monorepo - centralized infrastructure with temporal security',
+    'Shared FactoryWager monorepo harness — brands, security, docs, scan, console-depth',
   author: 'FactoryWager Team',
   license: 'MIT',
-  developmentStandards: 'https://example.com/development-standards',
-  quickReference: 'https://example.com/quick-reference',
+  remotes: CANONICAL_REMOTES,
+  docs: CANONICAL_REPO_DOCS,
+  harness: CANONICAL_HARNESS,
+  tools: CANONICAL_TOOLS,
+  /** @deprecated use `docs.standards` */
+  developmentStandards: CANONICAL_REPO_DOCS.standards,
+  /** @deprecated use `docs.standardsQuick` */
+  quickReference: CANONICAL_REPO_DOCS.standardsQuick,
 } as const;
 
 /**
@@ -119,6 +155,7 @@ export const FW = {
   docs: {
     patterns: DOC_PATTERNS,
     utils: DocumentationUtils,
+    canonical: CANONICAL_REPO_DOCS,
   },
 
   // Security (v5.1)
@@ -127,32 +164,32 @@ export const FW = {
     utils: SecurityUtils,
   },
 
-  // Package Management (NEW)
+  // Package Management
   package: {
     manager: PackageManager,
   },
 
-  // R2 Storage Enhanced (NEW)
+  // R2 Storage Enhanced
   r2: {
     storage: R2Storage,
   },
 
-  // RSS Management (NEW)
+  // RSS Management
   rss: {
     manager: RSSManager,
   },
 
-  // Bun Documentation Integration (NEW)
+  // Bun Documentation Integration
   bunDocs: {
     integration: BunDocumentationIntegration,
   },
 
-  // Wiki Integration (NEW)
+  // Wiki Integration
   wiki: {
     integration: BunWikiIntegration,
   },
 
-  // HTTP Health Endpoints (NEW)
+  // HTTP Health Endpoints
   http: {
     createHealthEndpoint,
     createBunHealthEndpoint,
@@ -164,9 +201,8 @@ export const FW = {
     resolveConfig: resolveUploaderConfig,
   },
 
-  // Development Standards Reference
-  standards: {
-    complete: '.custom-instructions.md',
-    quick: 'docs/DEVELOPMENT-STANDARDS.md',
-  },
+  // Development standards + harness path map
+  standards: CANONICAL_REPO_DOCS,
+  harness: CANONICAL_HARNESS,
+  tools: CANONICAL_TOOLS,
 } as const;

@@ -1,14 +1,32 @@
 # FactoryWager Enterprise Platform
 
-**Bun-native monorepo** — Core packages live in `packages/` and `lib/`. Large apps (`factorywager`, `kimiremote`) moved to `projects/active/`. Each project in `projects/` is independent with its own workspace.
+**Bun-native monorepo** — shared harness in `lib/` and `packages/`; apps under `projects/active/`. Each project may own its own workspace.
+
+## Canonical docs
+
+| Role | Doc |
+|------|-----|
+| This hub | [`README.md`](README.md) |
+| AI agents | [`AGENTS.md`](AGENTS.md) → [`docs/AGENTS.md`](docs/AGENTS.md) |
+| Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
+| Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · quick: [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
+| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
+| Projects triage | [`projects/README.md`](projects/README.md) |
+| Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
+
+**Remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score). `cascade` → [cascade-mover-v3](https://github.com/brendadeeznuts1111/cascade-mover-v3) (do not default-push there).
 
 ## Quick Start
+
 ```bash
 bun run install:all      # isolated linker + global store (bun.sh/docs/pm/global-store)
 bun run install:verify   # sanity-check cache dir, links/, and no ./~ drift
 bun run dev              # Watch server
 bun run packages:list    # Browse all packages with version/registry/triage
 ```
+
+Install policy detail: [`docs/UNIFIED.md`](docs/UNIFIED.md).
 
 ## Architecture
 
@@ -34,44 +52,41 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run lint` | ESLint on `lib/` |
 | `bun run lint:harness` | Harness ESLint config (lib, scripts, packages, server, config, tools) |
 | `bun run format:core` | Prettier harness format (`format:harness`) |
+| `bun run check:brands:all` | Branded ID gates (manifest + smart + types) |
 | `bun run fix:console-log` | Bulk replace console.log → console.info |
 | `bun run fix:scan-any-types` | Scan for `any` types |
 | `bun run dev` | Start platform server |
 | `bun run deployment:readiness` | Deployment readiness matrix |
 
-See `package.json` scripts for the full list.
+See root `package.json` `scripts` for the full list.
 
 ## Code Quality & Fix Tools
 
-Antipattern remediation tools (use after major refactors):
+Antipattern remediation (after major refactors). Conventions: [`.custom-instructions.md`](.custom-instructions.md).
 
-- `bun run fix:console-log` — Bulk replace `console.log()` with `console.info()` (project convention bans `console.log`)
-- `bun run fix:scan-any-types` — Scan for `: any` and `as any` usages that should be `unknown` or proper types
-- `bun run fix:scan-default-exports` — Find `export default` candidates to convert to named exports
-- `bun run fix:scan-non-null-assertions` — Find `!` assertions that should use safe access patterns
+- `bun run fix:console-log` — `console.log` → `console.info`
+- `bun run fix:scan-any-types` — `: any` / `as any` → `unknown` or real types
+- `bun run fix:scan-default-exports` — default export candidates
+- `bun run fix:scan-non-null-assertions` — `!` assertions to safe access
 
-See `scripts/fix-*.ts` for detail, or `scripts/fix-console-log.ts` for the bulk fix implementation.
+Implementations: [`scripts/fix-*.ts`](scripts/) (e.g. [`scripts/fix-console-log.ts`](scripts/fix-console-log.ts)).
 
 ## Shared Configuration
 
 <!-- markdownlint-disable MD013 -->
-- `config/ports.ts` — Centralized port configuration (defaults for all servers: DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, etc.). All ports overridable via env vars.
-- `config/r2-env.ts` — Centralized R2/Cloudflare credential config. Validates required env vars at startup.
-- All deploy scripts (`scripts/deploy/*`) require env vars: `CLOUDFLARE_API_TOKEN`, `R2_ACCOUNT_ID`, `WIKI_DEPLOY_PATH`, `R2_BUCKET_NAME`.
-- CORS: Set `CORS_ALLOWED_ORIGINS` (comma-separated) to restrict origins. Empty = allow all.
-- Server binding: Set `SERVER_HOST` env var (default `localhost`).
+- [`config/ports.ts`](config/ports.ts) — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …); env-overridable
+- [`config/r2-env.ts`](config/r2-env.ts) — R2/Cloudflare credentials; validates required env at startup
+- Deploy scripts under `scripts/deploy/*` need: `CLOUDFLARE_API_TOKEN`, `R2_ACCOUNT_ID`, `WIKI_DEPLOY_PATH`, `R2_BUCKET_NAME`
+- CORS: `CORS_ALLOWED_ORIGINS` (comma-separated; empty = allow all)
+- Bind: `SERVER_HOST` (default `localhost`)
 <!-- markdownlint-enable MD013 -->
 
 ## Project Policies
-- Coding standards (full): [`.custom-instructions.md`](.custom-instructions.md) · quick: [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
-- Import boundaries and allowed package roots: [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
-- Root organization: [`STRUCTURE.md`](STRUCTURE.md) (history: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md))
-- Workspace hygiene: `bun run validate:workspaces` (validates all packages are covered by root workspaces; `check:workspaces` is the deprecated alias)
-- **Code conventions** (enforced by eslint):
-  - **No `console.log`** — use `console.info`, `console.warn`, or `console.error`
-  - **No `any` type** — use `unknown` with type guards, or define proper interfaces
-  - **No default exports** — use named exports for better tree-shaking and IDE support
-  - **No non-null assertions (`!`)** — use optional chaining with defaults
-  - **No empty catch blocks** — always handle or re-throw errors
-  - **No hardcoded secrets** — use env vars via `config/ports.ts` or `config/r2-env.ts`
-- Monorepo tooling: Use `--filter` patterns and `build:affected` / `test:affected` for efficient development
+
+- **Standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
+- **Import boundaries:** [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
+- **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · history: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md)
+- **Workspace hygiene:** `bun run validate:workspaces` (`check:workspaces` is the deprecated alias)
+- **Harness:** brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) · console depth → [`lib/console-depth.ts`](lib/console-depth.ts)
+- **ESLint conventions:** no `console.log`; no `any`; named exports only; no non-null `!`; no empty `catch`; no hardcoded secrets
+- **Monorepo tooling:** `--filter` patterns · `build:affected` / `test:affected`

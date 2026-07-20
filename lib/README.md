@@ -1,70 +1,67 @@
-# 📚 FactoryWager Library Overview
+# FactoryWager Library Overview
 
-Complete library index for the FactoryWager Enterprise Platform.
+Shared harness for the FactoryWager monorepo. Barrel: [`index.ts`](./index.ts) (`LIB_INFO`, `FW`, re-exports).
 
-## 🎯 Core Modules
+## Canonical monorepo docs
 
-### Core Infrastructure
-- **`core-types.ts`** - Core type definitions
-- **`core-errors.ts`** - Error handling system
-- **`core-validation.ts`** - Validation utilities
-- **`core-documentation.ts`** - Documentation system
+| Role | Path |
+|------|------|
+| Path SSOT (this library) | [`docs/repo-docs.ts`](./docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
+| Coding standards | [`.custom-instructions.md`](../.custom-instructions.md) |
+| Agents | [`AGENTS.md`](../AGENTS.md) |
+| Workspace map | [`STRUCTURE.md`](../STRUCTURE.md) |
+| Brands | [`types/branded/README.md`](./types/branded/README.md) |
+| Console depth | [`console-depth.ts`](./console-depth.ts) |
+| Standards automation | [`validation/standards-integration.ts`](./validation/standards-integration.ts) |
 
-### Documentation System
-- **`documentation/`** - Enhanced documentation system with CLI, Utils, and validation
-- **`docs/`** - Documentation fetchers and cache managers
-- **`docs-reference.ts`** - Reference documentation
+```typescript
+import { CANONICAL_REPO_DOCS, LIB_INFO, FW } from "./lib";
 
-### Package Management (NEW)
-- **`package/package-manager.ts`** - Package analysis, Bun API discovery, dependency graphs
+LIB_INFO.docs.standards; // ".custom-instructions.md"
+FW.standards.unified; // "docs/UNIFIED.md"
+```
 
-### R2 Storage (NEW)
-- **`r2/r2-storage-enhanced.ts`** - Enhanced R2 storage with package integration
-- **`r2/`** - Additional R2 utilities (analytics, backup, batch operations, etc.)
+## Core modules
 
-### RSS Management (NEW)
-- **`rss/rss-manager.ts`** - RSS feed management with caching and R2 integration
+### Core infrastructure
+- **`core/`** — types, errors, validation, documentation URL handlers
 
-### Registry System
-- **`registry/`** - NPM registry integration, package docs, RSS aggregation
+### Documentation system
+- **`docs/`** — fetchers, patterns, cache, **`repo-docs.ts`** (path SSOT)
+- Patterns / utils re-exported via barrel
 
-### Security
-- **`security/`** - Security utilities, MCP servers, secret management
+### Harness (high-traffic)
+- **`types/branded.ts`** — branded ID facade (`as*` / `try*` / `parse*`)
+- **`console-depth.ts`** — inspect verbosity SSOT
+- **`projects-scan.ts`** — project inventory
+- **`security/`** — secrets, R2 credentials, MCP-related security
 
-### MCP Integration
-- **`mcp/`** - Model Context Protocol servers and clients
+### Package management
+- **`package/package-manager.ts`** — package analysis, Bun API discovery, dependency graphs
 
-### HAR Analyzer
-- **`har-analyzer/`** - HTTP Archive analysis with 4-layer context types, URL fragment classification, domain/asset mapping, and protocol-aware capture server
+### R2 storage
+- **`r2/r2-storage-enhanced.ts`** — enhanced R2 storage with package integration
+- **`r2/`** — analytics, backup, batch ops, etc.
+
+### RSS / registry / MCP / HAR
+- **`rss/`**, **`registry/`**, **`mcp/`**, **`har-analyzer/`**
 
 ### Utilities
-- **`utils/`** - Common utilities (validation, logging, error handling, etc.)
-- **`constants/`** - Shared constants
-- **`theme/`** - Theming and colors
+- **`utils/`**, **`constants/`**, **`theme/`**
 
-## 🚀 Quick Access
+## Quick access
 
 ```typescript
 import {
-  // Package Management
   PackageManager,
   type PackageInfo,
-
-  // R2 Storage
   R2Storage,
   type R2StorageConfig,
-
-  // RSS Management
   RSSManager,
   type RSSFeed,
-
-  // Documentation
-  docsURLBuilder,
-  EnhancedDocumentationURLValidator,
-
-  // Utilities
-  FW
-} from './lib';
+  CANONICAL_REPO_DOCS,
+  FW,
+} from "./lib";
 ```
 
 ## 📦 Package Management

@@ -112,5 +112,9 @@ Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert.
 | [`STRUCTURE.md`](../STRUCTURE.md) | Workspace map |
 | [`README.md`](../README.md) | Human hub |
 | [`IMPORT_BOUNDARIES.md`](./IMPORT_BOUNDARIES.md) | Package import rules |
+| [`UNIFIED.md`](./UNIFIED.md) | Bun install policy |
+| [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) | Path SSOT (`CANONICAL_REPO_DOCS`) |
+| [`lib/types/branded/README.md`](../lib/types/branded/README.md) | Branded IDs |
+| [`lib/console-depth.ts`](../lib/console-depth.ts) | Inspect depth |
 
-*Keep this file in sync with `.custom-instructions.md` when conventions change.*
+*Keep this file in sync with `.custom-instructions.md` and `CANONICAL_REPO_DOCS` when conventions change.*

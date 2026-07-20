@@ -2,6 +2,17 @@
 
 // Re-export documentation patterns
 export * from './patterns';
+import { DOC_PATTERNS } from './patterns';
+// Monorepo canonical doc / harness paths (root MD map SSOT)
+export {
+  CANONICAL_REPO_DOCS,
+  CANONICAL_HARNESS,
+  CANONICAL_TOOLS,
+  CANONICAL_DOC_ROLES,
+  CANONICAL_REMOTES,
+  type CanonicalRepoDocKey,
+  type CanonicalHarnessKey,
+} from './repo-docs';
 
 // Documentation utilities
 export class DocumentationUtils {
