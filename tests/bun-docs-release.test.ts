@@ -23,7 +23,7 @@ import {
   extractNoteFromHtml,
   extractNoteFromMarkdown,
   normalizeNote,
-} from '../tools/bun-docs-page-notes.ts';
+} from '../tools/bun-docs-catalog.ts';
 
 const SAMPLE_RSS = `<?xml version="1.0"?><rss><channel>
 <item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>g1</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate></item>
