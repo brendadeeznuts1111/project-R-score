@@ -8,21 +8,21 @@ export const SecurityPosture = {
   },
 
   components: {
-    "http-upgrade/orchestrator.ts": {
-      reviewDate: "2026-01-15",
-      reviewer: "@security-team",
+    'http-upgrade/orchestrator.ts': {
+      reviewDate: '2026-01-15',
+      reviewer: '@security-team',
       findings: [
-        { severity: "medium", issue: "TLS 1.2 support", status: "mitigated" },
-        { severity: "low", issue: "Header validation", status: "fixed" },
+        { severity: 'medium', issue: 'TLS 1.2 support', status: 'mitigated' },
+        { severity: 'low', issue: 'Header validation', status: 'fixed' },
       ],
-      compliance: ["OWASP Top 10", "PCI DSS", "GDPR"],
+      compliance: ['OWASP Top 10', 'PCI DSS', 'GDPR'],
     },
 
-    "ws-gateway.ts": {
-      reviewDate: "pending",
-      scheduled: "2026-04-01",
-      blockers: ["test coverage < 80%", "load testing incomplete"],
-      riskAssessment: "medium",
+    'ws-gateway.ts': {
+      reviewDate: 'pending',
+      scheduled: '2026-04-01',
+      blockers: ['test coverage < 80%', 'load testing incomplete'],
+      riskAssessment: 'medium',
     },
   },
 } as const;
@@ -35,7 +35,7 @@ export function summarizeSecurityPosture() {
 
   return {
     generatedAt: new Date().toISOString(),
-    source: "bun-v1.3.9-security-posture",
+    source: 'bun-v1.3.9-security-posture',
     summary: SecurityPosture.summary,
     totals: {
       componentCount: entries.length,
