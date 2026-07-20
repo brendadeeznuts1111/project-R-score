@@ -17,13 +17,7 @@
 
 import { resolve } from 'path';
 
-export type BunWriteData =
-  | string
-  | Blob
-  | ArrayBuffer
-  | SharedArrayBuffer
-  | Uint8Array
-  | Response;
+export type BunWriteData = string | Blob | ArrayBuffer | SharedArrayBuffer | Uint8Array | Response;
 
 /** `path.resolve` — path module as noted for Bun.write destinations. */
 export function resolvePath(...parts: string[]): string {
