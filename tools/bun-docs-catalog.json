@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-20T16:51:17.933Z",
+  "generated": "2026-07-20T17:36:10.763Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
   "blogUrl": "",
@@ -99,6 +99,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-orphans",
         "--path-ignore-patterns",
@@ -139,6 +140,7 @@
       ],
       "fixedIn": "1.1.41",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/module-resolution#custom-conditions",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.30",
       "blogUrl": "https://bun.com/blog/bun-v1.0.30"
@@ -167,6 +169,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.stdin"
       ],
@@ -195,6 +198,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:ffi"
       ],
@@ -232,6 +236,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-title",
         "--hot",
@@ -273,6 +278,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--hot",
@@ -297,6 +303,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--sql-preconnect",
         "bun:sql",
@@ -327,6 +334,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-timer-throttling",
         "--disable-backgrounding-occluded-windows",
@@ -358,6 +366,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-backgrounding-occluded-windows",
@@ -389,6 +398,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -420,6 +430,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -451,6 +462,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -482,6 +494,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -513,6 +526,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -546,6 +560,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-env-file",
         "--print",
@@ -578,6 +593,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
@@ -607,7 +623,8 @@
         }
       ],
       "fixedIn": "1.3.14",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--asset-naming",
         "--compile-autoload-package-json",
@@ -640,6 +657,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -674,6 +692,7 @@
       "section": "runtime",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--cron-title",
@@ -709,6 +728,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--inspect-brk",
         "--inspect-wait"
@@ -733,6 +753,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--inspect",
         "--inspect-wait"
@@ -755,6 +776,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--inspect",
         "--inspect-brk"
@@ -795,6 +817,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--preserve"
       ],
@@ -823,6 +846,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -860,6 +884,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--print",
@@ -892,6 +917,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -918,6 +944,7 @@
       "section": "runtime",
       "fixedIn": "1.3.6",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--only-missing",
         "BUN_CREATE_DIR"
@@ -948,7 +975,8 @@
       ],
       "changeNote": "Exit when parent dies (--no-orphans / bunfig)",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--path-ignore-patterns",
@@ -980,6 +1008,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -1004,6 +1033,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-install",
         "BUN_CREATE_DIR"
@@ -1041,6 +1071,7 @@
       ],
       "fixedIn": "1.0.21",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.JSON5.parse",
         "Bun.JSON5.stringify"
@@ -1072,6 +1103,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1115,6 +1147,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.serve"
       ],
@@ -1153,6 +1186,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-clear-screen"
       ],
@@ -1192,6 +1226,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -1226,6 +1261,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1253,6 +1289,7 @@
       "section": "runtime",
       "fixedIn": "1.2.17",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_AGENT_RULE_DISABLED"
       ],
@@ -1274,6 +1311,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -1308,6 +1346,7 @@
       ],
       "fixedIn": "1.3.13",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1343,6 +1382,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1377,6 +1417,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1419,6 +1460,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--cron-title",
@@ -1454,6 +1496,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.gc"
       ],
@@ -1483,6 +1526,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--db-preconnect",
         "bun:sql",
@@ -1517,6 +1561,7 @@
       "section": "runtime",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/file-types#html",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.6.3",
       "blogUrl": "https://bun.com/blog/bun-v0.6.3"
@@ -1533,7 +1578,8 @@
         "https://bun.com/docs/runtime/nodejs-compat"
       ],
       "section": "runtime",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "bun:jsc",
         "Bun.fetch"
@@ -1556,6 +1602,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--only",
         "--todo"
@@ -1584,6 +1631,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -1616,6 +1664,7 @@
       "section": "runtime",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.build"
       ],
@@ -1763,7 +1812,8 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--react"
       ],
@@ -1792,6 +1842,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -1823,6 +1874,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.dns",
         "Bun.dns.getCacheStats",
@@ -1847,6 +1899,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -1873,6 +1926,7 @@
       "section": "runtime",
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -1901,6 +1955,7 @@
       "section": "runtime",
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -1938,6 +1993,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-install",
         "--only-missing"
@@ -1964,7 +2020,8 @@
           "fragment": "run-noorphans-don-t-leave-orphan-processes-behind"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -1996,6 +2053,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -2027,6 +2085,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -2065,6 +2124,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.plugin"
       ],
@@ -2089,6 +2149,7 @@
       "section": "runtime",
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -2122,6 +2183,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -2147,6 +2209,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -2176,6 +2239,7 @@
       "section": "runtime",
       "fixedIn": "1.3.4",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--crate-type"
       ],
@@ -2205,7 +2269,8 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--test",
         "Bun.fetch"
@@ -2229,6 +2294,7 @@
       "section": "runtime",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--db-preconnect",
         "--sql-preconnect",
@@ -2273,6 +2339,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "fixedIn": "1.3.6",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.2.0"
     },
@@ -2308,11 +2375,13 @@
       "fixedIn": "1.3.4",
       "changedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bail",
         "--max-concurrency",
         "--timeout",
-        "--update-snapshots"
+        "--update-snapshots",
+        "bun test"
       ],
       "docsUrl": "https://bun.com/docs/test/index#run-tests",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.1.12",
@@ -2332,6 +2401,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/shell#getting-started",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
@@ -2355,6 +2425,7 @@
         }
       ],
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.concatArrayBuffers",
         "Bun.deepMatch",
@@ -2380,6 +2451,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/archive#quickstart",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.6",
       "blogUrl": "https://bun.com/blog/bun-v1.3.6"
@@ -2406,6 +2478,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
@@ -2443,6 +2516,7 @@
       "fixedIn": "1.3.14",
       "changedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--watch"
       ],
@@ -2467,6 +2541,7 @@
       "section": "runtime",
       "fixedIn": "1.1.32",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/color#flexible-input",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.1.30",
       "blogUrl": "https://bun.com/blog/bun-v1.1.30"
@@ -2491,6 +2566,7 @@
         }
       ],
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.deepMatch",
@@ -2526,6 +2602,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.listen"
       ],
@@ -2549,6 +2626,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CookieMap",
         "CookieMap"
@@ -2581,6 +2659,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.Cookie",
         "CookieMap"
@@ -2606,6 +2685,7 @@
       "changeNote": "In-process cron scheduling (UTC, no-overlap)",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--cron-title",
@@ -2637,6 +2717,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--cron-title",
@@ -2668,6 +2749,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cron-period",
         "--cron-title",
@@ -2702,6 +2784,7 @@
       ],
       "fixedIn": "1.1.35",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.hash",
         "Bun.password",
@@ -2734,6 +2817,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CSRF.generate",
         "Bun.CSRF.verify"
@@ -2765,6 +2849,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CSRF",
         "Bun.CSRF.verify"
@@ -2796,6 +2881,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CSRF",
         "Bun.CSRF.generate"
@@ -2828,6 +2914,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deflateSync",
         "Bun.env",
@@ -2859,6 +2946,7 @@
         }
       ],
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -2891,6 +2979,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.env",
@@ -2915,6 +3004,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
         "Bun.dns.getCacheStats",
@@ -2947,6 +3037,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
         "Bun.dns",
@@ -2978,6 +3069,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
         "Bun.dns",
@@ -3009,6 +3101,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS",
         "Bun.dns",
@@ -3053,6 +3146,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3088,6 +3182,7 @@
       ],
       "fixedIn": "1.0.36",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3112,6 +3207,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--test",
         "bun:jsc"
@@ -3144,6 +3240,7 @@
       "section": "runtime",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.write"
       ],
@@ -3173,6 +3270,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -3207,6 +3305,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3240,7 +3339,8 @@
         }
       ],
       "fixedIn": "1.3.14",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--smol"
       ],
@@ -3268,7 +3368,8 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3304,6 +3405,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/glob#quickstart",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.14",
       "blogUrl": "https://bun.com/blog/bun-v1.0.14"
@@ -3330,6 +3432,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3362,6 +3465,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3405,6 +3509,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CryptoHasher",
         "Bun.password",
@@ -3442,6 +3547,7 @@
       "changeNote": "Built-in image decode/resize/encode pipeline",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.s3.file"
       ],
@@ -3468,6 +3574,7 @@
         }
       ],
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -3500,6 +3607,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3536,6 +3644,7 @@
       ],
       "fixedIn": "1.3.13",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3569,6 +3678,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3612,6 +3722,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3645,6 +3756,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/workers#bun-ismainthread",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.7.1",
       "blogUrl": "https://bun.com/blog/bun-v0.7.1"
@@ -3664,6 +3776,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--outdir",
         "Bun.JSON5.stringify"
@@ -3687,6 +3800,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--outdir",
         "Bun.JSON5.parse"
@@ -3722,6 +3836,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.JSONL.parseChunk"
       ],
@@ -3752,6 +3867,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.JSONL.parse"
       ],
@@ -3783,6 +3899,7 @@
       ],
       "fixedIn": "1.3.12",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.connect"
       ],
@@ -3812,6 +3929,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -3847,6 +3965,7 @@
       "changeNote": "Native Markdown rendering (html/ansi/render/react)",
       "blogUrl": "https://bun.com/blog/bun-v1.3",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.markdown.ansi",
         "Bun.markdown.html",
@@ -3874,6 +3993,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3.12",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.markdown",
         "Bun.markdown.html",
@@ -3898,6 +4018,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.markdown",
         "Bun.markdown.ansi",
@@ -3923,6 +4044,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.markdown",
         "Bun.markdown.ansi",
@@ -3948,6 +4070,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.markdown",
         "Bun.markdown.ansi",
@@ -3978,6 +4101,7 @@
         }
       ],
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -4010,6 +4134,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4051,6 +4176,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4084,6 +4210,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CryptoHasher",
         "Bun.hash",
@@ -4126,6 +4253,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CryptoHasher",
         "Bun.hash",
@@ -4160,6 +4288,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4194,6 +4323,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4230,6 +4360,7 @@
       ],
       "fixedIn": "1.3.4",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "BUN_LOADER_JSX"
       ],
@@ -4251,6 +4382,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--db-preconnect",
         "--sql-preconnect",
@@ -4283,6 +4415,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4316,6 +4449,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4333,8 +4467,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:41:43.318Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
       "allPages": [
+        "https://bun.com/docs/runtime/utils",
         "https://bun.com/docs/runtime/bun-apis"
       ],
       "section": "runtime",
@@ -4345,15 +4481,17 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
       "related": [
-        "Bun.allocUnsafe",
-        "Bun.concatArrayBuffers",
-        "Bun.deepMatch",
-        "Bun.FileSystemRouter",
-        "Bun.indexOfLine"
+        "Bun.readableStreamTo",
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bun-apis",
+      "locusStatus": "inherited",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -4363,8 +4501,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:41:43.318Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
       "allPages": [
+        "https://bun.com/docs/runtime/utils",
         "https://bun.com/docs/runtime/bun-apis"
       ],
       "section": "runtime",
@@ -4375,15 +4515,17 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
       "related": [
-        "Bun.allocUnsafe",
-        "Bun.concatArrayBuffers",
-        "Bun.deepMatch",
-        "Bun.FileSystemRouter",
-        "Bun.indexOfLine"
+        "Bun.readableStreamTo",
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bun-apis",
+      "locusStatus": "inherited",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -4393,8 +4535,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:41:43.318Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
       "allPages": [
+        "https://bun.com/docs/runtime/utils",
         "https://bun.com/docs/runtime/bun-apis"
       ],
       "section": "runtime",
@@ -4405,15 +4549,17 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
       "related": [
-        "Bun.allocUnsafe",
-        "Bun.concatArrayBuffers",
-        "Bun.deepMatch",
-        "Bun.FileSystemRouter",
-        "Bun.indexOfLine"
+        "Bun.readableStreamTo",
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bun-apis",
+      "locusStatus": "inherited",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -4423,8 +4569,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:41:43.318Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
       "allPages": [
+        "https://bun.com/docs/runtime/utils",
         "https://bun.com/docs/runtime/bun-apis"
       ],
       "section": "runtime",
@@ -4435,15 +4583,17 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
       "related": [
-        "Bun.allocUnsafe",
-        "Bun.concatArrayBuffers",
-        "Bun.deepMatch",
-        "Bun.FileSystemRouter",
-        "Bun.indexOfLine"
+        "Bun.readableStreamTo",
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bun-apis",
+      "locusStatus": "inherited",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -4453,8 +4603,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:41:43.318Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bun-apis",
+      "canonicalPage": "https://bun.com/docs/runtime/utils",
+      "anchor": "bun-readablestreamto",
       "allPages": [
+        "https://bun.com/docs/runtime/utils",
         "https://bun.com/docs/runtime/bun-apis"
       ],
       "section": "runtime",
@@ -4465,15 +4617,17 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
       "related": [
-        "Bun.allocUnsafe",
-        "Bun.concatArrayBuffers",
-        "Bun.deepMatch",
-        "Bun.FileSystemRouter",
-        "Bun.indexOfLine"
+        "Bun.readableStreamTo",
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bun-apis",
+      "locusStatus": "inherited",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -4500,6 +4654,7 @@
       ],
       "fixedIn": "1.2.23",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.RedisClient",
         "RedisClient"
@@ -4530,6 +4685,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.redis",
         "RedisClient"
@@ -4561,6 +4717,7 @@
       ],
       "fixedIn": "1.3.13",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4595,6 +4752,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4632,6 +4790,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.S3Client",
         "S3Client"
@@ -4665,6 +4824,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.Image"
       ],
@@ -4694,6 +4854,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.s3",
         "S3Client"
@@ -4720,6 +4881,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3",
       "fixedIn": "1.3.4",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.secrets.delete",
         "Bun.secrets.get",
@@ -4742,6 +4904,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.secrets",
         "Bun.secrets.get",
@@ -4764,6 +4927,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.secrets",
         "Bun.secrets.delete",
@@ -4786,6 +4950,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.secrets",
         "Bun.secrets.delete",
@@ -4810,6 +4975,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.semver.order",
         "Bun.semver.satisfies"
@@ -4832,6 +4998,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.semver",
         "Bun.semver.satisfies"
@@ -4853,6 +5020,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.semver",
         "Bun.semver.order"
@@ -4895,6 +5063,7 @@
       "fixedIn": "1.3.14",
       "changedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--port"
       ],
@@ -4924,6 +5093,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.CryptoHasher",
         "Bun.hash",
@@ -4957,6 +5127,7 @@
       ],
       "fixedIn": "1.0.34",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -4991,6 +5162,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5028,6 +5200,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.spawn terminal (PTY)",
         "Bun.spawnSync",
@@ -5054,6 +5227,7 @@
       "changeNote": "Built-in PTY API (new Bun.Terminal + Bun.spawn terminal option); POSIX only at ship",
       "blogUrl": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.spawn",
         "Bun.spawnSync",
@@ -5088,6 +5262,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.spawn",
         "Bun.spawn terminal (PTY)",
@@ -5119,6 +5294,7 @@
       "fixedIn": "1.3.14",
       "changedIn": "1.2.5",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--db-preconnect",
         "--sql-preconnect",
@@ -5150,6 +5326,7 @@
       ],
       "fixedIn": "1.0.27",
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -5185,6 +5362,7 @@
       ],
       "fixedIn": "1.0.27",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--console-depth"
       ],
@@ -5214,6 +5392,7 @@
       ],
       "fixedIn": "1.0.27",
       "locusUnresolved": true,
+      "locusStatus": "dump",
       "related": [
         "Bun.allocUnsafe",
         "Bun.concatArrayBuffers",
@@ -5252,6 +5431,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5295,6 +5475,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5332,6 +5513,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.spawn",
         "Bun.spawn terminal (PTY)",
@@ -5362,6 +5544,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.spawn",
         "Bun.spawn terminal (PTY)",
@@ -5384,6 +5567,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.TOML.parse",
         "Bun.TOML.stringify"
@@ -5414,6 +5598,7 @@
       ],
       "fixedIn": "1.3.12",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.TOML",
         "Bun.TOML.stringify"
@@ -5443,6 +5628,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.TOML",
         "Bun.TOML.parse"
@@ -5474,7 +5660,8 @@
         }
       ],
       "fixedIn": "1.3.14",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "Bun.Transpiler.transformSync"
       ],
@@ -5508,6 +5695,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.Transpiler"
       ],
@@ -5540,6 +5728,7 @@
       "blogUrl": "https://bun.com/blog/bun-v1.0",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.0"
     },
@@ -5566,6 +5755,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5602,6 +5792,7 @@
       "changeNote": "Headless browser automation via native WebView",
       "blogUrl": "https://bun.com/blog/bun-v1.3.12#webview",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -5636,6 +5827,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5669,6 +5861,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5708,6 +5901,7 @@
       ],
       "fixedIn": "1.3.12",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.file"
       ],
@@ -5729,6 +5923,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.YAML.parse",
         "YAML"
@@ -5753,6 +5948,7 @@
       "section": "runtime",
       "fixedIn": "1.3.13",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.YAML",
         "YAML"
@@ -5784,6 +5980,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5817,6 +6014,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5850,6 +6048,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5884,6 +6083,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -5953,6 +6153,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -6002,6 +6203,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6025,6 +6227,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.Cookie",
         "Bun.CookieMap"
@@ -6125,6 +6328,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -6166,6 +6370,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.deepEquals",
         "Bun.deflateSync",
@@ -6231,6 +6436,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6386,7 +6592,8 @@
         "https://bun.com/docs/runtime/environment-variables"
       ],
       "section": "runtime",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -6472,7 +6679,8 @@
         "https://bun.com/docs/runtime/html-rewriter"
       ],
       "section": "runtime",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "docsUrl": "https://bun.com/docs/runtime/html-rewriter",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
@@ -6531,6 +6739,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6562,6 +6771,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6593,6 +6803,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6624,6 +6835,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6655,6 +6867,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6686,6 +6899,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6717,6 +6931,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6753,6 +6968,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6789,6 +7005,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6820,6 +7037,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6852,6 +7070,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6883,6 +7102,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -6971,6 +7191,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7002,6 +7223,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7033,6 +7255,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7064,6 +7287,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7144,7 +7368,8 @@
         "https://bun.com/docs/runtime/environment-variables"
       ],
       "section": "runtime",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--env-file",
         "--no-env-file",
@@ -7240,6 +7465,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7348,6 +7574,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.redis",
         "Bun.RedisClient"
@@ -7416,6 +7643,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7508,6 +7736,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7546,6 +7775,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.s3",
         "Bun.S3Client"
@@ -7604,6 +7834,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7640,7 +7871,8 @@
           "fragment": "using-tailwindcss-with-bun"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "serve.static.env",
         "--production"
@@ -7676,6 +7908,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "WebSocket"
       ],
@@ -7718,6 +7951,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7839,6 +8073,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7871,6 +8106,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7904,6 +8140,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7937,6 +8174,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -7970,6 +8208,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8004,6 +8243,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8038,6 +8278,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8071,6 +8312,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8109,6 +8351,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8140,6 +8383,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8173,6 +8417,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8210,6 +8455,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8243,6 +8489,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8274,6 +8521,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8307,6 +8555,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8339,6 +8588,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8372,6 +8622,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8405,6 +8656,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8437,6 +8689,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8469,6 +8722,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -8611,7 +8865,8 @@
         "https://bun.com/docs/runtime/http/websockets"
       ],
       "section": "runtime",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "ServerWebSocket"
       ],
@@ -8647,6 +8902,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--disable-background-networking",
         "--disable-background-timer-throttling",
@@ -8686,6 +8942,7 @@
       ],
       "section": "runtime",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "Bun.YAML",
         "Bun.YAML.parse"
@@ -8707,6 +8964,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--compile-autoload-package-json",
@@ -8729,7 +8987,8 @@
         "https://bun.com/docs/bundler/esbuild"
       ],
       "section": "bundler",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--define",
         "--external",
@@ -8769,6 +9028,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--compile",
         "--format",
@@ -8806,6 +9066,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bytecode",
         "--format",
@@ -8839,6 +9100,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -8872,6 +9134,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -8904,6 +9167,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -8936,6 +9200,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--env"
       ],
@@ -8966,6 +9231,7 @@
       ],
       "fixedIn": "1.3.13",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -8999,6 +9265,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9041,6 +9308,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9076,6 +9344,7 @@
       ],
       "fixedIn": "1.1.6",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--external",
@@ -9118,6 +9387,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9144,6 +9414,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--console"
       ],
@@ -9173,6 +9444,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9208,6 +9480,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bytecode",
         "--compile",
@@ -9241,6 +9514,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9273,6 +9547,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9311,6 +9586,7 @@
       ],
       "changedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--minify-identifiers",
         "--minify-syntax",
@@ -9344,6 +9620,7 @@
       ],
       "fixedIn": "0.7.2",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9382,6 +9659,7 @@
       ],
       "fixedIn": "1.1.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bytecode",
         "--compile",
@@ -9414,6 +9692,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--keep-names",
         "--minify-syntax",
@@ -9445,6 +9724,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--keep-names",
         "--minify-identifiers",
@@ -9475,6 +9755,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--keep-names",
         "--minify-identifiers",
@@ -9506,6 +9787,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9532,6 +9814,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9558,6 +9841,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9593,6 +9877,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bytecode",
         "--compile",
@@ -9635,6 +9920,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9666,6 +9952,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9700,6 +9987,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bytecode",
         "--compile",
@@ -9734,6 +10022,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9766,6 +10055,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9807,6 +10097,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9840,6 +10131,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -9865,6 +10157,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9889,6 +10182,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9946,6 +10240,7 @@
       ],
       "fixedIn": "1.2.16",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -9981,6 +10276,7 @@
       "changeNote": "Compile-time feature flags via import { feature } from \"bun:bundle\"",
       "blogUrl": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--bundle",
         "--define",
@@ -10006,6 +10302,7 @@
       "section": "bundler",
       "changedIn": "1.2.5",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:invalidate",
         "bun:ws"
@@ -10028,6 +10325,7 @@
       ],
       "section": "bundler",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:error",
         "bun:ws"
@@ -10050,6 +10348,7 @@
       "section": "bundler",
       "changedIn": "1.2.5",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:error",
         "bun:invalidate"
@@ -10090,6 +10389,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -10122,6 +10422,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -10153,6 +10454,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--force",
         "--asset-naming",
@@ -10350,6 +10652,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "serve.static.plugins",
         "--production"
@@ -10410,11 +10713,13 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:test",
         "--max-concurrency",
         "--timeout",
-        "--update-snapshots"
+        "--update-snapshots",
+        "bun test"
       ],
       "docsUrl": "https://bun.com/docs/test/index#bail-out-with-bail",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.7.0",
@@ -10443,6 +10748,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--coverage-reporter",
         "--test-name-pattern"
@@ -10479,6 +10785,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--coverage",
         "--test-name-pattern"
@@ -10509,6 +10816,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--reporter"
       ],
@@ -10538,11 +10846,13 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:test",
         "--bail",
         "--timeout",
-        "--update-snapshots"
+        "--update-snapshots",
+        "bun test"
       ],
       "docsUrl": "https://bun.com/docs/test/index#max-concurrency-flag",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.23",
@@ -10576,6 +10886,7 @@
       ],
       "fixedIn": "1.0.28",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--test-only",
         "--todo"
@@ -10606,6 +10917,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--tsconfig-override",
         "--frozen-lockfile"
@@ -10646,6 +10958,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--reporter-outfile",
         "test.functions",
@@ -10681,6 +10994,7 @@
       ],
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dots"
       ],
@@ -10718,6 +11032,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--preload",
         "test.functions",
@@ -10752,6 +11067,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--coverage",
         "--coverage-reporter"
@@ -10783,11 +11099,13 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:test",
         "--bail",
         "--max-concurrency",
-        "--update-snapshots"
+        "--update-snapshots",
+        "bun test"
       ],
       "docsUrl": "https://bun.com/docs/test/index#timeouts",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.6.4",
@@ -10820,6 +11138,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--test-only",
         "--only"
@@ -10850,6 +11169,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--prefer-offline",
         "--frozen-lockfile"
@@ -10886,11 +11206,13 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "bun:test",
         "--bail",
         "--max-concurrency",
-        "--timeout"
+        "--timeout",
+        "bun test"
       ],
       "docsUrl": "https://bun.com/docs/test/index#snapshot-testing",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.5.8",
@@ -10903,12 +11225,23 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:44:45.092Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/test",
+      "canonicalPage": "https://bun.com/docs/test/index",
+      "anchor": "run-tests",
       "allPages": [
+        "https://bun.com/docs/test/index",
         "https://bun.com/docs/test"
       ],
       "section": "test",
-      "docsUrl": "https://bun.com/docs/test",
+      "locusUnresolved": false,
+      "locusStatus": "fragment",
+      "related": [
+        "bun:test",
+        "--bail",
+        "--max-concurrency",
+        "--timeout",
+        "--update-snapshots"
+      ],
+      "docsUrl": "https://bun.com/docs/test/index#run-tests",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
     {
@@ -10924,6 +11257,7 @@
       ],
       "section": "test",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/test/snapshots#basic-snapshots",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },
@@ -11112,6 +11446,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--preload",
         "--reporter-outfile",
@@ -11142,6 +11477,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--preload",
         "--reporter-outfile",
@@ -11172,6 +11508,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--preload",
         "--reporter-outfile",
@@ -13915,6 +14252,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--auth-type",
         "--ca",
@@ -13957,6 +14295,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--destination",
         "--quiet",
@@ -13998,6 +14337,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--ignore",
         "--json",
@@ -14028,6 +14368,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--ca",
@@ -14051,7 +14392,8 @@
         "https://bun.com/docs/pm/cli/install"
       ],
       "section": "pm",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "BUN_INSTALL_CACHE_DIR"
       ],
@@ -14086,7 +14428,8 @@
         }
       ],
       "fixedIn": "1.3.7",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -14113,6 +14456,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -14139,6 +14483,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -14163,7 +14508,8 @@
         "https://bun.com/docs/pm/cli/patch"
       ],
       "section": "pm",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--patches-dir"
       ],
@@ -14203,6 +14549,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--cpu",
         "--dry-run",
@@ -14236,6 +14583,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--dry-run",
@@ -14279,6 +14627,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--top"
       ],
@@ -14317,6 +14666,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--all",
         "--quiet",
@@ -14349,6 +14699,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--exact",
         "--global",
@@ -14384,6 +14735,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -14427,6 +14779,7 @@
       ],
       "changedIn": "0.6.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dev",
         "--global",
@@ -14458,6 +14811,7 @@
       "section": "pm",
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--no-exit-on-error",
         "--parallel",
@@ -14490,6 +14844,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--package"
       ],
@@ -14526,7 +14881,8 @@
       ],
       "fixedIn": "1.3.7",
       "changedIn": "0.6.10",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--prefer-offline",
         "--tsconfig-override"
@@ -14559,6 +14915,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dev",
         "--exact",
@@ -14584,6 +14941,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -14627,6 +14985,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dev",
         "--exact",
@@ -14670,6 +15029,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--audit-level",
         "--json",
@@ -14708,6 +15068,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "trustedDependencies"
       ],
@@ -14738,6 +15099,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--latest",
         "--recursive"
@@ -14770,6 +15132,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--audit-level",
         "--ignore",
@@ -14803,6 +15166,7 @@
       ],
       "fixedIn": "1.1.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--interactive",
         "--recursive"
@@ -14837,6 +15201,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -14863,7 +15228,8 @@
       ],
       "section": "pm",
       "fixedIn": "1.1.44",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--no-save",
         "--save-text-lockfile",
@@ -14899,6 +15265,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -14931,6 +15298,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--filter",
         "--parallel",
@@ -14962,6 +15330,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--lockfile-only",
         "--save-text-lockfile",
@@ -14992,6 +15361,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -15024,6 +15394,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dev",
         "--exact",
@@ -15056,6 +15427,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -15088,6 +15460,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -15125,6 +15498,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--foo"
       ],
@@ -15155,6 +15529,7 @@
       ],
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--filter",
         "--no-exit-on-error",
@@ -15191,6 +15566,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--commit"
       ],
@@ -15219,6 +15595,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--dev",
         "--exact",
@@ -15262,6 +15639,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -15305,6 +15683,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--audit-level",
         "--ignore",
@@ -15345,6 +15724,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "serve.static.plugins",
         "serve.static.env"
@@ -15385,6 +15765,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--all",
         "--destination",
@@ -15416,6 +15797,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--interactive",
         "--latest"
@@ -15446,6 +15828,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -15487,7 +15870,8 @@
           "fragment": ""
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "docsUrl": "https://bun.com/docs/pm/cli/link",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.6.9",
       "blogUrl": "https://bun.com/blog/bun-v0.6.9"
@@ -15506,7 +15890,8 @@
         "https://bun.com/docs/pm/cli/install"
       ],
       "section": "pm",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--lockfile-only",
         "--no-save",
@@ -15538,6 +15923,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--filter",
         "--no-exit-on-error",
@@ -15572,6 +15958,7 @@
       ],
       "fixedIn": "1.1.44",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -15609,6 +15996,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -15640,6 +16028,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--access",
         "--auth-type",
@@ -15682,6 +16071,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--depth"
       ],
@@ -15705,6 +16095,7 @@
       "section": "pm",
       "fixedIn": "1.3.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "docsUrl": "https://bun.com/docs/pm/global-store#what-stays-project-local",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.31",
       "blogUrl": "https://bun.com/blog/bun-v1.0.31"
@@ -15740,6 +16131,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--all",
         "--destination",
@@ -15769,7 +16161,8 @@
           "fragment": "logging"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "docsUrl": "https://bun.com/docs/pm/isolated-installs",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.3",
       "blogUrl": "https://bun.com/blog/bun-v1.0.3"
@@ -15797,6 +16190,7 @@
       ],
       "fixedIn": "1.3.11",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--filter",
         "--no-exit-on-error",
@@ -15830,6 +16224,7 @@
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--lockfile-only",
         "--no-save",
@@ -16062,6 +16457,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16086,6 +16482,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16110,6 +16507,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16134,6 +16532,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16158,6 +16557,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16182,6 +16582,7 @@
       ],
       "section": "pm",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16223,6 +16624,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16264,6 +16666,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -16286,7 +16689,8 @@
         "https://bun.com/docs/pm/global-cache"
       ],
       "section": "pm",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--backend"
       ],
@@ -16319,7 +16723,8 @@
           "fragment": "enabling"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16409,6 +16814,7 @@
       "changeNote": "Shared global virtual store for isolated installs",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16440,7 +16846,8 @@
           "fragment": "cache-configure-cache-directory"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16472,7 +16879,8 @@
           "fragment": "cache-configure-cache-directory"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16506,6 +16914,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16539,6 +16948,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16572,6 +16982,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16605,6 +17016,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16637,6 +17049,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16675,6 +17088,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16713,6 +17127,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16747,6 +17162,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16779,6 +17195,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16816,6 +17233,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16853,6 +17271,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16885,6 +17304,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16918,6 +17338,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16951,6 +17372,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -16990,6 +17412,7 @@
       ],
       "fixedIn": "1.0.3",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -17024,6 +17447,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -17055,7 +17479,8 @@
           "fragment": "set-the-registry-for-a-specific-scope"
         }
       ],
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "page",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -17088,6 +17513,7 @@
         }
       ],
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent",
         "--no-orphans",
@@ -17196,6 +17622,7 @@
       ],
       "fixedIn": "1.3.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "resolutions"
       ],
@@ -17235,6 +17662,7 @@
       "section": "pm",
       "fixedIn": "1.1.34",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--concurrent-scripts",
         "--cpu",
@@ -17270,6 +17698,7 @@
       ],
       "fixedIn": "0.7.0",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "overrides"
       ],
@@ -17341,6 +17770,7 @@
       "fixedIn": "1.3.5",
       "changedIn": "0.6.10",
       "locusUnresolved": false,
+      "locusStatus": "fragment",
       "related": [
         "--ignore-scripts"
       ],
@@ -17403,7 +17833,8 @@
         "https://bun.com/reference/bun/sliceAnsi"
       ],
       "section": "reference",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "reference",
       "docsUrl": "https://bun.com/reference/bun/sliceAnsi",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.11",
       "blogUrl": "https://bun.com/blog/bun-v1.3.11"
@@ -17419,7 +17850,8 @@
         "https://bun.com/reference/bun/BunInspectOptions"
       ],
       "section": "reference",
-      "locusUnresolved": true,
+      "locusUnresolved": false,
+      "locusStatus": "reference",
       "docsUrl": "https://bun.com/reference/bun/BunInspectOptions",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
     },

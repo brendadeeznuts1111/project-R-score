@@ -42,6 +42,14 @@ export type CatalogEntryLike = {
   canonicalPage: string;
   anchor?: string;
   locusUnresolved?: boolean;
+  locusStatus?:
+    | 'fragment'
+    | 'page'
+    | 'inherited'
+    | 'dump'
+    | 'reference'
+    | 'coincidence'
+    | 'unresolved';
   blogUrl?: string;
   releaseUrl?: string;
   allPages: string[];
@@ -58,6 +66,8 @@ export type CatalogToBunTokenOpts = {
   catalogGenerated?: string;
   /** Catalog-level Bun.revision pin. */
   catalogCommitHash?: string;
+  /** Rich locus STATUS from catalog build. */
+  locusStatus?: CatalogEntryLike['locusStatus'];
 };
 
 export function catalogEntryToTokenRef(entry: CatalogEntryLike): TokenRef {
@@ -113,6 +123,7 @@ export function tokenRefToBunToken(
     announcementUrl?: string | null;
     lastVerified?: string;
     sourceCommit?: string;
+    locusStatus?: CatalogEntryLike['locusStatus'];
   }
 ): BunToken {
   const versionEvents = buildVersionEvents({
@@ -147,6 +158,7 @@ export function tokenRefToBunToken(
     docsLocus: {
       page: ref.locus.page,
       anchor: ref.locus.fragment && !ref.locus.unresolved ? ref.locus.fragment : null,
+      ...(opts?.locusStatus ? { status: opts.locusStatus } : {}),
     },
     since: sinceFromEvents(versionEvents) ?? ref.history.introduced ?? null,
     announcementUrl: announcementUrl ?? null,
@@ -179,6 +191,7 @@ export function catalogEntryToBunToken(
     announcementUrl: entry.blogUrl ?? null,
     lastVerified: entry.lastUpdated ?? opts?.catalogGenerated,
     sourceCommit: entry.changeCommit ?? opts?.catalogCommitHash,
+    locusStatus: entry.locusStatus,
   });
 }
 

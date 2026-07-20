@@ -28,7 +28,20 @@
       "required": ["page", "anchor"],
       "properties": {
         "page": { "type": "string", "format": "uri" },
-        "anchor": { "type": ["string", "null"] }
+        "anchor": { "type": ["string", "null"] },
+        "status": {
+          "type": "string",
+          "enum": [
+            "fragment",
+            "page",
+            "inherited",
+            "dump",
+            "reference",
+            "coincidence",
+            "unresolved"
+          ],
+          "description": "Rich locus STATUS (Bun.color HSL legend in locus canvas)"
+        }
       }
     },
     "since": { "type": ["string", "null"] },

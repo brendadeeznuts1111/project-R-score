@@ -2,7 +2,12 @@
  * TokenRef northstar — locus resolution + catalog adapter.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildPageAnchorIndex, resolveVerifiedLocus } from '../lib/docs/locus-resolve.ts';
+import {
+  buildPageAnchorIndex,
+  classifyLocusStatus,
+  findParentWithFragment,
+  resolveVerifiedLocus,
+} from '../lib/docs/locus-resolve.ts';
 import { catalogEntryToTokenRef } from '../lib/docs/token-ref-adapter.ts';
 import { locusUrl, locusResolved, historyAttested } from '../lib/docs/token-ref.ts';
 
@@ -74,6 +79,66 @@ describe('locus-resolve', () => {
     );
     expect(locus.page).toBe(page);
     expect(locus.fragment).toBe('getting-started');
+  });
+
+  test('STATUS classifies dump vs page vs inherited vs fragment', () => {
+    const utils = 'https://bun.com/docs/runtime/utils';
+    const dump = 'https://bun.com/docs/runtime/bun-apis';
+    const anchors = buildPageAnchorIndex([
+      { url: `${utils}.md`, anchors: ['bun-readablestreamto'] },
+      { url: `${dump}.md`, anchors: [] },
+    ]);
+    expect(
+      classifyLocusStatus({
+        name: 'Bun.readableStreamTo',
+        canonicalPage: utils,
+        anchor: 'bun-readablestreamto',
+        locusUnresolved: false,
+        pageAnchors: anchors,
+      })
+    ).toBe('fragment');
+    expect(
+      classifyLocusStatus({
+        name: 'Bun.mmap',
+        canonicalPage: dump,
+        pageAnchors: anchors,
+      })
+    ).toBe('dump');
+    expect(
+      classifyLocusStatus({
+        name: 'HTMLRewriter',
+        canonicalPage: 'https://bun.com/docs/runtime/html-rewriter',
+        pageAnchors: buildPageAnchorIndex([
+          {
+            url: 'https://bun.com/docs/runtime/html-rewriter.md',
+            anchors: ['extract-links-from-a-webpage'],
+          },
+        ]),
+      })
+    ).toBe('page');
+    const parent = findParentWithFragment(
+      'Bun.readableStreamToBytes',
+      new Map([
+        [
+          'Bun.readableStreamTo',
+          {
+            name: 'Bun.readableStreamTo',
+            canonicalPage: utils,
+            anchor: 'bun-readablestreamto',
+            locusUnresolved: false,
+          },
+        ],
+      ])
+    );
+    expect(parent?.fragment).toBe('bun-readablestreamto');
+    expect(
+      classifyLocusStatus({
+        name: 'Bun.readableStreamToBytes',
+        canonicalPage: dump,
+        pageAnchors: anchors,
+        parentFragment: parent,
+      })
+    ).toBe('inherited');
   });
 });
 
