@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/http/fetch — Bun.fetch
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
@@ -211,7 +212,7 @@ class PathResolver {
   static getEnhancedPath(): string[] {
     if (this.cachedPaths) return this.cachedPaths;
 
-    const systemPath = process.env.PATH || '';
+    const systemPath = Bun.env.PATH || '';
     const systemPaths = systemPath.split(':').filter(p => p.trim());
 
     // Combine system PATH with custom paths
@@ -270,7 +271,7 @@ class PathResolver {
     }
 
     const enhancedEnv = {
-      ...process.env,
+      ...Bun.env,
       PATH: this.getEnhancedPath().join(':'),
       ...options.env,
     };
@@ -306,7 +307,7 @@ class PathResolver {
     customPaths: number;
     pathList: string[];
   } {
-    const systemPath = process.env.PATH || '';
+    const systemPath = Bun.env.PATH || '';
     const systemPaths = systemPath.split(':').filter(p => p.trim());
     const validPaths = this.getEnhancedPath();
 
@@ -1747,7 +1748,7 @@ EXAMPLES:
 
     console.info('');
     console.info(`🌐 Environment PATH:`);
-    console.info(`   ${process.env.PATH || 'PATH not set'}`);
+    console.info(`   ${Bun.env.PATH || 'PATH not set'}`);
     console.info('');
 
     return; // Exit after showing PATH info
@@ -1965,8 +1966,8 @@ EXAMPLES:
     metricsFeed.push(payload);
 
     // Push to Tier-1380 endpoint if configured
-    const endpoint = process.env.TIER1380_METRICS_ENDPOINT;
-    const secret = process.env.TIER1380_SECRET || '';
+    const endpoint = Bun.env.TIER1380_METRICS_ENDPOINT;
+    const secret = Bun.env.TIER1380_SECRET || '';
     if (endpoint) {
       try {
         await metricsFeed.pushToEndpoint(endpoint, secret);

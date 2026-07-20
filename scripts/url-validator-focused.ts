@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readTextSync } from './lib/fs-bun';
 /**
@@ -113,7 +114,7 @@ class FocusedUrlValidator {
             // Filter out URLs that are part of template literals with environment variables
             const lineContext = line.trim();
 
-            // Skip if it's part of a template literal with process.env
+            // Skip if it's part of a template literal with Bun.env
             if (lineContext.includes('process.env') && lineContext.includes('${')) {
               return;
             }

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readText } from './lib/fs-bun';
 /**
@@ -72,4 +73,4 @@ console.info('\nFix guidance:');
 console.info('- `obj.prop!` -> `obj.prop ?? fallback` (add a default)');
 console.info('- `obj!.method()` -> check null first or use optional chaining');
 console.info('- `array.pop()!` -> use a proper type guard');
-console.info('- For env vars: `process.env.FOO!` -> `process.env.FOO ?? ""`');
+console.info('- For env vars: `Bun.env.FOO!` -> `Bun.env.FOO ?? ""`');

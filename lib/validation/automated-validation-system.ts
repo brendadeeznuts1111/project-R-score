@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 // lib/validation/automated-validation-system.ts — Automated validation for CI/CD and repo health
 
 // Entry guard check
@@ -242,7 +243,7 @@ class AutomatedValidationSystem {
   /**
    * Create GitHub Actions workflow
    */
-  static createGitHubActionsWorkflow(): void {
+  static async createGitHubActionsWorkflow(): Promise<void> {
     const workflow = `name: Automated Validation
 
 on:
@@ -317,8 +318,8 @@ jobs:
 `;
 
     try {
-      require('fs').mkdirSync('.github/workflows', { recursive: true });
-      require('fs').writeFileSync('.github/workflows/automated-validation.yml', workflow);
+      // Bun.write creates parent directories
+      await Bun.write('.github/workflows/automated-validation.yml', workflow);
       console.info(
         '   ✅ GitHub Actions workflow created: .github/workflows/automated-validation.yml'
       );
@@ -330,7 +331,7 @@ jobs:
   /**
    * Create monitoring dashboard configuration
    */
-  static createMonitoringDashboard(): void {
+  static async createMonitoringDashboard(): Promise<void> {
     const dashboard = {
       title: 'Repository Validation Dashboard',
       refreshInterval: 300000, // 5 minutes
@@ -368,8 +369,7 @@ jobs:
     };
 
     try {
-      require('fs').mkdirSync('config', { recursive: true });
-      require('fs').writeFileSync(
+      await Bun.write(
         'config/monitoring-dashboard.json',
         JSON.stringify(dashboard, null, 2)
       );
@@ -394,7 +394,7 @@ jobs:
 
     // Save validation report
     try {
-      require('fs').writeFileSync('validation-report.json', JSON.stringify(result, null, 2));
+      await Bun.write('validation-report.json', JSON.stringify(result, null, 2));
       console.info('\n📄 Validation report saved: validation-report.json');
     } catch (error) {
       console.info(`\n❌ Failed to save validation report: ${error}`);
@@ -402,11 +402,11 @@ jobs:
 
     // Create GitHub Actions workflow
     console.info('\n🔧 Creating CI/CD integration...');
-    this.createGitHubActionsWorkflow();
+    await this.createGitHubActionsWorkflow();
 
     // Create monitoring dashboard
     console.info('\n📊 Setting up monitoring...');
-    this.createMonitoringDashboard();
+    await this.createMonitoringDashboard();
 
     console.info('\n✅ Automated validation system setup complete!');
     console.info('\n🎯 Features enabled:');

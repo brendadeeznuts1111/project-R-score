@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Self-Referential Documentation Scanner
  * Location-aware template and resource management system
@@ -265,7 +266,7 @@ Generated on: {{TIMESTAMP}}
 `;
 
   const templatesDir =
-    process.env.DOCS_TEMPLATES_DIR || new URL('../../lib/docs/templates', import.meta.url).pathname;
+    Bun.env.DOCS_TEMPLATES_DIR || new URL('../../lib/docs/templates', import.meta.url).pathname;
   const templateFile = (Bun as any).file(`${templatesDir}/search-results.md`);
 
   try {

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync } from './lib/fs-bun';
 
@@ -17,9 +18,9 @@ function getPkgVersion(): string {
 }
 
 function getResolvedBucket(): { name: string; source: BucketSource; conflict: boolean } {
-  const r2 = (process.env.R2_BUCKET_NAME || '').trim();
-  const s3 = (process.env.S3_BUCKET_NAME || '').trim();
-  const aws = (process.env.AWS_BUCKET_NAME || '').trim();
+  const r2 = (Bun.env.R2_BUCKET_NAME || '').trim();
+  const s3 = (Bun.env.S3_BUCKET_NAME || '').trim();
+  const aws = (Bun.env.AWS_BUCKET_NAME || '').trim();
 
   const nonEmpty = [
     ['R2_BUCKET_NAME', r2],
@@ -49,9 +50,9 @@ async function main() {
 
   if (bucket.conflict) {
     console.error('[ci:r2:version:check][fail] conflicting bucket env vars detected:');
-    console.error(`  R2_BUCKET_NAME=${process.env.R2_BUCKET_NAME || ''}`);
-    console.error(`  S3_BUCKET_NAME=${process.env.S3_BUCKET_NAME || ''}`);
-    console.error(`  AWS_BUCKET_NAME=${process.env.AWS_BUCKET_NAME || ''}`);
+    console.error(`  R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME || ''}`);
+    console.error(`  S3_BUCKET_NAME=${Bun.env.S3_BUCKET_NAME || ''}`);
+    console.error(`  AWS_BUCKET_NAME=${Bun.env.AWS_BUCKET_NAME || ''}`);
     process.exit(1);
   }
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
@@ -76,16 +77,16 @@ async function ensurePortOwnerSafe(port: number): Promise<void> {
 async function main() {
   const runtime = RuntimeEnv.validate();
   const port = runtime.port;
-  process.env.PLAYGROUND_PORT = String(port);
-  process.env.PORT = process.env.PORT || String(port);
-  process.env.PLAYGROUND_HOST = process.env.PLAYGROUND_HOST || runtime.host;
-  process.env.PLAYGROUND_ALLOW_PORT_FALLBACK =
-    process.env.PLAYGROUND_ALLOW_PORT_FALLBACK || String(runtime.allowFallback);
-  process.env.PLAYGROUND_PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || runtime.portRange;
-  process.env.PLAYGROUND_RUNTIME_ORIGINS =
-    process.env.PLAYGROUND_RUNTIME_ORIGINS || runtime.runtimeOrigins.join(',');
-  process.env.PLAYGROUND_RUNTIME_STALE_MS =
-    process.env.PLAYGROUND_RUNTIME_STALE_MS || String(runtime.runtimeStaleMs);
+  Bun.env.PLAYGROUND_PORT = String(port);
+  Bun.env.PORT = Bun.env.PORT || String(port);
+  Bun.env.PLAYGROUND_HOST = Bun.env.PLAYGROUND_HOST || runtime.host;
+  Bun.env.PLAYGROUND_ALLOW_PORT_FALLBACK =
+    Bun.env.PLAYGROUND_ALLOW_PORT_FALLBACK || String(runtime.allowFallback);
+  Bun.env.PLAYGROUND_PORT_RANGE = Bun.env.PLAYGROUND_PORT_RANGE || runtime.portRange;
+  Bun.env.PLAYGROUND_RUNTIME_ORIGINS =
+    Bun.env.PLAYGROUND_RUNTIME_ORIGINS || runtime.runtimeOrigins.join(',');
+  Bun.env.PLAYGROUND_RUNTIME_STALE_MS =
+    Bun.env.PLAYGROUND_RUNTIME_STALE_MS || String(runtime.runtimeStaleMs);
 
   await ensurePortOwnerSafe(port);
 
@@ -96,12 +97,12 @@ async function main() {
     stdin: 'inherit',
     stdout: 'inherit',
     stderr: 'inherit',
-    env: process.env,
+    env: Bun.env,
   });
 
   const startedAt = new Date().toISOString();
   console.info(
-    `[playground:dev] Started watch mode at ${startedAt} (host=${runtime.host}, port=${port}, fallback=${process.env.PLAYGROUND_ALLOW_PORT_FALLBACK}, range=${process.env.PLAYGROUND_PORT_RANGE})`
+    `[playground:dev] Started watch mode at ${startedAt} (host=${runtime.host}, port=${port}, fallback=${Bun.env.PLAYGROUND_ALLOW_PORT_FALLBACK}, range=${Bun.env.PLAYGROUND_PORT_RANGE})`
   );
 
   const exitCode = await child.exited;

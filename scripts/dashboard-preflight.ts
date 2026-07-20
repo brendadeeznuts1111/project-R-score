@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -12,7 +13,7 @@ const DASHBOARD_ENV = resolveDashboardEnvConfig(3456);
 const REQUESTED_PORT = DASHBOARD_ENV.port;
 const MIN_BUN = [1, 3, 9] as const;
 const RECOMMENDED_BUN = [1, 3, 10] as const;
-const ALLOW_CANARY_BUN = parseBooleanEnv(process.env.ALLOW_CANARY_BUN, false);
+const ALLOW_CANARY_BUN = parseBooleanEnv(Bun.env.ALLOW_CANARY_BUN, false);
 const DASHBOARD_HOST = DASHBOARD_ENV.host || '127.0.0.1';
 
 type Level = 'PASS' | 'WARN' | 'FAIL';
@@ -122,7 +123,7 @@ async function verifyRoutes(probePort: number): Promise<void> {
   const child = Bun.spawn(['bun', 'dashboard/dashboard-server.ts'], {
     cwd: ROOT,
     env: {
-      ...process.env,
+      ...Bun.env,
       DASHBOARD_HOST,
       DASHBOARD_PORT: String(probePort),
       ALLOW_PORT_FALLBACK: 'false',

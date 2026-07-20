@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 
 /**
  * Simple R2 Client for Filter Watch Logger
@@ -9,6 +11,7 @@
  * Uses signed S3 requests in production, local filesystem in development.
  */
 
+import { join } from 'path';
 import { signS3Request, getR2Credentials } from './s3-signer';
 
 interface R2UploadOptions {
@@ -33,18 +36,9 @@ export async function uploadToR2(
 
     // For local development, store in local directory
     if (isLocalMode()) {
-      const fs = await import('fs');
-      const path = await import('path');
-
-      const localDir = path.join(process.cwd(), 'data', 'r2-logs');
-      const localFile = path.join(localDir, key);
-
-      // Ensure directory exists
-      await fs.promises.mkdir(path.dirname(localFile), { recursive: true });
-
-      // Write file
-      await fs.promises.writeFile(localFile, JSON.stringify(data, null, 2));
-
+      const localFile = join(process.cwd(), 'data', 'r2-logs', key);
+      // Bun.write creates parent directories
+      await Bun.write(localFile, JSON.stringify(data, null, 2));
       console.info(`💾 Stored locally: ${localFile}`);
       return;
     }
@@ -79,17 +73,17 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
   try {
     console.info(`📋 Listing R2 objects: ${prefix}`);
 
-    // For local development, list local files
+    // For local development, list local files via Bun.Glob
     if (isLocalMode()) {
-      const fs = await import('fs');
-      const path = await import('path');
-
-      const localDir = path.join(process.cwd(), 'data', 'r2-logs', prefix);
-
+      const localDir = join(process.cwd(), 'data', 'r2-logs', prefix);
       try {
-        const files = await fs.promises.readdir(localDir, { recursive: true });
-        return files.map(file => path.join(prefix, file));
-      } catch (error) {
+        const keys: string[] = [];
+        const glob = new Bun.Glob('**/*');
+        for await (const file of glob.scan({ cwd: localDir, onlyFiles: true })) {
+          keys.push(join(prefix, file));
+        }
+        return keys;
+      } catch {
         return [];
       }
     }
@@ -129,17 +123,12 @@ export async function downloadFromR2(key: string): Promise<any> {
 
     // For local development, read local file
     if (isLocalMode()) {
-      const fs = await import('fs');
-      const path = await import('path');
-
-      const localFile = path.join(process.cwd(), 'data', 'r2-logs', key);
-
-      try {
-        const data = await fs.promises.readFile(localFile, 'utf-8');
-        return JSON.parse(data);
-      } catch (error) {
+      const localFile = join(process.cwd(), 'data', 'r2-logs', key);
+      const file = Bun.file(localFile);
+      if (!(await file.exists())) {
         throw new Error(`Local file not found: ${localFile}`);
       }
+      return file.json();
     }
 
     // Production: signed GET request

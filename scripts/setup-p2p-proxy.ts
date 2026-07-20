@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 /**
  * P2P Proxy Setup Script
@@ -7,7 +8,7 @@
 
 import { writeText } from './lib/fs-bun';
 
-const BRAND_NAME = process.env.PROXY_BRAND_NAME || 'HaircutPro';
+const BRAND_NAME = Bun.env.PROXY_BRAND_NAME || 'HaircutPro';
 
 async function setupP2PProxy() {
   console.info('╔════════════════════════════════════════════════════════════╗');
@@ -49,7 +50,7 @@ NGROK_AUTH_TOKEN=your_ngrok_token_here
   }
 
   // 2. Create ngrok config
-  const ngrokConfig = `authtoken: ${process.env.NGROK_AUTH_TOKEN || 'your_token_here'}
+  const ngrokConfig = `authtoken: ${Bun.env.NGROK_AUTH_TOKEN || 'your_token_here'}
 tunnels:
   p2p-proxy:
     proto: http
@@ -175,7 +176,7 @@ Client → QR/Link → Branded Page → P2P Payment → Your Account
  * Quick test for P2P Proxy
  */
 
-const PROXY_URL = process.env.PROXY_URL || 'http://localhost:3002';
+const PROXY_URL = Bun.env.PROXY_URL || 'http://localhost:3002';
 
 async function testProxy() {
   console.info('Testing P2P Proxy...\n');

@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // lib/package/package-manager.ts — Package management with Bun API analysis and R2 integration
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 export interface PackageInfo {
   name: string;
   version: string;
@@ -35,7 +36,7 @@ export class PackageManager {
 
   constructor(projectRoot: string = process.cwd()) {
     this.projectRoot = projectRoot;
-    this.cacheDir = `${process.env.HOME || process.env.USERPROFILE || '/tmp'}/.cache/bun-docs/packages`;
+    this.cacheDir = `${Bun.env.HOME || Bun.env.USERPROFILE || '/tmp'}/.cache/bun-docs/packages`;
     try {
       Bun.$`mkdir -p ${this.cacheDir}`.quiet();
     } catch {

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * @fileoverview Set npm registry token
@@ -19,7 +20,7 @@
  */
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** NPM registry for fallback */
 const NPM_REGISTRY = 'https://registry.npmjs.org/';

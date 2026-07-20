@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-// @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 /**
  * Wiki v3.19 - AI Wiki Generator
  *
@@ -9,7 +9,6 @@
  */
 
 import { juniorProfile } from '../utils/junior-runner';
-import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 // v3.19: Tier-1380 AI → Wiki MD Sections!
@@ -325,10 +324,10 @@ if (import.meta.main) {
   console.info('');
 
   generateAIWiki(args)
-    .then(wiki => {
+    .then(async wiki => {
       // Save to file
       const filename = `ai-wiki-${Date.now()}.md`;
-      writeFileSync(filename, wiki);
+      await Bun.write(filename, wiki);
 
       console.info('✅ AI Wiki Generation Complete!');
       console.info(`📁 Saved to: ${filename}`);

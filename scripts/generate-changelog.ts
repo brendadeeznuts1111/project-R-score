@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
@@ -25,11 +26,11 @@ import { $ } from 'bun';
 const CHANGELOG_FILE = 'CHANGELOG.md';
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** R2 bucket URL */
 const R2_BUCKET_URL =
-  process.env.R2_BUCKET_URL ||
+  Bun.env.R2_BUCKET_URL ||
   'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry';
 
 /** Commit categories */

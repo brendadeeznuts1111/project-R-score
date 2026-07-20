@@ -5,6 +5,7 @@
 // URL DISCOVERY AND VALIDATION
 // ============================================================================
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 export class URLDiscoveryValidator {
   private static readonly FOUND_URLS = new Map<string, { source: string; type: string }>();
 
@@ -67,22 +68,22 @@ export class URLDiscoveryValidator {
     // Local URLs (skip validation but note them)
     const localURLs = [
       {
-        url: `${process.env.API_BASE_URL || 'http://example.com'}`,
+        url: `${Bun.env.API_BASE_URL || 'http://example.com'}`,
         source: 'dev-servers',
         type: 'local',
       },
       {
-        url: `${process.env.API_BASE_URL || 'http://example.com'}/api/v1/metrics`,
+        url: `${Bun.env.API_BASE_URL || 'http://example.com'}/api/v1/metrics`,
         source: 'trader-analyzer',
         type: 'local',
       },
       {
-        url: `${process.env.API_BASE_URL || 'http://example.com'}/health`,
+        url: `${Bun.env.API_BASE_URL || 'http://example.com'}/health`,
         source: 'trader-analyzer',
         type: 'local',
       },
       {
-        url: `${process.env.API_BASE_URL || 'http://example.com'}/api/v1/graph`,
+        url: `${Bun.env.API_BASE_URL || 'http://example.com'}/api/v1/graph`,
         source: 'trader-analyzer',
         type: 'local',
       },

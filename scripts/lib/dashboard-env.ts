@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 export type DashboardEnvConfig = {
   host: string;
   port: number;
@@ -22,15 +23,15 @@ export function parseBooleanEnv(value: string | undefined, fallback: boolean): b
 }
 
 export function resolveDashboardHost(): string {
-  return process.env.PLAYGROUND_HOST || process.env.DASHBOARD_HOST || process.env.SERVER_HOST || "127.0.0.1";
+  return Bun.env.PLAYGROUND_HOST || Bun.env.DASHBOARD_HOST || Bun.env.SERVER_HOST || "127.0.0.1";
 }
 
 export function resolveDashboardPort(fallback = 3401): number {
   const raw = Number.parseInt(
-    process.env.DASHBOARD_TEST_PORT ||
-      process.env.DASHBOARD_PORT ||
-      process.env.PLAYGROUND_PORT ||
-      process.env.PORT ||
+    Bun.env.DASHBOARD_TEST_PORT ||
+      Bun.env.DASHBOARD_PORT ||
+      Bun.env.PLAYGROUND_PORT ||
+      Bun.env.PORT ||
       String(fallback),
     10
   );
@@ -44,27 +45,27 @@ export function resolveDashboardEnvConfig(portFallback = 3401): DashboardEnvConf
     host,
     port,
     base: `http://${host}:${port}`,
-    allowFallback: parseBooleanEnv(process.env.DASHBOARD_TEST_ALLOW_PORT_FALLBACK, true),
-    portRange: process.env.DASHBOARD_TEST_PORT_RANGE || `${port}-${Math.min(port + 40, 65535)}`,
+    allowFallback: parseBooleanEnv(Bun.env.DASHBOARD_TEST_ALLOW_PORT_FALLBACK, true),
+    portRange: Bun.env.DASHBOARD_TEST_PORT_RANGE || `${port}-${Math.min(port + 40, 65535)}`,
   };
 }
 
 export function applyDashboardEnv(config: Pick<DashboardEnvConfig, "host" | "port">): void {
-  process.env.DASHBOARD_HOST = config.host;
-  process.env.DASHBOARD_TEST_PORT = String(config.port);
-  process.env.DASHBOARD_PORT = String(config.port);
-  process.env.PLAYGROUND_PORT = String(config.port);
-  process.env.PORT = String(config.port);
+  Bun.env.DASHBOARD_HOST = config.host;
+  Bun.env.DASHBOARD_TEST_PORT = String(config.port);
+  Bun.env.DASHBOARD_PORT = String(config.port);
+  Bun.env.PLAYGROUND_PORT = String(config.port);
+  Bun.env.PORT = String(config.port);
 }
 
 export function resolvePlaygroundPortPolicy(portFallback = 3011): PlaygroundPortPolicy {
   const requestedPort = resolveDashboardPort(portFallback);
-  const allowFallback = parseBooleanEnv(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false);
+  const allowFallback = parseBooleanEnv(Bun.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false);
   return {
     host: resolveDashboardHost(),
     requestedPort,
     portRange:
-      process.env.PLAYGROUND_PORT_RANGE ||
+      Bun.env.PLAYGROUND_PORT_RANGE ||
       (allowFallback ? "3011-3031" : `${requestedPort}-${requestedPort}`),
     allowFallback,
   };

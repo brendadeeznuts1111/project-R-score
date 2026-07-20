@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
  * Workspace Validator (Dependency-free version)
@@ -19,7 +20,7 @@ import { resolve, relative } from 'path';
 
 // ---------- CLI Argument Parsing (simple) ----------
 const args = process.argv.slice(2);
-const verbose = args.includes('--verbose') || process.env.VERBOSE === '1';
+const verbose = args.includes('--verbose') || Bun.env.VERBOSE === '1';
 
 // ---------- Configuration ----------
 const IGNORE_GLOBS = [
@@ -72,7 +73,7 @@ const colors = {
 };
 
 // Detect which script name was used (for deprecation warning)
-const lifecycleEvent = process.env.npm_lifecycle_event || '';
+const lifecycleEvent = Bun.env.npm_lifecycle_event || '';
 const isDeprecatedName = lifecycleEvent === 'check:workspaces';
 
 if (isDeprecatedName) {

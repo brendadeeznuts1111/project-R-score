@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
@@ -12,15 +13,15 @@
  * JuniorRunner/wiki-gen pooled ops (batch inserts)
  */
 
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 import { Database } from 'bun:sqlite';
 import { juniorProfile } from '../utils/junior-runner';
-import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 // v3.20: bun:sqlite Pool + R2 Sync!
-const DB_PATH = process.env.DB_PATH || './telemetry.db';
-const POOL_SIZE = parseInt(process.env.POOL_SIZE || '20');
-const R2_URL = process.env.R2_URL || 'https://r2.example.com';
+const DB_PATH = Bun.env.DB_PATH || './telemetry.db';
+const POOL_SIZE = parseInt(Bun.env.POOL_SIZE || '20');
+const R2_URL = Bun.env.R2_URL || 'https://r2.example.com';
 
 interface LeadSpecProfile {
   documentSize: number;
@@ -252,7 +253,7 @@ class TelemetryPool {
       };
 
       // Save locally for demo
-      writeFileSync('./telemetry-pool.json', JSON.stringify(syncData, null, 2));
+      await Bun.write('./telemetry-pool.json', JSON.stringify(syncData, null, 2));
 
       // In production, upload to R2
       if (R2_URL !== 'https://r2.example.com') {
@@ -260,7 +261,7 @@ class TelemetryPool {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.R2_TOKEN || ''}`,
+            Authorization: `Bearer ${Bun.env.R2_TOKEN || ''}`,
           },
           body: JSON.stringify(syncData),
         });

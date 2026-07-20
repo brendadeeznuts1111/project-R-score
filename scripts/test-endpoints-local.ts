@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 
 type EndpointCheck = {
   name: string;
@@ -8,8 +9,8 @@ type EndpointCheck = {
   body?: unknown;
 };
 
-const baseUrl = (process.env.PLAYGROUND_BASE_URL || 'http://localhost:3011').replace(/\/+$/, '');
-const timeoutMs = Number(process.env.ENDPOINT_TEST_TIMEOUT_MS || '4000');
+const baseUrl = (Bun.env.PLAYGROUND_BASE_URL || 'http://localhost:3011').replace(/\/+$/, '');
+const timeoutMs = Number(Bun.env.ENDPOINT_TEST_TIMEOUT_MS || '4000');
 
 const checks: EndpointCheck[] = [
   { name: 'info', method: 'GET', path: '/api/info', expectedStatus: 200 },

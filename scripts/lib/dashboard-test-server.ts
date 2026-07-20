@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { createServer } from 'node:net';
 import { applyDashboardEnv, resolveDashboardEnvConfig } from './dashboard-env';
 
@@ -147,7 +148,7 @@ export async function withDashboardServer<T>(
         stderr: 'inherit',
         stdin: 'ignore',
         env: {
-          ...process.env,
+          ...Bun.env,
           DASHBOARD_HOST: host,
           DASHBOARD_PORT: String(activePort),
           PLAYGROUND_PORT: String(activePort),
