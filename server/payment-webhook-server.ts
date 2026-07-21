@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/redis — RedisClient
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -91,7 +92,10 @@ function vlog(...args: Array<string | number | boolean | object | null | undefin
   if (VERBOSE) console.info(...args);
 }
 
-function jsonResponse(body: object | string | number | boolean | null, init?: ResponseInit): Response {
+function jsonResponse(
+  body: object | string | number | boolean | null,
+  init?: ResponseInit
+): Response {
   return Response.json(body, init);
 }
 

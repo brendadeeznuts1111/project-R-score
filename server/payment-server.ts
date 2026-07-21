@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 
 import { Pinecone } from '@pinecone-database/pinecone';
@@ -16,7 +18,10 @@ const PAYPAL_CLIENT_SECRET = Bun.env.PAYPAL_CLIENT_SECRET ?? '';
 const PAYPAL_API_BASE = Bun.env.PAYPAL_API_BASE ?? 'https://api-m.sandbox.paypal.com';
 const VENMO_WEBHOOK_SECRET = Bun.env.VENMO_WEBHOOK_SECRET ?? '';
 
-const redisPublish = async (channel: string, payload: object | string | number | boolean | null) => {
+const redisPublish = async (
+  channel: string,
+  payload: object | string | number | boolean | null
+) => {
   try {
     await redis.publish(channel, JSON.stringify(payload));
   } catch (err) {
