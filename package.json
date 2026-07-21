@@ -1557,6 +1557,7 @@
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
     "harness:violations": "bun tools/harness-violations.ts",
     "docs:map:check": "bun tools/doc-map-check.ts",
+    "docs:links:check": "bun tools/md-link-check.ts",
     "docs:release-index": "bun tools/bun-docs-releases.ts index",
     "docs:release-scrape": "bun tools/bun-docs-releases.ts scrape",
     "docs:refresh": "bun tools/bun-docs-refresh.ts",
