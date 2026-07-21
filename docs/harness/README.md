@@ -36,7 +36,7 @@ When a decision is unresolved, read **one** owner below — do not load the full
 | Feedback → infrastructure | [`FEEDBACK.md`](FEEDBACK.md) · `harness:lesson` |
 | Coherence / lifetime risk | finish migrations + ratchets (VELOCITY_BASELINE eras) |
 | Continuous maintenance | day loop + pre-commit timings · `docs:refresh` operate loop |
-| Measured effectiveness | gate timings · attention budget (serial ESLint still dominant) |
+| Measured effectiveness | gate timings · PR uses eslint-changed; full-tree ESLint on main push only |
 
 ## Setup (hooks + CI)
 
@@ -53,8 +53,8 @@ bun run ci:harness          # quiet full (= harness-gates.yml)
 | Tier | Owner | Proves |
 |------|-------|--------|
 | **install** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) · pre-push | `install:verify` only |
-| **fast** | `bun run ci:harness:fast` | path-bun · bun-env · brands `--quiet` · `test:changed` (dirty) |
-| **full** | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:harness` | + eslint · `test:changed:main` (`--main-head`) |
+| **fast** | `bun run ci:harness:fast` | ∥ path-bun · bun-env · brands · `test:changed` (dirty; skips if no code) |
+| **full** | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:harness` | + `lint:bun-native:changed` (PR) / full rollout (`HARNESS_FULL_LINT` on main push) · `test:changed:main` |
 | **claim** | [pr-claim.yml](../../.github/workflows/pr-claim.yml) | Claim → evidence ([PROOF.md](PROOF.md)); warn until 2026-07-28 |
 
 **Required checks:** see [AUTHORITY.md](AUTHORITY.md). Pre-commit write tools fail if staged≠worktree (re-stage + retry).

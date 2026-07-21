@@ -17,6 +17,8 @@ jobs:
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
       BUN_INSTALL_GLOBAL_STORE: '1'
+      # Full-tree ESLint only on push to main; PRs lint the change set.
+      HARNESS_FULL_LINT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && '1' || '0' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

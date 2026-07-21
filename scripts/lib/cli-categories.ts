@@ -94,8 +94,10 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
-  'ci:harness': 'Quiet full CI envelope (ratchets · eslint · brands · test:changed:main)',
-  'ci:harness:fast': 'Quiet local parity (ratchets · brands · test:changed dirty)',
+  'ci:harness':
+    'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
+  'ci:harness:fast': 'Quiet local parity (∥ cheap · test:changed dirty; no eslint)',
+  'lint:bun-native:changed': 'ESLint bun-native on files changed since main-head (cached)',
   'check:pr-claim': 'PR Claim → evidence body check (warn-first → error after 2026-07-28)',
   'proof:install': 'Journey proof: install layout healthy',
   'harness:lesson': 'Scaffold a FEEDBACK.md lesson stub',

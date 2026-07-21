@@ -110,3 +110,11 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Earliest owner:** script-gate
 - **Ratchet:** `scripts/ci-harness.ts` · `scripts/bun-test-changed.ts` · brands `--quiet` · install `--quiet`
 - **Keep / revise / drop:** keep
+
+### Full-tree ESLint every PR
+
+- **Finding:** `lint:bun-native:rollout` was ~78% of `ci:harness` wall; quieting logs did not move the bottleneck.
+- **Repair:** Default `lint:bun-native:changed` (+ cache); `HARNESS_FULL_LINT` only on main push; ∥ cheap ratchets; skip `test:changed` when change set has no code-like files.
+- **Earliest owner:** script-gate
+- **Ratchet:** `scripts/lint-bun-native-changed.ts` · `scripts/lib/git-changed.ts` · harness-gates env
+- **Keep / revise / drop:** keep

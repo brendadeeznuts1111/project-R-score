@@ -7,33 +7,17 @@
 /**
  * Day-loop wrapper for `bun test --changed`.
  *
- *   bun run test:changed                 # uncommitted (staged + unstaged + untracked)
- *   bun run test:changed -- HEAD~1       # since commit / tag
- *   bun run test:changed -- main         # since branch tip
+ *   bun run test:changed                 # uncommitted
+ *   bun run test:changed -- HEAD~1
+ *   bun run test:changed -- main
  *   bun run test:changed -- --main-head  # origin/main → main → HEAD~1
- *   bun run test:changed:main            # alias for --main-head
- *   bun run test:changed:watch           # --changed --watch
- *   bun run test:changed -- main --parallel
+ *   bun run test:changed:main
+ *   bun run test:changed:watch
  *
- * First non-flag positional → `--changed=<ref>` (unless `--main-head`).
- * Remaining args forward to `bun test`.
- * Do not pass a bare ref after raw `bun test --changed` — Bun treats it as a path filter.
- *
- * Graph: import scan only (no node_modules, no link/emit). Empty dirty set → exit 0
- * without `--watch`; with `--watch` the process stays alive.
+ * Short-circuit: if the change set has no code-like files, exit 0 without
+ * booting the Bun test import graph (~1–2s saved on docs-only diffs).
  */
-export {};
-
-async function resolveMainHead(): Promise<string> {
-  for (const ref of ['origin/main', 'main', 'origin/master', 'master'] as const) {
-    const proc = Bun.spawn(['git', 'rev-parse', '--verify', '--quiet', ref], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    if ((await proc.exited) === 0) return ref;
-  }
-  return 'HEAD~1';
-}
+import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 
 const raw = Bun.argv.slice(2);
 const wantMainHead = raw.includes('--main-head');
@@ -42,6 +26,19 @@ const flags = stripped.filter(a => a.startsWith('-'));
 const positionals = stripped.filter(a => !a.startsWith('-'));
 const restPositionals = wantMainHead ? positionals : positionals.slice(1);
 const ref = wantMainHead ? await resolveMainHead() : positionals[0];
+const watch = flags.includes('--watch');
+
+if (!watch) {
+  const changed = await listChangedFiles({
+    since: ref,
+    dirty: true,
+  });
+  if (changed.length === 0 || !hasCodeLikeChange(changed)) {
+    const why = changed.length === 0 ? 'empty change set' : 'no code-like files in change set';
+    console.info(`✓ test:changed — skip (${why}${ref ? `; since ${ref}` : ''})`);
+    process.exit(0);
+  }
+}
 
 const bunArgs = ['test', '--pass-with-no-tests'];
 bunArgs.push(ref ? `--changed=${ref}` : '--changed');
