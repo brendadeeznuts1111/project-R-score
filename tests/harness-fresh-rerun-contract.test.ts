@@ -19,6 +19,16 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun test tests/fixtures/runtime-cli/');
   });
 
+  test('bun-shell-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'bun-shell-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/bun-shell/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/bun-shell/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
   test('install-verify-journey freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');

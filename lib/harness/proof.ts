@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
@@ -34,7 +35,9 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/fixtures/runtime-cli/resolution-order/fixture.test.ts',
   'tests/fixtures/runtime-cli/shebang-bun/fixture.test.ts',
   'tests/fixtures/runtime-cli/console-depth/fixture.test.ts',
-
+  'tests/fixtures/bun-shell/interpolation/fixture.test.ts',
+  'tests/fixtures/bun-shell/error-handling/fixture.test.ts',
+  'tests/fixtures/bun-shell/cwd/fixture.test.ts',
   'tests/bun-cron.test.ts',
   'tests/bun-explicit-resource.test.ts',
   'tests/harness-cron-contract.test.ts',
@@ -119,6 +122,14 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['boundary'],
     evidence: ['tests/fixtures/runtime-cli/**/fixture.test.ts'],
     freshRerun: 'bun test tests/fixtures/runtime-cli/',
+  },
+  {
+    // owner: platform team
+    id: 'bun-shell-boundaries',
+    claim: 'Bun.$ shell tagged templates behave as this repo depends on them',
+    kinds: ['boundary'],
+    evidence: ['tests/fixtures/bun-shell/**/fixture.test.ts'],
+    freshRerun: 'bun test tests/fixtures/bun-shell/',
   },
   {
     id: 'path-bun',
