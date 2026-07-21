@@ -255,7 +255,6 @@ export const VALIDATE_WHITELIST = new Set([
   'scripts/bun-quick-wins-table.ts',
   'scripts/dx-mcp.ts',
   'scripts/lib/fs-bun.ts',
-  'tools/performance-comparison.ts',
   'packages/guards/src/bun-first-guard.ts',
   'lib/docs/constants/utils.ts',
   'packages/docs-tools/src/builders/url-builder.ts',
