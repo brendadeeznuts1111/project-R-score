@@ -27,7 +27,8 @@ frozenLockfile = false
 # Day-loop: bun run test:changed [-- HEAD~1|main] | test:changed:watch (re-query git)
 #           bun run test:parallel | test:isolate | SHARD=1/3 bun run test:shard
 # @see https://bun.com/docs/test/index#run-tests
-# @see https://bun.com/blog/bun-v1.3.13
+# @see https://bun.com/blog/bun-v1.3.13#bun-test-changed
+# @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
 [test]
 timeout = 10000
 # ast-grep integration scans (see .agents/skills/ast-grep/bunfig.toml for skill-local defaults)

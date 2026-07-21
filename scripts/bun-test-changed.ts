@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/test/index#run-tests — bun test
-// @see https://bun.com/blog/bun-v1.3.13 — --changed / --watch / --parallel / --isolate
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --changed=REF / --watch
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**

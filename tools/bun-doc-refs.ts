@@ -168,6 +168,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun test': 'https://bun.com/docs/test/index#run-tests',
   'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
+  // bun test flags (v1.3.13+) — blog anchors are the ship notes; docs index may lag
+  'bun test --changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
+  '--changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
+  '--isolate': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--parallel': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--shard': 'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
 
   // ── Bundler / executables ──────────────────────────────────────────────
   'bun build --compile': 'https://bun.com/docs/bundler/executables',
@@ -211,7 +217,9 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Package manager CLI / config (depth-controlled locus batch) ─────────
   '--filter': 'https://bun.com/docs/pm/filter#package-name-filter-pattern',
+  // Bundler watch (url/suggest only — excluded from annotate; ambiguous with bun test --watch)
   '--watch': 'https://bun.com/docs/bundler/index#watch-mode',
+  'bun build --watch': 'https://bun.com/docs/bundler/index#watch-mode',
   '--linker': 'https://bun.com/docs/runtime/bunfig#install-linker',
   '--dry-run': 'https://bun.com/docs/pm/cli/install#dry-run',
   '--dev': 'https://bun.com/docs/pm/cli/add#dev',
@@ -252,6 +260,8 @@ export const CANONICAL_REFS: Record<string, string> = {
  */
 function isCodeApiKey(k: string): boolean {
   if (k === 'console' || k === 'dns' || k === 'redis') return false;
+  // Ambiguous CLI flag: bundler watch vs `bun test --changed --watch` (blog #bun-test-changed)
+  if (k === '--watch') return false;
   if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
   // PascalCase Bun package exports / types
   if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;

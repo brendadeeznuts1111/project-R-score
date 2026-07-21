@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/test/index#run-tests — bun test
-// @see https://bun.com/blog/bun-v1.3.13 — --isolate / --parallel / --shard / --changed
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --watch
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 /**
  * Tool-legibility surface for the day loop + ratchets.
  * Quiet success; lists discover → invoke → verify commands.
