@@ -185,102 +185,21 @@ frozenLockfile = false
 
 ---
 
-## Tooling registry
-
-| Tool | Command | Purpose |
-| --- | --- | --- |
-| audit-bunfig | `bun run audit:bunfig` | Scan workspace `bunfig.toml` for redundant install key assignments |
-| audit-bunfig (strict) | `bun run audit:bunfig:strict` | Exit 1 if `linker` / `globalStore` / `dir` assignments found (includes intentional overrides — review first) |
-| audit-bunfig (doctor) | `bash scripts/audit-bunfig.sh --doctor` | Delegate to `kimi-doctor --gate bunfig-policy` when on PATH |
-| install:verify | `bun run install:verify` | Cache dir, global store `links/`, lockfile, tilde drift, layout |
-| install:verify (strict) | `bun run install:verify:strict` | Same checks, non-zero exit on failure |
-| with-bun-cache-env | `bun scripts/with-bun-cache-env.ts ci` | CI-safe env wrapper + frozen lockfile install |
-| bun-install-env | `scripts/lib/bun-install-env.ts` | Shared `applyBunInstallEnv()`, tilde scan helpers |
-| bun_verify | `bverify` / `bhealth` | Interactive runtime + machine policy checks (`~/.config/shell/bun.sh`) |
-| install:machine:health | `bun run install:machine:health` · aliases `bmachine` / `health` | Repo script `scripts/machine-bun-health.ts` |
-| kimi-doctor bunfig-policy | `kimi-doctor --gate bunfig-policy` | Root bunfig redundancy vs `~/.bunfig.toml` |
-| install:cache:lifecycle | `bun run install:cache:lifecycle` | CI-safe cache metrics dry-run (no destructive `pm cache rm`) |
-| install:cache:prune | `BUN_CACHE_PRUNE=1 bun run install:cache:prune` | Self-hosted prune when over `BUN_CACHE_PRUNE_MAX_MB` (default 2048) |
-| harness:report --json | `bun run harness:report --json` | Harness report; may embed install-cache metrics |
-
-### Precise audit grep
-
-Broad greps match **comments**. Prefer assignment matching:
+## Tooling (install plane)
 
 ```bash
-find . -name "bunfig.toml" -not -path "*/node_modules/*" -not -path "*/herdr-worktrees/*" \
-  -exec grep -lE '^(linker|globalStore)[[:space:]]*=|^[[:space:]]*dir[[:space:]]*=' {} \;
+bun run audit:bunfig
+bun run install:verify          # · :strict
+bun run install:machine:health  # bmachine / health
+bun run install:cache:lifecycle # --dry-run / --json
+bun scripts/with-bun-cache-env.ts ci
 ```
 
-Or run `./scripts/audit-bunfig.sh`.
+`bun pm cache` / `hash` / `untrusted` / `bin` — see `bun pm --help`. No safe `bun pm cache rm --dry-run` on Bun 1.4; use lifecycle script.
 
----
+IDE: do **not** set `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` in VS Code. CI: `setup-factory-bun` + `ci:core`; ephemeral runners may set absolute cache via wrapper.
 
-## bun pm command matrix
+## Related
 
-| Command | Active track | Notes |
-| --- | --- | --- |
-| `bun pm cache` | CI cache lifecycle | Resolve effective cache path |
-| `bun pm cache rm` | Self-hosted prune | **No safe `--dry-run` on Bun 1.4** — use `install:cache:lifecycle --dry-run` |
-| `bun pm hash` | Lockfile integrity | Current lockfile hash |
-| `bun pm hash-print` | Lockfile integrity | Stored hash |
-| `bun pm untrusted` | Security / audit | Blocked lifecycle scripts |
-| `bun pm ls --trusted` | Security | Trusted dependency surface |
-| `bun pm pkg get name version` | Automation | Project identity without hand-parsing JSON |
-| `bun pm bin` / `bun pm bin -g` | PATH verify | Local vs global bins |
-| `bun pm pack --quiet --dry-run` | CI artifacts | Tarball dry-run |
-
-**pm-health:** `scripts/lib/bun-pm-health.ts`, also reachable via `bun run install:cache:lifecycle --json`.
-
----
-
-## IDE and VS Code
-
-`~/Projects/.vscode/settings.json` and `~/.vscode/settings.json` — do **not** inject `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE`, or terminal `PATH` overrides for install policy. Cache and global store come from `~/.bunfig.toml` only.
-
----
-
-## CI notes
-
-### Frozen lockfile install wrapper
-
-Root `.github/workflows/` install steps that use `bun scripts/with-bun-cache-env.ts ci` (9 workflows, verified):
-
-| Workflow | Notes |
-| --- | --- |
-| `repo-hygiene.yml` | + `install:verify:strict` / cache lifecycle patterns |
-| `search-governance.yml` | frozen via wrapper |
-| `typescript-checks.yml` | frozen via wrapper |
-| `p0-security-check.yml` | frozen via wrapper |
-| `brand-bench.yml` | frozen via wrapper |
-| `cache-lifecycle.yml` | metrics / prune dispatch |
-| `demo-module-contract.yml` | frozen via wrapper |
-| `har-performance.yml` | hardened from plain install |
-| `url-validation.yml` | hardened from plain install |
-
-Additional workflows (e.g. `issue-automation.yml`) may exist without that wrapper — do not assume *every* YAML installs the same way; re-grep when adding jobs. Install journey CI owner is `repo-hygiene.yml` only.
-
-- Wrapper ≡ frozen lockfile install with absolute cache + global store for **ephemeral** runners that lack `~/.bunfig.toml`.
-- `BUN_INSTALL_CACHE_DIR` in GHA job env is acceptable for runners; do not mirror that into local VS Code.
-- Self-hosted: `CI_SELF_HOSTED=1` or `BUN_CACHE_PRUNE=1`; optional `BUN_CACHE_PRUNE_MAX_MB` (default 2048). **Do not** rely on `bun pm cache rm --dry-run` on Bun 1.4 — it may still delete; use `scripts/bun-cache-lifecycle.ts --dry-run`.
-
----
-
-## Related docs
-
-### Install and monorepo ops
-
-- [STRUCTURE.md](../STRUCTURE.md) — monorepo layout
-- [AGENTS.md](../AGENTS.md) — agent entry (machine Bun summary) · [docs/AGENTS.md](./AGENTS.md) — full guide
-- [organization/ROOT_CLEANUP_SUMMARY.md](./organization/ROOT_CLEANUP_SUMMARY.md) — root organization history
-- [Bun global store](https://bun.com/docs/pm/global-store)
-- [Bun bunfig.toml](https://bun.com/docs/runtime/bunfig)
-- [bun install CLI](https://bun.com/docs/pm/cli/install)
-
-### Other monorepo policies
-
-Not install SSOT — linked for navigation only:
-
-- [.custom-instructions.md](../.custom-instructions.md) — coding standards
-- [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) — wire / parse-once types (`unknown` → domain)
-- [lib/docs/repo-docs.ts](../lib/docs/repo-docs.ts) — path SSOT (`CANONICAL_REPO_DOCS`)
+- [STRUCTURE.md](../STRUCTURE.md) · [AGENTS.md](../AGENTS.md) · [harness/README.md](./harness/README.md)
+- [Bun bunfig](https://bun.com/docs/runtime/bunfig) · [global store](https://bun.com/docs/pm/global-store) · [install CLI](https://bun.com/docs/pm/cli/install)

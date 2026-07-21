@@ -22,10 +22,9 @@ Grounded map of **newer Bun runtime APIs** available on this machine’s toolcha
 6. [URLPattern](#urlpattern)
 7. [Bun.Glob.scan](#bunglobscan)
 8. [Bun.stripANSI / Bun.stringWidth](#bunstripansi--bunstringwidth)
-9. [Bun v1.3.12 release map](#bun-v1312-release-map)
-10. [Bun v1.3.13 release map](#bun-v1313-release-map)
-11. [Platform integration map](#platform-integration-map)
-12. [References](#references)
+9. [Release maps (1.3.12 / 1.3.13)](#release-maps-1312--1313)
+10. [Platform integration map](#platform-integration-map)
+11. [References](#references)
 
 ---
 
@@ -272,89 +271,28 @@ for await (const path of glob.scan({ cwd: './my-project' })) {
 
 ---
 
-## Bun v1.3.12 release map
+## Release maps (1.3.12 / 1.3.13)
 
-Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — page entry [title → `bun upgrade`](https://bun.com/blog/bun-v1.3.12#to-upgrade-bun) (before [WebView](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation)), through [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors). Runtime here: **1.4.0** (superset). Detailed API notes for WebView / markdown / cron / UDP are the sections above this map.
+Upstream: [bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) · [bun-v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--changed`). Runtime pin **1.4.0**.
 
-| Blog section | Homebase status |
-|--------------|-----------------|
-| [Install / `bun upgrade`](https://bun.com/blog/bun-v1.3.12#to-upgrade-bun) | Machine plane — [UNIFIED.md](./UNIFIED.md) · `bun upgrade` |
-| [`Bun.WebView`](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation) | Documented above · runtime verified · optional spine smoke when needed |
-| [`bun ./file.md` / markdown terminal](https://bun.com/blog/bun-v1.3.12#render-markdown-in-the-terminal-with-bun-file-md) | `Bun.markdown.ansi` section above · harness report UX candidate |
-| [Async stack traces for native errors](https://bun.com/blog/bun-v1.3.12#async-stack-traces-for-native-errors) | Runtime inherit · no homebase script |
-| [`Bun.cron()`](https://bun.com/blog/bun-v1.3.12#in-process-bun-cron-scheduler) | Documented above · used by docs operate / R2 patterns |
-| [UDP ICMP / truncation](https://bun.com/blog/bun-v1.3.12#udp-socket-icmp-error-handling-and-truncation-detection) | Documented above · re-read when editing `lib/udp` |
-| [Unix domain socket lifecycle ↔ Node](https://bun.com/blog/bun-v1.3.12#unix-domain-socket-lifecycle-now-matches-node-js) | Runtime inherit · prefer Bun.serve / native sockets in new code |
-| JSC: `using` / `await using`, JIT, Wasm, spec, libpas | Prefer `await using` for WebView / resources · rest inherit |
-| [Improved standalone Linux executables](https://bun.com/blog/bun-v1.3.12#improved-standalone-executables-on-linux) | Runtime inherit · `--compile` portability |
-| [URLPattern up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster) | Documented above · smoke + DX · no `$N` leak |
-| [Faster `Bun.stripANSI` / `Bun.stringWidth`](https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth) | Documented above · `console-depth` + OSC terminator smoke |
-| [Faster `bun build` on low-core machines](https://bun.com/blog/bun-v1.3.12#faster-bun-build-on-low-core-machines) | Runtime inherit (thread-pool fix) |
-| [Faster `Bun.Glob.scan()`](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan) | Documented above · smoke + DX · `**/X/...` boundary |
-| [Cgroup-aware `availableParallelism`](https://bun.com/blog/bun-v1.3.12#cgroup-aware-availableparallelism-hardwareconcurrency-on-linux) | Runtime inherit on Linux hosts / containers |
-| [HTTPS proxy CONNECT keep-alive](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels) | Runtime inherit · `fetch({ proxy })` tunnel reuse |
-| [`TCP_DEFER_ACCEPT` for `Bun.serve()` (Linux)](https://bun.com/blog/bun-v1.3.12#tcp-defer-accept-for-bun-serve-on-linux) | Runtime inherit · `Bun.listen` / `net.createServer` unchanged |
-| [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [Node](https://bun.com/blog/bun-v1.3.12#node-js-compatibility-improvements) · [Bun APIs](https://bun.com/blog/bun-v1.3.12#bun-apis) · [Web](https://bun.com/blog/bun-v1.3.12#web-apis) · [bundler](https://bun.com/blog/bun-v1.3.12#javascript-bundler) · [test](https://bun.com/blog/bun-v1.3.12#bun-test) · [Shell](https://bun.com/blog/bun-v1.3.12#bun-shell) · [Windows](https://bun.com/blog/bun-v1.3.12#windows) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors) | Inherit by running Bun ≥1.3.12 · **do not** re-document each bullet |
+| Wired here | Command / note |
+|------------|----------------|
+| WebView / markdown / cron / UDP | sections above |
+| URLPattern · Glob.scan · stripANSI/stringWidth | sections + smokes |
+| `test:changed` / isolate / parallel / shard | [harness/README.md](./harness/README.md) |
+| SHA3 / X25519 | section above · `tests/bun-crypto-webcrypto.test.ts` |
 
----
-
-## Bun v1.3.13 release map
-
-Upstream SSOT (full TOC → Internal / Runtime): [bun.com/blog/bun-v1.3.13](https://bun.com/blog/bun-v1.3.13) · deep link [bun-test-changed](https://bun.com/blog/bun-v1.3.13#bun-test-changed). Runtime here: **1.4.0** (superset).
-
-| Blog section | Homebase status |
-|--------------|-----------------|
-| [`bun test --isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) | Wired: `test:isolate`, `test:parallel` · day-loop in [harness README](./harness/README.md) |
-| [`--shard=M/N`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) | Wired: `SHARD=M/N bun run test:shard` · **no** GHA matrix yet |
-| [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) | Wired: [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) → `test:changed` / `test:changed:main` (`--main-head`) / `test:changed:watch` / `-- <ref>` |
-| `bun install` stream / isolated linker / source maps / JSC / zlib-ng | Machine/install plane — [UNIFIED.md](./UNIFIED.md); no extra homebase scripts |
-| SHA3 + X25519 | Wired: section above · `tests/bun-crypto-webcrypto.test.ts` · DX `crypto.sha3` / `crypto.x25519` |
-| `ws+unix://` / `wss+unix://` | Available on runtime · **not** spine-tested |
-| Standalone HTML file-loader inline | Available · use when `--compile --target browser` on HTML entry |
-| `bunx claude` alias | Runtime install fix · no repo change |
-| Bugfixes (Node / Bun APIs / Web / install / bundler / CSS / test / Windows / JSC / Internal) | Inherit by running Bun ≥1.3.13 · do not re-document each bullet |
-
-Day-loop proof for the test flags: `bun run test:changed` · `bun run test:parallel`. Crypto: `bun test tests/bun-crypto-webcrypto.test.ts`. URLPattern: `bun test tests/bun-urlpattern.test.ts`. Glob: `bun test tests/bun-glob-scan.test.ts`. ANSI width: `bun test tests/bun-ansi-width.test.ts`.
-
----
+Do not re-document every blog bugfix bullet — inherit by running Bun ≥1.3.13.
 
 ## References
 
-### Entry points (homebase)
+| Role | Entry |
+|------|--------|
+| DX | `bun run dx:catalog` · `tip` · `search` |
+| Canonical URL | `bun tools/bun-doc-refs.ts suggest "<api>"` |
+| Day loop | [harness/README.md](./harness/README.md) · `bun run harness:status` |
+| Operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · `bun run docs:refresh` |
+| Install | [UNIFIED.md](./UNIFIED.md) |
+| llms.txt | https://bun.com/docs/llms.txt |
 
-| Role | Command / path |
-|------|----------------|
-| DX one-liners | `bun run dx:catalog <id>` · `bun run dx:catalog tip [id]` · `search <q>` · `list` |
-| Canonical Bun API URL | `bun tools/bun-doc-refs.ts url "Bun.Glob"` / `suggest "…"` |
-| Day-loop / harness | [harness/README.md](./harness/README.md) · `bun run harness:status` |
-| Capabilities TOC | [Table of contents](#table-of-contents) |
-
-### Upstream docs (prefer `bun.com/docs`, not legacy `bun.sh/docs/api`)
-
-| Resource | URL |
-|----------|-----|
-| Bun v1.3.12 blog | https://bun.com/blog/bun-v1.3.12 |
-| Bun v1.3.12 install | https://bun.com/blog/bun-v1.3.12#to-install-bun |
-| Bun v1.3.12 upgrade | https://bun.com/blog/bun-v1.3.12#to-upgrade-bun |
-| Bun v1.3.12 Bugfixes | https://bun.com/blog/bun-v1.3.12#bugfixes |
-| URLPattern ship note | https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster |
-| URLPattern API (WHATWG) | https://developer.mozilla.org/en-US/docs/Web/API/URLPattern |
-| Bun.Glob | https://bun.com/docs/runtime/glob#quickstart |
-| Bun.Glob.scan ship note | https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan |
-| Bun.stringWidth | https://bun.com/docs/runtime/utils#bun-stringwidth |
-| Bun.stripANSI | https://bun.com/docs/runtime/utils#bun-stripansi |
-| stripANSI / stringWidth ship note | https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth |
-| Bun v1.3.13 blog | https://bun.com/blog/bun-v1.3.13 |
-| WebView | https://bun.com/docs/runtime/webview |
-| Markdown | https://bun.com/docs/runtime/markdown |
-| Cron | https://bun.com/docs/runtime/cron |
-| UDP | https://bun.com/docs/runtime/networking/udp |
-| Hashing | https://bun.com/docs/runtime/hashing |
-| node:crypto (incl. SHA3 / subtle) | https://bun.com/docs/runtime/nodejs-compat#nodecrypto |
-| bun-doc-refs | `bun tools/bun-doc-refs.ts suggest "Bun.WebView"` (catalog-first) |
-| docs:refresh | `bun run docs:refresh` — RSS → scrape → catalog → integrity ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)) |
-| Wire boundary | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
-| Install policy | [UNIFIED.md](./UNIFIED.md) |
-| Docs index | [README.md](./README.md) |
-
-*Last verified: 2026-07-21 against local Bun 1.4.0 — DX catalog docs rewritten to `bun.com/docs` (no `bun.sh/docs/api`); web-crypto 404 replaced with nodejs-compat#nodecrypto.*
+*Verified 2026-07-21 on Bun 1.4.0 — prefer `bun.com/docs`.*
