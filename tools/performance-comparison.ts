@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // tools/performance-comparison.ts — JS vs native plugin performance comparison
 
@@ -49,7 +48,7 @@ function nativePluginProcessing(files: string[]): number {
 
 // Demo files with imports
 const demoFiles = [
-  'const content = await Bun.file("src/index.ts").text();',
+  'import { readFileSync } from "fs"; import { join } from "path";',
   'import { EventEmitter } from "events"; import { createHash } from "crypto";',
   'import { randomUUID } from "crypto"; import { performance } from "perf_hooks";',
   'import { promisify } from "util"; import { inspect } from "util";',

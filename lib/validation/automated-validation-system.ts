@@ -288,30 +288,30 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const fs = require('fs').promises;
+          const fs = require('fs');
           try {
-            // Node fs.promises — github-script runs on Node, not Bun runtime
-            await fs.access('validation-report.json');
-            const raw = await fs.readFile('validation-report.json');
-            const report = JSON.parse(raw.toString());
-            const comment = \`
-            ## 🔍 Automated Validation Results
+            // Node fs — this is a GitHub Actions github-script body, not Bun runtime
+            if (fs.existsSync('validation-report.json')) {
+              const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
+              const comment = \`
+              ## 🔍 Automated Validation Results
 
-            **Status:** \${report.success ? '✅ PASSED' : '❌ FAILED'}
-            **Success Rate:** \${(report.metrics.successRate * 100).toFixed(1)}%
-            **Total Time:** \${report.metrics.totalTime}ms
+              **Status:** \${report.success ? '✅ PASSED' : '❌ FAILED'}
+              **Success Rate:** \${(report.metrics.successRate * 100).toFixed(1)}%
+              **Total Time:** \${report.metrics.totalTime}ms
 
-            \${report.recommendations.length > 0 ?
-              '**Recommendations:**\\n' + report.recommendations.map(r => \`• \${r}\`).join('\\n')
-              : 'No issues detected!'}
-            \`;
+              \${report.recommendations.length > 0 ?
+                '**Recommendations:**\\n' + report.recommendations.map(r => \`• \${r}\`).join('\\n')
+                : 'No issues detected!'}
+              \`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
           } catch (error) {
             console.info('Failed to read validation report:', error.message);
           }
