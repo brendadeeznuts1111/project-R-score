@@ -40,6 +40,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/bun-shell/`
 - **`fs-native-boundaries`** — `Bun.file` / `Bun.write` / `Bun.Glob` behave as expected  
   *Ratchet* → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
+- **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
+  *Ratchet* → `bun test tests/fixtures/security-hash/` · evidence `tests/fixtures/security-hash/**/fixture.test.ts`  
+  *Fixtures* → `password/` · `cryptohasher/`
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  

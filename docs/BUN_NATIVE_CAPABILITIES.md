@@ -21,6 +21,7 @@
 | `URLPattern` | URL routing (no `$N` leak) | `tests/bun-urlpattern.test.ts` |
 | `Bun.file` / `Bun.write` / `Bun.Glob` | file I/O, glob scanning | `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts` · claim `fs-native-boundaries` |
 | `Bun.$` / shell | tagged templates, `.cwd()`, `.nothrow()`, `.quiet()` | `bun test tests/fixtures/bun-shell/` · claim `bun-shell-boundaries` · [shell](https://bun.com/docs/runtime/shell) |
+| `Bun.password` / `CryptoHasher` | password hash/verify · sha256/sha1 digests | `bun test tests/fixtures/security-hash/` · claim `security-hash-boundaries` · [hashing](https://bun.com/docs/runtime/hashing) |
 | `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
 
 ### `Bun.cron`

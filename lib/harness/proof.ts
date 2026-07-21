@@ -2,6 +2,8 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
@@ -41,6 +43,8 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/fixtures/bun-shell/interpolation/fixture.test.ts',
   'tests/fixtures/bun-shell/error-handling/fixture.test.ts',
   'tests/fixtures/bun-shell/cwd/fixture.test.ts',
+  'tests/fixtures/security-hash/password/fixture.test.ts',
+  'tests/fixtures/security-hash/cryptohasher/fixture.test.ts',
   'tests/bun-cron.test.ts',
   'tests/bun-explicit-resource.test.ts',
   'tests/harness-cron-contract.test.ts',
@@ -140,6 +144,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['boundary'],
     evidence: ['tests/fs-bun.test.ts', 'tests/bun-glob-scan.test.ts'],
     freshRerun: 'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+  },
+  {
+    id: 'security-hash-boundaries',
+    claim: 'Bun.password and CryptoHasher behave as this repo depends on them',
+    kinds: ['boundary'],
+    evidence: ['tests/fixtures/security-hash/**/fixture.test.ts'],
+    freshRerun: 'bun test tests/fixtures/security-hash/',
   },
   {
     id: 'path-bun',
