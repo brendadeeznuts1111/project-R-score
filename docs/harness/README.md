@@ -42,20 +42,22 @@ When a decision is unresolved, read **one** owner below — do not load the full
 
 ```bash
 bun install                 # prepare → husky
-# pre-commit: hygiene → harness (staged≡worktree) → ast-grep
+# pre-commit: hygiene ‖ harness → ast-grep
 # pre-push:   install:verify --quiet
-bun run ci:harness:fast     # quiet local parity
-bun run ci:harness          # quiet full (= harness-gates.yml)
+bun run ci:harness:fast     # quiet local parity (no hygiene)
+bun run ci:harness          # quiet harness envelope
+bun run ci:core             # install verify · hygiene · ci:harness (= GHA)
 ```
 
-### CI tier matrix (no overlapping install/spine journeys)
+### CI tier matrix (one install on main/PR)
 
 | Tier | Owner | Proves |
 |------|-------|--------|
-| **install** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) · pre-push | `install:verify` only |
-| **fast** | `bun run ci:harness:fast` | ∥ path-bun · bun-env · brands · `test:changed` (dirty; skips if no code) |
-| **full** | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:harness` | + `lint:bun-native:changed` (PR) / full rollout (`HARNESS_FULL_LINT` on main push) · `test:changed:main` |
-| **claim** | step inside [harness-gates.yml](../../.github/workflows/harness-gates.yml) (PR only) | Claim → evidence ([PROOF.md](PROOF.md)); warn until 2026-07-28; no extra install |
+| **core** (GHA main/PR) | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:core` | install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install |
+| **fast** (local) | `bun run ci:harness:fast` | ∥ cheap · `test:changed` dirty |
+| **harness** | `bun run ci:harness` | eslint-changed (PR) / full on main · `test:changed:main` |
+| **feat/codex only** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) | hygiene for branches without harness-gates |
+| **setup** | [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml) | shared Bun + install cache (+ optional eslint cache) |
 
 **Required checks:** see [AUTHORITY.md](AUTHORITY.md). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 

@@ -1,0 +1,46 @@
+name: Setup Factory Bun CI
+description: >
+  Bun + install-cache restore + bun ci. Caller must checkout first.
+  Optional ESLint cache restore for harness lint.
+
+inputs:
+  bun-version:
+    description: Bun version for oven-sh/setup-bun
+    required: false
+    default: latest
+  eslint-cache:
+    description: Restore/save .cache/eslint-bun-native
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Cache Bun install
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/.bun/install/cache
+        key: bun-install-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: |
+          bun-install-${{ runner.os }}-
+
+    - name: Install
+      shell: bash
+      env:
+        BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+        BUN_INSTALL_GLOBAL_STORE: '1'
+      run: bun scripts/with-bun-cache-env.ts ci
+
+    - name: Cache ESLint (bun-native)
+      if: inputs.eslint-cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: .cache/eslint-bun-native
+        key: eslint-bun-native-${{ runner.os }}-${{ hashFiles('eslint.bun-native.config.ts', 'eslint.harness.config.ts', 'config/eslint/**/*.ts', 'package.json') }}
+        restore-keys: |
+          eslint-bun-native-${{ runner.os }}-

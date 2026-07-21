@@ -131,9 +131,9 @@ Install-related aliases on this Mac:
 
 | Alias | Actual command |
 | --- | --- |
-| `ba` | `bun run audit:all` |
+| `ba` | `bun run audit:bunfig` |
 | `bhealth` / `bverify` | `bun_verify` (shell function in `bun.sh`) |
-| `bmachine` | `bun run --cwd "$HOME/Projects" install:machine:health` |
+| `bmachine` | `bun run --cwd "$HOME/Projects" install:machine:health` (`--cwd` is Bun CLI) |
 | `health` | `root-health` → monorepo `install:machine:health` (among other checks) |
 | `bci` | `bun ci` |
 | `bi` | `bun install` |
@@ -174,7 +174,7 @@ Formerly titled “the `./~` drift bug” — same issue, stable heading for anc
 frozenLockfile = false
 
 # [install.scopes."@factorywager"]
-# url = "https://factory-wager.com/registry"
+# url = "<private FactoryWager registry>"  # same host as root bunfig.toml; token required
 # token = "$FACTORYWAGER_REGISTRY_TOKEN"
 
 [test]

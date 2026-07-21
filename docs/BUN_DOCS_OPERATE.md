@@ -2,7 +2,7 @@
 
 **Status**: Live  
 **Code**: [`tools/bun-doc-refs.ts`](../tools/bun-doc-refs.ts) · catalog [`tools/bun-docs-catalog.ts`](../tools/bun-docs-catalog.ts) · **northstar** [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts)  
-**Related**: [`BUN_DOCS_SYSTEM.md`](BUN_DOCS_SYSTEM.md) (legacy browser docs CLI — not this loop) · agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references
+**Related**: agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references · retired dumps removed from live `docs/` (recover via `git log -- docs/<file>`)
 
 Continuity layer for the docs intelligence pipeline: **integrity → self-heal → regen → log → status**.
 

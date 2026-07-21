@@ -41,6 +41,7 @@
     "scripts/harness-lesson.ts",
     "scripts/harness-status.ts",
     "scripts/ci-harness.ts",
+    "scripts/ci-core.ts",
     "scripts/lint-bun-native-changed.ts",
     "scripts/lib/git-changed.ts",
     "scripts/check-pr-claim.ts",

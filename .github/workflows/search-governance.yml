@@ -26,13 +26,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install
-        run: bun scripts/with-bun-cache-env.ts ci
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
 
       - name: Dependency Guard
         run: bun run security:guard:deps

@@ -19,8 +19,8 @@ bun run discover:bun-native
 bun run discover:bun-native:json
 
 # Safe apply on scripts/ only (exists/read/write/console.log)
-bun run discover:bun-native:apply:dry   # preview
-bun run discover:bun-native:apply       # write files
+bun scripts/bun-native-discover.ts --apply --dry-run --roots=scripts
+bun run discover:bun-native:apply                 # write files
 
 # Direct
 bun run scripts/bun-native-discover.ts --roots=scripts --apply

@@ -200,8 +200,8 @@ When adding new examples:
 
 ## 🔗 External Resources
 
-- [Bun Documentation](https://bun.sh/docs)
-- [Bun API Reference](https://bun.sh/docs/api)
+- [Bun Documentation](https://bun.com/docs)
+- [Bun Runtime APIs](https://bun.com/docs/runtime) · local map [BUN_NATIVE_CAPABILITIES](../docs/BUN_NATIVE_CAPABILITIES.md)
 - [Bun GitHub](https://github.com/oven-sh/bun)
 - [Bun Discord](https://discord.gg/bun)
 

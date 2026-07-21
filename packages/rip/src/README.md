@@ -56,19 +56,19 @@ console.log(formatReport(report));
 
 ```bash
 # Show help
-bun run lib/rip/cli.ts help
+bun lib/rip/cli.ts help
 
 # Generate purge signature
-bun run lib/rip/cli.ts purge --scope PURGE --pattern "TODO"
+bun lib/rip/cli.ts purge --scope PURGE --pattern "TODO"
 
 # Scan for broken links
-bun run lib/rip/cli.ts links ./src
+bun lib/rip/cli.ts links ./src
 
 # Scan for non-Bun code
-bun run lib/rip/cli.ts nonbun ./src
+bun lib/rip/cli.ts nonbun ./src
 
 # Show configuration
-bun run lib/rip/cli.ts config
+bun lib/rip/cli.ts config
 ```
 
 ## 📚 API Reference
@@ -302,6 +302,6 @@ MIT License - see LICENSE file for details.
 
 ## 🔗 Related Projects
 
-- [FactoryWager Core](../README.md) - Main project documentation
-- [Bun Documentation](https://bun.sh/docs) - Bun runtime documentation
+- [FactoryWager Core](../../../README.md) — monorepo hub
+- [Bun Documentation](https://bun.com/docs) - Bun runtime documentation
 - [Ripgrep](https://github.com/BurntSushi/ripgrep) - Search tool used under the hood

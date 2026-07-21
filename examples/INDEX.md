@@ -34,22 +34,22 @@ Located in `bun-v139-features/`:
 ### Interactive Runner
 
 ```bash
-cd bun-v139-features
+cd examples/bun-v139-features
 
 # Interactive mode
 bun start
 
-# Run all examples
+# Run all examples (package-local script)
 bun run all
 
 # Run specific example
 bun start 1
 
-# Run benchmarks
+# Run benchmarks (package-local script)
 bun run benchmark
 
 # Run tests
-bun run test
+bun test
 ```
 
 ### Documentation
@@ -192,6 +192,6 @@ scratch/bun-playground/
 
 ## 📖 External Resources
 
-- [Bun Documentation](https://bun.sh/docs)
+- [Bun Documentation](https://bun.com/docs)
 - [Bun v1.3.9 Release Notes](https://bun.com/blog/bun-v1.3.9)
 - [Bun GitHub](https://github.com/oven-sh/bun)

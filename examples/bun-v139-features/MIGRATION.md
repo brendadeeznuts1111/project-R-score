@@ -369,7 +369,7 @@ NO_PROXY=localhost bun run test
 
 ## 📚 Additional Resources
 
-- [Bun Documentation](https://bun.sh/docs)
+- [Bun Documentation](https://bun.com/docs)
 - [Bun v1.3.9 Release Notes](https://bun.com/blog/bun-v1.3.9)
 - [Example Files](../README.md)
 - [Performance Benchmarks](./benchmarks/)

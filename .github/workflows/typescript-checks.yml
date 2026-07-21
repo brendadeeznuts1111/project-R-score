@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: "1"
+      BUN_INSTALL_GLOBAL_STORE: '1'
     strategy:
       fail-fast: false
       matrix:
@@ -29,13 +29,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun scripts/with-bun-cache-env.ts ci
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
 
       - name: Verify TypeScript Check Config
         run: bun run ts:verify

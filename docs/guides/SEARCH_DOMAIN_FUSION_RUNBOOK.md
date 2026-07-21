@@ -4,14 +4,12 @@
 Fuse code search relevance from `search-smart` with domain-health telemetry for FactoryWager, while staying in verify-only rollout mode.
 
 ## Commands
-- Local fusion JSON output:
-  - `bun run search:smart:fusion:local -- "auth middleware"`
-- R2 fusion JSON output:
-  - `bun run search:smart:fusion:r2 -- "auth middleware"`
-- Direct fusion flags:
-  - `bun run scripts/search-smart.ts "auth middleware" --fusion-domain factory-wager.com --fusion-source local --fusion-json --json`
+- Local fusion JSON:
+  - `bun run search:smart -- "auth middleware" --fusion-domain factory-wager.com --fusion-source local --fusion-json --json`
+- R2 fusion JSON:
+  - `bun run search:smart -- "auth middleware" --fusion-domain factory-wager.com --fusion-source r2 --fusion-json --json`
 - Readiness check:
-  - `bun run project:online:check --domain factory-wager.com --source local --json`
+  - `bun run project:online:check -- --domain factory-wager.com --source local --json`
 
 ## Fusion Flags
 - `--fusion-domain <domain>`: enable domain fusion and set domain context.

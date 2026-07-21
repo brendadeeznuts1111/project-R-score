@@ -104,7 +104,7 @@ await r2.uploadPackageDocs('my-package', docs);
 import { RSSManager } from './lib';
 
 const rss = new RSSManager(r2Storage);
-await rss.subscribe('https://bun.sh/feed.xml', 'Bun Blog');
+await rss.subscribe('https://bun.com/rss.xml', 'Bun Blog');
 const feeds = await rss.fetchAll();
 ```
 

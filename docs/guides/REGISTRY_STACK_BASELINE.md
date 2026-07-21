@@ -1,11 +1,11 @@
 # Registry Stack Baseline
 
 ## Canonical topology
-- Registry API URL (publish/install): `https://registry.factory-wager.com`
-- CDN URL (optional read path): `https://registry.factory-wager.com`
+- Registry API URL (publish/install): private host from root `bunfig.toml` / `.npmrc` (`@factorywager` scope) — not publicly resolvable without VPN/DNS
+- CDN / read path: same private registry plane when configured
 - Storage backend: Cloudflare R2 bucket `npm-registry`
 
-Registry is R2-backed. Domain/CDN are access layers over that backend.
+Registry is R2-backed. Domain/CDN are access layers over that backend. Public `HEAD` may fail (`ENOTFOUND`); use `bun run registry:doctor` on the machine that has registry DNS.
 
 ## Permanent files in repo
 - Canonical registry config: `/Users/nolarose/Projects/registry.config.json5`
@@ -28,7 +28,7 @@ bun run registry:doctor:json
 
 ## Verify package visibility
 ```bash
-bun run lib/registry/cli.ts list --registry=https://registry.factory-wager.com
-bun run lib/registry/cli.ts info @factory-wager/<package> --registry=https://registry.factory-wager.com
+bun lib/registry/cli.ts list --registry="$REGISTRY_URL"
+bun lib/registry/cli.ts info @factorywager/<package> --registry="$REGISTRY_URL"
 ```
 

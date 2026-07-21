@@ -1,12 +1,25 @@
 #!/usr/bin/env sh
 set -e
 
-echo "== pre-commit: repo hygiene =="
-bun scripts/repo-hygiene.ts --staged
+# Hygiene ‖ harness in parallel; ast-grep after (may depend on clean tree).
+echo "== pre-commit: hygiene ‖ harness =="
+bun scripts/repo-hygiene.ts --staged &
+HID=$!
+bun scripts/pre-commit-harness.ts &
+PID=$!
 
-echo ""
-echo "== pre-commit: harness lint =="
-bun scripts/pre-commit-harness.ts
+h_code=0
+p_code=0
+wait "$HID" || h_code=$?
+wait "$PID" || p_code=$?
+if [ "$h_code" -ne 0 ]; then
+  echo "❌ repo hygiene failed"
+  exit "$h_code"
+fi
+if [ "$p_code" -ne 0 ]; then
+  echo "❌ harness pre-commit failed"
+  exit "$p_code"
+fi
 
 echo ""
 echo "== pre-commit: ast-grep + semver =="

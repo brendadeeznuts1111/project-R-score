@@ -1,17 +1,19 @@
 # Dashboard Runtime Guide
 
-This directory contains multiple dashboard surfaces. Use the correct target:
+Surfaces in this directory:
 
-- Local MCP dashboard service (primary ops target): `/Users/nolarose/Projects/dashboard/dashboard-server.ts`
-- Public docs site dashboard (deployment target): [https://docs.factory-wager.com](https://docs.factory-wager.com)
-- Registry dashboard (business cards UI): `/Users/nolarose/Projects/dashboard/business-registry.ts`
+| Surface | Entry |
+|---------|--------|
+| MCP HTTP dashboard | `bun dashboard/dashboard-server.ts` |
+| MCP CLI status | `bun run dashboard` → `dashboard/mcp-overview.ts status` |
+| Registry UI | `bun dashboard/business-registry.ts` |
+| Protocol check | `bun run dashboard:protocol:check` |
+| Live demo | `bun run dashboard:live` |
 
 ## Local MCP Dashboard
 
-Start command:
-
 ```bash
-bun run start:dashboard:mcp
+bun dashboard/dashboard-server.ts
 ```
 
 Primary local endpoints:
@@ -21,78 +23,45 @@ Primary local endpoints:
 - `GET /api/dashboard/runtime`
 - `GET /api/health`
 
-Default runtime environment contract:
+Default env:
 
 - `DASHBOARD_PORT=3456`
 - `DASHBOARD_HOST=localhost`
 - `DASHBOARD_CACHE_TTL_MS=2000`
 - `ALLOW_PORT_FALLBACK=false`
 
-When `ALLOW_PORT_FALLBACK=true`, the server auto-increments to the next free port if bind fails.
+When `ALLOW_PORT_FALLBACK=true`, the server auto-increments if bind fails.
 
 ## Preflight
 
-Run before local ops changes:
-
 ```bash
-bun run dashboard:preflight
+bun scripts/dashboard-preflight.ts
 ```
 
-Checks include:
+Checks Bun policy, port ownership for `DASHBOARD_PORT`, required files, and route contract for `/api/dashboard`, `/api/health`, `/api/dashboard/runtime`.
 
-- Bun minimum/recommended policy
-- Port availability and owner for `DASHBOARD_PORT`
-- Required dashboard files
-- Route contract for `/api/dashboard`, `/api/health`, `/api/dashboard/runtime`
-
-## Port Ownership Troubleshooting
-
-Show the process listening on dashboard port:
+## Port ownership
 
 ```bash
 lsof -nP -iTCP:3456 -sTCP:LISTEN
-```
-
-Show full process details:
-
-```bash
 ps -p <PID> -o pid,ppid,comm,args
+curl -sS http://localhost:3456/api/health
+curl -sS http://localhost:3456/api/dashboard
+curl -sS http://localhost:3456/api/dashboard/runtime
 ```
 
-Probe health and dashboard endpoints:
+## Status
 
 ```bash
-curl -sS http://localhost:3456/api/health | jq .
-curl -sS http://localhost:3456/api/dashboard | jq '.metrics.system'
-curl -sS http://localhost:3456/api/dashboard/runtime | jq .
+bun run dashboard                 # MCP overview status
+bun run dashboard:protocol:check  # protocol contract
+bun dashboard/status-monitor.ts   # component matrix (when needed)
 ```
 
-## Status Monitor
-
-Generate the project component status report from the curated 14-component matrix:
+## Registry dashboard
 
 ```bash
-bun run dashboard:status:report
+bun dashboard/business-registry.ts
 ```
 
-The report includes:
-- overall health score
-- stable vs beta component counts
-- production readiness count
-- average test coverage
-- top performers and attention list
-
-## Local Secret Handling
-
-Keep real credentials only in untracked local files:
-
-- `.env.local`
-- `.env.secret.local`
-
-Run local secret scan:
-
-```bash
-bun run security:secrets:local
-```
-
-This fails on high-confidence plaintext secrets found in tracked `.env` files.
+See also [`README-REGISTRY.md`](./README-REGISTRY.md).

@@ -28,7 +28,7 @@ See [`.github/HSL-COLOR-SYSTEM.md`](../../.github/HSL-COLOR-SYSTEM.md) for full 
 
 ### Prerequisites
 
-- **Bun** 1.0+
+- **Bun** 1.4.0 (see root `packageManager`)
 - **Git** for version control
 - **GitHub Account** for collaboration
 
@@ -117,7 +117,7 @@ bun test lib/security/
 bun test --coverage
 
 # Run performance benchmarks
-bun run benchmark
+bun run bench:deep
 
 # Run linting
 bun run lint
@@ -356,7 +356,7 @@ class ResourcePool<T> {
 
 ```bash
 # Run benchmarks
-bun run benchmark
+bun run bench:deep
 
 # Profile memory usage
 bun --profile script.ts
@@ -492,10 +492,10 @@ We use [Semantic Versioning](https://semver.org/):
 
 ### Resources
 
-- **Documentation**: [docs/](docs/)
-- **API Reference**: [docs/api/](docs/api/)
+- **Documentation**: [docs/README.md](../README.md)
+- **Bun capabilities**: [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md)
 - **Issues**: [GitHub Issues](https://github.com/brendadeeznuts1111/project-R-score/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/brendadeeznuts1111/project-R-score/discussions)
+- **Issues**: [project-R-score issues](https://github.com/brendadeeznuts1111/project-R-score/issues)
 
 ### Contact
 

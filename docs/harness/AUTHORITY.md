@@ -35,10 +35,9 @@ Branch protection should require these GitHub Actions check names (workflow / jo
 
 | Check | Workflow |
 |-------|----------|
-| `Harness Gates / Harness (ratchets · lint · brands · test:changed)` | [harness-gates.yml](../../.github/workflows/harness-gates.yml) — includes Claim → evidence on PRs |
-| `Repo Hygiene / hygiene` | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) |
+| `Harness Gates / Harness (ratchets · lint · brands · test:changed)` | [harness-gates.yml](../../.github/workflows/harness-gates.yml) — `ci:core` (install verify · hygiene · harness) + Claim on PRs |
 
-Both workflows share the `bun-install-${{ runner.os }}-${{ hashFiles('bun.lock') }}` Actions cache. Re-apply via Settings → Branches or `gh api` if job names drift.
+Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). Re-apply via Settings → Branches or `gh api` if the job name drifts.
 
 ## Credential custody
 

@@ -97,6 +97,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'ci:harness':
     'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
   'ci:harness:fast': 'Quiet local parity (∥ cheap · test:changed dirty; no eslint)',
+  'ci:core': 'Install verify · hygiene · ci:harness (GHA harness-gates / one install)',
   'lint:bun-native:changed': 'ESLint bun-native on files changed since main-head (cached)',
   'check:pr-claim': 'PR Claim → evidence body check (warn-first → error after 2026-07-28)',
   'proof:install': 'Journey proof: install layout healthy',
@@ -130,6 +131,7 @@ export const CLI_CORE_CMDS = new Set([
   'harness:status',
   'ci:harness',
   'ci:harness:fast',
+  'ci:core',
   'check:pr-claim',
   'proof:install',
   'cli:docs',

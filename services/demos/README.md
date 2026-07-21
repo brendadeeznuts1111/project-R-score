@@ -110,10 +110,10 @@ These demo services are designed to:
 Each demo can be run independently:
 ```bash
 # Run content type demo
-bun run services/demos/content-type-demo.ts
+bun services/demos/content-type-demo.ts
 
 # Run verbose fetch demo
-bun run services/demos/verbose-fetch-demo.ts
+bun services/demos/verbose-fetch-demo.ts
 ```
 
 ## 📝 Notes

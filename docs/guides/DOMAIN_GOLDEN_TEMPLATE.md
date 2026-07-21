@@ -47,7 +47,7 @@ Examples:
 Run:
 
 ```bash
-bun run search:domain:status:json
+bun run search:domain:doctor -- --json
 ```
 
 Check:
@@ -61,8 +61,9 @@ Commands:
 
 ```bash
 bun run search:domain:doctor
-bun run search:domain:doctor:fix
-bun run search:domain:doctor:secrets
+bun run search:domain:doctor -- --fix
+bun run search:domain:doctor -- --json
+bun run search:domain:doctor -- --emit-secrets-commands
 ```
 
 What doctor checks:
@@ -83,5 +84,5 @@ What `--fix` cannot set:
 To print ready-to-run secret command templates for missing tokens:
 
 ```bash
-bun run search:domain:doctor:secrets
+bun run search:domain:doctor -- --emit-secrets-commands
 ```

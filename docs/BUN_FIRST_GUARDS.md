@@ -107,7 +107,7 @@ Standard catches (easy)
 | `bun/prefer-bun-test` | warn | `test.bun` |
 | `bun/prefer-bun-sqlite` | warn | `sqlite.bun` |
 
-Every restricted-import message includes a one-liner and `https://bun.sh/docs/...` link from the catalog.
+Every restricted-import message includes a one-liner and `https://bun.com/docs/...` link from the catalog.
 
 ## Guard System
 
@@ -123,7 +123,7 @@ Example output:
 ❌ tools/example.ts
   🔴 Line 22: Node.js module "child_process" should not be used
      💡 One-liner: const proc = Bun.spawn([...]);
-     📖 https://bun.sh/docs/api/spawn
+     📖 https://bun.com/docs/runtime/child-process
 ```
 
 ## Migration Patterns
@@ -139,7 +139,7 @@ const data = JSON.parse(readFileSync('config.json', 'utf8'));
 const data = await Bun.file('config.json').json();
 ```
 
-Docs: https://bun.sh/docs/api/file-io
+Docs: https://bun.com/docs/runtime/file-io
 
 ### Child Process → Bun.spawn
 
@@ -148,7 +148,7 @@ const proc = Bun.spawn(['bun', 'script.ts'], { stdio: ['inherit', 'inherit', 'in
 const exitCode = await proc.exited;
 ```
 
-Docs: https://bun.sh/docs/api/spawn
+Docs: https://bun.com/docs/runtime/child-process
 
 ### Environment → Bun.env
 
@@ -156,7 +156,7 @@ Docs: https://bun.sh/docs/api/spawn
 const apiKey = Bun.env.API_KEY;
 ```
 
-Docs: https://bun.sh/docs/runtime/env
+Docs: https://bun.com/docs/runtime/environment-variables
 
 ## CI & Pre-commit
 
@@ -173,8 +173,8 @@ Full type-checked ESLint remains on `bun run lint` (heavy; not in pre-commit).
 
 ## Related Documentation
 
-- [Bun File I/O](https://bun.sh/docs/api/file-io)
-- [Bun Spawn](https://bun.sh/docs/api/spawn)
-- [Bun Test](https://bun.sh/docs/cli/test)
-- [import.meta.main](https://bun.sh/docs/runtime/modules#import-meta-main)
-- [QUICK_WINS_BUN_NATIVE.md](./QUICK_WINS_BUN_NATIVE.md)
+- [Bun File I/O](https://bun.com/docs/runtime/file-io)
+- [Bun Spawn](https://bun.com/docs/runtime/child-process)
+- [Bun Test](https://bun.com/docs/test)
+- [import.meta.main](https://bun.com/docs/runtime/modules#import-meta-main)
+- [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) · `bun run dx:catalog`

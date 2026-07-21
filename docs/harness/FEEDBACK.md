@@ -122,7 +122,15 @@ Scaffold: `bun run harness:lesson --title="…"`.
 ### GHA install × N jobs
 
 - **Finding:** `pr-claim` + `harness-gates` + `repo-hygiene` each paid cold Bun setup/install; claim needed no `node_modules`.
-- **Repair:** Fold claim into harness-gates; shared `bun-install-*` Actions cache on harness + hygiene; drop standalone `pr-claim.yml`.
+- **Repair:** Fold claim into harness-gates; shared `bun-install-*` Actions cache; drop standalone `pr-claim.yml`.
 - **Earliest owner:** CI
 - **Ratchet:** `.github/workflows/harness-gates.yml` · `.github/workflows/repo-hygiene.yml`
+- **Keep / revise / drop:** revise → see one-install core
+
+### One install on main/PR
+
+- **Finding:** Even with a shared cache, harness-gates + repo-hygiene still each ran `bun ci` on every PR.
+- **Repair:** `ci:core` (verify · lifecycle · hygiene · ci:harness) inside harness-gates; composite `setup-factory-bun`; repo-hygiene only on `feat/**`/`codex/**`; pre-commit hygiene ‖ harness.
+- **Earliest owner:** CI + script-gate
+- **Ratchet:** `scripts/ci-core.ts` · `.github/actions/setup-factory-bun` · harness-gates
 - **Keep / revise / drop:** keep

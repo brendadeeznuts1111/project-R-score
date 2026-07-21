@@ -18,12 +18,12 @@
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
 
-**Remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score). `cascade` → [cascade-mover-v3](https://github.com/brendadeeznuts1111/cascade-mover-v3) (do not default-push there).
+**Remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score). `cascade` → `cascade-mover-v3` (private git remote; do not default-push there).
 
 ## Quick Start
 
 ```bash
-bun run install:all      # isolated linker + global store (bun.sh/docs/pm/global-store)
+bun run install:all      # isolated linker + global store (bun.com/docs/pm/global-store)
 bun run install:verify   # sanity-check cache dir, links/, and no ./~ drift
 bun run help             # Categorized commands (shared SSOT with docs/CLI.md)
 bun run type-check       # Day-loop check (tsconfig.check.json)
@@ -77,7 +77,7 @@ Antipattern remediation (after major refactors). Conventions: [`.custom-instruct
 - `bun run fix:scan-default-exports` — default export candidates
 - `bun run fix:scan-non-null-assertions` — `!` assertions to safe access
 
-Implementations: [`scripts/fix-*.ts`](scripts/) (e.g. [`scripts/fix-console-log.ts`](scripts/fix-console-log.ts)).
+Implementations: [`scripts/fix-*.ts`](scripts/fix-console-log.ts) (e.g. [`scripts/fix-console-log.ts`](scripts/fix-console-log.ts)).
 
 ## Shared Configuration
 

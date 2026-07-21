@@ -243,7 +243,7 @@ class SecureDatabase {
 echo "🔐 Running Pre-Deployment Security Checks..."
 
 # Run security test suite
-bun run security-tests
+bun run security:audit
 
 # Check for vulnerabilities
 bun audit

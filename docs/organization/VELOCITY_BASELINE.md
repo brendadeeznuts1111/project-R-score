@@ -10,7 +10,7 @@ Measured 2026-07-21 during harness-engineering velocity transform. Thesis: [lopo
 | Typical staged `scripts/*.ts` (pre-transform, serial) | estimated multi-second serial eslint → prettier → doc-refs → brands×3 | brands types always ran |
 | Typical staged `scripts/*.ts` (post-transform) | **~2.1–2.7s** gate sum (`reports/harness-gate-timing.json`) | annotate-on-write; brands staged‖smart; brand-types deferred; path-bun / bun-env parallel when lib\|scripts staged |
 
-Dominant cost remains ESLint (~1.7s in the sample). Parallel brand/ratchet gates remove serial brand-types (~types deferred) and kill doc-refs re-stage loops.
+Dominant cost was full-tree ESLint. Default `ci:harness` now uses `lint:bun-native:changed` (~0.5s on dirty harness files); full rollout only with `HARNESS_FULL_LINT=1` (main push). Cache: `.cache/eslint-bun-native` (GHA-restored). Warm full rollout ~0.5–3.5s vs cold ~7s.
 
 ## Day-loop fiction (evidence) → fixed
 

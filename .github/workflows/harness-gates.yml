@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   harness:
+    # Keep this name stable — branch protection requires it.
     name: Harness (ratchets · lint · brands · test:changed)
     runs-on: ubuntu-latest
     env:
@@ -26,35 +27,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
         with:
-          bun-version: latest
-
-      - name: Cache Bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            /home/runner/.bun/install/cache
-          key: bun-install-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            bun-install-${{ runner.os }}-
-
-      - name: Install
-        run: bun scripts/with-bun-cache-env.ts ci
-
-      - name: Cache ESLint (bun-native)
-        uses: actions/cache@v4
-        with:
-          path: .cache/eslint-bun-native
-          key: eslint-bun-native-${{ runner.os }}-${{ hashFiles('eslint.bun-native.config.ts', 'eslint.harness.config.ts', 'config/eslint/**/*.ts', 'package.json') }}
-          restore-keys: |
-            eslint-bun-native-${{ runner.os }}-
+          eslint-cache: 'true'
 
       - name: Claim → evidence
         if: github.event_name == 'pull_request'
-        # Warn-only until 2026-07-28 (script default); no second runner/install.
         run: bun scripts/check-pr-claim.ts --event "$GITHUB_EVENT_PATH"
 
-      - name: Harness gates
-        run: bun run ci:harness
+      # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
+      - name: CI core
+        run: bun run ci:core

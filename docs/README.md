@@ -11,6 +11,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Agent full guide | [AGENTS.md](./AGENTS.md) |
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
 | Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
+| Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
 
 ## Boundaries and install
 
@@ -19,53 +20,35 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
-| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) · [URLPattern](./BUN_NATIVE_CAPABILITIES.md#urlpattern) · [Glob.scan](./BUN_NATIVE_CAPABILITIES.md#bunglobscan) · [stripANSI/stringWidth](./BUN_NATIVE_CAPABILITIES.md#bunstripansi--bunstringwidth) · [v1.3.12](./BUN_NATIVE_CAPABILITIES.md#bun-v1312-release-map) · [v1.3.13](./BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map) · [References](./BUN_NATIVE_CAPABILITIES.md#references) |
-| Bun DX catalog | `bun run dx:catalog <id>` | Entry: `list` · `tip [id]` · `search <q>` · SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
+| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) |
+| Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
 | Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) | `bun run docs:refresh` |
+| Bun-first policy | [bun/BUN_FIRST_POLICY.md](./bun/BUN_FIRST_POLICY.md) | pin 1.4.0 |
 
-These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes ≠ token/catalog operate.
+## Live trees (only)
 
-## Lib harness maps
-
-| Role | Path |
+| Tree | Role |
 |------|------|
-| Path SSOT (`CANONICAL_*`) | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |
-| Lib overview | [`../lib/README.md`](../lib/README.md) |
-| Branded IDs | [`../lib/types/branded/README.md`](../lib/types/branded/README.md) |
-| Console depth | [`../lib/console-depth.ts`](../lib/console-depth.ts) |
-| Boundary ESLint | [`../config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts) |
+| [guides/](./guides/) | Short runbooks |
+| [organization/](./organization/) | Velocity / homebase discovery |
+| [harness/](./harness/) | JIT index, proof, authority |
+| [packages/](./packages/) | Package registry map |
+| [performance/](./performance/) | Search baseline governance |
+| [contributing/](./contributing/) | CONTRIBUTING |
 
-## Tools (docs / harness)
+## Tools
 
 ```bash
-bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # Bun API canonical URLs
-bun tools/brand-catalog.ts SessionId              # brand discovery
-bun tools/branded-id-check.ts --staged --strict   # brand gate (diff)
-bun tools/harness-violations.ts --path lib --rule unknown
-bun tools/harness-violations.ts --open=3          # Bun.openInEditor
-bun run install:verify                            # install / tilde cache
-bun run lint:harness                              # eslint harness config
-bun run docs:map:check                            # SSOT path + root MD links
-bun run docs:refresh                              # RSS → scrape → catalog → integrity log
-bun run docs:catalog:build                        # structured Bun doc catalog (NOTE/SHIP/BLOG)
-bun run docs:catalog:export                       # compact TSV for agents
-bun tools/bun-doc-refs.ts catalog get Bun.WebView
-bun tools/bun-doc-refs.ts suggest Bun.Image       # catalog-first lookup
-# Operate SSOT: docs/BUN_DOCS_OPERATE.md
+bun tools/bun-doc-refs.ts suggest "Bun.secrets"
+bun run harness:status
+bun run docs:map:check
+bun run docs:refresh
 ```
 
-**Pre-commit:** staging any platform doc SSOT path (root `AGENTS.md` / `README.md` / `STRUCTURE.md` / `.custom-instructions.md`, `docs/{AGENTS,README,UNIFIED,WIRE_BOUNDARY,BUN_NATIVE_CAPABILITIES,BUN_DOCS_OPERATE,DEVELOPMENT-STANDARDS,IMPORT_BOUNDARIES}.md`, `lib/README.md`, `lib/types/branded/README.md`, `lib/docs/repo-docs.ts`, `tools/doc-map-check.ts`) runs `bun tools/doc-map-check.ts` automatically.
+## Not SSOT / archives
 
-## External thesis
+Historical dumps formerly under `docs/` were **removed from the live tree** (2026-07). Local checkout may still have a gitignored copy under `docs/archives/retired-2026-07-deep-pass/` — that path is not tracked.
 
-- [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)
-- [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md)
-- [Bun docs llms.txt](https://bun.com/docs/llms.txt)
+Recover any file: `git log --all --full-history -- 'docs/<name>.md'` · `git show <commit>:docs/<name>.md`.
 
-## Not SSOT
-
-- `docs/archives/` — historical reports  
-- One-off analysis / council / generated reports under `docs/` unless linked above  
-- Nested product docs under `projects/active/**`
-
-When adding a platform policy doc, update this index, root `AGENTS.md` canonical table, and `lib/docs/repo-docs.ts` (`CANONICAL_REPO_DOCS`).
+Do not resurrect dumps into live `docs/`. Nested product docs stay under `projects/active/**`.

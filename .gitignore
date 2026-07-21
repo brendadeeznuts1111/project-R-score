@@ -29,6 +29,7 @@ yarn.lock
 
 # Build outputs
 dist/
+dist-staging/
 .artifacts/
 build/
 !src/build/

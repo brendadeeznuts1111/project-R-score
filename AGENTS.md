@@ -2,7 +2,7 @@
 
 AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
-**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → [cascade-mover-v3](https://github.com/brendadeeznuts1111/cascade-mover-v3) (separate project — do not use as default push target).
+**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there).
 
 ## Canonical docs
 
@@ -81,7 +81,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
-  - Testing → nearest `*.test.ts` / [`tests/`](tests/) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
+  - Testing → nearest `*.test.ts` / [`tests/`](tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
 
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 

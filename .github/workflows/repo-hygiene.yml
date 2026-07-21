@@ -1,12 +1,13 @@
 name: Repo Hygiene
 
+# Main/PR install+hygiene lives in harness-gates (ci:core). This workflow
+# only covers long-lived feature branches that do not run harness-gates.
 on:
-  pull_request:
   push:
     branches:
-      - main
       - feat/**
       - codex/**
+  workflow_dispatch:
 
 jobs:
   hygiene:
@@ -18,22 +19,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Cache Bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            /home/runner/.bun/install/cache
-          key: bun-install-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            bun-install-${{ runner.os }}-
-
-      - name: Install
-        run: bun scripts/with-bun-cache-env.ts ci
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
 
       - name: Verify install cache
         run: bun run install:verify:strict

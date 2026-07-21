@@ -257,7 +257,7 @@ const adjusted = adjustToPerceivedBrightness(darkRed, 0.5);
 - [WCAG 2.1 Contrast Guidelines](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
 - [HSL Color Model](https://en.wikipedia.org/wiki/HSL_and_HSV)
 - [OKLCH Color Space](https://oklch.com/)
-- [Bun.color() API](https://bun.sh/docs/api/color)
+- [Bun.color() API](https://bun.com/docs/api/color)
 
 ---
 

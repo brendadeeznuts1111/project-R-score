@@ -13,7 +13,7 @@ Each project under `projects/` is classified into one of three tiers:
 ## Rules
 
 - Each project is **independent** — own `bun install`, `bun.lock`, `bun test` (except where root workspaces explicitly list a package).
-- **Root workspaces** (see root `package.json`): `packages/*`, `lib/*`, `projects/active/kimiremote/packages/*`, `projects/active/factorywager/registry/packages/*`, `projects/active/sports-terminal-os`.
+- **Root workspaces** (see root `package.json`): `packages/*`, `projects/active/factorywager/registry/packages/*`, `projects/active/sports-terminal-os`, `lib/*`.
 - Nested products with **own git remotes** are gitignored under this monorepo (kimiremote, cascade-mover-v3, bet-ticker-worker-v1.1, f402-openapi). Treat them as sibling checkouts, not monorepo source of truth.
 - To promote from `experimental/` to `active/`:
   ```bash

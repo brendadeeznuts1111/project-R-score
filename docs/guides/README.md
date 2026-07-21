@@ -1,8 +1,12 @@
 # Guides
 
-Pattern references and runbooks for the FactoryWager monorepo.
+Short runbooks only.
 
-- [`BUN_SPAWN_GUIDE.md`](./BUN_SPAWN_GUIDE.md) — `Bun.spawn()` patterns
-- [`BUN_WHICH_GUIDE.md`](./BUN_WHICH_GUIDE.md) — binary resolution
-- [`BUN_FIRST_MIGRATION_GUIDE.md`](./BUN_FIRST_MIGRATION_GUIDE.md) — migration checklist
-- [`ERROR_HANDLING_GUIDE.md`](./ERROR_HANDLING_GUIDE.md) — error-handling conventions
+| Guide | Role |
+|-------|------|
+| [DOMAIN_GOLDEN_TEMPLATE.md](./DOMAIN_GOLDEN_TEMPLATE.md) | Domain registry onboarding |
+| [REGISTRY_STACK_BASELINE.md](./REGISTRY_STACK_BASELINE.md) | Registry doctor / topology |
+| [SEARCH_DOMAIN_FUSION_RUNBOOK.md](./SEARCH_DOMAIN_FUSION_RUNBOOK.md) | search-smart + domain fusion |
+| spawn / which / migration / errors / AB | retired — recover via `git log -- docs/guides/…` |
+
+Velocity: [organization/VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md) · `bun run harness:status`.

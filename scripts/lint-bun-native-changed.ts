@@ -18,7 +18,7 @@ import {
 } from './lib/git-changed';
 
 const repoRoot = `${import.meta.dir}/..`;
-const CACHE = `${repoRoot}/reports/.eslintcache`;
+const CACHE = `${repoRoot}/.cache/eslint-bun-native`;
 
 const full =
   hasFlag('full') || Bun.env.HARNESS_FULL_LINT === '1' || Bun.env.HARNESS_FULL_LINT === 'true';
@@ -32,6 +32,8 @@ async function runEslint(files: string[]): Promise<number> {
     '--cache',
     '--cache-location',
     CACHE,
+    '--cache-strategy',
+    'content',
     '--quiet',
     '--max-warnings',
     '0',

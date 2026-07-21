@@ -1,18 +1,6 @@
-<!-- Prefetch Optimizations -->
-  <link rel="preconnect" href="https://bun.sh">
-  <link rel="dns-prefetch" href="https://bun.sh">
-  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
-  <link rel="preconnect" href="https://example.com">
-  <link rel="dns-prefetch" href="https://example.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://github.com">
-  <link rel="dns-prefetch" href="https://github.com">
-  <link rel="preconnect" href="https://developer.mozilla.org">
-  <link rel="dns-prefetch" href="https://developer.mozilla.org">
-<!-- End Prefetch Optimizations -->
+# Bun-First Policy & Implementation Guide
 
-# 🦌 Bun-First Policy & Implementation Guide
+**Runtime pin (homebase):** Bun **1.4.0** (`package.json` `packageManager`). Historical notes below that say “v1.3.6+” mean “at least that release”; operate on the pin.
 
 ## 🎯 Core Principle: **ALWAYS USE BUN FIRST!**
 
@@ -74,7 +62,7 @@ When a Bun equivalent exists, it MUST be used instead of the Node.js version.
 
 ---
 
-## 🔒 Runtime Reliability & Security Baseline (Bun v1.3.6+)
+## Runtime reliability & security baseline (Bun ≥1.3.6; pin 1.4.0)
 
 Track and enforce these fixes/features in runtime-sensitive codepaths:
 
@@ -129,8 +117,7 @@ Track and enforce these fixes/features in runtime-sensitive codepaths:
 
 ### Root hygiene placement rules
 
-- Generated Bun release-note summaries belong in
-  `docs/generated/bun-release-notes/`, not project root.
+- Bun release/catalog operate lives in `docs/BUN_DOCS_OPERATE.md` (`bun run docs:refresh`). Do not drop generated release dumps at project root (`docs/generated/` was retired).
 - Demo/template runnable files belong in `examples/demos/bun/`, not project
   root.
 - Test artifacts and scratch fixtures belong in `tests/root-artifacts/`.
@@ -579,8 +566,8 @@ investment in the future of web development.**
 
 ### Documentation:
 
-- [Bun Documentation 🌐](https://bun.sh/docs)
-- [Bun API Reference 🌐](https://bun.sh/docs/api)
+- [Bun Documentation 🌐](https://bun.com/docs)
+- [Bun API Reference 🌐](https://bun.com/docs/runtime)
 - [Migration Guide](../guides/BUN_FIRST_MIGRATION_GUIDE.md)
 
 ### Tools:
