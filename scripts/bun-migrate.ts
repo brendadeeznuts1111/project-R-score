@@ -252,7 +252,6 @@ export const VALIDATE_WHITELIST = new Set([
   'tools/bun-docs-changelog.ts',
   'lib/console-depth.ts',
   'scripts/bun-native-discover.ts',
-  'scripts/bun-quick-wins-table.ts',
   'scripts/dx-mcp.ts',
   'scripts/lib/fs-bun.ts',
   'packages/guards/src/bun-first-guard.ts',

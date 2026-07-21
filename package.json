@@ -2,7 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2",
   "packageManager": "bun@1.4.0",
-  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -1686,7 +1686,8 @@
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
     "harness:status": "bun scripts/harness-status.ts",
-    "harness:lesson": "bun scripts/harness-lesson.ts"
+    "harness:lesson": "bun scripts/harness-lesson.ts",
+    "search:loop:status": "bun run scripts/search-loop-status.ts"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

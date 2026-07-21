@@ -46,7 +46,6 @@ const SKIP_FILES = new Set([
   // intentional string samples / rule catalogs
   'scripts/dx-mcp.ts',
   'scripts/bun-rules.ts',
-  'scripts/bun-quick-wins-table.ts',
   'packages/guards/src/bun-first-guard.ts',
 ]);
 
