@@ -1,0 +1,6 @@
+node_modules/
+test/.tmp-runner-test/
+*.log
+.env
+.env.*
+!.env.example
