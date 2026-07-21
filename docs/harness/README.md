@@ -60,7 +60,7 @@ bun run check:bun-env           # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs                # when CLI surface changes
 ```
 
-Test axes: `test:affected` = changed **workspaces**; `test:changed` = Bun import-graph filter ([`scripts/bun-test-changed.ts`](../../scripts/bun-test-changed.ts) → `--changed` / `--changed=<ref>`; scan skips `node_modules`, no link/emit). Empty dirty set exits 0; `test:changed:watch` stays alive and re-filters on any local source edit. Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13](https://bun.com/blog/bun-v1.3.13).
+Test axes: `test:affected` = changed **workspaces**; `test:changed` = Bun import-graph filter ([`scripts/bun-test-changed.ts`](../../scripts/bun-test-changed.ts) → `--changed` / `--changed=<ref>`; scan skips `node_modules`, no link/emit). Empty dirty set exits 0; `test:changed:watch` stays alive and re-filters on any local source edit. Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) · [release map](../BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map).
 
 Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart; path-bun / bun-env when lib\|scripts staged; ESLint `--max-warnings 0`) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
 

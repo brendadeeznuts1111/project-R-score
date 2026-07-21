@@ -13,12 +13,8 @@ export {};
 
 const ROOT = process.cwd();
 
-/** Files that intentionally mention or rewrite process.env (catalog, migrators, demos). */
+/** Files that intentionally mention process.env outside string literals (migrators, this ratchet). */
 const ALLOW = new Set([
-  'lib/validation/bun-first-auditor.ts',
-  'scripts/bun-migrate.ts',
-  'scripts/bun-native-discover.ts',
-  'scripts/dx-mcp.ts',
   'scripts/lib/migrate-runtime.ts',
   'scripts/check-bun-env.ts',
 ]);

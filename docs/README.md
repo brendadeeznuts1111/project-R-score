@@ -19,7 +19,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
-| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | WebView, markdown.ansi, cron, UDP |
+| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | WebView, markdown.ansi, cron, UDP, [v1.3.12 map](./BUN_NATIVE_CAPABILITIES.md#bun-v1312-release-map), [v1.3.13 map](./BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map) |
 | Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) | `bun run docs:refresh` |
 
 These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes ≠ token/catalog operate.

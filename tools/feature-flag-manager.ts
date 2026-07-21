@@ -255,19 +255,13 @@ class FeatureFlagManager {
 
   async saveFlags(): Promise<boolean> {
     try {
-      const fs = await import('fs/promises');
-      const path = await import('path');
-
-      // Ensure config directory exists
-      const configDir = path.dirname(this.configPath);
-      await fs.mkdir(configDir, { recursive: true });
-
       const flagData = {
         version: '1.0.0',
         updatedAt: new Date().toISOString(),
         flags: Array.from(this.flags.entries()).map(([id, flag]) => ({ id, ...flag })),
       };
 
+      // Bun.write createPath creates parent segments for nested config paths
       await Bun.write(this.configPath, JSON.stringify(flagData, null, 2));
       log.verbose(`Saved feature flags to ${this.configPath}`);
       return true;

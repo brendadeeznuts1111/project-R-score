@@ -168,7 +168,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun test': 'https://bun.com/docs/test/index#run-tests',
   'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
-  // bun test flags (v1.3.13+) — blog anchors are the ship notes; docs index may lag
+  // Release blog deep links (docs index may lag; prefer these for ship notes)
+  'bun v1.3.12': 'https://bun.com/blog/bun-v1.3.12',
+  'bun v1.3.12 bugfixes': 'https://bun.com/blog/bun-v1.3.12#bugfixes',
+  'bun v1.3.12 contributors': 'https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors',
+  'bun v1.3.13': 'https://bun.com/blog/bun-v1.3.13',
+  // bun test flags (v1.3.13+) — blog anchors are the ship notes
   'bun test --changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
   '--changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
   '--isolate': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',

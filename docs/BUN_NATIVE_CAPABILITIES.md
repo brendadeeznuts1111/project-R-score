@@ -16,8 +16,11 @@ Grounded map of **newer Bun runtime APIs** available on this machine’s toolcha
 2. [Bun.markdown.ansi](#bunmarkdownansi)
 3. [Bun.cron](#buncron)
 4. [Bun.udpSocket](#bunudpsocket)
-5. [Platform integration map](#platform-integration-map)
-6. [References](#references)
+5. [WebCrypto SHA3 + X25519](#webcrypto-sha3--x25519)
+6. [Bun v1.3.12 release map](#bun-v1312-release-map)
+7. [Bun v1.3.13 release map](#bun-v1313-release-map)
+8. [Platform integration map](#platform-integration-map)
+9. [References](#references)
 
 ---
 
@@ -155,18 +158,81 @@ const job = Bun.cron("*/10 * * * *", async () => {
 
 ---
 
+## WebCrypto SHA3 + X25519
+
+**Verified on Bun 1.4.0** (also `Bun.CryptoHasher('sha3-256')`).
+
+| Surface | Algorithms / APIs |
+|---------|-------------------|
+| `node:crypto` | `createHash` / `createHmac` / `getHashes` — `sha3-224` … `sha3-512` |
+| `crypto.subtle` | `digest("SHA3-256")`, HMAC sign/verify; `deriveBits` with **X25519** (32-byte secret; `null` length → full output) |
+| Prefer for new crypto hashes | `new Bun.CryptoHasher("sha3-256")` over Node `createHash` when staying Bun-first |
+| Non-crypto fingerprints | `Bun.hash` (wyhash) — **not** a SHA3 substitute |
+
+Smoke: `bun test tests/bun-crypto-webcrypto.test.ts`. DX: `bun run dx:catalog crypto.sha3` · `bun run dx:catalog crypto.x25519`.
+
+**Related (runtime, not spine-tested here):** `ws+unix://` / `wss+unix://` WebSocket URLs; BoringSSL ML-KEM/ML-DSA present for future PQ — do not claim app support until we call those APIs.
+
+**Do not:** silently retarget existing `sha256` digests in `lib/security/**` — persisted hashes / HMACs break.
+
+---
+
+## Bun v1.3.12 release map
+
+Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — entry at title / `bun upgrade` / [WebView](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation) through [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors). Runtime here: **1.4.0** (superset); install with `bun upgrade`. Detailed API notes for WebView / markdown / cron / UDP are the sections above this map.
+
+| Blog section | Homebase status |
+|--------------|-----------------|
+| [`Bun.WebView`](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation) | Documented above · runtime verified · optional spine smoke when needed |
+| [`bun ./file.md` / markdown terminal](https://bun.com/blog/bun-v1.3.12#render-markdown-in-the-terminal-with-bun-file-md) | `Bun.markdown.ansi` section above · harness report UX candidate |
+| [Async stack traces for native errors](https://bun.com/blog/bun-v1.3.12#async-stack-traces-for-native-errors) | Runtime inherit · no homebase script |
+| [`Bun.cron()`](https://bun.com/blog/bun-v1.3.12#in-process-bun-cron-scheduler) | Documented above · used by docs operate / R2 patterns |
+| [UDP ICMP / truncation](https://bun.com/blog/bun-v1.3.12#udp-socket-icmp-error-handling-and-truncation-detection) | Documented above · re-read when editing `lib/udp` |
+| [Unix domain socket lifecycle ↔ Node](https://bun.com/blog/bun-v1.3.12#unix-domain-socket-lifecycle-now-matches-node-js) | Runtime inherit · prefer Bun.serve / native sockets in new code |
+| JSC: `using` / `await using`, JIT, Wasm, spec, libpas | Prefer `await using` for WebView / resources · rest inherit |
+| Standalone Linux executables / faster URLPattern / stripANSI / stringWidth / Glob.scan / build | Runtime inherit · console-depth already uses `Bun.stringWidth` |
+| Cgroup-aware parallelism / HTTPS CONNECT keep-alive / `TCP_DEFER_ACCEPT` | Runtime inherit on Linux hosts |
+| [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) (Node / Bun APIs / Web / bundler / test / Shell / Windows) → contributors | Inherit by running Bun ≥1.3.12 · do not re-document each bullet |
+
+---
+
+## Bun v1.3.13 release map
+
+Upstream SSOT (full TOC → Internal / Runtime): [bun.com/blog/bun-v1.3.13](https://bun.com/blog/bun-v1.3.13) · deep link [bun-test-changed](https://bun.com/blog/bun-v1.3.13#bun-test-changed). Runtime here: **1.4.0** (superset).
+
+| Blog section | Homebase status |
+|--------------|-----------------|
+| [`bun test --isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) | Wired: `test:isolate`, `test:parallel` · day-loop in [harness README](./harness/README.md) |
+| [`--shard=M/N`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) | Wired: `SHARD=M/N bun run test:shard` · **no** GHA matrix yet |
+| [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) | Wired: [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) → `test:changed` / `test:changed:watch` / `-- <ref>` |
+| `bun install` stream / isolated linker / source maps / JSC / zlib-ng | Machine/install plane — [UNIFIED.md](./UNIFIED.md); no extra homebase scripts |
+| SHA3 + X25519 | Wired: section above · `tests/bun-crypto-webcrypto.test.ts` · DX `crypto.sha3` / `crypto.x25519` |
+| `ws+unix://` / `wss+unix://` | Available on runtime · **not** spine-tested |
+| Standalone HTML file-loader inline | Available · use when `--compile --target browser` on HTML entry |
+| `bunx claude` alias | Runtime install fix · no repo change |
+| Bugfixes (Node / Bun APIs / Web / install / bundler / CSS / test / Windows / JSC / Internal) | Inherit by running Bun ≥1.3.13 · do not re-document each bullet |
+
+Day-loop proof for the test flags: `bun run test:changed` · `bun run test:parallel`. Crypto: `bun test tests/bun-crypto-webcrypto.test.ts`.
+
+---
+
 ## References
 
 | Resource | URL |
 |----------|-----|
+| Bun v1.3.12 blog | https://bun.com/blog/bun-v1.3.12 |
+| Bun v1.3.12 Bugfixes | https://bun.com/blog/bun-v1.3.12#bugfixes |
+| Bun v1.3.13 blog | https://bun.com/blog/bun-v1.3.13 |
 | WebView | https://bun.com/docs/runtime/webview |
 | Markdown | https://bun.com/docs/runtime/markdown |
 | Cron | https://bun.com/docs/runtime/cron |
 | UDP | https://bun.com/docs/runtime/networking/udp |
+| Hashing | https://bun.com/docs/runtime/hashing |
+| Web Crypto | https://bun.com/docs/runtime/web-crypto |
 | bun-doc-refs | `bun tools/bun-doc-refs.ts suggest "Bun.WebView"` (catalog-first) |
 | docs:refresh | `bun run docs:refresh` — RSS → scrape → catalog → integrity ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)) |
 | Wire boundary | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Install policy | [UNIFIED.md](./UNIFIED.md) |
 | Docs index | [README.md](./README.md) |
 
-*Last verified: 2026-07-20 against local Bun 1.4.0 and bun.com/docs/llms.txt index.*
+*Last verified: 2026-07-21 against local Bun 1.4.0 (SHA3 + X25519 smoke; v1.3.12 + v1.3.13 release maps).*
