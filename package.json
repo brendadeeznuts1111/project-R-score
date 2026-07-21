@@ -1684,7 +1684,6 @@
     "validate:integrity": "bun scripts/validate-integrity.ts",
     "validate:integrity:all": "bun scripts/validate-integrity.ts --section=all",
     "secrets:migrate": "bun scripts/secrets-migrate.ts",
-    "playground": "bun scripts/playground-dev.ts",
     "affected:list": "bun scripts/affected-workspaces.ts list",
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",

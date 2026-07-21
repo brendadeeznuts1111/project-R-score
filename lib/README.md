@@ -50,25 +50,18 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 
 | Domain | Purpose | Entry hint |
 |--------|---------|------------|
-| [`ab-testing/`](./ab-testing/) | Stub — live code in `packages/ab-testing` | see README |
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
-| [`business/`](./business/) | Stub — unreferenced modules removed | see README |
-| [`cli/`](./cli/) | Stub — chrome/docs CLI removed | see README |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
 | [`env/`](./env/) | Runtime env helpers | `runtime.ts` |
-| [`har-analyzer/`](./har-analyzer/) | Stub — HAR analyzer removed | see README |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
 | [`http/`](./http/) | HTTP helpers | `hardened-fetch.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |
-| [`pooling/`](./pooling/) | Stub — unreferenced modules removed | see README |
-| [`profile/`](./profile/) | Stub — session upload removed | see README |
 | [`r2/`](./r2/) | R2 storage and analytics | `r2-storage-enhanced.ts` |
-| [`registry/`](./registry/) | Stub — use root `registry:projects` / `registry:doctor` | see README |
 | [`rss/`](./rss/) | RSS managers | `rss-manager.ts` |
 | [`security/`](./security/) | Secrets, R2 creds, security utils | `index.ts` · `r2-credentials.ts` |
 | [`shared/`](./shared/) | Cross-cutting shared helpers | `tools/` |
@@ -76,5 +69,3 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`types/`](./types/) | Branded IDs and shared types | `branded.ts` · [branded/README](./types/branded/README.md) |
 | [`udp/`](./udp/) | Stub — unreferenced modules removed | see README |
 | [`utils/`](./utils/) | General utilities barrel | `index.ts` |
-| [`validation/`](./validation/) | Stub — prefer packages/docs-tools | see README |
-| [`wiki/`](./wiki/) | Stub — wiki integration removed | see README |

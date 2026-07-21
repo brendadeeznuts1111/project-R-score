@@ -26,9 +26,9 @@ bun run registry:doctor:json
 
 `--fix` does not set secrets.
 
-## Verify package visibility
+## Verify stack health
 ```bash
-bun lib/registry/cli.ts list --registry="$REGISTRY_URL"
-bun lib/registry/cli.ts info @factorywager/<package> --registry="$REGISTRY_URL"
+bun run registry:doctor
+bun run registry:projects
 ```
 
