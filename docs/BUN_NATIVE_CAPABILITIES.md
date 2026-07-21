@@ -318,26 +318,41 @@ Day-loop proof for the test flags: `bun run test:changed` · `bun run test:paral
 
 ## References
 
+### Entry points (homebase)
+
+| Role | Command / path |
+|------|----------------|
+| DX one-liners | `bun run dx:catalog <id>` · `bun run dx:catalog tip [id]` · `search <q>` · `list` |
+| Canonical Bun API URL | `bun tools/bun-doc-refs.ts url "Bun.Glob"` / `suggest "…"` |
+| Day-loop / harness | [harness/README.md](./harness/README.md) · `bun run harness:status` |
+| Capabilities TOC | [Table of contents](#table-of-contents) |
+
+### Upstream docs (prefer `bun.com/docs`, not legacy `bun.sh/docs/api`)
+
 | Resource | URL |
 |----------|-----|
 | Bun v1.3.12 blog | https://bun.com/blog/bun-v1.3.12 |
 | Bun v1.3.12 install | https://bun.com/blog/bun-v1.3.12#to-install-bun |
 | Bun v1.3.12 upgrade | https://bun.com/blog/bun-v1.3.12#to-upgrade-bun |
 | Bun v1.3.12 Bugfixes | https://bun.com/blog/bun-v1.3.12#bugfixes |
-| URLPattern (1.3.12) | https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster |
-| Bun.Glob.scan (1.3.12) | https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan |
-| stripANSI / stringWidth (1.3.12) | https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth |
+| URLPattern ship note | https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster |
+| URLPattern API (WHATWG) | https://developer.mozilla.org/en-US/docs/Web/API/URLPattern |
+| Bun.Glob | https://bun.com/docs/runtime/glob#quickstart |
+| Bun.Glob.scan ship note | https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan |
+| Bun.stringWidth | https://bun.com/docs/runtime/utils#bun-stringwidth |
+| Bun.stripANSI | https://bun.com/docs/runtime/utils#bun-stripansi |
+| stripANSI / stringWidth ship note | https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth |
 | Bun v1.3.13 blog | https://bun.com/blog/bun-v1.3.13 |
 | WebView | https://bun.com/docs/runtime/webview |
 | Markdown | https://bun.com/docs/runtime/markdown |
 | Cron | https://bun.com/docs/runtime/cron |
 | UDP | https://bun.com/docs/runtime/networking/udp |
 | Hashing | https://bun.com/docs/runtime/hashing |
-| Web Crypto | https://bun.com/docs/runtime/web-crypto |
+| node:crypto (incl. SHA3 / subtle) | https://bun.com/docs/runtime/nodejs-compat#nodecrypto |
 | bun-doc-refs | `bun tools/bun-doc-refs.ts suggest "Bun.WebView"` (catalog-first) |
 | docs:refresh | `bun run docs:refresh` — RSS → scrape → catalog → integrity ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)) |
 | Wire boundary | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Install policy | [UNIFIED.md](./UNIFIED.md) |
 | Docs index | [README.md](./README.md) |
 
-*Last verified: 2026-07-21 against local Bun 1.4.0 (SHA3 + X25519 · URLPattern `$N` · Glob.scan · stripANSI/stringWidth OSC · v1.3.12 + v1.3.13 release maps).*
+*Last verified: 2026-07-21 against local Bun 1.4.0 — DX catalog docs rewritten to `bun.com/docs` (no `bun.sh/docs/api`); web-crypto 404 replaced with nodejs-compat#nodecrypto.*

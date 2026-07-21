@@ -19,7 +19,8 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
-| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | WebView, markdown.ansi, cron, UDP, [v1.3.12 map](./BUN_NATIVE_CAPABILITIES.md#bun-v1312-release-map), [v1.3.13 map](./BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map) |
+| Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) · [URLPattern](./BUN_NATIVE_CAPABILITIES.md#urlpattern) · [Glob.scan](./BUN_NATIVE_CAPABILITIES.md#bunglobscan) · [stripANSI/stringWidth](./BUN_NATIVE_CAPABILITIES.md#bunstripansi--bunstringwidth) · [v1.3.12](./BUN_NATIVE_CAPABILITIES.md#bun-v1312-release-map) · [v1.3.13](./BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map) · [References](./BUN_NATIVE_CAPABILITIES.md#references) |
+| Bun DX catalog | `bun run dx:catalog <id>` | Entry: `list` · `tip [id]` · `search <q>` · SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
 | Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) | `bun run docs:refresh` |
 
 These are **different** concerns: install ≠ wire types ≠ package imports ≠ runtime feature notes ≠ token/catalog operate.
