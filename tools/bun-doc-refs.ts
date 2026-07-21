@@ -170,6 +170,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'snapshot guide': 'https://bun.com/guides/test/snapshot',
   // Release blog deep links (docs index may lag; prefer these for ship notes)
   'bun v1.3.12': 'https://bun.com/blog/bun-v1.3.12',
+  'bun v1.3.12 install': 'https://bun.com/blog/bun-v1.3.12#to-install-bun',
+  'bun v1.3.12 upgrade': 'https://bun.com/blog/bun-v1.3.12#to-upgrade-bun',
+  'bun upgrade': 'https://bun.com/blog/bun-v1.3.12#to-upgrade-bun',
   'bun v1.3.12 bugfixes': 'https://bun.com/blog/bun-v1.3.12#bugfixes',
   'bun v1.3.12 contributors': 'https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors',
   'bun v1.3.13': 'https://bun.com/blog/bun-v1.3.13',

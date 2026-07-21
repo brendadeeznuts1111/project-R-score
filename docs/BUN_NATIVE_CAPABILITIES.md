@@ -179,10 +179,11 @@ Smoke: `bun test tests/bun-crypto-webcrypto.test.ts`. DX: `bun run dx:catalog cr
 
 ## Bun v1.3.12 release map
 
-Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — entry at title / `bun upgrade` / [WebView](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation) through [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors). Runtime here: **1.4.0** (superset); install with `bun upgrade`. Detailed API notes for WebView / markdown / cron / UDP are the sections above this map.
+Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — page entry [title → `bun upgrade`](https://bun.com/blog/bun-v1.3.12#to-upgrade-bun) (before [WebView](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation)), through [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors). Runtime here: **1.4.0** (superset). Detailed API notes for WebView / markdown / cron / UDP are the sections above this map.
 
 | Blog section | Homebase status |
 |--------------|-----------------|
+| [Install / `bun upgrade`](https://bun.com/blog/bun-v1.3.12#to-upgrade-bun) | Machine plane — [UNIFIED.md](./UNIFIED.md) · `bun upgrade` |
 | [`Bun.WebView`](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation) | Documented above · runtime verified · optional spine smoke when needed |
 | [`bun ./file.md` / markdown terminal](https://bun.com/blog/bun-v1.3.12#render-markdown-in-the-terminal-with-bun-file-md) | `Bun.markdown.ansi` section above · harness report UX candidate |
 | [Async stack traces for native errors](https://bun.com/blog/bun-v1.3.12#async-stack-traces-for-native-errors) | Runtime inherit · no homebase script |
@@ -221,6 +222,8 @@ Day-loop proof for the test flags: `bun run test:changed` · `bun run test:paral
 | Resource | URL |
 |----------|-----|
 | Bun v1.3.12 blog | https://bun.com/blog/bun-v1.3.12 |
+| Bun v1.3.12 install | https://bun.com/blog/bun-v1.3.12#to-install-bun |
+| Bun v1.3.12 upgrade | https://bun.com/blog/bun-v1.3.12#to-upgrade-bun |
 | Bun v1.3.12 Bugfixes | https://bun.com/blog/bun-v1.3.12#bugfixes |
 | Bun v1.3.13 blog | https://bun.com/blog/bun-v1.3.13 |
 | WebView | https://bun.com/docs/runtime/webview |
