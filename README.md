@@ -56,7 +56,6 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run type-check` | Day-loop typecheck (`tsconfig.check.json`) |
 | `bun run build:affected` / `test:affected` | Changed packages only ([`--filter`](https://bun.com/docs/pm/filter)) |
 | `bun run packages:list` | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`) |
-| `bun run packages:outdated` | Check outdated root deps (fast — workspace-isolated) |
 | `bun run validate:workspaces` | Validate workspace coverage |
 | `bun run lint` | ESLint on `lib/` |
 | `bun run lint:harness` | Harness ESLint config (lib, scripts, packages, server, config, tools) |

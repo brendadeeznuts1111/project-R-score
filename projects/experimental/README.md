@@ -12,6 +12,8 @@ Prototypes, demos, and proofs-of-concept. May promote to `active/`, freeze under
 | `keyboard-shortcuts-lite` | Lightweight utility demo (ex-`active/utilities/`) |
 | `tan-bun` | Scratch takes / profile experiments (ex-`active/utilities/`) |
 | `testing` | Misnamed Dev HQ / proxy playground (ex-`active/utilities/`) |
+| `codepoint` | Nested proxy / dashboard sandbox (ex-`active/utilities/`) |
+| `api-plive-setup-discovery` | One-shot Plive discovery tooling (ex-`active/utilities/`) |
 
 ## Promote / freeze
 

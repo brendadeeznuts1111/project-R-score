@@ -1,12 +1,12 @@
 {
   "meta": {
-    "generated_at": "2026-07-21T06:18:03.145Z",
+    "generated_at": "2026-07-21T06:22:46.006Z",
     "root": "/Users/nolarose/Projects",
     "version": "1.0.0"
   },
   "stats": {
     "total_projects": 39,
-    "total_size_bytes": 779160576,
+    "total_size_bytes": 779151360,
     "total_size_human": "743 MB",
     "by_category": {
       "kimiremote": 1,
@@ -21,8 +21,8 @@
       "f402-openapi": 1,
       "playwriter-skill": 1,
       "tools": 1,
-      "utilities": 7,
-      "experimental": 9
+      "utilities": 5,
+      "experimental": 11
     }
   },
   "featured": [
@@ -73,7 +73,7 @@
       "name": "scratch",
       "path": "scratch",
       "category": "featured",
-      "size_bytes": 11105280,
+      "size_bytes": 11096064,
       "size_human": "10.6 MB",
       "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": false,
@@ -269,8 +269,8 @@
     {
       "id": "codepoint",
       "name": "codepoint",
-      "path": "projects/active/utilities/codepoint",
-      "category": "utilities",
+      "path": "projects/experimental/codepoint",
+      "category": "experimental",
       "size_bytes": 2764800,
       "size_human": "2.6 MB",
       "last_modified": "2026-07-20T00:00:00.000Z",
@@ -395,8 +395,8 @@
     {
       "id": "api-plive-setup-discovery",
       "name": "api-plive-setup-discovery",
-      "path": "projects/active/utilities/api-plive-setup-discovery",
-      "category": "utilities",
+      "path": "projects/experimental/api-plive-setup-discovery",
+      "category": "experimental",
       "size_bytes": 1115136,
       "size_human": "1.1 MB",
       "last_modified": "2026-07-20T00:00:00.000Z",

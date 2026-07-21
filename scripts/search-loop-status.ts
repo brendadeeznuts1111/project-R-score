@@ -2,7 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 
-import { resolve } from 'node:path';
 import {
   LOOP_FRESHNESS_WINDOW_MINUTES,
   formatLoopClosedReason,
@@ -172,11 +171,11 @@ function buildMarkdown(status: LoopStatus): string {
 
 async function main(): Promise<void> {
   const generatedAt = new Date().toISOString();
-  const latestPath = resolve('reports/search-benchmark/latest.json');
-  const indexPath = resolve('reports/search-benchmark/index.json');
-  const coveragePath = resolve('reports/search-coverage-loc-latest.json');
-  const outJson = resolve('reports/search-loop-status-latest.json');
-  const outMd = resolve('reports/search-loop-status-latest.md');
+  const latestPath = `${process.cwd()}/reports/search-benchmark/latest.json`;
+  const indexPath = `${process.cwd()}/reports/search-benchmark/index.json`;
+  const coveragePath = `${process.cwd()}/reports/search-coverage-loc-latest.json`;
+  const outJson = `${process.cwd()}/reports/search-loop-status-latest.json`;
+  const outMd = `${process.cwd()}/reports/search-loop-status-latest.md`;
 
   const latest = await readJsonFile<LatestSnapshot>(latestPath);
   const index = await readJsonFile<{ snapshots?: Array<{ id?: string }> }>(indexPath);

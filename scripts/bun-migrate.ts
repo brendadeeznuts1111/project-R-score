@@ -20,12 +20,11 @@
  * @see scripts/BUN_NATIVE.md
  * @see tools/bun-docs-catalog.json
  */
-import { resolve } from 'node:path';
-
-const REPO_ROOT = resolve(import.meta.dir, '..');
+const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
+const REPO_ROOT = joinPath(import.meta.dir, '..');
 const DEFAULT_ROOTS = ['lib', 'tools', 'scripts', 'packages'];
-const DEFAULT_OUT = resolve(REPO_ROOT, 'reports/bun-usage-inventory.json');
-const CATALOG_PATH = resolve(REPO_ROOT, 'tools/bun-docs-catalog.json');
+const DEFAULT_OUT = joinPath(REPO_ROOT, 'reports/bun-usage-inventory.json');
+const CATALOG_PATH = joinPath(REPO_ROOT, 'tools/bun-docs-catalog.json');
 
 export type MigrateSection = 'runtime' | 'crypto' | 'fs' | 'shell' | 'test' | 'bundler' | 'http';
 
@@ -309,7 +308,7 @@ async function collectTsFiles(roots: string[], includeTests: boolean): Promise<s
   const out: string[] = [];
   const glob = new Bun.Glob('**/*.{ts,tsx,mts,cts}');
   for (const root of roots) {
-    const abs = resolve(REPO_ROOT, root);
+    const abs = joinPath(REPO_ROOT, root);
     const info = await Bun.file(abs)
       .stat()
       .catch(() => null);

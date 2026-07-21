@@ -15,7 +15,6 @@
  *   bun run gate-report:monorepo -- --open
  */
 
-import { join } from 'node:path';
 import { gitChangedPaths, loadGateMap, resolveProjects, validateGateMap } from '../lib/gate-map.ts';
 import {
   buildGithubSummary,
@@ -62,14 +61,10 @@ async function main(): Promise<number> {
     } else if (args[i] === '--project' && args[i + 1]) {
       projectId = args[++i];
     } else if (args[i] === '--output' && args[i + 1]) {
-      htmlPath = args[i + 1].startsWith('/')
-        ? args[i + 1]
-        : join(import.meta.dir, '..', args[i + 1]);
+      htmlPath = args[i + 1].startsWith('/') ? args[i + 1] : `${import.meta.dir}/../${args[i + 1]}`;
       i++;
     } else if (args[i] === '--json' && args[i + 1]) {
-      jsonPath = args[i + 1].startsWith('/')
-        ? args[i + 1]
-        : join(import.meta.dir, '..', args[i + 1]);
+      jsonPath = args[i + 1].startsWith('/') ? args[i + 1] : `${import.meta.dir}/../${args[i + 1]}`;
       jsonExplicit = true;
       i++;
     }

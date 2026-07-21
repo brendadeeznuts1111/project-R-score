@@ -2,8 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync } from './lib/fs-bun';
 
-import { join } from 'node:path';
-
 export type Tier1Provider = 'bun-blog' | 'bun-release' | 'bun-docs' | 'mdn' | 'linux-kernel';
 
 export type Tier1Source = {
@@ -40,13 +38,7 @@ type DemoContractFile = {
 };
 
 const ROOT = process.cwd();
-const CONTRACT_PATH = join(
-  ROOT,
-  'scratch',
-  'bun-v1.3.9-examples',
-  'playground-web',
-  'demo-module-contract.json'
-);
+const CONTRACT_PATH = `${ROOT}/scratch/bun-v1.3.9-examples/playground-web/demo-module-contract.json`;
 const ALLOWED_HOSTS = new Set([
   'bun.com',
   'github.com',

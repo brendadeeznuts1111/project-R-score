@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 import { readJsonSync } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { join } from 'node:path';
 
 type DemoContract = {
   benchCommand: string;
@@ -25,15 +25,9 @@ type RunResult = {
 };
 
 const ROOT = process.cwd();
-const CONTRACT_PATH = join(
-  ROOT,
-  'scratch',
-  'bun-v1.3.9-examples',
-  'playground-web',
-  'demo-module-contract.json'
-);
-const REPORTS_DIR = join(ROOT, 'reports', 'demo-bench');
-const LATEST_PATH = join(REPORTS_DIR, 'latest.json');
+const CONTRACT_PATH = `${ROOT}/scratch/bun-v1.3.9-examples/playground-web/demo-module-contract.json`;
+const REPORTS_DIR = `${ROOT}/reports/demo-bench`;
+const LATEST_PATH = `${REPORTS_DIR}/latest.json`;
 
 function parseLimit(): number {
   const eq = Bun.argv.find(arg => arg.startsWith('--limit='));
@@ -197,7 +191,7 @@ async function main() {
     results,
   };
   const stamp = snapshot.generatedAt.replace(/[:.]/g, '-');
-  const snapshotPath = join(REPORTS_DIR, `snapshot-${stamp}.json`);
+  const snapshotPath = `${REPORTS_DIR}/snapshot-${stamp}.json`;
   await Bun.write(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`);
   await Bun.write(LATEST_PATH, `${JSON.stringify(snapshot, null, 2)}\n`);
 

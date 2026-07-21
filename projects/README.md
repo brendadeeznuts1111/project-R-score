@@ -34,7 +34,7 @@ Each project under `projects/` is classified into one of three tiers:
 | `active/development/` | geelark, kal-poly-bot | kal-poly `data/` is local-only (ignored) |
 | `active/enterprise/` | fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io, bet-ticker-worker-v1.1, cascade-mover-v3 | bet-ticker + cascade: **own repos**, gitignored |
 | `active/tools/` | native-addon-tool | |
-| `active/utilities/` | api-plive-setup-discovery, bun-file-analyzer, bun-toml-secrets-editor, codepoint, proton-pass, shortcut-registry, toml-cli | `dist/` local-only |
+| `active/utilities/` | bun-file-analyzer, bun-toml-secrets-editor, proton-pass, shortcut-registry, toml-cli | `dist/` local-only |
 | `active/factorywager/` | registry (+ packages) | In root workspaces |
 | `active/kimiremote/` | sports terminal proxy | Own repo, gitignored |
 | `active/sports-terminal-os/` | Sports Terminal OS v5.2 | Root workspace member |

@@ -86,15 +86,8 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run install:all` | scripts/with-bun-cache-env.ts install |
 | `bun run install:cache:lifecycle` | scripts/bun-cache-lifecycle.ts --dry-run |
-| `bun run install:cache:metrics` | scripts/bun-cache-lifecycle.ts --json |
 | `bun run install:cache:prune` | scripts/bun-cache-lifecycle.ts --prune |
-| `bun run install:factorywager` | scripts/with-bun-cache-env.ts install --filter './projects/active/factorywager/registry/packages/*' |
-| `bun run install:kimiremote` | scripts/with-bun-cache-env.ts install --filter './projects/active/kimiremote/packages/*' |
 | `bun run install:machine:health` | scripts/machine-bun-health.ts |
-| `bun run install:packages` | scripts/with-bun-cache-env.ts install --filter './packages/*' |
-| `bun run install:pm:health` | scripts/bun-cache-lifecycle.ts --dry-run --json |
-| `bun run install:projects` | scripts/with-bun-cache-env.ts install --filter './projects/*' |
-| `bun run install:projects:except:experimental` | scripts/with-bun-cache-env.ts install --filter './projects/*' --filter '!./projects/experimental/*' |
 | `bun run install:verify` | scripts/verify-install-cache.ts |
 | `bun run install:verify:strict` | scripts/verify-install-cache.ts --strict |
 
@@ -144,19 +137,13 @@ All commands run via `bun run <name>` from the project root:
 ### Documentation
 | Command | Description |
 |---------|-------------|
-| `bun run docs:cache` | tools/cli/docs-cli.ts cache |
 | `bun run docs:catalog` | tools/bun-docs-catalog.ts list |
 | `bun run docs:catalog:build` | tools/bun-docs-catalog.ts build |
 | `bun run docs:catalog:export` | tools/bun-docs-catalog.ts export --compact |
-| `bun run docs:index` | tools/cli/docs-cli.ts index |
-| `bun run docs:install` | bash scripts/install-bun-docs.sh |
 | `bun run docs:map:check` | tools/doc-map-check.ts |
-| `bun run docs:open` | tools/cli/docs-cli.ts open |
 | `bun run docs:refresh` | tools/bun-docs-refresh.ts |
 | `bun run docs:release-index` | tools/bun-docs-releases.ts index |
 | `bun run docs:release-scrape` | tools/bun-docs-releases.ts scrape |
-| `bun run docs:search` | tools/cli/docs-cli.ts search |
-| `bun run docs:sync` | lib/registry/docs-sync.ts |
 | `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
 
 ### Registry

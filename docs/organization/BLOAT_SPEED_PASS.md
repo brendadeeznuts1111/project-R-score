@@ -8,19 +8,26 @@ Path SSOT: [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts). Maps: [`STRUC
 
 ## Metrics
 
-| Metric | Before (plan baseline) | r1 | r2 | r3 (deeper) |
-|--------|------------------------:|---:|---:|------------:|
-| `package.json` scripts | 329 (post first trim; 431 original) | **275** | **258** | **193** |
-| `projects/experimental/` projects | 0 (README-only bucket) | **6** | **7** | **9** (+`tan-bun`, `testing`) |
-| `bun run help` | — | ~32ms | ~10–15ms | — |
-| `bun run cli:docs` | — | ~278ms | — | — |
+| Metric | Baseline | r1 | r2 | r3 | r4 (review+) |
+|--------|---------:|---:|---:|---:|-------------:|
+| `package.json` scripts | 329 (431 original) | **275** | **258** | **193** | **176** |
+| `projects/experimental/` | 0 | 6 | 7 | 9 | **11** (+`codepoint`, `api-plive-setup-discovery`) |
+| Active utilities (spine) | many | — | — | 7 | **5** (analyzer, toml-secrets, proton-pass, shortcut-registry, toml-cli) |
 
 ## What changed
 
 1. **CLI SSOT** — `help` + `cli:docs` share [`scripts/lib/cli-categories.ts`](../../scripts/lib/cli-categories.ts); day-loop docs in README / STRUCTURE / CLI.md.
-2. **Script trim** — r1: 54 aliases; r2: 17 more; **r3: 65** (protocol/dashboard/P2P fan-outs, `workspaces:*`, `ci:parallel*`, niche demos/`dataview`/`markdown:options`/`bunx` entry, pure aliases). Kept CI/husky + day-loop + `brand:*` / `fix:*` / `search:*` / `install:*`.
-3. **Tier moves** — demos + `keyboard-shortcuts-lite` + **`tan-bun`**, **`testing`** → experimental.
-4. **Speed** — skip ast-grep `doctor` on lockfile-only triggers. Dropped `node:path` from more entrypoints: validators, install health, `fix-*`, `brand-cpu-profile`, `playground-dev`, `ci-r2-version-check`, `security-dependency-guard`, `sitemap-refresh`, `secrets-scan-local`, demo contract scripts.
+2. **Script trim** — r1–r3 removed aliases / protocol fan-outs / niche demos; **r4** dropped `bunx:*`, scoped `install:*` filters, and docs-cli convenience aliases (`docs:open` / `search` / `cache` / `index` / `install` / `docs:sync`). Kept operate loop (`docs:refresh`, catalog, release-*), `install:verify*`, `install:all`, `install:machine:health`, `install:cache:lifecycle|prune`, `audit:bunfig*`.
+3. **Tier moves** — demos + utility sandboxes → experimental (11 on disk).
+4. **Speed** — skip ast-grep `doctor` on lockfile-only triggers; drop `node:path` from validators, fixers, demo contracts, `bun-migrate`, `search-loop-status`, `gate-report-monorepo`, `protocol-baseline-promote`.
+
+## Review findings (r4)
+
+| Finding | Fix |
+|---------|-----|
+| [`scripts/protocol-baseline-promote.ts`](../../scripts/protocol-baseline-promote.ts) still spawned removed `test:protocol:parallel:compare` | Spawn `scripts/test-protocol-parallel.ts` with the former compare flags |
+| Root README still listed `packages:outdated` | Removed; use `packages:list` / direct `bun outdated` |
+| `active/utilities/` still held one-shot sandboxes | Moved `codepoint`, `api-plive-setup-discovery` |
 
 ## Day loop (prefer)
 
@@ -32,12 +39,12 @@ bun run test:affected
 bun run cli:docs            # refresh docs/CLI.md
 ```
 
-Protocol checks (after r3): `bun run dashboard:protocol:check` or `bun run scripts/dashboard-protocol-check.ts --protocol=…`.
+Protocol: `bun run dashboard:protocol:check` or `bun run scripts/dashboard-protocol-check.ts --protocol=…`. Promote baseline: `bun run scripts/protocol-baseline-promote.ts` (compare gate inlined).
 
 ## Out of scope (still later)
 
 - Root-parked nested remotes (`Proton-workspace/`, `toc-ops*`, …)
 - `proton-pass` WIP lane
 - Lifecycle hook aliases (`pretest` / `prelint` / `prebuild`)
-- Remaining `node:path` in large search/benchmark scripts
-- Optional: move `codepoint` / `api-plive-setup-discovery` to experimental
+- Heavy `node:path` in `search-smart.ts` / search-benchmark family / `verify-package-import-boundaries.ts`
+- Optional archive of long-stale experimental demos
