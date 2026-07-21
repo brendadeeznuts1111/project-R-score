@@ -2,11 +2,12 @@
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 
 import { getCliPath, getPat } from './env.ts';
+import { getLogger } from './logger.ts';
 
 export class ProtonPassCliError extends Error {
   constructor(
     public readonly exitCode: number,
-    message: string
+    message: string,
   ) {
     super(message);
   }
@@ -15,6 +16,9 @@ export class ProtonPassCliError extends Error {
 async function runCli(args: string[], input?: string): Promise<string> {
   const pat = getPat();
   const cmd = [getCliPath(), ...args];
+  const logger = getLogger();
+
+  logger.debug('spawning pass-cli', { cmd });
 
   const proc = Bun.spawn({
     cmd,
@@ -37,12 +41,14 @@ async function runCli(args: string[], input?: string): Promise<string> {
   const stderr = await new Response(proc.stderr).text();
 
   if (exit !== 0) {
+    logger.debug('pass-cli failed', { exit, stderr, stdout });
     throw new ProtonPassCliError(
       exit,
-      `pass-cli failed (code ${exit}): ${stderr || stdout}`.trim()
+      `pass-cli failed (code ${exit}): ${stderr || stdout}`.trim(),
     );
   }
 
+  logger.debug('pass-cli succeeded', { stdout: stdout.slice(0, 200) });
   return stdout.trim();
 }
 
