@@ -419,7 +419,10 @@ export class Validator {
             validator = Validator.parseObject({});
             break;
           default:
-            validator = Validator.parseString({ required: rules.required, sanitize: rules.sanitize });
+            validator = Validator.parseString({
+              required: rules.required,
+              sanitize: rules.sanitize,
+            });
         }
 
         // Apply custom validator if provided
@@ -511,25 +514,25 @@ export function isValidRequest(request: unknown): request is {
  * Validate R2 key format
  */
 function parseR2KeyWire(input: unknown): { isValid: boolean; data?: string; error?: string } {
-    if (typeof input !== 'string') {
-      return { isValid: false, error: 'R2 key must be a string' };
-    }
-
-    // R2 key restrictions
-    if (input.length === 0 || input.length > 1024) {
-      return { isValid: false, error: 'R2 key must be 1-1024 characters' };
-    }
-
-    if (!/^[a-zA-Z0-9._/-]+$/.test(input)) {
-      return { isValid: false, error: 'R2 key contains invalid characters' };
-    }
-
-    if (input.startsWith('/') || input.endsWith('/')) {
-      return { isValid: false, error: 'R2 key cannot start or end with /' };
-    }
-
-    return { isValid: true, data: input };
+  if (typeof input !== 'string') {
+    return { isValid: false, error: 'R2 key must be a string' };
   }
+
+  // R2 key restrictions
+  if (input.length === 0 || input.length > 1024) {
+    return { isValid: false, error: 'R2 key must be 1-1024 characters' };
+  }
+
+  if (!/^[a-zA-Z0-9._/-]+$/.test(input)) {
+    return { isValid: false, error: 'R2 key contains invalid characters' };
+  }
+
+  if (input.startsWith('/') || input.endsWith('/')) {
+    return { isValid: false, error: 'R2 key cannot start or end with /' };
+  }
+
+  return { isValid: true, data: input };
+}
 
 export const parseR2Key = Validator.parseCustom(parseR2KeyWire, { required: true });
 

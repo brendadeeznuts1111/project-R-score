@@ -488,9 +488,7 @@ export class UnifiedCookieDataViewManager {
     return new Uint8Array(buffer);
   }
 
-  private serializeSecurityMetrics(
-    metrics: UnifiedSessionMetrics['securityMetrics']
-  ): Uint8Array {
+  private serializeSecurityMetrics(metrics: UnifiedSessionMetrics['securityMetrics']): Uint8Array {
     const buffer = new ArrayBuffer(16);
     const view = new DataView(buffer);
     view.setUint16(0, metrics.secureCookies, true);

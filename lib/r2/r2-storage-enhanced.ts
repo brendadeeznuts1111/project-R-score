@@ -269,7 +269,10 @@ export class R2Storage {
     await this.put(this.config.defaultBucket, key, Buffer.from(data));
   }
 
-  private async putJson(key: string, data: object | string | number | boolean | null): Promise<void> {
+  private async putJson(
+    key: string,
+    data: object | string | number | boolean | null
+  ): Promise<void> {
     await this.put(this.config.defaultBucket, key, Buffer.from(JSON.stringify(data)));
   }
 

@@ -52,7 +52,10 @@ const fallbackConstantValidator: ConstantValidatorLike = {
         break;
       }
       case 'documentation-base-url': {
-        const paths = [...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS), ...collectPathsFromUnknown(BUN_UTILS_URLS)];
+        const paths = [
+          ...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS),
+          ...collectPathsFromUnknown(BUN_UTILS_URLS),
+        ];
         for (const path of paths) {
           if (!path.startsWith('/docs/')) {
             errors.push(`Non-doc path detected: ${path}`);
@@ -70,7 +73,10 @@ const fallbackConstantValidator: ConstantValidatorLike = {
 
 const fallbackAutoHealer: AutoHealerLike = {
   async healAll(): Promise<{ totalFixes: number }> {
-    const paths = [...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS), ...collectPathsFromUnknown(BUN_UTILS_URLS)];
+    const paths = [
+      ...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS),
+      ...collectPathsFromUnknown(BUN_UTILS_URLS),
+    ];
     const fixable = paths.filter(p => normalizePath(p) !== p).length;
     return { totalFixes: fixable };
   },

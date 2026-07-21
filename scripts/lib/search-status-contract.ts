@@ -82,7 +82,9 @@ export const WARNING_STATUS_MAP: Record<string, StatusLevel> = {
 };
 
 export function normalizeWarningCode(value: unknown): string {
-  return String(value || '').trim().toLowerCase();
+  return String(value || '')
+    .trim()
+    .toLowerCase();
 }
 
 export function warningCodeStatus(code: string | number | boolean | null | undefined): StatusLevel {
@@ -93,7 +95,9 @@ export function warningCodeStatus(code: string | number | boolean | null | undef
 export function mapLoopStageToStatusLevel(
   status: LoopStageStatus | string | null | undefined
 ): StatusLevel {
-  const normalized = String(status || '').trim().toLowerCase();
+  const normalized = String(status || '')
+    .trim()
+    .toLowerCase();
   if (normalized === 'pass') return 'ok';
   if (normalized === 'warn') return 'warn';
   if (normalized === 'fail') return 'fail';
@@ -112,10 +116,14 @@ export function isLoopClosedByPolicy(stages: Array<Pick<LoopStage, 'id' | 'statu
   hasFail: boolean;
   disallowedWarnIds: string[];
 } {
-  const hasFail = stages.some((stage) => mapLoopStageToStatusLevel(stage.status) === 'fail');
+  const hasFail = stages.some(stage => mapLoopStageToStatusLevel(stage.status) === 'fail');
   const disallowedWarnIds = stages
-    .filter((stage) => mapLoopStageToStatusLevel(stage.status) === 'warn' && !ALLOWED_WARNING_STAGE_IDS.has(stage.id as LoopStageId))
-    .map((stage) => String(stage.id));
+    .filter(
+      stage =>
+        mapLoopStageToStatusLevel(stage.status) === 'warn' &&
+        !ALLOWED_WARNING_STAGE_IDS.has(stage.id as LoopStageId)
+    )
+    .map(stage => String(stage.id));
   return {
     loopClosed: !hasFail && disallowedWarnIds.length === 0,
     hasFail,
@@ -130,8 +138,8 @@ export function formatLoopClosedReason(stages: Array<Pick<LoopStage, 'id' | 'sta
   }
   if (evalResult.hasFail) {
     const failIds = stages
-      .filter((stage) => mapLoopStageToStatusLevel(stage.status) === 'fail')
-      .map((stage) => String(stage.id));
+      .filter(stage => mapLoopStageToStatusLevel(stage.status) === 'fail')
+      .map(stage => String(stage.id));
     return `One or more stages failed: ${failIds.join(', ')}`;
   }
   return `Disallowed warning stages present: ${evalResult.disallowedWarnIds.join(', ')}`;

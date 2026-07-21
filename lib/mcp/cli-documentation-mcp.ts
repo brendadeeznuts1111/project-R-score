@@ -217,7 +217,11 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.generateInteractiveExample', 'medium');
+      handleErrorFromUnknown(
+        error,
+        'CLIDocumentationMCPServer.generateInteractiveExample',
+        'medium'
+      );
       return { url: '', valid: false };
     }
   }
@@ -242,7 +246,11 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.generateComparisonExample', 'medium');
+      handleErrorFromUnknown(
+        error,
+        'CLIDocumentationMCPServer.generateComparisonExample',
+        'medium'
+      );
       return { url: '', valid: false };
     }
   }

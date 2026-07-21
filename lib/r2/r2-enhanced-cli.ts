@@ -198,7 +198,10 @@ class R2EnhancedCLI {
   }
 
   // Lifecycle Management Commands
-  private async handleLifecycle(subcommand: string | undefined, options: CliOptions): Promise<void> {
+  private async handleLifecycle(
+    subcommand: string | undefined,
+    options: CliOptions
+  ): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2LifecycleManager.displayStatus();
@@ -462,7 +465,10 @@ class R2EnhancedCLI {
   }
 
   // Analytics Commands
-  private async handleAnalytics(subcommand: string | undefined, options: CliOptions): Promise<void> {
+  private async handleAnalytics(
+    subcommand: string | undefined,
+    options: CliOptions
+  ): Promise<void> {
     switch (subcommand) {
       case 'metrics':
         const metrics = r2Analytics.getMetrics();

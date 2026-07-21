@@ -183,7 +183,10 @@ TREND (env):
 `);
 }
 
-export function coerceNum(input: string | number | boolean | null | undefined, fallback = 0): number {
+export function coerceNum(
+  input: string | number | boolean | null | undefined,
+  fallback = 0
+): number {
   const n = Number(input);
   return Number.isFinite(n) ? n : fallback;
 }

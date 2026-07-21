@@ -238,7 +238,9 @@ export class R2EventSystem {
    * Broadcast event to all WebSocket clients
    */
   private broadcastToWebSockets(
-    event: R2Event | { type: string; [key: string]: object | string | number | boolean | null | undefined }
+    event:
+      | R2Event
+      | { type: string; [key: string]: object | string | number | boolean | null | undefined }
   ): void {
     const message = JSON.stringify(event);
     this.wsClients.forEach(ws => {

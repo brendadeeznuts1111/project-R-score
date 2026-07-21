@@ -18,7 +18,12 @@ import { SecretLifecycleManager } from './secret-lifecycle';
 export { Cookie, CookieMap } from 'bun';
 
 // Security hardening utilities
-export { parseSafeString, parseSafeHexColor, parseSafeServiceName, type SafeResult } from './safe-validators';
+export {
+  parseSafeString,
+  parseSafeHexColor,
+  parseSafeServiceName,
+  type SafeResult,
+} from './safe-validators';
 export { secureBunRun, type SecureRunResult } from './secure-bun-run';
 export { WikiSecretTransaction } from './wiki-secret-transaction';
 export { writeAuditLog, type AuditEntry } from './audit-writer';
