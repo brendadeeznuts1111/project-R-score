@@ -297,8 +297,7 @@ export const UTILITIES: BunUtility[] = UtilityFactory.createMany([
     category: UtilsCategory.FILE_SYSTEM,
     docUrl: 'https://bun.sh/docs/api/utils#readfile',
     description: 'Asynchronously read file contents with encoding support',
-    exampleCode: `import { readFile } from 'bun';
-const content = await readFile('package.json', 'utf-8');
+    exampleCode: `const content = await Bun.file('package.json').text();
 console.info(content);`,
   },
   {
@@ -307,8 +306,7 @@ console.info(content);`,
     category: UtilsCategory.FILE_SYSTEM,
     docUrl: 'https://bun.sh/docs/api/utils#writefile',
     description: 'Write data to files with automatic directory creation',
-    exampleCode: `import { writeFile } from 'bun';
-await writeFile('output.txt', 'Hello, Bun!');
+    exampleCode: `await Bun.write('output.txt', 'Hello, Bun!');
 console.info('File written successfully');`,
   },
   {
@@ -628,11 +626,9 @@ export const BUN_UTILS_URLS = {
 // Common Bun.utils examples
 export const BUN_UTILS_EXAMPLES = {
   FILE_SYSTEM: {
-    READ_FILE: `import { readFile } from 'bun';
-const content = await readFile('package.json', 'utf-8');`,
+    READ_FILE: `const content = await Bun.file('package.json').text();`,
 
-    WRITE_FILE: `import { writeFile } from 'bun';
-await writeFile('output.txt', 'Hello, Bun!');`,
+    WRITE_FILE: `await Bun.write('output.txt', 'Hello, Bun!');`,
 
     FILE_EXISTS: `import { exists } from 'bun';
 const fileExists = await exists('package.json');`,

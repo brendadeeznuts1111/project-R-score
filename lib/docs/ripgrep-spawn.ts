@@ -7,26 +7,9 @@
 /**
  * High-Performance Ripgrep Searcher using Bun.spawn
  * Zero-copy, SIMD-optimized process management with streaming JSON parsing
+ *
+ * Bun APIs come from bun-types (do not locally redeclare Bun — it shadows and drifts).
  */
-
-// Import Bun types properly
-declare const Bun: {
-  spawn: (
-    args: string[],
-    options?: { stdout?: string; stderr?: string; env?: any }
-  ) => {
-    stdout: ReadableStream;
-    exited: Promise<number>;
-  };
-  spawnSync: (
-    args: string[],
-    options?: { stdout?: string; stderr?: string }
-  ) => {
-    success: boolean;
-    stdout?: Uint8Array;
-  };
-  readableStreamToText: (stream: ReadableStream) => Promise<string>;
-};
 
 export interface RipgrepMatch {
   type: 'match';
@@ -179,9 +162,13 @@ export class RipgrepSearcher {
   }
 
   private ensureCacheDir(): void {
-    // Pure directory create — Bun.write only creates parents for nested *files*
-    if (Bun.peek(Bun.file(this.cacheDir).exists()) === true) return;
-    Bun.spawnSync(['mkdir', '-p', this.cacheDir], { stdout: 'ignore', stderr: 'ignore' });
+    try {
+      new Bun.Glob('*').scanSync({ cwd: this.cacheDir, onlyFiles: false }).next();
+      return;
+    } catch {
+      // not a readable directory yet
+    }
+    Bun.peek(Bun.write(`${this.cacheDir.replace(/\/$/, '')}/.bun-keep`, ''));
   }
 
   /**

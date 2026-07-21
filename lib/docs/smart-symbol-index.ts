@@ -79,11 +79,23 @@ interface DiscoverResult {
   edges: DiscoveredEdge[];
 }
 
+function isDirectorySync(dir: string): boolean {
+  try {
+    new Bun.Glob('*').scanSync({ cwd: dir, onlyFiles: false }).next();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Sync ensure via Bun.write marker — no shell mkdir. */
+function ensureDirSync(dir: string): void {
+  if (isDirectorySync(dir)) return;
+  Bun.peek(Bun.write(`${dir.replace(/\/$/, '')}/.bun-keep`, ''));
+}
+
 function ensureParentDir(filePath: string): void {
-  const parent = dirnamePath(filePath);
-  if (Bun.peek(Bun.file(parent).exists()) === true) return;
-  // Bun.write createPath is async; mkdir -p stays sync for Database open.
-  Bun.spawnSync(['mkdir', '-p', parent], { stdout: 'ignore', stderr: 'ignore' });
+  ensureDirSync(dirnamePath(filePath));
 }
 
 function openDb(dbPath: string): Database {

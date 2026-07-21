@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/test/index#run-tests — bun test
+// @see https://bun.com/blog/bun-v1.3.13 — --isolate / --parallel / --shard / --changed
 /**
  * Tool-legibility surface for the day loop + ratchets.
  * Quiet success; lists discover → invoke → verify commands.
@@ -20,7 +22,10 @@ type Timing = {
 const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run type-check', purpose: 'Day-loop tsc (tsconfig.check.json spine)' },
   { cmd: 'bun run build:affected', purpose: 'Git-true workspace build' },
-  { cmd: 'bun run test:affected', purpose: 'Git-true workspace test' },
+  { cmd: 'bun run test:affected', purpose: 'Git-true workspace package test scripts' },
+  { cmd: 'bun run test:changed', purpose: 'Bun import-graph filter (bun test --changed)' },
+  { cmd: 'bun run test:parallel', purpose: 'Full suite workers (bun test --parallel)' },
+  { cmd: 'bun run proof:install', purpose: 'Journey: factory install layout healthy' },
   { cmd: 'bun run check:path-bun', purpose: 'No path/node:path under lib/' },
   { cmd: 'bun run check:bun-env', purpose: 'No process.env under lib/ + scripts/' },
   { cmd: 'bun run check:brands', purpose: 'Actionable unbranded IDs (smart)' },
@@ -29,6 +34,7 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
 
 console.info('FactoryWager harness status');
 console.info('JIT index: docs/harness/README.md');
+console.info('Review: docs/harness/REVIEW.md');
 console.info('');
 
 console.info('Day loop / ratchets');

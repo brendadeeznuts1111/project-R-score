@@ -46,7 +46,7 @@ export class SafeFileOperations {
   /**
    * Safely read a file with error handling
    */
-  static async readFile(
+  static async readTextFile(
     filePath: string,
     options: FileOperationOptions = {}
   ): Promise<FileOperationResult<string>> {
@@ -115,7 +115,7 @@ export class SafeFileOperations {
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
-        function: 'readFile',
+        function: 'readTextFile',
         operation: 'file-read',
         filePath,
       });
@@ -131,7 +131,7 @@ export class SafeFileOperations {
   /**
    * Safely write a file with error handling
    */
-  static async writeFile(
+  static async writeTextFile(
     filePath: string,
     content: string,
     options: FileOperationOptions = {}
@@ -194,7 +194,7 @@ export class SafeFileOperations {
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
-        function: 'writeFile',
+        function: 'writeTextFile',
         operation: 'file-write',
         filePath,
       });
@@ -210,7 +210,7 @@ export class SafeFileOperations {
   /**
    * Safely append to a file with error handling
    */
-  static async appendFile(
+  static async appendTextFile(
     filePath: string,
     content: string,
     options: FileOperationOptions = {}
@@ -261,7 +261,7 @@ export class SafeFileOperations {
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
-        function: 'appendFile',
+        function: 'appendTextFile',
         operation: 'file-append',
         filePath,
       });
@@ -365,15 +365,15 @@ export class SafeFileOperations {
  * Convenience functions for common file operations
  */
 export const safeReadFile = (filePath: string, options?: FileOperationOptions) =>
-  SafeFileOperations.readFile(filePath, options);
+  SafeFileOperations.readTextFile(filePath, options);
 
 export const safeWriteFile = (filePath: string, content: string, options?: FileOperationOptions) =>
-  SafeFileOperations.writeFile(filePath, content, options);
+  SafeFileOperations.writeTextFile(filePath, content, options);
 
 export const safeAppendFile = (filePath: string, content: string, options?: FileOperationOptions) =>
-  SafeFileOperations.appendFile(filePath, content, options);
+  SafeFileOperations.appendTextFile(filePath, content, options);
 
 export const safeDeleteFile = (filePath: string) => SafeFileOperations.deleteFile(filePath);
 
 // re-export path helpers used by some call sites historically
-export { basename, extname, dirname };
+export { basenamePath as basename, extnamePath as extname, dirnamePath as dirname };

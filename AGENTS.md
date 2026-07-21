@@ -12,6 +12,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
 | Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
 | Authority / lanes | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) |
+| Repository review (JIT) | [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) |
+| Proof / install journey | [`docs/harness/PROOF.md`](docs/harness/PROOF.md) · `bun run proof:install` |
 | Docs index | [`docs/README.md`](docs/README.md) |
 | Human hub | [`README.md`](README.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
@@ -75,7 +77,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 - **Task routing:**
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
-  - Harness JIT / proof / authority → [`docs/harness/README.md`](docs/harness/README.md) · `bun run harness:status`
+  - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/README.md) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)

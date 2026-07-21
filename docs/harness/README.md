@@ -13,7 +13,8 @@ When a decision is unresolved, read **one** owner below — do not load the full
 | Bun API usage / `@see` refs | `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) |
 | Install / bunfig / machine Bun | [`docs/UNIFIED.md`](../UNIFIED.md) |
 | Day loop / affected / type-check honesty | [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md) |
-| Claim vs evidence (“done?”) | [`PROOF.md`](PROOF.md) |
+| Claim vs evidence (“done?”) | [`PROOF.md`](PROOF.md) · `bun run proof:install` |
+| Repository review (9 trajectory questions) | [`REVIEW.md`](REVIEW.md) |
 | Repeat failure → earliest owner | [`FEEDBACK.md`](FEEDBACK.md) |
 | Lanes / push / credentials / irreversible ops | [`AUTHORITY.md`](AUTHORITY.md) |
 | Discover day-loop + ratchet status | `bun run harness:status` |
@@ -44,11 +45,19 @@ bun run harness:status          # discover ratchets + last gate timing
 bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
-bun run test:affected
+bun run test:affected           # workspace package.json "test" scripts
+bun run test:changed            # bun test --changed (import graph vs git dirty)
+# speed / CI (Bun ≥1.3.13):
+#   bun run test:parallel       # workers; implies --isolate
+#   bun run test:isolate        # fresh global per file (same process)
+#   SHARD=1/3 bun run test:shard
+bun run proof:install           # journey: install layout healthy
 bun run check:path-bun          # lib/ path ratchet
 bun run check:bun-env           # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs                # when CLI surface changes
 ```
+
+Test axes: `test:affected` = changed **workspaces**; `test:changed` = test files that **import** dirty sources. Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13](https://bun.com/blog/bun-v1.3.13).
 
 Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart; path-bun / bun-env when lib\|scripts staged; ESLint `--max-warnings 0`) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
 

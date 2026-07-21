@@ -53,4 +53,20 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Repair:** `scripts/affected-workspaces.ts`; widen `tsconfig.check.json` spine includes.
 - **Earliest owner:** script-gate + doc-map
 - **Ratchet:** package.json scripts + VELOCITY_BASELINE
-- **Keep / revise / drop:** keep (lib/docs/** still deferred)
+- **Keep / revise / drop:** keep (lib/docs island ratcheting via `tsconfig.check.json` include)
+
+### Ratchet promote dry-run
+
+- **Finding:** Flipping warn→error without a hit census re-teaches the same burn.
+- **Repair:** Before error-tier, run the gate once with `--max-warnings 0` (or equivalent dry-run) and record count + owner.
+- **Earliest owner:** lint + FEEDBACK
+- **Ratchet:** operating rule in harness-improve skill / this lesson
+- **Keep / revise / drop:** keep
+
+### Install journey proof
+
+- **Finding:** Pre-commit green overstated “install works.”
+- **Repair:** Named path `install-verify` as `journey`+`deployed`; evidence `bun run proof:install` (CI: repo-hygiene `install:verify:strict`).
+- **Earliest owner:** proof
+- **Ratchet:** `lib/harness/proof.ts` · `docs/harness/PROOF.md`
+- **Keep / revise / drop:** keep

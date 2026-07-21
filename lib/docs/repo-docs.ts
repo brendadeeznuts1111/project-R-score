@@ -48,6 +48,8 @@ export const CANONICAL_REPO_DOCS = {
   harnessFeedback: 'docs/harness/FEEDBACK.md',
   /** Capability vs permission / lanes */
   harnessAuthority: 'docs/harness/AUTHORITY.md',
+  /** Nine trajectory review questions → owners */
+  harnessReview: 'docs/harness/REVIEW.md',
   /** Projects triage + agent scope */
   projectsTriage: 'projects/README.md',
   /** Historical standards implementation notes */
@@ -128,6 +130,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   harnessProof: 'Proof claim kinds',
   harnessFeedback: 'Feedback → ratchet lessons',
   harnessAuthority: 'Authority / lanes / consequential grants',
+  harnessReview: 'Repository review questions → owners',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',
 } as const;

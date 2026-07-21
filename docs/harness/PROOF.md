@@ -18,12 +18,13 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Artifact | Claim | Required kinds |
 |----------|-------|----------------|
 | Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
-| Install cache | Root install layout is healthy | `deployed` (`bun run install:verify`) |
+| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`bun run proof:install` / `install:verify`; CI: `repo-hygiene.yml` → `install:verify:strict`) |
 | Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
 | Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`) |
 | Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |
 | Wire / unknown | Bare `unknown` params stay at parse edges | `boundary` (harness eslint `no-unknown-function-param` **error**) |
 | Day-loop type-check | Advertised `type-check` covers spine agent edit surfaces | `journey` (`bun run type-check` + `tsconfig.check.json` include list) |
+| Test changed | Import-graph filter matches git dirty sources | `journey` (`bun run test:changed` / `bun test --changed`) |
 
 ## Agent checklist before “done”
 

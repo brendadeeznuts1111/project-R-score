@@ -22,9 +22,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   },
   {
     id: 'install-verify',
-    claim: 'Root Bun install layout is healthy',
-    kinds: ['deployed'],
-    evidence: ['bun run install:verify'],
+    claim: 'Factory install produces a working Bun workspace',
+    kinds: ['journey', 'deployed'],
+    evidence: [
+      'bun run proof:install',
+      'bun run install:verify',
+      '.github/workflows/repo-hygiene.yml',
+    ],
   },
   {
     id: 'search-governance',
@@ -55,6 +59,12 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Advertised type-check covers spine agent edit surfaces',
     kinds: ['journey'],
     evidence: ['bun run type-check', 'tsconfig.check.json'],
+  },
+  {
+    id: 'test-changed',
+    claim: 'Day-loop test:changed runs import-graph-affected bun tests',
+    kinds: ['journey'],
+    evidence: ['bun run test:changed', 'bun test --changed'],
   },
 ] as const;
 

@@ -42,6 +42,10 @@ Suspected harness gap:
 6. **Fresh rerun** — same claim/class of job; confirm the intervention was actually retrieved/invoked.
 7. **Retain / revise / remove** — justify carrying cost; record lesson if it will recur.
 
+## Ratchet promote
+
+Before promoting a warn-tier rule to **error**, run the gate once with `--max-warnings 0` (or equivalent dry-run), capture hit count + owner, burn or scope, then flip. Do not surprise CI with an unknown population.
+
 ## Lesson
 
 Fill [`docs/harness/FEEDBACK.md`](../../../docs/harness/FEEDBACK.md) or `bun run harness:lesson --title="…"`.
