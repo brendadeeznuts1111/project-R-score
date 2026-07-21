@@ -258,7 +258,13 @@ async function main(): Promise<void> {
 
   const parallelJobs: Array<Promise<GateTiming & { code: number }>> = [
     spawnGate('brands-staged', ['bun', 'tools/branded-id-check.ts', '--staged', '--strict']),
-    spawnGate('brands-smart', ['bun', 'tools/branded-id-check.ts', '--smart', '--strict']),
+    spawnGate('brands-smart', [
+      'bun',
+      'tools/branded-id-check.ts',
+      '--smart',
+      '--strict',
+      '--quiet',
+    ]),
   ];
 
   if (full) {
