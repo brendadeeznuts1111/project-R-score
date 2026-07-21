@@ -74,3 +74,52 @@ export function assertRunbookProofLinks(): string[] {
   }
   return missing;
 }
+
+/**
+ * Fail closed: bijection between active spine tenant ids and runbook.tenant.
+ * Pass `SPINE_TENANTS.map(t => t.id)` from the caller (keeps lib/ free of spine imports).
+ */
+export function assertRunbookTenantLinks(activeTenantIds: readonly string[]): string[] {
+  const active = new Set(activeTenantIds);
+  const catalog = new Set(MAINTENANCE_RUNBOOKS.map(r => r.tenant));
+  const missing: string[] = [];
+  for (const id of active) {
+    if (!catalog.has(id)) missing.push(`spine tenant "${id}" has no TenantRunbook`);
+  }
+  for (const id of catalog) {
+    if (!active.has(id)) missing.push(`TenantRunbook "${id}" has no spine tenant`);
+  }
+  return missing;
+}
+
+/** Fail closed: catalog signal / intervention / retirement are non-empty. */
+export function assertRunbookFieldsNonEmpty(): string[] {
+  const missing: string[] = [];
+  for (const r of MAINTENANCE_RUNBOOKS) {
+    if (!r.signal.trim()) missing.push(`${r.tenant}.signal empty`);
+    if (!r.intervention.trim()) missing.push(`${r.tenant}.intervention empty`);
+    if (!r.retirement.trim()) missing.push(`${r.tenant}.retirement empty`);
+  }
+  return missing;
+}
+
+/**
+ * Fail closed: intervention text contains the linked proof’s freshRerun command.
+ */
+export function assertRunbookInterventionContainsProofFreshRerun(): string[] {
+  const byId = new Map(CRITICAL_PROOF_PATHS.map(p => [p.id, p]));
+  const missing: string[] = [];
+  for (const r of MAINTENANCE_RUNBOOKS) {
+    const proof = byId.get(r.proofId);
+    if (!proof) {
+      missing.push(`${r.tenant} → proofId ${r.proofId} missing`);
+      continue;
+    }
+    if (!r.intervention.includes(proof.freshRerun)) {
+      missing.push(
+        `${r.tenant}.intervention must include proof "${r.proofId}" freshRerun \`${proof.freshRerun}\``
+      );
+    }
+  }
+  return missing;
+}
