@@ -16,10 +16,19 @@
 
 export type ProofKind = 'unit' | 'boundary' | 'journey' | 'deployed';
 
+/** How the claim is enforced day-to-day (see docs/harness/PROOF.md Owner→gate). */
+export type ProofGateClass = 'continuous' | 'workflow' | 'human-only';
+
 export type ProofPath = {
   id: string; // brand-ok — opaque proof-path catalog key
   claim: string;
   kinds: ProofKind[];
+  /**
+   * continuous = pre-commit and/or ci:harness / ci:core
+   * workflow = named GHA outside that envelope (required or not)
+   * human-only = freshRerun paste / ad-hoc (no always-on gate)
+   */
+  gateClass: ProofGateClass;
   evidence: string[];
   /**
    * Command that re-proves the claim from a clean-enough state
@@ -36,6 +45,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'branded-ids',
     claim: 'New domain IDs are branded after the boundary',
     kinds: ['boundary', 'unit'],
+    gateClass: 'continuous',
     evidence: ['bun tools/branded-id-check.ts --staged --strict', 'bun run check:brands:types'],
     freshRerun: 'bun run check:brands:types',
   },
@@ -43,6 +53,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'install-verify',
     claim: 'Factory install produces a working Bun workspace',
     kinds: ['journey', 'deployed'],
+    gateClass: 'continuous',
     evidence: [
       'bun run proof:install',
       'bun run install:verify',
@@ -55,6 +66,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tests/journey/install-verify.test.ts
     claim: 'install:verify produces a successful WebView smoke report',
     kinds: ['journey'],
+    gateClass: 'human-only',
     evidence: [
       'bun run test:install-verify',
       'tests/journey/install-verify.test.ts',
@@ -66,6 +78,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'test-changed',
     claim: 'Import-graph filter runs affected bun tests (dirty or since main)',
     kinds: ['unit', 'journey'],
+    gateClass: 'continuous',
     evidence: [
       'bun run test:changed',
       'bun run test:changed:main',
@@ -80,6 +93,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'search-governance',
     claim: 'Search bench gate policy holds',
     kinds: ['journey'],
+    gateClass: 'workflow',
     evidence: ['bun run search:bench:gate', '.github/workflows/search-governance.yml'],
     freshRerun: 'bun run search:bench:gate',
   },
@@ -88,6 +102,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tests/journey/search-governance.test.ts
     claim: 'Search governance returns results for a known query (policy + search-smart + WebView)',
     kinds: ['journey'],
+    gateClass: 'workflow',
     evidence: [
       'bun run test:search-governance',
       'tests/journey/search-governance.test.ts',
@@ -100,6 +115,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'runtime-cli-boundaries',
     claim: 'Critical Bun runtime CLI flags behave as expected',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'bun test tests/fixtures/runtime-cli/',
       'tests/fixtures/runtime-cli/**/fixture.test.ts',
@@ -111,6 +127,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'bun-shell-boundaries',
     claim: 'Bun.$ shell tagged templates behave as this repo depends on them',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: ['bun test tests/fixtures/bun-shell/', 'tests/fixtures/bun-shell/**/fixture.test.ts'],
     freshRerun: 'bun test tests/fixtures/bun-shell/',
   },
@@ -118,6 +135,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'fs-native-boundaries',
     claim: 'Bun.file, Bun.write, and Bun.Glob behave as this repo depends on them',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
       'tests/fs-bun.test.ts',
@@ -129,6 +147,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'security-hash-boundaries',
     claim: 'Bun.password and CryptoHasher behave as this repo depends on them',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'bun test tests/fixtures/security-hash/',
       'tests/fixtures/security-hash/**/fixture.test.ts',
@@ -139,6 +158,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'path-bun',
     claim: 'Spine lib/ and tools/ do not import path/node:path',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: ['bun run check:path-bun'],
     freshRerun: 'bun run check:path-bun',
   },
@@ -146,6 +166,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'bun-env',
     claim: 'Spine lib/ + scripts/ do not read environment via the Node process object',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: ['bun run check:bun-env', 'eslint bun/prefer-bun-env (error)'],
     freshRerun: 'bun run check:bun-env',
   },
@@ -153,6 +174,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'unknown-param',
     claim: 'Bare unknown function params stay at parse*/FromUnknown edges',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'eslint harness/no-unknown-function-param (error)',
       'bun eslint --config eslint.bun-native.config.ts --quiet',
@@ -163,6 +185,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'day-loop-typecheck',
     claim: 'Advertised type-check covers spine agent edit surfaces',
     kinds: ['journey'],
+    gateClass: 'workflow',
     evidence: ['bun run type-check', 'tsconfig.check.json'],
     freshRerun: 'bun run type-check',
   },
@@ -171,6 +194,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tsconfig.check.json · lib/docs/**
     claim: 'lib/docs/** is inside tsconfig.check.json (no dual-era docs island)',
     kinds: ['boundary', 'journey'],
+    gateClass: 'workflow',
     evidence: ['bun run type-check', 'tsconfig.check.json include lib/docs/**/*', 'lib/docs/'],
     freshRerun: 'bun run type-check',
   },
@@ -179,6 +203,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tsconfig.check.json · lib/utils/**
     claim: 'lib/utils/** is inside tsconfig.check.json (no dual-era utils island)',
     kinds: ['boundary', 'journey'],
+    gateClass: 'workflow',
     evidence: ['bun run type-check', 'tsconfig.check.json include lib/utils/**/*', 'lib/utils/'],
     freshRerun: 'bun run type-check',
   },
@@ -188,6 +213,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim:
       'lib/core/** is inside tsconfig.check.json with ErrorSeverity enum (no dual-era core island)',
     kinds: ['boundary', 'journey'],
+    gateClass: 'workflow',
     evidence: ['bun run type-check', 'tsconfig.check.json include lib/core/**/*', 'lib/core/'],
     freshRerun: 'bun run type-check',
   },
@@ -196,6 +222,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tsconfig.check.json · lib/security/**
     claim: 'lib/security/** is inside tsconfig.check.json (no dual-era security island)',
     kinds: ['boundary', 'journey'],
+    gateClass: 'workflow',
     evidence: [
       'bun run type-check',
       'tsconfig.check.json include lib/security/**/*',
@@ -208,6 +235,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim:
       'Scheduling mirrors Bun: OS-persistent Bun.cron(path, schedule, title) is primary; in-process is the complement (spine uses in-process deliberately)',
     kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun run test:cron',
       'docs/harness/cron.md',
@@ -222,6 +250,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim:
       'OS-persistent Bun.cron(path, schedule, title) registers, fires scheduled(), and removes cleanly',
     kinds: ['journey', 'boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun run test:cron-os',
       'tests/journey/cron-os-persistent.test.ts',
@@ -235,6 +264,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: tools/bun-doc-refs.ts · spine tenant docs-integrity
     claim: 'Bun docs stack integrity pass succeeds (schedule --once)',
     kinds: ['journey', 'boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun tools/bun-doc-refs.ts schedule --once',
       'tools/bun-doc-refs.ts',
@@ -247,6 +277,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: spine/tenants.ts · spine/scheduler.ts
     claim: 'Spine runs ≥2 in-process tenants (docs-integrity + install-verify journey)',
     kinds: ['journey', 'boundary'],
+    gateClass: 'human-only',
     evidence: [
       'spine/tenants.ts',
       'spine/scheduler.ts',
@@ -262,6 +293,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: lib/harness/maintenance.ts · docs/harness/tenants/
     claim: 'Every spine tenant has TenantRunbook + SignalMonitor; retirementCheck; live freshRerun',
     kinds: ['boundary', 'journey'],
+    gateClass: 'human-only',
     evidence: [
       'lib/harness/maintenance.ts',
       'lib/harness/discover-scheduled.ts',
@@ -278,6 +310,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: lib/harness/heal-fixture.ts · tests/journey/tenant-heal.test.ts
     claim: 'Sandboxed maintenance loop heals: break → signal → intervene → proof green',
     kinds: ['journey'],
+    gateClass: 'human-only',
     evidence: [
       'lib/harness/heal-fixture.ts',
       'scripts/tenant-heal-fixture.ts',
@@ -293,6 +326,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: lib/harness/coverage-ratchet.ts · coverage-baseline.json
     claim: 'lib/harness line/func coverage stays at or above coverage-baseline.json floors',
     kinds: ['boundary', 'journey'],
+    gateClass: 'continuous',
     evidence: [
       'lib/harness/coverage-ratchet.ts',
       'lib/harness/coverage-baseline.json',
@@ -306,6 +340,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: scripts/check-harness-orphans.ts
     claim: 'Every lib/harness/*.ts module has at least one importer outside itself',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'scripts/check-harness-orphans.ts',
       'bun run check:harness-orphans',
@@ -318,6 +353,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: lib/harness/complexity.ts · complexity-baseline.json
     claim: 'No lib/harness function exceeds complexity-baseline.json maxComplexity',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'lib/harness/complexity.ts',
       'lib/harness/complexity-baseline.json',
@@ -333,6 +369,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim:
       'Code-quality tenants (types · coverage · orphans · complexity) have runbooks and live freshRerun',
     kinds: ['boundary', 'journey'],
+    gateClass: 'continuous',
     evidence: [
       'lib/harness/code-quality.ts',
       'docs/harness/code-quality.md',
@@ -345,6 +382,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: lib/harness/ci-deploy.ts · discover-ci.ts
     claim: 'CI/deploy jobs have runbooks; discover-ci coverage is fail-closed',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'lib/harness/ci-deploy.ts',
       'lib/harness/discover-ci.ts',
@@ -361,6 +399,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: scripts/ci-core.ts · .github/workflows/harness-gates.yml
     claim: 'CI envelope bun run ci:core is cataloged (install verify · hygiene · ci:harness)',
     kinds: ['boundary'],
+    gateClass: 'continuous',
     evidence: [
       'bun run docs:ci-deploy',
       'scripts/ci-core.ts',
@@ -375,6 +414,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: .github/workflows/typescript-checks.yml
     claim: 'typescript-checks ownership of type-check:ci / type-check:full is cataloged',
     kinds: ['boundary'],
+    gateClass: 'workflow',
     evidence: [
       'bun run docs:ci-deploy',
       '.github/workflows/typescript-checks.yml',
@@ -388,6 +428,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: scripts/deployment/deploy-production.ts
     claim: 'Production deploy path bun run deploy:production is cataloged (Bun.secrets + R2)',
     kinds: ['boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun run docs:ci-deploy',
       'scripts/deployment/deploy-production.ts',
@@ -401,6 +442,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: scripts/shell/deploy-staging.sh
     claim: 'Staging deploy path bun run deploy:staging is cataloged',
     kinds: ['boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun run docs:ci-deploy',
       'scripts/shell/deploy-staging.sh',
@@ -414,6 +456,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     // owner: scripts/bun-migrate.ts
     claim: 'Bun migration inventory path bun run migrate:status is cataloged',
     kinds: ['boundary'],
+    gateClass: 'human-only',
     evidence: [
       'bun run docs:ci-deploy',
       'scripts/bun-migrate.ts',

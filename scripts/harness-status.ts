@@ -83,7 +83,7 @@ const md = [
   ratchetBullets(
     CRITICAL_PROOF_PATHS.map(p => ({
       title: p.id,
-      body: `${p.claim} (\`${p.kinds.join('`+`')}\`)`,
+      body: `${p.claim} (\`${p.kinds.join('`+`')}\` · \`${p.gateClass}\`)`,
       ratchet: p.evidence.map(e => `\`${e}\``).join(', '),
       fresh: p.freshRerun,
     }))
@@ -101,11 +101,12 @@ if (hasFlag('table')) {
   logTable(
     CRITICAL_PROOF_PATHS.map(p => ({
       id: p.id,
+      gate: p.gateClass,
       kinds: p.kinds.join('+'),
       claim: p.claim,
       freshRerun: p.freshRerun,
     })),
-    ['id', 'kinds', 'claim', 'freshRerun']
+    ['id', 'gate', 'kinds', 'claim', 'freshRerun']
   );
   console.info('');
 }

@@ -213,6 +213,26 @@ if (!fast) {
   await runSerial([BOUNDARY_FIXTURES], verbose, timings, wantFailJson, mode);
 }
 
+/** Dual-catalog parents — was human-only / test:changed luck. */
+const DUAL_CATALOG: Step[] = [
+  {
+    name: 'ci-deploy-runbooks',
+    cmd: ['bun', 'run', 'test:ci-deploy'],
+    owner: 'ci-deploy-runbooks ProofPath',
+    repair: 'bun run test:ci-deploy',
+  },
+  {
+    name: 'code-quality-tenants',
+    cmd: ['bun', 'run', 'test:code-quality'],
+    owner: 'code-quality-tenants · coverage · orphans · complexity ProofPaths',
+    repair: 'bun run test:code-quality',
+  },
+];
+
+if (!fast) {
+  await runSerial(DUAL_CATALOG, verbose, timings, wantFailJson, mode);
+}
+
 const stepSum = timings.reduce((s, t) => s + t.ms, 0);
 await writeTimings(timings, mode);
 console.info(`✅ ci:harness (${mode}) ${stepSum}ms step-sum`);

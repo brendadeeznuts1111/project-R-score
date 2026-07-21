@@ -105,12 +105,15 @@ Search `proof.ts` and existing contracts. If yes, justify the addition or modify
 
 ### 8. How is this claim enforced in CI?
 
-Many claims are enforced by the existing `test:changed` / harness gates and the contract test, not a dedicated workflow.  
-Be precise: which existing job already runs this, or what minimal CI change is needed?
+Pick **`gateClass`**: `continuous` | `workflow` | `human-only` (SSOT on `ProofPath` — see [`PROOF.md`](PROOF.md) Owner→gate).
 
-For journeys, name the existing hook: `bun run test:changed` (path filter), a dedicated workflow, or the journey test file itself. For islands, `type-check` already runs on `tsconfig.check.json` changes. Do not invent a second smoke-file SSOT in `proof.ts`.
+- **continuous** — always runs in `pre-commit-harness` and/or `ci:harness` / `ci:core`
+- **workflow** — a named `.github/workflows/*` job runs it (package script alone is **not** workflow)
+- **human-only** — `freshRerun` paste / ad-hoc only
 
-**Answer:** … (e.g., “covered by `bun run test:changed` because the test file matches the path filter”; or “add a step to `.github/workflows/journey.yml` triggering on `tests/journey/<id>.test.ts`”)
+Be precise: which existing job already runs this, or what minimal CI change is needed? Do not invent a second smoke-file SSOT in `proof.ts`.
+
+**Answer:** … (e.g., “`gateClass: continuous` via `ci:harness` step X”; or “`human-only` — `bun run test:…` until demand backs a workflow”)
 
 ---
 
@@ -151,12 +154,13 @@ export type ProofPath = {
   id: string; // opaque catalog key
   claim: string; // one‑sentence claim (from Q1)
   kinds: ProofKind[]; // unit | boundary | journey | deployed (choose appropriate)
+  gateClass: ProofGateClass; // continuous | workflow | human-only (from Q8)
   evidence: string[]; // paths or commands that demonstrate the claim
   freshRerun: string; // exact command (from Q4)
 };
 ```
 
-Include a `// owner: …` comment above or inline.
+Include a `// owner: …` comment above or inline. Also add a matching row to the Owner→gate table in [`PROOF.md`](PROOF.md).
 
 **Answer:** (copy‑paste ready object)
 

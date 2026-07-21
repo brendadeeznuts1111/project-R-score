@@ -43,6 +43,7 @@ Branch protection should require these GitHub Actions check names (workflow / jo
 | `enforce_admins` | **on** |
 | Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
 | search-governance as required | optional — not required yet |
+| GitHub-hosted runners | **watch** — if jobs fail in ~2s with **0 steps** / empty `runner_name`, Actions never started (billing/quota/infra). Not a harness test failure; merge stays blocked until a run actually executes steps. |
 
 Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge. Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
 

@@ -35,7 +35,7 @@ describe('fresh-rerun contract', () => {
     }
   });
 
-  test('Owner→gate section lists every proof id', async () => {
+  test('Owner→gate section lists every proof id with matching gateClass', async () => {
     const proofMd = await Bun.file(
       new URL('../docs/harness/PROOF.md', import.meta.url).pathname
     ).text();
@@ -43,8 +43,22 @@ describe('fresh-rerun contract', () => {
     expect(start).toBeGreaterThanOrEqual(0);
     const end = proofMd.indexOf('\n## ', start + 1);
     const section = end >= 0 ? proofMd.slice(start, end) : proofMd.slice(start);
+    const tallies = { continuous: 0, workflow: 0, 'human-only': 0 };
     for (const p of CRITICAL_PROOF_PATHS) {
-      expect(section.includes(`\`${p.id}\``), p.id).toBe(true);
+      tallies[p.gateClass]++;
+      const row = new RegExp(
+        `\\|\\s*\`${p.id.replace(/-/g, '\\-')}\`\\s*\\|\\s*${p.gateClass}\\s*\\|`
+      );
+      expect(row.test(section), `${p.id} → ${p.gateClass}`).toBe(true);
+    }
+    expect(section).toContain(
+      `continuous ${tallies.continuous} · workflow ${tallies.workflow} · human-only ${tallies['human-only']}`
+    );
+  });
+
+  test('every ProofPath declares a gateClass', () => {
+    for (const p of CRITICAL_PROOF_PATHS) {
+      expect(['continuous', 'workflow', 'human-only']).toContain(p.gateClass);
     }
   });
 

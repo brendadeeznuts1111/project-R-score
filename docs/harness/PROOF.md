@@ -87,17 +87,17 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 
 ## Owner → gate
 
-How each claim is enforced day-to-day. Catalog meta (completeness · evidence⊇freshRerun) always applies. Classes:
+How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` in [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Catalog meta (completeness · evidence⊇freshRerun) always applies. Classes:
 
 - **continuous** — `pre-commit-harness` and/or `ci:harness` / `ci:core` (Harness Gates)
-- **workflow** — named GHA job or package script outside that envelope
-- **human-only** — `freshRerun` paste and/or `test:changed` luck (no dedicated always-on gate)
+- **workflow** — named GHA job outside that envelope (may also be a required status check)
+- **human-only** — package script / `freshRerun` paste only (no always-on gate). Do **not** label a package script as `workflow` unless a `.github/workflows/*` job runs it.
 
 | id | class | gate / workflow |
 |----|-------|-----------------|
 | `branded-ids` | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full` |
 | `install-verify` | continuous | `ci:core` · harness-gates |
-| `install-verify-journey` | workflow | `bun run test:install-verify` |
+| `install-verify-journey` | human-only | `bun run test:install-verify` |
 | `test-changed` | continuous | `ci:harness` · harness-gates |
 | `search-governance` | workflow | `search-governance.yml` · `search:bench:gate` |
 | `search-governance-basic` | workflow | `search-governance.yml` · `test:search-governance` |
@@ -108,29 +108,29 @@ How each claim is enforced day-to-day. Catalog meta (completeness · evidence⊇
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
-| `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
-| `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
-| `lib-utils-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
-| `lib-core-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
-| `lib-security-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
-| `bun-cron` | workflow | `bun run test:cron` |
-| `cron-os-persistent` | workflow | `bun run test:cron-os` |
-| `docs-integrity` | workflow | `bun-doc-refs schedule --once` · spine tenant |
-| `spine-multi-tenant` | workflow | `spine:schedule:once -- --tenant=install-verify` |
-| `spine-maintenance-runbooks` | workflow | `bun run test:tenant-runbooks` |
-| `spine-tenant-heal` | workflow | `bun run test:tenant-heal` |
-| `harness-coverage-ratchet` | workflow | `bun run test:harness-coverage` |
-| `harness-orphan-modules` | workflow | `bun run check:harness-orphans` |
-| `harness-complexity-floor` | continuous | pre-commit staged `lib/harness`; full tree = script/paste |
-| `code-quality-tenants` | workflow | `bun run test:code-quality` |
-| `ci-deploy-runbooks` | workflow | `bun run test:ci-deploy` |
+| `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-utils-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-core-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-security-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `bun-cron` | human-only | `bun run test:cron` |
+| `cron-os-persistent` | human-only | `bun run test:cron-os` |
+| `docs-integrity` | human-only | `bun-doc-refs schedule --once` · spine tenant |
+| `spine-multi-tenant` | human-only | `spine:schedule:once -- --tenant=install-verify` |
+| `spine-maintenance-runbooks` | human-only | `bun run test:tenant-runbooks` (live tenant freshReruns; heavy) |
+| `spine-tenant-heal` | human-only | `bun run test:tenant-heal` |
+| `harness-coverage-ratchet` | continuous | `ci:harness` dual-catalog · `test:code-quality` |
+| `harness-orphan-modules` | continuous | `ci:harness` dual-catalog · `test:code-quality` |
+| `harness-complexity-floor` | continuous | pre-commit staged `lib/harness`; also `test:code-quality` in `ci:harness` |
+| `code-quality-tenants` | continuous | `ci:harness` dual-catalog · `bun run test:code-quality` |
+| `ci-deploy-runbooks` | continuous | `ci:harness` dual-catalog · `bun run test:ci-deploy` |
 | `ci-core-envelope` | continuous | live gate `ci:core`; `freshRerun` = catalog `docs:ci-deploy` |
-| `typescript-ci-gate` | workflow | `typescript-checks.yml`; `freshRerun` = catalog |
-| `deploy-production-preflight` | workflow | `deploy:production` / catalog |
-| `deploy-staging-script` | workflow | `deploy:staging` / catalog |
-| `bun-migrate-status` | workflow | `migrate:status` / catalog |
+| `typescript-ci-gate` | workflow | `typescript-checks.yml` (required); `freshRerun` = catalog |
+| `deploy-production-preflight` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:production` |
+| `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
+| `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts: continuous ~13 · workflow ~21 · human-only 0 (Bun-native boundaries promoted into `ci:harness`).
+Counts (must match `gateClass` tallies): continuous 16 · workflow 8 · human-only 10.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
