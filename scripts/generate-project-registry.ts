@@ -38,12 +38,10 @@ const ACTIVE_SPECIALS = new Set([
 
 const CATEGORY_DIRS = new Set([
   'analysis',
-  'apps',
   'automation',
   'dashboards',
   'development',
   'enterprise',
-  'games',
   'tools',
   'utilities',
 ]);

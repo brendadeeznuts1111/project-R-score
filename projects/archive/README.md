@@ -1,10 +1,10 @@
-# Archive tier (projects)
+# Archive tier
 
-Frozen project checkouts under `projects/` — read-only reference, no active development.
+Frozen former `projects/active/*` apps — read-only reference. Triage: [`../README.md`](../README.md).
 
 ## Status
 
-Bucket exists for triage. Prefer **root `archive/`** for monorepo-root historical dumps (already gitignored). Use **this** tree when freezing a former `projects/active/*` app via:
+Empty until the first freeze. Prefer root [`archive/`](../../archive/) (gitignored) for monorepo-root historical dumps. Use **this** tree when freezing a product leaf:
 
 ```bash
 git mv projects/active/<category>/<name> projects/archive/<name>
@@ -15,5 +15,4 @@ git mv projects/active/<category>/<name> projects/archive/<name>
 - No CI ownership unless explicitly re-added
 - Do not re-introduce archived packages into root workspaces
 - Large runtime artifacts (`*.db`, `dist/`, `data/`) stay local-only / gitignored
-
-See also: root [`archive/`](../../archive/) (gitignored entire tree) and [`projects/README.md`](../README.md).
+- Frozen leaves still follow the root contract (`README.md` + `package.json`)

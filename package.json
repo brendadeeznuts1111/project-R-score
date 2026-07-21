@@ -1588,6 +1588,7 @@
     "fix:default-exports-bulk": "bun run scripts/fix-default-exports-bulk.ts",
     "cli:docs": "bun run scripts/generate-cli-docs.ts",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
+    "projects:roots:check": "bun tools/projects-root-check.ts",
     "ci:validate": "bun run --sequential standards:check",
     "search:policy:check": "bun run scripts/check-search-policy-governance.ts",
     "rules": "bun run scripts/bun-rules.ts",

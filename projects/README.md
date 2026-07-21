@@ -157,8 +157,9 @@ May exist under `~/Projects` but are gitignored or separate remotes — document
 ## Inventory tooling
 
 ```bash
+bun run projects:roots:check   # README + package.json contract
 bun run packages:list --filter=active
-bun run registry:projects   # → public/registry/projects-registry.json
+bun run registry:projects      # → public/registry/projects-registry.json
 ```
 
 Scaffold/`{{name}}` packages are **hidden by default**; use `--include-scaffolds` or `--paths` when debugging inventory.
