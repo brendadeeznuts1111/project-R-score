@@ -1167,7 +1167,7 @@ async function dispatch(
           ].join('\n'),
         },
         urlpattern: {
-          description: 'URLPattern routing — 2× faster with zero GC per call',
+          description: 'URLPattern routing — faster path; no RegExp.$N / lastMatch leak',
           code: [
             `bun -e "`,
             `const p = new URLPattern({ pathname: '/api/users/:id/posts/:postId' });`,
