@@ -1,13 +1,12 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9 Interactive Playground
- * 
+ *
  * Showcases all features and implementations from Bun v1.3.9
  */
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
-import { join } from "node:path";
-
-const DEMOS_DIR = join(import.meta.dir, "demos");
+const DEMOS_DIR = `${import.meta.dir}/demos`;
 
 interface Demo {
   name: string;
@@ -101,7 +100,7 @@ async function runDemo(demo: Demo) {
   console.info(`Description: ${demo.description}`);
   console.info("=".repeat(70) + "\n");
   
-  const demoPath = join(DEMOS_DIR, demo.file);
+  const demoPath = `${DEMOS_DIR}/${demo.file}`;
   
   try {
     const proc = Bun.spawn({

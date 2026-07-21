@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
-import { spawnSync } from 'node:child_process';
-import { resolve } from 'node:path';
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 
 type AdapterOptions = {
   strict: boolean;
@@ -19,8 +18,8 @@ function parseArgs(argv: string[]): AdapterOptions {
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
-  const root = resolve(import.meta.dir, '..', '..', '..');
+  const options = parseArgs(Bun.argv.slice(2));
+  const root = `${import.meta.dir}/../../..`;
   const args = ['run', 'scripts/brand-bench-evaluate.ts', '--json'];
 
   if (options.strict) args.push('--strict');
@@ -28,8 +27,12 @@ async function main(): Promise<void> {
   if (options.baseline) args.push(`--baseline=${options.baseline}`);
   if (options.governance) args.push(`--governance=${options.governance}`);
 
-  const run = spawnSync('bun', args, { cwd: root, encoding: 'utf8' });
-  const output = run.stdout?.trim() || '{}';
+  const run = Bun.spawnSync(['bun', ...args], {
+    cwd: root,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const output = run.stdout.toString().trim() || '{}';
   const parsed = JSON.parse(output);
 
   console.info(
@@ -48,9 +51,9 @@ async function main(): Promise<void> {
     )
   );
 
-  process.exit(run.status ?? 1);
+  if (run.exitCode !== 0) {
+    process.exitCode = run.exitCode ?? 1;
+  }
 }
 
-if (import.meta.main) {
-  await main();
-}
+await main();

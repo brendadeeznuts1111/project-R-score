@@ -1,18 +1,17 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: ESM Bytecode Compilation Demo
- * 
+ *
  * Demonstrates the new --format=esm support with --bytecode
  */
-
-import { join } from "node:path";
-import { tmpdir } from "node:os";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
 console.info("📦 Bun v1.3.9: ESM Bytecode Compilation Demo\n");
 console.info("=" .repeat(70));
 
-const demoDir = join(tmpdir(), `bun-esm-bytecode-demo-${Date.now()}`);
+const demoDir = `${Bun.env.TMPDIR ?? "/tmp"}/bun-esm-bytecode-demo-${Date.now()}`;
 
 // Example ESM CLI source code
 const cliSource = `#!/usr/bin/env bun
@@ -124,14 +123,13 @@ const packageJson = {
 };
 
 async function setup() {
-  await mkdir(demoDir, { recursive: true });
-  await mkdir(join(demoDir, "dist"), { recursive: true });
-  await writeFile(join(demoDir, "cli.ts"), cliSource);
-  await writeFile(join(demoDir, "package.json"), JSON.stringify(packageJson, null, 2));
+  await Bun.$`mkdir -p ${demoDir}/dist`.quiet();
+  await Bun.write(`${demoDir}/cli.ts`, cliSource);
+  await Bun.write(`${demoDir}/package.json`, JSON.stringify(packageJson, null, 2));
 }
 
 async function cleanup() {
-  await rm(demoDir, { recursive: true, force: true });
+  await Bun.$`rm -rf ${demoDir}`.quiet();
 }
 
 async function buildESM() {
@@ -167,8 +165,8 @@ async function buildCJS() {
 }
 
 async function runBinary(binary: string, args: string[]) {
-  const binaryPath = join(demoDir, "dist", binary);
-  
+  const binaryPath = `${demoDir}/dist/${binary}`;
+
   console.info(`\n▶️ Running: ./dist/${binary} ${args.join(" ")}`);
   console.info("-".repeat(70));
 
@@ -187,11 +185,8 @@ async function compareBinaries() {
   console.info("📊 Binary Comparison");
   console.info("=".repeat(70));
 
-  const esmPath = join(demoDir, "dist", "cli-esm");
-  const cjsPath = join(demoDir, "dist", "cli-cjs");
-
-  const esmFile = Bun.file(esmPath);
-  const cjsFile = Bun.file(cjsPath);
+  const esmFile = Bun.file(`${demoDir}/dist/cli-esm`);
+  const cjsFile = Bun.file(`${demoDir}/dist/cli-cjs`);
 
   const esmExists = await esmFile.exists();
   const cjsExists = await cjsFile.exists();

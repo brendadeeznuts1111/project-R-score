@@ -5,7 +5,17 @@
 import { createServer } from 'node:net';
 import { applyDashboardEnv, resolveDashboardEnvConfig } from './dashboard-env';
 
-const SERVER_CMD = ['bun', 'run', 'scratch/bun-v1.3.9-examples/playground-web/server.ts'];
+/** Scratch playground-web was retired; set an explicit entry for protocol checks. */
+function resolveServerCmd(): string[] {
+  const entry = Bun.env.DASHBOARD_SERVER_ENTRY?.trim();
+  if (!entry) {
+    throw new Error(
+      'DASHBOARD_SERVER_ENTRY is required (playground-web retired from scratch/). ' +
+        'Example: DASHBOARD_SERVER_ENTRY=path/to/server.ts bun run dashboard:protocol:check'
+    );
+  }
+  return ['bun', 'run', entry];
+}
 
 export type DashboardTestConfig = {
   host: string;
@@ -143,7 +153,7 @@ export async function withDashboardServer<T>(
       applyDashboardEnv({ host, port: activePort });
 
       serverProc = Bun.spawn({
-        cmd: SERVER_CMD,
+        cmd: resolveServerCmd(),
         stdout: 'inherit',
         stderr: 'inherit',
         stdin: 'ignore',

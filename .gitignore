@@ -42,8 +42,6 @@ out/
 .cache/
 .cheatsheet-cache/
 *.js
-!scratch/bun-v1.3.9-examples/playground-web/app.js
-!scratch/bun-v1.3.9-examples/playground-web/url-sharing.js
 *.js.map
 *.tsbuildinfo
 
@@ -119,6 +117,7 @@ yarn-error.log*
 .env.secret.local
 .env.*.local
 .env.*
+!/.env.example
 .env.development
 .env.production
 .env.staging
@@ -326,7 +325,6 @@ herdr-worktrees/
 /~/
 /index.html
 /index.ts
-scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx
 artifacts/*.zip
@@ -337,16 +335,13 @@ artifacts/bun-native-discover*.json
 artifacts/reports/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
 
-# Ephemeral agent audit helpers under scratch/ (keep README + bun-v1.3.9-examples tracked)
-/scratch/find-*.ts
-/scratch/check-*.ts
-/scratch/classify-*.ts
-/scratch/purge-*.ts
-/scratch/verify-*.ts
-/scratch/batch-*.ts
-/scratch/fix-*.ts
-/scratch/orphan-*
-/scratch/toc-ops/
+# Scratch: default-deny local dumps; curated Bun playground only
+/scratch/**
+!/scratch/README.md
+!/scratch/bun-v1.3.9-examples/
+!/scratch/bun-v1.3.9-examples/**
+# Local bench output under the allowlisted tree
+/scratch/bun-v1.3.9-examples/**/reports/
 
 # Standalone nested git repos (own remotes) — not monorepo spine
 # (plannotator-upstream/ already listed under "Vendored upstream clones")

@@ -1,12 +1,11 @@
 #!/usr/bin/env bun
 /**
  * Demo: ESM bytecode in --compile
- * 
+ *
  * Demonstrates ESM bytecode compilation support
  */
-
-import { writeFileSync, unlinkSync, existsSync } from "node:fs";
-import { join } from "node:path";
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
 console.info("📦 Bun v1.3.9: ESM Bytecode Compilation\n");
 console.info("=".repeat(70));
@@ -32,8 +31,7 @@ console.info("   Note: May default to ESM in future versions");
 console.info("\n💡 Creating example ESM module...");
 console.info("-".repeat(70));
 
-const demoDir = import.meta.dir;
-const exampleFile = join(demoDir, "example-esm.ts");
+const exampleFile = `${import.meta.dir}/example-esm.ts`;
 
 const exampleCode = `#!/usr/bin/env bun
 // Example ESM module for bytecode compilation
@@ -50,7 +48,7 @@ if (import.meta.main) {
 }
 `;
 
-writeFileSync(exampleFile, exampleCode);
+await Bun.write(exampleFile, exampleCode);
 console.info("✅ Created example-esm.ts");
 
 console.info("\n📝 Compilation Commands:");
@@ -74,11 +72,6 @@ console.info("  • ESM bytecode compilation supported");
 console.info("  • Use --format=esm for ESM output");
 console.info("  • Default may change to ESM in future");
 
-// Cleanup
-try {
-  if (existsSync(exampleFile)) {
-    unlinkSync(exampleFile);
-  }
-} catch {
-    console.error('Unhandled error:', error);
-  }
+if (await Bun.file(exampleFile).exists()) {
+  await Bun.$`rm -f ${exampleFile}`.quiet();
+}

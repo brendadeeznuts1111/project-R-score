@@ -7,10 +7,9 @@
  * Key fix: h2Server.emit("connection", rawSocket) now works
  */
 
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { createSecureServer } from "node:http2";
 import { createServer } from "node:net";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 
 const PORT = 8443;
 const HOST = "localhost";
@@ -19,10 +18,12 @@ const HOST = "localhost";
 let cert: string;
 let key: string;
 
-try {
-  cert = readFileSync(join(import.meta.dirname || ".", "cert.pem"), "utf-8");
-  key = readFileSync(join(import.meta.dirname || ".", "key.pem"), "utf-8");
-} catch {
+const certFile = Bun.file(`${import.meta.dir}/cert.pem`);
+const keyFile = Bun.file(`${import.meta.dir}/key.pem`);
+if ((await certFile.exists()) && (await keyFile.exists())) {
+  cert = await certFile.text();
+  key = await keyFile.text();
+} else {
   console.info("⚠ No certificates found, using dummy values");
   console.info("  Generate with: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes");
   cert = "dummy";

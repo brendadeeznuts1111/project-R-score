@@ -1,19 +1,17 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: Parallel & Sequential Script Execution Demo
- * 
+ *
  * Demonstrates the new --parallel and --sequential flags for bun run
  */
-
-import { join } from "node:path";
-import { tmpdir } from "node:os";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
 console.info("🚀 Bun v1.3.9: Script Orchestration Demo\n");
 console.info("=" .repeat(70));
 
 // Create a temporary workspace for the demo
-const demoDir = join(tmpdir(), `bun-parallel-demo-${Date.now()}`);
+const demoDir = `${Bun.env.TMPDIR ?? "/tmp"}/bun-parallel-demo-${Date.now()}`;
 
 // Sample package.json with multiple scripts
 const packageJson = {
@@ -52,18 +50,18 @@ const packages = {
 };
 
 async function setup() {
-  await mkdir(demoDir, { recursive: true });
-  await writeFile(join(demoDir, "package.json"), JSON.stringify(packageJson, null, 2));
-  
+  await Bun.$`mkdir -p ${demoDir}`.quiet();
+  await Bun.write(`${demoDir}/package.json`, JSON.stringify(packageJson, null, 2));
+
   for (const [dir, pkg] of Object.entries(packages)) {
-    const pkgDir = join(demoDir, dir);
-    await mkdir(pkgDir, { recursive: true });
-    await writeFile(join(pkgDir, "package.json"), JSON.stringify(pkg, null, 2));
+    const pkgDir = `${demoDir}/${dir}`;
+    await Bun.$`mkdir -p ${pkgDir}`.quiet();
+    await Bun.write(`${pkgDir}/package.json`, JSON.stringify(pkg, null, 2));
   }
 }
 
 async function cleanup() {
-  await rm(demoDir, { recursive: true, force: true });
+  await Bun.$`rm -rf ${demoDir}`.quiet();
 }
 
 async function demo1_basicParallel() {

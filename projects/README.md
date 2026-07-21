@@ -148,7 +148,8 @@ May exist under `~/Projects` but are gitignored or separate remotes — document
 
 | Treat as | Paths |
 |----------|--------|
-| **Readonly / freeze** | Root `archive/` (gitignored), `scratch/` (curated Bun playgrounds), `docs/archives/` |
+| **Readonly / freeze** | Root `archive/` (gitignored), `docs/archives/` |
+| **Scratch** | Tracked: `scratch/bun-v1.3.9-examples/` + `scratch/README.md`. Local dumps gitignored. Do not promote into `scripts/`/`lib/` without intent. Bun feature demos → `examples/bun-v139-features/` |
 | **Lower priority** | `projects/experimental/` |
 | **Local runtime only** | `*.db`, `dist/`, `node_modules/`, compile dumps, `data/` |
 | **Not this monorepo** | Root-parked table above + own-remote active products |

@@ -2,8 +2,7 @@
 /**
  * Run all Bun v1.3.9 benchmarks
  */
-
-import { join } from "node:path";
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
 const benchmarks = [
   { name: "RegExp JIT", file: "regex-benchmark.ts" },
@@ -15,7 +14,7 @@ async function runBenchmark(benchmark: typeof benchmarks[0]) {
   console.info("=".repeat(70));
   
   const proc = Bun.spawn({
-    cmd: ["bun", "run", join(import.meta.dir, benchmark.file)],
+    cmd: ["bun", "run", `${import.meta.dir}/${benchmark.file}`],
     stdout: "inherit",
     stderr: "inherit",
   });

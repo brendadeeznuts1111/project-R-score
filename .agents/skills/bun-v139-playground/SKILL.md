@@ -1,67 +1,52 @@
 ---
 name: bun-v139-playground
 description: |
-  Bun v1.3.9 Interactive Playground with 26 demos covering governance, process, 
-  networking, testing, and performance features. Uses Bun native signal handling,
-  MCP protocol bridge, and dynamic protocol scorecards.
-  
-  Use when: testing Bun v1.3.9 features, running demos, benchmarking,
-  or validating governance decisions.
+  Bun v1.3.9 feature demos and interactive CLI playground. Covers parallel scripts,
+  process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup.
+
+  Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.
 triggers: ["bun", "v1.3.9", "playground", "demo", "governance", "signal"]
 ---
 
 # Bun v1.3.9 Playground
 
-Interactive playground for Bun v1.3.9 features.
-
 ## Quick Start
 
 ```bash
-# Start playground
-cd scratch/bun-v1.3.9-examples/playground-web
-PORT=3011 bun run server.ts
+# Canonical tracked demos (agent-facing)
+bun run examples/bun-v139-features/runner.ts
 
-# Access
-open http://localhost:3011
+# Optional CLI playground (scratch allowlist)
+bun run scratch/bun-v1.3.9-examples/playground/playground.ts
+bun run scratch/bun-v1.3.9-examples/playground/playground.ts all
 ```
 
-## Key Features
+## Locations
 
-| Feature | Endpoint | Description |
-|---------|----------|-------------|
-| Governance | `/api/control/governance-status` | Decision validation |
-| Demos | `/api/demos` | 26 interactive demos |
-| Run Demo | `/api/run/:id` | Execute specific demo |
-| Protocol | `/api/control/protocol-scorecard` | Dynamic recommendations |
+| Path | Role |
+|------|------|
+| `examples/bun-v139-features/` | Tracked feature demos + runner |
+| `scratch/bun-v1.3.9-examples/playground/` | Interactive CLI menu |
 
-## Process Demos (6)
-
-- process-basics
-- signals-demo
-- spawn-demo
-- stdin-demo
-- argv-demo
-- ctrl-c-demo
+`playground-web/` is retired (not in git). Do not start a web server from scratch for demos.
 
 ## Bun Native
 
-All demos use Bun native APIs:
-- `Bun.spawn()` - Process management
-- `process.on('SIGINT')` - Signal handling
-- `Bun.argv` - CLI arguments
-- `Bun.stdin` - Stream input
+Prefer Bun APIs in demos:
 
-## Location
+- `Bun.spawn` / `Bun.spawnSync` — process management
+- `Bun.file` / `Bun.write` — file I/O
+- `Bun.argv` / `Bun.env` — CLI and env
+- `import.meta.dir` — path anchoring
 
-`scratch/bun-v1.3.9-examples/playground-web/`
+Intentional Node surfaces for API demos: `node:net`, `node:http2`.
 
 ## Agent tooling
 
 | Tool | Use when |
 |------|----------|
-| `ast_grep_bun` | Inventory Bun.spawn/signal patterns vs playground demos |
-| `ast_grep_search` | Find demo IDs referenced in server routes |
-| `/precommit` | Before committing playground or governance changes |
+| `ast_grep_bun` | Inventory Bun.spawn/signal patterns vs demos |
+| `/precommit` | Before committing playground or example changes |
 
 ```bash
 cd .agents/skills/ast-grep && bun run skill-loop:matrix -- --phases doctor,rate --only bun-v139

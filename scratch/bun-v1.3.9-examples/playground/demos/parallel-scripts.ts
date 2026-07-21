@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 /**
  * Demo: bun run --parallel and --sequential
- * 
+ *
  * Showcases script orchestration features
  */
-
-import { join } from "node:path";
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
 console.info("🚀 Bun v1.3.9: Parallel & Sequential Script Execution\n");
 console.info("=".repeat(70));
@@ -25,7 +25,7 @@ const packageJson = {
 };
 
 // Write package.json (Bun requires it to be named exactly package.json)
-const packageJsonPath = join(demoDir, "package.json");
+const packageJsonPath = `${demoDir}/package.json`;
 await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
 console.info("\n📦 Example 1: Parallel Execution");
@@ -78,12 +78,6 @@ console.info("  • --sequential: Runs scripts one at a time, sequential output"
 console.info("  • Pre/post scripts: Automatically grouped with main script");
 console.info("  • Output format: 'script-name | output'");
 
-// Cleanup
-try {
-  const file = Bun.file(packageJsonPath);
-  if (await file.exists()) {
-    await file.unlink();
-  }
-} catch {
-    console.error('Unhandled error:', error);
-  }
+if (await Bun.file(packageJsonPath).exists()) {
+  await Bun.$`rm -f ${packageJsonPath}`.quiet();
+}

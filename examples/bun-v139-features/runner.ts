@@ -1,11 +1,10 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: Interactive Example Runner
- * 
+ *
  * Run all examples or select specific ones to demo
  */
-
-import { join } from "node:path";
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
 interface Example {
   name: string;
@@ -107,7 +106,7 @@ async function runExample(example: Example) {
   console.info(`Description: ${example.description}`);
   console.info("=".repeat(70) + "\n");
   
-  const examplePath = join(import.meta.dir, example.file);
+  const examplePath = `${import.meta.dir}/${example.file}`;
   
   try {
     const proc = Bun.spawn({
@@ -153,7 +152,7 @@ async function runBenchmarks() {
   
   for (const bench of benchmarks) {
     console.info(`\n▶️ Running: ${bench.name}\n`);
-    const benchPath = join(import.meta.dir, bench.file);
+    const benchPath = `${import.meta.dir}/${bench.file}`;
     
     const proc = Bun.spawn({
       cmd: ["bun", "run", benchPath],
@@ -170,7 +169,7 @@ async function runTests() {
   console.info("🧪 Running Test Examples");
   console.info("=".repeat(70) + "\n");
   
-  const testPath = join(import.meta.dir, "mock-auto-cleanup.test.ts");
+  const testPath = `${import.meta.dir}/mock-auto-cleanup.test.ts`;
   
   const proc = Bun.spawn({
     cmd: ["bun", "test", testPath],
