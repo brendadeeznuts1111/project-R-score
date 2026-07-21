@@ -134,3 +134,19 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Earliest owner:** CI + script-gate
 - **Ratchet:** `scripts/ci-core.ts` · `.github/actions/setup-factory-bun` · harness-gates
 - **Keep / revise / drop:** keep
+
+### Docs dump attention tax
+
+- **Finding:** Hundreds of `docs/**` dumps (cheatsheets, council, generated) dominated search/agent context; stubbing in-place still showed up as “bottlenecks.”
+- **Repair:** Delete dumps from tracked live tree (recover via `git log`); keep ~37 SSOT markdown files; archive path stays gitignored.
+- **Earliest owner:** docs index
+- **Ratchet:** `docs/README.md` · `bun tools/doc-map-check.ts`
+- **Keep / revise / drop:** keep
+
+### GHA “account locked / billing” (not a code gate)
+
+- **Finding:** Push workflows on `d9441950` failed in ~3s with annotation *account is locked due to a billing issue* — jobs never started. Local `bun run ci:core` passed (~11s).
+- **Repair:** Unlock GitHub Actions billing / payment method on the org/account; re-run failed workflows. Do not chase green by rewriting gates while the runner refuses to start.
+- **Earliest owner:** account / CI ops
+- **Ratchet:** none (external)
+- **Keep / revise / drop:** keep (ops)
