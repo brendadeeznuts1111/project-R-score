@@ -18,9 +18,11 @@ If novel, name the new archetype and explain why.
   *Only* `proof.ts` entry, doc index bullets, contract test, config owner. No separate test file or doc brief.
 - **Journey** (install‑verify, search‑governance, cron‑os‑persistent) → **Full path**  
   Test file, doc brief, package scripts, CI smoke/workflow integration.
+- **Maintenance runbook** (spine tenant continuous maintenance) → **Slim path + runbook**  
+  `TenantRunbook` in [`lib/harness/maintenance.ts`](../../lib/harness/maintenance.ts), markdown under `docs/harness/tenants/<tenant>.md`, spine tenant entry, contract `bun run test:tenant-runbooks`. No separate journey test unless the proofId needs one.
 
 **Answer:** …  
-**Ceremony path:** slim / full
+**Ceremony path:** slim / full / maintenance-runbook
 
 ---
 

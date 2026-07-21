@@ -53,10 +53,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 - **`cron-os-persistent`** — OS register → entry → fire `scheduled()` → marker → remove (`journey` + `boundary`)  
   *Ratchet* → `bun run test:cron-os` · [`cron.md`](cron.md)
+- **`docs-integrity`** — Bun docs stack integrity pass (`journey` + `boundary`)  
+  *Ratchet* → `bun tools/bun-doc-refs.ts schedule --once` · [`tenants/docs-integrity.md`](tenants/docs-integrity.md)
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity + install-verify) (`journey` + `boundary`)  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
-- **`spine-tenants-runbook`** — install-verify tenant maintenance runbook (signal · intervention · proof · retirement) (`boundary`)  
-  *Ratchet* → `bun run docs:spine-tenants` · [`spine-tenants.md`](spine-tenants.md)
+- **`spine-maintenance-runbooks`** — every spine tenant has typed TenantRunbook (signal · intervention · proof · retirement) (`boundary` + `journey`)  
+  *Ratchet* → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · [`lib/harness/maintenance.ts`](../../lib/harness/maintenance.ts)
 
 ## Fresh-rerun
 

@@ -38,6 +38,7 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/journey/cron-os-persistent.test.ts',
   'tests/harness-fresh-rerun-contract.test.ts',
   'tests/spine-tenants.test.ts',
+  'tests/harness-tenant-runbooks.test.ts',
 ] as const;
 
 /** Named critical paths — each must set `freshRerun` (see FRESH-RERUN.md). */
@@ -202,6 +203,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run test:cron-os',
   },
   {
+    id: 'docs-integrity',
+    // owner: tools/bun-doc-refs.ts · spine tenant docs-integrity
+    claim: 'Bun docs stack integrity pass succeeds (schedule --once)',
+    kinds: ['journey', 'boundary'],
+    evidence: [
+      'bun tools/bun-doc-refs.ts schedule --once',
+      'tools/bun-doc-refs.ts',
+      'docs/harness/tenants/docs-integrity.md',
+    ],
+    freshRerun: 'bun tools/bun-doc-refs.ts schedule --once',
+  },
+  {
     id: 'spine-multi-tenant',
     // owner: spine/tenants.ts · spine/scheduler.ts
     claim: 'Spine runs ≥2 in-process tenants (docs-integrity + install-verify journey)',
@@ -212,17 +225,23 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun run spine:schedule:once -- --tenant=install-verify',
       'docs/harness/cron.md',
       'docs/harness/spine-tenants.md',
+      'lib/harness/maintenance.ts',
     ],
     freshRerun: 'bun run spine:schedule:once -- --tenant=install-verify',
   },
   {
-    id: 'spine-tenants-runbook',
-    // owner: docs/harness/spine-tenants.md
+    id: 'spine-maintenance-runbooks',
+    // owner: lib/harness/maintenance.ts · docs/harness/tenants/
     claim:
-      'install-verify spine tenant has a maintenance runbook (signal · intervention · proof · retirement)',
-    kinds: ['boundary'],
-    evidence: ['docs/harness/spine-tenants.md', 'bun run docs:spine-tenants', 'spine/tenants.ts'],
-    freshRerun: 'bun run docs:spine-tenants',
+      'Every spine tenant has a typed TenantRunbook (signal · intervention · proof · retirement)',
+    kinds: ['boundary', 'journey'],
+    evidence: [
+      'lib/harness/maintenance.ts',
+      'docs/harness/tenants/',
+      'bun run test:tenant-runbooks',
+      'docs/harness/spine-tenants.md',
+    ],
+    freshRerun: 'bun run test:tenant-runbooks',
   },
 ] as const;
 

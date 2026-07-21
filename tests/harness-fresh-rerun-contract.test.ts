@@ -54,9 +54,14 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run spine:schedule:once -- --tenant=install-verify');
   });
 
-  test('spine-tenants-runbook freshRerun is docs:spine-tenants', () => {
-    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'spine-tenants-runbook');
-    expect(p?.freshRerun).toBe('bun run docs:spine-tenants');
+  test('spine-maintenance-runbooks freshRerun is test:tenant-runbooks', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'spine-maintenance-runbooks');
+    expect(p?.freshRerun).toBe('bun run test:tenant-runbooks');
+  });
+
+  test('docs-integrity freshRerun is bun-doc-refs schedule --once', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'docs-integrity');
+    expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');
   });
 
   test('path-bun claim covers lib and tools', () => {

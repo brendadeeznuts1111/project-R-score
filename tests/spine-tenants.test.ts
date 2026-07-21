@@ -2,8 +2,10 @@
  * Spine multi-tenant registry ratchet.
  * @see docs/harness/cron.md
  * @see spine/tenants.ts
+ * @see lib/harness/maintenance.ts
  */
 import { describe, expect, test } from 'bun:test';
+import { runbookByTenant } from '../lib/harness/maintenance';
 import { SPINE_TENANTS, tenantById } from '../spine/tenants';
 
 describe('spine multi-tenant', () => {
@@ -20,16 +22,9 @@ describe('spine multi-tenant', () => {
     }
   });
 
-  test('runbook documents install-verify signal · intervention · proof · retirement', async () => {
-    const md = await Bun.file(
-      new URL('../docs/harness/spine-tenants.md', import.meta.url).pathname
-    ).text();
-    expect(md).toContain('Tenant: install-verify');
-    expect(md).toContain('### Signal');
-    expect(md).toContain('### Intervention');
-    expect(md).toContain('### Proof');
-    expect(md).toContain('### Retirement');
-    expect(md).toContain('install-verify-journey');
-    expect(md).toContain('bun run spine:schedule:once -- --tenant=install-verify');
+  test('each tenant has a typed maintenance runbook', () => {
+    for (const t of SPINE_TENANTS) {
+      expect(runbookByTenant(t.id), t.id).toBeDefined();
+    }
   });
 });

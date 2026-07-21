@@ -14,7 +14,9 @@ Corrected 2026-07-21 (was inverted).
 - lib/harness/cron.ts — both forms · ratchet: bun run test:cron
 - spine/scheduler.ts — in-process on purpose · multi-tenant · spine:schedule · type-check
 - spine/tenants.ts — ≥2 tenants (docs-integrity + install-verify) · claim `spine-multi-tenant`
-- spine-tenants.md — install-verify runbook (signal · intervention · proof · retirement) · `docs:spine-tenants`
+- lib/harness/maintenance.ts — typed TenantRunbook catalog · claim `spine-maintenance-runbooks`  
+  *Ratchet* → `bun run test:tenant-runbooks`
+- docs/harness/tenants/*.md — per-tenant signal · intervention · proof · retirement
 - bun-doc-refs schedule — cites OS-persistent as canonical · manual
 - **OS-persistent journey** — register → OS entry → fire `scheduled()` → marker → remove  
   *Ratchet* → `bun run test:cron-os` · claim `cron-os-persistent`

@@ -109,7 +109,12 @@ export const CLI_SPECIAL: Record<string, string> = {
     'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
   'docs:claim-discovery':
     'Claim discovery questionnaire (new ProofPath · docs/harness/CLAIM-DISCOVERY.md)',
-  'docs:spine-tenants': 'Spine tenants runbook (signal · intervention · proof · retirement)',
+  'docs:spine-tenants': 'Spine tenants index + typed MAINTENANCE_RUNBOOKS catalog',
+  'docs:tenant-install-verify':
+    'install-verify tenant runbook (signal · intervention · retirement)',
+  'docs:tenant-docs-integrity':
+    'docs-integrity tenant runbook (signal · intervention · retirement)',
+  'test:tenant-runbooks': 'Ratchet: every spine tenant has a TenantRunbook + markdown',
   'docs:fresh-rerun':
     'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
   'docs:search-governance':
@@ -164,7 +169,10 @@ export const CLI_CORE_CMDS = new Set([
   'docs:install-verify',
   'docs:claim-discovery',
   'docs:spine-tenants',
+  'docs:tenant-install-verify',
+  'docs:tenant-docs-integrity',
   'docs:fresh-rerun',
+  'test:tenant-runbooks',
   'docs:search-governance',
   'test:cron',
   'test:cron-os',
