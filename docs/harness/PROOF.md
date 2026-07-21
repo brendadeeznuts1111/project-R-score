@@ -2,6 +2,8 @@
 
 Match **evidence** to the **claim**. Green pre-commit alone does not prove a journey or deployed health.
 
+**New claim?** → fill out [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) first (`bun run docs:claim-discovery`).
+
 Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness-engineering/tree/trunk/docs/proof).
 
 Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.check.json` / brand types, and the ratchets named under each artefact.

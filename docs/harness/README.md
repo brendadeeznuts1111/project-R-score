@@ -22,7 +22,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md)
 - Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
 - Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · `bun run proof:install`
-- **New proof claim** → fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) first · `bun run docs:claim-discovery`
+- **New claim?** → fill out [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) · `bun run docs:claim-discovery`
 - Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)

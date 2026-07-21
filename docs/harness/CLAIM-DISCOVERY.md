@@ -6,17 +6,18 @@ The answers become the claim’s artifacts: `proof.ts` entry, doc bullets, contr
 
 ---
 
-### 0. Is this a new proof type, or a variant of an existing one?
+### 0. Classify the claim and choose the ceremony path
 
-Classify the claim: `journey`, `type-check island`, `ratchet-import`, `cron`, etc.  
-If it matches an existing archetype, copy the nearest template. If novel, name the new archetype and explain why.
+**Is this a new proof type, or a variant of an existing one?**  
+Examples: `journey`, `type-check island`, `ratchet-import`, `cron`, etc.  
+If novel, name the new archetype and explain why.
 
-**→ After classification, choose the ceremony path:**
+**→ Based on classification, pick the ceremony path:**
 
 - **Island / ratchet** (type-check islands, import ratchets, coherence slices) → **Slim path**  
-  (Only `proof.ts`, doc index bullets, contract test, config owner – no separate test file or doc brief.)
+  *Only* `proof.ts` entry, doc index bullets, contract test, config owner. No separate test file or doc brief.
 - **Journey** (install‑verify, search‑governance, cron‑os‑persistent) → **Full path**  
-  (Test file, doc brief, package scripts, CI smoke/workflow integration.)
+  Test file, doc brief, package scripts, CI smoke/workflow integration.
 
 **Answer:** …  
 **Ceremony path:** slim / full
@@ -37,8 +38,8 @@ A single shell command that exits 0 on success. No vague descriptions.
 
 **Answer:** `bun run …` or `bun test …` etc.
 
-- For a test, use the specific test file(s).  
-- For a type‑check island, it’s `bun run type-check` (and the include glob must be in `tsconfig.check.json`).
+- For a test, specify the exact test file(s).  
+- For a type‑check island, it’s `bun run type-check` (the include glob must be in `tsconfig.check.json`).
 
 ---
 
