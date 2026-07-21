@@ -55,7 +55,7 @@ bun run ci:harness          # quiet full (= harness-gates.yml)
 | **install** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) · pre-push | `install:verify` only |
 | **fast** | `bun run ci:harness:fast` | ∥ path-bun · bun-env · brands · `test:changed` (dirty; skips if no code) |
 | **full** | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:harness` | + `lint:bun-native:changed` (PR) / full rollout (`HARNESS_FULL_LINT` on main push) · `test:changed:main` |
-| **claim** | [pr-claim.yml](../../.github/workflows/pr-claim.yml) | Claim → evidence ([PROOF.md](PROOF.md)); warn until 2026-07-28 |
+| **claim** | step inside [harness-gates.yml](../../.github/workflows/harness-gates.yml) (PR only) | Claim → evidence ([PROOF.md](PROOF.md)); warn until 2026-07-28; no extra install |
 
 **Required checks:** see [AUTHORITY.md](AUTHORITY.md). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 

@@ -98,10 +98,10 @@ Scaffold: `bun run harness:lesson --title="…"`.
 ### Soft PR claim + unprotected main
 
 - **Finding:** Claim→evidence template was social; `main` had no required checks.
-- **Repair:** `check-pr-claim` + `pr-claim.yml` (warn until 2026-07-28); document required checks in AUTHORITY; `ci:harness:fast` for local parity; timings + `--fail-json` on `ci:harness`.
+- **Repair:** `check-pr-claim` in harness-gates (warn until 2026-07-28); required checks in AUTHORITY; `ci:harness:fast` for local parity.
 - **Earliest owner:** proof + AUTHORITY
-- **Ratchet:** `scripts/check-pr-claim.ts` · `.github/workflows/pr-claim.yml` · `docs/harness/AUTHORITY.md`
-- **Keep / revise / drop:** keep (flip claim check to error after warn window)
+- **Ratchet:** `scripts/check-pr-claim.ts` · `.github/workflows/harness-gates.yml` · `docs/harness/AUTHORITY.md`
+- **Keep / revise / drop:** keep (flip claim check to error after warn window; dropped standalone `pr-claim.yml` to save a runner install)
 
 ### Triple install + hardcoded spine + noisy gates
 
@@ -117,4 +117,12 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Repair:** Default `lint:bun-native:changed` (+ cache); `HARNESS_FULL_LINT` only on main push; ∥ cheap ratchets; skip `test:changed` when change set has no code-like files.
 - **Earliest owner:** script-gate
 - **Ratchet:** `scripts/lint-bun-native-changed.ts` · `scripts/lib/git-changed.ts` · harness-gates env
+- **Keep / revise / drop:** keep
+
+### GHA install × N jobs
+
+- **Finding:** `pr-claim` + `harness-gates` + `repo-hygiene` each paid cold Bun setup/install; claim needed no `node_modules`.
+- **Repair:** Fold claim into harness-gates; shared `bun-install-*` Actions cache on harness + hygiene; drop standalone `pr-claim.yml`.
+- **Earliest owner:** CI
+- **Ratchet:** `.github/workflows/harness-gates.yml` · `.github/workflows/repo-hygiene.yml`
 - **Keep / revise / drop:** keep
