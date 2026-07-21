@@ -7,16 +7,23 @@
 import { describe, expect, test } from 'bun:test';
 import {
   assertCiChildProofBijection,
+  assertCiDeployParentChildIds,
   assertCiInterventionNotCatalogFreshRerun,
   CI_CATALOG_FRESH_RERUN,
   CI_RUNBOOKS,
 } from '../lib/harness/ci-deploy';
 import {
+  assertCodeQualityParentChildIds,
   assertCodeQualityProofClosedSet,
   CODE_QUALITY_TENANTS,
 } from '../lib/harness/code-quality';
 import { assertGateRefs } from '../lib/harness/gate-ref';
-import { CRITICAL_PROOF_PATHS, orderProofKinds } from '../lib/harness/proof';
+import { assertSpineParentChildIds } from '../lib/harness/maintenance';
+import {
+  assertProofOwnersAndChildren,
+  CRITICAL_PROOF_PATHS,
+  orderProofKinds,
+} from '../lib/harness/proof';
 import { joinPath } from '../lib/path-bun';
 
 const HARNESS_ROOT = joinPath(import.meta.dir, '..');
@@ -65,12 +72,20 @@ describe('fresh-rerun contract', () => {
     );
   });
 
-  test('every ProofPath declares gateClass, gateRef, freshRerunKind', () => {
+  test('every ProofPath declares gateClass, gateRef, freshRerunKind, owner', () => {
     for (const p of CRITICAL_PROOF_PATHS) {
       expect(['continuous', 'workflow', 'human-only']).toContain(p.gateClass);
       expect(['claim', 'catalog']).toContain(p.freshRerunKind);
       expect(p.gateRef.trim().length, p.id).toBeGreaterThan(0);
+      expect(p.owner.trim().length, p.id).toBeGreaterThan(0);
     }
+    expect(assertProofOwnersAndChildren()).toEqual([]);
+  });
+
+  test('parent childIds closed sets match dual catalogs', () => {
+    expect(assertCiDeployParentChildIds()).toEqual([]);
+    expect(assertCodeQualityParentChildIds()).toEqual([]);
+    expect(assertSpineParentChildIds()).toEqual([]);
   });
 
   test('freshRerunKind catalog iff docs:ci-deploy', () => {

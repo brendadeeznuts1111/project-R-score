@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   evaluatePrClaim,
   kindCellValid,
+  mentionedProofIdsMissingFreshRerun,
   WARN_UNTIL_ISO,
   WARN_UNTIL_MS,
   warnOnlyMode,
@@ -75,6 +76,19 @@ describe('evaluatePrClaim', () => {
     expect(kindCellValid('boundary + unit')).toBe(true);
     expect(kindCellValid('`journey`')).toBe(true);
     expect(kindCellValid('asdf')).toBe(false);
+  });
+
+  test('soft: mentioned proof id without freshRerun command is listed', () => {
+    const softBody = `${filled}
+
+Mentioned \`branded-ids\` without its freshRerun command.
+`;
+    expect(mentionedProofIdsMissingFreshRerun(softBody)).toContain('branded-ids');
+    const withPaste = `${softBody}\nbun run check:brands:types\n`;
+    expect(mentionedProofIdsMissingFreshRerun(withPaste)).not.toContain('branded-ids');
+    const r = evaluatePrClaim(softBody, { strict: true });
+    expect(r.ok).toBe(true);
+    expect(r.missingFreshRerun).toContain('branded-ids');
   });
 });
 

@@ -83,7 +83,7 @@ const md = [
   ratchetBullets(
     CRITICAL_PROOF_PATHS.map(p => ({
       title: p.id,
-      body: `${p.claim} (\`${p.kinds.join('`+`')}\` · \`${p.gateClass}\` · \`${p.freshRerunKind}\`)`,
+      body: `${p.claim} (\`${p.kinds.join('`+`')}\` · \`${p.gateClass}\` · \`${p.freshRerunKind}\` · owner \`${p.owner}\`)`,
       ratchet: p.evidence.map(e => `\`${e}\``).join(', '),
       fresh: p.freshRerun,
     }))
@@ -105,10 +105,11 @@ if (hasFlag('table')) {
       gateRef: p.gateRef,
       kinds: p.kinds.join('+'),
       freshRerunKind: p.freshRerunKind,
+      owner: p.owner,
       claim: p.claim,
       freshRerun: p.freshRerun,
     })),
-    ['id', 'gateClass', 'gateRef', 'kinds', 'freshRerunKind', 'claim', 'freshRerun']
+    ['id', 'gateClass', 'gateRef', 'kinds', 'freshRerunKind', 'owner', 'claim', 'freshRerun']
   );
   console.info('');
 }

@@ -45,6 +45,8 @@ Spine **splits** doc-rerun vs proof-rerun (`TenantRunbook.freshRerun` ≠ linked
 
 Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail CI (`scripts/check-pr-claim.ts`). Drafts stay skipped. Rollback if false positives: extend `WARN_UNTIL_ISO`, do not delete the invariant.
 
+**Soft paste tip:** if the PR body mentions a proof id in backticks (`` `branded-ids` ``), `check-pr-claim` warns when that claim’s `freshRerun` command string is absent from the body. Soft only — does not fail CI.
+
 ## Lookup
 
 ```bash

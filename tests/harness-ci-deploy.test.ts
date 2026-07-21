@@ -7,6 +7,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   assertCiChildProofBijection,
+  assertCiDeployParentChildIds,
   assertCiInterventionNotCatalogFreshRerun,
   assertCiRunbookFields,
   assertCiRunbookProofLinks,
@@ -33,6 +34,7 @@ describe('CI / deploy runbooks', () => {
   test('CI child bijection + intervention ≠ catalog freshRerun', () => {
     expect(assertCiChildProofBijection()).toEqual([]);
     expect(assertCiInterventionNotCatalogFreshRerun()).toEqual([]);
+    expect(assertCiDeployParentChildIds()).toEqual([]);
   });
 
   test('assertCICoverage: every ci/build/deploy/migrate job owned or exempted', async () => {

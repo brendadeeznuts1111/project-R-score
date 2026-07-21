@@ -17,6 +17,7 @@ import {
   assertRunbookInterventionContainsProofFreshRerun,
   assertRunbookProofLinks,
   assertRunbookTenantLinks,
+  assertSpineParentChildIds,
   MAINTENANCE_RUNBOOKS,
   RETIRED_TENANT_RUNBOOKS,
   runbookByTenant,
@@ -82,6 +83,7 @@ describe('spine maintenance runbooks', () => {
 
   test('every runbook proofId resolves in CRITICAL_PROOF_PATHS', () => {
     expect(assertRunbookProofLinks()).toEqual([]);
+    expect(assertSpineParentChildIds()).toEqual([]);
   });
 
   test('catalog signal · intervention · retirement are non-empty', () => {

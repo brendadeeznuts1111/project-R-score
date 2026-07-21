@@ -8,7 +8,7 @@
  * @see ./discover-ci.ts
  * @see ../../docs/harness/ci-deploy.md
  */
-import { CRITICAL_PROOF_PATHS } from './proof';
+import { CRITICAL_PROOF_PATHS, type FreshRerunKind } from './proof';
 import type { RetirementCheck } from './maintenance';
 
 export type CiRunbook = {
@@ -21,6 +21,8 @@ export type CiRunbook = {
   retirementCheck?: RetirementCheck;
   /** Cheap catalog / docs fresh-rerun (not a full prod deploy) */
   freshRerun: string;
+  /** CI runbooks always catalog-doc style (same paste as ProofPath catalog children). */
+  freshRerunKind: FreshRerunKind;
   docPath: string;
 };
 
@@ -57,6 +59,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/ci-core.md',
   },
   {
@@ -72,6 +75,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       proofId: 'typescript-ci-gate',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/typescript-ci.md',
   },
   {
@@ -88,6 +92,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/deploy-production.md',
   },
   {
@@ -102,6 +107,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/deploy-staging.md',
   },
   {
@@ -116,6 +122,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/bun-migrate.md',
   },
 ] as const;
@@ -130,6 +137,24 @@ export function assertCiRunbookProofLinks(): string[] {
   const missing: string[] = [];
   for (const r of CI_RUNBOOKS) {
     if (!ids.has(r.proofId)) missing.push(`${r.id} → proofId ${r.proofId}`);
+  }
+  return missing;
+}
+
+/** Parent claim `ci-deploy-runbooks`.childIds ↔ CI_CHILD_PROOF_IDS. */
+export function assertCiDeployParentChildIds(): string[] {
+  const missing: string[] = [];
+  const parent = CRITICAL_PROOF_PATHS.find(p => p.id === 'ci-deploy-runbooks');
+  if (!parent?.childIds) {
+    missing.push('ci-deploy-runbooks missing childIds');
+    return missing;
+  }
+  const a = [...parent.childIds].sort();
+  const b = [...CI_CHILD_PROOF_IDS].sort();
+  if (a.length !== b.length || a.some((id, i) => id !== b[i])) {
+    missing.push(
+      `ci-deploy-runbooks.childIds [${a.join(', ')}] ≠ CI_CHILD_PROOF_IDS [${b.join(', ')}]`
+    );
   }
   return missing;
 }
@@ -164,6 +189,9 @@ export function assertCiChildProofBijection(): string[] {
     if (!p) continue;
     if (p.freshRerunKind !== 'catalog') {
       missing.push(`${r.id}: linked proof ${r.proofId} must have freshRerunKind catalog`);
+    }
+    if (r.freshRerunKind !== 'catalog') {
+      missing.push(`${r.id}: CiRunbook.freshRerunKind must be catalog`);
     }
     if (r.freshRerun !== CI_CATALOG_FRESH_RERUN || p.freshRerun !== CI_CATALOG_FRESH_RERUN) {
       missing.push(`${r.id}: freshRerun must be ${CI_CATALOG_FRESH_RERUN}`);

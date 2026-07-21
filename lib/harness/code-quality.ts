@@ -8,7 +8,7 @@
  * @see ./complexity.ts
  * @see ../../docs/harness/code-quality.md
  */
-import { CRITICAL_PROOF_PATHS } from './proof';
+import { CRITICAL_PROOF_PATHS, type FreshRerunKind } from './proof';
 import type { RetirementCheck } from './maintenance';
 
 export type CodeQualityTenant = {
@@ -21,6 +21,8 @@ export type CodeQualityTenant = {
   retirementVerified: boolean;
   retirementCheck?: RetirementCheck;
   freshRerun: string;
+  /** Code-quality tenants re-prove the linked claim (not a docs-only paste). */
+  freshRerunKind: FreshRerunKind;
   docPath: string;
 };
 
@@ -46,6 +48,7 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
       proofId: 'lib-docs-typecheck',
     },
     freshRerun: 'bun run type-check',
+    freshRerunKind: 'claim',
     docPath: 'docs/harness/tenants/types-covered.md',
   },
   {
@@ -62,6 +65,7 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
       proofId: 'harness-coverage-ratchet',
     },
     freshRerun: 'bun run test:harness-coverage',
+    freshRerunKind: 'claim',
     docPath: 'docs/harness/tenants/coverage-floor.md',
   },
   {
@@ -76,6 +80,7 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
       command: 'bun run check:harness-orphans',
     },
     freshRerun: 'bun run check:harness-orphans',
+    freshRerunKind: 'claim',
     docPath: 'docs/harness/tenants/orphan-modules.md',
   },
   {
@@ -91,6 +96,7 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
       command: 'bun run check:harness-complexity',
     },
     freshRerun: 'bun run check:harness-complexity',
+    freshRerunKind: 'claim',
     docPath: 'docs/harness/tenants/complexity-floor.md',
   },
 ] as const;
@@ -119,10 +125,29 @@ export function assertCodeQualityProofClosedSet(): string[] {
     if (!ids.has(t.proofId)) missing.push(`${t.id} → proofId ${t.proofId}`);
     if (linked.has(t.proofId)) missing.push(`duplicate CQ proofId ${t.proofId}`);
     linked.add(t.proofId);
+    if (t.freshRerunKind !== 'claim') {
+      missing.push(`${t.id}: CodeQualityTenant.freshRerunKind must be claim`);
+    }
   }
   // Intentional: only lib-docs-typecheck is CQ-linked among typecheck islands.
   if (!linked.has('lib-docs-typecheck')) {
     missing.push('types-covered must link lib-docs-typecheck');
+  }
+  return missing;
+}
+
+/** Parent claim `code-quality-tenants`.childIds ↔ CODE_QUALITY_TENANTS.proofId. */
+export function assertCodeQualityParentChildIds(): string[] {
+  const missing: string[] = [];
+  const parent = CRITICAL_PROOF_PATHS.find(p => p.id === 'code-quality-tenants');
+  if (!parent?.childIds) {
+    missing.push('code-quality-tenants missing childIds');
+    return missing;
+  }
+  const a = [...parent.childIds].sort();
+  const b = CODE_QUALITY_TENANTS.map(t => t.proofId).sort();
+  if (a.length !== b.length || a.some((id, i) => id !== b[i])) {
+    missing.push(`code-quality-tenants.childIds [${a.join(', ')}] ≠ CQ proofIds [${b.join(', ')}]`);
   }
   return missing;
 }

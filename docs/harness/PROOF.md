@@ -148,9 +148,10 @@ Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`]
 
 1. For a **new** claim: complete [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (slim or full path from Q0).
 2. State the claim in one sentence (`ProofPath.claim`).
-3. Pick kind(s), `gateClass` + `gateRef`, and `freshRerunKind` (`claim` | `catalog`).
-4. Point at evidence paths or commands that actually ran.
-5. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
-6. If evidence is missing, either run it or downgrade the claim.
+3. Pick kind(s), `gateClass` + `gateRef`, `freshRerunKind` (`claim` | `catalog`), and `owner`.
+4. Parent catalogs only: set `childIds` (CI / CQ / spine) so dual-catalog membership can’t drift.
+5. Point at evidence paths or commands that actually ran.
+6. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
+7. If evidence is missing, either run it or downgrade the claim.
 
 Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status` · `bun run docs:fresh-rerun` · `bun run docs:claim-discovery`.

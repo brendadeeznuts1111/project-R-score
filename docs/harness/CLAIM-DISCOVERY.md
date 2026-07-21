@@ -121,7 +121,7 @@ Be precise: which existing job already runs this, or what minimal CI change is n
 
 ### 9. Who is the human owner if the claim breaks?
 
-An owner accountable for fixing it, beyond the agent who wrote it. Encode as a comment in `proof.ts` (`// owner: …`) and, if appropriate, in [`AUTHORITY.md`](AUTHORITY.md). The `ProofPath` type does not include an `owner` field.
+An owner accountable for fixing it, beyond the agent who wrote it. Encode as `ProofPath.owner` (path or team string). Parent catalog claims may also set `childIds` for closed-set dual-catalog membership.
 
 **Answer:** …
 
@@ -161,10 +161,12 @@ export type ProofPath = {
   evidence: string[]; // paths or commands that demonstrate the claim
   freshRerun: string; // exact command (from Q4)
   freshRerunKind: FreshRerunKind; // claim | catalog (from Q4)
+  owner: string; // from Q9
+  childIds?: readonly string[]; // parent catalogs only (CI / CQ / spine)
 };
 ```
 
-Include a `// owner: …` comment above or inline. Also add a matching row to the Gate class table in [`PROOF.md`](PROOF.md).
+Also add a matching row to the Gate class table in [`PROOF.md`](PROOF.md).
 
 **Answer:** (copy‑paste ready object)
 
