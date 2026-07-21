@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
+// @see https://bun.com/docs/runtime — bun run / --smol / bun run - (execute code from stdin)
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin (path lists)
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
-// @see https://bun.com/docs/runtime/index#bun-run-smol — --smol
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
@@ -12,13 +12,13 @@
  *   bun run check:harness-complexity -- --json
  *   bun run check:harness-complexity -- --update-baseline --yes
  *
- * Changed-files (pre-commit / staged) — pipe paths into the probe:
+ * Changed-files (pre-commit / staged) — pipe paths via Bun.stdin (not `bun run -`):
  *   bun run check:harness-complexity:staged
  *   # or: git diff --cached --name-only --diff-filter=ACM -- lib/harness \
  *   #       | bun scripts/complexity-check.ts --stdin --json --baseline …
  *
- * Diagnostics / CI memory:
- *   bun --console-depth=4 run check:harness-complexity -- --report
+ * Diagnostics / CI memory (Bun flags before `run`):
+ *   bun --console-depth 4 run check:harness-complexity -- --report
  *   bun --smol run test:code-quality
  */
 import {
