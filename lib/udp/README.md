@@ -1,9 +1,5 @@
 # udp
 
-UDP helpers.
+Stub — UDP realtime helpers removed (no in-tree callers). Reintroduce only with a real product caller.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`udp-realtime-service.ts`](./udp-realtime-service.ts) |
+Inventory: [`../README.md`](../README.md).

@@ -1648,7 +1648,6 @@
     "registry:doctor:fix": "bun run scripts/registry-stack-doctor.ts --fix",
     "registry:doctor:json": "bun run scripts/registry-stack-doctor.ts --json",
     "project:online:check": "bun run scripts/project-online-readiness.ts",
-    "markdown": "bun run lib/docs/enhanced-markdown.ts",
     "url:validate": "bun scripts/url-validator.ts check",
     "url:check": "bun scripts/url-validator.ts quick",
     "url:report": "bun scripts/url-validator.ts check && bun -e \"console.log(await Bun.file('docs/data/url-validation-report.json').text())\"",

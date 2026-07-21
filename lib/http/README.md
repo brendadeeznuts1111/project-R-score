@@ -8,4 +8,4 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 |-------|
 | [`hardened-fetch.ts`](./hardened-fetch.ts) |
 | [`health-endpoint.ts`](./health-endpoint.ts) |
-| [`rsc-handler.ts`](./rsc-handler.ts) |
+| [`http2-multiplexer.ts`](./http2-multiplexer.ts) |

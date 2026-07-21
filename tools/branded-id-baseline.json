@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-21T15:24:31.641Z",
+  "generatedAt": "2026-07-21T15:26:05.174Z",
   "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/ab-testing/cookie-manager.ts\ttestId\tclearAssignment(testId: string): void {",
@@ -24,8 +24,6 @@
     "lib/core/logging-monitoring.ts\trequestId\twarn(message: string, context?: Record<string, any>, requestId?: string): void {",
     "lib/core/logging-monitoring.ts\tuserId\treturn (request: Request, response: Response, requestId?: string, userId?: string) => {",
     "lib/core/structured-logger.ts\tcorrelationId\tsetCorrelationId(correlationId: string): void {",
-    "lib/docs/ipc-stream-search.ts\tworkerId\tprivate handleWorkerMessage(workerId: string, message: IPCMessage, subprocess: any) {",
-    "lib/docs/ipc-stream-search.ts\tworkerId\tspawnWorker(workerId: string): boolean {",
     "lib/mcp/multi-threaded-wiki-generator.ts\ttaskId\tresult: { taskId: string; data: WikiGenerationResult | Error }",
     "lib/mcp/realtime-wiki-collaboration.ts\tcommentId\tdata: { commentId: string; documentId: DocumentId }",
     "lib/mcp/realtime-wiki-collaboration.ts\tdocumentId\tprivate isUserInDocument(userId: string, documentId: string): boolean {",

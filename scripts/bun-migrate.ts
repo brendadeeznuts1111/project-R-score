@@ -270,7 +270,6 @@ export const VALIDATE_WHITELIST = new Set([
   'lib/docs/ripgrep-spawn.ts',
   'lib/docs/smart-symbol-index.ts',
   'tools/overseer-cli.ts',
-  'lib/performance/optimized-spawn-test.ts',
   'lib/utils/input-validation-lib.ts',
 ]);
 
