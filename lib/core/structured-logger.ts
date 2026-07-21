@@ -140,12 +140,10 @@ class StructuredLogger {
    * Log performance metric
    */
   metric(name: string, value: number, unit?: string, metadata?: Record<string, any>): void {
-    const metrics = { [name]: value };
-    if (unit) {
-      metrics[`${name}_unit`] = unit;
-    }
-
-    this.log('info', `Metric: ${name}`, { ...metadata, metrics }, ['metric']);
+    const metrics: Record<string, number> = { [name]: value };
+    this.log('info', `Metric: ${name}`, { ...metadata, metrics, ...(unit ? { unit } : {}) }, [
+      'metric',
+    ]);
   }
 
   /**
@@ -223,7 +221,10 @@ class StructuredLogger {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        code: (error as Record<string, unknown>).code,
+        code: (() => {
+          const code = (error as { code?: unknown }).code;
+          return typeof code === 'string' ? code : undefined;
+        })(),
       };
     }
 

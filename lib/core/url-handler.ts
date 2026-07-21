@@ -4,7 +4,7 @@
 // @see BUN-SECURITY-FIXES-INTEGRATION.md
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-import { handleErrorFromUnknown, ValidationError } from './error-handling';
+import { ErrorSeverity, handleErrorFromUnknown, ValidationError } from './error-handling';
 import { Validator } from './validation';
 
 /**
@@ -68,7 +68,7 @@ export class EnhancedURL {
       // Invalid user input should fail validation without noisy error telemetry.
       // Reserve structured error logging for unexpected internal failures.
       if (!(error instanceof TypeError)) {
-        handleErrorFromUnknown(error, 'EnhancedURL.parseURL', 'medium');
+        handleErrorFromUnknown(error, 'EnhancedURL.parseURL', ErrorSeverity.MEDIUM);
       }
       throw new ValidationError(`Invalid URL: ${url}`);
     }
@@ -376,33 +376,33 @@ export class URLHandler {
   static normalize(url: string): string {
     try {
       const enhancedURL = new EnhancedURL(url);
-
-      // Normalize hostname to lowercase
-      if (enhancedURL.hostname) {
-        enhancedURL.components.hostname = enhancedURL.hostname.toLowerCase();
+      let pathname = enhancedURL.pathname;
+      if (pathname.length > 1 && pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
       }
 
-      // Remove trailing slash from pathname unless it's root
-      if (enhancedURL.pathname.length > 1 && enhancedURL.pathname.endsWith('/')) {
-        enhancedURL.components.pathname = enhancedURL.pathname.slice(0, -1);
-      }
-
-      // Sort search parameters
+      let search = '';
       if (enhancedURL.searchParams.toString()) {
         const params = new URLSearchParams();
         const keys = Array.from(enhancedURL.searchParams.keys()).sort();
-
         for (const key of keys) {
-          const values = enhancedURL.searchParams.getAll(key);
-          for (const value of values) {
+          for (const value of enhancedURL.searchParams.getAll(key)) {
             params.append(key, value);
           }
         }
-
-        enhancedURL.components.search = params.toString();
+        search = params.toString();
       }
 
-      return this.build(enhancedURL.components);
+      return this.build({
+        protocol: enhancedURL.protocol,
+        hostname: enhancedURL.hostname.toLowerCase(),
+        port: enhancedURL.port,
+        pathname,
+        search,
+        fragment: enhancedURL.fragment,
+        searchParams: enhancedURL.searchParams,
+        hash: enhancedURL.hash,
+      });
     } catch {
       return url;
     }

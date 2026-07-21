@@ -15,7 +15,7 @@ export interface ValidationResult<T = any> {
 /**
  * Validator function type
  */
-export type Validator<T = any> = (input: unknown) => ValidationResult<T>;
+export type ValidatorFn<T = any> = (input: unknown) => ValidationResult<T>;
 
 /**
  * Schema definition for object validation
@@ -30,7 +30,7 @@ export interface ValidationSchema {
     max?: number;
     pattern?: RegExp;
     enum?: any[];
-    custom?: Validator;
+    custom?: ValidatorFn;
     sanitize?: boolean;
   };
 }
@@ -122,7 +122,7 @@ export class Validator {
       enum?: string[];
       sanitize?: boolean;
     } = {}
-  ): Validator<string> {
+  ): ValidatorFn<string> {
     return (input: unknown): ValidationResult<string> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -193,7 +193,7 @@ export class Validator {
       integer?: boolean;
       sanitize?: boolean;
     } = {}
-  ): Validator<number> {
+  ): ValidatorFn<number> {
     return (input: unknown): ValidationResult<number> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -251,7 +251,7 @@ export class Validator {
       required?: boolean;
       sanitize?: boolean;
     } = {}
-  ): Validator<boolean> {
+  ): ValidatorFn<boolean> {
     return (input: unknown): ValidationResult<boolean> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -296,14 +296,14 @@ export class Validator {
    * Validate array input
    */
   static parseArray<T>(
-    itemValidator: Validator<T>,
+    itemValidator: ValidatorFn<T>,
     options: {
       required?: boolean;
       minLength?: number;
       maxLength?: number;
       sanitize?: boolean;
     } = {}
-  ): Validator<T[]> {
+  ): ValidatorFn<T[]> {
     return (input: unknown): ValidationResult<T[]> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -365,7 +365,7 @@ export class Validator {
   /**
    * Validate object input against schema
    */
-  static parseObject(schema: ValidationSchema): Validator<Record<string, any>> {
+  static parseObject(schema: ValidationSchema): ValidatorFn<Record<string, any>> {
     return (input: unknown): ValidationResult<Record<string, any>> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -381,7 +381,7 @@ export class Validator {
       // Validate each field in schema
       for (const [key, rules] of Object.entries(schema)) {
         const value = obj[key];
-        let validator: Validator;
+        let validator: ValidatorFn;
 
         // Create validator based on type
         switch (rules.type) {
@@ -457,7 +457,7 @@ export class Validator {
   static parseCustom<T>(
     validatorFn: (input: unknown) => { isValid: boolean; data?: T; error?: string },
     options: { required?: boolean } = {}
-  ): Validator<T> {
+  ): ValidatorFn<T> {
     return (input: unknown): ValidationResult<T> => {
       const errors: string[] = [];
       const warnings: string[] = [];

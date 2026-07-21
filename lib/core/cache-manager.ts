@@ -1,6 +1,6 @@
 // lib/core/cache-manager.ts — Cache management with versioning and invalidation
 
-import { CacheError, handleErrorFromUnknown } from './error-handling';
+import { CacheError, ErrorSeverity, handleErrorFromUnknown } from './error-handling';
 
 /**
  * Cache entry interface
@@ -110,7 +110,7 @@ export class CacheManager {
       this.updateHitStats();
       return entry.data as T;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.get', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.get', ErrorSeverity.MEDIUM);
       return null;
     }
   }
@@ -151,7 +151,7 @@ export class CacheManager {
       this.updateTagIndex(key, tags, true);
       this.updateStats();
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.set', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.set', ErrorSeverity.MEDIUM);
     }
   }
 
@@ -170,7 +170,7 @@ export class CacheManager {
       this.updateStats();
       return true;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.delete', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.delete', ErrorSeverity.MEDIUM);
       return false;
     }
   }
@@ -184,7 +184,7 @@ export class CacheManager {
       this.tagIndex.clear();
       this.resetStats();
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.clear', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.clear', ErrorSeverity.MEDIUM);
     }
   }
 
@@ -213,7 +213,7 @@ export class CacheManager {
 
       return invalidated;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.invalidateByTags', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.invalidateByTags', ErrorSeverity.MEDIUM);
       return 0;
     }
   }
@@ -240,7 +240,7 @@ export class CacheManager {
 
       return invalidated;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.invalidateByPattern', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.invalidateByPattern', ErrorSeverity.MEDIUM);
       return 0;
     }
   }
@@ -272,7 +272,7 @@ export class CacheManager {
 
       return value;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.getOrSet', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.getOrSet', ErrorSeverity.MEDIUM);
       throw error;
     }
   }
@@ -314,7 +314,7 @@ export class CacheManager {
 
       return true;
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.has', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.has', ErrorSeverity.MEDIUM);
       return false;
     }
   }
@@ -336,13 +336,13 @@ export class CacheManager {
           await this.set(key, value, options);
         } catch (error) {
           // Continue with other entries even if one fails
-          handleErrorFromUnknown(error, `CacheManager.warmUp.${key}`, 'low');
+          handleErrorFromUnknown(error, `CacheManager.warmUp.${key}`, ErrorSeverity.LOW);
         }
       });
 
       await Promise.allSettled(promises);
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.warmUp', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.warmUp', ErrorSeverity.MEDIUM);
     }
   }
 
@@ -354,7 +354,7 @@ export class CacheManager {
       const entries = this.getEntriesInfo();
       return { entries, version: this.version };
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.export', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.export', ErrorSeverity.MEDIUM);
       return { entries: [], version: this.version };
     }
   }
@@ -379,7 +379,7 @@ export class CacheManager {
       this.version = data.version;
       this.updateStats();
     } catch (error) {
-      handleErrorFromUnknown(error, 'CacheManager.import', 'medium');
+      handleErrorFromUnknown(error, 'CacheManager.import', ErrorSeverity.MEDIUM);
     }
   }
 

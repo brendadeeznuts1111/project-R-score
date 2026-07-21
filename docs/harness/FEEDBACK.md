@@ -62,8 +62,10 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · PR paste of claim `freshRerun` · `bun test tests/harness-fresh-rerun-contract.test.ts`
 - **lib/docs dual-era (closed)** (`type`)  
   *Ratchet* → `tsconfig.check.json` include `lib/docs/**/*` · claim `lib-docs-typecheck` · `bun run type-check`
-- **lib/utils dual-era (outside day-loop tsc)** (`type`)  
+- **lib/utils dual-era (closed)** (`type`)  
   *Ratchet* → `tsconfig.check.json` include `lib/utils/**/*` · claim `lib-utils-typecheck` · `bun run type-check`
+- **lib/core dual-era / ErrorSeverity string literals (closed)** (`type`)  
+  *Ratchet* → `tsconfig.check.json` include `lib/core/**/*` · claim `lib-core-typecheck` · `bun run type-check`
 - **tools/ path dual-era (closed)** (`type`)  
   *Ratchet* → `bun run check:path-bun` covers `lib/**` + `tools/**` · claim `path-bun`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  

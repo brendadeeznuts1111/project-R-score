@@ -16,6 +16,7 @@
     "lib/harness/**/*",
     "lib/docs/**/*",
     "lib/utils/**/*",
+    "lib/core/**/*",
     "spine/**/*",
     "lib/console-depth.ts",
     "lib/projects-scan.ts",

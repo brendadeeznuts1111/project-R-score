@@ -1,6 +1,11 @@
 // lib/core/concurrent-operations.ts — Safe concurrent operations manager
 
-import { handleErrorFromUnknown, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
+import {
+  ErrorSeverity,
+  handleErrorFromUnknown,
+  R2IntegrationError,
+  safeAsyncWithRetry,
+} from './error-handling';
 import { type OperationId, asOperationId } from '../types/branded.ts';
 
 /**
@@ -182,7 +187,11 @@ export class ConcurrentOperationsManager {
             try {
               await operation.rollback(result.data);
             } catch (rollbackError) {
-              handleErrorFromUnknown(rollbackError, `rollback-${operation.id}`, 'medium');
+              handleErrorFromUnknown(
+                rollbackError,
+                `rollback-${operation.id}`,
+                ErrorSeverity.MEDIUM
+              );
             }
           }
 
@@ -292,7 +301,7 @@ export class ConcurrentOperationsManager {
         try {
           await operation.rollback(result.data);
         } catch (error) {
-          handleErrorFromUnknown(error, `rollback-${operation.id}`, 'medium');
+          handleErrorFromUnknown(error, `rollback-${operation.id}`, ErrorSeverity.MEDIUM);
           allRolledBack = false;
         }
       }
@@ -364,7 +373,7 @@ export class BatchProcessor<T> {
  */
 export class ConcurrentMap<K, V> {
   private map: Map<K, V> = new Map();
-  private locks: Map<K, Promise<void>> = new Map();
+  private locks: Map<K, Promise<unknown>> = new Map();
 
   /**
    * Get value with concurrent safety

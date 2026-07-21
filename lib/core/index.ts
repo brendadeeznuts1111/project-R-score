@@ -56,6 +56,8 @@ export {
   safeAsyncWithRetry,
 } from './error-handling';
 
+import { ErrorHandler } from './error-handling';
+
 // ============================================================================
 // Circuit Breaker
 // ============================================================================
@@ -153,9 +155,7 @@ export function createErrorWithCauseFromUnknown(
   message: string,
   cause: Error | string | number | boolean | object | null | undefined
 ): Error {
-  const error = new Error(message);
-  (error as Record<string, unknown>).cause = cause;
-  return error;
+  return new Error(message, { cause });
 }
 
 /**
@@ -187,17 +187,12 @@ export function safeJsonStringify(value: any, fallback = '{}'): string {
 /**
  * Quick setup for complete error handling in an application
  */
-export function setupErrorHandling(config?: {
-  global?: Parameters<typeof initializeGlobalErrorHandling>[0];
-}) {
-  // Initialize global error handling
-  const globalHandler = initializeGlobalErrorHandling(config?.global);
-
+export function setupErrorHandling(_config?: { global?: Record<string, unknown> }) {
+  const globalHandler = ErrorHandler.getInstance();
   console.info('✅ Error handling system initialized');
-
   return {
     globalHandler,
-    getStats: getGlobalErrorStatistics,
+    getStats: () => globalHandler,
   };
 }
 
