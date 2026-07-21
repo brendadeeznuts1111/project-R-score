@@ -1,6 +1,6 @@
 // lib/core/concurrent-operations.ts — Safe concurrent operations manager
 
-import { handleError, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
+import { handleErrorFromUnknown, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
 import { type OperationId, asOperationId } from '../types/branded.ts';
 
 /**
@@ -182,7 +182,7 @@ export class ConcurrentOperationsManager {
             try {
               await operation.rollback(result.data);
             } catch (rollbackError) {
-              handleError(rollbackError, `rollback-${operation.id}`, 'medium');
+              handleErrorFromUnknown(rollbackError, `rollback-${operation.id}`, 'medium');
             }
           }
 
@@ -292,7 +292,7 @@ export class ConcurrentOperationsManager {
         try {
           await operation.rollback(result.data);
         } catch (error) {
-          handleError(error, `rollback-${operation.id}`, 'medium');
+          handleErrorFromUnknown(error, `rollback-${operation.id}`, 'medium');
           allRolledBack = false;
         }
       }

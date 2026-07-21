@@ -6,6 +6,8 @@ import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 import { type PipelineId, asPipelineId } from '../types/branded.ts';
 
+type PipelinePayload = object | string | number | boolean | null;
+
 export type TransformOperation =
   | 'compress'
   | 'decompress'
@@ -352,10 +354,14 @@ export class R2TransformPipeline {
   /**
    * Execute a single transformation step
    */
-  private async executeStep(step: TransformStep, data: unknown, sourceKey: string): Promise<any> {
+  private async executeStep(
+    step: TransformStep,
+    data: PipelinePayload,
+    sourceKey: string
+  ): Promise<any> {
     switch (step.operation) {
       case 'compress':
-        return await this.compressData(data, step.config.algorithm);
+        return await this.normalizeCompressedData(data, step.config.algorithm);
 
       case 'decompress':
         return await this.decompressData(data, step.config.algorithm);
@@ -369,7 +375,7 @@ export class R2TransformPipeline {
         return data;
 
       case 'convert-format':
-        return await this.convertFormat(data, step.config.from, step.config.to);
+        return await this.coerceFormat(data, step.config.from, step.config.to);
 
       case 'validate':
         const validator = this.validators.get(step.config.validator);
@@ -388,10 +394,10 @@ export class R2TransformPipeline {
         return await this.aggregateData(data, step.config);
 
       case 'sanitize':
-        return this.sanitizeData(data, step.config.removeFields);
+        return this.normalizeSanitizedData(data, step.config.removeFields);
 
       case 'enrich':
-        return await this.enrichData(data, step.config.enrichments);
+        return await this.normalizeEnrichedData(data, step.config.enrichments);
 
       default:
         throw new Error(`Unknown operation: ${step.operation}`);
@@ -401,7 +407,7 @@ export class R2TransformPipeline {
   /**
    * Compress data
    */
-  private async compressData(data: unknown, algorithm: string): Promise<Buffer> {
+  private async normalizeCompressedData(data: PipelinePayload, algorithm: string): Promise<Buffer> {
     const json = JSON.stringify(data);
     const buffer = Buffer.from(json);
 
@@ -428,7 +434,7 @@ export class R2TransformPipeline {
   /**
    * Convert data format
    */
-  private async convertFormat(data: unknown, from: string, to: string): Promise<any> {
+  private async coerceFormat(data: PipelinePayload, from: string, to: string): Promise<any> {
     if (from === to) return data;
 
     // JSON to CSV
@@ -504,7 +510,7 @@ export class R2TransformPipeline {
   /**
    * Sanitize data by removing sensitive fields
    */
-  private sanitizeData(data: unknown, removeFields: string[]): unknown {
+  private normalizeSanitizedData(data: PipelinePayload, removeFields: string[]): PipelinePayload {
     if (typeof data !== 'object' || data === null) return data;
 
     const sanitized = { ...data };
@@ -518,7 +524,10 @@ export class R2TransformPipeline {
   /**
    * Enrich data with additional information
    */
-  private async enrichData(data: unknown, enrichments: unknown[]): Promise<any> {
+  private async normalizeEnrichedData(
+    data: PipelinePayload,
+    enrichments: PipelinePayload[]
+  ): Promise<any> {
     // In production, would fetch enrichment data from external sources
     return {
       ...data,
@@ -550,7 +559,7 @@ export class R2TransformPipeline {
   /**
    * Write object to R2
    */
-  private async writeObject(bucket: string, key: string, data: unknown): Promise<void> {
+  private async writeObject(bucket: string, key: string, data: PipelinePayload): Promise<void> {
     // In production, would write to R2
     console.info(styled(`  💾 Writing: ${bucket}/${key}`, 'muted'));
   }

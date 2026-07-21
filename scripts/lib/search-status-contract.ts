@@ -85,12 +85,14 @@ export function normalizeWarningCode(value: unknown): string {
   return String(value || '').trim().toLowerCase();
 }
 
-export function warningCodeStatus(code: unknown): StatusLevel {
+export function warningCodeStatus(code: string | number | boolean | null | undefined): StatusLevel {
   const normalized = normalizeWarningCode(code);
   return WARNING_STATUS_MAP[normalized] || 'unknown';
 }
 
-export function mapLoopStageToStatusLevel(status: unknown): StatusLevel {
+export function mapLoopStageToStatusLevel(
+  status: LoopStageStatus | string | null | undefined
+): StatusLevel {
   const normalized = String(status || '').trim().toLowerCase();
   if (normalized === 'pass') return 'ok';
   if (normalized === 'warn') return 'warn';

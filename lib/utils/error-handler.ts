@@ -172,7 +172,7 @@ export async function safeExecute<T>(
 /**
  * Safely extract error message from unknown error type
  */
-export function getErrorMessage(error: unknown): string {
+export function getErrorMessageFromUnknown(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }

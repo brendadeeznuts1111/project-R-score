@@ -128,11 +128,11 @@ export class R2SearchEngine {
   async indexDocument(
     bucket: string,
     key: string,
-    content: unknown,
+    content: object | string | number | boolean | null,
     metadata: Record<string, any> = {}
   ): Promise<void> {
     const id = `${bucket}/${key}`;
-    const contentStr = this.extractText(content);
+    const contentStr = this.parseContentText(content);
 
     const doc: SearchDocument = {
       id,
@@ -432,7 +432,7 @@ export class R2SearchEngine {
     ]);
   }
 
-  private extractText(content: unknown): string {
+  private parseContentText(content: object | string | number | boolean | null): string {
     if (typeof content === 'string') return content;
     if (typeof content === 'object') {
       return JSON.stringify(content, null, 2);
@@ -663,12 +663,20 @@ export class R2SearchEngine {
     };
   }
 
-  private queueForIndexing(bucket: string, key: string, metadata?: unknown): void {
+  private queueForIndexing(
+    bucket: string,
+    key: string,
+    metadata?: Record<string, object | string | number | boolean | null | undefined>
+  ): void {
     // In production, would fetch content and index
     console.info(styled(`📝 Queued for indexing: ${bucket}/${key}`, 'muted'));
   }
 
-  private updateIndex(bucket: string, key: string, metadata?: unknown): void {
+  private updateIndex(
+    bucket: string,
+    key: string,
+    metadata?: Record<string, object | string | number | boolean | null | undefined>
+  ): void {
     this.queueForIndexing(bucket, key, metadata);
   }
 }

@@ -262,7 +262,17 @@ export class CookieInspector {
     };
   }
 
-  private static categorizeCookie(cookie: Cookie, categories: unknown): void {
+  private static categorizeCookie(
+    cookie: Cookie,
+    categories: {
+      session: number;
+      authentication: number;
+      analytics: number;
+      preferences: number;
+      advertising: number;
+      functional: number;
+    }
+  ): void {
     const name = cookie.name.toLowerCase();
 
     if (name.includes('session') || name.includes('sess')) {

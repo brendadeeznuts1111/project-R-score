@@ -68,7 +68,7 @@ export class ProductionCookieManager {
 
       return { cookies, session, responseCookies, alerts };
     } catch (error) {
-      this.metrics.recordError(error);
+      this.metrics.recordErrorFromUnknown(error);
       return {
         cookies: new Map(),
         session: { isGuest: true, id: Bun.randomUUIDv7() },
@@ -371,7 +371,7 @@ export class CookieMetrics {
     this.metrics.sessionValidationFailures++;
   }
 
-  recordError(error: unknown) {
+  recordErrorFromUnknown(_error: unknown) {
     this.metrics.errors++;
   }
 

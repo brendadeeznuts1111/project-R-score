@@ -4,7 +4,7 @@
 // @see BUN-SECURITY-FIXES-INTEGRATION.md
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-import { handleError, ValidationError } from './error-handling';
+import { handleErrorFromUnknown, ValidationError } from './error-handling';
 import { Validator } from './validation';
 
 /**
@@ -68,7 +68,7 @@ export class EnhancedURL {
       // Invalid user input should fail validation without noisy error telemetry.
       // Reserve structured error logging for unexpected internal failures.
       if (!(error instanceof TypeError)) {
-        handleError(error, 'EnhancedURL.parseURL', 'medium');
+        handleErrorFromUnknown(error, 'EnhancedURL.parseURL', 'medium');
       }
       throw new ValidationError(`Invalid URL: ${url}`);
     }
@@ -216,7 +216,7 @@ export class URLHandler {
       throw new ValidationError(`Invalid URL string: Must be no more than ${maxLength} characters`);
     }
 
-    const validation = Validator.string({
+    const validation = Validator.parseString({
       required: true,
       maxLength,
       sanitize: true,

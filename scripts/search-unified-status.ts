@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -142,7 +143,9 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
   ]);
 
   const warnings = Array.isArray(latest?.warnings)
-    ? latest.warnings.map((code: unknown) => normalizeWarningCode(code)).filter(Boolean)
+    ? latest.warnings
+        .map((code: string | number | boolean | null | undefined) => normalizeWarningCode(code))
+        .filter(Boolean)
     : [];
 
   const stages = asLoopStages(loopRaw);

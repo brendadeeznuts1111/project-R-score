@@ -238,7 +238,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
   private async handleErrorAsync(error: Error): Promise<void> {
     try {
       const { EnterpriseErrorHandler } = await import('./core-errors');
-      EnterpriseErrorHandler.getInstance().handleUnknown(error);
+      EnterpriseErrorHandler.getInstance().fromUnknown(error);
     } catch (handlerError) {
       process.stderr.write(`Failed to log to enterprise handler: ${handlerError}\n`);
     }

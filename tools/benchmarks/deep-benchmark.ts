@@ -117,7 +117,7 @@ export class DeepBenchmark {
         fastestNs: Math.min(...durations),
         slowestNs: Math.max(...durations),
         averageNs: durations.reduce((a, b) => a + b, 0) / durations.length,
-        nestedLevels: this.countNestedLevels(nestedData),
+        nestedLevels: this.parseNestedLevelCountFromUnknown(nestedData),
       },
     };
 
@@ -193,18 +193,18 @@ export class DeepBenchmark {
         },
         nestedInsights: results.map(r => ({
           durationNs: r.durationNs,
-          dataStructure: analyzeStructure(r.data),
+          dataStructure: parseStructureFromUnknown(r.data),
         })),
       },
     };
   }
 
-  private countNestedLevels(obj: unknown, current = 0): number {
+  private parseNestedLevelCountFromUnknown(obj: unknown, current = 0): number {
     if (!obj || typeof obj !== 'object') return current;
     let max = current;
     for (const value of Object.values(obj as Record<string, unknown>)) {
       if (value && typeof value === 'object') {
-        max = Math.max(max, this.countNestedLevels(value, current + 1));
+        max = Math.max(max, this.parseNestedLevelCountFromUnknown(value, current + 1));
       }
     }
     return max;
@@ -227,7 +227,7 @@ function percentiles(nums: number[]): Record<string, number> {
   return { p50: at(0.5), p90: at(0.9), p95: at(0.95), p99: at(0.99) };
 }
 
-function analyzeStructure(obj: unknown): StructureAnalysis {
+function parseStructureFromUnknown(obj: unknown): StructureAnalysis {
   if (!obj || typeof obj !== 'object') {
     return { type: typeof obj, value: obj };
   }

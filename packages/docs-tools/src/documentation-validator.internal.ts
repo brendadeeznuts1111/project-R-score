@@ -19,14 +19,14 @@ type PlatformModule = {
   AutoHealer: AutoHealerLike;
 };
 
-function collectPaths(value: unknown, out: string[] = []): string[] {
+function collectPathsFromUnknown(value: unknown, out: string[] = []): string[] {
   if (typeof value === 'string') {
     out.push(value);
     return out;
   }
   if (value && typeof value === 'object') {
     for (const nested of Object.values(value as Record<string, unknown>)) {
-      collectPaths(nested, out);
+      collectPathsFromUnknown(nested, out);
     }
   }
   return out;
@@ -52,7 +52,7 @@ const fallbackConstantValidator: ConstantValidatorLike = {
         break;
       }
       case 'documentation-base-url': {
-        const paths = [...collectPaths(CLI_DOCUMENTATION_URLS), ...collectPaths(BUN_UTILS_URLS)];
+        const paths = [...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS), ...collectPathsFromUnknown(BUN_UTILS_URLS)];
         for (const path of paths) {
           if (!path.startsWith('/docs/')) {
             errors.push(`Non-doc path detected: ${path}`);
@@ -70,7 +70,7 @@ const fallbackConstantValidator: ConstantValidatorLike = {
 
 const fallbackAutoHealer: AutoHealerLike = {
   async healAll(): Promise<{ totalFixes: number }> {
-    const paths = [...collectPaths(CLI_DOCUMENTATION_URLS), ...collectPaths(BUN_UTILS_URLS)];
+    const paths = [...collectPathsFromUnknown(CLI_DOCUMENTATION_URLS), ...collectPathsFromUnknown(BUN_UTILS_URLS)];
     const fixable = paths.filter(p => normalizePath(p) !== p).length;
     return { totalFixes: fixable };
   },

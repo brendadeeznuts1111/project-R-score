@@ -81,6 +81,8 @@ export function getCliColors(noColor: boolean): CliColors {
   };
 }
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
 export interface CliLogger {
   info: (msg: string) => void;
   success: (msg: string) => void;
@@ -88,7 +90,7 @@ export interface CliLogger {
   error: (msg: string) => void;
   verbose: (msg: string) => void;
   section: (title: string) => void;
-  json: (data: unknown) => void;
+  json: (data: JsonValue) => void;
 }
 
 /**
@@ -122,7 +124,7 @@ export function createCliLogger(options: {
     section: (title: string) => {
       if (!quiet) console.info(`\n${colors.cyan}${title}${colors.reset}`);
     },
-    json: (data: unknown) => {
+    json: (data: JsonValue) => {
       if (json) console.info(JSON.stringify(data, null, 2));
     },
   };
@@ -131,7 +133,7 @@ export function createCliLogger(options: {
 export interface TestRecord {
   passed: boolean;
   message: string;
-  details?: unknown;
+  details?: JsonValue;
   timestamp: string;
 }
 
@@ -152,7 +154,7 @@ export interface TestResults {
  */
 export function createTestResults(): {
   testResults: TestResults;
-  recordTest: (name: string, passed: boolean, message: string, details?: unknown) => boolean;
+  recordTest: (name: string, passed: boolean, message: string, details?: JsonValue) => boolean;
 } {
   const testResults: TestResults = {
     timestamp: new Date().toISOString(),
@@ -169,7 +171,7 @@ export function createTestResults(): {
     name: string,
     passed: boolean,
     message: string,
-    details?: unknown
+    details?: JsonValue
   ): boolean => {
     testResults.tests[name] = {
       passed,

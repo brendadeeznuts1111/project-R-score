@@ -254,7 +254,7 @@ export class R2BackupManager {
         manifest,
         status: 'completed',
         size: job.stats.totalSize,
-        checksum: await this.calculateChecksum(manifest),
+        checksum: await this.normalizeChecksumFromData(manifest),
       };
 
       this.snapshots.set(snapshot.id, snapshot);
@@ -675,7 +675,9 @@ export class R2BackupManager {
     return true;
   }
 
-  private async calculateChecksum(data: unknown): Promise<string> {
+  private async normalizeChecksumFromData(
+    data: object | string | number | boolean | null
+  ): Promise<string> {
     const hash = await crypto.subtle.digest(
       'SHA-256',
       new TextEncoder().encode(JSON.stringify(data))

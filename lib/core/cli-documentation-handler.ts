@@ -2,7 +2,7 @@
 
 import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
-import { handleError } from './error-handling';
+import { handleErrorFromUnknown } from './error-handling';
 
 /**
  * CLI Documentation URL Generator
@@ -39,7 +39,7 @@ export class CLIDocumentationHandler {
         ? URLHandler.addFragment(baseURL, URLFragmentUtils.buildFragment(fragment))
         : baseURL;
     } catch (error) {
-      handleError(error, 'CLIDocumentationHandler.generateDocumentationURL', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationHandler.generateDocumentationURL', 'medium');
       return `${this.BASE_URL}/docs/cli`;
     }
   }
@@ -114,7 +114,7 @@ export class CLIDocumentationHandler {
 
       return { valid: false };
     } catch (error) {
-      handleError(error, 'CLIDocumentationHandler.parseDocumentationURL', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationHandler.parseDocumentationURL', 'medium');
       return { valid: false };
     }
   }
@@ -276,7 +276,7 @@ export class CLIDocumentationHandler {
 
       return breadcrumbs;
     } catch (error) {
-      handleError(error, 'CLIDocumentationHandler.generateBreadcrumbs', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationHandler.generateBreadcrumbs', 'medium');
       return [{ name: 'CLI Documentation', url: `${this.BASE_URL}/docs/cli` }];
     }
   }

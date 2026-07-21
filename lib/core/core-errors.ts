@@ -622,6 +622,9 @@ export enum EnterpriseErrorCode {
 // ERROR CLASSES
 // ============================================================================
 
+/** Rejected wire input attached to validation errors (never trusted interior). */
+export type WireRejectValue = string | number | boolean | null | object | undefined;
+
 /**
  * Base enterprise error class
  */
@@ -693,13 +696,13 @@ export class SystemError extends BaseEnterpriseError {
  */
 export class ValidationError extends BaseEnterpriseError {
   public readonly field?: string;
-  public readonly value?: unknown;
+  public readonly value?: WireRejectValue;
 
   constructor(
     code: EnterpriseErrorCode,
     message: string,
     field?: string,
-    value?: unknown,
+    value?: WireRejectValue,
     context?: Record<string, unknown>
   ) {
     super(code, message, SecurityRiskLevel.LOW, context);
@@ -718,7 +721,7 @@ export class ValidationError extends BaseEnterpriseError {
 export class BrandValidationError extends ValidationError {
   public readonly brand: string;
 
-  constructor(brand: string, value: unknown) {
+  constructor(brand: string, value: WireRejectValue) {
     super(
       EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
       `${brand} must be a non-empty string`,
@@ -827,7 +830,7 @@ export class EnterpriseErrorFactory {
     code: EnterpriseErrorCode,
     message: string,
     field?: string,
-    value?: unknown,
+    value?: WireRejectValue,
     context?: Record<string, unknown>
   ): ValidationError {
     return new ValidationError(code, message, field, value, context);
@@ -973,7 +976,7 @@ export class EnterpriseErrorHandler {
   /**
    * Handle unknown error
    */
-  public handleUnknown(error: unknown): void {
+  public fromUnknown(error: unknown): void {
     const enterpriseError = EnterpriseErrorFactory.fromUnknown(error);
     this.handleError(enterpriseError);
   }
@@ -986,8 +989,8 @@ export class EnterpriseErrorHandler {
 /**
  * Handle error with centralized handler
  */
-export const handleError = (error: unknown): void => {
-  EnterpriseErrorHandler.getInstance().handleUnknown(error);
+export const handleErrorFromUnknown = (error: unknown): void => {
+  EnterpriseErrorHandler.getInstance().fromUnknown(error);
 };
 
 /**
@@ -1008,7 +1011,7 @@ export const createValidationError = (
   code: EnterpriseErrorCode,
   message: string,
   field?: string,
-  value?: unknown,
+  value?: WireRejectValue,
   context?: Record<string, unknown>
 ): ValidationError => {
   return EnterpriseErrorFactory.createValidationError(code, message, field, value, context);

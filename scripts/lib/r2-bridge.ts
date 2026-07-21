@@ -62,7 +62,7 @@ export function resolveR2BridgeConfig(input?: {
 export async function uploadJsonToR2(
   r2: R2BridgeConfig,
   key: string,
-  data: unknown
+  data: object | string | number | boolean | null
 ): Promise<void> {
   const writeOpts: Record<string, unknown> = {
     bucket: r2.bucket,
@@ -75,7 +75,9 @@ export async function uploadJsonToR2(
   await S3Client.write(key, JSON.stringify(data, null, 2), writeOpts);
 }
 
-export function encodeBridgePayload(payload: unknown): Uint8Array {
+export function coerceBridgePayload(
+  payload: object | string | number | boolean | null
+): Uint8Array {
   assertSafeZstdRuntime();
   const compressed = Bun.zstdCompressSync(JSON.stringify(payload));
   return Uint8Array.from([0x01, ...compressed]);
@@ -98,9 +100,9 @@ export function decodeBridgePayload(input: Uint8Array): unknown {
 export async function uploadCompressedStateToR2(
   r2: R2BridgeConfig,
   key: string,
-  payload: unknown
+  payload: object | string | number | boolean | null
 ): Promise<void> {
-  const encoded = encodeBridgePayload(payload);
+  const encoded = coerceBridgePayload(payload);
   const writeOpts: Record<string, unknown> = {
     bucket: r2.bucket,
     endpoint: r2.endpoint,

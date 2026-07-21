@@ -22,7 +22,7 @@ const SYNC_MULTIPLIER = 60 * 1000; // Convert minutes to milliseconds
 const DEFAULT_SYNC_INTERVAL = 30; // Default sync interval in minutes
 
 // Error logging utility
-const logError = (context: string, error: unknown): void => {
+const logError = (context: string, error: Error | string | Record<string, unknown>): void => {
   console.error(`[WikiIntegration:${context}]`, error);
 };
 

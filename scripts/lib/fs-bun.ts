@@ -86,10 +86,12 @@ export async function writeText(path: string, content: string): Promise<number> 
   return Bun.write(path, content);
 }
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
 /** JSON.stringify + Bun.write (trailing newline when pretty). */
 export async function writeJson(
   path: string,
-  value: unknown,
+  value: JsonValue,
   space: number | undefined = 2
 ): Promise<number> {
   const body =

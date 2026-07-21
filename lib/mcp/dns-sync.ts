@@ -68,7 +68,7 @@ export class DNSSynchronization {
   /**
    * Brand a zone id from API/wire JSON (fail closed).
    */
-  brandZoneId(raw: unknown): ZoneId {
+  parseZoneIdFromWire(raw: unknown): ZoneId {
     return parseZoneId(raw);
   }
 

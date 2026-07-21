@@ -83,11 +83,11 @@ export class ErrorHandler {
    * Handle and log errors with proper sanitization
    */
   handle(
-    error: unknown,
+    error: Error | string | number | boolean | object | null | undefined,
     context: string,
     severity: ErrorSeverity = ErrorSeverity.MEDIUM
   ): R2IntegrationError {
-    const sanitizedError = this.sanitizeError(error);
+    const sanitizedError = this.normalizeError(error);
     const errorCode = this.generateErrorCode(sanitizedError, context);
 
     // Track error frequency
@@ -107,7 +107,9 @@ export class ErrorHandler {
   /**
    * Sanitize error to prevent sensitive data leakage
    */
-  private sanitizeError(error: unknown): R2IntegrationError {
+  private normalizeError(
+    error: Error | string | number | boolean | object | null | undefined
+  ): R2IntegrationError {
     if (error instanceof R2IntegrationError) {
       return error;
     }
@@ -226,8 +228,8 @@ export class ErrorHandler {
 /**
  * Standardized error handler function
  */
-export function handleError(
-  error: unknown,
+export function handleErrorFromUnknown(
+  error: Error | string | number | boolean | object | null | undefined,
   context: string,
   severity: ErrorSeverity = ErrorSeverity.MEDIUM
 ): R2IntegrationError {
@@ -267,7 +269,7 @@ export async function safeAsyncWithRetry<T>(
       return await operation();
     } catch (error) {
       if (attempt === maxRetries) {
-        handleError(error, context, ErrorSeverity.HIGH);
+        handleErrorFromUnknown(error, context, ErrorSeverity.HIGH);
         return fallback;
       }
 

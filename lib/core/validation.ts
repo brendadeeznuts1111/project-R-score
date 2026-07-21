@@ -42,7 +42,7 @@ export class InputSanitizer {
   /**
    * Sanitize string input
    */
-  static sanitizeString(input: unknown): string {
+  static normalizeString(input: unknown): string {
     if (typeof input !== 'string') {
       return String(input || '');
     }
@@ -58,7 +58,7 @@ export class InputSanitizer {
   /**
    * Sanitize number input
    */
-  static sanitizeNumber(input: unknown): number {
+  static normalizeNumber(input: unknown): number {
     const num = Number(input);
     return isNaN(num) ? 0 : num;
   }
@@ -66,7 +66,7 @@ export class InputSanitizer {
   /**
    * Sanitize boolean input
    */
-  static sanitizeBoolean(input: unknown): boolean {
+  static normalizeBoolean(input: unknown): boolean {
     if (typeof input === 'boolean') return input;
     if (typeof input === 'string') {
       return input.toLowerCase() === 'true';
@@ -77,7 +77,7 @@ export class InputSanitizer {
   /**
    * Sanitize array input
    */
-  static sanitizeArray(input: unknown): any[] {
+  static normalizeArray(input: unknown): any[] {
     if (!Array.isArray(input)) {
       return [];
     }
@@ -88,7 +88,7 @@ export class InputSanitizer {
   /**
    * Sanitize object input
    */
-  static sanitizeObject(input: unknown): Record<string, any> {
+  static normalizeObject(input: unknown): Record<string, any> {
     if (!input || typeof input !== 'object' || Array.isArray(input)) {
       return {};
     }
@@ -113,7 +113,7 @@ export class Validator {
   /**
    * Validate string input
    */
-  static string(
+  static parseString(
     options: {
       required?: boolean;
       minLength?: number;
@@ -148,7 +148,7 @@ export class Validator {
 
       // Sanitize if requested
       if (options.sanitize) {
-        value = InputSanitizer.sanitizeString(input);
+        value = InputSanitizer.normalizeString(input);
         if (value !== input) {
           warnings.push('Input was sanitized');
         }
@@ -185,7 +185,7 @@ export class Validator {
   /**
    * Validate number input
    */
-  static number(
+  static parseNumber(
     options: {
       required?: boolean;
       min?: number;
@@ -215,7 +215,7 @@ export class Validator {
       }
 
       if (options.sanitize) {
-        const sanitized = InputSanitizer.sanitizeNumber(input);
+        const sanitized = InputSanitizer.normalizeNumber(input);
         if (sanitized !== value) {
           value = sanitized;
           warnings.push('Input was sanitized');
@@ -246,7 +246,7 @@ export class Validator {
   /**
    * Validate boolean input
    */
-  static boolean(
+  static parseBoolean(
     options: {
       required?: boolean;
       sanitize?: boolean;
@@ -276,7 +276,7 @@ export class Validator {
       }
 
       if (options.sanitize) {
-        const sanitized = InputSanitizer.sanitizeBoolean(input);
+        const sanitized = InputSanitizer.normalizeBoolean(input);
         if (sanitized !== value) {
           value = sanitized;
           warnings.push('Input was sanitized');
@@ -295,7 +295,7 @@ export class Validator {
   /**
    * Validate array input
    */
-  static array<T>(
+  static parseArray<T>(
     itemValidator: Validator<T>,
     options: {
       required?: boolean;
@@ -325,7 +325,7 @@ export class Validator {
       let value = input;
 
       if (options.sanitize) {
-        value = InputSanitizer.sanitizeArray(input);
+        value = InputSanitizer.normalizeArray(input);
         if (value.length !== input.length) {
           warnings.push('Array was sanitized');
         }
@@ -365,7 +365,7 @@ export class Validator {
   /**
    * Validate object input against schema
    */
-  static object(schema: ValidationSchema): Validator<Record<string, any>> {
+  static parseObject(schema: ValidationSchema): Validator<Record<string, any>> {
     return (input: unknown): ValidationResult<Record<string, any>> => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -386,7 +386,7 @@ export class Validator {
         // Create validator based on type
         switch (rules.type) {
           case 'string':
-            validator = Validator.string({
+            validator = Validator.parseString({
               required: rules.required,
               minLength: rules.minLength,
               maxLength: rules.maxLength,
@@ -396,7 +396,7 @@ export class Validator {
             });
             break;
           case 'number':
-            validator = Validator.number({
+            validator = Validator.parseNumber({
               required: rules.required,
               min: rules.min,
               max: rules.max,
@@ -404,22 +404,22 @@ export class Validator {
             });
             break;
           case 'boolean':
-            validator = Validator.boolean({
+            validator = Validator.parseBoolean({
               required: rules.required,
               sanitize: rules.sanitize,
             });
             break;
           case 'array':
-            validator = Validator.array(Validator.string(), {
+            validator = Validator.parseArray(Validator.parseString(), {
               required: rules.required,
               sanitize: rules.sanitize,
             });
             break;
           case 'object':
-            validator = Validator.object({});
+            validator = Validator.parseObject({});
             break;
           default:
-            validator = Validator.string({ required: rules.required, sanitize: rules.sanitize });
+            validator = Validator.parseString({ required: rules.required, sanitize: rules.sanitize });
         }
 
         // Apply custom validator if provided
@@ -451,7 +451,7 @@ export class Validator {
   /**
    * Create custom validator
    */
-  static custom<T>(
+  static parseCustom<T>(
     validatorFn: (input: unknown) => { isValid: boolean; data?: T; error?: string },
     options: { required?: boolean } = {}
   ): Validator<T> {
@@ -487,7 +487,7 @@ export class Validator {
 /**
  * Validate request object structure
  */
-export function validateRequest(request: unknown): request is {
+export function isValidRequest(request: unknown): request is {
   headers?: { authorization?: string; [key: string]: any };
   method?: string;
   url?: string;
@@ -510,8 +510,7 @@ export function validateRequest(request: unknown): request is {
 /**
  * Validate R2 key format
  */
-export const validateR2Key = Validator.custom(
-  (input: unknown) => {
+function parseR2KeyWire(input: unknown): { isValid: boolean; data?: string; error?: string } {
     if (typeof input !== 'string') {
       return { isValid: false, error: 'R2 key must be a string' };
     }
@@ -530,14 +529,14 @@ export const validateR2Key = Validator.custom(
     }
 
     return { isValid: true, data: input };
-  },
-  { required: true }
-);
+  }
+
+export const parseR2Key = Validator.parseCustom(parseR2KeyWire, { required: true });
 
 /**
  * Validate domain name
  */
-export const validateDomain = Validator.string({
+export const parseDomain = Validator.parseString({
   required: true,
   minLength: 3,
   maxLength: 253,
@@ -549,7 +548,7 @@ export const validateDomain = Validator.string({
 /**
  * Validate evidence ID
  */
-export const validateEvidenceId = Validator.string({
+export const parseEvidenceId = Validator.parseString({
   required: true,
   minLength: 1,
   maxLength: 100,

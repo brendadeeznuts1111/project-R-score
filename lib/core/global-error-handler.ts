@@ -144,7 +144,7 @@ export class GlobalErrorHandler {
     console.error('======================\n');
 
     // Log to enterprise error handler
-    EnterpriseErrorHandler.getInstance().handleUnknown(enhancedError);
+    EnterpriseErrorHandler.getInstance().fromUnknown(enhancedError);
 
     // Call custom handler if provided
     if (this.config.onUncaughtException) {
@@ -163,7 +163,10 @@ export class GlobalErrorHandler {
   /**
    * Handle unhandled promise rejections
    */
-  private handleUnhandledRejection(reason: unknown, promise: Promise<unknown>): void {
+  private handleUnhandledRejection(
+    reason: Error | string | number | boolean | object | null | undefined,
+    promise: Promise<unknown>
+  ): void {
     this.state.unhandledRejections++;
     this.state.lastErrorTime = Date.now();
 
@@ -178,7 +181,7 @@ export class GlobalErrorHandler {
     console.error('=================================\n');
 
     // Log to enterprise error handler
-    EnterpriseErrorHandler.getInstance().handleUnknown(enhancedError);
+    EnterpriseErrorHandler.getInstance().fromUnknown(enhancedError);
 
     // Call custom handler if provided
     if (this.config.onUnhandledRejection) {

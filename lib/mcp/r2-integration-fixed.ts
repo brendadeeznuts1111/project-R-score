@@ -3,7 +3,7 @@
 
 import { styled } from '../theme/colors';
 import {
-  handleError,
+  handleErrorFromUnknown,
   safeAsync,
   safeAsyncWithRetry,
   R2ConnectionError,
@@ -11,7 +11,7 @@ import {
   ErrorSeverity,
 } from '../core/error-handling';
 import { type UserId } from '../types/branded.ts';
-import { validateR2Key } from '../core/validation';
+import { parseR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
 import { safeConcurrent } from '../core/concurrent-operations';
 import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler';
@@ -103,7 +103,7 @@ export class R2MCPIntegration {
       this.initialized = true;
       console.info(styled('✅ R2 integration initialized', 'success'));
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.initialize', ErrorSeverity.CRITICAL);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.initialize', ErrorSeverity.CRITICAL);
       throw error;
     }
   }
@@ -116,7 +116,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const keyValidation = validateR2Key(`mcp/diagnoses/${diagnosis.id}.json`);
+      const keyValidation = parseR2Key(`mcp/diagnoses/${diagnosis.id}.json`);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid diagnosis key: ${keyValidation.errors.join(', ')}`);
       }
@@ -131,7 +131,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeDiagnosis', ErrorSeverity.HIGH);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.storeDiagnosis', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -144,7 +144,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const keyValidation = validateR2Key(`mcp/audits/${audit.id}.json`);
+      const keyValidation = parseR2Key(`mcp/audits/${audit.id}.json`);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid audit key: ${keyValidation.errors.join(', ')}`);
       }
@@ -159,7 +159,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeAuditEntry', ErrorSeverity.HIGH);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.storeAuditEntry', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -205,7 +205,7 @@ export class R2MCPIntegration {
         similar.map(
           (entry: any) => () =>
             this.getJSON(entry.key).catch(error => {
-              handleError(error, `fetchAudit-${entry.key}`, ErrorSeverity.MEDIUM);
+              handleErrorFromUnknown(error, `fetchAudit-${entry.key}`, ErrorSeverity.MEDIUM);
               return null;
             })
         ),
@@ -225,7 +225,7 @@ export class R2MCPIntegration {
 
       return fullEntries;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.searchAudits', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.searchAudits', ErrorSeverity.MEDIUM);
       return [];
     }
   }
@@ -271,7 +271,7 @@ export class R2MCPIntegration {
         similar.map(
           (entry: any) => () =>
             this.getJSON(entry.key).catch(error => {
-              handleError(error, `fetchDiagnosis-${entry.key}`, ErrorSeverity.MEDIUM);
+              handleErrorFromUnknown(error, `fetchDiagnosis-${entry.key}`, ErrorSeverity.MEDIUM);
               return null;
             })
         ),
@@ -291,7 +291,7 @@ export class R2MCPIntegration {
 
       return fullEntries;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.searchDiagnoses', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.searchDiagnoses', ErrorSeverity.MEDIUM);
       return [];
     }
   }
@@ -304,7 +304,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const keyValidation = validateR2Key(`mcp/metrics/${metrics.id}.json`);
+      const keyValidation = parseR2Key(`mcp/metrics/${metrics.id}.json`);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid metrics key: ${keyValidation.errors.join(', ')}`);
       }
@@ -319,7 +319,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeMetrics', ErrorSeverity.HIGH);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.storeMetrics', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -332,7 +332,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate key
-      const keyValidation = validateR2Key(key);
+      const keyValidation = parseR2Key(key);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid key: ${keyValidation.errors.join(', ')}`);
       }
@@ -361,7 +361,7 @@ export class R2MCPIntegration {
 
       return data;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.getJSON', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.getJSON', ErrorSeverity.MEDIUM);
       return null;
     }
   }
@@ -374,7 +374,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate key
-      const keyValidation = validateR2Key(key);
+      const keyValidation = parseR2Key(key);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid key: ${keyValidation.errors.join(', ')}`);
       }
@@ -393,7 +393,7 @@ export class R2MCPIntegration {
 
       return validatedKey;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.putJSON', ErrorSeverity.HIGH);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.putJSON', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -406,7 +406,7 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate key
-      const keyValidation = validateR2Key(key);
+      const keyValidation = parseR2Key(key);
       if (!keyValidation.isValid) {
         throw new R2DataError(`Invalid key for signed URL: ${keyValidation.errors.join(', ')}`);
       }
@@ -437,7 +437,7 @@ export class R2MCPIntegration {
 
       return urlWithFragment;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.generateSignedURL', ErrorSeverity.HIGH);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.generateSignedURL', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -486,7 +486,7 @@ export class R2MCPIntegration {
 
       return { valid: true, service, fragment };
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.parseFactoryWagerURL', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.parseFactoryWagerURL', ErrorSeverity.MEDIUM);
       return { valid: false };
     }
   }
@@ -514,7 +514,7 @@ export class R2MCPIntegration {
         },
       };
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.getConfigStatus', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.getConfigStatus', ErrorSeverity.MEDIUM);
       return { connected: false, config: {} };
     }
   }
@@ -553,7 +553,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['diagnoses', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateDiagnosisIndex', ErrorSeverity.LOW);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.updateDiagnosisIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -591,7 +591,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['audits', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateAuditIndex', ErrorSeverity.LOW);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.updateAuditIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -632,7 +632,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['metrics', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateMetricsIndex', ErrorSeverity.LOW);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.updateMetricsIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -680,7 +680,7 @@ export class R2MCPIntegration {
 
       return retrieved && retrieved.test === true;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.testConnection', ErrorSeverity.MEDIUM);
+      handleErrorFromUnknown(error, 'R2MCPIntegration.testConnection', ErrorSeverity.MEDIUM);
       return false;
     }
   }

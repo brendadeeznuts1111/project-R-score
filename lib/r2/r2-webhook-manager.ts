@@ -5,7 +5,7 @@
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { type WebhookId, asWebhookId } from '../types/branded.ts';
-import { r2EventSystem } from './r2-event-system';
+import { r2EventSystem, type R2Event } from './r2-event-system';
 
 export type WebhookEvent =
   | 'object:created'
@@ -218,7 +218,7 @@ export class R2WebhookManager {
   /**
    * Route event to matching webhooks
    */
-  private routeEvent(event: unknown): void {
+  private routeEvent(event: R2Event): void {
     for (const webhook of this.webhooks.values()) {
       if (webhook.status !== 'active') continue;
 
@@ -284,7 +284,7 @@ export class R2WebhookManager {
   /**
    * Create delivery
    */
-  private createDelivery(webhookId: WebhookId, event: unknown): WebhookDelivery {
+  private createDelivery(webhookId: WebhookId, event: R2Event): WebhookDelivery {
     const delivery: WebhookDelivery = {
       id: `del-${Date.now()}-${Bun.randomUUIDv7().slice(0, 8)}`,
       webhookId,
@@ -420,7 +420,10 @@ export class R2WebhookManager {
   /**
    * Generate HMAC signature
    */
-  private generateSignature(payload: unknown, secret: string): string {
+  private generateSignature(
+    payload: object | string | number | boolean | null,
+    secret: string
+  ): string {
     const data = JSON.stringify(payload);
     // In production, use proper HMAC
     return `sha256=${Bun.hash(data + secret).toString(16)}`;
@@ -429,7 +432,11 @@ export class R2WebhookManager {
   /**
    * Verify webhook signature
    */
-  verifySignature(payload: unknown, signature: string, secret: string): boolean {
+  verifySignature(
+    payload: object | string | number | boolean | null,
+    signature: string,
+    secret: string
+  ): boolean {
     const expected = this.generateSignature(payload, secret);
     return signature === expected;
   }

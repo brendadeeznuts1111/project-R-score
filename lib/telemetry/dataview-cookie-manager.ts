@@ -37,6 +37,8 @@ interface CookieOptions {
   secure?: boolean;
 }
 
+type SessionEventData = Record<string, string | number | boolean | null>;
+
 export class DataViewCookieManager {
   private db: Database;
   private serializer: DataViewProfileSerializer;
@@ -202,7 +204,7 @@ export class DataViewCookieManager {
   async recordSessionEvent(
     sessionId: string, // brand-ok — public boundary accepts plain string; branded internally via asSessionId
     eventType: string,
-    eventData: unknown
+    eventData: SessionEventData
   ): Promise<void> {
     const brandedSessionId = asSessionId(sessionId);
     const eventBuffer = this.serializer.serialize(eventData, {

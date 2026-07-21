@@ -17,6 +17,8 @@ export type ToolCallResult = {
   isError?: boolean;
 };
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
 type ClientFraming = 'content-length' | 'ndjson';
 
 /** Framing detected from the client's input; responses mirror it. Default: Content-Length. */
@@ -27,7 +29,7 @@ export function stdioFraming(): ClientFraming {
   return Bun.env.DX_MCP_NDJSON === '1' ? 'ndjson' : clientFraming;
 }
 
-export function toolJson(data: unknown, pretty = true): ToolCallResult {
+export function toolJson(data: JsonValue, pretty = true): ToolCallResult {
   return {
     content: [
       {
@@ -44,8 +46,8 @@ export function toolText(text: string, isError = false): ToolCallResult {
 
 export function rpcOk(
   id: number | string | undefined,
-  result: unknown
-): JsonRpcMessage & { result: unknown } {
+  result: JsonValue
+): JsonRpcMessage & { result: JsonValue } {
   return { jsonrpc: '2.0', id, result };
 }
 

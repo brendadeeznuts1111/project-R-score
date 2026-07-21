@@ -28,7 +28,7 @@ function isLocalMode(): boolean {
  */
 export async function uploadToR2(
   key: string,
-  data: unknown,
+  data: object | string | number | boolean | null,
   options: R2UploadOptions = {}
 ): Promise<void> {
   try {

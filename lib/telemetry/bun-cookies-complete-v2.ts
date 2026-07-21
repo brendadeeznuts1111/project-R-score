@@ -539,7 +539,7 @@ export class CookieStore {
 
   async set(
     key: string,
-    value: unknown,
+    value: string | number | boolean | null | Record<string, string | number | boolean | null>,
     ttl: number = 60 * 60 * 24 * 7 // 1 week default
   ): Promise<void> {
     const expires = Date.now() + ttl * 1000;

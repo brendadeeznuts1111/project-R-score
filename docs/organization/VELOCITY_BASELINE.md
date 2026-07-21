@@ -48,7 +48,7 @@ Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 | `path` / `node:path` in `lib/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` staged) |
 | `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
 
-Next single era (not started): `harness/no-unknown-function-param` burn (~88 warn + 28 error on strict paths) — staged `--max-warnings 0` already ratchets on touch.
+Next single era (not started): expand day-loop `type-check` into remaining `lib/docs/**` debt (isolated).
 
 ## Import / Bun-native ratchet (done)
 
@@ -58,6 +58,7 @@ Next single era (not started): `harness/no-unknown-function-param` burn (~88 war
 | `scripts/pre-commit-harness.ts` | `--max-warnings` **500 → 0** on staged harness files |
 | Burn slice | Removed remaining restricted import/syntax sites under harness paths (fs/crypto → Bun) |
 | `bun/prefer-bun-env` + `bun/prefer-import-meta-main` | Burned under harness paths → **error** in `config/eslint/plugin-bun` |
+| `harness/no-unknown-function-param` | Burned under harness paths → **error** in `config/eslint/plugin-harness` (parse*/\*FromUnknown allowlist) |
 
 ## Timing artifact
 

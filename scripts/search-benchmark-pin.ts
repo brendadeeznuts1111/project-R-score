@@ -183,7 +183,7 @@ TREND (env):
 `);
 }
 
-export function num(input: unknown, fallback = 0): number {
+export function coerceNum(input: string | number | boolean | null | undefined, fallback = 0): number {
   const n = Number(input);
   return Number.isFinite(n) ? n : fallback;
 }
@@ -227,17 +227,17 @@ export function toBaseline(
       queryPack: String(snapshot.queryPack || ''),
     },
     strict: {
-      latencyP95Ms: num(strict.latencyP95Ms),
-      peakHeapUsedMB: num(strict.peakHeapUsedMB),
-      peakRssMB: num(strict.peakRssMB),
-      qualityScore: num(strict.qualityScore),
-      reliabilityPct: num(strict.avgUniqueFamilyPct),
+      latencyP95Ms: coerceNum(strict.latencyP95Ms),
+      peakHeapUsedMB: coerceNum(strict.peakHeapUsedMB),
+      peakRssMB: coerceNum(strict.peakRssMB),
+      qualityScore: coerceNum(strict.qualityScore),
+      reliabilityPct: coerceNum(strict.avgUniqueFamilyPct),
     },
     coverage: {
-      files: num(snapshot.coverage?.files),
-      lines: num(snapshot.coverage?.lines),
-      uniqueFiles: num(snapshot.coverage?.uniqueFiles),
-      uniqueLines: num(snapshot.coverage?.uniqueLines),
+      files: coerceNum(snapshot.coverage?.files),
+      lines: coerceNum(snapshot.coverage?.lines),
+      uniqueFiles: coerceNum(snapshot.coverage?.uniqueFiles),
+      uniqueLines: coerceNum(snapshot.coverage?.uniqueLines),
     },
   };
 }
@@ -250,16 +250,16 @@ export async function readJson<T>(path: string): Promise<T> {
 export function thresholds(): CompareThresholds {
   return {
     fail: {
-      maxP95RegressionMs: num(Bun.env.SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS, 75),
-      maxHeapRegressionMB: num(Bun.env.SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB, 8),
-      minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_QUALITY_DELTA, -1),
-      minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA, -1.5),
+      maxP95RegressionMs: coerceNum(Bun.env.SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS, 75),
+      maxHeapRegressionMB: coerceNum(Bun.env.SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB, 8),
+      minQualityDelta: coerceNum(Bun.env.SEARCH_BENCH_PIN_MIN_QUALITY_DELTA, -1),
+      minReliabilityDelta: coerceNum(Bun.env.SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA, -1.5),
     },
     warn: {
-      maxP95RegressionMs: num(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_P95_REGRESSION_MS, 40),
-      maxHeapRegressionMB: num(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_HEAP_REGRESSION_MB, 4),
-      minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA, -0.5),
-      minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA, -0.75),
+      maxP95RegressionMs: coerceNum(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_P95_REGRESSION_MS, 40),
+      maxHeapRegressionMB: coerceNum(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_HEAP_REGRESSION_MB, 4),
+      minQualityDelta: coerceNum(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA, -0.5),
+      minReliabilityDelta: coerceNum(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA, -0.75),
     },
   };
 }
@@ -273,10 +273,10 @@ function parseBoolEnv(name: string, fallback: boolean): boolean {
 }
 
 function trendConfig(): TrendGateConfig {
-  const window = Math.max(2, Math.min(20, num(Bun.env.SEARCH_BENCH_PIN_TREND_WINDOW, 5)));
+  const window = Math.max(2, Math.min(20, coerceNum(Bun.env.SEARCH_BENCH_PIN_TREND_WINDOW, 5)));
   const minSamples = Math.max(
     2,
-    Math.min(window, num(Bun.env.SEARCH_BENCH_PIN_TREND_MIN_SAMPLES, 3))
+    Math.min(window, coerceNum(Bun.env.SEARCH_BENCH_PIN_TREND_MIN_SAMPLES, 3))
   );
   return {
     enabled: parseBoolEnv('SEARCH_BENCH_PIN_TREND_ENABLED', true),
@@ -304,11 +304,11 @@ function toTrendStrictMetrics(input: {
   reliabilityPct: number;
 }): TrendStrictMetrics {
   return {
-    latencyP95Ms: num(input.latencyP95Ms),
-    peakHeapUsedMB: num(input.peakHeapUsedMB),
-    peakRssMB: num(input.peakRssMB),
-    qualityScore: num(input.qualityScore),
-    reliabilityPct: num(input.reliabilityPct),
+    latencyP95Ms: coerceNum(input.latencyP95Ms),
+    peakHeapUsedMB: coerceNum(input.peakHeapUsedMB),
+    peakRssMB: coerceNum(input.peakRssMB),
+    qualityScore: coerceNum(input.qualityScore),
+    reliabilityPct: coerceNum(input.reliabilityPct),
   };
 }
 
@@ -727,11 +727,11 @@ async function collectTrendSamples(
       const strict = findStrictProfile(snap);
       samples.push(
         toTrendStrictMetrics({
-          latencyP95Ms: num(strict.latencyP95Ms),
-          peakHeapUsedMB: num(strict.peakHeapUsedMB),
-          peakRssMB: num(strict.peakRssMB),
-          qualityScore: num(strict.qualityScore),
-          reliabilityPct: num(strict.avgUniqueFamilyPct),
+          latencyP95Ms: coerceNum(strict.latencyP95Ms),
+          peakHeapUsedMB: coerceNum(strict.peakHeapUsedMB),
+          peakRssMB: coerceNum(strict.peakRssMB),
+          qualityScore: coerceNum(strict.qualityScore),
+          reliabilityPct: coerceNum(strict.avgUniqueFamilyPct),
         })
       );
     } catch {

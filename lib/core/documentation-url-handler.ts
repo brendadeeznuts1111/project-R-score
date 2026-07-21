@@ -4,7 +4,7 @@ import { DOCS, DOC_PATHS, URL_PATTERNS } from '../docs/reference';
 import { BUN_UTILS_URLS, UtilsCategory } from '../docs/constants/utils';
 import { CLI_DOCUMENTATION_URLS, CLICategory } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
-import { handleError } from './error-handling';
+import { handleErrorFromUnknown } from './error-handling';
 
 /**
  * Documentation URL types
@@ -90,7 +90,7 @@ export class DocumentationURLHandler {
 
       return url;
     } catch (error) {
-      handleError(error, 'DocumentationURLHandler.generateDocumentationURL', 'medium');
+      handleErrorFromUnknown(error, 'DocumentationURLHandler.generateDocumentationURL', 'medium');
       return this.BASE_URLS.bun;
     }
   }
@@ -364,7 +364,7 @@ export class DocumentationURLHandler {
 
       return breadcrumbs;
     } catch (error) {
-      handleError(error, 'DocumentationURLHandler.generateBreadcrumbs', 'medium');
+      handleErrorFromUnknown(error, 'DocumentationURLHandler.generateBreadcrumbs', 'medium');
       return [{ name: 'Documentation', url: 'https://bun.sh/docs', type: 'bun' }];
     }
   }

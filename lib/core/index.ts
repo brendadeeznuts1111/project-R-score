@@ -24,7 +24,7 @@ export {
   EnterpriseErrorHandler,
 
   // Convenience functions
-  handleError,
+  handleErrorFromUnknown,
   createSystemError,
   createValidationError,
   createNetworkError,
@@ -51,7 +51,7 @@ export {
   ErrorHandler,
 
   // Utility functions
-  handleError as handleR2Error,
+  handleErrorFromUnknown as handleR2Error,
   safeAsync,
   safeAsyncWithRetry,
 } from './error-handling';
@@ -184,7 +184,7 @@ export {
 /**
  * Get error message from unknown error type safely
  */
-export function getErrorMessage(error: unknown): string {
+export function getErrorMessageFromUnknown(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
@@ -207,7 +207,10 @@ export function isErrorType<T extends Error>(
 /**
  * Create error with cause chain
  */
-export function createErrorWithCause(message: string, cause: unknown): Error {
+export function createErrorWithCauseFromUnknown(
+  message: string,
+  cause: Error | string | number | boolean | object | null | undefined
+): Error {
   const error = new Error(message);
   (error as Record<string, unknown>).cause = cause;
   return error;
@@ -259,9 +262,9 @@ export function setupErrorHandling(config?: {
 // Default export for convenience
 export default {
   setupErrorHandling,
-  getErrorMessage,
+  getErrorMessageFromUnknown,
   isErrorType,
-  createErrorWithCause,
+  createErrorWithCauseFromUnknown,
   safeJsonParse,
   safeJsonStringify,
 };

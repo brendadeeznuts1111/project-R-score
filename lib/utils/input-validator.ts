@@ -20,8 +20,10 @@ export interface ValidationResult {
   sanitized?: boolean;
 }
 
+type WireInputValue = string | number | boolean | null | undefined | object;
+
 export interface InputValidator {
-  validate(value: unknown, rules: ValidationRule): ValidationResult;
+  validate(value: WireInputValue, rules: ValidationRule): ValidationResult;
   sanitize(value: string): string;
   validateURL(value: string): ValidationResult;
   validateKey(value: string): ValidationResult;
@@ -44,7 +46,7 @@ export class SecureInputValidator implements InputValidator {
   /**
    * Validate input against provided rules
    */
-  validate(value: unknown, rules: ValidationRule): ValidationResult {
+  validate(value: WireInputValue, rules: ValidationRule): ValidationResult {
     const errors: string[] = [];
     let processedValue: string | undefined;
     let wasSanitized = false;

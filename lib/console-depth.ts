@@ -99,14 +99,14 @@ export type InspectOptions = {
 };
 
 /**
- * Bun.inspect with the project depth + TTY-aware colors applied.
+ * Wire-edge Bun.inspect — accepts runtime `unknown` before typed use inward.
  * Only official BunInspectOptions fields are exposed — runtime-verified
  * on Bun 1.4.0: `getters`, `maxArrayLength`, and `maxStringLength` are
  * silently ignored by Bun.inspect, so they are deliberately absent.
  * @see https://bun.com/docs/runtime/utils#bun-inspect
  * @see https://bun.com/reference/bun/BunInspectOptions
  */
-export function inspect(value: unknown, options: InspectOptions = {}): string {
+export function inspectFromUnknown(value: unknown, options: InspectOptions = {}): string {
   return Bun.inspect(value, {
     depth: options.depth ?? getConsoleDepth(),
     colors: options.colors ?? shouldColor(),
@@ -115,21 +115,34 @@ export function inspect(value: unknown, options: InspectOptions = {}): string {
   });
 }
 
+/** Bun.inspect with the project depth + TTY-aware colors applied. */
+export function inspect<T>(value: T, options: InspectOptions = {}): string {
+  return inspectFromUnknown(value, options);
+}
+
 /**
  * console.log replacement: project depth, colors only on a real TTY.
  * @see https://bun.com/docs/runtime/utils#bun-inspect
  * @see https://bun.com/docs/runtime/console
  */
-export function logDepth(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspect(value, options));
+export function logDepthFromUnknown(value: unknown, options: InspectOptions = {}): void {
+  console.info(inspectFromUnknown(value, options));
+}
+
+export function logDepth<T>(value: T, options: InspectOptions = {}): void {
+  logDepthFromUnknown(value, options);
 }
 
 /**
  * Single-line compact log for high-frequency output (hot paths, watch loops).
  * @see https://bun.com/docs/runtime/utils#bun-inspect — `compact` option
  */
-export function logCompact(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspect(value, { compact: true, ...options }));
+export function logCompactFromUnknown(value: unknown, options: InspectOptions = {}): void {
+  console.info(inspectFromUnknown(value, { compact: true, ...options }));
+}
+
+export function logCompact<T>(value: T, options: InspectOptions = {}): void {
+  logCompactFromUnknown(value, options);
 }
 
 /**
@@ -137,15 +150,19 @@ export function logCompact(value: unknown, options: InspectOptions = {}): void {
  * output for snapshots, diffs, and golden-file comparisons.
  * @see https://bun.com/reference/bun/BunInspectOptions — `sorted`
  */
-export function logSorted(value: unknown, options: InspectOptions = {}): void {
-  console.info(inspect(value, { sorted: true, ...options }));
+export function logSortedFromUnknown(value: unknown, options: InspectOptions = {}): void {
+  console.info(inspectFromUnknown(value, { sorted: true, ...options }));
+}
+
+export function logSorted<T>(value: T, options: InspectOptions = {}): void {
+  logSortedFromUnknown(value, options);
 }
 
 /**
  * Bun.inspect.table with TTY-aware colors — tabular data done natively.
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
  */
-export function logTable(
+export function logTableFromUnknown(
   data: unknown,
   columns?: string[],
   options: { colors?: boolean } = {}
@@ -153,6 +170,14 @@ export function logTable(
   console.info(
     Bun.inspect.table(data as object[], columns, { colors: options.colors ?? shouldColor() })
   );
+}
+
+export function logTable<T extends object>(
+  data: T | T[],
+  columns?: string[],
+  options: { colors?: boolean } = {}
+): void {
+  logTableFromUnknown(data, columns, options);
 }
 
 /**

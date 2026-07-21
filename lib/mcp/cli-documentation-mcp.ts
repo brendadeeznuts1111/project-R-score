@@ -8,7 +8,7 @@ import {
 import { CLICategory, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils } from '../core/url-handler';
 import { styled, FW_COLORS } from '../theme/colors';
-import { handleError } from '../core/error-handling';
+import { handleErrorFromUnknown } from '../core/error-handling';
 
 /**
  * CLI Documentation MCP Server
@@ -30,7 +30,7 @@ export class CLIDocumentationMCPServer {
       console.info(styled('📚 CLI Documentation MCP Server initialized', 'success'));
       this.initialized = true;
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.initializeServer', 'high');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.initializeServer', 'high');
     }
   }
 
@@ -50,7 +50,7 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.getDocumentationURL', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.getDocumentationURL', 'medium');
       return { url: '', valid: false };
     }
   }
@@ -68,7 +68,7 @@ export class CLIDocumentationMCPServer {
       this.ensureInitialized();
       return CLIDocumentationHandler.parseDocumentationURL(url);
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.parseDocumentationURL', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.parseDocumentationURL', 'medium');
       return { valid: false };
     }
   }
@@ -93,7 +93,7 @@ export class CLIDocumentationMCPServer {
 
       return { results, searchURL };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.searchDocumentation', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.searchDocumentation', 'medium');
       return { results: [], searchURL: '' };
     }
   }
@@ -118,7 +118,7 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.generateCommandExample', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.generateCommandExample', 'medium');
       return { url: '', valid: false };
     }
   }
@@ -137,7 +137,7 @@ export class CLIDocumentationMCPServer {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateNavigationStructure();
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.getNavigationStructure', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.getNavigationStructure', 'medium');
       return [];
     }
   }
@@ -150,7 +150,7 @@ export class CLIDocumentationMCPServer {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateQuickReferenceURLs();
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.getQuickReferenceURLs', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.getQuickReferenceURLs', 'medium');
       return {};
     }
   }
@@ -163,7 +163,7 @@ export class CLIDocumentationMCPServer {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateBreadcrumbs(url);
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.getBreadcrumbs', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.getBreadcrumbs', 'medium');
       return [];
     }
   }
@@ -189,7 +189,7 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.createShareableLink', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.createShareableLink', 'medium');
       return { url: '', valid: false };
     }
   }
@@ -217,7 +217,7 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.generateInteractiveExample', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.generateInteractiveExample', 'medium');
       return { url: '', valid: false };
     }
   }
@@ -242,7 +242,7 @@ export class CLIDocumentationMCPServer {
 
       return { url, valid };
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.generateComparisonExample', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.generateComparisonExample', 'medium');
       return { url: '', valid: false };
     }
   }
@@ -277,7 +277,7 @@ export class CLIDocumentationMCPServer {
 
       console.info(styled('\n✅ CLI Documentation server is ready for use!', 'success'));
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.displayStatus', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.displayStatus', 'medium');
     }
   }
 
@@ -335,7 +335,7 @@ export class CLIDocumentationMCPServer {
 
       console.info(styled('\n✅ Feature demonstration completed!', 'success'));
     } catch (error) {
-      handleError(error, 'CLIDocumentationMCPServer.demonstrateFeatures', 'medium');
+      handleErrorFromUnknown(error, 'CLIDocumentationMCPServer.demonstrateFeatures', 'medium');
     }
   }
 

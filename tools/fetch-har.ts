@@ -57,9 +57,10 @@ if (!flags.outFile) {
 
 const toStdout = flags.outFile === '-';
 // When piping HAR to stdout, send progress to stderr so stdout is pure JSON
+type LogArg = string | number | boolean | object | null | undefined;
 const log = toStdout
-  ? (...a: unknown[]) => console.error(...a)
-  : (...a: unknown[]) => console.info(...a);
+  ? (...a: LogArg[]) => console.error(...a)
+  : (...a: LogArg[]) => console.info(...a);
 
 interface Entry {
   url: string;

@@ -39,13 +39,12 @@ export const harnessBoundaryDecodeRules: Linter.RulesRecord = {
 };
 
 /**
- * `unknown` as fun arg only at boundary.
- * Warn on full harness (rollout); agents must not introduce new ones without
- * boundary placement or eslint-disable with justification.
+ * `unknown` as fun arg only at boundary — **error** on full harness.
+ * Parse at the edge with parse*, is*, or *FromUnknown names (BOUNDARY_FN_NAME_RE).
  * @see docs/WIRE_BOUNDARY.md
  */
 export const harnessBoundaryUnknownParamRules: Linter.RulesRecord = {
-  [BOUNDARY_POLICY.eslintRules.unknownParam]: 'warn',
+  [BOUNDARY_POLICY.eslintRules.unknownParam]: 'error',
 };
 
 /** Strict tier: both rules error. */

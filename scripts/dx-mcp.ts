@@ -1,4 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/cron — Bun.cron
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -49,7 +54,7 @@ const BUN_VERSION = Bun.version;
 const SERVER_VERSION = '2.2.0';
 const SCAN_DEBUG = Bun.env.DX_MCP_DEBUG === '1';
 
-function debugScan(where: string, err: unknown): void {
+function debugScanFromUnknown(where: string, err: unknown): void {
   if (SCAN_DEBUG) console.error(`[dx-mcp:scan] ${where}`, err);
 }
 
@@ -161,7 +166,7 @@ async function makeProjectMeta(fullPath: string, scanRoot: string): Promise<Proj
   try {
     pkg = (await Bun.file(pkgPath).json()) as Record<string, any>;
   } catch (err) {
-    debugScan(`read package.json ${pkgPath}`, err);
+    debugScanFromUnknown(`read package.json ${pkgPath}`, err);
   }
   const { type, signals } = detectType(fullPath, pkg);
   const stats = walkStats(fullPath);
@@ -242,7 +247,7 @@ async function walkSource(dir: string): Promise<string[]> {
       files.push(f);
     }
   } catch (err) {
-    debugScan(`walkSource ${dir}`, err);
+    debugScanFromUnknown(`walkSource ${dir}`, err);
   }
   return files;
 }
@@ -265,7 +270,7 @@ async function extractImports(filePath: string): Promise<string[]> {
       pkgs.add(raw.startsWith('@') ? raw.split('/').slice(0, 2).join('/') : raw.split('/')[0]!);
     }
   } catch (err) {
-    debugScan(`extractImports ${filePath}`, err);
+    debugScanFromUnknown(`extractImports ${filePath}`, err);
   }
   return [...pkgs];
 }
@@ -302,7 +307,7 @@ async function findLargeFiles(dir: string, topN = 20): Promise<{ path: string; s
     try {
       files.push({ path: file.replace(dir + '/', ''), size: Bun.file(file).size });
     } catch (err) {
-      debugScan(`stat ${file}`, err);
+      debugScanFromUnknown(`stat ${file}`, err);
     }
   }
   files.sort((a, b) => b.size - a.size);
@@ -413,7 +418,7 @@ async function findBloat(dir: string): Promise<{
     try {
       totalSourceKb += Math.round(Bun.file(file).size / 1024);
     } catch (err) {
-      debugScan(`bloat stat ${file}`, err);
+      debugScanFromUnknown(`bloat stat ${file}`, err);
     }
   }
   return {
@@ -811,7 +816,7 @@ async function dispatch(
           try {
             configs.push({ path: cf, content: await Bun.file(cfPath).text() });
           } catch (err) {
-            debugScan(`read config ${cfPath}`, err);
+            debugScanFromUnknown(`read config ${cfPath}`, err);
           }
         }
       }

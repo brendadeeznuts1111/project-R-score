@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // tools/registry-color-filter.ts — Filter registry color channel entries by risk level
@@ -137,7 +138,7 @@ const throughputOrder = [
   'r_score',
 ];
 
-function tomlValue(v: unknown): string {
+function coerceTomlValue(v: string | number | boolean | null | undefined | object): string {
   if (typeof v === 'string') return JSON.stringify(v);
   if (typeof v === 'number' || typeof v === 'boolean') return String(v);
   if (v === null || v === undefined) return '""';
@@ -149,7 +150,7 @@ function printTable(name: string, rows: Array<Record<string, unknown>>, order: s
     console.info(`[[${name}]]`);
     for (const key of order) {
       if (row[key] === undefined) continue;
-      console.info(`${key} = ${tomlValue(row[key])}`);
+      console.info(`${key} = ${coerceTomlValue(row[key])}`);
     }
     console.info();
   }

@@ -4,7 +4,7 @@
 // lib/utils/env-config-manager.ts — Environment configuration manager
 
 import { logger } from './logger';
-import { getErrorMessage } from './error-handler';
+import { getErrorMessageFromUnknown } from './error-handler';
 
 export interface EnvConfigOptions {
   /** Environment name (development, staging, production) */
@@ -131,7 +131,7 @@ export class EnvConfigManager {
           logger.debug(`📄 Loaded environment from ${file}`);
         }
       } catch (error: unknown) {
-        const errorMessage = getErrorMessage(error);
+        const errorMessage = getErrorMessageFromUnknown(error);
         logger.warn(`⚠️ Failed to load ${file}: ${errorMessage}`);
       }
     }

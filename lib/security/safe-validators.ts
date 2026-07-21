@@ -33,7 +33,7 @@ function containsMaliciousPatterns(input: string): boolean {
  * Validate and sanitize a plain string.
  * Type-checks, trims, scans for injection patterns, and enforces a length cap.
  */
-export function safeString(input: unknown, maxLength = 256): SafeResult<string> {
+export function parseSafeString(input: unknown, maxLength = 256): SafeResult<string> {
   if (typeof input !== 'string') {
     return { ok: false, value: '', error: 'Expected a string' };
   }
@@ -57,7 +57,7 @@ export function safeString(input: unknown, maxLength = 256): SafeResult<string> 
 /**
  * Validate a hex color string (#RGB, #RGBA, #RRGGBB, #RRGGBBAA).
  */
-export function safeHexColor(input: unknown): SafeResult<string> {
+export function parseSafeHexColor(input: unknown): SafeResult<string> {
   if (typeof input !== 'string') {
     return { ok: false, value: '', error: 'Expected a string' };
   }
@@ -88,7 +88,7 @@ export function safeHexColor(input: unknown): SafeResult<string> {
  * Validate a reverse-DNS service name (e.g. `com.factorywager.wiki`).
  * Lowercase alphanumeric segments separated by dots, 2–6 segments, max 128 chars.
  */
-export function safeServiceName(input: unknown): SafeResult<string> {
+export function parseSafeServiceName(input: unknown): SafeResult<string> {
   if (typeof input !== 'string') {
     return { ok: false, value: '', error: 'Expected a string' };
   }

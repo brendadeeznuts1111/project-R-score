@@ -25,7 +25,7 @@ function requireJwtSecret(configured?: string): string {
   return 'default-secret-dev-only';
 }
 
-function b64urlJson(value: unknown): string {
+function normalizeB64urlJson(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString('base64url');
 }
 
@@ -302,8 +302,8 @@ export class RegistryAuth {
       exp: Math.floor(Date.now() / 1000) + expiry,
     };
 
-    const headerB64 = b64urlJson(header);
-    const payloadB64 = b64urlJson(payload);
+    const headerB64 = normalizeB64urlJson(header);
+    const payloadB64 = normalizeB64urlJson(payload);
     const signingInput = `${headerB64}.${payloadB64}`;
     const signatureB64 = hmacSha256Base64Url(secret, signingInput);
 

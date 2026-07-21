@@ -9,9 +9,36 @@
 
 import { Cookie } from './bun-cookies-complete-v2';
 
+export type StorageValue =
+  | string
+  | number
+  | boolean
+  | null
+  | StorageValue[]
+  | { [key: string]: StorageValue };
+
+export type StorageSetOptions = {
+  domain?: string;
+  path?: string;
+  secure?: boolean;
+  httpOnly?: boolean;
+  sameSite?: 'strict' | 'lax' | 'none';
+  maxAge?: number;
+  expires?: number | null;
+};
+
+export type CookieAttributeOptions = {
+  domain?: string;
+  path?: string;
+  secure?: boolean;
+  httpOnly?: boolean;
+  sameSite?: 'strict' | 'lax' | 'none';
+  maxAge?: number;
+};
+
 // 🌐 STORAGE ABSTRACTION INTERFACES
 export interface StorageAdapter {
-  set(key: string, value: unknown, options?: unknown): Promise<boolean>;
+  set(key: string, value: StorageValue, options?: StorageSetOptions): Promise<boolean>;
   get(key: string): Promise<any>;
   delete(key: string): Promise<boolean>;
   clear(): Promise<boolean>;
@@ -62,7 +89,7 @@ export class CookieStorage implements StorageAdapter {
     this.secure = options.secure ?? true;
   }
 
-  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
+  async set(key: string, value: StorageValue, options: StorageSetOptions = {}): Promise<boolean> {
     try {
       const cookie = new Cookie(key, JSON.stringify(value), {
         domain: options.domain || this.domain,
@@ -140,7 +167,7 @@ export class WebStorage implements StorageAdapter {
     this.prefix = prefix;
   }
 
-  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
+  async set(key: string, value: StorageValue, options: StorageSetOptions = {}): Promise<boolean> {
     try {
       const fullKey = this.prefix + key;
       const serialized = JSON.stringify({
@@ -248,7 +275,7 @@ export class SecureStorage implements StorageAdapter {
     this.fallbackStorage = new WebStorage(localStorage, 'secure_');
   }
 
-  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
+  async set(key: string, value: StorageValue, options: StorageSetOptions = {}): Promise<boolean> {
     try {
       const encrypted = await this.encrypt(JSON.stringify(value));
       return await this.fallbackStorage.set(key, encrypted, options);
@@ -388,9 +415,9 @@ export class FutureProofCookieSystem {
   // 🔄 UNIFIED STORAGE INTERFACE
   async store(
     key: string,
-    value: unknown,
+    value: StorageValue,
     method: 'cookie' | 'localStorage' | 'sessionStorage' | 'httpOnly' = 'cookie',
-    options: unknown = {}
+    options: StorageSetOptions = {}
   ): Promise<boolean> {
     try {
       // Check if cookies are supported/enabled
@@ -435,7 +462,7 @@ export class FutureProofCookieSystem {
     name: string,
     value: string,
     category: keyof ConsentSettings,
-    options: unknown = {}
+    options: CookieAttributeOptions = {}
   ): Cookie | null {
     const consentManager = ConsentManager.getInstance();
 
@@ -449,7 +476,11 @@ export class FutureProofCookieSystem {
     return new Cookie(name, value, { ...settings, ...options });
   }
 
-  private static createEphemeralCookie(name: string, value: string, options: unknown = {}): Cookie {
+  private static createEphemeralCookie(
+    name: string,
+    value: string,
+    options: CookieAttributeOptions = {}
+  ): Cookie {
     return new Cookie(name, value, {
       ...options,
       maxAge: 0, // Session cookie only
@@ -459,7 +490,7 @@ export class FutureProofCookieSystem {
     });
   }
 
-  private static getSettingsForCategory(category: keyof ConsentSettings): unknown {
+  private static getSettingsForCategory(category: keyof ConsentSettings): CookieAttributeOptions {
     const baseSettings = {
       secure: true,
       httpOnly: false,
@@ -507,7 +538,11 @@ export class FutureProofCookieSystem {
   }
 
   // 🔄 FALLBACK STRATEGIES
-  private async fallbackStore(key: string, value: unknown, options: unknown): Promise<boolean> {
+  private async fallbackStore(
+    key: string,
+    value: StorageValue,
+    options: StorageSetOptions
+  ): Promise<boolean> {
     console.info(`🔄 Using fallback strategy: ${this.fallbackStrategy}`);
 
     switch (this.fallbackStrategy) {

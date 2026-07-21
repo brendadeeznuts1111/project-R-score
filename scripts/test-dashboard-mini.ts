@@ -28,7 +28,14 @@ async function fetchJson(path: string) {
   return { res, json, text };
 }
 
-function checkEquals(checks: CheckResult[], name: string, actual: unknown, expected: unknown) {
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+function checkEquals(
+  checks: CheckResult[],
+  name: string,
+  actual: JsonValue | undefined,
+  expected: JsonValue | undefined
+) {
   const ok = actual === expected;
   checks.push({
     name,

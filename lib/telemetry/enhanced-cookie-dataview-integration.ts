@@ -476,7 +476,9 @@ export class UnifiedCookieDataViewManager {
     );
   }
 
-  private serializePerformanceMetrics(metrics: unknown): Uint8Array {
+  private serializePerformanceMetrics(
+    metrics: UnifiedSessionMetrics['performanceMetrics']
+  ): Uint8Array {
     const buffer = new ArrayBuffer(32);
     const view = new DataView(buffer);
     view.setFloat32(0, metrics.requestLatency, true);
@@ -486,7 +488,9 @@ export class UnifiedCookieDataViewManager {
     return new Uint8Array(buffer);
   }
 
-  private serializeSecurityMetrics(metrics: unknown): Uint8Array {
+  private serializeSecurityMetrics(
+    metrics: UnifiedSessionMetrics['securityMetrics']
+  ): Uint8Array {
     const buffer = new ArrayBuffer(16);
     const view = new DataView(buffer);
     view.setUint16(0, metrics.secureCookies, true);

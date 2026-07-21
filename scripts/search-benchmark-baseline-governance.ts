@@ -32,7 +32,7 @@ USAGE:
 `);
 }
 
-function hasNonEmptyString(value: unknown): boolean {
+function isNonEmptyString(value: unknown): boolean {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
@@ -42,10 +42,10 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
   if (baseline.version !== 1) {
     errors.push('version must be 1');
   }
-  if (!hasNonEmptyString(baseline.snapshot?.id)) {
+  if (!isNonEmptyString(baseline.snapshot?.id)) {
     errors.push('snapshot.id is required');
   }
-  if (!hasNonEmptyString(baseline.snapshot?.queryPack)) {
+  if (!isNonEmptyString(baseline.snapshot?.queryPack)) {
     errors.push('snapshot.queryPack is required');
   }
   if (!baseline.strict || typeof baseline.strict !== 'object') {
@@ -55,13 +55,13 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
     errors.push('coverage metrics are required');
   }
 
-  if (!hasNonEmptyString(baseline.rationale)) {
+  if (!isNonEmptyString(baseline.rationale)) {
     errors.push('rationale is required');
   } else if (String(baseline.rationale).trim() === 'bootstrap_missing_baseline') {
     errors.push('rationale cannot be bootstrap_missing_baseline for committed baselines');
   }
 
-  if (!hasNonEmptyString(baseline.pinnedBy)) {
+  if (!isNonEmptyString(baseline.pinnedBy)) {
     errors.push('pinnedBy is required');
   } else {
     const pinnedBy = String(baseline.pinnedBy).trim().toLowerCase();
@@ -73,7 +73,7 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
   if (!('previousSnapshotId' in baseline)) {
     errors.push('previousSnapshotId field is required (string or null)');
   } else if (
-    !(baseline.previousSnapshotId === null || hasNonEmptyString(baseline.previousSnapshotId))
+    !(baseline.previousSnapshotId === null || isNonEmptyString(baseline.previousSnapshotId))
   ) {
     errors.push('previousSnapshotId must be string or null');
   }
