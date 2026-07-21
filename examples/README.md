@@ -4,6 +4,5 @@
 |-----|-----|
 | `bun-v139-features/` | `cd examples/bun-v139-features && bun start` |
 | `bun-file/` | open folder |
-| `api-demo.ts` · `dashboard-demo.ts` | `bun run demo` · `bun run dashboard:live` |
 
 Index: [INDEX.md](./INDEX.md). Prefer day-loop: `bun run harness:status` · [BUN_NATIVE_CAPABILITIES](../docs/BUN_NATIVE_CAPABILITIES.md).
