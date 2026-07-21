@@ -12,8 +12,6 @@
     "lib/ai/ai-operations-manager.ts\tcommandId\tasync executeOptimization(commandId: string): Promise<OptimizationResult> {",
     "lib/ai/ai-operations-manager.ts\tcommandId\tgetCommandResult(commandId: string): OptimizationResult | undefined {",
     "lib/ai/anomaly-detector.ts\truleId\tremoveRule(ruleId: string): boolean {",
-    "lib/core/core-documentation.ts\tgistId\texport const buildGitHubGistURL = (gistId: string) => docsURL.buildGitHubGistURL(gistId);",
-    "lib/core/core-documentation.ts\tgistId\tpublic buildGitHubGistURL(gistId: string): string {",
     "lib/core/logging-monitoring.ts\trequestId\tdebug(message: string, context?: Record<string, any>, requestId?: string): void {",
     "lib/core/logging-monitoring.ts\trequestId\terror(message: string, error?: Error, context?: Record<string, any>, requestId?: string): void {",
     "lib/core/logging-monitoring.ts\trequestId\tfatal(message: string, error?: Error, context?: Record<string, any>, requestId?: string): void {",

@@ -60,7 +60,7 @@ echo -e "${GREEN}✅ Environment variables set${NC}"
 echo -e "${BLUE}🏥 Running health checks...${NC}"
 
 # Check if critical files exist
-if [ ! -f "server/base-server.ts" ]; then
+if [ ! -f "server/server-enhanced.ts" ]; then
     echo -e "${RED}❌ Error: Critical server file missing${NC}"
     exit 1
 fi
@@ -69,7 +69,7 @@ echo -e "${GREEN}✅ Health checks passed${NC}"
 
 # Build the application (if needed)
 echo -e "${BLUE}🔨 Building application...${NC}"
-bun build --target=bun server/base-server.ts --outdir=./dist-staging
+bun build --target=bun server/server-enhanced.ts --outdir=./dist-staging
 
 echo -e "${GREEN}✅ Build completed${NC}"
 
@@ -83,7 +83,7 @@ echo -e "${YELLOW}⚠️  Press Ctrl+C to stop the server${NC}"
 echo ""
 
 # Start the server with error handling
-if bun run server/base-server.ts; then
+if bun run server/server-enhanced.ts; then
     echo -e "${GREEN}✅ Staging server started successfully${NC}"
 else
     echo -e "${RED}❌ Error: Failed to start staging server${NC}"

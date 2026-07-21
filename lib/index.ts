@@ -20,7 +20,6 @@ import {
   CANONICAL_REPO_DOCS,
   CANONICAL_TOOLS,
 } from './docs/repo-docs';
-import { DOC_PATTERNS, DocumentationUtils } from './docs';
 import { PackageManager } from './package/package-manager';
 import { R2Storage } from './r2/r2-storage-enhanced';
 import { RSSManager } from './rss/rss-manager';
@@ -34,7 +33,7 @@ export * from './core/core-types';
 // Theme and styling
 export * from './theme/colors';
 
-// Documentation
+// Documentation path SSOT
 export * from './docs';
 export {
   CANONICAL_REPO_DOCS,
@@ -54,7 +53,6 @@ export * from './utils';
 // Re-export commonly used items
 export { styled, log, FW_COLORS } from './theme/colors';
 export { Utils } from './utils';
-export { DOC_PATTERNS, DocumentationUtils } from './docs';
 
 export {
   PackageManager,
@@ -98,8 +96,6 @@ export const FW = {
   log,
   utils: Utils,
   docs: {
-    patterns: DOC_PATTERNS,
-    utils: DocumentationUtils,
     canonical: CANONICAL_REPO_DOCS,
   },
   security: {
