@@ -8,6 +8,8 @@ on:
       - 'scripts/**/*domain-registry*'
       - 'tests/**/*search*'
       - 'tests/**/*domain-registry*'
+      - 'tests/journey/search-governance.test.ts'
+      - 'docs/harness/search-governance.md'
       - '.search/**'
       - 'package.json'
       - 'bun.lock'
@@ -23,6 +25,8 @@ on:
       - 'scripts/**/*domain-registry*'
       - 'tests/**/*search*'
       - 'tests/**/*domain-registry*'
+      - 'tests/journey/search-governance.test.ts'
+      - 'docs/harness/search-governance.md'
       - '.search/**'
       - 'package.json'
       - 'bun.lock'
@@ -58,6 +62,9 @@ jobs:
 
       - name: Search Status Contract Tests
         run: bun test tests/search-status-contract.test.ts
+
+      - name: Search Governance WebView Journey
+        run: bun run test:search-governance
 
       - name: Unified Search Status Strict Gate
         run: bun run search:status:unified:strict

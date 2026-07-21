@@ -109,10 +109,14 @@ export const CLI_SPECIAL: Record<string, string> = {
     'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
   'docs:fresh-rerun':
     'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
+  'docs:search-governance':
+    'Search-governance WebView journey brief (ansiMarkdown · docs/harness/search-governance.md)',
   'test:cron':
     'Cron contract ratchet (OS-persistent primary / in-process complement · docs/harness/cron.md)',
   'test:install-verify':
     'Install-verify → smoke HTML → Bun.WebView journey (tests/journey/install-verify.test.ts)',
+  'test:search-governance':
+    'Search governance → search-smart + WebView type/submit journey (tests/journey/search-governance.test.ts)',
   'spine:schedule': 'Spine integrity daemon (in-process Bun.cron complement)',
   'spine:schedule:once': 'One integrity pass via spine/scheduler → bun-doc-refs',
   'ci:harness':
@@ -154,8 +158,10 @@ export const CLI_CORE_CMDS = new Set([
   'docs:cron',
   'docs:install-verify',
   'docs:fresh-rerun',
+  'docs:search-governance',
   'test:cron',
   'test:install-verify',
+  'test:search-governance',
   'spine:schedule',
   'spine:schedule:once',
   'ci:harness',

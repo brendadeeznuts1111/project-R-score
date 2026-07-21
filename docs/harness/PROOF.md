@@ -29,6 +29,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:changed` · `bun run test:changed:main` (CI: `harness-gates.yml`)
 - **`search-governance`** — bench gate policy holds (`journey`)  
   *Ratchet* → `.github/workflows/search-governance.yml`
+- **`search-governance-basic`** — known query → WebView results (`journey`)  
+  *Ratchet* → `bun run test:search-governance` · [`search-governance.md`](search-governance.md)
 - **`path-bun`** — spine `lib/` does not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  

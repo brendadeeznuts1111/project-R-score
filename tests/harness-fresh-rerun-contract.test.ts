@@ -18,4 +18,9 @@ describe('fresh-rerun contract', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');
   });
+
+  test('search-governance-basic freshRerun is the WebView journey test', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'search-governance-basic');
+    expect(p?.freshRerun).toBe('bun run test:search-governance');
+  });
 });

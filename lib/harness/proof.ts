@@ -34,6 +34,7 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/harness-cron-contract.test.ts',
   'tests/bun-markdown-ansi.test.ts',
   'tests/journey/install-verify.test.ts',
+  'tests/journey/search-governance.test.ts',
   'tests/harness-fresh-rerun-contract.test.ts',
 ] as const;
 
@@ -89,6 +90,19 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['journey'],
     evidence: ['.github/workflows/search-governance.yml'],
     freshRerun: 'bun run search:bench:gate',
+  },
+  {
+    id: 'search-governance-basic',
+    // owner: tests/journey/search-governance.test.ts
+    claim: 'Search governance returns results for a known query (policy + search-smart + WebView)',
+    kinds: ['journey'],
+    evidence: [
+      'bun run test:search-governance',
+      'tests/journey/search-governance.test.ts',
+      'docs/harness/search-governance.md',
+      '.github/workflows/search-governance.yml',
+    ],
+    freshRerun: 'bun run test:search-governance',
   },
   {
     id: 'path-bun',

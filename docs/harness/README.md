@@ -29,6 +29,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Discover day-loop + ratchet status (live) → `bun run harness:status` (`ansiMarkdown` / `Bun.markdown.ansi`)
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron`
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
+- Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
 - Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
 - Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
