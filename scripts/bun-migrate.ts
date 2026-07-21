@@ -258,7 +258,6 @@ export const VALIDATE_WHITELIST = new Set([
   'packages/guards/src/bun-first-guard.ts',
   'lib/docs/constants/utils.ts',
   'packages/docs-tools/src/builders/url-builder.ts',
-  'lib/performance/memory-pool.ts',
   'scripts/pack-all.ts',
   'scripts/brand-cpu-profile.ts',
   'scripts/search-benchmark-dashboard.ts',

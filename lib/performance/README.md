@@ -7,4 +7,3 @@ Inventory: [`../README.md`](../README.md).
 | Entry |
 |-------|
 | [`cache-manager.ts`](./cache-manager.ts) |
-| [`memory-pool.ts`](./memory-pool.ts) |

@@ -11,4 +11,3 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | [`advanced-hsl-system.ts`](./advanced-hsl-system.ts) |
 | [`color-system.ts`](./color-system.ts) |
 | [`enhanced-status-matrix.ts`](./enhanced-status-matrix.ts) |
-| [`env-validator.ts`](./env-validator.ts) |
