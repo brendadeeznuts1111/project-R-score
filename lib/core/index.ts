@@ -57,21 +57,6 @@ export {
 } from './error-handling';
 
 // ============================================================================
-// Global Error Handling
-// ============================================================================
-
-export {
-  // Classes and types
-  GlobalErrorHandler,
-  type GlobalErrorConfig,
-
-  // Convenience functions
-  initializeGlobalErrorHandling,
-  onShutdown,
-  getGlobalErrorStatistics,
-} from './global-error-handler';
-
-// ============================================================================
 // Circuit Breaker
 // ============================================================================
 
@@ -89,27 +74,6 @@ export {
   getCircuitBreakerRegistry,
   getCircuitBreakerHealth,
 } from './circuit-breaker';
-
-// ============================================================================
-// Error Metrics & Alerting
-// ============================================================================
-
-export {
-  // Classes and types
-  ErrorMetricsCollector,
-  AlertSeverity,
-  AlertChannel,
-  type AlertConfig,
-  type ErrorMetric,
-  type ErrorAggregation,
-  type MetricsExport,
-
-  // Convenience functions
-  getErrorMetricsCollector,
-  recordError,
-  configureAlert,
-  getErrorAggregation,
-} from './error-metrics';
 
 // ============================================================================
 // CRC32 Hardware-Accelerated Checksums
@@ -135,28 +99,6 @@ export {
   benchmark,
   runBenchmarks,
 } from './crc32';
-
-// ============================================================================
-// Bun Spawn Utilities
-// ============================================================================
-
-export {
-  // Types
-  type SpawnResult,
-  type SafeSpawnOptions,
-
-  // Binary validation
-  validateBinaryExists,
-  validateBinaryOrThrow,
-
-  // Safe spawn
-  safeSpawn,
-  streamSpawn,
-
-  // TTY utilities
-  isTTY,
-  getTerminalSize,
-} from './bun-spawn-utils';
 
 // ============================================================================
 // Core Types
