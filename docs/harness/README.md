@@ -44,10 +44,18 @@ When a decision is unresolved, read **one** owner below — do not load the full
 bun install                 # runs prepare → husky
 # hooks: .husky/pre-commit (hygiene → pre-commit-harness → ast-grep)
 #        .husky/pre-push   (proof:install)
-bun run ci:harness          # same envelope as .github/workflows/harness-gates.yml
+bun run ci:harness          # same envelope as .github/workflows/harness-gates.yml (full tier)
 ```
 
-CI: [harness-gates.yml](../../.github/workflows/harness-gates.yml) (lint · brands · spine smokes · install proof) · [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) (`install:verify:strict`) · PR template requires claim→evidence ([PROOF.md](PROOF.md)).
+### CI tier matrix
+
+| Tier | Workflow | What it proves |
+|------|----------|----------------|
+| **fast** (install + hygiene) | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) | `install:verify:strict` · cache lifecycle · `hygiene` |
+| **full** (harness envelope) | [harness-gates.yml](../../.github/workflows/harness-gates.yml) | `bun run ci:harness` = proof:install · path-bun · bun-env · eslint bun-native · brands · spine smokes (`CI_SPINE_SMOKE_TESTS`) |
+| manual install-only | [ci-smoke.yml](../../.github/workflows/ci-smoke.yml) | `workflow_dispatch` only — not a third push journey |
+
+Pre-commit write tools (eslint `--fix` · prettier · doc-refs annotate) **fail the commit** if they rewrite staged files — re-stage and retry (no amend thrash). Annotate runs on **staged harness paths only**. PR template: claim→evidence ([PROOF.md](PROOF.md)).
 
 ## Day loop (honest)
 
@@ -73,7 +81,7 @@ bun run cli:docs                # when CLI surface changes
 
 Test axes: `test:affected` = changed **workspaces**; `test:changed` = Bun import-graph filter ([`scripts/bun-test-changed.ts`](../../scripts/bun-test-changed.ts) → `--changed` / `--changed=<ref>`; scan skips `node_modules`, no link/emit). Empty dirty set exits 0; `test:changed:watch` stays alive and re-filters on any local source edit. Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) · [release map](../BUN_NATIVE_CAPABILITIES.md#bun-v1313-release-map).
 
-Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart; path-bun / bun-env when lib\|scripts staged; ESLint `--max-warnings 0`) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
+Commit: husky → hygiene → `pre-commit-harness` (eslint `--fix` · prettier · annotate staged-only · **staged≡worktree gate** · brands staged‖smart · path-bun / bun-env when lib\|scripts staged; ESLint `--max-warnings 0`) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
 
 ## Local theses (FactoryWager)
 

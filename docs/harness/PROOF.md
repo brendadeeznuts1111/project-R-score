@@ -18,7 +18,8 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Artifact | Claim | Required kinds |
 |----------|-------|----------------|
 | Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
-| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`bun run proof:install` / `install:verify`; CI: `repo-hygiene.yml` → `install:verify:strict`) |
+| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`bun run proof:install` / `install:verify`; CI fast: `repo-hygiene.yml` → `install:verify:strict`; full: `harness-gates.yml`) |
+| **Spine smokes** | Bun-native spine capabilities hold | `unit` + `journey` (`CI_SPINE_SMOKE_TESTS` in `lib/harness/proof.ts` via `bun run ci:harness`) |
 | Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
 | Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`) |
 | Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |

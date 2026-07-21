@@ -6,7 +6,7 @@
  *
  *   bun run ci:harness
  */
-import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
+import { CI_SPINE_SMOKE_TESTS, CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 
 type Step = { name: string; cmd: string[]; owner: string; repair: string };
 
@@ -43,17 +43,9 @@ const steps: Step[] = [
   },
   {
     name: 'spine-smokes',
-    cmd: [
-      'bun',
-      'test',
-      'tests/bun-urlpattern.test.ts',
-      'tests/bun-glob-scan.test.ts',
-      'tests/bun-ansi-width.test.ts',
-      'tests/console-depth.test.ts',
-    ],
-    owner: 'docs/BUN_NATIVE_CAPABILITIES.md',
-    repair:
-      'bun test tests/bun-urlpattern.test.ts tests/bun-glob-scan.test.ts tests/bun-ansi-width.test.ts',
+    cmd: ['bun', 'test', ...CI_SPINE_SMOKE_TESTS],
+    owner: 'lib/harness/proof.ts · CI_SPINE_SMOKE_TESTS · docs/BUN_NATIVE_CAPABILITIES.md',
+    repair: `bun test ${CI_SPINE_SMOKE_TESTS.join(' ')}`,
   },
 ];
 

@@ -77,4 +77,20 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Repair:** `bun run ci:harness` + `harness-gates.yml`; pre-push `proof:install`; PR template points at PROOF/REVIEW.
 - **Earliest owner:** script-gate + doc-map
 - **Ratchet:** `scripts/ci-harness.ts` · `.github/workflows/harness-gates.yml` · `.github/pull_request_template.md`
+- **Keep / revise / drop:** keep (revised — see CI install overlap)
+
+### Green commit ≠ clean tree (annotate thrash)
+
+- **Finding:** Prettier / doc-refs annotate rewrote worktree after staging; commit exited 0; dirty tree forced amend loops.
+- **Repair:** After write tools, fail if staged harness files have unstaged diffs; print `git add …` repair. Annotate stays staged-path-only (no `defaultPaths` fan-out).
+- **Earliest owner:** script-gate (pre-commit)
+- **Ratchet:** `scripts/pre-commit-harness.ts` → `assertStagedMatchesWorktree`
+- **Keep / revise / drop:** keep
+
+### CI install journey overlap
+
+- **Finding:** `ci-smoke` + `repo-hygiene` + `harness-gates` each re-proved install on push — three journeys, low new signal.
+- **Repair:** Two tiers — **fast** `repo-hygiene` (`install:verify:strict`) · **full** `harness-gates` (`ci:harness`). `ci-smoke` is `workflow_dispatch` only. Matrix in harness README.
+- **Earliest owner:** proof + CI
+- **Ratchet:** `.github/workflows/ci-smoke.yml` · `docs/harness/README.md` Setup · `CI_SPINE_SMOKE_TESTS` in `lib/harness/proof.ts`
 - **Keep / revise / drop:** keep

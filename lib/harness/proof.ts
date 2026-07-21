@@ -1,3 +1,4 @@
+// @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern
 /**
  * Proof claim kinds for harness “done” checklists.
  * @see ../../docs/harness/PROOF.md
@@ -11,6 +12,17 @@ export type ProofPath = {
   kinds: ProofKind[];
   evidence: string[];
 };
+
+/**
+ * Bun-native spine smoke tests for `bun run ci:harness`.
+ * One SSOT — do not hardcode this list in CI scripts.
+ */
+export const CI_SPINE_SMOKE_TESTS = [
+  'tests/bun-urlpattern.test.ts',
+  'tests/bun-glob-scan.test.ts',
+  'tests/bun-ansi-width.test.ts',
+  'tests/console-depth.test.ts',
+] as const;
 
 /** Named critical paths (expand carefully). */
 export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
@@ -27,8 +39,15 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     evidence: [
       'bun run proof:install',
       'bun run install:verify',
+      '.github/workflows/harness-gates.yml',
       '.github/workflows/repo-hygiene.yml',
     ],
+  },
+  {
+    id: 'spine-smokes',
+    claim: 'Bun-native spine capabilities hold (URLPattern, Glob.scan, ANSI width, console-depth)',
+    kinds: ['unit', 'journey'],
+    evidence: ['bun run ci:harness', ...CI_SPINE_SMOKE_TESTS],
   },
   {
     id: 'search-governance',

@@ -68,6 +68,52 @@ async function getStagedFiles(): Promise<string[]> {
     .filter(Boolean);
 }
 
+/** Worktree ≠ index for these paths (write tools rewrote without re-stage). */
+async function filesWithUnstagedDiff(files: string[]): Promise<string[]> {
+  if (files.length === 0) return [];
+  const proc = Bun.spawn(['git', 'diff', '--name-only', '--', ...files], {
+    cwd: repoRoot,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const out = await new Response(proc.stdout).text();
+  await proc.exited;
+  return out
+    .split('\n')
+    .map(f => f.trim())
+    .filter(Boolean);
+}
+
+/**
+ * ESLint --fix / Prettier --write / doc-refs annotate must not leave a
+ * green commit with a dirty tree (amend thrash). Fail with re-stage repair.
+ */
+async function assertStagedMatchesWorktree(
+  files: string[],
+  timings: GateTiming[],
+  full: boolean
+): Promise<void> {
+  const t0 = performance.now();
+  const dirty = await filesWithUnstagedDiff(files);
+  timings.push({
+    name: 'staged-worktree',
+    ms: Math.round(performance.now() - t0),
+    ok: dirty.length === 0,
+  });
+  if (dirty.length === 0) return;
+  console.error('');
+  console.error('❌ Format/annotate rewrote staged files — commit would leave a dirty tree');
+  console.error(
+    '   invariant: index must match worktree for staged harness files after write tools'
+  );
+  console.error('   owner: scripts/pre-commit-harness.ts · docs/harness/FEEDBACK.md');
+  console.error('   repair:');
+  console.error(`     git add ${dirty.join(' ')}`);
+  console.error('     # then re-run: git commit');
+  await writeTimings(timings, full);
+  process.exit(1);
+}
+
 async function runGate(name: string, cmd: string[], timings: GateTiming[]): Promise<number> {
   const t0 = performance.now();
   const proc = Bun.spawn(cmd, {
@@ -155,8 +201,8 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Annotate-on-write then re-check (kills fail→annotate→re-stage loop).
-  console.info('🔗 Doc refs (annotate-on-write)...');
+  // Annotate-on-write — staged paths only (never defaultPaths fan-out).
+  console.info('🔗 Doc refs (annotate-on-write, staged only)...');
   const absFiles = harnessFiles.map(f => `${repoRoot}/${f}`);
   await runGate(
     'doc-refs-annotate',
@@ -176,6 +222,9 @@ async function main(): Promise<void> {
     await writeTimings(timings, full);
     process.exit(1);
   }
+
+  // Kill green-commit / dirty-tree / amend thrash (eslint --fix · prettier · annotate).
+  await assertStagedMatchesWorktree(harnessFiles, timings, full);
 
   console.info('🏷️  Brand manifest...');
   if (
