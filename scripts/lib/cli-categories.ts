@@ -121,8 +121,8 @@ export const CLI_SPECIAL: Record<string, string> = {
     'Install-verify → smoke HTML → Bun.WebView journey (tests/journey/install-verify.test.ts)',
   'test:search-governance':
     'Search governance → search-smart + WebView type/submit journey (tests/journey/search-governance.test.ts)',
-  'spine:schedule': 'Spine integrity daemon (in-process Bun.cron complement)',
-  'spine:schedule:once': 'One integrity pass via spine/scheduler → bun-doc-refs',
+  'spine:schedule': 'Spine multi-tenant daemon (in-process Bun.cron complement)',
+  'spine:schedule:once': 'Run spine tenants once (all, or --tenant=install-verify)',
   'ci:harness':
     'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
   'ci:harness:fast': 'Quiet local parity (∥ cheap · test:changed dirty; no eslint)',

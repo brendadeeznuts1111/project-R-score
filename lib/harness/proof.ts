@@ -37,6 +37,7 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/journey/search-governance.test.ts',
   'tests/journey/cron-os-persistent.test.ts',
   'tests/harness-fresh-rerun-contract.test.ts',
+  'tests/spine-tenants.test.ts',
 ] as const;
 
 /** Named critical paths — each must set `freshRerun` (see FRESH-RERUN.md). */
@@ -199,6 +200,19 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'docs/harness/cron.md',
     ],
     freshRerun: 'bun run test:cron-os',
+  },
+  {
+    id: 'spine-multi-tenant',
+    // owner: spine/tenants.ts · spine/scheduler.ts
+    claim: 'Spine runs ≥2 in-process tenants (docs-integrity + install-verify journey)',
+    kinds: ['journey', 'boundary'],
+    evidence: [
+      'spine/tenants.ts',
+      'spine/scheduler.ts',
+      'bun run spine:schedule:once -- --tenant=install-verify',
+      'docs/harness/cron.md',
+    ],
+    freshRerun: 'bun run spine:schedule:once -- --tenant=install-verify',
   },
 ] as const;
 

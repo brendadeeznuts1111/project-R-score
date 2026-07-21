@@ -49,6 +49,11 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run type-check');
   });
 
+  test('spine-multi-tenant freshRerun is install-verify tenant once', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'spine-multi-tenant');
+    expect(p?.freshRerun).toBe('bun run spine:schedule:once -- --tenant=install-verify');
+  });
+
   test('path-bun claim covers lib and tools', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'path-bun');
     expect(p?.claim).toContain('tools/');
