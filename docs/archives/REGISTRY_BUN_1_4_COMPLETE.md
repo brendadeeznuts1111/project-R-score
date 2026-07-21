@@ -164,7 +164,7 @@ graph TD
 subgraph "Version History"
   v4_17_18["4.17.18"][[Archived]]
   v4_17_19["4.17.19 🏷️"][[Archived]]
-  v4_17_20["4.17.20 🏷️"](Rollback)
+  v4_17_20["4.17.20 🏷️"](#)
   v4_17_21["4.17.21 🏷️"][Current]
 end
 

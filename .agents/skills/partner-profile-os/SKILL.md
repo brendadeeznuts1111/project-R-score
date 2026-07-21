@@ -11,9 +11,9 @@ Canonical partner identity layer for Sports Terminal v5.2+. Use when implementin
 
 | Resource | Path |
 |----------|------|
-| Full implementation spec | [`docs/sports-terminal/partner-profile-full-impl.md`](../../../docs/sports-terminal/partner-profile-full-impl.md) |
-| Doc index | [`docs/sports-terminal/README.md`](../../../docs/sports-terminal/README.md) |
-| Mermaid atlas (PDF) | [`docs/sports-terminal/mermaid-atlas.pdf`](../../../docs/sports-terminal/mermaid-atlas.pdf) |
+| Runtime + overview | [`sports-terminal-os` README](../../../projects/active/sports-terminal-os/README.md#partner-profile-os) |
+| Module tree | [`src/zones/partner-profile/`](../../../projects/active/sports-terminal-os/src/zones/partner-profile/) |
+| Historical specs (gitignored local archive) | `docs/archives/retired-2026-07-deep-pass/sports-terminal/` (`partner-profile-full-impl.md`, `README.md`, `mermaid-atlas.pdf`) |
 
 ## When to use
 

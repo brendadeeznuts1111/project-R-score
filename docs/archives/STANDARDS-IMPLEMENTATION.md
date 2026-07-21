@@ -211,8 +211,8 @@ What was the decision?
 [Impact on system, teams, and standards compliance]
 
 ## References
-- [.custom-instructions.md](./.custom-instructions.md) - Complete standards
-- [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) - Quick reference
+- [.custom-instructions.md](../../.custom-instructions.md) - Complete standards
+- [DEVELOPMENT-STANDARDS.md](../DEVELOPMENT-STANDARDS.md) - Quick reference
 ```
 
 #### **Decision Checklist Based on Standards**

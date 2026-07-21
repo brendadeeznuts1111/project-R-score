@@ -15,7 +15,7 @@ Real-time trading intelligence terminal at `projects/active/enterprise/cascade-m
 
 ## MCP
 
-Enable the `cascade-mover` server in [`.cursor/mcp.json`](../../.cursor/mcp.json). Requires `projects/active/enterprise/cascade-mover-v3/.env`.
+Enable the `cascade-mover` server in [`.cursor/mcp.json`](../../../.cursor/mcp.json). Requires `projects/active/enterprise/cascade-mover-v3/.env`.
 
 ## Code location
 

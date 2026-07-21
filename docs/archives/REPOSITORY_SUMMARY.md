@@ -238,11 +238,11 @@ bun run build
 ### **Getting Help**
 - **Issues**: [GitHub Issues](https://github.com/brendadeeznuts1111/project-R-score/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/brendadeeznuts1111/project-R-score/discussions)
-- **Documentation**: [docs/](docs/)
+- **Documentation**: [docs/](../../)
 - **Security Issues**: Use private security issue
 
 ### **Contributing**
-- **Guidelines**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Guidelines**: [CONTRIBUTING.md](../contributing/CONTRIBUTING.md)
 - **Code of Conduct**: Included in contributing guide
 - **Issue Templates**: Available in GitHub
 - **PR Process**: Automated review and assignment
