@@ -1,5 +1,7 @@
 # Bun native capabilities (platform note)
 
+
+> **JIT:** Feature notes + release maps. API lookup → `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run dx:catalog`.
 Grounded map of **newer Bun runtime APIs** available on this machine’s toolchain, how they relate to FactoryWager **lib / tools / docs**, and where **not** to over-claim.
 
 | | |

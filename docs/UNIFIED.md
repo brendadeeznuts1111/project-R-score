@@ -1,5 +1,7 @@
 # UNIFIED — Bun install policy (machine + monorepo)
 
+
+> **JIT:** Install/bunfig questions only. Day loop → `bun run harness:status`. Machine SSOT summary also in root `AGENTS.md`.
 Canonical reference for FactoryWager monorepo **install configuration**: machine-level defaults, workspace overrides, `./~` drift prevention, and verification tooling.
 
 This document is **about Bun package install / bunfig / cache / CI** — not TypeScript wire boundaries. For parse-once / branded IDs, see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).

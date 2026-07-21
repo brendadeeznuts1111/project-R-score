@@ -1,5 +1,7 @@
 # Wire boundary (parse once)
 
+
+> **JIT:** Parse-once / `unknown` / brands at the edge. Unresolved → this file only (not full standards stack).
 **SSOT for where untrusted data becomes trusted domain values.**
 
 Enforcement code: [`config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts)  

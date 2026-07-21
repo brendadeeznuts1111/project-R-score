@@ -25,7 +25,7 @@
 ```bash
 bun run install:all      # isolated linker + global store (bun.com/docs/pm/global-store)
 bun run install:verify   # sanity-check cache dir, links/, and no ./~ drift
-bun run help             # Categorized commands (shared SSOT with docs/CLI.md)
+bun run help             # Categorized commands (SSOT; optional: bun run cli:docs)
 bun run type-check       # Day-loop check (tsconfig.check.json)
 bun run build:affected   # Changed packages only (bun --filter ...)
 bun run packages:list    # Browse all packages with version/registry/triage
@@ -66,7 +66,7 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run dev` | Start platform server |
 | `bun run deployment:readiness` | Deployment readiness matrix |
 
-See `bun run help --verbose` or [`docs/CLI.md`](docs/CLI.md) for the full list.
+See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with `bun run cli:docs` only when needed).
 
 ## Code Quality & Fix Tools
 

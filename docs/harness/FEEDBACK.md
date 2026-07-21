@@ -46,5 +46,6 @@ Scaffold: `bun run harness:lesson --title="…"`.
 | Pre-commit ESLint cold | script-gate | `.cache/eslint-bun-native` |
 | GHA billing lock | ops | unlock Actions billing; local `ci:core` still proves |
 | SSOT doc encyclopedia tax | doc-map | compress OPERATE / standards / docs/AGENTS to JIT |
+| Generated CLI/REGISTRY tax | doc-map | stub + `help` / `packages:list`; regenerate on demand |
 
 Full prose lessons: `git show 4bd1e324:docs/harness/FEEDBACK.md` (pre-compression).
