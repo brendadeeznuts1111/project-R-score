@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { mkdir } from 'node:fs/promises';
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 import { join, resolve } from 'node:path';
+import { ensureDir } from './lib/fs-bun';
 import { createShutdown } from './lib/graceful-shutdown';
 
 function nowRunId(): string {
@@ -49,8 +50,7 @@ function parseArgs(argv: string[]): Options {
 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
-  // sync-ok: directory-only creation for bun --cpu-prof-dir; no paired writeFile to fold into Bun.write
-  await mkdir(options.profilesDir, { recursive: true });
+  await ensureDir(options.profilesDir);
 
   const profileName =
     options.target === 'generate'

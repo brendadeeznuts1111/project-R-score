@@ -1,398 +1,257 @@
 # Package Registry Manifest
 
-_Generated: 2026-05-18_
+_Generated: 2026-07-21_
 
 | Package | Version | Registry | Triage | Directory |
 |---------|---------|----------|--------|-----------|
-| 01-session 🔒 | -- | npm | active |  |
-| @brendadeeznuts1111/kal-poly-bot 🔒 | 2.4.2 | factory-wager | active |  |
-| @brendadeeznuts1111/surgical-precision-mcp | 1.2.0 | github | active |  |
-| @bun-tolm/cli | 1.0.0 | npm | active |  |
-| @bun-toml/benchmark | 1.0.0 | npm | active |  |
-| @bun-toml/core | 1.0.0 | npm | active |  |
-| @bun-toml/dashboard | 1.0.0 | npm | active |  |
-| @bun-toml/logger | 1.0.0 | npm | active |  |
-| @bun-toml/platform 🔒 | 1.0.0 | factory-wager | active |  |
-| @bun-toml/profiler | 1.0.0 | npm | active |  |
-| @bun-toml/rss | 1.0.0 | npm | active |  |
-| @bun-toml/shared | 1.0.0 | npm | active |  |
-| @bun-toml/templates | 1.0.0 | npm | active |  |
-| @bun/inspect-utils | 2.0.0 | npm | active |  |
-| @bun/pm-integrity | 1.0.0 | npm | active |  |
-| @bun/proxy | 1.3.5 | npm | active |  |
-| @dev-hq/cli | 1.0.0 | npm | active |  |
-| @dev-hq/core 🔒 | 0.1.0 | npm | active |  |
-| @dev-hq/create | 1.0.0 | github | active |  |
-| @dev-hq/server 🔒 | 0.1.0 | npm | active |  |
-| @devhq/cli | 1.2.0 | devhq | active |  |
-| @duoplus/cli-core | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/cli-core-pkg | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/core | 1.0.0 | duoplus | active |  |
-| @duoplus/disputes | 1.0.0 | duoplus | active |  |
-| @duoplus/monitoring | 1.0.0 | duoplus | active |  |
-| @duoplus/registry-gateway | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/security-vault | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/status-system | 3.7.0 | npm | active |  |
-| @duoplus/telemetry-kernel | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/terminal | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/testing-framework | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/testing-utils | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/ui-components | 1.2.4-beta.0 | npm | active |  |
-| @duoplus/utils | 1.2.4-beta.0 | npm | active |  |
-| @dynamic-spy/kit | 9.0.0 | npm | active |  |
-| @factory-wager/admin-cli | 1.0.0 | factory-wager | active |  |
-| @fire22-registry/analytics-dashboard | 2.7.0 | npm | active |  |
-| @fire22-registry/compliance-core | 4.3.0 | npm | active |  |
-| @fire22-registry/core-security | 3.1.0 | npm | active |  |
-| @fire22-registry/fraud-detection | 3.1.0 | npmjs | active |  |
-| @fire22/api-client | 3.0.9 | npmjs | active |  |
-| @fire22/api-consolidated | 1.0.0 | fire22 | active |  |
-| @fire22/bench | 1.0.0 | npm | active |  |
-| @fire22/benchmark-formatter | 1.0.3 | npm | active |  |
-| @fire22/benchmark-formatter | 1.0.3 | npm | active |  |
-| @fire22/benchmark-orchestrator-benchmark-orchestrator | 1.0.0 | npmjs | active |  |
-| @fire22/benchmark-suite | 1.0.3 | npm | active |  |
-| @fire22/benchmark-suite | 1.0.3 | npm | active |  |
-| @fire22/branding-audit-branding-audit | 2.1.0 | npm | active |  |
-| @fire22/build-system | 3.0.9 | npmjs | active |  |
-| @fire22/compliance-checker-compliance-checker | 1.0.0 | npmjs | active |  |
-| @fire22/core | 1.0.3 | npmjs | active |  |
-| @fire22/core-dashboard | 3.0.9 | npmjs | active |  |
-| @fire22/dashboard-testing-framework | 1.0.3 | npm | active |  |
-| @fire22/dashboard-worker-security-scanner-security-scanner-projects-enterprise-fantasy42-fire22-registry-dashboard-worker-packages-security-scanner | 1.0.0 | fire22 | active |  |
-| @fire22/enhanced-logging | 1.0.0-lkey.0 | npm | active |  |
-| @fire22/env-manager | 1.0.3 | fire22 | active |  |
-| @fire22/grid-ui | 1.0.0 | npm | active |  |
-| @fire22/language-keys | 1.0.0 | fire22 | active |  |
-| @fire22/load-testing | 1.0.3 | npm | active |  |
-| @fire22/load-testing | 1.0.3 | npm | active |  |
-| @fire22/memory-profiler | 1.0.3 | npm | active |  |
-| @fire22/memory-profiler | 1.0.3 | npm | active |  |
-| @fire22/micro-benchmarks | 1.0.3 | npm | active |  |
-| @fire22/micro-benchmarks | 1.0.3 | npm | active |  |
-| @fire22/middleware | 1.0.3 | npm | active |  |
-| @fire22/multilingual | 1.3.0 | npm | active |  |
-| @fire22/pattern-system | 3.0.9 | npmjs | active |  |
-| @fire22/queue-system | 1.0.0 | npm | active |  |
-| @fire22/security-audit-security-audit | 1.0.0 | npmjs | active |  |
-| @fire22/security-core | 1.0.0 | npmjs | active |  |
-| @fire22/security-registry | 1.0.0 | fire22 | active |  |
-| @fire22/security-scanner | 1.0.0 | fire22 | active |  |
-| @fire22/shared-styles | 1.0.0 | npm | active |  |
-| @fire22/sports-betting | 3.0.9 | npmjs | active |  |
-| @fire22/telegram-benchmarks | 1.0.0 | npm | active |  |
-| @fire22/telegram-bot | 1.0.0 | npm | active |  |
-| @fire22/telegram-dashboard | 1.0.0 | npm | active |  |
-| @fire22/telegram-integration | 3.0.9 | npmjs | active |  |
-| @fire22/telegram-workflows | 1.0.0 | npm | active |  |
-| @fire22/testing-framework | 1.0.3 | npm | active |  |
-| @fire22/testing-framework | 1.0.3 | npm | active |  |
-| @fire22/testing-framework | 1.0.3 | npm | active |  |
-| @fire22/version-manager 🔒 | 3.1.0 | fire22 | active |  |
-| @fire22/wager-system | 1.0.3 | fire22 | active |  |
-| @mycompany/bun-config-system | 1.3.5 | factory-wager | active |  |
-| @nolarose/windsurf-project | 1.0.0 | npm | active |  |
-| @skills/bun-native-mastery | 1.0.0 | npm | active |  |
-| @surgical-precision/platform | 1.2.0 | npmjs | active |  |
-| @surgical-precision/platform-old | 1.2.0 | npmjs | active |  |
-| @tier1380/mcp-tools | 1.3.8 | npm | active |  |
-| @your-org/crc32-sql-toolkit | 2.0.0 | factory-wager | active |  |
-| TAKE-1 | -- | npm | active |  |
-| TAKE-3 | -- | npm | active |  |
-| __test__ | -- | npm | active |  |
-| app | 1.0.0 | npm | active |  |
-| barbershop | 1.0.0 | npm | active |  |
-| benchmark | -- | npm | active |  |
-| betting-workflow-api | 1.0.0 | factory-wager | active |  |
-| bun-enhanced-file-analyzer | 1.0.0 | factory-wager | active |  |
-| bun-payment-linker-backend | 1.0.0 | npm | active |  |
-| bun-proxy | 0.1.0 | factory-wager | active |  |
-| bun-secrets-editor-widget | 1.0.0 | npm | active |  |
-| bun-toml-secrets-editor | 1.0.0 | npm | active |  |
-| bun-type-fixes | 1.0.0 | npm | active |  |
-| bun-v1.3.9-benchmarks | 1.0.0 | npm | active |  |
-| bun-v1.3.9-examples | 1.0.0 | npm | active |  |
-| bun-v1.3.9-playground | 1.0.0 | npm | active |  |
-| bun-v1.3.9-practical-examples | 1.0.0 | npm | active |  |
-| catalog-demo | 1.0.0 | npm | active |  |
-| cli-dashboard 🔒 | 1.0.0 | factory-wager | active |  |
-| codepoint | 0.1.0 | factory-wager | active |  |
-| codepoint-link-analytics-dashboard 🔒 | 0.0.1 | npm | active |  |
-| codepoint-react-demo 🔒 | 0.0.1 | npm | active |  |
-| codepoint-secrets-dashboard 🔒 | 0.0.1 | npm | active |  |
-| codepoint-systems-dashboard | 1.0.0 | npm | active |  |
-| cpu-profiling-demo | 1.0.0 | npm | active |  |
-| crystal-clear-docs-worker | 1.0.0 | npm | active |  |
-| crystal-clear-docs-worker | 1.0.0 | npm | active |  |
-| dev-hq-workspace 🔒 | -- | npm | active |  |
-| duo | 0.15.7 | npm | active |  |
-| duo-automation-artifacts | 1.2.4-beta.0 | npm | active |  |
-| duo-automation-tests | -- | npm | active |  |
-| duoplus-app-factory 🔒 | 3.6.0 | factory-wager | active |  |
-| duoplus-registry-worker | 1.0.0 | npm | active |  |
-| edge-worker 🔒 | 1.0.0 | factory-wager | active |  |
-| enhancements-1.0.01 | 0.1.0 | factory-wager | active |  |
-| enterprise-bun-app | 1.0.0 | npm | active |  |
-| enterprise-dashboard | 1.0.0 | factory-wager | active |  |
-| enterprise-dashboard-bench | -- | npm | active |  |
-| f402-openapi-contract 🔒 | 0.1.0 | npm | active |  |
-| factory-wager-registry 🔒 | 0.0.0 | npm | active |  |
-| factory-wager-registry-worker | 1.0.0 | npm | active |  |
-| factorywager-edge | 2.0.0 | npm | active |  |
-| fantasy402-ingestion 🔒 | 0.1.0 | npm | active |  |
-| fantasy42-fire22-registry | 5.1.0 | factory-wager | active |  |
-| fire22-benchmarking-suite 🔒 | 1.0.0 | npm | active |  |
-| fire22-core-packages 🔒 | 1.0.0 | npm | active |  |
-| fire22-dashboard-worker 🔒 | 5.1.0 | npm | active |  |
-| fire22-personal-subdomains | 1.0.0 | npm | active |  |
-| fire22-security-scanner | 1.0.0 | npm | active |  |
-| foxy-proxy | 1.0.0 | factory-wager | active |  |
-| fraud-detection-demo | 1.0.0 | npm | active |  |
-| full-stack-bun.io | 1.3.6 | factory-wager | active |  |
-| geelark | 1.0.0 | factory-wager | active |  |
-| geelark-dashboard 🔒 | 1.0.0 | npm | active |  |
-| grok-security | 1.0.0 | factory-wager | active |  |
-| http2-proxy-demo | 1.0.0 | npm | active |  |
-| ipfoxy-dashboard 🔒 | 1.0.0 | npm | active |  |
-| kalman-filter-suite | 1.0.0 | npm | active |  |
-| keyboard-shortcuts-lite | 1.0.0 | factory-wager | active |  |
-| lib | 1.0.0 | npm | active |  |
-| matrix-analysis-bench | -- | npm | active |  |
-| mcp-bun-docs | 1.0.0 | npm | active |  |
-| my-bun-app 🔒 | 1.0.0 | npmjs | active |  |
-| my-demo-app | 1.0.0 | npm | active |  |
-| my-tanstack-app 🔒 | -- | npm | active |  |
-| my-test-app | 1.0.0 | npm | active |  |
-| native-addon-tool 🔒 | 1.0.0 | factory-wager | active |  |
-| nolarose-benchmarks | 1.0.0 | npm | active |  |
-| nolarose-mcp-config | 1.0.1 | factory-wager | active |  |
-| parallel-scripts-demo | 1.0.0 | npm | active |  |
-| peer-team-payouts-peer 🔒 | 0.1.0 | npm | active |  |
-| pm-pack-demo | -- | npm | active |  |
-| quantum-navigator | 1.0.0 | factory-wager | active |  |
-| quantum-terminal-dashboard | 2.0.1 | factory-wager | active |  |
-| rust-bun-plugin | 1.0.0 | npmjs | active |  |
-| security-scanner-api | 1.0.0 | npm | active |  |
-| session-1 🔒 | -- | npm | active |  |
-| shortcut-registry | 1.0.0 | factory-wager | active |  |
-| sports-terminal-proxy | 1.0.1-beta.1 | npm | active |  |
-| systems-dashboard-template | 1.0.0 | npm | active |  |
-| tan-bun | 0.1.0 | factory-wager | active |  |
-| tanstack-start-bun-hosting 🔒 | -- | npm | active |  |
-| tension-field-god | 0.1.0-god | npm | active |  |
-| tier1380-test | 1.0.0 | npm | active |  |
-| utils | 1.0.0 | npm | active |  |
-| venmo-family-webui-demo | 1.0.0 | npm | active |  |
-| web-project 🔒 | -- | npm | active |  |
-| windsurf-project-config | 2.4.0 | npm | active |  |
-| workspace-demo | 1.0.0 | npm | active |  |
-| @factory-wager/cli | 0.1.0 |  | archive |  |
-| @factorywager/bunx-archive | 1.0.0 | npm | archive |  |
-| @factorywager/r2-storage-archive | 1.0.0 | npm | archive |  |
-| @factorywager/registry-archive | 1.0.0 | npm | archive |  |
-| @factorywager/registry-cli-archive | 1.0.0 | npm | archive |  |
-| @factorywager/registry-core-archive | 1.0.0 | npm | archive |  |
-| @factorywager/registry-server-archive | 1.0.0 | npm | archive |  |
-| @factorywager/registry-worker-archive | 1.0.0 | npm | archive |  |
-| @factorywager/secrets-archive | 1.0.0 | npm | archive |  |
-| @factorywager/semver-archive | 1.0.0 | npm | archive |  |
-| @factorywager/version-graph-archive | 1.0.0 | npm | archive |  |
-| @test/app | 1.0.0 | npm | archive |  |
-| @test/lib | 1.0.0 | npm | archive |  |
-| @test/utils | 1.0.0 | npm | archive |  |
-| bun-parallel-test | 1.0.0 | npm | archive |  |
-| bun-v1.3.9-playground-web | 1.0.0 | npm | archive |  |
-| docs-directory | 1.1.0 | npm | archive |  |
-| esm-bytecode-demo | 1.0.0 | npm | archive |  |
-| my-app-projects-archive-kimiremote-refactor-kimiremote-frontend 🔒 | 0.0.0 | npm | archive |  |
-| peer-team-payouts 🔒 | 0.1.0 | npm | archive |  |
-| sports-terminal-proxy-projects-archive-kimiremote-refactor | 1.0.0 | npm | archive |  |
-| @bun-tools/markdown-constants | 1.0.0 | npm | core |  |
-| @factorywager/dashboard-profile | 10.0.0 | npm | core |  |
-| @factorywager/dev-dashboard | 1.0.0 | npm | core |  |
-| @factorywager/fraud-prevention | 1.0.0 | npm | core |  |
-| @factorywager/playwriter-skill | 1.1.0 | npm | core |  |
-| @factorywager/pref-propagation | 10.0.0 | npm | core |  |
-| @factorywager/profile-cli | 10.0.0 | npm | core |  |
-| @factorywager/r2-storage | 1.0.0 | npm | core |  |
-| @factorywager/redis-profile | 10.0.0 | npm | core |  |
-| @factorywager/registry | 1.0.0 | npm | core |  |
-| @factorywager/registry-core | 1.0.0 | npm | core |  |
-| @factorywager/semver | 1.0.0 | npm | core |  |
-| @factorywager/theme | 1.0.0 | npm | core |  |
-| @factorywager/user-profile | 10.0.0 | npm | core |  |
-| @factorywager/xgboost-pers | 10.0.0 | npm | core |  |
-| @fw/ab-testing 🔒 | 0.1.0 | npm | core |  |
-| @fw/business 🔒 | 0.1.0 | npm | core |  |
-| @fw/docs-tools 🔒 | 0.1.0 | npm | core |  |
-| @fw/guards 🔒 | 0.1.0 | npm | core |  |
-| @fw/p2p 🔒 | 0.1.0 | npm | core |  |
-| @fw/package 🔒 | 0.1.0 | npm | core |  |
-| @fw/rip 🔒 | 0.1.0 | npm | core |  |
-| @fw/versioning 🔒 | 0.1.0 | npm | core |  |
-| @sports-terminal/cli | 0.1.1 | factory-wager | core |  |
-| @sports-terminal/core | 0.1.1 | factory-wager | core |  |
-| factorywager-enterprise 🔒 | 5.1.2 | factory-wager | core |  |
-| my-app 🔒 | 0.0.0 | npm | core |  |
-| shared | 0.1.0 | factory-wager | core |  |
-| @a2ui/angular | 0.8.1 | npm | experimental |  |
-| @a2ui/lit | 0.8.1 | npm | experimental |  |
-| @agents/api | 1.3.0 | npm | experimental |  |
-| @alerts/api | 1.3.0 | npm | experimental |  |
-| @apps/wager-app | 1.0.0 | npm | experimental |  |
-| @bench/core | 1.0.0 | internal | experimental |  |
-| @bench/layer4 | 1.0.0 | internal | experimental |  |
-| @bench/suite | 1.0.0 | npm | experimental |  |
-| @bun-api-registry/shared | 1.3.0 | npm | experimental |  |
-| @bun-api-registry/ui | 1.3.0 | npm | experimental |  |
-| @clawdbot/bluebubbles | 2026.1.23 | npm | experimental |  |
-| @clawdbot/copilot-proxy | 2026.1.23 | npm | experimental |  |
-| @clawdbot/diagnostics-otel | 2026.1.23 | npm | experimental |  |
-| @clawdbot/discord | 2026.1.23 | npm | experimental |  |
-| @clawdbot/google-antigravity-auth | 2026.1.23 | npm | experimental |  |
-| @clawdbot/google-gemini-cli-auth | 2026.1.23 | npm | experimental |  |
-| @clawdbot/imessage | 2026.1.23 | npm | experimental |  |
-| @clawdbot/llm-task | 2026.1.23 | npm | experimental |  |
-| @clawdbot/lobster | 2026.1.23 | npm | experimental |  |
-| @clawdbot/matrix | 2026.1.23 | npm | experimental |  |
-| @clawdbot/mattermost | 2026.1.23 | npm | experimental |  |
-| @clawdbot/memory-core | 2026.1.23 | npm | experimental |  |
-| @clawdbot/memory-lancedb | 2026.1.23 | npm | experimental |  |
-| @clawdbot/msteams | 2026.1.23 | npm | experimental |  |
-| @clawdbot/nextcloud-talk | 2026.1.23 | npm | experimental |  |
-| @clawdbot/nostr | 2026.1.23 | npm | experimental |  |
-| @clawdbot/open-prose | 2026.1.23 | npm | experimental |  |
-| @clawdbot/signal | 2026.1.23 | npm | experimental |  |
-| @clawdbot/skills | 1.0.0 | npm | experimental |  |
-| @clawdbot/slack | 2026.1.23 | npm | experimental |  |
-| @clawdbot/telegram | 2026.1.23 | npm | experimental |  |
-| @clawdbot/tlon | 2026.1.22 | npm | experimental |  |
-| @clawdbot/voice-call | 2026.1.23 | npm | experimental |  |
-| @clawdbot/whatsapp | 2026.1.23 | npm | experimental |  |
-| @clawdbot/zalo | 2026.1.23 | npm | experimental |  |
-| @clawdbot/zalouser | 2026.1.23 | npm | experimental |  |
-| @core/shared | 1.3.0 | npm | experimental |  |
-| @customers/api | 1.3.0 | npm | experimental |  |
-| @dev/registry | 1.0.0 | internal | experimental |  |
-| @endpoints/api | 1.3.0 | npm | experimental |  |
-| @factory-wager/css | 1.0.0 | npm | experimental |  |
-| @factory-wager/tokens | 1.0.0 | npm | experimental |  |
-| @factory-wager/ui | 1.0.0 | npm | experimental |  |
-| @factory-wager/wager-domain | 1.0.0 | npm | experimental |  |
-| @governance/api | 1.3.0 | npm | experimental |  |
-| @graph/layer2 | 1.2.0 | internal | experimental |  |
-| @graph/layer4 | 1.4.0-beta.3 | internal | experimental |  |
-| @graph/rss-integrator | 0.1.0 | npm | experimental |  |
-| @graph/telegram | 1.0.0 | npm | experimental |  |
-| @graph/types | 1.0.0 | internal | experimental |  |
-| @graph/utils | 1.0.0 | npm | experimental |  |
-| @groups/api | 1.3.0 | npm | experimental |  |
-| @live-events/api | 1.3.0 | npm | experimental |  |
-| @logs/api | 1.3.0 | npm | experimental |  |
-| @mini/sports-correlation | 1.0.0 | internal | experimental |  |
-| @mycompany/pkg-1 | 1.0.0 | npm | experimental |  |
-| @mycompany/pkg-2 | 2.0.0 | npm | experimental |  |
-| @mycompany/registry | 1.3.5 | npm | experimental |  |
-| @nexus/registry-dashboard | 1.0.0 | internal | experimental |  |
-| @nexus/trader-analyzer | 0.2.0 | factory-wager | experimental |  |
-| @nexus/trader-analyzer-bun | 0.1.0 | factory-wager | experimental |  |
-| @odds-core/types | 1.0.0 | npm | experimental |  |
-| @odds-protocol/tests 🔒 | 1.0.0 | npm | experimental |  |
-| @odds-testing/core | 1.0.0 | npm | experimental |  |
-| @registry-dashboard | 1.0.0 | npm | experimental |  |
-| @registry-mcp/benchmarks | 1.0.0 | npm | experimental |  |
-| @registry-mcp/blog | 2.4.1 | npm | experimental |  |
-| @registry-mcp/core | 2.4.1 | npm | experimental |  |
-| @registry-mcp/workspace 🔒 | 2.4.1 | factory-wager | experimental |  |
-| @reports/api | 1.3.0 | npm | experimental |  |
-| @rss-feed/optimization | 1.0.0 | npm | experimental |  |
-| @settings/api | 1.3.0 | npm | experimental |  |
-| @skill/weather | 1.0.0 | npm | experimental |  |
-| @summary/api | 1.3.0 | npm | experimental |  |
-| @telegram-chats/api | 1.3.0 | npm | experimental |  |
-| @telegram-superchat/api | 1.3.0 | npm | experimental |  |
-| @telegram/api | 1.3.0 | npm | experimental |  |
-| @telemetry/api | 1.3.0 | npm | experimental |  |
-| @ui/agents | 1.1.1 | npm | experimental |  |
-| @ui/alerts | 0.0.0 | npm | experimental |  |
-| @ui/analytics | 0.0.0 | npm | experimental |  |
-| @ui/billing | 0.0.0 | npm | experimental |  |
-| @ui/customers | 1.0.1 | npm | experimental |  |
-| @ui/dashboard | 1.1.0 | npm | experimental |  |
-| @ui/docs | 1.0.0 | npm | experimental |  |
-| @ui/endpoints | 0.0.0 | npm | experimental |  |
-| @ui/governance | 0.0.0 | npm | experimental |  |
-| @ui/groups | 0.0.0 | npm | experimental |  |
-| @ui/liveevents | 0.0.0 | npm | experimental |  |
-| @ui/logs | 0.0.0 | npm | experimental |  |
-| @ui/monitoring | 0.0.0 | npm | experimental |  |
-| @ui/projects-experimental-working-tmp-projects-zodapiopenbunyamlast-ui-shared | 1.3.0 | npm | experimental |  |
-| @ui/reports | 0.0.0 | npm | experimental |  |
-| @ui/security | 0.0.0 | npm | experimental |  |
-| @ui/settings | 0.0.0 | npm | experimental |  |
-| @ui/summary | 0.0.0 | npm | experimental |  |
-| @ui/telegramchats | 0.0.0 | npm | experimental |  |
-| @ui/telegramsuperchat | 0.0.0 | npm | experimental |  |
-| @ui/telemetry | 0.0.0 | npm | experimental |  |
-| @ui/wageranalysis | 0.0.0 | npm | experimental |  |
-| @ui/wagerdetail | 0.0.0 | npm | experimental |  |
-| @ui/wagers | 1.3.1 | npm | experimental |  |
-| @ui/workflow | 0.0.0 | npm | experimental |  |
-| @wager-analysis/api | 1.3.0 | npm | experimental |  |
-| @wager-detail/api | 1.3.0 | npm | experimental |  |
-| @wagers/api | 1.3.0 | npm | experimental |  |
-| @workflow/api | 1.3.0 | npm | experimental |  |
-| a2ui_0_9_eval_llm | 1.0.0 | npm | experimental |  |
-| a2ui_genkit_eval | 1.0.0 | npm | experimental |  |
-| api-gateway | 1.0.0 | npm | experimental |  |
-| api-integration | 0.1.0 | npm | experimental |  |
-| apple-id-creator | 1.0.0 | npm | experimental |  |
-| bun-api-explorer-pro | 2.0.0 | npm | experimental |  |
-| bun-docs | 0.1.0 | npm | experimental |  |
-| bun-enhanced-agents | 2.0.4 | factory-wager | experimental |  |
-| bun-mcp-server | 1.0.0 | npm | experimental |  |
-| bun-react-template 🔒 | 0.1.0 | factory-wager | experimental |  |
-| bun-stream-dashboard | 1.0.0 | factory-wager | experimental |  |
-| chromprofile-testing | 0.1.0 | factory-wager | experimental |  |
-| claude-features-test | 0.1.0 | factory-wager | experimental |  |
-| clawdbot | 2026.1.23 | npm.factory-wager | experimental |  |
-| clawdbot-control-ui 🔒 | -- | npm | experimental |  |
-| demo-project | 1.0.0 | npm | experimental |  |
-| factory-wager-monorepo | 1.3.2 | npmjs | experimental |  |
-| feed-project | 0.1.0 | npm | experimental |  |
-| foo | -- | npm | experimental |  |
-| hft-freeze-predictor | 0.1.0 | npm | experimental |  |
-| init 🔒 | -- | npm | experimental |  |
-| lightning-shortcut-system | 1.0.0 | npm | experimental |  |
-| mcp-blog-gateway 🔒 | 1.0.0 | npm | experimental |  |
-| nba-swarm | 1.0.0 | factory-wager | experimental |  |
-| obsidian-good-for-you | 0.1.0 | factory-wager | experimental |  |
-| odds-arbitrage | 1.0.0 | npm | experimental |  |
-| odds-core | 1.0.0 | npm | experimental |  |
-| odds-dashboard | 1.0.0 | npm | experimental |  |
-| odds-ml | 1.0.0 | npm | experimental |  |
-| odds-protocol-monorepo 🔒 | 1.0.0 | npm.factory-wager | experimental |  |
-| odds-temporal | 1.0.0 | npm | experimental |  |
-| odds-validation | 1.0.0 | npm | experimental |  |
-| odds-websocket | 1.0.0 | npm | experimental |  |
-| rss-feed-optimization | 1.0.0 | factory-wager | experimental |  |
-| rss-feed-optimization-template | 1.0.0 | npm | experimental |  |
-| rss-starter | 1.0.0 | npm | experimental |  |
-| sports | 0.1.0 | npm | experimental |  |
-| stream-processor | 1.0.0 | npm | experimental |  |
-| stuff-a | 1.0.0 | npm | experimental |  |
-| stuff-b | 1.0.0 | npm | experimental |  |
-| stuff-c | 1.0.0 | npm | experimental |  |
-| stuff-monorepo 🔒 | -- | npm | experimental |  |
-| t3-lattice | 3.4.0 | npm | experimental |  |
-| t3-lattice-registry | 3.4.0 | factory-wager | experimental |  |
-| t3-lattice-registry-client | 1.2.1 | npm | experimental |  |
-| tension-engine-v1 | 1.0.0 | npm | experimental |  |
-| test-demo 🔒 | -- | npm | experimental |  |
-| trader-analyzer-bench | -- | npm | experimental |  |
-| trader-analyzer-bun-bench | -- | npm | experimental |  |
-| trimmy | 0.1.0 | factory-wager | experimental |  |
-| vault-standards | 1.0.0 | npm | experimental |  |
-| windsurf-project-2 | 0.1.0 | factory-wager | experimental |  |
-| windsurf-project-old 🔒 | 2.4.0 | factory-wager | experimental |  |
-| working 🔒 | 0.1.0 | factory-wager | experimental |  |
+| @brendadeeznuts1111/kal-poly-bot🔒 | 2.4.2 | factory-wager | active | projects/active/development/kal-poly-bot |
+| @brendadeeznuts1111/surgical-precision-mcp | 1.2.0 | github | active | projects/active/development/kal-poly-bot/surgical-precision-mcp |
+| @bun-tolm/cli | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/cli |
+| @bun-toml/benchmark | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/benchmark |
+| @bun-toml/core | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/core |
+| @bun-toml/dashboard | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/dashboard |
+| @bun-toml/logger | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/logger |
+| @bun-toml/platform🔒 | 1.0.0 | factory-wager | active | projects/active/utilities/bun-toml-secrets-editor |
+| @bun-toml/profiler | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/profiler |
+| @bun-toml/rss | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/rss |
+| @bun-toml/shared | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/shared |
+| @bun/inspect-utils | 2.0.0 | npm | active | projects/active/analysis/grok-security/bun-inspect-utils |
+| @bun/pm-integrity | 1.0.0 | npm | active | projects/active/analysis/matrix-analysis/packages/pm-integrity |
+| @bun/proxy | 1.3.5 | npm | active | projects/active/utilities/codepoint/bun-proxy |
+| @cascade-mover/calibration🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/calibration |
+| @cascade-mover/cli-table🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/cli-table |
+| @cascade-mover/config🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/config |
+| @cascade-mover/pattern-classifier🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/pattern-classifier |
+| @cascade-mover/r2-client🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/r2-client |
+| @cascade-mover/sources🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/sources |
+| @cascade-mover/token-refresh🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/token-refresh |
+| @cascade-mover/ui🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/ui |
+| @cascade-mover/utils🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/utils |
+| @cascade-mover/websocket🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3/packages/websocket |
+| @dev-hq/create | 1.0.0 | github | active | projects/active/development/geelark/src/packages/create |
+| @devhq/cli | 1.2.0 | devhq | active | projects/active/utilities/testing/src/cli |
+| @duoplus/cli-core | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@tools/cli |
+| @duoplus/cli-core-pkg | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@tools/cli/package |
+| @duoplus/core | 1.0.0 | duoplus | active | projects/active/automation/duo-automation/packages/core |
+| @duoplus/disputes | 1.0.0 | duoplus | active | projects/active/automation/duo-automation/packages/disputes |
+| @duoplus/monitoring | 1.0.0 | duoplus | active | projects/active/automation/duo-automation/packages/monitoring |
+| @duoplus/registry-gateway | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@platform/modules/registry-gateway |
+| @duoplus/security-vault | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@platform/modules/security-vault |
+| @duoplus/status-system | 3.7.0 | npm | active | projects/active/automation/duo-automation/packages/@core/status |
+| @duoplus/telemetry-kernel | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@platform/modules/telemetry-kernel |
+| @duoplus/terminal | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@core/terminal |
+| @duoplus/testing-framework | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@tools/testing |
+| @duoplus/testing-utils | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@tools/testing/package |
+| @duoplus/ui-components | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@platform/components |
+| @duoplus/utils | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/packages/@core/utils |
+| @dynamic-spy/kit | 9.0.0 | npm | active | projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit |
+| @factory-wager/admin-cli | 1.0.0 | factory-wager | active | projects/active/automation/duo-automation/src/cli |
+| @factorywager/playwriter-skill | 1.1.0 | npm | active | projects/active/playwriter-skill |
+| @fire22-registry/analytics-dashboard | 2.7.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/analytics/analytics-dashboard |
+| @fire22-registry/compliance-core | 4.3.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/compliance/compliance-core |
+| @fire22-registry/core-security | 3.1.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/security/core-security |
+| @fire22-registry/fraud-detection | 3.1.0 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/security/core-security/fraud-detection |
+| @fire22/api-client | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-api-client |
+| @fire22/api-consolidated | 1.0.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-api-consolidated |
+| @fire22/bench | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/bench |
+| @fire22/benchmark-formatter | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/benchmark-formatter |
+| @fire22/benchmark-formatter | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/benchmark-formatter |
+| @fire22/benchmark-orchestrator-benchmark-orchestrator | 1.0.0 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/packages/benchmark-orchestrator |
+| @fire22/benchmark-suite | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/benchmark-suite |
+| @fire22/benchmark-suite | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/benchmark-suite |
+| @fire22/branding-audit-branding-audit | 2.1.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/packages/branding-audit |
+| @fire22/build-system | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-build-system |
+| @fire22/compliance-checker-compliance-checker | 1.0.0 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/packages/compliance-checker |
+| @fire22/core | 1.0.3 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/core |
+| @fire22/core-dashboard | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-core-dashboard |
+| @fire22/dashboard-worker-security-scanner-security-scanner-projects-enterprise-fantasy42-fire22-registry-dashboard-worker-packages-security-scanner | 1.0.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/security-scanner |
+| @fire22/enhanced-logging | 1.0.0-lkey.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/enhanced-logging |
+| @fire22/env-manager | 1.0.3 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/env-manager |
+| @fire22/grid-ui | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/@fire22/grid-ui |
+| @fire22/language-keys | 1.0.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-language-keys |
+| @fire22/load-testing | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/load-testing |
+| @fire22/load-testing | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/load-testing |
+| @fire22/memory-profiler | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/memory-profiler |
+| @fire22/memory-profiler | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/memory-profiler |
+| @fire22/micro-benchmarks | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/micro-benchmarks |
+| @fire22/micro-benchmarks | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/micro-benchmarks |
+| @fire22/middleware | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/middleware |
+| @fire22/multilingual | 1.3.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-multilingual |
+| @fire22/pattern-system | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-pattern-system |
+| @fire22/queue-system | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-queue-system |
+| @fire22/security-audit-security-audit | 1.0.0 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/packages/security-audit |
+| @fire22/security-core | 1.0.0 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/security-core |
+| @fire22/security-registry | 1.0.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry |
+| @fire22/security-scanner | 1.0.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/@fire22/security-scanner |
+| @fire22/shared-styles | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/shared-styles |
+| @fire22/sports-betting | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-sports-betting |
+| @fire22/telegram-benchmarks | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-telegram-benchmarks |
+| @fire22/telegram-bot | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-telegram-bot |
+| @fire22/telegram-dashboard | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-telegram-dashboard |
+| @fire22/telegram-integration | 3.0.9 | npmjs | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-telegram-integration |
+| @fire22/telegram-workflows | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-telegram-workflows |
+| @fire22/testing-framework | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/testing-framework |
+| @fire22/testing-framework | 1.0.3 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite/packages/testing-framework |
+| @fire22/version-manager🔒 | 3.1.0 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/version-manager |
+| @fire22/wager-system | 1.0.3 | fire22 | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/packages/wager-system |
+| @mycompany/bun-config-system | 1.3.5 | factory-wager | active | projects/active/tools/zig-self-bun |
+| @plannotator/ai🔒 | 0.0.1 | npm | active | plannotator-upstream/packages/ai |
+| @plannotator/editor | 0.0.1 | npm | active | plannotator-upstream/packages/editor |
+| @plannotator/hooks🔒 | 0.0.1 | npm | active | plannotator-upstream/apps/hook |
+| @plannotator/marketing🔒 | 0.0.1 | npm | active | plannotator-upstream/apps/marketing |
+| @plannotator/opencode | 0.21.1 | npm | active | plannotator-upstream/apps/opencode-plugin |
+| @plannotator/paste-service🔒 | 0.1.0 | npm | active | plannotator-upstream/apps/paste-service |
+| @plannotator/pi-extension | 0.21.1 | npm | active | plannotator-upstream/apps/pi-extension |
+| @plannotator/portal🔒 | 0.0.1 | npm | active | plannotator-upstream/apps/portal |
+| @plannotator/review-editor | 0.0.1 | npm | active | plannotator-upstream/packages/review-editor |
+| @plannotator/review🔒 | 0.0.1 | npm | active | plannotator-upstream/apps/review |
+| @plannotator/server🔒 | 0.21.1 | npm | active | plannotator-upstream/packages/server |
+| @plannotator/shared🔒 | 0.0.1 | npm | active | plannotator-upstream/packages/shared |
+| @plannotator/ui | 0.0.1 | npm | active | plannotator-upstream/packages/ui |
+| @plannotator/waitlist-service🔒 | 0.1.0 | npm | active | plannotator-upstream/apps/waitlist-service |
+| @sports-terminal/ui🔒 | 0.1.0 | npm | active | projects/active/enterprise/bet-ticker-worker-v1.1/packages/ui |
+| @surgical-precision/platform | 1.2.0 | npmjs | active | projects/active/development/kal-poly-bot/operation-surgical-precision |
+| @surgical-precision/platform-old | 1.2.0 | npmjs | active | projects/active/development/kal-poly-bot/operation_surgical_precision |
+| @tier1380/mcp-tools | 1.3.8 | npm | active | projects/active/analysis/matrix-analysis/mcp-tools |
+| @toc-ops/ledger-writer🔒 | 0.1.0 | npm | active | scratch/toc-ops/packages/ledger-writer |
+| @toc-ops/proton-pass | 0.1.0 | github | active | projects/active/utilities/proton-pass |
+| @toc-ops/proton-pass🔒 | 0.1.0 | npm | active | scratch/toc-ops/packages/proton-pass |
+| @your-org/crc32-sql-toolkit | 2.0.0 | factory-wager | active | projects/active/games/2048 |
+| 01-session🔒 | -- | npm | active | projects/active/utilities/bun-file-analyzer/01-session |
+| alchemy-tutorial🔒 | 1.0.0 | npm | active | examples/demos/alchemy-tutorial |
+| app | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/parallel-scripts/workspace-demo/packages/app |
+| benchmark | -- | npm | active | projects/active/tools/rust-bun-plugin/benchmark |
+| bet-ticker-bench🔒 | -- | npm | active | projects/active/enterprise/bet-ticker-worker-v1.1/bench |
+| bet-ticker-frontend🔒 | 1.0.0 | npm | active | projects/active/enterprise/bet-ticker-worker-v1.1/frontend |
+| bet-ticker-worker🔒 | 1.1.0 | npm | active | projects/active/enterprise/bet-ticker-worker-v1.1 |
+| bet-turnin-sheet🔒 | -- | npm | active | bet-turnin-sheet |
+| betting-workflow-api | 1.0.0 | factory-wager | active | projects/active/utilities/api-plive-setup-discovery |
+| bradley-terry | 0.3.32 | npm | active | bradley-terry |
+| bun-enhanced-file-analyzer | 1.0.0 | factory-wager | active | projects/active/utilities/bun-file-analyzer |
+| bun-payment-linker-backend | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/backend |
+| bun-proxy | 0.1.0 | factory-wager | active | projects/active/utilities/testing |
+| bun-secrets-editor-widget | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget |
+| bun-toml-secrets-editor | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/packages/secrets-editor |
+| bun-type-fixes | 1.0.0 | npm | active | projects/active/analysis/matrix-analysis/bun-type-fixes |
+| bun-v1.3.9-benchmarks | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/benchmarks |
+| bun-v1.3.9-examples | 1.0.0 | npm | active | examples/bun-v139-features |
+| bun-v1.3.9-playground | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/playground |
+| bun-v1.3.9-practical-examples | 1.0.0 | npm | active | scratch/bun-v1.3.9-practical-examples |
+| cascade-mover-v3🔒 | 0.1.0 | npm | active | projects/active/enterprise/cascade-mover-v3 |
+| catalog-demo | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/catalog-demo |
+| cli-dashboard🔒 | 1.0.0 | factory-wager | active | projects/active/apps/cli-dashboard |
+| codepoint | 0.1.0 | factory-wager | active | projects/active/utilities/codepoint |
+| codepoint-link-analytics-dashboard🔒 | 0.0.1 | npm | active | projects/active/utilities/codepoint/link-analytics-dashboard |
+| codepoint-react-demo🔒 | 0.0.1 | npm | active | projects/active/utilities/codepoint/react-demo |
+| codepoint-secrets-dashboard🔒 | 0.0.1 | npm | active | projects/active/utilities/codepoint/secrets-dashboard |
+| codepoint-systems-dashboard | 1.0.0 | npm | active | projects/active/utilities/codepoint/systems-dashboard |
+| cpu-profiling-demo | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/profiling |
+| crystal-clear-docs-worker | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/docs-worker |
+| crystal-clear-docs-worker | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/docs/docs-worker |
+| duo | 0.15.7 | npm | active | projects/active/utilities/shortcut-registry/tmp/duo |
+| duo-automation-artifacts | 1.2.4-beta.0 | npm | active | projects/active/automation/duo-automation/artifacts |
+| duo-automation-tests | -- | npm | active | projects/active/automation/duo-automation/tests/core |
+| duoplus-app-factory🔒 | 3.6.0 | factory-wager | active | projects/active/automation/duoplus-app-factory |
+| duoplus-registry-worker | 1.0.0 | npm | active | projects/active/automation/duo-automation/infrastructure/cloudflare |
+| edge-worker🔒 | 1.0.0 | factory-wager | active | projects/active/apps/edge-worker |
+| enhancements-1.0.01 | 0.1.0 | factory-wager | active | projects/active/automation/enhancements-1.0.01 |
+| enterprise-bun-app | 1.0.0 | npm | active | projects/active/utilities/bun-toml-secrets-editor/enterprise-app |
+| enterprise-dashboard | 1.0.0 | factory-wager | active | projects/active/dashboards/enterprise-dashboard |
+| enterprise-dashboard-bench | -- | npm | active | projects/active/dashboards/enterprise-dashboard/scripts/bench |
+| f402-openapi-contract🔒 | 0.1.0 | npm | active | projects/active/f402-openapi |
+| factory-wager-registry-worker | 1.0.0 | npm | active | projects/active/automation/duo-automation/src/registry |
+| factorywager-cli | 2.0.0 | factory-wager | active | projects/active/automation/duo-automation |
+| factorywager-edge | 2.0.0 | npm | active | projects/active/analysis/matrix-analysis/factorywager-edge |
+| factorywager-registry🔒 | 1.0.0 | npm | active | projects/active/factorywager |
+| fantasy402-dashboard🔒 | -- | npm | active | projects/active/f402-openapi/dashboard |
+| fantasy402-ingestion🔒 | 0.1.0 | npm | active | projects/active/f402-openapi/workers/fantasy402-ingestion |
+| fantasy42-fire22-registry | 5.1.0 | factory-wager | active | projects/active/enterprise/fantasy42-fire22-registry |
+| fire22-benchmarking-suite🔒 | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/benchmarking/benchmarking/fire22-benchmarking-suite |
+| fire22-core-packages🔒 | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/core/fire22-core-packages |
+| fire22-dashboard-worker🔒 | 5.1.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker |
+| fire22-personal-subdomains | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/personal-subdomains |
+| fire22-security-scanner | 1.0.0 | npm | active | projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/security/security/fire22-security-scanner |
+| foxy-proxy | 1.0.0 | factory-wager | active | projects/active/enterprise/foxy-proxy |
+| full-stack-bun.io | 1.3.6 | factory-wager | active | projects/active/enterprise/full-stack-bun.io |
+| geelark | 1.0.0 | factory-wager | active | projects/active/development/geelark |
+| geelark-dashboard🔒 | 1.0.0 | npm | active | projects/active/development/geelark/web/dashboard/dashboard-react |
+| grok-security | 1.0.0 | factory-wager | active | projects/active/analysis/grok-security |
+| http2-proxy-demo | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/http2-proxy |
+| ipfoxy-dashboard🔒 | 1.0.0 | npm | active | projects/active/enterprise/foxy-proxy/packages/dashboard |
+| kalman-filter-suite | 1.0.0 | npm | active | projects/active/development/kal-poly-bot/poly-kalshi-arb |
+| keyboard-shortcuts-lite | 1.0.0 | factory-wager | active | projects/active/utilities/keyboard-shortcuts-lite |
+| lib | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/parallel-scripts/workspace-demo/packages/lib |
+| matrix-analysis-bench | -- | npm | active | projects/active/analysis/matrix-analysis/benchmarks-combined/utils |
+| mcp-bun-docs | 1.0.0 | npm | active | projects/active/analysis/matrix-analysis/mcp-bun-docs |
+| my-bun-app🔒 | 1.0.0 | npmjs | active | projects/active/apps/my-bun-app |
+| my-demo-app | 1.0.0 | npm | active | projects/active/development/kal-poly-bot/demo-app |
+| my-tanstack-app🔒 | -- | npm | active | projects/active/utilities/tan-bun/TAKE-2/my-tanstack-app |
+| my-test-app | 1.0.0 | npm | active | projects/active/development/kal-poly-bot/test-surgical-precision-app |
+| native-addon-tool🔒 | 1.0.0 | factory-wager | active | projects/active/tools/native-addon-tool |
+| nolarose-benchmarks | 1.0.0 | npm | active | projects/active/analysis/matrix-analysis/benchmarks-combined |
+| nolarose-mcp-config | 1.0.1 | factory-wager | active | projects/active/analysis/matrix-analysis |
+| odds-selectors🔒 | 1.0.0 | npm | active | projects/active/enterprise/cascade-mover-v3/odds-selectors |
+| parallel-scripts-demo | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/parallel-scripts |
+| plannotator-extra-skills🔒 | 0.1.0 | npm | active | plannator |
+| plannotator-webview | 0.16.5 | npm | active | plannotator-upstream/apps/vscode-extension |
+| plannotator🔒 | 0.21.1 | npm | active | plannotator-upstream |
+| pm-pack-demo | -- | npm | active | projects/active/enterprise/full-stack-bun.io/examples/pm-pack-demo |
+| quantum-navigator | 1.0.0 | factory-wager | active | projects/active/utilities/toml-cli |
+| quantum-terminal-dashboard | 2.0.1 | factory-wager | active | projects/active/dashboards/quantum-terminal-dashboard |
+| react-example🔒 | 0.0.0 | npm | active | scratch/toc-ops |
+| refresh-auth-full🔒 | 1.0.0 | npm | active | projects/active/f402-openapi/workers/fantasy402-ingestion/scripts/refresh-auth-full |
+| refresh-cookies | 1.0.0 | npm | active | projects/active/f402-openapi/workers/fantasy402-ingestion/scripts/refresh-cookies |
+| rust-bun-plugin | 1.0.0 | npmjs | active | projects/active/tools/rust-bun-plugin |
+| security-scanner-api | 1.0.0 | npm | active | projects/active/analysis/scanner |
+| session-1🔒 | -- | npm | active | projects/active/utilities/codepoint/session-1 |
+| shortcut-registry | 1.0.0 | factory-wager | active | projects/active/utilities/shortcut-registry |
+| sports-terminal-proxy | 1.0.1-beta.1 | npmjs | active | projects/active/kimiremote |
+| TAKE-1 | -- | npm | active | projects/active/utilities/tan-bun/TAKE-1 |
+| TAKE-3 | -- | npm | active | projects/active/utilities/tan-bun/TAKE-3 |
+| tan-bun | 0.1.0 | factory-wager | active | projects/active/utilities/tan-bun |
+| tanstack-start-bun-hosting🔒 | -- | npm | active | projects/active/utilities/tan-bun/TAKE-3/custom-server-app |
+| tension-field-god | 0.1.0-god | npm | active | projects/active/analysis/matrix-analysis/my-wager-v3 |
+| tier1380-test | 1.0.0 | npm | active | projects/active/analysis/matrix-analysis/test-archive |
+| toc-ops🔒 | 0.1.0 | npm | active | toc-ops-repo |
+| utils | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/parallel-scripts/workspace-demo/packages/utils |
+| venmo-family-webui-demo | 1.0.0 | npm | active | projects/active/automation/duo-automation/demos/venmo-family-webui-demo |
+| web-project🔒 | -- | npm | active | projects/active/utilities/codepoint/web-project |
+| windsurf-project-config | 2.4.0 | npm | active | projects/active/automation/duo-automation/demos |
+| workspace-demo | 1.0.0 | npm | active | scratch/bun-v1.3.9-examples/parallel-scripts/workspace-demo |
+| @test/app | 1.0.0 | npm | archive | archive/scratch/bun-parallel-test/packages/app |
+| @test/lib | 1.0.0 | npm | archive | archive/scratch/bun-parallel-test/packages/lib |
+| @test/utils | 1.0.0 | npm | archive | archive/scratch/bun-parallel-test/packages/utils |
+| bun-parallel-test | 1.0.0 | npm | archive | archive/scratch/bun-parallel-test |
+| bun-v1.3.9-playground-web | 1.0.0 | npm | archive | archive/scratch/bun-v1.3.9-examples/playground-web |
+| esm-bytecode-demo | 1.0.0 | npm | archive | archive/scratch/bun-v1.3.9-examples/esm-bytecode |
+| @factorywager/ab-testing🔒 | 0.1.0 | npm | core | packages/ab-testing |
+| @factorywager/business🔒 | 0.1.0 | npm | core | packages/business |
+| @factorywager/dashboard-profile | 10.0.0 | npm | core | projects/active/factorywager/registry/packages/dashboard-profile |
+| @factorywager/dev-dashboard | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/dev-dashboard |
+| @factorywager/docs-tools🔒 | 0.1.0 | npm | core | packages/docs-tools |
+| @factorywager/fraud-prevention | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/fraud-prevention |
+| @factorywager/guards🔒 | 0.1.0 | npm | core | packages/guards |
+| @factorywager/p2p🔒 | 0.1.0 | npm | core | packages/p2p |
+| @factorywager/package🔒 | 0.1.0 | npm | core | packages/package |
+| @factorywager/pref-propagation | 10.0.0 | npm | core | projects/active/factorywager/registry/packages/pref-propagation |
+| @factorywager/profile-cli | 10.0.0 | npm | core | projects/active/factorywager/registry/apps/profile-cli |
+| @factorywager/r2-storage | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/r2-storage |
+| @factorywager/redis-profile | 10.0.0 | npm | core | projects/active/factorywager/registry/packages/redis-profile |
+| @factorywager/registry | 1.0.0 | npmjs | core | projects/active/factorywager/registry |
+| @factorywager/registry-core | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/registry-core |
+| @factorywager/rip🔒 | 0.1.0 | npm | core | packages/rip |
+| @factorywager/semver | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/semver |
+| @factorywager/theme | 1.0.0 | npm | core | projects/active/factorywager/registry/packages/theme |
+| @factorywager/user-profile | 10.0.0 | npm | core | projects/active/factorywager/registry/packages/user-profile |
+| @factorywager/versioning🔒 | 0.1.0 | npm | core | packages/versioning |
+| @factorywager/xgboost-pers | 10.0.0 | npm | core | projects/active/factorywager/registry/packages/xgboost-pers |
+| @sports-terminal/cli | 0.1.1 | factory-wager | core | projects/active/kimiremote/packages/cli |
+| @sports-terminal/core | 0.1.1 | factory-wager | core | projects/active/kimiremote/packages/core |
+| factorywager-enterprise🔒 | 5.1.2 | factory-wager | core | . |
+| my-app🔒 | 0.0.0 | npm | core | projects/active/kimiremote/frontend |
+| odds-selectors | 1.0.0 | npm | core | projects/active/sports-terminal-os/packages/odds-selectors |
+| shared | 0.1.0 | factory-wager | core | lib/shared |
+| sports-mcp-server | 1.0.0 | npm | core | projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server |
+| sports-terminal-frontend🔒 | 5.2.0 | npm | core | projects/active/sports-terminal-os/src/frontend |
+| sports-terminal-os🔒 | 5.2.0 | npm | core | projects/active/sports-terminal-os |
+

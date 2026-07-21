@@ -71,32 +71,16 @@ jq '[.hits[] | select(.docsUrl == null)] | .[0:5]' reports/bun-usage-inventory.j
 `apply --phase N --section SECTION` implements **phase 6–9** (crypto · fs · shell · runtime). Dry-run by default; pass `--write` to apply. Legacy safe fs apply on `scripts/` remains [`discover:bun-native:apply`](#commands).
 
 ```bash
-# Phase 6 crypto
-bun run bun-migrate apply --phase 6 --section crypto --dry-run
-bun run migrate:crypto:apply
-bun run validate:integrity
-
-# Phase 7 fs — preview then write
-bun run bun-migrate apply --phase 7 --section fs --dry-run
-bun run migrate:fs:dry
-bun run migrate:fs:apply
-
-# Scoped to one workspace package dir
-bun run bun-migrate apply --phase 7 --section fs --workspace p2p --dry-run
+# Phase 6–9: dry-run by default; add --write to apply
+bun run bun-migrate apply --phase 6 --section crypto
+bun run bun-migrate apply --phase 6 --section crypto --write
+bun run bun-migrate apply --phase 7 --section fs --workspace p2p
+bun run bun-migrate apply --phase 8 --section shell --write
+bun run bun-migrate apply --phase 9 --section runtime --write
 
 # After apply
-bun run validate:integrity:fs
-bun run validate:integrity:all   # crypto + fs + runtime + shell + test
-
-# Phase 8 shell
-bun run bun-migrate apply --phase 8 --section shell --dry-run
-bun run migrate:shell:apply
-bun run validate:integrity:shell
-
-# Phase 9 runtime (process.env → Bun.env, which, inspect, hrtime)
-bun run bun-migrate apply --phase 9 --section runtime --dry-run
-bun run migrate:runtime:apply
-bun run validate:integrity:runtime
+bun run validate:integrity
+bun run validate:integrity:all
 ```
 
 ### Migration status
@@ -104,7 +88,7 @@ bun run validate:integrity:runtime
 ```bash
 bun run migrate:status          # product debt table (exit 1 if debt remains)
 bun run migrate:inventory       # full JSON → reports/bun-usage-inventory.json
-bun run validate:integrity:all  # gate all sections
+bun run validate:integrity:all
 ```
 
 | phase | migrateSection | product debt | Status |
@@ -136,7 +120,7 @@ Phases **6–9 product debt clear**. Re-run `migrate:status` after further edits
 - bare `mkdir` without a following nested `Bun.write`
 - `child_process` → `Bun.spawn`
 - `process.env` → `Bun.env` (opt-in, many intentional Node-compat paths)
-- crypto / streams / complex multi-arg fs APIs — **crypto:** `migrate:crypto:apply` + `validate:integrity`
+- crypto / streams / complex multi-arg fs APIs — **crypto:** `bun-migrate apply --phase 6 --section crypto --write` + `validate:integrity`
 
 ## After apply
 

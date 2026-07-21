@@ -21,7 +21,7 @@
 
 import { $ } from 'bun';
 import { Glob } from 'bun';
-import { mkdir } from 'node:fs/promises';
+import { ensureDir } from './lib/fs-bun';
 
 /** Output directory for packed packages */
 const PACKS_DIR = './dist/packs';
@@ -59,8 +59,7 @@ async function main(): Promise<void> {
   console.info(`   R2 Store: ${R2_BUCKET_URL}`);
   console.info(`   Output:   ${PACKS_DIR}\n`);
 
-  // sync-ok: directory-only creation; bun pm pack --destination creates the dir when writing tarballs
-  await mkdir(PACKS_DIR, { recursive: true });
+  await ensureDir(PACKS_DIR);
 
   const glob = new Glob('*/package.json');
   const packages = [...glob.scanSync({ cwd: '.' })];

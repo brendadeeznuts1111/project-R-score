@@ -92,7 +92,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 - **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
 - **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · ESLint `BOUNDARY_POLICY`
-- **Project inventory:** [`lib/projects-scan.ts`](lib/projects-scan.ts) · `bun run packages:list`
+- **Project inventory:** [`lib/projects-scan.ts`](lib/projects-scan.ts) · `bun run packages:list` · `bun run registry:projects`
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all`
 - **Console depth:** [`lib/console-depth.ts`](lib/console-depth.ts)
 - **Agent triage:** [`projects/README.md`](projects/README.md)
@@ -114,13 +114,14 @@ From `package.json` `workspaces.packages`:
 - **Jun 2026:** bet-ticker + cascade under `projects/active/enterprise/` (gitignored nested repos).
 - **Jul 2026:** Context-bloat pass — compile dumps removed; root nested products gitignored; STRUCTURE/projects README aligned to disk; skill `node_modules` / utility `dist` cleaned; experimental/archive tier buckets; `packages:list` scaffold filter; local runtime DBs/build-artifacts pruned.
 - **Jul 2026 (docs):** Root standards rewrite; [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) as path SSOT; cleanup summary under [`docs/organization/`](docs/organization/).
+- **Jul 2026 (projects triage):** Dropped ghost inventory (`barbershop`/`peer`/empty experimental+archive paths); `bun run registry:projects` regenerates [`public/registry/projects-registry.json`](public/registry/projects-registry.json); `packages:list --write` refreshes [`docs/packages/REGISTRY.md`](docs/packages/REGISTRY.md).
+- **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; single `r2` / `playground` / `mybundocs11` entrypoints; migrate phase aliases → `bun-migrate` direct.
 
 Detail: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md).
 
 ## Future candidates
 
 - Populate `projects/experimental/` / `projects/archive/` on first freeze/promote; re-tier games/apps demos if desired.
-- Regenerate [`docs/packages/REGISTRY.md`](docs/packages/REGISTRY.md) with template-package filter (`{{name}}`, scaffolds).
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
 

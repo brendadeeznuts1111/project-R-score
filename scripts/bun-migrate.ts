@@ -250,7 +250,6 @@ export const VALIDATE_WHITELIST = new Set([
   'scripts/lib/migrate-shell.ts',
   'scripts/lib/migrate-runtime.ts',
   'scripts/validate-integrity.ts',
-  'scripts/url-validator-focused.ts',
   'tools/bun-docs-changelog.ts',
   'lib/console-depth.ts',
   'scripts/bun-native-discover.ts',

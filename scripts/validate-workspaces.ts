@@ -11,9 +11,6 @@
  *   bun run validate:workspaces
  *   bun run validate:workspaces --verbose
  *
- * Deprecated alias (still works, prints a warning):
- *   bun run check:workspaces
- *   bun run check:workspaces --verbose
  */
 
 import { resolve, relative } from 'path';
@@ -71,16 +68,6 @@ const colors = {
   cyan: '\x1b[36m',
   dim: '\x1b[2m',
 };
-
-// Detect which script name was used (for deprecation warning)
-const lifecycleEvent = Bun.env.npm_lifecycle_event || '';
-const isDeprecatedName = lifecycleEvent === 'check:workspaces';
-
-if (isDeprecatedName) {
-  console.warn(
-    `${colors.yellow}⚠️  "check:workspaces" is deprecated. Please use "validate:workspaces" instead.${colors.reset}\n`
-  );
-}
 
 // ---------- Load root workspace config ----------
 const rootDir = resolve(import.meta.dir, '..');

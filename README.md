@@ -90,7 +90,7 @@ Implementations: [`scripts/fix-*.ts`](scripts/) (e.g. [`scripts/fix-console-log.
 - **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) (parse once; no interior `unknown` / `decodeUnknown*`)
 - **Import boundaries:** [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
 - **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · history: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md)
-- **Workspace hygiene:** `bun run validate:workspaces` (`check:workspaces` is the deprecated alias)
+- **Workspace hygiene:** `bun run validate:workspaces`
 - **Harness:** brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) · console depth → [`lib/console-depth.ts`](lib/console-depth.ts)
 - **ESLint conventions:** no `console.log`; no `any`; named exports only; no non-null `!`; no empty `catch`; no hardcoded secrets
 - **Monorepo tooling:** `--filter` patterns · `build:affected` / `test:affected`

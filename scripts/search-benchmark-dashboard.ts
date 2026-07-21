@@ -25,7 +25,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
  * @license MIT
  */
 
-import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { sha256Hex, hmacSha256 } from './lib/hash';
@@ -6887,12 +6886,12 @@ async function main(): Promise<void> {
       if (!fileExistsSync(path)) {
         return { name, exists: false, size: null, lastModified: null, category };
       }
-      const st = statSync(path);
+      const f = Bun.file(path);
       return {
         name,
         exists: true,
-        size: st.size,
-        lastModified: new Date(st.mtimeMs).toISOString(),
+        size: f.size,
+        lastModified: new Date(f.lastModified).toISOString(),
         category,
       };
     };
@@ -7183,7 +7182,7 @@ async function main(): Promise<void> {
     const mtimes = new Map<string, number>();
     const readMtime = (file: string): number => {
       try {
-        return fileExistsSync(file) ? statSync(file).mtimeMs : 0;
+        return fileExistsSync(file) ? Bun.file(file).lastModified : 0;
       } catch {
         return 0;
       }

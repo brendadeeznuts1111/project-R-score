@@ -35,7 +35,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run test:affected` | --filter '...' test |
-| `bun run test:barbershop` | test projects/active/barbershop/tests/*.ts |
 | `bun run test:continuity` | tests/business-continuity-test.ts |
 | `bun run test:dashboard:endpoints` | scripts/test-dashboard-endpoints.ts |
 | `bun run test:dashboard:mini` | scripts/test-dashboard-mini.ts |
@@ -45,13 +44,12 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:integration` | tests/payment-dashboard-integration.ts |
 | `bun run test:p2p` | tests/p2p-proxy-quick-test.ts |
 | `bun run test:payments` | tests/payment-flow-demo.ts |
-| `bun run test:protocol-integration` | test:protocol:matrix |
 | `bun run test:protocol:blob` | scripts/dashboard-protocol-check.ts --protocol=blob |
 | `bun run test:protocol:data` | scripts/dashboard-protocol-check.ts --protocol=data |
 | `bun run test:protocol:file` | scripts/dashboard-protocol-check.ts --protocol=file |
 | `bun run test:protocol:http` | scripts/dashboard-protocol-check.ts --protocol=http |
 | `bun run test:protocol:https` | scripts/dashboard-protocol-check.ts --protocol=https |
-| `bun run test:protocol:matrix` | scratch --parallel test:protocol:http test:protocol:https test:protocol:s3 test:protocol:file test:protocol:data test:protocol:blob test:protocol:unix |
+| `bun run test:protocol:matrix` | --parallel test:protocol:http test:protocol:https test:protocol:s3 test:protocol:file test:protocol:data test:protocol:blob test:protocol:unix |
 | `bun run test:protocol:parallel` | scripts/test-protocol-parallel.ts |
 | `bun run test:protocol:parallel:baseline` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --json-out=reports/protocol-parallel.baseline.json |
 | `bun run test:protocol:parallel:compare` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --max-failures=0 --max-p95-ms=120 --baseline-json=reports/protocol-parallel.baseline.json --max-p95-regression-ms=20 --max-failure-regression=0 --json-out=reports/protocol-parallel.compare.json |
@@ -83,6 +81,34 @@ All commands run via `bun run <name>` from the project root:
 | `bun run format` | Prettier on lib/ |
 | `bun run lint` | ESLint on lib/ |
 | `bun run validate:workspaces` | scripts/validate-workspaces.ts |
+
+### Documentation
+| Command | Description |
+|---------|-------------|
+| `bun run docs:analyze` | tools/cli/integrated-cli.ts analyze |
+| `bun run docs:build` | docs:sync:integrated |
+| `bun run docs:cache` | tools/cli/docs-cli.ts cache |
+| `bun run docs:catalog` | tools/bun-docs-catalog.ts list |
+| `bun run docs:catalog:build` | tools/bun-docs-catalog.ts build |
+| `bun run docs:catalog:export` | tools/bun-docs-catalog.ts export --compact |
+| `bun run docs:demo` | examples/bun-docs-demo.ts |
+| `bun run docs:domain:graph` | docs/domain-renderer.ts full |
+| `bun run docs:fetch` | lib/registry/package-docs.ts |
+| `bun run docs:index` | tools/cli/docs-cli.ts index |
+| `bun run docs:init` | tools/cli/integrated-cli.ts init |
+| `bun run docs:install` | bash scripts/install-bun-docs.sh |
+| `bun run docs:map:check` | tools/doc-map-check.ts |
+| `bun run docs:open` | tools/cli/docs-cli.ts open |
+| `bun run docs:orchestration:graph` | docs/orchestration-graph.ts flow |
+| `bun run docs:publish` | tools/cli/integrated-cli.ts publish |
+| `bun run docs:refresh` | tools/bun-docs-refresh.ts |
+| `bun run docs:release-index` | tools/bun-docs-releases.ts index |
+| `bun run docs:release-scrape` | tools/bun-docs-releases.ts scrape |
+| `bun run docs:rss` | lib/registry/rss-aggregator.ts |
+| `bun run docs:search` | tools/cli/docs-cli.ts search |
+| `bun run docs:serve` | docs:open |
+| `bun run docs:sync` | lib/registry/docs-sync.ts |
+| `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
 
 ### Development
 | Command | Description |
@@ -130,13 +156,34 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run help` | scripts/help.ts |
-| `bun run help:verbose` | scripts/help.ts --verbose |
 
 ### Package Management
 | Command | Description |
 |---------|-------------|
 | `bun run packages:list` | scripts/packages-list.ts |
 | `bun run packages:outdated` | outdated --filter=factorywager-enterprise |
+
+### Registry
+| Command | Description |
+|---------|-------------|
+| `bun run registry:config` | lib/registry/cli.ts config |
+| `bun run registry:config:init` | lib/registry/config-loader.ts init |
+| `bun run registry:config:load` | lib/registry/config-loader.ts load |
+| `bun run registry:config:save` | lib/registry/config-loader.ts save |
+| `bun run registry:deploy:cdn` | wrangler deploy -c registry-wrangler.toml --env production |
+| `bun run registry:deploy:staging` | wrangler deploy -c registry-wrangler.toml --env staging |
+| `bun run registry:doctor` | scripts/registry-stack-doctor.ts |
+| `bun run registry:doctor:fix` | scripts/registry-stack-doctor.ts --fix |
+| `bun run registry:doctor:json` | scripts/registry-stack-doctor.ts --json |
+| `bun run registry:info` | lib/registry/cli.ts info |
+| `bun run registry:list` | lib/registry/cli.ts list |
+| `bun run registry:projects` | scripts/generate-project-registry.ts |
+| `bun run registry:publish` | lib/registry/cli.ts publish |
+| `bun run registry:search` | lib/registry/cli.ts search |
+| `bun run registry:setup` | registry:config:init |
+| `bun run registry:start` | lib/registry/cli.ts start |
+| `bun run registry:stats` | lib/registry/cli.ts stats |
+| `bun run registry:token:create` | lib/registry/cli.ts tokens create |
 
 ### Search
 | Command | Description |
@@ -191,56 +238,13 @@ All commands run via `bun run <name>` from the project root:
 | `bun run dataview` | scripts/dataview-cli.ts |
 | `bun run dataview:test` | scripts/dataview-tests.ts |
 
-### Documentation — Bun token/catalog (SSOT: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md))
-
-**Northstar:** [`BunToken`](../lib/docs/bun-token.ts) export · [`TokenRef`](../lib/docs/token-ref.ts) interior.
-
-| Intent | Command |
-|--------|---------|
-| Refresh evidence | `bun run docs:refresh` |
-| Resolve a BunToken | `bun tools/bun-doc-refs.ts suggest <token>` |
-| Agent BunToken JSON | `bun tools/bun-docs-catalog.ts export` |
-| Thin TSV | `bun run docs:catalog:export` |
-| Health / tier-A metrics | `bun tools/bun-doc-refs.ts status` |
-
-| Command | Description |
-|---------|-------------|
-| `bun run docs:refresh` | RSS → scrape → catalog build → integrity log |
-| `bun run docs:release-index` | Phase 0: `https://bun.com/rss.xml` → `tools/release-index.json` |
-| `bun run docs:release-scrape` | Phase 2b: release posts → SHIP/FIX/CHG overlay |
-| `bun run docs:catalog:build` | Build `tools/bun-docs-catalog.json` |
-| `bun run docs:catalog` | List catalog |
-| `bun run docs:catalog:export` | Compact TSV for agents |
-| `bun run docs:map:check` | Platform doc SSOT path + link check |
-
-### Documentation — other (not the token catalog)
-| Command | Description |
-|---------|-------------|
-| `bun run docs:analyze` | tools/cli/integrated-cli.ts analyze |
-| `bun run docs:build` | docs:sync:integrated |
-| `bun run docs:cache` | tools/cli/docs-cli.ts cache (legacy browser docs CLI) |
-| `bun run docs:demo` | examples/bun-docs-demo.ts |
-| `bun run docs:domain:graph` | docs/domain-renderer.ts full |
-| `bun run docs:fetch` | lib/registry/package-docs.ts |
-| `bun run docs:index` | tools/cli/docs-cli.ts index |
-| `bun run docs:init` | tools/cli/integrated-cli.ts init |
-| `bun run docs:install` | bash scripts/install-bun-docs.sh |
-| `bun run docs:open` | tools/cli/docs-cli.ts open |
-| `bun run docs:orchestration:graph` | docs/orchestration-graph.ts flow |
-| `bun run docs:publish` | tools/cli/integrated-cli.ts publish |
-| `bun run docs:rss` | lib/registry/rss-aggregator.ts (**registry feeds** — not Bun release-index) |
-| `bun run docs:search` | tools/cli/docs-cli.ts search |
-| `bun run docs:serve` | docs:open |
-| `bun run docs:sync` | lib/registry/docs-sync.ts |
-| `bun run docs:sync:integrated` | tools/cli/integrated-cli.ts sync |
-
 ### Markdown
 | Command | Description |
 |---------|-------------|
 | `bun run markdown` | Render markdown (pass file + format: ansi, html, links, headings, plain) |
 | `bun run markdown:options` | Bun markdown parser option demos (pass demo|compare|gfm|extended) |
 
-### RSS (registry package feeds — not Bun blog release-index)
+### RSS
 | Command | Description |
 |---------|-------------|
 | `bun run rss:add` | lib/registry/rss-aggregator.ts add |
@@ -248,8 +252,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run rss:fetch` | lib/registry/rss-aggregator.ts fetch |
 | `bun run rss:html` | lib/registry/rss-aggregator.ts html |
 | `bun run rss:list` | lib/registry/rss-aggregator.ts list |
-
-For Bun **release blog** RSS → `bun run docs:release-index` ([BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md)).
 
 ---
 
@@ -288,11 +290,13 @@ git mv projects/active/<name> projects/archive/<name>
 
 # Check triage status
 bun run packages:list --filter=active
+bun run registry:projects
 ```
 
 ## Registry Info
 
 - **Primary registry**: `registry.factory-wager.com`
 - **Default (npm)**: public packages
-- **Full manifest**: `docs/packages/REGISTRY.md`
+- **Full manifest**: `docs/packages/REGISTRY.md` (`bun run packages:list --write`)
+- **Projects browser**: `public/registry/projects-registry.json` (`bun run registry:projects`)
 - **Package scope**: `@factorywager/*` (core), `@fire22/*` (fantasy42)

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 import { readJson, resolvePath, scanFilesSync } from './lib/fs-bun';
 /**
  * List packages in the monorepo with name, version, registry, and triage status.
@@ -9,6 +10,7 @@ import { readJson, resolvePath, scanFilesSync } from './lib/fs-bun';
  *   bun run packages:list --filter=core|active|experimental|archive|scratch
  *   bun run packages:list --include-scaffolds   # show {{name}} / template noise
  *   bun run packages:list --paths               # add directory column
+ *   bun run packages:list --write               # refresh docs/packages/REGISTRY.md
  *
  * @see https://bun.com/docs/runtime/glob — Bun.Glob
  * @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -28,6 +30,8 @@ const SKIP_SEGMENTS = new Set([
 const FILTER = process.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
 const INCLUDE_SCAFFOLDS = process.argv.includes('--include-scaffolds');
 const SHOW_PATHS = process.argv.includes('--paths');
+const WRITE_MD = process.argv.includes('--write');
+const REGISTRY_MD = resolvePath(ROOT, 'docs/packages/REGISTRY.md');
 
 function shouldSkipRel(rel: string): boolean {
   return rel.split('/').some(seg => seg.startsWith('.') || SKIP_SEGMENTS.has(seg));
@@ -149,4 +153,26 @@ if (SHOW_PATHS) {
 console.info(`\nTotal: ${rows.length} packages`);
 if (skippedScaffolds > 0) {
   console.info(`Skipped scaffolds: ${skippedScaffolds} (pass --include-scaffolds to show)`);
+}
+
+if (WRITE_MD) {
+  if (FILTER) {
+    console.error('Refusing --write with --filter= (would truncate the manifest)');
+    process.exit(1);
+  }
+  const generated = new Date().toISOString().slice(0, 10);
+  const lines = [
+    '# Package Registry Manifest',
+    '',
+    `_Generated: ${generated}_`,
+    '',
+    '| Package | Version | Registry | Triage | Directory |',
+    '|---------|---------|----------|--------|-----------|',
+  ];
+  for (const [tag, name, ver, reg, dir] of rows) {
+    lines.push(`| ${name} | ${ver} | ${reg} | ${tag} | ${dir} |`);
+  }
+  lines.push('');
+  await Bun.write(REGISTRY_MD, `${lines.join('\n')}\n`);
+  console.info(`Wrote ${REGISTRY_MD}`);
 }

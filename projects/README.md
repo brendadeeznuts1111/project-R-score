@@ -36,14 +36,14 @@ Each project under `projects/` is classified into one of three tiers:
 | `active/enterprise/` | fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io, bet-ticker-worker-v1.1, cascade-mover-v3 | bet-ticker + cascade: **own repos**, gitignored |
 | `active/games/` | 2048 | Demo; candidate for experimental |
 | `active/tools/` | native-addon-tool, rust-bun-plugin, zig-self-bun | Native experiments |
-| `active/utilities/` | api-plive-setup-discovery, bun-file-analyzer, bun-toml-secrets-editor, codepoint, keyboard-shortcuts-lite, shortcut-registry, tan-bun, testing, toml-cli | `dist/` local-only |
+| `active/utilities/` | api-plive-setup-discovery, bun-file-analyzer, bun-toml-secrets-editor, codepoint, keyboard-shortcuts-lite, proton-pass, shortcut-registry, tan-bun, testing, toml-cli | `dist/` local-only |
 | `active/factorywager/` | registry (+ packages) | In root workspaces |
 | `active/kimiremote/` | sports terminal proxy | Own repo, gitignored |
 | `active/sports-terminal-os/` | Sports Terminal OS v5.2 | Root workspace member |
 | `active/f402-openapi/` | OpenAPI / workers | Own tree, gitignored |
 | `active/playwriter-skill/` | Playwright skill package | Thin skill |
 
-See `bun run packages:list --filter=active` for package names. Scaffold/`{{name}}` packages are **hidden by default**; use `--include-scaffolds` or `--paths` when debugging inventory.
+See `bun run packages:list --filter=active` for package names. Scaffold/`{{name}}` packages are **hidden by default**; use `--include-scaffolds` or `--paths` when debugging inventory. Refresh the public browser inventory with `bun run registry:projects` → [`public/registry/projects-registry.json`](../public/registry/projects-registry.json).
 
 ## Agent scope (what not to load)
 

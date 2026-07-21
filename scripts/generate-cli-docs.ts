@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
  * Auto-generate docs/CLI.md from package.json scripts.
@@ -35,6 +36,7 @@ const CATEGORIES: Array<{ prefix: string; label: string; desc: string }> = [
   { prefix: 'profile:barbershop', label: 'Barbershop Profile', desc: 'Sampling profiler CLI' },
   { prefix: 'dataview', label: 'DataView', desc: 'DataView pool CLI (pass subcommand)' },
   { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation' },
+  { prefix: 'registry:', label: 'Registry', desc: 'Project / package registry snapshots' },
 ];
 
 const SPECIAL: Record<string, string> = {
@@ -162,12 +164,16 @@ lines.push('git mv projects/active/<name> projects/archive/<name>');
 lines.push('');
 lines.push('# Check triage status');
 lines.push('bun run packages:list --filter=active');
+lines.push('bun run registry:projects');
 lines.push('```');
 lines.push('');
 lines.push('## Registry Info', '');
 lines.push('- **Primary registry**: `registry.factory-wager.com`');
 lines.push('- **Default (npm)**: public packages');
-lines.push('- **Full manifest**: `docs/packages/REGISTRY.md`');
+lines.push('- **Full manifest**: `docs/packages/REGISTRY.md` (`bun run packages:list --write`)');
+lines.push(
+  '- **Projects browser**: `public/registry/projects-registry.json` (`bun run registry:projects`)'
+);
 lines.push('- **Package scope**: `@factorywager/*` (core), `@fire22/*` (fantasy42)');
 lines.push('');
 
