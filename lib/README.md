@@ -53,10 +53,8 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
-| [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
-| [`http/`](./http/) | HTTP helpers | `hardened-fetch.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |
