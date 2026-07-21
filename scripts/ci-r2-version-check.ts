@@ -3,8 +3,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync } from './lib/fs-bun';
 
-import { resolve } from 'node:path';
-
 type BucketSource = 'R2_BUCKET_NAME' | 'S3_BUCKET_NAME' | 'AWS_BUCKET_NAME' | 'default';
 
 function isSemver(value: string): boolean {
@@ -12,7 +10,7 @@ function isSemver(value: string): boolean {
 }
 
 function getPkgVersion(): string {
-  const pkgPath = resolve(process.cwd(), 'package.json');
+  const pkgPath = `${process.cwd()}/package.json`;
   const pkg = readJsonSync(pkgPath) as { version?: string };
   return String(pkg.version || '').trim();
 }

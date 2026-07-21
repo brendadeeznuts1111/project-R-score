@@ -10,6 +10,8 @@ Prototypes, demos, and proofs-of-concept. May promote to `active/`, freeze under
 | `cli-dashboard`, `edge-worker`, `my-bun-app` | Tiny Bun demos (ex-`active/apps/`) |
 | `zig-self-bun`, `rust-bun-plugin` | Native experiment toolchains (ex-`active/tools/`) |
 | `keyboard-shortcuts-lite` | Lightweight utility demo (ex-`active/utilities/`) |
+| `tan-bun` | Scratch takes / profile experiments (ex-`active/utilities/`) |
+| `testing` | Misnamed Dev HQ / proxy playground (ex-`active/utilities/`) |
 
 ## Promote / freeze
 

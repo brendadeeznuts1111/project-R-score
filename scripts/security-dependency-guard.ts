@@ -6,8 +6,6 @@ import { readText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 
-import { resolve } from 'node:path';
-
 type PackageJson = {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -82,7 +80,7 @@ export function scanBlockedImportsWithGrep(): string {
 }
 
 export async function main(): Promise<void> {
-  const pkgPath = resolve('package.json');
+  const pkgPath = `${process.cwd()}/package.json`;
   const raw = JSON.parse(await readText(pkgPath)) as PackageJson;
   const blockedDeps = listBlockedDeps(raw);
   const importHits = rgAvailable() ? scanBlockedImportsWithRipgrep() : scanBlockedImportsWithGrep();

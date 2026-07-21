@@ -36,26 +36,17 @@ export const CLI_CATEGORIES: CliCategory[] = [
   { prefix: 'test:', label: 'Test', desc: 'Run tests', priority: 5 },
   { prefix: 'install:', label: 'Install', desc: 'Scoped installs', priority: 6 },
   { prefix: 'dev', label: 'Development', desc: 'Dev servers', priority: 7 },
-  { prefix: 'start:', label: 'Servers', desc: 'Long-running servers', priority: 8 },
-  { prefix: 'workspaces:', label: 'Workspace', desc: 'Workspace orchestration', priority: 9 },
   { prefix: 'cheatsheet:', label: 'Cheatsheet', desc: 'Generate cheat sheets', priority: 10 },
   { prefix: 'demo:', label: 'Demo', desc: 'Demo contracts', priority: 11 },
   { prefix: 'deploy', label: 'Deploy', desc: 'Deploy helpers', priority: 12 },
-  { prefix: 'rss:', label: 'RSS', desc: 'RSS feeds', priority: 13 },
   { prefix: 'search:', label: 'Search', desc: 'Search governance and benchmarks', priority: 14 },
   { prefix: 'wiki:', label: 'Wiki', desc: 'Wiki generation and live preview', priority: 15 },
-  { prefix: 'markdown', label: 'Markdown', desc: 'Markdown render and option demos', priority: 16 },
+  { prefix: 'markdown', label: 'Markdown', desc: 'Markdown render', priority: 16 },
   {
     prefix: 'profile:barbershop',
     label: 'Barbershop Profile',
     desc: 'Sampling profiler CLI',
     priority: 17,
-  },
-  {
-    prefix: 'dataview',
-    label: 'DataView',
-    desc: 'DataView pool CLI (pass subcommand)',
-    priority: 18,
   },
   { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation', priority: 19 },
   {
@@ -84,7 +75,6 @@ export const CLI_SPECIAL: Record<string, string> = {
   'pool-telemetry': 'Connection pool telemetry CLI (pass subcommand: stats, query, sync, serve)',
   'security-tests': 'Run lib/security security test suite',
   markdown: 'Render markdown (pass file + format: ansi, html, links, headings, plain)',
-  'markdown:options': 'Bun markdown parser option demos (pass demo|compare|gfm|extended)',
   'profile:barbershop': 'Barbershop sampling profiler (pass subcommand: run, quick, status, …)',
   'wiki:mcp': 'Wiki generator MCP CLI (pass subcommand: generate, templates, …)',
   'type-check': 'Day-loop typecheck (tsconfig.check.json)',
@@ -101,7 +91,6 @@ export const CLI_CORE_CMDS = new Set([
   'format',
   'help',
   'packages:list',
-  'packages:outdated',
   'fix:console-log',
   'fix:scan-any-types',
   'fix:scan-default-exports',
@@ -111,7 +100,6 @@ export const CLI_CORE_CMDS = new Set([
   'fix:pin-versions',
   'lint:core',
   'format:core',
-  'format:check:core',
   'validate:workspaces',
   'build:affected',
   'test:affected',
@@ -141,7 +129,7 @@ export function describeCliScript(key: string, cmd: string, maxLen = 0): string 
 }
 
 /** Prefixes hidden from non-verbose interactive help. */
-export const HELP_QUIET_PREFIXES = ['cheatsheet:', 'rss:', 'demo:'] as const;
+export const HELP_QUIET_PREFIXES = ['cheatsheet:', 'demo:'] as const;
 
 export function isHelpQuietKey(key: string, cmd: string): boolean {
   if (HELP_QUIET_PREFIXES.some(p => key.startsWith(p))) return true;

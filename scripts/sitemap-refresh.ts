@@ -6,8 +6,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-import { resolve } from 'node:path';
-
 type SitemapPage = {
   path: string;
   localFile: string;
@@ -16,9 +14,9 @@ type SitemapPage = {
 };
 
 const DEFAULT_DOMAIN = 'docs.factory-wager.com';
-const PUBLIC_DIR = resolve('public');
-const SITEMAP_INDEX_PATH = resolve(PUBLIC_DIR, 'sitemap.xml');
-const SITEMAP_PAGES_PATH = resolve(PUBLIC_DIR, 'sitemap-pages.xml');
+const PUBLIC_DIR = `${process.cwd()}/public`;
+const SITEMAP_INDEX_PATH = `${PUBLIC_DIR}/sitemap.xml`;
+const SITEMAP_PAGES_PATH = `${PUBLIC_DIR}/sitemap-pages.xml`;
 
 const DASHBOARDS = 'public/dashboards';
 
@@ -100,7 +98,7 @@ async function detectDomain(): Promise<string> {
     .toLowerCase();
   if (envDomain) return envDomain;
 
-  const cnamePath = resolve('CNAME');
+  const cnamePath = `${process.cwd()}/CNAME`;
   if (fileExistsSync(cnamePath)) {
     const cname = String(await readText(cnamePath))
       .trim()
@@ -126,7 +124,7 @@ async function gitLastmod(filePath: string): Promise<string> {
 async function buildSitemapPagesXml(domain: string): Promise<string> {
   const rows = await Promise.all(
     PAGES.map(async page => {
-      const local = resolve(page.localFile);
+      const local = `${process.cwd()}/${page.localFile}`;
       const lastmod = fileExistsSync(local) ? await gitLastmod(local) : new Date().toISOString();
       const loc = `https://${domain}${page.path}`;
       return [

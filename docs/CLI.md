@@ -41,13 +41,11 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run packages:list` | scripts/packages-list.ts |
-| `bun run packages:outdated` | outdated --filter=factorywager-enterprise |
 
 ### Format
 | Command | Description |
 |---------|-------------|
 | `bun run format:check` | prettier --check lib/**/*.ts |
-| `bun run format:check:core` | format:check:harness |
 | `bun run format:check:harness` | x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
 | `bun run format:core` | format:harness |
 | `bun run format:harness` | x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' |
@@ -67,10 +65,8 @@ All commands run via `bun run <name>` from the project root:
 ### Lint
 | Command | Description |
 |---------|-------------|
-| `bun run lint:affected` | --filter '...' lint |
 | `bun run lint:bun-native` | scripts/harness-strict-lint.ts |
 | `bun run lint:bun-native:rollout` | eslint --config eslint.bun-native.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' --quiet |
-| `bun run lint:ci:root` | eslint lib/ai --ext .ts,.tsx |
 | `bun run lint:fix` | NODE_OPTIONS='--max-old-space-size=16384' bun run eslint lib/ --ext .ts --fix |
 | `bun run lint:harness` | eslint --config eslint.harness.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' |
 
@@ -78,40 +74,12 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run build:affected` | Build packages affected by current changes (bun --filter ...) |
-| `bun run build:all` | --filter '*' build |
 
 ### Test
 | Command | Description |
 |---------|-------------|
 | `bun run test:affected` | Test packages affected by current changes (bun --filter ...) |
-| `bun run test:continuity` | tests/business-continuity-test.ts |
-| `bun run test:dashboard:endpoints` | scripts/test-dashboard-endpoints.ts |
-| `bun run test:dashboard:mini` | scripts/test-dashboard-mini.ts |
-| `bun run test:dashboard:suite` | scripts/test-dashboard-suite.ts |
-| `bun run test:dashboard:websocket` | scripts/test-dashboard-websocket.ts |
-| `bun run test:endpoints` | scripts/test-endpoints-local.ts |
-| `bun run test:integration` | tests/payment-dashboard-integration.ts |
-| `bun run test:p2p` | tests/p2p-proxy-quick-test.ts |
-| `bun run test:payments` | tests/payment-flow-demo.ts |
-| `bun run test:protocol:blob` | scripts/dashboard-protocol-check.ts --protocol=blob |
-| `bun run test:protocol:data` | scripts/dashboard-protocol-check.ts --protocol=data |
-| `bun run test:protocol:file` | scripts/dashboard-protocol-check.ts --protocol=file |
-| `bun run test:protocol:http` | scripts/dashboard-protocol-check.ts --protocol=http |
-| `bun run test:protocol:https` | scripts/dashboard-protocol-check.ts --protocol=https |
-| `bun run test:protocol:matrix` | --parallel test:protocol:http test:protocol:https test:protocol:s3 test:protocol:file test:protocol:data test:protocol:blob test:protocol:unix |
-| `bun run test:protocol:parallel` | scripts/test-protocol-parallel.ts |
-| `bun run test:protocol:parallel:baseline` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --json-out=reports/protocol-parallel.baseline.json |
-| `bun run test:protocol:parallel:compare` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --max-failures=0 --max-p95-ms=120 --baseline-json=reports/protocol-parallel.baseline.json --max-p95-regression-ms=20 --max-failure-regression=0 --json-out=reports/protocol-parallel.compare.json |
-| `bun run test:protocol:parallel:deep` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --json-out=reports/protocol-parallel.latest.json |
-| `bun run test:protocol:parallel:gate` | scripts/test-protocol-parallel.ts --rerun-each=3 --max-concurrency=4 --max-failures=0 --max-p95-ms=120 --json-out=reports/protocol-parallel.gate.json |
-| `bun run test:protocol:parallel:promote-baseline` | scripts/protocol-baseline-promote.ts |
-| `bun run test:protocol:parallel:promote-baseline:dryrun` | test:protocol:parallel:compare |
-| `bun run test:protocol:s3` | scripts/dashboard-protocol-check.ts --protocol=s3 |
-| `bun run test:protocol:unix` | scripts/dashboard-protocol-check.ts --protocol=unix |
 | `bun run test:scoped` | test tests/console-depth.test.ts |
-| `bun run test:scoped:bail` | test tests/console-depth.test.ts --bail=10 |
-| `bun run test:snapshots:update` | test tests/console-depth.test.ts --update-snapshots |
-| `bun run test:workspaces` | --filter '*' test |
 
 ### Install
 | Command | Description |
@@ -134,21 +102,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run dev` | Start platform watch server (server-enhanced.ts) |
-
-### Servers
-| Command | Description |
-|---------|-------------|
-| `bun run start:content-type` | server/content-type-server.ts |
-| `bun run start:p2p-proxy` | server/p2p-proxy-server.ts |
-| `bun run start:p2p-proxy:bun` | server/p2p-proxy-bun-native.ts |
-| `bun run start:p2p-proxy:v2` | server/p2p-proxy-server-enhanced.ts |
-
-### Workspace
-| Command | Description |
-|---------|-------------|
-| `bun run workspaces:build` | --sequential --workspaces --if-present build |
-| `bun run workspaces:lint` | --parallel --workspaces --if-present lint |
-| `bun run workspaces:test` | --parallel --workspaces --if-present test |
 
 ### Demo
 | Command | Description |
@@ -187,23 +140,14 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run markdown` | Render markdown (pass file + format: ansi, html, links, headings, plain) |
-| `bun run markdown:options` | Bun markdown parser option demos (pass demo|compare|gfm|extended) |
-
-### DataView
-| Command | Description |
-|---------|-------------|
-| `bun run dataview` | scripts/dataview-cli.ts |
-| `bun run dataview:test` | scripts/dataview-tests.ts |
 
 ### Documentation
 | Command | Description |
 |---------|-------------|
-| `bun run docs:build` | docs:sync:integrated |
 | `bun run docs:cache` | tools/cli/docs-cli.ts cache |
 | `bun run docs:catalog` | tools/bun-docs-catalog.ts list |
 | `bun run docs:catalog:build` | tools/bun-docs-catalog.ts build |
 | `bun run docs:catalog:export` | tools/bun-docs-catalog.ts export --compact |
-| `bun run docs:demo` | examples/bun-docs-demo.ts |
 | `bun run docs:index` | tools/cli/docs-cli.ts index |
 | `bun run docs:install` | bash scripts/install-bun-docs.sh |
 | `bun run docs:map:check` | tools/doc-map-check.ts |
@@ -252,9 +196,6 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run ci:bun:check` | scripts/ci-bun-check.ts |
 | `bun run ci:demo:contract` | demo:contract:validate |
-| `bun run ci:parallel` | --parallel build lint:ci:root check:harness |
-| `bun run ci:parallel:all` | --parallel --no-exit-on-error build lint:ci:root |
-| `bun run ci:parallel:full` | --parallel --no-exit-on-error build test lint |
 | `bun run ci:r2:version:check` | scripts/ci-r2-version-check.ts |
 | `bun run ci:validate` | --sequential standards:check |
 

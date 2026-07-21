@@ -1,12 +1,12 @@
 {
   "meta": {
-    "generated_at": "2026-07-21T06:14:03.702Z",
+    "generated_at": "2026-07-21T06:18:03.145Z",
     "root": "/Users/nolarose/Projects",
     "version": "1.0.0"
   },
   "stats": {
     "total_projects": 39,
-    "total_size_bytes": 779152384,
+    "total_size_bytes": 779160576,
     "total_size_human": "743 MB",
     "by_category": {
       "kimiremote": 1,
@@ -21,8 +21,8 @@
       "f402-openapi": 1,
       "playwriter-skill": 1,
       "tools": 1,
-      "utilities": 9,
-      "experimental": 7
+      "utilities": 7,
+      "experimental": 9
     }
   },
   "featured": [
@@ -31,9 +31,9 @@
       "name": "kimiremote",
       "path": "projects/active/kimiremote",
       "category": "featured",
-      "size_bytes": 20746240,
+      "size_bytes": 20748288,
       "size_human": "19.8 MB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# KimiRemote — Sports Terminal Proxy",
@@ -47,7 +47,7 @@
       "category": "featured",
       "size_bytes": 2935808,
       "size_human": "2.8 MB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# Sports Terminal OS v5.2",
@@ -73,7 +73,7 @@
       "name": "scratch",
       "path": "scratch",
       "category": "featured",
-      "size_bytes": 11099136,
+      "size_bytes": 11105280,
       "size_human": "10.6 MB",
       "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": false,
@@ -161,7 +161,7 @@
       "category": "enterprise",
       "size_bytes": 21048320,
       "size_human": "20.1 MB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# Bet Ticker Worker v1.1",
@@ -175,7 +175,7 @@
       "category": "f402-openapi",
       "size_bytes": 15389696,
       "size_human": "14.7 MB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# Fantasy402 OpenAPI And Ingestion",
@@ -259,7 +259,7 @@
       "category": "enterprise",
       "size_bytes": 4753408,
       "size_human": "4.5 MB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# Cascade Mover v3",
@@ -353,8 +353,8 @@
     {
       "id": "tan-bun",
       "name": "tan-bun",
-      "path": "projects/active/utilities/tan-bun",
-      "category": "utilities",
+      "path": "projects/experimental/tan-bun",
+      "category": "experimental",
       "size_bytes": 1504256,
       "size_human": "1.4 MB",
       "last_modified": "2026-06-25T00:00:00.000Z",
@@ -423,8 +423,8 @@
     {
       "id": "testing",
       "name": "testing",
-      "path": "projects/active/utilities/testing",
-      "category": "utilities",
+      "path": "projects/experimental/testing",
+      "category": "experimental",
       "size_bytes": 397312,
       "size_human": "388 KB",
       "last_modified": "2026-06-25T00:00:00.000Z",
@@ -511,7 +511,7 @@
       "category": "utilities",
       "size_bytes": 27648,
       "size_human": "27 KB",
-      "last_modified": "2026-07-20T00:00:00.000Z",
+      "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": true,
       "has_readme": true,
       "description": "# @toc-ops/proton-pass",

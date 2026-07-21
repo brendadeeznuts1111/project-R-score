@@ -5,9 +5,7 @@ import { fileExistsSync } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
-import { resolve } from 'node:path';
-
-const ROOT = resolve(import.meta.dir, '..');
+const ROOT = `${import.meta.dir}/..`;
 const PLACEHOLDER_PATTERNS = [
   /^your_/i,
   /^replace_me$/i,
@@ -100,7 +98,7 @@ async function main() {
   console.info('');
 
   const trackedEnvFiles = getTrackedEnvFiles();
-  const trackedAbsolute = trackedEnvFiles.map(file => resolve(ROOT, file));
+  const trackedAbsolute = trackedEnvFiles.map(file => `${ROOT}/${file}`);
 
   const localCandidates = [
     '.env',
@@ -112,7 +110,7 @@ async function main() {
     '.env.bun-secrets-v37',
     '.env.registry',
     '.env.secret',
-  ].map(file => resolve(ROOT, file));
+  ].map(file => `${ROOT}/${file}`);
 
   await Promise.all([
     ...trackedAbsolute.map(file => parseEnvFile(file, true)),

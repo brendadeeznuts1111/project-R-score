@@ -8,21 +8,19 @@ Path SSOT: [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts). Maps: [`STRUC
 
 ## Metrics
 
-| Metric | Before (plan baseline) | After (r1) | After (r2) |
-|--------|------------------------:|-----------:|-----------:|
-| `package.json` scripts | 329 (post first trim; 431 original) | **275** | **258** |
-| `projects/experimental/` projects | 0 (README-only bucket) | **6** | **7** (+`keyboard-shortcuts-lite`) |
-| `packages:list --filter=active` | — | 207 packages | — |
-| `bun run help` | — | **~32ms** | **~10–15ms** |
-| `bun run cli:docs` | — | **~278ms** | — |
-| `discover:bun-native --roots=scripts` | 8 files / 10 hits (earlier) | **4 files / 4 hits** | — |
+| Metric | Before (plan baseline) | r1 | r2 | r3 (deeper) |
+|--------|------------------------:|---:|---:|------------:|
+| `package.json` scripts | 329 (post first trim; 431 original) | **275** | **258** | **193** |
+| `projects/experimental/` projects | 0 (README-only bucket) | **6** | **7** | **9** (+`tan-bun`, `testing`) |
+| `bun run help` | — | ~32ms | ~10–15ms | — |
+| `bun run cli:docs` | — | ~278ms | — | — |
 
 ## What changed
 
-1. **CLI SSOT** — `help` + `cli:docs` share [`scripts/lib/cli-categories.ts`](../../scripts/lib/cli-categories.ts); day-loop docs in README / STRUCTURE / CLI.md (`type-check`, `build:affected`, `test:affected`).
-2. **Script trim** — r1 removed 54 zero-ref aliases; r2 dropped 17 more (`rss:*`, `version:*`, dashboard preflight fan-out, `lint:all`, `security:check`, `validate:demo`). Kept `brand:*`, `fix:*`, `security:posture:report`, `dashboard:protocol:check`. Cheatsheets scrubbed.
-3. **Tier moves** — r1: `2048`, `cli-dashboard`, `edge-worker`, `my-bun-app`, `zig-self-bun`, `rust-bun-plugin`. r2: `keyboard-shortcuts-lite` → experimental.
-4. **Speed** — skip ast-grep `doctor` when husky trigger is only root lockfile/`package.json`. Dropped `node:path` from hot + fix entrypoints: `url-validator`, `validate-workspaces`, `verify-install-cache`, `machine-bun-health`, `evict-root-tilde-cache`, `fix-*`, `brand-cpu-profile`, `playground-dev`.
+1. **CLI SSOT** — `help` + `cli:docs` share [`scripts/lib/cli-categories.ts`](../../scripts/lib/cli-categories.ts); day-loop docs in README / STRUCTURE / CLI.md.
+2. **Script trim** — r1: 54 aliases; r2: 17 more; **r3: 65** (protocol/dashboard/P2P fan-outs, `workspaces:*`, `ci:parallel*`, niche demos/`dataview`/`markdown:options`/`bunx` entry, pure aliases). Kept CI/husky + day-loop + `brand:*` / `fix:*` / `search:*` / `install:*`.
+3. **Tier moves** — demos + `keyboard-shortcuts-lite` + **`tan-bun`**, **`testing`** → experimental.
+4. **Speed** — skip ast-grep `doctor` on lockfile-only triggers. Dropped `node:path` from more entrypoints: validators, install health, `fix-*`, `brand-cpu-profile`, `playground-dev`, `ci-r2-version-check`, `security-dependency-guard`, `sitemap-refresh`, `secrets-scan-local`, demo contract scripts.
 
 ## Day loop (prefer)
 
@@ -34,8 +32,12 @@ bun run test:affected
 bun run cli:docs            # refresh docs/CLI.md
 ```
 
+Protocol checks (after r3): `bun run dashboard:protocol:check` or `bun run scripts/dashboard-protocol-check.ts --protocol=…`.
+
 ## Out of scope (still later)
 
 - Root-parked nested remotes (`Proton-workspace/`, `toc-ops*`, …)
 - `proton-pass` WIP lane
 - Lifecycle hook aliases (`pretest` / `prelint` / `prebuild`)
+- Remaining `node:path` in large search/benchmark scripts
+- Optional: move `codepoint` / `api-plive-setup-discovery` to experimental

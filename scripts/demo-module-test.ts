@@ -2,18 +2,11 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readJsonSync, readTextSync } from './lib/fs-bun';
 
-import { join } from 'node:path';
 import { validateTier1SourcesForDemo } from './demo-tier1-baselines';
 
 const ROOT = process.cwd();
-const SERVER_PATH = join(ROOT, 'scratch', 'bun-v1.3.9-examples', 'playground-web', 'server.ts');
-const CONTRACT_PATH = join(
-  ROOT,
-  'scratch',
-  'bun-v1.3.9-examples',
-  'playground-web',
-  'demo-module-contract.json'
-);
+const SERVER_PATH = `${ROOT}/scratch/bun-v1.3.9-examples/playground-web/server.ts`;
+const CONTRACT_PATH = `${ROOT}/scratch/bun-v1.3.9-examples/playground-web/demo-module-contract.json`;
 
 function parseArg(name: string): string {
   const prefix = `--${name}=`;
