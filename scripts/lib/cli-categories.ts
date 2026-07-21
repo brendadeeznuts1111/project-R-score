@@ -1,3 +1,7 @@
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 /**
  * Shared CLI category SSOT for `help` and `cli:docs`.
@@ -89,6 +93,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
+  'ci:harness': 'CI harness envelope (install · lint · brands · spine smokes)',
+  'proof:install': 'Journey proof: install layout healthy',
   'harness:lesson': 'Scaffold a FEEDBACK.md lesson stub',
 };
 
@@ -115,6 +121,9 @@ export const CLI_CORE_CMDS = new Set([
   'test:changed:watch',
   'test:parallel',
   'type-check',
+  'harness:status',
+  'ci:harness',
+  'proof:install',
   'cli:docs',
   'registry:projects',
 ]);

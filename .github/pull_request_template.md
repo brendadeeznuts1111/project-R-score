@@ -1,41 +1,39 @@
 # Pull Request
 
-## 🎯 Type
-- [ ] 🐛 Bug Fix
-- [ ] ✨ New Feature
-- [ ] 🔒 Security Fix
-- [ ] 📚 Documentation
-- [ ] 🔧 Refactor
-- [ ] ⚡ Performance
-- [ ] 🧪 Test
+## Summary
 
-## 📋 Description
-<!-- Describe your changes -->
+<!-- 1–3 bullets: why this change exists -->
 
-## 🔗 Related Issues
-Closes #<!-- issue number -->
+## Claim → evidence
 
-## ✅ Checklist
-- [ ] Code follows project style guidelines
-- [ ] Self-review completed
-- [ ] Comments added for complex logic
-- [ ] Documentation updated
-- [ ] Tests added/updated
-- [ ] All tests passing
-- [ ] No new warnings
-- [ ] Security considerations addressed
+State the user/ops claim this PR closes. Match kind to evidence ([PROOF.md](../docs/harness/PROOF.md)).
 
-## 🧪 Testing
-<!-- Describe how you tested your changes -->
+| Claim (one sentence) | Kind (`unit` / `boundary` / `journey` / `deployed`) | Evidence (command or path that exited 0) |
+|----------------------|-----------------------------------------------------|------------------------------------------|
+| | | |
 
-## 📸 Screenshots (if applicable)
-<!-- Add screenshots for UI changes -->
+Install journey (when install/layout touched): `bun run proof:install`
 
-## 🔍 Review Notes
-<!-- Any specific areas you'd like reviewers to focus on -->
+## Checklist
 
-## ⚠️ Breaking Changes
-<!-- List any breaking changes -->
+- [ ] `bun run harness:status` — day-loop ratchets known
+- [ ] `bun run type-check` green for spine edits (`tsconfig.check.json`)
+- [ ] Brands / wire: no new bare `*Id: string` or interior `unknown` params
+- [ ] Did **not** sweep a parallel lane (foreign dirty trees left out)
+- [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`, AGENTS)
+- [ ] If reviewing the job end-to-end: [REVIEW.md](../docs/harness/REVIEW.md) nine questions
 
-## 📚 Additional Context
-<!-- Any other information reviewers should know -->
+## Test plan
+
+```bash
+# typical local set — trim to what this PR touches
+bun run proof:install
+bun run type-check
+bun run test:changed
+bun run check:path-bun
+bun run check:bun-env
+```
+
+## Notes for reviewers
+
+<!-- Risk, rollout, authority (see docs/harness/AUTHORITY.md) -->

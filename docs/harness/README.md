@@ -38,6 +38,17 @@ When a decision is unresolved, read **one** owner below — do not load the full
 | Continuous maintenance | day loop + pre-commit timings · `docs:refresh` operate loop |
 | Measured effectiveness | gate timings · attention budget (serial ESLint still dominant) |
 
+## Setup (hooks + CI)
+
+```bash
+bun install                 # runs prepare → husky
+# hooks: .husky/pre-commit (hygiene → pre-commit-harness → ast-grep)
+#        .husky/pre-push   (proof:install)
+bun run ci:harness          # same envelope as .github/workflows/harness-gates.yml
+```
+
+CI: [harness-gates.yml](../../.github/workflows/harness-gates.yml) (lint · brands · spine smokes · install proof) · [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) (`install:verify:strict`) · PR template requires claim→evidence ([PROOF.md](PROOF.md)).
+
 ## Day loop (honest)
 
 ```bash

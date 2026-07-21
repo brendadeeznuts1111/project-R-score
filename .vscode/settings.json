@@ -24,8 +24,12 @@
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "eslint.useFlatConfig": true,
+  "eslint.options": {
+    "overrideConfigFile": "eslint.bun-native.config.ts"
+  },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.validate": ["typescript", "typescriptreact", "javascript", "javascriptreact"],
+  "eslint.lintTask.enable": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

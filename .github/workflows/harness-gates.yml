@@ -1,13 +1,18 @@
-name: CI Smoke
+name: Harness Gates
 
 on:
+  pull_request:
   push:
-    branches: [main, fix/ci-pipeline]
+    branches: [main]
   workflow_dispatch:
 
-# Thin install journey — full harness is harness-gates.yml
+concurrency:
+  group: harness-gates-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  smoke:
+  harness:
+    name: Harness (install · lint · brands · spine smokes)
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
@@ -24,5 +29,5 @@ jobs:
       - name: Install
         run: bun scripts/with-bun-cache-env.ts ci
 
-      - name: proof:install (journey)
-        run: bun run proof:install
+      - name: Harness gates
+        run: bun run ci:harness

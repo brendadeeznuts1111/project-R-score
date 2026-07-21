@@ -9,7 +9,8 @@ function printEntry(entry: (typeof BUN_DX_CATALOG)[number]): void {
   if (entry.bad) console.info(`   ❌ ${entry.bad}`);
   console.info(`   ✅ ${entry.good}`);
   console.info(`   📖 ${entry.docs}`);
-  if (entry.eslintRule) console.info(`   🔧 Rule: ${entry.eslintRule}`);
+  const rules = entry.eslintRules ?? (entry.eslintRule ? [entry.eslintRule] : []);
+  if (rules.length) console.info(`   🔧 Rule: ${rules.join(', ')}`);
 }
 
 function printTable(): void {
@@ -31,11 +32,25 @@ async function main(): Promise<void> {
 
   if (args.includes('--list') || args[0] === 'list' || args.length === 0) {
     printTable();
-    console.info('\nTip: bun run dx:catalog tip | search <query> | <entry-id>');
+    console.info('\nEntry points:');
+    console.info('  bun run dx:catalog <entry-id>     # e.g. file.glob');
+    console.info('  bun run dx:catalog tip [id]       # random, or tip for id');
+    console.info('  bun run dx:catalog search <query>');
+    console.info('  bun run dx:catalog list');
     return;
   }
 
   if (args[0] === 'tip' || args.includes('--random')) {
+    const tipId = args[0] === 'tip' ? args[1] : undefined;
+    if (tipId) {
+      const entry = BUN_DX_CATALOG.find(e => e.id === tipId);
+      if (!entry) {
+        console.error(`Unknown entry: ${tipId}`);
+        process.exit(1);
+      }
+      printEntry(entry);
+      return;
+    }
     printEntry(randomCatalogEntry());
     return;
   }

@@ -30,6 +30,18 @@ docs/ @brendadeeznuts1111
 **/docs/** @brendadeeznuts1111
 *.md @brendadeeznuts1111
 
+# Harness / agent ratchets (JIT index, proof, pre-commit, CI gates)
+docs/harness/ @brendadeeznuts1111
+lib/harness/ @brendadeeznuts1111
+scripts/pre-commit-harness.ts @brendadeeznuts1111
+scripts/ci-harness.ts @brendadeeznuts1111
+scripts/harness-status.ts @brendadeeznuts1111
+.github/workflows/harness-gates.yml @brendadeeznuts1111
+.github/workflows/repo-hygiene.yml @brendadeeznuts1111
+eslint.bun-native.config.ts @brendadeeznuts1111
+eslint.harness.config.ts @brendadeeznuts1111
+config/eslint/ @brendadeeznuts1111
+
 # R2 Storage Team - Cloudflare R2 integration
 lib/r2/ @brendadeeznuts1111
 **/r2-*/** @brendadeeznuts1111

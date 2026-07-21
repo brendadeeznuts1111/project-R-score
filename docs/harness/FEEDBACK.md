@@ -70,3 +70,11 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Earliest owner:** proof
 - **Ratchet:** `lib/harness/proof.ts` · `docs/harness/PROOF.md`
 - **Keep / revise / drop:** keep
+
+### CI echo-smoke / soft PR checklist
+
+- **Finding:** `ci-smoke.yml` only echoed success; PR template did not require claim→evidence.
+- **Repair:** `bun run ci:harness` + `harness-gates.yml`; pre-push `proof:install`; PR template points at PROOF/REVIEW.
+- **Earliest owner:** script-gate + doc-map
+- **Ratchet:** `scripts/ci-harness.ts` · `.github/workflows/harness-gates.yml` · `.github/pull_request_template.md`
+- **Keep / revise / drop:** keep

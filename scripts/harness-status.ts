@@ -32,6 +32,7 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   },
   { cmd: 'bun run test:parallel', purpose: 'Full suite workers (bun test --parallel)' },
   { cmd: 'bun run proof:install', purpose: 'Journey: factory install layout healthy' },
+  { cmd: 'bun run ci:harness', purpose: 'CI envelope (install · lint · brands · spine smokes)' },
   { cmd: 'bun run check:path-bun', purpose: 'No path/node:path under lib/' },
   { cmd: 'bun run check:bun-env', purpose: 'No process.env under lib/ + scripts/' },
   { cmd: 'bun run check:brands', purpose: 'Actionable unbranded IDs (smart)' },
