@@ -69,7 +69,7 @@ export const CANONICAL_HARNESS = {
   harnessProof: 'lib/harness/proof.ts',
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',
-  standardsIntegration: 'lib/validation/standards-integration.ts',
+  standardsIntegration: 'docs/DEVELOPMENT-STANDARDS.md',
   /** AST rules: decodeUnknown* + unknown params */
   boundaryEslint: 'config/eslint/plugin-harness/boundary.ts',
   boundaryEslintPlugin: 'config/eslint/plugin-harness/index.ts',
