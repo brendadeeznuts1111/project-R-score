@@ -159,6 +159,14 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Ratchet:** `docs/README.md` · `bun tools/doc-map-check.ts`
 - **Keep / revise / drop:** keep
 
+### lib/tools README + heap profile in tree
+
+- **Finding:** `lib/profile.md` (~12k heap dump) and encyclopedic `lib/README` / `tools/README` still taxed search after docs/ cleanup.
+- **Repair:** Delete/gitignore heap profiles; compress lib/tools/guards READMEs to JIT maps.
+- **Earliest owner:** docs index / lib map
+- **Ratchet:** `.gitignore` `lib/profile.md` · slim `lib/README.md`
+- **Keep / revise / drop:** keep
+
 ### Pre-commit ESLint cold cost on staged harness files
 
 - **Finding:** Staged harness lint still paid ~1.7s ESLint even after CI moved to changed-files.
