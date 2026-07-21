@@ -6,8 +6,14 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 
 - **`proof.ts`** — critical proof-path catalog (`evidence` + `freshRerun`)  
   *Ratchet* → [`docs/harness/PROOF.md`](../../docs/harness/PROOF.md) · [`docs/harness/FRESH-RERUN.md`](../../docs/harness/FRESH-RERUN.md) · `bun run harness:status`
-- **`maintenance.ts`** — `TenantRunbook` catalog (signal · intervention · proof · retirement)  
-  *Ratchet* → `bun run test:tenant-runbooks` · [`docs/harness/spine-tenants.md`](../../docs/harness/spine-tenants.md)
+- **`maintenance.ts`** — `TenantRunbook` catalog + `RETIRED_TENANT_RUNBOOKS` tombstones (`retirementVerified`)  
+  *Ratchet* → `bun run test:tenant-runbooks` · `assertRetirementEnforcement` · [`docs/harness/spine-tenants.md`](../../docs/harness/spine-tenants.md)
+- **`discover-scheduled.ts`** — harness-perimeter schedule discovery (code · package scripts · GHA)  
+  *Ratchet* → `assertScheduledJobCoverage` · owners / exemptions in-file
+- **`signal-monitoring.ts`** — per-tenant probe · alert channel · optional last-check freshness  
+  *Ratchet* → `assertSignalMonitorTenantLinks` · `assertSignalMonitorFreshness`
+- **`intervention-validity.ts`** — catalog + markdown repair commands resolve (script/path · allowlist)  
+  *Ratchet* → `assertInterventionCommandsValid`
 - **`cron.ts`** — Bun.cron surface (OS-persistent primary · in-process complement)  
   *Ratchet* → `bun run test:cron` · [`docs/harness/cron.md`](../../docs/harness/cron.md)
 

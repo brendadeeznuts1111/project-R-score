@@ -7,7 +7,7 @@
  *   bun run docs:spine-tenants
  */
 import { ansiMarkdown } from '../lib/console-depth';
-import { MAINTENANCE_RUNBOOKS } from '../lib/harness/maintenance';
+import { MAINTENANCE_RUNBOOKS, RETIRED_TENANT_RUNBOOKS } from '../lib/harness/maintenance';
 import { joinPath } from '../lib/path-bun';
 import { SPINE_TENANTS } from '../spine/tenants';
 
@@ -28,8 +28,19 @@ const catalog = [
     r =>
       `- **\`${r.tenant}\`** → proof \`${r.proofId}\`\n` +
       `  *Doc* → \`${r.docPath}\`\n` +
-      `  *Fresh-rerun* → \`${r.freshRerun}\``
+      `  *Fresh-rerun* → \`${r.freshRerun}\`\n` +
+      `  *Retirement verified* → \`${r.retirementVerified}\``
   ),
+  '',
+  '## Retired tombstones (`RETIRED_TENANT_RUNBOOKS`)',
+  '',
+  ...(RETIRED_TENANT_RUNBOOKS.length === 0
+    ? ['*(none)*']
+    : RETIRED_TENANT_RUNBOOKS.map(
+        r =>
+          `- **\`${r.tenant}\`** → proof \`${r.proofId}\` · verified \`${r.retirementVerified}\`\n` +
+          `  *Condition* → ${r.retirement}`
+      )),
   '',
 ].join('\n');
 

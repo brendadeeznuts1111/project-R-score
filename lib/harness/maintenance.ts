@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Continuous-maintenance runbooks for spine tenants.
  *
@@ -21,6 +22,12 @@ export type TenantRunbook = {
   proofId: string; // brand-ok — opaque proof-path catalog key
   /** Condition under which this tenant/runbook may be removed */
   retirement: string;
+  /**
+   * Operator attestation that `retirement` is satisfied.
+   * Active (`MAINTENANCE_RUNBOOKS`): must be `false`.
+   * Tombstone (`RETIRED_TENANT_RUNBOOKS`): must be `true` before/with removal from spine.
+   */
+  retirementVerified: boolean;
   /** UTC crontab (reference; enforcement is spine/tenants.ts) */
   schedule?: string;
   /** Command that validates the runbook doc / catalog entry */
@@ -32,6 +39,7 @@ export type TenantRunbook = {
 /**
  * SSOT catalog — every SPINE_TENANTS id must appear here.
  * Doc files under docs/harness/tenants/<tenant>.md must exist.
+ * Active entries must keep `retirementVerified: false`.
  */
 export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
   {
@@ -42,6 +50,7 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     proofId: 'docs-integrity',
     retirement:
       'Remove when docs integrity is solely owned by a required CI / operate schedule that does not need the spine daemon',
+    retirementVerified: false,
     schedule: '0 6 * * *',
     freshRerun: 'bun run docs:tenant-docs-integrity',
     docPath: 'docs/harness/tenants/docs-integrity.md',
@@ -54,15 +63,28 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     proofId: 'install-verify-journey',
     retirement:
       'Remove when install-verify journey proof is enforced by a pre-deploy / required CI gate on a schedule and spine is no longer the only periodic re-proof',
+    retirementVerified: false,
     schedule: '30 6 * * *',
     freshRerun: 'bun run docs:tenant-install-verify',
     docPath: 'docs/harness/tenants/install-verify.md',
   },
 ] as const;
 
+/**
+ * Tombstones for tenants removed from SPINE_TENANTS after operator attestation.
+ * Move an active runbook here with `retirementVerified: true` in the same PR
+ * that deletes the spine tenant (keeps multi-tenant ≥2 via another active tenant).
+ */
+export const RETIRED_TENANT_RUNBOOKS: readonly TenantRunbook[] = [];
+
 export function runbookByTenant(tenant: string): TenantRunbook | undefined {
   // brand-ok — opaque spine tenant catalog key
   return MAINTENANCE_RUNBOOKS.find(r => r.tenant === tenant);
+}
+
+export function retiredRunbookByTenant(tenant: string): TenantRunbook | undefined {
+  // brand-ok — opaque spine tenant catalog key
+  return RETIRED_TENANT_RUNBOOKS.find(r => r.tenant === tenant);
 }
 
 /** Fail closed: every proofId must resolve in CRITICAL_PROOF_PATHS. */
@@ -90,6 +112,57 @@ export function assertRunbookTenantLinks(activeTenantIds: readonly string[]): st
     if (!active.has(id)) missing.push(`TenantRunbook "${id}" has no spine tenant`);
   }
   return missing;
+}
+
+/**
+ * Fail closed: retirement attestation.
+ * - Active runbooks must keep `retirementVerified: false`.
+ * - Retired tombstones must have `retirementVerified: true`, non-empty condition,
+ *   and must not still be in SPINE_TENANTS or MAINTENANCE_RUNBOOKS.
+ */
+export function assertRetirementEnforcement(activeTenantIds: readonly string[]): string[] {
+  const activeSpine = new Set(activeTenantIds);
+  const activeCatalog = new Set(MAINTENANCE_RUNBOOKS.map(r => r.tenant));
+  const retiredCatalog = new Set(RETIRED_TENANT_RUNBOOKS.map(r => r.tenant));
+  const failures: string[] = [];
+
+  for (const r of MAINTENANCE_RUNBOOKS) {
+    if (r.retirementVerified) {
+      failures.push(
+        `${r.tenant}: active MAINTENANCE_RUNBOOKS entry must have retirementVerified: false ` +
+          `(attest then move to RETIRED_TENANT_RUNBOOKS when removing from spine)`
+      );
+    }
+  }
+
+  for (const r of RETIRED_TENANT_RUNBOOKS) {
+    if (!r.retirementVerified) {
+      failures.push(
+        `${r.tenant}: RETIRED_TENANT_RUNBOOKS entry must have retirementVerified: true`
+      );
+    }
+    if (!r.retirement.trim()) {
+      failures.push(`${r.tenant}: retired tombstone retirement condition empty`);
+    }
+    if (activeSpine.has(r.tenant)) {
+      failures.push(
+        `${r.tenant}: retired tombstone still listed in SPINE_TENANTS — remove spine entry first`
+      );
+    }
+    if (activeCatalog.has(r.tenant)) {
+      failures.push(
+        `${r.tenant}: cannot be in both MAINTENANCE_RUNBOOKS and RETIRED_TENANT_RUNBOOKS`
+      );
+    }
+  }
+
+  for (const id of retiredCatalog) {
+    if (activeCatalog.has(id)) {
+      failures.push(`${id}: duplicate active + retired runbook`);
+    }
+  }
+
+  return failures;
 }
 
 /** Fail closed: catalog signal / intervention / retirement are non-empty. */
@@ -122,4 +195,57 @@ export function assertRunbookInterventionContainsProofFreshRerun(): string[] {
     }
   }
   return missing;
+}
+
+/** Split a freshRerun / intervention command into argv (no shell). */
+export function argvFromCommand(cmd: string): string[] {
+  return cmd.trim().split(/\s+/).filter(Boolean);
+}
+
+/** Run a catalog command; inherit stdio so failures are diagnosable. */
+export async function runFreshRerunCommand(
+  cmd: string,
+  cwd: string
+): Promise<{ code: number; cmd: string }> {
+  const argv = argvFromCommand(cmd);
+  if (argv.length === 0) return { code: 1, cmd };
+  const proc = Bun.spawn(argv, { cwd, stdout: 'inherit', stderr: 'inherit' });
+  return { code: await proc.exited, cmd };
+}
+
+/** Fail closed: each TenantRunbook.freshRerun exits 0. */
+export async function assertRunbookFreshRerunsPass(cwd: string): Promise<string[]> {
+  const failures: string[] = [];
+  for (const r of MAINTENANCE_RUNBOOKS) {
+    console.info(`▶ runbook freshRerun · ${r.tenant} · ${r.freshRerun}`);
+    const { code } = await runFreshRerunCommand(r.freshRerun, cwd);
+    if (code !== 0) {
+      failures.push(`${r.tenant}.freshRerun \`${r.freshRerun}\` exit ${code}`);
+    }
+  }
+  return failures;
+}
+
+/**
+ * Fail closed: each linked proof’s freshRerun exits 0 (deduped by command string).
+ */
+export async function assertLinkedProofFreshRerunsPass(cwd: string): Promise<string[]> {
+  const byId = new Map(CRITICAL_PROOF_PATHS.map(p => [p.id, p]));
+  const seen = new Set<string>();
+  const failures: string[] = [];
+  for (const r of MAINTENANCE_RUNBOOKS) {
+    const proof = byId.get(r.proofId);
+    if (!proof) {
+      failures.push(`${r.tenant} → proofId ${r.proofId} missing`);
+      continue;
+    }
+    if (seen.has(proof.freshRerun)) continue;
+    seen.add(proof.freshRerun);
+    console.info(`▶ proof freshRerun · ${r.proofId} · ${proof.freshRerun}`);
+    const { code } = await runFreshRerunCommand(proof.freshRerun, cwd);
+    if (code !== 0) {
+      failures.push(`proof ${r.proofId} freshRerun \`${proof.freshRerun}\` exit ${code}`);
+    }
+  }
+  return failures;
 }

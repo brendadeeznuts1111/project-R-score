@@ -233,10 +233,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'spine-maintenance-runbooks',
     // owner: lib/harness/maintenance.ts · docs/harness/tenants/
     claim:
-      'Every spine tenant has a typed TenantRunbook (signal · intervention · proof · retirement)',
+      'Every spine tenant has TenantRunbook + SignalMonitor; retirement attested; live freshRerun',
     kinds: ['boundary', 'journey'],
     evidence: [
       'lib/harness/maintenance.ts',
+      'lib/harness/discover-scheduled.ts',
+      'lib/harness/signal-monitoring.ts',
+      'lib/harness/intervention-validity.ts',
       'docs/harness/tenants/',
       'bun run test:tenant-runbooks',
       'docs/harness/spine-tenants.md',

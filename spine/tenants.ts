@@ -23,7 +23,18 @@ export type SpineTenant = {
   run: () => Promise<number>;
 };
 
-async function spawnTenant(cmd: string[], label: string): Promise<number> {
+async function recordTenantTick(tenant: string, code: number): Promise<void> {
+  const path = joinPath(ROOT, 'reports/spine-tenant-ticks.jsonl');
+  const line = `${JSON.stringify({ ts: new Date().toISOString(), tenant, code })}\n`;
+  const prev = (await Bun.file(path).exists()) ? await Bun.file(path).text() : '';
+  await Bun.write(path, prev + line);
+}
+
+async function spawnTenant(
+  cmd: string[],
+  label: string,
+  tenantId: string // brand-ok — opaque spine tenant catalog key
+): Promise<number> {
   console.info(`▶ spine tenant · ${label}`);
   const proc = Bun.spawn(cmd, {
     cwd: ROOT,
@@ -32,6 +43,11 @@ async function spawnTenant(cmd: string[], label: string): Promise<number> {
   });
   const code = await proc.exited;
   console.info(`${code === 0 ? '✅' : '❌'} spine tenant · ${label} · exit ${code}`);
+  try {
+    await recordTenantTick(tenantId, code);
+  } catch (err) {
+    console.warn(`⚠️ spine tenant tick log failed · ${tenantId}`, err);
+  }
   return code;
 }
 
@@ -43,14 +59,19 @@ export const SPINE_TENANTS: readonly SpineTenant[] = [
     // Match tools/bun-doc-refs.ts schedule default
     schedule: '0 6 * * *',
     run: () =>
-      spawnTenant(['bun', 'tools/bun-doc-refs.ts', 'schedule', '--once'], 'docs-integrity'),
+      spawnTenant(
+        ['bun', 'tools/bun-doc-refs.ts', 'schedule', '--once'],
+        'docs-integrity',
+        'docs-integrity'
+      ),
   },
   {
     id: 'install-verify',
     label: 'install-verify journey (fresh-rerun)',
     // Offset from docs-integrity so the daemon does not stampede
     schedule: '30 6 * * *',
-    run: () => spawnTenant(['bun', 'run', 'test:install-verify'], 'install-verify'),
+    run: () =>
+      spawnTenant(['bun', 'run', 'test:install-verify'], 'install-verify', 'install-verify'),
   },
 ] as const;
 

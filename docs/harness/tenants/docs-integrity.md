@@ -22,5 +22,7 @@ Do **not** delete the tenant to green the daemon.
 
 Remove when docs integrity is solely owned by a required CI / `docs:refresh` operate schedule and the spine daemon is no longer needed for this pass. Keep multi-tenant proof ≥2 via another tenant.
 
+**Retirement verified** `false` — set `retirementVerified: true` and move the catalog entry to `RETIRED_TENANT_RUNBOOKS` in the same PR that removes this tenant from `SPINE_TENANTS`.
+
 **Owner** `// owner: platform / docs operate`  
 **Fresh-rerun** `bun run docs:tenant-docs-integrity`
