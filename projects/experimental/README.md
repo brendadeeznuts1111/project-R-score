@@ -2,16 +2,15 @@
 
 Prototypes, demos, and proofs-of-concept. May promote to `active/`, freeze under `archive/`, or delete.
 
-## Status
+## On disk
 
-Bucket exists for triage. **No projects relocated yet** — candidates still under `active/` until an explicit `git mv`:
+| Path | Why experimental |
+|------|------------------|
+| `2048` | Demo game, not platform product |
+| `cli-dashboard`, `edge-worker`, `my-bun-app` | Tiny Bun demos (ex-`active/apps/`) |
+| `zig-self-bun`, `rust-bun-plugin` | Native experiment toolchains (ex-`active/tools/`) |
 
-| Candidate (under `active/`) | Why experimental |
-|-----------------------------|------------------|
-| `games/2048` | Demo game, not platform product |
-| `apps/cli-dashboard`, `apps/edge-worker`, `apps/my-bun-app` | Tiny Bun demos |
-| `tools/zig-self-bun`, `tools/rust-bun-plugin` | Native experiment toolchains |
-| `utilities/keyboard-shortcuts-lite` | Lightweight utility demo |
+Still under `active/` (optional later move): `utilities/keyboard-shortcuts-lite`.
 
 ## Promote / freeze
 

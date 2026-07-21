@@ -25,7 +25,9 @@
 ```bash
 bun run install:all      # isolated linker + global store (bun.sh/docs/pm/global-store)
 bun run install:verify   # sanity-check cache dir, links/, and no ./~ drift
-bun run dev              # Watch server
+bun run help             # Categorized commands (shared SSOT with docs/CLI.md)
+bun run type-check       # Day-loop check (tsconfig.check.json)
+bun run build:affected   # Changed packages only (bun --filter ...)
 bun run packages:list    # Browse all packages with version/registry/triage
 ```
 
@@ -49,6 +51,10 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 
 | Command | Description |
 |---------|-------------|
+| `bun run help` | Interactive categorized commands (`--verbose` for all) |
+| `bun run cli:docs` | Regenerate [`docs/CLI.md`](docs/CLI.md) |
+| `bun run type-check` | Day-loop typecheck (`tsconfig.check.json`) |
+| `bun run build:affected` / `test:affected` | Changed packages only ([`--filter`](https://bun.com/docs/pm/filter)) |
 | `bun run packages:list` | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`) |
 | `bun run packages:outdated` | Check outdated root deps (fast — workspace-isolated) |
 | `bun run validate:workspaces` | Validate workspace coverage |
@@ -61,7 +67,7 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run dev` | Start platform server |
 | `bun run deployment:readiness` | Deployment readiness matrix |
 
-See root `package.json` `scripts` for the full list.
+See `bun run help --verbose` or [`docs/CLI.md`](docs/CLI.md) for the full list.
 
 ## Code Quality & Fix Tools
 

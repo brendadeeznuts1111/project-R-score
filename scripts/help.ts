@@ -5,62 +5,18 @@
  * Usage:  bun run help
  *         bun run help --verbose   # show ALL scripts including internal ones
  *         bun run help <category>  # filter by category (e.g. "fix", "test", "packages")
+ *
+ * @see ./lib/cli-categories.ts — category SSOT (shared with cli:docs)
+ * @see https://bun.com/docs/cli/run — bun run
  */
 
 import pkg from '../package.json' assert { type: 'json' };
+import { describeCliScript, isHelpQuietKey, matchCliCategory } from './lib/cli-categories';
 
 const scripts = pkg.scripts as Record<string, string>;
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
 const filter = args.find(a => !a.startsWith('-'));
-
-interface Category {
-  prefix: string;
-  label: string;
-  priority: number;
-}
-const categories: Category[] = [
-  { prefix: 'packages:', label: 'Package Management', priority: 0 },
-  { prefix: 'format:', label: 'Format', priority: 1 },
-  { prefix: 'fix:', label: 'Antipattern Fixing', priority: 2 },
-  { prefix: 'lint:', label: 'Lint', priority: 3 },
-  { prefix: 'build:', label: 'Build', priority: 4 },
-  { prefix: 'test:', label: 'Test', priority: 5 },
-  { prefix: 'install:', label: 'Install', priority: 6 },
-  { prefix: 'dev', label: 'Development', priority: 7 },
-  { prefix: 'start:', label: 'Servers', priority: 8 },
-  { prefix: 'workspaces:', label: 'Workspace', priority: 9 },
-  { prefix: 'cheatsheet:', label: 'Cheatsheet', priority: 10 },
-  { prefix: 'demo:', label: 'Demo', priority: 11 },
-  { prefix: 'deploy', label: 'Deploy', priority: 12 },
-  { prefix: 'rss:', label: 'RSS', priority: 13 },
-  { prefix: 'docs:', label: 'Documentation', priority: 14 },
-];
-
-const SPECIAL: Record<string, string> = {
-  dev: 'Start platform watch server',
-  lint: 'ESLint on lib/',
-  format: 'Prettier on lib/',
-};
-
-function describe(script: string, cmd: string): string {
-  if (SPECIAL[script]) return SPECIAL[script];
-  const desc = cmd
-    .replace(/^bun run\s+/, '')
-    .replace(/^bun\s+/, '')
-    .replace(/&\s*$/, '')
-    .trim();
-  if (desc.length > 60) return desc.slice(0, 57) + '...';
-  return desc;
-}
-
-function categorize(key: string): { label: string; priority: number } {
-  for (const cat of categories) {
-    if (key.startsWith(cat.prefix)) return { label: cat.label, priority: cat.priority };
-  }
-  if (key === 'dev' || key === 'start:') return { label: 'Development', priority: 7 };
-  return { label: 'Other', priority: 99 };
-}
 
 interface Entry {
   key: string;
@@ -69,27 +25,21 @@ interface Entry {
   category: string;
   priority: number;
 }
+
 const entries: Entry[] = [];
 
 for (const [key, cmd] of Object.entries(scripts)) {
   if (!cmd || cmd.startsWith('//')) continue;
-  const { label, priority } = categorize(key);
-  // Skip noisy/internal scripts unless verbose
-  if (
-    !verbose &&
-    (key.startsWith('cheatsheet:') ||
-      key.startsWith('rss:') ||
-      key.startsWith('demo:') ||
-      key.startsWith('deploy') ||
-      cmd.startsWith('echo') ||
-      cmd.startsWith('//'))
-  )
+  const matched = matchCliCategory(key);
+  const label = matched?.label ?? 'Other';
+  const priority = matched?.priority ?? 99;
+  if (!verbose && isHelpQuietKey(key, cmd)) continue;
+  if (filter && !key.includes(filter) && !label.toLowerCase().includes(filter.toLowerCase()))
     continue;
-  if (filter && !key.includes(filter)) continue;
   entries.push({
     key,
     cmd: cmd.slice(0, 70),
-    desc: describe(key, cmd),
+    desc: describeCliScript(key, cmd, 60),
     category: label,
     priority,
   });
@@ -109,4 +59,5 @@ for (const e of entries) {
 }
 
 console.info(`\n  ${entries.length} commands shown${verbose ? '' : ' (use --verbose for all)'}`);
-console.info('  See docs/CLI.md for full reference');
+console.info('  See docs/CLI.md for full reference (`bun run cli:docs` to refresh)');
+console.info('  Day loop: type-check · build:affected · test:affected');

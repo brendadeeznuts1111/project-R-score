@@ -6,17 +6,20 @@
 /**
  * Machine Bun policy + runtime health — delegates to kimi-toolchain machine-bun.
  */
-import { join } from 'path';
 
-const ROOT = join(import.meta.dir, '..');
+const ROOT = `${import.meta.dir}/..`;
+
+function joinPath(...parts: string[]): string {
+  return parts.join('/').replace(/\/+/g, '/');
+}
 
 async function resolveMachineBunEntry(): Promise<string | null> {
   const candidates = [
     Bun.env.KIMI_TOOLCHAIN_ROOT
-      ? join(Bun.env.KIMI_TOOLCHAIN_ROOT, 'src/bin/machine-bun.ts')
+      ? joinPath(Bun.env.KIMI_TOOLCHAIN_ROOT, 'src/bin/machine-bun.ts')
       : null,
-    join(ROOT, '..', 'kimi-toolchain', 'src/bin/machine-bun.ts'),
-    join(Bun.env.HOME ?? Bun.env.USERPROFILE ?? '', 'kimi-toolchain/src/bin/machine-bun.ts'),
+    joinPath(ROOT, '..', 'kimi-toolchain', 'src/bin/machine-bun.ts'),
+    joinPath(Bun.env.HOME ?? Bun.env.USERPROFILE ?? '', 'kimi-toolchain/src/bin/machine-bun.ts'),
   ].filter((p): p is string => Boolean(p));
 
   for (const entry of candidates) {

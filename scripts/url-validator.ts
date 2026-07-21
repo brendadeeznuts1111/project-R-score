@@ -9,9 +9,12 @@ import { readTextSync } from './lib/fs-bun';
  */
 
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { join } from 'path';
 import { URLNormalizer } from '../lib/docs/constants/utils.ts';
 import { urlService } from '../lib/core/url-service.ts';
+
+function joinPath(base: string, ...parts: string[]): string {
+  return [base, ...parts].join('/').replace(/\/+/g, '/');
+}
 
 // ============================================================================
 // INTERFACES
@@ -99,7 +102,7 @@ class UrlValidator {
     const glob = new Bun.Glob(pattern);
     for (const relativePath of glob.scanSync({ cwd: dir, onlyFiles: true, dot: false })) {
       if (excludeDirectories.some(excluded => relativePath.includes(`/${excluded}/`))) continue;
-      files.push(join(dir, relativePath));
+      files.push(joinPath(dir, relativePath));
     }
     return files;
   }

@@ -102,14 +102,19 @@ async function getChangedFiles(): Promise<string[]> {
   return [...new Set([...unstaged, ...staged])];
 }
 
-function buildGates(includePackages: boolean): Gate[] {
-  const gates: Gate[] = [
-    {
+function buildGates(includePackages: boolean, includeDoctor: boolean): Gate[] {
+  const gates: Gate[] = [];
+
+  if (includeDoctor) {
+    gates.push({
       id: 'doctor',
       label: 'ast-grep doctor',
       cmd: ['bun', `${skillRoot}/scripts/bun-cli.ts`, 'doctor'],
       cwd: repoRoot,
-    },
+    });
+  }
+
+  gates.push(
     {
       id: 'rules',
       label: 'ast-grep rule tests',
@@ -119,8 +124,8 @@ function buildGates(includePackages: boolean): Gate[] {
       id: 'semver',
       label: 'semver policy tests',
       cmd: ['python3', helper, '-q', 'bun', 'test-ci', '--profile', 'semver', '--skip-preflight'],
-    },
-  ];
+    }
+  );
 
   if (includePackages) {
     gates.push({
@@ -192,7 +197,15 @@ async function main(): Promise<void> {
     console.info(`   · … +${triggerFiles.length - 5} more`);
   }
 
-  const gates = buildGates(includePackages);
+  // Doctor is slow and only needed when the skill tree itself changes (or full mode).
+  // Root package.json / lockfile triggers still run rules + semver + packages.
+  const includeDoctor =
+    mode === 'full' || triggerFiles.some(f => f.replace(/^\.\//, '').startsWith(AST_GREP_PREFIX));
+  if (!includeDoctor && mode !== 'full') {
+    console.info('⏭️  Skipping ast-grep doctor (no skill-tree paths in trigger set)');
+  }
+
+  const gates = buildGates(includePackages, includeDoctor);
   const results: Array<{ id: string; ok: boolean; ms: number }> = [];
 
   for (const gate of gates) {

@@ -10,10 +10,17 @@
  * Preferred:
  *   bun run validate:workspaces
  *   bun run validate:workspaces --verbose
- *
  */
 
-import { resolve, relative } from 'path';
+/** Repo-relative join (avoid node:path). */
+function joinPath(...parts: string[]): string {
+  return parts.join('/').replace(/\/+/g, '/');
+}
+
+function relativeFrom(root: string, file: string): string {
+  const prefix = root.endsWith('/') ? root : `${root}/`;
+  return file.startsWith(prefix) ? file.slice(prefix.length) : file;
+}
 
 // ---------- CLI Argument Parsing (simple) ----------
 const args = process.argv.slice(2);
@@ -70,11 +77,11 @@ const colors = {
 };
 
 // ---------- Load root workspace config ----------
-const rootDir = resolve(import.meta.dir, '..');
+const rootDir = joinPath(import.meta.dir, '..');
 let rootPkg: any;
 try {
   // Use require() because Bun supports comments in package.json when loaded this way
-  rootPkg = require(resolve(rootDir, 'package.json'));
+  rootPkg = require(joinPath(rootDir, 'package.json'));
 } catch (err) {
   console.error(`${colors.red}❌ Failed to parse root package.json${colors.reset}`);
   console.error(err);
@@ -137,7 +144,7 @@ for await (const pkgFile of pkgGlob.scan({
   // We will filter manually after.
 })) {
   // Manual ignore filtering
-  const rel = relative(rootDir, pkgFile).replace(/\\/g, '/');
+  const rel = relativeFrom(rootDir, pkgFile).replace(/\\/g, '/');
   let shouldIgnore = false;
   for (const ignorePattern of IGNORE_GLOBS) {
     if (new Bun.Glob(ignorePattern).match(rel)) {
@@ -155,7 +162,7 @@ const covered: string[] = [];
 const orphaned: string[] = [];
 
 for (const pkgFile of allPackageFiles) {
-  const relPath = relative(rootDir, pkgFile).replace(/\\/g, '/');
+  const relPath = relativeFrom(rootDir, pkgFile).replace(/\\/g, '/');
 
   if (EXEMPT_PATHS.includes(relPath)) {
     covered.push(pkgFile);
@@ -177,12 +184,12 @@ console.info(
 
 console.info(`${colors.green}✅ Covered packages: ${covered.length}${colors.reset}`);
 if (covered.length > 0 && verbose) {
-  covered.forEach(f => console.info(`   ${relative(rootDir, f)}`));
+  covered.forEach(f => console.info(`   ${relativeFrom(rootDir, f)}`));
 }
 
 console.info(`${colors.red}\n❌ Orphaned packages: ${orphaned.length}${colors.reset}`);
 if (orphaned.length > 0) {
-  orphaned.forEach(f => console.info(`   ${colors.red}${relative(rootDir, f)}${colors.reset}`));
+  orphaned.forEach(f => console.info(`   ${colors.red}${relativeFrom(rootDir, f)}${colors.reset}`));
   console.info(
     `${colors.yellow}\n💡 Tip: Use --verbose to see all covered packages. Add missing paths to 'workspaces.packages' or move the package.json.${colors.reset}`
   );

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-07-21T05:45:20.787Z",
+    "generated_at": "2026-07-21T06:03:47.529Z",
     "root": "/Users/nolarose/Projects",
     "version": "1.0.0"
   },
@@ -14,16 +14,15 @@
       "factorywager": 1,
       "scratch": 1,
       "analysis": 3,
-      "apps": 3,
       "automation": 3,
       "dashboards": 3,
       "development": 2,
       "enterprise": 5,
       "f402-openapi": 1,
-      "games": 1,
       "playwriter-skill": 1,
-      "tools": 3,
-      "utilities": 10
+      "tools": 1,
+      "utilities": 10,
+      "experimental": 6
     }
   },
   "featured": [
@@ -200,8 +199,8 @@
     {
       "id": "2048",
       "name": "2048",
-      "path": "projects/active/games/2048",
-      "category": "games",
+      "path": "projects/experimental/2048",
+      "category": "experimental",
       "size_bytes": 11932672,
       "size_human": "11.4 MB",
       "last_modified": "2026-07-20T00:00:00.000Z",
@@ -410,8 +409,8 @@
     {
       "id": "zig-self-bun",
       "name": "zig-self-bun",
-      "path": "projects/active/tools/zig-self-bun",
-      "category": "tools",
+      "path": "projects/experimental/zig-self-bun",
+      "category": "experimental",
       "size_bytes": 545792,
       "size_human": "533 KB",
       "last_modified": "2026-07-20T00:00:00.000Z",
@@ -438,8 +437,8 @@
     {
       "id": "rust-bun-plugin",
       "name": "rust-bun-plugin",
-      "path": "projects/active/tools/rust-bun-plugin",
-      "category": "tools",
+      "path": "projects/experimental/rust-bun-plugin",
+      "category": "experimental",
       "size_bytes": 160768,
       "size_human": "157 KB",
       "last_modified": "2026-06-25T00:00:00.000Z",
@@ -522,8 +521,8 @@
     {
       "id": "edge-worker",
       "name": "edge-worker",
-      "path": "projects/active/apps/edge-worker",
-      "category": "apps",
+      "path": "projects/experimental/edge-worker",
+      "category": "experimental",
       "size_bytes": 7168,
       "size_human": "7 KB",
       "last_modified": "2026-06-25T00:00:00.000Z",
@@ -536,8 +535,8 @@
     {
       "id": "cli-dashboard",
       "name": "cli-dashboard",
-      "path": "projects/active/apps/cli-dashboard",
-      "category": "apps",
+      "path": "projects/experimental/cli-dashboard",
+      "category": "experimental",
       "size_bytes": 6144,
       "size_human": "6 KB",
       "last_modified": "2026-06-25T00:00:00.000Z",
@@ -564,8 +563,8 @@
     {
       "id": "my-bun-app",
       "name": "my-bun-app",
-      "path": "projects/active/apps/my-bun-app",
-      "category": "apps",
+      "path": "projects/experimental/my-bun-app",
+      "category": "experimental",
       "size_bytes": 4096,
       "size_human": "4 KB",
       "last_modified": "2026-06-25T00:00:00.000Z",

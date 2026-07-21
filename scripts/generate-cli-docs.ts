@@ -1,13 +1,22 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+// @see https://bun.com/docs/cli/run — bun run / package.json scripts
 /**
  * Auto-generate docs/CLI.md from package.json scripts.
  *
  * Usage: bun run scripts/generate-cli-docs.ts
+ *
+ * @see ./lib/cli-categories.ts — category SSOT (shared with help)
  */
 
 import pkg from '../package.json' assert { type: 'json' };
+import {
+  CLI_CATEGORIES,
+  CLI_CORE_CMDS,
+  describeCliScript,
+  matchCliCategory,
+} from './lib/cli-categories';
 
 const scripts = pkg.scripts as Record<string, string>;
 
@@ -17,100 +26,52 @@ interface Cmd {
   desc: string;
 }
 
-const CATEGORIES: Array<{ prefix: string; label: string; desc: string }> = [
-  { prefix: 'help', label: 'Help', desc: 'Available commands' },
-  { prefix: 'packages:', label: 'Package Management', desc: 'List, check, install deps' },
-  { prefix: 'fix:', label: 'Antipattern Fixing', desc: 'Automated code quality fixes' },
-  { prefix: 'format:', label: 'Format', desc: 'Prettier formatting' },
-  { prefix: 'lint:', label: 'Lint', desc: 'ESLint checks' },
-  { prefix: 'build:', label: 'Build', desc: 'Build affected packages' },
-  { prefix: 'test:', label: 'Test', desc: 'Run tests' },
-  { prefix: 'install:', label: 'Install', desc: 'Scoped installs' },
-  { prefix: 'workspaces:', label: 'Workspace', desc: 'Workspace orchestration' },
-  { prefix: 'cheatsheet:', label: 'Cheatsheet', desc: 'Generate cheat sheets' },
-  { prefix: 'demo:', label: 'Demo', desc: 'Demo contracts' },
-  { prefix: 'rss:', label: 'RSS', desc: 'RSS feeds' },
-  { prefix: 'search:', label: 'Search', desc: 'Search governance and benchmarks' },
-  { prefix: 'wiki:', label: 'Wiki', desc: 'Wiki generation and live preview' },
-  { prefix: 'markdown', label: 'Markdown', desc: 'Markdown render and option demos' },
-  { prefix: 'profile:barbershop', label: 'Barbershop Profile', desc: 'Sampling profiler CLI' },
-  { prefix: 'dataview', label: 'DataView', desc: 'DataView pool CLI (pass subcommand)' },
-  { prefix: 'docs:', label: 'Documentation', desc: 'Doc generation' },
-  { prefix: 'registry:', label: 'Registry', desc: 'Project / package registry snapshots' },
-];
-
-const SPECIAL: Record<string, string> = {
-  dev: 'Start platform watch server (server-enhanced.ts)',
-  lint: 'ESLint on lib/',
-  format: 'Prettier on lib/',
-  sync: 'Sync integration data',
-  updates: 'Check updates',
-  docs: 'Generate cheatsheet docs',
-  news: 'RSS news feed',
-  commits: 'Check commits',
-  'pool-telemetry': 'Connection pool telemetry CLI (pass subcommand: stats, query, sync, serve)',
-  'security-tests': 'Run lib/security security test suite',
-  markdown: 'Render markdown (pass file + format: ansi, html, links, headings, plain)',
-  'markdown:options': 'Bun markdown parser option demos (pass demo|compare|gfm|extended)',
-  'profile:barbershop': 'Barbershop sampling profiler (pass subcommand: run, quick, status, …)',
-  'wiki:mcp': 'Wiki generator MCP CLI (pass subcommand: generate, templates, …)',
-};
-
-const CORE_CMDS = new Set([
-  'dev',
-  'lint',
-  'format',
-  'help',
-  'packages:list',
-  'packages:outdated',
-  'fix:console-log',
-  'fix:scan-any-types',
-  'fix:scan-default-exports',
-  'fix:scan-non-null-assertions',
-  'fix:as-any',
-  'fix:empty-catches',
-  'fix:pin-versions',
-  'lint:core',
-  'format:core',
-  'format:check:core',
-  'validate:workspaces',
-  'build:affected',
-  'test:affected',
-]);
-
 function getCategory(key: string): string | null {
-  for (const cat of CATEGORIES) {
-    if (key.startsWith(cat.prefix)) return cat.label;
-  }
-  if (key === 'dev' || key === 'start:') return 'Development';
-  if (CORE_CMDS.has(key)) return 'Core';
+  const matched = matchCliCategory(key);
+  if (matched) return matched.label;
+  if (CLI_CORE_CMDS.has(key)) return 'Core';
   return null;
 }
 
-function describe(key: string, cmd: string): string {
-  if (SPECIAL[key]) return SPECIAL[key];
-  return cmd
-    .replace(/^bun run\s+/, '')
-    .replace(/^bun\s+/, '')
-    .trim();
-}
-
-// Collect commands by category
 const byCategory = new Map<string, Cmd[]>();
+const labelOrder = new Map<string, number>();
+labelOrder.set('Core', -2);
+for (const cat of CLI_CATEGORIES) {
+  if (!labelOrder.has(cat.label)) labelOrder.set(cat.label, cat.priority);
+}
 
 for (const [key, cmd] of Object.entries(scripts)) {
   if (!cmd || cmd.startsWith('//')) continue;
   const cat = getCategory(key);
   if (!cat) continue;
   if (!byCategory.has(cat)) byCategory.set(cat, []);
-  byCategory.get(cat)!.push({ key, cmd, desc: describe(key, cmd) });
+  byCategory.get(cat)!.push({ key, cmd, desc: describeCliScript(key, cmd) });
 }
 
-// Build markdown
+const orderedCats = [...byCategory.keys()].sort(
+  (a, b) => (labelOrder.get(a) ?? 99) - (labelOrder.get(b) ?? 99) || a.localeCompare(b)
+);
+
 const lines: string[] = [
   '# CLI Quick Reference',
   '',
-  '_Auto-generated from package.json. Run `bun run scripts/generate-cli-docs.ts` to regenerate._',
+  '_Auto-generated from package.json. Run `bun run cli:docs` (or `bun run scripts/generate-cli-docs.ts`) to regenerate._',
+  '',
+  'Category labels come from [`scripts/lib/cli-categories.ts`](../scripts/lib/cli-categories.ts) (shared with `bun run help`).',
+  '',
+  '---',
+  '',
+  '## Day loop (prefer these)',
+  '',
+  '| Command | Why |',
+  '|---------|-----|',
+  '| `bun run help` | Interactive categorized commands |',
+  '| `bun run type-check` | Scoped check via `tsconfig.check.json` (not full) |',
+  "| `bun run build:affected` | `bun run --filter '...' build` — changed packages only |",
+  "| `bun run test:affected` | `bun run --filter '...' test` |",
+  '| `bun run cli:docs` | Refresh this file |',
+  '',
+  'CI uses `bun run type-check:ci` (`tsconfig.ci.json`). Full solution: `type-check:full` (rare).',
   '',
   '---',
   '',
@@ -120,14 +81,14 @@ const lines: string[] = [
   '',
 ];
 
-for (const [cat, cmds] of byCategory) {
+for (const cat of orderedCats) {
+  const cmds = byCategory.get(cat)!;
   cmds.sort((a, b) => a.key.localeCompare(b.key));
   lines.push(`### ${cat}`);
   lines.push('| Command | Description |');
   lines.push('|---------|-------------|');
   for (const c of cmds) {
-    const pad = `\`bun run ${c.key}\``;
-    lines.push(`| ${pad} | ${c.desc} |`);
+    lines.push(`| \`bun run ${c.key}\` | ${c.desc} |`);
   }
   lines.push('');
 }
@@ -177,5 +138,5 @@ lines.push(
 lines.push('- **Package scope**: `@factorywager/*` (core), `@fire22/*` (fantasy42)');
 lines.push('');
 
-await Bun.write('docs/CLI.md', lines.join('\n'));
+await Bun.write('docs/CLI.md', `${lines.join('\n')}\n`);
 console.info('Wrote docs/CLI.md');

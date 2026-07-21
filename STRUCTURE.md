@@ -49,10 +49,10 @@ Projects/
 ├── plannator/               # Local Plannotator extra skills mirror (thin)
 ├── projects/
 │   ├── README.md            # Triage rules + active map + agent scope
-│   ├── experimental/        # Tier bucket (+ README); demos not bulk-moved yet
+│   ├── experimental/        # Relocated demos (2048, apps, zig/rust tools)
 │   ├── archive/             # Tier bucket (+ README); empty until first freeze
-│   └── active/              # Populated apps (see projects/README.md)
-│       ├── analysis|apps|automation|dashboards|development|enterprise|games|tools|utilities/
+│   └── active/              # Maintained apps (see projects/README.md)
+│       ├── analysis|automation|dashboards|development|enterprise|tools|utilities/
 │       ├── factorywager/    # registry (+ workspace packages)
 │       ├── sports-terminal-os/  # root workspace member
 │       ├── kimiremote/      # gitignored — own repo
@@ -81,10 +81,11 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 | `herdr-worktrees/` | Empty worktree parking |
 | Root `test-binary-*`, `**/sports-terminal-{before,after}` | Bun `--compile` dumps — delete if reappear |
 
-`projects/experimental/` and `projects/archive/` exist as **tier buckets** (README only until first `git mv`).
+`projects/experimental/` holds relocated demos (see [`projects/experimental/README.md`](projects/experimental/README.md)). `projects/archive/` remains a tier bucket until first freeze.
 
 ## Key navigation
 
+- **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json`) · `bun run build:affected` / `test:affected` ([Bun `--filter`](https://bun.com/docs/pm/filter)). Refresh CLI markdown: `bun run cli:docs` → [`docs/CLI.md`](docs/CLI.md) (categories: [`scripts/lib/cli-categories.ts`](scripts/lib/cli-categories.ts)).
 - **Run something?** Root `package.json` scripts (`bun run <name>`). Prefer named scripts over inventing paths.
 - **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `install:projects` / `install:packages`
 - **CLI:** [`tools/cli/`](tools/cli/) · [`tools/bin/`](tools/bin/)
@@ -116,12 +117,13 @@ From `package.json` `workspaces.packages`:
 - **Jul 2026 (docs):** Root standards rewrite; [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) as path SSOT; cleanup summary under [`docs/organization/`](docs/organization/).
 - **Jul 2026 (projects triage):** Dropped ghost inventory (`barbershop`/`peer`/empty experimental+archive paths); `bun run registry:projects` regenerates [`public/registry/projects-registry.json`](public/registry/projects-registry.json); `packages:list --write` refreshes [`docs/packages/REGISTRY.md`](docs/packages/REGISTRY.md).
 - **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; single `r2` / `playground` / `mybundocs11` entrypoints; migrate phase aliases → `bun-migrate` direct.
+- **Jul 2026 (bloat/speed):** CLI category SSOT; scripts **329 → 275**; demos → `projects/experimental/`; skip ast-grep doctor on lockfile-only staged sets; day-loop docs. Notes: [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
 
 Detail: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md).
 
 ## Future candidates
 
-- Populate `projects/experimental/` / `projects/archive/` on first freeze/promote; re-tier games/apps demos if desired.
+- Populate `projects/archive/` on first freeze; optionally move `utilities/keyboard-shortcuts-lite` to experimental.
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
 

@@ -8,7 +8,7 @@ Each project under `projects/` is classified into one of three tiers:
 | `experimental/` | Prototypes, proofs-of-concept, sandbox | May promote to active, archive, or delete |
 | `archive/` | Frozen research, no longer actively worked on | Read-only, kept for reference |
 
-**On disk today:** `active/` holds projects; `experimental/` and `archive/` exist as tier buckets with READMEs (candidates listed there — no bulk `git mv` yet).
+**On disk today:** `active/` holds maintained apps; `experimental/` holds relocated demos (see below); `archive/` is an empty tier bucket until first freeze.
 
 ## Rules
 
@@ -29,13 +29,11 @@ Each project under `projects/` is classified into one of three tiers:
 | Path | Contents | Notes |
 |------|----------|--------|
 | `active/analysis/` | grok-security, matrix-analysis, scanner | |
-| `active/apps/` | cli-dashboard, edge-worker, my-bun-app | Small demos |
 | `active/automation/` | duo-automation, duoplus-app-factory, enhancements-1.0.01 | |
 | `active/dashboards/` | enterprise-dashboard, quantum-terminal-dashboard, secrets-dashboard | |
 | `active/development/` | geelark, kal-poly-bot | kal-poly `data/` is local-only (ignored) |
 | `active/enterprise/` | fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io, bet-ticker-worker-v1.1, cascade-mover-v3 | bet-ticker + cascade: **own repos**, gitignored |
-| `active/games/` | 2048 | Demo; candidate for experimental |
-| `active/tools/` | native-addon-tool, rust-bun-plugin, zig-self-bun | Native experiments |
+| `active/tools/` | native-addon-tool | |
 | `active/utilities/` | api-plive-setup-discovery, bun-file-analyzer, bun-toml-secrets-editor, codepoint, keyboard-shortcuts-lite, proton-pass, shortcut-registry, tan-bun, testing, toml-cli | `dist/` local-only |
 | `active/factorywager/` | registry (+ packages) | In root workspaces |
 | `active/kimiremote/` | sports terminal proxy | Own repo, gitignored |
@@ -43,13 +41,16 @@ Each project under `projects/` is classified into one of three tiers:
 | `active/f402-openapi/` | OpenAPI / workers | Own tree, gitignored |
 | `active/playwriter-skill/` | Playwright skill package | Thin skill |
 
+Demos formerly under `active/apps/`, `active/games/`, and experimental native tools now live in [`experimental/`](experimental/README.md).
+
 See `bun run packages:list --filter=active` for package names. Scaffold/`{{name}}` packages are **hidden by default**; use `--include-scaffolds` or `--paths` when debugging inventory. Refresh the public browser inventory with `bun run registry:projects` → [`public/registry/projects-registry.json`](../public/registry/projects-registry.json).
 
 ## Agent scope (what not to load)
 
 | Treat as | Paths |
 |----------|--------|
-| **Readonly / freeze** | Root `archive/` (gitignored), `scratch/`, historical docs under `docs/archives/` |
+| **Readonly / freeze** | Root `archive/` (gitignored), `scratch/` (curated Bun playgrounds only), historical docs under `docs/archives/` |
+| **Lower priority** | `projects/experimental/` (demos — do not treat as platform spine) |
 | **Local runtime only** | `*.db`, `dist/`, `node_modules/`, compile dumps, `data/` |
 | **Not this monorepo** | Root-parked: `Proton-workspace/`, `plannotator-upstream/`, `toc-ops*`, `bet-turnin-sheet/`, `bradley-terry/` (gitignored) |
 | **Spine** | `lib/`, `packages/`, `config/`, `tools/`, `scripts/` (targeted), skills markdown under `.agents/skills/` |
@@ -58,5 +59,5 @@ See `bun run packages:list --filter=active` for package names. Scaffold/`{{name}
 
 | Path | Role |
 |------|------|
-| [`experimental/README.md`](experimental/README.md) | Demo / prototype candidates still under `active/` until moved |
+| [`experimental/README.md`](experimental/README.md) | Relocated demos + native experiment toolchains |
 | [`archive/README.md`](archive/README.md) | Frozen former `projects/active/*` apps (empty until first freeze) |

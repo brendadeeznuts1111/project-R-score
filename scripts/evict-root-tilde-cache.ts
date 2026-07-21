@@ -5,10 +5,9 @@
  * Remove literal `./~` cache dirs created when Bun fails to expand `~` in
  * workspace bunfig cache paths. Scans repo root and nested workspaces.
  */
-import { join } from 'path';
 import { findTildeCacheDirs } from './lib/bun-install-env.ts';
 
-const ROOT = join(import.meta.dir, '..');
+const ROOT = `${import.meta.dir}/..`;
 const dirs = findTildeCacheDirs(ROOT);
 
 if (dirs.length === 0) {

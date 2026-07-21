@@ -7,7 +7,6 @@
  * https://bun.sh/docs/pm/global-cache
  * https://bun.sh/docs/pm/global-store
  */
-import { join } from 'path';
 import {
   applyBunInstallEnv,
   findTildeCacheDirs,
@@ -22,7 +21,7 @@ import {
   resolveEffectiveInstallPolicy,
 } from './lib/machine-bunfig.ts';
 
-const ROOT = join(import.meta.dir, '..');
+const ROOT = `${import.meta.dir}/..`;
 const strict = process.argv.includes('--strict');
 
 type Check = { ok: boolean; label: string; detail?: string };
@@ -141,7 +140,7 @@ function checkTildeDrift(): Check {
 }
 
 async function checkLockfile(): Promise<Check> {
-  const lockPath = join(ROOT, 'bun.lock');
+  const lockPath = `${ROOT}/bun.lock`;
   if (!(await Bun.file(lockPath).exists())) {
     return { ok: !strict, label: 'lockfile', detail: 'bun.lock missing' };
   }
@@ -156,7 +155,7 @@ async function checkLockfile(): Promise<Check> {
 }
 
 function checkNodeModulesLayout(): Check {
-  const sample = join(ROOT, 'node_modules', 'typescript', 'package.json');
+  const sample = `${ROOT}/node_modules/typescript/package.json`;
   if (Bun.spawnSync(['test', '-e', sample]).exitCode !== 0) {
     return { ok: true, label: 'node_modules layout', detail: 'typescript not installed — skipped' };
   }
@@ -181,7 +180,7 @@ function checkNodeModulesLayout(): Check {
 }
 
 async function main() {
-  Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+  Bun.spawnSync(['bun', `${ROOT}/scripts/evict-root-tilde-cache.ts`], { cwd: ROOT });
 
   const checks = [
     await checkBunfig(),
