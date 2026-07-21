@@ -1,9 +1,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readText } from './fs-bun';
+import { fileExistsSync, readText, resolvePath } from './fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-
-import { resolve } from 'node:path';
 
 export type DomainRegistryEntry = {
   domain: string;
@@ -75,7 +73,7 @@ export function domainNamespace(domain: string): string {
 
 export function resolveDomainRegistryPath(inputPath?: string): string {
   const raw = inputPath || Bun.env.DOMAIN_REGISTRY_PATH || '.search/domain-registry.json';
-  return resolve(raw);
+  return resolvePath(raw);
 }
 
 export async function loadDomainRegistry(inputPath?: string): Promise<DomainRegistryData> {

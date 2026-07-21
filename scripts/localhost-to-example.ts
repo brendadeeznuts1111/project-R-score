@@ -7,8 +7,7 @@
  * Changes all example.com URLs to use example.com for better portability
  */
 
-import { join } from 'path';
-import { readTextSync, writeText, listFilesSync, dirExistsSync } from './lib/fs-bun';
+import { dirExistsSync, joinPath, listFilesSync, readTextSync, writeText } from './lib/fs-bun';
 
 class LocalhostToExampleConverter {
   private readonly sourceDirectories = ['lib', 'services', 'scripts', 'docs', 'tools'];
@@ -49,7 +48,7 @@ class LocalhostToExampleConverter {
     let replacements = 0;
 
     for (const rel of listFilesSync(this.fileGlob, { cwd: dir })) {
-      const fullPath = join(dir, rel);
+      const fullPath = joinPath(dir, rel);
       const fileReplacements = await this.convertFile(fullPath);
       if (fileReplacements > 0) {
         console.info(`  ✅ ${fullPath}: ${fileReplacements} replacements`);
@@ -114,7 +113,7 @@ class LocalhostToExampleConverter {
 }
 
 async function main(): Promise<void> {
-  const command = process.argv[2];
+  const command = Bun.argv[2];
   const converter = new LocalhostToExampleConverter();
 
   switch (command) {

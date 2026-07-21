@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { resolve4, resolveCname, resolveNs, Resolver } from 'node:dns/promises';
@@ -316,7 +317,7 @@ async function upsertDnsRecord(
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const known = await loadKnownSubdomains(options.domain);
   const checks = await Promise.all(known.map(cfg => checkDns(cfg.full_domain, options.timeoutMs)));
 

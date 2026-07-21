@@ -11,8 +11,8 @@
  */
 import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
-const verbose = process.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
-const args = process.argv.slice(2).filter(a => a !== '--verbose');
+const verbose = Bun.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
+const args = Bun.argv.slice(2).filter(a => a !== '--verbose');
 const env = applyBunInstallEnv();
 
 if (args.length === 0) {

@@ -1,12 +1,10 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { readText } from './lib/fs-bun';
+import { joinPath, readText, resolvePath } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
-
-import { resolve } from 'node:path';
 
 type Options = {
   registryPath: string;
@@ -161,8 +159,8 @@ async function runBunSecretsSet(
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
-  const registryPath = resolve(options.registryPath);
+  const options = parseArgs(Bun.argv.slice(2));
+  const registryPath = resolvePath(options.registryPath);
   const payload = JSON.parse(await readText(registryPath)) as DomainRegistry;
   const tokenEnvVars = readTokenEnvVars(payload);
   const token = normalizeText(options.token || Bun.env.FACTORY_WAGER_TOKEN);

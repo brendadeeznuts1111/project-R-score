@@ -29,7 +29,7 @@ const NPM_REGISTRY = 'https://registry.npmjs.org/';
  * Main function
  */
 async function main(): Promise<void> {
-  const token = process.argv[2];
+  const token = Bun.argv[2];
 
   if (!token) {
     console.error('❌ Usage: bun run npm:token <token>');

@@ -1,8 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { joinPath } from './fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { join } from 'path';
 
 /** Default dirs skipped when scanning for literal `./~` Bun cache drift. */
 export const DEFAULT_TILDE_PRUNE = ['node_modules', '.git', 'herdr-worktrees'] as const;
@@ -54,7 +54,7 @@ export function findTildeCacheDirs(
   root: string,
   pruneDirNames: readonly string[] = DEFAULT_TILDE_PRUNE
 ): string[] {
-  const prune = pruneDirNames.map(name => join(root, name));
+  const prune = pruneDirNames.map(name => joinPath(root, name));
   const findArgs = [
     root,
     ...prune.flatMap(p => ['-path', p, '-prune', '-o']),
@@ -83,5 +83,5 @@ export function isTildeCachePath(filePath: string): boolean {
 }
 
 export function globalStoreLinksDir(cacheDir: string): string {
-  return join(cacheDir, 'links');
+  return joinPath(cacheDir, 'links');
 }

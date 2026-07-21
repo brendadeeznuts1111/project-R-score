@@ -1,9 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { fileExistsSync, readText } from './lib/fs-bun';
-
-import { resolve } from 'node:path';
+import { fileExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
 
 type PinnedBaseline = {
   version?: number;
@@ -88,14 +86,14 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
+  const args = Bun.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
     usage();
     return;
   }
 
   const asJson = args.includes('--json');
-  const root = resolve('.search');
+  const root = resolvePath('.search');
   if (!fileExistsSync(root)) {
     throw new Error('.search directory not found');
   }
@@ -104,7 +102,7 @@ async function main(): Promise<void> {
   const baselineFiles: string[] = [];
   for await (const name of glob.scan({ cwd: root, onlyFiles: true, dot: false })) {
     if (!/^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name)) continue;
-    baselineFiles.push(resolve(root, name));
+    baselineFiles.push(resolvePath(root, name));
   }
   baselineFiles.sort();
 

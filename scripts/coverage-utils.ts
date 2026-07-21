@@ -2,7 +2,6 @@
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { basename, dirname, resolve } from 'node:path';
 
 export type FileCoverage = {
   file: string;
@@ -42,13 +41,13 @@ export async function expandGlobs(patterns: string[]): Promise<string[]> {
     if (!hasGlob(pattern)) {
       const file = Bun.file(pattern);
       if (await file.exists()) {
-        seen.add(resolve(pattern));
+        seen.add(resolvePath(pattern));
       }
       continue;
     }
     const glob = new Bun.Glob(pattern);
     for await (const match of glob.scan('.')) {
-      seen.add(resolve(match));
+      seen.add(resolvePath(match));
     }
   }
   return [...seen].sort();
@@ -151,7 +150,7 @@ function inferComponent(file: string): string {
     if (parts.length > rootIdx + 1) return `${parts[rootIdx]}/${parts[rootIdx + 1]}`;
     return parts[rootIdx];
   }
-  return basename(dirname(file)) || 'root';
+  return basenamePath(dirnamePath(file)) || 'root';
 }
 
 export function parseArg(flag: string, args: string[], fallback = ''): string {
@@ -160,6 +159,11 @@ export function parseArg(flag: string, args: string[], fallback = ''): string {
   return args[idx + 1] || fallback;
 }
 
+import { joinPath, resolvePath } from './lib/fs-bun';
+
+const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
+
+const basenamePath = (p: string) => p.split('/').filter(Boolean).pop() || p;
 function hasGlob(pattern: string): boolean {
   return /[*?\[\]{}]/.test(pattern);
 }

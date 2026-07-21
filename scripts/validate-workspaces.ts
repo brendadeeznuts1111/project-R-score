@@ -23,7 +23,7 @@ function relativeFrom(root: string, file: string): string {
 }
 
 // ---------- CLI Argument Parsing (simple) ----------
-const args = process.argv.slice(2);
+const args = Bun.argv.slice(2);
 const verbose = args.includes('--verbose') || Bun.env.VERBOSE === '1';
 
 // ---------- Configuration ----------

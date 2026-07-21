@@ -12,6 +12,7 @@
  * - Schema-based CLI parsing
  */
 
+import { joinPath, resolvePath } from './lib/fs-bun';
 import {
   searchSymbolIndex,
   type SymbolSearchHit,
@@ -25,7 +26,6 @@ import {
   type CanonicalFamily,
   type SearchPolicies,
 } from '../lib/docs/canonical-family';
-import { resolve } from 'node:path';
 import {
   evaluateReadiness,
   loadDomainHealthSummary,
@@ -1018,7 +1018,7 @@ async function processHitsWithFamilies(
   );
 
   const withFamilies = hits.map(hit => {
-    const family = familyData.byFile.get(resolve(hit.file));
+    const family = familyData.byFile.get(resolvePath(hit.file));
     if (!family || family.files.length <= 1) return hit;
 
     const mirrors = family.files.filter(f => f !== family.canonicalFile);
@@ -1045,7 +1045,7 @@ function applyFamilyCap(hits: SearchHit[], familyCap: number): SearchHit[] {
   const output: SearchHit[] = [];
 
   for (const hit of hits) {
-    const familyKey = `${hit.familyId || hit.canonicalFile || resolve(hit.file)}:${classifyGroup(hit)}`;
+    const familyKey = `${hit.familyId || hit.canonicalFile || resolvePath(hit.file)}:${classifyGroup(hit)}`;
     const used = familyCounts.get(familyKey) || 0;
     if (used >= familyCap) continue;
     familyCounts.set(familyKey, used + 1);
@@ -1386,7 +1386,7 @@ function readinessToStatusLevel(value: string | undefined): StatusLevel {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const parsed = parseArgs(process.argv.slice(2));
+  const parsed = parseArgs(Bun.argv.slice(2));
   if (!parsed) return;
 
   const { query, options } = parsed;

@@ -1,8 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readText, writeText } from './lib/fs-bun';
-
-import { resolve } from 'node:path';
+import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 
 type Options = {
   fix: boolean;
@@ -108,7 +106,7 @@ function canonicalNpmrcBlock(): string {
 }
 
 async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> {
-  const abs = resolve(path);
+  const abs = resolvePath(path);
   if (!fileExistsSync(abs)) {
     if (!fix) return { id: 'registry_config_exists', ok: false, detail: `missing ${abs}` };
     await writeText(abs, canonicalRegistryConfigText());
@@ -132,7 +130,7 @@ async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> 
 }
 
 async function ensureEnv(path: string, fix: boolean): Promise<Check> {
-  const abs = resolve(path);
+  const abs = resolvePath(path);
   const required: Array<[string, string]> = [
     ['REGISTRY_URL', CANONICAL_REGISTRY_URL],
     ['R2_REGISTRY_BUCKET', DEFAULT_R2_BUCKET],
@@ -156,7 +154,7 @@ async function ensureEnv(path: string, fix: boolean): Promise<Check> {
 }
 
 async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
-  const abs = resolve(path);
+  const abs = resolvePath(path);
   const block = canonicalNpmrcBlock();
   const raw = fileExistsSync(abs) ? await readText(abs) : '';
   const hasScopeA = raw.includes(`@factory-wager:registry=${CANONICAL_REGISTRY_URL}/`);
@@ -178,7 +176,7 @@ async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
 }
 
 async function checkPackagePublishConfig(): Promise<Check> {
-  const pkgPath = resolve('package.json');
+  const pkgPath = resolvePath('package.json');
   const pkg = JSON.parse(await readText(pkgPath)) as any;
   const registry = String(pkg?.publishConfig?.registry || '');
   const ok = registry === `${CANONICAL_REGISTRY_URL}/` || registry === CANONICAL_REGISTRY_URL;
@@ -214,7 +212,7 @@ async function runDoctor(options: Options) {
 }
 
 if (import.meta.main) {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const result = await runDoctor(options);
   if (options.json) {
     console.info(JSON.stringify(result, null, 2));

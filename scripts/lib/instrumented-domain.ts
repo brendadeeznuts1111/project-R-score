@@ -1,5 +1,4 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { performance } from 'node:perf_hooks';
 
 export type DomainConfig = Record<string, unknown>;
 

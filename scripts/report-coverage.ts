@@ -3,7 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 import { parseArg, expandGlobs, parseLcovFiles } from './coverage-utils';
 
-const args = process.argv.slice(2);
+const args = Bun.argv.slice(2);
 const inputPattern = parseArg('--input', args, 'coverage/**/lcov.info');
 const outputPath = parseArg('--output', args, 'coverage-total.html');
 const threshold = Number.parseFloat(parseArg('--threshold', args, '80')) || 80;

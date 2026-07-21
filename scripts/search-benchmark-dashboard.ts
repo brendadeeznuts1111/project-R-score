@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/s3 — S3Client
-import { fileExistsSync, readText, writeText } from './lib/fs-bun';
+import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -25,7 +25,6 @@ import { fileExistsSync, readText, writeText } from './lib/fs-bun';
  * @license MIT
  */
 
-import { resolve } from 'node:path';
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { sha256Hex, hmacSha256 } from './lib/hash';
 import { S3Client } from 'bun';
@@ -6613,13 +6612,13 @@ async function main(): Promise<void> {
   process.on('unhandledRejection', error => {
     console.error('[search-bench:dashboard] unhandledRejection', error);
   });
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const buildMeta = await resolveBuildMeta();
-  const dir = resolve(options.dir);
-  const latestJson = resolve(dir, 'latest.json');
-  const indexJson = resolve(dir, 'index.json');
-  const rssXml = resolve(dir, 'rss.xml');
-  const loopStatusJson = resolve('reports/search-loop-status-latest.json');
+  const dir = resolvePath(options.dir);
+  const latestJson = resolvePath(dir, 'latest.json');
+  const indexJson = resolvePath(dir, 'index.json');
+  const rssXml = resolvePath(dir, 'rss.xml');
+  const loopStatusJson = resolvePath('reports/search-loop-status-latest.json');
   const responseCache = new Map<string, CachedResponse>();
   const inflight = new Map<string, Promise<CachedResponse>>();
   const hotReloadClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
@@ -6749,7 +6748,7 @@ async function main(): Promise<void> {
   const resolveLocalManifestPath = async (id?: string | null): Promise<string | null> => {
     const wanted = id?.trim();
     if (wanted) {
-      return resolve(dir, wanted, 'publish-manifest.json');
+      return resolvePath(dir, wanted, 'publish-manifest.json');
     }
     if (!fileExistsSync(indexJson)) {
       return null;
@@ -6757,7 +6756,7 @@ async function main(): Promise<void> {
     try {
       const idx = (await Bun.file(indexJson).json()) as { snapshots?: Array<{ id?: string }> };
       const latestId = idx.snapshots?.[0]?.id;
-      return latestId ? resolve(dir, latestId, 'publish-manifest.json') : null;
+      return latestId ? resolvePath(dir, latestId, 'publish-manifest.json') : null;
     } catch {
       return null;
     }
@@ -6783,7 +6782,7 @@ async function main(): Promise<void> {
     }
   };
 
-  const canonicalBaselinePath = resolve('.search/search-benchmark-pinned-baseline.json');
+  const canonicalBaselinePath = resolvePath('.search/search-benchmark-pinned-baseline.json');
   let latestGateCache:
     | {
         source: 'local' | 'r2';
@@ -6898,33 +6897,35 @@ async function main(): Promise<void> {
     const items: InventoryItem[] = [
       mk(
         'snapshot.json',
-        id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json'),
+        id ? resolvePath(dir, id, 'snapshot.json') : resolvePath(dir, '__missing__/snapshot.json'),
         'snapshot'
       ),
       mk(
         'summary.md',
-        id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md'),
+        id ? resolvePath(dir, id, 'summary.md') : resolvePath(dir, '__missing__/summary.md'),
         'snapshot'
       ),
       mk(
         'snapshot.json.gz',
-        id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz'),
+        id
+          ? resolvePath(dir, id, 'snapshot.json.gz')
+          : resolvePath(dir, '__missing__/snapshot.json.gz'),
         'snapshot'
       ),
       mk(
         'summary.md.gz',
-        id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz'),
+        id ? resolvePath(dir, id, 'summary.md.gz') : resolvePath(dir, '__missing__/summary.md.gz'),
         'snapshot'
       ),
       mk(
         'publish-manifest.json',
         id
-          ? resolve(dir, id, 'publish-manifest.json')
-          : resolve(dir, '__missing__/publish-manifest.json'),
+          ? resolvePath(dir, id, 'publish-manifest.json')
+          : resolvePath(dir, '__missing__/publish-manifest.json'),
         'snapshot'
       ),
-      mk('rss.xml', resolve(dir, 'rss.xml'), 'snapshot'),
-      mk('health-report.json', resolve('reports', 'health-report.json'), 'domain-health'),
+      mk('rss.xml', resolvePath(dir, 'rss.xml'), 'snapshot'),
+      mk('health-report.json', resolvePath('reports', 'health-report.json'), 'domain-health'),
     ];
     const latestTs = items
       .filter(it => it.category === 'snapshot')
@@ -8423,7 +8424,7 @@ async function main(): Promise<void> {
           }
           return r2Snapshot;
         }
-        const localSnapshotPath = resolve(dir, id, 'snapshot.json');
+        const localSnapshotPath = resolvePath(dir, id, 'snapshot.json');
         if (optional && !fileExistsSync(localSnapshotPath)) {
           return jsonResponse(
             {

@@ -73,7 +73,6 @@ export const CLI_SPECIAL: Record<string, string> = {
   news: 'RSS news feed',
   commits: 'Check commits',
   'pool-telemetry': 'Connection pool telemetry CLI (pass subcommand: stats, query, sync, serve)',
-  'security-tests': 'Run lib/security security test suite',
   markdown: 'Render markdown (pass file + format: ansi, html, links, headings, plain)',
   'profile:barbershop': 'Barbershop sampling profiler (pass subcommand: run, quick, status, …)',
   'wiki:mcp': 'Wiki generator MCP CLI (pass subcommand: generate, templates, …)',

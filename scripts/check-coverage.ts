@@ -2,7 +2,7 @@
 
 import { expandGlobs, groupByComponent, parseArg, parseLcovFiles } from './coverage-utils';
 
-const args = process.argv.slice(2);
+const args = Bun.argv.slice(2);
 const inputPattern = parseArg('--input', args, 'coverage/**/lcov.info');
 const min = Number.parseFloat(parseArg('--min', args, '80')) || 80;
 const excludeRaw = parseArg('--exclude', args, '');

@@ -57,7 +57,7 @@ function toCssVars(palette: ReturnType<typeof generatePalette>, seed: number): s
 }
 
 function main(): void {
-  const { seed, saturation, lightness, format } = parseArgs(process.argv.slice(2));
+  const { seed, saturation, lightness, format } = parseArgs(Bun.argv.slice(2));
   const palette = generatePalette({ h: seed, s: saturation, l: lightness });
 
   if (format === 'css') {

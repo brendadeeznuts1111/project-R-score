@@ -374,7 +374,7 @@ Respond with JSON format containing: purityScore, recommendations, criticalIssue
 // ============================================================================
 
 async function main() {
-  const [command, ...args] = process.argv.slice(2);
+  const [command, ...args] = Bun.argv.slice(2);
   const engine = new AIPurgeEngine();
 
   switch (command) {

@@ -6,10 +6,10 @@
  * @see https://bun.com/docs/runtime/shell — Bun.$
  * @see https://bun.com/docs/runtime/child-process — Bun.spawn
  */
-import { resolve } from 'node:path';
 import { VALIDATE_WHITELIST, type UsageHit } from '../bun-migrate.ts';
+import { resolvePath } from './fs-bun';
 
-const REPO_ROOT = resolve(import.meta.dir, '../..');
+const REPO_ROOT = resolvePath(import.meta.dir, '../..');
 
 export const SHELL_APPLY_SKIP = VALIDATE_WHITELIST;
 
@@ -196,7 +196,7 @@ export async function applyShellSection(opts: {
   const results: ShellApplyResult[] = [];
 
   for (const [file, fileHits] of [...byFile.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-    const abs = resolve(REPO_ROOT, file);
+    const abs = resolvePath(REPO_ROOT, file);
     const before = await Bun.file(abs).text();
     const { text: after, changes } = applyShellTransforms(before);
 

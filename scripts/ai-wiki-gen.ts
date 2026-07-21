@@ -9,7 +9,7 @@
  */
 
 import { juniorProfile } from '../utils/junior-runner';
-import { join } from 'path';
+import { joinPath } from './lib/fs-bun';
 
 // v3.19: Tier-1380 AI → Wiki MD Sections!
 const AI_TEMPLATES = {
@@ -306,7 +306,7 @@ export async function generateAIWiki(sections: string[]): Promise<string> {
 
 // CLI Interface
 if (import.meta.main) {
-  const args = process.argv.slice(2);
+  const args = Bun.argv.slice(2);
 
   if (args.length === 0) {
     console.info('🤖 AI Wiki Generator v3.19');

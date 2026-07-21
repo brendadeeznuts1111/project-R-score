@@ -5,10 +5,10 @@
  * @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
  * @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
  */
-import { resolve } from 'node:path';
+import { resolvePath } from './fs-bun';
 import { VALIDATE_WHITELIST, type UsageHit } from '../bun-migrate.ts';
 
-const REPO_ROOT = resolve(import.meta.dir, '../..');
+const REPO_ROOT = resolvePath(import.meta.dir, '../..');
 
 export const FS_APPLY_SKIP = VALIDATE_WHITELIST;
 
@@ -420,7 +420,7 @@ export async function applyFsSection(opts: {
   const results: FsApplyResult[] = [];
 
   for (const [file, fileHits] of [...byFile.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-    const abs = resolve(REPO_ROOT, file);
+    const abs = resolvePath(REPO_ROOT, file);
     const before = await Bun.file(abs).text();
     const { text: after, changes } = applyFsTransforms(before, file);
 

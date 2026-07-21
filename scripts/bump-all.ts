@@ -58,7 +58,7 @@ function bumpVersion(current: string, type: BumpType): string {
  * Main bump function
  */
 async function main(): Promise<void> {
-  const type = process.argv[2] as BumpType;
+  const type = Bun.argv[2] as BumpType;
 
   if (!type || !['patch', 'minor', 'major'].includes(type)) {
     console.error('❌ Usage: bun run bump:all <patch|minor|major>');

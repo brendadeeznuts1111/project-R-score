@@ -1,7 +1,8 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { readTextSync } from './lib/fs-bun';
-import { dirname, join, relative, resolve } from 'node:path';
+import { joinPath, readTextSync, resolvePath } from './lib/fs-bun';
+
+const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
 
 type PackageBoundaryRule = {
   name: string;
@@ -55,14 +56,14 @@ function collectCodeFiles(dir: string): string[] {
       relativePath.includes('/build/')
     )
       continue;
-    files.push(join(dir, relativePath));
+    files.push(joinPath(dir, relativePath));
   }
   return files;
 }
 
 function resolveImport(fromFile: string, specifier: string): string {
   // Resolve path lexically; boundary validation only needs the effective path root.
-  return resolve(dirname(fromFile), specifier);
+  return resolvePath(dirnamePath(fromFile), specifier);
 }
 
 function lineAt(content: string, index: number): number {
@@ -74,7 +75,7 @@ function lineAt(content: string, index: number): number {
 }
 
 function toRel(absPath: string): string {
-  return relative(ROOT, absPath).replace(/\\/g, '/');
+  return relativePath(ROOT, absPath).replace(/\\/g, '/');
 }
 
 function isUnder(relPath: string, allowedRoot: string): boolean {
@@ -82,7 +83,7 @@ function isUnder(relPath: string, allowedRoot: string): boolean {
 }
 
 function checkRule(rule: PackageBoundaryRule): Violation[] {
-  const sourceAbs = resolve(ROOT, rule.sourceDir);
+  const sourceAbs = resolvePath(ROOT, rule.sourceDir);
   const files = collectCodeFiles(sourceAbs);
 
   const violations: Violation[] = [];

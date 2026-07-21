@@ -1,10 +1,9 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
-import { readText } from './lib/fs-bun';
+import { joinPath, readText, resolvePath } from './lib/fs-bun';
 import { sha256Hex } from './lib/hash';
 
-import { join, resolve } from 'node:path';
 import type {
   DecisionEvidence,
   DecisionIndex,
@@ -22,7 +21,7 @@ type JsonLike = string | number | boolean | null | JsonLike[] | { [key: string]:
 
 function parseArgs(argv: string[]): VerifyOptions {
   return {
-    root: resolve(argv.find(a => a.startsWith('--root='))?.split('=')[1] || 'docs/decisions'),
+    root: resolvePath(argv.find(a => a.startsWith('--root='))?.split('=')[1] || 'docs/decisions'),
     decisionId: argv.find(a => a.startsWith('--decision='))?.split('=')[1],
     json: argv.includes('--json'),
   };
@@ -70,7 +69,7 @@ function parseDate(value: string): number {
 }
 
 async function verifyOne(root: string, evidencePath: string): Promise<DecisionVerificationResult> {
-  const fullPath = resolve(root, evidencePath);
+  const fullPath = resolvePath(root, evidencePath);
   const evidence = JSON.parse(await readText(fullPath)) as DecisionEvidence;
   const digestComputed = digestEvidence(evidence);
   const digestExpected = evidence.evidence_digest || '';
@@ -129,7 +128,7 @@ export async function verifyDecisionEvidence(options: VerifyOptions): Promise<{
   checked: number;
   results: DecisionVerificationResult[];
 }> {
-  const indexPath = join(options.root, 'index.json');
+  const indexPath = joinPath(options.root, 'index.json');
   const index = JSON.parse(await readText(indexPath)) as DecisionIndex;
   const entries = Array.isArray(index.decisions) ? index.decisions : [];
   const filtered = options.decisionId
@@ -161,7 +160,7 @@ export async function verifyDecisionEvidence(options: VerifyOptions): Promise<{
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const summary = await verifyDecisionEvidence(options);
   if (options.json) {
     console.info(JSON.stringify(summary, null, 2));

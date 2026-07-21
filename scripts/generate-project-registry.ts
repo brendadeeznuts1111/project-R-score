@@ -25,7 +25,7 @@ import {
 
 const ROOT = process.cwd();
 const OUT = joinPath(ROOT, 'public/registry/projects-registry.json');
-const DRY = process.argv.includes('--dry-run');
+const DRY = Bun.argv.includes('--dry-run');
 
 /** Top-level entries under projects/active that are projects (not category folders). */
 const ACTIVE_SPECIALS = new Set([

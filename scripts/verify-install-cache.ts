@@ -22,7 +22,7 @@ import {
 } from './lib/machine-bunfig.ts';
 
 const ROOT = `${import.meta.dir}/..`;
-const strict = process.argv.includes('--strict');
+const strict = Bun.argv.includes('--strict');
 
 type Check = { ok: boolean; label: string; detail?: string };
 

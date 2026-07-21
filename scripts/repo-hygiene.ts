@@ -19,11 +19,10 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { Glob } from 'bun';
-import { join } from 'path';
-import { isDirectorySync, listEntriesSync } from './lib/fs-bun';
+import { isDirectorySync, joinPath, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
 
-const ROOT = join(import.meta.dir, '..');
+const ROOT = joinPath(import.meta.dir, '..');
 
 // Patterns that should never appear as tracked/staged files
 const STRAY_PATTERNS = [
@@ -120,7 +119,7 @@ async function findRootClutter(): Promise<Violation[]> {
   const rootEntries = listEntriesSync(ROOT, { dot: true });
 
   for (const name of rootEntries) {
-    if (isDirectorySync(join(ROOT, name))) {
+    if (isDirectorySync(joinPath(ROOT, name))) {
       if (FORBIDDEN_ROOT_DIRS.has(name)) {
         violations.push({ file: name + '/', rule: 'forbidden-root-dir' });
       } else if (!name.startsWith('.') && !ALLOWED_ROOT_DIRS.has(name) && !isGitignored(name)) {
@@ -142,7 +141,7 @@ async function findStrayFiles(): Promise<Violation[]> {
 
   // Root-level filename scan (captures patterns beyond json/md/log extensions)
   for (const file of listEntriesSync(ROOT, { dot: true })) {
-    if (isDirectorySync(join(ROOT, file))) continue;
+    if (isDirectorySync(joinPath(ROOT, file))) continue;
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(file)) {
         violations.push({ file, rule: 'stray-output-root' });
@@ -152,7 +151,7 @@ async function findStrayFiles(): Promise<Violation[]> {
   }
 
   for (const dir of SCAN_DIRS) {
-    const absDir = join(ROOT, dir);
+    const absDir = joinPath(ROOT, dir);
     const glob = new Glob('*.{json,jsonl,log,md}');
 
     for await (const file of glob.scan({ cwd: absDir, absolute: false })) {
@@ -215,17 +214,17 @@ async function checkStagedStray(): Promise<Violation[]> {
 }
 
 async function main() {
-  const stagedOnly = process.argv.includes('--staged');
+  const stagedOnly = Bun.argv.includes('--staged');
   const violations: Violation[] = [];
 
   if (stagedOnly) {
     // Pre-commit mode — evict drift first so ./~ never gets staged
-    Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+    Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
     violations.push(...(await checkStagedSecrets()));
     violations.push(...(await checkStagedStray()));
   } else {
     // Full scan mode — auto-evict Bun tilde-cache drift before scanning
-    Bun.spawnSync(['bun', join(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
+    Bun.spawnSync(['bun', joinPath(ROOT, 'scripts/evict-root-tilde-cache.ts')], { cwd: ROOT });
     violations.push(...(await findRootClutter()));
     violations.push(...(await findStrayFiles()));
     violations.push(...(await checkStagedSecrets()));

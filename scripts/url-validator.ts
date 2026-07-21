@@ -411,7 +411,7 @@ class UrlValidator {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const command = process.argv[2];
+  const command = Bun.argv[2];
   const validator = new UrlValidator();
 
   switch (command) {

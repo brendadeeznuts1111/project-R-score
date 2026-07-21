@@ -50,7 +50,7 @@ function parseArgs(argv: string[]): { path?: string; db?: string; rebuild?: bool
 }
 
 async function main(): Promise<void> {
-  const parsed = parseArgs(process.argv.slice(2));
+  const parsed = parseArgs(Bun.argv.slice(2));
   if (!parsed) {
     return;
   }

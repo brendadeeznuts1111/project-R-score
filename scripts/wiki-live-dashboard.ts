@@ -11,8 +11,7 @@
  */
 
 import { aiWikiSection, generateAIWiki } from './ai-wiki-gen';
-
-import { join } from 'path';
+import { joinPath } from './lib/fs-bun';
 
 // Multi-lang JSONC i18n structure
 interface WikiI18n {

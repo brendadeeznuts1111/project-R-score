@@ -1,9 +1,10 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { join } from 'path';
 import { formatBytes } from './format';
+import { joinPath } from './fs-bun';
 import {
   applyBunInstallEnv,
   globalStoreLinksDir,

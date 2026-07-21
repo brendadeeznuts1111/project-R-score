@@ -59,7 +59,7 @@ function getReleaseSteps(type: ReleaseType): ReleaseStep[] {
  * Main release function
  */
 async function main(): Promise<void> {
-  const type = process.argv[2] as ReleaseType;
+  const type = Bun.argv[2] as ReleaseType;
 
   if (!type || !['patch', 'minor', 'major'].includes(type)) {
     console.error('❌ Usage: bun run release:<patch|minor|major>');

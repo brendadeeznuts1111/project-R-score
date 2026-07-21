@@ -134,7 +134,7 @@ actions:
 // ============================================================================
 
 async function main() {
-  const args = process.argv.slice(2);
+  const args = Bun.argv.slice(2);
   const conform = new RipgrepConform();
 
   // Parse command line arguments

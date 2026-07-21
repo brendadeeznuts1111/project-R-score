@@ -166,7 +166,7 @@ async function runGate(gate: Gate): Promise<{ id: string; ok: boolean; ms: numbe
 }
 
 async function main(): Promise<void> {
-  const mode = parseMode(process.argv.slice(2));
+  const mode = parseMode(Bun.argv.slice(2));
   let triggerFiles: string[] = [];
   let includePackages = mode === 'full';
 

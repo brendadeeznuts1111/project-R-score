@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readText, writeText } from './lib/fs-bun';
+import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
-import { resolve } from 'node:path';
 import { loadDomainRegistry, resolveDomainRegistry } from './lib/domain-registry';
 
 type Options = {
@@ -82,7 +82,7 @@ function parseArgs(argv: string[]): Options {
 }
 
 async function readJsonIfExists(path: string): Promise<any | null> {
-  const resolvedPath = resolve(path);
+  const resolvedPath = resolvePath(path);
   if (!fileExistsSync(resolvedPath)) return null;
   try {
     return JSON.parse(await readText(resolvedPath));
@@ -204,14 +204,14 @@ type DoctorResult = {
 };
 
 async function ensureRegistryFile(registryPath: string, fix: boolean): Promise<DoctorCheck> {
-  const path = resolve(registryPath);
+  const path = resolvePath(registryPath);
   if (fileExistsSync(path)) {
     return { id: 'registry_file_exists', ok: true, detail: path };
   }
   if (!fix) {
     return { id: 'registry_file_exists', ok: false, detail: `missing ${path}` };
   }
-  const templatePath = resolve('.search/domain-registry.json');
+  const templatePath = resolvePath('.search/domain-registry.json');
   if (fileExistsSync(templatePath)) {
     return { id: 'registry_file_exists', ok: true, detail: `already available at ${templatePath}` };
   }
@@ -237,7 +237,7 @@ async function ensureEnvScaffold(
   tokenVars: string[],
   fix: boolean
 ): Promise<DoctorCheck> {
-  const envPath = resolve(envFile);
+  const envPath = resolvePath(envFile);
   const defaults: Array<[string, string]> = [
     ['DOMAIN_REGISTRY_PATH', '.search/domain-registry.json'],
     ['SEARCH_BENCH_DOMAIN', 'factory-wager.com'],
@@ -332,7 +332,7 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
   return {
     ok,
     fixApplied: options.fix,
-    envFile: resolve(options.envFile),
+    envFile: resolvePath(options.envFile),
     checks,
     blockedBySecrets,
     secretCommands,
@@ -340,7 +340,7 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   if (options.doctor) {
     const doctor = await runDomainRegistryDoctor(options);
     if (options.json) {

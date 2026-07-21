@@ -234,7 +234,7 @@ async function loadSubdomains(
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const r2 = resolveR2BridgeConfig({
     endpoint: options.endpoint,
     bucket: options.bucket,

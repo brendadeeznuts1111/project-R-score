@@ -208,7 +208,7 @@ export function evaluateBrandBench(
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   let governance: BenchGovernance = {};
 
   let current: BrandBenchReport;

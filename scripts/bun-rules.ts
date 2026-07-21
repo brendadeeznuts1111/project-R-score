@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/yaml — Bun.YAML
 // @see https://bun.com/docs/runtime/yaml — YAML
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -417,7 +419,7 @@ class RulesEngine {
 // ============================================================================
 
 async function main() {
-  const [command, ...args] = process.argv.slice(2);
+  const [command, ...args] = Bun.argv.slice(2);
   const engine = new RulesEngine();
 
   switch (command) {

@@ -221,7 +221,7 @@ export function generateMarkdownTable(): string {
 
 // CLI
 if (import.meta.main) {
-  const args = process.argv.slice(2);
+  const args = Bun.argv.slice(2);
   const command = args[0];
 
   switch (command) {

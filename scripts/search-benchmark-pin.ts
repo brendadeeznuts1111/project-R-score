@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readJson, readText, writeText } from './lib/fs-bun';
+import { fileExistsSync, joinPath, readJson, readText, resolvePath, writeText } from './lib/fs-bun';
+
+const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-
-import { dirname, resolve } from 'node:path';
 
 type Severity = 'ok' | 'warn' | 'fail';
 type AnomalyType =
@@ -483,8 +483,8 @@ function severityForLowerIsWorse(delta: number, warnFloor: number, failFloor: nu
 export function buildPackBaselinePath(defaultPath: string, queryPack: string): string {
   const pack = String(queryPack || '').trim();
   if (!pack) return defaultPath;
-  const dir = dirname(defaultPath);
-  return resolve(dir, `search-benchmark-pinned-baseline.${pack}.json`);
+  const dir = dirnamePath(defaultPath);
+  return resolvePath(dir, `search-benchmark-pinned-baseline.${pack}.json`);
 }
 
 export function resolveBaselinePath(
@@ -492,7 +492,7 @@ export function resolveBaselinePath(
   defaultPath: string,
   currentQueryPack: string
 ): string {
-  if (explicitBaselinePath) return resolve(explicitBaselinePath);
+  if (explicitBaselinePath) return resolvePath(explicitBaselinePath);
   const packPath = buildPackBaselinePath(defaultPath, currentQueryPack);
   if (packPath !== defaultPath && fileExistsSync(packPath)) {
     return packPath;
@@ -520,8 +520,8 @@ export function parseArgs(argv: string[]): {
   const mode: 'pin' | 'compare' = first === 'pin' ? 'pin' : 'compare';
   const rest = first === 'pin' || first === 'compare' ? argv.slice(1) : argv;
 
-  let fromPath = resolve('reports/search-benchmark/latest.json');
-  let outPath = resolve('.search/search-benchmark-pinned-baseline.json');
+  let fromPath = resolvePath('reports/search-benchmark/latest.json');
+  let outPath = resolvePath('.search/search-benchmark-pinned-baseline.json');
   let rationale = '';
   let pinnedBy = defaultPinnedBy();
   let baselinePath: string | undefined;
@@ -532,12 +532,12 @@ export function parseArgs(argv: string[]): {
   for (let i = 0; i < rest.length; i += 1) {
     const arg = rest[i];
     if (arg === '--from') {
-      fromPath = resolve(rest[i + 1] || fromPath);
+      fromPath = resolvePath(rest[i + 1] || fromPath);
       i += 1;
       continue;
     }
     if (arg === '--out') {
-      outPath = resolve(rest[i + 1] || outPath);
+      outPath = resolvePath(rest[i + 1] || outPath);
       i += 1;
       continue;
     }
@@ -552,7 +552,7 @@ export function parseArgs(argv: string[]): {
       continue;
     }
     if (arg === '--baseline') {
-      baselinePath = resolve(rest[i + 1] || outPath);
+      baselinePath = resolvePath(rest[i + 1] || outPath);
       i += 1;
       continue;
     }
@@ -692,8 +692,8 @@ async function collectTrendSamples(
   if (!config.enabled) {
     return [];
   }
-  const root = resolve('reports/search-benchmark');
-  const indexPath = resolve(root, 'index.json');
+  const root = resolvePath('reports/search-benchmark');
+  const indexPath = resolvePath(root, 'index.json');
   if (!fileExistsSync(indexPath)) {
     return [];
   }
@@ -717,9 +717,9 @@ async function collectTrendSamples(
     if (samples.length >= config.window) break;
     const id = String(entry.id || '').trim();
     if (!id) continue;
-    const fallbackPath = resolve(root, id, 'snapshot.json');
+    const fallbackPath = resolvePath(root, id, 'snapshot.json');
     const snapshotPath = fileExistsSync(String(entry.localJson || ''))
-      ? resolve(String(entry.localJson))
+      ? resolvePath(String(entry.localJson))
       : fallbackPath;
     if (!fileExistsSync(snapshotPath)) continue;
     try {
@@ -934,7 +934,7 @@ export async function compare(
 }
 
 export async function main(): Promise<void> {
-  const args = parseArgs(process.argv.slice(2));
+  const args = parseArgs(Bun.argv.slice(2));
   if (!args) return;
 
   if (args.mode === 'pin') {

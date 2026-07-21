@@ -36,7 +36,7 @@ const EXCLUDE_DIRS = new Set([
   '.bun-docs-cache',
 ]);
 
-const DRY_RUN = process.argv.includes('--dry-run');
+const DRY_RUN = Bun.argv.includes('--dry-run');
 
 const CARET_TILDE_RE = /^[\^~]/;
 const KEEP_PROTOCOLS = ['workspace:', 'catalog:', 'file:', 'git:', 'github:'];

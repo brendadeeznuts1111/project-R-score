@@ -17,7 +17,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 import { Database } from 'bun:sqlite';
 import { juniorProfile } from '../utils/junior-runner';
-import { join } from 'path';
+import { joinPath } from './lib/fs-bun';
 
 // v3.20: bun:sqlite Pool + R2 Sync!
 const DB_PATH = Bun.env.DB_PATH || './telemetry.db';
@@ -364,8 +364,8 @@ export async function juniorProfilePooled(
 
 // CLI Interface
 if (import.meta.main) {
-  const command = process.argv[2];
-  const args = process.argv.slice(3);
+  const command = Bun.argv[2];
+  const args = Bun.argv.slice(3);
 
   const pool = new TelemetryPool();
 

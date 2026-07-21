@@ -2,7 +2,7 @@
 
 import { expandGlobs, groupByComponent, parseArg, parseLcovFiles } from './coverage-utils';
 
-const args = process.argv.slice(2);
+const args = Bun.argv.slice(2);
 const inputPattern = parseArg('--input', args, 'coverage/**/lcov.info');
 const target = Number.parseFloat(parseArg('--target', args, '90')) || 90;
 const deadline = parseArg('--deadline', args, '2026-03-31');

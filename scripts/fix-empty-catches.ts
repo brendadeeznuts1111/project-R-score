@@ -16,7 +16,7 @@ import { readText, writeText, listFilesSync } from './lib/fs-bun';
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', 'coverage']);
 
-const DRY_RUN = process.argv.includes('--dry-run');
+const DRY_RUN = Bun.argv.includes('--dry-run');
 
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx,mjs,cjs}', { cwd: ROOT })) {

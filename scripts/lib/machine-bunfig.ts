@@ -1,8 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { join } from 'path';
 import { TOML } from 'bun';
+import { joinPath } from './fs-bun';
 
 export type BunfigInstall = {
   linker?: string;
@@ -35,7 +35,7 @@ function resolveHome(
 
 function expandTilde(value: string, home: string): string {
   if (value === '~') return home;
-  if (value.startsWith('~/')) return join(home, value.slice(2));
+  if (value.startsWith('~/')) return joinPath(home, value.slice(2));
   return value;
 }
 
@@ -61,7 +61,7 @@ export async function readMachineBunfig(
 ): Promise<MachineBunfigSnapshot> {
   const home = resolveHome(env);
   if (!home) return { bunfigPath: null, install: null, cacheDir: null };
-  const bunfigPath = join(home, '.bunfig.toml');
+  const bunfigPath = joinPath(home, '.bunfig.toml');
   const { install, cacheDir } = await readBunfigInstall(bunfigPath);
   const exists = await Bun.file(bunfigPath).exists();
   return {
@@ -72,7 +72,7 @@ export async function readMachineBunfig(
 }
 
 export async function readProjectBunfig(projectRoot: string): Promise<MachineBunfigSnapshot> {
-  const bunfigPath = join(projectRoot, 'bunfig.toml');
+  const bunfigPath = joinPath(projectRoot, 'bunfig.toml');
   const exists = await Bun.file(bunfigPath).exists();
   const { install, cacheDir } = await readBunfigInstall(bunfigPath);
   return {

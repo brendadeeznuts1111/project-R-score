@@ -1,7 +1,15 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { fileExistsSync, writeText, listFilesSync, dirExistsSync, ensureDir } from './lib/fs-bun';
+import {
+  dirExistsSync,
+  ensureDir,
+  fileExistsSync,
+  joinPath,
+  listFilesSync,
+  resolvePath,
+  writeText,
+} from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -11,7 +19,6 @@ import { fileExistsSync, writeText, listFilesSync, dirExistsSync, ensureDir } fr
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 
-import { join, resolve } from 'node:path';
 import { cpus, totalmem, release } from 'node:os';
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 import { InstrumentedDomain } from './lib/instrumented-domain';
@@ -98,7 +105,7 @@ function parseArgs(argv: string[]): RunnerOptions {
     argv.find(a => a.startsWith('--scenario-iterations='))?.split('=')[1],
     isCi ? 4 : 16
   );
-  const outputDir = resolve(
+  const outputDir = resolvePath(
     argv.find(a => a.startsWith('--output-dir='))?.split('=')[1] || 'reports/brand-bench'
   );
   const runId = argv.find(a => a.startsWith('--run-id='))?.split('=')[1] || nowRunId();
@@ -224,7 +231,7 @@ async function metricFromAsync(
 }
 
 async function collectProfileFiles(options: RunnerOptions): Promise<string[]> {
-  const profileDir = join(options.outputDir, 'profiles');
+  const profileDir = joinPath(options.outputDir, 'profiles');
   const explicit = [...options.profileFiles];
   // Directories: use Glob probe (Bun.file(dir).exists() is unreliable for dirs)
   if (!dirExistsSync(profileDir) && !fileExistsSync(profileDir)) return explicit;
@@ -235,7 +242,7 @@ async function collectProfileFiles(options: RunnerOptions): Promise<string[]> {
       name.startsWith('brand_seed_') ||
       name.startsWith('brand_bench_')
     ) {
-      explicit.push(join(profileDir, name));
+      explicit.push(joinPath(profileDir, name));
     }
   }
   return Array.from(new Set(explicit));
@@ -390,9 +397,9 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   };
 
   // Bun.write createPath creates parents; ensure profiles/ for later cpuprofiles
-  await ensureDir(join(options.outputDir, 'profiles'));
-  const runPath = join(options.outputDir, `${options.runId}.json`);
-  const latestPath = join(options.outputDir, 'latest.json');
+  await ensureDir(joinPath(options.outputDir, 'profiles'));
+  const runPath = joinPath(options.outputDir, `${options.runId}.json`);
+  const latestPath = joinPath(options.outputDir, 'latest.json');
 
   await writeText(runPath, JSON.stringify(report, null, 2));
   await writeText(latestPath, JSON.stringify(report, null, 2));
@@ -427,7 +434,7 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
 
 if (import.meta.main) {
   shutdown = createShutdown({ name: 'brand-bench-runner', quiet: false });
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const report = await runBrandBench(options);
   shutdown.dispose();
   if (options.quiet) {

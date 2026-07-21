@@ -1,13 +1,12 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readText, writeText } from './lib/fs-bun';
+import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 
-import { resolve } from 'node:path';
 import { S3Client } from 'bun';
 import inspector from 'node:inspector/promises';
 import {
@@ -672,12 +671,12 @@ async function uploadWithRetry(
 }
 
 export async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
   const id = options.id || timestampId();
   const createdAt = new Date().toISOString();
 
-  const outDir = resolve(options.outputDir);
-  const indexPath = resolve(outDir, 'index.json');
+  const outDir = resolvePath(options.outputDir);
+  const indexPath = resolvePath(outDir, 'index.json');
   const existingIndex = await readIndex(indexPath);
   const queryPack = options.queryPack || 'core_delivery';
   const deltaBasis: DeltaBasis = 'same-pack';
@@ -689,7 +688,7 @@ export async function main(): Promise<void> {
   const previousSnapshotId = previousEntry?.id || null;
   if (previousSnapshotId) {
     baselineSnapshotId = previousSnapshotId;
-    const previousPath = resolve(outDir, previousSnapshotId, 'snapshot.json');
+    const previousPath = resolvePath(outDir, previousSnapshotId, 'snapshot.json');
     if (fileExistsSync(previousPath)) {
       try {
         previousPayload = JSON.parse(await readText(previousPath)) as BenchmarkPayload;
@@ -712,14 +711,16 @@ export async function main(): Promise<void> {
       const result = await runBenchmark(options);
       const { profile } = await session.post('Profiler.stop');
       await session.post('Profiler.disable');
-      await writeText(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
-      console.info(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
+      await writeText(resolvePath(options.cpuProfilePath), JSON.stringify(profile, null, 2));
+      console.info(
+        `[search-bench:snapshot] wrote cpu profile ${resolvePath(options.cpuProfilePath)}`
+      );
       return result;
     } finally {
       session.disconnect();
     }
   })();
-  const coveragePath = resolve('reports/search-coverage-loc-latest.json');
+  const coveragePath = resolvePath('reports/search-coverage-loc-latest.json');
   const coverage = await (async () => {
     if (!fileExistsSync(coveragePath)) return null;
     try {
@@ -813,7 +814,7 @@ export async function main(): Promise<void> {
     baselineSnapshotId
   );
 
-  const snapshotDir = resolve(outDir, id);
+  const snapshotDir = resolvePath(outDir, id);
 
   const snapshotData = {
     id,
@@ -825,12 +826,12 @@ export async function main(): Promise<void> {
     ...payload,
   };
 
-  const snapshotJsonPath = resolve(snapshotDir, 'snapshot.json');
-  const summaryMdPath = resolve(snapshotDir, 'summary.md');
-  const latestJsonPath = resolve(outDir, 'latest.json');
-  const latestMdPath = resolve(outDir, 'latest.md');
-  const rssPath = resolve(outDir, 'rss.xml');
-  const manifestPath = resolve(snapshotDir, 'publish-manifest.json');
+  const snapshotJsonPath = resolvePath(snapshotDir, 'snapshot.json');
+  const summaryMdPath = resolvePath(snapshotDir, 'summary.md');
+  const latestJsonPath = resolvePath(outDir, 'latest.json');
+  const latestMdPath = resolvePath(outDir, 'latest.md');
+  const rssPath = resolvePath(outDir, 'rss.xml');
+  const manifestPath = resolvePath(snapshotDir, 'publish-manifest.json');
   const baseManifest = {
     id,
     createdAt,

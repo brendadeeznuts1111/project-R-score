@@ -382,7 +382,7 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const parsed = parseArgs(process.argv.slice(2));
+  const parsed = parseArgs(Bun.argv.slice(2));
   if (!parsed) return;
 
   const { query, options } = parsed;

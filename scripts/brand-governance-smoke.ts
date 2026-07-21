@@ -28,7 +28,7 @@ function run(cmd: string[]): CmdResult {
 
 async function main(): Promise<void> {
   const shutdown = createShutdown({ name: 'brand-governance-smoke' });
-  const strict = process.argv.slice(2).includes('--strict');
+  const strict = Bun.argv.slice(2).includes('--strict');
   const steps: CmdResult[] = [];
 
   const cmds: string[][] = [

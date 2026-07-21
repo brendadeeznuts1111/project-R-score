@@ -14,7 +14,7 @@ import pkg from '../package.json' assert { type: 'json' };
 import { describeCliScript, isHelpQuietKey, matchCliCategory } from './lib/cli-categories';
 
 const scripts = pkg.scripts as Record<string, string>;
-const args = process.argv.slice(2);
+const args = Bun.argv.slice(2);
 const verbose = args.includes('--verbose');
 const filter = args.find(a => !a.startsWith('-'));
 

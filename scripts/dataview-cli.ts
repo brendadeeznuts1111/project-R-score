@@ -22,9 +22,9 @@ interface ProfileMetadata {
 }
 
 // CLI arguments
-const command = process.argv[2];
-const subCommand = process.argv[3];
-const args = process.argv.slice(2);
+const command = Bun.argv[2];
+const subCommand = Bun.argv[3];
+const args = Bun.argv.slice(2);
 
 // Generate test profiles for batch operations
 function generateTestProfiles(

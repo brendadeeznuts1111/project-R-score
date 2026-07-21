@@ -1,8 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
-import { fileExistsSync, readJsonSync } from './fs-bun';
+import { fileExistsSync, readJsonSync, resolvePath } from './fs-bun';
 // @see https://bun.com/docs/runtime/color — Bun.color
 
-import { resolve } from 'node:path';
 import { checkContrast, generatePalette, parseHSL } from '../../lib/utils/advanced-hsl-colors';
 
 type DomainBrandingConfig = {
@@ -135,7 +134,7 @@ function splitDomain(
 function loadConfig(): Required<DomainBrandingConfig> {
   if (cachedConfig) return cachedConfig;
 
-  const path = resolve(process.cwd(), 'config', 'domain-branding.json');
+  const path = resolvePath(process.cwd(), 'config', 'domain-branding.json');
   if (!fileExistsSync(path)) {
     cachedConfig = DEFAULT_CONFIG;
     return cachedConfig;

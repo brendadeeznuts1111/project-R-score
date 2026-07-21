@@ -1,6 +1,8 @@
+// @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/bundler — Bun.build
-import { resolve as resolvePath } from 'node:path';
+import { resolvePath } from './fs-bun';
+import { flagValue, hasFlag } from './cli-args';
 
 export type BundleAnalysis = {
   generatedAt: string;
@@ -20,13 +22,10 @@ export type BundleAnalysis = {
 };
 
 export function parseArg(name: string, fallback = ''): string {
-  const prefix = `--${name}=`;
-  const exact = Bun.argv.find(arg => arg.startsWith(prefix));
-  if (exact) return exact.slice(prefix.length).trim();
-  const idx = Bun.argv.findIndex(arg => arg === `--${name}`);
-  if (idx >= 0) return String(Bun.argv[idx + 1] || '').trim();
-  return fallback;
+  return flagValue(name, fallback);
 }
+
+export { hasFlag };
 
 export async function buildBundleAnalysis(entryArg: string): Promise<BundleAnalysis> {
   const entrypoint = resolvePath(process.cwd(), entryArg);

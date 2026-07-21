@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/nodejs-compat#fetch — Bun.fetch
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/http/fetch — Bun.fetch
@@ -18,7 +19,6 @@
  *      bun scripts/validate-pointers.ts --compare # Compare with baseline
  */
 
-import { join } from 'path';
 import { globalPool } from '../lib/performance/memory-pool';
 import { hardenedFetch } from '../lib/http/hardened-fetch';
 import {
@@ -31,9 +31,9 @@ import { StatusOutput, writeRScore, writeColored } from '../lib/utils/output-hel
 import { loadJSON, saveJSON } from '../lib/utils/json-loader';
 
 // CONSTANTS
-const README_PATH = join(import.meta.dir, '..', 'README.md');
-const BASELINE_PATH = join(import.meta.dir, '..', '.validate-pointers-baseline.json');
-const PLATFORM_ROOT = join(import.meta.dir, '..');
+const README_PATH = joinPath(import.meta.dir, '..', 'README.md');
+const BASELINE_PATH = joinPath(import.meta.dir, '..', '.validate-pointers-baseline.json');
+const PLATFORM_ROOT = joinPath(import.meta.dir, '..');
 
 // PATTERNS
 const URL_PATTERN = /https?:\/\/[^\s)]+/g;
@@ -160,6 +160,7 @@ class ConcurrencyController {
 
 // BUN-NATIVE OPTIMIZATION SOLUTIONS (Real Implementation)
 import { type Socket, connect } from 'bun';
+import { joinPath } from './lib/fs-bun';
 
 // Real SharedArrayBuffer pool for M_impact optimization
 class MemoryPool {
@@ -855,20 +856,20 @@ const POINTER_DICTIONARY = {
 
   // Core CLI tools (local paths)
   CLI_TOOLS: {
-    overseer: join(PLATFORM_ROOT, 'tools', 'overseer-cli.ts'),
-    guide: join(PLATFORM_ROOT, 'utils', 'guide-cli.ts'),
-    server: join(PLATFORM_ROOT, 'server.ts'),
-    terminal: join(PLATFORM_ROOT, 'utils', 'terminal-tool.ts'),
+    overseer: joinPath(PLATFORM_ROOT, 'tools', 'overseer-cli.ts'),
+    guide: joinPath(PLATFORM_ROOT, 'utils', 'guide-cli.ts'),
+    server: joinPath(PLATFORM_ROOT, 'server.ts'),
+    terminal: joinPath(PLATFORM_ROOT, 'utils', 'terminal-tool.ts'),
   },
 
   // Shared utilities
   SHARED_UTILS: {
-    entryGuard: join(PLATFORM_ROOT, 'lib', 'shared', 'tools', 'entry-guard.ts'),
+    entryGuard: joinPath(PLATFORM_ROOT, 'lib', 'shared', 'tools', 'entry-guard.ts'),
   },
 
   // Documentation files (only existing files)
   DOCUMENTATION: {
-    bunMainGuide: join(PLATFORM_ROOT, 'docs', 'BUN_MAIN_GUIDE.md'),
+    bunMainGuide: joinPath(PLATFORM_ROOT, 'docs', 'BUN_MAIN_GUIDE.md'),
     // Removed missing files to improve R-Score
   },
 
@@ -1632,7 +1633,7 @@ function sortResults(results: ValidationResult[]): ValidationResult[] {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
+  const args = Bun.argv.slice(2);
   const doCompare = args.includes('--compare');
   const doSave = args.includes('--save');
   const showHelp = args.includes('--help') || args.includes('-h');

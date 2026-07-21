@@ -48,7 +48,7 @@ function parseArgs(argv: string[]): Options {
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
+  const options = parseArgs(Bun.argv.slice(2));
 
   const summary = await loadDomainHealthSummary({
     domain: options.domain,

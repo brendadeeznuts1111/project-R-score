@@ -8,8 +8,7 @@
  * to all example code and documentation
  */
 
-import { join } from 'path';
-import { readTextSync, writeText, listFilesSync, dirExistsSync } from './lib/fs-bun';
+import { dirExistsSync, joinPath, listFilesSync, readTextSync, writeText } from './lib/fs-bun';
 
 interface PrefetchOptimization {
   type: 'dns-prefetch' | 'preconnect' | 'prefetch' | 'preload' | 'modulepreload';
@@ -87,7 +86,7 @@ class ExamplePrefetchOptimizer {
     let optimizations = 0;
 
     for (const rel of listFilesSync(this.fileGlob, { cwd: dir })) {
-      const fullPath = join(dir, rel);
+      const fullPath = joinPath(dir, rel);
       const ext = rel.includes('.') ? `.${rel.split('.').pop()}` : '';
       const fileOptimizations = await this.optimizeFile(fullPath, ext);
       if (fileOptimizations > 0) {
@@ -319,7 +318,7 @@ class ExamplePrefetchOptimizer {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const command = process.argv[2];
+  const command = Bun.argv[2];
   const optimizer = new ExamplePrefetchOptimizer();
 
   switch (command) {

@@ -15,10 +15,19 @@
  */
 
 import { Glob } from 'bun';
-import { join, relative } from 'path';
+import { joinPath } from './lib/fs-bun';
+
+const relativePath = (from: string, to: string) => {
+  const a = from.replace(/\/$/, '');
+  const b = to;
+  if (b === a) return '';
+  const prefix = a + '/';
+  if (b.startsWith(prefix)) return b.slice(prefix.length);
+  return b;
+};
 
 const ROOT = import.meta.dir + '/..';
-const CLAUDE_DIR = join(ROOT, '.claude');
+const CLAUDE_DIR = joinPath(ROOT, '.claude');
 const COLUMNS = ['check', 'type', 'path', 'expected', 'detail', 'status'] as const;
 
 type Status = '✅' | '❌' | '⚠️' | '⏳';
@@ -85,14 +94,14 @@ async function mdFiles(dir: string): Promise<string[]> {
 }
 
 function rel(absPath: string): string {
-  return relative(ROOT, absPath);
+  return relativePath(ROOT, absPath);
 }
 
 async function main() {
   console.info('\n🔍 .claude/ health check\n');
 
   // 1. commands/ directory exists
-  const commandsDir = join(CLAUDE_DIR, 'commands');
+  const commandsDir = joinPath(CLAUDE_DIR, 'commands');
   const cmdPath = rel(commandsDir);
   const i1 = add({
     check: 'commands/',
@@ -146,8 +155,8 @@ async function main() {
   }
 
   // 3. .gitignore whitelists
-  const gitignorePath = rel(join(ROOT, '.gitignore'));
-  const gitignore = await Bun.file(join(ROOT, '.gitignore'))
+  const gitignorePath = rel(joinPath(ROOT, '.gitignore'));
+  const gitignore = await Bun.file(joinPath(ROOT, '.gitignore'))
     .text()
     .catch(() => '');
   const wlCommands = gitignore.includes('!.claude/commands/');
@@ -183,7 +192,7 @@ async function main() {
   }
 
   // 4. No slash commands misplaced in agents/
-  const agentsDir = join(CLAUDE_DIR, 'agents');
+  const agentsDir = joinPath(CLAUDE_DIR, 'agents');
   const agentFiles = await mdFiles(agentsDir).catch(() => [] as string[]);
   let misplaced = 0;
   for (const filepath of agentFiles) {
@@ -214,7 +223,7 @@ async function main() {
   }
 
   // 5. settings.local.json
-  const settingsPath = join(CLAUDE_DIR, 'settings.local.json');
+  const settingsPath = joinPath(CLAUDE_DIR, 'settings.local.json');
   const settingsFile = Bun.file(settingsPath);
   if (await settingsFile.exists()) {
     const idx = add({

@@ -201,7 +201,7 @@ async function getGitStatus(): Promise<{ label: string; value: string; status: '
 }
 
 async function runSystemAnalysis(): Promise<void> {
-  const filename = process.argv[2];
+  const filename = Bun.argv[2];
 
   console.info(colorize('🔍 Bun System Info & Project Analysis', 'bright'));
   console.info(colorize('=====================================', 'cyan'));

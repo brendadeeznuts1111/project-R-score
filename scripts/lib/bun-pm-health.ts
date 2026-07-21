@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { join } from 'path';
 import { collectBunCacheMetrics, type BunCacheMetrics } from './bun-cache-metrics.ts';
+import { joinPath } from './fs-bun';
 
 export type PmCommandResult = {
   command: string;
@@ -52,7 +52,7 @@ export type BunPmHealthReport = {
   warnings: string[];
 };
 
-const ROOT = join(import.meta.dir, '../..');
+const ROOT = joinPath(import.meta.dir, '../..');
 
 function runPm(args: string[], cwd = ROOT): PmCommandResult {
   const proc = Bun.spawnSync(['bun', 'pm', ...args], {

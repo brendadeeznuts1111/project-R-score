@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { fileExistsSync, readText } from './lib/fs-bun';
+import { fileExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
@@ -7,8 +7,6 @@ import { fileExistsSync, readText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-
-import { resolve } from 'node:path';
 
 type Profile = {
   id: string;
@@ -237,7 +235,7 @@ export function normalizeQueryPacks(parsed: unknown): QueryPacks {
 }
 
 export async function loadQueryPacks(): Promise<{ packs: QueryPacks; source: 'default' | 'file' }> {
-  const path = resolve('.search/benchmark-queries.lib.json');
+  const path = resolvePath('.search/benchmark-queries.lib.json');
   if (!fileExistsSync(path)) {
     return {
       packs: normalizeQueryPacks({}),
@@ -548,7 +546,7 @@ export async function main(): Promise<void> {
     overlap,
     queryTimeoutMs,
     queryRetries,
-  } = parseArgs(process.argv.slice(2));
+  } = parseArgs(Bun.argv.slice(2));
   const effectiveConcurrency =
     !concurrencyExplicit && path.includes(',') ? Math.min(concurrency, 2) : concurrency;
   const loaded = await loadQueryPacks();

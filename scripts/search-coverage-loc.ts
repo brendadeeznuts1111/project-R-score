@@ -1,12 +1,10 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
-import { readText } from './lib/fs-bun';
+import { joinPath, readText, resolvePath } from './lib/fs-bun';
 import { sha1Hex } from './lib/hash';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-
-import { resolve } from 'node:path';
 
 type Options = {
   roots: string[];
@@ -91,7 +89,7 @@ async function collectFiles(roots: string[]): Promise<string[]> {
     .split('\n')
     .map(line => line.trim())
     .filter(Boolean)
-    .map(path => resolve(path));
+    .map(path => resolvePath(path));
 }
 
 function countLines(content: string): number {
@@ -118,7 +116,7 @@ async function fileStats(files: string[]): Promise<FileStat[]> {
 }
 
 async function main(): Promise<void> {
-  const { roots, overlap } = parseArgs(process.argv.slice(2));
+  const { roots, overlap } = parseArgs(Bun.argv.slice(2));
   const files = await collectFiles(roots);
   const stats = await fileStats(files);
 

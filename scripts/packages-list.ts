@@ -27,10 +27,10 @@ const SKIP_SEGMENTS = new Set([
   'coverage',
   '.wrangler',
 ]);
-const FILTER = process.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
-const INCLUDE_SCAFFOLDS = process.argv.includes('--include-scaffolds');
-const SHOW_PATHS = process.argv.includes('--paths');
-const WRITE_MD = process.argv.includes('--write');
+const FILTER = Bun.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
+const INCLUDE_SCAFFOLDS = Bun.argv.includes('--include-scaffolds');
+const SHOW_PATHS = Bun.argv.includes('--paths');
+const WRITE_MD = Bun.argv.includes('--write');
 const REGISTRY_MD = resolvePath(ROOT, 'docs/packages/REGISTRY.md');
 
 function shouldSkipRel(rel: string): boolean {

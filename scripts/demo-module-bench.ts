@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
-import { performance } from 'node:perf_hooks';
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — performance.now
+
 import {
   TIER1_SOURCES,
   buildBaselineForDemo,

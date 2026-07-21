@@ -18,11 +18,11 @@ import { readText, writeText, listFilesSync } from './lib/fs-bun';
  * (e.g., Next.js pages, dynamic imports).
  */
 
-const ROOT = process.argv[2] || process.cwd();
+const ROOT = Bun.argv[2] || process.cwd();
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
 
-const DRY_RUN = process.argv.includes('--dry-run');
+const DRY_RUN = Bun.argv.includes('--dry-run');
 
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {

@@ -9,7 +9,7 @@ function parseSeed(args: string[]): number {
 }
 
 function main(): void {
-  const seed = parseSeed(process.argv.slice(2));
+  const seed = parseSeed(Bun.argv.slice(2));
   const markdown = `# Brand Seed ${seed}\n\nThis is the grounded default profile for UI color generation.\n\n- Primary hue: ${seed}\n- Saturation: 90\n- Lightness: 60\n`;
 
   const html = Bun.markdown.render(markdown);
