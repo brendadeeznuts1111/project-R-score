@@ -57,3 +57,15 @@ export function extnamePath(p: string): string {
   const i = base.lastIndexOf('.');
   return i > 0 ? base.slice(i) : '';
 }
+
+/** Relative path from `from` to `to` (POSIX `/`). Prefer directory `from` values. */
+export function relativePath(from: string, to: string): string {
+  const fromAbs = normalizePath(from.startsWith('/') ? from : resolvePath(from));
+  const toAbs = normalizePath(to.startsWith('/') ? to : resolvePath(to));
+  const fromParts = fromAbs === '/' ? [] : fromAbs.split('/').filter(Boolean);
+  const toParts = toAbs === '/' ? [] : toAbs.split('/').filter(Boolean);
+  let i = 0;
+  while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) i++;
+  const parts = [...Array.from({ length: fromParts.length - i }, () => '..'), ...toParts.slice(i)];
+  return parts.length === 0 ? '.' : parts.join('/');
+}

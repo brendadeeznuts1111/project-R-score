@@ -29,11 +29,10 @@ bun run system:full-demo
 
 ## 📚 Documentation
 
-- **[README](docs/README.md)** - Complete user guide
-- **[Quick Start](docs/QUICKSTART.md)** - 1-minute setup
-- **[Implementation](docs/IMPLEMENTATION.md)** - Technical details
-- **[Test Results](docs/TEST_RESULTS.md)** - Performance benchmarks
-- **[Test Guide](docs/TEST_GUIDE.md)** - How to run tests
+- **[README](docs/README.md)** — user guide
+- **[Implementation](docs/IMPLEMENTATION.md)** — technical details
+- **[Test Results](docs/TEST_RESULTS.md)** — benchmarks
+- **[Test Guide](docs/TEST_GUIDE.md)** — how to run tests
 
 ## 📁 Project Structure
 
@@ -209,7 +208,7 @@ bun test tests/unit/scoping-matrix.test.ts
 
 ## 📖 Getting Started
 
-1. **Read the [Quick Start Guide](docs/QUICKSTART.md)** (2 minutes)
+1. **Read the [docs README](docs/README.md)** (2 minutes)
 2. **Create R2 bucket** in Cloudflare dashboard
 3. **Set environment variables** from `.env.example`
 4. **Run commands** with `bun run src/config-manager.ts`

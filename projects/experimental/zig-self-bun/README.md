@@ -380,16 +380,11 @@ bun run cli status
 
 ## 📚 Documentation
 
-- **[Architecture](./docs/ARCHITECTURE.md)** - System design and data flow
-- **[API Reference](./docs/API.md)** - Complete endpoint documentation
-- **[Security Guide](./docs/SECURITY.md)** - Authentication and authorization
-- **[Performance Guide](./docs/PERFORMANCE.md)** - Optimization and monitoring
-- **[CLI Reference](./docs/CLI.md)** - Command-line interface
-- **[Deployment](./docs/DEPLOYMENT.md)** - Production deployment guides
+Live notes in-repo: [`BUN-APIS-GUIDE.md`](./BUN-APIS-GUIDE.md) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`MANIFESTO.md`](./MANIFESTO.md).
 
 ## 📄 License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+MIT.
 
 ---
 

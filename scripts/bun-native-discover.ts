@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * Deeper discovery (+ optional safe apply) for Bun-native file I/O debt.
  *
@@ -46,9 +47,6 @@ const SKIP_FILES = new Set([
   'scripts/dx-mcp.ts',
   'scripts/bun-rules.ts',
   'scripts/bun-quick-wins-table.ts',
-  'lib/validation/bun-first-compliance.ts',
-  'lib/validation/bun-first-auditor.ts',
-  'lib/guards/bun-first-guard.ts',
   'packages/guards/src/bun-first-guard.ts',
 ]);
 

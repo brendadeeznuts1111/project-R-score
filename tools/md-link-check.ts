@@ -5,22 +5,22 @@
 /**
  * md-link-check.ts — live markdown relative-link ratchet (non-archive).
  *
- * Scans root *.md plus docs/lib/.agents/tools/examples. Skips archives,
- * retired trees, node_modules, and projects/. Complements docs:map:check
- * (SSOT paths only).
+ * Scans root *.md plus docs/lib/.agents/tools/examples and projects triage
+ * READMEs (depth ≤2 under active/experimental). Skips archives, retired trees,
+ * node_modules. Complements docs:map:check (SSOT paths only).
  *
  * Usage:
  *   bun tools/md-link-check.ts
  *   bun tools/md-link-check.ts --json
  *   bun run docs:links:check
  */
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirnamePath, joinPath, relativePath, resolvePath } from '../lib/path-bun.ts';
 
-const REPO = resolve(import.meta.dir, '..');
+const REPO = resolvePath(import.meta.dir, '..');
 
 const SCAN_ROOTS = ['docs', 'lib', '.agents', 'tools', 'examples'] as const;
 
-const SKIP_DIR_RE = /(?:^|\/)(?:node_modules|\.git|archives|retired-[^/]+|projects)(?:\/|$)/;
+const SKIP_DIR_RE = /(?:^|\/)(?:node_modules|\.git|archives|retired-[^/]+|dist|coverage)(?:\/|$)/;
 
 type Issue = {
   file: string;
@@ -51,13 +51,15 @@ function normalizeTarget(raw: string): string | null {
   ) {
     return null;
   }
+  // Skip editor-style path:line refs
+  if (/:\d+$/.test(target)) return null;
   const hash = target.indexOf('#');
   const pathPart = hash >= 0 ? target.slice(0, hash) : target;
   return pathPart || null;
 }
 
 async function checkFile(abs: string): Promise<Issue[]> {
-  const relFile = relative(REPO, abs);
+  const relFile = relativePath(REPO, abs);
   let text: string;
   try {
     text = await Bun.file(abs).text();
@@ -67,13 +69,14 @@ async function checkFile(abs: string): Promise<Issue[]> {
   const linkRe = /\[([^\]]*)\]\(([^)]+)\)/g;
   const issues: Issue[] = [];
   const lines = text.split('\n');
+  const base = dirnamePath(abs);
   for (let i = 0; i < lines.length; i++) {
     linkRe.lastIndex = 0;
     let m: RegExpExecArray | null;
     while ((m = linkRe.exec(lines[i]!)) !== null) {
       const pathPart = normalizeTarget(m[2]!);
       if (!pathPart) continue;
-      const target = resolve(dirname(abs), pathPart);
+      const target = pathPart.startsWith('/') ? pathPart : resolvePath(base, pathPart);
       if (!(await pathExists(target))) {
         issues.push({ file: relFile, line: i + 1, target: pathPart });
       }
@@ -89,10 +92,10 @@ function shouldSkip(rel: string): boolean {
 async function collectFiles(): Promise<string[]> {
   const out: string[] = [];
   for await (const f of new Bun.Glob('*.md').scan({ cwd: REPO, onlyFiles: true })) {
-    if (!shouldSkip(f)) out.push(join(REPO, f));
+    if (!shouldSkip(f)) out.push(joinPath(REPO, f));
   }
   for (const root of SCAN_ROOTS) {
-    const base = join(REPO, root);
+    const base = joinPath(REPO, root);
     if (!(await pathExists(base))) continue;
     for await (const f of new Bun.Glob('**/*.{md,mdc}').scan({
       cwd: base,
@@ -100,10 +103,29 @@ async function collectFiles(): Promise<string[]> {
     })) {
       const rel = `${root}/${f}`;
       if (shouldSkip(rel)) continue;
-      out.push(join(REPO, rel));
+      out.push(joinPath(REPO, rel));
     }
   }
-  return out;
+  // Projects triage: root + category + product-leaf READMEs (depth ≤ 3 under active/)
+  out.push(joinPath(REPO, 'projects/README.md'));
+  out.push(joinPath(REPO, 'projects/experimental/README.md'));
+  for (const root of ['projects/active', 'projects/experimental'] as const) {
+    const base = joinPath(REPO, root);
+    if (!(await pathExists(base))) continue;
+    for await (const f of new Bun.Glob('**/README.md').scan({
+      cwd: base,
+      onlyFiles: true,
+    })) {
+      const depth = f.split('/').length;
+      // active/<cat>/README or active/<cat>/<leaf>/README or experimental/<leaf>/README
+      if (root === 'projects/active' && depth > 3) continue;
+      if (root === 'projects/experimental' && depth > 2) continue;
+      const rel = `${root}/${f}`;
+      if (shouldSkip(rel)) continue;
+      out.push(joinPath(REPO, rel));
+    }
+  }
+  return [...new Set(out)];
 }
 
 async function main(): Promise<void> {

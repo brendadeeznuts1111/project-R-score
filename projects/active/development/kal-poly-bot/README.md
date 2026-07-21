@@ -132,7 +132,7 @@ bun run worker:secret SECRET_NAME
 - [`Bun_Configuration_Hardening_Guide.md`](./operation_surgical_precision/Bun_Configuration_Hardening_Guide.md) - Security hardening protocols
 - [`configs/bunfig.production.toml`](./configs/bunfig.production.toml) - Production runtime configuration
 - [`configs/dashboards-hub.json`](./configs/dashboards-hub.json) - Centralized dashboard and hub configuration
-- [`workers/README.md`](./workers/README.md) - Cloudflare Workers deployment guide for factory-wager.com
+- [`workers/factory-wager.ts`](./workers/factory-wager.ts) - Cloudflare Workers entry for factory-wager.com
 - [`docs/SCRIPT_ACTION_ITEMS.md`](./docs/SCRIPT_ACTION_ITEMS.md) - Repository maintenance action checklist
 
 ### **🎨 Visual Coordination**

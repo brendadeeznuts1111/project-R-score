@@ -46,6 +46,5 @@ Protocol: `bun run dashboard:protocol:check`. Discover Node leftovers: `bun run 
 
 - Root-parked nested remotes; `proton-pass` WIP; lifecycle hook aliases
 - Broad `lib/docs/**` in day-loop type-check (debt isolated)
-- Broad `lib/docs/**` in day-loop type-check (debt isolated)
 - Intentional Node surfaces: `node:dns` health checks, `node:os` in brand bench, `node:inspector` snapshot, `node:net` test server
 - Large `search-benchmark-dashboard.ts` DNS logic (keep)

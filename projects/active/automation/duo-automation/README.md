@@ -536,32 +536,16 @@ bun run cli/factorywager-cli.ts compliance --aml5
 
 ## 📚 Documentation
 
-### Core Documentation
-- **[FactoryWager CLI v2.0](FACTORYWAGER_CLI_README.md)** - Complete CLI reference
-- **[DuoPlus Dashboard v4.4](DASHBOARD_V38_README.md)** - Dashboard implementation guide
-- **[Dashboard Matrix v4.4](DASHBOARD_MATRIX_V37.md)** - Feature matrix and capabilities
-- **[Git Configuration](GIT_CONFIG.md)** - Git setup and best practices
-
-### Architecture & Systems
-- **[Cascade System Status](CASCADE_SYSTEM_STATUS.md)** - Build system status
-- **[Deep Architecture Mastery](docs/architecture/DEEP_ARCHITECTURE_MASTERY.md)** - System architecture
-- **[Advanced CLI Guide](docs/ADVANCED_CLI_GUIDE.md)** - Advanced CLI usage
-- **[Admin Dashboard Complete](docs/ADMIN_DASHBOARD_COMPLETE.md)** - Admin interface guide
-
-### API & Integration
-- **[Config API Examples](src/@api/config-api-examples.ts)** - API usage examples
-- **[Business Logic Composition](src/@automation/business-logic-composition.ts)** - Workflow composition
-- **[Composable Workflows](src/@automation/composable-workflows.ts)** - Workflow patterns
-
-### Compliance & Security
-- **[Security Audit Tags](security-audit-tags.json)** - Security audit results
-- **[Compliance Reports](reports/)** - Latest compliance reports
-- **[Audit Trail Configuration](config/audit-trail.env)** - Audit logging setup
-
-### Development Resources
-- **[Project Scoping Policy](.project/.clinerules/project-scoping-policy.md)** - Development guidelines
-- **[Infrastructure Command Center](.project/.clinerules/infrastructure-command-center.md)** - Infrastructure management
-- **[Bun Native Policy](.project/.clinerules/bun-native-policy.md)** - Bun runtime optimization
+- **[Deep Architecture Mastery](docs/architecture/DEEP_ARCHITECTURE_MASTERY.md)** — system architecture
+- **[Admin Dashboard Complete](docs/ADMIN_DASHBOARD_COMPLETE.md)** — admin interface
+- **[Config API Examples](src/@api/config-api-examples.ts)** — API usage
+- **[Business Logic Composition](src/@automation/business-logic-composition.ts)** — workflows
+- **[Composable Workflows](src/@automation/composable-workflows.ts)** — workflow patterns
+- **[Security Audit Tags](security-audit-tags.json)** — audit tags
+- **[Compliance Reports](reports/)** — reports
+- **[Project Scoping Policy](.project/.clinerules/project-scoping-policy.md)**
+- **[Infrastructure Command Center](.project/.clinerules/infrastructure-command-center.md)**
+- **[Bun Native Policy](.project/.clinerules/bun-native-policy.md)**
 
 ## 🤝 Contributing
 

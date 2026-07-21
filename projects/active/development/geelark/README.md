@@ -659,18 +659,7 @@ npm run check:naming     # Check naming only
 
 ### Documentation
 
-See **[NAMING_STANDARDS_COMPLETE_PACKAGE.md](NAMING_STANDARDS_COMPLETE_PACKAGE.md)** for:
-- ✅ Complete package overview
-- ✅ Five Key Rules for constants
-- ✅ Training paths for developers
-- ✅ Skill level progression (Follower → Architect)
-- ✅ Code review checklist
-- ✅ Troubleshooting guide
-
-Also see:
-- **[NAMING_STANDARDS.md](NAMING_STANDARDS.md)** - Full reference guide
-- **[CONSTANTS_REFACTORING_GUIDE.md](CONSTANTS_REFACTORING_GUIDE.md)** - All constants audited
-- **[docs/NAMING_CONVENTIONS_MAINTENANCE_GUIDE.md](docs/NAMING_CONVENTIONS_MAINTENANCE_GUIDE.md)** - Maintenance skill guide
+Naming / constants: [`docs/NAMING_CONVENTIONS_MAINTENANCE_GUIDE.md`](docs/NAMING_CONVENTIONS_MAINTENANCE_GUIDE.md). Index: [`docs/README.md`](docs/README.md).
 
 ### Compliance Status
 
@@ -773,39 +762,14 @@ bun test
 
 | Document | Description |
 |----------|-------------|
-| **[Complete Feature Guide](docs/GEELARK_COMPLETE_GUIDE.md)** ⭐ | **COMPREHENSIVE** - All features, tests, APIs, deployment |
-| **[Dashboard & Frontend Guide](docs/DASHBOARD_FRONTEND_GUIDE.md)** ⭐ | **NEW** - React dashboard with 13 components |
-| **[Quick Reference](docs/QUICK_REFERENCE.md)** ⭐ | **NEW** - Types, props, Bun API lookup |
-| **[TypeScript Enhancement Guide](docs/TYPESCRIPT_ENHANCEMENT_GUIDE.md)** ⭐ | **NEW** - Type safety improvements |
-| [Documentation Index](docs/README.md) | Complete documentation suite |
-| [Performance Stress Test](docs/BUN_PERFORMANCE_STRESS_TEST.md) | Nanosecond-by-nanosecond execution analysis |
-| [DCE Annotations](docs/BUN_DCE_ANNOTATIONS.md) | Dead code elimination guide (26KB) |
-| [DCE Quick Reference](docs/DCE_ANNOTATIONS_QUICKREF.md) | DCE quick reference card |
-| [Bun File I/O](docs/BUN_FILE_IO.md) | Complete file I/O patterns guide |
-| [Bun Utilities](docs/BUN_UTILITIES_SUMMARY.md) | All Bun utilities with examples |
-| [Feature Flags](docs/FEATURE_FLAGS_VERIFICATION.md) | Feature flag system documentation |
-| [Environment Cheatsheet](docs/ENV_CHEATSHEET.md) | Environment variables quick reference |
-| [CLI Reference](docs/api/CLI_REFERENCE.md) | Complete command-line interface reference |
-| [Server API](docs/api/SERVER_API.md) | HTTP/WebSocket server documentation |
-| [Deployment Guide](docs/tutorials/DEPLOYMENT.md) | Platform-specific deployment instructions |
-| [Architecture](docs/architecture/ARCHITECTURE.md) | System architecture overview |
-| [Bun Runtime Features](docs/runtime/BUN_RUNTIME_FEATURES.md) | Bun feature integration |
-| [Bun Constants](docs/runtime/BUN_CONSTANTS.md) | Runtime constants reference |
-| [Feature Matrix](docs/features/FEATURE_MATRIX.md) | Complete feature flags matrix |
-| [Config Documentation](build/config/README.md) | Configuration files reference |
+| [Documentation Index](docs/README.md) | Live docs map |
+| [CLI Reference](docs/api/CLI_REFERENCE.md) | CLI surface |
+| [Server API](docs/api/SERVER_API.md) | HTTP/WebSocket |
+| [Architecture](docs/architecture/ARCHITECTURE.md) | System overview |
+| [Bun Runtime Features](docs/runtime/BUN_RUNTIME_FEATURES.md) | Bun integration |
+| [Bun Constants](docs/runtime/BUN_CONSTANTS.md) | Runtime constants |
 | [Schema Documentation](src/schemas/README.md) | JSON Schema definitions |
 
-### Documentation Statistics
-
-- **27 Documentation Files** covering all aspects of Geelark
-- **3 New Type Files** - database.ts, api.ts, types/index.ts (400+ lines)
-- **Upload System**: Complete API reference with examples
-- **Dashboard & Frontend**: 13 React components documented
-- **Testing**: 84 test files with full documentation
-- **Performance**: Detailed benchmarks and stress test results
-- **Feature Flags**: Complete DCE verification guide
-- **Quick Reference**: Types, props, and Bun API lookup
-- **TypeScript Enhancements**: Complete type safety guide
 
 ## 🗺️ Roadmap & Vision
 

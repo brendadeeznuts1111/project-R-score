@@ -126,22 +126,11 @@ bun-enhanced-file-analyzer/
 ## 🔗 Links & Resources
 
 ### **Documentation**
-- **[📖 Full Documentation](./docs/README.md)**
-- **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)**
 - **[🍪 CookieMap API](./docs/BUN_COOKIE_API_COMPARISON.md)**
 - **[🔧 Build System](./docs/build-files-option.md)**
 - **[🔥 React Fast Refresh](./docs/react-fast-refresh.md)**
-
-### **Examples & Demos**
 - **[🎨 Build Examples](./examples/build-examples.ts)**
-- **[📁 Virtual Files Demo](./examples/build-files-demo.ts)**
-- **[🧪 Test Examples](./test/)**
-
-### **External Resources**
-- **[🔗 Official Bun Documentation](https://bun.sh/docs)**
-- **[🔗 Bun v1.3.6+ Release Notes](https://github.com/oven-sh/bun/releases)**
-- **[🔗 React Documentation](https://react.dev/)**
-- **[🔗 Hono Framework](https://hono.dev/)**
+- **[Bun docs](https://bun.com/docs)** · **[Hono](https://hono.dev/)**
 
 ## 🌐 Live Demo
 
@@ -172,7 +161,7 @@ bun-enhanced-file-analyzer/
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License.
 
 ## 👥 Team
 

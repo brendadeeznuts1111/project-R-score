@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Guide CLI - Advanced project-specific binary resolution and execution
- * Demonstrates Bun.which patterns from BUN_WHICH_GUIDE.md
+ * Demonstrates Bun.which patterns (see bun.com/docs/runtime/utils#bun-which)
  *
  * Features:
  * - Platform-aware PATH building (POSIX vs Windows)

@@ -15,6 +15,7 @@ export {
   extnamePath,
   joinPath,
   normalizePath,
+  relativePath,
   resolvePath,
 } from '../../lib/path-bun';
 
