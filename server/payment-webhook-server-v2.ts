@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/redis — RedisClient
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**
  * Payment Webhook Server v2 - WITH PERSONALIZATION ENGINE
  *
@@ -15,7 +16,6 @@
  */
 
 import { RedisClient } from 'bun';
-import crypto from 'node:crypto';
 import { Pinecone } from '@pinecone-database/pinecone';
 import {
   getHabits,
@@ -96,7 +96,7 @@ if (!pc) {
 // ============================================================================
 
 function hmacSha256Hex(secret: string, payload: string): string {
-  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return new Bun.CryptoHasher('sha256', secret).update(payload).digest('hex');
 }
 
 function verifyPayPalWebhook(body: string, headers: Headers): boolean {

@@ -2,9 +2,7 @@
 // lib/security/secret-lifecycle.ts — Secret lifecycle and rotation management
 
 import { env } from 'bun';
-import { mkdir } from 'node:fs/promises';
 import { VersionedSecretManager } from './versioned-secrets';
-import { dirnamePath } from '../path-bun';
 
 export type LifecycleRule = {
   key: string;
@@ -151,7 +149,7 @@ export class SecretLifecycleManager {
   }
 
   private async writeLocalReport(path: string, contents: string) {
-    await mkdir(dirnamePath(path), { recursive: true });
+    // Bun.write createPath creates intermediate dirs for the file.
     await Bun.write(path, contents);
   }
 

@@ -3,7 +3,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/utils/safe-file-operations.ts — Safe file operations with error handling
 
-import { mkdir } from 'node:fs/promises';
 import { ErrorHandler } from './error-handler';
 import { dirnamePath, basenamePath, extnamePath } from '../path-bun';
 
@@ -32,8 +31,7 @@ export interface FileOperationResult<T = any> {
 
 /**
  * Safe file operations via Bun.file / Bun.write (canonical Bun file I/O).
- * Pure directory creation still uses node:fs mkdir — Bun.write only creates
- * parent segments when writing a nested *file* path.
+ * Pure directory creation uses a marker file so Bun.write createPath applies.
  */
 export class SafeFileOperations {
   private static readonly DEFAULT_OPTIONS: Required<FileOperationOptions> = {
@@ -350,12 +348,12 @@ export class SafeFileOperations {
   }
 
   /**
-   * Ensure directory exists (pure dirs — Bun.write only parents nested files).
+   * Ensure directory exists (marker file → Bun.write createPath).
    */
   private static async ensureDirectory(dirPath: string): Promise<void> {
-    if (!(await Bun.file(dirPath).exists())) {
-      await mkdir(dirPath, { recursive: true });
-    }
+    if (await Bun.file(dirPath).exists()) return;
+    const marker = `${dirPath.replace(/\/$/, '')}/.bun-keep`;
+    await Bun.write(marker, '');
   }
 
   private static delay(ms: number): Promise<void> {

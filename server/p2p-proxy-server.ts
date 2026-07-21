@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
-// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/redis — RedisClient
 /**
  * P2P Proxy Server - Unified Payment Bridge
@@ -17,7 +17,6 @@
  */
 
 import { RedisClient } from 'bun';
-import crypto from 'node:crypto';
 import {
   getHabits,
   storeHabits,
@@ -63,7 +62,7 @@ redis.onconnect = () => console.info('✅ Redis connected');
 // ============================================================================
 
 function hmacSha256Hex(secret: string, payload: string): string {
-  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return new Bun.CryptoHasher('sha256', secret).update(payload).digest('hex');
 }
 
 function verifyWebhookSignature(
@@ -432,7 +431,7 @@ const server = Bun.serve({
     const path = url.pathname;
 
     const origin = req.headers.get('Origin') || '';
-    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const allowedOrigins = (Bun.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
     const corsOrigin =
       allowedOrigins.length > 0 && allowedOrigins.includes(origin)
         ? origin

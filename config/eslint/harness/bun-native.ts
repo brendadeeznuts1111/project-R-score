@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Bun-native ESLint rules — restricted imports and syntax from DX catalog.
  */
@@ -54,19 +59,31 @@ const bunNativeSyntaxSelectors = [
   {
     selector:
       "CallExpression[callee.object.name='fs'][callee.property.name=/^(readFileSync|writeFileSync|existsSync|readdirSync|statSync|mkdirSync|rmSync|copyFileSync)$/]",
-    message: syntaxMessage('file.read', 'Use Bun.file(), Bun.Glob, or Bun.write() instead of fs sync methods.'),
+    message: syntaxMessage(
+      'file.read',
+      'Use Bun.file(), Bun.Glob, or Bun.write() instead of fs sync methods.'
+    ),
   },
   {
     selector: "CallExpression[callee.property.name='execSync']",
-    message: syntaxMessage('spawn.sync', 'Use Bun.spawn() or Bun.spawnSync() instead of execSync().'),
+    message: syntaxMessage(
+      'spawn.sync',
+      'Use Bun.spawn() or Bun.spawnSync() instead of execSync().'
+    ),
   },
   {
     selector: "CallExpression[callee.object.name='cp'][callee.property.name='spawnSync']",
-    message: syntaxMessage('spawn.sync', 'Use Bun.spawn() or Bun.spawnSync() instead of child_process.spawnSync().'),
+    message: syntaxMessage(
+      'spawn.sync',
+      'Use Bun.spawn() or Bun.spawnSync() instead of child_process.spawnSync().'
+    ),
   },
   {
-    selector: "ImportDeclaration[source.value=/^(node:)?child_process$/]",
-    message: syntaxMessage('spawn.exec', 'Use Bun.spawn() or Bun.spawnSync() instead of child_process.'),
+    selector: 'ImportDeclaration[source.value=/^(node:)?child_process$/]',
+    message: syntaxMessage(
+      'spawn.exec',
+      'Use Bun.spawn() or Bun.spawnSync() instead of child_process.'
+    ),
   },
   {
     selector: "CallExpression[callee.object.name='require'][arguments.0.value='child_process']",
@@ -83,9 +100,12 @@ function restrictedSyntax(severity: 'error' | 'warn'): Linter.RuleEntry {
 }
 
 export const bunNativeRestrictedImports = importPaths('error');
-export const bunNativeRestrictedImportsWarn = importPaths('warn');
 export const bunNativeRestrictedSyntax = restrictedSyntax('error');
-export const bunNativeRestrictedSyntaxWarn = restrictedSyntax('warn');
+
+/** @deprecated Soft rollout removed — harness paths are error-tier. Alias kept for imports. */
+export const bunNativeRestrictedImportsWarn = bunNativeRestrictedImports;
+/** @deprecated Soft rollout removed — harness paths are error-tier. Alias kept for imports. */
+export const bunNativeRestrictedSyntaxWarn = bunNativeRestrictedSyntax;
 
 export function bunNativeStrictConfig(files: readonly string[]): Linter.Config {
   return {
@@ -98,6 +118,11 @@ export function bunNativeStrictConfig(files: readonly string[]): Linter.Config {
   };
 }
 
+/**
+ * Harness path filter (lib/scripts/packages/server/config/tools): Bun-native
+ * import/syntax rules at **error** — same severity as STRICT_INVENTORY.
+ * Soft warn rollout was false-green (~max-warnings 500); fix-on-touch is the ratchet.
+ */
 export function bunNativeRolloutConfig(
   files: readonly string[],
   ignores: readonly string[]
@@ -107,8 +132,8 @@ export function bunNativeRolloutConfig(
     files: [...files],
     ignores: [...ignores],
     rules: {
-      'no-restricted-imports': bunNativeRestrictedImportsWarn,
-      'no-restricted-syntax': bunNativeRestrictedSyntaxWarn,
+      'no-restricted-imports': bunNativeRestrictedImports,
+      'no-restricted-syntax': bunNativeRestrictedSyntax,
     },
   };
 }

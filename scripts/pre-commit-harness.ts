@@ -131,7 +131,7 @@ async function main(): Promise<void> {
       'eslint.bun-native.config.ts',
       '--fix',
       '--max-warnings',
-      '500',
+      '0',
       ...harnessFiles,
     ],
     timings

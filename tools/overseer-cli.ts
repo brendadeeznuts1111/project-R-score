@@ -1,20 +1,21 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // tools/overseer-cli.ts — Root project manager for Bun platform projects
 
-// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
 ensureDirectExecution();
 
 import { which, spawn } from 'bun';
-import fs from 'bun:fs';
 
 console.info(`Overseer running from: ${Bun.main}`);
 
 // Discover projects (subdirs with package.json)
-const projects = fs
-  .readdirSync(Bun.cwd)
-  .filter(dir => fs.existsSync(`${Bun.cwd}/${dir}/package.json`));
+const projects = [...new Bun.Glob('*/package.json').scanSync({ cwd: Bun.cwd })].map(rel =>
+  rel.replace(/\/package\.json$/, '')
+);
 
 if (projects.length === 0) {
   console.error('No projects found (subdirectories with package.json required)');
@@ -24,17 +25,14 @@ if (projects.length === 0) {
 console.info('Available projects:');
 console.table(projects.map(p => ({ name: p, path: `${Bun.cwd}/${p}` })));
 
-// Run command in specific project
-function runInProject(projectName: string, cmd: string[]) {
+async function runInProject(projectName: string, cmd: string[]) {
   const projectHome = `${Bun.cwd}/${projectName}`;
 
-  // Verify project exists
-  if (!fs.existsSync(projectHome)) {
+  if (Bun.peek(Bun.file(`${projectHome}/package.json`).exists()) !== true) {
     console.error(`Project not found: ${projectHome}`);
     return;
   }
 
-  // Resolve binary with project-specific PATH
   const binPath = which(cmd[0], {
     cwd: projectHome,
     PATH: `${projectHome}/node_modules/.bin:${Bun.env.PATH || ''}`,
@@ -59,7 +57,6 @@ function runInProject(projectName: string, cmd: string[]) {
   return proc.exited;
 }
 
-// CLI argument parsing
 const args = Bun.argv.slice(2);
 
 if (args.length < 2) {

@@ -5,7 +5,6 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { Database } from 'bun:sqlite';
-import { mkdirSync, statSync } from 'node:fs';
 import ts from 'typescript';
 import { dirnamePath, resolvePath } from '../path-bun';
 
@@ -82,9 +81,9 @@ interface DiscoverResult {
 
 function ensureParentDir(filePath: string): void {
   const parent = dirnamePath(filePath);
-  if (Bun.peek(Bun.file(parent).exists()) !== true) {
-    mkdirSync(parent, { recursive: true });
-  }
+  if (Bun.peek(Bun.file(parent).exists()) === true) return;
+  // Bun.write createPath is async; mkdir -p stays sync for Database open.
+  Bun.spawnSync(['mkdir', '-p', parent], { stdout: 'ignore', stderr: 'ignore' });
 }
 
 function openDb(dbPath: string): Database {
@@ -357,8 +356,9 @@ function discoverSymbolsAndEdges(code: string, filePath: string): DiscoverResult
 
 function getFileStat(path: string): { mtimeMs: number; size: number } | null {
   try {
-    const stat = statSync(path);
-    return { mtimeMs: stat.mtimeMs, size: stat.size };
+    const file = Bun.file(path);
+    if (Bun.peek(file.exists()) !== true) return null;
+    return { mtimeMs: file.lastModified, size: file.size };
   } catch {
     return null;
   }

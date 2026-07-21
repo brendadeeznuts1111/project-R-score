@@ -180,10 +180,8 @@ export class RipgrepSearcher {
 
   private ensureCacheDir(): void {
     // Pure directory create — Bun.write only creates parents for nested *files*
-    if (Bun.peek(Bun.file(this.cacheDir).exists()) !== true) {
-      const fs = require('fs');
-      fs.mkdirSync(this.cacheDir, { recursive: true });
-    }
+    if (Bun.peek(Bun.file(this.cacheDir).exists()) === true) return;
+    Bun.spawnSync(['mkdir', '-p', this.cacheDir], { stdout: 'ignore', stderr: 'ignore' });
   }
 
   /**

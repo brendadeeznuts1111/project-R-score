@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/redis — RedisClient
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**
  * Payment Webhook Server
  *
@@ -36,7 +37,6 @@
  */
 
 import { RedisClient } from 'bun';
-import crypto from 'node:crypto';
 import { Pinecone } from '@pinecone-database/pinecone';
 
 // ============================================================================
@@ -87,11 +87,11 @@ export type PaymentResult = {
   timestamp: string;
 };
 
-function vlog(...args: unknown[]): void {
+function vlog(...args: Array<string | number | boolean | object | null | undefined>): void {
   if (VERBOSE) console.info(...args);
 }
 
-function jsonResponse(body: unknown, init?: ResponseInit): Response {
+function jsonResponse(body: object | string | number | boolean | null, init?: ResponseInit): Response {
   return Response.json(body, init);
 }
 
@@ -116,7 +116,7 @@ if (!pc) {
 // ============================================================================
 
 function hmacSha256Hex(secret: string, payload: string): string {
-  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return new Bun.CryptoHasher('sha256', secret).update(payload).digest('hex');
 }
 
 function verifyPayPalWebhook(body: string, headers: Headers): boolean {

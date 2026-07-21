@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 
-import crypto from 'node:crypto';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { redis } from 'bun';
 
@@ -16,7 +16,7 @@ const PAYPAL_CLIENT_SECRET = Bun.env.PAYPAL_CLIENT_SECRET ?? '';
 const PAYPAL_API_BASE = Bun.env.PAYPAL_API_BASE ?? 'https://api-m.sandbox.paypal.com';
 const VENMO_WEBHOOK_SECRET = Bun.env.VENMO_WEBHOOK_SECRET ?? '';
 
-const redisPublish = async (channel: string, payload: unknown) => {
+const redisPublish = async (channel: string, payload: object | string | number | boolean | null) => {
   try {
     await redis.publish(channel, JSON.stringify(payload));
   } catch (err) {
@@ -35,7 +35,7 @@ export type SuperProfile = {
 };
 
 function hmacSha256Hex(secret: string, payload: string): string {
-  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return new Bun.CryptoHasher('sha256', secret).update(payload).digest('hex');
 }
 
 let cachedPayPalToken: { token: string; expiresAt: number } | null = null;

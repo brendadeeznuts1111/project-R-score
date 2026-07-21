@@ -48,7 +48,15 @@ Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 | `path` / `node:path` in `lib/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` staged) |
 | `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
 
-Next single era (not started): import-warning burn-down / `--max-warnings` ratchet.
+Next single era (not started): remaining soft warns on touch (`bun/prefer-*`, `harness/no-unknown-function-param`) — staged `--max-warnings 0` already ratchets them when those files are committed.
+
+## Import / Bun-native ratchet (done)
+
+| Lever | Change |
+|-------|--------|
+| `config/eslint/harness/bun-native.ts` | Rollout `no-restricted-imports` / `no-restricted-syntax` → **error** (same as STRICT_INVENTORY) |
+| `scripts/pre-commit-harness.ts` | `--max-warnings` **500 → 0** on staged harness files |
+| Burn slice | Removed remaining restricted import/syntax sites under harness paths (fs/crypto → Bun) |
 
 ## Timing artifact
 
