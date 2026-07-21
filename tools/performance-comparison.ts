@@ -48,7 +48,7 @@ function nativePluginProcessing(files: string[]): number {
 
 // Demo files with imports
 const demoFiles = [
-  'const content = await Bun.file("src/index.ts").text();',
+  'import { readFileSync } from "fs"; import { join } from "path";',
   'import { EventEmitter } from "events"; import { createHash } from "crypto";',
   'import { randomUUID } from "crypto"; import { performance } from "perf_hooks";',
   'import { promisify } from "util"; import { inspect } from "util";',

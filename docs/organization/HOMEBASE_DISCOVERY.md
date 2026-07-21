@@ -46,13 +46,13 @@ Policy SSOT: [`docs/UNIFIED.md`](../UNIFIED.md).
 | `setup:mcp` / `setup:p2p` | Side doors |
 | `install:verify` / `install:machine:health` | Readonly health |
 
-### Bun pin (reconciled)
+### Gap — Bun pin skew
 
 | Source | Value |
 |--------|-------|
 | Runtime | Bun **1.4.0** |
-| `package.json` `packageManager` | **bun@1.4.0** |
-| `engines` | unset (optional; pin is `packageManager`) |
+| `package.json` `packageManager` | **bun@1.3.14** |
+| `engines` | unset |
 
 ---
 
@@ -62,12 +62,11 @@ Policy SSOT: [`docs/UNIFIED.md`](../UNIFIED.md).
 
 ```
 packages/*
+projects/active/kimiremote/packages/*          ← DEAD here (dir absent / gitignored)
 projects/active/factorywager/registry/packages/*  ← 11 packages on disk
 projects/active/sports-terminal-os             ← name: sports-terminal-os
 lib/*                                          ← only lib/shared has package.json today
 ```
-
-(Removed dead glob `projects/active/kimiremote/packages/*` — tree absent / gitignored.)
 
 ### Homebase map
 
@@ -91,7 +90,7 @@ Name overlap with `lib/`: `ab-testing`, `business`, `guards`, `package` — pack
 
 ### Gaps
 
-1. ~~Dead workspace glob: `projects/active/kimiremote/packages/*`~~ — removed
+1. Dead workspace glob: `projects/active/kimiremote/packages/*`
 2. `lib/*` workspace glob mostly inert (only `lib/shared`)
 3. No `packages/README.md`
 
@@ -244,9 +243,9 @@ Tracked/usable: `bunfig.toml`, four `eslint*.config.ts`, five `tsconfig*.json`, 
 
 ## Recommended next actions
 
-1. ~~**Fix config tracking policy**~~ — harness SSOT allowlisted + tracked (`config/bun-dx-catalog.ts`, `config/eslint/**`).
-2. ~~**Reconcile Bun pin**~~ — `packageManager` is `bun@1.4.0` (matches runtime).
-3. ~~**Drop dead workspace glob**~~ — removed `projects/active/kimiremote/packages/*`.
+1. ~~**Fix config tracking policy**~~ — **done in this worktree (staged, not committed):** copied harness SSOT from `~/Projects/config/`, added `.gitignore` allowlist for `config/bun-dx-catalog.ts` + `config/eslint/**`, `git add`’d. Commit when ready.
+2. **Reconcile Bun pin** — bump `packageManager` to `bun@1.4.0` or document intentional skew + CI PATH.
+3. **Drop or gate dead workspace glob** — `projects/active/kimiremote/packages/*` while tree is gitignored/absent.
 4. **Optional** — short `packages/README.md`; audit nested project bunfigs only if they join homebase install.
 
 Do **not** invent a second homebase doc tree; keep entry thin via `AGENTS.md` → `STRUCTURE.md` → this note for the discovery snapshot.

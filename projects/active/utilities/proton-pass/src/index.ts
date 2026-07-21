@@ -4,4 +4,3 @@ export { ProtonPassCliError, runJson, runRaw } from './client.ts';
 export * from './vault.ts';
 export * from './items.ts';
 export * from './template.ts';
-export { type Logger, getLogger, setLogger } from './logger.ts';
