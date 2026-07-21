@@ -62,7 +62,7 @@ Projects/
 ├── public/                  # Static assets, registry viewer
 ├── scratch/                 # Bun playground (curated; archive/scratch has older copies)
 ├── scripts/                 # Automation, CI, fix-* remediations
-├── server/ · tests/ · tools/ · workers/
+├── server/ · tests/ · tools/
 ├── bunfig.toml · package.json · tsconfig*.json
 ├── registry.config.json5    # → config/ (symlink)
 └── ci.bunfig.toml           # → config/ (symlink)

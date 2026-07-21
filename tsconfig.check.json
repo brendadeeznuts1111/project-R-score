@@ -3,7 +3,9 @@
   "compilerOptions": {
     "noEmit": true,
     "incremental": true,
-    "types": ["bun-types"],
+    "types": [
+      "bun-types"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "tsBuildInfoFile": ".cache/tsbuildinfo/check.tsbuildinfo"
@@ -25,9 +27,6 @@
     "lib/docs/urls.ts",
     "lib/docs/smart-symbol-index.ts",
     "lib/docs/ripgrep-spawn.ts",
-    "lib/utils/safe-file-operations.ts",
-    "workers/protocol-bridge-worker.ts",
-    "workers/ultra-pool.ts",
     "scripts/lib/cli-args.ts",
     "scripts/lib/cli-categories.ts",
     "scripts/lib/fs-bun.ts",
@@ -46,8 +45,14 @@
     "scripts/lib/git-changed.ts",
     "scripts/check-pr-claim.ts",
     "scripts/bun-test-changed.ts",
-    "types/**/*",
-    "index.ts"
+    "types/**/*"
   ],
-  "exclude": ["node_modules", "dist", "build", "env.d.ts", "**/*.test.ts", "**/*.bench.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "env.d.ts",
+    "**/*.test.ts",
+    "**/*.bench.ts"
+  ]
 }
