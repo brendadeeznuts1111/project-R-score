@@ -68,6 +68,40 @@ describe('code quality tenants', () => {
     expect(code).toBe(0);
   }, 60_000);
 
+  test('complexity-floor stdin path list scopes to listed files', async () => {
+    const proc = Bun.spawn(
+      [
+        'bun',
+        'scripts/complexity-check.ts',
+        '--stdin',
+        '--json',
+        '--baseline',
+        'lib/harness/complexity-baseline.json',
+      ],
+      {
+        cwd: ROOT,
+        stdin: new Blob(['lib/harness/complexity.ts\nREADME.md\n']),
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
+    const [out, code] = await Promise.all([
+      new Response(proc.stdout).text(),
+      proc.exited,
+    ]);
+    expect(code).toBe(0);
+    const json = JSON.parse(out.trim()) as {
+      ok: boolean;
+      mode: string;
+      files: number;
+      functions: number;
+    };
+    expect(json.ok).toBe(true);
+    expect(json.mode).toBe('stdin');
+    expect(json.files).toBe(1);
+    expect(json.functions).toBeGreaterThan(0);
+  }, 60_000);
+
   test('proof catalog includes harness coverage · orphans · complexity', () => {
     expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'harness-coverage-ratchet')).toBe(true);
     expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'harness-orphan-modules')).toBe(true);

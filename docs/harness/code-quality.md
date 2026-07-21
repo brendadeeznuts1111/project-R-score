@@ -26,3 +26,5 @@ bun run test:code-quality
 Included from `bun run test:tenant-runbooks`.
 
 Claims: `harness-coverage-ratchet` · `harness-orphan-modules` · `harness-complexity-floor` (types reuse `lib-docs-typecheck` / day-loop `type-check`).
+
+Tunings: `bun run check:harness-complexity:staged` (stdin changed-files) · `bun run test:code-quality:smol` (`--smol`) · `bun --console-depth=4 run check:harness-complexity`.

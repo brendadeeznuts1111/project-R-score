@@ -1700,6 +1700,8 @@
     "test:harness-coverage": "bun scripts/run-harness-coverage.ts",
     "check:harness-orphans": "bun scripts/check-harness-orphans.ts",
     "check:harness-complexity": "bun scripts/complexity-check.ts --json --baseline lib/harness/complexity-baseline.json",
+    "check:harness-complexity:staged": "git diff --cached --name-only --diff-filter=ACM -- 'lib/harness/**/*.ts' | bun scripts/complexity-check.ts --stdin --json --baseline lib/harness/complexity-baseline.json",
+    "test:code-quality:smol": "bun --smol run test:code-quality",
     "docs:code-quality": "bun scripts/docs-code-quality.ts",
     "docs:ci-deploy": "bun scripts/docs-ci-deploy.ts",
     "docs:search-governance": "bun scripts/docs-search-governance.ts",

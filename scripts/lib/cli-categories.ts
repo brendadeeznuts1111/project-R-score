@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
@@ -122,6 +123,9 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:harness-orphans': 'Fail if any lib/harness/*.ts module has no importers',
   'check:harness-complexity':
     'Fail if any lib/harness function exceeds complexity-baseline.json (--update-baseline to raise)',
+  'check:harness-complexity:staged':
+    'Complexity floor on staged lib/harness files (git diff | Bun.stdin)',
+  'test:code-quality:smol': 'test:code-quality under bun --smol (eager GC for tight CI)',
   'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
   'docs:ci-deploy': 'CI/deploy runbooks index (ansiMarkdown)',
   'docs:fresh-rerun':
@@ -188,6 +192,8 @@ export const CLI_CORE_CMDS = new Set([
   'test:harness-coverage',
   'check:harness-orphans',
   'check:harness-complexity',
+  'check:harness-complexity:staged',
+  'test:code-quality:smol',
   'docs:code-quality',
   'docs:ci-deploy',
   'docs:search-governance',

@@ -172,12 +172,43 @@ export function maxComplexitySeen(hits: ComplexityHit[]): number {
   return hits.reduce((m, h) => Math.max(m, h.complexity), 0);
 }
 
-export async function collectHarnessComplexity(root: string): Promise<ComplexityHit[]> {
+/** Keep only in-scope harness sources from a newline-delimited path list. */
+export function filterHarnessComplexityPaths(paths: readonly string[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of paths) {
+    const p = raw.trim().replace(/^\.\//, '');
+    if (!p || seen.has(p)) continue;
+    if (!p.startsWith('lib/harness/')) continue;
+    if (!p.endsWith('.ts') || p.endsWith('.test.ts') || p.endsWith('.d.ts')) continue;
+    seen.add(p);
+    out.push(p);
+  }
+  return out;
+}
+
+/**
+ * Collect complexity hits for the full harness surface, or a subset of
+ * repo-relative paths (e.g. from a staged git diff via stdin).
+ */
+export async function collectHarnessComplexity(
+  root: string,
+  files?: readonly string[]
+): Promise<ComplexityHit[]> {
   const hits: ComplexityHit[] = [];
-  const cwd = `${root}/lib/harness`;
+  if (files) {
+    for (const rel of filterHarnessComplexityPaths(files)) {
+      const abs = joinPath(root, rel);
+      if (!(await Bun.file(abs).exists())) continue;
+      const text = await Bun.file(abs).text();
+      hits.push(...analyzeFileComplexity(rel, text));
+    }
+    return hits;
+  }
+  const cwd = joinPath(root, 'lib/harness');
   for await (const rel of new Bun.Glob('**/*.ts').scan({ cwd, onlyFiles: true })) {
     if (rel.endsWith('.test.ts') || rel.endsWith('.d.ts')) continue;
-    const abs = `${cwd}/${rel}`;
+    const abs = joinPath(cwd, rel);
     const text = await Bun.file(abs).text();
     hits.push(...analyzeFileComplexity(`lib/harness/${rel}`, text));
   }

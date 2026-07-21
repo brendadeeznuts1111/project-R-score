@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
+// @see https://bun.com/docs/runtime/index#bun-run-smol — --smol
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
@@ -9,12 +11,22 @@
  *   bun run check:harness-complexity -- --report
  *   bun run check:harness-complexity -- --json
  *   bun run check:harness-complexity -- --update-baseline --yes
+ *
+ * Changed-files (pre-commit / staged) — pipe paths into the probe:
+ *   bun run check:harness-complexity:staged
+ *   # or: git diff --cached --name-only --diff-filter=ACM -- lib/harness \
+ *   #       | bun scripts/complexity-check.ts --stdin --json --baseline …
+ *
+ * Diagnostics / CI memory:
+ *   bun --console-depth=4 run check:harness-complexity -- --report
+ *   bun --smol run test:code-quality
  */
 import {
   assertComplexityFloor,
   collectHarnessComplexity,
   complexityBaselinePath,
   DEFAULT_COMPLEXITY_BASELINE_REL,
+  filterHarnessComplexityPaths,
   loadComplexityBaseline,
   maxComplexitySeen,
   writeComplexityBaseline,
@@ -38,11 +50,33 @@ const asJson = argv.includes('--json');
 const updateBaseline = argv.includes('--update-baseline');
 const allowLower = argv.includes('--allow-lower');
 const yes = argv.includes('--yes');
+const forceStdin = argv.includes('--stdin');
 const baselineArg = flagValue('--baseline') ?? DEFAULT_COMPLEXITY_BASELINE_REL;
 const baselineAbs = complexityBaselinePath(ROOT, baselineArg);
 
+/**
+ * Optional path list from stdin (newline-delimited).
+ * - `--stdin` always reads Bun.stdin (empty → scoped skip, not full glob)
+ * - else non-TTY stdin is read (empty → full glob for CI inherit)
+ * - TTY → full glob (interactive `bun run check:harness-complexity`)
+ */
+async function resolveFileList(): Promise<string[] | undefined> {
+  if (!forceStdin && process.stdin.isTTY) return undefined;
+  const input = (await Bun.stdin.text()).trim();
+  if (!input) return forceStdin ? [] : undefined;
+  return filterHarnessComplexityPaths(input.split('\n'));
+}
+
+const fileList = await resolveFileList();
+const scoped = fileList !== undefined;
 const baseline = await loadComplexityBaseline(ROOT, baselineArg);
-const hits = await collectHarnessComplexity(ROOT);
+
+if (updateBaseline && scoped) {
+  console.error('❌ --update-baseline requires a full-tree scan (do not pipe a file list)');
+  process.exit(2);
+}
+
+const hits = await collectHarnessComplexity(ROOT, fileList);
 hits.sort((a, b) => b.complexity - a.complexity);
 const maxSeen = maxComplexitySeen(hits);
 const failures = assertComplexityFloor(hits, baseline.maxComplexity);
@@ -51,6 +85,8 @@ type JsonOut = {
   ok: boolean;
   baseline: string;
   scope: string;
+  mode: 'full' | 'stdin';
+  files?: number;
   maxComplexity: number;
   maxSeen: number;
   functions: number;
@@ -58,6 +94,21 @@ type JsonOut = {
   top?: ComplexityHit[];
   updated?: { from: number; to: number };
 };
+
+function baseJson(extra: Partial<JsonOut> = {}): JsonOut {
+  return {
+    ok: failures.length === 0,
+    baseline: baselineArg,
+    scope: baseline.scope,
+    mode: scoped ? 'stdin' : 'full',
+    files: scoped ? (fileList?.length ?? 0) : undefined,
+    maxComplexity: baseline.maxComplexity,
+    maxSeen,
+    functions: hits.length,
+    failures,
+    ...extra,
+  };
+}
 
 async function confirmRaise(from: number, to: number): Promise<boolean> {
   if (yes) return true;
@@ -73,24 +124,21 @@ async function confirmRaise(from: number, to: number): Promise<boolean> {
   return answer === 'y' || answer === 'yes';
 }
 
+if (scoped && (fileList?.length ?? 0) === 0) {
+  if (asJson) {
+    console.info(JSON.stringify(baseJson({ ok: true, failures: [], functions: 0, maxSeen: 0 })));
+  } else {
+    console.info('✅ harness complexity · no in-scope files on stdin (skip)');
+  }
+  process.exit(0);
+}
+
 if (updateBaseline) {
-  let next = maxSeen;
+  const next = maxSeen;
   if (next < baseline.maxComplexity && !allowLower) {
     const msg = `refusing to lower maxComplexity ${baseline.maxComplexity} → ${next} (pass --allow-lower)`;
     if (asJson) {
-      console.info(
-        JSON.stringify({
-          ok: true,
-          baseline: baselineArg,
-          scope: baseline.scope,
-          maxComplexity: baseline.maxComplexity,
-          maxSeen,
-          functions: hits.length,
-          failures: [],
-          updated: undefined,
-          note: msg,
-        } satisfies JsonOut & { note: string })
-      );
+      console.info(JSON.stringify({ ...baseJson({ ok: true, failures: [] }), note: msg }));
     } else {
       console.info(`✅ ${msg}`);
     }
@@ -98,18 +146,7 @@ if (updateBaseline) {
   }
   if (next === baseline.maxComplexity) {
     if (asJson) {
-      console.info(
-        JSON.stringify({
-          ok: failures.length === 0,
-          baseline: baselineArg,
-          scope: baseline.scope,
-          maxComplexity: baseline.maxComplexity,
-          maxSeen,
-          functions: hits.length,
-          failures,
-          top: report ? hits.slice(0, 20) : undefined,
-        } satisfies JsonOut)
-      );
+      console.info(JSON.stringify(baseJson({ top: report ? hits.slice(0, 20) : undefined })));
     } else {
       console.info(
         `✅ baseline unchanged · maxComplexity ${baseline.maxComplexity} · max seen ${maxSeen}`
@@ -131,16 +168,14 @@ if (updateBaseline) {
 
   if (asJson) {
     console.info(
-      JSON.stringify({
-        ok: true,
-        baseline: baselineArg,
-        scope: baseline.scope,
-        maxComplexity: next,
-        maxSeen,
-        functions: hits.length,
-        failures: [],
-        updated: { from: baseline.maxComplexity, to: next },
-      } satisfies JsonOut)
+      JSON.stringify(
+        baseJson({
+          ok: true,
+          failures: [],
+          maxComplexity: next,
+          updated: { from: baseline.maxComplexity, to: next },
+        })
+      )
     );
   } else {
     console.info(`✅ wrote ${baselineArg} · maxComplexity ${baseline.maxComplexity} → ${next}`);
@@ -149,22 +184,14 @@ if (updateBaseline) {
 }
 
 if (asJson) {
-  const out: JsonOut = {
-    ok: failures.length === 0,
-    baseline: baselineArg,
-    scope: baseline.scope,
-    maxComplexity: baseline.maxComplexity,
-    maxSeen,
-    functions: hits.length,
-    failures,
-    top: report ? hits.slice(0, 20) : undefined,
-  };
-  console.info(JSON.stringify(out));
+  console.info(JSON.stringify(baseJson({ top: report ? hits.slice(0, 20) : undefined })));
   process.exit(failures.length === 0 ? 0 : 1);
 }
 
 if (report) {
-  console.info(`scope ${baseline.scope} · maxComplexity ${baseline.maxComplexity}`);
+  console.info(
+    `scope ${baseline.scope} · mode ${scoped ? 'stdin' : 'full'} · maxComplexity ${baseline.maxComplexity}`
+  );
   for (const h of hits.slice(0, 20)) {
     console.info(`  ${h.complexity.toString().padStart(3)}  ${h.file}:${h.line}  ${h.name}`);
   }
@@ -178,7 +205,8 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
+const modeNote = scoped ? ` · stdin ${fileList!.length} files` : '';
 console.info(
-  `✅ harness complexity · ${hits.length} functions · max seen ${maxSeen} ≤ floor ${baseline.maxComplexity}`
+  `✅ harness complexity · ${hits.length} functions${modeNote} · max seen ${maxSeen} ≤ floor ${baseline.maxComplexity}`
 );
 process.exit(0);
