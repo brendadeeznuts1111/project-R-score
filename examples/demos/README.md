@@ -1,5 +1,3 @@
-# Demos
+# demos
 
-Remaining Bun feature demos live under [`bun/`](./bun/). Prefer day-loop: `bun run harness:status`.
-
-Index: [`../INDEX.md`](../INDEX.md) · [`../README.md`](../README.md).
+Prior DEMO-* Bun fix playgrounds removed (unreferenced). Prefer `examples/bun-v139-features/` for Bun demos.

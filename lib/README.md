@@ -53,13 +53,13 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`ab-testing/`](./ab-testing/) | Stub — live code in `packages/ab-testing` | see README |
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
 | [`business/`](./business/) | Stub — unreferenced modules removed | see README |
-| [`cli/`](./cli/) | CLI helpers | `chrome-integration.ts` |
+| [`cli/`](./cli/) | Stub — chrome/docs CLI removed | see README |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
 | [`env/`](./env/) | Runtime env helpers | `runtime.ts` |
-| [`har-analyzer/`](./har-analyzer/) | HAR capture analysis | `bun-serve-types.ts` |
+| [`har-analyzer/`](./har-analyzer/) | Stub — HAR analyzer removed | see README |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
 | [`http/`](./http/) | HTTP helpers | `hardened-fetch.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |

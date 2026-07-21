@@ -127,4 +127,4 @@ Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_D
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
 
-Maintained by the platform team. Run `bun run dashboard` for live views, or use the active CLIs in [`tools/cli/`](tools/cli/docs-cli.ts) (`integrated-cli.ts`, `docs-cli.ts`, `endpoint-status.ts`).
+Maintained by the platform team. Run `bun run dashboard` for live views, or use active CLIs under [`tools/cli/`](tools/cli/) (e.g. `endpoint-status.ts`).
