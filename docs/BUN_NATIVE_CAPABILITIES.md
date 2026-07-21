@@ -191,9 +191,15 @@ Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — 
 | [UDP ICMP / truncation](https://bun.com/blog/bun-v1.3.12#udp-socket-icmp-error-handling-and-truncation-detection) | Documented above · re-read when editing `lib/udp` |
 | [Unix domain socket lifecycle ↔ Node](https://bun.com/blog/bun-v1.3.12#unix-domain-socket-lifecycle-now-matches-node-js) | Runtime inherit · prefer Bun.serve / native sockets in new code |
 | JSC: `using` / `await using`, JIT, Wasm, spec, libpas | Prefer `await using` for WebView / resources · rest inherit |
-| Standalone Linux executables / faster URLPattern / stripANSI / stringWidth / Glob.scan / build | Runtime inherit · console-depth already uses `Bun.stringWidth` |
-| Cgroup-aware parallelism / HTTPS CONNECT keep-alive / `TCP_DEFER_ACCEPT` | Runtime inherit on Linux hosts |
-| [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) (Node / Bun APIs / Web / bundler / test / Shell / Windows) → contributors | Inherit by running Bun ≥1.3.12 · do not re-document each bullet |
+| [Improved standalone Linux executables](https://bun.com/blog/bun-v1.3.12#improved-standalone-executables-on-linux) | Runtime inherit · `--compile` portability |
+| [URLPattern up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster) | Runtime inherit · no homebase wrapper; prefer for route match |
+| [Faster `Bun.stripANSI` / `Bun.stringWidth`](https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth) | Wired: [`lib/console-depth.ts`](../lib/console-depth.ts) · CANONICAL_REFS `Bun.stringWidth` / `Bun.stripANSI` |
+| [Faster `bun build` on low-core machines](https://bun.com/blog/bun-v1.3.12#faster-bun-build-on-low-core-machines) | Runtime inherit (thread-pool fix) |
+| [Faster `Bun.Glob.scan()`](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan) | Runtime inherit · used by docs/search tooling (`**/…` boundary) |
+| [Cgroup-aware `availableParallelism`](https://bun.com/blog/bun-v1.3.12#cgroup-aware-availableparallelism-hardwareconcurrency-on-linux) | Runtime inherit on Linux hosts / containers |
+| [HTTPS proxy CONNECT keep-alive](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels) | Runtime inherit · `fetch({ proxy })` tunnel reuse |
+| [`TCP_DEFER_ACCEPT` for `Bun.serve()` (Linux)](https://bun.com/blog/bun-v1.3.12#tcp-defer-accept-for-bun-serve-on-linux) | Runtime inherit · `Bun.listen` / `net.createServer` unchanged |
+| [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [Node](https://bun.com/blog/bun-v1.3.12#node-js-compatibility-improvements) · [Bun APIs](https://bun.com/blog/bun-v1.3.12#bun-apis) · [Web](https://bun.com/blog/bun-v1.3.12#web-apis) · [bundler](https://bun.com/blog/bun-v1.3.12#javascript-bundler) · [test](https://bun.com/blog/bun-v1.3.12#bun-test) · [Shell](https://bun.com/blog/bun-v1.3.12#bun-shell) · [Windows](https://bun.com/blog/bun-v1.3.12#windows) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors) | Inherit by running Bun ≥1.3.12 · **do not** re-document each bullet |
 
 ---
 

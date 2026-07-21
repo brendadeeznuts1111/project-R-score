@@ -175,6 +175,11 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun upgrade': 'https://bun.com/blog/bun-v1.3.12#to-upgrade-bun',
   'bun v1.3.12 bugfixes': 'https://bun.com/blog/bun-v1.3.12#bugfixes',
   'bun v1.3.12 contributors': 'https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors',
+  // v1.3.12 perf ship notes (runtime inherit; docs index may lag)
+  URLPattern: 'https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster',
+  'Bun.Glob.scan': 'https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan',
+  'bun v1.3.12 stripANSI': 'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
+  'bun v1.3.12 stringWidth': 'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
   'bun v1.3.13': 'https://bun.com/blog/bun-v1.3.13',
   // bun test flags (v1.3.13+) — blog anchors are the ship notes
   'bun test --changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
