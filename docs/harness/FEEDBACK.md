@@ -135,6 +135,14 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Ratchet:** `scripts/ci-core.ts` · `.github/actions/setup-factory-bun` · harness-gates
 - **Keep / revise / drop:** keep
 
+### TypeScript matrix ×2 installs
+
+- **Finding:** `typescript-checks.yml` matrix ran CI scope and full scope as separate jobs → two cold installs.
+- **Repair:** One job, both scopes sequential (`continue-on-error` + final require); still uses `setup-factory-bun`.
+- **Earliest owner:** CI
+- **Ratchet:** `.github/workflows/typescript-checks.yml`
+- **Keep / revise / drop:** keep
+
 ### Docs dump attention tax
 
 - **Finding:** Hundreds of `docs/**` dumps (cheatsheets, council, generated) dominated search/agent context; stubbing in-place still showed up as “bottlenecks.”

@@ -14,6 +14,7 @@ import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 const ROOT = `${import.meta.dir}/..`;
 const TIMING = `${ROOT}/reports/harness-gate-timing.json`;
 const CI_TIMING = `${ROOT}/reports/ci-harness-timing.json`;
+const CORE_TIMING = `${ROOT}/reports/ci-core-timing.json`;
 
 type Timing = {
   generatedAt?: string;
@@ -28,8 +29,9 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run test:changed:main', purpose: '--changed=origin/main|--main-head' },
   { cmd: 'bun run test:changed:watch', purpose: '--changed --watch' },
   { cmd: 'bun run ci:harness:fast', purpose: 'local parity (quiet)' },
-  { cmd: 'bun run ci:harness', purpose: 'full CI envelope (quiet)' },
-  { cmd: 'bun run proof:install', purpose: 'install journey (pre-push / hygiene)' },
+  { cmd: 'bun run ci:harness', purpose: 'harness envelope (quiet)' },
+  { cmd: 'bun run ci:core', purpose: 'GHA parity: verify · hygiene · ci:harness' },
+  { cmd: 'bun run proof:install', purpose: 'install journey (pre-push)' },
   { cmd: 'bun run check:path-bun', purpose: 'no path/node:path in lib/' },
   { cmd: 'bun run check:bun-env', purpose: 'no process.env in lib|scripts' },
 ];
@@ -63,3 +65,4 @@ async function showTiming(label: string, path: string): Promise<void> {
 
 await showTiming('Last pre-commit', TIMING);
 await showTiming('Last ci:harness', CI_TIMING);
+await showTiming('Last ci:core', CORE_TIMING);

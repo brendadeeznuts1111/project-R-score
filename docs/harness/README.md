@@ -58,8 +58,9 @@ bun run ci:core             # install verify · hygiene · ci:harness (= GHA)
 | **harness** | `bun run ci:harness` | eslint-changed (PR) / full on main · `test:changed:main` |
 | **feat/codex only** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) | hygiene for branches without harness-gates |
 | **setup** | [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml) | shared Bun + install cache (+ optional eslint cache) |
+| **types** | [typescript-checks.yml](../../.github/workflows/typescript-checks.yml) | one job → `type-check:ci` then `type-check:full` (not matrix×2 installs) |
 
-**Required checks:** see [AUTHORITY.md](AUTHORITY.md). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
+**Required checks:** Harness Gates only — see [AUTHORITY.md](AUTHORITY.md). Velocity / install-tax table: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 
 ## Day loop (honest)
 

@@ -65,7 +65,16 @@ Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph),
 
 ## Timing artifact
 
-Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json). Discover: `bun run harness:status`.
+Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json) · [`reports/ci-harness-timing.json`](../../reports/ci-harness-timing.json) · [`reports/ci-core-timing.json`](../../reports/ci-core-timing.json). Discover: `bun run harness:status`.
+
+## CI install tax (2026-07-21 deepen)
+
+| Era | Installs per PR (root) |
+|-----|------------------------:|
+| Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 (+ others) |
+| Post | **harness-gates once** (`ci:core` = verify · hygiene · harness + claim) · typescript **one** job (ci+full scopes) · shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml) cache |
+
+Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
 
 ## Polish (harness-engineering mapping)
 

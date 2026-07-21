@@ -12,19 +12,12 @@ concurrency:
 
 jobs:
   type-check:
-    name: ${{ matrix.name }}
+    # Single job — one install for CI scope + full scope (was matrix ×2 installs).
+    name: Type Check
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
       BUN_INSTALL_GLOBAL_STORE: '1'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: Type Check (CI Scope)
-            command: bun run type-check:ci
-          - name: Type Check (Full Scope)
-            command: bun run type-check:full
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,5 +34,21 @@ jobs:
       - name: Spine path-bun + Bun.env ratchets
         run: bun run check:path-bun && bun run check:bun-env
 
-      - name: Run Type Check
-        run: ${{ matrix.command }}
+      - name: Type Check (CI Scope)
+        id: ci_scope
+        continue-on-error: true
+        run: bun run type-check:ci
+
+      - name: Type Check (Full Scope)
+        id: full_scope
+        continue-on-error: true
+        run: bun run type-check:full
+
+      - name: Require both scopes
+        if: always()
+        run: |
+          if [ "${{ steps.ci_scope.outcome }}" != "success" ] || [ "${{ steps.full_scope.outcome }}" != "success" ]; then
+            echo "❌ type-check failed (ci=${{ steps.ci_scope.outcome }} full=${{ steps.full_scope.outcome }})"
+            exit 1
+          fi
+          echo "✅ both type-check scopes passed"
