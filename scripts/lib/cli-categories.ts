@@ -104,7 +104,7 @@ export const CLI_SPECIAL: Record<string, string> = {
     'AST build constants (BUILD_VERSION/TIME/COMMIT) + DEBUG DCE via Bun.build/--define',
   'build:defines:dev': 'build:defines with DEBUG=true / --feature=DEBUG',
   'build:defines:compile': 'build:defines --compile → dist/fw-build-info',
-  'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
+  'harness:status': 'Discover (display only): day-loop + proof catalog — not a gate',
   'docs:harness': 'Render docs/harness/README.md via bun ./file.md (native ANSI, no VM)',
   'docs:cron': 'Cron contract in-terminal (ansiMarkdown · docs/harness/cron.md)',
   'docs:install-verify':
@@ -130,7 +130,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
   'docs:ci-deploy': 'CI/deploy runbooks index (ansiMarkdown)',
   'docs:fresh-rerun':
-    'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
+    'Discover (display only): fresh-rerun contract + catalog — not a gate (ansiMarkdown · FRESH-RERUN.md)',
   'docs:search-governance':
     'Search-governance WebView journey brief (ansiMarkdown · docs/harness/search-governance.md)',
   'test:cron':

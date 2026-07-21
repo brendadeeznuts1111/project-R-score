@@ -85,6 +85,55 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ids* → `ci-core-envelope` · `typescript-ci-gate` · `deploy-production-preflight` · `deploy-staging-script` · `bun-migrate-status`  
   *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog) · fail-closed coverage → `ci-deploy-runbooks`
 
+## Owner → gate
+
+How each claim is enforced day-to-day. Catalog meta (completeness · evidence⊇freshRerun) always applies. Classes:
+
+- **continuous** — `pre-commit-harness` and/or `ci:harness` / `ci:core` (Harness Gates)
+- **workflow** — named GHA job or package script outside that envelope
+- **human-only** — `freshRerun` paste and/or `test:changed` luck (no dedicated always-on gate)
+
+| id | class | gate / workflow |
+|----|-------|-----------------|
+| `branded-ids` | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full` |
+| `install-verify` | continuous | `ci:core` · harness-gates |
+| `install-verify-journey` | workflow | `bun run test:install-verify` |
+| `test-changed` | continuous | `ci:harness` · harness-gates |
+| `search-governance` | workflow | `search-governance.yml` · `search:bench:gate` |
+| `search-governance-basic` | workflow | `search-governance.yml` · `test:search-governance` |
+| `runtime-cli-boundaries` | human-only | `bun test tests/fixtures/runtime-cli/` |
+| `bun-shell-boundaries` | human-only | `bun test tests/fixtures/bun-shell/` |
+| `fs-native-boundaries` | human-only | `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts` |
+| `security-hash-boundaries` | human-only | `bun test tests/fixtures/security-hash/` |
+| `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
+| `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
+| `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
+| `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
+| `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
+| `lib-utils-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
+| `lib-core-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
+| `lib-security-typecheck` | workflow | `typescript-checks.yml` · `type-check` |
+| `bun-cron` | workflow | `bun run test:cron` |
+| `cron-os-persistent` | workflow | `bun run test:cron-os` |
+| `docs-integrity` | workflow | `bun-doc-refs schedule --once` · spine tenant |
+| `spine-multi-tenant` | workflow | `spine:schedule:once -- --tenant=install-verify` |
+| `spine-maintenance-runbooks` | workflow | `bun run test:tenant-runbooks` |
+| `spine-tenant-heal` | workflow | `bun run test:tenant-heal` |
+| `harness-coverage-ratchet` | workflow | `bun run test:harness-coverage` |
+| `harness-orphan-modules` | workflow | `bun run check:harness-orphans` |
+| `harness-complexity-floor` | continuous | pre-commit staged `lib/harness`; full tree = script/paste |
+| `code-quality-tenants` | workflow | `bun run test:code-quality` |
+| `ci-deploy-runbooks` | workflow | `bun run test:ci-deploy` |
+| `ci-core-envelope` | continuous | live gate `ci:core`; `freshRerun` = catalog `docs:ci-deploy` |
+| `typescript-ci-gate` | workflow | `typescript-checks.yml`; `freshRerun` = catalog |
+| `deploy-production-preflight` | workflow | `deploy:production` / catalog |
+| `deploy-staging-script` | workflow | `deploy:staging` / catalog |
+| `bun-migrate-status` | workflow | `migrate:status` / catalog |
+
+Counts: continuous ~9 · workflow ~21 · human-only 4. Promote human-only → continuous only with demand (CLAIM-DISCOVERY).
+
+Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
+
 ## Fresh-rerun
 
 Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../lib/harness/proof.ts).  

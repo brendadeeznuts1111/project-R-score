@@ -6,6 +6,7 @@
  */
 import { describe, expect, test } from 'bun:test';
 import { CI_RUNBOOKS } from '../lib/harness/ci-deploy';
+import { CODE_QUALITY_TENANTS } from '../lib/harness/code-quality';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 import { joinPath } from '../lib/path-bun';
 
@@ -61,6 +62,14 @@ describe('fresh-rerun contract', () => {
       const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
       expect(p, r.id).toBeDefined();
       expect(p!.freshRerun, r.id).toBe(r.freshRerun);
+    }
+  });
+
+  test('CODE_QUALITY_TENANTS freshRerun matches linked ProofPath', () => {
+    for (const t of CODE_QUALITY_TENANTS) {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === t.proofId);
+      expect(p, t.id).toBeDefined();
+      expect(p!.freshRerun, t.id).toBe(t.freshRerun);
     }
   });
 
