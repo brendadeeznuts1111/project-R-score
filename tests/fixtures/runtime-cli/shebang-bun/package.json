@@ -1,0 +1,10 @@
+{
+  "name": "runtime-cli-shebang-bun",
+  "private": true,
+  "bin": {
+    "fake-cli": "./cli.js"
+  },
+  "scripts": {
+    "fake": "fake-cli"
+  }
+}

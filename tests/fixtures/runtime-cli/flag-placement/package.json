@@ -1,0 +1,7 @@
+{
+  "name": "runtime-cli-flag-placement",
+  "private": true,
+  "scripts": {
+    "dev": "bun run echo-args.ts"
+  }
+}

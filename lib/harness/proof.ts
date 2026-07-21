@@ -30,6 +30,7 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/bun-glob-scan.test.ts',
   'tests/bun-ansi-width.test.ts',
   'tests/console-depth.test.ts',
+  'tests/fixtures/runtime-cli/runtime-cli-boundaries.test.ts',
   'tests/bun-cron.test.ts',
   'tests/bun-explicit-resource.test.ts',
   'tests/harness-cron-contract.test.ts',
@@ -107,6 +108,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       '.github/workflows/search-governance.yml',
     ],
     freshRerun: 'bun run test:search-governance',
+  },
+  {
+    id: 'runtime-cli-boundaries',
+    claim: 'Critical Bun runtime CLI flags behave as expected',
+    kinds: ['boundary'],
+    evidence: ['tests/fixtures/runtime-cli/*.test.ts'],
+    freshRerun: 'bun test tests/fixtures/runtime-cli/',
   },
   {
     id: 'path-bun',

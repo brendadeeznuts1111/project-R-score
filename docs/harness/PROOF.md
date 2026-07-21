@@ -33,6 +33,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `.github/workflows/search-governance.yml`
 - **`search-governance-basic`** — known query → WebView results (`journey`)  
   *Ratchet* → `bun run test:search-governance` · [`search-governance.md`](search-governance.md)
+- **`runtime-cli-boundaries`** — critical Bun runtime CLI flags behave as expected (`boundary`)  
+  *Ratchet* → `bun test tests/fixtures/runtime-cli/` · evidence `tests/fixtures/runtime-cli/*.test.ts`  
+  *Fixtures* → `flag-placement/` (`#watch`) · `resolution-order/` (`#resolution-order`) · `shebang-bun/` (`#bun`) · `console-depth/` inline `-e` (`#bun-run-console-depth`)
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  

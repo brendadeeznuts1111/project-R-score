@@ -1,0 +1,7 @@
+{
+  "name": "runtime-cli-resolution-order",
+  "private": true,
+  "scripts": {
+    "build": "echo SCRIPT_HIT"
+  }
+}

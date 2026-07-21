@@ -42,6 +42,8 @@ out/
 .cache/
 .cheatsheet-cache/
 *.js
+# Shebang fixture must be .js for #!/usr/bin/env node (runtime-cli-boundaries)
+!tests/fixtures/runtime-cli/shebang-bun/cli.js
 *.js.map
 *.tsbuildinfo
 

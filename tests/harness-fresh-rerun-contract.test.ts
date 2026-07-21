@@ -14,6 +14,11 @@ describe('fresh-rerun contract', () => {
     }
   });
 
+  test('runtime-cli-boundaries freshRerun is the fixture suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'runtime-cli-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/runtime-cli/');
+  });
+
   test('install-verify-journey freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');
