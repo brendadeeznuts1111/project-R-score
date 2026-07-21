@@ -20,32 +20,48 @@ Scaffold: `bun run harness:lesson --title="…"`.
 
 ## Promote
 
-| Owner | Where |
-|-------|--------|
-| type | brand / path-bun / parse* |
-| lint | `config/eslint/plugin-harness/` · `plugin-bun/` |
-| skill | `.agents/skills/<name>/SKILL.md` |
-| doc-map | `lib/docs/repo-docs.ts` + SSOT markdown |
-| script-gate | `scripts/pre-commit-harness.ts` · named `bun run` |
-| proof | `docs/harness/PROOF.md` |
-| CI | `.github/workflows/` · `scripts/ci-*.ts` |
+- **`type`** — brand / path-bun / parse*  
+  *Ratchet* → `bun run check:brands` · `tsc --project tsconfig.check.json`
+- **`lint`** — `config/eslint/plugin-harness/` · `plugin-bun/`  
+  *Ratchet* → `bun eslint --config eslint.bun-native.config.ts --quiet` (**error** rules)
+- **`skill`** — `.agents/skills/<name>/SKILL.md`  
+  *Ratchet* → skill retrieved on fresh rerun of the same job class
+- **`doc-map`** — `lib/docs/repo-docs.ts` + SSOT markdown  
+  *Ratchet* → `bun run docs:map:check`
+- **`script-gate`** — `scripts/pre-commit-harness.ts` · named `bun run`  
+  *Ratchet* → husky pre-commit / named day-loop command
+- **`proof`** — [`PROOF.md`](PROOF.md)  
+  *Ratchet* → `lib/harness/proof.ts` evidence commands · `bun run harness:status`
+- **`CI`** — `.github/workflows/` · `scripts/ci-*.ts`  
+  *Ratchet* → `bun run ci:core` · required Harness Gates check
 
 ## Lesson index (detail in git)
 
-| Lesson | Owner | Ratchet |
-|--------|-------|---------|
-| Doc-refs re-stage loop | script-gate | annotate-on-write in pre-commit |
-| Soft warn-tier ESLint | lint | `--max-warnings 0` + error rules |
-| Affected / type-check fiction | script-gate | `affected-workspaces` · `tsconfig.check.json` |
-| Install journey proof | proof | `proof:install` / `install:verify` |
-| Annotate thrash / dirty tree | script-gate | `assertStagedMatchesWorktree` |
-| Full-tree ESLint every PR | script-gate | `lint:bun-native:changed` · `HARNESS_FULL_LINT` |
-| CI install × N jobs | CI | `ci:core` · `setup-factory-bun` · path filters |
-| Docs dump attention tax | doc-map | slim live `docs/` · `doc-map-check` |
-| Heap profile / fat READMEs | doc-map | gitignore `lib/profile.md` · JIT READMEs |
-| Pre-commit ESLint cold | script-gate | `.cache/eslint-bun-native` |
-| GHA billing lock | ops | unlock Actions billing; local `ci:core` still proves |
-| SSOT doc encyclopedia tax | doc-map | compress OPERATE / standards / docs/AGENTS to JIT |
-| Generated CLI/REGISTRY tax | doc-map | stub + `help` / `packages:list`; regenerate on demand |
+- **Doc-refs re-stage loop** (`script-gate`)  
+  *Ratchet* → annotate-on-write in pre-commit
+- **Soft warn-tier ESLint** (`lint`)  
+  *Ratchet* → `--max-warnings 0` + error rules
+- **Affected / type-check fiction** (`script-gate`)  
+  *Ratchet* → `affected-workspaces` · `tsconfig.check.json`
+- **Install journey proof** (`proof`)  
+  *Ratchet* → `proof:install` / `install:verify`
+- **Annotate thrash / dirty tree** (`script-gate`)  
+  *Ratchet* → `assertStagedMatchesWorktree`
+- **Full-tree ESLint every PR** (`script-gate`)  
+  *Ratchet* → `lint:bun-native:changed` · `HARNESS_FULL_LINT`
+- **CI install × N jobs** (`CI`)  
+  *Ratchet* → `ci:core` · `setup-factory-bun` · path filters
+- **Docs dump attention tax** (`doc-map`)  
+  *Ratchet* → slim live `docs/` · `doc-map-check`
+- **Heap profile / fat READMEs** (`doc-map`)  
+  *Ratchet* → gitignore `lib/profile.md` · JIT READMEs
+- **Pre-commit ESLint cold** (`script-gate`)  
+  *Ratchet* → `.cache/eslint-bun-native`
+- **GHA billing lock** (`ops`)  
+  *Ratchet* → unlock Actions billing; local `ci:core` still proves
+- **SSOT doc encyclopedia tax** (`doc-map`)  
+  *Ratchet* → compress OPERATE / standards / docs/AGENTS to JIT
+- **Generated CLI/REGISTRY tax** (`doc-map`)  
+  *Ratchet* → stub + `help` / `packages:list`; regenerate on demand
 
 Full prose lessons: `git show 4bd1e324:docs/harness/FEEDBACK.md` (pre-compression).

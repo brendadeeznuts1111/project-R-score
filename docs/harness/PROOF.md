@@ -4,32 +4,46 @@ Match **evidence** to the **claim**. Green pre-commit alone does not prove a jou
 
 Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness-engineering/tree/trunk/docs/proof).
 
+Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.check.json` / brand types, and the ratchets named under each artefact.
+
 ## Claim kinds
 
-| Kind | Meaning | Typical evidence |
-|------|---------|------------------|
-| `unit` | Pure logic / types | `bun test` file, `check:brands:types` |
-| `boundary` | Wire → domain parse / ratchet | staged brand gate, wire-boundary eslint, path-bun / bun-env |
-| `journey` | Multi-step user/ops path | scripted CLI sequence, contract JSON |
-| `deployed` | Live / machine state | `install:verify`, machine health, CI workflow green |
+- **`unit`** — pure logic / types  
+  *Ratchet* → `bun test` · `bun run check:brands:types`
+- **`boundary`** — wire → domain parse / spine ratchets  
+  *Ratchet* → staged brand gate · harness eslint · `check:path-bun` · `check:bun-env`
+- **`journey`** — multi-step user/ops path  
+  *Ratchet* → scripted CLI sequence · contract JSON
+- **`deployed`** — live / machine state  
+  *Ratchet* → `install:verify` · machine health · CI workflow green
 
 ## Named critical paths
 
-| Artifact | Claim | Required kinds |
-|----------|-------|----------------|
-| Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
-| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`proof:install` / `install:verify`; CI: `repo-hygiene.yml` only) |
-| **Test changed** | Import-graph affected tests | `unit` + `journey` (`test:changed` · `test:changed:main` / `--main-head`; CI: `harness-gates.yml`) |
-| Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
-| Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`) |
-| Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |
-| Wire / unknown | Bare `unknown` params stay at parse edges | `boundary` (harness eslint `no-unknown-function-param` **error**) |
-| Day-loop type-check | Advertised `type-check` covers spine agent edit surfaces | `journey` (`bun run type-check` + `tsconfig.check.json` include list) |
+- **`branded-ids`** — new domain IDs are branded after the boundary (`boundary` + `unit`)  
+  *Ratchet* → `bun tools/branded-id-check.ts --staged --strict`, `bun run check:brands:types`
+- **`install-verify`** — Factory install produces a working Bun workspace (`journey` + `deployed`)  
+  *Ratchet* → `bun run proof:install` · `bun run install:verify` (CI: `repo-hygiene.yml`)
+- **`install-verify-journey`** — install:verify → HTML report → WebView asserts `#status = verified`  
+  *Ratchet* → `bun run test:install-verify`
+- **`test-changed`** — import-graph affected tests (`unit` + `journey`)  
+  *Ratchet* → `bun run test:changed` · `bun run test:changed:main` (CI: `harness-gates.yml`)
+- **`search-governance`** — bench gate policy holds (`journey`)  
+  *Ratchet* → `.github/workflows/search-governance.yml`
+- **`path-bun`** — spine `lib/` does not import `path` / `node:path` (`boundary`)  
+  *Ratchet* → `bun run check:path-bun`
+- **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
+  *Ratchet* → `bun run check:bun-env` · eslint `bun/prefer-bun-env` (**error**)
+- **`unknown-param`** — bare `unknown` params stay at parse edges (`boundary`)  
+  *Ratchet* → eslint `harness/no-unknown-function-param` (**error**) · `bun eslint --config eslint.bun-native.config.ts --quiet`
+- **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit surfaces (`journey`)  
+  *Ratchet* → `bun run type-check` · `tsconfig.check.json`
+- **`bun-cron`** — OS-persistent primary; in-process complement (`unit` + `boundary`)  
+  *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 
 ## Agent checklist before “done”
 
 1. State the claim in one sentence.
-2. Pick kind(s) from the table.
+2. Pick kind(s) above.
 3. Point at evidence paths or commands that actually ran.
 4. If evidence is missing, either run it or downgrade the claim.
 

@@ -1189,13 +1189,17 @@ async function exportHierarchical(): Promise<void> {
 }
 
 /**
- * Start an in-process Bun.cron scheduler for the integrity gate.
- * Form: Bun.cron(schedule, handler) → CronJob
- *   https://bun.sh/docs/runtime/cron#bun-cron-schedule-handler-—-in-process
- * No-overlap (next fire after handler settles):
- *   https://bun.sh/docs/runtime/cron#no-overlap-guarantee
- * In-process schedules are UTC; bare #cron is not a section id.
- * Schedule is UTC, no-overlap guaranteed, job reschedules after errors.
+ * Integrity gate scheduler.
+ *
+ * Canonical primary (OS-persistent) — Bun docs hierarchy / lib/harness/cron:
+ *   await Bun.cron(path, schedule, title)  → crontab/launchd/Task Scheduler (local time)
+ *   https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level
+ *   Contract: docs/harness/cron.md
+ *
+ * This daemon deliberately uses the **in-process complement** (spine owns process lifetime):
+ *   scheduleInProcess / runInProcessUntilSignal → UTC, no-overlap, Disposable
+ *   https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
+ *   Owner: lib/harness/cron.ts + spine/scheduler.ts
  */
 /** Repo root (parent of tools/), used as cwd for the regen subprocess. */
 const REPO_ROOT = new URL('..', import.meta.url).pathname;
@@ -1297,16 +1301,13 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
     return;
   }
 
-  const job = Bun.cron(pattern, run);
-  console.info(`⏰ integrity scheduler started — pattern "${pattern}" (UTC), log: ${LOG}`);
-  console.info('   in-process job: dies with this process, state shared, no overlap');
-  process.on('SIGINT', () => {
-    job.stop();
-    console.info('\n👋 scheduler stopped');
-    process.exit(0);
+  // In-process complement via spine (OS-persistent remains Bun's primary form).
+  // @see ../docs/harness/cron.md
+  const { runInProcessUntilSignal } = await import('../spine/scheduler');
+  await runInProcessUntilSignal(pattern, run, {
+    label: `integrity scheduler · log ${LOG}`,
+    runImmediately: true,
   });
-  await run(); // immediate first run so there's feedback now
-  await new Promise(() => {}); // keep alive; the cron job drives from here
 }
 
 const defaultPaths = ['lib', 'tools', 'scripts', 'tests'];

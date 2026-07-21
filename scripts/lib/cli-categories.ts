@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/bundler/index#basic-example — Bun.build
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
@@ -94,7 +98,21 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
   'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',
+  'build:defines':
+    'AST build constants (BUILD_VERSION/TIME/COMMIT) + DEBUG DCE via Bun.build/--define',
+  'build:defines:dev': 'build:defines with DEBUG=true / --feature=DEBUG',
+  'build:defines:compile': 'build:defines --compile → dist/fw-build-info',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
+  'docs:harness': 'Render docs/harness/README.md via bun ./file.md (native ANSI, no VM)',
+  'docs:cron': 'Cron contract in-terminal (ansiMarkdown · docs/harness/cron.md)',
+  'docs:install-verify':
+    'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
+  'test:cron':
+    'Cron contract ratchet (OS-persistent primary / in-process complement · docs/harness/cron.md)',
+  'test:install-verify':
+    'Install-verify → smoke HTML → Bun.WebView journey (tests/journey/install-verify.test.ts)',
+  'spine:schedule': 'Spine integrity daemon (in-process Bun.cron complement)',
+  'spine:schedule:once': 'One integrity pass via spine/scheduler → bun-doc-refs',
   'ci:harness':
     'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
   'ci:harness:fast': 'Quiet local parity (∥ cheap · test:changed dirty; no eslint)',
@@ -130,6 +148,13 @@ export const CLI_CORE_CMDS = new Set([
   'test:parallel',
   'type-check',
   'harness:status',
+  'docs:harness',
+  'docs:cron',
+  'docs:install-verify',
+  'test:cron',
+  'test:install-verify',
+  'spine:schedule',
+  'spine:schedule:once',
   'ci:harness',
   'ci:harness:fast',
   'ci:core',
@@ -139,6 +164,9 @@ export const CLI_CORE_CMDS = new Set([
   'registry:projects',
   'projects:roots:check',
   'lib:domains:check',
+  'build:defines',
+  'build:defines:dev',
+  'build:defines:compile',
 ]);
 
 export function matchCliCategory(key: string): { label: string; priority: number } | null {

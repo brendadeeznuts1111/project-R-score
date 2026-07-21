@@ -7,6 +7,7 @@
  *   - CLI flag reference: https://bun.com/docs/runtime
  *   - Bun.inspect / Bun.inspect.table / Bun.inspect.custom / Bun.stringWidth /
  *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/runtime/utils
+ *   - Bun.markdown.ansi (AnsiTheme): https://bun.com/docs/runtime/markdown#ansi-terminal-output
  *   - Bun.color: https://bun.com/docs/runtime/color
  *   - Bun.env / .env files: https://bun.com/docs/runtime/environment-variables
  *   - Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
@@ -200,6 +201,30 @@ export function colorize(text: string, color: string): string {
   if (!shouldColor()) return text;
   const code = Bun.color(color, 'ansi') || Bun.color(color, 'ansi-256') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
+}
+
+/**
+ * FactoryWager theme over Bun.markdown.ansi — TTY columns, NO_COLOR-aware colors,
+ * OSC 8 hyperlinks on by default. kittyGraphics stays opt-in.
+ *
+ * Bun AnsiTheme defaults differ: columns=80, hyperlinks=false, colors=true.
+ *
+ * @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+ * @see https://bun.com/blog/bun-v1.3.12 — bun ./file.md (zero-overhead file path)
+ */
+export type AnsiMarkdownTheme = Bun.markdown.AnsiTheme;
+
+export function ansiMarkdown(
+  input: string | NodeJS.TypedArray | DataView<ArrayBuffer> | ArrayBufferLike,
+  theme?: AnsiMarkdownTheme
+): string {
+  return Bun.markdown.ansi(input, {
+    columns: theme?.columns ?? termWidth(),
+    colors: theme?.colors ?? shouldColor(),
+    hyperlinks: theme?.hyperlinks ?? true,
+    kittyGraphics: theme?.kittyGraphics ?? false,
+    ...(theme?.light !== undefined ? { light: theme.light } : {}),
+  });
 }
 
 /**

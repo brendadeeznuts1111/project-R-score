@@ -4,39 +4,63 @@ Hold the model fixed; improve **context + tools**. Upstream: [lopopolo/harness-e
 
 When a decision is unresolved, read **one** owner below — do not load the full standards stack.
 
+Markdown format does not change enforcement. Hard gates stay: lint (**error** + `--max-warnings 0`), `tsconfig.check.json` / brand types, proof journeys. Each invariant below names its ratchet.
+
+### Contract docs format (settled)
+
+Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives in tests / type-check / `proof.ts`.
+
+- Bold keys, plain values, sub-bullets for ratchets (no tables — they fight `Bun.markdown.ansi`)
+- One `docs/harness/<name>.md` + one `bun run docs:<name>` per contract (e.g. `docs:cron`)
+- No live-injection into the SSOT; live status stays `harness:status`
+
 ## When unresolved → read
 
-| When unresolved… | Read |
-|------------------|------|
-| Domain `*Id` / bare string IDs | [`lib/types/branded/README.md`](../../lib/types/branded/README.md) · skill `.agents/skills/branded-ids/` |
-| `unknown` / decode / wire vs interior | [`docs/WIRE_BOUNDARY.md`](../WIRE_BOUNDARY.md) |
-| Bun API usage / `@see` refs | `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) |
-| Install / bunfig / machine Bun | [`docs/UNIFIED.md`](../UNIFIED.md) |
-| Day loop / affected / type-check honesty | [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md) |
-| Claim vs evidence (“done?”) | [`PROOF.md`](PROOF.md) · `bun run proof:install` |
-| Repository review (9 trajectory questions) | [`REVIEW.md`](REVIEW.md) |
-| Repeat failure → earliest owner | [`FEEDBACK.md`](FEEDBACK.md) |
-| Lanes / push / credentials / irreversible ops | [`AUTHORITY.md`](AUTHORITY.md) |
-| Discover day-loop + ratchet status | `bun run harness:status` |
-| Improve the harness itself | [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md) |
-| Coding standards (full) | [`.custom-instructions.md`](../../.custom-instructions.md) |
+- Domain `*Id` / bare string IDs → [`lib/types/branded/README.md`](../../lib/types/branded/README.md) · skill `.agents/skills/branded-ids/`
+- `unknown` / decode / wire vs interior → [`docs/WIRE_BOUNDARY.md`](../WIRE_BOUNDARY.md)
+- Bun API usage / `@see` refs → `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
+- Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md)
+- Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
+- Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · `bun run proof:install`
+- Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
+- Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
+- Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
+- Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`
+- Discover day-loop + ratchet status (live) → `bun run harness:status` (`ansiMarkdown` / `Bun.markdown.ansi`)
+- Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron`
+- Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
+- Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
+- Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
+
+## Invariants (always enforced)
+
+- **`lib/types/branded.ts`** — domain `*Id` brands; no bare string IDs after the boundary  
+  *Ratchet* → `bun tools/branded-id-check.ts --staged --strict`, `bun run check:brands:types`, `tsc --project tsconfig.check.json`
+- **`docs/WIRE_BOUNDARY.md`** — `unknown` / decode stay at parse edges  
+  *Ratchet* → eslint `harness/no-unknown-function-param` (**error**), `harness/no-decode-unknown-outside-boundary` (**error**)
+- **`lib/path-bun`** — spine imports Bun path helpers, not `path` / `node:path`  
+  *Ratchet* → `bun run check:path-bun`, eslint `no-restricted-imports` (bun-native)
+- **`Bun.env` boxing** — no Node `process.env` in spine `lib/` + `scripts/`  
+  *Ratchet* → `bun run check:bun-env`, eslint `bun/prefer-bun-env` (**error**)
+- **Canonical Bun `@see` URLs** — Bun APIs cite catalog URLs  
+  *Ratchet* → pre-commit `bun-doc-refs` annotate-on-write · `bun tools/bun-doc-refs.ts check`
+- **Proof journeys** — claim kind matches evidence  
+  *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 
 ## Upstream thesis → FactoryWager owner
 
-| Thesis ([docs index](https://github.com/lopopolo/harness-engineering/tree/trunk/docs)) | Local owner |
-|----------------------------------------------------------------------------------------|-------------|
-| Hold the worker constant | This index + skill; do not “upgrade the model” mid-job |
-| Private process-data iceberg | `AGENTS.md` routing · UNIFIED · brand manifest · projects triage |
-| Whole job | One trajectory owns closeout; parallel **lanes** in AUTHORITY |
-| Just-in-time context | This index (not the 700+ line standards fan-out) |
-| Tool legibility | `bun run help` · `harness:status` · cli-categories · actionable gate errors |
-| Repository teaches the agent | brands / wire eslint / path-bun / bun-env / doc-refs annotate-on-write |
-| Autonomy inside authority | [`AUTHORITY.md`](AUTHORITY.md) |
-| Prove in the real environment | [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` |
-| Feedback → infrastructure | [`FEEDBACK.md`](FEEDBACK.md) · `harness:lesson` |
-| Coherence / lifetime risk | finish migrations + ratchets (VELOCITY_BASELINE eras) |
-| Continuous maintenance | day loop + pre-commit timings · `docs:refresh` operate loop |
-| Measured effectiveness | gate timings · PR uses eslint-changed; full-tree ESLint on main push only |
+- Hold the worker constant → this index + skill; do not “upgrade the model” mid-job
+- Private process-data iceberg → `AGENTS.md` routing · UNIFIED · brand manifest · projects triage
+- Whole job → one trajectory owns closeout; parallel **lanes** in AUTHORITY
+- Just-in-time context → this index (not the 700+ line standards fan-out)
+- Tool legibility → `bun run help` · `harness:status` · cli-categories · actionable gate errors
+- Repository teaches the agent → brands / wire eslint / path-bun / bun-env / doc-refs annotate-on-write
+- Autonomy inside authority → [`AUTHORITY.md`](AUTHORITY.md)
+- Prove in the real environment → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts`
+- Feedback → infrastructure → [`FEEDBACK.md`](FEEDBACK.md) · `harness:lesson`
+- Coherence / lifetime risk → finish migrations + ratchets (VELOCITY_BASELINE eras)
+- Continuous maintenance → day loop + pre-commit timings · `docs:refresh` operate loop
+- Measured effectiveness → gate timings · PR uses eslint-changed; full-tree ESLint on main push only
 
 ## Setup (hooks + CI)
 
@@ -49,23 +73,28 @@ bun run ci:harness          # quiet harness envelope
 bun run ci:core             # install verify · hygiene · ci:harness (= GHA)
 ```
 
-### CI tier matrix (one install on main/PR)
+### CI tiers
 
-| Tier | Owner | Proves |
-|------|-------|--------|
-| **core** (GHA main/PR) | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `ci:core` | install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install |
-| **fast** (local) | `bun run ci:harness:fast` | ∥ cheap · `test:changed` dirty |
-| **harness** | `bun run ci:harness` | eslint-changed (PR) / full on main · `test:changed:main` |
-| **feat/codex only** | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) | hygiene for branches without harness-gates |
-| **setup** | [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml) | shared Bun + install cache (+ optional eslint cache) |
-| **types** | [typescript-checks.yml](../../.github/workflows/typescript-checks.yml) | one job → `type-check:ci` then `type-check:full` (not matrix×2 installs) |
+- **`core`** (GHA main/PR) — install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install  
+  *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core`
+- **`fast`** (local) — ∥ cheap · `test:changed` dirty  
+  *Ratchet* → `bun run ci:harness:fast`
+- **`harness`** — eslint-changed (PR) / full on main · `test:changed:main`  
+  *Ratchet* → `bun run ci:harness`
+- **`feat/codex only`** — hygiene for branches without harness-gates  
+  *Ratchet* → [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml)
+- **`setup`** — shared Bun + install cache (+ optional eslint cache)  
+  *Ratchet* → [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml)
+- **`types`** — `type-check:ci` then `type-check:full` (not matrix×2 installs)  
+  *Ratchet* → [typescript-checks.yml](../../.github/workflows/typescript-checks.yml)
 
-**Required checks:** Harness Gates only — see [AUTHORITY.md](AUTHORITY.md). Velocity / install-tax table: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
+**Required checks:** Harness Gates only — see [AUTHORITY.md](AUTHORITY.md). Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 
 ## Day loop (honest)
 
 ```bash
-bun run harness:status          # discover ratchets + last gate timing
+bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)
+bun run harness:status          # live ratchets + last gate timing (ansiMarkdown)
 bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
@@ -80,9 +109,14 @@ bun run proof:install           # install only (also pre-push --quiet)
 bun run check:path-bun && bun run check:bun-env
 bun run projects:roots:check    # product-leaf README + package.json (also ∥ cheap / pre-commit on projects/)
 bun run lib:domains:check       # lib/*/ README indexes (also ∥ cheap / pre-commit on lib/)
+bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE); runtime config stays Bun.env
+#   bun run build:defines:dev       # DEBUG=true
+#   bun run build:defines:compile   # standalone dist/fw-build-info
 ```
 
 `test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
+
+Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in tables: `bun run harness:status -- --table`.
 
 ## Local theses (FactoryWager)
 

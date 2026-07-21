@@ -10,15 +10,13 @@ Inspect, edit, type-check, test, format, lint staged files, local builds, draft 
 
 ## Consequential (narrow grant)
 
-| Effect | Grant required |
-|--------|----------------|
-| `git commit` | User asks to commit (or delivery rule after an explicit ship batch) |
-| `git push` / PR | User asks to push or open a PR |
-| `--force` / history rewrite | Explicit user request; never force-push `main` without warning |
-| Skip hooks (`--no-verify`) | Explicit user request only |
-| Secrets / credentials in trajectory | Prefer ambient sidecar / env already loaded; do not paste keys into chat or commit `.env` |
-| Production deploy / cutover | Separate approve after canary/prep evidence |
-| Sweep another agent’s dirty tree | Forbidden — claim a **lane** first |
+- **`git commit`** — user asks to commit (or delivery rule after an explicit ship batch)
+- **`git push` / PR** — user asks to push or open a PR
+- **`--force` / history rewrite** — explicit user request; never force-push `main` without warning
+- **Skip hooks (`--no-verify`)** — explicit user request only
+- **Secrets / credentials in trajectory** — prefer ambient sidecar / env already loaded; do not paste keys into chat or commit `.env`
+- **Production deploy / cutover** — separate approve after canary/prep evidence
+- **Sweep another agent’s dirty tree** — forbidden — claim a **lane** first
 
 ## Parallel lanes
 
@@ -33,9 +31,8 @@ Before editing: `git status`. Own disjoint paths. Never stage `projects/active/u
 
 Branch protection should require these GitHub Actions check names (workflow / job):
 
-| Check | Workflow |
-|-------|----------|
-| `Harness Gates / Harness (ratchets · lint · brands · test:changed)` | [harness-gates.yml](../../.github/workflows/harness-gates.yml) — `ci:core` (install verify · hygiene · harness) + Claim on PRs |
+- **`Harness Gates / Harness (ratchets · lint · brands · test:changed)`**  
+  *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core` (install verify · hygiene · harness) + Claim on PRs
 
 Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). Re-apply via Settings → Branches or `gh api` if the job name drifts.
 

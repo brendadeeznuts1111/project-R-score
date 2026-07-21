@@ -12,14 +12,19 @@
 
 | API | Use when | Smoke / DX |
 |-----|----------|------------|
-| `Bun.WebView` | headless UI / automation | runtime `typeof` · catalog |
-| `Bun.markdown.ansi` | terminal markdown | `bun ./file.md` · ship note 1.3.12 |
-| `Bun.cron` | in-process schedule | docs operate / R2 patterns |
+| `using` / `await using` | deterministic dispose (`Symbol.dispose` / `asyncDispose`) | `tests/bun-explicit-resource.test.ts` · [TC39 ERM](https://github.com/tc39/proposal-explicit-resource-management) · [MDN using](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/using) |
+| `Bun.WebView` | headless UI / automation (`await using view`) | `bun run test:install-verify` · [`install-verify.md`](./harness/install-verify.md) · [webview](https://bun.com/docs/runtime/webview#new-bun-webview-options) |
+| `Bun.markdown.ansi` | terminal markdown (`AnsiTheme`) | `bun ./docs/harness/README.md` · `bun run docs:harness` · `bun run harness:status` · `tests/bun-markdown-ansi.test.ts` · [ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · ship [1.3.12](https://bun.com/blog/bun-v1.3.12) · helper `ansiMarkdown` in `lib/console-depth.ts` |
+| `Bun.cron` | OS-persistent primary + in-process complement | [`docs/harness/cron.md`](./harness/cron.md) · `bun run test:cron` · [cron](https://bun.com/docs/runtime/cron) |
 | `Bun.udpSocket` | UDP + ICMP/truncation | re-read when editing `lib/udp` |
 | WebCrypto SHA3 / X25519 | hashing / key exchange | `tests/bun-crypto-webcrypto.test.ts` · `crypto.sha3` / `crypto.x25519` |
 | `URLPattern` | URL routing (no `$N` leak) | `tests/bun-urlpattern.test.ts` |
 | `Bun.Glob.scan` | tree walk; `**/X/...` boundary | `tests/bun-glob-scan.test.ts` |
 | `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
+
+### `Bun.cron`
+
+Claim / evidence / owner: **[`docs/harness/cron.md`](./harness/cron.md)**. OS-persistent is primary; in-process is the complement. Spine daemon: `bun tools/bun-doc-refs.ts schedule` / `bun spine/scheduler.ts`.
 
 ## Platform integration
 

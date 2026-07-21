@@ -17,6 +17,7 @@
     "lib/types/**/*",
     "lib/path-bun.ts",
     "lib/harness/**/*",
+    "spine/**/*",
     "lib/console-depth.ts",
     "lib/projects-scan.ts",
     "lib/docs/repo-docs.ts",
