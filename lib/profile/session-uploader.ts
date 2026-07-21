@@ -22,7 +22,6 @@
  */
 
 import { S3Client } from 'bun';
-import { resolve, basename, join } from 'node:path';
 import { type AccessKeyId, type SessionId, asSessionId, tryAccessKeyId } from '../types/branded.ts';
 import {
   type ProfileType,
@@ -32,6 +31,7 @@ import {
   generateSessionId,
 } from '../core/fw-types';
 import { resolveR2InfraConfig } from '../security/infra-secrets';
+import { resolvePath, basenamePath, joinPath } from '../path-bun';
 
 // ==================== Types ====================
 
@@ -210,8 +210,8 @@ export class ProfileSessionUploader {
 
   /** Upload a single profile file to R2 */
   async uploadProfile(localPath: string): Promise<ProfileEntry> {
-    const absPath = resolve(localPath);
-    const filename = basename(absPath);
+    const absPath = resolvePath(localPath);
+    const filename = basenamePath(absPath);
     const parsed = parseProfileFilename(filename);
 
     if (!parsed) {
@@ -253,7 +253,7 @@ export class ProfileSessionUploader {
    * Returns all newly uploaded entries.
    */
   async scanAndUpload(profilesDir?: string): Promise<ProfileEntry[]> {
-    const dir = resolve(profilesDir || this.config.profilesDir || './profiles');
+    const dir = resolvePath(profilesDir || this.config.profilesDir || './profiles');
     const glob = new Bun.Glob('*.md');
     const entries: ProfileEntry[] = [];
 
@@ -261,7 +261,7 @@ export class ProfileSessionUploader {
       if (this.uploaded.has(filename)) continue;
       if (!PROFILE_FILENAME_RE.test(filename)) continue;
 
-      const entry = await this.uploadProfile(join(dir, filename));
+      const entry = await this.uploadProfile(joinPath(dir, filename));
       entries.push(entry);
     }
 
@@ -320,7 +320,7 @@ if (import.meta.main) {
 
   console.info(`Terminal Session: ${identity.sessionId}`);
   console.info(`User: ${identity.user}@${identity.hostname} (PID ${identity.pid})`);
-  console.info(`Scanning: ${resolve(config.profilesDir || './profiles')}`);
+  console.info(`Scanning: ${resolvePath(config.profilesDir || './profiles')}`);
   console.info('');
 
   const entries = await uploader.scanAndUpload();

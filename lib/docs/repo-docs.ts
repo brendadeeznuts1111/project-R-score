@@ -38,6 +38,14 @@ export const CANONICAL_REPO_DOCS = {
   bunToken: 'lib/docs/bun-token.ts',
   /** Root cleanup / organization history */
   organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
+  /** Velocity baseline + day-loop honesty */
+  velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
+  /** JIT harness thesis index */
+  harnessIndex: 'docs/harness/README.md',
+  /** Proof claim kinds */
+  harnessProof: 'docs/harness/PROOF.md',
+  /** Feedback → ratchet lessons */
+  harnessFeedback: 'docs/harness/FEEDBACK.md',
   /** Projects triage + agent scope */
   projectsTriage: 'projects/README.md',
   /** Historical standards implementation notes */
@@ -50,6 +58,8 @@ export const CANONICAL_HARNESS = {
   brandedMap: 'lib/types/branded/README.md',
   brandManifest: 'lib/types/brand-manifest.json',
   consoleDepth: 'lib/console-depth.ts',
+  pathBun: 'lib/path-bun.ts',
+  harnessProof: 'lib/harness/proof.ts',
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',
   standardsIntegration: 'lib/validation/standards-integration.ts',
@@ -77,6 +87,7 @@ export const CANONICAL_TOOLS = {
   brandCatalog: 'tools/brand-catalog.ts',
   brandManifestCli: 'tools/brand-manifest.ts',
   brandedIdsSkill: '.agents/skills/branded-ids/',
+  harnessImproveSkill: '.agents/skills/harness-improve/',
   brandedTypeProof: 'tests/branded-types.test-d.ts',
   consoleDepthTest: 'tests/console-depth.test.ts',
   consoleDepthBench: 'tools/benchmarks/console-depth-perf.ts',
@@ -107,6 +118,10 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   tokenRef: 'TokenRef interior knowledge-unit schema',
   bunToken: 'BunToken agent export contract (northstar)',
   organizationHistory: 'Root organization history',
+  velocityBaseline: 'Velocity baseline + day-loop honesty',
+  harnessIndex: 'JIT harness thesis index',
+  harnessProof: 'Proof claim kinds',
+  harnessFeedback: 'Feedback → ratchet lessons',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',
 } as const;

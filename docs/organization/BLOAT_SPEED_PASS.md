@@ -30,16 +30,20 @@ Path SSOT: [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts). Maps: [`STRUC
 
 ```bash
 bun run help
-bun run type-check
-bun run build:affected
+bun run type-check          # tsconfig.check.json — spine agent surfaces
+bun run build:affected      # git-true workspaces (scripts/affected-workspaces.ts)
 bun run test:affected
+bun run check:path-bun      # lib/ path ratchet
 bun run cli:docs
 ```
+
+Harness JIT: [`docs/harness/README.md`](../harness/README.md). Baseline: [`docs/organization/VELOCITY_BASELINE.md`](VELOCITY_BASELINE.md).
 
 Protocol: `bun run dashboard:protocol:check`. Discover Node leftovers: `bun run discover:bun-native`.
 
 ## Out of scope (still later)
 
 - Root-parked nested remotes; `proton-pass` WIP; lifecycle hook aliases
+- Broad `lib/docs/**` in day-loop type-check (debt isolated)
 - Intentional Node surfaces: `node:dns` health checks, `node:os` in brand bench, `node:inspector` snapshot, `node:net` test server
 - Large `search-benchmark-dashboard.ts` DNS logic (keep)

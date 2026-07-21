@@ -6,12 +6,11 @@
  * gate-map.json loader, validator, and project resolution for monorepo gates.
  */
 
-import { join } from 'node:path';
-
 import { type ProjectId, asProjectId } from './types/branded.ts';
+import { joinPath } from './path-bun';
 
 export const REPO_ROOT = import.meta.dir.replace(/\/lib$/, '');
-export const DEFAULT_GATE_MAP_PATH = join(REPO_ROOT, '.agents/skills/ast-grep/gate-map.json');
+export const DEFAULT_GATE_MAP_PATH = joinPath(REPO_ROOT, '.agents/skills/ast-grep/gate-map.json');
 
 export type GateMapGate = {
   id: string; // brand-ok — opaque entity primary key
@@ -80,7 +79,7 @@ export function resolveProjectPath(project: GateMapProject, root = REPO_ROOT): s
   if (project.path.startsWith('/') || project.path.startsWith('~')) {
     return project.path.replace(/^~/, Bun.env.HOME ?? '');
   }
-  return join(root, project.path);
+  return joinPath(root, project.path);
 }
 
 /** @deprecated use resolveProjectPath */
@@ -115,7 +114,7 @@ export async function validateGateMap(map: GateMap, root = REPO_ROOT): Promise<G
     }
 
     const absPath = resolveProjectPath(project, root);
-    if (!(await Bun.file(join(absPath, 'package.json')).exists())) {
+    if (!(await Bun.file(joinPath(absPath, 'package.json')).exists())) {
       const hasOtherMarker =
         (await Bun.file(absPath).exists()) &&
         (project.path === '.' || project.id === 'ast-grep-skill');

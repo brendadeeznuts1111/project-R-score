@@ -10,6 +10,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 |------|-----|
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
+| Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 | Human hub | [`README.md`](README.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |

@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { joinPath } from '../path-bun';
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/url-fixer-optimizer.ts — URL fixer and performance optimizer
@@ -7,8 +8,6 @@
 if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
-
-import { join } from 'path';
 
 // ============================================================================
 // URL FIXER AND OPTIMIZER

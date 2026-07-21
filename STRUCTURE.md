@@ -85,9 +85,9 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 
 ## Key navigation
 
-- **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json`) · `bun run build:affected` / `test:affected` ([Bun `--filter`](https://bun.com/docs/pm/filter)). Refresh CLI markdown: `bun run cli:docs` → [`docs/CLI.md`](docs/CLI.md) (categories: [`scripts/lib/cli-categories.ts`](scripts/lib/cli-categories.ts)).
+- **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json` spine) · `bun run build:affected` / `test:affected` (**git-true** via [`scripts/affected-workspaces.ts`](scripts/affected-workspaces.ts)). Harness JIT: [`docs/harness/README.md`](docs/harness/README.md). Refresh CLI: `bun run cli:docs` → [`docs/CLI.md`](docs/CLI.md).
 - **Run something?** Root `package.json` scripts (`bun run <name>`). Prefer named scripts over inventing paths.
-- **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `install:projects` / `install:packages`
+- **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `affected:list`
 - **CLI:** [`tools/cli/`](tools/cli/) · [`tools/bin/`](tools/bin/)
 - **Demos:** [`examples/`](examples/) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)

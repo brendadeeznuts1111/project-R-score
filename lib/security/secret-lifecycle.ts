@@ -3,8 +3,8 @@
 
 import { env } from 'bun';
 import { mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
 import { VersionedSecretManager } from './versioned-secrets';
+import { dirnamePath } from '../path-bun';
 
 export type LifecycleRule = {
   key: string;
@@ -151,7 +151,7 @@ export class SecretLifecycleManager {
   }
 
   private async writeLocalReport(path: string, contents: string) {
-    await mkdir(dirname(path), { recursive: true });
+    await mkdir(dirnamePath(path), { recursive: true });
     await Bun.write(path, contents);
   }
 

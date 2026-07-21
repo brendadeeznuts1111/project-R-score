@@ -9,8 +9,7 @@
  * lib/config/configuration-manager.ts).
  */
 
-import { resolve } from 'node:path';
-
+import { resolvePath } from '../path-bun';
 import {
   ProfileSessionUploader,
   type ProfileUploaderConfig,
@@ -91,9 +90,9 @@ export class ProfileWatcher {
 
   /** Resolve the list of directories to scan */
   private resolveDirs(): string[] {
-    const dirs = (this.config.watchDirs || ['./profiles']).map(d => resolve(d));
+    const dirs = (this.config.watchDirs || ['./profiles']).map(d => resolvePath(d));
     if (this.config.scanRoot) {
-      const root = resolve('.');
+      const root = resolvePath('.');
       if (!dirs.includes(root)) dirs.push(root);
     }
     return dirs;

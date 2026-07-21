@@ -1,11 +1,18 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
- * Pre-commit harness checks — fast bun-native lint + format on staged root paths.
+ * Pre-commit harness checks — staged root paths.
+ * Parallelizes independent gates; auto-annotates Bun doc refs; records timings.
  */
 import { HARNESS_FORMAT_GLOBS, HARNESS_PATHS } from '../config/eslint/harness/rollout.ts';
+import { hasFlag } from './lib/cli-args';
+import { ensureDir, writeJson } from './lib/fs-bun';
 
-const repoRoot = import.meta.dir + '/..';
+const repoRoot = `${import.meta.dir}/..`;
+const TIMING_PATH = `${repoRoot}/reports/harness-gate-timing.json`;
+
+type GateTiming = { name: string; ms: number; ok: boolean };
 
 function isHarnessPath(file: string): boolean {
   const normalized = file.replace(/^\.\//, '');
@@ -17,7 +24,6 @@ function isHarnessPath(file: string): boolean {
   return prefixes.some(prefix => normalized.startsWith(prefix));
 }
 
-/** Platform doc SSOT — when staged, run tools/doc-map-check.ts */
 const DOC_MAP_SSOT = new Set([
   'AGENTS.md',
   'README.md',
@@ -30,6 +36,11 @@ const DOC_MAP_SSOT = new Set([
   'docs/BUN_NATIVE_CAPABILITIES.md',
   'docs/DEVELOPMENT-STANDARDS.md',
   'docs/IMPORT_BOUNDARIES.md',
+  'docs/harness/README.md',
+  'docs/harness/PROOF.md',
+  'docs/harness/FEEDBACK.md',
+  'docs/organization/VELOCITY_BASELINE.md',
+  'docs/organization/BLOAT_SPEED_PASS.md',
   'lib/README.md',
   'lib/types/branded/README.md',
   'lib/docs/repo-docs.ts',
@@ -37,17 +48,7 @@ const DOC_MAP_SSOT = new Set([
 ]);
 
 function isDocMapPath(file: string): boolean {
-  const normalized = file.replace(/^\.\//, '');
-  return DOC_MAP_SSOT.has(normalized);
-}
-
-async function runDocMapCheck(): Promise<number> {
-  const proc = Bun.spawn(['bun', 'tools/doc-map-check.ts'], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  return proc.exited;
+  return DOC_MAP_SSOT.has(file.replace(/^\.\//, ''));
 }
 
 async function getStagedFiles(): Promise<string[]> {
@@ -65,53 +66,46 @@ async function getStagedFiles(): Promise<string[]> {
     .filter(Boolean);
 }
 
-async function runEslintHarness(files: string[]): Promise<number> {
-  const args = [
-    'eslint',
-    '--config',
-    'eslint.bun-native.config.ts',
-    '--fix',
-    // Cap bounds warning noise, not correctness (errors always fail).
-    // 500 covers bulk-annotation commits that stage hundreds of files at
-    // once; the tree currently carries ~230 known no-restricted-imports
-    // style warnings to burn down separately.
-    '--max-warnings',
-    '500',
-    ...files,
-  ];
-  const proc = Bun.spawn(['bun', ...args], {
+async function runGate(name: string, cmd: string[], timings: GateTiming[]): Promise<number> {
+  const t0 = performance.now();
+  const proc = Bun.spawn(cmd, {
     cwd: repoRoot,
     stdout: 'inherit',
     stderr: 'inherit',
   });
-  return proc.exited;
+  const code = await proc.exited;
+  timings.push({ name, ms: Math.round(performance.now() - t0), ok: code === 0 });
+  return code;
 }
 
-async function runPrettier(files: string[]): Promise<number> {
-  const args = ['prettier', '--write', ...files];
-  const proc = Bun.spawn(['bun', 'x', ...args], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  return proc.exited;
+async function writeTimings(timings: GateTiming[], full: boolean): Promise<void> {
+  await ensureDir(`${repoRoot}/reports`);
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    full,
+    totalMs: timings.reduce((s, t) => s + t.ms, 0),
+    gates: timings,
+  };
+  await writeJson(TIMING_PATH, payload);
+  console.info(`⏱  gate timings → reports/harness-gate-timing.json (${payload.totalMs}ms total)`);
 }
 
 async function main(): Promise<void> {
+  const full = hasFlag('full');
+  const timings: GateTiming[] = [];
   const staged = await getStagedFiles();
   const harnessFiles = staged.filter(isHarnessPath);
   const docMapFiles = staged.filter(isDocMapPath);
 
-  // Platform doc SSOT: when root/docs maps or repo-docs.ts change, re-verify links.
   if (docMapFiles.length > 0) {
     console.info(`🗺️  Doc map check (${docMapFiles.length} SSOT path(s) staged)...`);
-    const code = await runDocMapCheck();
+    const code = await runGate('doc-map', ['bun', 'tools/doc-map-check.ts'], timings);
     if (code !== 0) {
       console.error(
         '❌ Doc map check failed — fix broken links / CANONICAL_* paths\n' +
-          '   bun tools/doc-map-check.ts\n' +
-          '   bun tools/doc-map-check.ts --open'
+          '   bun tools/doc-map-check.ts'
       );
+      await writeTimings(timings, full);
       process.exit(1);
     }
   }
@@ -122,96 +116,160 @@ async function main(): Promise<void> {
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }
+    await writeTimings(timings, full);
     return;
   }
 
   console.info(`🔍 Harness lint (${harnessFiles.length} staged files)...`);
-  const lintCode = await runEslintHarness(harnessFiles);
+  const lintCode = await runGate(
+    'eslint',
+    [
+      'bun',
+      'eslint',
+      '--config',
+      'eslint.bun-native.config.ts',
+      '--fix',
+      '--max-warnings',
+      '500',
+      ...harnessFiles,
+    ],
+    timings
+  );
   if (lintCode !== 0) {
     console.error('❌ Harness ESLint check failed');
+    await writeTimings(timings, full);
     process.exit(1);
   }
 
   console.info('✨ Harness format...');
-  const formatCode = await runPrettier(harnessFiles);
+  const formatCode = await runGate(
+    'prettier',
+    ['bun', 'x', 'prettier', '--write', ...harnessFiles],
+    timings
+  );
   if (formatCode !== 0) {
     console.error('❌ Harness Prettier check failed');
+    await writeTimings(timings, full);
     process.exit(1);
   }
 
-  // Doc-reference gate: staged files must carry canonical @see links for
-  // the Bun APIs they use (fix: bun tools/bun-doc-refs.ts annotate --write <files>)
-  console.info('🔗 Doc refs...');
-  const docRefs = Bun.spawn(
-    ['bun', 'tools/bun-doc-refs.ts', 'check', ...harnessFiles.map(f => `${repoRoot}/${f}`)],
-    { cwd: repoRoot, stdout: 'inherit', stderr: 'inherit' }
+  // Annotate-on-write then re-check (kills fail→annotate→re-stage loop).
+  console.info('🔗 Doc refs (annotate-on-write)...');
+  const absFiles = harnessFiles.map(f => `${repoRoot}/${f}`);
+  await runGate(
+    'doc-refs-annotate',
+    ['bun', 'tools/bun-doc-refs.ts', 'annotate', '--write', ...absFiles],
+    timings
   );
-  if ((await docRefs.exited) !== 0) {
+  const docCheck = await runGate(
+    'doc-refs-check',
+    ['bun', 'tools/bun-doc-refs.ts', 'check', ...absFiles],
+    timings
+  );
+  if (docCheck !== 0) {
     console.error(
-      '❌ Missing canonical Bun doc refs — run: bun tools/bun-doc-refs.ts annotate --write <files>'
+      '❌ Missing canonical Bun doc refs after annotate — resolve manually:\n' +
+        '   bun tools/bun-doc-refs.ts suggest "<api>"'
     );
+    await writeTimings(timings, full);
     process.exit(1);
   }
 
-  // Brand institutional record must match BRAND_CATALOG (detector reads it).
   console.info('🏷️  Brand manifest...');
-  const brandManifest = Bun.spawn(['bun', 'tools/brand-manifest.ts', '--check'], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if ((await brandManifest.exited) !== 0) {
+  if (
+    (await runGate('brand-manifest', ['bun', 'tools/brand-manifest.ts', '--check'], timings)) !== 0
+  ) {
     console.error('❌ Stale brand-manifest.json — run: bun tools/brand-manifest.ts');
+    await writeTimings(timings, full);
     process.exit(1);
   }
 
-  // Branded-ID gate: only ADDED lines are judged, so legacy violations
-  // elsewhere in a touched file never block; new violations always do.
-  console.info('🏷️  Branded IDs...');
-  const brandCheck = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--staged', '--strict'], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if ((await brandCheck.exited) !== 0) {
-    console.error(
-      '❌ New unbranded domain ID (bare string) — agents MUST use lib/types/branded.ts\n' +
-        '   as*/try*/parse* (SessionId, UserId, …). Opaque only: // brand-ok\n' +
-        '   catalog: bun tools/brand-catalog.ts [BrandName]'
+  // Parallel: brands staged ‖ brands smart (types only on --full)
+  console.info(
+    full
+      ? '🏷️  Branded IDs (staged ‖ smart ‖ types)...'
+      : '🏷️  Branded IDs (staged ‖ smart; types deferred)...'
+  );
+
+  const brandJobs: Array<Promise<GateTiming & { code: number }>> = [
+    (async () => {
+      const t0 = performance.now();
+      const proc = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--staged', '--strict'], {
+        cwd: repoRoot,
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
+      const code = await proc.exited;
+      return {
+        name: 'brands-staged',
+        ms: Math.round(performance.now() - t0),
+        ok: code === 0,
+        code,
+      };
+    })(),
+    (async () => {
+      const t0 = performance.now();
+      const proc = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--strict'], {
+        cwd: repoRoot,
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
+      const code = await proc.exited;
+      return { name: 'brands-smart', ms: Math.round(performance.now() - t0), ok: code === 0, code };
+    })(),
+  ];
+
+  if (full) {
+    brandJobs.push(
+      (async () => {
+        const t0 = performance.now();
+        const proc = Bun.spawn(['bun', 'run', 'check:brands:types'], {
+          cwd: repoRoot,
+          stdout: 'inherit',
+          stderr: 'inherit',
+        });
+        const code = await proc.exited;
+        return {
+          name: 'brands-types',
+          ms: Math.round(performance.now() - t0),
+          ok: code === 0,
+          code,
+        };
+      })()
     );
-    process.exit(1);
   }
 
-  // Repo-wide smart gate: actionable unbranded IDs must stay 0.
-  // Mid-line function params are detected; legacy hits live in
-  // tools/branded-id-baseline.json (staged never uses baseline).
-  // Manual: bun run check:brands
-  console.info('🏷️  Branded IDs (repo-wide smart gate)...');
-  const brandSmart = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--strict'], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if ((await brandSmart.exited) !== 0) {
+  const brandResults = await Promise.all(brandJobs);
+  for (const r of brandResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
+
+  const brandStaged = brandResults.find(r => r.name === 'brands-staged')?.code ?? 1;
+  const brandSmart = brandResults.find(r => r.name === 'brands-smart')?.code ?? 1;
+  const brandTypes = brandResults.find(r => r.name === 'brands-types')?.code ?? 0;
+
+  if (brandStaged !== 0) {
     console.error(
-      '❌ Actionable unbranded IDs in repo — brand them or // brand-ok; see: bun run check:brands'
+      '❌ New unbranded domain ID (bare string) — use lib/types/branded.ts as*/try*/parse*'
     );
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (brandSmart !== 0) {
+    console.error('❌ Actionable unbranded IDs — bun run check:brands');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (brandTypes !== 0) {
+    console.error('❌ Branded type assertions failed — tests/branded-types.test-d.ts');
+    await writeTimings(timings, full);
     process.exit(1);
   }
 
-  // Type-level proof: brands are nominally distinct (tsc --noEmit on test-d file).
-  console.info('🏷️  Branded IDs (type-level)...');
-  const brandTypes = Bun.spawn(['bun', 'run', 'check:brands:types'], {
-    cwd: repoRoot,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if ((await brandTypes.exited) !== 0) {
-    console.error('❌ Branded type assertions failed — see tests/branded-types.test-d.ts');
-    process.exit(1);
+  if (!full) {
+    console.info('ℹ️  brand-types deferred (bun run check:brands:types or hook --full)');
   }
 
   console.info('✅ Harness pre-commit checks passed');
+  await writeTimings(timings, full);
   void HARNESS_PATHS;
   void HARNESS_FORMAT_GLOBS;
 }

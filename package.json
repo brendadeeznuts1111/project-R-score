@@ -1536,8 +1536,8 @@
     "install:cache:prune": "bun scripts/bun-cache-lifecycle.ts --prune",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
-    "build:affected": "bun run --filter '...' build",
-    "test:affected": "bun run --filter '...' test",
+    "build:affected": "bun scripts/affected-workspaces.ts build",
+    "test:affected": "bun scripts/affected-workspaces.ts test",
     "validate:workspaces": "bun scripts/validate-workspaces.ts",
     "brand:catalog": "bun tools/brand-catalog.ts",
     "brand:manifest": "bun tools/brand-manifest.ts",
@@ -1694,7 +1694,10 @@
     "validate:integrity:all": "bun scripts/validate-integrity.ts --section=all",
     "secrets:migrate": "bun scripts/secrets-migrate.ts",
     "mybundocs11": "bun tools/cli/mybundocs11.ts",
-    "playground": "bun scripts/playground-dev.ts"
+    "playground": "bun scripts/playground-dev.ts",
+    "affected:list": "bun scripts/affected-workspaces.ts list",
+    "check:path-bun": "bun scripts/check-path-bun.ts",
+    "harness:lesson": "bun scripts/harness-lesson.ts"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

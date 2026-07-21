@@ -6,55 +6,19 @@
  * Bun-native file helpers — only APIs documented at bun.com/docs/runtime/file-io
  * (and Glob at runtime/glob). No node:fs for file bodies; no shell; no node:path.
  *
- * Patterns (from Bun docs):
- *   const f = Bun.file(path)
- *   await f.text() | .json() | .bytes() | .arrayBuffer() | .exists() | .delete()
- *   await Bun.write(dest, data)          // string | Blob | BunFile | Uint8Array | Response
- *   await Bun.write(out, Bun.file(in))   // copy
- *   new Bun.Glob(pattern).scanSync({ cwd })
+ * Path join/resolve: re-exported from lib/path-bun (spine SSOT).
  */
+
+export {
+  basenamePath,
+  dirnamePath,
+  extnamePath,
+  joinPath,
+  normalizePath,
+  resolvePath,
+} from '../../lib/path-bun';
 
 export type BunWriteData = string | Blob | ArrayBuffer | SharedArrayBuffer | Uint8Array | Response;
-
-/** Normalize `/./` and `/../` segments; preserve absolute roots. */
-export function normalizePath(path: string): string {
-  const isAbs = path.startsWith('/');
-  const out: string[] = [];
-  for (const seg of path.split('/')) {
-    if (seg === '' || seg === '.') continue;
-    if (seg === '..') {
-      if (out.length > 0) out.pop();
-      continue;
-    }
-    out.push(seg);
-  }
-  const body = out.join('/');
-  if (isAbs) return `/${body}`;
-  return body || '.';
-}
-
-/** Join path segments with `/` (no node:path). */
-export function joinPath(...parts: string[]): string {
-  return normalizePath(parts.filter(p => p != null && String(p) !== '').join('/'));
-}
-
-/**
- * Resolve like Node's path.resolve for common cases: empty → cwd;
- * later absolute segment replaces; otherwise join under cwd.
- */
-export function resolvePath(...parts: string[]): string {
-  if (parts.length === 0) return process.cwd();
-  let resolved = '';
-  for (const part of parts) {
-    if (part == null || part === '') continue;
-    if (part.startsWith('/')) {
-      resolved = part;
-      continue;
-    }
-    resolved = resolved ? joinPath(resolved, part) : joinPath(process.cwd(), part);
-  }
-  return resolved ? normalizePath(resolved) : process.cwd();
-}
 
 /** Lazy `Bun.file(path)` (optional MIME override). */
 export function bunFile(path: string, type?: string): ReturnType<typeof Bun.file> {
@@ -114,7 +78,7 @@ export async function readArrayBuffer(path: string): Promise<ArrayBuffer> {
  * Creates intermediate path segments when `path` is nested.
  */
 export async function writeFile(path: string, data: BunWriteData): Promise<number> {
-  return Bun.write(path, data);
+  return Bun.write(path, data as Parameters<typeof Bun.write>[1]);
 }
 
 /** String payload convenience (most scripts). */

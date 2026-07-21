@@ -3,8 +3,8 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { CryptoHasher } from 'bun';
 
-import { resolve } from 'node:path';
 import ts from 'typescript';
+import { resolvePath } from '../path-bun';
 
 export interface AuthorityRule {
   contains: string;
@@ -291,7 +291,10 @@ export function resolveScoreThresholdsForQueryPack(
 }
 
 export async function loadSearchPolicies(rootDir: string = '.'): Promise<SearchPolicies> {
-  const candidates = [resolve(rootDir, '.search/policies.json'), resolve('.search/policies.json')];
+  const candidates = [
+    resolvePath(rootDir, '.search/policies.json'),
+    resolvePath('.search/policies.json'),
+  ];
 
   for (const path of candidates) {
     const file = Bun.file(path);
@@ -428,7 +431,7 @@ export async function buildCanonicalFamilies(
   const rootDir = options.rootDir || '.';
   const policies = options.policies || (await loadSearchPolicies(rootDir));
 
-  const uniqueFiles = Array.from(new Set(files.map(file => resolve(file))));
+  const uniqueFiles = Array.from(new Set(files.map(file => resolvePath(file))));
   const keyed = new Map<string, string[]>();
 
   for (const filePath of uniqueFiles) {

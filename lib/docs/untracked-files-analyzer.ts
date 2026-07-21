@@ -1,4 +1,6 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { joinPath } from '../path-bun';
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // lib/docs/untracked-files-analyzer.ts — Untracked files analysis
@@ -7,8 +9,6 @@
 if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
-
-import { join } from 'path';
 
 // ============================================================================
 // UNTRACKED FILES ANALYZER
@@ -190,7 +190,7 @@ class UntrackedFilesAnalyzer {
       };
     }
 
-    const fullPath = join(process.cwd(), filePath);
+    const fullPath = joinPath(process.cwd(), filePath);
     const bunFile = Bun.file(fullPath);
 
     if (!(await bunFile.exists())) {

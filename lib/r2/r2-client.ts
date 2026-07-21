@@ -11,8 +11,8 @@
  * Uses signed S3 requests in production, local filesystem in development.
  */
 
-import { join } from 'path';
 import { signS3Request, getR2Credentials } from './s3-signer';
+import { joinPath } from '../path-bun';
 
 interface R2UploadOptions {
   contentType?: string;
@@ -36,7 +36,7 @@ export async function uploadToR2(
 
     // For local development, store in local directory
     if (isLocalMode()) {
-      const localFile = join(process.cwd(), 'data', 'r2-logs', key);
+      const localFile = joinPath(process.cwd(), 'data', 'r2-logs', key);
       // Bun.write creates parent directories
       await Bun.write(localFile, JSON.stringify(data, null, 2));
       console.info(`💾 Stored locally: ${localFile}`);
@@ -75,12 +75,12 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
 
     // For local development, list local files via Bun.Glob
     if (isLocalMode()) {
-      const localDir = join(process.cwd(), 'data', 'r2-logs', prefix);
+      const localDir = joinPath(process.cwd(), 'data', 'r2-logs', prefix);
       try {
         const keys: string[] = [];
         const glob = new Bun.Glob('**/*');
         for await (const file of glob.scan({ cwd: localDir, onlyFiles: true })) {
-          keys.push(join(prefix, file));
+          keys.push(joinPath(prefix, file));
         }
         return keys;
       } catch {
@@ -123,7 +123,7 @@ export async function downloadFromR2(key: string): Promise<any> {
 
     // For local development, read local file
     if (isLocalMode()) {
-      const localFile = join(process.cwd(), 'data', 'r2-logs', key);
+      const localFile = joinPath(process.cwd(), 'data', 'r2-logs', key);
       const file = Bun.file(localFile);
       if (!(await file.exists())) {
         throw new Error(`Local file not found: ${localFile}`);

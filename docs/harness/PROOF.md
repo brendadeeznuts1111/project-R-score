@@ -1,0 +1,31 @@
+# Proof contracts
+
+Match **evidence** to the **claim**. Green pre-commit alone does not prove a journey or deployed health.
+
+Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness-engineering/tree/trunk/docs/proof).
+
+## Claim kinds
+
+| Kind | Meaning | Typical evidence |
+|------|---------|------------------|
+| `unit` | Pure logic / types | `bun test` file, `check:brands:types` |
+| `boundary` | Wire → domain parse | staged brand gate, wire-boundary eslint, fixture at edge |
+| `journey` | Multi-step user/ops path | scripted CLI sequence, contract JSON |
+| `deployed` | Live / machine state | `install:verify`, machine health, CI workflow green |
+
+## Named critical paths (start set)
+
+| Artifact | Claim | Required kinds |
+|----------|-------|----------------|
+| Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
+| Install cache | Root install layout is healthy | `deployed` (`bun run install:verify`) |
+| Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
+
+## Agent checklist before “done”
+
+1. State the claim in one sentence.
+2. Pick kind(s) from the table.
+3. Point at evidence paths or commands that actually ran.
+4. If evidence is missing, either run it or downgrade the claim.
+
+Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts).

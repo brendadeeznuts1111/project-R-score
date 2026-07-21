@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -13,8 +14,8 @@
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { executeBunCLI, parseOfficialFlags, BunCLIFlags } from './bun-cli-native-v3.15';
-import { join } from 'path';
 import { executeWithContext } from './context-run-server';
+import { joinPath } from './path-bun';
 
 // Enhanced interfaces for v3.17
 interface GlobalConfig {
@@ -130,7 +131,7 @@ export async function contextBuildWithMetafile(
     // v3.17: Metafile + JSONC in Context Engine!
     // Using global Bun.build since it may not be available on the Bun object in types
     const buildOptions = {
-      entrypoints: entrypoints.map(e => join(globalConfig.cwd, e)),
+      entrypoints: entrypoints.map(e => joinPath(globalConfig.cwd, e)),
       metafile: true,
       outdir: './dist-meta',
       // JSONC tsconfig!

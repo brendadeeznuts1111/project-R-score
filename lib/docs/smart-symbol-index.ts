@@ -6,8 +6,8 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { Database } from 'bun:sqlite';
 import { mkdirSync, statSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
 import ts from 'typescript';
+import { dirnamePath, resolvePath } from '../path-bun';
 
 const SOURCE_GLOBS = ['*.ts', '*.tsx', '*.js', '*.jsx', '*.mjs', '*.cjs'];
 const EXCLUDE_GLOBS = [
@@ -81,7 +81,7 @@ interface DiscoverResult {
 }
 
 function ensureParentDir(filePath: string): void {
-  const parent = dirname(filePath);
+  const parent = dirnamePath(filePath);
   if (Bun.peek(Bun.file(parent).exists()) !== true) {
     mkdirSync(parent, { recursive: true });
   }
@@ -365,7 +365,7 @@ function getFileStat(path: string): { mtimeMs: number; size: number } | null {
 }
 
 export function resolveSymbolIndexPath(customPath?: string): string {
-  return resolve(customPath || '.cache/smart-search/symbols.sqlite');
+  return resolvePath(customPath || '.cache/smart-search/symbols.sqlite');
 }
 
 export async function buildSymbolIndex(
@@ -375,7 +375,7 @@ export async function buildSymbolIndex(
     rebuild?: boolean;
   } = {}
 ): Promise<SymbolIndexBuildResult> {
-  const rootDir = resolve(options.rootDir || '.');
+  const rootDir = resolvePath(options.rootDir || '.');
   const dbPath = resolveSymbolIndexPath(options.dbPath);
 
   const start = performance.now();
@@ -443,7 +443,7 @@ export async function buildSymbolIndex(
   });
 
   for (const filePath of files) {
-    const absolutePath = resolve(filePath);
+    const absolutePath = resolvePath(filePath);
     const stat = getFileStat(absolutePath);
     if (!stat) {
       continue;
@@ -582,7 +582,7 @@ export function searchCallersBySymbol(
 
     if (options.rootDir) {
       predicates.push('f.path LIKE ?');
-      params.push(`${resolve(options.rootDir)}%`);
+      params.push(`${resolvePath(options.rootDir)}%`);
     }
 
     const whereClause = `WHERE ${predicates.join(' AND ')}`;
@@ -722,7 +722,7 @@ export function searchCalleesBySymbol(
 
     if (options.rootDir) {
       predicates.push('f.path LIKE ?');
-      params.push(`${resolve(options.rootDir)}%`);
+      params.push(`${resolvePath(options.rootDir)}%`);
     }
 
     const whereClause = `WHERE ${predicates.join(' AND ')}`;
@@ -893,7 +893,7 @@ export function searchSymbolIndex(
 
     if (options.rootDir) {
       predicates.push('f.path LIKE ?');
-      params.push(`${resolve(options.rootDir)}%`);
+      params.push(`${resolvePath(options.rootDir)}%`);
     }
 
     const whereClause = predicates.length ? `WHERE ${predicates.join(' AND ')}` : '';

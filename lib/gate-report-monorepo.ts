@@ -5,7 +5,6 @@
  * Monorepo gate report — runs gate-map projects and builds aggregated HTML/JSON.
  */
 
-import { join } from 'node:path';
 import {
   escapeHtml,
   formatDuration,
@@ -14,6 +13,7 @@ import {
   type GateResult,
   type GateStatus,
 } from '../plannator/lib/gate-report.ts';
+import { joinPath } from './path-bun';
 import {
   type GateMapGate,
   type GateMapProject,
@@ -59,9 +59,9 @@ export function kimiCheckMetrics(summary: KimiCheckSummary): Record<string, stri
   };
 }
 
-export const DEFAULT_HTML_OUTPUT = join(REPO_ROOT, 'reports', 'monorepo-gate-report.html');
-export const DEFAULT_JSON_OUTPUT = join(REPO_ROOT, 'reports', 'monorepo-gate-report.json');
-export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, 'reports', 'monorepo-history.jsonl');
+export const DEFAULT_HTML_OUTPUT = joinPath(REPO_ROOT, 'reports', 'monorepo-gate-report.html');
+export const DEFAULT_JSON_OUTPUT = joinPath(REPO_ROOT, 'reports', 'monorepo-gate-report.json');
+export const DEFAULT_HISTORY_PATH = joinPath(REPO_ROOT, 'reports', 'monorepo-history.jsonl');
 
 export type ProjectGateResult = GateResult & { optional?: boolean };
 
@@ -93,7 +93,7 @@ export async function runProjectGate(
   root = REPO_ROOT
 ): Promise<ProjectGateResult> {
   const base = resolveProjectPath(project, root);
-  const cwd = gate.cwd ? join(base, gate.cwd) : base;
+  const cwd = gate.cwd ? joinPath(base, gate.cwd) : base;
   const start = Bun.nanoseconds();
 
   const proc = Bun.spawn({

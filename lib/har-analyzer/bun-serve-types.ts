@@ -89,7 +89,6 @@ export function createHARServer(options?: {
 }): HARServer {
   const captured: CapturedEntry[] = [];
 
-  // @ts-expect-error Bun.serve overload union rejects optional TLS spread
   const server = Bun.serve({
     port: 0,
     fetch(req, server): Response | Promise<Response> {

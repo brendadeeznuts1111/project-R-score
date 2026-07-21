@@ -3,9 +3,9 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/utils/safe-file-operations.ts — Safe file operations with error handling
 
-import { dirname, basename, extname } from 'path';
 import { mkdir } from 'node:fs/promises';
 import { ErrorHandler } from './error-handler';
+import { dirnamePath, basenamePath, extnamePath } from '../path-bun';
 
 export interface FileOperationOptions {
   encoding?: BufferEncoding;
@@ -161,7 +161,7 @@ export class SafeFileOperations {
       // Bun.write creates intermediate path segments for nested file paths;
       // ensureDirectory covers pure empty-dir edge cases when createDir is set.
       if (opts.createDir) {
-        await this.ensureDirectory(dirname(filePath));
+        await this.ensureDirectory(dirnamePath(filePath));
       }
 
       if (opts.backup && (await Bun.file(filePath).exists())) {
@@ -230,7 +230,7 @@ export class SafeFileOperations {
       }
 
       if (opts.createDir) {
-        await this.ensureDirectory(dirname(filePath));
+        await this.ensureDirectory(dirnamePath(filePath));
       }
 
       let lastError: Error | unknown;
