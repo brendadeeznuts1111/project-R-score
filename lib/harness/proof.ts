@@ -30,7 +30,11 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/bun-glob-scan.test.ts',
   'tests/bun-ansi-width.test.ts',
   'tests/console-depth.test.ts',
-  'tests/fixtures/runtime-cli/runtime-cli-boundaries.test.ts',
+  'tests/fixtures/runtime-cli/flag-placement/fixture.test.ts',
+  'tests/fixtures/runtime-cli/resolution-order/fixture.test.ts',
+  'tests/fixtures/runtime-cli/shebang-bun/fixture.test.ts',
+  'tests/fixtures/runtime-cli/console-depth/fixture.test.ts',
+
   'tests/bun-cron.test.ts',
   'tests/bun-explicit-resource.test.ts',
   'tests/harness-cron-contract.test.ts',
@@ -113,7 +117,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'runtime-cli-boundaries',
     claim: 'Critical Bun runtime CLI flags behave as expected',
     kinds: ['boundary'],
-    evidence: ['tests/fixtures/runtime-cli/*.test.ts'],
+    evidence: ['tests/fixtures/runtime-cli/**/fixture.test.ts'],
     freshRerun: 'bun test tests/fixtures/runtime-cli/',
   },
   {
