@@ -5,7 +5,7 @@ Running `bun run install:verify` succeeds, and a headless browser smoke report s
 
 **Evidence**
 
-- **`tests/journey/install-verify.test.ts`** — runs real install:verify, materializes HTML, WebView assertion.  
+- **`tests/journey/install-verify.test.ts`** — runs real install:verify, materializes HTML, WebView assertion, failure screenshot.  
   *Ratchet* → `bun run test:install-verify`
 
 - **`lib/harness/proof.ts` / `PROOF.md`** — claim `install-verify-journey`.  
