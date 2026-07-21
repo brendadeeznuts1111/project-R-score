@@ -173,7 +173,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
   '--isolate': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
   '--parallel': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  '--shard': 'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  '--shard':
+    'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
 
   // ── Bundler / executables ──────────────────────────────────────────────
   'bun build --compile': 'https://bun.com/docs/bundler/executables',
