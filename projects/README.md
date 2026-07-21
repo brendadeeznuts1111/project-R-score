@@ -37,6 +37,8 @@ git mv projects/active/<path> projects/archive/<name>
 
 ## Active products
 
+Tier index: [`active/README.md`](active/README.md).
+
 Status: `workspace` = root workspace member · `own remote` = gitignored nested repo · `local` = tracked in this monorepo.
 
 ### Top-level

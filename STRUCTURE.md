@@ -51,7 +51,7 @@ Projects/
 │   ├── README.md            # Triage SSOT — every product leaf + root contract
 │   ├── experimental/        # Demos / PoCs (each top-level has README + package.json)
 │   ├── archive/             # Tier bucket (+ README); empty until first freeze
-│   └── active/              # Maintained apps (categories keep indexes; no flatten)
+│   └── active/              # README.md tier index; categories keep indexes (no flatten)
 │       ├── analysis|automation|dashboards|development|enterprise|tools|utilities/
 │       │     └── each category README.md lists product leaves (each leaf = install root)
 │       ├── factorywager/    # registry umbrella (+ workspace packages)
