@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-21T08:08:41.500Z",
+  "generatedAt": "2026-07-21T08:11:34.959Z",
   "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/ab-testing/cookie-manager.ts\ttestId\tclearAssignment(testId: string): void {",
@@ -13,7 +13,6 @@
     "lib/ai/ai-operations-manager.ts\tcommandId\tgetCommandResult(commandId: string): OptimizationResult | undefined {",
     "lib/ai/anomaly-detector.ts\truleId\tremoveRule(ruleId: string): boolean {",
     "lib/bun-cli-native-v3.15.ts\tsessionId\texport function getSession(sessionId: string): CLISession | undefined {",
-    "lib/cookie-manager.ts\texperimentId\tassignVariant(experimentId: string): VariantConfig | null {",
     "lib/core/core-documentation.ts\tgistId\texport const buildGitHubGistURL = (gistId: string) => docsURL.buildGitHubGistURL(gistId);",
     "lib/core/core-documentation.ts\tgistId\tpublic buildGitHubGistURL(gistId: string): string {",
     "lib/core/logging-monitoring.ts\trequestId\tdebug(message: string, context?: Record<string, any>, requestId?: string): void {",
@@ -107,18 +106,6 @@
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async cancelDeployment(deploymentId: string): Promise<void> {",
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async getDeploymentStatus(deploymentId: string): Promise<any> {",
     "lib/utils/s3-content-encoding.ts\tversionId\t): Promise<{ etag: string; versionId?: string }> {",
-    "lib/variant-testing.ts\tfeatureId\tdisableFeature(featureId: string): void {",
-    "lib/variant-testing.ts\tfeatureId\tenableFeature(featureId: string): void {",
-    "lib/variant-testing.ts\tfeatureId\thasFeature(featureId: string): boolean {",
-    "lib/variant-testing.ts\tfeatureId\tisFeatureEnabled(featureId: string): boolean {",
-    "lib/variant-testing.ts\ttestId\tgetCurrentVariant(testId?: string): VariantConfig | null {",
-    "lib/variant-testing.ts\ttestId\tgetTestResults(testId: string): VariantAnalytics[] {",
-    "lib/variant-testing.ts\ttestId\tgetVariantContent(contentKey: string, testId?: string): any {",
-    "lib/variant-testing.ts\ttestId\tgetVariantFeatures(testId?: string): string[] {",
-    "lib/variant-testing.ts\ttestId\ttrackClick(element: string, testId?: string): void {",
-    "lib/variant-testing.ts\ttestId\ttrackConversion(testId: string, value?: number): void {",
-    "lib/variant-testing.ts\ttestId\ttrackImpression(element: string, testId?: string): void {",
-    "lib/variant-testing.ts\ttestId\twithVariantTracking(element: HTMLElement, testId?: string): void {",
     "lib/watch-engine-v3.14.ts\tsessionId\texport function stopWatchSession(sessionId: string): void {"
   ]
 }

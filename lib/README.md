@@ -81,18 +81,13 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 
 ## Legacy / low-traffic root (do not extend)
 
-Leave on disk this pass — prefer domain APIs or retire in a dedicated pass.
+Still referenced by demos/tools — prefer domain APIs; do not add new callers.
 
 | File | Note |
 |------|------|
-| `bun-cli-native-v3.15.ts` | Versioned CLI dump |
-| `context-engine-v3.17.ts` | Versioned context engine |
+| `bun-cli-native-v3.15.ts` | Versioned CLI dump (examples/demos) |
+| `context-engine-v3.17.ts` | Versioned context engine (examples/demos) |
 | `context-run-server.ts` | Context run server experiment |
-| `cookie-manager.ts` | Cookie helper (also mirrored under ab-testing) |
-| `enhanced-watch-filter-v3.15.ts` | Versioned watch filter |
-| `filter-runner.ts` · `filter-watch-logger.ts` | Filter tooling dumps |
-| `prefetch-manager.ts` | Prefetch experiment |
-| `variant-testing.ts` | Variant testing dump |
-| `watch-engine-v3.14.ts` | Versioned watch engine |
-| `secrets-management.cjs` | Legacy CJS secrets helper |
-| `INTEGRATION_SUMMARY.md` | Stale note — prefer this README |
+| `enhanced-watch-filter-v3.15.ts` | Versioned watch filter (examples/demos) |
+| `filter-runner.ts` · `filter-watch-logger.ts` | Filter tooling (`tools/bin`, demos) |
+| `watch-engine-v3.14.ts` | Versioned watch engine (`tools/bin`) |
