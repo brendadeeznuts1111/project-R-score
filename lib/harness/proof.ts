@@ -68,7 +68,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun run test:changed',
       'bun run test:changed -- HEAD~1',
       'bun run test:changed -- main',
-      'bun scripts/test-changed.ts',
+      'bun scripts/bun-test-changed.ts',
     ],
   },
 ] as const;

@@ -40,6 +40,7 @@
     "scripts/check-bun-env.ts",
     "scripts/harness-lesson.ts",
     "scripts/harness-status.ts",
+    "scripts/bun-test-changed.ts",
     "types/**/*",
     "index.ts"
   ],

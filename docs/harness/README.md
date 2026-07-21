@@ -46,13 +46,13 @@ bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
 bun run test:affected           # workspace package.json "test" scripts
-bun run test:changed            # bun test --changed (unstaged+staged+untracked)
-#   bun test --changed=HEAD~1   # since commit / branch / tag
-#   bun test --changed=main
-#   bun run test:changed:watch  # re-filter on every restart
+bun run test:changed            # working tree (staged+unstaged+untracked)
+#   bun run test:changed -- HEAD~1
+#   bun run test:changed -- main
+#   bun run test:changed:watch          # --changed --watch
+#   bun run test:changed -- main --parallel
 # speed / CI (Bun ≥1.3.13):
-#   bun run test:parallel       # workers; implies --isolate
-#   bun run test:isolate        # fresh global per file (same process)
+#   bun run test:parallel | test:isolate
 #   SHARD=1/3 bun run test:shard
 bun run proof:install           # journey: install layout healthy
 bun run check:path-bun          # lib/ path ratchet
@@ -60,7 +60,7 @@ bun run check:bun-env           # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs                # when CLI surface changes
 ```
 
-Test axes: `test:affected` = changed **workspaces**; `test:changed` = test files that **import** dirty (or `--changed=REF`) sources via Bun’s import graph. Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13](https://bun.com/blog/bun-v1.3.13).
+Test axes: `test:affected` = changed **workspaces**; `test:changed` = Bun import-graph filter ([`scripts/bun-test-changed.ts`](../../scripts/bun-test-changed.ts) → `--changed` / `--changed=<ref>`). Prefer `--parallel` for large suites; `--shard=M/N` in CI. Docs: [bun test](https://bun.com/docs/test/index#run-tests) · [v1.3.13](https://bun.com/blog/bun-v1.3.13).
 
 Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart; path-bun / bun-env when lib\|scripts staged; ESLint `--max-warnings 0`) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
 
