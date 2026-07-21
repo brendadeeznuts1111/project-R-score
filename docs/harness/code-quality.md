@@ -13,7 +13,7 @@ Complexity floor: [`lib/harness/complexity-baseline.json`](../../lib/harness/com
 | `types-covered` | `type-check` fails | `bun run type-check` |
 | `coverage-floor` | harness coverage below baseline | `bun run test:harness-coverage` |
 | `orphan-modules` | `lib/harness` module with no importers | `bun run check:harness-orphans` |
-| `complexity-floor` | function McCabe complexity above baseline | `bun run check:harness-complexity` |
+| `complexity-floor` | `check:harness-complexity` exits non-zero | `bun run check:harness-complexity -- --update-baseline --yes` |
 
 Runbooks: [`tenants/types-covered.md`](tenants/types-covered.md) · [`tenants/coverage-floor.md`](tenants/coverage-floor.md) · [`tenants/orphan-modules.md`](tenants/orphan-modules.md) · [`tenants/complexity-floor.md`](tenants/complexity-floor.md)
 

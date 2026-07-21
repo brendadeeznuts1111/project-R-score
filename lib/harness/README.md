@@ -21,7 +21,7 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 - **`code-quality.ts`** — types · coverage · orphans · complexity tenants (not spine cron)  
   *Ratchet* → `bun run test:code-quality` · [`docs/harness/code-quality.md`](../../docs/harness/code-quality.md)
 - **`complexity.ts`** + **`complexity-baseline.json`** — McCabe floor for `lib/harness` functions  
-  *Ratchet* → `bun run check:harness-complexity`
+  *Probe* → `scripts/complexity-check.ts` · *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy.ts`** + **`discover-ci.ts`** — CI/deploy runbooks + fail-closed job coverage  
   *Ratchet* → `bun run test:ci-deploy` · [`docs/harness/ci-deploy.md`](../../docs/harness/ci-deploy.md)
 - **`coverage-ratchet.ts`** + **`coverage-baseline.json`** — lib/harness coverage floors  

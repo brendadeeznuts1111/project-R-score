@@ -294,7 +294,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     evidence: [
       'lib/harness/complexity.ts',
       'lib/harness/complexity-baseline.json',
-      'scripts/check-harness-complexity.ts',
+      'scripts/complexity-check.ts',
       'bun run check:harness-complexity',
       'docs/harness/tenants/complexity-floor.md',
     ],

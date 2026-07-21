@@ -2,12 +2,15 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
  * Cyclomatic complexity for lib/harness functions (TypeScript AST).
- * Used by scripts/check-harness-complexity.ts and the complexity-floor tenant.
+ * Used by scripts/complexity-check.ts and the complexity-floor tenant.
  *
  * @see ./complexity-baseline.json
  * @see ../../docs/harness/tenants/complexity-floor.md
  */
 import ts from 'typescript';
+import { joinPath } from '../path-bun';
+
+export const DEFAULT_COMPLEXITY_BASELINE_REL = 'lib/harness/complexity-baseline.json';
 
 export type ComplexityHit = {
   file: string;
@@ -126,15 +129,47 @@ export function analyzeFileComplexity(relPath: string, sourceText: string): Comp
 export type ComplexityBaseline = {
   maxComplexity: number;
   scope: string;
+  $comment?: string;
 };
 
-export async function loadComplexityBaseline(root: string): Promise<ComplexityBaseline> {
-  const path = `${root}/lib/harness/complexity-baseline.json`;
+export function complexityBaselinePath(root: string, relOrAbs?: string): string {
+  if (!relOrAbs) return joinPath(root, DEFAULT_COMPLEXITY_BASELINE_REL);
+  if (relOrAbs.startsWith('/')) return relOrAbs;
+  return joinPath(root, relOrAbs);
+}
+
+export async function loadComplexityBaseline(
+  root: string,
+  baselinePath?: string
+): Promise<ComplexityBaseline> {
+  const path = complexityBaselinePath(root, baselinePath);
   const raw = (await Bun.file(path).json()) as ComplexityBaseline;
   if (typeof raw.maxComplexity !== 'number' || raw.maxComplexity < 1) {
     throw new Error(`invalid complexity baseline at ${path}`);
   }
+  if (typeof raw.scope !== 'string' || !raw.scope.trim()) {
+    throw new Error(`invalid complexity baseline scope at ${path}`);
+  }
   return raw;
+}
+
+/** Write baseline JSON (raise-only by default via caller policy). */
+export async function writeComplexityBaseline(
+  absPath: string,
+  baseline: ComplexityBaseline
+): Promise<void> {
+  const body: ComplexityBaseline = {
+    $comment:
+      baseline.$comment ??
+      'Max McCabe complexity per function in lib/harness. Raise when intentionally allowing higher; never lower without a retirement PR.',
+    scope: baseline.scope,
+    maxComplexity: baseline.maxComplexity,
+  };
+  await Bun.write(absPath, `${JSON.stringify(body, null, 2)}\n`);
+}
+
+export function maxComplexitySeen(hits: ComplexityHit[]): number {
+  return hits.reduce((m, h) => Math.max(m, h.complexity), 0);
 }
 
 export async function collectHarnessComplexity(root: string): Promise<ComplexityHit[]> {

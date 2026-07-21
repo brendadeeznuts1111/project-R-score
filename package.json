@@ -1699,7 +1699,7 @@
     "test:ci-deploy": "bun test tests/harness-ci-deploy.test.ts",
     "test:harness-coverage": "bun scripts/run-harness-coverage.ts",
     "check:harness-orphans": "bun scripts/check-harness-orphans.ts",
-    "check:harness-complexity": "bun scripts/check-harness-complexity.ts",
+    "check:harness-complexity": "bun scripts/complexity-check.ts --json --baseline lib/harness/complexity-baseline.json",
     "docs:code-quality": "bun scripts/docs-code-quality.ts",
     "docs:ci-deploy": "bun scripts/docs-ci-deploy.ts",
     "docs:search-governance": "bun scripts/docs-search-governance.ts",

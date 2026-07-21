@@ -76,15 +76,14 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
   },
   {
     id: 'complexity-floor',
-    signal:
-      '`bun run check:harness-complexity` reports a lib/harness function above complexity-baseline.json maxComplexity',
-    intervention: 'bun run check:harness-complexity',
+    signal: '`bun run check:harness-complexity` exits non-zero',
+    intervention: 'bun run check:harness-complexity -- --update-baseline --yes',
     proofId: 'harness-complexity-floor',
     retirement:
-      'Remove when ESLint complexity (or equivalent) enforces the same lib/harness floor without this tenant',
+      'Remove when complexity is enforced by pre-commit (or ESLint complexity) for the same lib/harness floor without this tenant',
     retirementVerified: false,
     retirementCheck: {
-      description: 'complexity floor still enforced by ESLint or this probe',
+      description: 'complexity floor still enforced by pre-commit/ESLint or this probe',
       command: 'bun run check:harness-complexity',
     },
     freshRerun: 'bun run check:harness-complexity',

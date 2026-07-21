@@ -120,7 +120,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:ci-deploy': 'CI/deploy runbooks + discover-ci coverage ratchet',
   'test:harness-coverage': 'lib/harness coverage floor vs coverage-baseline.json',
   'check:harness-orphans': 'Fail if any lib/harness/*.ts module has no importers',
-  'check:harness-complexity': 'Fail if any lib/harness function exceeds complexity-baseline.json',
+  'check:harness-complexity':
+    'Fail if any lib/harness function exceeds complexity-baseline.json (--update-baseline to raise)',
   'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
   'docs:ci-deploy': 'CI/deploy runbooks index (ansiMarkdown)',
   'docs:fresh-rerun':
