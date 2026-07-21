@@ -1670,8 +1670,6 @@
     "brand:bench:evaluate": "bun run scripts/brand-bench-evaluate.ts --json",
     "brand:bench:pin": "bun run scripts/brand-bench-pin.ts",
     "decision:evidence:verify": "bun run scripts/decision-evidence-verify.ts --json",
-    "content-type": "bun run services/demos/content-type-demo.ts",
-    "verbose": "bun run services/demos/verbose-fetch-demo.ts",
     "demo": "bun run examples/api-demo.ts advanced",
     "ci:bun:check": "bun run scripts/ci-bun-check.ts",
     "ci:r2:version:check": "bun run scripts/ci-r2-version-check.ts",

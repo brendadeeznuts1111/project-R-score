@@ -1,6 +1,0 @@
-authtoken: your_token_here
-tunnels:
-  p2p-proxy:
-    proto: http
-    addr: 3002
-    domain: haircutpro.ngrok.app
