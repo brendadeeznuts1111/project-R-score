@@ -71,7 +71,9 @@ Must be the exact command that reproduces the evidence from a clean checkout.
 Usually identical to the ratchet command, but must be explicit.  
 For islands: often `bun run type-check`. For journeys: the named script (e.g., `bun run test:cron-os`).
 
-**Answer:** `bun run …`
+Also pick **`freshRerunKind`**: `claim` (behavioral re-proof) or `catalog` (docs/catalog presence only — CI children use `bun run docs:ci-deploy`).
+
+**Answer:** `bun run …` · `freshRerunKind: claim | catalog`
 
 - If it requires environment setup, describe it here and harden it in the implementation.  
 - Link to [`FRESH-RERUN.md`](FRESH-RERUN.md) for the PR body requirement.
@@ -105,18 +107,21 @@ Search `proof.ts` and existing contracts. If yes, justify the addition or modify
 
 ### 8. How is this claim enforced in CI?
 
-Many claims are enforced by the existing `test:changed` / harness gates and the contract test, not a dedicated workflow.  
-Be precise: which existing job already runs this, or what minimal CI change is needed?
+Pick **`gateClass`** + **`gateRef`** (SSOT on `ProofPath` — see [`PROOF.md`](PROOF.md) Gate class).
 
-For journeys, name the existing hook: `bun run test:changed` (path filter), a dedicated workflow, or the journey test file itself. For islands, `type-check` already runs on `tsconfig.check.json` changes. Do not invent a second smoke-file SSOT in `proof.ts`.
+- **continuous** — `gateRef` = `pre-commit-harness` | `ci:harness` | `ci:core`
+- **workflow** — `gateRef` = basename under `.github/workflows/` (package script alone is **not** workflow)
+- **human-only** — `gateRef` = `none`
 
-**Answer:** … (e.g., “covered by `bun run test:changed` because the test file matches the path filter”; or “add a step to `.github/workflows/journey.yml` triggering on `tests/journey/<id>.test.ts`”)
+Be precise: which existing job already runs this, or what minimal CI change is needed? Do not invent a second smoke-file SSOT in `proof.ts`.
+
+**Answer:** … (e.g., “`gateClass: continuous`, `gateRef: ci:harness`”; or “`human-only` / `none` until demand backs a workflow”)
 
 ---
 
 ### 9. Who is the human owner if the claim breaks?
 
-An owner accountable for fixing it, beyond the agent who wrote it. Encode as a comment in `proof.ts` (`// owner: …`) and, if appropriate, in [`AUTHORITY.md`](AUTHORITY.md). The `ProofPath` type does not include an `owner` field.
+An owner accountable for fixing it, beyond the agent who wrote it. Encode as `ProofPath.owner` (path or team string). Parent catalog claims may also set `childIds` for closed-set dual-catalog membership.
 
 **Answer:** …
 
@@ -150,13 +155,18 @@ Write the exact `ProofPath` object for `lib/harness/proof.ts`:
 export type ProofPath = {
   id: string; // opaque catalog key
   claim: string; // one‑sentence claim (from Q1)
-  kinds: ProofKind[]; // unit | boundary | journey | deployed (choose appropriate)
+  kinds: ProofKind[]; // unit | boundary | journey | deployed (use orderProofKinds)
+  gateClass: ProofGateClass; // continuous | workflow | human-only (from Q8)
+  gateRef: string; // from Q8
   evidence: string[]; // paths or commands that demonstrate the claim
   freshRerun: string; // exact command (from Q4)
+  freshRerunKind: FreshRerunKind; // claim | catalog (from Q4)
+  owner: string; // from Q9
+  childIds?: readonly string[]; // parent catalogs only (CI / CQ / spine)
 };
 ```
 
-Include a `// owner: …` comment above or inline.
+Also add a matching row to the Gate class table in [`PROOF.md`](PROOF.md).
 
 **Answer:** (copy‑paste ready object)
 

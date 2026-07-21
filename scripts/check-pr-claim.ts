@@ -9,24 +9,33 @@
  * Warn-first until WARN_UNTIL_ISO (then exit 1 on empty claim rows).
  * Draft PRs are skipped. `--strict` always fails on empty claims.
  * `--dry-run` evaluates fail-closed semantics but always exits 0 (WOULD_FAIL / WOULD_PASS).
+ * Kind cell must be ProofKind allowlist (unit|boundary|journey|deployed), optionally joined with +.
+ * Soft: if body mentions `` `proof-id` ``, warn when that path’s freshRerun command is absent (never fails CI).
  *
- *   bun scripts/check-pr-claim.ts --body-file path.md
+ *   bun scripts/check-pr-claim.ts --body-file PATH
  *   bun scripts/check-pr-claim.ts --event "$GITHUB_EVENT_PATH"
  *   bun scripts/check-pr-claim.ts --dry-run --event "$GITHUB_EVENT_PATH"
  *   echo "$BODY" | bun scripts/check-pr-claim.ts --stdin
  */
+import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 import { flagValue, hasFlag } from './lib/cli-args';
 
 /** After this instant (UTC), empty claim tables fail CI (warn-only before). */
 export const WARN_UNTIL_ISO = '2026-07-28T00:00:00.000Z';
 export const WARN_UNTIL_MS = Date.parse(WARN_UNTIL_ISO);
 
-type Result = {
+/** Matches ProofKind in lib/harness/proof.ts */
+export const PROOF_KINDS = ['unit', 'boundary', 'journey', 'deployed'] as const;
+
+export type Result = {
   ok: boolean;
   draft: boolean;
   warnOnly: boolean;
   missingSection: boolean;
   emptyClaimRow: boolean;
+  invalidKind: boolean;
+  /** Soft: proof ids mentioned in backticks whose freshRerun command is absent from the body */
+  missingFreshRerun: string[];
   message: string;
 };
 
@@ -36,26 +45,41 @@ export function warnOnlyMode(strict: boolean, nowMs: number = Date.now()): boole
   return nowMs < WARN_UNTIL_MS;
 }
 
-function parseClaimTable(body: string): { missingSection: boolean; emptyClaimRow: boolean } {
+export function kindCellValid(cell: string): boolean {
+  const parts = cell
+    .replace(/`/g, '')
+    .split(/[+/,]/)
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean);
+  if (parts.length === 0) return false;
+  const allow = new Set<string>(PROOF_KINDS);
+  return parts.every(p => allow.has(p));
+}
+
+/**
+ * Soft paste ratchet: when the PR body mentions `` `proof-id` ``, the body should
+ * also contain that path’s `freshRerun` command string. Never fail-closed by itself.
+ */
+export function mentionedProofIdsMissingFreshRerun(
+  body: string,
+  paths: readonly { id: string; freshRerun: string }[] = CRITICAL_PROOF_PATHS // brand-ok — opaque proof-path catalog key
+): string[] {
+  const missing: string[] = [];
+  for (const p of paths) {
+    if (!body.includes(`\`${p.id}\``)) continue;
+    if (!body.includes(p.freshRerun)) missing.push(p.id);
+  }
+  return missing;
+}
+
+function parseClaimTable(body: string): {
+  missingSection: boolean;
+  emptyClaimRow: boolean;
+  invalidKind: boolean;
+} {
   const missingSection = !/##\s*Claim\s*→\s*evidence/i.test(body);
-  if (missingSection) return { missingSection: true, emptyClaimRow: true };
+  if (missingSection) return { missingSection: true, emptyClaimRow: true, invalidKind: false };
 
-  // Data rows under the claim table: | claim | kind | evidence |
-  const rows = body
-    .split('\n')
-    .map(l => l.trim())
-    .filter(l => l.startsWith('|') && !/^\|\s*-+/.test(l));
-
-  const dataRows = rows.filter(l => {
-    const lower = l.toLowerCase();
-    return (
-      !lower.includes('claim (one sentence)') &&
-      !lower.includes('kind (`unit`') &&
-      !lower.includes('evidence (command')
-    );
-  });
-
-  // Prefer rows in/after the Claim section
   const claimIdx = body.search(/##\s*Claim\s*→\s*evidence/i);
   const after = claimIdx >= 0 ? body.slice(claimIdx) : body;
   const afterRows = after
@@ -71,10 +95,12 @@ function parseClaimTable(body: string): { missingSection: boolean; emptyClaimRow
       );
     });
 
-  const candidates = afterRows.length > 0 ? afterRows : dataRows;
-  if (candidates.length === 0) return { missingSection: false, emptyClaimRow: true };
+  if (afterRows.length === 0)
+    return { missingSection: false, emptyClaimRow: true, invalidKind: false };
 
-  const filled = candidates.some(row => {
+  let hasValidRow = false;
+  let sawInvalidKind = false;
+  for (const row of afterRows) {
     const cells = row
       .split('|')
       .slice(1, -1)
@@ -84,11 +110,19 @@ function parseClaimTable(body: string): { missingSection: boolean; emptyClaimRow
           .replace(/\u00a0/g, ' ')
           .trim()
       );
-    // Need non-empty claim + kind + evidence
-    return cells.length >= 3 && cells[0] !== '' && cells[1] !== '' && cells[2] !== '';
-  });
+    if (cells.length < 3 || cells[0] === '' || cells[1] === '' || cells[2] === '') continue;
+    if (!kindCellValid(cells[1]!)) {
+      sawInvalidKind = true;
+      continue;
+    }
+    hasValidRow = true;
+  }
 
-  return { missingSection: false, emptyClaimRow: !filled };
+  return {
+    missingSection: false,
+    emptyClaimRow: !hasValidRow,
+    invalidKind: sawInvalidKind && !hasValidRow,
+  };
 }
 
 export function evaluatePrClaim(
@@ -103,18 +137,24 @@ export function evaluatePrClaim(
       warnOnly: true,
       missingSection: false,
       emptyClaimRow: false,
+      invalidKind: false,
+      missingFreshRerun: [],
       message: 'draft PR — claim→evidence check skipped',
     };
   }
 
-  const { missingSection, emptyClaimRow } = parseClaimTable(body ?? '');
+  const text = body ?? '';
+  const { missingSection, emptyClaimRow, invalidKind } = parseClaimTable(text);
+  const missingFreshRerun = mentionedProofIdsMissingFreshRerun(text);
   const warnOnly = warnOnlyMode(opts.strict === true, opts.nowMs);
   const bad = missingSection || emptyClaimRow;
   const message = missingSection
     ? 'PR body missing "## Claim → evidence" section — fill the table (docs/harness/PROOF.md)'
-    : emptyClaimRow
-      ? 'Claim → evidence table has no filled row (claim · kind · evidence)'
-      : 'claim→evidence present';
+    : invalidKind
+      ? 'Claim → evidence kind must be unit|boundary|journey|deployed (optionally joined with +)'
+      : emptyClaimRow
+        ? 'Claim → evidence table has no filled row (claim · kind · evidence)'
+        : 'claim→evidence present';
 
   return {
     ok: !bad || warnOnly,
@@ -122,6 +162,8 @@ export function evaluatePrClaim(
     warnOnly: bad && warnOnly,
     missingSection,
     emptyClaimRow,
+    invalidKind,
+    missingFreshRerun,
     message,
   };
 }
@@ -152,6 +194,14 @@ async function readBody(): Promise<{ body: string; draft: boolean }> {
   process.exit(2);
 }
 
+function warnMissingFreshRerun(ids: string[]): void {
+  if (ids.length === 0) return;
+  console.warn(
+    `⚠️  soft: mentioned proof id(s) missing freshRerun command in body: ${ids.join(', ')}`
+  );
+  console.warn('   repair: paste that claim’s freshRerun output (docs/harness/FRESH-RERUN.md)');
+}
+
 async function main(): Promise<void> {
   const dryRun = hasFlag('dry-run');
   const strict = hasFlag('strict') || dryRun;
@@ -165,6 +215,7 @@ async function main(): Promise<void> {
     }
     const wouldFail = result.missingSection || result.emptyClaimRow;
     console.info(`${wouldFail ? 'WOULD_FAIL' : 'WOULD_PASS'} · ${result.message}`);
+    warnMissingFreshRerun(result.missingFreshRerun);
     process.exit(0);
   }
 
@@ -177,6 +228,7 @@ async function main(): Promise<void> {
     console.warn(`⚠️  ${result.message}`);
     console.warn(`   warn-only until ${WARN_UNTIL_ISO} — then this fails (or pass --strict now)`);
     console.warn('   repair: fill Claim → evidence in the PR body (docs/harness/PROOF.md)');
+    warnMissingFreshRerun(result.missingFreshRerun);
     process.exit(0);
   }
 
@@ -189,6 +241,7 @@ async function main(): Promise<void> {
   }
 
   console.info(`✅ ${result.message}`);
+  warnMissingFreshRerun(result.missingFreshRerun);
 }
 
 if (import.meta.main) {

@@ -71,7 +71,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · [`maintenance.ts`](../../lib/harness/maintenance.ts) · `assertRetirementConditionCheck`
 - **`spine-tenant-heal`** — sandboxed E2E heal loop (break → signal → intervene → recover) (`journey`)  
   *Ratchet* → `bun run test:tenant-heal` · [`heal-fixture.ts`](../../lib/harness/heal-fixture.ts) · [`tenant-heal.test.ts`](../../tests/journey/tenant-heal.test.ts)
-- **`code-quality-tenants`** — types · harness coverage · orphan modules (`boundary` + `journey`)  
+- **`code-quality-tenants`** — types · harness coverage · orphan modules · complexity (`boundary` + `journey`)  
   *Ratchet* → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
 - **`harness-coverage-ratchet`** — lib/harness coverage ≥ `coverage-baseline.json`  
   *Ratchet* → `bun run test:harness-coverage`
@@ -81,9 +81,58 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy-runbooks`** — CI/deploy jobs have runbooks; `assertCICoverage` fail-closed  
   *Ratchet* → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md)
-- **CI/deploy child claims** — catalog-ownership; `ProofPath.freshRerun` replays catalog presence, not intervention (see [FRESH-RERUN.md](FRESH-RERUN.md) · Three catalogs). Each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
+- **CI/deploy child claims** — catalog-ownership; `freshRerunKind: 'catalog'`; paste proves catalog presence, not intervention (see [FRESH-RERUN.md](FRESH-RERUN.md) · Three catalogs). Each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
   *Ids* → `ci-core-envelope` · `typescript-ci-gate` · `deploy-production-preflight` · `deploy-staging-script` · `bun-migrate-status`  
   *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog) · fail-closed coverage → `ci-deploy-runbooks`
+
+## Gate class
+
+How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRef` in [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Catalog meta (completeness · evidence⊇freshRerun · `freshRerunKind`) always applies. Classes:
+
+- **continuous** — `pre-commit-harness` and/or `ci:harness` / `ci:core` (Harness Gates)
+- **workflow** — named GHA job outside that envelope (may also be a required status check)
+- **human-only** — package script / `freshRerun` paste only (no always-on gate). Do **not** label a package script as `workflow` unless a `.github/workflows/*` job runs it.
+
+| id | class | gate / workflow |
+|----|-------|-----------------|
+| `branded-ids` | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full` |
+| `install-verify` | continuous | `ci:core` · harness-gates |
+| `install-verify-journey` | human-only | `bun run test:install-verify` |
+| `test-changed` | continuous | `ci:harness` · harness-gates |
+| `search-governance` | workflow | `search-governance.yml` · `search:bench:gate` |
+| `search-governance-basic` | workflow | `search-governance.yml` · `test:search-governance` |
+| `runtime-cli-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/runtime-cli/` |
+| `bun-shell-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/bun-shell/` |
+| `fs-native-boundaries` | continuous | `ci:harness` boundary-fixtures · fs-bun + bun-glob-scan |
+| `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
+| `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
+| `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
+| `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
+| `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-utils-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-core-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `lib-security-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
+| `bun-cron` | human-only | `bun run test:cron` |
+| `cron-os-persistent` | human-only | `bun run test:cron-os` |
+| `docs-integrity` | human-only | `bun-doc-refs schedule --once` · spine tenant |
+| `spine-multi-tenant` | human-only | `spine:schedule:once -- --tenant=install-verify` |
+| `spine-maintenance-runbooks` | human-only | `bun run test:tenant-runbooks` (live tenant freshReruns; heavy) |
+| `spine-tenant-heal` | human-only | `bun run test:tenant-heal` |
+| `harness-coverage-ratchet` | continuous | `ci:harness` dual-catalog · `test:code-quality` |
+| `harness-orphan-modules` | continuous | `ci:harness` dual-catalog · `test:code-quality` |
+| `harness-complexity-floor` | continuous | pre-commit staged `lib/harness`; also `test:code-quality` in `ci:harness` |
+| `code-quality-tenants` | continuous | `ci:harness` dual-catalog · `bun run test:code-quality` |
+| `ci-deploy-runbooks` | continuous | `ci:harness` dual-catalog · `bun run test:ci-deploy` |
+| `ci-core-envelope` | continuous | live gate `ci:core`; `freshRerun` = catalog `docs:ci-deploy` |
+| `typescript-ci-gate` | workflow | `typescript-checks.yml` (required); `freshRerun` = catalog |
+| `deploy-production-preflight` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:production` |
+| `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
+| `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
+
+Counts (must match `gateClass` tallies): continuous 16 · workflow 8 · human-only 10.
+
+Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
 ## Fresh-rerun
 
@@ -92,16 +141,17 @@ Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../li
 
 ## New claim → discovery first
 
-Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (Q0–Q14) so ceremony path (slim vs full), `claim` / `kinds` / `evidence` / `freshRerun`, contract asserts, and PR paste are decided before code.  
+Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (Q0–Q14) so ceremony path (slim vs full), `claim` / `kinds` / `gateClass` / `gateRef` / `evidence` / `freshRerun` / `freshRerunKind`, contract asserts, and PR paste are decided before code.  
 *Ratchet* → `bun run docs:claim-discovery` · answered questionnaire in the PR or commit trail
 
 ## Agent checklist before “done”
 
 1. For a **new** claim: complete [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (slim or full path from Q0).
 2. State the claim in one sentence (`ProofPath.claim`).
-3. Pick kind(s) above.
-4. Point at evidence paths or commands that actually ran.
-5. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
-6. If evidence is missing, either run it or downgrade the claim.
+3. Pick kind(s), `gateClass` + `gateRef`, `freshRerunKind` (`claim` | `catalog`), and `owner`.
+4. Parent catalogs only: set `childIds` (CI / CQ / spine) so dual-catalog membership can’t drift.
+5. Point at evidence paths or commands that actually ran.
+6. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
+7. If evidence is missing, either run it or downgrade the claim.
 
 Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status` · `bun run docs:fresh-rerun` · `bun run docs:claim-discovery`.

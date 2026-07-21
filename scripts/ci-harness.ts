@@ -192,6 +192,53 @@ if (!fast) {
 
 await runSerial([testStep(!fast)], verbose, timings, wantFailJson, mode);
 
+/** Bun-native boundary claims — always-on outside --fast (was human-only / test:changed luck). */
+const BOUNDARY_FIXTURES: Step = {
+  name: 'boundary-fixtures',
+  cmd: [
+    'bun',
+    'test',
+    'tests/fixtures/runtime-cli/',
+    'tests/fixtures/bun-shell/',
+    'tests/fixtures/security-hash/',
+    'tests/fs-bun.test.ts',
+    'tests/bun-glob-scan.test.ts',
+  ],
+  owner: 'runtime-cli · bun-shell · security-hash · fs-native ProofPaths',
+  repair:
+    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+};
+
+if (!fast) {
+  await runSerial([BOUNDARY_FIXTURES], verbose, timings, wantFailJson, mode);
+}
+
+/** Dual-catalog parents + catalog meta — was human-only / test:changed luck. */
+const DUAL_CATALOG: Step[] = [
+  {
+    name: 'ci-deploy-runbooks',
+    cmd: ['bun', 'run', 'test:ci-deploy'],
+    owner: 'ci-deploy-runbooks ProofPath',
+    repair: 'bun run test:ci-deploy',
+  },
+  {
+    name: 'code-quality-tenants',
+    cmd: ['bun', 'run', 'test:code-quality'],
+    owner: 'code-quality-tenants · coverage · orphans · complexity ProofPaths',
+    repair: 'bun run test:code-quality',
+  },
+  {
+    name: 'fresh-rerun-contract',
+    cmd: ['bun', 'test', 'tests/harness-fresh-rerun-contract.test.ts'],
+    owner: 'ProofPath catalog meta · gateClass · freshRerunKind · gateRef',
+    repair: 'bun test tests/harness-fresh-rerun-contract.test.ts',
+  },
+];
+
+if (!fast) {
+  await runSerial(DUAL_CATALOG, verbose, timings, wantFailJson, mode);
+}
+
 const stepSum = timings.reduce((s, t) => s + t.ms, 0);
 await writeTimings(timings, mode);
 console.info(`✅ ci:harness (${mode}) ${stepSum}ms step-sum`);

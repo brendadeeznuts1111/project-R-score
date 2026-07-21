@@ -6,11 +6,18 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  assertCiChildProofBijection,
+  assertCiDeployParentChildIds,
+  assertCiInterventionNotCatalogFreshRerun,
   assertCiRunbookFields,
   assertCiRunbookProofLinks,
   CI_RUNBOOKS,
 } from '../lib/harness/ci-deploy';
-import { assertCICoverage, discoverCiJobs } from '../lib/harness/discover-ci';
+import {
+  assertCICoverage,
+  assertEveryRunbookHasJobOwner,
+  discoverCiJobs,
+} from '../lib/harness/discover-ci';
 import { argvFromCommand } from '../lib/harness/maintenance';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 import { joinPath } from '../lib/path-bun';
@@ -24,8 +31,18 @@ describe('CI / deploy runbooks', () => {
     expect(CI_RUNBOOKS.length).toBeGreaterThanOrEqual(4);
   });
 
+  test('CI child bijection + intervention ≠ catalog freshRerun', () => {
+    expect(assertCiChildProofBijection()).toEqual([]);
+    expect(assertCiInterventionNotCatalogFreshRerun()).toEqual([]);
+    expect(assertCiDeployParentChildIds()).toEqual([]);
+  });
+
   test('assertCICoverage: every ci/build/deploy/migrate job owned or exempted', async () => {
     expect(await assertCICoverage(ROOT)).toEqual([]);
+  });
+
+  test('every CI_RUNBOOKS id appears in CI_JOB_OWNERS values', () => {
+    expect(assertEveryRunbookHasJobOwner()).toEqual([]);
   });
 
   test('discovery finds package CI scripts and GHA workflows', async () => {

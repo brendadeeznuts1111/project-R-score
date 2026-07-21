@@ -34,7 +34,20 @@ Branch protection should require these GitHub Actions check names (workflow / jo
 - **`Harness Gates / Harness (ratchets · lint · brands · test:changed)`**  
   *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core` (install verify · hygiene · harness) + Claim on PRs
 
-Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). Re-apply via Settings → Branches or `gh api` if the job name drifts.
+**Delivery (itch #4):**
+
+| Setting | Status |
+|---------|--------|
+| Required check `Harness Gates / Harness (…)` | on · strict |
+| Required check `TypeScript Checks / Type Check` | **on** · strict |
+| `enforce_admins` | **on** |
+| Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
+| search-governance as required | optional — not required yet |
+| GitHub-hosted runners | **watch** — if jobs fail in ~2s with **0 steps** / empty `runner_name`, Actions never started (billing/quota/infra). Not a harness test failure; merge stays blocked until a run actually executes steps. |
+
+Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge. Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
+
+Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml).
 
 ## Credential custody
 

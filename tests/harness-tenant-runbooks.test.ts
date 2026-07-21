@@ -17,6 +17,7 @@ import {
   assertRunbookInterventionContainsProofFreshRerun,
   assertRunbookProofLinks,
   assertRunbookTenantLinks,
+  assertSpineParentChildIds,
   MAINTENANCE_RUNBOOKS,
   RETIRED_TENANT_RUNBOOKS,
   runbookByTenant,
@@ -82,6 +83,7 @@ describe('spine maintenance runbooks', () => {
 
   test('every runbook proofId resolves in CRITICAL_PROOF_PATHS', () => {
     expect(assertRunbookProofLinks()).toEqual([]);
+    expect(assertSpineParentChildIds()).toEqual([]);
   });
 
   test('catalog signal · intervention · retirement are non-empty', () => {
@@ -90,6 +92,14 @@ describe('spine maintenance runbooks', () => {
 
   test('intervention contains linked proof freshRerun', () => {
     expect(assertRunbookInterventionContainsProofFreshRerun()).toEqual([]);
+  });
+
+  test('TenantRunbook.freshRerun ≠ linked ProofPath.freshRerun (doc vs claim)', () => {
+    for (const r of MAINTENANCE_RUNBOOKS) {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
+      expect(p, r.tenant).toBeDefined();
+      expect(r.freshRerun, r.tenant).not.toBe(p!.freshRerun);
+    }
   });
 
   test('intervention commands are valid (catalog + markdown)', async () => {

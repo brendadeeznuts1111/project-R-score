@@ -63,6 +63,8 @@ export type TenantRunbook = {
   schedule?: string;
   /** Command that validates the runbook doc / catalog entry */
   freshRerun: string;
+  /** Spine runbooks always catalog-doc style (docs:tenant-*). */
+  freshRerunKind: 'catalog';
   /** Repo-relative markdown owner */
   docPath: string;
 };
@@ -90,6 +92,7 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     },
     schedule: '0 6 * * *',
     freshRerun: 'bun run docs:tenant-docs-integrity',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/docs-integrity.md',
   },
   {
@@ -109,6 +112,7 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     },
     schedule: '30 6 * * *',
     freshRerun: 'bun run docs:tenant-install-verify',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/install-verify.md',
   },
 ] as const;
@@ -136,6 +140,27 @@ export function assertRunbookProofLinks(): string[] {
   const missing: string[] = [];
   for (const r of MAINTENANCE_RUNBOOKS) {
     if (!ids.has(r.proofId)) missing.push(`${r.tenant} → proofId ${r.proofId}`);
+    if (r.freshRerunKind !== 'catalog') {
+      missing.push(`${r.tenant}: TenantRunbook.freshRerunKind must be catalog`);
+    }
+  }
+  return missing;
+}
+
+/** Parent claim `spine-maintenance-runbooks`.childIds ↔ MAINTENANCE_RUNBOOKS.proofId. */
+export function assertSpineParentChildIds(): string[] {
+  const missing: string[] = [];
+  const parent = CRITICAL_PROOF_PATHS.find(p => p.id === 'spine-maintenance-runbooks');
+  if (!parent?.childIds) {
+    missing.push('spine-maintenance-runbooks missing childIds');
+    return missing;
+  }
+  const a = [...parent.childIds].sort();
+  const b = MAINTENANCE_RUNBOOKS.map(r => r.proofId).sort();
+  if (a.length !== b.length || a.some((id, i) => id !== b[i])) {
+    missing.push(
+      `spine-maintenance-runbooks.childIds [${a.join(', ')}] ≠ spine proofIds [${b.join(', ')}]`
+    );
   }
   return missing;
 }

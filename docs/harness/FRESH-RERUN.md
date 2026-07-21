@@ -28,13 +28,24 @@ The fresh-rerun step is what makes retain/revise/remove evidence-based. Lessons 
 
 | Catalog | Field | What exit 0 / paste proves |
 |---------|-------|----------------------------|
-| `ProofPath` (`CRITICAL_PROOF_PATHS`) | `freshRerun` | Claim re-proof (this doc’s meaning) |
+| `ProofPath` (`CRITICAL_PROOF_PATHS`) | `freshRerun` + `freshRerunKind` | `claim` → behavioral re-proof; `catalog` → catalog/doc presence |
 | `TenantRunbook` (spine) | `freshRerun` | Runbook/doc render (`docs:tenant-*`); linked `proofId` has the real claim command |
 | `CiRunbook` (CI/deploy) | `freshRerun` | Catalog/doc render (`docs:ci-deploy`) |
 
-Spine **splits** doc-rerun vs proof-rerun. CI/deploy **children** (`ci-core-envelope` … `bun-migrate-status`) set `ProofPath.freshRerun` to `bun run docs:ci-deploy` — that paste proves **catalog presence**, not that `ci:core` / deploy ran. Intervention stays on `CiRunbook`; fail-closed coverage is parent claim `ci-deploy-runbooks` (`bun run test:ci-deploy`).
+Spine **splits** doc-rerun vs proof-rerun (`TenantRunbook.freshRerun` ≠ linked `ProofPath.freshRerun`). CI/deploy **children** set `freshRerunKind: 'catalog'` and `freshRerun` = `bun run docs:ci-deploy` — that paste proves **catalog presence**, not that `ci:core` / deploy ran. Intervention stays on `CiRunbook` (must not equal the catalog paste); fail-closed coverage is parent claim `ci-deploy-runbooks` (`bun run test:ci-deploy`).
+
+### Id skew (intentional — do not “fix” by renaming casually)
+
+| Surface | Key | Notes |
+|---------|-----|-------|
+| ProofPath | `install-verify` | Workspace install journey (`ci:core`) |
+| Spine tenant | `install-verify` | Points at proof `install-verify-journey` (different claim) |
+| CiRunbook.id | e.g. `ci-core` | ≠ ProofPath id `ci-core-envelope` — link via `proofId` |
+| Code-quality | `types-covered` → `lib-docs-typecheck` | Sibling typecheck islands share `type-check` but are not CQ tenants |
 
 Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail CI (`scripts/check-pr-claim.ts`). Drafts stay skipped. Rollback if false positives: extend `WARN_UNTIL_ISO`, do not delete the invariant.
+
+**Soft paste tip:** if the PR body mentions a proof id in backticks (`` `branded-ids` ``), `check-pr-claim` warns when that claim’s `freshRerun` command string is absent from the body. Soft only — does not fail CI.
 
 ## Lookup
 

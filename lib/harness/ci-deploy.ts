@@ -8,7 +8,7 @@
  * @see ./discover-ci.ts
  * @see ../../docs/harness/ci-deploy.md
  */
-import { CRITICAL_PROOF_PATHS } from './proof';
+import { CRITICAL_PROOF_PATHS, type FreshRerunKind } from './proof';
 import type { RetirementCheck } from './maintenance';
 
 export type CiRunbook = {
@@ -21,8 +21,25 @@ export type CiRunbook = {
   retirementCheck?: RetirementCheck;
   /** Cheap catalog / docs fresh-rerun (not a full prod deploy) */
   freshRerun: string;
+  /** CI runbooks always catalog-doc style (same paste as ProofPath catalog children). */
+  freshRerunKind: FreshRerunKind;
   docPath: string;
 };
+
+/** Shared catalog paste for CI/deploy children (`freshRerunKind: 'catalog'`). */
+export const CI_CATALOG_FRESH_RERUN = 'bun run docs:ci-deploy';
+
+/**
+ * ProofPath ids owned by parent claim `ci-deploy-runbooks` (catalog children).
+ * Must stay bijective with `CI_RUNBOOKS[].proofId`.
+ */
+export const CI_CHILD_PROOF_IDS = [
+  'ci-core-envelope',
+  'typescript-ci-gate',
+  'deploy-production-preflight',
+  'deploy-staging-script',
+  'bun-migrate-status',
+] as const;
 
 /**
  * SSOT CI/deploy runbooks. Keep out of SPINE_TENANTS.
@@ -42,6 +59,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/ci-core.md',
   },
   {
@@ -57,6 +75,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       proofId: 'typescript-ci-gate',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/typescript-ci.md',
   },
   {
@@ -73,6 +92,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/deploy-production.md',
   },
   {
@@ -87,6 +107,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/deploy-staging.md',
   },
   {
@@ -101,6 +122,7 @@ export const CI_RUNBOOKS: readonly CiRunbook[] = [
       command: 'bun run docs:ci-deploy',
     },
     freshRerun: 'bun run docs:ci-deploy',
+    freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/bun-migrate.md',
   },
 ] as const;
@@ -115,6 +137,84 @@ export function assertCiRunbookProofLinks(): string[] {
   const missing: string[] = [];
   for (const r of CI_RUNBOOKS) {
     if (!ids.has(r.proofId)) missing.push(`${r.id} → proofId ${r.proofId}`);
+  }
+  return missing;
+}
+
+/** Parent claim `ci-deploy-runbooks`.childIds ↔ CI_CHILD_PROOF_IDS. */
+export function assertCiDeployParentChildIds(): string[] {
+  const missing: string[] = [];
+  const parent = CRITICAL_PROOF_PATHS.find(p => p.id === 'ci-deploy-runbooks');
+  if (!parent?.childIds) {
+    missing.push('ci-deploy-runbooks missing childIds');
+    return missing;
+  }
+  const a = [...parent.childIds].sort();
+  const b = [...CI_CHILD_PROOF_IDS].sort();
+  if (a.length !== b.length || a.some((id, i) => id !== b[i])) {
+    missing.push(
+      `ci-deploy-runbooks.childIds [${a.join(', ')}] ≠ CI_CHILD_PROOF_IDS [${b.join(', ')}]`
+    );
+  }
+  return missing;
+}
+
+/** Bijection: CI_RUNBOOKS.proofId ↔ CI_CHILD_PROOF_IDS ↔ catalog ProofPaths. */
+export function assertCiChildProofBijection(): string[] {
+  const missing: string[] = [];
+  const runbookProofs = CI_RUNBOOKS.map(r => r.proofId).sort();
+  const childIds = [...CI_CHILD_PROOF_IDS].sort();
+  if (
+    runbookProofs.length !== childIds.length ||
+    runbookProofs.some((id, i) => id !== childIds[i])
+  ) {
+    missing.push(
+      `CI_RUNBOOKS.proofId [${runbookProofs.join(', ')}] ≠ CI_CHILD_PROOF_IDS [${childIds.join(', ')}]`
+    );
+  }
+  const catalogPaths = CRITICAL_PROOF_PATHS.filter(p => p.freshRerunKind === 'catalog').map(
+    p => p.id
+  );
+  const catalogSorted = [...catalogPaths].sort();
+  if (
+    catalogSorted.length !== childIds.length ||
+    catalogSorted.some((id, i) => id !== childIds[i])
+  ) {
+    missing.push(
+      `freshRerunKind=catalog [${catalogSorted.join(', ')}] ≠ CI_CHILD_PROOF_IDS [${childIds.join(', ')}]`
+    );
+  }
+  for (const r of CI_RUNBOOKS) {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
+    if (!p) continue;
+    if (p.freshRerunKind !== 'catalog') {
+      missing.push(`${r.id}: linked proof ${r.proofId} must have freshRerunKind catalog`);
+    }
+    if (r.freshRerunKind !== 'catalog') {
+      missing.push(`${r.id}: CiRunbook.freshRerunKind must be catalog`);
+    }
+    if (r.freshRerun !== CI_CATALOG_FRESH_RERUN || p.freshRerun !== CI_CATALOG_FRESH_RERUN) {
+      missing.push(`${r.id}: freshRerun must be ${CI_CATALOG_FRESH_RERUN}`);
+    }
+  }
+  return missing;
+}
+
+/**
+ * CI catalog policy (opposite of spine): intervention is the live gate and must
+ * not equal / be a substring-only paste of the catalog freshRerun.
+ */
+export function assertCiInterventionNotCatalogFreshRerun(): string[] {
+  const missing: string[] = [];
+  for (const r of CI_RUNBOOKS) {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
+    if (!p) continue;
+    if (r.intervention.trim() === p.freshRerun.trim()) {
+      missing.push(`${r.id}: intervention must not equal proof freshRerun (catalog paste)`);
+    }
+    if (r.intervention.includes('docs:ci-deploy')) {
+      missing.push(`${r.id}: intervention must be the live gate, not docs:ci-deploy`);
+    }
   }
   return missing;
 }

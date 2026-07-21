@@ -302,7 +302,16 @@ async function main(): Promise<void> {
     ]),
   ];
 
-  if (full) {
+  const brandedTypesStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n === 'lib/types/branded.ts' ||
+      n.startsWith('lib/types/branded/') ||
+      n.includes('tests/branded-types') ||
+      n.includes('tsconfig.branded')
+    );
+  });
+  if (full || brandedTypesStaged) {
     parallelJobs.push(spawnGate('brands-types', ['bun', 'run', 'check:brands:types']));
   }
   if (libStaged || toolsStaged) {
@@ -375,8 +384,10 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  if (!full) {
-    console.info('ℹ️  brand-types deferred (bun run check:brands:types or hook --full)');
+  if (!full && !brandedTypesStaged) {
+    console.info(
+      'ℹ️  brand-types deferred (bun run check:brands:types, hook --full, or stage lib/types/branded/**)'
+    );
   }
 
   console.info('✅ Harness pre-commit checks passed');
