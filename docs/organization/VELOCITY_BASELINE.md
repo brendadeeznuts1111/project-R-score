@@ -47,8 +47,11 @@ Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 |-----|----------------|
 | `path` / `node:path` in `lib/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` staged) |
 | `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
+| Bun pin / dead workspace glob | **Done** — `packageManager` `bun@1.4.0`; removed `kimiremote` workspace glob ([HOMEBASE_DISCOVERY](HOMEBASE_DISCOVERY.md)) |
 
-Next single era (not started): expand day-loop `type-check` into remaining `lib/docs/**` debt (isolated).
+Day-loop `type-check` now also includes `lib/docs/smart-symbol-index.ts`, `lib/docs/ripgrep-spawn.ts`, and `lib/utils/safe-file-operations.ts` (Wave 2 clean subset). Remaining broad `lib/docs/**` debt still isolated.
+
+Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph), `test:parallel` / `test:isolate`, `test:shard` (`SHARD=M/N`). Distinct from `test:affected` (workspace package scripts).
 
 ## Import / Bun-native ratchet (done)
 

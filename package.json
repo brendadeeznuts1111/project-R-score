@@ -1,12 +1,11 @@
 {
   "name": "factorywager-enterprise",
   "version": "5.1.2",
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.0",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
-      "projects/active/kimiremote/packages/*",
       "projects/active/factorywager/registry/packages/*",
       "projects/active/sports-terminal-os",
       "lib/*"

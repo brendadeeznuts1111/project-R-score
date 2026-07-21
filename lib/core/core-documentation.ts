@@ -503,7 +503,7 @@ export const FRAGMENT_METADATA: Record<
   'node-compatibility': {
     description: 'Node.js built-in modules compatibility layer',
     relatedFragments: ['node:fs', 'node:path', 'node:crypto', 'node:zlib'],
-    examples: ['import fs from "node:fs"', 'import path from "node:path"'],
+    examples: ['const f = Bun.file("path")', 'await Bun.write("path", data)'],
     seeAlso: ['bun-api-reference', 'types'],
   },
 
@@ -604,7 +604,7 @@ export const FRAGMENT_METADATA: Record<
     relatedFragments: ['method', 'arrow', 'async'],
     examples: [
       'function serve(options: ServerOptions): Server',
-      'const readFile = (path: string): Promise<Buffer>',
+      'const text = await Bun.file(path).text()',
     ],
     seeAlso: ['method', 'class'],
   },
@@ -2449,9 +2449,9 @@ export class DocumentationURLValidator {
         main: 'https://bun.sh/docs/cli/api/utils',
         functions: [
           {
-            name: 'readFile',
-            example: "await readFile('file.txt', 'utf-8')",
-            docs: 'https://bun.sh/docs/cli/api/utils#readFile',
+            name: 'Bun.file',
+            example: "await Bun.file('file.txt').text()",
+            docs: 'https://bun.com/docs/runtime/file-io',
           },
           {
             name: 'isTypedArray',
