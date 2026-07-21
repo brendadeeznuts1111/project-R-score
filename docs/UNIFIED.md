@@ -44,7 +44,7 @@ Anchors below match GitHub / CommonMark auto-slugs from the section headings (re
 | `globalDir` / `globalBinDir` | Absolute under `$HOME/.bun` | Do not set | Machine owns global package locations |
 | `frozenLockfile` | `true` (CI safety) | Root sets `false` for active local dev | Machine locks by default; monorepo opts out locally |
 | `minimumReleaseAge` | `259200` (3 days) | Prefer inherit; do not re-duplicate unless documenting | Supply-chain age floor |
-| `packageManager` / `engines.bun` | Not set | Keep in `package.json` | Project pin |
+| `packageManager` / `engines.bun` | Not set | Keep in `package.json` (`packageManager`: `bun@1.4.0`) | Project pin must match operated runtime |
 | `[install.scopes."@scope"]` | Not set (npm default registry only) | Keep (e.g. `@factorywager`) | Private registry tokens are project-specific |
 | `[test]` / `[run]` / `[build]` / `[console]` / `[debug]` | Not set | Keep | Runtime / test behavior is project-specific |
 

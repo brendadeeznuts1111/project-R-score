@@ -11,7 +11,7 @@ export class MissingPersonalAccessTokenError extends Error {
 
 /** Read the Proton Pass personal access token from the environment. */
 export function getPat(): string {
-  const token = process.env[PAT_ENV] ?? Bun.env[PAT_ENV];
+  const token = Bun.env[PAT_ENV];
   if (!token) {
     throw new MissingPersonalAccessTokenError();
   }
@@ -20,5 +20,5 @@ export function getPat(): string {
 
 /** Resolve the Proton Pass CLI binary path. */
 export function getCliPath(): string {
-  return process.env[CLI_PATH_ENV] ?? Bun.env[CLI_PATH_ENV] ?? 'pass-cli';
+  return Bun.env[CLI_PATH_ENV] ?? 'pass-cli';
 }

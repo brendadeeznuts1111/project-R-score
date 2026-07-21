@@ -64,7 +64,12 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'test-changed',
     claim: 'Day-loop test:changed runs import-graph-affected bun tests',
     kinds: ['journey'],
-    evidence: ['bun run test:changed', 'bun test --changed'],
+    evidence: [
+      'bun run test:changed',
+      'bun run test:changed -- HEAD~1',
+      'bun run test:changed -- main',
+      'bun scripts/test-changed.ts',
+    ],
   },
 ] as const;
 

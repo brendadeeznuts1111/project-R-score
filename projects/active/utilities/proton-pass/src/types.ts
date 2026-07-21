@@ -4,13 +4,17 @@ import type { ItemId, VaultId } from './brands.ts';
 
 export type { ItemId, VaultId };
 
-export const ProtonItemTypeSchema = z.enum(['login', 'password', 'note', 'creditCard', 'alias']);
+export const ProtonItemTypeSchema = z.enum([
+  'login',
+  'password',
+  'note',
+  'creditCard',
+  'alias',
+]);
 
 export type ProtonItemType = z.infer<typeof ProtonItemTypeSchema>;
 
-export const ProtonItemSchema = z.object({
-  id: z.string().min(1).transform(asItemId),
-  vaultId: z.string().min(1).transform(asVaultId),
+const ProtonItemBaseSchema = z.object({
   title: z.string().min(1),
   type: ProtonItemTypeSchema,
   username: z.string().optional(),
@@ -18,6 +22,18 @@ export const ProtonItemSchema = z.object({
   note: z.string().optional(),
   url: z.string().optional(),
   fields: z.record(z.string()).optional(),
+});
+
+export const ProtonItemCreateSchema = ProtonItemBaseSchema.extend({
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+});
+
+export type ProtonItemCreate = z.infer<typeof ProtonItemCreateSchema>;
+
+export const ProtonItemSchema = ProtonItemBaseSchema.extend({
+  id: z.string().min(1).transform(asItemId),
+  vaultId: z.string().min(1).transform(asVaultId),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -41,14 +57,7 @@ export type ProtonVault = z.infer<typeof ProtonVaultSchema>;
 
 export const VaultTemplateSchema = z.object({
   name: z.string().optional(),
-  items: z.array(
-    ProtonItemSchema.omit({
-      id: true,
-      vaultId: true,
-      createdAt: true,
-      updatedAt: true,
-    })
-  ),
+  items: z.array(ProtonItemCreateSchema.omit({ createdAt: true, updatedAt: true })),
   folders: z
     .array(
       z.object({

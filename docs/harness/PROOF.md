@@ -24,7 +24,7 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |
 | Wire / unknown | Bare `unknown` params stay at parse edges | `boundary` (harness eslint `no-unknown-function-param` **error**) |
 | Day-loop type-check | Advertised `type-check` covers spine agent edit surfaces | `journey` (`bun run type-check` + `tsconfig.check.json` include list) |
-| Test changed | Import-graph filter matches git dirty sources | `journey` (`bun run test:changed` / `bun test --changed`) |
+| Test changed | Import-graph filter matches git dirty (or `--changed=REF`) sources | `journey` (`bun run test:changed` · `bun test --changed=main` · `test:changed:watch`) |
 
 ## Agent checklist before “done”
 

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ItemId, VaultId } from './brands.ts';
 import { runJson, runRaw } from './client.ts';
-import { type ProtonItem, ProtonItemSchema } from './types.ts';
+import { type ProtonItem, type ProtonItemCreate, ProtonItemSchema } from './types.ts';
 
 export async function listItems(vaultId: VaultId): Promise<ProtonItem[]> {
   const raw = await runJson<unknown[]>(['item', 'list', '--vault', vaultId]);
@@ -19,7 +19,7 @@ export async function getItem(itemId: ItemId): Promise<ProtonItem> {
 
 export async function createItem(
   vaultId: VaultId,
-  template: Partial<ProtonItem>
+  template: ProtonItemCreate
 ): Promise<ProtonItem> {
   const tempFile = join(
     tmpdir(),

@@ -1,8 +1,11 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
+import { z } from 'zod';
 import type { VaultId } from './brands.ts';
 import { createItem, listItems, updateItem } from './items.ts';
-import { type VaultTemplate, VaultTemplateSchema } from './types.ts';
+import { type ProtonItemCreate, type VaultTemplate, VaultTemplateSchema } from './types.ts';
+
+const ReplacementsSchema = z.record(z.string());
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -37,6 +40,7 @@ export async function applyTemplate(
   template: VaultTemplate,
   replacements: Record<string, string>
 ): Promise<{ itemsCreated: number; itemsUpdated: number }> {
+  const validatedReplacements = ReplacementsSchema.parse(replacements);
   const existingItems = await listItems(vaultId);
   const existingByTitle = new Map(existingItems.map(item => [item.title, item]));
 
@@ -44,9 +48,16 @@ export async function applyTemplate(
   let updated = 0;
 
   for (const itemTemplate of template.items) {
-    const processed = applyPlaceholders(itemTemplate, replacements) as Record<string, unknown>;
-    const title = String(processed.title ?? '');
-    const existing = existingByTitle.get(title);
+    const processed = applyPlaceholders(
+      itemTemplate,
+      validatedReplacements
+    ) as ProtonItemCreate;
+
+    if (!processed.title || typeof processed.title !== 'string') {
+      throw new Error('Template item is missing a title after placeholder replacement');
+    }
+
+    const existing = existingByTitle.get(processed.title);
 
     if (existing) {
       await updateItem(existing.id, processed);
