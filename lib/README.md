@@ -66,5 +66,4 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`shared/`](./shared/) | Cross-cutting shared helpers | `tools/` |
 | [`theme/`](./theme/) | Colors / styled logging | `colors.ts` |
 | [`types/`](./types/) | Branded IDs and shared types | `branded.ts` · [branded/README](./types/branded/README.md) |
-| [`udp/`](./udp/) | Stub — unreferenced modules removed | see README |
 | [`utils/`](./utils/) | General utilities barrel | `index.ts` |
