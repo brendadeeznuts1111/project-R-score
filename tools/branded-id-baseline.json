@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-21T08:11:34.959Z",
+  "generatedAt": "2026-07-21T08:14:11.664Z",
   "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/ab-testing/cookie-manager.ts\ttestId\tclearAssignment(testId: string): void {",
@@ -12,7 +12,6 @@
     "lib/ai/ai-operations-manager.ts\tcommandId\tasync executeOptimization(commandId: string): Promise<OptimizationResult> {",
     "lib/ai/ai-operations-manager.ts\tcommandId\tgetCommandResult(commandId: string): OptimizationResult | undefined {",
     "lib/ai/anomaly-detector.ts\truleId\tremoveRule(ruleId: string): boolean {",
-    "lib/bun-cli-native-v3.15.ts\tsessionId\texport function getSession(sessionId: string): CLISession | undefined {",
     "lib/core/core-documentation.ts\tgistId\texport const buildGitHubGistURL = (gistId: string) => docsURL.buildGitHubGistURL(gistId);",
     "lib/core/core-documentation.ts\tgistId\tpublic buildGitHubGistURL(gistId: string): string {",
     "lib/core/logging-monitoring.ts\trequestId\tdebug(message: string, context?: Record<string, any>, requestId?: string): void {",
@@ -27,8 +26,6 @@
     "lib/core/structured-logger.ts\tcorrelationId\tsetCorrelationId(correlationId: string): void {",
     "lib/docs/ipc-stream-search.ts\tworkerId\tprivate handleWorkerMessage(workerId: string, message: IPCMessage, subprocess: any) {",
     "lib/docs/ipc-stream-search.ts\tworkerId\tspawnWorker(workerId: string): boolean {",
-    "lib/enhanced-watch-filter-v3.15.ts\tsessionId\texport async function stopWatchSession(sessionId: string): Promise<void> {",
-    "lib/enhanced-watch-filter-v3.15.ts\tsessionId\texport function getWatchSessionStats(sessionId: string): {",
     "lib/mcp/multi-threaded-wiki-generator.ts\ttaskId\tresult: { taskId: string; data: WikiGenerationResult | Error }",
     "lib/mcp/realtime-wiki-collaboration.ts\tcommentId\tdata: { commentId: string; documentId: DocumentId }",
     "lib/mcp/realtime-wiki-collaboration.ts\tdocumentId\tprivate isUserInDocument(userId: string, documentId: string): boolean {",
@@ -105,7 +102,6 @@
     "lib/security/secret-lifecycle.ts\truleId\tprivate scheduler = new Map<string, LifecycleRule & { ruleId: string; nextRotation?: string }>();",
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async cancelDeployment(deploymentId: string): Promise<void> {",
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async getDeploymentStatus(deploymentId: string): Promise<any> {",
-    "lib/utils/s3-content-encoding.ts\tversionId\t): Promise<{ etag: string; versionId?: string }> {",
-    "lib/watch-engine-v3.14.ts\tsessionId\texport function stopWatchSession(sessionId: string): void {"
+    "lib/utils/s3-content-encoding.ts\tversionId\t): Promise<{ etag: string; versionId?: string }> {"
   ]
 }

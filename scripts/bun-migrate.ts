@@ -271,7 +271,6 @@ export const VALIDATE_WHITELIST = new Set([
   'lib/docs/smart-symbol-index.ts',
   'tools/overseer-cli.ts',
   'lib/performance/optimized-spawn-test.ts',
-  'lib/bun-cli-native-v3.15.ts',
   'lib/utils/input-validation-lib.ts',
 ]);
 

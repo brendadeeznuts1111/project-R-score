@@ -253,10 +253,9 @@ export class SecureVariantManager {
 }
 
 // ============================================================================
-// WIKI PAGE EXPORTS (for wiki-generator-cli integration)
+// WIKI PAGE EXPORTS (local shapes; wiki-generator-cli retired)
 // ============================================================================
 
-/** WikiPage shape expected by lib/wiki/wiki-generator-cli.ts */
 export interface CookieWikiPage {
 	title: string;
 	url: string;
@@ -267,17 +266,12 @@ export interface CookieWikiPage {
 	validationStatus?: "valid" | "invalid";
 }
 
-/**
- * Returns wiki pages describing the CRC32 cookie system.
- * Consumed by lib/wiki/wiki-generator-cli.ts so these pages appear
- * alongside other Bun utilities in the generated wiki.
- */
+/** Returns wiki pages describing the CRC32 cookie system. */
 export function getCookieCRC32WikiPages(
 	baseUrl = "https://wiki.company.com",
 	workspace = "bun-utilities",
 ): CookieWikiPage[] {
-	const base = `${baseUrl}/${workspace}/cookie_crc32`;
-	return [
+	const base = `${baseUrl}/${workspace}/cookie_crc32`;	return [
 		{
 			title: "COOKIE CRC32: SIGNING",
 			url: `${base}/signing`,
@@ -356,27 +350,10 @@ export function getCookieCRC32WikiPages(
 
 async function cmdWiki(full = false): Promise<void> {
   if (full) {
-    // Verify bun binary is available before shelling out
-    const bunPath = Bun.which("bun");
-    if (!bunPath) {
-      print(styled("Error:", "error") + " bun binary not found in PATH");
-      process.exit(1);
+    print(styled("Note:", "accent") + " full wiki pipeline retired; printing local wiki pages.");
+    for (const page of getCookieCRC32WikiPages()) {
+      print(`- ${page.title}: ${page.url}`);
     }
-    // Delegate to the full wiki generator pipeline
-    // which now includes cookie-CRC32 pages via getCookieCRC32WikiPages()
-    const { $ } = await import("bun");
-    const outputDir = Bun.escapeHTML("./internal-wiki/");
-    print(styled("Generating full wiki (includes cookie-CRC32 pages)...", "accent"));
-    await $`${bunPath} ${import.meta.dir}/../../lib/wiki/wiki-generator-cli.ts --format all`.quiet();
-    print(styled("Done!", "success") + ` Files written to ${outputDir}`);
-
-    // Open generated HTML in browser if `open` is available
-    const openBin = Bun.which("open");
-    if (openBin) {
-      await $`${openBin} ./internal-wiki/bun-utilities-wiki.html`.quiet().nothrow();
-    }
-    // Also open the markdown source in the user's editor
-    Bun.openInEditor("./internal-wiki/bun-utilities-wiki.md", { line: 1 });
     return;
   }
 
