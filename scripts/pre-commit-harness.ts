@@ -172,9 +172,23 @@ async function main(): Promise<void> {
     }
   }
 
+  const libFiles = staged.filter(f => f.replace(/^\.\//, '').startsWith('lib/'));
+  if (libFiles.length > 0) {
+    console.info(`📚 Lib domain indexes (${libFiles.length} path(s) staged)...`);
+    const code = await runGate('lib-domains', ['bun', 'run', 'lib:domains:check'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Lib domain index contract failed — each lib/*/ needs README.md\n' +
+          '   bun run lib:domains:check'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (harnessFiles.length === 0) {
-    if (docMapFiles.length > 0 || projectsFiles.length > 0) {
-      console.info('✅ Harness pre-commit checks passed (doc/projects gates only)');
+    if (docMapFiles.length > 0 || projectsFiles.length > 0 || libFiles.length > 0) {
+      console.info('✅ Harness pre-commit checks passed (doc/projects/lib gates only)');
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }

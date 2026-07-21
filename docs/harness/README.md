@@ -79,6 +79,7 @@ bun run ci:harness:fast         # before push (quiet)
 bun run proof:install           # install only (also pre-push --quiet)
 bun run check:path-bun && bun run check:bun-env
 bun run projects:roots:check    # product-leaf README + package.json (also ∥ cheap / pre-commit on projects/)
+bun run lib:domains:check       # lib/*/ README indexes (also ∥ cheap / pre-commit on lib/)
 ```
 
 `test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).

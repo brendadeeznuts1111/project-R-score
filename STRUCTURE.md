@@ -43,7 +43,7 @@ Projects/
 │   ├── organization/        # Root cleanup history
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)
-├── lib/                     # Shared library (brands, console-depth, scan, security)
+├── lib/                     # Shared library — README.md inventory + domain/*/README.md indexes
 │   └── docs/repo-docs.ts    # CANONICAL_REPO_DOCS path SSOT
 ├── packages/                # @factorywager/* internal packages (8)
 ├── plannator/               # Local Plannotator extra skills mirror (thin)

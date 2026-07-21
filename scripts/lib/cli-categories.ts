@@ -94,6 +94,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
+  'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
   'ci:harness':
     'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
@@ -138,6 +139,7 @@ export const CLI_CORE_CMDS = new Set([
   'cli:docs',
   'registry:projects',
   'projects:roots:check',
+  'lib:domains:check',
 ]);
 
 export function matchCliCategory(key: string): { label: string; priority: number } | null {

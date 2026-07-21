@@ -35,6 +35,7 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run check:path-bun', purpose: 'no path/node:path in lib/' },
   { cmd: 'bun run check:bun-env', purpose: 'no process.env in lib|scripts' },
   { cmd: 'bun run projects:roots:check', purpose: 'product-leaf README + package.json' },
+  { cmd: 'bun run lib:domains:check', purpose: 'lib/*/ README domain indexes' },
 ];
 
 console.info('FactoryWager harness · docs/harness/README.md');
