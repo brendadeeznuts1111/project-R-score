@@ -33,6 +33,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks`
 - Spine tenant E2E heal (sandboxed break → signal → intervene → recover) → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - Code quality tenants (types · coverage · orphans · complexity) → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
+- Bun harness control plane (`noOrphans`, freshRerun timeout, `--smol`, stdin vs `bun run -`) → [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md#harness-control-plane) · workspace `bunfig.toml` `[run]`
 - CI / deploy runbooks → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md) · claim `ci-deploy-runbooks`
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`

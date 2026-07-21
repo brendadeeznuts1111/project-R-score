@@ -39,6 +39,8 @@ git diff --cached --name-only --diff-filter=ACM -- 'lib/harness/**/*.ts' \
 
 With `--stdin`: empty or out-of-scope paths → skip (exit 0). Without `--stdin`: TTY or empty non-TTY → full `lib/harness` glob (freshRerun / CI).
 
+**Pre-commit:** when staged paths include `lib/harness/**/*.ts`, [`scripts/pre-commit-harness.ts`](../../../scripts/pre-commit-harness.ts) runs `bun run check:harness-complexity:staged` in the parallel gate lane. Do not wrap this in npm `pre*`/`post*` lifecycle hooks.
+
 ## Bun runtime knobs
 
 Put Bun flags **immediately after** `bun` (before `run`); trailing flags go to the script ([runtime note](https://bun.com/docs/runtime)):

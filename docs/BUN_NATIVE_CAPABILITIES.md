@@ -26,12 +26,33 @@
 
 Claim / evidence / owner: **[`docs/harness/cron.md`](./harness/cron.md)**. OS-persistent is primary; in-process is the complement. Spine daemon: `bun tools/bun-doc-refs.ts schedule` / `bun spine/scheduler.ts`.
 
+## Harness control plane
+
+Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See [UNIFIED.md](./UNIFIED.md) matrix · [runtime CLI](https://bun.com/docs/runtime#cli-usage).
+
+| Control | Where | Role |
+|---------|--------|------|
+| `[run] noOrphans = true` | root `bunfig.toml` | Kill descendants when Bun’s parent dies ([bunfig](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind)); husky EXIT trap is belt-and-suspenders |
+| `HARNESS_FRESH_RERUN_TIMEOUT_MS` | env (default `120000`) | Wall-clock kill in `runFreshRerunCommand` ([`lib/harness/maintenance.ts`](../lib/harness/maintenance.ts)) |
+| `--smol` | `bun --smol run …` / `test:code-quality:smol` | Eager GC / slower heap growth in tight CI |
+| `--console-depth` / `[console] depth` | CLI · bunfig · [`lib/console-depth.ts`](../lib/console-depth.ts) | Nested object inspect depth |
+| `Bun.stdin` vs `bun run -` | complexity staged probe | Path lists use `Bun.stdin`; `bun run -` executes *code* from stdin |
+
+### Three “lifecycle” concepts (do not conflate)
+
+| Concept | Docs | Harness rule |
+|---------|------|--------------|
+| Process orphans | `run.noOrphans` | Enabled in workspace bunfig |
+| Script `pre*` / `post*` | [runtime package.json scripts](https://bun.com/docs/runtime#run-a-package-json-script) | OK for `pretest`/`prelint`/`prebuild`; **never** on `check:harness-*` (steals stdin, inflates freshRerun) |
+| Install lifecycle | [pm/lifecycle](https://bun.com/docs/pm/lifecycle) | `trustedDependencies` / root `postinstall` — separate trust boundary |
+
 ## Platform integration
 
 | Concern | Owner |
 |---------|--------|
 | Install / pin | [UNIFIED.md](./UNIFIED.md) · `packageManager` bun@1.4.0 |
 | Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/README.md](./harness/README.md) |
+| Harness spawn / orphans | this section · `bunfig.toml` `[run]` · `runFreshRerunCommand` |
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 

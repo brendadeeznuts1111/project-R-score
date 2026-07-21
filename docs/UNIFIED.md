@@ -14,7 +14,7 @@ Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 | `[install.cache].dir` | **absolute** | never `~` | avoids `./~` ([bun#6237](https://github.com/oven-sh/bun/issues/6237)) |
 | `frozenLockfile` | true | root `false` for local | CI locked by default |
 | `minimumReleaseAge` | 259200 | prefer inherit | supply-chain floor |
-| scopes / `[test]` / `[console]` | — | project | keep local |
+| scopes / `[test]` / `[console]` / `[run].noOrphans` | — | project | keep local; orphans → [bunfig run.noOrphans](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind) |
 
 Legitimate hoisted/local-cache overrides exist under some `projects/active/**` — review before stripping (`bun run audit:bunfig`).
 

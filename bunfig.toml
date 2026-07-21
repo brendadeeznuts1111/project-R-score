@@ -7,6 +7,11 @@
 # Docs: https://bun.com/docs/runtime/console (precedence: --console-depth flag > this > default 2)
 depth = 6
 
+# Process-tree hygiene for husky / CI / spawn chains (workspace-owned, like [test]/[console]).
+# @see https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind
+[run]
+noOrphans = true
+
 [debug]
 # Pin editor in bunfig (matches Bun.openInEditor SSOT — bunfig > $VISUAL > $EDITOR).
 editor = "cursor"

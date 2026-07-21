@@ -312,6 +312,22 @@ async function main(): Promise<void> {
     parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
   }
 
+  // Complexity floor on staged lib/harness sources (Bun.stdin path list — not npm pre*).
+  const harnessComplexityStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n.startsWith('lib/harness/') &&
+      n.endsWith('.ts') &&
+      !n.endsWith('.test.ts') &&
+      !n.endsWith('.d.ts')
+    );
+  });
+  if (harnessComplexityStaged) {
+    parallelJobs.push(
+      spawnGate('harness-complexity-staged', ['bun', 'run', 'check:harness-complexity:staged'])
+    );
+  }
+
   const parallelResults = await Promise.all(parallelJobs);
   for (const r of parallelResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
 
@@ -320,6 +336,8 @@ async function main(): Promise<void> {
   const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
+  const complexityStaged =
+    parallelResults.find(r => r.name === 'harness-complexity-staged')?.code ?? 0;
 
   if (brandStaged !== 0) {
     console.error(
@@ -345,6 +363,14 @@ async function main(): Promise<void> {
   }
   if (bunEnv !== 0) {
     console.error('❌ process.env in lib/|scripts/ — use Bun.env (bun run check:bun-env)');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (complexityStaged !== 0) {
+    console.error(
+      '❌ harness complexity floor exceeded on staged files — bun run check:harness-complexity:staged\n' +
+        '   prefer refactor; raise only via: bun run check:harness-complexity -- --update-baseline --yes'
+    );
     await writeTimings(timings, full);
     process.exit(1);
   }

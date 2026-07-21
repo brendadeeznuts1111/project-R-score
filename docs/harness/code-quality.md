@@ -27,4 +27,6 @@ Included from `bun run test:tenant-runbooks`.
 
 Claims: `harness-coverage-ratchet` · `harness-orphan-modules` · `harness-complexity-floor` (types reuse `lib-docs-typecheck` / day-loop `type-check`).
 
-Tunings: `bun run check:harness-complexity:staged` (`Bun.stdin` path list) · `bun run test:code-quality:smol` · `bun --console-depth 4 run check:harness-complexity` — see [runtime](https://bun.com/docs/runtime) (`bun run -` is execute-code-from-stdin, not a file list).
+Tunings: `bun run check:harness-complexity:staged` (`Bun.stdin` path list; also wired in pre-commit when `lib/harness/**/*.ts` is staged) · `bun run test:code-quality:smol` · `bun --console-depth 4 run check:harness-complexity` — see [runtime](https://bun.com/docs/runtime) (`bun run -` is execute-code-from-stdin, not a file list).
+
+**Invariant:** do not add npm `precheck:harness-*` / `post*` hooks — they steal stdin from staged pipes and silently enlarge every `freshRerun`. Use explicit calls in [`scripts/pre-commit-harness.ts`](../../scripts/pre-commit-harness.ts) instead. Process orphans → workspace `[run] noOrphans` ([BUN_NATIVE control plane](../BUN_NATIVE_CAPABILITIES.md#harness-control-plane)).

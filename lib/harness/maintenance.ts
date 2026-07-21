@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind — noOrphans
 /**
  * Continuous-maintenance runbooks for spine tenants.
  *
@@ -10,6 +12,17 @@
  * @see ../spine/tenants.ts
  */
 import { CRITICAL_PROOF_PATHS } from './proof';
+
+/** Default freshRerun wall-clock limit (ms). Override: HARNESS_FRESH_RERUN_TIMEOUT_MS. */
+export const DEFAULT_FRESH_RERUN_TIMEOUT_MS = 120_000;
+
+export function freshRerunTimeoutMs(): number {
+  const raw = Bun.env.HARNESS_FRESH_RERUN_TIMEOUT_MS;
+  if (raw === undefined || raw === '') return DEFAULT_FRESH_RERUN_TIMEOUT_MS;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 1) return DEFAULT_FRESH_RERUN_TIMEOUT_MS;
+  return Math.floor(n);
+}
 
 /**
  * Programmatic retirement condition. Declared on active runbooks (schema only);
@@ -326,12 +339,33 @@ export function argvFromCommand(cmd: string): string[] {
 /** Run a catalog command; inherit stdio so failures are diagnosable. */
 export async function runFreshRerunCommand(
   cmd: string,
-  cwd: string
-): Promise<{ code: number; cmd: string }> {
+  cwd: string,
+  opts?: { timeoutMs?: number }
+): Promise<{ code: number; cmd: string; timedOut?: boolean }> {
   const argv = argvFromCommand(cmd);
   if (argv.length === 0) return { code: 1, cmd };
+  const timeoutMs = opts?.timeoutMs ?? freshRerunTimeoutMs();
   const proc = Bun.spawn(argv, { cwd, stdout: 'inherit', stderr: 'inherit' });
-  return { code: await proc.exited, cmd };
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timedOut = await new Promise<boolean>(resolve => {
+    timer = setTimeout(() => {
+      try {
+        proc.kill();
+      } catch {
+        /* already exited */
+      }
+      resolve(true);
+    }, timeoutMs);
+    void proc.exited.then(() => {
+      if (timer !== undefined) clearTimeout(timer);
+      resolve(false);
+    });
+  });
+  const code = timedOut ? 124 : ((await proc.exited) ?? 1);
+  if (timedOut) {
+    console.error(`❌ freshRerun timed out after ${timeoutMs}ms · ${cmd}`);
+  }
+  return { code, cmd, timedOut: timedOut || undefined };
 }
 
 /** Fail closed: each TenantRunbook.freshRerun exits 0. */

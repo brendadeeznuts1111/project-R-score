@@ -2,16 +2,33 @@
 set -e
 
 # Hygiene ‖ harness in parallel; ast-grep after (may depend on clean tree).
+# Kill background siblings on INT/TERM/EXIT so a cancelled hook does not leave orphans.
+# Belt-and-suspenders with workspace [run] noOrphans = true (bunfig.toml).
 echo "== pre-commit: hygiene ‖ harness =="
 bun scripts/repo-hygiene.ts --staged &
 HID=$!
 bun scripts/pre-commit-harness.ts &
 PID=$!
 
+cleanup() {
+  status=$?
+  # Best-effort: stop still-running siblings (ignore failures).
+  kill "$HID" 2>/dev/null || true
+  kill "$PID" 2>/dev/null || true
+  wait "$HID" 2>/dev/null || true
+  wait "$PID" 2>/dev/null || true
+  return "$status"
+}
+trap cleanup INT TERM EXIT
+
 h_code=0
 p_code=0
 wait "$HID" || h_code=$?
 wait "$PID" || p_code=$?
+
+# Successful waits: clear trap so EXIT does not re-kill finished jobs.
+trap - INT TERM EXIT
+
 if [ "$h_code" -ne 0 ]; then
   echo "❌ repo hygiene failed"
   exit "$h_code"
