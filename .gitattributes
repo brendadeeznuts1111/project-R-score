@@ -1,0 +1,46 @@
+# FactoryWager — normalize + mark regenerable / binary for GitHub linguist + clean diffs
+# @see https://git-scm.com/docs/gitattributes
+
+* text=auto eol=lf
+
+# Hooks and shell must stay LF (macOS/Linux husky)
+.husky/** text eol=lf
+*.sh text eol=lf
+
+# TypeScript / JSON / TOML / Markdown
+*.{ts,tsx,js,mjs,cjs,json,toml,md,yml,yaml} text eol=lf
+
+# Regenerable / generated (do not treat as hand-authored)
+artifacts/bun-native-discover*.json linguist-generated=true
+*.tsbuildinfo linguist-generated=true
+package-lock.json linguist-generated=true
+bun.lock linguist-generated=true
+bun.lockb linguist-generated=true
+
+# Binary / opaque
+*.heapprofile binary
+*.heapsnapshot binary
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.rdb binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.tar binary
+*.tgz binary
+*.gz binary
+*.dmg binary
+*.node binary
+*.so binary
+*.dylib binary
+*.wasm binary

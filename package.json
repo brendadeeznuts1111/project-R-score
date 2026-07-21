@@ -1624,7 +1624,7 @@
     "build:defines:dev": "bun scripts/build-with-defines.ts --debug",
     "build:defines:compile": "bun scripts/build-with-defines.ts --compile",
     "postbuild": "bun run demo:contract:validate && bun run ci:r2:version:check",
-    "clean": "rm -rf dist/ .cache/ coverage/",
+    "clean": "rm -rf dist/ .cache/ coverage/ artifacts/bun-native-discover*.json reports/harness-gate-timing.json reports/ci-harness-timing.json reports/ci-core-timing.json reports/bun-usage-inventory.json",
     "setup": "bun run install:all && bun run build",
     "security:audit": "bun audit",
     "security:guard:deps": "bun run scripts/security-dependency-guard.ts",

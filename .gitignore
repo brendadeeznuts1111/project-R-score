@@ -329,6 +329,24 @@ herdr-worktrees/
 scratch/session-artifacts/
 photo_*.jpg
 artifacts/*.docx
+artifacts/*.zip
+
+# Harness / pre-commit regenerable (local only — never stage)
+# Docs claim these are gitignored: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md
+artifacts/bun-native-discover*.json
+artifacts/reports/
+# reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
+
+# Ephemeral agent audit helpers under scratch/ (keep README + bun-v1.3.9-examples tracked)
+/scratch/find-*.ts
+/scratch/check-*.ts
+/scratch/classify-*.ts
+/scratch/purge-*.ts
+/scratch/verify-*.ts
+/scratch/batch-*.ts
+/scratch/fix-*.ts
+/scratch/orphan-*
+/scratch/toc-ops/
 
 # Standalone nested git repos (own remotes) — not monorepo spine
 # (plannotator-upstream/ already listed under "Vendored upstream clones")

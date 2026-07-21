@@ -52,6 +52,8 @@ const STRAY_PATTERNS = [
   // Root telemetry/db artifacts
   /^.*\.(db|rdb)$/,
   /^telemetry.*$/,
+  // Regenerable discover dump (also gitignored — catch force-add)
+  /^bun-native-discover(\.latest)?\.json$/,
 ];
 
 // Files that must never be staged (contain secrets)
@@ -64,8 +66,19 @@ const SECRETS_FILES = [
   '.env.local',
 ];
 
-// Directories to scan for stray output files
-const SCAN_DIRS = ['.', 'utils'];
+/** Path prefixes / exact paths that must never be staged (regenerable harness noise). */
+const FORBIDDEN_STAGED = [
+  'artifacts/bun-native-discover',
+  'reports/harness-gate-timing.json',
+  'reports/ci-harness-timing.json',
+  'reports/ci-core-timing.json',
+  'reports/bun-usage-inventory.json',
+  '.cache/',
+  'lib/profile.md',
+];
+
+// Directories to scan for stray output files (skip if absent — root utils/ was retired)
+const SCAN_DIRS = ['.'];
 
 // Top-level dirs allowed at monorepo root (see STRUCTURE.md)
 const ALLOWED_ROOT_DIRS = new Set([
@@ -90,6 +103,7 @@ const ALLOWED_ROOT_DIRS = new Set([
   'scripts',
   'server',
   'services',
+  'spine',
   'src',
   'tests',
   'tools',
@@ -152,6 +166,7 @@ async function findStrayFiles(): Promise<Violation[]> {
 
   for (const dir of SCAN_DIRS) {
     const absDir = joinPath(ROOT, dir);
+    if (dir !== '.' && !isDirectorySync(absDir)) continue;
     const glob = new Glob('*.{json,jsonl,log,md}');
 
     for await (const file of glob.scan({ cwd: absDir, absolute: false })) {
@@ -200,6 +215,14 @@ async function checkStagedStray(): Promise<Violation[]> {
     const basename = file.split('/').pop()!;
     if (isTildeCachePath(file)) {
       violations.push({ file, rule: 'tilde-cache-staged' });
+      continue;
+    }
+    if (
+      FORBIDDEN_STAGED.some(
+        p => file === p || file.startsWith(p) || (p.endsWith('/') && file.startsWith(p))
+      )
+    ) {
+      violations.push({ file, rule: 'harness-regenerable-staged' });
       continue;
     }
     for (const pattern of STRAY_PATTERNS) {

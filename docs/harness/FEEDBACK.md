@@ -55,6 +55,10 @@ Scaffold: `bun run harness:lesson --title="…"`.
   *Ratchet* → slim live `docs/` · `doc-map-check`
 - **Heap profile / fat READMEs** (`doc-map`)  
   *Ratchet* → gitignore `lib/profile.md` · JIT READMEs
+- **Discover / gate timing dumps in `git status`** (`script-gate`)  
+  *Ratchet* → gitignore `artifacts/bun-native-discover*.json` · `reports/` · hygiene `harness-regenerable-staged` · `bun run clean`
+- **Ephemeral scratch audit scripts polluting status** (`script-gate`)  
+  *Ratchet* → gitignore `/scratch/{find,check,classify,purge,verify,batch,fix}-*` · `/scratch/orphan-*` · `/scratch/toc-ops/`
 - **Pre-commit ESLint cold** (`script-gate`)  
   *Ratchet* → `.cache/eslint-bun-native`
 - **GHA billing lock** (`ops`)  
