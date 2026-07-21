@@ -62,13 +62,13 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`har-analyzer/`](./har-analyzer/) | HAR capture analysis | `bun-serve-types.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
 | [`http/`](./http/) | Health endpoints and HTTP helpers | `health-endpoint.ts` |
-| [`mcp/`](./mcp/) | MCP client / bridge helpers | `bun-mcp-client.ts` |
+| [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
-| [`performance/`](./performance/) | Benchmarks and recovery | `benchmark-recovery.ts` |
-| [`pooling/`](./pooling/) | Pool / DataView metrics | `dataview-metrics.ts` |
+| [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |
+| [`pooling/`](./pooling/) | Stub — unreferenced modules removed | see README |
 | [`profile/`](./profile/) | Profile session upload | `index.ts` |
 | [`r2/`](./r2/) | R2 storage and analytics | `r2-storage-enhanced.ts` |
-| [`registry/`](./registry/) | Registry platform helpers | `server.ts` · `cli.ts` |
+| [`registry/`](./registry/) | Stub — use root `registry:projects` / `registry:doctor` | see README |
 | [`rss/`](./rss/) | RSS managers | `rss-manager.ts` |
 | [`security/`](./security/) | Secrets, R2 creds, security utils | `index.ts` · `r2-credentials.ts` |
 | [`shared/`](./shared/) | Cross-cutting shared helpers | `tools/` |

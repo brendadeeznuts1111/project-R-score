@@ -1,9 +1,11 @@
 # performance
 
-Benchmarks and recovery.
+Performance helpers.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md).
 
 | Entry |
 |-------|
-| [`benchmark-recovery.ts`](./benchmark-recovery.ts) |
+| [`cache-management.ts`](./cache-management.ts) |
+| [`cache-manager.ts`](./cache-manager.ts) |
+| [`memory-pool.ts`](./memory-pool.ts) |

@@ -1,11 +1,5 @@
 # registry
 
-Registry platform helpers.
+Stub — prior registry CLI/docs-sync modules removed (no non-script callers). Prefer `registry:projects` / `registry:doctor` at repo root.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`server.ts`](./server.ts) |
-| [`cli.ts`](./cli.ts) |
-| [`auth.ts`](./auth.ts) |
+Inventory: [`../README.md`](../README.md).

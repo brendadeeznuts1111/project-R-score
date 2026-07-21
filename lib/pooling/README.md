@@ -1,10 +1,5 @@
 # pooling
 
-Pool / DataView metrics.
+Stub — DataView pool modules removed (no in-tree callers). Reintroduce only with a real product caller.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`dataview-metrics.ts`](./dataview-metrics.ts) |
-
+Inventory: [`../README.md`](../README.md).

@@ -2,9 +2,8 @@
 
 Wiki integration.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md).
 
 | Entry |
 |-------|
 | [`bun-wiki-integration.ts`](./bun-wiki-integration.ts) |
-| [`wiki-generator.ts`](./wiki-generator.ts) |
