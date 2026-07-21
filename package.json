@@ -1538,6 +1538,7 @@
     "build:affected": "bun scripts/affected-workspaces.ts build",
     "test:affected": "bun scripts/affected-workspaces.ts test",
     "test:changed": "bun scripts/bun-test-changed.ts",
+    "test:changed:main": "bun scripts/bun-test-changed.ts --main-head",
     "test:changed:watch": "bun scripts/bun-test-changed.ts --watch",
     "test:isolate": "bun test --isolate --pass-with-no-tests",
     "test:parallel": "bun test --parallel --pass-with-no-tests",

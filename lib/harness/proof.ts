@@ -13,10 +13,7 @@ export type ProofPath = {
   evidence: string[];
 };
 
-/**
- * Bun-native spine smoke tests for `bun run ci:harness`.
- * One SSOT — do not hardcode this list in CI scripts.
- */
+/** Manual Bun-native smoke files (not a second CI SSOT — prefer test:changed:main). */
 export const CI_SPINE_SMOKE_TESTS = [
   'tests/bun-urlpattern.test.ts',
   'tests/bun-glob-scan.test.ts',
@@ -39,15 +36,21 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     evidence: [
       'bun run proof:install',
       'bun run install:verify',
-      '.github/workflows/harness-gates.yml',
       '.github/workflows/repo-hygiene.yml',
     ],
   },
   {
-    id: 'spine-smokes',
-    claim: 'Bun-native spine capabilities hold (URLPattern, Glob.scan, ANSI width, console-depth)',
+    id: 'test-changed',
+    claim: 'Import-graph filter runs affected bun tests (dirty or since main)',
     kinds: ['unit', 'journey'],
-    evidence: ['bun run ci:harness', ...CI_SPINE_SMOKE_TESTS],
+    evidence: [
+      'bun run test:changed',
+      'bun run test:changed:main',
+      'bun run test:changed -- --main-head',
+      'bun run test:changed -- HEAD~1',
+      'bun scripts/bun-test-changed.ts',
+      '.github/workflows/harness-gates.yml',
+    ],
   },
   {
     id: 'search-governance',
@@ -78,17 +81,6 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Advertised type-check covers spine agent edit surfaces',
     kinds: ['journey'],
     evidence: ['bun run type-check', 'tsconfig.check.json'],
-  },
-  {
-    id: 'test-changed',
-    claim: 'Day-loop test:changed runs import-graph-affected bun tests',
-    kinds: ['journey'],
-    evidence: [
-      'bun run test:changed',
-      'bun run test:changed -- HEAD~1',
-      'bun run test:changed -- main',
-      'bun scripts/bun-test-changed.ts',
-    ],
   },
 ] as const;
 

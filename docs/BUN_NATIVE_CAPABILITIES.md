@@ -304,7 +304,7 @@ Upstream SSOT (full TOC → Internal / Runtime): [bun.com/blog/bun-v1.3.13](http
 |--------------|-----------------|
 | [`bun test --isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) | Wired: `test:isolate`, `test:parallel` · day-loop in [harness README](./harness/README.md) |
 | [`--shard=M/N`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) | Wired: `SHARD=M/N bun run test:shard` · **no** GHA matrix yet |
-| [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) | Wired: [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) → `test:changed` / `test:changed:watch` / `-- <ref>` |
+| [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) | Wired: [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) → `test:changed` / `test:changed:main` (`--main-head`) / `test:changed:watch` / `-- <ref>` |
 | `bun install` stream / isolated linker / source maps / JSC / zlib-ng | Machine/install plane — [UNIFIED.md](./UNIFIED.md); no extra homebase scripts |
 | SHA3 + X25519 | Wired: section above · `tests/bun-crypto-webcrypto.test.ts` · DX `crypto.sha3` / `crypto.x25519` |
 | `ws+unix://` / `wss+unix://` | Available on runtime · **not** spine-tested |

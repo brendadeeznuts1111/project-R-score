@@ -102,3 +102,11 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Earliest owner:** proof + AUTHORITY
 - **Ratchet:** `scripts/check-pr-claim.ts` · `.github/workflows/pr-claim.yml` · `docs/harness/AUTHORITY.md`
 - **Keep / revise / drop:** keep (flip claim check to error after warn window)
+
+### Triple install + hardcoded spine + noisy gates
+
+- **Finding:** `ci:harness` re-ran install and a fixed spine list; brands/install printed pages; `ci-smoke` was a third install path.
+- **Repair:** Install owned only by hygiene/pre-push; tests via `test:changed` / `--main-head`; quiet success lines; delete `ci-smoke.yml`.
+- **Earliest owner:** script-gate
+- **Ratchet:** `scripts/ci-harness.ts` · `scripts/bun-test-changed.ts` · brands `--quiet` · install `--quiet`
+- **Keep / revise / drop:** keep

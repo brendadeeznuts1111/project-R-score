@@ -17,6 +17,7 @@
  *   bun tools/branded-id-check.ts [paths...]   # report by directory (exit 0)
  *   bun tools/branded-id-check.ts --smart      # role + structure clusters
  *   bun tools/branded-id-check.ts --smart --json
+ *   bun tools/branded-id-check.ts --smart --quiet  # one-line success / full on fail
  *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
  *                                              #   (with --smart: ignores opaque-pk)
  *   bun tools/branded-id-check.ts --staged     # ADDED lines only (agents)
@@ -578,10 +579,17 @@ async function writeBaselineFile(files: string[]): Promise<void> {
   );
 }
 
-async function printSmartReport(hits: Hit[], asJson: boolean): Promise<void> {
+async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Promise<void> {
   const maps = await fieldMaps();
   const actionable = hits.filter(h => !h.suppressed);
   const suppressed = hits.filter(h => h.suppressed);
+
+  if (quiet && !asJson && actionable.length === 0) {
+    console.info(
+      `✅ brands-smart (${hits.length} hits, 0 actionable, ${suppressed.length} suppressed)`
+    );
+    return;
+  }
 
   if (asJson) {
     process.stdout.write(
@@ -697,6 +705,7 @@ async function main(): Promise<void> {
   const strict = args.includes('--strict');
   const smart = args.includes('--smart');
   const asJson = args.includes('--json');
+  const quiet = args.includes('--quiet');
   const writeBaseline = args.includes('--write-baseline');
 
   // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
@@ -730,7 +739,7 @@ async function main(): Promise<void> {
   if (smart) {
     const baseline = await loadBaselineKeys();
     const hits = applyBaseline(await scanAll(files), baseline);
-    await printSmartReport(hits, asJson);
+    await printSmartReport(hits, asJson, quiet);
     const actionable = hits.filter(h => !h.suppressed).length;
     if (strict && actionable > 0) process.exit(1);
     return;

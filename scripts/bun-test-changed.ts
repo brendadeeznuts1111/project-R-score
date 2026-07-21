@@ -9,25 +9,39 @@
  *
  *   bun run test:changed                 # uncommitted (staged + unstaged + untracked)
  *   bun run test:changed -- HEAD~1       # since commit / tag
- *   bun run test:changed -- main         # since branch
+ *   bun run test:changed -- main         # since branch tip
+ *   bun run test:changed -- --main-head  # origin/main → main → HEAD~1
+ *   bun run test:changed:main            # alias for --main-head
  *   bun run test:changed:watch           # --changed --watch
  *   bun run test:changed -- main --parallel
  *
- * First non-flag arg → `--changed=<ref>`. Remaining args forward to `bun test`.
+ * First non-flag positional → `--changed=<ref>` (unless `--main-head`).
+ * Remaining args forward to `bun test`.
  * Do not pass a bare ref after raw `bun test --changed` — Bun treats it as a path filter.
  *
  * Graph: import scan only (no node_modules, no link/emit). Empty dirty set → exit 0
- * without `--watch`; with `--watch` the process stays alive. Each watch restart
- * re-queries git (filter tracks the working tree). Any local source edit can
- * trigger a restart — even files not imported by the currently selected tests.
+ * without `--watch`; with `--watch` the process stays alive.
  */
 export {};
 
+async function resolveMainHead(): Promise<string> {
+  for (const ref of ['origin/main', 'main', 'origin/master', 'master'] as const) {
+    const proc = Bun.spawn(['git', 'rev-parse', '--verify', '--quiet', ref], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    if ((await proc.exited) === 0) return ref;
+  }
+  return 'HEAD~1';
+}
+
 const raw = Bun.argv.slice(2);
-const flags = raw.filter(a => a.startsWith('-'));
-const positionals = raw.filter(a => !a.startsWith('-'));
-const ref = positionals[0];
-const restPositionals = positionals.slice(1);
+const wantMainHead = raw.includes('--main-head');
+const stripped = raw.filter(a => a !== '--main-head');
+const flags = stripped.filter(a => a.startsWith('-'));
+const positionals = stripped.filter(a => !a.startsWith('-'));
+const restPositionals = wantMainHead ? positionals : positionals.slice(1);
+const ref = wantMainHead ? await resolveMainHead() : positionals[0];
 
 const bunArgs = ['test', '--pass-with-no-tests'];
 bunArgs.push(ref ? `--changed=${ref}` : '--changed');

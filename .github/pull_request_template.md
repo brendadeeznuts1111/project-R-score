@@ -27,11 +27,9 @@ Install journey (when install/layout touched): `bun run proof:install`
 
 ```bash
 # typical local set — trim to what this PR touches
-bun run proof:install
+bun run ci:harness:fast
+bun run test:changed:main
 bun run type-check
-bun run test:changed
-bun run check:path-bun
-bun run check:bun-env
 ```
 
 ## Notes for reviewers

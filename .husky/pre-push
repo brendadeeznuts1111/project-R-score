@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 set -e
 
-# Fast journey proof before the remote learns about a broken install layout.
-# Full lint/brands run in CI (harness-gates.yml) and on pre-commit for staged files.
-echo "== pre-push: proof:install =="
-bun run proof:install
-echo "✅ pre-push checks passed"
+# Install journey only — full gates live in CI (harness-gates) + pre-commit.
+bun scripts/verify-install-cache.ts --quiet

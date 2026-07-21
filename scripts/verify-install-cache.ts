@@ -23,6 +23,7 @@ import {
 
 const ROOT = `${import.meta.dir}/..`;
 const strict = Bun.argv.includes('--strict');
+const quiet = Bun.argv.includes('--quiet');
 
 type Check = { ok: boolean; label: string; detail?: string };
 
@@ -194,10 +195,15 @@ async function main() {
 
   let failed = 0;
   for (const check of checks) {
+    if (!check.ok) failed++;
+    if (quiet && check.ok) continue;
     const icon = check.ok ? '✅' : strict ? '❌' : '⚠️';
     const suffix = check.detail ? ` — ${check.detail}` : '';
     console.info(`${icon} ${check.label}${suffix}`);
-    if (!check.ok) failed++;
+  }
+
+  if (quiet && failed === 0) {
+    console.info('✅ install:verify');
   }
 
   if (failed > 0 && strict) {

@@ -5,8 +5,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 /**
- * Tool-legibility surface for the day loop + ratchets.
- * Quiet success; lists discover → invoke → verify commands.
+ * Tool-legibility surface for the day loop + ratchets (compact).
  *
  *   bun run harness:status
  */
@@ -14,68 +13,53 @@ import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 
 const ROOT = `${import.meta.dir}/..`;
 const TIMING = `${ROOT}/reports/harness-gate-timing.json`;
+const CI_TIMING = `${ROOT}/reports/ci-harness-timing.json`;
 
 type Timing = {
   generatedAt?: string;
   totalMs?: number;
+  mode?: string;
   gates?: Array<{ name: string; ms: number; ok: boolean }>;
 };
 
 const ratchets: Array<{ cmd: string; purpose: string }> = [
-  { cmd: 'bun run type-check', purpose: 'Day-loop tsc (tsconfig.check.json spine)' },
-  { cmd: 'bun run build:affected', purpose: 'Git-true workspace build' },
-  { cmd: 'bun run test:affected', purpose: 'Git-true workspace package test scripts' },
-  { cmd: 'bun run test:changed', purpose: 'Import-graph vs dirty (or -- HEAD~1|main)' },
-  {
-    cmd: 'bun run test:changed:watch',
-    purpose: 'Stay alive; re-query git + re-filter each restart',
-  },
-  { cmd: 'bun run test:parallel', purpose: 'Full suite workers (bun test --parallel)' },
-  { cmd: 'bun run proof:install', purpose: 'Journey: factory install layout healthy' },
-  { cmd: 'bun run ci:harness:fast', purpose: 'Local CI parity (skip eslint + spine)' },
-  { cmd: 'bun run ci:harness', purpose: 'Full CI envelope (matches harness-gates.yml)' },
-  { cmd: 'bun run check:pr-claim', purpose: 'PR claim→evidence (body-file / event)' },
-  { cmd: 'bun run check:path-bun', purpose: 'No path/node:path under lib/' },
-  { cmd: 'bun run check:bun-env', purpose: 'No process.env under lib/ + scripts/' },
-  { cmd: 'bun run check:brands', purpose: 'Actionable unbranded IDs (smart)' },
-  { cmd: 'bun tools/doc-map-check.ts', purpose: 'CANONICAL_* + SSOT link integrity' },
+  { cmd: 'bun run type-check', purpose: 'tsc spine (tsconfig.check.json)' },
+  { cmd: 'bun run test:changed', purpose: '--changed dirty tree' },
+  { cmd: 'bun run test:changed:main', purpose: '--changed=origin/main|--main-head' },
+  { cmd: 'bun run test:changed:watch', purpose: '--changed --watch' },
+  { cmd: 'bun run ci:harness:fast', purpose: 'local parity (quiet)' },
+  { cmd: 'bun run ci:harness', purpose: 'full CI envelope (quiet)' },
+  { cmd: 'bun run proof:install', purpose: 'install journey (pre-push / hygiene)' },
+  { cmd: 'bun run check:path-bun', purpose: 'no path/node:path in lib/' },
+  { cmd: 'bun run check:bun-env', purpose: 'no process.env in lib|scripts' },
 ];
 
-console.info('FactoryWager harness status');
-console.info('JIT index: docs/harness/README.md');
-console.info('Review: docs/harness/REVIEW.md');
+console.info('FactoryWager harness · docs/harness/README.md');
 console.info('');
-
-console.info('Day loop / ratchets');
 for (const r of ratchets) {
-  console.info(`  ${r.cmd.padEnd(36)}  ${r.purpose}`);
+  console.info(`  ${r.cmd.padEnd(32)}  ${r.purpose}`);
 }
 
 console.info('');
-console.info('Proof paths (claim → evidence)');
+console.info(`Proof paths (${CRITICAL_PROOF_PATHS.length})`);
 for (const p of CRITICAL_PROOF_PATHS) {
-  console.info(`  ${p.id.padEnd(20)}  ${p.claim}`);
-  console.info(`  ${''.padEnd(20)}  evidence: ${p.evidence.join(' · ')}`);
+  console.info(`  ${p.id.padEnd(22)}  ${p.kinds.join('+')}  ${p.claim}`);
 }
 
-const timingFile = Bun.file(TIMING);
-if (await timingFile.exists()) {
-  const t = (await timingFile.json()) as Timing;
+async function showTiming(label: string, path: string): Promise<void> {
+  const file = Bun.file(path);
+  if (!(await file.exists())) return;
+  const t = (await file.json()) as Timing;
   console.info('');
   console.info(
-    `Last pre-commit gate sum: ${t.totalMs ?? '?'}ms` + (t.generatedAt ? ` @ ${t.generatedAt}` : '')
+    `${label}: ${t.totalMs ?? '?'}ms` +
+      (t.mode ? ` (${t.mode})` : '') +
+      (t.generatedAt ? ` · ${t.generatedAt}` : '')
   );
-  if (t.gates?.length) {
-    const top = [...t.gates].sort((a, b) => b.ms - a.ms).slice(0, 5);
-    for (const g of top) {
-      console.info(`  ${g.name.padEnd(22)}  ${g.ms}ms  ${g.ok ? 'ok' : 'FAIL'}`);
-    }
+  for (const g of t.gates ?? []) {
+    console.info(`  ${g.ok ? '✓' : '✗'} ${g.name} ${g.ms}ms`);
   }
-} else {
-  console.info('');
-  console.info('No reports/harness-gate-timing.json yet (run a harness pre-commit).');
 }
 
-console.info('');
-console.info('Improve one job: .agents/skills/harness-improve/SKILL.md');
-console.info('Authority / lanes: docs/harness/AUTHORITY.md');
+await showTiming('Last pre-commit', TIMING);
+await showTiming('Last ci:harness', CI_TIMING);

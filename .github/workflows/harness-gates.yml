@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   harness:
-    name: Harness (install · lint · brands · spine smokes)
+    name: Harness (ratchets · lint · brands · test:changed)
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

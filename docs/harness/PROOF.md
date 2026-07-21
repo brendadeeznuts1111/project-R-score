@@ -18,14 +18,13 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Artifact | Claim | Required kinds |
 |----------|-------|----------------|
 | Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
-| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`bun run proof:install` / `install:verify`; CI fast: `repo-hygiene.yml` → `install:verify:strict`; full: `harness-gates.yml`) |
-| **Spine smokes** | Bun-native spine capabilities hold | `unit` + `journey` (`CI_SPINE_SMOKE_TESTS` in `lib/harness/proof.ts` via `bun run ci:harness`) |
+| **Install verify** | Factory install produces a working Bun workspace | `journey` + `deployed` (`proof:install` / `install:verify`; CI: `repo-hygiene.yml` only) |
+| **Test changed** | Import-graph affected tests | `unit` + `journey` (`test:changed` · `test:changed:main` / `--main-head`; CI: `harness-gates.yml`) |
 | Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
 | Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`) |
 | Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |
 | Wire / unknown | Bare `unknown` params stay at parse edges | `boundary` (harness eslint `no-unknown-function-param` **error**) |
 | Day-loop type-check | Advertised `type-check` covers spine agent edit surfaces | `journey` (`bun run type-check` + `tsconfig.check.json` include list) |
-| Test changed | Import-graph filter matches git dirty (or since-ref) sources | `journey` (`bun run test:changed` · `bun run test:changed -- main` · `test:changed:watch`) |
 
 ## Agent checklist before “done”
 

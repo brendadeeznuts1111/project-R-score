@@ -256,7 +256,7 @@ Root `.github/workflows/` install steps that use `bun scripts/with-bun-cache-env
 | `har-performance.yml` | hardened from plain install |
 | `url-validation.yml` | hardened from plain install |
 
-Additional workflows (e.g. `ci-smoke.yml`, `issue-automation.yml`) may exist without that wrapper — do not assume *every* YAML installs the same way; re-grep when adding jobs.
+Additional workflows (e.g. `issue-automation.yml`) may exist without that wrapper — do not assume *every* YAML installs the same way; re-grep when adding jobs. Install journey CI owner is `repo-hygiene.yml` only.
 
 - Wrapper ≡ frozen lockfile install with absolute cache + global store for **ephemeral** runners that lack `~/.bunfig.toml`.
 - `BUN_INSTALL_CACHE_DIR` in GHA job env is acceptable for runners; do not mirror that into local VS Code.
