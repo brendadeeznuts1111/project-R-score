@@ -14,10 +14,7 @@ export {};
 const ROOT = process.cwd();
 
 /** Files that intentionally mention process.env outside string literals (migrators, this ratchet). */
-const ALLOW = new Set([
-  'scripts/lib/migrate-runtime.ts',
-  'scripts/check-bun-env.ts',
-]);
+const ALLOW = new Set(['scripts/lib/migrate-runtime.ts', 'scripts/check-bun-env.ts']);
 
 const bad: string[] = [];
 const usageRe = /\bprocess\.env\b/;

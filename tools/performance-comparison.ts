@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // tools/performance-comparison.ts — JS vs native plugin performance comparison
 
