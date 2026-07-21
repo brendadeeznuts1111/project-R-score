@@ -9,11 +9,16 @@
  *   bun run test:changed                 # uncommitted (staged + unstaged + untracked)
  *   bun run test:changed -- HEAD~1       # since commit / tag
  *   bun run test:changed -- main         # since branch
- *   bun run test:changed:watch           # --changed --watch (re-filter on restart)
+ *   bun run test:changed:watch           # --changed --watch
  *   bun run test:changed -- main --parallel
  *
  * First non-flag arg → `--changed=<ref>`. Remaining args forward to `bun test`.
  * Do not pass a bare ref after raw `bun test --changed` — Bun treats it as a path filter.
+ *
+ * Graph: import scan only (no node_modules, no link/emit). Empty dirty set → exit 0
+ * without `--watch`; with `--watch` the process stays alive. Each watch restart
+ * re-queries git (filter tracks the working tree). Any local source edit can
+ * trigger a restart — even files not imported by the currently selected tests.
  */
 export {};
 

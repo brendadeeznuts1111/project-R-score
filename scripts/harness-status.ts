@@ -24,7 +24,7 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run build:affected', purpose: 'Git-true workspace build' },
   { cmd: 'bun run test:affected', purpose: 'Git-true workspace package test scripts' },
   { cmd: 'bun run test:changed', purpose: 'Import-graph vs dirty (or -- HEAD~1|main)' },
-  { cmd: 'bun run test:changed:watch', purpose: 'bun test --changed --watch' },
+  { cmd: 'bun run test:changed:watch', purpose: 'Stay alive; re-query git + re-filter each restart' },
   { cmd: 'bun run test:parallel', purpose: 'Full suite workers (bun test --parallel)' },
   { cmd: 'bun run proof:install', purpose: 'Journey: factory install layout healthy' },
   { cmd: 'bun run check:path-bun', purpose: 'No path/node:path under lib/' },
