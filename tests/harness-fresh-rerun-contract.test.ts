@@ -28,4 +28,21 @@ describe('fresh-rerun contract', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'cron-os-persistent');
     expect(p?.freshRerun).toBe('bun run test:cron-os');
   });
+
+  test('lib-docs-typecheck freshRerun is day-loop type-check', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'lib-docs-typecheck');
+    expect(p?.freshRerun).toBe('bun run type-check');
+  });
+});
+
+describe('lib-docs typecheck coherence', () => {
+  test('tsconfig.check.json includes lib/docs/**/*', async () => {
+    const cfg = (await Bun.file(
+      new URL('../tsconfig.check.json', import.meta.url).pathname
+    ).json()) as { include: string[] };
+    expect(cfg.include).toContain('lib/docs/**/*');
+    expect(cfg.include.some(p => p.startsWith('lib/docs/') && p !== 'lib/docs/**/*')).toBe(
+      false
+    );
+  });
 });

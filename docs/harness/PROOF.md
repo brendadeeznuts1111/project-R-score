@@ -39,6 +39,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**) · `bun eslint --config eslint.bun-native.config.ts --quiet`
 - **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit surfaces (`journey`)  
   *Ratchet* → `bun run type-check` · `tsconfig.check.json`
+- **`lib-docs-typecheck`** — `lib/docs/**` inside day-loop type-check (no dual-era docs island) (`boundary` + `journey`)  
+  *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/docs/**/*`
 - **`bun-cron`** — OS-persistent primary; in-process complement (`unit` + `boundary`)  
   *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 - **`cron-os-persistent`** — OS register → entry → fire `scheduled()` → marker → remove (`journey` + `boundary`)  

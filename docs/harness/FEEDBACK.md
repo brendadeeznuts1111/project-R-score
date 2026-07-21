@@ -60,6 +60,8 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → gitignore `lib/profile.md` · JIT READMEs
 - **Harness change without fresh-rerun evidence** (`proof`)  
   *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · PR paste of claim `freshRerun` · `bun test tests/harness-fresh-rerun-contract.test.ts`
+- **lib/docs dual-era (some files in check, some not)** (`type`)  
+  *Ratchet* → `tsconfig.check.json` include `lib/docs/**/*` · claim `lib-docs-typecheck` · `bun run type-check`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  
   *Ratchet* → gitignore `artifacts/bun-native-discover*.json` · `reports/` · hygiene `harness-regenerable-staged` · `bun run clean`
 - **Ephemeral scratch dumps polluting status** (`script-gate`)  

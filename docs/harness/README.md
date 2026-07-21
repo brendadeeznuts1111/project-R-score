@@ -50,6 +50,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 - **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  
   *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · `freshRerun` on each `CRITICAL_PROOF_PATHS` entry · paste output in PR
+- **`lib/docs/**` type-check** — docs path SSOT is one era under day-loop tsc  
+  *Ratchet* → `tsconfig.check.json` include `lib/docs/**/*` · claim `lib-docs-typecheck` · `bun run type-check`
 
 ## Upstream thesis → FactoryWager owner
 

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
@@ -56,8 +57,8 @@ export class EnhancedDocsCacheManager {
     // Create directory if it doesn't exist
     try {
       Bun.$`mkdir -p ${baseDir}`.quiet();
-    } catch {
-      console.error('Unhandled error:', error);
+    } catch (err) {
+      console.error('Unhandled error:', err);
     }
 
     return baseDir;

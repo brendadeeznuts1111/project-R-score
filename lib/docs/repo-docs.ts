@@ -130,6 +130,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',
+  harnessFreshRerun: 'Fresh-rerun contract (PR paste of claim re-proof)',
   harnessFeedback: 'Feedback → ratchet lessons',
   harnessAuthority: 'Authority / lanes / consequential grants',
   harnessReview: 'Repository review questions → owners',
