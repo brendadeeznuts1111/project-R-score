@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern
+// @see https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan — Bun.Glob.scan
 // @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
