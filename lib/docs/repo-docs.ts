@@ -59,6 +59,8 @@ export const CANONICAL_HARNESS = {
   brandManifest: 'lib/types/brand-manifest.json',
   consoleDepth: 'lib/console-depth.ts',
   pathBun: 'lib/path-bun.ts',
+  checkPathBun: 'scripts/check-path-bun.ts',
+  checkBunEnv: 'scripts/check-bun-env.ts',
   harnessProof: 'lib/harness/proof.ts',
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',

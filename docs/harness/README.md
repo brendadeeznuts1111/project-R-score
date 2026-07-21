@@ -24,10 +24,12 @@ bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
 bun run test:affected
+bun run check:path-bun          # lib/ path ratchet
+bun run check:bun-env           # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs                # when CLI surface changes
 ```
 
-Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
+Commit: husky → hygiene → `pre-commit-harness` (annotate-on-write doc-refs; brands staged‖smart; path-bun / bun-env when lib|scripts staged) → ast-grep when triggered. Timings: `reports/harness-gate-timing.json`.
 
 ## Local theses (FactoryWager)
 

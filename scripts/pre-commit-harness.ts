@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 /**
@@ -184,67 +185,50 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Parallel: brands staged ‖ brands smart (types only on --full)
+  const libStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('lib/'));
+  const scriptsStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('scripts/'));
+
+  // Parallel: brands staged ‖ brands smart ‖ path-bun ‖ bun-env (types only on --full)
   console.info(
     full
-      ? '🏷️  Branded IDs (staged ‖ smart ‖ types)...'
-      : '🏷️  Branded IDs (staged ‖ smart; types deferred)...'
+      ? '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ types ‖ path-bun ‖ bun-env)...'
+      : '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ path-bun ‖ bun-env; types deferred)...'
   );
 
-  const brandJobs: Array<Promise<GateTiming & { code: number }>> = [
-    (async () => {
-      const t0 = performance.now();
-      const proc = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--staged', '--strict'], {
-        cwd: repoRoot,
-        stdout: 'inherit',
-        stderr: 'inherit',
-      });
-      const code = await proc.exited;
-      return {
-        name: 'brands-staged',
-        ms: Math.round(performance.now() - t0),
-        ok: code === 0,
-        code,
-      };
-    })(),
-    (async () => {
-      const t0 = performance.now();
-      const proc = Bun.spawn(['bun', 'tools/branded-id-check.ts', '--smart', '--strict'], {
-        cwd: repoRoot,
-        stdout: 'inherit',
-        stderr: 'inherit',
-      });
-      const code = await proc.exited;
-      return { name: 'brands-smart', ms: Math.round(performance.now() - t0), ok: code === 0, code };
-    })(),
+  async function spawnGate(name: string, cmd: string[]): Promise<GateTiming & { code: number }> {
+    const t0 = performance.now();
+    const proc = Bun.spawn(cmd, {
+      cwd: repoRoot,
+      stdout: 'inherit',
+      stderr: 'inherit',
+    });
+    const code = await proc.exited;
+    return { name, ms: Math.round(performance.now() - t0), ok: code === 0, code };
+  }
+
+  const parallelJobs: Array<Promise<GateTiming & { code: number }>> = [
+    spawnGate('brands-staged', ['bun', 'tools/branded-id-check.ts', '--staged', '--strict']),
+    spawnGate('brands-smart', ['bun', 'tools/branded-id-check.ts', '--smart', '--strict']),
   ];
 
   if (full) {
-    brandJobs.push(
-      (async () => {
-        const t0 = performance.now();
-        const proc = Bun.spawn(['bun', 'run', 'check:brands:types'], {
-          cwd: repoRoot,
-          stdout: 'inherit',
-          stderr: 'inherit',
-        });
-        const code = await proc.exited;
-        return {
-          name: 'brands-types',
-          ms: Math.round(performance.now() - t0),
-          ok: code === 0,
-          code,
-        };
-      })()
-    );
+    parallelJobs.push(spawnGate('brands-types', ['bun', 'run', 'check:brands:types']));
+  }
+  if (libStaged) {
+    parallelJobs.push(spawnGate('path-bun', ['bun', 'scripts/check-path-bun.ts']));
+  }
+  if (libStaged || scriptsStaged) {
+    parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
   }
 
-  const brandResults = await Promise.all(brandJobs);
-  for (const r of brandResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
+  const parallelResults = await Promise.all(parallelJobs);
+  for (const r of parallelResults) timings.push({ name: r.name, ms: r.ms, ok: r.ok });
 
-  const brandStaged = brandResults.find(r => r.name === 'brands-staged')?.code ?? 1;
-  const brandSmart = brandResults.find(r => r.name === 'brands-smart')?.code ?? 1;
-  const brandTypes = brandResults.find(r => r.name === 'brands-types')?.code ?? 0;
+  const brandStaged = parallelResults.find(r => r.name === 'brands-staged')?.code ?? 1;
+  const brandSmart = parallelResults.find(r => r.name === 'brands-smart')?.code ?? 1;
+  const brandTypes = parallelResults.find(r => r.name === 'brands-types')?.code ?? 0;
+  const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
+  const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
 
   if (brandStaged !== 0) {
     console.error(
@@ -260,6 +244,16 @@ async function main(): Promise<void> {
   }
   if (brandTypes !== 0) {
     console.error('❌ Branded type assertions failed — tests/branded-types.test-d.ts');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (pathBun !== 0) {
+    console.error('❌ path/node:path in lib/ — use lib/path-bun (bun run check:path-bun)');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (bunEnv !== 0) {
+    console.error('❌ process.env in lib/|scripts/ — use Bun.env (bun run check:bun-env)');
     await writeTimings(timings, full);
     process.exit(1);
   }

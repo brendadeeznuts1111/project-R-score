@@ -4,22 +4,19 @@ Measured 2026-07-21 during harness-engineering velocity transform. Thesis: [lopo
 
 ## Commit-loop tax
 
-| Condition | Wall time (`real`) | Notes |
-|-----------|-------------------:|-------|
-| No staged harness files | **~0.05s** | Fast path exit |
-| Typical staged `scripts/*.ts` (pre-transform) | serial eslint → prettier → doc-refs → brand-manifest → brands staged → brands smart → brand types | Target: −30% after parallelize + annotate-on-write |
+| Condition | Wall time | Notes |
+|-----------|----------:|-------|
+| No staged harness files | **~0.04s** | Fast path exit |
+| Typical staged `scripts/*.ts` (pre-transform, serial) | estimated multi-second serial eslint → prettier → doc-refs → brands×3 | brands types always ran |
+| Typical staged `scripts/*.ts` (post-transform) | **~2.1–2.7s** gate sum (`reports/harness-gate-timing.json`) | annotate-on-write; brands staged‖smart; brand-types deferred; path-bun / bun-env parallel when lib\|scripts staged |
 
-Gate order (before transform): see [`scripts/pre-commit-harness.ts`](../../scripts/pre-commit-harness.ts).
+Dominant cost remains ESLint (~1.7s in the sample). Parallel brand/ratchet gates remove serial brand-types (~types deferred) and kill doc-refs re-stage loops.
 
-## Day-loop fiction (evidence)
+## Day-loop fiction (evidence) → fixed
 
 ### `type-check` (`tsconfig.check.json`)
 
-Pre-transform `include` covered only:
-
-- `src/**/*`, `lib/udp/**/*`, `lib/env/**/*`, two workers, two `scripts/lib` files, `types/**/*`, `index.ts`
-
-Agent edit surfaces **missing**: `lib/types/**`, most of `scripts/lib/**`, `lib/docs/**`, packages.
+Pre-transform `include` covered only a thin slice. Post-transform covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, select `lib/docs/*`, key `scripts/lib/*`, harness scripts. Full `lib/docs/**` still deferred (type debt).
 
 ### `build:affected` / `test:affected`
 
@@ -44,13 +41,15 @@ Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces
 
 Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 
-## Competing precedents (Phase D pick)
+## Competing precedents (Phase D)
 
 | Era | Spine status |
 |-----|----------------|
-| `Bun.env` vs `process.env` | Mostly migrated in `lib/`+`scripts/` `.ts` (catalog/docs leftovers) |
-| `path` / `node:path` in `lib/` | **Unfinished** — finish via [`lib/path-bun.ts`](../../lib/path-bun.ts) |
+| `path` / `node:path` in `lib/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` staged) |
+| `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
+
+Next single era (not started): import-warning burn-down / `--max-warnings` ratchet.
 
 ## Timing artifact
 
-Post-transform gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json).
+Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json).

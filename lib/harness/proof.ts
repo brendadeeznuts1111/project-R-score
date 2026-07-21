@@ -32,6 +32,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['journey'],
     evidence: ['.github/workflows/search-governance.yml'],
   },
+  {
+    id: 'path-bun',
+    claim: 'Spine lib/ does not import path/node:path',
+    kinds: ['boundary'],
+    evidence: ['bun run check:path-bun'],
+  },
+  {
+    id: 'bun-env',
+    claim: 'Spine lib/ + scripts/ do not read environment via the Node process object',
+    kinds: ['boundary'],
+    evidence: ['bun run check:bun-env'],
+  },
 ] as const;
 
 export function proofPathById(id: string): ProofPath | undefined {

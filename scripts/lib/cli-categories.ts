@@ -79,8 +79,10 @@ export const CLI_SPECIAL: Record<string, string> = {
   'type-check': 'Day-loop typecheck (tsconfig.check.json)',
   'type-check:ci': 'CI typecheck (tsconfig.ci.json)',
   'type-check:full': 'Full solution typecheck (rare)',
-  'build:affected': 'Build packages affected by current changes (bun --filter ...)',
-  'test:affected': 'Test packages affected by current changes (bun --filter ...)',
+  'build:affected': 'Build git-changed workspaces (scripts/affected-workspaces.ts)',
+  'test:affected': 'Test git-changed workspaces (scripts/affected-workspaces.ts)',
+  'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
+  'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
 };
 
 /** Always shown under Core in generated docs even without a prefix match. */

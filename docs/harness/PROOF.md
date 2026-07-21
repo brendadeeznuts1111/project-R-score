@@ -20,6 +20,8 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
 | Install cache | Root install layout is healthy | `deployed` (`bun run install:verify`) |
 | Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
+| Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`, pre-commit when `lib/` staged) |
+| Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`, pre-commit when lib\|scripts staged) |
 
 ## Agent checklist before “done”
 

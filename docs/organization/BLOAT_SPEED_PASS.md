@@ -34,6 +34,7 @@ bun run type-check          # tsconfig.check.json — spine agent surfaces
 bun run build:affected      # git-true workspaces (scripts/affected-workspaces.ts)
 bun run test:affected
 bun run check:path-bun      # lib/ path ratchet
+bun run check:bun-env       # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs
 ```
 
@@ -45,5 +46,6 @@ Protocol: `bun run dashboard:protocol:check`. Discover Node leftovers: `bun run 
 
 - Root-parked nested remotes; `proton-pass` WIP; lifecycle hook aliases
 - Broad `lib/docs/**` in day-loop type-check (debt isolated)
+- Import-warning burn-down (`--max-warnings 500`)
 - Intentional Node surfaces: `node:dns` health checks, `node:os` in brand bench, `node:inspector` snapshot, `node:net` test server
 - Large `search-benchmark-dashboard.ts` DNS logic (keep)

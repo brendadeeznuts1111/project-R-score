@@ -31,6 +31,7 @@
     "scripts/help.ts",
     "scripts/pre-commit-harness.ts",
     "scripts/check-path-bun.ts",
+    "scripts/check-bun-env.ts",
     "scripts/harness-lesson.ts",
     "types/**/*",
     "index.ts"
