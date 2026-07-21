@@ -6,7 +6,6 @@ Surfaces in this directory:
 |---------|--------|
 | MCP HTTP dashboard | `bun dashboard/dashboard-server.ts` |
 | MCP CLI status | `bun run dashboard` → `dashboard/mcp-overview.ts status` |
-| Registry UI | `bun dashboard/business-registry.ts` |
 | Protocol check | `bun run dashboard:protocol:check` |
 | Live demo | `bun run dashboard:live` |
 
@@ -55,13 +54,6 @@ curl -sS http://localhost:3456/api/dashboard/runtime
 ```bash
 bun run dashboard                 # MCP overview status
 bun run dashboard:protocol:check  # protocol contract
-bun dashboard/status-monitor.ts   # component matrix (when needed)
 ```
 
-## Registry dashboard
-
-```bash
-bun dashboard/business-registry.ts
-```
-
-See also [`README-REGISTRY.md`](./README-REGISTRY.md).
+Shell HTML: `bun-playground.html`, `navigation-hub.html`, `web-dashboard.html`.

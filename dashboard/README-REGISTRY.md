@@ -1,9 +1,11 @@
 # Registry dashboard
 
-Business-cards UI for the FactoryWager registry surface.
+The standalone `business-registry.ts` UI was removed as unreferenced.
+
+Use the MCP overview instead:
 
 ```bash
-bun dashboard/business-registry.ts
+bun run dashboard
 ```
 
-Related: [`README.md`](./README.md) · root `bun run dashboard` (MCP overview, not this UI).
+Related: [`README.md`](./README.md).
