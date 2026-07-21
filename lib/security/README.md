@@ -8,4 +8,3 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 |-------|
 | [`index.ts`](./index.ts) |
 | [`r2-credentials.ts`](./r2-credentials.ts) |
-

@@ -1,10 +1,5 @@
 # ab-testing
 
-A/B and experiment helpers.
+A/B helpers moved to the workspace package [`packages/ab-testing`](../../packages/ab-testing/).
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`cookie-manager.ts`](./cookie-manager.ts) |
-| [`manager.ts`](./manager.ts) |
+Inventory: [`../README.md`](../README.md). This folder is a stub so domain indexes stay stable; do not add new modules here.

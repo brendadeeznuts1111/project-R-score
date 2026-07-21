@@ -7,4 +7,4 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | Entry |
 |-------|
 | [`bun-wiki-integration.ts`](./bun-wiki-integration.ts) |
-
+| [`wiki-generator.ts`](./wiki-generator.ts) |

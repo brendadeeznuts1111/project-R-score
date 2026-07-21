@@ -1,10 +1,9 @@
 # shared
 
-Cross-cutting shared helpers.
+Cross-cutting helpers.
 
 Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
 
 | Entry |
 |-------|
-| [`dns-prefetch.ts`](./dns-prefetch.ts) |
-
+| _(see tree)_ |

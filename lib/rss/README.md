@@ -7,5 +7,4 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | Entry |
 |-------|
 | [`rss-manager.ts`](./rss-manager.ts) |
-| [`enhanced-rss.ts`](./enhanced-rss.ts) |
 

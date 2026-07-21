@@ -6,5 +6,6 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 
 | Entry |
 |-------|
-| [`index.ts`](./index.ts) |
-
+| [`server.ts`](./server.ts) |
+| [`cli.ts`](./cli.ts) |
+| [`auth.ts`](./auth.ts) |

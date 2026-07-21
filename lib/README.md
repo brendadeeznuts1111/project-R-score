@@ -50,44 +50,37 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 
 | Domain | Purpose | Entry hint |
 |--------|---------|------------|
-| [`ab-testing/`](./ab-testing/) | A/B and experiment helpers | `cookie-manager.ts` |
+| [`ab-testing/`](./ab-testing/) | Stub — live code in `packages/ab-testing` | see README |
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
-| [`business/`](./business/) | Business-domain pure helpers | `habits-pure.ts` |
+| [`business/`](./business/) | Stub — unreferenced modules removed | see README |
 | [`cli/`](./cli/) | CLI / ANSI dashboard helpers | `ansi-dashboard.ts` |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
 | [`env/`](./env/) | Runtime env helpers | `runtime.ts` |
-| [`har-analyzer/`](./har-analyzer/) | HAR capture analysis | `index.ts` |
+| [`har-analyzer/`](./har-analyzer/) | HAR capture analysis | `bun-serve-types.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
-| [`http/`](./http/) | Health endpoints and HTTP helpers | `index.ts` |
+| [`http/`](./http/) | Health endpoints and HTTP helpers | `health-endpoint.ts` |
 | [`mcp/`](./mcp/) | MCP client / bridge helpers | `bun-mcp-client.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Benchmarks and recovery | `benchmark-recovery.ts` |
 | [`pooling/`](./pooling/) | Pool / DataView metrics | `dataview-metrics.ts` |
 | [`profile/`](./profile/) | Profile session upload | `index.ts` |
 | [`r2/`](./r2/) | R2 storage and analytics | `r2-storage-enhanced.ts` |
-| [`registry/`](./registry/) | Registry platform helpers | `index.ts` |
+| [`registry/`](./registry/) | Registry platform helpers | `server.ts` · `cli.ts` |
 | [`rss/`](./rss/) | RSS managers | `rss-manager.ts` |
 | [`security/`](./security/) | Secrets, R2 creds, security utils | `index.ts` · `r2-credentials.ts` |
-| [`shared/`](./shared/) | Cross-cutting shared helpers | `dns-prefetch.ts` |
+| [`shared/`](./shared/) | Cross-cutting shared helpers | `tools/` |
 | [`theme/`](./theme/) | Colors / styled logging | `colors.ts` |
 | [`types/`](./types/) | Branded IDs and shared types | `branded.ts` · [branded/README](./types/branded/README.md) |
-| [`udp/`](./udp/) | UDP helpers | `index.ts` |
+| [`udp/`](./udp/) | Stub — unreferenced modules removed | see README |
 | [`utils/`](./utils/) | General utilities barrel | `index.ts` |
 | [`validation/`](./validation/) | Validation systems | `automated-validation-system.ts` |
 | [`wiki/`](./wiki/) | Wiki integration | `bun-wiki-integration.ts` |
 
 ## Legacy / low-traffic root (do not extend)
 
-Still referenced by demos/tools — prefer domain APIs; do not add new callers.
-
 | File | Note |
 |------|------|
-| `bun-cli-native-v3.15.ts` | Versioned CLI dump (examples/demos) |
-| `context-engine-v3.17.ts` | Versioned context engine (examples/demos) |
-| `context-run-server.ts` | Context run server experiment |
-| `enhanced-watch-filter-v3.15.ts` | Versioned watch filter (examples/demos) |
-| `filter-runner.ts` · `filter-watch-logger.ts` | Filter tooling (`tools/bin`, demos) |
-| `watch-engine-v3.14.ts` | Versioned watch engine (`tools/bin`) |
+| `filter-runner.ts` | Workspace filter helper (`src/server/filter-dashboard`, demos) |
