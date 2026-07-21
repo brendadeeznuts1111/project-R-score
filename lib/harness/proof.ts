@@ -287,9 +287,24 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run check:harness-orphans',
   },
   {
+    id: 'harness-complexity-floor',
+    // owner: lib/harness/complexity.ts · complexity-baseline.json
+    claim: 'No lib/harness function exceeds complexity-baseline.json maxComplexity',
+    kinds: ['boundary'],
+    evidence: [
+      'lib/harness/complexity.ts',
+      'lib/harness/complexity-baseline.json',
+      'scripts/check-harness-complexity.ts',
+      'bun run check:harness-complexity',
+      'docs/harness/tenants/complexity-floor.md',
+    ],
+    freshRerun: 'bun run check:harness-complexity',
+  },
+  {
     id: 'code-quality-tenants',
     // owner: lib/harness/code-quality.ts
-    claim: 'Code-quality tenants (types · coverage · orphans) have runbooks and live freshRerun',
+    claim:
+      'Code-quality tenants (types · coverage · orphans · complexity) have runbooks and live freshRerun',
     kinds: ['boundary', 'journey'],
     evidence: [
       'lib/harness/code-quality.ts',

@@ -67,6 +67,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:harness-coverage`
 - **`harness-orphan-modules`** — every `lib/harness/*.ts` has an importer  
   *Ratchet* → `bun run check:harness-orphans`
+- **`harness-complexity-floor`** — no `lib/harness` function exceeds `complexity-baseline.json`  
+  *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy-runbooks`** — CI/deploy jobs have runbooks; `assertCICoverage` fail-closed  
   *Ratchet* → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md)
 

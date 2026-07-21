@@ -1,0 +1,5 @@
+{
+  "$comment": "Max McCabe complexity per function in lib/harness. Raise when intentionally allowing higher; never lower without a retirement PR.",
+  "scope": "lib/harness",
+  "maxComplexity": 21
+}

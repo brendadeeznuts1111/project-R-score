@@ -69,6 +69,11 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:harness-coverage');
   });
 
+  test('harness-complexity-floor freshRerun is check:harness-complexity', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'harness-complexity-floor');
+    expect(p?.freshRerun).toBe('bun run check:harness-complexity');
+  });
+
   test('code-quality-tenants freshRerun is test:code-quality', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'code-quality-tenants');
     expect(p?.freshRerun).toBe('bun run test:code-quality');

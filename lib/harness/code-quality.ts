@@ -2,9 +2,10 @@
  * Code-quality tenants — same signal → intervention → proof → retirement shape
  * as spine maintenance, but not scheduled by the spine daemon.
  *
- * Scope: harness / day-loop surfaces (types · coverage-floor · orphan modules).
+ * Scope: harness / day-loop surfaces (types · coverage · orphans · complexity).
  *
  * @see ./coverage-ratchet.ts
+ * @see ./complexity.ts
  * @see ../../docs/harness/code-quality.md
  */
 import { CRITICAL_PROOF_PATHS } from './proof';
@@ -72,6 +73,22 @@ export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
     },
     freshRerun: 'bun run check:harness-orphans',
     docPath: 'docs/harness/tenants/orphan-modules.md',
+  },
+  {
+    id: 'complexity-floor',
+    signal:
+      '`bun run check:harness-complexity` reports a lib/harness function above complexity-baseline.json maxComplexity',
+    intervention: 'bun run check:harness-complexity',
+    proofId: 'harness-complexity-floor',
+    retirement:
+      'Remove when ESLint complexity (or equivalent) enforces the same lib/harness floor without this tenant',
+    retirementVerified: false,
+    retirementCheck: {
+      description: 'complexity floor still enforced by ESLint or this probe',
+      command: 'bun run check:harness-complexity',
+    },
+    freshRerun: 'bun run check:harness-complexity',
+    docPath: 'docs/harness/tenants/complexity-floor.md',
   },
 ] as const;
 

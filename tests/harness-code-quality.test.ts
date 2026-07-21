@@ -1,5 +1,5 @@
 /**
- * Code-quality tenants: catalog + live freshRerun (type-check · coverage · orphans).
+ * Code-quality tenants: catalog + live freshRerun (types · coverage · orphans · complexity).
  * @see lib/harness/code-quality.ts
  * @see docs/harness/code-quality.md
  */
@@ -20,7 +20,7 @@ describe('code quality tenants', () => {
   test('catalog proof links + fields', () => {
     expect(assertCodeQualityProofLinks()).toEqual([]);
     expect(assertCodeQualityFields()).toEqual([]);
-    expect(CODE_QUALITY_TENANTS.length).toBeGreaterThanOrEqual(3);
+    expect(CODE_QUALITY_TENANTS.length).toBeGreaterThanOrEqual(4);
   });
 
   test('every runbook doc exists with signal · intervention · retirement', async () => {
@@ -61,8 +61,16 @@ describe('code quality tenants', () => {
     expect(code).toBe(0);
   }, 60_000);
 
-  test('proof catalog includes harness-coverage-ratchet', () => {
+  test('complexity-floor check exits 0', async () => {
+    const t = CODE_QUALITY_TENANTS.find(x => x.id === 'complexity-floor');
+    expect(t).toBeDefined();
+    const { code } = await runFreshRerunCommand(t!.freshRerun, ROOT);
+    expect(code).toBe(0);
+  }, 60_000);
+
+  test('proof catalog includes harness coverage · orphans · complexity', () => {
     expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'harness-coverage-ratchet')).toBe(true);
     expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'harness-orphan-modules')).toBe(true);
+    expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'harness-complexity-floor')).toBe(true);
   });
 });

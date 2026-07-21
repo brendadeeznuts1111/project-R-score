@@ -120,6 +120,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:ci-deploy': 'CI/deploy runbooks + discover-ci coverage ratchet',
   'test:harness-coverage': 'lib/harness coverage floor vs coverage-baseline.json',
   'check:harness-orphans': 'Fail if any lib/harness/*.ts module has no importers',
+  'check:harness-complexity': 'Fail if any lib/harness function exceeds complexity-baseline.json',
   'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
   'docs:ci-deploy': 'CI/deploy runbooks index (ansiMarkdown)',
   'docs:fresh-rerun':
@@ -185,6 +186,7 @@ export const CLI_CORE_CMDS = new Set([
   'test:ci-deploy',
   'test:harness-coverage',
   'check:harness-orphans',
+  'check:harness-complexity',
   'docs:code-quality',
   'docs:ci-deploy',
   'docs:search-governance',

@@ -18,8 +18,10 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
   *Ratchet* → `assertInterventionCommandsValid`
 - **`heal-fixture.ts`** — sandboxed E2E heal loop (not a production spine tenant)  
   *Ratchet* → `bun run test:tenant-heal` · claim `spine-tenant-heal`
-- **`code-quality.ts`** — types · coverage · orphan-module tenants (not spine cron)  
+- **`code-quality.ts`** — types · coverage · orphans · complexity tenants (not spine cron)  
   *Ratchet* → `bun run test:code-quality` · [`docs/harness/code-quality.md`](../../docs/harness/code-quality.md)
+- **`complexity.ts`** + **`complexity-baseline.json`** — McCabe floor for `lib/harness` functions  
+  *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy.ts`** + **`discover-ci.ts`** — CI/deploy runbooks + fail-closed job coverage  
   *Ratchet* → `bun run test:ci-deploy` · [`docs/harness/ci-deploy.md`](../../docs/harness/ci-deploy.md)
 - **`coverage-ratchet.ts`** + **`coverage-baseline.json`** — lib/harness coverage floors  
