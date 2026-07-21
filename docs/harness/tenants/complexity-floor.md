@@ -33,9 +33,10 @@ Two different Bun stdin features ([runtime](https://bun.com/docs/runtime)):
 ```bash
 bun run check:harness-complexity:staged
 # equivalent:
-git diff --cached --name-only --diff-filter=ACM -- 'lib/harness/**/*.ts' \
+git diff --cached --name-only --diff-filter=ACM -- ':(glob)lib/harness/**/*.ts' \
   | bun scripts/complexity-check.ts --stdin --json --baseline lib/harness/complexity-baseline.json
 ```
+
 
 With `--stdin`: empty or out-of-scope paths → skip (exit 0). Without `--stdin`: TTY or empty non-TTY → full `lib/harness` glob (freshRerun / CI).
 
