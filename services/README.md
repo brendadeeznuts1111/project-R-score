@@ -1,9 +1,3 @@
 # services
 
-Service helpers that remain in use.
-
-| Entry |
-|-------|
-| [`rss-integration.ts`](./rss-integration.ts) |
-
-Demos under `demos/` were removed (unreferenced package.json toys).
+Stub — prior service helpers/demos removed. Prefer `lib/rss/` and root scripts.

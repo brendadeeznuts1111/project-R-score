@@ -55,7 +55,6 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
-| [`env/`](./env/) | Runtime env helpers | `runtime.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
 | [`http/`](./http/) | HTTP helpers | `hardened-fetch.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
